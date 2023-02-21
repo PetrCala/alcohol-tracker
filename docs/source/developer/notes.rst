@@ -5,6 +5,7 @@ Devloper documentation
 
 This is the main documentation for running the project.
 
+
 Prerequisites
 ================================
 
@@ -13,12 +14,18 @@ Prerequisites
 #. Install React Native by running :code:`npx react native`
 
 
+Setting up the project after cloning the repository
+================================
+#. Install all dependencies using :code:`npm i`.
+
+
 Setting up the project from scratch
 ================================
 
 #. If you need to set up the project from scratch (not clone it from the GitHub repository), we recommend you follow the `official documentation <https://reactnative.dev/docs/environment-setup>`_.
     * Initialize the project using :code:`npx react-native init alcohol_tracker --template react-native-template-typescript --npm`
     * It is good to keep the best practice when it comes to folder organization. Please keep in line with the GitHub folder structuring when recreating the project from scratch.
+
 
 Running the application using an emulator
 ================================
@@ -30,6 +37,7 @@ Running the application using an emulator
 #. You can run the application in the Android environent by using :code:`npm run android` from the project root directory.
 #. If all went right, you should see the application open in the emulator device.
 
+
 Running the application on an android device
 ================================
 
@@ -38,3 +46,9 @@ Running the application on an android device
 #. In your project directory, run the command :code:`npm run android`. This will start the Metro bundler and build your app.
 #. When the build is complete, your app will be installed and launched on your connected device automatically.
     * Note that you'll need to have the Android development environment set up on your computer, including the Android SDK and the Android platform tools, in order to use this command. You can follow the React Native documentation for instructions on setting up your development environment for Android.
+
+
+
+Modifying the application
+================================
+* The main code of the application is located in the folder `src`. The file `App.tsx` is the backbone of the project. The rest of the components that will be called can be found in the other various folders. Feel free to add, remove, or modify these folders as necessary. **The only file that has a direct dependency on the rest of the project is the `App.tsx`**. 
