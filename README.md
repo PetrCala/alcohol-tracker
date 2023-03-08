@@ -4,15 +4,13 @@ Track your everyday alcohol adventures using a natively ran application.
 
 ### How to run
 
-1. Clone the repository into a folder using `git clone`
-2. Install the dependencies using `npm i`
-3. Install and launch an emulator:
-  * Android: You can use the [Android Studio](developer.android.com)
-  * iOS: You can use the [Xcode](https://docs.expo.dev/workflow/ios-simulator/) (not tested for compatibility)
-4. Run the application:
-  * Android: `npm run android`
-  * iOS: `npm run ios`
+#### Obtaining the application file directly
 
+The application is obtainable per request from the developers in the form of an `.apk` file for Android devices, or an `IPA` file for iOS. Using this file, you can easily install the application by double tapping said file on your device. Make sure to enable installation from external sources on request.
+
+#### Downloading the application file from Play Store or iOS Store
+
+Once the application will reach version 1.0.0 (i.e. it will became fully functional), we intend to place it on both of the popular markets, where it will be easily accessible.
 
 
 ## For developers
@@ -25,4 +23,4 @@ Track your everyday alcohol adventures using a natively ran application.
 
 ### How to build/run
 
-Follow the documentation
+All the necessary steps are outlined in the developer documentation
