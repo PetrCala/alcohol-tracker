@@ -3,15 +3,20 @@ import { TouchableOpacity, Text, Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { render, fireEvent } from '@testing-library/react-native';
 
-import StartSessionButton from '../src/components/Buttons/SessionButton';
+import BasicButton from '../src/components/Buttons/BasicButton';
 import MenuIcon from '../src/components/Buttons/MenuIcon';
-import MainScreen from '../src/screens/MainScreen';
+import styles from '../src/styles';
 
 describe('TestNavigationButtons', () => {
 
     it('StartSessionButton triggers onPress', () => {
         const onPressMock = jest.fn();
-        const { getByText } = render(<StartSessionButton onPress={onPressMock} />);
+        const { getByText } = render(
+            <BasicButton 
+                text='+'
+                containerStyle={styles.startSessionButtonContainer}
+                buttonStyle={styles.startSessionButton}
+                onPress={onPressMock} />);
         fireEvent.press(getByText('+'));
         expect(onPressMock).toHaveBeenCalled();
     });
@@ -23,6 +28,8 @@ describe('TestNavigationButtons', () => {
             <MenuIcon
                 iconId={idMock}
                 iconSource={require('../src/assets/icons/social.png')}
+                containerStyle={styles.menuIconContainer}
+                iconStyle={styles.menuIcon}
                 onPress={onPressMock}
             />,
         );

@@ -6,6 +6,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   header: {
+    height: 70,
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: 10,
@@ -56,30 +57,52 @@ const styles = StyleSheet.create({
     height: 25,
     padding: 10,
   },
+  backArrowContainer: {
+    justifyContent: 'center',
+    marginTop: 10,
+    marginLeft: 10,
+    padding: 10,
+    position: 'absolute',
+  },
+  backArrow: {
+    width: 25,
+    height: 25,
+  },
   mainScreenContent: {
     flex: 1,
     padding: 10,
     backgroundColor: '#FFFF99',
   },
   drinkingSessionContainer: {
-    flex: 1,
+    flexGrow: 1,
+    flexShrink: 1,
     alignItems: "center",
     justifyContent: "center",
+    marginBottom: 70, //offset header
   },
   drinkingSessionTitle: {
     fontSize: 20,
     marginBottom: 20,
   },
-  startSessionButtonContainer: {
+  drinkingSessionButton: {
+    padding: 10,
+    marginBottom: 10,
+    marginTop: 10,
+    backgroundColor: '#007AFF'
+  },
+  drinkingSessionButtonText: {
+    color: 'white',
+    fontSize: 15,
+    fontWeight: '500',
+  },
+  startSessionButton: {
     position: 'absolute',
     bottom: 20,
     right: 20,
-  },
-  startSessionButton: {
-    backgroundColor: 'green',
     borderRadius: 50,
     width: 70,
     height: 70,
+    backgroundColor: 'green',
     alignItems: 'center',
   },
   startSessionText: {
@@ -87,13 +110,6 @@ const styles = StyleSheet.create({
     fontSize: 50,
     fontWeight: 'bold',
   },
-//   },
-//   footer: {
-//     flexDirection: 'row',
-//     justifyContent: 'flex-end',
-//     alignItems: 'center',
-//     padding: 10,
-//   },
 });
 
 export default styles;

@@ -1,23 +1,27 @@
 ﻿import React from 'react';
 import { TouchableOpacity, Image } from 'react-native';
-import styles from '../../styles';
 
 type Props = {
   iconId: string;
   iconSource: any;
+  containerStyle: any;
+  iconStyle: any;
   onPress: () => void;
 }
 
+/**
+ * A touchable icon, that can be stylized.
+ */
 const MenuIcon = (props: Props) => {
-  const { iconId, iconSource, onPress } = props;
+  const { iconId, iconSource, containerStyle, iconStyle, onPress } = props;
 
   return(
       <TouchableOpacity
         id={iconId}
         accessibilityRole='button' 
         onPress={onPress} 
-        style={styles.menuIconContainer}>
-          <Image source={iconSource} style={styles.menuIcon} />
+        style={containerStyle}>
+          <Image source={iconSource} style={iconStyle} />
       </TouchableOpacity>
   );
 };

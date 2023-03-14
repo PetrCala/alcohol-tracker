@@ -1,28 +1,36 @@
 ﻿import React, {useState} from 'react';
 import {
-  Button,
   Text,
   View,
 } from 'react-native';
 import styles from '../styles';
+import MenuIcon from '../components/Buttons/MenuIcon';
+import BasicButton from '../components/Buttons/BasicButton';
 
+type DrinkingSessionProps = {
+  navigation: any;
+}
 
-const DrinkingSession = () => {
+const DrinkingSession = (props: DrinkingSessionProps) => {
+  const { navigation } = props;
+
   const [units, setUnits] = useState(0);
   const [sessionStarted, setSessionStarted] = useState(false);
 
-  const startSession = () => {
-    setSessionStarted(true);
-  };
+  // const startSession = () => {
+  //   setSessionStarted(true);
+  // };
 
   const addUnit = () => {
     setUnits(units + 1);
   };
 
   const endSession = () => {
+    // endSession, show statistics, offer to go back
     setSessionStarted(false);
     saveSession();
     setUnits(0);
+    navigation.goBack();
   };
 
   const saveSession = () => {
@@ -31,22 +39,34 @@ const DrinkingSession = () => {
   };
 
   return (
-    <View style={styles.drinkingSessionContainer}>
-      {!sessionStarted ? (
-        <>
-          <Text style={styles.drinkingSessionTitle}>Start a new drinking session</Text>
-          <Button title="Start Session" onPress={startSession} />
-        </>
-      ) : (
-        <>
-          <Text style={styles.drinkingSessionTitle}>
-            Units consumed: {units}{" "}
-            {units > 1 ? "units" : "unit"}
-          </Text>
-          <Button title="Add Unit" onPress={addUnit} />
-          <Button title="End Session" onPress={endSession} />
-        </>
-      )}
+    <View style={{flex:1, backgroundColor: '#FFFF99'}}>
+      <View style={styles.header}>
+        <MenuIcon
+          iconId='escape-drinking-session'
+          iconSource={require('../assets/icons/arrow_back.png')}
+          containerStyle={styles.backArrowContainer}
+          iconStyle={styles.backArrow}
+          onPress={() => navigation.goBack() }
+        />
+      </View>
+      <View style={styles.drinkingSessionContainer}>
+        <Text style={styles.drinkingSessionTitle}>
+          Consumed: {units}{" "}
+          {units != 1 ? "units" : "unit"}
+        </Text>
+        <BasicButton 
+          text='Add Unit'
+          buttonStyle={styles.drinkingSessionButton}
+          textStyle={styles.drinkingSessionButtonText}
+          onPress={addUnit}
+        />
+        <BasicButton 
+          text='End Session'
+          buttonStyle={styles.drinkingSessionButton}
+          textStyle={styles.drinkingSessionButtonText}
+          onPress={endSession}
+        />
+      </View>
     </View>
   );
 };
