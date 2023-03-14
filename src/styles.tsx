@@ -70,24 +70,22 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginBottom: 20,
   },
+  startSessionButtonContainer: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+  },
   startSessionButton: {
     backgroundColor: 'green',
     borderRadius: 50,
     width: 70,
     height: 70,
     alignItems: 'center',
-    justifyContent: 'center',
-  },
-  startSessionButtonContainer: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
   },
   startSessionText: {
     color: 'white',
     fontSize: 50,
     fontWeight: 'bold',
-    marginTop: -5,
   },
 //   },
 //   footer: {

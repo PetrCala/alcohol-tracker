@@ -72,6 +72,7 @@ Building the application for an iOS device
 #. Once the build is complete, select *Distribute App* and then select *Ad Hoc*.
 #. Follow the prompts to export the :code:`IPA file`, which you can then transfer to your friend's iOS device using a file-sharing service like Dropbox or Google Drive.
 
-Modifying the application
+Updating the app version
 ================================
-* The main code of the application is located in the folder `src`. The file `App.tsx` is the backbone of the project. The rest of the components that will be called can be found in the other various folders. Feel free to add, remove, or modify these folders as necessary. **The only file that has a direct dependency on the rest of the project is the `App.tsx`**. 
+* Modify the version in the :code:`package.json` file by incrementing the version numbers as necessary.
+* Navigate to the project root folder and run :code:`npm install` to update the dependencies in your project.

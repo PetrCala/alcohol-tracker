@@ -6,6 +6,8 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
+import StartSessionButton from '../components/Buttons/SessionButton';
+import MenuIcon from '../components/Buttons/MenuIcon';
 import DrinkingSession from './DrinkingSessionScreen';
 import styles from '../styles';
 
@@ -36,7 +38,7 @@ const MainScreen = () => {
         <View style={styles.header}>
             <View style={styles.profileIconContainer}>
                 {/* User's clickable icon */}
-                <TouchableOpacity onPress={handleProfileClick}>
+                <TouchableOpacity accessibilityRole='button' onPress={handleProfileClick}>
                 <Image source={require('../assets/temp/temp_user_icon.jpg')} style={styles.profileIcon} />
                 </TouchableOpacity>
             </View>
@@ -44,16 +46,22 @@ const MainScreen = () => {
               <Text style={styles.headerUsername}>Petr</Text>
             </View>
             <View style={styles.menuContainer}>
-                {/* Replace these with clickable icons for social, achievements, and settings */}
-                <TouchableOpacity onPress={handleSocialClick} style={styles.menuIconContainer}>
-                <Image source={require('../assets/icons/social.png')} style={styles.menuIcon} />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={handleAchievementsClick} style={styles.menuIconContainer}>
-                <Image source={require('../assets/icons/achievements.png')} style={styles.menuIcon} />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={handleSettingsClick} style={styles.menuIconContainer}>
-                <Image source={require('../assets/icons/settings.png')} style={styles.menuIcon} />
-                </TouchableOpacity>
+                {/* Clickable icons for social, achievements, and settings */}
+                <MenuIcon 
+                  iconId='social-icon'
+                  iconSource={require('../assets/icons/social.png')} 
+                  onPress={handleSocialClick}
+                  />
+                <MenuIcon 
+                  iconId='achievements-icon'
+                  iconSource={require('../assets/icons/achievements.png')} 
+                  onPress={handleAchievementsClick}
+                  />
+                <MenuIcon 
+                  iconId='settings-icon'
+                  iconSource={require('../assets/icons/settings.png')} 
+                  onPress={handleSettingsClick}
+                  />
             </View>
         </View>
         <View style={styles.mainScreenContent}>
@@ -64,9 +72,7 @@ const MainScreen = () => {
                 <Text>Calendar</Text>
             </ScrollView>
             <View style={styles.startSessionButtonContainer}>
-                <TouchableOpacity onPress={handleStartSession} style={styles.startSessionButton}>
-                    <Text style={styles.startSessionText}>+</Text>
-                </TouchableOpacity>
+              <StartSessionButton onPress = {handleStartSession} />
             </View>
         </View>
     </View>
