@@ -14,8 +14,8 @@ describe('TestNavigationButtons', () => {
         const { getByText } = render(
             <BasicButton 
                 text='+'
-                containerStyle={styles.startSessionButtonContainer}
                 buttonStyle={styles.startSessionButton}
+                textStyle={styles.startSessionText}
                 onPress={onPressMock} />);
         fireEvent.press(getByText('+'));
         expect(onPressMock).toHaveBeenCalled();
