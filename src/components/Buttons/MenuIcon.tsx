@@ -1,5 +1,5 @@
 ﻿import React from 'react';
-import { TouchableOpacity, Image } from 'react-native';
+import { View, TouchableOpacity, Image } from 'react-native';
 
 type Props = {
   iconId: string;
@@ -16,13 +16,14 @@ const MenuIcon = (props: Props) => {
   const { iconId, iconSource, containerStyle, iconStyle, onPress } = props;
 
   return(
-      <TouchableOpacity
-        id={iconId}
-        accessibilityRole='button' 
-        onPress={onPress} 
-        style={containerStyle}>
-          <Image source={iconSource} style={iconStyle} />
-      </TouchableOpacity>
+    <TouchableOpacity
+      id={iconId} 
+      testID = 'menu-icon'
+      accessibilityRole='button' 
+      onPress={onPress} 
+      style={containerStyle}>
+        <Image source={iconSource} style={iconStyle} />
+    </TouchableOpacity>
   );
 };
 

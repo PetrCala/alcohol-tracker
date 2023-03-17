@@ -16,13 +16,12 @@ const BasicButton = (props: Props) => {
   const { text, buttonStyle, textStyle, onPress } = props;
 
   return(
-    <View>
-      <TouchableOpacity
-        style={buttonStyle}
-        onPress={onPress}>
-          <Text style={textStyle}>{text}</Text>
-      </TouchableOpacity>
-    </View>
+    <TouchableOpacity
+      testID = 'basic-button'
+      style={buttonStyle}
+      onPress={onPress}>
+        <Text style={textStyle}>{text}</Text>
+    </TouchableOpacity>
   );
 };
 

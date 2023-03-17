@@ -71,5 +71,4 @@ const DrinkingSession = (props: DrinkingSessionProps) => {
   );
 };
 
-
 export default DrinkingSession;
