@@ -32,12 +32,6 @@ const DrinkingSession = (props: DrinkingSessionProps) => {
     // Save the session data to an SQLite database, using a custom key
   };
 
-  // const db = SQLite.openDatabase(
-  //   {name: 'myDatabase.db', location: 'default'},
-  //   () => {},
-  //   error => {console.log(error)}
-  // );
-
   return (
     <View style={{flex:1, backgroundColor: '#FFFF99'}}>
       <View style={styles.header}>

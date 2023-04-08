@@ -8,7 +8,7 @@ import DrinkingSession from './screens/DrinkingSessionScreen';
 import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
 import firebaseConfig from "../firebaseConfig";
-
+import DatabaseContext from './DatabaseContext';
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
@@ -17,25 +17,27 @@ const Stack = createNativeStackNavigator();
 
 const AlcoholTracker = () => {
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false
-        }}
-        >
-        <Stack.Screen 
-          name='Main Screen'
-          component={MainScreen}
+    <DatabaseContext.Provider value={db}>
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: false
+          }}
+          >
+          <Stack.Screen 
+            name='Main Screen'
+            component={MainScreen}
+            options={{}}
+          />
+          <Stack.Screen 
+          name='Drinking Session' 
+          component={DrinkingSession}
           options={{}}
-        />
-        <Stack.Screen 
-        name='Drinking Session' 
-        component={DrinkingSession}
-        options={{}}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
-  )
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </DatabaseContext.Provider>
+  );
 };
 
 export default AlcoholTracker;

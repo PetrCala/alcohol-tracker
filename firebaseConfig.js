@@ -10,5 +10,5 @@ messagingSenderId: MESSAGING_SENDER_ID,
 appId: APP_ID,
 measurementId: MEASUREMENT_ID
 };
- 
+
 export default firebaseConfig;

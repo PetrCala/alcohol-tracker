@@ -1,4 +1,9 @@
-﻿import React from 'react';
+﻿import 
+  React,
+{
+  useContext,
+  useEffect,
+} from 'react';
 import { 
     ScrollView,
     Text,
@@ -7,7 +12,8 @@ import {
 import BasicButton from '../components/Buttons/BasicButton';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import styles from '../styles';
-import { ref, onValue } from "firebase/database";
+import DatabaseContext from '../DatabaseContext';
+import { readDataOnce, listenForDataChanges } from "../database";
 
 type MainScreenProps = {
   navigation: any;
@@ -15,6 +21,24 @@ type MainScreenProps = {
 
 const MainScreen = (props: MainScreenProps) => {
   const { navigation } = props;
+  const db = useContext(DatabaseContext);
+
+  useEffect(() => {
+    if (db) {
+      // Replace 'user1' with the actual user ID
+      readDataOnce(db, 'user1');
+  
+      // Subscribe to data changes and update the component state or perform other actions
+      const unsubscribe = listenForDataChanges(db, 'user1', (data) => {
+        console.log('Data changed:', data);
+      });
+  
+      // Clean up the listener on unmount
+      return () => {
+        unsubscribe();
+      };
+    }
+  }, [db]);
 
   const handleProfileClick = () => {
     // Code to navigate to the profile screen
