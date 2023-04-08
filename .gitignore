@@ -77,3 +77,4 @@ __snapshots__/
 *.apk
 *.ipa
 *.lnk
+*.env

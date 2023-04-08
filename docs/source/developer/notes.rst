@@ -17,6 +17,14 @@ Prerequisites
 Setting up the project after cloning the repository
 ================================
 #. Install all dependencies using :code:`npm i`.
+#. In the project root folder, create a file :code:`db-settings.env`, and inside, put the custom settings to the database you want to connet to. As a template, the file should look like this:
+:code:`API_KEY=YOUR_API_KEY`
+:code:`AUTH_DOMAIN=YOUR_AUTH_DOMAIN`
+:code:`DATABASE_URL=YOUR_DATABASE_URL`
+:code:`PROJECT_ID=YOUR_PROJECT_ID`
+:code:`STORAGE_BUCKET=YOUR_STORAGE_BUCKET`
+:code:`MESSAGING_SENDER_ID=YOUR_MESSAGING_SENDER_ID`
+:code:`APP_ID=YOUR_APP_ID`
 
 
 Setting up the project from scratch

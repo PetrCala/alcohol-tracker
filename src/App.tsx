@@ -5,6 +5,14 @@ import {createNativeStackNavigator } from '@react-navigation/native-stack'
 import MainScreen from './screens/MainScreen';
 import DrinkingSession from './screens/DrinkingSessionScreen';
 
+import { initializeApp } from "firebase/app";
+import { getDatabase } from "firebase/database";
+import firebaseConfig from "../firebaseConfig";
+
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
 const Stack = createNativeStackNavigator();
 
 const AlcoholTracker = () => {

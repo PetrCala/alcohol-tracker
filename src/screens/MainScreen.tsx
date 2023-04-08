@@ -7,6 +7,7 @@ import {
 import BasicButton from '../components/Buttons/BasicButton';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import styles from '../styles';
+import { ref, onValue } from "firebase/database";
 
 type MainScreenProps = {
   navigation: any;
@@ -41,7 +42,7 @@ const MainScreen = (props: MainScreenProps) => {
                   iconSource={require('../assets/temp/temp_user_icon.jpg')} 
                   containerStyle={styles.profileIconContainer}
                   iconStyle={styles.profileIcon}
-                  onPress={handleSocialClick}
+                  onPress={handleProfileClick}
                   />
             </View>
             <View style={styles.headerUsernameContainer}>
