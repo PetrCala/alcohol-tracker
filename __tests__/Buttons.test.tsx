@@ -15,7 +15,7 @@ describe('BasicButton', () => {
   
     it('should render the BasicButton component correctly', () => {
       const { getByTestId, getByText } = render(<BasicButton {...props} />);
-      const button = getByTestId('basic-button');
+      const button = getByTestId(props.text);
       const buttonText = getByText(props.text);
   
       expect(button).toBeDefined();
@@ -26,7 +26,7 @@ describe('BasicButton', () => {
   
     it('should call onPress function when button is pressed', () => {
       const { getByTestId } = render(<BasicButton {...props} />);
-      const button = getByTestId('basic-button');
+      const button = getByTestId(props.text);
   
       fireEvent.press(button);
   
@@ -45,11 +45,11 @@ describe('MenuIcon', () => {
 
   it('should render the MenuIcon component correctly', () => {
     const { getByTestId } = render(<MenuIcon {...props} />);
-    const menuIcon= getByTestId('menu-icon');
+    const menuIcon= getByTestId(props.iconId);
 
     expect(menuIcon).toBeDefined();
     expect(menuIcon.props.accessibilityRole).toBe('button');
-    expect(menuIcon.props.testID).toBe('menu-icon');
+    expect(menuIcon.props.testID).toBe(props.iconId);
     expect(menuIcon.props.style).toEqual(props.containerStyle);
 
     const image = menuIcon.props.children[0];
@@ -60,7 +60,7 @@ describe('MenuIcon', () => {
 
   it('should call the onPress function when the menu icon is pressed', () => {
     const { getByTestId } = render(<MenuIcon {...props} />);
-    const menuIcon = getByTestId('menu-icon');
+    const menuIcon = getByTestId(props.iconId);
 
     fireEvent.press(menuIcon);
     expect(props.onPress).toHaveBeenCalled();

@@ -12,7 +12,7 @@ type DrinkingSessionProps = {
   navigation: any;
 }
 
-const DrinkingSession = (props: DrinkingSessionProps) => {
+const DrinkingSessionScreen = (props: DrinkingSessionProps) => {
   const { navigation } = props;
 
   const [units, setUnits] = useState(0);
@@ -65,4 +65,4 @@ const DrinkingSession = (props: DrinkingSessionProps) => {
   );
 };
 
-export default DrinkingSession;
+export default DrinkingSessionScreen;

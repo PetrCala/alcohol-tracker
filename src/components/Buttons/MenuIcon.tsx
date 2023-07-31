@@ -18,7 +18,7 @@ const MenuIcon = (props: Props) => {
   return(
     <TouchableOpacity
       id={iconId} 
-      testID = 'menu-icon'
+      testID = {iconId}
       accessibilityRole='button' 
       onPress={onPress} 
       style={containerStyle}>

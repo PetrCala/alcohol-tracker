@@ -1,9 +1,13 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import {createNativeStackNavigator } from '@react-navigation/native-stack'
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
 
 import MainScreen from './screens/MainScreen';
-import DrinkingSession from './screens/DrinkingSessionScreen';
+import DrinkingSessionScreen from './screens/DrinkingSessionScreen';
+import ProfileScreen from './screens/ProfileScreen';
+import SocialScreen from './screens/SocialScreen';
+import AchievementScreen from './screens/AchievementScreen';
+import SettingsScreen from './screens/SettingsScreen';
 
 import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
@@ -24,14 +28,45 @@ const AlcoholTracker = () => {
             headerShown: false
           }}
           >
+          {/* 
+          screenOptions={{
+            headerStyle: {
+              backgroundColor: '#f4511e',
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+            },
+          }}
+          */}
           <Stack.Screen 
             name='Main Screen'
             component={MainScreen}
             options={{}}
           />
           <Stack.Screen 
-          name='Drinking Session' 
-          component={DrinkingSession}
+          name='Drinking Session Screen' 
+          component={DrinkingSessionScreen}
+          options={{}}
+          />
+          <Stack.Screen 
+          name='Profile Screen' 
+          component={ProfileScreen}
+          options={{}}
+          />
+          <Stack.Screen 
+          name='Social Screen' 
+          component={SocialScreen}
+          options={{}}
+          />
+          <Stack.Screen 
+          name='Achievement Screen' 
+          component={AchievementScreen}
+          options={{}}
+          />
+          <Stack.Screen 
+          name='Settings Screen' 
+          component={SettingsScreen}
           options={{}}
           />
         </Stack.Navigator>

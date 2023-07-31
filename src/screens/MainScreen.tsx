@@ -23,38 +23,22 @@ const MainScreen = (props: MainScreenProps) => {
   const { navigation } = props;
   const db = useContext(DatabaseContext);
 
-  useEffect(() => {
-    if (db) {
-      // Replace 'user1' with the actual user ID
-      readDataOnce(db, 'user1');
+  // useEffect(() => {
+  //   if (db) {
+  //     // Replace 'user1' with the actual user ID
+  //     readDataOnce(db, 'user1');
   
-      // Subscribe to data changes and update the component state or perform other actions
-      const unsubscribe = listenForDataChanges(db, 'user1', (data) => {
-        console.log('Data changed:', data);
-      });
+  //     // Subscribe to data changes and update the component state or perform other actions
+  //     const unsubscribe = listenForDataChanges(db, 'user1', (data) => {
+  //       console.log('Data changed:', data);
+  //     });
   
-      // Clean up the listener on unmount
-      return () => {
-        unsubscribe();
-      };
-    }
-  }, [db]);
-
-  const handleProfileClick = () => {
-    // Code to navigate to the profile screen
-  };
-
-  const handleSocialClick = () => {
-    // Code to navigate to the social screen
-  };
-
-  const handleAchievementsClick = () => {
-    // Code to navigate to the achievements screen
-  };
-
-  const handleSettingsClick = () => {
-    // Code to navigate to the settings screen
-  };
+  //     // Clean up the listener on unmount
+  //     return () => {
+  //       unsubscribe();
+  //     };
+  //   }
+  // }, [db]);
 
   return (
     <View style={styles.container}>
@@ -66,7 +50,7 @@ const MainScreen = (props: MainScreenProps) => {
                   iconSource={require('../assets/temp/temp_user_icon.jpg')} 
                   containerStyle={styles.profileIconContainer}
                   iconStyle={styles.profileIcon}
-                  onPress={handleProfileClick}
+                  onPress = {() => navigation.navigate('Profile Screen')}
                   />
             </View>
             <View style={styles.headerUsernameContainer}>
@@ -79,21 +63,21 @@ const MainScreen = (props: MainScreenProps) => {
                   iconSource={require('../assets/icons/social.png')} 
                   containerStyle={styles.menuIconContainer}
                   iconStyle={styles.menuIcon}
-                  onPress={handleSocialClick}
+                  onPress = {() => navigation.navigate('Social Screen')}
                   />
                 <MenuIcon 
-                  iconId='achievements-icon'
+                  iconId='achievement-icon'
                   iconSource={require('../assets/icons/achievements.png')} 
                   containerStyle={styles.menuIconContainer}
                   iconStyle={styles.menuIcon}
-                  onPress={handleAchievementsClick}
+                  onPress = {() => navigation.navigate('Achievement Screen')}
                   />
                 <MenuIcon 
                   iconId='settings-icon'
                   iconSource={require('../assets/icons/settings.png')} 
                   containerStyle={styles.menuIconContainer}
                   iconStyle={styles.menuIcon}
-                  onPress={handleSettingsClick}
+                  onPress = {() => navigation.navigate('Settings Screen')}
                   />
             </View>
         </View>
@@ -108,7 +92,7 @@ const MainScreen = (props: MainScreenProps) => {
               text='+'
               buttonStyle={styles.startSessionButton}
               textStyle={styles.startSessionText}
-              onPress = {() => navigation.navigate('Drinking Session')} />
+              onPress = {() => navigation.navigate('Drinking Session Screen')} />
         </View>
     </View>
   );

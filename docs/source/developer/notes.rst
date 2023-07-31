@@ -17,6 +17,10 @@ Prerequisites
 Setting up the project after cloning the repository
 ================================
 #. Install all dependencies using :code:`npm i`.
+#. If you wish to update all packages to the latest version (not recommended), run the following commands:
+:code:`npm i -g npm-check-updates`
+:code:`ncu -u`
+:code:`npm install`
 #. In the project root folder, create a file :code:`.env`, and inside, put the custom settings to the database you want to connet to. As a template, the file should look like this:
 :code:`API_KEY=YOUR_API_KEY`
 :code:`AUTH_DOMAIN=YOUR_AUTH_DOMAIN`

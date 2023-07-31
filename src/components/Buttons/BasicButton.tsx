@@ -17,7 +17,8 @@ const BasicButton = (props: Props) => {
 
   return(
     <TouchableOpacity
-      testID = 'basic-button'
+      id = {text}
+      testID={text}
       style={buttonStyle}
       onPress={onPress}>
         <Text style={textStyle}>{text}</Text>
