@@ -17,7 +17,7 @@ const SocialScreen = (props: SocialProps) => {
     <View style={{flex:1, backgroundColor: '#FFFF99'}}>
       <View style={styles.header}>
         <MenuIcon
-          iconId='escape-settings-screen'
+          iconId='escape-social-screen'
           iconSource={require('../assets/icons/arrow_back.png')}
           containerStyle={styles.backArrowContainer}
           iconStyle={styles.backArrow}
