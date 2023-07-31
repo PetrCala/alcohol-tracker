@@ -88,3 +88,7 @@ Updating the app version
 ================================
 * Modify the version in the :code:`package.json` file by incrementing the version numbers as necessary.
 * Navigate to the project root folder and run :code:`npm install` to update the dependencies in your project.
+
+Building the documentation
+================================
+* Build the documentation using a command :code:`make html`. If the *make* is not recognized, call the *make.bat* file directly using :code:`docs\make.bat html`.
