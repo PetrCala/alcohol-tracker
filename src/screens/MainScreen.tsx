@@ -1,6 +1,7 @@
 ﻿import 
   React,
 {
+  useState,
   useContext,
   useEffect,
 } from 'react';
@@ -13,32 +14,34 @@ import BasicButton from '../components/Buttons/BasicButton';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import styles from '../styles';
 import DatabaseContext from '../DatabaseContext';
-import { readDataOnce, listenForDataChanges } from "../database";
+import { readUserDataOnce, listenForDataChanges } from "../database";
 
 type MainScreenProps = {
   navigation: any;
 }
 
+type UserData = {
+  username: string;
+};
+
 const MainScreen = (props: MainScreenProps) => {
   const { navigation } = props;
   const db = useContext(DatabaseContext);
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const userId = 'petr_cala';
 
-  // useEffect(() => {
-  //   if (db) {
-  //     // Replace 'user1' with the actual user ID
-  //     readDataOnce(db, 'user1');
-  
-  //     // Subscribe to data changes and update the component state or perform other actions
-  //     const unsubscribe = listenForDataChanges(db, 'user1', (data) => {
-  //       console.log('Data changed:', data);
-  //     });
-  
-  //     // Clean up the listener on unmount
-  //     return () => {
-  //       unsubscribe();
-  //     };
-  //   }
-  // }, [db]);
+  useEffect(() => {
+    // Start listening for changes when the component mounts
+    const stopListening = listenForDataChanges(db, userId, (data) => {
+      setUserData(data);
+    });
+
+    // Stop listening for changes when the component unmounts
+    return () => {
+      stopListening();
+    };
+  }, [db, userId]); // Re-run effect when userId or db changes
+
 
   return (
     <View style={styles.container}>
@@ -54,7 +57,11 @@ const MainScreen = (props: MainScreenProps) => {
                   />
             </View>
             <View style={styles.headerUsernameContainer}>
-              <Text style={styles.headerUsername}>Petr</Text>
+              {userData ? 
+              <Text style={styles.headerUsername}>{userData.username}</Text> 
+                : 
+              <Text style={styles.headerUsername}>Loading...</Text>
+              }
             </View>
             <View style={styles.menuContainer}>
                 {/* Clickable icons for social, achievements, and settings */}

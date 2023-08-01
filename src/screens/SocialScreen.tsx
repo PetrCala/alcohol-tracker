@@ -1,10 +1,14 @@
-﻿import React, {useState} from 'react';
+﻿import React, {
+  useState,
+  useContext
+} from 'react';
 import {
   Text,
   View,
 } from 'react-native';
-import styles from '../styles';
+import BasicButton from '../components/Buttons/BasicButton';
 import MenuIcon from '../components/Buttons/MenuIcon';
+import styles from '../styles';
 
 type SocialProps = {
   navigation: any;

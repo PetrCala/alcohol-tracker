@@ -1,15 +1,20 @@
 ﻿import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react-native';
 import MainScreen from '../src/screens/MainScreen';
-import DatabaseContext from '../src/DatabaseContext';
 
 // Mock the navigation prop used by the component
 const mockNavigation = {
-  navigate: jest.fn(),
+  navigate: jest.fn()
 };
 
 // Mock the database
-jest.mock('../src/database');
+jest.mock('../src/database', () => ({
+  listenForDataChanges: jest.fn().mockImplementation((db, userId, callback) => {
+    // Return a mock listener function
+    return () => {};
+  }),
+  readUserDataOnce: jest.fn(),
+}));
 
 describe('<MainScreen />', () => {
   beforeEach(() => {

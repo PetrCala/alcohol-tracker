@@ -1,7 +1,6 @@
 ﻿import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react-native';
 import SocialScreen from '../src/screens/SocialScreen';
-import DatabaseContext from '../src/DatabaseContext';
 
 // Mock the navigation prop used by the component
 const mockNavigation = {

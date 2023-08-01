@@ -10,7 +10,13 @@ const mockNavigation = {
 };
 
 // Mock the database
-jest.mock('../src/database');
+jest.mock('../src/database', () => ({
+  listenForDataChanges: jest.fn().mockImplementation((db, userId, callback) => {
+    // Return a mock listener function
+    return () => {};
+  }),
+  readUserDataOnce: jest.fn(),
+}));
 
 describe('<ProfileScreen />', () => {
   beforeEach(() => {
