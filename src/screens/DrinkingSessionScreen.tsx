@@ -1,4 +1,7 @@
-﻿import React, {useState} from 'react';
+﻿import React, {
+  useState,
+  useContext
+} from 'react';
 import {
   Text,
   View,
@@ -6,7 +9,10 @@ import {
 import styles from '../styles';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import BasicButton from '../components/Buttons/BasicButton';
-import SQLite from 'react-native-sqlite-storage';
+
+import DatabaseContext from '../DatabaseContext';
+import { saveDrinkingSessionData } from '../database';
+import ClickableTextInput from '../components/Buttons/ClickableTextInput';
 
 type DrinkingSessionProps = {
   navigation: any;
@@ -14,22 +20,30 @@ type DrinkingSessionProps = {
 
 const DrinkingSessionScreen = (props: DrinkingSessionProps) => {
   const { navigation } = props;
-
+  const db = useContext(DatabaseContext);
+  const userId = 'petr_cala';
   const [units, setUnits] = useState(0);
 
   const addUnit = () => {
     setUnits(units + 1);
   };
 
-  const endSession = () => {
-    // endSession, show statistics, offer to go back
-    saveSession();
+  const removeUnit = () => {
+    if (units > 0) {
+      setUnits(units - 1);
+    }
+  }
+
+  async function saveSession(db: any, userId: string, units: number) {
+    // Save the data into the database
+    try {
+      await saveDrinkingSessionData(db, userId, units); // Save drinking session data
+    } catch (error:any) {
+      throw new Error('Failed to save drinking session data: ' + error.message);
+    }
+    // Show statistics, offer to go back
     setUnits(0);
     navigation.goBack();
-  };
-
-  const saveSession = () => {
-    // Save the session data to an SQLite database, using a custom key
   };
 
   return (
@@ -44,10 +58,11 @@ const DrinkingSessionScreen = (props: DrinkingSessionProps) => {
         />
       </View>
       <View style={styles.drinkingSessionContainer}>
-        <Text style={styles.drinkingSessionTitle}>
-          Consumed: {units}{" "}
-          {units != 1 ? "units" : "unit"}
-        </Text>
+        <ClickableTextInput
+          text = ''
+          currentUnits={units}
+          onUnitsChange={setUnits}
+        />
         <BasicButton 
           text='Add Unit'
           buttonStyle={styles.drinkingSessionButton}
@@ -55,10 +70,22 @@ const DrinkingSessionScreen = (props: DrinkingSessionProps) => {
           onPress={addUnit}
         />
         <BasicButton 
-          text='End Session'
+          text='Remove Unit'
           buttonStyle={styles.drinkingSessionButton}
           textStyle={styles.drinkingSessionButtonText}
-          onPress={endSession}
+          onPress={removeUnit}
+        />
+        <BasicButton 
+          text='Save Session'
+          buttonStyle={styles.drinkingSessionButton}
+          textStyle={styles.drinkingSessionButtonText}
+          onPress={() => saveSession(db, userId, units)}
+        />
+        <BasicButton 
+          text='Discard Session'
+          buttonStyle={styles.drinkingSessionButton}
+          textStyle={styles.drinkingSessionButtonText}
+          onPress={() => navigation.goBack()}
         />
       </View>
     </View>

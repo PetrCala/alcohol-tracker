@@ -1,4 +1,4 @@
-﻿import { get, ref, onValue, off } from "firebase/database";
+﻿import { get, ref, onValue, child, off, update, push, remove } from "firebase/database";
 
 /** Read data once using get()
  * 
@@ -27,23 +27,69 @@ export async function readUserDataOnce(db: any, userId: string) {
   return null;
 }
 
-/** Main listener for user data changes.
- * 
- * @param db The database object
- * @param userId User ID
- * @param onDataChange A function for data cahnge
- * @returns 
- */
-export function listenForDataChanges(
+// Main listener for drinking session data changes.
+export function listenForDrinkingSessionChanges(
   db: any,
   userId: string,
   onDataChange: (data: any) => void
 ) {
-  const userRef = ref(db, `users/${userId}`);
+  const userRef = ref(db, `user_drinking_sessions/${userId}`);
   const listener = onValue(userRef, (snapshot) => {
     const data = snapshot.val();
     onDataChange(data);
   });
 
   return () => off(userRef, "value", listener);
+}
+
+/** Write drinking session data into the database
+ *
+ * Throw an error in case the database writing fails.
+ *  */ 
+export async function saveDrinkingSessionData(
+  db: any, 
+  userId: string, 
+  units: number
+  ) {
+  const newDrinkingSessionKey = push(child(ref(db), 'drinking_sessions/')).key // Generate a new automatic key for the new drinking session
+  var updates: {
+    [key: string]: {
+      session_id: any;
+      user_id: string;
+      units: number;
+      timestamp: number
+    } | boolean } = {};
+  updates['/drinking_sessions/' + newDrinkingSessionKey] = {
+    session_id: newDrinkingSessionKey,
+    user_id: userId,
+    units: units,
+    timestamp: Date.now(),
+  };
+  updates['/user_drinking_sessions/' + userId + '/' + newDrinkingSessionKey] = true;
+
+  try {
+    return await update(ref(db), updates);
+  } catch (error:any) {
+    throw new Error('Failed to save drinking session data: ' + error.message);
+  }
+};
+
+/** Remove drinking session data from the database
+ *
+ * Throw an error in case the database removal fails.
+ *  */ 
+export async function removeDrinkingSessionData(
+  db: any, 
+  userId: string,
+  sessionKey: string,
+) {
+  var updates: {[key: string]: any} = {};
+  updates['/drinking_sessions/' + sessionKey] = null;
+  updates['/user_drinking_sessions/' + userId + '/' + sessionKey] = null;
+
+  try {
+    return await update(ref(db), updates);
+  } catch (error:any) {
+    throw new Error('Failed to remove drinking session data: ' + error.message);
+  }
 }

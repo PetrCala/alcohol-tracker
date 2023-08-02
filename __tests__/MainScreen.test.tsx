@@ -14,6 +14,7 @@ jest.mock('../src/database', () => ({
     return () => {};
   }),
   readUserDataOnce: jest.fn(),
+  saveDrinkingSessionData: jest.fn(),
 }));
 
 describe('<MainScreen />', () => {

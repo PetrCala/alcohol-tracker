@@ -11,20 +11,21 @@ import styles from '../styles';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import BasicButton from '../components/Buttons/BasicButton';
 
-import { readUserDataOnce } from '../database';
 import DatabaseContext from '../DatabaseContext';
+import { readUserDataOnce } from '../database';
+import { ref, get, onValue } from "firebase/database";
+import { saveDrinkingSessionData, removeDrinkingSessionData } from '../database';
 
 type ProfileProps = {
   navigation: any;
 }
 
-
-type UserData = {
-  username: string;
-};
-
 const ProfileScreen = (props: ProfileProps) => {
   const { navigation } = props;
+  const db = useContext(DatabaseContext);
+  const userId = 'petr_cala';
+  const sessionId = '-NaqnsVVobr1NXPEhFqP2';
+
 
   return (
     <View style={{flex:1, backgroundColor: '#FFFF99'}}>
@@ -41,7 +42,7 @@ const ProfileScreen = (props: ProfileProps) => {
         text='TD'
         buttonStyle={styles.startSessionButton}
         textStyle={styles.startSessionText}
-        onPress={() => console.log("no functionality")}
+        onPress={() => {console.log("does nothing")}}
       />
     </View>
   );

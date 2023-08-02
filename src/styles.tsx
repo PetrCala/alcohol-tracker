@@ -73,6 +73,50 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: '#FFFF99',
   },
+  ///
+  redButton: {
+    backgroundColor: 'red',
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    width: 70,
+    height: 70,
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  redButtonText: {
+    color: 'white',
+    fontSize: 35,
+    fontWeight: '900',
+  },
+  menuDrinkingSessionInfoText: {
+    fontSize: 20,
+    color: "black",
+    alignSelf: "center",
+    padding: 10,
+  },
+  menuDrinkingSessionContainer: {
+    backgroundColor: 'white',
+    padding: 16,
+    borderRadius: 8,
+    marginVertical: 4,
+    borderColor: '#ddd',
+    borderWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  menuDrinkingSessionText: {
+    fontSize: 16,
+    color: 'black',
+  },
+  ///
   drinkingSessionContainer: {
     flexGrow: 1,
     flexShrink: 1,
@@ -80,11 +124,40 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: 70, //offset header
   },
-  drinkingSessionTitle: {
-    fontSize: 20,
-    marginBottom: 20,
+  // Old title
+  // drinkingSessionTitle: {
+  //   fontSize: 20,
+  //   marginBottom: 20,
+  // },
+  drinkingSessionClickableTextContainer: {
+    padding: 15,
+    borderRadius: 8,
+    borderWidth: 2,
+    marginBottom: 15,
+    width: 300,
+    alignItems: 'center',
+    borderColor: '#212421',
+    backgroundColor: 'white',
+  },
+  drinkingSessionClickableTextStyle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#212421',
+  },
+
+  drinkingSessionClickableTextInput: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: 'white',
+    borderRadius: 4,
+    color: '#212421'
   },
   drinkingSessionButton: {
+    width: 130,
+    alignItems: "center",
     padding: 10,
     marginBottom: 10,
     marginTop: 10,
