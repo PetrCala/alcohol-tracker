@@ -1,4 +1,5 @@
-﻿import { get, ref, onValue, child, off, update, push, remove } from "firebase/database";
+﻿import { get, ref, onValue, child, off, update, push, query } from "firebase/database";
+import { getSingleDayDrinkingSessions } from "./utils/dataHandling";
 
 /** Read data once using get()
  * 
@@ -37,14 +38,36 @@ export function listenForDataChanges(
   refString: string,
   onDataChange: (data: any) => void
 ) {
-  const userRef = ref(db, `/${refString}`);
-  const listener = onValue(userRef, (snapshot) => {
+  const dbRef = ref(db, `/${refString}`);
+  const listener = onValue(dbRef, (snapshot) => {
     const data = snapshot.val();
     onDataChange(data);
   });
 
-  return () => off(userRef, "value", listener);
+  return () => off(dbRef, "value", listener);
 }
+
+/**
+ * Handle a listener that will query all of today's
+ * drinking sessions
+ */
+export function listenForAllSingleDaySessions(
+  db: any,
+  userId: any,
+  day: Date,
+  onDataChange: (data: any) => void
+) {
+  const dbRef = ref(db, `/user_drinking_sessions/${userId}`);
+  const listener = onValue(dbRef, (snapshot) => {
+    let data = snapshot.val();
+    data = Object.values(data); // To an array
+    data = getSingleDayDrinkingSessions(day, data);
+    onDataChange(data);
+  });
+
+  return () => off(dbRef, "value", listener);
+}; 
+
 
 /** Write drinking session data into the database
  *
@@ -55,7 +78,7 @@ export async function saveDrinkingSessionData(
   userId: string, 
   units: number
   ) {
-  const newDrinkingSessionKey = push(child(ref(db), 'drinking_sessions/')).key // Generate a new automatic key for the new drinking session
+  const newDrinkingSessionKey = push(child(ref(db), `/user_drinking_sessions/${userId}/`)).key // Generate a new automatic key for the new drinking session
   var updates: {
     [key: string]: {
       session_id: any;
@@ -63,16 +86,15 @@ export async function saveDrinkingSessionData(
       units: number;
       timestamp: number
     } | boolean } = {};
-  updates['/drinking_sessions/' + newDrinkingSessionKey] = {
+  updates[`/user_drinking_sessions/${userId}/` + newDrinkingSessionKey] = {
     session_id: newDrinkingSessionKey,
     user_id: userId,
     units: units,
     timestamp: Date.now(),
   };
-  updates['/user_drinking_sessions/' + userId + '/' + newDrinkingSessionKey] = true;
 
   try {
-    return await update(ref(db), updates);
+    await update(ref(db), updates);
   } catch (error:any) {
     throw new Error('Failed to save drinking session data: ' + error.message);
   }
@@ -88,7 +110,6 @@ export async function removeDrinkingSessionData(
   sessionKey: string,
 ) {
   var updates: {[key: string]: any} = {};
-  updates['/drinking_sessions/' + sessionKey] = null;
   updates['/user_drinking_sessions/' + userId + '/' + sessionKey] = null;
 
   try {

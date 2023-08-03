@@ -18,8 +18,6 @@ export type MainScreenProps = {
 export type DayOverviewScreenProps = {
     route: any
     navigation: any
-    // route: RouteProp<AppStackParamList, 'Day Overview Screen'>;
-    // navigation: StackNavigationProp<AppStackParamList, 'Day Overview Screen'>;
 }
 
 export type UserData = {
@@ -42,19 +40,34 @@ export type DrinkingSessionProps = {
     sessionColor: string
 }
 
-// Calendar props
+// Sessions calendar props
  
-export type CalendarDataItem = {
-  timestamp: number;
-  units: number;
+export type SessionsCalendarProps = {
+    drinkingSessionData: DrinkingSessionData[];
+    onDayPress: (day: any) => void;
 }
 
-export type CalendarMarkedDates = {
-  [key: string]: {
-    customStyles: {
-      container: {
-        backgroundColor: string;
-      };
+// type SessionSCalendarCustomStyles = {
+//     container: {
+//         backgroundColor: string;
+//         // elevation?: number;
+//     }
+//     // ,
+//     // text?: {
+//     //     color: string
+//     // }
+// }
+
+// type SessionCalendarDateMarkingCustom = {
+//     [date: string]: SessionSCalendarCustomStyles;
+// }
+
+// export type SessionsCalendarMarkedDates = {
+//     [date: string]: SessionCalendarDateMarkingCustom;
+// };
+
+export type SessionsCalendarMarkedDates = {
+    [date: string]: {
+        color?: string
     };
-  };
-}
+};

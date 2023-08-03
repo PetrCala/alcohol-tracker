@@ -31,23 +31,6 @@ export function changeDateBySomeDays(inputDate: Date, days: number): Date {
     return newDate;
 }
 
-export async function fetchDrinkingSessions(db: any, sessionIds: any) {
-    try {
-        let drinkingSessions: DrinkingSessionData[] = [];
-        const sessionKeys = Object.keys(sessionIds); // SessionIds: {key: true}
-        for (let sessionKey of sessionKeys){
-        let sessionRef = ref(db, `drinking_sessions/${sessionKey}`);
-        const sessionSnapshot = await get(sessionRef);
-        // Handle missing session
-        const sessionDetails = sessionSnapshot.val();
-        drinkingSessions.push(sessionDetails);
-        }
-        return drinkingSessions
-    } catch (error:any){
-        throw new Error("Failed to retrieve the drinking session data.");
-    }
-};
-
 /** Input an array of drinking sessions and return only those 
  * on a given day
  * 
@@ -56,21 +39,21 @@ export async function fetchDrinkingSessions(db: any, sessionIds: any) {
  * @param sessions An array of drinking sessions.
  */
 export function getSingleDayDrinkingSessions(day: Date, sessions: DrinkingSessionData[]) {
+    // Define the time boundaries
     day.setHours(0, 0, 0, 0); // set to start of day
-
+    
     const tomorrow = new Date(day);
     tomorrow.setDate(day.getDate() + 1); // set to start of next day
-
+    
     // convert to UNIX timestamp
     const todayUnix = Math.floor(day.getTime());
     const tomorrowUnix = Math.floor(tomorrow.getTime());
-
+    
     let result: DrinkingSessionData[] = [];
-
-    for (let sessionId in sessions) {
-        const session = sessions[sessionId];
+    for (let i in sessions) { // i is a numeric index from 0
+        const session = sessions[i];
         if (session.timestamp >= todayUnix && session.timestamp < tomorrowUnix) {
-            result[sessionId] = session;
+            result[i] = session;
         }
     }
 

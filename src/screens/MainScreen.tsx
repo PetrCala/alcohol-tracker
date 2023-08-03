@@ -17,14 +17,13 @@ import SessionsCalendar from 'react-native-calendars/src/calendar';
 import styles from '../styles';
 import DatabaseContext from '../DatabaseContext';
 import { listenForDataChanges, readDataOnce, removeDrinkingSessionData, saveDrinkingSessionData } from "../database";
-import { timestampToDate, fetchDrinkingSessions } from '../utils/dataHandling';
 import { MainScreenProps, UserData, DrinkingSessionIds, DrinkingSessionData } from '../utils/types';
 
 const MainScreen = ( { navigation }: MainScreenProps) => {
   const db = useContext(DatabaseContext);
   const [userData, setUserData] = useState<UserData | null>(null);
-  const [drinkingSessionIds, setDrinkingsessionIds] = useState<DrinkingSessionIds | null>(null); // Ids
   const [drinkingSessionData, setDrinkingsessionData] = useState<DrinkingSessionData[] | null>([]); // Data
+  const [ loadingData, setLoadingData] = useState<boolean | null>(true);
 
   const userId = 'petr_cala';
 
@@ -38,31 +37,18 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
     }
   }
 
-  /**
-   * Get a list of all drinking sessions and use this to update the state
-   * of drinking sessions.
-   */
-  const loadAllDrinkingSessions = async(db: any, sessionIds: any) => {
-    try {
-      const drinkingSessions = await fetchDrinkingSessions(db, sessionIds);
-      setDrinkingsessionData(drinkingSessions);
-    } catch (error:any){
-      throw new Error("Failed to retrieve the drinking session data.");
-    };
-  };
-
-
   // Monitor and update user data
   useEffect(() =>{
     getUserData(db, userId);
   }, []);
 
-  // Monitor and update drinking session id data
+  // Monitor drinking session data
   useEffect(() => {
     // Start listening for changes when the component mounts
     const refString = `user_drinking_sessions/${userId}`
-    const stopListening = listenForDataChanges(db, refString, (ids:any) => {
-      setDrinkingsessionIds(ids);
+    const stopListening = listenForDataChanges(db, refString, (data:any) => {
+      setDrinkingsessionData(data);
+      setLoadingData(false);
     });
 
     // Stop listening for changes when the component unmounts
@@ -71,43 +57,18 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
     };
   }, [db, userId]); // Re-run effect when userId or db changes
 
-
-  // Monitor and update drinking session data
-  useEffect(() => {
-    if (drinkingSessionIds != null){
-      loadAllDrinkingSessions(db, drinkingSessionIds);
-    } else {
-      setDrinkingsessionData([]); // No data remaining
-    }
-  }, [drinkingSessionIds]); 
-
-
-
-  const testRemoveFirstSession = async () => {
-    try {
-      if (drinkingSessionIds != null){
-        const sessionKeys = Object.keys(drinkingSessionIds);
-        const lastSessionId = sessionKeys[0];
-        await removeDrinkingSessionData(db, userId, lastSessionId);
-      }
-    } catch (error:any){
-      throw new Error("Failed to retrieve the user data.");
-    }
-  }
-
-  // Loading user data
-  if (userData == null) {
+  if (userData == null || loadingData) {
     return (
       <View style={styles.container}>
         <Text>Loading data...</Text>
         <ActivityIndicator 
           size="large"
           color = "#0000ff"
-        />
+          />
       </View>
     );
   };
-
+  
   return (
     <View style={styles.container}>
         <View style={styles.header}>
@@ -164,10 +125,6 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
             :
             <Text style={styles.menuDrinkingSessionInfoText}>No drinking sessions found</Text>
             }
-            {/*<Text>Calendar</Text>*/}
-            <TouchableOpacity style={styles.redButton} onPress={testRemoveFirstSession}>
-              <Text style={styles.redButtonText}>X</Text>
-            </TouchableOpacity>
             <BasicButton 
               text='+'
               buttonStyle={styles.startSessionButton}

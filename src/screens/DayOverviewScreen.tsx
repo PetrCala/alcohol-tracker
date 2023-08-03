@@ -12,23 +12,21 @@ import {
     timestampToDate, 
     formatDateToDay, 
     formatDateToTime, 
-    fetchDrinkingSessions, 
-    getSingleDayDrinkingSessions, 
     changeDateBySomeDays, 
     unitsToColors
 } from '../utils/dataHandling';
 import { useContext } from 'react';
 import DatabaseContext from '../DatabaseContext';
 import { DayOverviewScreenProps, DrinkingSessionProps, DrinkingSessionData, DrinkingSessionIds } from '../utils/types';
-import { listenForDataChanges } from '../database';
+import { listenForAllSingleDaySessions, listenForDataChanges } from '../database';
 
 
 const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
     const { timestamp } = route.params; // Params for navigation
     const db = useContext(DatabaseContext);
     const [ date, setDate ] = useState<Date | null>(timestampToDate(timestamp));
-    const [drinkingSessionIds, setDrinkingsessionIds] = useState<DrinkingSessionIds | null>(null); // Ids
     const [drinkingSessionData, setDrinkingsessionData] = useState<DrinkingSessionData[] | null>([]); // Data
+    const [ loadingData, setLoadingData] = useState<boolean | null>(true);
 
     const userId = 'petr_cala';
 
@@ -59,16 +57,10 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
         );
     };
 
-    const loadSingleDayDrinkingSessions = async(db: any, day: Date, sessionIds:any) => {
-        try {
-            let allDrinkingSessions = await fetchDrinkingSessions(db, sessionIds);
-            let singleDayDrinkingSessions = getSingleDayDrinkingSessions(day, allDrinkingSessions);
-            setDrinkingsessionData(singleDayDrinkingSessions);
-        } catch (error:any){
-            throw new Error("Failed to retrieve the drinking session data.");
-        };
-    };
-
+    /** Offset the "date" hook by a number of days.
+     * 
+     * @param days Number of days to change the day by.
+     */
     const changeDay = (days:number) => {
         if (date != null){
             const newDate = changeDateBySomeDays(date, days)
@@ -83,31 +75,23 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
 
     // Monitor and update drinking session id data
     useEffect(() => {
-        const refString = `user_drinking_sessions/${userId}`
-        const stopListening = listenForDataChanges(db, refString, (ids:any) => {
-        setDrinkingsessionIds(ids);
-        });
-        return () => {
-        stopListening();
-        };
-    }, [db, userId]);
-
-
-    // Monitor and update drinking session data
-    useEffect(() => {
-    if (drinkingSessionIds != null && date != null){
-            loadSingleDayDrinkingSessions(db, date, drinkingSessionIds);
-        } else {
-            setDrinkingsessionData([]); // No data remaining
+        if (date != null){
+            const stopListening = listenForAllSingleDaySessions(db, userId, date, (data:any) => {
+                setDrinkingsessionData(data);
+                setLoadingData(false);
+            });
+            return () => {
+                stopListening();
+            };
         }
-    }, [date, drinkingSessionIds]); 
+    }, [db, userId, date]);
 
 
     // Loading drinking session data
-    if (drinkingSessionData == null) {
+    if ( date == null || loadingData) {
         return (
         <View style={styles.container}>
-            <Text>Loading data...</Text>
+            <Text>Loading drinking session data...</Text>
             <ActivityIndicator 
             size="large"
             color = "#0000ff"
