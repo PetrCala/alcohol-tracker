@@ -18,7 +18,7 @@ import {
 import { useContext } from 'react';
 import DatabaseContext from '../DatabaseContext';
 import LoadingData from '../components/loadingData';
-import { DayOverviewScreenProps, DrinkingSessionProps, DrinkingSessionData, DrinkingSessionIds } from '../utils/types';
+import { DayOverviewScreenProps, DrinkingSessionProps, DrinkingSessionData} from '../utils/types';
 import { listenForAllSingleDaySessions, listenForDataChanges } from '../database';
 
 

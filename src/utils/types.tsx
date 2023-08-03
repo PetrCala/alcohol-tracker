@@ -1,5 +1,4 @@
-﻿import { RouteProp } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
+﻿import { StackNavigationProp } from '@react-navigation/stack';
 
 type AppStackParamList = {
   'Main Screen': undefined;
@@ -34,10 +33,6 @@ export type UserDataProps = {
   in_session: boolean;
   username: string;
 };
-
-export type DrinkingSessionIds = {
-  key: string;
-}
 
 export type DrinkingSessionData = {
   session_id: any;

@@ -17,8 +17,8 @@ import SessionsCalendar from 'react-native-calendars/src/calendar';
 import LoadingData from '../components/loadingData';
 import styles from '../styles';
 import DatabaseContext from '../DatabaseContext';
-import { listenForDataChanges, readDataOnce, removeDrinkingSessionData, saveDrinkingSessionData, updateDrinkingSessionUserData, updateUserData } from "../database";
-import { MainScreenProps, UserDataProps, DrinkingSessionIds, DrinkingSessionData } from '../utils/types';
+import { listenForDataChanges, updateDrinkingSessionUserData } from "../database";
+import { MainScreenProps, UserDataProps, DrinkingSessionData } from '../utils/types';
 import { update } from 'firebase/database';
 
 const MainScreen = ( { navigation }: MainScreenProps) => {

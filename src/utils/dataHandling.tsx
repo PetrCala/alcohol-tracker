@@ -1,7 +1,4 @@
 ﻿import { DrinkingSessionData } from "./types";
-import { ref, get } from "firebase/database";
-
-
 
 export function timestampToDate( timestamp: number) {
     return new Date(timestamp);
