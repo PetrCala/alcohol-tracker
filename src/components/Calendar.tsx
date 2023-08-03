@@ -5,12 +5,12 @@ import { SessionsCalendarProps,
     SessionsCalendarMarkedDates,
     DrinkingSessionData
 } from '../utils/types';
-
+import LoadingData from './loadingData';
 
 const SessionsCalendar = ({ drinkingSessionData, onDayPress} :SessionsCalendarProps) => {
     const [calendarData, setCalendarData ] = useState<DrinkingSessionData[] | null>(drinkingSessionData);
     const [markedDates, setMarkedDates] = useState<SessionsCalendarMarkedDates>({});
-    
+
     type DatesType = {
         [key: string]: {
             units: number;
@@ -61,6 +61,14 @@ const SessionsCalendar = ({ drinkingSessionData, onDayPress} :SessionsCalendarPr
         setMarkedDates({}); // No data remaining
         }
     }, [calendarData]);
+
+    if (markedDates == null || drinkingSessionData == null) {
+        return(
+            <LoadingData
+                loadingText='Loading data...'
+            />
+        );
+    }
 
     return (
         <Calendar

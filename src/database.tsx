@@ -1,4 +1,4 @@
-﻿import { get, ref, onValue, child, off, update, push, query } from "firebase/database";
+﻿import { get, ref, onValue, child, off, update, push, runTransaction } from "firebase/database";
 import { getSingleDayDrinkingSessions } from "./utils/dataHandling";
 
 /** Read data once using get()
@@ -36,11 +36,15 @@ export async function readDataOnce(db: any, refString: string) {
 export function listenForDataChanges(
   db: any,
   refString: string,
+  dataToArray: boolean,
   onDataChange: (data: any) => void
 ) {
   const dbRef = ref(db, `/${refString}`);
   const listener = onValue(dbRef, (snapshot) => {
-    const data = snapshot.val();
+    let data = snapshot.val();
+    if (dataToArray) {
+      data = Object.values(data); // To an array
+    };
     onDataChange(data);
   });
 
@@ -85,13 +89,15 @@ export async function saveDrinkingSessionData(
       user_id: string;
       units: number;
       timestamp: number
-    } | boolean } = {};
+    } | boolean | number} = {};
   updates[`/user_drinking_sessions/${userId}/` + newDrinkingSessionKey] = {
     session_id: newDrinkingSessionKey,
     user_id: userId,
     units: units,
     timestamp: Date.now(),
   };
+  updates[`users/${userId}/current_units`] = 0;
+  updates[`users/${userId}/in_session`] = false;
 
   try {
     await update(ref(db), updates);
@@ -117,4 +123,51 @@ export async function removeDrinkingSessionData(
   } catch (error:any) {
     throw new Error('Failed to remove drinking session data: ' + error.message);
   }
+}
+
+
+export async function updateCurrentUnits(
+  db: any, 
+  userId: string, 
+  units: number
+  ) {
+  try {
+    await runTransaction(ref(db, `users/${userId}`), (user) => {
+      if (user) {
+        user.current_units = units;
+      }
+      return user;
+    });
+  } catch (error:any) {
+    throw new Error('Failed to save drinking session data: ' + error.message);
+  }
+};
+
+export async function updateSessionStatus(
+  db: any, 
+  userId: string, 
+  status: boolean,
+  ) {
+  let updates: {[key: string]: boolean} = {};
+  updates[`users/${userId}/in_session`] = status;
+
+  try {
+    await update(ref(db), updates);
+  } catch (error:any) {
+    throw new Error('Failed to save drinking session data: ' + error.message);
+  }
+};
+
+export async function discardDrinkingSessionData(
+ db: any,
+ userId: string,
+){
+  let updates: {[key:string]: number | boolean} = {};
+  updates[`users/${userId}/current_units`] = 0;
+  updates[`users/${userId}/in_session`] = false;
+  try {
+    await update(ref(db), updates)
+  } catch (error:any) {
+    throw new Error('Failed to add a new unit: ' + error.message);
+  } 
 }

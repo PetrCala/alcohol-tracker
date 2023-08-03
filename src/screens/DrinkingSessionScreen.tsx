@@ -1,6 +1,8 @@
 ﻿import React, {
+  useRef,
   useState,
-  useContext
+  useContext,
+  useEffect
 } from 'react';
 import {
   Text,
@@ -9,40 +11,84 @@ import {
 import styles from '../styles';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import BasicButton from '../components/Buttons/BasicButton';
-
+import { DrinkingSessionScreenProps } from '../utils/types';
 import DatabaseContext from '../DatabaseContext';
-import { saveDrinkingSessionData } from '../database';
+import { saveDrinkingSessionData, updateCurrentUnits, discardDrinkingSessionData } from '../database';
 import ClickableTextInput from '../components/Buttons/ClickableTextInput';
 
-type DrinkingSessionProps = {
-  navigation: any;
-}
 
-const DrinkingSessionScreen = (props: DrinkingSessionProps) => {
-  const { navigation } = props;
+const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps) => {
+  const { current_units } = route.params;
+  const [units, setUnits] = useState(current_units);
+  const [pendingUpdate, setPendingUpdate] = useState(false);
   const db = useContext(DatabaseContext);
+  const updateTimeout = 1000; // Synchronize with DB every x milliseconds
   const userId = 'petr_cala';
-  const [units, setUnits] = useState(0);
 
-  const addUnit = () => {
-    setUnits(units + 1);
+
+  // Change local hook value
+  const changeUnits = (number: number) => {
+    const newUnits = units + number;
+    if (newUnits >= 0){
+      setUnits(newUnits);
+    }
   };
 
-  const removeUnit = () => {
-    if (units > 0) {
-      setUnits(units - 1);
+  // Create a ref to store the previous state
+  const prevUnitsRef = useRef<number>();
+    useEffect(() => {
+      prevUnitsRef.current = units;
+    });
+  const prevUnits = prevUnitsRef.current;
+
+  // Change database value once every second
+  useEffect(() => {
+    // Only schedule a database update if the units have changed
+    if (prevUnits !== units) {
+      setPendingUpdate(true);
+      const timer = setTimeout(async () => {
+        await updateCurrentUnits(db, userId, units);
+        setPendingUpdate(false); // Data has been synchronized with DB
+      }, updateTimeout); // Update every x milliseconds
+      // Clear timer on unmount or when units changes
+      return () => clearTimeout(timer);
     }
-  }
+  }, [units]);
+
 
   async function saveSession(db: any, userId: string, units: number) {
     // Save the data into the database
-    try {
-      await saveDrinkingSessionData(db, userId, units); // Save drinking session data
-    } catch (error:any) {
-      throw new Error('Failed to save drinking session data: ' + error.message);
+    if (units > 0){
+      try {
+        await saveDrinkingSessionData(db, userId, units); // Save drinking session data
+      } catch (error:any) {
+        throw new Error('Failed to save drinking session data: ' + error.message);
+      }
+      // Show statistics, offer to go back
+      setUnits(0);
+      navigation.goBack();
     }
-    // Show statistics, offer to go back
+  };
+
+  /** Discard the current session, reset current units and 
+   * session status, and navigate to main menu.
+   */
+  async function discardSession(db: any, userId: string){
+    try {
+      await discardDrinkingSessionData(db, userId); 
+    } catch (error:any) {
+      throw new Error('Failed to discard the session: ' + error.message);
+    }
     setUnits(0);
+    navigation.goBack();
+  }
+
+  /** If an update is pending, update immediately before navigating away
+   */
+  const handleBackPress = async () => {
+    if (pendingUpdate) {
+      await updateCurrentUnits(db, userId, units);
+    }
     navigation.goBack();
   };
 
@@ -54,7 +100,7 @@ const DrinkingSessionScreen = (props: DrinkingSessionProps) => {
           iconSource={require('../assets/icons/arrow_back.png')}
           containerStyle={styles.backArrowContainer}
           iconStyle={styles.backArrow}
-          onPress={() => navigation.goBack() }
+          onPress={handleBackPress}
         />
       </View>
       <View style={styles.drinkingSessionContainer}>
@@ -67,13 +113,13 @@ const DrinkingSessionScreen = (props: DrinkingSessionProps) => {
           text='Add Unit'
           buttonStyle={styles.drinkingSessionButton}
           textStyle={styles.drinkingSessionButtonText}
-          onPress={addUnit}
+          onPress={() => changeUnits(1)}
         />
         <BasicButton 
           text='Remove Unit'
           buttonStyle={styles.drinkingSessionButton}
           textStyle={styles.drinkingSessionButtonText}
-          onPress={removeUnit}
+          onPress={() => changeUnits(-1)}
         />
         <BasicButton 
           text='Save Session'
@@ -85,7 +131,7 @@ const DrinkingSessionScreen = (props: DrinkingSessionProps) => {
           text='Discard Session'
           buttonStyle={styles.drinkingSessionButton}
           textStyle={styles.drinkingSessionButtonText}
-          onPress={() => navigation.goBack()}
+          onPress={() => discardSession(db, userId)}
         />
       </View>
     </View>

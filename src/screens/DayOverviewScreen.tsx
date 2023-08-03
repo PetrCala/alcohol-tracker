@@ -17,6 +17,7 @@ import {
 } from '../utils/dataHandling';
 import { useContext } from 'react';
 import DatabaseContext from '../DatabaseContext';
+import LoadingData from '../components/loadingData';
 import { DayOverviewScreenProps, DrinkingSessionProps, DrinkingSessionData, DrinkingSessionIds } from '../utils/types';
 import { listenForAllSingleDaySessions, listenForDataChanges } from '../database';
 
@@ -90,13 +91,9 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
     // Loading drinking session data
     if ( date == null || loadingData) {
         return (
-        <View style={styles.container}>
-            <Text>Loading drinking session data...</Text>
-            <ActivityIndicator 
-            size="large"
-            color = "#0000ff"
+            <LoadingData
+                loadingText='Loading drinking session data...'
             />
-        </View>
         );
     };
 
@@ -111,16 +108,23 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
             onPress={() => navigation.goBack() }
             />
         </View>
-        <View>
-            <Text style={styles.menuDrinkingSessionInfoText}>
-                {date ? formatDateToDay(date) : "Loading date..."}
-            </Text>
+        <View style={styles.dayOverviewContainer}>
             <MenuIcon
                 iconId = "navigate-day-back"
                 iconSource = {require('../assets/icons/arrow_back.png')}
                 containerStyle={styles.previousDayContainer}
                 iconStyle = {styles.nextDayArrow}
                 onPress={() => {changeDay(-1)}}
+            />
+            <Text style={styles.menuDrinkingSessionInfoText}>
+                {date ? formatDateToDay(date) : "Loading date..."}
+            </Text>
+            <MenuIcon
+                iconId = "navigate-day-forward"
+                iconSource = {require('../assets/icons/arrow_back.png')}
+                containerStyle={styles.nextDayContainer}
+                iconStyle = {styles.nextDayArrow}
+                onPress={() => {changeDay(1)}} 
             />
             {drinkingSessionData ?
             <FlatList
@@ -131,13 +135,6 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
             :
             <Text style={styles.menuDrinkingSessionInfoText}>No drinking sessions found</Text>
             }
-            <MenuIcon
-                iconId = "navigate-day-forward"
-                iconSource = {require('../assets/icons/arrow_back.png')}
-                containerStyle={styles.nextDayContainer}
-                iconStyle = {styles.nextDayArrow}
-                onPress={() => {changeDay(1)}} 
-            />
         </View>
         </View>
     );

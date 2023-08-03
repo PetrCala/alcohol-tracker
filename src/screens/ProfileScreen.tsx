@@ -12,7 +12,7 @@ import MenuIcon from '../components/Buttons/MenuIcon';
 import BasicButton from '../components/Buttons/BasicButton';
 
 import DatabaseContext from '../DatabaseContext';
-import { readUserDataOnce } from '../database';
+import { readDataOnce } from '../database';
 import { ref, get, onValue } from "firebase/database";
 import { saveDrinkingSessionData, removeDrinkingSessionData } from '../database';
 

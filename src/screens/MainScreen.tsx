@@ -14,41 +14,61 @@ import {
 import BasicButton from '../components/Buttons/BasicButton';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import SessionsCalendar from 'react-native-calendars/src/calendar';
+import LoadingData from '../components/loadingData';
 import styles from '../styles';
 import DatabaseContext from '../DatabaseContext';
-import { listenForDataChanges, readDataOnce, removeDrinkingSessionData, saveDrinkingSessionData } from "../database";
-import { MainScreenProps, UserData, DrinkingSessionIds, DrinkingSessionData } from '../utils/types';
+import { listenForDataChanges, readDataOnce, removeDrinkingSessionData, saveDrinkingSessionData, updateCurrentUnits, updateSessionStatus } from "../database";
+import { MainScreenProps, UserDataProps, DrinkingSessionIds, DrinkingSessionData } from '../utils/types';
 
 const MainScreen = ( { navigation }: MainScreenProps) => {
   const db = useContext(DatabaseContext);
-  const [userData, setUserData] = useState<UserData | null>(null);
+  const [userData, setUserData] = useState<UserDataProps | null>(null);
   const [drinkingSessionData, setDrinkingsessionData] = useState<DrinkingSessionData[] | null>([]); // Data
-  const [ loadingData, setLoadingData] = useState<boolean | null>(true);
+  const [ loadingUserData, setUserLoadingData] = useState<boolean | null>(true);
+  const [ loadingSessionData, setLoadingSessionData] = useState<boolean | null>(true);
 
   const userId = 'petr_cala';
 
-  const getUserData = async (db:any, userId: string) => {
-    try {
-      let refString = `users/${userId}`
-      const userData = await readDataOnce(db, refString);
-      setUserData(userData);
-    } catch (error:any){
-      throw new Error("Failed to retrieve the user data.");
+  // Handle drinking session button press
+  const startDrinkingSession = async () => {
+    if (userData == null){
+      throw new Error("This function should never be called outside rendered main screen.")
     }
+    let startingUnits = userData.current_units;
+    if (!userData.in_session){
+      try {
+        await updateSessionStatus(db, userId, true);
+        if (startingUnits != 0){
+          await updateCurrentUnits(db, userId, 0);
+        }
+      } catch (error:any) {
+        throw new Error('Failed to start a new session: ' + error.message);
+      }
+    }
+    navigation.navigate("Drinking Session Screen", {current_units: startingUnits});
   }
 
-  // Monitor and update user data
-  useEffect(() =>{
-    getUserData(db, userId);
-  }, []);
+  // Monitor user data
+  useEffect(() => {
+      let userRef = `users/${userId}`
+      let stopListening = listenForDataChanges(db, userRef, false, (data:UserDataProps) => {
+        setUserData(data);
+        setUserLoadingData(false);
+      });
+
+      return () => {
+        stopListening();
+      };
+
+    }, [db, userId]);
 
   // Monitor drinking session data
   useEffect(() => {
     // Start listening for changes when the component mounts
-    const refString = `user_drinking_sessions/${userId}`
-    const stopListening = listenForDataChanges(db, refString, (data:any) => {
+    let sessionsRef = `user_drinking_sessions/${userId}`
+    let stopListening = listenForDataChanges(db, sessionsRef, true, (data:any) => {
       setDrinkingsessionData(data);
-      setLoadingData(false);
+      setLoadingSessionData(false);
     });
 
     // Stop listening for changes when the component unmounts
@@ -57,16 +77,13 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
     };
   }, [db, userId]); // Re-run effect when userId or db changes
 
-  if (userData == null || loadingData) {
-    return (
-      <View style={styles.container}>
-        <Text>Loading data...</Text>
-        <ActivityIndicator 
-          size="large"
-          color = "#0000ff"
-          />
-      </View>
-    );
+
+  if (loadingUserData || loadingSessionData) {
+    return(
+      <LoadingData
+        loadingText="Loading data..."
+      />
+    )
   };
   
   return (
@@ -83,7 +100,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
                   />
             </View>
             <View style={styles.headerUsernameContainer}>
-              <Text style={styles.headerUsername}>{userData.username}</Text> 
+              <Text style={styles.headerUsername}>{userData?.username}</Text> 
             </View>
             <View style={styles.menuContainer}>
                 {/* Clickable icons for social, achievements, and settings */}
@@ -111,6 +128,13 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
             </View>
         </View>
         <View style={styles.mainScreenContent}>
+            {userData?.in_session ?
+            <View style={styles.menuInSessionWarningContainer}>
+              <Text style={styles.menuInSessionWarningText}>You are currently in session!</Text> 
+            </View>
+            :
+            <></>
+            } 
             <Text style={styles.menuDrinkingSessionInfoText}>Your drinking sessions:</Text> 
             {/* Replace this with the overview and statistics */}
             {drinkingSessionData ?
@@ -129,7 +153,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
               text='+'
               buttonStyle={styles.startSessionButton}
               textStyle={styles.startSessionText}
-              onPress = {() => navigation.navigate('Drinking Session Screen')} />
+              onPress = {startDrinkingSession} />
         </View>
     </View>
   );

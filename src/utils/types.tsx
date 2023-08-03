@@ -3,7 +3,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 
 type AppStackParamList = {
   'Main Screen': undefined;
-  'Drinking Session Screen': undefined;
+  'Drinking Session Screen': { current_units: number};
   'Profile Screen': undefined;
   'Social Screen': undefined;
   'Achievement Screen': undefined;
@@ -20,7 +20,14 @@ export type DayOverviewScreenProps = {
     navigation: any
 }
 
-export type UserData = {
+export type DrinkingSessionScreenProps = {
+  route: any;
+  navigation: any;
+}
+
+export type UserDataProps = {
+  current_units: number;
+  in_session: boolean;
   username: string;
 };
 
@@ -71,3 +78,9 @@ export type SessionsCalendarMarkedDates = {
         color?: string
     };
 };
+
+// Loading data props
+
+export type LoadingDataProps = {
+    loadingText: string
+}

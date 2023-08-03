@@ -94,21 +94,27 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFF99',
   },
   ///
-  redButton: {
-    backgroundColor: 'red',
-    position: 'absolute',
-    bottom: 20,
-    left: 20,
-    width: 70,
-    height: 70,
-    borderRadius: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
+  menuInSessionWarningContainer: {
+    backgroundColor: '#ff5d54',
+    padding: 16,
+    borderRadius: 8,
+    marginVertical: 4,
+    borderColor: '#ddd',
+    borderWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    alignItems: "center",
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
-  redButtonText: {
-    color: 'white',
-    fontSize: 35,
-    fontWeight: '900',
+  menuInSessionWarningText: {
+    fontSize: 22,
+    color: '#ffffff', // White color for the text
+    fontWeight: 'bold',
   },
   menuDrinkingSessionInfoText: {
     fontSize: 20,
@@ -136,7 +142,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'black',
   },
-  ///
+  dayOverviewContainer: {
+    flexGrow: 1,
+    flexShrink: 1,
+    overflow:"hidden"
+  },
   drinkingSessionContainer: {
     flexGrow: 1,
     flexShrink: 1,
