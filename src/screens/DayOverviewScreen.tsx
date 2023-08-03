@@ -103,6 +103,19 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
     }, [date, drinkingSessionIds]); 
 
 
+    // Loading drinking session data
+    if (drinkingSessionData == null) {
+        return (
+        <View style={styles.container}>
+            <Text>Loading data...</Text>
+            <ActivityIndicator 
+            size="large"
+            color = "#0000ff"
+            />
+        </View>
+        );
+    };
+
     return (
         <View style={{flex:1, backgroundColor: '#FFFF99'}}>
         <View style={styles.header}>

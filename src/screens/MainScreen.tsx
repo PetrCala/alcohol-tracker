@@ -10,10 +10,10 @@ import {
     View,
     TouchableOpacity,
     ActivityIndicator,
-    FlatList
 } from 'react-native';
 import BasicButton from '../components/Buttons/BasicButton';
 import MenuIcon from '../components/Buttons/MenuIcon';
+import SessionsCalendar from 'react-native-calendars/src/calendar';
 import styles from '../styles';
 import DatabaseContext from '../DatabaseContext';
 import { listenForDataChanges, readDataOnce, removeDrinkingSessionData, saveDrinkingSessionData } from "../database";
@@ -138,9 +138,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
                   iconSource={require('../assets/icons/achievements.png')} 
                   containerStyle={styles.menuIconContainer}
                   iconStyle={styles.menuIcon}
-                  onPress = {() => navigation.navigate('Day Overview Screen', {
-                    timestamp: Date.now()
-                  })}
+                  onPress = {() => navigation.navigate('Achievement Screen')}
                   />
                 <MenuIcon 
                   iconId='settings-icon'
@@ -155,7 +153,14 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
             <Text style={styles.menuDrinkingSessionInfoText}>Your drinking sessions:</Text> 
             {/* Replace this with the overview and statistics */}
             {drinkingSessionData ?
-            <Text>Drinking sessions here</Text>
+            <SessionsCalendar
+              drinkingSessionData = {drinkingSessionData}
+              onDayPress = {(day) => {
+                navigation.navigate('Day Overview Screen',
+                { timestamp: day.timestamp }
+                )
+              }}
+            />
             :
             <Text style={styles.menuDrinkingSessionInfoText}>No drinking sessions found</Text>
             }

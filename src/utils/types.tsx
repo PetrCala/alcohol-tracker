@@ -41,3 +41,20 @@ export type DrinkingSessionProps = {
     session: DrinkingSessionData
     sessionColor: string
 }
+
+// Calendar props
+ 
+export type CalendarDataItem = {
+  timestamp: number;
+  units: number;
+}
+
+export type CalendarMarkedDates = {
+  [key: string]: {
+    customStyles: {
+      container: {
+        backgroundColor: string;
+      };
+    };
+  };
+}
