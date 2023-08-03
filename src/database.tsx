@@ -89,14 +89,19 @@ export async function saveDrinkingSessionData(
       session_id: any;
       units: number;
       timestamp: number
-    } | boolean | number} = {};
+    } | {
+      current_units: number;
+      in_session: boolean;
+    }} = {};
   updates[`/user_drinking_sessions/${userId}/` + newDrinkingSessionKey] = {
     session_id: newDrinkingSessionKey,
     units: units,
     timestamp: timestamp,
   };
-  updates[`users/${userId}/current_units`] = 0;
-  updates[`users/${userId}/in_session`] = false;
+  updates[`users/${userId}`] = {
+    current_units: 0,
+    in_session: false,
+  };
 
   try {
     await update(ref(db), updates);
