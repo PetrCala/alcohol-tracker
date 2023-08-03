@@ -3,7 +3,10 @@ import { StackNavigationProp } from '@react-navigation/stack';
 
 type AppStackParamList = {
   'Main Screen': undefined;
-  'Drinking Session Screen': { current_units: number};
+  'Drinking Session Screen': { 
+    timestamp: number;
+    current_units: number
+  };
   'Profile Screen': undefined;
   'Social Screen': undefined;
   'Achievement Screen': undefined;
@@ -26,6 +29,7 @@ export type DrinkingSessionScreenProps = {
 }
 
 export type UserDataProps = {
+  current_timestamp: number;
   current_units: number;
   in_session: boolean;
   username: string;
@@ -39,7 +43,6 @@ export type DrinkingSessionData = {
   session_id: any;
   timestamp: number;
   units: number;
-  user_id: string;
 }
 
 export type DrinkingSessionProps = {

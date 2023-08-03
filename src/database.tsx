@@ -80,21 +80,20 @@ export function listenForAllSingleDaySessions(
 export async function saveDrinkingSessionData(
   db: any, 
   userId: string, 
-  units: number
+  units: number,
+  timestamp: number
   ) {
   const newDrinkingSessionKey = push(child(ref(db), `/user_drinking_sessions/${userId}/`)).key // Generate a new automatic key for the new drinking session
   var updates: {
     [key: string]: {
       session_id: any;
-      user_id: string;
       units: number;
       timestamp: number
     } | boolean | number} = {};
   updates[`/user_drinking_sessions/${userId}/` + newDrinkingSessionKey] = {
     session_id: newDrinkingSessionKey,
-    user_id: userId,
     units: units,
-    timestamp: Date.now(),
+    timestamp: timestamp,
   };
   updates[`users/${userId}/current_units`] = 0;
   updates[`users/${userId}/in_session`] = false;
@@ -124,6 +123,35 @@ export async function removeDrinkingSessionData(
     throw new Error('Failed to remove drinking session data: ' + error.message);
   }
 }
+
+
+
+export async function updateDrinkingSessionUserData(
+  db: any,
+  updates: {[key: string]: any},
+) {
+  try {
+      await update(ref(db), updates);
+  } catch (error: any) {
+      throw new Error('Failed to update user data: ' + error.message);
+  }
+};
+
+
+export async function updateCurrentTimestamp(
+  db: any, 
+  userId: string, 
+  timestamp: number,
+  ) {
+  let updates: {[key: string]: number} = {};
+  updates[`users/${userId}/current_timestamp`] = timestamp;
+
+  try {
+    await update(ref(db), updates);
+  } catch (error:any) {
+    throw new Error('Failed to update session timestamp: ' + error.message);
+  }
+};
 
 
 export async function updateCurrentUnits(

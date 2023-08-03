@@ -17,8 +17,9 @@ import SessionsCalendar from 'react-native-calendars/src/calendar';
 import LoadingData from '../components/loadingData';
 import styles from '../styles';
 import DatabaseContext from '../DatabaseContext';
-import { listenForDataChanges, readDataOnce, removeDrinkingSessionData, saveDrinkingSessionData, updateCurrentUnits, updateSessionStatus } from "../database";
+import { listenForDataChanges, readDataOnce, removeDrinkingSessionData, saveDrinkingSessionData, updateDrinkingSessionUserData, updateUserData } from "../database";
 import { MainScreenProps, UserDataProps, DrinkingSessionIds, DrinkingSessionData } from '../utils/types';
+import { update } from 'firebase/database';
 
 const MainScreen = ( { navigation }: MainScreenProps) => {
   const db = useContext(DatabaseContext);
@@ -35,17 +36,26 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
       throw new Error("This function should never be called outside rendered main screen.")
     }
     let startingUnits = userData.current_units;
+    let sessionStartTime = userData.current_timestamp;
     if (!userData.in_session){
       try {
-        await updateSessionStatus(db, userId, true);
-        if (startingUnits != 0){
-          await updateCurrentUnits(db, userId, 0);
-        }
-      } catch (error:any) {
-        throw new Error('Failed to start a new session: ' + error.message);
+        let newSessionStartTime = Date.now();
+        let updates: {[key: string]: any} = {};
+        // Inform database of new session started
+        updates[`users/${userId}/in_session`] = true;
+        // Set the start time to now if session is new
+        updates[`users/${userId}/current_timestamp`] = newSessionStartTime;
+        // Reset starting units
+        updates[`users/${userId}/current_units`] = 0;
+        await updateDrinkingSessionUserData(db, updates);
+      } catch (error: any) {
+          console.error('Failed to start a new session: ' + error.message);
       }
     }
-    navigation.navigate("Drinking Session Screen", {current_units: startingUnits});
+    navigation.navigate("Drinking Session Screen", {
+      timestamp: sessionStartTime,
+      current_units: startingUnits
+    });
   }
 
   // Monitor user data

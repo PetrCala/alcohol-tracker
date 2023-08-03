@@ -18,7 +18,7 @@ import ClickableTextInput from '../components/Buttons/ClickableTextInput';
 
 
 const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps) => {
-  const { current_units } = route.params;
+  const { current_units, timestamp } = route.params;
   const [units, setUnits] = useState(current_units);
   const [pendingUpdate, setPendingUpdate] = useState(false);
   const db = useContext(DatabaseContext);
@@ -56,11 +56,11 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
   }, [units]);
 
 
-  async function saveSession(db: any, userId: string, units: number) {
+  async function saveSession(db: any, userId: string, units: number, timestamp: number) {
     // Save the data into the database
     if (units > 0){
       try {
-        await saveDrinkingSessionData(db, userId, units); // Save drinking session data
+        await saveDrinkingSessionData(db, userId, units, timestamp); // Save drinking session data
       } catch (error:any) {
         throw new Error('Failed to save drinking session data: ' + error.message);
       }
@@ -125,7 +125,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
           text='Save Session'
           buttonStyle={styles.drinkingSessionButton}
           textStyle={styles.drinkingSessionButtonText}
-          onPress={() => saveSession(db, userId, units)}
+          onPress={() => saveSession(db, userId, units, timestamp)}
         />
         <BasicButton 
           text='Discard Session'
