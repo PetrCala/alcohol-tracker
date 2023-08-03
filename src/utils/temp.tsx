@@ -1,4 +1,4 @@
-﻿import { readUserDataOnce, listenForDrinkingSessionChanges } from "../database";
+﻿import { readDataOnce, listenForDataChanges } from "../database";
 import { get, ref, query, equalTo } from "firebase/database";
 
   // useEffect(() => {

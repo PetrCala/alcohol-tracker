@@ -68,6 +68,26 @@ const styles = StyleSheet.create({
     width: 25,
     height: 25,
   },
+  previousDayContainer: {
+    justifyContent: 'center',
+    marginTop: 5,
+    left: 10,
+    padding: 10,
+    position: 'absolute',
+  },
+  nextDayContainer: {
+    justifyContent: 'center',
+    marginTop: 5,
+    right: 10,
+    padding: 10,
+    position: 'absolute',
+    transform: [{rotate: '180deg'}]
+  },
+  nextDayArrow: {
+    width: 25,
+    height: 25,
+    tintColor: "#1c73e6"
+  },
   mainScreenContent: {
     flex: 1,
     padding: 10,

@@ -18,22 +18,26 @@
  *   fetchUserData();
  * }, [db, userId]);
  * */
-export async function readUserDataOnce(db: any, userId: string) {
-  const userRef = ref(db, `users/${userId}`);
-  const snapshot = await get(userRef); // One-off fetch
-  if(snapshot.exists()) {
-    return snapshot.val(); // Return user data
+export async function readDataOnce(db: any, refString: string) {
+  const userRef = ref(db, `${refString}`);
+  try {
+    const snapshot = await get(userRef); // One-off fetch
+    if(snapshot.exists()) {
+      return snapshot.val(); // Return user data
+    }
+    return null;
+  } catch (error:any){
+    throw new Error("Failed to retrieve user data:" + error.message);
   }
-  return null;
 }
 
 // Main listener for drinking session data changes.
-export function listenForDrinkingSessionChanges(
+export function listenForDataChanges(
   db: any,
-  userId: string,
+  refString: string,
   onDataChange: (data: any) => void
 ) {
-  const userRef = ref(db, `user_drinking_sessions/${userId}`);
+  const userRef = ref(db, `/${refString}`);
   const listener = onValue(userRef, (snapshot) => {
     const data = snapshot.val();
     onDataChange(data);

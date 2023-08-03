@@ -16,35 +16,11 @@ import BasicButton from '../components/Buttons/BasicButton';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import styles from '../styles';
 import DatabaseContext from '../DatabaseContext';
-import { listenForDrinkingSessionChanges, readUserDataOnce, removeDrinkingSessionData } from "../database";
-import { get, ref, query, onValue, equalTo } from "firebase/database";
-import { render } from '@testing-library/react-native';
+import { listenForDataChanges, readDataOnce, removeDrinkingSessionData, saveDrinkingSessionData } from "../database";
+import { timestampToDate, fetchDrinkingSessions } from '../utils/dataHandling';
+import { MainScreenProps, UserData, DrinkingSessionIds, DrinkingSessionData } from '../utils/types';
 
-type MainScreenProps = {
-  navigation: any;
-}
-
-type UserData = {
-  username: string;
-};
-
-type DrinkingSessionIds = {
-  key: string;
-}
-
-type DrinkingSessionData = {
-  session_id: any;
-  timestamp: number;
-  units: number;
-  user_id: string;
-}
-
-type DrinkingSessionProps = {
-  session: DrinkingSessionData
-}
-
-const MainScreen = (props: MainScreenProps) => {
-  const { navigation } = props;
+const MainScreen = ( { navigation }: MainScreenProps) => {
   const db = useContext(DatabaseContext);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [drinkingSessionIds, setDrinkingsessionIds] = useState<DrinkingSessionIds | null>(null); // Ids
@@ -52,43 +28,40 @@ const MainScreen = (props: MainScreenProps) => {
 
   const userId = 'petr_cala';
 
-  const getUserData = async () => {
+  const getUserData = async (db:any, userId: string) => {
     try {
-      const userData = await readUserDataOnce(db, userId);
+      let refString = `users/${userId}`
+      const userData = await readDataOnce(db, refString);
       setUserData(userData);
     } catch (error:any){
       throw new Error("Failed to retrieve the user data.");
     }
   }
 
-  const fetchDrinkingSessions = async (db: any, sessionIds: any) => {
+  /**
+   * Get a list of all drinking sessions and use this to update the state
+   * of drinking sessions.
+   */
+  const loadAllDrinkingSessions = async(db: any, sessionIds: any) => {
     try {
-      let drinkingSessions: DrinkingSessionData[] = [];
-      const sessionKeys = Object.keys(sessionIds); // SessionIds: {key: true}
-      for (let sessionKey of sessionKeys){
-        let sessionRef = ref(db, `drinking_sessions/${sessionKey}`);
-        const sessionSnapshot = await get(sessionRef);
-        // Handle missing session
-        const sessionDetails = sessionSnapshot.val();
-        drinkingSessions.push(sessionDetails);
-      }
+      const drinkingSessions = await fetchDrinkingSessions(db, sessionIds);
       setDrinkingsessionData(drinkingSessions);
-      } catch (error:any){
-        throw new Error("Failed to retrieve the drinking session data.");
-      }
-    return null;
+    } catch (error:any){
+      throw new Error("Failed to retrieve the drinking session data.");
+    };
   };
 
-  // Monitor and update user data
-  useEffect(() => {
-    getUserData();
-  }, []); // Assume relatively constant
 
+  // Monitor and update user data
+  useEffect(() =>{
+    getUserData(db, userId);
+  }, []);
 
   // Monitor and update drinking session id data
   useEffect(() => {
     // Start listening for changes when the component mounts
-    const stopListening = listenForDrinkingSessionChanges(db, userId, (ids:any) => {
+    const refString = `user_drinking_sessions/${userId}`
+    const stopListening = listenForDataChanges(db, refString, (ids:any) => {
       setDrinkingsessionIds(ids);
     });
 
@@ -102,47 +75,19 @@ const MainScreen = (props: MainScreenProps) => {
   // Monitor and update drinking session data
   useEffect(() => {
     if (drinkingSessionIds != null){
-      fetchDrinkingSessions(db, drinkingSessionIds);
+      loadAllDrinkingSessions(db, drinkingSessionIds);
     } else {
       setDrinkingsessionData([]); // No data remaining
     }
   }, [drinkingSessionIds]); 
 
 
-  const DrinkingSession = ({session}: DrinkingSessionProps) => {
-    // Convert the timestamp to a Date object
-    const dateObject = new Date(session.timestamp);
 
-    // Extract the date, month, and year, and format them as MM-DD-YYYY
-    const date = ('0' + (dateObject.getMonth() + 1)).slice(-2) + '-' + 
-                ('0' + dateObject.getDate()).slice(-2) + '-' + 
-                dateObject.getFullYear();
-
-
-      return (
-        <View style={styles.menuDrinkingSessionContainer}>
-          <Text style={styles.menuDrinkingSessionText}>Date: {date}</Text>
-          <Text style={styles.menuDrinkingSessionText}>Units consumed: {session.units}</Text>
-        </View>
-      );
-  };
-
-
-  const renderDrinkingSession = ( {item} : {item: DrinkingSessionData}) => {
-    return(
-      <DrinkingSession
-        session = {item}
-      />
-    );
-  };
-
-    const testRemoveFirstSession = async () => {
+  const testRemoveFirstSession = async () => {
     try {
       if (drinkingSessionIds != null){
         const sessionKeys = Object.keys(drinkingSessionIds);
         const lastSessionId = sessionKeys[0];
-        console.log(sessionKeys);
-        console.log(lastSessionId);
         await removeDrinkingSessionData(db, userId, lastSessionId);
       }
     } catch (error:any){
@@ -154,6 +99,7 @@ const MainScreen = (props: MainScreenProps) => {
   if (userData == null) {
     return (
       <View style={styles.container}>
+        <Text>Loading data...</Text>
         <ActivityIndicator 
           size="large"
           color = "#0000ff"
@@ -192,7 +138,9 @@ const MainScreen = (props: MainScreenProps) => {
                   iconSource={require('../assets/icons/achievements.png')} 
                   containerStyle={styles.menuIconContainer}
                   iconStyle={styles.menuIcon}
-                  onPress = {() => navigation.navigate('Achievement Screen')}
+                  onPress = {() => navigation.navigate('Day Overview Screen', {
+                    timestamp: Date.now()
+                  })}
                   />
                 <MenuIcon 
                   iconId='settings-icon'
@@ -207,11 +155,7 @@ const MainScreen = (props: MainScreenProps) => {
             <Text style={styles.menuDrinkingSessionInfoText}>Your drinking sessions:</Text> 
             {/* Replace this with the overview and statistics */}
             {drinkingSessionData ?
-            <FlatList
-              data = {drinkingSessionData}
-              renderItem={renderDrinkingSession}
-              keyExtractor={item => item.session_id}
-            />
+            <Text>Drinking sessions here</Text>
             :
             <Text style={styles.menuDrinkingSessionInfoText}>No drinking sessions found</Text>
             }

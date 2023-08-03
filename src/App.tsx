@@ -8,6 +8,7 @@ import ProfileScreen from './screens/ProfileScreen';
 import SocialScreen from './screens/SocialScreen';
 import AchievementScreen from './screens/AchievementScreen';
 import SettingsScreen from './screens/SettingsScreen';
+import DayOverviewScreen from './screens/DayOverviewScreen';
 
 import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
@@ -67,6 +68,11 @@ const AlcoholTracker = () => {
           <Stack.Screen 
           name='Settings Screen' 
           component={SettingsScreen}
+          options={{}}
+          />
+          <Stack.Screen 
+          name='Day Overview Screen' 
+          component={DayOverviewScreen}
           options={{}}
           />
         </Stack.Navigator>

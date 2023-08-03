@@ -1,7 +1,7 @@
 ﻿import { get, ref, onValue, off } from "firebase/database";
 import { 
-  readUserDataOnce,
-  listenForDrinkingSessionChanges
+  readDataOnce,
+  listenForDataChanges
 } from '../src/database';'../src/database';
 
 jest.mock('firebase/database', () => ({
@@ -42,7 +42,7 @@ describe('data reading functions', () => {
         val: () => mockDb.users[existingUserId]
       });
   
-      const data = await readUserDataOnce(mockDb, existingUserId);
+      const data = await readDataOnce(mockDb, existingUserId);
       expect(data).not.toBeNull();
       expect(data).toEqual(mockDb.users[existingUserId]);
     });
@@ -56,7 +56,7 @@ describe('data reading functions', () => {
         val: () => null
       });
   
-      const data = await readUserDataOnce(mockDb, nonExistingUserId);
+      const data = await readDataOnce(mockDb, nonExistingUserId);
       expect(data).toBeNull();
     });
   
@@ -72,7 +72,7 @@ describe('data reading functions', () => {
             });
         });
   
-        listenForDrinkingSessionChanges(mockDb, userId, onDataChangeMock);
+        listenForDataChanges(mockDb, userId, onDataChangeMock);
   
         expect(onDataChangeMock).toHaveBeenCalledWith(mockDb.users[userId]);
     });
@@ -88,7 +88,7 @@ describe('data reading functions', () => {
         const mockListener = jest.fn();
         (onValue as jest.Mock).mockReturnValue(mockListener);
   
-        const unsubscribe = listenForDrinkingSessionChanges(mockDb, userId, onDataChangeMock);
+        const unsubscribe = listenForDataChanges(mockDb, userId, onDataChangeMock);
   
         unsubscribe();
   
