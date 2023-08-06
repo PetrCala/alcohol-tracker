@@ -124,7 +124,6 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
         if (date != null){
             const stopListening = listenForSessionDataChanges(db, userId, (data:any) => {
                 data = Object.values(data); // To an array
-                data.sort((a:any,b:any) => a.timestamp - b.timestamp); // Sort by timestamp
                 data = getSingleDayDrinkingSessions(date, data);
                 setDrinkingsessionData(data);
                 setLoadingData(false);
