@@ -28,6 +28,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
 
   // Change local hook value
   const changeUnits = (number: number) => {
+    console.log(timestamp);
     const newUnits = units + number;
     if (newUnits >= 0){
       setUnits(newUnits);

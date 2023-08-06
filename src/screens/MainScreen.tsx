@@ -38,15 +38,16 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
     let startingUnits = userData.current_units;
     let sessionStartTime = userData.current_timestamp;
     if (!userData.in_session){
+      startingUnits = 0;
+      sessionStartTime = Date.now();
+      let updates: {[key: string]: any} = {};
+      // Inform database of new session started
+      updates[`users/${userId}/in_session`] = true;
+      // Set the start time to now if session is new
+      updates[`users/${userId}/current_timestamp`] = sessionStartTime;
+      // Reset starting units
+      updates[`users/${userId}/current_units`] = startingUnits;
       try {
-        let newSessionStartTime = Date.now();
-        let updates: {[key: string]: any} = {};
-        // Inform database of new session started
-        updates[`users/${userId}/in_session`] = true;
-        // Set the start time to now if session is new
-        updates[`users/${userId}/current_timestamp`] = newSessionStartTime;
-        // Reset starting units
-        updates[`users/${userId}/current_units`] = 0;
         await updateDrinkingSessionUserData(db, updates);
       } catch (error: any) {
           console.error('Failed to start a new session: ' + error.message);

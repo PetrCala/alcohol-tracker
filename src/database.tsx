@@ -90,15 +90,17 @@ export async function saveDrinkingSessionData(
       units: number;
       timestamp: number
     } | {
+      current_timestamp: number;
       current_units: number;
       in_session: boolean;
     }} = {};
   updates[`/user_drinking_sessions/${userId}/` + newDrinkingSessionKey] = {
     session_id: newDrinkingSessionKey,
-    units: units,
     timestamp: timestamp,
+    units: units,
   };
   updates[`users/${userId}`] = {
+    current_timestamp: timestamp, // Otherwise gets deleted from DB
     current_units: 0,
     in_session: false,
   };
