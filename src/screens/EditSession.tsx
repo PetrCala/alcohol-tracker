@@ -13,7 +13,7 @@ import MenuIcon from '../components/Buttons/MenuIcon';
 import BasicButton from '../components/Buttons/BasicButton';
 import { EditSessionScreenProps, DrinkingSessionData } from '../utils/types';
 import DatabaseContext from '../DatabaseContext';
-import { saveDrinkingSessionData, removeDrinkingSessionData } from '../database';
+import { saveDrinkingSessionData, removeDrinkingSessionData, editDrinkingSessionData } from '../database';
 import ClickableTextInput from '../components/Buttons/ClickableTextInput';
 import { formatDateToDay, formatDateToTime, timestampToDate } from '../utils/dataHandling';
 
@@ -22,6 +22,7 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
     const { session } = route.params; 
     const [units, setUnits] = useState(session.units);
     const [timestamp, setTimestamp] = useState(session.timestamp); // Later editable
+    const sessionId = session.session_id;
     const sessionDate = timestampToDate(timestamp);
     const sessionDay = formatDateToDay(sessionDate);
     const sessionTime = formatDateToTime(sessionDate);
@@ -37,18 +38,21 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
         }
     };
 
-
-    async function saveSession(db: any, userId: string, units: number, timestamp: number) {
-        // Save the data into the database
+    async function saveSession(db: any, userId: string) {
         if (units > 0){
-        try {
-            await saveDrinkingSessionData(db, userId, units, timestamp); // Save drinking session data
-        } catch (error:any) {
-            throw new Error('Failed to save drinking session data: ' + error.message);
-        }
-        // Show statistics, offer to go back
-        setUnits(0);
-        navigation.goBack();
+            // Create the session object to be saved
+            const newSession: DrinkingSessionData = {
+                session_id: sessionId,
+                timestamp: timestamp,
+                units: units
+            };
+            // Save the data into the database
+            try {
+                await editDrinkingSessionData(db, userId, newSession); // Save drinking session data
+            } catch (error:any) {
+                throw new Error('Failed to save drinking session data: ' + error.message);
+            }
+            navigation.goBack();
         }
     };
 
@@ -111,13 +115,13 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
             text='Save Session'
             buttonStyle={styles.drinkingSessionButton}
             textStyle={styles.drinkingSessionButtonText}
-            onPress={() => saveSession(db, userId, units, timestamp)}
+            onPress={() => saveSession(db, userId)}
             />
             <BasicButton 
             text='Delete Session'
             buttonStyle={styles.drinkingSessionButton}
             textStyle={styles.drinkingSessionButtonText}
-            onPress={() => deleteSession(db, userId, session.session_id)}
+            onPress={() => deleteSession(db, userId, sessionId)}
             />
         </View>
         </View>

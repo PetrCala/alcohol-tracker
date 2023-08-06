@@ -9,16 +9,20 @@ import styles from '../styles';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import { 
     timestampToDate, 
+    getTimestampAtMidnight,
     formatDateToDay, 
     formatDateToTime, 
     changeDateBySomeDays, 
-    unitsToColors
+    unitsToColors,
+    getDateAtMidnightFromTimestamp,
+    getTimestampAtNoon,
+    getSingleDayDrinkingSessions
 } from '../utils/dataHandling';
 import { useContext } from 'react';
 import DatabaseContext from '../DatabaseContext';
 import LoadingData from '../components/loadingData';
 import { DayOverviewScreenProps, DrinkingSessionProps, DrinkingSessionData} from '../utils/types';
-import { listenForAllSingleDaySessions, listenForDataChanges } from '../database';
+import { listenForDataChanges, listenForSessionDataChanges } from '../database';
 
 
 const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
@@ -78,6 +82,32 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
         );
     }
 
+    const addSessionComponent = () => {
+        if (date == null) {
+            return(
+                <LoadingData
+                    loadingText='Loading date data...'
+                />
+            )
+        }
+        let newTimestamp = getTimestampAtNoon(date);
+        let newSession:DrinkingSessionData = {
+            session_id: 'edit-session-id', // Immutable! (see database.tsx)
+            timestamp: newTimestamp, // Arbitrary timestamp of today's noon
+            units: 0,
+        }
+        return(
+            <TouchableOpacity
+                style={styles.addSessionButton}
+                onPress={() => navigation.navigate('Edit Session Screen',
+                    {session: newSession}
+                )}
+                >
+                <Text style={styles.addSessionText}>+</Text>
+            </TouchableOpacity>
+        );
+    }
+
     /** Offset the "date" hook by a number of days.
      * 
      * @param days Number of days to change the day by.
@@ -89,15 +119,13 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
         };
     }
 
-    // Monitor the date
-    useEffect(() => {
-        setDate(timestampToDate(timestamp));
-    }, [timestamp]);
-
     // Monitor and update drinking session id data
     useEffect(() => {
         if (date != null){
-            const stopListening = listenForAllSingleDaySessions(db, userId, date, (data:any) => {
+            const stopListening = listenForSessionDataChanges(db, userId, (data:any) => {
+                data = Object.values(data); // To an array
+                data.sort((a:any,b:any) => a.timestamp - b.timestamp); // Sort by timestamp
+                data = getSingleDayDrinkingSessions(date, data);
                 setDrinkingsessionData(data);
                 setLoadingData(false);
             });
@@ -138,10 +166,13 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
                 renderItem={renderDrinkingSession}
                 keyExtractor={item => item.session_id}
                 ListEmptyComponent={noDrinkingSessionsComponent}
+                ListFooterComponent={addSessionComponent}
+                ListFooterComponentStyle={styles.addSessionButtonContainer}
             />
             :
             <></>
             }
+
         </View>
         <View style={styles.dayOverviewFooter}>
             <MenuIcon

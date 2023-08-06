@@ -38,12 +38,6 @@ const SessionsCalendar = ({ drinkingSessionData, onDayPress} :SessionsCalendarPr
         let markedDates: SessionsCalendarMarkedDates = Object.entries(dates).reduce((acc: SessionsCalendarMarkedDates, [key, { units }]) => {
             let color:string = unitsToColors(units);
             acc[key] = { color: color }
-            // acc[key] = { customStyles: {
-            //     container: {
-            //             backgroundColor: color
-            //         }
-            //     }
-            // };
             return acc;
         }, {});
         return markedDates;

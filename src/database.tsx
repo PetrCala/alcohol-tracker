@@ -1,5 +1,6 @@
 ﻿import { get, ref, onValue, child, off, update, push, runTransaction } from "firebase/database";
 import { getSingleDayDrinkingSessions } from "./utils/dataHandling";
+import { DrinkingSessionData } from "./utils/types";
 
 /** Read data once using get()
  * 
@@ -44,7 +45,6 @@ export function listenForDataChanges(
     let data = snapshot.val();
     if (dataToArray) {
       data = Object.values(data); // To an array
-      data.sort((a:any,b:any) => a.timestamp - b.timestamp); // Sort by timestamp
     };
     onDataChange(data);
   });
@@ -56,18 +56,14 @@ export function listenForDataChanges(
  * Handle a listener that will query all of today's
  * drinking sessions
  */
-export function listenForAllSingleDaySessions(
+export function listenForSessionDataChanges(
   db: any,
   userId: any,
-  day: Date,
   onDataChange: (data: any) => void
 ) {
   const dbRef = ref(db, `/user_drinking_sessions/${userId}`);
   const listener = onValue(dbRef, (snapshot) => {
     let data = snapshot.val();
-    data = Object.values(data); // To an array
-    data.sort((a:any,b:any) => a.timestamp - b.timestamp); // Sort by timestamp
-    data = getSingleDayDrinkingSessions(day, data);
     onDataChange(data);
   });
 
@@ -85,17 +81,23 @@ export async function saveDrinkingSessionData(
   units: number,
   timestamp: number
   ) {
-  const newDrinkingSessionKey = push(child(ref(db), `/user_drinking_sessions/${userId}/`)).key // Generate a new automatic key for the new drinking session
+  let newDrinkingSessionKey: string | null = null;
   var updates: {
-    [key: string]: {
-      session_id: any;
-      units: number;
-      timestamp: number
-    } | {
+    [key: string]: DrinkingSessionData | {
       current_timestamp: number;
       current_units: number;
       in_session: boolean;
     }} = {};
+  // Generate a new automatic key for the new drinking session
+  try {
+    newDrinkingSessionKey = await push(child(ref(db), `/user_drinking_sessions/${userId}/`)).key 
+  } catch (error:any) {
+    throw new Error('Failed to create a new session reference point: ' + error.message);
+  }
+  if (newDrinkingSessionKey == null) {
+    throw new Error('Failed to create a new session reference point');
+  }
+  // Update the database with this new key
   updates[`/user_drinking_sessions/${userId}/` + newDrinkingSessionKey] = {
     session_id: newDrinkingSessionKey,
     timestamp: timestamp,
@@ -131,8 +133,46 @@ export async function removeDrinkingSessionData(
   } catch (error:any) {
     throw new Error('Failed to remove drinking session data: ' + error.message);
   }
-}
+};
 
+/** Edit an existing drinking session data in database,
+ * or add a new one in case the user wishes to add a new
+ * session data without starting a new session
+ *
+ * Throw an error in case the database writing fails.
+ *  */ 
+export async function editDrinkingSessionData(
+  db: any, 
+  userId: string, 
+  editedSession: DrinkingSessionData
+  ) {
+  var updates: { [key: string]: DrinkingSessionData } = {};
+  let newDrinkingSessionKey = editedSession.session_id;
+  // Handle the case of an unexisting session
+  if (editedSession.session_id == 'edit-session-id'){
+    try {
+      // Generate a new key
+      let newlyGeneratedKey = await push(child(ref(db), `/user_drinking_sessions/${userId}/`)).key 
+      if (newlyGeneratedKey == null) {
+        throw new Error('Failed to create a new session reference point');
+      }
+      newDrinkingSessionKey = newlyGeneratedKey; // Assign if not null
+    } catch (error:any) {
+      throw new Error('Failed to create a new session reference point: ' + error.message);
+    }
+  }
+  updates[`/user_drinking_sessions/${userId}/` + newDrinkingSessionKey] = {
+    session_id: newDrinkingSessionKey,
+    timestamp: editedSession.timestamp,
+    units: editedSession.units,
+  };
+
+  try {
+    return await update(ref(db), updates);
+  } catch (error:any) {
+    throw new Error('Failed to remove drinking session data: ' + error.message);
+  }
+};
 
 
 export async function updateDrinkingSessionUserData(

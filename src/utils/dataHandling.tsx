@@ -1,8 +1,32 @@
 ﻿import { DrinkingSessionData } from "./types";
 
-export function timestampToDate( timestamp: number) {
+/** Convert a timestamp to a Date object */
+export function timestampToDate( timestamp: number): Date {
     return new Date(timestamp);
 };
+
+/** Inverse of timestampToDate, sets time to midnight
+ */
+export function getTimestampAtMidnight(date: Date): number {
+    const dateAtMidnight = new Date(date);
+    dateAtMidnight.setHours(0, 0, 0, 0);
+    return dateAtMidnight.getTime();
+};
+
+export function getTimestampAtNoon(date: Date): number {
+    const dateAtMidnight = new Date(date);
+    dateAtMidnight.setHours(12, 0, 0, 0);
+    return dateAtMidnight.getTime();
+};
+
+/** Input a timestamp and return the corresponding Date object
+ * with time set to midnight
+ */
+export function getDateAtMidnightFromTimestamp(timestamp: number): Date {
+    const date = new Date(timestamp);
+    date.setHours(0, 0, 0, 0); // Set the time to midnight
+    return date;
+  }
 
 export function formatDateToDay(inputDate: Date, addYear: boolean = true): string {
     // Extract the date, month, and year, and format them as MM-DD-YYYY
@@ -13,7 +37,7 @@ export function formatDateToDay(inputDate: Date, addYear: boolean = true): strin
         date = date + '-' + inputDate.getFullYear();
     }
     return date
-}
+};
 
 export function formatDateToTime(inputDate: Date): string {
     // Extract the hours and minutes, and format them as HH:MM
@@ -71,6 +95,7 @@ export function getSingleDayDrinkingSessions(day: Date, sessions: DrinkingSessio
     
     const tomorrow = new Date(day);
     tomorrow.setDate(day.getDate() + 1); // set to start of next day
+    tomorrow.setMilliseconds(tomorrow.getMilliseconds() - 1); // 23:59:59 to not include midnight endtries
   
     // Convert to UNIX timestamp
     const todayUnix = Math.floor(day.getTime());
@@ -86,7 +111,10 @@ export function getSingleDayDrinkingSessions(day: Date, sessions: DrinkingSessio
     }
   
     // Return the sessions between those indices
-    return sessions.slice(startIndex, endIndex);
+    const daySessions = sessions.slice(startIndex, endIndex);
+    console.log(sessions);
+    console.log(startIndex, endIndex);
+    return daySessions;
 }
 
 

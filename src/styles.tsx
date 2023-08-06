@@ -104,6 +104,24 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
+  addSessionButtonContainer: {
+    padding: 10,
+    alignSelf: 'center',
+  },
+  addSessionButton: {
+    borderRadius: 50,
+    width: 70,
+    height: 70,
+    backgroundColor: 'green',
+    alignItems: 'center',
+    justifyContent: 'center', // Center the text within the button
+  },
+  addSessionText: {
+    color: 'white',
+    fontSize: 50,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
   mainScreenContent: {
     flex: 1,
     padding: 10,
@@ -235,6 +253,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 50,
     fontWeight: 'bold',
+    textAlign: 'center'
   },
 });
 
