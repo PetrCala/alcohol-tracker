@@ -17,13 +17,24 @@ export type MainScreenProps = {
     navigation: StackNavigationProp<AppStackParamList, 'Main Screen'>;
 }
 
-export type DayOverviewScreenProps = {
-    route: any
-    navigation: any
-}
-
 export type DrinkingSessionScreenProps = {
   route: any;
+  navigation: any;
+}
+
+export type DayOverviewScreenProps = {
+    route: any;
+    navigation: any;
+}
+ 
+export type EditSessionScreenProps = {
+  route: {
+    key: string;
+    name: string;
+    params: {
+      session: DrinkingSessionData
+    }
+  };
   navigation: any;
 }
 
@@ -35,7 +46,7 @@ export type UserDataProps = {
 };
 
 export type DrinkingSessionData = {
-  session_id: any;
+  session_id: string;
   timestamp: number;
   units: number;
 }

@@ -44,7 +44,7 @@ export function listenForDataChanges(
     let data = snapshot.val();
     if (dataToArray) {
       data = Object.values(data); // To an array
-      // data.sort((a:any,b:any) => a.timestamp - b.timestamp); // Sort by timestamp
+      data.sort((a:any,b:any) => a.timestamp - b.timestamp); // Sort by timestamp
     };
     onDataChange(data);
   });

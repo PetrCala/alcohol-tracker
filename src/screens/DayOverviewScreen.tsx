@@ -3,8 +3,7 @@ import {
   Text,
   View,
   FlatList,
-  ActivityIndicator,
-  processColor
+  TouchableOpacity
 } from 'react-native';
 import styles from '../styles';
 import MenuIcon from '../components/Buttons/MenuIcon';
@@ -31,6 +30,10 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
 
     const userId = 'petr_cala';
 
+    const onEditSessionPress = (session:DrinkingSessionData) => {
+        return navigation.navigate('Edit Session Screen', {session: session})
+    }
+
     const DrinkingSession = ({session, sessionColor}: DrinkingSessionProps) => {
         // Convert the timestamp to a Date object
         const date = timestampToDate(session.timestamp);
@@ -41,8 +44,19 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
 
         return (
         <View style={viewStyle}>
-            <Text style={styles.menuDrinkingSessionText}>Time: {formatDateToTime(date)}</Text>
-            <Text style={styles.menuDrinkingSessionText}>Units consumed: {session.units}</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <View style={{ flex: 1 }}>
+                    <Text style={styles.menuDrinkingSessionText}>Time: {formatDateToTime(date)}</Text>
+                    <Text style={styles.menuDrinkingSessionText}>Units consumed: {session.units}</Text>
+                </View>
+                <MenuIcon
+                    iconId='edit-session-icon'
+                    iconSource={require('../assets/icons/edit.png')}
+                    containerStyle={styles.menuIconContainer}
+                    iconStyle={styles.menuIcon}
+                    onPress={() => onEditSessionPress(session)}
+                />
+            </View>
         </View>
         );
     };
@@ -57,6 +71,12 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
             />
         );
     };
+
+    const noDrinkingSessionsComponent = () => {
+        return (
+            <Text style={styles.menuDrinkingSessionInfoText}>No drinking sessions</Text>
+        );
+    }
 
     /** Offset the "date" hook by a number of days.
      * 
@@ -98,7 +118,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
     };
 
     return (
-        <View style={{flex:1, backgroundColor: '#FFFF99'}}>
+      <View style={{flex:1, backgroundColor: '#FFFF99'}}>
         <View style={styles.header}>
             <MenuIcon
             iconId='escape-settings-screen'
@@ -109,6 +129,21 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
             />
         </View>
         <View style={styles.dayOverviewContainer}>
+            <Text style={styles.menuDrinkingSessionInfoText}>
+                {date ? formatDateToDay(date) : "Loading date..."}
+            </Text>
+            {drinkingSessionData ?
+            <FlatList
+                data = {drinkingSessionData}
+                renderItem={renderDrinkingSession}
+                keyExtractor={item => item.session_id}
+                ListEmptyComponent={noDrinkingSessionsComponent}
+            />
+            :
+            <></>
+            }
+        </View>
+        <View style={styles.dayOverviewFooter}>
             <MenuIcon
                 iconId = "navigate-day-back"
                 iconSource = {require('../assets/icons/arrow_back.png')}
@@ -116,9 +151,6 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
                 iconStyle = {styles.nextDayArrow}
                 onPress={() => {changeDay(-1)}}
             />
-            <Text style={styles.menuDrinkingSessionInfoText}>
-                {date ? formatDateToDay(date) : "Loading date..."}
-            </Text>
             <MenuIcon
                 iconId = "navigate-day-forward"
                 iconSource = {require('../assets/icons/arrow_back.png')}
@@ -126,17 +158,8 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
                 iconStyle = {styles.nextDayArrow}
                 onPress={() => {changeDay(1)}} 
             />
-            {drinkingSessionData ?
-            <FlatList
-                data = {drinkingSessionData}
-                renderItem={renderDrinkingSession}
-                keyExtractor={item => item.session_id}
-            />
-            :
-            <Text style={styles.menuDrinkingSessionInfoText}>No drinking sessions found</Text>
-            }
         </View>
-        </View>
+      </View>
     );
 };
 

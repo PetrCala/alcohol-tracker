@@ -69,24 +69,40 @@ const styles = StyleSheet.create({
     height: 25,
   },
   previousDayContainer: {
-    justifyContent: 'center',
-    marginTop: 5,
-    left: 10,
-    padding: 10,
-    position: 'absolute',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
   },
   nextDayContainer: {
-    justifyContent: 'center',
-    marginTop: 5,
-    right: 10,
-    padding: 10,
-    position: 'absolute',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
     transform: [{rotate: '180deg'}]
   },
   nextDayArrow: {
     width: 25,
     height: 25,
     tintColor: "#1c73e6"
+  },
+  dayOverviewFooter: {
+    flexShrink: 1, // Only as large as necessary
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: '#FFFF99',
+    shadowColor: '#000',
+    borderWidth: 1,
+    shadowOffset: {
+      width: 0,
+      height: -2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    borderRadius: 2,
+    marginVertical: 0,
+    borderColor: '#ddd',
+    elevation: 8, // for Android shadow
+    padding: 17,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   mainScreenContent: {
     flex: 1,
@@ -118,8 +134,11 @@ const styles = StyleSheet.create({
   },
   menuDrinkingSessionInfoText: {
     fontSize: 20,
+    fontWeight: "bold",
+    marginTop: 4,
     color: "black",
     alignSelf: "center",
+    alignContent: "center",
     padding: 10,
   },
   menuDrinkingSessionContainer: {
@@ -143,8 +162,7 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   dayOverviewContainer: {
-    flexGrow: 1,
-    flexShrink: 1,
+    flex: 1,
     overflow:"hidden"
   },
   drinkingSessionContainer: {
@@ -154,11 +172,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: 70, //offset header
   },
-  // Old title
-  // drinkingSessionTitle: {
-  //   fontSize: 20,
-  //   marginBottom: 20,
-  // },
   drinkingSessionClickableTextContainer: {
     padding: 15,
     borderRadius: 8,
@@ -174,7 +187,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#212421',
   },
-
+  drinkingSessionTimeInfo: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlign: 'center' as 'center', 
+    color: '#212421',
+    paddingVertical: 20,
+    paddingHorizontal: 10,
+  },
   drinkingSessionClickableTextInput: {
     fontSize: 18,
     fontWeight: 'bold',
