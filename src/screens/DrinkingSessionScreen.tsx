@@ -15,12 +15,16 @@ import { DrinkingSessionScreenProps } from '../utils/types';
 import DatabaseContext from '../DatabaseContext';
 import { saveDrinkingSessionData, updateCurrentUnits, discardDrinkingSessionData } from '../database';
 import ClickableTextInput from '../components/Buttons/ClickableTextInput';
+import { formatDateToDay, formatDateToTime, timestampToDate } from '../utils/dataHandling';
 
 
 const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps) => {
   const { current_units, timestamp } = route.params;
   const [units, setUnits] = useState(current_units);
   const [pendingUpdate, setPendingUpdate] = useState(false);
+  const sessionDate = timestampToDate(timestamp);
+  const sessionDay = formatDateToDay(sessionDate);
+  const sessionTime = formatDateToTime(sessionDate);
   const db = useContext(DatabaseContext);
   const updateTimeout = 1000; // Synchronize with DB every x milliseconds
   const userId = 'petr_cala';
@@ -103,6 +107,14 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
           onPress={handleBackPress}
         />
       </View>
+      <View>
+            <Text style={styles.menuDrinkingSessionInfoText}>
+                {sessionDay}
+            </Text>
+            <Text style={styles.menuDrinkingSessionInfoText}>
+                {sessionTime}
+            </Text>
+        </View>
       <View style={styles.drinkingSessionContainer}>
         <ClickableTextInput
           text = ''

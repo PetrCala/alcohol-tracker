@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 70, //offset header
+    marginBottom: 90, //offset header
   },
   drinkingSessionClickableTextContainer: {
     padding: 15,
