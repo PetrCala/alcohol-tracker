@@ -89,7 +89,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
 
 
     // Loading drinking session data
-    if ( date == null || loadingData) {
+    if ( date == null || loadingData ) {
         return (
             <LoadingData
                 loadingText='Loading drinking session data...'

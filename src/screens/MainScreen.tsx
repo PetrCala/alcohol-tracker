@@ -8,8 +8,6 @@
 import { 
     Text,
     View,
-    TouchableOpacity,
-    ActivityIndicator,
 } from 'react-native';
 import BasicButton from '../components/Buttons/BasicButton';
 import MenuIcon from '../components/Buttons/MenuIcon';
@@ -19,7 +17,6 @@ import styles from '../styles';
 import DatabaseContext from '../DatabaseContext';
 import { listenForDataChanges, updateDrinkingSessionUserData } from "../database";
 import { MainScreenProps, UserDataProps, DrinkingSessionData } from '../utils/types';
-import { update } from 'firebase/database';
 
 const MainScreen = ( { navigation }: MainScreenProps) => {
   const db = useContext(DatabaseContext);

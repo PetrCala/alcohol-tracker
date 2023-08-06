@@ -50,7 +50,7 @@ export function getSingleDayDrinkingSessions(day: Date, sessions: DrinkingSessio
     for (let i in sessions) { // i is a numeric index from 0
         const session = sessions[i];
         if (session.timestamp >= todayUnix && session.timestamp < tomorrowUnix) {
-            result[i] = session;
+            result.push(session);
         }
     }
 
