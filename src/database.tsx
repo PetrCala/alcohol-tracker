@@ -44,6 +44,7 @@ export function listenForDataChanges(
     let data = snapshot.val();
     if (dataToArray) {
       data = Object.values(data); // To an array
+      // data.sort((a:any,b:any) => a.timestamp - b.timestamp); // Sort by timestamp
     };
     onDataChange(data);
   });
@@ -65,6 +66,7 @@ export function listenForAllSingleDaySessions(
   const listener = onValue(dbRef, (snapshot) => {
     let data = snapshot.val();
     data = Object.values(data); // To an array
+    data.sort((a:any,b:any) => a.timestamp - b.timestamp); // Sort by timestamp
     data = getSingleDayDrinkingSessions(day, data);
     onDataChange(data);
   });

@@ -28,34 +28,68 @@ export function changeDateBySomeDays(inputDate: Date, days: number): Date {
     return newDate;
 }
 
-/** Input an array of drinking sessions and return only those 
- * on a given day
+
+/** A binary search to help identify the indexes of items that fall above
+ * or below a target timestamp. Used to subset drinking sessions into a
+ * certain timeframe.
  * 
- * @param day A Date type object representing a day for which
- * the sessions should be loaded
- * @param sessions An array of drinking sessions.
+ * @param sessions The array of drinking sessions to query
+ * @param target Timestamp above/below which the sessions should appear
+ * @param start If true, treat this timestamp as a start point. If false, as an
+ * end point.
+ * @returns An index representing where in the array the start/end point is located.
  */
+function sessionsBinarySearch(sessions: DrinkingSessionData[], target: number, start: boolean): number {
+    let left = 0;
+    let right = sessions.length - 1;
+  
+    while (left <= right) {
+      let mid = Math.floor((left + right) / 2);
+  
+      if (sessions[mid].timestamp === target) {
+        return start ? mid : mid + 1;
+      } else if (sessions[mid].timestamp < target) {
+        left = mid + 1;
+      } else {
+        right = mid - 1;
+      }
+    }
+  
+    return start ? left : right;
+  }
+
+
+  /** Subset an array of drinking sessions to a single day.
+   * 
+   * @param day Day to subset the sessions for
+   * @param sessions An array of sessions to subset
+   * @returns The subsetted array of sessions
+   */
 export function getSingleDayDrinkingSessions(day: Date, sessions: DrinkingSessionData[]) {
     // Define the time boundaries
     day.setHours(0, 0, 0, 0); // set to start of day
     
     const tomorrow = new Date(day);
     tomorrow.setDate(day.getDate() + 1); // set to start of next day
-    
-    // convert to UNIX timestamp
+  
+    // Convert to UNIX timestamp
     const todayUnix = Math.floor(day.getTime());
     const tomorrowUnix = Math.floor(tomorrow.getTime());
+  
+    // Find the start and end indices for the day's timeframe
+    const startIndex = sessionsBinarySearch(sessions, todayUnix, true);
+    const endIndex = sessionsBinarySearch(sessions, tomorrowUnix, false);
     
-    let result: DrinkingSessionData[] = [];
-    for (let i in sessions) { // i is a numeric index from 0
-        const session = sessions[i];
-        if (session.timestamp >= todayUnix && session.timestamp < tomorrowUnix) {
-            result.push(session);
-        }
+    // If all timestamps are below the start Unix, return an empty array
+    if (startIndex > endIndex) {
+      return [];
     }
+  
+    // Return the sessions between those indices
+    return sessions.slice(startIndex, endIndex);
+}
 
-    return result;
-};
+
 
 /** Convert the units consumed to colors.
  * 
