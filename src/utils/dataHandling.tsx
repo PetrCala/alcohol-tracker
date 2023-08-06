@@ -53,35 +53,6 @@ export function changeDateBySomeDays(inputDate: Date, days: number): Date {
 }
 
 
-/** A binary search to help identify the indexes of items that fall above
- * or below a target timestamp. Used to subset drinking sessions into a
- * certain timeframe.
- * 
- * @param sessions The array of drinking sessions to query
- * @param target Timestamp above/below which the sessions should appear
- * @param start If true, treat this timestamp as a start point. If false, as an
- * end point.
- * @returns An index representing where in the array the start/end point is located.
- */
-function sessionsBinarySearch(sessions: DrinkingSessionData[], target: number, start: boolean): number {
-    let left = 0;
-    let right = sessions.length - 1;
-  
-    while (left <= right) {
-      let mid = Math.floor((left + right) / 2);
-  
-      if (sessions[mid].timestamp === target) {
-        return start ? mid : mid + 1;
-      } else if (sessions[mid].timestamp < target) {
-        left = mid + 1;
-      } else {
-        right = mid - 1;
-      }
-    }
-  
-    return start ? left : right;
-  }
-
 
   /** Subset an array of drinking sessions to a single day.
    * 
@@ -95,26 +66,15 @@ export function getSingleDayDrinkingSessions(day: Date, sessions: DrinkingSessio
     
     const tomorrow = new Date(day);
     tomorrow.setDate(day.getDate() + 1); // set to start of next day
-    tomorrow.setMilliseconds(tomorrow.getMilliseconds() - 1); // 23:59:59 to not include midnight endtries
   
     // Convert to UNIX timestamp
     const todayUnix = Math.floor(day.getTime());
     const tomorrowUnix = Math.floor(tomorrow.getTime());
   
-    // Find the start and end indices for the day's timeframe
-    const startIndex = sessionsBinarySearch(sessions, todayUnix, true);
-    const endIndex = sessionsBinarySearch(sessions, tomorrowUnix, false);
-    
-    // If all timestamps are below the start Unix, return an empty array
-    if (startIndex > endIndex) {
-      return [];
-    }
-  
+    const filteredSessions = sessions.filter(session => session.timestamp >= todayUnix && session.timestamp < tomorrowUnix);
+
     // Return the sessions between those indices
-    const daySessions = sessions.slice(startIndex, endIndex);
-    console.log(sessions);
-    console.log(startIndex, endIndex);
-    return daySessions;
+    return filteredSessions;
 }
 
 
