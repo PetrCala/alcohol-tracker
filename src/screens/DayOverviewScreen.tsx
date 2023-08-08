@@ -90,7 +90,8 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
                 />
             )
         }
-        let newTimestamp = getTimestampAtNoon(date);
+        // let newTimestamp = getTimestampAtNoon(date); // At noon
+        let newTimestamp = Date.now();
         let newSession:DrinkingSessionData = {
             session_id: 'edit-session-id', // Immutable! (see database.tsx)
             timestamp: newTimestamp, // Arbitrary timestamp of today's noon

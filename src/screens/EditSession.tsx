@@ -89,6 +89,11 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
             <Text style={styles.menuDrinkingSessionInfoText}>
                 {sessionDay}
             </Text>
+            {/* <ClickableTextInput
+                text = {sessionTime}
+                currentUnits={units}
+                onUnitsChange={setUnits}
+            /> */}
             <Text style={styles.menuDrinkingSessionInfoText}>
                 {sessionTime}
             </Text>
