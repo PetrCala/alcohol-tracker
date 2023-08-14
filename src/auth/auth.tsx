@@ -19,11 +19,11 @@ export async function signUpUserWithEmailAndPassword(
     auth:any, 
     email:string, 
     password: string,
-    displayName: string,
     ) {
     try{
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password)
-        return userCredential.user;
+        // const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+        // return userCredential.user;
+        await createUserWithEmailAndPassword(auth, email, password)
     } catch (error:any) {
         throw new Error("User creation failed: " + error.message);
     };

@@ -7,16 +7,18 @@ import {
     TouchableOpacity, 
     View 
 } from 'react-native';
-import { getAuth } from 'firebase/auth';
-import { signInUserWithEmailAndPassword } from '../auth/auth';
+import { getAuth, updateProfile } from 'firebase/auth';
+import { signUpUserWithEmailAndPassword } from '../auth/auth';
 import DatabaseContext from '../database/DatabaseContext';
-import { LoginScreenProps } from '../utils/types';
+import { SignUpScreenProps } from '../utils/types';
+import { pushNewUserInfo } from '../database/users';
 
-const LoginScreen = ( {navigation }: LoginScreenProps) => {
+const SignUpScreen = ( {navigation }: SignUpScreenProps) => {
     const auth = getAuth();
     const db = useContext(DatabaseContext);
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+    const [email, setEmail] = useState('');
+    const [nickname, setNickname] = useState('');
+    const [password, setPassword] = useState('');
 
     useEffect(() => {
         const stopListening = auth.onAuthStateChanged(user => {
@@ -28,18 +30,39 @@ const LoginScreen = ( {navigation }: LoginScreenProps) => {
         return stopListening;
     }, []);
 
-    const handleSignUp = () => {
-        navigation.navigate("Sign Up Screen");
+    const handleSignUp = async () => {
+        // Create the user in the authentification database
+        try {
+            await signUpUserWithEmailAndPassword(
+                auth, email, password
+                )
+        } catch (error:any){
+            throw new Error("There was an error creating a new user: " + error.message);
+        };
+        const newUser = auth.currentUser;
+        if (newUser == null){
+            throw new Error("The user was not created in the database");
+        }
+        // Update the user's information with the inputted sign up data
+        try {
+            await updateProfile(newUser, {
+                displayName: nickname
+            });
+        } catch (error:any) {
+            throw new Error("There was a problem updating the user information: " + error.message);
+        }
+        // Update the realtime database with the new user's info
+        try {
+            await pushNewUserInfo(db, newUser.uid);
+        } catch (error:any) {
+            throw new Error("Could not write the user data into the database: " + error.messsage);
+        }
+
+        return navigation.navigate("Main Screen");
     };
 
-    const handleLogin = async () => {
-        try {
-            await signInUserWithEmailAndPassword(
-                auth, email, password
-            );
-        } catch (error:any) {
-            throw new Error("Failed to sign in: " + error.message);
-        };
+    const handleGoBack = async () => {
+        navigation.navigate("Login Screen");
     };
 
     return (
@@ -55,6 +78,12 @@ const LoginScreen = ( {navigation }: LoginScreenProps) => {
             style={styles.input}
             />
             <TextInput
+            placeholder="Nickname"
+            value={nickname}
+            onChangeText={text => setNickname(text)}
+            style={styles.input}
+            />
+            <TextInput
             placeholder="Password"
             value={password}
             onChangeText={text => setPassword(text)}
@@ -65,23 +94,23 @@ const LoginScreen = ( {navigation }: LoginScreenProps) => {
 
         <View style={styles.buttonContainer}>
             <TouchableOpacity
-            onPress={handleLogin}
+            onPress={handleSignUp}
             style={styles.button}
             >
-            <Text style={styles.buttonText}>Login</Text>
+            <Text style={styles.buttonText}>Sign up</Text>
             </TouchableOpacity>
             <TouchableOpacity
-            onPress={handleSignUp}
+            onPress={handleGoBack}
             style={[styles.button, styles.buttonOutline]}
             >
-            <Text style={styles.buttonOutlineText}>Don't have an account yet? Sign up instead!</Text>
+            <Text style={styles.buttonOutlineText}>Go back</Text>
             </TouchableOpacity>
         </View>
         </KeyboardAvoidingView>
     );
 };
 
-export default LoginScreen
+export default SignUpScreen
 
 const styles = StyleSheet.create({
   container: {

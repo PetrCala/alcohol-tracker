@@ -2,6 +2,7 @@
 
 type AppStackParamList = {
   'Login Screen': undefined;
+  'Sign Up Screen': undefined;
   'Main Screen': undefined;
   'Drinking Session Screen': { 
     timestamp: number;
@@ -16,6 +17,10 @@ type AppStackParamList = {
 
 export type LoginScreenProps = {
     navigation: StackNavigationProp<AppStackParamList, 'Login Screen'>;
+}
+
+export type SignUpScreenProps = {
+    navigation: StackNavigationProp<AppStackParamList, 'Sign Up Screen'>;
 }
 
 export type MainScreenProps = {

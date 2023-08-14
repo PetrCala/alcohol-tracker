@@ -2,8 +2,9 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 
-import MainScreen from './screens/MainScreen';
 import LoginScreen from './screens/LoginScreen';
+import SignUpScreen from './screens/SignUpScreen';
+import MainScreen from './screens/MainScreen';
 import DrinkingSessionScreen from './screens/DrinkingSessionScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import SocialScreen from './screens/SocialScreen';
@@ -37,6 +38,11 @@ const AlcoholTracker = () => {
           <Stack.Screen
             name = 'Login Screen'
             component={LoginScreen}
+            options={{}}
+          />
+          <Stack.Screen
+            name = 'Sign Up Screen'
+            component={SignUpScreen}
             options={{}}
           />
           <Stack.Screen 
