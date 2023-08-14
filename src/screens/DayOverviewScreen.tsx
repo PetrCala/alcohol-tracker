@@ -129,10 +129,13 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
         if (date != null){
             let sessionsRef = `/user_drinking_sessions/${user.uid}`
             const stopListening = listenForDataChanges(db, sessionsRef, (data:any) => {
-                data = Object.values(data); // To an array
-                data = getSingleDayDrinkingSessions(date, data);
-                data.sort((a:any,b:any) => a.timestamp - b.timestamp); // Sort by timestamp
-                setDrinkingsessionData(data);
+                let newData: DrinkingSessionData[] = [];
+                if (data != null) {
+                    newData = Object.values(data); // To an array
+                    newData = getSingleDayDrinkingSessions(date, newData);
+                    newData.sort((a:any,b:any) => a.timestamp - b.timestamp); // Sort by timestamp
+                }
+                setDrinkingsessionData(newData);
                 setLoadingData(false);
             });
             return () => {

@@ -1,6 +1,8 @@
 ﻿import React, { useContext, useEffect, useState } from 'react';
 import { 
     KeyboardAvoidingView, 
+    Platform,
+    ScrollView,
     StyleSheet, 
     Text, 
     TextInput, 
@@ -66,9 +68,11 @@ const SignUpScreen = ( {navigation }: SignUpScreenProps) => {
     };
 
     return (
+        <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1 }}>
         <KeyboardAvoidingView
         style={styles.container}
-        behavior="padding"
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        // keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : -300}
         >
         <View style={styles.inputContainer}>
             <TextInput
@@ -107,6 +111,7 @@ const SignUpScreen = ( {navigation }: SignUpScreenProps) => {
             </TouchableOpacity>
         </View>
         </KeyboardAvoidingView>
+        </ScrollView>
     );
 };
 

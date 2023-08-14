@@ -20,7 +20,7 @@ import DatabaseContext from '../database/DatabaseContext';
 import { listenForDataChanges } from "../database/baseFunctions";
 import { updateDrinkingSessionUserData } from '../database/drinkingSessions';
 import { MainScreenProps, UserDataProps, DrinkingSessionData } from '../utils/types';
-import { deleteUser, getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
+import { deleteUser, getAuth, signOut, reauthenticateWithCredential } from 'firebase/auth';
 
 
 const MainScreen = ( { navigation }: MainScreenProps) => {
@@ -70,6 +70,8 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
 
   const handleSignOut = async () => {
     try {
+      // TODO
+      // reauthenticateWithCredential
       await signOut(auth);
       navigation.replace("Login Screen");
     } catch (error:any) {
