@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import BasicButton from '../components/Buttons/BasicButton';
 import MenuIcon from '../components/Buttons/MenuIcon';
-import SessionsCalendar from 'react-native-calendars/src/calendar';
+import SessionsCalendar from '../components/Calendar';
 import LoadingData from '../components/loadingData';
 import styles from '../styles';
 import DatabaseContext from '../DatabaseContext';

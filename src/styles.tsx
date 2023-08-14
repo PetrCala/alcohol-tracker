@@ -127,6 +127,11 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: '#FFFF99',
   },
+  mainScreenCalendarStyle: {
+    // height: 350
+  },
+  mainScreenCalendarTheme: {
+  },
   ///
   menuInSessionWarningContainer: {
     backgroundColor: '#ff5d54',

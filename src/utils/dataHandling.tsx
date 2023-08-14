@@ -1,4 +1,4 @@
-﻿import { DrinkingSessionData } from "./types";
+﻿import { DrinkingSessionData, DateObject } from "./types";
 
 /** Convert a timestamp to a Date object */
 export function timestampToDate( timestamp: number): Date {
@@ -66,7 +66,15 @@ export function setDateToCurrentTime(inputDate: Date): Date {
     return inputDate;
   }
 
-
+export function createDateObject(date: Date): DateObject {
+    return {
+      dateString: date.toISOString().split('T')[0],
+      day: date.getDate(),
+      month: date.getMonth() + 1, // JavaScript months are 0-indexed, so add 1
+      timestamp: date.getTime(),
+      year: date.getFullYear(),
+    };
+  }
 
   /** Subset an array of drinking sessions to a single day.
    * 

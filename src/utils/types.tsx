@@ -84,8 +84,18 @@ export type SessionsCalendarProps = {
 
 export type SessionsCalendarMarkedDates = {
     [date: string]: {
-        color?: string
+        color: string;
+        textColor?: string;
+
     };
+};
+
+export type DateObject = {
+  dateString: string;
+  day: number;
+  month: number;
+  timestamp: number;
+  year: number;
 };
 
 // Loading data props
