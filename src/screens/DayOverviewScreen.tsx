@@ -9,13 +9,10 @@ import styles from '../styles';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import { 
     timestampToDate, 
-    getTimestampAtMidnight,
     formatDateToDay, 
     formatDateToTime, 
     changeDateBySomeDays, 
     unitsToColors,
-    getDateAtMidnightFromTimestamp,
-    getTimestampAtNoon,
     getSingleDayDrinkingSessions,
     setDateToCurrentTime
 } from '../utils/dataHandling';
@@ -24,16 +21,23 @@ import DatabaseContext from '../database/DatabaseContext';
 import LoadingData from '../components/LoadingData';
 import { DayOverviewScreenProps, DrinkingSessionProps, DrinkingSessionData} from '../utils/types';
 import { listenForDataChanges } from '../database/baseFunctions';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { getAuth } from 'firebase/auth';
 
 
 const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
     const { timestamp } = route.params; // Params for navigation
+    const auth = getAuth();
+    const user = auth.currentUser;
     const db = useContext(DatabaseContext);
-    const [userId, setUserId] = useState<string | null>(null);
     const [ date, setDate ] = useState<Date | null>(timestampToDate(timestamp));
     const [drinkingSessionData, setDrinkingsessionData] = useState<DrinkingSessionData[] | null>([]); // Data
     const [ loadingData, setLoadingData] = useState<boolean | null>(true);
+
+    // Automatically navigate to login screen if login expires
+    if (user == null){
+        navigation.replace("Login Screen");
+        return null;
+    }
 
     const onEditSessionPress = (session:DrinkingSessionData) => {
         return navigation.navigate('Edit Session Screen', {session: session})
@@ -120,24 +124,10 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
         };
     }
 
-    // Monitor user id
-    useEffect(() => {
-        const auth = getAuth();
-        const stopListening = onAuthStateChanged(auth, (user) => {
-        if (user) { // User signed in
-            setUserId(user.uid);
-        } else {
-            // User is signed out
-        }
-        });
-
-        return () => stopListening();
-    }, []); 
-
     // Monitor and update drinking session id data
     useEffect(() => {
-        if (date != null && userId != null){
-            let sessionsRef = `/user_drinking_sessions/${userId}`
+        if (date != null){
+            let sessionsRef = `/user_drinking_sessions/${user.uid}`
             const stopListening = listenForDataChanges(db, sessionsRef, (data:any) => {
                 data = Object.values(data); // To an array
                 data = getSingleDayDrinkingSessions(date, data);
@@ -149,7 +139,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
                 stopListening();
             };
         }
-    }, [db, userId, date]);
+    }, [db, date]);
 
 
     // Loading drinking session data

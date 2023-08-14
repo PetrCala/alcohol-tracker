@@ -1,8 +1,6 @@
 ﻿import React, {
-useRef,
 useState,
 useContext,
-useEffect
 } from 'react';
 import {
 Text,
@@ -16,13 +14,13 @@ import DatabaseContext from '../database/DatabaseContext';
 import { removeDrinkingSessionData, editDrinkingSessionData } from '../database/drinkingSessions';
 import ClickableTextInput from '../components/Buttons/ClickableTextInput';
 import { formatDateToDay, formatDateToTime, timestampToDate } from '../utils/dataHandling';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import LoadingData from '../components/LoadingData';
+import { getAuth } from 'firebase/auth';
 
 
 const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
     const { session } = route.params; 
-    const [userId, setUserId] = useState<string | null>(null);
+    const auth = getAuth();
+    const user = auth.currentUser;
     const [units, setUnits] = useState(session.units);
     const [timestamp, setTimestamp] = useState(session.timestamp); // Later editable
     const sessionId = session.session_id;
@@ -31,6 +29,12 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
     const sessionTime = formatDateToTime(sessionDate);
     const db = useContext(DatabaseContext);
 
+
+    // Automatically navigate to login screen if login expires
+    if (user == null){
+        navigation.replace("Login Screen");
+        return null;
+    }
 
     // Change local hook value
     const changeUnits = (number: number) => {
@@ -76,28 +80,6 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
         navigation.goBack();
     };
 
-    // Monitor user id
-    useEffect(() => {
-        const auth = getAuth();
-        const stopListening = onAuthStateChanged(auth, (user) => {
-        if (user) { // User signed in
-            setUserId(user.uid);
-        } else {
-            // User is signed out
-        }
-        });
-
-        return () => stopListening();
-    }, []); 
-
-
-    if (userId == null) { // Should never happen
-        return(
-          <LoadingData
-          loadingText="Loading user id..." 
-          />
-          )
-      };
 
     return (
         <View style={{flex:1, backgroundColor: '#FFFF99'}}>
@@ -145,13 +127,13 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
             text='Save Session'
             buttonStyle={styles.drinkingSessionButton}
             textStyle={styles.drinkingSessionButtonText}
-            onPress={() => saveSession(db, userId)}
+            onPress={() => saveSession(db, user.uid)}
             />
             <BasicButton 
             text='Delete Session'
             buttonStyle={styles.drinkingSessionButton}
             textStyle={styles.drinkingSessionButtonText}
-            onPress={() => deleteSession(db, userId, sessionId)}
+            onPress={() => deleteSession(db, user.uid, sessionId)}
             />
         </View>
         </View>

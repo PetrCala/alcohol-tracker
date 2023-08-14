@@ -22,12 +22,19 @@ import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 
 
 const MainScreen = ( { navigation }: MainScreenProps) => {
+  const auth = getAuth();
+  const user = auth.currentUser;
   const db = useContext(DatabaseContext);
-  const [user, setUser] = useState<any | null>(null);
   const [userData, setUserData] = useState<UserDataProps | null>(null);
   const [drinkingSessionData, setDrinkingsessionData] = useState<DrinkingSessionData[] | null>([]); // Data
   const [ loadingUserData, setUserLoadingData] = useState<boolean | null>(true);
   const [ loadingSessionData, setLoadingSessionData] = useState<boolean | null>(true);
+
+  // Automatically navigate to login screen if login expires
+  if (user == null){
+    navigation.replace("Login Screen");
+    return null;
+  }
 
   // Handle drinking session button press
   const startDrinkingSession = async () => {
@@ -68,57 +75,39 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
     }
   };
 
-  // Monitor authentificated user
+  // Monitor user data
   useEffect(() => {
-    const auth = getAuth();
-    const stopListening = onAuthStateChanged(auth, (user) => {
-      if (user) { // User signed in
-        setUser(user);
-      } else {
-        // User is signed out
-      }
+    let userRef = `users/${user.uid}`
+    let stopListening = listenForDataChanges(db, userRef, (data:UserDataProps) => {
+      setUserData(data);
+      setUserLoadingData(false);
     });
 
     return () => stopListening();
-  }, []); 
-
-  // Monitor user data
-  useEffect(() => {
-    if (user != null){
-      let userRef = `users/${user.uid}`
-      let stopListening = listenForDataChanges(db, userRef, (data:UserDataProps) => {
-        setUserData(data);
-        setUserLoadingData(false);
-      });
-
-      return () => stopListening();
-    };
 
     }, [db, user]);
 
   // Monitor drinking session data
   useEffect(() => {
-    if (user != null) {
-      // Start listening for changes when the component mounts
-      let sessionsRef = `user_drinking_sessions/${user.uid}`
-      let stopListening = listenForDataChanges(db, sessionsRef, (data:any) => {
-        let newDrinkingSessionData:DrinkingSessionData[] = [];
-        if (data != null){
-          newDrinkingSessionData = Object.values(data); // To an array
-        }
-        setDrinkingsessionData(newDrinkingSessionData);
-        setLoadingSessionData(false);
-      });
-  
-      // Stop listening for changes when the component unmounts
-      return () => {
-        stopListening();
-      };
+    // Start listening for changes when the component mounts
+    let sessionsRef = `user_drinking_sessions/${user.uid}`
+    let stopListening = listenForDataChanges(db, sessionsRef, (data:any) => {
+      let newDrinkingSessionData:DrinkingSessionData[] = [];
+      if (data != null){
+        newDrinkingSessionData = Object.values(data); // To an array
+      }
+      setDrinkingsessionData(newDrinkingSessionData);
+      setLoadingSessionData(false);
+    });
+
+    // Stop listening for changes when the component unmounts
+    return () => {
+      stopListening();
     };
 
   }, [db, user]); // Re-run effect when userId or db changes
 
-
+  // Wait for the user data to be fetched from database
   if (loadingUserData || loadingSessionData) {
     return(
       <LoadingData

@@ -19,13 +19,13 @@ const LoginScreen = ( {navigation }: LoginScreenProps) => {
     const [password, setPassword] = useState('KappaKappa123')
 
     useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged(user => {
+        const stopListening = auth.onAuthStateChanged(user => {
         if (user) {
             navigation.replace("Main Screen") // Redirect to main screen
         };
         });
 
-        return unsubscribe;
+        return stopListening;
     }, []);
 
     const handleSignUp = () => {
