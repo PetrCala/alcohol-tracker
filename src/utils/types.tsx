@@ -1,6 +1,7 @@
 ﻿import { StackNavigationProp } from '@react-navigation/stack';
 
 type AppStackParamList = {
+  'Login Screen': undefined;
   'Main Screen': undefined;
   'Drinking Session Screen': { 
     timestamp: number;
@@ -12,6 +13,10 @@ type AppStackParamList = {
   'Settings Screen': undefined;
   'Day Overview Screen': { timestamp: number };
 };
+
+export type LoginScreenProps = {
+    navigation: StackNavigationProp<AppStackParamList, 'Login Screen'>;
+}
 
 export type MainScreenProps = {
     navigation: StackNavigationProp<AppStackParamList, 'Main Screen'>;

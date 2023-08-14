@@ -6,18 +6,19 @@
  * @param db The database object
  * @param userId The user ID
  */
-export async function pushBaseUserInfo(
+export async function pushNewUserInfo(
  db: any,
  userId: string,
 ){
+  let timestampNow = new Date().getTime();
   let updates: {[key:string]: number | boolean} = {};
-  updates[`users/${userId}/timestamp`] = 0;
+  updates[`users/${userId}/current_timestamp`] = timestampNow;
   updates[`users/${userId}/current_units`] = 0;
   updates[`users/${userId}/in_session`] = false;
   try {
     await update(ref(db), updates)
   } catch (error:any) {
-    throw new Error('Failed to add a new unit: ' + error.message);
+    throw new Error('Failed to create new user info: ' + error.message);
   } 
 }
 

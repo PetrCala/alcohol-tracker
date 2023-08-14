@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react';
+﻿import React, { useContext, useEffect, useState } from 'react';
 import { 
     KeyboardAvoidingView, 
     StyleSheet, 
@@ -9,76 +9,77 @@ import {
 } from 'react-native';
 import { getAuth } from 'firebase/auth';
 import { signInUserWithEmailAndPassword } from '../auth/auth';
+import DatabaseContext from '../database/DatabaseContext';
+import { LoginScreenProps } from '../utils/types';
 
-const LoginScreen = () => {
-//   const auth = getAuth();
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+const LoginScreen = ( {navigation }: LoginScreenProps) => {
+    const auth = getAuth();
+    const db = useContext(DatabaseContext);
+    const [email, setEmail] = useState('cojeee16@seznam.cz')
+    const [password, setPassword] = useState('KappaKappa123')
 
-  useEffect(() => {
-    console.log('navigate')
-    // const unsubscribe = auth.onAuthStateChanged(user => {
-    //   if (user) {
-    //     navigation.replace("Home")
-    //   }
-    // })
+    useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged(user => {
+        if (user) {
+            navigation.replace("Main Screen") // Redirect to main screen
+        };
+        });
 
-    // return unsubscribe
-  }, [])
+        return unsubscribe;
+    }, []);
 
-  const handleSignUp = () => {
-    console.log('signup');
-  }
+    const handleSignUp = () => {
+        console.log('signing up new user...');
+    };
 
-  const handleLogin = async () => {
-    const tempEmail = 'cojeee16@seznam.cz'
-    const tempPw = 'KappaKappa123';
+    const handleLogin = async () => {
+        try {
+            await signInUserWithEmailAndPassword(
+                auth, email, password
+            );
+        } catch (error:any) {
+            throw new Error("Failed to sign in: " + error.message);
+        };
+    };
 
-    // const loggedUser = await signInUserWithEmailAndPassword(
-    //     auth, tempEmail, tempPw
-    // )
-
-    // console.log(loggedUser);
-  }
-
-  return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior="padding"
-    >
-      <View style={styles.inputContainer}>
-        <TextInput
-          placeholder="Email"
-          value={email}
-          onChangeText={text => setEmail(text)}
-          style={styles.input}
-        />
-        <TextInput
-          placeholder="Password"
-          value={password}
-          onChangeText={text => setPassword(text)}
-          style={styles.input}
-          secureTextEntry
-        />
-      </View>
-
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          onPress={handleLogin}
-          style={styles.button}
+    return (
+        <KeyboardAvoidingView
+        style={styles.container}
+        behavior="padding"
         >
-          <Text style={styles.buttonText}>Login</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={handleSignUp}
-          style={[styles.button, styles.buttonOutline]}
-        >
-          <Text style={styles.buttonOutlineText}>Register</Text>
-        </TouchableOpacity>
-      </View>
-    </KeyboardAvoidingView>
-  )
-}
+        <View style={styles.inputContainer}>
+            <TextInput
+            placeholder="Email"
+            value={email}
+            onChangeText={text => setEmail(text)}
+            style={styles.input}
+            />
+            <TextInput
+            placeholder="Password"
+            value={password}
+            onChangeText={text => setPassword(text)}
+            style={styles.input}
+            secureTextEntry
+            />
+        </View>
+
+        <View style={styles.buttonContainer}>
+            <TouchableOpacity
+            onPress={handleLogin}
+            style={styles.button}
+            >
+            <Text style={styles.buttonText}>Login</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+            onPress={handleSignUp}
+            style={[styles.button, styles.buttonOutline]}
+            >
+            <Text style={styles.buttonOutlineText}>Register</Text>
+            </TouchableOpacity>
+        </View>
+        </KeyboardAvoidingView>
+    );
+};
 
 export default LoginScreen
 

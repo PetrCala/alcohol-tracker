@@ -13,7 +13,6 @@ import BasicButton from '../components/Buttons/BasicButton';
 
 import DatabaseContext from '../database/DatabaseContext';
 import { readDataOnce } from '../database/baseFunctions';
-import { listenForUserId } from '../auth/auth';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 type ProfileProps = {
@@ -22,16 +21,15 @@ type ProfileProps = {
 
 const ProfileScreen = (props: ProfileProps) => {
   const { navigation } = props;
-  const [userId, setUserId] = useState<string | null>(null);
+  const [user, setUser] = useState<any | null>(null);
   const db = useContext(DatabaseContext);
-  const sessionId = '-NaqnsVVobr1NXPEhFqP2';
 
 
   useEffect(() => {
     const auth = getAuth();
     const stopListening = onAuthStateChanged(auth, (user) => {
       if (user) { // User signed in
-        setUserId(user.uid);
+        setUser(user);
       } else {
         // User is signed out
       }

@@ -18,7 +18,7 @@ import DatabaseContext from '../database/DatabaseContext';
 import { listenForDataChanges } from "../database/baseFunctions";
 import { updateDrinkingSessionUserData } from '../database/drinkingSessions';
 import { MainScreenProps, UserDataProps, DrinkingSessionData } from '../utils/types';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 
 
 const MainScreen = ( { navigation }: MainScreenProps) => {
@@ -58,13 +58,22 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
     });
   }
 
+  const handleSignOut = async () => {
+    const auth = getAuth();
+    try {
+      await signOut(auth);
+      navigation.replace("Login Screen");
+    } catch (error:any) {
+      throw new Error("There was an error signing out: " + error.message);
+    }
+  };
+
   // Monitor authentificated user
   useEffect(() => {
     const auth = getAuth();
     const stopListening = onAuthStateChanged(auth, (user) => {
       if (user) { // User signed in
         setUser(user);
-        console.log(user);
       } else {
         // User is signed out
       }
@@ -155,7 +164,8 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
                   iconSource={require('../assets/icons/settings.png')} 
                   containerStyle={styles.menuIconContainer}
                   iconStyle={styles.menuIcon}
-                  onPress = {() => navigation.navigate('Settings Screen')}
+                  // onPress = {() => navigation.navigate('Settings Screen')}
+                  onPress = {handleSignOut}
                   />
             </View>
         </View>

@@ -34,14 +34,14 @@ const AlcoholTracker = () => {
             headerShown: false
           }}
           >
-          <Stack.Screen 
-            name='Main Screen'
-            component={MainScreen}
-            options={{}}
-          />
           <Stack.Screen
             name = 'Login Screen'
             component={LoginScreen}
+            options={{}}
+          />
+          <Stack.Screen 
+            name='Main Screen'
+            component={MainScreen}
             options={{}}
           />
           <Stack.Screen 

@@ -5,12 +5,21 @@ import {
     signInWithEmailAndPassword, 
     onAuthStateChanged
 } from "firebase/auth";
+import { pushNewUserInfo } from "../database/users";
 
 
+/** Create a new user in the database
+ * 
+ * @param auth 
+ * @param email 
+ * @param password 
+ * @returns 
+ */
 export async function signUpUserWithEmailAndPassword(
     auth:any, 
     email:string, 
     password: string,
+    displayName: string,
     ) {
     try{
         const userCredential = await createUserWithEmailAndPassword(auth, email, password)
@@ -29,6 +38,6 @@ export async function signInUserWithEmailAndPassword(
         const userCredential = await signInWithEmailAndPassword(auth, email, password)
         return userCredential.user;
     } catch (error:any) {
-        throw new Error("User creation failed: " + error.message);
+        throw new Error("User login failed: " + error.message);
     };
 }
