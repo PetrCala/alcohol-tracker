@@ -6,19 +6,21 @@
   useEffect,
 } from 'react';
 import { 
-    Text,
-    View,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import BasicButton from '../components/Buttons/BasicButton';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import SessionsCalendar from '../components/Calendar';
 import LoadingData from '../components/LoadingData';
+import YesNoPopup from '../components/YesNoPopup';
 import styles from '../styles';
 import DatabaseContext from '../database/DatabaseContext';
 import { listenForDataChanges } from "../database/baseFunctions";
 import { updateDrinkingSessionUserData } from '../database/drinkingSessions';
 import { MainScreenProps, UserDataProps, DrinkingSessionData } from '../utils/types';
-import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
+import { deleteUser, getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 
 
 const MainScreen = ( { navigation }: MainScreenProps) => {
@@ -27,8 +29,9 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
   const db = useContext(DatabaseContext);
   const [userData, setUserData] = useState<UserDataProps | null>(null);
   const [drinkingSessionData, setDrinkingsessionData] = useState<DrinkingSessionData[] | null>([]); // Data
-  const [ loadingUserData, setUserLoadingData] = useState<boolean | null>(true);
-  const [ loadingSessionData, setLoadingSessionData] = useState<boolean | null>(true);
+  const [ loadingUserData, setUserLoadingData] = useState<boolean>(true);
+  const [ loadingSessionData, setLoadingSessionData] = useState<boolean>(true);
+  // const [deleteUserPopupVisible, setDeleteUserPopupVisible] = useState<boolean>(false);
 
   // Automatically navigate to login screen if login expires
   if (user == null){
@@ -66,12 +69,20 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
   }
 
   const handleSignOut = async () => {
-    const auth = getAuth();
     try {
       await signOut(auth);
       navigation.replace("Login Screen");
     } catch (error:any) {
       throw new Error("There was an error signing out: " + error.message);
+    }
+  };
+
+  const handleDeleteUser = async () => {
+    try {
+      await deleteUser(user);
+      navigation.replace("Login Screen");
+    } catch (error:any) {
+      throw new Error("There was an error deleting the user: " + error.message);
     }
   };
 
@@ -149,13 +160,28 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
                   onPress = {() => navigation.navigate('Achievement Screen')}
                   />
                 <MenuIcon 
-                  iconId='settings-icon'
-                  iconSource={require('../assets/icons/settings.png')} 
+                  iconId='sign-out'
+                  iconSource={require('../assets/icons/exit.png')} 
                   containerStyle={styles.menuIconContainer}
                   iconStyle={styles.menuIcon}
                   // onPress = {() => navigation.navigate('Settings Screen')}
                   onPress = {handleSignOut}
                   />
+                <MenuIcon 
+                  iconId='menu-icon'
+                  iconSource={require('../assets/icons/delete.png')} 
+                  containerStyle={styles.menuIconContainer}
+                  iconStyle={styles.menuIcon}
+                  onPress = {handleDeleteUser}
+                  // onPress = {() => setDeleteUserPopupVisible(true)}
+                />
+                {/* <YesNoPopup
+                  visible={deleteUserPopupVisible}
+                  onRequestClose={() => setDeleteUserPopupVisible(false)}
+                  message="Do you really want delete this user?"
+                  onYes={handleDeleteUser}
+                  onNo={setDeleteUserPopupVisible(false)}
+                /> */}
             </View>
         </View>
         <View style={styles.mainScreenContent}>

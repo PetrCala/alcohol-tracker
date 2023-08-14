@@ -39,17 +39,17 @@ const AlcoholTracker = () => {
             name = 'Login Screen'
             component={LoginScreen}
             options={{}}
-          />
+            />
           <Stack.Screen
             name = 'Sign Up Screen'
             component={SignUpScreen}
             options={{}}
-          />
+            />
           <Stack.Screen 
             name='Main Screen'
             component={MainScreen}
             options={{}}
-          />
+            />
           <Stack.Screen 
           name='Drinking Session Screen' 
           component={DrinkingSessionScreen}
