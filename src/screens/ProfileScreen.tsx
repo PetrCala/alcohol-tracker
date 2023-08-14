@@ -15,6 +15,8 @@ import DatabaseContext from '../DatabaseContext';
 import { readDataOnce } from '../database';
 import { ref, get, onValue } from "firebase/database";
 import { saveDrinkingSessionData, removeDrinkingSessionData } from '../database';
+import { listenForUserId } from '../auth/auth';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 type ProfileProps = {
   navigation: any;
@@ -22,11 +24,26 @@ type ProfileProps = {
 
 const ProfileScreen = (props: ProfileProps) => {
   const { navigation } = props;
+  const [userId, setUserId] = useState<string | null>(null);
   const db = useContext(DatabaseContext);
-  const userId = 'petr_cala';
   const sessionId = '-NaqnsVVobr1NXPEhFqP2';
 
 
+  useEffect(() => {
+    const auth = getAuth();
+    const stopListening = onAuthStateChanged(auth, (user) => {
+      if (user) { // User signed in
+        setUserId(user.uid);
+      } else {
+        // User is signed out
+      }
+    });
+
+    return () => stopListening();
+  }, []); 
+
+
+  console.log(userId);
   return (
     <View style={{flex:1, backgroundColor: '#FFFF99'}}>
       <View style={styles.header}>
@@ -42,7 +59,7 @@ const ProfileScreen = (props: ProfileProps) => {
         text='TD'
         buttonStyle={styles.startSessionButton}
         textStyle={styles.startSessionText}
-        onPress={() => {console.log("does nothing")}}
+        onPress={() => {console.log('hello')}}
       />
     </View>
   );

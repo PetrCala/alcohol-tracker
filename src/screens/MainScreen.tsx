@@ -17,20 +17,21 @@ import styles from '../styles';
 import DatabaseContext from '../DatabaseContext';
 import { listenForDataChanges, updateDrinkingSessionUserData } from "../database";
 import { MainScreenProps, UserDataProps, DrinkingSessionData } from '../utils/types';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+
 
 const MainScreen = ( { navigation }: MainScreenProps) => {
   const db = useContext(DatabaseContext);
+  const [userId, setUserId] = useState<string | null>(null);
   const [userData, setUserData] = useState<UserDataProps | null>(null);
   const [drinkingSessionData, setDrinkingsessionData] = useState<DrinkingSessionData[] | null>([]); // Data
   const [ loadingUserData, setUserLoadingData] = useState<boolean | null>(true);
   const [ loadingSessionData, setLoadingSessionData] = useState<boolean | null>(true);
 
-  const userId = 'petr_cala';
-
   // Handle drinking session button press
   const startDrinkingSession = async () => {
     if (userData == null){
-      throw new Error("This function should never be called outside rendered main screen.")
+      throw new Error("The user" + userId + " has no data in the database.")
     }
     let startingUnits = userData.current_units;
     let sessionStartTime = userData.current_timestamp;
@@ -56,44 +57,65 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
     });
   }
 
+  // Monitor user id
+  useEffect(() => {
+    const auth = getAuth();
+    const stopListening = onAuthStateChanged(auth, (user) => {
+      if (user) { // User signed in
+        setUserId(user.uid);
+      } else {
+        // User is signed out
+      }
+    });
+
+    return () => stopListening();
+  }, []); 
+
   // Monitor user data
   useEffect(() => {
+    if (userId != null){
       let userRef = `users/${userId}`
-      let stopListening = listenForDataChanges(db, userRef, false, (data:UserDataProps) => {
+      let stopListening = listenForDataChanges(db, userRef, (data:UserDataProps) => {
         setUserData(data);
         setUserLoadingData(false);
       });
 
-      return () => {
-        stopListening();
-      };
+      return () => stopListening();
+    };
 
     }, [db, userId]);
 
   // Monitor drinking session data
   useEffect(() => {
-    // Start listening for changes when the component mounts
-    let sessionsRef = `user_drinking_sessions/${userId}`
-    let stopListening = listenForDataChanges(db, sessionsRef, true, (data:any) => {
-      setDrinkingsessionData(data);
-      setLoadingSessionData(false);
-    });
-
-    // Stop listening for changes when the component unmounts
-    return () => {
-      stopListening();
+    if (userId != null) {
+      // Start listening for changes when the component mounts
+      let sessionsRef = `user_drinking_sessions/${userId}`
+      let stopListening = listenForDataChanges(db, sessionsRef, (data:any) => {
+        let newDrinkingSessionData:DrinkingSessionData[] = [];
+        if (data != null){
+          newDrinkingSessionData = Object.values(data); // To an array
+        }
+        setDrinkingsessionData(newDrinkingSessionData);
+        setLoadingSessionData(false);
+      });
+  
+      // Stop listening for changes when the component unmounts
+      return () => {
+        stopListening();
+      };
     };
+
   }, [db, userId]); // Re-run effect when userId or db changes
 
 
   if (loadingUserData || loadingSessionData) {
     return(
       <LoadingData
-        loadingText="Loading data..."
+      loadingText="Loading data..."
       />
-    )
-  };
-  
+      )
+    };
+    
   return (
     <View style={styles.container}>
         <View style={styles.header}>

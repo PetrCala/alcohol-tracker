@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 
 import MainScreen from './screens/MainScreen';
+import LoginScreen from './screens/LoginScreen';
 import DrinkingSessionScreen from './screens/DrinkingSessionScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import SocialScreen from './screens/SocialScreen';
@@ -13,11 +14,14 @@ import EditSessionScreen from './screens/EditSession';
 
 import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
+import { getAuth } from 'firebase/auth';
 import firebaseConfig from "../firebaseConfig";
 import DatabaseContext from './DatabaseContext';
 
 const app = initializeApp(firebaseConfig);
+
 const db = getDatabase(app);
+const auth = getAuth(app); // Available automatically after this call
 
 const Stack = createNativeStackNavigator();
 
@@ -33,6 +37,11 @@ const AlcoholTracker = () => {
           <Stack.Screen 
             name='Main Screen'
             component={MainScreen}
+            options={{}}
+          />
+          <Stack.Screen
+            name = 'Login Screen'
+            component={LoginScreen}
             options={{}}
           />
           <Stack.Screen 

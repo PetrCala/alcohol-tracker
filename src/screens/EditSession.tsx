@@ -13,13 +13,16 @@ import MenuIcon from '../components/Buttons/MenuIcon';
 import BasicButton from '../components/Buttons/BasicButton';
 import { EditSessionScreenProps, DrinkingSessionData } from '../utils/types';
 import DatabaseContext from '../DatabaseContext';
-import { saveDrinkingSessionData, removeDrinkingSessionData, editDrinkingSessionData } from '../database';
+import { removeDrinkingSessionData, editDrinkingSessionData } from '../database';
 import ClickableTextInput from '../components/Buttons/ClickableTextInput';
 import { formatDateToDay, formatDateToTime, timestampToDate } from '../utils/dataHandling';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import LoadingData from '../components/loadingData';
 
 
 const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
     const { session } = route.params; 
+    const [userId, setUserId] = useState<string | null>(null);
     const [units, setUnits] = useState(session.units);
     const [timestamp, setTimestamp] = useState(session.timestamp); // Later editable
     const sessionId = session.session_id;
@@ -27,7 +30,6 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
     const sessionDay = formatDateToDay(sessionDate);
     const sessionTime = formatDateToTime(sessionDate);
     const db = useContext(DatabaseContext);
-    const userId = 'petr_cala';
 
 
     // Change local hook value
@@ -73,6 +75,29 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
     const handleBackPress = async () => {
         navigation.goBack();
     };
+
+    // Monitor user id
+    useEffect(() => {
+        const auth = getAuth();
+        const stopListening = onAuthStateChanged(auth, (user) => {
+        if (user) { // User signed in
+            setUserId(user.uid);
+        } else {
+            // User is signed out
+        }
+        });
+
+        return () => stopListening();
+    }, []); 
+
+
+    if (userId == null) { // Should never happen
+        return(
+          <LoadingData
+          loadingText="Loading user id..." 
+          />
+          )
+      };
 
     return (
         <View style={{flex:1, backgroundColor: '#FFFF99'}}>

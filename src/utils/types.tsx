@@ -28,13 +28,7 @@ export type DayOverviewScreenProps = {
 }
  
 export type EditSessionScreenProps = {
-  route: {
-    key: string;
-    name: string;
-    params: {
-      session: DrinkingSessionData
-    }
-  };
+  route: any;
   navigation: any;
 }
 

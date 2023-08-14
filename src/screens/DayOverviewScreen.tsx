@@ -23,17 +23,17 @@ import { useContext } from 'react';
 import DatabaseContext from '../DatabaseContext';
 import LoadingData from '../components/loadingData';
 import { DayOverviewScreenProps, DrinkingSessionProps, DrinkingSessionData} from '../utils/types';
-import { listenForDataChanges, listenForSessionDataChanges } from '../database';
+import { listenForDataChanges } from '../database';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 
 const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
     const { timestamp } = route.params; // Params for navigation
     const db = useContext(DatabaseContext);
+    const [userId, setUserId] = useState<string | null>(null);
     const [ date, setDate ] = useState<Date | null>(timestampToDate(timestamp));
     const [drinkingSessionData, setDrinkingsessionData] = useState<DrinkingSessionData[] | null>([]); // Data
     const [ loadingData, setLoadingData] = useState<boolean | null>(true);
-
-    const userId = 'petr_cala';
 
     const onEditSessionPress = (session:DrinkingSessionData) => {
         return navigation.navigate('Edit Session Screen', {session: session})
@@ -120,10 +120,25 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
         };
     }
 
+    // Monitor user id
+    useEffect(() => {
+        const auth = getAuth();
+        const stopListening = onAuthStateChanged(auth, (user) => {
+        if (user) { // User signed in
+            setUserId(user.uid);
+        } else {
+            // User is signed out
+        }
+        });
+
+        return () => stopListening();
+    }, []); 
+
     // Monitor and update drinking session id data
     useEffect(() => {
-        if (date != null){
-            const stopListening = listenForSessionDataChanges(db, userId, (data:any) => {
+        if (date != null && userId != null){
+            let sessionsRef = `/user_drinking_sessions/${userId}`
+            const stopListening = listenForDataChanges(db, sessionsRef, (data:any) => {
                 data = Object.values(data); // To an array
                 data = getSingleDayDrinkingSessions(date, data);
                 data.sort((a:any,b:any) => a.timestamp - b.timestamp); // Sort by timestamp

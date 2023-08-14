@@ -16,10 +16,13 @@ import DatabaseContext from '../DatabaseContext';
 import { saveDrinkingSessionData, updateCurrentUnits, discardDrinkingSessionData } from '../database';
 import ClickableTextInput from '../components/Buttons/ClickableTextInput';
 import { formatDateToDay, formatDateToTime, timestampToDate } from '../utils/dataHandling';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import LoadingData from '../components/loadingData';
 
 
 const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps) => {
   const { current_units, timestamp } = route.params;
+  const [userId, setUserId] = useState<string | null>(null);
   const [units, setUnits] = useState(current_units);
   const [pendingUpdate, setPendingUpdate] = useState(false);
   const sessionDate = timestampToDate(timestamp);
@@ -27,7 +30,6 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
   const sessionTime = formatDateToTime(sessionDate);
   const db = useContext(DatabaseContext);
   const updateTimeout = 1000; // Synchronize with DB every x milliseconds
-  const userId = 'petr_cala';
 
 
   // Change local hook value
@@ -45,10 +47,24 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
     });
   const prevUnits = prevUnitsRef.current;
 
+  // Monitor user id
+  useEffect(() => {
+    const auth = getAuth();
+    const stopListening = onAuthStateChanged(auth, (user) => {
+      if (user) { // User signed in
+        setUserId(user.uid);
+      } else {
+        // User is signed out
+      }
+    });
+
+    return () => stopListening();
+  }, []); 
+
   // Change database value once every second
   useEffect(() => {
     // Only schedule a database update if the units have changed
-    if (prevUnits !== units) {
+    if (prevUnits !== units && userId != null) {
       setPendingUpdate(true);
       const timer = setTimeout(async () => {
         await updateCurrentUnits(db, userId, units);
@@ -90,10 +106,18 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
   /** If an update is pending, update immediately before navigating away
    */
   const handleBackPress = async () => {
-    if (pendingUpdate) {
+    if (pendingUpdate && userId != null) {
       await updateCurrentUnits(db, userId, units);
     }
     navigation.goBack();
+  };
+
+  if (userId == null) { // Should never happen
+    return(
+      <LoadingData
+      loadingText="Loading user id..." 
+      />
+      )
   };
 
   return (

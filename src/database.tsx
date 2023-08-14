@@ -37,15 +37,14 @@ export async function readDataOnce(db: any, refString: string) {
 export function listenForDataChanges(
   db: any,
   refString: string,
-  dataToArray: boolean,
   onDataChange: (data: any) => void
 ) {
   const dbRef = ref(db, `/${refString}`);
   const listener = onValue(dbRef, (snapshot) => {
-    let data = snapshot.val();
-    if (dataToArray) {
-      data = Object.values(data); // To an array
-    };
+    let data:any = null;
+    if (snapshot.exists()){
+      data = snapshot.val();
+    }
     onDataChange(data);
   });
 
@@ -63,7 +62,10 @@ export function listenForSessionDataChanges(
 ) {
   const dbRef = ref(db, `/user_drinking_sessions/${userId}`);
   const listener = onValue(dbRef, (snapshot) => {
-    let data = snapshot.val();
+    let data:any = null;
+    if (snapshot.exists()){
+      data = snapshot.val();
+    }
     onDataChange(data);
   });
 
