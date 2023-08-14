@@ -16,7 +16,8 @@ import {
     unitsToColors,
     getDateAtMidnightFromTimestamp,
     getTimestampAtNoon,
-    getSingleDayDrinkingSessions
+    getSingleDayDrinkingSessions,
+    setDateToCurrentTime
 } from '../utils/dataHandling';
 import { useContext } from 'react';
 import DatabaseContext from '../DatabaseContext';
@@ -82,7 +83,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
         );
     }
 
-    const addSessionComponent = () => {
+    const addSessionButton = () => {
         if (date == null) {
             return(
                 <LoadingData
@@ -90,8 +91,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
                 />
             )
         }
-        // let newTimestamp = getTimestampAtNoon(date); // At noon
-        let newTimestamp = Date.now();
+        let newTimestamp = setDateToCurrentTime(date).getTime(); // At noon
         let newSession:DrinkingSessionData = {
             session_id: 'edit-session-id', // Immutable! (see database.tsx)
             timestamp: newTimestamp, // Arbitrary timestamp of today's noon
@@ -167,7 +167,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
                 renderItem={renderDrinkingSession}
                 keyExtractor={item => item.session_id}
                 ListEmptyComponent={noDrinkingSessionsComponent}
-                ListFooterComponent={addSessionComponent}
+                ListFooterComponent={addSessionButton}
                 ListFooterComponentStyle={styles.addSessionButtonContainer}
             />
             :

@@ -52,6 +52,20 @@ export function changeDateBySomeDays(inputDate: Date, days: number): Date {
     return newDate;
 }
 
+/** Change the time of a datetime object to now, 
+ * keeping the date constant.
+*/
+export function setDateToCurrentTime(inputDate: Date): Date {
+    const currentTime = new Date();
+  
+    inputDate.setHours(currentTime.getHours());
+    inputDate.setMinutes(currentTime.getMinutes());
+    inputDate.setSeconds(currentTime.getSeconds());
+    inputDate.setMilliseconds(currentTime.getMilliseconds());
+  
+    return inputDate;
+  }
+
 
 
   /** Subset an array of drinking sessions to a single day.
