@@ -1,4 +1,4 @@
-﻿import { off } from "firebase/database";
+﻿import { useEffect } from "react";
 import { 
     getAuth,
     createUserWithEmailAndPassword, 
@@ -6,19 +6,6 @@ import {
     onAuthStateChanged
 } from "firebase/auth";
 
-
-export function listenForUserId () {
-    const auth = getAuth();
-    onAuthStateChanged(auth, (user) => {
-        console.log('authstatechanged');
-        if (user) {
-            // User is signed in
-            return user.uid;
-        } else {
-            // User is signed out
-        };
-    });
-}
 
 export async function signUpUserWithEmailAndPassword(
     auth:any, 

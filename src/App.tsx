@@ -16,7 +16,7 @@ import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
 import { getAuth } from 'firebase/auth';
 import firebaseConfig from "../firebaseConfig";
-import DatabaseContext from './DatabaseContext';
+import DatabaseContext from './database/DatabaseContext';
 
 const app = initializeApp(firebaseConfig);
 

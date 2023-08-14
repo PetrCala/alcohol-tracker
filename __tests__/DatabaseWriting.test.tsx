@@ -1,7 +1,7 @@
 ﻿import { ref, onValue, child, update, push } from "firebase/database";
 import { 
   saveDrinkingSessionData
-} from '../src/database';
+} from '../src/database/baseFunctions';
 
 jest.mock('firebase/database', () => ({
   ref: jest.fn(),

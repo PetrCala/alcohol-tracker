@@ -2,7 +2,7 @@
 import { 
   readDataOnce,
   listenForDataChanges
-} from '../src/database';'../src/database';
+} from '../src/database/baseFunctions';'../src/database';
 
 jest.mock('firebase/database', () => ({
   get: jest.fn(),

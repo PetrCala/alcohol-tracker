@@ -6,7 +6,7 @@ import { SessionsCalendarProps,
     DrinkingSessionData,
     DateObject
 } from '../utils/types';
-import LoadingData from './loadingData';
+import LoadingData from './LoadingData';
 import styles from '../styles';
 
 const SessionsCalendar = ({ drinkingSessionData, onDayPress} :SessionsCalendarProps) => {

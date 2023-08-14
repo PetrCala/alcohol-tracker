@@ -12,12 +12,13 @@ import styles from '../styles';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import BasicButton from '../components/Buttons/BasicButton';
 import { DrinkingSessionScreenProps } from '../utils/types';
-import DatabaseContext from '../DatabaseContext';
-import { saveDrinkingSessionData, updateCurrentUnits, discardDrinkingSessionData } from '../database';
+import DatabaseContext from '../database/DatabaseContext';
+import { updateCurrentUnits, discardDrinkingSessionData } from '../database/users';
+import { saveDrinkingSessionData } from '../database/drinkingSessions';
 import ClickableTextInput from '../components/Buttons/ClickableTextInput';
 import { formatDateToDay, formatDateToTime, timestampToDate } from '../utils/dataHandling';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import LoadingData from '../components/loadingData';
+import LoadingData from '../components/LoadingData';
 
 
 const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps) => {

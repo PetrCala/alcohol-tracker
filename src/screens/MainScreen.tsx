@@ -12,17 +12,18 @@ import {
 import BasicButton from '../components/Buttons/BasicButton';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import SessionsCalendar from '../components/Calendar';
-import LoadingData from '../components/loadingData';
+import LoadingData from '../components/LoadingData';
 import styles from '../styles';
-import DatabaseContext from '../DatabaseContext';
-import { listenForDataChanges, updateDrinkingSessionUserData } from "../database";
+import DatabaseContext from '../database/DatabaseContext';
+import { listenForDataChanges } from "../database/baseFunctions";
+import { updateDrinkingSessionUserData } from '../database/drinkingSessions';
 import { MainScreenProps, UserDataProps, DrinkingSessionData } from '../utils/types';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 
 const MainScreen = ( { navigation }: MainScreenProps) => {
   const db = useContext(DatabaseContext);
-  const [userId, setUserId] = useState<string | null>(null);
+  const [user, setUser] = useState<any | null>(null);
   const [userData, setUserData] = useState<UserDataProps | null>(null);
   const [drinkingSessionData, setDrinkingsessionData] = useState<DrinkingSessionData[] | null>([]); // Data
   const [ loadingUserData, setUserLoadingData] = useState<boolean | null>(true);
@@ -31,7 +32,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
   // Handle drinking session button press
   const startDrinkingSession = async () => {
     if (userData == null){
-      throw new Error("The user" + userId + " has no data in the database.")
+      throw new Error("The user" + user.displayName + " has no data in the database.")
     }
     let startingUnits = userData.current_units;
     let sessionStartTime = userData.current_timestamp;
@@ -40,11 +41,11 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
       sessionStartTime = Date.now();
       let updates: {[key: string]: any} = {};
       // Inform database of new session started
-      updates[`users/${userId}/in_session`] = true;
+      updates[`users/${user.uid}/in_session`] = true;
       // Set the start time to now if session is new
-      updates[`users/${userId}/current_timestamp`] = sessionStartTime;
+      updates[`users/${user.uid}/current_timestamp`] = sessionStartTime;
       // Reset starting units
-      updates[`users/${userId}/current_units`] = startingUnits;
+      updates[`users/${user.uid}/current_units`] = startingUnits;
       try {
         await updateDrinkingSessionUserData(db, updates);
       } catch (error: any) {
@@ -57,12 +58,13 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
     });
   }
 
-  // Monitor user id
+  // Monitor authentificated user
   useEffect(() => {
     const auth = getAuth();
     const stopListening = onAuthStateChanged(auth, (user) => {
       if (user) { // User signed in
-        setUserId(user.uid);
+        setUser(user);
+        console.log(user);
       } else {
         // User is signed out
       }
@@ -73,8 +75,8 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
 
   // Monitor user data
   useEffect(() => {
-    if (userId != null){
-      let userRef = `users/${userId}`
+    if (user != null){
+      let userRef = `users/${user.uid}`
       let stopListening = listenForDataChanges(db, userRef, (data:UserDataProps) => {
         setUserData(data);
         setUserLoadingData(false);
@@ -83,13 +85,13 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
       return () => stopListening();
     };
 
-    }, [db, userId]);
+    }, [db, user]);
 
   // Monitor drinking session data
   useEffect(() => {
-    if (userId != null) {
+    if (user != null) {
       // Start listening for changes when the component mounts
-      let sessionsRef = `user_drinking_sessions/${userId}`
+      let sessionsRef = `user_drinking_sessions/${user.uid}`
       let stopListening = listenForDataChanges(db, sessionsRef, (data:any) => {
         let newDrinkingSessionData:DrinkingSessionData[] = [];
         if (data != null){
@@ -105,7 +107,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
       };
     };
 
-  }, [db, userId]); // Re-run effect when userId or db changes
+  }, [db, user]); // Re-run effect when userId or db changes
 
 
   if (loadingUserData || loadingSessionData) {
@@ -130,7 +132,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
                   />
             </View>
             <View style={styles.headerUsernameContainer}>
-              <Text style={styles.headerUsername}>{userData?.username}</Text> 
+              <Text style={styles.headerUsername}>{user.displayName}</Text> 
             </View>
             <View style={styles.menuContainer}>
                 {/* Clickable icons for social, achievements, and settings */}

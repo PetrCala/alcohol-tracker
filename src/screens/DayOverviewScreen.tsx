@@ -20,10 +20,10 @@ import {
     setDateToCurrentTime
 } from '../utils/dataHandling';
 import { useContext } from 'react';
-import DatabaseContext from '../DatabaseContext';
-import LoadingData from '../components/loadingData';
+import DatabaseContext from '../database/DatabaseContext';
+import LoadingData from '../components/LoadingData';
 import { DayOverviewScreenProps, DrinkingSessionProps, DrinkingSessionData} from '../utils/types';
-import { listenForDataChanges } from '../database';
+import { listenForDataChanges } from '../database/baseFunctions';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 

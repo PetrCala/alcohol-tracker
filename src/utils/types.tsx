@@ -36,7 +36,6 @@ export type UserDataProps = {
   current_timestamp: number;
   current_units: number;
   in_session: boolean;
-  username: string;
 };
 
 export type DrinkingSessionData = {

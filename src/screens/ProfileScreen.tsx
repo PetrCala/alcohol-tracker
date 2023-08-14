@@ -11,10 +11,8 @@ import styles from '../styles';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import BasicButton from '../components/Buttons/BasicButton';
 
-import DatabaseContext from '../DatabaseContext';
-import { readDataOnce } from '../database';
-import { ref, get, onValue } from "firebase/database";
-import { saveDrinkingSessionData, removeDrinkingSessionData } from '../database';
+import DatabaseContext from '../database/DatabaseContext';
+import { readDataOnce } from '../database/baseFunctions';
 import { listenForUserId } from '../auth/auth';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
@@ -43,7 +41,6 @@ const ProfileScreen = (props: ProfileProps) => {
   }, []); 
 
 
-  console.log(userId);
   return (
     <View style={{flex:1, backgroundColor: '#FFFF99'}}>
       <View style={styles.header}>
