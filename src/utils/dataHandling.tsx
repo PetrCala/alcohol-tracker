@@ -1,4 +1,5 @@
-﻿import { DrinkingSessionData, DateObject } from "../types/screens";
+﻿import { DrinkingSessionData } from "../types/database";
+import { DateObject } from "../types/various";
 
 /** Convert a timestamp to a Date object */
 export function timestampToDate( timestamp: number): Date {

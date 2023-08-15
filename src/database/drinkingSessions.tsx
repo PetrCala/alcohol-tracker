@@ -1,5 +1,5 @@
 ﻿import { ref, child, update, push } from "firebase/database";
-import { DrinkingSessionData } from "../types/screens";
+import { DrinkingSessionData } from "../types/database";
 
 
 

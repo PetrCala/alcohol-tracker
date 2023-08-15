@@ -50,12 +50,12 @@ const ProfileScreen = (props: ProfileProps) => {
           onPress={() => navigation.goBack() }
         />
       </View>
-      <BasicButton
+      {/* <BasicButton
         text='TD'
         buttonStyle={styles.startSessionButton}
         textStyle={styles.startSessionText}
         onPress={() => {console.log('hello')}}
-      />
+      /> */}
     </View>
   );
 };

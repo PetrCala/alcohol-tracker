@@ -9,7 +9,8 @@ View,
 import styles from '../styles';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import BasicButton from '../components/Buttons/BasicButton';
-import { EditSessionScreenProps, DrinkingSessionData } from '../types/screens';
+import { EditSessionScreenProps} from '../types/screens';
+import { DrinkingSessionData } from '../types/database';
 import DatabaseContext from '../database/DatabaseContext';
 import { removeDrinkingSessionData, editDrinkingSessionData } from '../database/drinkingSessions';
 import ClickableTextInput from '../components/Buttons/ClickableTextInput';

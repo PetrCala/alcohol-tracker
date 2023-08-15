@@ -17,103 +17,162 @@ import { SignUpScreenProps } from '../types/screens';
 import { pushNewUserInfo } from '../database/users';
 
 const SignUpScreen = ( {navigation }: SignUpScreenProps) => {
-    const auth = getAuth();
-    const db = useContext(DatabaseContext);
-    const [email, setEmail] = useState('');
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+  const auth = getAuth();
+  const db = useContext(DatabaseContext);
+  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [warning, setWarning] = useState< string | null>('');
 
-    useEffect(() => {
-        const stopListening = auth.onAuthStateChanged(user => {
-        if (user) {
-            navigation.replace("Main Screen") // Redirect to main screen
-        };
+  useEffect(() => {
+      const stopListening = auth.onAuthStateChanged(user => {
+      if (user) {
+          navigation.replace("Main Screen") // Redirect to main screen
+      };
+      });
+
+      return stopListening;
+  }, []);
+
+  const handleSignUp = async () => {
+    // Validate all hooks on the screen first, return null if invalid
+    const userInputValid = validateUserInput();
+    if (userInputValid == false){
+      return null;
+    }
+    // Create the user in the authentification database
+    try {
+        await signUpUserWithEmailAndPassword(
+            auth, email, password
+            )
+    } catch (error: any) {
+      return handleInvalidSignUp(error);
+    };
+    const newUser = auth.currentUser;
+    if (newUser == null){
+      return Alert.alert('User creation failed', 'The user was not created in the database');
+    }
+    // Update the user's information with the inputted sign up data
+    try {
+        await updateProfile(newUser, {
+            displayName: username
         });
+    } catch (error:any) {
+        throw new Error("There was a problem updating the user information: " + error.message);
+    }
+    // Update the realtime database with the new user's info
+    try {
+        await pushNewUserInfo(db, newUser.uid);
+    } catch (error:any) {
+      return Alert.alert('Could not write into database', 'Writing user info into the database failed: ' + error.message);
+    }
 
-        return stopListening;
-    }, []);
+    return navigation.navigate("Main Screen");
+  };
 
-    const handleSignUp = async () => {
-        // Create the user in the authentification database
-        try {
-            await signUpUserWithEmailAndPassword(
-                auth, email, password
-                )
-        } catch (error: any) {
-            return Alert.alert("Error Creating User", "There was an error creating a new user: " + error.message);
-        };
-        const newUser = auth.currentUser;
-        if (newUser == null){
-            throw new Error("The user was not created in the database");
-        }
-        // Update the user's information with the inputted sign up data
-        try {
-            await updateProfile(newUser, {
-                displayName: username
-            });
-        } catch (error:any) {
-            throw new Error("There was a problem updating the user information: " + error.message);
-        }
-        // Update the realtime database with the new user's info
-        try {
-            await pushNewUserInfo(db, newUser.uid);
-        } catch (error:any) {
-            throw new Error("Could not write the user data into the database: " + error.messsage);
-        }
-
-        return navigation.navigate("Main Screen");
+  /** Check that all user input is valid and return true if it is.
+   * Otherwise return false.
+   */
+  const validateUserInput = (): boolean => {
+    if (email == '' || username == '' || password == ''){
+      setWarning('You must fill out all fields first');
+      return false;
     };
+    return true;
+  }
 
-    const handleGoBack = async () => {
-        navigation.navigate("Login Screen");
-    };
+  /** Set the warning hook to include a warning text informing
+   * the user of an unsuccessful account creation. Return an alert
+   * in case of an uncaught warning, otherwise return null.
+   * 
+   * @param error Error thrown by the signUpWithUserEmailAndPassword method
+   */
+  const handleInvalidSignUp = (error:any) => {
+    const err = error.message;
+    if (err.includes('auth/invalid-email')){
+      setWarning('Invalid email');
+    } else if (err.includes('auth/missing-password')){
+      setWarning('Choose a password first');
+    } else if (err.includes('auth/weak-password')){
+      setWarning('Your password is too weak - password should be at least 6 characters')
+    } else if (err.includes('auth/email-already-in-use')){
+      setWarning('This email is already in use')
+    } else {
+      // Uncaught error
+      return Alert.alert("Error Creating User", "There was an error creating a new user: " + error.message);
+    }
+    return null;
+  };
 
-    return (
-        <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1 }}>
-        <KeyboardAvoidingView
-        style={styles.container}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        // keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : -300}
-        >
-        <View style={styles.inputContainer}>
-            <TextInput
-            placeholder="Email"
-            value={email}
-            onChangeText={text => setEmail(text)}
-            style={styles.input}
-            />
-            <TextInput
-            placeholder="Username"
-            value={username}
-            onChangeText={text => setUsername(text)}
-            style={styles.input}
-            />
-            <TextInput
-            placeholder="Password"
-            value={password}
-            onChangeText={text => setPassword(text)}
-            style={styles.input}
-            secureTextEntry
-            />
-        </View>
+  // const handleGoBack = async () => {
+  //   navigation.navigate("Login Screen");
+  // };
 
-        <View style={styles.buttonContainer}>
-            <TouchableOpacity
-            onPress={handleSignUp}
-            style={styles.button}
-            >
-            <Text style={styles.buttonText}>Sign up</Text>
+  return (
+      <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1 }}>
+      <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      // keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : -300}
+      >
+      <View style={styles.inputContainer}>
+          {warning ?
+          <TouchableOpacity
+            id={'warning'} 
+            testID = {'warning'}
+            accessibilityRole='button' 
+            onPress={() => setWarning('')} 
+            style={styles.warningContainer}>
+              <Text style={styles.warning}>{warning}</Text> 
+          </TouchableOpacity>
+          :
+          <></>
+          } 
+          <TextInput
+          placeholder="Email"
+          value={email}
+          onChangeText={text => setEmail(text)}
+          style={styles.input}
+          />
+          <TextInput
+          placeholder="Username"
+          value={username}
+          onChangeText={text => setUsername(text)}
+          style={styles.input}
+          />
+          <TextInput
+          placeholder="Password"
+          value={password}
+          onChangeText={text => setPassword(text)}
+          style={styles.input}
+          secureTextEntry
+          />
+      </View>
+
+      <View style={styles.actionButtonsContainer}>
+          <TouchableOpacity
+          onPress={handleSignUp}
+          style={styles.signUpButton}
+          >
+          <Text style={styles.signUpButtonText}>Create account</Text>
+          </TouchableOpacity>
+          <View style={styles.loginContainer}>
+            <Text style={styles.loginInfoText}>
+              Already a user?
+            </Text>
+            <TouchableOpacity 
+              style={styles.loginButtonContainer}
+              onPress={() => navigation.navigate('Login Screen')}
+              >
+              <Text style={styles.loginButtonText}>
+                Log in
+              </Text>
             </TouchableOpacity>
-            <TouchableOpacity
-            onPress={handleGoBack}
-            style={[styles.button, styles.buttonOutline]}
-            >
-            <Text style={styles.buttonOutlineText}>Go back</Text>
-            </TouchableOpacity>
-        </View>
-        </KeyboardAvoidingView>
-        </ScrollView>
-    );
+          </View>
+      </View>
+      </KeyboardAvoidingView>
+      </ScrollView>
+  );
 };
 
 export default SignUpScreen
@@ -123,6 +182,24 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#FFFF99',
+  },
+  warningContainer: {
+    width: '90%',
+    marginBottom: 15,
+    paddingHorizontal: 5,
+    paddingVertical: 5,
+    borderRadius: 5,
+    backgroundColor: '#fce3e1',
+    borderColor: 'red',
+    borderWidth: 2,
+    alignItems: 'center',
+    alignSelf: 'center',
+  },
+  warning: {
+    textAlign: 'center',
+    color: 'red',
+    fontWeight: 'bold',
   },
   inputContainer: {
     width: '80%'
@@ -132,35 +209,43 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 10,
+    borderColor: '#0782F9',
+    borderWidth: 2,
     marginTop: 5,
+    marginBottom: 5,
   },
-  buttonContainer: {
+  actionButtonsContainer: {
     width: '60%',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 40,
+    marginTop: 25,
   },
-  button: {
+  signUpButton: {
     backgroundColor: '#0782F9',
     width: '100%',
     padding: 15,
     borderRadius: 10,
     alignItems: 'center',
   },
-  buttonOutline: {
-    backgroundColor: 'white',
-    marginTop: 5,
-    borderColor: '#0782F9',
-    borderWidth: 2,
-  },
-  buttonText: {
+  signUpButtonText: {
     color: 'white',
     fontWeight: '700',
     fontSize: 16,
   },
-  buttonOutlineText: {
-    color: '#0782F9',
-    fontWeight: '700',
-    fontSize: 16,
+  loginContainer: {
+    marginTop: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  loginInfoText: {
+    color: '#000',
+  },
+  loginButtonContainer: {
+    marginLeft: 4,
+  },
+  loginButtonText: {
+    color: '#173bcf',
+    fontWeight: 'bold',
+    fontSize: 15,
   },
 })

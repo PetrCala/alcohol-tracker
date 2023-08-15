@@ -1,11 +1,12 @@
 ﻿import React, { useEffect, useState } from 'react';
 import { Calendar } from 'react-native-calendars';
 import { createDateObject, timestampToDate, unitsToColors } from '../utils/dataHandling';
-import { SessionsCalendarProps, 
-    SessionsCalendarMarkedDates,
-    DrinkingSessionData,
-    DateObject
-} from '../types/screens';
+import { 
+    SessionsCalendarProps,
+    SessionsCalendarMarkedDates
+} from '../types/various';
+import { DrinkingSessionData } from '../types/database';
+import { DateObject } from '../types/various';
 import LoadingData from './LoadingData';
 import styles from '../styles';
 
