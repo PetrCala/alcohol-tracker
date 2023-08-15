@@ -1,11 +1,12 @@
 ﻿import React, { useContext, useEffect, useState } from 'react';
 import { 
-    KeyboardAvoidingView, 
-    StyleSheet, 
-    Text, 
-    TextInput, 
-    TouchableOpacity, 
-    View 
+  Image,
+  KeyboardAvoidingView, 
+  StyleSheet, 
+  Text, 
+  TextInput, 
+  TouchableOpacity, 
+  View 
 } from 'react-native';
 import { Alert } from 'react-native';
 import { getAuth } from 'firebase/auth';
@@ -86,6 +87,12 @@ const LoginScreen = ( {navigation }: LoginScreenProps) => {
       style={styles.container}
       behavior="padding"
       >
+      <View style={styles.logoContainer}>
+        <Image
+          source={require('../assets/logo/alcohol-tracker-source-icon.png')}
+          style={styles.logo}
+        />
+      </View>
       <View style={styles.inputContainer}>
           {warning ?
           <TouchableOpacity
@@ -112,9 +119,6 @@ const LoginScreen = ( {navigation }: LoginScreenProps) => {
           style={styles.input}
           secureTextEntry
           />
-      </View>
-
-      <View style={styles.actionButtonsContainer}>
           <TouchableOpacity
             onPress={handleLogin}
             style={styles.loginButton}
@@ -148,6 +152,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FFFF99'
   },
+  logoContainer: {
+    marginTop: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  logo: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+  },
   warningContainer: {
     width: '90%',
     marginBottom: 15,
@@ -166,7 +180,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   inputContainer: {
-    width: '80%'
+    marginTop: 100,
+    flexGrow: 1,
+    height: '30%',
+    width: '80%',
   },
   input: {
     backgroundColor: 'white',
@@ -178,18 +195,14 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginBottom: 5,
   },
-  actionButtonsContainer: {
-    width: '60%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 25,
-  },
   loginButton: {
     backgroundColor: '#0782F9',
-    width: '100%',
+    width: '70%',
     padding: 15,
     borderRadius: 10,
+    marginTop: 25,
     alignItems: 'center',
+    alignSelf: 'center',
   },
   loginButtonText: {
     color: 'white',
@@ -200,6 +213,7 @@ const styles = StyleSheet.create({
     marginTop: 12,
     flexDirection: 'row',
     alignItems: 'center',
+    alignSelf: 'center',
   },
   signUpInfoText: {
     color: '#000',
