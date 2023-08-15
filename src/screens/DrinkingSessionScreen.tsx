@@ -11,7 +11,7 @@ import {
 import styles from '../styles';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import BasicButton from '../components/Buttons/BasicButton';
-import { DrinkingSessionScreenProps } from '../utils/types';
+import { DrinkingSessionScreenProps } from '../types/screens';
 import DatabaseContext from '../database/DatabaseContext';
 import { updateCurrentUnits, discardDrinkingSessionData } from '../database/users';
 import { saveDrinkingSessionData } from '../database/drinkingSessions';

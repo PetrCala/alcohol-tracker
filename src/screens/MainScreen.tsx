@@ -19,7 +19,8 @@ import styles from '../styles';
 import DatabaseContext from '../database/DatabaseContext';
 import { listenForDataChanges } from "../database/baseFunctions";
 import { updateDrinkingSessionUserData } from '../database/drinkingSessions';
-import { MainScreenProps, UserDataProps, DrinkingSessionData } from '../utils/types';
+import { UserDataProps, DrinkingSessionData } from '../types/database';
+import { MainScreenProps } from '../types/screens';
 import { deleteUser, getAuth, signOut, reauthenticateWithCredential } from 'firebase/auth';
 
 
@@ -198,7 +199,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
             {drinkingSessionData ?
             <SessionsCalendar
               drinkingSessionData = {drinkingSessionData}
-              onDayPress = {(day) => {
+              onDayPress = {(day:any) => {
                 navigation.navigate('Day Overview Screen',
                 { timestamp: day.timestamp }
                 )

@@ -13,14 +13,14 @@ import {
 import { getAuth, updateProfile } from 'firebase/auth';
 import { signUpUserWithEmailAndPassword } from '../auth/auth';
 import DatabaseContext from '../database/DatabaseContext';
-import { SignUpScreenProps } from '../utils/types';
+import { SignUpScreenProps } from '../types/screens';
 import { pushNewUserInfo } from '../database/users';
 
 const SignUpScreen = ( {navigation }: SignUpScreenProps) => {
     const auth = getAuth();
     const db = useContext(DatabaseContext);
     const [email, setEmail] = useState('');
-    const [nickname, setNickname] = useState('');
+    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
     useEffect(() => {
@@ -49,7 +49,7 @@ const SignUpScreen = ( {navigation }: SignUpScreenProps) => {
         // Update the user's information with the inputted sign up data
         try {
             await updateProfile(newUser, {
-                displayName: nickname
+                displayName: username
             });
         } catch (error:any) {
             throw new Error("There was a problem updating the user information: " + error.message);
@@ -83,9 +83,9 @@ const SignUpScreen = ( {navigation }: SignUpScreenProps) => {
             style={styles.input}
             />
             <TextInput
-            placeholder="Nickname"
-            value={nickname}
-            onChangeText={text => setNickname(text)}
+            placeholder="Username"
+            value={username}
+            onChangeText={text => setUsername(text)}
             style={styles.input}
             />
             <TextInput

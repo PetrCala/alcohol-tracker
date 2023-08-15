@@ -4,7 +4,7 @@
     ActivityIndicator
 } from "react-native";
 import styles from "../styles";
-import { LoadingDataProps } from "../utils/types";
+import { LoadingDataProps } from "../types/screens";
 
 const LoadingData = ({loadingText}:LoadingDataProps) => {
     return (

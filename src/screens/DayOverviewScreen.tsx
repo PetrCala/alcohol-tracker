@@ -19,7 +19,8 @@ import {
 import { useContext } from 'react';
 import DatabaseContext from '../database/DatabaseContext';
 import LoadingData from '../components/LoadingData';
-import { DayOverviewScreenProps, DrinkingSessionProps, DrinkingSessionData} from '../utils/types';
+import { DrinkingSessionProps, DrinkingSessionData } from '../types/database';
+import { DayOverviewScreenProps } from '../types/screens';
 import { listenForDataChanges } from '../database/baseFunctions';
 import { getAuth } from 'firebase/auth';
 

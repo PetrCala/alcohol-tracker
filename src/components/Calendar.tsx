@@ -5,7 +5,7 @@ import { SessionsCalendarProps,
     SessionsCalendarMarkedDates,
     DrinkingSessionData,
     DateObject
-} from '../utils/types';
+} from '../types/screens';
 import LoadingData from './LoadingData';
 import styles from '../styles';
 

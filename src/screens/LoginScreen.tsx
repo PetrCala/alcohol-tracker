@@ -10,75 +10,88 @@ import {
 import { getAuth } from 'firebase/auth';
 import { signInUserWithEmailAndPassword } from '../auth/auth';
 import DatabaseContext from '../database/DatabaseContext';
-import { LoginScreenProps } from '../utils/types';
+import { LoginScreenProps } from '../types/screens';
+import LoadingData from '../components/LoadingData';
+
 
 const LoginScreen = ( {navigation }: LoginScreenProps) => {
-    const auth = getAuth();
-    const db = useContext(DatabaseContext);
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+  const auth = getAuth();
+  const db = useContext(DatabaseContext);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [ loadingUser, setLoadingUser ] = useState<boolean>(true);
 
-    useEffect(() => {
-        const stopListening = auth.onAuthStateChanged(user => {
-        if (user) {
-            navigation.replace("Main Screen") // Redirect to main screen
-        };
-        });
+  useEffect(() => {
+    const stopListening = auth.onAuthStateChanged(user => {
+      if (user) {
+        navigation.replace("Main Screen") // Redirect to main screen
+      };
+      setLoadingUser(false);
+    });
 
-        return stopListening;
-    }, []);
+    return stopListening;
+  }, []);
 
-    const handleSignUp = () => {
-        navigation.navigate("Sign Up Screen");
-    };
+  const handleSignUp = () => {
+      navigation.replace("Sign Up Screen");
+  };
 
-    const handleLogin = async () => {
-        try {
-            await signInUserWithEmailAndPassword(
-                auth, email, password
-            );
-        } catch (error:any) {
-            throw new Error("Failed to sign in: " + error.message);
-        };
-    };
+  const handleLogin = async () => {
+      try {
+          await signInUserWithEmailAndPassword(
+              auth, email, password
+          );
+      } catch (error:any) {
+          throw new Error("Failed to sign in: " + error.message);
+      };
+  };
 
-    return (
-        <KeyboardAvoidingView
-        style={styles.container}
-        behavior="padding"
-        >
-        <View style={styles.inputContainer}>
-            <TextInput
-            placeholder="Email"
-            value={email}
-            onChangeText={text => setEmail(text)}
-            style={styles.input}
-            />
-            <TextInput
-            placeholder="Password"
-            value={password}
-            onChangeText={text => setPassword(text)}
-            style={styles.input}
-            secureTextEntry
-            />
-        </View>
-
-        <View style={styles.buttonContainer}>
-            <TouchableOpacity
-            onPress={handleLogin}
-            style={styles.button}
-            >
-            <Text style={styles.buttonText}>Login</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-            onPress={handleSignUp}
-            style={[styles.button, styles.buttonOutline]}
-            >
-            <Text style={styles.buttonOutlineText}>Don't have an account yet? Sign up instead!</Text>
-            </TouchableOpacity>
-        </View>
-        </KeyboardAvoidingView>
+  // Wait to see whether there already is an authentificated user
+  if (loadingUser) {
+    return(
+      <LoadingData
+      loadingText="Loading data..."
+      />
     );
+  };
+
+  return (
+      <KeyboardAvoidingView
+      style={styles.container}
+      behavior="padding"
+      >
+      <View style={styles.inputContainer}>
+          <TextInput
+          placeholder="Email"
+          value={email}
+          onChangeText={text => setEmail(text)}
+          style={styles.input}
+          />
+          <TextInput
+          placeholder="Password"
+          value={password}
+          onChangeText={text => setPassword(text)}
+          style={styles.input}
+          secureTextEntry
+          />
+      </View>
+
+      <View style={styles.buttonContainer}>
+          <TouchableOpacity
+          onPress={handleLogin}
+          style={styles.button}
+          >
+          <Text style={styles.buttonText}>Login</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+          onPress={handleSignUp}
+          style={[styles.button, styles.buttonOutline]}
+          >
+          <Text style={styles.buttonOutlineText}>Don't have an account yet? Sign up instead!</Text>
+          </TouchableOpacity>
+      </View>
+      </KeyboardAvoidingView>
+  );
 };
 
 export default LoginScreen
