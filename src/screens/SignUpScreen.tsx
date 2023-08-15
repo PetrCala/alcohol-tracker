@@ -1,5 +1,6 @@
 ﻿import React, { useContext, useEffect, useState } from 'react';
 import { 
+    Alert,
     KeyboardAvoidingView, 
     Platform,
     ScrollView,
@@ -38,8 +39,8 @@ const SignUpScreen = ( {navigation }: SignUpScreenProps) => {
             await signUpUserWithEmailAndPassword(
                 auth, email, password
                 )
-        } catch (error:any){
-            throw new Error("There was an error creating a new user: " + error.message);
+        } catch (error: any) {
+            return Alert.alert("Error Creating User", "There was an error creating a new user: " + error.message);
         };
         const newUser = auth.currentUser;
         if (newUser == null){

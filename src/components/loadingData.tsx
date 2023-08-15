@@ -8,8 +8,8 @@ import { LoadingDataProps } from "../utils/types";
 
 const LoadingData = ({loadingText}:LoadingDataProps) => {
     return (
-      <View style={styles.container}>
-        <Text>{loadingText}</Text>
+      <View style={styles.loadingContainer}>
+        {/* <Text>{loadingText}</Text> */}
         <ActivityIndicator 
           size="large"
           color = "#0000ff"

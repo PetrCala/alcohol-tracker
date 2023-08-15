@@ -5,7 +5,6 @@ import {
     signInWithEmailAndPassword, 
     onAuthStateChanged
 } from "firebase/auth";
-import { pushNewUserInfo } from "../database/users";
 
 
 /** Create a new user in the database

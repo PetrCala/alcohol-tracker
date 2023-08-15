@@ -166,17 +166,16 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
                   iconSource={require('../assets/icons/exit.png')} 
                   containerStyle={styles.menuIconContainer}
                   iconStyle={styles.menuIcon}
-                  // onPress = {() => navigation.navigate('Settings Screen')}
                   onPress = {handleSignOut}
+                  // onPress = {() => navigation.navigate('Settings Screen')}
                   />
-                <MenuIcon 
+                {/* <MenuIcon 
                   iconId='menu-icon'
                   iconSource={require('../assets/icons/delete.png')} 
                   containerStyle={styles.menuIconContainer}
                   iconStyle={styles.menuIcon}
                   onPress = {handleDeleteUser}
-                  // onPress = {() => setDeleteUserPopupVisible(true)}
-                />
+                /> */}
                 {/* <YesNoPopup
                   visible={deleteUserPopupVisible}
                   onRequestClose={() => setDeleteUserPopupVisible(false)}
