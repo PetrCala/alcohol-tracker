@@ -23,7 +23,6 @@ import { UserDataProps, DrinkingSessionData } from '../types/database';
 import { MainScreenProps } from '../types/screens';
 import { deleteUser, getAuth, signOut, reauthenticateWithCredential } from 'firebase/auth';
 
-
 const MainScreen = ( { navigation }: MainScreenProps) => {
   const auth = getAuth();
   const user = auth.currentUser;
@@ -137,7 +136,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
                 {/* User's clickable icon */}
                 <MenuIcon 
                   iconId='profile-icon'
-                  iconSource={require('../assets/temp/temp_user_icon.jpg')}  // user.photoURL;
+                  iconSource={require('../assets/temp/user.png')}  // user.photoURL;
                   containerStyle={styles.profileIconContainer}
                   iconStyle={styles.profileIcon}
                   onPress = {() => navigation.navigate('Profile Screen')}

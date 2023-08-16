@@ -129,13 +129,7 @@ const styles = StyleSheet.create({
   },
   mainScreenContent: {
     flex: 1,
-    padding: 10,
     backgroundColor: '#FFFF99',
-  },
-  mainScreenCalendarStyle: {
-    // height: 350
-  },
-  mainScreenCalendarTheme: {
   },
   ///
   menuInSessionWarningContainer: {
@@ -163,7 +157,8 @@ const styles = StyleSheet.create({
   menuDrinkingSessionInfoText: {
     fontSize: 20,
     fontWeight: "bold",
-    marginTop: 4,
+    marginTop: 5,
+    marginBottom: 5,
     color: "black",
     alignSelf: "center",
     alignContent: "center",

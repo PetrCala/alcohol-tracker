@@ -23,6 +23,8 @@ export type DateObject = {
   year: number;
 };
 
+export type DayState = 'selected' | 'disabled' | 'today' | '';
+
 // Loading data props
 
 export type LoadingDataProps = {

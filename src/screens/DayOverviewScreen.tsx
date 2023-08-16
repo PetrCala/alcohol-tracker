@@ -190,7 +190,6 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
             :
             <></>
             }
-
         </View>
         <View style={styles.dayOverviewFooter}>
             <MenuIcon

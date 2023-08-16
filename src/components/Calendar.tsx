@@ -1,4 +1,10 @@
 ﻿import React, { useEffect, useState, useMemo } from 'react';
+import { 
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
+} from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { createDateObject, getDateAtMidnightFromTimestamp, getSingleMonthDrinkingSessions, timestampToDate, unitsToColors } from '../utils/dataHandling';
 import { 
@@ -6,9 +12,57 @@ import {
     SessionsCalendarMarkedDates
 } from '../types/various';
 import { DrinkingSessionData } from '../types/database';
-import { DateObject } from '../types/various';
+import { DateObject, DayState } from '../types/various';
 import LoadingData from './LoadingData';
-import styles from '../styles';
+
+
+// Custom Day Component
+const DayComponent: React.FC<{
+    date:DateObject, 
+    state:DayState, 
+    marking:any, 
+    theme:any, 
+    onPress: (day: DateObject) => void 
+}> = ({ date, state, marking, theme, onPress }) => {
+  return (
+    <TouchableOpacity
+        onPress={() => onPress(date)}
+    >
+    <View style={styles.dayContainer}>
+      <Text
+      style={[styles.dayText,
+        state === 'disabled' ?  styles.dayTextDisabled : 
+        state === 'today' ?  styles.dayTextToday : {},
+        ]}
+    //   onPress={() => console.log('hello')}
+        // style={styles.dayText}
+      >
+        {date.day}
+      </Text>
+      { marking ?
+        <View style={[
+            {
+            marginTop: 5,
+            height: 9,
+            width: 9,
+            borderWidth: 1,
+            borderColor: 'black',
+            borderRadius: 10,
+        },
+        marking?.color == 'green' ? {backgroundColor: 'green'} :
+        marking?.color == 'yellow' ? {backgroundColor: 'yellow'} :
+        marking?.color == 'red' ? {backgroundColor: 'red'} :
+        marking?.color == 'orange' ? {backgroundColor: 'orange'} :
+        {}
+        ]}>
+        </View> :
+        <></>
+      }
+    </View>
+    </TouchableOpacity>
+  );
+};
+
 
 const SessionsCalendar = ({ drinkingSessionData, onDayPress} :SessionsCalendarProps) => {
     const [calendarData, setCalendarData ] = useState<DrinkingSessionData[] | null>(drinkingSessionData);
@@ -144,14 +198,59 @@ const SessionsCalendar = ({ drinkingSessionData, onDayPress} :SessionsCalendarPr
 
     return (
         <Calendar
-        onDayPress = {onDayPress}
+        dayComponent={({ date, state, marking, theme }) => 
+            <DayComponent 
+                date={date as DateObject} 
+                state={state as DayState} 
+                marking={marking as any}
+                theme={theme as any}
+                onPress={onDayPress}
+            />
+        }
         onMonthChange={newDate => handleMonthChange(newDate)}
         markedDates={markedDates}
         markingType={'period'}
+        firstDay={1}
+        enableSwipeMonths={true}
+        disableAllTouchEventsForDisabledDays={true}
         style={styles.mainScreenCalendarStyle}
-        theme={styles.mainScreenCalendarTheme}
+        theme={{
+            textDayHeaderFontWeight: 'bold',
+        }}
         />
     );
     };
     
 export default SessionsCalendar;
+
+
+const styles = StyleSheet.create({
+    // Day component styles
+    dayContainer: {
+        // flex: 1,
+        // backgroundColor:'green',
+        alignItems: 'center',
+        justifyContent: 'center',
+        // borderWidth: 1,
+        // borderColor: '#E0E0E0',
+        width: '100%',  // Give explicit width and height
+        height: 50,
+        // borderRadius: 4, // Rounded corners
+    },
+    dayText: {
+        fontSize: 16,
+        color: 'black',
+    },
+    dayTextDisabled: {
+        color: '#D3D3D3',
+    },
+    dayTextToday: {
+        color: 'blue', // Blue text for the current day
+    },
+    // Calendar styles
+    mainScreenCalendarStyle: {
+        width: '100%',
+        // borderWidth: 1,
+        // height: 350
+    },
+})
