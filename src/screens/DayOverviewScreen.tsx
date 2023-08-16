@@ -96,6 +96,14 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
                 />
             )
         }
+        // No button if the date is in the future
+        let today = new Date();
+        let tomorrowMidnight = changeDateBySomeDays(today, 1);
+        tomorrowMidnight.setHours(0,0,0,0);
+        if (date >= tomorrowMidnight){
+            return(<></>);
+        };
+        // Create a new mock drinking session
         let newTimestamp = setDateToCurrentTime(date).getTime(); // At noon
         let newSession:DrinkingSessionData = {
             session_id: 'edit-session-id', // Immutable! (see database.tsx)

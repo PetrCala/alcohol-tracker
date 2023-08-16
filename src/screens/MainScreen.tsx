@@ -127,8 +127,8 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
       <LoadingData
       loadingText="Loading data..."
       />
-      )
-    };
+    );
+  };
     
   return (
     <View style={styles.container}>
@@ -137,7 +137,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
                 {/* User's clickable icon */}
                 <MenuIcon 
                   iconId='profile-icon'
-                  iconSource={require('../assets/temp/temp_user_icon.jpg')} 
+                  iconSource={require('../assets/temp/temp_user_icon.jpg')}  // user.photoURL;
                   containerStyle={styles.profileIconContainer}
                   iconStyle={styles.profileIcon}
                   onPress = {() => navigation.navigate('Profile Screen')}

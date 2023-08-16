@@ -1,6 +1,6 @@
-﻿import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState, useMemo } from 'react';
 import { Calendar } from 'react-native-calendars';
-import { createDateObject, timestampToDate, unitsToColors } from '../utils/dataHandling';
+import { createDateObject, getDateAtMidnightFromTimestamp, getSingleMonthDrinkingSessions, timestampToDate, unitsToColors } from '../utils/dataHandling';
 import { 
     SessionsCalendarProps,
     SessionsCalendarMarkedDates
@@ -13,35 +13,75 @@ import styles from '../styles';
 const SessionsCalendar = ({ drinkingSessionData, onDayPress} :SessionsCalendarProps) => {
     const [calendarData, setCalendarData ] = useState<DrinkingSessionData[] | null>(drinkingSessionData);
     const [markedDates, setMarkedDates] = useState<SessionsCalendarMarkedDates>({});
-
+    
     type DatesType = {
         [key: string]: {
             units: number;
         }
     }
 
-    const getMarkedDates = (drinkingSessionData: DrinkingSessionData[]) => {
-        // Create a single object, "dates", that aggregates units
-        // across dates
-        let dates: DatesType =  drinkingSessionData.reduce((
-            acc: { [key: string]: { units: number } },
-            item: DrinkingSessionData
-            ) => {
-        let date = new Date(item.timestamp);
-        let dateString = date.toISOString().split('T')[0]; // yyyy-MM-dd
+    const formatDate = (date: Date) => {
+        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    }
 
-        if (!acc[dateString]) {
-            acc[dateString] = { units: item.units };
-        } else {
-            acc[dateString].units += item.units;
-        }
-        return acc;
+    const aggregateSessionsByDays = (sessions: DrinkingSessionData[]): DatesType => {
+        return sessions.reduce((
+            acc: DatesType,
+            item: DrinkingSessionData
+        ) => {
+            let dateString = formatDate(new Date(item.timestamp)); // MM-DD-YYYY
+
+            acc[dateString] = acc[dateString] ? { 
+                units: acc[dateString].units + item.units  // Already an entry exists
+            } : { 
+                units: item.units // First entry
+            };
+            return acc;
         }, {});
+    };
+
+
+    const fillInRestOfMonth = (dateObject:Date, inputData: DatesType, untilToday: boolean): DatesType => {
+        const objectYear = dateObject.getFullYear();
+        const objectMonth = dateObject.getMonth();
+          // Get the number of days in the current month
+        const daysInMonth = new Date(objectYear, objectMonth + 1, 0).getDate();
+        let daysToFill: number = daysInMonth; 
+        if (untilToday){
+            const today = new Date();
+            const todayMonth = today.getMonth();
+            if (objectMonth > todayMonth){
+                daysToFill = 0; // No marks for upcoming months
+            } else if (objectMonth == todayMonth){
+                daysToFill = today.getDate(); // Only mark until today for this month
+            };
+        };
+
+        const expanded: DatesType = {};
+
+        for (let day = 1; day <= daysToFill; day++) {
+          const dateKey = `${objectYear}-${String(objectMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+          
+          if (inputData[dateKey]) {
+            expanded[dateKey] = inputData[dateKey];
+          } else {
+            expanded[dateKey] = { units: 0 };
+          };
+        };
+        
+        return expanded;
+    };
+
+
+    const monthEntriesToColors = (sessions: DatesType) => {
         // MarkedDates object, see official react-native-calendars docs
-        let markedDates: SessionsCalendarMarkedDates = Object.entries(dates).reduce((acc: SessionsCalendarMarkedDates, [key, { units }]) => {
-            let color:string = unitsToColors(units);
+        let markedDates: SessionsCalendarMarkedDates = Object.entries(sessions).reduce((
+            acc: SessionsCalendarMarkedDates,
+            [key, { units: value }]
+        ) => {
+            let color:string = unitsToColors(value);
             let textColor:string = 'black';
-            if (color == 'red'){
+            if (color == 'red' || color == 'green'){
                 textColor = 'white';
             }
             acc[key] = { 
@@ -53,49 +93,47 @@ const SessionsCalendar = ({ drinkingSessionData, onDayPress} :SessionsCalendarPr
         return markedDates;
     };
 
-    const getMarkedDatesWithGreen = (existingMarkedDates: SessionsCalendarMarkedDates, beginningDate:Date) => {
-        const currentDate = new Date();
-        let markedDates: SessionsCalendarMarkedDates = {};
-        
-        // Iterate through each day starting from previous month and set it to green
-        beginningDate.setMonth(beginningDate.getMonth() - 1);
-        beginningDate.setDate(beginningDate.getDate() - 15);
-        for (let d = beginningDate; d < currentDate; d.setDate(d.getDate() + 1)) {
-            const dateStr = d.toISOString().split('T')[0];
-            markedDates[dateStr] = { 
-                color: "green",
-                textColor: "white"
-            };
-        }
+    const getMarkedDates = (dateObject: Date, drinkingSessionData: DrinkingSessionData[]): SessionsCalendarMarkedDates => {
+        if (!drinkingSessionData) return {};
 
-        // Merge the existing marked dates, so they override the generated ones
-        return { ...markedDates, ...existingMarkedDates };
+        const sessions = getSingleMonthDrinkingSessions(dateObject, drinkingSessionData, true);
+        const aggergatedSessions = aggregateSessionsByDays(sessions);
+        const monthTotalSessions = fillInRestOfMonth(dateObject, aggergatedSessions, true);
+        return monthEntriesToColors(monthTotalSessions);
     };
-    
+
+
     /** An explicit handler that fulfills the role of a useState, but
      * is called from within the Calendar object on month change.
      */
     const handleMonthChange = (newDate:DateObject) => {
-        const beginningDate = timestampToDate(newDate.timestamp);
-        const newMarkedDates = getMarkedDatesWithGreen(markedDates, beginningDate);
-        setMarkedDates(newMarkedDates);
-    }
+        if (calendarData != null){
+            const newDateObject = timestampToDate(newDate.timestamp);
+            const newMarkedDates = getMarkedDates(newDateObject, calendarData);
+            setMarkedDates(newMarkedDates);
+        } else {
+            setMarkedDates({});
+        }
+    };
+
+    const currentMarkedDates = useMemo(() => {
+        if (!calendarData) return {};
+
+        let newDateObject = new Date();
+        return getMarkedDates(newDateObject, calendarData);
+    }, [calendarData]);
+
 
     useEffect(() => {
         setCalendarData(drinkingSessionData);
     }, [drinkingSessionData]);
     
+
     useEffect(() => {
-        if (drinkingSessionData != null){
-            const newDate = new Date();
-            const markedDates = getMarkedDates(drinkingSessionData);
-            const allMarkedDates = getMarkedDatesWithGreen(markedDates, newDate);
-            setMarkedDates(allMarkedDates);
-        } else {
-            setMarkedDates({}); // No data remaining
-        }
-    }, [calendarData]);
+        setMarkedDates(currentMarkedDates);
+    }, [currentMarkedDates]);
      
+
     if (markedDates == null || drinkingSessionData == null) {
         return(
             <LoadingData
@@ -113,7 +151,7 @@ const SessionsCalendar = ({ drinkingSessionData, onDayPress} :SessionsCalendarPr
         style={styles.mainScreenCalendarStyle}
         theme={styles.mainScreenCalendarTheme}
         />
-        );
+    );
     };
     
 export default SessionsCalendar;

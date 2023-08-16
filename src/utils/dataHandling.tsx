@@ -77,21 +77,21 @@ export function createDateObject(date: Date): DateObject {
     };
   }
 
-  /** Subset an array of drinking sessions to a single day.
-   * 
-   * @param day Day to subset the sessions for
-   * @param sessions An array of sessions to subset
-   * @returns The subsetted array of sessions
-   */
-export function getSingleDayDrinkingSessions(day: Date, sessions: DrinkingSessionData[]) {
+/** Subset an array of drinking sessions to a single day.
+ * 
+ * @param dateObject Date type object for whose day to subset the sessions to
+ * @param sessions An array of sessions to subset
+ * @returns The subsetted array of sessions
+ */
+export function getSingleDayDrinkingSessions(dateObject: Date, sessions: DrinkingSessionData[]) {
     // Define the time boundaries
-    day.setHours(0, 0, 0, 0); // set to start of day
+    dateObject.setHours(0, 0, 0, 0); // set to start of day
     
-    const tomorrow = new Date(day);
-    tomorrow.setDate(day.getDate() + 1); // set to start of next day
+    const tomorrow = new Date(dateObject);
+    tomorrow.setDate(dateObject.getDate() + 1); // set to start of next day
   
     // Convert to UNIX timestamp
-    const todayUnix = Math.floor(day.getTime());
+    const todayUnix = Math.floor(dateObject.getTime());
     const tomorrowUnix = Math.floor(tomorrow.getTime());
   
     const filteredSessions = sessions.filter(session => session.timestamp >= todayUnix && session.timestamp < tomorrowUnix);
@@ -101,6 +101,36 @@ export function getSingleDayDrinkingSessions(day: Date, sessions: DrinkingSessio
 }
 
 
+/** Subset an array of drinking sessions to the current month only.
+ * 
+ * @param dateObject Date type object for whose month to subset the sessions to
+ * @param sessions An array of sessions to subset
+ * @param untilToday If true, include no sessions that occured after today
+ * @returns The subsetted array of sessions
+ */
+export function getSingleMonthDrinkingSessions(dateObject: Date, sessions: DrinkingSessionData[], untilToday: boolean = false){
+    dateObject.setHours(0, 0, 0, 0); // To midnight
+    // Find the beginning date
+    let firstDayOfMonth = new Date(dateObject.getFullYear(), dateObject.getMonth(), 1);
+    let beginningDate = firstDayOfMonth;
+    // Find the end date
+    const firstDayOfNextMonth = new Date(dateObject.getFullYear(), dateObject.getMonth() + 1, 1);
+    let endDate = firstDayOfNextMonth;
+    if (untilToday){
+        let today = new Date(); // automatically set to midnight
+        let tomorrowMidnight = changeDateBySomeDays(today, 1);
+        if (endDate >= tomorrowMidnight){
+            endDate = tomorrowMidnight; // Filter until today only
+        };
+    };
+    // Find the timestamps
+    const beginningUnix = Math.floor(beginningDate.getTime());
+    const endUnix = Math.floor(endDate.getTime());
+    // Filter to current month only
+    const monthDrinkingSessions = sessions.filter(session =>
+        session.timestamp >= beginningUnix && session.timestamp < endUnix);
+    return monthDrinkingSessions;
+};
 
 /** Convert the units consumed to colors.
  * 

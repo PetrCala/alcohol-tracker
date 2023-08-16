@@ -17,10 +17,11 @@ import DatabaseContext from '../database/DatabaseContext';
 import { SignUpScreenProps } from '../types/screens';
 import { pushNewUserInfo } from '../database/users';
 
-const SignUpScreen = ( {navigation }: SignUpScreenProps) => {
+const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
+  const { loginEmail } = route.params; // To avoid reduncancy
   const auth = getAuth();
   const db = useContext(DatabaseContext);
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(loginEmail);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [warning, setWarning] = useState< string | null>('');

@@ -19,7 +19,6 @@ import LoadingData from '../components/LoadingData';
 
 const LoginScreen = ( {navigation }: LoginScreenProps) => {
   const auth = getAuth();
-  const db = useContext(DatabaseContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loadingUser, setLoadingUser] = useState<boolean>(true);
@@ -131,7 +130,9 @@ const LoginScreen = ( {navigation }: LoginScreenProps) => {
             </Text>
             <TouchableOpacity 
               style={styles.signUpButtonContainer}
-              onPress={() => navigation.navigate('Sign Up Screen')}
+              onPress={() => navigation.navigate('Sign Up Screen',
+                {loginEmail: email}
+              )}
               >
               <Text style={styles.signUpButtonText}>
                 Sign up
