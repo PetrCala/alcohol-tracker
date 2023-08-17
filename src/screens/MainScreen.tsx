@@ -6,6 +6,7 @@
   useEffect,
 } from 'react';
 import { 
+  Alert,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -24,6 +25,7 @@ import { MainScreenProps } from '../types/screens';
 import { DateObject } from '../types/various';
 import { deleteUser, getAuth, signOut, reauthenticateWithCredential } from 'firebase/auth';
 import { dateToDateObject, getSingleMonthDrinkingSessions, timestampToDate } from '../utils/dataHandling';
+import { deleteUserInfo } from '../database/users';
 
 const MainScreen = ( { navigation }: MainScreenProps) => {
   const auth = getAuth();
@@ -86,11 +88,18 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
   };
 
   const handleDeleteUser = async () => {
+    // Delete the user's information from the realtime database
+    try {
+        await deleteUserInfo(db, user.uid);
+    } catch (error:any) {
+      return Alert.alert('Could not delete user info from database', 'Deleting the users info from realtime database failed: ' + error.message);
+    }
+    // Delete user from authentification database
     try {
       await deleteUser(user);
       navigation.replace("Login Screen");
     } catch (error:any) {
-      throw new Error("There was an error deleting the user: " + error.message);
+      return Alert.alert('Error deleting user', 'Could not delete user ' + user.uid + error.message);
     }
   };
 

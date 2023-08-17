@@ -11,7 +11,8 @@ export async function pushNewUserInfo(
  userId: string,
 ){
   let timestampNow = new Date().getTime();
-  let updates: {[key:string]: number | boolean} = {};
+  let updates: {[key:string]: any} = {};
+  updates[`users/${userId}/role`] = 'user';
   updates[`users/${userId}/current_timestamp`] = timestampNow;
   updates[`users/${userId}/current_units`] = 0;
   updates[`users/${userId}/in_session`] = false;
@@ -19,10 +20,30 @@ export async function pushNewUserInfo(
     await update(ref(db), updates)
   } catch (error:any) {
     throw new Error('Failed to create new user info: ' + error.message);
-  } 
-}
+  } ;
+};
 
 
+/** Delete all user info from the realtime database, including their 
+ * user information, drinking sessions, etc.
+ * 
+ * @param db The database object
+ * @param userId The user ID
+ */
+export async function deleteUserInfo(
+ db: any,
+ userId: string,
+){
+  let updates: {[key:string]: any} = {};
+  updates[`users/${userId}`] = null;
+  updates[`user_drinking_sessions/${userId}`] = null;
+  updates[`user_unconfirmed_days/${userId}`] = null;
+  try {
+    await update(ref(db), updates)
+  } catch (error:any) {
+    throw new Error('Failed to delete user info: ' + error.message);
+  } ;
+};
 
 export async function updateCurrentTimestamp(
   db: any, 
