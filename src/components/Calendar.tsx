@@ -109,18 +109,23 @@ const SessionsCalendar = ({
     };
 
 
-    const fillInRestOfMonth = (dateObject:Date, inputData: DatesType, untilToday: boolean): DatesType => {
-        const objectYear = dateObject.getFullYear();
-        const objectMonth = dateObject.getMonth();
+    const fillInRestOfMonth = (date:Date, inputData: DatesType, untilToday: boolean): DatesType => {
+        const objectYear = date.getFullYear();
+        const objectMonth = date.getMonth();
           // Get the number of days in the current month
         const daysInMonth = new Date(objectYear, objectMonth + 1, 0).getDate();
         let daysToFill: number = daysInMonth; 
         if (untilToday){
             const today = new Date();
             const todayMonth = today.getMonth();
-            if (objectMonth > todayMonth){
+            const todayYear = today.getFullYear();
+
+            if (objectYear > todayYear || 
+                (objectYear === todayYear && objectMonth > todayMonth)) {
+                // Future months
                 daysToFill = 0; // No marks for upcoming months
-            } else if (objectMonth == todayMonth){
+            } else if (objectYear === todayYear && objectMonth === todayMonth) {
+                // The current month
                 daysToFill = today.getDate(); // Only mark until today for this month
             };
         };
@@ -177,8 +182,8 @@ const SessionsCalendar = ({
         if (!drinkingSessionData) return {};
 
         // Check whether the current month is already marked
-        var currentMonthString = `-${String(date.getMonth() + 1).padStart(2, '0')}-`
-        var monthAlreadyIncluded = Object.keys(markedDates).some(key => key.includes(currentMonthString));
+        var currentYearMonthString = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-`
+        var monthAlreadyIncluded = Object.keys(markedDates).some(key => key.includes(currentYearMonthString));
         if (monthAlreadyIncluded){
             return markedDates; // Assume these contain all current month's marks
         };
@@ -328,6 +333,7 @@ const styles = StyleSheet.create({
         width: '100%',
         borderWidth: 1,
         borderColor: '#E0E0E0',
-        // height: 350
+        flexGrow: 1,
+        flexShrink: 1
     },
 })

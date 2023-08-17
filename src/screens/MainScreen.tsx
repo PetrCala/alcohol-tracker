@@ -222,7 +222,8 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
             :
             <></>
             } 
-            <Text style={styles.menuDrinkingSessionInfoText}>Your drinking sessions:</Text> 
+            <Text style={styles.menuDrinkingSessionInfoText}>Units this month:</Text> 
+            <Text style={styles.thisMonthUnitsText}>{thisMonthUnits}</Text> 
             {/* Replace this with the overview and statistics */}
             {drinkingSessionData ?
             <SessionsCalendar
@@ -245,8 +246,6 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
               textStyle={styles.startSessionText}
               onPress = {startDrinkingSession} />
             }
-            <Text style={styles.menuDrinkingSessionInfoText}>Units this month:</Text> 
-            <Text style={styles.thisMonthUnitsText}>{thisMonthUnits}</Text> 
         </View>
     </View>
   );
@@ -342,7 +341,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     marginTop: 5,
-    marginBottom: 5,
     color: "black",
     alignSelf: "center",
     alignContent: "center",
@@ -351,11 +349,10 @@ const styles = StyleSheet.create({
   thisMonthUnitsText: {
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 5,
+    marginBottom: 12,
     color: "black",
     alignSelf: "center",
     alignContent: "center",
-
   },
   startSessionButton: {
     position: 'absolute',
