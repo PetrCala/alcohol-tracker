@@ -59,7 +59,7 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
             } catch (error:any) {
                 throw new Error('Failed to save drinking session data: ' + error.message);
             }
-            navigation.goBack();
+            navigation.navigate('Main Screen'); // Get the main overview, not day
         }
     };
 

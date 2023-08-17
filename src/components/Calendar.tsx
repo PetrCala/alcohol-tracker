@@ -230,7 +230,7 @@ const SessionsCalendar = ({ drinkingSessionData, onDayPress} :SessionsCalendarPr
     // Set the marked dates to render on initial page load
     useEffect(() => {
         setMarkedDates(getInitialMarkedDates);
-    }, []);
+    }, [calendarData]);
      
 
     if (markedDates == null || drinkingSessionData == null) {
@@ -275,7 +275,6 @@ const styles = StyleSheet.create({
     // Day component styles
     dayContainer: {
         // flex: 1,
-        // backgroundColor:'green',
         alignItems: 'center',
         justifyContent: 'center',
         // borderWidth: 1,
