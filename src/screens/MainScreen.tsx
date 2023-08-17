@@ -21,6 +21,7 @@ import { listenForDataChanges } from "../database/baseFunctions";
 import { updateDrinkingSessionUserData } from '../database/drinkingSessions';
 import { UserDataProps, DrinkingSessionData } from '../types/database';
 import { MainScreenProps } from '../types/screens';
+import { DateObject } from '../types/various';
 import { deleteUser, getAuth, signOut, reauthenticateWithCredential } from 'firebase/auth';
 
 const MainScreen = ( { navigation }: MainScreenProps) => {
@@ -187,9 +188,14 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
         </View>
         <View style={styles.mainScreenContent}>
             {userData?.in_session ?
-            <View style={styles.menuInSessionWarningContainer}>
-              <Text style={styles.menuInSessionWarningText}>You are currently in session!</Text> 
-            </View>
+            <TouchableOpacity 
+              style={styles.menuInSessionWarningContainer}
+              onPress={startDrinkingSession}
+              >
+                <Text style={styles.menuInSessionWarningText}>
+                You are currently in session!
+                </Text> 
+            </TouchableOpacity>
             :
             <></>
             } 
@@ -198,7 +204,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
             {drinkingSessionData ?
             <SessionsCalendar
               drinkingSessionData = {drinkingSessionData}
-              onDayPress = {(day:any) => {
+              onDayPress = {(day:DateObject) => {
                 navigation.navigate('Day Overview Screen',
                 { timestamp: day.timestamp }
                 )
@@ -207,11 +213,13 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
             :
             <Text style={styles.menuDrinkingSessionInfoText}>No drinking sessions found</Text>
             }
+            {userData?.in_session ? <></> :
             <BasicButton 
               text='+'
               buttonStyle={styles.startSessionButton}
               textStyle={styles.startSessionText}
               onPress = {startDrinkingSession} />
+            }
         </View>
     </View>
   );

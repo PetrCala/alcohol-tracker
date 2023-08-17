@@ -26,9 +26,9 @@ const DayComponent: React.FC<{
 }> = ({ date, state, marking, theme, onPress }) => {
   return (
     <TouchableOpacity
+        style={styles.dayContainer}
         onPress={() => onPress(date)}
     >
-    <View style={styles.dayContainer}>
       <Text
       style={[styles.dayText,
         state === 'disabled' ?  styles.dayTextDisabled : 
@@ -48,6 +48,7 @@ const DayComponent: React.FC<{
             borderWidth: 1,
             borderColor: 'black',
             borderRadius: 10,
+            alignSelf: 'center',
         },
         marking?.color == 'green' ? {backgroundColor: 'green'} :
         marking?.color == 'yellow' ? {backgroundColor: 'yellow'} :
@@ -58,7 +59,6 @@ const DayComponent: React.FC<{
         </View> :
         <></>
       }
-    </View>
     </TouchableOpacity>
   );
 };
