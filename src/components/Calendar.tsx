@@ -48,6 +48,7 @@ const DayComponent: React.FC<{
       { marking ?
         <View style={[
             styles.daySessionsMarkingContainer,
+            state === 'disabled' ? {borderWidth: 0} : // No color for disabled squares
             marking?.color == 'green' ? {backgroundColor: 'green'} :
             marking?.color == 'yellow' ? {backgroundColor: 'yellow'} :
             marking?.color == 'red' ? {backgroundColor: 'red'} :
@@ -159,15 +160,24 @@ const SessionsCalendar = ({ drinkingSessionData, onDayPress} :SessionsCalendarPr
         return markedDates;
     };
 
+    /** Input a date and the drinking session data and compute day marks
+     * for days of the month around the specified date. 
+     * 
+     * @note Is meant to be ran numerous times, and could be modified into
+     * an expansive nature (see utils/backup.tsx).
+     * 
+     * @param date Date that includes the month to compute the marks for
+     * @param drinkingSessionData All drinking session data
+     * @returns Marked dates as a JSON type object
+     */
     const getMarkedDates = (date: Date, drinkingSessionData: DrinkingSessionData[]): SessionsCalendarMarkedDates => {
         if (!drinkingSessionData) return {};
-
-        const sessions = getSingleMonthDrinkingSessions(date, drinkingSessionData, true);
-        const aggergatedSessions = aggregateSessionsByDays(sessions);
-        const monthTotalSessions = fillInRestOfMonth(date, aggergatedSessions, true);
+        // Month not marked yet - generate new marks
+        var sessions = getSingleMonthDrinkingSessions(date, drinkingSessionData, true);
+        var aggergatedSessions = aggregateSessionsByDays(sessions);
+        var monthTotalSessions = fillInRestOfMonth(date, aggergatedSessions, true);
         return monthEntriesToColors(monthTotalSessions);
     };
-
 
 
     /** Handler for the left arrow calendar press. Uses a callback to
@@ -233,7 +243,7 @@ const SessionsCalendar = ({ drinkingSessionData, onDayPress} :SessionsCalendarPr
 
     return (
         <Calendar
-        // current={visibleDateObject.dateString}
+        current={visibleDateObject.dateString}
         dayComponent={({ date, state, marking, theme }) => 
             <DayComponent 
                 date={date as DateObject} 
