@@ -1,9 +1,24 @@
 ﻿import { DrinkingSessionData } from "../types/database";
 import { DateObject } from "../types/various";
 
+export function formatDate (date: Date): string {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+
 /** Convert a timestamp to a Date object */
 export function timestampToDate( timestamp: number): Date {
     return new Date(timestamp);
+};
+
+export function dateToDateObject( date:Date ): DateObject {
+    const dateObject = {
+        dateString: formatDate(date),
+        day: date.getDate(),
+        month: date.getMonth() + 1,
+        timestamp: date.getTime(),
+        year: date.getFullYear()
+    };
+    return dateObject;
 };
 
 /** Inverse of timestampToDate, sets time to midnight
@@ -52,6 +67,28 @@ export function changeDateBySomeDays(inputDate: Date, days: number): Date {
     newDate.setDate(newDate.getDate() + days);
     return newDate;
 }
+
+/** Input a DateObject and change it to the following month.
+ * 
+ * @param currentDate Current date as a DateObject
+ * @returns Next month's date as a DateObject
+ */
+export const getNextMonth = (currentDate: DateObject): DateObject => {
+    let newDate = new Date(currentDate.year, currentDate.month - 1, currentDate.day);
+    newDate.setMonth(newDate.getMonth() + 1); // Add one month
+    return dateToDateObject(newDate);
+};
+    
+
+/** Input a DateObject and change it to the previous month.
+ * 
+ * @param currentDate Current date as a DateObject
+ * @returns Previous month's date as a DateObject
+ */
+export const getPreviousMonth = (currentDate: DateObject): DateObject => {
+    let newDate = new Date(currentDate.year, currentDate.month - 2, currentDate.day); // Subtracting 2 since JS month is 0-indexed
+    return dateToDateObject(newDate);
+};
 
 /** Change the time of a datetime object to now, 
  * keeping the date constant.

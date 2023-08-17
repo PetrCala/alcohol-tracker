@@ -130,6 +130,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
     );
   };
     
+  console.log((new Date()).getMonth());
   return (
     <View style={styles.container}>
         <View style={styles.header}>

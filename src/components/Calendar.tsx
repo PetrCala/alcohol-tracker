@@ -6,7 +6,15 @@ import {
     View
 } from 'react-native';
 import { Calendar } from 'react-native-calendars';
-import { getSingleMonthDrinkingSessions, timestampToDate, unitsToColors } from '../utils/dataHandling';
+import { 
+    dateToDateObject,
+    formatDate,
+    getPreviousMonth,
+    getNextMonth,
+    getSingleMonthDrinkingSessions, 
+    timestampToDate, 
+    unitsToColors 
+} from '../utils/dataHandling';
 import { 
     SessionsCalendarProps,
     SessionsCalendarMarkedDates
@@ -34,8 +42,6 @@ const DayComponent: React.FC<{
         state === 'disabled' ?  styles.dayTextDisabled : 
         state === 'today' ?  styles.dayTextToday : {},
         ]}
-    //   onPress={() => console.log('hello')}
-        // style={styles.dayText}
       >
         {date.day}
       </Text>
@@ -50,7 +56,7 @@ const DayComponent: React.FC<{
         ]}>
             <Text style={[
                 styles.daySessionMarkingText,
-                marking?.color == 'green' ? {color: 'green'} : // Invisible marking
+                marking?.color == 'green' ? {fontSize: 0} : // Invisible marking
                 marking?.color == 'yellow' ? {color: 'black'} :
                 marking?.color == 'red' ? {color: 'white'} :
                 marking?.color == 'orange' ? {color: 'black'} :
@@ -73,15 +79,14 @@ const DayComponent: React.FC<{
 const SessionsCalendar = ({ drinkingSessionData, onDayPress} :SessionsCalendarProps) => {
     const [calendarData, setCalendarData ] = useState<DrinkingSessionData[] | null>(drinkingSessionData);
     const [markedDates, setMarkedDates] = useState<SessionsCalendarMarkedDates>({});
+    const [visibleDateObject, setVisibleDateObject] = useState<DateObject>(
+        dateToDateObject(new Date())
+    )
     
     type DatesType = {
         [key: string]: {
             units: number;
         }
-    }
-
-    const formatDate = (date: Date) => {
-        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
     }
 
     const aggregateSessionsByDays = (sessions: DrinkingSessionData[]): DatesType => {
@@ -154,45 +159,68 @@ const SessionsCalendar = ({ drinkingSessionData, onDayPress} :SessionsCalendarPr
         return markedDates;
     };
 
-    const getMarkedDates = (dateObject: Date, drinkingSessionData: DrinkingSessionData[]): SessionsCalendarMarkedDates => {
+    const getMarkedDates = (date: Date, drinkingSessionData: DrinkingSessionData[]): SessionsCalendarMarkedDates => {
         if (!drinkingSessionData) return {};
 
-        const sessions = getSingleMonthDrinkingSessions(dateObject, drinkingSessionData, true);
+        const sessions = getSingleMonthDrinkingSessions(date, drinkingSessionData, true);
         const aggergatedSessions = aggregateSessionsByDays(sessions);
-        const monthTotalSessions = fillInRestOfMonth(dateObject, aggergatedSessions, true);
+        const monthTotalSessions = fillInRestOfMonth(date, aggergatedSessions, true);
         return monthEntriesToColors(monthTotalSessions);
     };
 
 
-    /** An explicit handler that fulfills the role of a useState, but
-     * is called from within the Calendar object on month change.
+
+    /** Handler for the left arrow calendar press. Uses a callback to
+     * move to the previous month
+     * 
+     * @param subtractMonth A callback to move the months
      */
-    const handleMonthChange = (newDate:DateObject) => {
+    const handleLeftArrowPress = (subtractMonth: () => void) => {
+        const previousMonth = getPreviousMonth(visibleDateObject);
+        setVisibleDateObject(previousMonth);
+        updateMarkedDates(previousMonth);
+        subtractMonth(); // Use the callback to move to the previous month
+    };
+    
+    /** Handler for the left arrow calendar press. Uses a callback to
+     * move to the following month
+     * 
+     * @param subtractMonth A callback to move the months
+    */
+   const handleRightArrowPress = (addMonth: () => void) => {
+        const nextMonth = getNextMonth(visibleDateObject);
+        setVisibleDateObject(nextMonth);
+        updateMarkedDates(nextMonth);
+        addMonth(); // Use the callback to move to the next month
+    };
+     
+    const getInitialMarkedDates = () => {
+        if (!calendarData) return {};
+        
+        const currentDate = timestampToDate(visibleDateObject.timestamp);
+        return getMarkedDates(currentDate, calendarData);
+    };
+    
+    const updateMarkedDates = (newDateObject:DateObject) => {
         if (calendarData != null){
-            const newDateObject = timestampToDate(newDate.timestamp);
-            const newMarkedDates = getMarkedDates(newDateObject, calendarData);
+            const newDate = timestampToDate(newDateObject.timestamp);
+            const newMarkedDates = getMarkedDates(newDate, calendarData);
             setMarkedDates(newMarkedDates);
         } else {
             setMarkedDates({});
-        }
+        };
     };
-
-    const currentMarkedDates = useMemo(() => {
-        if (!calendarData) return {};
-
-        let newDateObject = new Date();
-        return getMarkedDates(newDateObject, calendarData);
-    }, [calendarData]);
-
-
+     
+    // Keep the calendarData hook up to date
     useEffect(() => {
         setCalendarData(drinkingSessionData);
     }, [drinkingSessionData]);
     
 
+    // Set the marked dates to render on initial page load
     useEffect(() => {
-        setMarkedDates(currentMarkedDates);
-    }, [currentMarkedDates]);
+        setMarkedDates(getInitialMarkedDates);
+    }, []);
      
 
     if (markedDates == null || drinkingSessionData == null) {
@@ -205,6 +233,7 @@ const SessionsCalendar = ({ drinkingSessionData, onDayPress} :SessionsCalendarPr
 
     return (
         <Calendar
+        // current={visibleDateObject.dateString}
         dayComponent={({ date, state, marking, theme }) => 
             <DayComponent 
                 date={date as DateObject} 
@@ -214,7 +243,8 @@ const SessionsCalendar = ({ drinkingSessionData, onDayPress} :SessionsCalendarPr
                 onPress={onDayPress}
             />
         }
-        onMonthChange={newDate => handleMonthChange(newDate)}
+        onPressArrowLeft={(subtractMonth) => handleLeftArrowPress(subtractMonth)}
+        onPressArrowRight={(addMonth) => handleRightArrowPress(addMonth)}
         markedDates={markedDates}
         markingType={'period'}
         firstDay={1}
