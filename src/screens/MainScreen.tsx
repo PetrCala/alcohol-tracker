@@ -6,6 +6,7 @@
   useEffect,
 } from 'react';
 import { 
+  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -15,7 +16,6 @@ import MenuIcon from '../components/Buttons/MenuIcon';
 import SessionsCalendar from '../components/Calendar';
 import LoadingData from '../components/LoadingData';
 import YesNoPopup from '../components/YesNoPopup';
-import styles from '../styles';
 import DatabaseContext from '../database/DatabaseContext';
 import { listenForDataChanges } from "../database/baseFunctions";
 import { updateDrinkingSessionUserData } from '../database/drinkingSessions';
@@ -23,15 +23,20 @@ import { UserDataProps, DrinkingSessionData } from '../types/database';
 import { MainScreenProps } from '../types/screens';
 import { DateObject } from '../types/various';
 import { deleteUser, getAuth, signOut, reauthenticateWithCredential } from 'firebase/auth';
+import { dateToDateObject, getSingleMonthDrinkingSessions, timestampToDate } from '../utils/dataHandling';
 
 const MainScreen = ( { navigation }: MainScreenProps) => {
   const auth = getAuth();
   const user = auth.currentUser;
   const db = useContext(DatabaseContext);
   const [userData, setUserData] = useState<UserDataProps | null>(null);
-  const [drinkingSessionData, setDrinkingsessionData] = useState<DrinkingSessionData[] | null>([]); // Data
-  const [ loadingUserData, setUserLoadingData] = useState<boolean>(true);
-  const [ loadingSessionData, setLoadingSessionData] = useState<boolean>(true);
+  const [drinkingSessionData, setDrinkingsessionData] = useState<DrinkingSessionData[] | []>([]); // Data
+  const [visibleDateObject, setVisibleDateObject] = useState<DateObject>(
+    dateToDateObject(new Date())
+    );
+  const [thisMonthUnits, setThisMonthUnits] = useState<number>(0);
+  const [loadingUserData, setUserLoadingData] = useState<boolean>(true);
+  const [loadingSessionData, setLoadingSessionData] = useState<boolean>(true);
   // const [deleteUserPopupVisible, setDeleteUserPopupVisible] = useState<boolean>(false);
 
   // Automatically navigate to login screen if login expires
@@ -89,6 +94,16 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
     }
   };
 
+  const calculateThisMonthUnits = (dateObject: DateObject, sessions: DrinkingSessionData[]) => {
+    // Subset to this month's sessions only
+    const currentDate = timestampToDate(dateObject.timestamp);
+    const sessionsThisMonth = getSingleMonthDrinkingSessions(
+      currentDate, sessions, false
+    );
+    // Sum up the units
+    return sessionsThisMonth.reduce((sum, session) => sum + session.units, 0);
+  };
+
   // Monitor user data
   useEffect(() => {
     let userRef = `users/${user.uid}`
@@ -121,6 +136,14 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
 
   }, [db, user]); // Re-run effect when userId or db changes
 
+  // Monitor visible month and various statistics
+  useEffect(() => {
+    let thisMonthUnits = calculateThisMonthUnits(visibleDateObject, drinkingSessionData);
+    setThisMonthUnits(thisMonthUnits);
+
+  }, [drinkingSessionData, visibleDateObject]);
+
+
   // Wait for the user data to be fetched from database
   if (loadingUserData || loadingSessionData) {
     return(
@@ -131,8 +154,8 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
   };
     
   return (
-    <View style={styles.container}>
-        <View style={styles.header}>
+    <View style={styles.mainContainer}>
+        <View style={styles.mainHeader}>
             <View style={styles.profileIconContainer}>
                 {/* User's clickable icon */}
                 <MenuIcon 
@@ -189,10 +212,10 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
         <View style={styles.mainScreenContent}>
             {userData?.in_session ?
             <TouchableOpacity 
-              style={styles.menuInSessionWarningContainer}
+              style={styles.userInSessionWarningContainer}
               onPress={startDrinkingSession}
               >
-                <Text style={styles.menuInSessionWarningText}>
+                <Text style={styles.userInSessionWarningText}>
                 You are currently in session!
                 </Text> 
             </TouchableOpacity>
@@ -204,6 +227,8 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
             {drinkingSessionData ?
             <SessionsCalendar
               drinkingSessionData = {drinkingSessionData}
+              visibleDateObject={visibleDateObject}
+              setVisibleDateObject={setVisibleDateObject}
               onDayPress = {(day:DateObject) => {
                 navigation.navigate('Day Overview Screen',
                 { timestamp: day.timestamp }
@@ -220,9 +245,132 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
               textStyle={styles.startSessionText}
               onPress = {startDrinkingSession} />
             }
+            <Text style={styles.menuDrinkingSessionInfoText}>Units this month:</Text> 
+            <Text style={styles.thisMonthUnitsText}>{thisMonthUnits}</Text> 
         </View>
     </View>
   );
 };
 
 export default MainScreen;
+
+const styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
+  mainHeader: {
+    height: 70,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 10,
+    backgroundColor: 'white',
+  },
+  profileIconContainer: {
+    width: 50,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  profileIcon: {
+    flex: 1,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+  },
+  headerUsernameContainer: {
+    //Ensure the container fills all space between, no more, no less
+    flexGrow: 1,
+    flexShrink: 1,
+    //other
+    justifyContent: 'center',
+    paddingLeft: 10,
+  },
+  headerUsername: {
+    flexWrap: 'wrap',
+    fontSize: 18,
+    fontWeight: '500',
+    color: 'black',
+  },
+  menuContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    width: 150,
+  },
+  menuIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  menuIcon: {
+    width: 25,
+    height: 25,
+    padding: 10,
+  },
+  mainScreenContent: {
+    flex: 1,
+    backgroundColor: '#FFFF99',
+  },
+  ///
+  userInSessionWarningContainer: {
+    backgroundColor: '#ff5d54',
+    padding: 16,
+    borderRadius: 8,
+    marginVertical: 4,
+    borderColor: '#ddd',
+    borderWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    alignItems: "center",
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  userInSessionWarningText: {
+    fontSize: 22,
+    color: '#ffffff', // White color for the text
+    fontWeight: 'bold',
+  },
+  menuDrinkingSessionInfoText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginTop: 5,
+    marginBottom: 5,
+    color: "black",
+    alignSelf: "center",
+    alignContent: "center",
+    padding: 10,
+  },
+  thisMonthUnitsText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 5,
+    color: "black",
+    alignSelf: "center",
+    alignContent: "center",
+
+  },
+  startSessionButton: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    borderRadius: 50,
+    width: 70,
+    height: 70,
+    backgroundColor: 'green',
+    alignItems: 'center',
+  },
+  startSessionText: {
+    color: 'white',
+    fontSize: 50,
+    fontWeight: 'bold',
+    textAlign: 'center'
+  },
+});

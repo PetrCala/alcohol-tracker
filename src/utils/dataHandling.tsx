@@ -120,15 +120,15 @@ export function createDateObject(date: Date): DateObject {
  * @param sessions An array of sessions to subset
  * @returns The subsetted array of sessions
  */
-export function getSingleDayDrinkingSessions(dateObject: Date, sessions: DrinkingSessionData[]) {
+export function getSingleDayDrinkingSessions(date: Date, sessions: DrinkingSessionData[]) {
     // Define the time boundaries
-    dateObject.setHours(0, 0, 0, 0); // set to start of day
+    date.setHours(0, 0, 0, 0); // set to start of day
     
-    const tomorrow = new Date(dateObject);
-    tomorrow.setDate(dateObject.getDate() + 1); // set to start of next day
+    const tomorrow = new Date(date);
+    tomorrow.setDate(date.getDate() + 1); // set to start of next day
   
     // Convert to UNIX timestamp
-    const todayUnix = Math.floor(dateObject.getTime());
+    const todayUnix = Math.floor(date.getTime());
     const tomorrowUnix = Math.floor(tomorrow.getTime());
   
     const filteredSessions = sessions.filter(session => session.timestamp >= todayUnix && session.timestamp < tomorrowUnix);
@@ -145,13 +145,13 @@ export function getSingleDayDrinkingSessions(dateObject: Date, sessions: Drinkin
  * @param untilToday If true, include no sessions that occured after today
  * @returns The subsetted array of sessions
  */
-export function getSingleMonthDrinkingSessions(dateObject: Date, sessions: DrinkingSessionData[], untilToday: boolean = false){
-    dateObject.setHours(0, 0, 0, 0); // To midnight
+export function getSingleMonthDrinkingSessions(date: Date, sessions: DrinkingSessionData[], untilToday: boolean = false){
+    date.setHours(0, 0, 0, 0); // To midnight
     // Find the beginning date
-    let firstDayOfMonth = new Date(dateObject.getFullYear(), dateObject.getMonth(), 1);
+    let firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
     let beginningDate = firstDayOfMonth;
     // Find the end date
-    const firstDayOfNextMonth = new Date(dateObject.getFullYear(), dateObject.getMonth() + 1, 1);
+    const firstDayOfNextMonth = new Date(date.getFullYear(), date.getMonth() + 1, 1);
     let endDate = firstDayOfNextMonth;
     if (untilToday){
         let today = new Date(); // automatically set to midnight

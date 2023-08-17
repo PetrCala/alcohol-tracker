@@ -4,6 +4,8 @@
 
 export type SessionsCalendarProps = {
     drinkingSessionData: DrinkingSessionData[];
+    visibleDateObject: DateObject;
+    setVisibleDateObject: React.Dispatch<React.SetStateAction<DateObject>>;
     onDayPress: (day: any) => void;
 }
  

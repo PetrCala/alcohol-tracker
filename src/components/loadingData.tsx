@@ -1,9 +1,9 @@
 ﻿import { 
     View,
     Text,
-    ActivityIndicator
+    ActivityIndicator,
+    StyleSheet
 } from "react-native";
-import styles from "../styles";
 import { LoadingDataProps } from "../types/various";
 
 const LoadingData = ({loadingText}:LoadingDataProps) => {
@@ -19,3 +19,11 @@ const LoadingData = ({loadingText}:LoadingDataProps) => {
 }    
 
 export default LoadingData;
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});

@@ -77,12 +77,14 @@ const DayComponent: React.FC<{
 };
 
 
-const SessionsCalendar = ({ drinkingSessionData, onDayPress} :SessionsCalendarProps) => {
+const SessionsCalendar = ({ 
+    drinkingSessionData, 
+    visibleDateObject, 
+    setVisibleDateObject,
+    onDayPress
+} :SessionsCalendarProps) => {
     const [calendarData, setCalendarData ] = useState<DrinkingSessionData[] | null>(drinkingSessionData);
     const [markedDates, setMarkedDates] = useState<SessionsCalendarMarkedDates>({});
-    const [visibleDateObject, setVisibleDateObject] = useState<DateObject>(
-        dateToDateObject(new Date())
-    )
     
     type DatesType = {
         [key: string]: {
@@ -324,7 +326,8 @@ const styles = StyleSheet.create({
     // Calendar styles
     mainScreenCalendarStyle: {
         width: '100%',
-        // borderWidth: 1,
+        borderWidth: 1,
+        borderColor: '#E0E0E0',
         // height: 350
     },
 })

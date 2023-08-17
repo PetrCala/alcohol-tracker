@@ -3,10 +3,10 @@ useState,
 useContext,
 } from 'react';
 import {
+    StyleSheet,
 Text,
 View,
 } from 'react-native';
-import styles from '../styles';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import BasicButton from '../components/Buttons/BasicButton';
 import { EditSessionScreenProps} from '../types/screens';
@@ -84,7 +84,7 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
 
     return (
         <View style={{flex:1, backgroundColor: '#FFFF99'}}>
-        <View style={styles.header}>
+        <View style={styles.mainHeader}>
             <MenuIcon
             iconId='escape-edit-session'
             iconSource={require('../assets/icons/arrow_back.png')}
@@ -136,3 +136,54 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
 };
 
 export default EditSessionScreen;
+
+const styles = StyleSheet.create({
+  mainHeader: {
+    height: 70,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 10,
+    backgroundColor: 'white',
+  },
+  backArrowContainer: {
+    justifyContent: 'center',
+    marginTop: 10,
+    marginLeft: 10,
+    padding: 10,
+    position: 'absolute',
+  },
+  backArrow: {
+    width: 25,
+    height: 25,
+  },
+  drinkingSessionContainer: {
+    flexGrow: 1,
+    flexShrink: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 90, //offset header
+  },
+  drinkingSessionButton: {
+    width: 130,
+    alignItems: "center",
+    padding: 10,
+    marginBottom: 10,
+    marginTop: 10,
+    backgroundColor: '#007AFF'
+  },
+  drinkingSessionButtonText: {
+    color: 'white',
+    fontSize: 15,
+    fontWeight: '500',
+  },
+  menuDrinkingSessionInfoText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginTop: 5,
+    marginBottom: 5,
+    color: "black",
+    alignSelf: "center",
+    alignContent: "center",
+    padding: 10,
+  },
+});
