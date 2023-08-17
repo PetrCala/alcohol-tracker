@@ -15,7 +15,7 @@ import { DrinkingSessionScreenProps } from '../types/screens';
 import DatabaseContext from '../database/DatabaseContext';
 import { updateCurrentUnits, discardDrinkingSessionData } from '../database/users';
 import { saveDrinkingSessionData } from '../database/drinkingSessions';
-import ClickableTextInput from '../components/Buttons/ClickableTextInput';
+import SessionUnitsInputWindow from '../components/Buttons/SessionUnitsInputWindow';
 import { formatDateToDay, formatDateToTime, timestampToDate } from '../utils/dataHandling';
 import { getAuth } from 'firebase/auth';
 
@@ -41,7 +41,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
   // Change local hook value
   const changeUnits = (number: number) => {
     const newUnits = units + number;
-    if (newUnits >= 0){
+    if (newUnits >= 0 && newUnits < 100){
       setUnits(newUnits);
     }
   };
@@ -124,8 +124,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
             </Text>
         </View>
       <View style={styles.drinkingSessionContainer}>
-        <ClickableTextInput
-          text = ''
+        <SessionUnitsInputWindow
           currentUnits={units}
           onUnitsChange={setUnits}
         />

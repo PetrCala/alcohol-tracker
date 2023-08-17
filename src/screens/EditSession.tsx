@@ -13,7 +13,7 @@ import { EditSessionScreenProps} from '../types/screens';
 import { DrinkingSessionData } from '../types/database';
 import DatabaseContext from '../database/DatabaseContext';
 import { removeDrinkingSessionData, editDrinkingSessionData } from '../database/drinkingSessions';
-import ClickableTextInput from '../components/Buttons/ClickableTextInput';
+import SessionUnitsInputWindow from '../components/Buttons/SessionUnitsInputWindow';
 import { formatDateToDay, formatDateToTime, timestampToDate } from '../utils/dataHandling';
 import { getAuth } from 'firebase/auth';
 
@@ -40,7 +40,7 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
     // Change local hook value
     const changeUnits = (number: number) => {
         const newUnits = units + number;
-        if (newUnits >= 0){
+        if (newUnits >= 0 && newUnits < 100){
             setUnits(newUnits);
         }
     };
@@ -72,7 +72,7 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
         } catch (error:any) {
             throw new Error('Failed to delete the session: ' + error.message);
         }
-        navigation.goBack();
+        navigation.navigate('Main Screen'); // Get the main overview, not day
     }
 
     /** If an update is pending, update immediately before navigating away
@@ -97,18 +97,12 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
             <Text style={styles.menuDrinkingSessionInfoText}>
                 {sessionDay}
             </Text>
-            {/* <ClickableTextInput
-                text = {sessionTime}
-                currentUnits={units}
-                onUnitsChange={setUnits}
-            /> */}
             <Text style={styles.menuDrinkingSessionInfoText}>
                 {sessionTime}
             </Text>
         </View>
         <View style={styles.drinkingSessionContainer}>
-            <ClickableTextInput
-            text = ''
+            <SessionUnitsInputWindow
             currentUnits={units}
             onUnitsChange={setUnits}
             />

@@ -195,21 +195,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: 90, //offset header
   },
-  drinkingSessionClickableTextContainer: {
-    padding: 15,
-    borderRadius: 8,
-    borderWidth: 2,
-    marginBottom: 15,
-    width: 300,
-    alignItems: 'center',
-    borderColor: '#212421',
-    backgroundColor: 'white',
-  },
-  drinkingSessionClickableTextStyle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#212421',
-  },
   drinkingSessionTimeInfo: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -220,16 +205,6 @@ const styles = StyleSheet.create({
     color: '#212421',
     paddingVertical: 20,
     paddingHorizontal: 10,
-  },
-  drinkingSessionClickableTextInput: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    paddingVertical: 8,
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: 'white',
-    borderRadius: 4,
-    color: '#212421'
   },
   drinkingSessionButton: {
     width: 130,
