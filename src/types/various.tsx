@@ -9,9 +9,9 @@ export type SessionsCalendarProps = {
  
 export type SessionsCalendarMarkedDates = {
     [date: string]: {
+        units: number;
         color: string;
         textColor?: string;
-
     };
 };
 

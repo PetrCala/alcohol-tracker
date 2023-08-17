@@ -6,7 +6,7 @@ import {
     View
 } from 'react-native';
 import { Calendar } from 'react-native-calendars';
-import { createDateObject, getDateAtMidnightFromTimestamp, getSingleMonthDrinkingSessions, timestampToDate, unitsToColors } from '../utils/dataHandling';
+import { getSingleMonthDrinkingSessions, timestampToDate, unitsToColors } from '../utils/dataHandling';
 import { 
     SessionsCalendarProps,
     SessionsCalendarMarkedDates
@@ -41,23 +41,29 @@ const DayComponent: React.FC<{
       </Text>
       { marking ?
         <View style={[
-            {
-            marginTop: 5,
-            height: 9,
-            width: 9,
-            borderWidth: 1,
-            borderColor: 'black',
-            borderRadius: 10,
-            alignSelf: 'center',
-        },
-        marking?.color == 'green' ? {backgroundColor: 'green'} :
-        marking?.color == 'yellow' ? {backgroundColor: 'yellow'} :
-        marking?.color == 'red' ? {backgroundColor: 'red'} :
-        marking?.color == 'orange' ? {backgroundColor: 'orange'} :
-        {}
+            styles.daySessionsMarkingContainer,
+            marking?.color == 'green' ? {backgroundColor: 'green'} :
+            marking?.color == 'yellow' ? {backgroundColor: 'yellow'} :
+            marking?.color == 'red' ? {backgroundColor: 'red'} :
+            marking?.color == 'orange' ? {backgroundColor: 'orange'} :
+            {}
         ]}>
+            <Text style={[
+                styles.daySessionMarkingText,
+                marking?.color == 'green' ? {color: 'green'} : // Invisible marking
+                marking?.color == 'yellow' ? {color: 'black'} :
+                marking?.color == 'red' ? {color: 'white'} :
+                marking?.color == 'orange' ? {color: 'black'} :
+                {}
+            ]}>
+                {marking.units}
+            </Text>
         </View> :
-        <></>
+        <View style={[
+            styles.daySessionsMarkingContainer,
+            {borderWidth: 0}
+        ]}
+        />
       }
     </TouchableOpacity>
   );
@@ -139,6 +145,7 @@ const SessionsCalendar = ({ drinkingSessionData, onDayPress} :SessionsCalendarPr
                 textColor = 'white';
             }
             acc[key] = { 
+                units: value, // number of units
                 color: color,
                 textColor: textColor
             }
@@ -238,14 +245,32 @@ const styles = StyleSheet.create({
         // borderRadius: 4, // Rounded corners
     },
     dayText: {
-        fontSize: 16,
+        marginTop: 1,
+        marginLeft: 2,
+        fontSize: 10,
         color: 'black',
+        alignSelf: 'flex-start',
     },
     dayTextDisabled: {
         color: '#D3D3D3',
     },
     dayTextToday: {
         color: 'blue', // Blue text for the current day
+    },
+    daySessionsMarkingContainer: {
+        marginTop: 0,
+        marginBottom: 5,
+        height: 35,
+        width: 35,
+        borderWidth: 1,
+        borderColor: '#D3D3D3',
+        borderRadius: 5,
+        alignSelf: 'center',
+        justifyContent: 'center',
+    },
+    daySessionMarkingText: {
+        fontSize: 18,
+        alignSelf: 'center',
     },
     // Calendar styles
     mainScreenCalendarStyle: {
