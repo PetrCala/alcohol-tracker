@@ -5,11 +5,28 @@ export function formatDate (date: Date): string {
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
 
+export function formatDateToDay(date: Date): string {
+    return `${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+};
+
+export function formatDateToTime(date: Date): string {
+    return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+    // var time = ('0' + inputDate.getHours()).slice(-2) + ':' + 
+    //             ('0' + inputDate.getMinutes()).slice(-2);
+    // return time;
+}
+
 /** Convert a timestamp to a Date object */
 export function timestampToDate( timestamp: number): Date {
     return new Date(timestamp);
 };
 
+/** Convert a Date type object to a JSON-type DateObject.
+ * Month is indexed from 1 in this object
+ * 
+ * @param date Date type object
+ * @returns A DateObject
+ */
 export function dateToDateObject( date:Date ): DateObject {
     const dateObject = {
         dateString: formatDate(date),
@@ -35,35 +52,14 @@ export function getTimestampAtNoon(date: Date): number {
     return dateAtMidnight.getTime();
 };
 
-/** Input a timestamp and return the corresponding Date object
- * with time set to midnight
+/** Input a Date type object and change its day by a certain amount
+ * 
+ * @param date Date type object
+ * @param days Number of days to change the date by
+ * @returns A new, modified Date type object
  */
-export function getDateAtMidnightFromTimestamp(timestamp: number): Date {
-    const date = new Date(timestamp);
-    date.setHours(0, 0, 0, 0); // Set the time to midnight
-    return date;
-  }
-
-export function formatDateToDay(inputDate: Date, addYear: boolean = true): string {
-    // Extract the date, month, and year, and format them as MM-DD-YYYY
-    var date = ('0' + (inputDate.getMonth() + 1)).slice(-2) + '-' + 
-                ('0' + inputDate.getDate()).slice(-2)
-    // Extract year
-    if (addYear) {
-        date = date + '-' + inputDate.getFullYear();
-    }
-    return date
-};
-
-export function formatDateToTime(inputDate: Date): string {
-    // Extract the hours and minutes, and format them as HH:MM
-    var time = ('0' + inputDate.getHours()).slice(-2) + ':' + 
-                ('0' + inputDate.getMinutes()).slice(-2);
-    return time;
-}
-
-export function changeDateBySomeDays(inputDate: Date, days: number): Date {
-    let newDate = new Date(inputDate); // to avoid mutating original date
+export function changeDateBySomeDays(date: Date, days: number): Date {
+    let newDate = new Date(date); // to avoid mutating original date
     newDate.setDate(newDate.getDate() + days);
     return newDate;
 }
@@ -74,8 +70,16 @@ export function changeDateBySomeDays(inputDate: Date, days: number): Date {
  * @returns Next month's date as a DateObject
  */
 export const getNextMonth = (currentDate: DateObject): DateObject => {
-    let newDate = new Date(currentDate.year, currentDate.month - 1, 1);
-    newDate.setMonth(newDate.getMonth() + 1); // Add one month
+    // Setting it to the same day of the next month
+    let newDate = new Date(currentDate.year, currentDate.month - 1, currentDate.day);
+    let originalMonth = newDate.getMonth();
+    
+    newDate.setMonth(originalMonth + 1); 
+    // If the day got changed because the next month doesn't have that day (e.g. 31 Aug to 1 Sep)
+    if ((newDate.getMonth() - originalMonth + 12) % 12 !== 1) {
+        newDate.setDate(0); // Setting the date to the last day of the previous month
+    }
+
     return dateToDateObject(newDate);
 };
     
@@ -86,7 +90,17 @@ export const getNextMonth = (currentDate: DateObject): DateObject => {
  * @returns Previous month's date as a DateObject
  */
 export const getPreviousMonth = (currentDate: DateObject): DateObject => {
-    let newDate = new Date(currentDate.year, currentDate.month - 2, 1); // Subtracting 2 since JS month is 0-indexed
+    // Setting it to the same day of the previous month
+    let newDate = new Date(currentDate.year, currentDate.month - 1, currentDate.day);
+    let originalMonth = newDate.getMonth();
+    
+    newDate.setMonth(originalMonth - 1);
+    
+    // If the day got changed because the previous month doesn't have that day (e.g., 31st March to something not 31st February)
+    if ((newDate.getMonth() - originalMonth + 12) % 12 !== 11) {
+        newDate.setDate(0); // Setting the date to the last day of the previous month
+    }
+
     return dateToDateObject(newDate);
 };
 
