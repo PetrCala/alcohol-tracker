@@ -11,10 +11,7 @@ export function formatDateToDay(date: Date): string {
 
 export function formatDateToTime(date: Date): string {
     return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
-    // var time = ('0' + inputDate.getHours()).slice(-2) + ':' + 
-    //             ('0' + inputDate.getMinutes()).slice(-2);
-    // return time;
-}
+};
 
 /** Convert a timestamp to a Date object */
 export function timestampToDate( timestamp: number): Date {
@@ -82,7 +79,6 @@ export const getNextMonth = (currentDate: DateObject): DateObject => {
 
     return dateToDateObject(newDate);
 };
-    
 
 /** Input a DateObject and change it to the previous month.
  * 
