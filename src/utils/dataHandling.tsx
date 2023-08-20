@@ -112,17 +112,7 @@ export function setDateToCurrentTime(inputDate: Date): Date {
     inputDate.setMilliseconds(currentTime.getMilliseconds());
   
     return inputDate;
-  }
-
-export function createDateObject(date: Date): DateObject {
-    return {
-      dateString: date.toISOString().split('T')[0],
-      day: date.getDate(),
-      month: date.getMonth() + 1, // JavaScript months are 0-indexed, so add 1
-      timestamp: date.getTime(),
-      year: date.getFullYear(),
-    };
-  }
+};
 
 /** Subset an array of drinking sessions to a single day.
  * 
@@ -187,16 +177,41 @@ export function sumAllUnits(all_units: UnitTypesProps){
     return Object.values(all_units).reduce((acc, curr) => acc + curr, 0);
 };
 
-export const getZeroUnitsOjbect = ():UnitTypesProps => {
-    return {
-        beer: 0,
-        cocktail: 0,
-        other: 0,
-        strong_shot: 0,
-        weak_shot: 0,
-        wine: 0
-    };
+/** Generate an object with all available units where 
+ * each unit's value is set to 0.
+ */
+export const getZeroUnitsObject = ():UnitTypesProps => {
+    // Create an object with all keys set to 0
+    let unitTypes = {} as UnitTypesProps;
+
+    // Create an array of all keys in UnitTypesProps type
+    const keys = Object.keys(unitTypes) as (keyof UnitTypesProps)[];
+
+    keys.forEach(key => {
+        unitTypes[key] = 0;
+    });
+
+    return unitTypes;
 };
+
+/** Generate an object with all available units where 
+ * each unit's value is set to a random integer.
+ */
+export const getRandomUnitsObject = (maxUnitValue:number = 30):UnitTypesProps => {
+
+    // Create an object with all keys set to 0
+    let unitTypes = {} as UnitTypesProps;
+
+    // Create an array of all keys in UnitTypesProps type
+    const keys = Object.keys(unitTypes) as (keyof UnitTypesProps)[];
+
+    keys.forEach(key => {
+        unitTypes[key] = Math.floor(Math.random() * maxUnitValue);
+    });
+
+    return unitTypes;
+};
+
 
 /** Convert the units consumed to colors.
  * 

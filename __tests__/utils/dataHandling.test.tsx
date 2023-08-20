@@ -6,11 +6,48 @@
     formatDateToTime,
     getNextMonth, 
     getPreviousMonth, 
+    getRandomUnitsObject, 
+    getSingleDayDrinkingSessions, 
+    getSingleMonthDrinkingSessions, 
     getTimestampAtMidnight, 
     getTimestampAtNoon, 
+    getZeroUnitsObject, 
+    setDateToCurrentTime, 
+    sumAllUnits, 
     timestampToDate 
 } from "../../src/utils/dataHandling";
 import { DateObject } from "../../src/types/various";
+import { DrinkingSessionData, UnitTypesProps } from "../../src/types/database";
+
+/**
+ * Generates a DrinkingSessionData for a specified offset relative to a given date.
+ *
+ * @param baseDate Date around which sessions are created.
+ * @param offsetDays Number of days to offset from baseDate. If not provided, a random offset between -7 and 7 days is used.
+ * @returns A DrinkingSessionData object.
+ */
+function generateMockSession(baseDate: Date, offsetDays?: number): DrinkingSessionData {
+    const sessionDate = new Date(baseDate);
+  
+    // If offsetDays is not provided, randomize between -7 and 7 days.
+    const daysOffset = offsetDays !== undefined ? offsetDays : Math.floor(Math.random() * 15) - 7;
+  
+    sessionDate.setDate(sessionDate.getDate() + daysOffset);
+  
+    const startHour = 3;  // you can randomize this or make it configurable
+  
+    sessionDate.setHours(startHour, 0, 0, 0);
+
+    const newSession:DrinkingSessionData =  {
+        end_time: sessionDate.getTime() + (2 * 60 * 60 * 1000),  // +2 hours
+        last_unit_added_time: sessionDate.getTime() + (1.5 * 60 * 60 * 1000),  // +1.5 hours
+        session_id: `session-${daysOffset}-offset`,
+        start_time: sessionDate.getTime(),
+        units: {} as any
+    };
+  
+    return newSession;
+  }
 
 
 describe('formatDate function', () => {
@@ -215,61 +252,31 @@ describe('getNextMonth function', () => {
     };
 
     it('shifts a mid-month date to the same day of the next month', () => {
-        const originalDateObj: DateObject = {
-            dateString: "2023-08-15",
-            day: 15,
-            month: 8,
-            timestamp: new Date(2023, 7, 15).getTime(),
-            year: 2023
-        };
+        const originalDateObj: DateObject = dateToDateObject(new Date(2023, 7, 15));
         const newDateObj = getNextMonth(originalDateObj);
         checkIsDateAndHasExpectedValues(newDateObj, 15, 9);  // Expected: September 15
     });
 
     it('shifts an end-of-month date (with 31 days) to the last day of the next month (with 30 days)', () => {
-        const originalDateObj = {
-            dateString: "2023-07-31",
-            year: 2023, 
-            month: 7,  // July
-            timestamp: new Date(2023, 6, 31).getTime(),
-            day: 31
-        };
+        const originalDateObj: DateObject = dateToDateObject(new Date(2023, 6, 31));
         const newDate = getNextMonth(originalDateObj);
         checkIsDateAndHasExpectedValues(newDate, 31, 8); // Expected: August 31 (as August has 31 days)
     });
 
     it('shifts an end-of-month date (with 31 days) to the last day of the next month (with 28/29 days)', () => {
-        const originalDateObj = {
-            dateString: "2023-01-31",
-            year: 2023,  // Non-leap year
-            month: 1,  // January
-            timestamp: new Date(2023, 0, 31).getTime(),
-            day: 31
-        };
+        const originalDateObj: DateObject = dateToDateObject(new Date(2023, 0, 31));
         const newDate = getNextMonth(originalDateObj);
         checkIsDateAndHasExpectedValues(newDate, 28, 2); // Expected: February 28 (non-leap year)
     });
 
     it('shifts an end-of-month date (with 31 days) to the last day of the next month (in a leap year)', () => {
-        const originalDateObj = {
-            dateString: "2024-01-31",
-            year: 2024,  // Leap year
-            month: 1,  // January
-            timestamp: new Date(2024, 0, 31).getTime(),
-            day: 31
-        };
+        const originalDateObj: DateObject = dateToDateObject(new Date(2024, 0, 31));
         const newDate = getNextMonth(originalDateObj);
         checkIsDateAndHasExpectedValues(newDate, 29, 2); // Expected: February 29 (leap year)
     });
 
     it('shifts an end-of-month date (with 30 days) to the same day of the next month (with 31 days)', () => {
-        const originalDateObj = {
-            dateString: "2023-04-32",
-            year: 2023, 
-            month: 4,  // April
-            timestamp: new Date(2023, 3, 30).getTime(),
-            day: 30
-        };
+        const originalDateObj: DateObject = dateToDateObject(new Date(2023, 3, 30));
         const newDate = getNextMonth(originalDateObj);
         checkIsDateAndHasExpectedValues(newDate, 30, 5); // Expected: May 30 (as May has 31 days)
     });
@@ -290,63 +297,208 @@ describe('getPreviousMonth function', () => {
     }
 
     it('handles normal month rollback', () => {
-        const originalDateObj: DateObject = {
-            dateString: "2023-08-15",
-            day: 15,
-            month: 8,
-            timestamp: new Date(2023, 7, 15).getTime(),
-            year: 2023
-        };
+        const originalDateObj: DateObject = dateToDateObject(new Date(2023, 7, 15));
         const newDate = getPreviousMonth(originalDateObj);
         checkDateValues(newDate, 2023, 7, 15); // Expected: 15th July 2023
     });
 
     it('handles end-of-month to month with fewer days (31 to 30)', () => {
-        const originalDateObj: DateObject = {
-            dateString: "2023-08-31",
-            day: 31,
-            month: 8,
-            timestamp: new Date(2023, 7, 31).getTime(),
-            year: 2023
-        };
+        const originalDateObj: DateObject = dateToDateObject(new Date(2023, 7, 31));
         const newDate = getPreviousMonth(originalDateObj);
         checkDateValues(newDate, 2023, 7, 31); // Expected: 31st July 2023
     });
 
     it('handles end-of-month to month with fewer days (31 to 28)', () => {
-        const originalDateObj: DateObject = {
-            dateString: "2023-03-31",
-            day: 31,
-            month: 3,
-            timestamp: new Date(2023, 2, 31).getTime(),
-            year: 2023
-        };
+        const originalDateObj: DateObject = dateToDateObject(new Date(2023, 2, 31));
         const newDate = getPreviousMonth(originalDateObj);
         checkDateValues(newDate, 2023, 2, 28); // Expected: 28th February 2023 (non-leap year)
     });
 
     it('handles end-of-month to month with fewer days (31 to 29 in leap year)', () => {
-        const originalDateObj: DateObject = {
-            dateString: "2024-03-31",
-            day: 31,
-            month: 3,
-            timestamp: new Date(2024, 2, 31).getTime(),
-            year: 2024
-        };
+        const originalDateObj: DateObject = dateToDateObject(new Date(2024, 2, 31));
         const newDate = getPreviousMonth(originalDateObj);
         checkDateValues(newDate, 2024, 2, 29); // Expected: 29th February 2024 (leap year)
     });
 
     it('handles year change', () => {
-        const originalDateObj: DateObject = {
-            dateString: "2024-01-01",
-            day: 1,
-            month: 1,
-            timestamp: new Date(2024, 0, 1).getTime(),
-            year: 2024
-        };
+        const originalDateObj: DateObject = dateToDateObject(new Date(2024, 0, 1));
         const newDate = getPreviousMonth(originalDateObj);
         checkDateValues(newDate, 2023, 12, 1); // Expected: 1st December 2023
     });
 
 });
+
+
+describe('setDateToCurrentTime function', () => {
+    it('should change the time to current while keeping the date component the same', () => {
+        const inputDate = new Date(2023, 7, 15, 5, 5, 5); // 15th August 2023, 05:05:05
+        const modifiedDate = setDateToCurrentTime(inputDate);
+
+        const currentTime = new Date();
+
+        expect(modifiedDate.getFullYear()).toEqual(2023);
+        expect(modifiedDate.getMonth()).toEqual(7);
+        expect(modifiedDate.getDate()).toEqual(15);
+        expect(modifiedDate.getHours()).toEqual(currentTime.getHours());
+        expect(modifiedDate.getMinutes()).toEqual(currentTime.getMinutes());
+        expect(modifiedDate.getSeconds()).toEqual(currentTime.getSeconds());
+        expect(modifiedDate.getMilliseconds()).toEqual(currentTime.getMilliseconds());
+    });
+});
+
+
+describe('getSingleDayDrinkingSessions', () => {
+
+    it('should return sessions that only fall within the given date', () => {
+      const baseDate = new Date('2023-08-20');
+      const testSessions: DrinkingSessionData[] = [
+        generateMockSession(baseDate, 0),    // Session from 'today'
+        generateMockSession(baseDate, -1),   // Session from 'yesterday'
+        generateMockSession(baseDate, 1)     // Session from 'tomorrow'
+      ];
+  
+      const result = getSingleDayDrinkingSessions(baseDate, testSessions);
+      expect(result).toHaveLength(1);
+      expect(result[0].session_id).toContain('session-0');
+    });
+  
+    it('should return an empty array if no sessions fall within the given date', () => {
+      const baseDate = new Date('2023-08-22');
+      const testSessions: DrinkingSessionData[] = [
+        generateMockSession(baseDate, -2),
+        generateMockSession(baseDate, -3)
+      ];
+  
+      const result = getSingleDayDrinkingSessions(baseDate, testSessions);
+      expect(result).toHaveLength(0);
+      expect(result).toEqual([]);
+    });
+  
+  });
+
+
+describe('getSingleMonthDrinkingSessions', () => {
+
+    it('should return sessions that only fall within the given month', () => {
+      const baseDate = new Date('2023-08-20');
+      const testSessions: DrinkingSessionData[] = [
+        generateMockSession(baseDate, 0),   // Session from this month
+        generateMockSession(baseDate, -30),  // Session from last month
+        generateMockSession(baseDate, 30)    // Session from next month
+      ];
+  
+      const result = getSingleMonthDrinkingSessions(baseDate, testSessions);
+      expect(result).toHaveLength(1);
+      expect(result[0].session_id).toContain('session-0');
+    });
+  
+    it('should return sessions until today when untilToday flag is true', () => {
+      const baseDate = new Date('2023-08-20');
+      const futureSessionDate = new Date(baseDate);
+      futureSessionDate.setDate(baseDate.getDate() + 5);  // A session 5 days into the future
+  
+      const testSessions: DrinkingSessionData[] = [
+        generateMockSession(baseDate, 0),   // Session from this month
+        {
+          ...generateMockSession(baseDate, 0),
+          session_id: 'session-future',
+          start_time: futureSessionDate.getTime()
+        }
+      ];
+  
+      const result = getSingleMonthDrinkingSessions(baseDate, testSessions, true);
+      expect(result).toHaveLength(1);
+      expect(result[0].session_id).toContain('session-0');
+    });
+  
+    it('should return an empty array if no sessions fall within the given month', () => {
+      const baseDate = new Date('2023-08-22');
+      const testSessions: DrinkingSessionData[] = [
+        generateMockSession(baseDate, -60),
+        generateMockSession(baseDate, -90)
+      ];
+  
+      const result = getSingleMonthDrinkingSessions(baseDate, testSessions);
+      expect(result).toHaveLength(0);
+      expect(result).toEqual([]);
+    });
+});
+
+
+describe('sumAllUnits', () => {
+
+    it('should correctly sum up all units of alcohol', () => {
+        const sampleUnits = getRandomUnitsObject();
+        
+        const result = sumAllUnits(sampleUnits);
+        const expectedSum = Object.values(sampleUnits).reduce((acc, curr) => acc + curr, 0);
+        expect(result).toBe(expectedSum);
+      });
+    
+      it('should return 0 if all units are 0', () => {
+        const zeroUnits = getZeroUnitsObject();
+        const result = sumAllUnits(zeroUnits);
+        expect(result).toBe(0);
+      });
+});
+
+
+// describe('getZeroUnitsObject', () => {
+//     it('should return an object with all unit types set to 0', () => {
+//       const zeroUnits = getZeroUnitsObject();
+  
+//       for (let unit in zeroUnits) {
+//         expect(zeroUnits[unit as keyof UnitTypesProps]).toBe(0);
+//       };
+//     });
+  
+//     it('should return a new object on each call', () => {
+//       const firstCall = getZeroUnitsObject();
+//       const secondCall = getZeroUnitsObject();
+  
+//       firstCall.beer = 5;  // Modify one of the properties of the first object
+  
+//       expect(firstCall.beer).toBe(5);
+//       expect(secondCall.beer).toBe(0);  // The second object should remain unchanged
+//     });
+
+//     it('should have all the expected keys based on UnitTypesProps type', () => {
+//         const zeroUnits = getZeroUnitsObject();
+//         let unitTypes = {} as UnitTypesProps;
+//         const expectedKeys = Object.keys(unitTypes);
+    
+//         expect(Object.keys(zeroUnits)).toEqual(expectedKeys);
+//     });
+// });
+
+
+
+// describe('getRandomUnitsObject', () => {
+
+//     it('should return an object with all values between 0 and maxUnitValue (exclusive)', () => {
+//       const randomUnits = getRandomUnitsObject(30);
+  
+//       for (let unit in randomUnits) {
+//           expect(randomUnits[unit as keyof UnitTypesProps]).toBeGreaterThanOrEqual(0);
+//           expect(randomUnits[unit as keyof UnitTypesProps]).toBeLessThanOrEqual(30);
+//       };
+//     });
+  
+//     it('should return different values on subsequent calls (most likely)', () => {
+//       const firstCall = getRandomUnitsObject(30);
+//       const secondCall = getRandomUnitsObject(30);
+  
+//       // Given the nature of randomness, this test might occasionally fail.
+//       // However, the likelihood of two random objects being exactly the same is extremely low.
+//       expect(firstCall).not.toEqual(secondCall);
+//     });
+
+//     it('should have all the expected keys based on UnitTypesProps type', () => {
+//         const randomUnits = getZeroUnitsObject();
+//         let unitTypes = {} as UnitTypesProps;
+//         const expectedKeys = Object.keys(unitTypes);
+    
+//         expect(Object.keys(randomUnits)).toEqual(expectedKeys);
+//     });
+  
+//   });
