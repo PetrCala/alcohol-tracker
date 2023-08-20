@@ -1,5 +1,5 @@
 ﻿import { StackNavigationProp } from '@react-navigation/stack';
-import { DrinkingSessionData, UserCurrentSessionData } from './database';
+import { DrinkingSessionData, CurrentSessionData } from './database';
 import { RouteProp } from '@react-navigation/native';
 
 
@@ -10,7 +10,7 @@ type AppStackParamList = {
   };
   'Main Screen': undefined;
   'Drinking Session Screen': { 
-    current_session_data: UserCurrentSessionData;
+    current_session_data: CurrentSessionData;
   };
   'Profile Screen': undefined;
   'Social Screen': undefined;

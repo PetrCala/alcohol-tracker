@@ -1,5 +1,24 @@
-﻿export type DatabaseProps = {
+﻿/** Main database props object */
+export type DatabaseProps = {
+  user_current_session: {
+    [user_id: string]: CurrentSessionData
+  },
+  user_drinking_sessions: {
+    [user_id: string]: DrinkingSessionData
+  },
+  user_unconfirmed_days: {
+    [user_id: string]: UnconfirmedDaysData
+  },
+  users: {
+    [user_id: string] : UserData
+  }
+};
 
+export type CurrentSessionData = {
+  current_units: UnitTypesProps;
+  in_session: boolean;
+  last_session_started: number;
+  last_unit_added: number;
 };
 
 export type UnitTypesProps = {
@@ -11,13 +30,6 @@ export type UnitTypesProps = {
   wine: number
 };
 
-export type UserCurrentSessionData = {
-  current_units: UnitTypesProps;
-  in_session: boolean;
-  last_session_started: number;
-  last_unit_added: number;
-};
-
 export type DrinkingSessionData = {
   end_time: number;
   last_unit_added_time: number;
@@ -25,6 +37,14 @@ export type DrinkingSessionData = {
   start_time: number;
   units: UnitTypesProps;
 };
+
+export type UnconfirmedDaysData = {
+  dateString: string;
+}
+
+export type UserData = {
+  role: string;
+}
 
 // Used when rendering drinking session day overview
 export type DrinkingSessionProps = {

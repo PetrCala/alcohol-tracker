@@ -32,7 +32,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
   const user = auth.currentUser;
   const db = useContext(DatabaseContext);
   // const [userData, setUserData] = useState<UserData | null>(null);
-  const [currentSessionData, setCurrentSessionData] = useState<UserCurrentSessionData | null>(null);
+  const [currentSessionData, setCurrentSessionData] = useState<CurrentSessionData | null>(null);
   const [drinkingSessionData, setDrinkingSessionData] = useState<DrinkingSessionData[] | []>([]); // Data
   const [visibleDateObject, setVisibleDateObject] = useState<DateObject>(
     dateToDateObject(new Date())
@@ -126,7 +126,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
   // Monitor user data
   useEffect(() => {
     let userRef = `users/${user.uid}`
-    let stopListening = listenForDataChanges(db, userRef, (data:UserCurrentSessionData) => {
+    let stopListening = listenForDataChanges(db, userRef, (data:CurrentSessionData) => {
       setCurrentSessionData(data);
       setLoadingCurrentSessionData(false);
     });

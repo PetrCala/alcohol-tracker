@@ -1,7 +1,6 @@
 ﻿import { ref, child, update, push } from "firebase/database";
-import { DrinkingSessionData, UnitTypesProps, UserCurrentSessionData } from "../types/database";
+import { DrinkingSessionData, UnitTypesProps, CurrentSessionData } from "../types/database";
 import { getZeroUnitsOjbect } from "../utils/dataHandling";
-
 
 
 /** Write drinking session data into the database
@@ -15,13 +14,13 @@ export async function saveDrinkingSessionData(
   ) {
   let newDrinkingSessionKey: string | null = null;
   let newUnits = getZeroUnitsOjbect();
-  let newCurrentSessionData: UserCurrentSessionData = {
+  let newCurrentSessionData: CurrentSessionData = {
     current_units: newUnits,
     in_session: false,
     last_session_started: newSessionData.start_time, // Otherwise gets deleted
     last_unit_added: newSessionData.last_unit_added_time, // Otherwise gets deleted
   };
-  var updates: { [key: string]: DrinkingSessionData | UserCurrentSessionData} = {};
+  var updates: { [key: string]: DrinkingSessionData | CurrentSessionData} = {};
   // Generate a new automatic key for the new drinking session
   try {
     newDrinkingSessionKey = await push(child(ref(db), `/user_drinking_sessions/${userId}/`)).key 
