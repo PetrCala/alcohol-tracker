@@ -34,11 +34,11 @@ const DayComponent: React.FC<{
     theme:any, 
     onPress: (day: DateObject) => void 
 }> = ({ date, state, marking, theme, onPress }) => {
+    var today = new Date();
+    var tomorrow = changeDateBySomeDays(today, 1);
+    var tomorrowMidnight = getTimestampAtMidnight(tomorrow);
 
     const dateNoLaterThanToday = (date:DateObject): boolean => {
-        let today = new Date();
-        let tomorrow = changeDateBySomeDays(today, 1);
-        let tomorrowMidnight = getTimestampAtMidnight(tomorrow);
         if (date.timestamp < tomorrowMidnight){
             return true;
         };
