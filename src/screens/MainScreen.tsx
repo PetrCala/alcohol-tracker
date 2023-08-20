@@ -24,7 +24,7 @@ import { CurrentSessionData, DrinkingSessionData, UnitTypesProps } from '../type
 import { MainScreenProps } from '../types/screens';
 import { DateObject } from '../types/various';
 import { deleteUser, getAuth, signOut, reauthenticateWithCredential } from 'firebase/auth';
-import { dateToDateObject, getSingleMonthDrinkingSessions, getZeroUnitsOjbect, sumAllUnits, timestampToDate } from '../utils/dataHandling';
+import { dateToDateObject, getSingleMonthDrinkingSessions, getZeroUnitsObject, sumAllUnits, timestampToDate } from '../utils/dataHandling';
 import { deleteUserInfo } from '../database/users';
 
 const MainScreen = ( { navigation }: MainScreenProps) => {
@@ -56,7 +56,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
     let startingUnits = currentSessionData.current_units;
     let sessionStartTime = currentSessionData.last_session_started;
     if (!currentSessionData.in_session){
-      let startingUnits: UnitTypesProps = getZeroUnitsOjbect();
+      let startingUnits: UnitTypesProps = getZeroUnitsObject();
       sessionStartTime = Date.now();
       let updates: {[key: string]: any} = {};
       updates[`user_current_session/${user.uid}/current_units`] = startingUnits;
