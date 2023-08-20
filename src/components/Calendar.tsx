@@ -13,7 +13,9 @@ import {
     getNextMonth,
     getSingleMonthDrinkingSessions, 
     timestampToDate, 
-    unitsToColors 
+    unitsToColors, 
+    changeDateBySomeDays,
+    getTimestampAtMidnight
 } from '../utils/dataHandling';
 import { 
     SessionsCalendarProps,
@@ -32,28 +34,38 @@ const DayComponent: React.FC<{
     theme:any, 
     onPress: (day: DateObject) => void 
 }> = ({ date, state, marking, theme, onPress }) => {
-  return (
-    <TouchableOpacity
-        style={styles.dayContainer}
-        onPress={() => onPress(date)}
-    >
-      <Text
-      style={[styles.dayText,
-        state === 'disabled' ?  styles.dayTextDisabled : 
-        state === 'today' ?  styles.dayTextToday : {},
-        ]}
-      >
-        {date.day}
-      </Text>
-      { marking ?
+
+    const dateNoLaterThanToday = (date:DateObject): boolean => {
+        let today = new Date();
+        let tomorrow = changeDateBySomeDays(today, 1);
+        let tomorrowMidnight = getTimestampAtMidnight(tomorrow);
+        if (date.timestamp < tomorrowMidnight){
+            return true;
+        };
+        return false;
+    };
+
+    return (
+        <TouchableOpacity
+            style={styles.dayContainer}
+            onPress={() => onPress(date)}
+        >
+        <Text
+        style={[styles.dayText,
+            state === 'disabled' ?  styles.dayTextDisabled : 
+            state === 'today' ?  styles.dayTextToday : {},
+            ]}
+        >
+            {date.day}
+        </Text>
         <View style={[
             styles.daySessionsMarkingContainer,
-            state === 'disabled' ? {borderWidth: 0} : // No color for disabled squares
-            marking?.color == 'green' ? {backgroundColor: 'green'} :
+            state === 'disabled' ? {borderWidth: 0 } : // No color for disabled squares
             marking?.color == 'yellow' ? {backgroundColor: 'yellow'} :
             marking?.color == 'red' ? {backgroundColor: 'red'} :
             marking?.color == 'orange' ? {backgroundColor: 'orange'} :
-            {}
+            dateNoLaterThanToday(date) ? {backgroundColor: 'green'} :
+            {borderWidth: 0}
         ]}>
             <Text style={[
                 styles.daySessionMarkingText,
@@ -63,17 +75,11 @@ const DayComponent: React.FC<{
                 marking?.color == 'orange' ? {color: 'black'} :
                 {}
             ]}>
-                {state === 'disabled' ? '' : marking.units}
+                {state === 'disabled' ? '' : marking?.units}
             </Text>
-        </View> :
-        <View style={[
-            styles.daySessionsMarkingContainer,
-            {borderWidth: 0}
-        ]}
-        />
-      }
-    </TouchableOpacity>
-  );
+        </View>
+        </TouchableOpacity>
+    );
 };
 
 
@@ -190,8 +196,8 @@ const SessionsCalendar = ({
         // Month not marked yet - generate new marks
         var sessions = getSingleMonthDrinkingSessions(date, drinkingSessionData, true);
         var aggergatedSessions = aggregateSessionsByDays(sessions);
-        var monthTotalSessions = fillInRestOfMonth(date, aggergatedSessions, true);
-        var newMarkedDates = monthEntriesToColors(monthTotalSessions);
+        // var monthTotalSessions = fillInRestOfMonth(date, aggergatedSessions, true);
+        var newMarkedDates = monthEntriesToColors(aggergatedSessions);
 
         return { ...markedDates, ...newMarkedDates } // Expand the state
     };
