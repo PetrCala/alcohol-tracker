@@ -15,7 +15,8 @@ import {
     timestampToDate, 
     unitsToColors, 
     changeDateBySomeDays,
-    getTimestampAtMidnight
+    getTimestampAtMidnight,
+    sumAllUnits
 } from '../utils/dataHandling';
 import { 
     SessionsCalendarProps,
@@ -103,12 +104,13 @@ const SessionsCalendar = ({
             acc: DatesType,
             item: DrinkingSessionData
         ) => {
-            let dateString = formatDate(new Date(item.timestamp)); // MM-DD-YYYY
+            let dateString = formatDate(new Date(item.start_time)); // MM-DD-YYYY
+            let newUnits:number = sumAllUnits(item.units);
 
             acc[dateString] = acc[dateString] ? { 
-                units: acc[dateString].units + item.units  // Already an entry exists
+                units: acc[dateString].units + newUnits  // Already an entry exists
             } : { 
-                units: item.units // First entry
+                units: newUnits // First entry
             };
             return acc;
         }, {});

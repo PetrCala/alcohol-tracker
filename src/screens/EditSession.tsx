@@ -10,24 +10,33 @@ View,
 import MenuIcon from '../components/Buttons/MenuIcon';
 import BasicButton from '../components/Buttons/BasicButton';
 import { EditSessionScreenProps} from '../types/screens';
-import { DrinkingSessionData } from '../types/database';
+import { DrinkingSessionData, UnitTypesProps } from '../types/database';
 import DatabaseContext from '../database/DatabaseContext';
 import { removeDrinkingSessionData, editDrinkingSessionData } from '../database/drinkingSessions';
 import SessionUnitsInputWindow from '../components/Buttons/SessionUnitsInputWindow';
-import { formatDateToDay, formatDateToTime, timestampToDate } from '../utils/dataHandling';
+import { formatDateToDay, formatDateToTime, sumAllUnits, timestampToDate } from '../utils/dataHandling';
 import { getAuth } from 'firebase/auth';
 
 
 const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
+    if (!route || ! navigation) return null; // Should never be null
     const { session } = route.params; 
     const auth = getAuth();
     const user = auth.currentUser;
-    const [units, setUnits] = useState(session.units);
-    const [timestamp, setTimestamp] = useState(session.timestamp); // Later editable
+    // Units
+    const [totalUnits, setTotalUnits] = useState<number>(sumAllUnits(session.units));
+    const [beerUnits, setBeerUnits] = useState(session.units.beer)
+    const [cocktailUnits, setCocktailUnits] = useState(session.units.cocktail)
+    const [otherUnits, setOtherUnits] = useState(session.units.other)
+    const [strongShotUnits, setStrongShotUnits] = useState(session.units.strong_shot)
+    const [weakShotUnits, setWeakShotUnits] = useState(session.units.weak_shot)
+    const [wineUnits, setWineUnits] = useState(session.units.wine)
+    // Time info
+    const [timestamp, setTimestamp] = useState(session.start_time); // Later editable
     const sessionId = session.session_id;
     const sessionDate = timestampToDate(timestamp);
     const sessionDay = formatDateToDay(sessionDate);
-    const sessionTime = formatDateToTime(sessionDate);
+    const sessionStartTime = formatDateToTime(sessionDate);
     const db = useContext(DatabaseContext);
 
 
@@ -39,27 +48,41 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
 
     // Change local hook value
     const changeUnits = (number: number) => {
-        const newUnits = units + number;
+        const newUnits = totalUnits + number;
         if (newUnits >= 0 && newUnits < 100){
-            setUnits(newUnits);
+            setOtherUnits(newUnits);
+            setTotalUnits(newUnits);
         }
     };
 
     async function saveSession(db: any, userId: string) {
-        if (units > 0){
-            // Create the session object to be saved
-            const newSession: DrinkingSessionData = {
+        if (totalUnits > 0){
+            let unitsToSave:UnitTypesProps = {
+                beer: beerUnits,
+                cocktail: cocktailUnits,
+                other: otherUnits,
+                strong_shot: strongShotUnits,
+                weak_shot: weakShotUnits,
+                wine: wineUnits,
+              }
+              let newSession: DrinkingSessionData = {
+                end_time: session.end_time,
+                last_unit_added_time: session.last_unit_added_time,
                 session_id: sessionId,
-                timestamp: timestamp,
-                units: units
-            };
+                start_time: session.start_time,
+                units: unitsToSave
+              };
             // Save the data into the database
             try {
                 await editDrinkingSessionData(db, userId, newSession); // Save drinking session data
             } catch (error:any) {
                 throw new Error('Failed to save drinking session data: ' + error.message);
             }
-            navigation.navigate('Main Screen'); // Get the main overview, not day
+            if (navigation){
+                navigation.navigate('Main Screen'); // Get the main overview, not day
+            } else {
+                throw new Error('Navigation not found');
+            }
         }
     };
 
@@ -72,7 +95,11 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
         } catch (error:any) {
             throw new Error('Failed to delete the session: ' + error.message);
         }
-        navigation.navigate('Main Screen'); // Get the main overview, not day
+        if (navigation){
+            navigation.navigate('Main Screen'); // Get the main overview, not day
+        } else {
+            throw new Error('Navigation not found');
+        }
     }
 
     /** If an update is pending, update immediately before navigating away
@@ -98,13 +125,13 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
                 {sessionDay}
             </Text>
             <Text style={styles.menuDrinkingSessionInfoText}>
-                {sessionTime}
+                {sessionStartTime}
             </Text>
         </View>
         <View style={styles.drinkingSessionContainer}>
             <SessionUnitsInputWindow
-            currentUnits={units}
-            onUnitsChange={setUnits}
+            currentUnits={totalUnits}
+            onUnitsChange={setTotalUnits}
             />
             <BasicButton 
             text='Add Unit'

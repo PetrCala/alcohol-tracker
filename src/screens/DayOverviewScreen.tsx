@@ -14,7 +14,9 @@ import {
     changeDateBySomeDays, 
     unitsToColors,
     getSingleDayDrinkingSessions,
-    setDateToCurrentTime
+    setDateToCurrentTime,
+    sumAllUnits,
+    getZeroUnitsOjbect
 } from '../utils/dataHandling';
 import { useContext } from 'react';
 import DatabaseContext from '../database/DatabaseContext';
@@ -44,9 +46,12 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
         return navigation.navigate('Edit Session Screen', {session: session})
     }
 
-    const DrinkingSession = ({session, sessionColor}: DrinkingSessionProps) => {
+    const DrinkingSession = ({session}: DrinkingSessionProps) => {
+        // Calculate the session color
+        var totalUnits = sumAllUnits(session.units)
+        var sessionColor = unitsToColors(totalUnits);
         // Convert the timestamp to a Date object
-        const date = timestampToDate(session.timestamp);
+        const date = timestampToDate(session.start_time);
         const viewStyle = {
             ...styles.menuDrinkingSessionContainer,
             backgroundColor: sessionColor
@@ -57,7 +62,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <View style={{ flex: 1 }}>
                     <Text style={styles.menuDrinkingSessionText}>Time: {formatDateToTime(date)}</Text>
-                    <Text style={styles.menuDrinkingSessionText}>Units consumed: {session.units}</Text>
+                    <Text style={styles.menuDrinkingSessionText}>Units consumed: {totalUnits}</Text>
                 </View>
                 <MenuIcon
                     iconId='edit-session-icon'
@@ -72,12 +77,9 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
     };
 
     const renderDrinkingSession = ( {item} : {item: DrinkingSessionData}) => {
-        const sessionColor = unitsToColors(item.units);
-         
         return(
             <DrinkingSession
-            session = {item}
-            sessionColor = {sessionColor}
+              session = {item}
             />
         );
     };
@@ -106,9 +108,11 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
         // Create a new mock drinking session
         let newTimestamp = setDateToCurrentTime(date).getTime(); // At noon
         let newSession:DrinkingSessionData = {
-            session_id: 'edit-session-id', // Immutable! (see database.tsx)
-            timestamp: newTimestamp, // Arbitrary timestamp of today's noon
-            units: 0,
+          end_time: newTimestamp + 1,
+          last_unit_added_time: newTimestamp,
+          session_id: 'edit-session-id', // Immutable! (see database/drinkingSessions.tsx)
+          start_time: newTimestamp, // Arbitrary timestamp of today's noon
+          units: getZeroUnitsOjbect(),
         }
         return(
             <TouchableOpacity

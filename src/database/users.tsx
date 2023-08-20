@@ -1,4 +1,6 @@
 ﻿import { update, runTransaction, ref } from "firebase/database";
+import { UnitTypesProps, UserCurrentSessionData } from "../types/database";
+import { getZeroUnitsOjbect } from "../utils/dataHandling";
 
 /** In the database, create base info for a user. This will
  * be stored under the "users" object in the database.
@@ -11,11 +13,18 @@ export async function pushNewUserInfo(
  userId: string,
 ){
   let timestampNow = new Date().getTime();
-  let updates: {[key:string]: any} = {};
+  let newCurrentUnitsData:UnitTypesProps = getZeroUnitsOjbect();
+  let newCurrentSessionData = {
+    current_units: newCurrentUnitsData,
+    in_session: false,
+    last_session_started: timestampNow,
+    last_unit_added: timestampNow,
+  };
+  let updates: {[key:string]: string | UserCurrentSessionData} = {};
+  // Users
   updates[`users/${userId}/role`] = 'user';
-  updates[`users/${userId}/current_timestamp`] = timestampNow;
-  updates[`users/${userId}/current_units`] = 0;
-  updates[`users/${userId}/in_session`] = false;
+  // User current session
+  updates[`user_current_session/${userId}`] = newCurrentSessionData;
   try {
     await update(ref(db), updates)
   } catch (error:any) {
@@ -34,8 +43,9 @@ export async function deleteUserInfo(
  db: any,
  userId: string,
 ){
-  let updates: {[key:string]: any} = {};
+  let updates: {[key:string]: null} = {};
   updates[`users/${userId}`] = null;
+  updates[`user_current_session/${userId}`] = null;
   updates[`user_drinking_sessions/${userId}`] = null;
   updates[`user_unconfirmed_days/${userId}`] = null;
   try {
@@ -45,13 +55,13 @@ export async function deleteUserInfo(
   } ;
 };
 
-export async function updateCurrentTimestamp(
+export async function updateLastSessionStarted(
   db: any, 
   userId: string, 
   timestamp: number,
   ) {
   let updates: {[key: string]: number} = {};
-  updates[`users/${userId}/current_timestamp`] = timestamp;
+  updates[`user_current_session/${userId}/last_session_started`] = timestamp;
 
   try {
     await update(ref(db), updates);
@@ -64,12 +74,12 @@ export async function updateCurrentTimestamp(
 export async function updateCurrentUnits(
   db: any, 
   userId: string, 
-  units: number
+  newUnits: UnitTypesProps
   ) {
   try {
-    await runTransaction(ref(db, `users/${userId}`), (user) => {
+    await runTransaction(ref(db, `user_current_session/${userId}`), (user) => {
       if (user) {
-        user.current_units = units;
+        user.current_units = newUnits;
       }
       return user;
     });
@@ -84,7 +94,7 @@ export async function updateSessionStatus(
   status: boolean,
   ) {
   let updates: {[key: string]: boolean} = {};
-  updates[`users/${userId}/in_session`] = status;
+  updates[`user_current_session/${userId}/in_session`] = status;
 
   try {
     await update(ref(db), updates);
@@ -97,9 +107,10 @@ export async function discardDrinkingSessionData(
  db: any,
  userId: string,
 ){
-  let updates: {[key:string]: number | boolean} = {};
-  updates[`users/${userId}/current_units`] = 0;
-  updates[`users/${userId}/in_session`] = false;
+  let newCurrentUnitsData:UnitTypesProps = getZeroUnitsOjbect();
+  let updates: {[key:string]: UnitTypesProps | boolean} = {};
+  updates[`user_current_session/${userId}/current_units`] = newCurrentUnitsData;
+  updates[`user_current_session/${userId}/in_session`] = false;
   try {
     await update(ref(db), updates)
   } catch (error:any) {

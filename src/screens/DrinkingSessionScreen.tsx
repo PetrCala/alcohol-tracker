@@ -16,20 +16,32 @@ import DatabaseContext from '../database/DatabaseContext';
 import { updateCurrentUnits, discardDrinkingSessionData } from '../database/users';
 import { saveDrinkingSessionData } from '../database/drinkingSessions';
 import SessionUnitsInputWindow from '../components/Buttons/SessionUnitsInputWindow';
-import { formatDateToDay, formatDateToTime, timestampToDate } from '../utils/dataHandling';
+import { formatDateToDay, formatDateToTime, sumAllUnits, timestampToDate } from '../utils/dataHandling';
 import { getAuth } from 'firebase/auth';
+import { DrinkingSessionData, UnitTypesProps } from '../types/database';
 
 const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps) => {
-  const { current_units, timestamp } = route.params;
+  if (!route || ! navigation) return null; // Should never be null
+  const { current_session_data }  = route.params;
+  const { current_units, in_session, last_session_started, last_unit_added } = current_session_data;
   const auth = getAuth();
   const user = auth.currentUser;
-  const [units, setUnits] = useState(current_units);
-  const [pendingUpdate, setPendingUpdate] = useState(false);
-  const sessionDate = timestampToDate(timestamp);
-  const sessionDay = formatDateToDay(sessionDate);
-  const sessionTime = formatDateToTime(sessionDate);
   const db = useContext(DatabaseContext);
+  // Units
+  const [totalUnits, setTotalUnits] = useState<number>(sumAllUnits(current_units));
+  const [beerUnits, setBeerUnits] = useState(current_units.beer)
+  const [cocktailUnits, setCocktailUnits] = useState(current_units.cocktail)
+  const [otherUnits, setOtherUnits] = useState(current_units.other)
+  const [strongShotUnits, setStrongShotUnits] = useState(current_units.strong_shot)
+  const [weakShotUnits, setWeakShotUnits] = useState(current_units.weak_shot)
+  const [wineUnits, setWineUnits] = useState(current_units.wine)
+  // Time info
+  const [lastUnitAdded, setLastUnitAdded] = useState<number>(last_unit_added);
+  const [pendingUpdate, setPendingUpdate] = useState(false);
   const updateTimeout = 1000; // Synchronize with DB every x milliseconds
+  const sessionDate = timestampToDate(last_session_started);
+  const sessionDay = formatDateToDay(sessionDate);
+  const sessionStartTime = formatDateToTime(sessionDate);
 
 
   // Automatically navigate to login screen if login expires
@@ -39,46 +51,73 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
   }
 
   // Change local hook value
-  const changeUnits = (number: number) => {
-    const newUnits = units + number;
+  const changeTotalUnits = (number: number) => {
+    const newUnits = totalUnits + number;
     if (newUnits >= 0 && newUnits < 100){
-      setUnits(newUnits);
+      setOtherUnits(newUnits);
+      setTotalUnits(newUnits);
     }
   };
 
   // Create a ref to store the previous state
   const prevUnitsRef = useRef<number>();
     useEffect(() => {
-      prevUnitsRef.current = units;
+      prevUnitsRef.current = totalUnits;
     });
   const prevUnits = prevUnitsRef.current;
 
   // Change database value once every second
   useEffect(() => {
     // Only schedule a database update if the units have changed
-    if (prevUnits !== units) {
+    if (prevUnits !== totalUnits) {
+      let newCurrentUnits:UnitTypesProps = {
+        beer: beerUnits,
+        cocktail: cocktailUnits,
+        other: otherUnits,
+        strong_shot: strongShotUnits,
+        weak_shot: weakShotUnits,
+        wine: wineUnits,
+      };
       setPendingUpdate(true);
       const timer = setTimeout(async () => {
-        await updateCurrentUnits(db, user.uid, units);
+        await updateCurrentUnits(db, user.uid, newCurrentUnits);
         setPendingUpdate(false); // Data has been synchronized with DB
       }, updateTimeout); // Update every x milliseconds
       // Clear timer on unmount or when units changes
       return () => clearTimeout(timer);
     }
-  }, [units]);
+  }, [totalUnits]);
 
 
-  async function saveSession(db: any, userId: string, units: number, timestamp: number) {
+  async function saveSession(db: any, userId: string) {
     // Save the data into the database
-    if (units > 0){
+    if (totalUnits > 0){
+      let unitsToSave:UnitTypesProps = {
+        beer: beerUnits,
+        cocktail: cocktailUnits,
+        other: otherUnits,
+        strong_shot: strongShotUnits,
+        weak_shot: weakShotUnits,
+        wine: wineUnits,
+      }
+      let newSessionData: DrinkingSessionData = {
+        end_time: Date.now(),
+        last_unit_added_time: lastUnitAdded,
+        session_id: 'placeholder-id', // Will be replaced during the call
+        start_time: last_session_started,
+        units: unitsToSave
+      };
       try {
-        await saveDrinkingSessionData(db, userId, units, timestamp); // Save drinking session data
+        await saveDrinkingSessionData(db, userId, newSessionData); // Save drinking session data
       } catch (error:any) {
         throw new Error('Failed to save drinking session data: ' + error.message);
       }
       // Show statistics, offer to go back
-      setUnits(0);
-      navigation.goBack();
+      if (navigation){
+        navigation.goBack();
+      } else {
+        throw new Error('Navigation not found');
+      }
     }
   };
 
@@ -91,15 +130,26 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
     } catch (error:any) {
       throw new Error('Failed to discard the session: ' + error.message);
     }
-    setUnits(0);
-    navigation.goBack();
+    if (navigation){
+      navigation.goBack();
+    } else {
+      throw new Error('Navigation not found');
+    };
   }
 
   /** If an update is pending, update immediately before navigating away
    */
   const handleBackPress = async () => {
     if (pendingUpdate) {
-      await updateCurrentUnits(db, user.uid, units);
+      let currentUnits:UnitTypesProps = {
+        beer: beerUnits,
+        cocktail: cocktailUnits,
+        other: otherUnits,
+        strong_shot: strongShotUnits,
+        weak_shot: weakShotUnits,
+        wine: wineUnits,
+      }
+      await updateCurrentUnits(db, user.uid, currentUnits);
     }
     navigation.goBack();
   };
@@ -120,31 +170,31 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
                 {sessionDay}
             </Text>
             <Text style={styles.menuDrinkingSessionInfoText}>
-                {sessionTime}
+                {sessionStartTime}
             </Text>
         </View>
       <View style={styles.drinkingSessionContainer}>
         <SessionUnitsInputWindow
-          currentUnits={units}
-          onUnitsChange={setUnits}
+          currentUnits={totalUnits}
+          onUnitsChange={setTotalUnits}
         />
         <BasicButton 
           text='Add Unit'
           buttonStyle={styles.drinkingSessionButton}
           textStyle={styles.drinkingSessionButtonText}
-          onPress={() => changeUnits(1)}
+          onPress={() => changeTotalUnits(1)}
         />
         <BasicButton 
           text='Remove Unit'
           buttonStyle={styles.drinkingSessionButton}
           textStyle={styles.drinkingSessionButtonText}
-          onPress={() => changeUnits(-1)}
+          onPress={() => changeTotalUnits(-1)}
         />
         <BasicButton 
           text='Save Session'
           buttonStyle={styles.drinkingSessionButton}
           textStyle={styles.drinkingSessionButtonText}
-          onPress={() => saveSession(db, user.uid, units, timestamp)}
+          onPress={() => saveSession(db, user.uid)}
         />
         <BasicButton 
           text='Discard Session'

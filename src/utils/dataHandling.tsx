@@ -1,4 +1,4 @@
-﻿import { DrinkingSessionData } from "../types/database";
+﻿import { DrinkingSessionData, UnitTypesProps } from "../types/database";
 import { DateObject } from "../types/various";
 
 export function formatDate (date: Date): string {
@@ -141,7 +141,7 @@ export function getSingleDayDrinkingSessions(date: Date, sessions: DrinkingSessi
     const todayUnix = Math.floor(date.getTime());
     const tomorrowUnix = Math.floor(tomorrow.getTime());
   
-    const filteredSessions = sessions.filter(session => session.timestamp >= todayUnix && session.timestamp < tomorrowUnix);
+    const filteredSessions = sessions.filter(session => session.start_time >= todayUnix && session.start_time < tomorrowUnix);
 
     // Return the sessions between those indices
     return filteredSessions;
@@ -175,8 +175,27 @@ export function getSingleMonthDrinkingSessions(date: Date, sessions: DrinkingSes
     const endUnix = Math.floor(endDate.getTime());
     // Filter to current month only
     const monthDrinkingSessions = sessions.filter(session =>
-        session.timestamp >= beginningUnix && session.timestamp < endUnix);
+        session.start_time >= beginningUnix && session.start_time < endUnix);
     return monthDrinkingSessions;
+};
+
+/** Sum up all units of alcohol regardless of category
+ * 
+ * @param all_units Units to sum up.
+ */
+export function sumAllUnits(all_units: UnitTypesProps){
+    return Object.values(all_units).reduce((acc, curr) => acc + curr, 0);
+};
+
+export const getZeroUnitsOjbect = ():UnitTypesProps => {
+    return {
+        beer: 0,
+        cocktail: 0,
+        other: 0,
+        strong_shot: 0,
+        weak_shot: 0,
+        wine: 0
+    };
 };
 
 /** Convert the units consumed to colors.

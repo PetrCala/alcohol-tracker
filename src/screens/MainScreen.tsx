@@ -20,25 +20,26 @@ import YesNoPopup from '../components/YesNoPopup';
 import DatabaseContext from '../database/DatabaseContext';
 import { listenForDataChanges } from "../database/baseFunctions";
 import { updateDrinkingSessionUserData } from '../database/drinkingSessions';
-import { UserDataProps, DrinkingSessionData } from '../types/database';
+import { UserCurrentSessionData, DrinkingSessionData, UnitTypesProps } from '../types/database';
 import { MainScreenProps } from '../types/screens';
 import { DateObject } from '../types/various';
 import { deleteUser, getAuth, signOut, reauthenticateWithCredential } from 'firebase/auth';
-import { dateToDateObject, getSingleMonthDrinkingSessions, timestampToDate } from '../utils/dataHandling';
+import { dateToDateObject, getSingleMonthDrinkingSessions, sumAllUnits, timestampToDate } from '../utils/dataHandling';
 import { deleteUserInfo } from '../database/users';
 
 const MainScreen = ( { navigation }: MainScreenProps) => {
   const auth = getAuth();
   const user = auth.currentUser;
   const db = useContext(DatabaseContext);
-  const [userData, setUserData] = useState<UserDataProps | null>(null);
-  const [drinkingSessionData, setDrinkingsessionData] = useState<DrinkingSessionData[] | []>([]); // Data
+  // const [userData, setUserData] = useState<UserData | null>(null);
+  const [currentSessionData, setCurrentSessionData] = useState<UserCurrentSessionData | null>(null);
+  const [drinkingSessionData, setDrinkingSessionData] = useState<DrinkingSessionData[] | []>([]); // Data
   const [visibleDateObject, setVisibleDateObject] = useState<DateObject>(
     dateToDateObject(new Date())
     );
   const [thisMonthUnits, setThisMonthUnits] = useState<number>(0);
-  const [loadingUserData, setUserLoadingData] = useState<boolean>(true);
-  const [loadingSessionData, setLoadingSessionData] = useState<boolean>(true);
+  const [loadingCurrentSessionData, setLoadingCurrentSessionData] = useState<boolean>(true);
+  const [loadingDrinkingSessionData, setLoadingDrinkingSessionData] = useState<boolean>(true);
   // const [deleteUserPopupVisible, setDeleteUserPopupVisible] = useState<boolean>(false);
 
   // Automatically navigate to login screen if login expires
@@ -49,21 +50,26 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
 
   // Handle drinking session button press
   const startDrinkingSession = async () => {
-    if (userData == null){
+    if (currentSessionData == null){
       throw new Error("The user" + user.displayName + " has no data in the database.")
     }
-    let startingUnits = userData.current_units;
-    let sessionStartTime = userData.current_timestamp;
-    if (!userData.in_session){
-      startingUnits = 0;
+    let startingUnits = currentSessionData.current_units;
+    let sessionStartTime = currentSessionData.last_session_started;
+    if (!currentSessionData.in_session){
+      let startingUnits: UnitTypesProps = {
+        beer: 0,
+        cocktail: 0,
+        other: 0,
+        strong_shot: 0,
+        weak_shot: 0,
+        wine: 0,
+      };
       sessionStartTime = Date.now();
       let updates: {[key: string]: any} = {};
-      // Inform database of new session started
-      updates[`users/${user.uid}/in_session`] = true;
-      // Set the start time to now if session is new
-      updates[`users/${user.uid}/current_timestamp`] = sessionStartTime;
-      // Reset starting units
       updates[`users/${user.uid}/current_units`] = startingUnits;
+      updates[`users/${user.uid}/in_session`] = true;
+      updates[`users/${user.uid}/last_session_started`] = sessionStartTime;
+      updates[`users/${user.uid}/last_unit_added`] = sessionStartTime;
       try {
         await updateDrinkingSessionUserData(db, updates);
       } catch (error: any) {
@@ -71,8 +77,12 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
       }
     }
     navigation.navigate("Drinking Session Screen", {
-      timestamp: sessionStartTime,
-      current_units: startingUnits
+      current_session_data: {
+        current_units: startingUnits,
+        in_session: true,
+        last_session_started: sessionStartTime,
+        last_unit_added: sessionStartTime
+      },
     });
   }
 
@@ -110,15 +120,15 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
       currentDate, sessions, false
     );
     // Sum up the units
-    return sessionsThisMonth.reduce((sum, session) => sum + session.units, 0);
+    return sessionsThisMonth.reduce((sum, session) => sum + sumAllUnits(session.units), 0);
   };
 
   // Monitor user data
   useEffect(() => {
     let userRef = `users/${user.uid}`
-    let stopListening = listenForDataChanges(db, userRef, (data:UserDataProps) => {
-      setUserData(data);
-      setUserLoadingData(false);
+    let stopListening = listenForDataChanges(db, userRef, (data:UserCurrentSessionData) => {
+      setCurrentSessionData(data);
+      setLoadingCurrentSessionData(false);
     });
 
     return () => stopListening();
@@ -134,8 +144,8 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
       if (data != null){
         newDrinkingSessionData = Object.values(data); // To an array
       }
-      setDrinkingsessionData(newDrinkingSessionData);
-      setLoadingSessionData(false);
+      setDrinkingSessionData(newDrinkingSessionData);
+      setLoadingDrinkingSessionData(false);
     });
 
     // Stop listening for changes when the component unmounts
@@ -154,13 +164,13 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
 
 
   // Wait for the user data to be fetched from database
-  if (loadingUserData || loadingSessionData) {
+  if (loadingCurrentSessionData || loadingDrinkingSessionData) {
     return(
       <LoadingData
       loadingText="Loading data..."
       />
-    );
-  };
+      );
+    };
     
   return (
     <View style={styles.mainContainer}>
@@ -219,7 +229,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
             </View>
         </View>
         <View style={styles.mainScreenContent}>
-            {userData?.in_session ?
+            {currentSessionData?.in_session ?
             <TouchableOpacity 
               style={styles.userInSessionWarningContainer}
               onPress={startDrinkingSession}
@@ -248,7 +258,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
             :
             <Text style={styles.menuDrinkingSessionInfoText}>No drinking sessions found</Text>
             }
-            {userData?.in_session ? <></> :
+            {currentSessionData?.in_session ? <></> :
             <BasicButton 
               text='+'
               buttonStyle={styles.startSessionButton}

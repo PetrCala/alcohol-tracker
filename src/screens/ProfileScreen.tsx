@@ -6,13 +6,13 @@
 import {
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import BasicButton from '../components/Buttons/BasicButton';
 
 import DatabaseContext from '../database/DatabaseContext';
-import { readDataOnce } from '../database/baseFunctions';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 type ProfileProps = {
@@ -21,22 +21,14 @@ type ProfileProps = {
 
 const ProfileScreen = (props: ProfileProps) => {
   const { navigation } = props;
-  const [user, setUser] = useState<any | null>(null);
+  const auth = getAuth();
+  const user = auth.currentUser;
   const db = useContext(DatabaseContext);
 
+  const handleButtonPress = () => {
+    console.log('hi')
+  };
 
-  useEffect(() => {
-    const auth = getAuth();
-    const stopListening = onAuthStateChanged(auth, (user) => {
-      if (user) { // User signed in
-        setUser(user);
-      } else {
-        // User is signed out
-      }
-    });
-
-    return () => stopListening();
-  }, []); 
 
 
   return (
@@ -50,13 +42,12 @@ const ProfileScreen = (props: ProfileProps) => {
           onPress={() => navigation.goBack() }
         />
       </View>
-      {/* <BasicButton
-        text='TD'
-        buttonStyle={styles.startSessionButton}
-        textStyle={styles.startSessionText}
-        onPress={() => {console.log('hello')}}
-      /> */}
-    </View>
+        <TouchableOpacity
+          style={styles.startSessionButton}
+          onPress={() => {handleButtonPress}} >
+          <Text style={styles.startSessionText}> ! </Text>
+        </TouchableOpacity>
+     </View>
   );
 };
 
@@ -80,5 +71,21 @@ const styles = StyleSheet.create({
   backArrow: {
     width: 25,
     height: 25,
+  },
+  startSessionButton: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    borderRadius: 50,
+    width: 70,
+    height: 70,
+    backgroundColor: 'green',
+    alignItems: 'center',
+  },
+  startSessionText: {
+    color: 'white',
+    fontSize: 50,
+    fontWeight: 'bold',
+    textAlign: 'center'
   },
 });

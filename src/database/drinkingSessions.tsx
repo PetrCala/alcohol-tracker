@@ -1,5 +1,6 @@
 ﻿import { ref, child, update, push } from "firebase/database";
-import { DrinkingSessionData } from "../types/database";
+import { DrinkingSessionData, UnitTypesProps, UserCurrentSessionData } from "../types/database";
+import { getZeroUnitsOjbect } from "../utils/dataHandling";
 
 
 
@@ -10,16 +11,17 @@ import { DrinkingSessionData } from "../types/database";
 export async function saveDrinkingSessionData(
   db: any, 
   userId: string, 
-  units: number,
-  timestamp: number
+  newSessionData: DrinkingSessionData,
   ) {
   let newDrinkingSessionKey: string | null = null;
-  var updates: {
-    [key: string]: DrinkingSessionData | {
-      current_timestamp: number;
-      current_units: number;
-      in_session: boolean;
-    }} = {};
+  let newUnits = getZeroUnitsOjbect();
+  let newCurrentSessionData: UserCurrentSessionData = {
+    current_units: newUnits,
+    in_session: false,
+    last_session_started: newSessionData.start_time, // Otherwise gets deleted
+    last_unit_added: newSessionData.last_unit_added_time, // Otherwise gets deleted
+  };
+  var updates: { [key: string]: DrinkingSessionData | UserCurrentSessionData} = {};
   // Generate a new automatic key for the new drinking session
   try {
     newDrinkingSessionKey = await push(child(ref(db), `/user_drinking_sessions/${userId}/`)).key 
@@ -30,16 +32,8 @@ export async function saveDrinkingSessionData(
     throw new Error('Failed to create a new session reference point');
   }
   // Update the database with this new key
-  updates[`/user_drinking_sessions/${userId}/` + newDrinkingSessionKey] = {
-    session_id: newDrinkingSessionKey,
-    timestamp: timestamp,
-    units: units,
-  };
-  updates[`users/${userId}`] = {
-    current_timestamp: timestamp, // Otherwise gets deleted from DB
-    current_units: 0,
-    in_session: false,
-  };
+  updates[`user_drinking_sessions/${userId}/` + newDrinkingSessionKey] = newSessionData;
+  updates[`user_current_session/${userId}`] = newCurrentSessionData;
 
   try {
     await update(ref(db), updates);
@@ -93,11 +87,8 @@ export async function editDrinkingSessionData(
       throw new Error('Failed to create a new session reference point: ' + error.message);
     }
   }
-  updates[`/user_drinking_sessions/${userId}/` + newDrinkingSessionKey] = {
-    session_id: newDrinkingSessionKey,
-    timestamp: editedSession.timestamp,
-    units: editedSession.units,
-  };
+  editedSession.session_id = newDrinkingSessionKey; // Update the key
+  updates[`/user_drinking_sessions/${userId}/` + newDrinkingSessionKey] = editedSession;
 
   try {
     return await update(ref(db), updates);
