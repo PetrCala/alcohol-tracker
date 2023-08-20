@@ -30,6 +30,7 @@ export async function saveDrinkingSessionData(
   if (newDrinkingSessionKey == null) {
     throw new Error('Failed to create a new session reference point');
   }
+  newSessionData.session_id = newDrinkingSessionKey; // Update the key
   // Update the database with this new key
   updates[`user_drinking_sessions/${userId}/` + newDrinkingSessionKey] = newSessionData;
   updates[`user_current_session/${userId}`] = newCurrentSessionData;

@@ -20,11 +20,11 @@ import YesNoPopup from '../components/YesNoPopup';
 import DatabaseContext from '../database/DatabaseContext';
 import { listenForDataChanges } from "../database/baseFunctions";
 import { updateDrinkingSessionUserData } from '../database/drinkingSessions';
-import { UserCurrentSessionData, DrinkingSessionData, UnitTypesProps } from '../types/database';
+import { CurrentSessionData, DrinkingSessionData, UnitTypesProps } from '../types/database';
 import { MainScreenProps } from '../types/screens';
 import { DateObject } from '../types/various';
 import { deleteUser, getAuth, signOut, reauthenticateWithCredential } from 'firebase/auth';
-import { dateToDateObject, getSingleMonthDrinkingSessions, sumAllUnits, timestampToDate } from '../utils/dataHandling';
+import { dateToDateObject, getSingleMonthDrinkingSessions, getZeroUnitsOjbect, sumAllUnits, timestampToDate } from '../utils/dataHandling';
 import { deleteUserInfo } from '../database/users';
 
 const MainScreen = ( { navigation }: MainScreenProps) => {
@@ -56,24 +56,17 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
     let startingUnits = currentSessionData.current_units;
     let sessionStartTime = currentSessionData.last_session_started;
     if (!currentSessionData.in_session){
-      let startingUnits: UnitTypesProps = {
-        beer: 0,
-        cocktail: 0,
-        other: 0,
-        strong_shot: 0,
-        weak_shot: 0,
-        wine: 0,
-      };
+      let startingUnits: UnitTypesProps = getZeroUnitsOjbect();
       sessionStartTime = Date.now();
       let updates: {[key: string]: any} = {};
-      updates[`users/${user.uid}/current_units`] = startingUnits;
-      updates[`users/${user.uid}/in_session`] = true;
-      updates[`users/${user.uid}/last_session_started`] = sessionStartTime;
-      updates[`users/${user.uid}/last_unit_added`] = sessionStartTime;
+      updates[`user_current_session/${user.uid}/current_units`] = startingUnits;
+      updates[`user_current_session/${user.uid}/in_session`] = true;
+      updates[`user_current_session/${user.uid}/last_session_started`] = sessionStartTime;
+      updates[`user_current_session/${user.uid}/last_unit_added`] = sessionStartTime;
       try {
         await updateDrinkingSessionUserData(db, updates);
       } catch (error: any) {
-          console.error('Failed to start a new session: ' + error.message);
+          Alert.alert('Could not start new session', 'Failed to start a new session: ' + error.message);
       }
     }
     navigation.navigate("Drinking Session Screen", {
@@ -125,7 +118,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
 
   // Monitor user data
   useEffect(() => {
-    let userRef = `users/${user.uid}`
+    let userRef = `user_current_session/${user.uid}`
     let stopListening = listenForDataChanges(db, userRef, (data:CurrentSessionData) => {
       setCurrentSessionData(data);
       setLoadingCurrentSessionData(false);

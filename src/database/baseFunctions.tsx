@@ -1,4 +1,11 @@
 ﻿import { get, ref, onValue, off } from "firebase/database";
+import { ValidDatabaseRefs } from "../types/database";
+
+
+function getFirebaseRef(path: ValidDatabaseRefs): string {
+    return path;
+}
+
 
 /** Read data once using get()
  * 
@@ -7,7 +14,8 @@
  * continuous listening and performance overload.
  * */
 export async function readDataOnce(db: any, refString: string) {
-  const userRef = ref(db, `${refString}`);
+  const validRef = getFirebaseRef(refString);
+  const userRef = ref(db, validRef);
   try {
     const snapshot = await get(userRef); // One-off fetch
     if(snapshot.exists()) {
@@ -22,10 +30,11 @@ export async function readDataOnce(db: any, refString: string) {
 // Main listener for drinking session data changes.
 export function listenForDataChanges(
   db: any,
-  refString: string,
+  refString: ValidDatabaseRefs,
   onDataChange: (data: any) => void
 ) {
-  const dbRef = ref(db, `/${refString}`);
+  const validRef = getFirebaseRef(refString);
+  const dbRef = ref(db, validRef);
   const listener = onValue(dbRef, (snapshot) => {
     let data:any = null;
     if (snapshot.exists()){

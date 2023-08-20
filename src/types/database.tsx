@@ -1,5 +1,6 @@
 ﻿/** Main database props object */
 export type DatabaseProps = {
+
   user_current_session: {
     [user_id: string]: CurrentSessionData
   },
@@ -50,5 +51,18 @@ export type UserData = {
 export type DrinkingSessionProps = {
   session: DrinkingSessionData
 };
+
+// Create a type for a valid database reference
+type ToString<T> = T extends string ? T : never;
+
+type RefPaths<T, P extends string = ''> = {
+  [K in keyof T]: K extends string | number 
+      ? `${P}${K}` | ToString<RefPaths<T[K], `${P}${K}/`>> 
+      : never;
+}[keyof T];
+
+export type ValidDatabaseRefs = RefPaths<DatabaseProps>;
+
+
 
 

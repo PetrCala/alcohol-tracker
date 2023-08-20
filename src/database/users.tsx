@@ -1,5 +1,5 @@
 ﻿import { update, runTransaction, ref } from "firebase/database";
-import { UnitTypesProps, UserCurrentSessionData } from "../types/database";
+import { UnitTypesProps, CurrentSessionData } from "../types/database";
 import { getZeroUnitsOjbect } from "../utils/dataHandling";
 
 /** In the database, create base info for a user. This will
@@ -20,7 +20,7 @@ export async function pushNewUserInfo(
     last_session_started: timestampNow,
     last_unit_added: timestampNow,
   };
-  let updates: {[key:string]: string | UserCurrentSessionData} = {};
+  let updates: {[key:string]: string | CurrentSessionData} = {};
   // Users
   updates[`users/${userId}/role`] = 'user';
   // User current session
