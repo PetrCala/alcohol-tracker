@@ -1,6 +1,6 @@
 ﻿import { ref, child, update, push } from "firebase/database";
 import { DrinkingSessionData, UnitTypesProps, CurrentSessionData } from "../types/database";
-import { getZeroUnitsOjbect } from "../utils/dataHandling";
+import { getZeroUnitsObject } from "../utils/dataHandling";
 
 
 /** Write drinking session data into the database
@@ -13,7 +13,7 @@ export async function saveDrinkingSessionData(
   newSessionData: DrinkingSessionData,
   ) {
   let newDrinkingSessionKey: string | null = null;
-  let newUnits = getZeroUnitsOjbect();
+  let newUnits = getZeroUnitsObject();
   let newCurrentSessionData: CurrentSessionData = {
     current_units: newUnits,
     in_session: false,

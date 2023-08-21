@@ -22,14 +22,22 @@ export type CurrentSessionData = {
   last_unit_added: number;
 };
 
-export type UnitTypesProps = {
-  beer: number
-  cocktail: number
-  other: number
-  strong_shot: number
-  weak_shot: number
-  wine: number
-};
+/** An array that represents all available alcohol units
+ * 
+ * Used to construct UnitTypesProps where the expected values of all
+ * these keys are set to numbers - main storage of units in the db
+ * 
+ */
+export const UnitTypesKeys = [
+  'beer', 
+  'cocktail', 
+  'other', 
+  'strong_shot',
+  'weak_shot',
+  'wine'
+] as const;  // Infer a readonly tuple
+
+export type UnitTypesProps = Record<typeof UnitTypesKeys[number], number>;
 
 export type DrinkingSessionData = {
   end_time: number;

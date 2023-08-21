@@ -17,7 +17,7 @@
     timestampToDate 
 } from "../../src/utils/dataHandling";
 import { DateObject } from "../../src/types/various";
-import { DrinkingSessionData, UnitTypesProps } from "../../src/types/database";
+import { DrinkingSessionData, UnitTypesKeys, UnitTypesProps } from "../../src/types/database";
 
 /**
  * Generates a DrinkingSessionData for a specified offset relative to a given date.
@@ -443,62 +443,60 @@ describe('sumAllUnits', () => {
 });
 
 
-// describe('getZeroUnitsObject', () => {
-//     it('should return an object with all unit types set to 0', () => {
-//       const zeroUnits = getZeroUnitsObject();
+describe('getZeroUnitsObject', () => {
+    it('should return an object with all unit types set to 0', () => {
+      const zeroUnits = getZeroUnitsObject();
   
-//       for (let unit in zeroUnits) {
-//         expect(zeroUnits[unit as keyof UnitTypesProps]).toBe(0);
-//       };
-//     });
+      for (let unit in zeroUnits) {
+        expect(zeroUnits[unit as keyof UnitTypesProps]).toBe(0);
+      };
+    });
   
-//     it('should return a new object on each call', () => {
-//       const firstCall = getZeroUnitsObject();
-//       const secondCall = getZeroUnitsObject();
+    it('should return a new object on each call', () => {
+      const firstCall = getZeroUnitsObject();
+      const secondCall = getZeroUnitsObject();
   
-//       firstCall.beer = 5;  // Modify one of the properties of the first object
+      firstCall.beer = 5;  // Modify one of the properties of the first object
   
-//       expect(firstCall.beer).toBe(5);
-//       expect(secondCall.beer).toBe(0);  // The second object should remain unchanged
-//     });
+      expect(firstCall.beer).toBe(5);
+      expect(secondCall.beer).toBe(0);  // The second object should remain unchanged
+    });
 
-//     it('should have all the expected keys based on UnitTypesProps type', () => {
-//         const zeroUnits = getZeroUnitsObject();
-//         let unitTypes = {} as UnitTypesProps;
-//         const expectedKeys = Object.keys(unitTypes);
+    it('should have all the expected keys based on UnitTypesProps type', () => {
+        const zeroUnits = getZeroUnitsObject();
+        const expectedKeys = UnitTypesKeys;
     
-//         expect(Object.keys(zeroUnits)).toEqual(expectedKeys);
-//     });
-// });
+        expect(Object.keys(zeroUnits)).toEqual(expectedKeys);
+    });
+});
 
 
 
-// describe('getRandomUnitsObject', () => {
+describe('getRandomUnitsObject', () => {
 
-//     it('should return an object with all values between 0 and maxUnitValue (exclusive)', () => {
-//       const randomUnits = getRandomUnitsObject(30);
+    it('should return an object with all values between 0 and maxUnitValue (exclusive)', () => {
+      const randomUnits = getRandomUnitsObject(30);
   
-//       for (let unit in randomUnits) {
-//           expect(randomUnits[unit as keyof UnitTypesProps]).toBeGreaterThanOrEqual(0);
-//           expect(randomUnits[unit as keyof UnitTypesProps]).toBeLessThanOrEqual(30);
-//       };
-//     });
+      for (let unit in randomUnits) {
+          expect(randomUnits[unit as keyof UnitTypesProps]).toBeGreaterThanOrEqual(0);
+          expect(randomUnits[unit as keyof UnitTypesProps]).toBeLessThanOrEqual(30);
+      };
+    });
   
-//     it('should return different values on subsequent calls (most likely)', () => {
-//       const firstCall = getRandomUnitsObject(30);
-//       const secondCall = getRandomUnitsObject(30);
+    it('should return different values on subsequent calls (most likely)', () => {
+      const firstCall = getRandomUnitsObject(30);
+      const secondCall = getRandomUnitsObject(30);
   
-//       // Given the nature of randomness, this test might occasionally fail.
-//       // However, the likelihood of two random objects being exactly the same is extremely low.
-//       expect(firstCall).not.toEqual(secondCall);
-//     });
+      // Given the nature of randomness, this test might occasionally fail.
+      // However, the likelihood of two random objects being exactly the same is extremely low.
+      expect(firstCall).not.toEqual(secondCall);
+    });
 
-//     it('should have all the expected keys based on UnitTypesProps type', () => {
-//         const randomUnits = getZeroUnitsObject();
-//         let unitTypes = {} as UnitTypesProps;
-//         const expectedKeys = Object.keys(unitTypes);
+    it('should have all the expected keys based on UnitTypesProps type', () => {
+        const randomUnits = getZeroUnitsObject();
+        const expectedKeys = UnitTypesKeys;
     
-//         expect(Object.keys(randomUnits)).toEqual(expectedKeys);
-//     });
+        expect(Object.keys(randomUnits)).toEqual(expectedKeys);
+    });
   
-//   });
+  });

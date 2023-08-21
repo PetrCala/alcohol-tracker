@@ -16,7 +16,7 @@ import {
     getSingleDayDrinkingSessions,
     setDateToCurrentTime,
     sumAllUnits,
-    getZeroUnitsOjbect
+    getZeroUnitsObject
 } from '../utils/dataHandling';
 import { useContext } from 'react';
 import DatabaseContext from '../database/DatabaseContext';
@@ -112,7 +112,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
           last_unit_added_time: newTimestamp,
           session_id: 'edit-session-id', // Immutable! (see database/drinkingSessions.tsx)
           start_time: newTimestamp, // Arbitrary timestamp of today's noon
-          units: getZeroUnitsOjbect(),
+          units: getZeroUnitsObject(),
         }
         return(
             <TouchableOpacity

@@ -181,35 +181,31 @@ export function sumAllUnits(all_units: UnitTypesProps){
  * each unit's value is set to 0.
  */
 export const getZeroUnitsObject = ():UnitTypesProps => {
-    // Create an object with all keys set to 0
-    let unitTypes = {} as UnitTypesProps;
-
-    // Create an array of all keys in UnitTypesProps type
-    const keys = Object.keys(unitTypes) as (keyof UnitTypesProps)[];
-
-    keys.forEach(key => {
-        unitTypes[key] = 0;
-    });
-
-    return unitTypes;
+    return {
+        beer: 0,
+        cocktail: 0,
+        other: 0,
+        strong_shot: 0,
+        weak_shot: 0,
+        wine: 0,
+    };
 };
 
 /** Generate an object with all available units where 
  * each unit's value is set to a random integer.
  */
 export const getRandomUnitsObject = (maxUnitValue:number = 30):UnitTypesProps => {
-
     // Create an object with all keys set to 0
-    let unitTypes = {} as UnitTypesProps;
+    let obj = getZeroUnitsObject();
 
     // Create an array of all keys in UnitTypesProps type
-    const keys = Object.keys(unitTypes) as (keyof UnitTypesProps)[];
+    const keys = Object.keys(obj) as (keyof UnitTypesProps)[];
 
     keys.forEach(key => {
-        unitTypes[key] = Math.floor(Math.random() * maxUnitValue);
+        obj[key] = Math.floor(Math.random() * maxUnitValue);
     });
 
-    return unitTypes;
+    return obj;
 };
 
 

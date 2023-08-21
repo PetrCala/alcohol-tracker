@@ -24,7 +24,7 @@ import { CurrentSessionData, DrinkingSessionData, UnitTypesProps } from '../type
 import { MainScreenProps } from '../types/screens';
 import { DateObject } from '../types/various';
 import { deleteUser, getAuth, signOut, reauthenticateWithCredential } from 'firebase/auth';
-import { dateToDateObject, getSingleMonthDrinkingSessions, getZeroUnitsObject, sumAllUnits, timestampToDate } from '../utils/dataHandling';
+import { dateToDateObject, getRandomUnitsObject, getSingleMonthDrinkingSessions, getZeroUnitsObject, sumAllUnits, timestampToDate } from '../utils/dataHandling';
 import { deleteUserInfo } from '../database/users';
 
 const MainScreen = ( { navigation }: MainScreenProps) => {
@@ -164,7 +164,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
       />
       );
     };
-    
+
   return (
     <View style={styles.mainContainer}>
         <View style={styles.mainHeader}>

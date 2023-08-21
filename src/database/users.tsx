@@ -1,6 +1,6 @@
 ﻿import { update, runTransaction, ref } from "firebase/database";
 import { UnitTypesProps, CurrentSessionData } from "../types/database";
-import { getZeroUnitsOjbect } from "../utils/dataHandling";
+import { getZeroUnitsObject } from "../utils/dataHandling";
 
 /** In the database, create base info for a user. This will
  * be stored under the "users" object in the database.
@@ -13,7 +13,7 @@ export async function pushNewUserInfo(
  userId: string,
 ){
   let timestampNow = new Date().getTime();
-  let newCurrentUnitsData:UnitTypesProps = getZeroUnitsOjbect();
+  let newCurrentUnitsData:UnitTypesProps = getZeroUnitsObject();
   let newCurrentSessionData = {
     current_units: newCurrentUnitsData,
     in_session: false,
@@ -107,7 +107,7 @@ export async function discardDrinkingSessionData(
  db: any,
  userId: string,
 ){
-  let newCurrentUnitsData:UnitTypesProps = getZeroUnitsOjbect();
+  let newCurrentUnitsData:UnitTypesProps = getZeroUnitsObject();
   let updates: {[key:string]: UnitTypesProps | boolean} = {};
   updates[`user_current_session/${userId}/current_units`] = newCurrentUnitsData;
   updates[`user_current_session/${userId}/in_session`] = false;

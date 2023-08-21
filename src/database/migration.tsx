@@ -15,7 +15,6 @@ admin.initializeApp({
 
 const db = admin.database();
 
-
 // Updates to the database
 
 // type UnitTypesProps = {
