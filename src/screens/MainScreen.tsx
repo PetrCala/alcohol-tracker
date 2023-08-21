@@ -22,7 +22,7 @@ import { listenForDataChanges } from "../database/baseFunctions";
 import { updateDrinkingSessionUserData } from '../database/drinkingSessions';
 import { CurrentSessionData, DrinkingSessionData, PreferencesData, UnconfirmedDaysData, UnitTypesProps } from '../types/database';
 import { MainScreenProps } from '../types/screens';
-import { DateObject } from '../types/various';
+import { DateObject } from '../types/components';
 import { deleteUser, getAuth, signOut, reauthenticateWithCredential } from 'firebase/auth';
 import { dateToDateObject, getRandomUnitsObject, getSingleMonthDrinkingSessions, getZeroUnitsObject, sumAllUnits, timestampToDate } from '../utils/dataHandling';
 import { deleteUserInfo } from '../database/users';

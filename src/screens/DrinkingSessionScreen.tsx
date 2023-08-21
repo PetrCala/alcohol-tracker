@@ -19,6 +19,8 @@ import SessionUnitsInputWindow from '../components/Buttons/SessionUnitsInputWind
 import { formatDateToDay, formatDateToTime, sumAllUnits, timestampToDate } from '../utils/dataHandling';
 import { getAuth } from 'firebase/auth';
 import { DrinkingSessionData, UnitTypesProps } from '../types/database';
+import DrinkingSessionUnitWindow from '../components/DrinkingSessionUnitWindow';
+
 
 const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps) => {
   if (!route || ! navigation) return null; // Should never be null
@@ -165,19 +167,59 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
           onPress={handleBackPress}
         />
       </View>
-      <View>
-            <Text style={styles.menuDrinkingSessionInfoText}>
-                {sessionDay}
-            </Text>
-            <Text style={styles.menuDrinkingSessionInfoText}>
-                {sessionStartTime}
-            </Text>
-        </View>
-      <View style={styles.drinkingSessionContainer}>
+      <View style={styles.sessionInfoContainer}>
+          {/* <Text style={styles.menuDrinkingSessionInfoText}>
+              {sessionDay}
+          </Text> */}
+          <Text style={styles.menuDrinkingSessionInfoText}>
+              {sessionStartTime}
+          </Text>
+      </View>
+      <View style={styles.totalUnitsContainer}>
         <SessionUnitsInputWindow
           currentUnits={totalUnits}
           onUnitsChange={setTotalUnits}
         />
+      </View>
+      <View style={styles.unitTypesContainer}>
+        <DrinkingSessionUnitWindow
+          unitName='Beer'
+          iconSource={require('../assets/icons/beer.png')}
+          currentUnits={beerUnits}
+          onUnitsChange={setBeerUnits}
+        />
+        <DrinkingSessionUnitWindow
+          unitName='Wine'
+          iconSource={require('../assets/icons/wine.png')}
+          currentUnits={wineUnits}
+          onUnitsChange={setWineUnits}
+        />
+        <DrinkingSessionUnitWindow
+          unitName='Weak Shot'
+          iconSource={require('../assets/icons/weak_shot.png')}
+          currentUnits={weakShotUnits}
+          onUnitsChange={setWeakShotUnits}
+        />
+        <DrinkingSessionUnitWindow
+          unitName='Strong Shot'
+          iconSource={require('../assets/icons/strong_shot.png')}
+          currentUnits={strongShotUnits}
+          onUnitsChange={setStrongShotUnits}
+        />
+        <DrinkingSessionUnitWindow
+          unitName='Cocktail'
+          iconSource={require('../assets/icons/cocktail.png')}
+          currentUnits={cocktailUnits}
+          onUnitsChange={setCocktailUnits}
+        />
+        <DrinkingSessionUnitWindow
+          unitName='Other'
+          iconSource={require('../assets/icons/alcohol_assortment.png')}
+          currentUnits={otherUnits}
+          onUnitsChange={setOtherUnits}
+        />
+      </View>
+      <View style={styles.otherButtonsContainer}>
         <BasicButton 
           text='Add Unit'
           buttonStyle={styles.drinkingSessionButton}
@@ -229,12 +271,21 @@ const styles = StyleSheet.create({
     width: 25,
     height: 25,
   },
-  drinkingSessionContainer: {
-    flexGrow: 1,
-    flexShrink: 1,
+  sessionInfoContainer: {
+
+  },
+  totalUnitsContainer: {
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 90, //offset header
+
+  },
+  unitTypesContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  otherButtonsContainer: {
+    alignItems: "center",
+    justifyContent: "center",
   },
   drinkingSessionButton: {
     width: 130,

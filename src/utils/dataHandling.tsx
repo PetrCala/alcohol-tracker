@@ -1,5 +1,5 @@
 ﻿import { DrinkingSessionData, UnitTypesProps, UnitsToColorsData } from "../types/database";
-import { DateObject } from "../types/various";
+import { DateObject } from "../types/components";
 
 export function formatDate (date: Date): string {
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;

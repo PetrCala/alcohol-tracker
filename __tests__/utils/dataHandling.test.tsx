@@ -17,7 +17,7 @@
     timestampToDate, 
     unitsToColors
 } from "../../src/utils/dataHandling";
-import { DateObject } from "../../src/types/various";
+import { DateObject } from "../../src/types/components";
 import { DrinkingSessionData, UnitTypesKeys, UnitTypesProps, UnitsToColorsData } from "../../src/types/database";
 
 /**

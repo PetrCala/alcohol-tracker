@@ -3,7 +3,7 @@
     ActivityIndicator,
     StyleSheet
 } from "react-native";
-import { LoadingDataProps } from "../types/various";
+import { LoadingDataProps } from "../types/components";
 
 const LoadingData = ({loadingText}:LoadingDataProps) => {
     return (

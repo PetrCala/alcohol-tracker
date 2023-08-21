@@ -21,9 +21,9 @@ import {
 import { 
     SessionsCalendarProps,
     SessionsCalendarMarkedDates
-} from '../types/various';
+} from '../types/components';
 import { DrinkingSessionData } from '../types/database';
-import { DateObject, DayState } from '../types/various';
+import { DateObject, DayState } from '../types/components';
 import LoadingData from './LoadingData';
 
 
@@ -90,7 +90,7 @@ const SessionsCalendar = ({
     visibleDateObject, 
     setVisibleDateObject,
     onDayPress
-} :SessionsCalendarProps) => {
+}: SessionsCalendarProps) => {
     const [calendarData, setCalendarData ] = useState<DrinkingSessionData[] | null>(drinkingSessionData);
     const [markedDates, setMarkedDates] = useState<SessionsCalendarMarkedDates>({});
     

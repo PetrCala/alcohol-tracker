@@ -1,7 +1,7 @@
 ﻿import { StackNavigationProp } from '@react-navigation/stack';
 import { DrinkingSessionData, CurrentSessionData, PreferencesData } from './database';
 import { RouteProp } from '@react-navigation/native';
-import { DateObject } from './various';
+import { DateObject } from './components';
 
 
 type AppStackParamList = {

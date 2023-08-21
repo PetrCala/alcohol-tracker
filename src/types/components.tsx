@@ -1,4 +1,5 @@
-﻿import { DrinkingSessionData, PreferencesData } from "./database";
+﻿import { ImageSourcePropType } from "react-native";
+import { DrinkingSessionData, PreferencesData } from "./database";
 
 // Sessions calendar props
 
@@ -27,6 +28,15 @@ export type DateObject = {
 };
 
 export type DayState = 'selected' | 'disabled' | 'today' | '';
+
+// Drinking session unit window props
+
+export type DrinkingSessionUnitWindowProps = {
+    unitName: string;
+    iconSource: ImageSourcePropType;
+    currentUnits: number;
+    onUnitsChange: React.Dispatch<React.SetStateAction<number>>;
+};
 
 // Loading data props
 
