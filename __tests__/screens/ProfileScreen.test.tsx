@@ -1,7 +1,7 @@
 ﻿import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react-native';
-import ProfileScreen from '../src/screens/ProfileScreen';
-import DatabaseContext from '../src/database/DatabaseContext';
+import ProfileScreen from '../../src/screens/ProfileScreen';
+import DatabaseContext from '../../src/database/DatabaseContext';
 
 // Mock the navigation prop used by the component
 const mockNavigation = {
@@ -10,14 +10,14 @@ const mockNavigation = {
 };
 
 // Mock the database
-jest.mock('../src/database', () => ({
-  listenForDataChanges: jest.fn().mockImplementation((db, userId, callback) => {
-    // Return a mock listener function
-    return () => {};
-  }),
-  readUserDataOnce: jest.fn(),
-  saveDrinkingSessionData: jest.fn(),
-}));
+// jest.mock('../src/database', () => ({
+//   listenForDataChanges: jest.fn().mockImplementation((db, userId, callback) => {
+//     // Return a mock listener function
+//     return () => {};
+//   }),
+//   readUserDataOnce: jest.fn(),
+//   saveDrinkingSessionData: jest.fn(),
+// }));
 
 describe('<ProfileScreen />', () => {
   beforeEach(() => {

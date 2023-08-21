@@ -9,8 +9,6 @@ const mockNavigation = {
   goBack: jest.fn(),
 };
 
-// Mock the database
-jest.mock('../src/database');
 
 describe('<AchievementScreen />', () => {
   beforeEach(() => {

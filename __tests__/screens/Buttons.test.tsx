@@ -1,8 +1,8 @@
 ﻿import React from 'react';
 import { Image } from 'react-native';
 import { render, fireEvent } from '@testing-library/react-native';
-import BasicButton from '../src/components/Buttons/BasicButton';
-import MenuIcon from '../src/components/Buttons/MenuIcon';
+import BasicButton from '../../src/components/Buttons/BasicButton';
+import MenuIcon from '../../src/components/Buttons/MenuIcon';
 
 describe('BasicButton', () => {
     const onPressMock = jest.fn();
@@ -37,7 +37,7 @@ describe('BasicButton', () => {
 describe('MenuIcon', () => {
   const props = {
     iconId: 'icon',
-    iconSource: require('./assets/icons/test_icon.png'),
+    iconSource: require('../assets/icons/test_icon.png'),
     containerStyle: { flex: 1, opacity: 1 },
     iconStyle: { width: 20, height: 20 },
     onPress: jest.fn(),

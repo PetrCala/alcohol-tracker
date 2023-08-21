@@ -18,6 +18,7 @@ import { SignUpScreenProps } from '../types/screens';
 import { pushNewUserInfo } from '../database/users';
 
 const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
+  if (!route || ! navigation) return null; // Should never be null
   const { loginEmail } = route.params; // To avoid reduncancy
   const auth = getAuth();
   const db = useContext(DatabaseContext);

@@ -1,7 +1,7 @@
 ﻿import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react-native';
-import StatisticsScreen from '../src/screens/StatisticsScreen';
-import DatabaseContext from '../src/database/DatabaseContext';
+import StatisticsScreen from '../../src/screens/StatisticsScreen';
+import DatabaseContext from '../../src/database/DatabaseContext';
 
 // Mock the navigation prop used by the component
 const mockNavigation = {
@@ -9,8 +9,6 @@ const mockNavigation = {
   goBack: jest.fn(),
 };
 
-// Mock the database
-jest.mock('../src/database');
 
 describe('<StatisticsScreen />', () => {
   beforeEach(() => {

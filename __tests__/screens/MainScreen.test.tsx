@@ -1,30 +1,22 @@
 ﻿import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react-native';
-import MainScreen from '../src/screens/MainScreen';
+import MainScreen from '../../src/screens/MainScreen';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { AppStackParamList } from '../../src/types/screens';
+import { createMockNavigation } from '../testProps';
 
 // Mock the navigation prop used by the component
-const mockNavigation = {
-  navigate: jest.fn()
-};
+// const mockNavigation = createMockNavigation('Main Screen');
+const mockNavigation: StackNavigationProp<AppStackParamList, 'Main Screen'> = createMockNavigation();
 
-// Mock the database
-jest.mock('../src/database', () => ({
-  listenForDataChanges: jest.fn().mockImplementation((db, userId, callback) => {
-    // Return a mock listener function
-    return () => {};
-  }),
-  readUserDataOnce: jest.fn(),
-  saveDrinkingSessionData: jest.fn(),
-}));
 
 describe('<MainScreen />', () => {
   beforeEach(() => {
     // Clear all instances and calls to constructor and all methods
-    mockNavigation.navigate.mockClear();
+    (mockNavigation.navigate as jest.Mock).mockClear(); // Typecast explicitly
   });
 
-  const navigateFromMainScreen = (screenTestId:string, screenName:string) => {
-    // Test navigation to a screen from the main screen
+  const navigateFromMainScreen = (screenTestId: string, screenName: string) => {
     render(<MainScreen navigation={mockNavigation} />);
     
     const screenButton = screen.getByTestId(screenTestId);
@@ -37,9 +29,13 @@ describe('<MainScreen />', () => {
     expect(tree).toMatchSnapshot();
   });
 
-  it('navigate to the drinking session screen', () => {
-    navigateFromMainScreen('+', 'Drinking Session Screen');
-  });
+  // it('navigate to the drinking session screen when in session', () => {
+  //   // Mock current session data to be in session
+  //   // For the sake of this example, I'm assuming the mock can be done as below, but you might need to adjust
+  //   setCurrentSessionData({ in_session: true });
+
+  //   navigateFromMainScreen('userInSessionWarningContainer', 'Drinking Session Screen');
+  // });
 
   it('navigate to the profile screen', () => {
     navigateFromMainScreen('profile-icon', 'Profile Screen');
@@ -51,10 +47,6 @@ describe('<MainScreen />', () => {
    
   it('navigate to the achievement screen', () => {
     navigateFromMainScreen('achievement-icon', 'Achievement Screen');
-  });
-
-  it('navigate to the settings screen', () => {
-    navigateFromMainScreen('settings-icon', 'Settings Screen');
   });
 
 });

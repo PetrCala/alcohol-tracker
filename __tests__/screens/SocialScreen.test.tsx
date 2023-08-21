@@ -1,6 +1,6 @@
 ﻿import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react-native';
-import SocialScreen from '../src/screens/SocialScreen';
+import SocialScreen from '../../src/screens/SocialScreen';
 
 // Mock the navigation prop used by the component
 const mockNavigation = {
@@ -8,8 +8,6 @@ const mockNavigation = {
   goBack: jest.fn(),
 };
 
-// Mock the database
-jest.mock('../src/database');
 
 describe('<SocialScreen />', () => {
   beforeEach(() => {

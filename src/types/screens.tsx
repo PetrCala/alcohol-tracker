@@ -4,7 +4,7 @@ import { RouteProp } from '@react-navigation/native';
 import { DateObject } from './components';
 
 
-type AppStackParamList = {
+export type AppStackParamList = {
   'Login Screen': undefined;
   'Sign Up Screen': {
     loginEmail: string;
@@ -29,7 +29,7 @@ export type LoginScreenProps = {
 }
 
 export type SignUpScreenProps = {
-  route: any;
+  route?: RouteProp<AppStackParamList, 'Sign Up Screen'>;
   navigation: StackNavigationProp<AppStackParamList, 'Sign Up Screen'>;
 }
 
