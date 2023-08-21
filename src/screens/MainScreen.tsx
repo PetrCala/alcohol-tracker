@@ -20,7 +20,7 @@ import YesNoPopup from '../components/YesNoPopup';
 import DatabaseContext from '../database/DatabaseContext';
 import { listenForDataChanges } from "../database/baseFunctions";
 import { updateDrinkingSessionUserData } from '../database/drinkingSessions';
-import { CurrentSessionData, DrinkingSessionData, UnitTypesProps } from '../types/database';
+import { CurrentSessionData, DrinkingSessionData, PreferencesData, UnconfirmedDaysData, UnitTypesProps } from '../types/database';
 import { MainScreenProps } from '../types/screens';
 import { DateObject } from '../types/various';
 import { deleteUser, getAuth, signOut, reauthenticateWithCredential } from 'firebase/auth';
@@ -32,14 +32,25 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
   const user = auth.currentUser;
   const db = useContext(DatabaseContext);
   // const [userData, setUserData] = useState<UserData | null>(null);
+
+  // Database data hooks
   const [currentSessionData, setCurrentSessionData] = useState<CurrentSessionData | null>(null);
-  const [drinkingSessionData, setDrinkingSessionData] = useState<DrinkingSessionData[] | []>([]); // Data
+  const [drinkingSessionData, setDrinkingSessionData] = useState<DrinkingSessionData[] | []>([]);
+  const [preferences, setPreferences] = useState<PreferencesData | null>(null);
+  const [unconfirmedDays, setUnconfirmedDays] = useState<UnconfirmedDaysData | null>(null);
+
+  // Other hooks
   const [visibleDateObject, setVisibleDateObject] = useState<DateObject>(
     dateToDateObject(new Date())
     );
   const [thisMonthUnits, setThisMonthUnits] = useState<number>(0);
+
+  // Loading hooks
   const [loadingCurrentSessionData, setLoadingCurrentSessionData] = useState<boolean>(true);
   const [loadingDrinkingSessionData, setLoadingDrinkingSessionData] = useState<boolean>(true);
+  const [loadingUserPreferences, setLoadingUserPreferences] = useState<boolean>(true);
+  const [loadingUnconfirmedDays, setLoadingUnconfirmedDays] = useState<boolean>(true);
+
   // const [deleteUserPopupVisible, setDeleteUserPopupVisible] = useState<boolean>(false);
 
   // Automatically navigate to login screen if login expires
@@ -116,7 +127,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
     return sessionsThisMonth.reduce((sum, session) => sum + sumAllUnits(session.units), 0);
   };
 
-  // Monitor user data
+  // Monitor current session data
   useEffect(() => {
     let userRef = `user_current_session/${user.uid}`
     let stopListening = listenForDataChanges(db, userRef, (data:CurrentSessionData) => {
@@ -126,14 +137,14 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
 
     return () => stopListening();
 
-    }, [db, user]);
+  }, [db, user]);
 
   // Monitor drinking session data
   useEffect(() => {
     // Start listening for changes when the component mounts
     let sessionsRef = `user_drinking_sessions/${user.uid}`
     let stopListening = listenForDataChanges(db, sessionsRef, (data:any) => {
-      let newDrinkingSessionData:DrinkingSessionData[] = [];
+      let newDrinkingSessionData:DrinkingSessionData[] = []; // Handles cases with no data
       if (data != null){
         newDrinkingSessionData = Object.values(data); // To an array
       }
@@ -148,6 +159,32 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
 
   }, [db, user]); // Re-run effect when userId or db changes
 
+  // Monitor user preferences
+  useEffect(() => {
+    let userRef = `user_preferences/${user.uid}`
+    let stopListening = listenForDataChanges(db, userRef, (data:PreferencesData) => {
+      setPreferences(data);
+      setLoadingUserPreferences(false);
+    });
+
+    return () => stopListening();
+
+  }, [db, user]);
+
+  // Monitor unconfirmed days
+  useEffect(() => {
+    let userRef = `user_unconfirmed_days/${user.uid}`
+    let stopListening = listenForDataChanges(db, userRef, (data:UnconfirmedDaysData) => {
+      if (data){ // Might be null
+        setUnconfirmedDays(data);
+      }
+      setLoadingUnconfirmedDays(false);
+    });
+
+    return () => stopListening();
+
+  }, [db, user]);
+
   // Monitor visible month and various statistics
   useEffect(() => {
     let thisMonthUnits = calculateThisMonthUnits(visibleDateObject, drinkingSessionData);
@@ -157,13 +194,21 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
 
 
   // Wait for the user data to be fetched from database
-  if (loadingCurrentSessionData || loadingDrinkingSessionData) {
+  if (
+    loadingCurrentSessionData || 
+    loadingDrinkingSessionData ||
+    loadingUserPreferences ||
+    loadingUnconfirmedDays) {
+
     return(
       <LoadingData
       loadingText="Loading data..."
       />
       );
-    };
+  };
+
+  // Should never be null
+  if (!currentSessionData || !drinkingSessionData || !preferences) return null;
 
   return (
     <View style={styles.mainContainer}>
@@ -240,11 +285,15 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
             {drinkingSessionData ?
             <SessionsCalendar
               drinkingSessionData = {drinkingSessionData}
+              preferences = {preferences}
               visibleDateObject={visibleDateObject}
               setVisibleDateObject={setVisibleDateObject}
               onDayPress = {(day:DateObject) => {
                 navigation.navigate('Day Overview Screen',
-                { timestamp: day.timestamp }
+                { 
+                  date_object: day,
+                  preferences: preferences
+                }
                 )
               }}
             />

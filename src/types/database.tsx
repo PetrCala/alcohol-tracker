@@ -7,6 +7,9 @@ export type DatabaseProps = {
   user_drinking_sessions: {
     [user_id: string]: DrinkingSessionData
   },
+  user_preferences: {
+    [user_id: string]: PreferencesData
+  },
   user_unconfirmed_days: {
     [user_id: string]: UnconfirmedDaysData
   },
@@ -47,8 +50,18 @@ export type DrinkingSessionData = {
   units: UnitTypesProps;
 };
 
+export type UnitsToColorsData = {
+  yellow: number;
+  orange: number;
+}
+
+export type PreferencesData = {
+  first_day_of_week: string;
+  units_to_colors: UnitsToColorsData;
+}
+
 export type UnconfirmedDaysData = {
-  dateString: string;
+  date_string: string;
 }
 
 export type UserData = {

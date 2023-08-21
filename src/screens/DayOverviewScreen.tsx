@@ -28,11 +28,12 @@ import { getAuth } from 'firebase/auth';
 
 
 const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
-    const { timestamp } = route.params; // Params for navigation
+    if (!route || ! navigation) return null; // Should never be null
+    const { date_object, preferences } = route.params; // Params for navigation
     const auth = getAuth();
     const user = auth.currentUser;
     const db = useContext(DatabaseContext);
-    const [ date, setDate ] = useState<Date | null>(timestampToDate(timestamp));
+    const [ date, setDate ] = useState<Date | null>(timestampToDate(date_object.timestamp));
     const [drinkingSessionData, setDrinkingsessionData] = useState<DrinkingSessionData[] | []>([]); // Data
     const [ loadingData, setLoadingData] = useState<boolean | null>(true);
 
@@ -49,7 +50,8 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
     const DrinkingSession = ({session}: DrinkingSessionProps) => {
         // Calculate the session color
         var totalUnits = sumAllUnits(session.units)
-        var sessionColor = unitsToColors(totalUnits);
+        var unitsToColorsInfo = preferences.units_to_colors;
+        var sessionColor = unitsToColors(totalUnits, unitsToColorsInfo);
         // Convert the timestamp to a Date object
         const date = timestampToDate(session.start_time);
         const viewStyle = {

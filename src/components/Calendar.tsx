@@ -86,6 +86,7 @@ const DayComponent: React.FC<{
 
 const SessionsCalendar = ({ 
     drinkingSessionData, 
+    preferences,
     visibleDateObject, 
     setVisibleDateObject,
     onDayPress
@@ -160,7 +161,8 @@ const SessionsCalendar = ({
             acc: SessionsCalendarMarkedDates,
             [key, { units: value }]
         ) => {
-            let color:string = unitsToColors(value);
+            let unitsToColorsInfo = preferences.units_to_colors;
+            let color:string = unitsToColors(value, unitsToColorsInfo);
             let textColor:string = 'black';
             if (color == 'red' || color == 'green'){
                 textColor = 'white';

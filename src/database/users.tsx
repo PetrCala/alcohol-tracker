@@ -1,5 +1,5 @@
 ﻿import { update, runTransaction, ref } from "firebase/database";
-import { UnitTypesProps, CurrentSessionData } from "../types/database";
+import { UnitTypesProps, CurrentSessionData, PreferencesData, UserData, UnitsToColorsData } from "../types/database";
 import { getZeroUnitsObject } from "../utils/dataHandling";
 
 /** In the database, create base info for a user. This will
@@ -12,6 +12,7 @@ export async function pushNewUserInfo(
  db: any,
  userId: string,
 ){
+  // User current session
   let timestampNow = new Date().getTime();
   let newCurrentUnitsData:UnitTypesProps = getZeroUnitsObject();
   let newCurrentSessionData = {
@@ -20,11 +21,29 @@ export async function pushNewUserInfo(
     last_session_started: timestampNow,
     last_unit_added: timestampNow,
   };
-  let updates: {[key:string]: string | CurrentSessionData} = {};
+  // User preferences
+  let newUnitsToColors:UnitsToColorsData = {
+    orange: 10,
+    yellow: 5,
+  }
+  let newPreferences:PreferencesData = {
+    first_day_of_week: 'Monday',
+    units_to_colors: newUnitsToColors,
+  };
   // Users
-  updates[`users/${userId}/role`] = 'user';
+  let newUserData:UserData = {
+    role: 'user',
+  };
+  // Allowed types
+  let updates: {
+    [key:string]: UserData | CurrentSessionData | PreferencesData
+  } = {};
   // User current session
   updates[`user_current_session/${userId}`] = newCurrentSessionData;
+  // User preferences
+  updates[`user_preferences/${userId}`] = newPreferences;
+  // Users
+  updates[`users/${userId}`] = newUserData;
   try {
     await update(ref(db), updates)
   } catch (error:any) {

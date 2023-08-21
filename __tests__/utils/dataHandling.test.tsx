@@ -14,10 +14,11 @@
     getZeroUnitsObject, 
     setDateToCurrentTime, 
     sumAllUnits, 
-    timestampToDate 
+    timestampToDate, 
+    unitsToColors
 } from "../../src/utils/dataHandling";
 import { DateObject } from "../../src/types/various";
-import { DrinkingSessionData, UnitTypesKeys, UnitTypesProps } from "../../src/types/database";
+import { DrinkingSessionData, UnitTypesKeys, UnitTypesProps, UnitsToColorsData } from "../../src/types/database";
 
 /**
  * Generates a DrinkingSessionData for a specified offset relative to a given date.
@@ -500,3 +501,34 @@ describe('getRandomUnitsObject', () => {
     });
   
   });
+
+
+  describe('unitsToColors', () => {
+
+    // Create a mock for UnitsToColorsData for consistent testing
+    const mockUnitsToColorsData: UnitsToColorsData = {
+        yellow: 2,
+        orange: 4
+    };
+
+    it('should return green for 0 units', () => {
+        expect(unitsToColors(0, mockUnitsToColorsData)).toBe('green');
+    });
+
+    it('should return yellow for units up to yellow limit', () => {
+        expect(unitsToColors(1, mockUnitsToColorsData)).toBe('yellow');
+        expect(unitsToColors(2, mockUnitsToColorsData)).toBe('yellow');
+    });
+
+    it('should return orange for units between yellow and orange limits', () => {
+        expect(unitsToColors(3, mockUnitsToColorsData)).toBe('orange');
+        expect(unitsToColors(4, mockUnitsToColorsData)).toBe('orange');
+    });
+
+    it('should return red for units above the orange limit', () => {
+        expect(unitsToColors(5, mockUnitsToColorsData)).toBe('red');
+        expect(unitsToColors(6, mockUnitsToColorsData)).toBe('red');
+    });
+
+});
+

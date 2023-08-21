@@ -1,6 +1,7 @@
 ﻿import { StackNavigationProp } from '@react-navigation/stack';
-import { DrinkingSessionData, CurrentSessionData } from './database';
+import { DrinkingSessionData, CurrentSessionData, PreferencesData } from './database';
 import { RouteProp } from '@react-navigation/native';
+import { DateObject } from './various';
 
 
 type AppStackParamList = {
@@ -16,7 +17,10 @@ type AppStackParamList = {
   'Social Screen': undefined;
   'Achievement Screen': undefined;
   'Settings Screen': undefined;
-  'Day Overview Screen': { timestamp: number };
+  'Day Overview Screen': { 
+    date_object: DateObject;
+    preferences: PreferencesData;
+  };
   'Edit Session Screen': { session: DrinkingSessionData }
 };
 
@@ -39,8 +43,8 @@ export type DrinkingSessionScreenProps = {
 }
 
 export type DayOverviewScreenProps = {
-    route: any;
-    navigation: any;
+  route?: RouteProp<AppStackParamList, 'Day Overview Screen'>;
+  navigation?: StackNavigationProp<AppStackParamList, 'Day Overview Screen'>;
 }
  
 export type EditSessionScreenProps = {

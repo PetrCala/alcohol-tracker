@@ -1,4 +1,4 @@
-﻿import { DrinkingSessionData, UnitTypesProps } from "../types/database";
+﻿import { DrinkingSessionData, UnitTypesProps, UnitsToColorsData } from "../types/database";
 import { DateObject } from "../types/various";
 
 export function formatDate (date: Date): string {
@@ -212,18 +212,19 @@ export const getRandomUnitsObject = (maxUnitValue:number = 30):UnitTypesProps =>
 /** Convert the units consumed to colors.
  * 
  * @param units Number of units consumed
+ * @param unitsToColorsInfo Information about limits for different colors
  * @returns String
  */
-export function unitsToColors(units: number){
+export function unitsToColors(units: number, unitsToColorsInfo:UnitsToColorsData){
     let sessionColor: any;
-    if (units > 10) {
-        sessionColor = 'red';
-    } else if (units > 5) {
-        sessionColor = 'orange';
-    } else if (units > 0) {
-        sessionColor = 'yellow';
-    } else {
+    if (units === 0) {
         sessionColor = 'green';
+    } else if (units <= unitsToColorsInfo.yellow) {
+        sessionColor = 'yellow';
+    } else if (units <= unitsToColorsInfo.orange) {
+        sessionColor = 'orange';
+    } else {
+        sessionColor = 'red';
     };
     return sessionColor;
 };

@@ -1,9 +1,10 @@
-﻿import { DrinkingSessionData } from "./database";
+﻿import { DrinkingSessionData, PreferencesData } from "./database";
 
 // Sessions calendar props
 
 export type SessionsCalendarProps = {
     drinkingSessionData: DrinkingSessionData[];
+    preferences: PreferencesData;
     visibleDateObject: DateObject;
     setVisibleDateObject: React.Dispatch<React.SetStateAction<DateObject>>;
     onDayPress: (day: any) => void;
