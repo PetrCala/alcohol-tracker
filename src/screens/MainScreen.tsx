@@ -202,7 +202,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
 
     return(
       <LoadingData
-      loadingText="Loading data..."
+      // loadingText="Loading data..."
       />
       );
   };

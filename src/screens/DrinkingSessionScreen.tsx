@@ -37,6 +37,14 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
   const [strongShotUnits, setStrongShotUnits] = useState(current_units.strong_shot)
   const [weakShotUnits, setWeakShotUnits] = useState(current_units.weak_shot)
   const [wineUnits, setWineUnits] = useState(current_units.wine)
+  const allUnits:UnitTypesProps = {
+    beer: beerUnits,
+    cocktail: cocktailUnits,
+    other: otherUnits,
+    strong_shot: strongShotUnits,
+    weak_shot: weakShotUnits,
+    wine: wineUnits,
+  };
   // Time info
   const [lastUnitAdded, setLastUnitAdded] = useState<number>(last_unit_added);
   const [pendingUpdate, setPendingUpdate] = useState(false);
@@ -53,13 +61,18 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
   }
 
   // Change local hook value
-  const changeTotalUnits = (number: number) => {
-    const newUnits = totalUnits + number;
+  const addOtherUnit = (number: number) => {
+    let newUnits = otherUnits + number;
     if (newUnits >= 0 && newUnits < 100){
       setOtherUnits(newUnits);
-      setTotalUnits(newUnits);
     }
   };
+
+  // Track total units
+  useEffect(() => {
+      let allUnitsSum = sumAllUnits(allUnits);
+      setTotalUnits(allUnitsSum);
+  }, [allUnits]);
 
   // Create a ref to store the previous state
   const prevUnitsRef = useRef<number>();
@@ -72,17 +85,9 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
   useEffect(() => {
     // Only schedule a database update if the units have changed
     if (prevUnits !== totalUnits) {
-      let newCurrentUnits:UnitTypesProps = {
-        beer: beerUnits,
-        cocktail: cocktailUnits,
-        other: otherUnits,
-        strong_shot: strongShotUnits,
-        weak_shot: weakShotUnits,
-        wine: wineUnits,
-      };
       setPendingUpdate(true);
       const timer = setTimeout(async () => {
-        await updateCurrentUnits(db, user.uid, newCurrentUnits);
+        await updateCurrentUnits(db, user.uid, allUnits);
         setPendingUpdate(false); // Data has been synchronized with DB
       }, updateTimeout); // Update every x milliseconds
       // Clear timer on unmount or when units changes
@@ -92,22 +97,18 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
 
 
   async function saveSession(db: any, userId: string) {
+    if (totalUnits > 99){
+      console.log('cannot save this session');
+      return null;
+    };
     // Save the data into the database
     if (totalUnits > 0){
-      let unitsToSave:UnitTypesProps = {
-        beer: beerUnits,
-        cocktail: cocktailUnits,
-        other: otherUnits,
-        strong_shot: strongShotUnits,
-        weak_shot: weakShotUnits,
-        wine: wineUnits,
-      }
       let newSessionData: DrinkingSessionData = {
         end_time: Date.now(),
         last_unit_added_time: lastUnitAdded,
         session_id: 'placeholder-id', // Will be replaced during the call
         start_time: last_session_started,
-        units: unitsToSave
+        units: allUnits
       };
       try {
         await saveDrinkingSessionData(db, userId, newSessionData); // Save drinking session data
@@ -143,15 +144,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
    */
   const handleBackPress = async () => {
     if (pendingUpdate) {
-      let currentUnits:UnitTypesProps = {
-        beer: beerUnits,
-        cocktail: cocktailUnits,
-        other: otherUnits,
-        strong_shot: strongShotUnits,
-        weak_shot: weakShotUnits,
-        wine: wineUnits,
-      }
-      await updateCurrentUnits(db, user.uid, currentUnits);
+      await updateCurrentUnits(db, user.uid, allUnits);
     }
     navigation.goBack();
   };
@@ -175,63 +168,65 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
               {sessionStartTime}
           </Text>
       </View>
-      <View style={styles.totalUnitsContainer}>
-        <SessionUnitsInputWindow
-          currentUnits={totalUnits}
-          onUnitsChange={setTotalUnits}
-        />
-      </View>
+      <SessionUnitsInputWindow
+        currentUnits={totalUnits}
+        setCurrentUnits={setTotalUnits}
+        styles={styles}
+      />
       <View style={styles.unitTypesContainer}>
-        {/* <DrinkingSessionUnitWindow
+        <DrinkingSessionUnitWindow
           unitName='Beer'
           iconSource={require('../assets/icons/beer.png')}
           currentUnits={beerUnits}
-          onUnitsChange={setBeerUnits}
+          setCurrentUnits={setBeerUnits}
         />
         <DrinkingSessionUnitWindow
           unitName='Wine'
           iconSource={require('../assets/icons/wine.png')}
           currentUnits={wineUnits}
-          onUnitsChange={setWineUnits}
+          setCurrentUnits={setWineUnits}
         />
         <DrinkingSessionUnitWindow
           unitName='Weak Shot'
           iconSource={require('../assets/icons/weak_shot.png')}
           currentUnits={weakShotUnits}
-          onUnitsChange={setWeakShotUnits}
+          setCurrentUnits={setWeakShotUnits}
         />
         <DrinkingSessionUnitWindow
           unitName='Strong Shot'
           iconSource={require('../assets/icons/strong_shot.png')}
           currentUnits={strongShotUnits}
-          onUnitsChange={setStrongShotUnits}
+          setCurrentUnits={setStrongShotUnits}
         />
         <DrinkingSessionUnitWindow
           unitName='Cocktail'
           iconSource={require('../assets/icons/cocktail.png')}
           currentUnits={cocktailUnits}
-          onUnitsChange={setCocktailUnits}
+          setCurrentUnits={setCocktailUnits}
         />
         <DrinkingSessionUnitWindow
           unitName='Other'
           iconSource={require('../assets/icons/alcohol_assortment.png')}
           currentUnits={otherUnits}
-          onUnitsChange={setOtherUnits}
-        /> */}
+          setCurrentUnits={setOtherUnits}
+        />
       </View>
       <View style={styles.otherButtonsContainer}>
+        <View style={{padding: 5}}>
         <BasicButton 
           text='Add Unit'
           buttonStyle={styles.drinkingSessionButton}
           textStyle={styles.drinkingSessionButtonText}
-          onPress={() => changeTotalUnits(1)}
+          onPress={() => addOtherUnit(1)}
         />
         <BasicButton 
           text='Remove Unit'
           buttonStyle={styles.drinkingSessionButton}
           textStyle={styles.drinkingSessionButtonText}
-          onPress={() => changeTotalUnits(-1)}
+          onPress={() => addOtherUnit(-1)}
         />
+        </View>
+        <View style={{padding: 5}}>
         <BasicButton 
           text='Save Session'
           buttonStyle={styles.drinkingSessionButton}
@@ -244,6 +239,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
           textStyle={styles.drinkingSessionButtonText}
           onPress={() => discardSession(db, user.uid)}
         />
+        </View>
       </View>
     </View>
   );
@@ -274,10 +270,26 @@ const styles = StyleSheet.create({
   sessionInfoContainer: {
 
   },
-  totalUnitsContainer: {
+  unitsInputContainer: {
     alignItems: "center",
     justifyContent: "center",
-
+  },
+  unitsInputButton: {
+    padding: 15,
+    borderRadius: 8,
+    borderWidth: 2,
+    marginBottom: 15,
+    width: 300,
+    alignItems: 'center',
+    borderColor: '#212421',
+    backgroundColor: 'white',
+  },
+  unitsInputText: {
+      fontSize: 18,
+      textAlign: 'center',
+      fontWeight: 'bold',
+      color: '#212421',
+      alignContent: 'center',
   },
   unitTypesContainer: {
     alignItems: "center",
@@ -286,6 +298,8 @@ const styles = StyleSheet.create({
   otherButtonsContainer: {
     alignItems: "center",
     justifyContent: "center",
+    flexDirection: "row",
+    padding: 2,
   },
   drinkingSessionButton: {
     width: 130,

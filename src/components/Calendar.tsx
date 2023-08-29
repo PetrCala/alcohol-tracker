@@ -262,7 +262,7 @@ const SessionsCalendar = ({
     if (markedDates == null || drinkingSessionData == null) {
         return(
             <LoadingData
-                loadingText='Loading data...'
+                // loadingText='Loading data...'
             />
         );
     }

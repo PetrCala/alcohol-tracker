@@ -96,7 +96,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
         if (date == null) {
             return(
                 <LoadingData
-                    loadingText='Loading date data...'
+                    // loadingText='Loading date data...'
                 />
             )
         }
@@ -164,7 +164,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
     if ( date == null || loadingData ) {
         return (
             <LoadingData
-                loadingText='Loading drinking session data...'
+                // loadingText='Loading drinking session data...'
             />
         );
     };

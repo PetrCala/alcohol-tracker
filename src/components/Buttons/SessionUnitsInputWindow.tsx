@@ -2,24 +2,33 @@
 import { 
     Keyboard,
     TextInput, 
-    TouchableOpacity, 
-    StyleSheet 
+    TouchableOpacity,
+    View
 } from 'react-native';
 
 
 type Props = {
     currentUnits: number;
-    onUnitsChange: (newUnits: number) => void;
+    setCurrentUnits: (newUnits: number) => void;
+    styles: {
+        unitsInputContainer: {};
+        unitsInputButton: {};
+        unitsInputText: {};
+    };
 }
 
 const SessionUnitsInputWindow = (props: Props) => {
-    const { currentUnits, onUnitsChange } = props;
+    const { currentUnits, setCurrentUnits, styles } = props;
     const [units, setUnits] = useState<number>(currentUnits);
     const [inputValue, setInputValue] = useState<string>(currentUnits.toString());
     const inputRef = useRef<TextInput>(null);
   
     useEffect(() => {
-        setUnits(currentUnits);
+        let newUnits = currentUnits;
+        if (currentUnits > 99){
+            newUnits = 99;
+        } ;
+        setUnits(newUnits);
     }, [currentUnits]);
 
 
@@ -57,7 +66,7 @@ const SessionUnitsInputWindow = (props: Props) => {
 
         if (numericValue !== units){
             setUnits(numericValue);
-            onUnitsChange(numericValue);
+            setCurrentUnits(numericValue);
         };
     };
 
@@ -73,52 +82,26 @@ const SessionUnitsInputWindow = (props: Props) => {
     };
   
     return (
-        <TouchableOpacity 
-            activeOpacity={1} 
-            onPress={handleContainerPress} 
-            style={styles.drinkingSessionClickableTextContainer}
-        >
-          <TextInput
-              ref={inputRef}
-              style={styles.drinkingSessionClickableTextStyle}
-              value={units.toString()}
-              onKeyPress={handleKeyPress}
-              keyboardType="numeric"
-              caretHidden={true}
-              blurOnSubmit={true}
-              onSubmitEditing={() => inputRef.current && inputRef.current.blur()} // Hide keyboard
-              maxLength={2}
-          />
-        </TouchableOpacity>
+        <View style={styles.unitsInputContainer}>
+            <TouchableOpacity 
+                activeOpacity={1} 
+                onPress={handleContainerPress} 
+                style={styles.unitsInputButton}
+            >
+            <TextInput
+                ref={inputRef}
+                style={styles.unitsInputText}
+                value={units.toString()}
+                onKeyPress={handleKeyPress}
+                keyboardType="numeric"
+                caretHidden={true}
+                blurOnSubmit={true}
+                onSubmitEditing={() => inputRef.current && inputRef.current.blur()} // Hide keyboard
+                maxLength={2}
+            />
+            </TouchableOpacity>
+        </View>
     );
 };
   
 export default SessionUnitsInputWindow;
-
-const styles = StyleSheet.create({
-    drinkingSessionClickableTextContainer: {
-      padding: 15,
-      borderRadius: 8,
-      borderWidth: 2,
-      marginBottom: 15,
-      width: 300,
-      alignItems: 'center',
-      borderColor: '#212421',
-      backgroundColor: 'white',
-    },
-    drinkingSessionClickableTextStyle: {
-      fontSize: 18,
-      fontWeight: 'bold',
-      color: '#212421',
-    },
-    drinkingSessionClickableTextInput: {
-      fontSize: 18,
-      fontWeight: 'bold',
-      paddingVertical: 8,
-      paddingHorizontal: 10,
-      borderWidth: 1,
-      borderColor: 'white',
-      borderRadius: 4,
-      color: '#212421'
-    },
-});
