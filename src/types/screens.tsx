@@ -25,12 +25,12 @@ export type AppStackParamList = {
 };
 
 export type LoginScreenProps = {
-    navigation: StackNavigationProp<AppStackParamList, 'Login Screen'>;
+    navigation?: StackNavigationProp<AppStackParamList, 'Login Screen'>;
 }
 
 export type SignUpScreenProps = {
   route?: RouteProp<AppStackParamList, 'Sign Up Screen'>;
-  navigation: StackNavigationProp<AppStackParamList, 'Sign Up Screen'>;
+  navigation?: StackNavigationProp<AppStackParamList, 'Sign Up Screen'>;
 }
 
 export type MainScreenProps = {

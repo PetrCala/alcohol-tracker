@@ -182,7 +182,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
         />
       </View>
       <View style={styles.unitTypesContainer}>
-        <DrinkingSessionUnitWindow
+        {/* <DrinkingSessionUnitWindow
           unitName='Beer'
           iconSource={require('../assets/icons/beer.png')}
           currentUnits={beerUnits}
@@ -217,7 +217,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
           iconSource={require('../assets/icons/alcohol_assortment.png')}
           currentUnits={otherUnits}
           onUnitsChange={setOtherUnits}
-        />
+        /> */}
       </View>
       <View style={styles.otherButtonsContainer}>
         <BasicButton 

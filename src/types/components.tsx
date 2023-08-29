@@ -41,5 +41,5 @@ export type DrinkingSessionUnitWindowProps = {
 // Loading data props
 
 export type LoadingDataProps = {
-    loadingText: string
+    // loadingText: string
 }

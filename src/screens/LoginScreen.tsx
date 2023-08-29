@@ -1,4 +1,4 @@
-﻿import React, { useContext, useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { 
   Image,
   KeyboardAvoidingView, 
@@ -12,12 +12,12 @@ import { Alert } from 'react-native';
 import { getAuth } from 'firebase/auth';
 
 import { signInUserWithEmailAndPassword } from '../auth/auth';
-import DatabaseContext from '../database/DatabaseContext';
 import { LoginScreenProps } from '../types/screens';
 import LoadingData from '../components/LoadingData';
 
 
 const LoginScreen = ( {navigation }: LoginScreenProps) => {
+  if (!navigation) return null; // Should never be null
   const auth = getAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -76,7 +76,7 @@ const LoginScreen = ( {navigation }: LoginScreenProps) => {
   if (loadingUser) {
     return(
       <LoadingData
-      loadingText="Loading data..."
+      // loadingText="Loading data..."
       />
     );
   };

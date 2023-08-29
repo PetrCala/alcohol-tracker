@@ -1,14 +1,13 @@
 ﻿import { 
     View,
     ActivityIndicator,
-    StyleSheet
+    StyleSheet,
 } from "react-native";
 import { LoadingDataProps } from "../types/components";
 
-const LoadingData = ({loadingText}:LoadingDataProps) => {
+const LoadingData = ({}:LoadingDataProps) => {
     return (
       <View style={styles.loadingContainer}>
-        {/* <Text>{loadingText}</Text> */}
         <ActivityIndicator 
           size="large"
           color = "#0000ff"
