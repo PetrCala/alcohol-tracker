@@ -64,6 +64,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
     if (currentSessionData == null){
       throw new Error("The user" + user.displayName + " has no data in the database.")
     }
+    if (!preferences) return null; // Should never be null
     let startingUnits = currentSessionData.current_units;
     let sessionStartTime = currentSessionData.last_session_started;
     if (!currentSessionData.in_session){
@@ -87,6 +88,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
         last_session_started: sessionStartTime,
         last_unit_added: sessionStartTime
       },
+      preferences: preferences
     });
   }
 

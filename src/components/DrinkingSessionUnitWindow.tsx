@@ -31,7 +31,10 @@ const DrinkingSessionUnitWindow = ({
                 style={styles.adjustUnitsButton}
                 onPress={() => changeUnits(-1)}
             >
-                <Text style={styles.adjustUnitsButtonText}>-</Text>
+                <Image 
+                    source={require('../assets/icons/minus.png')}
+                    style={styles.adjustUnitsIcon}
+                />
             </TouchableOpacity>
             <SessionUnitsInputWindow
                 currentUnits={currentUnits}
@@ -42,7 +45,10 @@ const DrinkingSessionUnitWindow = ({
                 style={styles.adjustUnitsButton}
                 onPress={() => changeUnits(1)}
             >
-                <Text style={styles.adjustUnitsButtonText}>+</Text>
+                <Image 
+                    source={require('../assets/icons/plus.png')}
+                    style={styles.adjustUnitsIcon}
+                />
             </TouchableOpacity>
         </View>
     );
@@ -53,15 +59,15 @@ export default DrinkingSessionUnitWindow;
 
 const styles = StyleSheet.create({
     sessionUnitContainer: {
-        width: '80%',
+        width: '100%',
         borderWidth: 1,
         borderColor: 'black',
-        backgroundColor: '#d9faf8',
+        backgroundColor: '#fcf50f',
         flexDirection: 'row',
     },
     iconStyle: {
-        width: 35,
-        height: 35,
+        width: 30,
+        height: 30,
         marginLeft: 5,
         marginRight: 5,
         alignSelf: 'center'
@@ -81,8 +87,8 @@ const styles = StyleSheet.create({
         marginBottom: 4,
     },
     unitsInputButton: {
-        width: 45,
-        height: 45,
+        width: 43,
+        height: 43,
         borderRadius: 5,
         borderWidth: 2,
         alignItems: 'center',
@@ -91,25 +97,23 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
     },
     unitsInputText: {
-        fontSize: 15,
+        width: 43,
+        height: 43,
+        fontSize: 17,
         fontWeight: 'bold',
         textAlign: 'center',
         color: '#212421',
-        alignSelf: 'center',
-        alignContent: 'center',
     },
     adjustUnitsButton: {
         width: 50,
         height: 50,
         alignSelf: 'flex-end',
+        alignContent: 'center',
         justifyContent: 'center',
     },
-    adjustUnitsButtonText: {
-        fontSize: 35,
-        fontWeight: '500',
-        color: 'black',
-        // borderWidth: 1,
-        // borderColor: 'black',
-        alignSelf: 'center'
+    adjustUnitsIcon: {
+        width: 17,
+        height: 17,
+        alignSelf: 'center',
     },
 })

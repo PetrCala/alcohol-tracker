@@ -44,7 +44,10 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
     }
 
     const onEditSessionPress = (session:DrinkingSessionData) => {
-        return navigation.navigate('Edit Session Screen', {session: session})
+        return navigation.navigate('Edit Session Screen', {
+          session: session,
+          preferences: preferences
+        })
     }
 
     const DrinkingSession = ({session}: DrinkingSessionProps) => {
@@ -120,7 +123,10 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
             <TouchableOpacity
                 style={styles.addSessionButton}
                 onPress={() => navigation.navigate('Edit Session Screen',
-                    {session: newSession}
+                    {
+                    session: newSession,
+                    preferences: preferences
+                  }
                 )}
                 >
                 <Text style={styles.addSessionText}>+</Text>

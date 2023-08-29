@@ -12,6 +12,7 @@ export type AppStackParamList = {
   'Main Screen': undefined;
   'Drinking Session Screen': { 
     current_session_data: CurrentSessionData;
+    preferences: PreferencesData;
   };
   'Profile Screen': undefined;
   'Social Screen': undefined;
@@ -21,7 +22,10 @@ export type AppStackParamList = {
     date_object: DateObject;
     preferences: PreferencesData;
   };
-  'Edit Session Screen': { session: DrinkingSessionData }
+  'Edit Session Screen': {
+    session: DrinkingSessionData
+    preferences: PreferencesData;
+  };
 };
 
 export type LoginScreenProps = {

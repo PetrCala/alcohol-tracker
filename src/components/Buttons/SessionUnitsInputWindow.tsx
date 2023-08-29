@@ -28,7 +28,7 @@ const SessionUnitsInputWindow = (props: Props) => {
         if (currentUnits > 99){
             newUnits = 99;
         } ;
-        setUnits(newUnits);
+        setUnits(currentUnits);
     }, [currentUnits]);
 
 

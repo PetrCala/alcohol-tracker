@@ -5,8 +5,11 @@
   useEffect
 } from 'react';
 import {
+  Image,
+  ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import MenuIcon from '../components/Buttons/MenuIcon';
@@ -16,7 +19,7 @@ import DatabaseContext from '../database/DatabaseContext';
 import { updateCurrentUnits, discardDrinkingSessionData } from '../database/users';
 import { saveDrinkingSessionData } from '../database/drinkingSessions';
 import SessionUnitsInputWindow from '../components/Buttons/SessionUnitsInputWindow';
-import { formatDateToDay, formatDateToTime, sumAllUnits, timestampToDate } from '../utils/dataHandling';
+import { formatDateToDay, formatDateToTime, sumAllUnits, timestampToDate, unitsToColors } from '../utils/dataHandling';
 import { getAuth } from 'firebase/auth';
 import { DrinkingSessionData, UnitTypesProps } from '../types/database';
 import DrinkingSessionUnitWindow from '../components/DrinkingSessionUnitWindow';
@@ -24,7 +27,7 @@ import DrinkingSessionUnitWindow from '../components/DrinkingSessionUnitWindow';
 
 const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps) => {
   if (!route || ! navigation) return null; // Should never be null
-  const { current_session_data }  = route.params;
+  const { current_session_data, preferences }  = route.params;
   const { current_units, in_session, last_session_started, last_unit_added } = current_session_data;
   const auth = getAuth();
   const user = auth.currentUser;
@@ -52,6 +55,9 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
   const sessionDate = timestampToDate(last_session_started);
   const sessionDay = formatDateToDay(sessionDate);
   const sessionStartTime = formatDateToTime(sessionDate);
+  // Other
+  const [monkeMode, setMonkeMode] = useState<boolean>(false);
+  const sessionColor = unitsToColors(totalUnits, preferences.units_to_colors);
 
 
   // Automatically navigate to login screen if login expires
@@ -150,29 +156,56 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
   };
 
   return (
-    <View style={{flex:1, backgroundColor: '#FFFF99'}}>
-      <View style={styles.mainHeader}>
-        <MenuIcon
-          iconId='escape-drinking-session'
-          iconSource={require('../assets/icons/arrow_back.png')}
-          containerStyle={styles.backArrowContainer}
-          iconStyle={styles.backArrow}
-          onPress={handleBackPress}
-        />
-      </View>
-      <View style={styles.sessionInfoContainer}>
-          {/* <Text style={styles.menuDrinkingSessionInfoText}>
-              {sessionDay}
-          </Text> */}
-          <Text style={styles.menuDrinkingSessionInfoText}>
-              {sessionStartTime}
-          </Text>
-      </View>
-      <SessionUnitsInputWindow
-        currentUnits={totalUnits}
-        setCurrentUnits={setTotalUnits}
-        styles={styles}
+    <>
+    <View style={styles.mainHeader}>
+      <MenuIcon
+        iconId='escape-drinking-session'
+        iconSource={require('../assets/icons/arrow_back.png')}
+        containerStyle={styles.backArrowContainer}
+        iconStyle={styles.backArrow}
+        onPress={handleBackPress}
       />
+      <BasicButton 
+        text='Monke Mode'
+        buttonStyle={styles.monkeModeButton}
+        textStyle={styles.monkeModeButtonText}
+        onPress={() => setMonkeMode(!monkeMode)}
+      />
+    </View>
+    <View style={styles.sessionInfoContainer}>
+        <Text style={styles.sessionInfoText}>
+            {sessionDay} {sessionStartTime}
+        </Text>
+    </View>
+    <View style={styles.unitCountContainer}>
+        <Text style={[ styles.unitCountText,
+          {color: sessionColor}
+        ]}>
+          {totalUnits}
+        </Text>
+        {/* <SessionUnitsInputWindow
+          currentUnits={totalUnits}
+          setCurrentUnits={setOtherUnits}
+          styles={styles}
+        /> */}
+    </View>
+    <ScrollView style={styles.scrollView}>
+      {monkeMode ?
+      <View style={styles.modifyUnitsContainer}>
+        <TouchableOpacity
+            style={[styles.modifyUnitsButton, {backgroundColor: 'red'}]}
+            onPress={() => addOtherUnit(-1)}
+        >
+          <Text style={styles.modifyUnitsText}>-</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+            style={[styles.modifyUnitsButton, {backgroundColor: 'green'}]}
+            onPress={() => addOtherUnit(1)}
+        >
+          <Text style={styles.modifyUnitsText}>+</Text>
+        </TouchableOpacity>
+      </View>
+      :
       <View style={styles.unitTypesContainer}>
         <DrinkingSessionUnitWindow
           unitName='Beer'
@@ -211,37 +244,25 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
           setCurrentUnits={setOtherUnits}
         />
       </View>
-      <View style={styles.otherButtonsContainer}>
-        <View style={{padding: 5}}>
-        <BasicButton 
-          text='Add Unit'
-          buttonStyle={styles.drinkingSessionButton}
-          textStyle={styles.drinkingSessionButtonText}
-          onPress={() => addOtherUnit(1)}
-        />
-        <BasicButton 
-          text='Remove Unit'
-          buttonStyle={styles.drinkingSessionButton}
-          textStyle={styles.drinkingSessionButtonText}
-          onPress={() => addOtherUnit(-1)}
-        />
-        </View>
-        <View style={{padding: 5}}>
-        <BasicButton 
-          text='Save Session'
-          buttonStyle={styles.drinkingSessionButton}
-          textStyle={styles.drinkingSessionButtonText}
-          onPress={() => saveSession(db, user.uid)}
-        />
-        <BasicButton 
-          text='Discard Session'
-          buttonStyle={styles.drinkingSessionButton}
-          textStyle={styles.drinkingSessionButtonText}
-          onPress={() => discardSession(db, user.uid)}
-        />
-        </View>
-      </View>
+      }
+    </ScrollView>
+    {/* <View style={styles.monkeModeContainer}>
+    </View> */}
+    <View style={styles.saveSessionContainer}>
+      <BasicButton 
+        text='Discard Session'
+        buttonStyle={styles.saveSessionButton}
+        textStyle={styles.saveSessionButtonText}
+        onPress={() => discardSession(db, user.uid)}
+      />
+      <BasicButton 
+        text='Save Session'
+        buttonStyle={styles.saveSessionButton}
+        textStyle={styles.saveSessionButtonText}
+        onPress={() => saveSession(db, user.uid)}
+      />
     </View>
+    </>
   );
 };
 
@@ -253,75 +274,147 @@ const styles = StyleSheet.create({
     height: 70,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignContent: 'center',
     padding: 10,
     backgroundColor: 'white',
   },
   backArrowContainer: {
     justifyContent: 'center',
-    marginTop: 10,
-    marginLeft: 10,
+    alignSelf: 'center',
     padding: 10,
-    position: 'absolute',
   },
   backArrow: {
     width: 25,
     height: 25,
   },
+  sessionInfoText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginTop: 5,
+    color: "black",
+    alignSelf: "center",
+    alignContent: "center",
+    padding: 5,
+  },
   sessionInfoContainer: {
-
+    backgroundColor: '#FFFF99',
+  },
+  unitCountContainer: {
+    height: '18%',
+    flexGrow: 1,
+    flexShrink: 1,
+    backgroundColor: '#FFFF99',
+    marginBottom: '-15%',
+  },
+  unitCountText: {
+    fontSize: 90,
+    fontWeight: "bold",
+    // marginTop: 5,
+    marginBottom: 10,
+    alignSelf: "center",
+    alignContent: "center",
+    padding: 2,
+    textShadowColor: 'black',
+    textShadowOffset: {width: 1, height: 1},
+    textShadowRadius: 9,
+  },
+  scrollView: {
+    flexGrow:1, 
+    flexShrink: 1,
+    backgroundColor: '#FFFF99',
+  },
+  unitTypesContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: '100%',
   },
   unitsInputContainer: {
     alignItems: "center",
     justifyContent: "center",
   },
   unitsInputButton: {
-    padding: 15,
-    borderRadius: 8,
-    borderWidth: 2,
-    marginBottom: 15,
-    width: 300,
+    width: '40%',
     alignItems: 'center',
-    borderColor: '#212421',
-    backgroundColor: 'white',
   },
   unitsInputText: {
-      fontSize: 18,
-      textAlign: 'center',
-      fontWeight: 'bold',
-      color: '#212421',
-      alignContent: 'center',
+    fontSize: 90,
+    fontWeight: "bold",
+    // marginTop: 5,
+    marginBottom: 10,
+    alignSelf: "center",
+    alignContent: "center",
+    padding: 2,
+    textShadowColor: 'black',
+    textShadowOffset: {width: 1, height: 1},
+    textShadowRadius: 9,
   },
-  unitTypesContainer: {
+  modifyUnitsContainer: {
+    height: 400,
+    flexGrow: 1,
+    flexShrink: 1,
+    justifyContent: "space-evenly",
+    alignItems: 'center',
+    flexDirection: "row",
+    padding: 10,
+  },
+  modifyUnitsButton: {
+    width: 100,
+    height: 100,
+    alignItems: "center",
+    justifyContent: 'center',
+    borderRadius: 50,
+  },
+  modifyUnitsText: {
+    fontSize: 60,
+    fontWeight: 'bold',
+    color: 'white',
+    textAlign: 'center',
+  },
+  monkeModeContainer: {
+    height: '10%',
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: '#FFFF99',
   },
-  otherButtonsContainer: {
+  monkeModeButton: {
+    width: '40%',
+    alignItems: "center",
+    justifyContent: 'center',
+    padding: 10,
+    // marginBottom: 10,
+    // marginTop: 10,
+    borderRadius: 10,
+    backgroundColor: '#007AFF',
+  },
+  monkeModeButtonText: {
+    color: 'white',
+    fontSize: 17,
+    fontWeight: '600',
+  },
+  saveSessionContainer: {
+    height: '8%',
+    width: '100%',
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
-    padding: 2,
+    backgroundColor: '#FFFF99',
+    marginBottom: 2,
   },
-  drinkingSessionButton: {
-    width: 130,
+  saveSessionButton: {
+    width: '50%',
+    height: '100%',
     alignItems: "center",
+    justifyContent: 'center',
     padding: 10,
     marginBottom: 10,
     marginTop: 10,
-    backgroundColor: '#007AFF'
+    backgroundColor: '#fcf50f',
+    borderWidth: 1,
+    borderColor: 'grey',
   },
-  drinkingSessionButtonText: {
-    color: 'white',
-    fontSize: 15,
-    fontWeight: '500',
-  },
-  menuDrinkingSessionInfoText: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginTop: 5,
-    marginBottom: 5,
-    color: "black",
-    alignSelf: "center",
-    alignContent: "center",
-    padding: 10,
+  saveSessionButtonText: {
+    color: 'black',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
