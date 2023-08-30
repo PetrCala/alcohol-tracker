@@ -25,7 +25,7 @@ import { CurrentSessionData, DrinkingSessionData, PreferencesData, UnconfirmedDa
 import { MainScreenProps } from '../types/screens';
 import { DateObject } from '../types/components';
 import { deleteUser, getAuth, signOut, reauthenticateWithCredential } from 'firebase/auth';
-import { dateToDateObject, getRandomUnitsObject, getSingleMonthDrinkingSessions, getZeroUnitsObject, sumAllUnits, timestampToDate } from '../utils/dataHandling';
+import { dateToDateObject, getZeroUnitsObject, calculateThisMonthUnits } from '../utils/dataHandling';
 import { deleteUserInfo } from '../database/users';
 
 const MainScreen = ( { navigation }: MainScreenProps) => {
@@ -33,7 +33,6 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
   const auth = getAuth();
   const user = auth.currentUser;
   const db = useContext(DatabaseContext);
-  // const [userData, setUserData] = useState<UserData | null>(null);
   // Database data hooks
   const [currentSessionData, setCurrentSessionData] = useState<CurrentSessionData | null>(null);
   const [drinkingSessionData, setDrinkingSessionData] = useState<DrinkingSessionData[] | []>([]);
@@ -50,8 +49,6 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
   const [loadingDrinkingSessionData, setLoadingDrinkingSessionData] = useState<boolean>(true);
   const [loadingUserPreferences, setLoadingUserPreferences] = useState<boolean>(true);
   const [loadingUnconfirmedDays, setLoadingUnconfirmedDays] = useState<boolean>(true);
-
-  // const [deleteUserPopupVisible, setDeleteUserPopupVisible] = useState<boolean>(false);
 
   // Automatically navigate to login screen if login expires
   if (user == null){
@@ -128,15 +125,6 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
     }
   };
 
-  const calculateThisMonthUnits = (dateObject: DateObject, sessions: DrinkingSessionData[]) => {
-    // Subset to this month's sessions only
-    const currentDate = timestampToDate(dateObject.timestamp);
-    const sessionsThisMonth = getSingleMonthDrinkingSessions(
-      currentDate, sessions, false
-    );
-    // Sum up the units
-    return sessionsThisMonth.reduce((sum, session) => sum + sumAllUnits(session.units), 0);
-  };
 
   // Monitor current session data
   useEffect(() => {
@@ -296,7 +284,6 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
           <Text style={styles.menuDrinkingSessionInfoText}>Units this month:</Text> 
           <Text style={styles.thisMonthUnitsText}>{thisMonthUnits}</Text> 
           {/* Replace this with the overview and statistics */}
-          {drinkingSessionData ?
           <SessionsCalendar
             drinkingSessionData = {drinkingSessionData}
             preferences = {preferences}
@@ -311,9 +298,6 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
               )
             }}
           />
-          :
-          <Text style={styles.menuDrinkingSessionInfoText}>No drinking sessions found</Text>
-          }
       </ScrollView>
       {currentSessionData?.in_session ? <></> :
       <BasicButton 

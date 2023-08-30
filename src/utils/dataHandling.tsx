@@ -177,6 +177,23 @@ export function sumAllUnits(all_units: UnitTypesProps){
     return Object.values(all_units).reduce((acc, curr) => acc + curr, 0);
 };
 
+/** Enter a dateObject and an array of drinking sessions and calculate 
+ * units consumed in the current month.
+ * 
+ * @param dateObject DateObject
+ * @param sessions Array of drinking sessions
+ * @returns Number of units consumed during the current month
+ */
+export const calculateThisMonthUnits = (dateObject: DateObject, sessions: DrinkingSessionData[]): number => {
+    // Subset to this month's sessions only
+    const currentDate = timestampToDate(dateObject.timestamp);
+    const sessionsThisMonth = getSingleMonthDrinkingSessions(
+        currentDate, sessions, false
+    );
+    // Sum up the units
+    return sessionsThisMonth.reduce((sum, session) => sum + sumAllUnits(session.units), 0);
+};
+
 /** Generate an object with all available units where 
  * each unit's value is set to 0.
  */

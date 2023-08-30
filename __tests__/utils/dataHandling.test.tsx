@@ -1,4 +1,5 @@
 ﻿import { 
+    calculateThisMonthUnits,
     changeDateBySomeDays,
     dateToDateObject, 
     formatDate,
@@ -20,14 +21,39 @@
 import { DateObject } from "../../src/types/components";
 import { DrinkingSessionData, UnitTypesKeys, UnitTypesProps, UnitsToColorsData } from "../../src/types/database";
 
+
+/** Generate a mock object of units
+ * 
+ * @usage const onlyWine = generateMockUnits({ wine: 5 });
+ */
+function generateMockUnits(units: Partial<UnitTypesProps> = {}): UnitTypesProps {
+    const defaultUnits: UnitTypesProps = {
+      beer: 0,
+      cocktail: 0,
+      other: 0,
+      strong_shot: 0,
+      weak_shot: 0,
+      wine: 0,
+    };
+  
+    return {
+      ...defaultUnits,
+      ...units,
+    };
+};
+
 /**
  * Generates a DrinkingSessionData for a specified offset relative to a given date.
  *
  * @param baseDate Date around which sessions are created.
  * @param offsetDays Number of days to offset from baseDate. If not provided, a random offset between -7 and 7 days is used.
+ * @param units Units consumed during the session
  * @returns A DrinkingSessionData object.
  */
-function generateMockSession(baseDate: Date, offsetDays?: number): DrinkingSessionData {
+function generateMockSession(baseDate: Date, offsetDays?: number, units?: UnitTypesProps): DrinkingSessionData {
+    if (!units){
+        units = getZeroUnitsObject();
+    };
     const sessionDate = new Date(baseDate);
   
     // If offsetDays is not provided, randomize between -7 and 7 days.
@@ -44,7 +70,7 @@ function generateMockSession(baseDate: Date, offsetDays?: number): DrinkingSessi
         last_unit_added_time: sessionDate.getTime() + (1.5 * 60 * 60 * 1000),  // +1.5 hours
         session_id: `session-${daysOffset}-offset`,
         start_time: sessionDate.getTime(),
-        units: {} as any
+        units: units
     };
   
     return newSession;
@@ -395,8 +421,8 @@ describe('getSingleMonthDrinkingSessions', () => {
   
     it('should return sessions until today when untilToday flag is true', () => {
       const baseDate = new Date('2023-08-20');
-      const futureSessionDate = new Date(baseDate);
-      futureSessionDate.setDate(baseDate.getDate() + 5);  // A session 5 days into the future
+      const futureSessionDate = new Date();
+      futureSessionDate.setDate(futureSessionDate.getDate() + 5);  // A session 5 days into the future
   
       const testSessions: DrinkingSessionData[] = [
         generateMockSession(baseDate, 0),   // Session from this month
@@ -442,6 +468,44 @@ describe('sumAllUnits', () => {
         expect(result).toBe(0);
       });
 });
+
+
+describe('calculateThisMonthUnits', () => {
+    let mockDateObject: DateObject =  dateToDateObject(new Date()); // Today
+    let twoBeers: UnitTypesProps = generateMockUnits({beer: 2});
+    let threeWines: UnitTypesProps = generateMockUnits({wine: 3});
+    let fourOther: UnitTypesProps = generateMockUnits({other: 4});
+    
+    it('should return 0 when there are no drinking sessions this month', () => {
+      const result = calculateThisMonthUnits(mockDateObject, []);
+      expect(result).toBe(0);
+    });
+  
+    it('should sum units for sessions that only fall within the current month', () => {
+      const testSessions: DrinkingSessionData[] = [
+        generateMockSession(new Date(), -31, twoBeers),
+        generateMockSession(new Date(), 31, twoBeers),
+        generateMockSession(new Date(), 0, threeWines),
+        generateMockSession(new Date(), 0, twoBeers),
+      ];
+      
+      const result = calculateThisMonthUnits(mockDateObject, testSessions);
+      expect(result).toBe(5);  // 3 + 2
+    });
+  
+    it('should sum units for all sessions if all fall within the current month', () => {
+      // Mock sumAllUnits function and getSingleMonthDrinkingSessions to return an array of sessions
+      const testSessions: DrinkingSessionData[] = [
+        generateMockSession(new Date(), 0, threeWines),
+        generateMockSession(new Date(), 0, twoBeers),
+        generateMockSession(new Date(), 0, fourOther),
+      ];
+      
+      const result = calculateThisMonthUnits(mockDateObject, testSessions);
+      expect(result).toBe(9);  // 4 + 3 + 2
+    });
+    
+  });
 
 
 describe('getZeroUnitsObject', () => {
