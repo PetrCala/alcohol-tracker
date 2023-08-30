@@ -24,12 +24,15 @@ import { getAuth } from 'firebase/auth';
 import { DrinkingSessionData, UnitTypesProps } from '../types/database';
 import DrinkingSessionUnitWindow from '../components/DrinkingSessionUnitWindow';
 import { maxAllowedUnits } from '../utils/static';
+import YesNoPopup from '../components/YesNoPopup';
 
 
 const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps) => {
+  // Navigation
   if (!route || ! navigation) return null; // Should never be null
   const { current_session_data, preferences }  = route.params;
   const { current_units, in_session, last_session_started, last_unit_added } = current_session_data;
+  // Context, database, and authentification
   const auth = getAuth();
   const user = auth.currentUser;
   const db = useContext(DatabaseContext);
@@ -59,6 +62,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
   const sessionStartTime = formatDateToTime(sessionDate);
   // Other
   const [monkeMode, setMonkeMode] = useState<boolean>(false);
+  const [discardModalVisible, setDiscardModalVisible] = useState<boolean>(false);
   const sessionColor = unitsToColors(totalUnits, preferences.units_to_colors);
 
 
@@ -86,7 +90,6 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
   useEffect(() => {
     let newAvailableUnits = maxAllowedUnits - totalUnits;
     setAvailableUnits(newAvailableUnits);
-    console.log("Available units: " + newAvailableUnits);
   }, [totalUnits]);
 
   // Create a ref to store the previous state
@@ -113,7 +116,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
 
   async function saveSession(db: any, userId: string) {
     if (totalUnits > 99){
-      console.log('cannot save this session');
+      console.log('Cannot save this session');
       return null;
     };
     // Save the data into the database
@@ -148,12 +151,17 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
     } catch (error:any) {
       throw new Error('Failed to discard the session: ' + error.message);
     }
-    if (navigation){
-      navigation.goBack();
-    } else {
-      throw new Error('Navigation not found');
-    };
   }
+  
+  const handleConfirmDiscard = () => {
+    discardSession(db, user.uid);
+    setDiscardModalVisible(false);
+    navigation.goBack();
+  };
+
+  const handleCancelDiscard = () => {
+    setDiscardModalVisible(false);
+  };
 
   /** If an update is pending, update immediately before navigating away
    */
@@ -269,7 +277,15 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
         text='Discard Session'
         buttonStyle={styles.saveSessionButton}
         textStyle={styles.saveSessionButtonText}
-        onPress={() => discardSession(db, user.uid)}
+        onPress={() => setDiscardModalVisible(true)}
+      />
+      <YesNoPopup
+        visible={discardModalVisible}
+        transparent={true}
+        onRequestClose={() => setDiscardModalVisible(false)}
+        message={"Do you really want to\ndiscard this session?"}
+        onYes={handleConfirmDiscard}
+        onNo={handleCancelDiscard}
       />
       <BasicButton 
         text='Save Session'

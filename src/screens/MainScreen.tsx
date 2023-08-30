@@ -29,23 +29,22 @@ import { dateToDateObject, getRandomUnitsObject, getSingleMonthDrinkingSessions,
 import { deleteUserInfo } from '../database/users';
 
 const MainScreen = ( { navigation }: MainScreenProps) => {
+  // Context, database, and authentification
   const auth = getAuth();
   const user = auth.currentUser;
   const db = useContext(DatabaseContext);
   // const [userData, setUserData] = useState<UserData | null>(null);
-
   // Database data hooks
   const [currentSessionData, setCurrentSessionData] = useState<CurrentSessionData | null>(null);
   const [drinkingSessionData, setDrinkingSessionData] = useState<DrinkingSessionData[] | []>([]);
   const [preferences, setPreferences] = useState<PreferencesData | null>(null);
   const [unconfirmedDays, setUnconfirmedDays] = useState<UnconfirmedDaysData | null>(null);
-
   // Other hooks
   const [visibleDateObject, setVisibleDateObject] = useState<DateObject>(
     dateToDateObject(new Date())
     );
-  const [thisMonthUnits, setThisMonthUnits] = useState<number>(0);
-
+    const [thisMonthUnits, setThisMonthUnits] = useState<number>(0);
+    const [signoutModalVisible, setSignoutModalVisible] = useState<boolean>(false);
   // Loading hooks
   const [loadingCurrentSessionData, setLoadingCurrentSessionData] = useState<boolean>(true);
   const [loadingDrinkingSessionData, setLoadingDrinkingSessionData] = useState<boolean>(true);
@@ -98,10 +97,19 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
       // TODO
       // reauthenticateWithCredential
       await signOut(auth);
-      navigation.replace("Login Screen");
     } catch (error:any) {
       throw new Error("There was an error signing out: " + error.message);
     }
+  };
+  
+  const handleConfirmSignout = () => {
+    handleSignOut();
+    setSignoutModalVisible(false);
+    navigation.replace("Login Screen");
+  };
+
+  const handleCancelSignout = () => {
+    setSignoutModalVisible(false);
   };
 
   const handleDeleteUser = async () => {
@@ -252,22 +260,23 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
                   iconSource={require('../assets/icons/exit.png')} 
                   containerStyle={styles.menuIconContainer}
                   iconStyle={styles.menuIcon}
-                  onPress = {handleSignOut}
+                  onPress = {() => setSignoutModalVisible(true)}
                   // onPress = {() => navigation.navigate('Settings Screen')}
-                  />
+                />
+                <YesNoPopup
+                  visible={signoutModalVisible}
+                  transparent={true}
+                  onRequestClose={() => setSignoutModalVisible(false)}
+                  message={"Do you really want to\nsign out?"}
+                  onYes={handleConfirmSignout}
+                  onNo={handleCancelSignout}
+                />
                 {/* <MenuIcon 
                   iconId='menu-icon'
                   iconSource={require('../assets/icons/delete.png')} 
                   containerStyle={styles.menuIconContainer}
                   iconStyle={styles.menuIcon}
                   onPress = {handleDeleteUser}
-                /> */}
-                {/* <YesNoPopup
-                  visible={deleteUserPopupVisible}
-                  onRequestClose={() => setDeleteUserPopupVisible(false)}
-                  message="Do you really want delete this user?"
-                  onYes={handleDeleteUser}
-                  onNo={setDeleteUserPopupVisible(false)}
                 /> */}
             </View>
         </View>
