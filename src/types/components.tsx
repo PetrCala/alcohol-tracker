@@ -35,8 +35,20 @@ export type DrinkingSessionUnitWindowProps = {
     unitName: string;
     iconSource: ImageSourcePropType;
     currentUnits: number;
+    availableUnits: number;
     setCurrentUnits: React.Dispatch<React.SetStateAction<number>>;
 };
+
+export type SessionUnitsInputWindowProps = {
+    currentUnits: number;
+    availableUnits: number;
+    setCurrentUnits: (newUnits: number) => void;
+    styles: {
+        unitsInputContainer: {};
+        unitsInputButton: {};
+        unitsInputText: {};
+    };
+}
 
 // Loading data props
 

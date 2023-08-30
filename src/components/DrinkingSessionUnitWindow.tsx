@@ -13,12 +13,13 @@ const DrinkingSessionUnitWindow = ({
     unitName,
     iconSource,
     currentUnits,
+    availableUnits,
     setCurrentUnits
 }: DrinkingSessionUnitWindowProps) => {
 
     const changeUnits = (number: number) => {
         let newUnits = currentUnits + number;
-        if (newUnits >= 0 && newUnits < 100){
+        if (newUnits >= 0 && number <= availableUnits){
           setCurrentUnits(newUnits);
         }
     };
@@ -38,6 +39,7 @@ const DrinkingSessionUnitWindow = ({
             </TouchableOpacity>
             <SessionUnitsInputWindow
                 currentUnits={currentUnits}
+                availableUnits={availableUnits}
                 setCurrentUnits={setCurrentUnits}
                 styles={styles}
             />

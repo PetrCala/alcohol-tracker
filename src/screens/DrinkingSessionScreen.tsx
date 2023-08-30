@@ -23,6 +23,7 @@ import { formatDateToDay, formatDateToTime, sumAllUnits, timestampToDate, unitsT
 import { getAuth } from 'firebase/auth';
 import { DrinkingSessionData, UnitTypesProps } from '../types/database';
 import DrinkingSessionUnitWindow from '../components/DrinkingSessionUnitWindow';
+import { maxAllowedUnits } from '../utils/static';
 
 
 const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps) => {
@@ -34,6 +35,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
   const db = useContext(DatabaseContext);
   // Units
   const [totalUnits, setTotalUnits] = useState<number>(sumAllUnits(current_units));
+  const [availableUnits, setAvailableUnits] = useState<number>(maxAllowedUnits - totalUnits);
   const [beerUnits, setBeerUnits] = useState(current_units.beer)
   const [cocktailUnits, setCocktailUnits] = useState(current_units.cocktail)
   const [otherUnits, setOtherUnits] = useState(current_units.other)
@@ -79,6 +81,13 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
       let allUnitsSum = sumAllUnits(allUnits);
       setTotalUnits(allUnitsSum);
   }, [allUnits]);
+
+  // Track available units
+  useEffect(() => {
+    let newAvailableUnits = maxAllowedUnits - totalUnits;
+    setAvailableUnits(newAvailableUnits);
+    console.log("Available units: " + newAvailableUnits);
+  }, [totalUnits]);
 
   // Create a ref to store the previous state
   const prevUnitsRef = useRef<number>();
@@ -185,6 +194,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
         </Text>
         {/* <SessionUnitsInputWindow
           currentUnits={totalUnits}
+          availableUnits={availableUnits}
           setCurrentUnits={setOtherUnits}
           styles={styles}
         /> */}
@@ -211,36 +221,42 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
           unitName='Beer'
           iconSource={require('../assets/icons/beer.png')}
           currentUnits={beerUnits}
+          availableUnits={availableUnits}
           setCurrentUnits={setBeerUnits}
         />
         <DrinkingSessionUnitWindow
           unitName='Wine'
           iconSource={require('../assets/icons/wine.png')}
           currentUnits={wineUnits}
+          availableUnits={availableUnits}
           setCurrentUnits={setWineUnits}
         />
         <DrinkingSessionUnitWindow
           unitName='Weak Shot'
           iconSource={require('../assets/icons/weak_shot.png')}
           currentUnits={weakShotUnits}
+          availableUnits={availableUnits}
           setCurrentUnits={setWeakShotUnits}
         />
         <DrinkingSessionUnitWindow
           unitName='Strong Shot'
           iconSource={require('../assets/icons/strong_shot.png')}
           currentUnits={strongShotUnits}
+          availableUnits={availableUnits}
           setCurrentUnits={setStrongShotUnits}
         />
         <DrinkingSessionUnitWindow
           unitName='Cocktail'
           iconSource={require('../assets/icons/cocktail.png')}
           currentUnits={cocktailUnits}
+          availableUnits={availableUnits}
           setCurrentUnits={setCocktailUnits}
         />
         <DrinkingSessionUnitWindow
           unitName='Other'
           iconSource={require('../assets/icons/alcohol_assortment.png')}
           currentUnits={otherUnits}
+          availableUnits={availableUnits}
           setCurrentUnits={setOtherUnits}
         />
       </View>

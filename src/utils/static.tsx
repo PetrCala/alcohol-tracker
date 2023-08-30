@@ -1,0 +1,1 @@
+﻿export const maxAllowedUnits = 99;

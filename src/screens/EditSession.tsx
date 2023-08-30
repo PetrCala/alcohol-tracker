@@ -21,6 +21,7 @@ import SessionUnitsInputWindow from '../components/Buttons/SessionUnitsInputWind
 import { formatDateToDay, formatDateToTime, sumAllUnits, timestampToDate, unitsToColors } from '../utils/dataHandling';
 import { getAuth } from 'firebase/auth';
 import DrinkingSessionUnitWindow from '../components/DrinkingSessionUnitWindow';
+import { maxAllowedUnits } from '../utils/static';
 
 
 const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
@@ -31,6 +32,7 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
     const user = auth.currentUser;
     // Units
     const [totalUnits, setTotalUnits] = useState<number>(sumAllUnits(units));
+    const [availableUnits, setAvailableUnits] = useState<number>(maxAllowedUnits - totalUnits);
     const [beerUnits, setBeerUnits] = useState(units.beer)
     const [cocktailUnits, setCocktailUnits] = useState(units.cocktail)
     const [otherUnits, setOtherUnits] = useState(units.other)
@@ -177,36 +179,42 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
           unitName='Beer'
           iconSource={require('../assets/icons/beer.png')}
           currentUnits={beerUnits}
+          availableUnits={availableUnits}
           setCurrentUnits={setBeerUnits}
         />
         <DrinkingSessionUnitWindow
           unitName='Wine'
           iconSource={require('../assets/icons/wine.png')}
           currentUnits={wineUnits}
+          availableUnits={availableUnits}
           setCurrentUnits={setWineUnits}
         />
         <DrinkingSessionUnitWindow
           unitName='Weak Shot'
           iconSource={require('../assets/icons/weak_shot.png')}
           currentUnits={weakShotUnits}
+          availableUnits={availableUnits}
           setCurrentUnits={setWeakShotUnits}
         />
         <DrinkingSessionUnitWindow
           unitName='Strong Shot'
           iconSource={require('../assets/icons/strong_shot.png')}
           currentUnits={strongShotUnits}
+          availableUnits={availableUnits}
           setCurrentUnits={setStrongShotUnits}
         />
         <DrinkingSessionUnitWindow
           unitName='Cocktail'
           iconSource={require('../assets/icons/cocktail.png')}
           currentUnits={cocktailUnits}
+          availableUnits={availableUnits}
           setCurrentUnits={setCocktailUnits}
         />
         <DrinkingSessionUnitWindow
           unitName='Other'
           iconSource={require('../assets/icons/alcohol_assortment.png')}
           currentUnits={otherUnits}
+          availableUnits={availableUnits}
           setCurrentUnits={setOtherUnits}
         />
       </View>

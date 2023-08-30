@@ -5,69 +5,61 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
+import { SessionUnitsInputWindowProps } from '../../types/components';
 
 
-type Props = {
-    currentUnits: number;
-    setCurrentUnits: (newUnits: number) => void;
-    styles: {
-        unitsInputContainer: {};
-        unitsInputButton: {};
-        unitsInputText: {};
-    };
-}
-
-const SessionUnitsInputWindow = (props: Props) => {
-    const { currentUnits, setCurrentUnits, styles } = props;
-    const [units, setUnits] = useState<number>(currentUnits);
+const SessionUnitsInputWindow = (props: SessionUnitsInputWindowProps) => {
+    const { currentUnits, setCurrentUnits, availableUnits, styles } = props;
     const [inputValue, setInputValue] = useState<string>(currentUnits.toString());
     const inputRef = useRef<TextInput>(null);
-  
-    useEffect(() => {
-        let newUnits = currentUnits;
-        if (currentUnits > 99){
-            newUnits = 99;
-        } ;
-        setUnits(currentUnits);
-    }, [currentUnits]);
 
 
-    const handleKeyPress = (event: {nativeEvent: {key:string}}) => {
+    const handleKeyPress = (event: { nativeEvent: { key: string } }) => {
         let updatedValue: string = '0';
         const key = event.nativeEvent.key;
-        
+    
         if (key === 'Backspace') {
-            if (inputValue.length > 1){
+            if (inputValue.length > 1) {
                 updatedValue = inputValue.slice(0, -1); // Longer than 1
             } else {
                 updatedValue = '0';
-            };
-            if (inputValue !== '0'){
+            }
+            if (inputValue !== '0') {
                 setInputValue(updatedValue);
-            };
+            }
         } else if (!isNaN(Number(key))) {
-            if (inputValue === '0'){
+            if (inputValue === '0') {
                 updatedValue = key;
-                setInputValue(updatedValue);
-            } else if (inputValue.length < 2){
-                // Append the number to the current inputValue if digits < 2
+            } else if (inputValue.length < 2) {
                 updatedValue = inputValue + key;
-                setInputValue(updatedValue);
             } else {
                 updatedValue = inputValue; // Same value 
-            };
-        };
-
+            }
+    
+            // Check that updatedValue is not greater than availableUnits
+            let numericValue = parseFloat(updatedValue);
+            if (isNaN(numericValue)) {
+                numericValue = 0;
+            }
+    
+            let inputValueNumeric = parseFloat(inputValue); // In case one digit is already input, adjust the availableUnits for this digit
+            if (numericValue > availableUnits + inputValueNumeric) {
+                return; // If the new value is greater than available units, do nothing.
+            }
+    
+            console.log(updatedValue)
+            setInputValue(updatedValue);
+        }
+    
         // Update units
         let numericValue = parseFloat(updatedValue);
         if (isNaN(numericValue)) {
             numericValue = 0;
         }
-
-        if (numericValue !== units){
-            setUnits(numericValue);
+    
+        if (numericValue !== currentUnits) {
             setCurrentUnits(numericValue);
-        };
+        }
     };
 
     const handleContainerPress = () => {
@@ -91,7 +83,7 @@ const SessionUnitsInputWindow = (props: Props) => {
             <TextInput
                 ref={inputRef}
                 style={styles.unitsInputText}
-                value={units.toString()}
+                value={currentUnits.toString()}
                 onKeyPress={handleKeyPress}
                 keyboardType="numeric"
                 caretHidden={true}
