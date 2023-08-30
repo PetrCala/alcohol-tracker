@@ -9,6 +9,7 @@ import {
   Alert,
   StyleSheet,
   Text,
+  Touchable,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -215,18 +216,20 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
   return (
     <View style={styles.mainContainer}>
         <View style={styles.mainHeader}>
-            <View style={styles.profileIconContainer}>
-                {/* User's clickable icon */}
+            <View style={styles.profileContainer}>
+              <TouchableOpacity
+                onPress = {() => navigation.navigate('Profile Screen')}
+                style={styles.profileButton}
+              >
                 <MenuIcon 
                   iconId='profile-icon'
                   iconSource={require('../assets/temp/user.png')}  // user.photoURL;
                   containerStyle={styles.profileIconContainer}
                   iconStyle={styles.profileIcon}
-                  onPress = {() => navigation.navigate('Profile Screen')}
+                  onPress = {() => {}}
                   />
-            </View>
-            <View style={styles.headerUsernameContainer}>
-              <Text style={styles.headerUsername}>{user.displayName}</Text> 
+                <Text style={styles.headerUsername}>{user.displayName}</Text> 
+              </TouchableOpacity>
             </View>
             <View style={styles.menuContainer}>
                 {/* Clickable icons for social, achievements, and settings */}
@@ -328,6 +331,15 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: 'white',
   },
+  profileContainer: {
+    //Ensure the container fills all space between, no more, no less
+    flexGrow: 1,
+    flexShrink: 1,
+  },
+  profileButton: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+  },
   profileIconContainer: {
     width: 50,
     height: 50,
@@ -339,20 +351,15 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-  },
-  headerUsernameContainer: {
-    //Ensure the container fills all space between, no more, no less
-    flexGrow: 1,
-    flexShrink: 1,
-    //other
-    justifyContent: 'center',
-    paddingLeft: 10,
+    alignSelf: 'center',
   },
   headerUsername: {
     flexWrap: 'wrap',
     fontSize: 18,
     fontWeight: '500',
     color: 'black',
+    marginLeft: 10,
+    alignSelf: 'center',
   },
   menuContainer: {
     display: 'flex',
