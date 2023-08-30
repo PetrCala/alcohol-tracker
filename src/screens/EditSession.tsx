@@ -22,6 +22,7 @@ import { formatDateToDay, formatDateToTime, sumAllUnits, timestampToDate, unitsT
 import { getAuth } from 'firebase/auth';
 import DrinkingSessionUnitWindow from '../components/DrinkingSessionUnitWindow';
 import { maxAllowedUnits } from '../utils/static';
+import YesNoPopup from '../components/YesNoPopup';
 
 
 const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
@@ -54,6 +55,7 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
     const db = useContext(DatabaseContext);
       // Other
     const [monkeMode, setMonkeMode] = useState<boolean>(false);
+    const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
     const sessionColor = unitsToColors(totalUnits, preferences.units_to_colors);
 
 
@@ -114,16 +116,19 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
         } catch (error:any) {
             throw new Error('Failed to delete the session: ' + error.message);
         }
-        if (navigation){
-            navigation.navigate('Main Screen'); // Get the main overview, not day
-        } else {
-            throw new Error('Navigation not found');
-        }
-    }
+      }
 
-    /** If an update is pending, update immediately before navigating away
-     */
-    const handleBackPress = async () => {
+    const handleConfirmDelete = () => {
+      deleteSession(db, user.uid, session_id);
+      setDeleteModalVisible(false);
+      navigation.navigate('Main Screen'); // Get the main overview, not day
+    };
+  
+    const handleCancelDelete = () => {
+      setDeleteModalVisible(false);
+    };
+
+    const handleBackPress = () => {
         navigation.goBack();
     };
 
@@ -225,7 +230,15 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
           text='Delete Session'
           buttonStyle={styles.saveSessionButton}
           textStyle={styles.saveSessionButtonText}
-          onPress={() => deleteSession(db, user.uid, session_id)}
+          onPress={() => setDeleteModalVisible(true)}
+        />
+        <YesNoPopup
+          visible={deleteModalVisible}
+          transparent={true}
+          onRequestClose={() => setDeleteModalVisible(false)}
+          message={"Do you really want to\ndelete this session?"}
+          onYes={handleConfirmDelete}
+          onNo={handleCancelDelete}
         />
         <BasicButton 
           text='Save Session'

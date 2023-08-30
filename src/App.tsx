@@ -18,6 +18,7 @@ import { getDatabase } from "firebase/database";
 import { getAuth } from 'firebase/auth';
 import firebaseConfig from "../firebaseConfig";
 import DatabaseContext from './database/DatabaseContext';
+import SessionSummaryScreen from './screens/SessionSummaryScreen';
 
 const app = initializeApp(firebaseConfig);
 
@@ -83,6 +84,11 @@ const AlcoholTracker = () => {
           <Stack.Screen 
           name='Edit Session Screen' 
           component={EditSessionScreen}
+          options={{}}
+          />
+          <Stack.Screen 
+          name='Session Summary Screen' 
+          component={SessionSummaryScreen}
           options={{}}
           />
         </Stack.Navigator>

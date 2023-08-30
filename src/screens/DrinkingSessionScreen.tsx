@@ -5,6 +5,7 @@
   useEffect
 } from 'react';
 import {
+  Alert,
   Image,
   ScrollView,
   StyleSheet,
@@ -80,6 +81,15 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
     }
   };
 
+  const resetAllUnits = () => {
+    setBeerUnits(0);
+    setCocktailUnits(0);
+    setOtherUnits(0);
+    setStrongShotUnits(0);
+    setWeakShotUnits(0);
+    setWineUnits(0);
+  };
+
   // Track total units
   useEffect(() => {
       let allUnitsSum = sumAllUnits(allUnits);
@@ -119,6 +129,11 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
       console.log('Cannot save this session');
       return null;
     };
+    // Should not happen
+    if (!navigation){
+      Alert.alert('Navigation not found', 'Failed to fetch the navigation');
+      return null;
+    };
     // Save the data into the database
     if (totalUnits > 0){
       let newSessionData: DrinkingSessionData = {
@@ -133,13 +148,14 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
       } catch (error:any) {
         throw new Error('Failed to save drinking session data: ' + error.message);
       }
-      // Show statistics, offer to go back
-      if (navigation){
-        navigation.goBack();
-      } else {
-        throw new Error('Navigation not found');
-      }
-    }
+      // Reset all units
+      resetAllUnits();
+      // Reroute to session summary, do not allow user to return
+      navigation.replace("Session Summary Screen", {
+        session: newSessionData,
+        preferences: preferences
+      });
+    };
   };
 
   /** Discard the current session, reset current units and 

@@ -23,9 +23,13 @@ export type AppStackParamList = {
     preferences: PreferencesData;
   };
   'Edit Session Screen': {
-    session: DrinkingSessionData
+    session: DrinkingSessionData;
     preferences: PreferencesData;
   };
+  'Session Summary Screen': {
+    session: DrinkingSessionData;
+    preferences: PreferencesData;
+  }
 };
 
 export type LoginScreenProps = {
@@ -54,4 +58,9 @@ export type DayOverviewScreenProps = {
 export type EditSessionScreenProps = {
   route?: RouteProp<AppStackParamList, 'Edit Session Screen'>;
   navigation?: StackNavigationProp<AppStackParamList, 'Edit Session Screen'>;
+}
+
+export type SessionSummaryScreenProps = {
+  route?: RouteProp<AppStackParamList, 'Session Summary Screen'>;
+  navigation?: StackNavigationProp<AppStackParamList, 'Session Summary Screen'>;
 }

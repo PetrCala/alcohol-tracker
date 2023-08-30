@@ -42,13 +42,21 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
         navigation.replace("Login Screen");
         return null;
     }
-
-    const onEditSessionPress = (session:DrinkingSessionData) => {
-        return navigation.navigate('Edit Session Screen', {
+    
+    const onSessionButtonPress = (session:DrinkingSessionData) => {
+        navigation.navigate('Session Summary Screen', {
           session: session,
           preferences: preferences
-        })
-    }
+        });
+    };
+
+    const onEditSessionPress = (session:DrinkingSessionData) => {
+        navigation.navigate('Edit Session Screen', {
+          session: session,
+          preferences: preferences
+        });
+    };
+
 
     const DrinkingSession = ({session}: DrinkingSessionProps) => {
         // Calculate the session color
@@ -66,8 +74,13 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
         <View style={viewStyle}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <View style={{ flex: 1 }}>
+                  <TouchableOpacity
+                    style={styles.menuDrinkingSessionButton}
+                    onPress={() => onSessionButtonPress(session)}
+                  >
                     <Text style={styles.menuDrinkingSessionText}>Time: {formatDateToTime(date)}</Text>
                     <Text style={styles.menuDrinkingSessionText}>Units consumed: {totalUnits}</Text>
+                  </TouchableOpacity>
                 </View>
                 <MenuIcon
                     iconId='edit-session-icon'
@@ -276,6 +289,10 @@ const styles = StyleSheet.create({
   dayOverviewContainer: {
     flex: 1,
     overflow:"hidden"
+  },
+  menuDrinkingSessionButton: {
+    flexGrow: 1,
+    flexShrink: 1,
   },
   menuDrinkingSessionText: {
     fontSize: 16,
