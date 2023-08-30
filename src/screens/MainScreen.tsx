@@ -7,9 +7,9 @@
 } from 'react';
 import { 
   Alert,
+  ScrollView,
   StyleSheet,
   Text,
-  Touchable,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -222,117 +222,113 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
   if (!currentSessionData || !drinkingSessionData || !preferences) return null;
 
   return (
-    <View style={styles.mainContainer}>
-        <View style={styles.mainHeader}>
-            <View style={styles.profileContainer}>
-              <TouchableOpacity
-                onPress = {() => navigation.navigate('Profile Screen')}
-                style={styles.profileButton}
-              >
-                <MenuIcon 
-                  iconId='profile-icon'
-                  iconSource={require('../assets/temp/user.png')}  // user.photoURL;
-                  containerStyle={styles.profileIconContainer}
-                  iconStyle={styles.profileIcon}
-                  onPress = {() => {}}
-                  />
-                <Text style={styles.headerUsername}>{user.displayName}</Text> 
-              </TouchableOpacity>
-            </View>
-            <View style={styles.menuContainer}>
-                {/* Clickable icons for social, achievements, and settings */}
-                <MenuIcon 
-                  iconId='social-icon'
-                  iconSource={require('../assets/icons/social.png')} 
-                  containerStyle={styles.menuIconContainer}
-                  iconStyle={styles.menuIcon}
-                  onPress = {() => navigation.navigate('Social Screen')}
-                  />
-                <MenuIcon 
-                  iconId='achievement-icon'
-                  iconSource={require('../assets/icons/achievements.png')} 
-                  containerStyle={styles.menuIconContainer}
-                  iconStyle={styles.menuIcon}
-                  onPress = {() => navigation.navigate('Achievement Screen')}
-                  />
-                <MenuIcon 
-                  iconId='sign-out'
-                  iconSource={require('../assets/icons/exit.png')} 
-                  containerStyle={styles.menuIconContainer}
-                  iconStyle={styles.menuIcon}
-                  onPress = {() => setSignoutModalVisible(true)}
-                  // onPress = {() => navigation.navigate('Settings Screen')}
+    <>
+      <View style={styles.mainHeader}>
+          <View style={styles.profileContainer}>
+            <TouchableOpacity
+              onPress = {() => navigation.navigate('Profile Screen')}
+              style={styles.profileButton}
+            >
+              <MenuIcon 
+                iconId='profile-icon'
+                iconSource={require('../assets/temp/user.png')}  // user.photoURL;
+                containerStyle={styles.profileIconContainer}
+                iconStyle={styles.profileIcon}
+                onPress = {() => {}}
                 />
-                <YesNoPopup
-                  visible={signoutModalVisible}
-                  transparent={true}
-                  onRequestClose={() => setSignoutModalVisible(false)}
-                  message={"Do you really want to\nsign out?"}
-                  onYes={handleConfirmSignout}
-                  onNo={handleCancelSignout}
-                />
-                {/* <MenuIcon 
-                  iconId='menu-icon'
-                  iconSource={require('../assets/icons/delete.png')} 
-                  containerStyle={styles.menuIconContainer}
-                  iconStyle={styles.menuIcon}
-                  onPress = {handleDeleteUser}
-                /> */}
-            </View>
-        </View>
-        <View style={styles.mainScreenContent}>
-            {currentSessionData?.in_session ?
-            <TouchableOpacity 
-              style={styles.userInSessionWarningContainer}
-              onPress={startDrinkingSession}
-              >
-                <Text style={styles.userInSessionWarningText}>
-                You are currently in session!
-                </Text> 
+              <Text style={styles.headerUsername}>{user.displayName}</Text> 
             </TouchableOpacity>
-            :
-            <></>
-            } 
-            <Text style={styles.menuDrinkingSessionInfoText}>Units this month:</Text> 
-            <Text style={styles.thisMonthUnitsText}>{thisMonthUnits}</Text> 
-            {/* Replace this with the overview and statistics */}
-            {drinkingSessionData ?
-            <SessionsCalendar
-              drinkingSessionData = {drinkingSessionData}
-              preferences = {preferences}
-              visibleDateObject={visibleDateObject}
-              setVisibleDateObject={setVisibleDateObject}
-              onDayPress = {(day:DateObject) => {
-                navigation.navigate('Day Overview Screen',
-                { 
-                  date_object: day,
-                  preferences: preferences
-                }
-                )
-              }}
-            />
-            :
-            <Text style={styles.menuDrinkingSessionInfoText}>No drinking sessions found</Text>
-            }
-            {currentSessionData?.in_session ? <></> :
-            <BasicButton 
-              text='+'
-              buttonStyle={styles.startSessionButton}
-              textStyle={styles.startSessionText}
-              onPress = {startDrinkingSession} />
-            }
-        </View>
-    </View>
+          </View>
+          <View style={styles.menuContainer}>
+              {/* Clickable icons for social, achievements, and settings */}
+              <MenuIcon 
+                iconId='social-icon'
+                iconSource={require('../assets/icons/social.png')} 
+                containerStyle={styles.menuIconContainer}
+                iconStyle={styles.menuIcon}
+                onPress = {() => navigation.navigate('Social Screen')}
+                />
+              <MenuIcon 
+                iconId='achievement-icon'
+                iconSource={require('../assets/icons/achievements.png')} 
+                containerStyle={styles.menuIconContainer}
+                iconStyle={styles.menuIcon}
+                onPress = {() => navigation.navigate('Achievement Screen')}
+                />
+              <MenuIcon 
+                iconId='sign-out'
+                iconSource={require('../assets/icons/exit.png')} 
+                containerStyle={styles.menuIconContainer}
+                iconStyle={styles.menuIcon}
+                onPress = {() => setSignoutModalVisible(true)}
+                // onPress = {() => navigation.navigate('Settings Screen')}
+              />
+              <YesNoPopup
+                visible={signoutModalVisible}
+                transparent={true}
+                onRequestClose={() => setSignoutModalVisible(false)}
+                message={"Do you really want to\nsign out?"}
+                onYes={handleConfirmSignout}
+                onNo={handleCancelSignout}
+              />
+              {/* <MenuIcon 
+                iconId='menu-icon'
+                iconSource={require('../assets/icons/delete.png')} 
+                containerStyle={styles.menuIconContainer}
+                iconStyle={styles.menuIcon}
+                onPress = {handleDeleteUser}
+              /> */}
+          </View>
+      </View>
+      <ScrollView style={styles.mainScreenContent}>
+          {currentSessionData?.in_session ?
+          <TouchableOpacity 
+            style={styles.userInSessionWarningContainer}
+            onPress={startDrinkingSession}
+            >
+              <Text style={styles.userInSessionWarningText}>
+              You are currently in session!
+              </Text> 
+          </TouchableOpacity>
+          :
+          <></>
+          } 
+          <Text style={styles.menuDrinkingSessionInfoText}>Units this month:</Text> 
+          <Text style={styles.thisMonthUnitsText}>{thisMonthUnits}</Text> 
+          {/* Replace this with the overview and statistics */}
+          {drinkingSessionData ?
+          <SessionsCalendar
+            drinkingSessionData = {drinkingSessionData}
+            preferences = {preferences}
+            visibleDateObject={visibleDateObject}
+            setVisibleDateObject={setVisibleDateObject}
+            onDayPress = {(day:DateObject) => {
+              navigation.navigate('Day Overview Screen',
+              { 
+                date_object: day,
+                preferences: preferences
+              }
+              )
+            }}
+          />
+          :
+          <Text style={styles.menuDrinkingSessionInfoText}>No drinking sessions found</Text>
+          }
+      </ScrollView>
+      {currentSessionData?.in_session ? <></> :
+      <BasicButton 
+        text='+'
+        buttonStyle={styles.startSessionButton}
+        textStyle={styles.startSessionText}
+        onPress = {startDrinkingSession} />
+      }
+    </>
   );
 };
 
 export default MainScreen;
 
 const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-    backgroundColor: 'white',
-  },
   mainHeader: {
     height: 70,
     flexDirection: 'row',
@@ -390,7 +386,8 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   mainScreenContent: {
-    flex: 1,
+    flexGrow:1, 
+    flexShrink: 1,
     backgroundColor: '#FFFF99',
   },
   ///

@@ -183,8 +183,11 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
         onPress={handleBackPress}
       />
       <BasicButton 
-        text='Monke Mode'
-        buttonStyle={styles.monkeModeButton}
+        text= {monkeMode ? 'Exit Monke Mode': 'Monke Mode'}
+        buttonStyle={[
+          styles.monkeModeButton,
+          monkeMode ?  styles.monkeModeButtonEnabled : {}
+        ]}
         textStyle={styles.monkeModeButtonText}
         onPress={() => setMonkeMode(!monkeMode)}
       />
@@ -409,17 +412,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFF99',
   },
   monkeModeButton: {
-    width: '40%',
+    width: '50%',
     alignItems: "center",
     justifyContent: 'center',
     padding: 10,
-    // marginBottom: 10,
-    // marginTop: 10,
     borderRadius: 10,
-    backgroundColor: '#007AFF',
+    borderWidth: 2,
+    borderColor: '#000',
+    backgroundColor: '#fcf50f',
+  },
+  monkeModeButtonEnabled: {
+    backgroundColor: '#FFFF99',
   },
   monkeModeButtonText: {
-    color: 'white',
+    color: 'black',
     fontSize: 17,
     fontWeight: '600',
   },
@@ -442,7 +448,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     backgroundColor: '#fcf50f',
     borderWidth: 1,
-    borderColor: 'grey',
+    borderColor: '#000',
   },
   saveSessionButtonText: {
     color: 'black',

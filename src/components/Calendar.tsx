@@ -341,7 +341,7 @@ const styles = StyleSheet.create({
     mainScreenCalendarStyle: {
         width: '100%',
         borderWidth: 1,
-        borderColor: '#E0E0E0',
+        borderColor: '#000',
         flexGrow: 1,
         flexShrink: 1
     },
