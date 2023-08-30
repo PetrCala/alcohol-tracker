@@ -232,8 +232,8 @@ export const getRandomUnitsObject = (maxUnitValue:number = 30):UnitTypesProps =>
  * @param unitsToColorsInfo Information about limits for different colors
  * @returns String
  */
-export function unitsToColors(units: number, unitsToColorsInfo:UnitsToColorsData){
-    let sessionColor: any;
+export function unitsToColors(units: number, unitsToColorsInfo:UnitsToColorsData): string{
+    let sessionColor: string;
     if (units === 0) {
         sessionColor = 'green';
     } else if (units <= unitsToColorsInfo.yellow) {

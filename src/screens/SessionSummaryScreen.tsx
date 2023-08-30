@@ -12,13 +12,32 @@ import {
 import { SessionSummaryScreenProps} from '../types/screens';
 import { getAuth } from 'firebase/auth';
 import MenuIcon from '../components/Buttons/MenuIcon';
-import { formatDate, formatDateToDay, formatDateToTime, sumAllUnits, timestampToDate } from '../utils/dataHandling';
+import { formatDate, formatDateToDay, formatDateToTime, sumAllUnits, timestampToDate, unitsToColors } from '../utils/dataHandling';
 import BasicButton from '../components/Buttons/BasicButton';
 
-const SessionDataItem = ({ heading, data, index }: { heading: string, data: string, index: number }) => (
+const SessionDataItem = ({
+    heading,
+    data,
+    index,
+    sessionColor
+  }: {
+    heading: string,
+    data: string,
+    index: number,
+    sessionColor?: string // Optional property for sessionColor
+  }) => (
     <View style={[styles.sessionDataContainer, { backgroundColor: index % 2 === 0 ? '#FFFFbd' : 'white' }]}>
       <Text style={styles.sessionDataHeading}>{heading}</Text>
-      <Text style={styles.sessionDataText}>{data}</Text>
+      {sessionColor ? (
+        // Render the colored rectangle when sessionColor is present
+        <View style={[
+            styles.sessionColorMarker,
+            {backgroundColor: sessionColor}
+        ]}/>
+      ) : (
+        // Else render the text
+        <Text style={styles.sessionDataText}>{data}</Text>
+      )}
     </View>
   );
 
@@ -28,6 +47,8 @@ const SessionSummaryScreen = ({ route, navigation}: SessionSummaryScreenProps) =
     const { end_time, last_unit_added_time, session_id, start_time, units } = session;
     const auth = getAuth();
     const user = auth.currentUser;
+    // Units info
+    const totalUnits = sumAllUnits(units);
     // Time info
     const sessionStartDate = timestampToDate(start_time);
     const lastUnitAddedDate = timestampToDate(last_unit_added_time);
@@ -36,6 +57,8 @@ const SessionSummaryScreen = ({ route, navigation}: SessionSummaryScreenProps) =
     const sessionStartTime = formatDateToTime(sessionStartDate);
     const lastUnitAddedTime = formatDateToTime(lastUnitAddedDate);
     const sessionEndTime = formatDateToTime(sessionEndDate);
+    // Other
+    const sessionColor = unitsToColors(totalUnits, preferences.units_to_colors);
 
     const handleBackPress = () => {
         navigation.goBack();
@@ -49,7 +72,7 @@ const SessionSummaryScreen = ({ route, navigation}: SessionSummaryScreenProps) =
       ];
     
       const unitData = [
-        { heading: 'Total:', data: sumAllUnits(units).toString() },
+        { heading: 'Total:', data: totalUnits.toString() },
         { heading: 'Beer:', data: units.beer.toString() },
         { heading: 'Wine:', data: units.wine.toString() },
         { heading: 'Weak Shot:', data: units.weak_shot.toString() },
@@ -78,6 +101,7 @@ const SessionSummaryScreen = ({ route, navigation}: SessionSummaryScreenProps) =
             {generalData.map((item, index) => (
                 <SessionDataItem key={index} heading={item.heading} data={item.data} index={index} />
             ))}
+            <SessionDataItem key="sessionColor" heading="Session Color" data = {sessionColor} index={generalData.length} sessionColor={sessionColor} />
             </View>
 
             <View style={styles.sessionSectionContainer}>
@@ -169,6 +193,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: 'black',
     fontWeight: '400',
+    marginRight: 5,
+  },
+  sessionColorMarker: {
+    width: 20, 
+    height: 20, 
+    borderWidth: 1,
+    borderColor: '#D3D3D3',
+    borderRadius: 5,
     marginRight: 5,
   },
   confirmButtonContainer: {
