@@ -1,6 +1,8 @@
 ﻿/** Main database props object */
 export type DatabaseProps = {
-
+  feedback: {
+    [feedback_id: string]: FeedbackData,
+  },
   user_current_session: {
     [user_id: string]: CurrentSessionData
   },
@@ -16,6 +18,12 @@ export type DatabaseProps = {
   users: {
     [user_id: string] : UserData
   }
+};
+
+export type FeedbackData = {
+  submit_time: number;
+  text: string;
+  user_id: string;
 };
 
 export type CurrentSessionData = {

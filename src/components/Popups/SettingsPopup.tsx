@@ -20,6 +20,7 @@ import { deleteUser, getAuth, signOut } from 'firebase/auth';
 import DatabaseContext from '../../database/DatabaseContext';
 import { deleteUserInfo } from '../../database/users';
 import FeedbackPopup from './FeedbackPopup';
+import { submitFeedback } from '../../database/feedback';
 
 const SettingsItem: React.FC<SettingsItemProps> = ({
     heading,
@@ -41,7 +42,7 @@ const SettingsItem: React.FC<SettingsItemProps> = ({
 
 const SettingsPopup = (props: SettingsPopupProps) => {
   // Props
-  const { visible, transparent, onRequestClose, navigation } = props;
+  const { visible, transparent, onRequestClose, navigation, userData } = props;
   // Context, database, and authentification
   const auth = getAuth();
   const user = auth.currentUser;
@@ -92,10 +93,12 @@ const SettingsPopup = (props: SettingsPopupProps) => {
   };
 
   const handleSubmitFeedback = () => {
-    // Popup an information button at the top (your feedback has been submitted)
-    console.log(feedbackText);
-    setFeedbackText('');
-    setFeedbackModalVisible(false);
+    if (feedbackText !== ''){
+        submitFeedback(db, user.uid, feedbackText);
+        // Popup an information button at the top (your feedback has been submitted)
+        setFeedbackText('');
+        setFeedbackModalVisible(false);
+    }; // Perhaps alert the user that they must fill out the feedback first
   };
 
   const handleCancelFeedback = () => {
@@ -124,12 +127,17 @@ const SettingsPopup = (props: SettingsPopupProps) => {
   };
 
 
-  const modalData = [
+  let modalData = [
     { heading: 'General', data:[
         { 
             label: 'Settings', 
             icon: require('../../assets/icons/settings.png'), 
             action: () => console.log('Beer pressed') 
+        },
+        { 
+            label: 'Terms and agreements', 
+            icon: require('../../assets/icons/book.png'), 
+            action: () => {}
         },
     ]},
     { heading: 'Feedback', data:[
@@ -155,8 +163,22 @@ const SettingsPopup = (props: SettingsPopupProps) => {
             icon: require('../../assets/icons/delete.png'), 
             action: () => setDeleteUserModalVisible(true)
         },
+    ]},
+    ];
+
+    let adminData = [
+        {heading: 'Admin settings', data:[
+            { 
+                label: 'See feedback', 
+                icon: require('../../assets/icons/book.png'), 
+                action: () => {console.log("viewing feedback...")}
+            },
         ]},
-  ];
+    ];
+
+  if (userData.role == 'admin'){
+    modalData = [...modalData, ...adminData] // Add admin settings
+  };
 
   return (
     <Modal

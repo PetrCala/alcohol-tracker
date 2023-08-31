@@ -1,5 +1,5 @@
 ﻿import { ImageSourcePropType } from "react-native";
-import { DrinkingSessionData, PreferencesData } from "./database";
+import { DrinkingSessionData, PreferencesData, UserData } from "./database";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { AppStackParamList } from "./screens";
 
@@ -33,6 +33,7 @@ export type SettingsPopupProps = {
     transparent: boolean;
     onRequestClose: () => void;
     navigation: StackNavigationProp<AppStackParamList, 'Main Screen'>;
+    userData: UserData;
 }
 
 export type SettingsButtonData = {

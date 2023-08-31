@@ -21,7 +21,7 @@ import YesNoPopup from '../components/Popups/YesNoPopup';
 import DatabaseContext from '../database/DatabaseContext';
 import { listenForDataChanges } from "../database/baseFunctions";
 import { updateDrinkingSessionUserData } from '../database/drinkingSessions';
-import { CurrentSessionData, DrinkingSessionData, PreferencesData, UnconfirmedDaysData, UnitTypesProps } from '../types/database';
+import { CurrentSessionData, DrinkingSessionData, PreferencesData, UnconfirmedDaysData, UnitTypesProps, UserData } from '../types/database';
 import { MainScreenProps } from '../types/screens';
 import { DateObject } from '../types/components';
 import { deleteUser, getAuth, signOut, reauthenticateWithCredential } from 'firebase/auth';
@@ -39,6 +39,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
   const [drinkingSessionData, setDrinkingSessionData] = useState<DrinkingSessionData[] | []>([]);
   const [preferences, setPreferences] = useState<PreferencesData | null>(null);
   const [unconfirmedDays, setUnconfirmedDays] = useState<UnconfirmedDaysData | null>(null);
+  const [userData, setUserData] = useState<UserData | null>(null);
   // Modals
   const [settingsModalVisible, setSettingsModalVisible] = useState<boolean>(false);
   // Other hooks
@@ -50,6 +51,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
   const [loadingDrinkingSessionData, setLoadingDrinkingSessionData] = useState<boolean>(true);
   const [loadingUserPreferences, setLoadingUserPreferences] = useState<boolean>(true);
   const [loadingUnconfirmedDays, setLoadingUnconfirmedDays] = useState<boolean>(true);
+  const [loadingUserData, setLoadingUserData] = useState<boolean>(true);
 
   // Automatically navigate to login screen if login expires
   if (user == null){
@@ -148,6 +150,20 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
 
   }, [db, user]);
 
+  // Monitor user dataj
+  useEffect(() => {
+    let userRef = `users/${user.uid}`
+    let stopListening = listenForDataChanges(db, userRef, (data:UserData) => {
+      if (data){ // Might be null
+        setUserData(data);
+      }
+      setLoadingUserData(false);
+    });
+
+    return () => stopListening();
+
+  }, [db, user]);
+
   // Monitor visible month and various statistics
   useEffect(() => {
     let thisMonthUnits = calculateThisMonthUnits(visibleDateObject, drinkingSessionData);
@@ -161,7 +177,9 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
     loadingCurrentSessionData || 
     loadingDrinkingSessionData ||
     loadingUserPreferences ||
-    loadingUnconfirmedDays) {
+    loadingUnconfirmedDays ||
+    loadingUserData
+    ) {
 
     return(
       <LoadingData
@@ -171,7 +189,12 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
   };
 
   // Should never be null
-  if (!currentSessionData || !drinkingSessionData || !preferences) return null;
+  if (
+    !currentSessionData || 
+    !drinkingSessionData || 
+    !preferences || 
+    !userData
+  ) return null;
 
   return (
     <>
@@ -219,6 +242,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
                 transparent={false}
                 onRequestClose={() => setSettingsModalVisible(false)}
                 navigation={navigation}
+                userData={userData}
               />
               {/* <MenuIcon 
                 iconId='sign-out'

@@ -15,6 +15,14 @@ admin.initializeApp({
 
 const db = admin.database();
 
+console.log(admin.auth());
+
+// db.ref('feedback').once('value', (snapshot:any) => {
+
+//     const feedback = snapshot.val();
+//     console.log(feedback);
+// });
+
 // Updates to the database
 
 // type UnitTypesProps = {
