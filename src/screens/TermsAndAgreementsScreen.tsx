@@ -7,8 +7,32 @@ import MenuIcon from '../components/Buttons/MenuIcon';
 import { TermsAndAgreementsScreenProps } from '../types/screens';
 
 
+type TermsItemProps = {
+  terms: string[];
+};
+
+const TermsItems: React.FC<TermsItemProps> = ({ terms }) => {
+  return (
+    <View style={styles.termsContainer}>
+      <Text style={styles.termsHeading}> 
+          Terms and Agreements
+      </Text>
+      {terms.map((term, index) => (
+        <Text key={index} style={styles.termsText}>
+          {`${index + 1}. ${term}`}
+        </Text>
+      ))}
+    </View>
+  );
+};
+
 const TermsAndAgreementsScreen = ({ navigation }: TermsAndAgreementsScreenProps) => {
   if (!navigation) return null; // Should never be null
+
+  const termsAndAgreements = [
+    '1. I solemnly swear to write down all consumed units in their true form and amount',
+    '2. I solemnly swear to earnestly and faithfully approximate the closest possible number of units consumed in case a blackout shall occur',
+  ]
 
   return (
     <View style={{flex:1, backgroundColor: '#FFFF99'}}>
@@ -21,11 +45,9 @@ const TermsAndAgreementsScreen = ({ navigation }: TermsAndAgreementsScreenProps)
           onPress={() => navigation.goBack() }
         />
       </View>
-      <View style={styles.termsContainer}>
-        <Text style={styles.termsText}> 
-            Terms and Agreements placeholder
-        </Text>
-      </View>
+      <TermsItems
+        terms={termsAndAgreements}
+      />
     </View>
   );
 };
@@ -54,9 +76,19 @@ const styles = StyleSheet.create({
   termsContainer: {
     flex: 1,
     backgroundColor: "#FFFF99",
+    padding: 5,
+  },
+  termsHeading: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'black',
+    alignSelf: 'center',
+    padding: 10,
   },
   termsText: {
-    fontSize: 15,
+    fontSize: 17,
     color: 'black',
+    padding: 5,
+    marginLeft: 5,
   }
 });
