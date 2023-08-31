@@ -65,6 +65,7 @@ export async function deleteUserInfo(
   let updates: {[key:string]: null} = {};
   updates[`users/${userId}`] = null;
   updates[`user_current_session/${userId}`] = null;
+  updates[`user_preferences/${userId}`] = null;
   updates[`user_drinking_sessions/${userId}`] = null;
   updates[`user_unconfirmed_days/${userId}`] = null;
   try {

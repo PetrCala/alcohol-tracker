@@ -25,7 +25,7 @@ import { getAuth } from 'firebase/auth';
 import { DrinkingSessionData, UnitTypesProps } from '../types/database';
 import DrinkingSessionUnitWindow from '../components/DrinkingSessionUnitWindow';
 import { maxAllowedUnits } from '../utils/static';
-import YesNoPopup from '../components/YesNoPopup';
+import YesNoPopup from '../components/Popups/YesNoPopup';
 
 
 const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps) => {

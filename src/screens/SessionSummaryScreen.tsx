@@ -1,9 +1,4 @@
-﻿import React, {
-    useEffect,
-    useState,
-    useContext,
-} from 'react';
-import {
+﻿import {
   ScrollView,
   StyleSheet,
   Text,
@@ -45,8 +40,6 @@ const SessionSummaryScreen = ({ route, navigation}: SessionSummaryScreenProps) =
     if (!route || ! navigation) return null; // Should never be null
     const { session, preferences } = route.params; 
     const { end_time, last_unit_added_time, session_id, start_time, units } = session;
-    const auth = getAuth();
-    const user = auth.currentUser;
     // Units info
     const totalUnits = sumAllUnits(units);
     // Time info

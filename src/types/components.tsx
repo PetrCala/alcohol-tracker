@@ -1,5 +1,39 @@
 ﻿import { ImageSourcePropType } from "react-native";
 import { DrinkingSessionData, PreferencesData } from "./database";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { AppStackParamList } from "./screens";
+
+// YesNo popup props
+
+export type YesNoPopupProps = {
+    visible: boolean;
+    transparent: boolean;
+    onRequestClose: () => void;
+    message: string;
+    onYes: () => void;
+    onNo: () => void;
+}
+
+// SettingsPopup props
+
+export type SettingsPopupProps = {
+    visible: boolean;
+    transparent: boolean;
+    onRequestClose: () => void;
+    navigation: StackNavigationProp<AppStackParamList, 'Main Screen'>;
+}
+
+export type SettingsButtonData = {
+  label: string;
+  icon: number;
+  action: () => void;
+};
+
+export type SettingsItemProps = {
+  heading: string;
+  data: SettingsButtonData[];
+  index: number;
+};
 
 // Sessions calendar props
 

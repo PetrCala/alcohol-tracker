@@ -17,7 +17,7 @@ import BasicButton from '../components/Buttons/BasicButton';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import SessionsCalendar from '../components/Calendar';
 import LoadingData from '../components/LoadingData';
-import YesNoPopup from '../components/YesNoPopup';
+import YesNoPopup from '../components/Popups/YesNoPopup';
 import DatabaseContext from '../database/DatabaseContext';
 import { listenForDataChanges } from "../database/baseFunctions";
 import { updateDrinkingSessionUserData } from '../database/drinkingSessions';
@@ -27,6 +27,7 @@ import { DateObject } from '../types/components';
 import { deleteUser, getAuth, signOut, reauthenticateWithCredential } from 'firebase/auth';
 import { dateToDateObject, getZeroUnitsObject, calculateThisMonthUnits } from '../utils/dataHandling';
 import { deleteUserInfo } from '../database/users';
+import SettingsPopup from '../components/Popups/SettingsPopup';
 
 const MainScreen = ( { navigation }: MainScreenProps) => {
   // Context, database, and authentification
@@ -38,12 +39,12 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
   const [drinkingSessionData, setDrinkingSessionData] = useState<DrinkingSessionData[] | []>([]);
   const [preferences, setPreferences] = useState<PreferencesData | null>(null);
   const [unconfirmedDays, setUnconfirmedDays] = useState<UnconfirmedDaysData | null>(null);
+  // Modals
+  const [settingsModalVisible, setSettingsModalVisible] = useState<boolean>(false);
   // Other hooks
   const [visibleDateObject, setVisibleDateObject] = useState<DateObject>(
-    dateToDateObject(new Date())
-    );
-    const [thisMonthUnits, setThisMonthUnits] = useState<number>(0);
-    const [signoutModalVisible, setSignoutModalVisible] = useState<boolean>(false);
+    dateToDateObject(new Date()));
+  const [thisMonthUnits, setThisMonthUnits] = useState<number>(0);
   // Loading hooks
   const [loadingCurrentSessionData, setLoadingCurrentSessionData] = useState<boolean>(true);
   const [loadingDrinkingSessionData, setLoadingDrinkingSessionData] = useState<boolean>(true);
@@ -88,43 +89,6 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
       preferences: preferences
     });
   }
-
-  const handleSignOut = async () => {
-    try {
-      // TODO
-      // reauthenticateWithCredential
-      await signOut(auth);
-    } catch (error:any) {
-      throw new Error("There was an error signing out: " + error.message);
-    }
-  };
-  
-  const handleConfirmSignout = () => {
-    handleSignOut();
-    setSignoutModalVisible(false);
-    navigation.replace("Login Screen");
-  };
-
-  const handleCancelSignout = () => {
-    setSignoutModalVisible(false);
-  };
-
-  const handleDeleteUser = async () => {
-    // Delete the user's information from the realtime database
-    try {
-        await deleteUserInfo(db, user.uid);
-    } catch (error:any) {
-      return Alert.alert('Could not delete user info from database', 'Deleting the users info from realtime database failed: ' + error.message);
-    }
-    // Delete user from authentification database
-    try {
-      await deleteUser(user);
-      navigation.replace("Login Screen");
-    } catch (error:any) {
-      return Alert.alert('Error deleting user', 'Could not delete user ' + user.uid + error.message);
-    }
-  };
-
 
   // Monitor current session data
   useEffect(() => {
@@ -235,15 +199,28 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
                 containerStyle={styles.menuIconContainer}
                 iconStyle={styles.menuIcon}
                 onPress = {() => navigation.navigate('Social Screen')}
-                />
+              />
               <MenuIcon 
                 iconId='achievement-icon'
                 iconSource={require('../assets/icons/achievements.png')} 
                 containerStyle={styles.menuIconContainer}
                 iconStyle={styles.menuIcon}
                 onPress = {() => navigation.navigate('Achievement Screen')}
-                />
+              />
               <MenuIcon 
+                iconId='settings-popup-icon'
+                iconSource={require('../assets/icons/menu.png')} 
+                containerStyle={styles.menuIconContainer}
+                iconStyle={styles.menuIcon}
+                onPress = {() => setSettingsModalVisible(true)}
+              />
+              <SettingsPopup
+                visible={settingsModalVisible}
+                transparent={false}
+                onRequestClose={() => setSettingsModalVisible(false)}
+                navigation={navigation}
+              />
+              {/* <MenuIcon 
                 iconId='sign-out'
                 iconSource={require('../assets/icons/exit.png')} 
                 containerStyle={styles.menuIconContainer}
@@ -251,21 +228,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
                 onPress = {() => setSignoutModalVisible(true)}
                 // onPress = {() => navigation.navigate('Settings Screen')}
               />
-              <YesNoPopup
-                visible={signoutModalVisible}
-                transparent={true}
-                onRequestClose={() => setSignoutModalVisible(false)}
-                message={"Do you really want to\nsign out?"}
-                onYes={handleConfirmSignout}
-                onNo={handleCancelSignout}
-              />
-              {/* <MenuIcon 
-                iconId='menu-icon'
-                iconSource={require('../assets/icons/delete.png')} 
-                containerStyle={styles.menuIconContainer}
-                iconStyle={styles.menuIcon}
-                onPress = {handleDeleteUser}
-              /> */}
+            */}
           </View>
       </View>
       <ScrollView style={styles.mainScreenContent}>

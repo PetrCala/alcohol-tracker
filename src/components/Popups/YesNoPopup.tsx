@@ -7,14 +7,8 @@ import {
   StyleSheet 
 } from 'react-native';
 
-type YesNoPopupProps = {
-    visible: boolean;
-    transparent: boolean;
-    onRequestClose: () => void;
-    message: string;
-    onYes: () => void;
-    onNo: () => void;
-}
+import { YesNoPopupProps } from '../../types/components';
+
 
 const YesNoPopup = (props: YesNoPopupProps) => {
   const { visible, transparent, onRequestClose, message, onYes, onNo } = props;
