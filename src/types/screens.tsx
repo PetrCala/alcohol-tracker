@@ -1,5 +1,5 @@
 ﻿import { StackNavigationProp } from '@react-navigation/stack';
-import { DrinkingSessionData, CurrentSessionData, PreferencesData } from './database';
+import { DrinkingSessionData, CurrentSessionData, PreferencesData, UserData } from './database';
 import { RouteProp } from '@react-navigation/native';
 import { DateObject } from './components';
 
@@ -10,6 +10,10 @@ export type AppStackParamList = {
     loginEmail: string;
   };
   'Main Screen': undefined;
+  'Main Menu Screen': {
+    userData: UserData;
+    preferences: PreferencesData;
+  };
   'Drinking Session Screen': { 
     current_session_data: CurrentSessionData;
     preferences: PreferencesData;
@@ -29,7 +33,8 @@ export type AppStackParamList = {
   'Session Summary Screen': {
     session: DrinkingSessionData;
     preferences: PreferencesData;
-  }
+  };
+  'Terms And Agreements Screen': undefined;
 };
 
 export type LoginScreenProps = {
@@ -43,6 +48,11 @@ export type SignUpScreenProps = {
 
 export type MainScreenProps = {
     navigation: StackNavigationProp<AppStackParamList, 'Main Screen'>;
+}
+
+export type MainMenuScreenProps = {
+  route?: RouteProp<AppStackParamList, 'Main Menu Screen'>;
+  navigation?: StackNavigationProp<AppStackParamList, 'Main Menu Screen'>;
 }
 
 export type DrinkingSessionScreenProps = {
@@ -63,4 +73,8 @@ export type EditSessionScreenProps = {
 export type SessionSummaryScreenProps = {
   route?: RouteProp<AppStackParamList, 'Session Summary Screen'>;
   navigation?: StackNavigationProp<AppStackParamList, 'Session Summary Screen'>;
+}
+
+export type TermsAndAgreementsScreenProps = {
+  navigation?: StackNavigationProp<AppStackParamList, 'Terms And Agreements Screen'>;
 }

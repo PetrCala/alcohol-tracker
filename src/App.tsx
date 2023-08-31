@@ -19,6 +19,8 @@ import { getAuth } from 'firebase/auth';
 import firebaseConfig from "../firebaseConfig";
 import DatabaseContext from './database/DatabaseContext';
 import SessionSummaryScreen from './screens/SessionSummaryScreen';
+import TermsAndAgreementsScreen from './screens/TermsAndAgreementsScreen';
+import MainMenuScreen from './screens/MainMenuScreen';
 
 const app = initializeApp(firebaseConfig);
 
@@ -52,44 +54,54 @@ const AlcoholTracker = () => {
             options={{}}
           />
           <Stack.Screen 
-          name='Drinking Session Screen' 
-          component={DrinkingSessionScreen}
-          options={{}}
+            name='Main Menu Screen'
+            component={MainMenuScreen}
+            options={{}}
           />
           <Stack.Screen 
-          name='Profile Screen' 
-          component={ProfileScreen}
-          options={{}}
+            name='Drinking Session Screen' 
+            component={DrinkingSessionScreen}
+            options={{}}
           />
           <Stack.Screen 
-          name='Social Screen' 
-          component={SocialScreen}
-          options={{}}
+            name='Profile Screen' 
+            component={ProfileScreen}
+            options={{}}
           />
           <Stack.Screen 
-          name='Achievement Screen' 
-          component={AchievementScreen}
-          options={{}}
+            name='Social Screen' 
+            component={SocialScreen}
+            options={{}}
           />
           <Stack.Screen 
-          name='Settings Screen' 
-          component={SettingsScreen}
-          options={{}}
+            name='Achievement Screen' 
+            component={AchievementScreen}
+            options={{}}
           />
           <Stack.Screen 
-          name='Day Overview Screen' 
-          component={DayOverviewScreen}
-          options={{}}
+            name='Settings Screen' 
+            component={SettingsScreen}
+            options={{}}
           />
           <Stack.Screen 
-          name='Edit Session Screen' 
-          component={EditSessionScreen}
-          options={{}}
+            name='Day Overview Screen' 
+            component={DayOverviewScreen}
+            options={{}}
           />
           <Stack.Screen 
-          name='Session Summary Screen' 
-          component={SessionSummaryScreen}
-          options={{}}
+            name='Edit Session Screen' 
+            component={EditSessionScreen}
+            options={{}}
+          />
+          <Stack.Screen 
+            name='Session Summary Screen' 
+            component={SessionSummaryScreen}
+            options={{}}
+          />
+          <Stack.Screen 
+            name='Terms And Agreements Screen' 
+            component={TermsAndAgreementsScreen}
+            options={{}}
           />
         </Stack.Navigator>
       </NavigationContainer>

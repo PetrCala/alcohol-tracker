@@ -17,17 +17,14 @@ import BasicButton from '../components/Buttons/BasicButton';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import SessionsCalendar from '../components/Calendar';
 import LoadingData from '../components/LoadingData';
-import YesNoPopup from '../components/Popups/YesNoPopup';
 import DatabaseContext from '../database/DatabaseContext';
 import { listenForDataChanges } from "../database/baseFunctions";
 import { updateDrinkingSessionUserData } from '../database/drinkingSessions';
 import { CurrentSessionData, DrinkingSessionData, PreferencesData, UnconfirmedDaysData, UnitTypesProps, UserData } from '../types/database';
 import { MainScreenProps } from '../types/screens';
 import { DateObject } from '../types/components';
-import { deleteUser, getAuth, signOut, reauthenticateWithCredential } from 'firebase/auth';
+import { getAuth } from 'firebase/auth';
 import { dateToDateObject, getZeroUnitsObject, calculateThisMonthUnits } from '../utils/dataHandling';
-import { deleteUserInfo } from '../database/users';
-import SettingsPopup from '../components/Popups/SettingsPopup';
 
 const MainScreen = ( { navigation }: MainScreenProps) => {
   // Context, database, and authentification
@@ -231,28 +228,15 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
                 onPress = {() => navigation.navigate('Achievement Screen')}
               />
               <MenuIcon 
-                iconId='settings-popup-icon'
+                iconId='main-menu-popup-icon'
                 iconSource={require('../assets/icons/menu.png')} 
                 containerStyle={styles.menuIconContainer}
                 iconStyle={styles.menuIcon}
-                onPress = {() => setSettingsModalVisible(true)}
+                onPress = {() => navigation.navigate('Main Menu Screen', {
+                  userData: userData,
+                  preferences: preferences
+                })}
               />
-              <SettingsPopup
-                visible={settingsModalVisible}
-                transparent={false}
-                onRequestClose={() => setSettingsModalVisible(false)}
-                navigation={navigation}
-                userData={userData}
-              />
-              {/* <MenuIcon 
-                iconId='sign-out'
-                iconSource={require('../assets/icons/exit.png')} 
-                containerStyle={styles.menuIconContainer}
-                iconStyle={styles.menuIcon}
-                onPress = {() => setSignoutModalVisible(true)}
-                // onPress = {() => navigation.navigate('Settings Screen')}
-              />
-            */}
           </View>
       </View>
       <ScrollView style={styles.mainScreenContent}>
