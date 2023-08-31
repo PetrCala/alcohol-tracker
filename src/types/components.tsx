@@ -1,5 +1,5 @@
 ﻿import { ImageSourcePropType } from "react-native";
-import { DrinkingSessionData, PreferencesData, UserData } from "./database";
+import { DrinkingSessionData, FeedbackData, PreferencesData, UserData } from "./database";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { AppStackParamList } from "./screens";
 
@@ -46,6 +46,15 @@ export type SettingsItemProps = {
   heading: string;
   data: SettingsButtonData[];
   index: number;
+};
+
+// AdminFeedbackModal props
+export type AdminFeedbackPopupProps = {
+    visible: boolean;
+    transparent: boolean;
+    onRequestClose: () => void;
+    onDismissFeedback: () => void;
+    feedbackData: FeedbackData;
 };
 
 // Sessions calendar props

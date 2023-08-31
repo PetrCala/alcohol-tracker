@@ -1,4 +1,4 @@
-﻿import React, { useContext, useState } from 'react';
+﻿import React, { useContext, useEffect, useState } from 'react';
 import { 
   View, 
   Text, 
@@ -21,6 +21,9 @@ import { deleteUserInfo } from '../database/users';
 import FeedbackPopup from '../components/Popups/FeedbackPopup';
 import { submitFeedback } from '../database/feedback';
 import { MainMenuScreenProps } from '../types/screens';
+import AdminFeedbackPopup from '../components/Popups/AdminFeedbackPopup';
+import { FeedbackData } from '../types/database';
+import { listenForDataChanges, readDataOnce } from '../database/baseFunctions';
 
 const MenuItem: React.FC<SettingsItemProps> = ({
     heading,
@@ -50,11 +53,13 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
   if (!user) return null;
   // Hooks
   const [feedbackText, setFeedbackText] = useState<string>('');
+  const [feedbackData, setFeedbackData] = useState<FeedbackData>({});
   // Modals
   const [reportBugModalVisible, setReportBugModalVisible] = useState<boolean>(false);
   const [feedbackModalVisible, setFeedbackModalVisible] = useState<boolean>(false);
   const [signoutModalVisible, setSignoutModalVisible] = useState<boolean>(false);
   const [deleteUserModalVisible, setDeleteUserModalVisible] = useState<boolean>(false);
+  const [adminFeedbackModalVisible, setAdminFeedbackModalVisible] = useState<boolean>(false);
 
 
   const handleSignOut = async () => {
@@ -126,6 +131,30 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
     setDeleteUserModalVisible(false);
   };
 
+  const handleDismissAdminFeedback = () => {
+    setAdminFeedbackModalVisible(false);
+  };
+
+  // Monitor feedback data
+  if (userData.role == 'admin'){
+    useEffect(() => {
+        // Start listening for changes when the component mounts
+        let dbRef = `feedback/`
+        let stopListening = listenForDataChanges(db, dbRef, (data: FeedbackData) => {
+          if (data != null) {
+          setFeedbackData(data);
+        };
+      });
+      
+      // Stop listening for changes when the component unmounts
+      return () => {
+        stopListening();
+      };
+      
+    }, [db, user]); 
+  };
+
+
 
   let modalData = [
     { heading: 'General', data:[
@@ -171,7 +200,7 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
             { 
                 label: 'See feedback', 
                 icon: require('../assets/icons/book.png'), 
-                action: () => {console.log("viewing feedback...")}
+                action: () => {setAdminFeedbackModalVisible(true)}
             },
         ]},
     ];
@@ -219,6 +248,13 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
                 message={"WARNING: Destructive action\n\nDo you really want to\ndelete this user?"}
                 onYes={handleConfirmDeleteUser}
                 onNo={handleCancelDeleteUser}
+            />
+            <AdminFeedbackPopup
+                visible={adminFeedbackModalVisible}
+                transparent={true}
+                onRequestClose={() => setAdminFeedbackModalVisible(false)}
+                onDismissFeedback={handleDismissAdminFeedback}
+                feedbackData={feedbackData}
             />
         </ScrollView>
       </View>

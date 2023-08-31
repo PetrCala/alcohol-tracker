@@ -1,12 +1,4 @@
 ﻿import { get, ref, onValue, off } from "firebase/database";
-import { ValidDatabaseRefs } from "../types/database";
-import { useState, useEffect } from "react";
-
-
-function getFirebaseRef(path: ValidDatabaseRefs): string {
-    return path;
-}
-
 
 /** Read data once using get()
  * 
@@ -15,8 +7,7 @@ function getFirebaseRef(path: ValidDatabaseRefs): string {
  * continuous listening and performance overload.
  * */
 export async function readDataOnce(db: any, refString: string) {
-  const validRef = getFirebaseRef(refString);
-  const userRef = ref(db, validRef);
+  const userRef = ref(db, refString);
   try {
     const snapshot = await get(userRef); // One-off fetch
     if(snapshot.exists()) {
@@ -31,11 +22,10 @@ export async function readDataOnce(db: any, refString: string) {
 // Main listener for drinking session data changes.
 export function listenForDataChanges(
   db: any,
-  refString: ValidDatabaseRefs,
+  refString: string,
   onDataChange: (data: any) => void
 ) {
-  const validRef = getFirebaseRef(refString);
-  const dbRef = ref(db, validRef);
+  const dbRef = ref(db, refString);
   const listener = onValue(dbRef, (snapshot) => {
     let data:any = null;
     if (snapshot.exists()){

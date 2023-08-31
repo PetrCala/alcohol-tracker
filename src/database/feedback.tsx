@@ -1,5 +1,5 @@
 ﻿import { child, push, ref, update } from "firebase/database";
-import { FeedbackData } from "../types/database";
+import { FeedbackData, FeedbackProps } from "../types/database";
 import { Alert } from "react-native";
 
 /** Submit feedback into the database
@@ -20,7 +20,7 @@ export async function submitFeedback(
 ){
     let newFeedbackKey: string | null = null;
     let timestampNow = new Date().getTime();
-    let newFeedback: FeedbackData = {
+    let newFeedback: FeedbackProps = {
         submit_time: timestampNow,
         text: text,
         user_id: userId
@@ -33,7 +33,7 @@ export async function submitFeedback(
     }
     if (!newFeedbackKey) Alert.alert('Failed to submit feedback', 'The application failed to create a new feedback object in the database');
     // Create the updates object
-    var updates: { [key: string]: FeedbackData} = {};
+    var updates:FeedbackData = {};
     updates[`feedback/${newFeedbackKey}`] = newFeedback;
 
     // Submit the feedback
@@ -43,3 +43,23 @@ export async function submitFeedback(
         Alert.alert('Feedback submission failed', 'Failed to save the feedback: ' + error.message);
     };
 };
+
+
+/** Remove a feedback item from the database
+ *
+ * Throw an error in case the removal fails.
+ *  */ 
+export async function removeFeedback(
+  db: any, 
+  feedbackKey: string,
+) {
+  var updates: {[key: string]: null} = {};
+  updates[`/feedback/${feedbackKey}`] = null;
+
+  try {
+    return await update(ref(db), updates);
+  } catch (error:any) {
+    Alert.alert('Failed to remove feedback', 'Feedback could not be removed: ' + error.message);
+  }
+};
+

@@ -1,0 +1,206 @@
+﻿import React, { useCallback, useContext, useState } from 'react';
+import { 
+  Alert,
+  FlatList,
+  Image,
+  Modal, 
+  StyleSheet, 
+  Text, 
+  TouchableOpacity, 
+  View, 
+} from 'react-native';
+
+import { AdminFeedbackPopupProps } from '../../types/components';
+import { FeedbackData, FeedbackProps } from '../../types/database';
+import { formatDateToDay, formatDateToTime, timestampToDate } from '../../utils/dataHandling';
+import DatabaseContext from '../../database/DatabaseContext';
+import { removeFeedback } from '../../database/feedback';
+
+
+const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
+  const { 
+    visible, 
+    transparent, 
+    onRequestClose, 
+    onDismissFeedback, 
+    feedbackData
+  } = props;
+  const db = useContext(DatabaseContext);
+
+  // Construct a data array for the FlatList
+  const feedbackDataArray =  Object.entries(feedbackData).map(([feedback_id, feedbackProps]) => ({
+      feedback_id: feedback_id,
+      ...feedbackProps
+  }));
+
+  async function handleDeleteFeedback(db: any, feedbackId: string) {
+    try{
+      await removeFeedback(db, feedbackId);
+    } catch (error:any){
+      Alert.alert("Failed to remove feedback", "Feedback could not be removed:" +error.message);
+    };
+  };
+
+  const renderFeedback = ( {item} : {item: FeedbackProps & {feedback_id: string}}) => {
+    let dateSubmitted = timestampToDate(item.submit_time);
+    let daySubmitted = formatDateToDay(dateSubmitted);
+    let timeSubmitted = formatDateToTime(dateSubmitted);
+
+    return (
+      <View style={styles.feedbackContainer}>
+        <View style={styles.headingContainer}>
+          <Text style={styles.feedbackTimeText}>{daySubmitted} {timeSubmitted}</Text>
+          <TouchableOpacity 
+            onPress={() => handleDeleteFeedback(db, item.feedback_id)}
+            style={styles.deleteFeedbackButton}
+          >
+            <Image source={require('../../assets/icons/remove.png')} style={styles.deleteFeedbackButtonImage}/>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.mainTextContainer}>
+          <Text style={styles.feedbackMainText}>{item.text}</Text>
+        </View>
+      </View>
+    );
+  };
+
+  const noFeedbackComponent = () => {
+      return (
+          <Text style={styles.noFeedbackText}>No feedback found</Text>
+      );
+  }
+
+  return (
+    <Modal
+      animationType="none"
+      transparent={transparent}
+      visible={visible}
+      onRequestClose={onRequestClose}
+    >
+    <View style={styles.modalContainer}>
+      <View style={styles.modalView}>
+        <FlatList
+              data = {feedbackDataArray}
+              renderItem={renderFeedback}
+              ListEmptyComponent={noFeedbackComponent}
+              // keyExtractor={(item) => item.feedback_id}
+          />
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.button} onPress={onDismissFeedback}>
+            <Text style={styles.buttonText}>Close</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
+    </Modal>
+  );
+};
+
+export default AdminFeedbackPopup;
+
+const styles = StyleSheet.create({
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // This will fade the background
+  },
+  modalView: {
+    height: '70%',
+    width: '80%',
+    backgroundColor: '#FFFF99',
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: 'black',
+    padding: 20,
+    alignItems: 'center',
+    elevation: 5,
+  },
+  feedbackContainer: {
+    flex: 1,
+    backgroundColor: 'white',
+    flexDirection: 'column',
+    padding: 16,
+    borderRadius: 8,
+    marginVertical: 4,
+    borderColor: '#ddd',
+    borderWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    alignContent: 'space-between',
+  },
+  headingContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  feedbackTimeText: {
+    fontSize: 12,
+    color: 'grey',
+    alignSelf: 'flex-end',
+    borderBottomColor: 'grey',
+    borderBottomWidth: 1,
+  },
+  noFeedbackText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginTop: 5,
+    marginBottom: 5,
+    color: "black",
+    alignSelf: "center",
+    alignContent: "center",
+    padding: 10,
+  },
+  deleteFeedbackContainer: {
+    height: 25,
+    width: 25,
+    justifyContent: 'center',
+  },
+  deleteFeedbackButton: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  deleteFeedbackButtonImage: {
+    height: 25,
+    width: 25,
+    borderRadius: 25,
+    alignSelf: 'flex-end',
+    backgroundColor: '#ff212f',
+  },
+  mainTextContainer: {
+    flexGrow: 1,
+    padding: 5,
+  },
+  feedbackMainText: {
+    fontSize: 14,
+    color: 'black',
+    textAlign: 'left',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 10,
+  },
+  button: {
+    width: '40%',
+    backgroundColor: 'white',
+    padding: 10,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: 'black',
+    margin: 5,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: 'black',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+});
+
