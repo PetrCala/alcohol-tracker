@@ -206,7 +206,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
                 iconSource={require('../assets/temp/user.png')}  // user.photoURL;
                 containerStyle={styles.profileIconContainer}
                 iconStyle={styles.profileIcon}
-                onPress = {() => {}}
+                onPress = {() => navigation.navigate('Profile Screen')}
                 />
               <Text style={styles.headerUsername}>{user.displayName}</Text> 
             </TouchableOpacity>
