@@ -70,6 +70,7 @@ yarn-error.log
 __snapshots__/
 
 # Other
+_dev/
 *-adminsdk-*.json
 
 # Custom
