@@ -19,6 +19,7 @@ import YesNoPopup from './YesNoPopup';
 import { deleteUser, getAuth, signOut } from 'firebase/auth';
 import DatabaseContext from '../../database/DatabaseContext';
 import { deleteUserInfo } from '../../database/users';
+import FeedbackPopup from './FeedbackPopup';
 
 const SettingsItem: React.FC<SettingsItemProps> = ({
     heading,
@@ -46,7 +47,11 @@ const SettingsPopup = (props: SettingsPopupProps) => {
   const user = auth.currentUser;
   const db = useContext(DatabaseContext);
   if (!user) return null;
-  // Hooks and modals
+  // Hooks
+  const [feedbackText, setFeedbackText] = useState<string>('');
+  // Modals
+  const [reportBugModalVisible, setReportBugModalVisible] = useState<boolean>(false);
+  const [feedbackModalVisible, setFeedbackModalVisible] = useState<boolean>(false);
   const [signoutModalVisible, setSignoutModalVisible] = useState<boolean>(false);
   const [deleteUserModalVisible, setDeleteUserModalVisible] = useState<boolean>(false);
 
@@ -77,6 +82,27 @@ const SettingsPopup = (props: SettingsPopupProps) => {
     navigation.replace("Login Screen");
   };
 
+  const handleSubmitReportBug = () => {
+    // Popup an information button at the top (your feedback has been submitted)
+    setReportBugModalVisible(false);
+  };
+
+  const handleCancelReportBug = () => {
+    setReportBugModalVisible(false);
+  };
+
+  const handleSubmitFeedback = () => {
+    // Popup an information button at the top (your feedback has been submitted)
+    console.log(feedbackText);
+    setFeedbackText('');
+    setFeedbackModalVisible(false);
+  };
+
+  const handleCancelFeedback = () => {
+    setFeedbackText('');
+    setFeedbackModalVisible(false);
+  };
+
   const handleConfirmSignout = () => {
     handleSignOut();
     setSignoutModalVisible(false);
@@ -101,26 +127,21 @@ const SettingsPopup = (props: SettingsPopupProps) => {
   const modalData = [
     { heading: 'General', data:[
         { 
-            label: 'Total', 
-            icon: require('../../assets/icons/delete.png'), 
-            action: () => console.log('Total pressed') 
-        },
-        { 
-            label: 'Beer', 
-            icon: require('../../assets/icons/delete.png'), 
+            label: 'Settings', 
+            icon: require('../../assets/icons/settings.png'), 
             action: () => console.log('Beer pressed') 
         },
     ]},
     { heading: 'Feedback', data:[
         { 
             label: 'Report a bug', 
-            icon: require('../../assets/icons/delete.png'), 
-            action: () => console.log('Bug reporting') 
+            icon: require('../../assets/icons/bug.png'), 
+            action: () => console.log('Bug reporting') // Throw an information window - not yet implemented
         },
         { 
             label: 'Give us a feedback', 
-            icon: require('../../assets/icons/delete.png'), 
-            action: () => console.log('Feedback') 
+            icon: require('../../assets/icons/idea.png'), 
+            action: () => setFeedbackModalVisible(true)
         },
     ]},
     { heading: 'Authentification', data:[
@@ -158,6 +179,15 @@ const SettingsPopup = (props: SettingsPopupProps) => {
             {modalData.map((group, index) => (
                 <SettingsItem key={index} heading={group.heading} data={group.data} index={index} />
             ))}
+            <FeedbackPopup
+                visible={feedbackModalVisible}
+                transparent={true}
+                onRequestClose={() => setFeedbackModalVisible(false)}
+                message={"What would you like us to improve?"}
+                setFeedbackText={setFeedbackText}
+                onSubmit={handleSubmitFeedback}
+                onClose={handleCancelFeedback}
+            />
             <YesNoPopup
                 visible={signoutModalVisible}
                 transparent={true}

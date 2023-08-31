@@ -3,6 +3,18 @@ import { DrinkingSessionData, PreferencesData } from "./database";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { AppStackParamList } from "./screens";
 
+// FeedbackPopup props
+
+export type FeedbackPopupProps = {
+    visible: boolean;
+    transparent: boolean;
+    onRequestClose: () => void;
+    message: string;
+    setFeedbackText: React.Dispatch<React.SetStateAction<string>>;
+    onSubmit: () => void;
+    onClose: () => void;
+};
+
 // YesNo popup props
 
 export type YesNoPopupProps = {

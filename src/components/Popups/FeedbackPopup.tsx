@@ -3,15 +3,25 @@ import {
   View, 
   Text, 
   Modal, 
+  TextInput,
   TouchableOpacity, 
-  StyleSheet 
+  StyleSheet, 
 } from 'react-native';
 
-import { YesNoPopupProps } from '../../types/components';
+import { FeedbackPopupProps } from '../../types/components';
 
 
-const YesNoPopup = (props: YesNoPopupProps) => {
-  const { visible, transparent, onRequestClose, message, onYes, onNo } = props;
+const FeedbackPopup = (props: FeedbackPopupProps) => {
+  const { 
+    visible, 
+    transparent, 
+    onRequestClose, 
+    message, 
+    setFeedbackText, 
+    onSubmit, 
+    onClose 
+} = props;
+
 
   return (
     <Modal
@@ -25,12 +35,23 @@ const YesNoPopup = (props: YesNoPopupProps) => {
         <Text style={styles.modalText}>
           {message}
         </Text>
+        <View style={styles.feedbackWindowContainer}>
+            <TextInput
+                style={styles.feedbackWindowText}
+                onChangeText={setFeedbackText}
+                placeholder={"Write your feedback here"}
+                placeholderTextColor={"grey"}
+                keyboardType="default"
+                maxLength={1000}
+                multiline={true}
+            />
+        </View>
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={onNo}>
-            <Text style={styles.buttonText}>No</Text>
+          <TouchableOpacity style={styles.button} onPress={onClose}>
+            <Text style={styles.buttonText}>Close</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={onYes}>
-            <Text style={styles.buttonText}>Yes</Text>
+          <TouchableOpacity style={styles.button} onPress={onSubmit}>
+            <Text style={styles.buttonText}>Submit</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -39,7 +60,7 @@ const YesNoPopup = (props: YesNoPopupProps) => {
   );
 };
 
-export default YesNoPopup;
+export default FeedbackPopup;
 
 const styles = StyleSheet.create({
   modalContainer: {
@@ -63,12 +84,30 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'black',
   },
+  feedbackWindowContainer: {
+    height: 300,
+    width: 250,
+    alignItems: 'flex-start',
+    borderWidth: 2,
+    borderColor: '#000',
+    borderRadius: 5,
+    backgroundColor: 'white',
+  },
+  feedbackWindowText: {
+    height: '100%',
+    width: '100%',
+    flexGrow: 1,
+    flexShrink: 1,
+    textAlignVertical: 'top',
+    margin: 12,
+  },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    padding: 10,
   },
   button: {
-    width: '30%',
+    width: '40%',
     backgroundColor: 'white',
     padding: 10,
     borderRadius: 8,
