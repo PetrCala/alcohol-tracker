@@ -143,67 +143,67 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
           style={styles.logo}
         />
       </View>
-        {warning ?
-          <View style={styles.warningContainer}>
-              <TouchableOpacity
-                id={'warning'} 
-                testID = {'warning'}
-                accessibilityRole='button' 
-                onPress={() => setWarning('')} 
-                style={styles.warningButton}>
-                  <Text style={styles.warning}>{warning}</Text> 
-              </TouchableOpacity>
-          </View>
-          :
-          <></>
-        } 
-        <View style={styles.inputContainer}>
-          <TextInput
-          placeholder="Email"
-          value={email}
-          onChangeText={text => setEmail(text)}
-          style={styles.input}
-          />
-          <TextInput
-          placeholder="Username"
-          value={username}
-          onChangeText={text => setUsername(text)}
-          style={styles.input}
-          />
-          <TextInput
-          placeholder="Password"
-          value={password}
-          onChangeText={text => setPassword(text)}
-          style={styles.input}
-          secureTextEntry
-          />
-          <TextInput
-          placeholder="Beta key"
-          value={betaKey}
-          onChangeText={text => setBetaKey(text)}
-          style={styles.input}
-          secureTextEntry
-          />
-          <TouchableOpacity
-          onPress={handleSignUp}
-          style={styles.signUpButton}
-          >
-          <Text style={styles.signUpButtonText}>Create account</Text>
-          </TouchableOpacity>
-          <View style={styles.loginContainer}>
-            <Text style={styles.loginInfoText}>
-              Already a user?
-            </Text>
-            <TouchableOpacity 
-              style={styles.loginButtonContainer}
-              onPress={() => navigation.navigate('Login Screen')}
-              >
-              <Text style={styles.loginButtonText}>
-                Log in
-              </Text>
+      {warning ?
+        <View style={styles.warningContainer}>
+            <TouchableOpacity
+              id={'warning'} 
+              testID = {'warning'}
+              accessibilityRole='button' 
+              onPress={() => setWarning('')} 
+              style={styles.warningButton}>
+                <Text style={styles.warning}>{warning}</Text> 
             </TouchableOpacity>
-          </View>
         </View>
+        :
+        <></>
+      } 
+      <View style={styles.inputContainer}>
+        <TextInput
+        placeholder="Email"
+        value={email}
+        onChangeText={text => setEmail(text)}
+        style={styles.input}
+        />
+        <TextInput
+        placeholder="Username"
+        value={username}
+        onChangeText={text => setUsername(text)}
+        style={styles.input}
+        />
+        <TextInput
+        placeholder="Password"
+        value={password}
+        onChangeText={text => setPassword(text)}
+        style={styles.input}
+        secureTextEntry
+        />
+        <TextInput
+        placeholder="Beta key"
+        value={betaKey}
+        onChangeText={text => setBetaKey(text)}
+        style={styles.input}
+        secureTextEntry
+        />
+        <TouchableOpacity
+        onPress={handleSignUp}
+        style={styles.signUpButton}
+        >
+        <Text style={styles.signUpButtonText}>Create account</Text>
+        </TouchableOpacity>
+        <View style={styles.loginContainer}>
+          <Text style={styles.loginInfoText}>
+            Already a user?
+          </Text>
+          <TouchableOpacity 
+            style={styles.loginButtonContainer}
+            onPress={() => navigation.navigate('Login Screen')}
+            >
+            <Text style={styles.loginButtonText}>
+              Log in
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
       </KeyboardAvoidingView>
     </ScrollView>
   );
@@ -212,24 +212,25 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
 export default SignUpScreen
 
 const styles = StyleSheet.create({
-  logoContainer: {
-    flexShrink: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    backgroundColor: '#FFFF99',
-    height: '20%',
-  },
-  logo: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-  },
   mainContainer: {
     flexGrow: 1,
     flexShrink: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FFFF99',
+  },
+  logoContainer: {
+    flexShrink: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    backgroundColor: '#FFFF99',
+    height: '20%',
+    width: '100%',
+  },
+  logo: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
   },
   warningContainer: {
     width: '90%',
@@ -256,7 +257,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexGrow: 1,
     flexShrink: 1,
-    justifyContent: 'center',
+    marginTop: '20%',
     width: '80%',
   },
   input: {

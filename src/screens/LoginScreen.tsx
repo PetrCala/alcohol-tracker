@@ -2,6 +2,8 @@
 import { 
   Image,
   KeyboardAvoidingView, 
+  Platform, 
+  ScrollView, 
   StyleSheet, 
   Text, 
   TextInput, 
@@ -81,10 +83,11 @@ const LoginScreen = ( {navigation }: LoginScreenProps) => {
     );
   };
 
-  return (
+  return (    
+    <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1, flexShrink: 1 }}>
       <KeyboardAvoidingView
-      style={styles.container}
-      behavior="padding"
+      style={styles.mainContainer}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
       <View style={styles.logoContainer}>
         <Image
@@ -92,71 +95,78 @@ const LoginScreen = ( {navigation }: LoginScreenProps) => {
           style={styles.logo}
         />
       </View>
-      <View style={styles.inputContainer}>
-          {warning ?
-          <TouchableOpacity
-            id={'warning'} 
-            testID = {'warning'}
-            accessibilityRole='button' 
-            onPress={() => setWarning('')} 
-            style={styles.warningContainer}>
-              <Text style={styles.warning}>{warning}</Text> 
-          </TouchableOpacity>
-          :
-          <></>
-          } 
-          <TextInput
-          placeholder="Email"
-          value={email}
-          onChangeText={text => setEmail(text)}
-          style={styles.input}
-          />
-          <TextInput
-          placeholder="Password"
-          value={password}
-          onChangeText={text => setPassword(text)}
-          style={styles.input}
-          secureTextEntry
-          />
-          <TouchableOpacity
-            onPress={handleLogin}
-            style={styles.loginButton}
-          >
-            <Text style={styles.loginButtonText}>Login</Text>
-          </TouchableOpacity>
-          <View style={styles.signUpContainer}>
-            <Text style={styles.signUpInfoText}>
-              Don't have an account?
-            </Text>
-            <TouchableOpacity 
-              style={styles.signUpButtonContainer}
-              onPress={() => navigation.navigate('Sign Up Screen',
-                {loginEmail: email}
-              )}
-              >
-              <Text style={styles.signUpButtonText}>
-                Sign up
-              </Text>
+      {warning ?
+        <View style={styles.warningContainer}>
+            <TouchableOpacity
+              id={'warning'} 
+              testID = {'warning'}
+              accessibilityRole='button' 
+              onPress={() => setWarning('')} 
+              style={styles.warningButton}>
+                <Text style={styles.warning}>{warning}</Text> 
             </TouchableOpacity>
-          </View>
+        </View>
+        :
+        <></>
+      } 
+      <View style={styles.inputContainer}>
+        <TextInput
+        placeholder="Email"
+        value={email}
+        onChangeText={text => setEmail(text)}
+        style={styles.input}
+        />
+        <TextInput
+        placeholder="Password"
+        value={password}
+        onChangeText={text => setPassword(text)}
+        style={styles.input}
+        secureTextEntry
+        />
+        <TouchableOpacity
+          onPress={handleLogin}
+          style={styles.loginButton}
+        >
+          <Text style={styles.loginButtonText}>Login</Text>
+        </TouchableOpacity>
+        <View style={styles.signUpContainer}>
+          <Text style={styles.signUpInfoText}>
+            Don't have an account?
+          </Text>
+          <TouchableOpacity 
+            style={styles.signUpButtonContainer}
+            onPress={() => navigation.navigate('Sign Up Screen',
+              {loginEmail: email}
+            )}
+            >
+            <Text style={styles.signUpButtonText}>
+              Sign up
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
       </KeyboardAvoidingView>
+    </ScrollView>
   );
 };
 
 export default LoginScreen
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  mainContainer: {
+    flexGrow: 1,
+    flexShrink: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FFFF99'
   },
   logoContainer: {
-    marginTop: 100,
-    justifyContent: 'center',
+    flexShrink: 1,
+    justifyContent: 'flex-end',
     alignItems: 'center',
+    backgroundColor: '#FFFF99',
+    height: '20%',
+    width: '100%',
   },
   logo: {
     width: 50,
@@ -165,7 +175,8 @@ const styles = StyleSheet.create({
   },
   warningContainer: {
     width: '90%',
-    marginBottom: 15,
+    position: 'absolute', // Temp
+    top: 10, // Temp
     paddingHorizontal: 5,
     paddingVertical: 5,
     borderRadius: 5,
@@ -175,15 +186,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
   },
+  warningButton: {
+    flexGrow: 1,
+    width: '90%',
+  },
   warning: {
     textAlign: 'center',
     color: 'red',
     fontWeight: 'bold',
   },
   inputContainer: {
-    marginTop: 100,
     flexGrow: 1,
-    height: '30%',
+    flexShrink: 1,
+    marginTop: '20%',
     width: '80%',
   },
   input: {
