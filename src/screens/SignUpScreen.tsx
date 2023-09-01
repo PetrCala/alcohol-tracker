@@ -131,9 +131,9 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
   // };
 
   return (
-      <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1 }}>
+    <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1, flexShrink: 1 }}>
       <KeyboardAvoidingView
-      style={styles.container}
+      style={styles.mainContainer}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       // keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : -300}
       >
@@ -143,19 +143,21 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
           style={styles.logo}
         />
       </View>
-      <View style={styles.inputContainer}>
-          {warning ?
-          <TouchableOpacity
-            id={'warning'} 
-            testID = {'warning'}
-            accessibilityRole='button' 
-            onPress={() => setWarning('')} 
-            style={styles.warningContainer}>
-              <Text style={styles.warning}>{warning}</Text> 
-          </TouchableOpacity>
+        {warning ?
+          <View style={styles.warningContainer}>
+              <TouchableOpacity
+                id={'warning'} 
+                testID = {'warning'}
+                accessibilityRole='button' 
+                onPress={() => setWarning('')} 
+                style={styles.warningButton}>
+                  <Text style={styles.warning}>{warning}</Text> 
+              </TouchableOpacity>
+          </View>
           :
           <></>
-          } 
+        } 
+        <View style={styles.inputContainer}>
           <TextInput
           placeholder="Email"
           value={email}
@@ -201,34 +203,38 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
               </Text>
             </TouchableOpacity>
           </View>
-      </View>
+        </View>
       </KeyboardAvoidingView>
-      </ScrollView>
+    </ScrollView>
   );
 };
 
 export default SignUpScreen
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
+  logoContainer: {
+    flexShrink: 1,
+    justifyContent: 'flex-end',
     alignItems: 'center',
     backgroundColor: '#FFFF99',
-  },
-  logoContainer: {
-    marginTop: 100,
-    justifyContent: 'center',
-    alignItems: 'center',
+    height: '20%',
   },
   logo: {
     width: 50,
     height: 50,
     borderRadius: 25,
   },
+  mainContainer: {
+    flexGrow: 1,
+    flexShrink: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FFFF99',
+  },
   warningContainer: {
     width: '90%',
-    marginBottom: 15,
+    position: 'absolute', // Temp
+    top: 10, // Temp
     paddingHorizontal: 5,
     paddingVertical: 5,
     borderRadius: 5,
@@ -238,15 +244,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
   },
+  warningButton: {
+    flexGrow: 1,
+    width: '90%',
+  },
   warning: {
     textAlign: 'center',
     color: 'red',
     fontWeight: 'bold',
   },
   inputContainer: {
-    marginTop: 100,
     flexGrow: 1,
-    height: '30%',
+    flexShrink: 1,
+    justifyContent: 'center',
     width: '80%',
   },
   input: {
