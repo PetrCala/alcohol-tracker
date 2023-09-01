@@ -34,23 +34,21 @@ const ReauthentificatePopup = (props: ReauthentificatePopupProps) => {
             <Text style={styles.modalText}>
             {message}
             </Text>
-            <View style={styles.feedbackWindowContainer}>
-                <TextInput
-                    style={styles.feedbackWindowText}
-                    onChangeText={setPassword}
-                    placeholder={"Write your feedback here"}
-                    placeholderTextColor={"grey"}
-                    keyboardType="default"
-                    maxLength={1000}
-                    multiline={true}
-                />
+            <View style={styles.passwordContainer}>
+            <TextInput
+                placeholder="Password"
+                value={password}
+                onChangeText={text => setPassword(text)}
+                style={styles.password}
+                secureTextEntry
+            />
             </View>
             <View style={styles.buttonContainer}>
-            {/* <TouchableOpacity style={styles.button} onPress={onClose}>
+            <TouchableOpacity style={styles.button} onPress={onRequestClose}>
                 <Text style={styles.buttonText}>Close</Text>
-            </TouchableOpacity> */}
+            </TouchableOpacity>
             <TouchableOpacity style={styles.button} onPress={() => onSubmit(password)}>
-                <Text style={styles.buttonText}>Submit</Text>
+                <Text style={styles.buttonText}>Delete user</Text>
             </TouchableOpacity>
             </View>
         </View>
@@ -69,6 +67,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)', // This will fade the background
   },
   modalView: {
+    width: '90%',
     backgroundColor: '#FFFF99',
     borderRadius: 8,
     borderWidth: 2,
@@ -83,22 +82,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'black',
   },
-  feedbackWindowContainer: {
-    height: 300,
-    width: 250,
+  passwordContainer: {
+    width: '95%',
+    height: 50,
     alignItems: 'flex-start',
+    justifyContent: 'center',
     borderWidth: 2,
     borderColor: '#000',
-    borderRadius: 5,
+    borderRadius: 10,
     backgroundColor: 'white',
   },
-  feedbackWindowText: {
+  password: {
     height: '100%',
     width: '100%',
-    flexGrow: 1,
-    flexShrink: 1,
-    textAlignVertical: 'top',
-    margin: 12,
+    padding: 10,
+    marginTop: 5,
+    marginBottom: 5,
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -106,7 +105,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   button: {
-    width: '40%',
+    width: '50%',
     backgroundColor: 'white',
     padding: 10,
     borderRadius: 8,

@@ -252,7 +252,7 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
             <ReauthentificatePopup
               visible={reauthentificateModalVisible}
               transparent={true}
-              message={"Please retype your password in order to proceed"}
+              message={"Please retype your password\nin order to proceed"}
               onRequestClose={() => setReauthentificateModalVisible(false)}
               onSubmit={(password) => handleDeleteUser(password)}
             />
