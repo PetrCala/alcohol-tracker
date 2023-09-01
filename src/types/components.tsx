@@ -51,6 +51,7 @@ export type ReauthentificatePopupProps = {
     visible: boolean;
     transparent: boolean;
     message: string;
+    confirmationMessage: string;
     onRequestClose: () => void;
     onSubmit: (password: string) => void;
 };

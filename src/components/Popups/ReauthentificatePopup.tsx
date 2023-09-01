@@ -16,6 +16,7 @@ const ReauthentificatePopup = (props: ReauthentificatePopupProps) => {
         visible, 
         transparent, 
         message, 
+        confirmationMessage,
         onRequestClose, 
         onSubmit, 
     } = props;
@@ -48,7 +49,7 @@ const ReauthentificatePopup = (props: ReauthentificatePopupProps) => {
                 <Text style={styles.buttonText}>Close</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.button} onPress={() => onSubmit(password)}>
-                <Text style={styles.buttonText}>Delete user</Text>
+                <Text style={styles.buttonText}>{confirmationMessage}</Text>
             </TouchableOpacity>
             </View>
         </View>
