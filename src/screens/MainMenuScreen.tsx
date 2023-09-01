@@ -73,17 +73,17 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
   };
 
   const handleDeleteUser = async () => {
-    // Delete the user's information from the realtime database
-    try {
-        await deleteUserInfo(db, user.uid);
-    } catch (error:any) {
-      return Alert.alert('Could not delete user info from database', 'Deleting the users info from realtime database failed: ' + error.message);
-    }
     // Delete user from authentification database
     try {
       await deleteUser(user);
     } catch (error:any) {
         return Alert.alert('Error deleting user', 'Could not delete user ' + user.uid + error.message);
+    }
+    // Delete the user's information from the realtime database
+    try {
+        await deleteUserInfo(db, user.uid, userData.beta_key_id); // Beta feature
+    } catch (error:any) {
+      return Alert.alert('Could not delete user info from database', 'Deleting the users info from realtime database failed: ' + error.message);
     }
     navigation.replace("Login Screen");
   };

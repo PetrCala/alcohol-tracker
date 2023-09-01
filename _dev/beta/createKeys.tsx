@@ -1,16 +1,4 @@
-﻿import { Alert } from "react-native";
-import { ref } from "firebase/database";
-import adminDb from "../database/adminDatabase";
-import { readDataOnce } from "../database/baseFunctions";
-
-type BetaKeysData = {
-    [beta_key: string]: {
-        in_usage: boolean;
-        user_id?: string;
-    },
-};
-
-/** Generate a single, possibly non-unique beta key
+﻿/** Generate a single, possibly non-unique beta key
  * 
  * @param length Length of the beta key
  * @returns String, the beta key
@@ -45,19 +33,3 @@ function generateBetaKeys(length:number = 90): string[] {
 
     return betaKeys;
 };
-
-async function getDatabaseBetaKeys(db:any){
-
-    let betaKeysRef = `beta_keys/`
-    let betaKeys:BetaKeysData = {};
-    try {
-        let data:BetaKeysData = await readDataOnce(db, betaKeysRef);
-        if (data){
-            betaKeys = data;
-        }
-    } catch (error:any){
-        Alert.alert("Beta key data fetch unsuccessful", "Failed to fetch the beta key data: " + error.message);
-    };
-    return betaKeys;
-}
-

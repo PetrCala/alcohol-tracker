@@ -76,6 +76,7 @@ export type UnconfirmedDaysData = {
 
 export type UserData = {
   role: string;
+  beta_key_id?: string;
 }
 
 // Used when rendering drinking session day overview

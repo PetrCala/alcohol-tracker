@@ -1,4 +1,4 @@
-[
+export const betaKeysList = [
   'o1dq1Scu4fynwg36Y6DyhEnVODNbGflufFra5woeQ4JULRikwI',
   'FjQkD4LoCcDdLKLtufS0ImavSozy6Jgoxif5BzNvu7Ok4rkz2d',
   '9AxYRA0IVr937HSDEXEgNgojZSXPMXk5922FspLomoEDbVNbJv',

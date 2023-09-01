@@ -1,6 +1,8 @@
 ﻿import { update, runTransaction, ref } from "firebase/database";
 import { UnitTypesProps, CurrentSessionData, PreferencesData, UserData, UnitsToColorsData } from "../types/database";
 import { getZeroUnitsObject } from "../utils/dataHandling";
+import { appInBeta } from "../utils/static";
+import { BetaKeysData } from "../../_dev/beta/betaTypes";
 
 /** In the database, create base info for a user. This will
  * be stored under the "users" object in the database.
@@ -11,6 +13,7 @@ import { getZeroUnitsObject } from "../utils/dataHandling";
 export async function pushNewUserInfo(
  db: any,
  userId: string,
+ betaKeyId: string, // Beta feature
 ){
   // User current session
   let timestampNow = new Date().getTime();
@@ -31,12 +34,14 @@ export async function pushNewUserInfo(
     units_to_colors: newUnitsToColors,
   };
   // Users
+  let userRole = appInBeta ? 'beta_user' : 'user'; // Beta feature
   let newUserData:UserData = {
-    role: 'user',
+    role: userRole,
+    beta_key_id: betaKeyId, // Beta feature
   };
   // Allowed types
   let updates: {
-    [key:string]: UserData | CurrentSessionData | PreferencesData
+    [key:string]: UserData | CurrentSessionData | PreferencesData | any
   } = {};
   // User current session
   updates[`user_current_session/${userId}`] = newCurrentSessionData;
@@ -44,6 +49,9 @@ export async function pushNewUserInfo(
   updates[`user_preferences/${userId}`] = newPreferences;
   // Users
   updates[`users/${userId}`] = newUserData;
+  // Beta feature
+  updates[`beta_keys/${betaKeyId}/in_usage`] = true;
+  updates[`beta_keys/${betaKeyId}/user_id`] = userId;
   try {
     await update(ref(db), updates)
   } catch (error:any) {
@@ -61,13 +69,19 @@ export async function pushNewUserInfo(
 export async function deleteUserInfo(
  db: any,
  userId: string,
+ betaKeyId: string | undefined, // Beta feature
 ){
-  let updates: {[key:string]: null} = {};
+  let updates: {[key:string]: null | false} = {}; 
   updates[`users/${userId}`] = null;
   updates[`user_current_session/${userId}`] = null;
   updates[`user_preferences/${userId}`] = null;
   updates[`user_drinking_sessions/${userId}`] = null;
   updates[`user_unconfirmed_days/${userId}`] = null;
+  // Beta feature
+  if (betaKeyId){ // Reset the beta key to a usable form
+    updates[`beta_keys/${betaKeyId}/in_usage`] = false;
+    updates[`beta_keys/${betaKeyId}/user_id`] = null;
+  };
   try {
     await update(ref(db), updates)
   } catch (error:any) {

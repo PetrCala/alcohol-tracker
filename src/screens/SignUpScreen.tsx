@@ -16,6 +16,8 @@ import { signUpUserWithEmailAndPassword } from '../auth/auth';
 import DatabaseContext from '../database/DatabaseContext';
 import { SignUpScreenProps } from '../types/screens';
 import { pushNewUserInfo } from '../database/users';
+import { readDataOnce } from '../database/baseFunctions';
+import { BetaKeysData, validateBetaKey } from '../database/beta';
 
 const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
   if (!route || ! navigation) return null; // Should never be null
@@ -26,6 +28,7 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [warning, setWarning] = useState< string | null>('');
+  const [betaKey, setBetaKey] = useState<string>(''); // Beta feature
 
   useEffect(() => {
       const stopListening = auth.onAuthStateChanged(user => {
@@ -43,6 +46,22 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
     if (userInputValid == false){
       return null;
     }
+    // Beta feature
+    let betaKeysRef = 'beta_keys/'
+    let betaKeys: BetaKeysData | null = null;
+    try{
+      betaKeys = await readDataOnce(db, betaKeysRef);
+    } catch (error: any) {
+      Alert.alert('Failed to contact the database', 'Beta keys list fetching failed:'+ error.message);
+    };
+    if (!betaKeys){ 
+      return null;
+    }
+    var betaKeyId = validateBetaKey(betaKeys, betaKey);
+    if (!betaKeyId){
+      setWarning('Your beta key is either invalid or already in use.');
+      return null;
+    };
     // Create the user in the authentification database
     try {
         await signUpUserWithEmailAndPassword(
@@ -65,7 +84,7 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
     }
     // Update the realtime database with the new user's info
     try {
-        await pushNewUserInfo(db, newUser.uid);
+        await pushNewUserInfo(db, newUser.uid, betaKeyId); // Beta feature
     } catch (error:any) {
       return Alert.alert('Could not write into database', 'Writing user info into the database failed: ' + error.message);
     }
@@ -77,7 +96,7 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
    * Otherwise return false.
    */
   const validateUserInput = (): boolean => {
-    if (email == '' || username == '' || password == ''){
+    if (email == '' || username == '' || password == '' || betaKey == ''){ // Beta feature
       setWarning('You must fill out all fields first');
       return false;
     };
@@ -153,6 +172,13 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
           placeholder="Password"
           value={password}
           onChangeText={text => setPassword(text)}
+          style={styles.input}
+          secureTextEntry
+          />
+          <TextInput
+          placeholder="Beta key"
+          value={betaKey}
+          onChangeText={text => setBetaKey(text)}
           style={styles.input}
           secureTextEntry
           />
