@@ -3,6 +3,8 @@ import { UnitTypesProps, CurrentSessionData, PreferencesData, UserData, UnitsToC
 import { getZeroUnitsObject } from "../utils/dataHandling";
 import { appInBeta } from "../utils/static";
 import { BetaKeysData } from "../../_dev/beta/betaTypes";
+import { EmailAuthProvider, User, UserCredential, reauthenticateWithCredential } from "firebase/auth";
+import { Alert } from "react-native";
 
 /** In the database, create base info for a user. This will
  * be stored under the "users" object in the database.
@@ -150,4 +152,38 @@ export async function discardDrinkingSessionData(
   } catch (error:any) {
     throw new Error('Failed to add a new unit: ' + error.message);
   } 
+}
+
+/** Reauthentificate a user using the User object and a password
+ * Necessary before important operations such as deleting a user 
+ * or changing a password.
+ * 
+ * Return a promise with the credentials if the reauthentification succeeds,
+ * or with null if it does not.
+ * 
+ * @param user User object from firebase
+ * @param password Password to reauthentificate with
+ */
+export async function reauthentificateUser(user: User, password: string): Promise<UserCredential | null>{
+    let email:string;
+    if (user.email){
+      email = user.email;
+    } else {
+      Alert.alert("User email not found", "This user has no email");
+      return null;
+    };
+    const credential = EmailAuthProvider.credential(
+        email,
+        password
+    );
+    try {
+      var result = await reauthenticateWithCredential(
+        user, 
+        credential
+      );
+      return result;
+    } catch (error:any){
+      Alert.alert("Reauthentification failed", "Failed to reauthentificated this user");
+      return null;
+    };
 }

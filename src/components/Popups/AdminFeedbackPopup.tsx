@@ -22,7 +22,6 @@ const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
     visible, 
     transparent, 
     onRequestClose, 
-    onDismissFeedback, 
     feedbackData
   } = props;
   const db = useContext(DatabaseContext);
@@ -86,7 +85,7 @@ const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
               // keyExtractor={(item) => item.feedback_id}
           />
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={onDismissFeedback}>
+          <TouchableOpacity style={styles.button} onPress={onRequestClose}>
             <Text style={styles.buttonText}>Close</Text>
           </TouchableOpacity>
         </View>

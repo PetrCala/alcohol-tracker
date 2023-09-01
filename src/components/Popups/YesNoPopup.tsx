@@ -11,7 +11,7 @@ import { YesNoPopupProps } from '../../types/components';
 
 
 const YesNoPopup = (props: YesNoPopupProps) => {
-  const { visible, transparent, onRequestClose, message, onYes, onNo } = props;
+  const { visible, transparent, onRequestClose, message, onYes } = props;
 
   return (
     <Modal
@@ -26,7 +26,7 @@ const YesNoPopup = (props: YesNoPopupProps) => {
           {message}
         </Text>
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={onNo}>
+          <TouchableOpacity style={styles.button} onPress={onRequestClose}>
             <Text style={styles.buttonText}>No</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.button} onPress={onYes}>

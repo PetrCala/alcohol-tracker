@@ -25,9 +25,9 @@ const ProfileScreen = (props: ProfileProps) => {
   const user = auth.currentUser;
   const db = useContext(DatabaseContext);
 
-  const handleButtonPress = () => {
-    console.log('hi')
-  };
+  // const handleButtonPress = () => {
+  //   console.log('hi')
+  // };
 
 
 
@@ -42,11 +42,11 @@ const ProfileScreen = (props: ProfileProps) => {
           onPress={() => navigation.goBack() }
         />
       </View>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={styles.startSessionButton}
           onPress={() => {handleButtonPress}} >
           <Text style={styles.startSessionText}> ! </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
      </View>
   );
 };

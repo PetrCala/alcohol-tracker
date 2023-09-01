@@ -11,7 +11,7 @@ import {
   View 
 } from 'react-native';
 import { Alert } from 'react-native';
-import { getAuth } from 'firebase/auth';
+import { getAuth, signOut } from 'firebase/auth';
 
 import { signInUserWithEmailAndPassword } from '../auth/auth';
 import { LoginScreenProps } from '../types/screens';

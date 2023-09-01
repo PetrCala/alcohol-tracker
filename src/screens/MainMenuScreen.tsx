@@ -15,15 +15,16 @@ import {
 } from '../types/components';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import YesNoPopup from '../components/Popups/YesNoPopup';
-import { deleteUser, getAuth, signOut } from 'firebase/auth';
+import { EmailAuthProvider, UserCredential, deleteUser, getAuth, reauthenticateWithCredential, signOut } from 'firebase/auth';
 import DatabaseContext from '../database/DatabaseContext';
-import { deleteUserInfo } from '../database/users';
+import { deleteUserInfo, reauthentificateUser } from '../database/users';
 import FeedbackPopup from '../components/Popups/FeedbackPopup';
 import { submitFeedback } from '../database/feedback';
 import { MainMenuScreenProps } from '../types/screens';
 import AdminFeedbackPopup from '../components/Popups/AdminFeedbackPopup';
 import { FeedbackData } from '../types/database';
 import { listenForDataChanges, readDataOnce } from '../database/baseFunctions';
+import ReauthentificatePopup from '../components/Popups/ReauthentificatePopup';
 
 const MenuItem: React.FC<SettingsItemProps> = ({
     heading,
@@ -52,13 +53,13 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
   const db = useContext(DatabaseContext);
   if (!user) return null;
   // Hooks
-  const [feedbackText, setFeedbackText] = useState<string>('');
   const [feedbackData, setFeedbackData] = useState<FeedbackData>({});
   // Modals
   const [reportBugModalVisible, setReportBugModalVisible] = useState<boolean>(false);
   const [feedbackModalVisible, setFeedbackModalVisible] = useState<boolean>(false);
   const [signoutModalVisible, setSignoutModalVisible] = useState<boolean>(false);
   const [deleteUserModalVisible, setDeleteUserModalVisible] = useState<boolean>(false);
+  const [reauthentificateModalVisible, setReauthentificateModalVisible] = useState<boolean>(false);
   const [adminFeedbackModalVisible, setAdminFeedbackModalVisible] = useState<boolean>(false);
 
 
@@ -68,24 +69,50 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
       // reauthenticateWithCredential
       await signOut(auth);
     } catch (error:any) {
-      throw new Error("There was an error signing out: " + error.message);
+      Alert.alert("User sign out error", "There was an error signing out: " + error.message);
+      return null;
     }
   };
 
-  const handleDeleteUser = async () => {
-    // Delete user from authentification database
+  const handleDeleteUser = async (password:string) => {
+    // Reauthentificate the user
+    let authentificationResult:UserCredential|null = null;
     try {
-      await deleteUser(user);
-    } catch (error:any) {
-        return Alert.alert('Error deleting user', 'Could not delete user ' + user.uid + error.message);
-    }
+      authentificationResult = await reauthentificateUser(user, password);
+    } catch (error:any){
+      Alert.alert("Reauthentification failed", "Failed to reauthentificate this user");
+      return null;
+    };
+    if (!authentificationResult){
+      return null; // Cancel user deletion
+    };
     // Delete the user's information from the realtime database
     try {
         await deleteUserInfo(db, user.uid, userData.beta_key_id); // Beta feature
     } catch (error:any) {
-      return Alert.alert('Could not delete user info from database', 'Deleting the users info from realtime database failed: ' + error.message);
+      handleInvalidDeleteUser(error);
     }
+    // Delete user from authentification database
+    try {
+      await deleteUser(user);
+    } catch (error:any) {
+      handleInvalidDeleteUser(error);
+    }
+    handleSignOut() // Sign out the user
+    // Add an alert here informing about the user deletion
     navigation.replace("Login Screen");
+  };
+
+  /** Handle cases when deleting a user fails */
+  const handleInvalidDeleteUser = (error:any) => {
+    var err = error.message;
+    if (err.includes('auth/requires-recent-login')){
+      // Should never happen
+      Alert.alert('User deletion failed', 'Recent user authentification was not done, yet the application attempted to delete the user:' + error.message);
+    } else {
+      Alert.alert('Error deleting user', 'Could not delete user ' + user.uid + error.message);
+    }
+    return null;
   };
 
   const handleSubmitReportBug = () => {
@@ -93,22 +120,12 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
     setReportBugModalVisible(false);
   };
 
-  const handleCancelReportBug = () => {
-    setReportBugModalVisible(false);
-  };
-
-  const handleSubmitFeedback = () => {
-    if (feedbackText !== ''){
-        submitFeedback(db, user.uid, feedbackText);
+  const handleSubmitFeedback = (feedback: string) => {
+    if (feedback !== ''){
+        submitFeedback(db, user.uid, feedback);
         // Popup an information button at the top (your feedback has been submitted)
-        setFeedbackText('');
         setFeedbackModalVisible(false);
     }; // Perhaps alert the user that they must fill out the feedback first
-  };
-
-  const handleCancelFeedback = () => {
-    setFeedbackText('');
-    setFeedbackModalVisible(false);
   };
 
   const handleConfirmSignout = () => {
@@ -117,22 +134,9 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
     navigation.replace("Login Screen");
   };
 
-  const handleCancelSignout = () => {
-    setSignoutModalVisible(false);
-  };
-
   const handleConfirmDeleteUser = () => {
-    handleDeleteUser();
     setDeleteUserModalVisible(false);
-    navigation.replace("Login Screen");
-  };
-
-  const handleCancelDeleteUser = () => {
-    setDeleteUserModalVisible(false);
-  };
-
-  const handleDismissAdminFeedback = () => {
-    setAdminFeedbackModalVisible(false);
+    setReauthentificateModalVisible(true);
   };
 
   // Monitor feedback data
@@ -227,33 +231,35 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
             <FeedbackPopup
                 visible={feedbackModalVisible}
                 transparent={true}
-                onRequestClose={() => setFeedbackModalVisible(false)}
                 message={"What would you like us to improve?"}
-                setFeedbackText={setFeedbackText}
-                onSubmit={handleSubmitFeedback}
-                onClose={handleCancelFeedback}
+                onRequestClose={() => setFeedbackModalVisible(false)}
+                onSubmit={(feedback) => handleSubmitFeedback(feedback)}
             />
             <YesNoPopup
                 visible={signoutModalVisible}
                 transparent={true}
-                onRequestClose={() => setSignoutModalVisible(false)}
                 message={"Do you really want to\nsign out?"}
+                onRequestClose={() => setSignoutModalVisible(false)}
                 onYes={handleConfirmSignout}
-                onNo={handleCancelSignout}
             />
             <YesNoPopup
                 visible={deleteUserModalVisible}
                 transparent={true}
-                onRequestClose={() => setDeleteUserModalVisible(false)}
                 message={"WARNING: Destructive action\n\nDo you really want to\ndelete this user?"}
+                onRequestClose={() => setDeleteUserModalVisible(false)}
                 onYes={handleConfirmDeleteUser}
-                onNo={handleCancelDeleteUser}
+            />
+            <ReauthentificatePopup
+              visible={reauthentificateModalVisible}
+              transparent={true}
+              message={"Please retype your password in order to proceed"}
+              onRequestClose={() => setReauthentificateModalVisible(false)}
+              onSubmit={(password) => handleDeleteUser(password)}
             />
             <AdminFeedbackPopup
                 visible={adminFeedbackModalVisible}
                 transparent={true}
                 onRequestClose={() => setAdminFeedbackModalVisible(false)}
-                onDismissFeedback={handleDismissAdminFeedback}
                 feedbackData={feedbackData}
             />
         </ScrollView>

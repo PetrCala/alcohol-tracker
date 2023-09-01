@@ -15,13 +15,11 @@ const FeedbackPopup = (props: FeedbackPopupProps) => {
   const { 
     visible, 
     transparent, 
-    onRequestClose, 
     message, 
-    setFeedbackText, 
-    onSubmit, 
-    onClose 
+    onRequestClose, 
+    onSubmit
 } = props;
-
+  const [feedbackText, setFeedbackText] = useState<string>('');
 
   return (
     <Modal
@@ -47,10 +45,13 @@ const FeedbackPopup = (props: FeedbackPopupProps) => {
             />
         </View>
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={onClose}>
+          <TouchableOpacity style={styles.button} onPress={onRequestClose}>
             <Text style={styles.buttonText}>Close</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={onSubmit}>
+          <TouchableOpacity 
+            style={styles.button} 
+            onPress={() => onSubmit(feedbackText)}
+          >
             <Text style={styles.buttonText}>Submit</Text>
           </TouchableOpacity>
         </View>

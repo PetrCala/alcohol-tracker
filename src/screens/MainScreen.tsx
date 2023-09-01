@@ -23,7 +23,7 @@ import { updateDrinkingSessionUserData } from '../database/drinkingSessions';
 import { CurrentSessionData, DrinkingSessionData, PreferencesData, UnconfirmedDaysData, UnitTypesProps, UserData } from '../types/database';
 import { MainScreenProps } from '../types/screens';
 import { DateObject } from '../types/components';
-import { getAuth } from 'firebase/auth';
+import { getAuth, signOut } from 'firebase/auth';
 import { dateToDateObject, getZeroUnitsObject, calculateThisMonthUnits } from '../utils/dataHandling';
 
 const MainScreen = ( { navigation }: MainScreenProps) => {
@@ -88,6 +88,13 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
       preferences: preferences
     });
   }
+
+  const handleInvalidData = () => {
+    signOut(auth);
+    navigation.replace("Login Screen");
+    Alert.alert("Database communication fail", "Failed to estabilsh communication with the database. Returning to the login screen.");
+    return null;
+  };
 
   // Monitor current session data
   useEffect(() => {
@@ -183,8 +190,8 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
       // loadingText="Loading data..."
       />
       );
-  };
-
+    };
+    
   // Should never be null
   if (
     !currentSessionData || 

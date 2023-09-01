@@ -8,11 +8,9 @@ import { AppStackParamList } from "./screens";
 export type FeedbackPopupProps = {
     visible: boolean;
     transparent: boolean;
-    onRequestClose: () => void;
     message: string;
-    setFeedbackText: React.Dispatch<React.SetStateAction<string>>;
-    onSubmit: () => void;
-    onClose: () => void;
+    onRequestClose: () => void;
+    onSubmit: (feedback: string) => void;
 };
 
 // YesNo popup props
@@ -20,10 +18,9 @@ export type FeedbackPopupProps = {
 export type YesNoPopupProps = {
     visible: boolean;
     transparent: boolean;
-    onRequestClose: () => void;
     message: string;
+    onRequestClose: () => void;
     onYes: () => void;
-    onNo: () => void;
 }
 
 // SettingsPopup props
@@ -48,12 +45,21 @@ export type SettingsItemProps = {
   index: number;
 };
 
+// Reauthentificate popup props
+
+export type ReauthentificatePopupProps = {
+    visible: boolean;
+    transparent: boolean;
+    message: string;
+    onRequestClose: () => void;
+    onSubmit: (password: string) => void;
+};
+
 // AdminFeedbackModal props
 export type AdminFeedbackPopupProps = {
     visible: boolean;
     transparent: boolean;
     onRequestClose: () => void;
-    onDismissFeedback: () => void;
     feedbackData: FeedbackData;
 };
 
