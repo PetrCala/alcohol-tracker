@@ -1,8 +1,8 @@
 ﻿import { ReactNode, createContext, useContext, useEffect, useState } from "react";
-import { handleUserConnection } from "./connection";
+import NetInfo from '@react-native-community/netinfo';
 
 type UserConnectionContextProps = {
-    isOnline: boolean;
+    isOnline: boolean | null;
 };
 
 export const UserConnectionContext = createContext<UserConnectionContextProps | null>(null);
@@ -22,8 +22,6 @@ export const useUserConnection = (): UserConnectionContextProps => {
 
 type UserConnectionProviderProps = {
   children: ReactNode;
-  db: any; // Replace with the actual type
-  auth: any; // Replace with the actual type
 }
 
 /** Provide a user connection context to the application
@@ -33,18 +31,25 @@ type UserConnectionProviderProps = {
  */
 export const UserConnectionProvider: React.FC<UserConnectionProviderProps> = ({ 
     children, 
-    db, 
-    auth 
 }) => {
-    const [isOnline, setIsOnline] = useState(false);
+    const [isOnline, setIsOnline] = useState< boolean | null>(false);
   
     useEffect(() => {
-      const userId = auth.currentUser?.uid;
-      if (userId) {
-        const unsubscribe = handleUserConnection(db, userId, setIsOnline);
-        return () => unsubscribe();
-      }
-    }, [db, auth]);
+      // Subscribe to network state updates
+      const unsubscribe = NetInfo.addEventListener(state => {
+        setIsOnline(state.isConnected);
+      });
+  
+      // Check the initial network status
+      NetInfo.fetch().then(state => {
+        setIsOnline(state.isConnected);
+      });
+  
+      // Unsubscribe to clean up the subscription
+      return () => {
+        unsubscribe();
+      };
+    }, []);
   
     const value = {
       isOnline,

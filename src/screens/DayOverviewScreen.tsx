@@ -25,6 +25,8 @@ import { DrinkingSessionProps, DrinkingSessionData } from '../types/database';
 import { DayOverviewScreenProps } from '../types/screens';
 import { listenForDataChanges } from '../database/baseFunctions';
 import { getAuth } from 'firebase/auth';
+import UserOffline from '../components/UserOffline';
+import { useUserConnection } from '../database/UserConnectionContext';
 
 
 const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
@@ -33,6 +35,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
     const auth = getAuth();
     const user = auth.currentUser;
     const db = useContext(DatabaseContext);
+    const { isOnline } = useUserConnection();
     const [ date, setDate ] = useState<Date | null>(timestampToDate(date_object.timestamp));
     const [drinkingSessionData, setDrinkingsessionData] = useState<DrinkingSessionData[] | []>([]); // Data
     const [ loadingData, setLoadingData] = useState<boolean | null>(true);
@@ -178,6 +181,8 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
         }
     }, [db, date]);
 
+
+    if (!isOnline) return (<UserOffline/>);
 
     // Loading drinking session data
     if ( date == null || loadingData ) {

@@ -18,12 +18,14 @@ import { SignUpScreenProps } from '../types/screens';
 import { pushNewUserInfo } from '../database/users';
 import { readDataOnce } from '../database/baseFunctions';
 import { BetaKeysData, validateBetaKey } from '../database/beta';
+import { useUserConnection } from '../database/UserConnectionContext';
 
 const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
   if (!route || ! navigation) return null; // Should never be null
   const { loginEmail } = route.params; // To avoid reduncancy
   const auth = getAuth();
   const db = useContext(DatabaseContext);
+  const { isOnline } = useUserConnection();
   const [email, setEmail] = useState(loginEmail);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -46,6 +48,10 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
     if (userInputValid == false){
       return null;
     }
+    if (!isOnline){
+      setWarning('You are offline');
+      return null;
+    };
     // Beta feature
     let betaKeysRef = 'beta_keys/'
     let betaKeys: BetaKeysData | null = null;

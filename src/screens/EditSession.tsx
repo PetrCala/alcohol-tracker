@@ -23,6 +23,8 @@ import { getAuth } from 'firebase/auth';
 import DrinkingSessionUnitWindow from '../components/DrinkingSessionUnitWindow';
 import { maxAllowedUnits } from '../utils/static';
 import YesNoPopup from '../components/Popups/YesNoPopup';
+import { useUserConnection } from '../database/UserConnectionContext';
+import UserOffline from '../components/UserOffline';
 
 
 const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
@@ -31,6 +33,7 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
     const { end_time, last_unit_added_time, session_id, start_time, units } = session;
     const auth = getAuth();
     const user = auth.currentUser;
+    const { isOnline } = useUserConnection();
     // Units
     const [totalUnits, setTotalUnits] = useState<number>(sumAllUnits(units));
     const [availableUnits, setAvailableUnits] = useState<number>(maxAllowedUnits - totalUnits);
@@ -132,6 +135,8 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
         navigation.goBack();
     };
 
+
+    if (!isOnline) return (<UserOffline/>);
 
     return (
       <>
@@ -238,10 +243,9 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
         <YesNoPopup
           visible={deleteModalVisible}
           transparent={true}
-          onRequestClose={() => setDeleteModalVisible(false)}
           message={"Do you really want to\ndelete this session?"}
+          onRequestClose={() => setDeleteModalVisible(false)}
           onYes={handleConfirmDelete}
-          onNo={handleCancelDelete}
         />
         <BasicButton 
           text='Save Session'

@@ -33,7 +33,7 @@ const Stack = createNativeStackNavigator();
 const AlcoholTracker = () => {
   return (
     <DatabaseContext.Provider value={db}>
-    <UserConnectionProvider db={db} auth={auth}>
+    <UserConnectionProvider>
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{

@@ -25,6 +25,8 @@ import AdminFeedbackPopup from '../components/Popups/AdminFeedbackPopup';
 import { FeedbackData } from '../types/database';
 import { listenForDataChanges, readDataOnce } from '../database/baseFunctions';
 import ReauthentificatePopup from '../components/Popups/ReauthentificatePopup';
+import UserOffline from '../components/UserOffline';
+import { useUserConnection } from '../database/UserConnectionContext';
 
 const MenuItem: React.FC<SettingsItemProps> = ({
     heading,
@@ -51,6 +53,7 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
   const auth = getAuth();
   const user = auth.currentUser;
   const db = useContext(DatabaseContext);
+  const { isOnline } = useUserConnection();
   if (!user) return null;
   // Hooks
   const [feedbackData, setFeedbackData] = useState<FeedbackData>({});
@@ -212,6 +215,8 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
   if (userData.role == 'admin'){
     modalData = [...modalData, ...adminData] // Add admin settings
   };
+
+  if (!isOnline) return (<UserOffline/>);
 
   return (
       <View style={styles.mainContainer}>

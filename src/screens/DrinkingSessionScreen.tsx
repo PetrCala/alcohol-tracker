@@ -26,6 +26,8 @@ import { DrinkingSessionData, UnitTypesProps } from '../types/database';
 import DrinkingSessionUnitWindow from '../components/DrinkingSessionUnitWindow';
 import { maxAllowedUnits } from '../utils/static';
 import YesNoPopup from '../components/Popups/YesNoPopup';
+import { useUserConnection } from '../database/UserConnectionContext';
+import UserOffline from '../components/UserOffline';
 
 
 const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps) => {
@@ -37,6 +39,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
   const auth = getAuth();
   const user = auth.currentUser;
   const db = useContext(DatabaseContext);
+  const { isOnline } = useUserConnection();
   // Units
   const [totalUnits, setTotalUnits] = useState<number>(sumAllUnits(current_units));
   const [availableUnits, setAvailableUnits] = useState<number>(maxAllowedUnits - totalUnits);
@@ -188,6 +191,8 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
     navigation.goBack();
   };
 
+  if (!isOnline) return (<UserOffline/>);
+
   return (
     <>
     <View style={styles.mainHeader}>
@@ -304,7 +309,6 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
         onRequestClose={() => setDiscardModalVisible(false)}
         message={"Do you really want to\ndiscard this session?"}
         onYes={handleConfirmDiscard}
-        onNo={handleCancelDiscard}
       />
       <BasicButton 
         text='Save Session'

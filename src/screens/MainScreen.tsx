@@ -33,7 +33,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
   const auth = getAuth();
   const user = auth.currentUser;
   const db = useContext(DatabaseContext);
-  // const { isOnline } = useUserConnection();
+  const { isOnline } = useUserConnection();
   // Database data hooks
   const [currentSessionData, setCurrentSessionData] = useState<CurrentSessionData | null>(null);
   const [drinkingSessionData, setDrinkingSessionData] = useState<DrinkingSessionData[] | []>([]);
@@ -178,6 +178,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
 
   }, [drinkingSessionData, visibleDateObject]);
 
+  if (!isOnline) return (<UserOffline/>);
 
   // Wait for the user data to be fetched from database
   if (
@@ -202,7 +203,6 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
     !preferences || 
     !userData
   ) return null;
-
 
   return (
     <>
