@@ -27,6 +27,7 @@ import { getAuth, signOut } from 'firebase/auth';
 import { dateToDateObject, getZeroUnitsObject, calculateThisMonthUnits } from '../utils/dataHandling';
 import { useUserConnection } from '../database/UserConnectionContext';
 import UserOffline from '../components/UserOffline';
+import { updateUserLastOnline } from '../database/users';
 
 const MainScreen = ( { navigation }: MainScreenProps) => {
   // Context, database, and authentification
@@ -92,12 +93,18 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
     });
   }
 
-  const handleInvalidData = () => {
-    signOut(auth);
-    navigation.replace("Login Screen");
-    Alert.alert("Database communication fail", "Failed to estabilsh communication with the database. Returning to the login screen.");
-    return null;
-  };
+  // Update the user last login time
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        await updateUserLastOnline(db, user.uid);
+      } catch (error:any) {
+        Alert.alert("Failed to contact the database", "Could not update user online status:" + error.message);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   // Monitor current session data
   useEffect(() => {

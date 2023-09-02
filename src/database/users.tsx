@@ -155,6 +155,20 @@ export async function discardDrinkingSessionData(
   } 
 }
 
+export async function updateUserLastOnline(
+  db: any,
+  userId: string,
+ ){
+  let lastOnline:number = new Date().getTime();
+  let updates: {[key:string]: number} = {};
+  updates[`users/${userId}/last_online`] = lastOnline;
+  try {
+    await update(ref(db), updates);
+  } catch (error:any) {
+    throw new Error('Failed to update user online status: ' + error.message);
+  };
+};
+
 /** Reauthentificate a user using the User object and a password
  * Necessary before important operations such as deleting a user 
  * or changing a password.
