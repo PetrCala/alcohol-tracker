@@ -12,15 +12,18 @@ import {
 } from 'react-native';
 import { Alert } from 'react-native';
 import { getAuth, signOut } from 'firebase/auth';
-
 import { signInUserWithEmailAndPassword } from '../auth/auth';
+
 import { LoginScreenProps } from '../types/screens';
 import LoadingData from '../components/LoadingData';
+import { useUserConnection } from '../database/UserConnectionContext';
+import UserOffline from '../components/UserOffline';
 
 
 const LoginScreen = ( {navigation }: LoginScreenProps) => {
   if (!navigation) return null; // Should never be null
   const auth = getAuth();
+  const { isOnline } = useUserConnection();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loadingUser, setLoadingUser] = useState<boolean>(true);
@@ -57,7 +60,6 @@ const LoginScreen = ( {navigation }: LoginScreenProps) => {
    */
   const handleInvalidLogin = (error:any) => {
     const err = error.message;
-    // Invalid email error
     if (err.includes('auth/invalid-email')){
       setWarning('Invalid email');
     } else if (err.includes('auth/missing-password')){
@@ -66,6 +68,8 @@ const LoginScreen = ( {navigation }: LoginScreenProps) => {
       setWarning('User not found')
     } else if (err.includes('auth/wrong-password')){
       setWarning('Incorrect password')
+    } else if (err.includes('auth/network-request-failed')){
+        setWarning('You are offline');
     } else {
       // Uncaught error
       return Alert.alert("Error Creating User", "There was an error creating a new user: " + error.message);

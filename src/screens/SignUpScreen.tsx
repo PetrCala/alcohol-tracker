@@ -119,6 +119,8 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
       setWarning('Your password is too weak - password should be at least 6 characters')
     } else if (err.includes('auth/email-already-in-use')){
       setWarning('This email is already in use')
+    } else if (err.includes('auth/network-request-failed')){
+        setWarning('You are offline');
     } else {
       // Uncaught error
       return Alert.alert("Error Creating User", "There was an error creating a new user: " + error.message);
