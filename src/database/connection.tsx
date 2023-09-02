@@ -19,12 +19,16 @@ export function handleUserConnection(
     let userConnectionRef = ref(db, `users/${userId}/connections`);
     let lastOnlineRef = ref(db, `users/${userId}/last_online`);
   
+    let con: any = null; // Initialize a variable to store the new connection reference
+
     const listener = onValue(connectedRef, (snapshot) => {
       if (snapshot.val() === true) {
         setIsOnline(true);
-        const con = push(userConnectionRef);
-        onDisconnect(con).remove();
-        set(con, true);
+  
+        con = push(userConnectionRef); // Create a new connection entry
+        set(con, true); // Set the value of the new entry to true
+  
+        onDisconnect(con).remove(); // Remove the new entry when the user disconnects
         onDisconnect(lastOnlineRef).set(serverTimestamp());
       } else {
         setIsOnline(false);
