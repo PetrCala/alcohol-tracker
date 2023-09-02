@@ -39,6 +39,7 @@ export async function pushNewUserInfo(
   let userRole = appInBeta ? 'beta_user' : 'user'; // Beta feature
   let newUserData:UserData = {
     role: userRole,
+    last_online: timestampNow,
     beta_key_id: betaKeyId, // Beta feature
   };
   // Allowed types

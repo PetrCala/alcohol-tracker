@@ -76,6 +76,8 @@ export type UnconfirmedDaysData = {
 
 export type UserData = {
   role: string;
+  last_online: number;
+  connections?: {connection_id: string}; // Connection instances
   beta_key_id?: string;
 }
 

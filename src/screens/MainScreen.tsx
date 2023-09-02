@@ -25,12 +25,14 @@ import { MainScreenProps } from '../types/screens';
 import { DateObject } from '../types/components';
 import { getAuth, signOut } from 'firebase/auth';
 import { dateToDateObject, getZeroUnitsObject, calculateThisMonthUnits } from '../utils/dataHandling';
+import { useUserConnection } from '../database/UserConnectionContext';
 
 const MainScreen = ( { navigation }: MainScreenProps) => {
   // Context, database, and authentification
   const auth = getAuth();
   const user = auth.currentUser;
   const db = useContext(DatabaseContext);
+  const { isOnline } = useUserConnection();
   // Database data hooks
   const [currentSessionData, setCurrentSessionData] = useState<CurrentSessionData | null>(null);
   const [drinkingSessionData, setDrinkingSessionData] = useState<DrinkingSessionData[] | []>([]);
