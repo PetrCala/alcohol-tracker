@@ -18,13 +18,13 @@ import MenuIcon from '../components/Buttons/MenuIcon';
 import SessionsCalendar from '../components/Calendar';
 import LoadingData from '../components/LoadingData';
 import DatabaseContext from '../context/DatabaseContext';
-import { listenForDataChanges } from "../database/baseFunctions";
+import { listenForDataChanges, readDataOnce } from "../database/baseFunctions";
 import { updateDrinkingSessionUserData } from '../database/drinkingSessions';
-import { CurrentSessionData, DrinkingSessionData, PreferencesData, UnconfirmedDaysData, UnitTypesProps, UserData } from '../types/database';
+import { CurrentSessionData, DrinkingSessionArrayItem, DrinkingSessionData, PreferencesData, UnconfirmedDaysData, UnitTypesProps, UserData } from '../types/database';
 import { MainScreenProps } from '../types/screens';
 import { DateObject } from '../types/components';
 import { getAuth, signOut } from 'firebase/auth';
-import { dateToDateObject, getZeroUnitsObject, calculateThisMonthUnits } from '../utils/dataHandling';
+import { dateToDateObject, getZeroUnitsObject, calculateThisMonthUnits, findOngoingSession } from '../utils/dataHandling';
 import { useUserConnection } from '../context/UserConnectionContext';
 import UserOffline from '../components/UserOffline';
 import { updateUserLastOnline } from '../database/users';
@@ -37,7 +37,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
   const { isOnline } = useUserConnection();
   // Database data hooks
   const [currentSessionData, setCurrentSessionData] = useState<CurrentSessionData | null>(null);
-  const [drinkingSessionData, setDrinkingSessionData] = useState<DrinkingSessionData[] | []>([]);
+  const [drinkingSessionData, setDrinkingSessionData] = useState<DrinkingSessionArrayItem[]>([]);
   const [preferences, setPreferences] = useState<PreferencesData | null>(null);
   const [unconfirmedDays, setUnconfirmedDays] = useState<UnconfirmedDaysData | null>(null);
   const [userData, setUserData] = useState<UserData | null>(null);
@@ -62,33 +62,23 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
 
   // Handle drinking session button press
   const startDrinkingSession = async () => {
-    if (currentSessionData == null){
-      throw new Error("The user" + user.displayName + " has no data in the database.")
-    }
     if (!preferences) return null; // Should never be null
-    let startingUnits = currentSessionData.current_units;
-    let sessionStartTime = currentSessionData.last_session_started;
-    if (!currentSessionData.in_session){
-      let startingUnits: UnitTypesProps = getZeroUnitsObject();
-      sessionStartTime = Date.now();
-      let updates: {[key: string]: any} = {};
-      updates[`user_current_session/${user.uid}/current_units`] = startingUnits;
-      updates[`user_current_session/${user.uid}/in_session`] = true;
-      updates[`user_current_session/${user.uid}/last_session_started`] = sessionStartTime;
-      updates[`user_current_session/${user.uid}/last_unit_added`] = sessionStartTime;
-      try {
-        await updateDrinkingSessionUserData(db, updates);
-      } catch (error: any) {
-          Alert.alert('Could not start new session', 'Failed to start a new session: ' + error.message);
-      }
-    }
+    let sessionData:DrinkingSessionArrayItem;
+    let ongoingSession = findOngoingSession(drinkingSessionData);
+    if (!ongoingSession){
+      // The user is not in an active session
+      sessionData = {
+        start_time: Date.now(),
+        end_time: Date.now(), // Will be overwritten
+        units: {},
+        ongoing: true
+      };
+    } else {
+      // The user already has an active session
+      sessionData = ongoingSession;
+    };
     navigation.navigate("Drinking Session Screen", {
-      current_session_data: {
-        current_units: startingUnits,
-        in_session: true,
-        last_session_started: sessionStartTime,
-        last_unit_added: sessionStartTime
-      },
+      session: sessionData,
       preferences: preferences
     });
   }
@@ -121,13 +111,13 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
   // Monitor drinking session data
   useEffect(() => {
     // Start listening for changes when the component mounts
+    let newDrinkingSessionData:DrinkingSessionArrayItem[];
     let sessionsRef = `user_drinking_sessions/${user.uid}`
-    let stopListening = listenForDataChanges(db, sessionsRef, (data:any) => {
-      let newDrinkingSessionData:DrinkingSessionData[] = []; // Handles cases with no data
+    let stopListening = listenForDataChanges(db, sessionsRef, (data:DrinkingSessionData) => {
       if (data != null){
         newDrinkingSessionData = Object.values(data); // To an array
+        setDrinkingSessionData(newDrinkingSessionData);
       }
-      setDrinkingSessionData(newDrinkingSessionData);
       setLoadingDrinkingSessionData(false);
     });
 
@@ -258,7 +248,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
           </View>
       </View>
       <ScrollView style={styles.mainScreenContent}>
-          {currentSessionData?.in_session ?
+          {currentSessionData?.current_session_id ?
           <TouchableOpacity 
             style={styles.userInSessionWarningContainer}
             onPress={startDrinkingSession}
@@ -288,7 +278,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
             }}
           />
       </ScrollView>
-      {currentSessionData?.in_session ? <></> :
+      {currentSessionData?.current_session_id ? <></> :
       <BasicButton 
         text='+'
         buttonStyle={styles.startSessionButton}

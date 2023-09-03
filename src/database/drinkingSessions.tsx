@@ -1,5 +1,5 @@
 ﻿import { ref, child, update, push } from "firebase/database";
-import { DrinkingSessionData, UnitTypesProps, CurrentSessionData } from "../types/database";
+import { DrinkingSessionData, UnitTypesProps, CurrentSessionData, DrinkingSessionArrayItem } from "../types/database";
 import { getZeroUnitsObject } from "../utils/dataHandling";
 
 
@@ -10,15 +10,11 @@ import { getZeroUnitsObject } from "../utils/dataHandling";
 export async function saveDrinkingSessionData(
   db: any, 
   userId: string, 
-  newSessionData: DrinkingSessionData,
+  newSessionData: DrinkingSessionArrayItem,
   ) {
   let newDrinkingSessionKey: string | null = null;
-  let newUnits = getZeroUnitsObject();
   let newCurrentSessionData: CurrentSessionData = {
-    current_units: newUnits,
-    in_session: false,
-    last_session_started: newSessionData.start_time, // Otherwise gets deleted
-    last_unit_added: newSessionData.last_unit_added_time, // Otherwise gets deleted
+    current_session_id: null, 
   };
   var updates: { [key: string]: DrinkingSessionData | CurrentSessionData} = {};
   // Generate a new automatic key for the new drinking session

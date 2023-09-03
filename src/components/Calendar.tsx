@@ -21,7 +21,7 @@ import {
     SessionsCalendarProps,
     SessionsCalendarMarkedDates
 } from '../types/components';
-import { DrinkingSessionData } from '../types/database';
+import { DrinkingSessionArrayItem, DrinkingSessionData } from '../types/database';
 import { DateObject, DayState } from '../types/components';
 import LoadingData from './LoadingData';
 
@@ -90,7 +90,7 @@ const SessionsCalendar = ({
     setVisibleDateObject,
     onDayPress
 }: SessionsCalendarProps) => {
-    const [calendarData, setCalendarData ] = useState<DrinkingSessionData[] | null>(drinkingSessionData);
+    const [calendarData, setCalendarData ] = useState<DrinkingSessionArrayItem[] | null>(drinkingSessionData);
     const [markedDates, setMarkedDates] = useState<SessionsCalendarMarkedDates>({});
     
     type DatesType = {
@@ -99,10 +99,10 @@ const SessionsCalendar = ({
         }
     }
 
-    const aggregateSessionsByDays = (sessions: DrinkingSessionData[]): DatesType => {
+    const aggregateSessionsByDays = (sessions: DrinkingSessionArrayItem[]): DatesType => {
         return sessions.reduce((
             acc: DatesType,
-            item: DrinkingSessionData
+            item: DrinkingSessionArrayItem
         ) => {
             let dateString = formatDate(new Date(item.start_time)); // MM-DD-YYYY
             let newUnits:number = sumAllUnits(item.units);
@@ -187,7 +187,7 @@ const SessionsCalendar = ({
      * @returns Marked dates as a JSON type object
      */
 
-    const getMarkedDates = (date: Date, drinkingSessionData: DrinkingSessionData[]): SessionsCalendarMarkedDates => {
+    const getMarkedDates = (date: Date, drinkingSessionData: DrinkingSessionArrayItem[]): SessionsCalendarMarkedDates => {
         if (!drinkingSessionData) return {};
 
         // Check whether the current month is already marked

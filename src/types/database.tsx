@@ -38,10 +38,25 @@ export type FeedbackData = {
 }
 
 export type CurrentSessionData = {
-  current_units: UnitTypesProps;
-  in_session: boolean;
-  last_session_started: number;
-  last_unit_added: number;
+  current_session_id: string | null;
+};
+
+export type DrinkingSessionData = {
+  [session_id: string]: {
+    start_time: number;
+    end_time: number;
+    units: UnitsObject;
+    blackout?: boolean;
+    note?: string;
+    ongoing?: boolean | null;
+  };
+};
+
+/** Type for drinking session data when stored as an array */
+export type DrinkingSessionArrayItem = Omit<DrinkingSessionData[string], 'session_id'>;
+
+export type UnitsObject = {
+  [timestamp: number]: UnitTypesProps;
 };
 
 /** An array that represents all available alcohol units
@@ -59,15 +74,7 @@ export const UnitTypesKeys = [
   'wine'
 ] as const;  // Infer a readonly tuple
 
-export type UnitTypesProps = Record<typeof UnitTypesKeys[number], number>;
-
-export type DrinkingSessionData = {
-  end_time: number;
-  last_unit_added_time: number;
-  session_id: string;
-  start_time: number;
-  units: UnitTypesProps;
-};
+export type UnitTypesProps = Partial<Record<typeof UnitTypesKeys[number], number>>;
 
 export type UnitsToColorsData = {
   yellow: number;

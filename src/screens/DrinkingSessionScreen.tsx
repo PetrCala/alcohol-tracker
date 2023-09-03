@@ -22,7 +22,7 @@ import { saveDrinkingSessionData } from '../database/drinkingSessions';
 import SessionUnitsInputWindow from '../components/Buttons/SessionUnitsInputWindow';
 import { formatDateToDay, formatDateToTime, sumAllUnits, timestampToDate, unitsToColors } from '../utils/dataHandling';
 import { getAuth } from 'firebase/auth';
-import { DrinkingSessionData, UnitTypesProps } from '../types/database';
+import { DrinkingSessionArrayItem, DrinkingSessionData, UnitTypesProps } from '../types/database';
 import DrinkingSessionUnitWindow from '../components/DrinkingSessionUnitWindow';
 import { maxAllowedUnits } from '../utils/static';
 import YesNoPopup from '../components/Popups/YesNoPopup';
@@ -33,22 +33,27 @@ import UserOffline from '../components/UserOffline';
 const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps) => {
   // Navigation
   if (!route || ! navigation) return null; // Should never be null
-  const { current_session_data, preferences }  = route.params;
-  const { current_units, in_session, last_session_started, last_unit_added } = current_session_data;
+  const { session, preferences }  = route.params;
   // Context, database, and authentification
   const auth = getAuth();
   const user = auth.currentUser;
   const db = useContext(DatabaseContext);
   const { isOnline } = useUserConnection();
   // Units
-  const [totalUnits, setTotalUnits] = useState<number>(sumAllUnits(current_units));
+  const [totalUnits, setTotalUnits] = useState<number>(sumAllUnits(session.units));
   const [availableUnits, setAvailableUnits] = useState<number>(maxAllowedUnits - totalUnits);
-  const [beerUnits, setBeerUnits] = useState(current_units.beer)
-  const [cocktailUnits, setCocktailUnits] = useState(current_units.cocktail)
-  const [otherUnits, setOtherUnits] = useState(current_units.other)
-  const [strongShotUnits, setStrongShotUnits] = useState(current_units.strong_shot)
-  const [weakShotUnits, setWeakShotUnits] = useState(current_units.weak_shot)
-  const [wineUnits, setWineUnits] = useState(current_units.wine)
+  // const [beerUnits, setBeerUnits] = useState(current_units.beer)
+  // const [cocktailUnits, setCocktailUnits] = useState(current_units.cocktail)
+  // const [otherUnits, setOtherUnits] = useState(current_units.other)
+  // const [strongShotUnits, setStrongShotUnits] = useState(current_units.strong_shot)
+  // const [weakShotUnits, setWeakShotUnits] = useState(current_units.weak_shot)
+  // const [wineUnits, setWineUnits] = useState(current_units.wine)
+  const [beerUnits, setBeerUnits] = useState(0)
+  const [cocktailUnits, setCocktailUnits] = useState(0)
+  const [otherUnits, setOtherUnits] = useState(0)
+  const [strongShotUnits, setStrongShotUnits] = useState(0)
+  const [weakShotUnits, setWeakShotUnits] = useState(0)
+  const [wineUnits, setWineUnits] = useState(0)
   const allUnits:UnitTypesProps = {
     beer: beerUnits,
     cocktail: cocktailUnits,
@@ -58,7 +63,6 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
     wine: wineUnits,
   };
   // Time info
-  const [lastUnitAdded, setLastUnitAdded] = useState<number>(last_unit_added);
   const [pendingUpdate, setPendingUpdate] = useState(false);
   const updateTimeout = 1000; // Synchronize with DB every x milliseconds
   const sessionDate = timestampToDate(last_session_started);
@@ -139,12 +143,11 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
     };
     // Save the data into the database
     if (totalUnits > 0){
-      let newSessionData: DrinkingSessionData = {
+      let newSessionData: DrinkingSessionArrayItem = {
+        start_time: session.start_time,
         end_time: Date.now(),
-        last_unit_added_time: lastUnitAdded,
-        session_id: 'placeholder-id', // Will be replaced during the call
-        start_time: last_session_started,
-        units: allUnits
+        units: allUnits,
+        ongoing: null,
       };
       try {
         await saveDrinkingSessionData(db, userId, newSessionData); // Save drinking session data

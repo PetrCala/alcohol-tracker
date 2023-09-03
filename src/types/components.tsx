@@ -1,5 +1,5 @@
 ﻿import { ImageSourcePropType } from "react-native";
-import { DrinkingSessionData, FeedbackData, PreferencesData, UserData } from "./database";
+import { DrinkingSessionArrayItem, DrinkingSessionData, FeedbackData, PreferencesData, UserData } from "./database";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { AppStackParamList } from "./screens";
 
@@ -67,7 +67,7 @@ export type AdminFeedbackPopupProps = {
 // Sessions calendar props
 
 export type SessionsCalendarProps = {
-    drinkingSessionData: DrinkingSessionData[];
+    drinkingSessionData: DrinkingSessionArrayItem[];
     preferences: PreferencesData;
     visibleDateObject: DateObject;
     setVisibleDateObject: React.Dispatch<React.SetStateAction<DateObject>>;

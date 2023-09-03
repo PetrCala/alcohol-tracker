@@ -1,4 +1,4 @@
-﻿import { DrinkingSessionData, UnitTypesProps, UnitsToColorsData } from "../types/database";
+﻿import { DrinkingSessionArrayItem, UnitTypesProps, UnitsObject, UnitsToColorsData } from "../types/database";
 import { DateObject } from "../types/components";
 
 export function formatDate (date: Date): string {
@@ -120,7 +120,7 @@ export function setDateToCurrentTime(inputDate: Date): Date {
  * @param sessions An array of sessions to subset
  * @returns The subsetted array of sessions
  */
-export function getSingleDayDrinkingSessions(date: Date, sessions: DrinkingSessionData[]) {
+export function getSingleDayDrinkingSessions(date: Date, sessions: DrinkingSessionArrayItem[]) {
     // Define the time boundaries
     date.setHours(0, 0, 0, 0); // set to start of day
     
@@ -145,7 +145,7 @@ export function getSingleDayDrinkingSessions(date: Date, sessions: DrinkingSessi
  * @param untilToday If true, include no sessions that occured after today
  * @returns The subsetted array of sessions
  */
-export function getSingleMonthDrinkingSessions(date: Date, sessions: DrinkingSessionData[], untilToday: boolean = false){
+export function getSingleMonthDrinkingSessions(date: Date, sessions: DrinkingSessionArrayItem[], untilToday: boolean = false){
     date.setHours(0, 0, 0, 0); // To midnight
     // Find the beginning date
     let firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
@@ -173,8 +173,17 @@ export function getSingleMonthDrinkingSessions(date: Date, sessions: DrinkingSes
  * 
  * @param all_units Units to sum up.
  */
-export function sumAllUnits(all_units: UnitTypesProps){
-    return Object.values(all_units).reduce((acc, curr) => acc + curr, 0);
+export function sumAllUnits(units: UnitsObject): number{
+    return Object.values(units).reduce((total, unitTypes) => {
+        return total + Object.values(unitTypes).reduce((subTotal, unitCount) => subTotal + (unitCount || 0), 0);
+    }, 0);
+};
+
+/** Out of an array of session items, return an a session that is ongoing. If there is no such session, return null
+ */
+export function findOngoingSession(sessions: DrinkingSessionArrayItem[]): DrinkingSessionArrayItem | null {
+    const ongoingSession = sessions.find(session => session.ongoing === true);
+    return ongoingSession ? ongoingSession : null;
 };
 
 /** Enter a dateObject and an array of drinking sessions and calculate 
@@ -184,7 +193,7 @@ export function sumAllUnits(all_units: UnitTypesProps){
  * @param sessions Array of drinking sessions
  * @returns Number of units consumed during the current month
  */
-export const calculateThisMonthUnits = (dateObject: DateObject, sessions: DrinkingSessionData[]): number => {
+export const calculateThisMonthUnits = (dateObject: DateObject, sessions: DrinkingSessionArrayItem[]): number => {
     // Subset to this month's sessions only
     const currentDate = timestampToDate(dateObject.timestamp);
     const sessionsThisMonth = getSingleMonthDrinkingSessions(
@@ -197,32 +206,44 @@ export const calculateThisMonthUnits = (dateObject: DateObject, sessions: Drinki
 /** Generate an object with all available units where 
  * each unit's value is set to 0.
  */
-export const getZeroUnitsObject = ():UnitTypesProps => {
+export const getZeroUnitsObject = ():UnitsObject => {
     return {
-        beer: 0,
-        cocktail: 0,
-        other: 0,
-        strong_shot: 0,
-        weak_shot: 0,
-        wine: 0,
+        [Date.now()]: {
+            beer: 0,
+            cocktail: 0,
+            other: 0,
+            strong_shot: 0,
+            weak_shot: 0,
+            wine: 0,
+        }
     };
 };
 
 /** Generate an object with all available units where 
  * each unit's value is set to a random integer.
  */
-export const getRandomUnitsObject = (maxUnitValue:number = 30):UnitTypesProps => {
-    // Create an object with all keys set to 0
-    let obj = getZeroUnitsObject();
+export const getRandomUnitsObject = (maxUnitValue:number = 30):UnitsObject => {
+    return {
+        [Date.now()]: {
+            beer: 2,
+            cocktail: 4,
+            other: 3,
+            strong_shot: 0,
+            weak_shot: 1,
+            wine: 0,
+        }
+    };
+    // // Create an object with all keys set to 0
+    // let obj = getZeroUnitsObject();
 
-    // Create an array of all keys in UnitTypesProps type
-    const keys = Object.keys(obj) as (keyof UnitTypesProps)[];
+    // // Create an array of all keys in UnitTypesProps type
+    // const keys = Object.keys(obj) as (keyof UnitTypesProps)[];
 
-    keys.forEach(key => {
-        obj[key] = Math.floor(Math.random() * maxUnitValue);
-    });
+    // keys.forEach(key => {
+    //     obj[key] = Math.floor(Math.random() * maxUnitValue);
+    // });
 
-    return obj;
+    // return obj;
 };
 
 
