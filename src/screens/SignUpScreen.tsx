@@ -13,12 +13,12 @@ import {
 } from 'react-native';
 import { getAuth, updateProfile } from 'firebase/auth';
 import { signUpUserWithEmailAndPassword } from '../auth/auth';
-import DatabaseContext from '../database/DatabaseContext';
+import DatabaseContext from '../context/DatabaseContext';
 import { SignUpScreenProps } from '../types/screens';
 import { pushNewUserInfo } from '../database/users';
 import { readDataOnce } from '../database/baseFunctions';
 import { BetaKeysData, validateBetaKey } from '../database/beta';
-import { useUserConnection } from '../database/UserConnectionContext';
+import { useUserConnection } from '../context/UserConnectionContext';
 
 const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
   if (!route || ! navigation) return null; // Should never be null

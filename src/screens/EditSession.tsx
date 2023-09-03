@@ -15,7 +15,7 @@ import MenuIcon from '../components/Buttons/MenuIcon';
 import BasicButton from '../components/Buttons/BasicButton';
 import { EditSessionScreenProps} from '../types/screens';
 import { DrinkingSessionData, UnitTypesProps } from '../types/database';
-import DatabaseContext from '../database/DatabaseContext';
+import DatabaseContext from '../context/DatabaseContext';
 import { removeDrinkingSessionData, editDrinkingSessionData } from '../database/drinkingSessions';
 import SessionUnitsInputWindow from '../components/Buttons/SessionUnitsInputWindow';
 import { formatDateToDay, formatDateToTime, sumAllUnits, timestampToDate, unitsToColors } from '../utils/dataHandling';
@@ -23,7 +23,7 @@ import { getAuth } from 'firebase/auth';
 import DrinkingSessionUnitWindow from '../components/DrinkingSessionUnitWindow';
 import { maxAllowedUnits } from '../utils/static';
 import YesNoPopup from '../components/Popups/YesNoPopup';
-import { useUserConnection } from '../database/UserConnectionContext';
+import { useUserConnection } from '../context/UserConnectionContext';
 import UserOffline from '../components/UserOffline';
 
 

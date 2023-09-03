@@ -17,7 +17,7 @@ import BasicButton from '../components/Buttons/BasicButton';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import SessionsCalendar from '../components/Calendar';
 import LoadingData from '../components/LoadingData';
-import DatabaseContext from '../database/DatabaseContext';
+import DatabaseContext from '../context/DatabaseContext';
 import { listenForDataChanges } from "../database/baseFunctions";
 import { updateDrinkingSessionUserData } from '../database/drinkingSessions';
 import { CurrentSessionData, DrinkingSessionData, PreferencesData, UnconfirmedDaysData, UnitTypesProps, UserData } from '../types/database';
@@ -25,7 +25,7 @@ import { MainScreenProps } from '../types/screens';
 import { DateObject } from '../types/components';
 import { getAuth, signOut } from 'firebase/auth';
 import { dateToDateObject, getZeroUnitsObject, calculateThisMonthUnits } from '../utils/dataHandling';
-import { useUserConnection } from '../database/UserConnectionContext';
+import { useUserConnection } from '../context/UserConnectionContext';
 import UserOffline from '../components/UserOffline';
 import { updateUserLastOnline } from '../database/users';
 
@@ -164,7 +164,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
 
   }, [db, user]);
 
-  // Monitor user dataj
+  // Monitor user data
   useEffect(() => {
     let userRef = `users/${user.uid}`
     let stopListening = listenForDataChanges(db, userRef, (data:UserData) => {

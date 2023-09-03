@@ -16,7 +16,7 @@ import {
 import MenuIcon from '../components/Buttons/MenuIcon';
 import YesNoPopup from '../components/Popups/YesNoPopup';
 import { EmailAuthProvider, UserCredential, deleteUser, getAuth, reauthenticateWithCredential, signOut } from 'firebase/auth';
-import DatabaseContext from '../database/DatabaseContext';
+import DatabaseContext from '../context/DatabaseContext';
 import { deleteUserInfo, reauthentificateUser } from '../database/users';
 import FeedbackPopup from '../components/Popups/FeedbackPopup';
 import { submitFeedback } from '../database/feedback';
@@ -26,7 +26,7 @@ import { FeedbackData } from '../types/database';
 import { listenForDataChanges, readDataOnce } from '../database/baseFunctions';
 import ReauthentificatePopup from '../components/Popups/ReauthentificatePopup';
 import UserOffline from '../components/UserOffline';
-import { useUserConnection } from '../database/UserConnectionContext';
+import { useUserConnection } from '../context/UserConnectionContext';
 
 const MenuItem: React.FC<SettingsItemProps> = ({
     heading,

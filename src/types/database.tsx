@@ -1,5 +1,6 @@
 ﻿/** Main database props object */
 export type DatabaseProps = {
+  config: ConfigProps,
   feedback: FeedbackData,
   user_current_session: {
     [user_id: string]: CurrentSessionData
@@ -17,6 +18,14 @@ export type DatabaseProps = {
     [user_id: string] : UserData
   }
 };
+
+export type ConfigProps = {
+  app_settings: AppSettings;
+};
+
+export type AppSettings = {
+  min_supported_version: string;
+}
 
 export type FeedbackProps = {
   submit_time: number;

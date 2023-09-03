@@ -19,14 +19,14 @@ import {
     getZeroUnitsObject
 } from '../utils/dataHandling';
 import { useContext } from 'react';
-import DatabaseContext from '../database/DatabaseContext';
+import DatabaseContext from '../context/DatabaseContext';
 import LoadingData from '../components/LoadingData';
 import { DrinkingSessionProps, DrinkingSessionData } from '../types/database';
 import { DayOverviewScreenProps } from '../types/screens';
 import { listenForDataChanges } from '../database/baseFunctions';
 import { getAuth } from 'firebase/auth';
 import UserOffline from '../components/UserOffline';
-import { useUserConnection } from '../database/UserConnectionContext';
+import { useUserConnection } from '../context/UserConnectionContext';
 
 
 const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {

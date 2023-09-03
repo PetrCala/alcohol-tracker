@@ -16,7 +16,7 @@ import { signInUserWithEmailAndPassword } from '../auth/auth';
 
 import { LoginScreenProps } from '../types/screens';
 import LoadingData from '../components/LoadingData';
-import { useUserConnection } from '../database/UserConnectionContext';
+import { useUserConnection } from '../context/UserConnectionContext';
 
 
 const LoginScreen = ( {navigation }: LoginScreenProps) => {

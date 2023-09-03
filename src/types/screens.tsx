@@ -6,6 +6,7 @@ import { DateObject } from './components';
 
 export type AppStackParamList = {
   'Login Screen': undefined;
+  'Force Update Screen': undefined;
   'Sign Up Screen': {
     loginEmail: string;
   };
@@ -37,8 +38,12 @@ export type AppStackParamList = {
   'Terms And Agreements Screen': undefined;
 };
 
+export type ForceUpdateScreen = {
+  navigation?: StackNavigationProp<AppStackParamList, 'Force Update Screen'>;
+}
+
 export type LoginScreenProps = {
-    navigation?: StackNavigationProp<AppStackParamList, 'Login Screen'>;
+  navigation?: StackNavigationProp<AppStackParamList, 'Login Screen'>;
 }
 
 export type SignUpScreenProps = {

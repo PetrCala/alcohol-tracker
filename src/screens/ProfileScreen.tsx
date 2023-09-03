@@ -12,7 +12,7 @@ import {
 import MenuIcon from '../components/Buttons/MenuIcon';
 import BasicButton from '../components/Buttons/BasicButton';
 
-import DatabaseContext from '../database/DatabaseContext';
+import DatabaseContext from '../context/DatabaseContext';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 type ProfileProps = {

@@ -16,7 +16,7 @@ export async function readDataOnce(db: any, refString: string) {
     return null;
   } catch (error:any){
     throw new Error("Failed to retrieve user data:" + error.message);
-  }
+  };
 }
 
 // Main listener for drinking session data changes.

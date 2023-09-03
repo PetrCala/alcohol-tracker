@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState, version } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { initializeApp } from "firebase/app";
@@ -6,6 +6,7 @@ import { getDatabase } from "firebase/database";
 import { getAuth } from 'firebase/auth';
 import firebaseConfig from "../firebaseConfig";
 
+import ForceUpdateScreen from './screens/ForceUpdateScreen';
 import LoginScreen from './screens/LoginScreen';
 import SignUpScreen from './screens/SignUpScreen';
 import MainScreen from './screens/MainScreen';
@@ -20,8 +21,7 @@ import SessionSummaryScreen from './screens/SessionSummaryScreen';
 import TermsAndAgreementsScreen from './screens/TermsAndAgreementsScreen';
 import MainMenuScreen from './screens/MainMenuScreen';
 
-import DatabaseContext from './database/DatabaseContext';
-import { UserConnectionProvider } from './database/UserConnectionContext';
+import ContextProvider from './context/context';
 
 const app = initializeApp(firebaseConfig);
 
@@ -32,8 +32,7 @@ const Stack = createNativeStackNavigator();
 
 const AlcoholTracker = () => {
   return (
-    <DatabaseContext.Provider value={db}>
-    <UserConnectionProvider>
+    <ContextProvider db={db}>
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{
@@ -43,6 +42,11 @@ const AlcoholTracker = () => {
           <Stack.Screen
             name = 'Login Screen'
             component={LoginScreen}
+            options={{}}
+          />
+          <Stack.Screen
+            name = 'Force Update Screen'
+            component={ForceUpdateScreen}
             options={{}}
           />
           <Stack.Screen
@@ -107,8 +111,7 @@ const AlcoholTracker = () => {
           />
         </Stack.Navigator>
       </NavigationContainer>
-    </UserConnectionProvider>
-    </DatabaseContext.Provider>
+    </ContextProvider>
   );
 };
 
