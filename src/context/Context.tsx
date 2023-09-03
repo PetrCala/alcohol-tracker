@@ -9,7 +9,7 @@ type ContextProviderProps = {
     children: ReactNode;
 };
 
-const ContextProvider:React.FC<ContextProviderProps>  = ({ db, children }) => (
+export const ContextProvider:React.FC<ContextProviderProps>  = ({ db, children }) => (
     <DatabaseContext.Provider value={db}>
       <UserConnectionProvider>
         <VersionManagementProvider>
@@ -18,5 +18,3 @@ const ContextProvider:React.FC<ContextProviderProps>  = ({ db, children }) => (
       </UserConnectionProvider>
     </DatabaseContext.Provider>
   );
-
-export default ContextProvider;

@@ -21,7 +21,7 @@ import SessionSummaryScreen from './screens/SessionSummaryScreen';
 import TermsAndAgreementsScreen from './screens/TermsAndAgreementsScreen';
 import MainMenuScreen from './screens/MainMenuScreen';
 
-import ContextProvider from './context/context';
+import { ContextProvider } from './context/Context';
 
 const app = initializeApp(firebaseConfig);
 
