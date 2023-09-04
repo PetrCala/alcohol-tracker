@@ -1,4 +1,4 @@
-﻿import { DrinkingSessionArrayItem, UnitTypesProps, UnitsObject, UnitsToColorsData } from "../types/database";
+﻿import { DrinkingSessionArrayItem, UnitTypesKeys, UnitTypesProps, UnitsObject, UnitsToColorsData } from "../types/database";
 import { DateObject } from "../types/components";
 
 export function formatDate (date: Date): string {
@@ -176,6 +176,17 @@ export function getSingleMonthDrinkingSessions(date: Date, sessions: DrinkingSes
 export function sumAllUnits(units: UnitsObject): number{
     return Object.values(units).reduce((total, unitTypes) => {
         return total + Object.values(unitTypes).reduce((subTotal, unitCount) => subTotal + (unitCount || 0), 0);
+    }, 0);
+};
+
+/** Sum up units of a specific type of alcohol across multiple sessions
+ * 
+ * @param unitsObject UnitsObject to sum up.
+ * @param unitType The type of unit to sum.
+ */
+export function sumUnitsOfSingleType(unitsObject: UnitsObject, unitType: typeof UnitTypesKeys[number]): number {
+    return Object.values(unitsObject).reduce((total, session) => {
+        return total + (session[unitType] || 0);
     }, 0);
 };
 

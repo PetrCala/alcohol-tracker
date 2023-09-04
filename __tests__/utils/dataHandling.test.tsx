@@ -15,6 +15,7 @@
     getZeroUnitsObject, 
     setDateToCurrentTime, 
     sumAllUnits, 
+    sumUnitsOfSingleType, 
     timestampToDate, 
     unitsToColors
 } from "../../src/utils/dataHandling";
@@ -467,6 +468,51 @@ describe('sumAllUnits', () => {
         const result = sumAllUnits(zeroUnits);
         expect(result).toBe(0);
       });
+});
+
+describe('sumUnitsOfSingleType function', () => {
+    let unitsData: UnitsObject;
+  
+    beforeEach(() => {
+      unitsData = {
+        1632423423: {
+          beer: 2,
+          cocktail: 1,
+          other: 3,
+        },
+        1632434223: {
+          other: 3,
+        },
+      };
+    });
+  
+    it('should return sum of specified unit type across all sessions', () => {
+      expect(sumUnitsOfSingleType(unitsData, 'beer')).toBe(2);
+      expect(sumUnitsOfSingleType(unitsData, 'cocktail')).toBe(1);
+      expect(sumUnitsOfSingleType(unitsData, 'other')).toBe(6);
+    });
+  
+    it('should return 0 if unit type does not exist in any of the sessions', () => {
+      expect(sumUnitsOfSingleType(unitsData, 'wine')).toBe(0);
+    });
+  
+    it('should return 0 if unitsObject is empty', () => {
+      const emptyUnitsData: UnitsObject = {};
+      expect(sumUnitsOfSingleType(emptyUnitsData, 'beer')).toBe(0);
+    });
+  
+    it('should handle a mix of existing and non-existing unit types', () => {
+      unitsData[1632434223].wine = 5;
+      expect(sumUnitsOfSingleType(unitsData, 'wine')).toBe(5);
+    });
+  
+    it('should handle undefined values without throwing errors', () => {
+      unitsData[1632434223] = {
+        beer: undefined,
+        wine: 5,
+      };
+      expect(sumUnitsOfSingleType(unitsData, 'beer')).toBe(2);
+    });
 });
 
 
