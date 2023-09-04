@@ -7,7 +7,7 @@
 import { SessionSummaryScreenProps} from '../types/screens';
 import { getAuth } from 'firebase/auth';
 import MenuIcon from '../components/Buttons/MenuIcon';
-import { formatDate, formatDateToDay, formatDateToTime, sumAllUnits, timestampToDate, unitsToColors } from '../utils/dataHandling';
+import { formatDate, formatDateToDay, formatDateToTime, sumAllUnits, sumUnitsOfSingleType, timestampToDate, unitsToColors } from '../utils/dataHandling';
 import BasicButton from '../components/Buttons/BasicButton';
 
 const SessionDataItem = ({
@@ -41,6 +41,14 @@ const SessionSummaryScreen = ({ route, navigation}: SessionSummaryScreenProps) =
     const { session, preferences } = route.params; 
     // Units info
     const totalUnits = sumAllUnits(session.units);
+    const unitSums = {
+        beer: sumUnitsOfSingleType(session.units, 'beer'),
+        wine: sumUnitsOfSingleType(session.units, 'wine'),
+        weak_shot: sumUnitsOfSingleType(session.units, 'weak_shot'),
+        strong_shot: sumUnitsOfSingleType(session.units, 'strong_shot'),
+        cocktail: sumUnitsOfSingleType(session.units, 'cocktail'),
+        other: sumUnitsOfSingleType(session.units, 'other'),
+    }
     // Time info
     const sessionStartDate = timestampToDate(session.start_time);
     // const lastUnitAddedDate = timestampToDate(last_unit_added_time);
@@ -65,12 +73,12 @@ const SessionSummaryScreen = ({ route, navigation}: SessionSummaryScreenProps) =
     
       const unitData = [
         { heading: 'Total:', data: totalUnits.toString() },
-        // { heading: 'Beer:', data: units.beer.toString() },
-        // { heading: 'Wine:', data: units.wine.toString() },
-        // { heading: 'Weak Shot:', data: units.weak_shot.toString() },
-        // { heading: 'Strong Shot:', data: units.strong_shot.toString() },
-        // { heading: 'Cocktail:', data: units.cocktail.toString() },
-        // { heading: 'Other:', data: units.other.toString() },
+        { heading: 'Beer:', data: unitSums.beer.toString() },
+        { heading: 'Wine:', data: unitSums.wine.toString() },
+        { heading: 'Weak Shot:', data: unitSums.weak_shot.toString() },
+        { heading: 'Strong Shot:', data: unitSums.strong_shot.toString() },
+        { heading: 'Cocktail:', data: unitSums.cocktail.toString() },
+        { heading: 'Other:', data: unitSums.other.toString() },
       ];
 
     return (

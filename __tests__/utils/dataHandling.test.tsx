@@ -517,7 +517,8 @@ describe('sumUnitsOfSingleType function', () => {
 
 
 describe('calculateThisMonthUnits', () => {
-    let mockDateObject: DateObject =  dateToDateObject(new Date()); // Today
+    let currentDate = new Date();
+    let mockDateObject: DateObject = dateToDateObject(currentDate);
     let twoBeers: UnitsObject = generateMockUnitsObject({beer: 2});
     let threeWines: UnitsObject = generateMockUnitsObject({wine: 3});
     let fourOther: UnitsObject = generateMockUnitsObject({other: 4});
