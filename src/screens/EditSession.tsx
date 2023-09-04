@@ -30,29 +30,28 @@ import UserOffline from '../components/UserOffline';
 const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
     if (!route || ! navigation) return null; // Should never be null
     const { session, preferences } = route.params; 
-    const { end_time, last_unit_added_time, session_id, start_time, units } = session;
     const auth = getAuth();
     const user = auth.currentUser;
     const { isOnline } = useUserConnection();
     // Units
-    const [totalUnits, setTotalUnits] = useState<number>(sumAllUnits(units));
+    const [totalUnits, setTotalUnits] = useState<number>(sumAllUnits(session.units));
     const [availableUnits, setAvailableUnits] = useState<number>(maxAllowedUnits - totalUnits);
-    const [beerUnits, setBeerUnits] = useState(units.beer)
-    const [cocktailUnits, setCocktailUnits] = useState(units.cocktail)
-    const [otherUnits, setOtherUnits] = useState(units.other)
-    const [strongShotUnits, setStrongShotUnits] = useState(units.strong_shot)
-    const [weakShotUnits, setWeakShotUnits] = useState(units.weak_shot)
-    const [wineUnits, setWineUnits] = useState(units.wine)
-    const allUnits:UnitTypesProps = {
-      beer: beerUnits,
-      cocktail: cocktailUnits,
-      other: otherUnits,
-      strong_shot: strongShotUnits,
-      weak_shot: weakShotUnits,
-      wine: wineUnits,
-    };
+    // const [beerUnits, setBeerUnits] = useState(units.beer)
+    // const [cocktailUnits, setCocktailUnits] = useState(units.cocktail)
+    // const [otherUnits, setOtherUnits] = useState(units.other)
+    // const [strongShotUnits, setStrongShotUnits] = useState(units.strong_shot)
+    // const [weakShotUnits, setWeakShotUnits] = useState(units.weak_shot)
+    // const [wineUnits, setWineUnits] = useState(units.wine)
+    // const allUnits:UnitTypesProps = {
+    //   beer: beerUnits,
+    //   cocktail: cocktailUnits,
+    //   other: otherUnits,
+    //   strong_shot: strongShotUnits,
+    //   weak_shot: weakShotUnits,
+    //   wine: wineUnits,
+    // };
     // Time info
-    const sessionDate = timestampToDate(start_time);
+    const sessionDate = timestampToDate(session.start_time);
     const sessionDay = formatDateToDay(sessionDate);
     const sessionStartTime = formatDateToTime(sessionDate);
     const db = useContext(DatabaseContext);

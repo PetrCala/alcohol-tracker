@@ -17,6 +17,7 @@ export type AppStackParamList = {
   };
   'Drinking Session Screen': { 
     session: DrinkingSessionArrayItem;
+    sessionKey: string;
     preferences: PreferencesData;
   };
   'Profile Screen': undefined;
@@ -24,15 +25,16 @@ export type AppStackParamList = {
   'Achievement Screen': undefined;
   'Settings Screen': undefined;
   'Day Overview Screen': { 
-    date_object: DateObject;
+    dateObject: DateObject;
+    drinkingSessionData: DrinkingSessionArrayItem[];
     preferences: PreferencesData;
   };
   'Edit Session Screen': {
-    session: DrinkingSessionData;
+    session: DrinkingSessionArrayItem;
     preferences: PreferencesData;
   };
   'Session Summary Screen': {
-    session: DrinkingSessionData;
+    session: DrinkingSessionArrayItem;
     preferences: PreferencesData;
   };
   'Terms And Agreements Screen': undefined;

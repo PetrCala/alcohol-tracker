@@ -99,6 +99,6 @@ export type UserData = {
 
 // Used when rendering drinking session day overview
 export type DrinkingSessionProps = {
-  session: DrinkingSessionData
+  session: DrinkingSessionArrayItem
 };
 

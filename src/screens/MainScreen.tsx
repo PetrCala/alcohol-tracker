@@ -19,7 +19,6 @@ import SessionsCalendar from '../components/Calendar';
 import LoadingData from '../components/LoadingData';
 import DatabaseContext from '../context/DatabaseContext';
 import { listenForDataChanges, readDataOnce } from "../database/baseFunctions";
-import { updateDrinkingSessionUserData } from '../database/drinkingSessions';
 import { CurrentSessionData, DrinkingSessionArrayItem, DrinkingSessionData, PreferencesData, UnconfirmedDaysData, UnitTypesProps, UserData } from '../types/database';
 import { MainScreenProps } from '../types/screens';
 import { DateObject } from '../types/components';
@@ -28,6 +27,7 @@ import { dateToDateObject, getZeroUnitsObject, calculateThisMonthUnits, findOngo
 import { useUserConnection } from '../context/UserConnectionContext';
 import UserOffline from '../components/UserOffline';
 import { updateUserLastOnline } from '../database/users';
+import { saveDrinkingSessionData, updateCurrentSessionKey } from '../database/drinkingSessions';
 
 const MainScreen = ( { navigation }: MainScreenProps) => {
   // Context, database, and authentification
@@ -62,8 +62,9 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
 
   // Handle drinking session button press
   const startDrinkingSession = async () => {
-    if (!preferences) return null; // Should never be null
+    if (!preferences || !currentSessionData) return null; // Should never be null 
     let sessionData:DrinkingSessionArrayItem;
+    let sessionKey:string;
     let ongoingSession = findOngoingSession(drinkingSessionData);
     if (!ongoingSession){
       // The user is not in an active session
@@ -73,12 +74,29 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
         units: {},
         ongoing: true
       };
+      try {
+        // Create a new session and return its session key
+        sessionKey = await saveDrinkingSessionData(db, user.uid, sessionData);
+      } catch (error:any) {
+        throw new Error("Failed to create a new key in the database");
+      };
+      try {
+        // Create a new session and return its session key
+        await updateCurrentSessionKey(db, user.uid, sessionKey);
+      } catch (error:any) {
+        throw new Error("Failed to update the current session key info");
+      };
     } else {
       // The user already has an active session
       sessionData = ongoingSession;
+      if (!currentSessionData.current_session_id){
+        throw new Error("There is no active data key in the database");
+      };
+      sessionKey = currentSessionData.current_session_id;
     };
     navigation.navigate("Drinking Session Screen", {
       session: sessionData,
+      sessionKey: sessionKey,
       preferences: preferences
     });
   }
@@ -271,7 +289,8 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
             onDayPress = {(day:DateObject) => {
               navigation.navigate('Day Overview Screen',
               { 
-                date_object: day,
+                dateObject: day,
+                drinkingSessionData: drinkingSessionData,
                 preferences: preferences
               }
               )

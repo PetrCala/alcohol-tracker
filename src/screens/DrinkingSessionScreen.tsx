@@ -18,7 +18,7 @@ import BasicButton from '../components/Buttons/BasicButton';
 import { DrinkingSessionScreenProps } from '../types/screens';
 import DatabaseContext from '../context/DatabaseContext';
 import { updateCurrentUnits, discardDrinkingSessionData } from '../database/users';
-import { saveDrinkingSessionData } from '../database/drinkingSessions';
+import { saveDrinkingSessionData, updateCurrentSessionKey } from '../database/drinkingSessions';
 import SessionUnitsInputWindow from '../components/Buttons/SessionUnitsInputWindow';
 import { formatDateToDay, formatDateToTime, sumAllUnits, timestampToDate, unitsToColors } from '../utils/dataHandling';
 import { getAuth } from 'firebase/auth';
@@ -33,7 +33,7 @@ import UserOffline from '../components/UserOffline';
 const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps) => {
   // Navigation
   if (!route || ! navigation) return null; // Should never be null
-  const { session, preferences }  = route.params;
+  const { session, sessionKey, preferences }  = route.params;
   // Context, database, and authentification
   const auth = getAuth();
   const user = auth.currentUser;
@@ -65,7 +65,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
   // Time info
   const [pendingUpdate, setPendingUpdate] = useState(false);
   const updateTimeout = 1000; // Synchronize with DB every x milliseconds
-  const sessionDate = timestampToDate(last_session_started);
+  const sessionDate = timestampToDate(session.start_time);
   const sessionDay = formatDateToDay(sessionDate);
   const sessionStartTime = formatDateToTime(sessionDate);
   // Other
@@ -131,7 +131,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
   }, [totalUnits]);
 
 
-  async function saveSession(db: any, userId: string) {
+  async function finishSession(db: any, userId: string) {
     if (totalUnits > 99){
       console.log('Cannot save this session');
       return null;
@@ -150,10 +150,15 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
         ongoing: null,
       };
       try {
-        await saveDrinkingSessionData(db, userId, newSessionData); // Save drinking session data
+        await saveDrinkingSessionData(db, userId, newSessionData, sessionKey); // Save drinking session data
       } catch (error:any) {
         throw new Error('Failed to save drinking session data: ' + error.message);
-      }
+      };
+      try {
+        await updateCurrentSessionKey(db, userId, null); // Remove the current session id info
+      } catch (error:any) {
+        throw new Error('Failed to save drinking session data: ' + error.message);
+      };
       // Reset all units
       resetAllUnits();
       // Reroute to session summary, do not allow user to return
@@ -317,7 +322,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
         text='Save Session'
         buttonStyle={styles.saveSessionButton}
         textStyle={styles.saveSessionButtonText}
-        onPress={() => saveSession(db, user.uid)}
+        onPress={() => finishSession(db, user.uid)}
       />
     </View>
     </>

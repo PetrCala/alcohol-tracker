@@ -1,40 +1,63 @@
 ﻿import { ref, child, update, push } from "firebase/database";
 import { DrinkingSessionData, UnitTypesProps, CurrentSessionData, DrinkingSessionArrayItem } from "../types/database";
-import { getZeroUnitsObject } from "../utils/dataHandling";
 
 
 /** Write drinking session data into the database
  *
  * Throw an error in case the database writing fails.
+ * 
+ * @return The session key associated with that session
  *  */ 
 export async function saveDrinkingSessionData(
   db: any, 
   userId: string, 
   newSessionData: DrinkingSessionArrayItem,
-  ) {
-  let newDrinkingSessionKey: string | null = null;
-  let newCurrentSessionData: CurrentSessionData = {
-    current_session_id: null, 
+  sessionKey?: string,
+  ): Promise<string> {
+  if (!sessionKey){
+    // Generate a new automatic key for the a drinking session
+    let newSessionKey: string | null = null; 
+    try {
+      newSessionKey = await push(child(ref(db), `/user_drinking_sessions/${userId}/`)).key 
+    } catch (error:any) {
+      throw new Error('Failed to create a new session reference point: ' + error.message);
+    }
+    if (!newSessionKey) throw new Error('Failed to create a new session reference point');
+    sessionKey = newSessionKey;
   };
-  var updates: { [key: string]: DrinkingSessionData | CurrentSessionData} = {};
-  // Generate a new automatic key for the new drinking session
-  try {
-    newDrinkingSessionKey = await push(child(ref(db), `/user_drinking_sessions/${userId}/`)).key 
-  } catch (error:any) {
-    throw new Error('Failed to create a new session reference point: ' + error.message);
-  }
-  if (!newDrinkingSessionKey) throw new Error('Failed to create a new session reference point');
-  newSessionData.session_id = newDrinkingSessionKey; // Update the key
   // Update the database with this new key
-  updates[`user_drinking_sessions/${userId}/` + newDrinkingSessionKey] = newSessionData;
-  updates[`user_current_session/${userId}`] = newCurrentSessionData;
-
+  var updates: { [key: string]: DrinkingSessionArrayItem } = {};
+  updates[`user_drinking_sessions/${userId}/` + sessionKey] = newSessionData;
   try {
     await update(ref(db), updates);
   } catch (error:any) {
     throw new Error('Failed to save drinking session data: ' + error.message);
+  };
+  return sessionKey;
+};
+
+/** Update the current session key info in the database. If there is no key,
+ * store one. If there is one, remove it.
+ * @param db Database
+ * @param userId User ID
+ */
+export async function updateCurrentSessionKey(
+  db: any,
+  userId: string,
+  key: string | null,
+) {
+  let newCurrentSessionData:CurrentSessionData = {
+    current_session_id: key, // Add or remove current session id
+  }
+  var updates: { [key: string]: CurrentSessionData} = {};
+  updates[`user_current_session/${userId}`] = newCurrentSessionData;
+  try {
+      await update(ref(db), updates);
+  } catch (error: any) {
+      throw new Error('Failed to update the current session data: ' + error.message);
   }
 };
+
 
 /** Remove drinking session data from the database
  *
@@ -64,12 +87,13 @@ export async function removeDrinkingSessionData(
 export async function editDrinkingSessionData(
   db: any, 
   userId: string, 
-  editedSession: DrinkingSessionData
+  editedSession: DrinkingSessionArrayItem,
+  newSession: boolean,
   ) {
   var updates: { [key: string]: DrinkingSessionData } = {};
   let newDrinkingSessionKey = editedSession.session_id;
   // Handle the case of an unexisting session
-  if (editedSession.session_id == 'edit-session-id'){
+  if (newSession){
     try {
       // Generate a new key
       let newlyGeneratedKey = await push(child(ref(db), `/user_drinking_sessions/${userId}/`)).key 
@@ -91,14 +115,3 @@ export async function editDrinkingSessionData(
   }
 };
 
-
-export async function updateDrinkingSessionUserData(
-  db: any,
-  updates: {[key: string]: any},
-) {
-  try {
-      await update(ref(db), updates);
-  } catch (error: any) {
-      throw new Error('Failed to update user data: ' + error.message);
-  }
-};

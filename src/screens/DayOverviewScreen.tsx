@@ -21,9 +21,8 @@ import {
 import { useContext } from 'react';
 import DatabaseContext from '../context/DatabaseContext';
 import LoadingData from '../components/LoadingData';
-import { DrinkingSessionProps, DrinkingSessionData } from '../types/database';
+import { DrinkingSessionProps, DrinkingSessionData, DrinkingSessionArrayItem } from '../types/database';
 import { DayOverviewScreenProps } from '../types/screens';
-import { listenForDataChanges } from '../database/baseFunctions';
 import { getAuth } from 'firebase/auth';
 import UserOffline from '../components/UserOffline';
 import { useUserConnection } from '../context/UserConnectionContext';
@@ -31,14 +30,12 @@ import { useUserConnection } from '../context/UserConnectionContext';
 
 const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
     if (!route || ! navigation) return null; // Should never be null
-    const { date_object, preferences } = route.params; // Params for navigation
+    const { dateObject, drinkingSessionData, preferences } = route.params; // Params for navigation
     const auth = getAuth();
     const user = auth.currentUser;
     const db = useContext(DatabaseContext);
     const { isOnline } = useUserConnection();
-    const [ date, setDate ] = useState<Date | null>(timestampToDate(date_object.timestamp));
-    const [drinkingSessionData, setDrinkingsessionData] = useState<DrinkingSessionData[] | []>([]); // Data
-    const [ loadingData, setLoadingData] = useState<boolean | null>(true);
+    const [ date, setDate ] = useState<Date | null>(timestampToDate(dateObject.timestamp));
 
     // Automatically navigate to login screen if login expires
     if (user == null){
@@ -46,14 +43,14 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
         return null;
     }
     
-    const onSessionButtonPress = (session:DrinkingSessionData) => {
+    const onSessionButtonPress = (session:DrinkingSessionArrayItem) => {
         navigation.navigate('Session Summary Screen', {
           session: session,
           preferences: preferences
         });
     };
 
-    const onEditSessionPress = (session:DrinkingSessionData) => {
+    const onEditSessionPress = (session:DrinkingSessionArrayItem) => {
         navigation.navigate('Edit Session Screen', {
           session: session,
           preferences: preferences
@@ -97,7 +94,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
         );
     };
 
-    const renderDrinkingSession = ( {item} : {item: DrinkingSessionData}) => {
+    const renderDrinkingSession = ( {item} : {item: DrinkingSessionArrayItem}) => {
         return(
             <DrinkingSession
               session = {item}
@@ -128,11 +125,9 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
         };
         // Create a new mock drinking session
         let newTimestamp = setDateToCurrentTime(date).getTime(); // At noon
-        let newSession:DrinkingSessionData = {
-          end_time: newTimestamp + 1,
-          last_unit_added_time: newTimestamp,
-          session_id: 'edit-session-id', // Immutable! (see database/drinkingSessions.tsx)
+        let newSession: DrinkingSessionArrayItem = {
           start_time: newTimestamp, // Arbitrary timestamp of today's noon
+          end_time: newTimestamp + 1,
           units: getZeroUnitsObject(),
         }
         return(
@@ -161,31 +156,10 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
         };
     }
 
-    // Monitor and update drinking session id data
-    useEffect(() => {
-        if (date != null){
-            let sessionsRef = `/user_drinking_sessions/${user.uid}`
-            const stopListening = listenForDataChanges(db, sessionsRef, (data:any) => {
-                let newData: DrinkingSessionData[] = [];
-                if (data != null) {
-                    newData = Object.values(data); // To an array
-                    newData = getSingleDayDrinkingSessions(date, newData);
-                    newData.sort((a:any,b:any) => a.timestamp - b.timestamp); // Sort by timestamp
-                }
-                setDrinkingsessionData(newData);
-                setLoadingData(false);
-            });
-            return () => {
-                stopListening();
-            };
-        }
-    }, [db, date]);
-
-
     if (!isOnline) return (<UserOffline/>);
 
     // Loading drinking session data
-    if ( date == null || loadingData ) {
+    if ( date == null ) {
         return (
             <LoadingData
                 // loadingText='Loading drinking session data...'
@@ -212,7 +186,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
             <FlatList
                 data = {drinkingSessionData}
                 renderItem={renderDrinkingSession}
-                keyExtractor={item => item.session_id}
+                keyExtractor={item => String(item.start_time)} // Use start time as id
                 ListEmptyComponent={noDrinkingSessionsComponent}
                 ListFooterComponent={addSessionButton}
                 ListFooterComponentStyle={styles.addSessionButtonContainer}

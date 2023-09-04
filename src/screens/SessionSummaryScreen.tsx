@@ -39,16 +39,15 @@ const SessionDataItem = ({
 const SessionSummaryScreen = ({ route, navigation}: SessionSummaryScreenProps) => {
     if (!route || ! navigation) return null; // Should never be null
     const { session, preferences } = route.params; 
-    const { end_time, last_unit_added_time, session_id, start_time, units } = session;
     // Units info
-    const totalUnits = sumAllUnits(units);
+    const totalUnits = sumAllUnits(session.units);
     // Time info
-    const sessionStartDate = timestampToDate(start_time);
-    const lastUnitAddedDate = timestampToDate(last_unit_added_time);
-    const sessionEndDate = timestampToDate(end_time);
+    const sessionStartDate = timestampToDate(session.start_time);
+    // const lastUnitAddedDate = timestampToDate(last_unit_added_time);
+    const sessionEndDate = timestampToDate(session.end_time);
     const sessionDay = formatDateToDay(sessionStartDate);
     const sessionStartTime = formatDateToTime(sessionStartDate);
-    const lastUnitAddedTime = formatDateToTime(lastUnitAddedDate);
+    // const lastUnitAddedTime = formatDateToTime(lastUnitAddedDate);
     const sessionEndTime = formatDateToTime(sessionEndDate);
     // Other
     const sessionColor = unitsToColors(totalUnits, preferences.units_to_colors);
@@ -60,18 +59,18 @@ const SessionSummaryScreen = ({ route, navigation}: SessionSummaryScreenProps) =
     const generalData = [
         { heading: 'Date:', data: sessionDay },
         { heading: 'Start time:', data: sessionStartTime },
-        { heading: 'Last unit added:', data: lastUnitAddedTime },
+        // { heading: 'Last unit added:', data: lastUnitAddedTime },
         { heading: 'End time:', data: sessionEndTime },
       ];
     
       const unitData = [
         { heading: 'Total:', data: totalUnits.toString() },
-        { heading: 'Beer:', data: units.beer.toString() },
-        { heading: 'Wine:', data: units.wine.toString() },
-        { heading: 'Weak Shot:', data: units.weak_shot.toString() },
-        { heading: 'Strong Shot:', data: units.strong_shot.toString() },
-        { heading: 'Cocktail:', data: units.cocktail.toString() },
-        { heading: 'Other:', data: units.other.toString() },
+        // { heading: 'Beer:', data: units.beer.toString() },
+        // { heading: 'Wine:', data: units.wine.toString() },
+        // { heading: 'Weak Shot:', data: units.weak_shot.toString() },
+        // { heading: 'Strong Shot:', data: units.strong_shot.toString() },
+        // { heading: 'Cocktail:', data: units.cocktail.toString() },
+        // { heading: 'Other:', data: units.other.toString() },
       ];
 
     return (
