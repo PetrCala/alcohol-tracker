@@ -140,20 +140,6 @@ export async function updateSessionStatus(
   }
 };
 
-export async function discardDrinkingSessionData(
- db: any,
- userId: string,
-){
-  let newCurrentUnitsData:UnitTypesProps = getZeroUnitsObject();
-  let updates: {[key:string]: UnitTypesProps | boolean} = {};
-  updates[`user_current_session/${userId}/current_units`] = newCurrentUnitsData;
-  updates[`user_current_session/${userId}/in_session`] = false;
-  try {
-    await update(ref(db), updates)
-  } catch (error:any) {
-    throw new Error('Failed to add a new unit: ' + error.message);
-  } 
-}
 
 export async function updateUserLastOnline(
   db: any,

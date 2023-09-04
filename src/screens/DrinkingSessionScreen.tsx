@@ -17,12 +17,12 @@ import MenuIcon from '../components/Buttons/MenuIcon';
 import BasicButton from '../components/Buttons/BasicButton';
 import { DrinkingSessionScreenProps } from '../types/screens';
 import DatabaseContext from '../context/DatabaseContext';
-import { updateCurrentUnits, discardDrinkingSessionData } from '../database/users';
-import { saveDrinkingSessionData, updateCurrentSessionKey } from '../database/drinkingSessions';
+import { updateCurrentUnits } from '../database/users';
+import { removeDrinkingSessionData, saveDrinkingSessionData, updateCurrentSessionKey } from '../database/drinkingSessions';
 import SessionUnitsInputWindow from '../components/Buttons/SessionUnitsInputWindow';
-import { formatDateToDay, formatDateToTime, sumAllUnits, timestampToDate, unitsToColors } from '../utils/dataHandling';
+import { addUnits, formatDateToDay, formatDateToTime, removeUnits, sumAllUnits, sumUnitsOfSingleType, timestampToDate, unitsToColors } from '../utils/dataHandling';
 import { getAuth } from 'firebase/auth';
-import { DrinkingSessionArrayItem, DrinkingSessionData, UnitTypesProps } from '../types/database';
+import { DrinkingSessionArrayItem, DrinkingSessionData, UnitTypesKeys, UnitTypesProps, UnitsObject } from '../types/database';
 import DrinkingSessionUnitWindow from '../components/DrinkingSessionUnitWindow';
 import { maxAllowedUnits } from '../utils/static';
 import YesNoPopup from '../components/Popups/YesNoPopup';
@@ -39,21 +39,18 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
   const user = auth.currentUser;
   const db = useContext(DatabaseContext);
   const { isOnline } = useUserConnection();
+  // Hooks
+  const [thisSession, setThisSession] = useState<DrinkingSessionArrayItem>(session);
+  const [currentUnits, setCurrentUnits] = useState<UnitsObject>(thisSession.units);
   // Units
-  const [totalUnits, setTotalUnits] = useState<number>(sumAllUnits(session.units));
+  const [totalUnits, setTotalUnits] = useState<number>(sumAllUnits(currentUnits));
   const [availableUnits, setAvailableUnits] = useState<number>(maxAllowedUnits - totalUnits);
-  // const [beerUnits, setBeerUnits] = useState(current_units.beer)
-  // const [cocktailUnits, setCocktailUnits] = useState(current_units.cocktail)
-  // const [otherUnits, setOtherUnits] = useState(current_units.other)
-  // const [strongShotUnits, setStrongShotUnits] = useState(current_units.strong_shot)
-  // const [weakShotUnits, setWeakShotUnits] = useState(current_units.weak_shot)
-  // const [wineUnits, setWineUnits] = useState(current_units.wine)
-  const [beerUnits, setBeerUnits] = useState(0)
-  const [cocktailUnits, setCocktailUnits] = useState(0)
-  const [otherUnits, setOtherUnits] = useState(0)
-  const [strongShotUnits, setStrongShotUnits] = useState(0)
-  const [weakShotUnits, setWeakShotUnits] = useState(0)
-  const [wineUnits, setWineUnits] = useState(0)
+  const [beerUnits, setBeerUnits] = useState(sumUnitsOfSingleType(currentUnits, 'beer'));
+  const [cocktailUnits, setCocktailUnits] = useState(sumUnitsOfSingleType(currentUnits, 'cocktail'));
+  const [otherUnits, setOtherUnits] = useState(sumUnitsOfSingleType(currentUnits, 'other'));
+  const [strongShotUnits, setStrongShotUnits] = useState(sumUnitsOfSingleType(currentUnits, 'strong_shot'));
+  const [weakShotUnits, setWeakShotUnits] = useState(sumUnitsOfSingleType(currentUnits, 'weak_shot'));
+  const [wineUnits, setWineUnits] = useState(sumUnitsOfSingleType(currentUnits, 'wine'));
   const allUnits:UnitTypesProps = {
     beer: beerUnits,
     cocktail: cocktailUnits,
@@ -65,7 +62,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
   // Time info
   const [pendingUpdate, setPendingUpdate] = useState(false);
   const updateTimeout = 1000; // Synchronize with DB every x milliseconds
-  const sessionDate = timestampToDate(session.start_time);
+  const sessionDate = timestampToDate(thisSession.start_time);
   const sessionDay = formatDateToDay(sessionDate);
   const sessionStartTime = formatDateToTime(sessionDate);
   // Other
@@ -80,55 +77,62 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
     return null;
   }
 
-  // Change local hook value
-  const addOtherUnit = (number: number) => {
-    let newUnits = otherUnits + number;
-    if (newUnits >= 0 && newUnits < 100){
-      setOtherUnits(newUnits);
-    }
+  // Update the current session whenever the units change
+  useEffect(() => {
+    let newSession:DrinkingSessionArrayItem = {
+      ...thisSession,
+      units: currentUnits
+    };
+    setThisSession(newSession);
+  }, [currentUnits]);
+
+  // Update the units hooks whenever the current units object changes
+  useEffect(() => {
+    setTotalUnits(sumAllUnits(currentUnits));
+    setAvailableUnits(maxAllowedUnits - sumAllUnits(currentUnits));
+    setBeerUnits(sumUnitsOfSingleType(currentUnits, 'beer'));
+    setCocktailUnits(sumUnitsOfSingleType(currentUnits, 'cocktail'));
+    setOtherUnits(sumUnitsOfSingleType(currentUnits, 'other'));
+    setStrongShotUnits(sumUnitsOfSingleType(currentUnits, 'strong_shot'));
+    setWeakShotUnits(sumUnitsOfSingleType(currentUnits, 'weak_shot'));
+    setWineUnits(sumUnitsOfSingleType(currentUnits, 'wine'));
+  }, [currentUnits]);
+
+
+  const handleAddUnits = (units: UnitTypesProps) => {
+    let newUnits: UnitsObject = addUnits(currentUnits, units);
+    setCurrentUnits(newUnits);
   };
 
-  const resetAllUnits = () => {
-    setBeerUnits(0);
-    setCocktailUnits(0);
-    setOtherUnits(0);
-    setStrongShotUnits(0);
-    setWeakShotUnits(0);
-    setWineUnits(0);
+  const handleRemoveUnits = (unitType: typeof UnitTypesKeys[number], count: number) => {
+    let newUnits: UnitsObject = removeUnits(currentUnits, unitType, count);
+    setCurrentUnits(newUnits);
   };
-
-  // Track total units
-  useEffect(() => {
-      let allUnitsSum = sumAllUnits(allUnits);
-      setTotalUnits(allUnitsSum);
-  }, [allUnits]);
-
-  // Track available units
-  useEffect(() => {
-    let newAvailableUnits = maxAllowedUnits - totalUnits;
-    setAvailableUnits(newAvailableUnits);
-  }, [totalUnits]);
 
   // Create a ref to store the previous state
-  const prevUnitsRef = useRef<number>();
+  const prevUnitsRef = useRef<UnitsObject>();
     useEffect(() => {
-      prevUnitsRef.current = totalUnits;
+      prevUnitsRef.current = currentUnits;
     });
   const prevUnits = prevUnitsRef.current;
 
   // Change database value once every second
   useEffect(() => {
     // Only schedule a database update if the units have changed
-    if (prevUnits !== totalUnits) {
+    if (prevUnits !== currentUnits) {
       setPendingUpdate(true);
       const timer = setTimeout(async () => {
-        await updateCurrentUnits(db, user.uid, allUnits);
+        try{
+          await saveDrinkingSessionData(db, user.uid, thisSession, sessionKey);
+        } catch (error:any) {
+          throw new Error("Could not save the drinking session data");
+        }
         setPendingUpdate(false); // Data has been synchronized with DB
       }, updateTimeout); // Update every x milliseconds
       // Clear timer on unmount or when units changes
       return () => clearTimeout(timer);
     }
-  }, [totalUnits]);
+  }, [thisSession]);
 
 
   async function finishSession(db: any, userId: string) {
@@ -150,17 +154,11 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
         ongoing: null,
       };
       try {
+        await updateCurrentSessionKey(db, userId, null); // Remove the current session id info
         await saveDrinkingSessionData(db, userId, newSessionData, sessionKey); // Save drinking session data
       } catch (error:any) {
         throw new Error('Failed to save drinking session data: ' + error.message);
       };
-      try {
-        await updateCurrentSessionKey(db, userId, null); // Remove the current session id info
-      } catch (error:any) {
-        throw new Error('Failed to save drinking session data: ' + error.message);
-      };
-      // Reset all units
-      resetAllUnits();
       // Reroute to session summary, do not allow user to return
       navigation.replace("Session Summary Screen", {
         session: newSessionData,
@@ -169,25 +167,16 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
     };
   };
 
-  /** Discard the current session, reset current units and 
-   * session status, and navigate to main menu.
-   */
-  async function discardSession(db: any, userId: string){
+  const handleConfirmDiscard = async () => {
     try {
-      await discardDrinkingSessionData(db, userId); 
+      await removeDrinkingSessionData(db, user.uid, sessionKey);
+      await updateCurrentSessionKey(db, user.uid, null);
     } catch (error:any) {
-      throw new Error('Failed to discard the session: ' + error.message);
-    }
-  }
-  
-  const handleConfirmDiscard = () => {
-    discardSession(db, user.uid);
+      Alert.alert("Session discard failed", "Could not discard the session: " + error.message);
+      return null;
+    };
     setDiscardModalVisible(false);
     navigation.goBack();
-  };
-
-  const handleCancelDiscard = () => {
-    setDiscardModalVisible(false);
   };
 
   /** If an update is pending, update immediately before navigating away
@@ -244,13 +233,13 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
       <View style={styles.modifyUnitsContainer}>
         <TouchableOpacity
             style={[styles.modifyUnitsButton, {backgroundColor: 'red'}]}
-            onPress={() => addOtherUnit(-1)}
+            onPress={() => handleRemoveUnits("other", 1)}
         >
           <Text style={styles.modifyUnitsText}>-</Text>
         </TouchableOpacity>
         <TouchableOpacity
             style={[styles.modifyUnitsButton, {backgroundColor: 'green'}]}
-            onPress={() => addOtherUnit(1)}
+            onPress={() => handleAddUnits({other: 1})}
         >
           <Text style={styles.modifyUnitsText}>+</Text>
         </TouchableOpacity>

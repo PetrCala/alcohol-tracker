@@ -214,6 +214,55 @@ export const calculateThisMonthUnits = (dateObject: DateObject, sessions: Drinki
     return sessionsThisMonth.reduce((sum, session) => sum + sumAllUnits(session.units), 0);
 };
 
+/** List all units to add and their amounts and add this to the current units hook
+* 
+* @param units UnitTypesProps kind of object listing each unit to add and its amount
+*/
+export const addUnits = (existingUnits: UnitsObject, unitsToAdd: UnitTypesProps): UnitsObject => {
+ let newUnits: UnitsObject = {
+   ...existingUnits,
+   [Date.now()]: unitsToAdd
+ };
+ return newUnits;
+};
+
+/** Specify the kind of unit to remove units from and the number of units to remove.
+* Remove this many units from that kind of unit
+* 
+* @param unitType Kind of unit to remove the units from
+* @param number Number of units to remove
+*/
+export const removeUnits = (existingUnits: UnitsObject, unitType: typeof UnitTypesKeys[number], count: number):UnitsObject => {
+ let unitsToRemove = count;
+ const updatedUnits: UnitsObject = JSON.parse(JSON.stringify(existingUnits)); // Deep copy
+ for (const timestamp of Object.keys(updatedUnits).sort((a, b) => +b - +a)) { // sort in descending order
+   const unitsAtTimestamp = updatedUnits[+timestamp] ?? {};
+   const availableUnits = unitsAtTimestamp[unitType] ?? 0;
+   if (availableUnits > 0) {
+     const unitsToRemoveNow = Math.min(unitsToRemove, availableUnits);
+     unitsAtTimestamp[unitType] = availableUnits - unitsToRemoveNow;
+     unitsToRemove -= unitsToRemoveNow;
+
+     // Clean up if there are zero units left for this type at this timestamp
+     if (unitsAtTimestamp[unitType] === 0) {
+       delete unitsAtTimestamp[unitType];
+     }
+
+     // Clean up if there are zero units left at this timestamp
+     if (Object.keys(unitsAtTimestamp).length === 0) {
+       delete updatedUnits[+timestamp];
+     }
+   };
+
+   if (unitsToRemove <= 0) {
+     break;
+   };
+ }
+ return updatedUnits;
+};
+
+
+
 /** Generate an object with all available units where 
  * each unit's value is set to 0.
  */

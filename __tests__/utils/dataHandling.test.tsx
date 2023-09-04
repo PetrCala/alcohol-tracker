@@ -1,4 +1,5 @@
 ﻿import { 
+  addUnits,
     calculateThisMonthUnits,
     changeDateBySomeDays,
     dateToDateObject, 
@@ -13,6 +14,7 @@
     getTimestampAtMidnight, 
     getTimestampAtNoon, 
     getZeroUnitsObject, 
+    removeUnits, 
     setDateToCurrentTime, 
     sumAllUnits, 
     sumUnitsOfSingleType, 
@@ -552,8 +554,136 @@ describe('calculateThisMonthUnits', () => {
       expect(result).toBe(9);  // 4 + 3 + 2
     });
     
+});
+
+
+describe('addUnits function', () => {
+  let existingUnits: UnitsObject;
+  
+  beforeEach(() => {
+    existingUnits = {
+      1632423423: {
+        beer: 2,
+        cocktail: 1,
+        other: 3,
+      },
+      1632434223: {
+        other: 3,
+      },
+    };
   });
 
+  it('should add new units with a new timestamp', () => {
+    const unitsToAdd: UnitTypesProps = { beer: 4, wine: 2 };
+    const newUnits = addUnits(existingUnits, unitsToAdd);
+    const newTimestamps = Object.keys(newUnits).map(Number);
+
+    // Expect that there is one more session than before
+    expect(newTimestamps.length).toBe(Object.keys(existingUnits).length + 1);
+
+    // Expect the most recent session data to match unitsToAdd
+    const mostRecentTimestamp = Math.max(...newTimestamps);
+    expect(newUnits[mostRecentTimestamp]).toEqual(unitsToAdd);
+  });
+
+  it('should keep all existing units unchanged', () => {
+    const unitsToAdd: UnitTypesProps = { beer: 4, wine: 2 };
+    const newUnits = addUnits(existingUnits, unitsToAdd);
+
+    Object.keys(existingUnits).forEach(timestamp => {
+      expect(newUnits[Number(timestamp)]).toEqual(existingUnits[Number(timestamp)]);
+    });
+  });
+
+  it('should handle empty units to add', () => {
+    const unitsToAdd: UnitTypesProps = {};
+    const newUnits = addUnits(existingUnits, unitsToAdd);
+    const newTimestamps = Object.keys(newUnits).map(Number);
+
+    // Expect that there is one more session than before
+    expect(newTimestamps.length).toBe(Object.keys(existingUnits).length + 1);
+
+    // Expect the most recent session data to be empty
+    const mostRecentTimestamp = Math.max(...newTimestamps);
+    expect(newUnits[mostRecentTimestamp]).toEqual(unitsToAdd);
+  });
+
+  it('should handle undefined values in units to add', () => {
+    const unitsToAdd: UnitTypesProps = { beer: undefined, wine: 2 };
+    const newUnits = addUnits(existingUnits, unitsToAdd);
+    const newTimestamps = Object.keys(newUnits).map(Number);
+
+    // Expect that there is one more session than before
+    expect(newTimestamps.length).toBe(Object.keys(existingUnits).length + 1);
+
+    // Expect the most recent session data to match unitsToAdd
+    const mostRecentTimestamp = Math.max(...newTimestamps);
+    expect(newUnits[mostRecentTimestamp]).toEqual(unitsToAdd);
+  });
+});
+
+
+describe('removeUnits function', () => {
+  let existingUnits: UnitsObject;
+
+  beforeEach(() => {
+    existingUnits = {
+      1632423423: {
+        beer: 4,
+        cocktail: 2,
+      },
+      1632434223: {
+        beer: 3,
+      },
+      1632435223: {
+        cocktail: 1,
+      }
+    };
+  });
+
+  it('should remove units starting from the most recent session', () => {
+    const newUnits = removeUnits(existingUnits, 'beer', 5);
+    expect(newUnits[1632434223]).toBeUndefined();
+    expect(newUnits[1632423423]?.beer).toBe(2);
+  });
+
+  it('should remove all units if the count equals the total', () => {
+    const newUnits = removeUnits(existingUnits, 'beer', 7);
+    expect(newUnits[1632434223]).toBeUndefined();
+    expect(newUnits[1632423423]?.beer).toBeUndefined();
+  });
+
+  it('should handle removing more units than exist', () => {
+    const newUnits = removeUnits(existingUnits, 'beer', 10);
+    expect(newUnits[1632434223]).toBeUndefined();
+    expect(newUnits[1632423423]?.beer).toBeUndefined();
+  });
+
+  it('should not modify other unit types when removing units', () => {
+    const newUnits = removeUnits(existingUnits, 'beer', 5);
+    expect(newUnits[1632423423]?.cocktail).toBe(2);
+    expect(newUnits[1632435223]?.cocktail).toBe(1);
+    expect(sumUnitsOfSingleType(newUnits, "cocktail")).toBe(3);
+  });
+
+  it('should remove 0 units if the count is 0', () => {
+    const newUnits = removeUnits(existingUnits, 'beer', 0);
+    expect(newUnits).toEqual(existingUnits);
+  });
+
+  // it('should handle undefined and zero values without throwing errors', () => {
+  //   existingUnits[1632434223]!.beer = undefined;
+  //   const newUnits = removeUnits(existingUnits, 'beer', 5);
+  //   expect(newUnits[1632434223]).toBeUndefined();
+  //   expect(newUnits[1632423423]?.beer).toBe(2);
+  // });
+
+  it('should clean up sessions that have zero units left', () => {
+    const newUnits = removeUnits(existingUnits, 'cocktail', 3);
+    expect(newUnits[1632423423]?.cocktail).toBeUndefined();
+    expect(newUnits[1632435223]).toBeUndefined();
+  });
+});
 
 describe('getZeroUnitsObject', () => {
     // it('should return an object with all unit types set to 0', () => {

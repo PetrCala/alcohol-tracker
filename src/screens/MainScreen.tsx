@@ -213,7 +213,6 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
     
   // Should never be null
   if (
-    !currentSessionData || 
     !drinkingSessionData || 
     !preferences || 
     !userData
