@@ -71,7 +71,9 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
       sessionData = {
         start_time: Date.now(),
         end_time: Date.now(), // Will be overwritten
-        units: {},
+        units: {
+          [Date.now()]: {other: 0} // Necessary placeholder, will be deleted
+        },
         ongoing: true
       };
       try {
