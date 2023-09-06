@@ -4,6 +4,7 @@
     useContext,
 } from 'react';
 import {
+  Alert,
   Image,
   ScrollView,
   StyleSheet,
@@ -14,7 +15,7 @@ import {
 import MenuIcon from '../components/Buttons/MenuIcon';
 import BasicButton from '../components/Buttons/BasicButton';
 import { EditSessionScreenProps} from '../types/screens';
-import { DrinkingSessionArrayItem, DrinkingSessionData, UnitTypesProps, UnitsObject } from '../types/database';
+import { DrinkingSessionArrayItem, DrinkingSessionData, UnitTypesKeys, UnitTypesProps, UnitsObject } from '../types/database';
 import DatabaseContext from '../context/DatabaseContext';
 import { removeDrinkingSessionData, editDrinkingSessionData } from '../database/drinkingSessions';
 import SessionUnitsInputWindow from '../components/Buttons/SessionUnitsInputWindow';
@@ -29,7 +30,7 @@ import UserOffline from '../components/UserOffline';
 
 const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
     if (!route || ! navigation) return null; // Should never be null
-    const { session, preferences } = route.params; 
+    const { session, sessionKey, preferences } = route.params; 
     const auth = getAuth();
     const user = auth.currentUser;
     const { isOnline } = useUserConnection();
@@ -62,6 +63,7 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
     const [monkeMode, setMonkeMode] = useState<boolean>(false);
     const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
     const sessionColor = unitsToColors(totalUnits, preferences.units_to_colors);
+    const sessionIsNew = sessionKey == 'edit-session-id' ? true : false;
 
 
     // Automatically navigate to login screen if login expires
@@ -108,31 +110,29 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
     }, [allUnits]);
 
 
-    async function saveSession(db: any, userId: string) {
-        if (totalUnits > 99){
-            console.log('cannot save this session');
-            return null;
-          };
-        if (totalUnits > 0){
-              let newSession: DrinkingSessionData = {
-                end_time: end_time,
-                last_unit_added_time: last_unit_added_time,
-                session_id: session_id,
-                start_time: start_time,
-                units: allUnits
-              };
-            // Save the data into the database
-            try {
-                await editDrinkingSessionData(db, userId, newSession); // Save drinking session data
-            } catch (error:any) {
-                throw new Error('Failed to save drinking session data: ' + error.message);
-            }
-            if (navigation){
-                navigation.navigate('Main Screen'); // Get the main overview, not day
-            } else {
-                throw new Error('Navigation not found');
-            }
-        }
+    async function finishSession(db: any, userId: string) {
+      if (totalUnits > 99){
+          console.log('cannot save this session');
+          return null;
+      };
+      if (!navigation){
+        Alert.alert('Navigation not found', 'Failed to fetch the navigation');
+        return null;
+      };
+      if (totalUnits > 0){
+        let newSessionData: DrinkingSessionArrayItem = {
+          start_time: session.start_time,
+          end_time: Date.now(),
+          units: allUnits,
+          ongoing: null,
+        };
+        try {
+          await editDrinkingSessionData(db, userId, newSessionData, sessionKey, sessionIsNew); // Finish editing
+        } catch (error:any) {
+          throw new Error('Failed to edit the drinking session data: ' + error.message);
+        };
+        navigation.navigate('Main Screen'); // Get the main overview, not day
+      };
     };
 
     /** Discard the current session, reset current units and 
@@ -147,15 +147,13 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
       }
 
     const handleConfirmDelete = () => {
-      deleteSession(db, user.uid, );
+      if (!sessionIsNew){
+        deleteSession(db, user.uid, sessionKey);
+      }
       setDeleteModalVisible(false);
       navigation.navigate('Main Screen'); // Get the main overview, not day
     };
   
-    const handleCancelDelete = () => {
-      setDeleteModalVisible(false);
-    };
-
     const handleBackPress = () => {
         navigation.goBack();
     };
@@ -200,13 +198,13 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
       <View style={styles.modifyUnitsContainer}>
         <TouchableOpacity
             style={[styles.modifyUnitsButton, {backgroundColor: 'red'}]}
-            onPress={() => addOtherUnit(-1)}
+            onPress={() => handleRemoveUnits("other", 1)}
         >
           <Text style={styles.modifyUnitsText}>-</Text>
         </TouchableOpacity>
         <TouchableOpacity
             style={[styles.modifyUnitsButton, {backgroundColor: 'green'}]}
-            onPress={() => addOtherUnit(1)}
+            onPress={() => handleAddUnits({other: 1})}
         >
           <Text style={styles.modifyUnitsText}>+</Text>
         </TouchableOpacity>
@@ -276,7 +274,7 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
           text='Save Session'
           buttonStyle={styles.saveSessionButton}
           textStyle={styles.saveSessionButtonText}
-          onPress={() => saveSession(db, user.uid)}
+          onPress={() => finishSession(db, user.uid)}
         />
     </View>
     </>

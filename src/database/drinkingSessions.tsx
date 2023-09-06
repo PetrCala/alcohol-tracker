@@ -1,5 +1,6 @@
 ﻿import { ref, child, update, push } from "firebase/database";
 import { DrinkingSessionData, UnitTypesProps, CurrentSessionData, DrinkingSessionArrayItem } from "../types/database";
+import { Alert } from "react-native";
 
 
 /** Write drinking session data into the database
@@ -87,15 +88,15 @@ export async function removeDrinkingSessionData(
 export async function editDrinkingSessionData(
   db: any, 
   userId: string, 
-  editedSession: DrinkingSessionArrayItem,
+  session: DrinkingSessionArrayItem,
+  sessionKey: string,
   newSession: boolean,
   ) {
-  var updates: { [key: string]: DrinkingSessionData } = {};
-  let newDrinkingSessionKey = editedSession.session_id;
-  // Handle the case of an unexisting session
+  var updates: { [key: string]: DrinkingSessionArrayItem } = {};
+  let newDrinkingSessionKey = sessionKey;
   if (newSession){
+    // Handle the case of an unexisting session
     try {
-      // Generate a new key
       let newlyGeneratedKey = await push(child(ref(db), `/user_drinking_sessions/${userId}/`)).key 
       if (newlyGeneratedKey == null) {
         throw new Error('Failed to create a new session reference point');
@@ -105,13 +106,12 @@ export async function editDrinkingSessionData(
       throw new Error('Failed to create a new session reference point: ' + error.message);
     }
   }
-  editedSession.session_id = newDrinkingSessionKey; // Update the key
-  updates[`/user_drinking_sessions/${userId}/` + newDrinkingSessionKey] = editedSession;
+  updates[`/user_drinking_sessions/${userId}/` + newDrinkingSessionKey] = session;
 
   try {
     return await update(ref(db), updates);
   } catch (error:any) {
-    throw new Error('Failed to remove drinking session data: ' + error.message);
+    Alert.alert('Session edit failed', 'Failed to edit drinking session data: ' + error.message);
   }
 };
 

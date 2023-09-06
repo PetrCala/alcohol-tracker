@@ -99,6 +99,7 @@ export type UserData = {
 
 // Used when rendering drinking session day overview
 export type DrinkingSessionProps = {
+  sessionKey: string,
   session: DrinkingSessionArrayItem
 };
 

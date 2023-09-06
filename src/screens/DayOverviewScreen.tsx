@@ -27,21 +27,51 @@ import { getAuth } from 'firebase/auth';
 import UserOffline from '../components/UserOffline';
 import { useUserConnection } from '../context/UserConnectionContext';
 
+type CombinedDataProps = {
+  sessionKey: string,
+  session: DrinkingSessionArrayItem
+}
 
 const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
     if (!route || ! navigation) return null; // Should never be null
-    const { dateObject, drinkingSessionData, preferences } = route.params; // Params for navigation
+    const { 
+      dateObject, 
+      drinkingSessionData, 
+      drinkingSessionKeys,
+      preferences 
+    } = route.params; // Params for navigation
     const auth = getAuth();
     const user = auth.currentUser;
     const db = useContext(DatabaseContext);
     const { isOnline } = useUserConnection();
-    const [ date, setDate ] = useState<Date | null>(timestampToDate(dateObject.timestamp));
+    const [ date, setDate ] = useState<Date>(timestampToDate(dateObject.timestamp));
+    const [ dailySessionData, setDailyData ] = useState<DrinkingSessionArrayItem[]>(getSingleDayDrinkingSessions(date, drinkingSessionData));
+    // Create a combined data object
+    // const combinedData:CombinedDataProps[] = drinkingSessionData.map((session, index) => {
+    //   return {
+    //     sessionKey: drinkingSessionKeys[index], // Assign explicitly
+    //     session
+    //   };
+    // });
 
     // Automatically navigate to login screen if login expires
     if (user == null){
         navigation.replace("Login Screen");
         return null;
     }
+
+    const getDailyKeys = () => {
+      let desiredIndexes:number[] = [];
+      for (let i = 0; i < drinkingSessionData.length; i++) {
+        if (dailySessionData.includes(drinkingSessionData[i])) {
+          desiredIndexes.push(i);
+        };
+      };
+      let dailyKeys = desiredIndexes.map(index => drinkingSessionKeys[index]);
+      return dailyKeys;
+    };
+    
+    const [ dailyKeys, setDailyKeys ] = useState<string[]>(getDailyKeys());
     
     const onSessionButtonPress = (session:DrinkingSessionArrayItem) => {
         navigation.navigate('Session Summary Screen', {
@@ -50,16 +80,16 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
         });
     };
 
-    const onEditSessionPress = (session:DrinkingSessionArrayItem) => {
+    const onEditSessionPress = (sessionKey:string, session:DrinkingSessionArrayItem) => {
         navigation.navigate('Edit Session Screen', {
           session: session,
-          sessionKey: 'test_key',
+          sessionKey: sessionKey,
           preferences: preferences
         });
     };
 
 
-    const DrinkingSession = ({session}: DrinkingSessionProps) => {
+    const DrinkingSession = ({sessionKey, session}: DrinkingSessionProps) => {
         // Calculate the session color
         var totalUnits = sumAllUnits(session.units)
         var unitsToColorsInfo = preferences.units_to_colors;
@@ -88,17 +118,18 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
                     iconSource={require('../assets/icons/edit.png')}
                     containerStyle={styles.menuIconContainer}
                     iconStyle={styles.menuIcon}
-                    onPress={() => onEditSessionPress(session)} // Use keyextractor to load id here
+                    onPress={() => onEditSessionPress(sessionKey, session)} // Use keyextractor to load id here
                 />
             </View>
         </View>
         );
     };
 
-    const renderDrinkingSession = ( {item} : {item: DrinkingSessionArrayItem}) => {
+    const renderDrinkingSession = ( {item} : {item: CombinedDataProps}) => {
         return(
             <DrinkingSession
-              session = {item}
+              sessionKey = {item.sessionKey}
+              session = {item.session}
             />
         );
     };
@@ -169,6 +200,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
         );
     };
 
+    console.log(dailyKeys);
     return (
       <View style={{flex:1, backgroundColor: '#FFFF99'}}>
         <View style={styles.mainHeader}>
@@ -186,9 +218,9 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
             </Text>
             {drinkingSessionData ?
             <FlatList
-                data = {drinkingSessionData}
+                data = {combinedData}
                 renderItem={renderDrinkingSession}
-                keyExtractor={item => String(item.start_time)} // Use start time as id
+                keyExtractor={item => String(item.sessionKey)} // Use start time as id
                 ListEmptyComponent={noDrinkingSessionsComponent}
                 ListFooterComponent={addSessionButton}
                 ListFooterComponentStyle={styles.addSessionButtonContainer}

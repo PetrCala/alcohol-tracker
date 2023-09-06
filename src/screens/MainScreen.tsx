@@ -38,6 +38,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
   // Database data hooks
   const [currentSessionData, setCurrentSessionData] = useState<CurrentSessionData | null>(null);
   const [drinkingSessionData, setDrinkingSessionData] = useState<DrinkingSessionArrayItem[]>([]);
+  const [drinkingSessionKeys, setDrinkingSessionKeys] = useState<string[]>([]);
   const [preferences, setPreferences] = useState<PreferencesData | null>(null);
   const [unconfirmedDays, setUnconfirmedDays] = useState<UnconfirmedDaysData | null>(null);
   const [userData, setUserData] = useState<UserData | null>(null);
@@ -128,15 +129,18 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
 
   }, [db, user]);
 
-  // Monitor drinking session data
+  // Monitor drinking session data and keys
   useEffect(() => {
     // Start listening for changes when the component mounts
     let newDrinkingSessionData:DrinkingSessionArrayItem[];
+    let newDrinkingSessionKeys:string[];
     let sessionsRef = `user_drinking_sessions/${user.uid}`
     let stopListening = listenForDataChanges(db, sessionsRef, (data:DrinkingSessionData) => {
       if (data != null){
         newDrinkingSessionData = Object.values(data); // To an array
+        newDrinkingSessionKeys = Object.keys(data);
         setDrinkingSessionData(newDrinkingSessionData);
+        setDrinkingSessionKeys(newDrinkingSessionKeys)
       }
       setLoadingDrinkingSessionData(false);
     });
@@ -292,6 +296,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
               { 
                 dateObject: day,
                 drinkingSessionData: drinkingSessionData,
+                drinkingSessionKeys: drinkingSessionKeys,
                 preferences: preferences
               }
               )

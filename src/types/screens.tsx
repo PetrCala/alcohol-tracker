@@ -27,6 +27,7 @@ export type AppStackParamList = {
   'Day Overview Screen': { 
     dateObject: DateObject;
     drinkingSessionData: DrinkingSessionArrayItem[];
+    drinkingSessionKeys: string[]; // Stored explicitly to alleviate database storage space
     preferences: PreferencesData;
   };
   'Edit Session Screen': {
