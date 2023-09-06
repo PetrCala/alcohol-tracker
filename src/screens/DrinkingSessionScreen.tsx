@@ -98,7 +98,6 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
     setWineUnits(sumUnitsOfSingleType(currentUnits, 'wine'));
   }, [currentUnits]);
 
-
   const handleAddUnits = (units: UnitTypesProps) => {
     let newUnits: UnitsObject = addUnits(currentUnits, units);
     setCurrentUnits(newUnits);

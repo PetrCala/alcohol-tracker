@@ -14,11 +14,11 @@ import {
 import MenuIcon from '../components/Buttons/MenuIcon';
 import BasicButton from '../components/Buttons/BasicButton';
 import { EditSessionScreenProps} from '../types/screens';
-import { DrinkingSessionData, UnitTypesProps } from '../types/database';
+import { DrinkingSessionArrayItem, DrinkingSessionData, UnitTypesProps, UnitsObject } from '../types/database';
 import DatabaseContext from '../context/DatabaseContext';
 import { removeDrinkingSessionData, editDrinkingSessionData } from '../database/drinkingSessions';
 import SessionUnitsInputWindow from '../components/Buttons/SessionUnitsInputWindow';
-import { formatDateToDay, formatDateToTime, sumAllUnits, timestampToDate, unitsToColors } from '../utils/dataHandling';
+import { addUnits, formatDateToDay, formatDateToTime, removeUnits, sumAllUnits, sumUnitsOfSingleType, timestampToDate, unitsToColors } from '../utils/dataHandling';
 import { getAuth } from 'firebase/auth';
 import DrinkingSessionUnitWindow from '../components/DrinkingSessionUnitWindow';
 import { maxAllowedUnits } from '../utils/static';
@@ -33,23 +33,26 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
     const auth = getAuth();
     const user = auth.currentUser;
     const { isOnline } = useUserConnection();
+    // Hooks
+    const [thisSession, setThisSession] = useState<DrinkingSessionArrayItem>(session);
+    const [currentUnits, setCurrentUnits] = useState<UnitsObject>(thisSession.units);
     // Units
-    const [totalUnits, setTotalUnits] = useState<number>(sumAllUnits(session.units));
+    const [totalUnits, setTotalUnits] = useState<number>(sumAllUnits(currentUnits));
     const [availableUnits, setAvailableUnits] = useState<number>(maxAllowedUnits - totalUnits);
-    // const [beerUnits, setBeerUnits] = useState(units.beer)
-    // const [cocktailUnits, setCocktailUnits] = useState(units.cocktail)
-    // const [otherUnits, setOtherUnits] = useState(units.other)
-    // const [strongShotUnits, setStrongShotUnits] = useState(units.strong_shot)
-    // const [weakShotUnits, setWeakShotUnits] = useState(units.weak_shot)
-    // const [wineUnits, setWineUnits] = useState(units.wine)
-    // const allUnits:UnitTypesProps = {
-    //   beer: beerUnits,
-    //   cocktail: cocktailUnits,
-    //   other: otherUnits,
-    //   strong_shot: strongShotUnits,
-    //   weak_shot: weakShotUnits,
-    //   wine: wineUnits,
-    // };
+    const [beerUnits, setBeerUnits] = useState(sumUnitsOfSingleType(currentUnits, 'beer'));
+    const [cocktailUnits, setCocktailUnits] = useState(sumUnitsOfSingleType(currentUnits, 'cocktail'));
+    const [otherUnits, setOtherUnits] = useState(sumUnitsOfSingleType(currentUnits, 'other'));
+    const [strongShotUnits, setStrongShotUnits] = useState(sumUnitsOfSingleType(currentUnits, 'strong_shot'));
+    const [weakShotUnits, setWeakShotUnits] = useState(sumUnitsOfSingleType(currentUnits, 'weak_shot'));
+    const [wineUnits, setWineUnits] = useState(sumUnitsOfSingleType(currentUnits, 'wine'));
+    const allUnits:UnitTypesProps = {
+      beer: beerUnits,
+      cocktail: cocktailUnits,
+      other: otherUnits,
+      strong_shot: strongShotUnits,
+      weak_shot: weakShotUnits,
+      wine: wineUnits,
+    };
     // Time info
     const sessionDate = timestampToDate(session.start_time);
     const sessionDay = formatDateToDay(sessionDate);
@@ -67,12 +70,35 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
         return null;
     }
 
-    // Change local hook value
-    const addOtherUnit = (number: number) => {
-        let newUnits = otherUnits + number;
-        if (newUnits >= 0 && newUnits < 100){
-        setOtherUnits(newUnits);
-        }
+    // Update the current session whenever the units change
+    useEffect(() => {
+      let newSession:DrinkingSessionArrayItem = {
+        ...thisSession,
+        units: currentUnits
+      };
+      setThisSession(newSession);
+    }, [currentUnits]);
+
+    // Update the units hooks whenever the current units object changes
+    useEffect(() => {
+      setTotalUnits(sumAllUnits(currentUnits));
+      setAvailableUnits(maxAllowedUnits - sumAllUnits(currentUnits));
+      setBeerUnits(sumUnitsOfSingleType(currentUnits, 'beer'));
+      setCocktailUnits(sumUnitsOfSingleType(currentUnits, 'cocktail'));
+      setOtherUnits(sumUnitsOfSingleType(currentUnits, 'other'));
+      setStrongShotUnits(sumUnitsOfSingleType(currentUnits, 'strong_shot'));
+      setWeakShotUnits(sumUnitsOfSingleType(currentUnits, 'weak_shot'));
+      setWineUnits(sumUnitsOfSingleType(currentUnits, 'wine'));
+    }, [currentUnits]);
+
+    const handleAddUnits = (units: UnitTypesProps) => {
+      let newUnits: UnitsObject = addUnits(currentUnits, units);
+      setCurrentUnits(newUnits);
+    };
+  
+    const handleRemoveUnits = (unitType: typeof UnitTypesKeys[number], count: number) => {
+      let newUnits: UnitsObject = removeUnits(currentUnits, unitType, count);
+      setCurrentUnits(newUnits);
     };
 
     // Track total units
@@ -121,7 +147,7 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
       }
 
     const handleConfirmDelete = () => {
-      deleteSession(db, user.uid, session_id);
+      deleteSession(db, user.uid, );
       setDeleteModalVisible(false);
       navigation.navigate('Main Screen'); // Get the main overview, not day
     };

@@ -53,6 +53,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
     const onEditSessionPress = (session:DrinkingSessionArrayItem) => {
         navigation.navigate('Edit Session Screen', {
           session: session,
+          sessionKey: 'test_key',
           preferences: preferences
         });
     };
@@ -87,7 +88,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
                     iconSource={require('../assets/icons/edit.png')}
                     containerStyle={styles.menuIconContainer}
                     iconStyle={styles.menuIcon}
-                    onPress={() => onEditSessionPress(session)}
+                    onPress={() => onEditSessionPress(session)} // Use keyextractor to load id here
                 />
             </View>
         </View>
@@ -136,6 +137,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
                 onPress={() => navigation.navigate('Edit Session Screen',
                     {
                     session: newSession,
+                    sessionKey: 'edit-session-id',
                     preferences: preferences
                   }
                 )}

@@ -31,6 +31,7 @@ export type AppStackParamList = {
   };
   'Edit Session Screen': {
     session: DrinkingSessionArrayItem;
+    sessionKey: string;
     preferences: PreferencesData;
   };
   'Session Summary Screen': {
