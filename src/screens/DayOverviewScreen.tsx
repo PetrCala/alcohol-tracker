@@ -45,14 +45,9 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
     const db = useContext(DatabaseContext);
     const { isOnline } = useUserConnection();
     const [ date, setDate ] = useState<Date>(timestampToDate(dateObject.timestamp));
-    const [ dailySessionData, setDailyData ] = useState<DrinkingSessionArrayItem[]>(getSingleDayDrinkingSessions(date, drinkingSessionData));
+    const [ dailySessionData, setDailyData ] = useState<DrinkingSessionArrayItem[]>([]);
     // Create a combined data object
-    // const combinedData:CombinedDataProps[] = drinkingSessionData.map((session, index) => {
-    //   return {
-    //     sessionKey: drinkingSessionKeys[index], // Assign explicitly
-    //     session
-    //   };
-    // });
+    const [ combinedData, setCombinedData ] = useState<CombinedDataProps[]>([]);
 
     // Automatically navigate to login screen if login expires
     if (user == null){
@@ -60,19 +55,23 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
         return null;
     }
 
-    const getDailyKeys = () => {
-      let desiredIndexes:number[] = [];
-      for (let i = 0; i < drinkingSessionData.length; i++) {
-        if (dailySessionData.includes(drinkingSessionData[i])) {
-          desiredIndexes.push(i);
-        };
-      };
-      let dailyKeys = desiredIndexes.map(index => drinkingSessionKeys[index]);
-      return dailyKeys;
-    };
-    
-    const [ dailyKeys, setDailyKeys ] = useState<string[]>(getDailyKeys());
-    
+    // Monitor the daily sessions data
+    useEffect(() => {
+      let newSessions = getSingleDayDrinkingSessions(date, drinkingSessionData)
+      setDailyData(newSessions);
+    }, [date]);
+
+    // Monitor the combined data
+    useEffect(() => {
+      let newCombinedData = dailySessionData.map((session):CombinedDataProps => {
+        return ({
+          sessionKey: drinkingSessionKeys[drinkingSessionData.indexOf(session)],
+          session: session,
+        });
+      });
+      setCombinedData(newCombinedData);
+    }, [dailySessionData]);
+
     const onSessionButtonPress = (session:DrinkingSessionArrayItem) => {
         navigation.navigate('Session Summary Screen', {
           session: session,
@@ -200,7 +199,6 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
         );
     };
 
-    console.log(dailyKeys);
     return (
       <View style={{flex:1, backgroundColor: '#FFFF99'}}>
         <View style={styles.mainHeader}>
