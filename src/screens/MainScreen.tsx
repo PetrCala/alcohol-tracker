@@ -54,6 +54,13 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
   const [loadingUserPreferences, setLoadingUserPreferences] = useState<boolean>(true);
   const [loadingUnconfirmedDays, setLoadingUnconfirmedDays] = useState<boolean>(true);
   const [loadingUserData, setLoadingUserData] = useState<boolean>(true);
+  const isLoading = [
+    loadingCurrentSessionData,
+    loadingDrinkingSessionData,
+    loadingUserPreferences,
+    loadingUnconfirmedDays,
+    loadingUserData,
+  ].some(Boolean);  // true if any of them is true
   const [loadingNewSession, setLoadingNewSession] = useState<boolean>(false);
 
   // Automatically navigate to login screen if login expires
@@ -203,41 +210,17 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
 
   }, [drinkingSessionData, visibleDateObject]);
 
-  if (!isOnline) return (<UserOffline/>);
-
-  // Wait for the user data to be fetched from database
-  if (
-    loadingCurrentSessionData || 
-    loadingDrinkingSessionData ||
-    loadingUserPreferences ||
-    loadingUnconfirmedDays ||
-    loadingUserData
-    ) {
-
-    return(
-      <LoadingData
-        loadingText=""
-      />
-      );
-    };
-
-  // On new drinking session start
-  if (loadingNewSession) {
-    return(
-      <LoadingData
-        loadingText='Starting a new session...'
-      />
-    );
-  };
-
-  // Should never be null
-  if (
-    !drinkingSessionData || 
-    !preferences || 
-    !userData
-  ) return null;
-
-  return (
+  if (!isOnline) {
+    return <UserOffline />;
+  } else if (isLoading) {
+    return <LoadingData loadingText="" />;
+  } else if (!drinkingSessionData || !preferences || !userData) {
+    // Missing data - each has to be declared explicitly for TypeScript
+    return null;
+  } else if (loadingNewSession) {
+    return <LoadingData loadingText='Starting a new session...' />;
+  } else {
+    return ( 
     <>
       <View style={styles.mainHeader}>
           <View style={styles.profileContainer}>
@@ -325,7 +308,9 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
       }
     </>
   );
+  };
 };
+   
 
 export default MainScreen;
 
