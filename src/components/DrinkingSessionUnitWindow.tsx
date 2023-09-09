@@ -22,7 +22,7 @@ const DrinkingSessionUnitWindow = ({
 
     const handleAddUnits = (units: UnitTypesProps) => {
       let newUnitCount = sumUnitTypes(units); // Number of added units
-      if (newUnitCount > 0 && newUnitCount < availableUnits) {
+      if (newUnitCount > 0 && newUnitCount <= availableUnits) {
         let newUnits: UnitsObject = addUnits(currentUnits, units);
         setCurrentUnits(newUnits);
         setTypeSum(typeSum + newUnitCount);
@@ -30,7 +30,7 @@ const DrinkingSessionUnitWindow = ({
     };
   
     const handleRemoveUnits = (unitType: typeof UnitTypesKeys[number], count: number) => {
-      if (count > 0 && count < availableUnits) {
+      if (typeSum > 0) {
         let newUnits: UnitsObject = removeUnits(currentUnits, unitType, count);
         setCurrentUnits(newUnits);
         setTypeSum(typeSum - count);
