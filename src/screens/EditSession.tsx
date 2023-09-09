@@ -27,6 +27,8 @@ import { maxAllowedUnits } from '../utils/static';
 import YesNoPopup from '../components/Popups/YesNoPopup';
 import { useUserConnection } from '../context/UserConnectionContext';
 import UserOffline from '../components/UserOffline';
+import { DrinkDataProps, UnitTypesViewProps } from '../types/components';
+import UnitTypesView from '../components/UnitTypesView';
 
 const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
     if (!route || ! navigation) return null; // Should never be null
@@ -56,12 +58,11 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
     const sessionColor = unitsToColors(totalUnits, preferences.units_to_colors);
     const sessionIsNew = sessionKey == 'edit-session-id' ? true : false;
 
-    type DrinkDataProps = {
-      key: typeof UnitTypesKeys[number], 
-      icon: ImageSourcePropType,
-      typeSum: number,
-      setTypeSum: React.Dispatch<React.SetStateAction<number>>;
-    }[];
+    // Automatically navigate to login screen if login expires
+    if (user == null){
+        navigation.replace("Login Screen");
+        return null;
+    }
 
     const drinkData: DrinkDataProps = [
       { key: 'beer', icon: require('../assets/icons/beer.png'), typeSum: beerSum, setTypeSum: setBeerSum},
@@ -71,31 +72,6 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
       { key: 'cocktail', icon: require('../assets/icons/cocktail.png'), typeSum: cocktailSum, setTypeSum: setCocktailSum},
       { key: 'other', icon: require('../assets/icons/alcohol_assortment.png'), typeSum: otherSum, setTypeSum: setOtherSum},
     ];
-
-    const UnitTypesView = () => {
-      return (
-        <View style={styles.unitTypesContainer}>
-          {drinkData.map(drink => (
-            <DrinkingSessionUnitWindow
-              key={drink.key} // JS unique key property - no need to list
-              unitKey={drink.key}
-              iconSource={drink.icon}
-              currentUnits={currentUnits}
-              setCurrentUnits={setCurrentUnits}
-              availableUnits={availableUnits}
-              typeSum={drink.typeSum}
-              setTypeSum={drink.setTypeSum}
-            />
-          ))}
-        </View>
-      );
-    };
-    
-    // Automatically navigate to login screen if login expires
-    if (user == null){
-        navigation.replace("Login Screen");
-        return null;
-    }
 
     const handleMonkePlus = () => {
       if (availableUnits > 0) {
@@ -226,7 +202,14 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
         </TouchableOpacity>
       </View>
       :
-      <UnitTypesView />
+      <View style={styles.unitTypesContainer}>
+        <UnitTypesView 
+          drinkData={drinkData}
+          currentUnits={currentUnits}
+          setCurrentUnits={setCurrentUnits}
+          availableUnits={availableUnits}
+        />
+      </View>
       }
     </ScrollView>
     <View style={styles.saveSessionContainer}>

@@ -54,6 +54,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
   const [loadingUserPreferences, setLoadingUserPreferences] = useState<boolean>(true);
   const [loadingUnconfirmedDays, setLoadingUnconfirmedDays] = useState<boolean>(true);
   const [loadingUserData, setLoadingUserData] = useState<boolean>(true);
+  const [loadingNewSession, setLoadingNewSession] = useState<boolean>(false);
 
   // Automatically navigate to login screen if login expires
   if (user == null){
@@ -63,11 +64,12 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
 
   // Handle drinking session button press
   const startDrinkingSession = async () => {
-    if (!preferences || !currentSessionData) return null; // Should never be null 
+    if (!preferences) return null; // Should never be null 
     let sessionData:DrinkingSessionArrayItem;
     let sessionKey:string;
     let ongoingSession = findOngoingSession(drinkingSessionData);
     if (!ongoingSession){
+      setLoadingNewSession(true);
       // The user is not in an active session
       sessionData = {
         start_time: Date.now(),
@@ -90,6 +92,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
         throw new Error("Failed to update the current session key info");
       };
     } else {
+      if (!currentSessionData) return null; // Should never be null with ongoing session
       // The user already has an active session
       sessionData = ongoingSession;
       if (!currentSessionData.current_session_id){
@@ -102,6 +105,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
       sessionKey: sessionKey,
       preferences: preferences
     });
+    setLoadingNewSession(false);
   }
 
   // Update the user last login time
@@ -212,11 +216,20 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
 
     return(
       <LoadingData
-      // loadingText="Loading data..."
+        loadingText=""
       />
       );
     };
-    
+
+  // On new drinking session start
+  if (loadingNewSession) {
+    return(
+      <LoadingData
+        loadingText='Starting a new session...'
+      />
+    );
+  };
+
   // Should never be null
   if (
     !drinkingSessionData || 

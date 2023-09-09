@@ -143,7 +143,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
         if (date == null) {
             return(
                 <LoadingData
-                    // loadingText='Loading date data...'
+                    loadingText=''
                 />
             )
         }
@@ -158,7 +158,6 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
         let newTimestamp = setDateToCurrentTime(date).getTime(); // At noon
         let newSession: DrinkingSessionArrayItem = {
           start_time: newTimestamp, // Arbitrary timestamp of today's noon
-          end_time: newTimestamp + 1,
           units: getZeroUnitsObject(),
         }
         return(
@@ -194,7 +193,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
     if ( date == null ) {
         return (
             <LoadingData
-                // loadingText='Loading drinking session data...'
+                loadingText=''
             />
         );
     };

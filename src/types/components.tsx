@@ -92,7 +92,22 @@ export type DateObject = {
 
 export type DayState = 'selected' | 'disabled' | 'today' | '';
 
-// Drinking session unit window props
+// Various unit window props
+
+export type DrinkDataProps = {
+    key: typeof UnitTypesKeys[number];
+    icon: ImageSourcePropType;
+    typeSum: number;
+    setTypeSum: React.Dispatch<React.SetStateAction<number>>;
+}[];
+
+export type UnitTypesViewProps = {
+    drinkData: DrinkDataProps;
+    currentUnits: UnitsObject;
+    setCurrentUnits: React.Dispatch<React.SetStateAction<UnitsObject>>;
+    availableUnits: number;
+};
+
 
 export type DrinkingSessionUnitWindowProps = {
     unitKey: typeof UnitTypesKeys[number]; // Non-verbose
@@ -121,5 +136,5 @@ export type SessionUnitsInputWindowProps = {
 // Loading data props
 
 export type LoadingDataProps = {
-    // loadingText: string
+    loadingText: string
 }

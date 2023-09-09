@@ -44,7 +44,7 @@ export type CurrentSessionData = {
 export type DrinkingSessionData = {
   [session_id: string]: {
     start_time: number;
-    end_time: number;
+    end_time?: number;
     units: UnitsObject;
     blackout?: boolean;
     note?: string;

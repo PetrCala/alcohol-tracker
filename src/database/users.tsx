@@ -108,23 +108,6 @@ export async function updateLastSessionStarted(
 };
 
 
-export async function updateCurrentUnits(
-  db: any, 
-  userId: string, 
-  newUnits: UnitTypesProps
-  ) {
-  try {
-    await runTransaction(ref(db, `user_current_session/${userId}`), (user) => {
-      if (user) {
-        user.current_units = newUnits;
-      }
-      return user;
-    });
-  } catch (error:any) {
-    throw new Error('Failed to save drinking session data: ' + error.message);
-  }
-};
-
 export async function updateSessionStatus(
   db: any, 
   userId: string, 

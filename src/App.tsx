@@ -57,7 +57,7 @@ const AlcoholTracker = () => {
           <Stack.Screen 
             name='Main Screen'
             component={MainScreen}
-            options={{}}
+            options={{ }}
           />
           <Stack.Screen 
             name='Main Menu Screen'

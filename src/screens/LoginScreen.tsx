@@ -81,7 +81,7 @@ const LoginScreen = ( {navigation }: LoginScreenProps) => {
   if (loadingUser) {
     return(
       <LoadingData
-      // loadingText="Loading data..."
+      loadingText=""
       />
     );
   };

@@ -1,5 +1,5 @@
 ﻿import { ref, child, update, push } from "firebase/database";
-import { DrinkingSessionData, UnitTypesProps, CurrentSessionData, DrinkingSessionArrayItem } from "../types/database";
+import { DrinkingSessionData, UnitTypesProps, CurrentSessionData, DrinkingSessionArrayItem, UnitsObject } from "../types/database";
 import { Alert } from "react-native";
 
 
@@ -112,6 +112,31 @@ export async function editDrinkingSessionData(
     return await update(ref(db), updates);
   } catch (error:any) {
     Alert.alert('Session edit failed', 'Failed to edit drinking session data: ' + error.message);
+  }
+};
+
+/** Access the database reference point of a user's drinking session
+ * and update the units of that session.
+ * 
+ * @param db Database object
+ * @param userId User ID
+ * @param sessionKey Key of the session
+ * @param newUnits UnitsObject containing the new units
+ */
+export async function updateSessionUnits(
+  db: any, 
+  userId: string, 
+  sessionKey: string,
+  newUnits: UnitsObject
+  ) {
+
+  var updates: { [key: string]: UnitsObject } = {};
+  updates[`/user_drinking_sessions/${userId}/${sessionKey}/units`] = newUnits;
+
+  try {
+    return await update(ref(db), updates);
+  } catch (error:any) {
+    Alert.alert('Units consumed save failed', 'Could not save the current session units consumed data: ' + error.message);
   }
 };
 
