@@ -30,8 +30,7 @@ const TermsAndAgreementsScreen = ({ navigation }: TermsAndAgreementsScreenProps)
   if (!navigation) return null; // Should never be null
 
   const termsAndAgreements = [
-    '1. I solemnly swear to write down all consumed units in their true form and amount',
-    '2. I solemnly swear to earnestly and faithfully approximate the closest possible number of units consumed in case a blackout shall occur',
+    'I solemnly swear to faithfully report all consumed units in their true form and amount',
   ]
 
   return (

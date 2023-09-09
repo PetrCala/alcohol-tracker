@@ -10,6 +10,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -56,6 +57,9 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
   const [strongShotSum, setStrongShotSum] = useState<number>(sumUnitsOfSingleType(currentUnits, 'strong_shot'));
   const [weakShotSum, setWeakShotSum] = useState<number>(sumUnitsOfSingleType(currentUnits, 'weak_shot'));
   const [wineSum, setWineSum] = useState<number>(sumUnitsOfSingleType(currentUnits, 'wine'));
+  // Session details
+  const [blackout, setBlackout] = useState<boolean | undefined>(session.blackout);
+  const [note, setNote] = useState<string | undefined>(session.note);
   // Time info
   const [pendingUpdate, setPendingUpdate] = useState(false);
   const updateTimeout = 1000; // Synchronize with DB every x milliseconds
@@ -230,6 +234,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
         </Text>
     </View>
     <ScrollView style={styles.scrollView}>
+      <>
       {monkeMode ?
       <View style={styles.modifyUnitsContainer}>
         <TouchableOpacity
@@ -255,6 +260,25 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
         />
       </View>
       }
+      {/* Wrap this in a modal that will show/hide the details */}
+      <View style={styles.sessionDetailsContainer}>
+        <View style={styles.blackoutContainer}>
+          <Text style={styles.noteHeading}>Blackout: </Text>
+        </View>
+        <View style={styles.noteContainer}>
+          <Text style={styles.noteHeading}>Session note:</Text>
+          <TextInput
+              style={styles.noteText}
+              onChangeText={() => {}}
+              placeholder={"Write your feedback here"}
+              placeholderTextColor={"grey"}
+              keyboardType="default"
+              maxLength={1000}
+              multiline={true}
+          />
+        </View>
+      </View>
+      </>
     </ScrollView>
     {/* <View style={styles.monkeModeContainer}>
     </View> */}
@@ -317,11 +341,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFF99',
   },
   unitCountContainer: {
-    height: '18%',
-    flexGrow: 1,
-    flexShrink: 1,
+    height: '19%',
     backgroundColor: '#FFFF99',
-    marginBottom: '-15%',
   },
   unitCountText: {
     fontSize: 90,
@@ -336,8 +357,7 @@ const styles = StyleSheet.create({
     textShadowRadius: 9,
   },
   scrollView: {
-    flexGrow:1, 
-    flexShrink: 1,
+    flex: 1,
     backgroundColor: '#FFFF99',
   },
   unitTypesContainer: {
@@ -410,6 +430,31 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 17,
     fontWeight: '600',
+  },
+  sessionDetailsContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: '100%',
+    marginTop: 20,
+  },
+  blackoutContainer: {
+    width: '100%',
+  },
+  noteContainer: {
+
+    width: '100%',
+  },
+  noteHeading: {
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  noteText: {
+    height: '100%',
+    width: '100%',
+    flexGrow: 1,
+    flexShrink: 1,
+    textAlignVertical: 'top',
+    margin: 12,
   },
   saveSessionContainer: {
     height: '8%',
