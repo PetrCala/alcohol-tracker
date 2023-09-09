@@ -134,7 +134,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
   }, [thisSession]);
 
 
-  async function finishSession(db: any, userId: string) {
+  async function saveSession(db: any, userId: string) {
     if (totalUnits > 99){
       console.log('Cannot save this session');
       return null;
@@ -310,7 +310,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
         text='Save Session'
         buttonStyle={styles.saveSessionButton}
         textStyle={styles.saveSessionButtonText}
-        onPress={() => finishSession(db, user.uid)}
+        onPress={() => saveSession(db, user.uid)}
       />
     </View>
     </>

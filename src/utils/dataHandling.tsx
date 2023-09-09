@@ -261,6 +261,33 @@ export const removeUnits = (existingUnits: UnitsObject, unitType: typeof UnitTyp
  return updatedUnits;
 };
 
+/** Input an array of drinkng sessions and remove all unit records
+ * where all units of a given timestamp are set to 0. Return the 
+ * updated array.
+ * 
+ * @param session Array of drinking sessions
+ * @returns The updated array
+ */
+export const removeZeroObjectsFromSession = (session:DrinkingSessionArrayItem):DrinkingSessionArrayItem => {
+  // Clone the session object to avoid mutating the original object
+  const updatedSession = { ...session };
+
+  // Go through each timestamp in the session's units object
+  for (const timestamp in updatedSession.units) {
+    // Check if all the unit values are set to 0
+    const allZero = UnitTypesKeys.every(
+      key => updatedSession.units[timestamp][key] === 0 || updatedSession.units[timestamp][key] === undefined
+    );
+
+    // If all unit values are 0, delete the timestamp from the units object
+    if (allZero) {
+      delete updatedSession.units[+timestamp];
+    }
+  }
+
+  return updatedSession;
+};
+
 
 
 /** Generate an object with all available units where 

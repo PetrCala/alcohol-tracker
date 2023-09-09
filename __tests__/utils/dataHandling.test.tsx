@@ -15,6 +15,7 @@
     getTimestampAtNoon, 
     getZeroUnitsObject, 
     removeUnits, 
+    removeZeroObjectsFromSession, 
     setDateToCurrentTime, 
     sumAllUnits, 
     sumUnitsOfSingleType, 
@@ -682,6 +683,65 @@ describe('removeUnits function', () => {
     const newUnits = removeUnits(existingUnits, 'cocktail', 3);
     expect(newUnits[1632423423]?.cocktail).toBeUndefined();
     expect(newUnits[1632435223]).toBeUndefined();
+  });
+});
+
+describe('removeZeroObjectsFromSession', () => {
+
+  // Helper function to generate mock session with units
+  const generateMockSessionWithUnits = (units: UnitsObject): DrinkingSessionArrayItem => {
+      return {
+          start_time: Date.now(),
+          end_time: Date.now() + 1000,
+          units: units
+      };
+  };
+
+  it('should remove UnitsObject children with all unit values set to 0', () => {
+      const mockSession: DrinkingSessionArrayItem = generateMockSessionWithUnits({
+          12345679: { beer: 0, cocktail: 0, other: 0, strong_shot: 0, weak_shot: 0, wine: 0 },
+          12345680: { beer: 1 }
+      });
+      
+      const result = removeZeroObjectsFromSession(mockSession);
+      expect(Object.keys(result.units)).toHaveLength(1);
+      expect(sumAllUnits(result.units)).toEqual(1);
+      expect(result.units[12345680]).toBeDefined();
+  });
+
+  it('should keep UnitsObject children with at least one unit value not set to 0', () => {
+      const mockSession: DrinkingSessionArrayItem = generateMockSessionWithUnits({
+          12345679: { beer: 1, cocktail: 0 },
+          12345680: { beer: 0, wine: 1 }
+      });
+      
+      const result = removeZeroObjectsFromSession(mockSession);
+      expect(Object.keys(result.units)).toHaveLength(2);
+      expect(sumAllUnits(result.units)).toEqual(2);
+      expect(result.units[12345679]).toBeDefined();
+      expect(result.units[12345680]).toBeDefined();
+  });
+
+  it('should return the same session if no UnitsObject children have all unit values set to 0', () => {
+      const mockSession: DrinkingSessionArrayItem = generateMockSessionWithUnits({
+          12345679: { beer: 1 },
+          12345680: { wine: 1 }
+      });
+
+      const result = removeZeroObjectsFromSession(mockSession);
+      expect(sumAllUnits(result.units)).toEqual(2);
+      expect(result).toEqual(mockSession);
+  });
+  
+  it('should return a session with no units if all UnitsObject children have all unit values set to 0', () => {
+      const mockSession: DrinkingSessionArrayItem = generateMockSessionWithUnits({
+          12345679: { beer: 0, cocktail: 0, other: 0, strong_shot: 0, weak_shot: 0, wine: 0 },
+          12345680: { beer: 0, cocktail: 0, other: 0, strong_shot: 0, weak_shot: 0, wine: 0 }
+      });
+
+      const result = removeZeroObjectsFromSession(mockSession);
+      expect(sumAllUnits(result.units)).toEqual(0);
+      expect(Object.keys(result.units)).toHaveLength(0);
   });
 });
 
