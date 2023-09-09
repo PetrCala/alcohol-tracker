@@ -6,15 +6,23 @@ import {
     View
 } from 'react-native';
 import { SessionUnitsInputWindowProps } from '../../types/components';
+import { addUnits, removeUnits, sumUnitsOfSingleType } from '../../utils/dataHandling';
+import { UnitTypesProps, UnitsObject } from '../../types/database';
 
 
-const SessionUnitsInputWindow = (props: SessionUnitsInputWindowProps) => {
-    const { currentUnits, setCurrentUnits, availableUnits, styles } = props;
-    const [inputValue, setInputValue] = useState<string>(currentUnits.toString());
+const SessionUnitsInputWindow = ({
+    unitKey,
+    currentUnits,
+    setCurrentUnits,
+    availableUnits,
+    typeSum,
+    setTypeSum,
+    styles
+}: SessionUnitsInputWindowProps) => {
+    const [inputValue, setInputValue] = useState<string>(typeSum.toString());
     const inputRef = useRef<TextInput>(null);
 
-
-    const handleKeyPress = (event: { nativeEvent: { key: string } }) => {
+    const handleKeyPress = (event: { nativeEvent: { key: string } }):void => {
         let updatedValue: string = '0';
         const key = event.nativeEvent.key;
     
@@ -47,19 +55,39 @@ const SessionUnitsInputWindow = (props: SessionUnitsInputWindowProps) => {
                 return; // If the new value is greater than available units, do nothing.
             }
     
-            console.log(updatedValue)
             setInputValue(updatedValue);
         }
     
         // Update units
         let numericValue = parseFloat(updatedValue);
+        handleNewNumericValue(numericValue);
+    };
+    
+    /** Given a new numeric value, update the necessary hooks upstream.
+     * 
+     * @param numericValue The value to handle.
+     * @return void, the upstream hooks get updated
+     */
+    const handleNewNumericValue = (numericValue: number):void => {
         if (isNaN(numericValue)) {
             numericValue = 0;
-        }
+        };
     
-        if (numericValue !== currentUnits) {
-            setCurrentUnits(numericValue);
-        }
+        if (numericValue == typeSum) return; // Do nothing if the value is the same
+        // Determine whether the new value is higher or lower than the current one
+        let newUnits: UnitsObject = { ...currentUnits };
+        if (numericValue > typeSum) {
+            // Add units
+            let numberToAdd:number = numericValue - typeSum;
+            let unitsToAdd:UnitTypesProps = {[unitKey]: numberToAdd}
+            newUnits = addUnits(newUnits, unitsToAdd);
+        } else {
+            // Remove units
+            let numberToRemove:number = typeSum - numericValue;
+            newUnits = removeUnits(newUnits, unitKey, numberToRemove);
+        };
+        setCurrentUnits(newUnits);
+        setTypeSum(numericValue);
     };
 
     const handleContainerPress = () => {
@@ -83,7 +111,7 @@ const SessionUnitsInputWindow = (props: SessionUnitsInputWindowProps) => {
             <TextInput
                 ref={inputRef}
                 style={styles.unitsInputText}
-                value={currentUnits.toString()}
+                value={typeSum.toString()}
                 onKeyPress={handleKeyPress}
                 keyboardType="numeric"
                 caretHidden={true}

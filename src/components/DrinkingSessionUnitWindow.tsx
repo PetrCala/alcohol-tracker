@@ -7,22 +7,38 @@
 } from "react-native";
 import { DrinkingSessionUnitWindowProps } from "../types/components";
 import SessionUnitsInputWindow from "./Buttons/SessionUnitsInputWindow";
-
+import { addUnits, findUnitName, removeUnits, sumAllUnits, sumUnitTypes, sumUnitsOfSingleType } from "../utils/dataHandling";
+import { UnitTypesKeys, UnitTypesProps, UnitsObject } from "../types/database";
 
 const DrinkingSessionUnitWindow = ({
-    unitName,
+    unitKey,
     iconSource,
     currentUnits,
+    setCurrentUnits,
     availableUnits,
-    setCurrentUnits
+    typeSum,
+    setTypeSum
 }: DrinkingSessionUnitWindowProps) => {
 
-    const changeUnits = (number: number) => {
-        let newUnits = currentUnits + number;
-        if (newUnits >= 0 && number <= availableUnits){
-          setCurrentUnits(newUnits);
-        }
+    const handleAddUnits = (units: UnitTypesProps) => {
+      let newUnitCount = sumUnitTypes(units); // Number of added units
+      if (newUnitCount > 0 && newUnitCount < availableUnits) {
+        let newUnits: UnitsObject = addUnits(currentUnits, units);
+        setCurrentUnits(newUnits);
+        setTypeSum(typeSum + newUnitCount);
+      };
     };
+  
+    const handleRemoveUnits = (unitType: typeof UnitTypesKeys[number], count: number) => {
+      if (count > 0 && count < availableUnits) {
+        let newUnits: UnitsObject = removeUnits(currentUnits, unitType, count);
+        setCurrentUnits(newUnits);
+        setTypeSum(typeSum - count);
+      };
+    };
+
+    const unitName = findUnitName(unitKey);
+
 
     return (
         <View style={styles.sessionUnitContainer}>
@@ -30,7 +46,7 @@ const DrinkingSessionUnitWindow = ({
             <Text style = {styles.unitInfoText}>{unitName}</Text>
             <TouchableOpacity
                 style={styles.adjustUnitsButton}
-                onPress={() => changeUnits(-1)}
+                onPress={() => handleRemoveUnits(unitKey, 1)}
             >
                 <Image 
                     source={require('../assets/icons/minus.png')}
@@ -38,14 +54,17 @@ const DrinkingSessionUnitWindow = ({
                 />
             </TouchableOpacity>
             <SessionUnitsInputWindow
+                unitKey={unitKey}
                 currentUnits={currentUnits}
-                availableUnits={availableUnits}
                 setCurrentUnits={setCurrentUnits}
+                availableUnits={availableUnits}
+                typeSum={typeSum}
+                setTypeSum={setTypeSum}
                 styles={styles}
             />
             <TouchableOpacity
                 style={styles.adjustUnitsButton}
-                onPress={() => changeUnits(1)}
+                onPress={() => handleAddUnits({[unitKey]: 1})}
             >
                 <Image 
                     source={require('../assets/icons/plus.png')}

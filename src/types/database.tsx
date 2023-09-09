@@ -74,6 +74,15 @@ export const UnitTypesKeys = [
   'wine'
 ] as const;  // Infer a readonly tuple
 
+export const UnitTypesNames = [
+  'Beer', 
+  'Cocktail', 
+  'Other', 
+  'Strong Shot',
+  'Weak Shot',
+  'Wine'
+] as const; // Should always match the UnitTypesKeys
+
 export type UnitTypesProps = Partial<Record<typeof UnitTypesKeys[number], number>>;
 
 export type UnitsToColorsData = {

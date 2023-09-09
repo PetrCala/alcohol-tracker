@@ -6,6 +6,7 @@
 import {
   Alert,
   Image,
+  ImageSourcePropType,
   ScrollView,
   StyleSheet,
   Text,
@@ -19,7 +20,7 @@ import { DrinkingSessionArrayItem, DrinkingSessionData, UnitTypesKeys, UnitTypes
 import DatabaseContext from '../context/DatabaseContext';
 import { removeDrinkingSessionData, editDrinkingSessionData } from '../database/drinkingSessions';
 import SessionUnitsInputWindow from '../components/Buttons/SessionUnitsInputWindow';
-import { addUnits, formatDateToDay, formatDateToTime, removeUnits, sumAllUnits, sumUnitsOfSingleType, timestampToDate, unitsToColors } from '../utils/dataHandling';
+import { addUnits, formatDateToDay, formatDateToTime, removeUnits, removeZeroObjectsFromSession, sumAllUnits, sumUnitsOfSingleType, timestampToDate, unitsToColors } from '../utils/dataHandling';
 import { getAuth } from 'firebase/auth';
 import DrinkingSessionUnitWindow from '../components/DrinkingSessionUnitWindow';
 import { maxAllowedUnits } from '../utils/static';
@@ -27,33 +28,23 @@ import YesNoPopup from '../components/Popups/YesNoPopup';
 import { useUserConnection } from '../context/UserConnectionContext';
 import UserOffline from '../components/UserOffline';
 
-
 const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
     if (!route || ! navigation) return null; // Should never be null
     const { session, sessionKey, preferences } = route.params; 
     const auth = getAuth();
     const user = auth.currentUser;
     const { isOnline } = useUserConnection();
-    // Hooks
-    const [thisSession, setThisSession] = useState<DrinkingSessionArrayItem>(session);
-    const [currentUnits, setCurrentUnits] = useState<UnitsObject>(thisSession.units);
     // Units
+    const [currentUnits, setCurrentUnits] = useState<UnitsObject>(session.units);
     const [totalUnits, setTotalUnits] = useState<number>(sumAllUnits(currentUnits));
     const [availableUnits, setAvailableUnits] = useState<number>(maxAllowedUnits - totalUnits);
-    const [beerUnits, setBeerUnits] = useState(sumUnitsOfSingleType(currentUnits, 'beer'));
-    const [cocktailUnits, setCocktailUnits] = useState(sumUnitsOfSingleType(currentUnits, 'cocktail'));
-    const [otherUnits, setOtherUnits] = useState(sumUnitsOfSingleType(currentUnits, 'other'));
-    const [strongShotUnits, setStrongShotUnits] = useState(sumUnitsOfSingleType(currentUnits, 'strong_shot'));
-    const [weakShotUnits, setWeakShotUnits] = useState(sumUnitsOfSingleType(currentUnits, 'weak_shot'));
-    const [wineUnits, setWineUnits] = useState(sumUnitsOfSingleType(currentUnits, 'wine'));
-    const allUnits:UnitTypesProps = {
-      beer: beerUnits,
-      cocktail: cocktailUnits,
-      other: otherUnits,
-      strong_shot: strongShotUnits,
-      weak_shot: weakShotUnits,
-      wine: wineUnits,
-    };
+    // Hooks for immediate display info - update these manually to improve efficiency
+    const [beerSum, setBeerSum] = useState<number>(sumUnitsOfSingleType(currentUnits, 'beer'));
+    const [cocktailSum, setCocktailSum] = useState<number>(sumUnitsOfSingleType(currentUnits, 'cocktail'));
+    const [otherSum, setOtherSum] = useState<number>(sumUnitsOfSingleType(currentUnits, 'other'));
+    const [strongShotSum, setStrongShotSum] = useState<number>(sumUnitsOfSingleType(currentUnits, 'strong_shot'));
+    const [weakShotSum, setWeakShotSum] = useState<number>(sumUnitsOfSingleType(currentUnits, 'weak_shot'));
+    const [wineSum, setWineSum] = useState<number>(sumUnitsOfSingleType(currentUnits, 'wine'));
     // Time info
     const sessionDate = timestampToDate(session.start_time);
     const sessionDay = formatDateToDay(sessionDate);
@@ -65,49 +56,73 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
     const sessionColor = unitsToColors(totalUnits, preferences.units_to_colors);
     const sessionIsNew = sessionKey == 'edit-session-id' ? true : false;
 
+    type DrinkDataProps = {
+      key: typeof UnitTypesKeys[number], 
+      icon: ImageSourcePropType,
+      typeSum: number,
+      setTypeSum: React.Dispatch<React.SetStateAction<number>>;
+    }[];
 
+    const drinkData: DrinkDataProps = [
+      { key: 'beer', icon: require('../assets/icons/beer.png'), typeSum: beerSum, setTypeSum: setBeerSum},
+      { key: 'wine', icon: require('../assets/icons/wine.png'), typeSum: wineSum, setTypeSum: setWineSum},
+      { key: 'weak_shot', icon: require('../assets/icons/weak_shot.png'), typeSum: weakShotSum, setTypeSum: setWeakShotSum},
+      { key: 'strong_shot', icon: require('../assets/icons/strong_shot.png'), typeSum: strongShotSum, setTypeSum: setStrongShotSum},
+      { key: 'cocktail', icon: require('../assets/icons/cocktail.png'), typeSum: cocktailSum, setTypeSum: setCocktailSum},
+      { key: 'other', icon: require('../assets/icons/alcohol_assortment.png'), typeSum: otherSum, setTypeSum: setOtherSum},
+    ];
+
+    const UnitTypesView = () => {
+      return (
+        <View style={styles.unitTypesContainer}>
+          {drinkData.map(drink => (
+            <DrinkingSessionUnitWindow
+              key={drink.key} // JS unique key property - no need to list
+              unitKey={drink.key}
+              iconSource={drink.icon}
+              currentUnits={currentUnits}
+              setCurrentUnits={setCurrentUnits}
+              availableUnits={availableUnits}
+              typeSum={drink.typeSum}
+              setTypeSum={drink.setTypeSum}
+            />
+          ))}
+        </View>
+      );
+    };
+    
     // Automatically navigate to login screen if login expires
     if (user == null){
         navigation.replace("Login Screen");
         return null;
     }
 
-    // Update the current session whenever the units change
-    useEffect(() => {
-      let newSession:DrinkingSessionArrayItem = {
-        ...thisSession,
-        units: currentUnits
+    const handleMonkePlus = () => {
+      if (availableUnits > 0) {
+        let unitsToAdd:UnitTypesProps = {other: 1};
+        let newUnits: UnitsObject = addUnits(currentUnits, unitsToAdd);
+        setCurrentUnits(newUnits);
+        setOtherSum(otherSum + 1);
       };
-      setThisSession(newSession);
-    }, [currentUnits]);
-
-    // Update the units hooks whenever the current units object changes
-    useEffect(() => {
-      setTotalUnits(sumAllUnits(currentUnits));
-      setAvailableUnits(maxAllowedUnits - sumAllUnits(currentUnits));
-      setBeerUnits(sumUnitsOfSingleType(currentUnits, 'beer'));
-      setCocktailUnits(sumUnitsOfSingleType(currentUnits, 'cocktail'));
-      setOtherUnits(sumUnitsOfSingleType(currentUnits, 'other'));
-      setStrongShotUnits(sumUnitsOfSingleType(currentUnits, 'strong_shot'));
-      setWeakShotUnits(sumUnitsOfSingleType(currentUnits, 'weak_shot'));
-      setWineUnits(sumUnitsOfSingleType(currentUnits, 'wine'));
-    }, [currentUnits]);
-
-    const handleAddUnits = (units: UnitTypesProps) => {
-      let newUnits: UnitsObject = addUnits(currentUnits, units);
-      setCurrentUnits(newUnits);
     };
   
-    const handleRemoveUnits = (unitType: typeof UnitTypesKeys[number], count: number) => {
-      let newUnits: UnitsObject = removeUnits(currentUnits, unitType, count);
-      setCurrentUnits(newUnits);
+    const handleMonkeMinus = () => {
+      if (otherSum > 0) {
+        let newUnits: UnitsObject = removeUnits(currentUnits, "other", 1);
+        setCurrentUnits(newUnits);
+        setOtherSum(otherSum - 1);
+      };
+      // Here, as else, maybe send an alert that there are other types of
+      // units logged
     };
 
-    // Track total units
+    // Update the hooks whenever current units change
     useEffect(() => {
-        let allUnitsSum = sumAllUnits(allUnits);
-        setTotalUnits(allUnitsSum);
-    }, [allUnits]);
+      let newTotalUnits = sumAllUnits(currentUnits);
+      let newAvailableUnits = maxAllowedUnits - newTotalUnits;
+      setTotalUnits(newTotalUnits);
+      setAvailableUnits(newAvailableUnits);
+    }, [currentUnits]);
 
 
     async function saveSession(db: any, userId: string) {
@@ -123,9 +138,10 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
         let newSessionData: DrinkingSessionArrayItem = {
           start_time: session.start_time,
           end_time: Date.now(),
-          units: allUnits,
+          units: currentUnits,
           ongoing: null,
         };
+        newSessionData = removeZeroObjectsFromSession(newSessionData); // Delete the initial log of zero units that was used as a placeholder
         try {
           await editDrinkingSessionData(db, userId, newSessionData, sessionKey, sessionIsNew); // Finish editing
         } catch (error:any) {
@@ -160,7 +176,7 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
 
 
     if (!isOnline) return (<UserOffline/>);
-
+    
     return (
       <>
       <View style={styles.mainHeader}>
@@ -198,62 +214,19 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
       <View style={styles.modifyUnitsContainer}>
         <TouchableOpacity
             style={[styles.modifyUnitsButton, {backgroundColor: 'red'}]}
-            onPress={() => handleRemoveUnits("other", 1)}
+            onPress={() => handleMonkeMinus()}
         >
           <Text style={styles.modifyUnitsText}>-</Text>
         </TouchableOpacity>
         <TouchableOpacity
             style={[styles.modifyUnitsButton, {backgroundColor: 'green'}]}
-            onPress={() => handleAddUnits({other: 1})}
+            onPress={() => handleMonkePlus()}
         >
           <Text style={styles.modifyUnitsText}>+</Text>
         </TouchableOpacity>
       </View>
       :
-      <View style={styles.unitTypesContainer}>
-        <DrinkingSessionUnitWindow
-          unitName='Beer'
-          iconSource={require('../assets/icons/beer.png')}
-          currentUnits={beerUnits}
-          availableUnits={availableUnits}
-          setCurrentUnits={setBeerUnits}
-        />
-        <DrinkingSessionUnitWindow
-          unitName='Wine'
-          iconSource={require('../assets/icons/wine.png')}
-          currentUnits={wineUnits}
-          availableUnits={availableUnits}
-          setCurrentUnits={setWineUnits}
-        />
-        <DrinkingSessionUnitWindow
-          unitName='Weak Shot'
-          iconSource={require('../assets/icons/weak_shot.png')}
-          currentUnits={weakShotUnits}
-          availableUnits={availableUnits}
-          setCurrentUnits={setWeakShotUnits}
-        />
-        <DrinkingSessionUnitWindow
-          unitName='Strong Shot'
-          iconSource={require('../assets/icons/strong_shot.png')}
-          currentUnits={strongShotUnits}
-          availableUnits={availableUnits}
-          setCurrentUnits={setStrongShotUnits}
-        />
-        <DrinkingSessionUnitWindow
-          unitName='Cocktail'
-          iconSource={require('../assets/icons/cocktail.png')}
-          currentUnits={cocktailUnits}
-          availableUnits={availableUnits}
-          setCurrentUnits={setCocktailUnits}
-        />
-        <DrinkingSessionUnitWindow
-          unitName='Other'
-          iconSource={require('../assets/icons/alcohol_assortment.png')}
-          currentUnits={otherUnits}
-          availableUnits={availableUnits}
-          setCurrentUnits={setOtherUnits}
-        />
-      </View>
+      <UnitTypesView />
       }
     </ScrollView>
     <View style={styles.saveSessionContainer}>

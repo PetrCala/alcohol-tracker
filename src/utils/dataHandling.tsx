@@ -1,4 +1,11 @@
-﻿import { DrinkingSessionArrayItem, UnitTypesKeys, UnitTypesProps, UnitsObject, UnitsToColorsData } from "../types/database";
+﻿import { 
+    DrinkingSessionArrayItem, 
+    UnitTypesKeys, 
+    UnitTypesNames, 
+    UnitTypesProps, 
+    UnitsObject, 
+    UnitsToColorsData 
+} from "../types/database";
 import { DateObject } from "../types/components";
 
 export function formatDate (date: Date): string {
@@ -190,6 +197,15 @@ export function sumUnitsOfSingleType(unitsObject: UnitsObject, unitType: typeof 
     }, 0);
 };
 
+/** Sum up units of a single Unit type object.
+ * 
+ * @param unitTypes A UnitTypesProps kind of object
+ * @returns The sum
+ */
+export function sumUnitTypes(unitTypes: UnitTypesProps): number {
+    return Object.values(unitTypes).reduce((subTotal, unitCount) => subTotal + (unitCount || 0), 0);
+}
+
 /** Out of an array of session items, return an a session that is ongoing. If there is no such session, return null
  */
 export function findOngoingSession(sessions: DrinkingSessionArrayItem[]): DrinkingSessionArrayItem | null {
@@ -218,10 +234,10 @@ export const calculateThisMonthUnits = (dateObject: DateObject, sessions: Drinki
 * 
 * @param units UnitTypesProps kind of object listing each unit to add and its amount
 */
-export const addUnits = (existingUnits: UnitsObject, unitsToAdd: UnitTypesProps): UnitsObject => {
+export const addUnits = (existingUnits: UnitsObject, units: UnitTypesProps): UnitsObject => {
  let newUnits: UnitsObject = {
    ...existingUnits,
-   [Date.now()]: unitsToAdd
+   [Date.now()]: units
  };
  return newUnits;
 };
@@ -289,7 +305,6 @@ export const removeZeroObjectsFromSession = (session:DrinkingSessionArrayItem):D
 };
 
 
-
 /** Generate an object with all available units where 
  * each unit's value is set to 0.
  */
@@ -352,4 +367,14 @@ export function unitsToColors(units: number, unitsToColorsInfo:UnitsToColorsData
         sessionColor = 'red';
     };
     return sessionColor;
+};
+
+/** Insert the key of a unit and find its matching verbose name.
+ * 
+ * @returns The verbose name of that unit.
+ */
+export const findUnitName = (unitKey: typeof UnitTypesKeys[number]) => {
+    let unitIdx = UnitTypesKeys.findIndex((type) => type === unitKey);
+    let unitName = UnitTypesNames[unitIdx];
+    return unitName;
 };

@@ -20,7 +20,7 @@ import DatabaseContext from '../context/DatabaseContext';
 import { updateCurrentUnits } from '../database/users';
 import { removeDrinkingSessionData, saveDrinkingSessionData, updateCurrentSessionKey } from '../database/drinkingSessions';
 import SessionUnitsInputWindow from '../components/Buttons/SessionUnitsInputWindow';
-import { addUnits, formatDateToDay, formatDateToTime, removeUnits, sumAllUnits, sumUnitsOfSingleType, timestampToDate, unitsToColors } from '../utils/dataHandling';
+import { addUnits, formatDateToDay, formatDateToTime, removeUnits, removeZeroObjectsFromSession, sumAllUnits, sumUnitsOfSingleType, timestampToDate, unitsToColors } from '../utils/dataHandling';
 import { getAuth } from 'firebase/auth';
 import { DrinkingSessionArrayItem, DrinkingSessionData, UnitTypesKeys, UnitTypesProps, UnitsObject } from '../types/database';
 import DrinkingSessionUnitWindow from '../components/DrinkingSessionUnitWindow';
@@ -152,6 +152,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
         units: allUnits,
         ongoing: null,
       };
+      newSessionData = removeZeroObjectsFromSession(newSessionData); // Delete the initial log of zero units that was used as a placeholder
       try {
         await updateCurrentSessionKey(db, userId, null); // Remove the current session id info
         await saveDrinkingSessionData(db, userId, newSessionData, sessionKey); // Save drinking session data

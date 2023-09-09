@@ -1,8 +1,9 @@
 ﻿import { 
-  addUnits,
+    addUnits,
     calculateThisMonthUnits,
     changeDateBySomeDays,
     dateToDateObject, 
+    findUnitName, 
     formatDate,
     formatDateToDay,
     formatDateToTime,
@@ -18,12 +19,13 @@
     removeZeroObjectsFromSession, 
     setDateToCurrentTime, 
     sumAllUnits, 
+    sumUnitTypes, 
     sumUnitsOfSingleType, 
     timestampToDate, 
     unitsToColors
 } from "../../src/utils/dataHandling";
 import { DateObject } from "../../src/types/components";
-import { DrinkingSessionArrayItem, DrinkingSessionData, UnitTypesKeys, UnitTypesProps, UnitsObject, UnitsToColorsData } from "../../src/types/database";
+import { DrinkingSessionArrayItem, DrinkingSessionData, UnitTypesKeys, UnitTypesNames, UnitTypesProps, UnitsObject, UnitsToColorsData } from "../../src/types/database";
 
 
 /** Generate a mock object of units
@@ -455,22 +457,22 @@ describe('getSingleMonthDrinkingSessions', () => {
 
 
 describe('sumAllUnits', () => {
-
-    it('should correctly sum up all units of alcohol', () => {
-        const sampleUnits:UnitsObject = getRandomUnitsObject();
-        
-        const result = sumAllUnits(sampleUnits);
-        const expectedSum = Object.values(sampleUnits).reduce((total, unitTypes) => {
-            return total + Object.values(unitTypes).reduce((subTotal, unitCount) => subTotal + (unitCount || 0), 0);
-          }, 0);
-        expect(result).toBe(expectedSum);
-      });
-    
-      it('should return 0 if all units are 0', () => {
-        const zeroUnits = getZeroUnitsObject();
-        const result = sumAllUnits(zeroUnits);
-        expect(result).toBe(0);
-      });
+  
+  it('should correctly sum up all units of alcohol', () => {
+      const sampleUnits:UnitsObject = getRandomUnitsObject();
+      
+      const result = sumAllUnits(sampleUnits);
+      const expectedSum = Object.values(sampleUnits).reduce((total, unitTypes) => {
+          return total + Object.values(unitTypes).reduce((subTotal, unitCount) => subTotal + (unitCount || 0), 0);
+        }, 0);
+      expect(result).toBe(expectedSum);
+    });
+  
+    it('should return 0 if all units are 0', () => {
+      const zeroUnits = getZeroUnitsObject();
+      const result = sumAllUnits(zeroUnits);
+      expect(result).toBe(0);
+    });
 });
 
 describe('sumUnitsOfSingleType function', () => {
@@ -517,6 +519,50 @@ describe('sumUnitsOfSingleType function', () => {
       expect(sumUnitsOfSingleType(unitsData, 'beer')).toBe(2);
     });
 });
+
+describe('sumUnitTypes', () => {
+
+  it('should correctly sum units of multiple types', () => {
+      let testUnits = {
+          beer: 2,
+          cocktail: 1,
+          wine: 3
+      };
+
+      const result = sumUnitTypes(testUnits);
+      expect(result).toBe(6);
+  });
+
+  it('should return 0 for an empty units object', () => {
+      let testUnits = {};
+
+      const result = sumUnitTypes(testUnits);
+      expect(result).toBe(0);
+  });
+
+  it('should handle missing unit types correctly', () => {
+      let testUnits = {
+          beer: 2,
+          wine: 3
+          // No cocktail, strong_shot, weak_shot, or other
+      };
+
+      const result = sumUnitTypes(testUnits);
+      expect(result).toBe(5);
+  });
+
+  it('should treat undefined unit counts as 0', () => {
+      let testUnits = {
+          beer: 2,
+          cocktail: undefined,
+          wine: 3
+      };
+
+      const result = sumUnitTypes(testUnits);
+      expect(result).toBe(5);
+  });
+});
+
 
 
 describe('calculateThisMonthUnits', () => {
@@ -832,5 +878,22 @@ describe('getRandomUnitsObject', () => {
         expect(unitsToColors(6, mockUnitsToColorsData)).toBe('red');
     });
 
+});
+
+describe('findUnitName', () => {
+  it('should return the verbose name for each unit key', () => {
+      const verboseNames = UnitTypesNames;
+
+      for (let unitKey of UnitTypesKeys) {
+          const verboseName = findUnitName(unitKey);
+          expect(verboseNames).toContain(verboseName);
+      }
+  });
+
+  it('should return undefined for an invalid unit key', () => {
+      const invalidUnitKey = 'invalid_key';  // This key doesn't exist in UnitTypesKeys
+      const result = findUnitName(invalidUnitKey as any);  // Type cast here to any to bypass TypeScript's type checking for the purpose of this test
+      expect(result).toBeUndefined();
+  });
 });
 

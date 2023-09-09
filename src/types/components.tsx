@@ -1,5 +1,5 @@
 ﻿import { ImageSourcePropType } from "react-native";
-import { DrinkingSessionArrayItem, DrinkingSessionData, FeedbackData, PreferencesData, UserData } from "./database";
+import { DrinkingSessionArrayItem, DrinkingSessionData, FeedbackData, PreferencesData, UnitTypesKeys, UnitsObject, UserData } from "./database";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { AppStackParamList } from "./screens";
 
@@ -95,17 +95,22 @@ export type DayState = 'selected' | 'disabled' | 'today' | '';
 // Drinking session unit window props
 
 export type DrinkingSessionUnitWindowProps = {
-    unitName: string;
+    unitKey: typeof UnitTypesKeys[number]; // Non-verbose
     iconSource: ImageSourcePropType;
-    currentUnits: number;
+    currentUnits: UnitsObject;
+    setCurrentUnits: React.Dispatch<React.SetStateAction<UnitsObject>>;
     availableUnits: number;
-    setCurrentUnits: React.Dispatch<React.SetStateAction<number>>;
+    typeSum: number,
+    setTypeSum: React.Dispatch<React.SetStateAction<number>>;
 };
 
 export type SessionUnitsInputWindowProps = {
-    currentUnits: number;
+    unitKey: typeof UnitTypesKeys[number];
+    currentUnits: UnitsObject;
+    setCurrentUnits: (newUnits: UnitsObject) => void;
     availableUnits: number;
-    setCurrentUnits: (newUnits: number) => void;
+    typeSum: number,
+    setTypeSum: React.Dispatch<React.SetStateAction<number>>;
     styles: {
         unitsInputContainer: {};
         unitsInputButton: {};
