@@ -233,7 +233,9 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
     </View>
     <SessionDetailsSlider 
       scrollViewRef={scrollViewRef}
+      isBlackout={isBlackout}
       onBlackoutChange={handleBlackoutChange}
+      note={note}
       onNoteChange={handleNoteChange}
     />
     </>

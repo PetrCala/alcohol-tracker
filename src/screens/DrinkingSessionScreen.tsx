@@ -286,7 +286,9 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
     </View>
     <SessionDetailsSlider 
       scrollViewRef={scrollViewRef}
+      isBlackout={isBlackout}
       onBlackoutChange={handleBlackoutChange}
+      note={note}
       onNoteChange={handleNoteChange}
     />
     </>

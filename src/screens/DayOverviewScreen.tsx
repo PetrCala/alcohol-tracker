@@ -93,6 +93,9 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
         var totalUnits = sumAllUnits(session.units)
         var unitsToColorsInfo = preferences.units_to_colors;
         var sessionColor = unitsToColors(totalUnits, unitsToColorsInfo);
+        if (session.blackout === true) {
+          sessionColor = 'black';
+        };
         // Convert the timestamp to a Date object
         const date = timestampToDate(session.start_time);
         const viewStyle = {
@@ -108,14 +111,23 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
                     style={styles.menuDrinkingSessionButton}
                     onPress={() => onSessionButtonPress(session)}
                   >
-                    <Text style={styles.menuDrinkingSessionText}>Time: {formatDateToTime(date)}</Text>
-                    <Text style={styles.menuDrinkingSessionText}>Units consumed: {totalUnits}</Text>
+                    <Text style={[
+                      styles.menuDrinkingSessionText,
+                      session.blackout === true ? {color: 'white'} : {}
+                      ]}>Time: {formatDateToTime(date)}</Text>
+                    <Text style={[
+                      styles.menuDrinkingSessionText,
+                      session.blackout === true ? {color: 'white'} : {}
+                    ]}>Units consumed: {totalUnits}</Text>
                   </TouchableOpacity>
                 </View>
                 <MenuIcon
                     iconId='edit-session-icon'
                     iconSource={require('../assets/icons/edit.png')}
-                    containerStyle={styles.menuIconContainer}
+                    containerStyle={[
+                      styles.menuIconContainer,
+                      session.blackout === true ? {backgroundColor: 'white'} : {}
+                    ]}
                     iconStyle={styles.menuIcon}
                     onPress={() => onEditSessionPress(sessionKey, session)} // Use keyextractor to load id here
                 />

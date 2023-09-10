@@ -206,6 +206,18 @@ export function sumUnitTypes(unitTypes: UnitTypesProps): number {
     return Object.values(unitTypes).reduce((subTotal, unitCount) => subTotal + (unitCount || 0), 0);
 }
 
+/** Input a session item and return the timestamp of the last unit
+ * consumed in that session.
+ * 
+ * @param session Drinking session array item
+ * @return Timestamp of the last unit consumed
+ */
+export function getLastUnitAddedTime(session: DrinkingSessionArrayItem):number | null{
+    const timestamps = Object.keys(session.units).map(Number); // All timestamps
+    // Return the maximum timestamp or null if there aren't any
+    return timestamps.length ? Math.max(...timestamps) : null;
+};
+
 /** Out of an array of session items, return an a session that is ongoing. If there is no such session, return null
  */
 export function findOngoingSession(sessions: DrinkingSessionArrayItem[]): DrinkingSessionArrayItem | null {

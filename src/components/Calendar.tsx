@@ -61,6 +61,7 @@ const DayComponent: React.FC<{
         <View style={[
             styles.daySessionsMarkingContainer,
             state === 'disabled' ? {borderWidth: 0 } : // No color for disabled squares
+            marking?.color == 'black' ? {backgroundColor: 'black'} :
             marking?.color == 'yellow' ? {backgroundColor: 'yellow'} :
             marking?.color == 'red' ? {backgroundColor: 'red'} :
             marking?.color == 'orange' ? {backgroundColor: 'orange'} :
@@ -73,6 +74,7 @@ const DayComponent: React.FC<{
                 marking?.color == 'yellow' ? {color: 'black'} :
                 marking?.color == 'red' ? {color: 'white'} :
                 marking?.color == 'orange' ? {color: 'black'} :
+                marking?.color == 'black' ? {color: 'white'} :
                 {}
             ]}>
                 {state === 'disabled' ? '' : marking?.units}
@@ -96,6 +98,7 @@ const SessionsCalendar = ({
     type DatesType = {
         [key: string]: {
             units: number;
+            blackout: boolean;
         }
     }
 
@@ -108,49 +111,17 @@ const SessionsCalendar = ({
             let newUnits:number = sumAllUnits(item.units);
 
             acc[dateString] = acc[dateString] ? { 
-                units: acc[dateString].units + newUnits  // Already an entry exists
+                // Already an entry exists
+                units: acc[dateString].units + newUnits,  
+                blackout: acc[dateString].blackout === false ? item.blackout : true
             } : { 
-                units: newUnits // First entry
+                // First entry
+                units: newUnits, 
+                blackout: item.blackout
             };
+
             return acc;
         }, {});
-    };
-
-
-    const fillInRestOfMonth = (date:Date, inputData: DatesType, untilToday: boolean): DatesType => {
-        const objectYear = date.getFullYear();
-        const objectMonth = date.getMonth();
-          // Get the number of days in the current month
-        const daysInMonth = new Date(objectYear, objectMonth + 1, 0).getDate();
-        let daysToFill: number = daysInMonth; 
-        if (untilToday){
-            const today = new Date();
-            const todayMonth = today.getMonth();
-            const todayYear = today.getFullYear();
-
-            if (objectYear > todayYear || 
-                (objectYear === todayYear && objectMonth > todayMonth)) {
-                // Future months
-                daysToFill = 0; // No marks for upcoming months
-            } else if (objectYear === todayYear && objectMonth === todayMonth) {
-                // The current month
-                daysToFill = today.getDate(); // Only mark until today for this month
-            };
-        };
-
-        const expanded: DatesType = {};
-
-        for (let day = 1; day <= daysToFill; day++) {
-          const dateKey = `${objectYear}-${String(objectMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-          
-          if (inputData[dateKey]) {
-            expanded[dateKey] = inputData[dateKey];
-          } else {
-            expanded[dateKey] = { units: 0 };
-          };
-        };
-        
-        return expanded;
     };
 
 
@@ -158,12 +129,18 @@ const SessionsCalendar = ({
         // MarkedDates object, see official react-native-calendars docs
         let markedDates: SessionsCalendarMarkedDates = Object.entries(sessions).reduce((
             acc: SessionsCalendarMarkedDates,
-            [key, { units: value }]
+            [key, {
+                 units: value,
+                 blackout: blackoutInfo
+            }]
         ) => {
             let unitsToColorsInfo = preferences.units_to_colors;
             let color:string = unitsToColors(value, unitsToColorsInfo);
+            if (blackoutInfo === true){
+                color = 'black'
+            };
             let textColor:string = 'black';
-            if (color == 'red' || color == 'green'){
+            if (color == 'red' || color == 'green' || color == 'black'){
                 textColor = 'white';
             }
             acc[key] = { 

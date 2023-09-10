@@ -15,20 +15,24 @@ import {
 
 interface SessionSliderProps {
     scrollViewRef: React.RefObject<ScrollView>;
+    isBlackout: boolean;
     onBlackoutChange: (value: boolean) => void;
+    note: string;
     onNoteChange: (value: string) => void;
 }
 
 const SessionDetailsSlider: React.FC<SessionSliderProps> = ({ 
     scrollViewRef,
+    isBlackout,
     onBlackoutChange,
+    note,
     onNoteChange
 }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const [heightAnim] = useState(new Animated.Value(0)); // Initial value for opacity
     const [featureY, setFeatureY] = useState(0);
-    const [isBlackout, setIsBlackout] = useState(false);
-    const [note, setNote] = useState('');
+    const [localIsBlackout, setLocalIsBlackout] = useState(isBlackout);
+    const [localNote, setLocalNote] = useState(note);
 
     const onFeatureLayout = (event: LayoutChangeEvent) => {
         const layout = event.nativeEvent.layout;
@@ -54,16 +58,14 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
         setIsExpanded(!isExpanded);
     };
 
-    /** Handle blackout toggle for both the local hook and the parent component */
-    const toggleBlackout = (value: boolean) => {
-        setIsBlackout(value);
+    const handleBlackoutChange = (value: boolean) => {
         onBlackoutChange(value);
+        setLocalIsBlackout(value);
     };
 
-    /** Handle note change for both the local hook and the parent component */
-    const changeNote = (value: string) => {
-        setNote(value);
+    const handleNoteChange = (value: string) => {
         onNoteChange(value);
+        setLocalNote(value);
     };
 
     return (
@@ -89,8 +91,8 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
                     ]}>
                         <Text style={styles.tileHeading}>Blackout: </Text>
                         <Switch 
-                            value={isBlackout} 
-                            onValueChange={toggleBlackout}
+                            value={localIsBlackout} 
+                            onValueChange={handleBlackoutChange}
                             trackColor={{ false: "#767577", true: "#fcf50f" }}
                             thumbColor={isBlackout ? "#f5dd4b" : "#f4f3f4"}
                         />
@@ -102,8 +104,9 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
                         <Text style={styles.tileHeading}>Session note:</Text>
                         <View style={styles.noteWindowContainer}>
                             <TextInput
+                                defaultValue={localNote}
                                 style={styles.noteText}
-                                onChangeText={changeNote}
+                                onChangeText={handleNoteChange}
                                 placeholder={"Write your note here"}
                                 placeholderTextColor={"grey"}
                                 keyboardType="default"

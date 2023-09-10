@@ -77,8 +77,9 @@ function generateMockSession(baseDate: Date, offsetDays?: number, units?: UnitsO
     const newSession:DrinkingSessionArrayItem =  {
         start_time: sessionDate.getTime(),
         end_time: sessionDate.getTime() + (2 * 60 * 60 * 1000),  // +2 hours
-        units: units,
-        blackout: false
+        blackout: false,
+        note: '',
+        units: units
     };
   
     return newSession;
@@ -739,6 +740,8 @@ describe('removeZeroObjectsFromSession', () => {
       return {
           start_time: Date.now(),
           end_time: Date.now() + 1000,
+          blackout: false,
+          note: '',
           units: units
       };
   };
@@ -897,3 +900,5 @@ describe('findUnitName', () => {
   });
 });
 
+
+// TODO - getLastUnitAddedTime
