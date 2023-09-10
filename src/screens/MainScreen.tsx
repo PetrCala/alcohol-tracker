@@ -81,6 +81,8 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
       sessionData = {
         start_time: Date.now(),
         end_time: Date.now(), // Will be overwritten
+        blackout: false,
+        note: '',
         units: {
           [Date.now()]: {other: 0} // Necessary placeholder, will be deleted
         },

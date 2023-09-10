@@ -158,6 +158,9 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
         let newTimestamp = setDateToCurrentTime(date).getTime(); // At noon
         let newSession: DrinkingSessionArrayItem = {
           start_time: newTimestamp, // Arbitrary timestamp of today's noon
+          end_time: newTimestamp, 
+          blackout: false,
+          note: '',
           units: getZeroUnitsObject(),
         }
         return(

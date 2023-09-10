@@ -36,6 +36,7 @@ import UserOffline from '../components/UserOffline';
 import { DrinkDataProps } from '../types/components';
 import UnitTypesView from '../components/UnitTypesView';
 import SessionDetailsSlider from '../components/SessionDetailsSlider';
+import LoadingData from '../components/LoadingData';
 
 
 const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps) => {
@@ -59,8 +60,8 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
   const [weakShotSum, setWeakShotSum] = useState<number>(sumUnitsOfSingleType(currentUnits, 'weak_shot'));
   const [wineSum, setWineSum] = useState<number>(sumUnitsOfSingleType(currentUnits, 'wine'));
   // Session details
-  const [isBlackout, setIsBlackout] = useState<boolean | undefined>(session.blackout);
-  const [note, setNote] = useState<string | undefined>(session.note);
+  const [isBlackout, setIsBlackout] = useState<boolean>(session.blackout);
+  const [note, setNote] = useState<string>(session.note);
   // Time info
   const [pendingUpdate, setPendingUpdate] = useState(false);
   const updateTimeout = 1000; // Synchronize with DB every x milliseconds
@@ -70,6 +71,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
   // Other
   const [monkeMode, setMonkeMode] = useState<boolean>(false);
   const [discardModalVisible, setDiscardModalVisible] = useState<boolean>(false);
+  const [ savingSession, setSavingSession ] = useState<boolean>(false);
   const sessionColor = unitsToColors(totalUnits, preferences.units_to_colors);
   const scrollViewRef = useRef<ScrollView>(null); // To navigate the view
 
@@ -140,7 +142,10 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
         try{
           let newSessionData: DrinkingSessionArrayItem = {
             start_time: session.start_time,
+            end_time: session.end_time,
             units: currentUnits,
+            blackout: false,
+            note: '',
             ongoing: true,
           };
           await saveDrinkingSessionData(db, user.uid, newSessionData, sessionKey);
@@ -167,10 +172,13 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
     };
     // Save the data into the database
     if (totalUnits > 0){
+      setSavingSession(true);
       let newSessionData: DrinkingSessionArrayItem = {
         start_time: session.start_time,
         end_time: Date.now(),
         units: currentUnits,
+        blackout: isBlackout,
+        note: note,
         ongoing: null,
       };
       newSessionData = removeZeroObjectsFromSession(newSessionData); // Delete the initial log of zero units that was used as a placeholder
@@ -185,6 +193,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
         session: newSessionData,
         preferences: preferences
       });
+      setSavingSession(false);
     };
   };
 
@@ -211,6 +220,8 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
 
   if (!isOnline) return (<UserOffline/>);
 
+  if (savingSession) return (<LoadingData loadingText='Saving session...'/>);
+
   return (
     <>
     <View style={styles.mainHeader}>
@@ -233,7 +244,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
     </View>
     <View style={styles.sessionInfoContainer}>
         <Text style={styles.sessionInfoText}>
-            {sessionDay} {sessionStartTime}
+            Session start: {sessionStartTime}
         </Text>
     </View>
     <View style={styles.unitCountContainer}>
@@ -345,6 +356,8 @@ const styles = StyleSheet.create({
   unitCountContainer: {
     height: '19%',
     backgroundColor: '#FFFF99',
+    borderBottomColor: '#000',
+    borderBottomWidth: 1,
   },
   unitCountText: {
     fontSize: 90,
@@ -446,7 +459,6 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderColor: '#000',
   },
-
   saveSessionContainer: {
     height: '8%',
     width: '100%',

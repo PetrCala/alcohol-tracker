@@ -2,6 +2,7 @@
     useEffect,
     useState,
     useContext,
+    useRef,
 } from 'react';
 import {
   Alert,
@@ -29,6 +30,7 @@ import { useUserConnection } from '../context/UserConnectionContext';
 import UserOffline from '../components/UserOffline';
 import { DrinkDataProps, UnitTypesViewProps } from '../types/components';
 import UnitTypesView from '../components/UnitTypesView';
+import SessionDetailsSlider from '../components/SessionDetailsSlider';
 
 const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
     if (!route || ! navigation) return null; // Should never be null
@@ -47,6 +49,9 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
     const [strongShotSum, setStrongShotSum] = useState<number>(sumUnitsOfSingleType(currentUnits, 'strong_shot'));
     const [weakShotSum, setWeakShotSum] = useState<number>(sumUnitsOfSingleType(currentUnits, 'weak_shot'));
     const [wineSum, setWineSum] = useState<number>(sumUnitsOfSingleType(currentUnits, 'wine'));
+    // Session details
+    const [isBlackout, setIsBlackout] = useState<boolean>(session.blackout);
+    const [note, setNote] = useState<string>(session.note);
     // Time info
     const sessionDate = timestampToDate(session.start_time);
     const sessionDay = formatDateToDay(sessionDate);
@@ -56,6 +61,7 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
     const [monkeMode, setMonkeMode] = useState<boolean>(false);
     const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
     const sessionColor = unitsToColors(totalUnits, preferences.units_to_colors);
+    const scrollViewRef = useRef<ScrollView>(null); // To navigate the view
     const sessionIsNew = sessionKey == 'edit-session-id' ? true : false;
 
     // Automatically navigate to login screen if login expires
@@ -92,6 +98,14 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
       // units logged
     };
 
+    const handleBlackoutChange = (value: boolean) => {
+      setIsBlackout(value);
+    };
+  
+    const handleNoteChange = (value: string) => {
+      setNote(value);
+    };
+
     // Update the hooks whenever current units change
     useEffect(() => {
       let newTotalUnits = sumAllUnits(currentUnits);
@@ -115,6 +129,8 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
           start_time: session.start_time,
           end_time: Date.now(),
           units: currentUnits,
+          blackout: isBlackout,
+          note: note,
           ongoing: null,
         };
         newSessionData = removeZeroObjectsFromSession(newSessionData); // Delete the initial log of zero units that was used as a placeholder
@@ -175,7 +191,7 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
       </View>
       <View style={styles.sessionInfoContainer}>
         <Text style={styles.sessionInfoText}>
-            {sessionDay} {sessionStartTime}
+            Session date: {sessionDay}
         </Text>
       </View>
       <View style={styles.unitCountContainer}>
@@ -185,33 +201,45 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
             {totalUnits}
           </Text>
       </View>
-      <ScrollView style={styles.scrollView}>
-      {monkeMode ?
-      <View style={styles.modifyUnitsContainer}>
-        <TouchableOpacity
-            style={[styles.modifyUnitsButton, {backgroundColor: 'red'}]}
-            onPress={() => handleMonkeMinus()}
-        >
-          <Text style={styles.modifyUnitsText}>-</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-            style={[styles.modifyUnitsButton, {backgroundColor: 'green'}]}
-            onPress={() => handleMonkePlus()}
-        >
-          <Text style={styles.modifyUnitsText}>+</Text>
-        </TouchableOpacity>
-      </View>
-      :
-      <View style={styles.unitTypesContainer}>
-        <UnitTypesView 
-          drinkData={drinkData}
-          currentUnits={currentUnits}
-          setCurrentUnits={setCurrentUnits}
-          availableUnits={availableUnits}
-        />
-      </View>
-      }
+      <ScrollView 
+      style={styles.scrollView} 
+      ref={scrollViewRef}
+      keyboardShouldPersistTaps="handled"
+    >
+    {monkeMode ?
+    <View style={styles.modifyUnitsContainer}>
+      <TouchableOpacity
+          style={[styles.modifyUnitsButton, {backgroundColor: 'red'}]}
+          onPress={() => handleMonkeMinus()}
+      >
+        <Text style={styles.modifyUnitsText}>-</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+          style={[styles.modifyUnitsButton, {backgroundColor: 'green'}]}
+          onPress={() => handleMonkePlus()}
+      >
+        <Text style={styles.modifyUnitsText}>+</Text>
+      </TouchableOpacity>
+    </View>
+    :
+    <>
+    <View style={styles.unitTypesContainer}>
+      <UnitTypesView 
+        drinkData={drinkData}
+        currentUnits={currentUnits}
+        setCurrentUnits={setCurrentUnits}
+        availableUnits={availableUnits}
+      />
+    </View>
+    <SessionDetailsSlider 
+      scrollViewRef={scrollViewRef}
+      onBlackoutChange={handleBlackoutChange}
+      onNoteChange={handleNoteChange}
+    />
+    </>
+    }
     </ScrollView>
+    <View style={styles.saveSessionDelimiter}/>
     <View style={styles.saveSessionContainer}>
         <BasicButton 
           text='Delete Session'
@@ -270,11 +298,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFF99',
   },
   unitCountContainer: {
-    height: '18%',
-    flexGrow: 1,
-    flexShrink: 1,
+    height: '19%',
     backgroundColor: '#FFFF99',
-    marginBottom: '-15%',
+    borderBottomColor: '#000',
+    borderBottomWidth: 1,
   },
   unitCountText: {
     fontSize: 90,
@@ -289,8 +316,7 @@ const styles = StyleSheet.create({
     textShadowRadius: 9,
   },
   scrollView: {
-    flexGrow:1, 
-    flexShrink: 1,
+    flex: 1,
     backgroundColor: '#FFFF99',
   },
   unitTypesContainer: {
@@ -364,6 +390,13 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: '600',
   },
+  saveSessionDelimiter: {
+    height: 5,
+    width: '100%',
+    backgroundColor: 'white',
+    borderTopWidth: 1,
+    borderColor: '#000',
+  },
   saveSessionContainer: {
     height: '8%',
     width: '100%',
@@ -383,7 +416,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     backgroundColor: '#fcf50f',
     borderWidth: 1,
-    borderColor: 'grey',
+    borderColor: '#000',
   },
   saveSessionButtonText: {
     color: 'black',

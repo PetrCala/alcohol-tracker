@@ -69,7 +69,7 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
     return (
         <View style={styles.container} onLayout={onFeatureLayout}>
             <TouchableOpacity style={styles.tab} onPress={toggleFeature}>
-                <Text style={styles.tabText}>Session details</Text>
+                <Text style={styles.tabText}>Session details:</Text>
                 <Image 
                 style={[
                     styles.tabArrow,
