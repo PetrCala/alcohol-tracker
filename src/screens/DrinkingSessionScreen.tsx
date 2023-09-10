@@ -144,8 +144,8 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
             start_time: session.start_time,
             end_time: session.end_time,
             units: currentUnits,
-            blackout: false,
-            note: '',
+            blackout: isBlackout,
+            note: note,
             ongoing: true,
           };
           await saveDrinkingSessionData(db, user.uid, newSessionData, sessionKey);
