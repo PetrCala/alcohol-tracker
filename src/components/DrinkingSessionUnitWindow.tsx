@@ -80,11 +80,12 @@ export default DrinkingSessionUnitWindow;
 
 const styles = StyleSheet.create({
     sessionUnitContainer: {
-        width: '100%',
         borderWidth: 1,
         borderColor: 'black',
+        borderRadius: 10,
         backgroundColor: '#fcf50f',
         flexDirection: 'row',
+        padding: 2,
     },
     iconStyle: {
         width: 30,

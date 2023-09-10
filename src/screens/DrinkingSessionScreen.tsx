@@ -35,6 +35,7 @@ import { useUserConnection } from '../context/UserConnectionContext';
 import UserOffline from '../components/UserOffline';
 import { DrinkDataProps } from '../types/components';
 import UnitTypesView from '../components/UnitTypesView';
+import SessionDetailsSlider from '../components/SessionDetailsSlider';
 
 
 const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps) => {
@@ -58,7 +59,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
   const [weakShotSum, setWeakShotSum] = useState<number>(sumUnitsOfSingleType(currentUnits, 'weak_shot'));
   const [wineSum, setWineSum] = useState<number>(sumUnitsOfSingleType(currentUnits, 'wine'));
   // Session details
-  const [blackout, setBlackout] = useState<boolean | undefined>(session.blackout);
+  const [isBlackout, setIsBlackout] = useState<boolean | undefined>(session.blackout);
   const [note, setNote] = useState<string | undefined>(session.note);
   // Time info
   const [pendingUpdate, setPendingUpdate] = useState(false);
@@ -70,6 +71,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
   const [monkeMode, setMonkeMode] = useState<boolean>(false);
   const [discardModalVisible, setDiscardModalVisible] = useState<boolean>(false);
   const sessionColor = unitsToColors(totalUnits, preferences.units_to_colors);
+  const scrollViewRef = useRef<ScrollView>(null); // To navigate the view
 
 
   // Automatically navigate to login screen if login expires
@@ -104,6 +106,14 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
     };
     // Here, as else, maybe send an alert that there are other types of
     // units logged
+  };
+
+  const handleBlackoutChange = (value: boolean) => {
+    setIsBlackout(value);
+  };
+
+  const handleNoteChange = (value: string) => {
+    setNote(value);
   };
 
   // Update the hooks whenever current units change
@@ -233,55 +243,47 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
           {totalUnits}
         </Text>
     </View>
-    <ScrollView style={styles.scrollView}>
-      <>
-      {monkeMode ?
-      <View style={styles.modifyUnitsContainer}>
-        <TouchableOpacity
-            style={[styles.modifyUnitsButton, {backgroundColor: 'red'}]}
-            onPress={() => handleMonkeMinus()}
-        >
-          <Text style={styles.modifyUnitsText}>-</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-            style={[styles.modifyUnitsButton, {backgroundColor: 'green'}]}
-            onPress={() => handleMonkePlus()}
-        >
-          <Text style={styles.modifyUnitsText}>+</Text>
-        </TouchableOpacity>
-      </View>
-      :
-      <View style={styles.unitTypesContainer}>
-        <UnitTypesView 
-          drinkData={drinkData}
-          currentUnits={currentUnits}
-          setCurrentUnits={setCurrentUnits}
-          availableUnits={availableUnits}
-        />
-      </View>
-      }
-      {/* Wrap this in a modal that will show/hide the details */}
-      <View style={styles.sessionDetailsContainer}>
-        <View style={styles.blackoutContainer}>
-          <Text style={styles.noteHeading}>Blackout: </Text>
-        </View>
-        <View style={styles.noteContainer}>
-          <Text style={styles.noteHeading}>Session note:</Text>
-          <TextInput
-              style={styles.noteText}
-              onChangeText={() => {}}
-              placeholder={"Write your feedback here"}
-              placeholderTextColor={"grey"}
-              keyboardType="default"
-              maxLength={1000}
-              multiline={true}
-          />
-        </View>
-      </View>
-      </>
+    <ScrollView 
+      style={styles.scrollView} 
+      ref={scrollViewRef}
+      keyboardShouldPersistTaps="handled"
+    >
+    {monkeMode ?
+    <View style={styles.modifyUnitsContainer}>
+      <TouchableOpacity
+          style={[styles.modifyUnitsButton, {backgroundColor: 'red'}]}
+          onPress={() => handleMonkeMinus()}
+      >
+        <Text style={styles.modifyUnitsText}>-</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+          style={[styles.modifyUnitsButton, {backgroundColor: 'green'}]}
+          onPress={() => handleMonkePlus()}
+      >
+        <Text style={styles.modifyUnitsText}>+</Text>
+      </TouchableOpacity>
+    </View>
+    :
+    <>
+    <View style={styles.unitTypesContainer}>
+      <UnitTypesView 
+        drinkData={drinkData}
+        currentUnits={currentUnits}
+        setCurrentUnits={setCurrentUnits}
+        availableUnits={availableUnits}
+      />
+    </View>
+    <SessionDetailsSlider 
+      scrollViewRef={scrollViewRef}
+      onBlackoutChange={handleBlackoutChange}
+      onNoteChange={handleNoteChange}
+    />
+    </>
+    }
     </ScrollView>
     {/* <View style={styles.monkeModeContainer}>
     </View> */}
+    <View style={styles.saveSessionDelimiter}/>
     <View style={styles.saveSessionContainer}>
       <BasicButton 
         text='Discard Session'
@@ -437,25 +439,14 @@ const styles = StyleSheet.create({
     width: '100%',
     marginTop: 20,
   },
-  blackoutContainer: {
+  saveSessionDelimiter: {
+    height: 5,
     width: '100%',
+    backgroundColor: 'white',
+    borderTopWidth: 1,
+    borderColor: '#000',
   },
-  noteContainer: {
 
-    width: '100%',
-  },
-  noteHeading: {
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
-  noteText: {
-    height: '100%',
-    width: '100%',
-    flexGrow: 1,
-    flexShrink: 1,
-    textAlignVertical: 'top',
-    margin: 12,
-  },
   saveSessionContainer: {
     height: '8%',
     width: '100%',
