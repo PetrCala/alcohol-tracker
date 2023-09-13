@@ -31,8 +31,6 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
     const [isExpanded, setIsExpanded] = useState(false);
     const [heightAnim] = useState(new Animated.Value(0)); // Initial value for opacity
     const [featureY, setFeatureY] = useState(0);
-    const [localIsBlackout, setLocalIsBlackout] = useState(isBlackout);
-    const [localNote, setLocalNote] = useState(note);
 
     const onFeatureLayout = (event: LayoutChangeEvent) => {
         const layout = event.nativeEvent.layout;
@@ -58,16 +56,6 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
         setIsExpanded(!isExpanded);
     };
 
-    const handleBlackoutChange = (value: boolean) => {
-        onBlackoutChange(value);
-        setLocalIsBlackout(value);
-    };
-
-    const handleNoteChange = (value: string) => {
-        onNoteChange(value);
-        setLocalNote(value);
-    };
-
     return (
         <View style={styles.container} onLayout={onFeatureLayout}>
             <TouchableOpacity style={styles.tab} onPress={toggleFeature}>
@@ -91,8 +79,8 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
                     ]}>
                         <Text style={styles.tileHeading}>Blackout: </Text>
                         <Switch 
-                            value={localIsBlackout} 
-                            onValueChange={handleBlackoutChange}
+                            value={isBlackout} 
+                            onValueChange={(value) => onBlackoutChange(value)}
                             trackColor={{ false: "#767577", true: "#fcf50f" }}
                             thumbColor={isBlackout ? "#f5dd4b" : "#f4f3f4"}
                         />
@@ -104,9 +92,9 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
                         <Text style={styles.tileHeading}>Session note:</Text>
                         <View style={styles.noteWindowContainer}>
                             <TextInput
-                                defaultValue={localNote}
+                                defaultValue={note}
                                 style={styles.noteText}
-                                onChangeText={handleNoteChange}
+                                onChangeText={(value) => onNoteChange(value)}
                                 placeholder={"Write your note here"}
                                 placeholderTextColor={"grey"}
                                 keyboardType="default"

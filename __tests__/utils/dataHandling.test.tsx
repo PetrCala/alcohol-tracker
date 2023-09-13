@@ -7,6 +7,7 @@
     formatDate,
     formatDateToDay,
     formatDateToTime,
+    getLastUnitAddedTime,
     getNextMonth, 
     getPreviousMonth, 
     getRandomUnitsObject, 
@@ -564,6 +565,39 @@ describe('sumUnitTypes', () => {
   });
 });
 
+describe('getLastUnitAddedTime', () => {
+  let dateNow:Date = new Date();
+  let mockSession:DrinkingSessionArrayItem;
+
+  beforeEach(() => {
+    mockSession = generateMockSession(dateNow);
+  });
+
+  it('should correctly identify last added unit timestamp', () => {
+    let now = dateNow.getTime();
+    let testUnits:UnitsObject = {
+      [now + 10]: {
+        beer: 2
+      },
+      [now + 20]: {
+        wine: 3,
+        other: 1
+      },
+    };
+    mockSession.units = testUnits;
+
+    const lastUnitAddedTime = getLastUnitAddedTime(mockSession);
+    expect(lastUnitAddedTime).toBe(now + 20);
+  });
+
+  it('should return null for an empty units object', () => {
+      let testUnits = {};
+      mockSession.units = testUnits;
+
+      const result = getLastUnitAddedTime(mockSession);
+      expect(result).toBe(null);
+  });
+});
 
 
 describe('calculateThisMonthUnits', () => {
