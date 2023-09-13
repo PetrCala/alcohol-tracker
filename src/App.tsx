@@ -31,10 +31,12 @@ const auth = getAuth(app); // Available automatically after this call
 const Stack = createNativeStackNavigator();
 
 const AlcoholTracker = () => {
+
   return (
     <ContextProvider db={db}>
       <NavigationContainer>
         <Stack.Navigator
+          initialRouteName='LoginScreen'
           screenOptions={{
             headerShown: false
           }}

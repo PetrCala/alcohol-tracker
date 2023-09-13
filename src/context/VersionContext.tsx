@@ -1,6 +1,6 @@
 ﻿import semver from 'semver';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ReactNode, useContext, useEffect, useState } from 'react';
+import { ReactNode, useContext, useEffect, useReducer, useState } from 'react';
 import { Alert } from 'react-native';
 
 import ForceUpdateScreen from '../screens/ForceUpdateScreen';
@@ -9,73 +9,84 @@ import UserOffline from '../components/UserOffline';
 import DatabaseContext from './DatabaseContext';
 import { readDataOnce } from '../database/baseFunctions';
 import { version } from '../../package.json';
+import WelcomeScreen from '../components/WelcomeScreen';
+import LoadingData from '../components/LoadingData';
+
+
+const initialState = {
+  isLoading: true,
+  versionValid: false,
+  versionInfoUnavailable: false,
+};
+
+const reducer = (state:any, action:any) => {
+  switch (action.type) {
+    case 'SET_LOADING':
+      return { ...state, isLoading: action.payload };
+    case 'SET_VERSION_VALID':
+      return { ...state, versionValid: action.payload };
+    case 'SET_VERSION_INFO_UNAVAILABLE':
+      return { ...state, versionInfoUnavailable: action.payload };
+    default:
+      return state;
+  }
+};
 
 type VersionManagementProviderProps = {
     children: ReactNode;
 };
 
 export const VersionManagementProvider: React.FC<VersionManagementProviderProps> = ({ children }) => {
-    const { isOnline } = useUserConnection();
-    const db = useContext(DatabaseContext);
-    const [versionInfoUnavailable, setVersionInfoUnavailable] = useState<boolean>(false);
-    const [versionValid, setVersionValid] = useState<boolean>(false);
-  
-    useEffect(() => {
+  const { isOnline } = useUserConnection();
+  const db = useContext(DatabaseContext);
+  const [state, dispatch] = useReducer(reducer, initialState);
 
-      const checkAppVersion = async () => {
-        try{
-          // Atttempt to fetch local cached version to allow offline handling
-          let minSupportedVersion: string | null = null;
-          if (!isOnline){
-            // User offline
-            try {
-              minSupportedVersion = await getCachedMinVersion();
-              if (!minSupportedVersion){
-                // User not online, local cache empty, return offline screen
-                setVersionInfoUnavailable(true);
-                return null;
-              };
-            } catch (error:any){
-              throw new Error("Failed to get local cache");
-            };
-          } else {
-            // User online
-            try {
-              minSupportedVersion = await fetchAndCacheMinVersion(db);
-              if (!minSupportedVersion) return null;
-            } catch (error:any) {
-              Alert.alert("Database connection failed", "Could not fetch version info from the database: "+ error.message);
-              return null;
-            };
-          };
-          let versionValid = validateAppVersion(minSupportedVersion);
-          setVersionValid(versionValid);
-          setVersionInfoUnavailable(false);
-        } catch (error:any){
-          Alert.alert("App version check failed", "Could not retrieve the version app information from the database: " + error.message);
-          return null;
-        };
-      };
+  async function checkAppVersion() {
+    dispatch({ type: 'SET_LOADING', payload: true });
   
-      checkAppVersion();
-    }, [isOnline]);
-
-    // Version info unreachable
-    if (versionInfoUnavailable){
-      return <UserOffline/>;
+    try {
+      let minSupportedVersion = null;
+  
+      if (!isOnline) {
+        minSupportedVersion = await getCachedMinVersion();
+  
+        if (!minSupportedVersion) {
+          dispatch({ type: 'SET_VERSION_INFO_UNAVAILABLE', payload: true });
+          return;
+        }
+      } else {
+        minSupportedVersion = await fetchAndCacheMinVersion(db);
+  
+        if (!minSupportedVersion) {
+          dispatch({ type: 'SET_VERSION_INFO_UNAVAILABLE', payload: true });
+          return;
+        }
+      }
+  
+      const versionValid = validateAppVersion(minSupportedVersion);
+      dispatch({ type: 'SET_VERSION_VALID', payload: versionValid });
+    } catch (error:any) {
+      Alert.alert(
+        "App version check failed",
+        "Could not retrieve the version app information from the database: " + error.message
+      );
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
     }
+  }
 
-    // Invalid version
-    if (!versionValid){
-      return <ForceUpdateScreen/>;
-    }
-  
-    return (
-      <>
-        {children}
-      </>
-    );
-  };
+  useEffect(() => {
+    checkAppVersion();
+  }, [isOnline]);
+
+  if (state.isLoading) return <LoadingData loadingText=''/>;
+  if (state.versionInfoUnavailable) return <UserOffline />;
+  if (!state.versionValid) return <ForceUpdateScreen />;
+
+  return <>{children}</>;
+};
+
+
 
 
 // Function to get cached minimum supported version

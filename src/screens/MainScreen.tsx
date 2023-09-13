@@ -212,16 +212,10 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
 
   }, [drinkingSessionData, visibleDateObject]);
 
-  if (!isOnline) {
-    return <UserOffline />;
-  } else if (isLoading) {
-    return <LoadingData loadingText="" />;
-  } else if (!drinkingSessionData || !preferences || !userData) {
-    // Missing data - each has to be declared explicitly for TypeScript
-    return null;
-  } else if (loadingNewSession) {
-    return <LoadingData loadingText='Starting a new session...' />;
-  } else {
+  if (!isOnline) return <UserOffline />;
+  if (isLoading || loadingNewSession) return <LoadingData loadingText={loadingNewSession ? 'Starting a new session...' : ''} />;
+  if (!drinkingSessionData || !preferences || !userData) return null;
+
     return ( 
     <>
       <View style={styles.mainHeader}>
@@ -310,7 +304,6 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
       }
     </>
   );
-  };
 };
    
 
