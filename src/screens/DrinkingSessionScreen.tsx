@@ -294,8 +294,6 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
     </>
     }
     </ScrollView>
-    {/* <View style={styles.monkeModeContainer}>
-    </View> */}
     <View style={styles.saveSessionDelimiter}/>
     <View style={styles.saveSessionContainer}>
       <BasicButton 
