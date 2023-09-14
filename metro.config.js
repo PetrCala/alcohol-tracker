@@ -9,6 +9,7 @@ module.exports = {
   transformer: {
     getTransformOptions: async () => ({
       transform: {
+        '\\.[jt]sx?$': 'babel-jest',
         experimentalImportSupport: false,
         inlineRequires: true,
       },

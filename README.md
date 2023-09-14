@@ -17,6 +17,7 @@ Once the application will reach version 1.0.0 (i.e. it will became fully functio
 
 ### Accessing the documentation
 
+1. Install `Sphinx` on your machine.
 1. Navigate to the `docs` folder.
 1. Run the command `make html`. This will create the documentation in the folder `build`.
 1. Access the documentation by opening any of the created *.html* files.

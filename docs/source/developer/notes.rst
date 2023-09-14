@@ -17,6 +17,18 @@ Prerequisites
 Setting up the project after cloning the repository
 ================================
 #. Install all dependencies using :code:`npm i`.
+#. If you wish to update all packages to the latest version (not recommended), run the following commands:
+:code:`npm i -g npm-check-updates`
+:code:`ncu -u`
+:code:`npm install`
+#. In the project root folder, create a file :code:`.env`, and inside, put the custom settings to the database you want to connect to. As a template, the file should look like this:
+:code:`API_KEY=YOUR_API_KEY`
+:code:`AUTH_DOMAIN=YOUR_AUTH_DOMAIN`
+:code:`DATABASE_URL=YOUR_DATABASE_URL`
+:code:`PROJECT_ID=YOUR_PROJECT_ID`
+:code:`STORAGE_BUCKET=YOUR_STORAGE_BUCKET`
+:code:`MESSAGING_SENDER_ID=YOUR_MESSAGING_SENDER_ID`
+:code:`APP_ID=YOUR_APP_ID`
 
 
 Setting up the project from scratch
@@ -72,6 +84,11 @@ Building the application for an iOS device
 #. Once the build is complete, select *Distribute App* and then select *Ad Hoc*.
 #. Follow the prompts to export the :code:`IPA file`, which you can then transfer to your friend's iOS device using a file-sharing service like Dropbox or Google Drive.
 
-Modifying the application
+Updating the app version
 ================================
-* The main code of the application is located in the folder `src`. The file `App.tsx` is the backbone of the project. The rest of the components that will be called can be found in the other various folders. Feel free to add, remove, or modify these folders as necessary. **The only file that has a direct dependency on the rest of the project is the `App.tsx`**. 
+* Modify the version in the :code:`package.json` file by incrementing the version numbers as necessary.
+* Navigate to the project root folder and run :code:`npm install` to update the dependencies in your project.
+
+Building the documentation
+================================
+* Build the documentation using a command :code:`make html`. If the *make* is not recognized, call the *make.bat* file directly using :code:`docs\make.bat html`.
