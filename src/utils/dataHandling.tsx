@@ -320,17 +320,20 @@ export const removeZeroObjectsFromSession = (session:DrinkingSessionArrayItem):D
 /** Generate an object with all available units where 
  * each unit's value is set to 0.
  */
-export const getZeroUnitsObject = ():UnitsObject => {
-    return {
-        [Date.now()]: {
-            beer: 0,
-            cocktail: 0,
-            other: 0,
-            strong_shot: 0,
-            weak_shot: 0,
-            wine: 0,
-        }
+export function getZeroUnitsObject(timestamp: number = Date.now()): UnitsObject {
+    const unitWithZeros: UnitTypesProps = {};
+  
+    // Loop over each item in UnitTypesKeys and set its value to 0
+    for (const key of UnitTypesKeys) {
+      unitWithZeros[key] = 0;
+    }
+  
+    // Create a new object with a given timestamp
+    const result: UnitsObject = {
+      [timestamp]: unitWithZeros
     };
+  
+    return result;
 };
 
 /** Generate an object with all available units where 

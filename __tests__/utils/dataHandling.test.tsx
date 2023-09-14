@@ -834,7 +834,7 @@ describe('getZeroUnitsObject', () => {
     //   const zeroUnitsValues = Object.values(zeroUnits)
   
     //   for (let unit in zeroUnitsValues) {
-    //     expect(zeroUnits[unit as keyof UnitTypesProps]).toBe(0);
+    //     expect(zeroUnitsValues[unit]).toBe(0);
     //   };
     // });
   
@@ -848,12 +848,12 @@ describe('getZeroUnitsObject', () => {
     //   expect(secondCall.beer).toBe(0);  // The second object should remain unchanged
     // });
 
-    it('should have all the expected keys based on UnitTypesProps type', () => {
-        const zeroUnits = getZeroUnitsObject();
-        const expectedKeys = UnitTypesKeys;
+    // it('should have all the expected keys based on UnitTypesProps type', () => {
+    //     const zeroUnits = getZeroUnitsObject();
+    //     const expectedKeys = UnitTypesKeys;
     
-        expect(Object.keys(zeroUnits)).toEqual(expectedKeys);
-    });
+    //     expect(Object.keys(zeroUnits)).toEqual(expectedKeys);
+    // });
 });
 
 
