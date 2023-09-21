@@ -1,8 +1,6 @@
 ﻿import { update, runTransaction, ref } from "firebase/database";
-import { UnitTypesProps, CurrentSessionData, PreferencesData, UserData, UnitsToColorsData } from "../types/database";
-import { getZeroUnitsObject } from "../utils/dataHandling";
+import { PreferencesData, UserData, UnitsToColorsData } from "../types/database";
 import { appInBeta } from "../utils/static";
-import { BetaKeysData } from "../../_dev/beta/betaTypes";
 import { EmailAuthProvider, User, UserCredential, reauthenticateWithCredential } from "firebase/auth";
 import { Alert } from "react-native";
 
@@ -19,13 +17,6 @@ export async function pushNewUserInfo(
 ){
   // User current session
   let timestampNow = new Date().getTime();
-  let newCurrentUnitsData:UnitTypesProps = getZeroUnitsObject();
-  let newCurrentSessionData = {
-    current_units: newCurrentUnitsData,
-    in_session: false,
-    last_session_started: timestampNow,
-    last_unit_added: timestampNow,
-  };
   // User preferences
   let newUnitsToColors:UnitsToColorsData = {
     orange: 10,
@@ -44,10 +35,8 @@ export async function pushNewUserInfo(
   };
   // Allowed types
   let updates: {
-    [key:string]: UserData | CurrentSessionData | PreferencesData | any
+    [key:string]: UserData | PreferencesData | any
   } = {};
-  // User current session
-  updates[`user_current_session/${userId}`] = newCurrentSessionData;
   // User preferences
   updates[`user_preferences/${userId}`] = newPreferences;
   // Users
@@ -90,37 +79,6 @@ export async function deleteUserInfo(
   } catch (error:any) {
     throw new Error('Failed to delete user info: ' + error.message);
   } ;
-};
-
-export async function updateLastSessionStarted(
-  db: any, 
-  userId: string, 
-  timestamp: number,
-  ) {
-  let updates: {[key: string]: number} = {};
-  updates[`user_current_session/${userId}/last_session_started`] = timestamp;
-
-  try {
-    await update(ref(db), updates);
-  } catch (error:any) {
-    throw new Error('Failed to update session timestamp: ' + error.message);
-  }
-};
-
-
-export async function updateSessionStatus(
-  db: any, 
-  userId: string, 
-  status: boolean,
-  ) {
-  let updates: {[key: string]: boolean} = {};
-  updates[`user_current_session/${userId}/in_session`] = status;
-
-  try {
-    await update(ref(db), updates);
-  } catch (error:any) {
-    throw new Error('Failed to save drinking session data: ' + error.message);
-  }
 };
 
 
