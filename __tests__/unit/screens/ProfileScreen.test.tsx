@@ -1,7 +1,7 @@
 ﻿import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react-native';
-import ProfileScreen from '../../src/screens/ProfileScreen';
-import DatabaseContext from '../../src/context/DatabaseContext';
+import ProfileScreen from '../../../src/screens/ProfileScreen';
+import DatabaseContext from '../../../src/context/DatabaseContext';
 
 // Mock the navigation prop used by the component
 const mockNavigation = {

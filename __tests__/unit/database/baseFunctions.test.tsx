@@ -1,23 +1,20 @@
-﻿// import { get, ref, onValue, off } from "firebase/database";
-// import { 
-//   readDataOnce,
-//   listenForDataChanges
-// } from '../src/database/baseFunctions';'../src/database';
+﻿import { get, ref, onValue, off } from "firebase/database";
+import { 
+  readDataOnce,
+  listenForDataChanges
+} from '../../../src/database/baseFunctions';
+import { AppSettings, ConfigProps, CurrentSessionData, DatabaseProps, FeedbackData, FeedbackProps, PreferencesData, UnconfirmedDaysData, UnitsToColorsData, UserData } from "../../../src/types/database";
+import { createMockConfig, createMockDatabase, createMockFeedback, createMockSession } from "../../../src/utils/testing/mockDatabase";
 
-// jest.mock('firebase/database', () => ({
-//   get: jest.fn(),
-//   ref: jest.fn(),
-//   onValue: jest.fn(),
-//   off: jest.fn(),
-// }));
+jest.mock('firebase/database', () => ({
+  get: jest.fn(),
+  ref: jest.fn(),
+  onValue: jest.fn(),
+  off: jest.fn(),
+}));
 
-// const mockDb = {
-//   users: {
-//     test_user: {
-//       username: 'Test user'
-//     }
-//   }
-// };
+
+let mockDb = createMockDatabase();
 
 // describe('data reading functions', () => {
 //     let onDataChangeMock: jest.Mock;

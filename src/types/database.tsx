@@ -96,7 +96,7 @@ export type PreferencesData = {
 }
 
 export type UnconfirmedDaysData = {
-  date_string: string;
+  [day_string: string]: boolean,
 }
 
 export type UserData = {

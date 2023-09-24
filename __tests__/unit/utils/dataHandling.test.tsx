@@ -24,67 +24,12 @@
     sumUnitsOfSingleType, 
     timestampToDate, 
     unitsToColors
-} from "../../src/utils/dataHandling";
-import { DateObject } from "../../src/types/components";
-import { DrinkingSessionArrayItem, DrinkingSessionData, UnitTypesKeys, UnitTypesNames, UnitTypesProps, UnitsObject, UnitsToColorsData } from "../../src/types/database";
+} from "../../../src/utils/dataHandling";
+import { DateObject } from "../../../src/types/components";
+import { DrinkingSessionArrayItem, DrinkingSessionData, UnitTypesKeys, UnitTypesNames, UnitTypesProps, UnitsObject, UnitsToColorsData } from "../../../src/types/database";
+import { createMockSession, createMockUnitsObject } from "../../../src/utils/testing/mockDatabase";
 
 
-/** Generate a mock object of units
- * 
- * @usage const onlyWine = generateMockUnitsObject({ wine: 5 });
- */
-function generateMockUnitsObject(units: Partial<UnitTypesProps> = {}): UnitsObject {
-    let timestampNow = new Date().getTime();
-    const defaultUnits: UnitsObject = {
-      [timestampNow]: {
-        beer: 0,
-        cocktail: 0,
-        other: 0,
-        strong_shot: 0,
-        weak_shot: 0,
-        wine: 0,
-      }
-    };
-  
-    return {
-      ...defaultUnits,
-      ...units,
-    };
-};
-
-/**
- * Generates a DrinkingSessionData for a specified offset relative to a given date.
- *
- * @param baseDate Date around which sessions are created.
- * @param offsetDays Number of days to offset from baseDate. If not provided, a random offset between -7 and 7 days is used.
- * @param units Units consumed during the session
- * @returns A DrinkingSessionData object.
- */
-function generateMockSession(baseDate: Date, offsetDays?: number, units?: UnitsObject): DrinkingSessionArrayItem {
-    if (!units){
-        units = getZeroUnitsObject();
-    };
-    const sessionDate = new Date(baseDate);
-  
-    // If offsetDays is not provided, randomize between -7 and 7 days.
-    const daysOffset = offsetDays !== undefined ? offsetDays : Math.floor(Math.random() * 15) - 7;
-  
-    sessionDate.setDate(sessionDate.getDate() + daysOffset);
-  
-    const startHour = 3;  // you can randomize this or make it configurable
-  
-    sessionDate.setHours(startHour, 0, 0, 0);
-
-    const newSession:DrinkingSessionArrayItem =  {
-        start_time: sessionDate.getTime(),
-        end_time: sessionDate.getTime() + (2 * 60 * 60 * 1000),  // +2 hours
-        blackout: false,
-        note: '',
-        units: units
-    };
-  
-    return newSession;
-  }
 
 
 describe('formatDate function', () => {
@@ -199,7 +144,7 @@ describe('getTimestampAtMidnight function', () => {
         expect(date.getMilliseconds()).toEqual(0);
     }
 
-    it('generates a timestamp corresponding to midnight of a given date', () => {
+    it('creates a timestamp corresponding to midnight of a given date', () => {
         const today = new Date();
         const timestampAtMidnight = getTimestampAtMidnight(today);
         const midnightDate = timestampToDate(timestampAtMidnight);
@@ -219,7 +164,7 @@ describe('getTimestampAtNoon function', () => {
         expect(date.getMilliseconds()).toEqual(0);
     }
 
-    it('generates a timestamp corresponding to noon of a given date', () => {
+    it('creates a timestamp corresponding to noon of a given date', () => {
         const today = new Date();
         const timestampAtNoon = getTimestampAtNoon(today);
         const noonDate = timestampToDate(timestampAtNoon);
@@ -389,9 +334,9 @@ describe('getSingleDayDrinkingSessions', () => {
     it('should return sessions that only fall within the given date', () => {
       const baseDate = new Date('2023-08-20');
       const testSessions: DrinkingSessionArrayItem[] = [
-        generateMockSession(baseDate, 0),    // Session from 'today'
-        generateMockSession(baseDate, -1),   // Session from 'yesterday'
-        generateMockSession(baseDate, 1)     // Session from 'tomorrow'
+        createMockSession(baseDate, 0),    // Session from 'today'
+        createMockSession(baseDate, -1),   // Session from 'yesterday'
+        createMockSession(baseDate, 1)     // Session from 'tomorrow'
       ];
   
       const result = getSingleDayDrinkingSessions(baseDate, testSessions);
@@ -401,8 +346,8 @@ describe('getSingleDayDrinkingSessions', () => {
     it('should return an empty array if no sessions fall within the given date', () => {
       const baseDate = new Date('2023-08-22');
       const testSessions: DrinkingSessionArrayItem[] = [
-        generateMockSession(baseDate, -2),
-        generateMockSession(baseDate, -3)
+        createMockSession(baseDate, -2),
+        createMockSession(baseDate, -3)
       ];
   
       const result = getSingleDayDrinkingSessions(baseDate, testSessions);
@@ -418,9 +363,9 @@ describe('getSingleMonthDrinkingSessions', () => {
     it('should return sessions that only fall within the given month', () => {
       const baseDate = new Date('2023-08-20');
       const testSessions: DrinkingSessionArrayItem[] = [
-        generateMockSession(baseDate, 0),   // Session from this month
-        generateMockSession(baseDate, -30),  // Session from last month
-        generateMockSession(baseDate, 30)    // Session from next month
+        createMockSession(baseDate, 0),   // Session from this month
+        createMockSession(baseDate, -30),  // Session from last month
+        createMockSession(baseDate, 30)    // Session from next month
       ];
   
       const result = getSingleMonthDrinkingSessions(baseDate, testSessions);
@@ -433,9 +378,9 @@ describe('getSingleMonthDrinkingSessions', () => {
       futureSessionDate.setDate(futureSessionDate.getDate() + 5);  // A session 5 days into the future
   
       const testSessions: DrinkingSessionArrayItem[] = [
-        generateMockSession(baseDate, 0),   // Session from this month
+        createMockSession(baseDate, 0),   // Session from this month
         {
-          ...generateMockSession(baseDate, 0),
+          ...createMockSession(baseDate, 0),
           start_time: futureSessionDate.getTime()
         }
       ];
@@ -447,8 +392,8 @@ describe('getSingleMonthDrinkingSessions', () => {
     it('should return an empty array if no sessions fall within the given month', () => {
       const baseDate = new Date('2023-08-22');
       const testSessions: DrinkingSessionArrayItem[] = [
-        generateMockSession(baseDate, -60),
-        generateMockSession(baseDate, -90)
+        createMockSession(baseDate, -60),
+        createMockSession(baseDate, -90)
       ];
   
       const result = getSingleMonthDrinkingSessions(baseDate, testSessions);
@@ -570,7 +515,7 @@ describe('getLastUnitAddedTime', () => {
   let mockSession:DrinkingSessionArrayItem;
 
   beforeEach(() => {
-    mockSession = generateMockSession(dateNow);
+    mockSession = createMockSession(dateNow);
   });
 
   it('should correctly identify last added unit timestamp', () => {
@@ -603,9 +548,9 @@ describe('getLastUnitAddedTime', () => {
 describe('calculateThisMonthUnits', () => {
     let currentDate = new Date();
     let mockDateObject: DateObject = dateToDateObject(currentDate);
-    let twoBeers: UnitsObject = generateMockUnitsObject({beer: 2});
-    let threeWines: UnitsObject = generateMockUnitsObject({wine: 3});
-    let fourOther: UnitsObject = generateMockUnitsObject({other: 4});
+    let twoBeers: UnitsObject = createMockUnitsObject({beer: 2});
+    let threeWines: UnitsObject = createMockUnitsObject({wine: 3});
+    let fourOther: UnitsObject = createMockUnitsObject({other: 4});
     
     it('should return 0 when there are no drinking sessions this month', () => {
       const result = calculateThisMonthUnits(mockDateObject, []);
@@ -614,10 +559,10 @@ describe('calculateThisMonthUnits', () => {
   
     it('should sum units for sessions that only fall within the current month', () => {
       const testSessions: DrinkingSessionArrayItem[] = [
-        generateMockSession(new Date(), -31, twoBeers),
-        generateMockSession(new Date(), 31, twoBeers),
-        generateMockSession(new Date(), 0, threeWines),
-        generateMockSession(new Date(), 0, twoBeers),
+        createMockSession(new Date(), -31, twoBeers),
+        createMockSession(new Date(), 31, twoBeers),
+        createMockSession(new Date(), 0, threeWines),
+        createMockSession(new Date(), 0, twoBeers),
       ];
       
       const result = calculateThisMonthUnits(mockDateObject, testSessions);
@@ -627,9 +572,9 @@ describe('calculateThisMonthUnits', () => {
     it('should sum units for all sessions if all fall within the current month', () => {
       // Mock sumAllUnits function and getSingleMonthDrinkingSessions to return an array of sessions
       const testSessions: DrinkingSessionArrayItem[] = [
-        generateMockSession(new Date(), 0, threeWines),
-        generateMockSession(new Date(), 0, twoBeers),
-        generateMockSession(new Date(), 0, fourOther),
+        createMockSession(new Date(), 0, threeWines),
+        createMockSession(new Date(), 0, twoBeers),
+        createMockSession(new Date(), 0, fourOther),
       ];
       
       const result = calculateThisMonthUnits(mockDateObject, testSessions);
@@ -769,8 +714,8 @@ describe('removeUnits function', () => {
 
 describe('removeZeroObjectsFromSession', () => {
 
-  // Helper function to generate mock session with units
-  const generateMockSessionWithUnits = (units: UnitsObject): DrinkingSessionArrayItem => {
+  // Helper function to create mock session with units
+  const createMockSessionWithUnits = (units: UnitsObject): DrinkingSessionArrayItem => {
       return {
           start_time: Date.now(),
           end_time: Date.now() + 1000,
@@ -781,7 +726,7 @@ describe('removeZeroObjectsFromSession', () => {
   };
 
   it('should remove UnitsObject children with all unit values set to 0', () => {
-      const mockSession: DrinkingSessionArrayItem = generateMockSessionWithUnits({
+      const mockSession: DrinkingSessionArrayItem = createMockSessionWithUnits({
           12345679: { beer: 0, cocktail: 0, other: 0, strong_shot: 0, weak_shot: 0, wine: 0 },
           12345680: { beer: 1 }
       });
@@ -793,7 +738,7 @@ describe('removeZeroObjectsFromSession', () => {
   });
 
   it('should keep UnitsObject children with at least one unit value not set to 0', () => {
-      const mockSession: DrinkingSessionArrayItem = generateMockSessionWithUnits({
+      const mockSession: DrinkingSessionArrayItem = createMockSessionWithUnits({
           12345679: { beer: 1, cocktail: 0 },
           12345680: { beer: 0, wine: 1 }
       });
@@ -806,7 +751,7 @@ describe('removeZeroObjectsFromSession', () => {
   });
 
   it('should return the same session if no UnitsObject children have all unit values set to 0', () => {
-      const mockSession: DrinkingSessionArrayItem = generateMockSessionWithUnits({
+      const mockSession: DrinkingSessionArrayItem = createMockSessionWithUnits({
           12345679: { beer: 1 },
           12345680: { wine: 1 }
       });
@@ -817,7 +762,7 @@ describe('removeZeroObjectsFromSession', () => {
   });
   
   it('should return a session with no units if all UnitsObject children have all unit values set to 0', () => {
-      const mockSession: DrinkingSessionArrayItem = generateMockSessionWithUnits({
+      const mockSession: DrinkingSessionArrayItem = createMockSessionWithUnits({
           12345679: { beer: 0, cocktail: 0, other: 0, strong_shot: 0, weak_shot: 0, wine: 0 },
           12345680: { beer: 0, cocktail: 0, other: 0, strong_shot: 0, weak_shot: 0, wine: 0 }
       });
