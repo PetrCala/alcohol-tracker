@@ -773,67 +773,56 @@ describe('removeZeroObjectsFromSession', () => {
   });
 });
 
-describe('getZeroUnitsObject', () => {
-    // it('should return an object with all unit types set to 0', () => {
-    //   const zeroUnits = getZeroUnitsObject();
-    //   const zeroUnitsValues = Object.values(zeroUnits)
-  
-    //   for (let unit in zeroUnitsValues) {
-    //     expect(zeroUnitsValues[unit]).toBe(0);
-    //   };
-    // });
-  
-    // it('should return a new object on each call', () => {
-    //   const firstCall = getZeroUnitsObject();
-    //   const secondCall = getZeroUnitsObject();
-  
-    //   firstCall.beer = 5;  // Modify one of the properties of the first object
-  
-    //   expect(firstCall.beer).toBe(5);
-    //   expect(secondCall.beer).toBe(0);  // The second object should remain unchanged
-    // });
-
-    // it('should have all the expected keys based on UnitTypesProps type', () => {
-    //     const zeroUnits = getZeroUnitsObject();
-    //     const expectedKeys = UnitTypesKeys;
-    
-    //     expect(Object.keys(zeroUnits)).toEqual(expectedKeys);
-    // });
-});
-
-
-
 describe('getRandomUnitsObject', () => {
+    let randomUnitsObject:UnitsObject = {};
+    let randomUnits: UnitTypesProps = {};
 
-    // it('should return an object with all values between 0 and maxUnitValue (exclusive)', () => {
-    //   const randomUnits = getRandomUnitsObject(30);
-  
-    //   for (let unit in randomUnits) {
-    //       expect(randomUnits[unit as keyof UnitTypesProps]).toBeGreaterThanOrEqual(0);
-    //       expect(randomUnits[unit as keyof UnitTypesProps]).toBeLessThanOrEqual(30);
-    //   };
-    // });
-  
-    it('should return different values on subsequent calls (most likely)', () => {
-      const firstCall = getRandomUnitsObject(30);
-      const secondCall = getRandomUnitsObject(30);
-  
-      // Given the nature of randomness, this test might occasionally fail.
-      // However, the likelihood of two random objects being exactly the same is extremely low.
-      expect(firstCall).not.toEqual(secondCall);
+    beforeEach(() => {
+      randomUnitsObject = getRandomUnitsObject(30);
+      randomUnits = Object.values(randomUnitsObject)[0];
     });
 
+    it('should return an object with all values between 0 and maxUnitValue (exclusive)', () => {
+      for (let unit in randomUnits) {
+          expect(randomUnits[unit as keyof UnitTypesProps]).toBeGreaterThanOrEqual(0);
+          expect(randomUnits[unit as keyof UnitTypesProps]).toBeLessThanOrEqual(30);
+      };
+    });
+  
     it('should have all the expected keys based on UnitTypesProps type', () => {
-        const randomUnits = getZeroUnitsObject();
         const expectedKeys = UnitTypesKeys;
-    
+
         expect(Object.keys(randomUnits)).toEqual(expectedKeys);
     });
   
   });
 
 
-  describe('unitsToColors', () => {
+describe('getZeroUnitsObject', () => {
+    let zeroUnitsObject:UnitsObject = {};
+    let zeroUnits: UnitTypesProps = {};
+
+    beforeEach(() => {
+      zeroUnitsObject = getZeroUnitsObject();
+      zeroUnits = Object.values(zeroUnitsObject)[0];
+    });
+
+    it('should return an object with all values equal to 0', () => {
+      for (let unit in zeroUnits) {
+          expect(zeroUnits[unit as keyof UnitTypesProps]).toEqual(0);
+      };
+    });
+  
+    it('should have all the expected keys based on UnitTypesProps type', () => {
+        const expectedKeys = UnitTypesKeys;
+
+        expect(Object.keys(zeroUnits)).toEqual(expectedKeys);
+    });
+  
+  });
+
+
+describe('unitsToColors', () => {
 
     // Create a mock for UnitsToColorsData for consistent testing
     const mockUnitsToColorsData: UnitsToColorsData = {

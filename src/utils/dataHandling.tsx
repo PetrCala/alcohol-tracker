@@ -7,6 +7,7 @@
     UnitsToColorsData 
 } from "../types/database";
 import { DateObject } from "../types/components";
+import { getRandomInt } from "./choice";
 
 export function formatDate (date: Date): string {
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
@@ -318,51 +319,31 @@ export const removeZeroObjectsFromSession = (session:DrinkingSessionArrayItem):D
 
 
 /** Generate an object with all available units where 
- * each unit's value is set to 0.
+ * each unit's value is set to a random integer.
  */
-export function getZeroUnitsObject(timestamp: number = Date.now()): UnitsObject {
-    const unitWithZeros: UnitTypesProps = {};
-  
-    // Loop over each item in UnitTypesKeys and set its value to 0
+
+export const getRandomUnitsObject = (maxUnitValue: number = 30): UnitsObject => {
+    const unitWithRandomValues: UnitTypesProps = {};
+
+    // Loop over each item in UnitTypesKeys and set its value to a random number between 0 and maxUnitValue
     for (const key of UnitTypesKeys) {
-      unitWithZeros[key] = 0;
+        unitWithRandomValues[key] = getRandomInt(0, maxUnitValue);
     }
-  
-    // Create a new object with a given timestamp
+
+    // Create a new object with a current timestamp
+    const timestamp = Date.now();
     const result: UnitsObject = {
-      [timestamp]: unitWithZeros
+        [timestamp]: unitWithRandomValues
     };
-  
+
     return result;
 };
 
-/** Generate an object with all available units where 
- * each unit's value is set to a random integer.
+/** Generate an object with all available units where each unit's value is set to 0.
  */
-export const getRandomUnitsObject = (maxUnitValue:number = 30):UnitsObject => {
-    return {
-        [Date.now()]: {
-            beer: 2,
-            cocktail: 4,
-            other: 3,
-            strong_shot: 0,
-            weak_shot: 1,
-            wine: 0,
-        }
-    };
-    // // Create an object with all keys set to 0
-    // let obj = getZeroUnitsObject();
-
-    // // Create an array of all keys in UnitTypesProps type
-    // const keys = Object.keys(obj) as (keyof UnitTypesProps)[];
-
-    // keys.forEach(key => {
-    //     obj[key] = Math.floor(Math.random() * maxUnitValue);
-    // });
-
-    // return obj;
+export function getZeroUnitsObject(): UnitsObject {
+    return getRandomUnitsObject(0);
 };
-
 
 /** Convert the units consumed to colors.
  * 
