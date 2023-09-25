@@ -16,6 +16,7 @@ jest.mock('firebase/database', () => ({
 
 let mockDb = createMockDatabase();
 
+
 // describe('data reading functions', () => {
 //     let onDataChangeMock: jest.Mock;
     
@@ -43,6 +44,8 @@ let mockDb = createMockDatabase();
 //       expect(data).not.toBeNull();
 //       expect(data).toEqual(mockDb.users[existingUserId]);
 //     });
+
+// });
   
 //     it('returns null if user does not exist', async () => {
 //       const nonExistingUserId = 'nonExistingUser';
