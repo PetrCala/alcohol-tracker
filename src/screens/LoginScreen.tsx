@@ -116,6 +116,8 @@ const LoginScreen = ( {navigation }: LoginScreenProps) => {
         <TextInput
         placeholder="Email"
         placeholderTextColor={"#a8a8a8"}
+        keyboardType='email-address'
+        textContentType='emailAddress'
         value={email}
         onChangeText={text => setEmail(text)}
         style={styles.input}
@@ -123,6 +125,7 @@ const LoginScreen = ( {navigation }: LoginScreenProps) => {
         <TextInput
         placeholder="Password"
         placeholderTextColor={"#a8a8a8"}
+        textContentType='password'
         value={password}
         onChangeText={text => setPassword(text)}
         style={styles.input}
