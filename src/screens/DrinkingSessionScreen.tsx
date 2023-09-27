@@ -37,6 +37,7 @@ import { DrinkDataProps } from '../types/components';
 import UnitTypesView from '../components/UnitTypesView';
 import SessionDetailsSlider from '../components/SessionDetailsSlider';
 import LoadingData from '../components/LoadingData';
+import { usePrevious } from '../utils/hooks/usePrevious';
 
 
 const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps) => {
@@ -71,7 +72,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
   // Other
   const [monkeMode, setMonkeMode] = useState<boolean>(false);
   const [discardModalVisible, setDiscardModalVisible] = useState<boolean>(false);
-  const [ savingSession, setSavingSession ] = useState<boolean>(false);
+  const [savingSession, setSavingSession] = useState<boolean>(false);
   const sessionColor = unitsToColors(totalUnits, preferences.units_to_colors);
   const scrollViewRef = useRef<ScrollView>(null); // To navigate the view
 
@@ -126,17 +127,22 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
     setAvailableUnits(newAvailableUnits);
   }, [currentUnits]);
 
-  // Create a ref to store the previous state
-  const prevUnitsRef = useRef<UnitsObject>();
-    useEffect(() => {
-      prevUnitsRef.current = currentUnits;
-    });
-  const prevUnits = prevUnitsRef.current;
+  // Monitor changes on screen using a custom hook
+  const prevUnits = usePrevious(currentUnits);
+  const prevIsBlackout = usePrevious(isBlackout);
+  const prevNote = usePrevious(note);
 
   // Change database value once every second
   useEffect(() => {
-    // Only schedule a database update if the units have changed
-    if (prevUnits !== currentUnits) {
+    // Compare previous values with current values
+    const unitsChanged = prevUnits !== currentUnits;
+    const blackoutChanged = prevIsBlackout !== isBlackout;
+    const noteChanged = prevNote !== note;
+    // Determine if any value has changed
+    const anyValueChanged = unitsChanged || blackoutChanged || noteChanged;
+
+    // Only schedule a database update if any hooks changed
+    if (anyValueChanged) {
       setPendingUpdate(true);
       const timer = setTimeout(async () => {
         try{
@@ -157,7 +163,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
       // Clear timer on unmount or when units changes
       return () => clearTimeout(timer);
     }
-  }, [currentUnits]);
+  }, [currentUnits, isBlackout, note]);
 
 
   async function saveSession(db: any, userId: string) {
