@@ -38,7 +38,7 @@ const FeedbackPopup = (props: FeedbackPopupProps) => {
                 style={styles.feedbackWindowText}
                 onChangeText={setFeedbackText}
                 placeholder={"Write your feedback here"}
-                placeholderTextColor={"grey"}
+                placeholderTextColor={"#a8a8a8"}
                 keyboardType="default"
                 maxLength={1000}
                 multiline={true}
@@ -101,6 +101,7 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     textAlignVertical: 'top',
     margin: 12,
+    color: 'black'
   },
   buttonContainer: {
     flexDirection: 'row',

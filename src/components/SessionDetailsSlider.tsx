@@ -96,7 +96,7 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
                                 style={styles.noteText}
                                 onChangeText={(value) => onNoteChange(value)}
                                 placeholder={"Write your note here"}
-                                placeholderTextColor={"grey"}
+                                placeholderTextColor={"#a8a8a8"}
                                 keyboardType="default"
                                 maxLength={1000}
                                 multiline={true}
@@ -189,6 +189,7 @@ const styles = StyleSheet.create({
         flexShrink: 1,
         textAlignVertical: 'top',
         margin: 10,
+        color: 'black',
     },
 });
 

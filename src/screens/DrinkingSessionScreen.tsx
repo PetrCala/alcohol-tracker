@@ -233,7 +233,6 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
 
   if (savingSession) return (<LoadingData loadingText='Saving session...'/>);
 
-  console.log(dbSyncSuccessful)
   return (
     <>
     <View style={styles.mainHeader}>

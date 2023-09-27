@@ -168,18 +168,21 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
       <View style={styles.inputContainer}>
         <TextInput
         placeholder="Email"
+        placeholderTextColor={"#a8a8a8"}
         value={email}
         onChangeText={text => setEmail(text)}
         style={styles.input}
         />
         <TextInput
         placeholder="Username"
+        placeholderTextColor={"#a8a8a8"}
         value={username}
         onChangeText={text => setUsername(text)}
         style={styles.input}
         />
         <TextInput
         placeholder="Password"
+        placeholderTextColor={"#a8a8a8"}
         value={password}
         onChangeText={text => setPassword(text)}
         style={styles.input}
@@ -187,6 +190,7 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
         />
         <TextInput
         placeholder="Beta key"
+        placeholderTextColor={"#a8a8a8"}
         value={betaKey}
         onChangeText={text => setBetaKey(text)}
         style={styles.input}
@@ -277,6 +281,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     marginTop: 5,
     marginBottom: 5,
+    color: 'black'
   },
   signUpButton: {
     backgroundColor: '#0782F9',
