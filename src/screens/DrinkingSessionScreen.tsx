@@ -39,6 +39,7 @@ import UnitTypesView from '../components/UnitTypesView';
 import SessionDetailsSlider from '../components/SessionDetailsSlider';
 import LoadingData from '../components/LoadingData';
 import { usePrevious } from '../utils/hooks/usePrevious';
+import SuccessIndicator from '../components/SuccessIndicator';
 
 
 const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps) => {
@@ -67,6 +68,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
   // Time info
   const [pendingUpdate, setPendingUpdate] = useState(false);
   const updateTimeout = 1000; // Synchronize with DB every x milliseconds
+  const [dbSyncSuccessful, setDbSyncSuccessful] = useState(false);
   const sessionDate = timestampToDate(session.start_time);
   const sessionDay = formatDateToDay(sessionDate);
   const sessionStartTime = formatDateToTime(sessionDate);
@@ -144,6 +146,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
 
     // Only schedule a database update if any hooks changed
     if (anyValueChanged) {
+      setDbSyncSuccessful(false);
       setPendingUpdate(true);
       const timer = setTimeout(async () => {
         try{
@@ -160,6 +163,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
           throw new Error("Could not save the drinking session data");
         }
         setPendingUpdate(false); // Data has been synchronized with DB
+        setDbSyncSuccessful(true);
       }, updateTimeout); // Update every x milliseconds
       // Clear timer on unmount or when units changes
       return () => clearTimeout(timer);
@@ -229,6 +233,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
 
   if (savingSession) return (<LoadingData loadingText='Saving session...'/>);
 
+  console.log(dbSyncSuccessful)
   return (
     <>
     <View style={styles.mainHeader}>
@@ -262,6 +267,10 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
           style={styles.pendingUpdateIndicator}
           />
         }
+        <SuccessIndicator 
+        visible={dbSyncSuccessful} 
+        successStyle={styles.successStyle}
+        />
     </View>
     <View style={styles.unitCountContainer}>
         <Text style={[ styles.unitCountText,
@@ -378,6 +387,15 @@ const styles = StyleSheet.create({
     width: 25,
     height: 25,
     margin: 10,
+    position: 'absolute',
+    right: 0
+  },
+  successStyle: {
+    width: 20,
+    height: 20,
+    borderRadius: 25,
+    margin: 10,
+    backgroundColor: 'green',
     position: 'absolute',
     right: 0
   },
