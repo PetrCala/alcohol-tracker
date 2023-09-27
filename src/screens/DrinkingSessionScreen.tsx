@@ -5,6 +5,7 @@
   useEffect
 } from 'react';
 import {
+  ActivityIndicator,
   Alert,
   Image,
   ScrollView,
@@ -254,8 +255,13 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
               Session start: {sessionStartTime}
           </Text>
         </View>
-        {pendingUpdate && <View style={styles.pendingUpdateCircle}></View>}
-        {/* <View style={styles.pendingUpdateCircle}></View> */}
+        {pendingUpdate && 
+        <ActivityIndicator 
+          size="small"
+          color = "#0000ff"
+          style={styles.pendingUpdateIndicator}
+          />
+        }
     </View>
     <View style={styles.unitCountContainer}>
         <Text style={[ styles.unitCountText,
@@ -368,11 +374,9 @@ const styles = StyleSheet.create({
     alignContent: "center",
     padding: 5,
   },
-  pendingUpdateCircle: {
+  pendingUpdateIndicator: {
     width: 25,
     height: 25,
-    borderRadius: 25,
-    backgroundColor: 'orange',
     margin: 10,
     position: 'absolute',
     right: 0
