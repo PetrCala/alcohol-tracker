@@ -249,9 +249,13 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
       />
     </View>
     <View style={styles.sessionInfoContainer}>
-        <Text style={styles.sessionInfoText}>
-            Session start: {sessionStartTime}
-        </Text>
+        <View style={styles.sessionTextContainer}>
+          <Text style={styles.sessionInfoText}>
+              Session start: {sessionStartTime}
+          </Text>
+        </View>
+        {pendingUpdate && <View style={styles.pendingUpdateCircle}></View>}
+        {/* <View style={styles.pendingUpdateCircle}></View> */}
     </View>
     <View style={styles.unitCountContainer}>
         <Text style={[ styles.unitCountText,
@@ -347,6 +351,14 @@ const styles = StyleSheet.create({
     width: 25,
     height: 25,
   },
+  sessionInfoContainer: {
+    backgroundColor: '#FFFF99',
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  sessionTextContainer: {
+    alignItems: 'center',
+  },
   sessionInfoText: {
     fontSize: 20,
     fontWeight: "bold",
@@ -356,8 +368,14 @@ const styles = StyleSheet.create({
     alignContent: "center",
     padding: 5,
   },
-  sessionInfoContainer: {
-    backgroundColor: '#FFFF99',
+  pendingUpdateCircle: {
+    width: 25,
+    height: 25,
+    borderRadius: 25,
+    backgroundColor: 'orange',
+    margin: 10,
+    position: 'absolute',
+    right: 0
   },
   unitCountContainer: {
     height: '19%',
