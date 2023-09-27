@@ -65,6 +65,7 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
   const [reauthentificateModalVisible, setReauthentificateModalVisible] = useState<boolean>(false);
   const [adminFeedbackModalVisible, setAdminFeedbackModalVisible] = useState<boolean>(false);
 
+  if (!db) return null; // Should never be null
 
   const handleSignOut = async () => {
     try {

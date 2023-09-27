@@ -1,4 +1,4 @@
-﻿import { ref, child, update, push } from "firebase/database";
+﻿import { Database, ref, child, update, push } from "firebase/database";
 import { DrinkingSessionData, UnitTypesProps, CurrentSessionData, DrinkingSessionArrayItem, UnitsObject } from "../types/database";
 import { Alert } from "react-native";
 
@@ -10,7 +10,7 @@ import { Alert } from "react-native";
  * @return The session key associated with that session
  *  */ 
 export async function saveDrinkingSessionData(
-  db: any, 
+  db: Database, 
   userId: string, 
   newSessionData: DrinkingSessionArrayItem,
   sessionKey?: string,
@@ -43,7 +43,7 @@ export async function saveDrinkingSessionData(
  * @param userId User ID
  */
 export async function updateCurrentSessionKey(
-  db: any,
+  db: Database,
   userId: string,
   key: string | null,
 ) {
@@ -65,7 +65,7 @@ export async function updateCurrentSessionKey(
  * Throw an error in case the database removal fails.
  *  */ 
 export async function removeDrinkingSessionData(
-  db: any, 
+  db: Database, 
   userId: string,
   sessionKey: string,
 ) {
@@ -86,7 +86,7 @@ export async function removeDrinkingSessionData(
  * Throw an error in case the database writing fails.
  *  */ 
 export async function editDrinkingSessionData(
-  db: any, 
+  db: Database, 
   userId: string, 
   session: DrinkingSessionArrayItem,
   sessionKey: string,
@@ -124,7 +124,7 @@ export async function editDrinkingSessionData(
  * @param newUnits UnitsObject containing the new units
  */
 export async function updateSessionUnits(
-  db: any, 
+  db: Database, 
   userId: string, 
   sessionKey: string,
   newUnits: UnitsObject

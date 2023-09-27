@@ -68,6 +68,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
     navigation.replace("Login Screen");
     return null;
   }
+  if (!db) return null; // Should never be null
 
   // Handle drinking session button press
   const startDrinkingSession = async () => {

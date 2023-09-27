@@ -1,4 +1,4 @@
-﻿import { child, push, ref, update } from "firebase/database";
+﻿import { Database, child, push, ref, update } from "firebase/database";
 import { FeedbackData, FeedbackProps } from "../types/database";
 import { Alert } from "react-native";
 
@@ -14,7 +14,7 @@ import { Alert } from "react-native";
  * was submitted.
  *  */
 export async function submitFeedback(
-    db: any,
+    db: Database,
     userId: string,
     text: string,
 ){
@@ -50,7 +50,7 @@ export async function submitFeedback(
  * Throw an error in case the removal fails.
  *  */ 
 export async function removeFeedback(
-  db: any, 
+  db: Database, 
   feedbackKey: string,
 ) {
   var updates: {[key: string]: null} = {};

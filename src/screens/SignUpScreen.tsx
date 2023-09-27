@@ -31,6 +31,7 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
   const [password, setPassword] = useState('');
   const [warning, setWarning] = useState< string | null>('');
   const [betaKey, setBetaKey] = useState<string>(''); // Beta feature
+  if (!db) return null; // Should never be null
 
   useEffect(() => {
       const stopListening = auth.onAuthStateChanged(user => {

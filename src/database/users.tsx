@@ -1,4 +1,4 @@
-﻿import { update, runTransaction, ref } from "firebase/database";
+﻿import { Database, update, runTransaction, ref } from "firebase/database";
 import { PreferencesData, UserData, UnitsToColorsData } from "../types/database";
 import { appInBeta } from "../utils/static";
 import { EmailAuthProvider, User, UserCredential, reauthenticateWithCredential } from "firebase/auth";
@@ -11,7 +11,7 @@ import { Alert } from "react-native";
  * @param userId The user ID
  */
 export async function pushNewUserInfo(
- db: any,
+ db: Database,
  userId: string,
  betaKeyId: string, // Beta feature
 ){
@@ -59,7 +59,7 @@ export async function pushNewUserInfo(
  * @param userId The user ID
  */
 export async function deleteUserInfo(
- db: any,
+ db: Database,
  userId: string,
  betaKeyId: string | undefined, // Beta feature
 ){
@@ -83,7 +83,7 @@ export async function deleteUserInfo(
 
 
 export async function updateUserLastOnline(
-  db: any,
+  db: Database,
   userId: string,
  ){
   let lastOnline:number = new Date().getTime();
