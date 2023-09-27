@@ -22,6 +22,7 @@
     "firebase": "^10.0.0",
     "firebase-admin": "^11.10.1",
     "firebaseui": "^6.1.0",
+    "identity-obj-proxy": "^3.0.0",
     "nanoid": "^4.0.2",
     "react": "18.2.0",
     "react-native": "0.72.3",
@@ -67,6 +68,12 @@
       "json",
       "node"
     ],
+    "transform": {
+      "^.+\\.tsx?$": "babel-jest"
+    },
+    "moduleNameMapper": {
+      "^.+\\.(css|less|scss)$": "identity-obj-proxy"
+    },
     "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
     "testPathIgnorePatterns": [
       "\\.snap$",

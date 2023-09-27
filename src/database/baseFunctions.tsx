@@ -46,7 +46,7 @@ export function listenForDataChanges(
  * 
  * @example const userNickname = await fetchNicknameByUID(db, "userUIDHere");
  */
-async function fetchNicknameByUID(db: Database, uid: string): Promise<string | null> {
+export async function fetchNicknameByUID(db: Database, uid: string): Promise<string | null> {
   try {
     const userRef = ref(db, `users/${uid}`);
     const userSnapshot = await get(userRef);
