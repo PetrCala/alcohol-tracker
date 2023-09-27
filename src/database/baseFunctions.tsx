@@ -1,5 +1,4 @@
 ﻿import { Database, get, ref, onValue, off } from "firebase/database";
-import { Alert } from "react-native";
 
 /** Read data once using get()
  * 
@@ -59,7 +58,6 @@ export async function fetchNicknameByUID(db: Database, uid: string): Promise<str
 
     return userSnapshot.val().nickname || null;
   } catch (error:any) {
-    // console.error("Error fetching user nickname:", error.message);
-    return null;
+    throw new Error("Failed to retrieve user nickname data:" + error.message);
   }
 };

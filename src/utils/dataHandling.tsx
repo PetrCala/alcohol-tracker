@@ -205,7 +205,19 @@ export function sumUnitsOfSingleType(unitsObject: UnitsObject, unitType: typeof 
  */
 export function sumUnitTypes(unitTypes: UnitTypesProps): number {
     return Object.values(unitTypes).reduce((subTotal, unitCount) => subTotal + (unitCount || 0), 0);
-}
+};
+
+/** Using an object of units, calculate how many points this object amounts to.
+ * 
+ * @param units UnitsObject type
+ * @returns Number of points
+ * 
+ * @example let points = sumAllPoints({[]})
+ */
+export function sumAllPoints(units:UnitsObject):number {
+    return 1
+
+};
 
 /** Input a session item and return the timestamp of the last unit
  * consumed in that session.

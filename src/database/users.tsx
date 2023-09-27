@@ -1,5 +1,5 @@
 ﻿import { Database, update, runTransaction, ref } from "firebase/database";
-import { PreferencesData, UserData, UnitsToColorsData } from "../types/database";
+import { PreferencesData, UserData, UnitsToColorsData, UnitTypesProps } from "../types/database";
 import { appInBeta } from "../utils/static";
 import { EmailAuthProvider, User, UserCredential, reauthenticateWithCredential } from "firebase/auth";
 import { Alert } from "react-native";
@@ -22,9 +22,18 @@ export async function pushNewUserInfo(
     orange: 10,
     yellow: 5,
   }
+  // let newUnitsToPoints:UnitTypesProps = {
+  //   'beer': 1,
+  //   'cocktail': 1.5,
+  //   'other': 1,
+  //   'strong_shot': 1,
+  //   'weak_shot': 0.5,
+  //   'wine': 1
+  // };
   let newPreferences:PreferencesData = {
     first_day_of_week: 'Monday',
     units_to_colors: newUnitsToColors,
+    // units_to_points: newUnitsToPoints,
   };
   // Users
   let userRole = appInBeta ? 'beta_user' : 'user'; // Beta feature

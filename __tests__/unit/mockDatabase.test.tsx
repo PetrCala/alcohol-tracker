@@ -9,7 +9,7 @@
     createMockUnconfirmedDays,
     createMockUserData,
     createMockDatabase
-  } from '../../src/utils/testing/mockDatabase';
+  } from '../utils/mockDatabase';
 import {
   DatabaseProps,
   ConfigProps,

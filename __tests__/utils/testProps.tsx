@@ -1,5 +1,5 @@
 ﻿import { StackNavigationProp } from "@react-navigation/stack"
-import { AppStackParamList } from "../../types/screens"
+import { AppStackParamList } from "../../src/types/screens"
 
 type MockedNavigationProp = {
     [K in keyof StackNavigationProp<AppStackParamList, any>]: jest.Mock;

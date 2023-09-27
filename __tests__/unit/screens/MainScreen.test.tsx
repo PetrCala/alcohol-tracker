@@ -3,7 +3,7 @@ import { render, fireEvent, screen } from '@testing-library/react-native';
 import MainScreen from '../../../src/screens/MainScreen';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { AppStackParamList } from '../../../src/types/screens';
-import { createMockNavigation } from '../../../src/utils/testing/testProps';
+import { createMockNavigation } from '../../utils/testProps';
 
 // Mock the navigation prop used by the component
 // const mockNavigation = createMockNavigation('Main Screen');

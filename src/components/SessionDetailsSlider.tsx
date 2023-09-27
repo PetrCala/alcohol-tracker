@@ -37,7 +37,7 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
         setFeatureY(layout.y);
     };
 
-    const toggleFeature = () => {
+    const toggleVisibility = () => {
         if (isExpanded) {
             Animated.timing(heightAnim, {
                 toValue: 0,
@@ -58,7 +58,7 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
 
     return (
         <View style={styles.container} onLayout={onFeatureLayout}>
-            <TouchableOpacity style={styles.tab} onPress={toggleFeature}>
+            <TouchableOpacity style={styles.tab} onPress={toggleVisibility}>
                 <Text style={styles.tabText}>Session details:</Text>
                 <Image 
                 style={[
@@ -68,6 +68,7 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
                 source={require('../assets/icons/arrow_down.png')}
                 />
             </TouchableOpacity>
+            {isExpanded ?
             <Animated.View style={[
                 styles.content,
                 { height: heightAnim }
@@ -105,6 +106,9 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
                     </View>
                 </>
             </Animated.View>
+            :
+            <></>
+            }
         </View>
     );
 };

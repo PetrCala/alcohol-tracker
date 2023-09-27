@@ -1,6 +1,7 @@
-﻿import { AppSettings, ConfigProps, CurrentSessionData, DatabaseProps, DrinkingSessionArrayItem, DrinkingSessionData, FeedbackData, FeedbackProps, PreferencesData, UnconfirmedDaysData, UnitTypesProps, UnitsObject, UnitsToColorsData, UserData } from "../../types/database";
-import { getRandomChoice, getRandomInt } from "../choice";
-import { formatDate, getRandomUnitsObject, getZeroUnitsObject } from "../dataHandling";
+﻿import { AppSettings, ConfigProps, CurrentSessionData, DatabaseProps, DrinkingSessionArrayItem, DrinkingSessionData, FeedbackData, FeedbackProps, PreferencesData, UnconfirmedDaysData, UnitTypesProps, UnitsObject, UnitsToColorsData, UserData } from "../../src/types/database";
+import { getRandomChoice, getRandomInt } from "../../src/utils/choice";
+import { formatDate, getRandomUnitsObject, getZeroUnitsObject } from "../../src/utils/dataHandling";
+import { MOCK_SESSION_IDS, MOCK_USER_IDS } from "./testsStatic";
 
 
 /** Initialize an empty database object to be
@@ -178,31 +179,19 @@ export function createMockUserData():UserData {
  * @returns A mock object of the firebase database
  */
 export function createMockDatabase(): DatabaseProps {
-  const mockUserIds = [
-      'mock-user-1',
-      'mock-user-2',
-      'mock-user-3',
-      'mock-user-4',
-      'mock-user-5',
-  ];
-  const mockSessionIds = [
-      'mock-session-1',
-      'mock-session-2',
-      'mock-session-3',
-  ];
   const db = initializeEmptyMockDatabase();
   // Configuration
   db.config = createMockConfig();
   
   // Data that varies across users
-  mockUserIds.forEach(userId => {
+  MOCK_USER_IDS.forEach(userId => {
       // Feedback
       db.feedback[userId] = createMockFeedback();
       
       // Drinking sessions
       const mockSessionData: DrinkingSessionData = {};
       let latestSessionId: string = '';
-      mockSessionIds.forEach(sessionId => {
+      MOCK_SESSION_IDS.forEach(sessionId => {
           const fullSessionId = `${userId}-${sessionId}`;
           const mockSession = createMockSession(new Date());
           mockSessionData[fullSessionId] = mockSession;

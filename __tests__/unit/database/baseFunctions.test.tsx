@@ -4,7 +4,7 @@ import {
   listenForDataChanges
 } from '../../../src/database/baseFunctions';
 import { AppSettings, ConfigProps, CurrentSessionData, DatabaseProps, FeedbackData, FeedbackProps, PreferencesData, UnconfirmedDaysData, UnitsToColorsData, UserData } from "../../../src/types/database";
-import { createMockConfig, createMockDatabase, createMockFeedback, createMockSession } from "../../../src/utils/testing/mockDatabase";
+import { createMockConfig, createMockDatabase, createMockFeedback, createMockSession } from "../../utils/mockDatabase";
 
 jest.mock('firebase/database', () => ({
   get: jest.fn(),
@@ -15,7 +15,6 @@ jest.mock('firebase/database', () => ({
 
 
 let mockDb = createMockDatabase();
-
 
 // describe('data reading functions', () => {
 //     let onDataChangeMock: jest.Mock;
@@ -32,6 +31,7 @@ let mockDb = createMockDatabase();
     
 //     // Read data once
 //     it('returns user data if user exists', async () => {
+
 //       const existingUserId = 'test_user';
       
 //       // Mock the 'get' function to simulate a successful database read

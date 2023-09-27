@@ -94,13 +94,18 @@ const getCachedMinVersion = async () => {
     return await AsyncStorage.getItem('min_supported_version');
 };
 
-export const validateAppVersion = (minSupportedVersion: string):boolean => {
-    const currentAppVersion = version;
-    // Compare versions
-    if (semver.lt(currentAppVersion, minSupportedVersion)) {
-      return false;
-    }
-    return true;
+/** Input the minimum supported version of the application and validate that the current version is not older than that one. If it is newer, return true, otherwise return false.
+ * 
+ * @param minSupportedVersion Version to validate against.
+ * @param currentAppVersion Current version of the application. Defaults to the version stored in 'package.json'. Overwrite this value only in testing.
+ * @returns True if the current app version is valid, and false otherwise.
+ */
+export const validateAppVersion = (minSupportedVersion: string, currentAppVersion:string = version):boolean => {
+  // Compare versions
+  if (semver.lt(currentAppVersion, minSupportedVersion)) {
+    return false; // Version is too old
+  }
+  return true;
 };
 
 // Function to fetch and cache minimum supported version

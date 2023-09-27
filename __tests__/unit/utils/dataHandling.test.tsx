@@ -27,7 +27,7 @@
 } from "../../../src/utils/dataHandling";
 import { DateObject } from "../../../src/types/components";
 import { DrinkingSessionArrayItem, DrinkingSessionData, UnitTypesKeys, UnitTypesNames, UnitTypesProps, UnitsObject, UnitsToColorsData } from "../../../src/types/database";
-import { createMockSession, createMockUnitsObject } from "../../../src/utils/testing/mockDatabase";
+import { createMockSession, createMockUnitsObject } from "../../utils/mockDatabase";
 
 
 
@@ -867,6 +867,3 @@ describe('findUnitName', () => {
       expect(result).toBeUndefined();
   });
 });
-
-
-// TODO - getLastUnitAddedTime
