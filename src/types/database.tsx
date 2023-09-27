@@ -93,7 +93,7 @@ export type UnitsToColorsData = {
 export type PreferencesData = {
   first_day_of_week: string;
   units_to_colors: UnitsToColorsData;
-  units_to_points: UnitTypesProps;
+  // units_to_points: UnitTypesProps;
 }
 
 export type UnconfirmedDaysData = {
