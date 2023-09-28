@@ -1,5 +1,5 @@
 ﻿import { Database, update, runTransaction, ref } from "firebase/database";
-import { PreferencesData, UserData, UnitsToColorsData, UnitTypesProps } from "../types/database";
+import { PreferencesData, UserData, UnitsToColorsData, UnitTypesProps, ProfileData } from "../types/database";
 import { appInBeta } from "../utils/static";
 import { EmailAuthProvider, User, UserCredential, reauthenticateWithCredential } from "firebase/auth";
 import { Alert } from "react-native";
@@ -13,6 +13,7 @@ import { Alert } from "react-native";
 export async function pushNewUserInfo(
  db: Database,
  userId: string,
+ profileData: ProfileData,
  betaKeyId: string, // Beta feature
 ){
   // User current session
@@ -38,6 +39,8 @@ export async function pushNewUserInfo(
   // Users
   let userRole = appInBeta ? 'beta_user' : 'user'; // Beta feature
   let newUserData:UserData = {
+    profile: profileData,
+    friends: {},
     role: userRole,
     last_online: timestampNow,
     beta_key_id: betaKeyId, // Beta feature

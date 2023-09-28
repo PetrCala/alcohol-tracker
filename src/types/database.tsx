@@ -101,10 +101,20 @@ export type UnconfirmedDaysData = {
 }
 
 export type UserData = {
+  profile: ProfileData;
+  friends: FriendsData;
   role: string;
   last_online: number;
-  connections?: {connection_id: string}; // Connection instances
-  beta_key_id?: string;
+  beta_key_id: string;
+}
+
+export type ProfileData = {
+  display_name: string,
+  photo_url: string,
+}
+
+export type FriendsData = {
+  [friend_id: string]: boolean
 }
 
 // Used when rendering drinking session day overview
