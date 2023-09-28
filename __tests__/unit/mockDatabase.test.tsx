@@ -274,11 +274,13 @@ describe('mockDatabase functions', () => {
       const db = initializeEmptyMockDatabase();
       expect(db).toBeDefined();
       expect(db.config.app_settings.min_supported_version).toBe('0.0.1');
+      expect(db.config.app_settings.min_user_creation_possible_version).toBe('0.0.1');
     });
   
     it('should create a mock config', () => {
-      const config = createMockConfig('0.0.2');
+      const config = createMockConfig('0.0.2', '0.0.2');
       expect(config.app_settings.min_supported_version).toBe('0.0.2');
+      expect(config.app_settings.min_user_creation_possible_version).toBe('0.0.2');
     });
   
     it('should create a mock feedback object', () => {

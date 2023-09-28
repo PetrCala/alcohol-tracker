@@ -1,4 +1,4 @@
-﻿import React, { useContext, useEffect, useState } from 'react';
+﻿import React, { useContext, useEffect, useState, version } from 'react';
 import { 
     Alert,
     Image,
@@ -20,6 +20,7 @@ import { readDataOnce } from '../database/baseFunctions';
 import { BetaKeysData, validateBetaKey } from '../database/beta';
 import { useUserConnection } from '../context/UserConnectionContext';
 import { ProfileData } from '../types/database';
+import { validateAppVersion } from '../context/VersionContext';
 
 const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
   if (!route || ! navigation) return null; // Should never be null
@@ -44,67 +45,7 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
       return stopListening;
   }, []);
 
-  const handleSignUp = async () => {
-    // Validate all hooks on the screen first, return null if invalid
-    const userInputValid = validateUserInput();
-    if (userInputValid == false){
-      return null;
-    }
-    if (!isOnline){
-      setWarning('You are offline');
-      return null;
-    };
-    // Beta feature
-    let betaKeysRef = 'beta_keys/'
-    let betaKeys: BetaKeysData | null = null;
-    try{
-      betaKeys = await readDataOnce(db, betaKeysRef);
-    } catch (error: any) {
-      Alert.alert('Failed to contact the database', 'Beta keys list fetching failed:'+ error.message);
-    };
-    if (!betaKeys){ 
-      return null;
-    }
-    var betaKeyId = validateBetaKey(betaKeys, betaKey);
-    if (!betaKeyId){
-      setWarning('Your beta key is either invalid or already in use.');
-      return null;
-    };
-    // Create the user in the authentification database
-    try {
-        await signUpUserWithEmailAndPassword(
-            auth, email, password
-            )
-    } catch (error: any) {
-      return handleInvalidSignUp(error);
-    };
-    const newUser = auth.currentUser;
-    if (newUser == null){
-      return Alert.alert('User creation failed', 'The user was not created in the database');
-    }
-    // Update the user's information with the inputted sign up data
-    try {
-        await updateProfile(newUser, {
-            displayName: username
-        });
-    } catch (error:any) {
-        throw new Error("There was a problem updating the user information: " + error.message);
-    }
-    // Update the realtime database with the new user's info
-    let newProfileData:ProfileData = {
-      display_name: username,
-      photo_url: "",
-    };
-    try {
-        await pushNewUserInfo(db, newUser.uid, newProfileData, betaKeyId); // Beta feature
-    } catch (error:any) {
-      return Alert.alert('Could not write into database', 'Writing user info into the database failed: ' + error.message);
-    }
-
-    return navigation.navigate("Main Screen");
-  };
-
-  /** Check that all user input is valid and return true if it is.
+ /** Check that all user input is valid and return true if it is.
    * Otherwise return false.
    */
   const validateUserInput = (): boolean => {
@@ -114,6 +55,90 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
     };
     return true;
   }
+
+  const fetchMinSupportedVersion = async (): Promise<string | null> => {
+    try {
+      return await readDataOnce(db, '/config/app_settings/min_user_creation_possible_version');
+    } catch (error:any) {
+      Alert.alert("Database connection failed", "Could not fetch version info from the database: " + error.message);
+      return null;
+    }
+  };
+
+  const fetchBetaKeys = async (): Promise<BetaKeysData | null> => {
+    try {
+      return await readDataOnce(db, 'beta_keys/');
+    } catch (error:any) {
+      Alert.alert('Failed to contact the database', 'Beta keys list fetching failed:' + error.message);
+      return null;
+    }
+  };
+
+  const createUserAuth = async () => {
+    try {
+      await signUpUserWithEmailAndPassword(auth, email, password);
+    } catch (error:any) {
+      handleInvalidSignUp(error);
+    }
+  };
+
+  const updateUserProfile = async (newUser: any) => {
+    try {
+      await updateProfile(newUser, { displayName: username });
+    } catch (error:any) {
+      throw new Error("There was a problem updating the user information: " + error.message);
+    }
+  };
+
+  const handleSignUp = async () => {
+    if (!validateUserInput() || !isOnline) return;
+
+    const minSupportedVersion = await fetchMinSupportedVersion();
+    if (!minSupportedVersion) {
+      setWarning('Failed to fetch the minimum supported version. Please try again later.');
+      return;
+    }
+    if (!validateAppVersion(minSupportedVersion)) {
+      setWarning('This version of the application is outdated. Please upgrade to the newest version.');
+      return;
+    }
+
+    const betaKeys = await fetchBetaKeys();
+    if (!betaKeys) {
+      setWarning('Failed to fetch beta keys. Please try again later.');
+      return;
+    }
+    const betaKeyId = validateBetaKey(betaKeys, betaKey);
+    if (!betaKeyId) {
+      setWarning('Your beta key is either invalid or already in use.');
+      return;
+    }
+
+    await createUserAuth();
+
+    const newUser = auth.currentUser;
+    if (!newUser) {
+      Alert.alert('User creation failed', 'The user was not created in the database');
+      return;
+    }
+
+    await updateUserProfile(newUser);
+
+    // Pushing initial user data to Realtime Database
+    const newProfileData: ProfileData = {
+      display_name: username,
+      photo_url: "",
+    };
+    try {
+      await pushNewUserInfo(db, newUser.uid, newProfileData, betaKeyId);
+    } catch (error:any) {
+      Alert.alert('Could not write into database', 'Writing user info into the database failed: ' + error.message);
+    }
+
+    navigation.navigate("Main Screen");
+  };
+
+ 
 
   /** Set the warning hook to include a warning text informing
    * the user of an unsuccessful account creation. Return an alert

@@ -13,7 +13,8 @@ export function initializeEmptyMockDatabase():DatabaseProps {
   return {
     config: {
       app_settings: {
-        min_supported_version: '0.0.1'
+        min_supported_version: '0.0.1',
+        min_user_creation_possible_version: '0.0.1'
       },
     },
     feedback: {},
@@ -34,10 +35,12 @@ export function initializeEmptyMockDatabase():DatabaseProps {
  * @returns Mock configuration data record
  */
 export function createMockConfig(
-    min_supported_version:string = '0.0.1'
+    min_supported_version:string = '0.0.1',
+    min_user_creation_possible_version:string = '0.0.1'
 ):ConfigProps {
     let mockAppSettings:AppSettings = {
         min_supported_version: min_supported_version,
+        min_user_creation_possible_version: min_user_creation_possible_version,
     };
     let mockConfig:ConfigProps = {
         app_settings: mockAppSettings,

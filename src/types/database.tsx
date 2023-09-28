@@ -25,6 +25,7 @@ export type ConfigProps = {
 
 export type AppSettings = {
   min_supported_version: string;
+  min_user_creation_possible_version: string;
 }
 
 export type FeedbackProps = {
