@@ -1,9 +1,11 @@
 ﻿import React, {useContext, useEffect, useRef, useState} from 'react';
 import {
     Alert,
+  Animated,
   BackHandler,
   ScrollView,
   StyleSheet,
+  Switch,
   Text,
   TouchableOpacity,
   View,
@@ -18,24 +20,20 @@ import BasicButton from '../components/Buttons/BasicButton';
 import { PreferencesData, UnitTypesProps, UnitsToColorsData } from '../types/database';
 import { savePreferencesData } from '../database/preferences';
 import YesNoPopup from '../components/Popups/YesNoPopup';
+import CustomSwitch from '../components/CustomSwitch';
 
-const PreferencesItem: React.FC<{ item: any }> = ({ item }) => (
-  <View style={styles.settingContainer}>
-    <Text style={styles.settingLabel}>{item.label}</Text>
-    <View style={styles.buttonsContainer}>
-      {item.buttons.map((button:any, index:any) => (
-        <TouchableOpacity 
-          key={index} 
-          style={[styles.button, { backgroundColor: button.color }]}
-          onPress={button.action}
-        >
-          <Text style={styles.buttonText}>{button.text}</Text>
-        </TouchableOpacity>
-      ))}
+
+const PreferencesItem: React.FC<{ key: any, item: any }> = ({ key, item }) => (
+  <View style={[
+    styles.container,
+    item.type === 'row' ? styles.horizontalContainer : styles.verticalContainer 
+  ]}>
+    <Text style={styles.label}>{item.label}</Text>
+    <View style={styles.itemContainer}>
+      {item.contents}
     </View>
   </View>
 );
-
 
 const PreferencesScreen = ({ route, navigation }: PreferencesScreenProps) => {
     if (!route || ! navigation) return null; // Should never be null
@@ -80,32 +78,34 @@ const PreferencesScreen = ({ route, navigation }: PreferencesScreenProps) => {
         };
     };
 
+    const handleFirstDayOfWeekToggle = (value: boolean) => {
+      let newValue = value ? "Monday" : "Sunday";
+      setCurrentPreferences(prev => ({ ...prev, first_day_of_week: newValue }));
+    };
+
     const settingsData = [
         {
         label: 'First Day of Week',
-        buttons: [
-            { color: 'green', text: '9', action: () => console.log('Green 9 pressed') },
-            { color: 'yellow', text: '10', action: () => console.log('Yellow 10 pressed') },
-        ],
+        type: 'row',
+        contents: <CustomSwitch
+          offText = 'Sun'
+          onText = 'Mon'
+          value={currentPreferences.first_day_of_week === "Monday"}
+          onValueChange={handleFirstDayOfWeekToggle}
+        />
         },
         {
         label: 'Unit Colors',
-        buttons: [
-            { color: 'green', text: '9', action: () => console.log('Green 9 pressed') },
-            { color: 'yellow', text: '10', action: () => console.log('Yellow 10 pressed') },
-        ],
+        type: 'column',
+        contents: <View><Text>Hello</Text></View>
         },
         {
         label: 'Point Conversion',
-        buttons: [
-            { color: 'blue', text: '5', action: () => console.log('Blue 5 pressed') },
-        ],
+        type: 'column',
+        contents: <View><Text>Hello</Text></View>
         },
         // Add more settings items as needed
     ];
-
-    // Updating the preferences
-    // setPrefs(prev => ({ ...prev, first_day_of_week: 'Monday' }));
 
     // Make the system back press toggle the go back handler
     useEffect(() => {
@@ -189,19 +189,28 @@ const styles = StyleSheet.create({
       flexShrink: 1,
       backgroundColor: '#FFFF99',
   },
-  settingContainer: {
-    flexDirection: 'row',
+  container: {
     justifyContent: 'space-between',
+    backgroundColor: 'white',
     padding: 10,
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: 'gray',
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: '#000',
+    margin: 2,
   },
-  settingLabel: {
+  horizontalContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  verticalContainer: {
+    flexDirection: 'column',
+  },
+  label: {
+    color: 'black',
     fontSize: 16,
     fontWeight: 'bold',
   },
-  buttonsContainer: {
+  itemContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },

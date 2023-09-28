@@ -329,7 +329,7 @@ const styles = StyleSheet.create({
       borderRadius: 8,
       borderWidth: 2,
       borderColor: 'black',
-      margin: 5,
+      margin: 2,
     },
     icon: {
         width: 15,
