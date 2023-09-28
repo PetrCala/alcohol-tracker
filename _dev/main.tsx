@@ -2,17 +2,17 @@
 
 import admin from './database/admin';
 import { assignAdminRole, listAllAdmins } from "./database/adminUtils";
-import { modifyAndTestUser } from './database/migrationTest';
-import { refactorUsersData } from './database/migration';
+import { modifyAndTestData } from './database/migrationTest';
+import { refactorPreferencesData, transformPreferencesData } from './database/migratePreferences';
+import { PreferencesData } from '../src/types/database';
 
 const adminDb = admin.database();
 
+const testUserId = "dmXj9O2SqWWHPRtqtKGGdaUzGFt2";
+
 async function main() {
     try {
-    // Example usage
-    // const userId = "sR7BxAtjQCbAKkOOMRBUByfDKh73";
-    // await modifyAndTestUser(adminDb, userId);
-    // await refactorUsersData(adminDb);
+      await refactorPreferencesData(adminDb);
   } catch (error) {
     console.error("An error occurred:", error);
   } finally {
