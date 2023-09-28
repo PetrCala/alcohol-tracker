@@ -26,6 +26,7 @@ import { DayOverviewScreenProps } from '../types/screens';
 import { getAuth } from 'firebase/auth';
 import UserOffline from '../components/UserOffline';
 import { useUserConnection } from '../context/UserConnectionContext';
+import BasicButton from '../components/Buttons/BasicButton';
 
 type CombinedDataProps = {
   sessionKey: string,
@@ -46,6 +47,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
     const { isOnline } = useUserConnection();
     const [ date, setDate ] = useState<Date>(timestampToDate(dateObject.timestamp));
     const [ dailySessionData, setDailyData ] = useState<DrinkingSessionArrayItem[]>([]);
+    const [ editMode, setEditMode ] = useState<boolean>(false);
     // Create a combined data object
     const [ combinedData, setCombinedData ] = useState<CombinedDataProps[]>([]);
 
@@ -72,9 +74,10 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
       setCombinedData(newCombinedData);
     }, [dailySessionData]);
 
-    const onSessionButtonPress = (session:DrinkingSessionArrayItem) => {
+    const onSessionButtonPress = (sessionKey: string, session:DrinkingSessionArrayItem) => {
         navigation.navigate('Session Summary Screen', {
           session: session,
+          sessionKey: sessionKey,
           preferences: preferences
         });
     };
@@ -109,7 +112,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
                 <View style={{ flex: 1 }}>
                   <TouchableOpacity
                     style={styles.menuDrinkingSessionButton}
-                    onPress={() => onSessionButtonPress(session)}
+                    onPress={() => onSessionButtonPress(sessionKey, session)}
                   >
                     <Text style={[
                       styles.menuDrinkingSessionText,
@@ -121,6 +124,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
                     ]}>Units consumed: {totalUnits}</Text>
                   </TouchableOpacity>
                 </View>
+                {editMode ?
                 <MenuIcon
                     iconId='edit-session-icon'
                     iconSource={require('../assets/icons/edit.png')}
@@ -131,6 +135,9 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
                     iconStyle={styles.menuIcon}
                     onPress={() => onEditSessionPress(sessionKey, session)} // Use keyextractor to load id here
                 />
+                :
+                <></>
+                }
             </View>
         </View>
         );
@@ -159,6 +166,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
                 />
             )
         }
+        if (!editMode) return <></>; // Do not display outside edit mode
         // No button if the date is in the future
         let today = new Date();
         let tomorrowMidnight = changeDateBySomeDays(today, 1);
@@ -223,6 +231,15 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
             iconStyle={styles.backArrow}
             onPress={() => navigation.goBack() }
             />
+            <BasicButton 
+              text= {editMode ? 'Exit Edit Mode': 'Edit Mode'}
+              buttonStyle={[
+                styles.editModeButton,
+                editMode ?  styles.editModeButtonEnabled : {}
+              ]}
+              textStyle={styles.editModeButtonText}
+              onPress={() => setEditMode(!editMode)}
+            />
         </View>
         <View style={styles.dayOverviewContainer}>
             <Text style={styles.menuDrinkingSessionInfoText}>
@@ -269,6 +286,7 @@ const styles = StyleSheet.create({
     height: 70,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignContent: 'center',
     padding: 10,
     backgroundColor: 'white',
   },
@@ -290,14 +308,35 @@ const styles = StyleSheet.create({
   },
   backArrowContainer: {
     justifyContent: 'center',
-    marginTop: 10,
-    marginLeft: 10,
     padding: 10,
-    position: 'absolute',
   },
   backArrow: {
     width: 25,
     height: 25,
+  },
+  editModeContainer: {
+    height: '10%',
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: '#FFFF99',
+  },
+  editModeButton: {
+    width: '45%',
+    alignItems: "center",
+    justifyContent: 'center',
+    padding: 10,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#000',
+    backgroundColor: '#fcf50f',
+  },
+  editModeButtonEnabled: {
+    backgroundColor: '#FFFF99',
+  },
+  editModeButtonText: {
+    color: 'black',
+    fontSize: 17,
+    fontWeight: '600',
   },
   menuIconContainer: {
     width: 40,

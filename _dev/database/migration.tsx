@@ -20,7 +20,7 @@ type TransformCallback = (data: any, primaryKey: string, secondaryKey?: string) 
     // ... [Your Transformation Logic Here] ...
 });
  */
-const processPrimaryLevelData = async (
+export const processPrimaryLevelData = async (
   adminDb: any,
   dbPath: keyof DatabaseProps,
   callback: TransformCallback
@@ -38,7 +38,7 @@ const processPrimaryLevelData = async (
 };
 
 // Processes data that's two levels deep (has secondary keys).
-const processSecondaryLevelData = async (
+export const processSecondaryLevelData = async (
   adminDb: any,
   dbPath: keyof DatabaseProps,
   callback: TransformCallback
@@ -57,8 +57,3 @@ const processSecondaryLevelData = async (
   }
 };
 
-// To refactor all users' data
-export const refactorUsersData = async (adminDb: any) => {
-  await processPrimaryLevelData(adminDb, 'users', transformUserData);
-  console.log("Successfully transformed the data")
-};

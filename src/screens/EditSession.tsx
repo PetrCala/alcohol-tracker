@@ -139,7 +139,7 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
         } catch (error:any) {
           throw new Error('Failed to edit the drinking session data: ' + error.message);
         };
-        navigation.navigate('Main Screen'); // Get the main overview, not day
+        navigation.goBack();
       };
     };
 
@@ -159,7 +159,7 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
         deleteSession(db, user.uid, sessionKey);
       }
       setDeleteModalVisible(false);
-      navigation.navigate('Main Screen'); // Get the main overview, not day
+      navigation.goBack();
     };
   
     const handleBackPress = () => {

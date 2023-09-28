@@ -23,9 +23,9 @@ export type YesNoPopupProps = {
     onYes: () => void;
 }
 
-// SettingsPopup props
+// MainMenu popup props
 
-export type SettingsPopupProps = {
+export type MainMenuPopupProps = {
     visible: boolean;
     transparent: boolean;
     onRequestClose: () => void;
@@ -33,15 +33,15 @@ export type SettingsPopupProps = {
     userData: UserData;
 }
 
-export type SettingsButtonData = {
+export type MainMenuButtonData = {
   label: string;
   icon: number;
   action: () => void;
 };
 
-export type SettingsItemProps = {
+export type MainMenuItemProps = {
   heading: string;
-  data: SettingsButtonData[];
+  data: MainMenuButtonData[];
   index: number;
 };
 
