@@ -19,6 +19,7 @@ import { pushNewUserInfo } from '../database/users';
 import { readDataOnce } from '../database/baseFunctions';
 import { BetaKeysData, validateBetaKey } from '../database/beta';
 import { useUserConnection } from '../context/UserConnectionContext';
+import { ProfileData } from '../types/database';
 
 const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
   if (!route || ! navigation) return null; // Should never be null
@@ -90,8 +91,12 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
         throw new Error("There was a problem updating the user information: " + error.message);
     }
     // Update the realtime database with the new user's info
+    let newProfileData:ProfileData = {
+      display_name: username,
+      photo_url: "",
+    };
     try {
-        await pushNewUserInfo(db, newUser.uid, betaKeyId); // Beta feature
+        await pushNewUserInfo(db, newUser.uid, newProfileData, betaKeyId); // Beta feature
     } catch (error:any) {
       return Alert.alert('Could not write into database', 'Writing user info into the database failed: ' + error.message);
     }

@@ -29,7 +29,6 @@ const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
   const db = useContext(DatabaseContext);
   if (!db) return null;
 
-  // Construct a data array for the FlatList
   const feedbackDataArray =  Object.entries(feedbackData).map(([feedback_id, feedbackProps]) => ({
       feedback_id: feedback_id,
       ...feedbackProps
@@ -44,23 +43,25 @@ const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
   };
 
   useEffect(() => {
-  (async function fetchNicknames() {
-    let newNicknames = { ...nicknames };
-
-    for (let item of feedbackDataArray) {
-      try {
-        let data = await fetchNicknameByUID(db, item.user_id);
-        if (data) {
-          newNicknames[item.user_id] = data; // Set if not null
-        }
-      } catch (error:any) {
-        Alert.alert("User nickname fetch failed", "Could not fetch the nickname of user with UID: " + item.user_id + error.message);
+    const fetchNicknames = async () => {
+      let newNicknames = { ...nicknames };
+  
+      for (let item of feedbackDataArray) {
+        try {
+          let data = await fetchNicknameByUID(db, item.user_id);
+          if (data) {
+            newNicknames[item.user_id] = data; // Set if not null
+          }
+        } catch (error:any) {
+          Alert.alert("User nickname fetch failed", "Could not fetch the nickname of user with UID: " + item.user_id + error.message);
+        };
       }
-    }
-
-    setNicknames(newNicknames);
-  })();
-}, [feedbackDataArray, db]);
+      setNicknames(newNicknames);
+    };
+    
+    fetchNicknames();
+  
+  }, [feedbackData, db]);
 
 
   const renderFeedback = ( {item} : {item: FeedbackProps & {feedback_id: string}}) => {

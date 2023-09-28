@@ -48,15 +48,15 @@ export function listenForDataChanges(
  */
 export async function fetchNicknameByUID(db: Database, uid: string): Promise<string | null> {
   try {
-    const userRef = ref(db, `users/${uid}`);
+    const userRef = ref(db, `users/${uid}/profile`);
     const userSnapshot = await get(userRef);
 
     if (!userSnapshot.exists()) {
       // console.error("No user found for the given UID.");
-      return null;
+      return "Not found";
     }
 
-    return userSnapshot.val().nickname || null;
+    return userSnapshot.val().display_name || null;
   } catch (error:any) {
     throw new Error("Failed to retrieve user nickname data:" + error.message);
   }

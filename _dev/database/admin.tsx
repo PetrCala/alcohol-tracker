@@ -13,6 +13,4 @@ admin.initializeApp({
     databaseURL: databaseURL
 });
 
-var adminDb = admin.database();
-
-export default adminDb;
+export default admin;

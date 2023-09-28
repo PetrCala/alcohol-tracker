@@ -1,4 +1,4 @@
-﻿import { AppSettings, ConfigProps, CurrentSessionData, DatabaseProps, DrinkingSessionArrayItem, DrinkingSessionData, FeedbackData, FeedbackProps, PreferencesData, UnconfirmedDaysData, UnitTypesProps, UnitsObject, UnitsToColorsData, UserData } from "../../src/types/database";
+﻿import { AppSettings, ConfigProps, CurrentSessionData, DatabaseProps, DrinkingSessionArrayItem, DrinkingSessionData, FeedbackData, FeedbackProps, FriendsData, PreferencesData, ProfileData, UnconfirmedDaysData, UnitTypesProps, UnitsObject, UnitsToColorsData, UserData } from "../../src/types/database";
 import { getRandomChoice, getRandomInt } from "../../src/utils/choice";
 import { formatDate, getRandomUnitsObject, getZeroUnitsObject } from "../../src/utils/dataHandling";
 import { MOCK_SESSION_IDS, MOCK_USER_IDS } from "./testsStatic";
@@ -133,9 +133,18 @@ export function createMockPreferences():PreferencesData {
       yellow: getRandomInt(3,6),
       orange: getRandomInt(7,10),
   };
+  let mockUnitsToPointsData: UnitTypesProps = {
+    'beer': 1,
+    'cocktail': 1.5,
+    'other': 1,
+    'strong_shot': 1,
+    'weak_shot': 0.5,
+    'wine': 1
+  };
   let mockPreferencesData: PreferencesData = {
       first_day_of_week: getRandomChoice(['Monday', 'Sunday']),
       units_to_colors: mockUnitsToColorsData,
+      units_to_points: mockUnitsToPointsData, 
   };
   return mockPreferencesData;
 };
@@ -165,7 +174,14 @@ export function createMockUnconfirmedDays(): UnconfirmedDaysData {
 /** Create and return a mock user data object
  */
 export function createMockUserData():UserData {
+  let mockProfileData: ProfileData = {
+    display_name: 'mock-user',
+    photo_url: ''
+  };
+  let mockFriendsData: FriendsData = {};
   return {
+    profile: mockProfileData,
+    friends: mockFriendsData,
     role: 'mock-user',
     last_online: Date.now(),
     beta_key_id: 'mock-beta-key',
