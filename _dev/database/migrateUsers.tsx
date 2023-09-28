@@ -8,22 +8,28 @@ export const transformUserData = async (userData: UserData, userId: string):Prom
   const role = userData.role ?? null;
   const last_online = userData.last_online ?? null;
   const beta_key_id = userData.beta_key_id ?? null;
-  let username:string = "";
-  try {
-    let newUsername = await getDisplayName(userId);
-    if (newUsername) {
-      username = newUsername;
+  let profile:ProfileData = userData.profile ?? null;
+  let friends:FriendsData = userData.friends ?? null;
+  // Create the profile data if not available - from version 0.2.0
+  if (!profile){
+    let username:string = "";
+    try {
+      let newUsername = await getDisplayName(userId);
+      if (newUsername) {
+        username = newUsername;
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
     }
-  } catch (error) {
-    console.error('Error fetching user data:', error);
-  }
-
-  // Placeholder values for new structure. You may want to modify these.
-  const profile: ProfileData = {
-      display_name: username,
-      photo_url: ""
+    profile = {
+        display_name: username,
+        photo_url: ""
+    };
   };
-  const friends: FriendsData = {};
+  // Create friends data if not available - from version 0.2.0
+  if (!friends){
+    friends = {};
+  };
 
   return {
       profile,

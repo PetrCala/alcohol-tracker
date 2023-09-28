@@ -7,16 +7,18 @@ export const transformPreferencesData = async (preferencesData: PreferencesData,
   // Extracting existing properties to construct the new structure
   const first_day_of_week = preferencesData.first_day_of_week ?? null;
   const units_to_colors = preferencesData.units_to_colors ?? null;
-
-  // Placeholder values for new structure. You may want to modify these.
-  const units_to_points: UnitTypesProps = {
-    'beer': 1,
-    'cocktail': 1.5,
-    'other': 1,
-    'strong_shot': 1,
-    'weak_shot': 0.5,
-    'wine': 1
-  };
+  // Assign units to points if the user has none - from version 0.2.0
+  let units_to_points = preferencesData.units_to_points ?? null;
+  if (!units_to_points){
+    units_to_points = {
+      'beer': 1,
+      'cocktail': 1.5,
+      'other': 1,
+      'strong_shot': 1,
+      'weak_shot': 0.5,
+      'wine': 1
+    };
+  }
 
   return {
     first_day_of_week,
