@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Switch,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -17,7 +18,7 @@ import { useUserConnection } from '../context/UserConnectionContext';
 import DatabaseContext from '../context/DatabaseContext';
 import UserOffline from '../components/UserOffline';
 import BasicButton from '../components/Buttons/BasicButton';
-import { PreferencesData, UnitTypesProps, UnitsToColorsData } from '../types/database';
+import { PreferencesData, UnitTypesKeys, UnitTypesNames, UnitTypesProps, UnitsToColorsData } from '../types/database';
 import { savePreferencesData } from '../database/preferences';
 import YesNoPopup from '../components/Popups/YesNoPopup';
 import CustomSwitch from '../components/CustomSwitch';
@@ -35,6 +36,43 @@ const PreferencesItem: React.FC<{ item: any }> = ({ item }) => (
   </View>
 );
 
+interface PreferencesListProps {
+  id: string;
+  initialContents: { label: string, value: number }[];
+  onPreferencesChange: (id: string, preferences: { label: string, value: number }[]) => void;
+}
+
+const PreferencesList: React.FC<PreferencesListProps> = ({ id, initialContents, onPreferencesChange }) => {
+  const [localPreferences, setLocalPreferences] = useState(initialContents);
+
+  const handleChange = (index: number, text: string) => {
+    let updatedPreferences = [...localPreferences];
+    updatedPreferences[index].value = Number(text);
+    setLocalPreferences(updatedPreferences);
+    onPreferencesChange(id, updatedPreferences);
+  };
+
+  return (
+    <View style={styles.preferencesListContainer}>
+      {localPreferences.map((item, index) => (
+        <View key={index} style={styles.preferencesListRowContainer}>
+          <Text style={styles.preferencesListLabel}>{item.label}</Text>
+          <View style={styles.preferencesListNumericContainer}>
+            <TextInput 
+              style={styles.preferencesListNumericInput}
+              keyboardType='decimal-pad'
+              maxLength={2}
+              textAlign='center'
+              value={item.value.toString()}
+              onChangeText={(text) => handleChange(index, text)}
+            />
+          </View>
+        </View>
+      ))}
+    </View>
+  );
+};
+
 
 const PreferencesScreen = ({ route, navigation }: PreferencesScreenProps) => {
     if (!route || ! navigation) return null; // Should never be null
@@ -45,6 +83,7 @@ const PreferencesScreen = ({ route, navigation }: PreferencesScreenProps) => {
     const { isOnline } = useUserConnection();
     const initialPreferences = useRef(preferences);
     const [showLeaveConfirmation, setShowLeaveConfirmation] = useState(false);
+    const [localListsPreferences, setLocalListsPreferences] = useState<Record<string, { label: string, value: number }[]>>({});
     // Deconstruct the preferences
     const [currentPreferences, setCurrentPreferences] = useState<PreferencesData>({
         first_day_of_week: preferences.first_day_of_week,
@@ -68,6 +107,10 @@ const PreferencesScreen = ({ route, navigation }: PreferencesScreenProps) => {
         } else {
           navigation.goBack();
         }
+    };
+
+    const handleListPreferencesChange = (id: string, preferences: { label: string, value: number }[]) => {
+      setLocalListsPreferences(prev => ({ ...prev, [id]: preferences }));
     };
 
     const handleSavePreferences = async () => {
@@ -101,12 +144,27 @@ const PreferencesScreen = ({ route, navigation }: PreferencesScreenProps) => {
         {
         label: 'Unit Colors',
         type: 'column',
-        contents: <View><Text>Hello</Text></View>
+        contents: <PreferencesList
+          id="unitsToColors"
+          initialContents={[
+            {label: 'Yellow', value: currentPreferences.units_to_colors.yellow},
+            {label: 'Orange', value: currentPreferences.units_to_colors.orange}
+          ]}
+          onPreferencesChange={handleListPreferencesChange}
+        />
         },
         {
         label: 'Point Conversion',
         type: 'column',
-        contents: <View><Text>Hello</Text></View>
+        contents: <PreferencesList
+          id="unitsToPoints" // Another unique identifier
+          initialContents={UnitTypesKeys.map((key, index) => ({
+            key: key,
+            label: UnitTypesNames[index],
+            value: currentPreferences.units_to_points[key]!  // Non-null assertion
+          }))}
+          onPreferencesChange={handleListPreferencesChange}
+        />
         },
         // Add more settings items as needed
     ];
@@ -228,6 +286,43 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontWeight: 'bold',
+  },
+  preferencesListContainer: {
+    flexDirection: 'column',
+    width: '100%',
+  },
+  preferencesListRowContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+  },
+  preferencesListLabel: {
+    fontSize: 16,
+    color: 'black',
+    fontWeight: '400',
+    marginLeft: 5,
+  },
+  preferencesListNumericContainer: {
+    height: 35,
+    width: 40,
+    borderRadius: 5,
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 8,
+    color: 'black'
+  },
+  preferencesListNumericInput: {
+    height: 35,
+    width: 40,
+    fontSize: 16,
+    borderRadius: 5,
+    borderWidth: 2,
+    borderColor: '#000',
+    backgroundColor: 'yellow',
+    fontWeight: '400',
+    textAlign: 'center'
   },
   savePreferencesButtonContainer: {
     width: '100%',
