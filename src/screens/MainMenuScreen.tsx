@@ -165,11 +165,21 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
 
   let modalData = [
     { heading: 'General', data:[
+        // { 
+        //     label: 'Settings', 
+        //     icon: require('../assets/icons/settings.png'), 
+        //     action: () => navigation.navigate("Settings Screen", {
+        //       preferences: preferences
+        //     })
+        // },
         { 
-            label: 'Settings', 
+            label: 'Preferences', 
             icon: require('../assets/icons/settings.png'), 
-            action: () => navigation.navigate("Settings Screen")
+            action: () => navigation.navigate("Preferences Screen", {
+              preferences: preferences
+            })
         },
+        // Potentially preferences screen?
         { 
             label: 'Terms and agreements', 
             icon: require('../assets/icons/book.png'), 

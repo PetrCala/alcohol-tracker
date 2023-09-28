@@ -15,6 +15,7 @@ import ProfileScreen from './screens/ProfileScreen';
 import SocialScreen from './screens/SocialScreen';
 import AchievementScreen from './screens/AchievementScreen';
 import SettingsScreen from './screens/SettingsScreen';
+import PreferencesScreen from './screens/PreferencesScreen';
 import DayOverviewScreen from './screens/DayOverviewScreen';
 import EditSessionScreen from './screens/EditSession';
 import SessionSummaryScreen from './screens/SessionSummaryScreen';
@@ -89,6 +90,11 @@ const AlcoholTracker = () => {
           <Stack.Screen 
             name='Settings Screen' 
             component={SettingsScreen}
+            options={{}}
+          />
+          <Stack.Screen 
+            name='Preferences Screen' 
+            component={PreferencesScreen}
             options={{}}
           />
           <Stack.Screen 

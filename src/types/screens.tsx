@@ -23,7 +23,12 @@ export type AppStackParamList = {
   'Profile Screen': undefined;
   'Social Screen': undefined;
   'Achievement Screen': undefined;
-  'Settings Screen': undefined;
+  'Settings Screen': {
+    preferences: PreferencesData;
+  };
+  'Preferences Screen': {
+    preferences: PreferencesData;
+  };
   'Day Overview Screen': { 
     dateObject: DateObject;
     drinkingSessionData: DrinkingSessionArrayItem[];
@@ -68,6 +73,16 @@ export type MainMenuScreenProps = {
 export type DrinkingSessionScreenProps = {
   route?: RouteProp<AppStackParamList, 'Drinking Session Screen'>;
   navigation?: StackNavigationProp<AppStackParamList, 'Drinking Session Screen'>;
+}
+
+export type SettingsScreenProps = {
+  route?: RouteProp<AppStackParamList, 'Settings Screen'>;
+  navigation?: StackNavigationProp<AppStackParamList, 'Settings Screen'>;
+}
+
+export type PreferencesScreenProps = {
+  route?: RouteProp<AppStackParamList, 'Preferences Screen'>;
+  navigation?: StackNavigationProp<AppStackParamList, 'Preferences Screen'>;
 }
 
 export type DayOverviewScreenProps = {
