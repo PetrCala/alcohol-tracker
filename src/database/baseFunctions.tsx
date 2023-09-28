@@ -52,8 +52,8 @@ export async function fetchNicknameByUID(db: Database, uid: string): Promise<str
     const userSnapshot = await get(userRef);
 
     if (!userSnapshot.exists()) {
-      console.error("No user found for the given UID.");
-      return null;
+      // console.error("No user found for the given UID.");
+      return "Not found";
     }
 
     return userSnapshot.val().display_name || null;
