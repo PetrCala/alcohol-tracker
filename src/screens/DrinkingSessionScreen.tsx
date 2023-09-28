@@ -22,7 +22,7 @@ import DatabaseContext from '../context/DatabaseContext';
 import { 
   removeDrinkingSessionData, 
   saveDrinkingSessionData, 
-  updateCurrentSessionKey,
+updateCurrentSessionKey,
   updateSessionUnits
 } from '../database/drinkingSessions';
 import SessionUnitsInputWindow from '../components/Buttons/SessionUnitsInputWindow';
@@ -203,6 +203,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
       // Reroute to session summary, do not allow user to return
       navigation.replace("Session Summary Screen", {
         session: newSessionData,
+        sessionKey: sessionKey,
         preferences: preferences
       });
       setSavingSession(false);

@@ -37,6 +37,7 @@ export type AppStackParamList = {
   };
   'Session Summary Screen': {
     session: DrinkingSessionArrayItem;
+    sessionKey: string;
     preferences: PreferencesData;
   };
   'Terms And Agreements Screen': undefined;

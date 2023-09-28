@@ -9,6 +9,7 @@ import { getAuth } from 'firebase/auth';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import { formatDate, formatDateToDay, formatDateToTime, getLastUnitAddedTime, sumAllUnits, sumUnitsOfSingleType, timestampToDate, unitsToColors } from '../utils/dataHandling';
 import BasicButton from '../components/Buttons/BasicButton';
+import { DrinkingSessionArrayItem } from '../types/database';
 
 const SessionDataItem = ({
     heading,
@@ -38,7 +39,7 @@ const SessionDataItem = ({
 
 const SessionSummaryScreen = ({ route, navigation}: SessionSummaryScreenProps) => {
     if (!route || ! navigation) return null; // Should never be null
-    const { session, preferences } = route.params; 
+    const { session, sessionKey, preferences } = route.params; 
     // Units info
     const totalUnits = sumAllUnits(session.units);
     const unitSums = {
@@ -68,6 +69,14 @@ const SessionSummaryScreen = ({ route, navigation}: SessionSummaryScreenProps) =
     let sessionColor = unitsToColors(totalUnits, preferences.units_to_colors);
     if (session.blackout === true) {
       sessionColor = 'black';
+    };
+  
+    const onEditSessionPress = (sessionKey:string, session:DrinkingSessionArrayItem) => {
+        navigation.navigate('Edit Session Screen', {
+          session: session,
+          sessionKey: sessionKey,
+          preferences: preferences
+        });
     };
 
     const handleBackPress = () => {
@@ -105,6 +114,13 @@ const SessionSummaryScreen = ({ route, navigation}: SessionSummaryScreenProps) =
               containerStyle={styles.backArrowContainer}
               iconStyle={styles.backArrow}
               onPress={handleBackPress}
+            />
+            <MenuIcon
+                iconId='edit-session-icon'
+                iconSource={require('../assets/icons/edit.png')}
+                containerStyle={styles.menuIconContainer}
+                iconStyle={styles.menuIcon}
+                onPress={() => onEditSessionPress(sessionKey, session)} // Use keyextractor to load id here
             />
           </View>
           <ScrollView style={styles.scrollView}>
@@ -155,6 +171,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignContent: 'center',
+    alignItems: 'center',
     padding: 10,
     backgroundColor: 'white',
   },
@@ -166,6 +183,18 @@ const styles = StyleSheet.create({
   backArrow: {
     width: 25,
     height: 25,
+  },
+  menuIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  menuIcon: {
+    width: 25,
+    height: 25,
+    padding: 10,
   },
   scrollView: {
     flexGrow:1, 
