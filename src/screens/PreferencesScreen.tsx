@@ -35,6 +35,7 @@ const PreferencesItem: React.FC<{ item: any }> = ({ item }) => (
   </View>
 );
 
+
 const PreferencesScreen = ({ route, navigation }: PreferencesScreenProps) => {
     if (!route || ! navigation) return null; // Should never be null
     const { userData, preferences } = route.params;

@@ -260,7 +260,7 @@ const SessionsCalendar = ({
         onPressArrowRight={(addMonth) => handleRightArrowPress(addMonth)}
         markedDates={markedDates}
         markingType={'period'}
-        firstDay={1}
+        firstDay={preferences.first_day_of_week === 'Monday' ? 1 : 0}
         enableSwipeMonths={true}
         disableAllTouchEventsForDisabledDays={true}
         style={styles.mainScreenCalendarStyle}
