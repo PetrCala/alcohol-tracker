@@ -57,8 +57,8 @@ const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
         Alert.alert("User nickname fetch failed", "Could not fetch the nickname of user with UID: " + item.user_id + error.message);
       }
     }
-
-    setNicknames(newNicknames);
+    
+    // setNicknames(newNicknames);
   })();
 }, [feedbackDataArray, db]);
 

@@ -1,7 +1,8 @@
 ﻿// Run the script using ts-node _dev/database/migration.tsx
 
-import adminDb from "./adminDatabase";
+import admin from "./admin";
 
+const adminDb = admin.database();
 
 // adminDb.ref('feedback').once('value', (snapshot:any) => {
 

@@ -38,7 +38,7 @@ import { DrinkDataProps } from '../types/components';
 import UnitTypesView from '../components/UnitTypesView';
 import SessionDetailsSlider from '../components/SessionDetailsSlider';
 import LoadingData from '../components/LoadingData';
-import { usePrevious } from '../utils/hooks/usePrevious';
+import { usePrevious } from '../hooks/usePrevious';
 import SuccessIndicator from '../components/SuccessIndicator';
 
 
