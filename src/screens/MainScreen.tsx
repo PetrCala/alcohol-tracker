@@ -428,4 +428,20 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center'
   },
+  // startSessionButton: {
+  //   position: 'absolute',
+  //   bottom: 20,
+  //   right: 20,
+  //   borderRadius: 50,
+  //   width: 70,
+  //   height: 70,
+  //   backgroundColor: 'green',
+  //   alignItems: 'center',
+  // },
+  // startSessionText: {
+  //   color: 'white',
+  //   fontSize: 50,
+  //   fontWeight: 'bold',
+  //   textAlign: 'center'
+  // },
 });

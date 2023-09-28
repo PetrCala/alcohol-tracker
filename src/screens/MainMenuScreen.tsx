@@ -10,8 +10,7 @@ import {
 } from 'react-native';
 
 import { 
-    SettingsPopupProps, 
-    SettingsItemProps 
+    MainMenuItemProps 
 } from '../types/components';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import YesNoPopup from '../components/Popups/YesNoPopup';
@@ -28,7 +27,7 @@ import ReauthentificatePopup from '../components/Popups/ReauthentificatePopup';
 import UserOffline from '../components/UserOffline';
 import { useUserConnection } from '../context/UserConnectionContext';
 
-const MenuItem: React.FC<SettingsItemProps> = ({
+const MenuItem: React.FC<MainMenuItemProps> = ({
     heading,
     data,
     index
@@ -169,7 +168,7 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
         { 
             label: 'Settings', 
             icon: require('../assets/icons/settings.png'), 
-            action: () => console.log('Beer pressed') 
+            action: () => navigation.navigate("Settings Screen")
         },
         { 
             label: 'Terms and agreements', 

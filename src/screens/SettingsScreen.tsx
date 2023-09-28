@@ -10,6 +10,24 @@ type SettingsProps = {
   navigation: any;
 }
 
+// const SettingsItem: React.FC<SettingsItemProps> = ({
+//     heading,
+//     data,
+//     index
+//   }) => (
+//     <View key={index}>
+//     <View style={styles.groupMarker}>
+//         <Text style={styles.groupText}>{heading}</Text>
+//     </View>
+//     {data.map((button, bIndex) => (
+//         <TouchableOpacity key={bIndex} style={styles.button} onPress={button.action}>
+//             <Image source={button.icon} style={styles.icon} />
+//             <Text style={styles.buttonText}>{button.label}</Text>
+//         </TouchableOpacity>
+//     ))}
+//     </View>
+// );
+
 const SettingsScreen = (props: SettingsProps) => {
   const { navigation } = props;
 
