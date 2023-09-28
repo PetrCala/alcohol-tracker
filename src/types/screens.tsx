@@ -27,6 +27,7 @@ export type AppStackParamList = {
     preferences: PreferencesData;
   };
   'Preferences Screen': {
+    userData: UserData;
     preferences: PreferencesData;
   };
   'Day Overview Screen': { 

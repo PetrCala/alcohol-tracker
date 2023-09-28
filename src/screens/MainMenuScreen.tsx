@@ -176,6 +176,7 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
             label: 'Preferences', 
             icon: require('../assets/icons/settings.png'), 
             action: () => navigation.navigate("Preferences Screen", {
+              userData: userData,
               preferences: preferences
             })
         },

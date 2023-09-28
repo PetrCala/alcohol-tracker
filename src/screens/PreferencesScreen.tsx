@@ -23,7 +23,7 @@ import YesNoPopup from '../components/Popups/YesNoPopup';
 import CustomSwitch from '../components/CustomSwitch';
 
 
-const PreferencesItem: React.FC<{ key: any, item: any }> = ({ key, item }) => (
+const PreferencesItem: React.FC<{ item: any }> = ({ item }) => (
   <View style={[
     styles.container,
     item.type === 'row' ? styles.horizontalContainer : styles.verticalContainer 
@@ -37,7 +37,7 @@ const PreferencesItem: React.FC<{ key: any, item: any }> = ({ key, item }) => (
 
 const PreferencesScreen = ({ route, navigation }: PreferencesScreenProps) => {
     if (!route || ! navigation) return null; // Should never be null
-    const { preferences } = route.params;
+    const { userData, preferences } = route.params;
     const auth = getAuth();
     const user = auth.currentUser;
     const db = useContext(DatabaseContext);
@@ -65,14 +65,17 @@ const PreferencesScreen = ({ route, navigation }: PreferencesScreenProps) => {
         if (havePreferencesChanged()) {
         setShowLeaveConfirmation(true); // Unsaved changes
         } else {
-        navigation.goBack();
+          navigation.goBack();
         }
     };
 
     const handleSavePreferences = async () => {
         try {
             await savePreferencesData(db, user.uid, currentPreferences);
-            navigation.goBack();
+            navigation.navigate("Main Menu Screen", {
+              userData: userData,
+              preferences: currentPreferences
+            });
         } catch (error:any) {
             Alert.alert('Preferences saving failed', error.message);
         };
