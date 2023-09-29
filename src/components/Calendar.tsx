@@ -21,7 +21,7 @@ import {
     SessionsCalendarProps,
     SessionsCalendarMarkedDates
 } from '../types/components';
-import { DrinkingSessionArrayItem, DrinkingSessionData } from '../types/database';
+import { DrinkingSessionArrayItem, DrinkingSessionData, PreferencesData } from '../types/database';
 import { DateObject, DayState } from '../types/components';
 import LoadingData from './LoadingData';
 
@@ -125,7 +125,7 @@ const SessionsCalendar = ({
     };
 
 
-    const monthEntriesToColors = (sessions: DatesType) => {
+    const monthEntriesToColors = (sessions: DatesType, preferences: PreferencesData) => {
         // MarkedDates object, see official react-native-calendars docs
         let markedDates: SessionsCalendarMarkedDates = Object.entries(sessions).reduce((
             acc: SessionsCalendarMarkedDates,
@@ -161,23 +161,26 @@ const SessionsCalendar = ({
      * 
      * @param date Date that includes the month to compute the marks for
      * @param drinkingSessionData All drinking session data
+     * @param preferences User preferences data
+     * @param forceUpdate If True, always fetch the marked dates.
      * @returns Marked dates as a JSON type object
      */
 
-    const getMarkedDates = (date: Date, drinkingSessionData: DrinkingSessionArrayItem[]): SessionsCalendarMarkedDates => {
+    const getMarkedDates = (date: Date, drinkingSessionData: DrinkingSessionArrayItem[], preferences: PreferencesData, forceUpdate:boolean = true): SessionsCalendarMarkedDates => {
         if (!drinkingSessionData) return {};
 
+        
         // Check whether the current month is already marked
         var currentYearMonthString = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-`
         var monthAlreadyIncluded = Object.keys(markedDates).some(key => key.includes(currentYearMonthString));
-        if (monthAlreadyIncluded){
+        if (monthAlreadyIncluded && !forceUpdate ){
             return markedDates; // Assume these contain all current month's marks
         };
         // Month not marked yet - generate new marks
         var sessions = getSingleMonthDrinkingSessions(date, drinkingSessionData, true);
         var aggergatedSessions = aggregateSessionsByDays(sessions);
         // var monthTotalSessions = fillInRestOfMonth(date, aggergatedSessions, true);
-        var newMarkedDates = monthEntriesToColors(aggergatedSessions);
+        var newMarkedDates = monthEntriesToColors(aggergatedSessions, preferences);
 
         return { ...markedDates, ...newMarkedDates } // Expand the state
     };
@@ -206,17 +209,10 @@ const SessionsCalendar = ({
         addMonth(); // Use the callback to move to the next month
     };
      
-    const getInitialMarkedDates = () => {
-        if (!calendarData) return {};
-        
-        const currentDate = timestampToDate(visibleDateObject.timestamp);
-        return getMarkedDates(currentDate, calendarData);
-    };
-    
     const updateMarkedDates = (newDateObject:DateObject) => {
         if (calendarData != null){
             const newDate = timestampToDate(newDateObject.timestamp);
-            const newMarkedDates = getMarkedDates(newDate, calendarData);
+            const newMarkedDates = getMarkedDates(newDate, calendarData, preferences, false);
             setMarkedDates(newMarkedDates);
         } else {
             setMarkedDates({});
@@ -227,13 +223,16 @@ const SessionsCalendar = ({
     useEffect(() => {
         setCalendarData(drinkingSessionData);
         setMarkedDates({}); // Reset marked dates when session data changes
-    }, [drinkingSessionData]);
+    }, [drinkingSessionData, preferences]);
     
-
-    // Set the marked dates to render on initial page load
+    // Update the marked periodically
     useEffect(() => {
-        setMarkedDates(getInitialMarkedDates);
-    }, [calendarData]);
+        if (calendarData){
+            let newMarkedDates = getMarkedDates(new Date(visibleDateObject.timestamp), calendarData, preferences, true); // Force update
+            setMarkedDates(newMarkedDates);
+        };
+    }, [preferences, calendarData, visibleDateObject.timestamp]);
+
      
 
     if (markedDates == null || drinkingSessionData == null) {
