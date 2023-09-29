@@ -212,11 +212,14 @@ export function sumUnitTypes(unitTypes: UnitTypesProps): number {
  * @param units UnitsObject type
  * @returns Number of points
  * 
- * @example let points = sumAllPoints({[]})
+ * @example let points = sumAllPoints({
+ * [1694819284]: {'beer': 5},
+ * [1694819286]: {'wine': 2, 'cocktail': 1},
+ * })
  */
 export function sumAllPoints(units:UnitsObject):number {
+    // sum all points functionality here
     return 1
-
 };
 
 /** Input a session item and return the timestamp of the last unit

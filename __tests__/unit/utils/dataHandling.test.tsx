@@ -510,6 +510,11 @@ describe('sumUnitTypes', () => {
   });
 });
 
+describe('sumAllPoints', () => {
+  // sum all points tests here
+
+});
+
 describe('getLastUnitAddedTime', () => {
   let dateNow:Date = new Date();
   let mockSession:DrinkingSessionArrayItem;
