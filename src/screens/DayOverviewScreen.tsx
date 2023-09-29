@@ -72,6 +72,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
         });
       });
       setCombinedData(newCombinedData);
+      console.log('setting combined data...')
     }, [dailySessionData]);
 
     const onSessionButtonPress = (sessionKey: string, session:DrinkingSessionArrayItem) => {

@@ -69,6 +69,7 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
         navigation.replace("Login Screen");
         return null;
     }
+    if (!db) return null; // Should never be null
 
     const drinkData: DrinkDataProps = [
       { key: 'beer', icon: require('../assets/icons/beer.png'), typeSum: beerSum, setTypeSum: setBeerSum},
