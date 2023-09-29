@@ -1,0 +1,154 @@
+﻿import React, {useState} from 'react';
+import {
+  Modal,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import Slider from '@react-native-community/slider';
+import BasicButton from '../Buttons/BasicButton';
+import MenuIcon from '../Buttons/MenuIcon';
+import { ModalFadeTransition } from '@react-navigation/stack/lib/typescript/src/TransitionConfigs/TransitionPresets';
+
+type NumericSliderProps = {
+    visible: boolean;
+    transparent: boolean;
+    heading: string,
+    value: number;
+    setValue: (value: number) => void;
+    onRequestClose: () => void;
+    onSave: () => void;
+};
+
+const NumericSlider = (props: NumericSliderProps) => {
+    const {
+        visible,
+        transparent,
+        heading,
+        value,
+        setValue,
+        onRequestClose,
+        onSave
+    } = props;
+    const [localValue, setLocalValue] = useState<number>(value);
+
+    const handleSliderChange = (value: number) => {
+        let newValue = parseFloat(value.toFixed(1))
+        setLocalValue(newValue);
+    }
+
+    return (
+        <Modal
+            animationType='none'
+            transparent={transparent}
+            visible={visible}
+            onRequestClose={onRequestClose}
+        >
+        <View style={styles.modalContainer}>
+        <View style={styles.modalView}>
+            <View style={styles.valueTextContainer}>
+                <Text style={styles.valueText}>{localValue}</Text>
+            </View>
+            <View style={styles.sliderContainer}>
+                <Slider
+                    value={localValue}
+                    style={styles.slider}
+                    minimumValue={0}
+                    maximumValue={5}
+                    step={0.1}
+                    minimumTrackTintColor="#000"
+                    maximumTrackTintColor="#000"
+                    thumbTintColor="#000"
+                    onValueChange={handleSliderChange}
+                    tapToSeek={true}
+                />
+            </View>
+            <View style={styles.saveButtonsDelimiter}/>
+            <View style={styles.saveButtonsContainer}>
+                <BasicButton 
+                    text='Cancel'
+                    buttonStyle={styles.saveButton}
+                    textStyle={styles.saveButtonText}
+                    onPress={onRequestClose}
+                />
+                <BasicButton 
+                    text='Save'
+                    buttonStyle={styles.saveButton}
+                    textStyle={styles.saveButtonText}
+                    onPress={onSave}
+                />
+            </View>
+        </View>
+        </View>
+        </Modal>
+    );
+};
+
+export default NumericSlider;
+
+
+const styles = StyleSheet.create({
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // This will fade the background
+  },
+  modalView: {
+    backgroundColor: '#FFFF99',
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: 'black',
+    padding: 20,
+    alignItems: 'center',
+    elevation: 5,
+  },
+  valueTextContainer: {
+    height: 50,
+    justifyContent: 'center'
+  },
+  valueText: {
+    fontSize: 20,
+    color: 'black',
+  },
+  sliderContainer: {
+    justifyContent: 'center',
+    padding: 20,
+    marginBottom: 15,
+  },
+  slider: {
+    width: 250, 
+    height: 40
+  },
+  saveButtonsDelimiter: {
+    height: 5,
+    width: '100%',
+    backgroundColor: 'white',
+    borderTopWidth: 1,
+    borderColor: '#000',
+  },
+  saveButtonsContainer: {
+    height: '8%',
+    width: '100%',
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+    backgroundColor: '#FFFF99',
+    marginBottom: 2,
+  },
+  saveButton: {
+    width: '50%',
+    height: 50,
+    alignItems: "center",
+    justifyContent: 'center',
+    padding: 10,
+    backgroundColor: '#fcf50f',
+    borderWidth: 1,
+    borderColor: '#000',
+  },
+  saveButtonText: {
+    color: 'black',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+});

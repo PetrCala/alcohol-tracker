@@ -6,8 +6,10 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  TouchableOpacity,
   View,
 } from 'react-native';
+import Slider from '@react-native-community/slider';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import { PreferencesScreenProps } from '../types/screens';
 import { getAuth } from 'firebase/auth';
@@ -19,63 +21,40 @@ import { PreferencesData, UnitTypesKeys, UnitTypesNames, UnitTypesProps, UnitsTo
 import { savePreferencesData } from '../database/preferences';
 import YesNoPopup from '../components/Popups/YesNoPopup';
 import CustomSwitch from '../components/CustomSwitch';
+import NumericSlider from '../components/Popups/NumericSlider';
 
-
-const PreferencesItem: React.FC<{ item: any }> = ({ item }) => (
-  <View style={[
-    styles.container,
-    item.type === 'row' ? styles.horizontalContainer : styles.verticalContainer 
-  ]}>
-    <Text style={styles.label}>{item.label}</Text>
-    <View style={styles.itemContainer}>
-      {item.contents}
-    </View>
-  </View>
-);
 
 interface PreferencesListProps {
   id: string;
   initialContents: { label: string, value: string }[];
-  onPreferencesChange: (id: string, preferences: { label: string, value: string }[]) => void;
+  onButtonPress: () => void;
 }
 
-const PreferencesList: React.FC<PreferencesListProps> = ({ id, initialContents, onPreferencesChange }) => {
+const PreferencesList: React.FC<PreferencesListProps> = ({ id, initialContents, onButtonPress}) => {
   const [localPreferences, setLocalPreferences] = useState(initialContents);
-
-  const handleChange = (index: number, text: string) => {
-    // Replace comma with point
-    let value = text.replace(',', '.');
-
-    // Validate input
-    const isValid = !isNaN(Number(value)) || value === '.' || /^-?\d*\.\d*$/.test(value);
-    
-    
-    if (isValid) {
-      let updatedPreferences = [...localPreferences];
-      updatedPreferences[index].value = value;
-      setLocalPreferences(updatedPreferences);
-      onPreferencesChange(id, updatedPreferences);
-    }
-};
 
   return (
     <View style={styles.preferencesListContainer}>
-      {localPreferences.map((item, index) => (
+      {localPreferences.map((item, index) => {
+        const [itemValue, setItemValue] = useState<number>(parseFloat(item.value));
+
+        return (
         <View key={index} style={styles.preferencesListRowContainer}>
           <Text style={styles.preferencesListLabel}>{item.label}</Text>
           <View style={styles.preferencesListNumericContainer}>
-            <TextInput 
-              style={styles.preferencesListNumericInput}
-              keyboardType='numeric'
-              returnKeyType='default'
-              maxLength={5}
-              textAlign='center'
-              value={item.value.toString()}
-              onChangeText={(text) => handleChange(index, text)}
-            />
+            <TouchableOpacity 
+              style={styles.preferencesListButton}
+              onPress={onButtonPress}
+            >
+              <Text style={styles.preferencesListText}>
+                {itemValue}
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
-      ))}
+        );
+      }
+      )}
     </View>
   );
 };
@@ -91,6 +70,9 @@ const PreferencesScreen = ({ route, navigation }: PreferencesScreenProps) => {
     const initialPreferences = useRef(preferences);
     const [showLeaveConfirmation, setShowLeaveConfirmation] = useState(false);
     const [localListsPreferences, setLocalListsPreferences] = useState<Record<string, { label: string, value: string }[]>>({});
+    const [sliderVisible, setSliderVisible] = useState<boolean>(false);
+    const [sliderValue, setSliderValue] = useState<number>(0);
+    const [sliderHeading, setSliderHeading] = useState<string>("");
     // Deconstruct the preferences
     const [currentPreferences, setCurrentPreferences] = useState<PreferencesData>({
         first_day_of_week: preferences.first_day_of_week,
@@ -121,78 +103,24 @@ const PreferencesScreen = ({ route, navigation }: PreferencesScreenProps) => {
     };
 
     const handleSavePreferences = async () => {
-      if (areAllValuesValid(localListsPreferences)) {
-          try {
-            console.log('saving preferences...')
-            navigation.goBack();
-              // Somehow get the values and save them, after transforming to numeric
-              // await savePreferencesData(db, user.uid, mergedPreferences);
-              // navigation.navigate("Main Menu Screen", {
-              //     userData: userData,
-              //     preferences: mergedPreferences
-              // });
-          } catch (error:any) {
-              Alert.alert('Preferences saving failed', error.message);
-          };
-      } else {
-          Alert.alert('Invalid Input', 'Please make sure all values are valid numbers.');
-      }
-    };
-    
-    const areAllValuesValid = (listsPreferences: Record<string, { label: string, value: string }[]>) => {
-      for (let id in listsPreferences) {
-          for (let item of listsPreferences[id]) {
-              const value = item.value;
-              if (isNaN(Number(value)) || !/^-?\d*\.?\d*$/.test(value)) {
-                  return false;
-              }
-          }
-      }
-      return true;
+      try {
+        console.log('saving preferences...')
+        navigation.goBack();
+          // Somehow get the values and save them, after transforming to numeric
+          // await savePreferencesData(db, user.uid, mergedPreferences);
+          // navigation.navigate("Main Menu Screen", {
+          //     userData: userData,
+          //     preferences: mergedPreferences
+          // });
+      } catch (error:any) {
+          Alert.alert('Preferences saving failed', error.message);
+      };
     };
 
     const handleFirstDayOfWeekToggle = (value: boolean) => {
       let newValue = value ? "Monday" : "Sunday";
       setCurrentPreferences(prev => ({ ...prev, first_day_of_week: newValue }));
     };
-
-    const settingsData = [
-        {
-        label: 'First Day of Week',
-        type: 'row',
-        contents: <CustomSwitch
-          offText = 'Sun'
-          onText = 'Mon'
-          value={currentPreferences.first_day_of_week === "Monday"}
-          onValueChange={handleFirstDayOfWeekToggle}
-        />
-        },
-        {
-        label: 'Unit Colors',
-        type: 'column',
-        contents: <PreferencesList
-          id="units_to_colors"
-          initialContents={[
-            {label: 'Yellow', value: currentPreferences.units_to_colors.yellow.toString()},
-            {label: 'Orange', value: currentPreferences.units_to_colors.orange.toString()}
-          ]}
-          onPreferencesChange={handleListPreferencesChange}
-        />
-        },
-        {
-        label: 'Point Conversion',
-        type: 'column',
-        contents: <PreferencesList
-          id="units_to_points" // Another unique identifier
-          initialContents={UnitTypesKeys.map((key, index) => ({
-            key: key,
-            label: UnitTypesNames[index],
-            value: currentPreferences.units_to_points[key]!.toString()  // Non-null assertion
-          }))}
-          onPreferencesChange={handleListPreferencesChange}
-        />
-        },
-    ];
 
     // Make the system back press toggle the go back handler
     useEffect(() => {
@@ -225,10 +153,54 @@ const PreferencesScreen = ({ route, navigation }: PreferencesScreenProps) => {
             style={styles.scrollView}
             keyboardShouldPersistTaps="handled"
           >
-            {settingsData.map((item, index) => (
-              <PreferencesItem key={index} item={item} />
-              ))}
+            <View style={[ styles.container, styles.horizontalContainer]}>
+              <Text style={styles.label}>First Day of Week</Text>
+              <View style={styles.itemContainer}>
+                <CustomSwitch
+                  offText = 'Sun'
+                  onText = 'Mon'
+                  value={currentPreferences.first_day_of_week === "Monday"}
+                  onValueChange={handleFirstDayOfWeekToggle}
+                />
+              </View>
+            </View>
+            <View style={[ styles.container, styles.verticalContainer]}>
+              <Text style={styles.label}>Unit Colors</Text>
+              <View style={styles.itemContainer}>
+                <PreferencesList
+                  id="units_to_colors"
+                  initialContents={[
+                    {label: 'Yellow', value: currentPreferences.units_to_colors.yellow.toString()},
+                    {label: 'Orange', value: currentPreferences.units_to_colors.orange.toString()}
+                  ]}
+                  onButtonPress={() => setSliderVisible(true)}
+                />
+              </View>
+            </View>
+            <View style={[ styles.container, styles.verticalContainer]}>
+              <Text style={styles.label}>Point Conversion</Text>
+              <View style={styles.itemContainer}>
+                <PreferencesList
+                  id="units_to_points" // Another unique identifier
+                  initialContents={UnitTypesKeys.map((key, index) => ({
+                    key: key,
+                    label: UnitTypesNames[index],
+                    value: currentPreferences.units_to_points[key]!.toString()  // Non-null assertion
+                  }))}
+                  onButtonPress={() => setSliderVisible(true)}
+                />
+              </View>
+            </View>
           </ScrollView>
+          <NumericSlider
+            visible={sliderVisible}
+            transparent={true}
+            value={sliderValue}
+            heading={sliderHeading}
+            setValue={(number) => console.log(number)}
+            onRequestClose={() => setSliderVisible(false)}
+            onSave={() => setSliderVisible(false)}
+          />
           <View style={styles.savePreferencesButtonContainer}>
             <BasicButton 
                 text='Save Preferences'
@@ -341,15 +313,18 @@ const styles = StyleSheet.create({
     margin: 8,
     color: 'black'
   },
-  preferencesListNumericInput: {
+  preferencesListButton: {
+  },
+  preferencesListText: {
     height: 40,
     width: 60,
     fontSize: 16,
+    color: 'black',
+    fontWeight: '500',
     borderRadius: 5,
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: '#000',
     backgroundColor: '#FFFF99',
-    fontWeight: '400',
     textAlign: 'center',
     textAlignVertical: 'center',
   },

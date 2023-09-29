@@ -23,6 +23,7 @@ import TermsAndAgreementsScreen from './screens/TermsAndAgreementsScreen';
 import MainMenuScreen from './screens/MainMenuScreen';
 
 import { ContextProvider } from './context/Context';
+import NumericSliderScreen from './screens/NumericSliderScreen';
 
 const app = initializeApp(firebaseConfig);
 
