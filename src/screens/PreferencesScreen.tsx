@@ -26,17 +26,17 @@ import NumericSlider from '../components/Popups/NumericSlider';
 
 interface PreferencesListProps {
   id: string;
-  initialContents: { label: string, value: string }[];
-  onButtonPress: () => void;
+  initialContents: { key: string, label: string, value: string }[];
+  onButtonPress: (key: string, label: string, value: number) => void;
 }
 
 const PreferencesList: React.FC<PreferencesListProps> = ({ id, initialContents, onButtonPress}) => {
-  const [localPreferences, setLocalPreferences] = useState(initialContents);
 
   return (
     <View style={styles.preferencesListContainer}>
-      {localPreferences.map((item, index) => {
-        const [itemValue, setItemValue] = useState<number>(parseFloat(item.value));
+      {initialContents.map((item, index) => {
+
+        let itemValue = parseFloat(item.value);
 
         return (
         <View key={index} style={styles.preferencesListRowContainer}>
@@ -44,7 +44,7 @@ const PreferencesList: React.FC<PreferencesListProps> = ({ id, initialContents, 
           <View style={styles.preferencesListNumericContainer}>
             <TouchableOpacity 
               style={styles.preferencesListButton}
-              onPress={onButtonPress}
+              onPress={() => onButtonPress(item.key, item.label, itemValue)}
             >
               <Text style={styles.preferencesListText}>
                 {itemValue}
@@ -69,10 +69,13 @@ const PreferencesScreen = ({ route, navigation }: PreferencesScreenProps) => {
     const { isOnline } = useUserConnection();
     const initialPreferences = useRef(preferences);
     const [showLeaveConfirmation, setShowLeaveConfirmation] = useState(false);
-    const [localListsPreferences, setLocalListsPreferences] = useState<Record<string, { label: string, value: string }[]>>({});
     const [sliderVisible, setSliderVisible] = useState<boolean>(false);
+    const [sliderStep, setSliderStep] = useState<number>(1);
+    const [sliderMaxValue, setSliderMaxValue] = useState<number>(5);
     const [sliderValue, setSliderValue] = useState<number>(0);
     const [sliderHeading, setSliderHeading] = useState<string>("");
+    const [sliderList, setSliderList] = useState<string>("");
+    const [sliderKey, setSliderKey] = useState<string>("");
     // Deconstruct the preferences
     const [currentPreferences, setCurrentPreferences] = useState<PreferencesData>({
         first_day_of_week: preferences.first_day_of_week,
@@ -98,20 +101,13 @@ const PreferencesScreen = ({ route, navigation }: PreferencesScreenProps) => {
         }
     };
 
-    const handleListPreferencesChange = (id: string, preferences: { label: string, value: string }[]) => {
-      setLocalListsPreferences(prev => ({ ...prev, [id]: preferences }));
-    };
-
     const handleSavePreferences = async () => {
       try {
-        console.log('saving preferences...')
-        navigation.goBack();
-          // Somehow get the values and save them, after transforming to numeric
-          // await savePreferencesData(db, user.uid, mergedPreferences);
-          // navigation.navigate("Main Menu Screen", {
-          //     userData: userData,
-          //     preferences: mergedPreferences
-          // });
+          await savePreferencesData(db, user.uid, currentPreferences);
+          navigation.navigate("Main Menu Screen", {
+              userData: userData,
+              preferences: currentPreferences
+          });
       } catch (error:any) {
           Alert.alert('Preferences saving failed', error.message);
       };
@@ -120,6 +116,28 @@ const PreferencesScreen = ({ route, navigation }: PreferencesScreenProps) => {
     const handleFirstDayOfWeekToggle = (value: boolean) => {
       let newValue = value ? "Monday" : "Sunday";
       setCurrentPreferences(prev => ({ ...prev, first_day_of_week: newValue }));
+    };
+
+    const updateUnitsToColors = (colorKey: string, value: number) => {
+    // const updateUnitsToColors = (colorKey: keyof UnitsToColorsData, value: number) => {
+      setCurrentPreferences(prev => ({
+        ...prev,
+        units_to_colors: {
+          ...prev.units_to_colors,
+          [colorKey]: value
+        }
+      }));
+    };
+
+    // const updateUnitsToPoints = (unitKey: typeof UnitTypesKeys[number], value: number) => {
+    const updateUnitsToPoints = (unitKey: string, value: number) => {
+      setCurrentPreferences(prev => ({
+        ...prev,
+        units_to_points: {
+          ...prev.units_to_points,
+          [unitKey]: value
+        }
+      }));
     };
 
     // Make the system back press toggle the go back handler
@@ -170,10 +188,18 @@ const PreferencesScreen = ({ route, navigation }: PreferencesScreenProps) => {
                 <PreferencesList
                   id="units_to_colors"
                   initialContents={[
-                    {label: 'Yellow', value: currentPreferences.units_to_colors.yellow.toString()},
-                    {label: 'Orange', value: currentPreferences.units_to_colors.orange.toString()}
+                    {key: "yellow", label: 'Yellow', value: currentPreferences.units_to_colors.yellow.toString()},
+                    {key: "orange", label: 'Orange', value: currentPreferences.units_to_colors.orange.toString()}
                   ]}
-                  onButtonPress={() => setSliderVisible(true)}
+                  onButtonPress={(key, label, value) => {
+                    setSliderHeading(label);
+                    setSliderStep(1);
+                    setSliderMaxValue(15);
+                    setSliderValue(value);
+                    setSliderVisible(true);
+                    setSliderList("units_to_colors");
+                    setSliderKey(key); 
+                }}
                 />
               </View>
             </View>
@@ -187,7 +213,15 @@ const PreferencesScreen = ({ route, navigation }: PreferencesScreenProps) => {
                     label: UnitTypesNames[index],
                     value: currentPreferences.units_to_points[key]!.toString()  // Non-null assertion
                   }))}
-                  onButtonPress={() => setSliderVisible(true)}
+                  onButtonPress={(key, label, value) => {
+                    setSliderHeading(label);
+                    setSliderStep(0.1);
+                    setSliderMaxValue(3);
+                    setSliderValue(value);
+                    setSliderVisible(true);
+                    setSliderList("units_to_points");
+                    setSliderKey(key); 
+                }}
                 />
               </View>
             </View>
@@ -197,9 +231,21 @@ const PreferencesScreen = ({ route, navigation }: PreferencesScreenProps) => {
             transparent={true}
             value={sliderValue}
             heading={sliderHeading}
-            setValue={(number) => console.log(number)}
-            onRequestClose={() => setSliderVisible(false)}
-            onSave={() => setSliderVisible(false)}
+            step={sliderStep}
+            maxValue={sliderMaxValue}
+            onRequestClose={() => {
+              setSliderVisible(false)
+              setSliderValue(0);
+              setSliderHeading("");
+            }}
+            onSave={(newValue) => {
+              if (sliderList == "units_to_colors"){
+                updateUnitsToColors(sliderKey, newValue)
+              } else if (sliderList == "units_to_points") {
+                updateUnitsToPoints(sliderKey, newValue)
+              }
+              setSliderVisible(false);
+            }}
           />
           <View style={styles.savePreferencesButtonContainer}>
             <BasicButton 

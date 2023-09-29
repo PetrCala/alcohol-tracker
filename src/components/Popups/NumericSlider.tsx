@@ -1,4 +1,4 @@
-﻿import React, {useState} from 'react';
+﻿import React, {useState, useEffect} from 'react';
 import {
   Modal,
   StyleSheet,
@@ -14,10 +14,11 @@ type NumericSliderProps = {
     visible: boolean;
     transparent: boolean;
     heading: string,
+    step: number;
     value: number;
-    setValue: (value: number) => void;
+    maxValue: number;
     onRequestClose: () => void;
-    onSave: () => void;
+    onSave: (value: number) => void;
 };
 
 const NumericSlider = (props: NumericSliderProps) => {
@@ -25,12 +26,17 @@ const NumericSlider = (props: NumericSliderProps) => {
         visible,
         transparent,
         heading,
+        step,
         value,
-        setValue,
+        maxValue,
         onRequestClose,
         onSave
     } = props;
     const [localValue, setLocalValue] = useState<number>(value);
+
+    useEffect(() => {
+        setLocalValue(value);
+    }, [value]);
 
     const handleSliderChange = (value: number) => {
         let newValue = parseFloat(value.toFixed(1))
@@ -47,6 +53,7 @@ const NumericSlider = (props: NumericSliderProps) => {
         <View style={styles.modalContainer}>
         <View style={styles.modalView}>
             <View style={styles.valueTextContainer}>
+                <Text style={styles.valueText}>{heading}</Text>
                 <Text style={styles.valueText}>{localValue}</Text>
             </View>
             <View style={styles.sliderContainer}>
@@ -54,8 +61,8 @@ const NumericSlider = (props: NumericSliderProps) => {
                     value={localValue}
                     style={styles.slider}
                     minimumValue={0}
-                    maximumValue={5}
-                    step={0.1}
+                    maximumValue={maxValue}
+                    step={step}
                     minimumTrackTintColor="#000"
                     maximumTrackTintColor="#000"
                     thumbTintColor="#000"
@@ -75,7 +82,7 @@ const NumericSlider = (props: NumericSliderProps) => {
                     text='Save'
                     buttonStyle={styles.saveButton}
                     textStyle={styles.saveButtonText}
-                    onPress={onSave}
+                    onPress={() => onSave(localValue)}
                 />
             </View>
         </View>
@@ -105,11 +112,13 @@ const styles = StyleSheet.create({
   },
   valueTextContainer: {
     height: 50,
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   valueText: {
     fontSize: 20,
     color: 'black',
+    alignSelf: 'center',
+    margin: 5,
   },
   sliderContainer: {
     justifyContent: 'center',
