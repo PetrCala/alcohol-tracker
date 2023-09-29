@@ -176,6 +176,7 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
             label: 'Preferences', 
             icon: require('../assets/icons/settings.png'), 
             action: () => navigation.navigate("Preferences Screen", {
+              userData: userData,
               preferences: preferences
             })
         },
@@ -329,7 +330,7 @@ const styles = StyleSheet.create({
       borderRadius: 8,
       borderWidth: 2,
       borderColor: 'black',
-      margin: 5,
+      margin: 2,
     },
     icon: {
         width: 15,

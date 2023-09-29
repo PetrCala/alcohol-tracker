@@ -1,11 +1,11 @@
 ﻿import React, {useContext, useEffect, useRef, useState} from 'react';
 import {
-    Alert,
+  Alert,
   BackHandler,
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
+  TextInput,
   View,
 } from 'react-native';
 import MenuIcon from '../components/Buttons/MenuIcon';
@@ -15,37 +15,82 @@ import { useUserConnection } from '../context/UserConnectionContext';
 import DatabaseContext from '../context/DatabaseContext';
 import UserOffline from '../components/UserOffline';
 import BasicButton from '../components/Buttons/BasicButton';
-import { PreferencesData, UnitTypesProps, UnitsToColorsData } from '../types/database';
+import { PreferencesData, UnitTypesKeys, UnitTypesNames, UnitTypesProps, UnitsToColorsData } from '../types/database';
 import { savePreferencesData } from '../database/preferences';
 import YesNoPopup from '../components/Popups/YesNoPopup';
+import CustomSwitch from '../components/CustomSwitch';
+
 
 const PreferencesItem: React.FC<{ item: any }> = ({ item }) => (
-  <View style={styles.settingContainer}>
-    <Text style={styles.settingLabel}>{item.label}</Text>
-    <View style={styles.buttonsContainer}>
-      {item.buttons.map((button:any, index:any) => (
-        <TouchableOpacity 
-          key={index} 
-          style={[styles.button, { backgroundColor: button.color }]}
-          onPress={button.action}
-        >
-          <Text style={styles.buttonText}>{button.text}</Text>
-        </TouchableOpacity>
-      ))}
+  <View style={[
+    styles.container,
+    item.type === 'row' ? styles.horizontalContainer : styles.verticalContainer 
+  ]}>
+    <Text style={styles.label}>{item.label}</Text>
+    <View style={styles.itemContainer}>
+      {item.contents}
     </View>
   </View>
 );
 
+interface PreferencesListProps {
+  id: string;
+  initialContents: { label: string, value: string }[];
+  onPreferencesChange: (id: string, preferences: { label: string, value: string }[]) => void;
+}
+
+const PreferencesList: React.FC<PreferencesListProps> = ({ id, initialContents, onPreferencesChange }) => {
+  const [localPreferences, setLocalPreferences] = useState(initialContents);
+
+  const handleChange = (index: number, text: string) => {
+    // Replace comma with point
+    let value = text.replace(',', '.');
+
+    // Validate input
+    const isValid = !isNaN(Number(value)) || value === '.' || /^-?\d*\.\d*$/.test(value);
+    
+    
+    if (isValid) {
+      let updatedPreferences = [...localPreferences];
+      updatedPreferences[index].value = value;
+      setLocalPreferences(updatedPreferences);
+      onPreferencesChange(id, updatedPreferences);
+    }
+};
+
+  return (
+    <View style={styles.preferencesListContainer}>
+      {localPreferences.map((item, index) => (
+        <View key={index} style={styles.preferencesListRowContainer}>
+          <Text style={styles.preferencesListLabel}>{item.label}</Text>
+          <View style={styles.preferencesListNumericContainer}>
+            <TextInput 
+              style={styles.preferencesListNumericInput}
+              keyboardType='numeric'
+              returnKeyType='default'
+              maxLength={5}
+              textAlign='center'
+              value={item.value.toString()}
+              onChangeText={(text) => handleChange(index, text)}
+            />
+          </View>
+        </View>
+      ))}
+    </View>
+  );
+};
+
 
 const PreferencesScreen = ({ route, navigation }: PreferencesScreenProps) => {
     if (!route || ! navigation) return null; // Should never be null
-    const { preferences } = route.params;
+    const { userData, preferences } = route.params;
     const auth = getAuth();
     const user = auth.currentUser;
     const db = useContext(DatabaseContext);
     const { isOnline } = useUserConnection();
     const initialPreferences = useRef(preferences);
     const [showLeaveConfirmation, setShowLeaveConfirmation] = useState(false);
+    const [localListsPreferences, setLocalListsPreferences] = useState<Record<string, { label: string, value: string }[]>>({});
     // Deconstruct the preferences
     const [currentPreferences, setCurrentPreferences] = useState<PreferencesData>({
         first_day_of_week: preferences.first_day_of_week,
@@ -67,45 +112,87 @@ const PreferencesScreen = ({ route, navigation }: PreferencesScreenProps) => {
         if (havePreferencesChanged()) {
         setShowLeaveConfirmation(true); // Unsaved changes
         } else {
-        navigation.goBack();
+          navigation.goBack();
         }
     };
 
+    const handleListPreferencesChange = (id: string, preferences: { label: string, value: string }[]) => {
+      setLocalListsPreferences(prev => ({ ...prev, [id]: preferences }));
+    };
+
     const handleSavePreferences = async () => {
-        try {
-            await savePreferencesData(db, user.uid, currentPreferences);
+      if (areAllValuesValid(localListsPreferences)) {
+          try {
+            console.log('saving preferences...')
             navigation.goBack();
-        } catch (error:any) {
-            Alert.alert('Preferences saving failed', error.message);
-        };
+              // Somehow get the values and save them, after transforming to numeric
+              // await savePreferencesData(db, user.uid, mergedPreferences);
+              // navigation.navigate("Main Menu Screen", {
+              //     userData: userData,
+              //     preferences: mergedPreferences
+              // });
+          } catch (error:any) {
+              Alert.alert('Preferences saving failed', error.message);
+          };
+      } else {
+          Alert.alert('Invalid Input', 'Please make sure all values are valid numbers.');
+      }
+    };
+    
+    const areAllValuesValid = (listsPreferences: Record<string, { label: string, value: string }[]>) => {
+      for (let id in listsPreferences) {
+          for (let item of listsPreferences[id]) {
+              const value = item.value;
+              if (isNaN(Number(value)) || !/^-?\d*\.?\d*$/.test(value)) {
+                  return false;
+              }
+          }
+      }
+      return true;
+    };
+
+    const handleFirstDayOfWeekToggle = (value: boolean) => {
+      let newValue = value ? "Monday" : "Sunday";
+      setCurrentPreferences(prev => ({ ...prev, first_day_of_week: newValue }));
     };
 
     const settingsData = [
         {
         label: 'First Day of Week',
-        buttons: [
-            { color: 'green', text: '9', action: () => console.log('Green 9 pressed') },
-            { color: 'yellow', text: '10', action: () => console.log('Yellow 10 pressed') },
-        ],
+        type: 'row',
+        contents: <CustomSwitch
+          offText = 'Sun'
+          onText = 'Mon'
+          value={currentPreferences.first_day_of_week === "Monday"}
+          onValueChange={handleFirstDayOfWeekToggle}
+        />
         },
         {
         label: 'Unit Colors',
-        buttons: [
-            { color: 'green', text: '9', action: () => console.log('Green 9 pressed') },
-            { color: 'yellow', text: '10', action: () => console.log('Yellow 10 pressed') },
-        ],
+        type: 'column',
+        contents: <PreferencesList
+          id="units_to_colors"
+          initialContents={[
+            {label: 'Yellow', value: currentPreferences.units_to_colors.yellow.toString()},
+            {label: 'Orange', value: currentPreferences.units_to_colors.orange.toString()}
+          ]}
+          onPreferencesChange={handleListPreferencesChange}
+        />
         },
         {
         label: 'Point Conversion',
-        buttons: [
-            { color: 'blue', text: '5', action: () => console.log('Blue 5 pressed') },
-        ],
+        type: 'column',
+        contents: <PreferencesList
+          id="units_to_points" // Another unique identifier
+          initialContents={UnitTypesKeys.map((key, index) => ({
+            key: key,
+            label: UnitTypesNames[index],
+            value: currentPreferences.units_to_points[key]!.toString()  // Non-null assertion
+          }))}
+          onPreferencesChange={handleListPreferencesChange}
+        />
         },
-        // Add more settings items as needed
     ];
-
-    // Updating the preferences
-    // setPrefs(prev => ({ ...prev, first_day_of_week: 'Monday' }));
 
     // Make the system back press toggle the go back handler
     useEffect(() => {
@@ -125,38 +212,41 @@ const PreferencesScreen = ({ route, navigation }: PreferencesScreenProps) => {
 
     return (
         <View style={{flex:1, backgroundColor: '#FFFF99'}}>
-        <View style={styles.mainHeader}>
-            <MenuIcon
-            iconId='escape-preferences-screen'
-            iconSource={require('../assets/icons/arrow_back.png')}
-            containerStyle={styles.backArrowContainer}
-            iconStyle={styles.backArrow}
-            onPress={handleGoBack}
-            />
-        </View>
-        <ScrollView style={styles.scrollView}>
+          <View style={styles.mainHeader}>
+              <MenuIcon
+              iconId='escape-preferences-screen'
+              iconSource={require('../assets/icons/arrow_back.png')}
+              containerStyle={styles.backArrowContainer}
+              iconStyle={styles.backArrow}
+              onPress={handleGoBack}
+              />
+          </View>
+          <ScrollView 
+            style={styles.scrollView}
+            keyboardShouldPersistTaps="handled"
+          >
             {settingsData.map((item, index) => (
-            <PreferencesItem key={index} item={item} />
-            ))}
-        </ScrollView>
-        <View style={styles.savePreferencesButtonContainer}>
+              <PreferencesItem key={index} item={item} />
+              ))}
+          </ScrollView>
+          <View style={styles.savePreferencesButtonContainer}>
             <BasicButton 
                 text='Save Preferences'
                 buttonStyle={styles.savePreferencesButton}
                 textStyle={styles.savePreferencesButtonText}
                 onPress={handleSavePreferences}
             />
-        </View>
-        <YesNoPopup 
-            visible={showLeaveConfirmation} 
-            transparent={true}
-            onRequestClose={() => setShowLeaveConfirmation(false)}
-            message="You have unsaved changes. Are you sure you want to go back?"
-            onYes={() => {
+          </View>
+          <YesNoPopup 
+              visible={showLeaveConfirmation} 
+              transparent={true}
+              onRequestClose={() => setShowLeaveConfirmation(false)}
+              message="You have unsaved changes. Are you sure you want to go back?"
+              onYes={() => {
                 setShowLeaveConfirmation(false);
                 navigation.goBack();
-            }}
-        />
+              }}
+          />
         </View>
     );
 };
@@ -189,19 +279,28 @@ const styles = StyleSheet.create({
       flexShrink: 1,
       backgroundColor: '#FFFF99',
   },
-  settingContainer: {
-    flexDirection: 'row',
+  container: {
     justifyContent: 'space-between',
+    backgroundColor: 'white',
     padding: 10,
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: 'gray',
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: '#000',
+    margin: 2,
   },
-  settingLabel: {
+  horizontalContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  verticalContainer: {
+    flexDirection: 'column',
+  },
+  label: {
+    color: 'black',
     fontSize: 16,
     fontWeight: 'bold',
   },
-  buttonsContainer: {
+  itemContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -216,9 +315,47 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
   },
+  preferencesListContainer: {
+    flexDirection: 'column',
+    width: '100%',
+  },
+  preferencesListRowContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+  },
+  preferencesListLabel: {
+    fontSize: 16,
+    color: 'black',
+    fontWeight: '400',
+    marginLeft: 5,
+  },
+  preferencesListNumericContainer: {
+    height: 35,
+    width: 60,
+    borderRadius: 5,
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 8,
+    color: 'black'
+  },
+  preferencesListNumericInput: {
+    height: 40,
+    width: 60,
+    fontSize: 16,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#000',
+    backgroundColor: '#FFFF99',
+    fontWeight: '400',
+    textAlign: 'center',
+    textAlignVertical: 'center',
+  },
   savePreferencesButtonContainer: {
     width: '100%',
-    height: '10%',
+    height: 70,
     flexShrink: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -229,7 +366,7 @@ const styles = StyleSheet.create({
   },
   savePreferencesButton: {
     width: '50%',
-    height: '90%',
+    height: 50,
     alignItems: "center",
     justifyContent: 'center',
     padding: 10,
