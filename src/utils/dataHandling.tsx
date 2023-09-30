@@ -1,5 +1,6 @@
 ﻿import { 
     DrinkingSessionArrayItem, 
+    MeasureType, 
     PreferencesData, 
     UnitTypesKeys, 
     UnitTypesNames, 
@@ -234,17 +235,24 @@ export function getSingleMonthDrinkingSessions(date: Date, sessions: DrinkingSes
     return monthDrinkingSessions;
 };
 
-export function aggregateSessionsByDays (sessions: DrinkingSessionArrayItem[]): SessionsCalendarDatesType {
+export function aggregateSessionsByDays (sessions: DrinkingSessionArrayItem[], measureType:MeasureType = 'points', unitsToPoints?: UnitTypesProps): SessionsCalendarDatesType {
     return sessions.reduce((
         acc: SessionsCalendarDatesType,
         item: DrinkingSessionArrayItem
     ) => {
         let dateString = formatDate(new Date(item.start_time)); // MM-DD-YYYY
-        let newUnits:number = sumAllUnits(item.units);
-
+        let newUnits: number;
+        if (measureType === 'points'){
+            if (!unitsToPoints) throw new Error("You must specify the point conversion");
+            newUnits = sumAllPoints(item.units, unitsToPoints);
+        } else if (measureType === 'units') {
+            newUnits = sumAllUnits(item.units);
+        } else {
+            throw new Error("Unknown measure type");
+        }
         acc[dateString] = acc[dateString] ? { 
             // Already an entry exists
-            units: acc[dateString].units + newUnits,  
+            units: acc[dateString].units + newUnits,  // Does not distinguish between units/points
             blackout: acc[dateString].blackout === false ? item.blackout : true
         } : { 
             // First entry
@@ -315,19 +323,36 @@ export function sumUnitTypes(unitTypes: UnitTypesProps): number {
     return Object.values(unitTypes).reduce((subTotal, unitCount) => subTotal + (unitCount || 0), 0);
 };
 
-/** Using an object of units, calculate how many points this object amounts to.
+/** Type guard to check if a given key is a valid UnitType key */
+export function isUnitTypeKey(key: string): key is keyof UnitTypesProps {
+  return UnitTypesKeys.includes(key as any);
+}
+
+/** Using a UnitsObject and the units to points conversion object, calculate how many points this object amounts to.
  * 
- * @param units UnitsObject type
+ * @param unitsObject UnitsObject type
+ * @param unitsToPoits Units to point conversion object
  * @returns Number of points
  * 
  * @example let points = sumAllPoints({
  * [1694819284]: {'beer': 5},
  * [1694819286]: {'wine': 2, 'cocktail': 1},
- * })
+ * }, unitsToPoints)
  */
-export function sumAllPoints(units:UnitsObject):number {
-    // sum all points functionality here
-    return 1
+export function sumAllPoints(unitsObject: UnitsObject, unitsToPoints: UnitTypesProps): number {
+    let totalPoints = 0;
+    // Iterate over each timestamp in unitsObject
+    for (const unitTypes of Object.values(unitsObject)) {
+      // Iterate over each key in the unitTypes of the current timestamp
+      for (const unitKey of Object.keys(unitTypes)) {
+        if (isUnitTypeKey(unitKey)) {
+          const typeUnits = unitTypes[unitKey] || 0;
+          const typePoints = unitsToPoints[unitKey] || 0;
+          totalPoints += typeUnits * typePoints;
+        }
+      }
+    }
+    return totalPoints;
 };
 
 /** Input a session item and return the timestamp of the last unit
@@ -364,6 +389,24 @@ export const calculateThisMonthUnits = (dateObject: DateObject, sessions: Drinki
     );
     // Sum up the units
     return sessionsThisMonth.reduce((sum, session) => sum + sumAllUnits(session.units), 0);
+};
+
+/** Enter a dateObject and an array of drinking sessions and calculate 
+ * points for units consumed in the current month.
+ * 
+ * @param dateObject DateObject
+ * @param sessions Array of drinking sessions
+ * @param unitsToPoints Units to points conversion object
+ * @returns Number of points for units consumed during the current month
+ */
+export const calculateThisMonthPoints = (dateObject: DateObject, sessions: DrinkingSessionArrayItem[], unitsToPoints: UnitTypesProps): number => {
+    // Subset to this month's sessions only
+    const currentDate = timestampToDate(dateObject.timestamp);
+    const sessionsThisMonth = getSingleMonthDrinkingSessions(
+        currentDate, sessions, false
+    );
+    // Sum up the units
+    return sessionsThisMonth.reduce((sum, session) => sum + sumAllPoints(session.units, unitsToPoints), 0);
 };
 
 /** List all units to add and their amounts and add this to the current units hook
@@ -498,4 +541,4 @@ export const findUnitName = (unitKey: typeof UnitTypesKeys[number]) => {
     return unitName;
 };
 
-// test get year-month, getAdjacentMonths, aggregatesessionsbydays, month entries to colors (move these maybe to a different location)
+// test get year-month, getAdjacentMonths, aggregatesessionsbydays, month entries to colors (move these maybe to a different location), calculatethismonthpoints

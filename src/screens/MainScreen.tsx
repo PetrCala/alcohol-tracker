@@ -23,7 +23,7 @@ import { CurrentSessionData, DrinkingSessionArrayItem, DrinkingSessionData, Pref
 import { MainScreenProps } from '../types/screens';
 import { DateObject } from '../types/components';
 import { getAuth, signOut } from 'firebase/auth';
-import { dateToDateObject, getZeroUnitsObject, calculateThisMonthUnits, findOngoingSession } from '../utils/dataHandling';
+import { dateToDateObject, getZeroUnitsObject, calculateThisMonthUnits, findOngoingSession, calculateThisMonthPoints } from '../utils/dataHandling';
 import { useUserConnection } from '../context/UserConnectionContext';
 import UserOffline from '../components/UserOffline';
 import { updateUserLastOnline } from '../database/users';
@@ -51,6 +51,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
   const [visibleDateObject, setVisibleDateObject] = useState<DateObject>(
     dateToDateObject(new Date()));
   const [thisMonthUnits, setThisMonthUnits] = useState<number>(0);
+  // const [thisMonthPoints, setThisMonthPoints] = useState<number>(0);
   const [loadingNewSession, setLoadingNewSession] = useState<boolean>(false);
 
   // Automatically navigate to login screen if login expires
@@ -58,7 +59,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
     navigation.replace("Auth", {screen: "Login Screen"});
     return null;
   }
-  if (!db) return null; // Should never be null
+  if (!db || !preferences) return null; // Should never be null
 
   // Handle drinking session button press
   const startDrinkingSession = async () => {
@@ -123,6 +124,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
 
   // Monitor visible month and various statistics
   useEffect(() => {
+    // let thisMonthUnits = calculateThisMonthPoints(visibleDateObject, drinkingSessionData, preferences.units_to_points);
     let thisMonthUnits = calculateThisMonthUnits(visibleDateObject, drinkingSessionData);
     setThisMonthUnits(thisMonthUnits);
 
@@ -191,8 +193,16 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
           :
           <></>
           } 
-          <Text style={styles.menuDrinkingSessionInfoText}>Units this month:</Text> 
-          <Text style={styles.thisMonthUnitsText}>{thisMonthUnits}</Text> 
+          <View style={styles.menuInfoContainer}>
+            <View style={styles.menuInfoItemContainer}>
+              <Text style={styles.menuInfoText}>Units this month:</Text> 
+              <Text style={styles.menuInfoText}>{thisMonthUnits}</Text> 
+            </View>
+            <View style={styles.menuInfoItemContainer}>
+              <Text style={styles.menuInfoText}>Points this month:</Text> 
+              <Text style={styles.menuInfoText}>0</Text> 
+            </View>
+          </View>
           {/* Replace this with the overview and statistics */}
           <SessionsCalendar
             drinkingSessionData = {drinkingSessionData}
@@ -303,13 +313,24 @@ const styles = StyleSheet.create({
     color: '#ffffff', // White color for the text
     fontWeight: 'bold',
   },
-  menuDrinkingSessionInfoText: {
+  menuInfoContainer: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    backgroundColor: '#FFFF99',
+    width: '100%',
+  },
+  menuInfoItemContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: '#FFFF99',
+    width: '100%',
+  },
+  menuInfoText: {
     fontSize: 20,
     fontWeight: "bold",
-    marginTop: 5,
     color: "black",
     alignSelf: "center",
-    alignContent: "center",
+    // alignContent: "center",
     padding: 10,
   },
   thisMonthUnitsText: {

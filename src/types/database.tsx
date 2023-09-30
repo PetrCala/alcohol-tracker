@@ -107,7 +107,7 @@ export type UserData = {
   role: string;
   last_online: number;
   beta_key_id: string;
-} | {}
+}
 
 export type ProfileData = {
   display_name: string,
@@ -124,3 +124,4 @@ export type DrinkingSessionProps = {
   session: DrinkingSessionArrayItem
 };
 
+export type MeasureType = 'units' | 'points';

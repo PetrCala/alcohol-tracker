@@ -19,6 +19,7 @@
     removeUnits, 
     removeZeroObjectsFromSession, 
     setDateToCurrentTime, 
+    sumAllPoints, 
     sumAllUnits, 
     sumUnitTypes, 
     sumUnitsOfSingleType, 
@@ -511,8 +512,74 @@ describe('sumUnitTypes', () => {
 });
 
 describe('sumAllPoints', () => {
-  // sum all points tests here
-
+  
+    // Helper to get a random UnitsObject for testing purposes
+    // function getRandomPointsUnitsObject(): [UnitsObject, UnitTypesProps] {
+    // }
+    // Test for all units and point conversion metrics present
+  
+    it('should return 0 if all units are 0', () => {
+      const zeroUnits: UnitsObject = { 
+        1632423423: {
+          beer: 0,
+          cocktail: 0,
+          other: 0,
+        },
+        1632434223: {
+          beer: 0,
+        },
+      };
+      const zeroPoints: UnitTypesProps = {
+        beer: 0,
+        cocktail: 0,
+        other: 0,
+        strong_shot: 0,
+        weak_shot: 0,
+        wine: 0
+      };
+      const result = sumAllPoints(zeroUnits, zeroPoints);
+      expect(result).toBe(0);
+    });
+  
+    it('should correctly handle missing keys in UnitsObject', () => {
+      const partialUnits: UnitsObject = { 
+        1632423423: {
+          beer: 2,
+          cocktail: 1,
+        },
+        1632434223: {
+          other: 3,
+        },
+      };
+      const samplePoints: UnitTypesProps = {
+        beer: 5,
+        cocktail: 10,
+        other: 1,
+        strong_shot: 15,
+        weak_shot: 5,
+        wine: 7
+      };
+      const result = sumAllPoints(partialUnits, samplePoints);
+      expect(result).toBe(2*5 + 1*10 + 3*1);
+    });
+  
+    it('should correctly handle missing keys in unitsToPoints', () => {
+      const sampleUnits: UnitsObject = { 
+        1632423423: {
+          beer: 2,
+          cocktail: 1,
+        },
+        1632434223: {
+          other: 3,
+        },
+      };
+      const partialPoints: UnitTypesProps = {
+        beer: 5,
+        other: 1,
+      };
+      const result = sumAllPoints(sampleUnits, partialPoints);
+      expect(result).toBe(2*5 + 1*0 + 3*1); // cocktail has a missing key in unitsToPoints, so its value is considered 0
+    });
 });
 
 describe('getLastUnitAddedTime', () => {

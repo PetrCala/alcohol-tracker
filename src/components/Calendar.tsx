@@ -132,7 +132,12 @@ const SessionsCalendar = ({
     const [loadingMarkedDates, setLoadingMarkedDays] = useState<boolean>(true);
 
     const getMarkedDates = (drinkingSessionData: DrinkingSessionArrayItem[], preferences: PreferencesData): SessionsCalendarMarkedDates => {
-        var aggergatedSessions = aggregateSessionsByDays(drinkingSessionData);
+        // Use points to calculate the point sum (flagged as units)
+        var aggergatedSessions = aggregateSessionsByDays(
+            drinkingSessionData,
+            'points',
+            preferences.units_to_points
+        );
         var newMarkedDates = monthEntriesToColors(aggergatedSessions, preferences);
         return newMarkedDates;
     };
