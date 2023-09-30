@@ -1,12 +1,13 @@
 ﻿import { 
     DrinkingSessionArrayItem, 
+    PreferencesData, 
     UnitTypesKeys, 
     UnitTypesNames, 
     UnitTypesProps, 
     UnitsObject, 
     UnitsToColorsData 
 } from "../types/database";
-import { DateObject } from "../types/components";
+import { DateObject, SessionsCalendarDatesType, SessionsCalendarMarkedDates } from "../types/components";
 import { getRandomInt } from "./choice";
 
 export function formatDate (date: Date): string {
@@ -108,6 +109,50 @@ export const getPreviousMonth = (currentDate: DateObject): DateObject => {
     return dateToDateObject(newDate);
 };
 
+/**
+ * Returns an array of DateObjects representing months adjacent to the input DateObject.
+ * The number of months returned before and after the input month is determined by the input number `n`.
+ * 
+ * For example, if given a DateObject for September and n = 2, the returned array will have 
+ * DateObjects for July, August, September, October, and November.
+ * 
+ * @param {DateObject} currentDate - The reference date from which adjacent months are computed.
+ * @param {number} n - The number of months to compute before and after the `currentDate`.
+ * 
+ * @returns {DateObject[]} - An array of DateObjects, including the `currentDate` and `n` months before and after it.
+ * 
+ * @example
+ * const inputDate: DateObject = {
+ *     dateString: '2023-09-15',
+ *     day: 15,
+ *     month: 9,
+ *     timestamp: 1684560000000,
+ *     year: 2023,
+ * };
+ * const outputDates = getAdjacentMonths(inputDate, 2);
+ * console.log(outputDates);
+ * // Expected output: DateObjects for July, August, September, October, and November of 2023.
+ */
+export const getAdjacentMonths = (currentDate: DateObject, n: number): DateObject[] => {
+    const result: DateObject[] = [currentDate]; // Start with the input date
+
+    // Add next n months
+    let nextDate = currentDate;
+    for (let i = 0; i < n; i++) {
+        nextDate = getNextMonth(nextDate);
+        result.push(nextDate);
+    }
+
+    // Add previous n months
+    let prevDate = currentDate;
+    for (let i = 0; i < n; i++) {
+        prevDate = getPreviousMonth(prevDate);
+        result.unshift(prevDate); // Add to the beginning
+    }
+
+    return result;
+};
+
 
 /** Using a date object, return a year-month string in the format YYYY-MM.
  * 
@@ -188,6 +233,57 @@ export function getSingleMonthDrinkingSessions(date: Date, sessions: DrinkingSes
         session.start_time >= beginningUnix && session.start_time < endUnix);
     return monthDrinkingSessions;
 };
+
+export function aggregateSessionsByDays (sessions: DrinkingSessionArrayItem[]): SessionsCalendarDatesType {
+    return sessions.reduce((
+        acc: SessionsCalendarDatesType,
+        item: DrinkingSessionArrayItem
+    ) => {
+        let dateString = formatDate(new Date(item.start_time)); // MM-DD-YYYY
+        let newUnits:number = sumAllUnits(item.units);
+
+        acc[dateString] = acc[dateString] ? { 
+            // Already an entry exists
+            units: acc[dateString].units + newUnits,  
+            blackout: acc[dateString].blackout === false ? item.blackout : true
+        } : { 
+            // First entry
+            units: newUnits, 
+            blackout: item.blackout
+        };
+
+        return acc;
+    }, {});
+};
+
+export function monthEntriesToColors(sessions: SessionsCalendarDatesType, preferences: PreferencesData) {
+    // MarkedDates object, see official react-native-calendars docs
+    let markedDates: SessionsCalendarMarkedDates = Object.entries(sessions).reduce((
+        acc: SessionsCalendarMarkedDates,
+        [key, {
+                units: value,
+                blackout: blackoutInfo
+        }]
+    ) => {
+        let unitsToColorsInfo = preferences.units_to_colors;
+        let color:string = unitsToColors(value, unitsToColorsInfo);
+        if (blackoutInfo === true){
+            color = 'black'
+        };
+        let textColor:string = 'black';
+        if (color == 'red' || color == 'green' || color == 'black'){
+            textColor = 'white';
+        }
+        acc[key] = { 
+            units: value, // number of units
+            color: color,
+            textColor: textColor
+        }
+        return acc;
+    }, {});
+    return markedDates;
+};
+
 
 /** Sum up all units of alcohol regardless of category
  * 
@@ -402,4 +498,4 @@ export const findUnitName = (unitKey: typeof UnitTypesKeys[number]) => {
     return unitName;
 };
 
-// test get year-month
+// test get year-month, getAdjacentMonths, aggregatesessionsbydays, month entries to colors (move these maybe to a different location)

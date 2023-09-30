@@ -82,6 +82,13 @@ export type SessionsCalendarMarkedDates = {
     };
 };
 
+export type SessionsCalendarDatesType = {
+    [key: string]: {
+        units: number;
+        blackout: boolean;
+    }
+};
+
 export type DateObject = {
   dateString: string;
   day: number;

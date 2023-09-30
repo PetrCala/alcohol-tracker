@@ -16,7 +16,9 @@ import {
     changeDateBySomeDays,
     getTimestampAtMidnight,
     sumAllUnits,
-    getYearMonth
+    getYearMonth,
+    aggregateSessionsByDays,
+    monthEntriesToColors
 } from '../utils/dataHandling';
 import { 
     SessionsCalendarProps,
@@ -25,7 +27,6 @@ import {
 import { DrinkingSessionArrayItem, DrinkingSessionData, PreferencesData } from '../types/database';
 import { DateObject, DayState } from '../types/components';
 import LoadingData from './LoadingData';
-import useMarkedDates from '../hooks/useMarkedDates';
 
 type CalendarColors = 'yellow' | 'red' | 'orange' | 'black';
 
@@ -127,7 +128,14 @@ const SessionsCalendar = ({
     onDayPress
 }: SessionsCalendarProps) => {
     const [calendarData, setCalendarData ] = useState<DrinkingSessionArrayItem[]>(drinkingSessionData);
-    const markedDates = useMarkedDates(visibleDateObject, calendarData, preferences);
+    const [markedDates, setMarkedDates] = useState<SessionsCalendarMarkedDates>({});
+    const [loadingMarkedDates, setLoadingMarkedDays] = useState<boolean>(true);
+
+    const getMarkedDates = (drinkingSessionData: DrinkingSessionArrayItem[], preferences: PreferencesData): SessionsCalendarMarkedDates => {
+        var aggergatedSessions = aggregateSessionsByDays(drinkingSessionData);
+        var newMarkedDates = monthEntriesToColors(aggergatedSessions, preferences);
+        return newMarkedDates;
+    };
 
     /** Handler for the left arrow calendar press. Uses a callback to
      * move to the previous month
@@ -156,7 +164,14 @@ const SessionsCalendar = ({
         setCalendarData(drinkingSessionData);
     }, [drinkingSessionData]);
 
-    // if (loadingMarkedDates) return <LoadingData loadingText={""}/>;
+    // Monitor marked days
+    useEffect(() => {
+        let newMarkedDates = getMarkedDates(calendarData, preferences);
+        setMarkedDates(newMarkedDates);
+        setLoadingMarkedDays(false);
+    }, [calendarData, preferences]);
+
+    if (loadingMarkedDates) return <LoadingData loadingText={""}/>;
 
     return (
         <Calendar
