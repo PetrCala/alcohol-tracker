@@ -10,6 +10,7 @@ import MenuIcon from '../components/Buttons/MenuIcon';
 import { formatDate, formatDateToDay, formatDateToTime, getLastUnitAddedTime, sumAllUnits, sumUnitsOfSingleType, timestampToDate, unitsToColors } from '../utils/dataHandling';
 import BasicButton from '../components/Buttons/BasicButton';
 import { DrinkingSessionArrayItem } from '../types/database';
+import { getDatabaseData } from '../context/DatabaseDataContext';
 
 const SessionDataItem = ({
     heading,
@@ -39,7 +40,8 @@ const SessionDataItem = ({
 
 const SessionSummaryScreen = ({ route, navigation}: SessionSummaryScreenProps) => {
     if (!route || ! navigation) return null; // Should never be null
-    const { session, sessionKey, preferences } = route.params; 
+    const { session, sessionKey } = route.params; 
+    const { preferences } = getDatabaseData();
     // Units info
     const totalUnits = sumAllUnits(session.units);
     const unitSums = {
@@ -65,6 +67,7 @@ const SessionSummaryScreen = ({ route, navigation}: SessionSummaryScreenProps) =
       const lastUnitAddedDate = timestampToDate(lastUnitEditTimestamp);
       lastUnitAdded = formatDateToTime(lastUnitAddedDate);
     }
+    if (!preferences) return null;
     // Other
     let sessionColor = unitsToColors(totalUnits, preferences.units_to_colors);
     if (session.blackout === true) {
@@ -75,7 +78,6 @@ const SessionSummaryScreen = ({ route, navigation}: SessionSummaryScreenProps) =
         navigation.navigate('Edit Session Screen', {
           session: session,
           sessionKey: sessionKey,
-          preferences: preferences
         });
     };
 

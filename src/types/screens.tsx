@@ -18,10 +18,7 @@ export type AuthStackParamList = {
 
 export type AppStackParamList = {
   'Main Screen': undefined;
-  'Main Menu Screen': {
-    userData: UserData;
-    preferences: PreferencesData;
-  };
+  'Main Menu Screen': undefined;
   'Drinking Session Screen': { 
     session: DrinkingSessionArrayItem;
     sessionKey: string;
@@ -30,28 +27,16 @@ export type AppStackParamList = {
   'Profile Screen': undefined;
   'Social Screen': undefined;
   'Achievement Screen': undefined;
-  'Settings Screen': {
-    preferences: PreferencesData;
-  };
-  'Preferences Screen': {
-    userData: UserData;
-    preferences: PreferencesData;
-  };
-  'Day Overview Screen': { 
-    dateObject: DateObject;
-    drinkingSessionData: DrinkingSessionArrayItem[];
-    drinkingSessionKeys: string[]; // Stored explicitly to alleviate database storage space
-    preferences: PreferencesData;
-  };
-  'Edit Session Screen': {
-    session: DrinkingSessionArrayItem;
-    sessionKey: string;
-    preferences: PreferencesData;
+  'Settings Screen': undefined;
+  'Preferences Screen': undefined;
+  'Day Overview Screen': { dateObject: DateObject };
+  'Edit Session Screen': { 
+    session: DrinkingSessionArrayItem, 
+    sessionKey: string 
   };
   'Session Summary Screen': {
     session: DrinkingSessionArrayItem;
     sessionKey: string;
-    preferences: PreferencesData;
   };
   'Terms And Agreements Screen': undefined;
 };

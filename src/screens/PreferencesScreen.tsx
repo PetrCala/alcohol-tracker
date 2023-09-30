@@ -22,6 +22,7 @@ import { savePreferencesData } from '../database/preferences';
 import YesNoPopup from '../components/Popups/YesNoPopup';
 import CustomSwitch from '../components/CustomSwitch';
 import NumericSlider from '../components/Popups/NumericSlider';
+import { getDatabaseData } from '../context/DatabaseDataContext';
 
 
 interface PreferencesListProps {
@@ -62,11 +63,11 @@ const PreferencesList: React.FC<PreferencesListProps> = ({ id, initialContents, 
 
 const PreferencesScreen = ({ route, navigation }: PreferencesScreenProps) => {
     if (!route || ! navigation) return null; // Should never be null
-    const { userData, preferences } = route.params;
     const auth = getAuth();
     const user = auth.currentUser;
     const db = useContext(DatabaseContext);
     const { isOnline } = useUserConnection();
+    const { userData, preferences } = getDatabaseData();
     const initialPreferences = useRef(preferences);
     const [showLeaveConfirmation, setShowLeaveConfirmation] = useState(false);
     const [sliderVisible, setSliderVisible] = useState<boolean>(false);
@@ -76,18 +77,19 @@ const PreferencesScreen = ({ route, navigation }: PreferencesScreenProps) => {
     const [sliderHeading, setSliderHeading] = useState<string>("");
     const [sliderList, setSliderList] = useState<string>("");
     const [sliderKey, setSliderKey] = useState<string>("");
+    
+    // Automatically navigate to login screen if login expires or db is not provided
+    if (!db || !user || !preferences){
+      navigation.replace("Login Screen");
+      return null;
+    }
+
     // Deconstruct the preferences
     const [currentPreferences, setCurrentPreferences] = useState<PreferencesData>({
         first_day_of_week: preferences.first_day_of_week,
         units_to_colors: preferences.units_to_colors,
         units_to_points: preferences.units_to_points
     });
-
-    // Automatically navigate to login screen if login expires or db is not provided
-    if (!db || !user){
-        navigation.replace("Login Screen");
-        return null;
-    }
 
     const havePreferencesChanged = () => {
         return JSON.stringify(initialPreferences.current) !== JSON.stringify(currentPreferences);

@@ -21,7 +21,7 @@ import { DrinkingSessionArrayItem, DrinkingSessionData, UnitTypesKeys, UnitTypes
 import DatabaseContext from '../context/DatabaseContext';
 import { removeDrinkingSessionData, editDrinkingSessionData } from '../database/drinkingSessions';
 import SessionUnitsInputWindow from '../components/Buttons/SessionUnitsInputWindow';
-import { addUnits, formatDateToDay, formatDateToTime, removeUnits, removeZeroObjectsFromSession, sumAllUnits, sumUnitsOfSingleType, timestampToDate, unitsToColors } from '../utils/dataHandling';
+import { addUnits, dateToDateObject, formatDateToDay, formatDateToTime, removeUnits, removeZeroObjectsFromSession, sumAllUnits, sumUnitsOfSingleType, timestampToDate, unitsToColors } from '../utils/dataHandling';
 import { getAuth } from 'firebase/auth';
 import DrinkingSessionUnitWindow from '../components/DrinkingSessionUnitWindow';
 import { maxAllowedUnits } from '../utils/static';
@@ -31,13 +31,15 @@ import UserOffline from '../components/UserOffline';
 import { DrinkDataProps, UnitTypesViewProps } from '../types/components';
 import UnitTypesView from '../components/UnitTypesView';
 import SessionDetailsSlider from '../components/SessionDetailsSlider';
+import { getDatabaseData } from '../context/DatabaseDataContext';
 
 const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
     if (!route || ! navigation) return null; // Should never be null
-    const { session, sessionKey, preferences } = route.params; 
+    const { session, sessionKey } = route.params; 
     const auth = getAuth();
     const user = auth.currentUser;
     const { isOnline } = useUserConnection();
+    const { preferences } = getDatabaseData();
     // Units
     const [currentUnits, setCurrentUnits] = useState<UnitsObject>(session.units);
     const [totalUnits, setTotalUnits] = useState<number>(sumAllUnits(currentUnits));
@@ -60,16 +62,16 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
       // Other
     const [monkeMode, setMonkeMode] = useState<boolean>(false);
     const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
-    const sessionColor = unitsToColors(totalUnits, preferences.units_to_colors);
     const scrollViewRef = useRef<ScrollView>(null); // To navigate the view
     const sessionIsNew = sessionKey == 'edit-session-id' ? true : false;
-
     // Automatically navigate to login screen if login expires
-    if (user == null){
-        navigation.replace("Login Screen");
-        return null;
+    if (!user || !preferences){
+      navigation.replace("Login Screen");
+      return null;
     }
     if (!db) return null; // Should never be null
+
+    const sessionColor = unitsToColors(totalUnits, preferences.units_to_colors);
 
     const drinkData: DrinkDataProps = [
       { key: 'beer', icon: require('../assets/icons/beer.png'), typeSum: beerSum, setTypeSum: setBeerSum},
@@ -155,12 +157,19 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
         }
       }
 
-    const handleConfirmDelete = () => {
+    const handleConfirmDelete = async () => {
       if (!sessionIsNew){
-        deleteSession(db, user.uid, sessionKey);
-      }
-      setDeleteModalVisible(false);
-      navigation.goBack();
+        try {
+            await deleteSession(db, user.uid, sessionKey);
+        } catch (error:any) {
+            throw new Error('Failed to delete the session: ' + error.message);
+        } finally {
+          setDeleteModalVisible(false);
+          navigation.navigate("Day Overview Screen", {
+            dateObject: dateToDateObject(sessionDate)
+          });
+        };
+      };
     };
   
     const handleBackPress = () => {

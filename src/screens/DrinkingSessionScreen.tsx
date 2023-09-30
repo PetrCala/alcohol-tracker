@@ -229,7 +229,6 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
         navigation.replace("Session Summary Screen", {
           session: newSessionData,
           sessionKey: sessionKey,
-          preferences: preferences
         });
         setSavingSession(false);
       };
@@ -253,7 +252,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
       Alert.alert("Session discard failed", "Could not discard the session: " + error.message);
     } finally {
       setDiscardModalVisible(false);
-      navigation.goBack();
+      navigation.navigate("Main Screen");
     };
   };
 
@@ -267,7 +266,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
         Alert.alert("Database synchronization failed", error.message);
       }
     }
-    navigation.goBack();
+    navigation.navigate("Main Screen");
   };
 
   if (!isOnline) return (<UserOffline/>);

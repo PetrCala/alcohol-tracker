@@ -26,6 +26,7 @@ import { listenForDataChanges, readDataOnce } from '../database/baseFunctions';
 import ReauthentificatePopup from '../components/Popups/ReauthentificatePopup';
 import UserOffline from '../components/UserOffline';
 import { useUserConnection } from '../context/UserConnectionContext';
+import { getDatabaseData } from '../context/DatabaseDataContext';
 
 const MenuItem: React.FC<MainMenuItemProps> = ({
     heading,
@@ -47,7 +48,7 @@ const MenuItem: React.FC<MainMenuItemProps> = ({
 
 const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
   if (!route || !navigation) return null; // Should never be null
-  const { userData, preferences } = route.params;
+  const { userData, preferences } = getDatabaseData();
   // Context, database, and authentification
   const auth = getAuth();
   const user = auth.currentUser;
@@ -64,7 +65,7 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
   const [reauthentificateModalVisible, setReauthentificateModalVisible] = useState<boolean>(false);
   const [adminFeedbackModalVisible, setAdminFeedbackModalVisible] = useState<boolean>(false);
 
-  if (!db) return null; // Should never be null
+  if (!db || !preferences || !userData) return null; // Should never be null
 
   const handleSignOut = async () => {
     try {
@@ -161,24 +162,17 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
     }, [db, user]); 
   };
 
-
-
   let modalData = [
     { heading: 'General', data:[
         // { 
         //     label: 'Settings', 
         //     icon: require('../assets/icons/settings.png'), 
-        //     action: () => navigation.navigate("Settings Screen", {
-        //       preferences: preferences
-        //     })
+        //     action: () => navigation.navigate("Settings Screen")
         // },
         { 
             label: 'Preferences', 
             icon: require('../assets/icons/settings.png'), 
-            action: () => navigation.navigate("Preferences Screen", {
-              userData: userData,
-              preferences: preferences
-            })
+            action: () => navigation.navigate("Preferences Screen")
         },
         // Potentially preferences screen?
         { 

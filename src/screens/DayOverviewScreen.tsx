@@ -4,7 +4,8 @@ import {
   View,
   FlatList,
   TouchableOpacity,
-  StyleSheet
+  StyleSheet,
+  Alert
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import MenuIcon from '../components/Buttons/MenuIcon';
@@ -28,6 +29,7 @@ import { getAuth } from 'firebase/auth';
 import UserOffline from '../components/UserOffline';
 import { useUserConnection } from '../context/UserConnectionContext';
 import BasicButton from '../components/Buttons/BasicButton';
+import { getDatabaseData } from '../context/DatabaseDataContext';
 
 type CombinedDataProps = {
   sessionKey: string,
@@ -36,16 +38,16 @@ type CombinedDataProps = {
 
 const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
     if (!route || ! navigation) return null; // Should never be null
-    const { 
-      dateObject, 
-      drinkingSessionData, 
-      drinkingSessionKeys,
-      preferences 
-    } = route.params; // Params for navigation
+    const { dateObject } = route.params; // Params for navigation
     const auth = getAuth();
     const user = auth.currentUser;
     const db = useContext(DatabaseContext);
     const { isOnline } = useUserConnection();
+    const { 
+      drinkingSessionData, 
+      drinkingSessionKeys, 
+      preferences 
+    } = getDatabaseData();
     const [ date, setDate ] = useState<Date>(timestampToDate(dateObject.timestamp));
     const [ dailySessionData, setDailyData ] = useState<DrinkingSessionArrayItem[]>([]);
     const [ editMode, setEditMode ] = useState<boolean>(false);
@@ -53,7 +55,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
     const [ combinedData, setCombinedData ] = useState<CombinedDataProps[]>([]);
 
     // Automatically navigate to login screen if login expires
-    if (user == null){
+    if (!user || !preferences){
         navigation.replace("Login Screen");
         return null;
     }
@@ -83,11 +85,10 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
         });
     };
 
-    const onEditSessionPress = (sessionKey:string, session:DrinkingSessionArrayItem) => {
-        navigation.navigate('Edit Session Screen', {
+    const onEditSessionPress = (session: DrinkingSessionArrayItem, sessionKey:string) => {
+        navigation.navigate('Edit Session Screen', { 
           session: session,
-          sessionKey: sessionKey,
-          preferences: preferences
+          sessionKey: sessionKey 
         });
     };
 
@@ -134,7 +135,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
                       session.blackout === true ? {backgroundColor: 'white'} : {}
                     ]}
                     iconStyle={styles.menuIcon}
-                    onPress={() => onEditSessionPress(sessionKey, session)} // Use keyextractor to load id here
+                    onPress={() => onEditSessionPress(session, sessionKey)} // Use keyextractor to load id here
                 />
                 :
                 <></>
@@ -191,7 +192,6 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
                     {
                     session: newSession,
                     sessionKey: 'edit-session-id',
-                    preferences: preferences
                   }
                 )}
                 >
@@ -210,14 +210,13 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
             setDate(newDate);
         };
     }
-    useFocusEffect(
-        useCallback(() => {
-            console.log(drinkingSessionData.length)
-            let newSessions = getSingleDayDrinkingSessions(date, drinkingSessionData);
-            setDailyData(newSessions);
-            console.log(newSessions.length)
-        }, [date, drinkingSessionData])
-    );
+    // useFocusEffect(
+    //     useCallback(() => {
+    //         let newSessions = getSingleDayDrinkingSessions(date, drinkingSessionData);
+    //         setDailyData(newSessions);
+    //         console.log(newSessions.length)
+    //     }, [date, drinkingSessionData])
+    // );
 
     if (!isOnline) return (<UserOffline/>);
 

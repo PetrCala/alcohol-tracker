@@ -13,6 +13,8 @@ import { useUserConnection } from '../context/UserConnectionContext';
 import DatabaseContext from '../context/DatabaseContext';
 import UserOffline from '../components/UserOffline';
 import BasicButton from '../components/Buttons/BasicButton';
+import { getDatabase } from 'firebase/database';
+import { getDatabaseData } from '../context/DatabaseDataContext';
 
 const SettingsItem: React.FC<{ item: any }> = ({ item }) => (
   <View style={styles.settingContainer}>
@@ -34,14 +36,14 @@ const SettingsItem: React.FC<{ item: any }> = ({ item }) => (
 
 const SettingsScreen = ({ route, navigation }: SettingsScreenProps) => {
   if (!route || ! navigation) return null; // Should never be null
-  const { preferences } = route.params;
+  const { preferences } = getDatabaseData();
   const auth = getAuth();
   const user = auth.currentUser;
   const db = useContext(DatabaseContext);
   const { isOnline } = useUserConnection();
 
   // Automatically navigate to login screen if login expires
-  if (user == null){
+  if (!user || !preferences){
       navigation.replace("Login Screen");
       return null;
   }
