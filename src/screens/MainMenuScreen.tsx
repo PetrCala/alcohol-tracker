@@ -104,7 +104,7 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
     }
     handleSignOut() // Sign out the user
     // Add an alert here informing about the user deletion
-    navigation.replace("Login Screen");
+    navigation.replace("Auth", {screen: "Login Screen"});
   };
 
   /** Handle cases when deleting a user fails */
@@ -135,7 +135,7 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
   const handleConfirmSignout = () => {
     handleSignOut();
     setSignoutModalVisible(false);
-    navigation.replace("Login Screen");
+    navigation.replace("Auth", {screen: "Login Screen"});
   };
 
   const handleConfirmDeleteUser = () => {

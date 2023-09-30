@@ -1,4 +1,4 @@
-import React, { useEffect, useState, version } from 'react';
+import React, { Suspense, lazy } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";

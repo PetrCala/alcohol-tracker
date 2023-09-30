@@ -91,8 +91,12 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
         if (data != null){
             newDrinkingSessionData = Object.values(data); // To an array
             newDrinkingSessionKeys = Object.keys(data);
-            setDrinkingSessionData(newDrinkingSessionData);
-            setDrinkingSessionKeys(newDrinkingSessionKeys)
+            if (JSON.stringify(newDrinkingSessionData) !== JSON.stringify(drinkingSessionData)) {
+                setDrinkingSessionData(newDrinkingSessionData);
+            }
+            if (JSON.stringify(newDrinkingSessionKeys) !== JSON.stringify(drinkingSessionKeys)) {
+                setDrinkingSessionKeys(newDrinkingSessionKeys);
+            }
         }
         setLoadingDrinkingSessionData(false);
         });
@@ -108,8 +112,10 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
     useEffect(() => {
         let userRef = `user_preferences/${user.uid}`
         let stopListening = listenForDataChanges(db, userRef, (data:PreferencesData) => {
-        setPreferences(data);
-        setLoadingUserPreferences(false);
+            if (JSON.stringify(data) !== JSON.stringify(preferences)) {
+                setPreferences(data);
+            };
+            setLoadingUserPreferences(false);
         });
 
         return () => stopListening();
@@ -121,7 +127,9 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
         let userRef = `user_unconfirmed_days/${user.uid}`
         let stopListening = listenForDataChanges(db, userRef, (data:UnconfirmedDaysData) => {
         if (data){ // Might be null
-            setUnconfirmedDays(data);
+            if (JSON.stringify(data) !== JSON.stringify(unconfirmedDays)) {
+                setUnconfirmedDays(data);
+            };
         }
         setLoadingUnconfirmedDays(false);
         });
@@ -136,7 +144,9 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
         let userRef = `users/${user.uid}`
         let stopListening = listenForDataChanges(db, userRef, (data:UserData) => {
         if (data){ // Might be null
-            setUserData(data);
+            if (JSON.stringify(data) !== JSON.stringify(userData)) {
+                setUserData(data);
+            };
         }
         setLoadingUserData(false);
         });
