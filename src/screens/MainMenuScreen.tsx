@@ -65,8 +65,6 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
   const [reauthentificateModalVisible, setReauthentificateModalVisible] = useState<boolean>(false);
   const [adminFeedbackModalVisible, setAdminFeedbackModalVisible] = useState<boolean>(false);
 
-  if (!db || !preferences || !userData) return null; // Should never be null
-
   const handleSignOut = async () => {
     try {
       // TODO
@@ -79,6 +77,7 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
   };
 
   const handleDeleteUser = async (password:string) => {
+    if (!db || !userData) return;
     // Reauthentificate the user
     let authentificationResult:UserCredential|null = null;
     try {
@@ -125,6 +124,7 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
   };
 
   const handleSubmitFeedback = (feedback: string) => {
+    if (!db) return;
     if (feedback !== ''){
         submitFeedback(db, user.uid, feedback);
         // Popup an information button at the top (your feedback has been submitted)
@@ -144,8 +144,9 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
   };
 
   // Monitor feedback data
-  if (userData.role == 'admin'){
+  if (userData?.role == 'admin'){
     useEffect(() => {
+        if (!db) return;
         // Start listening for changes when the component mounts
         let dbRef = `feedback/`
         let stopListening = listenForDataChanges(db, dbRef, (data: FeedbackData) => {
@@ -217,11 +218,12 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
         ]},
     ];
 
-  if (userData.role == 'admin'){
+  if (userData?.role == 'admin'){
     modalData = [...modalData, ...adminData] // Add admin settings
   };
 
   if (!isOnline) return (<UserOffline/>);
+  if (!db || !preferences || !userData) return null; // Should never be null
 
   return (
       <View style={styles.mainContainer}>

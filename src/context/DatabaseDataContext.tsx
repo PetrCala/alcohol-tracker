@@ -62,15 +62,9 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
         loadingUserData,
     ].some(Boolean);  // true if any of them is true
 
-    // Provide empty context if the login expires
-    if (!user || !db) return (
-        <DatabaseDataContext.Provider value={undefined}>
-            {children}
-        </DatabaseDataContext.Provider>
-    );
-
     // Monitor current session data
     useEffect(() => {
+        if (!user || !db) return;
         let userRef = `user_current_session/${user.uid}`
         let stopListening = listenForDataChanges(db, userRef, (data:CurrentSessionData) => {
             setCurrentSessionData(data);
@@ -83,6 +77,7 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
 
     // Monitor drinking session data and keys
     useEffect(() => {
+        if (!user || !db) return;
         // Start listening for changes when the component mounts
         let newData:DrinkingSessionArrayItem[];
         let newKeys:string[];
@@ -108,6 +103,7 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
 
     // Monitor user preferences
     useEffect(() => {
+        if (!user || !db) return;
         let userRef = `user_preferences/${user.uid}`
         let stopListening = listenForDataChanges(db, userRef, (data:PreferencesData) => {
             if (JSON.stringify(data) !== JSON.stringify(preferences)) {
@@ -122,6 +118,7 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
 
     // Monitor unconfirmed days
     useEffect(() => {
+        if (!user || !db) return;
         let newData:UnconfirmedDaysData = {};
         let userRef = `user_unconfirmed_days/${user.uid}`
         let stopListening = listenForDataChanges(db, userRef, (data:UnconfirmedDaysData) => {
@@ -139,6 +136,7 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
 
     // Monitor user data
     useEffect(() => {
+        if (!user || !db) return;
         let userRef = `users/${user.uid}`
         let stopListening = listenForDataChanges(db, userRef, (data:UserData) => {
             if (JSON.stringify(data) !== JSON.stringify(userData)) {
@@ -150,6 +148,13 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
         return () => stopListening();
 
     }, [db, user]);
+
+    // Provide empty context if the login expires
+    if (!user || !db) return (
+        <DatabaseDataContext.Provider value={undefined}>
+            {children}
+        </DatabaseDataContext.Provider>
+    );
 
     // if (isLoading) return <LoadingData loadingText=''/>;
 

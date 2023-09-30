@@ -64,14 +64,6 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
     const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
     const scrollViewRef = useRef<ScrollView>(null); // To navigate the view
     const sessionIsNew = sessionKey == 'edit-session-id' ? true : false;
-    // Automatically navigate to login screen if login expires
-    if (!user || !preferences){
-      navigation.replace("Login Screen");
-      return null;
-    }
-    if (!db) return null; // Should never be null
-
-    const sessionColor = unitsToColors(totalUnits, preferences.units_to_colors);
 
     const drinkData: DrinkDataProps = [
       { key: 'beer', icon: require('../assets/icons/beer.png'), typeSum: beerSum, setTypeSum: setBeerSum},
@@ -163,6 +155,7 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
 
     const handleConfirmDelete = async () => {
       if (!sessionIsNew){
+        if (!user) return;
         try {
             await deleteSession(db, user.uid, sessionKey);
         } catch (error:any) {
@@ -182,6 +175,13 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
 
 
     if (!isOnline) return (<UserOffline/>);
+    if (!user || !preferences){
+      navigation.replace("Login Screen");
+      return null;
+    }
+    if (!db) return null; // Should never be null
+    
+    const sessionColor = unitsToColors(totalUnits, preferences.units_to_colors);
     
     return (
       <>

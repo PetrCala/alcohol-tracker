@@ -81,13 +81,6 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
   const scrollViewRef = useRef<ScrollView>(null); // To navigate the view
 
 
-  // Automatically navigate to login screen if login expires
-  if (user == null){
-    navigation.replace("Login Screen");
-    return null;
-  }
-  if (!db) return null; // Should never be null
-
   const drinkData: DrinkDataProps = [
     { key: 'beer', icon: require('../assets/icons/beer.png'), typeSum: beerSum, setTypeSum: setBeerSum},
     { key: 'wine', icon: require('../assets/icons/wine.png'), typeSum: wineSum, setTypeSum: setWineSum},
@@ -139,6 +132,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
 
   // Change database value once every second
   useEffect(() => {
+    if (!db || !user) return;
     // Compare previous values with current values
     const unitsChanged = prevUnits !== currentUnits;
     const blackoutChanged = prevIsBlackout !== isBlackout;
@@ -241,6 +235,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
   }
 
   const handleConfirmDiscard = async () => {
+    if (!db || !user) return;
     let timeSinceLastUpdate = Date.now() - lastUpdate;
     if (timeSinceLastUpdate < 1000) {
       await sleep(1000 - timeSinceLastUpdate); // Wait for database synchronization
@@ -259,6 +254,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
   /** If an update is pending, update immediately before navigating away
    */
   const handleBackPress = async () => {
+    if (!db || !user) return;
     if (pendingUpdate) {
       try{
         await updateSessionUnits(db, user.uid, sessionKey, currentUnits);
@@ -270,8 +266,13 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
   };
 
   if (!isOnline) return (<UserOffline/>);
-
   if (savingSession) return (<LoadingData loadingText='Saving session...'/>);
+  if (user == null){
+    navigation.replace("Login Screen");
+    return null;
+  }
+  if (!db) return null; // Should never be null
+
 
   return (
     <>

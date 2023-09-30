@@ -45,25 +45,16 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
     userData,
     isLoading
   } = getDatabaseData();
-  // Modals
-  const [settingsModalVisible, setSettingsModalVisible] = useState<boolean>(false);
-  // Other hooks
+  
   const [visibleDateObject, setVisibleDateObject] = useState<DateObject>(
     dateToDateObject(new Date()));
   const [thisMonthUnits, setThisMonthUnits] = useState<number>(0);
-  // const [thisMonthPoints, setThisMonthPoints] = useState<number>(0);
+  const [thisMonthPoints, setThisMonthPoints] = useState<number>(0);
   const [loadingNewSession, setLoadingNewSession] = useState<boolean>(false);
-
-  // Automatically navigate to login screen if login expires
-  if (user == null){
-    navigation.replace("Auth", {screen: "Login Screen"});
-    return null;
-  }
-  if (!db || !preferences) return null; // Should never be null
-
+   
   // Handle drinking session button press
   const startDrinkingSession = async () => {
-    if (!preferences) return null; // Should never be null 
+    if (!preferences || !db || !user) return null; // Should never be null 
     let sessionData:DrinkingSessionArrayItem;
     let sessionKey:string;
     let ongoingSession = findOngoingSession(drinkingSessionData);
@@ -112,6 +103,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
   // Update the user last login time
   useEffect(() => {
     const fetchData = async () => {
+      if (!db || !user) return;
       try {
         await updateUserLastOnline(db, user.uid);
       } catch (error:any) {
@@ -124,15 +116,22 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
 
   // Monitor visible month and various statistics
   useEffect(() => {
-    // let thisMonthUnits = calculateThisMonthPoints(visibleDateObject, drinkingSessionData, preferences.units_to_points);
+    if (!preferences) return;
     let thisMonthUnits = calculateThisMonthUnits(visibleDateObject, drinkingSessionData);
+    let thisMonthPoints = calculateThisMonthPoints(visibleDateObject, drinkingSessionData, preferences.units_to_points);
+    
+    setThisMonthPoints(thisMonthPoints);
     setThisMonthUnits(thisMonthUnits);
-
   }, [drinkingSessionData, visibleDateObject]);
 
+
+  if (!user) {
+    navigation.replace("Auth", {screen: "Login Screen"});
+    return;
+  }
   if (!isOnline) return <UserOffline />;
   if (isLoading || loadingNewSession) return <LoadingData loadingText={loadingNewSession ? 'Starting a new session...' : ''} />;
-  if (!drinkingSessionData || !preferences || !userData) return null;
+  if (!db || !preferences || !drinkingSessionData || !userData) return;
 
   return ( 
     <>
@@ -200,7 +199,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
             </View>
             <View style={styles.menuInfoItemContainer}>
               <Text style={styles.menuInfoText}>Points this month:</Text> 
-              <Text style={styles.menuInfoText}>0</Text> 
+              <Text style={styles.menuInfoText}>{thisMonthPoints}</Text> 
             </View>
           </View>
           {/* Replace this with the overview and statistics */}

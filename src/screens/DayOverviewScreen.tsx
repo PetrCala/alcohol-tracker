@@ -54,12 +54,6 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
     // Create a combined data object
     const [ combinedData, setCombinedData ] = useState<CombinedDataProps[]>([]);
 
-    // Automatically navigate to login screen if login expires
-    if (!user || !preferences){
-        navigation.replace("Login Screen");
-        return null;
-    }
-
     // Monitor the daily sessions data
     useEffect(() => {
       let newSessions = getSingleDayDrinkingSessions(date, drinkingSessionData)
@@ -94,6 +88,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
 
 
     const DrinkingSession = ({sessionKey, session}: DrinkingSessionProps) => {
+        if (!preferences) return;
         // Calculate the session color
         var totalUnits = sumAllUnits(session.units)
         var unitsToColorsInfo = preferences.units_to_colors;
@@ -219,15 +214,11 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
     // );
 
     if (!isOnline) return (<UserOffline/>);
-
-    // Loading drinking session data
-    if ( date == null ) {
-        return (
-            <LoadingData
-                loadingText=''
-            />
-        );
-    };
+    if (!date) return <LoadingData loadingText=''/>;
+    if (!user || !preferences){
+        navigation.replace("Login Screen");
+        return;
+    }
 
     return (
       <View style={{flex:1, backgroundColor: '#FFFF99'}}>

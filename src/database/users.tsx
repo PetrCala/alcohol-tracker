@@ -4,6 +4,39 @@ import { appInBeta } from "../utils/static";
 import { EmailAuthProvider, User, UserCredential, reauthenticateWithCredential } from "firebase/auth";
 import { Alert } from "react-native";
 
+export const getDefaultPreferences = ():PreferencesData => {
+  return {
+    first_day_of_week: 'Monday',
+    units_to_colors: {
+      'orange': 10,
+      'yellow': 5
+    },
+    units_to_points: {
+      'beer': 1,
+      'cocktail': 1.5,
+      'other': 1,
+      'strong_shot': 1,
+      'weak_shot': 0.5,
+      'wine': 1
+    },
+  };
+};
+
+export const getDefaultUserData = (
+ profileData: ProfileData,
+ betaKeyId: string, // Beta feature
+):UserData => {
+  let userRole = appInBeta ? 'beta_user' : 'user'; // Beta feature
+  let timestampNow = new Date().getTime();
+  return {
+    profile: profileData,
+    friends: {},
+    role: userRole,
+    last_online: timestampNow,
+    beta_key_id: betaKeyId, // Beta feature
+  };
+};
+
 /** In the database, create base info for a user. This will
  * be stored under the "users" object in the database.
  * 
@@ -16,43 +49,14 @@ export async function pushNewUserInfo(
  profileData: ProfileData,
  betaKeyId: string, // Beta feature
 ){
-  // User current session
-  let timestampNow = new Date().getTime();
-  // User preferences
-  let newUnitsToColors:UnitsToColorsData = {
-    orange: 10,
-    yellow: 5,
-  }
-  let newUnitsToPoints:UnitTypesProps = {
-    'beer': 1,
-    'cocktail': 1.5,
-    'other': 1,
-    'strong_shot': 1,
-    'weak_shot': 0.5,
-    'wine': 1
-  };
-  let newPreferences:PreferencesData = {
-    first_day_of_week: 'Monday',
-    units_to_colors: newUnitsToColors,
-    units_to_points: newUnitsToPoints,
-  };
-  // Users
-  let userRole = appInBeta ? 'beta_user' : 'user'; // Beta feature
-  let newUserData:UserData = {
-    profile: profileData,
-    friends: {},
-    role: userRole,
-    last_online: timestampNow,
-    beta_key_id: betaKeyId, // Beta feature
-  };
   // Allowed types
   let updates: {
     [key:string]: UserData | PreferencesData | any
   } = {};
   // User preferences
-  updates[`user_preferences/${userId}`] = newPreferences;
+  updates[`user_preferences/${userId}`] = getDefaultPreferences();
   // Users
-  updates[`users/${userId}`] = newUserData;
+  updates[`users/${userId}`] = getDefaultUserData(profileData, betaKeyId);
   // Beta feature
   updates[`beta_keys/${betaKeyId}/in_usage`] = true;
   updates[`beta_keys/${betaKeyId}/user_id`] = userId;
