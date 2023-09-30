@@ -67,6 +67,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
   const [note, setNote] = useState<string>(session.note);
   // Time info
   const [pendingUpdate, setPendingUpdate] = useState(false);
+  const [lastUpdate, setLastUpdate] = useState<number>(Date.now());
   const updateTimeout = 1000; // Synchronize with DB every x milliseconds
   const [dbSyncSuccessful, setDbSyncSuccessful] = useState(false);
   const sessionDate = timestampToDate(session.start_time);
@@ -162,26 +163,47 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
           await saveDrinkingSessionData(db, user.uid, newSessionData, sessionKey);
         } catch (error:any) {
           throw new Error("Could not save the drinking session data");
+        } finally {
+          setPendingUpdate(false); // Data has been synchronized with DB
+          setLastUpdate(Date.now());
+          setDbSyncSuccessful(true);
         }
-        setPendingUpdate(false); // Data has been synchronized with DB
-        setDbSyncSuccessful(true);
       }, updateTimeout); // Update every x milliseconds
       // Clear timer on unmount or when units changes
       return () => clearTimeout(timer);
     }
   }, [currentUnits, isBlackout, note]);
 
+  async function sleep(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  async function waitForPendingUpdateToComplete(): Promise<boolean> {
+    if (!pendingUpdate) {
+      return false; // No waiting was needed
+    }
+    return new Promise((resolve) => {
+      const checkInterval = setInterval(() => {
+        if (!pendingUpdate) {
+          clearInterval(checkInterval);
+          resolve(true);
+        }
+      }, 100); // Check every 100ms
+    });
+  }
 
   async function saveSession(db: any, userId: string) {
     if (totalUnits > 99){
       console.log('Cannot save this session');
       return null;
     };
-    // Should not happen
-    if (!navigation){
-      Alert.alert('Navigation not found', 'Failed to fetch the navigation');
+    if (!navigation) return null; // Should not happen
+    // Wait for any pending updates to resolve first
+    if (pendingUpdate){
+      console.log('Data synchronization ongoing');
       return null;
-    };
+    }
+    let timeSinceLastUpdate = Date.now() - lastUpdate;
     // Save the data into the database
     if (totalUnits > 0){
       setSavingSession(true);
@@ -191,42 +213,59 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
         units: currentUnits,
         blackout: isBlackout,
         note: note,
-        ongoing: null,
+        ongoing: null
       };
       newSessionData = removeZeroObjectsFromSession(newSessionData); // Delete the initial log of zero units that was used as a placeholder
       try {
+        if (timeSinceLastUpdate < 1000) {
+          await sleep(1000 - timeSinceLastUpdate); // Wait for database synchronization
+        }
         await updateCurrentSessionKey(db, userId, null); // Remove the current session id info
         await saveDrinkingSessionData(db, userId, newSessionData, sessionKey); // Save drinking session data
       } catch (error:any) {
         throw new Error('Failed to save drinking session data: ' + error.message);
+      } finally {
+        // Reroute to session summary, do not allow user to return
+        navigation.replace("Session Summary Screen", {
+          session: newSessionData,
+          sessionKey: sessionKey,
+          preferences: preferences
+        });
+        setSavingSession(false);
       };
-      // Reroute to session summary, do not allow user to return
-      navigation.replace("Session Summary Screen", {
-        session: newSessionData,
-        sessionKey: sessionKey,
-        preferences: preferences
-      });
-      setSavingSession(false);
     };
   };
 
+  const handleDiscardSession = () => {
+    if (pendingUpdate) return null;
+    setDiscardModalVisible(true);
+  }
+
   const handleConfirmDiscard = async () => {
+    let timeSinceLastUpdate = Date.now() - lastUpdate;
+    if (timeSinceLastUpdate < 1000) {
+      await sleep(1000 - timeSinceLastUpdate); // Wait for database synchronization
+    }
     try {
       await removeDrinkingSessionData(db, user.uid, sessionKey);
       await updateCurrentSessionKey(db, user.uid, null);
     } catch (error:any) {
       Alert.alert("Session discard failed", "Could not discard the session: " + error.message);
-      return null;
+    } finally {
+      setDiscardModalVisible(false);
+      navigation.goBack();
     };
-    setDiscardModalVisible(false);
-    navigation.goBack();
   };
 
   /** If an update is pending, update immediately before navigating away
    */
   const handleBackPress = async () => {
     if (pendingUpdate) {
-      await updateSessionUnits(db, user.uid, sessionKey, currentUnits);
+      try{
+        await updateSessionUnits(db, user.uid, sessionKey, currentUnits);
+      } catch (error:any) {
+        Alert.alert("Database synchronization failed", error.message);
+      }
     }
     navigation.goBack();
   };
@@ -324,9 +363,12 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
     <View style={styles.saveSessionContainer}>
       <BasicButton 
         text='Discard Session'
-        buttonStyle={styles.saveSessionButton}
+        buttonStyle={[
+          styles.saveSessionButton,
+          pendingUpdate ? styles.disabledSaveSessionButton : styles.enabledSaveSessionButton
+        ]}
         textStyle={styles.saveSessionButtonText}
-        onPress={() => setDiscardModalVisible(true)}
+        onPress={handleDiscardSession}
       />
       <YesNoPopup
         visible={discardModalVisible}
@@ -337,7 +379,10 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
       />
       <BasicButton 
         text='Save Session'
-        buttonStyle={styles.saveSessionButton}
+        buttonStyle={[
+          styles.saveSessionButton,
+          pendingUpdate ? styles.disabledSaveSessionButton : styles.enabledSaveSessionButton
+        ]}
         textStyle={styles.saveSessionButtonText}
         onPress={() => saveSession(db, user.uid)}
       />
@@ -523,9 +568,14 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 10,
     marginTop: 10,
-    backgroundColor: '#fcf50f',
     borderWidth: 1,
     borderColor: '#000',
+  },
+  enabledSaveSessionButton: {
+    backgroundColor: '#fcf50f',
+  },
+  disabledSaveSessionButton: {
+    backgroundColor: '#fffb82',
   },
   saveSessionButtonText: {
     color: 'black',
