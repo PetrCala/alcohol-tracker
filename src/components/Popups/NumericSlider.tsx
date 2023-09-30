@@ -111,22 +111,24 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   valueTextContainer: {
+    marginTop: 10,
     height: 50,
     justifyContent: 'center',
   },
   valueText: {
-    fontSize: 20,
+    fontSize: 25,
     color: 'black',
     alignSelf: 'center',
     margin: 5,
   },
   sliderContainer: {
     justifyContent: 'center',
-    padding: 20,
-    marginBottom: 15,
+    margin: 10,
+    marginTop: 15,
+    marginBottom: 5,
   },
   slider: {
-    width: 250, 
+    width: 280, 
     height: 40
   },
   saveButtonsDelimiter: {
@@ -137,10 +139,9 @@ const styles = StyleSheet.create({
     borderColor: '#000',
   },
   saveButtonsContainer: {
-    height: '8%',
-    width: '100%',
+    width: '80%',
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-between",
     flexDirection: "row",
     backgroundColor: '#FFFF99',
     marginBottom: 2,
@@ -151,9 +152,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: 'center',
     padding: 10,
-    backgroundColor: '#fcf50f',
-    borderWidth: 1,
-    borderColor: '#000',
+    backgroundColor: 'white',
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: 'black',
+    margin: 5,
   },
   saveButtonText: {
     color: 'black',

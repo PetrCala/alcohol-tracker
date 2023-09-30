@@ -110,7 +110,6 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
       setAvailableUnits(newAvailableUnits);
     }, [currentUnits]);
 
-
     async function saveSession(db: any, userId: string) {
       if (totalPoints > 99){
           console.log('cannot save this session');

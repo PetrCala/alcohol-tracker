@@ -355,7 +355,7 @@ const styles = StyleSheet.create({
   preferencesListLabel: {
     fontSize: 16,
     color: 'black',
-    fontWeight: '400',
+    fontWeight: '500',
     marginLeft: 5,
   },
   preferencesListNumericContainer: {
@@ -401,8 +401,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 10,
     backgroundColor: '#fcf50f',
-    borderWidth: 1,
-    borderColor: '#000',
+    // backgroundColor: 'white',
+    borderWidth: 2,
+    borderColor: 'black',
     borderRadius: 8,
   },
   savePreferencesButtonText: {

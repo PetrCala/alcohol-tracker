@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     width: 120,
     height: 40,
     borderRadius: 20,
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: '#000',
     flexDirection: 'row',
     alignItems: 'center',
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 30,
     borderRadius: 15,
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: '#e0e0e0',
     backgroundColor: "#f4f3f4",
     justifyContent: 'center',
@@ -62,5 +62,6 @@ const styles = StyleSheet.create({
   sliderText: {
     fontSize: 16,
     color: 'black',
+    fontWeight: '500',
   },
 });
