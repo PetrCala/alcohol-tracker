@@ -28,6 +28,7 @@ import { useUserConnection } from '../context/UserConnectionContext';
 import UserOffline from '../components/UserOffline';
 import { updateUserLastOnline } from '../database/users';
 import { saveDrinkingSessionData, updateCurrentSessionKey } from '../database/drinkingSessions';
+import { getDatabaseData } from '../context/DatabaseDataContext';
 
 const MainScreen = ( { navigation }: MainScreenProps) => {
   // Context, database, and authentification
@@ -35,12 +36,13 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
   const user = auth.currentUser;
   const db = useContext(DatabaseContext);
   const { isOnline } = useUserConnection();
+  const { unconfirmedDays } = getDatabaseData();
   // Database data hooks
   const [currentSessionData, setCurrentSessionData] = useState<CurrentSessionData | null>(null);
   const [drinkingSessionData, setDrinkingSessionData] = useState<DrinkingSessionArrayItem[]>([]);
   const [drinkingSessionKeys, setDrinkingSessionKeys] = useState<string[]>([]);
   const [preferences, setPreferences] = useState<PreferencesData | null>(null);
-  const [unconfirmedDays, setUnconfirmedDays] = useState<UnconfirmedDaysData | null>(null);
+  // const [unconfirmedDays, setUnconfirmedDays] = useState<UnconfirmedDaysData | null>(null);
   const [userData, setUserData] = useState<UserData | null>(null);
   // Modals
   const [settingsModalVisible, setSettingsModalVisible] = useState<boolean>(false);
@@ -183,7 +185,8 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
     let userRef = `user_unconfirmed_days/${user.uid}`
     let stopListening = listenForDataChanges(db, userRef, (data:UnconfirmedDaysData) => {
       if (data){ // Might be null
-        setUnconfirmedDays(data);
+        console.log('fetching')
+        // setUnconfirmedDays(data);
       }
       setLoadingUnconfirmedDays(false);
     });
@@ -217,7 +220,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
   if (isLoading || loadingNewSession) return <LoadingData loadingText={loadingNewSession ? 'Starting a new session...' : ''} />;
   if (!drinkingSessionData || !preferences || !userData) return null;
 
-    return ( 
+  return ( 
     <>
       <View style={styles.mainHeader}>
           <View style={styles.profileContainer}>

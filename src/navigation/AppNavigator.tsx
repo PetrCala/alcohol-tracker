@@ -12,9 +12,10 @@ import SessionSummaryScreen from '../screens/SessionSummaryScreen';
 import TermsAndAgreementsScreen from '../screens/TermsAndAgreementsScreen';
 
 import Stack from './Stack';
+import { DatabaseDataProvider } from '../context/DatabaseDataContext';
 
 const AppNavigator = () => (
-  // <UserConnectionContextProvider>
+    <DatabaseDataProvider>
     <Stack.Navigator 
       initialRouteName='Main Screen'
       screenOptions={{
@@ -34,7 +35,7 @@ const AppNavigator = () => (
       <Stack.Screen name='Session Summary Screen' component={SessionSummaryScreen}/>
       <Stack.Screen name='Terms And Agreements Screen' component={TermsAndAgreementsScreen} />
     </Stack.Navigator>
-  // </UserConnectionContextProvider>
+    </DatabaseDataProvider>
 );
 
 export default AppNavigator;
