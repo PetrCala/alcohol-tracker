@@ -38,8 +38,7 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
   useEffect(() => {
       const stopListening = auth.onAuthStateChanged(user => {
       if (user) {
-        console.log("navigating to the main screen...")
-          // navigation.replace("Main Screen") // Redirect to main screen
+          navigation.replace("App", {screen: "Main Screen"}) // Redirect to main screen
       };
       });
 
