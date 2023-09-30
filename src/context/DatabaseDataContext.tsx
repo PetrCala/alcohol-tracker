@@ -84,21 +84,19 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
     // Monitor drinking session data and keys
     useEffect(() => {
         // Start listening for changes when the component mounts
-        let newDrinkingSessionData:DrinkingSessionArrayItem[];
-        let newDrinkingSessionKeys:string[];
+        let newData:DrinkingSessionArrayItem[];
+        let newKeys:string[];
         let sessionsRef = `user_drinking_sessions/${user.uid}`
         let stopListening = listenForDataChanges(db, sessionsRef, (data:DrinkingSessionData) => {
-        if (data != null){
-            newDrinkingSessionData = Object.values(data); // To an array
-            newDrinkingSessionKeys = Object.keys(data);
-            if (JSON.stringify(newDrinkingSessionData) !== JSON.stringify(drinkingSessionData)) {
-                setDrinkingSessionData(newDrinkingSessionData);
+            newData = data ? Object.values(data) : [];
+            newKeys = data ? Object.keys(data) : [];
+            if (JSON.stringify(newData) !== JSON.stringify(drinkingSessionData)) {
+                setDrinkingSessionData(newData);
             }
-            if (JSON.stringify(newDrinkingSessionKeys) !== JSON.stringify(drinkingSessionKeys)) {
-                setDrinkingSessionKeys(newDrinkingSessionKeys);
+            if (JSON.stringify(newKeys) !== JSON.stringify(drinkingSessionKeys)) {
+                setDrinkingSessionKeys(newKeys);
             }
-        }
-        setLoadingDrinkingSessionData(false);
+            setLoadingDrinkingSessionData(false);
         });
 
         // Stop listening for changes when the component unmounts
@@ -124,13 +122,13 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
 
     // Monitor unconfirmed days
     useEffect(() => {
+        let newData:UnconfirmedDaysData = {};
         let userRef = `user_unconfirmed_days/${user.uid}`
         let stopListening = listenForDataChanges(db, userRef, (data:UnconfirmedDaysData) => {
-        if (data){ // Might be null
-            if (JSON.stringify(data) !== JSON.stringify(unconfirmedDays)) {
-                setUnconfirmedDays(data);
+            newData = data ? data : {};
+            if (JSON.stringify(newData) !== JSON.stringify(unconfirmedDays)) {
+                setUnconfirmedDays(newData);
             };
-        }
         setLoadingUnconfirmedDays(false);
         });
 
@@ -143,12 +141,10 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
     useEffect(() => {
         let userRef = `users/${user.uid}`
         let stopListening = listenForDataChanges(db, userRef, (data:UserData) => {
-        if (data){ // Might be null
             if (JSON.stringify(data) !== JSON.stringify(userData)) {
                 setUserData(data);
             };
-        }
-        setLoadingUserData(false);
+            setLoadingUserData(false);
         });
 
         return () => stopListening();
@@ -156,7 +152,6 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
     }, [db, user]);
 
     // if (isLoading) return <LoadingData loadingText=''/>;
-    // if (!drinkingSessionData || !preferences || !userData) return null;
 
     const value = {
         currentSessionData: currentSessionData,
