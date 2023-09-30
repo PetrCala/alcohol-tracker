@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState, useMemo, useCallback } from 'react';
+﻿import React, { useEffect, useState, useMemo, useCallback, ReactNode } from 'react';
 import { 
     StyleSheet,
     Text,
@@ -27,6 +27,13 @@ import {
 import { DrinkingSessionArrayItem, DrinkingSessionData, PreferencesData } from '../types/database';
 import { DateObject, DayState } from '../types/components';
 import LoadingData from './LoadingData';
+
+// declare module 'react-native-calendars' {
+//   interface Theme {
+//     'stylesheet.calendar.header'?: object;
+//     // Add other custom theme properties if needed
+//   }
+// }
 
 type CalendarColors = 'yellow' | 'red' | 'orange' | 'black';
 
@@ -119,6 +126,16 @@ const DayComponent: React.FC<{
     );
 };
 
+function CustomArrow(direction:string):ReactNode {
+    return (
+        <View style={[
+            arrowStyles.customArrowContainer,
+            direction === 'left' ? arrowStyles.leftContainer : arrowStyles.rightContainer
+        ]}>
+            <Text style={arrowStyles.customArrowText}>{direction === 'left' ? '<' : '>'}</Text>
+        </View>
+    );
+}
 
 const SessionsCalendar = ({ 
     drinkingSessionData, 
@@ -195,17 +212,59 @@ const SessionsCalendar = ({
         markedDates={markedDates}
         markingType={'period'}
         firstDay={preferences.first_day_of_week === 'Monday' ? 1 : 0}
-        enableSwipeMonths={true}
+        enableSwipeMonths={false}
         disableAllTouchEventsForDisabledDays={true}
+        renderArrow={CustomArrow}
         style={styles.mainScreenCalendarStyle}
         theme={{
             textDayHeaderFontWeight: 'bold',
-        }}
+            'stylesheet.calendar.header': {
+                header: {
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginTop: 5,
+                  marginBottom: 5
+                },
+                monthText: {
+                  color: 'black',
+                  fontSize: 20,
+                  width: 150,
+                  textAlign: 'center'
+                }
+            }
+        } as any} // Circumvent typescript gymnastics
         />
     );
     };
     
 export default SessionsCalendar;
+
+const arrowStyles = StyleSheet.create({
+    customArrowContainer: {
+        // marginHorizontal: -10
+        alignSelf: 'center',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 70,
+        backgroundColor: '#ffff99',
+        // backgroundColor: 'white',
+        borderWidth: 2,
+        borderColor: 'black',
+        borderRadius: 10,
+    },
+    leftContainer: {
+        marginRight: 10
+    },
+    rightContainer: {
+        marginLeft: 10,
+    },
+    customArrowText: {
+        color: 'black',
+        fontSize: 30,
+        fontWeight: '500',
+    },
+});
 
 
 const styles = StyleSheet.create({
@@ -251,7 +310,8 @@ const styles = StyleSheet.create({
     // Calendar styles
     mainScreenCalendarStyle: {
         width: '100%',
-        borderWidth: 1,
+        borderTopWidth: 2,
+        borderBottomWidth: 2,
         borderColor: '#000',
         flexGrow: 1,
         flexShrink: 1
