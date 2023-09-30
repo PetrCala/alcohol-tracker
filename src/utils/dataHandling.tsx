@@ -108,6 +108,18 @@ export const getPreviousMonth = (currentDate: DateObject): DateObject => {
     return dateToDateObject(newDate);
 };
 
+
+/** Using a date object, return a year-month string in the format YYYY-MM.
+ * 
+ * @param dateObject Date object
+ * @returns Year-Month string, e.g. '2023-08'
+ * 
+ * @example let yearMonth = getYearMonth(testDateObject);
+ */
+export function getYearMonth(dateObject: DateObject):string {
+    return `${dateObject.year}-${String(dateObject.month).padStart(2, '0')}`
+};
+
 /** Change the time of a datetime object to now, 
  * keeping the date constant.
 */
@@ -389,3 +401,5 @@ export const findUnitName = (unitKey: typeof UnitTypesKeys[number]) => {
     let unitName = UnitTypesNames[unitIdx];
     return unitName;
 };
+
+// test get year-month
