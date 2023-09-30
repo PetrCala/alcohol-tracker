@@ -127,13 +127,17 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
         Alert.alert('Navigation not found', 'Failed to fetch the navigation');
         return null;
       };
+      // Handle old versions of drinking session data where note/blackout were missing
+      let sessionNote = note ? note : "";
+      let sessionBlackout = isBlackout ? isBlackout : false;
+      // Save the session
       if (totalUnits > 0){
         let newSessionData: DrinkingSessionArrayItem = {
           start_time: session.start_time,
           end_time: Date.now(),
           units: currentUnits,
-          blackout: isBlackout,
-          note: note,
+          blackout: sessionBlackout,
+          note: sessionNote,
           ongoing: null,
         };
         newSessionData = removeZeroObjectsFromSession(newSessionData); // Delete the initial log of zero units that was used as a placeholder
