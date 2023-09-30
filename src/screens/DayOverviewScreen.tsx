@@ -1,4 +1,4 @@
-﻿import React, {useState, useEffect} from 'react';
+﻿import React, {useState, useEffect, useCallback} from 'react';
 import {
   Text,
   View,
@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import { 
     timestampToDate, 
@@ -61,7 +62,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
     useEffect(() => {
       let newSessions = getSingleDayDrinkingSessions(date, drinkingSessionData)
       setDailyData(newSessions);
-    }, [date]);
+    }, [date, drinkingSessionData]);
 
     // Monitor the combined data
     useEffect(() => {
@@ -72,7 +73,6 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
         });
       });
       setCombinedData(newCombinedData);
-      console.log('setting combined data...')
     }, [dailySessionData]);
 
     const onSessionButtonPress = (sessionKey: string, session:DrinkingSessionArrayItem) => {
@@ -210,6 +210,14 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
             setDate(newDate);
         };
     }
+    useFocusEffect(
+        useCallback(() => {
+            console.log(drinkingSessionData.length)
+            let newSessions = getSingleDayDrinkingSessions(date, drinkingSessionData);
+            setDailyData(newSessions);
+            console.log(newSessions.length)
+        }, [date, drinkingSessionData])
+    );
 
     if (!isOnline) return (<UserOffline/>);
 
