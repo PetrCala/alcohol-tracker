@@ -43,10 +43,12 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
                 toValue: 0,
                 duration: 200,
                 useNativeDriver: false,
-            }).start();
+            }).start( () => {
+                scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+            });
         } else {
             Animated.timing(heightAnim, {
-                toValue: 400, // Expand the container to this much
+                toValue: featureY, // Expand the container to this much
                 duration: 200,
                 useNativeDriver: false,
             }).start(() => {
@@ -69,10 +71,13 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
                 />
             </TouchableOpacity>
             {isExpanded ?
-            <Animated.View style={[
+            <Animated.View 
+            style={[
                 styles.content,
                 { height: heightAnim }
-            ]}>
+            ]}
+            onLayout={!isExpanded ? onFeatureLayout : undefined}
+            >
                 <>
                     <View style={[
                         styles.tileContainerBase,
@@ -152,6 +157,7 @@ const styles = StyleSheet.create({
         borderColor: '#212421',
         borderWidth: 1,
         padding: 5,
+        overflow: 'hidden', // Hide when not expanded
     },
     tileContainerBase: {
         marginBottom: 5,
