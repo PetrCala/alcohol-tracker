@@ -26,7 +26,7 @@ updateCurrentSessionKey,
   updateSessionUnits
 } from '../database/drinkingSessions';
 import SessionUnitsInputWindow from '../components/Buttons/SessionUnitsInputWindow';
-import { addUnits, formatDateToDay, formatDateToTime, removeUnits, removeZeroObjectsFromSession, sumAllUnits, sumUnitsOfSingleType, timestampToDate, unitsToColors } from '../utils/dataHandling';
+import { addUnits, formatDateToDay, formatDateToTime, removeUnits, removeZeroObjectsFromSession, sumAllPoints, sumAllUnits, sumUnitsOfSingleType, timestampToDate, unitsToColors } from '../utils/dataHandling';
 import { getAuth } from 'firebase/auth';
 import { DrinkingSessionArrayItem, DrinkingSessionData, UnitTypesKeys, UnitTypesProps, UnitsObject } from '../types/database';
 import DrinkingSessionUnitWindow from '../components/DrinkingSessionUnitWindow';
@@ -53,8 +53,8 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
   const { isOnline } = useUserConnection();
   // Units
   const [currentUnits, setCurrentUnits] = useState<UnitsObject>(session.units);
-  const [totalUnits, setTotalUnits] = useState<number>(sumAllUnits(currentUnits));
-  const [availableUnits, setAvailableUnits] = useState<number>(maxAllowedUnits - totalUnits);
+  const [totalPoints, setTotalPoints] = useState<number>(0);
+  const [availableUnits, setAvailableUnits] = useState<number>(0);
   // Hooks for immediate display info - update these manually to improve efficiency
   const [beerSum, setBeerSum] = useState<number>(sumUnitsOfSingleType(currentUnits, 'beer'));
   const [cocktailSum, setCocktailSum] = useState<number>(sumUnitsOfSingleType(currentUnits, 'cocktail'));
@@ -77,7 +77,6 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
   const [monkeMode, setMonkeMode] = useState<boolean>(false);
   const [discardModalVisible, setDiscardModalVisible] = useState<boolean>(false);
   const [savingSession, setSavingSession] = useState<boolean>(false);
-  const sessionColor = unitsToColors(totalUnits, preferences.units_to_colors);
   const scrollViewRef = useRef<ScrollView>(null); // To navigate the view
 
 
@@ -119,10 +118,11 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
 
   // Update the hooks whenever current units change
   useEffect(() => {
-    let newTotalUnits = sumAllUnits(currentUnits);
-    let newAvailableUnits = maxAllowedUnits - newTotalUnits;
-    setTotalUnits(newTotalUnits);
-    setAvailableUnits(newAvailableUnits);
+      if (!preferences) return;
+      let newTotalPoints = sumAllPoints(currentUnits, preferences.units_to_points);
+      let newAvailableUnits = maxAllowedUnits - newTotalPoints;
+      setTotalPoints(newTotalPoints);
+      setAvailableUnits(newAvailableUnits);
   }, [currentUnits]);
 
   // Monitor changes on screen using a custom hook
@@ -166,7 +166,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
       // Clear timer on unmount or when units changes
       return () => clearTimeout(timer);
     }
-  }, [currentUnits, isBlackout, note]);
+  }, [currentUnits, isBlackout, note, db, user]);
 
   async function sleep(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -187,7 +187,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
   }
 
   async function saveSession(db: any, userId: string) {
-    if (totalUnits > 99){
+    if (totalPoints > 99){
       console.log('Cannot save this session');
       return null;
     };
@@ -199,7 +199,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
     }
     let timeSinceLastUpdate = Date.now() - lastUpdate;
     // Save the data into the database
-    if (totalUnits > 0){
+    if (totalPoints > 0){
       setSavingSession(true);
       let newSessionData: DrinkingSessionArrayItem = {
         start_time: session.start_time,
@@ -273,6 +273,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
   }
   if (!db) return null; // Should never be null
 
+  const sessionColor = unitsToColors(totalPoints, preferences.units_to_colors);
 
   return (
     <>
@@ -316,7 +317,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
         <Text style={[ styles.unitCountText,
           {color: sessionColor}
         ]}>
-          {totalUnits}
+          {totalPoints}
         </Text>
     </View>
     <ScrollView 

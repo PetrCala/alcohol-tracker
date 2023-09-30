@@ -21,7 +21,7 @@ import { DrinkingSessionArrayItem, DrinkingSessionData, UnitTypesKeys, UnitTypes
 import DatabaseContext from '../context/DatabaseContext';
 import { removeDrinkingSessionData, editDrinkingSessionData } from '../database/drinkingSessions';
 import SessionUnitsInputWindow from '../components/Buttons/SessionUnitsInputWindow';
-import { addUnits, dateToDateObject, formatDateToDay, formatDateToTime, removeUnits, removeZeroObjectsFromSession, sumAllUnits, sumUnitsOfSingleType, timestampToDate, unitsToColors } from '../utils/dataHandling';
+import { addUnits, dateToDateObject, formatDateToDay, formatDateToTime, removeUnits, removeZeroObjectsFromSession, sumAllPoints, sumAllUnits, sumUnitsOfSingleType, timestampToDate, unitsToColors } from '../utils/dataHandling';
 import { getAuth } from 'firebase/auth';
 import DrinkingSessionUnitWindow from '../components/DrinkingSessionUnitWindow';
 import { maxAllowedUnits } from '../utils/static';
@@ -42,8 +42,8 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
     const { preferences } = getDatabaseData();
     // Units
     const [currentUnits, setCurrentUnits] = useState<UnitsObject>(session.units);
-    const [totalUnits, setTotalUnits] = useState<number>(sumAllUnits(currentUnits));
-    const [availableUnits, setAvailableUnits] = useState<number>(maxAllowedUnits - totalUnits);
+    const [totalPoints, setTotalPoints] = useState<number>(0);
+    const [availableUnits, setAvailableUnits] = useState<number>(0);
     // Hooks for immediate display info - update these manually to improve efficiency
     const [beerSum, setBeerSum] = useState<number>(sumUnitsOfSingleType(currentUnits, 'beer'));
     const [cocktailSum, setCocktailSum] = useState<number>(sumUnitsOfSingleType(currentUnits, 'cocktail'));
@@ -103,15 +103,16 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
 
     // Update the hooks whenever current units change
     useEffect(() => {
-      let newTotalUnits = sumAllUnits(currentUnits);
-      let newAvailableUnits = maxAllowedUnits - newTotalUnits;
-      setTotalUnits(newTotalUnits);
+      if (!preferences) return;
+      let newTotalPoints = sumAllPoints(currentUnits, preferences.units_to_points);
+      let newAvailableUnits = maxAllowedUnits - newTotalPoints;
+      setTotalPoints(newTotalPoints);
       setAvailableUnits(newAvailableUnits);
     }, [currentUnits]);
 
 
     async function saveSession(db: any, userId: string) {
-      if (totalUnits > 99){
+      if (totalPoints > 99){
           console.log('cannot save this session');
           return null;
       };
@@ -123,7 +124,7 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
       let sessionNote = note ? note : "";
       let sessionBlackout = isBlackout ? isBlackout : false;
       // Save the session
-      if (totalUnits > 0){
+      if (totalPoints > 0){
         let newSessionData: DrinkingSessionArrayItem = {
           start_time: session.start_time,
           end_time: Date.now(),
@@ -181,7 +182,7 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
     }
     if (!db) return null; // Should never be null
     
-    const sessionColor = unitsToColors(totalUnits, preferences.units_to_colors);
+    const sessionColor = unitsToColors(totalPoints, preferences.units_to_colors);
     
     return (
       <>
@@ -212,7 +213,7 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
           <Text style={[ styles.unitCountText,
             {color: sessionColor}
           ]}>
-            {totalUnits}
+            {totalPoints}
           </Text>
       </View>
       <ScrollView 

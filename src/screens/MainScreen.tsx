@@ -23,7 +23,7 @@ import { CurrentSessionData, DrinkingSessionArrayItem, DrinkingSessionData, Pref
 import { MainScreenProps } from '../types/screens';
 import { DateObject } from '../types/components';
 import { getAuth, signOut } from 'firebase/auth';
-import { dateToDateObject, getZeroUnitsObject, calculateThisMonthUnits, findOngoingSession, calculateThisMonthPoints } from '../utils/dataHandling';
+import { dateToDateObject, getZeroUnitsObject, calculateThisMonthUnits, findOngoingSession, calculateThisMonthPoints, getYearMonth, getSingleMonthDrinkingSessions, timestampToDate } from '../utils/dataHandling';
 import { useUserConnection } from '../context/UserConnectionContext';
 import UserOffline from '../components/UserOffline';
 import { updateUserLastOnline } from '../database/users';
@@ -45,12 +45,13 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
     userData,
     isLoading
   } = getDatabaseData();
-  
   const [visibleDateObject, setVisibleDateObject] = useState<DateObject>(
     dateToDateObject(new Date()));
   const [thisMonthUnits, setThisMonthUnits] = useState<number>(0);
   const [thisMonthPoints, setThisMonthPoints] = useState<number>(0);
+  const [thisMonthSessionCount, setThisMonthSessionCount] = useState<number>(0);
   const [loadingNewSession, setLoadingNewSession] = useState<boolean>(false);
+  const thisMonth = getYearMonth(visibleDateObject);
    
   // Handle drinking session button press
   const startDrinkingSession = async () => {
@@ -119,10 +120,12 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
     if (!preferences) return;
     let thisMonthUnits = calculateThisMonthUnits(visibleDateObject, drinkingSessionData);
     let thisMonthPoints = calculateThisMonthPoints(visibleDateObject, drinkingSessionData, preferences.units_to_points);
+    let thisMonthSessionCount = getSingleMonthDrinkingSessions(timestampToDate(visibleDateObject.timestamp), drinkingSessionData, false).length; // Replace this in the future
     
     setThisMonthPoints(thisMonthPoints);
     setThisMonthUnits(thisMonthUnits);
-  }, [drinkingSessionData, visibleDateObject]);
+    setThisMonthSessionCount(thisMonthSessionCount);
+  }, [drinkingSessionData, visibleDateObject, preferences]);
 
 
   if (!user) {
@@ -193,13 +196,20 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
           <></>
           } 
           <View style={styles.menuInfoContainer}>
+            <View style={styles.menuInfoContainer}>
+              <Text style={styles.menuInfoText}>Monthly Overview</Text>
+            </View>
             <View style={styles.menuInfoItemContainer}>
-              <Text style={styles.menuInfoText}>Units this month:</Text> 
+              <Text style={styles.menuInfoText}>Units:</Text> 
               <Text style={styles.menuInfoText}>{thisMonthUnits}</Text> 
             </View>
             <View style={styles.menuInfoItemContainer}>
-              <Text style={styles.menuInfoText}>Points this month:</Text> 
+              <Text style={styles.menuInfoText}>Points:</Text> 
               <Text style={styles.menuInfoText}>{thisMonthPoints}</Text> 
+            </View>
+            <View style={styles.menuInfoItemContainer}>
+              <Text style={styles.menuInfoText}>Sessions:</Text> 
+              <Text style={styles.menuInfoText}>{thisMonthSessionCount}</Text> 
             </View>
           </View>
           {/* Replace this with the overview and statistics */}
@@ -212,6 +222,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
               navigation.navigate('Day Overview Screen', { dateObject: day })
             }}
           />
+          <View style={{height:200, backgroundColor: '#ffff99'}}></View>
       </ScrollView>
       {currentSessionData?.current_session_id ? <></> :
       <BasicButton 

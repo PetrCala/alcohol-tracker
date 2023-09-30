@@ -18,7 +18,8 @@ import {
     getSingleDayDrinkingSessions,
     setDateToCurrentTime,
     sumAllUnits,
-    getZeroUnitsObject
+    getZeroUnitsObject,
+    sumAllPoints
 } from '../utils/dataHandling';
 import { useContext } from 'react';
 import DatabaseContext from '../context/DatabaseContext';
@@ -91,6 +92,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
         if (!preferences) return;
         // Calculate the session color
         var totalUnits = sumAllUnits(session.units)
+        var totalPoints = sumAllPoints(session.units, preferences.units_to_points);
         var unitsToColorsInfo = preferences.units_to_colors;
         var sessionColor = unitsToColors(totalUnits, unitsToColorsInfo);
         if (session.blackout === true) {
@@ -118,7 +120,11 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
                     <Text style={[
                       styles.menuDrinkingSessionText,
                       session.blackout === true ? {color: 'white'} : {}
-                    ]}>Units consumed: {totalUnits}</Text>
+                    ]}>Units: {totalUnits}</Text>
+                    <Text style={[
+                      styles.menuDrinkingSessionText,
+                      session.blackout === true ? {color: 'white'} : {}
+                    ]}>Points: {totalPoints}</Text>
                   </TouchableOpacity>
                 </View>
                 {editMode ?
