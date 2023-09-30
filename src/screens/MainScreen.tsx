@@ -65,7 +65,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
 
   // Automatically navigate to login screen if login expires
   if (user == null){
-    navigation.replace("Login Screen");
+    navigation.replace("Auth", {screen: "Login Screen"});
     return null;
   }
   if (!db) return null; // Should never be null
@@ -230,7 +230,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
                 iconSource={require('../assets/temp/user.png')}  // user.photoURL;
                 containerStyle={styles.profileIconContainer}
                 iconStyle={styles.profileIcon}
-                onPress = {() => navigation.navigate('Profile Screen')}
+                onPress = {() => navigation.navigate('App', {screen: 'Profile Screen'})}
                 />
               <Text style={styles.headerUsername}>{user.displayName}</Text> 
             </TouchableOpacity>
