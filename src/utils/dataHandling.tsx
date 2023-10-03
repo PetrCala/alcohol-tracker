@@ -10,6 +10,7 @@
 } from "../types/database";
 import { DateObject, SessionsCalendarDatesType, SessionsCalendarMarkedDates } from "../types/components";
 import { getRandomInt } from "./choice";
+import { MONTHS, MONTHS_ABBREVIATED } from "./static";
 
 export function formatDate (date: Date): string {
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
@@ -164,6 +165,23 @@ export const getAdjacentMonths = (currentDate: DateObject, n: number): DateObjec
  */
 export function getYearMonth(dateObject: DateObject):string {
     return `${dateObject.year}-${String(dateObject.month).padStart(2, '0')}`
+};
+
+/**
+ * Returns a string representation of the month and year in the format "MMM/YYYY" or with full month names (default)
+ * 
+ * @param {DateObject} dateObject - An object containing numeric values for 'year' and 'month'.
+ * @param {bool} abbreviated - If true, return the months in the abbreviated format, returns to false.
+ * @returns {string} - A string in the format "MMM/YYYY", where "MMM" is the abbreviated or full month name.
+ * 
+ * @example
+ * const date = { year: 2023, month: 10 };
+ * getAbbreviatedYearMonth(date); // Returns "Oct/2023"
+ */
+export function getYearMonthVerbose(dateObject: DateObject, abbreviated:boolean = false): string {
+    const months = abbreviated ? MONTHS_ABBREVIATED : MONTHS
+    const monthName = months[dateObject.month - 1];
+    return `${monthName} ${dateObject.year}`;
 };
 
 /** Change the time of a datetime object to now, 
@@ -541,4 +559,4 @@ export const findUnitName = (unitKey: typeof UnitTypesKeys[number]) => {
     return unitName;
 };
 
-// test get year-month, getAdjacentMonths, aggregatesessionsbydays, month entries to colors (move these maybe to a different location), calculatethismonthpoints
+// test get year-month, getAdjacentMonths, aggregatesessionsbydays, month entries to colors (move these maybe to a different location), calculatethismonthpoints, getabbreviatedyearmonth

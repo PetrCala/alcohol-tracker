@@ -2,6 +2,7 @@
 import { DrinkingSessionArrayItem, DrinkingSessionData, FeedbackData, PreferencesData, UnitTypesKeys, UnitsObject, UserData } from "./database";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { AppStackParamList } from "./screens";
+import { Calendar } from 'react-native-calendars';
 
 // FeedbackPopup props
 
@@ -71,6 +72,8 @@ export type SessionsCalendarProps = {
     preferences: PreferencesData;
     visibleDateObject: DateObject;
     setVisibleDateObject: React.Dispatch<React.SetStateAction<DateObject>>;
+    onLeftArrowPress: (changeMonthFunction: () => void) => void,
+    onRightArrowPress: (changeMonthFunction: () => void) => void,
     onDayPress: (day: any) => void;
 }
  

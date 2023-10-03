@@ -126,22 +126,17 @@ const DayComponent: React.FC<{
     );
 };
 
-function CustomArrow(direction:string):ReactNode {
-    return (
-        <View style={[
-            arrowStyles.customArrowContainer,
-            direction === 'left' ? arrowStyles.leftContainer : arrowStyles.rightContainer
-        ]}>
-            <Text style={arrowStyles.customArrowText}>{direction === 'left' ? '<' : '>'}</Text>
-        </View>
-    );
-}
+// function CustomArrow(direction:string):ReactNode|null {
+//     return null
+// }
 
 const SessionsCalendar = ({ 
     drinkingSessionData, 
     preferences,
     visibleDateObject, 
     setVisibleDateObject,
+    onLeftArrowPress,
+    onRightArrowPress,
     onDayPress
 }: SessionsCalendarProps) => {
     const [calendarData, setCalendarData ] = useState<DrinkingSessionArrayItem[]>(drinkingSessionData);
@@ -214,24 +209,26 @@ const SessionsCalendar = ({
         firstDay={preferences.first_day_of_week === 'Monday' ? 1 : 0}
         enableSwipeMonths={false}
         disableAllTouchEventsForDisabledDays={true}
-        renderArrow={CustomArrow}
+        // renderArrow={CustomArrow}
+        hideArrows={true}
         style={styles.mainScreenCalendarStyle}
         theme={{
             textDayHeaderFontWeight: 'bold',
             'stylesheet.calendar.header': {
                 header: {
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginTop: 5,
-                  marginBottom: 5
+                    height: 0 // Hide the header
+                //   flexDirection: 'row',
+                //   justifyContent: 'space-between',
+                //   alignItems: 'center',
+                //   marginTop: 5,
+                //   marginBottom: 5
                 },
-                monthText: {
-                  color: 'black',
-                  fontSize: 20,
-                  width: 150,
-                  textAlign: 'center'
-                }
+                // monthText: {
+                //   color: 'black',
+                //   fontSize: 20,
+                //   width: 150,
+                //   textAlign: 'center'
+                // }
             }
         } as any} // Circumvent typescript gymnastics
         />
@@ -239,33 +236,6 @@ const SessionsCalendar = ({
     };
     
 export default SessionsCalendar;
-
-const arrowStyles = StyleSheet.create({
-    customArrowContainer: {
-        // marginHorizontal: -10
-        alignSelf: 'center',
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: 70,
-        backgroundColor: '#ffff99',
-        // backgroundColor: 'white',
-        borderWidth: 2,
-        borderColor: 'black',
-        borderRadius: 10,
-    },
-    leftContainer: {
-        marginRight: 10
-    },
-    rightContainer: {
-        marginLeft: 10,
-    },
-    customArrowText: {
-        color: 'black',
-        fontSize: 30,
-        fontWeight: '500',
-    },
-});
-
 
 const styles = StyleSheet.create({
     // Day component styles
@@ -310,8 +280,8 @@ const styles = StyleSheet.create({
     // Calendar styles
     mainScreenCalendarStyle: {
         width: '100%',
-        borderTopWidth: 2,
-        borderBottomWidth: 2,
+        borderTopWidth: 1,
+        borderBottomWidth: 1,
         borderColor: '#000',
         flexGrow: 1,
         flexShrink: 1
