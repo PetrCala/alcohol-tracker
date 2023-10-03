@@ -262,7 +262,8 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
         Alert.alert("Database synchronization failed", error.message);
       }
     }
-    navigation.navigate("Main Screen");
+    // navigation.navigate("Main Screen");
+    navigation.goBack();
   };
 
   if (!isOnline) return (<UserOffline/>);

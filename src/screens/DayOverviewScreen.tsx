@@ -24,7 +24,7 @@ import {
 import { useContext } from 'react';
 import DatabaseContext from '../context/DatabaseContext';
 import LoadingData from '../components/LoadingData';
-import { DrinkingSessionProps, DrinkingSessionData, DrinkingSessionArrayItem } from '../types/database';
+import { DrinkingSessionProps, DrinkingSessionData, DrinkingSessionArrayItem, PreferencesData } from '../types/database';
 import { DayOverviewScreenProps } from '../types/screens';
 import { getAuth } from 'firebase/auth';
 import UserOffline from '../components/UserOffline';
@@ -72,19 +72,21 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
       setCombinedData(newCombinedData);
     }, [dailySessionData]);
 
-    const onSessionButtonPress = (sessionKey: string, session:DrinkingSessionArrayItem) => {
-        navigation.navigate('Session Summary Screen', {
-          session: session,
-          sessionKey: sessionKey,
-          preferences: preferences
-        });
+    const onSessionButtonPress = (sessionKey: string, session:DrinkingSessionArrayItem, preferences:PreferencesData) => {
+      if (!preferences) return null;
+      let navigateToScreen:string = session?.ongoing ? 'Drinking Session Screen' : 'Session Summary Screen'
+      navigation.navigate(navigateToScreen, {
+        session: session,
+        sessionKey: sessionKey,
+        preferences: preferences
+      });
     };
 
     const onEditSessionPress = (session: DrinkingSessionArrayItem, sessionKey:string) => {
-        navigation.navigate('Edit Session Screen', { 
-          session: session,
-          sessionKey: sessionKey 
-        });
+      navigation.navigate('Edit Session Screen', { 
+        session: session,
+        sessionKey: sessionKey 
+      });
     };
 
 
@@ -111,7 +113,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
                 <View style={{ flex: 1 }}>
                   <TouchableOpacity
                     style={styles.menuDrinkingSessionButton}
-                    onPress={() => onSessionButtonPress(sessionKey, session)}
+                    onPress={() => onSessionButtonPress(sessionKey, session, preferences)}
                   >
                     <Text style={[
                       styles.menuDrinkingSessionText,
@@ -127,7 +129,16 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
                     ]}>Points: {totalPoints}</Text>
                   </TouchableOpacity>
                 </View>
-                {editMode ?
+                {session?.ongoing ?
+                  <View style={styles.ongoingSessionContainer}>
+                    <TouchableOpacity
+                      style={styles.ongoingSessionButton}
+                      onPress={() => onSessionButtonPress(sessionKey, session, preferences)}
+                    >
+                      <Text style={styles.ongoingSessionText}>In Session</Text>
+                    </TouchableOpacity>
+                  </View>
+                : editMode ?
                 <MenuIcon
                     iconId='edit-session-icon'
                     iconSource={require('../assets/icons/edit.png')}
@@ -431,4 +442,25 @@ const styles = StyleSheet.create({
     height: 25,
     tintColor: "#1c73e6"
   },
+  ongoingSessionContainer: {
+    width: 120,
+    height: 40,
+    borderRadius: 10,
+    margin: 5,
+    backgroundColor: 'white',
+    borderWidth: 2,
+    borderColor: 'black',
+  },
+  ongoingSessionButton: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  ongoingSessionText: {
+    color: 'black',
+    fontWeight: '500',
+    fontSize: 20,
+  }
 });

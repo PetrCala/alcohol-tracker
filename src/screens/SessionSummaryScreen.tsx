@@ -116,13 +116,17 @@ const SessionSummaryScreen = ({ route, navigation}: SessionSummaryScreenProps) =
               iconStyle={styles.backArrow}
               onPress={handleBackPress}
             />
+            {session.ongoing ?
+            <></>
+            :
             <MenuIcon
                 iconId='edit-session-icon'
                 iconSource={require('../assets/icons/edit.png')}
                 containerStyle={styles.menuIconContainer}
                 iconStyle={styles.menuIcon}
                 onPress={() => onEditSessionPress(sessionKey, session)} // Use keyextractor to load id here
-            />
+                />
+            }
           </View>
           <ScrollView style={styles.scrollView}>
             <View style={styles.sessionInfoContainer}>
