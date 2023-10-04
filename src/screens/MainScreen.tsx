@@ -224,12 +224,13 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
             </View>
           </View>
           <SessionsCalendar
+            ref={calendarRef}
             drinkingSessionData = {drinkingSessionData}
             preferences = {preferences}
             visibleDateObject={visibleDateObject}
             setVisibleDateObject={setVisibleDateObject}
-            onLeftArrowPress={onPreviousMonth}
-            onRightArrowPress={onNextMonth}
+            // onLeftArrowPress={onPreviousMonth}
+            // onRightArrowPress={onNextMonth}
             onDayPress = {(day:DateObject) => {
               navigation.navigate('Day Overview Screen', { dateObject: day })
             }}

@@ -1,9 +1,9 @@
 ﻿import { initializeApp } from "firebase/app";
 import { Database, getDatabase } from "firebase/database";
 
-import { fetchNicknameByUID } from "../../src/database/baseFunctions";
-import firebaseConfig from "../../firebaseConfig";
-import { TEST_UID, TEST_NICKNAME } from "../utils/testsStatic";
+import { fetchNicknameByUID } from "../../../src/database/baseFunctions";
+import firebaseConfig from "../../../firebaseConfig";
+import { TEST_UID, TEST_NICKNAME } from "../../utils/testsStatic";
 
 
 describe("fetchNicknameByUID", () => {

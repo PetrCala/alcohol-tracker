@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState, useMemo, useCallback, ReactNode } from 'react';
+﻿import React, { useEffect, useState, useMemo, useCallback, forwardRef, ReactNode } from 'react';
 import { 
     StyleSheet,
     Text,
@@ -130,15 +130,16 @@ const DayComponent: React.FC<{
 //     return null
 // }
 
-const SessionsCalendar = ({ 
+// const SessionsCalendar = React.forwardRef(function SessionsCalendar({ 
+const SessionsCalendar = React.forwardRef(({ 
     drinkingSessionData, 
     preferences,
     visibleDateObject, 
     setVisibleDateObject,
-    onLeftArrowPress,
-    onRightArrowPress,
+    // onLeftArrowPress,
+    // onRightArrowPress,
     onDayPress
-}: SessionsCalendarProps) => {
+}: SessionsCalendarProps, ref:React.Ref<any>) => {
     const [calendarData, setCalendarData ] = useState<DrinkingSessionArrayItem[]>(drinkingSessionData);
     const [markedDates, setMarkedDates] = useState<SessionsCalendarMarkedDates>({});
     const [loadingMarkedDates, setLoadingMarkedDays] = useState<boolean>(true);
@@ -192,6 +193,7 @@ const SessionsCalendar = ({
 
     return (
         <Calendar
+        ref={ref}
         current={visibleDateObject.dateString}
         dayComponent={({ date, state, marking, theme }) => 
             <DayComponent 
@@ -233,7 +235,7 @@ const SessionsCalendar = ({
         } as any} // Circumvent typescript gymnastics
         />
     );
-    };
+});
     
 export default SessionsCalendar;
 
