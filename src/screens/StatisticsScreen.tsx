@@ -23,6 +23,12 @@ const StatisticsScreen = (props: StatisticsProps) => {
           iconStyle={styles.backArrow}
           onPress={() => navigation.goBack() }
         />
+        <View style={styles.menuContainer}>
+          <Text style={styles.sectionText}>Statistics</Text>
+        </View>
+      </View>
+      <View style={styles.mainContainer}>
+        <Text style={styles.sectionText}>Coming soon...</Text>
       </View>
     </View>
   );
@@ -35,19 +41,33 @@ const styles = StyleSheet.create({
   mainHeader: {
     height: 70,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent:'space-between',
     padding: 10,
     backgroundColor: 'white',
   },
   backArrowContainer: {
     justifyContent: 'center',
-    marginTop: 10,
     marginLeft: 10,
-    padding: 10,
-    position: 'absolute',
   },
   backArrow: {
     width: 25,
     height: 25,
+  },
+  menuContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    width: 200,
+  },
+  sectionText: {
+    fontSize: 20,
+    color: 'black',
+    fontWeight: 'bold',
+    margin: 10,
+    textAlign: 'center',
+  },
+  mainContainer: {
+    flex: 1,
   },
 });

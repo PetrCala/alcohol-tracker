@@ -155,7 +155,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
             </TouchableOpacity>
           </View>
           <View style={styles.menuContainer}>
-              {/* Clickable icons for social, achievements, and settings */}
+              <Text style={styles.yearMonthText}>{thisYearMonth}</Text>
           </View>
       </View>
       {currentSessionData?.current_session_id ?
@@ -170,9 +170,9 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
       :
       <></>
       } 
-      <View style={styles.yearMonthContainer}>
+      {/* <View style={styles.yearMonthContainer}>
         <Text style={styles.yearMonthText}>{thisYearMonth}</Text>
-      </View>
+      </View> */}
       <ScrollView style={styles.mainScreenContent}>
           <View style={styles.menuInfoContainer}>
             <View style={styles.menuInfoItemContainer}>
@@ -300,7 +300,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
-    width: 150,
+    width: 200,
   },
   menuIconContainer: {
     width: 40,
@@ -443,7 +443,7 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     borderWidth: 1,
     borderColor: '#ddd',
-    elevation: 8, // for Android shadow
+    elevation: 10, // for Android shadow
   },
   mainScreenFooterHalfContainer: {
     width: '50%',
