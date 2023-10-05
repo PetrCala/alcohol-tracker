@@ -300,6 +300,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderBottomColor: 'black',
     borderBottomWidth: 1,
+    borderColor: 'grey',
   },
   yearMonthText: {
     fontSize: 18,

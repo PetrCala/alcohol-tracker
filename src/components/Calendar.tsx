@@ -1,6 +1,7 @@
 ﻿import React, { useEffect, useState, useMemo, useCallback, forwardRef, ReactNode } from 'react';
 import { 
     Dimensions,
+    Image,
     StyleSheet,
     Text,
     TouchableOpacity,
@@ -22,6 +23,7 @@ import {
 import { DrinkingSessionArrayItem, DrinkingSessionData, PreferencesData } from '../types/database';
 import { DateObject, DayState } from '../types/components';
 import LoadingData from './LoadingData';
+import MenuIcon from './Buttons/MenuIcon';
 
 type CalendarColors = 'yellow' | 'red' | 'orange' | 'black';
 
@@ -120,7 +122,14 @@ function CustomArrow(direction:string):ReactNode {
             arrowStyles.customArrowContainer,
             direction === 'left' ? arrowStyles.leftContainer : arrowStyles.rightContainer
         ]}>
-            <Text style={arrowStyles.customArrowText}>{direction === 'left' ? '<' : '>'}</Text>
+            <Image
+            source = {require('../assets/icons/arrow_back.png')}
+            style={[
+                arrowStyles.customArrowIcon, 
+                direction === 'left' ? arrowStyles.customArrowLeft : arrowStyles.customArrowRight
+            ]}
+            />
+            {/* <Text style={arrowStyles.customArrowText}>{direction === 'left' ? '<' : '>'}</Text> */}
         </View>
     );
 }
@@ -238,14 +247,13 @@ const arrowStyles = StyleSheet.create({
         height: 45,
         alignSelf: 'center',
         justifyContent: 'center',
-        borderColor: 'black',
-        borderRadius: 0,
+        bordercolor: 'grey',
         borderWidth: 1,
         backgroundColor:'white',
         alignItems: 'center',
         width: screenWidth / 2,
         // backgroundColor: 'white',
-        marginVertical: -10
+        marginVertical: -10,
     },
     leftContainer: {
         marginRight: -10,
@@ -254,10 +262,18 @@ const arrowStyles = StyleSheet.create({
     rightContainer: {
         marginLeft: -10,
     },
-    customArrowText: {
-        color: 'black',
-        fontSize: 30,
-        fontWeight: '500',
+    customArrowIcon: {
+        height: 20,
+        width: 20,
+    },
+    customArrowLeft: {
+        alignSelf: 'flex-start',
+        marginLeft: 15,
+    },
+    customArrowRight: {
+        alignSelf: 'flex-end',
+        marginRight: 15,
+        transform: [{rotate: '180deg'}]
     },
 });
 

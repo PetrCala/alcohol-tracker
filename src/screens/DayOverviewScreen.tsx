@@ -5,7 +5,8 @@ import {
   FlatList,
   TouchableOpacity,
   StyleSheet,
-  Alert
+  Alert,
+  Dimensions
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import MenuIcon from '../components/Buttons/MenuIcon';
@@ -278,15 +279,21 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
             <MenuIcon
                 iconId = "navigate-day-back"
                 iconSource = {require('../assets/icons/arrow_back.png')}
-                containerStyle={styles.previousDayContainer}
-                iconStyle = {styles.nextDayArrow}
+                containerStyle={styles.footerArrowContainer}
+                iconStyle = {[
+                  styles.dayArrowIcon,
+                  styles.previousDayArrow
+                ]}
                 onPress={() => {changeDay(-1)}}
-            />
+                />
             <MenuIcon
                 iconId = "navigate-day-forward"
                 iconSource = {require('../assets/icons/arrow_back.png')}
-                containerStyle={styles.nextDayContainer}
-                iconStyle = {styles.nextDayArrow}
+                containerStyle={styles.footerArrowContainer}
+                iconStyle = {[
+                  styles.dayArrowIcon,
+                  styles.nextDayArrow
+                ]}
                 onPress={() => {changeDay(1)}} 
             />
         </View>
@@ -296,6 +303,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
 
 export default DayOverviewScreen;
 
+const screenWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
   mainHeader: {
@@ -390,6 +398,7 @@ const styles = StyleSheet.create({
   },
   dayOverviewFooter: {
     flexShrink: 1, // Only as large as necessary
+    marginHorizontal: -1,
     left: 0,
     right: 0,
     bottom: 0,
@@ -406,7 +415,6 @@ const styles = StyleSheet.create({
     marginVertical: 0,
     borderColor: '#ddd',
     elevation: 8, // for Android shadow
-    padding: 17,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
@@ -428,19 +436,29 @@ const styles = StyleSheet.create({
     padding: 10,
     alignSelf: 'center',
   },
-  previousDayContainer: {
-    justifyContent: 'flex-end',
+  footerArrowContainer: {
+    justifyContent: 'center',
     alignItems: 'center',
+    width: screenWidth / 2,
+    backgroundColor: 'white',
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    borderColor: 'grey',
+    height: 50,
   },
-  nextDayContainer: {
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    transform: [{rotate: '180deg'}]
-  },
-  nextDayArrow: {
+  dayArrowIcon: {
     width: 25,
     height: 25,
-    tintColor: "#1c73e6"
+    tintColor: "black",
+  },
+  previousDayArrow: {
+    alignSelf: 'flex-start',
+    marginLeft: 15,
+  },
+  nextDayArrow: {
+    transform: [{rotate: '180deg'}],
+    alignSelf: 'flex-end',
+    marginRight: 15,
   },
   ongoingSessionContainer: {
     width: 120,
