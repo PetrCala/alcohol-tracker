@@ -132,10 +132,10 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
                 {session?.ongoing ?
                   <View style={styles.ongoingSessionContainer}>
                     <TouchableOpacity
-                      style={styles.ongoingSessionButton}
-                      onPress={() => onSessionButtonPress(sessionKey, session, preferences)}
-                    >
-                      <Text style={styles.ongoingSessionText}>In Session</Text>
+                        style={styles.ongoingSessionButton}
+                        onPress={() => onSessionButtonPress(sessionKey, session, preferences)}
+                      >
+                        <Text style={styles.ongoingSessionText}>In Session</Text>
                     </TouchableOpacity>
                   </View>
                 : editMode ?

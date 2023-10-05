@@ -4,7 +4,6 @@
   useState,
   useContext,
   useEffect,
-  useRef,
 } from 'react';
 import { 
   Alert,
@@ -14,14 +13,12 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Calendar } from 'react-native-calendars';
 import BasicButton from '../components/Buttons/BasicButton';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import SessionsCalendar from '../components/Calendar';
 import LoadingData from '../components/LoadingData';
 import DatabaseContext from '../context/DatabaseContext';
-import { listenForDataChanges, readDataOnce } from "../database/baseFunctions";
-import { CurrentSessionData, DrinkingSessionArrayItem, DrinkingSessionData, PreferencesData, UnconfirmedDaysData, UnitTypesProps, UserData } from '../types/database';
+import { DrinkingSessionArrayItem } from '../types/database';
 import { MainScreenProps } from '../types/screens';
 import { DateObject } from '../types/components';
 import { getAuth, signOut } from 'firebase/auth';
@@ -54,15 +51,6 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
   const [thisMonthSessionCount, setThisMonthSessionCount] = useState<number>(0);
   const [loadingNewSession, setLoadingNewSession] = useState<boolean>(false);
   const thisYearMonth = getYearMonthVerbose(visibleDateObject, false);
-  const calendarRef = useRef<any>(null);
-   
-  const onPreviousMonth = () => {
-    calendarRef.current?.onPressArrowLeft((subtractMonth:() => void) => subtractMonth);
-  };
-
-  const onNextMonth = () => {
-    calendarRef.current?.onPressArrowRight((addMonth:() => void) => addMonth());
-  };
 
   // Handle drinking session button press
   const startDrinkingSession = async () => {
@@ -193,22 +181,22 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
               />
           </View>
       </View>
+      {currentSessionData?.current_session_id ?
+      <TouchableOpacity 
+      style={styles.userInSessionWarningContainer}
+      onPress={startDrinkingSession}
+      >
+        <Text style={styles.userInSessionWarningText}>
+        You are currently in session!
+        </Text> 
+      </TouchableOpacity>
+      :
+      <></>
+      } 
       <View style={styles.yearMonthContainer}>
         <Text style={styles.yearMonthText}>{thisYearMonth}</Text>
       </View>
       <ScrollView style={styles.mainScreenContent}>
-          {currentSessionData?.current_session_id ?
-          <TouchableOpacity 
-            style={styles.userInSessionWarningContainer}
-            onPress={startDrinkingSession}
-            >
-              <Text style={styles.userInSessionWarningText}>
-              You are currently in session!
-              </Text> 
-          </TouchableOpacity>
-          :
-          <></>
-          } 
           <View style={styles.menuInfoContainer}>
             <View style={styles.menuInfoItemContainer}>
               <Text style={styles.menuInfoText}>Units:</Text> 
@@ -224,31 +212,14 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
             </View>
           </View>
           <SessionsCalendar
-            ref={calendarRef}
             drinkingSessionData = {drinkingSessionData}
             preferences = {preferences}
             visibleDateObject={visibleDateObject}
             setVisibleDateObject={setVisibleDateObject}
-            // onLeftArrowPress={onPreviousMonth}
-            // onRightArrowPress={onNextMonth}
             onDayPress = {(day:DateObject) => {
               navigation.navigate('Day Overview Screen', { dateObject: day })
             }}
           />
-          <View style={styles.navigationArrowContainer}>
-            <TouchableOpacity
-              onPress={onPreviousMonth}
-              style={styles.navigationArrowButton}
-            >
-              <Text style={styles.navigationArrowText}>{'<'}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={onNextMonth}
-              style={styles.navigationArrowButton}
-            >
-              <Text style={styles.navigationArrowText}>{'>'}</Text>
-            </TouchableOpacity>
-          </View>
           <View style={{height:200, backgroundColor: '#ffff99'}}></View>
       </ScrollView>
       {currentSessionData?.current_session_id ? <></> :
@@ -326,10 +297,12 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#ffff99',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    borderBottomColor: 'black',
+    borderBottomWidth: 1,
   },
   yearMonthText: {
-    fontSize: 20,
+    fontSize: 18,
     color: 'black',
     fontWeight: 'bold',
     margin: 10,
@@ -375,12 +348,14 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   menuInfoText: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: "bold",
     color: "black",
     alignSelf: "center",
     // alignContent: "center",
-    padding: 10,
+    padding: 6,
+    marginRight: 4,
+    marginLeft: 4,
   },
   thisMonthUnitsText: {
     fontSize: 20,

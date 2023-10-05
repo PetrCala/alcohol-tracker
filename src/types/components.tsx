@@ -72,8 +72,6 @@ export type SessionsCalendarProps = {
     preferences: PreferencesData;
     visibleDateObject: DateObject;
     setVisibleDateObject: React.Dispatch<React.SetStateAction<DateObject>>;
-    // onLeftArrowPress: (changeMonthFunction: () => void) => void,
-    // onRightArrowPress: (changeMonthFunction: () => void) => void,
     onDayPress: (day: any) => void;
 }
  

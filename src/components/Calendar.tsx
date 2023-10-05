@@ -1,5 +1,6 @@
 ﻿import React, { useEffect, useState, useMemo, useCallback, forwardRef, ReactNode } from 'react';
 import { 
+    Dimensions,
     StyleSheet,
     Text,
     TouchableOpacity,
@@ -7,16 +8,10 @@ import {
 } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { 
-    formatDate,
     getPreviousMonth,
     getNextMonth,
-    getSingleMonthDrinkingSessions, 
-    timestampToDate, 
-    unitsToColors, 
     changeDateBySomeDays,
     getTimestampAtMidnight,
-    sumAllUnits,
-    getYearMonth,
     aggregateSessionsByDays,
     monthEntriesToColors
 } from '../utils/dataHandling';
@@ -27,13 +22,6 @@ import {
 import { DrinkingSessionArrayItem, DrinkingSessionData, PreferencesData } from '../types/database';
 import { DateObject, DayState } from '../types/components';
 import LoadingData from './LoadingData';
-
-// declare module 'react-native-calendars' {
-//   interface Theme {
-//     'stylesheet.calendar.header'?: object;
-//     // Add other custom theme properties if needed
-//   }
-// }
 
 type CalendarColors = 'yellow' | 'red' | 'orange' | 'black';
 
@@ -126,20 +114,25 @@ const DayComponent: React.FC<{
     );
 };
 
-// function CustomArrow(direction:string):ReactNode|null {
-//     return null
-// }
+function CustomArrow(direction:string):ReactNode {
+    return (
+        <View style={[
+            arrowStyles.customArrowContainer,
+            direction === 'left' ? arrowStyles.leftContainer : arrowStyles.rightContainer
+        ]}>
+            <Text style={arrowStyles.customArrowText}>{direction === 'left' ? '<' : '>'}</Text>
+        </View>
+    );
+}
 
-// const SessionsCalendar = React.forwardRef(function SessionsCalendar({ 
-const SessionsCalendar = React.forwardRef(({ 
+
+const SessionsCalendar: React.FC<SessionsCalendarProps> = ({ 
     drinkingSessionData, 
     preferences,
     visibleDateObject, 
     setVisibleDateObject,
-    // onLeftArrowPress,
-    // onRightArrowPress,
     onDayPress
-}: SessionsCalendarProps, ref:React.Ref<any>) => {
+}) => {
     const [calendarData, setCalendarData ] = useState<DrinkingSessionArrayItem[]>(drinkingSessionData);
     const [markedDates, setMarkedDates] = useState<SessionsCalendarMarkedDates>({});
     const [loadingMarkedDates, setLoadingMarkedDays] = useState<boolean>(true);
@@ -193,7 +186,6 @@ const SessionsCalendar = React.forwardRef(({
 
     return (
         <Calendar
-        ref={ref}
         current={visibleDateObject.dateString}
         dayComponent={({ date, state, marking, theme }) => 
             <DayComponent 
@@ -204,6 +196,7 @@ const SessionsCalendar = React.forwardRef(({
                 onPress={onDayPress}
             />
         }
+        monthFormat=''
         onPressArrowLeft={(subtractMonth) => handleLeftArrowPress(subtractMonth)}
         onPressArrowRight={(addMonth) => handleRightArrowPress(addMonth)}
         markedDates={markedDates}
@@ -211,33 +204,62 @@ const SessionsCalendar = React.forwardRef(({
         firstDay={preferences.first_day_of_week === 'Monday' ? 1 : 0}
         enableSwipeMonths={false}
         disableAllTouchEventsForDisabledDays={true}
-        // renderArrow={CustomArrow}
-        hideArrows={true}
+        renderArrow={CustomArrow}
         style={styles.mainScreenCalendarStyle}
         theme={{
             textDayHeaderFontWeight: 'bold',
             'stylesheet.calendar.header': {
                 header: {
-                    height: 0 // Hide the header
-                //   flexDirection: 'row',
-                //   justifyContent: 'space-between',
-                //   alignItems: 'center',
-                //   marginTop: 5,
-                //   marginBottom: 5
+                   flexDirection: 'row',
+                   justifyContent: 'space-between',
+                   alignItems: 'center',
+                   margin: 0,
+                   padding: 0,
                 },
-                // monthText: {
+                monthText: {
                 //   color: 'black',
                 //   fontSize: 20,
                 //   width: 150,
+                //   width: 0,
                 //   textAlign: 'center'
-                // }
+                }
             }
         } as any} // Circumvent typescript gymnastics
         />
     );
-});
+};
     
 export default SessionsCalendar;
+
+const screenWidth = Dimensions.get('window').width;
+
+const arrowStyles = StyleSheet.create({
+    customArrowContainer: {
+        height: 45,
+        alignSelf: 'center',
+        justifyContent: 'center',
+        borderColor: 'black',
+        borderRadius: 0,
+        borderWidth: 1,
+        backgroundColor:'white',
+        alignItems: 'center',
+        width: screenWidth / 2,
+        // backgroundColor: 'white',
+        marginVertical: -10
+    },
+    leftContainer: {
+        marginRight: -10,
+        marginLeft: -15,
+    },
+    rightContainer: {
+        marginLeft: -10,
+    },
+    customArrowText: {
+        color: 'black',
+        fontSize: 30,
+        fontWeight: '500',
+    },
+});
 
 const styles = StyleSheet.create({
     // Day component styles
@@ -282,7 +304,7 @@ const styles = StyleSheet.create({
     // Calendar styles
     mainScreenCalendarStyle: {
         width: '100%',
-        borderTopWidth: 1,
+        borderTopWidth: 0,
         borderBottomWidth: 1,
         borderColor: '#000',
         flexGrow: 1,
