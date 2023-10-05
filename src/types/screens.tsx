@@ -27,6 +27,7 @@ export type AppStackParamList = {
   'Profile Screen': undefined;
   'Social Screen': undefined;
   'Achievement Screen': undefined;
+  'Statistics Screen': undefined;
   'Settings Screen': undefined;
   'Preferences Screen': undefined;
   'Day Overview Screen': { dateObject: DateObject };

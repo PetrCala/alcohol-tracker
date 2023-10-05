@@ -7,6 +7,7 @@
 } from 'react';
 import { 
   Alert,
+  Dimensions,
   ScrollView,
   StyleSheet,
   Text,
@@ -137,7 +138,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
 
   return ( 
     <>
-      <View style={styles.mainHeader}>
+      <View style={styles.mainScreenHeader}>
           <View style={styles.profileContainer}>
             <TouchableOpacity
               onPress = {() => navigation.navigate('Profile Screen')}
@@ -155,30 +156,6 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
           </View>
           <View style={styles.menuContainer}>
               {/* Clickable icons for social, achievements, and settings */}
-              <MenuIcon 
-                iconId='social-icon'
-                iconSource={require('../assets/icons/social.png')} 
-                containerStyle={styles.menuIconContainer}
-                iconStyle={styles.menuIcon}
-                onPress = {() => navigation.navigate('Social Screen')}
-              />
-              <MenuIcon 
-                iconId='achievement-icon'
-                iconSource={require('../assets/icons/achievements.png')} 
-                containerStyle={styles.menuIconContainer}
-                iconStyle={styles.menuIcon}
-                onPress = {() => navigation.navigate('Achievement Screen')}
-              />
-              <MenuIcon 
-                iconId='main-menu-popup-icon'
-                iconSource={require('../assets/icons/menu.png')} 
-                containerStyle={styles.menuIconContainer}
-                iconStyle={styles.menuIcon}
-                onPress = {() => navigation.navigate('Main Menu Screen', {
-                  userData: userData,
-                  preferences: preferences
-                })}
-              />
           </View>
       </View>
       {currentSessionData?.current_session_id ?
@@ -222,6 +199,49 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
           />
           <View style={{height:200, backgroundColor: '#ffff99'}}></View>
       </ScrollView>
+      <View style={styles.mainScreenFooter}>
+        <View style={[
+          styles.mainScreenFooterHalfContainer,
+          styles.mainScreenFooterLeftContainer
+        ]}>
+          <MenuIcon 
+            iconId='social-icon'
+            iconSource={require('../assets/icons/social.png')} 
+            containerStyle={styles.menuIconContainer}
+            iconStyle={styles.menuIcon}
+            onPress = {() => navigation.navigate('Social Screen')}
+          />
+          <MenuIcon 
+            iconId='achievement-icon'
+            iconSource={require('../assets/icons/achievements.png')} 
+            containerStyle={styles.menuIconContainer}
+            iconStyle={styles.menuIcon}
+            onPress = {() => navigation.navigate('Achievement Screen')}
+          />
+        </View>
+        <View style={[
+          styles.mainScreenFooterHalfContainer,
+          styles.mainScreenFooterRightContainer
+        ]}>
+          <MenuIcon 
+            iconId='main-menu-popup-icon'
+            iconSource={require('../assets/icons/statistics.png')} 
+            containerStyle={styles.menuIconContainer}
+            iconStyle={styles.menuIcon}
+            onPress = {() => navigation.navigate('Statistics Screen')}
+          />
+          <MenuIcon 
+            iconId='main-menu-popup-icon'
+            iconSource={require('../assets/icons/bar_menu.png')} 
+            containerStyle={styles.menuIconContainer}
+            iconStyle={styles.menuIcon}
+            onPress = {() => navigation.navigate('Main Menu Screen', {
+              userData: userData,
+              preferences: preferences
+            })}
+          />
+        </View>
+      </View>
       {currentSessionData?.current_session_id ? <></> :
       <BasicButton 
         text='+'
@@ -233,11 +253,12 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
   );
 };
    
-
 export default MainScreen;
 
+const screenWidth = Dimensions.get('window').width;
+
 const styles = StyleSheet.create({
-  mainHeader: {
+  mainScreenHeader: {
     height: 70,
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -277,7 +298,7 @@ const styles = StyleSheet.create({
   menuContainer: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    justifyContent: 'flex-end',
     alignItems: 'center',
     width: 150,
   },
@@ -289,8 +310,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   menuIcon: {
-    width: 25,
-    height: 25,
+    width: 28,
+    height: 28,
     padding: 10,
   },
   yearMonthContainer: {
@@ -369,12 +390,14 @@ const styles = StyleSheet.create({
   startSessionButton: {
     position: 'absolute',
     bottom: 20,
-    right: 20,
+    left: '50%',
+    transform: [{ translateX: -35 }],
     borderRadius: 50,
     width: 70,
     height: 70,
     backgroundColor: 'green',
     alignItems: 'center',
+    shadowColor: 'black',
   },
   startSessionText: {
     color: 'white',
@@ -383,13 +406,11 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   navigationArrowContainer: {
-      // marginHorizontal: -10
       justifyContent: 'space-between',
       alignItems: 'center',
       width: '100%',
       backgroundColor: '#ffff99',
       flexDirection: 'row',
-      // backgroundColor: 'white',
   },
   navigationArrowButton: {
     width: '50%',
@@ -406,5 +427,35 @@ const styles = StyleSheet.create({
       fontSize: 30,
       fontWeight: '500',
       textAlign: 'center',
+  },
+  mainScreenFooter: {
+    height: 55,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    // padding: 10,
+    backgroundColor: 'white',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: -2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    elevation: 8, // for Android shadow
+  },
+  mainScreenFooterHalfContainer: {
+    width: '50%',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    backgroundColor: 'shite',
+  },
+  mainScreenFooterLeftContainer: {
+    paddingRight: 30,
+  },
+  mainScreenFooterRightContainer: {
+    paddingLeft: 30,
   },
 });

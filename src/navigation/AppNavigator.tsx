@@ -13,6 +13,7 @@ import TermsAndAgreementsScreen from '../screens/TermsAndAgreementsScreen';
 
 import Stack from './Stack';
 import { DatabaseDataProvider } from '../context/DatabaseDataContext';
+import StatisticsScreen from '../screens/StatisticsScreen';
 
 const AppNavigator = () => (
     <DatabaseDataProvider>
@@ -28,6 +29,7 @@ const AppNavigator = () => (
       <Stack.Screen name='Drinking Session Screen' component={DrinkingSessionScreen}/>
       <Stack.Screen name='Social Screen' component={SocialScreen}/>
       <Stack.Screen name='Achievement Screen' component={AchievementScreen}/>
+      <Stack.Screen name='Statistics Screen' component={StatisticsScreen}/>
       <Stack.Screen name='Settings Screen' component={SettingsScreen}/>
       <Stack.Screen name='Preferences Screen' component={PreferencesScreen}/>
       <Stack.Screen name='Day Overview Screen' component={DayOverviewScreen}/>
