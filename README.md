@@ -1,4 +1,4 @@
-## Alcohol tracker
+## Kiroku - alcohol tracker
 
 Track your everyday alcohol adventures using a natively ran application.
 
