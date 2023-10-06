@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "alcohol_tracker.app"
-               BlueprintName = "alcohol_tracker"
-               ReferencedContainer = "container:alcohol_tracker.xcodeproj">
+               BuildableName = "kiroku.app"
+               BlueprintName = "kiroku"
+               ReferencedContainer = "container:kiroku.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "alcohol_trackerTests.xctest"
-               BlueprintName = "alcohol_trackerTests"
-               ReferencedContainer = "container:alcohol_tracker.xcodeproj">
+               BuildableName = "kirokuTests.xctest"
+               BlueprintName = "kirokuTests"
+               ReferencedContainer = "container:kiroku.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "alcohol_tracker.app"
-            BlueprintName = "alcohol_tracker"
-            ReferencedContainer = "container:alcohol_tracker.xcodeproj">
+            BuildableName = "kiroku.app"
+            BlueprintName = "kiroku"
+            ReferencedContainer = "container:kiroku.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "alcohol_tracker.app"
-            BlueprintName = "alcohol_tracker"
-            ReferencedContainer = "container:alcohol_tracker.xcodeproj">
+            BuildableName = "kiroku.app"
+            BlueprintName = "kiroku"
+            ReferencedContainer = "container:kiroku.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

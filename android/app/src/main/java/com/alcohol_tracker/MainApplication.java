@@ -1,4 +1,4 @@
-package com.alcohol_tracker;
+package com.kiroku;
 
 import android.app.Application;
 import com.facebook.react.PackageList;

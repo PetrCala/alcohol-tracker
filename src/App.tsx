@@ -15,7 +15,7 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app); // Available automatically after this call
 
-const AlcoholTracker = () => {
+const Kiroku = () => {
   return (
     <ContextProvider db={db}>
       <NavigationContainer>
@@ -33,4 +33,4 @@ const AlcoholTracker = () => {
   );
 };
 
-export default AlcoholTracker;
+export default Kiroku;
