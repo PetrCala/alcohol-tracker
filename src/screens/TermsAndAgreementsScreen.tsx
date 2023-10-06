@@ -1,8 +1,10 @@
 ﻿import {
+  Platform,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
+import { WebView } from 'react-native-webview';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import { TermsAndAgreementsScreenProps } from '../types/screens';
 
@@ -26,6 +28,7 @@ const TermsItems: React.FC<TermsItemProps> = ({ terms }) => {
   );
 };
 
+
 const TermsAndAgreementsScreen = ({ navigation }: TermsAndAgreementsScreenProps) => {
   if (!navigation) return null; // Should never be null
 
@@ -44,6 +47,11 @@ const TermsAndAgreementsScreen = ({ navigation }: TermsAndAgreementsScreenProps)
           onPress={() => navigation.goBack() }
         />
       </View>
+      <WebView 
+        originWhitelist={['*']}
+        source={Platform.OS === 'ios' ? require('../assets/privacy_policy.html') : { uri: 'file:///android_asset/privacy_policy.html' }}
+        style={{ flex: 1 }} 
+      />
       <TermsItems
         terms={termsAndAgreements}
       />

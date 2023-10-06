@@ -96,9 +96,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.alcohol_tracker"
+    namespace "com.kiroku"
     defaultConfig {
-        applicationId "com.alcohol_tracker"
+        applicationId "com.kiroku"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -114,6 +114,12 @@ android {
         }
     }
     signingConfigs {
+        debug {
+            storeFile file('debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
         release {
             storeFile file(rootProject.ext.MYAPP_RELEASE_STORE_FILE)
             keyAlias rootProject.ext.MYAPP_RELEASE_KEY_ALIAS
@@ -121,14 +127,6 @@ android {
             keyPassword rootProject.ext.MYAPP_RELEASE_KEY_PASSWORD
         }
     }
-    // signingConfigs {
-    //     debug {
-    //         storeFile file('debug.keystore')
-    //         storePassword 'android'
-    //         keyAlias 'androiddebugkey'
-    //         keyPassword 'android'
-    //     }
-    // }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
