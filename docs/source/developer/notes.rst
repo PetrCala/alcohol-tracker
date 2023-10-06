@@ -65,8 +65,10 @@ Running the application on an Android device
 Building the application for an Android device
 ================================
 
-#. You can build the application using the command :code:`npx react-native run-android --variant=release`. This will build the :code:`.apk` file in the :code:`android\\app\\build\\outputs\\apk\\release\\` folder.
+#. You can build the application for local testing using the command :code:`npx react-native build-android --mode=debug`. This will build an :code:`.apk` file in the :code:`android\\app\\build\\outputs\\apk\\debug\\` folder.
 #. Share the :code:`.apk` file with your friends. They can easily install the application by downloading the file to their device and opening it there.
+#. To build the application for production, run :code:`npx react-native build-android --mode=release`. This will create an :code:`.aab` file in the :code:`android\\app\\build\\outputs\\bundle\\release` folder.
+#. This file can be uploaded into the App Store Console.
 
 Running the application on an iOS device
 ================================
