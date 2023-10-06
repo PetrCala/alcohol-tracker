@@ -6,7 +6,7 @@
 } from 'react-native';
 import { WebView } from 'react-native-webview';
 import MenuIcon from '../components/Buttons/MenuIcon';
-import { TermsAndAgreementsScreenProps } from '../types/screens';
+import { TermsOfServiceScreenProps } from '../types/screens';
 
 
 type TermsItemProps = {
@@ -29,7 +29,7 @@ const TermsItems: React.FC<TermsItemProps> = ({ terms }) => {
 };
 
 
-const TermsAndAgreementsScreen = ({ navigation }: TermsAndAgreementsScreenProps) => {
+const TermsOfServiceScreen = ({ navigation }: TermsOfServiceScreenProps) => {
   if (!navigation) return null; // Should never be null
 
   const termsAndAgreements = [
@@ -40,7 +40,7 @@ const TermsAndAgreementsScreen = ({ navigation }: TermsAndAgreementsScreenProps)
     <View style={{flex:1, backgroundColor: '#FFFF99'}}>
       <View style={styles.mainHeader}>
         <MenuIcon
-          iconId='escape-privacy-policy-screen'
+          iconId='escape-terms-of-service-screen'
           iconSource={require('../../assets/icons/arrow_back.png')}
           containerStyle={styles.backArrowContainer}
           iconStyle={styles.backArrow}
@@ -49,7 +49,7 @@ const TermsAndAgreementsScreen = ({ navigation }: TermsAndAgreementsScreenProps)
       </View>
       <WebView 
         originWhitelist={['*']}
-        source={Platform.OS === 'ios' ? require('../../assets/privacy_policy.html') : { uri: 'file:///android_asset/privacy_policy.html' }}
+        source={Platform.OS === 'ios' ? require('../../assets/terms_of_service.html') : { uri: 'file:///android_asset/terms_of_service.html' }}
         style={{ flex: 1 }} 
       />
       <TermsItems
@@ -59,7 +59,7 @@ const TermsAndAgreementsScreen = ({ navigation }: TermsAndAgreementsScreenProps)
   );
 };
 
-export default TermsAndAgreementsScreen;
+export default TermsOfServiceScreen;
 
 const styles = StyleSheet.create({
   mainHeader: {

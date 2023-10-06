@@ -107,12 +107,12 @@ export type SessionSummaryScreenProps = {
   navigation?: any
 }
 
-export type TermsAndAgreementsScreenProps = {
-  // navigation?: StackNavigationProp<AppStackParamList, 'Terms And Agreements Screen'>;
+export type TermsOfServiceScreenProps = {
+  // navigation?: StackNavigationProp<AppStackParamList, 'Terms Of Service Screen'>;
   navigation?: any
 }
 
-export type PrivacyPolicyScreen = {
+export type PrivacyPolicyScreenProps = {
   // navigation?: StackNavigationProp<AppStackParamList, 'Privacy Policy Screen'>;
   navigation?: any
 }

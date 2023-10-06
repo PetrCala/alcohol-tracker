@@ -10,7 +10,7 @@ import PreferencesScreen from '../screens/PreferencesScreen';
 import DayOverviewScreen from '../screens/DayOverviewScreen';
 import EditSessionScreen from '../screens/EditSessionScreen';
 import SessionSummaryScreen from '../screens/SessionSummaryScreen';
-import TermsAndAgreementsScreen from '../screens/TermsAndAgreementsScreen';
+import TermsOfServiceScreen from '../screens/TermsAndAgreementsScreen';
 import PrivacyPolicyScreen from '../screens/PrivacyPolicyScreen';
 
 import Stack from './Stack';
@@ -36,7 +36,7 @@ const AppNavigator = () => (
       <Stack.Screen name='Day Overview Screen' component={DayOverviewScreen}/>
       <Stack.Screen name='Edit Session Screen' component={EditSessionScreen}/>
       <Stack.Screen name='Session Summary Screen' component={SessionSummaryScreen}/>
-      <Stack.Screen name='Terms And Agreements Screen' component={TermsAndAgreementsScreen} />
+      <Stack.Screen name='Terms Of Service Screen' component={TermsOfServiceScreen} />
       <Stack.Screen name='Privacy Policy Screen' component={PrivacyPolicyScreen} />
     </Stack.Navigator>
     </DatabaseDataProvider>

@@ -6,7 +6,7 @@
 } from 'react-native';
 import { WebView } from 'react-native-webview';
 import MenuIcon from '../components/Buttons/MenuIcon';
-import { PrivacyPolicyScreen } from '../types/screens';
+import { PrivacyPolicyScreenProps } from '../types/screens';
 
 
 
@@ -26,7 +26,7 @@ const PrivacyPolicyScreen = ({ navigation }: PrivacyPolicyScreenProps) => {
       </View>
       <WebView 
         originWhitelist={['*']}
-        source={Platform.OS === 'ios' ? require('../../assets/terms_and_agreements.html') : { uri: 'file:///android_asset/terms_and_agreements.html' }}
+        source={Platform.OS === 'ios' ? require('../../assets/privacy_policy.html') : { uri: 'file:///android_asset/privacy_policy.html' }}
         style={{ flex: 1 }} 
       />
     </View>

@@ -177,9 +177,9 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
         },
         // Potentially preferences screen?
         { 
-            label: 'Terms and agreements', 
+            label: 'Terms of service', 
             icon: require('../../assets/icons/book.png'), 
-            action: () => navigation.navigate("Terms And Agreements Screen")
+            action: () => navigation.navigate("Terms Of Service Screen")
         },
     ]},
     { heading: 'Feedback', data:[
