@@ -47,11 +47,11 @@ const TermsOfServiceScreen = ({ navigation }: TermsOfServiceScreenProps) => {
           onPress={() => navigation.goBack() }
         />
       </View>
-      <WebView 
+      {/* <WebView 
         originWhitelist={['*']}
         source={Platform.OS === 'ios' ? require('../../assets/terms_of_service.html') : { uri: 'file:///android_asset/terms_of_service.html' }}
         style={{ flex: 1 }} 
-      />
+      /> */}
       <TermsItems
         terms={termsAndAgreements}
       />

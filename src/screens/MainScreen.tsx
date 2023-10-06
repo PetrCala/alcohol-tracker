@@ -146,7 +146,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
             >
               <MenuIcon 
                 iconId='profile-icon'
-                iconSource={require('../../../assets/temp/user.png')}  // user.photoURL;
+                iconSource={require('../../assets/temp/user.png')}  // user.photoURL;
                 containerStyle={styles.profileIconContainer}
                 iconStyle={styles.profileIcon}
                 onPress = {() => navigation.navigate('App', {screen: 'Profile Screen'})}

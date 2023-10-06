@@ -24,11 +24,11 @@ const PrivacyPolicyScreen = ({ navigation }: PrivacyPolicyScreenProps) => {
           onPress={() => navigation.goBack() }
         />
       </View>
-      <WebView 
+      {/* <WebView 
         originWhitelist={['*']}
         source={Platform.OS === 'ios' ? require('../../assets/privacy_policy.html') : { uri: 'file:///android_asset/privacy_policy.html' }}
         style={{ flex: 1 }} 
-      />
+      /> */}
     </View>
   );
 };

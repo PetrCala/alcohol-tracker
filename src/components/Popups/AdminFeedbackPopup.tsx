@@ -81,7 +81,7 @@ const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
             onPress={() => handleDeleteFeedback(db, item.feedback_id)}
             style={styles.deleteFeedbackButton}
           >
-            <Image source={require('../../assets/icons/remove.png')} style={styles.deleteFeedbackButtonImage}/>
+            <Image source={require('../../../assets/icons/remove.png')} style={styles.deleteFeedbackButtonImage}/>
           </TouchableOpacity>
         </View>
         <View style={styles.mainTextContainer}>
