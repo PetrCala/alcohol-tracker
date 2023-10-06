@@ -40,6 +40,7 @@ export type AppStackParamList = {
     sessionKey: string;
   };
   'Terms And Agreements Screen': undefined;
+  'Privacy Policy Screen': undefined;
 };
 
 export type ForceUpdateScreen = {
@@ -108,5 +109,10 @@ export type SessionSummaryScreenProps = {
 
 export type TermsAndAgreementsScreenProps = {
   // navigation?: StackNavigationProp<AppStackParamList, 'Terms And Agreements Screen'>;
+  navigation?: any
+}
+
+export type PrivacyPolicyScreen = {
+  // navigation?: StackNavigationProp<AppStackParamList, 'Privacy Policy Screen'>;
   navigation?: any
 }

@@ -6,35 +6,12 @@
 } from 'react-native';
 import { WebView } from 'react-native-webview';
 import MenuIcon from '../components/Buttons/MenuIcon';
-import { TermsAndAgreementsScreenProps } from '../types/screens';
+import { PrivacyPolicyScreen } from '../types/screens';
 
 
-type TermsItemProps = {
-  terms: string[];
-};
 
-const TermsItems: React.FC<TermsItemProps> = ({ terms }) => {
-  return (
-    <View style={styles.termsContainer}>
-      <Text style={styles.termsHeading}> 
-          Terms and Agreements
-      </Text>
-      {terms.map((term, index) => (
-        <Text key={index} style={styles.termsText}>
-          {`${index + 1}. ${term}`}
-        </Text>
-      ))}
-    </View>
-  );
-};
-
-
-const TermsAndAgreementsScreen = ({ navigation }: TermsAndAgreementsScreenProps) => {
+const PrivacyPolicyScreen = ({ navigation }: PrivacyPolicyScreenProps) => {
   if (!navigation) return null; // Should never be null
-
-  const termsAndAgreements = [
-    'I solemnly swear to faithfully report all consumed units in their true form and amount',
-  ]
 
   return (
     <View style={{flex:1, backgroundColor: '#FFFF99'}}>
@@ -49,17 +26,14 @@ const TermsAndAgreementsScreen = ({ navigation }: TermsAndAgreementsScreenProps)
       </View>
       <WebView 
         originWhitelist={['*']}
-        source={Platform.OS === 'ios' ? require('../../assets/privacy_policy.html') : { uri: 'file:///android_asset/privacy_policy.html' }}
+        source={Platform.OS === 'ios' ? require('../../assets/terms_and_agreements.html') : { uri: 'file:///android_asset/terms_and_agreements.html' }}
         style={{ flex: 1 }} 
-      />
-      <TermsItems
-        terms={termsAndAgreements}
       />
     </View>
   );
 };
 
-export default TermsAndAgreementsScreen;
+export default PrivacyPolicyScreen;
 
 const styles = StyleSheet.create({
   mainHeader: {
@@ -99,3 +73,4 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   }
 });
+
