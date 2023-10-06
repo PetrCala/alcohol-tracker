@@ -123,7 +123,7 @@ function CustomArrow(direction:string):ReactNode {
             direction === 'left' ? arrowStyles.leftContainer : arrowStyles.rightContainer
         ]}>
             <Image
-            source = {require('../assets/icons/arrow_back.png')}
+            source = {require('../../assets/icons/arrow_back.png')}
             style={[
                 arrowStyles.customArrowIcon, 
                 direction === 'left' ? arrowStyles.customArrowLeft : arrowStyles.customArrowRight

@@ -170,7 +170,7 @@ const PreferencesScreen = ({ route, navigation }: PreferencesScreenProps) => {
           <View style={styles.mainHeader}>
               <MenuIcon
               iconId='escape-preferences-screen'
-              iconSource={require('../assets/icons/arrow_back.png')}
+              iconSource={require('../../assets/icons/arrow_back.png')}
               containerStyle={styles.backArrowContainer}
               iconStyle={styles.backArrow}
               onPress={handleGoBack}

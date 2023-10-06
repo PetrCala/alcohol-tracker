@@ -111,7 +111,7 @@ const SessionSummaryScreen = ({ route, navigation}: SessionSummaryScreenProps) =
           <View style={styles.mainHeader}>
             <MenuIcon
               iconId='escape-session-summary'
-              iconSource={require('../assets/icons/arrow_back.png')}
+              iconSource={require('../../assets/icons/arrow_back.png')}
               containerStyle={styles.backArrowContainer}
               iconStyle={styles.backArrow}
               onPress={handleBackPress}
@@ -121,7 +121,7 @@ const SessionSummaryScreen = ({ route, navigation}: SessionSummaryScreenProps) =
             :
             <MenuIcon
                 iconId='edit-session-icon'
-                iconSource={require('../assets/icons/edit.png')}
+                iconSource={require('../../assets/icons/edit.png')}
                 containerStyle={styles.menuIconContainer}
                 iconStyle={styles.menuIcon}
                 onPress={() => onEditSessionPress(sessionKey, session)} // Use keyextractor to load id here

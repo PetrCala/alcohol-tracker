@@ -41,7 +41,7 @@ const TermsAndAgreementsScreen = ({ navigation }: TermsAndAgreementsScreenProps)
       <View style={styles.mainHeader}>
         <MenuIcon
           iconId='escape-social-screen'
-          iconSource={require('../assets/icons/arrow_back.png')}
+          iconSource={require('../../assets/icons/arrow_back.png')}
           containerStyle={styles.backArrowContainer}
           iconStyle={styles.backArrow}
           onPress={() => navigation.goBack() }
@@ -49,7 +49,7 @@ const TermsAndAgreementsScreen = ({ navigation }: TermsAndAgreementsScreenProps)
       </View>
       <WebView 
         originWhitelist={['*']}
-        source={Platform.OS === 'ios' ? require('../assets/privacy_policy.html') : { uri: 'file:///android_asset/privacy_policy.html' }}
+        source={Platform.OS === 'ios' ? require('../../assets/privacy_policy.html') : { uri: 'file:///android_asset/privacy_policy.html' }}
         style={{ flex: 1 }} 
       />
       <TermsItems

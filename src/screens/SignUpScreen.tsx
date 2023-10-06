@@ -178,7 +178,7 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
       >
       <View style={styles.logoContainer}>
         <Image
-          source={require('../assets/logo/alcohol-tracker-source-icon.png')}
+          source={require('../../assets/logo/alcohol-tracker-source-icon.png')}
           style={styles.logo}
         />
       </View>

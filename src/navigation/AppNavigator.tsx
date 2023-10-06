@@ -7,7 +7,7 @@ import AchievementScreen from '../screens/AchievementScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import PreferencesScreen from '../screens/PreferencesScreen';
 import DayOverviewScreen from '../screens/DayOverviewScreen';
-import EditSessionScreen from '../screens/EditSession';
+import EditSessionScreen from '../screens/EditSessionScreen';
 import SessionSummaryScreen from '../screens/SessionSummaryScreen';
 import TermsAndAgreementsScreen from '../screens/TermsAndAgreementsScreen';
 
