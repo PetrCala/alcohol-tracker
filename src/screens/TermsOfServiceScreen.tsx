@@ -17,7 +17,7 @@ const TermsItems: React.FC<TermsItemProps> = ({ terms }) => {
   return (
     <View style={styles.termsContainer}>
       <Text style={styles.termsHeading}> 
-          Terms and Agreements
+          Terms of Service
       </Text>
       {terms.map((term, index) => (
         <Text key={index} style={styles.termsText}>
@@ -47,14 +47,17 @@ const TermsOfServiceScreen = ({ navigation }: TermsOfServiceScreenProps) => {
           onPress={() => navigation.goBack() }
         />
       </View>
+      <View style={styles.mainContainer}>
+        <Text style={styles.sectionText}>Terms of Service Screen...</Text>
+      </View>
       {/* <WebView 
         originWhitelist={['*']}
         source={Platform.OS === 'ios' ? require('../../assets/terms_of_service.html') : { uri: 'file:///android_asset/terms_of_service.html' }}
         style={{ flex: 1 }} 
       /> */}
-      <TermsItems
+      {/* <TermsItems
         terms={termsAndAgreements}
-      />
+      /> */}
     </View>
   );
 };
@@ -97,5 +100,15 @@ const styles = StyleSheet.create({
     color: 'black',
     padding: 5,
     marginLeft: 5,
-  }
+  },
+  sectionText: {
+    fontSize: 20,
+    color: 'black',
+    fontWeight: 'bold',
+    margin: 10,
+    textAlign: 'center',
+  },
+  mainContainer: {
+    flex: 1,
+  },
 });

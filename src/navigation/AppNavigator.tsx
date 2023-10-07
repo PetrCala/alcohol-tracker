@@ -10,7 +10,7 @@ import PreferencesScreen from '../screens/PreferencesScreen';
 import DayOverviewScreen from '../screens/DayOverviewScreen';
 import EditSessionScreen from '../screens/EditSessionScreen';
 import SessionSummaryScreen from '../screens/SessionSummaryScreen';
-import TermsOfServiceScreen from '../screens/TermsAndAgreementsScreen';
+import TermsOfServiceScreen from '../screens/TermsOfServiceScreen';
 import PrivacyPolicyScreen from '../screens/PrivacyPolicyScreen';
 
 import Stack from './Stack';

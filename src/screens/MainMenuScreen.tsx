@@ -181,6 +181,12 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
             icon: require('../../assets/icons/book.png'), 
             action: () => navigation.navigate("Terms Of Service Screen")
         },
+        { 
+            label: 'Privacy Policy', 
+            icon: require('../../assets/icons/book.png'), 
+            action: () => navigation.navigate("Privacy Policy Screen")
+        },
+        // Legal and Policies
     ]},
     { heading: 'Feedback', data:[
         { 

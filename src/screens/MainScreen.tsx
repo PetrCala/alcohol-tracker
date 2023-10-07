@@ -154,9 +154,9 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
               <Text style={styles.headerUsername}>{user.displayName}</Text> 
             </TouchableOpacity>
           </View>
-          <View style={styles.menuContainer}>
+          {/* <View style={styles.menuContainer}>
               <Text style={styles.yearMonthText}>{thisYearMonth}</Text>
-          </View>
+          </View> */}
       </View>
       {currentSessionData?.current_session_id ?
       <TouchableOpacity 

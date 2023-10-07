@@ -24,6 +24,9 @@ const PrivacyPolicyScreen = ({ navigation }: PrivacyPolicyScreenProps) => {
           onPress={() => navigation.goBack() }
         />
       </View>
+      <View style={styles.mainContainer}>
+        <Text style={styles.sectionText}>Privacy policy screen...</Text>
+      </View>
       {/* <WebView 
         originWhitelist={['*']}
         source={Platform.OS === 'ios' ? require('../../assets/privacy_policy.html') : { uri: 'file:///android_asset/privacy_policy.html' }}
@@ -71,6 +74,16 @@ const styles = StyleSheet.create({
     color: 'black',
     padding: 5,
     marginLeft: 5,
-  }
+  },
+  sectionText: {
+    fontSize: 20,
+    color: 'black',
+    fontWeight: 'bold',
+    margin: 10,
+    textAlign: 'center',
+  },
+  mainContainer: {
+    flex: 1,
+  },
 });
 
