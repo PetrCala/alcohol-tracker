@@ -142,7 +142,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
                 : editMode ?
                 <MenuIcon
                     iconId='edit-session-icon'
-                    iconSource={require('../assets/icons/edit.png')}
+                    iconSource={require('../../assets/icons/edit.png')}
                     containerStyle={[
                       styles.menuIconContainer,
                       session.blackout === true ? {backgroundColor: 'white'} : {}
@@ -243,7 +243,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
         <View style={styles.mainHeader}>
             <MenuIcon
             iconId='escape-settings-screen'
-            iconSource={require('../assets/icons/arrow_back.png')}
+            iconSource={require('../../assets/icons/arrow_back.png')}
             containerStyle={styles.backArrowContainer}
             iconStyle={styles.backArrow}
             onPress={() => navigation.goBack() }
@@ -278,7 +278,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
         <View style={styles.dayOverviewFooter}>
             <MenuIcon
                 iconId = "navigate-day-back"
-                iconSource = {require('../assets/icons/arrow_back.png')}
+                iconSource = {require('../../assets/icons/arrow_back.png')}
                 containerStyle={styles.footerArrowContainer}
                 iconStyle = {[
                   styles.dayArrowIcon,
@@ -288,7 +288,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
                 />
             <MenuIcon
                 iconId = "navigate-day-forward"
-                iconSource = {require('../assets/icons/arrow_back.png')}
+                iconSource = {require('../../assets/icons/arrow_back.png')}
                 containerStyle={styles.footerArrowContainer}
                 iconStyle = {[
                   styles.dayArrowIcon,

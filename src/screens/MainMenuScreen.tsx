@@ -167,42 +167,48 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
     { heading: 'General', data:[
         // { 
         //     label: 'Settings', 
-        //     icon: require('../assets/icons/settings.png'), 
+        //     icon: require('../../assets/icons/settings.png'), 
         //     action: () => navigation.navigate("Settings Screen")
         // },
         { 
             label: 'Preferences', 
-            icon: require('../assets/icons/settings.png'), 
+            icon: require('../../assets/icons/settings.png'), 
             action: () => navigation.navigate("Preferences Screen")
         },
         // Potentially preferences screen?
         { 
-            label: 'Terms and agreements', 
-            icon: require('../assets/icons/book.png'), 
-            action: () => navigation.navigate("Terms And Agreements Screen")
+            label: 'Terms of service', 
+            icon: require('../../assets/icons/book.png'), 
+            action: () => navigation.navigate("Terms Of Service Screen")
         },
+        { 
+            label: 'Privacy Policy', 
+            icon: require('../../assets/icons/book.png'), 
+            action: () => navigation.navigate("Privacy Policy Screen")
+        },
+        // Legal and Policies
     ]},
     { heading: 'Feedback', data:[
         { 
             label: 'Report a bug', 
-            icon: require('../assets/icons/bug.png'), 
+            icon: require('../../assets/icons/bug.png'), 
             action: () => console.log('Bug reporting') // Throw an information window - not yet implemented
         },
         { 
             label: 'Give us a feedback', 
-            icon: require('../assets/icons/idea.png'), 
+            icon: require('../../assets/icons/idea.png'), 
             action: () => setFeedbackModalVisible(true)
         },
     ]},
     { heading: 'Authentification', data:[
         { 
             label: 'Sign out', 
-            icon: require('../assets/icons/exit.png'), 
+            icon: require('../../assets/icons/exit.png'), 
             action: () => setSignoutModalVisible(true)
         },
         { 
             label: 'Delete user', 
-            icon: require('../assets/icons/delete.png'), 
+            icon: require('../../assets/icons/delete.png'), 
             action: () => setDeleteUserModalVisible(true)
         },
     ]},
@@ -212,7 +218,7 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
         {heading: 'Admin settings', data:[
             { 
                 label: 'See feedback', 
-                icon: require('../assets/icons/book.png'), 
+                icon: require('../../assets/icons/book.png'), 
                 action: () => {setAdminFeedbackModalVisible(true)}
             },
         ]},
@@ -230,7 +236,7 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
         <View style={styles.mainHeader}>
             <MenuIcon
                 iconId='escape-main-menu'
-                iconSource={require('../assets/icons/arrow_back.png')}
+                iconSource={require('../../assets/icons/arrow_back.png')}
                 containerStyle={styles.backArrowContainer}
                 iconStyle={styles.backArrow}
                 onPress= {() => navigation.goBack()}

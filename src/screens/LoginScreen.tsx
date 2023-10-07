@@ -94,7 +94,7 @@ const LoginScreen = ( {navigation }: LoginScreenProps) => {
       >
       <View style={styles.logoContainer}>
         <Image
-          source={require('../assets/logo/alcohol-tracker-source-icon.png')}
+          source={require('../../assets/logo/alcohol-tracker-source-icon.png')}
           style={styles.logo}
         />
       </View>
@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   signUpButtonText: {
-    color: '#de0286',
+    color: '#02a109',
     fontWeight: 'bold',
     fontSize: 15,
   },

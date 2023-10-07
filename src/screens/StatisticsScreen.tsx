@@ -18,7 +18,7 @@ const StatisticsScreen = (props: StatisticsProps) => {
       <View style={styles.mainHeader}>
         <MenuIcon
           iconId='escape-statistics-screen'
-          iconSource={require('../assets/icons/arrow_back.png')}
+          iconSource={require('../../assets/icons/arrow_back.png')}
           containerStyle={styles.backArrowContainer}
           iconStyle={styles.backArrow}
           onPress={() => navigation.goBack() }

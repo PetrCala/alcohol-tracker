@@ -4,6 +4,7 @@ import { CurrentSessionData, DrinkingSessionArrayItem, DrinkingSessionData, Pref
 import DatabaseContext from './DatabaseContext';
 import { getAuth } from 'firebase/auth';
 import { listenForDataChanges } from '../database/baseFunctions';
+import { isEqual } from 'lodash';
 import LoadingData from '../components/LoadingData';
 
 type DatabaseDataContextType = {
@@ -85,10 +86,10 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
         let stopListening = listenForDataChanges(db, sessionsRef, (data:DrinkingSessionData) => {
             newData = data ? Object.values(data) : [];
             newKeys = data ? Object.keys(data) : [];
-            if (JSON.stringify(newData) !== JSON.stringify(drinkingSessionData)) {
+            if (!isEqual(newData, drinkingSessionData)) {
                 setDrinkingSessionData(newData);
             }
-            if (JSON.stringify(newKeys) !== JSON.stringify(drinkingSessionKeys)) {
+            if (!isEqual(newKeys, drinkingSessionKeys)) {
                 setDrinkingSessionKeys(newKeys);
             }
             setLoadingDrinkingSessionData(false);
@@ -106,9 +107,9 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
         if (!user || !db) return;
         let userRef = `user_preferences/${user.uid}`
         let stopListening = listenForDataChanges(db, userRef, (data:PreferencesData) => {
-            if (JSON.stringify(data) !== JSON.stringify(preferences)) {
+            if (!isEqual(data, preferences)) {
                 setPreferences(data);
-            };
+            }
             setLoadingUserPreferences(false);
         });
 
@@ -123,9 +124,9 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
         let userRef = `user_unconfirmed_days/${user.uid}`
         let stopListening = listenForDataChanges(db, userRef, (data:UnconfirmedDaysData) => {
             newData = data ? data : {};
-            if (JSON.stringify(newData) !== JSON.stringify(unconfirmedDays)) {
+            if (!isEqual(newData, unconfirmedDays)) {
                 setUnconfirmedDays(newData);
-            };
+            }
         setLoadingUnconfirmedDays(false);
         });
 
@@ -139,9 +140,9 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
         if (!user || !db) return;
         let userRef = `users/${user.uid}`
         let stopListening = listenForDataChanges(db, userRef, (data:UserData) => {
-            if (JSON.stringify(data) !== JSON.stringify(userData)) {
+            if (!isEqual(data, userData)) {
                 setUserData(data);
-            };
+            }
             setLoadingUserData(false);
         });
 

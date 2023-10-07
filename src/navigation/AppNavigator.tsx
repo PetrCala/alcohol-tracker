@@ -4,16 +4,17 @@ import ProfileScreen from '../screens/ProfileScreen';
 import MainMenuScreen from '../screens/MainMenuScreen';
 import SocialScreen from '../screens/SocialScreen';
 import AchievementScreen from '../screens/AchievementScreen';
+import StatisticsScreen from '../screens/StatisticsScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import PreferencesScreen from '../screens/PreferencesScreen';
 import DayOverviewScreen from '../screens/DayOverviewScreen';
-import EditSessionScreen from '../screens/EditSession';
+import EditSessionScreen from '../screens/EditSessionScreen';
 import SessionSummaryScreen from '../screens/SessionSummaryScreen';
-import TermsAndAgreementsScreen from '../screens/TermsAndAgreementsScreen';
+import TermsOfServiceScreen from '../screens/TermsOfServiceScreen';
+import PrivacyPolicyScreen from '../screens/PrivacyPolicyScreen';
 
 import Stack from './Stack';
 import { DatabaseDataProvider } from '../context/DatabaseDataContext';
-import StatisticsScreen from '../screens/StatisticsScreen';
 
 const AppNavigator = () => (
     <DatabaseDataProvider>
@@ -35,7 +36,8 @@ const AppNavigator = () => (
       <Stack.Screen name='Day Overview Screen' component={DayOverviewScreen}/>
       <Stack.Screen name='Edit Session Screen' component={EditSessionScreen}/>
       <Stack.Screen name='Session Summary Screen' component={SessionSummaryScreen}/>
-      <Stack.Screen name='Terms And Agreements Screen' component={TermsAndAgreementsScreen} />
+      <Stack.Screen name='Terms Of Service Screen' component={TermsOfServiceScreen} />
+      <Stack.Screen name='Privacy Policy Screen' component={PrivacyPolicyScreen} />
     </Stack.Navigator>
     </DatabaseDataProvider>
 );

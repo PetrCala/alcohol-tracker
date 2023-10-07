@@ -178,7 +178,7 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
       >
       <View style={styles.logoContainer}>
         <Image
-          source={require('../assets/logo/alcohol-tracker-source-icon.png')}
+          source={require('../../assets/logo/alcohol-tracker-source-icon.png')}
           style={styles.logo}
         />
       </View>
@@ -347,7 +347,7 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   loginButtonText: {
-    color: '#de0286',
+    color: '#02a109',
     fontWeight: 'bold',
     fontSize: 15,
   },

@@ -6,7 +6,7 @@
 } from 'react-native';
 import { WebView } from 'react-native-webview';
 import MenuIcon from '../components/Buttons/MenuIcon';
-import { TermsAndAgreementsScreenProps } from '../types/screens';
+import { TermsOfServiceScreenProps } from '../types/screens';
 
 
 type TermsItemProps = {
@@ -17,7 +17,7 @@ const TermsItems: React.FC<TermsItemProps> = ({ terms }) => {
   return (
     <View style={styles.termsContainer}>
       <Text style={styles.termsHeading}> 
-          Terms and Agreements
+          Terms of Service
       </Text>
       {terms.map((term, index) => (
         <Text key={index} style={styles.termsText}>
@@ -29,7 +29,7 @@ const TermsItems: React.FC<TermsItemProps> = ({ terms }) => {
 };
 
 
-const TermsAndAgreementsScreen = ({ navigation }: TermsAndAgreementsScreenProps) => {
+const TermsOfServiceScreen = ({ navigation }: TermsOfServiceScreenProps) => {
   if (!navigation) return null; // Should never be null
 
   const termsAndAgreements = [
@@ -40,26 +40,29 @@ const TermsAndAgreementsScreen = ({ navigation }: TermsAndAgreementsScreenProps)
     <View style={{flex:1, backgroundColor: '#FFFF99'}}>
       <View style={styles.mainHeader}>
         <MenuIcon
-          iconId='escape-social-screen'
-          iconSource={require('../assets/icons/arrow_back.png')}
+          iconId='escape-terms-of-service-screen'
+          iconSource={require('../../assets/icons/arrow_back.png')}
           containerStyle={styles.backArrowContainer}
           iconStyle={styles.backArrow}
           onPress={() => navigation.goBack() }
         />
       </View>
-      <WebView 
+      <View style={styles.mainContainer}>
+        <Text style={styles.sectionText}>Terms of Service Screen...</Text>
+      </View>
+      {/* <WebView 
         originWhitelist={['*']}
-        source={Platform.OS === 'ios' ? require('../assets/privacy_policy.html') : { uri: 'file:///android_asset/privacy_policy.html' }}
+        source={Platform.OS === 'ios' ? require('../../assets/terms_of_service.html') : { uri: 'file:///android_asset/terms_of_service.html' }}
         style={{ flex: 1 }} 
-      />
-      <TermsItems
+      /> */}
+      {/* <TermsItems
         terms={termsAndAgreements}
-      />
+      /> */}
     </View>
   );
 };
 
-export default TermsAndAgreementsScreen;
+export default TermsOfServiceScreen;
 
 const styles = StyleSheet.create({
   mainHeader: {
@@ -97,5 +100,15 @@ const styles = StyleSheet.create({
     color: 'black',
     padding: 5,
     marginLeft: 5,
-  }
+  },
+  sectionText: {
+    fontSize: 20,
+    color: 'black',
+    fontWeight: 'bold',
+    margin: 10,
+    textAlign: 'center',
+  },
+  mainContainer: {
+    flex: 1,
+  },
 });

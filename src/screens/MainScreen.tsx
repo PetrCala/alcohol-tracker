@@ -146,7 +146,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
             >
               <MenuIcon 
                 iconId='profile-icon'
-                iconSource={require('../assets/temp/user.png')}  // user.photoURL;
+                iconSource={require('../../assets/temp/user.png')}  // user.photoURL;
                 containerStyle={styles.profileIconContainer}
                 iconStyle={styles.profileIcon}
                 onPress = {() => navigation.navigate('App', {screen: 'Profile Screen'})}
@@ -154,9 +154,9 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
               <Text style={styles.headerUsername}>{user.displayName}</Text> 
             </TouchableOpacity>
           </View>
-          <View style={styles.menuContainer}>
+          {/* <View style={styles.menuContainer}>
               <Text style={styles.yearMonthText}>{thisYearMonth}</Text>
-          </View>
+          </View> */}
       </View>
       {currentSessionData?.current_session_id ?
       <TouchableOpacity 
@@ -206,14 +206,14 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
         ]}>
           <MenuIcon 
             iconId='social-icon'
-            iconSource={require('../assets/icons/social.png')} 
+            iconSource={require('../../assets/icons/social.png')} 
             containerStyle={styles.menuIconContainer}
             iconStyle={styles.menuIcon}
             onPress = {() => navigation.navigate('Social Screen')}
           />
           <MenuIcon 
             iconId='achievement-icon'
-            iconSource={require('../assets/icons/achievements.png')} 
+            iconSource={require('../../assets/icons/achievements.png')} 
             containerStyle={styles.menuIconContainer}
             iconStyle={styles.menuIcon}
             onPress = {() => navigation.navigate('Achievement Screen')}
@@ -225,14 +225,14 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
         ]}>
           <MenuIcon 
             iconId='main-menu-popup-icon'
-            iconSource={require('../assets/icons/statistics.png')} 
+            iconSource={require('../../assets/icons/statistics.png')} 
             containerStyle={styles.menuIconContainer}
             iconStyle={styles.menuIcon}
             onPress = {() => navigation.navigate('Statistics Screen')}
           />
           <MenuIcon 
             iconId='main-menu-popup-icon'
-            iconSource={require('../assets/icons/bar_menu.png')} 
+            iconSource={require('../../assets/icons/bar_menu.png')} 
             containerStyle={styles.menuIconContainer}
             iconStyle={styles.menuIcon}
             onPress = {() => navigation.navigate('Main Menu Screen', {

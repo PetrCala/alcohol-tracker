@@ -66,12 +66,12 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
     const sessionIsNew = sessionKey == 'edit-session-id' ? true : false;
 
     const drinkData: DrinkDataProps = [
-      { key: 'beer', icon: require('../assets/icons/beer.png'), typeSum: beerSum, setTypeSum: setBeerSum},
-      { key: 'wine', icon: require('../assets/icons/wine.png'), typeSum: wineSum, setTypeSum: setWineSum},
-      { key: 'weak_shot', icon: require('../assets/icons/weak_shot.png'), typeSum: weakShotSum, setTypeSum: setWeakShotSum},
-      { key: 'strong_shot', icon: require('../assets/icons/strong_shot.png'), typeSum: strongShotSum, setTypeSum: setStrongShotSum},
-      { key: 'cocktail', icon: require('../assets/icons/cocktail.png'), typeSum: cocktailSum, setTypeSum: setCocktailSum},
-      { key: 'other', icon: require('../assets/icons/alcohol_assortment.png'), typeSum: otherSum, setTypeSum: setOtherSum},
+      { key: 'beer', icon: require('../../assets/icons/beer.png'), typeSum: beerSum, setTypeSum: setBeerSum},
+      { key: 'wine', icon: require('../../assets/icons/wine.png'), typeSum: wineSum, setTypeSum: setWineSum},
+      { key: 'weak_shot', icon: require('../../assets/icons/weak_shot.png'), typeSum: weakShotSum, setTypeSum: setWeakShotSum},
+      { key: 'strong_shot', icon: require('../../assets/icons/strong_shot.png'), typeSum: strongShotSum, setTypeSum: setStrongShotSum},
+      { key: 'cocktail', icon: require('../../assets/icons/cocktail.png'), typeSum: cocktailSum, setTypeSum: setCocktailSum},
+      { key: 'other', icon: require('../../assets/icons/alcohol_assortment.png'), typeSum: otherSum, setTypeSum: setOtherSum},
     ];
 
     const handleMonkePlus = () => {
@@ -188,7 +188,7 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
       <View style={styles.mainHeader}>
           <MenuIcon
           iconId='escape-edit-session'
-          iconSource={require('../assets/icons/arrow_back.png')}
+          iconSource={require('../../assets/icons/arrow_back.png')}
           containerStyle={styles.backArrowContainer}
           iconStyle={styles.backArrow}
           onPress={handleBackPress}

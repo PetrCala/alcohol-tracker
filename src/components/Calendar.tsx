@@ -33,6 +33,8 @@ type DayMarking = {
     units?: number;
 }
 
+const screenWidth = Dimensions.get('window').width;
+
 // Custom Day Component
 const DayComponent: React.FC<{
     date:DateObject, 
@@ -123,7 +125,7 @@ function CustomArrow(direction:string):ReactNode {
             direction === 'left' ? arrowStyles.leftContainer : arrowStyles.rightContainer
         ]}>
             <Image
-            source = {require('../assets/icons/arrow_back.png')}
+            source = {require('../../assets/icons/arrow_back.png')}
             style={[
                 arrowStyles.customArrowIcon, 
                 direction === 'left' ? arrowStyles.customArrowLeft : arrowStyles.customArrowRight
@@ -205,7 +207,7 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
                 onPress={onDayPress}
             />
         }
-        monthFormat=''
+        monthFormat='MMM yyyy'
         onPressArrowLeft={(subtractMonth) => handleLeftArrowPress(subtractMonth)}
         onPressArrowRight={(addMonth) => handleRightArrowPress(addMonth)}
         markedDates={markedDates}
@@ -219,18 +221,22 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
             textDayHeaderFontWeight: 'bold',
             'stylesheet.calendar.header': {
                 header: {
-                   flexDirection: 'row',
-                   justifyContent: 'space-between',
-                   alignItems: 'center',
-                   margin: 0,
-                   padding: 0,
+                    width: screenWidth,
+                    marginLeft: -5,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    margin: 0,
+                    padding: 0,
+                    borderTopWidth: 1,
+                    borderBottomWidth: 1,
+                    borderColor: 'grey',
                 },
                 monthText: {
-                //   color: 'black',
-                //   fontSize: 20,
-                //   width: 150,
-                //   width: 0,
-                //   textAlign: 'center'
+                  color: 'black',
+                  fontSize: 20,
+                  fontWeight: '500',
+                  width: screenWidth / 3,
+                  textAlign: 'center'
                 }
             }
         } as any} // Circumvent typescript gymnastics
@@ -240,24 +246,20 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
     
 export default SessionsCalendar;
 
-const screenWidth = Dimensions.get('window').width;
 
 const arrowStyles = StyleSheet.create({
     customArrowContainer: {
         height: 45,
         alignSelf: 'center',
         justifyContent: 'center',
-        bordercolor: 'grey',
-        borderWidth: 1,
         backgroundColor:'white',
         alignItems: 'center',
-        width: screenWidth / 2,
-        // backgroundColor: 'white',
+        width: screenWidth / 3,
         marginVertical: -10,
     },
     leftContainer: {
         marginRight: -10,
-        marginLeft: -15,
+        marginLeft: -10,
     },
     rightContainer: {
         marginLeft: -10,
