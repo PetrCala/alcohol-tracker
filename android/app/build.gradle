@@ -101,8 +101,8 @@ android {
         applicationId "com.kiroku"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode rootProject.ext.APP_VERSION_CODE
-        versionName rootProject.ext.APP_VERSION_STR
+        versionCode 1
+        versionName "0.2.1"
     }
 
     splits {
