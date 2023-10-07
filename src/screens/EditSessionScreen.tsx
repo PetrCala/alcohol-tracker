@@ -126,7 +126,7 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
       if (totalPoints > 0){
         let newSessionData: DrinkingSessionArrayItem = {
           start_time: session.start_time,
-          end_time: Date.now(),
+          end_time: session.end_time,
           units: currentUnits,
           blackout: sessionBlackout,
           note: sessionNote,
