@@ -1,4 +1,5 @@
 ﻿import {
+  Linking,
   Platform,
   StyleSheet,
   Text,
@@ -12,6 +13,16 @@ const TermsOfServiceScreen = ({ navigation }: TermsOfServiceScreenProps) => {
   if (!navigation) return null; // Should never be null
 
   const termsHtml = require("../../assets/html/terms-of-service.html");
+
+  const handleStartLoadWithRequest = (request:any) => {
+      // Check if the URL has "mailto:" scheme
+      if (request.url.startsWith('mailto:')) {
+          // Use Linking to open the default email client
+          Linking.openURL(request.url);
+          return false; // Returning false prevents WebView from trying to handle the URL
+      }
+      return true;
+  };
 
   return (
     <View style={{flex:1, backgroundColor: '#FFFF99'}}>
@@ -28,6 +39,7 @@ const TermsOfServiceScreen = ({ navigation }: TermsOfServiceScreenProps) => {
         <WebView 
           originWhitelist={['*']}
           source={termsHtml}
+          onShouldStartLoadWithRequest={handleStartLoadWithRequest}
           style={{ flex: 1 }} 
         />
       </View>

@@ -1,4 +1,5 @@
 ﻿import {
+  Linking,
   Platform,
   StyleSheet,
   Text,
@@ -15,6 +16,16 @@ const PrivacyPolicyScreen = ({ navigation }: PrivacyPolicyScreenProps) => {
 
   const policyHtml = require("../../assets/html/privacy-policy.html");
 
+  const handleStartLoadWithRequest = (request:any) => {
+      // Check if the URL has "mailto:" scheme
+      if (request.url.startsWith('mailto:')) {
+          // Use Linking to open the default email client
+          Linking.openURL(request.url);
+          return false; // Returning false prevents WebView from trying to handle the URL
+      }
+      return true;
+  };
+
   return (
     <View style={{flex:1, backgroundColor: '#FFFF99'}}>
       <View style={styles.mainHeader}>
@@ -30,6 +41,7 @@ const PrivacyPolicyScreen = ({ navigation }: PrivacyPolicyScreenProps) => {
         <WebView 
           originWhitelist={['*']}
           source={policyHtml}
+          onShouldStartLoadWithRequest={handleStartLoadWithRequest}
           style={{ flex: 1 }} 
         />
       </View>
