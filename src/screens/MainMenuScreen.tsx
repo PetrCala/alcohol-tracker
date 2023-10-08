@@ -27,6 +27,7 @@ import ReauthentificatePopup from '../components/Popups/ReauthentificatePopup';
 import UserOffline from '../components/UserOffline';
 import { useUserConnection } from '../context/UserConnectionContext';
 import { getDatabaseData } from '../context/DatabaseDataContext';
+import ItemListPopup from '../components/Popups/ItemListPopup';
 
 const MenuItem: React.FC<MainMenuItemProps> = ({
     heading,
@@ -58,6 +59,7 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
   // Hooks
   const [feedbackData, setFeedbackData] = useState<FeedbackData>({});
   // Modals
+  const [policiesModalVisible, setPoliciesModalVisible] = useState<boolean>(false);
   const [reportBugModalVisible, setReportBugModalVisible] = useState<boolean>(false);
   const [feedbackModalVisible, setFeedbackModalVisible] = useState<boolean>(false);
   const [signoutModalVisible, setSignoutModalVisible] = useState<boolean>(false);
@@ -173,20 +175,13 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
         { 
             label: 'Preferences', 
             icon: require('../../assets/icons/settings.png'), 
-            action: () => navigation.navigate("Preferences Screen")
-        },
-        // Potentially preferences screen?
-        { 
-            label: 'Terms of service', 
-            icon: require('../../assets/icons/book.png'), 
-            action: () => navigation.navigate("Terms Of Service Screen")
+            action: () => navigation.navigate("Preferences Screen"),
         },
         { 
-            label: 'Privacy Policy', 
+            label: 'Legal and Policies', 
             icon: require('../../assets/icons/book.png'), 
-            action: () => navigation.navigate("Privacy Policy Screen")
+            action: () => setPoliciesModalVisible(true),
         },
-        // Legal and Policies
     ]},
     { heading: 'Feedback', data:[
         { 
@@ -224,6 +219,25 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
         ]},
     ];
 
+    let policiesData = [
+        { 
+            label: 'Terms of service', 
+            icon: require('../../assets/icons/book.png'), 
+            action: () => {
+              navigation.navigate("Terms Of Service Screen")
+              setPoliciesModalVisible(false)
+            }
+        },
+        { 
+            label: 'Privacy Policy', 
+            icon: require('../../assets/icons/book.png'), 
+            action: () => {
+              navigation.navigate("Privacy Policy Screen")
+              setPoliciesModalVisible(false)
+          }
+        },
+    ]
+
   if (userData?.role == 'admin'){
     modalData = [...modalData, ...adminData] // Add admin settings
   };
@@ -246,6 +260,13 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
             {modalData.map((group, index) => (
                 <MenuItem key={index} heading={group.heading} data={group.data} index={index} />
             ))}
+            <ItemListPopup
+                visible={policiesModalVisible}
+                transparent={true}
+                heading={"Our Policies"}
+                actions={policiesData}
+                onRequestClose={() => setPoliciesModalVisible(false)}
+            />
             <FeedbackPopup
                 visible={feedbackModalVisible}
                 transparent={true}
