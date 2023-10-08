@@ -13,6 +13,8 @@ import { PrivacyPolicyScreenProps } from '../types/screens';
 const PrivacyPolicyScreen = ({ navigation }: PrivacyPolicyScreenProps) => {
   if (!navigation) return null; // Should never be null
 
+  const policyHtml = require("../../assets/html/privacy-policy.html");
+
   return (
     <View style={{flex:1, backgroundColor: '#FFFF99'}}>
       <View style={styles.mainHeader}>
@@ -25,13 +27,12 @@ const PrivacyPolicyScreen = ({ navigation }: PrivacyPolicyScreenProps) => {
         />
       </View>
       <View style={styles.mainContainer}>
-        <Text style={styles.sectionText}>Privacy policy screen...</Text>
+        <WebView 
+          originWhitelist={['*']}
+          source={policyHtml}
+          style={{ flex: 1 }} 
+        />
       </View>
-      {/* <WebView 
-        originWhitelist={['*']}
-        source={Platform.OS === 'ios' ? require('../../assets/privacy_policy.html') : { uri: 'file:///android_asset/privacy_policy.html' }}
-        style={{ flex: 1 }} 
-      /> */}
     </View>
   );
 };
@@ -45,6 +46,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 10,
     backgroundColor: 'white',
+    shadowColor: '#000',             
+    shadowOffset: { width: 0, height: 2 }, 
+    shadowOpacity: 0.25,             
+    shadowRadius: 3.84,              
+    elevation: 5,
+    zIndex: 1,
   },
   backArrowContainer: {
     justifyContent: 'center',
@@ -56,31 +63,6 @@ const styles = StyleSheet.create({
   backArrow: {
     width: 25,
     height: 25,
-  },
-  termsContainer: {
-    flex: 1,
-    backgroundColor: "#FFFF99",
-    padding: 5,
-  },
-  termsHeading: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: 'black',
-    alignSelf: 'center',
-    padding: 10,
-  },
-  termsText: {
-    fontSize: 17,
-    color: 'black',
-    padding: 5,
-    marginLeft: 5,
-  },
-  sectionText: {
-    fontSize: 20,
-    color: 'black',
-    fontWeight: 'bold',
-    margin: 10,
-    textAlign: 'center',
   },
   mainContainer: {
     flex: 1,

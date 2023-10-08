@@ -8,33 +8,10 @@ import { WebView } from 'react-native-webview';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import { TermsOfServiceScreenProps } from '../types/screens';
 
-
-type TermsItemProps = {
-  terms: string[];
-};
-
-const TermsItems: React.FC<TermsItemProps> = ({ terms }) => {
-  return (
-    <View style={styles.termsContainer}>
-      <Text style={styles.termsHeading}> 
-          Terms of Service
-      </Text>
-      {terms.map((term, index) => (
-        <Text key={index} style={styles.termsText}>
-          {`${index + 1}. ${term}`}
-        </Text>
-      ))}
-    </View>
-  );
-};
-
-
 const TermsOfServiceScreen = ({ navigation }: TermsOfServiceScreenProps) => {
   if (!navigation) return null; // Should never be null
 
-  const termsAndAgreements = [
-    'I solemnly swear to faithfully report all consumed units in their true form and amount',
-  ]
+  const termsHtml = require("../../assets/html/terms-of-service.html");
 
   return (
     <View style={{flex:1, backgroundColor: '#FFFF99'}}>
@@ -48,16 +25,12 @@ const TermsOfServiceScreen = ({ navigation }: TermsOfServiceScreenProps) => {
         />
       </View>
       <View style={styles.mainContainer}>
-        <Text style={styles.sectionText}>Terms of Service Screen...</Text>
+        <WebView 
+          originWhitelist={['*']}
+          source={termsHtml}
+          style={{ flex: 1 }} 
+        />
       </View>
-      {/* <WebView 
-        originWhitelist={['*']}
-        source={Platform.OS === 'ios' ? require('../../assets/terms_of_service.html') : { uri: 'file:///android_asset/terms_of_service.html' }}
-        style={{ flex: 1 }} 
-      /> */}
-      {/* <TermsItems
-        terms={termsAndAgreements}
-      /> */}
     </View>
   );
 };
@@ -71,6 +44,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 10,
     backgroundColor: 'white',
+    shadowColor: '#000',             
+    shadowOffset: { width: 0, height: 2 }, 
+    shadowOpacity: 0.25,             
+    shadowRadius: 3.84,              
+    elevation: 5,
+    zIndex: 1,
   },
   backArrowContainer: {
     justifyContent: 'center',
@@ -82,31 +61,6 @@ const styles = StyleSheet.create({
   backArrow: {
     width: 25,
     height: 25,
-  },
-  termsContainer: {
-    flex: 1,
-    backgroundColor: "#FFFF99",
-    padding: 5,
-  },
-  termsHeading: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: 'black',
-    alignSelf: 'center',
-    padding: 10,
-  },
-  termsText: {
-    fontSize: 17,
-    color: 'black',
-    padding: 5,
-    marginLeft: 5,
-  },
-  sectionText: {
-    fontSize: 20,
-    color: 'black',
-    fontWeight: 'bold',
-    margin: 10,
-    textAlign: 'center',
   },
   mainContainer: {
     flex: 1,
