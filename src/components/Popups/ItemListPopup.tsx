@@ -93,6 +93,7 @@ const styles = StyleSheet.create({
   actionText: {
     fontSize: 16,
     color: 'black',
+    fontWeight: '500',
   },
   closeButton: {
     marginTop: 15,

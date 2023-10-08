@@ -370,7 +370,7 @@ const styles = StyleSheet.create({
       marginLeft: 10,
       color: 'black',
       fontSize: 16,
-      fontWeight: 'bold',
+      fontWeight: '500',
     },
     groupMarker: {
       width: '100%',
