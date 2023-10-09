@@ -2,7 +2,8 @@ import React, { Suspense, lazy } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
-import { getAuth } from 'firebase/auth';
+import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
+import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage'
 import firebaseConfig from "../firebaseConfig";
 
 import AuthNavigator from './navigation/AuthNavigator';
@@ -13,7 +14,10 @@ import { ContextProvider } from './context/Context';
 const app = initializeApp(firebaseConfig);
 
 const db = getDatabase(app);
-const auth = getAuth(app); // Available automatically after this call
+
+const auth = initializeAuth(app, {
+  persistence: getReactNativePersistence(ReactNativeAsyncStorage)
+})
 
 const Kiroku = () => {
   return (

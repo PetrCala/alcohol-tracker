@@ -1,18 +1,20 @@
 ﻿import {
+  useState,
+  useEffect
+} from 'react';
+import {
+  Dimensions,
   Linking,
   Platform,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
-import { WebView } from 'react-native-webview';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import { PrivacyPolicyScreenProps } from '../types/screens';
-
-
+import { WebView } from 'react-native-webview';
 
 const PrivacyPolicyScreen = ({ navigation }: PrivacyPolicyScreenProps) => {
-  if (!navigation) return null; // Should never be null
 
   const policyHtml = require("../../assets/html/privacy-policy.html");
 
@@ -25,6 +27,8 @@ const PrivacyPolicyScreen = ({ navigation }: PrivacyPolicyScreenProps) => {
       }
       return true;
   };
+
+  if (!navigation) return null; // Should never be null
 
   return (
     <View style={{flex:1, backgroundColor: '#FFFF99'}}>

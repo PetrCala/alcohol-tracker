@@ -1,13 +1,14 @@
 ﻿import {
+  Dimensions,
   Linking,
   Platform,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
-import { WebView } from 'react-native-webview';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import { TermsOfServiceScreenProps } from '../types/screens';
+import { WebView } from 'react-native-webview';
 
 const TermsOfServiceScreen = ({ navigation }: TermsOfServiceScreenProps) => {
   if (!navigation) return null; // Should never be null
@@ -40,7 +41,7 @@ const TermsOfServiceScreen = ({ navigation }: TermsOfServiceScreenProps) => {
           originWhitelist={['*']}
           source={termsHtml}
           onShouldStartLoadWithRequest={handleStartLoadWithRequest}
-          style={{ flex: 1 }} 
+          style={{flex: 1}}
         />
       </View>
     </View>

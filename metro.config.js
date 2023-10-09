@@ -18,6 +18,6 @@ module.exports = {
     }),
   },
   resolver: {
-    assetExts: [...defaultAssetExts, "css"]
+    assetExts: [...defaultAssetExts, "css", "html"]
   }
 };
