@@ -98,10 +98,10 @@ android {
 
     namespace "com.kiroku"
     defaultConfig {
-        applicationId "com.kiroku"
+        applicationId "com.alcohol_tracker"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 3
+        versionCode 4
         versionName "0.2.5"
     }
 
