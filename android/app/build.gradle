@@ -96,7 +96,7 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.kiroku"
+    namespace "com.alcohol_tracker"
     defaultConfig {
         applicationId "com.alcohol_tracker"
         minSdkVersion rootProject.ext.minSdkVersion

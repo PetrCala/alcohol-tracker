@@ -16,16 +16,20 @@ import { WebView } from 'react-native-webview';
 
 const PrivacyPolicyScreen = ({ navigation }: PrivacyPolicyScreenProps) => {
 
-  const policyHtml = require("../../assets/html/privacy-policy.html");
+  const policyHtml = Platform.OS === 'android' 
+        ? 'file:///android_asset/html/privacy-policy.html'
+        // : require("../../assets/html/privacy-policy.html");
+        : require("../../assets/html/privacy-policy.html");
+
 
   const handleStartLoadWithRequest = (request:any) => {
-      // Check if the URL has "mailto:" scheme
-      if (request.url.startsWith('mailto:')) {
-          // Use Linking to open the default email client
-          Linking.openURL(request.url);
-          return false; // Returning false prevents WebView from trying to handle the URL
-      }
-      return true;
+    // Check if the URL has "mailto:" scheme
+    if (request.url.startsWith('mailto:')) {
+        // Use Linking to open the default email client
+        Linking.openURL(request.url);
+        return false; // Returning false prevents WebView from trying to handle the URL
+    }
+    return true;
   };
 
   if (!navigation) return null; // Should never be null
@@ -44,7 +48,7 @@ const PrivacyPolicyScreen = ({ navigation }: PrivacyPolicyScreenProps) => {
       <View style={styles.mainContainer}>
         <WebView 
           originWhitelist={['*']}
-          source={policyHtml}
+          source={{uri: policyHtml}}
           onShouldStartLoadWithRequest={handleStartLoadWithRequest}
           style={{ flex: 1 }} 
         />
