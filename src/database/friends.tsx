@@ -1,24 +1,15 @@
-﻿import database from '@react-native-firebase/database';
+﻿import { Database, ref, get } from "firebase/database";
 
 /**
  * Check if userB is in userA's friend list.
  * 
+ * @param {Database} db - The database object against which to validate this conditio
  * @param {string} userA - User ID of the authenticated user.
  * @param {string} userB - User ID of the friend being checked.
  * @returns {Promise<boolean>} - Returns true if userB is a friend of userA, otherwise false.
  */
-async function isFriend(userA:string, userB:string):Promise<boolean> {
-  const snapshot = await database().ref(`/users/${userA}/friends/${userB}`).once('value');
+export async function isFriend(db:Database, userA:string, userB:string):Promise<boolean> {
+  const dbRef = ref(db, `/users/${userA}/friends/${userB}`)
+  const snapshot = await get(dbRef);
   return snapshot.exists();
-};
-
-/**
- * Fetch the profile details of a given user.
- * 
- * @param {string} userId - User ID whose profile details need to be fetched.
- * @returns {Promise<Object>} - Returns the user profile object if exists, otherwise undefined.
- */
-async function fetchUserProfile(userId:string):Promise<Object> {
-  const snapshot = await database().ref(`/users/${userId}/profile`).once('value');
-  return snapshot.val();
 };

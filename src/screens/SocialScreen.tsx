@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import BasicButton from '../components/Buttons/BasicButton';
 import MenuIcon from '../components/Buttons/MenuIcon';
+import { getDatabaseData } from '../context/DatabaseDataContext';
 
 type SocialProps = {
   navigation: any;
@@ -16,6 +17,11 @@ type SocialProps = {
 
 const SocialScreen = (props: SocialProps) => {
   const { navigation } = props;
+
+  const { userData } = getDatabaseData();
+  const friendsData = userData?.friends ? userData.friends : {};
+
+  if (!userData) return null;
 
   return (
     <View style={{flex:1, backgroundColor: '#FFFF99'}}>
