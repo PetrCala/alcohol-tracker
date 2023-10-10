@@ -41,7 +41,7 @@ const TermsOfServiceScreen = ({ navigation }: TermsOfServiceScreenProps) => {
       <View style={styles.mainContainer}>
         <WebView 
           originWhitelist={['*']}
-          source={termsHtml}
+          source={{uri: termsHtml}}
           onShouldStartLoadWithRequest={handleStartLoadWithRequest}
           style={{flex: 1}}
         />
