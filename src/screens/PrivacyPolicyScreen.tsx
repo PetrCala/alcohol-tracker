@@ -17,10 +17,8 @@ import { WebView } from 'react-native-webview';
 const PrivacyPolicyScreen = ({ navigation }: PrivacyPolicyScreenProps) => {
 
   const policyHtml = Platform.OS === 'android' 
-        ? 'file:///android_asset/html/privacy-policy.html'
-        // : require("../../assets/html/privacy-policy.html");
+        ? {uri : 'file:///android_asset/html/privacy-policy.html'}
         : require("../../assets/html/privacy-policy.html");
-
 
   const handleStartLoadWithRequest = (request:any) => {
     // Check if the URL has "mailto:" scheme
@@ -48,9 +46,10 @@ const PrivacyPolicyScreen = ({ navigation }: PrivacyPolicyScreenProps) => {
       <View style={styles.mainContainer}>
         <WebView 
           originWhitelist={['*']}
-          source={{uri: policyHtml}}
+          source={policyHtml}
           onShouldStartLoadWithRequest={handleStartLoadWithRequest}
           style={{ flex: 1 }} 
+          javaScriptEnabled
         />
       </View>
     </View>

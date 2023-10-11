@@ -14,7 +14,7 @@ const TermsOfServiceScreen = ({ navigation }: TermsOfServiceScreenProps) => {
   if (!navigation) return null; // Should never be null
 
   const termsHtml = Platform.OS === 'android' 
-        ? 'file:///android_asset/html/terms-of-service.html'
+        ? {uri: 'file:///android_asset/html/terms-of-service.html'}
         : require("../../assets/html/terms-of-service.html");
 
   const handleStartLoadWithRequest = (request:any) => {
@@ -41,9 +41,10 @@ const TermsOfServiceScreen = ({ navigation }: TermsOfServiceScreenProps) => {
       <View style={styles.mainContainer}>
         <WebView 
           originWhitelist={['*']}
-          source={{uri: termsHtml}}
+          source={termsHtml}
           onShouldStartLoadWithRequest={handleStartLoadWithRequest}
           style={{flex: 1}}
+          javaScriptEnabled
         />
       </View>
     </View>
