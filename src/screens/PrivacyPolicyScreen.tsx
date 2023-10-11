@@ -17,7 +17,7 @@ import { WebView } from 'react-native-webview';
 const PrivacyPolicyScreen = ({ navigation }: PrivacyPolicyScreenProps) => {
 
   const policyHtml = Platform.OS === 'android' 
-        ? {uri : 'file:///android_asset/html/privacy-policy-link'}
+        ? {uri : 'file:///android_asset/html/privacy-policy.html'}
         : require("../../assets/html/privacy-policy.html");
 
   const handleStartLoadWithRequest = (request:any) => {
