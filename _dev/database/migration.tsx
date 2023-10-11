@@ -1,11 +1,6 @@
 ﻿// Run the script using ts-node _dev/database/migration.tsx
 
-import admin from "./admin";
 import { DatabaseProps, FriendsData, ProfileData, UserData } from "../../src/types/database";
-import { getDisplayName } from "./adminUtils";
-import { transformUserData } from "./migrateUsers";
-
-const adminDb = admin.database();
 
 type TransformCallback = (data: any, primaryKey: string, secondaryKey?: string) => any;
 
