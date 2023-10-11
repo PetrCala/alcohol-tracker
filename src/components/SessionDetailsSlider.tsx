@@ -37,16 +37,18 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
         setFeatureY(layout.y);
     };
 
-    const toggleFeature = () => {
+    const toggleVisibility = () => {
         if (isExpanded) {
             Animated.timing(heightAnim, {
                 toValue: 0,
                 duration: 200,
                 useNativeDriver: false,
-            }).start();
+            }).start( () => {
+                scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+            });
         } else {
             Animated.timing(heightAnim, {
-                toValue: 400, // Expand the container to this much
+                toValue: featureY, // Expand the container to this much
                 duration: 200,
                 useNativeDriver: false,
             }).start(() => {
@@ -58,20 +60,24 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
 
     return (
         <View style={styles.container} onLayout={onFeatureLayout}>
-            <TouchableOpacity style={styles.tab} onPress={toggleFeature}>
+            <TouchableOpacity style={styles.tab} onPress={toggleVisibility}>
                 <Text style={styles.tabText}>Session details:</Text>
                 <Image 
                 style={[
                     styles.tabArrow,
                     isExpanded ? styles.tabArrowExpanded : styles.tabArrowDefault
                 ]}
-                source={require('../assets/icons/arrow_down.png')}
+                source={require('../../assets/icons/arrow_down.png')}
                 />
             </TouchableOpacity>
-            <Animated.View style={[
+            {isExpanded ?
+            <Animated.View 
+            style={[
                 styles.content,
                 { height: heightAnim }
-            ]}>
+            ]}
+            onLayout={!isExpanded ? onFeatureLayout : undefined}
+            >
                 <>
                     <View style={[
                         styles.tileContainerBase,
@@ -96,7 +102,7 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
                                 style={styles.noteText}
                                 onChangeText={(value) => onNoteChange(value)}
                                 placeholder={"Write your note here"}
-                                placeholderTextColor={"grey"}
+                                placeholderTextColor={"#a8a8a8"}
                                 keyboardType="default"
                                 maxLength={1000}
                                 multiline={true}
@@ -105,6 +111,9 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
                     </View>
                 </>
             </Animated.View>
+            :
+            <></>
+            }
         </View>
     );
 };
@@ -148,6 +157,7 @@ const styles = StyleSheet.create({
         borderColor: '#212421',
         borderWidth: 1,
         padding: 5,
+        overflow: 'hidden', // Hide when not expanded
     },
     tileContainerBase: {
         marginBottom: 5,
@@ -189,6 +199,7 @@ const styles = StyleSheet.create({
         flexShrink: 1,
         textAlignVertical: 'top',
         margin: 10,
+        color: 'black',
     },
 });
 

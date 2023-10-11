@@ -25,6 +25,7 @@ export type ConfigProps = {
 
 export type AppSettings = {
   min_supported_version: string;
+  min_user_creation_possible_version: string;
 }
 
 export type FeedbackProps = {
@@ -93,17 +94,28 @@ export type UnitsToColorsData = {
 export type PreferencesData = {
   first_day_of_week: string;
   units_to_colors: UnitsToColorsData;
+  units_to_points: UnitTypesProps;
 }
 
 export type UnconfirmedDaysData = {
-  date_string: string;
+  [day_string: string]: boolean,
 }
 
 export type UserData = {
+  profile: ProfileData;
+  friends: FriendsData;
   role: string;
   last_online: number;
-  connections?: {connection_id: string}; // Connection instances
-  beta_key_id?: string;
+  beta_key_id: string;
+}
+
+export type ProfileData = {
+  display_name: string,
+  photo_url: string,
+}
+
+export type FriendsData = {
+  [friend_id: string]: boolean
 }
 
 // Used when rendering drinking session day overview
@@ -112,3 +124,4 @@ export type DrinkingSessionProps = {
   session: DrinkingSessionArrayItem
 };
 
+export type MeasureType = 'units' | 'points';

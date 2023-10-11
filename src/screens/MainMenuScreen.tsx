@@ -10,8 +10,7 @@ import {
 } from 'react-native';
 
 import { 
-    SettingsPopupProps, 
-    SettingsItemProps 
+    MainMenuItemProps 
 } from '../types/components';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import YesNoPopup from '../components/Popups/YesNoPopup';
@@ -27,8 +26,10 @@ import { listenForDataChanges, readDataOnce } from '../database/baseFunctions';
 import ReauthentificatePopup from '../components/Popups/ReauthentificatePopup';
 import UserOffline from '../components/UserOffline';
 import { useUserConnection } from '../context/UserConnectionContext';
+import { getDatabaseData } from '../context/DatabaseDataContext';
+import ItemListPopup from '../components/Popups/ItemListPopup';
 
-const MenuItem: React.FC<SettingsItemProps> = ({
+const MenuItem: React.FC<MainMenuItemProps> = ({
     heading,
     data,
     index
@@ -48,7 +49,7 @@ const MenuItem: React.FC<SettingsItemProps> = ({
 
 const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
   if (!route || !navigation) return null; // Should never be null
-  const { userData, preferences } = route.params;
+  const { userData, preferences } = getDatabaseData();
   // Context, database, and authentification
   const auth = getAuth();
   const user = auth.currentUser;
@@ -58,13 +59,13 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
   // Hooks
   const [feedbackData, setFeedbackData] = useState<FeedbackData>({});
   // Modals
+  const [policiesModalVisible, setPoliciesModalVisible] = useState<boolean>(false);
   const [reportBugModalVisible, setReportBugModalVisible] = useState<boolean>(false);
   const [feedbackModalVisible, setFeedbackModalVisible] = useState<boolean>(false);
   const [signoutModalVisible, setSignoutModalVisible] = useState<boolean>(false);
   const [deleteUserModalVisible, setDeleteUserModalVisible] = useState<boolean>(false);
   const [reauthentificateModalVisible, setReauthentificateModalVisible] = useState<boolean>(false);
   const [adminFeedbackModalVisible, setAdminFeedbackModalVisible] = useState<boolean>(false);
-
 
   const handleSignOut = async () => {
     try {
@@ -78,6 +79,7 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
   };
 
   const handleDeleteUser = async (password:string) => {
+    if (!db || !userData) return;
     // Reauthentificate the user
     let authentificationResult:UserCredential|null = null;
     try {
@@ -103,7 +105,7 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
     }
     handleSignOut() // Sign out the user
     // Add an alert here informing about the user deletion
-    navigation.replace("Login Screen");
+    navigation.replace("Auth", {screen: "Login Screen"});
   };
 
   /** Handle cases when deleting a user fails */
@@ -124,6 +126,7 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
   };
 
   const handleSubmitFeedback = (feedback: string) => {
+    if (!db) return;
     if (feedback !== ''){
         submitFeedback(db, user.uid, feedback);
         // Popup an information button at the top (your feedback has been submitted)
@@ -134,7 +137,7 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
   const handleConfirmSignout = () => {
     handleSignOut();
     setSignoutModalVisible(false);
-    navigation.replace("Login Screen");
+    navigation.replace("Auth", {screen: "Login Screen"});
   };
 
   const handleConfirmDeleteUser = () => {
@@ -143,8 +146,9 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
   };
 
   // Monitor feedback data
-  if (userData.role == 'admin'){
+  if (userData?.role == 'admin'){
     useEffect(() => {
+        if (!db) return;
         // Start listening for changes when the component mounts
         let dbRef = `feedback/`
         let stopListening = listenForDataChanges(db, dbRef, (data: FeedbackData) => {
@@ -161,42 +165,45 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
     }, [db, user]); 
   };
 
-
-
   let modalData = [
     { heading: 'General', data:[
+        // { 
+        //     label: 'Settings', 
+        //     icon: require('../../assets/icons/settings.png'), 
+        //     action: () => navigation.navigate("Settings Screen")
+        // },
         { 
-            label: 'Settings', 
-            icon: require('../assets/icons/settings.png'), 
-            action: () => console.log('Beer pressed') 
+            label: 'Preferences', 
+            icon: require('../../assets/icons/settings.png'), 
+            action: () => navigation.navigate("Preferences Screen"),
         },
         { 
-            label: 'Terms and agreements', 
-            icon: require('../assets/icons/book.png'), 
-            action: () => navigation.navigate("Terms And Agreements Screen")
+            label: 'Legal and Policies', 
+            icon: require('../../assets/icons/book.png'), 
+            action: () => setPoliciesModalVisible(true),
         },
     ]},
     { heading: 'Feedback', data:[
         { 
             label: 'Report a bug', 
-            icon: require('../assets/icons/bug.png'), 
+            icon: require('../../assets/icons/bug.png'), 
             action: () => console.log('Bug reporting') // Throw an information window - not yet implemented
         },
         { 
             label: 'Give us a feedback', 
-            icon: require('../assets/icons/idea.png'), 
+            icon: require('../../assets/icons/idea.png'), 
             action: () => setFeedbackModalVisible(true)
         },
     ]},
     { heading: 'Authentification', data:[
         { 
             label: 'Sign out', 
-            icon: require('../assets/icons/exit.png'), 
+            icon: require('../../assets/icons/exit.png'), 
             action: () => setSignoutModalVisible(true)
         },
         { 
             label: 'Delete user', 
-            icon: require('../assets/icons/delete.png'), 
+            icon: require('../../assets/icons/delete.png'), 
             action: () => setDeleteUserModalVisible(true)
         },
     ]},
@@ -206,24 +213,44 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
         {heading: 'Admin settings', data:[
             { 
                 label: 'See feedback', 
-                icon: require('../assets/icons/book.png'), 
+                icon: require('../../assets/icons/book.png'), 
                 action: () => {setAdminFeedbackModalVisible(true)}
             },
         ]},
     ];
 
-  if (userData.role == 'admin'){
+    let policiesData = [
+        { 
+            label: 'Terms of service', 
+            icon: require('../../assets/icons/book.png'), 
+            action: () => {
+              navigation.navigate("Terms Of Service Screen")
+              setPoliciesModalVisible(false)
+            }
+        },
+        { 
+            label: 'Privacy Policy', 
+            icon: require('../../assets/icons/book.png'), 
+            action: () => {
+              navigation.navigate("Privacy Policy Screen")
+              setPoliciesModalVisible(false)
+          }
+        },
+    ]
+
+  if (userData?.role == 'admin'){
     modalData = [...modalData, ...adminData] // Add admin settings
   };
 
   if (!isOnline) return (<UserOffline/>);
+  if (!db || !preferences || !userData) return null; // Should never be null
 
   return (
       <View style={styles.mainContainer}>
         <View style={styles.mainHeader}>
             <MenuIcon
                 iconId='escape-main-menu'
-                iconSource={require('../assets/icons/arrow_back.png')}
+                iconSource={require('../../assets/icons/arrow_back.png')}
                 containerStyle={styles.backArrowContainer}
                 iconStyle={styles.backArrow}
                 onPress= {() => navigation.goBack()}
@@ -233,6 +260,13 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
             {modalData.map((group, index) => (
                 <MenuItem key={index} heading={group.heading} data={group.data} index={index} />
             ))}
+            <ItemListPopup
+                visible={policiesModalVisible}
+                transparent={true}
+                heading={"Our Policies"}
+                actions={policiesData}
+                onRequestClose={() => setPoliciesModalVisible(false)}
+            />
             <FeedbackPopup
                 visible={feedbackModalVisible}
                 transparent={true}
@@ -282,13 +316,19 @@ const styles = StyleSheet.create({
       alignItems: 'center',
     },
     mainHeader: {
-        height: 70,
-        width: '100%',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignContent: 'center',
-        padding: 10,
-        backgroundColor: 'white',
+      height: 70,
+      width: '100%',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignContent: 'center',
+      padding: 10,
+      backgroundColor: 'white',
+      shadowColor: '#000',             
+      shadowOffset: { width: 0, height: 2 }, 
+      shadowOpacity: 0.25,             
+      shadowRadius: 3.84,              
+      elevation: 5,
+      zIndex: 1,
     },
     scrollView: {
         width: '100%',
@@ -319,7 +359,7 @@ const styles = StyleSheet.create({
       borderRadius: 8,
       borderWidth: 2,
       borderColor: 'black',
-      margin: 5,
+      margin: 2,
     },
     icon: {
         width: 15,
@@ -330,7 +370,7 @@ const styles = StyleSheet.create({
       marginLeft: 10,
       color: 'black',
       fontSize: 16,
-      fontWeight: 'bold',
+      fontWeight: '500',
     },
     groupMarker: {
       width: '100%',

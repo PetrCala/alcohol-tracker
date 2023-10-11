@@ -1,11 +1,14 @@
-﻿import React, {useState, useEffect} from 'react';
+﻿import React, {useState, useEffect, useCallback} from 'react';
 import {
   Text,
   View,
   FlatList,
   TouchableOpacity,
-  StyleSheet
+  StyleSheet,
+  Alert,
+  Dimensions
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import { 
     timestampToDate, 
@@ -16,16 +19,19 @@ import {
     getSingleDayDrinkingSessions,
     setDateToCurrentTime,
     sumAllUnits,
-    getZeroUnitsObject
+    getZeroUnitsObject,
+    sumAllPoints
 } from '../utils/dataHandling';
 import { useContext } from 'react';
 import DatabaseContext from '../context/DatabaseContext';
 import LoadingData from '../components/LoadingData';
-import { DrinkingSessionProps, DrinkingSessionData, DrinkingSessionArrayItem } from '../types/database';
+import { DrinkingSessionProps, DrinkingSessionData, DrinkingSessionArrayItem, PreferencesData } from '../types/database';
 import { DayOverviewScreenProps } from '../types/screens';
 import { getAuth } from 'firebase/auth';
 import UserOffline from '../components/UserOffline';
 import { useUserConnection } from '../context/UserConnectionContext';
+import BasicButton from '../components/Buttons/BasicButton';
+import { getDatabaseData } from '../context/DatabaseDataContext';
 
 type CombinedDataProps = {
   sessionKey: string,
@@ -34,32 +40,27 @@ type CombinedDataProps = {
 
 const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
     if (!route || ! navigation) return null; // Should never be null
-    const { 
-      dateObject, 
-      drinkingSessionData, 
-      drinkingSessionKeys,
-      preferences 
-    } = route.params; // Params for navigation
+    const { dateObject } = route.params; // Params for navigation
     const auth = getAuth();
     const user = auth.currentUser;
     const db = useContext(DatabaseContext);
     const { isOnline } = useUserConnection();
+    const { 
+      drinkingSessionData, 
+      drinkingSessionKeys, 
+      preferences 
+    } = getDatabaseData();
     const [ date, setDate ] = useState<Date>(timestampToDate(dateObject.timestamp));
     const [ dailySessionData, setDailyData ] = useState<DrinkingSessionArrayItem[]>([]);
+    const [ editMode, setEditMode ] = useState<boolean>(false);
     // Create a combined data object
     const [ combinedData, setCombinedData ] = useState<CombinedDataProps[]>([]);
-
-    // Automatically navigate to login screen if login expires
-    if (user == null){
-        navigation.replace("Login Screen");
-        return null;
-    }
 
     // Monitor the daily sessions data
     useEffect(() => {
       let newSessions = getSingleDayDrinkingSessions(date, drinkingSessionData)
       setDailyData(newSessions);
-    }, [date]);
+    }, [date, drinkingSessionData]);
 
     // Monitor the combined data
     useEffect(() => {
@@ -72,25 +73,29 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
       setCombinedData(newCombinedData);
     }, [dailySessionData]);
 
-    const onSessionButtonPress = (session:DrinkingSessionArrayItem) => {
-        navigation.navigate('Session Summary Screen', {
-          session: session,
-          preferences: preferences
-        });
+    const onSessionButtonPress = (sessionKey: string, session:DrinkingSessionArrayItem, preferences:PreferencesData) => {
+      if (!preferences) return null;
+      let navigateToScreen:string = session?.ongoing ? 'Drinking Session Screen' : 'Session Summary Screen'
+      navigation.navigate(navigateToScreen, {
+        session: session,
+        sessionKey: sessionKey,
+        preferences: preferences
+      });
     };
 
-    const onEditSessionPress = (sessionKey:string, session:DrinkingSessionArrayItem) => {
-        navigation.navigate('Edit Session Screen', {
-          session: session,
-          sessionKey: sessionKey,
-          preferences: preferences
-        });
+    const onEditSessionPress = (session: DrinkingSessionArrayItem, sessionKey:string) => {
+      navigation.navigate('Edit Session Screen', { 
+        session: session,
+        sessionKey: sessionKey 
+      });
     };
 
 
     const DrinkingSession = ({sessionKey, session}: DrinkingSessionProps) => {
+        if (!preferences) return;
         // Calculate the session color
         var totalUnits = sumAllUnits(session.units)
+        var totalPoints = sumAllPoints(session.units, preferences.units_to_points);
         var unitsToColorsInfo = preferences.units_to_colors;
         var sessionColor = unitsToColors(totalUnits, unitsToColorsInfo);
         if (session.blackout === true) {
@@ -109,7 +114,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
                 <View style={{ flex: 1 }}>
                   <TouchableOpacity
                     style={styles.menuDrinkingSessionButton}
-                    onPress={() => onSessionButtonPress(session)}
+                    onPress={() => onSessionButtonPress(sessionKey, session, preferences)}
                   >
                     <Text style={[
                       styles.menuDrinkingSessionText,
@@ -118,19 +123,36 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
                     <Text style={[
                       styles.menuDrinkingSessionText,
                       session.blackout === true ? {color: 'white'} : {}
-                    ]}>Units consumed: {totalUnits}</Text>
+                    ]}>Units: {totalUnits}</Text>
+                    <Text style={[
+                      styles.menuDrinkingSessionText,
+                      session.blackout === true ? {color: 'white'} : {}
+                    ]}>Points: {totalPoints}</Text>
                   </TouchableOpacity>
                 </View>
+                {session?.ongoing ?
+                  <View style={styles.ongoingSessionContainer}>
+                    <TouchableOpacity
+                        style={styles.ongoingSessionButton}
+                        onPress={() => onSessionButtonPress(sessionKey, session, preferences)}
+                      >
+                        <Text style={styles.ongoingSessionText}>In Session</Text>
+                    </TouchableOpacity>
+                  </View>
+                : editMode ?
                 <MenuIcon
                     iconId='edit-session-icon'
-                    iconSource={require('../assets/icons/edit.png')}
+                    iconSource={require('../../assets/icons/edit.png')}
                     containerStyle={[
                       styles.menuIconContainer,
                       session.blackout === true ? {backgroundColor: 'white'} : {}
                     ]}
                     iconStyle={styles.menuIcon}
-                    onPress={() => onEditSessionPress(sessionKey, session)} // Use keyextractor to load id here
+                    onPress={() => onEditSessionPress(session, sessionKey)} // Use keyextractor to load id here
                 />
+                :
+                <></>
+                }
             </View>
         </View>
         );
@@ -159,6 +181,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
                 />
             )
         }
+        if (!editMode) return <></>; // Do not display outside edit mode
         // No button if the date is in the future
         let today = new Date();
         let tomorrowMidnight = changeDateBySomeDays(today, 1);
@@ -182,7 +205,6 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
                     {
                     session: newSession,
                     sessionKey: 'edit-session-id',
-                    preferences: preferences
                   }
                 )}
                 >
@@ -201,27 +223,39 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
             setDate(newDate);
         };
     }
+    // useFocusEffect(
+    //     useCallback(() => {
+    //         let newSessions = getSingleDayDrinkingSessions(date, drinkingSessionData);
+    //         setDailyData(newSessions);
+    //         console.log(newSessions.length)
+    //     }, [date, drinkingSessionData])
+    // );
 
     if (!isOnline) return (<UserOffline/>);
-
-    // Loading drinking session data
-    if ( date == null ) {
-        return (
-            <LoadingData
-                loadingText=''
-            />
-        );
-    };
+    if (!date) return <LoadingData loadingText=''/>;
+    if (!user || !preferences){
+        navigation.replace("Login Screen");
+        return;
+    }
 
     return (
       <View style={{flex:1, backgroundColor: '#FFFF99'}}>
         <View style={styles.mainHeader}>
             <MenuIcon
             iconId='escape-settings-screen'
-            iconSource={require('../assets/icons/arrow_back.png')}
+            iconSource={require('../../assets/icons/arrow_back.png')}
             containerStyle={styles.backArrowContainer}
             iconStyle={styles.backArrow}
             onPress={() => navigation.goBack() }
+            />
+            <BasicButton 
+              text= {editMode ? 'Exit Edit Mode': 'Edit Mode'}
+              buttonStyle={[
+                styles.editModeButton,
+                editMode ?  styles.editModeButtonEnabled : {}
+              ]}
+              textStyle={styles.editModeButtonText}
+              onPress={() => setEditMode(!editMode)}
             />
         </View>
         <View style={styles.dayOverviewContainer}>
@@ -244,16 +278,22 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
         <View style={styles.dayOverviewFooter}>
             <MenuIcon
                 iconId = "navigate-day-back"
-                iconSource = {require('../assets/icons/arrow_back.png')}
-                containerStyle={styles.previousDayContainer}
-                iconStyle = {styles.nextDayArrow}
+                iconSource = {require('../../assets/icons/arrow_back.png')}
+                containerStyle={styles.footerArrowContainer}
+                iconStyle = {[
+                  styles.dayArrowIcon,
+                  styles.previousDayArrow
+                ]}
                 onPress={() => {changeDay(-1)}}
-            />
+                />
             <MenuIcon
                 iconId = "navigate-day-forward"
-                iconSource = {require('../assets/icons/arrow_back.png')}
-                containerStyle={styles.nextDayContainer}
-                iconStyle = {styles.nextDayArrow}
+                iconSource = {require('../../assets/icons/arrow_back.png')}
+                containerStyle={styles.footerArrowContainer}
+                iconStyle = {[
+                  styles.dayArrowIcon,
+                  styles.nextDayArrow
+                ]}
                 onPress={() => {changeDay(1)}} 
             />
         </View>
@@ -263,14 +303,22 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
 
 export default DayOverviewScreen;
 
+const screenWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
   mainHeader: {
     height: 70,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignContent: 'center',
     padding: 10,
     backgroundColor: 'white',
+    shadowColor: '#000',             
+    shadowOffset: { width: 0, height: 2 }, 
+    shadowOpacity: 0.25,             
+    shadowRadius: 3.84,              
+    elevation: 5,
+    zIndex: 1,
   },
   menuDrinkingSessionContainer: {
     backgroundColor: 'white',
@@ -290,14 +338,35 @@ const styles = StyleSheet.create({
   },
   backArrowContainer: {
     justifyContent: 'center',
-    marginTop: 10,
-    marginLeft: 10,
     padding: 10,
-    position: 'absolute',
   },
   backArrow: {
     width: 25,
     height: 25,
+  },
+  editModeContainer: {
+    height: '10%',
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: '#FFFF99',
+  },
+  editModeButton: {
+    width: '45%',
+    alignItems: "center",
+    justifyContent: 'center',
+    padding: 10,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#000',
+    backgroundColor: '#fcf50f',
+  },
+  editModeButtonEnabled: {
+    backgroundColor: '#FFFF99',
+  },
+  editModeButtonText: {
+    color: 'black',
+    fontSize: 17,
+    fontWeight: '600',
   },
   menuIconContainer: {
     width: 40,
@@ -335,6 +404,7 @@ const styles = StyleSheet.create({
   },
   dayOverviewFooter: {
     flexShrink: 1, // Only as large as necessary
+    marginHorizontal: -1,
     left: 0,
     right: 0,
     bottom: 0,
@@ -351,7 +421,6 @@ const styles = StyleSheet.create({
     marginVertical: 0,
     borderColor: '#ddd',
     elevation: 8, // for Android shadow
-    padding: 17,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
@@ -373,18 +442,49 @@ const styles = StyleSheet.create({
     padding: 10,
     alignSelf: 'center',
   },
-  previousDayContainer: {
-    justifyContent: 'flex-end',
+  footerArrowContainer: {
+    justifyContent: 'center',
     alignItems: 'center',
+    width: screenWidth / 2,
+    backgroundColor: 'white',
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    borderColor: 'grey',
+    height: 50,
   },
-  nextDayContainer: {
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    transform: [{rotate: '180deg'}]
-  },
-  nextDayArrow: {
+  dayArrowIcon: {
     width: 25,
     height: 25,
-    tintColor: "#1c73e6"
+    tintColor: "black",
   },
+  previousDayArrow: {
+    alignSelf: 'flex-start',
+    marginLeft: 15,
+  },
+  nextDayArrow: {
+    transform: [{rotate: '180deg'}],
+    alignSelf: 'flex-end',
+    marginRight: 15,
+  },
+  ongoingSessionContainer: {
+    width: 120,
+    height: 40,
+    borderRadius: 10,
+    margin: 5,
+    backgroundColor: 'white',
+    borderWidth: 2,
+    borderColor: 'black',
+  },
+  ongoingSessionButton: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  ongoingSessionText: {
+    color: 'black',
+    fontWeight: '500',
+    fontSize: 20,
+  }
 });

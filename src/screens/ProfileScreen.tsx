@@ -36,7 +36,7 @@ const ProfileScreen = (props: ProfileProps) => {
       <View style={styles.mainHeader}>
         <MenuIcon
           iconId='escape-profile-screen'
-          iconSource={require('../assets/icons/arrow_back.png')}
+          iconSource={require('../../assets/icons/arrow_back.png')}
           containerStyle={styles.backArrowContainer}
           iconStyle={styles.backArrow}
           onPress={() => navigation.goBack() }
@@ -60,6 +60,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 10,
     backgroundColor: 'white',
+    shadowColor: '#000',             
+    shadowOffset: { width: 0, height: 2 }, 
+    shadowOpacity: 0.25,             
+    shadowRadius: 3.84,              
+    elevation: 5,
+    zIndex: 1,
   },
   backArrowContainer: {
     justifyContent: 'center',

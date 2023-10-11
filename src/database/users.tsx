@@ -1,10 +1,41 @@
-﻿import { update, runTransaction, ref } from "firebase/database";
-import { UnitTypesProps, CurrentSessionData, PreferencesData, UserData, UnitsToColorsData } from "../types/database";
-import { getZeroUnitsObject } from "../utils/dataHandling";
+﻿import { Database, update, runTransaction, ref } from "firebase/database";
+import { PreferencesData, UserData, UnitsToColorsData, UnitTypesProps, ProfileData } from "../types/database";
 import { appInBeta } from "../utils/static";
-import { BetaKeysData } from "../../_dev/beta/betaTypes";
 import { EmailAuthProvider, User, UserCredential, reauthenticateWithCredential } from "firebase/auth";
 import { Alert } from "react-native";
+
+export const getDefaultPreferences = ():PreferencesData => {
+  return {
+    first_day_of_week: 'Monday',
+    units_to_colors: {
+      'orange': 10,
+      'yellow': 5
+    },
+    units_to_points: {
+      'beer': 1,
+      'cocktail': 1.5,
+      'other': 1,
+      'strong_shot': 1,
+      'weak_shot': 0.5,
+      'wine': 1
+    },
+  };
+};
+
+export const getDefaultUserData = (
+ profileData: ProfileData,
+ betaKeyId: string, // Beta feature
+):UserData => {
+  let userRole = appInBeta ? 'beta_user' : 'user'; // Beta feature
+  let timestampNow = new Date().getTime();
+  return {
+    profile: profileData,
+    friends: {},
+    role: userRole,
+    last_online: timestampNow,
+    beta_key_id: betaKeyId, // Beta feature
+  };
+};
 
 /** In the database, create base info for a user. This will
  * be stored under the "users" object in the database.
@@ -13,45 +44,19 @@ import { Alert } from "react-native";
  * @param userId The user ID
  */
 export async function pushNewUserInfo(
- db: any,
+ db: Database,
  userId: string,
+ profileData: ProfileData,
  betaKeyId: string, // Beta feature
 ){
-  // User current session
-  let timestampNow = new Date().getTime();
-  let newCurrentUnitsData:UnitTypesProps = getZeroUnitsObject();
-  let newCurrentSessionData = {
-    current_units: newCurrentUnitsData,
-    in_session: false,
-    last_session_started: timestampNow,
-    last_unit_added: timestampNow,
-  };
-  // User preferences
-  let newUnitsToColors:UnitsToColorsData = {
-    orange: 10,
-    yellow: 5,
-  }
-  let newPreferences:PreferencesData = {
-    first_day_of_week: 'Monday',
-    units_to_colors: newUnitsToColors,
-  };
-  // Users
-  let userRole = appInBeta ? 'beta_user' : 'user'; // Beta feature
-  let newUserData:UserData = {
-    role: userRole,
-    last_online: timestampNow,
-    beta_key_id: betaKeyId, // Beta feature
-  };
   // Allowed types
   let updates: {
-    [key:string]: UserData | CurrentSessionData | PreferencesData | any
+    [key:string]: UserData | PreferencesData | any
   } = {};
-  // User current session
-  updates[`user_current_session/${userId}`] = newCurrentSessionData;
   // User preferences
-  updates[`user_preferences/${userId}`] = newPreferences;
+  updates[`user_preferences/${userId}`] = getDefaultPreferences();
   // Users
-  updates[`users/${userId}`] = newUserData;
+  updates[`users/${userId}`] = getDefaultUserData(profileData, betaKeyId);
   // Beta feature
   updates[`beta_keys/${betaKeyId}/in_usage`] = true;
   updates[`beta_keys/${betaKeyId}/user_id`] = userId;
@@ -70,7 +75,7 @@ export async function pushNewUserInfo(
  * @param userId The user ID
  */
 export async function deleteUserInfo(
- db: any,
+ db: Database,
  userId: string,
  betaKeyId: string | undefined, // Beta feature
 ){
@@ -92,40 +97,9 @@ export async function deleteUserInfo(
   } ;
 };
 
-export async function updateLastSessionStarted(
-  db: any, 
-  userId: string, 
-  timestamp: number,
-  ) {
-  let updates: {[key: string]: number} = {};
-  updates[`user_current_session/${userId}/last_session_started`] = timestamp;
-
-  try {
-    await update(ref(db), updates);
-  } catch (error:any) {
-    throw new Error('Failed to update session timestamp: ' + error.message);
-  }
-};
-
-
-export async function updateSessionStatus(
-  db: any, 
-  userId: string, 
-  status: boolean,
-  ) {
-  let updates: {[key: string]: boolean} = {};
-  updates[`user_current_session/${userId}/in_session`] = status;
-
-  try {
-    await update(ref(db), updates);
-  } catch (error:any) {
-    throw new Error('Failed to save drinking session data: ' + error.message);
-  }
-};
-
 
 export async function updateUserLastOnline(
-  db: any,
+  db: Database,
   userId: string,
  ){
   let lastOnline:number = new Date().getTime();

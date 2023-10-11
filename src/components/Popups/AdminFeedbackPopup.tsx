@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useContext, useState } from 'react';
+﻿import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { 
   Alert,
   FlatList,
@@ -15,6 +15,7 @@ import { FeedbackData, FeedbackProps } from '../../types/database';
 import { formatDateToDay, formatDateToTime, timestampToDate } from '../../utils/dataHandling';
 import DatabaseContext from '../../context/DatabaseContext';
 import { removeFeedback } from '../../database/feedback';
+import { fetchNicknameByUID } from '../../database/baseFunctions';
 
 
 const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
@@ -24,9 +25,10 @@ const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
     onRequestClose, 
     feedbackData
   } = props;
+  const [nicknames, setNicknames] = useState<{ [key: string]: string }>({});
   const db = useContext(DatabaseContext);
+  if (!db) return null;
 
-  // Construct a data array for the FlatList
   const feedbackDataArray =  Object.entries(feedbackData).map(([feedback_id, feedbackProps]) => ({
       feedback_id: feedback_id,
       ...feedbackProps
@@ -36,24 +38,50 @@ const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
     try{
       await removeFeedback(db, feedbackId);
     } catch (error:any){
-      Alert.alert("Failed to remove feedback", "Feedback could not be removed:" +error.message);
+      Alert.alert("Failed to remove feedback", "Feedback could not be removed:" + error.message);
     };
   };
+
+  useEffect(() => {
+    const fetchNicknames = async () => {
+      let newNicknames = { ...nicknames };
+  
+      for (let item of feedbackDataArray) {
+        try {
+          let data = await fetchNicknameByUID(db, item.user_id);
+          if (data) {
+            newNicknames[item.user_id] = data; // Set if not null
+          }
+        } catch (error:any) {
+          Alert.alert("User nickname fetch failed", "Could not fetch the nickname of user with UID: " + item.user_id + error.message);
+        };
+      }
+      setNicknames(newNicknames);
+    };
+    
+    fetchNicknames();
+  
+  }, [feedbackData, db]);
+
 
   const renderFeedback = ( {item} : {item: FeedbackProps & {feedback_id: string}}) => {
     let dateSubmitted = timestampToDate(item.submit_time);
     let daySubmitted = formatDateToDay(dateSubmitted);
     let timeSubmitted = formatDateToTime(dateSubmitted);
+    let nickname = nicknames[item.user_id] || "Loading..."; // Default to "Loading..." if the nickname isn't fetched yet
+
 
     return (
       <View style={styles.feedbackContainer}>
         <View style={styles.headingContainer}>
-          <Text style={styles.feedbackTimeText}>{daySubmitted} {timeSubmitted}</Text>
+          <Text style={styles.feedbackTimeText}>{daySubmitted} {timeSubmitted} 
+          </Text>
+          <Text style={styles.feedbackTimeText}> - {nickname}</Text>
           <TouchableOpacity 
             onPress={() => handleDeleteFeedback(db, item.feedback_id)}
             style={styles.deleteFeedbackButton}
           >
-            <Image source={require('../../assets/icons/remove.png')} style={styles.deleteFeedbackButtonImage}/>
+            <Image source={require('../../../assets/icons/remove.png')} style={styles.deleteFeedbackButtonImage}/>
           </TouchableOpacity>
         </View>
         <View style={styles.mainTextContainer}>
@@ -69,6 +97,7 @@ const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
       );
   }
 
+  
   return (
     <Modal
       animationType="none"

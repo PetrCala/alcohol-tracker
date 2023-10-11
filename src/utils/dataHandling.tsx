@@ -1,12 +1,16 @@
 ﻿import { 
     DrinkingSessionArrayItem, 
+    MeasureType, 
+    PreferencesData, 
     UnitTypesKeys, 
     UnitTypesNames, 
     UnitTypesProps, 
     UnitsObject, 
     UnitsToColorsData 
 } from "../types/database";
-import { DateObject } from "../types/components";
+import { DateObject, SessionsCalendarDatesType, SessionsCalendarMarkedDates } from "../types/components";
+import { getRandomInt } from "./choice";
+import { MONTHS, MONTHS_ABBREVIATED } from "./static";
 
 export function formatDate (date: Date): string {
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
@@ -107,6 +111,79 @@ export const getPreviousMonth = (currentDate: DateObject): DateObject => {
     return dateToDateObject(newDate);
 };
 
+/**
+ * Returns an array of DateObjects representing months adjacent to the input DateObject.
+ * The number of months returned before and after the input month is determined by the input number `n`.
+ * 
+ * For example, if given a DateObject for September and n = 2, the returned array will have 
+ * DateObjects for July, August, September, October, and November.
+ * 
+ * @param {DateObject} currentDate - The reference date from which adjacent months are computed.
+ * @param {number} n - The number of months to compute before and after the `currentDate`.
+ * 
+ * @returns {DateObject[]} - An array of DateObjects, including the `currentDate` and `n` months before and after it.
+ * 
+ * @example
+ * const inputDate: DateObject = {
+ *     dateString: '2023-09-15',
+ *     day: 15,
+ *     month: 9,
+ *     timestamp: 1684560000000,
+ *     year: 2023,
+ * };
+ * const outputDates = getAdjacentMonths(inputDate, 2);
+ * console.log(outputDates);
+ * // Expected output: DateObjects for July, August, September, October, and November of 2023.
+ */
+export const getAdjacentMonths = (currentDate: DateObject, n: number): DateObject[] => {
+    const result: DateObject[] = [currentDate]; // Start with the input date
+
+    // Add next n months
+    let nextDate = currentDate;
+    for (let i = 0; i < n; i++) {
+        nextDate = getNextMonth(nextDate);
+        result.push(nextDate);
+    }
+
+    // Add previous n months
+    let prevDate = currentDate;
+    for (let i = 0; i < n; i++) {
+        prevDate = getPreviousMonth(prevDate);
+        result.unshift(prevDate); // Add to the beginning
+    }
+
+    return result;
+};
+
+
+/** Using a date object, return a year-month string in the format YYYY-MM.
+ * 
+ * @param dateObject Date object
+ * @returns Year-Month string, e.g. '2023-08'
+ * 
+ * @example let yearMonth = getYearMonth(testDateObject);
+ */
+export function getYearMonth(dateObject: DateObject):string {
+    return `${dateObject.year}-${String(dateObject.month).padStart(2, '0')}`
+};
+
+/**
+ * Returns a string representation of the month and year in the format "MMM/YYYY" or with full month names (default)
+ * 
+ * @param {DateObject} dateObject - An object containing numeric values for 'year' and 'month'.
+ * @param {bool} abbreviated - If true, return the months in the abbreviated format, returns to false.
+ * @returns {string} - A string in the format "MMM/YYYY", where "MMM" is the abbreviated or full month name.
+ * 
+ * @example
+ * const date = { year: 2023, month: 10 };
+ * getAbbreviatedYearMonth(date); // Returns "Oct/2023"
+ */
+export function getYearMonthVerbose(dateObject: DateObject, abbreviated:boolean = false): string {
+    const months = abbreviated ? MONTHS_ABBREVIATED : MONTHS
+    const monthName = months[dateObject.month - 1];
+    return `${monthName} ${dateObject.year}`;
+};
+
 /** Change the time of a datetime object to now, 
  * keeping the date constant.
 */
@@ -176,6 +253,64 @@ export function getSingleMonthDrinkingSessions(date: Date, sessions: DrinkingSes
     return monthDrinkingSessions;
 };
 
+export function aggregateSessionsByDays (sessions: DrinkingSessionArrayItem[], measureType:MeasureType = 'points', unitsToPoints?: UnitTypesProps): SessionsCalendarDatesType {
+    return sessions.reduce((
+        acc: SessionsCalendarDatesType,
+        item: DrinkingSessionArrayItem
+    ) => {
+        let dateString = formatDate(new Date(item.start_time)); // MM-DD-YYYY
+        let newUnits: number;
+        if (measureType === 'points'){
+            if (!unitsToPoints) throw new Error("You must specify the point conversion");
+            newUnits = sumAllPoints(item.units, unitsToPoints);
+        } else if (measureType === 'units') {
+            newUnits = sumAllUnits(item.units);
+        } else {
+            throw new Error("Unknown measure type");
+        }
+        acc[dateString] = acc[dateString] ? { 
+            // Already an entry exists
+            units: acc[dateString].units + newUnits,  // Does not distinguish between units/points
+            blackout: acc[dateString].blackout === false ? item.blackout : true
+        } : { 
+            // First entry
+            units: newUnits, 
+            blackout: item.blackout
+        };
+
+        return acc;
+    }, {});
+};
+
+export function monthEntriesToColors(sessions: SessionsCalendarDatesType, preferences: PreferencesData) {
+    // MarkedDates object, see official react-native-calendars docs
+    let markedDates: SessionsCalendarMarkedDates = Object.entries(sessions).reduce((
+        acc: SessionsCalendarMarkedDates,
+        [key, {
+                units: value,
+                blackout: blackoutInfo
+        }]
+    ) => {
+        let unitsToColorsInfo = preferences.units_to_colors;
+        let color:string = unitsToColors(value, unitsToColorsInfo);
+        if (blackoutInfo === true){
+            color = 'black'
+        };
+        let textColor:string = 'black';
+        if (color == 'red' || color == 'green' || color == 'black'){
+            textColor = 'white';
+        }
+        acc[key] = { 
+            units: value, // number of units
+            color: color,
+            textColor: textColor
+        }
+        return acc;
+    }, {});
+    return markedDates;
+};
+
+
 /** Sum up all units of alcohol regardless of category
  * 
  * @param all_units Units to sum up.
@@ -204,7 +339,39 @@ export function sumUnitsOfSingleType(unitsObject: UnitsObject, unitType: typeof 
  */
 export function sumUnitTypes(unitTypes: UnitTypesProps): number {
     return Object.values(unitTypes).reduce((subTotal, unitCount) => subTotal + (unitCount || 0), 0);
+};
+
+/** Type guard to check if a given key is a valid UnitType key */
+export function isUnitTypeKey(key: string): key is keyof UnitTypesProps {
+  return UnitTypesKeys.includes(key as any);
 }
+
+/** Using a UnitsObject and the units to points conversion object, calculate how many points this object amounts to.
+ * 
+ * @param unitsObject UnitsObject type
+ * @param unitsToPoits Units to point conversion object
+ * @returns Number of points
+ * 
+ * @example let points = sumAllPoints({
+ * [1694819284]: {'beer': 5},
+ * [1694819286]: {'wine': 2, 'cocktail': 1},
+ * }, unitsToPoints)
+ */
+export function sumAllPoints(unitsObject: UnitsObject, unitsToPoints: UnitTypesProps): number {
+    let totalPoints = 0;
+    // Iterate over each timestamp in unitsObject
+    for (const unitTypes of Object.values(unitsObject)) {
+      // Iterate over each key in the unitTypes of the current timestamp
+      for (const unitKey of Object.keys(unitTypes)) {
+        if (isUnitTypeKey(unitKey)) {
+          const typeUnits = unitTypes[unitKey] || 0;
+          const typePoints = unitsToPoints[unitKey] || 0;
+          totalPoints += typeUnits * typePoints;
+        }
+      }
+    }
+    return totalPoints;
+};
 
 /** Input a session item and return the timestamp of the last unit
  * consumed in that session.
@@ -240,6 +407,24 @@ export const calculateThisMonthUnits = (dateObject: DateObject, sessions: Drinki
     );
     // Sum up the units
     return sessionsThisMonth.reduce((sum, session) => sum + sumAllUnits(session.units), 0);
+};
+
+/** Enter a dateObject and an array of drinking sessions and calculate 
+ * points for units consumed in the current month.
+ * 
+ * @param dateObject DateObject
+ * @param sessions Array of drinking sessions
+ * @param unitsToPoints Units to points conversion object
+ * @returns Number of points for units consumed during the current month
+ */
+export const calculateThisMonthPoints = (dateObject: DateObject, sessions: DrinkingSessionArrayItem[], unitsToPoints: UnitTypesProps): number => {
+    // Subset to this month's sessions only
+    const currentDate = timestampToDate(dateObject.timestamp);
+    const sessionsThisMonth = getSingleMonthDrinkingSessions(
+        currentDate, sessions, false
+    );
+    // Sum up the units
+    return sessionsThisMonth.reduce((sum, session) => sum + sumAllPoints(session.units, unitsToPoints), 0);
 };
 
 /** List all units to add and their amounts and add this to the current units hook
@@ -318,48 +503,31 @@ export const removeZeroObjectsFromSession = (session:DrinkingSessionArrayItem):D
 
 
 /** Generate an object with all available units where 
- * each unit's value is set to 0.
- */
-export const getZeroUnitsObject = ():UnitsObject => {
-    return {
-        [Date.now()]: {
-            beer: 0,
-            cocktail: 0,
-            other: 0,
-            strong_shot: 0,
-            weak_shot: 0,
-            wine: 0,
-        }
-    };
-};
-
-/** Generate an object with all available units where 
  * each unit's value is set to a random integer.
  */
-export const getRandomUnitsObject = (maxUnitValue:number = 30):UnitsObject => {
-    return {
-        [Date.now()]: {
-            beer: 2,
-            cocktail: 4,
-            other: 3,
-            strong_shot: 0,
-            weak_shot: 1,
-            wine: 0,
-        }
+
+export const getRandomUnitsObject = (maxUnitValue: number = 30): UnitsObject => {
+    const unitWithRandomValues: UnitTypesProps = {};
+
+    // Loop over each item in UnitTypesKeys and set its value to a random number between 0 and maxUnitValue
+    for (const key of UnitTypesKeys) {
+        unitWithRandomValues[key] = getRandomInt(0, maxUnitValue);
+    }
+
+    // Create a new object with a current timestamp
+    const timestamp = Date.now();
+    const result: UnitsObject = {
+        [timestamp]: unitWithRandomValues
     };
-    // // Create an object with all keys set to 0
-    // let obj = getZeroUnitsObject();
 
-    // // Create an array of all keys in UnitTypesProps type
-    // const keys = Object.keys(obj) as (keyof UnitTypesProps)[];
-
-    // keys.forEach(key => {
-    //     obj[key] = Math.floor(Math.random() * maxUnitValue);
-    // });
-
-    // return obj;
+    return result;
 };
 
+/** Generate an object with all available units where each unit's value is set to 0.
+ */
+export function getZeroUnitsObject(): UnitsObject {
+    return getRandomUnitsObject(0);
+};
 
 /** Convert the units consumed to colors.
  * 
@@ -390,3 +558,5 @@ export const findUnitName = (unitKey: typeof UnitTypesKeys[number]) => {
     let unitName = UnitTypesNames[unitIdx];
     return unitName;
 };
+
+// test get year-month, getAdjacentMonths, aggregatesessionsbydays, month entries to colors (move these maybe to a different location), calculatethismonthpoints, getabbreviatedyearmonth

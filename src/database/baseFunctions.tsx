@@ -1,4 +1,4 @@
-﻿import { get, ref, onValue, off, push, onDisconnect, set, serverTimestamp } from "firebase/database";
+﻿import { Database, get, ref, onValue, off } from "firebase/database";
 
 /** Read data once using get()
  * 
@@ -6,7 +6,7 @@
  * return all data of that user. Uses get to avoid
  * continuous listening and performance overload.
  * */
-export async function readDataOnce(db: any, refString: string) {
+export async function readDataOnce(db: Database, refString: string) {
   const userRef = ref(db, refString);
   try {
     const snapshot = await get(userRef); // One-off fetch
@@ -21,7 +21,7 @@ export async function readDataOnce(db: any, refString: string) {
 
 // Main listener for drinking session data changes.
 export function listenForDataChanges(
-  db: any,
+  db: Database,
   refString: string,
   onDataChange: (data: any) => void
 ) {
@@ -36,3 +36,28 @@ export function listenForDataChanges(
 
   return () => off(dbRef, "value", listener);
 }
+
+
+/**
+ * Fetch the Firebase nickname of a user given their UID.
+ * @param {Database} db The Realtime Database instance.
+ * @param {string} uid The user's UID.
+ * @return {Promise<string|null>} The nickname or null if not found.
+ * 
+ * @example const userNickname = await fetchNicknameByUID(db, "userUIDHere");
+ */
+export async function fetchNicknameByUID(db: Database, uid: string): Promise<string | null> {
+  try {
+    const userRef = ref(db, `users/${uid}/profile`);
+    const userSnapshot = await get(userRef);
+
+    if (!userSnapshot.exists()) {
+      // console.error("No user found for the given UID.");
+      return "Not found";
+    }
+
+    return userSnapshot.val().display_name || null;
+  } catch (error:any) {
+    throw new Error("Failed to retrieve user nickname data:" + error.message);
+  }
+};

@@ -2,6 +2,7 @@
 import { DrinkingSessionArrayItem, DrinkingSessionData, FeedbackData, PreferencesData, UnitTypesKeys, UnitsObject, UserData } from "./database";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { AppStackParamList } from "./screens";
+import { Calendar } from 'react-native-calendars';
 
 // FeedbackPopup props
 
@@ -23,9 +24,9 @@ export type YesNoPopupProps = {
     onYes: () => void;
 }
 
-// SettingsPopup props
+// MainMenu popup props
 
-export type SettingsPopupProps = {
+export type MainMenuPopupProps = {
     visible: boolean;
     transparent: boolean;
     onRequestClose: () => void;
@@ -33,15 +34,15 @@ export type SettingsPopupProps = {
     userData: UserData;
 }
 
-export type SettingsButtonData = {
+export type MainMenuButtonData = {
   label: string;
   icon: number;
   action: () => void;
 };
 
-export type SettingsItemProps = {
+export type MainMenuItemProps = {
   heading: string;
-  data: SettingsButtonData[];
+  data: MainMenuButtonData[];
   index: number;
 };
 
@@ -80,6 +81,13 @@ export type SessionsCalendarMarkedDates = {
         color: string;
         textColor?: string;
     };
+};
+
+export type SessionsCalendarDatesType = {
+    [key: string]: {
+        units: number;
+        blackout: boolean;
+    }
 };
 
 export type DateObject = {

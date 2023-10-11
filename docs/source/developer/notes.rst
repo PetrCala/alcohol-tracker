@@ -59,14 +59,18 @@ Running the application on an Android device
 #. Enable USB debugging on your device by going to :code:`Settings\\Developer options\\USB debugging`.
 #. Check that your computer is able to detect the device by running :code:`adb devices`. If it is not, try checking `here <https://stackoverflow.com/questions/21170392/my-android-device-does-not-appear-in-the-list-of-adb-devices>`_.
 #. In your project directory, run the command :code:`npm run android`. This will start the Metro bundler and build your app.
+#. To reduce building time in a development environment, you can append the flag :code:`--active-arch-only`, which will build the application for the current Application Binary Interface (ABI) only, improving the native build time by a ~75% factor. Example: :code:`npm run android --active-arch-only` or :code:`npx react-native run-android --active-arch-only`
 #. When the build is complete, your app will be installed and launched on your connected device automatically.
     * Note that you'll need to have the Android development environment set up on your computer, including the Android SDK and the Android platform tools, in order to use this command. You can follow the React Native documentation for instructions on setting up your development environment for Android.
 
 Building the application for an Android device
 ================================
 
-#. You can build the application using the command :code:`npx react-native run-android --variant=release`. This will build the :code:`.apk` file in the :code:`android\\app\\build\\outputs\\apk\\release\\` folder.
-#. Share the :code:`.apk` file with your friends. They can easily install the application by downloading the file to their device and opening it there.
+#. You can build the *.apk* version of the application by running :code:`npx react-native run-android`. In that case, the output will be stored in the :code:`android\\app\\build\\outputs\\apk\\` folder.
+#. If you append the flag :code:`--mode=debug`, the file will be stored in the *apk* folder, while with the flag :code:`--mode=release`, it will be stored in the *release* folder.
+#. To build the application for the App Store Console (*.aab*), run the command :code:`npx react-native build-android` with the respective flags. The output will be stored in the :code:`android\\app\\build\\outputs\\bundle\\` folder.
+#. The *.apk* files can be instaled by double tapping, while the *.aab* file is meant for distribution through the App Store Console.
+#. As when with running the device only, you may append the flag :code:`--active-arch-only` to drastically improve the build time.
 
 Running the application on an iOS device
 ================================

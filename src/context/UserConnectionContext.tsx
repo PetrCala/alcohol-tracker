@@ -32,7 +32,7 @@ type UserConnectionProviderProps = {
 export const UserConnectionProvider: React.FC<UserConnectionProviderProps> = ({ 
     children, 
 }) => {
-    const [isOnline, setIsOnline] = useState< boolean | null>(false);
+    const [isOnline, setIsOnline] = useState< boolean | null>(true);
   
     useEffect(() => {
       // Subscribe to network state updates

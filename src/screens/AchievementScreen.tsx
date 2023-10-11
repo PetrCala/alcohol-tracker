@@ -17,12 +17,18 @@ const AchievementScreen = (props: AchievementsProps) => {
     <View style={{flex:1, backgroundColor: '#FFFF99'}}>
       <View style={styles.mainHeader}>
         <MenuIcon
-          iconId='escape-achievement-screen'
-          iconSource={require('../assets/icons/arrow_back.png')}
+          iconId='escape-statistics-screen'
+          iconSource={require('../../assets/icons/arrow_back.png')}
           containerStyle={styles.backArrowContainer}
           iconStyle={styles.backArrow}
           onPress={() => navigation.goBack() }
         />
+        <View style={styles.menuContainer}>
+          <Text style={styles.sectionText}>Achievements</Text>
+        </View>
+      </View>
+      <View style={styles.mainContainer}>
+        <Text style={styles.sectionText}>Coming soon...</Text>
       </View>
     </View>
   );
@@ -34,19 +40,39 @@ const styles = StyleSheet.create({
   mainHeader: {
     height: 70,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent:'space-between',
     padding: 10,
     backgroundColor: 'white',
+    shadowColor: '#000',             
+    shadowOffset: { width: 0, height: 2 }, 
+    shadowOpacity: 0.25,             
+    shadowRadius: 3.84,              
+    elevation: 5,
+    zIndex: 1,
   },
   backArrowContainer: {
     justifyContent: 'center',
-    marginTop: 10,
     marginLeft: 10,
-    padding: 10,
-    position: 'absolute',
   },
   backArrow: {
     width: 25,
     height: 25,
+  },
+  menuContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    width: 200,
+  },
+  sectionText: {
+    fontSize: 20,
+    color: 'black',
+    fontWeight: 'bold',
+    margin: 10,
+    textAlign: 'center',
+  },
+  mainContainer: {
+    flex: 1,
   },
 });

@@ -1,70 +1,59 @@
 ﻿// Run the script using ts-node _dev/database/migration.tsx
 
-import adminDb from "./adminDatabase";
+import admin from "./admin";
+import { DatabaseProps, FriendsData, ProfileData, UserData } from "../../src/types/database";
+import { getDisplayName } from "./adminUtils";
+import { transformUserData } from "./migrateUsers";
 
+const adminDb = admin.database();
 
-// adminDb.ref('feedback').once('value', (snapshot:any) => {
+type TransformCallback = (data: any, primaryKey: string, secondaryKey?: string) => any;
 
-    // const feedback = snapshot.val();
-    // console.log(feedback);
-// };
+/**
+ * Iterate and transform data in a specified database path.
+ *
+ * @param adminDb - The database reference.
+ * @param dbPath - The path in the database where the data resides.
+ * @param callback - A function to transform the data.
+ * 
+ * @example iterateAndTransformData(adminDb, 'user_drinking_sessions', (session, userId, sessionId) => {
+    // ... [Your Transformation Logic Here] ...
+});
+ */
+export const processPrimaryLevelData = async (
+  adminDb: any,
+  dbPath: keyof DatabaseProps,
+  callback: TransformCallback
+) => {
+  const snapshot = await adminDb.ref(dbPath).once('value');
+  const mainData = snapshot.val();
 
-export type DrinkingSessionData = {
-    [session_id: string]: {
-      start_time: number;
-      end_time: number;
-      units: UnitsObject;
-      blackout?: boolean;
-      note?: string;
-      ongoing?: boolean | null;
-    };
-  };
-
-export const UnitTypesKeys = [
-    'beer', 
-    'cocktail', 
-    'other', 
-    'strong_shot',
-    'weak_shot',
-    'wine'
-  ] as const;  // Infer a readonly tuple
-  
-  export type UnitTypesProps = Partial<Record<typeof UnitTypesKeys[number], number>>;
-
-/** Type for drinking session data when stored as an array */
-export type DrinkingSessionArrayItem = Omit<DrinkingSessionData[string], 'session_id'>;
-
-export type UnitsObject = {
-  [timestamp: number]: UnitTypesProps;
+  for (let primaryKey in mainData) {
+      let dataItem = mainData[primaryKey];
+      let newData = await callback(dataItem, primaryKey);
+      if (newData) {
+          await adminDb.ref(`${dbPath}/${primaryKey}`).set(newData);
+      }
+  }
 };
 
+// Processes data that's two levels deep (has secondary keys).
+export const processSecondaryLevelData = async (
+  adminDb: any,
+  dbPath: keyof DatabaseProps,
+  callback: TransformCallback
+) => {
+  const snapshot = await adminDb.ref(dbPath).once('value');
+  const mainData = snapshot.val();
 
-// adminDb.ref('user_drinking_sessions').once('value', (snapshot:any) => {
-//     const users = snapshot.val();
+  for (let primaryKey in mainData) {
+      for (let secondaryKey in mainData[primaryKey]) {
+          let dataItem = mainData[primaryKey][secondaryKey];
+          let newData = await callback(dataItem, primaryKey, secondaryKey);
+          if (newData) {
+              await adminDb.ref(`${dbPath}/${primaryKey}/${secondaryKey}`).set(newData);
+          }
+      }
+  }
+};
 
-//     for (let userId in users) {
-//         const sessions = users[userId];
-//         for (let sessionId in sessions) {
-//             let session = sessions[sessionId];
-//             let startTime:number = session.start_time;
-//             let totalUnits:number = 0;
-//             for (const key of UnitTypesKeys) {
-//               if (session.units[key] !== undefined) {
-//                 totalUnits += session.units[key]!;
-//               }
-//             }
-//             let newUnits:UnitsObject = {
-//                 [startTime]: {
-//                     other: totalUnits,
-//                 }
-//             };
-//             // Transform the session data
-//             let newSession: DrinkingSessionArrayItem = {
-//                 start_time: session.start_time,
-//                 end_time: session.start_time + 10000,
-//                 units: newUnits,
-//             };
-//             adminDb.ref(`user_drinking_sessions/${userId}/${sessionId}`).set(newSession);
-//         };
-//     };
-// });

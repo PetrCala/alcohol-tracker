@@ -31,7 +31,7 @@ const LoginScreen = ( {navigation }: LoginScreenProps) => {
   useEffect(() => {
     const stopListening = auth.onAuthStateChanged(user => {
       if (user) {
-        navigation.replace("Main Screen") // Redirect to main screen
+        navigation.replace("App", {screen: "Main Screen"}) // Redirect to main screen
       };
       setLoadingUser(false);
     });
@@ -94,7 +94,7 @@ const LoginScreen = ( {navigation }: LoginScreenProps) => {
       >
       <View style={styles.logoContainer}>
         <Image
-          source={require('../assets/logo/alcohol-tracker-source-icon.png')}
+          source={require('../../assets/logo/alcohol-tracker-source-icon.png')}
           style={styles.logo}
         />
       </View>
@@ -115,12 +115,17 @@ const LoginScreen = ( {navigation }: LoginScreenProps) => {
       <View style={styles.inputContainer}>
         <TextInput
         placeholder="Email"
+        placeholderTextColor={"#a8a8a8"}
+        keyboardType='email-address'
+        textContentType='emailAddress'
         value={email}
         onChangeText={text => setEmail(text)}
         style={styles.input}
         />
         <TextInput
         placeholder="Password"
+        placeholderTextColor={"#a8a8a8"}
+        textContentType='password'
         value={password}
         onChangeText={text => setPassword(text)}
         style={styles.input}
@@ -209,22 +214,25 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 10,
-    borderColor: '#0782F9',
+    borderColor: '#000',
     borderWidth: 2,
     marginTop: 5,
     marginBottom: 5,
+    color: 'black'
   },
   loginButton: {
-    backgroundColor: '#0782F9',
+    backgroundColor: '#fcf50f',
     width: '70%',
     padding: 15,
     borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#000',
     marginTop: 25,
     alignItems: 'center',
     alignSelf: 'center',
   },
   loginButtonText: {
-    color: 'white',
+    color: 'black',
     fontWeight: '700',
     fontSize: 16,
   },
@@ -241,7 +249,7 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   signUpButtonText: {
-    color: '#173bcf',
+    color: '#02a109',
     fontWeight: 'bold',
     fontSize: 15,
   },
