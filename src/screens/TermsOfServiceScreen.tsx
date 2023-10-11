@@ -14,7 +14,7 @@ const TermsOfServiceScreen = ({ navigation }: TermsOfServiceScreenProps) => {
   if (!navigation) return null; // Should never be null
 
   const termsHtml = Platform.OS === 'android' 
-        ? {uri: 'file:///android_asset/html/terms-of-service.html'}
+        ? {uri: 'file:///android_asset/html/terms-of-service-link'}
         : require("../../assets/html/terms-of-service.html");
 
   const handleStartLoadWithRequest = (request:any) => {
