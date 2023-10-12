@@ -51,8 +51,8 @@ const LoginScreen = ( {navigation }: LoginScreenProps) => {
             auth, email, password
         );
     } catch (error:any) {
-      const errorHeading = "Error Creating User";
-      const errorMessage = "There was an error creating a new user: ";
+      const errorHeading = "Failed to log in";
+      const errorMessage = "There was an error trying to log in: ";
       return handleInvalidInput(error, errorHeading, errorMessage);
     };
   };
