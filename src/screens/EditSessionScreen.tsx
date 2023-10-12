@@ -32,6 +32,7 @@ import { DrinkDataProps, UnitTypesViewProps } from '../types/components';
 import UnitTypesView from '../components/UnitTypesView';
 import SessionDetailsSlider from '../components/SessionDetailsSlider';
 import { getDatabaseData } from '../context/DatabaseDataContext';
+import commonStyles from '../styles/commonStyles';
 
 const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
     if (!route || ! navigation) return null; // Should never be null
@@ -185,7 +186,7 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
     
     return (
       <>
-      <View style={styles.mainHeader}>
+      <View style={commonStyles.mainHeader}>
           <MenuIcon
           iconId='escape-edit-session'
           iconSource={require('../../assets/icons/arrow_back.png')}
@@ -284,20 +285,6 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
 export default EditSessionScreen;
 
 const styles = StyleSheet.create({
-  mainHeader: {
-    height: 70,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignContent: 'center',
-    padding: 10,
-    backgroundColor: 'white',
-    shadowColor: '#000',             
-    shadowOffset: { width: 0, height: 2 }, 
-    shadowOpacity: 0.25,             
-    shadowRadius: 3.84,              
-    elevation: 5,
-    zIndex: 1,
-  },
   backArrowContainer: {
     justifyContent: 'center',
     alignSelf: 'center',

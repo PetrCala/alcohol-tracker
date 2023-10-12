@@ -1,21 +1,26 @@
 ﻿import React from 'react';
-import { View, Text, Linking, StyleSheet } from 'react-native';
+import { View, Text, Linking, StyleSheet, Platform } from 'react-native';
+import { playStoreLink, iStoreLink } from '../utils/static';
 
 const ForceUpdateScreen = () => {
+  const storeLink = Platform.OS === "android" ? playStoreLink : iStoreLink
   return (
     <View style={styles.container}>
       <Text style={styles.title}>App Update Required</Text>
       <Text style={styles.description}>
         This version of the app is now discontinued. Please update to the latest version.
       </Text>
-        {/* This version of the app is now discontinued. Please update to the latest version using the link below. */}
-      {/* <Text
-        style={styles.updateLink}
-        // onPress={() => Linking.openURL('itms-apps://your-app-store-link')}
-        onPress={() => {console.log('pressing appstore...')}}
-      >
-        Update Now
-      </Text> */}
+      {storeLink ?
+        <Text
+          style={styles.updateLink}
+          // onPress={() => Linking.openURL('itms-apps://your-app-store-link')}
+          onPress={() => Linking.openURL(storeLink)}
+        >
+          Update Now
+        </Text>
+        :
+        <></>
+      }
     </View>
   );
 };

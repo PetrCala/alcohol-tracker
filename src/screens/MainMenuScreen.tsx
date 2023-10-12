@@ -28,6 +28,7 @@ import UserOffline from '../components/UserOffline';
 import { useUserConnection } from '../context/UserConnectionContext';
 import { getDatabaseData } from '../context/DatabaseDataContext';
 import ItemListPopup from '../components/Popups/ItemListPopup';
+import commonStyles from '../styles/commonStyles';
 
 const MenuItem: React.FC<MainMenuItemProps> = ({
     heading,
@@ -247,7 +248,7 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
 
   return (
       <View style={styles.mainContainer}>
-        <View style={styles.mainHeader}>
+        <View style={commonStyles.mainHeader}>
             <MenuIcon
                 iconId='escape-main-menu'
                 iconSource={require('../../assets/icons/arrow_back.png')}
@@ -316,22 +317,6 @@ const styles = StyleSheet.create({
     mainContainer: {
       flex: 1,
       justifyContent: 'center',
-      alignItems: 'center',
-    },
-    mainHeader: {
-      height: 70,
-      width: '100%',
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignContent: 'center',
-      padding: 10,
-      backgroundColor: 'white',
-      shadowColor: '#000',             
-      shadowOffset: { width: 0, height: 2 }, 
-      shadowOpacity: 0.25,             
-      shadowRadius: 3.84,              
-      elevation: 5,
-      zIndex: 1,
     },
     scrollView: {
         width: '100%',

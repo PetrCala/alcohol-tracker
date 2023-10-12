@@ -11,6 +11,7 @@ import { formatDate, formatDateToDay, formatDateToTime, getLastUnitAddedTime, su
 import BasicButton from '../components/Buttons/BasicButton';
 import { DrinkingSessionArrayItem } from '../types/database';
 import { getDatabaseData } from '../context/DatabaseDataContext';
+import commonStyles from '../styles/commonStyles';
 
 const SessionDataItem = ({
     heading,
@@ -108,7 +109,7 @@ const SessionSummaryScreen = ({ route, navigation}: SessionSummaryScreenProps) =
 
     return (
         <>
-          <View style={styles.mainHeader}>
+          <View style={commonStyles.mainHeader}>
             <MenuIcon
               iconId='escape-session-summary'
               iconSource={require('../../assets/icons/arrow_back.png')}
@@ -171,21 +172,6 @@ const SessionSummaryScreen = ({ route, navigation}: SessionSummaryScreenProps) =
 export default SessionSummaryScreen;
 
 const styles = StyleSheet.create({
-  mainHeader: {
-    height: 70,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignContent: 'center',
-    alignItems: 'center',
-    padding: 10,
-    backgroundColor: 'white',
-    shadowColor: '#000',             
-    shadowOffset: { width: 0, height: 2 }, 
-    shadowOpacity: 0.25,             
-    shadowRadius: 3.84,              
-    elevation: 5,
-    zIndex: 1,
-  },
   backArrowContainer: {
     justifyContent: 'center',
     alignSelf: 'center',

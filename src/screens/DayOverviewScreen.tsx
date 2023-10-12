@@ -37,6 +37,7 @@ type CombinedDataProps = {
   sessionKey: string,
   session: DrinkingSessionArrayItem
 }
+import commonStyles from '../styles/commonStyles';
 
 const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
     if (!route || ! navigation) return null; // Should never be null
@@ -240,7 +241,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
 
     return (
       <View style={{flex:1, backgroundColor: '#FFFF99'}}>
-        <View style={styles.mainHeader}>
+        <View style={commonStyles.mainHeader}>
             <MenuIcon
             iconId='escape-settings-screen'
             iconSource={require('../../assets/icons/arrow_back.png')}
@@ -306,20 +307,6 @@ export default DayOverviewScreen;
 const screenWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
-  mainHeader: {
-    height: 70,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignContent: 'center',
-    padding: 10,
-    backgroundColor: 'white',
-    shadowColor: '#000',             
-    shadowOffset: { width: 0, height: 2 }, 
-    shadowOpacity: 0.25,             
-    shadowRadius: 3.84,              
-    elevation: 5,
-    zIndex: 1,
-  },
   menuDrinkingSessionContainer: {
     backgroundColor: 'white',
     padding: 16,

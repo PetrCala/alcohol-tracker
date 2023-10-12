@@ -5,6 +5,7 @@ import {
   View,
 } from 'react-native';
 import MenuIcon from '../components/Buttons/MenuIcon';
+import commonStyles from '../styles/commonStyles';
 
 type AchievementsProps = {
   navigation: any;
@@ -15,7 +16,7 @@ const AchievementScreen = (props: AchievementsProps) => {
 
   return (
     <View style={{flex:1, backgroundColor: '#FFFF99'}}>
-      <View style={styles.mainHeader}>
+      <View style={commonStyles.mainHeader}>
         <MenuIcon
           iconId='escape-statistics-screen'
           iconSource={require('../../assets/icons/arrow_back.png')}
@@ -37,19 +38,6 @@ const AchievementScreen = (props: AchievementsProps) => {
 export default AchievementScreen;
 
 const styles = StyleSheet.create({
-  mainHeader: {
-    height: 70,
-    flexDirection: 'row',
-    justifyContent:'space-between',
-    padding: 10,
-    backgroundColor: 'white',
-    shadowColor: '#000',             
-    shadowOffset: { width: 0, height: 2 }, 
-    shadowOpacity: 0.25,             
-    shadowRadius: 3.84,              
-    elevation: 5,
-    zIndex: 1,
-  },
   backArrowContainer: {
     justifyContent: 'center',
     marginLeft: 10,

@@ -295,7 +295,7 @@ const styles = StyleSheet.create({
   forgottenPasswordText: {
     color: '#02a109',
     fontWeight: 'bold',
-    fontSize: 15,
+    fontSize: 14,
   },
   horizontalLine: {
     width: screenWidth * 0.55,
@@ -321,7 +321,7 @@ const styles = StyleSheet.create({
   signUpButtonText: {
     color: '#02a109',
     fontWeight: 'bold',
-    fontSize: 15,
+    fontSize: 14,
     marginLeft: 4,
     paddingTop: 10,
     paddingBottom: 10,

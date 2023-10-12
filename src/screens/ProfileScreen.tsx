@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import BasicButton from '../components/Buttons/BasicButton';
+import commonStyles from '../styles/commonStyles';
 
 import DatabaseContext from '../context/DatabaseContext';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
@@ -33,7 +34,7 @@ const ProfileScreen = (props: ProfileProps) => {
 
   return (
     <View style={{flex:1, backgroundColor: '#FFFF99'}}>
-      <View style={styles.mainHeader}>
+      <View style={commonStyles.mainHeader}>
         <MenuIcon
           iconId='escape-profile-screen'
           iconSource={require('../../assets/icons/arrow_back.png')}
@@ -54,19 +55,6 @@ const ProfileScreen = (props: ProfileProps) => {
 export default ProfileScreen;
 
 const styles = StyleSheet.create({
-  mainHeader: {
-    height: 70,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 10,
-    backgroundColor: 'white',
-    shadowColor: '#000',             
-    shadowOffset: { width: 0, height: 2 }, 
-    shadowOpacity: 0.25,             
-    shadowRadius: 3.84,              
-    elevation: 5,
-    zIndex: 1,
-  },
   backArrowContainer: {
     justifyContent: 'center',
     marginTop: 10,

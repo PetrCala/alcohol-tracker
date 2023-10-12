@@ -24,6 +24,7 @@ import CustomSwitch from '../components/CustomSwitch';
 import NumericSlider from '../components/Popups/NumericSlider';
 import { getDatabaseData } from '../context/DatabaseDataContext';
 import { getDefaultPreferences } from '../database/users';
+import commonStyles from '../styles/commonStyles';
 
 
 interface PreferencesListProps {
@@ -167,7 +168,7 @@ const PreferencesScreen = ({ route, navigation }: PreferencesScreenProps) => {
 
     return (
         <View style={{flex:1, backgroundColor: '#FFFF99'}}>
-          <View style={styles.mainHeader}>
+          <View style={commonStyles.mainHeader}>
               <MenuIcon
               iconId='escape-preferences-screen'
               iconSource={require('../../assets/icons/arrow_back.png')}
@@ -282,19 +283,6 @@ export default PreferencesScreen;
 
 
 const styles = StyleSheet.create({
-  mainHeader: {
-    height: 70,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 10,
-    backgroundColor: 'white',
-    shadowColor: '#000',             
-    shadowOffset: { width: 0, height: 2 }, 
-    shadowOpacity: 0.25,             
-    shadowRadius: 3.84,              
-    elevation: 5,
-    zIndex: 1,
-  },
   backArrowContainer: {
     justifyContent: 'center',
     marginTop: 10,

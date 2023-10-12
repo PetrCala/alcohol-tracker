@@ -40,7 +40,7 @@ import SessionDetailsSlider from '../components/SessionDetailsSlider';
 import LoadingData from '../components/LoadingData';
 import { usePrevious } from '../hooks/usePrevious';
 import SuccessIndicator from '../components/SuccessIndicator';
-
+import commonStyles from '../styles/commonStyles';
 
 const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps) => {
   // Navigation
@@ -278,7 +278,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
 
   return (
     <>
-    <View style={styles.mainHeader}>
+    <View style={commonStyles.mainHeader}>
       <MenuIcon
         iconId='escape-drinking-session'
         iconSource={require('../../assets/icons/arrow_back.png')}
@@ -397,20 +397,6 @@ export default DrinkingSessionScreen;
 
 
 const styles = StyleSheet.create({
-  mainHeader: {
-    height: 70,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignContent: 'center',
-    padding: 10,
-    backgroundColor: 'white',
-    shadowColor: '#000',             
-    shadowOffset: { width: 0, height: 2 }, 
-    shadowOpacity: 0.25,             
-    shadowRadius: 3.84,              
-    elevation: 5,
-    zIndex: 1,
-  },
   backArrowContainer: {
     justifyContent: 'center',
     alignSelf: 'center',

@@ -13,6 +13,7 @@ import {
 import MenuIcon from '../components/Buttons/MenuIcon';
 import { PrivacyPolicyScreenProps } from '../types/screens';
 import { WebView } from 'react-native-webview';
+import commonStyles from '../styles/commonStyles';
 
 const PrivacyPolicyScreen = ({ navigation }: PrivacyPolicyScreenProps) => {
 
@@ -34,7 +35,7 @@ const PrivacyPolicyScreen = ({ navigation }: PrivacyPolicyScreenProps) => {
 
   return (
     <View style={{flex:1, backgroundColor: '#FFFF99'}}>
-      <View style={styles.mainHeader}>
+      <View style={commonStyles.mainHeader}>
         <MenuIcon
           iconId='escape-privacy-policy-screen'
           iconSource={require('../../assets/icons/arrow_back.png')}
@@ -59,19 +60,6 @@ const PrivacyPolicyScreen = ({ navigation }: PrivacyPolicyScreenProps) => {
 export default PrivacyPolicyScreen;
 
 const styles = StyleSheet.create({
-  mainHeader: {
-    height: 70,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 10,
-    backgroundColor: 'white',
-    shadowColor: '#000',             
-    shadowOffset: { width: 0, height: 2 }, 
-    shadowOpacity: 0.25,             
-    shadowRadius: 3.84,              
-    elevation: 5,
-    zIndex: 1,
-  },
   backArrowContainer: {
     justifyContent: 'center',
     marginTop: 10,

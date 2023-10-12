@@ -15,6 +15,7 @@ import UserOffline from '../components/UserOffline';
 import BasicButton from '../components/Buttons/BasicButton';
 import { getDatabase } from 'firebase/database';
 import { getDatabaseData } from '../context/DatabaseDataContext';
+import commonStyles from '../styles/commonStyles';
 
 const SettingsItem: React.FC<{ item: any }> = ({ item }) => (
   <View style={styles.settingContainer}>
@@ -73,7 +74,7 @@ const SettingsScreen = ({ route, navigation }: SettingsScreenProps) => {
 
   return (
     <View style={{flex:1, backgroundColor: '#FFFF99'}}>
-      <View style={styles.mainHeader}>
+      <View style={commonStyles.mainHeader}>
         <MenuIcon
           iconId='escape-settings-screen'
           iconSource={require('../../assets/icons/arrow_back.png')}
@@ -103,19 +104,6 @@ export default SettingsScreen;
 
 
 const styles = StyleSheet.create({
-  mainHeader: {
-    height: 70,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 10,
-    backgroundColor: 'white',
-    shadowColor: '#000',             
-    shadowOffset: { width: 0, height: 2 }, 
-    shadowOpacity: 0.25,             
-    shadowRadius: 3.84,              
-    elevation: 5,
-    zIndex: 1,
-  },
   backArrowContainer: {
     justifyContent: 'center',
     marginTop: 10,

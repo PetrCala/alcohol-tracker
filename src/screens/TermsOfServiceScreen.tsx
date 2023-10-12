@@ -9,6 +9,7 @@
 import MenuIcon from '../components/Buttons/MenuIcon';
 import { TermsOfServiceScreenProps } from '../types/screens';
 import { WebView } from 'react-native-webview';
+import commonStyles from '../styles/commonStyles';
 
 const TermsOfServiceScreen = ({ navigation }: TermsOfServiceScreenProps) => {
   if (!navigation) return null; // Should never be null
@@ -29,7 +30,7 @@ const TermsOfServiceScreen = ({ navigation }: TermsOfServiceScreenProps) => {
 
   return (
     <View style={{flex:1, backgroundColor: '#FFFF99'}}>
-      <View style={styles.mainHeader}>
+      <View style={commonStyles.mainHeader}>
         <MenuIcon
           iconId='escape-terms-of-service-screen'
           iconSource={require('../../assets/icons/arrow_back.png')}
@@ -54,19 +55,6 @@ const TermsOfServiceScreen = ({ navigation }: TermsOfServiceScreenProps) => {
 export default TermsOfServiceScreen;
 
 const styles = StyleSheet.create({
-  mainHeader: {
-    height: 70,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 10,
-    backgroundColor: 'white',
-    shadowColor: '#000',             
-    shadowOffset: { width: 0, height: 2 }, 
-    shadowOpacity: 0.25,             
-    shadowRadius: 3.84,              
-    elevation: 5,
-    zIndex: 1,
-  },
   backArrowContainer: {
     justifyContent: 'center',
     marginTop: 10,

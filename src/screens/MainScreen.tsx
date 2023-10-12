@@ -29,6 +29,7 @@ import UserOffline from '../components/UserOffline';
 import { updateUserLastOnline } from '../database/users';
 import { saveDrinkingSessionData, updateCurrentSessionKey } from '../database/drinkingSessions';
 import { getDatabaseData } from '../context/DatabaseDataContext';
+import commonStyles from '../styles/commonStyles';
 
 const MainScreen = ( { navigation }: MainScreenProps) => {
   // Context, database, and authentification
@@ -138,7 +139,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
 
   return ( 
     <>
-      <View style={styles.mainScreenHeader}>
+      <View style={commonStyles.mainHeader}>
           <View style={styles.profileContainer}>
             <TouchableOpacity
               onPress = {() => navigation.navigate('Profile Screen')}
@@ -258,19 +259,6 @@ export default MainScreen;
 const screenWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
-  mainScreenHeader: {
-    height: 70,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 10,
-    backgroundColor: 'white',
-    shadowColor: '#000',             
-    shadowOffset: { width: 0, height: 2 }, 
-    shadowOpacity: 0.25,             
-    shadowRadius: 3.84,              
-    elevation: 5,
-    zIndex: 1,
-  },
   profileContainer: {
     //Ensure the container fills all space between, no more, no less
     flexGrow: 1,
