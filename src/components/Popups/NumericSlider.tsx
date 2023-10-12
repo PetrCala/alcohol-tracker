@@ -72,18 +72,18 @@ const NumericSlider = (props: NumericSliderProps) => {
             </View>
             <View style={styles.saveButtonsDelimiter}/>
             <View style={styles.saveButtonsContainer}>
-                <BasicButton 
-                    text='Cancel'
-                    buttonStyle={styles.saveButton}
-                    textStyle={styles.saveButtonText}
-                    onPress={onRequestClose}
-                />
-                <BasicButton 
-                    text='Save'
-                    buttonStyle={styles.saveButton}
-                    textStyle={styles.saveButtonText}
-                    onPress={() => onSave(localValue)}
-                />
+              <BasicButton 
+                  text='Save'
+                  buttonStyle={styles.saveButton}
+                  textStyle={styles.saveButtonText}
+                  onPress={() => onSave(localValue)}
+              />
+              <BasicButton 
+                  text='Cancel'
+                  buttonStyle={styles.cancelButton}
+                  textStyle={styles.cancelButtonText}
+                  onPress={onRequestClose}
+              />
             </View>
         </View>
         </View>
@@ -139,28 +139,38 @@ const styles = StyleSheet.create({
     borderColor: '#000',
   },
   saveButtonsContainer: {
-    width: '80%',
+    width: '100%',
     alignItems: "center",
     justifyContent: "space-between",
-    flexDirection: "row",
+    flexDirection: "column",
     backgroundColor: '#FFFF99',
     marginBottom: 2,
   },
   saveButton: {
-    width: '50%',
-    height: 50,
-    alignItems: "center",
-    justifyContent: 'center',
+    width: 150,
+    backgroundColor: '#fcf50f',
     padding: 10,
-    backgroundColor: 'white',
     borderRadius: 8,
     borderWidth: 2,
     borderColor: 'black',
     margin: 5,
+    alignItems: 'center',
   },
   saveButtonText: {
     color: 'black',
-    fontSize: 18,
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  cancelButton: {
+    width: '100%',
+    backgroundColor: '#ffff99',
+    padding: 6,
+    margin: 5,
+    alignItems: 'center',
+  },
+  cancelButtonText: {
+    color: 'black',
+    fontSize: 16,
     fontWeight: 'bold',
   },
 });

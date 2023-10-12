@@ -45,14 +45,14 @@ const FeedbackPopup = (props: FeedbackPopupProps) => {
             />
         </View>
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={onRequestClose}>
-            <Text style={styles.buttonText}>Close</Text>
-          </TouchableOpacity>
           <TouchableOpacity 
-            style={styles.button} 
+            style={styles.confirmButton} 
             onPress={() => onSubmit(feedbackText)}
           >
-            <Text style={styles.buttonText}>Submit</Text>
+            <Text style={styles.confirmButtonText}>Submit</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.cancelButton} onPress={onRequestClose}>
+            <Text style={styles.cancelButtonText}>Close</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -75,12 +75,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 2,
     borderColor: 'black',
-    padding: 20,
     alignItems: 'center',
     elevation: 5,
+    paddingTop: 15,
   },
   modalText: {
-    marginBottom: 15,
     textAlign: 'center',
     fontSize: 16,
     color: 'black',
@@ -93,6 +92,7 @@ const styles = StyleSheet.create({
     borderColor: '#000',
     borderRadius: 5,
     backgroundColor: 'white',
+    margin: 15,
   },
   feedbackWindowText: {
     height: '100%',
@@ -104,21 +104,33 @@ const styles = StyleSheet.create({
     color: 'black'
   },
   buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 10,
+    width: '100%',
+    flexDirection: 'column',
+    alignItems: 'center',
   },
-  button: {
-    width: '40%',
-    backgroundColor: 'white',
+  confirmButton: {
+    width: 150,
+    backgroundColor: '#fcf50f',
     padding: 10,
     borderRadius: 8,
     borderWidth: 2,
     borderColor: 'black',
-    margin: 5,
     alignItems: 'center',
   },
-  buttonText: {
+  confirmButtonText: {
+    color: 'black',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  cancelButton: {
+    width: 150,
+    backgroundColor: '#ffff99',
+    padding: 6,
+    alignItems: 'center',
+    marginTop: 3,
+    marginBottom: 10,
+  },
+  cancelButtonText: {
     color: 'black',
     fontSize: 16,
     fontWeight: 'bold',

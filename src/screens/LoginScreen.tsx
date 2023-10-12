@@ -28,7 +28,7 @@ const LoginScreen = ( {navigation }: LoginScreenProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loadingUser, setLoadingUser] = useState<boolean>(true);
-  const [warning, setWarning] = useState< string | null>('warning');
+  const [warning, setWarning] = useState< string | null>('');
   const [success, setSuccess] = useState< string | null>('');
   const [resetPasswordModalVisible, setResetPasswordModalVisible] = useState<boolean>(false);
 
@@ -330,9 +330,9 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   horizontalLine: {
-    width: screenWidth * 0.8,
+    width: screenWidth * 0.55,
     height: 1,
-    backgroundColor: 'black',
+    backgroundColor: 'grey',
     alignSelf: 'center',
   },
   signUpContainer: {

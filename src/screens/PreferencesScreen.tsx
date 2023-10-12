@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
   preferencesListLabel: {
     fontSize: 16,
     color: 'black',
-    fontWeight: '500',
+    fontWeight: '400',
     marginLeft: 5,
   },
   preferencesListNumericContainer: {
@@ -381,7 +381,7 @@ const styles = StyleSheet.create({
     width: 60,
     fontSize: 16,
     color: 'black',
-    fontWeight: '500',
+    fontWeight: '400',
     borderRadius: 5,
     borderWidth: 2,
     borderColor: '#000',
