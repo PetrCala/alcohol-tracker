@@ -204,6 +204,11 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
           onPress={() => setMonkeMode(!monkeMode)}
         />
       </View>
+      <ScrollView 
+        style={styles.scrollView} 
+        ref={scrollViewRef}
+        keyboardShouldPersistTaps="handled"
+      >
       <View style={styles.sessionInfoContainer}>
         <Text style={styles.sessionInfoText}>
             Session date: {sessionDay}
@@ -216,11 +221,6 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
             {totalPoints}
           </Text>
       </View>
-      <ScrollView 
-      style={styles.scrollView} 
-      ref={scrollViewRef}
-      keyboardShouldPersistTaps="handled"
-    >
     {monkeMode ?
     <View style={styles.modifyUnitsContainer}>
       <TouchableOpacity
@@ -255,6 +255,7 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
     />
     </>
     }
+    <View style={{height:200, backgroundColor: '#ffff99'}}></View>
     </ScrollView>
     <View style={styles.saveSessionDelimiter}/>
     <View style={styles.saveSessionContainer}>
@@ -307,10 +308,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFF99',
   },
   unitCountContainer: {
-    height: '19%',
     backgroundColor: '#FFFF99',
-    borderBottomColor: '#000',
-    borderBottomWidth: 1,
   },
   unitCountText: {
     fontSize: 90,
