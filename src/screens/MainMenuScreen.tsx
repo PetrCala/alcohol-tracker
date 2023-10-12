@@ -23,7 +23,7 @@ import { MainMenuScreenProps } from '../types/screens';
 import AdminFeedbackPopup from '../components/Popups/AdminFeedbackPopup';
 import { FeedbackData } from '../types/database';
 import { listenForDataChanges, readDataOnce } from '../database/baseFunctions';
-import ReauthentificatePopup from '../components/Popups/ReauthentificatePopup';
+import InputTextPopup from '../components/Popups/InputTextPopup';
 import UserOffline from '../components/UserOffline';
 import { useUserConnection } from '../context/UserConnectionContext';
 import { getDatabaseData } from '../context/DatabaseDataContext';
@@ -288,13 +288,16 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
                 onRequestClose={() => setDeleteUserModalVisible(false)}
                 onYes={handleConfirmDeleteUser}
             />
-            <ReauthentificatePopup
+            <InputTextPopup
               visible={reauthentificateModalVisible}
               transparent={true}
               message={"Please retype your password\nin order to proceed"}
               confirmationMessage={"Delete user"}
+              placeholder={"Password"}
               onRequestClose={() => setReauthentificateModalVisible(false)}
               onSubmit={(password) => handleDeleteUser(password)}
+              textContentType='password'
+              secureTextEntry
             />
             <AdminFeedbackPopup
                 visible={adminFeedbackModalVisible}

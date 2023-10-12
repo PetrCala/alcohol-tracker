@@ -238,13 +238,13 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
         <Text style={styles.signUpButtonText}>Create account</Text>
         </TouchableOpacity>
         <View style={styles.loginContainer}>
-          <Text style={styles.loginInfoText}>
-            Already a user?
-          </Text>
           <TouchableOpacity 
             style={styles.loginButtonContainer}
             onPress={() => navigation.navigate('Login Screen')}
             >
+            <Text style={styles.loginInfoText}>
+              Already a user?
+            </Text>
             <Text style={styles.loginButtonText}>
               Log in
             </Text>
@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
   },
   signUpButton: {
     backgroundColor: '#fcf50f',
-    width: '70%',
+    width: '100%',
     padding: 15,
     borderRadius: 10,
     borderWidth: 2,
@@ -335,20 +335,24 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   loginContainer: {
-    marginTop: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'center',
+    marginTop: 3,
+    width: '100%',
   },
   loginInfoText: {
     color: '#000',
   },
   loginButtonContainer: {
-    marginLeft: 4,
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   loginButtonText: {
     color: '#02a109',
     fontWeight: 'bold',
     fontSize: 15,
+    marginLeft: 4,
+    paddingTop: 10,
+    paddingBottom: 10,
   },
 })

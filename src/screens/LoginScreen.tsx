@@ -1,5 +1,6 @@
 ﻿import React, { useEffect, useState } from 'react';
 import { 
+  Dimensions,
   Image,
   KeyboardAvoidingView, 
   Platform, 
@@ -11,12 +12,13 @@ import {
   View 
 } from 'react-native';
 import { Alert } from 'react-native';
-import { getAuth, signOut } from 'firebase/auth';
+import { getAuth, sendPasswordResetEmail, signOut } from 'firebase/auth';
 import { signInUserWithEmailAndPassword } from '../auth/auth';
 
 import { LoginScreenProps } from '../types/screens';
 import LoadingData from '../components/LoadingData';
 import { useUserConnection } from '../context/UserConnectionContext';
+import InputTextPopup from '../components/Popups/InputTextPopup';
 
 
 const LoginScreen = ( {navigation }: LoginScreenProps) => {
@@ -26,7 +28,9 @@ const LoginScreen = ( {navigation }: LoginScreenProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loadingUser, setLoadingUser] = useState<boolean>(true);
-  const [warning, setWarning] = useState< string | null>('');
+  const [warning, setWarning] = useState< string | null>('warning');
+  const [success, setSuccess] = useState< string | null>('');
+  const [resetPasswordModalVisible, setResetPasswordModalVisible] = useState<boolean>(false);
 
   useEffect(() => {
     const stopListening = auth.onAuthStateChanged(user => {
@@ -47,19 +51,43 @@ const LoginScreen = ( {navigation }: LoginScreenProps) => {
             auth, email, password
         );
     } catch (error:any) {
-      return handleInvalidLogin(error);
+      const errorHeading = "Error Creating User";
+      const errorMessage = "There was an error creating a new user: ";
+      return handleInvalidInput(error, errorHeading, errorMessage);
+    };
+  };
+
+  const handleResetPassword = async (mail:string) => {
+    // reset the user password
+    try {
+      await sendPasswordResetEmail(auth, mail);
+      setSuccess("Password reset link sent");
+    } catch (error:any) {
+      const errorHeading = "Error When Resetting Password";
+      const errorMessage = "There was an error when resetting your password: ";
+      return handleInvalidInput(error, errorHeading, errorMessage);
+    } finally {
+      setResetPasswordModalVisible(false);
     };
   };
 
   /** Set the warning hook to include a warning text informing
-   * the user of an unsuccessful login. Return an alert
+   * the user of an unsuccessful firebase request. Return an alert
    * in case of an uncaught warning, otherwise return null.
    * 
-   * @param error Error thrown by the signInWithUserEmailAndPassword method
+   * @param {any} error Error thrown by the signInWithUserEmailAndPassword method
+   * @param {string} alertHeading Error heading message
+   * @param {string} alertMessage Error explanation message
    */
-  const handleInvalidLogin = (error:any) => {
+  const handleInvalidInput = (
+    error:any, 
+    alertHeading:string, 
+    alertMessage:string,
+    ) => {
     const err = error.message;
-    if (err.includes('auth/invalid-email')){
+    if (err.includes('auth/missing-email')){
+      setWarning('Missing email');
+    } else if (err.includes('auth/invalid-email')){
       setWarning('Invalid email');
     } else if (err.includes('auth/missing-password')){
       setWarning('Missing password')
@@ -71,7 +99,7 @@ const LoginScreen = ( {navigation }: LoginScreenProps) => {
         setWarning('You are offline');
     } else {
       // Uncaught error
-      return Alert.alert("Error Creating User", "There was an error creating a new user: " + error.message);
+      return Alert.alert(alertHeading, alertMessage + error.message);
     }
     return null;
   };
@@ -99,14 +127,34 @@ const LoginScreen = ( {navigation }: LoginScreenProps) => {
         />
       </View>
       {warning ?
-        <View style={styles.warningContainer}>
+        <View style={[styles.infoContainer, styles.warningInfoContainer]}>
             <TouchableOpacity
               id={'warning'} 
               testID = {'warning'}
               accessibilityRole='button' 
               onPress={() => setWarning('')} 
-              style={styles.warningButton}>
-                <Text style={styles.warning}>{warning}</Text> 
+              style={styles.infoButton}>
+                <Text style={[
+                  styles.infoText,
+                  styles.warningInfoText
+                ]}>{warning}</Text> 
+            </TouchableOpacity>
+        </View>
+        :
+        <></>
+      } 
+      {success ?
+        <View style={[styles.infoContainer, styles.successInfoContainer]}>
+            <TouchableOpacity
+              id={'success'} 
+              testID = {'success'}
+              accessibilityRole='button' 
+              onPress={() => setSuccess('')} 
+              style={styles.infoButton}>
+                <Text style={[
+                  styles.infoText,
+                  styles.successInfoText
+                ]}>{success}</Text> 
             </TouchableOpacity>
         </View>
         :
@@ -137,21 +185,40 @@ const LoginScreen = ( {navigation }: LoginScreenProps) => {
         >
           <Text style={styles.loginButtonText}>Login</Text>
         </TouchableOpacity>
+        <TouchableOpacity 
+          onPress={() => setResetPasswordModalVisible(true)}
+          style={styles.forgottenPasswordButton}
+        >
+          <Text style={styles.forgottenPasswordText}>Forgot your password?</Text>
+        </TouchableOpacity>
+        <View style={styles.horizontalLine}/>
         <View style={styles.signUpContainer}>
-          <Text style={styles.signUpInfoText}>
-            Don't have an account?
-          </Text>
           <TouchableOpacity 
             style={styles.signUpButtonContainer}
             onPress={() => navigation.navigate('Sign Up Screen',
               {loginEmail: email}
             )}
             >
+            <Text style={styles.signUpInfoText}>
+              Don't have an account?
+            </Text>
             <Text style={styles.signUpButtonText}>
               Sign up
             </Text>
           </TouchableOpacity>
         </View>
+        <InputTextPopup
+          visible={resetPasswordModalVisible}
+          transparent={true}
+          message={"E-mail to send the reset link to:"}
+          confirmationMessage={"Send link"}
+          placeholder={"E-mail"}
+          onRequestClose={() => setResetPasswordModalVisible(false)}
+          onSubmit={(mail) => handleResetPassword(mail)}
+          keyboardType='email-address'
+          textContentType='emailAddress'
+          secureTextEntry={false}
+        />
       </View>
       </KeyboardAvoidingView>
     </ScrollView>
@@ -159,6 +226,8 @@ const LoginScreen = ( {navigation }: LoginScreenProps) => {
 };
 
 export default LoginScreen
+
+const screenWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -181,27 +250,37 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 25,
   },
-  warningContainer: {
-    width: '90%',
+  infoContainer: {
+    width: '80%',
     position: 'absolute', // Temp
-    top: 10, // Temp
-    paddingHorizontal: 5,
-    paddingVertical: 5,
+    top: 15, // Temp
     borderRadius: 5,
-    backgroundColor: '#fce3e1',
-    borderColor: 'red',
     borderWidth: 2,
     alignItems: 'center',
     alignSelf: 'center',
   },
-  warningButton: {
-    flexGrow: 1,
-    width: '90%',
+  warningInfoContainer: {
+    backgroundColor: '#fce3e1',
+    borderColor: 'red',
   },
-  warning: {
+  successInfoContainer: {
+    backgroundColor: '#e3f0d5',
+    borderColor: 'green',
+  },
+  infoButton: {
+    width: '100%',
+    height: '100%',
+  },
+  infoText: {
+    padding: 10,
     textAlign: 'center',
-    color: 'red',
     fontWeight: 'bold',
+  },
+  warningInfoText: {
+    color: 'red',
+  },
+  successInfoText: {
+    color: 'green',
   },
   inputContainer: {
     flexGrow: 1,
@@ -222,12 +301,12 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     backgroundColor: '#fcf50f',
-    width: '70%',
+    width: '100%',
     padding: 15,
     borderRadius: 10,
     borderWidth: 2,
+    marginTop: 10,
     borderColor: '#000',
-    marginTop: 25,
     alignItems: 'center',
     alignSelf: 'center',
   },
@@ -236,21 +315,47 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 16,
   },
+  forgottenPasswordButton: {
+    width: '100%',
+    backgroundColor: '#ffff99',
+    textAlign: 'center',
+    alignItems: 'center',
+    marginTop: 3,
+    marginBottom: 3,
+    padding: 10,
+  },
+  forgottenPasswordText: {
+    color: '#02a109',
+    fontWeight: 'bold',
+    fontSize: 15,
+  },
+  horizontalLine: {
+    width: screenWidth * 0.8,
+    height: 1,
+    backgroundColor: 'black',
+    alignSelf: 'center',
+  },
   signUpContainer: {
-    marginTop: 12,
-    flexDirection: 'row',
+    width: '100%',
+    marginTop: 5,
     alignItems: 'center',
     alignSelf: 'center',
   },
+  signUpButtonContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   signUpInfoText: {
     color: '#000',
-  },
-  signUpButtonContainer: {
-    marginLeft: 4,
   },
   signUpButtonText: {
     color: '#02a109',
     fontWeight: 'bold',
     fontSize: 15,
+    marginLeft: 4,
+    paddingTop: 10,
+    paddingBottom: 10,
   },
 })

@@ -46,17 +46,6 @@ export type MainMenuItemProps = {
   index: number;
 };
 
-// Reauthentificate popup props
-
-export type ReauthentificatePopupProps = {
-    visible: boolean;
-    transparent: boolean;
-    message: string;
-    confirmationMessage: string;
-    onRequestClose: () => void;
-    onSubmit: (password: string) => void;
-};
-
 // AdminFeedbackModal props
 export type AdminFeedbackPopupProps = {
     visible: boolean;
