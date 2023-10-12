@@ -33,35 +33,38 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
     const [featureY, setFeatureY] = useState(0);
 
     const onFeatureLayout = (event: LayoutChangeEvent) => {
-        const layout = event.nativeEvent.layout;
-        setFeatureY(layout.y);
+        setFeatureY(250);
     };
 
     const toggleVisibility = () => {
-        if (isExpanded) {
-            Animated.timing(heightAnim, {
-                toValue: 0,
-                duration: 200,
-                useNativeDriver: false,
-            }).start( () => {
-                scrollViewRef.current?.scrollTo({ y: 0, animated: true });
-            });
-        } else {
-            Animated.timing(heightAnim, {
-                toValue: featureY, // Expand the container to this much
-                duration: 200,
-                useNativeDriver: false,
-            }).start(() => {
-                scrollViewRef.current?.scrollTo({ y: featureY, animated: true });
-            });
-        }
+        // if (isExpanded) {
+        //     Animated.timing(heightAnim, {
+        //         toValue: 0,
+        //         duration: 200,
+        //         useNativeDriver: false,
+        //     }).start( () => {
+        //         scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+        //     });
+        // } else {
+        //     Animated.timing(heightAnim, {
+        //         toValue: featureY, // Expand the container to this much
+        //         duration: 200,
+        //         useNativeDriver: false,
+        //     })
+        //     .start(() => {
+        //         scrollViewRef.current?.scrollTo({ y: featureY, animated: true });
+        //     });
+        // }
         setIsExpanded(!isExpanded);
     };
 
     return (
-        <View style={styles.container} onLayout={onFeatureLayout}>
-            <TouchableOpacity style={styles.tab} onPress={toggleVisibility}>
-                <Text style={styles.tabText}>Session details:</Text>
+        // <View style={styles.container} onLayout={onFeatureLayout}>
+        <View style={styles.container}>
+            <View style={styles.tab}>
+                <Text style={styles.tabText}>Session details</Text>
+            </View>
+            {/* <TouchableOpacity style={styles.tab} onPress={toggleVisibility}>
                 <Image 
                 style={[
                     styles.tabArrow,
@@ -69,8 +72,8 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
                 ]}
                 source={require('../../assets/icons/arrow_down.png')}
                 />
-            </TouchableOpacity>
-            {isExpanded ?
+            </TouchableOpacity> */}
+            {/* {isExpanded ?
             <Animated.View 
             style={[
                 styles.content,
@@ -78,42 +81,44 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
             ]}
             onLayout={!isExpanded ? onFeatureLayout : undefined}
             >
-                <>
-                    <View style={[
-                        styles.tileContainerBase,
-                        styles.tileContainerHorizontal
-                    ]}>
-                        <Text style={styles.tileHeading}>Blackout: </Text>
-                        <Switch 
-                            value={isBlackout} 
-                            onValueChange={(value) => onBlackoutChange(value)}
-                            trackColor={{ false: "#767577", true: "#fcf50f" }}
-                            thumbColor={isBlackout ? "#f5dd4b" : "#f4f3f4"}
+            */}
+            <View style={styles.sessionDetailsContainer}>
+                <View style={[
+                    styles.tileContainerBase,
+                    styles.tileContainerHorizontal
+                ]}>
+                    <Text style={styles.tileHeading}>Blackout: </Text>
+                    <Switch 
+                        value={isBlackout} 
+                        onValueChange={(value) => onBlackoutChange(value)}
+                        trackColor={{ false: "#767577", true: "#fcf50f" }}
+                        thumbColor={isBlackout ? "#f5dd4b" : "#f4f3f4"}
+                    />
+                </View>
+                <View style={[
+                    styles.tileContainerBase,
+                    styles.tileContainerVertical
+                ]}>
+                    <Text style={styles.tileHeading}>Session note:</Text>
+                    <View style={styles.noteWindowContainer}>
+                        <TextInput
+                            defaultValue={note}
+                            style={styles.noteText}
+                            onChangeText={(value) => onNoteChange(value)}
+                            placeholder={"Write your note here"}
+                            placeholderTextColor={"#a8a8a8"}
+                            keyboardType="default"
+                            maxLength={1000}
+                            multiline={true}
                         />
                     </View>
-                    <View style={[
-                        styles.tileContainerBase,
-                        styles.tileContainerVertical
-                    ]}>
-                        <Text style={styles.tileHeading}>Session note:</Text>
-                        <View style={styles.noteWindowContainer}>
-                            <TextInput
-                                defaultValue={note}
-                                style={styles.noteText}
-                                onChangeText={(value) => onNoteChange(value)}
-                                placeholder={"Write your note here"}
-                                placeholderTextColor={"#a8a8a8"}
-                                keyboardType="default"
-                                maxLength={1000}
-                                multiline={true}
-                            />
-                        </View>
-                    </View>
-                </>
+                </View>
+            </View>
+            {/*
             </Animated.View>
             :
             <></>
-            }
+            } */}
         </View>
     );
 };
@@ -121,18 +126,19 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
 const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
+        width: '100%',
     },
     tab: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         alignItems: 'center',
         height: 50,
         width: '100%',
         borderColor: '#212421',
         borderWidth: 1,
-        backgroundColor: '#fcf50f',
+        // backgroundColor: '#fcf50f',
+        backgroundColor: 'white',
         paddingHorizontal: 10,
-        marginTop: 5,
     },
     tabText: {
         fontWeight: 'bold',
@@ -159,14 +165,19 @@ const styles = StyleSheet.create({
         padding: 5,
         overflow: 'hidden', // Hide when not expanded
     },
+    sessionDetailsContainer: {
+        width: '100%',
+        backgroundColor: 'white',
+        borderBottomColor: 'black',
+        borderBottomWidth: 1,
+    },
     tileContainerBase: {
-        marginBottom: 5,
-        marginTop: 5,
         padding: 10,
         backgroundColor: '#ffff99',
         borderColor: '#000',
+        borderRadius: 5,
         borderWidth: 1,
-        borderRadius: 10,
+        margin: 5,
     },
     tileContainerHorizontal: {
         justifyContent: 'space-between',
@@ -180,7 +191,7 @@ const styles = StyleSheet.create({
     },
     tileHeading: {
         fontSize: 14,
-        fontWeight: 'bold',
+        fontWeight: '500',
         color: 'black',
     },
     noteWindowContainer: {

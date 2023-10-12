@@ -30,6 +30,7 @@ import { updateUserLastOnline } from '../database/users';
 import { saveDrinkingSessionData, updateCurrentSessionKey } from '../database/drinkingSessions';
 import { getDatabaseData } from '../context/DatabaseDataContext';
 import commonStyles from '../styles/commonStyles';
+import ItemListPopup from '../components/Popups/ItemListPopup';
 
 const MainScreen = ( { navigation }: MainScreenProps) => {
   // Context, database, and authentification
@@ -46,6 +47,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
     userData,
     isLoading
   } = getDatabaseData();
+  const [startSessionModalVisible, setStartSessionModalVisible] = useState<boolean>(false);
   const [visibleDateObject, setVisibleDateObject] = useState<DateObject>(
     dateToDateObject(new Date()));
   const [thisMonthUnits, setThisMonthUnits] = useState<number>(0);
@@ -243,13 +245,19 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
           />
         </View>
       </View>
-      {currentSessionData?.current_session_id ? <></> :
+      {/* {currentSessionData?.current_session_id ? <></> : */}
       <BasicButton 
         text='+'
         buttonStyle={styles.startSessionButton}
         textStyle={styles.startSessionText}
         onPress = {startDrinkingSession} />
-      }
+      {/* <ItemListPopup
+          visible={policiesModalVisible}
+          transparent={true}
+          heading={"Our Policies"}
+          actions={policiesData}
+          onRequestClose={() => setPoliciesModalVisible(false)}
+      /> */}
     </>
   );
 };

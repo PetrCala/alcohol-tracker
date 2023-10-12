@@ -296,10 +296,15 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
         onPress={() => setMonkeMode(!monkeMode)}
       />
     </View>
+    <ScrollView 
+      style={styles.scrollView} 
+      ref={scrollViewRef}
+      keyboardShouldPersistTaps="handled"
+    >
     <View style={styles.sessionInfoContainer}>
         <View style={styles.sessionTextContainer}>
           <Text style={styles.sessionInfoText}>
-              Session start: {sessionStartTime}
+              Session started at {sessionStartTime}
           </Text>
         </View>
         {pendingUpdate && 
@@ -321,11 +326,6 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
           {totalPoints}
         </Text>
     </View>
-    <ScrollView 
-      style={styles.scrollView} 
-      ref={scrollViewRef}
-      keyboardShouldPersistTaps="handled"
-    >
     {monkeMode ?
     <View style={styles.modifyUnitsContainer}>
       <TouchableOpacity
@@ -360,6 +360,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
     />
     </>
     }
+    <View style={{height:200, backgroundColor: '#ffff99'}}></View>
     </ScrollView>
     <View style={styles.saveSessionDelimiter}/>
     <View style={styles.saveSessionContainer}>
@@ -440,10 +441,8 @@ const styles = StyleSheet.create({
     right: 0
   },
   unitCountContainer: {
-    height: '19%',
     backgroundColor: '#FFFF99',
     borderBottomColor: '#000',
-    borderBottomWidth: 1,
   },
   unitCountText: {
     fontSize: 90,
