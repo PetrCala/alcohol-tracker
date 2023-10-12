@@ -21,6 +21,7 @@ import { BetaKeysData, validateBetaKey } from '../database/beta';
 import { useUserConnection } from '../context/UserConnectionContext';
 import { ProfileData } from '../types/database';
 import { validateAppVersion } from '../context/VersionContext';
+import { handleInvalidInput } from '../utils/errorHandling';
 
 const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
   if (!route || ! navigation) return null; // Should never be null
@@ -31,7 +32,7 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
   const [email, setEmail] = useState(loginEmail);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [warning, setWarning] = useState< string | null>('');
+  const [warning, setWarning] = useState<string>('');
   const [betaKey, setBetaKey] = useState<string>(''); // Beta feature
   if (!db) return null; // Should never be null
 
@@ -78,7 +79,9 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
     try {
       await signUpUserWithEmailAndPassword(auth, email, password);
     } catch (error:any) {
-      handleInvalidSignUp(error);
+      const errorHeading = "Error Creating User";
+      const errorMessage = "There was an error creating a new user: ";
+      handleInvalidInput(error, errorHeading, errorMessage, setWarning);
     }
   };
 

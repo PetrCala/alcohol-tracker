@@ -19,6 +19,7 @@ import { LoginScreenProps } from '../types/screens';
 import LoadingData from '../components/LoadingData';
 import { useUserConnection } from '../context/UserConnectionContext';
 import InputTextPopup from '../components/Popups/InputTextPopup';
+import { handleInvalidInput } from '../utils/errorHandling';
 
 
 const LoginScreen = ( {navigation }: LoginScreenProps) => {
@@ -28,8 +29,8 @@ const LoginScreen = ( {navigation }: LoginScreenProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loadingUser, setLoadingUser] = useState<boolean>(true);
-  const [warning, setWarning] = useState< string | null>('');
-  const [success, setSuccess] = useState< string | null>('');
+  const [warning, setWarning] = useState< string>('');
+  const [success, setSuccess] = useState< string>('');
   const [resetPasswordModalVisible, setResetPasswordModalVisible] = useState<boolean>(false);
 
   useEffect(() => {
@@ -53,7 +54,7 @@ const LoginScreen = ( {navigation }: LoginScreenProps) => {
     } catch (error:any) {
       const errorHeading = "Failed to log in";
       const errorMessage = "There was an error trying to log in: ";
-      return handleInvalidInput(error, errorHeading, errorMessage);
+      return handleInvalidInput(error, errorHeading, errorMessage, setWarning);
     };
   };
 
@@ -65,43 +66,10 @@ const LoginScreen = ( {navigation }: LoginScreenProps) => {
     } catch (error:any) {
       const errorHeading = "Error When Resetting Password";
       const errorMessage = "There was an error when resetting your password: ";
-      return handleInvalidInput(error, errorHeading, errorMessage);
+      return handleInvalidInput(error, errorHeading, errorMessage, setWarning);
     } finally {
       setResetPasswordModalVisible(false);
     };
-  };
-
-  /** Set the warning hook to include a warning text informing
-   * the user of an unsuccessful firebase request. Return an alert
-   * in case of an uncaught warning, otherwise return null.
-   * 
-   * @param {any} error Error thrown by the signInWithUserEmailAndPassword method
-   * @param {string} alertHeading Error heading message
-   * @param {string} alertMessage Error explanation message
-   */
-  const handleInvalidInput = (
-    error:any, 
-    alertHeading:string, 
-    alertMessage:string,
-    ) => {
-    const err = error.message;
-    if (err.includes('auth/missing-email')){
-      setWarning('Missing email');
-    } else if (err.includes('auth/invalid-email')){
-      setWarning('Invalid email');
-    } else if (err.includes('auth/missing-password')){
-      setWarning('Missing password')
-    } else if (err.includes('auth/user-not-found')){
-      setWarning('User not found')
-    } else if (err.includes('auth/wrong-password')){
-      setWarning('Incorrect password')
-    } else if (err.includes('auth/network-request-failed')){
-        setWarning('You are offline');
-    } else {
-      // Uncaught error
-      return Alert.alert(alertHeading, alertMessage + error.message);
-    }
-    return null;
   };
 
   // Wait to see whether there already is an authentificated user
@@ -120,12 +88,6 @@ const LoginScreen = ( {navigation }: LoginScreenProps) => {
       style={styles.mainContainer}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-      <View style={styles.logoContainer}>
-        <Image
-          source={require('../../assets/logo/alcohol-tracker-source-icon.png')}
-          style={styles.logo}
-        />
-      </View>
       {warning ?
         <View style={[styles.infoContainer, styles.warningInfoContainer]}>
             <TouchableOpacity
@@ -160,6 +122,12 @@ const LoginScreen = ( {navigation }: LoginScreenProps) => {
         :
         <></>
       } 
+      <View style={styles.logoContainer}>
+        <Image
+          source={require('../../assets/logo/alcohol-tracker-source-icon.png')}
+          style={styles.logo}
+        />
+      </View>
       <View style={styles.inputContainer}>
         <TextInput
         placeholder="Email"
@@ -285,7 +253,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexGrow: 1,
     flexShrink: 1,
-    marginTop: '20%',
+    marginTop: 130,
     width: '80%',
   },
   input: {
