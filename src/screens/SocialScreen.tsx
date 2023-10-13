@@ -11,16 +11,36 @@ import BasicButton from '../components/Buttons/BasicButton';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import { getDatabaseData } from '../context/DatabaseDataContext';
 import commonStyles from '../styles/commonStyles';
+import { FriendIds } from '../types/database';
+
+type FriendOverviewProps = {
+  index: any;
+  friendId: string;
+}
 
 type SocialProps = {
   navigation: any;
 }
 
+
+const FriendOverview = (props: FriendOverviewProps) => {
+  const { index, friendId } = props;
+
+  return (
+    <View style={styles.friendOverviewContainer}>
+      <Text key={index} style={styles.friendText}>{friendId}</Text>
+      {/* <Image></Image> friend icon*/}
+      {/* <Text></Text> friend nickname*/}
+    </View>
+  );
+};
+
+
 const SocialScreen = (props: SocialProps) => {
   const { navigation } = props;
 
   const { userData } = getDatabaseData();
-  const friendsData = userData?.friends ? userData.friends : {};
+  const friendsIds:FriendIds = userData?.friends ? Object.keys(userData.friends) : [];
 
   if (!userData) return null;
 
@@ -39,7 +59,17 @@ const SocialScreen = (props: SocialProps) => {
         </View>
       </View>
       <View style={styles.mainContainer}>
-        <Text style={styles.sectionText}>Coming soon...</Text>
+        {friendsIds ? 
+        <View style={styles.friendList}>
+          {friendsIds.map((friendId, index) => (
+            <FriendOverview
+              index={index}
+              friendId={friendId}
+            />
+          ))}
+        </View>
+        :
+        <></>}
       </View>
     </View>
   );
@@ -72,5 +102,27 @@ const styles = StyleSheet.create({
   },
   mainContainer: {
     flex: 1,
+    justifyContent: 'center',
   },
+  friendList: {
+    width: '100%',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    padding: 3,
+  },
+  friendOverviewContainer: {
+    width: '80%',
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: 'black',
+    borderRadius: 5,
+    margin: 2,
+    padding: 2,
+  },
+  friendText: {
+    color: 'black',
+    fontSize: 13,
+    fontWeight: '400',
+  }
 });

@@ -118,6 +118,8 @@ export type FriendsData = {
   [friend_id: string]: boolean
 }
 
+export type FriendIds = string[] // An array of friend IDs
+
 // Used when rendering drinking session day overview
 export type DrinkingSessionProps = {
   sessionKey: string,
