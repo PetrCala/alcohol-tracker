@@ -1,4 +1,4 @@
-﻿import { AppSettings, ConfigProps, CurrentSessionData, DatabaseProps, DrinkingSessionArrayItem, DrinkingSessionData, FeedbackData, FeedbackProps, FriendsData, PreferencesData, ProfileData, UnconfirmedDaysData, UnitTypesProps, UnitsObject, UnitsToColorsData, UserData } from "../../src/types/database";
+﻿import { AppSettings, ConfigProps, CurrentSessionData, DatabaseProps, DrinkingSessionArrayItem, DrinkingSessionData, FeedbackData, FeedbackProps, FriendRequestData, FriendRequestStatus, FriendsData, PreferencesData, ProfileData, UnconfirmedDaysData, UnitTypesProps, UnitsObject, UnitsToColorsData, UserData } from "../../src/types/database";
 import { getRandomChoice, getRandomInt } from "../../src/utils/choice";
 import { formatDate, getRandomUnitsObject, getZeroUnitsObject } from "../../src/utils/dataHandling";
 import { MOCK_SESSION_IDS, MOCK_USER_IDS } from "./testsStatic";
@@ -174,17 +174,42 @@ export function createMockUnconfirmedDays(): UnconfirmedDaysData {
   return data;
 }
 
-/** Create and return a mock user data object
+/** Create and return mock friend request data. Is created at random.
+ *  (possibly improve in the future)
+ * 
+ * @param {string} userId ID of the mock user
+ * @returns {FriendRequestData} Mock FriendRequest type data.
  */
-export function createMockUserData():UserData {
+export function createMockFriendRequests(userId:string): FriendRequestData {
+  let mockRequestData: FriendRequestData = {};
+  const statuses: FriendRequestStatus[] = ["pending", "accepted", "rejected"];
+  for (let mockId of MOCK_USER_IDS){
+    if (mockId === userId) {
+      continue; // Skip self
+    }
+    let randomIndex = Math.floor(Math.random() * statuses.length);
+    let mockStatus = statuses[randomIndex];
+    mockRequestData[mockId] = mockStatus;
+  };
+  return mockRequestData;
+};
+
+/** Create and return a mock user data object
+ * @param {string} userId ID of the mock user
+ * 
+ * @returns {UserData} Mock user data
+ */
+export function createMockUserData(userId:string):UserData {
   let mockProfileData: ProfileData = {
     display_name: 'mock-user',
     photo_url: ''
   };
   let mockFriendsData: FriendsData = {};
+  let mockFriendRequests: FriendRequestData = createMockFriendRequests(userId);
   return {
     profile: mockProfileData,
     friends: mockFriendsData,
+    friend_requests: mockFriendRequests,
     role: 'mock-user',
     last_online: Date.now(),
     beta_key_id: 'mock-beta-key',
@@ -229,7 +254,7 @@ export function createMockDatabase(): DatabaseProps {
       db.user_unconfirmed_days[userId] = createMockUnconfirmedDays();
 
       // User data
-      db.users[userId] = createMockUserData();
+      db.users[userId] = createMockUserData(userId);
   });
   
   return db;

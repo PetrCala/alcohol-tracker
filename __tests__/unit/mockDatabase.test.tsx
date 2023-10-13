@@ -319,7 +319,7 @@ describe('mockDatabase functions', () => {
     });
   
     it('should create mock user data', () => {
-      const userData = createMockUserData();
+      const userData = createMockUserData('mock-user-id');
       expect(userData).toBeDefined();
       expect(userData.role).toBe('mock-user');
     });

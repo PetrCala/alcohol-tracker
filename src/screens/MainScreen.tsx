@@ -202,7 +202,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
           />
           <View style={{height:200, backgroundColor: '#ffff99'}}></View>
       </ScrollView>
-      <View style={styles.mainScreenFooter}>
+      <View style={commonStyles.mainFooter}>
         <View style={[
           styles.mainScreenFooterHalfContainer,
           styles.mainScreenFooterLeftContainer
@@ -429,23 +429,6 @@ const styles = StyleSheet.create({
       fontSize: 30,
       fontWeight: '500',
       textAlign: 'center',
-  },
-  mainScreenFooter: {
-    height: 55,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    // padding: 10,
-    backgroundColor: 'white',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: -2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 10,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    elevation: 10, // for Android shadow
   },
   mainScreenFooterHalfContainer: {
     width: '50%',

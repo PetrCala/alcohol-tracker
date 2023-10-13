@@ -3,15 +3,20 @@
   useContext
 } from 'react';
 import {
+  Dimensions,
+  Image,
+  ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import BasicButton from '../components/Buttons/BasicButton';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import { getDatabaseData } from '../context/DatabaseDataContext';
 import commonStyles from '../styles/commonStyles';
-import { FriendIds } from '../types/database';
+import { FriendIds, UserData } from '../types/database';
+import { TabView, SceneMap } from 'react-native-tab-view';
 
 type FriendOverviewProps = {
   index: any;
@@ -22,6 +27,15 @@ type SocialProps = {
   navigation: any;
 }
 
+type RouteType = {
+  key: string;
+  title: string;
+  userData: UserData | null;
+};
+
+type ScreenProps = {
+  userData: UserData | null;
+}
 
 const FriendOverview = (props: FriendOverviewProps) => {
   const { index, friendId } = props;
@@ -35,12 +49,74 @@ const FriendOverview = (props: FriendOverviewProps) => {
   );
 };
 
+const FriendListScreen = (props:ScreenProps) => {
+  const {userData} = props;
+  const friendIds:FriendIds = userData?.friends ? Object.keys(userData.friends) : [];
+
+  return (
+    <ScrollView style={styles.friendListContainer}>
+      {friendIds.length > 0 ? 
+      <View style={styles.friendList}>
+        {friendIds.map((friendId, index) => (
+          <FriendOverview
+            index={index}
+            friendId={friendId}
+          />
+        ))}
+      </View>
+      :
+      <View style={{
+        flex:1, 
+        justifyContent: 'center', 
+        alignItems: 'center',
+        backgroundColor: 'cyan',
+        height: Dimensions.get('screen').height,
+        }}>
+        <Text>This is the friend list screen</Text>
+      </View>
+      }
+    </ScrollView>
+  );
+};
+
+const FriendRequestScreen = (props:ScreenProps) => {
+  const {userData} = props;
+  
+  return (
+    <View style={{
+      flex:1, 
+      justifyContent: 'center', 
+      alignItems: 'center',
+      backgroundColor: 'pink'
+      }}>
+      <Text>This is the friend request screen</Text>
+    </View>
+  );
+};
+
 
 const SocialScreen = (props: SocialProps) => {
   const { navigation } = props;
-
   const { userData } = getDatabaseData();
-  const friendsIds:FriendIds = userData?.friends ? Object.keys(userData.friends) : [];
+  const userHasFriends = userData?.friends !== undefined;
+  const [index, setIndex] = useState<number>(userHasFriends === true ? 0 : 1); // Current screen index - defaults to friend requests in case of no friends
+  const [routes] = useState([
+    { key: 'friendList', title: 'Friend List', userData: userData},
+    { key: 'friendRequests', title: 'Friend Requests', userData: userData},
+  ]);
+
+
+  const renderScene = ({ route }: {route: RouteType }) => {
+    if (!userData) return null;
+    switch (route.key) {
+      case 'friendList':
+        return <FriendListScreen userData={route.userData} />;
+      case 'friendRequests':
+        return <FriendRequestScreen userData={route.userData}/>;
+      default:
+        return null;
+    };
+  }
 
   if (!userData) return null;
 
@@ -58,24 +134,52 @@ const SocialScreen = (props: SocialProps) => {
           <Text style={styles.sectionText}>Friends</Text>
         </View>
       </View>
-      <View style={styles.mainContainer}>
-        {friendsIds ? 
-        <View style={styles.friendList}>
-          {friendsIds.map((friendId, index) => (
-            <FriendOverview
-              index={index}
-              friendId={friendId}
+      <TabView
+        navigationState={{ index, routes }}
+        renderScene={renderScene}
+        onIndexChange={setIndex}
+        initialLayout={{ width: Dimensions.get('window').width }}
+        swipeEnabled={true}
+        tabBarPosition="bottom"
+        renderTabBar={() => null} // Do not render the default tab bar
+      />
+      <View style={commonStyles.mainFooter}>
+        <View style={styles.footerHalfContainer}>
+          <TouchableOpacity
+            style={[
+              styles.footerButton,
+              index === 0 ? { backgroundColor: '#ebeb02' } : {},
+            ]}
+            onPress={() => setIndex(0)}
+          >
+            <Image
+              source={require('../../assets/icons/friend_list.png')}
+              style={styles.footerImage}
             />
-          ))}
+          </TouchableOpacity>
         </View>
-        :
-        <></>}
+        <View style={styles.footerHalfContainer}>
+          <TouchableOpacity
+            style={[
+              styles.footerButton,
+              index === 1 ? { backgroundColor: '#ebeb02' } : {},
+            ]}
+            onPress={() => setIndex(1)}
+          >
+            <Image
+              source={require('../../assets/icons/add_user.png')}
+              style={styles.footerImage}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
 };
 
 export default SocialScreen;
+
+const screenWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
   backArrowContainer: {
@@ -100,9 +204,9 @@ const styles = StyleSheet.create({
     margin: 10,
     textAlign: 'center',
   },
-  mainContainer: {
+  friendListContainer: {
     flex: 1,
-    justifyContent: 'center',
+    // justifyContent: 'center',
   },
   friendList: {
     width: '100%',
@@ -124,5 +228,30 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 13,
     fontWeight: '400',
-  }
+  },
+  footerHalfContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  footerButton: {
+    width: screenWidth * 0.5,
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  footerImageWrapper: {
+    width: 36,
+    height: 36,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 3,
+    backgroundColor: '#ebeb02',
+  },
+  footerImage: {
+    width: 28,
+    height: 28,
+    padding: 10,
+    // tintColor: '#ebeb02',
+    tintColor: '#000',
+  },
 });

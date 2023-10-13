@@ -104,6 +104,7 @@ export type UnconfirmedDaysData = {
 export type UserData = {
   profile: ProfileData;
   friends: FriendsData;
+  friend_requests: FriendRequestData;
   role: string;
   last_online: number;
   beta_key_id: string;
@@ -119,6 +120,13 @@ export type FriendsData = {
 }
 
 export type FriendIds = string[] // An array of friend IDs
+
+export type FriendRequestData = {
+  [request_id: string]: FriendRequestStatus;
+}
+
+export type FriendRequestStatus = "pending" | "accepted" | "rejected";
+
 
 // Used when rendering drinking session day overview
 export type DrinkingSessionProps = {
