@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
     },
     sessionDetailsContainer: {
         width: '100%',
-        backgroundColor: 'white',
+        backgroundColor: '#fcf50f',
         borderBottomColor: 'black',
         borderBottomWidth: 1,
     },

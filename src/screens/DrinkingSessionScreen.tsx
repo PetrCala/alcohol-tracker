@@ -538,11 +538,12 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   saveSessionDelimiter: {
-    height: 5,
-    width: '100%',
-    backgroundColor: 'white',
-    borderTopWidth: 1,
-    borderColor: '#000',
+    width: 0,
+    // height: 5,
+    // width: '100%',
+    // backgroundColor: 'white',
+    // borderTopWidth: 1,
+    // borderColor: '#000',
   },
   saveSessionContainer: {
     height: '8%',
@@ -551,7 +552,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flexDirection: "row",
     backgroundColor: '#FFFF99',
-    marginBottom: 2,
+    // marginBottom: 2,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: -2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    borderTopWidth: 1,
+    borderColor: '#ddd',
+    elevation: 10, // for Android shadow
   },
   saveSessionButton: {
     width: '50%',
