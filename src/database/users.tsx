@@ -1,4 +1,4 @@
-﻿import { Database, update, runTransaction, ref } from "firebase/database";
+﻿import { Database, update, runTransaction, ref, get } from "firebase/database";
 import { PreferencesData, UserData, UnitsToColorsData, UnitTypesProps, ProfileData } from "../types/database";
 import { appInBeta } from "../utils/static";
 import { EmailAuthProvider, User, UserCredential, reauthenticateWithCredential } from "firebase/auth";
@@ -31,10 +31,27 @@ export const getDefaultUserData = (
   return {
     profile: profileData,
     friends: {},
+    friend_requests: {},
     role: userRole,
     last_online: timestampNow,
     beta_key_id: betaKeyId, // Beta feature
   };
+};
+
+/**
+ * Check if a user exists in the realtime database.
+ * 
+ * @param {Database} db - The database object against which to validate this conditio
+ * @param {string} userId - User ID of the user to check.
+ * @returns {Promise<boolean>} - Returns true if the user exists, false otherwise.
+ */
+export async function userExistsInDatabase(
+  db: Database,
+  userId: string,
+):Promise<boolean> {
+  const dbRef = ref(db, `/users/${userId}/`)
+  const snapshot = await get(dbRef);
+  return snapshot.exists();
 };
 
 /** In the database, create base info for a user. This will

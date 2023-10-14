@@ -15,13 +15,10 @@ import BasicButton from '../components/Buttons/BasicButton';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import { getDatabaseData } from '../context/DatabaseDataContext';
 import commonStyles from '../styles/commonStyles';
-import { FriendIds, UserData } from '../types/database';
+import { FriendIds, FriendRequestStatus, UserData } from '../types/database';
 import { TabView, SceneMap } from 'react-native-tab-view';
-
-type FriendOverviewProps = {
-  index: any;
-  friendId: string;
-}
+import FriendListScreen from './Social/FriendListScreen';
+import FriendRequestScreen from './Social/FriendRequestScreen';
 
 type SocialProps = {
   navigation: any;
@@ -32,68 +29,6 @@ type RouteType = {
   title: string;
   userData: UserData | null;
 };
-
-type ScreenProps = {
-  userData: UserData | null;
-}
-
-const FriendOverview = (props: FriendOverviewProps) => {
-  const { index, friendId } = props;
-
-  return (
-    <View style={styles.friendOverviewContainer}>
-      <Text key={index} style={styles.friendText}>{friendId}</Text>
-      {/* <Image></Image> friend icon*/}
-      {/* <Text></Text> friend nickname*/}
-    </View>
-  );
-};
-
-const FriendListScreen = (props:ScreenProps) => {
-  const {userData} = props;
-  const friendIds:FriendIds = userData?.friends ? Object.keys(userData.friends) : [];
-
-  return (
-    <ScrollView style={styles.friendListContainer}>
-      {friendIds.length > 0 ? 
-      <View style={styles.friendList}>
-        {friendIds.map((friendId, index) => (
-          <FriendOverview
-            index={index}
-            friendId={friendId}
-          />
-        ))}
-      </View>
-      :
-      <View style={{
-        flex:1, 
-        justifyContent: 'center', 
-        alignItems: 'center',
-        backgroundColor: 'cyan',
-        height: Dimensions.get('screen').height,
-        }}>
-        <Text>This is the friend list screen</Text>
-      </View>
-      }
-    </ScrollView>
-  );
-};
-
-const FriendRequestScreen = (props:ScreenProps) => {
-  const {userData} = props;
-  
-  return (
-    <View style={{
-      flex:1, 
-      justifyContent: 'center', 
-      alignItems: 'center',
-      backgroundColor: 'pink'
-      }}>
-      <Text>This is the friend request screen</Text>
-    </View>
-  );
-};
-
 
 const SocialScreen = (props: SocialProps) => {
   const { navigation } = props;
@@ -204,7 +139,7 @@ const styles = StyleSheet.create({
     margin: 10,
     textAlign: 'center',
   },
-  friendListContainer: {
+  scrollViewContainer: {
     flex: 1,
     // justifyContent: 'center',
   },

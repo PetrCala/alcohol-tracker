@@ -125,7 +125,7 @@ export type FriendRequestData = {
   [request_id: string]: FriendRequestStatus;
 }
 
-export type FriendRequestStatus = "pending" | "accepted" | "rejected";
+export type FriendRequestStatus = "sent" | "received" | "accepted" |  "rejected";
 
 
 // Used when rendering drinking session day overview
