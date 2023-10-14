@@ -34,14 +34,14 @@ const FriendRequest = (props: FriendRequestProps) => {
 
 const FriendRequestScreen = (props:ScreenProps) => {
   const {userData} = props;
-  const [ searchUsersModalVisible, setSearchUsersModalVisible] = useState<boolean>(false);
+  const [searchUsersModalVisible, setSearchUsersModalVisible] = useState<boolean>(false);
 
   const friendRequests:FriendRequestData = userData?.friend_requests ? userData.friend_requests : {};
 
-  // Before sending a request, make sure that the request
-  // has not been sent already. If it indeed has not, the
-  // sendFriendRequst function can be called as is.
-  
+  const handleSearchModalClose = () => {
+    setSearchUsersModalVisible(false);
+  };
+
   return (
   <View style={styles.mainContainer}>
     <ScrollView style={styles.scrollViewContainer}>
@@ -63,7 +63,7 @@ const FriendRequestScreen = (props:ScreenProps) => {
         backgroundColor: 'pink',
         height: Dimensions.get('screen').height,
         }}>
-        <Text>This is the friend request screen</Text>
+        <Text>There are no friend requests to display</Text>
       </View>
       }
       <SearchUsersPopup
@@ -71,7 +71,7 @@ const FriendRequestScreen = (props:ScreenProps) => {
         transparent={true}
         message={"Input the nickname of the user you\nwould like to send a friend request to:"}
         placeholder={"Nickname"}
-        onRequestClose={() => setSearchUsersModalVisible(false)}
+        onRequestClose={handleSearchModalClose}
       />
     </ScrollView>
     <View style={styles.newRequestContainer}>

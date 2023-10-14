@@ -51,6 +51,26 @@ const SearchUsersPopup = (props: InputTextPopupProps) => {
         };
     };
 
+    const handleCancelButtonPress = () => {
+      // Reset all values displayed on screen
+      onRequestClose();
+      setSearchText('');
+      setUserIds({});
+      setNoUsersFound(false);
+    };
+
+    const doSendFriendRequest = (
+      db: Database, 
+      userFrom: string, 
+      userTo: string) => {
+        // Before sending a request, make sure that the request
+        // has not been sent already. If it indeed has not, the
+        // sendFriendRequst function can be called as is.
+    };
+
+
+  
+
     if (!db) return;
 
     return (
@@ -92,13 +112,14 @@ const SearchUsersPopup = (props: InputTextPopupProps) => {
                   index = {index}
                   userId = {userId}
                 />
+                // Either add a modal for sending the request, or a button to the right of the overview
               ))
               :
               <></>
               }
             </View>
             <View style={styles.cancelButtonContainer}>
-                <TouchableOpacity style={styles.cancelButton} onPress={onRequestClose}>
+                <TouchableOpacity style={styles.cancelButton} onPress={handleCancelButtonPress}>
                     <Text style={styles.cancelButtonText}>Close</Text>
                 </TouchableOpacity>
             </View>
