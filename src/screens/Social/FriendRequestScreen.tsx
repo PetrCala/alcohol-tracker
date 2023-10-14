@@ -1,5 +1,6 @@
 ﻿import {
   Dimensions,
+  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -8,6 +9,7 @@
 } from 'react-native';
 import { FriendRequestData, FriendRequestStatus, UserData } from '../../types/database';
 import { useState } from 'react';
+import SearchUsersPopup from '../../components/Popups/SearchUsersPopup';
 
 type FriendRequestProps = {
   index: any;
@@ -21,7 +23,6 @@ type ScreenProps = {
 
 const FriendRequest = (props: FriendRequestProps) => {
   const { index, requestId, requestStatus } = props;
-  const [ sendRequestModalVisible, setSendRequestModalVisible] = useState<boolean>(false);
 
   return (
     <View style={styles.friendRequestContainer}>
@@ -33,6 +34,7 @@ const FriendRequest = (props: FriendRequestProps) => {
 
 const FriendRequestScreen = (props:ScreenProps) => {
   const {userData} = props;
+  const [ searchUsersModalVisible, setSearchUsersModalVisible] = useState<boolean>(false);
 
   const friendRequests:FriendRequestData = userData?.friend_requests ? userData.friend_requests : {};
 
@@ -41,6 +43,7 @@ const FriendRequestScreen = (props:ScreenProps) => {
   // sendFriendRequst function can be called as is.
   
   return (
+  <View style={styles.mainContainer}>
     <ScrollView style={styles.scrollViewContainer}>
       {friendRequests ? 
       <View style={styles.friendList}>
@@ -63,15 +66,30 @@ const FriendRequestScreen = (props:ScreenProps) => {
         <Text>This is the friend request screen</Text>
       </View>
       }
-      {/* <YesNoPopup - do a sendRequestPopup here instead
-          visible={deleteUserModalVisible}
-          transparent={true}
-          message={"WARNING: Destructive action\n\nDo you really want to\ndelete this user?"}
-          onRequestClose={() => setDeleteUserModalVisible(false)}
-          onYes={handleConfirmDeleteUser}
-      /> */}
+      <SearchUsersPopup
+        visible={searchUsersModalVisible}
+        transparent={true}
+        message={"Input the nickname of the user you\nwould like to send a friend request to:"}
+        placeholder={"Nickname"}
+        onRequestClose={() => setSearchUsersModalVisible(false)}
+      />
     </ScrollView>
+    <View style={styles.newRequestContainer}>
+        <TouchableOpacity
+            style={styles.newRequestButton}
+            onPress={() => setSearchUsersModalVisible(true)}
+        >
+            <Text style={styles.newRequestText}>
+                New Friend Request
+            </Text>
+            {/* <Image
+                source={require('../../../assets/icons/plus.png')}
+                style={styles.newRequestPlusSign}
+            /> */}
+        </TouchableOpacity>
 
+    </View>
+  </View>
   );
 };
 
@@ -80,6 +98,10 @@ export default FriendRequestScreen;
 const screenWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+    backgroundColor: '#ffff99',
+  },
   scrollViewContainer: {
     flex: 1,
     // justifyContent: 'center',
@@ -105,4 +127,34 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '400',
   },
+  newRequestContainer: {
+    position: 'absolute',
+    bottom: 30,
+    right: 50,
+    height: 50,
+    width: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    borderWidth: 2,
+    borderColor: 'black',
+    borderRadius: 10,
+  },
+  newRequestButton: {
+    height: '100%',
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  newRequestText: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: 'white',
+    textAlign: 'center',
+  },
+//   newRequestPlusSign: {
+//     width: 50,
+//     height: 50,
+//     tintColor: 'white',
+//   },
 });

@@ -19,13 +19,8 @@ export type InputTextPopupProps = {
     visible: boolean;
     transparent: boolean;
     message: string;
-    confirmationMessage: string;
     placeholder: string;
     onRequestClose: () => void;
-    onSubmit: (password: string) => void;
-    keyboardType?: KeyboardTypeOptions | undefined;
-    textContentType?: any; // Many options
-    secureTextEntry?: boolean | undefined;
 };
 
 const SearchUsersPopup = (props: InputTextPopupProps) => {
@@ -35,7 +30,6 @@ const SearchUsersPopup = (props: InputTextPopupProps) => {
         message, 
         placeholder,
         onRequestClose, 
-        onSubmit,
     } = props;
     const db = useContext(DatabaseContext);
     const [searchText, setSearchText] = useState<string>('');
