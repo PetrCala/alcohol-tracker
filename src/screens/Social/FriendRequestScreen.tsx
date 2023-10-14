@@ -7,6 +7,7 @@
   View,
 } from 'react-native';
 import { FriendRequestData, FriendRequestStatus, UserData } from '../../types/database';
+import { useState } from 'react';
 
 type FriendRequestProps = {
   index: any;
@@ -20,6 +21,7 @@ type ScreenProps = {
 
 const FriendRequest = (props: FriendRequestProps) => {
   const { index, requestId, requestStatus } = props;
+  const [ sendRequestModalVisible, setSendRequestModalVisible] = useState<boolean>(false);
 
   return (
     <View style={styles.friendRequestContainer}>
@@ -61,7 +63,15 @@ const FriendRequestScreen = (props:ScreenProps) => {
         <Text>This is the friend request screen</Text>
       </View>
       }
+      {/* <YesNoPopup - do a sendRequestPopup here instead
+          visible={deleteUserModalVisible}
+          transparent={true}
+          message={"WARNING: Destructive action\n\nDo you really want to\ndelete this user?"}
+          onRequestClose={() => setDeleteUserModalVisible(false)}
+          onYes={handleConfirmDeleteUser}
+      /> */}
     </ScrollView>
+
   );
 };
 

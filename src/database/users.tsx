@@ -1,5 +1,5 @@
 ﻿import { Database, update, runTransaction, ref, get } from "firebase/database";
-import { PreferencesData, UserData, UnitsToColorsData, UnitTypesProps, ProfileData } from "../types/database";
+import { PreferencesData, UserData, UnitsToColorsData, UnitTypesProps, ProfileData, NicknameToIdData } from "../types/database";
 import { appInBeta } from "../utils/static";
 import { EmailAuthProvider, User, UserCredential, reauthenticateWithCredential } from "firebase/auth";
 import { Alert } from "react-native";
@@ -66,10 +66,13 @@ export async function pushNewUserInfo(
  profileData: ProfileData,
  betaKeyId: string, // Beta feature
 ){
+  const userNickname = profileData.display_name;
   // Allowed types
   let updates: {
-    [key:string]: UserData | PreferencesData | any
+    [key:string]: UserData | PreferencesData | NicknameToIdData | any;
   } = {};
+  // Nickname to ID
+  updates[`nickname_to_id/${userNickname}/${userId}`] = true;
   // User preferences
   updates[`user_preferences/${userId}`] = getDefaultPreferences();
   // Users
@@ -90,13 +93,16 @@ export async function pushNewUserInfo(
  * 
  * @param db The database object
  * @param userId The user ID
+ * @param userNickname The user nickname
  */
 export async function deleteUserInfo(
  db: Database,
  userId: string,
+ userNickname: string,
  betaKeyId: string | undefined, // Beta feature
 ){
   let updates: {[key:string]: null | false} = {}; 
+  updates[`nickname_to_id/${userNickname}/${userId}`] = null;
   updates[`users/${userId}`] = null;
   updates[`user_current_session/${userId}`] = null;
   updates[`user_preferences/${userId}`] = null;

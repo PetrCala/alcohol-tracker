@@ -1,4 +1,4 @@
-﻿import { AppSettings, ConfigProps, CurrentSessionData, DatabaseProps, DrinkingSessionArrayItem, DrinkingSessionData, FeedbackData, FeedbackProps, FriendRequestData, FriendRequestStatus, FriendsData, PreferencesData, ProfileData, UnconfirmedDaysData, UnitTypesProps, UnitsObject, UnitsToColorsData, UserData } from "../../src/types/database";
+﻿import { AppSettings, ConfigProps, CurrentSessionData, DatabaseProps, DrinkingSessionArrayItem, DrinkingSessionData, FeedbackData, FeedbackProps, FriendRequestData, FriendRequestStatus, FriendsData, NicknameToIdData, PreferencesData, ProfileData, UnconfirmedDaysData, UnitTypesProps, UnitsObject, UnitsToColorsData, UserData } from "../../src/types/database";
 import { getRandomChoice, getRandomInt } from "../../src/utils/choice";
 import { formatDate, getRandomUnitsObject, getZeroUnitsObject } from "../../src/utils/dataHandling";
 import { MOCK_SESSION_IDS, MOCK_USER_IDS } from "./testsStatic";
@@ -18,6 +18,7 @@ export function initializeEmptyMockDatabase():DatabaseProps {
       },
     },
     feedback: {},
+    nickname_to_id: {},
     user_current_session: {},
     user_drinking_sessions: {},
     user_preferences: {},
@@ -59,6 +60,17 @@ export function createMockFeedback():FeedbackProps {
         text: 'Mock feedback',
         user_id: 'mock-user-id',
     };
+};
+
+
+/** Create a mock nicknames to user IDs data object.
+ * 
+ * @returns {NicknameToIdData} The mock object.
+ */
+export function createMockNicknameToIdData(userId: string):NicknameToIdData{
+  return {
+    user_id: true,
+  };
 };
 
 /** Create and return a mock current session object.
@@ -231,7 +243,7 @@ export function createMockDatabase(): DatabaseProps {
   MOCK_USER_IDS.forEach(userId => {
       // Feedback
       db.feedback[userId] = createMockFeedback();
-      
+
       // Drinking sessions
       const mockSessionData: DrinkingSessionData = {};
       let latestSessionId: string = '';
@@ -255,6 +267,11 @@ export function createMockDatabase(): DatabaseProps {
 
       // User data
       db.users[userId] = createMockUserData(userId);
+
+      // Nicknames to user ids
+      let nickname = db.users[userId].profile.display_name
+      db.nickname_to_id[nickname] = createMockNicknameToIdData(userId);
+      
   });
   
   return db;

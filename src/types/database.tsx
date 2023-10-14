@@ -2,6 +2,9 @@
 export type DatabaseProps = {
   config: ConfigProps,
   feedback: FeedbackData,
+  nickname_to_id: {
+    [display_name: string]: NicknameToIdData
+  },
   user_current_session: {
     [user_id: string]: CurrentSessionData
   },
@@ -37,6 +40,10 @@ export type FeedbackProps = {
 export type FeedbackData = {
   [feedback_id: string]: FeedbackProps
 }
+
+export type NicknameToIdData = {
+  [user_id: string]: boolean;
+};
 
 export type CurrentSessionData = {
   current_session_id: string | null;

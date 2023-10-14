@@ -17,7 +17,7 @@ type ScreenProps = {
   userData: UserData | null;
 }
 
-const FriendOverview = (props: FriendOverviewProps) => {
+export const FriendOverview = (props: FriendOverviewProps) => {
   const { index, friendId } = props;
 
   return (
