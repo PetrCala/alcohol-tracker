@@ -13,6 +13,7 @@ import { NicknameToIdData } from '../../types/database';
 import DatabaseContext from '../../context/DatabaseContext';
 import { Database } from 'firebase/database';
 import { searchDbByNickname } from '../../database/search';
+import UserOverview from '../UserOverview';
 
 export type InputTextPopupProps = {
     visible: boolean;
@@ -27,28 +28,28 @@ export type InputTextPopupProps = {
     secureTextEntry?: boolean | undefined;
 };
 
-const SendRequestPopup = (props: InputTextPopupProps) => {
+const SearchUsersPopup = (props: InputTextPopupProps) => {
     const { 
         visible, 
         transparent, 
         message, 
-        confirmationMessage,
         placeholder,
         onRequestClose, 
-        onSubmit, 
-        keyboardType,
-        textContentType,
-        secureTextEntry
+        onSubmit,
     } = props;
     const db = useContext(DatabaseContext);
-    const [text, setText] = useState<string>('');
+    const [searchText, setSearchText] = useState<string>('');
     const [userIds, setUserIds] = useState<NicknameToIdData>({});
+    const [noUsersFound, setNoUsersFound] = useState<boolean>(false);
 
     const doSearch = async (db:Database, nickname:string):Promise<void> => {
+        setNoUsersFound(false);
         try {
             const newUserIds = await searchDbByNickname(db, nickname);
             if (newUserIds) {
                 setUserIds(newUserIds);
+            } else {
+                setNoUsersFound(true);
             };
         } catch (error:any) {
             Alert.alert("Database serach failed", "Could not search the database: " + error.message);
@@ -56,44 +57,64 @@ const SendRequestPopup = (props: InputTextPopupProps) => {
         };
     };
 
+    if (!db) return;
+
     return (
-        <Modal
-        animationType="none"
-        transparent={transparent}
-        visible={visible}
-        onRequestClose={onRequestClose}
-        >
+      <Modal
+      animationType="none"
+      transparent={transparent}
+      visible={visible}
+      onRequestClose={onRequestClose}
+      >
         <View style={styles.modalContainer}>
         <View style={styles.modalView}>
             <Text style={styles.modalText}>
             {message}
             </Text>
             <View style={styles.textContainer}>
-            <TextInput
-                placeholder={placeholder}
-                value={text}
-                onChangeText={text => setText(text)}
-                style={styles.password}
-                keyboardType={keyboardType}
-                textContentType={textContentType}
-                secureTextEntry={secureTextEntry}
-            />
+              <TextInput
+                  placeholder={placeholder}
+                  value={searchText}
+                  onChangeText={text => setSearchText(text)}
+                  style={styles.searchText}
+                  keyboardType="default"
+                  textContentType="nickname"
+              />
             </View>
-            <View style={styles.buttonsContainer}>
-                <TouchableOpacity style={styles.confirmButton} onPress={() => onSubmit(text)}>
-                    <Text style={styles.confirmButtonText}>{confirmationMessage}</Text>
+            <View style={styles.searchButtonContainer}>
+                <TouchableOpacity style={styles.searchButton} onPress={() => doSearch(db, searchText)}>
+                    <Text style={styles.searchButtonText}>Search</Text>
                 </TouchableOpacity>
+            </View>
+            <View style={styles.searchResultsContainer}>
+              {noUsersFound ?
+                <Text style={styles.noUsersFoundText}>
+                  There are no users with this nickname.
+                </Text>
+              :
+              userIds ?
+              Object.keys(userIds).map((userId, index) => (
+                <UserOverview
+                  index = {index}
+                  userId = {userId}
+                />
+              ))
+              :
+              <></>
+              }
+            </View>
+            <View style={styles.cancelButtonContainer}>
                 <TouchableOpacity style={styles.cancelButton} onPress={onRequestClose}>
                     <Text style={styles.cancelButtonText}>Close</Text>
                 </TouchableOpacity>
             </View>
         </View>
         </View>
-        </Modal>
+      </Modal>
     );
 };
 
-export default SendRequestPopup;
+export default SearchUsersPopup;
 
 const styles = StyleSheet.create({
   modalContainer: {
@@ -104,6 +125,7 @@ const styles = StyleSheet.create({
   },
   modalView: {
     width: '90%',
+    flexDirection: 'column',
     backgroundColor: '#FFFF99',
     borderRadius: 8,
     borderWidth: 2,
@@ -128,20 +150,24 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: 'white',
   },
-  password: {
+  searchButtonContainer: {
+    width: '100%',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  searchText: {
     height: '100%',
     width: '100%',
     padding: 10,
     marginTop: 5,
     marginBottom: 5,
   },
-  buttonsContainer: {
+  searchResultsContainer: {
     width: '100%',
     flexDirection: 'column',
-    alignItems: 'center',
-    marginTop: 15,
+    padding: 2,
   },
-  confirmButton: {
+  searchButton: {
     width: '100%',
     backgroundColor: '#fcf50f',
     padding: 10,
@@ -151,7 +177,18 @@ const styles = StyleSheet.create({
     margin: 5,
     alignItems: 'center',
   },
-  confirmButtonText: {
+  searchButtonText: {
+    color: 'black',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  cancelButtonContainer: {
+    width: '100%',
+    flexDirection: 'column',
+    alignItems: 'center',
+    marginTop: 15,
+  },
+  noUsersFoundText: {
     color: 'black',
     fontSize: 16,
     fontWeight: 'bold',

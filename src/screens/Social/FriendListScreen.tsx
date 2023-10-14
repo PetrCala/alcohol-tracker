@@ -7,27 +7,28 @@
   View,
 } from 'react-native';
 import { FriendIds, UserData } from "../../types/database";
+import UserOverview from '../../components/UserOverview';
 
-type FriendOverviewProps = {
-  index: any;
-  friendId: string;
-}
+// type FriendOverviewProps = {
+//   index: any;
+//   friendId: string;
+// }
 
 type ScreenProps = {
   userData: UserData | null;
 }
 
-export const FriendOverview = (props: FriendOverviewProps) => {
-  const { index, friendId } = props;
+// export const FriendOverview = (props: FriendOverviewProps) => {
+//   const { index, friendId } = props;
 
-  return (
-    <View style={styles.friendOverviewContainer}>
-      <Text key={index} style={styles.friendText}>{friendId}</Text>
-      {/* <Image></Image> friend icon*/}
-      {/* <Text></Text> friend nickname*/}
-    </View>
-  );
-};
+//   return (
+//     <View style={styles.friendOverviewContainer}>
+//       <Text key={index} style={styles.friendText}>{friendId}</Text>
+//       {/* <Image></Image> friend icon*/}
+//       {/* <Text></Text> friend nickname*/}
+//     </View>
+//   );
+// };
 
 const FriendListScreen = (props:ScreenProps) => {
   const {userData} = props;
@@ -38,9 +39,9 @@ const FriendListScreen = (props:ScreenProps) => {
       {friends ? 
       <View style={styles.friendList}>
         {Object.keys(friends).map((friendId, index) => (
-          <FriendOverview
+          <UserOverview
             index={index}
-            friendId={friendId}
+            userId={friendId}
           />
         ))}
       </View>
