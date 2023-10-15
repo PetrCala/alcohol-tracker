@@ -1,7 +1,7 @@
-﻿import { DatabaseProps, FriendsData, PreferencesData, ProfileData, UnitTypesProps, UserData } from "../../src/types/database";
-import { getDisplayName } from "./adminUtils";
-import { processPrimaryLevelData } from "./migration";
-import { modifyAndTestData } from "./migrationTest";
+﻿import { DatabaseProps, FriendsData, PreferencesData, ProfileData, UnitTypesProps, UserData } from "../../../../src/types/database";
+import { getDisplayName } from "../../adminUtils";
+import { processPrimaryLevelData } from "../../migration";
+import { modifyAndTestData } from "../../migrationTest";
 
 export const transformPreferencesData = async (preferencesData: PreferencesData, userId: string):Promise<PreferencesData> => {
   // Extracting existing properties to construct the new structure

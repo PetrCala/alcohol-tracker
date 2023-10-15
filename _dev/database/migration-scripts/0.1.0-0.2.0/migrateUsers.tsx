@@ -1,7 +1,7 @@
-﻿import { DatabaseProps, FriendsData, ProfileData, UserData } from "../../src/types/database";
-import { getDisplayName } from "./adminUtils";
-import { processPrimaryLevelData } from "./migration";
-import { modifyAndTestData } from "./migrationTest";
+﻿import { DatabaseProps, FriendRequestData, FriendsData, ProfileData, UserData } from "../../../../src/types/database";
+import { getDisplayName } from "../../adminUtils";
+import { processPrimaryLevelData } from "../../migration";
+import { modifyAndTestData } from "../../migrationTest";
 
 export const transformUserData = async (userData: UserData, userId: string):Promise<UserData> => {
   // Extracting existing properties to construct the new structure
@@ -10,6 +10,7 @@ export const transformUserData = async (userData: UserData, userId: string):Prom
   const beta_key_id = userData.beta_key_id ?? null;
   let profile:ProfileData = userData.profile ?? null;
   let friends:FriendsData = userData.friends ?? null;
+  let friend_requests:FriendRequestData = userData.friend_requests ?? null;
   // Create the profile data if not available - from version 0.2.0
   if (!profile){
     let username:string = "";
@@ -34,6 +35,7 @@ export const transformUserData = async (userData: UserData, userId: string):Prom
   return {
       profile,
       friends,
+      friend_requests,
       role,
       last_online,
       beta_key_id

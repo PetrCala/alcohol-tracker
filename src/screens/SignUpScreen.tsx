@@ -22,6 +22,8 @@ import { useUserConnection } from '../context/UserConnectionContext';
 import { ProfileData } from '../types/database';
 import { validateAppVersion } from '../context/VersionContext';
 import { handleInvalidInput } from '../utils/errorHandling';
+import { isValidString } from '../utils/validation';
+import { invalidChars } from '../utils/static';
 
 const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
   if (!route || ! navigation) return null; // Should never be null
@@ -46,6 +48,7 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
       return stopListening;
   }, []);
 
+
  /** Check that all user input is valid and return true if it is.
    * Otherwise return false.
    */
@@ -54,6 +57,10 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
       setWarning('You must fill out all fields first');
       return false;
     };
+    if (!isValidString(username)){
+      setWarning('Your nickname can not contain ' + invalidChars.join(', '));
+      return false;
+    }
     return true;
   }
 

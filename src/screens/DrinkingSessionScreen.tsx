@@ -552,7 +552,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flexDirection: "row",
     backgroundColor: '#FFFF99',
-    // marginBottom: 2,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,

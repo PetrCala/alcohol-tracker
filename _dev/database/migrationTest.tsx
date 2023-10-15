@@ -19,11 +19,12 @@ export async function modifyAndTestData<T>(
     db: Database, 
     userId: string, 
     refString: string, 
-    transformFunction: TransformFunction<T>
+    transformFunction: TransformFunction<T>,
+    createNewData: boolean = false,
 ): Promise<boolean | undefined> {
     // Step 1: Capture the original data for later validation
     const originalData = await readDataOnce(db, refString);
-    if (!originalData) {
+    if (!originalData && !createNewData) { // Do not check if creating the data
         console.error("Data not found.");
         return;
     }

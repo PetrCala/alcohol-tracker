@@ -1,6 +1,6 @@
-﻿import admin from '../admin';
-import { refactorPreferencesData } from '../migratePreferences';
-import { refactorUsersData } from '../migrateUsers';
+﻿import admin from '../../admin';
+import { refactorPreferencesData } from './migratePreferences';
+import { refactorUsersData } from './migrateUsers';
 
 const adminDb = admin.database();
 
