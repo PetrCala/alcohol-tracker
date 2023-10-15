@@ -26,8 +26,7 @@ export async function isFriend(db:Database, userA:string, userB:string):Promise<
  *  the request.
  * @param {string} userTo ID of the user to whom the
  *  request is being sent to. Also serves as the request ID.
- * @returns {Promise<void|null>} Returns null in case
- *  the database save fails.
+ * @returns {Promise<void>}
  * @throws {Alert} In case the database fails to
  *  save the data.
  */
@@ -35,7 +34,7 @@ export async function sendFriendRequest(
   db:Database,
   userFrom: string,
   userTo: string,
-):Promise<void|null> {
+):Promise<void> {
   try {
     // Assume the userFrom always exists
     const userToExists = await userExistsInDatabase(db, userTo);
@@ -49,35 +48,63 @@ export async function sendFriendRequest(
     await update(ref(db), updates);
   } catch (error:any) {
     Alert.alert("Friend request failed", "Failed to send a friend request to user " + userTo + ": " + error.message);
-    return;
-  };
+  } finally {return};
 };
 
+/**
+ * Remove from the database friend request data that existed between two users.
+ * 
+ * @param {Database} db Firebase Database object.
+ * @param {string} userFrom ID of user 1.
+ * @param {string} userTo ID of user 2.
+ * @returns {Promise<void>}
+ * @throws {Alert} In case the database fails to
+ *  save the data.
+ */
+export async function deleteFriendRequest(
+  db:Database,
+  userFrom: string,
+  userTo: string,
+):Promise<void> {
+  var updates: { [requestId: string]: null } = {};
+  try {
+    updates[`users/${userFrom}/friend_requests/${userTo}`] = null;
+    const userToExists = await userExistsInDatabase(db, userTo);
+    if (userToExists) {
+      updates[`users/${userTo}/friend_requests/${userFrom}`] = null;
+    };
+    await update(ref(db), updates);
+  } catch (error:any) {
+    Alert.alert("Request handling failed", "Could not handle the friend request from user " + userTo + ": " + error.message);
+  } finally {return};
+};
+
+
+/**
+ * Accept a friend request sent from another user.
+ * 
+ * @param {Database} db Firebase Database object.
+ * @param {string} userFrom ID of the user that is accepting the request
+ * @param {string} userTo ID of the user that sent the request.
+ * @returns {Promise<void>}
+ * @throws {Alert} In case the database fails to
+ *  save the data.
+ */
 export async function acceptFriendRequest(
   db:Database,
   userFrom: string,
   userTo: string,
-) {
+):Promise<void> {
   var updates: { [requestId: string]: string|boolean|null } = {};
   try {
+    updates[`users/${userFrom}/friends/${userTo}`] = true;
     const userToExists = await userExistsInDatabase(db, userTo);
     if (!userToExists) {
-      // Case user does not exist
-      updates[`users/${userFrom}/friend_requests/${userTo}`] = null; // Delete the request
-      try {
-        await update(ref(db), updates);
-      } catch (error:any) {
-        Alert.alert("User does not", "The user " + userTo + "does not exist in the database. This friend request has been deleted")
-      } finally {return};
+      updates[`users/${userTo}/friends/${userFrom}`] = true;
     };
-    // Case user exists 
-    updates[`users/${userFrom}/friend_requests/${userTo}`] = "accepted";
-    updates[`users/${userTo}/friend_requests/${userFrom}`] = "accepted";
-    updates[`users/${userFrom}/friends/${userTo}`] = true;
-    updates[`users/${userTo}/friends/${userFrom}`] = true;
     await update(ref(db), updates);
+    await deleteFriendRequest(db, userFrom, userTo); // Clean up the friend request data
   } catch (error:any) {
     Alert.alert("Failed to accept the request", "Could not accept the friend request from user " + userTo + ": " + error.message);
-    return;
-  };
+  } finally {return};
 };

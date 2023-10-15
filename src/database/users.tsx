@@ -101,6 +101,7 @@ export async function deleteUserInfo(
  userNickname: string,
  betaKeyId: string | undefined, // Beta feature
 ){
+  // Clean up friend lists and friend requests
   let updates: {[key:string]: null | false} = {}; 
   updates[`nickname_to_id/${userNickname}/${userId}`] = null;
   updates[`users/${userId}`] = null;

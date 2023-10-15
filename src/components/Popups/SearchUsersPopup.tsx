@@ -89,7 +89,6 @@ const SearchUsersPopup = (props: InputTextPopupProps) => {
       userTo: string
     ) {
       const requestStatus = requestStatuses[index];
-      const buttonText = requestStatus ? statusToTextMap[requestStatus] : "Send a request";
       const alreadyAFriend = userData?.friends[userTo];
 
       if (!user) return;
