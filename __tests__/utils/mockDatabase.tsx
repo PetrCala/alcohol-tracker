@@ -194,7 +194,7 @@ export function createMockUnconfirmedDays(): UnconfirmedDaysData {
  */
 export function createMockFriendRequests(userId:string): FriendRequestData {
   let mockRequestData: FriendRequestData = {};
-  const statuses: FriendRequestStatus[] = ["sent", "received", "accepted", "rejected"];
+  const statuses: FriendRequestStatus[] = ["sent", "received"];
   for (let mockId of MOCK_USER_IDS){
     if (mockId === userId) {
       continue; // Skip self

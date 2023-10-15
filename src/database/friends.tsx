@@ -37,9 +37,9 @@ export async function sendFriendRequest(
   userTo: string,
 ):Promise<void|null> {
   try {
-    const userFromExists = await userExistsInDatabase(db, userFrom);
+    // Assume the userFrom always exists
     const userToExists = await userExistsInDatabase(db, userTo);
-    if (!userToExists || !userFromExists) {
+    if (!userToExists) {
       Alert.alert("User does not exist", "The user " + userTo + "does not exist in the database.")
       return;
     };
@@ -49,6 +49,35 @@ export async function sendFriendRequest(
     await update(ref(db), updates);
   } catch (error:any) {
     Alert.alert("Friend request failed", "Failed to send a friend request to user " + userTo + ": " + error.message);
+    return;
+  };
+};
+
+export async function acceptFriendRequest(
+  db:Database,
+  userFrom: string,
+  userTo: string,
+) {
+  var updates: { [requestId: string]: string|boolean|null } = {};
+  try {
+    const userToExists = await userExistsInDatabase(db, userTo);
+    if (!userToExists) {
+      // Case user does not exist
+      updates[`users/${userFrom}/friend_requests/${userTo}`] = null; // Delete the request
+      try {
+        await update(ref(db), updates);
+      } catch (error:any) {
+        Alert.alert("User does not", "The user " + userTo + "does not exist in the database. This friend request has been deleted")
+      } finally {return};
+    };
+    // Case user exists 
+    updates[`users/${userFrom}/friend_requests/${userTo}`] = "accepted";
+    updates[`users/${userTo}/friend_requests/${userFrom}`] = "accepted";
+    updates[`users/${userFrom}/friends/${userTo}`] = true;
+    updates[`users/${userTo}/friends/${userFrom}`] = true;
+    await update(ref(db), updates);
+  } catch (error:any) {
+    Alert.alert("Failed to accept the request", "Could not accept the friend request from user " + userTo + ": " + error.message);
     return;
   };
 };

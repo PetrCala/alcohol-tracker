@@ -42,6 +42,7 @@ const FriendListScreen = (props:ScreenProps) => {
           <UserOverview
             index={index}
             userId={friendId}
+            RightSideComponent={<></>}
           />
         ))}
       </View>

@@ -3,14 +3,16 @@
 type UserOverviewProps = {
   index: any;
   userId: string;
+  RightSideComponent: any // Add the correct type here
 }
 
 export const UserOverview = (props: UserOverviewProps) => {
-  const { index, userId } = props;
+  const { index, userId, RightSideComponent } = props;
 
   return (
     <View style={styles.userOverviewContainer}>
       <Text key={index} style={styles.userText}>{userId}</Text>
+      <RightSideComponent/>
       {/* <Image></Image> friend icon*/}
       {/* <Text></Text> friend nickname*/}
     </View>

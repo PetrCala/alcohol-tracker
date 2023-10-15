@@ -1,4 +1,4 @@
-﻿import React, { useContext, useState } from 'react';
+﻿import React, { useContext, useEffect, useState } from 'react';
 import { 
   View, 
   Text, 
@@ -9,11 +9,14 @@ import {
   KeyboardTypeOptions,
   Alert, 
 } from 'react-native';
-import { NicknameToIdData } from '../../types/database';
+import { FriendRequestStatus, NicknameToIdData } from '../../types/database';
 import DatabaseContext from '../../context/DatabaseContext';
 import { Database } from 'firebase/database';
 import { searchDbByNickname } from '../../database/search';
 import UserOverview from '../UserOverview';
+import { getAuth } from 'firebase/auth';
+import { getDatabaseData } from '../../context/DatabaseDataContext';
+import { acceptFriendRequest, isFriend, sendFriendRequest } from '../../database/friends';
 
 export type InputTextPopupProps = {
     visible: boolean;
@@ -32,16 +35,21 @@ const SearchUsersPopup = (props: InputTextPopupProps) => {
         onRequestClose, 
     } = props;
     const db = useContext(DatabaseContext);
+    const auth = getAuth();
+    const user = auth.currentUser;
+    const { userData } = getDatabaseData();
     const [searchText, setSearchText] = useState<string>('');
-    const [userIds, setUserIds] = useState<NicknameToIdData>({});
+    const [requestIds, setRequestIds] = useState<NicknameToIdData>({});
+    const [requestStatuses, setRequestStatuses] = useState<FriendRequestStatus[]>([]);
     const [noUsersFound, setNoUsersFound] = useState<boolean>(false);
 
     const doSearch = async (db:Database, nickname:string):Promise<void> => {
         setNoUsersFound(false);
         try {
-            const newUserIds = await searchDbByNickname(db, nickname);
-            if (newUserIds) {
-                setUserIds(newUserIds);
+            const newRequestIds = await searchDbByNickname(db, nickname);
+            if (newRequestIds) {
+                updateSearchedUsersStatus(newRequestIds);
+                setRequestIds(newRequestIds);
             } else {
                 setNoUsersFound(true);
             };
@@ -51,26 +59,67 @@ const SearchUsersPopup = (props: InputTextPopupProps) => {
         };
     };
 
+    /** Having a list of users returned by the search,
+     * determine the request status for each and update
+     * the UsersStatus hook.
+     */
+    const updateSearchedUsersStatus = (usersId: NicknameToIdData):void => {
+      if (!usersId || !userData) return;
+      let newUsersStatus = Object.keys(usersId).map((userId) => userData.friend_requests[userId])
+      setRequestStatuses(newUsersStatus);
+    };
+
     const handleCancelButtonPress = () => {
       // Reset all values displayed on screen
       onRequestClose();
       setSearchText('');
-      setUserIds({});
+      setRequestIds({});
+      setRequestStatuses([]);
       setNoUsersFound(false);
     };
 
-    const doSendFriendRequest = (
-      db: Database, 
-      userFrom: string, 
-      userTo: string) => {
-        // Before sending a request, make sure that the request
-        // has not been sent already. If it indeed has not, the
-        // sendFriendRequst function can be called as is.
+    const statusToTextMap = {
+      "sent": "Waiting for a response",
+      "received": "Accept friend request",
     };
 
+    function sendFriendRequestButton(
+      db:Database, 
+      index: number,
+      userTo: string
+    ) {
+      const requestStatus = requestStatuses[index];
+      const buttonText = requestStatus ? statusToTextMap[requestStatus] : "Send a request";
+      const alreadyAFriend = userData?.friends[userTo];
 
+      if (!user) return;
+
+      return (
+        // Refactor this part using AI later
+        <View style={styles.sendFriendRequestContainer}>
+          {alreadyAFriend ?
+          <Text style={styles.sendFriendRequestText}>Already a friend</Text>
+          : requestStatus === "sent" ?
+          <Text style={styles.sendFriendRequestText}>Waiting for a response</Text>
+          : requestStatus === "received" ?
+          <TouchableOpacity 
+            style={styles.acceptFriendRequestButton}
+            onPress={() => acceptFriendRequest(db, user.uid, userTo)}
+          >
+            <Text style={styles.sendFriendRequestText}>Accept friend request</Text>
+          </TouchableOpacity>
+          :
+          <TouchableOpacity 
+            style={styles.sendFriendRequestButton}
+            onPress={() => sendFriendRequest(db, user.uid, userTo)}
+          >
+            <Text style={styles.sendFriendRequestText}>Send friend request</Text>
+          </TouchableOpacity>
+          }
+        </View>
+      )
+    };
   
-
     if (!db) return;
 
     return (
@@ -106,13 +155,13 @@ const SearchUsersPopup = (props: InputTextPopupProps) => {
                   There are no users with this nickname.
                 </Text>
               :
-              userIds ?
-              Object.keys(userIds).map((userId, index) => (
+              requestIds ?
+              Object.keys(requestIds).map((userId, index) => (
                 <UserOverview
                   index = {index}
                   userId = {userId}
+                  RightSideComponent={sendFriendRequestButton(db, index, userId)}
                 />
-                // Either add a modal for sending the request, or a button to the right of the overview
               ))
               :
               <></>
@@ -219,6 +268,35 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  sendFriendRequestContainer: {
+    width: 150,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'black',
+    borderRadius: 10,
+  },
+  sendFriendRequestButton: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+  },
+  acceptFriendRequestButton: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'green',
+  },
+  sendFriendRequestText: {
+    fontSize: 13,
+    fontWeight: '400',
+    color: 'black',
+    textAlign: 'center',
   },
 });
 
