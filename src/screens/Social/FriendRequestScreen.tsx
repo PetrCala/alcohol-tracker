@@ -26,7 +26,6 @@ type ScreenProps = {
   userData: UserData | null;
 }
 
-
 const FriendRequest = (props: FriendRequestProps) => {
   const { requestId, requestStatus, profileData } = props;
   const auth = getAuth();
@@ -131,11 +130,11 @@ const FriendRequestScreen = (props:ScreenProps) => {
       {friendRequests ? 
       <View style={styles.friendList}>
         {Object.keys(friendRequests).map((requestId) => (
-            <FriendRequest
-                requestId={requestId}
-                requestStatus={friendRequests[requestId]}
-                profileData={displayData[requestId]}
-            />
+          <FriendRequest
+              requestId={requestId}
+              requestStatus={friendRequests[requestId]}
+              profileData={displayData[requestId]}
+          />
         ))}
       </View>
       :

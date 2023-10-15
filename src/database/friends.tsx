@@ -1,5 +1,4 @@
 ﻿import { Database, ref, get, push, child, set, update } from "firebase/database";
-import { FriendRequestData } from "../types/database";
 import { Alert } from "react-native";
 import { userExistsInDatabase } from "./users";
 
@@ -35,20 +34,16 @@ export async function sendFriendRequest(
   userFrom: string,
   userTo: string,
 ):Promise<void> {
-  try {
-    // Assume the userFrom always exists
-    const userToExists = await userExistsInDatabase(db, userTo);
-    if (!userToExists) {
-      Alert.alert("User does not exist", "The user " + userTo + "does not exist in the database.")
-      return;
-    };
-    var updates: { [requestId: string]: string } = {};
-    updates[`users/${userFrom}/friend_requests/${userTo}`] = "sent";
-    updates[`users/${userTo}/friend_requests/${userFrom}`] = "received";
-    await update(ref(db), updates);
-  } catch (error:any) {
-    Alert.alert("Friend request failed", "Failed to send a friend request to user " + userTo + ": " + error.message);
-  } finally {return};
+  // Assume the userFrom always exists
+  const userToExists = await userExistsInDatabase(db, userTo);
+  if (!userToExists) {
+    Alert.alert("User does not exist", "The user " + userTo + "does not exist in the database.")
+    return;
+  };
+  var updates: { [requestId: string]: string } = {};
+  updates[`users/${userFrom}/friend_requests/${userTo}`] = "sent";
+  updates[`users/${userTo}/friend_requests/${userFrom}`] = "received";
+  await update(ref(db), updates);
 };
 
 /**
@@ -67,16 +62,12 @@ export async function deleteFriendRequest(
   userTo: string,
 ):Promise<void> {
   var updates: { [requestId: string]: null } = {};
-  try {
-    updates[`users/${userFrom}/friend_requests/${userTo}`] = null;
-    const userToExists = await userExistsInDatabase(db, userTo);
-    if (userToExists) {
-      updates[`users/${userTo}/friend_requests/${userFrom}`] = null;
-    };
-    await update(ref(db), updates);
-  } catch (error:any) {
-    Alert.alert("Request handling failed", "Could not handle the friend request from user " + userTo + ": " + error.message);
-  } finally {return};
+  updates[`users/${userFrom}/friend_requests/${userTo}`] = null;
+  const userToExists = await userExistsInDatabase(db, userTo);
+  if (userToExists) {
+    updates[`users/${userTo}/friend_requests/${userFrom}`] = null;
+  };
+  await update(ref(db), updates);
 };
 
 
@@ -96,15 +87,11 @@ export async function acceptFriendRequest(
   userTo: string,
 ):Promise<void> {
   var updates: { [requestId: string]: string|boolean|null } = {};
-  try {
-    updates[`users/${userFrom}/friends/${userTo}`] = true;
-    const userToExists = await userExistsInDatabase(db, userTo);
-    if (!userToExists) {
-      updates[`users/${userTo}/friends/${userFrom}`] = true;
-    };
-    await update(ref(db), updates);
-    await deleteFriendRequest(db, userFrom, userTo); // Clean up the friend request data
-  } catch (error:any) {
-    Alert.alert("Failed to accept the request", "Could not accept the friend request from user " + userTo + ": " + error.message);
-  } finally {return};
+  updates[`users/${userFrom}/friends/${userTo}`] = true;
+  const userToExists = await userExistsInDatabase(db, userTo);
+  if (!userToExists) {
+    updates[`users/${userTo}/friends/${userFrom}`] = true;
+  };
+  await update(ref(db), updates);
+  await deleteFriendRequest(db, userFrom, userTo); // Clean up the friend request data
 };

@@ -1,7 +1,5 @@
-﻿import { Database, ref, get, push, child, set, update } from "firebase/database";
-import { FriendRequestData, NicknameToIdData } from "../types/database";
-import { Alert } from "react-native";
-import { userExistsInDatabase } from "./users";
+﻿import { Database, ref, get } from "firebase/database";
+import { NicknameToIdData } from "../types/database";
 
 
 /**
@@ -19,15 +17,10 @@ export async function searchDbByNickname(
     db:Database,
     nickname:string
 ):Promise<NicknameToIdData|null> {
-    try {
-        const dbRef = ref(db, `nickname_to_id/${nickname}`)
-        const snapshot = await get(dbRef);
-        if(snapshot.exists()) {
-            return snapshot.val(); // The nicknames
-        }
-        return null;
-    } catch (error:any) {
-        Alert.alert("Database search failed", "Could not connect to the database. Try again." + error.message)
-        return null;
-    };
+    const dbRef = ref(db, `nickname_to_id/${nickname}`)
+    const snapshot = await get(dbRef);
+    if(snapshot.exists()) {
+        return snapshot.val(); // The nicknames
+    }
+    return null;
 };

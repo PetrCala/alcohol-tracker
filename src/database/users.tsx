@@ -57,15 +57,18 @@ export async function userExistsInDatabase(
 /** In the database, create base info for a user. This will
  * be stored under the "users" object in the database.
  * 
- * @param db The database object
- * @param userId The user ID
+ * @param {Database} db The firebase database object
+ * @param {string} userId The user ID
+ * @param {ProfileData} profileData Profile data of the user to create
+ * @param {string} betaKeyId Beta key // Beta feature
+ * @returns {Promise<void>}
  */
 export async function pushNewUserInfo(
  db: Database,
  userId: string,
  profileData: ProfileData,
  betaKeyId: string, // Beta feature
-){
+):Promise<void>{
   const userNickname = profileData.display_name;
   // Allowed types
   let updates: {
@@ -80,27 +83,25 @@ export async function pushNewUserInfo(
   // Beta feature
   updates[`beta_keys/${betaKeyId}/in_usage`] = true;
   updates[`beta_keys/${betaKeyId}/user_id`] = userId;
-  try {
-    await update(ref(db), updates)
-  } catch (error:any) {
-    throw new Error('Failed to create new user info: ' + error.message);
-  } ;
+  await update(ref(db), updates)
 };
 
 
 /** Delete all user info from the realtime database, including their 
  * user information, drinking sessions, etc.
  * 
- * @param db The database object
- * @param userId The user ID
- * @param userNickname The user nickname
+ * @param {Database} db The firebase database object
+ * @param {string} userId The user ID
+ * @param {string} userNickname The user nickname
+ * @param {string} betaKeyId Beta key // Beta feature
+ * @returns {Promise<void>}
  */
 export async function deleteUserInfo(
  db: Database,
  userId: string,
  userNickname: string,
  betaKeyId: string | undefined, // Beta feature
-){
+):Promise<void>{
   // Clean up friend lists and friend requests
   let updates: {[key:string]: null | false} = {}; 
   updates[`nickname_to_id/${userNickname}/${userId}`] = null;
@@ -114,26 +115,26 @@ export async function deleteUserInfo(
     updates[`beta_keys/${betaKeyId}/in_usage`] = false;
     updates[`beta_keys/${betaKeyId}/user_id`] = null;
   };
-  try {
-    await update(ref(db), updates)
-  } catch (error:any) {
-    throw new Error('Failed to delete user info: ' + error.message);
-  } ;
+  await update(ref(db), updates)
 };
 
 
+/** 
+ * Update the timestamp denoting when a user has lsat
+ * been seen online
+ * 
+ * @param {Database} db Firebase database object.
+ * @param {string} userId ID of the user to update the data for
+ * @return {Promise<void>}
+ */
 export async function updateUserLastOnline(
   db: Database,
   userId: string,
- ){
+ ):Promise<void>{
   let lastOnline:number = new Date().getTime();
   let updates: {[key:string]: number} = {};
   updates[`users/${userId}/last_online`] = lastOnline;
-  try {
-    await update(ref(db), updates);
-  } catch (error:any) {
-    throw new Error('Failed to update user online status: ' + error.message);
-  };
+  await update(ref(db), updates);
 };
 
 /** Reauthentificate a user using the User object and a password
@@ -145,27 +146,23 @@ export async function updateUserLastOnline(
  * 
  * @param user User object from firebase
  * @param password Password to reauthentificate with
+ * @returns {Promise<void|UserCredential>} Null if the user does not exist, otherwise the result of the authentification.
  */
-export async function reauthentificateUser(user: User, password: string): Promise<UserCredential | null>{
+export async function reauthentificateUser(user: User, password: string): Promise<void|UserCredential>{
     let email:string;
     if (user.email){
       email = user.email;
     } else {
       Alert.alert("User email not found", "This user has no email");
-      return null;
+      return;
     };
     const credential = EmailAuthProvider.credential(
         email,
         password
     );
-    try {
-      var result = await reauthenticateWithCredential(
-        user, 
-        credential
-      );
-      return result;
-    } catch (error:any){
-      Alert.alert("Reauthentification failed", "Failed to reauthentificated this user");
-      return null;
-    };
+    var result = await reauthenticateWithCredential(
+      user, 
+      credential
+    );
+    return result;
 }

@@ -1,25 +1,28 @@
 ﻿import { Database, get, ref, onValue, off } from "firebase/database";
 
-/** Read data once using get()
+/** Read data once from the realtime database using get(). Return the data if it exists.
  * 
- * Provide the database object and a user ID and 
- * return all data of that user. Uses get to avoid
- * continuous listening and performance overload.
+ * @param {Database} db The Realtime Database instance.
+ * @param {string} refString Ref string to listen at
+ * @returns {Promsise<any|null>}
+ * 
  * */
-export async function readDataOnce(db: Database, refString: string) {
+export async function readDataOnce(db: Database, refString: string): Promise<any|null> {
   const userRef = ref(db, refString);
-  try {
-    const snapshot = await get(userRef); // One-off fetch
-    if(snapshot.exists()) {
-      return snapshot.val(); // Return user data
-    }
-    return null;
-  } catch (error:any){
-    throw new Error("Failed to retrieve user data:" + error.message);
-  };
+  const snapshot = await get(userRef); // One-off fetch
+  if(snapshot.exists()) {
+    return snapshot.val(); // Return user data
+  }
+  return null;
 }
 
-// Main listener for drinking session data changes.
+/**
+ * Main listener for data changes
+ * 
+ * @param {Database} db The Realtime Database instance.
+ * @param {string} refString Ref string to listen at
+ * @param {(data:any) => void} onDataChange Callback function to execute on data change.
+ */
 export function listenForDataChanges(
   db: Database,
   refString: string,
@@ -37,7 +40,6 @@ export function listenForDataChanges(
   return () => off(dbRef, "value", listener);
 }
 
-
 /**
  * Fetch the Firebase nickname of a user given their UID.
  * @param {Database} db The Realtime Database instance.
@@ -47,17 +49,11 @@ export function listenForDataChanges(
  * @example const userNickname = await fetchNicknameByUID(db, "userUIDHere");
  */
 export async function fetchNicknameByUID(db: Database, uid: string): Promise<string | null> {
-  try {
-    const userRef = ref(db, `users/${uid}/profile`);
-    const userSnapshot = await get(userRef);
-
-    if (!userSnapshot.exists()) {
-      // console.error("No user found for the given UID.");
-      return "Not found";
-    }
-
-    return userSnapshot.val().display_name || null;
-  } catch (error:any) {
-    throw new Error("Failed to retrieve user nickname data:" + error.message);
+  const userRef = ref(db, `users/${uid}/profile`);
+  const userSnapshot = await get(userRef);
+  if (!userSnapshot.exists()) {
+    // console.error("No user found for the given UID.");
+    return "Not found";
   }
+  return userSnapshot.val().display_name || null;
 };
