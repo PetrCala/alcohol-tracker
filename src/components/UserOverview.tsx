@@ -11,7 +11,7 @@ export const UserOverview = (props: UserOverviewProps) => {
 
   return (
     <View style={styles.userOverviewContainer}>
-      <Text key={index} style={styles.userText}>{userId}</Text>
+      <Text style={styles.userText}>{userId}</Text>
       <RightSideComponent/>
       {/* <Image></Image> friend icon*/}
       {/* <Text></Text> friend nickname*/}

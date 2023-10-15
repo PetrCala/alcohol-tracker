@@ -1,4 +1,5 @@
 ﻿import {
+  Alert,
   Dimensions,
   Image,
   ScrollView,
@@ -7,51 +8,133 @@
   TouchableOpacity,
   View,
 } from 'react-native';
-import { FriendRequestData, FriendRequestStatus, UserData } from '../../types/database';
-import { useState } from 'react';
+import { FriendRequestData, FriendRequestDisplayData, FriendRequestStatus, ProfileData, UserData } from '../../types/database';
+import { useContext, useEffect, useState } from 'react';
 import SearchUsersPopup from '../../components/Popups/SearchUsersPopup';
+import DatabaseContext from '../../context/DatabaseContext';
+import { fetchUserProfiles } from '../../database/profile';
+import { acceptFriendRequest, deleteFriendRequest } from '../../database/friends';
+import { getAuth } from 'firebase/auth';
 
 type FriendRequestProps = {
-  index: any;
   requestId: string; // Other user's ID
   requestStatus: FriendRequestStatus;
+  profileData: ProfileData;
 };
 
 type ScreenProps = {
   userData: UserData | null;
 }
 
+
 const FriendRequest = (props: FriendRequestProps) => {
-  const { index, requestId, requestStatus } = props;
+  const { requestId, requestStatus, profileData } = props;
+  const auth = getAuth();
+  const user = auth.currentUser;
+  const db = useContext(DatabaseContext);
+
+  if (!db || !user) return;
+
+  const FriendRequestButtons = () => {
+    return(
+      <View style={styles.friendRequestButtonsContainer}>
+        <TouchableOpacity 
+          style={[
+            styles.handleRequestButton,
+            styles.acceptRequestButton
+          ]}
+          onPress = {() => acceptFriendRequest(db, user.uid, requestId)}
+        >
+          <Text style={styles.handleRequestText}>Accept</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={[
+            styles.handleRequestButton,
+            styles.rejectRequestButton
+          ]}
+          onPress = {() => deleteFriendRequest(db, user.uid, requestId)}
+        >
+          <Text style={styles.handleRequestText}>Remove</Text>
+        </TouchableOpacity>
+      </View>
+    )
+  };
+
+  const FriendRequestPending = () => {
+    return (
+      <View style={styles.friendRequestPendingContainer}>
+        <Text style={styles.handleRequestText}>Pending</Text>
+      </View>
+    );
+  };
 
   return (
     <View style={styles.friendRequestContainer}>
-      <Text key={index} style={styles.friendRequestText}>Friend request ID: {requestId}</Text>
-      <Text key={index} style={styles.friendRequestText}>Friend request status: {requestStatus}</Text>
+      <View style={styles.friendRequestProfile}>
+        <Text style={styles.friendRequestText}>Friend request ID: {requestId}</Text>
+        <Text style={styles.friendRequestText}>Nickname: {profileData.display_name}</Text>
+        {/* Include profile picture here too */}
+        <Text style={styles.friendRequestText}>Friend request status: {requestStatus}</Text>
+      </View>
+      {requestStatus === 'received' ?
+      <FriendRequestButtons/>
+      : requestStatus === 'sent' ?
+      <FriendRequestPending/>
+      : 
+      <></>
+      }
     </View>
   );
 };
 
 const FriendRequestScreen = (props:ScreenProps) => {
   const {userData} = props;
+  const db = useContext(DatabaseContext);
+  const [friendRequests, setFriendRequests] = useState<FriendRequestData>(userData ? userData.friend_requests : {});
+  const [displayData, setDisplayData] = useState<FriendRequestDisplayData>({})
   const [searchUsersModalVisible, setSearchUsersModalVisible] = useState<boolean>(false);
-
-  const friendRequests:FriendRequestData = userData?.friend_requests ? userData.friend_requests : {};
 
   const handleSearchModalClose = () => {
     setSearchUsersModalVisible(false);
   };
+
+
+  useEffect(() => {
+    if (!userData) return;
+    setFriendRequests(userData.friend_requests);
+  }, [userData]);
+
+  useEffect(() => {
+    const fetchDisplayData = async () => {
+      if (!db) return;
+      var newDisplayData:FriendRequestDisplayData = {};
+      try {
+        let requestIds = Object.keys(friendRequests);
+        let userProfiles:ProfileData[] = await fetchUserProfiles(db, requestIds);
+        for (let i = 0; i < userProfiles.length; i++) {
+          let requestId = requestIds[i];
+          let profile = userProfiles[i];
+          newDisplayData[requestId] = profile;
+        };
+      } catch (error:any) {
+        Alert.alert("Database connection failed", "Could not fetch the profile data associated with the displayed friend requests: " + error.message);
+      } finally {
+        setDisplayData(newDisplayData);
+      };
+    };
+    fetchDisplayData();
+  }, [friendRequests]);
 
   return (
   <View style={styles.mainContainer}>
     <ScrollView style={styles.scrollViewContainer}>
       {friendRequests ? 
       <View style={styles.friendList}>
-        {Object.keys(friendRequests).map((requestId, index) => (
+        {Object.keys(friendRequests).map((requestId) => (
             <FriendRequest
-                index={index}
                 requestId={requestId}
-                requestStatus={friendRequests[index]}
+                requestStatus={friendRequests[requestId]}
+                profileData={displayData[requestId]}
             />
         ))}
       </View>
@@ -87,7 +170,6 @@ const FriendRequestScreen = (props:ScreenProps) => {
                 style={styles.newRequestPlusSign}
             /> */}
         </TouchableOpacity>
-
     </View>
   </View>
   );
@@ -122,10 +204,49 @@ const styles = StyleSheet.create({
     margin: 2,
     padding: 2,
   },
+  friendRequestProfile: {
+    width: '50%',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    padding: 2,
+  },
   friendRequestText: {
     color: 'black',
     fontSize: 13,
     fontWeight: '400',
+  },
+  friendRequestButtonsContainer: {
+    width: '50%',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    padding: 2,
+  },
+  handleRequestButton: {
+    width: 100,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5,
+  },
+  acceptRequestButton: {
+    backgroundColor: 'green',
+  },
+  rejectRequestButton: {
+    backgroundColor: 'red',
+  },
+  handleRequestText: {
+    color: 'white',
+    fontSize: 15,
+    fontWeight: '400',
+    textAlign: 'center',
+  },
+  friendRequestPendingContainer: {
+    width: '50%',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
   },
   newRequestContainer: {
     position: 'absolute',
@@ -157,4 +278,5 @@ const styles = StyleSheet.create({
 //     height: 50,
 //     tintColor: 'white',
 //   },
+
 });
