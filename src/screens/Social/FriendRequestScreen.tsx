@@ -67,6 +67,8 @@ const FriendRequest = (props: FriendRequestProps) => {
     );
   };
 
+  if (!profileData) return;
+
   return (
     <View style={styles.friendRequestContainer}>
       <View style={styles.friendRequestProfile}>
@@ -97,7 +99,6 @@ const FriendRequestScreen = (props:ScreenProps) => {
     setSearchUsersModalVisible(false);
   };
 
-
   useEffect(() => {
     if (!userData) return;
     setFriendRequests(userData.friend_requests);
@@ -127,7 +128,7 @@ const FriendRequestScreen = (props:ScreenProps) => {
   return (
   <View style={styles.mainContainer}>
     <ScrollView style={styles.scrollViewContainer}>
-      {friendRequests ? 
+      {Object.keys(friendRequests).length > 0 ? 
       <View style={styles.friendList}>
         {Object.keys(friendRequests).map((requestId) => (
           <FriendRequest
@@ -177,17 +178,17 @@ const styles = StyleSheet.create({
   },
   scrollViewContainer: {
     flex: 1,
-    backgroundColor: '#ffff99'
-    // justifyContent: 'center',
+    backgroundColor: '#ffff99',
   },
   friendList: {
     width: '100%',
     flexDirection: 'column',
     justifyContent: 'center',
+    alignItems: 'center',
     padding: 3,
   },
   friendRequestContainer: {
-    width: '80%',
+    width: '95%',
     flexDirection: 'row',
     backgroundColor: 'white',
     borderWidth: 1,
@@ -197,7 +198,7 @@ const styles = StyleSheet.create({
     padding: 2,
   },
   friendRequestProfile: {
-    width: '50%',
+    width: '70%',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'flex-start',
@@ -229,13 +230,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
   },
   handleRequestText: {
-    color: 'white',
+    color: 'black',
     fontSize: 15,
     fontWeight: '400',
     textAlign: 'center',
   },
   friendRequestPendingContainer: {
-    width: '50%',
+    width: '25%',
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
