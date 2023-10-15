@@ -26,6 +26,49 @@ export type InputTextPopupProps = {
     onRequestClose: () => void;
 };
 
+type SendFriendRequestButtonProps = {
+  db:Database, 
+  index: number,
+  userFrom: string,
+  userTo: string,
+  requestStatus: FriendRequestStatus | undefined;
+  alreadyAFriend: boolean;
+}
+
+const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
+  db,
+  index,
+  userFrom,
+  userTo,
+  requestStatus,
+  alreadyAFriend
+}) => {
+  return (
+    // Refactor this part using AI later
+    <View style={styles.sendFriendRequestContainer}>
+      {alreadyAFriend ?
+      <Text style={styles.sendFriendRequestText}>Already a friend</Text>
+      : requestStatus === "sent" ?
+      <Text style={styles.sendFriendRequestText}>Waiting for a response</Text>
+      : requestStatus === "received" ?
+      <TouchableOpacity 
+        style={styles.acceptFriendRequestButton}
+        onPress={() => acceptFriendRequest(db, userFrom, userTo)}
+      >
+        <Text style={styles.sendFriendRequestText}>Accept friend request</Text>
+      </TouchableOpacity>
+      :
+      <TouchableOpacity 
+        style={styles.sendFriendRequestButton}
+        onPress={() => sendFriendRequest(db, userFrom, userTo)}
+      >
+        <Text style={styles.sendFriendRequestText}>Send friend request</Text>
+      </TouchableOpacity>
+      }
+    </View>
+  )
+};
+
 const SearchUsersPopup = (props: InputTextPopupProps) => {
     const { 
         visible, 
@@ -40,16 +83,17 @@ const SearchUsersPopup = (props: InputTextPopupProps) => {
     const { userData } = getDatabaseData();
     const [searchText, setSearchText] = useState<string>('');
     const [requestIds, setRequestIds] = useState<NicknameToIdData>({});
-    const [requestStatuses, setRequestStatuses] = useState<FriendRequestStatus[]>([]);
+    const [requestStatuses, setRequestStatuses] = useState<(FriendRequestStatus | undefined)[]>([]);
     const [noUsersFound, setNoUsersFound] = useState<boolean>(false);
 
     const doSearch = async (db:Database, nickname:string):Promise<void> => {
+        if (!db || !nickname) return; // Input a value first alert
         setNoUsersFound(false);
         try {
             const newRequestIds = await searchDbByNickname(db, nickname);
             if (newRequestIds) {
-                updateSearchedUsersStatus(newRequestIds);
                 setRequestIds(newRequestIds);
+                updateSearchedUsersStatus(newRequestIds);
             } else {
                 setNoUsersFound(true);
             };
@@ -64,8 +108,11 @@ const SearchUsersPopup = (props: InputTextPopupProps) => {
      * the UsersStatus hook.
      */
     const updateSearchedUsersStatus = (usersId: NicknameToIdData):void => {
-      if (!usersId || !userData) return;
-      let newUsersStatus = Object.keys(usersId).map((userId) => userData.friend_requests[userId])
+      if (!userData) return;
+      let newUsersStatus:(FriendRequestStatus | undefined)[] = [];
+      if (Object.keys(usersId).length > 0) {
+        newUsersStatus = Object.keys(usersId).map((userId) => userData?.friend_requests ? userData.friend_requests[userId] : undefined)
+      }
       setRequestStatuses(newUsersStatus);
     };
 
@@ -83,43 +130,9 @@ const SearchUsersPopup = (props: InputTextPopupProps) => {
       "received": "Accept friend request",
     };
 
-    function sendFriendRequestButton(
-      db:Database, 
-      index: number,
-      userTo: string
-    ) {
-      const requestStatus = requestStatuses[index];
-      const alreadyAFriend = userData?.friends[userTo];
 
-      if (!user) return;
-
-      return (
-        // Refactor this part using AI later
-        <View style={styles.sendFriendRequestContainer}>
-          {alreadyAFriend ?
-          <Text style={styles.sendFriendRequestText}>Already a friend</Text>
-          : requestStatus === "sent" ?
-          <Text style={styles.sendFriendRequestText}>Waiting for a response</Text>
-          : requestStatus === "received" ?
-          <TouchableOpacity 
-            style={styles.acceptFriendRequestButton}
-            onPress={() => acceptFriendRequest(db, user.uid, userTo)}
-          >
-            <Text style={styles.sendFriendRequestText}>Accept friend request</Text>
-          </TouchableOpacity>
-          :
-          <TouchableOpacity 
-            style={styles.sendFriendRequestButton}
-            onPress={() => sendFriendRequest(db, user.uid, userTo)}
-          >
-            <Text style={styles.sendFriendRequestText}>Send friend request</Text>
-          </TouchableOpacity>
-          }
-        </View>
-      )
-    };
   
-    if (!db) return;
+    if (!db || !user) return;
 
     return (
       <Modal
@@ -153,14 +166,20 @@ const SearchUsersPopup = (props: InputTextPopupProps) => {
                 <Text style={styles.noUsersFoundText}>
                   There are no users with this nickname.
                 </Text>
-              :
-              requestIds ?
+              : Object.keys(requestIds).length > 0 ?
               Object.keys(requestIds).map((userId, index) => (
-                <UserOverview
-                  index = {index}
-                  userId = {userId}
-                  RightSideComponent={sendFriendRequestButton(db, index, userId)}
-                />
+                <View style={styles.userOverviewContainer}>
+                  <Text>{userId}</Text>
+                  {/* <Image></Image> friend icon*/}
+                  <SendFriendRequestButton 
+                    db={db}
+                    index={index}
+                    userFrom={user.uid}
+                    userTo={userId}
+                    requestStatus={requestStatuses[index]}
+                    alreadyAFriend={userData?.friends ? userData?.friends[userId] : false}
+                  />
+                </View>
               ))
               :
               <></>
@@ -267,6 +286,21 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  userOverviewContainer: {
+    width: '80%',
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: 'black',
+    borderRadius: 5,
+    margin: 2,
+    padding: 2,
+  },
+  userText: {
+    color: 'black',
+    fontSize: 13,
+    fontWeight: '400',
   },
   sendFriendRequestContainer: {
     width: 150,

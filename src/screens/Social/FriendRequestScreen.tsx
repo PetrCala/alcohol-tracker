@@ -105,7 +105,7 @@ const FriendRequestScreen = (props:ScreenProps) => {
 
   useEffect(() => {
     const fetchDisplayData = async () => {
-      if (!db) return;
+      if (!db || !friendRequests) return;
       var newDisplayData:FriendRequestDisplayData = {};
       try {
         let requestIds = Object.keys(friendRequests);
@@ -138,20 +138,12 @@ const FriendRequestScreen = (props:ScreenProps) => {
         ))}
       </View>
       :
-      <View style={{
-        flex:1, 
-        justifyContent: 'center', 
-        alignItems: 'center',
-        backgroundColor: 'pink',
-        height: Dimensions.get('screen').height,
-        }}>
-        <Text>There are no friend requests to display</Text>
-      </View>
+      <></>
       }
       <SearchUsersPopup
         visible={searchUsersModalVisible}
         transparent={true}
-        message={"Input the nickname of the user you\nwould like to send a friend request to:"}
+        message={"Send a friend request to:"}
         placeholder={"Nickname"}
         onRequestClose={handleSearchModalClose}
       />
@@ -185,6 +177,7 @@ const styles = StyleSheet.create({
   },
   scrollViewContainer: {
     flex: 1,
+    backgroundColor: '#ffff99'
     // justifyContent: 'center',
   },
   friendList: {
@@ -249,13 +242,12 @@ const styles = StyleSheet.create({
   },
   newRequestContainer: {
     position: 'absolute',
-    bottom: 30,
-    right: 50,
+    bottom: 20,
+    right: 20,
     height: 50,
-    width: 100,
+    width: 150,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'white',
     borderWidth: 2,
     borderColor: 'black',
     borderRadius: 10,
@@ -264,12 +256,14 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '100%',
     justifyContent: 'center',
+    borderRadius: 10,
     alignItems: 'center',
+    backgroundColor:'white',
   },
   newRequestText: {
     fontSize: 15,
     fontWeight: 'bold',
-    color: 'white',
+    color: 'black',
     textAlign: 'center',
   },
 //   newRequestPlusSign: {

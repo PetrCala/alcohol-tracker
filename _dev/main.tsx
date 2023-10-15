@@ -1,6 +1,4 @@
-﻿import { UserRecord } from 'firebase-admin/lib/auth';
-
-import admin from './database/admin';
+﻿import admin from './database/admin';
 import { assignAdminRole, listAllAdmins } from "./database/adminUtils";
 import { refactorPreferencesData, transformPreferencesData } from './database/migration-scripts/0.1.0-0.2.0/migratePreferences';
 import { PreferencesData } from '../src/types/database';

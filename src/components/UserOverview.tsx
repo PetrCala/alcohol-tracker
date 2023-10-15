@@ -8,11 +8,10 @@ type UserOverviewProps = {
 
 export const UserOverview = (props: UserOverviewProps) => {
   const { index, userId, RightSideComponent } = props;
-
   return (
     <View style={styles.userOverviewContainer}>
       <Text style={styles.userText}>{userId}</Text>
-      <RightSideComponent/>
+      {/* <RightSideComponent/> */}
       {/* <Image></Image> friend icon*/}
       {/* <Text></Text> friend nickname*/}
     </View>
