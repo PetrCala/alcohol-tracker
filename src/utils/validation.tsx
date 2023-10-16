@@ -15,3 +15,21 @@ for(let char of invalidChars) {
 }
 return true;
 }
+
+/**
+ * Check whether an element is a non-empty object.
+ * 
+ * @description
+ * Validate that the object is JSON-like type object with at least one key-value pair.
+ * For arrays, return false.
+ * 
+ * @param {any} input Element/variable to check
+ * @returns {boolean} True if the element is a non-empty object, false otherwise.
+ */
+export function isNonEmptyObject(input:any) {
+    try {
+        return (input && typeof input === 'object' && !Array.isArray(input) && Object.keys(input).length > 0)
+    } catch (error:any) {
+        return false;
+    };
+}

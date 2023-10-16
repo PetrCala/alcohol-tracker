@@ -15,6 +15,7 @@ import DatabaseContext from '../../context/DatabaseContext';
 import { fetchUserProfiles } from '../../database/profile';
 import { acceptFriendRequest, deleteFriendRequest } from '../../database/friends';
 import { getAuth } from 'firebase/auth';
+import { isNonEmptyObject } from '../../utils/validation';
 
 type FriendRequestProps = {
   requestId: string; // Other user's ID
@@ -128,7 +129,7 @@ const FriendRequestScreen = (props:ScreenProps) => {
   return (
   <View style={styles.mainContainer}>
     <ScrollView style={styles.scrollViewContainer}>
-      {Object.keys(friendRequests).length > 0 ? 
+      {isNonEmptyObject(friendRequests) ?
       <View style={styles.friendList}>
         {Object.keys(friendRequests).map((requestId) => (
           <FriendRequest

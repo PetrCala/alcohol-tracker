@@ -17,6 +17,7 @@ import UserOverview from '../UserOverview';
 import { getAuth } from 'firebase/auth';
 import { getDatabaseData } from '../../context/DatabaseDataContext';
 import { acceptFriendRequest, isFriend, sendFriendRequest } from '../../database/friends';
+import { isNonEmptyObject } from '../../utils/validation';
 
 export type InputTextPopupProps = {
     visible: boolean;
@@ -110,7 +111,7 @@ const SearchUsersPopup = (props: InputTextPopupProps) => {
     const updateSearchedUsersStatus = (usersId: NicknameToIdData):void => {
       if (!userData) return;
       let newUsersStatus:(FriendRequestStatus | undefined)[] = [];
-      if (Object.keys(usersId).length > 0) {
+      if (isNonEmptyObject(usersId)) {
         newUsersStatus = Object.keys(usersId).map((userId) => userData?.friend_requests ? userData.friend_requests[userId] : undefined)
       }
       setRequestStatuses(newUsersStatus);
@@ -166,7 +167,7 @@ const SearchUsersPopup = (props: InputTextPopupProps) => {
                 <Text style={styles.noUsersFoundText}>
                   There are no users with this nickname.
                 </Text>
-              : Object.keys(requestIds).length > 0 ?
+              : isNonEmptyObject(requestIds) ?
               Object.keys(requestIds).map((userId, index) => (
                 <View style={styles.userOverviewContainer}>
                   <Text>{userId}</Text>
