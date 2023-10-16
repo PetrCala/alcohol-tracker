@@ -74,13 +74,7 @@ const LoginScreen = ( {navigation }: LoginScreenProps) => {
 
   // Wait to see whether there already is an authentificated user
   // Possibly here display the app logo instead of the loading screen
-  if (loadingUser) {
-    return(
-      <LoadingData
-      loadingText=""
-      />
-    );
-  };
+  if (loadingUser) return <LoadingData/>
 
   return (    
     <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1, flexShrink: 1 }}>

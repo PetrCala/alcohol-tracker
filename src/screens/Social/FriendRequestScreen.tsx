@@ -8,7 +8,7 @@
   TouchableOpacity,
   View,
 } from 'react-native';
-import { FriendRequestData, FriendRequestDisplayData, FriendRequestStatus, ProfileData, UserData } from '../../types/database';
+import { FriendRequestData, ProfileDisplayData, FriendRequestStatus, ProfileData, UserData } from '../../types/database';
 import { useContext, useEffect, useState } from 'react';
 import SearchUsersPopup from '../../components/Popups/SearchUsersPopup';
 import DatabaseContext from '../../context/DatabaseContext';
@@ -16,6 +16,8 @@ import { fetchUserProfiles } from '../../database/profile';
 import { acceptFriendRequest, deleteFriendRequest } from '../../database/friends';
 import { getAuth } from 'firebase/auth';
 import { isNonEmptyObject } from '../../utils/validation';
+import useProfileDisplayData from '../../hooks/useProfileDisplayData';
+import LoadingData from '../../components/LoadingData';
 
 type FriendRequestProps = {
   requestId: string; // Other user's ID
@@ -73,10 +75,10 @@ const FriendRequest = (props: FriendRequestProps) => {
   return (
     <View style={styles.friendRequestContainer}>
       <View style={styles.friendRequestProfile}>
-        <Text style={styles.friendRequestText}>Friend request ID: {requestId}</Text>
-        <Text style={styles.friendRequestText}>Nickname: {profileData.display_name}</Text>
+        <Text key={'request-id'} style={styles.friendRequestText}>Friend request ID: {requestId}</Text>
+        <Text key={'nickname'} style={styles.friendRequestText}>Nickname: {profileData.display_name}</Text>
         {/* Include profile picture here too */}
-        <Text style={styles.friendRequestText}>Friend request status: {requestStatus}</Text>
+        <Text key={'status'} style={styles.friendRequestText}>Friend request status: {requestStatus}</Text>
       </View>
       {requestStatus === 'received' ?
       <FriendRequestButtons/>
@@ -92,8 +94,13 @@ const FriendRequest = (props: FriendRequestProps) => {
 const FriendRequestScreen = (props:ScreenProps) => {
   const {userData} = props;
   const db = useContext(DatabaseContext);
-  const [friendRequests, setFriendRequests] = useState<FriendRequestData>(userData ? userData.friend_requests : {});
-  const [displayData, setDisplayData] = useState<FriendRequestDisplayData>({})
+  const [friendRequests, setFriendRequests] = useState<FriendRequestData>(userData ? userData?.friend_requests : {});
+  const [loadingDisplayData, setLoadingDisplayData] = useState<boolean>(false);
+  const [displayData, setDisplayData] = useProfileDisplayData({
+    data: friendRequests,
+    db: db,
+    setLoadingDisplayData: setLoadingDisplayData
+  });
   const [searchUsersModalVisible, setSearchUsersModalVisible] = useState<boolean>(false);
 
   const handleSearchModalClose = () => {
@@ -105,37 +112,14 @@ const FriendRequestScreen = (props:ScreenProps) => {
     setFriendRequests(userData.friend_requests);
   }, [userData]);
 
-  useEffect(() => {
-    const fetchDisplayData = async () => {
-      if (!db || !isNonEmptyObject(friendRequests)) {
-        setDisplayData({});
-        return;
-      };
-      const newDisplayData:FriendRequestDisplayData = {};
-      try {
-        const requestIds = Object.keys(friendRequests);
-        const userProfiles:ProfileData[] = await fetchUserProfiles(db, requestIds);
-        requestIds.forEach((requestId, index) => {
-          newDisplayData[requestId] = userProfiles[index];
-        });
-      } catch (error:any) {
-        Alert.alert(
-          "Database connection failed", 
-          "Could not fetch the profile data associated with the displayed friend requests: " + error.message
-        );
-      } finally {
-        setDisplayData(newDisplayData);
-      };
-    };
-    fetchDisplayData();
-  }, [friendRequests]);
-
   return (
   <View style={styles.mainContainer}>
     <ScrollView style={styles.scrollViewContainer}>
       {isNonEmptyObject(friendRequests) ?
       <View style={styles.friendList}>
         {Object.keys(friendRequests).map((requestId) => (
+          loadingDisplayData ?
+          <LoadingData/> :
           <FriendRequest
               requestId={requestId}
               requestStatus={friendRequests[requestId]}

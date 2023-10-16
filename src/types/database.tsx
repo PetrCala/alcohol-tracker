@@ -132,8 +132,8 @@ export type FriendRequestData = {
   [request_id: string]: FriendRequestStatus;
 }
 
-export type FriendRequestDisplayData = {
-  [request_id: string]: ProfileData;
+export type ProfileDisplayData = {
+  [user_id: string]: ProfileData;
 }
 
 export type FriendRequestStatus = "sent" | "received";

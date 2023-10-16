@@ -193,7 +193,7 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
         setLoadingMarkedDays(false);
     }, [calendarData, preferences]);
 
-    if (loadingMarkedDates) return <LoadingData loadingText={""}/>;
+    if (loadingMarkedDates) return <LoadingData/>;
 
     return (
         <Calendar

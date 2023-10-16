@@ -129,9 +129,3 @@ export type SessionUnitsInputWindowProps = {
         unitsInputText: {};
     };
 }
-
-// Loading data props
-
-export type LoadingDataProps = {
-    loadingText: string
-}

@@ -250,14 +250,8 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
         text='+'
         buttonStyle={styles.startSessionButton}
         textStyle={styles.startSessionText}
-        onPress = {startDrinkingSession} />
-      {/* <ItemListPopup
-          visible={policiesModalVisible}
-          transparent={true}
-          heading={"Our Policies"}
-          actions={policiesData}
-          onRequestClose={() => setPoliciesModalVisible(false)}
-      /> */}
+        onPress = {startDrinkingSession}
+      />
     </>
   );
 };

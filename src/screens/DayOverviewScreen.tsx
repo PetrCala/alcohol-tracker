@@ -175,43 +175,37 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
     }
 
     const addSessionButton = () => {
-        if (date == null) {
-            return(
-                <LoadingData
-                    loadingText=''
-                />
-            )
-        }
-        if (!editMode) return <></>; // Do not display outside edit mode
-        // No button if the date is in the future
-        let today = new Date();
-        let tomorrowMidnight = changeDateBySomeDays(today, 1);
-        tomorrowMidnight.setHours(0,0,0,0);
-        if (date >= tomorrowMidnight){
-            return(<></>);
-        };
-        // Create a new mock drinking session
-        let newTimestamp = setDateToCurrentTime(date).getTime(); // At noon
-        let newSession: DrinkingSessionArrayItem = {
-          start_time: newTimestamp, // Arbitrary timestamp of today's noon
-          end_time: newTimestamp, 
-          blackout: false,
-          note: '',
-          units: getZeroUnitsObject(),
-        }
-        return(
-            <TouchableOpacity
-                style={styles.addSessionButton}
-                onPress={() => navigation.navigate('Edit Session Screen',
-                    {
-                    session: newSession,
-                    sessionKey: 'edit-session-id',
-                  }
-                )}
-                >
-                <Text style={styles.addSessionText}>+</Text>
-            </TouchableOpacity>
-        );
+      if (!date) return (<LoadingData/>);
+      if (!editMode) return <></>; // Do not display outside edit mode
+      // No button if the date is in the future
+      let today = new Date();
+      let tomorrowMidnight = changeDateBySomeDays(today, 1);
+      tomorrowMidnight.setHours(0,0,0,0);
+      if (date >= tomorrowMidnight){
+          return(<></>);
+      };
+      // Create a new mock drinking session
+      let newTimestamp = setDateToCurrentTime(date).getTime(); // At noon
+      let newSession: DrinkingSessionArrayItem = {
+        start_time: newTimestamp, // Arbitrary timestamp of today's noon
+        end_time: newTimestamp, 
+        blackout: false,
+        note: '',
+        units: getZeroUnitsObject(),
+      }
+      return(
+          <TouchableOpacity
+              style={styles.addSessionButton}
+              onPress={() => navigation.navigate('Edit Session Screen',
+                  {
+                  session: newSession,
+                  sessionKey: 'edit-session-id',
+                }
+              )}
+              >
+              <Text style={styles.addSessionText}>+</Text>
+          </TouchableOpacity>
+      );
     }
 
     /** Offset the "date" hook by a number of days.
@@ -233,7 +227,7 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
     // );
 
     if (!isOnline) return (<UserOffline/>);
-    if (!date) return <LoadingData loadingText=''/>;
+    if (!date) return (<LoadingData/>);
     if (!user || !preferences){
         navigation.replace("Login Screen");
         return;

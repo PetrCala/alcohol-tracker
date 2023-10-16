@@ -6,8 +6,13 @@
   TouchableOpacity,
   View,
 } from 'react-native';
-import { FriendIds, UserData } from "../../types/database";
+import { FriendIds, FriendsData, UserData } from "../../types/database";
 import UserOverview from '../../components/UserOverview';
+import useProfileDisplayData from '../../hooks/useProfileDisplayData';
+import { useContext, useEffect, useState } from 'react';
+import DatabaseContext from '../../context/DatabaseContext';
+import { isNonEmptyObject } from '../../utils/validation';
+import LoadingData from '../../components/LoadingData';
 
 // type FriendOverviewProps = {
 //   index: any;
@@ -32,13 +37,27 @@ type ScreenProps = {
 
 const FriendListScreen = (props:ScreenProps) => {
   const {userData} = props;
-  const friends = userData?.friends ? userData?.friends : {};
+  const db = useContext(DatabaseContext);
+  const [friends, setFriends] = useState<FriendsData>(userData ? userData?.friends : {});
+  const [loadingDisplayData, setLoadingDisplayData] = useState<boolean>(false);
+  const [displayData, setDisplayData] = useProfileDisplayData({
+    data: friends,
+    db: db,
+    setLoadingDisplayData: setLoadingDisplayData
+  });
+
+  useEffect(() => {
+    if (!userData) return;
+    (userData.friend_requests);
+  }, [userData]);
 
   return (
     <ScrollView style={styles.scrollViewContainer}>
-      {friends ? 
+      {isNonEmptyObject(friends) ? 
       <View style={styles.friendList}>
         {Object.keys(friends).map((friendId, index) => (
+          loadingDisplayData ?
+          <LoadingData/> :
           <UserOverview
             index={index}
             userId={friendId}
@@ -47,15 +66,7 @@ const FriendListScreen = (props:ScreenProps) => {
         ))}
       </View>
       :
-      <View style={{
-        flex:1, 
-        justifyContent: 'center', 
-        alignItems: 'center',
-        backgroundColor: 'cyan',
-        height: Dimensions.get('screen').height,
-        }}>
-        <Text>This is the friend list screen</Text>
-      </View>
+      <></>
       }
     </ScrollView>
   );

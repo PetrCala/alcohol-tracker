@@ -4,14 +4,20 @@
     StyleSheet,
     Text,
 } from "react-native";
-import { LoadingDataProps } from "../types/components";
+
+export type LoadingDataProps = {
+    loadingText?: string
+}
 
 const LoadingData = ({
   loadingText
 }:LoadingDataProps) => {
     return (
       <View style={styles.loadingContainer}>
-        <Text style={styles.loadingText}>{loadingText}</Text>
+        {loadingText ? 
+        <Text style={styles.loadingText}>{loadingText}</Text> :
+        <></>
+        }
         <ActivityIndicator 
           size="large"
           color = "#0000ff"
