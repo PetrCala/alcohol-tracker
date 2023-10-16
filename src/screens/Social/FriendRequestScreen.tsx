@@ -75,10 +75,16 @@ const FriendRequest = (props: FriendRequestProps) => {
   return (
     <View style={styles.friendRequestContainer}>
       <View style={styles.friendRequestProfile}>
-        <Text key={'request-id'} style={styles.friendRequestText}>Friend request ID: {requestId}</Text>
-        <Text key={'nickname'} style={styles.friendRequestText}>Nickname: {profileData.display_name}</Text>
-        {/* Include profile picture here too */}
-        <Text key={'status'} style={styles.friendRequestText}>Friend request status: {requestStatus}</Text>
+        <Image
+          key='profile-icon'
+          style={styles.friendRequestImage}
+          source={
+            profileData?.photo_url && profileData?.photo_url !== '' ?
+            {uri: profileData.photo_url}:
+            require('../../../assets/temp/user.png')
+          }
+        />
+        <Text key={'nickname'} style={styles.friendRequestText}>{profileData.display_name}</Text>
       </View>
       {requestStatus === 'received' ?
       <FriendRequestButtons/>
@@ -117,10 +123,11 @@ const FriendRequestScreen = (props:ScreenProps) => {
     <ScrollView style={styles.scrollViewContainer}>
       {isNonEmptyObject(friendRequests) ?
       <View style={styles.friendList}>
-        {Object.keys(friendRequests).map((requestId) => (
+        {Object.keys(friendRequests).map((requestId, index) => (
           loadingDisplayData ?
           <LoadingData/> :
           <FriendRequest
+              key={index}
               requestId={requestId}
               requestStatus={friendRequests[requestId]}
               profileData={displayData[requestId]}
@@ -144,7 +151,7 @@ const FriendRequestScreen = (props:ScreenProps) => {
             onPress={() => setSearchUsersModalVisible(true)}
         >
             <Text style={styles.newRequestText}>
-                New Friend Request
+                Add A Friend
             </Text>
             {/* <Image
                 source={require('../../../assets/icons/plus.png')}
@@ -188,15 +195,21 @@ const styles = StyleSheet.create({
   },
   friendRequestProfile: {
     width: '70%',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-    padding: 2,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    padding: 5,
+  },
+  friendRequestImage: {
+    width: 30,
+    height: 30,
+    padding: 5,
   },
   friendRequestText: {
     color: 'black',
     fontSize: 13,
     fontWeight: '400',
+    marginLeft: 5,
   },
   friendRequestButtonsContainer: {
     width: '50%',
@@ -235,7 +248,7 @@ const styles = StyleSheet.create({
     bottom: 20,
     right: 20,
     height: 50,
-    width: 150,
+    width: 120,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,

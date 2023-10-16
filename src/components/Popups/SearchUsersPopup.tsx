@@ -183,14 +183,14 @@ const SearchUsersPopup = (props: InputTextPopupProps) => {
               Object.keys(searchResultData).map((userId, index) => (
                 loadingDisplayData ?
                 <LoadingData/> :
-                <View style={styles.userOverviewContainer}>
+                <View key={index} style={styles.userOverviewContainer}>
                   <View style={styles.userInfoContainer}>
                     <Image
                       key='profile-icon'
                       style={styles.userProfileImage}
                       source={
                         displayData[userId]?.photo_url && displayData[userId]?.photo_url !== '' ?
-                        {uri: ""}:
+                        {uri: displayData[userId].photo_url}:
                         require('../../../assets/temp/user.png')
                       }
                     />

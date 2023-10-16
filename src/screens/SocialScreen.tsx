@@ -91,6 +91,7 @@ const SocialScreen = (props: SocialProps) => {
               source={require('../../assets/icons/friend_list.png')}
               style={styles.footerImage}
             />
+            <Text style={styles.footerText}>Friend List</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.footerHalfContainer}>
@@ -105,6 +106,7 @@ const SocialScreen = (props: SocialProps) => {
               source={require('../../assets/icons/add_user.png')}
               style={styles.footerImage}
             />
+            <Text style={styles.footerText}>Add Friends</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -171,6 +173,7 @@ const styles = StyleSheet.create({
   footerButton: {
     width: screenWidth * 0.5,
     height: '100%',
+    flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -183,10 +186,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#ebeb02',
   },
   footerImage: {
-    width: 28,
-    height: 28,
-    padding: 10,
+    width: 25,
+    height: 25,
+    padding: 5,
     // tintColor: '#ebeb02',
-    tintColor: '#000',
+    // tintColor: '#000',
+    tintColor: 'gray',
   },
+  footerText: {
+    fontSize: 12,
+    color: 'gray',
+  }
 });
