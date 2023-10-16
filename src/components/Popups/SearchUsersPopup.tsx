@@ -7,9 +7,10 @@ import {
   TouchableOpacity, 
   StyleSheet,
   KeyboardTypeOptions,
-  Alert, 
+  Alert,
+  Image, 
 } from 'react-native';
-import { FriendRequestStatus, NicknameToIdData } from '../../types/database';
+import { FriendRequestDisplayData, FriendRequestStatus, NicknameToIdData, ProfileData } from '../../types/database';
 import DatabaseContext from '../../context/DatabaseContext';
 import { Database } from 'firebase/database';
 import { searchDbByNickname } from '../../database/search';
@@ -18,6 +19,8 @@ import { getAuth } from 'firebase/auth';
 import { getDatabaseData } from '../../context/DatabaseDataContext';
 import { acceptFriendRequest, isFriend, sendFriendRequest } from '../../database/friends';
 import { isNonEmptyObject } from '../../utils/validation';
+import { fetchUserProfiles } from '../../database/profile';
+import LoadingData from '../LoadingData';
 
 export type InputTextPopupProps = {
     visible: boolean;
@@ -89,18 +92,20 @@ const SearchUsersPopup = (props: InputTextPopupProps) => {
     const user = auth.currentUser;
     const { userData } = getDatabaseData();
     const [searchText, setSearchText] = useState<string>('');
-    const [requestIds, setRequestIds] = useState<NicknameToIdData>({});
+    const [searchResultData, setSearchResultData] = useState<NicknameToIdData>({});
     const [requestStatuses, setRequestStatuses] = useState<(FriendRequestStatus | undefined)[]>([]);
     const [noUsersFound, setNoUsersFound] = useState<boolean>(false);
+    const [displayData, setDisplayData] = useState<FriendRequestDisplayData>({});
+    const [loadingDisplayData, setLoadingDisplayData] = useState<boolean>(false);
 
     const doSearch = async (db:Database, nickname:string):Promise<void> => {
         if (!db || !nickname) return; // Input a value first alert
         setNoUsersFound(false);
         try {
-            const newRequestIds = await searchDbByNickname(db, nickname);
-            if (newRequestIds) {
-                setRequestIds(newRequestIds);
-                updateSearchedUsersStatus(newRequestIds);
+            const newSearchResults = await searchDbByNickname(db, nickname);
+            if (newSearchResults) {
+                setSearchResultData(newSearchResults);
+                updateSearchedUsersStatus(newSearchResults);
             } else {
                 setNoUsersFound(true);
             };
@@ -114,11 +119,11 @@ const SearchUsersPopup = (props: InputTextPopupProps) => {
      * determine the request status for each and update
      * the UsersStatus hook.
      */
-    const updateSearchedUsersStatus = (usersId: NicknameToIdData):void => {
+    const updateSearchedUsersStatus = (searchData: NicknameToIdData):void => {
       if (!userData) return;
       let newUsersStatus:(FriendRequestStatus | undefined)[] = [];
-      if (isNonEmptyObject(usersId)) {
-        newUsersStatus = Object.keys(usersId).map((userId) => userData?.friend_requests ? userData.friend_requests[userId] : undefined)
+      if (isNonEmptyObject(searchData)) {
+        newUsersStatus = Object.keys(searchData).map((userId) => userData?.friend_requests ? userData.friend_requests[userId] : undefined)
       }
       setRequestStatuses(newUsersStatus);
     };
@@ -127,10 +132,38 @@ const SearchUsersPopup = (props: InputTextPopupProps) => {
       // Reset all values displayed on screen
       onRequestClose();
       setSearchText('');
-      setRequestIds({});
+      setSearchResultData({});
       setRequestStatuses([]);
+      setDisplayData({});
       setNoUsersFound(false);
     };
+
+    useEffect(() => {
+      const fetchDisplayData = async () => {
+      if (!db || !isNonEmptyObject(searchResultData)) {
+        setDisplayData({});
+        return;
+      };
+      const newDisplayData:FriendRequestDisplayData = {};
+      setLoadingDisplayData(true);
+      try {
+        const searchResultIds = Object.keys(searchResultData);
+        const userProfiles:ProfileData[] = await fetchUserProfiles(db, searchResultIds);
+        searchResultIds.forEach((userId, index) => {
+          newDisplayData[userId] = userProfiles[index];
+        });
+      } catch (error:any) {
+        Alert.alert(
+          "Database connection failed", 
+          "Could not fetch the profile data associated with the displayed search results: " + error.message
+        );
+      } finally {
+        setDisplayData(newDisplayData);
+        setLoadingDisplayData(false);
+      };
+    };
+    fetchDisplayData();
+    }, [searchResultData]);
   
     if (!db || !user) return;
 
@@ -166,11 +199,17 @@ const SearchUsersPopup = (props: InputTextPopupProps) => {
                 <Text style={styles.noUsersFoundText}>
                   There are no users with this nickname.
                 </Text>
-              : isNonEmptyObject(requestIds) ?
-              Object.keys(requestIds).map((userId, index) => (
+              : isNonEmptyObject(searchResultData) || !loadingDisplayData ?
+              Object.keys(searchResultData).map((userId, index) => (
                 <View style={styles.userOverviewContainer}>
-                  <Text>{userId}</Text>
-                  {/* <Image></Image> friend icon*/}
+                  <Text style={styles.userNicknameText}>{displayData?.userId?.display_name}</Text>
+                  <Image
+                    style={styles.userProfileImage}
+                    source={displayData?.userId?.photo_url && displayData?.userId?.photo_url !== '' ?
+                      require(displayData.userId.photo_url) :
+                      require('../../../assets/temp/user.png')
+                    }
+                  />
                   <SendFriendRequestButton 
                     db={db}
                     index={index}
@@ -182,7 +221,7 @@ const SearchUsersPopup = (props: InputTextPopupProps) => {
                 </View>
               ))
               :
-              <></>
+              <LoadingData loadingText=''/>
               }
             </View>
             <View style={styles.cancelButtonContainer}>
@@ -297,10 +336,15 @@ const styles = StyleSheet.create({
     margin: 2,
     padding: 2,
   },
-  userText: {
+  userNicknameText: {
     color: 'black',
     fontSize: 13,
     fontWeight: '400',
+  },
+  userProfileImage: {
+    width: 25,
+    height: 25,
+    padding: 5,
   },
   sendFriendRequestContainer: {
     width: 150,
@@ -332,5 +376,3 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
-
-

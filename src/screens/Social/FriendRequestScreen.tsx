@@ -107,18 +107,22 @@ const FriendRequestScreen = (props:ScreenProps) => {
 
   useEffect(() => {
     const fetchDisplayData = async () => {
-      if (!db || !friendRequests) return;
-      var newDisplayData:FriendRequestDisplayData = {};
+      if (!db || !isNonEmptyObject(friendRequests)) {
+        setDisplayData({});
+        return;
+      };
+      const newDisplayData:FriendRequestDisplayData = {};
       try {
-        let requestIds = Object.keys(friendRequests);
-        let userProfiles:ProfileData[] = await fetchUserProfiles(db, requestIds);
-        for (let i = 0; i < userProfiles.length; i++) {
-          let requestId = requestIds[i];
-          let profile = userProfiles[i];
-          newDisplayData[requestId] = profile;
-        };
+        const requestIds = Object.keys(friendRequests);
+        const userProfiles:ProfileData[] = await fetchUserProfiles(db, requestIds);
+        requestIds.forEach((requestId, index) => {
+          newDisplayData[requestId] = userProfiles[index];
+        });
       } catch (error:any) {
-        Alert.alert("Database connection failed", "Could not fetch the profile data associated with the displayed friend requests: " + error.message);
+        Alert.alert(
+          "Database connection failed", 
+          "Could not fetch the profile data associated with the displayed friend requests: " + error.message
+        );
       } finally {
         setDisplayData(newDisplayData);
       };
