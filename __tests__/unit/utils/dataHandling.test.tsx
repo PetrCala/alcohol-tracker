@@ -7,6 +7,7 @@
     formatDate,
     formatDateToDay,
     formatDateToTime,
+    getAdjacentMonths,
     getLastUnitAddedTime,
     getNextMonth, 
     getPreviousMonth, 
@@ -15,6 +16,8 @@
     getSingleMonthDrinkingSessions, 
     getTimestampAtMidnight, 
     getTimestampAtNoon, 
+    getYearMonth,
+    getYearMonthVerbose,
     getZeroUnitsObject, 
     removeUnits, 
     removeZeroObjectsFromSession, 
@@ -29,6 +32,7 @@
 import { DateObject } from "../../../src/types/components";
 import { DrinkingSessionArrayItem, DrinkingSessionData, UnitTypesKeys, UnitTypesNames, UnitTypesProps, UnitsObject, UnitsToColorsData } from "../../../src/types/database";
 import { createMockSession, createMockUnitsObject } from "../../utils/mockDatabase";
+import { MONTHS, MONTHS_ABBREVIATED } from "../../../src/utils/static";
 
 
 
@@ -262,6 +266,56 @@ describe('getNextMonth function', () => {
         const originalDateObj: DateObject = dateToDateObject(new Date(2023, 3, 30));
         const newDate = getNextMonth(originalDateObj);
         checkIsDateAndHasExpectedValues(newDate, 30, 5); // Expected: May 30 (as May has 31 days)
+    });
+
+});
+
+describe('getYearMonth', () => {
+
+    it('should correctly format year and month for valid dates', () => {
+        const testCases: { input: Date, expected: string }[] = [
+            { input: new Date(2023,7), expected: '2023-08' }, // 0-indexed vs 1-indexed
+            { input: new Date(2021, 1), expected: '2021-02' },
+            { input: new Date(1999, 11), expected: '1999-12' },
+            { input: new Date(2000, 0), expected: '2000-01' },
+        ];
+
+        testCases.forEach(({ input, expected }) => {
+            let dateObject = dateToDateObject(input)
+            expect(getYearMonth(dateObject)).toBe(expected);
+        });
+    });
+
+    it('should handle month values with single digits', () => {
+        const dateObject: DateObject = dateToDateObject(new Date(2023, 4));
+        expect(getYearMonth(dateObject)).toBe('2023-05');
+    });
+
+    it('should handle month values with two digits', () => {
+        const dateObject: DateObject = dateToDateObject(new Date(2023, 9));
+        expect(getYearMonth(dateObject)).toBe('2023-10');
+    });
+});
+
+
+describe('getYearMonthVerbose', () => {
+
+    it('should return full month name by default', () => {
+        const date: DateObject = dateToDateObject(new Date(2023, 9));
+        expect(getYearMonthVerbose(date)).toBe('October 2023');
+    });
+
+    it('should return abbreviated month name when specified', () => {
+        const date: DateObject = dateToDateObject(new Date(2023, 9));
+        expect(getYearMonthVerbose(date, true)).toBe('Oct 2023');
+    });
+
+    it('should handle all months correctly', () => {
+        for (let i = 0; i < 12; i++) {
+            const date: DateObject = dateToDateObject(new Date(2023, i));
+            expect(getYearMonthVerbose(date)).toBe(`${MONTHS[i]} 2023`);
+            expect(getYearMonthVerbose(date, true)).toBe(`${MONTHS_ABBREVIATED[i]} 2023`);
+        }
     });
 
 });

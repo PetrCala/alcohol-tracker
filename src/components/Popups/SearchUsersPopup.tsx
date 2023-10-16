@@ -44,26 +44,32 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
   requestStatus,
   alreadyAFriend
 }) => {
+  const statusToTextMap = {
+    "friend" :"Already a friend",
+    "sent": "Waiting for a response",
+    "received": "Accept friend request",
+    "undefined": "Send a friend request",
+  };
   return (
     // Refactor this part using AI later
     <View style={styles.sendFriendRequestContainer}>
       {alreadyAFriend ?
-      <Text style={styles.sendFriendRequestText}>Already a friend</Text>
+      <Text style={styles.sendFriendRequestText}>{statusToTextMap.friend}</Text>
       : requestStatus === "sent" ?
-      <Text style={styles.sendFriendRequestText}>Waiting for a response</Text>
+      <Text style={styles.sendFriendRequestText}>{statusToTextMap.sent}</Text>
       : requestStatus === "received" ?
       <TouchableOpacity 
         style={styles.acceptFriendRequestButton}
         onPress={() => acceptFriendRequest(db, userFrom, userTo)}
       >
-        <Text style={styles.sendFriendRequestText}>Accept friend request</Text>
+        <Text style={styles.sendFriendRequestText}>{statusToTextMap.received}</Text>
       </TouchableOpacity>
       :
       <TouchableOpacity 
         style={styles.sendFriendRequestButton}
         onPress={() => sendFriendRequest(db, userFrom, userTo)}
       >
-        <Text style={styles.sendFriendRequestText}>Send friend request</Text>
+        <Text style={styles.sendFriendRequestText}>{statusToTextMap.undefined}</Text>
       </TouchableOpacity>
       }
     </View>
@@ -125,13 +131,6 @@ const SearchUsersPopup = (props: InputTextPopupProps) => {
       setRequestStatuses([]);
       setNoUsersFound(false);
     };
-
-    const statusToTextMap = {
-      "sent": "Waiting for a response",
-      "received": "Accept friend request",
-    };
-
-
   
     if (!db || !user) return;
 
