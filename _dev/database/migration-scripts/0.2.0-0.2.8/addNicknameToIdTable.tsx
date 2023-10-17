@@ -40,11 +40,15 @@ export const updateAllNicknameToIdData = async (adminDb: any) => {
         throw new Error("Refactorization test failed.");
     }
 
+    console.log("Converting nicknames to IDs and saving to database...")
     const allUserIds = await getAllUserIds(adminDb);
     for (let i = 0; i < allUserIds.length; i++) {
+        let verboseIdx = i + 1;
+        console.log("Processing "+ verboseIdx + "/" + allUserIds.length)
         let userId = allUserIds[i];
         await addUserNicknameToIdData(adminDb, userId);
     }
+    console.log("All nicknames converted and saved successfully")
 };
 
 export default updateAllNicknameToIdData;

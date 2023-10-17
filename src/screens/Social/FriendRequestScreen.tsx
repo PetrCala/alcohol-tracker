@@ -65,7 +65,7 @@ const FriendRequest = (props: FriendRequestProps) => {
           ]}
           onPress = {() => handleAcceptFriendRequest(db, user.uid, requestId)}
         >
-          <Text style={styles.handleRequestText}>Accept</Text>
+          <Text style={styles.handleRequestButtonText}>Accept</Text>
         </TouchableOpacity>
         <TouchableOpacity 
           key={requestId+'-reject-request-button'}
@@ -75,7 +75,7 @@ const FriendRequest = (props: FriendRequestProps) => {
           ]}
           onPress = {() => handleRejectFriendRequest(db, user.uid, requestId)}
         >
-          <Text style={styles.handleRequestText}>Remove</Text>
+          <Text style={styles.handleRequestButtonText}>Remove</Text>
         </TouchableOpacity>
       </View>
     )
@@ -139,7 +139,10 @@ const FriendRequestScreen = (props:ScreenProps) => {
 
   return (
   <View style={styles.mainContainer}>
-    <ScrollView style={styles.scrollViewContainer}>
+    <ScrollView 
+      style={styles.scrollViewContainer}
+      keyboardShouldPersistTaps="handled"
+    >
       {isNonEmptyObject(friendRequests) ?
       <View style={styles.friendList}>
         {Object.keys(friendRequests).map(requestId => (
@@ -159,7 +162,7 @@ const FriendRequestScreen = (props:ScreenProps) => {
       <SearchUsersPopup
         visible={searchUsersModalVisible}
         transparent={true}
-        message={"Send a friend request to:"}
+        message={"Search users"}
         placeholder={"Nickname"}
         onRequestClose={handleSearchModalClose}
       />
@@ -200,17 +203,12 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 3,
   },
   friendRequestContainer: {
-    width: '95%',
+    width: '100%',
     flexDirection: 'row',
     backgroundColor: 'white',
-    borderWidth: 1,
-    borderColor: 'black',
-    borderRadius: 5,
-    margin: 2,
-    padding: 2,
+    padding: 5,
   },
   friendRequestProfile: {
     width: '60%',
@@ -218,17 +216,18 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     padding: 5,
+    paddingTop: 7
   },
   friendRequestImage: {
-    width: 30,
-    height: 30,
+    width: 70,
+    height: 70,
     padding: 5,
   },
   friendRequestText: {
     color: 'black',
-    fontSize: 13,
+    fontSize: 16,
     fontWeight: '400',
-    marginLeft: 5,
+    marginLeft: 10,
   },
   friendRequestButtonsContainer: {
     width: '40%',
@@ -239,7 +238,7 @@ const styles = StyleSheet.create({
   },
   handleRequestButton: {
     width: '50%',
-    height: 50,
+    height: 40,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 5,
@@ -252,11 +251,15 @@ const styles = StyleSheet.create({
   rejectRequestButton: {
     backgroundColor: 'red',
   },
+  handleRequestButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '400',
+  },
   handleRequestText: {
     color: 'black',
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '400',
-    textAlign: 'center',
   },
   friendRequestPendingContainer: {
     width: '40%',

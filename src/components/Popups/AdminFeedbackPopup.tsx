@@ -13,9 +13,9 @@ import {
 import { AdminFeedbackPopupProps } from '../../types/components';
 import { FeedbackData, FeedbackProps } from '../../types/database';
 import { formatDateToDay, formatDateToTime, timestampToDate } from '../../utils/dataHandling';
-import DatabaseContext from '../../context/FirebaseContext';
 import { removeFeedback } from '../../database/feedback';
 import { fetchNicknameByUID } from '../../database/baseFunctions';
+import { useFirebase } from '../../context/FirebaseContext';
 
 
 const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
@@ -26,7 +26,7 @@ const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
     feedbackData
   } = props;
   const [nicknames, setNicknames] = useState<{ [key: string]: string }>({});
-  const db = useContext(DatabaseContext);
+  const { db } = useFirebase();
   if (!db) return null;
 
   const feedbackDataArray =  Object.entries(feedbackData).map(([feedback_id, feedbackProps]) => ({

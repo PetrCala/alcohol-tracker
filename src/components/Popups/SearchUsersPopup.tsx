@@ -136,14 +136,18 @@ const SearchUsersPopup = (props: InputTextPopupProps) => {
       setRequestStatuses(newUsersStatus);
     };
 
-    const handleCancelButtonPress = () => {
+    const resetSearch = () => {
       // Reset all values displayed on screen
-      onRequestClose();
       setSearchText('');
       setSearchResultData({});
       setRequestStatuses([]);
       setDisplayData({});
       setNoUsersFound(false);
+    };
+
+    const handleCancelButtonPress = () => {
+      onRequestClose(); // Set the modal invisible
+      resetSearch();
     };
 
     if (!db || !user) return;
@@ -169,6 +173,19 @@ const SearchUsersPopup = (props: InputTextPopupProps) => {
                   keyboardType="default"
                   textContentType="nickname"
               />
+              {searchText !== '' ? 
+                <TouchableOpacity 
+                  onPress={() => resetSearch()}
+                  style={styles.searchTextResetContainer}
+                >
+                  <Image
+                  style={styles.searchTextResetImage}
+                  source={require('../../../assets/icons/thin_x.png')}
+                  />
+                </TouchableOpacity>
+                :
+                <></>
+              }
             </View>
             <View style={styles.searchButtonContainer}>
                 <TouchableOpacity style={styles.searchButton} onPress={() => doSearch(db, searchText)}>
@@ -256,8 +273,9 @@ const styles = StyleSheet.create({
   textContainer: {
     width: '100%',
     height: 50,
-    alignItems: 'flex-start',
-    justifyContent: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     borderWidth: 2,
     borderColor: '#000',
     borderRadius: 10,
@@ -265,17 +283,28 @@ const styles = StyleSheet.create({
     marginTop: 15,
     marginBottom: 5,
   },
+  searchText: {
+    height: '100%',
+    width: '90%',
+    padding: 10,
+    marginTop: 5,
+    marginBottom: 5,
+  },
+  searchTextResetContainer: {
+    width: '10%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  searchTextResetImage: {
+    width: 15,
+    height: 15,
+    tintColor: 'gray',
+  },
   searchButtonContainer: {
     width: '100%',
     flexDirection: 'column',
     alignItems: 'center',
-  },
-  searchText: {
-    height: '100%',
-    width: '100%',
-    padding: 10,
-    marginTop: 5,
-    marginBottom: 5,
   },
   searchResultsContainer: {
     width: '100%',
@@ -300,6 +329,7 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'column',
     alignItems: 'center',
+    marginTop: 5,
   },
   noUsersFoundText: {
     color: 'black',
