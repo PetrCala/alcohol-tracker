@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { getAuth, updateProfile } from 'firebase/auth';
 import { signUpUserWithEmailAndPassword } from '../auth/auth';
-import DatabaseContext from '../context/DatabaseContext';
+import { useFirebase } from '../context/FirebaseContext';
 import { SignUpScreenProps } from '../types/screens';
 import { pushNewUserInfo } from '../database/users';
 import { readDataOnce } from '../database/baseFunctions';
@@ -29,7 +29,7 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
   if (!route || ! navigation) return null; // Should never be null
   const { loginEmail } = route.params; // To avoid reduncancy
   const auth = getAuth();
-  const db = useContext(DatabaseContext);
+  const { db } = useFirebase();
   const { isOnline } = useUserConnection();
   const [email, setEmail] = useState(loginEmail);
   const [username, setUsername] = useState('');

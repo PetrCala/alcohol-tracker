@@ -10,7 +10,6 @@ import MenuIcon from '../components/Buttons/MenuIcon';
 import { SettingsScreenProps } from '../types/screens';
 import { getAuth } from 'firebase/auth';
 import { useUserConnection } from '../context/UserConnectionContext';
-import DatabaseContext from '../context/DatabaseContext';
 import UserOffline from '../components/UserOffline';
 import BasicButton from '../components/Buttons/BasicButton';
 import { getDatabase } from 'firebase/database';
@@ -40,7 +39,6 @@ const SettingsScreen = ({ route, navigation }: SettingsScreenProps) => {
   const { preferences } = getDatabaseData();
   const auth = getAuth();
   const user = auth.currentUser;
-  const db = useContext(DatabaseContext);
   const { isOnline } = useUserConnection();
 
   // Automatically navigate to login screen if login expires

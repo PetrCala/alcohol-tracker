@@ -11,7 +11,7 @@ import {
   Image, 
 } from 'react-native';
 import { ProfileDisplayData, FriendRequestStatus, NicknameToIdData, ProfileData } from '../../types/database';
-import DatabaseContext from '../../context/DatabaseContext';
+import { useFirebase } from '../../context/FirebaseContext';
 import { Database } from 'firebase/database';
 import { searchDbByNickname } from '../../database/search';
 import UserOverview from '../UserOverview';
@@ -91,7 +91,7 @@ const SearchUsersPopup = (props: InputTextPopupProps) => {
         placeholder,
         onRequestClose, 
     } = props;
-    const db = useContext(DatabaseContext);
+    const { db } = useFirebase();
     const auth = getAuth();
     const user = auth.currentUser;
     const { userData } = getDatabaseData();

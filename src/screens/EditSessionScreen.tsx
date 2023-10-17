@@ -18,7 +18,7 @@ import MenuIcon from '../components/Buttons/MenuIcon';
 import BasicButton from '../components/Buttons/BasicButton';
 import { EditSessionScreenProps} from '../types/screens';
 import { DrinkingSessionArrayItem, DrinkingSessionData, UnitTypesKeys, UnitTypesProps, UnitsObject } from '../types/database';
-import DatabaseContext from '../context/DatabaseContext';
+import { useFirebase } from '../context/FirebaseContext';
 import { removeDrinkingSessionData, editDrinkingSessionData } from '../database/drinkingSessions';
 import SessionUnitsInputWindow from '../components/Buttons/SessionUnitsInputWindow';
 import { addUnits, dateToDateObject, formatDateToDay, formatDateToTime, removeUnits, removeZeroObjectsFromSession, sumAllPoints, sumAllUnits, sumUnitsOfSingleType, timestampToDate, unitsToColors } from '../utils/dataHandling';
@@ -59,7 +59,7 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
     const sessionDate = timestampToDate(session.start_time);
     const sessionDay = formatDateToDay(sessionDate);
     const sessionStartTime = formatDateToTime(sessionDate);
-    const db = useContext(DatabaseContext);
+    const { db } = useFirebase();
       // Other
     const [monkeMode, setMonkeMode] = useState<boolean>(false);
     const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);

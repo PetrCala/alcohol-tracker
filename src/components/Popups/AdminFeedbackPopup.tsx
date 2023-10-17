@@ -13,7 +13,7 @@ import {
 import { AdminFeedbackPopupProps } from '../../types/components';
 import { FeedbackData, FeedbackProps } from '../../types/database';
 import { formatDateToDay, formatDateToTime, timestampToDate } from '../../utils/dataHandling';
-import DatabaseContext from '../../context/DatabaseContext';
+import DatabaseContext from '../../context/FirebaseContext';
 import { removeFeedback } from '../../database/feedback';
 import { fetchNicknameByUID } from '../../database/baseFunctions';
 

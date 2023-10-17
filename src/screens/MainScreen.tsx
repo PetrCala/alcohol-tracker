@@ -18,7 +18,6 @@ import BasicButton from '../components/Buttons/BasicButton';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import SessionsCalendar from '../components/Calendar';
 import LoadingData from '../components/LoadingData';
-import DatabaseContext from '../context/DatabaseContext';
 import { DrinkingSessionArrayItem } from '../types/database';
 import { MainScreenProps } from '../types/screens';
 import { DateObject } from '../types/components';
@@ -31,12 +30,13 @@ import { saveDrinkingSessionData, updateCurrentSessionKey } from '../database/dr
 import { getDatabaseData } from '../context/DatabaseDataContext';
 import commonStyles from '../styles/commonStyles';
 import ItemListPopup from '../components/Popups/ItemListPopup';
+import { useFirebase } from '../context/FirebaseContext';
 
 const MainScreen = ( { navigation }: MainScreenProps) => {
   // Context, database, and authentification
   const auth = getAuth();
   const user = auth.currentUser;
-  const db = useContext(DatabaseContext);
+  const { db } = useFirebase();
   const { isOnline } = useUserConnection();
   const { 
     currentSessionData,
@@ -139,6 +139,7 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
   if (isLoading || loadingNewSession) return <LoadingData loadingText={loadingNewSession ? 'Starting a new session...' : ''} />;
   if (!db || !preferences || !drinkingSessionData || !userData) return;
 
+
   return ( 
     <>
       <View style={commonStyles.mainHeader}>
@@ -149,7 +150,11 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
             >
               <MenuIcon 
                 iconId='profile-icon'
-                iconSource={require('../../assets/temp/user.png')}  // user.photoURL;
+                iconSource={
+                  userData?.profile.photo_url && userData?.profile.photo_url !== '' ?
+                  {uri: userData.profile.photo_url}:
+                  require('../../assets/temp/user.png')
+                }  // user.photoURL;
                 containerStyle={styles.profileIconContainer}
                 iconStyle={styles.profileIcon}
                 onPress = {() => navigation.navigate('App', {screen: 'Profile Screen'})}

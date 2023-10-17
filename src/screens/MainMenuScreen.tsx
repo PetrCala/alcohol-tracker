@@ -15,7 +15,6 @@ import {
 import MenuIcon from '../components/Buttons/MenuIcon';
 import YesNoPopup from '../components/Popups/YesNoPopup';
 import { EmailAuthProvider, UserCredential, deleteUser, getAuth, reauthenticateWithCredential, signOut } from 'firebase/auth';
-import DatabaseContext from '../context/DatabaseContext';
 import { deleteUserInfo, reauthentificateUser } from '../database/users';
 import FeedbackPopup from '../components/Popups/FeedbackPopup';
 import { submitFeedback } from '../database/feedback';
@@ -29,6 +28,7 @@ import { useUserConnection } from '../context/UserConnectionContext';
 import { getDatabaseData } from '../context/DatabaseDataContext';
 import ItemListPopup from '../components/Popups/ItemListPopup';
 import commonStyles from '../styles/commonStyles';
+import { useFirebase } from '../context/FirebaseContext';
 
 const MenuItem: React.FC<MainMenuItemProps> = ({
     heading,
@@ -54,7 +54,7 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
   // Context, database, and authentification
   const auth = getAuth();
   const user = auth.currentUser;
-  const db = useContext(DatabaseContext);
+  const { db } = useFirebase();
   const { isOnline } = useUserConnection();
   if (!user) return null;
   // Hooks
@@ -82,7 +82,7 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
   const handleDeleteUser = async (password:string) => {
     if (!db || !userData) return;
     // Reauthentificate the user
-    let authentificationResult:UserCredential|null = null;
+    let authentificationResult:void|UserCredential;
     try {
       authentificationResult = await reauthentificateUser(user, password);
     } catch (error:any){

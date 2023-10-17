@@ -6,11 +6,11 @@ import { Alert } from 'react-native';
 import ForceUpdateScreen from '../screens/ForceUpdateScreen';
 import { useUserConnection } from './UserConnectionContext';
 import UserOffline from '../components/UserOffline';
-import DatabaseContext from './DatabaseContext';
 import { readDataOnce } from '../database/baseFunctions';
 import { version } from '../../package.json';
 import WelcomeScreen from '../components/WelcomeScreen';
 import LoadingData from '../components/LoadingData';
+import { useFirebase } from './FirebaseContext';
 
 
 const initialState = {
@@ -38,7 +38,7 @@ type VersionManagementProviderProps = {
 
 export const VersionManagementProvider: React.FC<VersionManagementProviderProps> = ({ children }) => {
   const { isOnline } = useUserConnection();
-  const db = useContext(DatabaseContext);
+  const { db }= useFirebase();
   const [state, dispatch] = useReducer(reducer, initialState);
 
   async function checkAppVersion() {

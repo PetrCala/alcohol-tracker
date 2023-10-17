@@ -23,7 +23,6 @@ import {
     sumAllPoints
 } from '../utils/dataHandling';
 import { useContext } from 'react';
-import DatabaseContext from '../context/DatabaseContext';
 import LoadingData from '../components/LoadingData';
 import { DrinkingSessionProps, DrinkingSessionData, DrinkingSessionArrayItem, PreferencesData } from '../types/database';
 import { DayOverviewScreenProps } from '../types/screens';
@@ -44,7 +43,6 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
     const { dateObject } = route.params; // Params for navigation
     const auth = getAuth();
     const user = auth.currentUser;
-    const db = useContext(DatabaseContext);
     const { isOnline } = useUserConnection();
     const { 
       drinkingSessionData, 

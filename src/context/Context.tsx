@@ -1,21 +1,21 @@
 ﻿import { ReactNode } from "react";
-import DatabaseContext from "./DatabaseContext";
+import { FirebaseProvider } from "./FirebaseContext";
 import { UserConnectionProvider } from "./UserConnectionContext";
 import { VersionManagementProvider } from "./VersionContext";
-import { Database } from "firebase/database";
+import { FirebaseApp } from "firebase/app";
 
 
 type ContextProviderProps = {
-    db: Database;
+    app: FirebaseApp;
     children: ReactNode;
 };
 
-export const ContextProvider:React.FC<ContextProviderProps>  = ({ db, children }) => (
-    <DatabaseContext.Provider value={db}>
+export const ContextProvider:React.FC<ContextProviderProps>  = ({ app, children }) => (
+    <FirebaseProvider app={app}>
       <UserConnectionProvider>
         <VersionManagementProvider>
           {children}
         </VersionManagementProvider>
       </UserConnectionProvider>
-    </DatabaseContext.Provider>
+    </FirebaseProvider>
   );

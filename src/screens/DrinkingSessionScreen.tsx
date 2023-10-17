@@ -18,7 +18,7 @@ import {
 import MenuIcon from '../components/Buttons/MenuIcon';
 import BasicButton from '../components/Buttons/BasicButton';
 import { DrinkingSessionScreenProps } from '../types/screens';
-import DatabaseContext from '../context/DatabaseContext';
+import { useFirebase } from '../context/FirebaseContext';
 import { 
   removeDrinkingSessionData, 
   saveDrinkingSessionData, 
@@ -49,7 +49,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
   // Context, database, and authentification
   const auth = getAuth();
   const user = auth.currentUser;
-  const db = useContext(DatabaseContext);
+  const { db } = useFirebase();
   const { isOnline } = useUserConnection();
   // Units
   const [currentUnits, setCurrentUnits] = useState<UnitsObject>(session.units);

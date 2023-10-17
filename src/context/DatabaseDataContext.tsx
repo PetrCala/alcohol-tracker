@@ -1,11 +1,11 @@
 ﻿// DatabaseDataContext.tsx
 import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
 import { CurrentSessionData, DrinkingSessionArrayItem, DrinkingSessionData, PreferencesData, UnconfirmedDaysData, UserData } from '../types/database';
-import DatabaseContext from './DatabaseContext';
 import { getAuth } from 'firebase/auth';
 import { listenForDataChanges } from '../database/baseFunctions';
 import { isEqual } from 'lodash';
 import LoadingData from '../components/LoadingData';
+import { useFirebase } from './FirebaseContext';
 
 type DatabaseDataContextType = {
   currentSessionData: CurrentSessionData | null;
@@ -41,7 +41,7 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
 }) => {
     const auth = getAuth();
     const user = auth.currentUser;
-    const db = useContext(DatabaseContext);
+    const { db } = useFirebase();
     // Database data hooks
     const [currentSessionData, setCurrentSessionData] = useState<CurrentSessionData | null>(null);
     const [drinkingSessionData, setDrinkingSessionData] = useState<DrinkingSessionArrayItem[]>([]);

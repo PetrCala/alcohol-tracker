@@ -11,7 +11,7 @@
 import { FriendRequestData, ProfileDisplayData, FriendRequestStatus, ProfileData, UserData } from '../../types/database';
 import { useContext, useEffect, useState } from 'react';
 import SearchUsersPopup from '../../components/Popups/SearchUsersPopup';
-import DatabaseContext from '../../context/DatabaseContext';
+import { useFirebase } from '../../context/FirebaseContext';
 import { fetchUserProfiles } from '../../database/profile';
 import { acceptFriendRequest, deleteFriendRequest } from '../../database/friends';
 import { getAuth } from 'firebase/auth';
@@ -34,7 +34,7 @@ const FriendRequest = (props: FriendRequestProps) => {
   const { requestId, requestStatus, profileData } = props;
   const auth = getAuth();
   const user = auth.currentUser;
-  const db = useContext(DatabaseContext);
+  const { db } = useFirebase();
 
   const handleAcceptFriendRequest = async (db:Database, userId:string, requestId: string):Promise<void> => {
     try {
@@ -118,7 +118,7 @@ const FriendRequest = (props: FriendRequestProps) => {
 
 const FriendRequestScreen = (props:ScreenProps) => {
   const {userData} = props;
-  const db = useContext(DatabaseContext);
+  const { db } = useFirebase();
   const [friendRequests, setFriendRequests] = useState<FriendRequestData>(userData ? userData?.friend_requests : {});
   const [loadingDisplayData, setLoadingDisplayData] = useState<boolean>(false);
   const [displayData, setDisplayData] = useProfileDisplayData({

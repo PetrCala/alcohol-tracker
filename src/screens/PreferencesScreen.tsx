@@ -14,7 +14,7 @@ import MenuIcon from '../components/Buttons/MenuIcon';
 import { PreferencesScreenProps } from '../types/screens';
 import { getAuth } from 'firebase/auth';
 import { useUserConnection } from '../context/UserConnectionContext';
-import DatabaseContext from '../context/DatabaseContext';
+import { useFirebase } from '../context/FirebaseContext';
 import UserOffline from '../components/UserOffline';
 import BasicButton from '../components/Buttons/BasicButton';
 import { PreferencesData, UnitTypesKeys, UnitTypesNames, UnitTypesProps, UnitsToColorsData } from '../types/database';
@@ -66,7 +66,7 @@ const PreferencesScreen = ({ route, navigation }: PreferencesScreenProps) => {
     if (!route || ! navigation) return null; // Should never be null
     const auth = getAuth();
     const user = auth.currentUser;
-    const db = useContext(DatabaseContext);
+    const { db } = useFirebase();
     const { isOnline } = useUserConnection();
     const { userData, preferences } = getDatabaseData();
     const initialPreferences = useRef(preferences);

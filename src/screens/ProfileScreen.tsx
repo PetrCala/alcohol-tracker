@@ -13,7 +13,6 @@ import MenuIcon from '../components/Buttons/MenuIcon';
 import BasicButton from '../components/Buttons/BasicButton';
 import commonStyles from '../styles/commonStyles';
 
-import DatabaseContext from '../context/DatabaseContext';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 type ProfileProps = {
@@ -24,7 +23,6 @@ const ProfileScreen = (props: ProfileProps) => {
   const { navigation } = props;
   const auth = getAuth();
   const user = auth.currentUser;
-  const db = useContext(DatabaseContext);
 
   // const handleButtonPress = () => {
   //   console.log('hi')

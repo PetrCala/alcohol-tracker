@@ -10,7 +10,7 @@ import { FriendIds, FriendsData, UserData } from "../../types/database";
 import UserOverview from '../../components/UserOverview';
 import useProfileDisplayData from '../../hooks/useProfileDisplayData';
 import { useContext, useEffect, useState } from 'react';
-import DatabaseContext from '../../context/DatabaseContext';
+import { useFirebase } from '../../context/FirebaseContext';
 import { isNonEmptyObject } from '../../utils/validation';
 import LoadingData from '../../components/LoadingData';
 
@@ -37,7 +37,7 @@ type ScreenProps = {
 
 const FriendListScreen = (props:ScreenProps) => {
   const {userData} = props;
-  const db = useContext(DatabaseContext);
+  const { db } = useFirebase();
   const [friends, setFriends] = useState<FriendsData>(userData ? userData?.friends : {});
   const [loadingDisplayData, setLoadingDisplayData] = useState<boolean>(false);
   const [displayData, setDisplayData] = useProfileDisplayData({
