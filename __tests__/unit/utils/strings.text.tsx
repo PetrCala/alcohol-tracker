@@ -1,33 +1,42 @@
 ﻿import { cleanStringForFirebaseKey } from '../../../src/utils/strings';
 
 describe('cleanStringForFirebaseKey', () => {
-  it('should replace sequences of invalid characters and/or whitespaces with a single underscore', () => {
-    const input = ".#   []$";
+
+  const testCleanString = (input: string, expected: string) => {
     const output = cleanStringForFirebaseKey(input);
-    expect(output).toBe("_");
+    expect(output).toBe(expected);
+  };
+
+  it('should replace sequences of invalid characters and/or whitespaces with a single underscore', () => {
+    testCleanString(".#   []$", "_");
   });
 
   it('should handle strings with interspersed valid characters correctly', () => {
-    const input = "John .#[]$ Doe";
-    const output = cleanStringForFirebaseKey(input);
-    expect(output).toBe("john_doe");
+    testCleanString("John .#[]$ Doe", "john_doe");
   });
 
   it('should handle empty strings', () => {
-    const input = "";
-    const output = cleanStringForFirebaseKey(input);
-    expect(output).toBe("");
+    testCleanString("", "_");
   });
 
   it('should handle strings without invalid characters or spaces', () => {
-    const input = "JohnDoe";
-    const output = cleanStringForFirebaseKey(input);
-    expect(output).toBe("johndoe");
+    testCleanString("JohnDoe", "johndoe");
   });
 
   it('should handle only spaces', () => {
-    const input = "   ";
-    const output = cleanStringForFirebaseKey(input);
-    expect(output).toBe("_");
+    testCleanString("   ", "_");
   });
+
+  it('should handle strings with diacritics', () => {
+    testCleanString("Jöhn Doe éšč", "john_doe_esc");
+  });
+
+  it('should handle spaces at the beginning/end', () => {
+    testCleanString(" John Doe", "john_doe");
+  });
+
+  it('should handle a complex case', () => {
+    testCleanString("John.Doe #1 č ", "john_doe_1_c");
+  });
+
 });

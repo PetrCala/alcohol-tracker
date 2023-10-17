@@ -6,6 +6,8 @@
  * The function will:
  * 1.Replace any sequence of characters in the 'invalidChars' array or whitespace with a single underscore.
  * 2. Remove any white space from the string.
+ * 3. Remove any diacritics.
+ * 3. If the string is empty, an underscore will be returned
  * 
  * This ensures that for any given input string, the cleaned result is consistent,
  * enabling it to be reliably used as a key in the database.
@@ -14,20 +16,22 @@
  * @returns {string} - The cleaned string.
  * 
  * @example
- * const rawNickname = "John.Doe #1";
+ * const rawNickname = "John.Doe #1 č ";
  * const key = cleanStringForFirebaseKey(rawNickname);
- * console.log(key);  // Outputs: "john_doe_1"
+ * console.log(key);  // Outputs: "john_doe_1_c"
  */
 export function cleanStringForFirebaseKey(rawStr: string): string {
-    // List of invalid characters.
+    // Trim spaces and normalize the string to its canonical decomposed form.
+    const normalizedStr = rawStr.trim().normalize('NFD');
 
-    // First replace invalid characters with an underscore.
-    let intermediateStr = rawStr.split('').map(char => 
-        invalidChars.includes(char) ? '_' : char
+    // Remove diacritical marks and replace invalid characters or whitespace with an underscore.
+    const intermediateStr = normalizedStr.replace(/[\u0300-\u036f]/g, '').split('').map(char => 
+        invalidChars.includes(char) || char.trim() === '' ? '_' : char
     ).join('');
 
-    // Now, replace any sequence of underscores and/or whitespaces with a single underscore.
+    // Replace any sequence of underscores and/or whitespaces with a single underscore and convert to lowercase.
     const cleanedStr = intermediateStr.replace(/[_\s]+/g, '_').toLowerCase();
 
-    return cleanedStr;
+    // If the cleaned string is empty or just "_", return "_". Otherwise, remove trailing underscores.
+    return cleanedStr === '' || cleanedStr === '_' ? '_' : cleanedStr.replace(/_+$/, '');
 }
