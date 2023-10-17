@@ -3,6 +3,7 @@ import { PreferencesData, UserData, UnitsToColorsData, UnitTypesProps, ProfileDa
 import { appInBeta } from "../utils/static";
 import { EmailAuthProvider, User, UserCredential, reauthenticateWithCredential } from "firebase/auth";
 import { Alert } from "react-native";
+import { cleanStringForFirebaseKey } from "../utils/strings";
 
 export const getDefaultPreferences = ():PreferencesData => {
   return {
@@ -70,12 +71,13 @@ export async function pushNewUserInfo(
  betaKeyId: string, // Beta feature
 ):Promise<void>{
   const userNickname = profileData.display_name;
+  const nicknameKey = cleanStringForFirebaseKey(userNickname);
   // Allowed types
   let updates: {
     [key:string]: UserData | PreferencesData | NicknameToIdData | any;
   } = {};
   // Nickname to ID
-  updates[`nickname_to_id/${userNickname}/${userId}`] = true;
+  updates[`nickname_to_id/${nicknameKey}/${userId}`] = userNickname;
   // User preferences
   updates[`user_preferences/${userId}`] = getDefaultPreferences();
   // Users
@@ -103,8 +105,9 @@ export async function deleteUserInfo(
  betaKeyId: string | undefined, // Beta feature
 ):Promise<void>{
   // Clean up friend lists and friend requests
+  const nicknameKey = cleanStringForFirebaseKey(userNickname);
   let updates: {[key:string]: null | false} = {}; 
-  updates[`nickname_to_id/${userNickname}/${userId}`] = null;
+  updates[`nickname_to_id/${nicknameKey}/${userId}`] = null;
   updates[`users/${userId}`] = null;
   updates[`user_current_session/${userId}`] = null;
   updates[`user_preferences/${userId}`] = null;

@@ -3,6 +3,7 @@ import { NicknameToIdData } from "../../../../src/types/database";
 import { modifyAndTestData } from "../../migrationTest";
 import { ref } from "firebase/database";
 import { getAllUserIds } from "../../../utils/various";
+import { cleanStringForFirebaseKey } from "../../../../src/utils/strings";
 
 export const addUserNicknameToIdData = async (db:any, userId: string):Promise<boolean> => {
     try {
@@ -12,8 +13,9 @@ export const addUserNicknameToIdData = async (db:any, userId: string):Promise<bo
         if (data) {
             const nickname = data.display_name;
             if (!nickname) return false;
-            const nicknameRef = `nickname_to_id/${nickname}/${userId}`
-            await db.ref(nicknameRef).set(true);
+            const nicknameKey = cleanStringForFirebaseKey(nickname);
+            const nicknameRef = `nickname_to_id/${nicknameKey}/${userId}`
+            await db.ref(nicknameRef).set(nickname);
             return true
         } else {
             console.log("Could not find data for user: " + userId);

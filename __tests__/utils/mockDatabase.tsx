@@ -1,6 +1,7 @@
 ﻿import { AppSettings, ConfigProps, CurrentSessionData, DatabaseProps, DrinkingSessionArrayItem, DrinkingSessionData, FeedbackData, FeedbackProps, FriendRequestData, FriendRequestStatus, FriendsData, NicknameToIdData, PreferencesData, ProfileData, UnconfirmedDaysData, UnitTypesProps, UnitsObject, UnitsToColorsData, UserData } from "../../src/types/database";
 import { getRandomChoice, getRandomInt } from "../../src/utils/choice";
 import { formatDate, getRandomUnitsObject, getZeroUnitsObject } from "../../src/utils/dataHandling";
+import { cleanStringForFirebaseKey } from "../../src/utils/strings";
 import { MOCK_SESSION_IDS, MOCK_USER_IDS } from "./testsStatic";
 
 
@@ -68,9 +69,10 @@ export function createMockFeedback():FeedbackProps {
  * @returns {NicknameToIdData} The mock object.
  */
 export function createMockNicknameToIdData(userId: string):NicknameToIdData{
-  return {
-    user_id: true,
+  const returnObject: NicknameToIdData = {
+    [userId]: 'mock nickname'
   };
+  return returnObject;
 };
 
 /** Create and return a mock current session object.
@@ -270,7 +272,8 @@ export function createMockDatabase(): DatabaseProps {
 
       // Nicknames to user ids
       let nickname = db.users[userId].profile.display_name
-      db.nickname_to_id[nickname] = createMockNicknameToIdData(userId);
+      let nickname_key = cleanStringForFirebaseKey(nickname);
+      db.nickname_to_id[nickname_key] = createMockNicknameToIdData(userId);
       
   });
   

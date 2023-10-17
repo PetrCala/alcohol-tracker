@@ -3,7 +3,7 @@ export type DatabaseProps = {
   config: ConfigProps,
   feedback: FeedbackData,
   nickname_to_id: {
-    [display_name: string]: NicknameToIdData
+    [nickname_key: string]: NicknameToIdData
   },
   user_current_session: {
     [user_id: string]: CurrentSessionData
@@ -42,7 +42,7 @@ export type FeedbackData = {
 }
 
 export type NicknameToIdData = {
-  [user_id: string]: boolean;
+  [user_id: string]: string; // User UID - Raw nickname pair
 };
 
 export type CurrentSessionData = {

@@ -1,4 +1,6 @@
-﻿import admin from './database/admin';
+﻿// Run the script using ts-node _dev/database/migration.tsx (install globally through npm install -g ts-node)
+
+import admin from './database/admin';
 import { assignAdminRole, listAllAdmins } from "./database/adminUtils";
 import { refactorPreferencesData, transformPreferencesData } from './database/migration-scripts/0.1.0-0.2.0/migratePreferences';
 import { PreferencesData } from '../src/types/database';
@@ -13,7 +15,7 @@ async function main() {
     try {
       // await refactorPreferencesData(adminDb);
       // await refactorUsersData(adminDb);
-      // await updateAllNicknameToIdData(adminDb) // Profile nickname to nickname_to_id
+      await updateAllNicknameToIdData(adminDb) // Profile nickname to nickname_to_id
   } catch (error) {
     console.error("An error occurred:", error);
   } finally {
