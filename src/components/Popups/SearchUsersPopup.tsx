@@ -249,7 +249,6 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   modalText: {
-    marginBottom: 15,
     textAlign: 'center',
     fontSize: 16,
     color: 'black',
@@ -263,6 +262,8 @@ const styles = StyleSheet.create({
     borderColor: '#000',
     borderRadius: 10,
     backgroundColor: 'white',
+    marginTop: 15,
+    marginBottom: 5,
   },
   searchButtonContainer: {
     width: '100%',
@@ -288,7 +289,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 2,
     borderColor: 'black',
-    margin: 5,
     alignItems: 'center',
   },
   searchButtonText: {
@@ -300,7 +300,6 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'column',
     alignItems: 'center',
-    marginTop: 15,
   },
   noUsersFoundText: {
     color: 'black',
@@ -311,7 +310,6 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#ffff99',
     padding: 6,
-    margin: 5,
     alignItems: 'center',
   },
   cancelButtonText: {
@@ -328,7 +326,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'black',
     borderRadius: 5,
-    margin: 2,
+    marginTop: 3,
+    marginBottom: 2,
     padding: 2,
   },
   userInfoContainer: {
