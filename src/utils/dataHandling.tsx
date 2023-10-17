@@ -559,4 +559,4 @@ export const findUnitName = (unitKey: typeof UnitTypesKeys[number]) => {
     return unitName;
 };
 
-// test get year-month, getAdjacentMonths, aggregatesessionsbydays, month entries to colors (move these maybe to a different location), calculatethismonthpoints, getabbreviatedyearmonth
+// test, getAdjacentMonths, aggregatesessionsbydays, month entries to colors (move these maybe to a different location), calculatethismonthpoints, getabbreviatedyearmonth
