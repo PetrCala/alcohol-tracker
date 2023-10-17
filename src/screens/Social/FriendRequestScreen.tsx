@@ -58,6 +58,7 @@ const FriendRequest = (props: FriendRequestProps) => {
     return(
       <View style={styles.friendRequestButtonsContainer}>
         <TouchableOpacity 
+          key={requestId+'-accept-request-button'}
           style={[
             styles.handleRequestButton,
             styles.acceptRequestButton
@@ -67,6 +68,7 @@ const FriendRequest = (props: FriendRequestProps) => {
           <Text style={styles.handleRequestText}>Accept</Text>
         </TouchableOpacity>
         <TouchableOpacity 
+          key={requestId+'-reject-request-button'}
           style={[
             styles.handleRequestButton,
             styles.rejectRequestButton
@@ -90,10 +92,10 @@ const FriendRequest = (props: FriendRequestProps) => {
   if (!profileData) return;
 
   return (
-    <View style={styles.friendRequestContainer}>
-      <View style={styles.friendRequestProfile}>
+    <View key={requestId+'-container'} style={styles.friendRequestContainer}>
+      <View key={requestId+'profile'} style={styles.friendRequestProfile}>
         <Image
-          key='profile-icon'
+          key={requestId+'-profile-icon'}
           style={styles.friendRequestImage}
           source={
             profileData?.photo_url && profileData?.photo_url !== '' ?
@@ -101,12 +103,12 @@ const FriendRequest = (props: FriendRequestProps) => {
             require('../../../assets/temp/user.png')
           }
         />
-        <Text key={'nickname'} style={styles.friendRequestText}>{profileData.display_name}</Text>
+        <Text key={requestId+'-nickname'} style={styles.friendRequestText}>{profileData.display_name}</Text>
       </View>
       {requestStatus === 'received' ?
-      <FriendRequestButtons key={'friend-request-buttons'}/>
+      <FriendRequestButtons key={requestId+'-friend-request-buttons'}/>
       : requestStatus === 'sent' ?
-      <FriendRequestPending key={'friend-request-pending'}/>
+      <FriendRequestPending key={requestId+'-friend-request-pending'}/>
       : 
       <></>
       }
@@ -140,11 +142,11 @@ const FriendRequestScreen = (props:ScreenProps) => {
     <ScrollView style={styles.scrollViewContainer}>
       {isNonEmptyObject(friendRequests) ?
       <View style={styles.friendList}>
-        {Object.keys(friendRequests).map((requestId, index) => (
+        {Object.keys(friendRequests).map(requestId => (
           loadingDisplayData ?
-          <LoadingData/> :
+          <LoadingData key={requestId+'-loading'}/> :
           <FriendRequest
-              key={index}
+              key={requestId+'-friend-request'}
               requestId={requestId}
               requestStatus={friendRequests[requestId]}
               profileData={displayData[requestId]}

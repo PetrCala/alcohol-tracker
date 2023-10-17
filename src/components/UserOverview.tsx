@@ -1,13 +1,12 @@
 ﻿import { StyleSheet, Text, View } from "react-native";
 
 type UserOverviewProps = {
-  index: any;
   userId: string;
   RightSideComponent: any // Add the correct type here
 }
 
 export const UserOverview = (props: UserOverviewProps) => {
-  const { index, userId, RightSideComponent } = props;
+  const { userId, RightSideComponent } = props;
   return (
     <View style={styles.userOverviewContainer}>
       <Text style={styles.userText}>{userId}</Text>

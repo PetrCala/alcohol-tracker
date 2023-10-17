@@ -33,7 +33,6 @@ export type InputTextPopupProps = {
 
 type SendFriendRequestButtonProps = {
   db:Database, 
-  index: number,
   userFrom: string,
   userTo: string,
   requestStatus: FriendRequestStatus | undefined;
@@ -42,7 +41,6 @@ type SendFriendRequestButtonProps = {
 
 const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
   db,
-  index,
   userFrom,
   userTo,
   requestStatus,
@@ -182,11 +180,11 @@ const SearchUsersPopup = (props: InputTextPopupProps) => {
               : isNonEmptyObject(searchResultData) ?
               Object.keys(searchResultData).map((userId, index) => (
                 loadingDisplayData ?
-                <LoadingData/> :
-                <View key={index} style={styles.userOverviewContainer}>
-                  <View style={styles.userInfoContainer}>
+                <LoadingData key={userId+'-loading'}/> :
+                <View key={userId+'-container'} style={styles.userOverviewContainer}>
+                  <View key={userId+'-profile'} style={styles.userInfoContainer}>
                     <Image
-                      key='profile-icon'
+                      key={userId+'-profile-icon'}
                       style={styles.userProfileImage}
                       source={
                         displayData[userId]?.photo_url && displayData[userId]?.photo_url !== '' ?
@@ -195,15 +193,15 @@ const SearchUsersPopup = (props: InputTextPopupProps) => {
                       }
                     />
                     <Text 
-                      key='nickname'
+                      key={userId+'-nickname'}
                       style={styles.userNicknameText}
                     >
                     {displayData[userId]?.display_name ? displayData[userId].display_name : "Unknown"}
                     </Text>
                   </View>
                   <SendFriendRequestButton 
+                    key={userId+'-request-button'}
                     db={db}
-                    index={index}
                     userFrom={user.uid}
                     userTo={userId}
                     requestStatus={requestStatuses[index]}

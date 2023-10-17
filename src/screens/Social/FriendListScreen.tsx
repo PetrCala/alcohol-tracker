@@ -55,11 +55,11 @@ const FriendListScreen = (props:ScreenProps) => {
     <ScrollView style={styles.scrollViewContainer}>
       {isNonEmptyObject(friends) ? 
       <View style={styles.friendList}>
-        {Object.keys(friends).map((friendId, index) => (
+        {Object.keys(friends).map(friendId => (
           loadingDisplayData ?
-          <LoadingData/> :
+          <LoadingData key={friendId+'-loading'}/> :
           <UserOverview
-            index={index}
+            key={friendId+'-user-overview'}
             userId={friendId}
             RightSideComponent={<></>}
           />
