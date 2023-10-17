@@ -19,6 +19,39 @@ import { FriendIds, FriendRequestStatus, UserData } from '../types/database';
 import { TabView, SceneMap } from 'react-native-tab-view';
 import FriendListScreen from './Social/FriendListScreen';
 import FriendRequestScreen from './Social/FriendRequestScreen';
+import SearchScreen from './Social/SearchScreen';
+
+
+type SocialFooterButtonProps = {
+  index: number;
+  currentIndex: number;
+  setImageIndex: (index: number) => void;
+  source: any;
+  label: string;
+};
+
+const SocialFooterButton: React.FC<SocialFooterButtonProps> = ({
+  index,
+  currentIndex,
+  setImageIndex,
+  source,
+  label,
+}) => {
+  return (
+    <View style={styles.footerPartContainer}>
+      <TouchableOpacity
+        style={[
+          styles.footerButton,
+          currentIndex === index ? { backgroundColor: '#ebeb02' } : {},
+        ]}
+        onPress={() => setImageIndex(index)}
+      >
+        <Image source={source} style={styles.footerImage} />
+        <Text style={styles.footerText}>{label}</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
 
 type SocialProps = {
   navigation: any;
@@ -30,13 +63,15 @@ type RouteType = {
   userData: UserData | null;
 };
 
+
 const SocialScreen = (props: SocialProps) => {
   const { navigation } = props;
   const { userData } = getDatabaseData();
   const userHasFriends = userData?.friends !== undefined;
-  const [index, setIndex] = useState<number>(userHasFriends === true ? 0 : 1); // Current screen index - defaults to friend requests in case of no friends
+  const [index, setIndex] = useState<number>(0); // Current screen index - defaults to friend requests in case of no friends
   const [routes] = useState([
     { key: 'friendList', title: 'Friend List', userData: userData},
+    { key: 'friendSearch', title: 'Friend Search', userData: userData},
     { key: 'friendRequests', title: 'Friend Requests', userData: userData},
   ]);
 
@@ -45,13 +80,36 @@ const SocialScreen = (props: SocialProps) => {
     if (!userData) return null;
     switch (route.key) {
       case 'friendList':
-        return <FriendListScreen userData={route.userData} />;
+        return <FriendListScreen 
+          userData={route.userData} 
+          setIndex={setIndex}
+        />;
+      case 'friendSearch':
+        return <SearchScreen userData={route.userData}/>;
       case 'friendRequests':
         return <FriendRequestScreen userData={route.userData}/>;
       default:
         return null;
     };
   }
+
+  const footerButtons = [
+    {
+      index: 0,
+      source: require('../../assets/icons/friend_list.png'),
+      label: 'Friend List',
+    },
+    {
+      index: 1,
+      source: require('../../assets/icons/search.png'),
+      label: 'Search',
+    },
+    {
+      index: 2,
+      source: require('../../assets/icons/add_user.png'),
+      label: 'Friend Requests',
+    },
+  ];
 
   if (!userData) return null;
 
@@ -79,36 +137,16 @@ const SocialScreen = (props: SocialProps) => {
         renderTabBar={() => null} // Do not render the default tab bar
       />
       <View style={commonStyles.mainFooter}>
-        <View style={styles.footerHalfContainer}>
-          <TouchableOpacity
-            style={[
-              styles.footerButton,
-              index === 0 ? { backgroundColor: '#ebeb02' } : {},
-            ]}
-            onPress={() => setIndex(0)}
-          >
-            <Image
-              source={require('../../assets/icons/friend_list.png')}
-              style={styles.footerImage}
-            />
-            <Text style={styles.footerText}>Friend List</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.footerHalfContainer}>
-          <TouchableOpacity
-            style={[
-              styles.footerButton,
-              index === 1 ? { backgroundColor: '#ebeb02' } : {},
-            ]}
-            onPress={() => setIndex(1)}
-          >
-            <Image
-              source={require('../../assets/icons/add_user.png')}
-              style={styles.footerImage}
-            />
-            <Text style={styles.footerText}>Friend Requests</Text>
-          </TouchableOpacity>
-        </View>
+        {footerButtons.map(button => (
+          <SocialFooterButton
+            key={button.index}
+            index={button.index}
+            currentIndex={index}
+            setImageIndex={setIndex}
+            source={button.source}
+            label={button.label}
+          />
+        ))}
       </View>
     </View>
   );
@@ -166,12 +204,12 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '400',
   },
-  footerHalfContainer: {
+  footerPartContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   footerButton: {
-    width: screenWidth * 0.5,
+    width: screenWidth / 3,
     height: '100%',
     flexDirection: 'column',
     justifyContent: 'center',

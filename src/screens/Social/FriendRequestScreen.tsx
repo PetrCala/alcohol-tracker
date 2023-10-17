@@ -127,11 +127,6 @@ const FriendRequestScreen = (props:ScreenProps) => {
     db: db,
     setLoadingDisplayData: setLoadingDisplayData
   });
-  const [searchUsersModalVisible, setSearchUsersModalVisible] = useState<boolean>(false);
-
-  const handleSearchModalClose = () => {
-    setSearchUsersModalVisible(false);
-  };
 
   useEffect(() => {
     if (!userData) return;
@@ -160,29 +155,7 @@ const FriendRequestScreen = (props:ScreenProps) => {
       :
       <></>
       }
-      <SearchUsersPopup
-        visible={searchUsersModalVisible}
-        transparent={true}
-        message={"Search users"}
-        placeholder={"Nickname"}
-        onRequestClose={handleSearchModalClose}
-      />
-      <FillerView/>
     </ScrollView>
-    <View style={styles.newRequestContainer}>
-        <TouchableOpacity
-            style={styles.newRequestButton}
-            onPress={() => setSearchUsersModalVisible(true)}
-        >
-            <Text style={styles.newRequestText}>
-                Add A Friend
-            </Text>
-            {/* <Image
-                source={require('../../../assets/icons/plus.png')}
-                style={styles.newRequestPlusSign}
-            /> */}
-        </TouchableOpacity>
-    </View>
   </View>
   );
 };

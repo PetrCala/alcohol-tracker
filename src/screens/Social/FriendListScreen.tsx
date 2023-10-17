@@ -21,6 +21,7 @@ import LoadingData from '../../components/LoadingData';
 
 type ScreenProps = {
   userData: UserData | null;
+  setIndex: React.Dispatch<React.SetStateAction<number>>;
 }
 
 // export const FriendOverview = (props: FriendOverviewProps) => {
@@ -36,7 +37,7 @@ type ScreenProps = {
 // };
 
 const FriendListScreen = (props:ScreenProps) => {
-  const {userData} = props;
+  const {userData, setIndex} = props;
   const { db } = useFirebase();
   const [friends, setFriends] = useState<FriendsData>(userData ? userData?.friends : {});
   const [loadingDisplayData, setLoadingDisplayData] = useState<boolean>(false);
@@ -66,7 +67,15 @@ const FriendListScreen = (props:ScreenProps) => {
         ))}
       </View>
       :
-      <></>
+      <View style={styles.emptyList}>
+        <Text style={styles.emptyListText}>You do not have any friends yet</Text>
+        <TouchableOpacity 
+          onPress={() => setIndex(1)}
+          style={styles.navigateToSearchButton}
+        >
+          <Text style={styles.navigateToSearchText}>Add them here</Text>
+        </TouchableOpacity>
+      </View>
       }
     </ScrollView>
   );
@@ -101,5 +110,33 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 13,
     fontWeight: '400',
+  },
+  emptyList: {
+    width: '100%',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyListText: {
+    color: 'black',
+    fontSize: 18,
+    fontWeight: '500',
+    padding: 20,
+  },
+  navigateToSearchButton: {
+    width: 150,
+    height: 50,
+    backgroundColor: 'white',
+    padding: 5,
+    borderColor: 'black',
+    borderWidth: 2,
+    borderRadius: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  navigateToSearchText: {
+    color: 'black',
+    fontSize: 16,
+    fontWeight: '500',
   },
 });
