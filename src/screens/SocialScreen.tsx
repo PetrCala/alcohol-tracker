@@ -106,7 +106,7 @@ const SocialScreen = (props: SocialProps) => {
               source={require('../../assets/icons/add_user.png')}
               style={styles.footerImage}
             />
-            <Text style={styles.footerText}>Add Friends</Text>
+            <Text style={styles.footerText}>Friend Requests</Text>
           </TouchableOpacity>
         </View>
       </View>

@@ -18,6 +18,7 @@ import { getAuth } from 'firebase/auth';
 import { isNonEmptyObject } from '../../utils/validation';
 import useProfileDisplayData from '../../hooks/useProfileDisplayData';
 import LoadingData from '../../components/LoadingData';
+import { Database } from 'firebase/database';
 
 type FriendRequestProps = {
   requestId: string; // Other user's ID
@@ -35,6 +36,22 @@ const FriendRequest = (props: FriendRequestProps) => {
   const user = auth.currentUser;
   const db = useContext(DatabaseContext);
 
+  const handleAcceptFriendRequest = async (db:Database, userId:string, requestId: string):Promise<void> => {
+    try {
+      await acceptFriendRequest(db, userId, requestId);
+    } catch (error:any){
+      Alert.alert("Friend request accept failed", "Could not accept the friend request: " + error.message);
+    };
+  };
+
+  const handleRejectFriendRequest = async (db:Database, userId:string, requestId: string):Promise<void> => {
+    try {
+      await deleteFriendRequest(db, userId, requestId);
+    } catch (error:any){
+      Alert.alert("Friend request accept failed", "Could not accept the friend request: " + error.message);
+    };
+  };
+
   if (!db || !user) return;
 
   const FriendRequestButtons = () => {
@@ -45,7 +62,7 @@ const FriendRequest = (props: FriendRequestProps) => {
             styles.handleRequestButton,
             styles.acceptRequestButton
           ]}
-          onPress = {() => acceptFriendRequest(db, user.uid, requestId)}
+          onPress = {() => handleAcceptFriendRequest(db, user.uid, requestId)}
         >
           <Text style={styles.handleRequestText}>Accept</Text>
         </TouchableOpacity>
@@ -54,7 +71,7 @@ const FriendRequest = (props: FriendRequestProps) => {
             styles.handleRequestButton,
             styles.rejectRequestButton
           ]}
-          onPress = {() => deleteFriendRequest(db, user.uid, requestId)}
+          onPress = {() => handleRejectFriendRequest(db, user.uid, requestId)}
         >
           <Text style={styles.handleRequestText}>Remove</Text>
         </TouchableOpacity>
@@ -194,7 +211,7 @@ const styles = StyleSheet.create({
     padding: 2,
   },
   friendRequestProfile: {
-    width: '70%',
+    width: '60%',
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
@@ -212,18 +229,20 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   friendRequestButtonsContainer: {
-    width: '50%',
+    width: '40%',
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
     alignItems: 'center',
     padding: 2,
   },
   handleRequestButton: {
-    width: 100,
+    width: '50%',
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 5,
+    marginLeft: 2,
+    marginRight: 2,
   },
   acceptRequestButton: {
     backgroundColor: 'green',
