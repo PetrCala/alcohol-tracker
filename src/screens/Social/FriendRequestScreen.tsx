@@ -259,10 +259,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   friendRequestPendingContainer: {
-    width: '25%',
+    width: '40%',
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
+    paddingRight: 10,
   },
   newRequestContainer: {
     position: 'absolute',
