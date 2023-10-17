@@ -41,6 +41,7 @@ import LoadingData from '../components/LoadingData';
 import { usePrevious } from '../hooks/usePrevious';
 import SuccessIndicator from '../components/SuccessIndicator';
 import commonStyles from '../styles/commonStyles';
+import FillerView from '../components/FillerView';
 
 const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps) => {
   // Navigation
@@ -360,7 +361,7 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
     />
     </>
     }
-    <View style={{height:200, backgroundColor: '#ffff99'}}></View>
+    <FillerView/>
     </ScrollView>
     <View style={styles.saveSessionDelimiter}/>
     <View style={styles.saveSessionContainer}>

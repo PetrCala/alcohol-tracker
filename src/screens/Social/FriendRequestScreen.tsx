@@ -19,6 +19,7 @@ import { isNonEmptyObject } from '../../utils/validation';
 import useProfileDisplayData from '../../hooks/useProfileDisplayData';
 import LoadingData from '../../components/LoadingData';
 import { Database } from 'firebase/database';
+import FillerView from '../../components/FillerView';
 
 type FriendRequestProps = {
   requestId: string; // Other user's ID
@@ -166,6 +167,7 @@ const FriendRequestScreen = (props:ScreenProps) => {
         placeholder={"Nickname"}
         onRequestClose={handleSearchModalClose}
       />
+      <FillerView/>
     </ScrollView>
     <View style={styles.newRequestContainer}>
         <TouchableOpacity
