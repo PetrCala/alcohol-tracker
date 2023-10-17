@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
 import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
+import { getStorage } from "firebase/storage"
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage'
 import firebaseConfig from "../firebaseConfig";
 
@@ -12,6 +13,8 @@ import Stack from './navigation/Stack';
 import { ContextProvider } from './context/Context';
 
 const app = initializeApp(firebaseConfig);
+
+const storage = getStorage(app);
 
 const db = getDatabase(app);
 
