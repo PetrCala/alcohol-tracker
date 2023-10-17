@@ -104,9 +104,9 @@ export async function deleteUserInfo(
  userNickname: string,
  betaKeyId: string | undefined, // Beta feature
 ):Promise<void>{
-  // Clean up friend lists and friend requests
   const nicknameKey = cleanStringForFirebaseKey(userNickname);
   let updates: {[key:string]: null | false} = {}; 
+  // Clean up friend requests
   updates[`nickname_to_id/${nicknameKey}/${userId}`] = null;
   updates[`users/${userId}`] = null;
   updates[`user_current_session/${userId}`] = null;
@@ -118,6 +118,8 @@ export async function deleteUserInfo(
     updates[`beta_keys/${betaKeyId}/in_usage`] = false;
     updates[`beta_keys/${betaKeyId}/user_id`] = null;
   };
+  // await cleanFriendRequests(db, userId);
+  // await cleanFriends(db, userId);
   await update(ref(db), updates)
 };
 

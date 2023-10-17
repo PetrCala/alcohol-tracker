@@ -1,5 +1,6 @@
 ﻿import { Database, ref, get } from "firebase/database";
 import { NicknameToIdData } from "../types/database";
+import { cleanStringForFirebaseKey } from "../utils/strings";
 
 
 /**
@@ -17,7 +18,8 @@ export async function searchDbByNickname(
     db:Database,
     nickname:string
 ):Promise<NicknameToIdData|null> {
-    const dbRef = ref(db, `nickname_to_id/${nickname}`)
+    const nicknameKey = cleanStringForFirebaseKey(nickname);
+    const dbRef = ref(db, `nickname_to_id/${nicknameKey}`)
     const snapshot = await get(dbRef);
     if(snapshot.exists()) {
         return snapshot.val(); // The nicknames

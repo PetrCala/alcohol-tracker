@@ -27,7 +27,7 @@ export function cleanStringForFirebaseKey(rawStr: string): string {
     ).join('');
 
     // Now, replace any sequence of underscores and/or whitespaces with a single underscore.
-    const cleanedStr = intermediateStr.replace(/[_\s]+/g, '_');
+    const cleanedStr = intermediateStr.replace(/[_\s]+/g, '_').toLowerCase();
 
     return cleanedStr;
 }

@@ -87,9 +87,9 @@ const FriendRequest = (props: FriendRequestProps) => {
         <Text key={'nickname'} style={styles.friendRequestText}>{profileData.display_name}</Text>
       </View>
       {requestStatus === 'received' ?
-      <FriendRequestButtons/>
+      <FriendRequestButtons key={'friend-request-buttons'}/>
       : requestStatus === 'sent' ?
-      <FriendRequestPending/>
+      <FriendRequestPending key={'friend-request-pending'}/>
       : 
       <></>
       }

@@ -109,7 +109,7 @@ const SearchUsersPopup = (props: InputTextPopupProps) => {
         if (!db || !nickname) return; // Input a value first alert
         setNoUsersFound(false);
         try {
-            const newSearchResults = await searchDbByNickname(db, nickname);
+            const newSearchResults = await searchDbByNickname(db, nickname); // Cleaned within the function
             if (newSearchResults) {
                 setSearchResultData(newSearchResults);
                 updateSearchedUsersStatus(newSearchResults);
