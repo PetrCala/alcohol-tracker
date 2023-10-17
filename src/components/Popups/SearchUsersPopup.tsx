@@ -48,6 +48,7 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
 }) => {
   
   const statusToTextMap = {
+    "self": "You",
     "friend" :"Already a friend",
     "sent": "Awaiting a response",
     "received": "Accept friend request",
@@ -57,7 +58,9 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
   return (
     // Refactor this part using AI later
     <View style={styles.sendFriendRequestContainer}>
-      {alreadyAFriend ?
+      {userFrom === userTo ?
+      <Text style={styles.sendFriendRequestText}>{statusToTextMap.self}</Text>
+      : alreadyAFriend ?
       <Text style={styles.sendFriendRequestText}>{statusToTextMap.friend}</Text>
       : requestStatus === "sent" ?
       <Text style={styles.sendFriendRequestText}>{statusToTextMap.sent}</Text>
@@ -181,6 +184,7 @@ const SearchUsersPopup = (props: InputTextPopupProps) => {
               Object.keys(searchResultData).map((userId, index) => (
                 loadingDisplayData ?
                 <LoadingData key={userId+'-loading'}/> :
+                // Perhaps abstract away the following into SearchResult
                 <View key={userId+'-container'} style={styles.userOverviewContainer}>
                   <View key={userId+'-profile'} style={styles.userInfoContainer}>
                     <Image
@@ -345,7 +349,7 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   sendFriendRequestContainer: {
-    width: 80,
+    width: 'auto',
     height: 40,
     justifyContent: 'center',
     alignItems: 'center',
@@ -376,5 +380,6 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: 'black',
     textAlign: 'center',
+    padding: 5,
   },
 });
