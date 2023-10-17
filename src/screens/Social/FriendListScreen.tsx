@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
   emptyListText: {
     color: 'black',
     fontSize: 18,
-    fontWeight: '500',
+    fontWeight: '400',
     padding: 20,
   },
   navigateToSearchButton: {

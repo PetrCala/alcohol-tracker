@@ -67,7 +67,7 @@ type RouteType = {
 const SocialScreen = (props: SocialProps) => {
   const { navigation } = props;
   const { userData } = getDatabaseData();
-  const userHasFriends = userData?.friends !== undefined;
+  // const userHasFriends = userData?.friends !== undefined;
   const [index, setIndex] = useState<number>(0); // Current screen index - defaults to friend requests in case of no friends
   const [routes] = useState([
     { key: 'friendList', title: 'Friend List', userData: userData},
@@ -124,7 +124,7 @@ const SocialScreen = (props: SocialProps) => {
           onPress={() => navigation.goBack() }
         />
         <View style={styles.menuContainer}>
-          <Text style={styles.sectionText}>Friends</Text>
+          {/* <Text style={styles.sectionText}>Friends</Text> */}
         </View>
       </View>
       <TabView
