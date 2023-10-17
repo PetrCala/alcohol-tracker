@@ -16,7 +16,7 @@
  * @example
  * const rawNickname = "John.Doe #1";
  * const key = cleanStringForFirebaseKey(rawNickname);
- * console.log(key);  // Outputs: "John_Doe_1"
+ * console.log(key);  // Outputs: "john_doe_1"
  */
 export function cleanStringForFirebaseKey(rawStr: string): string {
     // List of invalid characters.

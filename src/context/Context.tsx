@@ -2,10 +2,11 @@
 import DatabaseContext from "./DatabaseContext";
 import { UserConnectionProvider } from "./UserConnectionContext";
 import { VersionManagementProvider } from "./VersionContext";
+import { Database } from "firebase/database";
 
 
 type ContextProviderProps = {
-    db: any;
+    db: Database;
     children: ReactNode;
 };
 
