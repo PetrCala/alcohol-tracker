@@ -14,6 +14,8 @@ import BasicButton from '../components/Buttons/BasicButton';
 import commonStyles from '../styles/commonStyles';
 
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import UploadImageComponent from '../components/UploadImage';
+import { useFirebase } from '../context/FirebaseContext';
 
 type ProfileProps = {
   navigation: any;
@@ -23,12 +25,7 @@ const ProfileScreen = (props: ProfileProps) => {
   const { navigation } = props;
   const auth = getAuth();
   const user = auth.currentUser;
-
-  // const handleButtonPress = () => {
-  //   console.log('hi')
-  // };
-
-
+  const { db, storage } = useFirebase();
 
   return (
     <View style={{flex:1, backgroundColor: '#FFFF99'}}>
@@ -41,11 +38,9 @@ const ProfileScreen = (props: ProfileProps) => {
           onPress={() => navigation.goBack() }
         />
       </View>
-        {/* <TouchableOpacity
-          style={styles.startSessionButton}
-          onPress={() => {handleButtonPress}} >
-          <Text style={styles.startSessionText}> ! </Text>
-        </TouchableOpacity> */}
+      <UploadImageComponent
+        storage={storage}
+      />
      </View>
   );
 };

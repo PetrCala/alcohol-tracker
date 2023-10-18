@@ -1,69 +1,54 @@
 ﻿import React, { useState } from 'react';
-import { Alert, Button, Image, View } from 'react-native';
-import { getStorage, ref, uploadBytesResumable } from 'firebase/storage';
-import * as ImagePicker from 'expo-image-picker';
+import { Button, Image, View, Text } from 'react-native';
+import { ImageLibraryOptions, launchImageLibrary } from 'react-native-image-picker';
+import { FirebaseStorage, getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
+import { uploadImageToFirebase } from '../storage/storageUpload';
 
-function UploadImage() {
-  const [image, setImage] = useState(null);
+type UploadImageComponentProps = {
+  storage:FirebaseStorage
+};
 
-  // Function to handle image selection and upload
-  const pickAndUploadImage = async () => {
-    // Request permission and pick an image using Expo ImagePicker
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    
-    if (status !== 'granted') {
-      Alert.alert('Sorry, we need camera roll permissions to select an image!');
-      return;
-    }
+const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
+  storage
+}) => {
+  const [imageSource, setImageSource] = useState<string | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
 
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
+  const chooseImage = () => {
+    // Ask for permissions here
+
+    const options:ImageLibraryOptions = {
+      mediaType: 'photo',
+      includeBase64: false,
+    };
+
+    launchImageLibrary(options, (response:any) => {
+      console.log("Response: " + response)
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.errorCode) {
+        console.log('ImagePicker Error: ', response.error);
+      } else {
+        const source = { uri: response.uri };
+        // const source = { uri: response.assets[0].uri };
+        setImageSource(source.uri);
+        // If you want to upload the image after selecting, you can call it here:
+        console.log("Successfully selected the following source URI: " + source.uri);
+        // uploadImageToFirebase(storage, response.uri);
+      }
     });
-
-    // Ensure a file was actually selected
-    if (!result.cancelled) {
-      setImage(result.uri);
-
-      // Upload the image to Firebase Storage
-      const storage = getStorage();
-      const storageRef = ref(storage, 'path/to/uploaded/image.jpg'); // specify where you want to store the image
-      const response = await fetch(result.uri);
-      const blob = await response.blob();
-      const uploadTask = uploadBytesResumable(storageRef, blob);
-
-
-      uploadTask.on('state_changed',
-        (snapshot) => {
-            // Track progress
-            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            switch (snapshot.state) {
-            case 'paused':
-                console.log('Upload is paused');
-                break;
-            case 'running':
-                console.log(`Upload is ${progress}% done.`);
-                break;
-            }
-        },
-        (error) => {
-            console.error('Error uploading image:', error);
-        },
-        () => {
-            console.log('Upload successful!');
-        }
-        );
-    }
   };
 
+
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
-      <Button title="Pick and Upload Image" onPress={pickAndUploadImage} />
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Button title="Choose Image" onPress={chooseImage} />
+
+      {imageSource && <Image source={{ uri: imageSource }} style={{ width: 100, height: 100 }} />}
+
+      {uploadProgress && <Text>Progress: {uploadProgress}%</Text>}
     </View>
   );
-}
+};
 
-export default UploadImage;
+export default UploadImageComponent;
