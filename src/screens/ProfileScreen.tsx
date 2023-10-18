@@ -1,21 +1,14 @@
-﻿import React, {
-  useState,
-  useContext,
-  useEffect
-} from 'react';
-import {
+﻿import {
   StyleSheet,
-  Text,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import MenuIcon from '../components/Buttons/MenuIcon';
-import BasicButton from '../components/Buttons/BasicButton';
 import commonStyles from '../styles/commonStyles';
 
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { getAuth } from 'firebase/auth';
 import UploadImageComponent from '../components/UploadImage';
 import { useFirebase } from '../context/FirebaseContext';
+import PermissionHandler from '../permissions/PermissionHandler';
 
 type ProfileProps = {
   navigation: any;
@@ -38,9 +31,11 @@ const ProfileScreen = (props: ProfileProps) => {
           onPress={() => navigation.goBack() }
         />
       </View>
-      <UploadImageComponent
-        storage={storage}
-      />
+      <PermissionHandler permissionType='write_photos'>
+        <UploadImageComponent
+          storage={storage}
+        />
+      </PermissionHandler>
      </View>
   );
 };

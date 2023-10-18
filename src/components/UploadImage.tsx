@@ -8,6 +8,13 @@ type UploadImageComponentProps = {
   storage:FirebaseStorage
 };
 
+/** TODO
+ * 
+ * @description
+ * This component should always be wrapped in the PermissionHandler that checks
+ * for "write_photos" (?) permissions - perhaps validate this inside this component
+ * 
+ */
 const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
   storage
 }) => {

@@ -1,4 +1,12 @@
-﻿import { invalidChars } from "./static";
+﻿import { Platform } from "react-native";
+import { availablePlatforms, invalidChars } from "./static";
+
+/**
+ * Check that the current platform is valid.
+ */
+export const platformIsValid = ():boolean => {
+    return availablePlatforms.includes(Platform.OS);
+}
 
 /**
  * Validate that a string does not contain any characters not accepted
