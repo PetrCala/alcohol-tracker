@@ -1,4 +1,4 @@
-﻿import { Database, ref, get } from "firebase/database";
+﻿import { Database, ref, get, update } from "firebase/database";
 import { ProfileData } from "../types/database";
 
 /**
@@ -25,3 +25,29 @@ export async function fetchUserProfile(db: Database, userId:string):Promise<Prof
 export function fetchUserProfiles(db: Database, userIds: string[]): Promise<ProfileData[]> {
   return Promise.all(userIds.map(id => fetchUserProfile(db, id)));
 }
+
+
+/**
+ * Using the Firebase realtime database instance, the user UID, and the full name of the
+ * profile picture path, set the name of the file to a new path.
+ * 
+ * @description
+ * Should be called together with uploading of the picture to the storage.
+ * 
+ * @param {Database} db The Firebase realtime database instance.
+ * @param {string} userId User UID.
+ * @param {string} photoURL Name of the new file, including the suffix (e.g., profile_picture.jpg)
+ * @returns {Promise<string>} Full path to the image
+ * 
+ * @example
+ * await setProfilePictureURL(db, 'test-user-id', 'profile_picture.jpg');
+ */
+export async function setProfilePictureURL(
+    db: Database,
+    userId: string,
+    photoURL: string,
+):Promise<void> {
+  var updates: { [key: string]: string } = {};
+  updates[`users/${userId}/profile/photo_url`] = photoURL;
+  await update(ref(db), updates);
+};

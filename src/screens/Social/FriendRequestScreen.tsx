@@ -8,18 +8,16 @@
   TouchableOpacity,
   View,
 } from 'react-native';
-import { FriendRequestData, ProfileDisplayData, FriendRequestStatus, ProfileData, UserData } from '../../types/database';
-import { useContext, useEffect, useState } from 'react';
-import SearchUsersPopup from '../../components/Popups/SearchUsersPopup';
+import { FriendRequestData, FriendRequestStatus, ProfileData, UserData } from '../../types/database';
+import { useEffect, useState } from 'react';
 import { useFirebase } from '../../context/FirebaseContext';
-import { fetchUserProfiles } from '../../database/profile';
 import { acceptFriendRequest, deleteFriendRequest } from '../../database/friends';
 import { getAuth } from 'firebase/auth';
 import { isNonEmptyObject } from '../../utils/validation';
 import useProfileDisplayData from '../../hooks/useProfileDisplayData';
 import LoadingData from '../../components/LoadingData';
 import { Database } from 'firebase/database';
-import FillerView from '../../components/FillerView';
+import ProfileImage from '../../components/ProfileImage';
 
 type FriendRequestProps = {
   requestId: string; // Other user's ID
@@ -35,7 +33,7 @@ const FriendRequest = (props: FriendRequestProps) => {
   const { requestId, requestStatus, profileData } = props;
   const auth = getAuth();
   const user = auth.currentUser;
-  const { db } = useFirebase();
+  const { db, storage } = useFirebase();
 
   const handleAcceptFriendRequest = async (db:Database, userId:string, requestId: string):Promise<void> => {
     try {
@@ -95,7 +93,14 @@ const FriendRequest = (props: FriendRequestProps) => {
   return (
     <View key={requestId+'-container'} style={styles.friendRequestContainer}>
       <View key={requestId+'profile'} style={styles.friendRequestProfile}>
-        <Image
+        <ProfileImage
+          key={requestId+'-profile-icon'}
+          storage={storage}
+          userId={requestId}
+          photoURL={profileData.photo_url}
+          style={styles.friendRequestImage}
+        />
+        {/* <Image
           key={requestId+'-profile-icon'}
           style={styles.friendRequestImage}
           source={
@@ -103,7 +108,7 @@ const FriendRequest = (props: FriendRequestProps) => {
             {uri: profileData.photo_url}:
             require('../../../assets/temp/user.png')
           }
-        />
+        /> */}
         <Text key={requestId+'-nickname'} style={styles.friendRequestText}>{profileData.display_name}</Text>
       </View>
       {requestStatus === 'received' ?
@@ -196,7 +201,8 @@ const styles = StyleSheet.create({
   friendRequestImage: {
     width: 70,
     height: 70,
-    padding: 5,
+    padding: 10,
+    borderRadius: 35,
   },
   friendRequestText: {
     color: 'black',

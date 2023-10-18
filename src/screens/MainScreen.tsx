@@ -31,12 +31,13 @@ import { getDatabaseData } from '../context/DatabaseDataContext';
 import commonStyles from '../styles/commonStyles';
 import ItemListPopup from '../components/Popups/ItemListPopup';
 import { useFirebase } from '../context/FirebaseContext';
+import ProfileImage from '../components/ProfileImage';
 
 const MainScreen = ( { navigation }: MainScreenProps) => {
   // Context, database, and authentification
   const auth = getAuth();
   const user = auth.currentUser;
-  const { db } = useFirebase();
+  const { db, storage } = useFirebase();
   const { isOnline } = useUserConnection();
   const { 
     currentSessionData,
@@ -130,7 +131,6 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
     setThisMonthSessionCount(thisMonthSessionCount);
   }, [drinkingSessionData, visibleDateObject, preferences]);
 
-
   if (!user) {
     navigation.replace("Auth", {screen: "Login Screen"});
     return;
@@ -148,17 +148,12 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
               onPress = {() => navigation.navigate('Profile Screen')}
               style={styles.profileButton}
             >
-              <MenuIcon 
-                iconId='profile-icon'
-                iconSource={
-                  userData?.profile.photo_url && userData?.profile.photo_url !== '' ?
-                  {uri: userData.profile.photo_url}:
-                  require('../../assets/temp/user.png')
-                }  // user.photoURL;
-                containerStyle={styles.profileIconContainer}
-                iconStyle={styles.profileIcon}
-                onPress = {() => navigation.navigate('App', {screen: 'Profile Screen'})}
-                />
+              <ProfileImage
+                storage={storage}
+                userId={user.uid}
+                photoURL={userData.profile.photo_url}
+                style={styles.profileImage}
+              />
               <Text style={styles.headerUsername}>{user.displayName}</Text> 
             </TouchableOpacity>
           </View>
@@ -275,18 +270,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-start',
   },
-  profileIconContainer: {
-    width: 50,
-    height: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  profileIcon: {
-    flex: 1,
+  profileImage: {
     width: 50,
     height: 50,
     borderRadius: 25,
-    alignSelf: 'center',
   },
   headerUsername: {
     flexWrap: 'wrap',

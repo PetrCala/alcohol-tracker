@@ -7,10 +7,12 @@
 
 export type LoadingDataProps = {
     loadingText?: string
+    style?: any
 }
 
 const LoadingData = ({
-  loadingText
+  loadingText,
+  style
 }:LoadingDataProps) => {
     return (
       <View style={styles.loadingContainer}>
@@ -21,6 +23,7 @@ const LoadingData = ({
         <ActivityIndicator 
           size="large"
           color = "#0000ff"
+          style={style ? style: {}}
           />
       </View>
     );
