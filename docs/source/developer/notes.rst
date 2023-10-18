@@ -87,6 +87,7 @@ Building the application for an iOS device
 #. Select *Product* from the menu bar, and then select *Archive*.
 #. Once the build is complete, select *Distribute App* and then select *Ad Hoc*.
 #. Follow the prompts to export the :code:`IPA file`, which you can then transfer to your friend's iOS device using a file-sharing service like Dropbox or Google Drive.
+#. You may need to enable the new architecture on iOS. See `this library<https://github.com/react-native-image-picker/react-native-image-picker>`_ as an example of a module that employs the new architecture.
 
 Updating the app version
 ================================
