@@ -28,7 +28,7 @@ const PermissionHandler: React.FC<PermissionHandlerProps> = ({
     permissionType, 
     children 
 }) => {
-    const [permissionsGranted, setPermissionsGranted] = useState(false);
+    const [permissionGranted, setPermissionGranted] = useState(false);
 
     useEffect(() => {
         if (permissionType === "notifications" && Platform.OS === 'ios') {
@@ -38,7 +38,7 @@ const PermissionHandler: React.FC<PermissionHandlerProps> = ({
         }
     }, [permissionType]);
 
-    // Perhaps emply checkMultiple, requestMultiple,...
+    // Perhaps employ checkMultiple, requestMultiple,...
 
     const getPermission = () => {
         return permissionsMap[permissionType][Platform.OS];
@@ -46,17 +46,17 @@ const PermissionHandler: React.FC<PermissionHandlerProps> = ({
 
     const checkPermission = async () => {
         const status = await check(getPermission());
-        handlePermissionStatus(status);
+        handlePermissiontatus(status);
     };
 
     const checkNotificationPermission = async () => {
         const { status } = await checkNotifications();
-        handlePermissionStatus(status);
+        handlePermissiontatus(status);
     };
 
-    const handlePermissionStatus = (status: string) => {
+    const handlePermissiontatus = (status: string) => {
         if (status === RESULTS.GRANTED) {
-            setPermissionsGranted(true);
+            setPermissionGranted(true);
         }
     };
 
@@ -70,7 +70,7 @@ const PermissionHandler: React.FC<PermissionHandlerProps> = ({
         }
 
         if (status === RESULTS.GRANTED) {
-            setPermissionsGranted(true);
+            setPermissionGranted(true);
         } else {
             Alert.alert("Permission Denied", "This functionality might not work properly!");
         }
@@ -78,7 +78,7 @@ const PermissionHandler: React.FC<PermissionHandlerProps> = ({
 
     return (
         <>
-            {permissionsGranted ? (
+            {permissionGranted ? (
                 children
             ) : (
                 <Button title={`Request ${permissionType} permission`} onPress={requestPermission} />

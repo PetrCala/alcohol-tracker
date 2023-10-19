@@ -7,7 +7,6 @@
   View,
 } from 'react-native';
 import { FriendIds, FriendsData, UserData } from "../../types/database";
-import UserOverview from '../../components/UserOverview';
 import useProfileDisplayData from '../../hooks/useProfileDisplayData';
 import { useContext, useEffect, useState } from 'react';
 import { useFirebase } from '../../context/FirebaseContext';
@@ -59,11 +58,12 @@ const FriendListScreen = (props:ScreenProps) => {
         {Object.keys(friends).map(friendId => (
           loadingDisplayData ?
           <LoadingData key={friendId+'-loading'}/> :
-          <UserOverview
-            key={friendId+'-user-overview'}
-            userId={friendId}
-            RightSideComponent={<></>}
-          />
+          // <UserOverview
+          //   key={friendId+'-user-overview'}
+          //   userId={friendId}
+          //   RightSideComponent={<></>}
+          // />
+          <></>
         ))}
       </View>
       :
