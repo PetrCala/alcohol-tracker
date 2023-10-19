@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { initializeApp } from "firebase/app";
 import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage'
-import firebaseConfig from "../firebaseConfig";
+import firebaseConfig from '../firebaseConfig';
 
 import AuthNavigator from './navigation/AuthNavigator';
 import AppNavigator from './navigation/AppNavigator';

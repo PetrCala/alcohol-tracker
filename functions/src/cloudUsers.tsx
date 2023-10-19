@@ -1,8 +1,8 @@
 ﻿import * as functions from 'firebase-functions'
-import admin from '../../src/database/admin';
-import { validateBetaKey } from '../../src/database/beta';
-import { validateAppVersion, validateSignInInput } from '../../src/utils/validation';
-import { pushNewUserInfo } from '../../src/database/users';
+import admin from '@database/admin';
+import { validateBetaKey } from '@database/beta';
+import { pushNewUserInfo } from '@database/users';
+import { validateAppVersion, validateSignInInput } from '@utils/validation';
 
 // Must install firebase CLI using $npm install -g firebase-tools and add AppData\Roaming\npm to the environmental path --> see the help for Firebase Functions on logging in, etc.
 

@@ -7,7 +7,8 @@
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "deploy-functions": "firebase deploy --only functions --debug"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "1.18.2",

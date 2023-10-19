@@ -4,7 +4,7 @@
     StyleSheet,
     Text,
 } from "react-native";
-import { LoadingDataProps } from "../types/components";
+import { LoadingDataProps } from "./LoadingData";
 
 const WelcomeScreen = () => {
     return (

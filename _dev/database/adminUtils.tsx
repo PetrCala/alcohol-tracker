@@ -48,12 +48,12 @@ export async function assignAdminRole(uid: string): Promise<void> {
   }
 }
 
-export async function getDisplayName(uid:string):Promise<string | null> {
+export async function getDisplayName(uid:string):Promise<string | undefined> {
   try {
     const userRecord = await admin.auth().getUser(uid);
     return userRecord.displayName;
   } catch (error) {
     console.error('Error fetching user data:', error);
-    return null;
+    return undefined;
   }
 }

@@ -1,4 +1,4 @@
-﻿import { validateAppVersion } from "../../../src/context/VersionContext";
+﻿import { validateAppVersion } from "../../../src/utils/validation";
 
 describe('validateAppVersion', () => {
     // Mock the current version of the application

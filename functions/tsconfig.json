@@ -1,11 +1,9 @@
 ﻿{
-  "extends": "@tsconfig/react-native/tsconfig.json",
+  "extends": "../tsconfig.base.json",
   "compilerOptions": {
-    "esModuleInterop": true,
-    "isolatedModules": true,
-    "paths": {
-      "@firebase/auth": ["./node_modules/@firebase/auth/dist/index.rn.d.ts"]
-    }
-  }
+    "rootDir": "./src",
+    "outDir": "./lib"
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["node_modules"]
 }
-

@@ -107,7 +107,7 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
       :
       <TouchableOpacity 
         style={styles.sendFriendRequestButton}
-        onPress={() => sendFriendRequest(db, userFrom, userTo)}
+        onPress={() => sendFriendRequest(db, userFrom, userTo)} // Also refresh the status!!
       >
         <Text style={styles.sendFriendRequestText}>{statusToTextMap.undefined}</Text>
       </TouchableOpacity>

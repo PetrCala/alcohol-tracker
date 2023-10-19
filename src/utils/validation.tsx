@@ -2,7 +2,9 @@
 import { Platform } from "react-native";
 import { availablePlatforms, invalidChars } from "./static";
 
-import { version } from '../../package.json';
+import { version as _version } from '../../package.json';
+
+const version: string = _version;
 
 type ValidationResult = {
     success: boolean,

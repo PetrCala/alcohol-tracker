@@ -33,12 +33,14 @@ local.properties
 .cxx/
 *.keystore
 !debug.keystore
+functions/lib/*
 
 # node.js
 #
 node_modules/
 npm-debug.log
 yarn-error.log
+functions/ui-debug.log
 
 # Jest
 #

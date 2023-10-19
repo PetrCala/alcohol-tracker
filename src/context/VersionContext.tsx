@@ -9,7 +9,7 @@ import { readDataOnce } from '../database/baseFunctions';
 import WelcomeScreen from '../components/WelcomeScreen';
 import LoadingData from '../components/LoadingData';
 import { useFirebase } from './FirebaseContext';
-import { validateAppVersion } from '../utils/validation';
+import { validateAppVersion } from '@utils/validation';
 
 
 const initialState = {

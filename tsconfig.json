@@ -1,10 +1,29 @@
 {
   "extends": "@tsconfig/react-native/tsconfig.json",
   "compilerOptions": {
+    "allowJs": true,
+    "resolveJsonModule": true,
     "esModuleInterop": true,
     "isolatedModules": true,
+    "composite": true,
+    "noEmit":false,
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "./build",
+    "baseUrl": ".",
     "paths": {
-      "@firebase/auth": ["./node_modules/@firebase/auth/dist/index.rn.d.ts"]
+      "@firebase/auth": ["./node_modules/@firebase/auth/dist/index.rn.d.ts"],
+      "@database/*": ["./src/database/*"],
+      "@utils/*": ["./src/utils/*"]
     }
-  }
+  },
+  "include": [
+    "src/**/*",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js",
+    "**/*.json",
+    "package.json",
+  ],
+  "exclude": ["node_modules", "__tests__", "_dev", "android", "ios", "assets", "coverage", "docs", ".vscode"]
 }
