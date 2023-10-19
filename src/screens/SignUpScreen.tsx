@@ -2,7 +2,15 @@
 import React, { useContext, useEffect, useState, version } from 'react';
 import { 
     Alert,
-    StyleSheet, 
+    Image,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View, 
 } from 'react-native';
 import { getAuth, updateProfile } from 'firebase/auth';
 import { signUpUserWithEmailAndPassword } from '../auth/auth';
@@ -95,6 +103,7 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
       // Handle the error
       setWarning('Error during sign-up: ' + error.message);
     }
+  };
     // const minSupportedVersion = await fetchMinSupportedVersion();
     // if (!minSupportedVersion) {
     //   setWarning('Failed to fetch the minimum supported version. Please try again later.');
@@ -141,9 +150,6 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
     // } catch (error:any) {
     //   Alert.alert('Could not write into database', 'Writing user info into the database failed: ' + error.message);
     //   return;
-    }
-
-  };
 
  
 
@@ -263,7 +269,7 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
   );
 };
 
-export default SignUpScreen
+export default SignUpScreen;
 
 const styles = StyleSheet.create({
   mainContainer: {
