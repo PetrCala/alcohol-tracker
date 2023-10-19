@@ -1,5 +1,13 @@
-﻿import { Platform } from "react-native";
+﻿import semver from 'semver';
+import { Platform } from "react-native";
 import { availablePlatforms, invalidChars } from "./static";
+
+import { version } from '../../package.json';
+
+type ValidationResult = {
+    success: boolean,
+    message?: string
+}
 
 /**
  * Check that the current platform is valid.
@@ -16,13 +24,51 @@ export const platformIsValid = ():boolean => {
  * @returns {boolean} True if the string is valid, false otherwise.
  */
 export function isValidString(input:string) {
-for(let char of invalidChars) {
-    if(input.includes(char)) {
-        return false;
+    for(let char of invalidChars) {
+        if(input.includes(char)) {
+            return false;
+        }
     }
+    return true;
 }
-return true;
+
+/**
+ * Having a list of input sign in text, check that all fields are valid. Return the
+ * results as a ValidationResult object.
+ * 
+ * @param {string} email User mail
+ * @param {string} username User name
+ * @param {string} password User password
+ * @param {string} betaKey Beta key // Beta feature
+ */
+export const validateSignInInput = (
+    email:string,
+    username:string,
+    password:string,
+    betaKey:string // Beta feature
+): ValidationResult => {
+    if (email == '' || username == '' || password == '' || betaKey == ''){ // Beta feature
+        return {success: false, message: 'You must fill out all fields first'};
+    };
+    if (!isValidString(username)){
+        return {success: false, message: 'Your nickname can not contain ' + invalidChars.join(', ')}
+    }
+    return {success: true};
 }
+
+/** Input the minimum supported version of the application and validate that the current version is not older than that one. If it is newer, return true, otherwise return false.
+ * 
+ * @param minSupportedVersion Version to validate against.
+ * @param currentAppVersion Current version of the application. Defaults to the version stored in 'package.json'. Overwrite this value only in testing.
+ * @returns {ValidationResult} Validation result type object.
+ */
+export const validateAppVersion = (minSupportedVersion: string, currentAppVersion:string = version):ValidationResult => {
+  // Compare versions
+  if (semver.lt(currentAppVersion, minSupportedVersion)) {
+    return {success: false, message: 'This version of the application is outdated. Please upgrade to the newest version.'}
+  }
+  return {success: true};
+};
 
 /**
  * Check whether an element is a non-empty object.

@@ -1,26 +1,16 @@
-﻿import React, { useContext, useEffect, useState, version } from 'react';
+﻿import functions from '@react-native-firebase/functions'
+import React, { useContext, useEffect, useState, version } from 'react';
 import { 
     Alert,
-    Image,
-    KeyboardAvoidingView, 
-    Platform,
-    ScrollView,
     StyleSheet, 
-    Text, 
-    TextInput, 
-    TouchableOpacity, 
-    View 
 } from 'react-native';
 import { getAuth, updateProfile } from 'firebase/auth';
 import { signUpUserWithEmailAndPassword } from '../auth/auth';
 import { useFirebase } from '../context/FirebaseContext';
 import { SignUpScreenProps } from '../types/screens';
-import { pushNewUserInfo } from '../database/users';
 import { readDataOnce } from '../database/baseFunctions';
 import { BetaKeysData, validateBetaKey } from '../database/beta';
 import { useUserConnection } from '../context/UserConnectionContext';
-import { ProfileData } from '../types/database';
-import { validateAppVersion } from '../context/VersionContext';
 import { handleInvalidInput } from '../utils/errorHandling';
 import { isValidString } from '../utils/validation';
 import { invalidChars } from '../utils/static';
@@ -92,50 +82,67 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
   const handleSignUp = async () => {
     if (!validateUserInput() || !isOnline) return;
 
-    const minSupportedVersion = await fetchMinSupportedVersion();
-    if (!minSupportedVersion) {
-      setWarning('Failed to fetch the minimum supported version. Please try again later.');
-      return;
-    }
-    if (!validateAppVersion(minSupportedVersion)) {
-      setWarning('This version of the application is outdated. Please upgrade to the newest version.');
-      return;
-    }
-
-    const betaKeys = await fetchBetaKeys();
-    if (!betaKeys) {
-      setWarning('Failed to fetch beta keys. Please try again later.');
-      return;
-    }
-    const betaKeyId = validateBetaKey(betaKeys, betaKey);
-    if (!betaKeyId) {
-      setWarning('Your beta key is either invalid or already in use.');
-      return;
-    }
-
-    await createUserAuth();
-
-    const newUser = auth.currentUser;
-    if (!newUser) {
-      Alert.alert('User creation failed', 'The user was not created in the database');
-      return;
-    }
-
-    await updateUserProfile(newUser);
-
-    // Pushing initial user data to Realtime Database
-    const newProfileData: ProfileData = {
-      display_name: username,
-      photo_url: "",
-    };
     try {
-      await pushNewUserInfo(db, newUser.uid, newProfileData, betaKeyId);
+      const createUserFunction = functions().httpsCallable('createUser')
+      const result = await createUserFunction({ email, password, username, betaKey });
+
+      if (result.data.success) {
+        navigation.replace("App", {screen: "Main Screen"}); // Navigate to main screen
+      } else {
+        setWarning(result.data?.message);
+      }
     } catch (error:any) {
-      Alert.alert('Could not write into database', 'Writing user info into the database failed: ' + error.message);
-      return;
+      // Handle the error
+      setWarning('Error during sign-up: ' + error.message);
+    }
+    // const minSupportedVersion = await fetchMinSupportedVersion();
+    // if (!minSupportedVersion) {
+    //   setWarning('Failed to fetch the minimum supported version. Please try again later.');
+    //   return;
+    // }
+    // if (!validateAppVersion(minSupportedVersion)) {
+    //   setWarning('This version of the application is outdated. Please upgrade to the newest version.');
+    //   return;
+    // }
+
+    // const betaKeys = await fetchBetaKeys();
+    // if (!betaKeys) {
+    //   setWarning('Failed to fetch beta keys. Please try again later.');
+    //   return;
+    // }
+    // const betaKeyId = validateBetaKey(betaKeys, betaKey);
+    // if (!betaKeyId) {
+    //   setWarning('Your beta key is either invalid or already in use.');
+    //   return;
+    // }
+
+    // await createUserAuth();
+
+    // const newUser = auth.currentUser;
+    // if (!newUser) {
+    //   Alert.alert('User creation failed', 'The user was not created in the database');
+    //   return;
+    // }
+
+    // try {
+    //   await updateUserProfile(newUser);
+    // } catch (error:any) {
+    //   Alert.alert('User profile update failed', 'Could not update the user profile: ' + error.message);
+    //   return;
+    // }
+
+    // // Pushing initial user data to Realtime Database
+    // const newProfileData: ProfileData = {
+    //   display_name: username,
+    //   photo_url: "",
+    // };
+    // try {
+    //   await pushNewUserInfo(db, newUser.uid, newProfileData, betaKeyId);
+    // } catch (error:any) {
+    //   Alert.alert('Could not write into database', 'Writing user info into the database failed: ' + error.message);
+    //   return;
     }
 
-    navigation.replace("App", {screen: "Main Screen"}) // Navigate to main screen
   };
 
  

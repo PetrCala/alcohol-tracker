@@ -1,5 +1,4 @@
-﻿import semver from 'semver';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+﻿import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ReactNode, useContext, useEffect, useReducer, useState } from 'react';
 import { Alert } from 'react-native';
 
@@ -7,10 +6,10 @@ import ForceUpdateScreen from '../screens/ForceUpdateScreen';
 import { useUserConnection } from './UserConnectionContext';
 import UserOffline from '../components/UserOffline';
 import { readDataOnce } from '../database/baseFunctions';
-import { version } from '../../package.json';
 import WelcomeScreen from '../components/WelcomeScreen';
 import LoadingData from '../components/LoadingData';
 import { useFirebase } from './FirebaseContext';
+import { validateAppVersion } from '../utils/validation';
 
 
 const initialState = {
@@ -63,8 +62,8 @@ export const VersionManagementProvider: React.FC<VersionManagementProviderProps>
         }
       }
   
-      const versionValid = validateAppVersion(minSupportedVersion);
-      dispatch({ type: 'SET_VERSION_VALID', payload: versionValid });
+      const versionValidationResult = validateAppVersion(minSupportedVersion);
+      dispatch({ type: 'SET_VERSION_VALID', payload: versionValidationResult.success });
     } catch (error:any) {
       Alert.alert(
         "App version check failed",
@@ -94,19 +93,7 @@ const getCachedMinVersion = async () => {
     return await AsyncStorage.getItem('min_supported_version');
 };
 
-/** Input the minimum supported version of the application and validate that the current version is not older than that one. If it is newer, return true, otherwise return false.
- * 
- * @param minSupportedVersion Version to validate against.
- * @param currentAppVersion Current version of the application. Defaults to the version stored in 'package.json'. Overwrite this value only in testing.
- * @returns True if the current app version is valid, and false otherwise.
- */
-export const validateAppVersion = (minSupportedVersion: string, currentAppVersion:string = version):boolean => {
-  // Compare versions
-  if (semver.lt(currentAppVersion, minSupportedVersion)) {
-    return false; // Version is too old
-  }
-  return true;
-};
+
 
 // Function to fetch and cache minimum supported version
 const fetchAndCacheMinVersion = async (db:any) => {

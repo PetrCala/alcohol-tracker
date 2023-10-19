@@ -1,4 +1,4 @@
-﻿import admin from '../../admin';
+﻿import admin from '../../../../src/database/admin';
 import { refactorPreferencesData } from './migratePreferences';
 import { refactorUsersData } from './migrateUsers';
 

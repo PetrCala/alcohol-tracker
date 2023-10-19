@@ -1,6 +1,6 @@
 ﻿import { UserRecord } from 'firebase-admin/lib/auth';
 
-import admin from "./admin";
+import admin from "../../src/database/admin";
 
 /**
  * Lists all users with the 'admin' custom claim.

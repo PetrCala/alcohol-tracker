@@ -2,7 +2,7 @@
 
 require('dotenv').config(); // Load the .env file
 
-var admin = require('firebase-admin');
+import * as admin from 'firebase-admin'
 var serviceAccount = require('../../alcohol-tracker-db-firebase-adminsdk-nsgbc-52a51fdabc.json');
 
 var databaseURL = process.env.DATABASE_URL;

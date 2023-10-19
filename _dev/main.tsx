@@ -1,6 +1,6 @@
 ﻿// Run the script using ts-node _dev/database/migration.tsx (install globally through npm install -g ts-node)
 
-import admin from './database/admin';
+import admin from '../src/database/admin';
 import { assignAdminRole, listAllAdmins } from "./database/adminUtils";
 import { refactorPreferencesData, transformPreferencesData } from './database/migration-scripts/0.1.0-0.2.0/migratePreferences';
 import { PreferencesData } from '../src/types/database';

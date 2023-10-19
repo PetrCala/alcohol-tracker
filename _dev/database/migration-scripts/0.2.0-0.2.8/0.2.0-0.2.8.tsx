@@ -1,4 +1,4 @@
-﻿import admin from '../../admin';
+﻿import admin from '../../../../src/database/admin';
 import addNicknameToIdTable from './addNicknameToIdTable';
 
 const adminDb = admin.database();
