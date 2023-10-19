@@ -35,9 +35,10 @@ const LoginScreen = ( {navigation }: LoginScreenProps) => {
 
   useEffect(() => {
     const stopListening = auth.onAuthStateChanged(user => {
-      if (user) {
-        navigation.replace("App", {screen: "Main Screen"}) // Redirect to main screen
-      };
+      // Handle the case when the user does not have all data ready
+      // if (user) {
+      //   navigation.replace("App", {screen: "Main Screen"}) // Redirect to main screen
+      // };
       setLoadingUser(false);
     });
 

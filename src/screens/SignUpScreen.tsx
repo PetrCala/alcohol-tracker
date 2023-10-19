@@ -38,17 +38,6 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
   const [betaKey, setBetaKey] = useState<string>(''); // Beta feature
   if (!db) return null; // Should never be null
 
-  useEffect(() => {
-      const stopListening = auth.onAuthStateChanged(user => {
-      if (user) {
-          navigation.replace("App", {screen: "Main Screen"}) // Redirect to main screen
-      };
-      });
-
-      return stopListening;
-  }, []);
-
-
  /** Check that all user input is valid and return true if it is.
    * Otherwise return false.
    */
@@ -143,9 +132,10 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
       await pushNewUserInfo(db, newUser.uid, newProfileData, betaKeyId);
     } catch (error:any) {
       Alert.alert('Could not write into database', 'Writing user info into the database failed: ' + error.message);
+      return;
     }
 
-    navigation.navigate("Main Screen");
+    navigation.replace("App", {screen: "Main Screen"}) // Navigate to main screen
   };
 
  

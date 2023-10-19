@@ -8,7 +8,7 @@
   TouchableOpacity,
   View,
 } from 'react-native';
-import { FriendRequestData, FriendRequestStatus, ProfileData, UserData } from '../../types/database';
+import { FriendRequestData, FriendRequestStatus, UserData } from '../../types/database';
 import { useEffect, useState } from 'react';
 import { useFirebase } from '../../context/FirebaseContext';
 import { acceptFriendRequest, deleteFriendRequest } from '../../database/friends';
@@ -17,23 +17,28 @@ import { isNonEmptyObject } from '../../utils/validation';
 import useProfileDisplayData from '../../hooks/useProfileDisplayData';
 import LoadingData from '../../components/LoadingData';
 import { Database } from 'firebase/database';
-import ProfileImage from '../../components/ProfileImage';
+import UserOverview from '../../components/UserOverview';
 
-type FriendRequestProps = {
-  requestId: string; // Other user's ID
-  requestStatus: FriendRequestStatus;
-  profileData: ProfileData;
+type FriendRequestButtonsProps = {
+  requestId: string
+}
+
+type FriendRequestComponentProps = {
+  requestStatus: FriendRequestStatus | undefined;
+  requestId: string
 };
 
 type ScreenProps = {
   userData: UserData | null;
 }
 
-const FriendRequest = (props: FriendRequestProps) => {
-  const { requestId, requestStatus, profileData } = props;
+// Component to be shown for a received friend request
+const FriendRequestButtons:React.FC<FriendRequestButtonsProps> = ({
+  requestId
+}) => {
+  const { db } = useFirebase();
   const auth = getAuth();
   const user = auth.currentUser;
-  const { db, storage } = useFirebase();
 
   const handleAcceptFriendRequest = async (db:Database, userId:string, requestId: string):Promise<void> => {
     try {
@@ -53,74 +58,58 @@ const FriendRequest = (props: FriendRequestProps) => {
 
   if (!db || !user) return;
 
-  const FriendRequestButtons = () => {
-    return(
-      <View style={styles.friendRequestButtonsContainer}>
-        <TouchableOpacity 
-          key={requestId+'-accept-request-button'}
-          style={[
-            styles.handleRequestButton,
-            styles.acceptRequestButton
-          ]}
-          onPress = {() => handleAcceptFriendRequest(db, user.uid, requestId)}
-        >
-          <Text style={styles.handleRequestButtonText}>Accept</Text>
-        </TouchableOpacity>
-        <TouchableOpacity 
-          key={requestId+'-reject-request-button'}
-          style={[
-            styles.handleRequestButton,
-            styles.rejectRequestButton
-          ]}
-          onPress = {() => handleRejectFriendRequest(db, user.uid, requestId)}
-        >
-          <Text style={styles.handleRequestButtonText}>Remove</Text>
-        </TouchableOpacity>
-      </View>
-    )
-  };
+  return(
+    <View style={styles.friendRequestButtonsContainer}>
+      <TouchableOpacity 
+        key={requestId+'-accept-request-button'}
+        style={[
+          styles.handleRequestButton,
+          styles.acceptRequestButton
+        ]}
+        onPress = {() => handleAcceptFriendRequest(db, user.uid, requestId)}
+      >
+        <Text style={styles.handleRequestButtonText}>Accept</Text>
+      </TouchableOpacity>
+      <TouchableOpacity 
+        key={requestId+'-reject-request-button'}
+        style={[
+          styles.handleRequestButton,
+          styles.rejectRequestButton
+        ]}
+        onPress = {() => handleRejectFriendRequest(db, user.uid, requestId)}
+      >
+        <Text style={styles.handleRequestButtonText}>Remove</Text>
+      </TouchableOpacity>
+    </View>
+  )
+};
 
-  const FriendRequestPending = () => {
-    return (
-      <View style={styles.friendRequestPendingContainer}>
-        <Text style={styles.handleRequestText}>Pending</Text>
-      </View>
-    );
-  };
-
-  if (!profileData) return;
-
+// Component to be shown when the friend request is pending
+const FriendRequestPending:React.FC = () => {
   return (
-    <View key={requestId+'-container'} style={styles.friendRequestContainer}>
-      <View key={requestId+'profile'} style={styles.friendRequestProfile}>
-        <ProfileImage
-          key={requestId+'-profile-icon'}
-          storage={storage}
-          userId={requestId}
-          photoURL={profileData.photo_url}
-          style={styles.friendRequestImage}
-        />
-        {/* <Image
-          key={requestId+'-profile-icon'}
-          style={styles.friendRequestImage}
-          source={
-            profileData?.photo_url && profileData?.photo_url !== '' ?
-            {uri: profileData.photo_url}:
-            require('../../../assets/temp/user.png')
-          }
-        /> */}
-        <Text key={requestId+'-nickname'} style={styles.friendRequestText}>{profileData.display_name}</Text>
-      </View>
-      {requestStatus === 'received' ?
-      <FriendRequestButtons key={requestId+'-friend-request-buttons'}/>
-      : requestStatus === 'sent' ?
-      <FriendRequestPending key={requestId+'-friend-request-pending'}/>
-      : 
-      <></>
-      }
+    <View style={styles.friendRequestPendingContainer}>
+      <Text style={styles.handleRequestText}>Pending</Text>
     </View>
   );
 };
+
+// Component to be rendered on the right hand side of each friend request container
+const FriendRequestComponent:React.FC<FriendRequestComponentProps> = ({
+  requestStatus,
+  requestId
+}) => {
+  return (
+    requestStatus === 'received' ?
+    <FriendRequestButtons 
+      key={requestId+'-friend-request-buttons'}
+      requestId={requestId}
+    />
+    : requestStatus === 'sent' ?
+    <FriendRequestPending key={requestId+'-friend-request-pending'}/>
+    : 
+    <></>
+  )
+}
 
 const FriendRequestScreen = (props:ScreenProps) => {
   const {userData} = props;
@@ -146,16 +135,21 @@ const FriendRequestScreen = (props:ScreenProps) => {
     >
       {isNonEmptyObject(friendRequests) ?
       <View style={styles.friendList}>
-        {Object.keys(friendRequests).map(requestId => (
-          loadingDisplayData ?
-          <LoadingData key={requestId+'-loading'}/> :
-          <FriendRequest
-              key={requestId+'-friend-request'}
-              requestId={requestId}
-              requestStatus={friendRequests[requestId]}
-              profileData={displayData[requestId]}
+        {Object.keys(friendRequests).map(requestId => {
+          const profileData = displayData[requestId];
+          const requestStatus = friendRequests[requestId];
+
+          if (loadingDisplayData) return <LoadingData key={requestId+'-loading'}/>
+
+          return (
+          <UserOverview
+            key={requestId+'-friend-request'}
+            userId={requestId}
+            profileData={profileData}
+            RightSideComponent={FriendRequestComponent({requestId, requestStatus})}
           />
-        ))}
+          )
+        })}
       </View>
       :
       <></>

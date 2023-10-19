@@ -139,7 +139,6 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
   if (isLoading || loadingNewSession) return <LoadingData loadingText={loadingNewSession ? 'Starting a new session...' : ''} />;
   if (!db || !preferences || !drinkingSessionData || !userData) return;
 
-
   return ( 
     <>
       <View style={commonStyles.mainHeader}>

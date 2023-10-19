@@ -4,11 +4,10 @@ import { useFirebase } from "../context/FirebaseContext";
 import { ProfileData } from "../types/database";
 import ProfileImage from "./ProfileImage";
 
-
 type UserOverviewProps = {
   userId: string; // Other user's ID
   profileData: ProfileData;
-  RightSideComponent: React.FC 
+  RightSideComponent: React.ReactNode   // Render directly as a ReactNode without JSX syntax
 };
 
 
@@ -20,22 +19,6 @@ const UserOverview: React.FC<UserOverviewProps> = ({
   const auth = getAuth();
   const user = auth.currentUser;
   const { db, storage } = useFirebase();
-
-  // const handleAcceptFriendRequest = async (db:Database, userId:string, requestId: string):Promise<void> => {
-  //   try {
-  //     await acceptFriendRequest(db, userId, requestId);
-  //   } catch (error:any){
-  //     Alert.alert("Friend request accept failed", "Could not accept the friend request: " + error.message);
-  //   };
-  // };
-
-  // const handleRejectFriendRequest = async (db:Database, userId:string, requestId: string):Promise<void> => {
-  //   try {
-  //     await deleteFriendRequest(db, userId, requestId);
-  //   } catch (error:any){
-  //     Alert.alert("Friend request accept failed", "Could not accept the friend request: " + error.message);
-  //   };
-  // };
 
   if (!db || !user || !profileData) return;
 
@@ -51,14 +34,7 @@ const UserOverview: React.FC<UserOverviewProps> = ({
         />
         <Text key={userId+'-nickname'} style={styles.userOverviewText}>{profileData.display_name}</Text>
       </View>
-      <RightSideComponent/>
-      {/* {requestStatus === 'received' ?
-      <FriendRequestButtons key={userId+'-friend-request-buttons'}/>
-      : requestStatus === 'sent' ?
-      <FriendRequestPending key={userId+'-friend-request-pending'}/>
-      : 
-      <></>
-      } */}
+      {RightSideComponent}
     </View>
   );
 };
