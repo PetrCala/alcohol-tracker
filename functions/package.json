@@ -3,7 +3,7 @@
     "scripts": {
         "serve": "firebase emulators:start --only functions",
         "deploy": "firebase deploy --only functions",
-        "build": "babel src --out-dir lib --extensions '.ts,.tsx,.js,.jsx'"
+        "build": "babel lib --out-dir lib"
     },
     "dependencies": {
         "firebase-admin": "^11.10.1",

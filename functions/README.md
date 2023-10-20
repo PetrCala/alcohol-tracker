@@ -2,7 +2,7 @@
 
 - From inside the project root, run
     ```
-    npx tsc --build functions
+    npm run transpile
     ```
 
     which will build the functions project.

@@ -1,9 +1,32 @@
 ﻿{
-  "extends": "../tsconfig.base.json",
+  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "rootDir": "./src",
-    "outDir": "./lib"
-  },
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
-  "exclude": ["node_modules"]
+    "noEmit": false,
+    "rootDir": "../",
+    "outDir": "./lib",
+  },  
+  "references": [
+    { "path": "../"}
+  ],
+  "include": [
+    "src/cloudUsers.tsx",
+    "src/transpileEntry.ts",
+    // "../src/database/**/*",
+    // "../src/utils/**/*",
+    "../src/database/admin.tsx",
+    "../src/database/beta.tsx",
+    "../src/database/users.tsx",
+    "../src/utils/validation.tsx",
+  ],
+  "exclude": [
+    "node_modules", 
+    "__tests__", 
+    "_dev", 
+    "android", 
+    "ios", 
+    "assets", 
+    "coverage", 
+    "docs", 
+    ".vscode"
+  ]
 }

@@ -970,3 +970,208 @@ Require stack:
 
 [error] 
 [error] Error: Functions codebase could not be analyzed successfully. It may have a syntax or runtime error
+[debug] [2023-10-20T08:10:50.372Z] ----------------------------------------------------------------------
+[debug] [2023-10-20T08:10:50.374Z] Command:       c:\Program Files\nodejs\node.exe C:\Users\AU451FE\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only functions --debug
+[debug] [2023-10-20T08:10:50.375Z] CLI Version:   12.7.0
+[debug] [2023-10-20T08:10:50.375Z] Platform:      win32
+[debug] [2023-10-20T08:10:50.375Z] Node Version:  v18.17.1
+[debug] [2023-10-20T08:10:50.379Z] Time:          Fri Oct 20 2023 10:10:50 GMT+0200 (středoevropský letní čas)
+[debug] [2023-10-20T08:10:50.379Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2023-10-20T08:10:50.476Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2023-10-20T08:10:50.478Z] > authorizing via signed-in user (juke797@gmail.com)
+[debug] [2023-10-20T08:10:50.478Z] [iam] checking project alcohol-tracker-db for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2023-10-20T08:10:50.481Z] > refreshing access token with scopes: []
+[debug] [2023-10-20T08:10:50.484Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2023-10-20T08:10:50.485Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2023-10-20T08:10:50.767Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2023-10-20T08:10:50.768Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2023-10-20T08:10:50.791Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/alcohol-tracker-db:testIamPermissions [none]
+[debug] [2023-10-20T08:10:50.792Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/alcohol-tracker-db:testIamPermissions x-goog-quota-user=projects/alcohol-tracker-db
+[debug] [2023-10-20T08:10:50.792Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/alcohol-tracker-db:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2023-10-20T08:10:51.625Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/alcohol-tracker-db:testIamPermissions 200
+[debug] [2023-10-20T08:10:51.625Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/alcohol-tracker-db:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2023-10-20T08:10:51.626Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/alcohol-tracker-db/serviceAccounts/alcohol-tracker-db@appspot.gserviceaccount.com:testIamPermissions [none]
+[debug] [2023-10-20T08:10:51.627Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/alcohol-tracker-db/serviceAccounts/alcohol-tracker-db@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2023-10-20T08:10:52.495Z] <<< [apiv2][status] POST https://iam.googleapis.com/v1/projects/alcohol-tracker-db/serviceAccounts/alcohol-tracker-db@appspot.gserviceaccount.com:testIamPermissions 200
+[debug] [2023-10-20T08:10:52.496Z] <<< [apiv2][body] POST https://iam.googleapis.com/v1/projects/alcohol-tracker-db/serviceAccounts/alcohol-tracker-db@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[info] 
+[info] === Deploying to 'alcohol-tracker-db'...
+[info] 
+[info] i  deploying functions 
+[debug] [2023-10-20T08:10:52.499Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/alcohol-tracker-db [none]
+[debug] [2023-10-20T08:10:52.913Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/alcohol-tracker-db 200
+[debug] [2023-10-20T08:10:52.913Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/alcohol-tracker-db {"projectId":"alcohol-tracker-db","projectNumber":"665512857657","displayName":"alcohol-tracker-db","name":"projects/alcohol-tracker-db","resources":{"hostingSite":"alcohol-tracker-db","realtimeDatabaseInstance":"alcohol-tracker-db-default-rtdb","storageBucket":"alcohol-tracker-db.appspot.com","locationId":"europe-west"},"state":"ACTIVE","etag":"1_bc9cb06d-bb6f-45ac-9a84-41c4adf1a4dd"}
+[info] i  functions: preparing codebase default for deployment 
+[info] i  functions: ensuring required API cloudfunctions.googleapis.com is enabled... 
+[info] i  functions: ensuring required API cloudbuild.googleapis.com is enabled... 
+[info] i  artifactregistry: ensuring required API artifactregistry.googleapis.com is enabled... 
+[debug] [2023-10-20T08:10:52.916Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/cloudfunctions.googleapis.com [none]
+[debug] [2023-10-20T08:10:52.916Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/cloudfunctions.googleapis.com x-goog-quota-user=projects/alcohol-tracker-db
+[debug] [2023-10-20T08:10:52.917Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/runtimeconfig.googleapis.com [none]
+[debug] [2023-10-20T08:10:52.917Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/runtimeconfig.googleapis.com x-goog-quota-user=projects/alcohol-tracker-db
+[debug] [2023-10-20T08:10:52.919Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/cloudbuild.googleapis.com [none]
+[debug] [2023-10-20T08:10:52.919Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/cloudbuild.googleapis.com x-goog-quota-user=projects/alcohol-tracker-db
+[debug] [2023-10-20T08:10:52.920Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/artifactregistry.googleapis.com [none]
+[debug] [2023-10-20T08:10:52.920Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/artifactregistry.googleapis.com x-goog-quota-user=projects/alcohol-tracker-db
+[debug] [2023-10-20T08:10:53.993Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/artifactregistry.googleapis.com 200
+[debug] [2023-10-20T08:10:53.993Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/artifactregistry.googleapis.com [omitted]
+[info] +  artifactregistry: required API artifactregistry.googleapis.com is enabled 
+[debug] [2023-10-20T08:10:54.002Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/cloudfunctions.googleapis.com 200
+[debug] [2023-10-20T08:10:54.002Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/cloudfunctions.googleapis.com [omitted]
+[info] +  functions: required API cloudfunctions.googleapis.com is enabled 
+[debug] [2023-10-20T08:10:54.004Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/cloudbuild.googleapis.com 200
+[debug] [2023-10-20T08:10:54.005Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/cloudbuild.googleapis.com [omitted]
+[info] +  functions: required API cloudbuild.googleapis.com is enabled 
+[debug] [2023-10-20T08:10:54.137Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/runtimeconfig.googleapis.com 200
+[debug] [2023-10-20T08:10:54.137Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/runtimeconfig.googleapis.com [omitted]
+[debug] [2023-10-20T08:10:54.138Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/alcohol-tracker-db/adminSdkConfig [none]
+[debug] [2023-10-20T08:10:54.788Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/alcohol-tracker-db/adminSdkConfig 200
+[debug] [2023-10-20T08:10:54.789Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/alcohol-tracker-db/adminSdkConfig {"projectId":"alcohol-tracker-db","databaseURL":"https://alcohol-tracker-db-default-rtdb.europe-west1.firebasedatabase.app","storageBucket":"alcohol-tracker-db.appspot.com","locationId":"europe-west"}
+[debug] [2023-10-20T08:10:54.790Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/alcohol-tracker-db/configs [none]
+[debug] [2023-10-20T08:10:55.671Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/alcohol-tracker-db/configs 200
+[debug] [2023-10-20T08:10:55.671Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/alcohol-tracker-db/configs {}
+[debug] [2023-10-20T08:10:55.676Z] Validating nodejs source
+[debug] [2023-10-20T08:11:02.484Z] > [functions] package.json contents: {
+  "name": "functions",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "deploy": "firebase deploy --only functions",
+    "build": "babel lib --out-dir lib"
+  },
+  "dependencies": {
+    "firebase-admin": "^11.10.1",
+    "firebase-functions": "^4.4.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.22.5",
+    "@babel/core": "^7.22.8",
+    "@babel/preset-env": "^7.22.7",
+    "@babel/preset-react": "^7.22.5",
+    "@babel/preset-typescript": "^7.22.5",
+    "@babel/runtime": "^7.22.6",
+    "@types/node": "^20.8.7",
+    "babel-plugin-module-resolver": "^5.0.0",
+    "typescript": "^5.1.6"
+  },
+  "private": true,
+  "engines": {
+    "node": "18"
+  }
+}
+[debug] [2023-10-20T08:11:02.488Z] Building nodejs source
+[info] i  functions: Loading and analyzing source code for codebase default to determine what to deploy 
+[debug] [2023-10-20T08:11:02.490Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-10-20T08:11:02.513Z] Found firebase-functions binary at 'C:\Users\AU451FE\JavaScript\Kiroku\functions\node_modules\.bin\firebase-functions'
+[info] Serving at port 8344
+
+[debug] [2023-10-20T08:11:06.008Z] Got response code 400; body Failed to generate manifest from function source: Error: Cannot find module '../../src/database/admin'
+Require stack:
+- C:\Users\AU451FE\JavaScript\Kiroku\functions\lib\functions\src\cloudUsers.js
+- C:\Users\AU451FE\JavaScript\Kiroku\functions\index.js
+- C:\Users\AU451FE\JavaScript\Kiroku\functions\node_modules\firebase-functions\lib\runtime\loader.js
+- C:\Users\AU451FE\JavaScript\Kiroku\functions\node_modules\firebase-functions\lib\bin\firebase-functions.js
+[info] shutdown requested via /__/quitquitquit
+
+[error] 
+[error] Error: Functions codebase could not be analyzed successfully. It may have a syntax or runtime error
+[debug] [2023-10-20T08:14:56.543Z] ----------------------------------------------------------------------
+[debug] [2023-10-20T08:14:56.545Z] Command:       c:\Program Files\nodejs\node.exe C:\Users\AU451FE\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only functions --debug
+[debug] [2023-10-20T08:14:56.545Z] CLI Version:   12.7.0
+[debug] [2023-10-20T08:14:56.545Z] Platform:      win32
+[debug] [2023-10-20T08:14:56.545Z] Node Version:  v18.17.1
+[debug] [2023-10-20T08:14:56.548Z] Time:          Fri Oct 20 2023 10:14:56 GMT+0200 (středoevropský letní čas)
+[debug] [2023-10-20T08:14:56.549Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2023-10-20T08:14:56.624Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2023-10-20T08:14:56.626Z] > authorizing via signed-in user (juke797@gmail.com)
+[debug] [2023-10-20T08:14:56.627Z] [iam] checking project alcohol-tracker-db for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2023-10-20T08:14:56.631Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/alcohol-tracker-db:testIamPermissions [none]
+[debug] [2023-10-20T08:14:56.631Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/alcohol-tracker-db:testIamPermissions x-goog-quota-user=projects/alcohol-tracker-db
+[debug] [2023-10-20T08:14:56.632Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/alcohol-tracker-db:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2023-10-20T08:14:57.751Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/alcohol-tracker-db:testIamPermissions 200
+[debug] [2023-10-20T08:14:57.752Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/alcohol-tracker-db:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2023-10-20T08:14:57.754Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/alcohol-tracker-db/serviceAccounts/alcohol-tracker-db@appspot.gserviceaccount.com:testIamPermissions [none]
+[debug] [2023-10-20T08:14:57.754Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/alcohol-tracker-db/serviceAccounts/alcohol-tracker-db@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2023-10-20T08:14:58.583Z] <<< [apiv2][status] POST https://iam.googleapis.com/v1/projects/alcohol-tracker-db/serviceAccounts/alcohol-tracker-db@appspot.gserviceaccount.com:testIamPermissions 200
+[debug] [2023-10-20T08:14:58.584Z] <<< [apiv2][body] POST https://iam.googleapis.com/v1/projects/alcohol-tracker-db/serviceAccounts/alcohol-tracker-db@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[info] 
+[info] === Deploying to 'alcohol-tracker-db'...
+[info] 
+[info] i  deploying functions 
+[debug] [2023-10-20T08:14:58.590Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/alcohol-tracker-db [none]
+[debug] [2023-10-20T08:14:59.486Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/alcohol-tracker-db 200
+[debug] [2023-10-20T08:14:59.487Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/alcohol-tracker-db {"projectId":"alcohol-tracker-db","projectNumber":"665512857657","displayName":"alcohol-tracker-db","name":"projects/alcohol-tracker-db","resources":{"hostingSite":"alcohol-tracker-db","realtimeDatabaseInstance":"alcohol-tracker-db-default-rtdb","storageBucket":"alcohol-tracker-db.appspot.com","locationId":"europe-west"},"state":"ACTIVE","etag":"1_bc9cb06d-bb6f-45ac-9a84-41c4adf1a4dd"}
+[info] i  functions: preparing codebase default for deployment 
+[info] i  functions: ensuring required API cloudfunctions.googleapis.com is enabled... 
+[info] i  functions: ensuring required API cloudbuild.googleapis.com is enabled... 
+[info] i  artifactregistry: ensuring required API artifactregistry.googleapis.com is enabled... 
+[debug] [2023-10-20T08:14:59.490Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/cloudfunctions.googleapis.com [none]
+[debug] [2023-10-20T08:14:59.491Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/cloudfunctions.googleapis.com x-goog-quota-user=projects/alcohol-tracker-db
+[debug] [2023-10-20T08:14:59.492Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/runtimeconfig.googleapis.com [none]
+[debug] [2023-10-20T08:14:59.493Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/runtimeconfig.googleapis.com x-goog-quota-user=projects/alcohol-tracker-db
+[debug] [2023-10-20T08:14:59.495Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/cloudbuild.googleapis.com [none]
+[debug] [2023-10-20T08:14:59.495Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/cloudbuild.googleapis.com x-goog-quota-user=projects/alcohol-tracker-db
+[debug] [2023-10-20T08:14:59.497Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/artifactregistry.googleapis.com [none]
+[debug] [2023-10-20T08:14:59.497Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/artifactregistry.googleapis.com x-goog-quota-user=projects/alcohol-tracker-db
+[debug] [2023-10-20T08:15:00.613Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/runtimeconfig.googleapis.com 200
+[debug] [2023-10-20T08:15:00.614Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/runtimeconfig.googleapis.com [omitted]
+[debug] [2023-10-20T08:15:00.633Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/cloudbuild.googleapis.com 200
+[debug] [2023-10-20T08:15:00.633Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/cloudbuild.googleapis.com [omitted]
+[info] +  functions: required API cloudbuild.googleapis.com is enabled 
+[debug] [2023-10-20T08:15:00.635Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/artifactregistry.googleapis.com 200
+[debug] [2023-10-20T08:15:00.635Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/artifactregistry.googleapis.com [omitted]
+[info] +  artifactregistry: required API artifactregistry.googleapis.com is enabled 
+[debug] [2023-10-20T08:15:00.637Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/cloudfunctions.googleapis.com 200
+[debug] [2023-10-20T08:15:00.637Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/cloudfunctions.googleapis.com [omitted]
+[info] +  functions: required API cloudfunctions.googleapis.com is enabled 
+[debug] [2023-10-20T08:15:00.638Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/alcohol-tracker-db/adminSdkConfig [none]
+[debug] [2023-10-20T08:15:01.387Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/alcohol-tracker-db/adminSdkConfig 200
+[debug] [2023-10-20T08:15:01.388Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/alcohol-tracker-db/adminSdkConfig {"projectId":"alcohol-tracker-db","databaseURL":"https://alcohol-tracker-db-default-rtdb.europe-west1.firebasedatabase.app","storageBucket":"alcohol-tracker-db.appspot.com","locationId":"europe-west"}
+[debug] [2023-10-20T08:15:01.389Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/alcohol-tracker-db/configs [none]
+[debug] [2023-10-20T08:15:02.507Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/alcohol-tracker-db/configs 200
+[debug] [2023-10-20T08:15:02.508Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/alcohol-tracker-db/configs {}
+[debug] [2023-10-20T08:15:02.516Z] Validating nodejs source
+[debug] [2023-10-20T08:15:09.297Z] > [functions] package.json contents: {
+  "name": "functions",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "deploy": "firebase deploy --only functions",
+    "build": "babel lib --out-dir lib"
+  },
+  "dependencies": {
+    "firebase-admin": "^11.10.1",
+    "firebase-functions": "^4.4.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.22.5",
+    "@babel/core": "^7.22.8",
+    "@babel/preset-env": "^7.22.7",
+    "@babel/preset-react": "^7.22.5",
+    "@babel/preset-typescript": "^7.22.5",
+    "@babel/runtime": "^7.22.6",
+    "@types/node": "^20.8.7",
+    "babel-plugin-module-resolver": "^5.0.0",
+    "typescript": "^5.1.6"
+  },
+  "private": true,
+  "engines": {
+    "node": "18"
+  }
+}
+[debug] [2023-10-20T08:15:09.300Z] Building nodejs source
+[info] i  functions: Loading and analyzing source code for codebase default to determine what to deploy 
+[debug] [2023-10-20T08:15:09.303Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-10-20T08:15:09.322Z] Found firebase-functions binary at 'C:\Users\AU451FE\JavaScript\Kiroku\functions\node_modules\.bin\firebase-functions'
+[info] Serving at port 8546
+
+[debug] [2023-10-20T08:15:12.139Z] Got response code 400; body Failed to generate manifest from function source: Error: Cannot find module '../../src/database/beta'
+Require stack:
+- C:\Users\AU451FE\JavaScript\Kiroku\functions\lib\functions\src\cloudUsers.js
+- C:\Users\AU451FE\JavaScript\Kiroku\functions\index.js
+- C:\Users\AU451FE\JavaScript\Kiroku\functions\node_modules\firebase-functions\lib\runtime\loader.js
+- C:\Users\AU451FE\JavaScript\Kiroku\functions\node_modules\firebase-functions\lib\bin\firebase-functions.js
+[info] shutdown requested via /__/quitquitquit
+
+[error] 
+[error] Error: Functions codebase could not be analyzed successfully. It may have a syntax or runtime error

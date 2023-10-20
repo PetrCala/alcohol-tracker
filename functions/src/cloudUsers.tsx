@@ -1,8 +1,11 @@
 ﻿import * as functions from 'firebase-functions'
-import admin from '@database/admin';
+import * as admin from 'firebase-admin'
+// import admin from '@database/admin';
 import { validateBetaKey } from '@database/beta';
 import { pushNewUserInfo } from '@database/users';
 import { validateAppVersion, validateSignInInput } from '@utils/validation';
+
+admin.initializeApp();
 
 // Must install firebase CLI using $npm install -g firebase-tools and add AppData\Roaming\npm to the environmental path --> see the help for Firebase Functions on logging in, etc.
 
@@ -23,7 +26,7 @@ export const createUser = functions.https.onCall(async (data, context):Promise<C
   // Validate the sign in input
   const signInInputValidationResult = validateSignInInput(email, username, password, betaKey);
   if (!signInInputValidationResult.success) {
-    return { success: false, uid: null, message: signInInputValidationResult?.message };
+    return { success: false, uid: null, message: signInInputValidationResult.message };
   }
 
   // Validate the minimum supported version
@@ -35,7 +38,7 @@ export const createUser = functions.https.onCall(async (data, context):Promise<C
   }
   const versionValidationResult = validateAppVersion(minSupportedVersionData)
   if (!versionValidationResult.success) {
-    return { success: false, uid: null, message: versionValidationResult?.message };
+    return { success: false, uid: null, message: versionValidationResult.message };
   }
 
   // Check beta key validity and other preconditions

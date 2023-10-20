@@ -9,6 +9,7 @@
     "noEmit":false,
     "declaration": true,
     "declarationMap": true,
+    "rootDir": ".",
     "outDir": "./build",
     "baseUrl": ".",
     "paths": {
@@ -18,11 +19,14 @@
     }
   },
   "include": [
-    "src/**/*",
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.js",
-    "**/*.json",
+    "src/database/**/*",
+    "src/utils/**/*",
+    "src/types/**/*",
+    // "src/**/*",
+    // "**/*.ts",
+    // "**/*.tsx",
+    // "**/*.js",
+    // "**/*.json",
     "package.json",
   ],
   "exclude": ["node_modules", "__tests__", "_dev", "android", "ios", "assets", "coverage", "docs", ".vscode"]

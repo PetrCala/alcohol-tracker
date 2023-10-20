@@ -8,6 +8,7 @@
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest",
+    "transpile": "npx tsc --build functions",
     "deploy-functions": "firebase deploy --only functions --debug"
   },
   "dependencies": {
