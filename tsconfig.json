@@ -6,7 +6,7 @@
     "esModuleInterop": true,
     "isolatedModules": true,
     "composite": true,
-    "noEmit":false,
+    "noEmit":true,
     "declaration": true,
     "declarationMap": true,
     "rootDir": ".",
@@ -18,16 +18,7 @@
       "@utils/*": ["./src/utils/*"]
     }
   },
-  "include": [
-    "src/database/**/*",
-    "src/utils/**/*",
-    "src/types/**/*",
-    // "src/**/*",
-    // "**/*.ts",
-    // "**/*.tsx",
-    // "**/*.js",
-    // "**/*.json",
-    "package.json",
-  ],
-  "exclude": ["node_modules", "__tests__", "_dev", "android", "ios", "assets", "coverage", "docs", ".vscode"]
+  "include": [],
+  // "exclude": ["node_modules", "__tests__", "_dev", "android", "ios", "assets", "coverage", "docs", ".vscode"]
+  "exclude": []
 }
