@@ -5,18 +5,18 @@
     "rootDir": "../",
     "outDir": "./lib",
   },  
-  "references": [
-    { "path": "../"}
-  ],
   "include": [
     "src/cloudUsers.tsx",
     "src/transpileEntry.ts",
-    // "../src/database/**/*",
-    // "../src/utils/**/*",
     "../src/database/admin.tsx",
     "../src/database/beta.tsx",
     "../src/database/users.tsx",
+    "../src/utils/static.tsx",
+    "../src/utils/strings.tsx",
     "../src/utils/validation.tsx",
+    "../src/types/*.tsx",
+    "../package.json",
+    "../alcohol-tracker-db-firebase-adminsdk-*.json"
   ],
   "exclude": [
     "node_modules", 

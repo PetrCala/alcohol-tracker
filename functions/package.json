@@ -3,7 +3,8 @@
     "scripts": {
         "serve": "firebase emulators:start --only functions",
         "deploy": "firebase deploy --only functions",
-        "build": "babel lib --out-dir lib"
+        "transpile": "npx tsc --build .",
+        "babel": "babel lib --out-dir lib"
     },
     "dependencies": {
         "firebase-admin": "^11.10.1",

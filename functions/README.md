@@ -1,18 +1,22 @@
 ﻿# Firebase Functions
 
-- From inside the project root, run
+- Navigate to the functions folder first
+    ```
+    cd functions
+    ```
+- From inside the folder, run
     ```
     npm run transpile
     ```
 
-    which will build the functions project.
+    which will build the functions project in the `functions/lib/` folder.
   
-- Navigate to the `functions/` folder and run
+- Next, run
     ```
-    npm run build
+    npm run babel
     ```
 
-    this will build the lib files in the `functions/lib/` folder so that the functions there can be exported into the Firebase Functions.
+    this will translate the lib files in the `functions/lib/` folder so that the functions there can be exported into the Firebase Functions.
 
 - Run
     ```

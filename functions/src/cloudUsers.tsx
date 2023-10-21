@@ -1,6 +1,5 @@
 ﻿import * as functions from 'firebase-functions'
-import * as admin from 'firebase-admin'
-// import admin from '@database/admin';
+import admin from '@database/admin';
 import { validateBetaKey } from '@database/beta';
 import { pushNewUserInfo } from '@database/users';
 import { validateAppVersion, validateSignInInput } from '@utils/validation';
