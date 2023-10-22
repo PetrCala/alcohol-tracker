@@ -1,5 +1,6 @@
 ﻿import { 
     addUnits,
+    calculateThisMonthPoints,
     calculateThisMonthUnits,
     changeDateBySomeDays,
     dateToDateObject, 
@@ -30,8 +31,8 @@
     unitsToColors
 } from "../../../src/utils/dataHandling";
 import { DateObject } from "../../../src/types/components";
-import { DrinkingSessionArrayItem, DrinkingSessionData, UnitTypesKeys, UnitTypesNames, UnitTypesProps, UnitsObject, UnitsToColorsData } from "../../../src/types/database";
-import { createMockSession, createMockUnitsObject } from "../../utils/mockDatabase";
+import { DrinkingSessionArrayItem, DrinkingSessionData, PreferencesData, UnitTypesKeys, UnitTypesNames, UnitTypesProps, UnitsObject, UnitsToColorsData } from "../../../src/types/database";
+import { createMockPreferences, createMockSession, createMockUnitsObject } from "../../utils/mockDatabase";
 import { MONTHS, MONTHS_ABBREVIATED } from "../../../src/utils/static";
 
 
@@ -707,6 +708,49 @@ describe('calculateThisMonthUnits', () => {
       expect(result).toBe(9);  // 4 + 3 + 2
     });
     
+});
+
+describe('calculateThisMonthPoints', () => {
+  let mockPreferences: PreferencesData = createMockPreferences();
+  let mockUnitsToPoints = mockPreferences.units_to_points;
+  mockUnitsToPoints.beer = 1;
+  mockUnitsToPoints.weak_shot = 0.5;
+  mockUnitsToPoints.other = 1;
+  let currentDate = new Date();
+  let mockDateObject: DateObject = dateToDateObject(currentDate);
+  let twoBeers: UnitsObject = createMockUnitsObject({beer: 2});
+  let threeWeakShots: UnitsObject = createMockUnitsObject({weak_shot: 3});
+  let fourOther: UnitsObject = createMockUnitsObject({other: 4});
+  
+  it('should return 0 when there are no drinking sessions this month', () => {
+    const result = calculateThisMonthPoints(mockDateObject, [], mockUnitsToPoints);
+    expect(result).toBe(0);
+  });
+
+  it('should sum units for sessions that only fall within the current month', () => {
+    const testSessions: DrinkingSessionArrayItem[] = [
+      createMockSession(new Date(), -31, twoBeers),
+      createMockSession(new Date(), 31, twoBeers),
+      createMockSession(new Date(), 0, threeWeakShots),
+      createMockSession(new Date(), 0, twoBeers),
+    ];
+    
+    const result = calculateThisMonthPoints(mockDateObject, testSessions, mockUnitsToPoints);
+    expect(result).toBe(3.5);  // 3 * 0.5 + 2 * 1
+  });
+
+  it('should sum units for all sessions if all fall within the current month', () => {
+    // Mock sumAllUnits function and getSingleMonthDrinkingSessions to return an array of sessions
+    const testSessions: DrinkingSessionArrayItem[] = [
+      createMockSession(new Date(), 0, threeWeakShots),
+      createMockSession(new Date(), 0, twoBeers),
+      createMockSession(new Date(), 0, fourOther),
+    ];
+    
+    const result = calculateThisMonthPoints(mockDateObject, testSessions, mockUnitsToPoints);
+    expect(result).toBe(7.5);  // 3 * 0.5 + 2 * 1 + 4 * 1
+  });
+
 });
 
 

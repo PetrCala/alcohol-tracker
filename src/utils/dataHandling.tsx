@@ -176,7 +176,7 @@ export function getYearMonth(dateObject: DateObject):string {
  * 
  * @example
  * const date = { year: 2023, month: 10 };
- * getAbbreviatedYearMonth(date); // Returns "Oct/2023"
+ * getYearMonthVerbose(date, true); // Returns "Oct/2023"
  */
 export function getYearMonthVerbose(dateObject: DateObject, abbreviated:boolean = false): string {
     const months = abbreviated ? MONTHS_ABBREVIATED : MONTHS
@@ -412,10 +412,10 @@ export const calculateThisMonthUnits = (dateObject: DateObject, sessions: Drinki
 /** Enter a dateObject and an array of drinking sessions and calculate 
  * points for units consumed in the current month.
  * 
- * @param dateObject DateObject
- * @param sessions Array of drinking sessions
- * @param unitsToPoints Units to points conversion object
- * @returns Number of points for units consumed during the current month
+ * @param {DateObject} dateObject DateObject
+ * @param {DrinkingSessionArrayItem[]} sessions Array of drinking sessions
+ * @param {UnitTypesProps} unitsToPoints Units to points conversion object
+ * @returns {number} Number of points for units consumed during the current month
  */
 export const calculateThisMonthPoints = (dateObject: DateObject, sessions: DrinkingSessionArrayItem[], unitsToPoints: UnitTypesProps): number => {
     // Subset to this month's sessions only
@@ -559,4 +559,4 @@ export const findUnitName = (unitKey: typeof UnitTypesKeys[number]) => {
     return unitName;
 };
 
-// test, getAdjacentMonths, aggregatesessionsbydays, month entries to colors (move these maybe to a different location), calculatethismonthpoints, getabbreviatedyearmonth
+// test, getAdjacentMonths, aggregatesessionsbydays, month entries to colors (move these maybe to a different location)
