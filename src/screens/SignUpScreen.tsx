@@ -20,8 +20,10 @@ import { readDataOnce } from '../database/baseFunctions';
 import { BetaKeysData, validateBetaKey } from '../database/beta';
 import { useUserConnection } from '../context/UserConnectionContext';
 import { handleInvalidInput } from '../utils/errorHandling';
-import { isValidString } from '../utils/validation';
+import { isValidString, validateAppVersion } from '../utils/validation';
 import { invalidChars } from '../utils/static';
+import { pushNewUserInfo } from '@database/users';
+import { ProfileData } from 'src/types/database';
 
 const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
   if (!route || ! navigation) return null; // Should never be null
@@ -90,95 +92,80 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
   const handleSignUp = async () => {
     if (!validateUserInput() || !isOnline) return;
 
+    var minSupportedVersion: string | null;
+    var betaKeys:any;
+
     try {
-      const createUserFunction = functions().httpsCallable('createUser')
-      const result = await createUserFunction({ email, password, username, betaKey });
-
-      if (result.data.success) {
-        navigation.replace("App", {screen: "Main Screen"}); // Navigate to main screen
-      } else {
-        setWarning(result.data?.message);
-      }
+      minSupportedVersion = await fetchMinSupportedVersion();
+      betaKeys = await fetchBetaKeys();
     } catch (error:any) {
-      // Handle the error
-      setWarning('Error during sign-up: ' + error.message);
+      Alert.alert('Data fetch failed', 'Could not fetch the sign-up source data: ' + error.message);
+      return;
+    };
+
+    if (!minSupportedVersion) {
+      setWarning('Failed to fetch the minimum supported version. Please try again later.');
+      return;
     }
-  };
-    // const minSupportedVersion = await fetchMinSupportedVersion();
-    // if (!minSupportedVersion) {
-    //   setWarning('Failed to fetch the minimum supported version. Please try again later.');
-    //   return;
-    // }
-    // if (!validateAppVersion(minSupportedVersion)) {
-    //   setWarning('This version of the application is outdated. Please upgrade to the newest version.');
-    //   return;
-    // }
-
-    // const betaKeys = await fetchBetaKeys();
-    // if (!betaKeys) {
-    //   setWarning('Failed to fetch beta keys. Please try again later.');
-    //   return;
-    // }
-    // const betaKeyId = validateBetaKey(betaKeys, betaKey);
-    // if (!betaKeyId) {
-    //   setWarning('Your beta key is either invalid or already in use.');
-    //   return;
-    // }
-
-    // await createUserAuth();
-
-    // const newUser = auth.currentUser;
-    // if (!newUser) {
-    //   Alert.alert('User creation failed', 'The user was not created in the database');
-    //   return;
-    // }
-
-    // try {
-    //   await updateUserProfile(newUser);
-    // } catch (error:any) {
-    //   Alert.alert('User profile update failed', 'Could not update the user profile: ' + error.message);
-    //   return;
-    // }
-
-    // // Pushing initial user data to Realtime Database
-    // const newProfileData: ProfileData = {
-    //   display_name: username,
-    //   photo_url: "",
-    // };
-    // try {
-    //   await pushNewUserInfo(db, newUser.uid, newProfileData, betaKeyId);
-    // } catch (error:any) {
-    //   Alert.alert('Could not write into database', 'Writing user info into the database failed: ' + error.message);
-    //   return;
-
- 
-
-  /** Set the warning hook to include a warning text informing
-   * the user of an unsuccessful account creation. Return an alert
-   * in case of an uncaught warning, otherwise return null.
-   * 
-   * @param error Error thrown by the signUpWithUserEmailAndPassword method
-   */
-  const handleInvalidSignUp = (error:any) => {
-    const err = error.message;
-    if (err.includes('auth/invalid-email')){
-      setWarning('Invalid email');
-    } else if (err.includes('auth/missing-password')){
-      setWarning('Choose a password first');
-    } else if (err.includes('auth/weak-password')){
-      setWarning('Your password is too weak - password should be at least 6 characters')
-    } else if (err.includes('auth/email-already-in-use')){
-      setWarning('This email is already in use')
-    } else if (err.includes('auth/network-request-failed')){
-        setWarning('You are offline');
-    } else {
-      // Uncaught error
-      return Alert.alert("Error Creating User", "There was an error creating a new user: " + error.message);
+    if (!validateAppVersion(minSupportedVersion)) {
+      setWarning('This version of the application is outdated. Please upgrade to the newest version.');
+      return;
     }
-    return null;
+
+    if (!betaKeys) {
+      setWarning('Failed to fetch beta keys. Please try again later.');
+      return;
+    }
+    const betaKeyId = validateBetaKey(betaKeys, betaKey);
+    if (!betaKeyId) {
+      setWarning('Your beta key is either invalid or already in use.');
+      return;
+    }
+
+    // Pushing initial user data to Realtime Database
+    const newProfileData: ProfileData = {
+      display_name: username,
+      photo_url: "",
+    };
+
+    try {
+      await createUserAuth();
+    } catch (error:any) {
+      Alert.alert('User creation failed', 'The user was not created in the database');
+      return;
+    };
+
+    const newUser = auth.currentUser;
+    if (!newUser) {
+      Alert.alert('User creation failed', 'The user was not created in the database');
+      return;
+    }
+    
+    
+    try {
+      await updateUserProfile(auth.currentUser);
+      await pushNewUserInfo(db, auth.currentUser.uid, newProfileData, betaKeyId);
+    } catch (error:any) {
+      Alert.alert('Could not write into database', 'Writing user info into the database failed: ' + error.message);
+      return;
+    };
   };
 
-  // const handleGoBack = async () => {
+  // try {
+  //   const createUserFunction = functions().httpsCallable('createUser')
+  //   const result = await createUserFunction({ email, password, username, betaKey });
+
+  //   if (result.data.success) {
+  //     navigation.replace("App", {screen: "Main Screen"}); // Navigate to main screen
+  //   } else {
+  //     setWarning(result.data?.message);
+  //   }
+  // } catch (error:any) {
+  //   // Handle the error
+  //   setWarning('Error during sign-up: ' + error.message);
+  // }
+
+   // const handleGoBack = async () => {
   //   navigation.navigate("Login Screen");
   // };
 

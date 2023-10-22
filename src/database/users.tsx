@@ -4,7 +4,6 @@ import { appInBeta } from "../utils/static";
 import { EmailAuthProvider, User, UserCredential, reauthenticateWithCredential } from "firebase/auth";
 import { Alert } from "react-native";
 import { cleanStringForFirebaseKey } from "../utils/strings";
-import admin from "./admin";
 
 export const getDefaultPreferences = ():PreferencesData => {
   return {
@@ -59,14 +58,14 @@ export async function userExistsInDatabase(
 /** In the database, create base info for a user. This will
  * be stored under the "users" object in the database.
  * 
- * @param {admin.database.Database} db The firebase admin database object
+ * @param {Database} db The firebase realtime database object
  * @param {string} userId The user ID
  * @param {ProfileData} profileData Profile data of the user to create
  * @param {string} betaKeyId Beta key // Beta feature
  * @returns {Promise<void>}
  */
 export async function pushNewUserInfo(
- db: admin.database.Database,
+ db: Database,
  userId: string,
  profileData: ProfileData,
  betaKeyId: string, // Beta feature
@@ -86,16 +85,14 @@ export async function pushNewUserInfo(
   // Beta feature
   updates[`beta_keys/${betaKeyId}/in_usage`] = true;
   updates[`beta_keys/${betaKeyId}/user_id`] = userId;
-  await db.ref().update(updates);
+  await update(ref(db), updates);
 };
 
 
 /** Delete all user info from the realtime database, including their 
  * user information, drinking sessions, etc.
  * 
- * TODO modify to accept the admin database
  * 
- * @param {admin.database.Database} db The firebase admin database object
  * @param {Database} db The firebase database object
  * @param {string} userId The user ID
  * @param {string} userNickname The user nickname

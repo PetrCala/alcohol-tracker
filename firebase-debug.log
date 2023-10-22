@@ -1175,3 +1175,212 @@ Require stack:
 
 [error] 
 [error] Error: Functions codebase could not be analyzed successfully. It may have a syntax or runtime error
+[debug] [2023-10-21T05:34:03.681Z] ----------------------------------------------------------------------
+[debug] [2023-10-21T05:34:03.683Z] Command:       c:\Program Files\nodejs\node.exe C:\Users\AU451FE\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js emulators:start --only functions --debug
+[debug] [2023-10-21T05:34:03.683Z] CLI Version:   12.7.0
+[debug] [2023-10-21T05:34:03.684Z] Platform:      win32
+[debug] [2023-10-21T05:34:03.684Z] Node Version:  v18.17.1
+[debug] [2023-10-21T05:34:03.687Z] Time:          Sat Oct 21 2023 07:34:03 GMT+0200 (středoevropský letní čas)
+[debug] [2023-10-21T05:34:03.687Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2023-10-21T05:34:03.693Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[debug] [2023-10-21T05:34:03.805Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2023-10-21T05:34:03.808Z] > authorizing via signed-in user (juke797@gmail.com)
+[info] i  emulators: Starting emulators: functions {"metadata":{"emulator":{"name":"hub"},"message":"Starting emulators: functions"}}
+[debug] [2023-10-21T05:34:03.826Z] [logging] Logging Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2023-10-21T05:34:03.827Z] assigned listening specs for emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400},{"address":"::1","family":"IPv6","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000},{"address":"::1","family":"IPv6","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}]},"metadata":{"message":"assigned listening specs for emulators"}}
+[debug] [2023-10-21T05:34:03.878Z] [hub] writing locator at C:\Users\AU451FE\AppData\Local\Temp\hub-alcohol-tracker-db.json
+[debug] [2023-10-21T05:34:03.886Z] *** [apiv2] error from fetch(https://firebase-public.firebaseio.com/cli.json, {"headers":{},"method":"GET"}): FetchError: request to https://firebase-public.firebaseio.com/cli.json failed, reason: getaddrinfo ENOTFOUND firebase-public.firebaseio.com
+[warn] !  Unable to fetch the CLI MOTD and remote config. 
+[debug] [2023-10-21T05:34:03.887Z] Failed to fetch MOTD FirebaseError: Failed to make request to https://firebase-public.firebaseio.com/cli.json
+[debug] [2023-10-21T05:34:03.902Z] [functions] Functions Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2023-10-21T05:34:03.903Z] [eventarc] Eventarc Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2023-10-21T05:34:03.903Z] late-assigned ports for functions and eventarc emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400},{"address":"::1","family":"IPv6","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000},{"address":"::1","family":"IPv6","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}],"functions":[{"address":"127.0.0.1","family":"IPv4","port":5001}],"eventarc":[{"address":"127.0.0.1","family":"IPv4","port":9299}]},"metadata":{"message":"late-assigned ports for functions and eventarc emulators"}}
+[warn] !  functions: The following emulators are not running, calls to these services from the Functions emulator will affect production: auth, firestore, database, hosting, pubsub, storage {"metadata":{"emulator":{"name":"functions"},"message":"The following emulators are not running, calls to these services from the Functions emulator will affect production: \u001b[1mauth, firestore, database, hosting, pubsub, storage\u001b[22m"}}
+[debug] [2023-10-21T05:34:03.911Z] defaultcredentials: writing to file C:\Users\AU451FE\AppData\Roaming\firebase\juke797_gmail_com_application_default_credentials.json
+[debug] [2023-10-21T05:34:03.916Z] Setting GAC to C:\Users\AU451FE\AppData\Roaming\firebase\juke797_gmail_com_application_default_credentials.json {"metadata":{"emulator":{"name":"functions"},"message":"Setting GAC to C:\\Users\\AU451FE\\AppData\\Roaming\\firebase\\juke797_gmail_com_application_default_credentials.json"}}
+[debug] [2023-10-21T05:34:03.919Z] > refreshing access token with scopes: []
+[debug] [2023-10-21T05:34:03.920Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2023-10-21T05:34:03.920Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2023-10-21T05:34:03.925Z] *** [apiv2] error from fetch(https://www.googleapis.com/oauth2/v3/token, {"headers":{},"method":"POST","body":{"_overheadLength":545,"_valueLength":212,"_valuesToMeasure":[],"writable":false,"readable":true,"dataSize":0,"maxDataSize":2097152,"pauseStreams":true,"_released":true,"_streams":[],"_currentStream":null,"_insideLoop":false,"_pendingNext":false,"_boundary":"--------------------------865212012250272568102237","_events":{},"_eventsCount":1}}): FetchError: request to https://www.googleapis.com/oauth2/v3/token failed, reason: getaddrinfo ENOTFOUND www.googleapis.com
+[debug] [2023-10-21T05:34:03.926Z] Failed to get Admin SDK config for alcohol-tracker-db, falling back to cache Failed to get Admin SDK for Firebase project alcohol-tracker-db. Please make sure the project exists and your account has permission to access it. {"name":"FirebaseError","children":[],"exit":2,"message":"Failed to get Admin SDK for Firebase project alcohol-tracker-db. Please make sure the project exists and your account has permission to access it.","original":{"name":"FirebaseError","children":[],"exit":1,"message":"Authentication Error: Your credentials are no longer valid. Please run \u001b[1mfirebase login --reauth\u001b[22m\n\nFor CI servers and headless environments, generate a new token with \u001b[1mfirebase login:ci\u001b[22m","status":500},"status":500}
+[debug] [2023-10-21T05:34:03.947Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"ui"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2023-10-21T05:34:03.948Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"ui"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2023-10-21T05:34:03.948Z] Starting Emulator UI with command {"binary":"node","args":["C:\\Users\\AU451FE\\.cache\\firebase\\emulators\\ui-v1.11.7\\server\\server.js"],"optionalArgs":[],"joinArgs":false} {"metadata":{"emulator":{"name":"ui"},"message":"Starting Emulator UI with command {\"binary\":\"node\",\"args\":[\"C:\\\\Users\\\\AU451FE\\\\.cache\\\\firebase\\\\emulators\\\\ui-v1.11.7\\\\server\\\\server.js\"],\"optionalArgs\":[],\"joinArgs\":false}"}}
+[info] i  ui: Emulator UI logging to ui-debug.log {"metadata":{"emulator":{"name":"ui"},"message":"Emulator UI logging to \u001b[1mui-debug.log\u001b[22m"}}
+[debug] [2023-10-21T05:34:04.763Z] Web / API server started at 127.0.0.1:4000
+ {"metadata":{"emulator":{"name":"ui"},"message":"Web / API server started at 127.0.0.1:4000\n"}}
+[debug] [2023-10-21T05:34:04.764Z] Web / API server started at ::1:4000
+ {"metadata":{"emulator":{"name":"ui"},"message":"Web / API server started at ::1:4000\n"}}
+[info] i  functions: Watching "C:\Users\AU451FE\JavaScript\Kiroku\functions" for Cloud Functions... {"metadata":{"emulator":{"name":"functions"},"message":"Watching \"C:\\Users\\AU451FE\\JavaScript\\Kiroku\\functions\" for Cloud Functions..."}}
+[debug] [2023-10-21T05:34:05.022Z] Validating nodejs source
+[debug] [2023-10-21T05:34:15.110Z] checkFunctionsSDKVersion was unable to fetch information from NPM Error: spawnSync C:\Windows\system32\cmd.exe ETIMEDOUT
+    at Object.spawnSync (node:internal/child_process:1110:20)
+    at Object.spawnSync (node:child_process:871:24)
+    at Function.spawnSync [as sync] (C:\Users\AU451FE\AppData\Roaming\npm\node_modules\firebase-tools\node_modules\cross-spawn\index.js:26:23)
+    at Object.getLatestSDKVersion (C:\Users\AU451FE\AppData\Roaming\npm\node_modules\firebase-tools\lib\deploy\functions\runtimes\node\versioning.js:54:25)
+    at Object.checkFunctionsSDKVersion (C:\Users\AU451FE\AppData\Roaming\npm\node_modules\firebase-tools\lib\deploy\functions\runtimes\node\versioning.js:74:32)
+    at Delegate.validate (C:\Users\AU451FE\AppData\Roaming\npm\node_modules\firebase-tools\lib\deploy\functions\runtimes\node\index.js:84:20)
+    at FunctionsEmulator.discoverTriggers (C:\Users\AU451FE\AppData\Roaming\npm\node_modules\firebase-tools\lib\emulator\functionsEmulator.js:296:35)
+    at async FunctionsEmulator.loadTriggers (C:\Users\AU451FE\AppData\Roaming\npm\node_modules\firebase-tools\lib\emulator\functionsEmulator.js:325:34)
+    at async FunctionsEmulator.connect (C:\Users\AU451FE\AppData\Roaming\npm\node_modules\firebase-tools\lib\emulator\functionsEmulator.js:262:13)
+    at async Object.startAll (C:\Users\AU451FE\AppData\Roaming\npm\node_modules\firebase-tools\lib\emulator\controller.js:565:13)
+[debug] [2023-10-21T05:34:15.115Z] > [functions] package.json contents: {
+  "name": "functions",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "deploy": "firebase deploy --only functions",
+    "transpile": "npx tsc --build .",
+    "babel": "babel lib --out-dir lib"
+  },
+  "dependencies": {
+    "firebase-admin": "^11.10.1",
+    "firebase-functions": "^4.4.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.22.5",
+    "@babel/core": "^7.22.8",
+    "@babel/preset-env": "^7.22.7",
+    "@babel/preset-react": "^7.22.5",
+    "@babel/preset-typescript": "^7.22.5",
+    "@babel/runtime": "^7.22.6",
+    "@types/node": "^20.8.7",
+    "babel-plugin-module-resolver": "^5.0.0",
+    "typescript": "^5.1.6"
+  },
+  "private": true,
+  "engines": {
+    "node": "18"
+  }
+}
+[debug] [2023-10-21T05:34:15.120Z] Building nodejs source
+[debug] [2023-10-21T05:34:15.121Z] Failed to find version of module node: reached end of search path C:\Users\AU451FE\JavaScript\Kiroku\functions\node_modules
+[info] +  functions: Using node@18 from host. 
+[debug] [2023-10-21T05:34:15.126Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-10-21T05:34:15.148Z] Found firebase-functions binary at 'C:\Users\AU451FE\JavaScript\Kiroku\functions\node_modules\.bin\firebase-functions'
+[info] Serving at port 8321
+
+[debug] [2023-10-21T05:34:18.974Z] Got response code 400; body Failed to generate manifest from function source: SyntaxError: Cannot use import statement outside a module
+[info] shutdown requested via /__/quitquitquit
+
+[error] !!  functions: Failed to load function definition from source: FirebaseError: Functions codebase could not be analyzed successfully. It may have a syntax or runtime error {"metadata":{"emulator":{"name":"functions"},"message":"Failed to load function definition from source: FirebaseError: Functions codebase could not be analyzed successfully. It may have a syntax or runtime error"}}
+[info] 
+┌─────────────────────────────────────────────────────────────┐
+│ ✔  All emulators ready! It is now safe to connect your app. │
+│ i  View Emulator UI at http://127.0.0.1:4000/               │
+└─────────────────────────────────────────────────────────────┘
+
+┌───────────┬────────────────┬─────────────────────────────────┐
+│ Emulator  │ Host:Port      │ View in Emulator UI             │
+├───────────┼────────────────┼─────────────────────────────────┤
+│ Functions │ 127.0.0.1:5001 │ http://127.0.0.1:4000/functions │
+└───────────┴────────────────┴─────────────────────────────────┘
+  Emulator Hub running at 127.0.0.1:4400
+  Other reserved ports: 4500
+
+Issues? Report them at https://github.com/firebase/firebase-tools/issues and attach the *-debug.log files.
+ 
+[debug] [2023-10-22T11:37:17.273Z] ----------------------------------------------------------------------
+[debug] [2023-10-22T11:37:17.275Z] Command:       c:\Program Files\nodejs\node.exe C:\Users\AU451FE\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only functions --debug
+[debug] [2023-10-22T11:37:17.276Z] CLI Version:   12.7.0
+[debug] [2023-10-22T11:37:17.276Z] Platform:      win32
+[debug] [2023-10-22T11:37:17.276Z] Node Version:  v18.17.1
+[debug] [2023-10-22T11:37:17.279Z] Time:          Sun Oct 22 2023 13:37:17 GMT+0200 (středoevropský letní čas)
+[debug] [2023-10-22T11:37:17.279Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2023-10-22T11:37:17.287Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[debug] [2023-10-22T11:37:17.422Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2023-10-22T11:37:17.424Z] > authorizing via signed-in user (juke797@gmail.com)
+[debug] [2023-10-22T11:37:17.425Z] [iam] checking project alcohol-tracker-db for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2023-10-22T11:37:17.428Z] > refreshing access token with scopes: []
+[debug] [2023-10-22T11:37:17.430Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2023-10-22T11:37:17.430Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2023-10-22T11:37:17.640Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2023-10-22T11:37:17.641Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2023-10-22T11:37:17.663Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/alcohol-tracker-db:testIamPermissions [none]
+[debug] [2023-10-22T11:37:17.664Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/alcohol-tracker-db:testIamPermissions x-goog-quota-user=projects/alcohol-tracker-db
+[debug] [2023-10-22T11:37:17.664Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/alcohol-tracker-db:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2023-10-22T11:37:18.515Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/alcohol-tracker-db:testIamPermissions 200
+[debug] [2023-10-22T11:37:18.516Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/alcohol-tracker-db:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2023-10-22T11:37:18.517Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/alcohol-tracker-db/serviceAccounts/alcohol-tracker-db@appspot.gserviceaccount.com:testIamPermissions [none]
+[debug] [2023-10-22T11:37:18.518Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/alcohol-tracker-db/serviceAccounts/alcohol-tracker-db@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2023-10-22T11:37:18.577Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[debug] [2023-10-22T11:37:18.578Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[debug] [2023-10-22T11:37:19.317Z] <<< [apiv2][status] POST https://iam.googleapis.com/v1/projects/alcohol-tracker-db/serviceAccounts/alcohol-tracker-db@appspot.gserviceaccount.com:testIamPermissions 200
+[debug] [2023-10-22T11:37:19.318Z] <<< [apiv2][body] POST https://iam.googleapis.com/v1/projects/alcohol-tracker-db/serviceAccounts/alcohol-tracker-db@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[info] 
+[info] === Deploying to 'alcohol-tracker-db'...
+[info] 
+[info] i  deploying functions 
+[debug] [2023-10-22T11:37:19.322Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/alcohol-tracker-db [none]
+[debug] [2023-10-22T11:37:19.666Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/alcohol-tracker-db 200
+[debug] [2023-10-22T11:37:19.667Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/alcohol-tracker-db {"projectId":"alcohol-tracker-db","projectNumber":"665512857657","displayName":"alcohol-tracker-db","name":"projects/alcohol-tracker-db","resources":{"hostingSite":"alcohol-tracker-db","realtimeDatabaseInstance":"alcohol-tracker-db-default-rtdb","storageBucket":"alcohol-tracker-db.appspot.com","locationId":"europe-west"},"state":"ACTIVE","etag":"1_bc9cb06d-bb6f-45ac-9a84-41c4adf1a4dd"}
+[info] i  functions: preparing codebase default for deployment 
+[info] i  functions: ensuring required API cloudfunctions.googleapis.com is enabled... 
+[info] i  functions: ensuring required API cloudbuild.googleapis.com is enabled... 
+[info] i  artifactregistry: ensuring required API artifactregistry.googleapis.com is enabled... 
+[debug] [2023-10-22T11:37:19.670Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/cloudfunctions.googleapis.com [none]
+[debug] [2023-10-22T11:37:19.670Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/cloudfunctions.googleapis.com x-goog-quota-user=projects/alcohol-tracker-db
+[debug] [2023-10-22T11:37:19.672Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/runtimeconfig.googleapis.com [none]
+[debug] [2023-10-22T11:37:19.672Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/runtimeconfig.googleapis.com x-goog-quota-user=projects/alcohol-tracker-db
+[debug] [2023-10-22T11:37:19.674Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/cloudbuild.googleapis.com [none]
+[debug] [2023-10-22T11:37:19.674Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/cloudbuild.googleapis.com x-goog-quota-user=projects/alcohol-tracker-db
+[debug] [2023-10-22T11:37:19.675Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/artifactregistry.googleapis.com [none]
+[debug] [2023-10-22T11:37:19.675Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/artifactregistry.googleapis.com x-goog-quota-user=projects/alcohol-tracker-db
+[debug] [2023-10-22T11:37:20.673Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/runtimeconfig.googleapis.com 200
+[debug] [2023-10-22T11:37:20.674Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/runtimeconfig.googleapis.com [omitted]
+[debug] [2023-10-22T11:37:20.700Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/cloudbuild.googleapis.com 200
+[debug] [2023-10-22T11:37:20.700Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/cloudbuild.googleapis.com [omitted]
+[info] +  functions: required API cloudbuild.googleapis.com is enabled 
+[debug] [2023-10-22T11:37:20.701Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/cloudfunctions.googleapis.com 200
+[debug] [2023-10-22T11:37:20.702Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/cloudfunctions.googleapis.com [omitted]
+[info] +  functions: required API cloudfunctions.googleapis.com is enabled 
+[debug] [2023-10-22T11:37:20.703Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/artifactregistry.googleapis.com 200
+[debug] [2023-10-22T11:37:20.703Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/alcohol-tracker-db/services/artifactregistry.googleapis.com [omitted]
+[info] +  artifactregistry: required API artifactregistry.googleapis.com is enabled 
+[debug] [2023-10-22T11:37:20.704Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/alcohol-tracker-db/adminSdkConfig [none]
+[debug] [2023-10-22T11:37:21.212Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/alcohol-tracker-db/adminSdkConfig 200
+[debug] [2023-10-22T11:37:21.213Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/alcohol-tracker-db/adminSdkConfig {"projectId":"alcohol-tracker-db","databaseURL":"https://alcohol-tracker-db-default-rtdb.europe-west1.firebasedatabase.app","storageBucket":"alcohol-tracker-db.appspot.com","locationId":"europe-west"}
+[debug] [2023-10-22T11:37:21.214Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/alcohol-tracker-db/configs [none]
+[debug] [2023-10-22T11:37:22.092Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/alcohol-tracker-db/configs 200
+[debug] [2023-10-22T11:37:22.092Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/alcohol-tracker-db/configs {}
+[debug] [2023-10-22T11:37:22.096Z] Validating nodejs source
+[debug] [2023-10-22T11:37:28.101Z] > [functions] package.json contents: {
+  "name": "functions",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "deploy": "firebase deploy --only functions",
+    "transpile": "npx tsc --build .",
+    "babel": "babel lib --out-dir lib"
+  },
+  "dependencies": {
+    "firebase-admin": "^11.10.1",
+    "firebase-functions": "^4.4.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.22.5",
+    "@babel/core": "^7.22.8",
+    "@babel/preset-env": "^7.22.7",
+    "@babel/preset-react": "^7.22.5",
+    "@babel/preset-typescript": "^7.22.5",
+    "@babel/runtime": "^7.22.6",
+    "@types/node": "^20.8.7",
+    "babel-plugin-module-resolver": "^5.0.0",
+    "typescript": "^5.1.6"
+  },
+  "private": true,
+  "engines": {
+    "node": "18"
+  }
+}
+[debug] [2023-10-22T11:37:28.104Z] Building nodejs source
+[info] i  functions: Loading and analyzing source code for codebase default to determine what to deploy 
+[debug] [2023-10-22T11:37:28.106Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-10-22T11:37:28.129Z] Found firebase-functions binary at 'C:\Users\AU451FE\JavaScript\Kiroku\functions\node_modules\.bin\firebase-functions'
+[info] Serving at port 8800
+
+[debug] [2023-10-22T11:37:31.830Z] Got response code 400; body Failed to generate manifest from function source: SyntaxError: Cannot use import statement outside a module
+[info] shutdown requested via /__/quitquitquit
+
+[error] 
+[error] Error: Functions codebase could not be analyzed successfully. It may have a syntax or runtime error

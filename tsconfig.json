@@ -18,7 +18,6 @@
       "@utils/*": ["./src/utils/*"]
     }
   },
-  "include": [],
+  // "include": [],
   // "exclude": ["node_modules", "__tests__", "_dev", "android", "ios", "assets", "coverage", "docs", ".vscode"]
-  "exclude": []
 }
