@@ -1,3 +1,13 @@
-﻿const { createUser } = require('./lib/functions/src/cloudUsers');
+﻿// const { createUser } = require('./lib/functions/src/cloudUsers');
 
-module.exports = { createUser };
+// module.exports = { createUser };
+
+// const functions = require('firebase-functions');
+
+// exports.makeUppercase = functions.firestore.document('/messages/{documentId}')
+//     .onCreate((snap, context) => {
+//     const original = snap.data().original;
+//     console.log('Uppercasing', context.params.documentId, original);
+//     const uppercase = original.toUpperCase();
+//     return snap.ref.set({uppercase}, {merge: true});
+//     });

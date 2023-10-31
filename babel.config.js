@@ -4,13 +4,14 @@ module.exports = {
     ['@babel/preset-env', {targets: {node: 'current'}}],
     '@babel/preset-typescript'
   ],
-  plugins: [
-    [
-      'module:react-native-dotenv',
-      {
-        moduleName: '@env',
-        path: '.env',
-      },
-    ],
-  ],
+  // plugins: [
+  //   [
+  //     'module:react-native-dotenv',
+  //    Replaced by the types/env.d.ts file that declares the .env as an @env module
+  //     {
+  //       moduleName: '@env',
+  //       path: '.env',
+  //     },
+  //   ],
+  // ],
 };

@@ -12,6 +12,7 @@ Prerequisites
 #. Install `node.js <https://nodejs.org/>`_.
 #. Install the `Java SE Development Kit (JDK)  <https://www.oracle.com/java/technologies/downloads/#java17>`_. We recommend you use the long-term-supported version 17. After the installation, open the *Edit environment variables for your account* window from the Windows control pannel, and ADD a new variable named *JAVA_HOME*. Set its value to the installed folder of the JDK (most likely :code:`C:\\ProgramFiles\\Java\\jdk-{version-name}\\`)
 #. Install React Native by running :code:`npx react native`
+#. Install the lates version of firebase tools using :code:`npm install -g firebase-tools`.
 
 
 Setting up the project after cloning the repository
@@ -97,3 +98,7 @@ Updating the app version
 Building the documentation
 ================================
 * Build the documentation using a command :code:`make html`. If the *make* is not recognized, call the *make.bat* file directly using :code:`docs\make.bat html`.
+
+Running firebase emulators
+================================
+* :code:`firebase emulators:start`

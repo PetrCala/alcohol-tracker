@@ -1,8 +1,9 @@
 ﻿import { ReactNode, createContext, useContext } from 'react';
-import { Database, getDatabase } from 'firebase/database';
-import { FirebaseStorage } from 'firebase/storage';
+import { Database, connectDatabaseEmulator, getDatabase } from 'firebase/database';
+import { FirebaseStorage, getStorage, connectStorageEmulator } from 'firebase/storage';
 import { FirebaseApp } from 'firebase/app';
-import { getStorage } from 'firebase/storage';
+import { USE_EMULATORS, FIREBASE_DATABASE_EMULATOR_HOST, FIREBASE_STORAGE_EMULATOR_HOST } from '@env';
+
 
 type FirebaseContextProps = {
     db: Database;
@@ -34,9 +35,17 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
     app,
     children, 
 }) => {
-
     const db = getDatabase(app);
     const storage = getStorage(app);
+
+    // Check if emulators should be used
+    if (USE_EMULATORS === 'true') {
+      const [dbHost, dbPort] = FIREBASE_DATABASE_EMULATOR_HOST.split(':');
+      const [storageHost, storagePort] = FIREBASE_STORAGE_EMULATOR_HOST.split(':');
+  
+      connectDatabaseEmulator(db, dbHost, parseInt(dbPort));
+      connectStorageEmulator(storage, storageHost, parseInt(storagePort));
+    }
   
     return (
       <FirebaseContext.Provider value={{db, storage}} >
