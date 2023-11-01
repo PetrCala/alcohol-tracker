@@ -21,7 +21,7 @@ import LoadingData from '../components/LoadingData';
 import { DrinkingSessionArrayItem } from '../types/database';
 import { MainScreenProps } from '../types/screens';
 import { DateObject } from '../types/components';
-import { getAuth, signOut } from 'firebase/auth';
+import { auth } from "../../firebaseConfig"
 import { dateToDateObject, getZeroUnitsObject, calculateThisMonthUnits, findOngoingSession, calculateThisMonthPoints, getSingleMonthDrinkingSessions, timestampToDate, getYearMonthVerbose } from '../utils/dataHandling';
 import { useUserConnection } from '../context/UserConnectionContext';
 import UserOffline from '../components/UserOffline';
@@ -35,7 +35,6 @@ import ProfileImage from '../components/ProfileImage';
 
 const MainScreen = ( { navigation }: MainScreenProps) => {
   // Context, database, and authentification
-  const auth = getAuth();
   const user = auth.currentUser;
   const { db, storage } = useFirebase();
   const { isOnline } = useUserConnection();

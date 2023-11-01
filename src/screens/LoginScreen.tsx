@@ -12,7 +12,8 @@ import {
   View 
 } from 'react-native';
 import { Alert } from 'react-native';
-import { getAuth, sendPasswordResetEmail, signOut } from 'firebase/auth';
+import { sendPasswordResetEmail, signOut } from 'firebase/auth';
+import { auth } from "../../firebaseConfig";
 import { signInUserWithEmailAndPassword } from '../auth/auth';
 
 import { LoginScreenProps } from '../types/screens';
@@ -24,7 +25,6 @@ import { handleInvalidInput } from '../utils/errorHandling';
 
 const LoginScreen = ( {navigation }: LoginScreenProps) => {
   if (!navigation) return null; // Should never be null
-  const auth = getAuth();
   const { isOnline } = useUserConnection();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import { SettingsScreenProps } from '../types/screens';
-import { getAuth } from 'firebase/auth';
+import { auth } from "../../firebaseConfig";
 import { useUserConnection } from '../context/UserConnectionContext';
 import UserOffline from '../components/UserOffline';
 import BasicButton from '../components/Buttons/BasicButton';
@@ -37,7 +37,6 @@ const SettingsItem: React.FC<{ item: any }> = ({ item }) => (
 const SettingsScreen = ({ route, navigation }: SettingsScreenProps) => {
   if (!route || ! navigation) return null; // Should never be null
   const { preferences } = getDatabaseData();
-  const auth = getAuth();
   const user = auth.currentUser;
   const { isOnline } = useUserConnection();
 

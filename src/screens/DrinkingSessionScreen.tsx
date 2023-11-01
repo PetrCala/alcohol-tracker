@@ -27,7 +27,7 @@ updateCurrentSessionKey,
 } from '../database/drinkingSessions';
 import SessionUnitsInputWindow from '../components/Buttons/SessionUnitsInputWindow';
 import { addUnits, formatDateToDay, formatDateToTime, removeUnits, removeZeroObjectsFromSession, sumAllPoints, sumAllUnits, sumUnitsOfSingleType, timestampToDate, unitsToColors } from '../utils/dataHandling';
-import { getAuth } from 'firebase/auth';
+import { auth } from "../../firebaseConfig";
 import { DrinkingSessionArrayItem, DrinkingSessionData, UnitTypesKeys, UnitTypesProps, UnitsObject } from '../types/database';
 import DrinkingSessionUnitWindow from '../components/DrinkingSessionUnitWindow';
 import { maxAllowedUnits } from '../utils/static';
@@ -48,7 +48,6 @@ const DrinkingSessionScreen = ({ route, navigation}: DrinkingSessionScreenProps)
   if (!route || ! navigation) return null; // Should never be null
   const { session, sessionKey, preferences }  = route.params;
   // Context, database, and authentification
-  const auth = getAuth();
   const user = auth.currentUser;
   const { db } = useFirebase();
   const { isOnline } = useUserConnection();

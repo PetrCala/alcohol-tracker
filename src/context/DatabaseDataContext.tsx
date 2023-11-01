@@ -1,7 +1,7 @@
 ﻿// DatabaseDataContext.tsx
 import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
 import { CurrentSessionData, DrinkingSessionArrayItem, DrinkingSessionData, PreferencesData, UnconfirmedDaysData, UserData } from '../types/database';
-import { getAuth } from 'firebase/auth';
+import { auth } from "../../firebaseConfig";
 import { listenForDataChanges } from '../database/baseFunctions';
 import { isEqual } from 'lodash';
 import LoadingData from '../components/LoadingData';
@@ -39,7 +39,6 @@ type DatabaseDataProviderProps = {
 export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({ 
     children 
 }) => {
-    const auth = getAuth();
     const user = auth.currentUser;
     const { db } = useFirebase();
     // Database data hooks

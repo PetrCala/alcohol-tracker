@@ -12,7 +12,7 @@ import { FriendRequestData, FriendRequestStatus, UserData } from '../../types/da
 import { useEffect, useState } from 'react';
 import { useFirebase } from '../../context/FirebaseContext';
 import { acceptFriendRequest, deleteFriendRequest } from '../../database/friends';
-import { getAuth } from 'firebase/auth';
+import { auth } from "../../../firebaseConfig";
 import { isNonEmptyObject } from '../../utils/validation';
 import useProfileDisplayData from '../../hooks/useProfileDisplayData';
 import LoadingData from '../../components/LoadingData';
@@ -37,7 +37,6 @@ const FriendRequestButtons:React.FC<FriendRequestButtonsProps> = ({
   requestId
 }) => {
   const { db } = useFirebase();
-  const auth = getAuth();
   const user = auth.currentUser;
 
   const handleAcceptFriendRequest = async (db:Database, userId:string, requestId: string):Promise<void> => {

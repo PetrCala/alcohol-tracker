@@ -26,7 +26,7 @@ import { useContext } from 'react';
 import LoadingData from '../components/LoadingData';
 import { DrinkingSessionProps, DrinkingSessionData, DrinkingSessionArrayItem, PreferencesData } from '../types/database';
 import { DayOverviewScreenProps } from '../types/screens';
-import { getAuth } from 'firebase/auth';
+import { auth } from "../../firebaseConfig";
 import UserOffline from '../components/UserOffline';
 import { useUserConnection } from '../context/UserConnectionContext';
 import BasicButton from '../components/Buttons/BasicButton';
@@ -41,7 +41,6 @@ import commonStyles from '../styles/commonStyles';
 const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
     if (!route || ! navigation) return null; // Should never be null
     const { dateObject } = route.params; // Params for navigation
-    const auth = getAuth();
     const user = auth.currentUser;
     const { isOnline } = useUserConnection();
     const { 

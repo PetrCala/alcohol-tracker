@@ -15,7 +15,7 @@ import { useFirebase } from '../../context/FirebaseContext';
 import { Database } from 'firebase/database';
 import { searchDbByNickname } from '../../database/search';
 import UserOverview from '../UserOverview';
-import { getAuth } from 'firebase/auth';
+import { auth } from "../../../firebaseConfig";
 import { getDatabaseData } from '../../context/DatabaseDataContext';
 import { acceptFriendRequest, isFriend, sendFriendRequest } from '../../database/friends';
 import { isNonEmptyObject } from '../../utils/validation';
@@ -92,7 +92,6 @@ const SearchUsersPopup = (props: InputTextPopupProps) => {
         onRequestClose, 
     } = props;
     const { db } = useFirebase();
-    const auth = getAuth();
     const user = auth.currentUser;
     const { userData } = getDatabaseData();
     const [searchText, setSearchText] = useState<string>('');

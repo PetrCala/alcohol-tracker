@@ -5,7 +5,7 @@
   View,
 } from 'react-native';
 import { SessionSummaryScreenProps} from '../types/screens';
-import { getAuth } from 'firebase/auth';
+import { auth } from "../../firebaseConfig";
 import MenuIcon from '../components/Buttons/MenuIcon';
 import { formatDate, formatDateToDay, formatDateToTime, getLastUnitAddedTime, sumAllPoints, sumAllUnits, sumUnitsOfSingleType, timestampToDate, unitsToColors } from '../utils/dataHandling';
 import BasicButton from '../components/Buttons/BasicButton';

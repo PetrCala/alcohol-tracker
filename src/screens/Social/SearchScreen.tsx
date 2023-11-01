@@ -13,7 +13,7 @@ import { FriendRequestStatus, UserData, NicknameToIdData } from '../../types/dat
 import { useState } from 'react';
 import { useFirebase } from '../../context/FirebaseContext';
 import { acceptFriendRequest, deleteFriendRequest, sendFriendRequest } from '../../database/friends';
-import { getAuth } from 'firebase/auth';
+import { auth } from "../../../firebaseConfig";
 import { isNonEmptyObject } from '../../utils/validation';
 import useProfileDisplayData from '../../hooks/useProfileDisplayData';
 import LoadingData from '../../components/LoadingData';
@@ -123,7 +123,6 @@ type ScreenProps = {
 const SearchScreen = (props:ScreenProps) => {
   const {userData} = props;
   const { db } = useFirebase();
-  const auth = getAuth();
   const user = auth.currentUser;
   const [searchText, setSearchText] = useState<string>('');
   const [searchResultData, setSearchResultData] = useState<NicknameToIdData>({});

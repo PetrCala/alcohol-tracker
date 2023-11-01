@@ -12,7 +12,7 @@ import {
 import Slider from '@react-native-community/slider';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import { PreferencesScreenProps } from '../types/screens';
-import { getAuth } from 'firebase/auth';
+import { auth} from "../../firebaseConfig";
 import { useUserConnection } from '../context/UserConnectionContext';
 import { useFirebase } from '../context/FirebaseContext';
 import UserOffline from '../components/UserOffline';
@@ -64,7 +64,6 @@ const PreferencesList: React.FC<PreferencesListProps> = ({ id, initialContents, 
 
 const PreferencesScreen = ({ route, navigation }: PreferencesScreenProps) => {
     if (!route || ! navigation) return null; // Should never be null
-    const auth = getAuth();
     const user = auth.currentUser;
     const { db } = useFirebase();
     const { isOnline } = useUserConnection();

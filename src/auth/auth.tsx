@@ -1,6 +1,5 @@
 ﻿import { useEffect } from "react";
 import { 
-    getAuth,
     createUserWithEmailAndPassword, 
     signInWithEmailAndPassword, 
     onAuthStateChanged

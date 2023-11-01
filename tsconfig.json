@@ -4,7 +4,11 @@
     "allowJs": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
+    "skipLibCheck": true,
     "isolatedModules": true,
+    "moduleResolution": "node",
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
     "composite": true,
     "noEmit":true,
     "declaration": true,
@@ -19,9 +23,12 @@
     }
   },
   "include": [
+    "**/*.js",
+    "**/*.jsx",
     "**/*.ts",
     "**/*.tsx",
-    "app.json"
+    "app.json",
+    "src",
   ],
   // "exclude": ["node_modules", "__tests__", "_dev", "android", "ios", "assets", "coverage", "docs", ".vscode"]
 }

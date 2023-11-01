@@ -1,4 +1,4 @@
-﻿import { getAuth } from "firebase/auth";
+﻿import { auth } from "../../firebaseConfig";
 import { StyleSheet, Text, View } from "react-native";
 import { useFirebase } from "../context/FirebaseContext";
 import { ProfileData } from "../types/database";
@@ -16,7 +16,6 @@ const UserOverview: React.FC<UserOverviewProps> = ({
   profileData,
   RightSideComponent
 }) => {
-  const auth = getAuth();
   const user = auth.currentUser;
   const { db, storage } = useFirebase();
 

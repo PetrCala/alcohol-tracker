@@ -12,7 +12,8 @@ import {
     TouchableOpacity,
     View, 
 } from 'react-native';
-import { getAuth, updateProfile } from 'firebase/auth';
+import { updateProfile } from 'firebase/auth';
+import { auth } from "../../firebaseConfig";
 import { signUpUserWithEmailAndPassword } from '../auth/auth';
 import { useFirebase } from '../context/FirebaseContext';
 import { SignUpScreenProps } from '../types/screens';
@@ -28,7 +29,6 @@ import { ProfileData } from 'src/types/database';
 const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
   if (!route || ! navigation) return null; // Should never be null
   const { loginEmail } = route.params; // To avoid reduncancy
-  const auth = getAuth();
   const { db } = useFirebase();
   const { isOnline } = useUserConnection();
   const [email, setEmail] = useState(loginEmail);
