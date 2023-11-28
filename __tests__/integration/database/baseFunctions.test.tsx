@@ -3,7 +3,6 @@ import { Database, getDatabase } from "firebase/database";
 
 import { fetchNicknameByUID } from "../../../src/database/baseFunctions";
 import { TEST_UID, TEST_NICKNAME } from "../../utils/testsStatic";
-// import firebaseConfig from "../../../firebaseConfig";
 
 
 describe("fetchNicknameByUID", () => {
