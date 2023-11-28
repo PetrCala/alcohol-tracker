@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import { SettingsScreenProps } from '../types/screens';
-import { auth } from "../../firebaseConfig";
+import { auth } from "../../src/services/firebaseConfig";
 import { useUserConnection } from '../context/UserConnectionContext';
 import UserOffline from '../components/UserOffline';
 import BasicButton from '../components/Buttons/BasicButton';

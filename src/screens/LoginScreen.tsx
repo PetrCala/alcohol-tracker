@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { Alert } from 'react-native';
 import { sendPasswordResetEmail, signOut } from 'firebase/auth';
-import { auth } from "../../firebaseConfig";
+import { auth } from "../../src/services/firebaseConfig";
 import { signInUserWithEmailAndPassword } from '../auth/auth';
 
 import { LoginScreenProps } from '../types/screens';

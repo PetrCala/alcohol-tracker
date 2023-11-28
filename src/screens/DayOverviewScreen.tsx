@@ -26,7 +26,7 @@ import { useContext } from 'react';
 import LoadingData from '../components/LoadingData';
 import { DrinkingSessionProps, DrinkingSessionData, DrinkingSessionArrayItem, PreferencesData } from '../types/database';
 import { DayOverviewScreenProps } from '../types/screens';
-import { auth } from "../../firebaseConfig";
+import { auth } from "../../src/services/firebaseConfig";
 import UserOffline from '../components/UserOffline';
 import { useUserConnection } from '../context/UserConnectionContext';
 import BasicButton from '../components/Buttons/BasicButton';

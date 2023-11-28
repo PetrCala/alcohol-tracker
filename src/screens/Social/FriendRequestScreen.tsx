@@ -12,7 +12,7 @@ import { FriendRequestData, FriendRequestStatus, UserData } from '../../types/da
 import { useEffect, useState } from 'react';
 import { useFirebase } from '../../context/FirebaseContext';
 import { acceptFriendRequest, deleteFriendRequest } from '../../database/friends';
-import { auth } from "../../../firebaseConfig";
+import { auth } from "../../../src/services/firebaseConfig";
 import { isNonEmptyObject } from '../../utils/validation';
 import useProfileDisplayData from '../../hooks/useProfileDisplayData';
 import LoadingData from '../../components/LoadingData';

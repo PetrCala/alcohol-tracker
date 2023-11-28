@@ -22,7 +22,7 @@ import { useFirebase } from '../context/FirebaseContext';
 import { removeDrinkingSessionData, editDrinkingSessionData } from '../database/drinkingSessions';
 import SessionUnitsInputWindow from '../components/Buttons/SessionUnitsInputWindow';
 import { addUnits, dateToDateObject, formatDateToDay, formatDateToTime, removeUnits, removeZeroObjectsFromSession, sumAllPoints, sumAllUnits, sumUnitsOfSingleType, timestampToDate, unitsToColors } from '../utils/dataHandling';
-import { auth } from "../../firebaseConfig";
+import { auth } from "../../src/services/firebaseConfig";
 import DrinkingSessionUnitWindow from '../components/DrinkingSessionUnitWindow';
 import { maxAllowedUnits } from '../utils/static';
 import YesNoPopup from '../components/Popups/YesNoPopup';

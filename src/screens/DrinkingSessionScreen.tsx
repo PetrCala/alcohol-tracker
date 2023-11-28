@@ -27,7 +27,7 @@ updateCurrentSessionKey,
 } from '../database/drinkingSessions';
 import SessionUnitsInputWindow from '../components/Buttons/SessionUnitsInputWindow';
 import { addUnits, formatDateToDay, formatDateToTime, removeUnits, removeZeroObjectsFromSession, sumAllPoints, sumAllUnits, sumUnitsOfSingleType, timestampToDate, unitsToColors } from '../utils/dataHandling';
-import { auth } from "../../firebaseConfig";
+import { auth } from "../../src/services/firebaseConfig";
 import { DrinkingSessionArrayItem, DrinkingSessionData, UnitTypesKeys, UnitTypesProps, UnitsObject } from '../types/database';
 import DrinkingSessionUnitWindow from '../components/DrinkingSessionUnitWindow';
 import { maxAllowedUnits } from '../utils/static';

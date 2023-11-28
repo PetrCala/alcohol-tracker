@@ -5,7 +5,7 @@
 import MenuIcon from '../components/Buttons/MenuIcon';
 import commonStyles from '../styles/commonStyles';
 
-import { auth } from "../../firebaseConfig";
+import { auth } from "../../src/services/firebaseConfig";
 import UploadImageComponent from '../components/UploadImage';
 import { useFirebase } from '../context/FirebaseContext';
 import PermissionHandler from '../permissions/PermissionHandler';

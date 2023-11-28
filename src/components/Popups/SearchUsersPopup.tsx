@@ -15,7 +15,7 @@ import { useFirebase } from '../../context/FirebaseContext';
 import { Database } from 'firebase/database';
 import { searchDbByNickname } from '../../database/search';
 import UserOverview from '../UserOverview';
-import { auth } from "../../../firebaseConfig";
+import { auth } from "../../../src/services/firebaseConfig";
 import { getDatabaseData } from '../../context/DatabaseDataContext';
 import { acceptFriendRequest, isFriend, sendFriendRequest } from '../../database/friends';
 import { isNonEmptyObject } from '../../utils/validation';

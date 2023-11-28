@@ -1,4 +1,4 @@
-﻿import { app, auth } from '../../../src/utils/firebaseUtils';
+﻿import { app, auth } from 'firebaseConfig';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 describe('Firebase Auth Emulator', () => {

@@ -1,6 +1,6 @@
 ﻿import firebase from 'firebase/app';
 import 'firebase/database';
-import { app } from '../../../firebaseConfig';
+import { app } from '../../../src/services/firebaseConfig';
 
 
 

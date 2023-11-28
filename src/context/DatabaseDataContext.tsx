@@ -1,7 +1,7 @@
 ﻿// DatabaseDataContext.tsx
 import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
 import { CurrentSessionData, DrinkingSessionArrayItem, DrinkingSessionData, PreferencesData, UnconfirmedDaysData, UserData } from '../types/database';
-import { auth } from "../../firebaseConfig";
+import { auth } from "../../src/services/firebaseConfig";
 import { listenForDataChanges } from '../database/baseFunctions';
 import { isEqual } from 'lodash';
 import LoadingData from '../components/LoadingData';

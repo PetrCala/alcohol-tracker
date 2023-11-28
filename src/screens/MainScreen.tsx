@@ -21,7 +21,7 @@ import LoadingData from '../components/LoadingData';
 import { DrinkingSessionArrayItem } from '../types/database';
 import { MainScreenProps } from '../types/screens';
 import { DateObject } from '../types/components';
-import { auth } from "../../firebaseConfig"
+import { auth } from "../../src/services/firebaseConfig"
 import { dateToDateObject, getZeroUnitsObject, calculateThisMonthUnits, findOngoingSession, calculateThisMonthPoints, getSingleMonthDrinkingSessions, timestampToDate, getYearMonthVerbose } from '../utils/dataHandling';
 import { useUserConnection } from '../context/UserConnectionContext';
 import UserOffline from '../components/UserOffline';

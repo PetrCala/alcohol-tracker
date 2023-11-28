@@ -15,7 +15,7 @@ import {
 import MenuIcon from '../components/Buttons/MenuIcon';
 import YesNoPopup from '../components/Popups/YesNoPopup';
 import { EmailAuthProvider, UserCredential, deleteUser, reauthenticateWithCredential, signOut } from 'firebase/auth';
-import { auth } from "../../firebaseConfig";
+import { auth } from "../../src/services/firebaseConfig";
 import { deleteUserInfo, reauthentificateUser } from '../database/users';
 import FeedbackPopup from '../components/Popups/FeedbackPopup';
 import { submitFeedback } from '../database/feedback';
