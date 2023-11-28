@@ -24,9 +24,10 @@ const auth = initializeAuth(app, {
 
 // Connect to auth emulator if in development environment
 if (process.env.NODE_ENV === 'test' || process.env.USE_EMULATORS === 'true') {
-    const [authHost, authPort] = FIREBASE_AUTH_EMULATOR_HOST.split(':');
+  const emulatorHost = process.env.FIREBASE_AUTH_EMULATOR_HOST;
+  const [authHost, authPort] = emulatorHost.split(':');
 
-    connectAuthEmulator(auth, authHost, parseInt(authPort));
+  connectAuthEmulator(auth, authHost, parseInt(authPort));
 }
 
 export { app, auth };
