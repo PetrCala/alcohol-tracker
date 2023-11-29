@@ -15,24 +15,24 @@ describe('validateAppVersion', () => {
         let olderMinorVersionResult = validateAppVersion(olderMinorVersion, mockCurrentVersion);
         let newerMinorVersionResult = validateAppVersion(newerMinorVersion, mockCurrentVersion);
 
-        expect(olderMinorVersionResult).toBe(false);
-        expect(newerMinorVersionResult).toBe(false);
+        expect(olderMinorVersionResult.success).toBe(true);
+        expect(newerMinorVersionResult.success).toBe(false);
     });
 
     it('validates middle version number correctly', () => {
         let olderMiddleVersionResult = validateAppVersion(olderMiddleVersion, mockCurrentVersion);
         let newerMiddleVersionResult = validateAppVersion(newerMiddleVersion, mockCurrentVersion);
 
-        expect(olderMiddleVersionResult).toBe(false);
-        expect(newerMiddleVersionResult).toBe(false);
+        expect(olderMiddleVersionResult.success).toBe(true);
+        expect(newerMiddleVersionResult.success).toBe(false);
     });
 
     it('validates major version number correctly', () => {
         let olderMajorVersionResult = validateAppVersion(olderMajorVersion, mockCurrentVersion);
         let newerMajorVersionResult = validateAppVersion(newerMajorVersion, mockCurrentVersion);
 
-        expect(olderMajorVersionResult).toBe(false);
-        expect(newerMajorVersionResult).toBe(false);
+        expect(olderMajorVersionResult.success).toBe(true);
+        expect(newerMajorVersionResult.success).toBe(false);
     });
 
 });
