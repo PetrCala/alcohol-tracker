@@ -1,7 +1,12 @@
-﻿import { app, auth } from 'firebaseConfig';
+﻿import { app, auth } from '../../../src/services/firebaseConfig';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 
-describe('Firebase Auth Emulator', () => {
+// Never run these tests outside of the emulator environment
+const shouldRunTests = process.env.USE_EMULATORS === 'true';
+
+const describeWithEmulator = shouldRunTests ? describe : describe.skip;
+
+describeWithEmulator('Firebase Auth Emulator', () => {
   it('should create a new user', async () => {
     const newUserEmail = 'newuser@example.com';
     const newUserPassword = 'password';
@@ -9,8 +14,5 @@ describe('Firebase Auth Emulator', () => {
     const userCredential = await createUserWithEmailAndPassword(auth, newUserEmail, newUserPassword);
     expect(userCredential.user).toBeTruthy();
     expect(userCredential.user.email).toBe(newUserEmail);
-
   });
-
-  // Add more tests as needed for your auth flows
 });
