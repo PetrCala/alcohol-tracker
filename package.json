@@ -89,7 +89,8 @@
       "\\.snap$",
       "<rootDir>/node_modules/",
       "/node_modules/(?!(firebase)/)",
-      "/node_modules/(?!react-native-calendars/)"
+      "/node_modules/(?!react-native-calendars/)",
+      "__tests__/utils/"
     ]
   }
 }
