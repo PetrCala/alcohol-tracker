@@ -18,7 +18,7 @@ const AchievementScreen = (props: AchievementsProps) => {
     <View style={{flex:1, backgroundColor: '#FFFF99'}}>
       <View style={commonStyles.mainHeader}>
         <MenuIcon
-          iconId='escape-statistics-screen'
+          iconId='escape-achievement-screen'
           iconSource={require('../../assets/icons/arrow_back.png')}
           containerStyle={styles.backArrowContainer}
           iconStyle={styles.backArrow}
