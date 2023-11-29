@@ -1,5 +1,5 @@
 ﻿const { initializeApp } = require('firebase/app');
-const { initializeAuth, connectAuthEmulator } = require('firebase/auth');
+const { connectAuthEmulator } = require('firebase/auth');
 
 // Mocking Firebase modules and AsyncStorage
 jest.mock('firebase/app', () => ({

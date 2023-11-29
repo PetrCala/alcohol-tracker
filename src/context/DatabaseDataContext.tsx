@@ -4,7 +4,6 @@ import { CurrentSessionData, DrinkingSessionArrayItem, DrinkingSessionData, Pref
 import { auth } from "../../src/services/firebaseConfig";
 import { listenForDataChanges } from '../database/baseFunctions';
 import { isEqual } from 'lodash';
-import LoadingData from '../components/LoadingData';
 import { useFirebase } from './FirebaseContext';
 
 type DatabaseDataContextType = {
