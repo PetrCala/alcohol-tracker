@@ -1,7 +1,4 @@
-﻿const { initializeApp } = require('firebase/app');
-const { connectAuthEmulator } = require('firebase/auth');
-
-// Mocking Firebase modules and AsyncStorage
+﻿// Mocking Firebase modules and AsyncStorage
 jest.mock('firebase/app', () => ({
     initializeApp: jest.fn(),
 }));
@@ -14,22 +11,13 @@ jest.mock('@react-native-async-storage/async-storage', () => ({}));
 
 // Helper function to set environment variables
 const setEnvironmentVariables = (env) => {
-    process.env.NODE_ENV = env.NODE_ENV;
-    process.env.USE_EMULATORS = env.USE_EMULATORS;
-    process.env.FIREBASE_AUTH_EMULATOR_HOST;
-    process.env.API_KEY = env.API_KEY;
-    process.env.AUTH_DOMAIN = env.AUTH_DOMAIN;
-    process.env.DATABASE_URL = env.DATABASE_URL;
-    process.env.PROJECT_ID = env.PROJECT_ID;
-    process.env.STORAGE_BUCKET = env.STORAGE_BUCKET;
-    process.env.MESSAGING_SENDER_ID = env.MESSAGING_SENDER_ID;
-    process.env.APP_ID = env.APP_ID;
-    process.env.MEASUREMENT_ID = env.MEASUREMENT_ID;
+    Object.assign(process.env, env);
 };
 
 // Reset environment variables and mocks before each test
 beforeEach(() => {
-    jest.clearAllMocks();
+    jest.resetModules(); // Reset module registry
+    jest.clearAllMocks(); // Clear all mocks
     setEnvironmentVariables({
         NODE_ENV: 'development',
         USE_EMULATORS: 'false',
@@ -45,12 +33,13 @@ beforeEach(() => {
     });
 });
 
-
 describe('Firebase Configuration', () => {
     it('should initialize Firebase with correct configuration in development environment', () => {
-        // Import the configuration module
-        require('../../../src/services/firebaseConfig')
+        // Dynamically import the configuration module
+        require('../../../src/services/firebaseConfig');
 
+        const { initializeApp } = require('firebase/app');
+        
         // Check if Firebase has been initialized with the correct parameters
         expect(initializeApp).toHaveBeenCalledWith({
             apiKey: 'test-api-key',
@@ -63,6 +52,7 @@ describe('Firebase Configuration', () => {
             measurementId: 'test-measurement-id'
         });
 
+        const { connectAuthEmulator } = require('firebase/auth');
         // Verify that the auth emulator is not connected in development
         expect(connectAuthEmulator).not.toHaveBeenCalled();
     });
@@ -79,6 +69,7 @@ describe('Firebase Configuration', () => {
         // Import the configuration module
         require('../../../src/services/firebaseConfig')
 
+        const { connectAuthEmulator } = require('firebase/auth');
         // Check if the auth emulator connection is attempted
         expect(connectAuthEmulator).toHaveBeenCalled();
     });
