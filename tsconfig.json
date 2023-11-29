@@ -29,6 +29,7 @@
     "**/*.ts",
     "**/*.tsx",
     "app.json",
+    "package.json", // Application version import
     "src",
   ],
   // "exclude": ["node_modules", "__tests__", "_dev", "android", "ios", "assets", "coverage", "docs", ".vscode"]
