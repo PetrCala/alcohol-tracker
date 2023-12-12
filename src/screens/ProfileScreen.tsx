@@ -5,7 +5,6 @@
 import MenuIcon from '../components/Buttons/MenuIcon';
 import commonStyles from '../styles/commonStyles';
 
-import { auth } from "../../src/services/firebaseConfig";
 import UploadImageComponent from '../components/UploadImage';
 import { useFirebase } from '../context/FirebaseContext';
 import PermissionHandler from '../permissions/PermissionHandler';
@@ -16,7 +15,6 @@ type ProfileProps = {
 
 const ProfileScreen = (props: ProfileProps) => {
   const { navigation } = props;
-  const user = auth.currentUser;
   const { db, storage } = useFirebase();
 
   return (
