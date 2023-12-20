@@ -1,0 +1,51 @@
+name: Bump Version
+
+on:
+  workflow_dispatch:
+    inputs:
+      SEMVER_LEVEL:
+        description: One of {BUILD, PATCH, MINOR, MAJOR}
+        required: true
+        default: BUILD
+        type: string
+
+  workflow_call:
+    inputs:
+      SEMVER_LEVEL:
+        description: One of {BUILD, PATCH, MINOR, MAJOR}
+        required: false
+        default: BUILD
+        type: string
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+    outputs:
+      NEW_VERSION: ${{ steps.bump-version.outputs.NEW_VERSION }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Bump version
+        id: bump-version
+        run: |
+          SEMVER_LEVEL=${{ inputs.SEMVER_LEVEL }} node .github/actions/javascript/bumpVersion/bumpVersion.js
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add package.json
+          git commit -m "Bump version to ${{ steps.bump-version.outputs.NEW_VERSION }}"
+          git push
