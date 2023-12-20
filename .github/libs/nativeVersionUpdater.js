@@ -41,9 +41,9 @@ function padToTwoDigits(number) {
  * @returns {String}
  */
 exports.generateAndroidVersionCode = function generateAndroidVersionCode(npmVersion) {
-    // const prefix = '10'; // Do not use the prefix here
+    const prefix = '10'; // Pad to 10 digits with this prefix
     return ''.concat(
-        // prefix, // Do not use the prefix here
+        prefix,
         padToTwoDigits(getMajorVersion(npmVersion) || 0),
         padToTwoDigits(getMinorVersion(npmVersion) || 0),
         padToTwoDigits(getPatchVersion(npmVersion) || 0),

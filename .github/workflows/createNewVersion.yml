@@ -19,7 +19,7 @@ on:
 
 jobs:
   create-new-version:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     outputs:
       NEW_VERSION: ${{ steps.bump-version.outputs.NEW_VERSION }}
