@@ -65,7 +65,7 @@ jobs:
         id: bump-version
         if: steps.pr-label-analysis.outputs.result != ''
         run: |
-          SEMVER_LEVEL=${{ steps.pr-label-analysis.outputs.result }} node .github/actions/javascript/bumpVersion/bumpVersion.js
+          SEMVER_LEVEL=${{ steps.pr-label-analysis.outputs.result }} node .github/actions/javascript/bumpVersion/bumpVersion.js 
 
       - name: Commit new version
         run: |
