@@ -18,8 +18,9 @@ on:
         type: string
 
 jobs:
-  bump-version:
+  create-new-version:
     runs-on: ubuntu-latest
+
     outputs:
       NEW_VERSION: ${{ steps.bump-version.outputs.NEW_VERSION }}
 
@@ -30,7 +31,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: 20
 
       - name: Install dependencies
         run: npm ci
@@ -39,13 +40,18 @@ jobs:
         id: bump-version
         run: |
           SEMVER_LEVEL=${{ inputs.SEMVER_LEVEL }} node .github/actions/javascript/bumpVersion/bumpVersion.js
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Commit and push changes
+      - name: Commit new version
         run: |
           git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add package.json
-          git commit -m "Bump version to ${{ steps.bump-version.outputs.NEW_VERSION }}"
-          git push
+          git config --local user.name "Version-O-Bot"
+          git add \
+            ./package.json \
+            ./package-lock.json \
+            ./android/app/build.gradle \
+            ./ios/kiroku/Info.plist \
+            ./ios/kirokuTests/Info.plist
+          git commit -m "Update version to ${{ steps.bump-version.outputs.NEW_VERSION }}"
+
+      - name: Update the branch
+        run: git push origin workflow-tests

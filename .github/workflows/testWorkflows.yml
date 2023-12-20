@@ -10,5 +10,5 @@ jobs:
     uses: PetrCala/Kiroku/.github/workflows/createNewVersion.yml@workflow-tests
     with:
       SEMVER_LEVEL: BUILD
-    secrets:
-      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+    # secrets:
+    #   GH_TOKEN: ${{ secrets.GH_TOKEN }}
