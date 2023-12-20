@@ -3,12 +3,10 @@ name: Call Workflow
 on:
   push:
     branches:
-      - workflow-tests
+      - no-branch
 
 jobs:
   call-create-new-version-workflow:
     uses: PetrCala/Kiroku/.github/workflows/createNewVersion.yml@workflow-tests
     with:
       SEMVER_LEVEL: BUILD
-    # secrets:
-    #   GH_TOKEN: ${{ secrets.GH_TOKEN }}
