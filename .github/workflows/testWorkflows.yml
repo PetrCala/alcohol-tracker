@@ -1,0 +1,15 @@
+name: Call Workflow
+
+on:
+  push:
+    branches:
+      - workflow-tests
+
+jobs:
+  call-create-new-version-workflow:
+    uses: PetrCala/Kiroku/.github/workflows/createNewVersion.yml@workflow-tests
+    with:
+      SEMVER_LEVEL: BUILD
+    secrets:
+    #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_TOKEN: 'test-token'
