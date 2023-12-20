@@ -6,24 +6,6 @@ on:
         - workflow-tests-2
     types: [closed]
 
-
-# on:
-#   workflow_dispatch:
-#     inputs:
-#       SEMVER_LEVEL:
-#         description: One of {BUILD, PATCH, MINOR, MAJOR}
-#         required: true
-#         default: BUILD
-#         type: string
-
-#   workflow_call:
-#     inputs:
-#       SEMVER_LEVEL:
-#         description: One of {BUILD, PATCH, MINOR, MAJOR}
-#         required: false
-#         default: BUILD
-#         type: stringon:
-
 jobs:
   generate-new-version:
     runs-on: macos-latest
@@ -64,8 +46,9 @@ jobs:
       - name: Bump version
         id: bump-version
         if: steps.pr-label-analysis.outputs.result != ''
-        run: |
-          SEMVER_LEVEL=${{ steps.pr-label-analysis.outputs.result }} node .github/actions/javascript/bumpVersion/bumpVersion.js 
+        env:
+          SEMVER_LEVEL: ${{ steps.pr-label-analysis.outputs.result }}
+        run: node .github/actions/javascript/bumpVersion/bumpVersion.js
 
       - name: Commit new version
         run: |

@@ -43,7 +43,8 @@ function updateNativeVersions(version) {
     }
 }
 
-let semanticVersionLevel = core.getInput('SEMVER_LEVEL', {require: true});
+// let semanticVersionLevel = core.getInput('SEMVER_LEVEL', {require: true}); // Source
+let semanticVersionLevel = process.env.SEMVER_LEVEL;
 if (!semanticVersionLevel || !_.contains(versionUpdater.SEMANTIC_VERSION_LEVELS, semanticVersionLevel)) {
     semanticVersionLevel = versionUpdater.SEMANTIC_VERSION_LEVELS.BUILD;
     console.log(`Invalid input for 'SEMVER_LEVEL': ${semanticVersionLevel}`, `Defaulting to: ${semanticVersionLevel}`);
