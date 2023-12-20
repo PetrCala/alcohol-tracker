@@ -1,13 +1,10 @@
 name: Create New Version
 
 on:
-  # pull_request:
-  #   branches:
-  #       - workflow-tests
-  #   types: [closed]
-  push:
+  pull_request:
     branches:
-      - workflow-tests
+        - workflow-tests-2
+    types: [closed]
 
 
 # on:
@@ -31,7 +28,7 @@ jobs:
   generate-new-version:
     runs-on: macos-latest
     # Run only if the PR is merged
-    # if: github.event.pull_request.merged == true # Uncomment later
+    if: github.event.pull_request.merged == true
     outputs:
       NEW_VERSION: ${{ steps.bump-version.outputs.NEW_VERSION }}
 
@@ -83,4 +80,4 @@ jobs:
           git commit -m "Update version to ${{ steps.bump-version.outputs.NEW_VERSION }}"
 
       - name: Update the branch
-        run: git push origin workflow-tests
+        run: git push origin workflow-tests-2
