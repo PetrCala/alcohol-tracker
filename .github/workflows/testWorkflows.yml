@@ -11,5 +11,4 @@ jobs:
     with:
       SEMVER_LEVEL: BUILD
     secrets:
-    #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      GITHUB_TOKEN: 'test-token'
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
