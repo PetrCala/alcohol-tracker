@@ -1,6 +1,6 @@
 {
   "name": "kiroku",
-  "version": "0.2.9-3",
+  "version": "0.2.9-4",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
