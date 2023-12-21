@@ -6,8 +6,16 @@ const fs = require('fs');
 const exec = promisify(require('child_process').exec);
 const _ = require('underscore');
 const core = require('@actions/core');
+const yargs = require('yargs/yargs')
 const versionUpdater = require('./versionUpdater');
 const {updateAndroidVersion, updateiOSVersion, generateAndroidVersionCode} = require('./nativeVersionUpdater');
+const {argv} = yargs(process.argv.slice(2))
+    .option('SEMVER_LEVEL', {
+        alias: 'semver',
+        describe: 'The semantic version level to increment',
+        type: 'string',
+        demandOption: true,
+    });
 
 /**
  * Update the native app versions.
@@ -43,11 +51,12 @@ function updateNativeVersions(version) {
     }
 }
 
-// let semanticVersionLevel = core.getInput('SEMVER_LEVEL', {require: true}); // Source
-let semanticVersionLevel = process.env.SEMVER_LEVEL;
+// let semanticVersionLevel = core.getInput('SEMVER_LEVEL', {require: true}); // Use when running as GH action
+let semanticVersionLevel = argv.SEMVER_LEVEL; // Running the script using node.js
 if (!semanticVersionLevel || !_.contains(versionUpdater.SEMANTIC_VERSION_LEVELS, semanticVersionLevel)) {
+    console.log(`Invalid input for 'SEMVER_LEVEL': ${semanticVersionLevel}`);
     semanticVersionLevel = versionUpdater.SEMANTIC_VERSION_LEVELS.BUILD;
-    console.log(`Invalid input for 'SEMVER_LEVEL': ${semanticVersionLevel}`, `Defaulting to: ${semanticVersionLevel}`);
+    console.log(`Defaulting to: ${semanticVersionLevel}`);
 }
 
 const {version: previousVersion} = JSON.parse(fs.readFileSync('./package.json'));

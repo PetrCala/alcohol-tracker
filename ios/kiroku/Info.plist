@@ -17,11 +17,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.2.7</string>
+	<string>0.2.9</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>0.2.7.0</string>
+	<string>0.2.9.2</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -35,18 +35,12 @@
 			</dict>
 		</dict>
 	</dict>
-	<!-- <key>NSLocationWhenInUseUsageDescription</key>
-	<string>We need access to your location when using the app.</string> -->
-	<!-- <key>NSNotificationsUsageDescription</key>
-	<string>We need your permission to send you notifications.</string> -->
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>We need access to your photos to select images or videos.</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>We need access to your photos to select images or videos.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>We need access to your camera to capture videos.</string>
-	<!--<key>NSMicrophoneUsageDescription</key>
-	<string>We need access to your microphone to record audio with video.</string> -->
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>We need access to your photos to select images or videos.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need access to your photos to select images or videos.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>		</string>
 	<key>UIRequiredDeviceCapabilities</key>

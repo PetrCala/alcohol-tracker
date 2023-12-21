@@ -25,3 +25,18 @@ Once the application will reach version 1.0.0 (i.e. it will became fully functio
 ### How to build/run
 
 All the necessary steps are outlined in the developer documentation
+
+### Updating the application version
+
+- In the future, the application versioning will be rewritten into a github action. As of now, you can update the version (local, and for all platforms) using
+    ```bash
+    npm run bump-<SEMVER_LEVEL>
+    ```
+
+    where `<SEMVER_LEVEL>` can be one of the following:
+    - **BUILD**: Increments the build version.
+    - **PATCH**: Increments the patch version, where only small changes are introduced.
+    - **MINOR**: Increments the minor version, where no API breakiing changes are introduced.
+    - **MAJOR**: Increments the major version, where major, API breaking changes are introduced.
+
+- We use semantic versioning.

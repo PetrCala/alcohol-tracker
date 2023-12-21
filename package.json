@@ -1,6 +1,6 @@
 {
   "name": "kiroku",
-  "version": "0.2.8",
+  "version": "0.2.9-2",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -12,7 +12,11 @@
     "test:emulators": "firebase emulators:exec --only auth,database,storage 'jest'",
     "emulate": "firebase emulators:start",
     "transpile": "npx tsc --build functions",
-    "deploy-functions": "firebase deploy --only functions --debug"
+    "deploy-functions": "firebase deploy --only functions --debug",
+    "bump-build": "node ./.github/libs/bumpVersion.js --semver BUILD",
+    "bump-patch": "node ./.github/libs/bumpVersion.js --semver PATCH",
+    "bump-minor": "node ./.github/libs/bumpVersion.js --semver MINOR",
+    "bump-major": "node ./.github/libs/bumpVersion.js --semver MAJOR"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "1.18.2",
@@ -47,8 +51,9 @@
     "react-native-tab-view": "^3.5.2",
     "react-native-webview": "^13.6.2",
     "semver": "^7.5.4",
+    "ts-node": "^10.9.2",
     "underscore": "^1.13.6",
-    "ts-node": "^10.9.2"
+    "yargs": "^17.7.2"
   },
   "devDependencies": {
     "@actions/core": "^1.10.1",
