@@ -21,6 +21,8 @@ DerivedData
 *.ipa
 *.xcuserstate
 ios/.xcode.env.local
+ios/*.xcworkspace
+ios/Podfile.lock
 
 # Android/IntelliJ
 #
@@ -47,6 +49,10 @@ ui-debug.log
 # Jest
 #
 .jest/
+
+# Bun
+#
+bun.lockb
 
 # fastlane
 #

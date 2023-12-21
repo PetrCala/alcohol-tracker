@@ -355,26 +355,23 @@ const styles = StyleSheet.create({
     height: 35,
     width: 60,
     borderRadius: 5,
-    backgroundColor: 'white',
-    justifyContent: 'center',
-    alignItems: 'center',
     margin: 8,
-    color: 'black'
+    color: 'black',
   },
   preferencesListButton: {
-  },
-  preferencesListText: {
     height: 40,
     width: 60,
-    fontSize: 16,
-    color: 'black',
-    fontWeight: '400',
     borderRadius: 5,
     borderWidth: 2,
     borderColor: '#000',
     backgroundColor: '#FFFF99',
+    justifyContent: 'center',
+  },
+  preferencesListText: {
+    fontSize: 16,
+    color: 'black',
+    fontWeight: '500',
     textAlign: 'center',
-    textAlignVertical: 'center',
   },
   savePreferencesButtonContainer: {
     width: '100%',

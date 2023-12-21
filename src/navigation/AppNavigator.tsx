@@ -1,4 +1,6 @@
-﻿import MainScreen from '../screens/MainScreen';
+﻿import { SafeAreaView, StyleSheet } from 'react-native';
+
+import MainScreen from '../screens/MainScreen';
 import DrinkingSessionScreen from '../screens/DrinkingSessionScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import MainMenuScreen from '../screens/MainMenuScreen';
@@ -17,6 +19,7 @@ import Stack from './Stack';
 import { DatabaseDataProvider } from '../context/DatabaseDataContext';
 
 const AppNavigator = () => (
+  <SafeAreaView style={styles.safeArea}>
     <DatabaseDataProvider>
     <Stack.Navigator 
       initialRouteName='Main Screen'
@@ -40,6 +43,15 @@ const AppNavigator = () => (
       <Stack.Screen name='Privacy Policy Screen' component={PrivacyPolicyScreen} />
     </Stack.Navigator>
     </DatabaseDataProvider>
+  </SafeAreaView>
 );
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#fff',
+    // ...
+  },
+});
 
 export default AppNavigator;

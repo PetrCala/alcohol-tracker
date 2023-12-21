@@ -1,6 +1,7 @@
 ﻿import React, {useState, useEffect, useCallback} from 'react';
 import {
   Text,
+  Image,
   View,
   FlatList,
   TouchableOpacity,
@@ -172,37 +173,46 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
     }
 
     const addSessionButton = () => {
-      if (!date) return (<LoadingData/>);
-      if (!editMode) return <></>; // Do not display outside edit mode
-      // No button if the date is in the future
-      let today = new Date();
-      let tomorrowMidnight = changeDateBySomeDays(today, 1);
-      tomorrowMidnight.setHours(0,0,0,0);
-      if (date >= tomorrowMidnight){
-          return(<></>);
-      };
-      // Create a new mock drinking session
-      let newTimestamp = setDateToCurrentTime(date).getTime(); // At noon
-      let newSession: DrinkingSessionArrayItem = {
-        start_time: newTimestamp, // Arbitrary timestamp of today's noon
-        end_time: newTimestamp, 
-        blackout: false,
-        note: '',
-        units: getZeroUnitsObject(),
-      }
-      return(
-          <TouchableOpacity
-              style={styles.addSessionButton}
-              onPress={() => navigation.navigate('Edit Session Screen',
-                  {
-                  session: newSession,
-                  sessionKey: 'edit-session-id',
-                }
-              )}
-              >
-              <Text style={styles.addSessionText}>+</Text>
-          </TouchableOpacity>
-      );
+        if (date == null) {
+            return(
+                <LoadingData
+                    loadingText=''
+                />
+            )
+        }
+        if (!editMode) return <></>; // Do not display outside edit mode
+        // No button if the date is in the future
+        let today = new Date();
+        let tomorrowMidnight = changeDateBySomeDays(today, 1);
+        tomorrowMidnight.setHours(0,0,0,0);
+        if (date >= tomorrowMidnight){
+            return(<></>);
+        };
+        // Create a new mock drinking session
+        let newTimestamp = setDateToCurrentTime(date).getTime(); // At noon
+        let newSession: DrinkingSessionArrayItem = {
+          start_time: newTimestamp, // Arbitrary timestamp of today's noon
+          end_time: newTimestamp, 
+          blackout: false,
+          note: '',
+          units: getZeroUnitsObject(),
+        }
+        return(
+            <TouchableOpacity
+                style={styles.addSessionButton}
+                onPress={() => navigation.navigate('Edit Session Screen',
+                    {
+                    session: newSession,
+                    sessionKey: 'edit-session-id',
+                  }
+                )}
+                >
+                <Image
+                  source={require('../../assets/icons/plus.png')}
+                  style={styles.addSessionImage}
+                />
+            </TouchableOpacity>
+        );
     }
 
     /** Offset the "date" hook by a number of days.
@@ -410,11 +420,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center', // Center the text within the button
   },
-  addSessionText: {
-    color: 'white',
-    fontSize: 50,
-    fontWeight: 'bold',
-    textAlign: 'center',
+  addSessionImage: {
+    width: 30,
+    height: 30,
+    tintColor: 'white',
+    alignItems: 'center',
   },
   addSessionButtonContainer: {
     padding: 10,

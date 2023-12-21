@@ -442,7 +442,6 @@ const styles = StyleSheet.create({
   },
   unitCountContainer: {
     backgroundColor: '#FFFF99',
-    borderBottomColor: '#000',
   },
   unitCountText: {
     fontSize: 90,

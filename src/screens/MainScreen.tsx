@@ -8,6 +8,7 @@
 import { 
   Alert,
   Dimensions,
+  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -243,13 +244,17 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
           />
         </View>
       </View>
-      {/* {currentSessionData?.current_session_id ? <></> : */}
-      <BasicButton 
-        text='+'
-        buttonStyle={styles.startSessionButton}
-        textStyle={styles.startSessionText}
-        onPress = {startDrinkingSession}
-      />
+      {currentSessionData?.current_session_id ? <></> :
+        <TouchableOpacity
+          style={styles.startSessionButton}
+          onPress={startDrinkingSession}
+        >
+          <Image
+            source={require('../../assets/icons/plus.png')}
+            style={styles.startSessionImage}
+          />
+        </TouchableOpacity>
+      }
     </>
   );
 };
@@ -383,13 +388,19 @@ const styles = StyleSheet.create({
     height: 70,
     backgroundColor: 'green',
     alignItems: 'center',
+    justifyContent: 'center',
     shadowColor: 'black',
   },
-  startSessionText: {
-    color: 'white',
-    fontSize: 50,
-    fontWeight: 'bold',
-    textAlign: 'center'
+  startSessionImage: {
+    width: 30,
+    height: 30,
+    tintColor: 'white',
+    alignItems: 'center',
+    // color: 'white',
+    // fontSize: 50,
+    // fontWeight: 'bold',
+    // textAlign: 'center',
+    // lineHeight: 70,
   },
   navigationArrowContainer: {
       justifyContent: 'space-between',
