@@ -13,10 +13,10 @@
     "emulate": "firebase emulators:start",
     "transpile": "npx tsc --build functions",
     "deploy-functions": "firebase deploy --only functions --debug",
-    "bump-build": "node ./.github/libs/bumpVersion.js --semver BUILD",
-    "bump-patch": "node ./.github/libs/bumpVersion.js --semver PATCH",
-    "bump-minor": "node ./.github/libs/bumpVersion.js --semver MINOR",
-    "bump-major": "node ./.github/libs/bumpVersion.js --semver MAJOR"
+    "bump-build": "./scripts/bumpVersion.sh BUILD",
+    "bump-patch": "./scripts/bumpVersion.sh PATCH",
+    "bump-minor": "./scripts/bumpVersion.sh MINOR",
+    "bump-major": "./scripts/bumpVersion.sh MAJOR"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "1.18.2",
