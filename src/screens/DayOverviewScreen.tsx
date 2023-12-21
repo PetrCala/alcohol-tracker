@@ -1,6 +1,7 @@
 ﻿import React, {useState, useEffect, useCallback} from 'react';
 import {
   Text,
+  Image,
   View,
   FlatList,
   TouchableOpacity,
@@ -208,7 +209,10 @@ const DayOverviewScreen = ({ route, navigation }: DayOverviewScreenProps) => {
                   }
                 )}
                 >
-                <Text style={styles.addSessionText}>+</Text>
+                <Image
+                  source={require('../../assets/icons/plus.png')}
+                  style={styles.addSessionImage}
+                />
             </TouchableOpacity>
         );
     }
@@ -432,11 +436,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center', // Center the text within the button
   },
-  addSessionText: {
-    color: 'white',
-    fontSize: 50,
-    fontWeight: 'bold',
-    textAlign: 'center',
+  addSessionImage: {
+    width: 30,
+    height: 30,
+    tintColor: 'white',
+    alignItems: 'center',
   },
   addSessionButtonContainer: {
     padding: 10,
