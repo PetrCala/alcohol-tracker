@@ -30,7 +30,7 @@ NEW_VERSION=$(node ./.github/libs/bumpVersion.js --semver $SEMVER_LEVEL)
 info "The new version is $NEW_VERSION"
 
 git add .
-git commit -m "Update version to $NEW_VERSION"
+git commit -m "Version update: $NEW_VERSION"
 
 success "Version update complete!"
 success "Please push your changes to the remote repository using 'git push'."
