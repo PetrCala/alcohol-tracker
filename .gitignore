@@ -21,6 +21,8 @@ DerivedData
 *.ipa
 *.xcuserstate
 ios/.xcode.env.local
+ios/*.xcworkspace
+ios/Podfile.lock
 
 # Android/IntelliJ
 #
@@ -43,6 +45,10 @@ yarn-error.log
 # Jest
 #
 .jest/
+
+# Bun
+#
+bun.lockb
 
 # fastlane
 #
