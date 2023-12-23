@@ -18,8 +18,8 @@ default_platform(:ios)
 platform :ios do
   desc "Push a new beta build to TestFlight"
   lane :beta do
-    increment_build_number(xcodeproj: "kiroku.xcodeproj")
-    build_app(workspace: "kiroku.xcworkspace", scheme: "kiroku")
-    upload_to_testflight
+    # increment_build_number(xcodeproj: "./ios/kiroku.xcodeproj")
+    build_app(workspace: "./ios/kiroku.xcworkspace", scheme: "kiroku")
+    # upload_to_testflight
   end
 end
