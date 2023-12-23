@@ -1,11 +1,6 @@
 # require_relative '../node_modules/react-native/scripts/react_native_pods'
 # require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-# require File.join(File.dirname(`node --print "require.resolve('expo/package.json')"`), "scripts/autolinking")
-# Set the type of Mapbox SDK to use
-# This value is used by $RNMapboxMaps
-# $RNMapboxMapsImpl = 'mapbox'
-
 def node_require(script)
   # Resolve script with node to allow for hoisting
   require Pod::Executable.execute_command('node', ['-p',
@@ -53,14 +48,16 @@ setup_permissions([
 #   dependencies: {
 #     ...(process.env.NO_FLIPPER ? { 'react-native-flipper': { platforms: { ios: null } } } : {}),
 # ```
-flipper_config = ENV['NO_FLIPPER'] == "1" ? FlipperConfiguration.disabled : FlipperConfiguration.enabled
-# flipper_config = FlipperConfiguration.disabled
+# flipper_config = ENV['NO_FLIPPER'] == "1" ? FlipperConfiguration.disabled : FlipperConfiguration.enabled
+flipper_config = FlipperConfiguration.disabled
 
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
   Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
   use_frameworks! :linkage => linkage.to_sym
 end
+
+use_modular_headers!
 
 # Force pods to match minimum iOS version for React Native
 # Fixes build issue on Xcode Cloud where some pods
@@ -83,14 +80,6 @@ end
 # end
 
 target 'kiroku' do
-  # use_expo_modules!
-  # post_integrate do |installer|
-  #   begin
-  #     expo_patch_react_imports!(installer)
-  #   rescue => e
-  #     Pod::UI.warn e
-  #   end
-  # end
   permissions_path = '../node_modules/react-native-permissions/ios'
 
   project 'kiroku',
@@ -128,8 +117,6 @@ target 'kiroku' do
   end
 
   post_install do |installer|
-    # Configure Mapbox after installation
-    # $RNMapboxMaps.post_install(installer)
 
     react_native_post_install(
       installer,
@@ -150,5 +137,3 @@ target 'kiroku' do
     end
   end
 end
-
-use_modular_headers!

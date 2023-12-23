@@ -13,13 +13,29 @@
 # Uncomment the line if you want fastlane to automatically update itself
 # update_fastlane
 
-default_platform(:ios)
+platform :android do
+  desc "Generate a new local APK"
+  lane :build do
+    # ENV["ENVFILE"]=".env.production"
+
+    gradle(
+      project_dir: './android',
+      task: 'assemble',
+      flavor: 'Production',
+      build_type: 'Release',
+    )
+  end
+end
 
 platform :ios do
+  desc "Generate a local iOS production build"
+  # ENV["ENVFILE"]=".env.production"
+  build_app(workspace: "./ios/kiroku.xcworkspace", scheme: "kiroku")
+
   desc "Push a new beta build to TestFlight"
   lane :beta do
-    # increment_build_number(xcodeproj: "./ios/kiroku.xcodeproj")
+    increment_build_number(xcodeproj: "./ios/kiroku.xcodeproj")
     build_app(workspace: "./ios/kiroku.xcworkspace", scheme: "kiroku")
-    # upload_to_testflight
+    upload_to_testflight
   end
 end
