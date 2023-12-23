@@ -42,3 +42,12 @@ All the necessary steps are outlined in the developer documentation
 - The command creates a new commit in the current branch with the updated version. You can then push to origin these changes as you see fit.
 - The command should always be ran **on the staging branch** and from the project root. No version updates should happen on the master branch, nor in smaller branches. This should help keep one source of truth. When merging to the staging branch, never accept changes from the incoming branch.
 - We use semantic versioning.
+
+### Local environment installation
+
+```bash
+bundle update
+npm i
+cd ios
+pod install
+```
