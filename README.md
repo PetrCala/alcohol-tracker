@@ -54,6 +54,13 @@ pod install
 
 ## Building for Android
 
+- Create a `local.properties` file in the `android` folder and put the following inside:
+    ```bash
+    sdk.dir = /Users/USERNAME/Library/Android/sdk
+    ```
+
+    where you replace `USERNAME` with your username.
+
 - Running `npm run build:android` may fail with insufficient permissions to open the *gradlew* file. In that case, run
 
     ```bash
