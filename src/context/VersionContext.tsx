@@ -6,7 +6,6 @@ import ForceUpdateScreen from '../screens/ForceUpdateScreen';
 import { useUserConnection } from './UserConnectionContext';
 import UserOffline from '../components/UserOffline';
 import { readDataOnce } from '../database/baseFunctions';
-import WelcomeScreen from '../components/WelcomeScreen';
 import LoadingData from '../components/LoadingData';
 import { useFirebase } from './FirebaseContext';
 import { validateAppVersion } from '@utils/validation';

@@ -1,5 +1,4 @@
-﻿import functions from '@react-native-firebase/functions'
-import React, { useContext, useEffect, useState, version } from 'react';
+﻿import React, { useContext, useEffect, useState, version } from 'react';
 import { 
     Alert,
     Image,
@@ -90,7 +89,7 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
   };
 
   const handleSignUp = async () => {
-    if (!validateUserInput() || !isOnline) return;
+    if (!validateUserInput() || !isOnline || !auth.currentUser) return;
 
     var minSupportedVersion: string | null;
     var betaKeys:any;
