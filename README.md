@@ -60,6 +60,10 @@ pod install
     ```
 
     where you replace `USERNAME` with your username.
+- Make sure to add this path to the `ANDROID_HOME` by running
+    ```bash
+    export ANDROID_HOME = /Users/USERNAME/Library/Android/sdk
+    ```
 
 - Running `npm run build:android` may fail with insufficient permissions to open the *gradlew* file. In that case, run
 

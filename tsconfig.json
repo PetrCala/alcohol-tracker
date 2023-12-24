@@ -1,8 +1,10 @@
 {
   "extends": "@tsconfig/react-native/tsconfig.json",
   "compilerOptions": {
+    "target": "esnext",
+    "module": "commonjs",
     "allowJs": true,
-    "module": "CommonJS",
+    "jsx": "react-native",
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -18,19 +20,32 @@
     "outDir": "./build",
     "baseUrl": ".",
     "paths": {
-      "@firebase/auth": ["./node_modules/@firebase/auth/dist/index.rn.d.ts"],
+      "@assets/*": ["./assets/*"],
+      "@components/*": ["./src/components/*"],
       "@database/*": ["./src/database/*"],
-      "@utils/*": ["./src/utils/*"]
+      "@firebase/auth": ["./node_modules/@firebase/auth/dist/index.rn.d.ts"],
+      "@hooks/*": ["./src/hooks/*"],
+      // "@libs/*": ["./src/libs/*"],
+      "@navigation/*": ["./src/navigation/*"],
+      "@screens/*": ["./src/screens/*"],
+      "@styles/*": ["./src/styles/*"],
+      "@src/*": ["./src/*"],
+      "@utils/*": ["./src/utils/*"],
+      // "@userActions/*": ["./src/libs/actions/*"]
     }
   },
   "include": [
+    "__mocks__",
+    "__tests__",
+    "assets",
+    "docs",
+    "src",
     "**/*.js",
     "**/*.jsx",
     "**/*.ts",
     "**/*.tsx",
     "app.json",
     "package.json", // Application version import
-    "src",
   ],
   // "exclude": ["node_modules", "__tests__", "_dev", "android", "ios", "assets", "coverage", "docs", ".vscode"]
 }

@@ -1,4 +1,4 @@
-﻿import 'dotenv/config'
+﻿import Config from 'react-native-config';
 import { ReactNode, createContext, useContext } from 'react';
 import { Database, connectDatabaseEmulator, getDatabase } from 'firebase/database';
 import { FirebaseStorage, getStorage, connectStorageEmulator } from 'firebase/storage';
@@ -39,9 +39,9 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
     const storage = getStorage(app);
 
     // Check if emulators should be used
-    if (process.env.NODE_ENV === 'test' || process.env.USE_EMULATORS === 'true') {
-      var database_host = process.env.FIREBASE_DATABASE_EMULATOR_HOST;
-      var storage_host = process.env.FIREBASE_STORAGE_EMULATOR_HOST;
+    if (Config.NODE_ENV === 'test' || Config.USE_EMULATORS === 'true') {
+      var database_host = Config.FIREBASE_DATABASE_EMULATOR_HOST;
+      var storage_host = Config.FIREBASE_STORAGE_EMULATOR_HOST;
       if (database_host && storage_host) {
         const [dbHost, dbPort] = database_host.split(':');
         const [storageHost, storagePort] = storage_host.split(':');

@@ -1,8 +1,9 @@
-﻿import { app, auth } from '../../../src/services/firebaseConfig';
+﻿import Config from 'react-native-config';
+import { app, auth } from '../../../src/services/firebaseConfig';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 // Never run these tests outside of the emulator environment
-const shouldRunTests = process.env.USE_EMULATORS === 'true';
+const shouldRunTests = Config.USE_EMULATORS === 'true';
 
 const describeWithEmulator = shouldRunTests ? describe : describe.skip;
 

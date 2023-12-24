@@ -21,7 +21,7 @@ platform :android do
     gradle(
       project_dir: './android',
       task: 'assemble',
-      flavor: 'Production',
+      # flavor: 'Production',
       build_type: 'Release',
     )
   end
