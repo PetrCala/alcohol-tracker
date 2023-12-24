@@ -51,3 +51,13 @@ npm i
 cd ios
 pod install
 ```
+
+## Building for Android
+
+- Running `npm run build:android` may fail with insufficient permissions to open the *gradlew* file. In that case, run
+
+    ```bash
+    chmod +x ./android/gradlew
+    ```
+
+    to make the file readable.

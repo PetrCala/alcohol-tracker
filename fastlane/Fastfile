@@ -25,12 +25,26 @@ platform :android do
       build_type: 'Release',
     )
   end
+
+  desc "Build the application for Google Play"
+  lane :beta do
+    # ENV["ENVFILE"]=".env.production"
+
+    gradle(
+        project_dir: './android',
+        task: 'bundle',
+        flavor: 'Production',
+        build_type: 'Release',
+    )
+  end
 end
 
 platform :ios do
   desc "Generate a local iOS production build"
-  # ENV["ENVFILE"]=".env.production"
-  build_app(workspace: "./ios/kiroku.xcworkspace", scheme: "kiroku")
+  lane :build do
+    # ENV["ENVFILE"]=".env.production"
+    build_app(workspace: "./ios/kiroku.xcworkspace", scheme: "kiroku")
+  end
 
   desc "Push a new beta build to TestFlight"
   lane :beta do

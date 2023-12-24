@@ -13,7 +13,36 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 # Available Actions
 
+## Android
+
+### android build
+
+```sh
+[bundle exec] fastlane android build
+```
+
+Generate a new local APK
+
+### android beta
+
+```sh
+[bundle exec] fastlane android beta
+```
+
+Build the application for Google Play
+
+----
+
+
 ## iOS
+
+### ios build
+
+```sh
+[bundle exec] fastlane ios build
+```
+
+Generate a local iOS production build
 
 ### ios beta
 
