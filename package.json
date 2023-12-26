@@ -3,8 +3,8 @@
   "version": "0.2.9-5",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
-    "ios": "react-native run-ios",
+    "android": "npx react-native run-android --mode=Debug",
+    "ios": "npx react-native run-ios --list-devices --configuration=\"DebugDevelopment\" --scheme=\"Kiroku Dev\"",
     "build:android": "fastlane android build",
     "build:ios": "fastlane ios build",
     "lint": "eslint .",

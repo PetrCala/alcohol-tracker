@@ -59,11 +59,15 @@ pod install
     sdk.dir = /Users/USERNAME/Library/Android/sdk
     ```
 
-    where you replace `USERNAME` with your username.
+    where you replace `USERNAME` with your username. On windows, adjust the path to point to your Android SDK folder.
 - Make sure to add this path to the `ANDROID_HOME` by running
     ```bash
     export ANDROID_HOME = /Users/USERNAME/Library/Android/sdk
     ```
+
+    If this variable is not set, you might be running into the **Error: Command failed with EN0ENT** bug upon trying to connect to an emulator.
+
+- Build the `.APK` file using `npm run build:android` (calls `fastlane android build`). To bundle the build for Google Play release, run `fastlane android beta`.
 
 - Running `npm run build:android` may fail with insufficient permissions to open the *gradlew* file. In that case, run
 
