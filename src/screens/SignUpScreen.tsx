@@ -22,7 +22,7 @@ import { useUserConnection } from '../context/UserConnectionContext';
 import { handleInvalidInput } from '../utils/errorHandling';
 import { isValidString, validateAppVersion } from '../utils/validation';
 import { invalidChars } from '../utils/static';
-import { pushNewUserInfo } from '@database/users';
+import { pushNewUserInfo } from '../database/users';
 import { ProfileData } from 'src/types/database';
 
 const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
