@@ -54,8 +54,9 @@ const LoginScreen = ( {navigation }: LoginScreenProps) => {
     } catch (error:any) {
       const errorHeading = "Failed to log in";
       const errorMessage = "There was an error trying to log in: ";
-      return handleInvalidInput(error, errorHeading, errorMessage, setWarning);
+      handleInvalidInput(error, errorHeading, errorMessage, setWarning);
     };
+    return;
   };
 
   const handleResetPassword = async (mail:string) => {
@@ -204,7 +205,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
     backgroundColor: '#FFFF99',
-    height: '20%',
+    marginTop: '40%',
     width: '100%',
   },
   logo: {
@@ -214,8 +215,9 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     width: '80%',
+    height: 'auto',
     position: 'absolute', // Temp
-    top: 15, // Temp
+    top: '10%', // Temp
     borderRadius: 5,
     borderWidth: 2,
     alignItems: 'center',
@@ -230,13 +232,15 @@ const styles = StyleSheet.create({
     borderColor: 'green',
   },
   infoButton: {
+    justifyContent: 'center',
+    textAlign: 'center',
     width: '100%',
     height: '100%',
   },
   infoText: {
-    padding: 10,
     textAlign: 'center',
     fontWeight: 'bold',
+    padding: 5,
   },
   warningInfoText: {
     color: 'red',
@@ -247,7 +251,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexGrow: 1,
     flexShrink: 1,
-    marginTop: 130,
+    marginTop: '25%',
     width: '80%',
   },
   input: {

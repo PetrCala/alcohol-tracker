@@ -32,6 +32,8 @@ export const handleInvalidInput = (
         setWarning('Incorrect password')
     } else if (err.includes('auth/network-request-failed')){
         setWarning('You are offline');
+    // } else if (err.includes('auth/api-key-not-valid')){
+    //     setWarning('The app is not configured correctly. Please contact the developer');
     } else {
         // Uncaught error
         Alert.alert(alertHeading, alertMessage + error.message);

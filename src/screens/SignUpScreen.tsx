@@ -173,14 +173,7 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
       <KeyboardAvoidingView
       style={styles.mainContainer}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      // keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : -300}
       >
-      <View style={styles.logoContainer}>
-        <Image
-          source={require('../../assets/logo/alcohol-tracker-source-icon.png')}
-          style={styles.logo}
-        />
-      </View>
       {warning ?
         <View style={styles.warningContainer}>
             <TouchableOpacity
@@ -195,6 +188,12 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
         :
         <></>
       } 
+      <View style={styles.logoContainer}>
+        <Image
+          source={require('../../assets/logo/alcohol-tracker-source-icon.png')}
+          style={styles.logo}
+        />
+      </View>
       <View style={styles.inputContainer}>
         <TextInput
         placeholder="Email"
@@ -270,7 +269,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
     backgroundColor: '#FFFF99',
-    height: '20%',
+    marginTop: '40%',
     width: '100%',
   },
   logo: {
@@ -279,11 +278,9 @@ const styles = StyleSheet.create({
     borderRadius: 25,
   },
   warningContainer: {
-    width: '90%',
+    width: '80%',
     position: 'absolute', // Temp
-    top: 10, // Temp
-    paddingHorizontal: 5,
-    paddingVertical: 5,
+    top: '10%', // Temp
     borderRadius: 5,
     backgroundColor: '#fce3e1',
     borderColor: 'red',
@@ -296,6 +293,7 @@ const styles = StyleSheet.create({
     width: '90%',
   },
   warning: {
+    padding: 5,
     textAlign: 'center',
     color: 'red',
     fontWeight: 'bold',
@@ -303,7 +301,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexGrow: 1,
     flexShrink: 1,
-    marginTop: '20%',
+    marginTop: '25%',
     width: '80%',
   },
   input: {
