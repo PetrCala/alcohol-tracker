@@ -70,12 +70,9 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
 
   const handleSignOut = async () => {
     try {
-      // TODO
-      // reauthenticateWithCredential
       await signOut(auth);
     } catch (error:any) {
       Alert.alert("User sign out error", "There was an error signing out: " + error.message);
-      return null;
     }
   };
 
@@ -107,7 +104,7 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
     }
     handleSignOut() // Sign out the user
     // Add an alert here informing about the user deletion
-    navigation.replace("Auth", {screen: "Login Screen"});
+    navigation.navigate("Auth", {screen: "Login Screen"});
   };
 
   /** Handle cases when deleting a user fails */
@@ -139,7 +136,7 @@ const MainMenuScreen = ({ route, navigation}: MainMenuScreenProps) => {
   const handleConfirmSignout = () => {
     handleSignOut();
     setSignoutModalVisible(false);
-    navigation.replace("Auth", {screen: "Login Screen"});
+    navigation.navigate("Auth", {screen: "Login Screen"});
   };
 
   const handleConfirmDeleteUser = () => {
