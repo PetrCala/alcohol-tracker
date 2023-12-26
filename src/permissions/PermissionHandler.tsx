@@ -16,13 +16,14 @@ type PermissionHandlerProps = {
     children: any;
 };
 
-/** TODO
+/**
+ * PermissionHandler component handles the permission logic for a specific permission type.
  * 
- * 
- * @example
- *  <SinglePermissionHandler permissionType="camera">
- *     <CameraComponent />
- *  </SinglePermissionHandler>
+ * @component
+ * @param {Object} props - The component props.
+ * @param {string} props.permissionType - The type of permission to handle.
+ * @param {ReactNode} props.children - The child components to render if permission is granted.
+ * @returns {ReactNode} - The rendered component based on the permission status.
  */
 const PermissionHandler: React.FC<PermissionHandlerProps> = ({ 
     permissionType, 
