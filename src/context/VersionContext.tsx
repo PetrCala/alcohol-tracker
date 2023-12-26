@@ -1,5 +1,5 @@
 ﻿import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ReactNode, useContext, useEffect, useReducer, useState } from 'react';
+import { ReactNode, useEffect, useReducer } from 'react';
 import { Alert } from 'react-native';
 
 import ForceUpdateScreen from '../screens/ForceUpdateScreen';
@@ -8,7 +8,7 @@ import UserOffline from '../components/UserOffline';
 import { readDataOnce } from '../database/baseFunctions';
 import LoadingData from '../components/LoadingData';
 import { useFirebase } from './FirebaseContext';
-import { validateAppVersion } from '@utils/validation';
+import { validateAppVersion } from '../utils/validation';
 
 
 const initialState = {
@@ -40,25 +40,19 @@ export const VersionManagementProvider: React.FC<VersionManagementProviderProps>
   const [state, dispatch] = useReducer(reducer, initialState);
 
   async function checkAppVersion() {
+    if (!isOnline) return; // Don't check version if offline
     dispatch({ type: 'SET_LOADING', payload: true });
   
     try {
       let minSupportedVersion = null;
-  
-      if (!isOnline) {
-        minSupportedVersion = await getCachedMinVersion();
-  
-        if (!minSupportedVersion) {
-          dispatch({ type: 'SET_VERSION_INFO_UNAVAILABLE', payload: true });
-          return;
-        }
-      } else {
+      minSupportedVersion = await getCachedMinVersion();
+      if (!minSupportedVersion) {
         minSupportedVersion = await fetchAndCacheMinVersion(db);
-  
-        if (!minSupportedVersion) {
-          dispatch({ type: 'SET_VERSION_INFO_UNAVAILABLE', payload: true });
-          return;
-        }
+      }
+
+      if (!minSupportedVersion) {
+        dispatch({ type: 'SET_VERSION_INFO_UNAVAILABLE', payload: true });
+        return;
       }
   
       const versionValidationResult = validateAppVersion(minSupportedVersion);
@@ -77,6 +71,8 @@ export const VersionManagementProvider: React.FC<VersionManagementProviderProps>
     checkAppVersion();
   }, [isOnline]);
 
+
+  if (!isOnline) return <UserOffline />;
   if (state.isLoading) return <LoadingData/>;
   if (state.versionInfoUnavailable) return <UserOffline />;
   if (!state.versionValid) return <ForceUpdateScreen />;
@@ -85,14 +81,10 @@ export const VersionManagementProvider: React.FC<VersionManagementProviderProps>
 };
 
 
-
-
 // Function to get cached minimum supported version
 const getCachedMinVersion = async () => {
     return await AsyncStorage.getItem('min_supported_version');
 };
-
-
 
 // Function to fetch and cache minimum supported version
 const fetchAndCacheMinVersion = async (db:any) => {
