@@ -12,7 +12,6 @@ import { auth } from "../../src/services/firebaseConfig";
 import { useUserConnection } from '../context/UserConnectionContext';
 import UserOffline from '../components/UserOffline';
 import BasicButton from '../components/Buttons/BasicButton';
-import { getDatabase } from 'firebase/database';
 import { getDatabaseData } from '../context/DatabaseDataContext';
 import commonStyles from '../styles/commonStyles';
 

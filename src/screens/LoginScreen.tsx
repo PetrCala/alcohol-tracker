@@ -11,7 +11,6 @@ import {
   TouchableOpacity, 
   View 
 } from 'react-native';
-import { Alert } from 'react-native';
 import { sendPasswordResetEmail, signOut } from 'firebase/auth';
 import { auth } from "../../src/services/firebaseConfig";
 import { signInUserWithEmailAndPassword } from '../auth/auth';

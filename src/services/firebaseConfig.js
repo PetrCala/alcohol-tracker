@@ -30,4 +30,4 @@ if (process.env.NODE_ENV === 'test' || Config.USE_EMULATORS === 'true') {
   connectAuthEmulator(auth, authHost, parseInt(authPort));
 }
 
-export { app, auth };
+export { app, auth, firebaseConfig };

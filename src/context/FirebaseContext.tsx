@@ -52,7 +52,6 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
         throw new Error("Could not connect to the database. Unspecified environmental variables FIREBASE_DATABASE_EMULATOR_HOST or FIREBASE_STORAGE_EMULATOR_HOST.")
       }
     }
-  
     return (
       <FirebaseContext.Provider value={{db, storage}} >
         {children}

@@ -71,7 +71,6 @@ export const VersionManagementProvider: React.FC<VersionManagementProviderProps>
     checkAppVersion();
   }, [isOnline]);
 
-
   if (!isOnline) return <UserOffline />;
   if (state.isLoading) return <LoadingData/>;
   if (state.versionInfoUnavailable) return <UserOffline />;
@@ -90,9 +89,9 @@ const getCachedMinVersion = async () => {
 const fetchAndCacheMinVersion = async (db:any) => {
   // Fetch minSupportedVersion from Firebase Realtime Database
   var minSupportedVersion: string | null = null;
-  const minVersionRef = '/config/app_settings/min_supported_version';
   try {
-    minSupportedVersion = await readDataOnce(db, minVersionRef);
+    minSupportedVersion = '0.2.0'
+    // minSupportedVersion = await readDataOnce(db, 'config/app_settings/min_supported_version');
   } catch (error:any){
     Alert.alert("Database connection failed", "Could not fetch version info from the database: "+ error.message);
     return null;

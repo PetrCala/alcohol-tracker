@@ -74,10 +74,8 @@ def __apply_Xcode_14_3_RC_post_install_workaround(installer)
   end
 end
 
-# Configure Mapbox before installing dependencies
-# pre_install do |installer|
-#   $RNMapboxMaps.pre_install(installer)
-# end
+# Pods to install
+# pod 'FirebaseAuth'
 
 target 'kiroku' do
   permissions_path = '../node_modules/react-native-permissions/ios'
