@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "android": "npx react-native run-android --mode=Debug",
-    "ios": "npx react-native run-ios --list-devices --configuration=\"DebugDevelopment\" --scheme=\"Kiroku Dev\"",
+    "ios": "npx react-native run-ios --list-devices --mode=\"Debug\" --scheme=\"Kiroku Dev\"",
     "build:android": "fastlane android build",
     "build:ios": "fastlane ios build",
+    "pod-install": "cd ios && pod install && cd ..",
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest",
