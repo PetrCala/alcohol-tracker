@@ -89,7 +89,13 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
   };
 
   const handleSignUp = async () => {
-    if (!validateUserInput() || !isOnline || !auth.currentUser) return;
+    if (!validateUserInput() || !isOnline || !auth) return;
+    let currentUser = auth.currentUser
+
+    if (currentUser) {
+      setWarning("You are already authentificated. This is a system bug, please reset the application data.");
+      return;
+    }
 
     var minSupportedVersion: string | null;
     var betaKeys:any;
@@ -128,18 +134,16 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
     };
 
     try {
-      await createUserAuth();
+      await createUserAuth(); // Sets the auth.currentUser upon success
     } catch (error:any) {
       Alert.alert('User creation failed', 'The user was not created in the database');
       return;
     };
 
-    const newUser = auth.currentUser;
-    if (!newUser) {
+    if (!auth.currentUser) {
       Alert.alert('User creation failed', 'The user was not created in the database');
       return;
     }
-    
     
     try {
       await updateUserProfile(auth.currentUser);

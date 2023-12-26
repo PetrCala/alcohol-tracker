@@ -87,6 +87,7 @@ __snapshots__/
 # Other
 *-adminsdk-*.json
 _dev/beta/beta_keys.tsx
+_dev/utils/admin.js
 
 # Custom
 .bundle

@@ -1,7 +1,6 @@
 ﻿// Create and export the admin logged database object
 
 import Config from 'react-native-config';
-
 import * as admin from 'firebase-admin'
 var serviceAccount = require('../../alcohol-tracker-db-firebase-adminsdk-nsgbc-52a51fdabc.json');
 

@@ -3,6 +3,7 @@
   "compilerOptions": {
     "target": "esnext",
     "module": "commonjs",
+    "types": ["react-native", "jest", "node"],
     "allowJs": true,
     "jsx": "react-native",
     "resolveJsonModule": true,
@@ -46,6 +47,7 @@
     "**/*.tsx",
     "app.json",
     "package.json", // Application version import
+    "**/alcohol-tracker*.json"
   ],
   // "exclude": ["node_modules", "__tests__", "_dev", "android", "ios", "assets", "coverage", "docs", ".vscode"]
 }
