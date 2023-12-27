@@ -90,23 +90,23 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
 
   const handleSignUp = async () => {
     if (!validateUserInput() || !isOnline || !auth) return;
-    let currentUser = auth.currentUser
+    let currentUser = auth.currentUser;
 
     if (currentUser) {
-      setWarning("You are already authentificated. This is a system bug, please reset the application data.");
+      setWarning("You are already authenticated. This is a system bug, please reset the application data.");
       return;
     }
 
     var minSupportedVersion: string | null;
-    var betaKeys:any;
+    var betaKeys: any;
 
     try {
       minSupportedVersion = await fetchMinSupportedVersion();
       betaKeys = await fetchBetaKeys();
-    } catch (error:any) {
+    } catch (error: any) {
       Alert.alert('Data fetch failed', 'Could not fetch the sign-up source data: ' + error.message);
       return;
-    };
+    }
 
     if (!minSupportedVersion) {
       setWarning('Failed to fetch the minimum supported version. Please try again later.');
@@ -135,25 +135,21 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
 
     try {
       await createUserAuth(); // Sets the auth.currentUser upon success
-    } catch (error:any) {
-      Alert.alert('User creation failed', 'The user was not created in the database');
-      return;
-    };
-
-    if (!auth.currentUser) {
-      Alert.alert('User creation failed', 'The user was not created in the database');
-      return;
-    }
-    
-    try {
+      if (!auth.currentUser) {
+        throw new Error('User creation failed');
+      }
       await updateUserProfile(auth.currentUser);
       await pushNewUserInfo(db, auth.currentUser.uid, newProfileData, betaKeyId);
-    } catch (error:any) {
-      Alert.alert('Could not write into database', 'Writing user info into the database failed: ' + error.message);
+      navigation.replace("App", { screen: "Main Screen" }); // Navigate to main screen
+    } catch (error: any) {
+      Alert.alert('Sign-up failed', 'There was an error during sign-up: ' + error.message);
+      // Clean up any partially created data
+      if (auth.currentUser) {
+        await auth.currentUser.delete();
+      }
       return;
-    };
+    }
   };
-
   // try {
   //   const createUserFunction = functions().httpsCallable('createUser')
   //   const result = await createUserFunction({ email, password, username, betaKey });
