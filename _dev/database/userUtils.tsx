@@ -1,5 +1,5 @@
 // Run this script with an argument using
-// # ts-node _dev/database/userUtils.tsx [argument]
+// # bun _dev/database/userUtils.tsx [argument]
 
 import admin from '../utils/admin';
 import { deleteUserInfo } from '../../src/database/users';

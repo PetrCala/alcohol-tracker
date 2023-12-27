@@ -9,6 +9,7 @@
     "build:ios": "fastlane ios build",
     "pod-install": "cd ios && pod install && cd ..",
     "pod-reset": "./scripts/podReset.sh",
+    "docs": "cd docs && bundle exec jekyll serve --livereload",
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest",
