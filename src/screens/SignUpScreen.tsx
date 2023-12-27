@@ -1,4 +1,4 @@
-﻿import React, { useContext, useEffect, useState, version } from 'react';
+﻿import React, { useState } from 'react';
 import { 
     Alert,
     Image,
@@ -22,7 +22,7 @@ import { useUserConnection } from '../context/UserConnectionContext';
 import { handleInvalidInput } from '../utils/errorHandling';
 import { isValidString, validateAppVersion } from '../utils/validation';
 import { invalidChars } from '../utils/static';
-import { pushNewUserInfo } from '../database/users';
+import { deleteUserInfo, pushNewUserInfo } from '../database/users';
 import { ProfileData } from 'src/types/database';
 
 const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
@@ -61,6 +61,7 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
       return;
     }
 
+    var newUserId: string | undefined;
     var minSupportedVersion: string | null;
     var betaKeys: any;
 
@@ -98,40 +99,38 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
       photo_url: "",
     };
 
+    // Create the user in the Firebase authentication
     try {
-      await signUpUserWithEmailAndPassword(auth, email, password);
-      if (!auth.currentUser) {
-        throw new Error('User creation failed');
-      }
+      await signUpUserWithEmailAndPassword(auth, email, password)
+    } catch (error:any) {
+      Alert.alert('Sign-up failed', 'There was an error during sign-up: ' + error.message);
+      return;
+    }
+
+    if (!auth.currentUser) {
+      throw new Error('User creation failed');
+    }
+    newUserId = auth.currentUser.uid;
+
+    try {
+      // Realtime Database updates
+      await pushNewUserInfo(db, newUserId, newProfileData, betaKeyId);
+      // Firebase authentication updates
       await updateProfile(auth.currentUser, { displayName: username });
-      await pushNewUserInfo(db, auth.currentUser.uid, newProfileData, betaKeyId);
-      navigation.replace("App", { screen: "Main Screen" }); // Navigate to main screen
+      navigation.replace("App", { screen: "Main Screen" });
+      // Potentially navigate with a success message
     } catch (error: any) {
       Alert.alert('Sign-up failed', 'There was an error during sign-up: ' + error.message);
       // Clean up any partially created data
       if (auth.currentUser) {
         await auth.currentUser.delete();
       }
-      return;
+      // Delete the user data from the Realtime Database
+      const userNickname = newProfileData.display_name;
+      await deleteUserInfo(db, newUserId, userNickname, betaKeyId)
     }
+    return;
   };
-  // try {
-  //   const createUserFunction = functions().httpsCallable('createUser')
-  //   const result = await createUserFunction({ email, password, username, betaKey });
-
-  //   if (result.data.success) {
-  //     navigation.replace("App", {screen: "Main Screen"}); // Navigate to main screen
-  //   } else {
-  //     setWarning(result.data?.message);
-  //   }
-  // } catch (error:any) {
-  //   // Handle the error
-  //   setWarning('Error during sign-up: ' + error.message);
-  // }
-
-   // const handleGoBack = async () => {
-  //   navigation.navigate("Login Screen");
-  // };
 
   return (
     <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1, flexShrink: 1 }}>
@@ -318,3 +317,22 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
 })
+
+// Firebase functions approach to sign-up handling
+  // try {
+  //   const createUserFunction = functions().httpsCallable('createUser')
+  //   const result = await createUserFunction({ email, password, username, betaKey });
+
+  //   if (result.data.success) {
+  //     navigation.replace("App", {screen: "Main Screen"}); // Navigate to main screen
+  //   } else {
+  //     setWarning(result.data?.message);
+  //   }
+  // } catch (error:any) {
+  //   // Handle the error
+  //   setWarning('Error during sign-up: ' + error.message);
+  // }
+
+   // const handleGoBack = async () => {
+  //   navigation.navigate("Login Screen");
+  // };

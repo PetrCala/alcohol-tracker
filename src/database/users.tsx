@@ -1,5 +1,5 @@
-﻿import { Database, update, runTransaction, ref, get } from "firebase/database";
-import { PreferencesData, UserData, UnitsToColorsData, UnitTypesProps, ProfileData, NicknameToIdData } from "../types/database";
+﻿import { Database, update, ref, get } from "firebase/database";
+import { PreferencesData, UserData, ProfileData, NicknameToIdData } from "../types/database";
 import { appInBeta } from "../utils/static";
 import { EmailAuthProvider, User, UserCredential, reauthenticateWithCredential } from "firebase/auth";
 import { Alert } from "react-native";
