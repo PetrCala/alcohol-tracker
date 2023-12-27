@@ -52,42 +52,6 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
     return true;
   }
 
-  const fetchMinSupportedVersion = async (): Promise<string | null> => {
-    try {
-      return await readDataOnce(db, '/config/app_settings/min_user_creation_possible_version');
-    } catch (error:any) {
-      Alert.alert("Database connection failed", "Could not fetch version info from the database: " + error.message);
-      return null;
-    }
-  };
-
-  const fetchBetaKeys = async (): Promise<BetaKeysData | null> => {
-    try {
-      return await readDataOnce(db, 'beta_keys/');
-    } catch (error:any) {
-      Alert.alert('Failed to contact the database', 'Beta keys list fetching failed:' + error.message);
-      return null;
-    }
-  };
-
-  const createUserAuth = async () => {
-    try {
-      await signUpUserWithEmailAndPassword(auth, email, password);
-    } catch (error:any) {
-      const errorHeading = "Error Creating User";
-      const errorMessage = "There was an error creating a new user: ";
-      handleInvalidInput(error, errorHeading, errorMessage, setWarning);
-    }
-  };
-
-  const updateUserProfile = async (newUser: any) => {
-    try {
-      await updateProfile(newUser, { displayName: username });
-    } catch (error:any) {
-      throw new Error("There was a problem updating the user information: " + error.message);
-    }
-  };
-
   const handleSignUp = async () => {
     if (!validateUserInput() || !isOnline || !auth) return;
     let currentUser = auth.currentUser;
@@ -101,8 +65,8 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
     var betaKeys: any;
 
     try {
-      minSupportedVersion = await fetchMinSupportedVersion();
-      betaKeys = await fetchBetaKeys();
+      minSupportedVersion = await readDataOnce(db, '/config/app_settings/min_user_creation_possible_version');
+      betaKeys = await readDataOnce(db, 'beta_keys/');
     } catch (error: any) {
       Alert.alert('Data fetch failed', 'Could not fetch the sign-up source data: ' + error.message);
       return;
@@ -121,6 +85,7 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
       setWarning('Failed to fetch beta keys. Please try again later.');
       return;
     }
+
     const betaKeyId = validateBetaKey(betaKeys, betaKey);
     if (!betaKeyId) {
       setWarning('Your beta key is either invalid or already in use.');
@@ -134,11 +99,11 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
     };
 
     try {
-      await createUserAuth(); // Sets the auth.currentUser upon success
+      await signUpUserWithEmailAndPassword(auth, email, password);
       if (!auth.currentUser) {
         throw new Error('User creation failed');
       }
-      await updateUserProfile(auth.currentUser);
+      await updateProfile(auth.currentUser, { displayName: username });
       await pushNewUserInfo(db, auth.currentUser.uid, newProfileData, betaKeyId);
       navigation.replace("App", { screen: "Main Screen" }); // Navigate to main screen
     } catch (error: any) {
