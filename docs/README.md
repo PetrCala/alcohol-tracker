@@ -38,3 +38,8 @@ Welcome to the Kiroku documentation. [Jekyll](https://jekyllrb.com) is used to s
 # Documentation structure
 
 TBA
+
+<!-- How to link stuff without repeating yourself -->
+<!-- [jekyll-docs]: https://jekyllrb.com/docs/home
+[jekyll-gh]:   https://github.com/jekyll/jekyll
+[jekyll-talk]: https://talk.jekyllrb.com/ -->
