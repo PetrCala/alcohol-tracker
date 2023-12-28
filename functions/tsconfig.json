@@ -1,33 +1,15 @@
-﻿{
-  "extends": "../tsconfig.json",
-  "module": "CommonJS",
+{
   "compilerOptions": {
-    "noEmit": false,
-    "rootDir": "../",
-    "outDir": "./lib",
-  },  
+    "module": "commonjs",
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "outDir": "lib",
+    "sourceMap": true,
+    "strict": true,
+    "target": "es2017"
+  },
+  "compileOnSave": true,
   "include": [
-    "src/cloudUsers.tsx",
-    "src/transpileEntry.ts",
-    "../src/database/admin.tsx",
-    "../src/database/beta.tsx",
-    "../src/database/users.tsx",
-    "../src/utils/static.tsx",
-    "../src/utils/strings.tsx",
-    "../src/utils/validation.tsx",
-    "../src/types/*.tsx",
-    "../package.json",
-    "../alcohol-tracker-db-firebase-adminsdk-*.json"
-  ],
-  "exclude": [
-    "node_modules", 
-    "__tests__", 
-    "_dev", 
-    "android", 
-    "ios", 
-    "assets", 
-    "coverage", 
-    "docs", 
-    ".vscode"
+    "src"
   ]
 }
