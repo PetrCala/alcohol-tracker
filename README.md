@@ -1,36 +1,56 @@
-## Kiroku - alcohol tracker
+<div align="center">
+    <!-- <a href="https://link-here"> -->
+        <img src="https://raw.githubusercontent.com/PetrCala/Kiroku/master/assets/logo/alcohol-tracker-source-icon.png
+" width="64" height="64" alt="Kiroku Icon">
+    <!-- </a> -->
+    <h1>
+        <!-- <a href="https://link-here"> -->
+            Kiroku - Alcohol Tracker
+        <!-- </a> -->
+    </h1>
+</div>
 
-Track your everyday alcohol adventures using a natively ran application.
+#### Table of Contents
+* [How to run](#how-to-run)
+* [For developers](#for-developers)
 
 ### How to run
 
-#### Obtaining the application file directly
-
-The application is obtainable per request from the developers in the form of an `.apk` file for Android devices, or an `IPA` file for iOS. Using this file, you can easily install the application by double tapping said file on your device. Make sure to enable installation from external sources on request.
-
-#### Downloading the application file from Play Store or iOS Store
-
-Once the application will reach version 1.0.0 (i.e. it will became fully functional), we intend to place it on both of the popular markets, where it will be easily accessible.
+- The application is currently available in closed beta both on the App Store and the Play Store. To access the beta version, [send us an email](mailto:kiroku.alcohol.tracker@gmail.com?subject=Beta%20Add%20Request), and we will add you into the team of internal testers.
 
 
 ## For developers
 
-### Accessing the documentation
+- This section is intended for developers only and will later be moved into the Jekyll documentation.
 
-1. Install `Sphinx` on your machine.
-1. Navigate to the `docs` folder.
-1. Run the command `make html`. This will create the documentation in the folder `build`.
-1. Access the documentation by opening any of the created *.html* files.
+### On the platform choice
 
-### How to build/run
+- We highly recommend you use Mac for working on this project. Given its compatibility with both Android and iOS, it is an ideal platform for developing a unified and efficient working environment. Fastlane, Bun, and other tools are readily available for Mac, allowing you to ease up your workflow significantly.
+- If you can not, or do not want to develop on MacOS, you may need to substitute Bun with other package managers, such as `npm`, and some features of the application may be unavailable to you.
 
-All the necessary steps are outlined in the developer documentation
+### Setting up the local environment
+
+- We use [Bun](https://bun.sh) for package managing. This experimental approach should come at the added benefit of allowing you to spend less time worrying about packages, and more time coding. Install Bun using
+
+    ```bash
+    curl -fsSL https://bun.sh/install | bash
+    ```
+
+- Most of the local environment setup right after cloning the repository can be handled with the following commands.
+
+    ```bash
+    bundle update
+    bun i
+    bun -g i firebase-tools
+    cd ios
+    pod install
+    ```
 
 ### Updating the application version
 
 - In the future, the application versioning will be rewritten into a github action. As of now, you can update the version (local, and for all platforms) using
     ```bash
-    npm run bump-<SEMVER_LEVEL>
+    bun run bump-<SEMVER_LEVEL>
     ```
 
     where `<SEMVER_LEVEL>` can be one of the following:
@@ -42,15 +62,6 @@ All the necessary steps are outlined in the developer documentation
 - The command creates a new commit in the current branch with the updated version. You can then push to origin these changes as you see fit.
 - The command should always be ran **on the staging branch** and from the project root. No version updates should happen on the master branch, nor in smaller branches. This should help keep one source of truth. When merging to the staging branch, never accept changes from the incoming branch.
 - We use semantic versioning.
-
-### Local environment installation
-
-```bash
-bundle update
-npm i
-cd ios
-pod install
-```
 
 ## Building for Android
 
@@ -67,12 +78,22 @@ pod install
 
     If this variable is not set, you might be running into the **Error: Command failed with EN0ENT** bug upon trying to connect to an emulator.
 
-- Build the `.APK` file using `npm run build:android` (calls `fastlane android build`). To bundle the build for Google Play release, run `fastlane android beta`.
+- Build the `.APK` file using `bun run build:android` (calls `fastlane android build`). To bundle the build for Google Play release, run `fastlane android beta`.
 
-- Running `npm run build:android` may fail with insufficient permissions to open the *gradlew* file. In that case, run
+- Running `bun run build:android` may fail with insufficient permissions to open the *gradlew* file. In that case, run
 
     ```bash
     chmod +x ./android/gradlew
     ```
 
     to make the file readable.
+
+## Working with Firebase
+
+- Firebase CLI is necessary for any Firebase tests/emulators to run correctly. In order to set up your local environment, run these commands first
+
+    ```
+    bun -g i firebase
+    firebase login
+    firebase init
+    ```
