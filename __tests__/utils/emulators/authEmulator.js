@@ -1,14 +1,31 @@
-import Config from 'react-native-config';
 import { getAuth, connectAuthEmulator } from "firebase/auth";
+// import firebase from "firebase/app";
+// import "firebase/auth";
 
-const emulatorHost = Config.FIREBASE_AUTH_EMULATOR_HOST;
-const [authHost, authPort] = emulatorHost.split(':');
+// const emulatorHost = Config.FIREBASE_AUTH_EMULATOR_HOST;
+// const [authHost, authPort] = emulatorHost.split(':');
+
+export function emulatorConnect() {
+  const auth = firebase.auth();
+  auth.useEmulator("http://127.0.0.1:9099");
+}
+
+function emulatorGoogleCredential() {
+  const auth = firebase.auth();
+  auth.signInWithCredential(firebase.auth.GoogleAuthProvider.credential(
+    '{"sub": "abc123", "email": "foo@example.com", "email_verified": true}'
+  ));  
+}
+
+
+
 
 const auth = getAuth();
 // connectAuthEmulator(auth, authHost, parseInt(authPort)); // TODO -- rewrite to this
 connectAuthEmulator(auth, "http://127.0.0.1:9099"); // This works
+console.log(auth);
 
-export { auth };
+// export { auth };
 
 // firebase.auth().signInWithCredential(firebase.auth.GoogleAuthProvider.credential(
 //   '{"sub": "abc123", "email": "foo@example.com", "email_verified": true}'

@@ -1,10 +1,12 @@
 // This test suite simulates a complete lifecycle of user creation and deletion
 // All of this should run on an emulator suite to test the real-life behavior as close as possible without interacting with the production database
 
-import { auth } from '../../utils/emulators/authEmulator';
+import { emulatorConnect } from '../../utils/emulators/authEmulator';
 import { checkEmulatorStatus } from '../../utils/emulatorTools';
 // import SignUpScreen from '../../../src/screens/SignUpScreen';
 // import { readDataOnce } from '@database/baseFunctions';
+
+let auth: any;
 
 const shouldRunTests = process.env.USE_EMULATORS === 'true';
 
@@ -13,14 +15,15 @@ const describeWithEmulator = shouldRunTests ? describe : describe.skip;
 describeWithEmulator('Create and delete a user in the emulated database', () => {
     beforeAll(async () => {
         console.log("Initializing the sign up test suite...")
+        auth = emulatorConnect();
         // Assert that the emulators are up and running
-        const isEmulatorRunning = await checkEmulatorStatus();
-        if (!isEmulatorRunning) {
-            console.error("Emulators are not running. Exiting the test suite...");
-            process.exit(1);
-        }
+        // const isEmulatorRunning = await checkEmulatorStatus();
+        // if (!isEmulatorRunning) {
+        //     console.error("Emulators are not running. Exiting the test suite...");
+        //     process.exit(1);
+        // }
 
-        console.log("Emulators are running")
+        // console.log("Emulators are running")
     });
 
     it('should connect to the emulator realtime database', async () => {

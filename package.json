@@ -15,7 +15,7 @@
     "test": "jest",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
     "test:emulators": "firebase emulators:exec --only auth,database,storage 'jest'",
-    "emulate": "firebase emulators:start",
+    "emulators": "firebase emulators:start",
     "transpile": "npx tsc --build functions",
     "deploy-functions": "firebase deploy --only functions --debug",
     "bump-build": "./scripts/bumpVersion.sh BUILD",
