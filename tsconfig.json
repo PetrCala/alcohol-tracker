@@ -7,6 +7,7 @@
     "allowJs": true,
     "jsx": "react-native",
     "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "isolatedModules": true,

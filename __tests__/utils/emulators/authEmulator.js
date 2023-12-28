@@ -17,9 +17,6 @@ function emulatorGoogleCredential() {
   ));  
 }
 
-
-
-
 const auth = getAuth();
 // connectAuthEmulator(auth, authHost, parseInt(authPort)); // TODO -- rewrite to this
 connectAuthEmulator(auth, "http://127.0.0.1:9099"); // This works
