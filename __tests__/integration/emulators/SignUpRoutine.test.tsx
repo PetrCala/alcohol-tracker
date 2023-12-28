@@ -1,13 +1,10 @@
 // This test suite simulates a complete lifecycle of user creation and deletion
 // All of this should run on an emulator suite to test the real-life behavior as close as possible without interacting with the production database
 
-import { render, fireEvent, waitFor } from '@testing-library/react-native';
-import SignUpScreen from '../../../src/screens/SignUpScreen';
-import { auth } from '../../../src/services/firebaseConfig';
-import { readDataOnce } from '@database/baseFunctions';
-import { Alert } from 'react-native';
-import { FirebaseProvider } from '../../../src/context/FirebaseContext'; // adjust the path as needed
-import { checkEmulatorStatus } from '__tests__/unit/utils/emulatorTools';
+import { auth } from '../../utils/emulators/authEmulator';
+import { checkEmulatorStatus } from '../../utils/emulatorTools';
+// import SignUpScreen from '../../../src/screens/SignUpScreen';
+// import { readDataOnce } from '@database/baseFunctions';
 
 const shouldRunTests = process.env.USE_EMULATORS === 'true';
 
@@ -26,7 +23,10 @@ describeWithEmulator('Create and delete a user in the emulated database', () => 
         console.log("Emulators are running")
     });
 
-    // ...
+    it('should connect to the emulator realtime database', async () => {
+        console.log(auth);
+        console.log("Auth object imported successfully");
+    });
 
     afterAll(async () => {
         // Clean up app instances

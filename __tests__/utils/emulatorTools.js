@@ -1,3 +1,5 @@
+// Perhaps move this to the emulators folder later
+
 export async function checkEmulatorStatus() {
     const admin = require('firebase-admin');
     try {
