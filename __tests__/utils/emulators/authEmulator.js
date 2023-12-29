@@ -1,6 +1,12 @@
-// import { getAuth, connectAuthEmulator } from "firebase/auth";
-import firebase from "firebase/app";
-import "firebase/auth";
+jest.mock('react-native-config', () => require('__mocks__/react-native-config'));
+jest.mock('react-native', () => require('__mocks__/react-native'));
+
+import { initializeApp } from "firebase/app";
+import { getAuth, connectAuthEmulator } from "@firebase/auth";
+import { firebaseConfig } from "../../../src/services/firebaseConfig";
+
+// import firebase from "firebase/app";
+// import "firebase/auth";
 
 // const emulatorHost = Config.FIREBASE_AUTH_EMULATOR_HOST;
 // const [authHost, authPort] = emulatorHost.split(':');
@@ -16,13 +22,16 @@ function emulatorGoogleCredential() {
     '{"sub": "abc123", "email": "foo@example.com", "email_verified": true}'
   ));  
 }
+console.log("Importing firebase config...")
+console.log(firebaseConfig);
 
 console.log("Trying to connect...")
-emulatorConnect()
-// const auth = getAuth();
-// // connectAuthEmulator(auth, authHost, parseInt(authPort)); // TODO -- rewrite to this
-// connectAuthEmulator(auth, "http://127.0.0.1:9099"); // This works
-// console.log(auth);
+const auth = getAuth();
+// connectAuthEmulator(auth, authHost, parseInt(authPort)); // TODO -- rewrite to this
+connectAuthEmulator(auth, "http://127.0.0.1:9099"); // This works
+console.log(auth);
+
+export {auth};
 
 // export { auth };
 

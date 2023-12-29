@@ -1,4 +1,4 @@
-﻿import { app, auth } from '../../../src/services/firebaseConfig';
+﻿import { app } from '../../../src/services/firebaseConfig';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 // Never run these tests outside of the emulator environment
@@ -11,6 +11,7 @@ describeWithEmulator('Firebase Auth Emulator', () => {
   it('should initialize', () => {
     // TODO
     expect(1).toEqual(1);
+    console.log(app);
   });
   // it('should create a new user', async () => {
   //   const newUserEmail = 'newuser@example.com';
