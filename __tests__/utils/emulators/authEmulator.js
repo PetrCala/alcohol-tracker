@@ -1,6 +1,6 @@
-import { getAuth, connectAuthEmulator } from "firebase/auth";
-// import firebase from "firebase/app";
-// import "firebase/auth";
+// import { getAuth, connectAuthEmulator } from "firebase/auth";
+import firebase from "firebase/app";
+import "firebase/auth";
 
 // const emulatorHost = Config.FIREBASE_AUTH_EMULATOR_HOST;
 // const [authHost, authPort] = emulatorHost.split(':');
@@ -17,10 +17,12 @@ function emulatorGoogleCredential() {
   ));  
 }
 
-const auth = getAuth();
-// connectAuthEmulator(auth, authHost, parseInt(authPort)); // TODO -- rewrite to this
-connectAuthEmulator(auth, "http://127.0.0.1:9099"); // This works
-console.log(auth);
+console.log("Trying to connect...")
+emulatorConnect()
+// const auth = getAuth();
+// // connectAuthEmulator(auth, authHost, parseInt(authPort)); // TODO -- rewrite to this
+// connectAuthEmulator(auth, "http://127.0.0.1:9099"); // This works
+// console.log(auth);
 
 // export { auth };
 

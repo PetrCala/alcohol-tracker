@@ -1,23 +1,19 @@
-// import { getDatabase, connectDatabaseEmulator } from "firebase/database";
+import { getDatabase, connectDatabaseEmulator } from "firebase/database";
+import { initializeApp } from "firebase/app";
+import { firebaseConfig } from "../../../src/services/firebaseConfig";
 
-import firebase from "firebase/app";
-import "firebase/database";
-
-const app = firebase
-    .initializeTestApp({
-      projectId: "some-firestore-emulator",
-      auth: {
-        uid: "test-user",
-        firebase: {
-          sign_in_provider: "google.com"
-        }   
-      }
-    })
+// import firebase from "firebase/app";
+// import "firebase/database";
 
 
-var db = firebase.database(app);
-db.useEmulator("127.0.0.1", 9001);
+const app = initializeApp(firebaseConfig);
+
+// var db = firebase.database(app);
+// db.useEmulator("127.0.0.1", 9001);
 
 // // firebaseApps previously initialized using initializeApp()
-// const db = getDatabase();
+const db = getDatabase(app);
+console.log(db);
 // connectDatabaseEmulator(db, '127.0.0.1', 9001);
+
+// console.log(db);
