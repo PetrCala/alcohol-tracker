@@ -8,6 +8,7 @@ import UserOffline from '../components/UserOffline';
 import { readDataOnce } from '../database/baseFunctions';
 import LoadingData from '../components/LoadingData';
 import { useFirebase } from './FirebaseContext';
+import { Database } from 'firebase/database';
 import { validateAppVersion } from '../utils/validation';
 
 
@@ -86,7 +87,7 @@ const getCachedMinVersion = async () => {
 };
 
 // Function to fetch and cache minimum supported version
-const fetchAndCacheMinVersion = async (db:any) => {
+const fetchAndCacheMinVersion = async (db:Database) => {
   // Fetch minSupportedVersion from Firebase Realtime Database
   var minSupportedVersion: string | null = null;
   try {

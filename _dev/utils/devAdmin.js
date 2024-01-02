@@ -1,10 +1,6 @@
-﻿// Create and export the admin logged database object
-
-import Config from 'react-native-config';
 const admin = require('firebase-admin');
-var serviceAccount = require('../../alcohol-tracker-db-firebase-adminsdk-nsgbc-52a51fdabc.json');
-
-var databaseURL = Config.DATABASE_URL;
+const serviceAccount = require('../../alcohol-tracker-db-firebase-adminsdk-nsgbc-52a51fdabc.json');
+const databaseURL = "https://alcohol-tracker-db-default-rtdb.europe-west1.firebasedatabase.app"
 
 // Initialize the app with a service account and the database URL
 admin.initializeApp({

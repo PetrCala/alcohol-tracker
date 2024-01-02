@@ -89,6 +89,7 @@ __snapshots__/
 _dev/beta/beta_keys.tsx
 _dev/utils/admin.js
 docs-old/
+mockDatabase.json
 
 # Custom
 .bundle

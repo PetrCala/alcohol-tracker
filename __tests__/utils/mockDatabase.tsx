@@ -1,4 +1,6 @@
-﻿import { AppSettings, ConfigProps, CurrentSessionData, DatabaseProps, DrinkingSessionArrayItem, DrinkingSessionData, FeedbackData, FeedbackProps, FriendRequestData, FriendRequestStatus, FriendsData, NicknameToIdData, PreferencesData, ProfileData, UnconfirmedDaysData, UnitTypesProps, UnitsObject, UnitsToColorsData, UserData } from "../../src/types/database";
+﻿import fs from 'fs';
+
+import { AppSettings, ConfigProps, CurrentSessionData, DatabaseProps, DrinkingSessionArrayItem, DrinkingSessionData, FeedbackData, FeedbackProps, FriendRequestData, FriendRequestStatus, FriendsData, NicknameToIdData, PreferencesData, ProfileData, UnconfirmedDaysData, UnitTypesProps, UnitsObject, UnitsToColorsData, UserData } from "../../src/types/database";
 import { getRandomChoice, getRandomInt } from "../../src/utils/choice";
 import { formatDate, getRandomUnitsObject, getZeroUnitsObject } from "../../src/utils/dataHandling";
 import { cleanStringForFirebaseKey } from "../../src/utils/strings";
@@ -279,3 +281,18 @@ export function createMockDatabase(): DatabaseProps {
   
   return db;
 }
+
+
+/**
+ * Export the mock database as a JSON file at the current folder location.
+ * 
+ * @returns {string} The path of the exported JSON file.
+ */
+export function exportMockDatabase(): string {
+  const mockDatabase = createMockDatabase();
+  const filePath = './mockDatabase.json';
+  fs.writeFileSync(filePath, JSON.stringify(mockDatabase));
+  return filePath;
+}
+
+// exportMockDatabase() // Run script to export

@@ -2,7 +2,7 @@
   "extends": "@tsconfig/react-native/tsconfig.json",
   "compilerOptions": {
     "target": "esnext",
-    "module": "commonjs",
+    "module": "ESNext",
     "types": ["react-native", "jest", "node"],
     "allowJs": true,
     "jsx": "react-native",
