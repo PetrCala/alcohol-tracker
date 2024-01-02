@@ -1,19 +1,18 @@
-// !! Run using bun test
+// !! Run using npm test - to run using bun test, resolve first issue with Config -> mock react-native-config
 // This test suite simulates a complete lifecycle of user creation and deletion
 // All of this should run on an emulator suite to test the real-life behavior as close as possible without interacting with the production database
 
-import assert from "assert";
-
-import Config from 'react-native-config';
-const { getDatabase, connectDatabaseEmulator, ref, get, set } = require("firebase/database");
-const { initializeApp } = require("firebase/app");
-const { createMockDatabase } = require("../../utils/mockDatabase.tsx");
-// const { isConnectedToAuthEmulator, isConnectedToStorageEmulator, isConnectedToDatabaseEmulator } = require("../../../src/services/firebaseUtils.tsx");
+require('dotenv').config(); // Use .env variables in this file - CONFIG does not work here
+import { getDatabase, connectDatabaseEmulator, ref, get, set } from "firebase/database";
+import { initializeApp } from "firebase/app";
+import { createMockDatabase } from "../../utils/mockDatabase";
+import { isConnectedToAuthEmulator, isConnectedToDatabaseEmulator, isConnectedToStorageEmulator } from "@src/services/firebaseUtils";
 import { DatabaseProps } from "@src/types/database";
 import { Database } from "firebase/database";
+import CONST from '@src/CONST';
 
 // Never run these tests outside of the emulator environment
-const shouldRunTests = process.env.USE_EMULATORS === 'true';
+const shouldRunTests = process.env.APP_ENVIRONMENT === CONST.ENVIRONMENT.TEST;
 
 const describeWithEmulator = shouldRunTests ? describe : describe.skip;
 
@@ -22,8 +21,6 @@ describeWithEmulator('Create and delete a user in the emulated database', () => 
     let mockDatabase: DatabaseProps;
 
     beforeAll(async () => {
-        assert(shouldRunTests, 'Tests should run') // Extra safety check
-
         // Initialize the app and database
         const testApp = initializeApp({
             databaseURL: "https://localhost:9001/?ns=alcohol-tracker-db",
@@ -49,16 +46,17 @@ describeWithEmulator('Create and delete a user in the emulated database', () => 
 
     it('should connect to the emulator realtime database', async () => {
         expect(db).not.toBeNull();
-        // expect(isConnectedToDatabaseEmulator(db)).toBe(true);
+        expect(isConnectedToDatabaseEmulator(db)).toBe(true);
     });
 
     it('mock data should not be empty', async () => {
         async function getDatabaseRef() {
             var tempRef = ref(db, 'config');
             const snapshot = await get(tempRef); // One-off fetch
-            expect(snapshot.exists()).toBe(true);
-            expect(snapshot.val()).not.toBeNull();
+            return snapshot;
         }
-        await getDatabaseRef()
+        const data = await getDatabaseRef()
+        expect(data.exists()).toBe(true);
+        expect(data.val()).not.toBeNull();
     });
 });

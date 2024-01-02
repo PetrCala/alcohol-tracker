@@ -4,8 +4,9 @@ import { Database, connectDatabaseEmulator, getDatabase } from 'firebase/databas
 import { FirebaseStorage, getStorage, connectStorageEmulator } from 'firebase/storage';
 import { FirebaseApp } from 'firebase/app';
 import { extractHostAndPort, isConnectedToDatabaseEmulator, isConnectedToStorageEmulator } from '../../src/services/firebaseUtils';
+import CONST from '@src/CONST';
 
-const isTestEnv = process.env.NODE_ENV === 'test'|| Config.USE_EMULATORS === 'true';
+const isTestEnv = process.env.NODE_ENV === 'test'|| Config.APP_ENVIRONMENT === CONST.ENVIRONMENT.TEST;
 const envPrefix = isTestEnv ? 'TEST_' : '';
 
 type FirebaseContextProps = {

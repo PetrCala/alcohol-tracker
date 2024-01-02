@@ -1,8 +1,9 @@
 ﻿import { app } from '../../../src/services/firebaseConfig';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
+import CONST from '@src/CONST';
 
 // Never run these tests outside of the emulator environment
-const shouldRunTests = process.env.USE_EMULATORS === 'true';
+const shouldRunTests = process.env.ENVIRONMENT === CONST.ENVIRONMENT.TEST;
 
 const describeWithEmulator = shouldRunTests ? describe : describe.skip;
 
