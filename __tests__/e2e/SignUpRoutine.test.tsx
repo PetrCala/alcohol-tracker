@@ -1,64 +1,65 @@
+// !! Run using bun test
 // This test suite simulates a complete lifecycle of user creation and deletion
 // All of this should run on an emulator suite to test the real-life behavior as close as possible without interacting with the production database
 
 // import Config from 'react-native-config';
-import { getDatabase, connectDatabaseEmulator, ref, get, set } from "firebase/database";
-import { initializeApp } from "firebase/app";
-const admin = require('firebase-admin');
-const serviceAccount = require('../../alcohol-tracker-db-firebase-adminsdk-nsgbc-52a51fdabc.json');
-import { emulatorConnect } from '../utils/emulators/authEmulator';
-import { checkEmulatorStatus } from '../utils/emulatorTools';
+const { getDatabase, connectDatabaseEmulator, ref, get, set } = require("firebase/database");
+const { initializeApp } = require("firebase/app");
+const { createMockDatabase } = require("../utils/mockDatabase.tsx");
+// import * as admin from 'firebase-admin';
 // import SignUpScreen from '../../../src/screens/SignUpScreen';
 // import { readDataOnce } from '@database/baseFunctions';
 
 // const isTestEnv = process.env.NODE_ENV === 'test'|| Config.USE_EMULATORS === 'true';
-// const envPrefix = isTestEnv ? 'TEST_' : '';
+const isTestEnv = true;
+const envPrefix = isTestEnv ? 'TEST_' : '';
 
-process.env.FIREBASE_EMULATOR_HOST = 'localhost:9001';
+// Never run these tests outside of the emulator environment
+const shouldRunTests = process.env.USE_EMULATORS === 'true';
 
-// admin.initializeApp({
-//     credential: admin.credential.cert(serviceAccount),
-//     // databaseURL: "https://localhost:9001/?ns=alcohol-tracker-db",
-//     databaseURL: "https://localhost:9001/?ns=alcohol-tracker-db",
-//     projectId: 'alcohol-tracker-db', // TODO modify this to the config file
-// });
+const describeWithEmulator = isTestEnv ? describe : describe.skip;
+
+// Initialize the app and database
 const testApp = initializeApp({
-    // credential: admin.credential.cert(serviceAccount),
-    // databaseURL: "https://localhost:9001/?ns=alcohol-tracker-db",
     databaseURL: "https://localhost:9001/?ns=alcohol-tracker-db",
     projectId: 'alcohol-tracker-db', // TODO modify this to the config file
-})
-
-// With a database Reference, write null to clear the database.
-
-// admin.database().useEmulator('localhost', 9000);
+});
 
 const db = getDatabase(testApp);
 connectDatabaseEmulator(db, 'localhost', 9001);
 
-// var tempRef = ref(db, 'config');
-// const snapshot = await get(tempRef); // One-off fetch
-// if(snapshot.exists()) {
-// console.log(snapshot.val()); // Return user data
-// } else {
-// console.log('no data');
-// }
+// Initialize the database with mock data
+const mockDatabase = createMockDatabase();
 
-// var new_ref = db.ref('config')
-// var new_ref = db.ref('config')
-// console.log(new_ref);
-// With a database Reference, write null to clear the database.
-// admin.database().ref().set(null);
-// db.ref('config').once("value", (snapshot:any) => {
-//     console.log(snapshot.val());
-// });
+describeWithEmulator('Create and delete a user in the emulated database', () => {
 
-// console.log(admin.database().ref())
-// set(ref(db), null);
-// set(ref(db), null);
+    beforeEach(async () => {
+        // Write mock data to the database
+        set(ref(db), mockDatabase);
+    });
 
-// describeWithEmulator('Create and delete a user in the emulated database', () => {
-//     beforeAll(async () => {
+    it('should connect to the emulator realtime database', async () => {
+        async function getDatabaseRef() {
+            var tempRef = ref(db, 'config');
+            const snapshot = await get(tempRef); // One-off fetch
+            if(snapshot.exists()) {
+                console.log('data exists')
+                console.log(snapshot.val()); // Return user data
+                } else {
+                console.log('no data');
+            }
+        }
+        await getDatabaseRef()
+        expect(db).not.toBeNull();
+    });
+
+    afterEach(async () => {
+        // Write null to clear the database.
+        set(ref(db), null);
+    });
+
+});
+
 //         console.log("Initializing the sign up test suite...")
 //         auth = emulatorConnect();
 //         // Assert that the emulators are up and running
@@ -168,4 +169,3 @@ connectDatabaseEmulator(db, 'localhost', 9001);
 //     console.log('cleaning up...')
 //     // await Promise.all(firebase.apps().map((app: firebase.app.App) => app.delete()));
 //   });
-// });

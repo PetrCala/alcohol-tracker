@@ -32,7 +32,7 @@
 } from "../../../src/utils/dataHandling";
 import { DateObject } from "../../../src/types/components";
 import { DrinkingSessionArrayItem, DrinkingSessionData, PreferencesData, UnitTypesKeys, UnitTypesNames, UnitTypesProps, UnitsObject, UnitsToColorsData } from "../../../src/types/database";
-import { createMockPreferences, createMockSession, createMockUnitsObject } from "../../utils/mockDatabase";
+import { createMockPreferences, createMockSession, createMockUnitsObject } from "../../utils/mockDatabase.js";
 import { MONTHS, MONTHS_ABBREVIATED } from "../../../src/utils/static";
 
 

@@ -2,9 +2,27 @@
   "extends": "@tsconfig/react-native/tsconfig.json",
   "compilerOptions": {
     "target": "esnext",
-    "module": "ESNext",
+    "module": "esnext",
     "types": ["react-native", "jest", "node"],
+    "lib": [
+        "DOM",
+        "es2019",
+        "es2020.bigint",
+        "es2020.date",
+        "es2020.number",
+        "es2020.promise",
+        "es2020.string",
+        "es2020.symbol.wellknown",
+        "es2021.promise",
+        "es2021.string",
+        "es2021.weakref",
+        "es2022.array",
+        "es2022.object",
+        "es2022.string",
+        "ES2021.Intl"
+    ],
     "allowJs": true,
+    "checkJs": false,
     "jsx": "react-native",
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
@@ -36,6 +54,13 @@
       // "@userActions/*": ["./src/libs/actions/*"]
     }
   },
+  "ts-node": {
+    // these options are overrides used only by ts-node
+    // same as the --compilerOptions flag and the TS_NODE_COMPILER_OPTIONS environment variable
+    "compilerOptions": {
+      "module": "ESNext"
+    }
+  },
   "include": [
     "__mocks__",
     "__tests__",
@@ -48,6 +73,6 @@
     "**/*.tsx",
     "app.json",
     "package.json", // Application version import
-    "**/alcohol-tracker*.json"
-  ],
+    "**/alcohol-tracker*.json", 
+    "react-native.config.js"]
 }
