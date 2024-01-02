@@ -3,7 +3,10 @@ import { ReactNode, createContext, useContext } from 'react';
 import { Database, connectDatabaseEmulator, getDatabase } from 'firebase/database';
 import { FirebaseStorage, getStorage, connectStorageEmulator } from 'firebase/storage';
 import { FirebaseApp } from 'firebase/app';
+import { extractHostAndPort, isConnectedToDatabaseEmulator, isConnectedToStorageEmulator } from '../../src/services/firebaseUtils';
 
+const isTestEnv = process.env.NODE_ENV === 'test'|| Config.USE_EMULATORS === 'true';
+const envPrefix = isTestEnv ? 'TEST_' : '';
 
 type FirebaseContextProps = {
     db: Database;
@@ -39,17 +42,17 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
     const storage = getStorage(app);
 
     // Check if emulators should be used
-    if (Config.NODE_ENV === 'test' || Config.USE_EMULATORS === 'true') {
-      var database_host = Config.FIREBASE_DATABASE_EMULATOR_HOST;
-      var storage_host = Config.FIREBASE_STORAGE_EMULATOR_HOST;
-      if (database_host && storage_host) {
-        const [dbHost, dbPort] = database_host.split(':');
-        const [storageHost, storagePort] = storage_host.split(':');
-    
+    if (isTestEnv) {
+      const [dbHost, dbPort] = extractHostAndPort(`${envPrefix}DATABASE_URL`);
+      const [storageHost, storagePort] = extractHostAndPort(`${envPrefix}STORAGE_BUCKET`);
+
+      // Safety check to connect to emulators only if they are not already running
+      if (!isConnectedToDatabaseEmulator(db)) {
         connectDatabaseEmulator(db, dbHost, parseInt(dbPort));
+      }
+
+      if (!isConnectedToStorageEmulator(storage)) {
         connectStorageEmulator(storage, storageHost, parseInt(storagePort));
-      } else {
-        throw new Error("Could not connect to the database. Unspecified environmental variables FIREBASE_DATABASE_EMULATOR_HOST or FIREBASE_STORAGE_EMULATOR_HOST.")
       }
     }
     return (

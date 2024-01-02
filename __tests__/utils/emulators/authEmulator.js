@@ -5,12 +5,6 @@ import { initializeApp } from "firebase/app";
 import { getAuth, connectAuthEmulator } from "@firebase/auth";
 import { firebaseConfig } from "../../../src/services/firebaseConfig";
 
-// import firebase from "firebase/app";
-// import "firebase/auth";
-
-// const emulatorHost = Config.FIREBASE_AUTH_EMULATOR_HOST;
-// const [authHost, authPort] = emulatorHost.split(':');
-
 export function emulatorConnect() {
   const auth = firebase.auth();
   auth.useEmulator("http://127.0.0.1:9099");

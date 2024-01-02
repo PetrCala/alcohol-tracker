@@ -2,17 +2,20 @@
 import { initializeApp } from "firebase/app";
 import { initializeAuth, getReactNativePersistence, connectAuthEmulator } from 'firebase/auth';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
+import { isConnectedToAuthEmulator } from './firebaseUtils';
 
+const isTestEnv = process.env.NODE_ENV === 'test'|| Config.USE_EMULATORS === 'true';
+const envPrefix = isTestEnv ? 'TEST_' : '';
 
 const firebaseConfig = {
-    apiKey: Config.API_KEY,
-    authDomain: Config.AUTH_DOMAIN,
-    databaseURL: Config.DATABASE_URL,
-    projectId: Config.PROJECT_ID,
-    storageBucket: Config.STORAGE_BUCKET,
-    messagingSenderId: Config.MESSAGING_SENDER_ID,
-    appId: Config.APP_ID,
-    measurementId: Config.MEASUREMENT_ID
+  apiKey: Config[`${envPrefix}API_KEY`],
+  authDomain: Config[`${envPrefix}AUTH_DOMAIN`],
+  databaseURL: Config[`${envPrefix}DATABASE_URL`],
+  projectId: Config[`${envPrefix}PROJECT_ID`],
+  storageBucket: Config[`${envPrefix}STORAGE_BUCKET`],
+  messagingSenderId: Config[`${envPrefix}MESSAGING_SENDER_ID`],
+  appId: Config[`${envPrefix}APP_ID`],
+  measurementId: Config[`${envPrefix}MEASUREMENT_ID`]
 };
 
 // Initialize Firebase
@@ -24,11 +27,12 @@ const auth = initializeAuth(app, {
 });
 
 // Connect to auth emulator if in development environment
-if (process.env.NODE_ENV === 'test' || Config.USE_EMULATORS === 'true') {
-  const emulatorHost = Config.FIREBASE_AUTH_EMULATOR_HOST;
-  const [authHost, authPort] = emulatorHost.split(':');
+if (isTestEnv) {
+  const authUrl = Config[`${envPrefix}AUTH_DOMAIN`];
 
-  connectAuthEmulator(auth, authHost, parseInt(authPort));
+  if (!isConnectedToAuthEmulator(auth)){
+    connectAuthEmulator(auth, authUrl);
+  }
 }
 
 export { app, auth, firebaseConfig };
