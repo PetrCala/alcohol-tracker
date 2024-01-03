@@ -1,13 +1,13 @@
-﻿import Config from 'react-native-config';
-import { ReactNode, createContext, useContext } from 'react';
+﻿import { ReactNode, createContext, useContext } from 'react';
 import { Database, connectDatabaseEmulator, getDatabase } from 'firebase/database';
 import { FirebaseStorage, getStorage, connectStorageEmulator } from 'firebase/storage';
 import { FirebaseApp } from 'firebase/app';
 import { extractHostAndPort, isConnectedToDatabaseEmulator, isConnectedToStorageEmulator } from '../../src/services/firebaseUtils';
+import CONFIG from '@src/CONFIG';
 import CONST from '@src/CONST';
 
-const isTestEnv = process.env.NODE_ENV === 'test'|| Config.APP_ENVIRONMENT === CONST.ENVIRONMENT.TEST;
-const envPrefix = isTestEnv ? 'TEST_' : '';
+const isTestEnv = process.env.NODE_ENV === 'test'|| CONFIG.APP_ENVIRONMENT === CONST.ENVIRONMENT.TEST;
+const firebaseConfig = isTestEnv ? CONFIG.DB_CONFIG_TEST : CONFIG.DB_CONFIG_PROD;
 
 type FirebaseContextProps = {
     db: Database;
@@ -44,8 +44,8 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
 
     // Check if emulators should be used
     if (isTestEnv) {
-      const [dbHost, dbPort] = extractHostAndPort(`${envPrefix}DATABASE_URL`);
-      const [storageHost, storagePort] = extractHostAndPort(`${envPrefix}STORAGE_BUCKET`);
+      const [dbHost, dbPort] = extractHostAndPort(firebaseConfig.DATABASE_URL);
+      const [storageHost, storagePort] = extractHostAndPort(firebaseConfig.STORAGE_BUCKET);
 
       // Safety check to connect to emulators only if they are not already running
       if (!isConnectedToDatabaseEmulator(db)) {
@@ -56,6 +56,7 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
         connectStorageEmulator(storage, storageHost, parseInt(storagePort));
       }
     }
+
     return (
       <FirebaseContext.Provider value={{db, storage}} >
         {children}

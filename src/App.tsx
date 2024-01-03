@@ -7,6 +7,7 @@ import AppNavigator from './navigation/AppNavigator';
 import Stack from './navigation/Stack';
 import { ContextProvider } from './context/Context';
 
+
 const Kiroku = () => {
   return (
     <ContextProvider app={app}>
