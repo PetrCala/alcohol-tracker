@@ -1,11 +1,7 @@
-
 // !! Run using npm test - to run using bun test, resolve first issue with Config -> mock react-native-config
 
-// This test suite simulates a complete lifecycle of user creation and deletion
-// All of this should run on an emulator suite to test the real-life behavior as close as possible without interacting with the production database
-
 require('dotenv').config(); // Use .env variables in this file - CONFIG does not work here
-import { getStorage, FirebaseStorage, getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
+import { getStorage, FirebaseStorage, ref } from 'firebase/storage';
 import { initializeApp, deleteApp, FirebaseApp } from "firebase/app";
 import { isConnectedToStorageEmulator } from "@src/services/firebaseUtils";
 import { describeWithEmulator } from "../../utils/emulatorTools";

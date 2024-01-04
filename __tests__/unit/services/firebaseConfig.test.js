@@ -1,4 +1,6 @@
-﻿// Mocking Firebase modules and AsyncStorage
+﻿// TODO redo this to reflect the new .env
+
+// Mocking Firebase modules and AsyncStorage
 jest.mock('firebase/app', () => ({
     initializeApp: jest.fn(),
 }));
