@@ -44,8 +44,8 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
 
     // Check if emulators should be used
     if (isTestEnv) {
-      const [dbHost, dbPort] = extractHostAndPort(firebaseConfig.DATABASE_URL);
-      const [storageHost, storagePort] = extractHostAndPort(firebaseConfig.STORAGE_BUCKET);
+      const [dbHost, dbPort] = extractHostAndPort(firebaseConfig.databaseURL);
+      const [storageHost, storagePort] = extractHostAndPort(firebaseConfig.storageBucket);
 
       // Safety check to connect to emulators only if they are not already running
       if (!isConnectedToDatabaseEmulator(db)) {
