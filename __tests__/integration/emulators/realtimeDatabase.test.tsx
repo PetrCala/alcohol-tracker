@@ -56,7 +56,7 @@ describeWithEmulator('Connect to the realtime database emulator', () => {
         expect(isConnectedToDatabaseEmulator(db)).toBe(true);
     });
 
-    it('mock data should not be empty', async () => {
+    it('should write non-empty mock data', async () => {
         async function getDatabaseRef() {
             var tempRef = ref(db, 'config');
             const snapshot = await get(tempRef); // One-off fetch
