@@ -115,9 +115,10 @@ export function createMockUnitsObject(units: Partial<UnitTypesProps> = {}): Unit
  * @param baseDate Date around which sessions are created.
  * @param offsetDays Number of days to offset from baseDate. If not provided, a random offset between -7 and 7 days is used.
  * @param units Units consumed during the session
+ * @param ongoing Whether the session is ongoing or not
  * @returns A DrinkingSessionData object.
  */
-export function createMockSession(baseDate: Date, offsetDays?: number, units?: UnitsObject): DrinkingSessionArrayItem {
+export function createMockSession(baseDate: Date, offsetDays?: number, units?: UnitsObject, ongoing?: boolean): DrinkingSessionArrayItem {
     if (!units){
         units = getZeroUnitsObject();
     };
@@ -139,6 +140,7 @@ export function createMockSession(baseDate: Date, offsetDays?: number, units?: U
         note: '',
         units: units
     };
+    if (ongoing) newSession.ongoing = true;
   
     return newSession;
 };

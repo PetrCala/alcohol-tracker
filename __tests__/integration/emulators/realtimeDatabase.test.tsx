@@ -3,12 +3,18 @@
 require('dotenv').config(); // Use .env variables in this file - CONFIG does not work here
 import { getDatabase, connectDatabaseEmulator, ref, get, set, goOffline } from "firebase/database";
 import { initializeApp, deleteApp, FirebaseApp } from "firebase/app";
-import { createMockDatabase } from "../../utils/mockDatabase";
+import { createMockDatabase, createMockSession } from "../../utils/mockDatabase";
 import { isConnectedToDatabaseEmulator } from "@src/services/firebaseUtils";
-import { DatabaseProps } from "@src/types/database";
+import { DatabaseProps, UnitTypesProps } from "@src/types/database";
 import { Database } from "firebase/database";
 import { describeWithEmulator } from "../../utils/emulatorTools";
 import * as firebaseRules from '../../../firebase.json';
+import { saveDrinkingSessionData } from "@database/drinkingSessions";
+
+import { MOCK_SESSION_IDS, MOCK_USER_IDS } from "../../utils/testsStatic";
+import { readDataOnce } from "@database/baseFunctions";
+
+
 
 const databaseURL = process.env.TEST_DATABASE_URL;
 const projectId = process.env.TEST_PROJECT_ID;
@@ -20,6 +26,7 @@ describeWithEmulator('Connect to the realtime database emulator', () => {
     let testApp: FirebaseApp;
     let db: Database;
     let mockDatabase: DatabaseProps;
+    let testUserId: string = MOCK_USER_IDS[0];
 
     beforeAll(async () => {
         testApp = initializeApp({
@@ -65,5 +72,32 @@ describeWithEmulator('Connect to the realtime database emulator', () => {
         const data = await getDatabaseRef()
         expect(data.exists()).toBe(true);
         expect(data.val()).not.toBeNull();
+    });
+
+    it('should save drinking session data', async () => {
+        const sessionUnits: UnitTypesProps = {
+            beer: 2,
+        };
+        const drinkingSession = createMockSession(new Date(), undefined, sessionUnits, undefined);
+
+        expect(drinkingSession).not.toBeNull();
+        expect(drinkingSession.ongoing).toBe(undefined);
+
+        const sessionKey = `${testUserId}-mock-session-0`;
+        await saveDrinkingSessionData(db, testUserId, drinkingSession, sessionKey)
+        const userSessionRef = `user_drinking_sessions/${testUserId}/${sessionKey}`;
+        const userSession = await readDataOnce(db, userSessionRef);
+
+        expect(userSession).not.toBeNull();
+        expect(userSession).toMatchObject(drinkingSession);
+        // To match only some attributes
+        // expect(userSession).toMatchObject({
+        //     ...drinkingSession,
+        //     ongoing: undefined,
+        //     end_time: expect.anything(),
+        // });
+
+
+
     });
 });
