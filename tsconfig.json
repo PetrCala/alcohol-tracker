@@ -73,6 +73,7 @@
     "**/*.tsx",
     "app.json",
     "package.json", // Application version import
+    "firebase.json",
     "**/alcohol-tracker*.json", 
     "react-native.config.js"]
 }

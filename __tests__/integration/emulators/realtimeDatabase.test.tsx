@@ -1,36 +1,41 @@
 // !! Run using npm test - to run using bun test, resolve first issue with Config -> mock react-native-config
+
 // This test suite simulates a complete lifecycle of user creation and deletion
 // All of this should run on an emulator suite to test the real-life behavior as close as possible without interacting with the production database
 
 require('dotenv').config(); // Use .env variables in this file - CONFIG does not work here
-import { getDatabase, connectDatabaseEmulator, ref, get, set } from "firebase/database";
-import { initializeApp } from "firebase/app";
+import { getDatabase, connectDatabaseEmulator, ref, get, set, goOffline } from "firebase/database";
+import { initializeApp, deleteApp, FirebaseApp } from "firebase/app";
 import { createMockDatabase } from "../../utils/mockDatabase";
-import { isConnectedToAuthEmulator, isConnectedToDatabaseEmulator, isConnectedToStorageEmulator } from "@src/services/firebaseUtils";
+import { isConnectedToDatabaseEmulator } from "@src/services/firebaseUtils";
 import { DatabaseProps } from "@src/types/database";
 import { Database } from "firebase/database";
-import CONST from '@src/CONST';
+import { describeWithEmulator } from "../../utils/emulatorTools";
+import * as firebaseRules from '../../../firebase.json';
 
-// Never run these tests outside of the emulator environment
-const shouldRunTests = process.env.APP_ENVIRONMENT === CONST.ENVIRONMENT.TEST;
+const databaseURL = process.env.TEST_DATABASE_URL;
+const projectId = process.env.TEST_PROJECT_ID;
+if (!databaseURL || !projectId) {
+    throw new Error(`Missing environment variables ${databaseURL} or ${projectId} for storage emulator`);
+};
 
-const describeWithEmulator = shouldRunTests ? describe : describe.skip;
-
-describeWithEmulator('Create and delete a user in the emulated database', () => {
+describeWithEmulator('Connect to the realtime database emulator', () => {
+    let testApp: FirebaseApp;
     let db: Database;
     let mockDatabase: DatabaseProps;
 
     beforeAll(async () => {
-        // Initialize the app and database
-        const testApp = initializeApp({
-            databaseURL: "https://localhost:9001/?ns=alcohol-tracker-db",
-            projectId: 'alcohol-tracker-db', // TODO modify this to the config file
+        testApp = initializeApp({
+            databaseURL: databaseURL,
+            projectId: projectId,
         });
 
+        // Initialize the database
         db = getDatabase(testApp);
-        connectDatabaseEmulator(db, 'localhost', 9001);
+        const dbPort = parseInt(firebaseRules.emulators.database.port)
+        connectDatabaseEmulator(db, 'localhost', dbPort);
 
-        // Initialize the database with mock data
+        // Fill the database with mock data
         mockDatabase = createMockDatabase();
     })
 
@@ -42,6 +47,11 @@ describeWithEmulator('Create and delete a user in the emulated database', () => 
     // Write null to clear the database.
     afterEach(async () => {
         set(ref(db), null);
+    });
+
+    afterAll(async () => {
+        goOffline(db); // Close database connection
+        deleteApp(testApp); // Delete the app
     });
 
     it('should connect to the emulator realtime database', async () => {
