@@ -66,9 +66,4 @@ describeWithEmulator('Test feedback rules', () => {
     const unauthRef = unauthDb.ref(`feedback/${testFeedbackId}`);
     await assertFails(unauthRef.get());
   });
-
-    // it('should not write feedback when not logged in', async () => {
-    //     const unauthDb = testEnv.database();
-    //     const unauthRef = unauthDb.ref(`feedback/${testFeedbackId}`);
-    //     await assertFails(unauthRef.set(testFeedback));
 });
