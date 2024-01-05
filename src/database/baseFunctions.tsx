@@ -9,7 +9,6 @@
  * */
 export async function readDataOnce(db: Database, refString: string): Promise<any|null> {
   const userRef = ref(db, refString);
-  console.log(userRef)
   const snapshot = await get(userRef); // One-off fetch
   if(snapshot.exists()) {
     return snapshot.val(); // Return user data
