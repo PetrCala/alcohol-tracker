@@ -1,7 +1,6 @@
 // !! Run using npm test - to run using bun test, resolve first issue with Config -> mock react-native-config
 
 require('dotenv').config(); // Use .env variables in this file - CONFIG does not work here
-import fs from 'fs';
 import {
   initializeTestEnvironment,
   assertFails,
@@ -52,6 +51,20 @@ describeWithEmulator('Test feedback rules', () => {
     const unauthDb = testEnv.unauthenticatedContext().database();
     const unauthRef = unauthDb.ref(`feedback/${testFeedbackId}`);
     await assertFails(unauthRef.set(testFeedback));
+  });
+
+  it('should allow reading feedback when admin is true', async () => {
+    const authDb = testEnv.authenticatedContext(testFeedbackId, {
+      admin: true,
+    }).database();
+    const authRef = authDb.ref(`feedback/${testFeedbackId}`);
+    await assertSucceeds(authRef.get());
+  });
+
+  it('should not read feedback when not an admin', async () => {
+    const unauthDb = testEnv.unauthenticatedContext().database();
+    const unauthRef = unauthDb.ref(`feedback/${testFeedbackId}`);
+    await assertFails(unauthRef.get());
   });
 
     // it('should not write feedback when not logged in', async () => {
