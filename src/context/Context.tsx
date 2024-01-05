@@ -1,21 +1,21 @@
-﻿import { ReactNode } from "react";
-import { FirebaseProvider } from "./FirebaseContext";
-import { UserConnectionProvider } from "./UserConnectionContext";
-import { VersionManagementProvider } from "./VersionContext";
-import { FirebaseApp } from "firebase/app";
-
+﻿import {ReactNode} from 'react';
+import {FirebaseProvider} from './FirebaseContext';
+import {UserConnectionProvider} from './UserConnectionContext';
+import {VersionManagementProvider} from './VersionContext';
+import {FirebaseApp} from 'firebase/app';
 
 type ContextProviderProps = {
-    app: FirebaseApp;
-    children: ReactNode;
+  app: FirebaseApp;
+  children: ReactNode;
 };
 
-export const ContextProvider:React.FC<ContextProviderProps>  = ({ app, children }) => (
-    <FirebaseProvider app={app}>
-      <UserConnectionProvider>
-        <VersionManagementProvider>
-          {children}
-        </VersionManagementProvider>
-      </UserConnectionProvider>
-    </FirebaseProvider>
-  );
+export const ContextProvider: React.FC<ContextProviderProps> = ({
+  app,
+  children,
+}) => (
+  <FirebaseProvider app={app}>
+    <UserConnectionProvider>
+      <VersionManagementProvider>{children}</VersionManagementProvider>
+    </UserConnectionProvider>
+  </FirebaseProvider>
+);

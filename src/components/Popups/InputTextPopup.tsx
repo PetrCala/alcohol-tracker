@@ -1,77 +1,80 @@
-﻿import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  Modal, 
+﻿import React, {useState} from 'react';
+import {
+  View,
+  Text,
+  Modal,
   TextInput,
-  TouchableOpacity, 
+  TouchableOpacity,
   StyleSheet,
-  KeyboardTypeOptions, 
+  KeyboardTypeOptions,
 } from 'react-native';
 
 export type InputTextPopupProps = {
-    visible: boolean;
-    transparent: boolean;
-    message: string;
-    confirmationMessage: string;
-    placeholder: string;
-    onRequestClose: () => void;
-    onSubmit: (password: string) => void;
-    keyboardType?: KeyboardTypeOptions | undefined;
-    textContentType?: any; // Many options
-    secureTextEntry?: boolean | undefined;
+  visible: boolean;
+  transparent: boolean;
+  message: string;
+  confirmationMessage: string;
+  placeholder: string;
+  onRequestClose: () => void;
+  onSubmit: (password: string) => void;
+  keyboardType?: KeyboardTypeOptions | undefined;
+  textContentType?: any; // Many options
+  secureTextEntry?: boolean | undefined;
 };
 
 const InputTextPopup = (props: InputTextPopupProps) => {
-    const { 
-        visible, 
-        transparent, 
-        message, 
-        confirmationMessage,
-        placeholder,
-        onRequestClose, 
-        onSubmit, 
-        keyboardType,
-        textContentType,
-        secureTextEntry
-    } = props;
-    const [text, setText] = useState<string>('');
+  const {
+    visible,
+    transparent,
+    message,
+    confirmationMessage,
+    placeholder,
+    onRequestClose,
+    onSubmit,
+    keyboardType,
+    textContentType,
+    secureTextEntry,
+  } = props;
+  const [text, setText] = useState<string>('');
 
-    return (
-        <Modal
-        animationType="none"
-        transparent={transparent}
-        visible={visible}
-        onRequestClose={onRequestClose}
-        >
-        <View style={styles.modalContainer}>
+  return (
+    <Modal
+      animationType="none"
+      transparent={transparent}
+      visible={visible}
+      onRequestClose={onRequestClose}>
+      <View style={styles.modalContainer}>
         <View style={styles.modalView}>
-            <Text style={styles.modalText}>
-            {message}
-            </Text>
-            <View style={styles.textContainer}>
+          <Text style={styles.modalText}>{message}</Text>
+          <View style={styles.textContainer}>
             <TextInput
-                placeholder={placeholder}
-                value={text}
-                onChangeText={text => setText(text)}
-                style={styles.password}
-                keyboardType={keyboardType}
-                textContentType={textContentType}
-                secureTextEntry={secureTextEntry}
+              placeholder={placeholder}
+              value={text}
+              onChangeText={text => setText(text)}
+              style={styles.password}
+              keyboardType={keyboardType}
+              textContentType={textContentType}
+              secureTextEntry={secureTextEntry}
             />
-            </View>
-            <View style={styles.buttonsContainer}>
-                <TouchableOpacity style={styles.confirmButton} onPress={() => onSubmit(text)}>
-                    <Text style={styles.confirmButtonText}>{confirmationMessage}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.cancelButton} onPress={onRequestClose}>
-                    <Text style={styles.cancelButtonText}>Close</Text>
-                </TouchableOpacity>
-            </View>
+          </View>
+          <View style={styles.buttonsContainer}>
+            <TouchableOpacity
+              style={styles.confirmButton}
+              onPress={() => onSubmit(text)}>
+              <Text style={styles.confirmButtonText}>
+                {confirmationMessage}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.cancelButton}
+              onPress={onRequestClose}>
+              <Text style={styles.cancelButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        </View>
-        </Modal>
-    );
+      </View>
+    </Modal>
+  );
 };
 
 export default InputTextPopup;
@@ -150,4 +153,3 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
-

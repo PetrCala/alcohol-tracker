@@ -9,14 +9,14 @@ const EMPTY_ARRAY = Object.freeze([]);
 const EMPTY_OBJECT = Object.freeze({});
 
 const CONST = {
-    ENVIRONMENT: {
-        DEV: 'development',
-        STAGING: 'staging',
-        PRODUCTION: 'production',
-        TEST: 'test',
-    },
-    EMPTY_ARRAY,
-    EMPTY_OBJECT
+  ENVIRONMENT: {
+    DEV: 'development',
+    STAGING: 'staging',
+    PRODUCTION: 'production',
+    TEST: 'test',
+  },
+  EMPTY_ARRAY,
+  EMPTY_OBJECT,
 } as const;
 
 export default CONST;

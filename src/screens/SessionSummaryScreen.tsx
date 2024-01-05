@@ -1,172 +1,208 @@
-﻿import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-import { SessionSummaryScreenProps} from '../types/screens';
-import { auth } from "../../src/services/firebaseConfig";
+﻿import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {SessionSummaryScreenProps} from '../types/screens';
+import {auth} from '../../src/services/firebaseConfig';
 import MenuIcon from '../components/Buttons/MenuIcon';
-import { formatDate, formatDateToDay, formatDateToTime, getLastUnitAddedTime, sumAllPoints, sumAllUnits, sumUnitsOfSingleType, timestampToDate, unitsToColors } from '../utils/dataHandling';
+import {
+  formatDate,
+  formatDateToDay,
+  formatDateToTime,
+  getLastUnitAddedTime,
+  sumAllPoints,
+  sumAllUnits,
+  sumUnitsOfSingleType,
+  timestampToDate,
+  unitsToColors,
+} from '../utils/dataHandling';
 import BasicButton from '../components/Buttons/BasicButton';
-import { DrinkingSessionArrayItem } from '../types/database';
-import { getDatabaseData } from '../context/DatabaseDataContext';
+import {DrinkingSessionArrayItem} from '../types/database';
+import {getDatabaseData} from '../context/DatabaseDataContext';
 import commonStyles from '../styles/commonStyles';
 
 const SessionDataItem = ({
-    heading,
-    data,
-    index,
-    sessionColor
-  }: {
-    heading: string,
-    data: any,
-    index: number,
-    sessionColor?: string // Optional property for sessionColor
-  }) => (
-    <View style={[styles.sessionDataContainer, { backgroundColor: index % 2 === 0 ? '#FFFFbd' : 'white' }]}>
-      <Text style={styles.sessionDataHeading}>{heading}</Text>
-      {sessionColor ? (
-        // Render the colored rectangle when sessionColor is present
-        <View style={[
-          styles.sessionColorMarker,
-          {backgroundColor: sessionColor}
-        ]}/>
-      ) : (
-        // Else render the text
-        <Text style={styles.sessionDataText}>{data}</Text>
-      )}
-    </View>
-  );
+  heading,
+  data,
+  index,
+  sessionColor,
+}: {
+  heading: string;
+  data: any;
+  index: number;
+  sessionColor?: string; // Optional property for sessionColor
+}) => (
+  <View
+    style={[
+      styles.sessionDataContainer,
+      {backgroundColor: index % 2 === 0 ? '#FFFFbd' : 'white'},
+    ]}>
+    <Text style={styles.sessionDataHeading}>{heading}</Text>
+    {sessionColor ? (
+      // Render the colored rectangle when sessionColor is present
+      <View
+        style={[styles.sessionColorMarker, {backgroundColor: sessionColor}]}
+      />
+    ) : (
+      // Else render the text
+      <Text style={styles.sessionDataText}>{data}</Text>
+    )}
+  </View>
+);
 
-const SessionSummaryScreen = ({ route, navigation}: SessionSummaryScreenProps) => {
-    if (!route || ! navigation) return null; // Should never be null
-    const { session, sessionKey } = route.params; 
-    const { preferences } = getDatabaseData();
-    if (!preferences) return null; // Careful when writing hooks after this line
-    // Units info
-    const totalUnits = sumAllUnits(session.units);
-    const totalPoints = sumAllPoints(session.units, preferences.units_to_points);
-    const unitSums = {
-        beer: sumUnitsOfSingleType(session.units, 'beer'),
-        wine: sumUnitsOfSingleType(session.units, 'wine'),
-        weak_shot: sumUnitsOfSingleType(session.units, 'weak_shot'),
-        strong_shot: sumUnitsOfSingleType(session.units, 'strong_shot'),
-        cocktail: sumUnitsOfSingleType(session.units, 'cocktail'),
-        other: sumUnitsOfSingleType(session.units, 'other'),
-    }
-    // Time info
-    const sessionStartDate = timestampToDate(session.start_time);
-    const sessionEndDate = timestampToDate(session.end_time);
-    const sessionDay = formatDateToDay(sessionStartDate);
-    const sessionStartTime = formatDateToTime(sessionStartDate);
-    const sessionEndTime = formatDateToTime(sessionEndDate);
-    // Figure out last unit added
-    let lastUnitAdded: string;
-    const lastUnitEditTimestamp = getLastUnitAddedTime(session);
-    if (!lastUnitEditTimestamp){
-      lastUnitAdded = 'Unknown';
-    } else {
-      const lastUnitAddedDate = timestampToDate(lastUnitEditTimestamp);
-      lastUnitAdded = formatDateToTime(lastUnitAddedDate);
-    }
-  
-    const onEditSessionPress = (sessionKey:string, session:DrinkingSessionArrayItem) => {
-        navigation.navigate('Edit Session Screen', {
-          session: session,
-          sessionKey: sessionKey,
-        });
-    };
+const SessionSummaryScreen = ({
+  route,
+  navigation,
+}: SessionSummaryScreenProps) => {
+  if (!route || !navigation) return null; // Should never be null
+  const {session, sessionKey} = route.params;
+  const {preferences} = getDatabaseData();
+  if (!preferences) return null; // Careful when writing hooks after this line
+  // Units info
+  const totalUnits = sumAllUnits(session.units);
+  const totalPoints = sumAllPoints(session.units, preferences.units_to_points);
+  const unitSums = {
+    beer: sumUnitsOfSingleType(session.units, 'beer'),
+    wine: sumUnitsOfSingleType(session.units, 'wine'),
+    weak_shot: sumUnitsOfSingleType(session.units, 'weak_shot'),
+    strong_shot: sumUnitsOfSingleType(session.units, 'strong_shot'),
+    cocktail: sumUnitsOfSingleType(session.units, 'cocktail'),
+    other: sumUnitsOfSingleType(session.units, 'other'),
+  };
+  // Time info
+  const sessionStartDate = timestampToDate(session.start_time);
+  const sessionEndDate = timestampToDate(session.end_time);
+  const sessionDay = formatDateToDay(sessionStartDate);
+  const sessionStartTime = formatDateToTime(sessionStartDate);
+  const sessionEndTime = formatDateToTime(sessionEndDate);
+  // Figure out last unit added
+  let lastUnitAdded: string;
+  const lastUnitEditTimestamp = getLastUnitAddedTime(session);
+  if (!lastUnitEditTimestamp) {
+    lastUnitAdded = 'Unknown';
+  } else {
+    const lastUnitAddedDate = timestampToDate(lastUnitEditTimestamp);
+    lastUnitAdded = formatDateToTime(lastUnitAddedDate);
+  }
 
-    const handleBackPress = () => {
-        navigation.goBack();
-    };
+  const onEditSessionPress = (
+    sessionKey: string,
+    session: DrinkingSessionArrayItem,
+  ) => {
+    navigation.navigate('Edit Session Screen', {
+      session: session,
+      sessionKey: sessionKey,
+    });
+  };
 
-    const generalData = [
-      { heading: 'Points:', data: totalPoints.toString() },
-      { heading: 'Date:', data: sessionDay },
-      { heading: 'Start time:', data: sessionStartTime },
-      { heading: 'Last unit added:', data: lastUnitAdded },
-      { heading: 'End time:', data: sessionEndTime },
-    ];
-    
-    const unitData = [
-        { heading: 'Units:', data: totalUnits.toString() },
-        { heading: 'Beer:', data: unitSums.beer.toString() },
-        { heading: 'Wine:', data: unitSums.wine.toString() },
-        { heading: 'Weak Shot:', data: unitSums.weak_shot.toString() },
-        { heading: 'Strong Shot:', data: unitSums.strong_shot.toString() },
-        { heading: 'Cocktail:', data: unitSums.cocktail.toString() },
-        { heading: 'Other:', data: unitSums.other.toString() },
-      ];
+  const handleBackPress = () => {
+    navigation.goBack();
+  };
 
-    const otherData = [
-      { heading: 'Blackout:', data: session.blackout ? 'Yes' : 'No'},
-      { heading: 'Note:', data: session.note },
-    ];
+  const generalData = [
+    {heading: 'Points:', data: totalPoints.toString()},
+    {heading: 'Date:', data: sessionDay},
+    {heading: 'Start time:', data: sessionStartTime},
+    {heading: 'Last unit added:', data: lastUnitAdded},
+    {heading: 'End time:', data: sessionEndTime},
+  ];
 
-    let sessionColor = session.blackout ? 'black' : unitsToColors(totalUnits, preferences.units_to_colors);
+  const unitData = [
+    {heading: 'Units:', data: totalUnits.toString()},
+    {heading: 'Beer:', data: unitSums.beer.toString()},
+    {heading: 'Wine:', data: unitSums.wine.toString()},
+    {heading: 'Weak Shot:', data: unitSums.weak_shot.toString()},
+    {heading: 'Strong Shot:', data: unitSums.strong_shot.toString()},
+    {heading: 'Cocktail:', data: unitSums.cocktail.toString()},
+    {heading: 'Other:', data: unitSums.other.toString()},
+  ];
 
-    return (
-        <>
-          <View style={commonStyles.mainHeader}>
-            <MenuIcon
-              iconId='escape-session-summary'
-              iconSource={require('../../assets/icons/arrow_back.png')}
-              containerStyle={styles.backArrowContainer}
-              iconStyle={styles.backArrow}
-              onPress={handleBackPress}
+  const otherData = [
+    {heading: 'Blackout:', data: session.blackout ? 'Yes' : 'No'},
+    {heading: 'Note:', data: session.note},
+  ];
+
+  let sessionColor = session.blackout
+    ? 'black'
+    : unitsToColors(totalUnits, preferences.units_to_colors);
+
+  return (
+    <>
+      <View style={commonStyles.mainHeader}>
+        <MenuIcon
+          iconId="escape-session-summary"
+          iconSource={require('../../assets/icons/arrow_back.png')}
+          containerStyle={styles.backArrowContainer}
+          iconStyle={styles.backArrow}
+          onPress={handleBackPress}
+        />
+        {session.ongoing ? (
+          <></>
+        ) : (
+          <MenuIcon
+            iconId="edit-session-icon"
+            iconSource={require('../../assets/icons/edit.png')}
+            containerStyle={styles.menuIconContainer}
+            iconStyle={styles.menuIcon}
+            onPress={() => onEditSessionPress(sessionKey, session)} // Use keyextractor to load id here
+          />
+        )}
+      </View>
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.sessionInfoContainer}>
+          <Text style={styles.sessionInfoText}>Session Summary</Text>
+        </View>
+
+        <View style={styles.sessionSectionContainer}>
+          <Text style={styles.sessionDataContainerHeading}>General</Text>
+          <SessionDataItem
+            key="sessionColor"
+            heading="Session Color"
+            data={sessionColor}
+            index={generalData.length}
+            sessionColor={sessionColor}
+          />
+          {generalData.map((item, index) => (
+            <SessionDataItem
+              key={index}
+              heading={item.heading}
+              data={item.data}
+              index={index}
             />
-            {session.ongoing ?
-            <></>
-            :
-            <MenuIcon
-                iconId='edit-session-icon'
-                iconSource={require('../../assets/icons/edit.png')}
-                containerStyle={styles.menuIconContainer}
-                iconStyle={styles.menuIcon}
-                onPress={() => onEditSessionPress(sessionKey, session)} // Use keyextractor to load id here
-                />
-            }
-          </View>
-          <ScrollView style={styles.scrollView}>
-            <View style={styles.sessionInfoContainer}>
-            <Text style={styles.sessionInfoText}>Session Summary</Text>
-            </View>
+          ))}
+        </View>
 
-            <View style={styles.sessionSectionContainer}>
-            <Text style={styles.sessionDataContainerHeading}>General</Text>
-            <SessionDataItem key="sessionColor" heading="Session Color" data = {sessionColor} index={generalData.length} sessionColor={sessionColor} />
-            {generalData.map((item, index) => (
-                <SessionDataItem key={index} heading={item.heading} data={item.data} index={index} />
-                ))}
-            </View>
+        <View style={styles.sessionSectionContainer}>
+          <Text style={styles.sessionDataContainerHeading}>Units consumed</Text>
+          {unitData.map((item, index) => (
+            <SessionDataItem
+              key={index}
+              heading={item.heading}
+              data={item.data}
+              index={index}
+            />
+          ))}
+        </View>
 
-            <View style={styles.sessionSectionContainer}>
-            <Text style={styles.sessionDataContainerHeading}>Units consumed</Text>
-            {unitData.map((item, index) => (
-                <SessionDataItem key={index} heading={item.heading} data={item.data} index={index} />
-            ))}
-            </View>
-
-            <View style={styles.sessionSectionContainer}>
-            <Text style={styles.sessionDataContainerHeading}>Other</Text>
-            {otherData.map((item, index) => (
-                <SessionDataItem key={index} heading={item.heading} data={item.data} index={index} />
-            ))}
-            </View>
-
-            </ScrollView>
-            <View style={styles.confirmButtonContainer}>
-                <BasicButton 
-                    text='Confirm'
-                    buttonStyle={styles.confirmButton}
-                    textStyle={styles.confirmButtonText}
-                    onPress={() => navigation.goBack()}
-                />
-            </View>
-        </>
-    );
+        <View style={styles.sessionSectionContainer}>
+          <Text style={styles.sessionDataContainerHeading}>Other</Text>
+          {otherData.map((item, index) => (
+            <SessionDataItem
+              key={index}
+              heading={item.heading}
+              data={item.data}
+              index={index}
+            />
+          ))}
+        </View>
+      </ScrollView>
+      <View style={styles.confirmButtonContainer}>
+        <BasicButton
+          text="Confirm"
+          buttonStyle={styles.confirmButton}
+          textStyle={styles.confirmButtonText}
+          onPress={() => navigation.goBack()}
+        />
+      </View>
+    </>
+  );
 };
 
 export default SessionSummaryScreen;
@@ -194,7 +230,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   scrollView: {
-    flexGrow:1, 
+    flexGrow: 1,
     flexShrink: 1,
     backgroundColor: '#FFFF99',
   },
@@ -205,11 +241,11 @@ const styles = StyleSheet.create({
   },
   sessionInfoText: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginTop: 5,
-    color: "black",
-    alignSelf: "center",
-    alignContent: "center",
+    color: 'black',
+    alignSelf: 'center',
+    alignContent: 'center',
     padding: 10,
   },
   sessionSectionContainer: {
@@ -219,8 +255,8 @@ const styles = StyleSheet.create({
   },
   sessionDataContainerHeading: {
     fontSize: 15,
-    fontWeight: "bold",
-    color: "#4a4b4d",
+    fontWeight: 'bold',
+    color: '#4a4b4d',
     fontStyle: 'italic',
     alignSelf: 'center',
     padding: 10,
@@ -246,11 +282,11 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     marginRight: 5,
     marginLeft: 10,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   sessionColorMarker: {
-    width: 20, 
-    height: 20, 
+    width: 20,
+    height: 20,
     borderWidth: 1,
     borderColor: '#D3D3D3',
     borderRadius: 5,
@@ -260,9 +296,9 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '10%',
     flexShrink: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "row",
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
     backgroundColor: '#FFFF99',
     marginBottom: 5,
     padding: 5,
@@ -270,7 +306,7 @@ const styles = StyleSheet.create({
   confirmButton: {
     width: '50%',
     height: '90%',
-    alignItems: "center",
+    alignItems: 'center',
     justifyContent: 'center',
     padding: 10,
     backgroundColor: '#fcf50f',

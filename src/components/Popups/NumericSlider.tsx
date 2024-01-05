@@ -1,98 +1,91 @@
 ﻿import React, {useState, useEffect} from 'react';
-import {
-  Modal,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import {Modal, StyleSheet, Text, View} from 'react-native';
 import Slider from '@react-native-community/slider';
 import BasicButton from '../Buttons/BasicButton';
 import MenuIcon from '../Buttons/MenuIcon';
-import { ModalFadeTransition } from '@react-navigation/stack/lib/typescript/src/TransitionConfigs/TransitionPresets';
+import {ModalFadeTransition} from '@react-navigation/stack/lib/typescript/src/TransitionConfigs/TransitionPresets';
 
 type NumericSliderProps = {
-    visible: boolean;
-    transparent: boolean;
-    heading: string,
-    step: number;
-    value: number;
-    maxValue: number;
-    onRequestClose: () => void;
-    onSave: (value: number) => void;
+  visible: boolean;
+  transparent: boolean;
+  heading: string;
+  step: number;
+  value: number;
+  maxValue: number;
+  onRequestClose: () => void;
+  onSave: (value: number) => void;
 };
 
 const NumericSlider = (props: NumericSliderProps) => {
-    const {
-        visible,
-        transparent,
-        heading,
-        step,
-        value,
-        maxValue,
-        onRequestClose,
-        onSave
-    } = props;
-    const [localValue, setLocalValue] = useState<number>(value);
+  const {
+    visible,
+    transparent,
+    heading,
+    step,
+    value,
+    maxValue,
+    onRequestClose,
+    onSave,
+  } = props;
+  const [localValue, setLocalValue] = useState<number>(value);
 
-    useEffect(() => {
-        setLocalValue(value);
-    }, [value]);
+  useEffect(() => {
+    setLocalValue(value);
+  }, [value]);
 
-    const handleSliderChange = (value: number) => {
-        let newValue = parseFloat(value.toFixed(1))
-        setLocalValue(newValue);
-    }
+  const handleSliderChange = (value: number) => {
+    let newValue = parseFloat(value.toFixed(1));
+    setLocalValue(newValue);
+  };
 
-    return (
-        <Modal
-            animationType='none'
-            transparent={transparent}
-            visible={visible}
-            onRequestClose={onRequestClose}
-        >
-        <View style={styles.modalContainer}>
+  return (
+    <Modal
+      animationType="none"
+      transparent={transparent}
+      visible={visible}
+      onRequestClose={onRequestClose}>
+      <View style={styles.modalContainer}>
         <View style={styles.modalView}>
-            <View style={styles.valueTextContainer}>
-                <Text style={styles.valueText}>{heading}</Text>
-                <Text style={styles.valueText}>{localValue}</Text>
-            </View>
-            <View style={styles.sliderContainer}>
-                <Slider
-                    value={localValue}
-                    style={styles.slider}
-                    minimumValue={0}
-                    maximumValue={maxValue}
-                    step={step}
-                    minimumTrackTintColor="#000"
-                    maximumTrackTintColor="#000"
-                    thumbTintColor="#000"
-                    onValueChange={handleSliderChange}
-                    tapToSeek={true}
-                />
-            </View>
-            <View style={styles.saveButtonsDelimiter}/>
-            <View style={styles.saveButtonsContainer}>
-              <BasicButton 
-                  text='Save'
-                  buttonStyle={styles.saveButton}
-                  textStyle={styles.saveButtonText}
-                  onPress={() => onSave(localValue)}
-              />
-              <BasicButton 
-                  text='Cancel'
-                  buttonStyle={styles.cancelButton}
-                  textStyle={styles.cancelButtonText}
-                  onPress={onRequestClose}
-              />
-            </View>
+          <View style={styles.valueTextContainer}>
+            <Text style={styles.valueText}>{heading}</Text>
+            <Text style={styles.valueText}>{localValue}</Text>
+          </View>
+          <View style={styles.sliderContainer}>
+            <Slider
+              value={localValue}
+              style={styles.slider}
+              minimumValue={0}
+              maximumValue={maxValue}
+              step={step}
+              minimumTrackTintColor="#000"
+              maximumTrackTintColor="#000"
+              thumbTintColor="#000"
+              onValueChange={handleSliderChange}
+              tapToSeek={true}
+            />
+          </View>
+          <View style={styles.saveButtonsDelimiter} />
+          <View style={styles.saveButtonsContainer}>
+            <BasicButton
+              text="Save"
+              buttonStyle={styles.saveButton}
+              textStyle={styles.saveButtonText}
+              onPress={() => onSave(localValue)}
+            />
+            <BasicButton
+              text="Cancel"
+              buttonStyle={styles.cancelButton}
+              textStyle={styles.cancelButtonText}
+              onPress={onRequestClose}
+            />
+          </View>
         </View>
-        </View>
-        </Modal>
-    );
+      </View>
+    </Modal>
+  );
 };
 
 export default NumericSlider;
-
 
 const styles = StyleSheet.create({
   modalContainer: {
@@ -128,8 +121,8 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   slider: {
-    width: 280, 
-    height: 40
+    width: 280,
+    height: 40,
   },
   saveButtonsDelimiter: {
     height: 5,
@@ -140,9 +133,9 @@ const styles = StyleSheet.create({
   },
   saveButtonsContainer: {
     width: '100%',
-    alignItems: "center",
-    justifyContent: "space-between",
-    flexDirection: "column",
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    flexDirection: 'column',
     backgroundColor: '#FFFF99',
     marginBottom: 2,
   },

@@ -1,18 +1,13 @@
-﻿import { 
-    View,
-    ActivityIndicator,
-    StyleSheet,
-    Text,
-} from "react-native";
-import { LoadingDataProps } from "./LoadingData";
+﻿import {View, ActivityIndicator, StyleSheet, Text} from 'react-native';
+import {LoadingDataProps} from './LoadingData';
 
 const WelcomeScreen = () => {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.text}>Welcome to the app!</Text>
-      </View>
-    );
-}    
+  return (
+    <View style={styles.container}>
+      <Text style={styles.text}>Welcome to the app!</Text>
+    </View>
+  );
+};
 
 export default WelcomeScreen;
 

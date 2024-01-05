@@ -3,23 +3,19 @@
     // Admin has full access to the database
     ".read": "auth.token.admin === true",
     ".write": "auth.token.admin === true",
-      
     // Main rules
     "beta_keys": {
-      	".read": true,
-      	".write": "auth !== null",
+      ".read": true,
+      ".write": "auth !== null",
     },
-      
     "config": {
-      	".read": true,
-      	".write": "auth.token.admin === true"
+      ".read": true,
+      ".write": "auth.token.admin === true"
     },
-      
     "feedback": {
-      	".read": "auth.token.admin === true",
-      	".write": "auth !== null"
+      ".read": "auth.token.admin === true",
+      ".write": "auth !== null"
     },
-      
     "nickname_to_id": {
       ".read": "auth !== null",
       "$display_key": {
@@ -29,58 +25,52 @@
         }
       }
     },
-      
     "users": {
       "$uid": {
         // Only allow the user themselves and the admin to read user top-level node.
         ".read": "auth != null && auth.uid === $uid",
         ".write": "auth != null && (auth.uid === $uid || !data.exists())",
-        
         "profile": {
           // Any authentificated user can read other users' profiles.
           ".read": "auth != null",
           // Only allow the user themselves to write to their profile.
           ".write": "auth != null && auth.uid === $uid"
         },
-          
-    		"friends": {
-      		"$friend_uid": {
+        "friends": {
+          "$friend_uid": {
             ".validate": "newData.isBoolean()",
-        		".read": "auth != null",
-        		".write": "auth != null"// &&
-            	// Case when the friend relationship does not exist -> validate friend request existence
-              //((!data.exists() &&
-            	//(root.child('users').child(auth.uid).child('friend_requests').child($friend_uid).exists()) &&
-              //(root.child('users').child($friend_uid).child('friend_requests').child($uid).exists())) ||
-              // Case when the friend relationship exists -> either self or friend
-              //(data.exists() && (auth.uid === $uid || auth.uid === $friend_uid)))"
-      		}
-    		},
-        
-		    "friend_requests": {
-		      "$request_uid": {
+            ".read": "auth != null",
+            ".write": "auth != null" // &&
+            // Case when the friend relationship does not exist -> validate friend request existence
+            //((!data.exists() &&
+            //(root.child('users').child(auth.uid).child('friend_requests').child($friend_uid).exists()) &&
+            //(root.child('users').child($friend_uid).child('friend_requests').child($uid).exists())) ||
+            // Case when the friend relationship exists -> either self or friend
+            //(data.exists() && (auth.uid === $uid || auth.uid === $friend_uid)))"
+          }
+        },
+        "friend_requests": {
+          "$request_uid": {
             //".validate": "newData.isString() && (newData.val() === 'sent' || newData.val() === 'received')",//" || !newData.exists()",
-		        ".read": "auth != null && (auth.uid === $uid || auth.uid === $request_uid)",
-		        ".write": "auth != null"// && 
-		                  //((data.exists() && (auth.uid === $uid || auth.uid === $request_uid)) ||
-		                  // (!data.exists() && ((newData.val() === 'received' && auth.uid === $request_uid) || 
-                      //                  (newData.val() === 'sent' && auth.uid === $uid))))"
-		      }
-		    }
+            ".read": "auth != null && (auth.uid === $uid || auth.uid === $request_uid)",
+            ".write": "auth != null" // && 
+            //((data.exists() && (auth.uid === $uid || auth.uid === $request_uid)) ||
+            // (!data.exists() && ((newData.val() === 'received' && auth.uid === $request_uid) || 
+            //                  (newData.val() === 'sent' && auth.uid === $uid))))"
+          }
+        }
       }
     },
-      
     "user_drinking_sessions": {
       "$uid": {
-				// Allow the user or their friends to read their drinking session data
+        // Allow the user or their friends to read their drinking session data
         ".read": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('friends').child($uid).exists())",
         ".write": "auth !== null && auth.uid === $uid" // Only the user can write his own drinking session data
       }
     },
-      
     "user_preferences": {
       "$uid": {
-				// Allow the user or their friends to read their preferences
+        // Allow the user or their friends to read their preferences
         ".read": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('friends').child($uid).exists())",
         ".write": "auth != null && (auth.uid === $uid || !data.exists())",
         "first_day_of_week": {
@@ -88,7 +78,6 @@
         }
       }
     },
-      
     "user_unconfirmed_days": {
       "$uid": {
         // Allow only authenticated content owners access to their unconfirmed days data
@@ -96,10 +85,9 @@
         ".write": "auth !== null && auth.uid === $uid"
       }
     },
-      
     "user_current_session": {
-    	"$uid": {
-				// Allow the user or their friends to read their current drinking session data
+      "$uid": {
+        // Allow the user or their friends to read their current drinking session data
         ".read": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('friends').child($uid).exists())",
         ".write": "auth !== null && auth.uid === $uid"
       }

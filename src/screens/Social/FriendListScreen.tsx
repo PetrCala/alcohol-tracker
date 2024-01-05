@@ -6,60 +6,65 @@
   TouchableOpacity,
   View,
 } from 'react-native';
-import { FriendIds, FriendsData, UserData } from "../../types/database";
+import {FriendIds, FriendsData, UserData} from '../../types/database';
 import useProfileDisplayData from '../../hooks/useProfileDisplayData';
-import { useContext, useEffect, useState } from 'react';
-import { useFirebase } from '../../context/FirebaseContext';
-import { isNonEmptyObject } from '../../utils/validation';
+import {useContext, useEffect, useState} from 'react';
+import {useFirebase} from '../../context/FirebaseContext';
+import {isNonEmptyObject} from '../../utils/validation';
 import LoadingData from '../../components/LoadingData';
 
 type ScreenProps = {
   userData: UserData | null;
   setIndex: React.Dispatch<React.SetStateAction<number>>;
-}
+};
 
-const FriendListScreen = (props:ScreenProps) => {
+const FriendListScreen = (props: ScreenProps) => {
   const {userData, setIndex} = props;
-  const { db } = useFirebase();
-  const [friends, setFriends] = useState<FriendsData>(userData ? userData?.friends : {});
+  const {db} = useFirebase();
+  const [friends, setFriends] = useState<FriendsData>(
+    userData ? userData?.friends : {},
+  );
   const [loadingDisplayData, setLoadingDisplayData] = useState<boolean>(false);
   const [displayData, setDisplayData] = useProfileDisplayData({
     data: friends,
     db: db,
-    setLoadingDisplayData: setLoadingDisplayData
+    setLoadingDisplayData: setLoadingDisplayData,
   });
 
   useEffect(() => {
     if (!userData) return;
-    (userData.friend_requests);
+    userData.friend_requests;
   }, [userData]);
 
   return (
     <ScrollView style={styles.scrollViewContainer}>
-      {isNonEmptyObject(friends) ? 
-      <View style={styles.friendList}>
-        {Object.keys(friends).map(friendId => (
-          loadingDisplayData ?
-          <LoadingData key={friendId+'-loading'}/> :
-          // <UserOverview
-          //   key={friendId+'-user-overview'}
-          //   userId={friendId}
-          //   RightSideComponent={<></>}
-          // />
-          <></>
-        ))}
-      </View>
-      :
-      <View style={styles.emptyList}>
-        <Text style={styles.emptyListText}>You do not have any friends yet</Text>
-        <TouchableOpacity 
-          onPress={() => setIndex(1)}
-          style={styles.navigateToSearchButton}
-        >
-          <Text style={styles.navigateToSearchText}>Add them here</Text>
-        </TouchableOpacity>
-      </View>
-      }
+      {isNonEmptyObject(friends) ? (
+        <View style={styles.friendList}>
+          {Object.keys(friends).map(friendId =>
+            loadingDisplayData ? (
+              <LoadingData key={friendId + '-loading'} />
+            ) : (
+              // <UserOverview
+              //   key={friendId+'-user-overview'}
+              //   userId={friendId}
+              //   RightSideComponent={<></>}
+              // />
+              <></>
+            ),
+          )}
+        </View>
+      ) : (
+        <View style={styles.emptyList}>
+          <Text style={styles.emptyListText}>
+            You do not have any friends yet
+          </Text>
+          <TouchableOpacity
+            onPress={() => setIndex(1)}
+            style={styles.navigateToSearchButton}>
+            <Text style={styles.navigateToSearchText}>Add them here</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </ScrollView>
   );
 };

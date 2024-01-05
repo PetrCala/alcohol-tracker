@@ -2,88 +2,60 @@
 
 require('dotenv').config(); // Use .env variables in this file - CONFIG does not work here
 import fs from 'fs';
-import { initializeTestEnvironment, assertFails, assertSucceeds, RulesTestEnvironment, EmulatorConfig } from '@firebase/rules-unit-testing';
-import { describeWithEmulator, teardownFirebaseRulesTestEnv, shouldRunTests, setupFirebaseRulesTestEnv } from "../../utils/emulatorTools";
+import {
+  initializeTestEnvironment,
+  assertFails,
+  assertSucceeds,
+  RulesTestEnvironment,
+  EmulatorConfig,
+} from '@firebase/rules-unit-testing';
+import {
+  describeWithEmulator,
+  teardownFirebaseRulesTestEnv,
+  shouldRunTests,
+  setupFirebaseRulesTestEnv,
+} from '../../utils/emulatorTools';
 import * as firebaseRules from '../../../firebase.json';
-import { FeedbackProps } from '@src/types/database';
+import {FeedbackProps} from '@src/types/database';
 
 const projectId = process.env.TEST_PROJECT_ID;
 if (!projectId) throw new Error(`Missing environment variable ${projectId}.`);
 
-describeWithEmulator('Test firebase rules emulator connection', () => {
-    let testEnv: RulesTestEnvironment;
-    let testId: string;
-
-    beforeAll(async () => {
-        const emulatorConfig = {
-            host: 'localhost',
-            port: parseInt(firebaseRules.emulators.database.port),
-            rules: fs.readFileSync("database.rules.json", "utf8"),
-        };
-
-        testEnv = await initializeTestEnvironment({
-            projectId: projectId,
-            database: emulatorConfig,
-        });
-    });
-
-    afterEach(async () => {
-        await testEnv.clearDatabase();
-    });
-
-    afterAll(async () => {
-        await testEnv.clearDatabase();
-        await testEnv.cleanup();
-    });
-});
-
-
 describeWithEmulator('Test feedback rules', () => {
-    let testEnv: RulesTestEnvironment;
-    let testId: string;
+  let testEnv: RulesTestEnvironment;
+  let testFeedbackId: string = 'testFeedbackId';
+  let testFeedback: FeedbackProps = {
+    submit_time: 0,
+    text: 'test',
+    user_id: 'testId',
+  };
 
-    beforeAll(async () => {
-        testEnv = await setupFirebaseRulesTestEnv();
-    });
+  beforeAll(async () => {
+    testEnv = await setupFirebaseRulesTestEnv();
+  });
 
-    afterEach(async () => {
-        await testEnv.clearDatabase();
-    });
+  afterEach(async () => {
+    await testEnv.clearDatabase();
+  });
 
-    afterAll(async () => {
-        await teardownFirebaseRulesTestEnv(testEnv);
-    });
+  afterAll(async () => {
+    await teardownFirebaseRulesTestEnv(testEnv);
+  });
 
-    it('should succeed with an authentificated user transaction', async () => {
-        expect(1).toBe(1);
-        // const alice = testEnv.authenticatedContext('alice');
-        // await assertSucceeds(alice.database().ref('/private/doc').set({ key: 'value' }));
-    });
+  it('should write feedback when authorized', async () => {
+    const authDb = testEnv.authenticatedContext(testFeedbackId).database();
+    const authRef = authDb.ref(`feedback/${testFeedbackId}`);
+    await assertSucceeds(authRef.set(testFeedback));
+  });
 
-    it('should fail with an unauthentificated user transaction', async () => {
-        expect(1).toBe(1);
-        // const unauthed = testEnv.unauthenticatedContext();
-        // await assertFails(unauthed.database().ref('/private/doc').set({ key: 'value' }));
-    });
+  it('should not write feedback when unauthorized', async () => {
+    const unauthDb = testEnv.unauthenticatedContext().database();
+    const unauthRef = unauthDb.ref(`feedback/${testFeedbackId}`);
+    await assertFails(unauthRef.set(testFeedback));
+  });
 
-    it('should do something', async () => {
-        expect(1).toBe(1);
-        // let testId = 'testId';
-        // let testDb = testEnv.authenticatedContext(testId).database();
-        // await assertFails(testDb.ref("/some/path").set({ foo: "bar" }));
-        // await assertSucceeds(testDb.ref("/another/path").set({ foo: "bar" }));
-    });
-
-    it('unauthenticated user can not write feedback', async () => {
-        const testDb = testEnv.unauthenticatedContext().database();
-        const testFeedbackId = 'testFeedbackId';
-        const testFeedback:FeedbackProps = {
-            submit_time: 0,
-            text: 'test',
-            user_id: 'testId',
-        }
-        const testRef = testDb.ref(`feedback/${testFeedbackId}`);
-        await assertFails(testRef.set(testFeedback));
-    });
-
+    // it('should not write feedback when not logged in', async () => {
+    //     const unauthDb = testEnv.database();
+    //     const unauthRef = unauthDb.ref(`feedback/${testFeedbackId}`);
+    //     await assertFails(unauthRef.set(testFeedback));
 });

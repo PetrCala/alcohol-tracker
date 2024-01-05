@@ -1,13 +1,15 @@
-﻿import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Animated } from 'react-native';
+﻿import React, {useState, useEffect} from 'react';
+import {View, Text, StyleSheet, Animated} from 'react-native';
 
 type SuccessIndicatorProps = {
   visible: boolean;
   successStyle: any; // Consider giving this a more specific type than 'any' if possible
 };
 
-const SuccessIndicator: React.FC<SuccessIndicatorProps> = ({ visible, successStyle }) => {
-  
+const SuccessIndicator: React.FC<SuccessIndicatorProps> = ({
+  visible,
+  successStyle,
+}) => {
   const [opacity] = useState(new Animated.Value(0)); // Initial value for opacity: 0
 
   useEffect(() => {
@@ -33,7 +35,7 @@ const SuccessIndicator: React.FC<SuccessIndicatorProps> = ({ visible, successSty
   if (!visible) return null;
 
   return (
-    <Animated.View style={[successStyle, { opacity }]}>
+    <Animated.View style={[successStyle, {opacity}]}>
       {/* <MaterialIcons name="check" size={24} color="white" /> */}
     </Animated.View>
   );

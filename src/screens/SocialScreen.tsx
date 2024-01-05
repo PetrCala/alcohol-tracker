@@ -1,6 +1,4 @@
-﻿import React, {
-  useState,
-} from 'react';
+﻿import React, {useState} from 'react';
 import {
   Dimensions,
   Image,
@@ -10,14 +8,13 @@ import {
   View,
 } from 'react-native';
 import MenuIcon from '../components/Buttons/MenuIcon';
-import { getDatabaseData } from '../context/DatabaseDataContext';
+import {getDatabaseData} from '../context/DatabaseDataContext';
 import commonStyles from '../styles/commonStyles';
-import { FriendIds, FriendRequestStatus, UserData } from '../types/database';
-import { TabView, SceneMap } from 'react-native-tab-view';
+import {FriendIds, FriendRequestStatus, UserData} from '../types/database';
+import {TabView, SceneMap} from 'react-native-tab-view';
 import FriendListScreen from './Social/FriendListScreen';
 import FriendRequestScreen from './Social/FriendRequestScreen';
 import SearchScreen from './Social/SearchScreen';
-
 
 type SocialFooterButtonProps = {
   index: number;
@@ -39,10 +36,9 @@ const SocialFooterButton: React.FC<SocialFooterButtonProps> = ({
       <TouchableOpacity
         style={[
           styles.footerButton,
-          currentIndex === index ? { backgroundColor: '#ebeb02' } : {},
+          currentIndex === index ? {backgroundColor: '#ebeb02'} : {},
         ]}
-        onPress={() => setImageIndex(index)}
-      >
+        onPress={() => setImageIndex(index)}>
         <Image source={source} style={styles.footerImage} />
         <Text style={styles.footerText}>{label}</Text>
       </TouchableOpacity>
@@ -52,7 +48,7 @@ const SocialFooterButton: React.FC<SocialFooterButtonProps> = ({
 
 type SocialProps = {
   navigation: any;
-}
+};
 
 type RouteType = {
   key: string;
@@ -60,35 +56,32 @@ type RouteType = {
   userData: UserData | null;
 };
 
-
 const SocialScreen = (props: SocialProps) => {
-  const { navigation } = props;
-  const { userData } = getDatabaseData();
+  const {navigation} = props;
+  const {userData} = getDatabaseData();
   // const userHasFriends = userData?.friends !== undefined;
   const [index, setIndex] = useState<number>(0); // Current screen index - defaults to friend requests in case of no friends
   const [routes] = useState([
-    { key: 'friendList', title: 'Friend List', userData: userData},
-    { key: 'friendSearch', title: 'Friend Search', userData: userData},
-    { key: 'friendRequests', title: 'Friend Requests', userData: userData},
+    {key: 'friendList', title: 'Friend List', userData: userData},
+    {key: 'friendSearch', title: 'Friend Search', userData: userData},
+    {key: 'friendRequests', title: 'Friend Requests', userData: userData},
   ]);
 
-
-  const renderScene = ({ route }: {route: RouteType }) => {
+  const renderScene = ({route}: {route: RouteType}) => {
     if (!userData) return null;
     switch (route.key) {
       case 'friendList':
-        return <FriendListScreen 
-          userData={route.userData} 
-          setIndex={setIndex}
-        />;
+        return (
+          <FriendListScreen userData={route.userData} setIndex={setIndex} />
+        );
       case 'friendSearch':
-        return <SearchScreen userData={route.userData}/>;
+        return <SearchScreen userData={route.userData} />;
       case 'friendRequests':
-        return <FriendRequestScreen userData={route.userData}/>;
+        return <FriendRequestScreen userData={route.userData} />;
       default:
         return null;
-    };
-  }
+    }
+  };
 
   const footerButtons = [
     {
@@ -111,24 +104,24 @@ const SocialScreen = (props: SocialProps) => {
   if (!userData) return null;
 
   return (
-    <View style={{flex:1, backgroundColor: '#FFFF99'}}>
+    <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
       <View style={commonStyles.mainHeader}>
         <MenuIcon
-          iconId='escape-statistics-screen'
+          iconId="escape-statistics-screen"
           iconSource={require('../../assets/icons/arrow_back.png')}
           containerStyle={styles.backArrowContainer}
           iconStyle={styles.backArrow}
-          onPress={() => navigation.goBack() }
+          onPress={() => navigation.goBack()}
         />
         <View style={styles.menuContainer}>
           {/* <Text style={styles.sectionText}>Friends</Text> */}
         </View>
       </View>
       <TabView
-        navigationState={{ index, routes }}
+        navigationState={{index, routes}}
         renderScene={renderScene}
         onIndexChange={setIndex}
-        initialLayout={{ width: Dimensions.get('window').width }}
+        initialLayout={{width: Dimensions.get('window').width}}
         swipeEnabled={true}
         tabBarPosition="bottom"
         renderTabBar={() => null} // Do not render the default tab bar
@@ -231,5 +224,5 @@ const styles = StyleSheet.create({
   footerText: {
     fontSize: 12,
     color: 'gray',
-  }
+  },
 });

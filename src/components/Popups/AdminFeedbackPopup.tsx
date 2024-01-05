@@ -1,87 +1,99 @@
-﻿import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { 
+﻿import React, {useCallback, useContext, useEffect, useState} from 'react';
+import {
   Alert,
   FlatList,
   Image,
-  Modal, 
-  StyleSheet, 
-  Text, 
-  TouchableOpacity, 
-  View, 
+  Modal,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
-import { AdminFeedbackPopupProps } from '../../types/components';
-import { FeedbackData, FeedbackProps } from '../../types/database';
-import { formatDateToDay, formatDateToTime, timestampToDate } from '../../utils/dataHandling';
-import { removeFeedback } from '../../database/feedback';
-import { fetchNicknameByUID } from '../../database/baseFunctions';
-import { useFirebase } from '../../context/FirebaseContext';
-
+import {AdminFeedbackPopupProps} from '../../types/components';
+import {FeedbackData, FeedbackProps} from '../../types/database';
+import {
+  formatDateToDay,
+  formatDateToTime,
+  timestampToDate,
+} from '../../utils/dataHandling';
+import {removeFeedback} from '../../database/feedback';
+import {fetchNicknameByUID} from '../../database/baseFunctions';
+import {useFirebase} from '../../context/FirebaseContext';
 
 const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
-  const { 
-    visible, 
-    transparent, 
-    onRequestClose, 
-    feedbackData
-  } = props;
-  const [nicknames, setNicknames] = useState<{ [key: string]: string }>({});
-  const { db } = useFirebase();
+  const {visible, transparent, onRequestClose, feedbackData} = props;
+  const [nicknames, setNicknames] = useState<{[key: string]: string}>({});
+  const {db} = useFirebase();
   if (!db) return null;
 
-  const feedbackDataArray =  Object.entries(feedbackData).map(([feedback_id, feedbackProps]) => ({
+  const feedbackDataArray = Object.entries(feedbackData).map(
+    ([feedback_id, feedbackProps]) => ({
       feedback_id: feedback_id,
-      ...feedbackProps
-  }));
+      ...feedbackProps,
+    }),
+  );
 
   async function handleDeleteFeedback(db: any, feedbackId: string) {
-    try{
+    try {
       await removeFeedback(db, feedbackId);
-    } catch (error:any){
-      Alert.alert("Failed to remove feedback", "Feedback could not be removed:" + error.message);
-    };
-  };
+    } catch (error: any) {
+      Alert.alert(
+        'Failed to remove feedback',
+        'Feedback could not be removed:' + error.message,
+      );
+    }
+  }
 
   useEffect(() => {
     const fetchNicknames = async () => {
-      let newNicknames = { ...nicknames };
-  
+      let newNicknames = {...nicknames};
+
       for (let item of feedbackDataArray) {
         try {
           let data = await fetchNicknameByUID(db, item.user_id);
           if (data) {
             newNicknames[item.user_id] = data; // Set if not null
           }
-        } catch (error:any) {
-          Alert.alert("User nickname fetch failed", "Could not fetch the nickname of user with UID: " + item.user_id + error.message);
-        };
+        } catch (error: any) {
+          Alert.alert(
+            'User nickname fetch failed',
+            'Could not fetch the nickname of user with UID: ' +
+              item.user_id +
+              error.message,
+          );
+        }
       }
       setNicknames(newNicknames);
     };
-    
+
     fetchNicknames();
-  
   }, [feedbackData, db]);
 
-
-  const renderFeedback = ( {item} : {item: FeedbackProps & {feedback_id: string}}) => {
+  const renderFeedback = ({
+    item,
+  }: {
+    item: FeedbackProps & {feedback_id: string};
+  }) => {
     let dateSubmitted = timestampToDate(item.submit_time);
     let daySubmitted = formatDateToDay(dateSubmitted);
     let timeSubmitted = formatDateToTime(dateSubmitted);
-    let nickname = nicknames[item.user_id] || "Loading..."; // Default to "Loading..." if the nickname isn't fetched yet
-
+    let nickname = nicknames[item.user_id] || 'Loading...'; // Default to "Loading..." if the nickname isn't fetched yet
 
     return (
       <View style={styles.feedbackContainer}>
         <View style={styles.headingContainer}>
-          <Text style={styles.feedbackTimeText}>{daySubmitted} {timeSubmitted} 
+          <Text style={styles.feedbackTimeText}>
+            {daySubmitted} {timeSubmitted}
           </Text>
           <Text style={styles.feedbackTimeText}> - {nickname}</Text>
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={() => handleDeleteFeedback(db, item.feedback_id)}
-            style={styles.deleteFeedbackButton}
-          >
-            <Image source={require('../../../assets/icons/remove.png')} style={styles.deleteFeedbackButtonImage}/>
+            style={styles.deleteFeedbackButton}>
+            <Image
+              source={require('../../../assets/icons/remove.png')}
+              style={styles.deleteFeedbackButtonImage}
+            />
           </TouchableOpacity>
         </View>
         <View style={styles.mainTextContainer}>
@@ -92,34 +104,30 @@ const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
   };
 
   const noFeedbackComponent = () => {
-      return (
-          <Text style={styles.noFeedbackText}>No feedback found</Text>
-      );
-  }
+    return <Text style={styles.noFeedbackText}>No feedback found</Text>;
+  };
 
-  
   return (
     <Modal
       animationType="none"
       transparent={transparent}
       visible={visible}
-      onRequestClose={onRequestClose}
-    >
-    <View style={styles.modalContainer}>
-      <View style={styles.modalView}>
-        <FlatList
-              data = {feedbackDataArray}
-              renderItem={renderFeedback}
-              ListEmptyComponent={noFeedbackComponent}
-              // keyExtractor={(item) => item.feedback_id}
+      onRequestClose={onRequestClose}>
+      <View style={styles.modalContainer}>
+        <View style={styles.modalView}>
+          <FlatList
+            data={feedbackDataArray}
+            renderItem={renderFeedback}
+            ListEmptyComponent={noFeedbackComponent}
+            // keyExtractor={(item) => item.feedback_id}
           />
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={onRequestClose}>
-            <Text style={styles.buttonText}>Close</Text>
-          </TouchableOpacity>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.button} onPress={onRequestClose}>
+              <Text style={styles.buttonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
-    </View>
     </Modal>
   );
 };
@@ -177,12 +185,12 @@ const styles = StyleSheet.create({
   },
   noFeedbackText: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginTop: 5,
     marginBottom: 5,
-    color: "black",
-    alignSelf: "center",
-    alignContent: "center",
+    color: 'black',
+    alignSelf: 'center',
+    alignContent: 'center',
     padding: 10,
   },
   deleteFeedbackContainer: {
@@ -231,4 +239,3 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
-

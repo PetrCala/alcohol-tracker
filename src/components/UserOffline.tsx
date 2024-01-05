@@ -1,16 +1,12 @@
-﻿import { 
-    View,
-    StyleSheet,
-    Text,
-} from "react-native";
+﻿import {View, StyleSheet, Text} from 'react-native';
 
 const UserOffline = () => {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.text}>You are offline</Text>
-      </View>
-    );
-}    
+  return (
+    <View style={styles.container}>
+      <Text style={styles.text}>You are offline</Text>
+    </View>
+  );
+};
 
 export default UserOffline;
 
@@ -24,5 +20,5 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 40,
     color: 'black',
-  }
+  },
 });

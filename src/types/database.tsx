@@ -1,25 +1,25 @@
 ﻿/** Main database props object */
 export type DatabaseProps = {
-  config: ConfigProps,
-  feedback: FeedbackData,
+  config: ConfigProps;
+  feedback: FeedbackData;
   nickname_to_id: {
-    [nickname_key: string]: NicknameToIdData
-  },
+    [nickname_key: string]: NicknameToIdData;
+  };
   user_current_session: {
-    [user_id: string]: CurrentSessionData
-  },
+    [user_id: string]: CurrentSessionData;
+  };
   user_drinking_sessions: {
-    [user_id: string]: DrinkingSessionData
-  },
+    [user_id: string]: DrinkingSessionData;
+  };
   user_preferences: {
-    [user_id: string]: PreferencesData
-  },
+    [user_id: string]: PreferencesData;
+  };
   user_unconfirmed_days: {
-    [user_id: string]: UnconfirmedDaysData
-  },
+    [user_id: string]: UnconfirmedDaysData;
+  };
   users: {
-    [user_id: string] : UserData
-  }
+    [user_id: string]: UserData;
+  };
 };
 
 export type ConfigProps = {
@@ -29,17 +29,17 @@ export type ConfigProps = {
 export type AppSettings = {
   min_supported_version: string;
   min_user_creation_possible_version: string;
-}
+};
 
 export type FeedbackProps = {
   submit_time: number;
   text: string;
   user_id: string;
-}
+};
 
 export type FeedbackData = {
-  [feedback_id: string]: FeedbackProps
-}
+  [feedback_id: string]: FeedbackProps;
+};
 
 export type NicknameToIdData = {
   [user_id: string]: string; // User UID - Raw nickname pair
@@ -61,52 +61,57 @@ export type DrinkingSessionData = {
 };
 
 /** Type for drinking session data when stored as an array */
-export type DrinkingSessionArrayItem = Omit<DrinkingSessionData[string], 'session_id'>;
+export type DrinkingSessionArrayItem = Omit<
+  DrinkingSessionData[string],
+  'session_id'
+>;
 
 export type UnitsObject = {
   [timestamp: number]: UnitTypesProps;
 };
 
 /** An array that represents all available alcohol units
- * 
+ *
  * Used to construct UnitTypesProps where the expected values of all
  * these keys are set to numbers - main storage of units in the db
- * 
+ *
  */
 export const UnitTypesKeys = [
-  'beer', 
-  'cocktail', 
-  'other', 
+  'beer',
+  'cocktail',
+  'other',
   'strong_shot',
   'weak_shot',
-  'wine'
-] as const;  // Infer a readonly tuple
+  'wine',
+] as const; // Infer a readonly tuple
 
 export const UnitTypesNames = [
-  'Beer', 
-  'Cocktail', 
-  'Other', 
+  'Beer',
+  'Cocktail',
+  'Other',
   'Strong Shot',
   'Weak Shot',
-  'Wine'
+  'Wine',
 ] as const; // Should always match the UnitTypesKeys
 
-export type UnitTypesProps = Partial<Record<typeof UnitTypesKeys[number], number>>;
+export type UnitTypesProps = Partial<
+  Record<(typeof UnitTypesKeys)[number], number>
+>;
 
 export type UnitsToColorsData = {
   yellow: number;
   orange: number;
-}
+};
 
 export type PreferencesData = {
   first_day_of_week: string;
   units_to_colors: UnitsToColorsData;
   units_to_points: UnitTypesProps;
-}
+};
 
 export type UnconfirmedDaysData = {
-  [day_string: string]: boolean,
-}
+  [day_string: string]: boolean;
+};
 
 export type UserData = {
   profile: ProfileData;
@@ -115,34 +120,33 @@ export type UserData = {
   role: string;
   last_online: number;
   beta_key_id: string;
-}
+};
 
 export type ProfileData = {
-  display_name: string,
-  photo_url: string,
-}
+  display_name: string;
+  photo_url: string;
+};
 
 export type FriendsData = {
-  [friend_id: string]: boolean
-}
+  [friend_id: string]: boolean;
+};
 
-export type FriendIds = string[] // An array of friend IDs
+export type FriendIds = string[]; // An array of friend IDs
 
 export type FriendRequestData = {
   [request_id: string]: FriendRequestStatus;
-}
+};
 
 export type ProfileDisplayData = {
   [user_id: string]: ProfileData;
-}
+};
 
-export type FriendRequestStatus = "sent" | "received";
-
+export type FriendRequestStatus = 'sent' | 'received';
 
 // Used when rendering drinking session day overview
 export type DrinkingSessionProps = {
-  sessionKey: string,
-  session: DrinkingSessionArrayItem
+  sessionKey: string;
+  session: DrinkingSessionArrayItem;
 };
 
 export type MeasureType = 'units' | 'points';

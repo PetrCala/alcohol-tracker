@@ -7,40 +7,41 @@
   View,
 } from 'react-native';
 import MenuIcon from '../components/Buttons/MenuIcon';
-import { TermsOfServiceScreenProps } from '../types/screens';
-import { WebView } from 'react-native-webview';
+import {TermsOfServiceScreenProps} from '../types/screens';
+import {WebView} from 'react-native-webview';
 import commonStyles from '../styles/commonStyles';
 
-const TermsOfServiceScreen = ({ navigation }: TermsOfServiceScreenProps) => {
+const TermsOfServiceScreen = ({navigation}: TermsOfServiceScreenProps) => {
   if (!navigation) return null; // Should never be null
 
-  const termsHtml = Platform.OS === 'android' 
-        ? {uri: 'file:///android_asset/html/terms-of-service.html'}
-        : require("../../assets/html/terms-of-service.html");
+  const termsHtml =
+    Platform.OS === 'android'
+      ? {uri: 'file:///android_asset/html/terms-of-service.html'}
+      : require('../../assets/html/terms-of-service.html');
 
-  const handleStartLoadWithRequest = (request:any) => {
-      // Check if the URL has "mailto:" scheme
-      if (request.url.startsWith('mailto:')) {
-          // Use Linking to open the default email client
-          Linking.openURL(request.url);
-          return false; // Returning false prevents WebView from trying to handle the URL
-      }
-      return true;
+  const handleStartLoadWithRequest = (request: any) => {
+    // Check if the URL has "mailto:" scheme
+    if (request.url.startsWith('mailto:')) {
+      // Use Linking to open the default email client
+      Linking.openURL(request.url);
+      return false; // Returning false prevents WebView from trying to handle the URL
+    }
+    return true;
   };
 
   return (
-    <View style={{flex:1, backgroundColor: '#FFFF99'}}>
+    <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
       <View style={commonStyles.mainHeader}>
         <MenuIcon
-          iconId='escape-terms-of-service-screen'
+          iconId="escape-terms-of-service-screen"
           iconSource={require('../../assets/icons/arrow_back.png')}
           containerStyle={styles.backArrowContainer}
           iconStyle={styles.backArrow}
-          onPress={() => navigation.goBack() }
+          onPress={() => navigation.goBack()}
         />
       </View>
       <View style={styles.mainContainer}>
-        <WebView 
+        <WebView
           originWhitelist={['*']}
           source={termsHtml}
           onShouldStartLoadWithRequest={handleStartLoadWithRequest}

@@ -1,43 +1,43 @@
-﻿import React, { useEffect, useState } from 'react';
-import { 
+﻿import React, {useEffect, useState} from 'react';
+import {
   Dimensions,
   Image,
-  KeyboardAvoidingView, 
-  Platform, 
-  ScrollView, 
-  StyleSheet, 
-  Text, 
-  TextInput, 
-  TouchableOpacity, 
-  View 
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import { sendPasswordResetEmail, signOut } from 'firebase/auth';
-import { auth } from "../../src/services/firebaseConfig";
-import { signInUserWithEmailAndPassword } from '../auth/auth';
+import {sendPasswordResetEmail, signOut} from 'firebase/auth';
+import {auth} from '../../src/services/firebaseConfig';
+import {signInUserWithEmailAndPassword} from '../auth/auth';
 
-import { LoginScreenProps } from '../types/screens';
+import {LoginScreenProps} from '../types/screens';
 import LoadingData from '../components/LoadingData';
-import { useUserConnection } from '../context/UserConnectionContext';
+import {useUserConnection} from '../context/UserConnectionContext';
 import InputTextPopup from '../components/Popups/InputTextPopup';
-import { handleInvalidInput } from '../utils/errorHandling';
+import {handleInvalidInput} from '../utils/errorHandling';
 
-
-const LoginScreen = ( {navigation }: LoginScreenProps) => {
+const LoginScreen = ({navigation}: LoginScreenProps) => {
   if (!navigation) return null; // Should never be null
-  const { isOnline } = useUserConnection();
+  const {isOnline} = useUserConnection();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loadingUser, setLoadingUser] = useState<boolean>(true);
-  const [warning, setWarning] = useState< string>('');
-  const [success, setSuccess] = useState< string>('');
-  const [resetPasswordModalVisible, setResetPasswordModalVisible] = useState<boolean>(false);
+  const [warning, setWarning] = useState<string>('');
+  const [success, setSuccess] = useState<string>('');
+  const [resetPasswordModalVisible, setResetPasswordModalVisible] =
+    useState<boolean>(false);
 
   useEffect(() => {
     const stopListening = auth.onAuthStateChanged(user => {
       // Handle the case when the user does not have all data ready
       if (user) {
-        navigation.replace("App", {screen: "Main Screen"}) // Redirect to main screen
-      };
+        navigation.replace('App', {screen: 'Main Screen'}); // Redirect to main screen
+      }
       setLoadingUser(false);
     });
 
@@ -48,147 +48,137 @@ const LoginScreen = ( {navigation }: LoginScreenProps) => {
     // Validate all hooks on the screen first, return null if invalid
     // Attempt to login
     try {
-        await signInUserWithEmailAndPassword(
-            auth, email, password
-        );
-    } catch (error:any) {
-      const errorHeading = "Failed to log in";
-      const errorMessage = "There was an error trying to log in: ";
+      await signInUserWithEmailAndPassword(auth, email, password);
+    } catch (error: any) {
+      const errorHeading = 'Failed to log in';
+      const errorMessage = 'There was an error trying to log in: ';
       handleInvalidInput(error, errorHeading, errorMessage, setWarning);
-    };
+    }
     return;
   };
 
-  const handleResetPassword = async (mail:string) => {
+  const handleResetPassword = async (mail: string) => {
     // reset the user password
     try {
       await sendPasswordResetEmail(auth, mail);
-      setSuccess("Password reset link sent");
-    } catch (error:any) {
-      const errorHeading = "Error When Resetting Password";
-      const errorMessage = "There was an error when resetting your password: ";
+      setSuccess('Password reset link sent');
+    } catch (error: any) {
+      const errorHeading = 'Error When Resetting Password';
+      const errorMessage = 'There was an error when resetting your password: ';
       return handleInvalidInput(error, errorHeading, errorMessage, setWarning);
     } finally {
       setResetPasswordModalVisible(false);
-    };
+    }
   };
 
   // Wait to see whether there already is an authentificated user
   // Possibly here display the app logo instead of the loading screen
-  if (loadingUser) return <LoadingData/>
+  if (loadingUser) return <LoadingData />;
 
-  return (    
-    <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1, flexShrink: 1 }}>
+  return (
+    <ScrollView
+      keyboardShouldPersistTaps="handled"
+      contentContainerStyle={{flexGrow: 1, flexShrink: 1}}>
       <KeyboardAvoidingView
-      style={styles.mainContainer}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-      {warning ?
-        <View style={[styles.infoContainer, styles.warningInfoContainer]}>
+        style={styles.mainContainer}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        {warning ? (
+          <View style={[styles.infoContainer, styles.warningInfoContainer]}>
             <TouchableOpacity
-              id={'warning'} 
-              testID = {'warning'}
-              accessibilityRole='button' 
-              onPress={() => setWarning('')} 
+              id={'warning'}
+              testID={'warning'}
+              accessibilityRole="button"
+              onPress={() => setWarning('')}
               style={styles.infoButton}>
-                <Text style={[
-                  styles.infoText,
-                  styles.warningInfoText
-                ]}>{warning}</Text> 
+              <Text style={[styles.infoText, styles.warningInfoText]}>
+                {warning}
+              </Text>
             </TouchableOpacity>
-        </View>
-        :
-        <></>
-      } 
-      {success ?
-        <View style={[styles.infoContainer, styles.successInfoContainer]}>
+          </View>
+        ) : (
+          <></>
+        )}
+        {success ? (
+          <View style={[styles.infoContainer, styles.successInfoContainer]}>
             <TouchableOpacity
-              id={'success'} 
-              testID = {'success'}
-              accessibilityRole='button' 
-              onPress={() => setSuccess('')} 
+              id={'success'}
+              testID={'success'}
+              accessibilityRole="button"
+              onPress={() => setSuccess('')}
               style={styles.infoButton}>
-                <Text style={[
-                  styles.infoText,
-                  styles.successInfoText
-                ]}>{success}</Text> 
+              <Text style={[styles.infoText, styles.successInfoText]}>
+                {success}
+              </Text>
             </TouchableOpacity>
+          </View>
+        ) : (
+          <></>
+        )}
+        <View style={styles.logoContainer}>
+          <Image
+            source={require('../../assets/logo/alcohol-tracker-source-icon.png')}
+            style={styles.logo}
+          />
         </View>
-        :
-        <></>
-      } 
-      <View style={styles.logoContainer}>
-        <Image
-          source={require('../../assets/logo/alcohol-tracker-source-icon.png')}
-          style={styles.logo}
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <TextInput
-        placeholder="Email"
-        placeholderTextColor={"#a8a8a8"}
-        keyboardType='email-address'
-        textContentType='emailAddress'
-        value={email}
-        onChangeText={text => setEmail(text)}
-        style={styles.input}
-        />
-        <TextInput
-        placeholder="Password"
-        placeholderTextColor={"#a8a8a8"}
-        textContentType='password'
-        value={password}
-        onChangeText={text => setPassword(text)}
-        style={styles.input}
-        secureTextEntry
-        />
-        <TouchableOpacity
-          onPress={handleLogin}
-          style={styles.loginButton}
-        >
-          <Text style={styles.loginButtonText}>Login</Text>
-        </TouchableOpacity>
-        <TouchableOpacity 
-          onPress={() => setResetPasswordModalVisible(true)}
-          style={styles.forgottenPasswordButton}
-        >
-          <Text style={styles.forgottenPasswordText}>Forgot your password?</Text>
-        </TouchableOpacity>
-        <View style={styles.horizontalLine}/>
-        <View style={styles.signUpContainer}>
-          <TouchableOpacity 
-            style={styles.signUpButtonContainer}
-            onPress={() => navigation.navigate('Sign Up Screen',
-              {loginEmail: email}
-            )}
-            >
-            <Text style={styles.signUpInfoText}>
-              Don't have an account?
-            </Text>
-            <Text style={styles.signUpButtonText}>
-              Sign up
+        <View style={styles.inputContainer}>
+          <TextInput
+            placeholder="Email"
+            placeholderTextColor={'#a8a8a8'}
+            keyboardType="email-address"
+            textContentType="emailAddress"
+            value={email}
+            onChangeText={text => setEmail(text)}
+            style={styles.input}
+          />
+          <TextInput
+            placeholder="Password"
+            placeholderTextColor={'#a8a8a8'}
+            textContentType="password"
+            value={password}
+            onChangeText={text => setPassword(text)}
+            style={styles.input}
+            secureTextEntry
+          />
+          <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
+            <Text style={styles.loginButtonText}>Login</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setResetPasswordModalVisible(true)}
+            style={styles.forgottenPasswordButton}>
+            <Text style={styles.forgottenPasswordText}>
+              Forgot your password?
             </Text>
           </TouchableOpacity>
+          <View style={styles.horizontalLine} />
+          <View style={styles.signUpContainer}>
+            <TouchableOpacity
+              style={styles.signUpButtonContainer}
+              onPress={() =>
+                navigation.navigate('Sign Up Screen', {loginEmail: email})
+              }>
+              <Text style={styles.signUpInfoText}>Don't have an account?</Text>
+              <Text style={styles.signUpButtonText}>Sign up</Text>
+            </TouchableOpacity>
+          </View>
+          <InputTextPopup
+            visible={resetPasswordModalVisible}
+            transparent={true}
+            message={'E-mail to send the reset link to:'}
+            confirmationMessage={'Send link'}
+            placeholder={'E-mail'}
+            onRequestClose={() => setResetPasswordModalVisible(false)}
+            onSubmit={mail => handleResetPassword(mail)}
+            keyboardType="email-address"
+            textContentType="emailAddress"
+            secureTextEntry={false}
+          />
         </View>
-        <InputTextPopup
-          visible={resetPasswordModalVisible}
-          transparent={true}
-          message={"E-mail to send the reset link to:"}
-          confirmationMessage={"Send link"}
-          placeholder={"E-mail"}
-          onRequestClose={() => setResetPasswordModalVisible(false)}
-          onSubmit={(mail) => handleResetPassword(mail)}
-          keyboardType='email-address'
-          textContentType='emailAddress'
-          secureTextEntry={false}
-        />
-      </View>
       </KeyboardAvoidingView>
     </ScrollView>
   );
 };
 
-export default LoginScreen
+export default LoginScreen;
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -198,7 +188,7 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FFFF99'
+    backgroundColor: '#FFFF99',
   },
   logoContainer: {
     flexShrink: 1,
@@ -263,7 +253,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     marginTop: 5,
     marginBottom: 5,
-    color: 'black'
+    color: 'black',
   },
   loginButton: {
     backgroundColor: '#fcf50f',
@@ -324,4 +314,4 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 10,
   },
-})
+});

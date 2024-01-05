@@ -1,9 +1,7 @@
-﻿import React, { useState } from 'react';
-import { View, TouchableOpacity, StyleSheet, Text } from 'react-native';
+﻿import React, {useState} from 'react';
+import {View, TouchableOpacity, StyleSheet, Text} from 'react-native';
 
-const PendingCircleComponent = (
-    visible: boolean
-) => {
+const PendingCircleComponent = (visible: boolean) => {
   // A sample boolean hook to determine visibility of the circle.
   const [isVisible, setIsVisible] = useState(false);
 
@@ -16,7 +14,7 @@ const PendingCircleComponent = (
       {isVisible && <View style={styles.circle}></View>}
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -27,15 +25,15 @@ const styles = StyleSheet.create({
   circle: {
     width: 50,
     height: 50,
-    borderRadius: 25,  // Makes it a circle.
-    backgroundColor: 'orange',  // Gives it the orange color.
-    marginBottom: 20,  // Space between circle and toggle button.
+    borderRadius: 25, // Makes it a circle.
+    backgroundColor: 'orange', // Gives it the orange color.
+    marginBottom: 20, // Space between circle and toggle button.
   },
   button: {
     padding: 10,
     backgroundColor: '#ddd',
     borderRadius: 5,
-  }
+  },
 });
 
 export default PendingCircleComponent;

@@ -1,16 +1,19 @@
-﻿import { Database, get, ref, onValue, off } from "firebase/database";
+﻿import {Database, get, ref, onValue, off} from 'firebase/database';
 
 /** Read data once from the realtime database using get(). Return the data if it exists.
- * 
+ *
  * @param {Database} db The Realtime Database instance.
  * @param {string} refString Ref string to listen at
  * @returns {Promsise<any|null>}
- * 
+ *
  * */
-export async function readDataOnce(db: Database, refString: string): Promise<any|null> {
+export async function readDataOnce(
+  db: Database,
+  refString: string,
+): Promise<any | null> {
   const userRef = ref(db, refString);
   const snapshot = await get(userRef); // One-off fetch
-  if(snapshot.exists()) {
+  if (snapshot.exists()) {
     return snapshot.val(); // Return user data
   }
   return null;
@@ -18,7 +21,7 @@ export async function readDataOnce(db: Database, refString: string): Promise<any
 
 /**
  * Main listener for data changes
- * 
+ *
  * @param {Database} db The Realtime Database instance.
  * @param {string} refString Ref string to listen at
  * @param {(data:any) => void} onDataChange Callback function to execute on data change.
@@ -26,18 +29,18 @@ export async function readDataOnce(db: Database, refString: string): Promise<any
 export function listenForDataChanges(
   db: Database,
   refString: string,
-  onDataChange: (data: any) => void
+  onDataChange: (data: any) => void,
 ) {
   const dbRef = ref(db, refString);
-  const listener = onValue(dbRef, (snapshot) => {
-    let data:any = null;
-    if (snapshot.exists()){
+  const listener = onValue(dbRef, snapshot => {
+    let data: any = null;
+    if (snapshot.exists()) {
       data = snapshot.val();
     }
     onDataChange(data);
   });
 
-  return () => off(dbRef, "value", listener);
+  return () => off(dbRef, 'value', listener);
 }
 
 /**
@@ -45,15 +48,18 @@ export function listenForDataChanges(
  * @param {Database} db The Realtime Database instance.
  * @param {string} uid The user's UID.
  * @return {Promise<string|null>} The nickname or null if not found.
- * 
+ *
  * @example const userNickname = await fetchNicknameByUID(db, "userUIDHere");
  */
-export async function fetchNicknameByUID(db: Database, uid: string): Promise<string | null> {
+export async function fetchNicknameByUID(
+  db: Database,
+  uid: string,
+): Promise<string | null> {
   const userRef = ref(db, `users/${uid}/profile`);
   const userSnapshot = await get(userRef);
   if (!userSnapshot.exists()) {
     // console.error("No user found for the given UID.");
-    return "Not found";
+    return 'Not found';
   }
   return userSnapshot.val().display_name || null;
-};
+}

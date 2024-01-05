@@ -1,65 +1,85 @@
-﻿import { ReactNode, createContext, useContext } from 'react';
-import { Database, connectDatabaseEmulator, getDatabase } from 'firebase/database';
-import { FirebaseStorage, getStorage, connectStorageEmulator } from 'firebase/storage';
-import { FirebaseApp } from 'firebase/app';
-import { extractHostAndPort, isConnectedToDatabaseEmulator, isConnectedToStorageEmulator } from '../../src/services/firebaseUtils';
+﻿import {ReactNode, createContext, useContext} from 'react';
+import {
+  Database,
+  connectDatabaseEmulator,
+  getDatabase,
+} from 'firebase/database';
+import {
+  FirebaseStorage,
+  getStorage,
+  connectStorageEmulator,
+} from 'firebase/storage';
+import {FirebaseApp} from 'firebase/app';
+import {
+  extractHostAndPort,
+  isConnectedToDatabaseEmulator,
+  isConnectedToStorageEmulator,
+} from '../../src/services/firebaseUtils';
 import CONFIG from '@src/CONFIG';
 import CONST from '@src/CONST';
 
-const isTestEnv = process.env.NODE_ENV === 'test'|| CONFIG.APP_ENVIRONMENT === CONST.ENVIRONMENT.TEST;
-const firebaseConfig = isTestEnv ? CONFIG.DB_CONFIG_TEST : CONFIG.DB_CONFIG_PROD;
+const isTestEnv =
+  process.env.NODE_ENV === 'test' ||
+  CONFIG.APP_ENVIRONMENT === CONST.ENVIRONMENT.TEST;
+const firebaseConfig = isTestEnv
+  ? CONFIG.DB_CONFIG_TEST
+  : CONFIG.DB_CONFIG_PROD;
 
 type FirebaseContextProps = {
-    db: Database;
-    storage: FirebaseStorage;
+  db: Database;
+  storage: FirebaseStorage;
 };
 
-const FirebaseContext = createContext<FirebaseContextProps|null>(null);
+const FirebaseContext = createContext<FirebaseContextProps | null>(null);
 
 /** Fetch the FirebaseContext. If the context does not exist, throw an error.
- * 
+ *
  * @example { db, storage } = useFirebase();
  */
 export const useFirebase = (): FirebaseContextProps => {
-    const context = useContext(FirebaseContext);
-    if (!context) {
-        throw new Error("firebaseContext must be used within a FirebaseContextProvider");
-    };
-    return context;
+  const context = useContext(FirebaseContext);
+  if (!context) {
+    throw new Error(
+      'firebaseContext must be used within a FirebaseContextProvider',
+    );
+  }
+  return context;
 };
 
 type FirebaseProviderProps = {
-    app: FirebaseApp;
-    children: ReactNode;
-}
+  app: FirebaseApp;
+  children: ReactNode;
+};
 
 /** Provide a firebase context to the application
  */
-export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({ 
-    app,
-    children, 
+export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
+  app,
+  children,
 }) => {
-    const db = getDatabase(app);
-    const storage = getStorage(app);
+  const db = getDatabase(app);
+  const storage = getStorage(app);
 
-    // Check if emulators should be used
-    if (isTestEnv) {
-      const [dbHost, dbPort] = extractHostAndPort(firebaseConfig.databaseURL);
-      const [storageHost, storagePort] = extractHostAndPort(firebaseConfig.storageBucket);
+  // Check if emulators should be used
+  if (isTestEnv) {
+    const [dbHost, dbPort] = extractHostAndPort(firebaseConfig.databaseURL);
+    const [storageHost, storagePort] = extractHostAndPort(
+      firebaseConfig.storageBucket,
+    );
 
-      // Safety check to connect to emulators only if they are not already running
-      if (!isConnectedToDatabaseEmulator(db)) {
-        connectDatabaseEmulator(db, dbHost, parseInt(dbPort));
-      }
-
-      if (!isConnectedToStorageEmulator(storage)) {
-        connectStorageEmulator(storage, storageHost, parseInt(storagePort));
-      }
+    // Safety check to connect to emulators only if they are not already running
+    if (!isConnectedToDatabaseEmulator(db)) {
+      connectDatabaseEmulator(db, dbHost, parseInt(dbPort));
     }
 
-    return (
-      <FirebaseContext.Provider value={{db, storage}} >
-        {children}
-      </FirebaseContext.Provider>
-    );
+    if (!isConnectedToStorageEmulator(storage)) {
+      connectStorageEmulator(storage, storageHost, parseInt(storagePort));
+    }
+  }
+
+  return (
+    <FirebaseContext.Provider value={{db, storage}}>
+      {children}
+    </FirebaseContext.Provider>
+  );
 };

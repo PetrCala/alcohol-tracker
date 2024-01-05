@@ -1,28 +1,24 @@
 ﻿import React, {useState} from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import commonStyles from '../styles/commonStyles';
 
 type AchievementsProps = {
   navigation: any;
-}
+};
 
 const AchievementScreen = (props: AchievementsProps) => {
-  const { navigation } = props;
+  const {navigation} = props;
 
   return (
-    <View style={{flex:1, backgroundColor: '#FFFF99'}}>
+    <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
       <View style={commonStyles.mainHeader}>
         <MenuIcon
-          iconId='escape-achievement-screen'
+          iconId="escape-achievement-screen"
           iconSource={require('../../assets/icons/arrow_back.png')}
           containerStyle={styles.backArrowContainer}
           iconStyle={styles.backArrow}
-          onPress={() => navigation.goBack() }
+          onPress={() => navigation.goBack()}
         />
         <View style={styles.menuContainer}>
           <Text style={styles.sectionText}>Achievements</Text>

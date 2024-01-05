@@ -1,39 +1,34 @@
-﻿import {
-  StyleSheet,
-  View,
-} from 'react-native';
+﻿import {StyleSheet, View} from 'react-native';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import commonStyles from '../styles/commonStyles';
 
 import UploadImageComponent from '../components/UploadImage';
-import { useFirebase } from '../context/FirebaseContext';
+import {useFirebase} from '../context/FirebaseContext';
 import PermissionHandler from '../permissions/PermissionHandler';
 
 type ProfileProps = {
   navigation: any;
-}
+};
 
 const ProfileScreen = (props: ProfileProps) => {
-  const { navigation } = props;
-  const { db, storage } = useFirebase();
+  const {navigation} = props;
+  const {db, storage} = useFirebase();
 
   return (
-    <View style={{flex:1, backgroundColor: '#FFFF99'}}>
+    <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
       <View style={commonStyles.mainHeader}>
         <MenuIcon
-          iconId='escape-profile-screen'
+          iconId="escape-profile-screen"
           iconSource={require('../../assets/icons/arrow_back.png')}
           containerStyle={styles.backArrowContainer}
           iconStyle={styles.backArrow}
-          onPress={() => navigation.goBack() }
+          onPress={() => navigation.goBack()}
         />
       </View>
-      <PermissionHandler permissionType='write_photos'>
-        <UploadImageComponent
-          storage={storage}
-        />
+      <PermissionHandler permissionType="write_photos">
+        <UploadImageComponent storage={storage} />
       </PermissionHandler>
-     </View>
+    </View>
   );
 };
 
@@ -65,6 +60,6 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 50,
     fontWeight: 'bold',
-    textAlign: 'center'
+    textAlign: 'center',
   },
 });

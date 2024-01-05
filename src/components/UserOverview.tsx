@@ -1,37 +1,38 @@
-﻿import { auth } from "../../src/services/firebaseConfig";
-import { StyleSheet, Text, View } from "react-native";
-import { useFirebase } from "../context/FirebaseContext";
-import { ProfileData } from "../types/database";
-import ProfileImage from "./ProfileImage";
+﻿import {auth} from '../../src/services/firebaseConfig';
+import {StyleSheet, Text, View} from 'react-native';
+import {useFirebase} from '../context/FirebaseContext';
+import {ProfileData} from '../types/database';
+import ProfileImage from './ProfileImage';
 
 type UserOverviewProps = {
   userId: string; // Other user's ID
   profileData: ProfileData;
-  RightSideComponent: React.ReactNode   // Render directly as a ReactNode without JSX syntax
+  RightSideComponent: React.ReactNode; // Render directly as a ReactNode without JSX syntax
 };
-
 
 const UserOverview: React.FC<UserOverviewProps> = ({
   userId,
   profileData,
-  RightSideComponent
+  RightSideComponent,
 }) => {
   const user = auth.currentUser;
-  const { db, storage } = useFirebase();
+  const {db, storage} = useFirebase();
 
   if (!db || !user || !profileData) return;
 
   return (
-    <View key={userId+'-container'} style={styles.userOverviewContainer}>
-      <View key={userId+'profile'} style={styles.userOverviewProfile}>
+    <View key={userId + '-container'} style={styles.userOverviewContainer}>
+      <View key={userId + 'profile'} style={styles.userOverviewProfile}>
         <ProfileImage
-          key={userId+'-profile-icon'}
+          key={userId + '-profile-icon'}
           storage={storage}
           userId={userId}
           photoURL={profileData.photo_url}
           style={styles.userOverviewImage}
         />
-        <Text key={userId+'-nickname'} style={styles.userOverviewText}>{profileData.display_name}</Text>
+        <Text key={userId + '-nickname'} style={styles.userOverviewText}>
+          {profileData.display_name}
+        </Text>
       </View>
       {RightSideComponent}
     </View>
@@ -39,7 +40,6 @@ const UserOverview: React.FC<UserOverviewProps> = ({
 };
 
 export default UserOverview;
-
 
 const styles = StyleSheet.create({
   userOverviewContainer: {
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     padding: 5,
-    paddingTop: 7
+    paddingTop: 7,
   },
   userOverviewImage: {
     width: 70,

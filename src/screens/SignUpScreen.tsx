@@ -1,35 +1,35 @@
-﻿import React, { useState } from 'react';
-import { 
-    Alert,
-    Image,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View, 
+﻿import React, {useState} from 'react';
+import {
+  Alert,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import { updateProfile } from 'firebase/auth';
-import { auth } from "../../src/services/firebaseConfig";
-import { signUpUserWithEmailAndPassword } from '../auth/auth';
-import { useFirebase } from '../context/FirebaseContext';
-import { SignUpScreenProps } from '../types/screens';
-import { readDataOnce } from '../database/baseFunctions';
-import { BetaKeysData, validateBetaKey } from '../database/beta';
-import { useUserConnection } from '../context/UserConnectionContext';
-import { handleInvalidInput } from '../utils/errorHandling';
-import { isValidString, validateAppVersion } from '../utils/validation';
-import { invalidChars } from '../utils/static';
-import { deleteUserInfo, pushNewUserInfo } from '../database/users';
-import { ProfileData } from 'src/types/database';
+import {updateProfile} from 'firebase/auth';
+import {auth} from '../../src/services/firebaseConfig';
+import {signUpUserWithEmailAndPassword} from '../auth/auth';
+import {useFirebase} from '../context/FirebaseContext';
+import {SignUpScreenProps} from '../types/screens';
+import {readDataOnce} from '../database/baseFunctions';
+import {BetaKeysData, validateBetaKey} from '../database/beta';
+import {useUserConnection} from '../context/UserConnectionContext';
+import {handleInvalidInput} from '../utils/errorHandling';
+import {isValidString, validateAppVersion} from '../utils/validation';
+import {invalidChars} from '../utils/static';
+import {deleteUserInfo, pushNewUserInfo} from '../database/users';
+import {ProfileData} from 'src/types/database';
 
-const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
-  if (!route || ! navigation) return null; // Should never be null
-  const { loginEmail } = route.params; // To avoid reduncancy
-  const { db } = useFirebase();
-  const { isOnline } = useUserConnection();
+const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
+  if (!route || !navigation) return null; // Should never be null
+  const {loginEmail} = route.params; // To avoid reduncancy
+  const {db} = useFirebase();
+  const {isOnline} = useUserConnection();
   const [email, setEmail] = useState(loginEmail);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -37,27 +37,30 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
   const [betaKey, setBetaKey] = useState<string>(''); // Beta feature
   if (!db) return null; // Should never be null
 
- /** Check that all user input is valid and return true if it is.
+  /** Check that all user input is valid and return true if it is.
    * Otherwise return false.
    */
   const validateUserInput = (): boolean => {
-    if (email == '' || username == '' || password == '' || betaKey == ''){ // Beta feature
+    if (email == '' || username == '' || password == '' || betaKey == '') {
+      // Beta feature
       setWarning('You must fill out all fields first');
       return false;
-    };
-    if (!isValidString(username)){
+    }
+    if (!isValidString(username)) {
       setWarning('Your nickname can not contain ' + invalidChars.join(', '));
       return false;
     }
     return true;
-  }
+  };
 
   const handleSignUp = async () => {
     if (!validateUserInput() || !isOnline || !auth) return;
     let currentUser = auth.currentUser;
 
     if (currentUser) {
-      setWarning("You are already authenticated. This is a system bug, please reset the application data.");
+      setWarning(
+        'You are already authenticated. This is a system bug, please reset the application data.',
+      );
       return;
     }
 
@@ -66,19 +69,29 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
     var betaKeys: any;
 
     try {
-      minSupportedVersion = await readDataOnce(db, '/config/app_settings/min_user_creation_possible_version');
+      minSupportedVersion = await readDataOnce(
+        db,
+        '/config/app_settings/min_user_creation_possible_version',
+      );
       betaKeys = await readDataOnce(db, 'beta_keys/');
     } catch (error: any) {
-      Alert.alert('Data fetch failed', 'Could not fetch the sign-up source data: ' + error.message);
+      Alert.alert(
+        'Data fetch failed',
+        'Could not fetch the sign-up source data: ' + error.message,
+      );
       return;
     }
 
     if (!minSupportedVersion) {
-      setWarning('Failed to fetch the minimum supported version. Please try again later.');
+      setWarning(
+        'Failed to fetch the minimum supported version. Please try again later.',
+      );
       return;
     }
     if (!validateAppVersion(minSupportedVersion)) {
-      setWarning('This version of the application is outdated. Please upgrade to the newest version.');
+      setWarning(
+        'This version of the application is outdated. Please upgrade to the newest version.',
+      );
       return;
     }
 
@@ -96,14 +109,17 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
     // Pushing initial user data to Realtime Database
     const newProfileData: ProfileData = {
       display_name: username,
-      photo_url: "",
+      photo_url: '',
     };
 
     // Create the user in the Firebase authentication
     try {
-      await signUpUserWithEmailAndPassword(auth, email, password)
-    } catch (error:any) {
-      Alert.alert('Sign-up failed', 'There was an error during sign-up: ' + error.message);
+      await signUpUserWithEmailAndPassword(auth, email, password);
+    } catch (error: any) {
+      Alert.alert(
+        'Sign-up failed',
+        'There was an error during sign-up: ' + error.message,
+      );
       return;
     }
 
@@ -116,103 +132,99 @@ const SignUpScreen = ({ route, navigation }: SignUpScreenProps) => {
       // Realtime Database updates
       await pushNewUserInfo(db, newUserId, newProfileData, betaKeyId);
       // Firebase authentication updates
-      await updateProfile(auth.currentUser, { displayName: username });
-      navigation.replace("App", { screen: "Main Screen" });
+      await updateProfile(auth.currentUser, {displayName: username});
+      navigation.replace('App', {screen: 'Main Screen'});
       // Potentially navigate with a success message
     } catch (error: any) {
-      Alert.alert('Sign-up failed', 'There was an error during sign-up: ' + error.message);
+      Alert.alert(
+        'Sign-up failed',
+        'There was an error during sign-up: ' + error.message,
+      );
       // Clean up any partially created data
       if (auth.currentUser) {
         await auth.currentUser.delete();
       }
       // Delete the user data from the Realtime Database
       const userNickname = newProfileData.display_name;
-      await deleteUserInfo(db, newUserId, userNickname, betaKeyId)
+      await deleteUserInfo(db, newUserId, userNickname, betaKeyId);
     }
     return;
   };
 
   return (
-    <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1, flexShrink: 1 }}>
+    <ScrollView
+      keyboardShouldPersistTaps="handled"
+      contentContainerStyle={{flexGrow: 1, flexShrink: 1}}>
       <KeyboardAvoidingView
-      style={styles.mainContainer}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-      {warning ?
-        <View style={styles.warningContainer}>
+        style={styles.mainContainer}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        {warning ? (
+          <View style={styles.warningContainer}>
             <TouchableOpacity
-              id={'warning'} 
-              testID = {'warning'}
-              accessibilityRole='button' 
-              onPress={() => setWarning('')} 
+              id={'warning'}
+              testID={'warning'}
+              accessibilityRole="button"
+              onPress={() => setWarning('')}
               style={styles.warningButton}>
-                <Text style={styles.warning}>{warning}</Text> 
+              <Text style={styles.warning}>{warning}</Text>
             </TouchableOpacity>
+          </View>
+        ) : (
+          <></>
+        )}
+        <View style={styles.logoContainer}>
+          <Image
+            source={require('../../assets/logo/alcohol-tracker-source-icon.png')}
+            style={styles.logo}
+          />
         </View>
-        :
-        <></>
-      } 
-      <View style={styles.logoContainer}>
-        <Image
-          source={require('../../assets/logo/alcohol-tracker-source-icon.png')}
-          style={styles.logo}
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <TextInput
-        placeholder="Email"
-        placeholderTextColor={"#a8a8a8"}
-        keyboardType='email-address'
-        textContentType='emailAddress'
-        value={email}
-        onChangeText={text => setEmail(text)}
-        style={styles.input}
-        />
-        <TextInput
-        placeholder="Username"
-        placeholderTextColor={"#a8a8a8"}
-        textContentType='username'
-        value={username}
-        onChangeText={text => setUsername(text)}
-        style={styles.input}
-        />
-        <TextInput
-        placeholder="Password"
-        placeholderTextColor={"#a8a8a8"}
-        textContentType='password'
-        value={password}
-        onChangeText={text => setPassword(text)}
-        style={styles.input}
-        secureTextEntry
-        />
-        <TextInput
-        placeholder="Beta key"
-        placeholderTextColor={"#a8a8a8"}
-        value={betaKey}
-        onChangeText={text => setBetaKey(text)}
-        style={styles.input}
-        secureTextEntry
-        />
-        <TouchableOpacity
-        onPress={handleSignUp}
-        style={styles.signUpButton}
-        >
-        <Text style={styles.signUpButtonText}>Create account</Text>
-        </TouchableOpacity>
-        <View style={styles.loginContainer}>
-          <TouchableOpacity 
-            style={styles.loginButtonContainer}
-            onPress={() => navigation.navigate('Login Screen')}
-            >
-            <Text style={styles.loginInfoText}>
-              Already a user?
-            </Text>
-            <Text style={styles.loginButtonText}>
-              Log in
-            </Text>
+        <View style={styles.inputContainer}>
+          <TextInput
+            placeholder="Email"
+            placeholderTextColor={'#a8a8a8'}
+            keyboardType="email-address"
+            textContentType="emailAddress"
+            value={email}
+            onChangeText={text => setEmail(text)}
+            style={styles.input}
+          />
+          <TextInput
+            placeholder="Username"
+            placeholderTextColor={'#a8a8a8'}
+            textContentType="username"
+            value={username}
+            onChangeText={text => setUsername(text)}
+            style={styles.input}
+          />
+          <TextInput
+            placeholder="Password"
+            placeholderTextColor={'#a8a8a8'}
+            textContentType="password"
+            value={password}
+            onChangeText={text => setPassword(text)}
+            style={styles.input}
+            secureTextEntry
+          />
+          <TextInput
+            placeholder="Beta key"
+            placeholderTextColor={'#a8a8a8'}
+            value={betaKey}
+            onChangeText={text => setBetaKey(text)}
+            style={styles.input}
+            secureTextEntry
+          />
+          <TouchableOpacity onPress={handleSignUp} style={styles.signUpButton}>
+            <Text style={styles.signUpButtonText}>Create account</Text>
           </TouchableOpacity>
+          <View style={styles.loginContainer}>
+            <TouchableOpacity
+              style={styles.loginButtonContainer}
+              onPress={() => navigation.navigate('Login Screen')}>
+              <Text style={styles.loginInfoText}>Already a user?</Text>
+              <Text style={styles.loginButtonText}>Log in</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
       </KeyboardAvoidingView>
     </ScrollView>
   );
@@ -277,7 +289,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     marginTop: 5,
     marginBottom: 5,
-    color: 'black'
+    color: 'black',
   },
   signUpButton: {
     backgroundColor: '#fcf50f',
@@ -316,23 +328,23 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 10,
   },
-})
+});
 
 // Firebase functions approach to sign-up handling
-  // try {
-  //   const createUserFunction = functions().httpsCallable('createUser')
-  //   const result = await createUserFunction({ email, password, username, betaKey });
+// try {
+//   const createUserFunction = functions().httpsCallable('createUser')
+//   const result = await createUserFunction({ email, password, username, betaKey });
 
-  //   if (result.data.success) {
-  //     navigation.replace("App", {screen: "Main Screen"}); // Navigate to main screen
-  //   } else {
-  //     setWarning(result.data?.message);
-  //   }
-  // } catch (error:any) {
-  //   // Handle the error
-  //   setWarning('Error during sign-up: ' + error.message);
-  // }
+//   if (result.data.success) {
+//     navigation.replace("App", {screen: "Main Screen"}); // Navigate to main screen
+//   } else {
+//     setWarning(result.data?.message);
+//   }
+// } catch (error:any) {
+//   // Handle the error
+//   setWarning('Error during sign-up: ' + error.message);
+// }
 
-   // const handleGoBack = async () => {
-  //   navigation.navigate("Login Screen");
-  // };
+// const handleGoBack = async () => {
+//   navigation.navigate("Login Screen");
+// };

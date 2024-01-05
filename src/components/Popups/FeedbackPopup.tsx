@@ -1,62 +1,53 @@
-﻿import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  Modal, 
+﻿import React, {useState} from 'react';
+import {
+  View,
+  Text,
+  Modal,
   TextInput,
-  TouchableOpacity, 
-  StyleSheet, 
+  TouchableOpacity,
+  StyleSheet,
 } from 'react-native';
 
-import { FeedbackPopupProps } from '../../types/components';
-
+import {FeedbackPopupProps} from '../../types/components';
 
 const FeedbackPopup = (props: FeedbackPopupProps) => {
-  const { 
-    visible, 
-    transparent, 
-    message, 
-    onRequestClose, 
-    onSubmit
-} = props;
+  const {visible, transparent, message, onRequestClose, onSubmit} = props;
   const [feedbackText, setFeedbackText] = useState<string>('');
 
   return (
     <Modal
-    animationType="none"
-    transparent={transparent}
-    visible={visible}
-    onRequestClose={onRequestClose}
-    >
-    <View style={styles.modalContainer}>
-      <View style={styles.modalView}>
-        <Text style={styles.modalText}>
-          {message}
-        </Text>
-        <View style={styles.feedbackWindowContainer}>
+      animationType="none"
+      transparent={transparent}
+      visible={visible}
+      onRequestClose={onRequestClose}>
+      <View style={styles.modalContainer}>
+        <View style={styles.modalView}>
+          <Text style={styles.modalText}>{message}</Text>
+          <View style={styles.feedbackWindowContainer}>
             <TextInput
-                style={styles.feedbackWindowText}
-                onChangeText={setFeedbackText}
-                placeholder={"Write your feedback here"}
-                placeholderTextColor={"#a8a8a8"}
-                keyboardType="default"
-                maxLength={1000}
-                multiline={true}
+              style={styles.feedbackWindowText}
+              onChangeText={setFeedbackText}
+              placeholder={'Write your feedback here'}
+              placeholderTextColor={'#a8a8a8'}
+              keyboardType="default"
+              maxLength={1000}
+              multiline={true}
             />
-        </View>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity 
-            style={styles.confirmButton} 
-            onPress={() => onSubmit(feedbackText)}
-          >
-            <Text style={styles.confirmButtonText}>Submit</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.cancelButton} onPress={onRequestClose}>
-            <Text style={styles.cancelButtonText}>Close</Text>
-          </TouchableOpacity>
+          </View>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={styles.confirmButton}
+              onPress={() => onSubmit(feedbackText)}>
+              <Text style={styles.confirmButtonText}>Submit</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.cancelButton}
+              onPress={onRequestClose}>
+              <Text style={styles.cancelButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
-    </View>
     </Modal>
   );
 };
@@ -101,7 +92,7 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     textAlignVertical: 'top',
     margin: 12,
-    color: 'black'
+    color: 'black',
   },
   buttonContainer: {
     width: '100%',

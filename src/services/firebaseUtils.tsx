@@ -1,7 +1,7 @@
 import Config from 'react-native-config';
-import { FirebaseStorage } from 'firebase/storage';
-import { Database } from 'firebase/database';
-import { Auth } from 'firebase/auth';
+import {FirebaseStorage} from 'firebase/storage';
+import {Database} from 'firebase/database';
+import {Auth} from 'firebase/auth';
 
 /**
  * Extracts the host and port from the specified environment name.
@@ -13,7 +13,9 @@ import { Auth } from 'firebase/auth';
 export function extractHostAndPort(envName: string): [string, string] {
   const emulatorHost = Config[envName];
   if (!emulatorHost) {
-    throw new Error(`Could not connect to the database. Unspecified environmental variables ${envName}.`);
+    throw new Error(
+      `Could not connect to the database. Unspecified environmental variables ${envName}.`,
+    );
   }
   const regex = /https?:\/\/([^:/]+)(?::(\d+))?/;
   const match = emulatorHost.match(regex);
@@ -22,12 +24,12 @@ export function extractHostAndPort(envName: string): [string, string] {
     const port = match[2];
     return [host, port];
   }
-  throw new Error("Invalid URL format");
+  throw new Error('Invalid URL format');
 }
 
 /**
  * Checks if the Firebase Storage instance is connected to an emulator.
- * 
+ *
  * @param storage The Firebase Storage instance.
  * @returns True if connected to the emulator, false otherwise.
  * @example
@@ -35,7 +37,9 @@ export function extractHostAndPort(envName: string): [string, string] {
  * const connectedToStorageEmulator = isConnectedToStorageEmulator(storage);
  * console.log('Connected to Storage Emulator:', connectedToStorageEmulator);
  */
-export function isConnectedToStorageEmulator(storage:FirebaseStorage): boolean {
+export function isConnectedToStorageEmulator(
+  storage: FirebaseStorage,
+): boolean {
   const storageConfig = storage.app.options.storageBucket;
   if (!storageConfig) return false;
   const [host, port] = extractHostAndPort('TEST_STORAGE_BUCKET');
@@ -44,7 +48,7 @@ export function isConnectedToStorageEmulator(storage:FirebaseStorage): boolean {
 
 /**
  * Checks if the Firebase Authentication instance is connected to an emulator.
- * 
+ *
  * @param auth The Firebase Auth instance.
  * @returns True if connected to the emulator, false otherwise.
  * @example
@@ -52,7 +56,7 @@ export function isConnectedToStorageEmulator(storage:FirebaseStorage): boolean {
  * const connectedToAuthEmulator = isConnectedToAuthEmulator(auth);
  * console.log('Connected to Auth Emulator:', connectedToAuthEmulator);
  */
-export function isConnectedToAuthEmulator(auth:Auth): boolean {
+export function isConnectedToAuthEmulator(auth: Auth): boolean {
   const authConfig = auth.app.options.authDomain;
   if (!authConfig) return false;
   const [host, port] = extractHostAndPort('TEST_AUTH_DOMAIN');
@@ -62,7 +66,7 @@ export function isConnectedToAuthEmulator(auth:Auth): boolean {
 
 /**
  * Checks if the Firebase Realtime Database instance is connected to an emulator.
- * 
+ *
  * @param database The Firebase Database instance.
  * @returns True if connected to the emulator, false otherwise.
  */

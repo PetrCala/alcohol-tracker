@@ -1,40 +1,30 @@
-﻿import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  Modal, 
-  TouchableOpacity, 
-  StyleSheet 
-} from 'react-native';
+﻿import React, {useState} from 'react';
+import {View, Text, Modal, TouchableOpacity, StyleSheet} from 'react-native';
 
-import { YesNoPopupProps } from '../../types/components';
-
+import {YesNoPopupProps} from '../../types/components';
 
 const YesNoPopup = (props: YesNoPopupProps) => {
-  const { visible, transparent, onRequestClose, message, onYes } = props;
+  const {visible, transparent, onRequestClose, message, onYes} = props;
 
   return (
     <Modal
-    animationType="none"
-    transparent={transparent}
-    visible={visible}
-    onRequestClose={onRequestClose}
-    >
-    <View style={styles.modalContainer}>
-      <View style={styles.modalView}>
-        <Text style={styles.modalText}>
-          {message}
-        </Text>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={onRequestClose}>
-            <Text style={styles.buttonText}>No</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={onYes}>
-            <Text style={styles.buttonText}>Yes</Text>
-          </TouchableOpacity>
+      animationType="none"
+      transparent={transparent}
+      visible={visible}
+      onRequestClose={onRequestClose}>
+      <View style={styles.modalContainer}>
+        <View style={styles.modalView}>
+          <Text style={styles.modalText}>{message}</Text>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.button} onPress={onRequestClose}>
+              <Text style={styles.buttonText}>No</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={onYes}>
+              <Text style={styles.buttonText}>Yes</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
-    </View>
     </Modal>
   );
 };

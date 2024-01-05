@@ -88,6 +88,11 @@
 
     to make the file readable.
 
+## Formatting
+
+- For typescript and javascript files, we use `Prettier`
+- For bash scripts, we use `shell-format`
+
 ## Working with Firebase
 
 - Firebase CLI is necessary for any Firebase tests/emulators to run correctly. In order to set up your local environment, run these commands first

@@ -1,16 +1,16 @@
-﻿import { useState, useEffect } from 'react';
-import { Alert } from 'react-native';
+﻿import {useState, useEffect} from 'react';
+import {Alert} from 'react-native';
 
-import { ProfileData, ProfileDisplayData } from '../types/database';
-import { isNonEmptyObject } from '../utils/validation';
-import { Database } from 'firebase/database';
-import { fetchUserProfiles } from '../database/profile';
+import {ProfileData, ProfileDisplayData} from '../types/database';
+import {isNonEmptyObject} from '../utils/validation';
+import {Database} from 'firebase/database';
+import {fetchUserProfiles} from '../database/profile';
 
 type Options = {
-  data: { [id: string]: any };
+  data: {[id: string]: any};
   db: Database | null;
   setLoadingDisplayData: (value: boolean) => void;
-}
+};
 
 /**
  * useProfileDisplayData - A React hook to fetch and manage user profile data for display.
@@ -39,7 +39,7 @@ type Options = {
 const useProfileDisplayData = ({
   data,
   db,
-  setLoadingDisplayData
+  setLoadingDisplayData,
 }: Options): [ProfileDisplayData, (data: ProfileDisplayData) => void] => {
   const [displayData, setDisplayData] = useState<ProfileDisplayData>({});
 
@@ -48,26 +48,29 @@ const useProfileDisplayData = ({
       if (!db || !isNonEmptyObject(data)) {
         setDisplayData({});
         return;
-      };
+      }
 
       const newDisplayData: ProfileDisplayData = {};
       setLoadingDisplayData && setLoadingDisplayData(true);
 
       try {
         const dataIds = Object.keys(data);
-        const userProfiles: ProfileData[] = await fetchUserProfiles(db, dataIds);
+        const userProfiles: ProfileData[] = await fetchUserProfiles(
+          db,
+          dataIds,
+        );
         dataIds.forEach((id, index) => {
           newDisplayData[id] = userProfiles[index];
         });
       } catch (error: any) {
         Alert.alert(
-          "Database connection failed",
-          "Could not fetch the profile data: " + error.message
+          'Database connection failed',
+          'Could not fetch the profile data: ' + error.message,
         );
       } finally {
         setDisplayData(newDisplayData);
         setLoadingDisplayData && setLoadingDisplayData(false);
-      };
+      }
     };
 
     fetchDisplayData();

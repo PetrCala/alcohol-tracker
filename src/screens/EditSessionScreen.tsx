@@ -1,9 +1,4 @@
-﻿import React, {
-    useEffect,
-    useState,
-    useContext,
-    useRef,
-} from 'react';
+﻿import React, {useEffect, useState, useContext, useRef} from 'react';
 import {
   Alert,
   Image,
@@ -16,250 +11,316 @@ import {
 } from 'react-native';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import BasicButton from '../components/Buttons/BasicButton';
-import { EditSessionScreenProps} from '../types/screens';
-import { DrinkingSessionArrayItem, DrinkingSessionData, UnitTypesKeys, UnitTypesProps, UnitsObject } from '../types/database';
-import { useFirebase } from '../context/FirebaseContext';
-import { removeDrinkingSessionData, editDrinkingSessionData } from '../database/drinkingSessions';
+import {EditSessionScreenProps} from '../types/screens';
+import {
+  DrinkingSessionArrayItem,
+  DrinkingSessionData,
+  UnitTypesKeys,
+  UnitTypesProps,
+  UnitsObject,
+} from '../types/database';
+import {useFirebase} from '../context/FirebaseContext';
+import {
+  removeDrinkingSessionData,
+  editDrinkingSessionData,
+} from '../database/drinkingSessions';
 import SessionUnitsInputWindow from '../components/Buttons/SessionUnitsInputWindow';
-import { addUnits, dateToDateObject, formatDateToDay, formatDateToTime, removeUnits, removeZeroObjectsFromSession, sumAllPoints, sumAllUnits, sumUnitsOfSingleType, timestampToDate, unitsToColors } from '../utils/dataHandling';
-import { auth } from "../../src/services/firebaseConfig";
+import {
+  addUnits,
+  dateToDateObject,
+  formatDateToDay,
+  formatDateToTime,
+  removeUnits,
+  removeZeroObjectsFromSession,
+  sumAllPoints,
+  sumAllUnits,
+  sumUnitsOfSingleType,
+  timestampToDate,
+  unitsToColors,
+} from '../utils/dataHandling';
+import {auth} from '../../src/services/firebaseConfig';
 import DrinkingSessionUnitWindow from '../components/DrinkingSessionUnitWindow';
-import { maxAllowedUnits } from '../utils/static';
+import {maxAllowedUnits} from '../utils/static';
 import YesNoPopup from '../components/Popups/YesNoPopup';
-import { useUserConnection } from '../context/UserConnectionContext';
+import {useUserConnection} from '../context/UserConnectionContext';
 import UserOffline from '../components/UserOffline';
-import { DrinkDataProps, UnitTypesViewProps } from '../types/components';
+import {DrinkDataProps, UnitTypesViewProps} from '../types/components';
 import UnitTypesView from '../components/UnitTypesView';
 import SessionDetailsSlider from '../components/SessionDetailsSlider';
-import { getDatabaseData } from '../context/DatabaseDataContext';
+import {getDatabaseData} from '../context/DatabaseDataContext';
 import commonStyles from '../styles/commonStyles';
 
-const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
-    if (!route || ! navigation) return null; // Should never be null
-    const { session, sessionKey } = route.params; 
-    const user = auth.currentUser;
-    const { isOnline } = useUserConnection();
-    const { preferences } = getDatabaseData();
-    // Units
-    const [currentUnits, setCurrentUnits] = useState<UnitsObject>(session.units);
-    const [totalPoints, setTotalPoints] = useState<number>(0);
-    const [availableUnits, setAvailableUnits] = useState<number>(0);
-    // Hooks for immediate display info - update these manually to improve efficiency
-    const [beerSum, setBeerSum] = useState<number>(sumUnitsOfSingleType(currentUnits, 'beer'));
-    const [cocktailSum, setCocktailSum] = useState<number>(sumUnitsOfSingleType(currentUnits, 'cocktail'));
-    const [otherSum, setOtherSum] = useState<number>(sumUnitsOfSingleType(currentUnits, 'other'));
-    const [strongShotSum, setStrongShotSum] = useState<number>(sumUnitsOfSingleType(currentUnits, 'strong_shot'));
-    const [weakShotSum, setWeakShotSum] = useState<number>(sumUnitsOfSingleType(currentUnits, 'weak_shot'));
-    const [wineSum, setWineSum] = useState<number>(sumUnitsOfSingleType(currentUnits, 'wine'));
-    // Session details
-    const [isBlackout, setIsBlackout] = useState<boolean>(session.blackout);
-    const [note, setNote] = useState<string>(session.note);
-    // Time info
-    const sessionDate = timestampToDate(session.start_time);
-    const sessionDay = formatDateToDay(sessionDate);
-    const sessionStartTime = formatDateToTime(sessionDate);
-    const { db } = useFirebase();
-      // Other
-    const [monkeMode, setMonkeMode] = useState<boolean>(false);
-    const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
-    const scrollViewRef = useRef<ScrollView>(null); // To navigate the view
-    const sessionIsNew = sessionKey == 'edit-session-id' ? true : false;
+const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
+  if (!route || !navigation) return null; // Should never be null
+  const {session, sessionKey} = route.params;
+  const user = auth.currentUser;
+  const {isOnline} = useUserConnection();
+  const {preferences} = getDatabaseData();
+  // Units
+  const [currentUnits, setCurrentUnits] = useState<UnitsObject>(session.units);
+  const [totalPoints, setTotalPoints] = useState<number>(0);
+  const [availableUnits, setAvailableUnits] = useState<number>(0);
+  // Hooks for immediate display info - update these manually to improve efficiency
+  const [beerSum, setBeerSum] = useState<number>(
+    sumUnitsOfSingleType(currentUnits, 'beer'),
+  );
+  const [cocktailSum, setCocktailSum] = useState<number>(
+    sumUnitsOfSingleType(currentUnits, 'cocktail'),
+  );
+  const [otherSum, setOtherSum] = useState<number>(
+    sumUnitsOfSingleType(currentUnits, 'other'),
+  );
+  const [strongShotSum, setStrongShotSum] = useState<number>(
+    sumUnitsOfSingleType(currentUnits, 'strong_shot'),
+  );
+  const [weakShotSum, setWeakShotSum] = useState<number>(
+    sumUnitsOfSingleType(currentUnits, 'weak_shot'),
+  );
+  const [wineSum, setWineSum] = useState<number>(
+    sumUnitsOfSingleType(currentUnits, 'wine'),
+  );
+  // Session details
+  const [isBlackout, setIsBlackout] = useState<boolean>(session.blackout);
+  const [note, setNote] = useState<string>(session.note);
+  // Time info
+  const sessionDate = timestampToDate(session.start_time);
+  const sessionDay = formatDateToDay(sessionDate);
+  const sessionStartTime = formatDateToTime(sessionDate);
+  const {db} = useFirebase();
+  // Other
+  const [monkeMode, setMonkeMode] = useState<boolean>(false);
+  const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
+  const scrollViewRef = useRef<ScrollView>(null); // To navigate the view
+  const sessionIsNew = sessionKey == 'edit-session-id' ? true : false;
 
-    const drinkData: DrinkDataProps = [
-      { key: 'beer', icon: require('../../assets/icons/beer.png'), typeSum: beerSum, setTypeSum: setBeerSum},
-      { key: 'wine', icon: require('../../assets/icons/wine.png'), typeSum: wineSum, setTypeSum: setWineSum},
-      { key: 'weak_shot', icon: require('../../assets/icons/weak_shot.png'), typeSum: weakShotSum, setTypeSum: setWeakShotSum},
-      { key: 'strong_shot', icon: require('../../assets/icons/strong_shot.png'), typeSum: strongShotSum, setTypeSum: setStrongShotSum},
-      { key: 'cocktail', icon: require('../../assets/icons/cocktail.png'), typeSum: cocktailSum, setTypeSum: setCocktailSum},
-      { key: 'other', icon: require('../../assets/icons/alcohol_assortment.png'), typeSum: otherSum, setTypeSum: setOtherSum},
-    ];
+  const drinkData: DrinkDataProps = [
+    {
+      key: 'beer',
+      icon: require('../../assets/icons/beer.png'),
+      typeSum: beerSum,
+      setTypeSum: setBeerSum,
+    },
+    {
+      key: 'wine',
+      icon: require('../../assets/icons/wine.png'),
+      typeSum: wineSum,
+      setTypeSum: setWineSum,
+    },
+    {
+      key: 'weak_shot',
+      icon: require('../../assets/icons/weak_shot.png'),
+      typeSum: weakShotSum,
+      setTypeSum: setWeakShotSum,
+    },
+    {
+      key: 'strong_shot',
+      icon: require('../../assets/icons/strong_shot.png'),
+      typeSum: strongShotSum,
+      setTypeSum: setStrongShotSum,
+    },
+    {
+      key: 'cocktail',
+      icon: require('../../assets/icons/cocktail.png'),
+      typeSum: cocktailSum,
+      setTypeSum: setCocktailSum,
+    },
+    {
+      key: 'other',
+      icon: require('../../assets/icons/alcohol_assortment.png'),
+      typeSum: otherSum,
+      setTypeSum: setOtherSum,
+    },
+  ];
 
-    const handleMonkePlus = () => {
-      if (availableUnits > 0) {
-        let unitsToAdd:UnitTypesProps = {other: 1};
-        let newUnits: UnitsObject = addUnits(currentUnits, unitsToAdd);
-        setCurrentUnits(newUnits);
-        setOtherSum(otherSum + 1);
-      };
-    };
-  
-    const handleMonkeMinus = () => {
-      if (otherSum > 0) {
-        let newUnits: UnitsObject = removeUnits(currentUnits, "other", 1);
-        setCurrentUnits(newUnits);
-        setOtherSum(otherSum - 1);
-      };
-      // Here, as else, maybe send an alert that there are other types of
-      // units logged
-    };
+  const handleMonkePlus = () => {
+    if (availableUnits > 0) {
+      let unitsToAdd: UnitTypesProps = {other: 1};
+      let newUnits: UnitsObject = addUnits(currentUnits, unitsToAdd);
+      setCurrentUnits(newUnits);
+      setOtherSum(otherSum + 1);
+    }
+  };
 
-    const handleBlackoutChange = (value: boolean) => {
-      setIsBlackout(value);
-    };
-  
-    const handleNoteChange = (value: string) => {
-      setNote(value);
-    };
+  const handleMonkeMinus = () => {
+    if (otherSum > 0) {
+      let newUnits: UnitsObject = removeUnits(currentUnits, 'other', 1);
+      setCurrentUnits(newUnits);
+      setOtherSum(otherSum - 1);
+    }
+    // Here, as else, maybe send an alert that there are other types of
+    // units logged
+  };
 
-    // Update the hooks whenever current units change
-    useEffect(() => {
-      if (!preferences) return;
-      let newTotalPoints = sumAllPoints(currentUnits, preferences.units_to_points);
-      let newAvailableUnits = maxAllowedUnits - newTotalPoints;
-      setTotalPoints(newTotalPoints);
-      setAvailableUnits(newAvailableUnits);
-    }, [currentUnits]);
+  const handleBlackoutChange = (value: boolean) => {
+    setIsBlackout(value);
+  };
 
-    async function saveSession(db: any, userId: string) {
-      if (totalPoints > 99){
-          console.log('cannot save this session');
-          return null;
-      };
-      if (!navigation){
-        Alert.alert('Navigation not found', 'Failed to fetch the navigation');
-        return null;
-      };
-      // Handle old versions of drinking session data where note/blackout were missing
-      let sessionNote = note ? note : "";
-      let sessionBlackout = isBlackout ? isBlackout : false;
-      // Save the session
-      if (totalPoints > 0){
-        let newSessionData: DrinkingSessionArrayItem = {
-          start_time: session.start_time,
-          end_time: session.end_time,
-          units: currentUnits,
-          blackout: sessionBlackout,
-          note: sessionNote,
-          ongoing: null,
-        };
-        newSessionData = removeZeroObjectsFromSession(newSessionData); // Delete the initial log of zero units that was used as a placeholder
-        try {
-          await editDrinkingSessionData(db, userId, newSessionData, sessionKey, sessionIsNew); // Finish editing
-        } catch (error:any) {
-          throw new Error('Failed to edit the drinking session data: ' + error.message);
-        };
-        navigation.goBack();
-      };
-    };
+  const handleNoteChange = (value: string) => {
+    setNote(value);
+  };
 
-    /** Discard the current session, reset current units and 
-     * session status, and navigate to main menu.
-     */
-    async function deleteSession(db: any, userId: string, sessionId: string){
-        try {
-            await removeDrinkingSessionData(db, userId, sessionId); 
-        } catch (error:any) {
-            throw new Error('Failed to delete the session: ' + error.message);
-        }
-      }
+  // Update the hooks whenever current units change
+  useEffect(() => {
+    if (!preferences) return;
+    let newTotalPoints = sumAllPoints(
+      currentUnits,
+      preferences.units_to_points,
+    );
+    let newAvailableUnits = maxAllowedUnits - newTotalPoints;
+    setTotalPoints(newTotalPoints);
+    setAvailableUnits(newAvailableUnits);
+  }, [currentUnits]);
 
-    const handleConfirmDelete = async () => {
-      if (!sessionIsNew){
-        if (!user) return;
-        try {
-            await deleteSession(db, user.uid, sessionKey);
-        } catch (error:any) {
-            throw new Error('Failed to delete the session: ' + error.message);
-        } finally {
-          setDeleteModalVisible(false);
-          navigation.navigate("Day Overview Screen", {
-            dateObject: dateToDateObject(sessionDate)
-          });
-        };
-      };
-    };
-  
-    const handleBackPress = () => {
-        navigation.goBack();
-    };
-
-
-    if (!isOnline) return (<UserOffline/>);
-    if (!user || !preferences){
-      navigation.replace("Login Screen");
+  async function saveSession(db: any, userId: string) {
+    if (totalPoints > 99) {
+      console.log('cannot save this session');
       return null;
     }
-    if (!db) return null; // Should never be null
-    
-    const sessionColor = unitsToColors(totalPoints, preferences.units_to_colors);
-    
-    return (
-      <>
+    if (!navigation) {
+      Alert.alert('Navigation not found', 'Failed to fetch the navigation');
+      return null;
+    }
+    // Handle old versions of drinking session data where note/blackout were missing
+    let sessionNote = note ? note : '';
+    let sessionBlackout = isBlackout ? isBlackout : false;
+    // Save the session
+    if (totalPoints > 0) {
+      let newSessionData: DrinkingSessionArrayItem = {
+        start_time: session.start_time,
+        end_time: session.end_time,
+        units: currentUnits,
+        blackout: sessionBlackout,
+        note: sessionNote,
+        ongoing: null,
+      };
+      newSessionData = removeZeroObjectsFromSession(newSessionData); // Delete the initial log of zero units that was used as a placeholder
+      try {
+        await editDrinkingSessionData(
+          db,
+          userId,
+          newSessionData,
+          sessionKey,
+          sessionIsNew,
+        ); // Finish editing
+      } catch (error: any) {
+        throw new Error(
+          'Failed to edit the drinking session data: ' + error.message,
+        );
+      }
+      navigation.goBack();
+    }
+  }
+
+  /** Discard the current session, reset current units and
+   * session status, and navigate to main menu.
+   */
+  async function deleteSession(db: any, userId: string, sessionId: string) {
+    try {
+      await removeDrinkingSessionData(db, userId, sessionId);
+    } catch (error: any) {
+      throw new Error('Failed to delete the session: ' + error.message);
+    }
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!sessionIsNew) {
+      if (!user) return;
+      try {
+        await deleteSession(db, user.uid, sessionKey);
+      } catch (error: any) {
+        throw new Error('Failed to delete the session: ' + error.message);
+      } finally {
+        setDeleteModalVisible(false);
+        navigation.navigate('Day Overview Screen', {
+          dateObject: dateToDateObject(sessionDate),
+        });
+      }
+    }
+  };
+
+  const handleBackPress = () => {
+    navigation.goBack();
+  };
+
+  if (!isOnline) return <UserOffline />;
+  if (!user || !preferences) {
+    navigation.replace('Login Screen');
+    return null;
+  }
+  if (!db) return null; // Should never be null
+
+  const sessionColor = unitsToColors(totalPoints, preferences.units_to_colors);
+
+  return (
+    <>
       <View style={commonStyles.mainHeader}>
-          <MenuIcon
-          iconId='escape-edit-session'
+        <MenuIcon
+          iconId="escape-edit-session"
           iconSource={require('../../assets/icons/arrow_back.png')}
           containerStyle={styles.backArrowContainer}
           iconStyle={styles.backArrow}
           onPress={handleBackPress}
-          />
-        <BasicButton 
-          text= {monkeMode ? 'Exit Monke Mode': 'Monke Mode'}
+        />
+        <BasicButton
+          text={monkeMode ? 'Exit Monke Mode' : 'Monke Mode'}
           buttonStyle={[
             styles.monkeModeButton,
-            monkeMode ?  styles.monkeModeButtonEnabled : {}
+            monkeMode ? styles.monkeModeButtonEnabled : {},
           ]}
           textStyle={styles.monkeModeButtonText}
           onPress={() => setMonkeMode(!monkeMode)}
         />
       </View>
-      <ScrollView 
-        style={styles.scrollView} 
+      <ScrollView
+        style={styles.scrollView}
         ref={scrollViewRef}
-        keyboardShouldPersistTaps="handled"
-      >
-      <View style={styles.sessionInfoContainer}>
-        <Text style={styles.sessionInfoText}>
-            Session date: {sessionDay}
-        </Text>
-      </View>
-      <View style={styles.unitCountContainer}>
-          <Text style={[ styles.unitCountText,
-            {color: sessionColor}
-          ]}>
+        keyboardShouldPersistTaps="handled">
+        <View style={styles.sessionInfoContainer}>
+          <Text style={styles.sessionInfoText}>Session date: {sessionDay}</Text>
+        </View>
+        <View style={styles.unitCountContainer}>
+          <Text style={[styles.unitCountText, {color: sessionColor}]}>
             {totalPoints}
           </Text>
-      </View>
-    {monkeMode ?
-    <View style={styles.modifyUnitsContainer}>
-      <TouchableOpacity
-          style={[styles.modifyUnitsButton, {backgroundColor: 'red'}]}
-          onPress={() => handleMonkeMinus()}
-      >
-        <Text style={styles.modifyUnitsText}>-</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-          style={[styles.modifyUnitsButton, {backgroundColor: 'green'}]}
-          onPress={() => handleMonkePlus()}
-      >
-        <Text style={styles.modifyUnitsText}>+</Text>
-      </TouchableOpacity>
-    </View>
-    :
-    <>
-    <View style={styles.unitTypesContainer}>
-      <UnitTypesView 
-        drinkData={drinkData}
-        currentUnits={currentUnits}
-        setCurrentUnits={setCurrentUnits}
-        availableUnits={availableUnits}
-      />
-    </View>
-    <SessionDetailsSlider 
-      scrollViewRef={scrollViewRef}
-      isBlackout={isBlackout}
-      onBlackoutChange={handleBlackoutChange}
-      note={note}
-      onNoteChange={handleNoteChange}
-    />
-    </>
-    }
-    <View style={{height:200, backgroundColor: '#ffff99'}}></View>
-    </ScrollView>
-    <View style={styles.saveSessionDelimiter}/>
-    <View style={styles.saveSessionContainer}>
-        <BasicButton 
-          text='Delete Session'
+        </View>
+        {monkeMode ? (
+          <View style={styles.modifyUnitsContainer}>
+            <TouchableOpacity
+              style={[styles.modifyUnitsButton, {backgroundColor: 'red'}]}
+              onPress={() => handleMonkeMinus()}>
+              <Text style={styles.modifyUnitsText}>-</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.modifyUnitsButton, {backgroundColor: 'green'}]}
+              onPress={() => handleMonkePlus()}>
+              <Text style={styles.modifyUnitsText}>+</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <>
+            <View style={styles.unitTypesContainer}>
+              <UnitTypesView
+                drinkData={drinkData}
+                currentUnits={currentUnits}
+                setCurrentUnits={setCurrentUnits}
+                availableUnits={availableUnits}
+              />
+            </View>
+            <SessionDetailsSlider
+              scrollViewRef={scrollViewRef}
+              isBlackout={isBlackout}
+              onBlackoutChange={handleBlackoutChange}
+              note={note}
+              onNoteChange={handleNoteChange}
+            />
+          </>
+        )}
+        <View style={{height: 200, backgroundColor: '#ffff99'}}></View>
+      </ScrollView>
+      <View style={styles.saveSessionDelimiter} />
+      <View style={styles.saveSessionContainer}>
+        <BasicButton
+          text="Delete Session"
           buttonStyle={styles.saveSessionButton}
           textStyle={styles.saveSessionButtonText}
           onPress={() => setDeleteModalVisible(true)}
@@ -267,19 +328,19 @@ const EditSessionScreen = ({ route, navigation}: EditSessionScreenProps) => {
         <YesNoPopup
           visible={deleteModalVisible}
           transparent={true}
-          message={"Do you really want to\ndelete this session?"}
+          message={'Do you really want to\ndelete this session?'}
           onRequestClose={() => setDeleteModalVisible(false)}
           onYes={handleConfirmDelete}
         />
-        <BasicButton 
-          text='Save Session'
+        <BasicButton
+          text="Save Session"
           buttonStyle={styles.saveSessionButton}
           textStyle={styles.saveSessionButtonText}
           onPress={() => saveSession(db, user.uid)}
         />
-    </View>
+      </View>
     </>
-    );
+  );
 };
 
 export default EditSessionScreen;
@@ -296,11 +357,11 @@ const styles = StyleSheet.create({
   },
   sessionInfoText: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginTop: 5,
-    color: "black",
-    alignSelf: "center",
-    alignContent: "center",
+    color: 'black',
+    alignSelf: 'center',
+    alignContent: 'center',
     padding: 5,
   },
   sessionInfoContainer: {
@@ -311,11 +372,11 @@ const styles = StyleSheet.create({
   },
   unitCountText: {
     fontSize: 90,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     // marginTop: 5,
     marginBottom: 10,
-    alignSelf: "center",
-    alignContent: "center",
+    alignSelf: 'center',
+    alignContent: 'center',
     padding: 2,
     textShadowColor: 'black',
     textShadowOffset: {width: 1, height: 1},
@@ -326,13 +387,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFF99',
   },
   unitTypesContainer: {
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     width: '100%',
   },
   unitsInputContainer: {
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   unitsInputButton: {
     width: '40%',
@@ -340,11 +401,11 @@ const styles = StyleSheet.create({
   },
   unitsInputText: {
     fontSize: 90,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     // marginTop: 5,
     marginBottom: 10,
-    alignSelf: "center",
-    alignContent: "center",
+    alignSelf: 'center',
+    alignContent: 'center',
     padding: 2,
     textShadowColor: 'black',
     textShadowOffset: {width: 1, height: 1},
@@ -354,15 +415,15 @@ const styles = StyleSheet.create({
     height: 400,
     flexGrow: 1,
     flexShrink: 1,
-    justifyContent: "space-evenly",
+    justifyContent: 'space-evenly',
     alignItems: 'center',
-    flexDirection: "row",
+    flexDirection: 'row',
     padding: 10,
   },
   modifyUnitsButton: {
     width: 100,
     height: 100,
-    alignItems: "center",
+    alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 50,
   },
@@ -374,13 +435,13 @@ const styles = StyleSheet.create({
   },
   monkeModeContainer: {
     height: '10%',
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: '#FFFF99',
   },
   monkeModeButton: {
     width: '50%',
-    alignItems: "center",
+    alignItems: 'center',
     justifyContent: 'center',
     padding: 10,
     borderRadius: 10,
@@ -406,9 +467,9 @@ const styles = StyleSheet.create({
   saveSessionContainer: {
     height: '8%',
     width: '100%',
-    alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "row",
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
     backgroundColor: '#FFFF99',
     shadowColor: '#000',
     shadowOffset: {
@@ -424,7 +485,7 @@ const styles = StyleSheet.create({
   saveSessionButton: {
     width: '50%',
     height: '100%',
-    alignItems: "center",
+    alignItems: 'center',
     justifyContent: 'center',
     padding: 10,
     marginBottom: 10,
