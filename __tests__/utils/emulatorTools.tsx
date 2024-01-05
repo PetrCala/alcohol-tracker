@@ -9,8 +9,7 @@ import CONST from '@src/CONST';
 export const shouldRunTests = process.env.APP_ENVIRONMENT === CONST.ENVIRONMENT.TEST;
 export const describeWithEmulator = shouldRunTests ? describe : describe.skip;
 
-
-export async function initializeTestEnv():Promise<RulesTestEnvironment> {
+export async function setupFirebaseRulesTestEnv():Promise<RulesTestEnvironment> {
     const projectId = process.env.TEST_PROJECT_ID;
     if (!projectId) {
         throw new Error('Missing environment variable TEST_PROJECT_ID.');
@@ -22,13 +21,16 @@ export async function initializeTestEnv():Promise<RulesTestEnvironment> {
         rules: fs.readFileSync("database.rules.json", "utf8"),
     };
 
-    return await initializeTestEnvironment({
+    let testEnv: RulesTestEnvironment = await initializeTestEnvironment({
         projectId: projectId,
         database: emulatorConfig,
     });
+
+    return testEnv;
 }
 
-export async function teardownTestEnv(testEnv: RulesTestEnvironment) {
+export async function teardownFirebaseRulesTestEnv(testEnv: RulesTestEnvironment) {
     await testEnv.clearDatabase();
     await testEnv.cleanup();
 };
+    
