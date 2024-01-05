@@ -1,5 +1,5 @@
 ﻿import React from 'react';
-import { render, fireEvent, screen } from '@testing-library/react-native';
+import {render, fireEvent, screen} from '@testing-library/react-native';
 import SocialScreen from '../../../src/screens/SocialScreen';
 
 // Mock the navigation prop used by the component
@@ -7,7 +7,6 @@ const mockNavigation = {
   navigate: jest.fn(),
   goBack: jest.fn(),
 };
-
 
 describe('<SocialScreen />', () => {
   beforeEach(() => {
@@ -21,14 +20,11 @@ describe('<SocialScreen />', () => {
   });
 
   it('escape from the social screen', () => {
-    
-    const { getByTestId } = render(<SocialScreen navigation={mockNavigation} />);
-    
+    const {getByTestId} = render(<SocialScreen navigation={mockNavigation} />);
+
     const backButton = getByTestId('escape-social-screen');
     fireEvent.press(backButton);
-    
+
     expect(mockNavigation.goBack).toHaveBeenCalled();
   });
-
 });
-

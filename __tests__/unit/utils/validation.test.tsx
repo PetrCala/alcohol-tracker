@@ -1,9 +1,8 @@
-﻿import { isNonEmptyObject } from "../../../src/utils/validation";
+﻿import {isNonEmptyObject} from '../../../src/utils/validation';
 
 describe('isNonEmptyObject', () => {
-
   it('should return true for non-empty objects', () => {
-    const nonEmptyObject = { key: 'value' };
+    const nonEmptyObject = {key: 'value'};
     expect(isNonEmptyObject(nonEmptyObject)).toBeTruthy();
   });
 
@@ -13,7 +12,16 @@ describe('isNonEmptyObject', () => {
   });
 
   it('should return false for non-object types', () => {
-    const testData = [42, 'string', true, null, undefined, [], () => {}, Symbol('sym')];
+    const testData = [
+      42,
+      'string',
+      true,
+      null,
+      undefined,
+      [],
+      () => {},
+      Symbol('sym'),
+    ];
     testData.forEach(value => {
       expect(isNonEmptyObject(value)).toBeFalsy();
     });
@@ -30,6 +38,4 @@ describe('isNonEmptyObject', () => {
     const nonEmptyArray = [1, 2, 3];
     expect(isNonEmptyObject(nonEmptyArray)).toBeFalsy();
   });
-
 });
-

@@ -2,7 +2,7 @@
 set -e
 
 SCRIPTS_DIR=$(dirname "${BASH_SOURCE[0]}")
-source "$SCRIPTS_DIR/shellUtils.sh";
+source "$SCRIPTS_DIR/shellUtils.sh"
 
 # Check if an argument is provided
 if [ $# -eq 0 ]; then

@@ -13,7 +13,7 @@
 set -e
 
 SCRIPTS_DIR=$(dirname "${BASH_SOURCE[0]}")
-source "$SCRIPTS_DIR/shellUtils.sh";
+source "$SCRIPTS_DIR/shellUtils.sh"
 
 # Navigate to the ios folder (same level as SCRIPTS_DIR)
 PROJECT_ROOT=$(dirname "$SCRIPTS_DIR")

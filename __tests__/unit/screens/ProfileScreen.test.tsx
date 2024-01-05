@@ -1,5 +1,5 @@
 ﻿import React from 'react';
-import { render, fireEvent, screen } from '@testing-library/react-native';
+import {render, fireEvent, screen} from '@testing-library/react-native';
 import ProfileScreen from '../../../src/screens/ProfileScreen';
 
 // Mock the navigation prop used by the component
@@ -30,14 +30,11 @@ describe('<ProfileScreen />', () => {
   });
 
   it('escape from the profile screen', () => {
-    
-    const { getByTestId } = render(<ProfileScreen navigation={mockNavigation} />);
-    
+    const {getByTestId} = render(<ProfileScreen navigation={mockNavigation} />);
+
     const backButton = getByTestId('escape-profile-screen');
     fireEvent.press(backButton);
-    
+
     expect(mockNavigation.goBack).toHaveBeenCalled();
   });
-
 });
-
