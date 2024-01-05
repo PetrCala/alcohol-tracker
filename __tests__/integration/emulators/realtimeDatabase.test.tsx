@@ -45,17 +45,17 @@ describeWithEmulator('Connect to the realtime database emulator', () => {
 
     // Set up the database before each test
     beforeEach(async () => {
-        set(ref(db), mockDatabase);
+        await set(ref(db), mockDatabase);
     });
 
     // Write null to clear the database.
     afterEach(async () => {
-        set(ref(db), null);
+        await set(ref(db), null);
     });
 
     afterAll(async () => {
         goOffline(db); // Close database connection
-        deleteApp(testApp); // Delete the app
+        await deleteApp(testApp); // Delete the app
     });
 
     it('should connect to the emulator realtime database', async () => {

@@ -38,7 +38,7 @@ describeWithEmulator('Connect to the storage emulator', () => {
     });
 
     afterAll(async () => {
-        deleteApp(testApp); // Delete the app
+        await deleteApp(testApp); // Delete the app
     });
 
     it('should connect to the emulator storage', async () => {
