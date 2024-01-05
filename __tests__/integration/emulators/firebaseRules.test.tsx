@@ -20,14 +20,15 @@ import {FeedbackProps} from '@src/types/database';
 const projectId = process.env.TEST_PROJECT_ID;
 if (!projectId) throw new Error(`Missing environment variable ${projectId}.`);
 
+const testFeedbackId: string = 'testFeedbackId';
+const testFeedback: FeedbackProps = {
+  submit_time: 0,
+  text: 'test',
+  user_id: 'testId',
+};
+
 describeWithEmulator('Test feedback rules', () => {
   let testEnv: RulesTestEnvironment;
-  let testFeedbackId: string = 'testFeedbackId';
-  let testFeedback: FeedbackProps = {
-    submit_time: 0,
-    text: 'test',
-    user_id: 'testId',
-  };
 
   beforeAll(async () => {
     testEnv = await setupFirebaseRulesTestEnv();
@@ -54,9 +55,11 @@ describeWithEmulator('Test feedback rules', () => {
   });
 
   it('should allow reading feedback when admin is true', async () => {
-    const authDb = testEnv.authenticatedContext(testFeedbackId, {
-      admin: true,
-    }).database();
+    const authDb = testEnv
+      .authenticatedContext(testFeedbackId, {
+        admin: true,
+      })
+      .database();
     const authRef = authDb.ref(`feedback/${testFeedbackId}`);
     await assertSucceeds(authRef.get());
   });
@@ -66,4 +69,22 @@ describeWithEmulator('Test feedback rules', () => {
     const unauthRef = unauthDb.ref(`feedback/${testFeedbackId}`);
     await assertFails(unauthRef.get());
   });
+});
+
+describeWithEmulator('Test friend requests', () => {
+  let testEnv: RulesTestEnvironment;
+
+  beforeAll(async () => {
+    testEnv = await setupFirebaseRulesTestEnv();
+  });
+
+  afterEach(async () => {
+    await testEnv.clearDatabase();
+  });
+
+  afterAll(async () => {
+    await teardownFirebaseRulesTestEnv(testEnv);
+  });
+
+  it('does dome stuff', async () => {});
 });
