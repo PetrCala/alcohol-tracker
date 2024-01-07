@@ -115,8 +115,8 @@ export type UnconfirmedDaysData = {
 
 export type UserData = {
   profile: ProfileData;
-  friends: FriendsData;
-  friend_requests: FriendRequestData;
+  friends?: FriendsData;
+  friend_requests?: FriendRequestData;
   role: string;
   last_online: number;
   beta_key_id: string;

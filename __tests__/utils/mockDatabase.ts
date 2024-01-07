@@ -249,7 +249,7 @@ export function createMockUserData(userId: string): UserData {
     display_name: 'mock-user',
     photo_url: '',
   };
-  let mockFriendsData: FriendsData = {};
+  let mockFriendsData: FriendsData | undefined = undefined;
   let mockFriendRequests: FriendRequestData = createMockFriendRequests(userId);
   return {
     profile: mockProfileData,
@@ -321,5 +321,5 @@ export function exportMockDatabase(): string {
   fs.writeFileSync(filePath, JSON.stringify(mockDatabase));
   return filePath;
 }
-
-// exportMockDatabase() // Run script to export
+// 
+exportMockDatabase() // Run script to export

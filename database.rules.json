@@ -5,16 +5,21 @@
       ".write": "auth != null"
     },
     "users": {
-      ".read": "auth != null",
-      ".write": "auth != null",
       "$uid": {
-          "friend_requests": {
-            "$request_id": {
-                ".validate": "newData.val() === null || (newData.isString() && (newData.val() === 'sent' || newData.val() === 'received'))",
-                ".read": true
-                // ".write": "root.child('users').child($uid).child('friend_requests').child($request_id) == $uid"
-            }
+        "friends": {
+          "$friend_uid": {
+            ".validate": "newData.isBoolean()",
+            ".read": "auth != null",
+            ".write": "auth != null"
           }
+        },
+        "friend_requests": {
+          ".read": "auth != null && $uid === auth.uid",
+          "$request_id": {
+            ".validate": "(($uid === auth.uid && newData.val() === 'sent') || ($request_id === auth.uid && newData.val() === 'received') || newData.val() === null) && ($uid != $request_id) && (newData.isString())",
+            ".write": "auth != null"
+          }
+        }
       }
     }
   }

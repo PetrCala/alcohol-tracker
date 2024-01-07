@@ -28,7 +28,6 @@ const testFeedback: FeedbackProps = {
   user_id: 'testId',
 };
 const authUserId = 'authUserId';
-const unauthUserId = 'unauthUserId';
 const otherUserId = 'otherUserId';
 
 describeWithEmulator('Test feedback rules', () => {
@@ -76,6 +75,27 @@ describeWithEmulator('Test feedback rules', () => {
   });
 });
 
+describeWithEmulator('Test friend rules', () => {
+  let testEnv: RulesTestEnvironment;
+  setupGlobalMocks(); // Silence permission denied warnings
+
+  beforeAll(async () => {
+    testEnv = await setupFirebaseRulesTestEnv();
+  });
+
+  afterEach(async () => {
+    await testEnv.clearDatabase();
+  });
+
+  afterAll(async () => {
+    await teardownFirebaseRulesTestEnv(testEnv);
+  });
+
+  it('does something', async () => {
+    expect(true).toBe(true);
+  });
+});
+
 describeWithEmulator('Test friend request rules', () => {
   let testEnv: RulesTestEnvironment;
   setupGlobalMocks();
@@ -96,7 +116,7 @@ describeWithEmulator('Test friend request rules', () => {
     // Set up the authenticated user context
     const authDb = testEnv.authenticatedContext(authUserId).database();
     const authRef = authDb.ref(
-      `users/${authUserId}/friends/friend_requests/${otherUserId}`,
+      `users/${authUserId}/friend_requests/${otherUserId}`,
     );
 
     // Allow only 'sent' or null values to be written into the user's own friend_requests database part
@@ -108,7 +128,7 @@ describeWithEmulator('Test friend request rules', () => {
     // Set up the authenticated user context
     const authDb = testEnv.authenticatedContext(authUserId).database();
     const authRef = authDb.ref(
-      `users/${authUserId}/friends/friend_requests/${otherUserId}`,
+      `users/${authUserId}/friend_requests/${otherUserId}`,
     );
 
     // Attempt to write invalid values into the user's own friend_requests database part
@@ -120,7 +140,7 @@ describeWithEmulator('Test friend request rules', () => {
     // Set up the authenticated user context
     const authDb = testEnv.authenticatedContext(authUserId).database();
     const authRef = authDb.ref(
-      `users/${otherUserId}/friends/friend_requests/${authUserId}`,
+      `users/${otherUserId}/friend_requests/${authUserId}`,
     );
 
     // Attempt to write the authenticated user's id into the other user's friend_requests database part
@@ -132,7 +152,7 @@ describeWithEmulator('Test friend request rules', () => {
     // Set up the authenticated user context
     const authDb = testEnv.authenticatedContext(authUserId).database();
     const authRef = authDb.ref(
-      `users/${otherUserId}/friends/friend_requests/someOtherUserId`,
+      `users/${otherUserId}/friend_requests/${otherUserId}`,
     );
 
     // Attempt to write under different id into the other user's friend_requests database part
@@ -143,7 +163,7 @@ describeWithEmulator('Test friend request rules', () => {
     // Set up the authenticated user context
     const authDb = testEnv.authenticatedContext(authUserId).database();
     const authRef = authDb.ref(
-      `users/${otherUserId}/friends/friend_requests/${authUserId}`,
+      `users/${otherUserId}/friend_requests/${authUserId}`,
     );
 
     // Fail any other write into the other user's friend_requests database part than 'received'
@@ -151,27 +171,37 @@ describeWithEmulator('Test friend request rules', () => {
     await assertFails(authRef.set('sent'));
   });
 
-  // it('should allow reading friend_requests when authenticated', async () => {
-  //   // Set up the authenticated user context
-  //   const authDb = testEnv.authenticatedContext(authUserId).database();
-  //   const authRef = authDb.ref(`users/${authUserId}/friends/friend_requests/${otherUserId}`);
+  it('should not allow writing to friend_requests anything else than strings', async () => {
+    // Set up the authenticated user context
+    const authDb = testEnv.authenticatedContext(authUserId).database();
+    const authRef = authDb.ref(`users/${authUserId}/friend_requests`);
 
-  //   // Attempt to read the friend_requests database part
-  //   await assertSucceeds(authRef.get());
-  // });
+    // Attempt to write non-string values into the user's own friend_requests database part
+    // No need to write directly null, since only friend requests themselves should be modified
+    await assertFails(authRef.set(123));
+    await assertFails(authRef.set(true));
+    await assertFails(authRef.set({}));
+    await assertFails(authRef.set([]));
+    await assertFails(authRef.set(null));
+  });
 
-  // it('should not allow authenticated user to write into other user\'s friend_requests', async () => {
-  //   const authUserId = 'authUserId';
-  //   const otherUserId = 'otherUserId';
-  //   const requestId = 'requestId';
+  it('should allow reading own friend_requests when authenticated', async () => {
+    const authDb = testEnv.authenticatedContext(authUserId).database();
+    const authRef = authDb.ref(`users/${authUserId}/friend_requests`);
+    await assertSucceeds(authRef.get());
+  });
 
-  //   // Set up the authenticated user context
-  //   const authDb = testEnv.authenticatedContext(authUserId).database();
-  //   const authRef = authDb.ref(`users/${otherUserId}/friends/friend_requests/${requestId}`);
+  it('should not allow reading own friend_requests when unauthenticated', async () => {
+    const unauthDb = testEnv.unauthenticatedContext().database();
+    const unauthRef = unauthDb.ref(`users/${authUserId}/friend_requests`);
+    await assertFails(unauthRef.get());
+  });
 
-  //   // Attempt to write into the other user's friend_requests database part
-  //   await assertFails(authRef.set('sent'));
-  // });
+  it("should not allow reading other people's friend requests", async () => {
+    const authDb = testEnv.authenticatedContext(authUserId).database();
+    const authRef = authDb.ref(`users/${otherUserId}/friend_requests`);
+    await assertFails(authRef.get());
+  });
 });
 
 // Test out beta keys behavior

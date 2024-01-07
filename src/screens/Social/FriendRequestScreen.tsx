@@ -122,19 +122,18 @@ const FriendRequestComponent: React.FC<FriendRequestComponentProps> = ({
 const FriendRequestScreen = (props: ScreenProps) => {
   const {userData} = props;
   const {db} = useFirebase();
-  const [friendRequests, setFriendRequests] = useState<FriendRequestData>(
-    userData ? userData?.friend_requests : {},
-  );
+  const [friendRequests, setFriendRequests] = useState<
+    FriendRequestData | undefined
+  >(userData?.friend_requests);
   const [loadingDisplayData, setLoadingDisplayData] = useState<boolean>(false);
   const [displayData, setDisplayData] = useProfileDisplayData({
-    data: friendRequests,
+    data: friendRequests ?? {},
     db: db,
     setLoadingDisplayData: setLoadingDisplayData,
   });
 
   useEffect(() => {
-    if (!userData) return;
-    setFriendRequests(userData.friend_requests);
+    setFriendRequests(userData?.friend_requests);
   }, [userData]);
 
   return (
@@ -142,7 +141,8 @@ const FriendRequestScreen = (props: ScreenProps) => {
       <ScrollView
         style={styles.scrollViewContainer}
         keyboardShouldPersistTaps="handled">
-        {isNonEmptyObject(friendRequests) ? (
+        {/* {isNonEmptyObject(friendRequests) ? ( */}
+        {friendRequests ? (
           <View style={styles.friendList}>
             {Object.keys(friendRequests).map(requestId => {
               const profileData = displayData[requestId];

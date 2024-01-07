@@ -21,12 +21,10 @@ type ScreenProps = {
 const FriendListScreen = (props: ScreenProps) => {
   const {userData, setIndex} = props;
   const {db} = useFirebase();
-  const [friends, setFriends] = useState<FriendsData>(
-    userData ? userData?.friends : {},
-  );
+  const [friends, setFriends] = useState<FriendsData | undefined>(userData?.friends);
   const [loadingDisplayData, setLoadingDisplayData] = useState<boolean>(false);
   const [displayData, setDisplayData] = useProfileDisplayData({
-    data: friends,
+    data: friends ?? {},
     db: db,
     setLoadingDisplayData: setLoadingDisplayData,
   });
@@ -38,7 +36,8 @@ const FriendListScreen = (props: ScreenProps) => {
 
   return (
     <ScrollView style={styles.scrollViewContainer}>
-      {isNonEmptyObject(friends) ? (
+      {/* {isNonEmptyObject(friends) ? ( */}
+      {friends ? (
         <View style={styles.friendList}>
           {Object.keys(friends).map(friendId =>
             loadingDisplayData ? (

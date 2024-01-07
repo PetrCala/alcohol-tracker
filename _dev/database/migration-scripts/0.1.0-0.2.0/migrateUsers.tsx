@@ -9,8 +9,8 @@ export const transformUserData = async (userData: UserData, userId: string):Prom
   const last_online = userData.last_online ?? null;
   const beta_key_id = userData.beta_key_id ?? null;
   let profile:ProfileData = userData.profile ?? null;
-  let friends:FriendsData = userData.friends ?? null;
-  let friend_requests:FriendRequestData = userData.friend_requests ?? null;
+  let friends:FriendsData | undefined = userData.friends ?? undefined;
+  let friend_requests:FriendRequestData | undefined = userData.friend_requests ?? undefined;
   // Create the profile data if not available - from version 0.2.0
   if (!profile){
     let username:string = "";
@@ -29,7 +29,7 @@ export const transformUserData = async (userData: UserData, userId: string):Prom
   };
   // Create friends data if not available - from version 0.2.0
   if (!friends){
-    friends = {};
+    friends = undefined;
   };
 
   return {

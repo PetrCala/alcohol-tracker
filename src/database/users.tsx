@@ -41,8 +41,6 @@ export const getDefaultUserData = (
   let timestampNow = new Date().getTime();
   return {
     profile: profileData,
-    friends: {},
-    friend_requests: {},
     role: userRole,
     last_online: timestampNow,
     beta_key_id: betaKeyId, // Beta feature

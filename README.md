@@ -125,3 +125,15 @@
 
   Under this setup, the database will allow writes into the lower order node even though you are explicitly trying to forbid it by setting the rules to `false` there. To forbid writes into the lower order node, make sure to address the higher order rules first.
 - When dealing with `.validate`, the behavior is a little different. The **validation rules apply only to the node for which they are written**. In other words, they do not cascade. If you, for example, want all members of a node to be either null, or a certain string, you must set this value for all nodes for which this should be relevant. Simply setting this to a higher order node will not suffice.
+
+## Firebase rules explanation
+
+Our Firebase project uses specific security rules to ensure data integrity and access control. Below is an overview of these rules:
+
+### Feedback
+
+- **Read Access**: Only users with an `admin` role can read data from the `feedback` node. This is controlled by the rule: `"auth.token.admin === true"`. It ensures that only authenticated users with an admin token can access this data.
+
+- **Write Access**: Any authenticated user can write data to the `feedback` node. The rule `"auth != null"` checks that the user is authenticated, regardless of their role or other credentials.
+
+### TBA
