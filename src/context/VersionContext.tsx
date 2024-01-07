@@ -77,6 +77,7 @@ export const VersionManagementProvider: React.FC<
     checkAppVersion();
   }, [isOnline]);
 
+
   if (!isOnline) return <UserOffline />;
   if (state.isLoading) return <LoadingData />;
   if (state.versionInfoUnavailable) return <UserOffline />;

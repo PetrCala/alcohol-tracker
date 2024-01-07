@@ -53,6 +53,20 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
     return true;
   };
 
+  async function rollbackChanges(
+    newUserId: string,
+    userNickname: string,
+    betaKeyId: string,
+  ): Promise<void> {
+    // Delete the user data from the Realtime Database
+    await deleteUserInfo(db, newUserId, userNickname, betaKeyId);
+
+    // Delete the user from Firebase authentication
+    if (auth.currentUser) {
+      await auth.currentUser.delete();
+    }
+  }
+
   const handleSignUp = async () => {
     if (!validateUserInput() || !isOnline || !auth) return;
     let currentUser = auth.currentUser;
@@ -116,6 +130,7 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
     try {
       await signUpUserWithEmailAndPassword(auth, email, password);
     } catch (error: any) {
+      console.log('Sign-up failed when creating a user in firebase authentification: ', error)
       Alert.alert(
         'Sign-up failed',
         'There was an error during sign-up: ' + error.message,
@@ -128,24 +143,46 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
     }
     newUserId = auth.currentUser.uid;
 
+    try{
+      await auth.currentUser.delete();
+    } catch (error: any) {
+      console.log('Sign-up failed when deleting a user in firebase authentification: ', error)
+      Alert.alert(
+        'Sign-up failed',
+        'There was an error during sign-up: ' + error.message,
+      );
+      return;
+    }
+
     try {
       // Realtime Database updates
       await pushNewUserInfo(db, newUserId, newProfileData, betaKeyId);
-      // Firebase authentication updates
-      await updateProfile(auth.currentUser, {displayName: username});
-      navigation.replace('App', {screen: 'Main Screen'});
-      // Potentially navigate with a success message
+
+      // Update Firebase authentication
+      if (auth.currentUser) {
+        await updateProfile(auth.currentUser, { displayName: username });
+      } else {
+        throw new Error("Authentication failed");
+      }
+
+      // Navigate to the main screen with a success message
+      // navigation.replace('App', {screen: 'Main Screen'});
     } catch (error: any) {
       Alert.alert(
         'Sign-up failed',
         'There was an error during sign-up: ' + error.message,
       );
-      // Delete the user data from the Realtime Database
-      const userNickname = newProfileData.display_name;
-      await deleteUserInfo(db, newUserId, userNickname, betaKeyId);
-      // Clean up any partially created data
-      if (auth.currentUser) {
-        await auth.currentUser.delete();
+
+      // Attempt to rollback any changes made
+      try {
+        await rollbackChanges(
+          newUserId,
+          newProfileData.display_name,
+          betaKeyId,
+        );
+      } catch (rollbackError:any) {
+        console.error("Rollback error: ", rollbackError);
+        Alert.alert('Clean-up failed', `Error during sign-up clean-up: ${rollbackError.message}`);
       }
     }
     return;
