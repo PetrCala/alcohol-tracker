@@ -15,7 +15,7 @@ import {isConnectedToDatabaseEmulator} from '@src/services/firebaseUtils';
 import {DatabaseProps, UnitTypesProps} from '@src/types/database';
 import {Database} from 'firebase/database';
 import {describeWithEmulator} from '../../utils/emulatorTools';
-import * as firebaseRules from '../../../firebase.json';
+import * as firebaseJson from '../../../firebase.json';
 import {saveDrinkingSessionData} from '@database/drinkingSessions';
 
 import {MOCK_SESSION_IDS, MOCK_USER_IDS} from '../../utils/testsStatic';
@@ -43,7 +43,7 @@ describeWithEmulator('Connect to the realtime database emulator', () => {
 
     // Initialize the database
     db = getDatabase(testApp);
-    const dbPort = parseInt(firebaseRules.emulators.database.port);
+    const dbPort = parseInt(firebaseJson.emulators.database.port);
     connectDatabaseEmulator(db, 'localhost', dbPort);
 
     // Fill the database with mock data

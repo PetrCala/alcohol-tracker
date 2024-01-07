@@ -14,7 +14,7 @@ import {
   shouldRunTests,
   setupFirebaseRulesTestEnv,
 } from '../../utils/emulatorTools';
-import * as firebaseRules from '../../../firebase.json';
+import * as firebaseJson from '../../../firebase.json';
 import {FeedbackProps} from '@src/types/database';
 
 const projectId = process.env.TEST_PROJECT_ID;
@@ -161,3 +161,6 @@ describeWithEmulator('Test friend request rules', () => {
   //   await assertFails(authRef.set('sent'));
   // });
 });
+
+// Test out beta keys behavior
+// Make an explicit list of opperations the user can do (has to do) before being authenticated

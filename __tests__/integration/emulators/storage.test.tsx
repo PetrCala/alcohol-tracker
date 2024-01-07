@@ -6,7 +6,7 @@ import {initializeApp, deleteApp, FirebaseApp} from 'firebase/app';
 import {isConnectedToStorageEmulator} from '@src/services/firebaseUtils';
 import {describeWithEmulator} from '../../utils/emulatorTools';
 import {connectStorageEmulator} from 'firebase/storage';
-import * as firebaseRules from '../../../firebase.json';
+import * as firebaseJson from '../../../firebase.json';
 
 const storageBucket = process.env.TEST_STORAGE_BUCKET;
 const projectId = process.env.TEST_PROJECT_ID;
@@ -27,7 +27,7 @@ describeWithEmulator('Connect to the storage emulator', () => {
     });
 
     storage = getStorage();
-    const storagePort = parseInt(firebaseRules.emulators.database.port);
+    const storagePort = parseInt(firebaseJson.emulators.database.port);
     connectStorageEmulator(storage, 'localhost', storagePort);
   });
 

@@ -71,6 +71,9 @@ bun.lockb
 **/fastlane/screenshots
 **/fastlane/test_output
 
+# Firebase
+**/database.rules.test.json
+
 # Bundle artifact
 *.jsbundle
 
