@@ -63,15 +63,17 @@
 - The command should always be ran **on the staging branch** and from the project root. No version updates should happen on the master branch, nor in smaller branches. This should help keep one source of truth. When merging to the staging branch, never accept changes from the incoming branch.
 - We use semantic versioning.
 
-## Building for Android
+### Building for Android
 
 - Create a `local.properties` file in the `android` folder and put the following inside:
+
     ```bash
     sdk.dir = /Users/USERNAME/Library/Android/sdk
     ```
 
     where you replace `USERNAME` with your username. On windows, adjust the path to point to your Android SDK folder.
 - Make sure to add this path to the `ANDROID_HOME` by running
+
     ```bash
     export ANDROID_HOME = /Users/USERNAME/Library/Android/sdk
     ```
@@ -88,12 +90,16 @@
 
     to make the file readable.
 
-## Formatting
+### Formatting
 
 - For typescript and javascript files, we use `Prettier`
 - For bash scripts, we use `shell-format`
 
-## Working with Firebase
+### Managing ruby versions
+
+- We officially use Ruby version 2.6.10. To read about ruby version configuration see [this link](https://rbenv.org/man/rbenv.1).
+
+### Working with Firebase
 
 - Firebase CLI is necessary for any Firebase tests/emulators to run correctly. In order to set up your local environment, run these commands first
 
@@ -103,10 +109,11 @@
     firebase init
     ```
 
-## Writing Firebase rules
+### Writing Firebase rules
 
 - When setting the Firebase rules, here are a several useful behavior patterns to keep in mind:
   - `.read` and `.write` rules cascade. In case you allow an operation in a higher order node, all operations ran on deeper will be allowed, even if you explicitly override them there. Similarly, setting `false` will disallow all deeper node operations. Consider the following example:
+  
   ```
   higher_order_node: {
     .write: true,
