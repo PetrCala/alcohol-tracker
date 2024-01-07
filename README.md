@@ -102,3 +102,19 @@
     firebase login
     firebase init
     ```
+
+## Writing Firebase rules
+
+- When setting the Firebase rules, here are a several useful behavior patterns to keep in mind:
+  - `.read` and `.write` rules cascade. In case you allow an operation in a higher order node, all operations ran on deeper will be allowed, even if you explicitly override them there. Similarly, setting `false` will disallow all deeper node operations. Consider the following example:
+  ```
+  higher_order_node: {
+    .write: true,
+    lower_order_node: {
+        .write: false
+    }
+  }
+  ```
+
+  Under this setup, the database will allow writes into the lower order node even though you are explicitly trying to forbid it by setting the rules to `false` there. To forbid writes into the lower order node, make sure to address the higher order rules first.
+- When dealing with `.validate`, the behavior is a little different. The **validation rules apply only to the node for which they are written**. In other words, they do not cascade. If you, for example, want all members of a node to be either null, or a certain string, you must set this value for all nodes for which this should be relevant. Simply setting this to a higher order node will not suffice.
