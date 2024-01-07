@@ -91,8 +91,48 @@ describeWithEmulator('Test friend rules', () => {
     await teardownFirebaseRulesTestEnv(testEnv);
   });
 
-  it('does something', async () => {
-    expect(true).toBe(true);
+  it('should allow a user to write valid values into their own friend list', async () => {
+    const authDb = testEnv.authenticatedContext('authUserId').database();
+    const authRef = authDb.ref(`users/authUserId/friends/otherUserId`);
+    await assertSucceeds(authRef.set(true));
+    await assertSucceeds(authRef.set(null));
+  });
+
+  it('should allow a user to write valid values into other user\'s friend list', async () => {
+    const authDb = testEnv.authenticatedContext('authUserId').database();
+    const authRef = authDb.ref(`users/otherUserId/friends/authUserId`);
+    await assertSucceeds(authRef.set(true));
+    await assertSucceeds(authRef.set(null));
+  });
+
+  it('should not allow a user to write their own name into their friend list', async () => {
+    const authDb = testEnv.authenticatedContext('authUserId').database();
+    const authRef = authDb.ref(`users/authUserId/friends/authUserId`);
+    await assertFails(authRef.set(true));
+  });
+
+  it('should not allow writing invalid values into their friend list', async () => {
+    const authDb = testEnv.authenticatedContext('authUserId').database();
+    const authRef = authDb.ref(`users/authUserId/friends/otherUserId`);
+    await assertFails(authRef.set('invalid'));
+  });
+  
+  it('should not allow writing invalid values into other user\'s friend list', async () => {
+    const authDb = testEnv.authenticatedContext('authUserId').database();
+    const authRef = authDb.ref(`users/otherUserId/friends/authUserId`);
+    await assertFails(authRef.set('invalid'));
+  });
+
+  it('should allow reading own friend list when authenticated', async () => {
+    const authDb = testEnv.authenticatedContext('authUserId').database();
+    const authRef = authDb.ref(`users/authUserId/friends`);
+    await assertSucceeds(authRef.get());
+  });
+
+  it('should not allow reading own friend list when unauthenticated', async () => {
+    const unauthDb = testEnv.unauthenticatedContext().database();
+    const unauthRef = unauthDb.ref(`users/authUserId/friends`);
+    await assertFails(unauthRef.get());
   });
 });
 
@@ -185,6 +225,12 @@ describeWithEmulator('Test friend request rules', () => {
     await assertFails(authRef.set(null));
   });
 
+  it('should not allow the user to write their own name into their friend_requests', async () => {
+    const authDb = testEnv.authenticatedContext(authUserId).database();
+    const authRef = authDb.ref(`users/${authUserId}/friend_requests/${authUserId}`);
+    await assertFails(authRef.set('sent'));
+  })
+
   it('should allow reading own friend_requests when authenticated', async () => {
     const authDb = testEnv.authenticatedContext(authUserId).database();
     const authRef = authDb.ref(`users/${authUserId}/friend_requests`);
@@ -204,5 +250,5 @@ describeWithEmulator('Test friend request rules', () => {
   });
 });
 
-// Test out beta keys behavior
+// Test out beta keys, config
 // Make an explicit list of opperations the user can do (has to do) before being authenticated

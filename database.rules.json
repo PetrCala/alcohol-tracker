@@ -1,23 +1,86 @@
 {
   "rules": {
+    "beta_keys": {
+      ".read": true,
+      ".write": "auth != null"
+    },
+    "config": {
+      ".read": true,
+      ".write": "auth.token.admin === true"
+    },
     "feedback": {
       ".read": "auth.token.admin === true",
       ".write": "auth != null"
     },
+    "nickname_to_id": {
+      ".read": "auth != null",
+      "$display_key": {
+        "$uid": {
+          ".validate": "newData.isString() || newData.val() === null",
+          ".write": "auth.uid === $uid"
+        }
+      }
+    },
+    "user_current_session": {
+      "$uid": {
+        ".validate": "newData.isString() || newData.val() === null",
+        ".read": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('friends').child($uid).exists())",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+    "user_drinking_sessions": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('friends').child($uid).exists())",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+    "user_preferences": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('friends').child($uid).exists())",
+        ".write": "auth != null && auth.uid === $uid",
+        "first_day_of_week": {
+          ".validate": "newData.val() === 'Monday' || newData.val() === 'Sunday'"
+        },
+        "units_to_colors": {
+          ".validate": "newData.hasChildren(['orange', 'yellow'])"
+        },
+        "units_to_points": {
+          ".validate": "newData.hasChildren(['beer', 'cocktail', 'other', 'stron_shot', 'weak_shot', 'wine'])"
+        }
+        }
+    },
+    "user_unconfirmed_days": {
+      "$uid": {
+        ".validate": "newData.val() === true || newData.val() === null",
+        ".read": "auth != null  && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
     "users": {
       "$uid": {
         "friends": {
+          ".read": "auth != null",
           "$friend_uid": {
-            ".validate": "newData.isBoolean()",
-            ".read": "auth != null",
-            ".write": "auth != null"
+            ".validate": "(newData.val() === true || newData.val() === null)",
+            ".write": "auth != null && $uid != $friend_uid && ($uid === auth.uid || $friend_uid === auth.uid)"
           }
         },
         "friend_requests": {
           ".read": "auth != null && $uid === auth.uid",
           "$request_id": {
-            ".validate": "(($uid === auth.uid && newData.val() === 'sent') || ($request_id === auth.uid && newData.val() === 'received') || newData.val() === null) && ($uid != $request_id) && (newData.isString())",
-            ".write": "auth != null"
+            ".validate": "(($uid === auth.uid && newData.val() === 'sent') || ($request_id === auth.uid && newData.val() === 'received') || newData.val() === null)",
+            ".write": "auth != null && $uid != $request_id"
+          }
+        },
+        "profile": {
+          ".read": "auth != null",
+          "photo_url": {
+            ".validate": "newData.isString()",
+            ".write": "auth != null && auth.uid === $uid"
+          },
+          "display_name": {
+            ".validate": "newData.isString()",
+            ".write": "auth != null && auth.uid === $uid"
           }
         }
       }
