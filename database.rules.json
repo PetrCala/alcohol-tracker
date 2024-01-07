@@ -11,8 +11,8 @@
           "friend_requests": {
             "$request_id": {
                 ".validate": "newData.val() === null || (newData.isString() && (newData.val() === 'sent' || newData.val() === 'received'))",
-                ".read": true,
-                ".write": "root.child('users').child($uid).child('friend_requests').child($request_id) == $uid"
+                ".read": true
+                // ".write": "root.child('users').child($uid).child('friend_requests').child($request_id) == $uid"
             }
           }
       }

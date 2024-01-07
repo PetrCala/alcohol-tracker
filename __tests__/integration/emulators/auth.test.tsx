@@ -13,7 +13,7 @@ import {
 import {initializeApp, deleteApp, FirebaseApp} from 'firebase/app';
 import {isConnectedToAuthEmulator} from '@src/services/firebaseUtils';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
-import {describeWithEmulator} from '../../utils/emulatorTools';
+import {describeWithEmulator} from '../../utils/emulators/emulatorTools';
 
 const authDomain = process.env.TEST_AUTH_DOMAIN;
 const projectId = process.env.TEST_PROJECT_ID;

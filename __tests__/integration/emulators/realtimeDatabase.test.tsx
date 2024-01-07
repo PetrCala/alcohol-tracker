@@ -14,7 +14,7 @@ import {createMockDatabase, createMockSession} from '../../utils/mockDatabase';
 import {isConnectedToDatabaseEmulator} from '@src/services/firebaseUtils';
 import {DatabaseProps, UnitTypesProps} from '@src/types/database';
 import {Database} from 'firebase/database';
-import {describeWithEmulator} from '../../utils/emulatorTools';
+import {describeWithEmulator} from '../../utils/emulators/emulatorTools';
 import * as firebaseJson from '../../../firebase.json';
 import {saveDrinkingSessionData} from '@database/drinkingSessions';
 

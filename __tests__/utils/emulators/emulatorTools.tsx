@@ -5,7 +5,7 @@ import {
   initializeTestEnvironment,
   RulesTestEnvironment,
 } from '@firebase/rules-unit-testing';
-import * as firebaseJson from '../../firebase.json';
+import * as firebaseJson from '../../../firebase.json';
 import CONST from '@src/CONST';
 
 // Perhaps if this grows too largs, rewrite into a module export
