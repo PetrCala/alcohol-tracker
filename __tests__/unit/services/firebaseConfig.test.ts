@@ -12,7 +12,7 @@ jest.mock('firebase/auth', () => ({
 jest.mock('@react-native-async-storage/async-storage', () => ({}));
 
 // Helper function to set environment variables
-const setEnvironmentVariables = env => {
+const setEnvironmentVariables = (env:any) => {
   Object.assign(process.env, env);
 };
 
