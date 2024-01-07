@@ -140,13 +140,13 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
         'Sign-up failed',
         'There was an error during sign-up: ' + error.message,
       );
+      // Delete the user data from the Realtime Database
+      const userNickname = newProfileData.display_name;
+      await deleteUserInfo(db, newUserId, userNickname, betaKeyId);
       // Clean up any partially created data
       if (auth.currentUser) {
         await auth.currentUser.delete();
       }
-      // Delete the user data from the Realtime Database
-      const userNickname = newProfileData.display_name;
-      await deleteUserInfo(db, newUserId, userNickname, betaKeyId);
     }
     return;
   };
