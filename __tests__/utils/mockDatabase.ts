@@ -249,11 +249,11 @@ export function createMockUserData(userId: string): UserData {
     display_name: 'mock-user',
     photo_url: '',
   };
-  let mockFriendsData: FriendsData | undefined = undefined;
+  // let mockFriendsData: FriendsData | undefined = undefined;
   let mockFriendRequests: FriendRequestData = createMockFriendRequests(userId);
   return {
     profile: mockProfileData,
-    friends: mockFriendsData,
+    // friends: mockFriendsData,
     friend_requests: mockFriendRequests,
     role: 'mock-user',
     last_online: Date.now(),

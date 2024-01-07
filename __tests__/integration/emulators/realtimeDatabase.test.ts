@@ -20,6 +20,7 @@ import {saveDrinkingSessionData} from '@database/drinkingSessions';
 
 import {MOCK_SESSION_IDS, MOCK_USER_IDS} from '../../utils/testsStatic';
 import {readDataOnce} from '@database/baseFunctions';
+import {setupGlobalMocks} from '../../utils/testUtils';
 
 const databaseURL = process.env.TEST_DATABASE_URL;
 const projectId = process.env.TEST_PROJECT_ID;
@@ -34,6 +35,7 @@ describeWithEmulator('Connect to the realtime database emulator', () => {
   let db: Database;
   let mockDatabase: DatabaseProps;
   let testUserId: string = MOCK_USER_IDS[0];
+  setupGlobalMocks();
 
   beforeAll(async () => {
     testApp = initializeApp({
