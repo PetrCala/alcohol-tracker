@@ -33,7 +33,7 @@ import {
   timestampToDate,
   unitsToColors,
 } from '../utils/dataHandling';
-import {auth} from '../../src/services/firebaseConfig';
+import {auth} from '../services/firebaseSetup';
 import {
   DrinkingSessionArrayItem,
   DrinkingSessionData,

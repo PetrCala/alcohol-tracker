@@ -16,7 +16,7 @@ import {
 import {useEffect, useState} from 'react';
 import {useFirebase} from '../../context/FirebaseContext';
 import {acceptFriendRequest, deleteFriendRequest} from '../../database/friends';
-import {auth} from '../../../src/services/firebaseConfig';
+import {auth} from '../../services/firebaseSetup';
 import {isNonEmptyObject} from '../../utils/validation';
 import useProfileDisplayData from '../../hooks/useProfileDisplayData';
 import LoadingData from '../../components/LoadingData';

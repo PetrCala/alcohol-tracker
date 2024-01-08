@@ -38,7 +38,7 @@ import {
   timestampToDate,
   unitsToColors,
 } from '../utils/dataHandling';
-import {auth} from '../../src/services/firebaseConfig';
+import {auth} from '../services/firebaseSetup';
 import DrinkingSessionUnitWindow from '../components/DrinkingSessionUnitWindow';
 import {maxAllowedUnits} from '../utils/static';
 import YesNoPopup from '../components/Popups/YesNoPopup';

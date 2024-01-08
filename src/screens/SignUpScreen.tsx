@@ -12,7 +12,7 @@ import {
   View,
 } from 'react-native';
 import {updateProfile} from 'firebase/auth';
-import {auth} from '../../src/services/firebaseConfig';
+import {auth} from '../services/firebaseSetup';
 import {signUpUserWithEmailAndPassword} from '../auth/auth';
 import {useFirebase} from '../context/FirebaseContext';
 import {SignUpScreenProps} from '../types/screens';

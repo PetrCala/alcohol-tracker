@@ -32,7 +32,7 @@ import {
   PreferencesData,
 } from '../types/database';
 import {DayOverviewScreenProps} from '../types/screens';
-import {auth} from '../../src/services/firebaseConfig';
+import {auth} from '../services/firebaseSetup';
 import UserOffline from '../components/UserOffline';
 import {useUserConnection} from '../context/UserConnectionContext';
 import BasicButton from '../components/Buttons/BasicButton';

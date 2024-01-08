@@ -21,7 +21,7 @@ export default {
   APP_NAME: get(Config, 'APP_NAME', 'Kiroku'),
   APP_ENVIRONMENT: get(Config, 'APP_ENVIRONMENT', ''),
   DB_CONFIG_PROD: {
-    // These have to be camelcase for firebase to work
+    // The keys have to be camelcase for firebase to work
     apiKey: get(Config, 'API_KEY', ''),
     authDomain: get(Config, 'AUTH_DOMAIN', ''),
     databaseURL: get(Config, 'DATABASE_URL', ''),
@@ -30,6 +30,16 @@ export default {
     messagineSenderId: get(Config, 'MESSAGING_SENDER_ID', ''),
     appId: get(Config, 'APP_ID', ''),
     measurementId: get(Config, 'MEASUREMENT_ID', ''),
+  },
+  DB_CONFIG_DEV: {
+    apiKey: get(Config, 'DEV_API_KEY', ''),
+    authDomain: get(Config, 'DEV_AUTH_DOMAIN', ''),
+    databaseURL: get(Config, 'DEV_DATABASE_URL', ''),
+    projectId: get(Config, 'DEV_PROJECT_ID', ''),
+    storageBucket: get(Config, 'DEV_STORAGE_BUCKET', ''),
+    messagineSenderId: get(Config, 'DEV_MESSAGING_SENDER_ID', ''),
+    appId: get(Config, 'DEV_APP_ID', ''),
+    measurementId: get(Config, 'DEV_MEASUREMENT_ID', ''),
   },
   DB_CONFIG_TEST: {
     apiKey: get(Config, 'TEST_API_KEY', ''),

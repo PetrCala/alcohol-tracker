@@ -12,7 +12,7 @@ import {
   View,
 } from 'react-native';
 import {sendPasswordResetEmail, signOut} from 'firebase/auth';
-import {auth} from '../../src/services/firebaseConfig';
+import {auth} from '../services/firebaseSetup';
 import {signInUserWithEmailAndPassword} from '../auth/auth';
 
 import {LoginScreenProps} from '../types/screens';

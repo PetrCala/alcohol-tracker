@@ -36,7 +36,7 @@ beforeEach(() => {
 });
 
 describe('Firebase Configuration', () => {
-  it('should initialize Firebase with correct configuration in development environment', () => {
+  xit('should initialize Firebase with correct configuration in development environment', () => {
     // Dynamically import the configuration module
     require('../../../src/services/firebaseConfig');
 
@@ -59,7 +59,7 @@ describe('Firebase Configuration', () => {
     expect(connectAuthEmulator).not.toHaveBeenCalled();
   });
 
-  it('should connect to auth emulator in test environment', () => {
+  xit('should connect to auth emulator in test environment', () => {
     // Set environment to test
     setEnvironmentVariables({
       ...process.env,

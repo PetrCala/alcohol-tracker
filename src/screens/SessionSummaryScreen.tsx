@@ -1,6 +1,6 @@
 ﻿import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import {SessionSummaryScreenProps} from '../types/screens';
-import {auth} from '../../src/services/firebaseConfig';
+import {auth} from '../services/firebaseSetup';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import {
   formatDate,

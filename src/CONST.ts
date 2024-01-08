@@ -12,7 +12,7 @@ const CONST = {
   ENVIRONMENT: {
     DEV: 'development',
     STAGING: 'staging',
-    PRODUCTION: 'production',
+    PROD: 'production',
     TEST: 'test',
   },
   EMPTY_ARRAY,

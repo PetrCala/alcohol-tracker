@@ -1,39 +1,40 @@
-﻿import {initializeApp, FirebaseOptions, FirebaseApp} from 'firebase/app';
-import {
-  initializeAuth,
-  getReactNativePersistence,
-  connectAuthEmulator,
-  Auth,
-} from 'firebase/auth';
-import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
-import {isConnectedToAuthEmulator} from './firebaseUtils';
+import { FirebaseOptions } from "firebase/app";
 import CONFIG from '@src/CONFIG';
 import CONST from '@src/CONST';
 
-const isTestEnv =
-  process.env.NODE_ENV === 'test' ||
-  CONFIG.APP_ENVIRONMENT === CONST.ENVIRONMENT.TEST;
+/**
+ * Dynamically and automatically sets Firebase configuration based on the current application environment. 
+ *
+ * Available environments:
+ * - `CONST.ENVIRONMENT.TEST`: Test environment.
+ * - `CONST.ENVIRONMENT.DEV`: Development environment.
+ * - `CONST.ENVIRONMENT.PROD`: Production environment.
+ *
+ * Throws:
+ * - Throws an error if the `APP_ENVIRONMENT` is not one of the predefined environments.
+ *
+ * Example Usage:
+ * This configuration object is typically used to initialize Firebase in the application, 
+ * ensuring that the correct environment settings are applied.
+ *
+ * ```
+ * import { initializeApp } from 'firebase/app';
+ * 
+ * // Initialize Firebase with the dynamic configuration
+ * initializeApp(firebaseConfig);
+ * ```
+ */
+const firebaseConfig: FirebaseOptions = (() => {
+    switch (CONFIG.APP_ENVIRONMENT) {
+        case CONST.ENVIRONMENT.TEST:
+            return CONFIG.DB_CONFIG_TEST;
+        case CONST.ENVIRONMENT.DEV:
+            return CONFIG.DB_CONFIG_DEV;
+        case CONST.ENVIRONMENT.PROD:
+            return CONFIG.DB_CONFIG_PROD;
+        default:
+            throw new Error('Invalid environment');
+    }
+})();
 
-const firebaseConfig: FirebaseOptions = isTestEnv
-  ? CONFIG.DB_CONFIG_TEST
-  : CONFIG.DB_CONFIG_PROD;
-
-// Initialize Firebase
-const app: FirebaseApp = initializeApp(firebaseConfig);
-
-// Initialize Auth with React Native persistence
-const auth: Auth = initializeAuth(app, {
-  persistence: getReactNativePersistence(ReactNativeAsyncStorage),
-});
-
-// Connect to auth emulator if in development environment
-if (isTestEnv) {
-  const authUrl = firebaseConfig.authDomain;
-  if (!authUrl) throw new Error('Auth URL not defined in firebaseConfig');
-
-  if (!isConnectedToAuthEmulator(auth)) {
-    connectAuthEmulator(auth, authUrl);
-  }
-}
-
-export {app, auth, firebaseConfig};
+export default firebaseConfig;

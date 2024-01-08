@@ -16,7 +16,7 @@ import LoadingData from '../components/LoadingData';
 import {DrinkingSessionArrayItem} from '../types/database';
 import {MainScreenProps} from '../types/screens';
 import {DateObject} from '../types/components';
-import {auth} from '../../src/services/firebaseConfig';
+import {auth} from '../services/firebaseSetup';
 import {
   dateToDateObject,
   getZeroUnitsObject,

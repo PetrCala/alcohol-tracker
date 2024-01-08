@@ -1,4 +1,4 @@
-﻿import {auth} from '../../src/services/firebaseConfig';
+﻿import {auth} from '../services/firebaseSetup';
 import {StyleSheet, Text, View} from 'react-native';
 import {useFirebase} from '../context/FirebaseContext';
 import {ProfileData} from '../types/database';

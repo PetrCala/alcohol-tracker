@@ -19,7 +19,7 @@ import {
   reauthenticateWithCredential,
   signOut,
 } from 'firebase/auth';
-import {auth} from '../../src/services/firebaseConfig';
+import {auth} from '../services/firebaseSetup';
 import {deleteUserInfo, reauthentificateUser} from '../database/users';
 import FeedbackPopup from '../components/Popups/FeedbackPopup';
 import {submitFeedback} from '../database/feedback';

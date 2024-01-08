@@ -8,7 +8,7 @@ import {
   UnconfirmedDaysData,
   UserData,
 } from '../types/database';
-import {auth} from '../../src/services/firebaseConfig';
+import {auth} from '../services/firebaseSetup';
 import {listenForDataChanges} from '../database/baseFunctions';
 import {isEqual} from 'lodash';
 import {useFirebase} from './FirebaseContext';

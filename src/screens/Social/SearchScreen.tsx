@@ -21,7 +21,7 @@ import {
   deleteFriendRequest,
   sendFriendRequest,
 } from '../../database/friends';
-import {auth} from '../../../src/services/firebaseConfig';
+import {auth} from '../../services/firebaseSetup';
 import {isNonEmptyObject} from '../../utils/validation';
 import useProfileDisplayData from '../../hooks/useProfileDisplayData';
 import LoadingData from '../../components/LoadingData';

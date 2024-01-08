@@ -12,7 +12,7 @@ import {
 import Slider from '@react-native-community/slider';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import {PreferencesScreenProps} from '../types/screens';
-import {auth} from '../../src/services/firebaseConfig';
+import {auth} from '../services/firebaseSetup';
 import {useUserConnection} from '../context/UserConnectionContext';
 import {useFirebase} from '../context/FirebaseContext';
 import UserOffline from '../components/UserOffline';
