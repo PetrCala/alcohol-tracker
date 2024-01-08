@@ -2,7 +2,11 @@
   "rules": {
     "beta_keys": {
       ".read": true,
-      ".write": "auth != null"
+      ".write": "auth.token.admin === true",
+      "$key": {
+        ".validate": "newData.hasChildren()",
+        ".write": "auth != null"
+      }
     },
     "config": {
       ".read": true,
@@ -10,10 +14,15 @@
     },
     "feedback": {
       ".read": "auth.token.admin === true",
-      ".write": "auth != null"
+      ".write": "auth.token.admin === true",
+      "$feedback_id": {
+        ".validate": "newData.val() === null || newData.hasChildren(['submit_time', 'text', 'user_id'])",
+        ".write": "auth != null"
+      }
     },
     "nickname_to_id": {
       ".read": "auth != null",
+      ".write": "auth.token.admin === true",
       "$display_key": {
         "$uid": {
           ".validate": "newData.isString() || newData.val() === null",
@@ -22,6 +31,8 @@
       }
     },
     "user_current_session": {
+      ".read": "auth.token.admin === true",
+      ".write": "auth.token.admin === true",
       "$uid": {
         ".validate": "newData.isString() || newData.val() === null",
         ".read": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('friends').child($uid).exists())",
@@ -29,13 +40,19 @@
       }
     },
     "user_drinking_sessions": {
+      ".read": "auth.token.admin === true",
+      ".write": "auth.token.admin === true",
       "$uid": {
+        ".validate": "newData.val() === null || newData.hasChildren()",
         ".read": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('friends').child($uid).exists())",
         ".write": "auth != null && auth.uid === $uid"
       }
     },
     "user_preferences": {
+      ".read": "auth.token.admin === true",
+      ".write": "auth.token.admin === true",
       "$uid": {
+        ".validate": "newData.val() === null || newData.hasChildren()",
         ".read": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('friends').child($uid).exists())",
         ".write": "auth != null && auth.uid === $uid",
         "first_day_of_week": {
@@ -58,29 +75,32 @@
     },
     "users": {
       "$uid": {
+        ".validate": "newData.val() === null || newData.hasChildren()",
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid",
         "friends": {
+          ".validate": "newData.val() === null || newData.hasChildren()",
           ".read": "auth != null",
           "$friend_uid": {
-            ".validate": "(newData.val() === true || newData.val() === null)",
-            ".write": "auth != null && $uid != $friend_uid && ($uid === auth.uid || $friend_uid === auth.uid)"
+            ".validate": "(newData.val() === true || newData.val() === null) && $uid != $friend_uid && ($uid === auth.uid || $friend_uid === auth.uid)",
+            ".write": "auth != null"
           }
         },
         "friend_requests": {
-          ".read": "auth != null && $uid === auth.uid",
+          ".validate": "newData.val() === null || newData.hasChildren()",
           "$request_id": {
-            ".validate": "(($uid === auth.uid && newData.val() === 'sent') || ($request_id === auth.uid && newData.val() === 'received') || newData.val() === null)",
-            ".write": "auth != null && $uid != $request_id"
+            ".validate": "(($uid === auth.uid && newData.val() === 'sent') || ($request_id === auth.uid && newData.val() === 'received') || newData.val() === null) && $uid != $request_id",
+            ".write": "auth != null"
           }
         },
         "profile": {
+          ".validate": "newData.val() === null || newData.hasChildren(['photo_url', 'display_name'])",
           ".read": "auth != null",
           "photo_url": {
-            ".validate": "newData.isString()",
-            ".write": "auth != null && auth.uid === $uid"
+            ".validate": "newData.isString()"
           },
           "display_name": {
-            ".validate": "newData.isString()",
-            ".write": "auth != null && auth.uid === $uid"
+            ".validate": "newData.isString()"
           }
         }
       }

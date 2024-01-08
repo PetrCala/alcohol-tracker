@@ -112,18 +112,42 @@
 ### Writing Firebase rules
 
 - When setting the Firebase rules, here are a several useful behavior patterns to keep in mind:
-  - `.read` and `.write` rules cascade. In case you allow an operation in a higher order node, all operations ran on deeper will be allowed, even if you explicitly override them there. Similarly, setting `false` will disallow all deeper node operations. Consider the following example:
+  - `.read` and `.write` rules cascade in the following way:
+    1. Rules get evaluated based on the node depth until the operation ultimately fails/succeeds.
+    2. Allowing an operation in a higher node means that similar operations ran on any lower node will succeed.
+    3. Targetting a lower node may lead to an allow as long as the final node's rule succeeds. This is despite any rules failing in higher nodes.
+    4. If the node into which is written does not have any write/read rules, the rules of higher order nodes will take effect instead, based on the rules described above.
+  - To demonstrate the two above-principles, consider this example:
   
-  ```
-  higher_order_node: {
-    .write: true,
-    lower_order_node: {
-        .write: false
+    ```
+    "higher_node": {
+        ".write": true,
+        "lower_node": {
+            ".write: false"
+        }
     }
-  }
-  ```
+    ```
 
-  Under this setup, the database will allow writes into the lower order node even though you are explicitly trying to forbid it by setting the rules to `false` there. To forbid writes into the lower order node, make sure to address the higher order rules first.
+    - Writing to the higher node: **succeeds**
+    - Writing to the lower node: **succeeds**
+    - **Explanation**: Attempting to write to the lower node will succeed, as a higher node is setting the `write` rule to `true`. The lower node`s rule is considered, but the higher order rule's allow operation takes precedence. Next, writing to the higher node will succeed too, regardless of the rules in the lower node (these are not considered).
+
+  - Next, take a look at this example:
+
+    ```
+    "higher_node": {
+        ".write": false,
+        "lower_node": {
+            ".write: true"
+        }
+    }
+    ```
+
+    - Writing to the higher node: **fails**
+    - Writing to the lower node: **succeeds**
+    - **Explanation**: When targetting the higher node, the write deny rule means the operation will fail. The rule in the lower node is not taken into consideration (regardless of the outcome). When writing to the lower node, the operation will succeed, as despite the higher node denial, it holds that denial in higher nodes 
+
+  - Under this setup, the database will allow writes into the lower order node even though you are explicitly trying to forbid it by setting the rules to `false` there. To forbid writes into the lower order node, make sure to address the higher order rules first.
 - When dealing with `.validate`, the behavior is a little different. The **validation rules apply only to the node for which they are written**. In other words, they do not cascade. If you, for example, want all members of a node to be either null, or a certain string, you must set this value for all nodes for which this should be relevant. Simply setting this to a higher order node will not suffice.
 
 ## Firebase rules explanation
