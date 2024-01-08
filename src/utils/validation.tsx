@@ -26,7 +26,7 @@ export const platformIsValid = (): boolean => {
  * @returns {boolean} True if the string is valid, false otherwise.
  */
 export function isValidString(input: string) {
-  for (let char of invalidChars) {
+  for (const char of invalidChars) {
     if (input.includes(char)) {
       return false;
     }
