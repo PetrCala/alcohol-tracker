@@ -53,7 +53,6 @@ const MenuItem: React.FC<MainMenuItemProps> = ({heading, data, index}) => (
 );
 
 const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
-  if (!route || !navigation) return null; // Should never be null
   const {userData, preferences} = getDatabaseData();
   // Context, database, and authentification
   const user = auth.currentUser;
@@ -281,6 +280,7 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
     modalData = [...modalData, ...adminData]; // Add admin settings
   }
 
+  if (!route || !navigation) return null; // Should never be null
   if (!isOnline) return <UserOffline />;
   if (!db || !preferences || !userData) return null; // Should never be null
 

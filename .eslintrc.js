@@ -79,7 +79,7 @@ module.exports = {
                     'error',
                     {
                         selector: ['variable', 'property'],
-                        format: ['camelCase', 'UPPER_CASE', 'PascalCase'],
+                        format: ['camelCase', 'UPPER_CASE', 'PascalCase', 'snake_case'],
                     },
                     {
                         selector: 'function',

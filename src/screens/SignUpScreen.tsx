@@ -17,17 +17,15 @@ import {signUpUserWithEmailAndPassword} from '../auth/auth';
 import {useFirebase} from '../context/FirebaseContext';
 import {SignUpScreenProps} from '../types/screens';
 import {readDataOnce} from '../database/baseFunctions';
-import {BetaKeysData, validateBetaKey} from '../database/beta';
+import {validateBetaKey} from '../database/beta';
 import {useUserConnection} from '../context/UserConnectionContext';
-import {handleInvalidInput} from '../utils/errorHandling';
 import {isValidString, validateAppVersion} from '../utils/validation';
 import {invalidChars} from '../utils/static';
 import {deleteUserInfo, pushNewUserInfo} from '../database/users';
 import {ProfileData} from 'src/types/database';
 
 const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
-  if (!route || !navigation) return null; // Should never be null
-  const {loginEmail} = route.params; // To avoid reduncancy
+  const {loginEmail} = route ? route.params : {loginEmail: ''};
   const {db} = useFirebase();
   const {isOnline} = useUserConnection();
   const [email, setEmail] = useState(loginEmail);
@@ -69,7 +67,7 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
 
   const handleSignUp = async () => {
     if (!validateUserInput() || !isOnline || !auth) return;
-    let currentUser = auth.currentUser;
+    const currentUser = auth.currentUser;
 
     if (currentUser) {
       setWarning(
@@ -78,9 +76,9 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
       return;
     }
 
-    var newUserId: string | undefined;
-    var minSupportedVersion: string | null;
-    var betaKeys: any;
+    let newUserId: string | undefined;
+    let minSupportedVersion: string | null;
+    let betaKeys: any;
 
     try {
       minSupportedVersion = await readDataOnce(
@@ -187,6 +185,8 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
     }
     return;
   };
+
+  if (!route || !navigation) return null; // Should never be null
 
   return (
     <ScrollView
