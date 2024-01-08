@@ -1,7 +1,7 @@
 <div align="center">
     <!-- <a href="https://link-here"> -->
-        <img src="https://raw.githubusercontent.com/PetrCala/Kiroku/master/assets/logo/alcohol-tracker-source-icon.png
-" width="64" height="64" alt="Kiroku Icon">
+        <!-- <img src="https://raw.githubusercontent.com/PetrCala/Kiroku/master/assets/logo/alcohol-tracker-source-icon.png -->
+<!-- " width="64" height="64" alt="Kiroku Icon"> -->
     <!-- </a> -->
     <h1>
         <!-- <a href="https://link-here"> -->
