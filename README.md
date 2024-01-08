@@ -111,6 +111,8 @@
 
 ### Writing Firebase rules
 
+#### Overview
+
 - When setting the Firebase rules, here are a several useful behavior patterns to keep in mind:
   - `.read` and `.write` rules cascade in the following way:
     1. Rules get evaluated based on the node depth until the operation ultimately fails/succeeds.
@@ -150,14 +152,44 @@
   - Under this setup, the database will allow writes into the lower order node even though you are explicitly trying to forbid it by setting the rules to `false` there. To forbid writes into the lower order node, make sure to address the higher order rules first.
 - When dealing with `.validate`, the behavior is a little different. The **validation rules apply only to the node for which they are written**. In other words, they do not cascade. If you, for example, want all members of a node to be either null, or a certain string, you must set this value for all nodes for which this should be relevant. Simply setting this to a higher order node will not suffice.
 
-## Firebase rules explanation
+#### Strategy
 
-Our Firebase project uses specific security rules to ensure data integrity and access control. Below is an overview of these rules:
+- For read/write, define restrictive rules at higher nodes, and allow broader access at concrete nodes. For example:
 
-### Feedback
+    ```
+    "users": {
+        "$uid": {
+            ".write": "auth != null && $uid ==== auth.uid",
+            "friend_requests": {
+                "$friend_request_id": {
+                    ".write": "auth != null"
+                }
+            }
+        }
+    }
+    ```
 
-- **Read Access**: Only users with an `admin` role can read data from the `feedback` node. This is controlled by the rule: `"auth.token.admin === true"`. It ensures that only authenticated users with an admin token can access this data.
+    - This will allow only the user to write to their data, except for the `friend_requests` node, in which other user will be able to write data too. 
+    - Note that the write rules from the `$uid` node also cascade to the `friend_requests` node, protecting the latter from other users making direct modifications to it as a whole. Consequently, the only allowed write operations on this structure for other users will be to append/delete data to the `friend_requests` node.
+    - If a user deletes the last of the data in that node, Firebase will automatically delete it. Thus, this operation will be recognized as a Firebase deletion, and will not fall under the defined rules. Vice versa, create it if it is the first record in that node. There is no need to write to the node reference itself.
 
-- **Write Access**: Any authenticated user can write data to the `feedback` node. The rule `"auth != null"` checks that the user is authenticated, regardless of their role or other credentials.
+- For a more fine-grained managemene of the type of data that can be written into a node, use `.validate`. In the previous example:
 
-### TBA
+    ```
+    "users": {
+        "$uid": {
+            ".write": "auth != null && $uid ==== auth.uid",
+            "friend_requests": {
+                "$friend_request_id": {
+                    ".validate": "(($uid === auth.uid && newData.val() === 'sent') || ($request_id === auth.uid && newData.val() === 'received') || newData.val() === null) && $uid != $request_id",
+                    ".write": "auth != null"
+                }
+            }
+        }
+    }
+    ```
+
+    - This new rule ensures that the user can either add a `sent` request to their own node, add `received` request to other user's node, or delete a request. They also can not send a friend request to themselves.
+    - The new, more granular logic, allows us to specify the type of data that is being written into the database.
+
+- It might seem tricky to figure out whether to write a rule into `.validate` or `.read`/`.write`. As a rule of thumb, if the rule targets **who** is requesting the operation, `.read`/`.write` might be suitable. If specifying the type of data is what you are after, `.validate` should do the trick. More than anything, however, keep the cascading nature of each of these rule types in mind, and use it to your advantage to avoid redundancy, while keeping the rules clear and intuitive.
