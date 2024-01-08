@@ -16,7 +16,7 @@
     "start": "react-native start",
     "test": "jest",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
-    "test:emulators": "firebase emulators:exec --only auth,database,storage 'jest'",
+    "test:emulators": "firebase emulators:exec --only auth,database,storage 'npm test __tests__/integration/emulators'",
     "emulators": "firebase emulators:start",
     "transpile": "npx tsc --build functions",
     "test-ts": "ts-node ./__tests__/e2e/SignUpRoutine.tsx",
