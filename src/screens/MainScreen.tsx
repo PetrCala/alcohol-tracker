@@ -1,4 +1,4 @@
-﻿import React, {useState, useContext, useEffect} from 'react';
+﻿import React, {useState, useEffect} from 'react';
 import {
   Alert,
   Dimensions,
@@ -9,7 +9,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import BasicButton from '../components/Buttons/BasicButton';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import SessionsCalendar from '../components/Calendar';
 import LoadingData from '../components/LoadingData';
@@ -19,7 +18,6 @@ import {DateObject} from '../types/components';
 import {auth} from '../services/firebaseSetup';
 import {
   dateToDateObject,
-  getZeroUnitsObject,
   calculateThisMonthUnits,
   findOngoingSession,
   calculateThisMonthPoints,
@@ -36,7 +34,6 @@ import {
 } from '../database/drinkingSessions';
 import {getDatabaseData} from '../context/DatabaseDataContext';
 import commonStyles from '../styles/commonStyles';
-import ItemListPopup from '../components/Popups/ItemListPopup';
 import {useFirebase} from '../context/FirebaseContext';
 import ProfileImage from '../components/ProfileImage';
 
@@ -59,6 +56,10 @@ const MainScreen = ({navigation}: MainScreenProps) => {
   const [visibleDateObject, setVisibleDateObject] = useState<DateObject>(
     dateToDateObject(new Date()),
   );
+  const [ongoingSession, setOngoingSession] =
+    useState<DrinkingSessionArrayItem | null>(
+      findOngoingSession(drinkingSessionData),
+    );
   const [thisMonthUnits, setThisMonthUnits] = useState<number>(0);
   const [thisMonthPoints, setThisMonthPoints] = useState<number>(0);
   const [thisMonthSessionCount, setThisMonthSessionCount] = useState<number>(0);
@@ -70,7 +71,6 @@ const MainScreen = ({navigation}: MainScreenProps) => {
     if (!preferences || !db || !user) return null; // Should never be null
     let sessionData: DrinkingSessionArrayItem;
     let sessionKey: string;
-    let ongoingSession = findOngoingSession(drinkingSessionData);
     if (!ongoingSession) {
       setLoadingNewSession(true);
       // The user is not in an active session
@@ -130,6 +130,12 @@ const MainScreen = ({navigation}: MainScreenProps) => {
     fetchData();
   }, []);
 
+  // Monitor ongoing sessions in database
+  useEffect(() => {
+    let result = findOngoingSession(drinkingSessionData);
+    setOngoingSession(result);
+  }, [drinkingSessionData, currentSessionData]);
+
   // Monitor visible month and various statistics
   useEffect(() => {
     if (!preferences) return;
@@ -186,7 +192,7 @@ const MainScreen = ({navigation}: MainScreenProps) => {
               <Text style={styles.yearMonthText}>{thisYearMonth}</Text>
           </View> */}
       </View>
-      {currentSessionData?.current_session_id ? (
+      {ongoingSession ? (
         <TouchableOpacity
           style={styles.userInSessionWarningContainer}
           onPress={startDrinkingSession}>
@@ -273,7 +279,7 @@ const MainScreen = ({navigation}: MainScreenProps) => {
           />
         </View>
       </View>
-      {currentSessionData?.current_session_id ? (
+      {ongoingSession ? (
         <></>
       ) : (
         <TouchableOpacity
