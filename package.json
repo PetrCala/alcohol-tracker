@@ -23,10 +23,10 @@
     "transpile": "npx tsc --build functions",
     "test-ts": "ts-node ./__tests__/e2e/SignUpRoutine.tsx",
     "deploy-functions": "firebase deploy --only functions --debug",
-    "bump-build": "./scripts/bumpVersion.sh BUILD",
-    "bump-patch": "./scripts/bumpVersion.sh PATCH",
-    "bump-minor": "./scripts/bumpVersion.sh MINOR",
-    "bump-major": "./scripts/bumpVersion.sh MAJOR"
+    "bump:build": "./scripts/bumpVersion.sh BUILD",
+    "bump:patch": "./scripts/bumpVersion.sh PATCH",
+    "bump:minor": "./scripts/bumpVersion.sh MINOR",
+    "bump:major": "./scripts/bumpVersion.sh MAJOR"
   },
   "dependencies": {
     "@firebase/rules-unit-testing": "^3.0.1",
