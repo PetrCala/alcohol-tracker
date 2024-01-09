@@ -5,7 +5,14 @@ import {
 } from '@firebase/rules-unit-testing';
 import * as firebaseJson from '../../../firebase.json';
 
-export async function setupFirebaseRulesTestEnv(): Promise<RulesTestEnvironment> {
+interface TestEnvironmentResult {
+  testEnv: RulesTestEnvironment;
+  authDb: any;
+  unauthDb: any;
+  adminDb: any;
+}
+
+export async function setupFirebaseRulesTestEnv(): Promise<TestEnvironmentResult> {
   const projectId = process.env.TEST_PROJECT_ID;
   if (!projectId) {
     throw new Error('Missing environment variable TEST_PROJECT_ID.');
@@ -21,7 +28,13 @@ export async function setupFirebaseRulesTestEnv(): Promise<RulesTestEnvironment>
     database: emulatorConfig,
   });
 
-  return testEnv;
+  let authDb: any = testEnv.authenticatedContext('authUserId').database();
+  let unauthDb: any = testEnv.unauthenticatedContext().database();
+  let adminDb: any = testEnv
+    .authenticatedContext('authUserId', {admin: true})
+    .database();
+
+  return {testEnv, authDb, unauthDb, adminDb};
 }
 
 export async function teardownFirebaseRulesTestEnv(
