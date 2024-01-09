@@ -67,6 +67,8 @@
         }
     },
     "user_unconfirmed_days": {
+      ".read": "auth.token.admin === true",
+      ".write": "auth.token.admin === true",
       "$uid": {
         ".validate": "newData.val() === true || newData.val() === null",
         ".read": "auth != null  && auth.uid === $uid",
