@@ -2,6 +2,7 @@
 
 import {
   AppSettings,
+  BetaKeysProps,
   ConfigProps,
   CurrentSessionData,
   DatabaseProps,
@@ -37,6 +38,7 @@ import {MOCK_SESSION_IDS, MOCK_USER_IDS} from './testsStatic';
  */
 export function initializeEmptyMockDatabase(): DatabaseProps {
   return {
+    beta_keys: {},
     config: {
       app_settings: {
         min_supported_version: '0.0.1',
@@ -51,6 +53,19 @@ export function initializeEmptyMockDatabase(): DatabaseProps {
     user_unconfirmed_days: {},
     users: {},
   };
+}
+
+export function createMockBetaKeys(number: number): BetaKeysProps {
+  const betaKeys: BetaKeysProps = {};
+  for (let i = 0; i < number; i++) {
+    const idx = i + 1; // Start indexing from key 1
+    const key = `beta-key-${idx}`;
+    betaKeys[idx] = {
+      key: key,
+      in_usage: false,
+    }
+  }
+  return betaKeys;
 }
 
 /** Create a mock configuration data record
@@ -269,11 +284,18 @@ export function createMockUserData(userId: string): UserData {
  */
 export function createMockDatabase(): DatabaseProps {
   const db = initializeEmptyMockDatabase();
+  // Beta keys
+  db.beta_keys = createMockBetaKeys(10); // beta feature
   // Configuration
   db.config = createMockConfig();
 
   // Data that varies across users
-  MOCK_USER_IDS.forEach(userId => {
+  MOCK_USER_IDS.forEach((userId, index) => {
+
+    // Choose beta key for the user - beta feature
+    db.beta_keys[index + 1].in_usage = true;
+    db.beta_keys[index + 1].user_id = userId;
+
     // Feedback
     db.feedback[userId] = createMockFeedback();
 
@@ -319,6 +341,7 @@ export function exportMockDatabase(): string {
   const mockDatabase = createMockDatabase();
   const filePath = './mockDatabase.json';
   fs.writeFileSync(filePath, JSON.stringify(mockDatabase));
+  console.log("Mock database exported to: " + filePath)
   return filePath;
 }
 // 

@@ -25,6 +25,8 @@ import {
   UnitsToColorsData,
 } from '../../src/types/database';
 
+// Validate beta keys
+
 /** Enter an object that is supposed to be of the ConfigProps type and validate it. Return true if it has that type, and false otherwise.
  *
  * @param obj

@@ -2,54 +2,34 @@
 
 require('dotenv').config(); // Use .env variables in this file - CONFIG does not work here
 import {
-  getDatabase,
-  connectDatabaseEmulator,
   ref,
   get,
   set,
-  goOffline,
 } from 'firebase/database';
-import {initializeApp, deleteApp, FirebaseApp} from 'firebase/app';
+import {FirebaseApp} from 'firebase/app';
 import {createMockDatabase, createMockSession} from '../../utils/mockDatabase';
 import {isConnectedToDatabaseEmulator} from '@src/services/firebaseUtils';
 import {DatabaseProps, UnitTypesProps} from '@src/types/database';
 import {Database} from 'firebase/database';
 import {describeWithEmulator} from '../../utils/emulators/emulatorTools';
-import * as firebaseJson from '../../../firebase.json';
 import {saveDrinkingSessionData} from '@database/drinkingSessions';
 
-import {MOCK_SESSION_IDS, MOCK_USER_IDS} from '../../utils/testsStatic';
+import {MOCK_USER_IDS} from '../../utils/testsStatic';
 import {readDataOnce} from '@database/baseFunctions';
 import {setupGlobalMocks} from '../../utils/testUtils';
+import { setupRealtimeDatabaseTestEnv, teardownRealtimeDatabaseTestEnv } from '../../utils/emulators/realtimeDatabaseSetup';
+import { deleteUserInfo } from '@database/users';
 
-const databaseURL = process.env.TEST_DATABASE_URL;
-const projectId = process.env.TEST_PROJECT_ID;
-if (!databaseURL || !projectId) {
-  throw new Error(
-    `Missing environment variables ${databaseURL} or ${projectId} for storage emulator`,
-  );
-}
+const mockDatabase: DatabaseProps = createMockDatabase();
+const testUserId: string = MOCK_USER_IDS[0];
 
-describeWithEmulator('Connect to the realtime database emulator', () => {
+describeWithEmulator('Test connecting to the realtime database emulator', () => {
   let testApp: FirebaseApp;
   let db: Database;
-  let mockDatabase: DatabaseProps;
-  let testUserId: string = MOCK_USER_IDS[0];
   setupGlobalMocks();
 
   beforeAll(async () => {
-    testApp = initializeApp({
-      databaseURL: databaseURL,
-      projectId: projectId,
-    });
-
-    // Initialize the database
-    db = getDatabase(testApp);
-    const dbPort = parseInt(firebaseJson.emulators.database.port);
-    connectDatabaseEmulator(db, 'localhost', dbPort);
-
-    // Fill the database with mock data
-    mockDatabase = createMockDatabase();
+    ({ testApp, db } = setupRealtimeDatabaseTestEnv());
   });
 
   // Set up the database before each test
@@ -63,13 +43,35 @@ describeWithEmulator('Connect to the realtime database emulator', () => {
   });
 
   afterAll(async () => {
-    goOffline(db); // Close database connection
-    await deleteApp(testApp); // Delete the app
+    await teardownRealtimeDatabaseTestEnv(testApp, db);
   });
 
   it('should connect to the emulator realtime database', async () => {
     expect(db).not.toBeNull();
     expect(isConnectedToDatabaseEmulator(db)).toBe(true);
+  });
+
+});
+
+describeWithEmulator('Test saving a drinking session', () => {
+  let testApp: FirebaseApp;
+  let db: Database;
+  setupGlobalMocks();
+
+  beforeAll(async () => {
+    ({ testApp, db } = setupRealtimeDatabaseTestEnv());
+  });
+
+  beforeEach(async () => {
+    await set(ref(db), mockDatabase);
+  });
+
+  afterEach(async () => {
+    await set(ref(db), null);
+  });
+
+  afterAll(async () => {
+    await teardownRealtimeDatabaseTestEnv(testApp, db);
   });
 
   it('should write non-empty mock data', async () => {
@@ -111,4 +113,43 @@ describeWithEmulator('Connect to the realtime database emulator', () => {
     //     end_time: expect.anything(),
     // });
   });
+});
+
+describeWithEmulator('Test saving and deleting user\'s data from the database', () => {
+  let testApp: FirebaseApp;
+  let db: Database;
+  setupGlobalMocks();
+
+  beforeAll(async () => {
+    ({ testApp, db } = setupRealtimeDatabaseTestEnv());
+  });
+
+  beforeEach(async () => {
+    await set(ref(db), mockDatabase);
+  });
+
+  afterEach(async () => {
+    await set(ref(db), null);
+  });
+
+  afterAll(async () => {
+    await teardownRealtimeDatabaseTestEnv(testApp, db);
+  });
+
+  it('pushes all new user info into the database', async () => {
+  });
+
+  it('deletes all user info from the database', async () => {
+
+    const userBetaKey = `${testUserId}-beta`;
+    const betaKeyData = await readDataOnce(db, `beta_keys`);
+    console.log('hello-world')
+    // let userNickname = userData.profile.display_name;
+    // await deleteUserInfo(db, testUserId, userNickname); // beta feature
+  });
+
+  it('updates user last online in the database', async () => {
+    expect(true).toBe(true);
+  });
+
 });

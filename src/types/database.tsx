@@ -1,5 +1,6 @@
 ﻿/** Main database props object */
 export type DatabaseProps = {
+  beta_keys: BetaKeysProps; // beta feature
   config: ConfigProps;
   feedback: FeedbackData;
   nickname_to_id: {
@@ -19,6 +20,15 @@ export type DatabaseProps = {
   };
   users: {
     [user_id: string]: UserData;
+  };
+};
+
+export type BetaKeysProps = {
+  // beta feature
+  [key_id: string]: {
+    key: string;
+    in_usage: boolean;
+    user_id?: string;
   };
 };
 

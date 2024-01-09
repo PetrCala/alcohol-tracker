@@ -1,5 +1,4 @@
-﻿import { BetaKeysData } from "./betaTypes";
-
+﻿import { BetaKeysData } from "@database/beta";
 
 /** Using an array of keys, write these keys into the database,
  * creating a new object for every key of that array.

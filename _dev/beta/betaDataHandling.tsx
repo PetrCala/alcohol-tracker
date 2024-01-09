@@ -1,4 +1,4 @@
-﻿import { BetaKeysData } from "./betaTypes";
+﻿import { BetaKeysData } from "@database/beta";
 
 /** Validate that a beta key is available for use in the database.
  * If it is, return the database id of that key.

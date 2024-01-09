@@ -2,19 +2,15 @@
 
 require('dotenv').config(); // Use .env variables in this file - CONFIG does not work here
 import {
-  initializeTestEnvironment,
   assertFails,
   assertSucceeds,
   RulesTestEnvironment,
-  EmulatorConfig,
 } from '@firebase/rules-unit-testing';
+import {describeWithEmulator} from '../../utils/emulators/emulatorTools';
 import {
-  describeWithEmulator,
-  teardownFirebaseRulesTestEnv,
-  shouldRunTests,
   setupFirebaseRulesTestEnv,
-} from '../../utils/emulators/emulatorTools';
-import * as firebaseJson from '../../../firebase.json';
+  teardownFirebaseRulesTestEnv,
+} from '../../utils/emulators/firebaseRulesSetup';
 import {FeedbackProps} from '@src/types/database';
 import {setupGlobalMocks} from '../../utils/testUtils';
 
@@ -265,5 +261,6 @@ describeWithEmulator('Test friend request rules', () => {
   });
 });
 
-// Test out beta keys, config
+// TODO
+// Test out beta keys, config, rest of the rules
 // Make an explicit list of opperations the user can do (has to do) before being authenticated
