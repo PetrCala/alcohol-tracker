@@ -338,11 +338,13 @@ export function createMockDatabase(): DatabaseProps {
  *
  * @returns {string} The path of the exported JSON file.
  */
-export function exportMockDatabase(): string {
+export function exportMockDatabase(verbose:boolean = false): string {
   const mockDatabase = createMockDatabase();
   const filePath = './mockDatabase.json';
   fs.writeFileSync(filePath, JSON.stringify(mockDatabase));
-  console.log("Mock database exported to: " + filePath)
+  if (verbose) {
+    console.log("Mock database exported to: " + filePath)
+  }
   return filePath;
 }
 // 

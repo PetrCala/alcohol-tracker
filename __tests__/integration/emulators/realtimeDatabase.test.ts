@@ -5,7 +5,12 @@ import {ref, get, set} from 'firebase/database';
 import {FirebaseApp} from 'firebase/app';
 import {createMockDatabase, createMockSession} from '../../utils/mockDatabase';
 import {isConnectedToDatabaseEmulator} from '@src/services/firebaseUtils';
-import {BetaKeyProps, BetaKeysProps, DatabaseProps, UnitTypesProps} from '@src/types/database';
+import {
+  BetaKeyProps,
+  BetaKeysProps,
+  DatabaseProps,
+  UnitTypesProps,
+} from '@src/types/database';
 import {Database} from 'firebase/database';
 import {describeWithEmulator} from '../../utils/emulators/emulatorTools';
 import {saveDrinkingSessionData} from '@database/drinkingSessions';
@@ -18,6 +23,7 @@ import {
   teardownRealtimeDatabaseTestEnv,
 } from '../../utils/emulators/realtimeDatabaseSetup';
 import {deleteUserInfo} from '@database/users';
+import {cleanStringForFirebaseKey} from '@src/utils/strings';
 
 const mockDatabase: DatabaseProps = createMockDatabase();
 const testUserId: string = MOCK_USER_IDS[0];
@@ -118,43 +124,96 @@ describeWithEmulator('Test saving a drinking session', () => {
   });
 });
 
-describeWithEmulator(
-  "Test saving and deleting user's data from the database",
-  () => {
-    let testApp: FirebaseApp;
-    let db: Database;
-    setupGlobalMocks();
+describeWithEmulator('Pushes all new user info into the database', () => {
+  let testApp: FirebaseApp;
+  let db: Database;
+  setupGlobalMocks();
 
-    beforeAll(async () => {
-      ({testApp, db} = setupRealtimeDatabaseTestEnv());
+  beforeAll(async () => {
+    ({testApp, db} = setupRealtimeDatabaseTestEnv());
+  });
+
+  beforeEach(async () => {
+    await set(ref(db), mockDatabase);
+  });
+
+  afterEach(async () => {
+    await set(ref(db), null);
+  });
+
+  afterAll(async () => {
+    await teardownRealtimeDatabaseTestEnv(testApp, db);
+  });
+
+});
+
+describeWithEmulator('Test deleting data from the database', () => {
+  let testApp: FirebaseApp;
+  let db: Database;
+  setupGlobalMocks();
+
+  beforeAll(async () => {
+    ({testApp, db} = setupRealtimeDatabaseTestEnv());
+  });
+
+  beforeEach(async () => {
+    await set(ref(db), mockDatabase);
+  });
+
+  afterEach(async () => {
+    await set(ref(db), null);
+  });
+
+  afterAll(async () => {
+    await teardownRealtimeDatabaseTestEnv(testApp, db);
+  });
+
+  it('deletes the beta keys data from the database', async () => {
+    await deleteUserInfo(db, testUserId, testUserDisplayName, 1); // beta feature
+    const dbBetaKey: BetaKeyProps = await readDataOnce(db, `beta_keys/1`);
+    expect(dbBetaKey).toMatchObject({
+      in_usage: false,
+      key: testUserBetaKey,
     });
+  });
 
-    beforeEach(async () => {
-      await set(ref(db), mockDatabase);
-    });
+  it('deletes the user nickname ID data from the database', async () => {
+    await deleteUserInfo(db, testUserId, testUserDisplayName, 1); // beta feature
+    const nicknameKey = cleanStringForFirebaseKey(testUserDisplayName);
+    const dbNickname = await readDataOnce(
+      db,
+      `nickname_to_id/${nicknameKey}/${testUserId}`,
+    );
+    expect(dbNickname).toBeNull();
+  });
 
-    afterEach(async () => {
-      await set(ref(db), null);
-    });
+  it('deletes the user data from the database', async () => {
+    await deleteUserInfo(db, testUserId, testUserDisplayName, 1); // beta feature
+    const dbData = await readDataOnce(db, `users/${testUserId}`);
+    expect(dbData).toBeNull();
+  });
 
-    afterAll(async () => {
-      await teardownRealtimeDatabaseTestEnv(testApp, db);
-    });
+  it('deletes the current session data from the database', async () => {
+    await deleteUserInfo(db, testUserId, testUserDisplayName, 1); // beta feature
+    const dbSessionData = await readDataOnce(db, `sessions/${testUserId}`);
+    expect(dbSessionData).toBeNull();
+  });
 
-    it('pushes all new user info into the database', async () => {});
+  it('deletes the user preferences from the database', async () => {
+    await deleteUserInfo(db, testUserId, testUserDisplayName, 1); // beta feature
+    const dbPreferencesData = await readDataOnce(db, `user_preferences/${testUserId}`);
+    expect(dbPreferencesData).toBeNull();
+  });
 
-    it('deletes all user info from the database', async () => {
-      await deleteUserInfo(db, testUserId, testUserDisplayName, 1); // beta feature
+  it('deletes the user drinking sessions from the database', async () => {
+    await deleteUserInfo(db, testUserId, testUserDisplayName, 1); // beta feature
+    const dbSessionsData = await readDataOnce(db, `user_drinking_sessions/${testUserId}`);
+    expect(dbSessionsData).toBeNull();
+  });
 
-      const modifiedBetaKey: BetaKeyProps = await readDataOnce(db, `beta_keys/1`);
-      expect(modifiedBetaKey).toMatchObject({
-        "in_usage": false,
-        "key": testUserBetaKey,
-      });
-    });
-
-    it('updates user last online in the database', async () => {
-      expect(true).toBe(true);
-    });
-  },
-);
+  it('deletes the user unconfirmed days from the database', async () => {
+    await deleteUserInfo(db, testUserId, testUserDisplayName, 1); // beta feature
+    const dbUnconfirmedDays = await readDataOnce(db, `user_unconfirmed_days/${testUserId}`);
+    expect(dbUnconfirmedDays).toBeNull();
+  });
+});
