@@ -13,8 +13,12 @@ import {
 } from '../../utils/emulators/firebaseRulesSetup';
 import {FeedbackProps} from '@src/types/database';
 import {setupGlobalMocks} from '../../utils/testUtils';
-import { createMockSession } from '../../utils/mockDatabase';
-import exp from 'constants';
+import {createMockSession} from '../../utils/mockDatabase';
+import {getDefaultPreferences} from '@database/users';
+import {
+  SAMPLE_UNITS_TO_COLORS,
+  SAMPLE_UNITS_TO_POINTS,
+} from '../../utils/testsStatic';
 
 const projectId = process.env.TEST_PROJECT_ID;
 if (!projectId) throw new Error(`Missing environment variable ${projectId}.`);
@@ -79,13 +83,13 @@ describeWithEmulator('Test drinking session rules', () => {
 
   it('should allow the user themselves to write into their own data', async () => {
     const authRef = authDb.ref(`user_drinking_sessions/${authUserId}`);
-    const mockDrinkingSession = createMockSession(new Date);
+    const mockDrinkingSession = createMockSession(new Date());
     await assertSucceeds(authRef.set(mockDrinkingSession));
   });
 
-  it('should not allow a user to write into other user\'s data', async () => {
+  it("should not allow a user to write into other user's data", async () => {
     const authRef = authDb.ref(`user_drinking_sessions/${otherUserId}`);
-    const mockDrinkingSession = createMockSession(new Date);
+    const mockDrinkingSession = createMockSession(new Date());
     await assertFails(authRef.set(mockDrinkingSession));
   });
 
@@ -94,9 +98,9 @@ describeWithEmulator('Test drinking session rules', () => {
     await assertSucceeds(authRef.get());
   });
 
-  it('should allow a user to read friend\'s drinking session data', async () => {
+  it("should allow a user to read friend's drinking session data", async () => {
     // Set the friend connection first
-    const friendRef = authDb.ref(`users/${authUserId}/friends/${otherUserId}`)
+    const friendRef = authDb.ref(`users/${authUserId}/friends/${otherUserId}`);
     await friendRef.set(true);
 
     const authRef = authDb.ref(`user_drinking_sessions/${otherUserId}`);
@@ -107,7 +111,6 @@ describeWithEmulator('Test drinking session rules', () => {
     const authRef = authDb.ref(`user_drinking_sessions/${otherUserId}`);
     await assertFails(authRef.get());
   });
-
 });
 
 describeWithEmulator('Test user preferences rules', () => {
@@ -129,10 +132,60 @@ describeWithEmulator('Test user preferences rules', () => {
     await teardownFirebaseRulesTestEnv(testEnv);
   });
 
-  it('does something', () => {
-    expect(true).toBe(true);
+  it('should allow an authenticated user to set default preferences', async () => {
+    const defaultPreferences = getDefaultPreferences();
+    const authRef = authDb.ref(`user_preferences/${authUserId}`);
+    await assertSucceeds(authRef.set(defaultPreferences));
   });
 
+  it('should allow an authenticater user to read their own preferences', async () => {
+    const authRef = authDb.ref(`user_preferences/${authUserId}`);
+    await assertSucceeds(authRef.get());
+  });
+
+  it("should not allow general authenticated users to read other user's preferences", async () => {
+    const authRef = authDb.ref(`user_preferences/${otherUserId}`);
+    await assertFails(authRef.get());
+  });
+
+  it("should allow authenticated friend users to read other user's preferences", async () => {
+    const friendRef = authDb.ref(`users/${authUserId}/friends/${otherUserId}`);
+    await friendRef.set(true);
+
+    const authRef = authDb.ref(`user_preferences/${otherUserId}`);
+    await assertSucceeds(authRef.get());
+  });
+
+  it('should allow an authenticated user to set their preferred day of week', async () => {
+    const authRef = authDb.ref(
+      `user_preferences/${otherUserId}/first_day_of_week`,
+    );
+    await assertSucceeds(authRef.set('Monday'));
+    await assertSucceeds(authRef.set('Sunday'));
+  });
+
+  it('should not allow an authenticated user to set incorrect day of week', async () => {
+    const authRef = authDb.ref(
+      `user_preferences/${otherUserId}/first_day_of_week`,
+    );
+    await assertFails(authRef.set('Wednesday'));
+    await assertFails(authRef.set(123));
+    await assertFails(authRef.set(null));
+  });
+
+  it('should allow an authenticated user to set their units to colors data', async () => {
+    const authRef = authDb.ref(
+      `user_preferences/${otherUserId}/units_to_colors`,
+    );
+    await assertSucceeds(authRef.set(SAMPLE_UNITS_TO_COLORS));
+  });
+
+  it('should allow an authenticated user to set their units to points data', async () => {
+    const authRef = authDb.ref(
+      `user_preferences/${otherUserId}/units_to_points`,
+    );
+    await assertSucceeds(authRef.set(SAMPLE_UNITS_TO_POINTS));
+  });
 });
 
 describeWithEmulator('Test feedback rules', () => {
