@@ -156,7 +156,7 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
       // Navigate to the main screen with a success message
       navigation.replace('App', {screen: 'Main Screen'});
     } catch (error: any) {
-      const errorHeading = 'Sign-up faild';
+      const errorHeading = 'Sign-up failed';
       const errorMessage = 'There was an error during sign-up: ';
       handleInvalidInput(error, errorHeading, errorMessage, setWarning);
 
@@ -168,8 +168,9 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
           betaKeyId,
         );
       } catch (rollbackError:any) {
-        console.error("Rollback error: ", rollbackError);
-        Alert.alert('Clean-up failed', `Error during sign-up clean-up: ${rollbackError.message}`);
+        const errorHeading = 'Rollback error';
+        const errorMessage = 'Error during sign-up rollback:';
+        handleInvalidInput(rollbackError, errorHeading, errorMessage, setWarning);
       }
     }
     return;
