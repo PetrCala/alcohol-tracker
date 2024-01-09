@@ -23,13 +23,16 @@ export type DatabaseProps = {
   };
 };
 
+export type BetaKeyProps = {
+  // beta feature
+  key: string;
+  in_usage: boolean;
+  user_id?: string;
+};
+
 export type BetaKeysProps = {
   // beta feature
-  [key_id: string]: {
-    key: string;
-    in_usage: boolean;
-    user_id?: string;
-  };
+  [key_id: number]: BetaKeyProps;
 };
 
 export type ConfigProps = {
@@ -129,7 +132,7 @@ export type UserData = {
   friend_requests?: FriendRequestData;
   role: string;
   last_online: number;
-  beta_key_id: string;
+  beta_key_id: number;
 };
 
 export type ProfileData = {

@@ -45,7 +45,7 @@ function isBetaKey(obj: any): obj is any {
  * @param betaKeysData - The beta keys data to validate.
  * @returns True if all beta keys are valid, false otherwise.
  */
-function validateBetaKeys(betaKeysData: {[betaKeyId: string]: any}): boolean {
+function validateBetaKeys(betaKeysData: {[betaKeyId: number]: any}): boolean {
   // beta feature
   for (const betaKeyId in betaKeysData) {
     if (!isBetaKey(betaKeysData[betaKeyId])) {
@@ -274,7 +274,7 @@ function isUserData(obj: any): obj is UserData {
   return (
     typeof obj.role === 'string' &&
     typeof obj.last_online === 'number' &&
-    typeof obj.beta_key_id === 'string'
+    typeof obj.beta_key_id === 'number'
   );
 }
 

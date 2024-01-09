@@ -13,13 +13,13 @@
 export function validateBetaKey(
   betaKeys: BetaKeysData,
   betaKey: string,
-): string | null {
+): number | null {
   for (const [id, value] of Object.entries(betaKeys)) {
     if (value.key === betaKey) {
       if (value.in_usage) {
         return null; // In usage
       } else {
-        return id; // Integer id associated with the key object in database
+        return parseInt(id); // Integer id associated with the key object in database
       }
     }
   }

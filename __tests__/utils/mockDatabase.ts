@@ -256,10 +256,11 @@ export function createMockFriendRequests(userId: string): FriendRequestData {
 
 /** Create and return a mock user data object
  * @param {string} userId ID of the mock user
+ * @param {number} index Index of the mock user
  *
  * @returns {UserData} Mock user data
  */
-export function createMockUserData(userId: string): UserData {
+export function createMockUserData(userId: string, index: number): UserData {
   let mockProfileData: ProfileData = {
     display_name: 'mock-user',
     photo_url: '',
@@ -272,7 +273,7 @@ export function createMockUserData(userId: string): UserData {
     friend_requests: mockFriendRequests,
     role: 'mock-user',
     last_online: Date.now(),
-    beta_key_id: 'mock-beta-key',
+    beta_key_id: index + 1,
   };
 }
 
@@ -321,7 +322,7 @@ export function createMockDatabase(): DatabaseProps {
     db.user_unconfirmed_days[userId] = createMockUnconfirmedDays();
 
     // User data
-    db.users[userId] = createMockUserData(userId);
+    db.users[userId] = createMockUserData(userId, index);
 
     // Nicknames to user ids
     let nickname = db.users[userId].profile.display_name;

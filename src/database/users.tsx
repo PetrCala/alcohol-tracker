@@ -35,7 +35,7 @@ export const getDefaultPreferences = (): PreferencesData => {
 
 export const getDefaultUserData = (
   profileData: ProfileData,
-  betaKeyId: string, // Beta feature
+  betaKeyId: number, // Beta feature
 ): UserData => {
   let userRole = appInBeta ? 'beta_user' : 'user'; // Beta feature
   let timestampNow = new Date().getTime();
@@ -69,14 +69,14 @@ export async function userExistsInDatabase(
  * @param {Database} db The firebase realtime database object
  * @param {string} userId The user ID
  * @param {ProfileData} profileData Profile data of the user to create
- * @param {string} betaKeyId Beta key // Beta feature
+ * @param {number} betaKeyId Beta key // Beta feature
  * @returns {Promise<void>}
  */
 export async function pushNewUserInfo(
   db: Database,
   userId: string,
   profileData: ProfileData,
-  betaKeyId: string, // Beta feature
+  betaKeyId: number, // Beta feature
 ): Promise<void> {
   const userNickname = profileData.display_name;
   const nicknameKey = cleanStringForFirebaseKey(userNickname);
@@ -110,7 +110,7 @@ export async function deleteUserInfo(
   db: Database,
   userId: string,
   userNickname: string,
-  betaKeyId: string | undefined, // Beta feature
+  betaKeyId: number | undefined, // Beta feature
 ): Promise<void> {
   const nicknameKey = cleanStringForFirebaseKey(userNickname);
   let updates: {[key: string]: null | false} = {};

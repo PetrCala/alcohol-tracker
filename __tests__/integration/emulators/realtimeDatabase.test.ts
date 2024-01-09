@@ -1,15 +1,11 @@
 // !! Run using npm test - to run using bun test, resolve first issue with Config -> mock react-native-config
 
 require('dotenv').config(); // Use .env variables in this file - CONFIG does not work here
-import {
-  ref,
-  get,
-  set,
-} from 'firebase/database';
+import {ref, get, set} from 'firebase/database';
 import {FirebaseApp} from 'firebase/app';
 import {createMockDatabase, createMockSession} from '../../utils/mockDatabase';
 import {isConnectedToDatabaseEmulator} from '@src/services/firebaseUtils';
-import {DatabaseProps, UnitTypesProps} from '@src/types/database';
+import {BetaKeyProps, BetaKeysProps, DatabaseProps, UnitTypesProps} from '@src/types/database';
 import {Database} from 'firebase/database';
 import {describeWithEmulator} from '../../utils/emulators/emulatorTools';
 import {saveDrinkingSessionData} from '@database/drinkingSessions';
@@ -17,41 +13,48 @@ import {saveDrinkingSessionData} from '@database/drinkingSessions';
 import {MOCK_USER_IDS} from '../../utils/testsStatic';
 import {readDataOnce} from '@database/baseFunctions';
 import {setupGlobalMocks} from '../../utils/testUtils';
-import { setupRealtimeDatabaseTestEnv, teardownRealtimeDatabaseTestEnv } from '../../utils/emulators/realtimeDatabaseSetup';
-import { deleteUserInfo } from '@database/users';
+import {
+  setupRealtimeDatabaseTestEnv,
+  teardownRealtimeDatabaseTestEnv,
+} from '../../utils/emulators/realtimeDatabaseSetup';
+import {deleteUserInfo} from '@database/users';
 
 const mockDatabase: DatabaseProps = createMockDatabase();
 const testUserId: string = MOCK_USER_IDS[0];
+const testUserDisplayName: string = 'mock-user';
+const testUserBetaKey: string = 'beta-key-1';
 
-describeWithEmulator('Test connecting to the realtime database emulator', () => {
-  let testApp: FirebaseApp;
-  let db: Database;
-  setupGlobalMocks();
+describeWithEmulator(
+  'Test connecting to the realtime database emulator',
+  () => {
+    let testApp: FirebaseApp;
+    let db: Database;
+    setupGlobalMocks();
 
-  beforeAll(async () => {
-    ({ testApp, db } = setupRealtimeDatabaseTestEnv());
-  });
+    beforeAll(async () => {
+      ({testApp, db} = setupRealtimeDatabaseTestEnv());
+    });
 
-  // Set up the database before each test
-  beforeEach(async () => {
-    await set(ref(db), mockDatabase);
-  });
+    // Set up the database before each test
+    beforeEach(async () => {
+      await set(ref(db), mockDatabase);
+    });
 
-  // Write null to clear the database.
-  afterEach(async () => {
-    await set(ref(db), null);
-  });
+    // Write null to clear the database.
+    afterEach(async () => {
+      await set(ref(db), null);
+    });
 
-  afterAll(async () => {
-    await teardownRealtimeDatabaseTestEnv(testApp, db);
-  });
+    afterAll(async () => {
+      await teardownRealtimeDatabaseTestEnv(testApp, db);
+    });
 
-  it('should connect to the emulator realtime database', async () => {
-    expect(db).not.toBeNull();
-    expect(isConnectedToDatabaseEmulator(db)).toBe(true);
-  });
-
-});
+    it('should connect to the emulator realtime database', async () => {
+      expect(db).not.toBeNull();
+      expect(isConnectedToDatabaseEmulator(db)).toBe(true);
+    });
+  },
+);
 
 describeWithEmulator('Test saving a drinking session', () => {
   let testApp: FirebaseApp;
@@ -59,7 +62,7 @@ describeWithEmulator('Test saving a drinking session', () => {
   setupGlobalMocks();
 
   beforeAll(async () => {
-    ({ testApp, db } = setupRealtimeDatabaseTestEnv());
+    ({testApp, db} = setupRealtimeDatabaseTestEnv());
   });
 
   beforeEach(async () => {
@@ -115,41 +118,43 @@ describeWithEmulator('Test saving a drinking session', () => {
   });
 });
 
-describeWithEmulator('Test saving and deleting user\'s data from the database', () => {
-  let testApp: FirebaseApp;
-  let db: Database;
-  setupGlobalMocks();
+describeWithEmulator(
+  "Test saving and deleting user's data from the database",
+  () => {
+    let testApp: FirebaseApp;
+    let db: Database;
+    setupGlobalMocks();
 
-  beforeAll(async () => {
-    ({ testApp, db } = setupRealtimeDatabaseTestEnv());
-  });
+    beforeAll(async () => {
+      ({testApp, db} = setupRealtimeDatabaseTestEnv());
+    });
 
-  beforeEach(async () => {
-    await set(ref(db), mockDatabase);
-  });
+    beforeEach(async () => {
+      await set(ref(db), mockDatabase);
+    });
 
-  afterEach(async () => {
-    await set(ref(db), null);
-  });
+    afterEach(async () => {
+      await set(ref(db), null);
+    });
 
-  afterAll(async () => {
-    await teardownRealtimeDatabaseTestEnv(testApp, db);
-  });
+    afterAll(async () => {
+      await teardownRealtimeDatabaseTestEnv(testApp, db);
+    });
 
-  it('pushes all new user info into the database', async () => {
-  });
+    it('pushes all new user info into the database', async () => {});
 
-  it('deletes all user info from the database', async () => {
+    it('deletes all user info from the database', async () => {
+      await deleteUserInfo(db, testUserId, testUserDisplayName, 1); // beta feature
 
-    const userBetaKey = `${testUserId}-beta`;
-    const betaKeyData = await readDataOnce(db, `beta_keys`);
-    console.log('hello-world')
-    // let userNickname = userData.profile.display_name;
-    // await deleteUserInfo(db, testUserId, userNickname); // beta feature
-  });
+      const modifiedBetaKey: BetaKeyProps = await readDataOnce(db, `beta_keys/1`);
+      expect(modifiedBetaKey).toMatchObject({
+        "in_usage": false,
+        "key": testUserBetaKey,
+      });
+    });
 
-  it('updates user last online in the database', async () => {
-    expect(true).toBe(true);
-  });
-
-});
+    it('updates user last online in the database', async () => {
+      expect(true).toBe(true);
+    });
+  },
+);

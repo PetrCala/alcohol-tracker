@@ -54,7 +54,7 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
   async function rollbackChanges(
     newUserId: string,
     userNickname: string,
-    betaKeyId: string,
+    betaKeyId: number,
   ): Promise<void> {
     // Delete the user data from the Realtime Database
     await deleteUserInfo(db, newUserId, userNickname, betaKeyId);

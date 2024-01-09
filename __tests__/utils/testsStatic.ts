@@ -10,6 +10,7 @@ export const MOCK_USER_IDS = [
   'mock-user-4',
   'mock-user-5',
 ];
+
 export const MOCK_SESSION_IDS = [
   'mock-session-1',
   'mock-session-2',
