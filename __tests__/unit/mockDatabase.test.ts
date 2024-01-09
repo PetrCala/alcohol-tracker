@@ -25,7 +25,35 @@ import {
   UnitsToColorsData,
 } from '../../src/types/database';
 
-// Validate beta keys
+/**
+ * Checks if the given object is a valid beta key.
+ * @param obj - The object to be checked.
+ * @returns True if the object is a valid beta key, false otherwise.
+ */
+function isBetaKey(obj: any): obj is any {
+  // beta feature
+  return (
+    typeof obj.key === 'string' &&
+    typeof obj.in_usage === 'boolean' &&
+    (obj.user_id === undefined || typeof obj.user_id === 'string')
+  );
+}
+
+/**
+ * Validates the beta keys data.
+ *
+ * @param betaKeysData - The beta keys data to validate.
+ * @returns True if all beta keys are valid, false otherwise.
+ */
+function validateBetaKeys(betaKeysData: {[betaKeyId: string]: any}): boolean {
+  // beta feature
+  for (const betaKeyId in betaKeysData) {
+    if (!isBetaKey(betaKeysData[betaKeyId])) {
+      return false;
+    }
+  }
+  return true;
+}
 
 /** Enter an object that is supposed to be of the ConfigProps type and validate it. Return true if it has that type, and false otherwise.
  *
@@ -332,6 +360,11 @@ describe('mockDatabase functions', () => {
 
 describe('mockDatabase data structure', () => {
   let db: DatabaseProps = initializeEmptyMockDatabase();
+
+  it('should have beta keys data', () => {
+    // beta feature
+    expect(validateBetaKeys(db.beta_keys)).toBe(true);
+  });
 
   it('should have config data', () => {
     expect(validateConfig(db.config)).toBe(true);
