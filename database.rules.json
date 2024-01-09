@@ -56,15 +56,15 @@
         ".read": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('friends').child($uid).exists())",
         ".write": "auth != null && auth.uid === $uid",
         "first_day_of_week": {
-          ".validate": "newData.val() === 'Monday' || newData.val() === 'Sunday'"
+          ".validate": "newData.isString() && (newData.val() === 'Monday' || newData.val() === 'Sunday')"
         },
         "units_to_colors": {
-          ".validate": "newData.hasChildren(['orange', 'yellow'])"
+          ".validate": "newData.hasChildren(['yellow', 'orange'])"
         },
         "units_to_points": {
-          ".validate": "newData.hasChildren(['beer', 'cocktail', 'other', 'stron_shot', 'weak_shot', 'wine'])"
+          ".validate": "newData.hasChildren(['beer', 'cocktail', 'other', 'strong_shot', 'weak_shot', 'wine'])"
         }
-        }
+      }
     },
     "user_unconfirmed_days": {
       ".read": "auth.token.admin === true",

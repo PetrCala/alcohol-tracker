@@ -23,6 +23,7 @@ export const SAMPLE_UNITS_TO_COLORS: UnitsToColorsData = {
   yellow: 2,
   orange: 4,
 };
+
 export const SAMPLE_UNITS_TO_POINTS: UnitTypesProps = {
   beer: 5,
   cocktail: 10,

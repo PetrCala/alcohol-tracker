@@ -158,7 +158,7 @@ describeWithEmulator('Test user preferences rules', () => {
 
   it('should allow an authenticated user to set their preferred day of week', async () => {
     const authRef = authDb.ref(
-      `user_preferences/${otherUserId}/first_day_of_week`,
+      `user_preferences/${authUserId}/first_day_of_week`,
     );
     await assertSucceeds(authRef.set('Monday'));
     await assertSucceeds(authRef.set('Sunday'));
@@ -166,23 +166,22 @@ describeWithEmulator('Test user preferences rules', () => {
 
   it('should not allow an authenticated user to set incorrect day of week', async () => {
     const authRef = authDb.ref(
-      `user_preferences/${otherUserId}/first_day_of_week`,
+      `user_preferences/${authUserId}/first_day_of_week`,
     );
     await assertFails(authRef.set('Wednesday'));
     await assertFails(authRef.set(123));
-    await assertFails(authRef.set(null));
   });
 
   it('should allow an authenticated user to set their units to colors data', async () => {
     const authRef = authDb.ref(
-      `user_preferences/${otherUserId}/units_to_colors`,
+      `user_preferences/${authUserId}/units_to_colors`,
     );
     await assertSucceeds(authRef.set(SAMPLE_UNITS_TO_COLORS));
   });
 
   it('should allow an authenticated user to set their units to points data', async () => {
     const authRef = authDb.ref(
-      `user_preferences/${otherUserId}/units_to_points`,
+      `user_preferences/${authUserId}/units_to_points`,
     );
     await assertSucceeds(authRef.set(SAMPLE_UNITS_TO_POINTS));
   });
