@@ -23,6 +23,7 @@ import {isValidString, validateAppVersion} from '../utils/validation';
 import {invalidChars} from '../utils/static';
 import {deleteUserInfo, pushNewUserInfo} from '../database/users';
 import {ProfileData} from 'src/types/database';
+import { handleInvalidInput } from '@src/utils/errorHandling';
 
 const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
   const {loginEmail} = route ? route.params : {loginEmail: ''};
@@ -141,17 +142,6 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
     }
     newUserId = auth.currentUser.uid;
 
-    try{
-      await auth.currentUser.delete();
-    } catch (error: any) {
-      console.log('Sign-up failed when deleting a user in firebase authentification: ', error)
-      Alert.alert(
-        'Sign-up failed',
-        'There was an error during sign-up: ' + error.message,
-      );
-      return;
-    }
-
     try {
       // Realtime Database updates
       await pushNewUserInfo(db, newUserId, newProfileData, betaKeyId);
@@ -164,12 +154,11 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
       }
 
       // Navigate to the main screen with a success message
-      // navigation.replace('App', {screen: 'Main Screen'});
+      navigation.replace('App', {screen: 'Main Screen'});
     } catch (error: any) {
-      Alert.alert(
-        'Sign-up failed',
-        'There was an error during sign-up: ' + error.message,
-      );
+      const errorHeading = 'Sign-up faild';
+      const errorMessage = 'There was an error during sign-up: ';
+      handleInvalidInput(error, errorHeading, errorMessage, setWarning);
 
       // Attempt to rollback any changes made
       try {

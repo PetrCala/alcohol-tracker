@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {useFocusEffect} from '@react-navigation/native';
 import {sendPasswordResetEmail, signOut} from 'firebase/auth';
 import {auth} from '../services/firebaseSetup';
 import {signInUserWithEmailAndPassword} from '../auth/auth';
@@ -32,17 +33,21 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
   const [resetPasswordModalVisible, setResetPasswordModalVisible] =
     useState<boolean>(false);
 
-  useEffect(() => {
-    const stopListening = auth.onAuthStateChanged(user => {
-      // Handle the case when the user does not have all data ready
-      if (user) {
-        navigation.replace('App', {screen: 'Main Screen'}); // Redirect to main screen
-      }
-      setLoadingUser(false);
-    });
+  useFocusEffect(
+    // Redirect to main screen if user is already logged in (from login screen only)
+    React.useCallback(() => {
+      const stopListening = auth.onAuthStateChanged(user => {
+        if (user) {
+          navigation.replace('App', {screen: 'Main Screen'}); // Redirect to main screen
+        }
+        setLoadingUser(false);
+      });
 
-    return stopListening;
-  }, []);
+      return () => {
+        stopListening(); // This will be called when the screen loses focus
+      };
+    }, []),
+  );
 
   const handleLogin = async () => {
     // Validate all hooks on the screen first, return null if invalid

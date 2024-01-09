@@ -38,6 +38,14 @@ export const handleInvalidInput = (
     setWarning(
       'The app is not configured correctly. Please contact the developer.',
     );
+  } else if (err.includes('auth/too-many-requests')) {
+    setWarning(
+      'Too many requests. Please wait a moment and try again later.',
+    );
+  } else if (err.includes('PERMISSION_DENIED: Permission denied')) {
+    setWarning(
+      'Permission denied. Please contact the administrator for assistance.'
+    );
   } else {
     // Uncaught error
     Alert.alert(alertHeading, alertMessage + error.message);
