@@ -14,6 +14,7 @@ import {
 import {FeedbackProps} from '@src/types/database';
 import {setupGlobalMocks} from '../../utils/testUtils';
 import { createMockSession } from '../../utils/mockDatabase';
+import exp from 'constants';
 
 const projectId = process.env.TEST_PROJECT_ID;
 if (!projectId) throw new Error(`Missing environment variable ${projectId}.`);
@@ -105,6 +106,31 @@ describeWithEmulator('Test drinking session rules', () => {
   it('should not allow a user to drinking session data of a non-friend', async () => {
     const authRef = authDb.ref(`user_drinking_sessions/${otherUserId}`);
     await assertFails(authRef.get());
+  });
+
+});
+
+describeWithEmulator('Test user preferences rules', () => {
+  let testEnv: RulesTestEnvironment;
+  let authDb: any; // firebase.database.Database
+  let unauthDb: any; // firebase.database.Database
+  let adminDb: any;
+  setupGlobalMocks(); // Silence permission denied warnings
+
+  beforeAll(async () => {
+    ({testEnv, authDb, unauthDb, adminDb} = await setupFirebaseRulesTestEnv());
+  });
+
+  afterEach(async () => {
+    await testEnv.clearDatabase();
+  });
+
+  afterAll(async () => {
+    await teardownFirebaseRulesTestEnv(testEnv);
+  });
+
+  it('does something', () => {
+    expect(true).toBe(true);
   });
 
 });

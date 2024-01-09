@@ -86,11 +86,11 @@ export async function pushNewUserInfo(
   } = {};
   // Nickname to ID
   updates[`nickname_to_id/${nicknameKey}/${userId}`] = userNickname;
-  // User preferences
+  // // User preferences
   updates[`user_preferences/${userId}`] = getDefaultPreferences();
-  // Users
+  // // Users
   updates[`users/${userId}`] = getDefaultUserData(profileData, betaKeyId);
-  // Beta feature
+  // // Beta feature
   updates[`beta_keys/${betaKeyId}/in_usage`] = true;
   updates[`beta_keys/${betaKeyId}/user_id`] = userId;
   await update(ref(db), updates);

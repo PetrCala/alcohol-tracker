@@ -23,7 +23,7 @@ import {isValidString, validateAppVersion} from '../utils/validation';
 import {invalidChars} from '../utils/static';
 import {deleteUserInfo, pushNewUserInfo} from '../database/users';
 import {ProfileData} from 'src/types/database';
-import { handleInvalidInput } from '@src/utils/errorHandling';
+import {handleInvalidInput} from '@src/utils/errorHandling';
 
 const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
   const {loginEmail} = route ? route.params : {loginEmail: ''};
@@ -129,7 +129,10 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
     try {
       await signUpUserWithEmailAndPassword(auth, email, password);
     } catch (error: any) {
-      console.log('Sign-up failed when creating a user in firebase authentification: ', error)
+      console.log(
+        'Sign-up failed when creating a user in firebase authentification: ',
+        error,
+      );
       Alert.alert(
         'Sign-up failed',
         'There was an error during sign-up: ' + error.message,
@@ -145,16 +148,6 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
     try {
       // Realtime Database updates
       await pushNewUserInfo(db, newUserId, newProfileData, betaKeyId);
-
-      // Update Firebase authentication
-      if (auth.currentUser) {
-        await updateProfile(auth.currentUser, { displayName: username });
-      } else {
-        throw new Error("Authentication failed");
-      }
-
-      // Navigate to the main screen with a success message
-      navigation.replace('App', {screen: 'Main Screen'});
     } catch (error: any) {
       const errorHeading = 'Sign-up failed';
       const errorMessage = 'There was an error during sign-up: ';
@@ -167,12 +160,31 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
           newProfileData.display_name,
           betaKeyId,
         );
-      } catch (rollbackError:any) {
+      } catch (rollbackError: any) {
         const errorHeading = 'Rollback error';
         const errorMessage = 'Error during sign-up rollback:';
-        handleInvalidInput(rollbackError, errorHeading, errorMessage, setWarning);
+        handleInvalidInput(
+          rollbackError,
+          errorHeading,
+          errorMessage,
+          setWarning,
+        );
+      }
+      return;
+    }
+    // Update Firebase authentication
+    if (auth.currentUser) {
+      try {
+        await updateProfile(auth.currentUser, {displayName: username});
+      } catch (error: any) {
+        const errorHeading = 'User profile update failed';
+        const errorMessage = 'There was an error during sign-up: ';
+        handleInvalidInput(error, errorHeading, errorMessage, setWarning);
+        return;
       }
     }
+    // Navigate to the main screen with a success message
+    navigation.replace('App', {screen: 'Main Screen'});
     return;
   };
 
