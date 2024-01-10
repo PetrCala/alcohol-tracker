@@ -19,7 +19,6 @@ import {DateObject} from '../types/components';
 import {auth} from '../services/firebaseSetup';
 import {
   dateToDateObject,
-  getZeroUnitsObject,
   calculateThisMonthUnits,
   findOngoingSession,
   calculateThisMonthPoints,
@@ -30,15 +29,12 @@ import {
 import {useUserConnection} from '../context/UserConnectionContext';
 import UserOffline from '../components/UserOffline';
 import {updateUserLastOnline} from '../database/users';
-import {
-  saveDrinkingSessionData,
-  updateCurrentSessionKey,
-} from '../database/drinkingSessions';
+import {startLiveDrinkingSession} from '../database/drinkingSessions';
 import {getDatabaseData} from '../context/DatabaseDataContext';
 import commonStyles from '../styles/commonStyles';
-import ItemListPopup from '../components/Popups/ItemListPopup';
 import {useFirebase} from '../context/FirebaseContext';
 import ProfileImage from '../components/ProfileImage';
+import {generateDatabaseKey} from '@database/baseFunctions';
 
 const MainScreen = ({navigation}: MainScreenProps) => {
   // Context, database, and authentification
@@ -84,26 +80,38 @@ const MainScreen = ({navigation}: MainScreenProps) => {
         },
         ongoing: true,
       };
-      try {
-        // Create a new session and return its session key
-        sessionKey = await saveDrinkingSessionData(db, user.uid, sessionData);
-      } catch (error: any) {
-        throw new Error('Failed to create a new key in the database');
+      const newSessionKey = generateDatabaseKey(
+        db,
+        `user_drinking_sessions/${user.uid}`,
+      );
+      if (!newSessionKey) {
+        Alert.alert(
+          'New session key generation failed',
+          "Couldn't generate a new session key",
+        );
+        return;
       }
+      sessionKey = newSessionKey;
       try {
-        // Create a new session and return its session key
-        await updateCurrentSessionKey(db, user.uid, sessionKey);
+        await startLiveDrinkingSession(db, user.uid, sessionData, sessionKey);
       } catch (error: any) {
-        throw new Error('Failed to update the current session key info');
+        Alert.alert(
+          'New session initialization failed',
+          'Could not start a new session: ' + error.message,
+        );
+        return;
       }
     } else {
-      if (!currentSessionData) return null; // Should never be null with ongoing session
-      // The user already has an active session
-      sessionData = ongoingSession;
-      if (!currentSessionData.current_session_id) {
-        throw new Error('There is no active data key in the database');
+      const currentsessionKey = currentSessionData?.current_session_id ?? null;
+      if (!currentsessionKey) {
+        Alert.alert(
+          'New session initialization failed',
+          'Could not find the existing session',
+        );
+        return;
       }
-      sessionKey = currentSessionData.current_session_id;
+      sessionData = ongoingSession;
+      sessionKey = currentsessionKey;
     }
     navigation.navigate('Drinking Session Screen', {
       session: sessionData,

@@ -43,12 +43,15 @@ type CombinedDataProps = {
   session: DrinkingSessionArrayItem;
 };
 import commonStyles from '../styles/commonStyles';
+import { generateDatabaseKey } from '@database/baseFunctions';
+import { useFirebase } from '@src/context/FirebaseContext';
 
 const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
   if (!route || !navigation) return null; // Should never be null
   const {dateObject} = route.params; // Params for navigation
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
+  const {db} = useFirebase();
   const {drinkingSessionData, drinkingSessionKeys, preferences} =
     getDatabaseData();
   const [date, setDate] = useState<Date>(timestampToDate(dateObject.timestamp));
@@ -198,7 +201,7 @@ const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
     if (date == null) {
       return <LoadingData loadingText="" />;
     }
-    if (!editMode) return <></>; // Do not display outside edit mode
+    if (!editMode || !user) return <></>; // Do not display outside edit mode
     // No button if the date is in the future
     let today = new Date();
     let tomorrowMidnight = changeDateBySomeDays(today, 1);
@@ -215,13 +218,18 @@ const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
       note: '',
       units: getZeroUnitsObject(),
     };
+    let newSessionKey = generateDatabaseKey(db, `user_drinking_sessions/${user.uid}`);
+    if (!newSessionKey) {
+      Alert.alert('Error', 'Could not generate a new session key.');
+      return;
+    }
     return (
       <TouchableOpacity
         style={styles.addSessionButton}
         onPress={() =>
           navigation.navigate('Edit Session Screen', {
             session: newSession,
-            sessionKey: 'edit-session-id',
+            sessionKey: newSessionKey,
           })
         }>
         <Image

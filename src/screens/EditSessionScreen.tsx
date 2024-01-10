@@ -22,7 +22,7 @@ import {
 import {useFirebase} from '../context/FirebaseContext';
 import {
   removeDrinkingSessionData,
-  editDrinkingSessionData,
+  saveDrinkingSessionData,
 } from '../database/drinkingSessions';
 import SessionUnitsInputWindow from '../components/Buttons/SessionUnitsInputWindow';
 import {
@@ -91,7 +91,6 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
   const [monkeMode, setMonkeMode] = useState<boolean>(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
   const scrollViewRef = useRef<ScrollView>(null); // To navigate the view
-  const sessionIsNew = sessionKey == 'edit-session-id' ? true : false;
 
   const drinkData: DrinkDataProps = [
     {
@@ -195,47 +194,34 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
       };
       newSessionData = removeZeroObjectsFromSession(newSessionData); // Delete the initial log of zero units that was used as a placeholder
       try {
-        await editDrinkingSessionData(
-          db,
-          userId,
-          newSessionData,
-          sessionKey,
-          sessionIsNew,
-        ); // Finish editing
+        await saveDrinkingSessionData(db, userId, newSessionData, sessionKey); // Finish editing
       } catch (error: any) {
-        throw new Error(
+        Alert.alert(
+          'Sesison edit failed',
           'Failed to edit the drinking session data: ' + error.message,
         );
+        return;
       }
       navigation.goBack();
     }
   }
 
-  /** Discard the current session, reset current units and
-   * session status, and navigate to main menu.
-   */
-  async function deleteSession(db: any, userId: string, sessionId: string) {
-    try {
-      await removeDrinkingSessionData(db, userId, sessionId);
-    } catch (error: any) {
-      throw new Error('Failed to delete the session: ' + error.message);
-    }
-  }
-
   const handleConfirmDelete = async () => {
-    if (!sessionIsNew) {
-      if (!user) return;
-      try {
-        await deleteSession(db, user.uid, sessionKey);
-      } catch (error: any) {
-        throw new Error('Failed to delete the session: ' + error.message);
-      } finally {
-        setDeleteModalVisible(false);
-        navigation.navigate('Day Overview Screen', {
-          dateObject: dateToDateObject(sessionDate),
-        });
-      }
+    if (!user) return;
+    try {
+      await removeDrinkingSessionData(db, user.uid, sessionKey);
+    } catch (error: any) {
+      Alert.alert(
+        'Failed to delete the session',
+        'Session could not be deleted',
+        error.message,
+      );
+      return;
     }
+    setDeleteModalVisible(false);
+    navigation.navigate('Day Overview Screen', {
+      dateObject: dateToDateObject(sessionDate),
+    });
   };
 
   const handleBackPress = () => {

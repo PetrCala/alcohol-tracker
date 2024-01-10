@@ -15,7 +15,6 @@ import {Database} from 'firebase/database';
 import {describeWithEmulator} from '../../utils/emulators/emulatorTools';
 import {
   saveDrinkingSessionData,
-  updateCurrentSessionKey,
 } from '@database/drinkingSessions';
 
 import {MOCK_USER_IDS} from '../../utils/testsStatic';
@@ -138,7 +137,7 @@ describeWithEmulator('Test drinking session functionality', () => {
   });
 
   it('should correctly save current session id', async () => {
-    await updateCurrentSessionKey(db, testUserId, mockSessionKey);
+    await set(ref(db, `user_current_session/${testUserId}`), mockSessionKey);
     const newSessionKey = await readDataOnce(db, `user_current_session/${testUserId}/current_session_id`);
     const expectedSessionKey = mockSessionKey;
     expect(newSessionKey).toEqual(expectedSessionKey);

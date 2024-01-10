@@ -661,4 +661,4 @@ export const findUnitName = (unitKey: (typeof UnitTypesKeys)[number]) => {
   return unitName;
 };
 
-// test, getAdjacentMonths, aggregatesessionsbydays, month entries to colors (move these maybe to a different location)
+// test, getAdjacentMonths, findongoingsession, aggregatesessionsbydays, month entries to colors (move these maybe to a different location)
