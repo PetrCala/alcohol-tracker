@@ -13,7 +13,10 @@ import {
 } from '@src/types/database';
 import {Database} from 'firebase/database';
 import {describeWithEmulator} from '../../utils/emulators/emulatorTools';
-import {saveDrinkingSessionData} from '@database/drinkingSessions';
+import {
+  saveDrinkingSessionData,
+  updateCurrentSessionKey,
+} from '@database/drinkingSessions';
 
 import {MOCK_USER_IDS} from '../../utils/testsStatic';
 import {readDataOnce} from '@database/baseFunctions';
@@ -34,6 +37,19 @@ const mockDatabase: DatabaseProps = createMockDatabase();
 const testUserId: string = MOCK_USER_IDS[0];
 const testUserDisplayName: string = 'mock-user';
 const testUserBetaKey: string = 'beta-key-1';
+
+const mockSessionKey = `${testUserId}-mock-session-999`;
+const mockSessionUnits: UnitTypesProps = {
+  beer: 2,
+  wine: 1,
+  other: 3,
+};
+const mockDrinkingSession = createMockSession(
+  new Date(),
+  undefined,
+  mockSessionUnits,
+  undefined,
+);
 
 describeWithEmulator(
   'Test connecting to the realtime database emulator',
@@ -67,7 +83,7 @@ describeWithEmulator(
   },
 );
 
-describeWithEmulator('Test saving a drinking session', () => {
+describeWithEmulator('Test realtime database emulator', () => {
   let testApp: FirebaseApp;
   let db: Database;
   setupGlobalMocks();
@@ -98,32 +114,53 @@ describeWithEmulator('Test saving a drinking session', () => {
     expect(data.exists()).toBe(true);
     expect(data.val()).not.toBeNull();
   });
+});
+
+describeWithEmulator('Test drinking session functionality', () => {
+  let testApp: FirebaseApp;
+  let db: Database;
+  setupGlobalMocks();
+
+  beforeAll(async () => {
+    ({testApp, db} = setupRealtimeDatabaseTestEnv());
+  });
+
+  beforeEach(async () => {
+    await set(ref(db), mockDatabase);
+  });
+
+  afterEach(async () => {
+    await set(ref(db), null);
+  });
+
+  afterAll(async () => {
+    await teardownRealtimeDatabaseTestEnv(testApp, db);
+  });
+
+  it('should correctly save current session id', async () => {
+    await updateCurrentSessionKey(db, testUserId, mockSessionKey);
+    const newSessionKey = await readDataOnce(db, `user_current_session/${testUserId}/current_session_id`);
+    const expectedSessionKey = mockSessionKey;
+    expect(newSessionKey).toEqual(expectedSessionKey);
+  });
 
   it('should save drinking session data', async () => {
-    const sessionUnits: UnitTypesProps = {
-      beer: 2,
-    };
-    const drinkingSession = createMockSession(
-      new Date(),
-      undefined,
-      sessionUnits,
-      undefined,
+    await saveDrinkingSessionData(
+      db,
+      testUserId,
+      mockDrinkingSession,
+      mockSessionKey,
     );
 
-    expect(drinkingSession).not.toBeNull();
-    expect(drinkingSession.ongoing).toBe(undefined);
-
-    const sessionKey = `${testUserId}-mock-session-0`;
-    await saveDrinkingSessionData(db, testUserId, drinkingSession, sessionKey);
-    const userSessionRef = `user_drinking_sessions/${testUserId}/${sessionKey}`;
+    const userSessionRef = `user_drinking_sessions/${testUserId}/${mockSessionKey}`;
     const userSession = await readDataOnce(db, userSessionRef);
 
     expect(userSession).not.toBeNull();
-    expect(userSession).toMatchObject(drinkingSession);
+    expect(userSession).toMatchObject(mockDrinkingSession);
   });
 });
 
-describeWithEmulator('Pushes all new user info into the database', () => {
+describeWithEmulator('Test pushing new user info into the database', () => {
   let testApp: FirebaseApp;
   let db: Database;
   let newUserDisplayName = 'mock-user-6';
