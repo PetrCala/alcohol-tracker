@@ -1,4 +1,4 @@
-﻿import {Database, get, ref, onValue, off} from 'firebase/database';
+﻿import {Database, get, ref, child, push, onValue, off} from 'firebase/database';
 
 /** Read data once from the realtime database using get(). Return the data if it exists.
  *
@@ -22,9 +22,9 @@ export async function readDataOnce(
 /**
  * Main listener for data changes
  *
- * @param {Database} db The Realtime Database instance.
- * @param {string} refString Ref string to listen at
- * @param {(data:any) => void} onDataChange Callback function to execute on data change.
+ * @param db The Realtime Database instance.
+ * @param refString Ref string to listen at
+ * @param onDataChange Callback function to execute on data change.
  */
 export function listenForDataChanges(
   db: Database,
@@ -62,4 +62,18 @@ export async function fetchNicknameByUID(
     return 'Not found';
   }
   return userSnapshot.val().display_name || null;
+}
+
+/**
+ * Generates a database key based on the provided reference string.
+ * 
+ * @param db The database object.
+ * @param refString The reference string used to generate the key.
+ * @returns The generated database key, or null if the key cannot be generated.
+ */
+export function generateDatabaseKey(
+  db: Database,
+  refString: string,
+): string | null {
+  return push(child(ref(db), refString)).key;
 }

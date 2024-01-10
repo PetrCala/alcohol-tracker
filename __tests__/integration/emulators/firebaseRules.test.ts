@@ -257,7 +257,7 @@ describeWithEmulator('Test user current session rules', () => {
 
   it('should allow writing to user current session node when admin is true', async () => {
     const authRef = adminDb.ref(`user_current_session`);
-    await assertSucceeds(authRef.set({test_user: {current_session_key: 'test'}}));
+    await assertSucceeds(authRef.set({test_user: {current_session_id: 'test'}}));
   });
 
   it('should not allow writing to user current session node when not an admin', async () => {
@@ -269,7 +269,7 @@ describeWithEmulator('Test user current session rules', () => {
 
   it('should allow an authenticated user to write into their own current session node', async () => {
     const authRef = authDb.ref(`user_current_session/${authUserId}`);
-    await assertSucceeds(authRef.set({current_session_key: mockSessionKey}));
+    await assertSucceeds(authRef.set({current_session_id: mockSessionKey}));
   });
 
   it('should not allow an authenticated user to write with incorrect keys into their own current session node', async () => {
@@ -279,17 +279,17 @@ describeWithEmulator('Test user current session rules', () => {
 
   it('should not allow an authenticated user to write with incorrect values into their own current session node', async () => {
     const authRef = authDb.ref(`user_current_session/${authUserId}`);
-    await assertFails(authRef.set({current_session_key: 123}));
+    await assertFails(authRef.set({current_session_id: 123}));
   });
 
   it("should not allow an authenticated user to write into other user's current session nodes", async () => {
     const authRef = authDb.ref(`user_current_session/${otherUserId}`);
-    await assertFails(authRef.set({current_session_key: mockSessionKey}));
+    await assertFails(authRef.set({current_session_id: mockSessionKey}));
   });
 
   it('should not allow an unauthenticated user to write into their own current session node', async () => {
     const unauthRef = unauthDb.ref(`user_current_session/${authUserId}`);
-    await assertFails(unauthRef.set({current_session_key: mockSessionKey}));
+    await assertFails(unauthRef.set({current_session_id: mockSessionKey}));
   });
 
   it('should allow an authenticated user to read their own current session node', async () => {

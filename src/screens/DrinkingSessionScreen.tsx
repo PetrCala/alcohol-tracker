@@ -2,11 +2,9 @@
 import {
   ActivityIndicator,
   Alert,
-  Image,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -15,12 +13,11 @@ import BasicButton from '../components/Buttons/BasicButton';
 import {DrinkingSessionScreenProps} from '../types/screens';
 import {useFirebase} from '../context/FirebaseContext';
 import {
-  removeDrinkingSessionData,
+  discardLiveDrinkingSession,
+  endLiveDrinkingSession,
   saveDrinkingSessionData,
-  updateCurrentSessionKey,
   updateSessionUnits,
 } from '../database/drinkingSessions';
-import SessionUnitsInputWindow from '../components/Buttons/SessionUnitsInputWindow';
 import {
   addUnits,
   formatDateToDay,
@@ -28,7 +25,6 @@ import {
   removeUnits,
   removeZeroObjectsFromSession,
   sumAllPoints,
-  sumAllUnits,
   sumUnitsOfSingleType,
   timestampToDate,
   unitsToColors,
@@ -36,12 +32,9 @@ import {
 import {auth} from '../services/firebaseSetup';
 import {
   DrinkingSessionArrayItem,
-  DrinkingSessionData,
-  UnitTypesKeys,
   UnitTypesProps,
   UnitsObject,
 } from '../types/database';
-import DrinkingSessionUnitWindow from '../components/DrinkingSessionUnitWindow';
 import {maxAllowedUnits} from '../utils/static';
 import YesNoPopup from '../components/Popups/YesNoPopup';
 import {useUserConnection} from '../context/UserConnectionContext';
@@ -279,20 +272,25 @@ const DrinkingSessionScreen = ({
         if (timeSinceLastUpdate < 1000) {
           await sleep(1000 - timeSinceLastUpdate); // Wait for database synchronization
         }
-        await updateCurrentSessionKey(db, userId, null); // Remove the current session id info
-        await saveDrinkingSessionData(db, userId, newSessionData, sessionKey); // Save drinking session data
+        await endLiveDrinkingSession(
+          db,
+          userId,
+          newSessionData,
+          sessionKey,
+        );
       } catch (error: any) {
-        throw new Error(
+        Alert.alert(
+          'Session save failed',
           'Failed to save drinking session data: ' + error.message,
         );
-      } finally {
-        // Reroute to session summary, do not allow user to return
-        navigation.replace('Session Summary Screen', {
-          session: newSessionData,
-          sessionKey: sessionKey,
-        });
-        setSavingSession(false);
+        return;
       }
+      // Reroute to session summary, do not allow user to return
+      navigation.replace('Session Summary Screen', {
+        session: newSessionData,
+        sessionKey: sessionKey,
+      });
+      setSavingSession(false);
     }
   }
 
@@ -308,8 +306,7 @@ const DrinkingSessionScreen = ({
       await sleep(1000 - timeSinceLastUpdate); // Wait for database synchronization
     }
     try {
-      await removeDrinkingSessionData(db, user.uid, sessionKey);
-      await updateCurrentSessionKey(db, user.uid, null);
+      await discardLiveDrinkingSession(db, user.uid, sessionKey);
     } catch (error: any) {
       Alert.alert(
         'Session discard failed',
