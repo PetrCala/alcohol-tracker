@@ -272,12 +272,7 @@ const DrinkingSessionScreen = ({
         if (timeSinceLastUpdate < 1000) {
           await sleep(1000 - timeSinceLastUpdate); // Wait for database synchronization
         }
-        await endLiveDrinkingSession(
-          db,
-          userId,
-          newSessionData,
-          sessionKey,
-        );
+        await endLiveDrinkingSession(db, userId, newSessionData, sessionKey);
       } catch (error: any) {
         Alert.alert(
           'Session save failed',
