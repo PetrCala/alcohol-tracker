@@ -6,7 +6,7 @@ import {
   assertSucceeds,
   RulesTestEnvironment,
 } from '@firebase/rules-unit-testing';
-import {describeWithEmulator} from '../../utils/emulators/emulatorTools';
+import {describeWithEmulator, makeFriends} from '../../utils/emulators/emulatorTools';
 import {
   setupFirebaseRulesTestEnv,
   teardownFirebaseRulesTestEnv,
@@ -19,6 +19,7 @@ import {
   SAMPLE_UNITS_TO_COLORS,
   SAMPLE_UNITS_TO_POINTS,
 } from '../../utils/testsStatic';
+import { mock } from 'node:test';
 
 const projectId = process.env.TEST_PROJECT_ID;
 if (!projectId) throw new Error(`Missing environment variable ${projectId}.`);
@@ -31,6 +32,7 @@ const testFeedback: FeedbackProps = {
 };
 const authUserId = 'authUserId';
 const otherUserId = 'otherUserId';
+const mockSessionKey = `${authUserId}-mock-session-999`;
 
 describeWithEmulator('Test drinking session rules', () => {
   let testEnv: RulesTestEnvironment;
@@ -99,10 +101,7 @@ describeWithEmulator('Test drinking session rules', () => {
   });
 
   it("should allow a user to read friend's drinking session data", async () => {
-    // Set the friend connection first
-    const friendRef = authDb.ref(`users/${authUserId}/friends/${otherUserId}`);
-    await friendRef.set(true);
-
+    await makeFriends(authDb, authUserId, otherUserId); // Set the friend connection first
     const authRef = authDb.ref(`user_drinking_sessions/${otherUserId}`);
     await assertSucceeds(authRef.get());
   });
@@ -149,9 +148,7 @@ describeWithEmulator('Test user preferences rules', () => {
   });
 
   it("should allow authenticated friend users to read other user's preferences", async () => {
-    const friendRef = authDb.ref(`users/${authUserId}/friends/${otherUserId}`);
-    await friendRef.set(true);
-
+    await makeFriends(authDb, authUserId, otherUserId);
     const authRef = authDb.ref(`user_preferences/${otherUserId}`);
     await assertSucceeds(authRef.get());
   });
@@ -224,6 +221,96 @@ describeWithEmulator('Test feedback rules', () => {
   it('should not read feedback when not an admin', async () => {
     const unauthRef = unauthDb.ref(`feedback/${testFeedbackId}`);
     await assertFails(unauthRef.get());
+  });
+});
+
+describeWithEmulator('Test user current session rules', () => {
+  let testEnv: RulesTestEnvironment;
+  let authDb: any;
+  let unauthDb: any;
+  let adminDb: any;
+  setupGlobalMocks(); // Silence permission denied warnings
+
+  beforeAll(async () => {
+    ({testEnv, authDb, unauthDb, adminDb} = await setupFirebaseRulesTestEnv());
+  });
+
+  afterEach(async () => {
+    await testEnv.clearDatabase();
+  });
+
+  afterAll(async () => {
+    await teardownFirebaseRulesTestEnv(testEnv);
+  });
+
+  it('should allow reading user current session node when admin is true', async () => {
+    const authRef = adminDb.ref(`user_current_session`);
+    await assertSucceeds(authRef.get());
+  });
+
+  it('should not allow reading user current session node when not an admin', async () => {
+    const authRef = authDb.ref(`user_current_session`);
+    const unauthRef = unauthDb.ref(`user_current_session`);
+    await assertFails(authRef.get());
+    await assertFails(unauthRef.get());
+  });
+
+  it('should allow writing to user current session node when admin is true', async () => {
+    const authRef = adminDb.ref(`user_current_session`);
+    await assertSucceeds(authRef.set({test_user: {current_session_key: 'test'}}));
+  });
+
+  it('should not allow writing to user current session node when not an admin', async () => {
+    const authRef = authDb.ref(`user_current_session`);
+    const unauthRef = unauthDb.ref(`user_current_session`);
+    await assertFails(authRef.set({data: 'test'}));
+    await assertFails(unauthRef.set({data: 'test'}));
+  });
+
+  it('should allow an authenticated user to write into their own current session node', async () => {
+    const authRef = authDb.ref(`user_current_session/${authUserId}`);
+    await assertSucceeds(authRef.set({current_session_key: mockSessionKey}));
+  });
+
+  it('should not allow an authenticated user to write with incorrect keys into their own current session node', async () => {
+    const authRef = authDb.ref(`user_current_session/${authUserId}`);
+    await assertFails(authRef.set({incorrect_key: mockSessionKey}));
+  });
+
+  it('should not allow an authenticated user to write with incorrect values into their own current session node', async () => {
+    const authRef = authDb.ref(`user_current_session/${authUserId}`);
+    await assertFails(authRef.set({current_session_key: 123}));
+  });
+
+  it("should not allow an authenticated user to write into other user's current session nodes", async () => {
+    const authRef = authDb.ref(`user_current_session/${otherUserId}`);
+    await assertFails(authRef.set({current_session_key: mockSessionKey}));
+  });
+
+  it('should not allow an unauthenticated user to write into their own current session node', async () => {
+    const unauthRef = unauthDb.ref(`user_current_session/${authUserId}`);
+    await assertFails(unauthRef.set({current_session_key: mockSessionKey}));
+  });
+
+  it('should allow an authenticated user to read their own current session node', async () => {
+    const authRef = authDb.ref(`user_drinking_sessions/${authUserId}`);
+    await assertSucceeds(authRef.get());
+  });
+
+  it('should not allow an authenticated user to read other users\' current session node', async () => {
+    const authRef = authDb.ref(`user_drinking_sessions/${otherUserId}`);
+    await assertFails(authRef.get());
+  });
+
+  it('should allow an authenticated user to read their friends\' current session node', async () => {
+    await makeFriends(authDb, authUserId, otherUserId); // Set the friend connection first
+    const authRef = authDb.ref(`user_drinking_sessions/${otherUserId}`);
+    await assertSucceeds(authRef.get());
+  });
+
+  it('should not allow an authenticated user to read their own current session node', async () => {
+    const authRef = unauthDb.ref(`user_drinking_sessions/${authUserId}`);
+    await assertFails(authRef.get());
   });
 });
 
