@@ -111,7 +111,7 @@ const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
     var totalUnits = sumAllUnits(session.units);
     var totalPoints = sumAllPoints(session.units, preferences.units_to_points);
     var unitsToColorsInfo = preferences.units_to_colors;
-    var sessionColor = unitsToColors(totalUnits, unitsToColorsInfo);
+    var sessionColor = unitsToColors(totalPoints, unitsToColorsInfo);
     if (session.blackout === true) {
       sessionColor = 'black';
     }
