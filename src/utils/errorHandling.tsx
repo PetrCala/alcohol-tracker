@@ -22,6 +22,8 @@ export const handleInvalidInput = (
     setWarning('Invalid email');
   } else if (err.includes('auth/missing-password')) {
     setWarning('Missing password');
+  } else if (err.includes('auth/invalid-credential')) {
+    setWarning('Invalid credentials');
   } else if (err.includes('auth/weak-password')) {
     setWarning(
       'Your password is too weak - password should be at least 6 characters',
