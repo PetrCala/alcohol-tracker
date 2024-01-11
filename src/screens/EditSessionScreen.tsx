@@ -49,6 +49,7 @@ import UnitTypesView from '../components/UnitTypesView';
 import SessionDetailsSlider from '../components/SessionDetailsSlider';
 import {getDatabaseData} from '../context/DatabaseDataContext';
 import commonStyles from '../styles/commonStyles';
+import { getPreviousRouteName } from '@navigation/navigationUtils';
 
 const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
   if (!route || !navigation) return null; // Should never be null
@@ -202,6 +203,9 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
         );
         return;
       }
+      const previousRouteName = getPreviousRouteName(navigation);
+      console.log('saving the session and navigating back...');
+      console.log('previousRouteName', previousRouteName);
       navigation.goBack();
     }
   }
@@ -225,6 +229,9 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
   };
 
   const handleBackPress = () => {
+    const previousRouteName = getPreviousRouteName(navigation);
+    console.log('navigating back...');
+    console.log('previousRouteName', previousRouteName);
     navigation.goBack();
   };
 
