@@ -1,4 +1,5 @@
 ﻿import {SafeAreaView, StyleSheet} from 'react-native';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import MainScreen from '../screens/MainScreen';
 import DrinkingSessionScreen from '../screens/DrinkingSessionScreen';
@@ -18,8 +19,15 @@ import PrivacyPolicyScreen from '../screens/PrivacyPolicyScreen';
 import Stack from './Stack';
 import {DatabaseDataProvider} from '../context/DatabaseDataContext';
 
-const AppNavigator = () => (
-  <SafeAreaView style={styles.safeArea}>
+const AppNavigator = () => {
+  const insets = useSafeAreaInsets();
+  
+  return (
+  // <SafeAreaView style={styles.safeArea}>
+  <SafeAreaProvider style={[
+    styles.safeArea,
+    { paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right, paddingBottom: insets.bottom - 10 }
+    ]}>
     <DatabaseDataProvider>
       <Stack.Navigator
         initialRouteName="Main Screen"
@@ -60,8 +68,8 @@ const AppNavigator = () => (
         />
       </Stack.Navigator>
     </DatabaseDataProvider>
-  </SafeAreaView>
-);
+  </SafeAreaProvider>
+)};
 
 const styles = StyleSheet.create({
   safeArea: {

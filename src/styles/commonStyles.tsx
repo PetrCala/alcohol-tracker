@@ -31,6 +31,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 10,
     borderWidth: 1,
+    borderBottomWidth: 0,
     borderColor: '#ddd',
     elevation: 10, // for Android shadow
     // padding: 10,
