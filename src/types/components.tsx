@@ -74,7 +74,6 @@ export type DayMarking = {
   units?: number;
   color?: CalendarColors;
   textColor?: string;
-  decimalPoint?: true;
 };
 
 export type CalendarColors = 'yellow' | 'red' | 'orange' | 'black' | 'green';
