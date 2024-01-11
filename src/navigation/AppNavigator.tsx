@@ -23,10 +23,9 @@ const AppNavigator = () => {
   const insets = useSafeAreaInsets();
   
   return (
-  // <SafeAreaView style={styles.safeArea}>
   <SafeAreaProvider style={[
     styles.safeArea,
-    { paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right, paddingBottom: insets.bottom - 10 }
+    { paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right, paddingBottom: insets.bottom }
     ]}>
     <DatabaseDataProvider>
       <Stack.Navigator
