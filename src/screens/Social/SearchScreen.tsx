@@ -98,26 +98,34 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
     undefined: 'Send a request',
   };
 
-  const handleSendRequestPress = async (db: Database, userFrom:string, userTo: string):Promise<void> => {
-    try{
+  const handleSendRequestPress = async (
+    db: Database,
+    userFrom: string,
+    userTo: string,
+  ): Promise<void> => {
+    try {
       await sendFriendRequest(db, userFrom, userTo);
       // TODO Also refresh the status!!
     } catch (error: any) {
       Alert.alert(
-        'Friend request failed',
+        'User does not exist in the database',
         'Could not send a friend request: ' + error.message,
       );
       return;
     }
   };
 
-  const handleAcceptFriendRequestPress = async (db: Database, userFrom:string, userTo: string):Promise<void> => {
-    try{
+  const handleAcceptFriendRequestPress = async (
+    db: Database,
+    userFrom: string,
+    userTo: string,
+  ): Promise<void> => {
+    try {
       await acceptFriendRequest(db, userFrom, userTo);
       // TODO Also refresh the status!!
     } catch (error: any) {
       Alert.alert(
-        'Friend request failed',
+        'User does not exist in the database',
         'Could not accept a friend request: ' + error.message,
       );
       return;
@@ -146,8 +154,7 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
       ) : (
         <TouchableOpacity
           style={styles.sendFriendRequestButton}
-          onPress={() => handleSendRequestPress(db, userFrom, userTo)} 
-        >
+          onPress={() => handleSendRequestPress(db, userFrom, userTo)}>
           <Text style={styles.sendFriendRequestText}>
             {statusToTextMap.undefined}
           </Text>

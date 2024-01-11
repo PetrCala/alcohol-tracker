@@ -469,6 +469,8 @@ describeWithEmulator('Test friend request rules', () => {
     const authRef = authDb.ref(`users/${otherUserId}/friend_requests`);
     await assertFails(authRef.get());
   });
+
+  // Check that the rules correctly reject writing to non-existent users
 });
 
 // TODO

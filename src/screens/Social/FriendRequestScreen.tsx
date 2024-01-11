@@ -52,7 +52,7 @@ const FriendRequestButtons: React.FC<FriendRequestButtonsProps> = ({
       await acceptFriendRequest(db, userId, requestId);
     } catch (error: any) {
       Alert.alert(
-        'Friend request accept failed',
+        'User does not exist in the database',
         'Could not accept the friend request: ' + error.message,
       );
     }
@@ -67,7 +67,7 @@ const FriendRequestButtons: React.FC<FriendRequestButtonsProps> = ({
       await deleteFriendRequest(db, userId, requestId);
     } catch (error: any) {
       Alert.alert(
-        'Friend request accept failed',
+        'User does not exist in the database',
         'Could not accept the friend request: ' + error.message,
       );
     }

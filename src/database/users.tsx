@@ -58,7 +58,7 @@ export async function userExistsInDatabase(
   db: Database,
   userId: string,
 ): Promise<boolean> {
-  const dbRef = ref(db, `/users/${userId}/`);
+  const dbRef = ref(db, `/users/${userId}/profile`);
   const snapshot = await get(dbRef);
   return snapshot.exists();
 }

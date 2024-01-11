@@ -31,11 +31,13 @@ import {
   pushNewUserInfo,
 } from '@database/users';
 import {cleanStringForFirebaseKey} from '@src/utils/strings';
+import { sendFriendRequest } from '@database/friends';
 
 const mockDatabase: DatabaseProps = createMockDatabase();
 const testUserId: string = MOCK_USER_IDS[0];
 const testUserDisplayName: string = 'mock-user';
 const testUserBetaKey: string = 'beta-key-1';
+const testUserId2: string = MOCK_USER_IDS[1];
 
 const mockSessionKey = `${testUserId}-mock-session-999`;
 const mockSessionUnits: UnitTypesProps = {
@@ -314,4 +316,35 @@ describeWithEmulator('Test deleting data from the database', () => {
     );
     expect(dbUnconfirmedDays).toBeNull();
   });
+});
+
+describeWithEmulator('Test friend request functionality', () => {
+  let testApp: FirebaseApp;
+  let db: Database;
+  setupGlobalMocks();
+
+  beforeAll(async () => {
+    ({testApp, db} = setupRealtimeDatabaseTestEnv());
+  });
+
+  beforeEach(async () => {
+    await set(ref(db), mockDatabase);
+    await deleteUserInfo(db, testUserId, testUserDisplayName, 1); // beta feature
+  });
+
+  afterEach(async () => {
+    await set(ref(db), null);
+  });
+
+  afterAll(async () => {
+    await teardownRealtimeDatabaseTestEnv(testApp, db);
+  });
+
+  // TODO
+  it('should send a friend request', async () => {
+    // TODO
+    expect(true).toBe(true);
+    // await sendFriendRequest(db, testUserId, testUserId2);
+  });
+
 });

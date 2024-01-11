@@ -3,6 +3,7 @@
 - Add an update screen
 - Finish the user deletion cleanup
 - Make friend request sends refresh status (see SearchScreen)
+- Finish friend request and friend test suite
 
 ### Migrating to 0.3.0 database
 
