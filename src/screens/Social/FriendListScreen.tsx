@@ -13,6 +13,11 @@ import {useFirebase} from '../../context/FirebaseContext';
 import {isNonEmptyObject} from '../../utils/validation';
 import LoadingData from '../../components/LoadingData';
 
+const FriendOverview: React.FC = ({}) => {
+  // TODO
+  return <></>;
+};
+
 type ScreenProps = {
   userData: UserData | null;
   setIndex: React.Dispatch<React.SetStateAction<number>>;
@@ -21,7 +26,9 @@ type ScreenProps = {
 const FriendListScreen = (props: ScreenProps) => {
   const {userData, setIndex} = props;
   const {db} = useFirebase();
-  const [friends, setFriends] = useState<FriendsData | undefined>(userData?.friends);
+  const [friends, setFriends] = useState<FriendsData | undefined>(
+    userData?.friends,
+  );
   const [loadingDisplayData, setLoadingDisplayData] = useState<boolean>(false);
   const [displayData, setDisplayData] = useProfileDisplayData({
     data: friends ?? {},
@@ -36,21 +43,27 @@ const FriendListScreen = (props: ScreenProps) => {
 
   return (
     <ScrollView style={styles.scrollViewContainer}>
-      {/* {isNonEmptyObject(friends) ? ( */}
+      <Text style={styles.friendText}>There are your friends:</Text>
       {friends ? (
         <View style={styles.friendList}>
-          {Object.keys(friends).map(friendId =>
-            loadingDisplayData ? (
-              <LoadingData key={friendId + '-loading'} />
-            ) : (
+          {Object.keys(friends).map(friendId => {
+            const profileData = displayData[friendId];
+            const friendName = profileData?.display_name;
+
+            if (loadingDisplayData)
+              return <LoadingData key={friendId + '-loading'} />;
+
+            return (
+              <Text key={friendId} style={styles.friendText}>
+                {friendName}
+              </Text>
               // <UserOverview
               //   key={friendId+'-user-overview'}
               //   userId={friendId}
               //   RightSideComponent={<></>}
               // />
-              <></>
-            ),
-          )}
+            );
+          })}
         </View>
       ) : (
         <View style={styles.emptyList}>
