@@ -39,7 +39,7 @@ const useProfileDisplayData = ({
   data,
   db,
   setLoadingDisplayData,
-}: Options): [ProfileDisplayData, (data: ProfileDisplayData) => void] => {
+}: Options): [ProfileDisplayData, (profileData: ProfileDisplayData) => void] => {
   const [displayData, setDisplayData] = useState<ProfileDisplayData>({});
 
   useEffect(() => {
@@ -72,8 +72,8 @@ const useProfileDisplayData = ({
       }
     };
 
-    // fetchDisplayData();
-  }, [data, db, setLoadingDisplayData]);
+    fetchDisplayData();
+  }, []);
 
   return [displayData, setDisplayData];
 };

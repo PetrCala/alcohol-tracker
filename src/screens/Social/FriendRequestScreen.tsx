@@ -27,6 +27,10 @@ type FriendRequestButtonsProps = {
   requestId: string;
 };
 
+type FriendRequestPendingProps = {
+  requestId: string;
+};
+
 type FriendRequestComponentProps = {
   requestStatus: FriendRequestStatus | undefined;
   requestId: string;
@@ -36,42 +40,42 @@ type ScreenProps = {
   userData: UserData | null;
 };
 
+const handleAcceptFriendRequest = async (
+  db: Database,
+  userId: string,
+  requestId: string,
+): Promise<void> => {
+  try {
+    await acceptFriendRequest(db, userId, requestId);
+  } catch (error: any) {
+    Alert.alert(
+      'User does not exist in the database',
+      'Could not accept the friend request: ' + error.message,
+    );
+  }
+};
+
+const handleRejectFriendRequest = async (
+  db: Database,
+  userId: string,
+  requestId: string,
+): Promise<void> => {
+  try {
+    await deleteFriendRequest(db, userId, requestId);
+  } catch (error: any) {
+    Alert.alert(
+      'User does not exist in the database',
+      'Could not accept the friend request: ' + error.message,
+    );
+  }
+};
+
 // Component to be shown for a received friend request
 const FriendRequestButtons: React.FC<FriendRequestButtonsProps> = ({
   requestId,
 }) => {
   const {db} = useFirebase();
   const user = auth.currentUser;
-
-  const handleAcceptFriendRequest = async (
-    db: Database,
-    userId: string,
-    requestId: string,
-  ): Promise<void> => {
-    try {
-      await acceptFriendRequest(db, userId, requestId);
-    } catch (error: any) {
-      Alert.alert(
-        'User does not exist in the database',
-        'Could not accept the friend request: ' + error.message,
-      );
-    }
-  };
-
-  const handleRejectFriendRequest = async (
-    db: Database,
-    userId: string,
-    requestId: string,
-  ): Promise<void> => {
-    try {
-      await deleteFriendRequest(db, userId, requestId);
-    } catch (error: any) {
-      Alert.alert(
-        'User does not exist in the database',
-        'Could not accept the friend request: ' + error.message,
-      );
-    }
-  };
 
   if (!db || !user) return;
 
@@ -94,10 +98,20 @@ const FriendRequestButtons: React.FC<FriendRequestButtonsProps> = ({
 };
 
 // Component to be shown when the friend request is pending
-const FriendRequestPending: React.FC = () => {
+const FriendRequestPending: React.FC<FriendRequestPendingProps> = ({
+  requestId,
+}) => {
+  const {db} = useFirebase();
+  const user = auth.currentUser;
+
+  if (!db || !user) return;
   return (
     <View style={styles.friendRequestPendingContainer}>
-      <Text style={styles.handleRequestText}>Pending</Text>
+      <TouchableOpacity
+        style={[styles.handleRequestButton, styles.rejectRequestButton]}
+        onPress={() => handleRejectFriendRequest(db, user.uid, requestId)}>
+        <Text style={styles.handleRequestButtonText}>Cancel</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -113,7 +127,10 @@ const FriendRequestComponent: React.FC<FriendRequestComponentProps> = ({
       requestId={requestId}
     />
   ) : requestStatus === 'sent' ? (
-    <FriendRequestPending key={requestId + '-friend-request-pending'} />
+    <FriendRequestPending
+      key={requestId + '-friend-request-pending'}
+      requestId={requestId}
+    />
   ) : (
     <></>
   );
@@ -131,10 +148,6 @@ const FriendRequestScreen = (props: ScreenProps) => {
     db: db,
     setLoadingDisplayData: setLoadingDisplayData,
   });
-
-  useEffect(() => {
-    setFriendRequests(userData?.friend_requests);
-  }, [userData]);
 
   return (
     <View style={styles.mainContainer}>
@@ -248,6 +261,19 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 16,
     fontWeight: '400',
+  },
+  cancelRequestButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'red',
+  },
+  cancelRequestImage: {
+    height: '110%',
+    width: '110%',
+    tintColor: 'white',
   },
   friendRequestPendingContainer: {
     width: '40%',
