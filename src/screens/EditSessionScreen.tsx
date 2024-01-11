@@ -1,6 +1,7 @@
 ﻿import React, {useEffect, useState, useContext, useRef} from 'react';
 import {
   Alert,
+  BackHandler,
   Image,
   ImageSourcePropType,
   ScrollView,
@@ -49,7 +50,7 @@ import UnitTypesView from '../components/UnitTypesView';
 import SessionDetailsSlider from '../components/SessionDetailsSlider';
 import {getDatabaseData} from '../context/DatabaseDataContext';
 import commonStyles from '../styles/commonStyles';
-import { getPreviousRouteName } from '@navigation/navigationUtils';
+import {getPreviousRouteName} from '@navigation/navigationUtils';
 
 const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
   if (!route || !navigation) return null; // Should never be null
@@ -88,7 +89,12 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
   const sessionDay = formatDateToDay(sessionDate);
   const sessionStartTime = formatDateToTime(sessionDate);
   const {db} = useFirebase();
+  // Session object hooks
+  const initialSession = useRef(session);
+  const [currentSession, setCurrentSession] =
+    useState<DrinkingSessionArrayItem>(session); // Track the session object modifications
   // Other
+  const [showLeaveConfirmation, setShowLeaveConfirmation] = useState(false);
   const [monkeMode, setMonkeMode] = useState<boolean>(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
   const scrollViewRef = useRef<ScrollView>(null); // To navigate the view
@@ -159,57 +165,6 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
     setNote(value);
   };
 
-  // Update the hooks whenever current units change
-  useEffect(() => {
-    if (!preferences) return;
-    let newTotalPoints = sumAllPoints(
-      currentUnits,
-      preferences.units_to_points,
-    );
-    let newAvailableUnits = maxAllowedUnits - newTotalPoints;
-    setTotalPoints(newTotalPoints);
-    setAvailableUnits(newAvailableUnits);
-  }, [currentUnits]);
-
-  async function saveSession(db: any, userId: string) {
-    if (totalPoints > 99) {
-      console.log('cannot save this session');
-      return null;
-    }
-    if (!navigation) {
-      Alert.alert('Navigation not found', 'Failed to fetch the navigation');
-      return null;
-    }
-    // Handle old versions of drinking session data where note/blackout were missing
-    let sessionNote = note ? note : '';
-    let sessionBlackout = isBlackout ? isBlackout : false;
-    // Save the session
-    if (totalPoints > 0) {
-      let newSessionData: DrinkingSessionArrayItem = {
-        start_time: session.start_time,
-        end_time: session.end_time,
-        units: currentUnits,
-        blackout: sessionBlackout,
-        note: sessionNote,
-        ongoing: null,
-      };
-      newSessionData = removeZeroObjectsFromSession(newSessionData); // Delete the initial log of zero units that was used as a placeholder
-      try {
-        await saveDrinkingSessionData(db, userId, newSessionData, sessionKey); // Finish editing
-      } catch (error: any) {
-        Alert.alert(
-          'Sesison edit failed',
-          'Failed to edit the drinking session data: ' + error.message,
-        );
-        return;
-      }
-      const previousRouteName = getPreviousRouteName(navigation);
-      console.log('saving the session and navigating back...');
-      console.log('previousRouteName', previousRouteName);
-      navigation.goBack();
-    }
-  }
-
   const handleConfirmDelete = async () => {
     if (!user) return;
     try {
@@ -228,12 +183,103 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
     });
   };
 
-  const handleBackPress = () => {
-    const previousRouteName = getPreviousRouteName(navigation);
-    console.log('navigating back...');
-    console.log('previousRouteName', previousRouteName);
-    navigation.goBack();
+  const hasSessionChanged = () => {
+    return JSON.stringify(initialSession.current) !== JSON.stringify(currentSession);
   };
+
+  const handleBackPress = () => {
+    if (hasSessionChanged()) {
+      setShowLeaveConfirmation(true); // Unsaved changes
+    } else {
+      confirmGoBack(session); // No changes to the session object
+    }
+  };
+
+  const confirmGoBack = (
+    finalSessionData: DrinkingSessionArrayItem // Decide which session to go back with
+  ) => {
+    const previousRouteName = getPreviousRouteName(navigation);
+    // Navigate back explicitly to avoid errors
+    if (previousRouteName.includes('Day Overview Screen')) {
+      const sessionDateObject = dateToDateObject(sessionDate);
+      navigation.navigate('Day Overview Screen', {
+        dateObject: sessionDateObject,
+      });
+    } else if (previousRouteName.includes('Session Summary Screen')) {
+      navigation.navigate('Session Summary Screen', {
+        session: finalSessionData,
+        sessionKey: sessionKey,
+      });
+    } else {
+      navigation.goBack();
+    }
+  };
+
+  async function saveSession(db: any, userId: string) {
+    if (totalPoints > 99) {
+      console.log('cannot save this session');
+      return null;
+    }
+    if (!navigation) {
+      Alert.alert('Navigation not found', 'Failed to fetch the navigation');
+      return null;
+    }
+    // Save the session
+    if (totalPoints > 0) {
+      let newSessionData: DrinkingSessionArrayItem = removeZeroObjectsFromSession(currentSession); // Delete the initial log of zero units that was used as a placeholder
+      // Handle old versions of drinking session data where note/blackout were missing - remove this later
+      newSessionData.blackout = isBlackout ? isBlackout : false;
+      newSessionData.note = note ? note : '';
+      try {
+        await saveDrinkingSessionData(db, userId, newSessionData, sessionKey); // Finish editing
+      } catch (error: any) {
+        Alert.alert(
+          'Sesison edit failed',
+          'Failed to edit the drinking session data: ' + error.message,
+        );
+        return;
+      }
+      confirmGoBack(newSessionData);
+    }
+  }
+
+  // Update the hooks whenever current units change
+  useEffect(() => {
+    if (!preferences) return;
+    let newTotalPoints = sumAllPoints(
+      currentUnits,
+      preferences.units_to_points,
+    );
+    let newAvailableUnits = maxAllowedUnits - newTotalPoints;
+    setTotalPoints(newTotalPoints);
+    setAvailableUnits(newAvailableUnits);
+  }, [currentUnits]);
+
+  useEffect(() => {
+    if (!preferences) return;
+    let newSession: DrinkingSessionArrayItem = {
+      start_time: session.start_time,
+      end_time: session.end_time,
+      units: currentUnits,
+      blackout: isBlackout,
+      note: note,
+    };
+    setCurrentSession(newSession);
+  }, [currentUnits, isBlackout, note]);
+
+  // Make the system back press toggle the go back handler
+  useEffect(() => {
+    const backAction = () => {
+      handleBackPress();
+      return true; // Prevent the event from bubbling up and being handled by the default handler
+    };
+
+    BackHandler.addEventListener('hardwareBackPress', backAction);
+
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', backAction);
+    };
+  }, [currentSession]); // Add your state dependencies here
 
   if (!isOnline) return <UserOffline />;
   if (!user || !preferences) {
@@ -330,6 +376,13 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
           buttonStyle={styles.saveSessionButton}
           textStyle={styles.saveSessionButtonText}
           onPress={() => saveSession(db, user.uid)}
+        />
+        <YesNoPopup
+          visible={showLeaveConfirmation}
+          transparent={true}
+          onRequestClose={() => setShowLeaveConfirmation(false)}
+          message="You have unsaved changes. Are you sure you want to go back?"
+          onYes={() => confirmGoBack(session)} // No changes to the session object
         />
       </View>
     </>
