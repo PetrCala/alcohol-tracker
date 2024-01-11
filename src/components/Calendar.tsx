@@ -22,26 +22,41 @@ import {
   getTimestampAtMidnight,
   aggregateSessionsByDays,
   monthEntriesToColors,
+  hasDecimalPoint,
 } from '../utils/dataHandling';
-import {
-  SessionsCalendarProps,
-  SessionsCalendarMarkedDates,
-} from '../types/components';
 import {
   DrinkingSessionArrayItem,
   DrinkingSessionData,
   PreferencesData,
 } from '../types/database';
-import {DateObject, DayState} from '../types/components';
+import {DateObject, DayState, DayMarking, CalendarColors} from '../types/components';
 import LoadingData from './LoadingData';
-import MenuIcon from './Buttons/MenuIcon';
 
-type CalendarColors = 'yellow' | 'red' | 'orange' | 'black';
+type SessionsCalendarProps = {
+  drinkingSessionData: DrinkingSessionArrayItem[];
+  preferences: PreferencesData;
+  visibleDateObject: DateObject;
+  setVisibleDateObject: React.Dispatch<React.SetStateAction<DateObject>>;
+  onDayPress: (day: any) => void;
+};
 
-type DayMarking = {
-  color?: CalendarColors;
-  textColor?: string;
-  units?: number;
+export type SessionsCalendarMarkedDates = {
+  [date: string]: DayMarking;
+};
+
+export type SessionsCalendarDatesType = {
+  [key: string]: {
+    units: number;
+    blackout: boolean;
+  };
+};
+
+const colorToTextColorMap: Record<CalendarColors, string> = {
+  yellow: 'black',
+  red: 'white',
+  orange: 'black',
+  black: 'white',
+  green: 'white',
 };
 
 const screenWidth = Dimensions.get('window').width;
@@ -102,20 +117,16 @@ const DayComponent: React.FC<{
   const getMarkingTextStyle = (marking: DayMarking) => {
     let baseStyle = styles.daySessionMarkingText;
 
-    const colorToTextColorMap: Record<CalendarColors, string> = {
-      yellow: 'black',
-      red: 'white',
-      orange: 'black',
-      black: 'white',
-    };
+    if (marking?.units && hasDecimalPoint(marking.units) && marking.units >= 10) {
+      baseStyle = {...baseStyle, fontSize: 15}; // Handle overflow
+    }
 
-    if (!marking?.color) {
-      return {...baseStyle, fontSize: 0};
-    } else if (colorToTextColorMap[marking?.color]) {
+    if (marking?.color && colorToTextColorMap[marking?.color]) {
       return {...baseStyle, color: colorToTextColorMap[marking?.color]};
     }
-    return {...baseStyle, fontSize: 0};
-    throw new Error('Unspecied color in the calendar');
+
+    return {...baseStyle, fontSize: 0}; // Default case
+
   };
 
   return (

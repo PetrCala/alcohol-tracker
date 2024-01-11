@@ -45,7 +45,7 @@ import {
   createMockPreferences,
   createMockSession,
   createMockUnitsObject,
-} from '../../utils/mockDatabase.js';
+} from '../../utils/mockDatabase';
 import {MONTHS, MONTHS_ABBREVIATED} from '../../../src/utils/static';
 
 describe('formatDate function', () => {

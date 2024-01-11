@@ -9,10 +9,10 @@
   UnitsToColorsData,
 } from '../types/database';
 import {
-  DateObject,
-  SessionsCalendarDatesType,
   SessionsCalendarMarkedDates,
-} from '../types/components';
+  SessionsCalendarDatesType,
+} from '@components/Calendar';
+import {DateObject, CalendarColors, DayMarking} from '@src/types/components';
 import {getRandomInt} from './choice';
 import {MONTHS, MONTHS_ABBREVIATED} from './static';
 
@@ -341,7 +341,7 @@ export function monthEntriesToColors(
       [key, {units: value, blackout: blackoutInfo}],
     ) => {
       let unitsToColorsInfo = preferences.units_to_colors;
-      let color: string = unitsToColors(value, unitsToColorsInfo);
+      let color: CalendarColors = unitsToColors(value, unitsToColorsInfo);
       if (blackoutInfo === true) {
         color = 'black';
       }
@@ -349,11 +349,12 @@ export function monthEntriesToColors(
       if (color == 'red' ?? color == 'green' ?? color == 'black') {
         textColor = 'white';
       }
-      acc[key] = {
+      let markingObject: DayMarking = {
         units: value, // number of units
         color: color,
         textColor: textColor,
       };
+      acc[key] = markingObject;
       return acc;
     },
     {},
@@ -586,7 +587,7 @@ export const removeZeroObjectsFromSession = (
     // Check if all the unit values are set to 0
     const allZero = UnitTypesKeys.every(
       key =>
-       updatedSession.units[timestamp][key] === 0 ??
+        updatedSession.units[timestamp][key] === 0 ??
         updatedSession.units[timestamp][key] === undefined,
     );
 
@@ -637,8 +638,8 @@ export function getZeroUnitsObject(): UnitsObject {
 export function unitsToColors(
   units: number,
   unitsToColorsInfo: UnitsToColorsData,
-): string {
-  let sessionColor: string;
+): CalendarColors {
+  let sessionColor: CalendarColors;
   if (units === 0) {
     sessionColor = 'green';
   } else if (units <= unitsToColorsInfo.yellow) {
@@ -660,5 +661,15 @@ export const findUnitName = (unitKey: (typeof UnitTypesKeys)[number]) => {
   let unitName = UnitTypesNames[unitIdx];
   return unitName;
 };
+
+/**
+ * Checks if a number has a decimal point.
+ * @param number - The number to check.
+ * @returns True if the number has a decimal point, false otherwise.
+ */
+export function hasDecimalPoint(number: number): boolean {
+  const numberAsString = number.toString();
+  return numberAsString.includes('.');
+}
 
 // test, getAdjacentMonths, findongoingsession, aggregatesessionsbydays, month entries to colors (move these maybe to a different location)
