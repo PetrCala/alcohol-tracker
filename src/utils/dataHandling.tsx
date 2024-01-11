@@ -429,8 +429,8 @@ export function sumAllPoints(
     // Iterate over each key in the unitTypes of the current timestamp
     for (const unitKey of Object.keys(unitTypes)) {
       if (isUnitTypeKey(unitKey)) {
-        const typeUnits = unitTypes[unitKey] || 0;
-        const typePoints = unitsToPoints[unitKey] || 0;
+        const typeUnits = unitTypes[unitKey] ?? 0;
+        const typePoints = unitsToPoints[unitKey] ?? 0;
         totalPoints += typeUnits * typePoints;
       }
     }
