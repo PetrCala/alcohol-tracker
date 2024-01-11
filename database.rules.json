@@ -90,14 +90,14 @@
           ".read": "auth != null",
           "$friend_uid": {
             ".validate": "(newData.val() === true || newData.val() === null) && $uid != $friend_uid && ($uid === auth.uid || $friend_uid === auth.uid)",
-            ".write": "auth != null"
+            ".write": "auth != null && root.child('users').child($uid).exists()"
           }
         },
         "friend_requests": {
           ".validate": "newData.val() === null || newData.hasChildren()",
           "$request_id": {
             ".validate": "(($uid === auth.uid && newData.val() === 'sent') || ($request_id === auth.uid && newData.val() === 'received') || newData.val() === null) && $uid != $request_id",
-            ".write": "auth != null"
+            ".write": "auth != null && root.child('users').child($uid).exists()"
           }
         },
         "profile": {
