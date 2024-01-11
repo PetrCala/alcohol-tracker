@@ -20,6 +20,7 @@ import {
 } from '../database/drinkingSessions';
 import {
   addUnits,
+  dateToDateObject,
   formatDateToDay,
   formatDateToTime,
   removeUnits,
@@ -47,6 +48,7 @@ import {usePrevious} from '../hooks/usePrevious';
 import SuccessIndicator from '../components/SuccessIndicator';
 import commonStyles from '../styles/commonStyles';
 import FillerView from '../components/FillerView';
+import { getPreviousRouteName } from '@navigation/navigationUtils';
 
 const DrinkingSessionScreen = ({
   route,
@@ -309,7 +311,15 @@ const DrinkingSessionScreen = ({
       );
     } finally {
       setDiscardModalVisible(false);
-      navigation.navigate('Main Screen');
+      const previousRouteName = getPreviousRouteName(navigation);
+      if (previousRouteName.includes('Day Overview Screen')) {
+        const sessionDateObject = dateToDateObject(sessionDate);
+        navigation.navigate('Day Overview Screen', {
+          dateObject: sessionDateObject,
+        });
+      } else {
+        navigation.navigate('Main Screen');
+      }
     }
   };
 
