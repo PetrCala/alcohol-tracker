@@ -19,12 +19,11 @@ type Options = {
  * and provides an interface to manage the fetched data's state. It also manages loading
  * state for any associated UI components.
  *
- * @param {Options} options - The configuration options for the hook.
- * @param {{ [id: string]: any }} options.data - A mapping from user IDs or request IDs to their associated data.
- * @param {Database} options.db - The Firebase database instance used to fetch user profiles.
- * @param {(value: boolean) => void} [options.setLoadingDisplayData] - An optional function to update the UI's loading state.
+ * @param data - A mapping from user IDs or request IDs to their associated data.
+ * @param db - The Firebase database instance used to fetch user profiles.
+ * @param setLoadingDisplayData - An optional function to update the UI's loading state.
  *
- * @returns {[ProfileDisplayData, (data: ProfileDisplayData) => void]} - A tuple where the first element is
+ * @returns A tuple where the first element is
  * the fetched profile display data, and the second element is a setter function for that data.
  *
  * @example
@@ -73,8 +72,8 @@ const useProfileDisplayData = ({
       }
     };
 
-    fetchDisplayData();
-  }, [data, db, fetchUserProfiles, setLoadingDisplayData]);
+    // fetchDisplayData();
+  }, [data, db, setLoadingDisplayData]);
 
   return [displayData, setDisplayData];
 };

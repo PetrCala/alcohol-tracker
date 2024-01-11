@@ -98,6 +98,32 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
     undefined: 'Send a request',
   };
 
+  const handleSendRequestPress = async (db: Database, userFrom:string, userTo: string):Promise<void> => {
+    try{
+      await sendFriendRequest(db, userFrom, userTo);
+      // TODO Also refresh the status!!
+    } catch (error: any) {
+      Alert.alert(
+        'Friend request failed',
+        'Could not send a friend request: ' + error.message,
+      );
+      return;
+    }
+  };
+
+  const handleAcceptFriendRequestPress = async (db: Database, userFrom:string, userTo: string):Promise<void> => {
+    try{
+      await acceptFriendRequest(db, userFrom, userTo);
+      // TODO Also refresh the status!!
+    } catch (error: any) {
+      Alert.alert(
+        'Friend request failed',
+        'Could not accept a friend request: ' + error.message,
+      );
+      return;
+    }
+  };
+
   return (
     // Refactor this part using AI later
     <View style={styles.sendFriendRequestContainer}>
@@ -112,7 +138,7 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
       ) : requestStatus === 'received' ? (
         <TouchableOpacity
           style={styles.acceptFriendRequestButton}
-          onPress={() => acceptFriendRequest(db, userFrom, userTo)}>
+          onPress={() => handleAcceptFriendRequestPress(db, userFrom, userTo)}>
           <Text style={styles.sendFriendRequestText}>
             {statusToTextMap.received}
           </Text>
@@ -120,7 +146,7 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
       ) : (
         <TouchableOpacity
           style={styles.sendFriendRequestButton}
-          onPress={() => sendFriendRequest(db, userFrom, userTo)} // Also refresh the status!!
+          onPress={() => handleSendRequestPress(db, userFrom, userTo)} 
         >
           <Text style={styles.sendFriendRequestText}>
             {statusToTextMap.undefined}
