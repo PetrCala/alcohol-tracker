@@ -346,7 +346,7 @@ export function monthEntriesToColors(
         color = 'black';
       }
       let textColor: string = 'black';
-      if (color == 'red' || color == 'green' || color == 'black') {
+      if (color == 'red' ?? color == 'green' ?? color == 'black') {
         textColor = 'white';
       }
       acc[key] = {
@@ -370,7 +370,7 @@ export function sumAllUnits(units: UnitsObject): number {
     return (
       total +
       Object.values(unitTypes).reduce(
-        (subTotal, unitCount) => subTotal + (unitCount || 0),
+        (subTotal, unitCount) => subTotal + (unitCount ?? 0),
         0,
       )
     );
@@ -387,7 +387,7 @@ export function sumUnitsOfSingleType(
   unitType: (typeof UnitTypesKeys)[number],
 ): number {
   return Object.values(unitsObject).reduce((total, session) => {
-    return total + (session[unitType] || 0);
+    return total + (session[unitType] ?? 0);
   }, 0);
 }
 
@@ -398,7 +398,7 @@ export function sumUnitsOfSingleType(
  */
 export function sumUnitTypes(unitTypes: UnitTypesProps): number {
   return Object.values(unitTypes).reduce(
-    (subTotal, unitCount) => subTotal + (unitCount || 0),
+    (subTotal, unitCount) => subTotal + (unitCount ?? 0),
     0,
   );
 }
@@ -586,7 +586,7 @@ export const removeZeroObjectsFromSession = (
     // Check if all the unit values are set to 0
     const allZero = UnitTypesKeys.every(
       key =>
-        updatedSession.units[timestamp][key] === 0 ||
+       updatedSession.units[timestamp][key] === 0 ??
         updatedSession.units[timestamp][key] === undefined,
     );
 
