@@ -1,9 +1,11 @@
 ﻿// import addNicknameToIdTable from './addNicknameToIdTable';
-import {getDatabase, saveDatabase} from '../../databaseUtils';
+import {getDatabase, getMigrationEnvType, saveDatabase} from '../../databaseUtils';
 import { DatabaseProps } from '@src/types/database';
 import updateAllNicknameToIdData, { addUserNicknameToId } from './addNicknameToIdTable';
+import CONST from '../../../../src/CONST';
 
 import admin from "../../../admin";
+import { env } from 'yargs';
 
 const adminDb = admin.database();
 
@@ -19,17 +21,23 @@ const adminDb = admin.database();
  * @version 0.2.0-0.3.0
  */
 async function migrate_020_030(
-  type: 'development' | 'production' = 'development',
+  type: string
 ):Promise<void> {
+  let envType: 'production' | 'development';
+  try {
+    envType = getMigrationEnvType(type);
+  } catch (error:any) {
+    throw new Error('Failed to get migration environment type: ' + error.message);
+  }
   console.log('Migrating the database from 0.2.0 to 0.3.0...');
-  let db: DatabaseProps | null = getDatabase(type);
+  let db: DatabaseProps | null = getDatabase(envType);
   if (!db) {
     throw new Error('Failed to load database');
   }
   try {
     // addNicknameToIdTable(db);
     await updateAllNicknameToIdData(adminDb);
-    saveDatabase(db, type);
+    saveDatabase(db, envType);
   } catch (error:any) {
     throw new Error('Failed to migrate database: ' + error.message);
   }

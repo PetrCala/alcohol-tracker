@@ -4,23 +4,21 @@ require('dotenv').config(); // for the process.env variables to read the .env fi
 import admin from './admin';
 import migrate_020_030 from './database/migration-scripts/0.2.0-0.3.0/migrateMain';
 import CONST from '../src/CONST';
-import { confirmExecution } from '../src/utils/utils';
+import {confirmExecution} from '../src/utils/utils';
 
 // const adminDb = admin.database();
 
-const environment = process.env.APP_ENVIRONMENT // From .env, could be null
+const environment = process.env.APP_ENVIRONMENT; // From .env, could be null
 if (!environment) {
   throw new Error('APP_ENVIRONMENT not set in .env file');
 }
-
-let env: 'development' | 'production' = 'development'
-if (environment === CONST.ENVIRONMENT.PROD){
-  env = CONST.ENVIRONMENT.PROD
-}
+const mainEnv = environment;
 
 (async () => {
-  if (env === CONST.ENVIRONMENT.PROD) {
-    const isConfirmed = await confirmExecution('Are you sure you want to run this in the production environment? (y/n) ');
+  if (environment === CONST.ENVIRONMENT.PROD) {
+    const isConfirmed = await confirmExecution(
+      'Are you sure you want to run this in the production environment? (y/n) ',
+    );
     if (isConfirmed) {
       await main();
     } else {
@@ -33,12 +31,12 @@ if (environment === CONST.ENVIRONMENT.PROD){
 })();
 
 async function main() {
-    try {
-      console.log("Migrating the database...")
-      await migrate_020_030(env);
+  try {
+    console.log('Migrating the database...');
+    await migrate_020_030(mainEnv);
   } catch (error) {
-    console.error("An error occurred:", error);
+    console.error('An error occurred:', error);
   } finally {
     process.exit(0);
-  };
-};
+  }
+}

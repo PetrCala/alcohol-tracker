@@ -3,6 +3,7 @@ require('dotenv').config(); // for the process.env variables to read the .env fi
 
 import {DatabaseProps} from '../../src/types/database';
 import { loadJsonData, saveJsonData } from '../../src/utils/utils';
+import CONST from '../../src/CONST';
 
 const devDbName = `${process.env.DEV_PROJECT_ID}-default-rtdb-export`;
 const prodDbName = `${process.env.PROD_PROJECT_ID}-default-rtdb-export`;
@@ -57,4 +58,23 @@ export const saveDatabase = (
   const outputPath = getDbPath('output', dbType);
   saveJsonData(outputPath, db);
   console.log(`Database saved successfully under path ${outputPath}!`)
+};
+
+
+/**
+ * Returns the environment type based on the input type.
+ * @param type - The input type.
+ * @returns The environment type, which can be either 'production' or 'development'.
+ * @throws Error if the input type is invalid.
+ */
+export const getMigrationEnvType = (type: string): 'production' | 'development' => {
+  let envType: 'production' | 'development';
+  if (type === CONST.ENVIRONMENT.PROD) {
+    envType = 'production';
+  } else if (type === CONST.ENVIRONMENT.DEV) { 
+    envType = 'development';
+  } else {
+    throw new Error('Invalid environment');
+  }
+  return envType;
 };
