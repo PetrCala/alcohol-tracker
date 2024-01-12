@@ -193,3 +193,12 @@
     - The new, more granular logic, allows us to specify the type of data that is being written into the database.
 
 - It might seem tricky to figure out whether to write a rule into `.validate` or `.read`/`.write`. As a rule of thumb, if the rule targets **who** is requesting the operation, `.read`/`.write` might be suitable. If specifying the type of data is what you are after, `.validate` should do the trick. More than anything, however, keep the cascading nature of each of these rule types in mind, and use it to your advantage to avoid redundancy, while keeping the rules clear and intuitive.
+
+### Migrating the database
+
+The database migration process is handled in a rather manual fashion. As of now, the procedure is as follows:
+  
+1. Make sure your `_dev` folder contains the folder `migrations`. This folder should in turn contain folders `input` and `output`.
+2. Inside the `input` folder, place the database you want to migrate (do not rename it from the Firebase import).
+3. Call the relevant migration script (located inside the `_dev/database/migration-scripts` folder) from the `_dev/main.tsx` file. You can run this file using either **bun**, or **ts-node**.
+4. The output will be located in the `_dev/migrations/output` folder. From there, you can update the relevant database.

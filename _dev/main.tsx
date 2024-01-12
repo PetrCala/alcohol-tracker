@@ -10,7 +10,7 @@ const testUserId = "dmXj9O2SqWWHPRtqtKGGdaUzGFt2";
 async function main() {
     try {
       console.log("Migrating the database...")
-      await migrate_020_030();
+      migrate_020_030('dev');
   } catch (error) {
     console.error("An error occurred:", error);
   } finally {
