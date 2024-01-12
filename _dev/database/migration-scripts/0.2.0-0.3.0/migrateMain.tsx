@@ -39,7 +39,6 @@ async function migrate_020_030(type: string): Promise<void> {
     throw new Error('Failed to load database');
   }
   try {
-    // addNicknameToIdTable(db);
     await updateAllNicknameToIdData(adminDb);
     saveDatabase(db, envType);
   } catch (error: any) {

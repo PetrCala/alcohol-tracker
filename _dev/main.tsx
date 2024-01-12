@@ -1,7 +1,6 @@
 ﻿// Run the script using ts-node _dev/database/migration.tsx (install globally through npm install -g ts-node)
 
 require('dotenv').config(); // for the process.env variables to read the .env file
-import admin from './admin';
 import migrate_020_030 from './database/migration-scripts/0.2.0-0.3.0/migrateMain';
 import CONST from '../src/CONST';
 import {confirmExecution} from '../src/utils/utils';

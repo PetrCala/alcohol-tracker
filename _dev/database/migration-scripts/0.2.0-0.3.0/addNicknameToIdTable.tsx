@@ -1,9 +1,6 @@
-﻿import fs from 'fs';
-import { DatabaseProps, NicknameToIdData, UserData } from "../../../../src/types/database";
-import { modifyAndTestData } from "../../migrationTest";
+﻿import { DatabaseProps, NicknameToIdData, UserData } from "../../../../src/types/database";
 import { getAllUserIds } from "../../../utils/various";
 import { cleanStringForFirebaseKey } from "../../../../src/utils/strings";
-import { getDatabase } from '_dev/database/databaseUtils';
 import { findSingleValueByKey } from '../../../../src/utils/utils';
 
 export const addUserNicknameToId = (db: DatabaseProps, userId: string): DatabaseProps => {
@@ -34,6 +31,7 @@ export const updateAllNicknameToIdData = async (adminDb: any) => {
         let verboseIdx = i + 1;
         console.log("Processing "+ verboseIdx + "/" + allUserIds.length)
         let userId = allUserIds[i];
+        console.log(userId);
         // await addUserNicknameToIdData(adminDb, userId);
     }
     console.log("All nicknames converted and saved successfully")

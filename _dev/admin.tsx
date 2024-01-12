@@ -18,16 +18,16 @@ let databaseURL: string;
 let sdkFileName: string;
 
 if (environment === CONST.ENVIRONMENT.PROD) {
-  databaseURL = CONFIG.DB_CONFIG_PROD.databaseURL;
-  sdkFileName = CONFIG.ADMIN_SDK.PROD;
+  databaseURL = process.env.PROD_DATABASE_URL ?? '';
+  sdkFileName = process.env.ADMIN_SDK_PROD ?? '';
 } else if (environment === CONST.ENVIRONMENT.DEV) {
-  databaseURL = CONFIG.DB_CONFIG_DEV.databaseURL;
-  sdkFileName = CONFIG.ADMIN_SDK.DEV;
+  databaseURL = process.env.DEV_DATABASE_URL ?? '';
+  sdkFileName = process.env.ADMIN_SDK_DEV ?? '';
 } else {
   throw new Error('Invalid environment');
 }
 
-var serviceAccount = require(`../../${sdkFileName}.json`);
+var serviceAccount = require(`../${sdkFileName}.json`); // Automatically fails if the .env variables are not specified
 
 // Initialize the app with a service account and the database URL
 admin.initializeApp({
