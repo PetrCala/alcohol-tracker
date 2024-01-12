@@ -20,6 +20,10 @@ if (ENVIRONMENT === CONST.ENVIRONMENT.DEV) {
 export default {
   APP_NAME: get(Config, 'APP_NAME', 'Kiroku'),
   APP_ENVIRONMENT: get(Config, 'APP_ENVIRONMENT', ''),
+  ADMIN_SDK: {
+    PROD: get(Config, 'ADMIN_SDK_PROD', ''),
+    DEV: get(Config, 'ADMIN_SDK_DEV', ''),
+  },
   DB_CONFIG_PROD: {
     // The keys have to be camelcase for firebase to work
     apiKey: get(Config, 'API_KEY', ''),

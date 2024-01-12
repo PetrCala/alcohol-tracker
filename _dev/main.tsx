@@ -1,22 +1,25 @@
 ﻿// Run the script using ts-node _dev/database/migration.tsx (install globally through npm install -g ts-node)
 
 require('dotenv').config(); // for the process.env variables to read the .env file
-import admin from '../src/database/admin';
+import admin from './admin';
 import migrate_020_030 from './database/migration-scripts/0.2.0-0.3.0/migrateMain';
 import CONST from '../src/CONST';
 import { confirmExecution } from '../src/utils/utils';
 
 // const adminDb = admin.database();
 
-const testUserId = "dmXj9O2SqWWHPRtqtKGGdaUzGFt2";
-
-const environment = process.env.APP_ENVIRONMENT
+const environment = process.env.APP_ENVIRONMENT // From .env, could be null
 if (!environment) {
   throw new Error('APP_ENVIRONMENT not set in .env file');
 }
 
+let env: 'development' | 'production' = 'development'
+if (environment === CONST.ENVIRONMENT.PROD){
+  env = CONST.ENVIRONMENT.PROD
+}
+
 (async () => {
-  if (environment === CONST.ENVIRONMENT.PROD) {
+  if (env === CONST.ENVIRONMENT.PROD) {
     const isConfirmed = await confirmExecution('Are you sure you want to run this in the production environment? (y/n) ');
     if (isConfirmed) {
       await main();
@@ -32,7 +35,7 @@ if (!environment) {
 async function main() {
     try {
       console.log("Migrating the database...")
-      // await migrate_020_030('dev');
+      await migrate_020_030(env);
   } catch (error) {
     console.error("An error occurred:", error);
   } finally {

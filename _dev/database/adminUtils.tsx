@@ -1,6 +1,6 @@
 ﻿import { UserRecord } from 'firebase-admin/lib/auth';
 
-import admin from "../../src/database/admin";
+import admin from "../admin";
 
 const adminDb = admin.database();
 

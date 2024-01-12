@@ -12,28 +12,28 @@ const migrationsFolder = path.resolve(__dirname, '../migrations');
 /**
  * Returns the path of the database file based on the stream type and database type.
  * @param streamType The type of stream ('input' or 'output'). Default is 'input'.
- * @param dbType The type of database ('dev' or 'prod'). Default is 'dev'.
+ * @param dbType - The type of the database ('development' or 'production'). Defaults to 'development'.
  * @returns The path of the database file.
  */
 export function getDbPath(
   streamType: 'input' | 'output' = 'input',
-  dbType: 'dev' | 'prod' = 'dev',
+  dbType: 'development' | 'production' = 'development',
 ): string {
-  const dbName = dbType === 'dev' ? devDbName : prodDbName;
+  const dbName = dbType === 'development' ? devDbName : prodDbName;
   const streamFolder = path.resolve(migrationsFolder, streamType);
   return path.resolve(streamFolder, dbName) + '.json';
 }
 
 /**
  * Retrieves the database based on the specified type.
- * @param dbType - The type of the database ('dev' or 'prod'). Defaults to 'dev'.
+ * @param dbType - The type of the database ('development' or 'production'). Defaults to 'development'.
  * @returns The database object if it exists, otherwise an empty object.
  * @example
- * const db: DatabaseProps = getDatabase('dev');
+ * const db: DatabaseProps = getDatabase('development');
  * console.log(db);
  */
 export const getDatabase = (
-  dbType: 'dev' | 'prod' = 'dev',
+  dbType: 'development' | 'production' = 'development',
 ): DatabaseProps | null => {
   const path = getDbPath('input', dbType); // Input database
   let data: DatabaseProps | null = null;
@@ -47,11 +47,11 @@ export const getDatabase = (
 /**
  * Saves the database to a file.
  * @param db The database to be saved.
- * @param dbType The type of the database ('dev' or 'prod'). Default is 'dev'.
+ * @param dbType The type of the database ('develoment' or 'production'). Default is 'development'.
  */
 export const saveDatabase = (
   db: DatabaseProps,
-  dbType: 'dev' | 'prod' = 'dev',
+  dbType: 'development' | 'production' = 'development',
 ): void => {
   console.log('Saving the database...')
   const outputPath = getDbPath('output', dbType);

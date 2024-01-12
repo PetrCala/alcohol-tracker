@@ -3,7 +3,7 @@ import {getDatabase, saveDatabase} from '../../databaseUtils';
 import { DatabaseProps } from '@src/types/database';
 import updateAllNicknameToIdData, { addUserNicknameToId } from './addNicknameToIdTable';
 
-import admin from "../../../../src/database/admin";
+import admin from "../../../admin";
 
 const adminDb = admin.database();
 
@@ -19,7 +19,7 @@ const adminDb = admin.database();
  * @version 0.2.0-0.3.0
  */
 async function migrate_020_030(
-  type: 'dev' | 'prod' = 'dev',
+  type: 'development' | 'production' = 'development',
 ):Promise<void> {
   console.log('Migrating the database from 0.2.0 to 0.3.0...');
   let db: DatabaseProps | null = getDatabase(type);
