@@ -5,7 +5,7 @@
   "type": "commonjs",
   "license": "MIT",
   "scripts": {
-    "android": "npx react-native run-android --mode=Debug",
+    "android": "npx react-native run-android --mode=Debug --active-arch-only",
     "ios": "npx react-native run-ios --list-devices --mode=\"Debug\"",
     "build:android": "fastlane android build",
     "build:ios": "fastlane ios build",
