@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import * as readline from 'readline';
 
 import { DatabaseProps } from '@src/types/database';
 
@@ -111,4 +112,23 @@ export function findSingleValueByKey(node: any, keyToFind: string): any {
   }
 
   return foundValues[0];
+}
+
+/**
+ * Asks the user a question and returns a promise that resolves to a boolean value indicating the user's confirmation.
+ * @param question - The question to ask the user.
+ * @returns A promise that resolves to a boolean value indicating the user's confirmation.
+ */
+export async function confirmExecution(question: string): Promise<boolean> {
+  return new Promise((resolve) => {
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout
+    });
+
+    rl.question(question, (answer: string) => {
+      rl.close();
+      resolve(answer.toLowerCase() === 'y');
+    });
+  });
 }

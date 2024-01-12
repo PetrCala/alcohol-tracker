@@ -2,6 +2,8 @@
 
 import admin from "../../src/database/admin";
 
+const adminDb = admin.database();
+
 /**
  * Lists all users with the 'admin' custom claim.
  * 

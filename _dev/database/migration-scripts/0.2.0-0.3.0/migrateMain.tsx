@@ -1,7 +1,11 @@
 ﻿// import addNicknameToIdTable from './addNicknameToIdTable';
 import {getDatabase, saveDatabase} from '../../databaseUtils';
 import { DatabaseProps } from '@src/types/database';
-import { addUserNicknameToId } from './addNicknameToIdTable';
+import updateAllNicknameToIdData, { addUserNicknameToId } from './addNicknameToIdTable';
+
+import admin from "../../../../src/database/admin";
+
+const adminDb = admin.database();
 
 /**
  * Migrate from the 0.2.0 version of the database to database applicable
@@ -14,17 +18,17 @@ import { addUserNicknameToId } from './addNicknameToIdTable';
  *
  * @version 0.2.0-0.3.0
  */
-function migrate_020_030(
+async function migrate_020_030(
   type: 'dev' | 'prod' = 'dev',
-):void {
+):Promise<void> {
   console.log('Migrating the database from 0.2.0 to 0.3.0...');
-  const db: DatabaseProps | null = getDatabase(type);
+  let db: DatabaseProps | null = getDatabase(type);
   if (!db) {
     throw new Error('Failed to load database');
   }
   try {
     // addNicknameToIdTable(db);
-    addUserNicknameToId(db, 'mock-user-1');
+    await updateAllNicknameToIdData(adminDb);
     saveDatabase(db, type);
   } catch (error:any) {
     throw new Error('Failed to migrate database: ' + error.message);
