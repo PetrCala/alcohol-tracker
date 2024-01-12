@@ -6,9 +6,6 @@ import {
 } from '../../databaseUtils';
 import {DatabaseProps} from '@src/types/database';
 import updateAllNicknameToIdData from './addNicknameToIdTable';
-import admin from '../../../admin';
-
-const adminDb = admin.database();
 
 /**
  * Migrate from the 0.2.0 version of the database to database applicable
@@ -36,7 +33,7 @@ function migrate_020_030(type: string): void {
     throw new Error('Failed to load database');
   }
   try {
-    db = updateAllNicknameToIdData(db, adminDb);
+    db = updateAllNicknameToIdData(db);
     saveDatabase(db, envType);
   } catch (error: any) {
     throw new Error('Failed to migrate database: ' + error.message);
