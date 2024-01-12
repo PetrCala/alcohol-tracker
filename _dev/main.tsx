@@ -32,7 +32,7 @@ const mainEnv = environment;
 async function main() {
   try {
     console.log('Migrating the database...');
-    await migrate_020_030(mainEnv);
+    migrate_020_030(mainEnv);
   } catch (error) {
     console.error('An error occurred:', error);
   } finally {

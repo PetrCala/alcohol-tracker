@@ -21,7 +21,7 @@ const adminDb = admin.database();
  *
  * @version 0.2.0-0.3.0
  */
-async function migrate_020_030(type: string): Promise<void> {
+function migrate_020_030(type: string): void {
   let envType: 'production' | 'development';
   try {
     envType = getMigrationEnvType(type);
@@ -36,7 +36,7 @@ async function migrate_020_030(type: string): Promise<void> {
     throw new Error('Failed to load database');
   }
   try {
-    db = await updateAllNicknameToIdData(db, adminDb);
+    db = updateAllNicknameToIdData(db, adminDb);
     saveDatabase(db, envType);
   } catch (error: any) {
     throw new Error('Failed to migrate database: ' + error.message);
