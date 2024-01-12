@@ -23,7 +23,7 @@ const adminDb = admin.database();
  * 
  * @version <=0.2.0
  */
-async function main() {
+async function migrate_020() {
     try {
       await refactorPreferencesData(adminDb);
       await refactorUsersData(adminDb);
@@ -34,4 +34,4 @@ async function main() {
   };
 };
 
-// main();
+export default migrate_020;

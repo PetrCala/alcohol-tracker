@@ -1,21 +1,16 @@
 ﻿// Run the script using ts-node _dev/database/migration.tsx (install globally through npm install -g ts-node)
 
 import admin from '../src/database/admin';
-import { assignAdminRole, listAllAdmins } from "./database/adminUtils";
-import { refactorPreferencesData, transformPreferencesData } from './database/migration-scripts/0.1.0-0.2.0/migratePreferences';
-import { PreferencesData } from '../src/types/database';
-import { refactorUsersData } from './database/migration-scripts/0.1.0-0.2.0/migrateUsers';
-import { updateAllNicknameToIdData } from './database/migration-scripts/0.2.0-0.2.8/addNicknameToIdTable';
+import migrate_020_030 from './database/migration-scripts/0.2.0-0.3.0/migrateMain';
 
-const adminDb = admin.database();
+// const adminDb = admin.database();
 
 const testUserId = "dmXj9O2SqWWHPRtqtKGGdaUzGFt2";
 
 async function main() {
     try {
-      // await refactorPreferencesData(adminDb);
-      // await refactorUsersData(adminDb);
-      await updateAllNicknameToIdData(adminDb) // Profile nickname to nickname_to_id
+      console.log("Migrating the database...")
+      await migrate_020_030();
   } catch (error) {
     console.error("An error occurred:", error);
   } finally {
@@ -25,8 +20,3 @@ async function main() {
 
 main();
 
-//   await listAllAdmins().then(admins => {
-//     admins.forEach((admin: UserRecord) => {
-//         console.log(`UID: ${admin.uid}, Email: ${admin.email}`);
-//     });
-// });

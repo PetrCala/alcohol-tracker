@@ -1,10 +1,14 @@
 // Run this script with an argument using
 // # bun _dev/database/userUtils.tsx [argument]
 
-import admin from '../utils/admin';
+import { assignAdminRole, listAllAdmins } from "./adminUtils";
 import { deleteUserInfo } from '../../src/database/users';
 
-const adminDb = admin.database();
+//   await listAllAdmins().then(admins => {
+//     admins.forEach((admin: UserRecord) => {
+//         console.log(`UID: ${admin.uid}, Email: ${admin.email}`);
+//     });
+// });
 
 async function wipeUserData(userId:string) {
     console.log(`Wiping user data for user with ID: ${userId}`);

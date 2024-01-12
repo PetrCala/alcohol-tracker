@@ -5,16 +5,16 @@ const adminDb = admin.database();
 
 /**
  * Migrate from the 0.2.0 version of the database to database applicable
- * to app versions 0.2.8 and above. Automatically validates that the
+ * to app versions 0.3.0 and above. Automatically validates that the
  * transformation can be made, and exits if it can not.
  * 
  * @description
  *  Major changes:
  *  -   nickname_to_id table added
  * 
- * @version 0.2.0-0.2.8
+ * @version 0.2.0-0.3.0
  */
-async function main() {
+async function migrate_020_030() {
     try {
       await addNicknameToIdTable(adminDb)
   } catch (error) {
@@ -24,4 +24,4 @@ async function main() {
   };
 };
 
-main();
+export default migrate_020_030;
