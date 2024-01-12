@@ -52,3 +52,63 @@ export function saveJsonData(filePath: string, data: any): boolean {
     return false;
   }
 }
+
+/**
+ * Finds all values in an object or array that match a given key.
+ * @param node - The object or array to search.
+ * @param keyToFind - The key to match.
+ * @returns An array of values that match the given key.
+ */
+export function findValuesByKey(node: any, keyToFind: string): any[] {
+  let foundValues: any[] = [];
+
+  if (node instanceof Array) {
+    node.forEach(element => {
+      foundValues = foundValues.concat(findValuesByKey(element, keyToFind));
+    });
+  } else if (node instanceof Object) {
+    Object.keys(node).forEach(key => {
+      if (key === keyToFind) {
+        foundValues.push(node[key]);
+      }
+      foundValues = foundValues.concat(findValuesByKey(node[key], keyToFind));
+    });
+  }
+
+  return foundValues;
+}
+
+/**
+ * Finds a single value in an object or array by a specified key. Search only at the level of the specified node.
+ * @param node - The object or array to search.
+ * @param keyToFind - The key to search for.
+ * @returns The value associated with the specified key.
+ * @throws Error if no value is found for the specified key or if more than one value is found.
+ */
+export function findSingleValueByKey(node: any, keyToFind: string): any {
+  let foundValues: any[] = [];
+
+  const searchNode = (currentNode: any) => {
+    if (currentNode instanceof Array) {
+      currentNode.forEach(element => searchNode(element));
+    } else if (currentNode instanceof Object) {
+      Object.keys(currentNode).forEach(key => {
+        if (key === keyToFind) {
+          foundValues.push(currentNode[key]);
+          // if (foundValues.length > 1) {
+          //   throw new Error("More than one value found for the specified key.");
+          // }
+        }
+        // searchNode(currentNode[key]);
+      });
+    }
+  };
+
+  searchNode(node);
+
+  if (foundValues.length !== 1) {
+    throw new Error("No value found for the specified key.");
+  }
+
+  return foundValues[0];
+}

@@ -37,4 +37,8 @@ describe('cleanStringForFirebaseKey', () => {
   it('should handle a complex case', () => {
     testCleanString('John.Doe #1 č ', 'john_doe_1_c');
   });
+
+  it('should replace dashes with underscores', () => {
+    testCleanString('mock-user', 'mock_user');
+  });
 });
