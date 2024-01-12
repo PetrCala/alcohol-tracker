@@ -5,10 +5,7 @@ import {
   saveDatabase,
 } from '../../databaseUtils';
 import {DatabaseProps} from '@src/types/database';
-import updateAllNicknameToIdData, {
-  addUserNicknameToId,
-} from './addNicknameToIdTable';
-import CONST from '../../../../src/CONST';
+import updateAllNicknameToIdData from './addNicknameToIdTable';
 import admin from '../../../admin';
 
 const adminDb = admin.database();
@@ -39,7 +36,7 @@ async function migrate_020_030(type: string): Promise<void> {
     throw new Error('Failed to load database');
   }
   try {
-    await updateAllNicknameToIdData(adminDb);
+    db = await updateAllNicknameToIdData(db, adminDb);
     saveDatabase(db, envType);
   } catch (error: any) {
     throw new Error('Failed to migrate database: ' + error.message);

@@ -3,7 +3,6 @@
 require('dotenv').config(); // for the process.env variables to read the .env file
 const admin = require('firebase-admin');
 import CONST from '../src/CONST';
-import CONFIG from '../src/CONFIG';
 
 const environment = process.env.APP_ENVIRONMENT; // From .env, could be null
 if (!environment) {
