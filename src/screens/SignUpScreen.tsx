@@ -1,5 +1,6 @@
 ﻿import React, {useState} from 'react';
 import {
+  Dimensions,
   Alert,
   Image,
   KeyboardAvoidingView,
@@ -271,6 +272,8 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
 
 export default SignUpScreen;
 
+const screenHeight = Dimensions.get('window').height;
+
 const styles = StyleSheet.create({
   mainContainer: {
     flexGrow: 1,
@@ -284,7 +287,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
     backgroundColor: '#FFFF99',
-    marginTop: '40%',
+    marginTop: screenHeight * 0.2,
     width: '100%',
   },
   logo: {
@@ -316,7 +319,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexGrow: 1,
     flexShrink: 1,
-    marginTop: '25%',
+    marginTop: screenHeight * 0.15,
     width: '80%',
   },
   input: {

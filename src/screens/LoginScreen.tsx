@@ -186,6 +186,7 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
 export default LoginScreen;
 
 const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -200,7 +201,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
     backgroundColor: '#FFFF99',
-    marginTop: '40%',
+    marginTop: screenHeight * 0.2,
     width: '100%',
   },
   logo: {
@@ -246,7 +247,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexGrow: 1,
     flexShrink: 1,
-    marginTop: '25%',
+    marginTop: screenHeight * 0.15,
     width: '80%',
   },
   input: {
