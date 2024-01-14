@@ -41,7 +41,8 @@ type FriendRequestComponentProps = {
 };
 
 type ScreenProps = {
-  userData: UserData | null;
+  friendRequests: FriendRequestData | undefined;
+  setFriendRequests: React.Dispatch<React.SetStateAction<FriendRequestData | undefined>>;
 };
 
 const handleAcceptFriendRequest = async (
@@ -150,11 +151,8 @@ const FriendRequestComponent: React.FC<FriendRequestComponentProps> = ({
 };
 
 const FriendRequestScreen = (props: ScreenProps) => {
-  const {userData} = props;
+  const {friendRequests, setFriendRequests} = props;
   const {db} = useFirebase();
-  const [friendRequests, setFriendRequests] = useState<
-    FriendRequestData | undefined
-  >(userData?.friend_requests);
   const [loadingDisplayData, setLoadingDisplayData] = useState<boolean>(false);
   const [displayData, setDisplayData] = useProfileDisplayData({
     data: friendRequests ?? {},
@@ -165,7 +163,6 @@ const FriendRequestScreen = (props: ScreenProps) => {
   const removeFriendRequestItem = (
     userId: string,
   ) => {
-    console.log('removing friend request item for user', userId)
     const updatedRequests = { ...friendRequests };
     delete updatedRequests[userId];
     setFriendRequests(updatedRequests);

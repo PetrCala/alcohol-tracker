@@ -10,7 +10,7 @@ import {
 import MenuIcon from '../components/Buttons/MenuIcon';
 import {getDatabaseData} from '../context/DatabaseDataContext';
 import commonStyles from '../styles/commonStyles';
-import {FriendIds, FriendRequestStatus, UserData} from '../types/database';
+import {FriendRequestData, UserData} from '../types/database';
 import {TabView, SceneMap} from 'react-native-tab-view';
 import FriendListScreen from './Social/FriendListScreen';
 import FriendRequestScreen from './Social/FriendRequestScreen';
@@ -59,6 +59,9 @@ type RouteType = {
 const SocialScreen = (props: SocialProps) => {
   const {navigation} = props;
   const {userData} = getDatabaseData();
+  const [friendRequests, setFriendRequests] = useState<
+    FriendRequestData | undefined
+  >(userData?.friend_requests);
   const userHasFriends = userData?.friends ?? false;
   const [index, setIndex] = useState<number>(0); // Current screen index - defaults to friend requests in case of no friends
   const [routes] = useState([
@@ -77,7 +80,12 @@ const SocialScreen = (props: SocialProps) => {
       case 'friendSearch':
         return <SearchScreen userData={route.userData} />;
       case 'friendRequests':
-        return <FriendRequestScreen userData={route.userData} />;
+        return (
+          <FriendRequestScreen
+            friendRequests={friendRequests}
+            setFriendRequests={setFriendRequests}
+          />
+        );
       default:
         return null;
     }
