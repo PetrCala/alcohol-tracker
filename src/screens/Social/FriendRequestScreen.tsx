@@ -10,7 +10,10 @@
 } from 'react-native';
 import {
   FriendRequestData,
+  FriendRequestDisplayData,
   FriendRequestStatus,
+  FriendRequestStatusState,
+  FriendsData,
   UserData,
 } from '../../types/database';
 import {useEffect, useState} from 'react';
@@ -22,7 +25,6 @@ import useProfileDisplayData from '../../hooks/useProfileDisplayData';
 import LoadingData from '../../components/LoadingData';
 import {Database} from 'firebase/database';
 import UserOverview from '../../components/UserOverview';
-import { set } from 'lodash';
 
 type FriendRequestButtonsProps = {
   requestId: string;
@@ -35,14 +37,15 @@ type FriendRequestPendingProps = {
 };
 
 type FriendRequestComponentProps = {
-  requestStatus: FriendRequestStatus | undefined;
+  requestStatus: FriendRequestStatusState | undefined;
   requestId: string;
   removeFriendRequestItem: (userId: string) => void;
 };
 
 type ScreenProps = {
-  friendRequests: FriendRequestData | undefined;
-  setFriendRequests: React.Dispatch<React.SetStateAction<FriendRequestData | undefined>>;
+  friendRequests: FriendRequestDisplayData | undefined;
+  setFriendRequests: React.Dispatch<React.SetStateAction<FriendRequestDisplayData | undefined>>;
+  friends: FriendsData | undefined;
 };
 
 const handleAcceptFriendRequest = async (
@@ -167,6 +170,18 @@ const FriendRequestScreen = (props: ScreenProps) => {
     delete updatedRequests[userId];
     setFriendRequests(updatedRequests);
   };
+
+  // useEffect(() => {
+  //   if (friendRequests) {
+  //     setDisplayData({
+  //       data: friendRequests,
+  //       db: db,
+  //       setLoadingDisplayData: setLoadingDisplayData,
+  //     });
+  //   }
+  // }, [friendRequests]);
+
+  // TODO - the friendRequests hook is updating correctly, but the rendered list is not
 
   return (
     <View style={styles.mainContainer}>

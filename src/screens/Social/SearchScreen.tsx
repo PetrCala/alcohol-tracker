@@ -14,6 +14,9 @@ import {
   UserData,
   NicknameToIdData,
   FriendRequestStatusState,
+  FriendRequestData,
+  FriendsData,
+  FriendRequestDisplayData,
 } from '../../types/database';
 import {useState} from 'react';
 import {useFirebase} from '../../context/FirebaseContext';
@@ -24,6 +27,7 @@ import useProfileDisplayData from '../../hooks/useProfileDisplayData';
 import LoadingData from '../../components/LoadingData';
 import {Database} from 'firebase/database';
 import {searchDbByNickname} from '../../database/search';
+import { set } from 'lodash';
 
 const statusToTextMap: {[key in FriendRequestStatusState]: string} = {
   self: 'You',
@@ -189,11 +193,15 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
 };
 
 type ScreenProps = {
-  userData: UserData | null;
+  friendRequests: FriendRequestDisplayData | undefined;
+  setFriendRequests: React.Dispatch<
+    React.SetStateAction<FriendRequestDisplayData | undefined>
+  >;
+  friends: FriendsData | undefined;
 };
 
 const SearchScreen = (props: ScreenProps) => {
-  const {userData} = props;
+  const {friendRequests, setFriendRequests, friends} = props;
   const {db} = useFirebase();
   const user = auth.currentUser;
   const [searchText, setSearchText] = useState<string>('');
@@ -236,14 +244,14 @@ const SearchScreen = (props: ScreenProps) => {
    * the UsersStatus hook.
    */
   const updateSearchedUsersStatus = (searchData: NicknameToIdData): void => {
-    if (!userData) return;
-    let newUsersStatus: {[userId: string]: FriendRequestStatusState | undefined} =
-      {};
+    let newUsersStatus: {
+      [userId: string]: FriendRequestStatusState | undefined;
+    } = {};
     if (isNonEmptyObject(searchData)) {
       Object.keys(searchData).map(
         userId =>
-          (newUsersStatus[userId] = userData?.friend_requests
-            ? userData.friend_requests[userId]
+          (newUsersStatus[userId] = friendRequests
+            ? friendRequests[userId]
             : undefined),
       );
     }
@@ -256,10 +264,16 @@ const SearchScreen = (props: ScreenProps) => {
    */
   const updateRequestStatus = (
     userId: string,
-    newStatus: FriendRequestStatusState,
+    newStatus: FriendRequestStatusState
   ) => {
+    // Update the request status on this tab
     setRequestStatuses(prevStatuses => ({
       ...prevStatuses,
+      [userId]: newStatus,
+    }));
+    // Update the parent hook that shows on other tabs too
+    setFriendRequests(prevRequests => ({
+      ...prevRequests,
       [userId]: newStatus,
     }));
   };
@@ -330,7 +344,7 @@ const SearchScreen = (props: ScreenProps) => {
                     requestStatus={requestStatuses[userId]}
                     updateRequestStatus={updateRequestStatus}
                     alreadyAFriend={
-                      userData?.friends ? userData?.friends[userId] : false
+                      friends ? friends[userId] : false
                     }
                   />
                 ),

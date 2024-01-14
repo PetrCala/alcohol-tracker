@@ -19,27 +19,19 @@ const FriendOverview: React.FC = ({}) => {
 };
 
 type ScreenProps = {
-  userData: UserData | null;
+  friends: FriendsData | undefined;
   setIndex: React.Dispatch<React.SetStateAction<number>>;
 };
 
 const FriendListScreen = (props: ScreenProps) => {
-  const {userData, setIndex} = props;
+  const {friends, setIndex} = props;
   const {db} = useFirebase();
-  const [friends, setFriends] = useState<FriendsData | undefined>(
-    userData?.friends,
-  );
   const [loadingDisplayData, setLoadingDisplayData] = useState<boolean>(false);
   const [displayData, setDisplayData] = useProfileDisplayData({
     data: friends ?? {},
     db: db,
     setLoadingDisplayData: setLoadingDisplayData,
   });
-
-  useEffect(() => {
-    if (!userData) return;
-    userData.friend_requests;
-  }, [userData]);
 
   return (
     <ScrollView style={styles.scrollViewContainer}>
