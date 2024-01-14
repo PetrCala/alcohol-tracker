@@ -376,7 +376,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   textContainer: {
-    width: '100%',
+    width: '95%',
     height: 50,
     flexDirection: 'row',
     alignItems: 'center',
@@ -387,6 +387,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     marginTop: 10,
     marginBottom: 5,
+    alignSelf: 'center',
   },
   searchText: {
     height: '100%',
@@ -407,9 +408,11 @@ const styles = StyleSheet.create({
     tintColor: 'gray',
   },
   searchButtonContainer: {
-    width: '100%',
+    width: '95%',
     flexDirection: 'column',
     alignItems: 'center',
+    alignSelf: 'center',
+    marginBottom: 5,
   },
   searchResultsContainer: {
     width: '100%',
