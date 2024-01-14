@@ -182,6 +182,7 @@ const FriendRequestScreen = (props: ScreenProps) => {
   // }, [friendRequests]);
 
   // TODO - the friendRequests hook is updating correctly, but the rendered list is not
+  // This can be done by assigning a key to each of the mapped items in the list (would first have to be rewritten into a component). Each time the key would change, the component would be re-rendered
 
   return (
     <View style={styles.mainContainer}>
