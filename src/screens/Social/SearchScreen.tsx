@@ -13,28 +13,36 @@ import {
   FriendRequestStatus,
   UserData,
   NicknameToIdData,
+  FriendRequestStatusState,
 } from '../../types/database';
 import {useState} from 'react';
 import {useFirebase} from '../../context/FirebaseContext';
-import {
-  acceptFriendRequest,
-  deleteFriendRequest,
-  sendFriendRequest,
-} from '../../database/friends';
+import {acceptFriendRequest, sendFriendRequest} from '../../database/friends';
 import {auth} from '../../services/firebaseSetup';
 import {isNonEmptyObject} from '../../utils/validation';
 import useProfileDisplayData from '../../hooks/useProfileDisplayData';
 import LoadingData from '../../components/LoadingData';
 import {Database} from 'firebase/database';
-import FillerView from '../../components/FillerView';
 import {searchDbByNickname} from '../../database/search';
+
+const statusToTextMap: {[key in FriendRequestStatusState]: string} = {
+  self: 'You',
+  friend: 'Already a friend',
+  sent: 'Awaiting a response',
+  received: 'Accept friend request',
+  undefined: 'Send a request',
+};
 
 type SearchResultProps = {
   userId: string;
   displayData: any;
   db: Database;
   userFrom: string;
-  requestStatus: FriendRequestStatus | undefined;
+  requestStatus: FriendRequestStatusState | undefined;
+  updateRequestStatus: (
+    userId: string,
+    newStatus: FriendRequestStatusState,
+  ) => void;
   alreadyAFriend: boolean;
 };
 
@@ -44,6 +52,7 @@ const SearchResult: React.FC<SearchResultProps> = ({
   db,
   userFrom,
   requestStatus,
+  updateRequestStatus,
   alreadyAFriend,
 }) => {
   return (
@@ -69,6 +78,7 @@ const SearchResult: React.FC<SearchResultProps> = ({
         userFrom={userFrom}
         userTo={userId}
         requestStatus={requestStatus}
+        updateRequestStatus={updateRequestStatus}
         alreadyAFriend={alreadyAFriend}
       />
     </View>
@@ -79,7 +89,11 @@ type SendFriendRequestButtonProps = {
   db: Database;
   userFrom: string;
   userTo: string;
-  requestStatus: FriendRequestStatus | undefined;
+  requestStatus: FriendRequestStatusState | undefined;
+  updateRequestStatus: (
+    userId: string,
+    newStatus: FriendRequestStatusState,
+  ) => void;
   alreadyAFriend: boolean;
 };
 
@@ -88,24 +102,20 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
   userFrom,
   userTo,
   requestStatus,
+  updateRequestStatus,
   alreadyAFriend,
 }) => {
-  const statusToTextMap = {
-    self: 'You',
-    friend: 'Already a friend',
-    sent: 'Awaiting a response',
-    received: 'Accept friend request',
-    undefined: 'Send a request',
-  };
-
   const handleSendRequestPress = async (
     db: Database,
     userFrom: string,
     userTo: string,
+    updateRequestStatus: (
+      userId: string,
+      newStatus: FriendRequestStatusState,
+    ) => void,
   ): Promise<void> => {
     try {
       await sendFriendRequest(db, userFrom, userTo);
-      // TODO Also refresh the status!!
     } catch (error: any) {
       Alert.alert(
         'User does not exist in the database',
@@ -113,16 +123,20 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
       );
       return;
     }
+    updateRequestStatus(userTo, 'sent');
   };
 
   const handleAcceptFriendRequestPress = async (
     db: Database,
     userFrom: string,
     userTo: string,
+    updateRequestStatus: (
+      userId: string,
+      newStatus: FriendRequestStatusState,
+    ) => void,
   ): Promise<void> => {
     try {
       await acceptFriendRequest(db, userFrom, userTo);
-      // TODO Also refresh the status!!
     } catch (error: any) {
       Alert.alert(
         'User does not exist in the database',
@@ -130,6 +144,7 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
       );
       return;
     }
+    updateRequestStatus(userTo, 'friend');
   };
 
   return (
@@ -146,7 +161,14 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
       ) : requestStatus === 'received' ? (
         <TouchableOpacity
           style={styles.acceptFriendRequestButton}
-          onPress={() => handleAcceptFriendRequestPress(db, userFrom, userTo)}>
+          onPress={() =>
+            handleAcceptFriendRequestPress(
+              db,
+              userFrom,
+              userTo,
+              updateRequestStatus,
+            )
+          }>
           <Text style={styles.sendFriendRequestText}>
             {statusToTextMap.received}
           </Text>
@@ -154,7 +176,9 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
       ) : (
         <TouchableOpacity
           style={styles.sendFriendRequestButton}
-          onPress={() => handleSendRequestPress(db, userFrom, userTo)}>
+          onPress={() =>
+            handleSendRequestPress(db, userFrom, userTo, updateRequestStatus)
+          }>
           <Text style={styles.sendFriendRequestText}>
             {statusToTextMap.undefined}
           </Text>
@@ -176,9 +200,9 @@ const SearchScreen = (props: ScreenProps) => {
   const [searchResultData, setSearchResultData] = useState<NicknameToIdData>(
     {},
   );
-  const [requestStatuses, setRequestStatuses] = useState<
-    (FriendRequestStatus | undefined)[]
-  >([]);
+  const [requestStatuses, setRequestStatuses] = useState<{
+    [userId: string]: FriendRequestStatusState | undefined;
+  }>({});
   const [noUsersFound, setNoUsersFound] = useState<boolean>(false);
   const [loadingDisplayData, setLoadingDisplayData] = useState<boolean>(false);
   const [displayData, setDisplayData] = useProfileDisplayData({
@@ -213,22 +237,38 @@ const SearchScreen = (props: ScreenProps) => {
    */
   const updateSearchedUsersStatus = (searchData: NicknameToIdData): void => {
     if (!userData) return;
-    let newUsersStatus: (FriendRequestStatus | undefined)[] = [];
+    let newUsersStatus: {[userId: string]: FriendRequestStatusState | undefined} =
+      {};
     if (isNonEmptyObject(searchData)) {
-      newUsersStatus = Object.keys(searchData).map(userId =>
-        userData?.friend_requests
-          ? userData.friend_requests[userId]
-          : undefined,
+      Object.keys(searchData).map(
+        userId =>
+          (newUsersStatus[userId] = userData?.friend_requests
+            ? userData.friend_requests[userId]
+            : undefined),
       );
     }
     setRequestStatuses(newUsersStatus);
+  };
+
+  /** Using a user ID and a user status, update the request status
+   * for just this user. This is used for updating screen
+   * status when handling single requests.
+   */
+  const updateRequestStatus = (
+    userId: string,
+    newStatus: FriendRequestStatusState,
+  ) => {
+    setRequestStatuses(prevStatuses => ({
+      ...prevStatuses,
+      [userId]: newStatus,
+    }));
   };
 
   const resetSearch = () => {
     // Reset all values displayed on screen
     setSearchText('');
     setSearchResultData({});
-    setRequestStatuses([]);
+    setRequestStatuses({});
     setDisplayData({});
     setNoUsersFound(false);
   };
@@ -287,7 +327,8 @@ const SearchScreen = (props: ScreenProps) => {
                     displayData={displayData}
                     db={db}
                     userFrom={user.uid}
-                    requestStatus={requestStatuses[index]}
+                    requestStatus={requestStatuses[userId]}
+                    updateRequestStatus={updateRequestStatus}
                     alreadyAFriend={
                       userData?.friends ? userData?.friends[userId] : false
                     }

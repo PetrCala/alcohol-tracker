@@ -156,6 +156,17 @@ export type ProfileDisplayData = {
 
 export type FriendRequestStatus = 'sent' | 'received';
 
+// Used when rendering friend request screen
+export type FriendRequestStatusState = 'self' | 'sent' | 'received' | 'friend' | 'undefined';
+
+export const statusToTextMap: {[key in FriendRequestStatusState]: string} = {
+  self: 'You',
+  friend: 'Already a friend',
+  sent: 'Awaiting a response',
+  received: 'Accept friend request',
+  undefined: 'Send a request',
+};
+
 // Used when rendering drinking session day overview
 export type DrinkingSessionProps = {
   sessionKey: string;
