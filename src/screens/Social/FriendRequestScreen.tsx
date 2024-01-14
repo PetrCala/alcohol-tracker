@@ -22,18 +22,22 @@ import useProfileDisplayData from '../../hooks/useProfileDisplayData';
 import LoadingData from '../../components/LoadingData';
 import {Database} from 'firebase/database';
 import UserOverview from '../../components/UserOverview';
+import { set } from 'lodash';
 
 type FriendRequestButtonsProps = {
   requestId: string;
+  removeFriendRequestItem: (userId: string) => void;
 };
 
 type FriendRequestPendingProps = {
   requestId: string;
+  removeFriendRequestItem: (userId: string) => void;
 };
 
 type FriendRequestComponentProps = {
   requestStatus: FriendRequestStatus | undefined;
   requestId: string;
+  removeFriendRequestItem: (userId: string) => void;
 };
 
 type ScreenProps = {
@@ -44,6 +48,7 @@ const handleAcceptFriendRequest = async (
   db: Database,
   userId: string,
   requestId: string,
+  removeFriendRequestItem: (userId: string) => void,
 ): Promise<void> => {
   try {
     await acceptFriendRequest(db, userId, requestId);
@@ -53,12 +58,14 @@ const handleAcceptFriendRequest = async (
       'Could not accept the friend request: ' + error.message,
     );
   }
+  removeFriendRequestItem(requestId);
 };
 
 const handleRejectFriendRequest = async (
   db: Database,
   userId: string,
   requestId: string,
+  removeFriendRequestItem: (userId: string) => void,
 ): Promise<void> => {
   try {
     await deleteFriendRequest(db, userId, requestId);
@@ -68,11 +75,13 @@ const handleRejectFriendRequest = async (
       'Could not accept the friend request: ' + error.message,
     );
   }
+  removeFriendRequestItem(requestId);
 };
 
 // Component to be shown for a received friend request
 const FriendRequestButtons: React.FC<FriendRequestButtonsProps> = ({
   requestId,
+  removeFriendRequestItem
 }) => {
   const {db} = useFirebase();
   const user = auth.currentUser;
@@ -84,13 +93,13 @@ const FriendRequestButtons: React.FC<FriendRequestButtonsProps> = ({
       <TouchableOpacity
         key={requestId + '-accept-request-button'}
         style={[styles.handleRequestButton, styles.acceptRequestButton]}
-        onPress={() => handleAcceptFriendRequest(db, user.uid, requestId)}>
+        onPress={() => handleAcceptFriendRequest(db, user.uid, requestId, removeFriendRequestItem)}>
         <Text style={styles.handleRequestButtonText}>Accept</Text>
       </TouchableOpacity>
       <TouchableOpacity
         key={requestId + '-reject-request-button'}
         style={[styles.handleRequestButton, styles.rejectRequestButton]}
-        onPress={() => handleRejectFriendRequest(db, user.uid, requestId)}>
+        onPress={() => handleRejectFriendRequest(db, user.uid, requestId, removeFriendRequestItem)}>
         <Text style={styles.handleRequestButtonText}>Remove</Text>
       </TouchableOpacity>
     </View>
@@ -100,6 +109,7 @@ const FriendRequestButtons: React.FC<FriendRequestButtonsProps> = ({
 // Component to be shown when the friend request is pending
 const FriendRequestPending: React.FC<FriendRequestPendingProps> = ({
   requestId,
+  removeFriendRequestItem,
 }) => {
   const {db} = useFirebase();
   const user = auth.currentUser;
@@ -109,7 +119,7 @@ const FriendRequestPending: React.FC<FriendRequestPendingProps> = ({
     <View style={styles.friendRequestPendingContainer}>
       <TouchableOpacity
         style={[styles.handleRequestButton, styles.rejectRequestButton]}
-        onPress={() => handleRejectFriendRequest(db, user.uid, requestId)}>
+        onPress={() => handleRejectFriendRequest(db, user.uid, requestId, removeFriendRequestItem)}>
         <Text style={styles.handleRequestButtonText}>Cancel</Text>
       </TouchableOpacity>
     </View>
@@ -120,16 +130,19 @@ const FriendRequestPending: React.FC<FriendRequestPendingProps> = ({
 const FriendRequestComponent: React.FC<FriendRequestComponentProps> = ({
   requestStatus,
   requestId,
+  removeFriendRequestItem,
 }) => {
   return requestStatus === 'received' ? (
     <FriendRequestButtons
       key={requestId + '-friend-request-buttons'}
       requestId={requestId}
+      removeFriendRequestItem={removeFriendRequestItem}
     />
   ) : requestStatus === 'sent' ? (
     <FriendRequestPending
       key={requestId + '-friend-request-pending'}
       requestId={requestId}
+      removeFriendRequestItem={removeFriendRequestItem}
     />
   ) : (
     <></>
@@ -148,6 +161,15 @@ const FriendRequestScreen = (props: ScreenProps) => {
     db: db,
     setLoadingDisplayData: setLoadingDisplayData,
   });
+
+  const removeFriendRequestItem = (
+    userId: string,
+  ) => {
+    console.log('removing friend request item for user', userId)
+    const updatedRequests = { ...friendRequests };
+    delete updatedRequests[userId];
+    setFriendRequests(updatedRequests);
+  };
 
   return (
     <View style={styles.mainContainer}>
@@ -172,6 +194,7 @@ const FriendRequestScreen = (props: ScreenProps) => {
                   RightSideComponent={FriendRequestComponent({
                     requestId,
                     requestStatus,
+                    removeFriendRequestItem,
                   })}
                 />
               );
