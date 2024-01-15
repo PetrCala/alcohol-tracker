@@ -1,7 +1,7 @@
 ﻿import {ReactNode} from 'react';
 import {FirebaseProvider} from './FirebaseContext';
 import {UserConnectionProvider} from './UserConnectionContext';
-import {VersionManagementProvider} from './VersionContext';
+import {ConfigProvider} from './ConfigContext';
 import {FirebaseApp} from 'firebase/app';
 
 type ContextProviderProps = {
@@ -15,7 +15,7 @@ export const ContextProvider: React.FC<ContextProviderProps> = ({
 }) => (
   <FirebaseProvider app={app}>
     <UserConnectionProvider>
-      <VersionManagementProvider>{children}</VersionManagementProvider>
+      <ConfigProvider>{children}</ConfigProvider>
     </UserConnectionProvider>
   </FirebaseProvider>
 );
