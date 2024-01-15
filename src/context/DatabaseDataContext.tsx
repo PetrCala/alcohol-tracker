@@ -94,7 +94,7 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
     );
 
     return () => stopListening();
-  }, [db, user]);
+  }, []);
 
   // Monitor drinking session data and keys
   useEffect(() => {
@@ -123,7 +123,7 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
     return () => {
       stopListening();
     };
-  }, [db, user]); // Re-run effect when userId or db changes
+  }, []);
 
   // Monitor user preferences
   useEffect(() => {
@@ -141,7 +141,7 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
     );
 
     return () => stopListening();
-  }, [db, user]);
+  }, []);
 
   // Monitor unconfirmed days
   useEffect(() => {
@@ -161,7 +161,7 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
     );
 
     return () => stopListening();
-  }, [db, user]);
+  }, []);
 
   // Monitor user data
   useEffect(() => {
@@ -175,7 +175,7 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
     });
 
     return () => stopListening();
-  }, [db, user]);
+  }, []);
 
   // Provide empty context if the login expires
   if (!user || !db)
