@@ -46,7 +46,7 @@ export type AppSettings = {
 };
 
 export type MaintenanceProps = {
-  maintence_mode: boolean;
+  maintenance_mode: boolean;
   message: string;
   start_time: number;
   end_time: number;

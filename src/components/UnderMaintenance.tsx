@@ -1,4 +1,4 @@
-import {ConfigProps} from '@src/types/database';
+import {ConfigProps, MaintenanceProps} from '@src/types/database';
 import {View, StyleSheet, Text, Image, Dimensions} from 'react-native';
 import CONST from '@src/CONST';
 
@@ -6,19 +6,34 @@ type UnderMaintenanceProps = {
   config: ConfigProps | null;
 };
 
+/** Given a date, return this date in human-legible hours and minutes */
+function getHourMinute(date: Date): string {
+  const pad = (num: number) => num.toString().padStart(2, '0');
+  let hours = pad(date.getHours());
+  let minutes = pad(date.getMinutes());
+  return `${hours}:${minutes}`;
+}
+
 const UnderMaintenance = ({config}: UnderMaintenanceProps) => {
-  const maintenance = config?.maintenance;
-  const maintenanceMessage = maintenance?.message ?? 'Under maintenance';
-  const start_time = maintenance?.start_time;
-  const end_time = maintenance?.end_time;
+  const defaultMaintenance: MaintenanceProps = {
+    maintenance_mode: true,
+    message: 'We are currently under maintenance',
+    start_time: 1704067200,
+    end_time: 1704067200,
+  };
+  const maintenance = config?.maintenance ?? defaultMaintenance;
+  const startTime = getHourMinute(new Date(maintenance.start_time));
+  const endTime = getHourMinute(new Date(maintenance.end_time));
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>{maintenanceMessage}</Text>
       <Image
         style={styles.beaverImage}
         source={require('../../assets/images/under_maintenance.jpg')}
       />
+      <Text style={styles.heading}>Under maintenance</Text>
+      <Text style={[styles.text, styles.messageText]}>{maintenance.message}</Text>
+      <Text style={styles.text}>{startTime} - {endTime}</Text>
     </View>
   );
 };
@@ -32,12 +47,33 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FFFF99',
   },
-  text: {
+  heading: {
     fontSize: 40,
+    fontWeight: 'bold',
     color: 'black',
+    marginBottom: 20,
+    textShadowColor: 'rgba(0, 0, 0, 0.75)', // Text shadow for legibility
+    textShadowOffset: {width: 0.5, height: 0.5},
+    textShadowRadius: 1
+  },
+  text: {
+    fontSize: 20,
+    color: 'black',
+    lineHeight: 28, // Increased line height
+    marginBottom: 10, // Added bottom margin
+    marginLeft: 30, // Added left margin
+    marginRight: 30, // Added right margin
+    textAlign: 'center',
+  },
+  messageText: {
+    marginBottom: 20
   },
   beaverImage: {
-    width: CONST.SCREEN_WIDTH,
-    height: CONST.SCREEN_WIDTH,
-  },
+    width: CONST.SCREEN_WIDTH > CONST.SCREEN_HEIGHT ? CONST.SCREEN_HEIGHT * 0.8: CONST.SCREEN_WIDTH * 0.8,
+    height: CONST.SCREEN_WIDTH > CONST.SCREEN_HEIGHT ? CONST.SCREEN_HEIGHT * 0.8: CONST.SCREEN_WIDTH * 0.8,
+    aspectRatio: 1, // Maintain aspect ratio
+    marginTop: -50,
+    marginBottom: 30,
+    borderRadius: 10,
+  }
 });
