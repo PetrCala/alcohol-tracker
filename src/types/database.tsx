@@ -37,11 +37,19 @@ export type BetaKeysProps = {
 
 export type ConfigProps = {
   app_settings: AppSettings;
+  maintenance: MaintenanceProps;
 };
 
 export type AppSettings = {
   min_supported_version: string;
   min_user_creation_possible_version: string;
+};
+
+export type MaintenanceProps = {
+  maintence_mode: boolean;
+  message: string;
+  start_time: number;
+  end_time: number;
 };
 
 export type FeedbackProps = {

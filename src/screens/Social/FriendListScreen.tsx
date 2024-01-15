@@ -35,7 +35,7 @@ const FriendListScreen = (props: ScreenProps) => {
 
   return (
     <ScrollView style={styles.scrollViewContainer}>
-      <Text style={styles.friendText}>There are your friends:</Text>
+      <Text style={styles.friendText}>These are your friends:</Text>
       {friends ? (
         <View style={styles.friendList}>
           {Object.keys(friends).map(friendId => {
