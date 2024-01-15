@@ -12,11 +12,10 @@ import {ConfigProps} from '@src/types/database';
 import {isEqual} from 'lodash';
 
 const initialState = {
+  isLoading: true,
   versionValid: false,
-  versionInfoUnavailable: false,
   config: null,
   underMaintenance: false,
-  isLoading: true,
 };
 
 const reducer = (state: any, action: any) => {
@@ -25,8 +24,6 @@ const reducer = (state: any, action: any) => {
       return {...state, isLoading: action.payload};
     case 'SET_VERSION_VALID':
       return {...state, versionValid: action.payload};
-    case 'SET_VERSION_INFO_UNAVAILABLE':
-      return {...state, versionInfoUnavailable: action.payload};
     case 'SET_CONFIG':
       return {...state, config: action.payload};
     case 'SET_UNDER_MAINTENANCE':
@@ -126,7 +123,6 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({children}) => {
   if (!isOnline) return <UserOffline />;
   if (state.underMaintenance) return <UserOffline />;
   if (state.isLoading) return <LoadingData />;
-  if (state.versionInfoUnavailable) return <UserOffline />;
   if (!state.versionValid) return <ForceUpdateScreen />;
 
   return <>{children}</>;
