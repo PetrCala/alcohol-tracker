@@ -1,5 +1,11 @@
 ﻿// DatabaseDataContext.tsx
-import {ReactNode, createContext, useContext, useEffect, useState} from 'react';
+import {
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useReducer,
+} from 'react';
 import {
   CurrentSessionData,
   DrinkingSessionArrayItem,
@@ -46,38 +52,63 @@ type DatabaseDataProviderProps = {
   children: ReactNode;
 };
 
+const initialState = {
+  currentSessionData: null,
+  drinkingSessionData: [],
+  drinkingSessionKeys: [],
+  preferences: null,
+  unconfirmedDays: null,
+  userData: null,
+  loadingCurrentSessionData: true,
+  loadingDrinkingSessionData: true,
+  loadingUserPreferences: true,
+  loadingUnconfirmedDays: true,
+  loadingUserData: true,
+};
+
+const reducer = (state: any, action: any) => {
+  switch (action.type) {
+    case 'SET_CURRENT_SESSION_DATA':
+      return {...state, currentSessionData: action.payload};
+    case 'SET_DRINKING_SESSION_DATA':
+      return {...state, drinkingSessionData: action.payload};
+    case 'SET_DRINKING_SESSION_KEYS':
+      return {...state, drinkingSessionKeys: action.payload};
+    case 'SET_PREFERENCES':
+      return {...state, preferences: action.payload};
+    case 'SET_UNCONFIRMED_DAYS':
+      return {...state, unconfirmedDays: action.payload};
+    case 'SET_USER_DATA':
+      return {...state, userData: action.payload};
+    case 'SET_LOADING_CURRENT_SESSION_DATA':
+      return {...state, loadingCurrentSessionData: action.payload};
+    case 'SET_LOADING_DRINKING_SESSION_DATA':
+      return {...state, loadingDrinkingSessionData: action.payload};
+    case 'SET_LOADING_USER_PREFERENCES':
+      return {...state, loadingUserPreferences: action.payload};
+    case 'SET_LOADING_UNCONFIRMED_DAYS':
+      return {...state, loadingUnconfirmedDays: action.payload};
+    case 'SET_LOADING_USER_DATA':
+      return {...state, loadingUserData: action.payload};
+    default:
+      return state;
+  }
+};
+
 export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
   children,
 }) => {
   const user = auth.currentUser;
   const {db} = useFirebase();
+  const [state, dispatch] = useReducer(reducer, initialState);
+
   // Database data hooks
-  const [currentSessionData, setCurrentSessionData] =
-    useState<CurrentSessionData | null>(null);
-  const [drinkingSessionData, setDrinkingSessionData] = useState<
-    DrinkingSessionArrayItem[]
-  >([]);
-  const [drinkingSessionKeys, setDrinkingSessionKeys] = useState<string[]>([]);
-  const [preferences, setPreferences] = useState<PreferencesData | null>(null);
-  const [unconfirmedDays, setUnconfirmedDays] =
-    useState<UnconfirmedDaysData | null>(null);
-  const [userData, setUserData] = useState<UserData | null>(null);
-  // Loading hooks
-  const [loadingCurrentSessionData, setLoadingCurrentSessionData] =
-    useState<boolean>(true);
-  const [loadingDrinkingSessionData, setLoadingDrinkingSessionData] =
-    useState<boolean>(true);
-  const [loadingUserPreferences, setLoadingUserPreferences] =
-    useState<boolean>(true);
-  const [loadingUnconfirmedDays, setLoadingUnconfirmedDays] =
-    useState<boolean>(true);
-  const [loadingUserData, setLoadingUserData] = useState<boolean>(true);
   const isLoading = [
-    loadingCurrentSessionData,
-    loadingDrinkingSessionData,
-    loadingUserPreferences,
-    loadingUnconfirmedDays,
-    loadingUserData,
+    state.loadingCurrentSessionData,
+    state.loadingDrinkingSessionData,
+    state.loadingUserPreferences,
+    state.loadingUnconfirmedDays,
+    state.loadingUserData,
   ].some(Boolean); // true if any of them is true
 
   // Monitor current session data
@@ -88,8 +119,8 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
       db,
       userRef,
       (data: CurrentSessionData) => {
-        setCurrentSessionData(data);
-        setLoadingCurrentSessionData(false);
+        dispatch({type: 'SET_CURRENT_SESSION_DATA', payload: data});
+        dispatch({type: 'SET_LOADING_CURRENT_SESSION_DATA', payload: false});
       },
     );
 
@@ -109,13 +140,13 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
       (data: DrinkingSessionData) => {
         newData = data ? Object.values(data) : [];
         newKeys = data ? Object.keys(data) : [];
-        if (!isEqual(newData, drinkingSessionData)) {
-          setDrinkingSessionData(newData);
+        if (!isEqual(newData, state.drinkingSessionData)) {
+          dispatch({type: 'SET_DRINKING_SESSION_DATA', payload: newData});
         }
-        if (!isEqual(newKeys, drinkingSessionKeys)) {
-          setDrinkingSessionKeys(newKeys);
+        if (!isEqual(newKeys, state.drinkingSessionKeys)) {
+          dispatch({type: 'SET_DRINKING_SESSION_KEYS', payload: newKeys});
         }
-        setLoadingDrinkingSessionData(false);
+        dispatch({type: 'SET_LOADING_DRINKING_SESSION_DATA', payload: false});
       },
     );
 
@@ -133,10 +164,10 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
       db,
       userRef,
       (data: PreferencesData) => {
-        if (!isEqual(data, preferences)) {
-          setPreferences(data);
+        if (!isEqual(data, state.preferences)) {
+          dispatch({type: 'SET_PREFERENCES', payload: data});
         }
-        setLoadingUserPreferences(false);
+        dispatch({type: 'SET_LOADING_USER_PREFERENCES', payload: false});
       },
     );
 
@@ -153,10 +184,10 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
       userRef,
       (data: UnconfirmedDaysData) => {
         newData = data ? data : {};
-        if (!isEqual(newData, unconfirmedDays)) {
-          setUnconfirmedDays(newData);
+        if (!isEqual(newData, state.unconfirmedDays)) {
+          dispatch({type: 'SET_UNCONFIRMED_DAYS', payload: newData});
         }
-        setLoadingUnconfirmedDays(false);
+        dispatch({type: 'SET_LOADING_UNCONFIRMED_DAYS', payload: false});
       },
     );
 
@@ -168,10 +199,10 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
     if (!user || !db) return;
     let userRef = `users/${user.uid}`;
     let stopListening = listenForDataChanges(db, userRef, (data: UserData) => {
-      if (!isEqual(data, userData)) {
-        setUserData(data);
+      if (!isEqual(data, state.userData)) {
+        dispatch({type: 'SET_USER_DATA', payload: data});
       }
-      setLoadingUserData(false);
+      dispatch({type: 'SET_LOADING_USER_DATA', payload: false});
     });
 
     return () => stopListening();
@@ -188,12 +219,12 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
   // if (isLoading) return <LoadingData loadingText=''/>;
 
   const value = {
-    currentSessionData: currentSessionData,
-    drinkingSessionData: drinkingSessionData,
-    drinkingSessionKeys: drinkingSessionKeys,
-    preferences: preferences,
-    unconfirmedDays: unconfirmedDays,
-    userData: userData,
+    currentSessionData: state.currentSessionData,
+    drinkingSessionData: state.drinkingSessionData,
+    drinkingSessionKeys: state.drinkingSessionKeys,
+    preferences: state.preferences,
+    unconfirmedDays: state.unconfirmedDays,
+    userData: state.userData,
     isLoading: isLoading,
   };
 
