@@ -15,6 +15,7 @@ import {TabView, SceneMap} from 'react-native-tab-view';
 import FriendListScreen from './Social/FriendListScreen';
 import FriendRequestScreen from './Social/FriendRequestScreen';
 import SearchScreen from './Social/SearchScreen';
+import CONST from '@src/CONST';
 
 type SocialFooterButtonProps = {
   index: number;
@@ -160,8 +161,6 @@ const SocialScreen = (props: SocialProps) => {
 
 export default SocialScreen;
 
-const screenWidth = Dimensions.get('window').width;
-
 const styles = StyleSheet.create({
   backArrowContainer: {
     justifyContent: 'center',
@@ -215,7 +214,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   footerButton: {
-    width: screenWidth / 3,
+    width: CONST.SCREEN_WIDTH / 3,
     height: '100%',
     flexDirection: 'column',
     justifyContent: 'center',

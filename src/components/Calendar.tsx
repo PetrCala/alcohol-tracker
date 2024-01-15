@@ -31,6 +31,7 @@ import {
 } from '../types/database';
 import {DateObject, DayState, DayMarking, CalendarColors} from '../types/components';
 import LoadingData from './LoadingData';
+import CONST from '@src/CONST';
 
 type SessionsCalendarProps = {
   drinkingSessionData: DrinkingSessionArrayItem[];
@@ -58,8 +59,6 @@ const colorToTextColorMap: Record<CalendarColors, string> = {
   black: 'white',
   green: 'white',
 };
-
-const screenWidth = Dimensions.get('window').width;
 
 // Custom Day Component
 const DayComponent: React.FC<{
@@ -255,7 +254,7 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
           textDayHeaderFontWeight: 'bold',
           'stylesheet.calendar.header': {
             header: {
-              width: screenWidth,
+              width: CONST.SCREEN_WIDTH,
               marginLeft: -5,
               flexDirection: 'row',
               alignItems: 'center',
@@ -269,7 +268,7 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
               color: 'black',
               fontSize: 20,
               fontWeight: '500',
-              width: screenWidth / 3,
+              width: CONST.SCREEN_WIDTH / 3,
               textAlign: 'center',
             },
           },
@@ -288,7 +287,7 @@ const arrowStyles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: 'white',
     alignItems: 'center',
-    width: screenWidth / 3,
+    width: CONST.SCREEN_WIDTH / 3,
     marginVertical: -10,
   },
   leftContainer: {

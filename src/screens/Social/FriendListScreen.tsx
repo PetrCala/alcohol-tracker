@@ -75,8 +75,6 @@ const FriendListScreen = (props: ScreenProps) => {
 
 export default FriendListScreen;
 
-const screenWidth = Dimensions.get('window').width;
-
 const styles = StyleSheet.create({
   scrollViewContainer: {
     flex: 1,

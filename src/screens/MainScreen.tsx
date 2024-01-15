@@ -307,8 +307,6 @@ const MainScreen = ({navigation}: MainScreenProps) => {
 
 export default MainScreen;
 
-const screenWidth = Dimensions.get('window').width;
-
 const styles = StyleSheet.create({
   profileContainer: {
     //Ensure the container fills all space between, no more, no less

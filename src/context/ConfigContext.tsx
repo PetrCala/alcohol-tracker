@@ -10,6 +10,7 @@ import {useFirebase} from './FirebaseContext';
 import {validateAppVersion} from '../utils/validation';
 import {ConfigProps} from '@src/types/database';
 import {isEqual} from 'lodash';
+import UnderMaintenance from '@components/UnderMaintenance';
 
 const initialState = {
   isLoading: true,
@@ -121,7 +122,7 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({children}) => {
 
   // Monitor user preferences
   if (!isOnline) return <UserOffline />;
-  if (state.underMaintenance) return <UserOffline />;
+  if (state.underMaintenance) return <UnderMaintenance config={state.config} />;
   if (state.isLoading) return <LoadingData />;
   if (!state.versionValid) return <ForceUpdateScreen />;
 

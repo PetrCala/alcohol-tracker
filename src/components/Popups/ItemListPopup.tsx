@@ -8,6 +8,7 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
+import CONST from '@src/CONST';
 
 type ItemList = {
   label: string;
@@ -57,8 +58,6 @@ const ItemListPopup: React.FC<ItemListPopupProps> = ({
   );
 };
 
-const screenWidth = Dimensions.get('window').width;
-
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
@@ -67,7 +66,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalView: {
-    width: screenWidth * 0.8,
+    width: CONST.SCREEN_WIDTH * 0.8,
     backgroundColor: '#FFFF99',
     borderRadius: 8,
     borderWidth: 2,
@@ -85,7 +84,7 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   actionButton: {
-    width: screenWidth * 0.75,
+    width: CONST.SCREEN_WIDTH * 0.75,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'white',

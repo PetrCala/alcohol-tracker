@@ -21,6 +21,7 @@ import LoadingData from '../components/LoadingData';
 import {useUserConnection} from '../context/UserConnectionContext';
 import InputTextPopup from '../components/Popups/InputTextPopup';
 import {handleInvalidInput} from '../utils/errorHandling';
+import CONST from '@src/CONST';
 
 const LoginScreen = ({navigation}: LoginScreenProps) => {
   if (!navigation) return null; // Should never be null
@@ -185,9 +186,6 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
 
 export default LoginScreen;
 
-const screenWidth = Dimensions.get('window').width;
-const screenHeight = Dimensions.get('window').height;
-
 const styles = StyleSheet.create({
   mainContainer: {
     flexGrow: 1,
@@ -201,7 +199,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
     backgroundColor: '#FFFF99',
-    marginTop: screenHeight * 0.2,
+    marginTop: CONST.SCREEN_HEIGHT * 0.2,
     width: '100%',
   },
   logo: {
@@ -247,7 +245,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexGrow: 1,
     flexShrink: 1,
-    marginTop: screenHeight * 0.15,
+    marginTop: CONST.SCREEN_HEIGHT * 0.15,
     width: '80%',
   },
   input: {
@@ -292,7 +290,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   horizontalLine: {
-    width: screenWidth * 0.55,
+    width: CONST.SCREEN_WIDTH * 0.55,
     height: 1,
     backgroundColor: 'grey',
     alignSelf: 'center',

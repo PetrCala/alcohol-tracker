@@ -361,8 +361,6 @@ const SearchScreen = (props: ScreenProps) => {
 
 export default SearchScreen;
 
-const screenWidth = Dimensions.get('window').width;
-
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,

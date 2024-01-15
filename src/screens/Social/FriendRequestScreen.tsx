@@ -223,8 +223,6 @@ const FriendRequestScreen = (props: ScreenProps) => {
 
 export default FriendRequestScreen;
 
-const screenWidth = Dimensions.get('window').width;
-
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,

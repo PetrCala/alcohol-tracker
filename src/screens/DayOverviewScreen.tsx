@@ -37,6 +37,7 @@ import UserOffline from '../components/UserOffline';
 import {useUserConnection} from '../context/UserConnectionContext';
 import BasicButton from '../components/Buttons/BasicButton';
 import {getDatabaseData} from '../context/DatabaseDataContext';
+import CONST from '@src/CONST';
 
 type CombinedDataProps = {
   sessionKey: string;
@@ -328,8 +329,6 @@ const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
 
 export default DayOverviewScreen;
 
-const screenWidth = Dimensions.get('window').width;
-
 const styles = StyleSheet.create({
   menuDrinkingSessionContainer: {
     backgroundColor: 'white',
@@ -456,7 +455,7 @@ const styles = StyleSheet.create({
   footerArrowContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: screenWidth / 2,
+    width: CONST.SCREEN_WIDTH / 2,
     backgroundColor: 'white',
     borderLeftWidth: 1,
     borderRightWidth: 1,
