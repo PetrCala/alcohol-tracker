@@ -2,10 +2,10 @@ import {
   askForValue,
   confirmExecution,
   validateAndParseInputToTimestamp,
-} from '../../src/utils/utils';
-import {MaintenanceProps} from '../../src/types/database';
-import admin from '../admin';
-import {askForConfirmationInProduction} from '../utils/devEnv';
+} from '../../../src/utils/utils';
+import {MaintenanceProps} from '../../../src/types/database';
+import admin from '../../admin';
+import {askForConfirmationInProduction} from '../../utils/devEnv';
 
 /** Schedule maintenance by updating the maintenance configuration in the
  * database. Connect through an admin SDK to the database flavor that is
