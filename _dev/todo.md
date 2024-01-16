@@ -3,7 +3,10 @@
 - Finish the user deletion cleanup
 - Make friend request sends refresh status (see SearchScreen)
 - Finish friend request and friend test suite
-- Write a script for automatic maintenance handling (start, stop)
+- *done* Write a script for automatic maintenance handling (start, stop)
+- Finish user profile pictures handling
+- Add a friend overview screen
+- Make sure the update screen is decently handled for both Android and iOS
 
 ### Migrating to 0.3.0 database
 
