@@ -17,17 +17,19 @@ import {
   FriendRequestData,
   FriendsData,
   FriendRequestDisplayData,
+  ProfileDisplayData,
+  ProfileData,
 } from '../../types/database';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useFirebase} from '../../context/FirebaseContext';
 import {acceptFriendRequest, sendFriendRequest} from '../../database/friends';
 import {auth} from '../../services/firebaseSetup';
 import {isNonEmptyObject} from '../../utils/validation';
-import useProfileDisplayData from '../../hooks/useProfileDisplayData';
 import LoadingData from '../../components/LoadingData';
 import {Database} from 'firebase/database';
 import {searchDbByNickname} from '../../database/search';
 import {set} from 'lodash';
+import {fetchUserProfiles} from '@database/profile';
 
 const statusToTextMap: {[key in FriendRequestStatusState]: string} = {
   self: 'You',
@@ -214,12 +216,7 @@ const SearchScreen = (props: ScreenProps) => {
     [userId: string]: FriendRequestStatusState | undefined;
   }>({});
   const [noUsersFound, setNoUsersFound] = useState<boolean>(false);
-  const [loadingDisplayData, setLoadingDisplayData] = useState<boolean>(false);
-  const [displayData, setDisplayData] = useProfileDisplayData({
-    data: searchResultData,
-    db: db,
-    setLoadingDisplayData: setLoadingDisplayData,
-  });
+  const [displayData, setDisplayData] = useState<ProfileDisplayData>({});
 
   const doSearch = async (db: Database, nickname: string): Promise<void> => {
     if (!db || !nickname) return; // Input a value first alert
@@ -230,6 +227,8 @@ const SearchScreen = (props: ScreenProps) => {
       if (newSearchResults) {
         setSearchResultData(newSearchResults);
         updateSearchedUsersStatus(newSearchResults);
+        const newDisplayData = await fetchDisplayData();
+        setDisplayData(newDisplayData);
       } else {
         setNoUsersFound(true);
       }
@@ -242,6 +241,19 @@ const SearchScreen = (props: ScreenProps) => {
     } finally {
       setSearching(false);
     }
+  };
+
+  const fetchDisplayData = async (): Promise<ProfileDisplayData> => {
+    if (!db || !isNonEmptyObject(searchResultData)) {
+      return {};
+    }
+    const newDisplayData: ProfileDisplayData = {};
+    const dataIds = Object.keys(searchResultData);
+    const userProfiles: ProfileData[] = await fetchUserProfiles(db, dataIds);
+    dataIds.forEach((id, index) => {
+      newDisplayData[id] = userProfiles[index];
+    });
+    return newDisplayData;
   };
 
   /** Having a list of users returned by the search,
@@ -331,24 +343,20 @@ const SearchScreen = (props: ScreenProps) => {
         </View>
         <View style={styles.searchResultsContainer}>
           {searching ? (
-            <LoadingData style={styles.loadingData}/>
+            <LoadingData style={styles.loadingData} />
           ) : isNonEmptyObject(searchResultData) ? (
-            Object.keys(searchResultData).map((userId, index) =>
-              loadingDisplayData ? (
-                <LoadingData key={userId + '-loading'} />
-              ) : (
-                <SearchResult
-                  key={userId + '-container'}
-                  userId={userId}
-                  displayData={displayData}
-                  db={db}
-                  userFrom={user.uid}
-                  requestStatus={requestStatuses[userId]}
-                  updateRequestStatus={updateRequestStatus}
-                  alreadyAFriend={friends ? friends[userId] : false}
-                />
-              ),
-            )
+            Object.keys(searchResultData).map((userId, index) => (
+              <SearchResult
+                key={userId + '-container'}
+                userId={userId}
+                displayData={displayData}
+                db={db}
+                userFrom={user.uid}
+                requestStatus={requestStatuses[userId]}
+                updateRequestStatus={updateRequestStatus}
+                alreadyAFriend={friends ? friends[userId] : false}
+              />
+            ))
           ) : noUsersFound ? (
             <Text style={styles.noUsersFoundText}>
               There are no users with this nickname.
