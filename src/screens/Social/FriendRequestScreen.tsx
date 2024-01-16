@@ -44,8 +44,11 @@ type FriendRequestComponentProps = {
 
 type ScreenProps = {
   friendRequests: FriendRequestDisplayData | undefined;
-  setFriendRequests: React.Dispatch<React.SetStateAction<FriendRequestDisplayData | undefined>>;
+  setFriendRequests: React.Dispatch<
+    React.SetStateAction<FriendRequestDisplayData | undefined>
+  >;
   friends: FriendsData | undefined;
+  setFriends: React.Dispatch<React.SetStateAction<FriendsData | undefined>>;
 };
 
 const handleAcceptFriendRequest = async (
@@ -85,7 +88,7 @@ const handleRejectFriendRequest = async (
 // Component to be shown for a received friend request
 const FriendRequestButtons: React.FC<FriendRequestButtonsProps> = ({
   requestId,
-  removeFriendRequestItem
+  removeFriendRequestItem,
 }) => {
   const {db} = useFirebase();
   const user = auth.currentUser;
@@ -97,13 +100,27 @@ const FriendRequestButtons: React.FC<FriendRequestButtonsProps> = ({
       <TouchableOpacity
         key={requestId + '-accept-request-button'}
         style={[styles.handleRequestButton, styles.acceptRequestButton]}
-        onPress={() => handleAcceptFriendRequest(db, user.uid, requestId, removeFriendRequestItem)}>
+        onPress={() =>
+          handleAcceptFriendRequest(
+            db,
+            user.uid,
+            requestId,
+            removeFriendRequestItem,
+          )
+        }>
         <Text style={styles.handleRequestButtonText}>Accept</Text>
       </TouchableOpacity>
       <TouchableOpacity
         key={requestId + '-reject-request-button'}
         style={[styles.handleRequestButton, styles.rejectRequestButton]}
-        onPress={() => handleRejectFriendRequest(db, user.uid, requestId, removeFriendRequestItem)}>
+        onPress={() =>
+          handleRejectFriendRequest(
+            db,
+            user.uid,
+            requestId,
+            removeFriendRequestItem,
+          )
+        }>
         <Text style={styles.handleRequestButtonText}>Remove</Text>
       </TouchableOpacity>
     </View>
@@ -123,7 +140,14 @@ const FriendRequestPending: React.FC<FriendRequestPendingProps> = ({
     <View style={styles.friendRequestPendingContainer}>
       <TouchableOpacity
         style={[styles.handleRequestButton, styles.rejectRequestButton]}
-        onPress={() => handleRejectFriendRequest(db, user.uid, requestId, removeFriendRequestItem)}>
+        onPress={() =>
+          handleRejectFriendRequest(
+            db,
+            user.uid,
+            requestId,
+            removeFriendRequestItem,
+          )
+        }>
         <Text style={styles.handleRequestButtonText}>Cancel</Text>
       </TouchableOpacity>
     </View>
@@ -154,7 +178,7 @@ const FriendRequestComponent: React.FC<FriendRequestComponentProps> = ({
 };
 
 const FriendRequestScreen = (props: ScreenProps) => {
-  const {friendRequests, setFriendRequests} = props;
+  const {friendRequests, setFriendRequests, friends, setFriends} = props;
   const {db} = useFirebase();
   const [loadingDisplayData, setLoadingDisplayData] = useState<boolean>(false);
   const [displayData, setDisplayData] = useProfileDisplayData({
@@ -163,10 +187,8 @@ const FriendRequestScreen = (props: ScreenProps) => {
     setLoadingDisplayData: setLoadingDisplayData,
   });
 
-  const removeFriendRequestItem = (
-    userId: string,
-  ) => {
-    const updatedRequests = { ...friendRequests };
+  const removeFriendRequestItem = (userId: string) => {
+    const updatedRequests = {...friendRequests};
     delete updatedRequests[userId];
     setFriendRequests(updatedRequests);
   };

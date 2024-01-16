@@ -84,6 +84,7 @@ const SocialScreen = (props: SocialProps) => {
             friendRequests={friendRequests}
             setFriendRequests={setFriendRequests}
             friends={friends}
+            setFriends={setFriends}
           />
         );
       case 'friendRequests':
@@ -92,6 +93,7 @@ const SocialScreen = (props: SocialProps) => {
             friendRequests={friendRequests}
             setFriendRequests={setFriendRequests}
             friends={friends}
+            setFriends={setFriends}
           />
         );
       default:

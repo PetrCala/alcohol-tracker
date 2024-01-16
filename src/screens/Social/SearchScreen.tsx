@@ -27,7 +27,7 @@ import useProfileDisplayData from '../../hooks/useProfileDisplayData';
 import LoadingData from '../../components/LoadingData';
 import {Database} from 'firebase/database';
 import {searchDbByNickname} from '../../database/search';
-import { set } from 'lodash';
+import {set} from 'lodash';
 
 const statusToTextMap: {[key in FriendRequestStatusState]: string} = {
   self: 'You',
@@ -198,10 +198,11 @@ type ScreenProps = {
     React.SetStateAction<FriendRequestDisplayData | undefined>
   >;
   friends: FriendsData | undefined;
+  setFriends: React.Dispatch<React.SetStateAction<FriendsData | undefined>>;
 };
 
 const SearchScreen = (props: ScreenProps) => {
-  const {friendRequests, setFriendRequests, friends} = props;
+  const {friendRequests, setFriendRequests, friends, setFriends} = props;
   const {db} = useFirebase();
   const user = auth.currentUser;
   const [searchText, setSearchText] = useState<string>('');
@@ -264,7 +265,7 @@ const SearchScreen = (props: ScreenProps) => {
    */
   const updateRequestStatus = (
     userId: string,
-    newStatus: FriendRequestStatusState
+    newStatus: FriendRequestStatusState,
   ) => {
     // Update the request status on this tab
     setRequestStatuses(prevStatuses => ({
@@ -343,9 +344,7 @@ const SearchScreen = (props: ScreenProps) => {
                     userFrom={user.uid}
                     requestStatus={requestStatuses[userId]}
                     updateRequestStatus={updateRequestStatus}
-                    alreadyAFriend={
-                      friends ? friends[userId] : false
-                    }
+                    alreadyAFriend={friends ? friends[userId] : false}
                   />
                 ),
               )

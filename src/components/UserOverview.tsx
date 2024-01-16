@@ -15,10 +15,9 @@ const UserOverview: React.FC<UserOverviewProps> = ({
   profileData,
   RightSideComponent,
 }) => {
-  const user = auth.currentUser;
   const {db, storage} = useFirebase();
 
-  if (!db || !user || !profileData) return;
+  if (!db || !profileData) return;
 
   return (
     <View key={userId + '-container'} style={styles.userOverviewContainer}>
