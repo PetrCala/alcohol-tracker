@@ -13,6 +13,7 @@ import {
   FriendRequestData,
   FriendRequestStatus,
   FriendsData,
+  MaintenanceProps,
   NicknameToIdData,
   PreferencesData,
   ProfileData,
@@ -44,6 +45,11 @@ export function initializeEmptyMockDatabase(): DatabaseProps {
         min_supported_version: '0.0.1',
         min_user_creation_possible_version: '0.0.1',
       },
+      maintenance: {
+        maintenance_mode: false,
+        start_time: 0,
+        end_time: 0,
+      }
     },
     feedback: {},
     nickname_to_id: {},
@@ -82,8 +88,14 @@ export function createMockConfig(
     min_supported_version: min_supported_version,
     min_user_creation_possible_version: min_user_creation_possible_version,
   };
+  let mockMaintenance: MaintenanceProps = {
+    maintenance_mode: false,
+    start_time: 0,
+    end_time: 0,
+  }
   let mockConfig: ConfigProps = {
     app_settings: mockAppSettings,
+    maintenance: mockMaintenance,
   };
   return mockConfig;
 }
