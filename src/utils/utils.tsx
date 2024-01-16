@@ -132,3 +132,22 @@ export async function confirmExecution(question: string): Promise<boolean> {
     });
   });
 }
+
+/**
+ * Asks the user a question and returns a promise that resolves to the inputted value.
+ * @param question - The question to ask the user.
+ * @returns A promise that resolves to the inputted value.
+ */
+export async function askForValue(question: string): Promise<string> {
+  return new Promise((resolve) => {
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout
+    });
+
+    rl.question(question, (answer: string) => {
+      rl.close();
+      resolve(answer);
+    });
+  });
+}
