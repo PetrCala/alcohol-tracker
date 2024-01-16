@@ -209,6 +209,7 @@ const SearchScreen = (props: ScreenProps) => {
   const [searchResultData, setSearchResultData] = useState<NicknameToIdData>(
     {},
   );
+  const [searching, setSearching] = useState<boolean>(false);
   const [requestStatuses, setRequestStatuses] = useState<{
     [userId: string]: FriendRequestStatusState | undefined;
   }>({});
@@ -222,6 +223,7 @@ const SearchScreen = (props: ScreenProps) => {
 
   const doSearch = async (db: Database, nickname: string): Promise<void> => {
     if (!db || !nickname) return; // Input a value first alert
+    setSearching(true);
     setNoUsersFound(false);
     try {
       const newSearchResults = await searchDbByNickname(db, nickname); // Cleaned within the function
@@ -237,6 +239,8 @@ const SearchScreen = (props: ScreenProps) => {
         'Could not search the database: ' + error.message,
       );
       return;
+    } finally {
+      setSearching(false);
     }
   };
 
@@ -326,32 +330,32 @@ const SearchScreen = (props: ScreenProps) => {
           </TouchableOpacity>
         </View>
         <View style={styles.searchResultsContainer}>
-          {
-            noUsersFound ? (
-              <Text style={styles.noUsersFoundText}>
-                There are no users with this nickname.
-              </Text>
-            ) : isNonEmptyObject(searchResultData) ? (
-              Object.keys(searchResultData).map((userId, index) =>
-                loadingDisplayData ? (
-                  <LoadingData key={userId + '-loading'} />
-                ) : (
-                  <SearchResult
-                    key={userId + '-container'}
-                    userId={userId}
-                    displayData={displayData}
-                    db={db}
-                    userFrom={user.uid}
-                    requestStatus={requestStatuses[userId]}
-                    updateRequestStatus={updateRequestStatus}
-                    alreadyAFriend={friends ? friends[userId] : false}
-                  />
-                ),
-              )
-            ) : (
-              <></>
-            ) // Some users found, but searchResults empty - should not happen
-          }
+          {searching ? (
+            <LoadingData style={styles.loadingData}/>
+          ) : isNonEmptyObject(searchResultData) ? (
+            Object.keys(searchResultData).map((userId, index) =>
+              loadingDisplayData ? (
+                <LoadingData key={userId + '-loading'} />
+              ) : (
+                <SearchResult
+                  key={userId + '-container'}
+                  userId={userId}
+                  displayData={displayData}
+                  db={db}
+                  userFrom={user.uid}
+                  requestStatus={requestStatuses[userId]}
+                  updateRequestStatus={updateRequestStatus}
+                  alreadyAFriend={friends ? friends[userId] : false}
+                />
+              ),
+            )
+          ) : noUsersFound ? (
+            <Text style={styles.noUsersFoundText}>
+              There are no users with this nickname.
+            </Text>
+          ) : (
+            <></>
+          )}
         </View>
       </ScrollView>
     </View>
@@ -449,10 +453,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 5,
   },
+  loadingData: {
+    width: '100%',
+    height: 50,
+    margin: 5,
+  },
   noUsersFoundText: {
     color: 'black',
     fontSize: 16,
     fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 15,
   },
   cancelButton: {
     width: '100%',
