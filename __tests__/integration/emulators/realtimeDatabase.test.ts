@@ -21,6 +21,7 @@ import {MOCK_USER_IDS} from '../../utils/testsStatic';
 import {readDataOnce} from '@database/baseFunctions';
 import {setupGlobalMocks} from '../../utils/testUtils';
 import {
+  fillDatabaseWithMockData,
   setupRealtimeDatabaseTestEnv,
   teardownRealtimeDatabaseTestEnv,
 } from '../../utils/emulators/realtimeDatabaseSetup';
@@ -33,7 +34,6 @@ import {
 import {cleanStringForFirebaseKey} from '@src/utils/strings';
 import { sendFriendRequest } from '@database/friends';
 
-const mockDatabase: DatabaseProps = createMockDatabase();
 const testUserId: string = MOCK_USER_IDS[0];
 const testUserDisplayName: string = 'mock-user';
 const testUserBetaKey: string = 'beta-key-1';
@@ -65,7 +65,7 @@ describeWithEmulator(
 
     // Set up the database before each test
     beforeEach(async () => {
-      await set(ref(db), mockDatabase);
+      await fillDatabaseWithMockData(db);
     });
 
     // Write null to clear the database.
@@ -94,7 +94,7 @@ describeWithEmulator('Test realtime database emulator', () => {
   });
 
   beforeEach(async () => {
-    await set(ref(db), mockDatabase);
+    await fillDatabaseWithMockData(db);
   });
 
   afterEach(async () => {
@@ -127,7 +127,7 @@ describeWithEmulator('Test drinking session functionality', () => {
   });
 
   beforeEach(async () => {
-    await set(ref(db), mockDatabase);
+    await fillDatabaseWithMockData(db);
   });
 
   afterEach(async () => {
@@ -178,7 +178,7 @@ describeWithEmulator('Test pushing new user info into the database', () => {
   });
 
   beforeEach(async () => {
-    await set(ref(db), mockDatabase);
+    await fillDatabaseWithMockData(db);
 
     let userList = await readDataOnce(db, 'user_current_session'); // Arbitrary node with all user ids in top level
     const userKeys = Object.keys(userList);
@@ -253,7 +253,7 @@ describeWithEmulator('Test deleting data from the database', () => {
   });
 
   beforeEach(async () => {
-    await set(ref(db), mockDatabase);
+    await fillDatabaseWithMockData(db);
     await deleteUserInfo(db, testUserId, testUserDisplayName, 1); // beta feature
   });
 
@@ -328,7 +328,7 @@ describeWithEmulator('Test friend request functionality', () => {
   });
 
   beforeEach(async () => {
-    await set(ref(db), mockDatabase);
+    await fillDatabaseWithMockData(db);
     await deleteUserInfo(db, testUserId, testUserDisplayName, 1); // beta feature
   });
 

@@ -329,6 +329,8 @@ const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
 
 export default DayOverviewScreen;
 
+const screenWidth = Dimensions.get('window').width;
+
 const styles = StyleSheet.create({
   menuDrinkingSessionContainer: {
     backgroundColor: 'white',
@@ -455,7 +457,7 @@ const styles = StyleSheet.create({
   footerArrowContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: CONST.SCREEN_WIDTH / 2,
+    width: screenWidth / 2,
     backgroundColor: 'white',
     borderLeftWidth: 1,
     borderRightWidth: 1,

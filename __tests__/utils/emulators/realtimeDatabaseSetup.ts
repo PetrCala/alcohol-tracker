@@ -7,6 +7,8 @@ import {
 import {initializeApp, deleteApp, FirebaseApp} from 'firebase/app';
 import {Database} from 'firebase/database';
 import * as firebaseJson from '../../../firebase.json';
+import {createMockDatabase} from '../mockDatabase';
+import {ref, set} from 'firebase/database';
 
 export function setupRealtimeDatabaseTestEnv(): {
   testApp: FirebaseApp;
@@ -46,4 +48,15 @@ export async function teardownRealtimeDatabaseTestEnv(
 ): Promise<void> {
   goOffline(db); // Close database connection
   await deleteApp(testApp); // Delete the app
+}
+
+/** Given a database object, fill it with mock data.
+ *
+ * @param db Firebase Database object.
+ * @returns The updated Database object.
+ */
+export async function fillDatabaseWithMockData(db: any): Promise<void> {
+  let mockDatabase = createMockDatabase();
+  await set(ref(db), mockDatabase);
+  return db;
 }

@@ -43,6 +43,9 @@ const UnderMaintenance = ({config}: UnderMaintenanceProps) => {
 
 export default UnderMaintenance;
 
+const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -73,13 +76,13 @@ const styles = StyleSheet.create({
   },
   beaverImage: {
     width:
-      CONST.SCREEN_WIDTH > CONST.SCREEN_HEIGHT
-        ? CONST.SCREEN_HEIGHT * 0.8
-        : CONST.SCREEN_WIDTH * 0.8,
+      screenWidth > screenHeight
+        ? screenHeight * 0.8
+        : screenWidth * 0.8,
     height:
-      CONST.SCREEN_WIDTH > CONST.SCREEN_HEIGHT
-        ? CONST.SCREEN_HEIGHT * 0.8
-        : CONST.SCREEN_WIDTH * 0.8,
+      screenWidth > screenHeight
+        ? screenHeight * 0.8
+        : screenWidth * 0.8,
     aspectRatio: 1, // Maintain aspect ratio
     marginTop: -50,
     marginBottom: 30,

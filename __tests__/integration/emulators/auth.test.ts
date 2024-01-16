@@ -14,6 +14,7 @@ import {initializeApp, deleteApp, FirebaseApp} from 'firebase/app';
 import {isConnectedToAuthEmulator} from '@src/services/firebaseUtils';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 import {describeWithEmulator} from '../../utils/emulators/emulatorTools';
+import {createMockAuthUsers} from '../../utils/emulators/authSetup';
 
 const authDomain = process.env.TEST_AUTH_DOMAIN;
 const projectId = process.env.TEST_PROJECT_ID;
@@ -40,7 +41,7 @@ describeWithEmulator('Connect to the storage emulator', () => {
   });
 
   beforeEach(async () => {
-    // do something
+    await createMockAuthUsers(auth);
   });
 
   afterEach(async () => {
@@ -51,7 +52,7 @@ describeWithEmulator('Connect to the storage emulator', () => {
     await deleteApp(testApp); // Delete the app
   });
 
-  xit('should connect to the auth emulator', async () => {
+  it('should connect to the auth emulator', async () => {
     expect(auth).not.toBeNull();
     expect(isConnectedToAuthEmulator(auth)).toBe(true);
   });

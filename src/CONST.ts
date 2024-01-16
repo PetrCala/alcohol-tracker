@@ -1,8 +1,6 @@
 // Taken and modified form the Expensify GitHub
 // Source: https://github.com/Expensify/App/blob/main/src/CONST.ts
 
-import { Dimensions } from "react-native";
-
 // import Config from 'react-native-config';
 
 // Creating a default array and object this way because objects ({}) and arrays ([]) are not stable types.
@@ -19,8 +17,6 @@ const CONST = {
   },
   EMPTY_ARRAY,
   EMPTY_OBJECT,
-  SCREEN_WIDTH: Dimensions.get('window').width,
-  SCREEN_HEIGHT: Dimensions.get('window').height,
 } as const;
 
 export default CONST;

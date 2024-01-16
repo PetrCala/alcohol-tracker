@@ -31,7 +31,6 @@ import {
 } from '../types/database';
 import {DateObject, DayState, DayMarking, CalendarColors} from '../types/components';
 import LoadingData from './LoadingData';
-import CONST from '@src/CONST';
 
 type SessionsCalendarProps = {
   drinkingSessionData: DrinkingSessionArrayItem[];
@@ -254,7 +253,7 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
           textDayHeaderFontWeight: 'bold',
           'stylesheet.calendar.header': {
             header: {
-              width: CONST.SCREEN_WIDTH,
+              width: screenWidth,
               marginLeft: -5,
               flexDirection: 'row',
               alignItems: 'center',
@@ -268,7 +267,7 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
               color: 'black',
               fontSize: 20,
               fontWeight: '500',
-              width: CONST.SCREEN_WIDTH / 3,
+              width: screenWidth / 3,
               textAlign: 'center',
             },
           },
@@ -280,6 +279,8 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
 
 export default SessionsCalendar;
 
+const screenWidth = Dimensions.get('window').width;
+
 const arrowStyles = StyleSheet.create({
   customArrowContainer: {
     height: 45,
@@ -287,7 +288,7 @@ const arrowStyles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: 'white',
     alignItems: 'center',
-    width: CONST.SCREEN_WIDTH / 3,
+    width: screenWidth / 3,
     marginVertical: -10,
   },
   leftContainer: {

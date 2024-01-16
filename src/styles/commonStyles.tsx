@@ -1,5 +1,6 @@
 ﻿import {Dimensions, StyleSheet} from 'react-native';
-import CONST from '@src/CONST';
+
+const screenWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
   mainHeader: {
@@ -18,7 +19,7 @@ const styles = StyleSheet.create({
   },
   mainFooter: {
     height: 55,
-    width: CONST.SCREEN_WIDTH,
+    width: screenWidth,
     flexDirection: 'row',
     justifyContent: 'center',
     backgroundColor: 'white',
