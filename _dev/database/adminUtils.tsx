@@ -2,7 +2,7 @@
 
 import admin from "../admin";
 
-const adminDb = admin.database();
+// const adminDb = admin.database();
 
 /**
  * Lists all users with the 'admin' custom claim.

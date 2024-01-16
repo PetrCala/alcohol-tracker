@@ -4,6 +4,7 @@ require('dotenv').config(); // for the process.env variables to read the .env fi
 import migrate_020_030 from './database/migration-scripts/0.2.0-0.3.0/migrateMain';
 import CONST from '../src/CONST';
 import {confirmExecution} from '../src/utils/utils';
+import { listAllAdmins } from './database/adminUtils';
 
 // const adminDb = admin.database();
 
@@ -21,7 +22,7 @@ const mainEnv = environment;
     if (isConfirmed) {
       await main();
     } else {
-      console.log('Migration cancelled.');
+      console.log('Script run cancelled.');
       process.exit(0);
     }
   } else {
@@ -32,7 +33,7 @@ const mainEnv = environment;
 async function main() {
   try {
     console.log('Migrating the database...');
-    migrate_020_030(mainEnv);
+    // migrate_020_030(mainEnv);
   } catch (error) {
     console.error('An error occurred:', error);
   } finally {
