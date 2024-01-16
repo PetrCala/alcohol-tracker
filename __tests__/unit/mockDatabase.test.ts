@@ -9,6 +9,8 @@
   createMockUnconfirmedDays,
   createMockUserData,
   createMockDatabase,
+  createMockMaintenance,
+  createMockAppSettings,
 } from '../utils/mockDatabase';
 import {
   DatabaseProps,
@@ -24,6 +26,7 @@ import {
   UserData,
   UnitsToColorsData,
 } from '../../src/types/database';
+import {create} from 'lodash';
 
 /**
  * Checks if the given object is a valid beta key.
@@ -302,12 +305,21 @@ describe('mockDatabase functions', () => {
     );
   });
 
-  it('should create a mock config', () => {
-    const config = createMockConfig('0.0.2', '0.0.2');
-    expect(config.app_settings.min_supported_version).toBe('0.0.2');
-    expect(config.app_settings.min_user_creation_possible_version).toBe(
-      '0.0.2',
-    );
+  it('should create mock config', () => {
+    const config = createMockConfig();
+    expect(config.app_settings).not.toBe(null);
+    expect(config.maintenance).not.toBe(null);
+  });
+
+  it('should create a mock app settings', () => {
+    const app_settings = createMockAppSettings('0.0.2', '0.0.2');
+    expect(app_settings.min_supported_version).toBe('0.0.2');
+    expect(app_settings.min_user_creation_possible_version).toBe('0.0.2');
+  });
+
+  it('should create a mock maintenance object', () => {
+    const maintenance = createMockMaintenance();
+    expect(maintenance.maintenance_mode).toBe(false);
   });
 
   it('should create a mock feedback object', () => {

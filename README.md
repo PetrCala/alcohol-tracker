@@ -50,7 +50,7 @@
 
 - In the future, the application versioning will be rewritten into a github action. As of now, you can update the version (local, and for all platforms) using
     ```bash
-    bun run bump-<SEMVER_LEVEL>
+    bun run bump:<SEMVER_LEVEL>
     ```
 
     where `<SEMVER_LEVEL>` can be one of the following:
@@ -202,3 +202,36 @@ The database migration process is handled in a rather manual fashion. As of now,
 2. Inside the `input` folder, place the database you want to migrate (do not rename it from the Firebase import).
 3. Call the relevant migration script (located inside the `_dev/database/migration-scripts` folder) from the `_dev/main.tsx` file. You can run this file using either **bun**, or **ts-node**.
 4. The output will be located in the `_dev/migrations/output` folder. From there, you can update the relevant database.
+
+
+### Database maintenance
+
+You can schedule database maintenance directly from the command line using `bun run maintenance:schedule`, provided you have the corresponding admin SDK. After the maintenance is over, you will have to cancel it through running `bun run maintenance:cancel`. For more detail, see the following sections.
+
+#### Scheduling maintenance
+
+1. In `.env`, set the environment of the database you want to schedule the maintenance for.
+2. Place the admin SDK file of this database into the project root, and make sure the admin SDK paths in the `.env` file are configured correctly to point to this file.
+3. From the project root, run
+
+    ```bash
+    bun run maintenance:schedule
+    ```
+
+    From there, follow the on-screen instructions.
+
+#### Cancelling maintenance
+
+1. Follow steps 1-2 from the previous section.
+2. From the project root, run
+
+    ```bash
+    bun run maintenance:cancel
+    ```
+
+    and follow the on-screen instructions.
+
+#### Understanding the maintenance mechanism
+
+- Scheduling a maintenance will update the `config/maintenance` node of the database. Namely, the `maintenance_mode` will be set to `true`, while the start and end time will be set to your desired values. As long as the `maintenance_mode` flag is on, all users will be shown a maintenance screen upon opening the application.
+- There is no in-built check to make sure the maintenance time is over. As such, the start/end times are purely of informational character. This is to allow the developers more flexibility. Consequently, after the actual maintenance is over and the app is ready to be made available to users, simply cancel the maintenance using the instructions in the [Cancelling maintenance](#cancelling-maintenance) section. This will set the `maintenance_mode` to false, allowing application access to users.

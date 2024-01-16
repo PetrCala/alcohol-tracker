@@ -151,3 +151,25 @@ export async function askForValue(question: string): Promise<string> {
     });
   });
 }
+/**
+ * Validates and parses the input string to a timestamp.
+ * 
+ * @param input - The input string representing a date and time in the format "YYYY-MM-DD HH:MM".
+ * @returns The timestamp value of the input string.
+ * @throws Error if the input string is not in the correct format or if it represents an invalid date.
+ */
+export function validateAndParseInputToTimestamp(input: string): number {
+  const regex = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/;
+  if (!regex.test(input)) {
+    throw new Error(
+      'Invalid date format. Please use the format YYYY-MM-DD HH:MM.',
+    );
+  }
+
+  const date = new Date(input);
+  if (isNaN(date.getTime())) {
+    throw new Error('Invalid date. Please provide a valid date and time.');
+  }
+
+  return date.getTime();
+}

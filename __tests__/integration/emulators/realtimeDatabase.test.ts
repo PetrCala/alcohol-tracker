@@ -3,11 +3,11 @@
 require('dotenv').config(); // Use .env variables in this file - CONFIG does not work here
 import {ref, get, set} from 'firebase/database';
 import {FirebaseApp} from 'firebase/app';
-import {createMockDatabase, createMockSession} from '../../utils/mockDatabase';
+import {createMockConfig, createMockMaintenance, createMockSession} from '../../utils/mockDatabase';
 import {isConnectedToDatabaseEmulator} from '@src/services/firebaseUtils';
 import {
   BetaKeyProps,
-  DatabaseProps,
+  MaintenanceProps,
   ProfileData,
   UnitTypesProps,
 } from '@src/types/database';
@@ -32,7 +32,6 @@ import {
   pushNewUserInfo,
 } from '@database/users';
 import {cleanStringForFirebaseKey} from '@src/utils/strings';
-import { sendFriendRequest } from '@database/friends';
 
 const testUserId: string = MOCK_USER_IDS[0];
 const testUserDisplayName: string = 'mock-user';
@@ -116,6 +115,38 @@ describeWithEmulator('Test realtime database emulator', () => {
     expect(data.val()).not.toBeNull();
   });
 });
+
+
+describeWithEmulator('Test config functionality', () => {
+  let testApp: FirebaseApp;
+  let db: Database;
+  setupGlobalMocks();
+
+  beforeAll(async () => {
+    ({testApp, db} = setupRealtimeDatabaseTestEnv());
+  });
+
+  beforeEach(async () => {
+    await fillDatabaseWithMockData(db);
+  });
+
+  afterEach(async () => {
+    await set(ref(db), null);
+  });
+
+  afterAll(async () => {
+    await teardownRealtimeDatabaseTestEnv(testApp, db);
+  });
+
+  it('should correctly read the config', async () => {
+    const expectedConfig = createMockConfig();
+    const configRef = 'config';
+    const config = await readDataOnce(db, configRef);
+    expect(config).not.toBeNull();
+    expect(config).toEqual(expectedConfig);
+  });
+});
+
 
 describeWithEmulator('Test drinking session functionality', () => {
   let testApp: FirebaseApp;

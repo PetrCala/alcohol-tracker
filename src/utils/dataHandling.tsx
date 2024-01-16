@@ -137,10 +137,10 @@ export const getPreviousMonth = (currentDate: DateObject): DateObject => {
  * For example, if given a DateObject for September and n = 2, the returned array will have
  * DateObjects for July, August, September, October, and November.
  *
- * @param {DateObject} currentDate - The reference date from which adjacent months are computed.
- * @param {number} n - The number of months to compute before and after the `currentDate`.
+ * @param currentDate - The reference date from which adjacent months are computed.
+ * @param n - The number of months to compute before and after the `currentDate`.
  *
- * @returns {DateObject[]} - An array of DateObjects, including the `currentDate` and `n` months before and after it.
+ * @returns - An array of DateObjects, including the `currentDate` and `n` months before and after it.
  *
  * @example
  * const inputDate: DateObject = {
@@ -191,9 +191,9 @@ export function getYearMonth(dateObject: DateObject): string {
 /**
  * Returns a string representation of the month and year in the format "MMM/YYYY" or with full month names (default)
  *
- * @param {DateObject} dateObject - An object containing numeric values for 'year' and 'month'.
- * @param {bool} abbreviated - If true, return the months in the abbreviated format, returns to false.
- * @returns {string} - A string in the format "MMM/YYYY", where "MMM" is the abbreviated or full month name.
+ * @param dateObject - An object containing numeric values for 'year' and 'month'.
+ * @param abbreviated - If true, return the months in the abbreviated format, returns to false.
+ * @returns - A string in the format "MMM/YYYY", where "MMM" is the abbreviated or full month name.
  *
  * @example
  * const date = { year: 2023, month: 10 };
@@ -490,10 +490,10 @@ export const calculateThisMonthUnits = (
 /** Enter a dateObject and an array of drinking sessions and calculate
  * points for units consumed in the current month.
  *
- * @param {DateObject} dateObject DateObject
- * @param {DrinkingSessionArrayItem[]} sessions Array of drinking sessions
- * @param {UnitTypesProps} unitsToPoints Units to points conversion object
- * @returns {number} Number of points for units consumed during the current month
+ * @param dateObject DateObject
+ * @param sessions Array of drinking sessions
+ * @param unitsToPoints Units to points conversion object
+ * @returns Number of points for units consumed during the current month
  */
 export const calculateThisMonthPoints = (
   dateObject: DateObject,
