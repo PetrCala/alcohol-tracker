@@ -156,6 +156,7 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
     };
   }, []);
 
+
   // Monitor user preferences
   useEffect(() => {
     if (!user || !db) return;
