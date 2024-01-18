@@ -1,4 +1,4 @@
-﻿import React, {useState, useEffect} from 'react';
+﻿import React, {useState, useEffect, useMemo} from 'react';
 import {Modal, StyleSheet, Text, View} from 'react-native';
 import Slider from '@react-native-community/slider';
 import BasicButton from '../Buttons/BasicButton';

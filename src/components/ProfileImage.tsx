@@ -1,4 +1,4 @@
-﻿import React, {useState, useEffect} from 'react';
+﻿import React, {useState, useMemo, useEffect} from 'react';
 import {ActivityIndicator, Alert, Image} from 'react-native'; // or 'react-native-web' if you're using React for web
 import {FirebaseStorage} from 'firebase/storage';
 import {getProfilePictureURL} from '../storage/storageProfile';

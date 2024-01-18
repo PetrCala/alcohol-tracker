@@ -1,4 +1,4 @@
-﻿import React, {useState, useEffect} from 'react';
+﻿import React, {useState, useEffect, useMemo} from 'react';
 import {
   Alert,
   Dimensions,
@@ -141,13 +141,13 @@ const MainScreen = ({navigation}: MainScreenProps) => {
   }, []);
 
   // Monitor ongoing sessions in database
-  useEffect(() => {
+  useMemo(() => {
     let result = findOngoingSession(drinkingSessionData);
     setOngoingSession(result);
   }, [drinkingSessionData, currentSessionData]);
 
   // Monitor visible month and various statistics
-  useEffect(() => {
+  useMemo(() => {
     if (!preferences) return;
     let thisMonthUnits = calculateThisMonthUnits(
       visibleDateObject,

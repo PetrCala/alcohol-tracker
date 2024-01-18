@@ -1,4 +1,4 @@
-﻿import React, {useEffect, useState, useContext, useRef} from 'react';
+﻿import React, {useEffect, useState, useContext, useRef, useMemo} from 'react';
 import {
   Alert,
   BackHandler,
@@ -244,7 +244,7 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
   }
 
   // Update the hooks whenever current units change
-  useEffect(() => {
+  useMemo(() => {
     if (!preferences) return;
     let newTotalPoints = sumAllPoints(
       currentUnits,
@@ -255,7 +255,7 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
     setAvailableUnits(newAvailableUnits);
   }, [currentUnits]);
 
-  useEffect(() => {
+  useMemo(() => {
     if (!preferences) return;
     let newSession: DrinkingSessionArrayItem = {
       start_time: session.start_time,

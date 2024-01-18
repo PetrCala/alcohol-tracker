@@ -1,4 +1,4 @@
-﻿import React, {useRef, useState, useContext, useEffect} from 'react';
+﻿import React, {useRef, useState, useContext, useEffect, useMemo} from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -169,7 +169,7 @@ const DrinkingSessionScreen = ({
   };
 
   // Update the hooks whenever current units change
-  useEffect(() => {
+  useMemo(() => {
     if (!preferences) return;
     let newTotalPoints = sumAllPoints(
       currentUnits,
@@ -226,7 +226,7 @@ const DrinkingSessionScreen = ({
       // Clear timer on unmount or when units changes
       return () => clearTimeout(timer);
     }
-  }, [currentUnits, isBlackout, note, db, user]);
+  }, [currentUnits, isBlackout, note]);
 
   async function sleep(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
