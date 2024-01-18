@@ -6,16 +6,50 @@
   TouchableOpacity,
   View,
 } from 'react-native';
-import {FriendIds, FriendsData, UserData} from '../../types/database';
+import {FriendsData, ProfileData} from '../../types/database';
 import useProfileDisplayData from '../../hooks/useProfileDisplayData';
-import {useContext, useEffect, useState} from 'react';
+import {useState} from 'react';
 import {useFirebase} from '../../context/FirebaseContext';
-import {isNonEmptyObject} from '../../utils/validation';
 import LoadingData from '../../components/LoadingData';
+import ProfileImage from '@components/ProfileImage';
 
-const FriendOverview: React.FC = ({}) => {
-  // TODO
-  return <></>;
+type FriendOverviewProps = {
+  friendId: string;
+  profileData: ProfileData;
+  RightSideComponent: React.ReactNode;
+};
+
+const FriendOverview: React.FC<FriendOverviewProps> = ({
+  friendId,
+  profileData,
+  RightSideComponent,
+}) => {
+  const {db, storage} = useFirebase();
+
+  if (!db || !profileData) return;
+
+  return (
+    <View key={friendId + '-container'} style={styles.friendOverviewContainer}>
+      <View key={friendId + 'profile'} style={styles.friendOverviewProfile}>
+        <ProfileImage
+          key={friendId + '-profile-icon'}
+          storage={storage}
+          userId={friendId}
+          photoURL={profileData.photo_url}
+          style={styles.friendOverviewImage}
+        />
+        <View key={friendId + 'info'} style={styles.friendInfoContainer}>
+          <Text key={friendId + '-nickname'} style={styles.friendOverviewText}>
+            {profileData.display_name}
+          </Text>
+          <Text key={friendId + '-sessions'} style={styles.friendOverviewText}>
+            {/* User details */}
+          </Text>
+        </View>
+      </View>
+      {RightSideComponent}
+    </View>
+  );
 };
 
 type ScreenProps = {
@@ -35,25 +69,21 @@ const FriendListScreen = (props: ScreenProps) => {
 
   return (
     <ScrollView style={styles.scrollViewContainer}>
-      <Text style={styles.friendText}>These are your friends:</Text>
-      {friends ? (
+      {loadingDisplayData ? (
+        <LoadingData />
+      ) : friends ? (
         <View style={styles.friendList}>
           {Object.keys(friends).map(friendId => {
             const profileData = displayData[friendId];
             const friendName = profileData?.display_name;
 
-            if (loadingDisplayData)
-              return <LoadingData key={friendId + '-loading'} />;
-
             return (
-              <Text key={friendId} style={styles.friendText}>
-                {friendName}
-              </Text>
-              // <UserOverview
-              //   key={friendId+'-user-overview'}
-              //   userId={friendId}
-              //   RightSideComponent={<></>}
-              // />
+              <FriendOverview
+                key={friendId + '-user-overview'}
+                friendId={friendId}
+                profileData={profileData}
+                RightSideComponent={<></>}
+              />
             );
           })}
         </View>
@@ -75,31 +105,53 @@ const FriendListScreen = (props: ScreenProps) => {
 
 export default FriendListScreen;
 
+const screenHeight = Dimensions.get('window').height;
+
 const styles = StyleSheet.create({
   scrollViewContainer: {
     flex: 1,
     // justifyContent: 'center',
   },
+  loadingContainer: {
+    width: '100%',
+    height: screenHeight * 0.8,
+  },
   friendList: {
     width: '100%',
     flexDirection: 'column',
     justifyContent: 'center',
-    padding: 3,
   },
   friendOverviewContainer: {
-    width: '80%',
+    width: '100%',
     flexDirection: 'row',
     backgroundColor: 'white',
-    borderWidth: 1,
-    borderColor: 'black',
-    borderRadius: 5,
-    margin: 2,
-    padding: 2,
+    padding: 5,
   },
-  friendText: {
+  friendOverviewProfile: {
+    width: '60%',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    padding: 5,
+    paddingTop: 7,
+  },
+  friendOverviewImage: {
+    width: 70,
+    height: 70,
+    padding: 10,
+    borderRadius: 35,
+  },
+  friendInfoContainer: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    padding: 5
+  },
+  friendOverviewText: {
     color: 'black',
-    fontSize: 13,
+    fontSize: 16,
     fontWeight: '400',
+    marginLeft: 10,
   },
   emptyList: {
     width: '100%',

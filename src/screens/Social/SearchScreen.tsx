@@ -20,7 +20,7 @@ import {
   ProfileDisplayData,
   ProfileData,
 } from '../../types/database';
-import {useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {useFirebase} from '../../context/FirebaseContext';
 import {acceptFriendRequest, sendFriendRequest} from '../../database/friends';
 import {auth} from '../../services/firebaseSetup';
@@ -303,7 +303,7 @@ const SearchScreen = (props: ScreenProps) => {
     setDisplayData({});
     setNoUsersFound(false);
   };
-
+  
   if (!db || !user) return;
 
   return (
@@ -345,7 +345,7 @@ const SearchScreen = (props: ScreenProps) => {
           {searching ? (
             <LoadingData style={styles.loadingData} />
           ) : isNonEmptyObject(searchResultData) ? (
-            Object.keys(searchResultData).map((userId, index) => (
+            Object.keys(searchResultData).map((userId) => (
               <SearchResult
                 key={userId + '-container'}
                 userId={userId}
