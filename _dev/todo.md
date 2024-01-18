@@ -14,3 +14,4 @@
 - Add all nicknames for all users (from scratch)
 - Add a maintenance node
 - Clean up the potential remaining bugs from the currentSession vs. ongoingSession inconsistencies
+- Publish new rules
