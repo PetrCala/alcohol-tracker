@@ -30,7 +30,9 @@ export type AppStackParamList = {
     sessionKey: string;
     preferences: PreferencesData;
   };
-  'Profile Screen': undefined;
+  'Profile Screen': {
+    userId: string;
+  };
   'Social Screen': undefined;
   'Achievement Screen': undefined;
   'Statistics Screen': undefined;
@@ -74,6 +76,12 @@ export type MainScreenProps = {
 export type MainMenuScreenProps = {
   route?: RouteProp<AppStackParamList, 'Main Menu Screen'>;
   // navigation?: StackNavigationProp<AppStackParamList, 'Main Menu Screen'>;
+  navigation?: any;
+};
+
+export type ProfileProps = {
+  route?: RouteProp<AppStackParamList, 'Profile Screen'>;
+  // navigation?: StackNavigationProp<AppStackParamList, 'Profile Screen'>;
   navigation?: any;
 };
 
