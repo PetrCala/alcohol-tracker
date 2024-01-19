@@ -1,6 +1,6 @@
 require('dotenv').config(); // for the process.env variables to read the .env file
 import {MOCK_USER_IDS} from '../testsStatic';
-import {signUpUserWithEmailAndPassword} from '@src/auth/auth';
+import {signUpUserWithEmailAndPassword} from '../../../src/auth/auth';
 import {
   initializeAuth,
   getReactNativePersistence,
@@ -8,7 +8,7 @@ import {
   Auth,
 } from 'firebase/auth';
 import {initializeApp, deleteApp, FirebaseApp} from 'firebase/app';
-import {isConnectedToAuthEmulator} from '@src/services/firebaseUtils';
+import {isConnectedToAuthEmulator} from '../../../src/services/firebaseUtils';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 
 export function setupAuthTestEnv(): {

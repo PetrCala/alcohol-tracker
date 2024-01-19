@@ -1,4 +1,4 @@
-﻿import { UnitTypesProps, UnitsToColorsData } from "@src/types/database";
+﻿import { UnitTypesProps, UnitsToColorsData } from "../../src/types/database"
 
 // Realtime database test user information
 export const TEST_UID = 'dmXj9O2SqWWHPRtqtKGGdaUzGFt2';
