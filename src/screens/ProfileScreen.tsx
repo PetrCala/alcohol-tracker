@@ -1,9 +1,11 @@
 ﻿import {
   Alert,
   Dimensions,
+  Image,
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import MenuIcon from '../components/Buttons/MenuIcon';
@@ -13,14 +15,12 @@ import UploadImageComponent from '../components/UploadImage';
 import {useFirebase} from '../context/FirebaseContext';
 import PermissionHandler from '../permissions/PermissionHandler';
 import {ProfileProps} from '@src/types/screens';
+import {auth} from '../services/firebaseSetup';
 import {StatData, StatsOverview} from '@components/Items/StatOverview';
 import ProfileOverview from '@components/Social/ProfileOverview';
 import {useEffect, useMemo, useReducer} from 'react';
 import {readDataOnce} from '@database/baseFunctions';
-import {
-  DrinkingSessionArrayItem,
-  PreferencesData,
-} from '@src/types/database';
+import {DrinkingSessionArrayItem, PreferencesData} from '@src/types/database';
 import {
   calculateThisMonthPoints,
   calculateThisMonthUnits,
@@ -31,6 +31,9 @@ import {
 import {DateObject} from '@src/types/components';
 import SessionsCalendar from '@components/Calendar';
 import LoadingData from '@components/LoadingData';
+import ItemListPopup from '@components/Popups/ItemListPopup';
+import {unfriend} from '@database/friends';
+import YesNoPopup from '@components/Popups/YesNoPopup';
 
 interface State {
   isLoading: boolean;
@@ -40,6 +43,8 @@ interface State {
   drinkingSessionsCount: number;
   unitsConsumed: number;
   pointsEarned: number;
+  manageFriendModalVisible: boolean;
+  unfriendModalVisible: boolean;
 }
 
 interface Action {
@@ -55,6 +60,8 @@ const initialState: State = {
   drinkingSessionsCount: 0,
   unitsConsumed: 0,
   pointsEarned: 0,
+  manageFriendModalVisible: false,
+  unfriendModalVisible: false,
 };
 
 const reducer = (state: State, action: Action): State => {
@@ -73,6 +80,10 @@ const reducer = (state: State, action: Action): State => {
       return {...state, unitsConsumed: action.payload};
     case 'SET_POINTS_EARNED':
       return {...state, pointsEarned: action.payload};
+    case 'SET_MANAGE_FRIEND_MODAL_VISIBLE':
+      return {...state, manageFriendModalVisible: action.payload};
+    case 'SET_UNFRIEND_MODAL_VISIBLE':
+      return {...state, unfriendModalVisible: action.payload};
     default:
       return state;
   }
@@ -80,9 +91,35 @@ const reducer = (state: State, action: Action): State => {
 
 const ProfileScreen = ({route, navigation}: ProfileProps) => {
   if (!route || !navigation) return null;
+  const user = auth.currentUser;
   const {userId, profileData, drinkingSessionData, preferences} = route.params;
   const {db, storage} = useFirebase();
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  const handleUnfriend = async () => {
+    if (!user) return;
+    try {
+      await unfriend(db, user.uid, userId);
+      navigation.goBack();
+    } catch (error: any) {
+      Alert.alert(
+        'User does not exist in the database',
+        'Could not unfriend this user: ' + error.message,
+      );
+    } finally {
+      dispatch({type: 'SET_UNFRIEND_MODAL_VISIBLE', payload: false});
+      dispatch({type: 'SET_MANAGE_FRIEND_MODAL_VISIBLE', payload: false});
+    }
+  };
+
+  const manageFriendData = [
+    {
+      label: 'Unfriend',
+      icon: require('../../assets/icons/remove-user.png'),
+      action: () =>
+        dispatch({type: 'SET_UNFRIEND_MODAL_VISIBLE', payload: true}),
+    },
+  ];
 
   // Define your stats data
   const statsData: StatData = [
@@ -157,7 +194,8 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
   }, [state.drinkingSessionData, state.preferences, state.visibleDateObject]);
 
   if (state.isLoading) return <LoadingData />;
-  if (!db || !storage || !state.preferences || !state.drinkingSessionData) return;
+  if (!db || !storage || !state.preferences || !state.drinkingSessionData)
+    return;
 
   return (
     <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
@@ -186,7 +224,41 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
           dispatch={dispatch}
           onDayPress={(day: DateObject) => {}}
         />
+        <View style={styles.bottomContainer}>
+          {user?.uid !== userId ? (
+            <TouchableOpacity
+              style={styles.manageFriendButton}
+              onPress={() =>
+                dispatch({
+                  type: 'SET_MANAGE_FRIEND_MODAL_VISIBLE',
+                  payload: true,
+                })
+              }>
+              <Text style={styles.manageFriendButtonText}>Manage</Text>
+            </TouchableOpacity>
+          ) : (
+            <></>
+          )}
+        </View>
         <View style={{height: 200, backgroundColor: '#ffff99'}}></View>
+        <ItemListPopup
+          visible={state.manageFriendModalVisible}
+          transparent={true}
+          heading={'Manage Friend'}
+          actions={manageFriendData}
+          onRequestClose={() =>
+            dispatch({type: 'SET_MANAGE_FRIEND_MODAL_VISIBLE', payload: false})
+          }
+        />
+        <YesNoPopup
+          visible={state.unfriendModalVisible}
+          transparent={true}
+          message={'Do you really want to\nunfriend this user?'}
+          onRequestClose={() =>
+            dispatch({type: 'SET_UNFRIEND_MODAL_VISIBLE', payload: false})
+          }
+          onYes={handleUnfriend}
+        />
       </ScrollView>
     </View>
   );
@@ -243,5 +315,26 @@ const styles = StyleSheet.create({
     height: 120,
     flexDirection: 'row',
     width: screenWidth,
+  },
+  bottomContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
+  manageFriendButton: {
+    width: '30%',
+    height: 40,
+    backgroundColor: 'rgba(128, 128, 128, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5,
+    borderWidth: 2,
+    borderColor: 'black',
+    margin: 10,
+  },
+  manageFriendButtonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'black',
   },
 });
