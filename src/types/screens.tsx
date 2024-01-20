@@ -34,6 +34,8 @@ export type AppStackParamList = {
   'Profile Screen': {
     userId: string;
     profileData: ProfileData;
+    drinkingSessionData: DrinkingSessionArrayItem[] | null;
+    preferences: PreferencesData | null;
   };
   'Social Screen': undefined;
   'Achievement Screen': undefined;

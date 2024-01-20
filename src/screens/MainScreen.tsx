@@ -1,4 +1,4 @@
-﻿import React, {useState, useEffect, useMemo} from 'react';
+﻿import React, {useState, useEffect, useMemo, useReducer} from 'react';
 import {
   Alert,
   Dimensions,
@@ -35,8 +35,53 @@ import {useFirebase} from '../context/FirebaseContext';
 import ProfileImage from '../components/ProfileImage';
 import {generateDatabaseKey} from '@database/baseFunctions';
 
+interface State {
+  visibleDateObject: DateObject;
+  drinkingSessionsCount: number;
+  unitsConsumed: number;
+  pointsEarned: number;
+  ongoingSession: DrinkingSessionArrayItem | null;
+  loadingNewSession: boolean;
+}
+
+interface Action {
+  type: string;
+  payload: any;
+}
+
+const initialState: State = {
+  visibleDateObject: dateToDateObject(new Date()),
+  drinkingSessionsCount: 0,
+  unitsConsumed: 0,
+  pointsEarned: 0,
+  ongoingSession: null,
+  loadingNewSession: false,
+};
+
+
+const reducer = (state: State, action: Action): State => {
+  switch (action.type) {
+    case 'SET_VISIBLE_DATE_OBJECT':
+      return {...state, visibleDateObject: action.payload};
+    case 'SET_DRINKING_SESSIONS_COUNT':
+      return {...state, drinkingSessionsCount: action.payload};
+    case 'SET_UNITS_CONSUMED':
+      return {...state, unitsConsumed: action.payload};
+    case 'SET_POINTS_EARNED':
+      return {...state, pointsEarned: action.payload};
+    case 'SET_ONGOING_SESSION':
+      return {...state, ongoingSession: action.payload};
+    case 'SET_LOADING_NEW_SESSION':
+      return {...state, loadingNewSession: action.payload};
+    default:
+      return state;
+  }
+};
+
+// const [startSessionModalVisible, setStartSessionModalVisible] =
+//   useState<boolean>(false);
+
 const MainScreen = ({navigation}: MainScreenProps) => {
-  // Context, database, and authentification
   const user = auth.currentUser;
   const {db, storage} = useFirebase();
   const {isOnline} = useUserConnection();
@@ -49,28 +94,15 @@ const MainScreen = ({navigation}: MainScreenProps) => {
     userData,
     isLoading,
   } = getDatabaseData();
-  const [startSessionModalVisible, setStartSessionModalVisible] =
-    useState<boolean>(false);
-  const [visibleDateObject, setVisibleDateObject] = useState<DateObject>(
-    dateToDateObject(new Date()),
-  );
-  const [ongoingSession, setOngoingSession] =
-    useState<DrinkingSessionArrayItem | null>(
-      findOngoingSession(drinkingSessionData),
-    );
-  const [thisMonthUnits, setThisMonthUnits] = useState<number>(0);
-  const [thisMonthPoints, setThisMonthPoints] = useState<number>(0);
-  const [thisMonthSessionCount, setThisMonthSessionCount] = useState<number>(0);
-  const [loadingNewSession, setLoadingNewSession] = useState<boolean>(false);
-  const thisYearMonth = getYearMonthVerbose(visibleDateObject, false);
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   // Handle drinking session button press
   const startDrinkingSession = async () => {
     if (!preferences || !db || !user) return null; // Should never be null
     let sessionData: DrinkingSessionArrayItem;
     let sessionKey: string;
-    if (!ongoingSession) {
-      setLoadingNewSession(true);
+    if (!state.ongoingSession) {
+      dispatch({type: 'SET_LOADING_NEW_SESSION', payload: true});
       // The user is not in an active session
       sessionData = {
         start_time: Date.now(),
@@ -112,7 +144,7 @@ const MainScreen = ({navigation}: MainScreenProps) => {
         );
         return;
       }
-      sessionData = ongoingSession;
+      sessionData = state.ongoingSession;
       sessionKey = currentsessionKey;
     }
     navigation.navigate('Drinking Session Screen', {
@@ -120,7 +152,7 @@ const MainScreen = ({navigation}: MainScreenProps) => {
       sessionKey: sessionKey,
       preferences: preferences,
     });
-    setLoadingNewSession(false);
+    dispatch({type: 'SET_LOADING_NEW_SESSION', payload: false});
   };
 
   // Update the user last login time
@@ -143,41 +175,44 @@ const MainScreen = ({navigation}: MainScreenProps) => {
   // Monitor ongoing sessions in database
   useMemo(() => {
     let result = findOngoingSession(drinkingSessionData);
-    setOngoingSession(result);
+    dispatch({type: 'SET_ONGOING_SESSION', payload: result});
   }, [drinkingSessionData, currentSessionData]);
 
   // Monitor visible month and various statistics
   useMemo(() => {
     if (!preferences) return;
     let thisMonthUnits = calculateThisMonthUnits(
-      visibleDateObject,
+      state.visibleDateObject,
       drinkingSessionData,
     );
     let thisMonthPoints = calculateThisMonthPoints(
-      visibleDateObject,
+      state.visibleDateObject,
       drinkingSessionData,
       preferences.units_to_points,
     );
     let thisMonthSessionCount = getSingleMonthDrinkingSessions(
-      timestampToDate(visibleDateObject.timestamp),
+      timestampToDate(state.visibleDateObject.timestamp),
       drinkingSessionData,
       false,
     ).length; // Replace this in the future
 
-    setThisMonthPoints(thisMonthPoints);
-    setThisMonthUnits(thisMonthUnits);
-    setThisMonthSessionCount(thisMonthSessionCount);
-  }, [drinkingSessionData, visibleDateObject, preferences]);
+    dispatch({
+      type: 'SET_DRINKING_SESSIONS_COUNT',
+      payload: thisMonthSessionCount,
+    });
+    dispatch({type: 'SET_UNITS_CONSUMED', payload: thisMonthUnits});
+    dispatch({type: 'SET_POINTS_EARNED', payload: thisMonthPoints});
+  }, [drinkingSessionData, state.visibleDateObject, preferences]);
 
   if (!user) {
     navigation.replace('Auth', {screen: 'Login Screen'});
     return;
   }
   if (!isOnline) return <UserOffline />;
-  if (isLoading || loadingNewSession)
+  if (isLoading || state.loadingNewSession)
     return (
       <LoadingData
-        loadingText={loadingNewSession ? 'Starting a new session...' : ''}
+        loadingText={state.loadingNewSession ? 'Starting a new session...' : ''}
       />
     );
   if (!db || !preferences || !drinkingSessionData || !userData) return;
@@ -190,6 +225,8 @@ const MainScreen = ({navigation}: MainScreenProps) => {
             onPress={() => navigation.navigate('Profile Screen', {
               userId: user.uid,
               profileData: userData.profile,
+              drinkingSessionData: drinkingSessionData,
+              preferences: preferences,
             })}
             style={styles.profileButton}>
             <ProfileImage
@@ -205,7 +242,7 @@ const MainScreen = ({navigation}: MainScreenProps) => {
               <Text style={styles.yearMonthText}>{thisYearMonth}</Text>
           </View> */}
       </View>
-      {ongoingSession ? (
+      {state.ongoingSession ? (
         <TouchableOpacity
           style={styles.userInSessionWarningContainer}
           onPress={startDrinkingSession}>
@@ -223,22 +260,22 @@ const MainScreen = ({navigation}: MainScreenProps) => {
         <View style={styles.menuInfoContainer}>
           <View style={styles.menuInfoItemContainer}>
             <Text style={styles.menuInfoText}>Units:</Text>
-            <Text style={styles.menuInfoText}>{thisMonthUnits}</Text>
+            <Text style={styles.menuInfoText}>{state.unitsConsumed}</Text>
           </View>
           <View style={styles.menuInfoItemContainer}>
             <Text style={styles.menuInfoText}>Points:</Text>
-            <Text style={styles.menuInfoText}>{thisMonthPoints}</Text>
+            <Text style={styles.menuInfoText}>{state.pointsEarned}</Text>
           </View>
           <View style={styles.menuInfoItemContainer}>
             <Text style={styles.menuInfoText}>Sessions:</Text>
-            <Text style={styles.menuInfoText}>{thisMonthSessionCount}</Text>
+            <Text style={styles.menuInfoText}>{state.drinkingSessionsCount}</Text>
           </View>
         </View>
         <SessionsCalendar
           drinkingSessionData={drinkingSessionData}
           preferences={preferences}
-          visibleDateObject={visibleDateObject}
-          setVisibleDateObject={setVisibleDateObject}
+          visibleDateObject={state.visibleDateObject}
+          dispatch={dispatch}
           onDayPress={(day: DateObject) => {
             navigation.navigate('Day Overview Screen', {dateObject: day});
           }}
@@ -292,7 +329,7 @@ const MainScreen = ({navigation}: MainScreenProps) => {
           />
         </View>
       </View>
-      {ongoingSession ? (
+      {state.ongoingSession ? (
         <></>
       ) : (
         <TouchableOpacity
