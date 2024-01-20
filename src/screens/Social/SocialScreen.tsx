@@ -1,4 +1,4 @@
-﻿import React, {useState} from 'react';
+﻿import React, {useMemo, useState} from 'react';
 import {
   Dimensions,
   Image,
@@ -129,6 +129,12 @@ const SocialScreen = (props: SocialProps) => {
       label: 'Friend Requests',
     },
   ];
+
+  useMemo(() => {
+    if (!userData) return;
+    setFriendRequests(userData.friend_requests);
+    setFriends(userData.friends);
+  }, [userData]);
 
   if (!userData) return null;
 
