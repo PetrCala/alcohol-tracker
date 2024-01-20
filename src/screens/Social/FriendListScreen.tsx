@@ -6,12 +6,40 @@
   TouchableOpacity,
   View,
 } from 'react-native';
-import {FriendsData, ProfileData} from '../../types/database';
+import {FriendRequestDisplayData, FriendsData, ProfileData, ProfileDisplayData} from '../../types/database';
 import useProfileDisplayData from '../../hooks/useProfileDisplayData';
-import {useState} from 'react';
+import {useEffect, useReducer, useState} from 'react';
 import {useFirebase} from '../../context/FirebaseContext';
 import LoadingData from '../../components/LoadingData';
 import UserOverview from '@components/Social/UserOverview';
+import { Database } from 'firebase/database';
+import { fetchUserProfiles } from '@database/profile';
+
+interface State {
+  isLoading: boolean;
+  displayData: ProfileDisplayData;
+}
+
+interface Action {
+  type: string;
+  payload: any;
+}
+
+const initialState: State = {
+  isLoading: true,
+  displayData: {},
+};
+
+const reducer = (state: State, action: Action): State => {
+  switch (action.type) {
+    case 'SET_IS_LOADING':
+      return {...state, isLoading: action.payload};
+    case 'SET_DISPLAY_DATA':
+      return {...state, displayData: action.payload};
+    default:
+      return state;
+  }
+};
 
 type ScreenProps = {
   navigation: any;
@@ -22,23 +50,42 @@ type ScreenProps = {
 const FriendListScreen = (props: ScreenProps) => {
   const {navigation, friends, setIndex} = props;
   const {db} = useFirebase();
-  const [loadingDisplayData, setLoadingDisplayData] = useState<boolean>(false);
-  const [displayData, setDisplayData] = useProfileDisplayData({
-    data: friends ?? {},
-    db: db,
-    setLoadingDisplayData: setLoadingDisplayData,
-  });
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  const updateDisplayData = async (
+    db: Database | undefined,
+    friends: FriendsData | undefined,
+  ): Promise<void> => {
+    const newDisplayData: ProfileDisplayData = {};
+    if (db && friends) {
+      const dataIds = Object.keys(friends);
+      const userProfiles: ProfileData[] = await fetchUserProfiles(db, dataIds);
+      dataIds.forEach((id, index) => {
+        newDisplayData[id] = userProfiles[index];
+      });
+    }
+    dispatch({type: 'SET_DISPLAY_DATA', payload: newDisplayData});
+  };
+
+  useEffect(() => {
+    const updateLocalHooks = async () => {
+      dispatch({type: 'SET_IS_LOADING', payload: false});
+      await updateDisplayData(db, friends);
+      dispatch({type: 'SET_IS_LOADING', payload: false});
+    };
+    updateLocalHooks();
+  }, [friends]);
 
   if (!navigation) return null;
 
   return (
     <ScrollView style={styles.scrollViewContainer}>
-      {loadingDisplayData ? (
-        <LoadingData />
-      ) : friends ? (
+        {state.isLoading ? (
+          <LoadingData />
+        ) : friends ? (
         <View style={styles.friendList}>
           {Object.keys(friends).map(friendId => {
-            const profileData = displayData[friendId];
+            const profileData = state.displayData[friendId];
 
             return (
               <TouchableOpacity
