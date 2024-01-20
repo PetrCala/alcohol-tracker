@@ -20,7 +20,7 @@ import {
   ProfileDisplayData,
   ProfileData,
 } from '../../types/database';
-import {useCallback, useEffect, useState} from 'react';
+import {useCallback, useEffect, useReducer, useState} from 'react';
 import {useFirebase} from '../../context/FirebaseContext';
 import {acceptFriendRequest, sendFriendRequest} from '../../database/friends';
 import {auth} from '../../services/firebaseSetup';
@@ -28,7 +28,6 @@ import {isNonEmptyObject} from '../../utils/validation';
 import LoadingData from '../../components/LoadingData';
 import {Database} from 'firebase/database';
 import {searchDbByNickname} from '../../database/search';
-import {set} from 'lodash';
 import {fetchUserProfiles} from '@database/profile';
 
 const statusToTextMap: {[key in FriendRequestStatusState]: string} = {
@@ -194,6 +193,48 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
   );
 };
 
+interface State {
+  searchText: string;
+  searchResultData: NicknameToIdData;
+  searching: boolean;
+  requestStatuses: {[userId: string]: FriendRequestStatusState | undefined};
+  noUsersFound: boolean;
+  displayData: ProfileDisplayData;
+}
+
+interface Action {
+  type: string;
+  payload: any;
+}
+
+const initialState: State = {
+  searchText: '',
+  searchResultData: {},
+  searching: false,
+  requestStatuses: {},
+  noUsersFound: false,
+  displayData: {},
+};
+
+const reducer = (state: State, action: Action): State => {
+  switch (action.type) {
+    case 'SET_SEARCH_TEXT':
+      return {...state, searchText: action.payload};
+    case 'SET_SEARCH_RESULT_DATA':
+      return {...state, searchResultData: action.payload};
+    case 'SET_SEARCHING':
+      return {...state, searching: action.payload};
+    case 'SET_REQUEST_STATUSES':
+      return {...state, requestStatuses: action.payload};
+    case 'SET_NO_USERS_FOUND':
+      return {...state, noUsersFound: action.payload};
+    case 'SET_DISPLAY_DATA':
+      return {...state, displayData: action.payload};
+    default:
+      return state;
+  }
+};
+
 type ScreenProps = {
   friendRequests: FriendRequestDisplayData | undefined;
   setFriendRequests: React.Dispatch<
@@ -207,30 +248,23 @@ const SearchScreen = (props: ScreenProps) => {
   const {friendRequests, setFriendRequests, friends, setFriends} = props;
   const {db} = useFirebase();
   const user = auth.currentUser;
-  const [searchText, setSearchText] = useState<string>('');
-  const [searchResultData, setSearchResultData] = useState<NicknameToIdData>(
-    {},
-  );
-  const [searching, setSearching] = useState<boolean>(false);
-  const [requestStatuses, setRequestStatuses] = useState<{
-    [userId: string]: FriendRequestStatusState | undefined;
-  }>({});
-  const [noUsersFound, setNoUsersFound] = useState<boolean>(false);
-  const [displayData, setDisplayData] = useState<ProfileDisplayData>({});
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   const doSearch = async (db: Database, nickname: string): Promise<void> => {
     if (!db || !nickname) return; // Input a value first alert
-    setSearching(true);
-    setNoUsersFound(false);
+    let searchResultData: NicknameToIdData | null = {};
+    dispatch({type: 'SET_SEARCHING', payload: true});
+    dispatch({type: 'SET_NO_USERS_FOUND', payload: false});
     try {
-      const newSearchResults = await searchDbByNickname(db, nickname); // Cleaned within the function
-      if (newSearchResults) {
-        setSearchResultData(newSearchResults);
-        updateSearchedUsersStatus(newSearchResults);
-        const newDisplayData = await fetchDisplayData();
-        setDisplayData(newDisplayData);
+      searchResultData = await searchDbByNickname(db, nickname); // Cleaned within the function
+      if (searchResultData) {
+        searchResultData = searchResultData;
+        updateSearchedUsersStatus(searchResultData);
+        await updateDisplayData(searchResultData);
       } else {
-        setNoUsersFound(true);
+        dispatch({type: 'SET_DISPLAY_DATA', payload: {}});
+        dispatch({type: 'SET_NO_USERS_FOUND', payload: true});
+        dispatch({type: 'SET_REQUEST_STATUSES', payload: {}});
       }
     } catch (error: any) {
       Alert.alert(
@@ -239,13 +273,16 @@ const SearchScreen = (props: ScreenProps) => {
       );
       return;
     } finally {
-      setSearching(false);
+      dispatch({type: 'SET_SEARCH_RESULT_DATA', payload: searchResultData});
+      dispatch({type: 'SET_SEARCHING', payload: false});
     }
   };
 
-  const fetchDisplayData = async (): Promise<ProfileDisplayData> => {
+  const updateDisplayData = async (
+    searchResultData: NicknameToIdData,
+  ): Promise<void> => {
     if (!db || !isNonEmptyObject(searchResultData)) {
-      return {};
+      return;
     }
     const newDisplayData: ProfileDisplayData = {};
     const dataIds = Object.keys(searchResultData);
@@ -253,7 +290,7 @@ const SearchScreen = (props: ScreenProps) => {
     dataIds.forEach((id, index) => {
       newDisplayData[id] = userProfiles[index];
     });
-    return newDisplayData;
+    dispatch({type: 'SET_DISPLAY_DATA', payload: newDisplayData});
   };
 
   /** Having a list of users returned by the search,
@@ -272,7 +309,7 @@ const SearchScreen = (props: ScreenProps) => {
             : undefined),
       );
     }
-    setRequestStatuses(newUsersStatus);
+    dispatch({type: 'SET_REQUEST_STATUSES', payload: newUsersStatus});
   };
 
   /** Using a user ID and a user status, update the request status
@@ -284,10 +321,8 @@ const SearchScreen = (props: ScreenProps) => {
     newStatus: FriendRequestStatusState,
   ) => {
     // Update the request status on this tab
-    setRequestStatuses(prevStatuses => ({
-      ...prevStatuses,
-      [userId]: newStatus,
-    }));
+    const newRequestStatuses = {...state.requestStatuses, [userId]: newStatus};
+    dispatch({type: 'SET_REQUEST_STATUSES', payload: newRequestStatuses});
     // Update the parent hook that shows on other tabs too
     setFriendRequests(prevRequests => ({
       ...prevRequests,
@@ -297,13 +332,14 @@ const SearchScreen = (props: ScreenProps) => {
 
   const resetSearch = () => {
     // Reset all values displayed on screen
-    setSearchText('');
-    setSearchResultData({});
-    setRequestStatuses({});
-    setDisplayData({});
-    setNoUsersFound(false);
+    dispatch({type: 'SET_SEARCHING', payload: false});
+    dispatch({type: 'SET_SEARCH_TEXT', payload: ''});
+    dispatch({type: 'SET_SEARCH_RESULT_DATA', payload: {}});
+    dispatch({type: 'SET_REQUEST_STATUSES', payload: {}});
+    dispatch({type: 'SET_DISPLAY_DATA', payload: {}});
+    dispatch({type: 'SET_NO_USERS_FOUND', payload: true});
   };
-  
+
   if (!db || !user) return;
 
   return (
@@ -315,13 +351,15 @@ const SearchScreen = (props: ScreenProps) => {
         <View style={styles.textContainer}>
           <TextInput
             placeholder="Nickname"
-            value={searchText}
-            onChangeText={text => setSearchText(text)}
+            value={state.searchText}
+            onChangeText={text =>
+              dispatch({type: 'SET_SEARCH_TEXT', payload: text})
+            }
             style={styles.searchText}
             keyboardType="default"
             textContentType="nickname"
           />
-          {searchText !== '' ? (
+          {state.searchText !== '' ? (
             <TouchableOpacity
               onPress={() => resetSearch()}
               style={styles.searchTextResetContainer}>
@@ -337,27 +375,27 @@ const SearchScreen = (props: ScreenProps) => {
         <View style={styles.searchButtonContainer}>
           <TouchableOpacity
             style={styles.searchButton}
-            onPress={() => doSearch(db, searchText)}>
+            onPress={() => doSearch(db, state.searchText)}>
             <Text style={styles.searchButtonText}>Search</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.searchResultsContainer}>
-          {searching ? (
+          {state.searching ? (
             <LoadingData style={styles.loadingData} />
-          ) : isNonEmptyObject(searchResultData) ? (
-            Object.keys(searchResultData).map((userId) => (
+          ) : isNonEmptyObject(state.searchResultData) ? (
+            Object.keys(state.searchResultData).map(userId => (
               <SearchResult
                 key={userId + '-container'}
                 userId={userId}
-                displayData={displayData}
+                displayData={state.displayData}
                 db={db}
                 userFrom={user.uid}
-                requestStatus={requestStatuses[userId]}
+                requestStatus={state.requestStatuses[userId]}
                 updateRequestStatus={updateRequestStatus}
                 alreadyAFriend={friends ? friends[userId] : false}
               />
             ))
-          ) : noUsersFound ? (
+          ) : state.noUsersFound ? (
             <Text style={styles.noUsersFoundText}>
               There are no users with this nickname.
             </Text>
