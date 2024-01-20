@@ -20,7 +20,6 @@ import {useEffect, useMemo, useReducer} from 'react';
 import {readDataOnce} from '@database/baseFunctions';
 import {
   DrinkingSessionArrayItem,
-  DrinkingSessionData,
   PreferencesData,
 } from '@src/types/database';
 import {
@@ -239,6 +238,7 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: 'grey',
     alignSelf: 'center',
+    marginTop: 5,
   },
   statsOverviewHolder: {
     height: 120,

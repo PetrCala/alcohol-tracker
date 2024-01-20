@@ -29,7 +29,12 @@ import {
   DrinkingSessionData,
   PreferencesData,
 } from '../types/database';
-import {DateObject, DayState, DayMarking, CalendarColors} from '../types/components';
+import {
+  DateObject,
+  DayState,
+  DayMarking,
+  CalendarColors,
+} from '../types/components';
 import LoadingData from './LoadingData';
 
 type SessionsCalendarProps = {
@@ -116,16 +121,23 @@ const DayComponent: React.FC<{
   const getMarkingTextStyle = (marking: DayMarking) => {
     let baseStyle = styles.daySessionMarkingText;
 
-    if (marking?.units && hasDecimalPoint(marking.units) && marking.units >= 10) {
+    if (
+      marking?.units &&
+      hasDecimalPoint(marking.units) &&
+      marking.units >= 10
+    ) {
       baseStyle = {...baseStyle, fontSize: 15}; // Handle overflow
     }
 
-    if (marking?.color && colorToTextColorMap[marking?.color]) {
+    if (
+      marking?.color &&
+      colorToTextColorMap[marking?.color] &&
+      marking?.units != 0
+    ) {
       return {...baseStyle, color: colorToTextColorMap[marking?.color]};
     }
 
     return {...baseStyle, fontSize: 0}; // Default case
-
   };
 
   return (
@@ -198,7 +210,7 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
    */
   const handleLeftArrowPress = (subtractMonth: () => void) => {
     const previousMonth = getPreviousMonth(visibleDateObject);
-    dispatch({type: 'SET_VISIBLE_DATE_OBJECT', payload: previousMonth})
+    dispatch({type: 'SET_VISIBLE_DATE_OBJECT', payload: previousMonth});
     subtractMonth(); // Use the callback to move to the previous month
   };
 
@@ -209,7 +221,7 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
    */
   const handleRightArrowPress = (addMonth: () => void) => {
     const nextMonth = getNextMonth(visibleDateObject);
-    dispatch({type: 'SET_VISIBLE_DATE_OBJECT', payload: nextMonth})
+    dispatch({type: 'SET_VISIBLE_DATE_OBJECT', payload: nextMonth});
     addMonth(); // Use the callback to move to the next month
   };
 
