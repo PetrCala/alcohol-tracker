@@ -15,7 +15,7 @@
     "lint": "eslint . --max-warnings=0 --cache --cache-location=node_modules/.cache/eslint",
     "lint-changed": "eslint --fix $(git diff --diff-filter=AM --name-only main -- \"*.js\" \"*.ts\" \"*.tsx\")",
     "lint-watch": "npx eslint-watch --watch --changed",
-    "merge": "./scripts.sh mergeAndPush.sh $1",
+    "merge": "./scripts/mergeAndPush.sh $1",
     "maintenance:schedule": "ts-node ./_dev/config/maintenance/maintenanceMain.tsx schedule",
     "maintenance:cancel": "ts-node ./_dev/config/maintenance/maintenanceMain.tsx cancel",
     "start": "react-native start",
