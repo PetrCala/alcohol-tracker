@@ -29,7 +29,11 @@ const NoFriendUserOverview: React.FC<NoFriendUserOverviewProps> = ({
           photoURL={profileData.photo_url}
           style={styles.noFriendUserOverviewImage}
         />
-        <Text key={userId + '-nickname'} style={styles.noFriendUserOverviewText}>
+        <Text 
+        key={userId + '-nickname'} 
+        style={styles.noFriendUserOverviewText}
+        numberOfLines={1}
+        ellipsizeMode="tail">
           {profileData.display_name}
         </Text>
       </View>
@@ -48,7 +52,7 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   noFriendUserOverviewProfile: {
-    width: '60%',
+    width: '55%',
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
@@ -66,5 +70,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     marginLeft: 10,
+    flexShrink: 1,
   },
 });

@@ -348,11 +348,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   friendRequestButtonsContainer: {
-    width: '40%',
+    width: '45%',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 2,
+    paddingRight: 5,
   },
   handleRequestButton: {
     width: '50%',
@@ -360,8 +360,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 5,
-    marginLeft: 2,
-    marginRight: 2,
+    margin: 2
   },
   acceptRequestButton: {
     backgroundColor: 'green',
@@ -379,25 +378,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '400',
   },
-  cancelRequestButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'red',
-  },
   cancelRequestImage: {
     height: '110%',
     width: '110%',
     tintColor: 'white',
   },
   friendRequestPendingContainer: {
-    width: '40%',
+    width: '45%',
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
-    paddingRight: 10,
   },
   newRequestContainer: {
     position: 'absolute',
