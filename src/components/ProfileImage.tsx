@@ -1,8 +1,34 @@
-﻿import React, {useState, useMemo, useEffect} from 'react';
-import {ActivityIndicator, Alert, Image} from 'react-native'; // or 'react-native-web' if you're using React for web
+﻿import React, {useEffect, useMemo, useReducer} from 'react';
+import {ActivityIndicator, Image} from 'react-native'; // or 'react-native-web' if you're using React for web
 import {FirebaseStorage} from 'firebase/storage';
 import {getProfilePictureURL} from '../storage/storageProfile';
 import {handleStorageErrors} from '../utils/errorHandling';
+
+interface State {
+  imageUrl: string | null;
+  loadingImage: boolean;
+}
+
+interface Action {
+  type: string;
+  payload: any;
+}
+
+const initialState: State = {
+  imageUrl: null,
+  loadingImage: true,
+};
+
+const reducer = (state: State, action: Action) => {
+  switch (action.type) {
+    case 'SET_IMAGE_URL':
+      return {...state, imageUrl: action.payload};
+    case 'SET_LOADING_IMAGE':
+      return {...state, loadingImage: action.payload};
+    default:
+      return state;
+  }
+};
 
 type ProfileImageProps = {
   storage: FirebaseStorage;
@@ -13,33 +39,45 @@ type ProfileImageProps = {
 
 function ProfileImage(props: ProfileImageProps) {
   const {storage, userId, photoURL, style} = props;
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [loadingImage, setLoadingImage] = useState<boolean>(false);
+  const [state, dispatch] = useReducer(reducer, initialState);
 
-  useEffect(() => {
+ useEffect(() => {
+    let mounted = true;
+    dispatch({ type: 'SET_LOADING_IMAGE', payload: true });
+
     const fetchImage = async () => {
-      setLoadingImage(true);
       try {
         const url = await getProfilePictureURL(storage, userId, photoURL);
-        if (url) {
-          setImageUrl(url);
+        if (mounted && url) {
+          dispatch({ type: 'SET_IMAGE_URL', payload: url });
         }
-      } catch (error: any) {
-        handleStorageErrors(error);
+      } catch (error) {
+        if (mounted) {
+          handleStorageErrors(error);
+        }
       } finally {
-        setLoadingImage(false);
+        if (mounted) {
+          dispatch({ type: 'SET_LOADING_IMAGE', payload: false });
+        }
       }
     };
-    fetchImage();
-  }, []); // Run once when the component mounts
 
-  if (loadingImage)
+    fetchImage();
+
+    return () => {
+      mounted = false;
+    };
+  }, [userId, photoURL]);
+
+  if (state.loadingImage)
     return <ActivityIndicator size="large" color="#0000ff" style={style} />;
 
   return (
     <Image
       source={
-        imageUrl ? {uri: imageUrl} : require('../../assets/temp/user.png')
+        state.imageUrl
+          ? {uri: state.imageUrl}
+          : require('../../assets/temp/user.png')
       }
       style={style}
     />

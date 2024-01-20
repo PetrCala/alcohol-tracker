@@ -21,7 +21,7 @@ const initialState = {
 
 const reducer = (state: any, action: any) => {
   switch (action.type) {
-    case 'SET_LOADING':
+    case 'SET_IS_LOADING':
       return {...state, isLoading: action.payload};
     case 'SET_VERSION_VALID':
       return {...state, versionValid: action.payload};
@@ -48,7 +48,7 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({children}) => {
     if (!db) return;
 
     let isMounted = true;
-    dispatch({type: 'SET_LOADING', payload: true}); // Set loading true initially
+    dispatch({type: 'SET_IS_LOADING', payload: true}); // Set loading true initially
 
     const configRef = `config`;
 
@@ -66,7 +66,7 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({children}) => {
       async (data: ConfigProps) => {
         await processConfigData(data);
         if (isMounted) {
-          dispatch({type: 'SET_LOADING', payload: false}); // Set loading false after processing
+          dispatch({type: 'SET_IS_LOADING', payload: false}); // Set loading false after processing
         }
       },
     );
@@ -81,7 +81,7 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({children}) => {
         );
         // Handle initial load error
         if (isMounted) {
-          dispatch({type: 'SET_LOADING', payload: false});
+          dispatch({type: 'SET_IS_LOADING', payload: false});
         }
       });
 

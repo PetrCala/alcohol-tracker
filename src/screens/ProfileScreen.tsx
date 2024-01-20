@@ -59,7 +59,7 @@ const initialState: State = {
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
-    case 'SET_LOADING':
+    case 'SET_IS_LOADING':
       return {...state, isLoading: action.payload};
     case 'SET_PREFERENCES':
       return {...state, preferences: action.payload};
@@ -94,7 +94,7 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
   // Database data hooks
   useEffect(() => {
     const fetchData = async () => {
-      dispatch({type: 'SET_LOADING', payload: true});
+      dispatch({type: 'SET_IS_LOADING', payload: true});
 
       try {
         let userSessions: DrinkingSessionArrayItem[] | null =
@@ -124,7 +124,7 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
         );
       }
 
-      dispatch({type: 'SET_LOADING', payload: false});
+      dispatch({type: 'SET_IS_LOADING', payload: false});
     };
 
     fetchData();
@@ -154,7 +154,7 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
     });
     dispatch({type: 'SET_UNITS_CONSUMED', payload: thisMonthUnits});
     dispatch({type: 'SET_POINTS_EARNED', payload: thisMonthPoints});
-  }, [state.drinkingSessionData, state.visibleDateObject]);
+  }, [state.drinkingSessionData, state.preferences, state.visibleDateObject]);
 
   if (state.isLoading) return <LoadingData />;
   if (!db || !storage || !state.preferences || !state.drinkingSessionData) return;
