@@ -1,7 +1,5 @@
 ﻿import {
   Alert,
-  Dimensions,
-  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -9,14 +7,14 @@
   View,
 } from 'react-native';
 import {
-  FriendRequestData,
   FriendRequestDisplayData,
-  FriendRequestStatus,
   FriendRequestStatusState,
   FriendsData,
-  UserData,
+  NicknameToIdData,
+  ProfileData,
+  ProfileDisplayData,
 } from '../../types/database';
-import {useState} from 'react';
+import {useEffect, useReducer, useState} from 'react';
 import {useFirebase} from '../../context/FirebaseContext';
 import {acceptFriendRequest, deleteFriendRequest} from '../../database/friends';
 import {auth} from '../../services/firebaseSetup';
@@ -24,21 +22,21 @@ import useProfileDisplayData from '../../hooks/useProfileDisplayData';
 import LoadingData from '../../components/LoadingData';
 import {Database} from 'firebase/database';
 import NoFriendUserOverview from '@components/Social/NoFriendUserOverview';
+import {update} from 'lodash';
+import { isNonEmptyObject } from '@src/utils/validation';
+import { fetchUserProfiles } from '@database/profile';
 
 type FriendRequestButtonsProps = {
   requestId: string;
-  removeFriendRequestItem: (userId: string) => void;
 };
 
 type FriendRequestPendingProps = {
   requestId: string;
-  removeFriendRequestItem: (userId: string) => void;
 };
 
 type FriendRequestComponentProps = {
   requestStatus: FriendRequestStatusState | undefined;
   requestId: string;
-  removeFriendRequestItem: (userId: string) => void;
 };
 
 type ScreenProps = {
@@ -54,7 +52,6 @@ const handleAcceptFriendRequest = async (
   db: Database,
   userId: string,
   requestId: string,
-  removeFriendRequestItem: (userId: string) => void,
 ): Promise<void> => {
   try {
     await acceptFriendRequest(db, userId, requestId);
@@ -64,14 +61,12 @@ const handleAcceptFriendRequest = async (
       'Could not accept the friend request: ' + error.message,
     );
   }
-  removeFriendRequestItem(requestId);
 };
 
 const handleRejectFriendRequest = async (
   db: Database,
   userId: string,
   requestId: string,
-  removeFriendRequestItem: (userId: string) => void,
 ): Promise<void> => {
   try {
     await deleteFriendRequest(db, userId, requestId);
@@ -81,13 +76,11 @@ const handleRejectFriendRequest = async (
       'Could not accept the friend request: ' + error.message,
     );
   }
-  removeFriendRequestItem(requestId);
 };
 
 // Component to be shown for a received friend request
 const FriendRequestButtons: React.FC<FriendRequestButtonsProps> = ({
   requestId,
-  removeFriendRequestItem,
 }) => {
   const {db} = useFirebase();
   const user = auth.currentUser;
@@ -99,27 +92,13 @@ const FriendRequestButtons: React.FC<FriendRequestButtonsProps> = ({
       <TouchableOpacity
         key={requestId + '-accept-request-button'}
         style={[styles.handleRequestButton, styles.acceptRequestButton]}
-        onPress={() =>
-          handleAcceptFriendRequest(
-            db,
-            user.uid,
-            requestId,
-            removeFriendRequestItem,
-          )
-        }>
+        onPress={() => handleAcceptFriendRequest(db, user.uid, requestId)}>
         <Text style={styles.handleRequestButtonText}>Accept</Text>
       </TouchableOpacity>
       <TouchableOpacity
         key={requestId + '-reject-request-button'}
         style={[styles.handleRequestButton, styles.rejectRequestButton]}
-        onPress={() =>
-          handleRejectFriendRequest(
-            db,
-            user.uid,
-            requestId,
-            removeFriendRequestItem,
-          )
-        }>
+        onPress={() => handleRejectFriendRequest(db, user.uid, requestId)}>
         <Text style={styles.handleRequestButtonText}>Remove</Text>
       </TouchableOpacity>
     </View>
@@ -129,7 +108,6 @@ const FriendRequestButtons: React.FC<FriendRequestButtonsProps> = ({
 // Component to be shown when the friend request is pending
 const FriendRequestPending: React.FC<FriendRequestPendingProps> = ({
   requestId,
-  removeFriendRequestItem,
 }) => {
   const {db} = useFirebase();
   const user = auth.currentUser;
@@ -139,14 +117,7 @@ const FriendRequestPending: React.FC<FriendRequestPendingProps> = ({
     <View style={styles.friendRequestPendingContainer}>
       <TouchableOpacity
         style={[styles.handleRequestButton, styles.rejectRequestButton]}
-        onPress={() =>
-          handleRejectFriendRequest(
-            db,
-            user.uid,
-            requestId,
-            removeFriendRequestItem,
-          )
-        }>
+        onPress={() => handleRejectFriendRequest(db, user.uid, requestId)}>
         <Text style={styles.handleRequestButtonText}>Cancel</Text>
       </TouchableOpacity>
     </View>
@@ -157,68 +128,89 @@ const FriendRequestPending: React.FC<FriendRequestPendingProps> = ({
 const FriendRequestComponent: React.FC<FriendRequestComponentProps> = ({
   requestStatus,
   requestId,
-  removeFriendRequestItem,
 }) => {
   return requestStatus === 'received' ? (
     <FriendRequestButtons
       key={requestId + '-friend-request-buttons'}
       requestId={requestId}
-      removeFriendRequestItem={removeFriendRequestItem}
     />
   ) : requestStatus === 'sent' ? (
     <FriendRequestPending
       key={requestId + '-friend-request-pending'}
       requestId={requestId}
-      removeFriendRequestItem={removeFriendRequestItem}
     />
   ) : (
     <></>
   );
 };
 
-const FriendRequestScreen = (props: ScreenProps) => {
-  const {friendRequests, setFriendRequests, friends, setFriends} = props;
-  const {db} = useFirebase();
-  const [loadingDisplayData, setLoadingDisplayData] = useState<boolean>(false);
-  const [displayData, setDisplayData] = useProfileDisplayData({
-    data: friendRequests ?? {},
-    db: db,
-    setLoadingDisplayData: setLoadingDisplayData,
-  });
+interface State {
+  isLoading: boolean;
+  displayData: ProfileDisplayData;
+}
 
-  const removeFriendRequestItem = (userId: string) => {
-    const updatedRequests = {...friendRequests};
-    delete updatedRequests[userId];
-    setFriendRequests(updatedRequests);
+interface Action {
+  type: string;
+  payload: any;
+}
+
+const initialState: State = {
+  isLoading: true,
+  displayData: {},
+};
+
+const reducer = (state: State, action: Action): State => {
+  switch (action.type) {
+    case 'SET_IS_LOADING':
+      return {...state, isLoading: action.payload};
+    case 'SET_DISPLAY_DATA':
+      return {...state, displayData: action.payload};
+    default:
+      return state;
+  }
+};
+
+const FriendRequestScreen = (props: ScreenProps) => {
+  const {friendRequests} = props;
+  const {db} = useFirebase();
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  const updateDisplayData = async (
+    db: Database | undefined,
+    friendRequests: FriendRequestDisplayData | undefined,
+  ): Promise<void> => {
+    const newDisplayData: ProfileDisplayData = {};
+    if (db && friendRequests) {
+      const dataIds = Object.keys(friendRequests);
+      const userProfiles: ProfileData[] = await fetchUserProfiles(db, dataIds);
+      dataIds.forEach((id, index) => {
+        newDisplayData[id] = userProfiles[index];
+      });
+    }
+    dispatch({type: 'SET_DISPLAY_DATA', payload: newDisplayData});
   };
 
-  // useEffect(() => {
-  //   if (friendRequests) {
-  //     setDisplayData({
-  //       data: friendRequests,
-  //       db: db,
-  //       setLoadingDisplayData: setLoadingDisplayData,
-  //     });
-  //   }
-  // }, [friendRequests]);
-
-  // TODO - the friendRequests hook is updating correctly, but the rendered list is not
-  // This can be done by assigning a key to each of the mapped items in the list (would first have to be rewritten into a component). Each time the key would change, the component would be re-rendered
+  useEffect(() => {
+    const updateLocalHooks = async () => {
+      dispatch({type: 'SET_IS_LOADING', payload: false});
+      await updateDisplayData(db, friendRequests);
+      dispatch({type: 'SET_IS_LOADING', payload: false});
+    };
+    updateLocalHooks();
+  }, [friendRequests]);
 
   return (
     <View style={styles.mainContainer}>
       <ScrollView
         style={styles.scrollViewContainer}
         keyboardShouldPersistTaps="handled">
-        {/* {isNonEmptyObject(friendRequests) ? ( */}
-        {friendRequests ? (
+        {state.isLoading ? (
+          <LoadingData />
+        ) : friendRequests ? (
           <View style={styles.friendList}>
             {Object.keys(friendRequests).map(requestId => {
-              const profileData = displayData[requestId];
+              const profileData = state.displayData[requestId];
               const requestStatus = friendRequests[requestId];
-
-              if (loadingDisplayData)
-                return <LoadingData key={requestId + '-loading'} />;
 
               return (
                 <NoFriendUserOverview
@@ -228,7 +220,6 @@ const FriendRequestScreen = (props: ScreenProps) => {
                   RightSideComponent={FriendRequestComponent({
                     requestId,
                     requestStatus,
-                    removeFriendRequestItem,
                   })}
                 />
               );
