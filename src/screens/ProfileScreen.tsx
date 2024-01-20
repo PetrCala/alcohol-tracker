@@ -208,7 +208,7 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
           onPress={() => navigation.goBack()}
         />
         <View style={styles.menuContainer}>
-          <Text style={styles.sectionText}>Profile</Text>
+          <Text style={styles.sectionText}>{user?.uid === userId ? "Profile" : "Friend Overview"}</Text>
         </View>
       </View>
       <ScrollView style={styles.scrollView} keyboardShouldPersistTaps="handled">
