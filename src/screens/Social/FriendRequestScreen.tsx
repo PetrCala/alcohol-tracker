@@ -14,7 +14,7 @@ import {
   ProfileData,
   ProfileDisplayData,
 } from '../../types/database';
-import {useEffect, useReducer, useState} from 'react';
+import {useEffect, useMemo, useReducer, useState} from 'react';
 import {useFirebase} from '../../context/FirebaseContext';
 import {acceptFriendRequest, deleteFriendRequest} from '../../database/friends';
 import {auth} from '../../services/firebaseSetup';
@@ -23,8 +23,8 @@ import LoadingData from '../../components/LoadingData';
 import {Database} from 'firebase/database';
 import NoFriendUserOverview from '@components/Social/NoFriendUserOverview';
 import {update} from 'lodash';
-import { isNonEmptyObject } from '@src/utils/validation';
-import { fetchUserProfiles } from '@database/profile';
+import {isNonEmptyObject} from '@src/utils/validation';
+import {fetchUserProfiles} from '@database/profile';
 
 type FriendRequestButtonsProps = {
   requestId: string;
@@ -37,6 +37,12 @@ type FriendRequestPendingProps = {
 type FriendRequestComponentProps = {
   requestStatus: FriendRequestStatusState | undefined;
   requestId: string;
+};
+
+type FriendRequestItemProps = {
+  requestId: string;
+  friendRequests: FriendRequestDisplayData | undefined;
+  displayData: ProfileDisplayData;
 };
 
 type ScreenProps = {
@@ -144,9 +150,35 @@ const FriendRequestComponent: React.FC<FriendRequestComponentProps> = ({
   );
 };
 
+const FriendRequestItem: React.FC<FriendRequestItemProps> = ({
+  requestId,
+  friendRequests,
+  displayData,
+}) => {
+  if (!friendRequests || !displayData) return <></>;
+  const profileData = displayData[requestId];
+  const requestStatus = friendRequests[requestId];
+
+  return (
+    <NoFriendUserOverview
+      key={requestId + '-friend-request'}
+      userId={requestId}
+      profileData={profileData}
+      RightSideComponent={FriendRequestComponent({
+        requestId,
+        requestStatus,
+      })}
+    />
+  );
+};
+
 interface State {
   isLoading: boolean;
   displayData: ProfileDisplayData;
+  requestsSent: string[];
+  requestsReceived: string[];
+  requestsSentCount: number;
+  requestsReceivedCount: number;
 }
 
 interface Action {
@@ -157,6 +189,10 @@ interface Action {
 const initialState: State = {
   isLoading: true,
   displayData: {},
+  requestsSent: [],
+  requestsReceived: [],
+  requestsSentCount: 0,
+  requestsReceivedCount: 0,
 };
 
 const reducer = (state: State, action: Action): State => {
@@ -165,6 +201,14 @@ const reducer = (state: State, action: Action): State => {
       return {...state, isLoading: action.payload};
     case 'SET_DISPLAY_DATA':
       return {...state, displayData: action.payload};
+    case 'SET_REQUESTS_SENT':
+      return {...state, requestsSent: action.payload};
+    case 'SET_REQUESTS_RECEIVED':
+      return {...state, requestsReceived: action.payload};
+    case 'SET_REQUESTS_SENT_COUNT':
+      return {...state, requestsSentCount: action.payload};
+    case 'SET_REQUESTS_RECEIVED_COUNT':
+      return {...state, requestsReceivedCount: action.payload};
     default:
       return state;
   }
@@ -199,6 +243,30 @@ const FriendRequestScreen = (props: ScreenProps) => {
     updateLocalHooks();
   }, [friendRequests]);
 
+  useMemo(() => {
+    const newRequestsSent: string[] = [];
+    const newRequestsReceived: string[] = [];
+    if (friendRequests) {
+      Object.keys(friendRequests).forEach(requestId => {
+        if (friendRequests[requestId] === 'sent') {
+          newRequestsSent.push(requestId);
+        } else if (friendRequests[requestId] === 'received') {
+          newRequestsReceived.push(requestId);
+        }
+      });
+    }
+    const newRequestsSentCount = newRequestsSent.length;
+    const newRequestsReceivedCount = newRequestsReceived.length;
+
+    dispatch({type: 'SET_REQUESTS_SENT', payload: newRequestsSent});
+    dispatch({type: 'SET_REQUESTS_RECEIVED', payload: newRequestsReceived});
+    dispatch({type: 'SET_REQUESTS_SENT_COUNT', payload: newRequestsSentCount});
+    dispatch({
+      type: 'SET_REQUESTS_RECEIVED_COUNT',
+      payload: newRequestsReceivedCount,
+    });
+  }, [friendRequests]);
+
   return (
     <View style={styles.mainContainer}>
       <ScrollView
@@ -206,27 +274,37 @@ const FriendRequestScreen = (props: ScreenProps) => {
         keyboardShouldPersistTaps="handled">
         {state.isLoading ? (
           <LoadingData />
-        ) : friendRequests ? (
-          <View style={styles.friendList}>
-            {Object.keys(friendRequests).map(requestId => {
-              const profileData = state.displayData[requestId];
-              const requestStatus = friendRequests[requestId];
-
-              return (
-                <NoFriendUserOverview
-                  key={requestId + '-friend-request'}
-                  userId={requestId}
-                  profileData={profileData}
-                  RightSideComponent={FriendRequestComponent({
-                    requestId,
-                    requestStatus,
-                  })}
-                />
-              );
-            })}
-          </View>
         ) : (
-          <></>
+          <View style={styles.friendList}>
+            <View style={styles.requestsInfoContainer}>
+              <Text style={styles.requestsInfoText}>
+                Requests Received ({state.requestsReceivedCount})
+              </Text>
+            </View>
+            <View style={styles.requestsContainer}>
+              {state.requestsReceived.map(requestId => (
+                <FriendRequestItem
+                  key={requestId + '-friend-request-item'}
+                  requestId={requestId}
+                  friendRequests={friendRequests}
+                  displayData={state.displayData}
+                />
+              ))}
+            </View>
+            <View style={styles.requestsInfoContainer}>
+              <Text style={styles.requestsInfoText}>Requests Sent ({state.requestsSentCount})</Text>
+            </View>
+            <View style={styles.requestsContainer}>
+              {state.requestsSent.map(requestId => (
+                <FriendRequestItem
+                  key={requestId + '-friend-request-item'}
+                  requestId={requestId}
+                  friendRequests={friendRequests}
+                  displayData={state.displayData}
+                />
+              ))}
+            </View>
+          </View>
         )}
       </ScrollView>
     </View>
@@ -245,6 +323,25 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffff99',
   },
   friendList: {
+    width: '100%',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  requestsInfoContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    padding: 10,
+    backgroundColor: 'gray',
+  },
+  requestsInfoText: {
+    fontSize: 16,
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  requestsContainer: {
     width: '100%',
     flexDirection: 'column',
     justifyContent: 'center',
