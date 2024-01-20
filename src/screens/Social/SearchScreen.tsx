@@ -317,7 +317,7 @@ const SearchScreen = (props: ScreenProps) => {
     dispatch({type: 'SET_SEARCH_RESULT_DATA', payload: {}});
     dispatch({type: 'SET_REQUEST_STATUSES', payload: {}});
     dispatch({type: 'SET_DISPLAY_DATA', payload: {}});
-    dispatch({type: 'SET_NO_USERS_FOUND', payload: true});
+    dispatch({type: 'SET_NO_USERS_FOUND', payload: false});
   };
 
   useMemo(() => {
