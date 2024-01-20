@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
   noFriendUserOverviewText: {
     color: 'black',
     fontSize: 16,
-    fontWeight: '400',
+    fontWeight: '500',
     marginLeft: 10,
   },
 });

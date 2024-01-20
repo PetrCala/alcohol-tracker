@@ -500,8 +500,8 @@ const styles = StyleSheet.create({
   },
   userNicknameText: {
     color: 'black',
-    fontSize: 18,
-    fontWeight: '400',
+    fontSize: 16,
+    fontWeight: '500',
     marginLeft: 10,
   },
   userProfileImage: {

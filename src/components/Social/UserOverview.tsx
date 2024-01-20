@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
   userOverviewText: {
     color: 'black',
     fontSize: 16,
-    fontWeight: '400',
+    fontWeight: '500',
     marginLeft: 10,
   },
 });

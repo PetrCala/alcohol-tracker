@@ -259,32 +259,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  friendRequestContainer: {
-    width: '100%',
-    flexDirection: 'row',
-    backgroundColor: 'white',
-    padding: 5,
-  },
-  friendRequestProfile: {
-    width: '60%',
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    padding: 5,
-    paddingTop: 7,
-  },
-  friendRequestImage: {
-    width: 70,
-    height: 70,
-    padding: 10,
-    borderRadius: 35,
-  },
-  friendRequestText: {
-    color: 'black',
-    fontSize: 16,
-    fontWeight: '400',
-    marginLeft: 10,
-  },
   friendRequestButtonsContainer: {
     width: '40%',
     flexDirection: 'row',
