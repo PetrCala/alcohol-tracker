@@ -13,14 +13,14 @@ import {useFirebase} from '../../context/FirebaseContext';
 import LoadingData from '../../components/LoadingData';
 import UserOverview from '@components/Social/UserOverview';
 
-
 type ScreenProps = {
+  navigation: any;
   friends: FriendsData | undefined;
   setIndex: React.Dispatch<React.SetStateAction<number>>;
 };
 
 const FriendListScreen = (props: ScreenProps) => {
-  const {friends, setIndex} = props;
+  const {navigation, friends, setIndex} = props;
   const {db} = useFirebase();
   const [loadingDisplayData, setLoadingDisplayData] = useState<boolean>(false);
   const [displayData, setDisplayData] = useProfileDisplayData({
@@ -28,6 +28,8 @@ const FriendListScreen = (props: ScreenProps) => {
     db: db,
     setLoadingDisplayData: setLoadingDisplayData,
   });
+
+  if (!navigation) return null;
 
   return (
     <ScrollView style={styles.scrollViewContainer}>
@@ -37,15 +39,26 @@ const FriendListScreen = (props: ScreenProps) => {
         <View style={styles.friendList}>
           {Object.keys(friends).map(friendId => {
             const profileData = displayData[friendId];
-            const friendName = profileData?.display_name;
 
             return (
-              <UserOverview
-                key={friendId + '-user-overview'}
-                userId={friendId}
-                profileData={profileData}
-                RightSideComponent={<></>}
-              />
+              <TouchableOpacity
+                key={friendId + '-button'}
+                style={styles.friendOverviewButton}
+                onPress={() =>
+                  navigation.navigate('Profile Screen', {
+                    userId: friendId,
+                    profileData: profileData,
+                    drinkingSessionData: null, // Fetch on render
+                    preferences: null,
+                  })
+                }>
+                <UserOverview
+                  key={friendId + '-user-overview'}
+                  userId={friendId}
+                  profileData={profileData}
+                  RightSideComponent={<></>}
+                />
+              </TouchableOpacity>
             );
           })}
         </View>
@@ -83,6 +96,10 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     backgroundColor: 'white',
+  },
+  friendOverviewButton: {
+    width: '100%',
+    height: '100%',
   },
   emptyList: {
     width: '100%',

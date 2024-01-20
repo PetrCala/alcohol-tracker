@@ -10,7 +10,12 @@ import {
 import MenuIcon from '../../components/Buttons/MenuIcon';
 import {getDatabaseData} from '../../context/DatabaseDataContext';
 import commonStyles from '../../styles/commonStyles';
-import {FriendRequestData, FriendRequestDisplayData, FriendsData, UserData} from '../../types/database';
+import {
+  FriendRequestData,
+  FriendRequestDisplayData,
+  FriendsData,
+  UserData,
+} from '../../types/database';
 import {TabView, SceneMap} from 'react-native-tab-view';
 import FriendListScreen from './FriendListScreen';
 import FriendRequestScreen from './FriendRequestScreen';
@@ -77,7 +82,13 @@ const SocialScreen = (props: SocialProps) => {
     if (!userData) return null;
     switch (route.key) {
       case 'friendList':
-        return <FriendListScreen friends={friends} setIndex={setIndex} />;
+        return (
+          <FriendListScreen
+            navigation={navigation}
+            friends={friends}
+            setIndex={setIndex}
+          />
+        );
       case 'friendSearch':
         return (
           <SearchScreen

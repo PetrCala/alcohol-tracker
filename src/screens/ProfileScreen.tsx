@@ -13,7 +13,6 @@ import UploadImageComponent from '../components/UploadImage';
 import {useFirebase} from '../context/FirebaseContext';
 import PermissionHandler from '../permissions/PermissionHandler';
 import {ProfileProps} from '@src/types/screens';
-import ProfileImage from '@components/ProfileImage';
 import {StatData, StatsOverview} from '@components/Items/StatOverview';
 import ProfileOverview from '@components/Social/ProfileOverview';
 import {useEffect, useMemo, useReducer} from 'react';
@@ -132,20 +131,20 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
   }, [userId, drinkingSessionData, preferences]);
 
   useMemo(() => {
-    if (!drinkingSessionData || !preferences) return;
+    if (!state.drinkingSessionData || !state.preferences) return;
 
     let thisMonthUnits = calculateThisMonthUnits(
       state.visibleDateObject,
-      drinkingSessionData,
+      state.drinkingSessionData,
     );
     let thisMonthPoints = calculateThisMonthPoints(
       state.visibleDateObject,
-      drinkingSessionData,
-      preferences.units_to_points,
+      state.drinkingSessionData,
+      state.preferences.units_to_points,
     );
     let thisMonthSessionCount = getSingleMonthDrinkingSessions(
       timestampToDate(state.visibleDateObject.timestamp),
-      drinkingSessionData,
+      state.drinkingSessionData,
       false,
     ).length; // Replace this in the future
 
@@ -158,7 +157,7 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
   }, [state.drinkingSessionData, state.visibleDateObject]);
 
   if (state.isLoading) return <LoadingData />;
-  if (!db || !storage || !preferences || !drinkingSessionData) return;
+  if (!db || !storage || !state.preferences || !state.drinkingSessionData) return;
 
   return (
     <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
@@ -181,8 +180,8 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
           <StatsOverview statsData={statsData} />
         </View>
         <SessionsCalendar
-          drinkingSessionData={drinkingSessionData}
-          preferences={preferences}
+          drinkingSessionData={state.drinkingSessionData}
+          preferences={state.preferences}
           visibleDateObject={state.visibleDateObject}
           dispatch={dispatch}
           onDayPress={(day: DateObject) => {}}
