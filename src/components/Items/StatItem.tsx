@@ -30,12 +30,13 @@ const styles = StyleSheet.create({
   },
   overviewStatsContents: {
     textAlign: 'center',
-    fontSize: 25,
+    fontSize: 23,
+    fontWeight: 'bold',
     color: 'black',
   },
   overviewStatsHeader: {
     textAlign: 'center',
-    fontSize: 18,
+    fontSize: 16,
     paddingRight: 3,
     paddingLeft: 3,
     color: 'black',
