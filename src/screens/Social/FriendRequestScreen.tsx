@@ -16,15 +16,14 @@ import {
   FriendsData,
   UserData,
 } from '../../types/database';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {useFirebase} from '../../context/FirebaseContext';
 import {acceptFriendRequest, deleteFriendRequest} from '../../database/friends';
 import {auth} from '../../services/firebaseSetup';
-import {isNonEmptyObject} from '../../utils/validation';
 import useProfileDisplayData from '../../hooks/useProfileDisplayData';
 import LoadingData from '../../components/LoadingData';
 import {Database} from 'firebase/database';
-import UserOverview from '../../components/UserOverview';
+import NoFriendUserOverview from '@components/Social/NoFriendUserOverview';
 
 type FriendRequestButtonsProps = {
   requestId: string;
@@ -222,7 +221,7 @@ const FriendRequestScreen = (props: ScreenProps) => {
                 return <LoadingData key={requestId + '-loading'} />;
 
               return (
-                <UserOverview
+                <NoFriendUserOverview
                   key={requestId + '-friend-request'}
                   userId={requestId}
                   profileData={profileData}

@@ -19,7 +19,7 @@ import {
 import {useFirebase} from '../../context/FirebaseContext';
 import {Database} from 'firebase/database';
 import {searchDbByNickname} from '../../database/search';
-import UserOverview from '../UserOverview';
+import UserOverview from '../Social/NoFriendUserOverview';
 import {auth} from '../../services/firebaseSetup';
 import {getDatabaseData} from '../../context/DatabaseDataContext';
 import {

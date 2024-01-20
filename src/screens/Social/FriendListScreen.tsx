@@ -11,46 +11,8 @@ import useProfileDisplayData from '../../hooks/useProfileDisplayData';
 import {useState} from 'react';
 import {useFirebase} from '../../context/FirebaseContext';
 import LoadingData from '../../components/LoadingData';
-import ProfileImage from '@components/ProfileImage';
+import UserOverview from '@components/Social/UserOverview';
 
-type FriendOverviewProps = {
-  friendId: string;
-  profileData: ProfileData;
-  RightSideComponent: React.ReactNode;
-};
-
-const FriendOverview: React.FC<FriendOverviewProps> = ({
-  friendId,
-  profileData,
-  RightSideComponent,
-}) => {
-  const {db, storage} = useFirebase();
-
-  if (!db || !profileData) return;
-
-  return (
-    <View key={friendId + '-container'} style={styles.friendOverviewContainer}>
-      <View key={friendId + 'profile'} style={styles.friendOverviewProfile}>
-        <ProfileImage
-          key={friendId + '-profile-icon'}
-          storage={storage}
-          userId={friendId}
-          photoURL={profileData.photo_url}
-          style={styles.friendOverviewImage}
-        />
-        <View key={friendId + 'info'} style={styles.friendInfoContainer}>
-          <Text key={friendId + '-nickname'} style={styles.friendOverviewText}>
-            {profileData.display_name}
-          </Text>
-          <Text key={friendId + '-sessions'} style={styles.friendOverviewText}>
-            {/* User details */}
-          </Text>
-        </View>
-      </View>
-      {RightSideComponent}
-    </View>
-  );
-};
 
 type ScreenProps = {
   friends: FriendsData | undefined;
@@ -78,9 +40,9 @@ const FriendListScreen = (props: ScreenProps) => {
             const friendName = profileData?.display_name;
 
             return (
-              <FriendOverview
+              <UserOverview
                 key={friendId + '-user-overview'}
-                friendId={friendId}
+                userId={friendId}
                 profileData={profileData}
                 RightSideComponent={<></>}
               />
@@ -120,38 +82,7 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'column',
     justifyContent: 'center',
-  },
-  friendOverviewContainer: {
-    width: '100%',
-    flexDirection: 'row',
     backgroundColor: 'white',
-    padding: 5,
-  },
-  friendOverviewProfile: {
-    width: '60%',
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    padding: 5,
-    paddingTop: 7,
-  },
-  friendOverviewImage: {
-    width: 70,
-    height: 70,
-    padding: 10,
-    borderRadius: 35,
-  },
-  friendInfoContainer: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-    padding: 5
-  },
-  friendOverviewText: {
-    color: 'black',
-    fontSize: 16,
-    fontWeight: '400',
-    marginLeft: 10,
   },
   emptyList: {
     width: '100%',

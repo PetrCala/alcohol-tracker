@@ -189,6 +189,7 @@ const MainScreen = ({navigation}: MainScreenProps) => {
           <TouchableOpacity
             onPress={() => navigation.navigate('Profile Screen', {
               userId: user.uid,
+              profileData: userData.profile,
             })}
             style={styles.profileButton}>
             <ProfileImage
