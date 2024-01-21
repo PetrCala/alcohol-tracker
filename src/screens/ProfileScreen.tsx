@@ -222,7 +222,11 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
           preferences={state.preferences}
           visibleDateObject={state.visibleDateObject}
           dispatch={dispatch}
-          onDayPress={(day: DateObject) => {}}
+          onDayPress={(day: DateObject) => {
+            user?.uid === userId ?
+            navigation.navigate('Day Overview Screen', {dateObject: day}):
+            null
+          }}
         />
         <View style={styles.bottomContainer}>
           {user?.uid !== userId ? (

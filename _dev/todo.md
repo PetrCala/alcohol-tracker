@@ -3,6 +3,7 @@
 - Finish user profile pictures handling
 - Handle the flashing when opening a user's profile (or app too)
 - Fix the bug when opening a keyboard in search window (disappears)
+- Fix the safe area on ios
 
 ### Migrating to 0.3.0 database
 
