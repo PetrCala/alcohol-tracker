@@ -63,7 +63,6 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
 export default ProfileOverview;
 
 const screenWidth = Dimensions.get('window').width;
-const mainContainerPadding = 5;
 const profileImageSize = 110;
 
 const styles = StyleSheet.create({
@@ -72,7 +71,8 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'flex-start',
     alignItems: 'center',
-    padding: mainContainerPadding,
+    padding: 5,
+    marginTop: 20,
   },
   profileImageContainer: {
     height: profileImageSize,
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     height: profileImageSize,
     borderRadius: profileImageSize / 2,
     backgroundColor: 'white',
-    top: mainContainerPadding,
+    top: 0,
     position: 'absolute',
     zIndex: 0, // Ensure that the profile image is below the edit button
   },
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     height: profileImageSize / 3,
     width: profileImageSize / 3,
     position: 'absolute',
-    top: mainContainerPadding + profileImageSize / 2 + profileImageSize / 7, // 7 is a magic number
+    top: profileImageSize / 2 + profileImageSize / 7, // 7 is a magic number
     left: screenWidth / 2 + profileImageSize / 2 - profileImageSize / 3,
     justifyContent: 'center',
     alignItems: 'center',
