@@ -91,11 +91,18 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({children}) => {
     };
   }, []);
 
-  // Monitor under maintenance <- somehow ensures up-to-date data
+  // Monitor under maintenance and min version <- somehow ensures up-to-date data
   useEffect(() => {
     let underMaintenance: boolean =
       state.config?.maintenance.maintenance_mode ?? false;
+    let minSupportedVersion = state.config?.app_settings.min_supported_version;
+    const versionValidationResult = validateAppVersion(minSupportedVersion);
+
     dispatch({type: 'SET_UNDER_MAINTENANCE', payload: underMaintenance});
+    dispatch({
+      type: 'SET_VERSION_VALID',
+      payload: versionValidationResult.success,
+    });
   }, [state.config]);
 
   useEffect(() => {

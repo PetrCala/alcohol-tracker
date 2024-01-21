@@ -56,7 +56,8 @@ export const validateSignInInput = (
   if (!isValidString(username)) {
     return {
       success: false,
-      message: 'Your nickname can not contain ' + CONST.INVALID_CHARS.join(', '),
+      message:
+        'Your nickname can not contain ' + CONST.INVALID_CHARS.join(', '),
     };
   }
   return {success: true};
@@ -70,8 +71,9 @@ export const validateSignInInput = (
  */
 export const validateAppVersion = (
   minSupportedVersion: string,
-  currentAppVersion: string = version,
+  currentAppVersion: string | null = version,
 ): ValidationResult => {
+  if (!currentAppVersion) return {success: false}; // Allowing to be null allows cleaner code down the line
   // Compare versions
   if (semver.lt(currentAppVersion, minSupportedVersion)) {
     return {
