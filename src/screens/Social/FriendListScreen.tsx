@@ -80,7 +80,7 @@ const FriendListScreen = (props: ScreenProps) => {
   return (
     <ScrollView style={styles.scrollViewContainer}>
         {state.isLoading ? (
-          <LoadingData />
+          <LoadingData style={styles.loadingContainer}/>
         ) : friends ? (
         <View style={styles.friendList}>
           {Object.keys(friends).map(friendId => {
