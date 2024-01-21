@@ -4,6 +4,7 @@
 - Handle the flashing when opening a user's profile (or app too)
 - Fix the bug when opening a keyboard in search window (disappears)
 - Fix the safe area on ios
+- Fix the bug where the unfriend modal does not appear on iOS
 
 ### Migrating to 0.3.0 database
 

@@ -116,8 +116,9 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
     {
       label: 'Unfriend',
       icon: require('../../assets/icons/remove-user.png'),
-      action: () =>
-        dispatch({type: 'SET_UNFRIEND_MODAL_VISIBLE', payload: true}),
+      action: () => {
+        dispatch({type: 'SET_UNFRIEND_MODAL_VISIBLE', payload: true});
+      },
     },
   ];
 
@@ -197,6 +198,8 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
   if (!db || !storage || !state.preferences || !state.drinkingSessionData)
     return;
 
+  console.log(state.unfriendModalVisible);
+
   return (
     <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
       <View style={commonStyles.mainHeader}>
@@ -208,7 +211,9 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
           onPress={() => navigation.goBack()}
         />
         <View style={styles.menuContainer}>
-          <Text style={styles.sectionText}>{user?.uid === userId ? "Profile" : "Friend Overview"}</Text>
+          <Text style={styles.sectionText}>
+            {user?.uid === userId ? 'Profile' : 'Friend Overview'}
+          </Text>
         </View>
       </View>
       <ScrollView style={styles.scrollView} keyboardShouldPersistTaps="handled">
@@ -223,9 +228,9 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
           visibleDateObject={state.visibleDateObject}
           dispatch={dispatch}
           onDayPress={(day: DateObject) => {
-            user?.uid === userId ?
-            navigation.navigate('Day Overview Screen', {dateObject: day}):
-            null
+            user?.uid === userId
+              ? navigation.navigate('Day Overview Screen', {dateObject: day})
+              : null;
           }}
         />
         <View style={styles.bottomContainer}>
@@ -245,25 +250,26 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
           )}
         </View>
         <View style={{height: 200, backgroundColor: '#ffff99'}}></View>
-        <ItemListPopup
-          visible={state.manageFriendModalVisible}
-          transparent={true}
-          heading={'Manage Friend'}
-          actions={manageFriendData}
-          onRequestClose={() =>
-            dispatch({type: 'SET_MANAGE_FRIEND_MODAL_VISIBLE', payload: false})
-          }
-        />
-        <YesNoPopup
-          visible={state.unfriendModalVisible}
-          transparent={true}
-          message={'Do you really want to\nunfriend this user?'}
-          onRequestClose={() =>
-            dispatch({type: 'SET_UNFRIEND_MODAL_VISIBLE', payload: false})
-          }
-          onYes={handleUnfriend}
-        />
       </ScrollView>
+      <ItemListPopup
+        visible={state.manageFriendModalVisible}
+        transparent={true}
+        heading={'Manage Friend'}
+        actions={manageFriendData}
+        onRequestClose={() => {
+          dispatch({type: 'SET_MANAGE_FRIEND_MODAL_VISIBLE', payload: false});
+          dispatch({type: 'SET_UNFRIEND_MODAL_VISIBLE', payload: false}); // Extra safety
+        }}
+      />
+      <YesNoPopup
+        visible={state.unfriendModalVisible}
+        transparent={true}
+        message={'Do you really want to\nunfriend this user?'}
+        onRequestClose={() => {
+          dispatch({type: 'SET_UNFRIEND_MODAL_VISIBLE', payload: false});
+        }}
+        onYes={handleUnfriend}
+      />
     </View>
   );
 };
