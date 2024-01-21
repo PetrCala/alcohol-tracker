@@ -11,7 +11,7 @@ const LoadingData = ({loadingText, style}: LoadingDataProps) => {
       {loadingText ? (
         <Text style={styles.loadingText}>{loadingText}</Text>
       ) : (
-        <></>
+        null
       )}
       <ActivityIndicator
         size="large"

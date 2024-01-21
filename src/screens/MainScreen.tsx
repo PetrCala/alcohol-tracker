@@ -58,7 +58,6 @@ const initialState: State = {
   loadingNewSession: false,
 };
 
-
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case 'SET_VISIBLE_DATE_OBJECT':
@@ -222,12 +221,14 @@ const MainScreen = ({navigation}: MainScreenProps) => {
       <View style={commonStyles.mainHeader}>
         <View style={styles.profileContainer}>
           <TouchableOpacity
-            onPress={() => navigation.navigate('Profile Screen', {
-              userId: user.uid,
-              profileData: userData.profile,
-              drinkingSessionData: drinkingSessionData,
-              preferences: preferences,
-            })}
+            onPress={() =>
+              navigation.navigate('Profile Screen', {
+                userId: user.uid,
+                profileData: userData.profile,
+                drinkingSessionData: drinkingSessionData,
+                preferences: preferences,
+              })
+            }
             style={styles.profileButton}>
             <ProfileImage
               storage={storage}
@@ -251,7 +252,7 @@ const MainScreen = ({navigation}: MainScreenProps) => {
           </Text>
         </TouchableOpacity>
       ) : (
-        <></>
+        null
       )}
       {/* <View style={styles.yearMonthContainer}>
         <Text style={styles.yearMonthText}>{thisYearMonth}</Text>
@@ -268,7 +269,9 @@ const MainScreen = ({navigation}: MainScreenProps) => {
           </View>
           <View style={styles.menuInfoItemContainer}>
             <Text style={styles.menuInfoText}>Sessions:</Text>
-            <Text style={styles.menuInfoText}>{state.drinkingSessionsCount}</Text>
+            <Text style={styles.menuInfoText}>
+              {state.drinkingSessionsCount}
+            </Text>
           </View>
         </View>
         <SessionsCalendar
@@ -329,9 +332,7 @@ const MainScreen = ({navigation}: MainScreenProps) => {
           />
         </View>
       </View>
-      {state.ongoingSession ? (
-        <></>
-      ) : (
+      {state.ongoingSession ? null : (
         <TouchableOpacity
           style={styles.startSessionButton}
           onPress={startDrinkingSession}>

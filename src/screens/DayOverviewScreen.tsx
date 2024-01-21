@@ -177,7 +177,7 @@ const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
               onPress={() => onEditSessionPress(session, sessionKey)} // Use keyextractor to load id here
             />
           ) : (
-            <></>
+            null
           )}
         </View>
       </View>
@@ -202,13 +202,13 @@ const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
     if (date == null) {
       return <LoadingData loadingText="" />;
     }
-    if (!editMode || !user) return <></>; // Do not display outside edit mode
+    if (!editMode || !user) return null; // Do not display outside edit mode
     // No button if the date is in the future
     let today = new Date();
     let tomorrowMidnight = changeDateBySomeDays(today, 1);
     tomorrowMidnight.setHours(0, 0, 0, 0);
     if (date >= tomorrowMidnight) {
-      return <></>;
+      return null;
     }
     // Create a new mock drinking session
     let newTimestamp = setDateToCurrentTime(date).getTime(); // At noon
@@ -300,7 +300,7 @@ const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
             ListFooterComponentStyle={styles.addSessionButtonContainer}
           />
         ) : (
-          <></>
+          null
         )}
       </View>
       <View style={styles.dayOverviewFooter}>

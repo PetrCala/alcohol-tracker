@@ -210,7 +210,7 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
             </TouchableOpacity>
           </View>
         ) : (
-          <></>
+          null
         )}
         <View style={styles.logoContainer}>
           <Image

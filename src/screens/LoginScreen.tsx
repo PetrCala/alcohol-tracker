@@ -102,7 +102,7 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
             </TouchableOpacity>
           </View>
         ) : (
-          <></>
+          null
         )}
         {success ? (
           <View style={[styles.infoContainer, styles.successInfoContainer]}>
@@ -118,7 +118,7 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
             </TouchableOpacity>
           </View>
         ) : (
-          <></>
+          null
         )}
         <View style={styles.logoContainer}>
           <Image

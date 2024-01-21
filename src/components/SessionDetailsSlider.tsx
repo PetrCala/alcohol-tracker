@@ -111,7 +111,7 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
       {/*
             </Animated.View>
             :
-            <></>
+            null
             } */}
     </View>
   );

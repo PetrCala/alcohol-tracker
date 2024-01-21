@@ -2,6 +2,7 @@ import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {ProfileData} from '../../types/database';
 import {useFirebase} from '../../context/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
+import {auth} from '@src/services/firebaseSetup';
 
 type ProfileOverviewProps = {
   userId: string;
@@ -12,6 +13,7 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
   userId,
   profileData,
 }) => {
+  const user = auth.currentUser;
   const {db, storage} = useFirebase();
 
   if (!db || !profileData) return;
@@ -24,6 +26,15 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
         photoURL={profileData.photo_url}
         style={styles.profileOverviewImage}
       />
+      {user?.uid === userId ? (
+        <TouchableOpacity
+          // style={styles.editProfileButton}
+          onPress={() => {
+            console.log('Edit profile button pressed');
+          }}>
+          {/* <Text style={styles.editProfileButtonText}>Edit Profile</Text> */}
+        </TouchableOpacity>
+      ) : null}
       <View style={styles.userInfoContainer}>
         <Text
           style={styles.profileNameText}
@@ -48,10 +59,10 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   profileOverviewImage: {
-    width: 100,
-    height: 100,
+    width: 110,
+    height: 110,
     margin: 10,
-    borderRadius: 50,
+    borderRadius: 55,
     backgroundColor: 'white',
   },
   userInfoContainer: {

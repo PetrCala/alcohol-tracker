@@ -141,9 +141,7 @@ const FriendRequestComponent: React.FC<FriendRequestComponentProps> = ({
       key={requestId + '-friend-request-pending'}
       requestId={requestId}
     />
-  ) : (
-    <></>
-  );
+  ) : null;
 };
 
 const FriendRequestItem: React.FC<FriendRequestItemProps> = ({
@@ -288,7 +286,9 @@ const FriendRequestScreen = (props: ScreenProps) => {
               ))}
             </View>
             <View style={styles.requestsInfoContainer}>
-              <Text style={styles.requestsInfoText}>Requests Sent ({state.requestsSentCount})</Text>
+              <Text style={styles.requestsInfoText}>
+                Requests Sent ({state.requestsSentCount})
+              </Text>
             </View>
             <View style={styles.requestsContainer}>
               {state.requestsSent.map(requestId => (
@@ -356,7 +356,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 5,
-    margin: 2
+    margin: 2,
   },
   acceptRequestButton: {
     backgroundColor: 'green',

@@ -142,13 +142,7 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
       ) : requestStatus === 'received' ? (
         <TouchableOpacity
           style={styles.acceptFriendRequestButton}
-          onPress={() =>
-            handleAcceptFriendRequestPress(
-              db,
-              userFrom,
-              userTo,
-            )
-          }>
+          onPress={() => handleAcceptFriendRequestPress(db, userFrom, userTo)}>
           <Text style={styles.sendFriendRequestText}>
             {statusToTextMap.received}
           </Text>
@@ -263,7 +257,9 @@ const SearchScreen = (props: ScreenProps) => {
    * determine the request status for each and update
    * the RequestStatuses hook.
    */
-  const updateRequestStatuses = (searchResultData: NicknameToIdData = state.searchResultData): void => {
+  const updateRequestStatuses = (
+    searchResultData: NicknameToIdData = state.searchResultData,
+  ): void => {
     let newRequestStatuses: {
       [userId: string]: FriendRequestStatusState;
     } = {};
@@ -328,9 +324,7 @@ const SearchScreen = (props: ScreenProps) => {
                 source={require('../../../assets/icons/thin_x.png')}
               />
             </TouchableOpacity>
-          ) : (
-            <></>
-          )}
+          ) : null}
         </View>
         <View style={styles.searchButtonContainer}>
           <TouchableOpacity
@@ -358,9 +352,7 @@ const SearchScreen = (props: ScreenProps) => {
             <Text style={styles.noUsersFoundText}>
               There are no users with this nickname.
             </Text>
-          ) : (
-            <></>
-          )}
+          ) : null}
         </View>
       </ScrollView>
     </View>

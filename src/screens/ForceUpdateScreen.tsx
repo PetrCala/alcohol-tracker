@@ -23,7 +23,7 @@ const ForceUpdateScreen = () => {
           Update Now
         </Text>
       ) : (
-        <></>
+        null
       )}
     </View>
   );
