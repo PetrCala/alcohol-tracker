@@ -41,12 +41,10 @@ export const handleInvalidInput = (
       'The app is not configured correctly. Please contact the developer.',
     );
   } else if (err.includes('auth/too-many-requests')) {
-    setWarning(
-      'Too many requests. Please wait a moment and try again later.',
-    );
+    setWarning('Too many requests. Please wait a moment and try again later.');
   } else if (err.includes('PERMISSION_DENIED: Permission denied')) {
     setWarning(
-      'Permission denied. Please contact the administrator for assistance.'
+      'Permission denied. Please contact the administrator for assistance.',
     );
   } else {
     // Uncaught error
@@ -55,10 +53,18 @@ export const handleInvalidInput = (
   return null;
 };
 
-export const handleStorageErrors = (error: any): void => {
-  // TODO
+export const handleStorageErrors = (
+  error: any,
+  alertHeading: string,
+  alertMessage: string,
+  setWarning: React.Dispatch<React.SetStateAction<string>>,
+): void => {
   // A full list of error codes is available at
   // https://firebase.google.com/docs/storage/web/handle-errors
+
+  // const err = error.message;
+  // if (err.includes('auth/missing-email')) {
+  //   setWarning('Missing email');
   switch (error.code) {
     case 'storage/object-not-found':
       // File doesn't exist
@@ -70,8 +76,9 @@ export const handleStorageErrors = (error: any): void => {
       // User canceled the upload
       break;
 
-    // ...
-
+    case 'storage/invalid-url':
+      // Invalid image url
+      break;
     case 'storage/unknown':
       // Unknown error occurred, inspect the server response
       break;

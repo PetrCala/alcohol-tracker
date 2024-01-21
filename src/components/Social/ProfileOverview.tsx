@@ -1,4 +1,11 @@
-import {Dimensions, Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  Dimensions,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {ProfileData} from '../../types/database';
 import {useFirebase} from '../../context/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
@@ -43,7 +50,10 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
       ) : null}
       <View />
       <PermissionHandler permissionType="write_photos">
-        <UploadImageComponent storage={storage} />
+        <UploadImageComponent
+          storage={storage}
+          pathToUpload={`users/${userId}/profile/profile_image.jpg`}
+        />
       </PermissionHandler>
       <View style={styles.userInfoContainer}>
         <Text
@@ -57,7 +67,6 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
     </View>
   );
 };
-
 
 export default ProfileOverview;
 

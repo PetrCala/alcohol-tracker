@@ -1,19 +1,15 @@
 ﻿import React, {useState} from 'react';
-import {Button, Image, View, Text} from 'react-native';
+import {Button, Image, View, Text, Alert} from 'react-native';
 import {
   ImageLibraryOptions,
   launchImageLibrary,
 } from 'react-native-image-picker';
-import {
-  FirebaseStorage,
-  getDownloadURL,
-  ref,
-  uploadBytesResumable,
-} from 'firebase/storage';
+import {FirebaseStorage} from 'firebase/storage';
 import {uploadImageToFirebase} from '../storage/storageUpload';
 
 type UploadImageComponentProps = {
   storage: FirebaseStorage;
+  pathToUpload: string;
 };
 
 /** TODO
@@ -25,6 +21,7 @@ type UploadImageComponentProps = {
  */
 const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
   storage,
+  pathToUpload,
 }) => {
   const [imageSource, setImageSource] = useState<string | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
@@ -37,21 +34,24 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
       includeBase64: false,
     };
 
-    launchImageLibrary(options, (response: any) => {
-      console.log('Response: ' + response);
+    launchImageLibrary(options, async (response: any) => {
       if (response.didCancel) {
-        console.log('User cancelled image picker');
+        // console.log('User cancelled image picker');
       } else if (response.errorCode) {
-        console.log('ImagePicker Error: ', response.error);
+        Alert.alert('ImagePicker Error', response.errorMessage);
       } else {
-        const source = {uri: response.uri};
-        // const source = { uri: response.assets[0].uri };
-        setImageSource(source.uri);
-        // If you want to upload the image after selecting, you can call it here:
-        console.log(
-          'Successfully selected the following source URI: ' + source.uri,
-        );
-        // uploadImageToFirebase(storage, response.uri);
+        try {
+          const source = {uri: response.assets[0].uri};
+          await uploadImageToFirebase(
+            storage,
+            source.uri,
+            pathToUpload,
+            setUploadProgress,
+          );
+          setImageSource(source.uri); // Set local
+        } catch (error: any) {
+          Alert.alert('Error uploading image', error.message);
+        }
       }
     });
   };
