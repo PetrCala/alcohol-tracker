@@ -46,7 +46,7 @@ import {
   createMockSession,
   createMockUnitsObject,
 } from '../../utils/mockDatabase';
-import {MONTHS, MONTHS_ABBREVIATED} from '../../../src/utils/static';
+import CONST from '@src/CONST';
 
 describe('formatDate function', () => {
   function checkFormattedDate(date: Date, expectedFormattedDate: string) {
@@ -313,9 +313,9 @@ describe('getYearMonthVerbose', () => {
   it('should handle all months correctly', () => {
     for (let i = 0; i < 12; i++) {
       const date: DateObject = dateToDateObject(new Date(2023, i));
-      expect(getYearMonthVerbose(date)).toBe(`${MONTHS[i]} 2023`);
+      expect(getYearMonthVerbose(date)).toBe(`${CONST.MONTHS[i]} 2023`);
       expect(getYearMonthVerbose(date, true)).toBe(
-        `${MONTHS_ABBREVIATED[i]} 2023`,
+        `${CONST.MONTHS_ABBREVIATED[i]} 2023`,
       );
     }
   });

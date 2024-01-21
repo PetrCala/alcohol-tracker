@@ -1,9 +1,12 @@
-﻿import React from 'react';
+﻿import CONST from '@src/CONST';
+import React from 'react';
 import {View, Text, Linking, StyleSheet, Platform} from 'react-native';
-import {playStoreLink, iStoreLink} from '../utils/static';
 
 const ForceUpdateScreen = () => {
-  const storeLink = Platform.OS === 'android' ? playStoreLink : iStoreLink;
+  const storeLink =
+    Platform.OS === 'android'
+      ? CONST.STORE_LINKS.ANDROID
+      : CONST.STORE_LINKS.IOS;
   return (
     <View style={styles.container}>
       <Text style={styles.title}>App Update Required</Text>

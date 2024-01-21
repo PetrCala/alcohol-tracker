@@ -40,8 +40,6 @@ import {
   unitsToColors,
 } from '../utils/dataHandling';
 import {auth} from '../services/firebaseSetup';
-import DrinkingSessionUnitWindow from '../components/DrinkingSessionUnitWindow';
-import {maxAllowedUnits} from '../utils/static';
 import YesNoPopup from '../components/Popups/YesNoPopup';
 import {useUserConnection} from '../context/UserConnectionContext';
 import UserOffline from '../components/UserOffline';
@@ -51,6 +49,7 @@ import SessionDetailsSlider from '../components/SessionDetailsSlider';
 import {getDatabaseData} from '../context/DatabaseDataContext';
 import commonStyles from '../styles/commonStyles';
 import {getPreviousRouteName} from '@navigation/navigationUtils';
+import CONST from '@src/CONST';
 
 const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
   if (!route || !navigation) return null; // Should never be null
@@ -250,7 +249,7 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
       currentUnits,
       preferences.units_to_points,
     );
-    let newAvailableUnits = maxAllowedUnits - newTotalPoints;
+    let newAvailableUnits = CONST.MAX_ALLOWED_UNITS - newTotalPoints;
     setTotalPoints(newTotalPoints);
     setAvailableUnits(newAvailableUnits);
   }, [currentUnits]);

@@ -1,6 +1,6 @@
 ﻿import semver from 'semver';
 import {Platform} from 'react-native';
-import {availablePlatforms, invalidChars} from './static';
+import CONST from '@src/CONST';
 
 import {version as _version} from '../../package.json';
 
@@ -15,7 +15,7 @@ type ValidationResult = {
  * Check that the current platform is valid.
  */
 export const platformIsValid = (): boolean => {
-  return availablePlatforms.includes(Platform.OS);
+  return CONST.AVAILABLE_PLATFORMS.includes(Platform.OS as any);
 };
 
 /**
@@ -26,7 +26,7 @@ export const platformIsValid = (): boolean => {
  * @returns {boolean} True if the string is valid, false otherwise.
  */
 export function isValidString(input: string) {
-  for (const char of invalidChars) {
+  for (const char of CONST.INVALID_CHARS) {
     if (input.includes(char)) {
       return false;
     }
@@ -56,7 +56,7 @@ export const validateSignInInput = (
   if (!isValidString(username)) {
     return {
       success: false,
-      message: 'Your nickname can not contain ' + invalidChars.join(', '),
+      message: 'Your nickname can not contain ' + CONST.INVALID_CHARS.join(', '),
     };
   }
   return {success: true};

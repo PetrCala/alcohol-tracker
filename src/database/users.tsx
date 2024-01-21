@@ -5,7 +5,6 @@ import {
   ProfileData,
   NicknameToIdData,
 } from '../types/database';
-import {appInBeta} from '../utils/static';
 import {
   EmailAuthProvider,
   User,
@@ -14,6 +13,7 @@ import {
 } from 'firebase/auth';
 import {Alert} from 'react-native';
 import {cleanStringForFirebaseKey} from '../utils/strings';
+import CONST from '@src/CONST';
 
 export const getDefaultPreferences = (): PreferencesData => {
   return {
@@ -37,7 +37,7 @@ export const getDefaultUserData = (
   profileData: ProfileData,
   betaKeyId: number, // Beta feature
 ): UserData => {
-  let userRole = appInBeta ? 'beta_user' : 'user'; // Beta feature
+  let userRole = CONST.APP_IN_BETA ? 'beta_user' : 'user'; // Beta feature
   let timestampNow = new Date().getTime();
   return {
     profile: profileData,

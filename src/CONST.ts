@@ -9,6 +9,8 @@ const EMPTY_ARRAY = Object.freeze([]);
 const EMPTY_OBJECT = Object.freeze({});
 
 const CONST = {
+  APP_IN_BETA: true,
+  AVAILABLE_PLATFORMS: ['ios', 'android'],
   ENVIRONMENT: {
     DEV: 'development',
     STAGING: 'staging',
@@ -17,6 +19,41 @@ const CONST = {
   },
   EMPTY_ARRAY,
   EMPTY_OBJECT,
+  INVALID_CHARS: ['.', '#', '$', '[', ']'],
+  MAX_ALLOWED_UNITS: 99,
+  MONTHS: [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+  ],
+  MONTHS_ABBREVIATED: [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+  ],
+  STORE_LINKS: {
+    ANDROID:
+      'https://play.google.com/store/apps/details?id=com.alcohol_tracker',
+    IOS: '',
+  },
 } as const;
 
 export default CONST;

@@ -21,10 +21,10 @@ import {readDataOnce} from '../database/baseFunctions';
 import {validateBetaKey} from '../database/beta';
 import {useUserConnection} from '../context/UserConnectionContext';
 import {isValidString, validateAppVersion} from '../utils/validation';
-import {invalidChars} from '../utils/static';
 import {deleteUserInfo, pushNewUserInfo} from '../database/users';
 import {ProfileData} from 'src/types/database';
 import {handleInvalidInput} from '@src/utils/errorHandling';
+import CONST from '@src/CONST';
 
 const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
   const {loginEmail} = route ? route.params : {loginEmail: ''};
@@ -47,7 +47,7 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
       return false;
     }
     if (!isValidString(username)) {
-      setWarning('Your nickname can not contain ' + invalidChars.join(', '));
+      setWarning('Your nickname can not contain ' + CONST.INVALID_CHARS.join(', '));
       return false;
     }
     return true;

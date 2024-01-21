@@ -36,7 +36,6 @@ import {
   UnitTypesProps,
   UnitsObject,
 } from '../types/database';
-import {maxAllowedUnits} from '../utils/static';
 import YesNoPopup from '../components/Popups/YesNoPopup';
 import {useUserConnection} from '../context/UserConnectionContext';
 import UserOffline from '../components/UserOffline';
@@ -49,6 +48,7 @@ import SuccessIndicator from '../components/SuccessIndicator';
 import commonStyles from '../styles/commonStyles';
 import FillerView from '../components/FillerView';
 import { getPreviousRouteName } from '@navigation/navigationUtils';
+import CONST from '@src/CONST';
 
 const DrinkingSessionScreen = ({
   route,
@@ -175,7 +175,7 @@ const DrinkingSessionScreen = ({
       currentUnits,
       preferences.units_to_points,
     );
-    let newAvailableUnits = maxAllowedUnits - newTotalPoints;
+    let newAvailableUnits = CONST.MAX_ALLOWED_UNITS - newTotalPoints;
     setTotalPoints(newTotalPoints);
     setAvailableUnits(newAvailableUnits);
   }, [currentUnits]);
