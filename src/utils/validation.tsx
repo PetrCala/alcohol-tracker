@@ -1,4 +1,4 @@
-﻿import semver from 'semver';
+﻿import semver, { minSatisfying } from 'semver';
 import {Platform} from 'react-native';
 import CONST from '@src/CONST';
 
@@ -70,10 +70,17 @@ export const validateSignInInput = (
  * @returns {ValidationResult} Validation result type object.
  */
 export const validateAppVersion = (
-  minSupportedVersion: string,
-  currentAppVersion: string | null = version,
+  minSupportedVersion: string | undefined,
+  currentAppVersion: string = version,
 ): ValidationResult => {
-  if (!currentAppVersion) return {success: false}; // Allowing to be null allows cleaner code down the line
+  console.log(minSupportedVersion)
+  if (!minSupportedVersion)
+    // Allowing to be null allows cleaner code down the line
+    return {
+      success: false,
+      message:
+        'This version of the application is outdated. Please upgrade to the newest version.',
+    };
   // Compare versions
   if (semver.lt(currentAppVersion, minSupportedVersion)) {
     return {

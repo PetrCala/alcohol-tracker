@@ -1,4 +1,4 @@
-﻿import {ReactNode, useEffect, useReducer} from 'react';
+﻿import {ReactNode, useEffect, useMemo, useReducer} from 'react';
 import {Alert} from 'react-native';
 
 import ForceUpdateScreen from '../screens/ForceUpdateScreen';
@@ -43,6 +43,19 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({children}) => {
   const {db} = useFirebase();
   const [state, dispatch] = useReducer(reducer, initialState);
 
+  const updateLocalHooks = (newConfigData: ConfigProps) => {
+    let underMaintenance: boolean =
+      newConfigData.maintenance.maintenance_mode ?? false;
+    let minSupportedVersion = newConfigData.app_settings.min_supported_version;
+    const versionValidationResult = validateAppVersion(minSupportedVersion);
+
+    dispatch({type: 'SET_UNDER_MAINTENANCE', payload: underMaintenance});
+    dispatch({
+      type: 'SET_VERSION_VALID',
+      payload: versionValidationResult.success,
+    });
+  };
+
   // Monitor config
   useEffect(() => {
     if (!db) return;
@@ -57,6 +70,7 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({children}) => {
 
       if (!isEqual(configData, state.config)) {
         dispatch({type: 'SET_CONFIG', payload: configData});
+        updateLocalHooks(configData);
       }
     };
 
@@ -91,40 +105,8 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({children}) => {
     };
   }, []);
 
-  // Monitor under maintenance and min version <- somehow ensures up-to-date data
-  useEffect(() => {
-    let underMaintenance: boolean =
-      state.config?.maintenance.maintenance_mode ?? false;
-    let minSupportedVersion = state.config?.app_settings.min_supported_version;
-    const versionValidationResult = validateAppVersion(minSupportedVersion);
-
-    dispatch({type: 'SET_UNDER_MAINTENANCE', payload: underMaintenance});
-    dispatch({
-      type: 'SET_VERSION_VALID',
-      payload: versionValidationResult.success,
-    });
-  }, [state.config]);
-
-  useEffect(() => {
-    function checkAppVersion(config: ConfigProps | null = state.config) {
-      try {
-        let minSupportedVersion = config?.app_settings.min_supported_version;
-        if (!minSupportedVersion) return;
-        const versionValidationResult = validateAppVersion(minSupportedVersion);
-        dispatch({
-          type: 'SET_VERSION_VALID',
-          payload: versionValidationResult.success,
-        });
-      } catch (error: any) {
-        Alert.alert(
-          'App version check failed',
-          'Could not retrieve the version app information from the database: ' +
-            error.message,
-        );
-      }
-    }
-
-    checkAppVersion(state.config);
+  useMemo(() => {
+    updateLocalHooks(state.config); // Explicit for live propagation
   }, [state.config]);
 
   // Monitor user preferences

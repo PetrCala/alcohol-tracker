@@ -360,7 +360,7 @@ describeWithEmulator('Test friend request functionality', () => {
 
   beforeEach(async () => {
     await fillDatabaseWithMockData(db);
-    await deleteUserData(db, testUserId, testUserDisplayName, 1); // beta feature
+    await deleteUserData(db, testUserId, testUserDisplayName, 1, undefined, undefined); // beta feature // TODO
   });
 
   afterEach(async () => {
