@@ -59,7 +59,7 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
     betaKeyId: number,
   ): Promise<void> {
     // Delete the user data from the Realtime Database
-    await deleteUserData(db, newUserId, userNickname, betaKeyId);
+    await deleteUserData(db, newUserId, userNickname, betaKeyId, undefined, undefined);
 
     // Delete the user from Firebase authentication
     if (auth.currentUser) {

@@ -285,7 +285,7 @@ describeWithEmulator('Test deleting data from the database', () => {
 
   beforeEach(async () => {
     await fillDatabaseWithMockData(db);
-    await deleteUserData(db, testUserId, testUserDisplayName, 1); // beta feature
+    await deleteUserData(db, testUserId, testUserDisplayName, 1, undefined, undefined); // beta feature // TODO: Add friend requests, friends
   });
 
   afterEach(async () => {

@@ -107,7 +107,14 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
     // Delete the user's information from the realtime database
     try {
       let userNickname = userData.profile.display_name;
-      await deleteUserData(db, user.uid, userNickname, userData.beta_key_id); // Beta feature
+      await deleteUserData(
+        db,
+        user.uid,
+        userNickname,
+        userData.beta_key_id,
+        userData.friends,
+        userData.friend_requests,
+      ); // Beta feature
     } catch (error: any) {
       handleInvalidDeleteUser(error);
     }

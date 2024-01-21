@@ -4,6 +4,8 @@ import {
   UserData,
   ProfileData,
   NicknameToIdData,
+  FriendsData,
+  FriendRequestData,
 } from '../types/database';
 import {
   EmailAuthProvider,
@@ -111,6 +113,8 @@ export async function deleteUserData(
   userId: string,
   userNickname: string,
   betaKeyId: number | undefined, // Beta feature
+  friends: FriendsData | undefined,
+  friendRequests: FriendRequestData | undefined,
 ): Promise<void> {
   const nicknameKey = cleanStringForFirebaseKey(userNickname);
   let updates: {[key: string]: null | false} = {};
@@ -121,14 +125,23 @@ export async function deleteUserData(
   updates[`user_preferences/${userId}`] = null;
   updates[`user_drinking_sessions/${userId}`] = null;
   updates[`user_unconfirmed_days/${userId}`] = null;
+  // Data stored in other users' nodes
+  if (friends) {
+    Object.keys(friends).forEach((friendId) => {
+      updates[`users/${friendId}/friends/${userId}`] = null;
+    });
+  };
+  if (friendRequests) {
+    Object.keys(friendRequests).forEach((friendRequestId) => {
+      updates[`users/${friendRequestId}/friend_requests/${userId}`] = null;
+    });
+  };
   // Beta feature
   if (betaKeyId) {
     // Reset the beta key to a usable form
     updates[`beta_keys/${betaKeyId}/in_usage`] = false;
     updates[`beta_keys/${betaKeyId}/user_id`] = null;
   }
-  // await cleanFriendRequests(db, userId);
-  // await cleanFriends(db, userId);
   await update(ref(db), updates);
 }
 
