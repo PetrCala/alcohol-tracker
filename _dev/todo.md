@@ -1,6 +1,5 @@
 ### Must do before release
 
-- Finish friend request and friend test suite
 - Finish user profile pictures handling
 - Handle the flashing when opening a user's profile (or app too)
 - Fix the bug when opening a keyboard in search window (disappears)
