@@ -10,7 +10,6 @@ import {
   FriendRequestDisplayData,
   FriendRequestStatusState,
   FriendsData,
-  NicknameToIdData,
   ProfileData,
   ProfileDisplayData,
 } from '../../types/database';
@@ -18,12 +17,9 @@ import {useEffect, useMemo, useReducer, useState} from 'react';
 import {useFirebase} from '../../context/FirebaseContext';
 import {acceptFriendRequest, deleteFriendRequest} from '../../database/friends';
 import {auth} from '../../services/firebaseSetup';
-import useProfileDisplayData from '../../hooks/useProfileDisplayData';
 import LoadingData from '../../components/LoadingData';
 import {Database} from 'firebase/database';
 import NoFriendUserOverview from '@components/Social/NoFriendUserOverview';
-import {update} from 'lodash';
-import {isNonEmptyObject} from '@src/utils/validation';
 import {fetchUserProfiles} from '@database/profile';
 
 type FriendRequestButtonsProps = {

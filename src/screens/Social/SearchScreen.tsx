@@ -10,11 +10,8 @@
   View,
 } from 'react-native';
 import {
-  FriendRequestStatus,
-  UserData,
   NicknameToIdData,
   FriendRequestStatusState,
-  FriendRequestData,
   FriendsData,
   FriendRequestDisplayData,
   ProfileDisplayData,
@@ -29,7 +26,6 @@ import LoadingData from '../../components/LoadingData';
 import {Database} from 'firebase/database';
 import {searchDbByNickname} from '../../database/search';
 import {fetchUserProfiles} from '@database/profile';
-import {update} from 'lodash';
 
 const statusToTextMap: {[key in FriendRequestStatusState]: string} = {
   self: 'You',

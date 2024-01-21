@@ -6,8 +6,7 @@
   TouchableOpacity,
   View,
 } from 'react-native';
-import {FriendRequestDisplayData, FriendsData, ProfileData, ProfileDisplayData} from '../../types/database';
-import useProfileDisplayData from '../../hooks/useProfileDisplayData';
+import {FriendsData, ProfileData, ProfileDisplayData} from '../../types/database';
 import {useEffect, useReducer, useState} from 'react';
 import {useFirebase} from '../../context/FirebaseContext';
 import LoadingData from '../../components/LoadingData';
