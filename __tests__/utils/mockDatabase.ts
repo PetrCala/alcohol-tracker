@@ -280,33 +280,37 @@ export function createMockFriendRequests(userId: string): FriendRequestData {
 /** Create and return a mock user data object
  * @param userId ID of the mock user
  * @param index Index of the mock user
- *
+ * @param noFriends If set to true, no friends or friend requests will be created.
  * @returns Mock user data
  */
-export function createMockUserData(userId: string, index: number): UserData {
+export function createMockUserData(userId: string, index: number, noFriends: boolean = false): UserData {
   let mockProfileData: ProfileData = {
     display_name: 'mock-user',
     photo_url: '',
   };
-  // let mockFriendsData: FriendsData | undefined = undefined;
-  let mockFriendRequests: FriendRequestData = createMockFriendRequests(userId);
-  return {
+  const mockUserData: UserData = {
     profile: mockProfileData,
-    // friends: mockFriendsData,
-    friend_requests: mockFriendRequests,
     role: 'mock-user',
     last_online: Date.now(),
     beta_key_id: index + 1,
   };
+  if (!noFriends) {
+    // mockUserData['friends'] = // TODO
+    mockUserData['friend_requests'] = createMockFriendRequests(userId);
+  }
+  return mockUserData;
 }
 
 /** Create and return an object that will mock
  * the firebase database. This object has the
  * type DatabaseProps.
  *
+ * @param noFriends If set to true, no friends or friend requests will be created.
  * @returns A mock object of the firebase database
  */
-export function createMockDatabase(): DatabaseProps {
+export function createMockDatabase(
+  noFriends: boolean = false
+): DatabaseProps {
   const db = initializeEmptyMockDatabase();
   // Beta keys
   db.beta_keys = createMockBetaKeys(10); // beta feature
@@ -344,7 +348,7 @@ export function createMockDatabase(): DatabaseProps {
     db.user_unconfirmed_days[userId] = createMockUnconfirmedDays();
 
     // User data
-    db.users[userId] = createMockUserData(userId, index);
+    db.users[userId] = createMockUserData(userId, index, noFriends);
 
     // Nicknames to user ids
     let nickname = db.users[userId].profile.display_name;
