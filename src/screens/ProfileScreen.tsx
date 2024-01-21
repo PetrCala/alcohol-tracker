@@ -196,8 +196,6 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
   if (!db || !storage || !state.preferences || !state.drinkingSessionData)
     return;
 
-  console.log(state.unfriendModalVisible);
-
   return (
     <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
       <View style={commonStyles.mainHeader}>

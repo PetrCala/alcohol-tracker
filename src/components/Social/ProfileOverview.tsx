@@ -3,7 +3,8 @@ import {ProfileData} from '../../types/database';
 import {useFirebase} from '../../context/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
 import {auth} from '@src/services/firebaseSetup';
-import { profile } from 'console';
+import PermissionHandler from '@src/permissions/PermissionHandler';
+import UploadImageComponent from '@components/UploadImage';
 
 type ProfileOverviewProps = {
   userId: string;
@@ -41,6 +42,9 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
         </TouchableOpacity>
       ) : null}
       <View />
+      <PermissionHandler permissionType="write_photos">
+        <UploadImageComponent storage={storage} />
+      </PermissionHandler>
       <View style={styles.userInfoContainer}>
         <Text
           style={styles.profileNameText}
@@ -54,11 +58,6 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
   );
 };
 
-{
-  /* <PermissionHandler permissionType="write_photos">
-  <UploadImageComponent storage={storage} />
-</PermissionHandler> */
-}
 
 export default ProfileOverview;
 
