@@ -1,9 +1,7 @@
 ### Must do before release
 
-- Finish the user deletion cleanup
 - Finish friend request and friend test suite
 - Finish user profile pictures handling
-- Make sure the update screen is decently handled for both Android and iOS
 - Handle the flashing when opening a user's profile (or app too)
 - Fix the bug when opening a keyboard in search window (disappears)
 

@@ -73,7 +73,6 @@ export const validateAppVersion = (
   minSupportedVersion: string | undefined,
   currentAppVersion: string = version,
 ): ValidationResult => {
-  console.log(minSupportedVersion)
   if (!minSupportedVersion)
     // Allowing to be null allows cleaner code down the line
     return {

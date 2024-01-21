@@ -38,4 +38,9 @@ describe('isNonEmptyObject', () => {
     const nonEmptyArray = [1, 2, 3];
     expect(isNonEmptyObject(nonEmptyArray)).toBeFalsy();
   });
+
+  it('should return false undefined', () => {
+    const nonEmptyArray = undefined;
+    expect(isNonEmptyObject(nonEmptyArray)).toBeFalsy();
+  });
 });
