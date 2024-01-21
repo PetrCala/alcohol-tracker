@@ -11,9 +11,7 @@
 import MenuIcon from '../components/Buttons/MenuIcon';
 import commonStyles from '../styles/commonStyles';
 
-import UploadImageComponent from '../components/UploadImage';
 import {useFirebase} from '../context/FirebaseContext';
-import PermissionHandler from '../permissions/PermissionHandler';
 import {ProfileProps} from '@src/types/screens';
 import {auth} from '../services/firebaseSetup';
 import {StatData, StatsOverview} from '@components/Items/StatOverview';
@@ -274,11 +272,6 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
   );
 };
 
-{
-  /* <PermissionHandler permissionType="write_photos">
-  <UploadImageComponent storage={storage} />
-</PermissionHandler> */
-}
 
 export default ProfileScreen;
 
