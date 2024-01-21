@@ -52,7 +52,7 @@ const CONST = {
   STORE_LINKS: {
     ANDROID:
       'https://play.google.com/store/apps/details?id=com.alcohol_tracker',
-    IOS: 'https://testflight.apple.com/join/DgY9lieL',
+    IOS: 'https://testflight.apple.com/join/DgY9IieL',
   },
 } as const;
 
