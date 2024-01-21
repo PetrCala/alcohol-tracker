@@ -21,7 +21,7 @@ import {readDataOnce} from '../database/baseFunctions';
 import {validateBetaKey} from '../database/beta';
 import {useUserConnection} from '../context/UserConnectionContext';
 import {isValidString, validateAppVersion} from '../utils/validation';
-import {deleteUserInfo, pushNewUserInfo} from '../database/users';
+import {deleteUserData, pushNewUserInfo} from '../database/users';
 import {ProfileData} from 'src/types/database';
 import {handleInvalidInput} from '@src/utils/errorHandling';
 import CONST from '@src/CONST';
@@ -59,7 +59,7 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
     betaKeyId: number,
   ): Promise<void> {
     // Delete the user data from the Realtime Database
-    await deleteUserInfo(db, newUserId, userNickname, betaKeyId);
+    await deleteUserData(db, newUserId, userNickname, betaKeyId);
 
     // Delete the user from Firebase authentication
     if (auth.currentUser) {

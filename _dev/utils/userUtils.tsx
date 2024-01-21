@@ -2,7 +2,7 @@
 // # bun _dev/database/userUtils.tsx [argument]
 
 import { assignAdminRole, listAllAdmins } from "../database/adminUtils";
-import { deleteUserInfo } from '../../src/database/users';
+import { deleteUserData } from '../../src/database/users';
 
 //   await listAllAdmins().then(admins => {
 //     admins.forEach((admin: UserRecord) => {

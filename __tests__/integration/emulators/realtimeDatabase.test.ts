@@ -26,7 +26,7 @@ import {
   teardownRealtimeDatabaseTestEnv,
 } from '../../utils/emulators/realtimeDatabaseSetup';
 import {
-  deleteUserInfo,
+  deleteUserData,
   getDefaultPreferences,
   getDefaultUserData,
   pushNewUserInfo,
@@ -285,7 +285,7 @@ describeWithEmulator('Test deleting data from the database', () => {
 
   beforeEach(async () => {
     await fillDatabaseWithMockData(db);
-    await deleteUserInfo(db, testUserId, testUserDisplayName, 1); // beta feature
+    await deleteUserData(db, testUserId, testUserDisplayName, 1); // beta feature
   });
 
   afterEach(async () => {
@@ -360,7 +360,7 @@ describeWithEmulator('Test friend request functionality', () => {
 
   beforeEach(async () => {
     await fillDatabaseWithMockData(db);
-    await deleteUserInfo(db, testUserId, testUserDisplayName, 1); // beta feature
+    await deleteUserData(db, testUserId, testUserDisplayName, 1); // beta feature
   });
 
   afterEach(async () => {
