@@ -32,6 +32,7 @@ export async function uploadImageToFirebase(
       // console.log('Upload is ' + progress + '% done');
     },
     (error: any) => {
+      // Add a more clever way to handle errors
       Alert.alert('Error uploading image', error.message);
       return;
     },

@@ -6,6 +6,7 @@ import {
 } from 'react-native-image-picker';
 import {FirebaseStorage} from 'firebase/storage';
 import {uploadImageToFirebase} from '../storage/storageUpload';
+import { handleStorageErrors } from '@src/utils/errorHandling';
 
 type UploadImageComponentProps = {
   storage: FirebaseStorage;
@@ -25,6 +26,7 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
 }) => {
   const [imageSource, setImageSource] = useState<string | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+  const [warning, setWarning] = useState<string>('');
 
   const chooseImage = () => {
     // Ask for permissions here
@@ -50,11 +52,13 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
           );
           setImageSource(source.uri); // Set local
         } catch (error: any) {
-          Alert.alert('Error uploading image', error.message);
+          handleStorageErrors(error, 'Error uploading image', error.message, setWarning);
         }
       }
     });
   };
+
+  console.log(warning)
 
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
