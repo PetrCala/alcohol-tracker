@@ -43,10 +43,10 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({children}) => {
   const {db} = useFirebase();
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const updateLocalHooks = (newConfigData: ConfigProps) => {
+  const updateLocalHooks = (newConfigData: ConfigProps | null) => {
     let underMaintenance: boolean =
-      newConfigData.maintenance.maintenance_mode ?? false;
-    let minSupportedVersion = newConfigData.app_settings.min_supported_version;
+      newConfigData?.maintenance.maintenance_mode ?? false;
+    let minSupportedVersion = newConfigData?.app_settings.min_supported_version;
     const versionValidationResult = validateAppVersion(minSupportedVersion);
 
     dispatch({type: 'SET_UNDER_MAINTENANCE', payload: underMaintenance});
