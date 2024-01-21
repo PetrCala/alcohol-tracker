@@ -41,10 +41,6 @@ type SearchResultProps = {
   db: Database;
   userFrom: string;
   requestStatus: FriendRequestStatusState | undefined;
-  // updateRequestStatus: (
-  //   userId: string,
-  //   newStatus: FriendRequestStatusState,
-  // ) => void;
   alreadyAFriend: boolean;
 };
 
@@ -90,10 +86,6 @@ type SendFriendRequestButtonProps = {
   userFrom: string;
   userTo: string;
   requestStatus: FriendRequestStatusState | undefined;
-  // updateRequestStatus: (
-  //   userId: string,
-  //   newStatus: FriendRequestStatusState,
-  // ) => void;
   alreadyAFriend: boolean;
 };
 
@@ -102,17 +94,12 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
   userFrom,
   userTo,
   requestStatus,
-  // updateRequestStatus,
   alreadyAFriend,
 }) => {
   const handleSendRequestPress = async (
     db: Database,
     userFrom: string,
     userTo: string,
-    // updateRequestStatus: (
-    //   userId: string,
-    //   newStatus: FriendRequestStatusState,
-    // ) => void,
   ): Promise<void> => {
     try {
       await sendFriendRequest(db, userFrom, userTo);
@@ -123,17 +110,12 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
       );
       return;
     }
-    // updateRequestStatus(userTo, 'sent');
   };
 
   const handleAcceptFriendRequestPress = async (
     db: Database,
     userFrom: string,
     userTo: string,
-    // updateRequestStatus: (
-    //   userId: string,
-    //   newStatus: FriendRequestStatusState,
-    // ) => void,
   ): Promise<void> => {
     try {
       await acceptFriendRequest(db, userFrom, userTo);
@@ -144,7 +126,6 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
       );
       return;
     }
-    // updateRequestStatus(userTo, 'friend');
   };
 
   return (
@@ -166,7 +147,6 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
               db,
               userFrom,
               userTo,
-              // updateRequestStatus,
             )
           }>
           <Text style={styles.sendFriendRequestText}>
