@@ -91,13 +91,25 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
    * Otherwise return false.
    */
   const validateUserInput = (): boolean => {
-    if (state.email == '' || state.username == '' || state.password == '' || state.betaKey == '') {
+    if (
+      state.email == '' ||
+      state.username == '' ||
+      state.password == '' ||
+      state.betaKey == ''
+    ) {
       // Beta feature
-      dispatch({'type': 'SET_WARNING', 'payload': 'You must fill out all fields first'});
+      dispatch({
+        type: 'SET_WARNING',
+        payload: 'You must fill out all fields first',
+      });
       return false;
     }
     if (!isValidString(state.username)) {
-      dispatch({'type': 'SET_WARNING', 'payload': 'Your nickname can not contain ' + CONST.INVALID_CHARS.join(', ')});
+      dispatch({
+        type: 'SET_WARNING',
+        payload:
+          'Your nickname can not contain ' + CONST.INVALID_CHARS.join(', '),
+      });
       return false;
     }
     return true;
@@ -109,7 +121,14 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
     betaKeyId: number,
   ): Promise<void> {
     // Delete the user data from the Realtime Database
-    await deleteUserData(db, newUserId, userNickname, betaKeyId, undefined, undefined);
+    await deleteUserData(
+      db,
+      newUserId,
+      userNickname,
+      betaKeyId,
+      undefined,
+      undefined,
+    );
 
     // Delete the user from Firebase authentication
     if (auth.currentUser) {
@@ -122,7 +141,11 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
     const currentUser = auth.currentUser;
 
     if (currentUser) {
-      dispatch({'type': 'SET_WARNING', 'payload': 'You are already authenticated. This is a system bug, please reset the application data.'});
+      dispatch({
+        type: 'SET_WARNING',
+        payload:
+          'You are already authenticated. This is a system bug, please reset the application data.',
+      });
       return;
     }
 
@@ -145,22 +168,33 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
     }
 
     if (!minSupportedVersion) {
-      dispatch({'type': 'SET_WARNING', 'payload': 'Failed to fetch the minimum supported version. Please try again later.'});
+      dispatch({
+        type: 'SET_WARNING',
+        payload:
+          'Failed to fetch the minimum supported version. Please try again later.',
+      });
       return;
     }
     if (!validateAppVersion(minSupportedVersion)) {
-      dispatch({'type': 'SET_WARNING', 'payload': 'This version of the application is outdated. Please upgrade to the newest version.'});
+      dispatch({
+        type: 'SET_WARNING',
+        payload:
+          'This version of the application is outdated. Please upgrade to the newest version.',
+      });
       return;
     }
 
     if (!betaKeys) {
-      dispatch({'type': 'SET_WARNING', 'payload': 'Failed to fetch beta keys. Please try again later.'});
+      dispatch({
+        type: 'SET_WARNING',
+        payload: 'Failed to fetch beta keys. Please try again later.',
+      });
       return;
     }
 
     const betaKeyId = validateBetaKey(betaKeys, state.betaKey);
     if (!betaKeyId) {
-      dispatch({'type': 'SET_WARNING', 'payload': 'Invalid beta key.'});
+      dispatch({type: 'SET_WARNING', payload: 'Invalid beta key.'});
       return;
     }
 
@@ -208,12 +242,7 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
       } catch (rollbackError: any) {
         const errorHeading = 'Rollback error';
         const errorMessage = 'Error during sign-up rollback:';
-        handleErrors(
-          rollbackError,
-          errorHeading,
-          errorMessage,
-          dispatch,
-        );
+        handleErrors(rollbackError, errorHeading, errorMessage, dispatch);
       }
       return;
     }
@@ -242,11 +271,7 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
       <KeyboardAvoidingView
         style={styles.mainContainer}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        {state.warning ? (
-          <WarningMessage warningText={state.warning} dispatch={dispatch} />
-        ) : (
-          null
-        )}
+        <WarningMessage warningText={state.warning} dispatch={dispatch} />
         <View style={styles.logoContainer}>
           <Image
             source={require('../../assets/logo/alcohol-tracker-source-icon.png')}
@@ -260,7 +285,9 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
             keyboardType="email-address"
             textContentType="emailAddress"
             value={state.email}
-            onChangeText={text => dispatch({'type': 'UPDATE_EMAIL', 'payload': text})}
+            onChangeText={text =>
+              dispatch({type: 'UPDATE_EMAIL', payload: text})
+            }
             style={styles.input}
           />
           <TextInput
@@ -268,7 +295,9 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
             placeholderTextColor={'#a8a8a8'}
             textContentType="username"
             value={state.username}
-            onChangeText={text => dispatch({'type': 'UPDATE_USERNAME', 'payload': text})}
+            onChangeText={text =>
+              dispatch({type: 'UPDATE_USERNAME', payload: text})
+            }
             style={styles.input}
           />
           <TextInput
@@ -276,7 +305,9 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
             placeholderTextColor={'#a8a8a8'}
             textContentType="password"
             value={state.password}
-            onChangeText={text => dispatch({'type': 'UPDATE_PASSWORD', 'payload': text})}
+            onChangeText={text =>
+              dispatch({type: 'UPDATE_PASSWORD', payload: text})
+            }
             style={styles.input}
             secureTextEntry
           />
@@ -284,7 +315,9 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
             placeholder="Beta key"
             placeholderTextColor={'#a8a8a8'}
             value={state.betaKey}
-            onChangeText={text => dispatch({'type': 'SET_BETA_KEY', 'payload': text})}
+            onChangeText={text =>
+              dispatch({type: 'SET_BETA_KEY', payload: text})
+            }
             style={styles.input}
             secureTextEntry
           />

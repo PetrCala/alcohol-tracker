@@ -144,12 +144,8 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
       <KeyboardAvoidingView
         style={styles.mainContainer}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        {state.warning ? (
-          <WarningMessage warningText={state.warning} dispatch={dispatch} />
-        ) : null}
-        {state.success ? (
-          <SuccessMessage successText={state.success} dispatch={dispatch} />
-        ) : null}
+        <WarningMessage warningText={state.warning} dispatch={dispatch} />
+        <SuccessMessage successText={state.success} dispatch={dispatch} />
         <View style={styles.logoContainer}>
           <Image
             source={require('../../assets/logo/alcohol-tracker-source-icon.png')}

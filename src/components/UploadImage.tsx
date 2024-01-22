@@ -7,6 +7,8 @@ import {
 import {FirebaseStorage} from 'firebase/storage';
 import {uploadImageToFirebase} from '../storage/storageUpload';
 import {handleErrors} from '@src/utils/errorHandling';
+import WarningMessage from './Info/WarningMessage';
+import SuccessMessage from './Info/SuccessMessage';
 
 interface State {
   imageSource: string | null;
@@ -109,6 +111,9 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
       )}
 
       {/* {uploadProgress && <Text>Progress: {uploadProgress}%</Text>} */}
+
+      <WarningMessage warningText={state.warning} dispatch={dispatch} />
+      <SuccessMessage successText={state.success} dispatch={dispatch} />
     </View>
   );
 };

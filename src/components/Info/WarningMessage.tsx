@@ -9,7 +9,7 @@ const WarningMessage: React.FC<WarningMessageProps> = ({
   warningText,
   dispatch,
 }) => {
-  return (
+  return warningText && (
     <View style={[styles.infoContainer, styles.warningInfoContainer]}>
       <TouchableOpacity
         id={'warning'}

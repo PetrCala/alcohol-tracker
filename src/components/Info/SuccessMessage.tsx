@@ -9,7 +9,7 @@ const SuccessMessage: React.FC<SuccessMessageProps> = ({
   successText,
   dispatch,
 }) => {
-  return (
+  return successText && (
     <View style={[styles.infoContainer, styles.successInfoContainer]}>
       <TouchableOpacity
         id={'success'}
@@ -57,4 +57,3 @@ const styles = StyleSheet.create({
     color: 'green',
   },
 });
-
