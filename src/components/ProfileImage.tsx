@@ -80,8 +80,11 @@ function ProfileImage(props: ProfileImageProps) {
     <Image
       source={
         state.imageUrl
-          ? {uri: state.imageUrl}
-          : require('../../assets/temp/user.png')
+          // ? {uri: state.imageUrl}
+          ? {uri: photoURL}
+          // : require('../../assets/temp/user.png')
+          : {uri: photoURL}
+          // Change this so that this points to the correct source
       }
       style={style}
     />

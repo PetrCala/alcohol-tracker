@@ -124,11 +124,11 @@ export type SessionUnitsInputWindowProps = {
 
 export type UploadImagePopupProps = {
   imageSource: string;
+  setImageSource: (newUrl: string) => void;
   visible: boolean;
   transparent: boolean;
   message: string;
   onRequestClose: () => void;
   onSubmit: () => Promise<void>;
   uploadProgress: string | null;
-  onSuccess: () => void;
 };

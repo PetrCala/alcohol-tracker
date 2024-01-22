@@ -12,6 +12,7 @@ import ProfileImage from '@components/ProfileImage';
 import {auth} from '@src/services/firebaseSetup';
 import PermissionHandler from '@src/permissions/PermissionHandler';
 import UploadImageComponent from '@components/UploadImage';
+import { useState } from 'react';
 
 type ProfileOverviewProps = {
   userId: string;
@@ -25,6 +26,8 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
   const user = auth.currentUser;
   const {db, storage} = useFirebase();
 
+  const [imageSource, setImageSource] = useState<string>(profileData.photo_url);
+
   if (!db || !profileData) return;
 
   return (
@@ -33,28 +36,23 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
       <ProfileImage
         storage={storage}
         userId={userId}
-        photoURL={profileData.photo_url}
+        photoURL={imageSource}
         style={styles.profileOverviewImage}
       />
       {user?.uid === userId ? (
-        <TouchableOpacity
-          style={styles.editProfileButton}
-          onPress={() => {
-            console.log('Edit profile button pressed');
-          }}>
-          <Image
-            style={styles.editProfileButtonImage}
-            source={require('../../../assets/icons/camera.png')}
-          />
-        </TouchableOpacity>
+        <View style={styles.editProfileButton}>
+          <PermissionHandler permissionType="write_photos">
+            <UploadImageComponent
+              storage={storage}
+              pathToUpload={`users/${userId}/profile/profile_image.jpg`}
+              imageSource={require('../../../assets/icons/camera.png')}
+              imageStyle={styles.editProfileButtonImage}
+              setImageSource={setImageSource}
+            />
+          </PermissionHandler>
+        </View>
       ) : null}
       <View />
-      <PermissionHandler permissionType="write_photos">
-        <UploadImageComponent
-          storage={storage}
-          pathToUpload={`users/${userId}/profile/profile_image.jpg`}
-        />
-      </PermissionHandler>
       <View style={styles.userInfoContainer}>
         <Text
           style={styles.profileNameText}

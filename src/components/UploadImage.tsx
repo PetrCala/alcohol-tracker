@@ -1,5 +1,13 @@
 ﻿import React, {useReducer, useState} from 'react';
-import {Button, Image, View, Text, Alert} from 'react-native';
+import {
+  Button,
+  Image,
+  View,
+  Text,
+  Alert,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
 import {
   ImageLibraryOptions,
   launchImageLibrary,
@@ -52,19 +60,21 @@ const reducer = (state: State, action: Action): State => {
 type UploadImageComponentProps = {
   storage: FirebaseStorage;
   pathToUpload: string;
-  onSuccess: () => void; // Set the parent component state
+  imageSource: NodeRequire;
+  imageStyle: any;
+  setImageSource: (newUrl: string) => void;
 };
 
 const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
   storage,
   pathToUpload,
-  onSuccess,
+  imageSource,
+  imageStyle,
+  setImageSource,
 }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const handleUpload = async (sourceURI: string | null) => {
-    console.log('starting upload...')
-    console.log("sourceURI:", sourceURI)
     if (!sourceURI) {
       dispatch({type: 'SET_WARNING', payload: 'No image selected'});
       return;
@@ -79,7 +89,7 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
       );
     } catch (error: any) {
       handleErrors(error, 'Error uploading image', error.message, dispatch);
-      dispatch({type: 'SET_IMAGE_SOURCE', payload: null})
+      dispatch({type: 'SET_IMAGE_SOURCE', payload: null});
     } finally {
       dispatch({type: 'SET_UPLOAD_PROGRESS', payload: 0});
       dispatch({type: 'SET_UPLOAD_ONGOING', payload: false});
@@ -102,7 +112,10 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
       } else {
         const source = {uri: response.assets[0].uri};
         if (!source) {
-          dispatch({type: 'SET_WARNING', payload: 'Could not fetch the image. Please try again.'})
+          dispatch({
+            type: 'SET_WARNING',
+            payload: 'Could not fetch the image. Please try again.',
+          });
           return;
         }
         dispatch({type: 'SET_UPLOAD_MODAL_VISIBLE', payload: true});
@@ -112,12 +125,15 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
   };
 
   return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <Button title="Choose Image" onPress={chooseImage} />
+    <View style={styles.container}>
+      <TouchableOpacity onPress={chooseImage} style={styles.button}>
+        <Image source={imageSource as any} style={imageStyle} />
+      </TouchableOpacity>
 
       {state.imageSource && (
         <UploadImagePopup
           imageSource={state.imageSource}
+          setImageSource={setImageSource} 
           visible={state.uploadModalVisible}
           transparent={true}
           message={'Do you want to upload this image?'}
@@ -126,7 +142,6 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
           }
           onSubmit={() => handleUpload(state.imageSource)}
           uploadProgress={state.uploadProgress}
-          onSuccess={onSuccess}
         />
       )}
       <WarningMessage warningText={state.warning} dispatch={dispatch} />
@@ -136,3 +151,19 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
 };
 
 export default UploadImageComponent;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '100%',
+  },
+  button: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '100%',
+  },
+});

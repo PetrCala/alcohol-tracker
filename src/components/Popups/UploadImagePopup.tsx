@@ -20,6 +20,7 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
     onRequestClose,
     onSubmit,
     uploadProgress,
+    setImageSource,
   } = props;
   const [uploadOngoing, setUploadOngoing] = useState<boolean>(false);
   const [uploadFinished, setUploadFinished] = useState<boolean>(false);
@@ -107,6 +108,7 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
     if (uploadProgress && uploadProgress.includes('100')) {
       setUploadFinished(true);
       setUploadOngoing(false);
+      setImageSource(imageSource);
     }
   }, [uploadProgress]);
 
