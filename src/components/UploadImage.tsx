@@ -9,11 +9,12 @@ import {uploadImageToFirebase} from '../storage/storageUpload';
 import {handleErrors} from '@src/utils/errorHandling';
 import WarningMessage from './Info/WarningMessage';
 import SuccessMessage from './Info/SuccessMessage';
+import UploadImagePopup from './Popups/UploadImagePopup';
 
 interface State {
   imageSource: string | null;
+  uploadModalVisible: boolean;
   uploadProgress: number | null;
-  uploadOngoing: boolean;
   warning: string;
   success: string;
 }
@@ -25,8 +26,8 @@ interface Action {
 
 const initialState: State = {
   imageSource: null,
+  uploadModalVisible: false,
   uploadProgress: null,
-  uploadOngoing: false,
   warning: '',
   success: '',
 };
@@ -35,10 +36,10 @@ const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case 'SET_IMAGE_SOURCE':
       return {...state, imageSource: action.payload};
+    case 'SET_UPLOAD_MODAL_VISIBLE':
+      return {...state, uploadModalVisible: action.payload};
     case 'SET_UPLOAD_PROGRESS':
       return {...state, uploadProgress: action.payload};
-    case 'SET_UPLOAD_ONGOING':
-      return {...state, uploadOngoing: action.payload};
     case 'SET_WARNING':
       return {...state, warning: action.payload};
     case 'SET_SUCCESS':
@@ -59,16 +60,19 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
 }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const handleUpload = async (source: {uri: string}) => {
+  const handleUpload = async (sourceURI: string | null) => {
+    if (!sourceURI) {
+      dispatch({type: 'SET_WARNING', payload: 'No image selected'});
+      return;
+    }
     dispatch({type: 'SET_UPLOAD_ONGOING', payload: true});
     try {
       await uploadImageToFirebase(
         storage,
-        source.uri,
+        sourceURI,
         pathToUpload,
         dispatch, // Handle errors inside the function
       );
-      dispatch({type: 'SET_IMAGE_SOURCE', payload: source.uri});
     } catch (error: any) {
       handleErrors(error, 'Error uploading image', error.message, dispatch);
     } finally {
@@ -92,26 +96,38 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
         Alert.alert('ImagePicker Error', response.errorMessage);
       } else {
         const source = {uri: response.assets[0].uri};
-        await handleUpload(source);
+        if (!source) {
+          dispatch({type: 'SET_WARNING', payload: 'Could not fetch the image. Please try again.'})
+          return;
+        }
+        dispatch({type: 'SET_UPLOAD_MODAL_VISIBLE', payload: true});
+        dispatch({type: 'SET_IMAGE_SOURCE', payload: source.uri});
       }
     });
   };
 
-  console.log('Upload progress:', state.uploadProgress);
+  // console.log('Upload progress:', state.uploadProgress);
 
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
       <Button title="Choose Image" onPress={chooseImage} />
 
-      {state.imageSource && (
-        <Image
-          source={{uri: state.imageSource}}
-          style={{width: 100, height: 100}}
-        />
-      )}
 
       {/* {uploadProgress && <Text>Progress: {uploadProgress}%</Text>} */}
 
+      {state.imageSource && (
+        <UploadImagePopup
+          imageSource={state.imageSource}
+          visible={state.uploadModalVisible}
+          transparent={true}
+          message={'Do you want to upload this image?'}
+          onRequestClose={() =>
+            dispatch({type: 'SET_UPLOAD_MODAL_VISIBLE', payload: false})
+          }
+          onSubmit={() => handleUpload(state.imageSource)}
+          uploadProgress={state.uploadProgress}
+        />
+      )}
       <WarningMessage warningText={state.warning} dispatch={dispatch} />
       <SuccessMessage successText={state.success} dispatch={dispatch} />
     </View>
