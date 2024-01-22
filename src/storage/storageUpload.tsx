@@ -6,12 +6,21 @@ import {
   uploadBytesResumable,
 } from 'firebase/storage';
 
+/**
+ * Uploads an image to Firebase storage.
+ * 
+ * @param storage - The Firebase storage instance.
+ * @param uri - The URI of the image to upload.
+ * @param pathToUpload - The path in Firebase storage where the image should be uploaded.
+ * @param dispatch - The dispatch function to update the state.
+ * @returns A promise that resolves when the upload is complete.
+ */
 export async function uploadImageToFirebase(
   storage: FirebaseStorage,
   uri: string,
   pathToUpload: string,
   dispatch: React.Dispatch<any>,
-): Promise<StorageReference | void> {
+): Promise<void> {
   if (!uri) return;
   const storageRef = ref(storage, pathToUpload);
   const response = await fetch(uri); // Fetch the image from the local file system using its URI:
@@ -34,13 +43,13 @@ export async function uploadImageToFirebase(
     },
     (error: any) => {
       handleErrors(error, 'Error uploading image', error.message, dispatch);
-      return;
     },
     () => {
       // On success
       dispatch({type: 'SET_UPLOAD_PROGRESS', payload: 0});
       dispatch({type: 'SET_SUCESS', payload: 'Image uploaded successfully'});
+      return;
     },
   );
-  return uploadTask.snapshot.ref; // Reference to the storage location
+  return;
 }

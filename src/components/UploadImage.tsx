@@ -67,25 +67,21 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
       } else if (response.errorCode) {
         Alert.alert('ImagePicker Error', response.errorMessage);
       } else {
-        try {
-          const source = {uri: response.assets[0].uri};
-          await uploadImageToFirebase(
-            storage,
-            source.uri,
-            pathToUpload,
-            dispatch,
-          );
-          dispatch({type: 'SET_IMAGE_SOURCE', payload: source.uri});
-        } catch (error: any) {
-          handleErrors(error, 'Error uploading image', error.message, dispatch);
-        }
+        const source = {uri: response.assets[0].uri};
+        await uploadImageToFirebase(
+          storage,
+          source.uri,
+          pathToUpload,
+          dispatch, // Handle errors inside the function
+        );
+        dispatch({type: 'SET_IMAGE_SOURCE', payload: source.uri});
       }
     });
   };
 
   console.log('Upload progress:', state.uploadProgress);
-  console.log('Warning:', state.warning);
-  console.log('Success:', state.success);
+  // console.log('Warning:', state.warning);
+  // console.log('Success:', state.success);
 
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
