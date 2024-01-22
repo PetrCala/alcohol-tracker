@@ -106,14 +106,9 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
     });
   };
 
-  // console.log('Upload progress:', state.uploadProgress);
-
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
       <Button title="Choose Image" onPress={chooseImage} />
-
-
-      {/* {uploadProgress && <Text>Progress: {uploadProgress}%</Text>} */}
 
       {state.imageSource && (
         <UploadImagePopup
