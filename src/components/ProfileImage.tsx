@@ -2,11 +2,12 @@
 import {ActivityIndicator, Image} from 'react-native'; // or 'react-native-web' if you're using React for web
 import {FirebaseStorage} from 'firebase/storage';
 import {getProfilePictureURL} from '../storage/storageProfile';
-import {handleStorageErrors} from '../utils/errorHandling';
+import {handleErrors} from '../utils/errorHandling';
 
 interface State {
   imageUrl: string | null;
   loadingImage: boolean;
+  warning: string;
 }
 
 interface Action {
@@ -17,6 +18,7 @@ interface Action {
 const initialState: State = {
   imageUrl: null,
   loadingImage: true,
+  warning: '',
 };
 
 const reducer = (state: State, action: Action) => {
@@ -25,6 +27,8 @@ const reducer = (state: State, action: Action) => {
       return {...state, imageUrl: action.payload};
     case 'SET_LOADING_IMAGE':
       return {...state, loadingImage: action.payload};
+    case 'SET_WARNING':
+      return {...state, warning: action.payload};
     default:
       return state;
   }
@@ -53,7 +57,7 @@ function ProfileImage(props: ProfileImageProps) {
         }
       } catch (error:any) {
         if (mounted) {
-          handleStorageErrors(error, 'Error fetching the image', error.message, () => {});
+          handleErrors(error, 'Error fetching the image', error.message, dispatch);
         }
       } finally {
         if (mounted) {

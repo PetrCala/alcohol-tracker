@@ -1,4 +1,4 @@
-﻿import React, {useState} from 'react';
+﻿import React, {useReducer, useState} from 'react';
 import {Button, Image, View, Text, Alert} from 'react-native';
 import {
   ImageLibraryOptions,
@@ -6,27 +6,52 @@ import {
 } from 'react-native-image-picker';
 import {FirebaseStorage} from 'firebase/storage';
 import {uploadImageToFirebase} from '../storage/storageUpload';
-import { handleStorageErrors } from '@src/utils/errorHandling';
+import {handleErrors} from '@src/utils/errorHandling';
+
+interface State {
+  imageSource: string | null;
+  uploadProgress: number | null;
+  warning: string;
+  success: string;
+}
+
+interface Action {
+  type: string;
+  payload: any;
+}
+
+const initialState: State = {
+  imageSource: null,
+  uploadProgress: null,
+  warning: '',
+  success: '',
+};
+
+const reducer = (state: State, action: Action): State => {
+  switch (action.type) {
+    case 'SET_IMAGE_SOURCE':
+      return {...state, imageSource: action.payload};
+    case 'SET_UPLOAD_PROGRESS':
+      return {...state, uploadProgress: action.payload};
+    case 'SET_WARNING':
+      return {...state, warning: action.payload};
+    case 'SET_SUCCESS':
+      return {...state, success: action.payload};
+    default:
+      return state;
+  }
+};
 
 type UploadImageComponentProps = {
   storage: FirebaseStorage;
   pathToUpload: string;
 };
 
-/** TODO
- *
- * @description
- * This component should always be wrapped in the PermissionHandler that checks
- * for "write_photos" (?) permissions - perhaps validate this inside this component
- *
- */
 const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
   storage,
   pathToUpload,
 }) => {
-  const [imageSource, setImageSource] = useState<string | null>(null);
-  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
-  const [warning, setWarning] = useState<string>('');
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   const chooseImage = () => {
     // Ask for permissions here
@@ -48,25 +73,32 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
             storage,
             source.uri,
             pathToUpload,
-            setUploadProgress,
+            dispatch,
           );
-          setImageSource(source.uri); // Set local
+          dispatch({type: 'SET_IMAGE_SOURCE', payload: source.uri});
         } catch (error: any) {
-        handleStorageErrors(error, 'Error uploading image', error.message, setWarning);
+          handleErrors(error, 'Error uploading image', error.message, dispatch);
         }
       }
     });
   };
 
+  console.log('Upload progress:', state.uploadProgress);
+  console.log('Warning:', state.warning);
+  console.log('Success:', state.success);
+
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
       <Button title="Choose Image" onPress={chooseImage} />
 
-      {imageSource && (
-        <Image source={{uri: imageSource}} style={{width: 100, height: 100}} />
+      {state.imageSource && (
+        <Image
+          source={{uri: state.imageSource}}
+          style={{width: 100, height: 100}}
+        />
       )}
 
-      {uploadProgress && <Text>Progress: {uploadProgress}%</Text>}
+      {/* {uploadProgress && <Text>Progress: {uploadProgress}%</Text>} */}
     </View>
   );
 };

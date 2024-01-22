@@ -1,23 +1,16 @@
-﻿import {
+﻿import {handleErrors} from '@src/utils/errorHandling';
+import {
   FirebaseStorage,
   StorageReference,
-  getDownloadURL,
   ref,
   uploadBytesResumable,
 } from 'firebase/storage';
-import {Alert} from 'react-native';
 
-/**
- * Uploads a file to the storage.
- *
- * @param file - The file to be uploaded.
- * @returns A promise that resolves when the file is successfully uploaded.
- */
 export async function uploadImageToFirebase(
   storage: FirebaseStorage,
   uri: string,
   pathToUpload: string,
-  setUploadProgress: React.Dispatch<React.SetStateAction<number | null>>,
+  dispatch: React.Dispatch<any>,
 ): Promise<StorageReference | void> {
   if (!uri) return;
   const storageRef = ref(storage, pathToUpload);
@@ -29,28 +22,25 @@ export async function uploadImageToFirebase(
     'state_changed',
     (snapshot: any) => {
       const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-      console.log('Upload is ' + progress + '% done');
+      dispatch({type: 'SET_UPLOAD_PROGRESS', payload: progress});
       switch (snapshot.state) {
         case 'paused':
-          console.log('Upload is paused');
+          // console.log('Upload is paused');
           break;
         case 'running':
-          console.log('Upload is running');
+          // console.log('Upload is running');
           break;
       }
-      // console.log('Upload is ' + progress + '% done');
     },
     (error: any) => {
-      // Add a more clever way to handle errors
-      Alert.alert('Error uploading image', error.message);
+      handleErrors(error, 'Error uploading image', error.message, dispatch);
       return;
     },
     () => {
-      // Do something on successful upload completion
-      // getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-      //   console.log('File available at', downloadURL);
-      // });
-    }
+      // On success
+      dispatch({type: 'SET_UPLOAD_PROGRESS', payload: 0});
+      dispatch({type: 'SET_SUCESS', payload: 'Image uploaded successfully'});
+    },
   );
   return uploadTask.snapshot.ref; // Reference to the storage location
 }
