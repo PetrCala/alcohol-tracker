@@ -51,9 +51,9 @@ function ProfileImage(props: ProfileImageProps) {
         if (mounted && url) {
           dispatch({ type: 'SET_IMAGE_URL', payload: url });
         }
-      } catch (error) {
+      } catch (error:any) {
         if (mounted) {
-          handleStorageErrors(error);
+          handleStorageErrors(error, 'Error fetching the image', error.message, () => {});
         }
       } finally {
         if (mounted) {

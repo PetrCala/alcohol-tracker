@@ -52,7 +52,7 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
           );
           setImageSource(source.uri); // Set local
         } catch (error: any) {
-          handleStorageErrors(error, 'Error uploading image', error.message, setWarning);
+        handleStorageErrors(error, 'Error uploading image', error.message, setWarning);
         }
       }
     });

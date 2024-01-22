@@ -241,9 +241,7 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
               }>
               <Text style={styles.manageFriendButtonText}>Manage</Text>
             </TouchableOpacity>
-          ) : (
-            null
-          )}
+          ) : null}
         </View>
         <View style={{height: 200, backgroundColor: '#ffff99'}}></View>
       </ScrollView>
@@ -269,7 +267,6 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
     </View>
   );
 };
-
 
 export default ProfileScreen;
 
