@@ -672,4 +672,12 @@ export function hasDecimalPoint(number: number): boolean {
   return numberAsString.includes('.');
 }
 
-// test, getAdjacentMonths, findongoingsession, aggregatesessionsbydays, month entries to colors (move these maybe to a different location)
+export function toPercentageVerbose(number: number): string {
+  if (number > 1 || number < 0 ){
+    throw new Error("A fraction number must be between 0 and 1.")
+  }
+  const percentage = number * 100;
+  return `${percentage.toFixed(2).toString()}%`
+}
+
+// test, getAdjacentMonths, findongoingsession, aggregatesessionsbydays, month entries to colors (move these maybe to a different location), toPercentageVerbose

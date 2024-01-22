@@ -1,4 +1,5 @@
-﻿import {handleErrors} from '@src/utils/errorHandling';
+﻿import { toPercentageVerbose } from '@src/utils/dataHandling';
+import {handleErrors} from '@src/utils/errorHandling';
 import {
   FirebaseStorage,
   StorageReference,
@@ -30,8 +31,9 @@ export async function uploadImageToFirebase(
   uploadTask.on(
     'state_changed',
     (snapshot: any) => {
-      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-      dispatch({type: 'SET_UPLOAD_PROGRESS', payload: progress});
+      const progressFraction = (snapshot.bytesTransferred / snapshot.totalBytes)
+      const progressVerbose = toPercentageVerbose(progressFraction);
+      dispatch({type: 'SET_UPLOAD_PROGRESS', payload: progressVerbose});
       switch (snapshot.state) {
         case 'paused':
           // console.log('Upload is paused');

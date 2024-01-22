@@ -14,7 +14,7 @@ import UploadImagePopup from './Popups/UploadImagePopup';
 interface State {
   imageSource: string | null;
   uploadModalVisible: boolean;
-  uploadProgress: number | null;
+  uploadProgress: string | null;
   warning: string;
   success: string;
 }
@@ -52,15 +52,19 @@ const reducer = (state: State, action: Action): State => {
 type UploadImageComponentProps = {
   storage: FirebaseStorage;
   pathToUpload: string;
+  onSuccess: () => void; // Set the parent component state
 };
 
 const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
   storage,
   pathToUpload,
+  onSuccess,
 }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const handleUpload = async (sourceURI: string | null) => {
+    console.log('starting upload...')
+    console.log("sourceURI:", sourceURI)
     if (!sourceURI) {
       dispatch({type: 'SET_WARNING', payload: 'No image selected'});
       return;
@@ -75,6 +79,7 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
       );
     } catch (error: any) {
       handleErrors(error, 'Error uploading image', error.message, dispatch);
+      dispatch({type: 'SET_IMAGE_SOURCE', payload: null})
     } finally {
       dispatch({type: 'SET_UPLOAD_PROGRESS', payload: 0});
       dispatch({type: 'SET_UPLOAD_ONGOING', payload: false});
@@ -121,6 +126,7 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
           }
           onSubmit={() => handleUpload(state.imageSource)}
           uploadProgress={state.uploadProgress}
+          onSuccess={onSuccess}
         />
       )}
       <WarningMessage warningText={state.warning} dispatch={dispatch} />

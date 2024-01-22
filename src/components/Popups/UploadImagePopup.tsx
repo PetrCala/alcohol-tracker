@@ -1,6 +1,7 @@
 import {UploadImagePopupProps} from '@src/types/components';
 import {useEffect, useState} from 'react';
 import {
+  Alert,
   Dimensions,
   Image,
   Modal,
@@ -24,6 +25,16 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
   const [uploadFinished, setUploadFinished] = useState<boolean>(false);
 
   const ConfirmationWindow: React.FC = () => {
+
+    const startUpload = async () => {
+      setUploadOngoing(true);
+      try {
+        await onSubmit();
+      } catch (error:any) {
+        Alert.alert("Upload failed", "Failed to upload the image" + error.message) // Rewrite in the future
+      };
+    };
+
     return (
       <>
         <Text style={styles.modalText}>{message}</Text>
@@ -36,10 +47,7 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.button}
-            onPress={() => {
-              setUploadOngoing(true);
-              //   onSubmit;
-            }}>
+            onPress={startUpload}>
             <Text style={styles.buttonText}>Yes</Text>
           </TouchableOpacity>
         </View>
@@ -48,30 +56,59 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
   };
 
   const UploadWindow: React.FC = () => {
-    const handleCancelUpload = () => {
-      console.log('cancelling upload...');
-      setUploadOngoing(false);
-      onRequestClose();
-    };
+    // const handleCancelUpload = () => {
+
+    //   setUploadOngoing(false);
+    //   onRequestClose();
+    // };
 
     return (
       <>
-        <Text style={styles.modalText}>Upload in progress...</Text>
-        {/* {imageSource && (
-          <Image source={{uri: imageSource}} style={styles.image} />
-        )} */}
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={handleCancelUpload}>
-            <Text style={styles.buttonText}>Cancel</Text>
+        <Text style={styles.modalText}>Upload progress:</Text>
+        <Text style={styles.uploadText}>{uploadProgress}</Text>
+        {/* <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={[styles.button, styles.cancelButton]}
+            onPress={handleCancelUpload}>
+            <Text style={styles.buttonText}>Cancel upload</Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
       </>
     );
   };
 
   const UploadFinishedWindow: React.FC = () => {
-    return null;
+    const handleUploadFinishConfirm = () => {
+      setUploadFinished(false);
+      onRequestClose();
+    };
+
+    return (
+      <>
+        <Text style={styles.modalText}>Upload finished!</Text>
+        <View style={styles.uploadFinishedContainer}>
+          <Image
+            source={require('../../../assets/icons/check.png')}
+            style={styles.uploadFinishedImage}
+          />
+        </View>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleUploadFinishConfirm}>
+              <Text style={styles.buttonText}>Great!</Text>
+           </TouchableOpacity>
+        </View>
+      </>
+    );
   };
+
+  useEffect(() => {
+    if (uploadProgress && uploadProgress.includes('100')) {
+      setUploadFinished(true);
+      setUploadOngoing(false);
+    }
+  }, [uploadProgress]);
 
   return (
     <Modal
@@ -125,6 +162,13 @@ const styles = StyleSheet.create({
     height: imageSize * 0.5,
     marginBottom: 10,
   },
+  uploadText: {
+    marginBottom: 15,
+    textAlign: 'center',
+    fontSize: 23,
+    fontWeight: 'bold',
+    color: 'black',
+  },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -143,6 +187,22 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  cancelButton: {
+    width: 140, // For cancel upload text
+  },
+  uploadFinishedContainer: {
+    backgroundColor: 'green',
+    borderRadius: 20,
+    padding: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  uploadFinishedImage: {
+    width: 30,
+    height: 30,
+    tintColor: 'white',
   },
 });
 

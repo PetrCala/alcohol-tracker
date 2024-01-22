@@ -128,6 +128,7 @@ export type UploadImagePopupProps = {
   transparent: boolean;
   message: string;
   onRequestClose: () => void;
-  onSubmit: () => void;
-  uploadProgress: number | null;
+  onSubmit: () => Promise<void>;
+  uploadProgress: string | null;
+  onSuccess: () => void;
 };
