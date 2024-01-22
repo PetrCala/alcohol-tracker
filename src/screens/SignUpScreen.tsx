@@ -25,6 +25,7 @@ import {deleteUserData, pushNewUserInfo} from '../database/users';
 import {ProfileData} from 'src/types/database';
 import {handleErrors} from '@src/utils/errorHandling';
 import CONST from '@src/CONST';
+import WarningMessage from '@components/Info/WarningMessage';
 
 interface State {
   email: string;
@@ -242,16 +243,7 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
         style={styles.mainContainer}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         {state.warning ? (
-          <View style={styles.warningContainer}>
-            <TouchableOpacity
-              id={'warning'}
-              testID={'warning'}
-              accessibilityRole="button"
-              onPress={() => dispatch({'type': 'SET_WARNING', 'payload': ''})}
-              style={styles.warningButton}>
-              <Text style={styles.warning}>{state.warning}</Text>
-            </TouchableOpacity>
-          </View>
+          <WarningMessage warningText={state.warning} dispatch={dispatch} />
         ) : (
           null
         )}

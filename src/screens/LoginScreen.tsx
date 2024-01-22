@@ -22,6 +22,8 @@ import {useUserConnection} from '../context/UserConnectionContext';
 import InputTextPopup from '../components/Popups/InputTextPopup';
 import {handleErrors} from '../utils/errorHandling';
 import CONST from '@src/CONST';
+import WarningMessage from '@components/Info/WarningMessage';
+import SuccessMessage from '@components/Info/SuccessMessage';
 
 interface State {
   email: string;
@@ -121,7 +123,7 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
     // reset the user password
     try {
       await sendPasswordResetEmail(auth, mail);
-      dispatch({type: 'SET_SUCCESS', payload: 'Password reset link sent'})
+      dispatch({type: 'SET_SUCCESS', payload: 'Password reset link sent'});
     } catch (error: any) {
       const errorHeading = 'Error When Resetting Password';
       const errorMessage = 'There was an error when resetting your password: ';
@@ -143,32 +145,10 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
         style={styles.mainContainer}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         {state.warning ? (
-          <View style={[styles.infoContainer, styles.warningInfoContainer]}>
-            <TouchableOpacity
-              id={'warning'}
-              testID={'warning'}
-              accessibilityRole="button"
-              onPress={() => dispatch({type: 'SET_WARNING', payload: ''})}
-              style={styles.infoButton}>
-              <Text style={[styles.infoText, styles.warningInfoText]}>
-                {state.warning}
-              </Text>
-            </TouchableOpacity>
-          </View>
+          <WarningMessage warningText={state.warning} dispatch={dispatch} />
         ) : null}
         {state.success ? (
-          <View style={[styles.infoContainer, styles.successInfoContainer]}>
-            <TouchableOpacity
-              id={'success'}
-              testID={'success'}
-              accessibilityRole="button"
-              onPress={() => dispatch({type: 'SET_SUCCESS', payload: ''})}
-              style={styles.infoButton}>
-              <Text style={[styles.infoText, styles.successInfoText]}>
-                {state.success}
-              </Text>
-            </TouchableOpacity>
-          </View>
+          <SuccessMessage successText={state.success} dispatch={dispatch} />
         ) : null}
         <View style={styles.logoContainer}>
           <Image
@@ -183,7 +163,9 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
             keyboardType="email-address"
             textContentType="emailAddress"
             value={state.email}
-            onChangeText={text => dispatch({type: 'UPDATE_EMAIL', payload: text})}
+            onChangeText={text =>
+              dispatch({type: 'UPDATE_EMAIL', payload: text})
+            }
             style={styles.input}
           />
           <TextInput
@@ -191,7 +173,9 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
             placeholderTextColor={'#a8a8a8'}
             textContentType="password"
             value={state.password}
-            onChangeText={text => dispatch({type: 'UPDATE_PASSWORD', payload: text})}
+            onChangeText={text =>
+              dispatch({type: 'UPDATE_PASSWORD', payload: text})
+            }
             style={styles.input}
             secureTextEntry
           />
@@ -199,7 +183,12 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
             <Text style={styles.loginButtonText}>Login</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => dispatch({type: 'SET_RESET_PASSWORD_MODAL_VISIBLE', payload: true})}
+            onPress={() =>
+              dispatch({
+                type: 'SET_RESET_PASSWORD_MODAL_VISIBLE',
+                payload: true,
+              })
+            }
             style={styles.forgottenPasswordButton}>
             <Text style={styles.forgottenPasswordText}>
               Forgot your password?
@@ -222,7 +211,12 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
             message={'E-mail to send the reset link to:'}
             confirmationMessage={'Send link'}
             placeholder={'E-mail'}
-            onRequestClose={() => dispatch({type: 'SET_RESET_PASSWORD_MODAL_VISIBLE', payload: false})}
+            onRequestClose={() =>
+              dispatch({
+                type: 'SET_RESET_PASSWORD_MODAL_VISIBLE',
+                payload: false,
+              })
+            }
             onSubmit={mail => handleResetPassword(mail)}
             keyboardType="email-address"
             textContentType="emailAddress"
