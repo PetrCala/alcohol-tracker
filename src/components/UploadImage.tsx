@@ -58,8 +58,6 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
     });
   };
 
-  console.log(warning)
-
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
       <Button title="Choose Image" onPress={chooseImage} />
