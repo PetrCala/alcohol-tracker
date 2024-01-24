@@ -1,6 +1,12 @@
 ﻿// SinglePermissionHandler.js
 import React, {useState, useEffect} from 'react';
-import {Button, Alert, Platform} from 'react-native';
+import {
+  Button,
+  Alert,
+  Platform,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
 import {
   check,
   PERMISSIONS,
@@ -85,9 +91,9 @@ const PermissionHandler: React.FC<PermissionHandlerProps> = ({
       {permissionGranted ? (
         children
       ) : (
-        <Button
-          title={`Request ${permissionType} permission`}
+        <TouchableOpacity
           onPress={requestPermission}
+          style={styles.permissionButton}
         />
       )}
     </>
@@ -95,3 +101,16 @@ const PermissionHandler: React.FC<PermissionHandlerProps> = ({
 };
 
 export default PermissionHandler;
+
+const styles = StyleSheet.create({
+  permissionButton: {
+    alignSelf: 'center',
+    flex: 1,
+    // backgroundColor: 'pink',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '100%',
+    // zIndex: 0,
+  },
+});

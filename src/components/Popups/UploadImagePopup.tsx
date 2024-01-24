@@ -14,26 +14,26 @@ import {
 const UploadImagePopup = (props: UploadImagePopupProps) => {
   const {
     imageSource,
+    setImageSource,
     visible,
     transparent,
     message,
     onRequestClose,
     onSubmit,
-    uploadProgress,
-    setImageSource,
+    parentState,
   } = props;
-  const [uploadOngoing, setUploadOngoing] = useState<boolean>(false);
   const [uploadFinished, setUploadFinished] = useState<boolean>(false);
 
   const ConfirmationWindow: React.FC = () => {
-
     const startUpload = async () => {
-      setUploadOngoing(true);
       try {
         await onSubmit();
-      } catch (error:any) {
-        Alert.alert("Upload failed", "Failed to upload the image" + error.message) // Rewrite in the future
-      };
+      } catch (error: any) {
+        Alert.alert(
+          'Upload failed',
+          'Failed to upload the image' + error.message,
+        ); // Rewrite in the future
+      }
     };
 
     return (
@@ -46,12 +46,19 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
           <TouchableOpacity style={styles.button} onPress={onRequestClose}>
             <Text style={styles.buttonText}>No</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={startUpload}>
+          <TouchableOpacity style={styles.button} onPress={startUpload}>
             <Text style={styles.buttonText}>Yes</Text>
           </TouchableOpacity>
         </View>
+      </>
+    );
+  };
+
+  const CompressionWindow: React.FC = () => {
+    return (
+      <>
+        <Text style={styles.modalText}>Compressing image...</Text>
+        <Text style={styles.uploadText}>{parentState.compressionProgress}</Text>
       </>
     );
   };
@@ -65,8 +72,8 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
 
     return (
       <>
-        <Text style={styles.modalText}>Upload progress:</Text>
-        <Text style={styles.uploadText}>{uploadProgress}</Text>
+        <Text style={styles.modalText}>Uploading image...</Text>
+        <Text style={styles.uploadText}>{parentState.uploadProgress}</Text>
         {/* <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={[styles.button, styles.cancelButton]}
@@ -97,20 +104,19 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
           <TouchableOpacity
             style={styles.button}
             onPress={handleUploadFinishConfirm}>
-              <Text style={styles.buttonText}>Great!</Text>
-           </TouchableOpacity>
+            <Text style={styles.buttonText}>Great!</Text>
+          </TouchableOpacity>
         </View>
       </>
     );
   };
 
   useEffect(() => {
-    if (uploadProgress && uploadProgress.includes('100')) {
+    if (parentState.uploadProgress && parentState.uploadProgress.includes('100')) {
       setUploadFinished(true);
-      setUploadOngoing(false);
       setImageSource(imageSource);
     }
-  }, [uploadProgress]);
+  }, [parentState.uploadProgress]);
 
   return (
     <Modal
@@ -122,7 +128,9 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
         <View style={styles.modalView}>
           {uploadFinished ? (
             <UploadFinishedWindow />
-          ) : uploadOngoing ? (
+          ) : parentState.compressionOngoing ? (
+            <CompressionWindow />
+          ) : parentState.uploadOngoing ? (
             <UploadWindow />
           ) : (
             <ConfirmationWindow />

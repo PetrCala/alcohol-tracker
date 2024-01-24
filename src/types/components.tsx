@@ -11,6 +11,7 @@ import {
 import {StackNavigationProp} from '@react-navigation/stack';
 import {AppStackParamList} from './screens';
 import {Calendar} from 'react-native-calendars';
+import { GeneralAction } from './states';
 
 // FeedbackPopup props
 
@@ -122,6 +123,17 @@ export type SessionUnitsInputWindowProps = {
 
 // Upload image
 
+export interface UploadImageState {
+  imageSource: string | null;
+  uploadModalVisible: boolean;
+  uploadOngoing: boolean;
+  uploadProgress: string | null;
+  compressionOngoing: boolean;
+  compressionProgress: number | null;
+  warning: string;
+  success: string;
+}
+
 export type UploadImagePopupProps = {
   imageSource: string;
   setImageSource: (newUrl: string) => void;
@@ -130,5 +142,6 @@ export type UploadImagePopupProps = {
   message: string;
   onRequestClose: () => void;
   onSubmit: () => Promise<void>;
-  uploadProgress: string | null;
+  parentState: UploadImageState;
+  // parentDispatch: React.Dispatch<GeneralAction>;
 };
