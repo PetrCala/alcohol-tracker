@@ -1,9 +1,7 @@
 import {
   Dimensions,
-  Image,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import {ProfileData} from '../../types/database';

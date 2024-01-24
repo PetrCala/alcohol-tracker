@@ -124,9 +124,7 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
   };
 
   const chooseImage = () => {
-    console.log('choosing an image...')
-    // Ask for permissions here
-
+    // Assume granted permissions
     const options: ImageLibraryOptions = {
       mediaType: 'photo',
       includeBase64: false,
