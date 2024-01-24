@@ -1,5 +1,4 @@
 ﻿import {ReactNode, useEffect, useMemo, useReducer} from 'react';
-import {Alert} from 'react-native';
 
 import ForceUpdateScreen from '../screens/ForceUpdateScreen';
 import {useUserConnection} from './UserConnectionContext';
@@ -56,63 +55,27 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({children}) => {
     });
   };
 
-  // Monitor config
   useEffect(() => {
     if (!db) return;
-
-    let isMounted = true;
-    dispatch({type: 'SET_IS_LOADING', payload: true}); // Set loading true initially
-
     const configRef = `config`;
-
-    const processConfigData = async (configData: ConfigProps) => {
-      if (!isMounted) return;
-
-      if (!isEqual(configData, state.config)) {
-        dispatch({type: 'SET_CONFIG', payload: configData});
-        updateLocalHooks(configData);
-      }
-    };
-
-    const stopListening = listenForDataChanges(
+    let stopListening = listenForDataChanges(
       db,
       configRef,
-      async (data: ConfigProps) => {
-        await processConfigData(data);
-        if (isMounted) {
-          dispatch({type: 'SET_IS_LOADING', payload: false}); // Set loading false after processing
-        }
+      (data: ConfigProps) => {
+        dispatch({type: 'SET_IS_LOADING', payload: true});
+        dispatch({type: 'SET_CONFIG', payload: data});
+        updateLocalHooks(data);
+        dispatch({type: 'SET_IS_LOADING', payload: false});
       },
     );
 
-    // Initial fetch and process
-    readDataOnce(db, configRef)
-      .then(processConfigData)
-      .catch(error => {
-        Alert.alert(
-          'Error fetching data',
-          'Could not fetch config data: ' + error.message,
-        );
-        // Handle initial load error
-        if (isMounted) {
-          dispatch({type: 'SET_IS_LOADING', payload: false});
-        }
-      });
-
-    return () => {
-      isMounted = false;
-      stopListening(); // Stop listening to data changes when the component unmounts
-    };
+    return () => stopListening();
   }, []);
-
-  useMemo(() => {
-    updateLocalHooks(state.config); // Explicit for live propagation
-  }, [state.config]);
 
   // Monitor user preferences
   if (!isOnline) return <UserOffline />;
-  if (state.underMaintenance) return <UnderMaintenance config={state.config} />;
   if (state.isLoading) return <LoadingData />;
+  if (state.underMaintenance) return <UnderMaintenance config={state.config} />;
   if (!state.versionValid) return <ForceUpdateScreen />;
 
   return <>{children}</>;
