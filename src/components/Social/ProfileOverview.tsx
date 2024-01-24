@@ -10,7 +10,7 @@ import {ProfileData} from '../../types/database';
 import {useFirebase} from '../../context/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
 import {auth} from '@src/services/firebaseSetup';
-import PermissionHandler from '@src/permissions/PermissionHandler';
+import PermissionHandler from '@src/permissions/PermissionsHandler';
 import UploadImageComponent from '@components/UploadImage';
 import { useState } from 'react';
 
@@ -41,7 +41,11 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
       />
       {user?.uid === userId ? (
         <View style={styles.editProfileButton}>
-          <PermissionHandler permissionType="write_photos">
+          <PermissionHandler 
+            permissionType="read_photos"
+            imageSource={require('../../../assets/icons/camera.png')}
+            imageStyle={styles.editProfileButtonImage}
+          >
             <UploadImageComponent
               storage={storage}
               pathToUpload={`users/${userId}/profile/profile_image.jpg`}
@@ -107,12 +111,13 @@ const styles = StyleSheet.create({
     borderRadius: profileImageSize / 3,
     borderColor: 'black',
     borderWidth: 2,
-    zIndex: 1,
+    zIndex: 0,
   },
   editProfileButtonImage: {
     height: profileImageSize / 6,
     width: profileImageSize / 6,
     tintColor: 'gray',
+    zIndex: 4,
   },
   userInfoContainer: {
     flexDirection: 'column',

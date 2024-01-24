@@ -7,6 +7,7 @@ import {
   Alert,
   TouchableOpacity,
   StyleSheet,
+  ImageSourcePropType,
 } from 'react-native';
 import {
   ImageLibraryOptions,
@@ -60,7 +61,7 @@ const reducer = (state: UploadImageState, action: GeneralAction): UploadImageSta
 type UploadImageComponentProps = {
   storage: FirebaseStorage;
   pathToUpload: string;
-  imageSource: NodeRequire;
+  imageSource: ImageSourcePropType;
   imageStyle: any;
   setImageSource: (newUrl: string) => void;
 };
@@ -123,6 +124,7 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
   };
 
   const chooseImage = () => {
+    console.log('choosing an image...')
     // Ask for permissions here
 
     const options: ImageLibraryOptions = {
@@ -185,13 +187,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     height: '100%',
-    backgroundColor: 'blue',
-    zIndex: 1,
+    zIndex: 2,
   },
   button: {
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
     height: '100%',
+    zIndex: 3,
   },
 });
