@@ -21,7 +21,6 @@ import UploadImagePopup from './Popups/UploadImagePopup';
 import {UploadImageState} from '@src/types/components';
 import {GeneralAction} from '@src/types/states';
 import {checkPermission} from '@src/permissions/checkPermission';
-import {request} from 'http';
 import {requestPermission} from '@src/permissions/requestPermission';
 
 const initialState: UploadImageState = {
@@ -82,17 +81,15 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
     dispatch({type: 'COMPRESSION_ONGOING', payload: true});
 
     try {
-      await CompressorImage.compress(sourceURI, {
+      const compressedURI = await CompressorImage.compress(sourceURI, {
         progressDivider: 10,
         downloadProgress: progress => {
+          // console.log(progress)
           dispatch({type: 'COMPRESSION_PROGRESS', payload: progress});
         },
       });
-
-      dispatch({type: 'COMPRESSION_ONGOING', payload: false});
-      return sourceURI; // Return the compressed image URI
+      return compressedURI; // Return the compressed image URI
     } catch (error: any) {
-      dispatch({type: 'COMPRESSION_ONGOING', payload: false});
       handleErrors(
         error,
         'Error during image compression',
@@ -104,15 +101,13 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
   };
 
   const uploadImage = async (sourceURI: string) => {
-    dispatch({type: 'SET_UPLOAD_ONGOING', payload: true});
-
     try {
+      dispatch({type: 'SET_UPLOAD_ONGOING', payload: true});
       await uploadImageToFirebase(storage, sourceURI, pathToUpload, dispatch);
     } catch (error: any) {
+      dispatch({type: 'SET_UPLOAD_ONGOING', payload: false}); // Otherwise dispatch upon success in child component
       handleErrors(error, 'Error uploading image', error.message, dispatch);
       throw error; // Rethrow the error to be handled by the caller
-    } finally {
-      dispatch({type: 'SET_UPLOAD_ONGOING', payload: false});
     }
   };
 
@@ -169,9 +164,19 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
         }
       }
       await chooseImage(); // Call automatically
+      resetIndicators(); // Clean the indicators for upload
     } catch (error: any) {
       Alert.alert('Error choosing image', error.message);
     }
+  };
+
+  const resetIndicators = () => {
+    dispatch({type: 'COMPRESSION_ONGOING', payload: false});
+    dispatch({type: 'COMPRESSION_PROGRESS', payload: null});
+    dispatch({type: 'SET_UPLOAD_ONGOING', payload: false});
+    dispatch({type: 'SET_UPLOAD_PROGRESS', payload: null});
+    dispatch({type: 'SET_WARNING', payload: ''});
+    dispatch({type: 'SET_SUCCESS', payload: ''});
   };
 
   return (
@@ -192,6 +197,7 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
           }
           onSubmit={() => handleUpload(state.imageSource)}
           parentState={state}
+          parentDispatch={dispatch}
         />
       )}
       <WarningMessage warningText={state.warning} dispatch={dispatch} />

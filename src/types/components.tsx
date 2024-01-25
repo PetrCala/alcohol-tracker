@@ -143,5 +143,5 @@ export type UploadImagePopupProps = {
   onRequestClose: () => void;
   onSubmit: () => Promise<void>;
   parentState: UploadImageState;
-  // parentDispatch: React.Dispatch<GeneralAction>;
+  parentDispatch: React.Dispatch<GeneralAction>;
 };

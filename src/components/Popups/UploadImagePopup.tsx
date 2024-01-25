@@ -21,6 +21,7 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
     onRequestClose,
     onSubmit,
     parentState,
+    parentDispatch,
   } = props;
   const [uploadFinished, setUploadFinished] = useState<boolean>(false);
 
@@ -55,6 +56,7 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
   };
 
   const CompressionWindow: React.FC = () => {
+    console.log(parentState.compressionProgress);
     return (
       <>
         <Text style={styles.modalText}>Compressing image...</Text>
@@ -112,9 +114,13 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
   };
 
   useEffect(() => {
-    if (parentState.uploadProgress && parentState.uploadProgress.includes('100')) {
+    if (
+      parentState.uploadProgress &&
+      parentState.uploadProgress.includes('100')
+    ) {
       setUploadFinished(true);
       setImageSource(imageSource);
+      parentDispatch({type: 'SET_UPLOAD_ONGOING', payload: false});
     }
   }, [parentState.uploadProgress]);
 
@@ -128,10 +134,10 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
         <View style={styles.modalView}>
           {uploadFinished ? (
             <UploadFinishedWindow />
-          ) : parentState.compressionOngoing ? (
-            <CompressionWindow />
           ) : parentState.uploadOngoing ? (
             <UploadWindow />
+          ) : parentState.compressionOngoing ? (
+            <CompressionWindow />
           ) : (
             <ConfirmationWindow />
           )}
