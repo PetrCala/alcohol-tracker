@@ -55,16 +55,6 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
     );
   };
 
-  const CompressionWindow: React.FC = () => {
-    console.log(parentState.compressionProgress);
-    return (
-      <>
-        <Text style={styles.modalText}>Compressing image...</Text>
-        <Text style={styles.uploadText}>{parentState.compressionProgress}</Text>
-      </>
-    );
-  };
-
   const UploadWindow: React.FC = () => {
     // const handleCancelUpload = () => {
 
@@ -136,8 +126,6 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
             <UploadFinishedWindow />
           ) : parentState.uploadOngoing ? (
             <UploadWindow />
-          ) : parentState.compressionOngoing ? (
-            <CompressionWindow />
           ) : (
             <ConfirmationWindow />
           )}

@@ -128,8 +128,6 @@ export interface UploadImageState {
   uploadModalVisible: boolean;
   uploadOngoing: boolean;
   uploadProgress: string | null;
-  compressionOngoing: boolean;
-  compressionProgress: number | null;
   warning: string;
   success: string;
 }
