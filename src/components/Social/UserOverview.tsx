@@ -25,7 +25,6 @@ const UserOverview: React.FC<UserOverviewProps> = ({
           key={userId + '-profile-icon'}
           storage={storage}
           userId={userId}
-          photoURL={profileData.photo_url}
           style={styles.userOverviewImage}
         />
         <View key={userId + 'info'} style={styles.userInfoContainer}>

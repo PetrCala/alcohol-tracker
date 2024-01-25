@@ -28,8 +28,8 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
       <ProfileImage
         storage={storage}
         userId={userId}
-        photoURL={imageSource}
         style={styles.profileOverviewImage}
+        localImageSource={imageSource}
       />
       {user?.uid === userId ? (
         <View style={styles.editProfileButton}>
