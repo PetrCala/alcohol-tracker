@@ -14,6 +14,7 @@ import {
   Permission,
   Rationale,
   Linking,
+  AlertButton,
 } from 'react-native';
 import {
   check,
@@ -97,8 +98,8 @@ const PermissionHandler: React.FC<PermissionHandlerProps> = ({
         buttonNegative: 'Cancel',
         buttonPositive: 'OK',
       };
-      const granted = await PermissionsAndroid.request(permission, rationale);
-      return granted === PermissionsAndroid.RESULTS.GRANTED;
+      const status = await PermissionsAndroid.request(permission, rationale);
+      return status; // status === PermissionsAndroid.RESULTS.GRANTED;
     } catch (err: any) {
       // console.warn(err);
       return false;
@@ -107,44 +108,55 @@ const PermissionHandler: React.FC<PermissionHandlerProps> = ({
 
   const requestPermissionIOS = async (permission: RNPermission) => {
     const status = await request(permission);
-    return status === RESULTS.GRANTED;
+    return status; // status === RESULTS.GRANTED;
   };
 
   const requestNotificationsPermissionIOS = async () => {
     const response = await requestNotifications(['alert', 'sound']);
-    return response.status === RESULTS.GRANTED;
+    return response; // response.status === RESULTS.GRANTED;
   };
 
   const requestPermission = async () => {
     const permission: Permission | RNPermission =
       permissionsMap[permissionType][Platform.OS];
 
-    let isGranted = false;
+    let status: any;
     if (Platform.OS === 'android') {
-      isGranted = await requestPermissionAndroid(permission as Permission);
+      status = await requestPermissionAndroid(permission as Permission);
     } else if (Platform.OS === 'ios' && permissionType === 'notifications') {
-      isGranted = await requestNotificationsPermissionIOS();
+      status = await requestNotificationsPermissionIOS();
     } else if (Platform.OS === 'ios') {
-      isGranted = await requestPermissionIOS(permission as RNPermission);
+      status = await requestPermissionIOS(permission as RNPermission);
     }
+
+    const isGranted = [
+      PermissionsAndroid.RESULTS.GRANTED,
+      RESULTS.GRANTED,
+    ].includes(status);
 
     if (!isGranted) {
-      Alert.alert(
-        'Permission Denied',
-        'You need to grant permission for this functionality to work.',
-      );
+      const restrictedAccess = [
+        PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN,
+        RESULTS.BLOCKED,
+        RESULTS.LIMITED,
+        RESULTS.UNAVAILABLE,
+      ].includes(status);
+      if (restrictedAccess) {
+        Alert.alert(
+          'Storage Permission Required',
+          'App needs access to your storage to read files. Please go to app settings and grant permission.',
+          [
+            {text: 'Cancel', style: 'cancel'},
+            {text: 'Open Settings', onPress: openSettings},
+          ],
+        );
+      } else {
+        Alert.alert(
+          'Permission Denied',
+          'You need to grant permission for this functionality to work.',
+        );
+      }
     }
-
-    // How to handle never ask again on permission result
-    // if (result === (PermissionsAndroid).RESULTS.NEVER_ASK_AGAIN)
-    // Alert.alert(
-    //   'Storage Permission Required',
-    //   'App needs access to your storage to read files. Please go to app settings and grant permission.',
-    //   [
-    //     {text: 'Cancel', style: 'cancel'},
-    //     {text: 'Open Settings', onPress: openSettings},
-    //   ],
-    // );
 
     return isGranted;
   };
