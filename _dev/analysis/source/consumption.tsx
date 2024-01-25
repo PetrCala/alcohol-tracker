@@ -1,6 +1,5 @@
-import {getSingleMonthDrinkingSessions} from '../../src/utils/dataHandling';
-import {DatabaseProps, DrinkingSessionData} from '../../src/types/database';
-import {getDatabase} from '../database/databaseUtils';
+import {getSingleMonthDrinkingSessions} from '../../../src/utils/dataHandling';
+import {DatabaseProps, DrinkingSessionData} from '../../../src/types/database';
 
 export const getUserOverallConsumption = (db: DatabaseProps): void => {
   const allUserIds = Object.keys(db.users);
@@ -63,8 +62,3 @@ export const getUserOverallConsumption = (db: DatabaseProps): void => {
       (totalSessionCount / allUserIds.length).toFixed(2),
   );
 };
-
-const db = getDatabase('production');
-if (!db) throw new Error('Could not get database');
-getUserOverallConsumption(db);
-process.exit(0);
