@@ -1,5 +1,11 @@
 ﻿import {Database, ref, get, update} from 'firebase/database';
 import {ProfileData} from '../types/database';
+import {
+  FirebaseStorage,
+  ref as StorageRef,
+  getDownloadURL,
+} from 'firebase/storage';
+import {Auth, User, updateProfile} from 'firebase/auth';
 
 /**
  * Fetch the profile details of a given user.
@@ -54,4 +60,28 @@ export async function setProfilePictureURL(
   var updates: {[key: string]: string} = {};
   updates[`users/${userId}/profile/photo_url`] = photoURL;
   await update(ref(db), updates);
+}
+
+/**
+ * Updates the profile information of a user.
+ * 
+ * @param pathToUpload - The path to the file to upload.
+ * @param user - The user object.
+ * @param auth - The authentication object.
+ * @param db - The database object.
+ * @param storage - The Firebase storage object.
+ * @returns A promise that resolves when the profile information is updated.
+ */
+export async function updateProfileInfo(
+  pathToUpload: string,
+  user: User | null,
+  auth: Auth,
+  db: Database,
+  storage: FirebaseStorage,
+): Promise<void> {
+  if (!user || !auth.currentUser) return;
+  const downloadURL = await getDownloadURL(StorageRef(storage, pathToUpload));
+  await setProfilePictureURL(db, user.uid, downloadURL);
+  await updateProfile(auth.currentUser, {photoURL: downloadURL});
+  return;
 }

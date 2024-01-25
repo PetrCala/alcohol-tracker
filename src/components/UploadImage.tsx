@@ -12,7 +12,7 @@ import {
   launchImageLibrary,
 } from 'react-native-image-picker';
 import {Image as CompressorImage} from 'react-native-compressor';
-import {FirebaseStorage} from 'firebase/storage';
+import {FirebaseStorage, getDownloadURL, ref} from 'firebase/storage';
 import {uploadImageToFirebase} from '../storage/storageUpload';
 import {handleErrors} from '@src/utils/errorHandling';
 import WarningMessage from './Info/WarningMessage';
@@ -22,6 +22,11 @@ import {UploadImageState} from '@src/types/components';
 import {GeneralAction} from '@src/types/states';
 import {checkPermission} from '@src/permissions/checkPermission';
 import {requestPermission} from '@src/permissions/requestPermission';
+import {setProfilePictureURL, updateProfileInfo} from '@database/profile';
+import {auth} from '@src/services/firebaseSetup';
+import {useFirebase} from '@src/context/FirebaseContext';
+import {updateProfile} from 'firebase/auth';
+import path from 'path';
 
 const initialState: UploadImageState = {
   imageSource: null,
@@ -55,20 +60,22 @@ const reducer = (
 };
 
 type UploadImageComponentProps = {
-  storage: FirebaseStorage;
   pathToUpload: string;
   imageSource: ImageSourcePropType;
   imageStyle: any;
   setImageSource: (newUrl: string) => void;
+  isProfilePicture: boolean;
 };
 
 const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
-  storage,
   pathToUpload,
   imageSource,
   imageStyle,
   setImageSource,
+  isProfilePicture = false,
 }) => {
+  const user = auth.currentUser;
+  const {db, storage} = useFirebase();
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const uploadImage = async (sourceURI: string) => {
@@ -90,6 +97,9 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
       dispatch({type: 'SET_UPLOAD_ONGOING', payload: true});
       const compressedURI = await CompressorImage.compress(sourceURI);
       await uploadImage(compressedURI);
+      if (isProfilePicture) {
+        await updateProfileInfo(pathToUpload, user, auth, db, storage);
+      }
     } catch (error: any) {
       dispatch({type: 'SET_UPLOAD_ONGOING', payload: false}); // Otherwise dispatch upon success in child component
       dispatch({type: 'SET_IMAGE_SOURCE', payload: null});
