@@ -1,9 +1,7 @@
-﻿import React, {useReducer, useState} from 'react';
+﻿import React, {useReducer} from 'react';
 import {
-  Button,
   Image,
   View,
-  Text,
   Alert,
   TouchableOpacity,
   StyleSheet,
