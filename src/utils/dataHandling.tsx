@@ -14,7 +14,7 @@ import {
 } from '@components/Calendar';
 import {DateObject, CalendarColors, DayMarking} from '@src/types/components';
 import {getRandomInt} from './choice';
-import CONST from '@src/CONST';
+import CONST from '../CONST';
 
 export function formatDate(date: Date): string {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
