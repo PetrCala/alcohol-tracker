@@ -1,5 +1,5 @@
 ﻿import {PERMISSIONS} from 'react-native-permissions';
-import { PermissionEntry, PermissionKey } from './PermissionsUtils';
+import { PermissionEntry, PermissionKey } from './permissionsUtils';
 
 export const permissionsMap: Record<PermissionKey, PermissionEntry> = {
   camera: {

@@ -13,16 +13,18 @@ import {
   ImageLibraryOptions,
   launchImageLibrary,
 } from 'react-native-image-picker';
-import { Image as CompressorImage } from 'react-native-compressor';
+import {Image as CompressorImage} from 'react-native-compressor';
 import {FirebaseStorage} from 'firebase/storage';
 import {uploadImageToFirebase} from '../storage/storageUpload';
 import {handleErrors} from '@src/utils/errorHandling';
 import WarningMessage from './Info/WarningMessage';
 import SuccessMessage from './Info/SuccessMessage';
 import UploadImagePopup from './Popups/UploadImagePopup';
-import { UploadImageState } from '@src/types/components';
-import { GeneralAction } from '@src/types/states';
-
+import {UploadImageState} from '@src/types/components';
+import {GeneralAction} from '@src/types/states';
+import {checkPermission} from '@src/permissions/checkPermission';
+import {request} from 'http';
+import {requestPermission} from '@src/permissions/requestPermission';
 
 const initialState: UploadImageState = {
   imageSource: null,
@@ -35,7 +37,10 @@ const initialState: UploadImageState = {
   success: '',
 };
 
-const reducer = (state: UploadImageState, action: GeneralAction): UploadImageState => {
+const reducer = (
+  state: UploadImageState,
+  action: GeneralAction,
+): UploadImageState => {
   switch (action.type) {
     case 'SET_IMAGE_SOURCE':
       return {...state, imageSource: action.payload};
@@ -76,27 +81,32 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const compressImage = async (sourceURI: string): Promise<string> => {
-    dispatch({ type: 'COMPRESSION_ONGOING', payload: true });
+    dispatch({type: 'COMPRESSION_ONGOING', payload: true});
 
     try {
       await CompressorImage.compress(sourceURI, {
         progressDivider: 10,
-        downloadProgress: (progress) => {
-          dispatch({ type: 'COMPRESSION_PROGRESS', payload: progress });
+        downloadProgress: progress => {
+          dispatch({type: 'COMPRESSION_PROGRESS', payload: progress});
         },
       });
 
-      dispatch({ type: 'COMPRESSION_ONGOING', payload: false });
+      dispatch({type: 'COMPRESSION_ONGOING', payload: false});
       return sourceURI; // Return the compressed image URI
     } catch (error: any) {
-      dispatch({ type: 'COMPRESSION_ONGOING', payload: false });
-      handleErrors(error, 'Error during image compression', error.message, dispatch);
+      dispatch({type: 'COMPRESSION_ONGOING', payload: false});
+      handleErrors(
+        error,
+        'Error during image compression',
+        error.message,
+        dispatch,
+      );
       throw error; // Rethrow the error to be handled by the caller
     }
   };
 
   const uploadImage = async (sourceURI: string) => {
-    dispatch({ type: 'SET_UPLOAD_ONGOING', payload: true });
+    dispatch({type: 'SET_UPLOAD_ONGOING', payload: true});
 
     try {
       await uploadImageToFirebase(storage, sourceURI, pathToUpload, dispatch);
@@ -104,32 +114,32 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
       handleErrors(error, 'Error uploading image', error.message, dispatch);
       throw error; // Rethrow the error to be handled by the caller
     } finally {
-      dispatch({ type: 'SET_UPLOAD_ONGOING', payload: false });
+      dispatch({type: 'SET_UPLOAD_ONGOING', payload: false});
     }
   };
 
   const handleUpload = async (sourceURI: string | null) => {
     if (!sourceURI) {
-      dispatch({ type: 'SET_WARNING', payload: 'No image selected' });
+      dispatch({type: 'SET_WARNING', payload: 'No image selected'});
       return;
     }
-    
+
     try {
       const compressedURI = await compressImage(sourceURI);
       await uploadImage(compressedURI);
-    } catch (error:any) {
-      dispatch({ type: 'SET_IMAGE_SOURCE', payload: null });
+    } catch (error: any) {
+      dispatch({type: 'SET_IMAGE_SOURCE', payload: null});
       handleErrors(error, 'Error uploading image', error.message, dispatch);
     }
   };
 
-  const chooseImage = () => {
-    // Assume granted permissions
+  const chooseImage = async () => {
     const options: ImageLibraryOptions = {
       mediaType: 'photo',
       includeBase64: false,
     };
 
+    // Assume granted permissions
     launchImageLibrary(options, async (response: any) => {
       if (response.didCancel) {
         // console.log('User cancelled image picker');
@@ -150,16 +160,32 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
     });
   };
 
+  const handleChooseImagePress = async () => {
+    try {
+      // Check for permissions
+      const permissionAllowed = await checkPermission('read_photos');
+      if (!permissionAllowed) {
+        const permissionGranted = await requestPermission('read_photos');
+        if (!permissionGranted) {
+          return; // Permission denied - info message automatically handled by requestPermission
+        }
+      }
+      await chooseImage(); // Call automatically
+    } catch (error: any) {
+      Alert.alert('Error choosing image', error.message);
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={chooseImage} style={styles.button}>
+      <TouchableOpacity onPress={handleChooseImagePress} style={styles.button}>
         <Image source={imageSource as any} style={imageStyle} />
       </TouchableOpacity>
 
       {state.imageSource && (
         <UploadImagePopup
           imageSource={state.imageSource}
-          setImageSource={setImageSource} 
+          setImageSource={setImageSource}
           visible={state.uploadModalVisible}
           transparent={true}
           message={'Do you want to upload this image?'}

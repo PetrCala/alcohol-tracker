@@ -1,16 +1,10 @@
-import {
-  Dimensions,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import {Dimensions, StyleSheet, Text, View} from 'react-native';
 import {ProfileData} from '../../types/database';
 import {useFirebase} from '../../context/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
 import {auth} from '@src/services/firebaseSetup';
-import PermissionHandler from '@src/permissions/PermissionsHandler';
 import UploadImageComponent from '@components/UploadImage';
-import { useState } from 'react';
+import {useState} from 'react';
 
 type ProfileOverviewProps = {
   userId: string;
@@ -39,19 +33,13 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
       />
       {user?.uid === userId ? (
         <View style={styles.editProfileButton}>
-          <PermissionHandler 
-            permissionType="read_photos"
+          <UploadImageComponent
+            storage={storage}
+            pathToUpload={`users/${userId}/profile/profile_image.jpg`}
             imageSource={require('../../../assets/icons/camera.png')}
             imageStyle={styles.editProfileButtonImage}
-          >
-            <UploadImageComponent
-              storage={storage}
-              pathToUpload={`users/${userId}/profile/profile_image.jpg`}
-              imageSource={require('../../../assets/icons/camera.png')}
-              imageStyle={styles.editProfileButtonImage}
-              setImageSource={setImageSource}
-            />
-          </PermissionHandler>
+            setImageSource={setImageSource}
+          />
         </View>
       ) : null}
       <View />

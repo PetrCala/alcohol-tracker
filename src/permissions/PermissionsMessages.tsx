@@ -1,4 +1,4 @@
-import { PermissionKey } from "./PermissionsUtils";
+import { PermissionKey } from "./permissionsUtils";
 
 export const permissionsMessages: Record<PermissionKey, Record<string, string>> = {
   camera: {
