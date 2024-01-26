@@ -1,4 +1,4 @@
-﻿import React, {useState} from 'react';
+﻿import React, {useMemo, useState} from 'react';
 import {
   Dimensions,
   Image,
@@ -7,14 +7,19 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import MenuIcon from '../components/Buttons/MenuIcon';
-import {getDatabaseData} from '../context/DatabaseDataContext';
-import commonStyles from '../styles/commonStyles';
-import {FriendRequestData, FriendRequestDisplayData, FriendsData, UserData} from '../types/database';
+import MenuIcon from '../../components/Buttons/MenuIcon';
+import {getDatabaseData} from '../../context/DatabaseDataContext';
+import commonStyles from '../../styles/commonStyles';
+import {
+  FriendRequestData,
+  FriendRequestDisplayData,
+  FriendsData,
+  UserData,
+} from '../../types/database';
 import {TabView, SceneMap} from 'react-native-tab-view';
-import FriendListScreen from './Social/FriendListScreen';
-import FriendRequestScreen from './Social/FriendRequestScreen';
-import SearchScreen from './Social/SearchScreen';
+import FriendListScreen from './FriendListScreen';
+import FriendRequestScreen from './FriendRequestScreen';
+import SearchScreen from './SearchScreen';
 
 type SocialFooterButtonProps = {
   index: number;
@@ -77,7 +82,13 @@ const SocialScreen = (props: SocialProps) => {
     if (!userData) return null;
     switch (route.key) {
       case 'friendList':
-        return <FriendListScreen friends={friends} setIndex={setIndex} />;
+        return (
+          <FriendListScreen
+            navigation={navigation}
+            friends={friends}
+            setIndex={setIndex}
+          />
+        );
       case 'friendSearch':
         return (
           <SearchScreen
@@ -104,20 +115,26 @@ const SocialScreen = (props: SocialProps) => {
   const footerButtons = [
     {
       index: 0,
-      source: require('../../assets/icons/friend_list.png'),
+      source: require('../../../assets/icons/friend_list.png'),
       label: 'Friend List',
     },
     {
       index: 1,
-      source: require('../../assets/icons/search.png'),
+      source: require('../../../assets/icons/search.png'),
       label: 'Search',
     },
     {
       index: 2,
-      source: require('../../assets/icons/add_user.png'),
+      source: require('../../../assets/icons/add_user.png'),
       label: 'Friend Requests',
     },
   ];
+
+  useMemo(() => {
+    if (!userData) return;
+    setFriendRequests(userData.friend_requests);
+    setFriends(userData.friends);
+  }, [userData]);
 
   if (!userData) return null;
 
@@ -126,13 +143,13 @@ const SocialScreen = (props: SocialProps) => {
       <View style={commonStyles.mainHeader}>
         <MenuIcon
           iconId="escape-statistics-screen"
-          iconSource={require('../../assets/icons/arrow_back.png')}
+          iconSource={require('../../../assets/icons/arrow_back.png')}
           containerStyle={styles.backArrowContainer}
           iconStyle={styles.backArrow}
           onPress={() => navigation.goBack()}
         />
         <View style={styles.menuContainer}>
-          {/* <Text style={styles.sectionText}>Friends</Text> */}
+          <Text style={styles.sectionText}>Friends</Text>
         </View>
       </View>
       <TabView

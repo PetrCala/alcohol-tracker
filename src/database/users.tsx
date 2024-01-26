@@ -4,8 +4,9 @@ import {
   UserData,
   ProfileData,
   NicknameToIdData,
+  FriendsData,
+  FriendRequestData,
 } from '../types/database';
-import {appInBeta} from '../utils/static';
 import {
   EmailAuthProvider,
   User,
@@ -14,6 +15,7 @@ import {
 } from 'firebase/auth';
 import {Alert} from 'react-native';
 import {cleanStringForFirebaseKey} from '../utils/strings';
+import CONST from '@src/CONST';
 
 export const getDefaultPreferences = (): PreferencesData => {
   return {
@@ -37,7 +39,7 @@ export const getDefaultUserData = (
   profileData: ProfileData,
   betaKeyId: number, // Beta feature
 ): UserData => {
-  let userRole = appInBeta ? 'beta_user' : 'user'; // Beta feature
+  let userRole = CONST.APP_IN_BETA ? 'beta_user' : 'user'; // Beta feature
   let timestampNow = new Date().getTime();
   return {
     profile: profileData,
@@ -50,8 +52,8 @@ export const getDefaultUserData = (
 /**
  * Check if a user exists in the realtime database.
  *
- * @param {Database} db - The database object against which to validate this conditio
- * @param {string} userId - User ID of the user to check.
+ * @param db - The database object against which to validate this conditio
+ * @param userId - User ID of the user to check.
  * @returns {Promise<boolean>} - Returns true if the user exists, false otherwise.
  */
 export async function userExistsInDatabase(
@@ -66,10 +68,10 @@ export async function userExistsInDatabase(
 /** In the database, create base info for a user. This will
  * be stored under the "users" object in the database.
  *
- * @param {Database} db The firebase realtime database object
- * @param {string} userId The user ID
- * @param {ProfileData} profileData Profile data of the user to create
- * @param {number} betaKeyId Beta key // Beta feature
+ * @param db The firebase realtime database object
+ * @param userId The user ID
+ * @param profileData Profile data of the user to create
+ * @param betaKeyId Beta key // Beta feature
  * @returns {Promise<void>}
  */
 export async function pushNewUserInfo(
@@ -100,17 +102,19 @@ export async function pushNewUserInfo(
  * user information, drinking sessions, etc.
  *
  *
- * @param {Database} db The firebase database object
- * @param {string} userId The user ID
- * @param {string} userNickname The user nickname
- * @param {string} betaKeyId Beta key // Beta feature
+ * @param db The firebase database object;
+ * @param userId The user ID
+ * @param userNickname The user nickname
+ * @param betaKeyId Beta key // Beta feature
  * @returns {Promise<void>}
  */
-export async function deleteUserInfo(
+export async function deleteUserData(
   db: Database,
   userId: string,
   userNickname: string,
   betaKeyId: number | undefined, // Beta feature
+  friends: FriendsData | undefined,
+  friendRequests: FriendRequestData | undefined,
 ): Promise<void> {
   const nicknameKey = cleanStringForFirebaseKey(userNickname);
   let updates: {[key: string]: null | false} = {};
@@ -121,14 +125,23 @@ export async function deleteUserInfo(
   updates[`user_preferences/${userId}`] = null;
   updates[`user_drinking_sessions/${userId}`] = null;
   updates[`user_unconfirmed_days/${userId}`] = null;
+  // Data stored in other users' nodes
+  if (friends) {
+    Object.keys(friends).forEach((friendId) => {
+      updates[`users/${friendId}/friends/${userId}`] = null;
+    });
+  };
+  if (friendRequests) {
+    Object.keys(friendRequests).forEach((friendRequestId) => {
+      updates[`users/${friendRequestId}/friend_requests/${userId}`] = null;
+    });
+  };
   // Beta feature
   if (betaKeyId) {
     // Reset the beta key to a usable form
     updates[`beta_keys/${betaKeyId}/in_usage`] = false;
     updates[`beta_keys/${betaKeyId}/user_id`] = null;
   }
-  // await cleanFriendRequests(db, userId);
-  // await cleanFriends(db, userId);
   await update(ref(db), updates);
 }
 
@@ -136,9 +149,9 @@ export async function deleteUserInfo(
  * Update the timestamp denoting when a user has lsat
  * been seen online
  *
- * @param {Database} db Firebase database object.
- * @param {string} userId ID of the user to update the data for
- * @return {Promise<void>}
+ * @param db Firebase database object.
+ * @param userId ID of the user to update the data for
+ * @return
  */
 export async function updateUserLastOnline(
   db: Database,

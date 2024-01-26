@@ -10,17 +10,14 @@
   View,
 } from 'react-native';
 import {
-  FriendRequestStatus,
-  UserData,
   NicknameToIdData,
   FriendRequestStatusState,
-  FriendRequestData,
   FriendsData,
   FriendRequestDisplayData,
   ProfileDisplayData,
   ProfileData,
 } from '../../types/database';
-import {useEffect, useState} from 'react';
+import {useCallback, useEffect, useMemo, useReducer, useState} from 'react';
 import {useFirebase} from '../../context/FirebaseContext';
 import {acceptFriendRequest, sendFriendRequest} from '../../database/friends';
 import {auth} from '../../services/firebaseSetup';
@@ -28,7 +25,6 @@ import {isNonEmptyObject} from '../../utils/validation';
 import LoadingData from '../../components/LoadingData';
 import {Database} from 'firebase/database';
 import {searchDbByNickname} from '../../database/search';
-import {set} from 'lodash';
 import {fetchUserProfiles} from '@database/profile';
 
 const statusToTextMap: {[key in FriendRequestStatusState]: string} = {
@@ -45,10 +41,6 @@ type SearchResultProps = {
   db: Database;
   userFrom: string;
   requestStatus: FriendRequestStatusState | undefined;
-  updateRequestStatus: (
-    userId: string,
-    newStatus: FriendRequestStatusState,
-  ) => void;
   alreadyAFriend: boolean;
 };
 
@@ -58,7 +50,6 @@ const SearchResult: React.FC<SearchResultProps> = ({
   db,
   userFrom,
   requestStatus,
-  updateRequestStatus,
   alreadyAFriend,
 }) => {
   return (
@@ -84,7 +75,6 @@ const SearchResult: React.FC<SearchResultProps> = ({
         userFrom={userFrom}
         userTo={userId}
         requestStatus={requestStatus}
-        updateRequestStatus={updateRequestStatus}
         alreadyAFriend={alreadyAFriend}
       />
     </View>
@@ -96,10 +86,6 @@ type SendFriendRequestButtonProps = {
   userFrom: string;
   userTo: string;
   requestStatus: FriendRequestStatusState | undefined;
-  updateRequestStatus: (
-    userId: string,
-    newStatus: FriendRequestStatusState,
-  ) => void;
   alreadyAFriend: boolean;
 };
 
@@ -108,17 +94,12 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
   userFrom,
   userTo,
   requestStatus,
-  updateRequestStatus,
   alreadyAFriend,
 }) => {
   const handleSendRequestPress = async (
     db: Database,
     userFrom: string,
     userTo: string,
-    updateRequestStatus: (
-      userId: string,
-      newStatus: FriendRequestStatusState,
-    ) => void,
   ): Promise<void> => {
     try {
       await sendFriendRequest(db, userFrom, userTo);
@@ -129,17 +110,12 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
       );
       return;
     }
-    updateRequestStatus(userTo, 'sent');
   };
 
   const handleAcceptFriendRequestPress = async (
     db: Database,
     userFrom: string,
     userTo: string,
-    updateRequestStatus: (
-      userId: string,
-      newStatus: FriendRequestStatusState,
-    ) => void,
   ): Promise<void> => {
     try {
       await acceptFriendRequest(db, userFrom, userTo);
@@ -150,7 +126,6 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
       );
       return;
     }
-    updateRequestStatus(userTo, 'friend');
   };
 
   return (
@@ -167,14 +142,7 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
       ) : requestStatus === 'received' ? (
         <TouchableOpacity
           style={styles.acceptFriendRequestButton}
-          onPress={() =>
-            handleAcceptFriendRequestPress(
-              db,
-              userFrom,
-              userTo,
-              updateRequestStatus,
-            )
-          }>
+          onPress={() => handleAcceptFriendRequestPress(db, userFrom, userTo)}>
           <Text style={styles.sendFriendRequestText}>
             {statusToTextMap.received}
           </Text>
@@ -182,9 +150,7 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
       ) : (
         <TouchableOpacity
           style={styles.sendFriendRequestButton}
-          onPress={() =>
-            handleSendRequestPress(db, userFrom, userTo, updateRequestStatus)
-          }>
+          onPress={() => handleSendRequestPress(db, userFrom, userTo)}>
           <Text style={styles.sendFriendRequestText}>
             {statusToTextMap.undefined}
           </Text>
@@ -192,6 +158,48 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
       )}
     </View>
   );
+};
+
+interface State {
+  searchText: string;
+  searchResultData: NicknameToIdData;
+  searching: boolean;
+  requestStatuses: {[userId: string]: FriendRequestStatusState | undefined};
+  noUsersFound: boolean;
+  displayData: ProfileDisplayData;
+}
+
+interface Action {
+  type: string;
+  payload: any;
+}
+
+const initialState: State = {
+  searchText: '',
+  searchResultData: {},
+  searching: false,
+  requestStatuses: {},
+  noUsersFound: false,
+  displayData: {},
+};
+
+const reducer = (state: State, action: Action): State => {
+  switch (action.type) {
+    case 'SET_SEARCH_TEXT':
+      return {...state, searchText: action.payload};
+    case 'SET_SEARCH_RESULT_DATA':
+      return {...state, searchResultData: action.payload};
+    case 'SET_SEARCHING':
+      return {...state, searching: action.payload};
+    case 'SET_REQUEST_STATUSES':
+      return {...state, requestStatuses: action.payload};
+    case 'SET_NO_USERS_FOUND':
+      return {...state, noUsersFound: action.payload};
+    case 'SET_DISPLAY_DATA':
+      return {...state, displayData: action.payload};
+    default:
+      return state;
+  }
 };
 
 type ScreenProps = {
@@ -204,34 +212,22 @@ type ScreenProps = {
 };
 
 const SearchScreen = (props: ScreenProps) => {
-  const {friendRequests, setFriendRequests, friends, setFriends} = props;
+  const {friendRequests, friends} = props;
   const {db} = useFirebase();
   const user = auth.currentUser;
-  const [searchText, setSearchText] = useState<string>('');
-  const [searchResultData, setSearchResultData] = useState<NicknameToIdData>(
-    {},
-  );
-  const [searching, setSearching] = useState<boolean>(false);
-  const [requestStatuses, setRequestStatuses] = useState<{
-    [userId: string]: FriendRequestStatusState | undefined;
-  }>({});
-  const [noUsersFound, setNoUsersFound] = useState<boolean>(false);
-  const [displayData, setDisplayData] = useState<ProfileDisplayData>({});
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   const doSearch = async (db: Database, nickname: string): Promise<void> => {
     if (!db || !nickname) return; // Input a value first alert
-    setSearching(true);
-    setNoUsersFound(false);
+    let searchResultData: NicknameToIdData = {};
+    dispatch({type: 'SET_SEARCHING', payload: true});
     try {
-      const newSearchResults = await searchDbByNickname(db, nickname); // Cleaned within the function
-      if (newSearchResults) {
-        setSearchResultData(newSearchResults);
-        updateSearchedUsersStatus(newSearchResults);
-        const newDisplayData = await fetchDisplayData();
-        setDisplayData(newDisplayData);
-      } else {
-        setNoUsersFound(true);
+      const newResults = await searchDbByNickname(db, nickname); // Nicknam cleaned within the function
+      if (newResults) {
+        searchResultData = newResults;
       }
+      await updateHooksBasedOnSearchResults(searchResultData);
+      dispatch({type: 'SET_SEARCH_RESULT_DATA', payload: searchResultData});
     } catch (error: any) {
       Alert.alert(
         'Database serach failed',
@@ -239,70 +235,66 @@ const SearchScreen = (props: ScreenProps) => {
       );
       return;
     } finally {
-      setSearching(false);
+      dispatch({type: 'SET_SEARCHING', payload: false});
     }
   };
 
-  const fetchDisplayData = async (): Promise<ProfileDisplayData> => {
-    if (!db || !isNonEmptyObject(searchResultData)) {
-      return {};
-    }
+  const updateDisplayData = async (
+    searchResultData: NicknameToIdData,
+  ): Promise<void> => {
     const newDisplayData: ProfileDisplayData = {};
-    const dataIds = Object.keys(searchResultData);
-    const userProfiles: ProfileData[] = await fetchUserProfiles(db, dataIds);
-    dataIds.forEach((id, index) => {
-      newDisplayData[id] = userProfiles[index];
-    });
-    return newDisplayData;
+    if (db || isNonEmptyObject(searchResultData)) {
+      const dataIds = Object.keys(searchResultData);
+      const userProfiles: ProfileData[] = await fetchUserProfiles(db, dataIds);
+      dataIds.forEach((id, index) => {
+        newDisplayData[id] = userProfiles[index];
+      });
+    }
+    dispatch({type: 'SET_DISPLAY_DATA', payload: newDisplayData});
   };
 
   /** Having a list of users returned by the search,
    * determine the request status for each and update
-   * the UsersStatus hook.
+   * the RequestStatuses hook.
    */
-  const updateSearchedUsersStatus = (searchData: NicknameToIdData): void => {
-    let newUsersStatus: {
-      [userId: string]: FriendRequestStatusState | undefined;
+  const updateRequestStatuses = (
+    searchResultData: NicknameToIdData = state.searchResultData,
+  ): void => {
+    let newRequestStatuses: {
+      [userId: string]: FriendRequestStatusState;
     } = {};
-    if (isNonEmptyObject(searchData)) {
-      Object.keys(searchData).map(
-        userId =>
-          (newUsersStatus[userId] = friendRequests
-            ? friendRequests[userId]
-            : undefined),
-      );
+    if (isNonEmptyObject(searchResultData)) {
+      Object.keys(searchResultData).forEach(userId => {
+        if (friendRequests && friendRequests[userId]) {
+          newRequestStatuses[userId] = friendRequests[userId];
+        }
+      });
     }
-    setRequestStatuses(newUsersStatus);
+    dispatch({type: 'SET_REQUEST_STATUSES', payload: newRequestStatuses});
   };
 
-  /** Using a user ID and a user status, update the request status
-   * for just this user. This is used for updating screen
-   * status when handling single requests.
-   */
-  const updateRequestStatus = (
-    userId: string,
-    newStatus: FriendRequestStatusState,
-  ) => {
-    // Update the request status on this tab
-    setRequestStatuses(prevStatuses => ({
-      ...prevStatuses,
-      [userId]: newStatus,
-    }));
-    // Update the parent hook that shows on other tabs too
-    setFriendRequests(prevRequests => ({
-      ...prevRequests,
-      [userId]: newStatus,
-    }));
+  const updateHooksBasedOnSearchResults = async (
+    searchResults: NicknameToIdData,
+  ): Promise<void> => {
+    updateRequestStatuses(searchResults); // Perhaps redundant
+    await updateDisplayData(searchResults); // Assuming this returns a Promise
+    const noUsersFound = !isNonEmptyObject(searchResults);
+    dispatch({type: 'SET_NO_USERS_FOUND', payload: noUsersFound});
   };
 
   const resetSearch = () => {
     // Reset all values displayed on screen
-    setSearchText('');
-    setSearchResultData({});
-    setRequestStatuses({});
-    setDisplayData({});
-    setNoUsersFound(false);
+    dispatch({type: 'SET_SEARCHING', payload: false});
+    dispatch({type: 'SET_SEARCH_TEXT', payload: ''});
+    dispatch({type: 'SET_SEARCH_RESULT_DATA', payload: {}});
+    dispatch({type: 'SET_REQUEST_STATUSES', payload: {}});
+    dispatch({type: 'SET_DISPLAY_DATA', payload: {}});
+    dispatch({type: 'SET_NO_USERS_FOUND', payload: false});
   };
+
+  useMemo(() => {
+    updateRequestStatuses();
+  }, [friendRequests]); // When updated in the database, not locally
 
   if (!db || !user) return;
 
@@ -315,13 +307,15 @@ const SearchScreen = (props: ScreenProps) => {
         <View style={styles.textContainer}>
           <TextInput
             placeholder="Nickname"
-            value={searchText}
-            onChangeText={text => setSearchText(text)}
+            value={state.searchText}
+            onChangeText={text =>
+              dispatch({type: 'SET_SEARCH_TEXT', payload: text})
+            }
             style={styles.searchText}
             keyboardType="default"
             textContentType="nickname"
           />
-          {searchText !== '' ? (
+          {state.searchText !== '' ? (
             <TouchableOpacity
               onPress={() => resetSearch()}
               style={styles.searchTextResetContainer}>
@@ -330,40 +324,35 @@ const SearchScreen = (props: ScreenProps) => {
                 source={require('../../../assets/icons/thin_x.png')}
               />
             </TouchableOpacity>
-          ) : (
-            <></>
-          )}
+          ) : null}
         </View>
         <View style={styles.searchButtonContainer}>
           <TouchableOpacity
             style={styles.searchButton}
-            onPress={() => doSearch(db, searchText)}>
+            onPress={() => doSearch(db, state.searchText)}>
             <Text style={styles.searchButtonText}>Search</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.searchResultsContainer}>
-          {searching ? (
+          {state.searching ? (
             <LoadingData style={styles.loadingData} />
-          ) : isNonEmptyObject(searchResultData) ? (
-            Object.keys(searchResultData).map((userId, index) => (
+          ) : isNonEmptyObject(state.searchResultData) ? (
+            Object.keys(state.searchResultData).map(userId => (
               <SearchResult
                 key={userId + '-container'}
                 userId={userId}
-                displayData={displayData}
+                displayData={state.displayData}
                 db={db}
                 userFrom={user.uid}
-                requestStatus={requestStatuses[userId]}
-                updateRequestStatus={updateRequestStatus}
+                requestStatus={state.requestStatuses[userId]}
                 alreadyAFriend={friends ? friends[userId] : false}
               />
             ))
-          ) : noUsersFound ? (
+          ) : state.noUsersFound ? (
             <Text style={styles.noUsersFoundText}>
               There are no users with this nickname.
             </Text>
-          ) : (
-            <></>
-          )}
+          ) : null}
         </View>
       </ScrollView>
     </View>
@@ -500,8 +489,8 @@ const styles = StyleSheet.create({
   },
   userNicknameText: {
     color: 'black',
-    fontSize: 18,
-    fontWeight: '400',
+    fontSize: 16,
+    fontWeight: '500',
     marginLeft: 10,
   },
   userProfileImage: {

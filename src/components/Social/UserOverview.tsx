@@ -1,13 +1,12 @@
-﻿import {auth} from '../services/firebaseSetup';
 import {StyleSheet, Text, View} from 'react-native';
-import {useFirebase} from '../context/FirebaseContext';
-import {ProfileData} from '../types/database';
-import ProfileImage from './ProfileImage';
+import {ProfileData} from '../../types/database';
+import {useFirebase} from '../../context/FirebaseContext';
+import ProfileImage from '@components/ProfileImage';
 
 type UserOverviewProps = {
-  userId: string; // Other user's ID
+  userId: string;
   profileData: ProfileData;
-  RightSideComponent: React.ReactNode; // Render directly as a ReactNode without JSX syntax
+  RightSideComponent: React.ReactNode;
 };
 
 const UserOverview: React.FC<UserOverviewProps> = ({
@@ -26,12 +25,20 @@ const UserOverview: React.FC<UserOverviewProps> = ({
           key={userId + '-profile-icon'}
           storage={storage}
           userId={userId}
-          photoURL={profileData.photo_url}
           style={styles.userOverviewImage}
         />
-        <Text key={userId + '-nickname'} style={styles.userOverviewText}>
-          {profileData.display_name}
-        </Text>
+        <View key={userId + 'info'} style={styles.userInfoContainer}>
+          <Text
+            key={userId + '-nickname'}
+            style={[styles.userOverviewText, {flexShrink: 1}]}
+            numberOfLines={1}
+            ellipsizeMode="tail">
+            {profileData.display_name}
+          </Text>
+          <Text key={userId + '-sessions'} style={styles.userOverviewText}>
+            {/* User details */}
+          </Text>
+        </View>
       </View>
       {RightSideComponent}
     </View>
@@ -44,7 +51,6 @@ const styles = StyleSheet.create({
   userOverviewContainer: {
     width: '100%',
     flexDirection: 'row',
-    backgroundColor: 'white',
     padding: 5,
   },
   userOverviewProfile: {
@@ -61,10 +67,16 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 35,
   },
+  userInfoContainer: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    padding: 5,
+  },
   userOverviewText: {
     color: 'black',
     fontSize: 16,
-    fontWeight: '400',
+    fontWeight: '500',
     marginLeft: 10,
   },
 });

@@ -20,7 +20,7 @@ import {
   signOut,
 } from 'firebase/auth';
 import {auth} from '../services/firebaseSetup';
-import {deleteUserInfo, reauthentificateUser} from '../database/users';
+import {deleteUserData, reauthentificateUser} from '../database/users';
 import FeedbackPopup from '../components/Popups/FeedbackPopup';
 import {submitFeedback} from '../database/feedback';
 import {MainMenuScreenProps} from '../types/screens';
@@ -107,7 +107,14 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
     // Delete the user's information from the realtime database
     try {
       let userNickname = userData.profile.display_name;
-      await deleteUserInfo(db, user.uid, userNickname, userData.beta_key_id); // Beta feature
+      await deleteUserData(
+        db,
+        user.uid,
+        userNickname,
+        userData.beta_key_id,
+        userData.friends,
+        userData.friend_requests,
+      ); // Beta feature
     } catch (error: any) {
       handleInvalidDeleteUser(error);
     }

@@ -5,6 +5,7 @@ import {
   PreferencesData,
   UserData,
   DrinkingSessionArrayItem,
+  ProfileData,
 } from './database';
 import {RouteProp} from '@react-navigation/native';
 import {DateObject} from './components';
@@ -30,7 +31,12 @@ export type AppStackParamList = {
     sessionKey: string;
     preferences: PreferencesData;
   };
-  'Profile Screen': undefined;
+  'Profile Screen': {
+    userId: string;
+    profileData: ProfileData;
+    drinkingSessionData: DrinkingSessionArrayItem[] | null;
+    preferences: PreferencesData | null;
+  };
   'Social Screen': undefined;
   'Achievement Screen': undefined;
   'Statistics Screen': undefined;
@@ -74,6 +80,12 @@ export type MainScreenProps = {
 export type MainMenuScreenProps = {
   route?: RouteProp<AppStackParamList, 'Main Menu Screen'>;
   // navigation?: StackNavigationProp<AppStackParamList, 'Main Menu Screen'>;
+  navigation?: any;
+};
+
+export type ProfileProps = {
+  route?: RouteProp<AppStackParamList, 'Profile Screen'>;
+  // navigation?: StackNavigationProp<AppStackParamList, 'Profile Screen'>;
   navigation?: any;
 };
 

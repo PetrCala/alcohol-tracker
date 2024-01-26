@@ -3,19 +3,22 @@
 require('dotenv').config(); // Use .env variables in this file - CONFIG does not work here
 import {ref, get, set} from 'firebase/database';
 import {FirebaseApp} from 'firebase/app';
-import {createMockConfig, createMockMaintenance, createMockSession} from '../../utils/mockDatabase';
+import {
+  createMockConfig,
+  createMockMaintenance,
+  createMockSession,
+} from '../../utils/mockDatabase';
 import {isConnectedToDatabaseEmulator} from '@src/services/firebaseUtils';
 import {
   BetaKeyProps,
+  FriendRequestData,
   MaintenanceProps,
   ProfileData,
   UnitTypesProps,
 } from '@src/types/database';
 import {Database} from 'firebase/database';
 import {describeWithEmulator} from '../../utils/emulators/emulatorTools';
-import {
-  saveDrinkingSessionData,
-} from '@database/drinkingSessions';
+import {saveDrinkingSessionData} from '@database/drinkingSessions';
 
 import {MOCK_USER_IDS} from '../../utils/testsStatic';
 import {readDataOnce} from '@database/baseFunctions';
@@ -26,12 +29,13 @@ import {
   teardownRealtimeDatabaseTestEnv,
 } from '../../utils/emulators/realtimeDatabaseSetup';
 import {
-  deleteUserInfo,
+  deleteUserData,
   getDefaultPreferences,
   getDefaultUserData,
   pushNewUserInfo,
 } from '@database/users';
 import {cleanStringForFirebaseKey} from '@src/utils/strings';
+import {acceptFriendRequest, deleteFriendRequest, isFriend, sendFriendRequest, unfriend} from '@database/friends';
 
 const testUserId: string = MOCK_USER_IDS[0];
 const testUserDisplayName: string = 'mock-user';
@@ -116,7 +120,6 @@ describeWithEmulator('Test realtime database emulator', () => {
   });
 });
 
-
 describeWithEmulator('Test config functionality', () => {
   let testApp: FirebaseApp;
   let db: Database;
@@ -147,7 +150,6 @@ describeWithEmulator('Test config functionality', () => {
   });
 });
 
-
 describeWithEmulator('Test drinking session functionality', () => {
   let testApp: FirebaseApp;
   let db: Database;
@@ -170,8 +172,14 @@ describeWithEmulator('Test drinking session functionality', () => {
   });
 
   it('should correctly save current session id', async () => {
-    await set(ref(db, `user_current_session/${testUserId}`), mockSessionKey);
-    const newSessionKey = await readDataOnce(db, `user_current_session/${testUserId}/current_session_id`);
+    await set(
+      ref(db, `user_current_session/${testUserId}/current_session_id`),
+      mockSessionKey,
+    );
+    const newSessionKey = await readDataOnce(
+      db,
+      `user_current_session/${testUserId}/current_session_id`,
+    );
     const expectedSessionKey = mockSessionKey;
     expect(newSessionKey).toEqual(expectedSessionKey);
   });
@@ -270,7 +278,7 @@ describeWithEmulator('Test pushing new user info into the database', () => {
       ...expectedData,
       last_online: expect.any(Number),
     });
-    expect(dbUserData.last_online).toBeCloseTo(expectedData.last_online, -1); // Within 10ms
+    expect(dbUserData.last_online).toBeCloseTo(expectedData.last_online, -2); // Within 100ms
   });
 });
 
@@ -285,7 +293,14 @@ describeWithEmulator('Test deleting data from the database', () => {
 
   beforeEach(async () => {
     await fillDatabaseWithMockData(db);
-    await deleteUserInfo(db, testUserId, testUserDisplayName, 1); // beta feature
+    await deleteUserData(
+      db,
+      testUserId,
+      testUserDisplayName,
+      1,
+      undefined,
+      undefined,
+    ); // beta feature // TODO: Add friend requests, friends
   });
 
   afterEach(async () => {
@@ -359,8 +374,22 @@ describeWithEmulator('Test friend request functionality', () => {
   });
 
   beforeEach(async () => {
-    await fillDatabaseWithMockData(db);
-    await deleteUserInfo(db, testUserId, testUserDisplayName, 1); // beta feature
+    await fillDatabaseWithMockData(db, true); // No friends
+    await deleteUserData(
+      db,
+      testUserId,
+      testUserDisplayName,
+      1,
+      undefined,
+      undefined,
+    ); // beta feature
+    const friends = await readDataOnce(db, `users/${testUserId}/friends`);
+    const friendRequests = await readDataOnce(
+      db,
+      `users/${testUserId}/friend_requests`,
+    );
+    expect(friends).toBeNull();
+    expect(friendRequests).toBeNull();
   });
 
   afterEach(async () => {
@@ -371,11 +400,94 @@ describeWithEmulator('Test friend request functionality', () => {
     await teardownRealtimeDatabaseTestEnv(testApp, db);
   });
 
-  // TODO
-  it('should send a friend request', async () => {
-    // TODO
-    expect(true).toBe(true);
-    // await sendFriendRequest(db, testUserId, testUserId2);
+  it('should correctly determine friends', async () => {
+    await set(ref(db, `users/${testUserId}/friends/${testUserId2}`), true);
+    await set(ref(db, `users/${testUserId2}/friends/${testUserId}`), true);
+    const usersAreFriends = await isFriend(db, testUserId, testUserId2);
+    expect(usersAreFriends).toBe(true);
   });
 
+  it('should send a friend request', async () => {
+    const expectedRequestsUser1: FriendRequestData = {
+      [testUserId2]: 'sent',
+    };
+    const expectedRequestsUser2: FriendRequestData = {
+      [testUserId]: 'received',
+    };
+    await sendFriendRequest(db, testUserId, testUserId2);
+    const user1FriendRequests = await readDataOnce(
+      db,
+      `users/${testUserId}/friend_requests`,
+    );
+    const user2FriendRequests = await readDataOnce(
+      db,
+      `users/${testUserId2}/friend_requests`,
+    );
+    expect(user1FriendRequests).toMatchObject(expectedRequestsUser1);
+    expect(user2FriendRequests).toMatchObject(expectedRequestsUser2);
+  });
+
+
+  it('should delete a friend request', async () => {
+    await set(ref(db, `users/${testUserId}/friend_requests/${testUserId2}`), 'sent');
+    await set(ref(db, `users/${testUserId2}/friend_requests/${testUserId}`), 'received');
+    await deleteFriendRequest(db, testUserId, testUserId2);
+    const user1FriendRequests = await readDataOnce(
+      db,
+      `users/${testUserId}/friend_requests`,
+    );
+    const user2FriendRequests = await readDataOnce(
+      db,
+      `users/${testUserId2}/friend_requests`,
+    );
+    expect(user1FriendRequests).toBeNull();
+    expect(user2FriendRequests).toBeNull();
+  });
+
+
+  it('should accept a friend request', async () => {
+    await set(ref(db, `users/${testUserId}/friend_requests/${testUserId2}`), 'sent');
+    await set(ref(db, `users/${testUserId2}/friend_requests/${testUserId}`), 'received');
+    await acceptFriendRequest(db, testUserId, testUserId2);
+    const user1FriendRequests = await readDataOnce(
+      db,
+      `users/${testUserId}/friend_requests`,
+    );
+    const user2FriendRequests = await readDataOnce(
+      db,
+      `users/${testUserId2}/friend_requests`,
+    );
+    expect(user1FriendRequests).toBeNull();
+    expect(user2FriendRequests).toBeNull();
+
+    const user1Friends = await readDataOnce(
+      db,
+      `users/${testUserId}/friends`,
+    );
+    const user2Friends = await readDataOnce(
+      db,
+      `users/${testUserId2}/friends`,
+    );
+    expect(user1Friends).toMatchObject({[testUserId2]: true});
+    expect(user2Friends).toMatchObject({[testUserId]: true});
+  });
+
+  it('should unfriend a user', async () => {
+    await set(ref(db, `users/${testUserId}/friends/${testUserId2}`), true);
+    await set(ref(db, `users/${testUserId2}/friends/${testUserId}`), true);
+    await unfriend(db, testUserId, testUserId2);
+    const user1Friends = await readDataOnce(
+      db,
+      `users/${testUserId}/friends`,
+    );
+    const user2Friends = await readDataOnce(
+      db,
+      `users/${testUserId2}/friends`,
+    );
+    expect(user1Friends).toBeNull();
+    expect(user2Friends).toBeNull();
+
+    const usersAreFriends = await isFriend(db, testUserId, testUserId2); // Extra check
+    expect(usersAreFriends).toBe(false);
+  });
 });

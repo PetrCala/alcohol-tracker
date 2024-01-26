@@ -1,5 +1,4 @@
-﻿import {ReactNode, useEffect, useReducer} from 'react';
-import {Alert} from 'react-native';
+﻿import {ReactNode, useEffect, useMemo, useReducer} from 'react';
 
 import ForceUpdateScreen from '../screens/ForceUpdateScreen';
 import {useUserConnection} from './UserConnectionContext';
@@ -21,7 +20,7 @@ const initialState = {
 
 const reducer = (state: any, action: any) => {
   switch (action.type) {
-    case 'SET_LOADING':
+    case 'SET_IS_LOADING':
       return {...state, isLoading: action.payload};
     case 'SET_VERSION_VALID':
       return {...state, versionValid: action.payload};
@@ -43,87 +42,40 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({children}) => {
   const {db} = useFirebase();
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  // Monitor config
+  const updateLocalHooks = (newConfigData: ConfigProps | null) => {
+    let underMaintenance: boolean =
+      newConfigData?.maintenance.maintenance_mode ?? false;
+    let minSupportedVersion = newConfigData?.app_settings.min_supported_version;
+    const versionValidationResult = validateAppVersion(minSupportedVersion);
+
+    dispatch({type: 'SET_UNDER_MAINTENANCE', payload: underMaintenance});
+    dispatch({
+      type: 'SET_VERSION_VALID',
+      payload: versionValidationResult.success,
+    });
+  };
+
   useEffect(() => {
     if (!db) return;
-
-    let isMounted = true;
-    dispatch({type: 'SET_LOADING', payload: true}); // Set loading true initially
-
     const configRef = `config`;
-
-    const processConfigData = async (configData: ConfigProps) => {
-      if (!isMounted) return;
-
-      if (!isEqual(configData, state.config)) {
-        dispatch({type: 'SET_CONFIG', payload: configData});
-      }
-    };
-
-    const stopListening = listenForDataChanges(
+    let stopListening = listenForDataChanges(
       db,
       configRef,
-      async (data: ConfigProps) => {
-        await processConfigData(data);
-        if (isMounted) {
-          dispatch({type: 'SET_LOADING', payload: false}); // Set loading false after processing
-        }
+      (data: ConfigProps) => {
+        dispatch({type: 'SET_IS_LOADING', payload: true});
+        dispatch({type: 'SET_CONFIG', payload: data});
+        updateLocalHooks(data);
+        dispatch({type: 'SET_IS_LOADING', payload: false});
       },
     );
 
-    // Initial fetch and process
-    readDataOnce(db, configRef)
-      .then(processConfigData)
-      .catch(error => {
-        Alert.alert(
-          'Error fetching data',
-          'Could not fetch config data: ' + error.message,
-        );
-        // Handle initial load error
-        if (isMounted) {
-          dispatch({type: 'SET_LOADING', payload: false});
-        }
-      });
-
-    return () => {
-      isMounted = false;
-      stopListening(); // Stop listening to data changes when the component unmounts
-    };
+    return () => stopListening();
   }, []);
-
-  // Monitor under maintenance <- somehow ensures up-to-date data
-  useEffect(() => {
-    let underMaintenance: boolean =
-      state.config?.maintenance.maintenance_mode ?? false;
-    dispatch({type: 'SET_UNDER_MAINTENANCE', payload: underMaintenance});
-  }, [state.config]);
-
-  useEffect(() => {
-    function checkAppVersion(config: ConfigProps | null = state.config) {
-      try {
-        let minSupportedVersion = config?.app_settings.min_supported_version;
-        if (!minSupportedVersion) return;
-        const versionValidationResult = validateAppVersion(minSupportedVersion);
-        dispatch({
-          type: 'SET_VERSION_VALID',
-          payload: versionValidationResult.success,
-        });
-      } catch (error: any) {
-        Alert.alert(
-          'App version check failed',
-          'Could not retrieve the version app information from the database: ' +
-            error.message,
-        );
-      }
-    }
-
-    checkAppVersion(state.config);
-  }, [state.config]);
 
   // Monitor user preferences
   if (!isOnline) return <UserOffline />;
-  if (state.underMaintenance) return <UnderMaintenance config={state.config} />;
   if (state.isLoading) return <LoadingData />;
+  if (state.underMaintenance) return <UnderMaintenance config={state.config} />;
   if (!state.versionValid) return <ForceUpdateScreen />;
 
   return <>{children}</>;

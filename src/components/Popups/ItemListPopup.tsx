@@ -8,7 +8,6 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
-import CONST from '@src/CONST';
 
 type ItemList = {
   label: string;

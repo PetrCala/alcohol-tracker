@@ -5,7 +5,7 @@ import MainScreen from '../screens/MainScreen';
 import DrinkingSessionScreen from '../screens/DrinkingSessionScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import MainMenuScreen from '../screens/MainMenuScreen';
-import SocialScreen from '../screens/SocialScreen';
+import SocialScreen from '../screens/Social/SocialScreen';
 import AchievementScreen from '../screens/AchievementScreen';
 import StatisticsScreen from '../screens/StatisticsScreen';
 import SettingsScreen from '../screens/SettingsScreen';

@@ -1,6 +1,6 @@
 {
   "name": "kiroku",
-  "version": "0.2.11-6",
+  "version": "0.2.12-0",
   "private": true,
   "type": "commonjs",
   "license": "MIT",
@@ -15,6 +15,7 @@
     "lint": "eslint . --max-warnings=0 --cache --cache-location=node_modules/.cache/eslint",
     "lint-changed": "eslint --fix $(git diff --diff-filter=AM --name-only main -- \"*.js\" \"*.ts\" \"*.tsx\")",
     "lint-watch": "npx eslint-watch --watch --changed",
+    "merge": "./scripts/mergeAndPush.sh",
     "maintenance:schedule": "ts-node ./_dev/config/maintenance/maintenanceMain.tsx schedule",
     "maintenance:cancel": "ts-node ./_dev/config/maintenance/maintenanceMain.tsx cancel",
     "start": "react-native start",
@@ -25,10 +26,8 @@
     "transpile": "npx tsc --build functions",
     "test-ts": "ts-node ./__tests__/e2e/SignUpRoutine.tsx",
     "deploy-functions": "firebase deploy --only functions --debug",
-    "bump:build": "./scripts/bumpVersion.sh BUILD",
-    "bump:patch": "./scripts/bumpVersion.sh PATCH",
-    "bump:minor": "./scripts/bumpVersion.sh MINOR",
-    "bump:major": "./scripts/bumpVersion.sh MAJOR"
+    "bump": "./scripts/bumpVersion.sh",
+    "analysis:run": "ts-node _dev/analysis/main.tsx"
   },
   "dependencies": {
     "@firebase/rules-unit-testing": "^3.0.1",
@@ -49,6 +48,7 @@
     "react-native": "0.72.3",
     "react-native-calendars": "^1.1300.0",
     "react-native-codegen": "0.71.5",
+    "react-native-compressor": "^1.8.23",
     "react-native-config": "^1.5.1",
     "react-native-fs": "^2.20.0",
     "react-native-gradle-plugin": "^0.71.19",

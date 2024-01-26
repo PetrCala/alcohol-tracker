@@ -6,54 +6,105 @@
   TouchableOpacity,
   View,
 } from 'react-native';
-import {FriendIds, FriendsData, UserData} from '../../types/database';
-import useProfileDisplayData from '../../hooks/useProfileDisplayData';
-import {useContext, useEffect, useState} from 'react';
+import {FriendsData, ProfileData, ProfileDisplayData} from '../../types/database';
+import {useEffect, useReducer, useState} from 'react';
 import {useFirebase} from '../../context/FirebaseContext';
-import {isNonEmptyObject} from '../../utils/validation';
 import LoadingData from '../../components/LoadingData';
+import UserOverview from '@components/Social/UserOverview';
+import { Database } from 'firebase/database';
+import { fetchUserProfiles } from '@database/profile';
 
-const FriendOverview: React.FC = ({}) => {
-  // TODO
-  return <></>;
+interface State {
+  isLoading: boolean;
+  displayData: ProfileDisplayData;
+}
+
+interface Action {
+  type: string;
+  payload: any;
+}
+
+const initialState: State = {
+  isLoading: true,
+  displayData: {},
+};
+
+const reducer = (state: State, action: Action): State => {
+  switch (action.type) {
+    case 'SET_IS_LOADING':
+      return {...state, isLoading: action.payload};
+    case 'SET_DISPLAY_DATA':
+      return {...state, displayData: action.payload};
+    default:
+      return state;
+  }
 };
 
 type ScreenProps = {
+  navigation: any;
   friends: FriendsData | undefined;
   setIndex: React.Dispatch<React.SetStateAction<number>>;
 };
 
 const FriendListScreen = (props: ScreenProps) => {
-  const {friends, setIndex} = props;
+  const {navigation, friends, setIndex} = props;
   const {db} = useFirebase();
-  const [loadingDisplayData, setLoadingDisplayData] = useState<boolean>(false);
-  const [displayData, setDisplayData] = useProfileDisplayData({
-    data: friends ?? {},
-    db: db,
-    setLoadingDisplayData: setLoadingDisplayData,
-  });
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  const updateDisplayData = async (
+    db: Database | undefined,
+    friends: FriendsData | undefined,
+  ): Promise<void> => {
+    const newDisplayData: ProfileDisplayData = {};
+    if (db && friends) {
+      const dataIds = Object.keys(friends);
+      const userProfiles: ProfileData[] = await fetchUserProfiles(db, dataIds);
+      dataIds.forEach((id, index) => {
+        newDisplayData[id] = userProfiles[index];
+      });
+    }
+    dispatch({type: 'SET_DISPLAY_DATA', payload: newDisplayData});
+  };
+
+  useEffect(() => {
+    const updateLocalHooks = async () => {
+      dispatch({type: 'SET_IS_LOADING', payload: false});
+      await updateDisplayData(db, friends);
+      dispatch({type: 'SET_IS_LOADING', payload: false});
+    };
+    updateLocalHooks();
+  }, [friends]);
+
+  if (!navigation) return null;
 
   return (
     <ScrollView style={styles.scrollViewContainer}>
-      <Text style={styles.friendText}>These are your friends:</Text>
-      {friends ? (
+        {state.isLoading ? (
+          <LoadingData style={styles.loadingContainer}/>
+        ) : friends ? (
         <View style={styles.friendList}>
           {Object.keys(friends).map(friendId => {
-            const profileData = displayData[friendId];
-            const friendName = profileData?.display_name;
-
-            if (loadingDisplayData)
-              return <LoadingData key={friendId + '-loading'} />;
+            const profileData = state.displayData[friendId];
 
             return (
-              <Text key={friendId} style={styles.friendText}>
-                {friendName}
-              </Text>
-              // <UserOverview
-              //   key={friendId+'-user-overview'}
-              //   userId={friendId}
-              //   RightSideComponent={<></>}
-              // />
+              <TouchableOpacity
+                key={friendId + '-button'}
+                style={styles.friendOverviewButton}
+                onPress={() =>
+                  navigation.navigate('Profile Screen', {
+                    userId: friendId,
+                    profileData: profileData,
+                    drinkingSessionData: null, // Fetch on render
+                    preferences: null,
+                  })
+                }>
+                <UserOverview
+                  key={friendId + '-user-overview'}
+                  userId={friendId}
+                  profileData={profileData}
+                  RightSideComponent={<></>}
+                />
+              </TouchableOpacity>
             );
           })}
         </View>
@@ -75,31 +126,26 @@ const FriendListScreen = (props: ScreenProps) => {
 
 export default FriendListScreen;
 
+const screenHeight = Dimensions.get('window').height;
+
 const styles = StyleSheet.create({
   scrollViewContainer: {
     flex: 1,
     // justifyContent: 'center',
   },
+  loadingContainer: {
+    width: '100%',
+    height: screenHeight * 0.8,
+  },
   friendList: {
     width: '100%',
     flexDirection: 'column',
     justifyContent: 'center',
-    padding: 3,
-  },
-  friendOverviewContainer: {
-    width: '80%',
-    flexDirection: 'row',
     backgroundColor: 'white',
-    borderWidth: 1,
-    borderColor: 'black',
-    borderRadius: 5,
-    margin: 2,
-    padding: 2,
   },
-  friendText: {
-    color: 'black',
-    fontSize: 13,
-    fontWeight: '400',
+  friendOverviewButton: {
+    width: '100%',
+    height: '100%',
   },
   emptyList: {
     width: '100%',

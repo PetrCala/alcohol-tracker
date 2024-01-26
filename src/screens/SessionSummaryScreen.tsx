@@ -134,7 +134,7 @@ const SessionSummaryScreen = ({
           onPress={handleBackPress}
         />
         {session.ongoing ? (
-          <></>
+          null
         ) : (
           <MenuIcon
             iconId="edit-session-icon"

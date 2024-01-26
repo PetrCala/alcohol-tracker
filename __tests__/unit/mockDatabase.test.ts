@@ -26,7 +26,6 @@ import {
   UserData,
   UnitsToColorsData,
 } from '../../src/types/database';
-import {create} from 'lodash';
 
 /**
  * Checks if the given object is a valid beta key.

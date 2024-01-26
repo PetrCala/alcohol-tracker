@@ -53,10 +53,11 @@ export async function teardownRealtimeDatabaseTestEnv(
 /** Given a database object, fill it with mock data.
  *
  * @param db Firebase Database object.
+ * @param noFriends If set to true, no friends or friend requests will be created.
  * @returns The updated Database object.
  */
-export async function fillDatabaseWithMockData(db: any): Promise<void> {
-  let mockDatabase = createMockDatabase();
+export async function fillDatabaseWithMockData(db: any, noFriends: boolean = false): Promise<void> {
+  let mockDatabase = createMockDatabase(noFriends);
   await set(ref(db), mockDatabase);
   return db;
 }

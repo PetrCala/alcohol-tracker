@@ -14,7 +14,7 @@ import {
 } from '@components/Calendar';
 import {DateObject, CalendarColors, DayMarking} from '@src/types/components';
 import {getRandomInt} from './choice';
-import {MONTHS, MONTHS_ABBREVIATED} from './static';
+import CONST from '../CONST';
 
 export function formatDate(date: Date): string {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
@@ -203,7 +203,7 @@ export function getYearMonthVerbose(
   dateObject: DateObject,
   abbreviated: boolean = false,
 ): string {
-  const months = abbreviated ? MONTHS_ABBREVIATED : MONTHS;
+  const months = abbreviated ? CONST.MONTHS_ABBREVIATED : CONST.MONTHS;
   const monthName = months[dateObject.month - 1];
   return `${monthName} ${dateObject.year}`;
 }
@@ -672,4 +672,12 @@ export function hasDecimalPoint(number: number): boolean {
   return numberAsString.includes('.');
 }
 
-// test, getAdjacentMonths, findongoingsession, aggregatesessionsbydays, month entries to colors (move these maybe to a different location)
+export function toPercentageVerbose(number: number): string {
+  if (number > 1 || number < 0 ){
+    throw new Error("A fraction number must be between 0 and 1.")
+  }
+  const percentage = number * 100;
+  return `${percentage.toFixed(2).toString()}%`
+}
+
+// test, getAdjacentMonths, findongoingsession, aggregatesessionsbydays, month entries to colors (move these maybe to a different location), toPercentageVerbose

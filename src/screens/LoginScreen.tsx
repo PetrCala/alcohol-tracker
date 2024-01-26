@@ -1,4 +1,4 @@
-﻿import React, {useEffect, useState} from 'react';
+﻿import React, {useEffect, useReducer, useState} from 'react';
 import {
   Dimensions,
   Image,
@@ -20,19 +20,75 @@ import {LoginScreenProps} from '../types/screens';
 import LoadingData from '../components/LoadingData';
 import {useUserConnection} from '../context/UserConnectionContext';
 import InputTextPopup from '../components/Popups/InputTextPopup';
-import {handleInvalidInput} from '../utils/errorHandling';
+import {handleErrors} from '../utils/errorHandling';
 import CONST from '@src/CONST';
+import WarningMessage from '@components/Info/WarningMessage';
+import SuccessMessage from '@components/Info/SuccessMessage';
+
+interface State {
+  email: string;
+  password: string;
+  loadingUser: boolean;
+  warning: string;
+  success: string;
+  resetPasswordModalVisible: boolean;
+}
+
+interface Action {
+  type: string;
+  payload: any;
+}
+
+const initialState: State = {
+  email: '',
+  password: '',
+  loadingUser: true,
+  warning: '',
+  success: '',
+  resetPasswordModalVisible: false,
+};
+
+const reducer = (state: State, action: Action) => {
+  switch (action.type) {
+    case 'UPDATE_EMAIL':
+      return {
+        ...state,
+        email: action.payload,
+      };
+    case 'UPDATE_PASSWORD':
+      return {
+        ...state,
+        password: action.payload,
+      };
+    case 'SET_LOADING_USER':
+      return {
+        ...state,
+        loadingUser: action.payload,
+      };
+    case 'SET_WARNING':
+      return {
+        ...state,
+        warning: action.payload,
+      };
+    case 'SET_SUCCESS':
+      return {
+        ...state,
+        success: action.payload,
+      };
+    case 'SET_RESET_PASSWORD_MODAL_VISIBLE':
+      return {
+        ...state,
+        resetPasswordModalVisible: action.payload,
+      };
+    default:
+      return state;
+  }
+};
 
 const LoginScreen = ({navigation}: LoginScreenProps) => {
   if (!navigation) return null; // Should never be null
   const {isOnline} = useUserConnection();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loadingUser, setLoadingUser] = useState<boolean>(true);
-  const [warning, setWarning] = useState<string>('');
-  const [success, setSuccess] = useState<string>('');
-  const [resetPasswordModalVisible, setResetPasswordModalVisible] =
-    useState<boolean>(false);
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   useFocusEffect(
     // Redirect to main screen if user is already logged in (from login screen only)
@@ -41,7 +97,7 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
         if (user) {
           navigation.replace('App', {screen: 'Main Screen'}); // Redirect to main screen
         }
-        setLoadingUser(false);
+        dispatch({type: 'SET_LOADING_USER', payload: false});
       });
 
       return () => {
@@ -54,11 +110,11 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
     // Validate all hooks on the screen first, return null if invalid
     // Attempt to login
     try {
-      await signInUserWithEmailAndPassword(auth, email, password);
+      await signInUserWithEmailAndPassword(auth, state.email, state.password);
     } catch (error: any) {
       const errorHeading = 'Failed to log in';
       const errorMessage = 'There was an error trying to log in: ';
-      handleInvalidInput(error, errorHeading, errorMessage, setWarning);
+      handleErrors(error, errorHeading, errorMessage, dispatch);
     }
     return;
   };
@@ -67,19 +123,19 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
     // reset the user password
     try {
       await sendPasswordResetEmail(auth, mail);
-      setSuccess('Password reset link sent');
+      dispatch({type: 'SET_SUCCESS', payload: 'Password reset link sent'});
     } catch (error: any) {
       const errorHeading = 'Error When Resetting Password';
       const errorMessage = 'There was an error when resetting your password: ';
-      return handleInvalidInput(error, errorHeading, errorMessage, setWarning);
+      return handleErrors(error, errorHeading, errorMessage, dispatch);
     } finally {
-      setResetPasswordModalVisible(false);
+      dispatch({type: 'SET_RESET_PASSWORD_MODAL_VISIBLE', payload: false});
     }
   };
 
   // Wait to see whether there already is an authentificated user
   // Possibly here display the app logo instead of the loading screen
-  if (loadingUser) return <LoadingData />;
+  if (state.loadingUser) return <LoadingData />;
 
   return (
     <ScrollView
@@ -88,38 +144,8 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
       <KeyboardAvoidingView
         style={styles.mainContainer}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        {warning ? (
-          <View style={[styles.infoContainer, styles.warningInfoContainer]}>
-            <TouchableOpacity
-              id={'warning'}
-              testID={'warning'}
-              accessibilityRole="button"
-              onPress={() => setWarning('')}
-              style={styles.infoButton}>
-              <Text style={[styles.infoText, styles.warningInfoText]}>
-                {warning}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <></>
-        )}
-        {success ? (
-          <View style={[styles.infoContainer, styles.successInfoContainer]}>
-            <TouchableOpacity
-              id={'success'}
-              testID={'success'}
-              accessibilityRole="button"
-              onPress={() => setSuccess('')}
-              style={styles.infoButton}>
-              <Text style={[styles.infoText, styles.successInfoText]}>
-                {success}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <></>
-        )}
+        <WarningMessage warningText={state.warning} dispatch={dispatch} />
+        <SuccessMessage successText={state.success} dispatch={dispatch} />
         <View style={styles.logoContainer}>
           <Image
             source={require('../../assets/logo/alcohol-tracker-source-icon.png')}
@@ -132,16 +158,20 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
             placeholderTextColor={'#a8a8a8'}
             keyboardType="email-address"
             textContentType="emailAddress"
-            value={email}
-            onChangeText={text => setEmail(text)}
+            value={state.email}
+            onChangeText={text =>
+              dispatch({type: 'UPDATE_EMAIL', payload: text})
+            }
             style={styles.input}
           />
           <TextInput
             placeholder="Password"
             placeholderTextColor={'#a8a8a8'}
             textContentType="password"
-            value={password}
-            onChangeText={text => setPassword(text)}
+            value={state.password}
+            onChangeText={text =>
+              dispatch({type: 'UPDATE_PASSWORD', payload: text})
+            }
             style={styles.input}
             secureTextEntry
           />
@@ -149,7 +179,12 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
             <Text style={styles.loginButtonText}>Login</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => setResetPasswordModalVisible(true)}
+            onPress={() =>
+              dispatch({
+                type: 'SET_RESET_PASSWORD_MODAL_VISIBLE',
+                payload: true,
+              })
+            }
             style={styles.forgottenPasswordButton}>
             <Text style={styles.forgottenPasswordText}>
               Forgot your password?
@@ -160,19 +195,24 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
             <TouchableOpacity
               style={styles.signUpButtonContainer}
               onPress={() =>
-                navigation.navigate('Sign Up Screen', {loginEmail: email})
+                navigation.navigate('Sign Up Screen', {loginEmail: state.email})
               }>
               <Text style={styles.signUpInfoText}>Don't have an account?</Text>
               <Text style={styles.signUpButtonText}>Sign up</Text>
             </TouchableOpacity>
           </View>
           <InputTextPopup
-            visible={resetPasswordModalVisible}
+            visible={state.resetPasswordModalVisible}
             transparent={true}
             message={'E-mail to send the reset link to:'}
             confirmationMessage={'Send link'}
             placeholder={'E-mail'}
-            onRequestClose={() => setResetPasswordModalVisible(false)}
+            onRequestClose={() =>
+              dispatch({
+                type: 'SET_RESET_PASSWORD_MODAL_VISIBLE',
+                payload: false,
+              })
+            }
             onSubmit={mail => handleResetPassword(mail)}
             keyboardType="email-address"
             textContentType="emailAddress"

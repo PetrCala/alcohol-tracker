@@ -1,15 +1,19 @@
-﻿import React from 'react';
+﻿import CONST from '@src/CONST';
+import React from 'react';
 import {View, Text, Linking, StyleSheet, Platform} from 'react-native';
-import {playStoreLink, iStoreLink} from '../utils/static';
 
 const ForceUpdateScreen = () => {
-  const storeLink = Platform.OS === 'android' ? playStoreLink : iStoreLink;
+  const storeLink =
+    Platform.OS === 'android'
+      ? CONST.STORE_LINKS.ANDROID
+      : CONST.STORE_LINKS.IOS;
   return (
     <View style={styles.container}>
       <Text style={styles.title}>App Update Required</Text>
       <Text style={styles.description}>
         This version of the app is now discontinued. Please update to the latest
-        version.
+        version using the link below
+        {Platform.OS === 'ios' ? ' or from within the TestFlight app' : ''}.
       </Text>
       {storeLink ? (
         <Text
@@ -19,7 +23,7 @@ const ForceUpdateScreen = () => {
           Update Now
         </Text>
       ) : (
-        <></>
+        null
       )}
     </View>
   );

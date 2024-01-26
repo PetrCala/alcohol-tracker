@@ -1,4 +1,4 @@
-﻿import React, {useContext, useEffect, useRef, useState} from 'react';
+﻿import React, {useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {
   Alert,
   BackHandler,
@@ -141,7 +141,7 @@ const PreferencesScreen = ({route, navigation}: PreferencesScreenProps) => {
     }));
   };
 
-  useEffect(() => {
+  useMemo(() => {
     if (!preferences) return;
     let newPreferences = {
       first_day_of_week: preferences.first_day_of_week,

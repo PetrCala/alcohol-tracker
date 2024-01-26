@@ -32,7 +32,7 @@ describeWithEmulator('Connect to the storage emulator', () => {
     await teardownAuthTestEnv(testApp);
   });
 
-  xit('should connect to the auth emulator', async () => {
+  it('should connect to the auth emulator', async () => {
     expect(auth).not.toBeNull();
     expect(isConnectedToAuthEmulator(auth)).toBe(true);
   });
