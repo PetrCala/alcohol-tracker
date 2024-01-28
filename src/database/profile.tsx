@@ -6,6 +6,7 @@ import {
   getDownloadURL,
 } from 'firebase/storage';
 import {Auth, User, updateProfile} from 'firebase/auth';
+import {cacheProfileImage} from '@src/utils/cache';
 
 /**
  * Fetch the profile details of a given user.
@@ -64,7 +65,7 @@ export async function setProfilePictureURL(
 
 /**
  * Updates the profile information of a user.
- * 
+ *
  * @param pathToUpload - The path to the file to upload.
  * @param user - The user object.
  * @param auth - The authentication object.
@@ -78,10 +79,12 @@ export async function updateProfileInfo(
   auth: Auth,
   db: Database,
   storage: FirebaseStorage,
+  cacheImage: boolean,
 ): Promise<void> {
   if (!user || !auth.currentUser) return;
   const downloadURL = await getDownloadURL(StorageRef(storage, pathToUpload));
   await setProfilePictureURL(db, user.uid, downloadURL);
   await updateProfile(auth.currentUser, {photoURL: downloadURL});
+  if (cacheImage) await cacheProfileImage(user.uid, downloadURL);
   return;
 }

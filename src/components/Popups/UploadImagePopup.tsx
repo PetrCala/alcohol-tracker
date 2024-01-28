@@ -104,14 +104,18 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
   };
 
   useEffect(() => {
-    if (
-      parentState.uploadProgress &&
-      parentState.uploadProgress.includes('100')
-    ) {
-      setUploadFinished(true);
-      setImageSource(imageSource);
-      parentDispatch({type: 'SET_UPLOAD_ONGOING', payload: false});
+    const updateInfoUponUpload = async () => {
+      if (
+        parentState.uploadProgress &&
+        parentState.uploadProgress.includes('100')
+      ) {
+        setUploadFinished(true);
+        setImageSource(imageSource);
+        parentDispatch({type: 'SET_UPLOAD_ONGOING', payload: false});
+      }
     }
+
+    updateInfoUponUpload()
   }, [parentState.uploadProgress]);
 
   return (

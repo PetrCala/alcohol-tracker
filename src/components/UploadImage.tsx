@@ -27,6 +27,7 @@ import {auth} from '@src/services/firebaseSetup';
 import {useFirebase} from '@src/context/FirebaseContext';
 import {updateProfile} from 'firebase/auth';
 import path from 'path';
+import { cacheProfileImage } from '@src/utils/cache';
 
 const initialState: UploadImageState = {
   imageSource: null,
@@ -98,7 +99,7 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
       const compressedURI = await CompressorImage.compress(sourceURI);
       await uploadImage(compressedURI);
       if (isProfilePicture) {
-        await updateProfileInfo(pathToUpload, user, auth, db, storage);
+        await updateProfileInfo(pathToUpload, user, auth, db, storage, true); // Also caches the image
       }
     } catch (error: any) {
       dispatch({type: 'SET_UPLOAD_ONGOING', payload: false}); // Otherwise dispatch upon success in child component

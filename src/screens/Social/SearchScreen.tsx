@@ -64,7 +64,7 @@ const SearchResult: React.FC<SearchResultProps> = ({
           key={userId + '-profile-icon'}
           storage={storage}
           userId={userId}
-          downloadURL={displayData[userId]?.photo_url}
+          downloadPath={displayData[userId]?.photo_url}
           style={styles.userProfileImage}
         />
         <Text style={styles.userNicknameText}>

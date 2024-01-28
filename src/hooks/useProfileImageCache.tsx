@@ -1,6 +1,7 @@
 import {useState, useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CONST from '@src/CONST';
+import { cacheProfileImage } from '@src/utils/cache';
 
 /**
  * Custom hook for caching and retrieving profile images based on user ID.
@@ -24,7 +25,7 @@ const useProfileImageCache = (userId: string) => {
 
       const item = JSON.parse(itemStr);
       const now = new Date().getTime();
-      const CACHE_LIFESPAN = 60 * 60 * 1000; // 1 hour
+      const CACHE_LIFESPAN = 4 * 60 * 60 * 1000; // 4 hours
 
       if (now - item.timestamp > CACHE_LIFESPAN) {
         await AsyncStorage.removeItem(key);
@@ -44,13 +45,7 @@ const useProfileImageCache = (userId: string) => {
    * @param url - The URL of the image to cache.
    */
   const cacheImage = async (url: string | null) => {
-    const key = `users/${userId}/profile/photo_url`; // Alternative: profileImage-${userId}
-    const now = new Date().getTime();
-    const item = {
-      url: url === null ? CONST.NO_IMAGE : url,
-      timestamp: now,
-    };
-    await AsyncStorage.setItem(key, JSON.stringify(item));
+    await cacheProfileImage(userId, url);
     setCachedUrl(url);
   };
 

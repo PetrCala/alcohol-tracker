@@ -20,6 +20,10 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
 
   const [imageSource, setImageSource] = useState<string>(profileData.photo_url);
 
+  useEffect(() => {
+    setImageSource(profileData.photo_url);
+  }, [profileData.photo_url]);
+
   if (!db || !profileData) return;
 
   return (
@@ -29,7 +33,7 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
         key={`${userId}-profile-image`}
         storage={storage}
         userId={userId}
-        downloadURL={imageSource}
+        downloadPath={imageSource}
         style={styles.profileOverviewImage}
       />
       {user?.uid === userId ? (

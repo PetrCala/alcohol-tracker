@@ -38,22 +38,45 @@ const reducer = (state: State, action: Action) => {
 type ProfileImageProps = {
   storage: FirebaseStorage;
   userId: string;
-  downloadURL: string | null;
+  downloadPath: string | null;
   style: any;
 };
 
 function ProfileImage(props: ProfileImageProps) {
-  const {storage, userId, downloadURL, style} = props;
+  const {storage, userId, downloadPath, style} = props;
   const [state, dispatch] = useReducer(reducer, initialState);
+  const {cachedUrl, cacheImage, isCacheChecked} = useProfileImageCache(userId);
+
+  const checkAvailableCache = (url: string | null): boolean => {
+    if (url) {
+      dispatch({type: 'SET_IMAGE_URL', payload: cachedUrl});
+      dispatch({type: 'SET_LOADING_IMAGE', payload: false});
+      return true;
+    }
+    return false;
+  };
 
   useEffect(() => {
     const fetchImage = async () => {
+      if (!isCacheChecked) return; // Only proceed if cache has been checked
+
+      const cacheFound = checkAvailableCache(cachedUrl);
+      if (cacheFound) return; // Use cache if available
+
       dispatch({type: 'SET_LOADING_IMAGE', payload: true});
       try {
-        const url = downloadURL?.includes(CONST.FIREBASE_STORAGE_URL)
-          ? await getProfilePictureURL(storage, userId, downloadURL) 
-          : downloadURL;
-        dispatch({type: 'SET_IMAGE_URL', payload: url});
+        let downloadUrl: string | null;
+        if (downloadPath?.includes(CONST.FIREBASE_STORAGE_URL)) {
+          downloadUrl = await getProfilePictureURL(
+            storage,
+            userId,
+            downloadPath,
+          );
+          await cacheImage(downloadUrl);
+        } else {
+          downloadUrl = downloadPath;
+        }
+        dispatch({type: 'SET_IMAGE_URL', payload: downloadUrl});
       } catch (error: any) {
         Alert.alert('Error fetching the image', error.message);
         // handleErrors(
@@ -68,7 +91,7 @@ function ProfileImage(props: ProfileImageProps) {
     };
 
     fetchImage();
-  }, [downloadURL]);
+  }, [downloadPath, cachedUrl, isCacheChecked]);
 
   if (state.loadingImage)
     return <ActivityIndicator size="large" color="#0000ff" style={style} />;
