@@ -19,7 +19,7 @@ export async function getProfilePictureURL(
   userId: string,
   downloadURL: string,
 ): Promise<string> {
-  if (!storage || !userId) return '';
+  if (!storage || !userId  || !downloadURL) return '';
   const httpsRef = ref(storage, downloadURL);
   const url = await getDownloadURL(httpsRef);
   return url;

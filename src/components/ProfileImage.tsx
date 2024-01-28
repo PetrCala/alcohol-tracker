@@ -57,7 +57,7 @@ function ProfileImage(props: ProfileImageProps) {
           db,
           `users/${userId}/profile/photo_url`,
         );
-        const url = await getProfilePictureURL(storage, userId, downloadURL);
+        const url = await getProfilePictureURL(storage, userId, downloadURL); // Handles null values
         if (url) {
           dispatch({type: 'SET_IMAGE_URL', payload: url});
         }
