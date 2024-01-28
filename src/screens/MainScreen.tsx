@@ -233,6 +233,7 @@ const MainScreen = ({navigation}: MainScreenProps) => {
             <ProfileImage
               storage={storage}
               userId={user.uid}
+              downloadURL={userData.profile.photo_url}
               style={styles.profileImage}
             />
             <Text style={styles.headerUsername}>{user.displayName}</Text>

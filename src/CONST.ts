@@ -49,6 +49,7 @@ const CONST = {
     'Nov',
     'Dec',
   ],
+  NO_IMAGE: 'NO_IMAGE', // Used for the profile avatar when there is no image
   STORE_LINKS: {
     ANDROID:
       'https://play.google.com/store/apps/details?id=com.alcohol_tracker',

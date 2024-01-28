@@ -28,6 +28,7 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
       <ProfileImage
         storage={storage}
         userId={userId}
+        downloadURL={imageSource}
         style={styles.profileOverviewImage}
         localImageSource={imageSource}
       />

@@ -26,6 +26,9 @@ import LoadingData from '../../components/LoadingData';
 import {Database} from 'firebase/database';
 import {searchDbByNickname} from '../../database/search';
 import {fetchUserProfiles} from '@database/profile';
+import CONST from '@src/CONST';
+import ProfileImage from '@components/ProfileImage';
+import { FirebaseStorage } from 'firebase/storage';
 
 const statusToTextMap: {[key in FriendRequestStatusState]: string} = {
   self: 'You',
@@ -39,6 +42,7 @@ type SearchResultProps = {
   userId: string;
   displayData: any;
   db: Database;
+  storage: FirebaseStorage
   userFrom: string;
   requestStatus: FriendRequestStatusState | undefined;
   alreadyAFriend: boolean;
@@ -48,6 +52,7 @@ const SearchResult: React.FC<SearchResultProps> = ({
   userId,
   displayData,
   db,
+  storage,
   userFrom,
   requestStatus,
   alreadyAFriend,
@@ -55,14 +60,12 @@ const SearchResult: React.FC<SearchResultProps> = ({
   return (
     <View style={styles.userOverviewContainer}>
       <View style={styles.userInfoContainer}>
-        <Image
+        <ProfileImage
+          key={userId + '-profile-icon'}
+          storage={storage}
+          userId={userId}
+          downloadURL={displayData[userId]?.photo_url}
           style={styles.userProfileImage}
-          source={
-            displayData[userId]?.photo_url &&
-            displayData[userId]?.photo_url !== ''
-              ? {uri: displayData[userId].photo_url}
-              : require('../../../assets/temp/user.png')
-          }
         />
         <Text style={styles.userNicknameText}>
           {displayData[userId]?.display_name
@@ -213,7 +216,7 @@ type ScreenProps = {
 
 const SearchScreen = (props: ScreenProps) => {
   const {friendRequests, friends} = props;
-  const {db} = useFirebase();
+  const {db, storage} = useFirebase();
   const user = auth.currentUser;
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -296,7 +299,7 @@ const SearchScreen = (props: ScreenProps) => {
     updateRequestStatuses();
   }, [friendRequests]); // When updated in the database, not locally
 
-  if (!db || !user) return;
+  if (!db || !user || !storage) return;
 
   return (
     <View style={styles.mainContainer}>
@@ -343,6 +346,7 @@ const SearchScreen = (props: ScreenProps) => {
                 userId={userId}
                 displayData={state.displayData}
                 db={db}
+                storage={storage}
                 userFrom={user.uid}
                 requestStatus={state.requestStatuses[userId]}
                 alreadyAFriend={friends ? friends[userId] : false}
@@ -496,6 +500,7 @@ const styles = StyleSheet.create({
   userProfileImage: {
     width: 70,
     height: 70,
+    borderRadius: 35,
     padding: 5,
   },
   sendFriendRequestContainer: {

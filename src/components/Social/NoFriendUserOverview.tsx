@@ -25,6 +25,7 @@ const NoFriendUserOverview: React.FC<NoFriendUserOverviewProps> = ({
         <ProfileImage
           key={userId + '-profile-icon'}
           storage={storage}
+          downloadURL={profileData.photo_url}
           userId={userId}
           style={styles.noFriendUserOverviewImage}
         />
