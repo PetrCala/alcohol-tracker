@@ -20,17 +20,21 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
 
   const [imageSource, setImageSource] = useState<string>(profileData.photo_url);
 
+  useEffect(() => {
+    setImageSource(profileData.photo_url);
+  }, [profileData.photo_url]);
+
   if (!db || !profileData) return;
 
   return (
     <View style={styles.profileOverviewContainer}>
       <View style={styles.profileImageContainer} />
       <ProfileImage
+        key={`${userId}-profile-image`}
         storage={storage}
         userId={userId}
         downloadURL={imageSource}
         style={styles.profileOverviewImage}
-        localImageSource={imageSource}
       />
       {user?.uid === userId ? (
         <View style={styles.editProfileButton}>

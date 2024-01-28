@@ -40,38 +40,19 @@ type ProfileImageProps = {
   userId: string;
   downloadURL: string | null;
   style: any;
-  localImageSource?: string; // If the user has uploaded a new image, use this instead of the one in the database, so that the user can see the new image immediately without any listeners
 };
 
 function ProfileImage(props: ProfileImageProps) {
-  const {storage, userId, downloadURL, style, localImageSource} = props;
+  const {storage, userId, downloadURL, style} = props;
   const [state, dispatch] = useReducer(reducer, initialState);
-  const {cachedUrl, cacheImage, isCacheChecked} = useProfileImageCache(userId);
-
-  const checkAvailableCache = (url: string | null): boolean => {
-    if (url) {
-      dispatch({type: 'SET_IMAGE_URL', payload: cachedUrl});
-      dispatch({type: 'SET_LOADING_IMAGE', payload: false});
-      return true;
-    }
-    return false;
-  };
 
   useEffect(() => {
     const fetchImage = async () => {
-      if (!isCacheChecked) return; // Only proceed if cache has been checked
-
-      const cacheFound = checkAvailableCache(cachedUrl);
-      if (cacheFound) return; // Use cache if available
-
       dispatch({type: 'SET_LOADING_IMAGE', payload: true});
       try {
-        const url = localImageSource
-          ? localImageSource
-          : downloadURL
-            ? await getProfilePictureURL(storage, userId, downloadURL)
-            : null;
-        await cacheImage(url);
+        const url = downloadURL?.includes(CONST.FIREBASE_STORAGE_URL)
+          ? await getProfilePictureURL(storage, userId, downloadURL) 
+          : downloadURL;
         dispatch({type: 'SET_IMAGE_URL', payload: url});
       } catch (error: any) {
         Alert.alert('Error fetching the image', error.message);
@@ -87,7 +68,7 @@ function ProfileImage(props: ProfileImageProps) {
     };
 
     fetchImage();
-  }, [cachedUrl, cachedUrl, isCacheChecked, downloadURL, localImageSource]);
+  }, [downloadURL]);
 
   if (state.loadingImage)
     return <ActivityIndicator size="large" color="#0000ff" style={style} />;

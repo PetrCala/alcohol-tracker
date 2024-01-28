@@ -55,6 +55,7 @@ const CONST = {
       'https://play.google.com/store/apps/details?id=com.alcohol_tracker',
     IOS: 'https://testflight.apple.com/join/DgY9IieL',
   },
+  FIREBASE_STORAGE_URL: 'https://firebasestorage.googleapis.com',
 } as const;
 
 export default CONST;
