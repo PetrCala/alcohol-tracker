@@ -2,12 +2,12 @@ import {useState, useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 /**
- * Custom hook for caching and retrieving images based on user ID.
+ * Custom hook for caching and retrieving profile images based on user ID.
  *
  * @param userId - The ID of the user.
  * @returns An object containing the cached URL and a function to cache an image.
  */
-const useImageCache = (userId: string) => {
+const useProfileImageCache = (userId: string) => {
     const [cachedUrl, setCachedUrl] = useState<string | null>(null);
 
     useEffect(() => {
@@ -49,4 +49,4 @@ const useImageCache = (userId: string) => {
     return {cachedUrl, cacheImage};
 };
 
-export default useImageCache;
+export default useProfileImageCache;
