@@ -13,13 +13,13 @@ const useProfileImageCache = (userId: string) => {
   const [cachedUrl, setCachedUrl] = useState<string | null>(null);
   const [isCacheChecked, setIsCacheChecked] = useState(false);
 
-
   useEffect(() => {
     const fetchCachedImage = async (): Promise<void> => {
       const key = `users/${userId}/profile/photo_url`;
       const itemStr = await AsyncStorage.getItem(key);
       if (itemStr === null) {
         setCachedUrl(null);
+        setIsCacheChecked(true);
         return;
       }
 
