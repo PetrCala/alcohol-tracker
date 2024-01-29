@@ -4,6 +4,7 @@ import {FirebaseStorage} from 'firebase/storage';
 import {getProfilePictureURL} from '@src/storage/storageProfile';
 import useProfileImageCache from '@hooks/useProfileImageCache';
 import CONST from '@src/CONST';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface State {
   imageUrl: string | null;
@@ -76,6 +77,7 @@ function ProfileImage(props: ProfileImageProps) {
         } else {
           downloadUrl = downloadPath;
         }
+
         dispatch({type: 'SET_IMAGE_URL', payload: downloadUrl});
       } catch (error: any) {
         Alert.alert('Error fetching the image', error.message);
@@ -95,7 +97,7 @@ function ProfileImage(props: ProfileImageProps) {
 
   if (state.loadingImage)
     return <ActivityIndicator size="large" color="#0000ff" style={style} />;
-
+  
   return (
     <Image
       source={
