@@ -114,7 +114,7 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
         parentState.uploadProgress.includes('100') &&
         user
       ) {
-        AsyncStorage.removeItem(CONST.CACHE.PROFILE_PICTURE_KEY + user.uid);
+        await AsyncStorage.removeItem(CONST.CACHE.PROFILE_PICTURE_KEY + user.uid);
         setUploadFinished(true);
         parentDispatch({type: 'SET_UPLOAD_ONGOING', payload: false});
       }

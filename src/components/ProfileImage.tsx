@@ -4,7 +4,6 @@ import {FirebaseStorage} from 'firebase/storage';
 import {getProfilePictureURL} from '@src/storage/storageProfile';
 import useProfileImageCache from '@hooks/useProfileImageCache';
 import CONST from '@src/CONST';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface State {
   imageUrl: string | null;
@@ -47,10 +46,15 @@ function ProfileImage(props: ProfileImageProps) {
   const {storage, userId, downloadPath, style} = props;
   const [state, dispatch] = useReducer(reducer, initialState);
   const {cachedUrl, cacheImage, isCacheChecked} = useProfileImageCache(userId);
-  const prevCachedUrl = useRef(cachedUrl);
+  const prevDownloadPath = useRef(downloadPath); // Possibly not needed
+  const prevCachedUrl = useRef(cachedUrl); // Crucial
 
   const checkAvailableCache = (url: string | null): boolean => {
-    if (url && url === prevCachedUrl.current) {
+    if (
+      url &&
+      url === prevCachedUrl.current && // Don't use cache if the url has changed
+      prevDownloadPath.current === downloadPath // Don't use cache if the download path has changed
+    ) {
       dispatch({type: 'SET_IMAGE_URL', payload: cachedUrl});
       dispatch({type: 'SET_LOADING_IMAGE', payload: false});
       return true;
@@ -67,16 +71,17 @@ function ProfileImage(props: ProfileImageProps) {
 
       dispatch({type: 'SET_LOADING_IMAGE', payload: true});
       try {
-        let downloadUrl: string | null;
+        let downloadUrl: string | null = null;
         if (downloadPath?.includes(CONST.FIREBASE_STORAGE_URL)) {
+          // console.log('downloadPath', downloadPath)
           downloadUrl = await getProfilePictureURL(
             storage,
             userId,
             downloadPath,
+            false, // use the cache buster - error prone potentially, but makes the state upadate
           );
+          // console.log('downloadUrl', downloadUrl);
           await cacheImage(downloadUrl);
-        } else {
-          downloadUrl = downloadPath;
         }
 
         dispatch({type: 'SET_IMAGE_URL', payload: downloadUrl});
