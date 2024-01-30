@@ -15,7 +15,7 @@ const useProfileImageCache = (userId: string) => {
 
   useEffect(() => {
     const fetchCachedImage = async (): Promise<void> => {
-      const key = `users/${userId}/profile/photo_url`;
+      const key = CONST.CACHE.PROFILE_PICTURE_KEY + userId;
       const itemStr = await AsyncStorage.getItem(key);
       if (itemStr === null) {
         setCachedUrl(null);

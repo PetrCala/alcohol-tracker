@@ -99,7 +99,7 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
       const compressedURI = await CompressorImage.compress(sourceURI);
       await uploadImage(compressedURI);
       if (isProfilePicture) {
-        await updateProfileInfo(pathToUpload, user, auth, db, storage, true); // Also caches the image
+        await updateProfileInfo(pathToUpload, user, auth, db, storage);
       }
     } catch (error: any) {
       dispatch({type: 'SET_UPLOAD_ONGOING', payload: false}); // Otherwise dispatch upon success in child component

@@ -79,12 +79,10 @@ export async function updateProfileInfo(
   auth: Auth,
   db: Database,
   storage: FirebaseStorage,
-  cacheImage: boolean,
 ): Promise<void> {
   if (!user || !auth.currentUser) return;
   const downloadURL = await getDownloadURL(StorageRef(storage, pathToUpload));
   await setProfilePictureURL(db, user.uid, downloadURL);
   await updateProfile(auth.currentUser, {photoURL: downloadURL});
-  if (cacheImage) await cacheProfileImage(user.uid, downloadURL);
   return;
 }

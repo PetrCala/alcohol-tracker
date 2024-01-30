@@ -11,6 +11,9 @@ const EMPTY_OBJECT = Object.freeze({});
 const CONST = {
   APP_IN_BETA: true,
   AVAILABLE_PLATFORMS: ['ios', 'android'],
+  CACHE: {
+    PROFILE_PICTURE_KEY: 'profilePicture',
+  },
   ENVIRONMENT: {
     DEV: 'development',
     STAGING: 'staging',

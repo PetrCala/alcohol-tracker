@@ -24,28 +24,4 @@ const downloadAndCacheImage = async (firebaseUrl) => {
 };
 
 
-// Function to save the local image path to AsyncStorage
-const saveLocalImagePath = async (userId, localImagePath) => {
-  try {
-    const key = `users/${userId}/profile/image_url`;
-    await AsyncStorage.setItem(key, localImagePath);
-  } catch (error) {
-    console.error('Error saving local image path:', error);
-  }
-};
-
-// Function to get the local image path from AsyncStorage
-const getLocalImagePath = async (userId) => {
-  try {
-    const key = `users/${userId}/profile/image_url`;
-    const localImagePath = await AsyncStorage.getItem(key);
-    return localImagePath;
-  } catch (error) {
-    console.error('Error retrieving local image path:', error);
-  }
-};
-
-
-// Later, when rendering the image
-<Image source={{ uri: localImagePath }} />
 

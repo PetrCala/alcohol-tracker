@@ -8,7 +8,7 @@ import CONST from '@src/CONST';
  * @param url - The URL of the profile image. Can be null.
  */
 export const cacheProfileImage = async (userId: string, url: string | null) => {
-    const key = `users/${userId}/profile/photo_url`;
+    const key = CONST.CACHE.PROFILE_PICTURE_KEY + userId;
     const now = new Date().getTime();
     const item = {
         url: url === null ? CONST.NO_IMAGE : url,

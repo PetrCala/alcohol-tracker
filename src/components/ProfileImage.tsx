@@ -1,4 +1,4 @@
-﻿import React, {useEffect, useMemo, useReducer} from 'react';
+﻿import React, {useEffect, useMemo, useReducer, useRef} from 'react';
 import {ActivityIndicator, Alert, Image} from 'react-native'; // or 'react-native-web' if you're using React for web
 import {FirebaseStorage} from 'firebase/storage';
 import {getProfilePictureURL} from '@src/storage/storageProfile';
@@ -47,9 +47,10 @@ function ProfileImage(props: ProfileImageProps) {
   const {storage, userId, downloadPath, style} = props;
   const [state, dispatch] = useReducer(reducer, initialState);
   const {cachedUrl, cacheImage, isCacheChecked} = useProfileImageCache(userId);
+  const prevCachedUrl = useRef(cachedUrl);
 
   const checkAvailableCache = (url: string | null): boolean => {
-    if (url) {
+    if (url && url === prevCachedUrl.current) {
       dispatch({type: 'SET_IMAGE_URL', payload: cachedUrl});
       dispatch({type: 'SET_LOADING_IMAGE', payload: false});
       return true;
@@ -61,8 +62,8 @@ function ProfileImage(props: ProfileImageProps) {
     const fetchImage = async () => {
       if (!isCacheChecked) return; // Only proceed if cache has been checked
 
-      const cacheFound = checkAvailableCache(cachedUrl);
-      if (cacheFound) return; // Use cache if available
+      const cacheUnchanged = checkAvailableCache(cachedUrl);
+      if (cacheUnchanged) return; // Use cache if available and unchanged
 
       dispatch({type: 'SET_LOADING_IMAGE', payload: true});
       try {
@@ -93,6 +94,7 @@ function ProfileImage(props: ProfileImageProps) {
     };
 
     fetchImage();
+    prevCachedUrl.current = cachedUrl;
   }, [downloadPath, cachedUrl, isCacheChecked]);
 
   if (state.loadingImage)
