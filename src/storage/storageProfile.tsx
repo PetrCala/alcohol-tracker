@@ -19,7 +19,7 @@ export async function getProfilePictureURL(
   userId: string,
   downloadPath: string,
 ): Promise<string | null> {
-  if (!storage || !userId  || !downloadPath) return null;
+  if (!storage || !userId  || !downloadPath) throw new Error('Missing parameters');
   const httpsRef = ref(storage, downloadPath);
   const downloadURL = await getDownloadURL(httpsRef);
   return downloadURL;
