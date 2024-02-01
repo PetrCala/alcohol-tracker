@@ -116,8 +116,6 @@ function ProfileImage(props: ProfileImageProps) {
   if (state.loadingImage)
     return <ActivityIndicator size="large" color="#0000ff" style={style} />;
 
-  console.log(refreshTrigger, 'child')
-
   return (
     <Image
       source={

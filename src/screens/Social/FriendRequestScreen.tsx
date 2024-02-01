@@ -230,7 +230,7 @@ const FriendRequestScreen = (props: ScreenProps) => {
 
   useEffect(() => {
     const updateLocalHooks = async () => {
-      dispatch({type: 'SET_IS_LOADING', payload: false});
+      dispatch({type: 'SET_IS_LOADING', payload: true});
       await updateDisplayData(db, friendRequests);
       dispatch({type: 'SET_IS_LOADING', payload: false});
     };
