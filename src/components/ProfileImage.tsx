@@ -49,14 +49,12 @@ function ProfileImage(props: ProfileImageProps) {
   const prevCachedUrl = useRef(cachedUrl); // Crucial
 
   const checkAvailableCache = async (url: string | null): Promise<boolean> => {
-    if (downloadPath?.startsWith(CONST.LOCAL_IMAGE_PREFIX)) {
+    if (
+      downloadPath?.startsWith(CONST.LOCAL_IMAGE_PREFIX) || // Local image
+      (url && url === prevCachedUrl.current) // Cached image
+    ) {
       // Is a local file
       dispatch({type: 'SET_IMAGE_URL', payload: downloadPath});
-      dispatch({type: 'SET_LOADING_IMAGE', payload: false});
-      return true;
-    }
-    if (url && url === prevCachedUrl.current) {
-      dispatch({type: 'SET_IMAGE_URL', payload: cachedUrl});
       dispatch({type: 'SET_LOADING_IMAGE', payload: false});
       return true;
     }
