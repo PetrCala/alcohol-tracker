@@ -1,4 +1,4 @@
-﻿import React, {useEffect, useMemo, useReducer, useRef} from 'react';
+﻿import React, {useEffect, useMemo, useReducer, useRef, useState} from 'react';
 import {ActivityIndicator, Alert, Image} from 'react-native'; // or 'react-native-web' if you're using React for web
 import {FirebaseStorage} from 'firebase/storage';
 import {getProfilePictureURL} from '@src/storage/storageProfile';
@@ -46,15 +46,16 @@ function ProfileImage(props: ProfileImageProps) {
   const {storage, userId, downloadPath, style} = props;
   const [state, dispatch] = useReducer(reducer, initialState);
   const {cachedUrl, cacheImage, isCacheChecked} = useProfileImageCache(userId);
-  const prevDownloadPath = useRef(downloadPath); // Possibly not needed
   const prevCachedUrl = useRef(cachedUrl); // Crucial
 
-  const checkAvailableCache = (url: string | null): boolean => {
-    if (
-      url &&
-      url === prevCachedUrl.current && // Don't use cache if the url has changed
-      prevDownloadPath.current === downloadPath // Don't use cache if the download path has changed
-    ) {
+  const checkAvailableCache = async (url: string | null): Promise<boolean> => {
+    if (downloadPath?.startsWith(CONST.LOCAL_IMAGE_PREFIX)) {
+      // Is a local file
+      dispatch({type: 'SET_IMAGE_URL', payload: downloadPath});
+      dispatch({type: 'SET_LOADING_IMAGE', payload: false});
+      return true;
+    }
+    if (url && url === prevCachedUrl.current) {
       dispatch({type: 'SET_IMAGE_URL', payload: cachedUrl});
       dispatch({type: 'SET_LOADING_IMAGE', payload: false});
       return true;
@@ -66,22 +67,21 @@ function ProfileImage(props: ProfileImageProps) {
     const fetchImage = async () => {
       if (!isCacheChecked) return; // Only proceed if cache has been checked
 
-      const cacheUnchanged = checkAvailableCache(cachedUrl);
+      const cacheUnchanged = await checkAvailableCache(cachedUrl);
       if (cacheUnchanged) return; // Use cache if available and unchanged
 
       dispatch({type: 'SET_LOADING_IMAGE', payload: true});
       try {
         let downloadUrl: string | null = null;
         if (downloadPath?.includes(CONST.FIREBASE_STORAGE_URL)) {
-          // console.log('downloadPath', downloadPath)
           downloadUrl = await getProfilePictureURL(
             storage,
             userId,
             downloadPath,
-            false, // use the cache buster - error prone potentially, but makes the state upadate
           );
-          // console.log('downloadUrl', downloadUrl);
-          await cacheImage(downloadUrl);
+          if (downloadUrl !== downloadPath) {
+            await cacheImage(downloadUrl);
+          }
         }
 
         dispatch({type: 'SET_IMAGE_URL', payload: downloadUrl});

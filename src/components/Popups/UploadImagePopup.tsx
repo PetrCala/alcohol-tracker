@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CONST from '@src/CONST';
-import { auth } from '@src/services/firebaseSetup';
+import {auth} from '@src/services/firebaseSetup';
 import {UploadImagePopupProps} from '@src/types/components';
 import {useEffect, useState} from 'react';
 import {
@@ -114,13 +114,16 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
         parentState.uploadProgress.includes('100') &&
         user
       ) {
-        await AsyncStorage.removeItem(CONST.CACHE.PROFILE_PICTURE_KEY + user.uid);
+        setImageSource(imageSource);
+        await AsyncStorage.removeItem(
+          CONST.CACHE.PROFILE_PICTURE_KEY + user.uid,
+        );
         setUploadFinished(true);
         parentDispatch({type: 'SET_UPLOAD_ONGOING', payload: false});
       }
-    }
+    };
 
-    updateInfoUponUpload()
+    updateInfoUponUpload();
   }, [parentState.uploadProgress]);
 
   return (

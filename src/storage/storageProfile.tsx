@@ -18,19 +18,22 @@ export async function getProfilePictureURL(
   storage: FirebaseStorage,
   userId: string,
   downloadPath: string,
-  useCacheBuster: boolean = false,
+  // useCacheBuster: boolean = false,
 ): Promise<string | null> {
   if (!storage || !userId || !downloadPath)
     throw new Error('Missing parameters');
+
+  // let pathWithCacheBuster = downloadPath;
+
+  // if (useCacheBuster) {
+  //   // Append a unique query parameter to the URL
+  //   const cacheBuster = new Date().toLocaleTimeString(); // Current time as a cache-busting query parameter
+  //   pathWithCacheBuster +=
+  //     (pathWithCacheBuster.includes('?') ? '&' : '?') + 'cacheBuster=' + cacheBuster;
+  // }
+
   const httpsRef = ref(storage, downloadPath);
   let downloadURL = await getDownloadURL(httpsRef);
-
-  if (useCacheBuster) {
-    // Append a unique query parameter to the URL
-    const cacheBuster = new Date().toLocaleTimeString(); // Current time as a cache-busting query parameter
-    downloadURL +=
-      (downloadURL.includes('?') ? '&' : '?') + 'cacheBuster=' + cacheBuster;
-  }
 
   return downloadURL;
 }

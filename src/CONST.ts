@@ -23,6 +23,7 @@ const CONST = {
   EMPTY_ARRAY,
   EMPTY_OBJECT,
   INVALID_CHARS: ['.', '#', '$', '[', ']'],
+  LOCAL_IMAGE_PREFIX: 'file://',
   MAX_ALLOWED_UNITS: 99,
   MONTHS: [
     'January',
