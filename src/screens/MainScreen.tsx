@@ -34,6 +34,7 @@ import commonStyles from '../styles/commonStyles';
 import {useFirebase} from '../context/FirebaseContext';
 import ProfileImage from '../components/ProfileImage';
 import {generateDatabaseKey} from '@database/baseFunctions';
+import { set } from 'lodash';
 
 interface State {
   visibleDateObject: DateObject;
@@ -235,6 +236,7 @@ const MainScreen = ({navigation}: MainScreenProps) => {
               userId={user.uid}
               downloadPath={userData.profile.photo_url}
               style={styles.profileImage}
+              screen={'Main Screen'}
             />
             <Text style={styles.headerUsername}>{user.displayName}</Text>
           </TouchableOpacity>

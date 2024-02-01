@@ -40,13 +40,15 @@ type ProfileImageProps = {
   userId: string;
   downloadPath: string | null;
   style: any;
+  screen?: string;
 };
 
 function ProfileImage(props: ProfileImageProps) {
-  const {storage, userId, downloadPath, style} = props;
+  const {storage, userId, downloadPath, style, screen} = props;
   const [state, dispatch] = useReducer(reducer, initialState);
   const {cachedUrl, cacheImage, isCacheChecked} = useProfileImageCache(userId);
   const prevCachedUrl = useRef(cachedUrl); // Crucial
+  const initialDownloadPath = useRef(downloadPath); //
 
   const checkAvailableCache = async (url: string | null): Promise<boolean> => {
     if (downloadPath?.startsWith(CONST.LOCAL_IMAGE_PREFIX)) {
@@ -55,7 +57,12 @@ function ProfileImage(props: ProfileImageProps) {
       dispatch({type: 'SET_LOADING_IMAGE', payload: false});
       return true;
     }
-    if (url && url === prevCachedUrl.current) { // Do not merge these two if statements (order matters)
+    if (
+      // Do not merge these two if statements (order matters)
+      url &&
+      url === prevCachedUrl.current &&
+      downloadPath === initialDownloadPath.current // Only if the download path has not changed
+    ) {
       // Use cache if available and unchanged
       dispatch({type: 'SET_IMAGE_URL', payload: cachedUrl});
       dispatch({type: 'SET_LOADING_IMAGE', payload: false});
@@ -75,11 +82,13 @@ function ProfileImage(props: ProfileImageProps) {
       try {
         let downloadUrl: string | null = null;
         if (downloadPath?.includes(CONST.FIREBASE_STORAGE_URL)) {
+          // if (downloadPath === initialDownloadPath.current) // If the input download path has not changed
           downloadUrl = await getProfilePictureURL(
             storage,
             userId,
             downloadPath,
           );
+          // if (downloadUrl === downloadPath) // If the resulting download path has not changed
           if (downloadUrl !== downloadPath) {
             await cacheImage(downloadUrl);
           }

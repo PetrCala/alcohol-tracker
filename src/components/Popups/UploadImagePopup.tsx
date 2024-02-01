@@ -114,7 +114,7 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
         parentState.uploadProgress.includes('100') &&
         user
       ) {
-        setImageSource(imageSource);
+        setImageSource(imageSource); // Propagate immediate local changes
         await AsyncStorage.removeItem(
           CONST.CACHE.PROFILE_PICTURE_KEY + user.uid,
         );
