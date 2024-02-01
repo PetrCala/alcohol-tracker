@@ -3,6 +3,7 @@ import {
   Alert,
   Dimensions,
   Image,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -34,7 +35,6 @@ import commonStyles from '../styles/commonStyles';
 import {useFirebase} from '../context/FirebaseContext';
 import ProfileImage from '../components/ProfileImage';
 import {generateDatabaseKey} from '@database/baseFunctions';
-import { set } from 'lodash';
 
 interface State {
   visibleDateObject: DateObject;
@@ -43,6 +43,8 @@ interface State {
   pointsEarned: number;
   ongoingSession: DrinkingSessionArrayItem | null;
   loadingNewSession: boolean;
+  refreshing: boolean;
+  refreshCounter: number;
 }
 
 interface Action {
@@ -57,6 +59,8 @@ const initialState: State = {
   pointsEarned: 0,
   ongoingSession: null,
   loadingNewSession: false,
+  refreshing: false,
+  refreshCounter: 0,
 };
 
 const reducer = (state: State, action: Action): State => {
@@ -73,6 +77,10 @@ const reducer = (state: State, action: Action): State => {
       return {...state, ongoingSession: action.payload};
     case 'SET_LOADING_NEW_SESSION':
       return {...state, loadingNewSession: action.payload};
+    case 'SET_REFRESHING':
+      return {...state, refreshing: action.payload};
+    case 'SET_REFRESH_COUNTER':
+      return {...state, refreshCounter: action.payload};
     default:
       return state;
   }
@@ -155,6 +163,17 @@ const MainScreen = ({navigation}: MainScreenProps) => {
     dispatch({type: 'SET_LOADING_NEW_SESSION', payload: false});
   };
 
+  const onRefresh = React.useCallback(() => {
+    dispatch({type: 'SET_REFRESHING', payload: true});
+    setTimeout(() => {
+      dispatch({type: 'SET_REFRESHING', payload: false});
+      dispatch({
+        type: 'SET_REFRESH_COUNTER',
+        payload: state.refreshCounter + 1,
+      });
+    }, 1000);
+  }, []);
+
   // Update the user last login time
   useEffect(() => {
     const fetchData = async () => {
@@ -236,7 +255,7 @@ const MainScreen = ({navigation}: MainScreenProps) => {
               userId={user.uid}
               downloadPath={userData.profile.photo_url}
               style={styles.profileImage}
-              screen={'Main Screen'}
+              refreshTrigger={state.refreshCounter}
             />
             <Text style={styles.headerUsername}>{user.displayName}</Text>
           </TouchableOpacity>
@@ -253,13 +272,15 @@ const MainScreen = ({navigation}: MainScreenProps) => {
             You are currently in session!
           </Text>
         </TouchableOpacity>
-      ) : (
-        null
-      )}
+      ) : null}
       {/* <View style={styles.yearMonthContainer}>
         <Text style={styles.yearMonthText}>{thisYearMonth}</Text>
       </View> */}
-      <ScrollView style={styles.mainScreenContent}>
+      <ScrollView
+        style={styles.mainScreenContent}
+        refreshControl={
+          <RefreshControl refreshing={state.refreshing} onRefresh={onRefresh} />
+        }>
         <View style={styles.menuInfoContainer}>
           <View style={styles.menuInfoItemContainer}>
             <Text style={styles.menuInfoText}>Units:</Text>

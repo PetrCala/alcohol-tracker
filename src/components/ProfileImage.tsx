@@ -40,11 +40,11 @@ type ProfileImageProps = {
   userId: string;
   downloadPath: string | null;
   style: any;
-  screen?: string;
+  refreshTrigger?: number; // Likely a number, used to force a refresh
 };
 
 function ProfileImage(props: ProfileImageProps) {
-  const {storage, userId, downloadPath, style, screen} = props;
+  const {storage, userId, downloadPath, style, refreshTrigger} = props;
   const [state, dispatch] = useReducer(reducer, initialState);
   const {cachedUrl, cacheImage, isCacheChecked} = useProfileImageCache(userId);
   const prevCachedUrl = useRef(cachedUrl); // Crucial
@@ -61,7 +61,8 @@ function ProfileImage(props: ProfileImageProps) {
       // Do not merge these two if statements (order matters)
       url &&
       url === prevCachedUrl.current &&
-      downloadPath === initialDownloadPath.current // Only if the download path has not changed
+      downloadPath === initialDownloadPath.current && // Only if the download path has not changed
+      !refreshTrigger // Only if the refresh trigger is not set
     ) {
       // Use cache if available and unchanged
       dispatch({type: 'SET_IMAGE_URL', payload: cachedUrl});
@@ -110,10 +111,12 @@ function ProfileImage(props: ProfileImageProps) {
 
     fetchImage();
     prevCachedUrl.current = cachedUrl;
-  }, [downloadPath, cachedUrl, isCacheChecked]);
+  }, [downloadPath, cachedUrl, isCacheChecked, refreshTrigger]);
 
   if (state.loadingImage)
     return <ActivityIndicator size="large" color="#0000ff" style={style} />;
+
+  console.log(refreshTrigger, 'child')
 
   return (
     <Image
