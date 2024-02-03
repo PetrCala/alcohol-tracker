@@ -19,6 +19,7 @@ import {useEffect, useMemo, useReducer} from 'react';
 import {readDataOnce} from '@database/baseFunctions';
 import {
   DrinkingSessionArrayItem,
+  DrinkingSessionData,
   FriendsData,
   PreferencesData,
 } from '@src/types/database';
@@ -165,11 +166,11 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
         let userPreferences: PreferencesData | null = preferences;
 
         if (!userSessions) {
-          const newSessions = await readDataOnce(
+          const newSessions: DrinkingSessionData | null = await readDataOnce(
             db,
             `user_drinking_sessions/${userId}`,
           );
-          userSessions = Object.values(newSessions);
+          userSessions = newSessions ? Object.values(newSessions) : [];
         }
         if (!userPreferences) {
           userPreferences = await readDataOnce(

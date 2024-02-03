@@ -6,7 +6,10 @@ import {
   assertSucceeds,
   RulesTestEnvironment,
 } from '@firebase/rules-unit-testing';
-import {describeWithEmulator, makeFriends} from '../../utils/emulators/emulatorTools';
+import {
+  describeWithEmulator,
+  makeFriends,
+} from '../../utils/emulators/emulatorTools';
 import {
   setupFirebaseRulesTestEnv,
   teardownFirebaseRulesTestEnv,
@@ -19,7 +22,6 @@ import {
   SAMPLE_UNITS_TO_COLORS,
   SAMPLE_UNITS_TO_POINTS,
 } from '../../utils/testsStatic';
-import { mock } from 'node:test';
 
 const projectId = process.env.TEST_PROJECT_ID;
 if (!projectId) throw new Error(`Missing environment variable ${projectId}.`);
@@ -257,7 +259,9 @@ describeWithEmulator('Test user current session rules', () => {
 
   it('should allow writing to user current session node when admin is true', async () => {
     const authRef = adminDb.ref(`user_current_session`);
-    await assertSucceeds(authRef.set({test_user: {current_session_id: 'test'}}));
+    await assertSucceeds(
+      authRef.set({test_user: {current_session_id: 'test'}}),
+    );
   });
 
   it('should not allow writing to user current session node when not an admin', async () => {
@@ -297,12 +301,12 @@ describeWithEmulator('Test user current session rules', () => {
     await assertSucceeds(authRef.get());
   });
 
-  it('should not allow an authenticated user to read other users\' current session node', async () => {
+  it("should not allow an authenticated user to read other users' current session node", async () => {
     const authRef = authDb.ref(`user_drinking_sessions/${otherUserId}`);
     await assertFails(authRef.get());
   });
 
-  it('should allow an authenticated user to read their friends\' current session node', async () => {
+  it("should allow an authenticated user to read their friends' current session node", async () => {
     await makeFriends(authDb, authUserId, otherUserId); // Set the friend connection first
     const authRef = authDb.ref(`user_drinking_sessions/${otherUserId}`);
     await assertSucceeds(authRef.get());
