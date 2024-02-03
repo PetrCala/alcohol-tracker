@@ -148,10 +148,10 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     backgroundColor: 'white',
+    paddingTop: 5,
   },
   friendOverviewButton: {
     width: '100%',
-    height: '100%',
   },
   emptyList: {
     width: '100%',
