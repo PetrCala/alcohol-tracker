@@ -101,20 +101,6 @@ const SearchScreen = (props: ScreenProps) => {
     }
   };
 
-  // const updateDisplayData = async (
-  //   searchResultData: NicknameToIdData,
-  // ): Promise<void> => {
-  //   const newDisplayData: ProfileDisplayData = {};
-  //   if (db || isNonEmptyObject(searchResultData)) {
-  //     const dataIds = Object.keys(searchResultData);
-  //     const userProfiles: ProfileData[] = await fetchUserProfiles(db, dataIds);
-  //     dataIds.forEach((id, index) => {
-  //       newDisplayData[id] = userProfiles[index];
-  //     });
-  //   }
-  //   dispatch({type: 'SET_DISPLAY_DATA', payload: newDisplayData});
-  // };
-
   /** Having a list of users returned by the search,
    * determine the request status for each and update
    * the RequestStatuses hook.
@@ -139,7 +125,6 @@ const SearchScreen = (props: ScreenProps) => {
     searchResults: NicknameToIdData,
   ): Promise<void> => {
     updateRequestStatuses(searchResults); // Perhaps redundant
-    // await updateDisplayData(searchResults); // Assuming this returns a Promise
     const noUsersFound = !isNonEmptyObject(searchResults);
     dispatch({type: 'SET_NO_USERS_FOUND', payload: noUsersFound});
   };

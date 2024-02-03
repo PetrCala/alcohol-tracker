@@ -7,16 +7,14 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import MenuIcon from '../../components/Buttons/MenuIcon';
 import {getDatabaseData} from '../../context/DatabaseDataContext';
 import commonStyles from '../../styles/commonStyles';
 import {
-  FriendRequestData,
   FriendRequestDisplayData,
   FriendsData,
   UserData,
 } from '../../types/database';
-import {TabView, SceneMap} from 'react-native-tab-view';
+import {TabView} from 'react-native-tab-view';
 import FriendListScreen from './FriendListScreen';
 import FriendRequestScreen from './FriendRequestScreen';
 import SearchScreen from './SearchScreen';
