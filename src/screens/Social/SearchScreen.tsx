@@ -28,8 +28,8 @@ import {searchDbByNickname} from '../../database/search';
 import {fetchUserProfiles} from '@database/profile';
 import CONST from '@src/CONST';
 import ProfileImage from '@components/ProfileImage';
-import { FirebaseStorage } from 'firebase/storage';
-import { QUIRKY_NICKNAMES } from './QuirkyNicknames';
+import {FirebaseStorage} from 'firebase/storage';
+import {QUIRKY_NICKNAMES} from './QuirkyNicknames';
 
 const statusToTextMap: {[key in FriendRequestStatusState]: string} = {
   self: 'You',
@@ -43,7 +43,7 @@ type SearchResultProps = {
   userId: string;
   displayData: any;
   db: Database;
-  storage: FirebaseStorage
+  storage: FirebaseStorage;
   userFrom: string;
   requestStatus: FriendRequestStatusState | undefined;
   alreadyAFriend: boolean;
@@ -310,10 +310,9 @@ const SearchScreen = (props: ScreenProps) => {
       <ScrollView
         style={styles.scrollViewContainer}
         keyboardShouldPersistTaps="handled">
-        <Text style={styles.searchInfoText}>Search users</Text>
         <View style={styles.textContainer}>
           <TextInput
-            placeholder="Nickname"
+            placeholder="Search for a user"
             value={state.searchText}
             onChangeText={text =>
               dispatch({type: 'SET_SEARCH_TEXT', payload: text})
@@ -388,12 +387,6 @@ const styles = StyleSheet.create({
     padding: 15,
     alignItems: 'center',
     elevation: 5,
-  },
-  searchInfoText: {
-    textAlign: 'center',
-    fontSize: 16,
-    color: 'black',
-    marginTop: 10,
   },
   textContainer: {
     width: '95%',
