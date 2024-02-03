@@ -149,7 +149,7 @@ const FriendRequestItem: React.FC<FriendRequestItemProps> = ({
   friendRequests,
   displayData,
 }) => {
-  if (!friendRequests || !displayData) return <></>;
+  if (!friendRequests || !displayData) return null;
   const profileData = displayData[requestId];
   const requestStatus = friendRequests[requestId];
 
