@@ -273,8 +273,10 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
         <ProfileOverview userId={userId} profileData={profileData} />
         <View style={styles.friendsInfoContainer}>
           <View style={styles.leftContainer}>
-            <Text style={styles.friendsInfoText}>
-              Friends: {state.friendCount}
+            <Text style={styles.friendsInfoHeading}>Friends:</Text>
+            <Text
+              style={[styles.friendsInfoText, commonStyles.smallMarginLeft]}>
+              {state.friendCount}
             </Text>
             {userId === user?.uid ? null : (
               <Text
@@ -392,6 +394,12 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     flexDirection: 'row',
     margin: 10,
+  },
+  friendsInfoHeading: {
+    fontSize: 16,
+    color: 'black',
+    fontWeight: '500',
+    textAlign: 'center',
   },
   friendsInfoText: {
     fontSize: 16,

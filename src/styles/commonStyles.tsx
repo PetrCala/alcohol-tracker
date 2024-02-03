@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
   },
   linkText: {
     color: '#0000EE',
-    fontWeight: 'bold',
+    fontWeight: '500',
   },
   smallMarginLeft: {
     marginLeft: 5,
