@@ -35,7 +35,11 @@ import LoadingData from '@components/LoadingData';
 import ItemListPopup from '@components/Popups/ItemListPopup';
 import {unfriend} from '@database/friends';
 import YesNoPopup from '@components/Popups/YesNoPopup';
-import { fetchUserFriends, getCommonFriends, getCommonFriendsCount } from '@src/utils/social/friendUtils';
+import {
+  fetchUserFriends,
+  getCommonFriends,
+  getCommonFriendsCount,
+} from '@src/utils/social/friendUtils';
 
 interface State {
   isLoading: boolean;
@@ -196,7 +200,10 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
 
   // Monitor common friends count
   useMemo(() => {
-    const commonFriendCount = getCommonFriendsCount(currentUserFriends, state.friends);
+    const commonFriendCount = getCommonFriendsCount(
+      currentUserFriends,
+      state.friends,
+    );
     dispatch({type: 'SET_COMMON_FRIEND_COUNT', payload: commonFriendCount});
   }, [state.friends]);
 
@@ -249,6 +256,13 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
       </View>
       <ScrollView style={styles.scrollView} keyboardShouldPersistTaps="handled">
         <ProfileOverview userId={userId} profileData={profileData} />
+        <View style={styles.friendsInfoContainer}>
+          <Text></Text>
+          <Text style={styles.friendsInfoText}>Friends: {friends ? Object.keys(friends).length : 0} </Text>
+          <Text style={styles.friendsInfoText}>
+            ({state.commonFriendCount} common)
+          </Text>
+        </View>
         <View style={commonStyles.horizontalLine} />
         <View style={styles.statsOverviewHolder}>
           <StatsOverview statsData={statsData} />
@@ -336,6 +350,19 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     flexShrink: 1,
     backgroundColor: '#FFFF99',
+  },
+  friendsInfoContainer: {
+    width: '90%',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    alignSelf: 'center',
+    flexDirection: 'row',
+    margin: 10,
+  },
+  friendsInfoText: {
+    fontSize: 16,
+    color: 'black',
+    textAlign: 'center',
   },
   statsOverviewHolder: {
     height: 120,
