@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     padding: 5,
-    marginTop: 20,
+    marginTop: 15,
   },
   profileImageContainer: {
     height: profileImageSize,
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     height: profileImageSize,
     borderRadius: profileImageSize / 2,
     backgroundColor: 'white',
-    top: 0,
+    top: 5,
     position: 'absolute',
     zIndex: 0, // Ensure that the profile image is below the edit button
   },
@@ -111,9 +111,11 @@ const styles = StyleSheet.create({
     zIndex: 4,
   },
   userInfoContainer: {
-    flexDirection: 'column',
+    width: screenWidth,
+    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'flex-start',
+    marginTop: 10,
     padding: 5,
     textAlign: 'center',
   },

@@ -20,6 +20,7 @@ import {TabView, SceneMap} from 'react-native-tab-view';
 import FriendListScreen from './FriendListScreen';
 import FriendRequestScreen from './FriendRequestScreen';
 import SearchScreen from './SearchScreen';
+import {SocialScreenProps} from '@src/types/screens';
 
 type SocialFooterButtonProps = {
   index: number;
@@ -51,18 +52,15 @@ const SocialFooterButton: React.FC<SocialFooterButtonProps> = ({
   );
 };
 
-type SocialProps = {
-  navigation: any;
-};
-
 type RouteType = {
   key: string;
   title: string;
   userData: UserData | null;
 };
 
-const SocialScreen = (props: SocialProps) => {
-  const {navigation} = props;
+const SocialScreen = ({route, navigation}: SocialScreenProps) => {
+  if (!route || !navigation) return null;
+  const {screen} = route.params;
   const {userData} = getDatabaseData();
   const [friendRequests, setFriendRequests] = useState<
     FriendRequestDisplayData | undefined
@@ -71,12 +69,14 @@ const SocialScreen = (props: SocialProps) => {
     userData?.friends,
   );
   const userHasFriends = userData?.friends ?? false;
-  const [index, setIndex] = useState<number>(0); // Current screen index - defaults to friend requests in case of no friends
   const [routes] = useState([
     {key: 'friendList', title: 'Friend List', userData: userData},
     {key: 'friendSearch', title: 'Friend Search', userData: userData},
     {key: 'friendRequests', title: 'Friend Requests', userData: userData},
   ]);
+  const [index, setIndex] = useState<number>(
+    routes.findIndex(route => route.title === screen) || 0, // Get the index of the screen based on the title
+  );
 
   const renderScene = ({route}: {route: RouteType}) => {
     if (!userData) return null;

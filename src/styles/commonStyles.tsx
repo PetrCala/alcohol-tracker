@@ -43,6 +43,13 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginTop: 5,
   },
+  linkText: {
+    color: '#0000EE',
+    fontWeight: 'bold',
+  },
+  smallMarginLeft: {
+    marginLeft: 5,
+  },
 });
 
 export default styles;

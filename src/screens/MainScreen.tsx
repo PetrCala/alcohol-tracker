@@ -321,7 +321,9 @@ const MainScreen = ({navigation}: MainScreenProps) => {
             iconSource={require('../../assets/icons/social.png')}
             containerStyle={styles.menuIconContainer}
             iconStyle={styles.menuIcon}
-            onPress={() => navigation.navigate('Social Screen')}
+            onPress={() =>
+              navigation.navigate('Social Screen', {screen: 'Friend List'})
+            }
           />
           <MenuIcon
             iconId="achievement-icon"

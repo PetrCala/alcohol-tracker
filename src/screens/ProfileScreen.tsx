@@ -257,11 +257,30 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
       <ScrollView style={styles.scrollView} keyboardShouldPersistTaps="handled">
         <ProfileOverview userId={userId} profileData={profileData} />
         <View style={styles.friendsInfoContainer}>
-          <Text></Text>
-          <Text style={styles.friendsInfoText}>Friends: {friends ? Object.keys(friends).length : 0} </Text>
-          <Text style={styles.friendsInfoText}>
-            ({state.commonFriendCount} common)
-          </Text>
+          <View style={styles.leftContainer}>
+            <Text style={styles.friendsInfoText}>
+              Friends: {friends ? Object.keys(friends).length : 0}
+            </Text>
+            {userId === user?.uid ? null : (
+              <Text
+                style={[styles.friendsInfoText, commonStyles.smallMarginLeft]}>
+                ({state.commonFriendCount} common)
+              </Text>
+            )}
+          </View>
+          <View style={styles.rightContainer}>
+            <TouchableOpacity
+              onPress={() => {
+                userId === user?.uid
+                  ? navigation.replace('Social Screen', {screen: 'Friend List'})
+                  : navigation.navigate('Friends');
+              }}
+              style={styles.seeFriendsButton}>
+              <Text style={[styles.friendsInfoText, commonStyles.linkText]}>
+                See all friends
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
         <View style={commonStyles.horizontalLine} />
         <View style={styles.statsOverviewHolder}>
@@ -353,7 +372,7 @@ const styles = StyleSheet.create({
   },
   friendsInfoContainer: {
     width: '90%',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
     alignItems: 'center',
     alignSelf: 'center',
     flexDirection: 'row',
@@ -363,6 +382,25 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'black',
     textAlign: 'center',
+  },
+  leftContainer: {
+    width: '60%',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+  rightContainer: {
+    width: '40%',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  seeFriendsButton: {
+    paddingTop: 5,
+    paddingBottom: 5,
+    paddingLeft: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   statsOverviewHolder: {
     height: 120,

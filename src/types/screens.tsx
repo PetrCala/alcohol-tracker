@@ -40,7 +40,9 @@ export type AppStackParamList = {
     drinkingSessionData: DrinkingSessionArrayItem[] | null;
     preferences: PreferencesData | null;
   };
-  'Social Screen': undefined;
+  'Social Screen': {
+    screen: string; // 'Friend List' | 'Friend Requests' | 'Search';
+  };
   'Achievement Screen': undefined;
   'Statistics Screen': undefined;
   'Settings Screen': undefined;
@@ -83,6 +85,12 @@ export type MainScreenProps = {
 export type MainMenuScreenProps = {
   route?: RouteProp<AppStackParamList, 'Main Menu Screen'>;
   // navigation?: StackNavigationProp<AppStackParamList, 'Main Menu Screen'>;
+  navigation?: any;
+};
+
+export type SocialScreenProps = {
+  route?: RouteProp<AppStackParamList, 'Social Screen'>;
+  // navigation: StackNavigationProp<AppStackParamList, 'Main Screen'>;
   navigation?: any;
 };
 

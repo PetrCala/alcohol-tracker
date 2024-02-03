@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
   },
   overviewStatsHeader: {
     textAlign: 'center',
-    fontSize: 16,
+    fontSize: 15,
     paddingRight: 3,
     paddingLeft: 3,
     color: 'black',
