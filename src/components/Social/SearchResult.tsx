@@ -66,12 +66,12 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
     <View style={styles.sendFriendRequestContainer}>
       {userFrom === userTo ? (
         <Text style={styles.sendFriendRequestText}>{statusToTextMap.self}</Text>
+      ) : requestStatus === 'sent' ? (
+        <Text style={styles.sendFriendRequestText}>{statusToTextMap.sent}</Text>
       ) : alreadyAFriend ? (
         <Text style={styles.sendFriendRequestText}>
           {statusToTextMap.friend}
         </Text>
-      ) : requestStatus === 'sent' ? (
-        <Text style={styles.sendFriendRequestText}>{statusToTextMap.sent}</Text>
       ) : requestStatus === 'received' ? (
         <TouchableOpacity
           style={styles.acceptFriendRequestButton}
