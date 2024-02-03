@@ -194,6 +194,32 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
     fetchData();
   }, [userId, drinkingSessionData, preferences]);
 
+  // Monitor friends
+  useEffect(() => {
+    const fetchFriends = async () => {
+      dispatch({type: 'SET_IS_LOADING', payload: true});
+
+      try {
+        let userFriends: FriendsData | null = friends;
+
+        if (!userFriends) {
+          userFriends = await fetchUserFriends(db, userId);
+        }
+
+        dispatch({type: 'SET_FRIENDS', payload: userFriends});
+      } catch (error: any) {
+        Alert.alert(
+          'Error fetching data',
+          `Could not connect to the database: ${error.message}`,
+        );
+      }
+
+      dispatch({type: 'SET_IS_LOADING', payload: false});
+    };
+
+    fetchFriends();
+  }, [userId, friends]);
+
   // Monitor friends count
   useMemo(() => {
     const friendCount = state.friends ? Object.keys(state.friends).length : 0;
@@ -232,7 +258,7 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
     dispatch({type: 'SET_POINTS_EARNED', payload: thisMonthPoints});
   }, [state.drinkingSessionData, state.preferences, state.visibleDateObject]);
 
-  if (state.isLoading) return <LoadingData />;
+  if (state.isLoading) return <LoadingData blendBackground={true} />;
   if (!db || !storage || !state.preferences || !state.drinkingSessionData)
     return;
 
