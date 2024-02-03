@@ -36,6 +36,13 @@ const styles = StyleSheet.create({
     elevation: 10, // for Android shadow
     // padding: 10,
   },
+  horizontalLine: {
+    width: screenWidth * 0.9,
+    height: 1,
+    backgroundColor: 'grey',
+    alignSelf: 'center',
+    marginTop: 5,
+  },
 });
 
 export default styles;

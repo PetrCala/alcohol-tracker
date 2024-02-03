@@ -214,7 +214,7 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
       </View>
       <ScrollView style={styles.scrollView} keyboardShouldPersistTaps="handled">
         <ProfileOverview userId={userId} profileData={profileData} />
-        <View style={styles.horizontalLine} />
+        <View style={commonStyles.horizontalLine} />
         <View style={styles.statsOverviewHolder}>
           <StatsOverview statsData={statsData} />
         </View>
@@ -301,13 +301,6 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     flexShrink: 1,
     backgroundColor: '#FFFF99',
-  },
-  horizontalLine: {
-    width: screenWidth * 0.9,
-    height: 1,
-    backgroundColor: 'grey',
-    alignSelf: 'center',
-    marginTop: 5,
   },
   statsOverviewHolder: {
     height: 120,

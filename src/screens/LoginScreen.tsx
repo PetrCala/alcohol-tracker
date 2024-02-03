@@ -15,13 +15,12 @@ import {useFocusEffect} from '@react-navigation/native';
 import {sendPasswordResetEmail, signOut} from 'firebase/auth';
 import {auth} from '../services/firebaseSetup';
 import {signInUserWithEmailAndPassword} from '../auth/auth';
-
+import commonStyles from '../styles/commonStyles';
 import {LoginScreenProps} from '../types/screens';
 import LoadingData from '../components/LoadingData';
 import {useUserConnection} from '../context/UserConnectionContext';
 import InputTextPopup from '../components/Popups/InputTextPopup';
 import {handleErrors} from '../utils/errorHandling';
-import CONST from '@src/CONST';
 import WarningMessage from '@components/Info/WarningMessage';
 import SuccessMessage from '@components/Info/SuccessMessage';
 
@@ -190,7 +189,7 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
               Forgot your password?
             </Text>
           </TouchableOpacity>
-          <View style={styles.horizontalLine} />
+          <View style={commonStyles.horizontalLine} />
           <View style={styles.signUpContainer}>
             <TouchableOpacity
               style={styles.signUpButtonContainer}
@@ -331,12 +330,6 @@ const styles = StyleSheet.create({
     color: '#02a109',
     fontWeight: 'bold',
     fontSize: 14,
-  },
-  horizontalLine: {
-    width: screenWidth * 0.55,
-    height: 1,
-    backgroundColor: 'grey',
-    alignSelf: 'center',
   },
   signUpContainer: {
     width: '100%',
