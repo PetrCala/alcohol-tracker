@@ -28,6 +28,7 @@ import {
   calculateThisMonthUnits,
   dateToDateObject,
   getSingleMonthDrinkingSessions,
+  objKeys,
   timestampToDate,
 } from '@src/utils/dataHandling';
 import {DateObject} from '@src/types/components';
@@ -222,10 +223,10 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
 
   // Monitor friends count
   useMemo(() => {
-    const friendCount = state.friends ? Object.keys(state.friends).length : 0;
+    const friendCount = state.friends ? objKeys(state.friends).length : 0;
     const commonFriendCount = getCommonFriendsCount(
-      currentUserFriends,
-      state.friends,
+      objKeys(currentUserFriends),
+      objKeys(state.friends),
     );
     dispatch({type: 'SET_FRIEND_COUNT', payload: friendCount});
     dispatch({type: 'SET_COMMON_FRIEND_COUNT', payload: commonFriendCount});

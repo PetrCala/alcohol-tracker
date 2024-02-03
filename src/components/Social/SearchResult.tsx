@@ -4,6 +4,7 @@ import {acceptFriendRequest, sendFriendRequest} from '../../database/friends';
 import {Database} from 'firebase/database';
 import ProfileImage from '@components/ProfileImage';
 import {FirebaseStorage} from 'firebase/storage';
+import React from 'react';
 
 const statusToTextMap: {[key in FriendRequestStatusState]: string} = {
   self: 'You',
@@ -100,6 +101,7 @@ type SearchResultProps = {
   userFrom: string;
   requestStatus: FriendRequestStatusState | undefined;
   alreadyAFriend: boolean;
+  customButton?: React.ReactNode;
 };
 
 const SearchResult: React.FC<SearchResultProps> = ({
@@ -110,6 +112,7 @@ const SearchResult: React.FC<SearchResultProps> = ({
   userFrom,
   requestStatus,
   alreadyAFriend,
+  customButton,
 }) => {
   return (
     <View style={styles.userOverviewContainer}>
@@ -127,13 +130,17 @@ const SearchResult: React.FC<SearchResultProps> = ({
             : 'Unknown'}
         </Text>
       </View>
-      <SendFriendRequestButton
-        db={db}
-        userFrom={userFrom}
-        userTo={userId}
-        requestStatus={requestStatus}
-        alreadyAFriend={alreadyAFriend}
-      />
+      {customButton ? (
+        customButton
+      ) : (
+        <SendFriendRequestButton
+          db={db}
+          userFrom={userFrom}
+          userTo={userId}
+          requestStatus={requestStatus}
+          alreadyAFriend={alreadyAFriend}
+        />
+      )}
     </View>
   );
 };

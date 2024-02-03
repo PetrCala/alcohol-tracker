@@ -21,10 +21,17 @@ const SearchWindow: React.FC<SearchWindowProps> = ({
 }) => {
   const db = useFirebase().db;
   const [searchText, setSearchText] = useState<string>('');
+  const [searchCount, setSearchCount] = useState<number>(0);
+
+  const handleDoSearch = (db: Database, searchText: string): void => {
+    doSearch(db, searchText);
+    setSearchCount(searchCount + 1);
+  };
 
   const handleResetSearch = () => {
-    setSearchText('');
     onResetSearch();
+    setSearchText('');
+    setSearchCount(0);
   };
 
   return (
@@ -38,7 +45,7 @@ const SearchWindow: React.FC<SearchWindowProps> = ({
           keyboardType="default"
           textContentType="nickname"
         />
-        {searchText !== '' ? (
+        {searchText !== '' || searchCount > 0 ? (
           <TouchableOpacity
             onPress={handleResetSearch}
             style={styles.searchTextResetContainer}>
@@ -52,7 +59,7 @@ const SearchWindow: React.FC<SearchWindowProps> = ({
       <View style={styles.searchButtonContainer}>
         <TouchableOpacity
           style={styles.searchButton}
-          onPress={() => doSearch(db, searchText)}>
+          onPress={() => handleDoSearch(db, searchText)}>
           <Text style={styles.searchButtonText}>Search</Text>
         </TouchableOpacity>
       </View>

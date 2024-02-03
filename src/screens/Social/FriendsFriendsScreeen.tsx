@@ -1,4 +1,11 @@
-import {Alert, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {
   NicknameToIdData,
   FriendRequestStatusState,
@@ -7,30 +14,36 @@ import {
   ProfileDisplayData,
   ProfileData,
 } from '../../types/database';
-import {useMemo, useReducer} from 'react';
+import {useEffect, useMemo, useReducer} from 'react';
 import {useFirebase} from '../../context/FirebaseContext';
 import {auth} from '../../services/firebaseSetup';
-import {isNonEmptyObject} from '../../utils/validation';
+import {isNonEmptyArray, isNonEmptyObject} from '../../utils/validation';
 import LoadingData from '../../components/LoadingData';
 import {Database} from 'firebase/database';
-import {searchDbByNickname} from '../../database/search';
+import {
+  searchDatabaseForUsers,
+  searchDbByNickname,
+} from '../../database/search';
 import {fetchUserProfiles} from '@database/profile';
-import {QUIRKY_NICKNAMES} from '../../utils/QuirkyNicknames';
 import SearchResult from '@components/Social/SearchResult';
 import SearchWindow from '@components/Social/SearchWindow';
 import {FriendsFriendsScreenProps} from '@src/types/screens';
 import MainHeader from '@components/Header/MainHeader';
 import GrayHeader from '@components/Header/GrayHeader';
 import {getCommonFriends} from '@src/utils/social/friendUtils';
+import {UserSearchResults} from '@src/types/search';
+import {objKeys} from '@src/utils/dataHandling';
+import {getDatabaseData} from '@src/context/DatabaseDataContext';
+import SeeProfileButton from '@components/Buttons/SeeProfileButton';
 
 interface State {
-  searchResultData: FriendsData;
   searching: boolean;
-  commonFriends: string[];
-  otherFriends: string[];
-  // requestStatuses: {[userId: string]: FriendRequestStatusState | undefined};
+  displayedFriends: UserSearchResults;
+  commonFriends: UserSearchResults;
+  otherFriends: UserSearchResults;
+  requestStatuses: {[userId: string]: FriendRequestStatusState | undefined};
   noUsersFound: boolean;
-  // displayData: ProfileDisplayData;
+  displayData: ProfileDisplayData;
 }
 
 interface Action {
@@ -39,32 +52,31 @@ interface Action {
 }
 
 const initialState: State = {
-  searchResultData: {},
   searching: false,
+  displayedFriends: [],
   commonFriends: [],
   otherFriends: [],
-  // requestStatuses: {},
+  requestStatuses: {},
   noUsersFound: false,
-  // displayData: {},
+  displayData: {},
 };
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
-    case 'SET_SEARCH_RESULT_DATA':
-      return {...state, searchResultData: action.payload};
     case 'SET_SEARCHING':
       return {...state, searching: action.payload};
+    case 'SET_DISPLAYED_FRIENDS':
+      return {...state, displayedFriends: action.payload};
     case 'SET_COMMON_FRIENDS':
       return {...state, commonFriends: action.payload};
     case 'SET_OTHER_FRIENDS':
       return {...state, otherFriends: action.payload};
-
-    // case 'SET_REQUEST_STATUSES':
-    //   return {...state, requestStatuses: action.payload};
-    // case 'SET_NO_USERS_FOUND':
-    //   return {...state, noUsersFound: action.payload};
-    // case 'SET_DISPLAY_DATA':
-    //   return {...state, displayData: action.payload};
+    case 'SET_REQUEST_STATUSES':
+      return {...state, requestStatuses: action.payload};
+    case 'SET_NO_USERS_FOUND':
+      return {...state, noUsersFound: action.payload};
+    case 'SET_DISPLAY_DATA':
+      return {...state, displayData: action.payload};
     default:
       return state;
   }
@@ -77,29 +89,21 @@ const FriendsFriendsScreen = ({
   if (!route || !navigation) return null;
   const {userId, friends, currentUserFriends} = route.params;
   const {db, storage} = useFirebase();
+  const {userData} = getDatabaseData();
   const user = auth.currentUser;
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const doSearch = async (db: Database, searchText: string): Promise<void> => {
-    if (!db || !searchText) {
-      // Add an 'input a value first' alert later
-      dispatch({type: 'SET_SEARCH_RESULT_DATA', payload: {}});
-      await updateHooksBasedOnSearchResults({});
-      return;
-    }
-
-    let searchResultData: NicknameToIdData = {};
-    dispatch({type: 'SET_SEARCHING', payload: true});
     try {
-      const newResults = await searchDbByNickname(db, searchText); // Nickname is cleaned in the function
-      if (newResults) {
-        searchResultData = newResults;
-      }
-      if (QUIRKY_NICKNAMES[searchText]) {
-        searchResultData[QUIRKY_NICKNAMES[searchText]] = searchText;
-      }
-      await updateHooksBasedOnSearchResults(searchResultData);
-      dispatch({type: 'SET_SEARCH_RESULT_DATA', payload: searchResultData});
+      dispatch({type: 'SET_SEARCHING', payload: true});
+      let searchResultData: UserSearchResults = await searchDatabaseForUsers(
+        db,
+        searchText,
+      );
+      let relevantResults = searchResultData.filter(userId =>
+        objKeys(friends).includes(userId),
+      );
+      dispatch({type: 'SET_DISPLAYED_FRIENDS', payload: relevantResults}); // Hide irrelevant
     } catch (error: any) {
       Alert.alert(
         'Database serach failed',
@@ -112,79 +116,124 @@ const FriendsFriendsScreen = ({
   };
 
   const updateDisplayData = async (
-    searchResultData: NicknameToIdData,
+    searchResultData: UserSearchResults,
   ): Promise<void> => {
     const newDisplayData: ProfileDisplayData = {};
-    if (db || isNonEmptyObject(searchResultData)) {
-      const dataIds = Object.keys(searchResultData);
-      const userProfiles: ProfileData[] = await fetchUserProfiles(db, dataIds);
-      dataIds.forEach((id, index) => {
-        newDisplayData[id] = userProfiles[index];
-      });
-    }
+    const userProfiles: ProfileData[] = await fetchUserProfiles(
+      db,
+      searchResultData,
+    );
+    searchResultData.forEach((id, index) => {
+      newDisplayData[id] = userProfiles[index];
+    });
     dispatch({type: 'SET_DISPLAY_DATA', payload: newDisplayData});
   };
 
-  //   /** Having a list of users returned by the search,
-  //    * determine the request status for each and update
-  //    * the RequestStatuses hook.
-  //    */
-  //   const updateRequestStatuses = (
-  //     searchResultData: NicknameToIdData = state.searchResultData,
-  //   ): void => {
-  //     let newRequestStatuses: {
-  //       [userId: string]: FriendRequestStatusState;
-  //     } = {};
-  //     if (isNonEmptyObject(searchResultData)) {
-  //       Object.keys(searchResultData).forEach(userId => {
-  //         if (friendRequests && friendRequests[userId]) {
-  //           newRequestStatuses[userId] = friendRequests[userId];
-  //         }
-  //       });
-  //     }
-  //     dispatch({type: 'SET_REQUEST_STATUSES', payload: newRequestStatuses});
-  //   };
+  /** Having a list of users returned by the search,
+   * determine the request status for each and update
+   * the RequestStatuses hook.
+   */
+  const updateRequestStatuses = (searchResultData: UserSearchResults): void => {
+    let newRequestStatuses: {
+      [userId: string]: FriendRequestStatusState;
+    } = {};
+    searchResultData.forEach(userId => {
+      if (userData?.friend_requests && userData.friend_requests[userId]) {
+        newRequestStatuses[userId] = userData.friend_requests[userId];
+      }
+    });
+    dispatch({type: 'SET_REQUEST_STATUSES', payload: newRequestStatuses});
+  };
 
   const updateHooksBasedOnSearchResults = async (
-    searchResults: NicknameToIdData,
+    searchResults: UserSearchResults,
   ): Promise<void> => {
-    // updateRequestStatuses(searchResults); // Perhaps redundant
+    updateRequestStatuses(searchResults); // Perhaps redundant
     await updateDisplayData(searchResults); // Assuming this returns a Promise
-    const noUsersFound = !isNonEmptyObject(searchResults);
+    const noUsersFound = !isNonEmptyArray(searchResults);
     dispatch({type: 'SET_NO_USERS_FOUND', payload: noUsersFound});
   };
 
-  const resetSearch = (): void => {
-    // Reset all values displayed on screen
-    dispatch({type: 'SET_SEARCHING', payload: false});
-    dispatch({type: 'SET_SEARCH_RESULT_DATA', payload: {}});
-    dispatch({type: 'SET_REQUEST_STATUSES', payload: {}});
-    dispatch({type: 'SET_DISPLAY_DATA', payload: {}});
-    dispatch({type: 'SET_NO_USERS_FOUND', payload: false});
+  const renderSearchResults = (renderCommonFriends: boolean): JSX.Element[] => {
+    return objKeys(state.displayedFriends)
+      .filter(
+        userId => state.commonFriends.includes(userId) === renderCommonFriends,
+      )
+      .map(userId => (
+        <SearchResult
+          key={userId + '-container'}
+          userId={userId}
+          userDisplayData={state.displayData[userId]}
+          db={db}
+          storage={storage}
+          //@ts-ignore
+          userFrom={user.uid}
+          requestStatus={
+            renderCommonFriends ? undefined : state.requestStatuses[userId]
+          }
+          alreadyAFriend={friends ? friends[userId] : false}
+          customButton={
+            renderCommonFriends ? (
+              <SeeProfileButton
+                key={userId + '-button'}
+                onPress={() =>
+                  navigation.navigate('Profile Screen', {
+                    userId: userId,
+                    profileData: state.displayData[userId],
+                    friends: null, // Fetch on render
+                    currentUserFriends: currentUserFriends,
+                    drinkingSessionData: null, // Fetch on render
+                    preferences: null, // Fetch on render
+                  })
+                }
+              />
+            ) : null
+          }
+        />
+      ));
   };
-
-  useMemo(() => {
-    // Perhaps rewrite? - update search results, or something
-    dispatch({type: 'SET_SEARCH_RESULT_DATA', payload: friends});
-  }, [friends]);
 
   // Monitor friend groups
   useMemo(() => {
     let commonFriends: string[] = [];
     let otherFriends: string[] = [];
     if (friends) {
-      commonFriends = getCommonFriends(friends, currentUserFriends);
-      otherFriends = Object.keys(friends).filter(
+      commonFriends = getCommonFriends(
+        objKeys(friends),
+        objKeys(currentUserFriends),
+      );
+      otherFriends = objKeys(friends).filter(
         friend => !commonFriends.includes(friend),
       );
     }
     dispatch({type: 'SET_COMMON_FRIENDS', payload: commonFriends});
     dispatch({type: 'SET_OTHER_FRIENDS', payload: otherFriends});
-  }, [friends, currentUserFriends]);
+  }, [currentUserFriends, friends]);
 
-  //   useMemo(() => {
-  //     updateRequestStatuses();
-  //   }, [friendRequests]); // When updated in the database, not locally
+  useMemo(() => {
+    let noUsersFound: boolean = true;
+    if (isNonEmptyArray(state.displayedFriends)) {
+      noUsersFound = false;
+    }
+    dispatch({type: 'SET_NO_USERS_FOUND', payload: noUsersFound});
+  }, [state.displayedFriends]);
+
+  useEffect(() => {
+    const initialSearch = async (): Promise<void> => {
+      dispatch({type: 'SET_SEARCHING', payload: true});
+      await updateHooksBasedOnSearchResults(objKeys(friends));
+      dispatch({type: 'SET_DISPLAYED_FRIENDS', payload: friends});
+      dispatch({type: 'SET_SEARCHING', payload: false});
+    };
+    initialSearch();
+  }, []);
+
+  const resetSearch = (): void => {
+    // Reset all values displayed on screen
+    dispatch({type: 'SET_DISPLAYED_FRIENDS', payload: friends}); // Uncover all
+    dispatch({type: 'SET_SEARCHING', payload: false});
+    dispatch({type: 'SET_NO_USERS_FOUND', payload: false});
+  };
 
   if (!db || !user || !storage) return;
 
@@ -198,48 +247,24 @@ const FriendsFriendsScreen = ({
         style={styles.scrollViewContainer}
         keyboardShouldPersistTaps="handled">
         <SearchWindow doSearch={doSearch} onResetSearch={resetSearch} />
-        <GrayHeader headerText="Common Friends" />
         <View style={styles.searchResultsContainer}>
           {state.searching ? (
             <LoadingData style={styles.loadingData} />
-          ) : isNonEmptyObject(state.searchResultData) ? (
-            Object.keys(state.searchResultData).map(
-              userId =>
-                state.commonFriends.includes(userId) ? (
-                  <Text key={userId + '-container'}>{userId}</Text>
-                ) : null,
-              // <SearchResult
-              //   key={userId + '-container'}
-              //   userId={userId}
-              //   // displayData={state.displayData}
-              //   displayData={}
-              //   db={db}
-              //   storage={storage}
-              //   userFrom={user.uid}
-              //   requestStatus={state.requestStatuses[userId]}
-              //   alreadyAFriend={friends ? friends[userId] : false}
-              // />,
-            )
+          ) : isNonEmptyObject(state.displayedFriends) ? (
+            <>
+              <GrayHeader headerText="Common Friends" />
+              {renderSearchResults(true)}
+              <GrayHeader headerText="Other Friends" />
+              {renderSearchResults(false)}
+            </>
           ) : state.noUsersFound ? (
             <Text style={styles.noUsersFoundText}>
-              There are no users with this nickname.
+              {objKeys(friends).length > 0
+                ? 'No friends found.\n\nTry searching for other users.'
+                : 'This user has not added any friends yet.'}
             </Text>
           ) : null}
         </View>
-        <GrayHeader headerText="Other Friends" />
-        {state.searching ? (
-          <LoadingData style={styles.loadingData} />
-        ) : isNonEmptyObject(state.searchResultData) ? (
-          Object.keys(state.searchResultData).map(userId =>
-            !state.commonFriends.includes(userId) ? (
-              <Text key={userId + '-container'}>{userId}</Text>
-            ) : null,
-          )
-        ) : state.noUsersFound ? (
-          <Text style={styles.noUsersFoundText}>
-            There are no users with this nickname.
-          </Text>
-        ) : null}
       </ScrollView>
     </View>
   );

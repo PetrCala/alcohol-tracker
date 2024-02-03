@@ -1,4 +1,4 @@
-﻿import semver, { minSatisfying } from 'semver';
+﻿import semver, {minSatisfying} from 'semver';
 import {Platform} from 'react-native';
 import CONST from '@src/CONST';
 
@@ -112,4 +112,13 @@ export function isNonEmptyObject(input: any) {
   } catch (error: any) {
     return false;
   }
+}
+
+/**
+ * Checks if the input is a non-empty array.
+ * @param input - The input to be checked.
+ * @returns True if the input is a non-empty array, false otherwise.
+ */
+export function isNonEmptyArray(input: any) {
+  return Array.isArray(input) && input.length > 0;
 }

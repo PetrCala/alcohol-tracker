@@ -6,21 +6,22 @@ import {
   FriendRequestDisplayData,
   ProfileDisplayData,
   ProfileData,
-} from '../../types/database';
+} from '@src/types/database';
 import {useMemo, useReducer} from 'react';
-import {useFirebase} from '../../context/FirebaseContext';
-import {auth} from '../../services/firebaseSetup';
-import {isNonEmptyObject} from '../../utils/validation';
-import LoadingData from '../../components/LoadingData';
+import {useFirebase} from '@src/context/FirebaseContext';
+import {auth} from '@src/services/firebaseSetup';
+import {isNonEmptyArray, isNonEmptyObject} from '@src/utils/validation';
+import LoadingData from '@src/components/LoadingData';
 import {Database} from 'firebase/database';
-import {searchDbByNickname} from '../../database/search';
+import {searchDatabaseForUsers, searchDbByNickname} from '@src/database/search';
 import {fetchUserProfiles} from '@database/profile';
-import {QUIRKY_NICKNAMES} from '../../utils/QuirkyNicknames';
+import {QUIRKY_NICKNAMES} from '@src/utils/QuirkyNicknames';
 import SearchResult from '@components/Social/SearchResult';
 import SearchWindow from '@components/Social/SearchWindow';
+import {UserSearchResults} from '@src/types/search';
 
 interface State {
-  searchResultData: NicknameToIdData;
+  searchResultData: UserSearchResults;
   searching: boolean;
   requestStatuses: {[userId: string]: FriendRequestStatusState | undefined};
   noUsersFound: boolean;
@@ -33,7 +34,7 @@ interface Action {
 }
 
 const initialState: State = {
-  searchResultData: {},
+  searchResultData: [],
   searching: false,
   requestStatuses: {},
   noUsersFound: false,
@@ -73,23 +74,12 @@ const SearchScreen = (props: ScreenProps) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const doSearch = async (db: Database, searchText: string): Promise<void> => {
-    if (!db || !searchText) {
-      // Add an 'input a value first' alert later
-      dispatch({type: 'SET_SEARCH_RESULT_DATA', payload: {}});
-      await updateHooksBasedOnSearchResults({});
-      return;
-    }
-
-    let searchResultData: NicknameToIdData = {};
-    dispatch({type: 'SET_SEARCHING', payload: true});
     try {
-      const newResults = await searchDbByNickname(db, searchText); // Nickname is cleaned in the function
-      if (newResults) {
-        searchResultData = newResults;
-      }
-      if (QUIRKY_NICKNAMES[searchText]) {
-        searchResultData[QUIRKY_NICKNAMES[searchText]] = searchText;
-      }
+      dispatch({type: 'SET_SEARCHING', payload: true});
+      let searchResultData: UserSearchResults = await searchDatabaseForUsers(
+        db,
+        searchText,
+      );
       await updateHooksBasedOnSearchResults(searchResultData);
       dispatch({type: 'SET_SEARCH_RESULT_DATA', payload: searchResultData});
     } catch (error: any) {
@@ -104,16 +94,16 @@ const SearchScreen = (props: ScreenProps) => {
   };
 
   const updateDisplayData = async (
-    searchResultData: NicknameToIdData,
+    searchResultData: UserSearchResults,
   ): Promise<void> => {
     const newDisplayData: ProfileDisplayData = {};
-    if (db || isNonEmptyObject(searchResultData)) {
-      const dataIds = Object.keys(searchResultData);
-      const userProfiles: ProfileData[] = await fetchUserProfiles(db, dataIds);
-      dataIds.forEach((id, index) => {
-        newDisplayData[id] = userProfiles[index];
-      });
-    }
+    const userProfiles: ProfileData[] = await fetchUserProfiles(
+      db,
+      searchResultData,
+    );
+    searchResultData.forEach((id, index) => {
+      newDisplayData[id] = userProfiles[index];
+    });
     dispatch({type: 'SET_DISPLAY_DATA', payload: newDisplayData});
   };
 
@@ -122,27 +112,25 @@ const SearchScreen = (props: ScreenProps) => {
    * the RequestStatuses hook.
    */
   const updateRequestStatuses = (
-    searchResultData: NicknameToIdData = state.searchResultData,
+    searchResultData: UserSearchResults = state.searchResultData,
   ): void => {
     let newRequestStatuses: {
       [userId: string]: FriendRequestStatusState;
     } = {};
-    if (isNonEmptyObject(searchResultData)) {
-      Object.keys(searchResultData).forEach(userId => {
-        if (friendRequests && friendRequests[userId]) {
-          newRequestStatuses[userId] = friendRequests[userId];
-        }
-      });
-    }
+    searchResultData.forEach(userId => {
+      if (friendRequests && friendRequests[userId]) {
+        newRequestStatuses[userId] = friendRequests[userId];
+      }
+    });
     dispatch({type: 'SET_REQUEST_STATUSES', payload: newRequestStatuses});
   };
 
   const updateHooksBasedOnSearchResults = async (
-    searchResults: NicknameToIdData,
+    searchResults: UserSearchResults,
   ): Promise<void> => {
     updateRequestStatuses(searchResults); // Perhaps redundant
     await updateDisplayData(searchResults); // Assuming this returns a Promise
-    const noUsersFound = !isNonEmptyObject(searchResults);
+    const noUsersFound = !isNonEmptyArray(searchResults);
     dispatch({type: 'SET_NO_USERS_FOUND', payload: noUsersFound});
   };
 
@@ -170,8 +158,8 @@ const SearchScreen = (props: ScreenProps) => {
         <View style={styles.searchResultsContainer}>
           {state.searching ? (
             <LoadingData style={styles.loadingData} />
-          ) : isNonEmptyObject(state.searchResultData) ? (
-            Object.keys(state.searchResultData).map(userId => (
+          ) : isNonEmptyArray(state.searchResultData) ? (
+            state.searchResultData.map(userId => (
               <SearchResult
                 key={userId + '-container'}
                 userId={userId}

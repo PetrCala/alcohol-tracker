@@ -1,6 +1,8 @@
 ﻿import {Database, ref, get} from 'firebase/database';
-import {NicknameToIdData} from '../types/database';
+import {NicknameToIdData} from '@src/types/database';
 import {cleanStringForFirebaseKey} from '@src/utils/strings';
+import {QUIRKY_NICKNAMES} from '@src/utils/QuirkyNicknames';
+import {UserSearchResults} from '@src/types/search';
 
 /**
  * Using a database object and a nickname to search,
@@ -24,4 +26,30 @@ export async function searchDbByNickname(
     return snapshot.val(); // The nicknames
   }
   return null;
+}
+
+/**
+ * Searches the database for a given searchText and returns a string of IDs that match the search text.
+ * @param db - The database object.
+ * @param searchText - The text to search for.
+ * @param useQuirkyNicknames - Whether to include quirky nicknames in the search results. Default is true.
+ * @returns A Promise that resolves to a string of IDs that match the search text.
+ */
+export async function searchDatabaseForUsers(
+  db: Database | null,
+  searchText: string,
+  useQuirkyNicknames: boolean = true,
+): Promise<UserSearchResults> {
+  if (!db || !searchText) {
+    return [];
+  }
+  let searchResultData: UserSearchResults = [];
+  const newResults = await searchDbByNickname(db, searchText); // Nickname is cleaned in the function
+  if (newResults) {
+    searchResultData = Object.keys(newResults);
+  }
+  if (useQuirkyNicknames && QUIRKY_NICKNAMES[searchText]) {
+    searchResultData.push(searchText);
+  }
+  return searchResultData;
 }

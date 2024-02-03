@@ -1,6 +1,7 @@
 import {readDataOnce} from '@database/baseFunctions';
 import {FriendsData} from '@src/types/database';
 import {Database} from 'firebase/database';
+import {isNonEmptyArray} from '../validation';
 
 export async function fetchUserFriends(
   db: Database,
@@ -16,15 +17,14 @@ export async function fetchUserFriends(
  * @returns An array of common friends.
  */
 export function getCommonFriends(
-  user1Friends: FriendsData | null,
-  user2Friends: FriendsData | null,
+  user1FriendIds: string[],
+  user2FriendIds: string[],
 ): string[] {
   let commonFriends: string[] = [];
-  if (!user1Friends || !user2Friends) {
+  if (!isNonEmptyArray(user1FriendIds) && !isNonEmptyArray(user2FriendIds)) {
     return commonFriends;
   }
-  const user1FriendIds: string[] = Object.keys(user1Friends);
-  commonFriends = Object.keys(user2Friends).filter(friendId =>
+  commonFriends = user2FriendIds.filter(friendId =>
     user1FriendIds.includes(friendId),
   );
   return commonFriends;
@@ -37,8 +37,8 @@ export function getCommonFriends(
  * @returns The number of common friends.
  */
 export function getCommonFriendsCount(
-  user1Friends: FriendsData | null,
-  user2Friends: FriendsData | null,
+  user1FriendIds: string[],
+  user2FriendIds: string[],
 ): number {
-  return getCommonFriends(user1Friends, user2Friends).length;
+  return getCommonFriends(user1FriendIds, user2FriendIds).length;
 }
