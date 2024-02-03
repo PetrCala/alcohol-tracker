@@ -18,13 +18,13 @@ import {fetchUserProfiles} from '@database/profile';
 import {QUIRKY_NICKNAMES} from '../../utils/QuirkyNicknames';
 import SearchResult from '@components/Social/SearchResult';
 import SearchWindow from '@components/Social/SearchWindow';
-import useProfileDisplayData from '@hooks/userProfileDisplayData';
 
 interface State {
   searchResultData: NicknameToIdData;
   searching: boolean;
   requestStatuses: {[userId: string]: FriendRequestStatusState | undefined};
   noUsersFound: boolean;
+  displayData: ProfileDisplayData;
 }
 
 interface Action {
@@ -37,6 +37,7 @@ const initialState: State = {
   searching: false,
   requestStatuses: {},
   noUsersFound: false,
+  displayData: {},
 };
 
 const reducer = (state: State, action: Action): State => {
@@ -49,6 +50,8 @@ const reducer = (state: State, action: Action): State => {
       return {...state, requestStatuses: action.payload};
     case 'SET_NO_USERS_FOUND':
       return {...state, noUsersFound: action.payload};
+    case 'SET_DISPLAY_DATA':
+      return {...state, displayData: action.payload};
     default:
       return state;
   }
@@ -68,7 +71,6 @@ const SearchScreen = (props: ScreenProps) => {
   const {db, storage} = useFirebase();
   const user = auth.currentUser;
   const [state, dispatch] = useReducer(reducer, initialState);
-  const {loadingDisplayData, displayData} = useProfileDisplayData(friends);
 
   const doSearch = async (db: Database, searchText: string): Promise<void> => {
     if (!db || !searchText) {
@@ -101,6 +103,20 @@ const SearchScreen = (props: ScreenProps) => {
     }
   };
 
+  const updateDisplayData = async (
+    searchResultData: NicknameToIdData,
+  ): Promise<void> => {
+    const newDisplayData: ProfileDisplayData = {};
+    if (db || isNonEmptyObject(searchResultData)) {
+      const dataIds = Object.keys(searchResultData);
+      const userProfiles: ProfileData[] = await fetchUserProfiles(db, dataIds);
+      dataIds.forEach((id, index) => {
+        newDisplayData[id] = userProfiles[index];
+      });
+    }
+    dispatch({type: 'SET_DISPLAY_DATA', payload: newDisplayData});
+  };
+
   /** Having a list of users returned by the search,
    * determine the request status for each and update
    * the RequestStatuses hook.
@@ -125,6 +141,7 @@ const SearchScreen = (props: ScreenProps) => {
     searchResults: NicknameToIdData,
   ): Promise<void> => {
     updateRequestStatuses(searchResults); // Perhaps redundant
+    await updateDisplayData(searchResults); // Assuming this returns a Promise
     const noUsersFound = !isNonEmptyObject(searchResults);
     dispatch({type: 'SET_NO_USERS_FOUND', payload: noUsersFound});
   };
@@ -134,6 +151,7 @@ const SearchScreen = (props: ScreenProps) => {
     dispatch({type: 'SET_SEARCHING', payload: false});
     dispatch({type: 'SET_SEARCH_RESULT_DATA', payload: {}});
     dispatch({type: 'SET_REQUEST_STATUSES', payload: {}});
+    dispatch({type: 'SET_DISPLAY_DATA', payload: {}});
     dispatch({type: 'SET_NO_USERS_FOUND', payload: false});
   };
 
@@ -150,14 +168,14 @@ const SearchScreen = (props: ScreenProps) => {
         keyboardShouldPersistTaps="handled">
         <SearchWindow doSearch={doSearch} onResetSearch={resetSearch} />
         <View style={styles.searchResultsContainer}>
-          {state.searching || loadingDisplayData ? (
+          {state.searching ? (
             <LoadingData style={styles.loadingData} />
           ) : isNonEmptyObject(state.searchResultData) ? (
             Object.keys(state.searchResultData).map(userId => (
               <SearchResult
                 key={userId + '-container'}
                 userId={userId}
-                displayData={displayData}
+                userDisplayData={state.displayData[userId]}
                 db={db}
                 storage={storage}
                 userFrom={user.uid}

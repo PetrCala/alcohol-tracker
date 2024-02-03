@@ -1,6 +1,10 @@
 import {useEffect, useReducer, useCallback} from 'react';
 import {useFirebase} from '@src/context/FirebaseContext';
-import {FriendsData, ProfileDisplayData} from '@src/types/database';
+import {
+  FriendsData,
+  NicknameToIdData,
+  ProfileDisplayData,
+} from '@src/types/database';
 import {fetchProfileDisplayData} from '@database/profile';
 
 interface State {
@@ -45,7 +49,9 @@ function reducer(state: State, action: Action): State {
  * Usage:
  * const { loadingDisplayData, displayData } = useProfileDisplayData(friends);
  */
-const useProfileDisplayData = (friends: FriendsData | undefined) => {
+const useProfileDisplayData = (
+  friends: FriendsData | NicknameToIdData | undefined,
+) => {
   const {db} = useFirebase();
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -57,7 +63,7 @@ const useProfileDisplayData = (friends: FriendsData | undefined) => {
     }
     dispatch({type: 'SET_DISPLAY_DATA', payload: newDisplayData});
     dispatch({type: 'SET_LOADING_DISPLAY_DATA', payload: false});
-  }, [db, friends]);
+  }, [friends]);
 
   useEffect(() => {
     updateDisplayData();

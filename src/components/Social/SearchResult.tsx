@@ -1,5 +1,5 @@
 import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {FriendRequestStatusState} from '../../types/database';
+import {FriendRequestStatusState, ProfileData} from '../../types/database';
 import {acceptFriendRequest, sendFriendRequest} from '../../database/friends';
 import {Database} from 'firebase/database';
 import ProfileImage from '@components/ProfileImage';
@@ -94,7 +94,7 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
 
 type SearchResultProps = {
   userId: string;
-  displayData: any;
+  userDisplayData: ProfileData;
   db: Database;
   storage: FirebaseStorage;
   userFrom: string;
@@ -104,7 +104,7 @@ type SearchResultProps = {
 
 const SearchResult: React.FC<SearchResultProps> = ({
   userId,
-  displayData,
+  userDisplayData,
   db,
   storage,
   userFrom,
@@ -118,12 +118,12 @@ const SearchResult: React.FC<SearchResultProps> = ({
           key={userId + '-profile-icon'}
           storage={storage}
           userId={userId}
-          downloadPath={displayData[userId]?.photo_url}
+          downloadPath={userDisplayData.photo_url}
           style={styles.userProfileImage}
         />
         <Text style={styles.userNicknameText}>
-          {displayData[userId]?.display_name
-            ? displayData[userId].display_name
+          {userDisplayData?.display_name
+            ? userDisplayData.display_name
             : 'Unknown'}
         </Text>
       </View>
