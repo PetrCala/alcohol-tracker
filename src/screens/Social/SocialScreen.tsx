@@ -21,6 +21,7 @@ import FriendListScreen from './FriendListScreen';
 import FriendRequestScreen from './FriendRequestScreen';
 import SearchScreen from './SearchScreen';
 import {SocialScreenProps} from '@src/types/screens';
+import Header from '@components/Header/Header';
 
 type SocialFooterButtonProps = {
   index: number;
@@ -140,18 +141,7 @@ const SocialScreen = ({route, navigation}: SocialScreenProps) => {
 
   return (
     <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
-      <View style={commonStyles.mainHeader}>
-        <MenuIcon
-          iconId="escape-statistics-screen"
-          iconSource={require('../../../assets/icons/arrow_back.png')}
-          containerStyle={styles.backArrowContainer}
-          iconStyle={styles.backArrow}
-          onPress={() => navigation.goBack()}
-        />
-        <View style={styles.menuContainer}>
-          <Text style={styles.sectionText}>Friends</Text>
-        </View>
-      </View>
+      <Header headerText="Friends" onGoBack={() => navigation.goBack()} />
       <TabView
         navigationState={{index, routes}}
         renderScene={renderScene}
@@ -182,21 +172,6 @@ export default SocialScreen;
 const screenWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
-  backArrowContainer: {
-    justifyContent: 'center',
-    marginLeft: 10,
-  },
-  backArrow: {
-    width: 25,
-    height: 25,
-  },
-  menuContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    width: 200,
-  },
   sectionText: {
     fontSize: 20,
     color: 'black',

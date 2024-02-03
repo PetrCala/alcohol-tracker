@@ -44,8 +44,10 @@ type CombinedDataProps = {
   session: DrinkingSessionArrayItem;
 };
 import commonStyles from '../styles/commonStyles';
-import { generateDatabaseKey } from '@database/baseFunctions';
-import { useFirebase } from '@src/context/FirebaseContext';
+import {generateDatabaseKey} from '@database/baseFunctions';
+import {useFirebase} from '@src/context/FirebaseContext';
+import Header from '@components/Header/Header';
+import HeaderButton from '@components/Header/HeaderButton';
 
 const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
   if (!route || !navigation) return null; // Should never be null
@@ -176,9 +178,7 @@ const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
               iconStyle={styles.menuIcon}
               onPress={() => onEditSessionPress(session, sessionKey)} // Use keyextractor to load id here
             />
-          ) : (
-            null
-          )}
+          ) : null}
         </View>
       </View>
     );
@@ -219,7 +219,10 @@ const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
       note: '',
       units: getZeroUnitsObject(),
     };
-    let newSessionKey = generateDatabaseKey(db, `user_drinking_sessions/${user.uid}`);
+    let newSessionKey = generateDatabaseKey(
+      db,
+      `user_drinking_sessions/${user.uid}`,
+    );
     if (!newSessionKey) {
       Alert.alert('Error', 'Could not generate a new session key.');
       return;
@@ -268,24 +271,18 @@ const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
 
   return (
     <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
-      <View style={commonStyles.mainHeader}>
-        <MenuIcon
-          iconId="escape-settings-screen"
-          iconSource={require('../../assets/icons/arrow_back.png')}
-          containerStyle={styles.backArrowContainer}
-          iconStyle={styles.backArrow}
-          onPress={() => navigation.goBack()}
-        />
-        <BasicButton
-          text={editMode ? 'Exit Edit Mode' : 'Edit Mode'}
-          buttonStyle={[
-            styles.editModeButton,
-            editMode ? styles.editModeButtonEnabled : {},
-          ]}
-          textStyle={styles.editModeButtonText}
-          onPress={() => setEditMode(!editMode)}
-        />
-      </View>
+      <Header
+        headerText=""
+        onGoBack={() => navigation.goBack()}
+        rightSideComponent={
+          <HeaderButton
+            buttonOn={editMode}
+            textOn="Exit Edit Mode"
+            textOff="Edit Mode"
+            onPress={() => setEditMode(!editMode)}
+          />
+        }
+      />
       <View style={styles.dayOverviewContainer}>
         <Text style={styles.menuDrinkingSessionInfoText}>
           {date ? formatDateToDay(date) : 'Loading date...'}
@@ -299,9 +296,7 @@ const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
             ListFooterComponent={addSessionButton}
             ListFooterComponentStyle={styles.addSessionButtonContainer}
           />
-        ) : (
-          null
-        )}
+        ) : null}
       </View>
       <View style={styles.dayOverviewFooter}>
         <MenuIcon
@@ -355,30 +350,6 @@ const styles = StyleSheet.create({
   backArrow: {
     width: 25,
     height: 25,
-  },
-  editModeContainer: {
-    height: '10%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#FFFF99',
-  },
-  editModeButton: {
-    width: '45%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 10,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#000',
-    backgroundColor: '#fcf50f',
-  },
-  editModeButtonEnabled: {
-    backgroundColor: '#FFFF99',
-  },
-  editModeButtonText: {
-    color: 'black',
-    fontSize: 17,
-    fontWeight: '600',
   },
   menuIconContainer: {
     width: 40,

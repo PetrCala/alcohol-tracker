@@ -47,8 +47,10 @@ import {usePrevious} from '../hooks/usePrevious';
 import SuccessIndicator from '../components/SuccessIndicator';
 import commonStyles from '../styles/commonStyles';
 import FillerView from '../components/FillerView';
-import { getPreviousRouteName } from '@navigation/navigationUtils';
+import {getPreviousRouteName} from '@navigation/navigationUtils';
 import CONST from '@src/CONST';
+import Header from '@components/Header/Header';
+import HeaderButton from '@components/Header/HeaderButton';
 
 const DrinkingSessionScreen = ({
   route,
@@ -350,24 +352,18 @@ const DrinkingSessionScreen = ({
 
   return (
     <>
-      <View style={commonStyles.mainHeader}>
-        <MenuIcon
-          iconId="escape-drinking-session"
-          iconSource={require('../../assets/icons/arrow_back.png')}
-          containerStyle={styles.backArrowContainer}
-          iconStyle={styles.backArrow}
-          onPress={handleBackPress}
-        />
-        <BasicButton
-          text={monkeMode ? 'Exit Monke Mode' : 'Monke Mode'}
-          buttonStyle={[
-            styles.monkeModeButton,
-            monkeMode ? styles.monkeModeButtonEnabled : {},
-          ]}
-          textStyle={styles.monkeModeButtonText}
-          onPress={() => setMonkeMode(!monkeMode)}
-        />
-      </View>
+      <Header
+        headerText=""
+        onGoBack={handleBackPress}
+        rightSideComponent={
+          <HeaderButton
+            buttonOn={monkeMode}
+            textOn="Exit Monke Mode"
+            textOff="Monke Mode"
+            onPress={() => setMonkeMode(!monkeMode)}
+          />
+        }
+      />
       <ScrollView
         style={styles.scrollView}
         ref={scrollViewRef}
@@ -575,30 +571,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
     textAlign: 'center',
-  },
-  monkeModeContainer: {
-    height: '10%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#FFFF99',
-  },
-  monkeModeButton: {
-    width: '50%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 10,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#000',
-    backgroundColor: '#fcf50f',
-  },
-  monkeModeButtonEnabled: {
-    backgroundColor: '#FFFF99',
-  },
-  monkeModeButtonText: {
-    color: 'black',
-    fontSize: 17,
-    fontWeight: '600',
   },
   sessionDetailsContainer: {
     alignItems: 'center',

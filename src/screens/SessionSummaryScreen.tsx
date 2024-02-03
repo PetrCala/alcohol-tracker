@@ -17,6 +17,7 @@ import BasicButton from '../components/Buttons/BasicButton';
 import {DrinkingSessionArrayItem} from '../types/database';
 import {getDatabaseData} from '../context/DatabaseDataContext';
 import commonStyles from '../styles/commonStyles';
+import Header from '@components/Header/Header';
 
 const SessionDataItem = ({
   heading,
@@ -125,26 +126,21 @@ const SessionSummaryScreen = ({
 
   return (
     <>
-      <View style={commonStyles.mainHeader}>
-        <MenuIcon
-          iconId="escape-session-summary"
-          iconSource={require('../../assets/icons/arrow_back.png')}
-          containerStyle={styles.backArrowContainer}
-          iconStyle={styles.backArrow}
-          onPress={handleBackPress}
-        />
-        {session.ongoing ? (
-          null
-        ) : (
-          <MenuIcon
-            iconId="edit-session-icon"
-            iconSource={require('../../assets/icons/edit.png')}
-            containerStyle={styles.menuIconContainer}
-            iconStyle={styles.menuIcon}
-            onPress={() => onEditSessionPress(sessionKey, session)} // Use keyextractor to load id here
-          />
-        )}
-      </View>
+      <Header
+        headerText=""
+        onGoBack={handleBackPress}
+        rightSideComponent={
+          session.ongoing ? null : (
+            <MenuIcon
+              iconId="edit-session-icon"
+              iconSource={require('../../assets/icons/edit.png')}
+              containerStyle={styles.menuIconContainer}
+              iconStyle={styles.menuIcon}
+              onPress={() => onEditSessionPress(sessionKey, session)} // Use keyextractor to load id here
+            />
+          )
+        }
+      />
       <ScrollView style={styles.scrollView}>
         <View style={styles.sessionInfoContainer}>
           <Text style={styles.sessionInfoText}>Session Summary</Text>
@@ -208,21 +204,13 @@ const SessionSummaryScreen = ({
 export default SessionSummaryScreen;
 
 const styles = StyleSheet.create({
-  backArrowContainer: {
-    justifyContent: 'center',
-    alignSelf: 'center',
-    padding: 10,
-  },
-  backArrow: {
-    width: 25,
-    height: 25,
-  },
   menuIconContainer: {
     width: 40,
     height: 40,
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
+    marginRight: 10,
   },
   menuIcon: {
     width: 25,

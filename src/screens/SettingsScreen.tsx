@@ -14,6 +14,7 @@ import UserOffline from '../components/UserOffline';
 import BasicButton from '../components/Buttons/BasicButton';
 import {getDatabaseData} from '../context/DatabaseDataContext';
 import commonStyles from '../styles/commonStyles';
+import Header from '@components/Header/Header';
 
 const SettingsItem: React.FC<{item: any}> = ({item}) => (
   <View style={styles.settingContainer}>
@@ -76,15 +77,7 @@ const SettingsScreen = ({route, navigation}: SettingsScreenProps) => {
 
   return (
     <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
-      <View style={commonStyles.mainHeader}>
-        <MenuIcon
-          iconId="escape-settings-screen"
-          iconSource={require('../../assets/icons/arrow_back.png')}
-          containerStyle={styles.backArrowContainer}
-          iconStyle={styles.backArrow}
-          onPress={() => navigation.goBack()}
-        />
-      </View>
+      <Header headerText="" onGoBack={() => navigation.goBack()} />
       <ScrollView style={styles.scrollView}>
         {settingsData.map((item, index) => (
           <SettingsItem key={index} item={item} />
@@ -105,17 +98,6 @@ const SettingsScreen = ({route, navigation}: SettingsScreenProps) => {
 export default SettingsScreen;
 
 const styles = StyleSheet.create({
-  backArrowContainer: {
-    justifyContent: 'center',
-    marginTop: 10,
-    marginLeft: 10,
-    padding: 10,
-    position: 'absolute',
-  },
-  backArrow: {
-    width: 25,
-    height: 25,
-  },
   scrollView: {
     width: '100%',
     flexGrow: 1,

@@ -238,7 +238,7 @@ const MainScreen = ({navigation}: MainScreenProps) => {
 
   return (
     <>
-      <View style={commonStyles.mainHeader}>
+      <View style={commonStyles.headerContainer}>
         <View style={styles.profileContainer}>
           <TouchableOpacity
             onPress={() =>
@@ -378,6 +378,7 @@ export default MainScreen;
 const styles = StyleSheet.create({
   profileContainer: {
     //Ensure the container fills all space between, no more, no less
+    padding: 10,
     flexGrow: 1,
     flexShrink: 1,
   },

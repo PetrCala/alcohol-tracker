@@ -34,6 +34,7 @@ import {getDatabaseData} from '../context/DatabaseDataContext';
 import ItemListPopup from '../components/Popups/ItemListPopup';
 import commonStyles from '../styles/commonStyles';
 import {useFirebase} from '../context/FirebaseContext';
+import Header from '@components/Header/Header';
 
 const MenuItem: React.FC<MainMenuItemProps> = ({heading, data, index}) => (
   <View key={index}>
@@ -293,15 +294,7 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
 
   return (
     <View style={styles.mainContainer}>
-      <View style={commonStyles.mainHeader}>
-        <MenuIcon
-          iconId="escape-main-menu"
-          iconSource={require('../../assets/icons/arrow_back.png')}
-          containerStyle={styles.backArrowContainer}
-          iconStyle={styles.backArrow}
-          onPress={() => navigation.goBack()}
-        />
-      </View>
+      <Header headerText="" onGoBack={() => navigation.goBack()} />
       <ScrollView style={styles.scrollView}>
         {modalData.map((group, index) => (
           <MenuItem
@@ -375,15 +368,6 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     flexShrink: 1,
     backgroundColor: '#FFFF99',
-  },
-  backArrowContainer: {
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-    padding: 10,
-  },
-  backArrow: {
-    width: 25,
-    height: 25,
   },
   modalText: {
     marginBottom: 15,

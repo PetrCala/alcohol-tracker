@@ -41,6 +41,7 @@ import {
   getCommonFriends,
   getCommonFriendsCount,
 } from '@src/utils/social/friendUtils';
+import Header from '@components/Header/Header';
 
 interface State {
   isLoading: boolean;
@@ -264,20 +265,10 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
 
   return (
     <View style={styles.mainContainer}>
-      <View style={commonStyles.mainHeader}>
-        <MenuIcon
-          iconId="escape-profile-screen"
-          iconSource={require('../../assets/icons/arrow_back.png')}
-          containerStyle={styles.backArrowContainer}
-          iconStyle={styles.backArrow}
-          onPress={() => navigation.goBack()}
-        />
-        <View style={styles.menuContainer}>
-          <Text style={styles.sectionText}>
-            {user?.uid === userId ? 'Profile' : 'Friend Overview'}
-          </Text>
-        </View>
-      </View>
+      <Header
+        headerText={user?.uid === userId ? 'Profile' : 'Friend Overview'}
+        onGoBack={() => navigation.goBack()}
+      />
       <ScrollView style={styles.scrollView} keyboardShouldPersistTaps="handled">
         <ProfileOverview userId={userId} profileData={profileData} />
         <View style={styles.friendsInfoContainer}>
@@ -299,7 +290,10 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
                   ? navigation.navigate('Social Screen', {
                       screen: 'Friend List',
                     })
-                  : navigation.navigate('Friends');
+                  : navigation.navigate('Friends Friends Screen', {
+                      userId: userId,
+                      friends: state.friends,
+                    });
               }}
               style={styles.seeFriendsButton}>
               <Text style={[styles.friendsInfoText, commonStyles.linkText]}>
@@ -378,21 +372,6 @@ const styles = StyleSheet.create({
     // shadowRadius: 3.84,
     // elevation: 5,
     // zIndex: 1,
-  },
-  backArrowContainer: {
-    justifyContent: 'center',
-    marginLeft: 10,
-  },
-  backArrow: {
-    width: 25,
-    height: 25,
-  },
-  menuContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    width: 200,
   },
   sectionText: {
     fontSize: 20,

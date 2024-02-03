@@ -10,13 +10,10 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import MenuIcon from '../components/Buttons/MenuIcon';
 import BasicButton from '../components/Buttons/BasicButton';
 import {EditSessionScreenProps} from '../types/screens';
 import {
   DrinkingSessionArrayItem,
-  DrinkingSessionData,
-  UnitTypesKeys,
   UnitTypesProps,
   UnitsObject,
 } from '../types/database';
@@ -25,7 +22,6 @@ import {
   removeDrinkingSessionData,
   saveDrinkingSessionData,
 } from '../database/drinkingSessions';
-import SessionUnitsInputWindow from '../components/Buttons/SessionUnitsInputWindow';
 import {
   addUnits,
   dateToDateObject,
@@ -47,9 +43,11 @@ import {DrinkDataProps, UnitTypesViewProps} from '../types/components';
 import UnitTypesView from '../components/UnitTypesView';
 import SessionDetailsSlider from '../components/SessionDetailsSlider';
 import {getDatabaseData} from '../context/DatabaseDataContext';
-import commonStyles from '../styles/commonStyles';
 import {getPreviousRouteName} from '@navigation/navigationUtils';
 import CONST from '@src/CONST';
+import Header from '@components/Header/Header';
+import HeaderButton from '@components/Header/HeaderButton';
+import {isEqual} from 'lodash';
 
 const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
   if (!route || !navigation) return null; // Should never be null
@@ -183,7 +181,7 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
   };
 
   const hasSessionChanged = () => {
-    return JSON.stringify(initialSession.current) !== JSON.stringify(currentSession);
+    return !isEqual(initialSession.current, currentSession);
   };
 
   const handleBackPress = () => {
@@ -195,7 +193,7 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
   };
 
   const confirmGoBack = (
-    finalSessionData: DrinkingSessionArrayItem // Decide which session to go back with
+    finalSessionData: DrinkingSessionArrayItem, // Decide which session to go back with
   ) => {
     const previousRouteName = getPreviousRouteName(navigation);
     // Navigate back explicitly to avoid errors
@@ -225,7 +223,8 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
     }
     // Save the session
     if (totalPoints > 0) {
-      let newSessionData: DrinkingSessionArrayItem = removeZeroObjectsFromSession(currentSession); // Delete the initial log of zero units that was used as a placeholder
+      let newSessionData: DrinkingSessionArrayItem =
+        removeZeroObjectsFromSession(currentSession); // Delete the initial log of zero units that was used as a placeholder
       // Handle old versions of drinking session data where note/blackout were missing - remove this later
       newSessionData.blackout = isBlackout ? isBlackout : false;
       newSessionData.note = note ? note : '';
@@ -291,24 +290,18 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
 
   return (
     <>
-      <View style={commonStyles.mainHeader}>
-        <MenuIcon
-          iconId="escape-edit-session"
-          iconSource={require('../../assets/icons/arrow_back.png')}
-          containerStyle={styles.backArrowContainer}
-          iconStyle={styles.backArrow}
-          onPress={handleBackPress}
-        />
-        <BasicButton
-          text={monkeMode ? 'Exit Monke Mode' : 'Monke Mode'}
-          buttonStyle={[
-            styles.monkeModeButton,
-            monkeMode ? styles.monkeModeButtonEnabled : {},
-          ]}
-          textStyle={styles.monkeModeButtonText}
-          onPress={() => setMonkeMode(!monkeMode)}
-        />
-      </View>
+      <Header
+        headerText=""
+        onGoBack={handleBackPress}
+        rightSideComponent={
+          <HeaderButton
+            buttonOn={monkeMode}
+            textOn="Exit Monke Mode"
+            textOff="Monke Mode"
+            onPress={() => setMonkeMode(!monkeMode)}
+          />
+        }
+      />
       <ScrollView
         style={styles.scrollView}
         ref={scrollViewRef}
@@ -477,30 +470,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
     textAlign: 'center',
-  },
-  monkeModeContainer: {
-    height: '10%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#FFFF99',
-  },
-  monkeModeButton: {
-    width: '50%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 10,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#000',
-    backgroundColor: '#fcf50f',
-  },
-  monkeModeButtonEnabled: {
-    backgroundColor: '#FFFF99',
-  },
-  monkeModeButtonText: {
-    color: 'black',
-    fontSize: 17,
-    fontWeight: '600',
   },
   saveSessionDelimiter: {
     height: 5,

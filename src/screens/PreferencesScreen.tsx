@@ -31,6 +31,7 @@ import NumericSlider from '../components/Popups/NumericSlider';
 import {getDatabaseData} from '../context/DatabaseDataContext';
 import {getDefaultPreferences} from '../database/users';
 import commonStyles from '../styles/commonStyles';
+import Header from '@components/Header/Header';
 
 interface PreferencesListProps {
   id: string;
@@ -175,15 +176,7 @@ const PreferencesScreen = ({route, navigation}: PreferencesScreenProps) => {
 
   return (
     <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
-      <View style={commonStyles.mainHeader}>
-        <MenuIcon
-          iconId="escape-preferences-screen"
-          iconSource={require('../../assets/icons/arrow_back.png')}
-          containerStyle={styles.backArrowContainer}
-          iconStyle={styles.backArrow}
-          onPress={handleGoBack}
-        />
-      </View>
+      <Header headerText="Preferences" onGoBack={handleGoBack} />
       <ScrollView style={styles.scrollView} keyboardShouldPersistTaps="handled">
         <View style={[styles.container, styles.horizontalContainer]}>
           <Text style={styles.label}>First Day of Week</Text>
@@ -294,17 +287,6 @@ const PreferencesScreen = ({route, navigation}: PreferencesScreenProps) => {
 export default PreferencesScreen;
 
 const styles = StyleSheet.create({
-  backArrowContainer: {
-    justifyContent: 'center',
-    marginTop: 10,
-    marginLeft: 10,
-    padding: 10,
-    position: 'absolute',
-  },
-  backArrow: {
-    width: 25,
-    height: 25,
-  },
   scrollView: {
     width: '100%',
     flexGrow: 1,

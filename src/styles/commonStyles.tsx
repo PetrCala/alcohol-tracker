@@ -1,14 +1,15 @@
 ﻿import {Dimensions, StyleSheet} from 'react-native';
 
 const screenWidth = Dimensions.get('window').width;
+const backArrowWidth = 60;
 
 const styles = StyleSheet.create({
-  mainHeader: {
+  headerContainer: {
     height: 70,
+    width: screenWidth,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 10,
     backgroundColor: 'white',
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
@@ -16,6 +17,24 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
     zIndex: 1,
+  },
+  backArrowContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: backArrowWidth,
+    height: '100%',
+  },
+  backArrow: {
+    width: 25,
+    height: 25,
+  },
+  headerRightContainer: {
+    display: 'flex',
+    width: screenWidth - backArrowWidth,
+    height: '100%',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
   },
   mainFooter: {
     height: 55,

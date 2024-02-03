@@ -43,6 +43,10 @@ export type AppStackParamList = {
   'Social Screen': {
     screen: string; // 'Friend List' | 'Friend Requests' | 'Search';
   };
+  'Friends Friends Screen': {
+    userId: string;
+    friends: FriendsData | null;
+  };
   'Achievement Screen': undefined;
   'Statistics Screen': undefined;
   'Settings Screen': undefined;
@@ -90,6 +94,12 @@ export type MainMenuScreenProps = {
 
 export type SocialScreenProps = {
   route?: RouteProp<AppStackParamList, 'Social Screen'>;
+  // navigation: StackNavigationProp<AppStackParamList, 'Main Screen'>;
+  navigation?: any;
+};
+
+export type FriendsFriendsScreenProps = {
+  route?: RouteProp<AppStackParamList, 'Friends Friends Screen'>;
   // navigation: StackNavigationProp<AppStackParamList, 'Main Screen'>;
   navigation?: any;
 };
