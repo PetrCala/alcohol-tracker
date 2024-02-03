@@ -159,7 +159,6 @@ const FriendsFriendsScreen = ({
   };
 
   const renderSearchResults = (renderCommonFriends: boolean): JSX.Element[] => {
-    console.log(state.requestStatuses);
     return objKeys(state.displayedFriends)
       .filter(
         userId => state.commonFriends.includes(userId) === renderCommonFriends,
@@ -176,7 +175,9 @@ const FriendsFriendsScreen = ({
           requestStatus={
             renderCommonFriends ? undefined : state.requestStatuses[userId]
           }
-          alreadyAFriend={friends ? friends[userId] : false}
+          alreadyAFriend={
+            currentUserFriends ? currentUserFriends[userId] : false
+          }
           customButton={
             renderCommonFriends ? (
               <SeeProfileButton
