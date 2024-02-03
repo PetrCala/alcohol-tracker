@@ -29,7 +29,7 @@ import {fetchUserProfiles} from '@database/profile';
 import CONST from '@src/CONST';
 import ProfileImage from '@components/ProfileImage';
 import { FirebaseStorage } from 'firebase/storage';
-import { QUIRKY_NICKNAMES } from './Untitled';
+import { QUIRKY_NICKNAMES } from './QuirkyNicknames';
 
 const statusToTextMap: {[key in FriendRequestStatusState]: string} = {
   self: 'You',
