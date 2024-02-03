@@ -19,7 +19,7 @@ import {QUIRKY_NICKNAMES} from '../../utils/QuirkyNicknames';
 import SearchResult from '@components/Social/SearchResult';
 import SearchWindow from '@components/Social/SearchWindow';
 import {FriendsFriendsScreenProps} from '@src/types/screens';
-import Header from '@components/Header/Header';
+import MainHeader from '@components/Header/MainHeader';
 
 interface State {
   searchResultData: NicknameToIdData;
@@ -160,7 +160,7 @@ const FriendsFriendsScreen = ({
 
   return (
     <View style={styles.mainContainer}>
-      <Header
+      <MainHeader
         headerText="Find Friends of Friends"
         onGoBack={() => navigation.goBack()}
       />

@@ -9,7 +9,7 @@ type HeaderProps = {
   rightSideComponent?: React.ReactNode;
 };
 
-const Header: React.FC<HeaderProps> = ({
+const MainHeader: React.FC<HeaderProps> = ({
   headerText,
   onGoBack,
   rightSideComponent,
@@ -52,4 +52,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Header;
+export default MainHeader;

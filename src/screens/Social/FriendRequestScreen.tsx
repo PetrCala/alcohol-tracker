@@ -21,6 +21,8 @@ import LoadingData from '../../components/LoadingData';
 import {Database} from 'firebase/database';
 import NoFriendUserOverview from '@components/Social/NoFriendUserOverview';
 import {fetchUserProfiles} from '@database/profile';
+import headerStyles from '@src/styles/headerStyles';
+import GrayHeader from '@components/Header/GrayHeader';
 
 type FriendRequestButtonsProps = {
   requestId: string;
@@ -270,11 +272,9 @@ const FriendRequestScreen = (props: ScreenProps) => {
           <LoadingData />
         ) : (
           <View style={styles.friendList}>
-            <View style={styles.requestsInfoContainer}>
-              <Text style={styles.requestsInfoText}>
-                Requests Received ({state.requestsReceivedCount})
-              </Text>
-            </View>
+            <GrayHeader
+              headerText={`Requests Received (${state.requestsReceivedCount})`}
+            />
             <View style={styles.requestsContainer}>
               {state.requestsReceived.map(requestId => (
                 <FriendRequestItem
@@ -285,8 +285,8 @@ const FriendRequestScreen = (props: ScreenProps) => {
                 />
               ))}
             </View>
-            <View style={styles.requestsInfoContainer}>
-              <Text style={styles.requestsInfoText}>
+            <View style={headerStyles.grayHeaderContainer}>
+              <Text style={headerStyles.grayHeaderText}>
                 Requests Sent ({state.requestsSentCount})
               </Text>
             </View>

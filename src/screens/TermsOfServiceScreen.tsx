@@ -10,7 +10,7 @@ import MenuIcon from '../components/Buttons/MenuIcon';
 import {TermsOfServiceScreenProps} from '../types/screens';
 import {WebView} from 'react-native-webview';
 import commonStyles from '../styles/commonStyles';
-import Header from '@components/Header/Header';
+import MainHeader from '@components/Header/MainHeader';
 
 const TermsOfServiceScreen = ({navigation}: TermsOfServiceScreenProps) => {
   if (!navigation) return null; // Should never be null
@@ -32,7 +32,7 @@ const TermsOfServiceScreen = ({navigation}: TermsOfServiceScreenProps) => {
 
   return (
     <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
-      <Header headerText="" onGoBack={() => navigation.goBack()} />
+      <MainHeader headerText="" onGoBack={() => navigation.goBack()} />
       <View style={styles.mainContainer}>
         <WebView
           originWhitelist={['*']}

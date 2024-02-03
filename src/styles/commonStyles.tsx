@@ -3,7 +3,7 @@
 const screenWidth = Dimensions.get('window').width;
 const backArrowWidth = 60;
 
-const styles = StyleSheet.create({
+const commonStyles = StyleSheet.create({
   headerContainer: {
     height: 70,
     width: screenWidth,
@@ -71,4 +71,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default styles;
+export default commonStyles;

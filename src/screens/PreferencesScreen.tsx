@@ -31,7 +31,7 @@ import NumericSlider from '../components/Popups/NumericSlider';
 import {getDatabaseData} from '../context/DatabaseDataContext';
 import {getDefaultPreferences} from '../database/users';
 import commonStyles from '../styles/commonStyles';
-import Header from '@components/Header/Header';
+import MainHeader from '@components/Header/MainHeader';
 
 interface PreferencesListProps {
   id: string;
@@ -176,7 +176,7 @@ const PreferencesScreen = ({route, navigation}: PreferencesScreenProps) => {
 
   return (
     <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
-      <Header headerText="Preferences" onGoBack={handleGoBack} />
+      <MainHeader headerText="Preferences" onGoBack={handleGoBack} />
       <ScrollView style={styles.scrollView} keyboardShouldPersistTaps="handled">
         <View style={[styles.container, styles.horizontalContainer]}>
           <Text style={styles.label}>First Day of Week</Text>

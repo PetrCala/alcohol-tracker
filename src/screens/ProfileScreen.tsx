@@ -41,7 +41,7 @@ import {
   getCommonFriends,
   getCommonFriendsCount,
 } from '@src/utils/social/friendUtils';
-import Header from '@components/Header/Header';
+import MainHeader from '@components/Header/MainHeader';
 
 interface State {
   isLoading: boolean;
@@ -265,7 +265,7 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
 
   return (
     <View style={styles.mainContainer}>
-      <Header
+      <MainHeader
         headerText={user?.uid === userId ? 'Profile' : 'Friend Overview'}
         onGoBack={() => navigation.goBack()}
       />

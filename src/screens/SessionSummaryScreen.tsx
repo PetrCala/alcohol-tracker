@@ -17,7 +17,7 @@ import BasicButton from '../components/Buttons/BasicButton';
 import {DrinkingSessionArrayItem} from '../types/database';
 import {getDatabaseData} from '../context/DatabaseDataContext';
 import commonStyles from '../styles/commonStyles';
-import Header from '@components/Header/Header';
+import MainHeader from '@components/Header/MainHeader';
 
 const SessionDataItem = ({
   heading,
@@ -126,7 +126,7 @@ const SessionSummaryScreen = ({
 
   return (
     <>
-      <Header
+      <MainHeader
         headerText=""
         onGoBack={handleBackPress}
         rightSideComponent={

@@ -49,8 +49,8 @@ import commonStyles from '../styles/commonStyles';
 import FillerView from '../components/FillerView';
 import {getPreviousRouteName} from '@navigation/navigationUtils';
 import CONST from '@src/CONST';
-import Header from '@components/Header/Header';
-import HeaderButton from '@components/Header/HeaderButton';
+import MainHeader from '@components/Header/MainHeader';
+import MainHeaderButton from '@components/Header/MainHeaderButton';
 
 const DrinkingSessionScreen = ({
   route,
@@ -352,11 +352,11 @@ const DrinkingSessionScreen = ({
 
   return (
     <>
-      <Header
+      <MainHeader
         headerText=""
         onGoBack={handleBackPress}
         rightSideComponent={
-          <HeaderButton
+          <MainHeaderButton
             buttonOn={monkeMode}
             textOn="Exit Monke Mode"
             textOff="Monke Mode"

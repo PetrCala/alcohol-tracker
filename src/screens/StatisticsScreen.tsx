@@ -2,7 +2,7 @@
 import {StyleSheet, Text, View} from 'react-native';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import commonStyles from '../styles/commonStyles';
-import Header from '@components/Header/Header';
+import MainHeader from '@components/Header/MainHeader';
 
 type StatisticsProps = {
   navigation: any;
@@ -13,7 +13,10 @@ const StatisticsScreen = (props: StatisticsProps) => {
 
   return (
     <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
-      <Header headerText="Statistics" onGoBack={() => navigation.goBack()} />
+      <MainHeader
+        headerText="Statistics"
+        onGoBack={() => navigation.goBack()}
+      />
       <View style={styles.mainContainer}>
         <Text style={styles.sectionText}>Coming soon...</Text>
       </View>

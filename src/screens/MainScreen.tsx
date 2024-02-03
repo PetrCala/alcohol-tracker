@@ -31,7 +31,7 @@ import UserOffline from '../components/UserOffline';
 import {updateUserLastOnline} from '../database/users';
 import {startLiveDrinkingSession} from '../database/drinkingSessions';
 import {getDatabaseData} from '../context/DatabaseDataContext';
-import commonStyles from '../styles/commonStyles';
+import commonStyles from '@src/styles/commonStyles';
 import {useFirebase} from '../context/FirebaseContext';
 import ProfileImage from '../components/ProfileImage';
 import {generateDatabaseKey} from '@database/baseFunctions';
@@ -475,10 +475,9 @@ const styles = StyleSheet.create({
   },
   menuInfoText: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '500',
     color: 'black',
     alignSelf: 'center',
-    // alignContent: "center",
     padding: 6,
     marginRight: 4,
     marginLeft: 4,

@@ -46,8 +46,8 @@ type CombinedDataProps = {
 import commonStyles from '../styles/commonStyles';
 import {generateDatabaseKey} from '@database/baseFunctions';
 import {useFirebase} from '@src/context/FirebaseContext';
-import Header from '@components/Header/Header';
-import HeaderButton from '@components/Header/HeaderButton';
+import MainHeader from '@components/Header/MainHeader';
+import MainHeaderButton from '@components/Header/MainHeaderButton';
 
 const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
   if (!route || !navigation) return null; // Should never be null
@@ -271,11 +271,11 @@ const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
 
   return (
     <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
-      <Header
+      <MainHeader
         headerText=""
         onGoBack={() => navigation.goBack()}
         rightSideComponent={
-          <HeaderButton
+          <MainHeaderButton
             buttonOn={editMode}
             textOn="Exit Edit Mode"
             textOff="Edit Mode"

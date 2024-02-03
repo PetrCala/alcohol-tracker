@@ -45,8 +45,8 @@ import SessionDetailsSlider from '../components/SessionDetailsSlider';
 import {getDatabaseData} from '../context/DatabaseDataContext';
 import {getPreviousRouteName} from '@navigation/navigationUtils';
 import CONST from '@src/CONST';
-import Header from '@components/Header/Header';
-import HeaderButton from '@components/Header/HeaderButton';
+import MainHeader from '@components/Header/MainHeader';
+import MainHeaderButton from '@components/Header/MainHeaderButton';
 import {isEqual} from 'lodash';
 
 const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
@@ -290,11 +290,11 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
 
   return (
     <>
-      <Header
+      <MainHeader
         headerText=""
         onGoBack={handleBackPress}
         rightSideComponent={
-          <HeaderButton
+          <MainHeaderButton
             buttonOn={monkeMode}
             textOn="Exit Monke Mode"
             textOff="Monke Mode"

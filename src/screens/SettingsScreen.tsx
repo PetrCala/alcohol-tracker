@@ -14,7 +14,7 @@ import UserOffline from '../components/UserOffline';
 import BasicButton from '../components/Buttons/BasicButton';
 import {getDatabaseData} from '../context/DatabaseDataContext';
 import commonStyles from '../styles/commonStyles';
-import Header from '@components/Header/Header';
+import MainHeader from '@components/Header/MainHeader';
 
 const SettingsItem: React.FC<{item: any}> = ({item}) => (
   <View style={styles.settingContainer}>
@@ -77,7 +77,7 @@ const SettingsScreen = ({route, navigation}: SettingsScreenProps) => {
 
   return (
     <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
-      <Header headerText="" onGoBack={() => navigation.goBack()} />
+      <MainHeader headerText="" onGoBack={() => navigation.goBack()} />
       <ScrollView style={styles.scrollView}>
         {settingsData.map((item, index) => (
           <SettingsItem key={index} item={item} />

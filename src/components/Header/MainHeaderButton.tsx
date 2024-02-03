@@ -2,14 +2,14 @@ import BasicButton from '../Buttons/BasicButton';
 import {StyleSheet, View} from 'react-native';
 import commonStyles from '@src/styles/commonStyles';
 
-type HeaderButtonProps = {
+type MainHeaderButtonProps = {
   buttonOn: boolean;
   textOn: string;
   textOff: string;
   onPress: () => void;
 };
 
-const HeaderButton: React.FC<HeaderButtonProps> = ({
+const MainHeaderButton: React.FC<MainHeaderButtonProps> = ({
   buttonOn,
   textOn,
   textOff,
@@ -53,4 +53,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HeaderButton;
+export default MainHeaderButton;

@@ -11,7 +11,7 @@ import MenuIcon from '../components/Buttons/MenuIcon';
 import {PrivacyPolicyScreenProps} from '../types/screens';
 import {WebView} from 'react-native-webview';
 import commonStyles from '../styles/commonStyles';
-import Header from '@components/Header/Header';
+import MainHeader from '@components/Header/MainHeader';
 
 const PrivacyPolicyScreen = ({navigation}: PrivacyPolicyScreenProps) => {
   const policyHtml =
@@ -33,7 +33,7 @@ const PrivacyPolicyScreen = ({navigation}: PrivacyPolicyScreenProps) => {
 
   return (
     <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
-      <Header headerText="" onGoBack={() => navigation.goBack()} />
+      <MainHeader headerText="" onGoBack={() => navigation.goBack()} />
       <View style={styles.mainContainer}>
         <WebView
           originWhitelist={['*']}

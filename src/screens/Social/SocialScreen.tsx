@@ -21,7 +21,7 @@ import FriendListScreen from './FriendListScreen';
 import FriendRequestScreen from './FriendRequestScreen';
 import SearchScreen from './SearchScreen';
 import {SocialScreenProps} from '@src/types/screens';
-import Header from '@components/Header/Header';
+import MainHeader from '@components/Header/MainHeader';
 
 type SocialFooterButtonProps = {
   index: number;
@@ -141,7 +141,7 @@ const SocialScreen = ({route, navigation}: SocialScreenProps) => {
 
   return (
     <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
-      <Header headerText="Friends" onGoBack={() => navigation.goBack()} />
+      <MainHeader headerText="Friends" onGoBack={() => navigation.goBack()} />
       <TabView
         navigationState={{index, routes}}
         renderScene={renderScene}
