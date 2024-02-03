@@ -38,7 +38,6 @@ import {unfriend} from '@database/friends';
 import YesNoPopup from '@components/Popups/YesNoPopup';
 import {
   fetchUserFriends,
-  getCommonFriends,
   getCommonFriendsCount,
 } from '@src/utils/social/friendUtils';
 import MainHeader from '@components/Header/MainHeader';
@@ -295,6 +294,7 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
                   : navigation.navigate('Friends Friends Screen', {
                       userId: userId,
                       friends: state.friends,
+                      currentUserFriends: currentUserFriends,
                     });
               }}
               style={styles.seeFriendsButton}>

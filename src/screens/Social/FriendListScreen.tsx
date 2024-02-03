@@ -16,7 +16,7 @@ import {useFirebase} from '../../context/FirebaseContext';
 import LoadingData from '../../components/LoadingData';
 import UserOverview from '@components/Social/UserOverview';
 import {Database} from 'firebase/database';
-import {fetchUserProfiles} from '@database/profile';
+import {fetchProfileDisplayData, fetchUserProfiles} from '@database/profile';
 
 interface State {
   isLoading: boolean;
@@ -59,13 +59,9 @@ const FriendListScreen = (props: ScreenProps) => {
     db: Database | undefined,
     friends: FriendsData | undefined,
   ): Promise<void> => {
-    const newDisplayData: ProfileDisplayData = {};
+    let newDisplayData: ProfileDisplayData = {};
     if (db && friends) {
-      const dataIds = Object.keys(friends);
-      const userProfiles: ProfileData[] = await fetchUserProfiles(db, dataIds);
-      dataIds.forEach((id, index) => {
-        newDisplayData[id] = userProfiles[index];
-      });
+      newDisplayData = await fetchProfileDisplayData(db, Object.keys(friends));
     }
     dispatch({type: 'SET_DISPLAY_DATA', payload: newDisplayData});
   };

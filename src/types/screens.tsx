@@ -46,6 +46,7 @@ export type AppStackParamList = {
   'Friends Friends Screen': {
     userId: string;
     friends: FriendsData | null;
+    currentUserFriends: FriendsData | null;
   };
   'Achievement Screen': undefined;
   'Statistics Screen': undefined;

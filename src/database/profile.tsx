@@ -1,5 +1,5 @@
 ﻿import {Database, ref, get, update} from 'firebase/database';
-import {ProfileData} from '../types/database';
+import {ProfileData, ProfileDisplayData} from '../types/database';
 import {
   FirebaseStorage,
   ref as StorageRef,
@@ -36,6 +36,27 @@ export function fetchUserProfiles(
   userIds: string[],
 ): Promise<ProfileData[]> {
   return Promise.all(userIds.map(id => fetchUserProfile(db, id)));
+}
+
+/**
+ * Fetches profile display data for the given user IDs.
+ *
+ * @param db - The database instance.
+ * @param userIds - An array of user IDs.
+ * @returns A promise that resolves to an object containing the profile display data.
+ */
+export async function fetchProfileDisplayData(
+  db: Database | undefined,
+  userIds: string[],
+): Promise<ProfileDisplayData> {
+  const newDisplayData: ProfileDisplayData = {};
+  if (db && userIds) {
+    const userProfiles: ProfileData[] = await fetchUserProfiles(db, userIds);
+    userIds.forEach((id, index) => {
+      newDisplayData[id] = userProfiles[index];
+    });
+  }
+  return newDisplayData;
 }
 
 /**

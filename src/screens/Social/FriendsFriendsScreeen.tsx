@@ -20,13 +20,17 @@ import SearchResult from '@components/Social/SearchResult';
 import SearchWindow from '@components/Social/SearchWindow';
 import {FriendsFriendsScreenProps} from '@src/types/screens';
 import MainHeader from '@components/Header/MainHeader';
+import GrayHeader from '@components/Header/GrayHeader';
+import {getCommonFriends} from '@src/utils/social/friendUtils';
 
 interface State {
-  searchResultData: NicknameToIdData;
+  searchResultData: FriendsData;
   searching: boolean;
-  requestStatuses: {[userId: string]: FriendRequestStatusState | undefined};
+  commonFriends: string[];
+  otherFriends: string[];
+  // requestStatuses: {[userId: string]: FriendRequestStatusState | undefined};
   noUsersFound: boolean;
-  displayData: ProfileDisplayData;
+  // displayData: ProfileDisplayData;
 }
 
 interface Action {
@@ -37,9 +41,11 @@ interface Action {
 const initialState: State = {
   searchResultData: {},
   searching: false,
-  requestStatuses: {},
+  commonFriends: [],
+  otherFriends: [],
+  // requestStatuses: {},
   noUsersFound: false,
-  displayData: {},
+  // displayData: {},
 };
 
 const reducer = (state: State, action: Action): State => {
@@ -48,12 +54,17 @@ const reducer = (state: State, action: Action): State => {
       return {...state, searchResultData: action.payload};
     case 'SET_SEARCHING':
       return {...state, searching: action.payload};
-    case 'SET_REQUEST_STATUSES':
-      return {...state, requestStatuses: action.payload};
-    case 'SET_NO_USERS_FOUND':
-      return {...state, noUsersFound: action.payload};
-    case 'SET_DISPLAY_DATA':
-      return {...state, displayData: action.payload};
+    case 'SET_COMMON_FRIENDS':
+      return {...state, commonFriends: action.payload};
+    case 'SET_OTHER_FRIENDS':
+      return {...state, otherFriends: action.payload};
+
+    // case 'SET_REQUEST_STATUSES':
+    //   return {...state, requestStatuses: action.payload};
+    // case 'SET_NO_USERS_FOUND':
+    //   return {...state, noUsersFound: action.payload};
+    // case 'SET_DISPLAY_DATA':
+    //   return {...state, displayData: action.payload};
     default:
       return state;
   }
@@ -64,7 +75,7 @@ const FriendsFriendsScreen = ({
   navigation,
 }: FriendsFriendsScreenProps) => {
   if (!route || !navigation) return null;
-  const {userId, friends} = route.params;
+  const {userId, friends, currentUserFriends} = route.params;
   const {db, storage} = useFirebase();
   const user = auth.currentUser;
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -152,6 +163,25 @@ const FriendsFriendsScreen = ({
     dispatch({type: 'SET_NO_USERS_FOUND', payload: false});
   };
 
+  useMemo(() => {
+    // Perhaps rewrite? - update search results, or something
+    dispatch({type: 'SET_SEARCH_RESULT_DATA', payload: friends});
+  }, [friends]);
+
+  // Monitor friend groups
+  useMemo(() => {
+    let commonFriends: string[] = [];
+    let otherFriends: string[] = [];
+    if (friends) {
+      commonFriends = getCommonFriends(friends, currentUserFriends);
+      otherFriends = Object.keys(friends).filter(
+        friend => !commonFriends.includes(friend),
+      );
+    }
+    dispatch({type: 'SET_COMMON_FRIENDS', payload: commonFriends});
+    dispatch({type: 'SET_OTHER_FRIENDS', payload: otherFriends});
+  }, [friends, currentUserFriends]);
+
   //   useMemo(() => {
   //     updateRequestStatuses();
   //   }, [friendRequests]); // When updated in the database, not locally
@@ -168,28 +198,48 @@ const FriendsFriendsScreen = ({
         style={styles.scrollViewContainer}
         keyboardShouldPersistTaps="handled">
         <SearchWindow doSearch={doSearch} onResetSearch={resetSearch} />
+        <GrayHeader headerText="Common Friends" />
         <View style={styles.searchResultsContainer}>
           {state.searching ? (
             <LoadingData style={styles.loadingData} />
           ) : isNonEmptyObject(state.searchResultData) ? (
-            Object.keys(state.searchResultData).map(userId => (
-              <SearchResult
-                key={userId + '-container'}
-                userId={userId}
-                displayData={state.displayData}
-                db={db}
-                storage={storage}
-                userFrom={user.uid}
-                requestStatus={state.requestStatuses[userId]}
-                alreadyAFriend={friends ? friends[userId] : false}
-              />
-            ))
+            Object.keys(state.searchResultData).map(
+              userId =>
+                state.commonFriends.includes(userId) ? (
+                  <Text key={userId + '-container'}>{userId}</Text>
+                ) : null,
+              // <SearchResult
+              //   key={userId + '-container'}
+              //   userId={userId}
+              //   // displayData={state.displayData}
+              //   displayData={}
+              //   db={db}
+              //   storage={storage}
+              //   userFrom={user.uid}
+              //   requestStatus={state.requestStatuses[userId]}
+              //   alreadyAFriend={friends ? friends[userId] : false}
+              // />,
+            )
           ) : state.noUsersFound ? (
             <Text style={styles.noUsersFoundText}>
               There are no users with this nickname.
             </Text>
           ) : null}
         </View>
+        <GrayHeader headerText="Other Friends" />
+        {state.searching ? (
+          <LoadingData style={styles.loadingData} />
+        ) : isNonEmptyObject(state.searchResultData) ? (
+          Object.keys(state.searchResultData).map(userId =>
+            !state.commonFriends.includes(userId) ? (
+              <Text key={userId + '-container'}>{userId}</Text>
+            ) : null,
+          )
+        ) : state.noUsersFound ? (
+          <Text style={styles.noUsersFoundText}>
+            There are no users with this nickname.
+          </Text>
+        ) : null}
       </ScrollView>
     </View>
   );
