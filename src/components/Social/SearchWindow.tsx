@@ -24,8 +24,10 @@ const SearchWindow: React.FC<SearchWindowProps> = ({
   const [searchCount, setSearchCount] = useState<number>(0);
 
   const handleDoSearch = (db: Database, searchText: string): void => {
-    doSearch(db, searchText);
-    setSearchCount(searchCount + 1);
+    if (searchText) {
+      doSearch(db, searchText);
+      setSearchCount(searchCount + 1);
+    }
   };
 
   const handleResetSearch = () => {

@@ -13,6 +13,8 @@ import {
   FriendRequestDisplayData,
   ProfileDisplayData,
   ProfileData,
+  UserData,
+  FriendRequestData,
 } from '../../types/database';
 import {useEffect, useMemo, useReducer} from 'react';
 import {useFirebase} from '../../context/FirebaseContext';
@@ -35,6 +37,7 @@ import {UserSearchResults} from '@src/types/search';
 import {objKeys} from '@src/utils/dataHandling';
 import {getDatabaseData} from '@src/context/DatabaseDataContext';
 import SeeProfileButton from '@components/Buttons/SeeProfileButton';
+import {update} from 'lodash';
 
 interface State {
   searching: boolean;
@@ -129,26 +132,27 @@ const FriendsFriendsScreen = ({
     dispatch({type: 'SET_DISPLAY_DATA', payload: newDisplayData});
   };
 
-  /** Having a list of users returned by the search,
-   * determine the request status for each and update
-   * the RequestStatuses hook.
-   */
-  const updateRequestStatuses = (searchResultData: UserSearchResults): void => {
-    let newRequestStatuses: {
-      [userId: string]: FriendRequestStatusState;
-    } = {};
-    searchResultData.forEach(userId => {
-      if (userData?.friend_requests && userData.friend_requests[userId]) {
-        newRequestStatuses[userId] = userData.friend_requests[userId];
+  useMemo(() => {
+    const updateRequestStatuses = (
+      friendRequests: FriendRequestData | undefined,
+    ): void => {
+      let newRequestStatuses: {
+        [userId: string]: FriendRequestStatusState;
+      } = {};
+      if (friendRequests) {
+        Object.keys(friendRequests).forEach(userId => {
+          newRequestStatuses[userId] = friendRequests[userId];
+        });
       }
-    });
-    dispatch({type: 'SET_REQUEST_STATUSES', payload: newRequestStatuses});
-  };
+      dispatch({type: 'SET_REQUEST_STATUSES', payload: newRequestStatuses});
+    };
+    updateRequestStatuses(userData?.friend_requests);
+  }, [userData?.friend_requests, friends]);
 
   const updateHooksBasedOnSearchResults = async (
     searchResults: UserSearchResults,
   ): Promise<void> => {
-    updateRequestStatuses(searchResults); // Perhaps redundant
+    // updateRequestStatuses(searchResults); // Perhaps redundant
     await updateDisplayData(searchResults); // Assuming this returns a Promise
     const noUsersFound = !isNonEmptyArray(searchResults);
     dispatch({type: 'SET_NO_USERS_FOUND', payload: noUsersFound});
@@ -252,9 +256,13 @@ const FriendsFriendsScreen = ({
             <LoadingData style={styles.loadingData} />
           ) : isNonEmptyObject(state.displayedFriends) ? (
             <>
-              <GrayHeader headerText="Common Friends" />
+              <GrayHeader
+                headerText={`Common Friends (${state.commonFriends.length})`}
+              />
               {renderSearchResults(true)}
-              <GrayHeader headerText="Other Friends" />
+              <GrayHeader
+                headerText={`Other Friends (${state.otherFriends.length})`}
+              />
               {renderSearchResults(false)}
             </>
           ) : state.noUsersFound ? (
