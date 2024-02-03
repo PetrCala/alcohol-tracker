@@ -237,7 +237,7 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
     return;
 
   return (
-    <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
+    <View style={styles.mainContainer}>
       <View style={commonStyles.mainHeader}>
         <MenuIcon
           iconId="escape-profile-screen"
@@ -270,7 +270,9 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
             <TouchableOpacity
               onPress={() => {
                 userId === user?.uid
-                  ? navigation.replace('Social Screen', {screen: 'Friend List'})
+                  ? navigation.navigate('Social Screen', {
+                      screen: 'Friend List',
+                    })
                   : navigation.navigate('Friends');
               }}
               style={styles.seeFriendsButton}>
@@ -340,6 +342,17 @@ const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+    backgroundColor: '#ffff99',
+    overflow: 'hidden', // For the shadow
+    // shadowColor: 'black',
+    // shadowOffset: {width: 0, height: 2},
+    // shadowOpacity: 0.25,
+    // shadowRadius: 3.84,
+    // elevation: 5,
+    // zIndex: 1,
+  },
   backArrowContainer: {
     justifyContent: 'center',
     marginLeft: 10,
@@ -366,7 +379,6 @@ const styles = StyleSheet.create({
     width: '100%',
     flexGrow: 1,
     flexShrink: 1,
-    backgroundColor: '#FFFF99',
   },
   friendsInfoContainer: {
     width: '90%',
