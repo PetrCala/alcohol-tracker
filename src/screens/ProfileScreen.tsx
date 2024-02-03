@@ -193,20 +193,6 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
     fetchData();
   }, [userId, drinkingSessionData, preferences]);
 
-  // Monitor friends
-  useEffect(() => {
-    const fetchCurrentFriends = async () => {
-      let newFriends = await fetchUserFriends(db, userId);
-      dispatch({type: 'SET_FRIENDS', payload: newFriends});
-    };
-    fetchCurrentFriends();
-  }, [friends]);
-
-  useMemo(() => {
-    if (state.friends) {
-    }
-  }, [state.friends]);
-
   // Monitor friends count
   useMemo(() => {
     const friendCount = state.friends ? Object.keys(state.friends).length : 0;
