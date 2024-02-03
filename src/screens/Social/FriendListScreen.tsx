@@ -98,10 +98,10 @@ const FriendListScreen = (props: ScreenProps) => {
                   navigation.navigate('Profile Screen', {
                     userId: friendId,
                     profileData: profileData,
-                    friends: null,
+                    friends: null, // Fetch on render
                     currentUserFriends: friends,
                     drinkingSessionData: null, // Fetch on render
-                    preferences: null,
+                    preferences: null, // Fetch on render
                   })
                 }>
                 <UserOverview

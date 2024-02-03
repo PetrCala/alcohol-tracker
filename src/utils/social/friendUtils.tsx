@@ -1,8 +1,9 @@
 import {readDataOnce} from '@database/baseFunctions';
 import {FriendsData} from '@src/types/database';
+import {Database} from 'firebase/database';
 
 export async function fetchUserFriends(
-  db: any,
+  db: Database,
   userId: string,
 ): Promise<FriendsData | null> {
   return await readDataOnce(db, `users/${userId}/friends`);

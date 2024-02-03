@@ -46,6 +46,7 @@ interface State {
   preferences: PreferencesData | null;
   drinkingSessionData: DrinkingSessionArrayItem[] | null;
   friends: FriendsData | null;
+  friendCount: number;
   commonFriendCount: number;
   visibleDateObject: DateObject;
   drinkingSessionsCount: number;
@@ -65,6 +66,7 @@ const initialState: State = {
   preferences: null,
   drinkingSessionData: null,
   friends: null,
+  friendCount: 0,
   commonFriendCount: 0,
   visibleDateObject: dateToDateObject(new Date()),
   drinkingSessionsCount: 0,
@@ -84,6 +86,8 @@ const reducer = (state: State, action: Action): State => {
       return {...state, drinkingSessionData: action.payload};
     case 'SET_FRIENDS':
       return {...state, friends: action.payload};
+    case 'SET_FRIEND_COUNT':
+      return {...state, friendCount: action.payload};
     case 'SET_COMMON_FRIEND_COUNT':
       return {...state, commonFriendCount: action.payload};
     case 'SET_VISIBLE_DATE_OBJECT':
@@ -192,18 +196,25 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
   // Monitor friends
   useEffect(() => {
     const fetchCurrentFriends = async () => {
-      let newFriends = fetchUserFriends(db, userId);
+      let newFriends = await fetchUserFriends(db, userId);
       dispatch({type: 'SET_FRIENDS', payload: newFriends});
     };
     fetchCurrentFriends();
   }, [friends]);
 
-  // Monitor common friends count
   useMemo(() => {
+    if (state.friends) {
+    }
+  }, [state.friends]);
+
+  // Monitor friends count
+  useMemo(() => {
+    const friendCount = state.friends ? Object.keys(state.friends).length : 0;
     const commonFriendCount = getCommonFriendsCount(
       currentUserFriends,
       state.friends,
     );
+    dispatch({type: 'SET_FRIEND_COUNT', payload: friendCount});
     dispatch({type: 'SET_COMMON_FRIEND_COUNT', payload: commonFriendCount});
   }, [state.friends]);
 
@@ -259,7 +270,7 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
         <View style={styles.friendsInfoContainer}>
           <View style={styles.leftContainer}>
             <Text style={styles.friendsInfoText}>
-              Friends: {friends ? Object.keys(friends).length : 0}
+              Friends: {state.friendCount}
             </Text>
             {userId === user?.uid ? null : (
               <Text
