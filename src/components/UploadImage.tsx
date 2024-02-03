@@ -27,7 +27,7 @@ import {auth} from '@src/services/firebaseSetup';
 import {useFirebase} from '@src/context/FirebaseContext';
 import {updateProfile} from 'firebase/auth';
 import path from 'path';
-import { cacheProfileImage } from '@src/utils/cache';
+import {cacheProfileImage} from '@src/utils/cache';
 
 const initialState: UploadImageState = {
   imageSource: null,
@@ -104,7 +104,8 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
     } catch (error: any) {
       dispatch({type: 'SET_UPLOAD_ONGOING', payload: false}); // Otherwise dispatch upon success in child component
       dispatch({type: 'SET_IMAGE_SOURCE', payload: null});
-      handleErrors(error, 'Error uploading image', error.message, dispatch);
+      Alert.alert('Error uploading image', error.message);
+      // handleErrors(error, 'Error uploading image', error.message, dispatch); // Use after popup alerts have been implemented
     }
   };
 
