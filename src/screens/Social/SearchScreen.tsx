@@ -29,6 +29,7 @@ import {fetchUserProfiles} from '@database/profile';
 import CONST from '@src/CONST';
 import ProfileImage from '@components/ProfileImage';
 import { FirebaseStorage } from 'firebase/storage';
+import { QUIRKY_NICKNAMES } from './Untitled';
 
 const statusToTextMap: {[key in FriendRequestStatusState]: string} = {
   self: 'You',
@@ -228,6 +229,9 @@ const SearchScreen = (props: ScreenProps) => {
       const newResults = await searchDbByNickname(db, nickname); // Nicknam cleaned within the function
       if (newResults) {
         searchResultData = newResults;
+      }
+      if (QUIRKY_NICKNAMES[nickname]) {
+        searchResultData[QUIRKY_NICKNAMES[nickname]] = nickname;
       }
       await updateHooksBasedOnSearchResults(searchResultData);
       dispatch({type: 'SET_SEARCH_RESULT_DATA', payload: searchResultData});
