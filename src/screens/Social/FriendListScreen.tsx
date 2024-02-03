@@ -19,13 +19,13 @@ type ScreenProps = {
 
 const FriendListScreen = (props: ScreenProps) => {
   const {navigation, friends, setIndex} = props;
-  const {isLoading, displayData} = useProfileDisplayData(friends);
+  const {loadingDisplayData, displayData} = useProfileDisplayData(friends);
 
   if (!navigation) return null;
 
   return (
     <ScrollView style={styles.scrollViewContainer}>
-      {isLoading ? (
+      {loadingDisplayData ? (
         <LoadingData style={styles.loadingContainer} />
       ) : friends ? (
         <View style={styles.friendList}>

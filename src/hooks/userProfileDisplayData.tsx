@@ -4,16 +4,16 @@ import {FriendsData, ProfileDisplayData} from '@src/types/database';
 import {fetchProfileDisplayData} from '@database/profile';
 
 interface State {
-  isLoading: boolean;
+  loadingDisplayData: boolean;
   displayData: ProfileDisplayData;
 }
 
 type Action =
   | {type: 'SET_DISPLAY_DATA'; payload: ProfileDisplayData}
-  | {type: 'SET_IS_LOADING'; payload: boolean};
+  | {type: 'SET_LOADING_DISPLAY_DATA'; payload: boolean};
 
 const initialState: State = {
-  isLoading: false,
+  loadingDisplayData: false,
   displayData: {},
 };
 
@@ -21,8 +21,8 @@ function reducer(state: State, action: Action): State {
   switch (action.type) {
     case 'SET_DISPLAY_DATA':
       return {...state, displayData: action.payload};
-    case 'SET_IS_LOADING':
-      return {...state, isLoading: action.payload};
+    case 'SET_LOADING_DISPLAY_DATA':
+      return {...state, loadingDisplayData: action.payload};
     default:
       return state;
   }
@@ -38,25 +38,25 @@ function reducer(state: State, action: Action): State {
  * @param friends - An object or undefined, where the object keys represent the unique
  *  user IDs of the friends.
  * @returns An object containing the following properties:
- *   - isLoading: boolean - Represents if the hook is currently loading data.
+ *   - loadingDisplayData: boolean - Represents if the hook is currently loading data.
  *   - displayData: ProfileDisplayData - An object holding the fetched profile data,
  *     structured according to the ProfileDisplayData interface.
  *
  * Usage:
- * const { isLoading, displayData } = useProfileDisplayData(friends);
+ * const { loadingDisplayData, displayData } = useProfileDisplayData(friends);
  */
 const useProfileDisplayData = (friends: FriendsData | undefined) => {
   const {db} = useFirebase();
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const updateDisplayData = useCallback(async (): Promise<void> => {
-    dispatch({type: 'SET_IS_LOADING', payload: true});
+    dispatch({type: 'SET_LOADING_DISPLAY_DATA', payload: true});
     let newDisplayData: ProfileDisplayData = {};
     if (db && friends) {
       newDisplayData = await fetchProfileDisplayData(db, Object.keys(friends));
     }
     dispatch({type: 'SET_DISPLAY_DATA', payload: newDisplayData});
-    dispatch({type: 'SET_IS_LOADING', payload: false});
+    dispatch({type: 'SET_LOADING_DISPLAY_DATA', payload: false});
   }, [db, friends]);
 
   useEffect(() => {
