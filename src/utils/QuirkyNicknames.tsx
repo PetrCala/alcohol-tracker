@@ -1,10 +1,10 @@
 type QuirkyNicknames = {
-    [nickname: string]: string;
-}
+  [nickname: string]: string;
+};
 
 /**
  * Quirky nicknames mapping.
  */
 export const QUIRKY_NICKNAMES: QuirkyNicknames = {
-    'Violet': 'mock-user-1'
-}
+  Debílek: 'vilem-krejcar-user-id',
+};

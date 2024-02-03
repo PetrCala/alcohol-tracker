@@ -1,13 +1,4 @@
-﻿import {
-  Alert,
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+﻿import {Alert, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {
   NicknameToIdData,
   FriendRequestStatusState,
@@ -26,9 +17,9 @@ import {searchDbByNickname} from '../../database/search';
 import {fetchUserProfiles} from '@database/profile';
 import {QUIRKY_NICKNAMES} from '../../utils/QuirkyNicknames';
 import SearchResult from '@components/Social/SearchResult';
+import SearchWindow from '@components/Social/SearchWindow';
 
 interface State {
-  searchText: string;
   searchResultData: NicknameToIdData;
   searching: boolean;
   requestStatuses: {[userId: string]: FriendRequestStatusState | undefined};
@@ -42,7 +33,6 @@ interface Action {
 }
 
 const initialState: State = {
-  searchText: '',
   searchResultData: {},
   searching: false,
   requestStatuses: {},
@@ -52,8 +42,6 @@ const initialState: State = {
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
-    case 'SET_SEARCH_TEXT':
-      return {...state, searchText: action.payload};
     case 'SET_SEARCH_RESULT_DATA':
       return {...state, searchResultData: action.payload};
     case 'SET_SEARCHING':
@@ -84,17 +72,23 @@ const SearchScreen = (props: ScreenProps) => {
   const user = auth.currentUser;
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const doSearch = async (db: Database, nickname: string): Promise<void> => {
-    if (!db || !nickname) return; // Input a value first alert
+  const doSearch = async (db: Database, searchText: string): Promise<void> => {
+    if (!db || !searchText) {
+      // Add an 'input a value first' alert later
+      dispatch({type: 'SET_SEARCH_RESULT_DATA', payload: {}});
+      await updateHooksBasedOnSearchResults({});
+      return;
+    }
+
     let searchResultData: NicknameToIdData = {};
     dispatch({type: 'SET_SEARCHING', payload: true});
     try {
-      const newResults = await searchDbByNickname(db, nickname); // Nicknam cleaned within the function
+      const newResults = await searchDbByNickname(db, searchText); // Nickname is cleaned in the function
       if (newResults) {
         searchResultData = newResults;
       }
-      if (QUIRKY_NICKNAMES[nickname]) {
-        searchResultData[QUIRKY_NICKNAMES[nickname]] = nickname;
+      if (QUIRKY_NICKNAMES[searchText]) {
+        searchResultData[QUIRKY_NICKNAMES[searchText]] = searchText;
       }
       await updateHooksBasedOnSearchResults(searchResultData);
       dispatch({type: 'SET_SEARCH_RESULT_DATA', payload: searchResultData});
@@ -152,10 +146,9 @@ const SearchScreen = (props: ScreenProps) => {
     dispatch({type: 'SET_NO_USERS_FOUND', payload: noUsersFound});
   };
 
-  const resetSearch = () => {
+  const resetSearch = (): void => {
     // Reset all values displayed on screen
     dispatch({type: 'SET_SEARCHING', payload: false});
-    dispatch({type: 'SET_SEARCH_TEXT', payload: ''});
     dispatch({type: 'SET_SEARCH_RESULT_DATA', payload: {}});
     dispatch({type: 'SET_REQUEST_STATUSES', payload: {}});
     dispatch({type: 'SET_DISPLAY_DATA', payload: {}});
@@ -173,35 +166,7 @@ const SearchScreen = (props: ScreenProps) => {
       <ScrollView
         style={styles.scrollViewContainer}
         keyboardShouldPersistTaps="handled">
-        <View style={styles.textContainer}>
-          <TextInput
-            placeholder="Search for a user"
-            value={state.searchText}
-            onChangeText={text =>
-              dispatch({type: 'SET_SEARCH_TEXT', payload: text})
-            }
-            style={styles.searchText}
-            keyboardType="default"
-            textContentType="nickname"
-          />
-          {state.searchText !== '' ? (
-            <TouchableOpacity
-              onPress={() => resetSearch()}
-              style={styles.searchTextResetContainer}>
-              <Image
-                style={styles.searchTextResetImage}
-                source={require('../../../assets/icons/thin_x.png')}
-              />
-            </TouchableOpacity>
-          ) : null}
-        </View>
-        <View style={styles.searchButtonContainer}>
-          <TouchableOpacity
-            style={styles.searchButton}
-            onPress={() => doSearch(db, state.searchText)}>
-            <Text style={styles.searchButtonText}>Search</Text>
-          </TouchableOpacity>
-        </View>
+        <SearchWindow doSearch={doSearch} onResetSearch={resetSearch} />
         <View style={styles.searchResultsContainer}>
           {state.searching ? (
             <LoadingData style={styles.loadingData} />

@@ -1,6 +1,6 @@
 ﻿import {Database, ref, get} from 'firebase/database';
 import {NicknameToIdData} from '../types/database';
-import {cleanStringForFirebaseKey} from '../utils/strings';
+import {cleanStringForFirebaseKey} from '@src/utils/strings';
 
 /**
  * Using a database object and a nickname to search,
@@ -9,15 +9,15 @@ import {cleanStringForFirebaseKey} from '../utils/strings';
  * if not.
  *
  * @param {Database} db Firebase Database object.
- * @param {string} nickname The nickname to search for.
+ * @param {string} searchText The nickname to search for.
  * @returns {Promise<NicknameToIdData|null>} The user IDs
  *  that belong to this nickname
  */
 export async function searchDbByNickname(
   db: Database,
-  nickname: string,
+  searchText: string,
 ): Promise<NicknameToIdData | null> {
-  const nicknameKey = cleanStringForFirebaseKey(nickname);
+  const nicknameKey = cleanStringForFirebaseKey(searchText);
   const dbRef = ref(db, `nickname_to_id/${nicknameKey}`);
   const snapshot = await get(dbRef);
   if (snapshot.exists()) {
