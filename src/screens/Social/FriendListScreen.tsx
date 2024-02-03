@@ -6,13 +6,17 @@
   TouchableOpacity,
   View,
 } from 'react-native';
-import {FriendsData, ProfileData, ProfileDisplayData} from '../../types/database';
+import {
+  FriendsData,
+  ProfileData,
+  ProfileDisplayData,
+} from '../../types/database';
 import {useEffect, useReducer, useState} from 'react';
 import {useFirebase} from '../../context/FirebaseContext';
 import LoadingData from '../../components/LoadingData';
 import UserOverview from '@components/Social/UserOverview';
-import { Database } from 'firebase/database';
-import { fetchUserProfiles } from '@database/profile';
+import {Database} from 'firebase/database';
+import {fetchUserProfiles} from '@database/profile';
 
 interface State {
   isLoading: boolean;
@@ -79,9 +83,9 @@ const FriendListScreen = (props: ScreenProps) => {
 
   return (
     <ScrollView style={styles.scrollViewContainer}>
-        {state.isLoading ? (
-          <LoadingData style={styles.loadingContainer}/>
-        ) : friends ? (
+      {state.isLoading ? (
+        <LoadingData style={styles.loadingContainer} />
+      ) : friends ? (
         <View style={styles.friendList}>
           {Object.keys(friends).map(friendId => {
             const profileData = state.displayData[friendId];

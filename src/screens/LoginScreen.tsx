@@ -189,7 +189,7 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
               Forgot your password?
             </Text>
           </TouchableOpacity>
-          <View style={commonStyles.horizontalLine} />
+          <View style={[commonStyles.horizontalLine, styles.customLineWidth]} />
           <View style={styles.signUpContainer}>
             <TouchableOpacity
               style={styles.signUpButtonContainer}
@@ -353,5 +353,8 @@ const styles = StyleSheet.create({
     marginLeft: 4,
     paddingTop: 10,
     paddingBottom: 10,
+  },
+  customLineWidth: {
+    width: screenWidth * 0.7,
   },
 });
