@@ -6,6 +6,7 @@ import {
   UserData,
   DrinkingSessionArrayItem,
   ProfileData,
+  FriendsData,
 } from './database';
 import {RouteProp} from '@react-navigation/native';
 import {DateObject} from './components';
@@ -34,6 +35,8 @@ export type AppStackParamList = {
   'Profile Screen': {
     userId: string;
     profileData: ProfileData;
+    friends: FriendsData | null;
+    currentUserFriends: FriendsData | null;
     drinkingSessionData: DrinkingSessionArrayItem[] | null;
     preferences: PreferencesData | null;
   };

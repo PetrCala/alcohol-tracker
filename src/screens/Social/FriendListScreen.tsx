@@ -94,6 +94,8 @@ const FriendListScreen = (props: ScreenProps) => {
                   navigation.navigate('Profile Screen', {
                     userId: friendId,
                     profileData: profileData,
+                    friends: null,
+                    currentUserFriends: friends,
                     drinkingSessionData: null, // Fetch on render
                     preferences: null,
                   })

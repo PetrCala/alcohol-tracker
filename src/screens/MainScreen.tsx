@@ -245,6 +245,8 @@ const MainScreen = ({navigation}: MainScreenProps) => {
               navigation.navigate('Profile Screen', {
                 userId: user.uid,
                 profileData: userData.profile,
+                friends: userData.friends,
+                currentUserFriends: userData.friends,
                 drinkingSessionData: drinkingSessionData,
                 preferences: preferences,
               })

@@ -10,7 +10,6 @@
 } from 'react-native';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import commonStyles from '../styles/commonStyles';
-
 import {useFirebase} from '../context/FirebaseContext';
 import {ProfileProps} from '@src/types/screens';
 import {auth} from '../services/firebaseSetup';
@@ -18,7 +17,11 @@ import {StatData, StatsOverview} from '@components/Items/StatOverview';
 import ProfileOverview from '@components/Social/ProfileOverview';
 import {useEffect, useMemo, useReducer} from 'react';
 import {readDataOnce} from '@database/baseFunctions';
-import {DrinkingSessionArrayItem, PreferencesData} from '@src/types/database';
+import {
+  DrinkingSessionArrayItem,
+  FriendsData,
+  PreferencesData,
+} from '@src/types/database';
 import {
   calculateThisMonthPoints,
   calculateThisMonthUnits,
@@ -32,11 +35,14 @@ import LoadingData from '@components/LoadingData';
 import ItemListPopup from '@components/Popups/ItemListPopup';
 import {unfriend} from '@database/friends';
 import YesNoPopup from '@components/Popups/YesNoPopup';
+import { fetchUserFriends, getCommonFriends, getCommonFriendsCount } from '@src/utils/social/friendUtils';
 
 interface State {
   isLoading: boolean;
   preferences: PreferencesData | null;
   drinkingSessionData: DrinkingSessionArrayItem[] | null;
+  friends: FriendsData | null;
+  commonFriendCount: number;
   visibleDateObject: DateObject;
   drinkingSessionsCount: number;
   unitsConsumed: number;
@@ -54,6 +60,8 @@ const initialState: State = {
   isLoading: true,
   preferences: null,
   drinkingSessionData: null,
+  friends: null,
+  commonFriendCount: 0,
   visibleDateObject: dateToDateObject(new Date()),
   drinkingSessionsCount: 0,
   unitsConsumed: 0,
@@ -70,6 +78,10 @@ const reducer = (state: State, action: Action): State => {
       return {...state, preferences: action.payload};
     case 'SET_DRINKING_SESSION_DATA':
       return {...state, drinkingSessionData: action.payload};
+    case 'SET_FRIENDS':
+      return {...state, friends: action.payload};
+    case 'SET_COMMON_FRIEND_COUNT':
+      return {...state, commonFriendCount: action.payload};
     case 'SET_VISIBLE_DATE_OBJECT':
       return {...state, visibleDateObject: action.payload};
     case 'SET_DRINKING_SESSIONS_COUNT':
@@ -90,7 +102,14 @@ const reducer = (state: State, action: Action): State => {
 const ProfileScreen = ({route, navigation}: ProfileProps) => {
   if (!route || !navigation) return null;
   const user = auth.currentUser;
-  const {userId, profileData, drinkingSessionData, preferences} = route.params;
+  const {
+    userId,
+    profileData,
+    friends,
+    currentUserFriends,
+    drinkingSessionData,
+    preferences,
+  } = route.params;
   const {db, storage} = useFirebase();
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -166,6 +185,22 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
     fetchData();
   }, [userId, drinkingSessionData, preferences]);
 
+  // Monitor friends
+  useEffect(() => {
+    const fetchCurrentFriends = async () => {
+      let newFriends = fetchUserFriends(db, userId);
+      dispatch({type: 'SET_FRIENDS', payload: newFriends});
+    };
+    fetchCurrentFriends();
+  }, [friends]);
+
+  // Monitor common friends count
+  useMemo(() => {
+    const commonFriendCount = getCommonFriendsCount(currentUserFriends, state.friends);
+    dispatch({type: 'SET_COMMON_FRIEND_COUNT', payload: commonFriendCount});
+  }, [state.friends]);
+
+  // Monitor stats
   useMemo(() => {
     if (!state.drinkingSessionData || !state.preferences) return;
 
