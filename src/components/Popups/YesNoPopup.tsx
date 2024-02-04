@@ -40,7 +40,6 @@ const styles = StyleSheet.create({
     // position: 'absolute',
     // top: 10,
     // left: 10,
-    zIndex: 100,
   },
   modalView: {
     backgroundColor: '#FFFF99',
