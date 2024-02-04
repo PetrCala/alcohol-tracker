@@ -1,6 +1,5 @@
 ﻿import {Alert, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {
-  NicknameToIdData,
   FriendRequestStatusState,
   FriendsData,
   FriendRequestDisplayData,
@@ -10,12 +9,11 @@ import {
 import {useMemo, useReducer} from 'react';
 import {useFirebase} from '@src/context/FirebaseContext';
 import {auth} from '@src/services/firebaseSetup';
-import {isNonEmptyArray, isNonEmptyObject} from '@src/utils/validation';
+import {isNonEmptyArray} from '@src/utils/validation';
 import LoadingData from '@src/components/LoadingData';
 import {Database} from 'firebase/database';
-import {searchDatabaseForUsers, searchDbByNickname} from '@src/database/search';
+import {searchDatabaseForUsers} from '@src/database/search';
 import {fetchUserProfiles} from '@database/profile';
-import {QUIRKY_NICKNAMES} from '@src/utils/QuirkyNicknames';
 import SearchResult from '@components/Social/SearchResult';
 import SearchWindow from '@components/Social/SearchWindow';
 import {UserSearchResults} from '@src/types/search';
@@ -145,7 +143,7 @@ const SearchScreen = (props: ScreenProps) => {
     updateRequestStatuses();
   }, [friendRequests]); // When updated in the database, not locally
 
-  if (!db || !user || !storage) return;
+  if (!user || !storage) return;
 
   return (
     <View style={styles.mainContainer}>

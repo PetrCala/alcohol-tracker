@@ -225,7 +225,7 @@ const FriendsFriendsScreen = ({
     dispatch({type: 'SET_NO_USERS_FOUND', payload: false});
   };
 
-  if (!db || !user || !storage) return;
+  if (!user || !storage) return;
 
   return (
     <View style={styles.mainContainer}>
