@@ -587,7 +587,7 @@ export const removeZeroObjectsFromSession = (
     // Check if all the unit values are set to 0
     const allZero = UnitTypesKeys.every(
       key =>
-        updatedSession.units[timestamp][key] === 0 ??
+        updatedSession.units[timestamp][key] === 0 ||
         updatedSession.units[timestamp][key] === undefined,
     );
 
