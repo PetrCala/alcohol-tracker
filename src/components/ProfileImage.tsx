@@ -1,10 +1,9 @@
-﻿import React, {useEffect, useMemo, useReducer} from 'react';
+﻿import React, {useEffect, useMemo, useReducer, useRef, useState} from 'react';
 import {ActivityIndicator, Alert, Image} from 'react-native'; // or 'react-native-web' if you're using React for web
 import {FirebaseStorage} from 'firebase/storage';
-import {getProfilePictureURL} from '../storage/storageProfile';
-import {handleErrors} from '../utils/errorHandling';
-import {useFirebase} from '@src/context/FirebaseContext';
-import {readDataOnce} from '@database/baseFunctions';
+import {getProfilePictureURL} from '@src/storage/storageProfile';
+import useProfileImageCache from '@hooks/useProfileImageCache';
+import CONST from '@src/CONST';
 
 interface State {
   imageUrl: string | null;
@@ -39,28 +38,64 @@ const reducer = (state: State, action: Action) => {
 type ProfileImageProps = {
   storage: FirebaseStorage;
   userId: string;
+  downloadPath: string | null;
   style: any;
-  localImageSource?: string; // If the user has uploaded a new image, use this instead of the one in the database, so that the user can see the new image immediately without any listeners
+  refreshTrigger?: number; // Likely a number, used to force a refresh
 };
 
 function ProfileImage(props: ProfileImageProps) {
-  const {storage, userId, style} = props;
-  const db = useFirebase().db;
+  const {storage, userId, downloadPath, style, refreshTrigger} = props;
   const [state, dispatch] = useReducer(reducer, initialState);
+  const {cachedUrl, cacheImage, isCacheChecked} = useProfileImageCache(userId);
+  const prevCachedUrl = useRef(cachedUrl); // Crucial
+  const initialDownloadPath = useRef(downloadPath); //
+
+  const checkAvailableCache = async (url: string | null): Promise<boolean> => {
+    if (downloadPath?.startsWith(CONST.LOCAL_IMAGE_PREFIX)) {
+      // Is a local file
+      dispatch({type: 'SET_IMAGE_URL', payload: downloadPath});
+      dispatch({type: 'SET_LOADING_IMAGE', payload: false});
+      return true;
+    }
+    if (
+      // Do not merge these two if statements (order matters)
+      url &&
+      url === prevCachedUrl.current &&
+      downloadPath === initialDownloadPath.current && // Only if the download path has not changed
+      !refreshTrigger // Only if the refresh trigger is not set
+    ) {
+      // Use cache if available and unchanged
+      dispatch({type: 'SET_IMAGE_URL', payload: cachedUrl});
+      dispatch({type: 'SET_LOADING_IMAGE', payload: false});
+      return true;
+    }
+    return false;
+  };
 
   useEffect(() => {
-    dispatch({type: 'SET_LOADING_IMAGE', payload: true});
-
     const fetchImage = async () => {
+      if (!isCacheChecked) return; // Only proceed if cache has been checked
+
+      const cacheUnchanged = await checkAvailableCache(cachedUrl);
+      if (cacheUnchanged) return; // Use cache if available and unchanged
+
+      dispatch({type: 'SET_LOADING_IMAGE', payload: true});
       try {
-        const downloadURL = await readDataOnce(
-          db,
-          `users/${userId}/profile/photo_url`,
-        );
-        const url = await getProfilePictureURL(storage, userId, downloadURL);
-        if (url) {
-          dispatch({type: 'SET_IMAGE_URL', payload: url});
+        let downloadUrl: string | null = null;
+        if (downloadPath?.includes(CONST.FIREBASE_STORAGE_URL)) {
+          // if (downloadPath === initialDownloadPath.current) // If the input download path has not changed
+          downloadUrl = await getProfilePictureURL(
+            storage,
+            userId,
+            downloadPath,
+          );
+          // if (downloadUrl === downloadPath) // If the resulting download path has not changed
+          if (downloadUrl !== downloadPath) {
+            await cacheImage(downloadUrl);
+          }
         }
+
+        dispatch({type: 'SET_IMAGE_URL', payload: downloadUrl});
       } catch (error: any) {
         Alert.alert('Error fetching the image', error.message);
         // handleErrors(
@@ -75,13 +110,8 @@ function ProfileImage(props: ProfileImageProps) {
     };
 
     fetchImage();
-  }, []);
-
-  useEffect(() => {
-    if (props.localImageSource) {
-      dispatch({type: 'SET_IMAGE_URL', payload: props.localImageSource});
-    }
-  }, [props.localImageSource]);
+    prevCachedUrl.current = cachedUrl;
+  }, [downloadPath, cachedUrl, isCacheChecked, refreshTrigger]);
 
   if (state.loadingImage)
     return <ActivityIndicator size="large" color="#0000ff" style={style} />;
@@ -89,7 +119,7 @@ function ProfileImage(props: ProfileImageProps) {
   return (
     <Image
       source={
-        state.imageUrl
+        state.imageUrl && state.imageUrl !== CONST.NO_IMAGE
           ? {uri: state.imageUrl}
           : require('../../assets/temp/user.png')
       }

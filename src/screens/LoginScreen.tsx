@@ -15,13 +15,12 @@ import {useFocusEffect} from '@react-navigation/native';
 import {sendPasswordResetEmail, signOut} from 'firebase/auth';
 import {auth} from '../services/firebaseSetup';
 import {signInUserWithEmailAndPassword} from '../auth/auth';
-
+import commonStyles from '../styles/commonStyles';
 import {LoginScreenProps} from '../types/screens';
 import LoadingData from '../components/LoadingData';
-import {useUserConnection} from '../context/UserConnectionContext';
+import {useUserConnection} from '../context/global/UserConnectionContext';
 import InputTextPopup from '../components/Popups/InputTextPopup';
 import {handleErrors} from '../utils/errorHandling';
-import CONST from '@src/CONST';
 import WarningMessage from '@components/Info/WarningMessage';
 import SuccessMessage from '@components/Info/SuccessMessage';
 
@@ -190,7 +189,7 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
               Forgot your password?
             </Text>
           </TouchableOpacity>
-          <View style={styles.horizontalLine} />
+          <View style={[commonStyles.horizontalLine, styles.customLineWidth]} />
           <View style={styles.signUpContainer}>
             <TouchableOpacity
               style={styles.signUpButtonContainer}
@@ -332,12 +331,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 14,
   },
-  horizontalLine: {
-    width: screenWidth * 0.55,
-    height: 1,
-    backgroundColor: 'grey',
-    alignSelf: 'center',
-  },
   signUpContainer: {
     width: '100%',
     marginTop: 5,
@@ -360,5 +353,8 @@ const styles = StyleSheet.create({
     marginLeft: 4,
     paddingTop: 10,
     paddingBottom: 10,
+  },
+  customLineWidth: {
+    width: screenWidth * 0.7,
   },
 });

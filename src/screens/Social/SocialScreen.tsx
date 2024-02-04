@@ -1,4 +1,4 @@
-﻿import React, {useMemo, useState} from 'react';
+﻿import React, {useState} from 'react';
 import {
   Dimensions,
   Image,
@@ -7,19 +7,21 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import MenuIcon from '../../components/Buttons/MenuIcon';
-import {getDatabaseData} from '../../context/DatabaseDataContext';
-import commonStyles from '../../styles/commonStyles';
-import {
-  FriendRequestData,
-  FriendRequestDisplayData,
-  FriendsData,
-  UserData,
-} from '../../types/database';
-import {TabView, SceneMap} from 'react-native-tab-view';
+import {getDatabaseData} from '@src/context/global/DatabaseDataContext';
+import commonStyles from '@src/styles/commonStyles';
+import {UserData} from '@src/types/database';
+import {TabView} from 'react-native-tab-view';
 import FriendListScreen from './FriendListScreen';
 import FriendRequestScreen from './FriendRequestScreen';
 import SearchScreen from './SearchScreen';
+import {
+  FriendListScreenProps,
+  SearchScreenProps,
+  SocialScreenProps,
+} from '@src/types/screens';
+import MainHeader from '@components/Header/MainHeader';
+import {getReceivedRequestsCount} from '@src/utils/social/friendUtils';
+import {useIsFocused} from '@react-navigation/native';
 
 type SocialFooterButtonProps = {
   index: number;
@@ -27,6 +29,7 @@ type SocialFooterButtonProps = {
   setImageIndex: (index: number) => void;
   source: any;
   label: string;
+  infoNumberValue?: number;
 };
 
 const SocialFooterButton: React.FC<SocialFooterButtonProps> = ({
@@ -35,7 +38,9 @@ const SocialFooterButton: React.FC<SocialFooterButtonProps> = ({
   setImageIndex,
   source,
   label,
+  infoNumberValue,
 }) => {
+  const displayNumberValue = infoNumberValue && infoNumberValue > 0;
   return (
     <View style={styles.footerPartContainer}>
       <TouchableOpacity
@@ -44,15 +49,25 @@ const SocialFooterButton: React.FC<SocialFooterButtonProps> = ({
           currentIndex === index ? {backgroundColor: '#ebeb02'} : {},
         ]}
         onPress={() => setImageIndex(index)}>
-        <Image source={source} style={styles.footerImage} />
+        <View
+          style={
+            displayNumberValue
+              ? [styles.imageContainer, styles.extraSpacing]
+              : styles.imageContainer
+          }>
+          <Image source={source} style={styles.footerImage} />
+          {displayNumberValue ? (
+            <View style={styles.friendRequestCounter}>
+              <Text style={styles.friendRequestCounterValue}>
+                {infoNumberValue}
+              </Text>
+            </View>
+          ) : null}
+        </View>
         <Text style={styles.footerText}>{label}</Text>
       </TouchableOpacity>
     </View>
   );
-};
-
-type SocialProps = {
-  navigation: any;
 };
 
 type RouteType = {
@@ -61,22 +76,19 @@ type RouteType = {
   userData: UserData | null;
 };
 
-const SocialScreen = (props: SocialProps) => {
-  const {navigation} = props;
+const SocialScreen = ({route, navigation}: SocialScreenProps) => {
+  if (!route || !navigation) return null;
+  const {screen} = route.params;
   const {userData} = getDatabaseData();
-  const [friendRequests, setFriendRequests] = useState<
-    FriendRequestDisplayData | undefined
-  >(userData?.friend_requests);
-  const [friends, setFriends] = useState<FriendsData | undefined>(
-    userData?.friends,
-  );
-  const userHasFriends = userData?.friends ?? false;
-  const [index, setIndex] = useState<number>(0); // Current screen index - defaults to friend requests in case of no friends
   const [routes] = useState([
     {key: 'friendList', title: 'Friend List', userData: userData},
     {key: 'friendSearch', title: 'Friend Search', userData: userData},
     {key: 'friendRequests', title: 'Friend Requests', userData: userData},
   ]);
+
+  const [index, setIndex] = useState<number>(
+    routes.findIndex(route => route.title === screen) || 0, // Get the index of the screen based on the title
+  );
 
   const renderScene = ({route}: {route: RouteType}) => {
     if (!userData) return null;
@@ -85,26 +97,22 @@ const SocialScreen = (props: SocialProps) => {
         return (
           <FriendListScreen
             navigation={navigation}
-            friends={friends}
+            friends={userData?.friends}
             setIndex={setIndex}
           />
         );
       case 'friendSearch':
         return (
           <SearchScreen
-            friendRequests={friendRequests}
-            setFriendRequests={setFriendRequests}
-            friends={friends}
-            setFriends={setFriends}
+            friendRequests={userData?.friend_requests}
+            friends={userData?.friends}
           />
         );
       case 'friendRequests':
         return (
           <FriendRequestScreen
-            friendRequests={friendRequests}
-            setFriendRequests={setFriendRequests}
-            friends={friends}
-            setFriends={setFriends}
+            friendRequests={userData?.friend_requests}
+            friends={userData?.friends}
           />
         );
       default:
@@ -127,31 +135,15 @@ const SocialScreen = (props: SocialProps) => {
       index: 2,
       source: require('../../../assets/icons/add_user.png'),
       label: 'Friend Requests',
+      infoNumberValue: getReceivedRequestsCount(userData?.friend_requests),
     },
   ];
-
-  useMemo(() => {
-    if (!userData) return;
-    setFriendRequests(userData.friend_requests);
-    setFriends(userData.friends);
-  }, [userData]);
 
   if (!userData) return null;
 
   return (
     <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
-      <View style={commonStyles.mainHeader}>
-        <MenuIcon
-          iconId="escape-statistics-screen"
-          iconSource={require('../../../assets/icons/arrow_back.png')}
-          containerStyle={styles.backArrowContainer}
-          iconStyle={styles.backArrow}
-          onPress={() => navigation.goBack()}
-        />
-        <View style={styles.menuContainer}>
-          <Text style={styles.sectionText}>Friends</Text>
-        </View>
-      </View>
+      <MainHeader headerText="Friends" onGoBack={() => navigation.goBack()} />
       <TabView
         navigationState={{index, routes}}
         renderScene={renderScene}
@@ -170,6 +162,7 @@ const SocialScreen = (props: SocialProps) => {
             setImageIndex={setIndex}
             source={button.source}
             label={button.label}
+            infoNumberValue={button.infoNumberValue}
           />
         ))}
       </View>
@@ -182,21 +175,6 @@ export default SocialScreen;
 const screenWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
-  backArrowContainer: {
-    justifyContent: 'center',
-    marginLeft: 10,
-  },
-  backArrow: {
-    width: 25,
-    height: 25,
-  },
-  menuContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    width: 200,
-  },
   sectionText: {
     fontSize: 20,
     color: 'black',
@@ -247,6 +225,32 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 3,
     backgroundColor: '#ebeb02',
+  },
+  imageContainer: {
+    flexDirection: 'row',
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  extraSpacing: {
+    marginLeft: 30, // 20 + 10
+  },
+  friendRequestCounter: {
+    width: 20,
+    height: 20,
+    backgroundColor: '#4CAF50',
+    borderRadius: 10,
+    marginLeft: 10,
+    marginBottom: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'black',
+  },
+  friendRequestCounterValue: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: 'white',
   },
   footerImage: {
     width: 25,

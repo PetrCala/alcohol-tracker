@@ -5,7 +5,7 @@ import {app} from './services/firebaseSetup';
 import AuthNavigator from './navigation/AuthNavigator';
 import AppNavigator from './navigation/AppNavigator';
 import Stack from './navigation/Stack';
-import {ContextProvider} from './context/Context';
+import {ContextProvider} from './context/global/Context';
 
 const Kiroku = () => {
   return (

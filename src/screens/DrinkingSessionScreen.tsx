@@ -11,7 +11,7 @@ import {
 import MenuIcon from '../components/Buttons/MenuIcon';
 import BasicButton from '../components/Buttons/BasicButton';
 import {DrinkingSessionScreenProps} from '../types/screens';
-import {useFirebase} from '../context/FirebaseContext';
+import {useFirebase} from '../context/global/FirebaseContext';
 import {
   discardLiveDrinkingSession,
   endLiveDrinkingSession,
@@ -37,7 +37,7 @@ import {
   UnitsObject,
 } from '../types/database';
 import YesNoPopup from '../components/Popups/YesNoPopup';
-import {useUserConnection} from '../context/UserConnectionContext';
+import {useUserConnection} from '../context/global/UserConnectionContext';
 import UserOffline from '../components/UserOffline';
 import {DrinkDataProps} from '../types/components';
 import UnitTypesView from '../components/UnitTypesView';
@@ -47,8 +47,10 @@ import {usePrevious} from '../hooks/usePrevious';
 import SuccessIndicator from '../components/SuccessIndicator';
 import commonStyles from '../styles/commonStyles';
 import FillerView from '../components/FillerView';
-import { getPreviousRouteName } from '@navigation/navigationUtils';
+import {getPreviousRouteName} from '@navigation/navigationUtils';
 import CONST from '@src/CONST';
+import MainHeader from '@components/Header/MainHeader';
+import MainHeaderButton from '@components/Header/MainHeaderButton';
 
 const DrinkingSessionScreen = ({
   route,
@@ -214,6 +216,7 @@ const DrinkingSessionScreen = ({
             user.uid,
             newSessionData,
             sessionKey,
+            true, // Update live session status
           );
         } catch (error: any) {
           throw new Error('Could not save the drinking session data');
@@ -269,7 +272,6 @@ const DrinkingSessionScreen = ({
         note: note,
         ongoing: null,
       };
-      newSessionData = removeZeroObjectsFromSession(newSessionData); // Delete the initial log of zero units that was used as a placeholder
       try {
         if (timeSinceLastUpdate < 1000) {
           await sleep(1000 - timeSinceLastUpdate); // Wait for database synchronization
@@ -350,24 +352,18 @@ const DrinkingSessionScreen = ({
 
   return (
     <>
-      <View style={commonStyles.mainHeader}>
-        <MenuIcon
-          iconId="escape-drinking-session"
-          iconSource={require('../../assets/icons/arrow_back.png')}
-          containerStyle={styles.backArrowContainer}
-          iconStyle={styles.backArrow}
-          onPress={handleBackPress}
-        />
-        <BasicButton
-          text={monkeMode ? 'Exit Monke Mode' : 'Monke Mode'}
-          buttonStyle={[
-            styles.monkeModeButton,
-            monkeMode ? styles.monkeModeButtonEnabled : {},
-          ]}
-          textStyle={styles.monkeModeButtonText}
-          onPress={() => setMonkeMode(!monkeMode)}
-        />
-      </View>
+      <MainHeader
+        headerText=""
+        onGoBack={handleBackPress}
+        rightSideComponent={
+          <MainHeaderButton
+            buttonOn={monkeMode}
+            textOn="Exit Monke Mode"
+            textOff="Monke Mode"
+            onPress={() => setMonkeMode(!monkeMode)}
+          />
+        }
+      />
       <ScrollView
         style={styles.scrollView}
         ref={scrollViewRef}
@@ -387,7 +383,7 @@ const DrinkingSessionScreen = ({
           )}
           <SuccessIndicator
             visible={dbSyncSuccessful}
-            successStyle={styles.successStyle}
+            successStyle={[styles.successStyle, commonStyles.successIndicator]}
           />
         </View>
         <View style={styles.unitCountContainer}>
@@ -502,11 +498,6 @@ const styles = StyleSheet.create({
     right: 0,
   },
   successStyle: {
-    width: 20,
-    height: 20,
-    borderRadius: 25,
-    margin: 10,
-    backgroundColor: 'green',
     position: 'absolute',
     right: 0,
   },
@@ -575,30 +566,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
     textAlign: 'center',
-  },
-  monkeModeContainer: {
-    height: '10%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#FFFF99',
-  },
-  monkeModeButton: {
-    width: '50%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 10,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#000',
-    backgroundColor: '#fcf50f',
-  },
-  monkeModeButtonEnabled: {
-    backgroundColor: '#FFFF99',
-  },
-  monkeModeButtonText: {
-    color: 'black',
-    fontSize: 17,
-    fontWeight: '600',
   },
   sessionDetailsContainer: {
     alignItems: 'center',

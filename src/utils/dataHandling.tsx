@@ -367,6 +367,7 @@ export function monthEntriesToColors(
  * @param all_units Units to sum up.
  */
 export function sumAllUnits(units: UnitsObject): number {
+  if (!units) return 0;
   return Object.values(units).reduce((total, unitTypes) => {
     return (
       total +
@@ -424,6 +425,7 @@ export function sumAllPoints(
   unitsObject: UnitsObject,
   unitsToPoints: UnitTypesProps,
 ): number {
+  if (!unitsObject) return 0;
   let totalPoints = 0;
   // Iterate over each timestamp in unitsObject
   for (const unitTypes of Object.values(unitsObject)) {
@@ -587,12 +589,12 @@ export const removeZeroObjectsFromSession = (
     // Check if all the unit values are set to 0
     const allZero = UnitTypesKeys.every(
       key =>
-        updatedSession.units[timestamp][key] === 0 ??
+        updatedSession.units[timestamp][key] === 0 ||
         updatedSession.units[timestamp][key] === undefined,
     );
 
-    // If all unit values are 0, delete the timestamp from the units object
-    if (allZero) {
+    // If all unit values are 0, delete the timestamp from the units object, unless it is the last one
+    if (allZero && Object.keys(updatedSession.units).length > 1) {
       delete updatedSession.units[+timestamp];
     }
   }
@@ -673,11 +675,25 @@ export function hasDecimalPoint(number: number): boolean {
 }
 
 export function toPercentageVerbose(number: number): string {
-  if (number > 1 || number < 0 ){
-    throw new Error("A fraction number must be between 0 and 1.")
+  if (number > 1 || number < 0) {
+    throw new Error('A fraction number must be between 0 and 1.');
   }
   const percentage = number * 100;
-  return `${percentage.toFixed(2).toString()}%`
+  return `${percentage.toFixed(2).toString()}%`;
+}
+
+/**
+ * Returns an array of keys from the provided object.
+ * @param obj - The object to retrieve keys from.
+ * @returns An array of keys from the object.
+ */
+export function objKeys(obj: any): string[] {
+  // Check if obj is an object and not null
+  if (typeof obj === 'object' && obj !== null) {
+    return Object.keys(obj);
+  }
+  // Return an empty array for non-object inputs or null
+  return [];
 }
 
 // test, getAdjacentMonths, findongoingsession, aggregatesessionsbydays, month entries to colors (move these maybe to a different location), toPercentageVerbose

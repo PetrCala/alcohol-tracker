@@ -2,7 +2,6 @@
   initializeEmptyMockDatabase,
   createMockConfig,
   createMockFeedback,
-  createMockCurrentSession,
   createMockUnitsObject,
   createMockSession,
   createMockPreferences,
@@ -16,7 +15,6 @@ import {
   DatabaseProps,
   ConfigProps,
   FeedbackProps,
-  CurrentSessionData,
   DrinkingSessionData,
   UnitsObject,
   UnitTypesKeys,
@@ -25,6 +23,7 @@ import {
   UnconfirmedDaysData,
   UserData,
   UnitsToColorsData,
+  UserStatusData,
 } from '../../src/types/database';
 
 /**
@@ -94,29 +93,17 @@ function validateFeedback(feedbackData: {[feedbackId: string]: any}): boolean {
   return true;
 }
 
-/** Input an object of supposed current session data and validate that the object is indeed of the CurrentSessionData type. Return true if yes, and false otherwise.
- *
- * @param obj Object to validate.
- * @returns bool
- */
-function isCurrentSessionData(obj: any): obj is CurrentSessionData {
-  return typeof obj.current_session_id === 'string';
+function isUserStatus(obj: any): obj is UserStatusData {
+  return typeof obj.last_online === 'number';
 }
 
-/** Enter a data object containing supposed current sessions, and validate that all objects (values) are indeed of the supposed type. If yes, return true, otherwise return false.
- *
- * @param userSessions Data to validate
- * @returns bool
- */
-function validateUserCurrentSession(userSessions: {
-  [userId: string]: any;
-}): boolean {
-  for (const userId in userSessions) {
-    if (!isCurrentSessionData(userSessions[userId])) {
-      return false; // If any value is not a valid CurrentSessionData, return false
+function validateUserStatus(userStatuses: {[userId: string]: any}): boolean {
+  for (const userId in userStatuses) {
+    if (!isUserStatus(userStatuses[userId])) {
+      return false;
     }
   }
-  return true; // All values are valid
+  return true;
 }
 
 /** Type guard for UnitTypesProps. Return true if an object is of UnitTypesProps type, and false otherwise.
@@ -273,11 +260,7 @@ function validateUserUnconfirmedDaysData(userUnconfirmedDays: {
  * @returns bool
  */
 function isUserData(obj: any): obj is UserData {
-  return (
-    typeof obj.role === 'string' &&
-    typeof obj.last_online === 'number' &&
-    typeof obj.beta_key_id === 'number'
-  );
+  return typeof obj.role === 'string' && typeof obj.beta_key_id === 'number';
 }
 
 /** Enter a data object containing supposed user data, and validate that all objects (values) are indeed of the supposed type. If yes, return true, otherwise return false.
@@ -325,11 +308,6 @@ describe('mockDatabase functions', () => {
     const feedback = createMockFeedback();
     expect(feedback).toBeDefined();
     expect(feedback.text).toBe('Mock feedback');
-  });
-
-  it('should create a mock current session', () => {
-    const session = createMockCurrentSession('mock-session-id');
-    expect(session.current_session_id).toBe('mock-session-id');
   });
 
   it('should create a mock units object', () => {
@@ -385,8 +363,8 @@ describe('mockDatabase data structure', () => {
     expect(validateFeedback(db.feedback)).toBe(true);
   });
 
-  it('should have user current session data', () => {
-    expect(validateUserCurrentSession(db.user_current_session)).toBe(true);
+  it('should have user status', () => {
+    expect(validateUserStatus(db.user_status)).toBe(true);
   });
 
   it('should have user drinking session data', () => {

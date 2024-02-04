@@ -19,7 +19,7 @@ import {
 } from '../../utils/dataHandling';
 import {removeFeedback} from '../../database/feedback';
 import {fetchNicknameByUID} from '../../database/baseFunctions';
-import {useFirebase} from '../../context/FirebaseContext';
+import {useFirebase} from '../../context/global/FirebaseContext';
 
 const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
   const {visible, transparent, onRequestClose, feedbackData} = props;

@@ -1,3 +1,6 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import CONST from '@src/CONST';
+import {auth} from '@src/services/firebaseSetup';
 import {UploadImagePopupProps} from '@src/types/components';
 import {useEffect, useState} from 'react';
 import {
@@ -23,6 +26,7 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
     parentState,
     parentDispatch,
   } = props;
+  const user = auth.currentUser;
   const [uploadFinished, setUploadFinished] = useState<boolean>(false);
 
   const ConfirmationWindow: React.FC = () => {
@@ -104,14 +108,22 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
   };
 
   useEffect(() => {
-    if (
-      parentState.uploadProgress &&
-      parentState.uploadProgress.includes('100')
-    ) {
-      setUploadFinished(true);
-      setImageSource(imageSource);
-      parentDispatch({type: 'SET_UPLOAD_ONGOING', payload: false});
-    }
+    const updateInfoUponUpload = async () => {
+      if (
+        parentState.uploadProgress &&
+        parentState.uploadProgress.includes('100') &&
+        user
+      ) {
+        setImageSource(imageSource); // Propagate immediate local changes
+        await AsyncStorage.removeItem(
+          CONST.CACHE.PROFILE_PICTURE_KEY + user.uid,
+        );
+        setUploadFinished(true);
+        parentDispatch({type: 'SET_UPLOAD_ONGOING', payload: false});
+      }
+    };
+
+    updateInfoUponUpload();
   }, [parentState.uploadProgress]);
 
   return (

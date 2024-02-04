@@ -15,11 +15,11 @@ import {
 import {updateProfile} from 'firebase/auth';
 import {auth} from '../services/firebaseSetup';
 import {signUpUserWithEmailAndPassword} from '../auth/auth';
-import {useFirebase} from '../context/FirebaseContext';
+import {useFirebase} from '../context/global/FirebaseContext';
 import {SignUpScreenProps} from '../types/screens';
 import {readDataOnce} from '../database/baseFunctions';
 import {validateBetaKey} from '../database/beta';
-import {useUserConnection} from '../context/UserConnectionContext';
+import {useUserConnection} from '../context/global/UserConnectionContext';
 import {isValidString, validateAppVersion} from '../utils/validation';
 import {deleteUserData, pushNewUserInfo} from '../database/users';
 import {ProfileData} from 'src/types/database';

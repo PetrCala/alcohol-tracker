@@ -3,6 +3,7 @@ import {
   Alert,
   Dimensions,
   Image,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -25,13 +26,13 @@ import {
   timestampToDate,
   getYearMonthVerbose,
 } from '../utils/dataHandling';
-import {useUserConnection} from '../context/UserConnectionContext';
+import {useUserConnection} from '../context/global/UserConnectionContext';
 import UserOffline from '../components/UserOffline';
 import {updateUserLastOnline} from '../database/users';
 import {startLiveDrinkingSession} from '../database/drinkingSessions';
-import {getDatabaseData} from '../context/DatabaseDataContext';
-import commonStyles from '../styles/commonStyles';
-import {useFirebase} from '../context/FirebaseContext';
+import {getDatabaseData} from '../context/global/DatabaseDataContext';
+import commonStyles from '@src/styles/commonStyles';
+import {useFirebase} from '../context/global/FirebaseContext';
 import ProfileImage from '../components/ProfileImage';
 import {generateDatabaseKey} from '@database/baseFunctions';
 
@@ -42,6 +43,8 @@ interface State {
   pointsEarned: number;
   ongoingSession: DrinkingSessionArrayItem | null;
   loadingNewSession: boolean;
+  refreshing: boolean;
+  refreshCounter: number;
 }
 
 interface Action {
@@ -56,6 +59,8 @@ const initialState: State = {
   pointsEarned: 0,
   ongoingSession: null,
   loadingNewSession: false,
+  refreshing: false,
+  refreshCounter: 0,
 };
 
 const reducer = (state: State, action: Action): State => {
@@ -72,6 +77,10 @@ const reducer = (state: State, action: Action): State => {
       return {...state, ongoingSession: action.payload};
     case 'SET_LOADING_NEW_SESSION':
       return {...state, loadingNewSession: action.payload};
+    case 'SET_REFRESHING':
+      return {...state, refreshing: action.payload};
+    case 'SET_REFRESH_COUNTER':
+      return {...state, refreshCounter: action.payload};
     default:
       return state;
   }
@@ -85,7 +94,7 @@ const MainScreen = ({navigation}: MainScreenProps) => {
   const {db, storage} = useFirebase();
   const {isOnline} = useUserConnection();
   const {
-    currentSessionData,
+    userStatusData,
     drinkingSessionData,
     drinkingSessionKeys,
     preferences,
@@ -97,7 +106,7 @@ const MainScreen = ({navigation}: MainScreenProps) => {
 
   // Handle drinking session button press
   const startDrinkingSession = async () => {
-    if (!preferences || !db || !user) return null; // Should never be null
+    if (!preferences || !user) return null; // Should never be null
     let sessionData: DrinkingSessionArrayItem;
     let sessionKey: string;
     if (!state.ongoingSession) {
@@ -135,7 +144,9 @@ const MainScreen = ({navigation}: MainScreenProps) => {
         return;
       }
     } else {
-      const currentsessionKey = currentSessionData?.current_session_id ?? null;
+      const currentsessionKey = state.ongoingSession
+        ? userStatusData?.latest_session_id
+        : null;
       if (!currentsessionKey) {
         Alert.alert(
           'New session initialization failed',
@@ -154,10 +165,21 @@ const MainScreen = ({navigation}: MainScreenProps) => {
     dispatch({type: 'SET_LOADING_NEW_SESSION', payload: false});
   };
 
+  const onRefresh = React.useCallback(() => {
+    dispatch({type: 'SET_REFRESHING', payload: true});
+    setTimeout(() => {
+      dispatch({type: 'SET_REFRESHING', payload: false});
+      dispatch({
+        type: 'SET_REFRESH_COUNTER',
+        payload: state.refreshCounter + 1,
+      });
+    }, 1000);
+  }, []);
+
   // Update the user last login time
   useEffect(() => {
     const fetchData = async () => {
-      if (!db || !user) return;
+      if (!user) return;
       try {
         await updateUserLastOnline(db, user.uid);
       } catch (error: any) {
@@ -175,7 +197,7 @@ const MainScreen = ({navigation}: MainScreenProps) => {
   useMemo(() => {
     let result = findOngoingSession(drinkingSessionData);
     dispatch({type: 'SET_ONGOING_SESSION', payload: result});
-  }, [drinkingSessionData, currentSessionData]);
+  }, [drinkingSessionData, userStatusData]);
 
   // Monitor visible month and various statistics
   useMemo(() => {
@@ -214,17 +236,19 @@ const MainScreen = ({navigation}: MainScreenProps) => {
         loadingText={state.loadingNewSession ? 'Starting a new session...' : ''}
       />
     );
-  if (!db || !preferences || !drinkingSessionData || !userData) return;
+  if (!preferences || !drinkingSessionData || !userData) return;
 
   return (
     <>
-      <View style={commonStyles.mainHeader}>
+      <View style={commonStyles.headerContainer}>
         <View style={styles.profileContainer}>
           <TouchableOpacity
             onPress={() =>
               navigation.navigate('Profile Screen', {
                 userId: user.uid,
                 profileData: userData.profile,
+                friends: userData.friends,
+                currentUserFriends: userData.friends,
                 drinkingSessionData: drinkingSessionData,
                 preferences: preferences,
               })
@@ -233,7 +257,9 @@ const MainScreen = ({navigation}: MainScreenProps) => {
             <ProfileImage
               storage={storage}
               userId={user.uid}
+              downloadPath={userData.profile.photo_url}
               style={styles.profileImage}
+              refreshTrigger={state.refreshCounter}
             />
             <Text style={styles.headerUsername}>{user.displayName}</Text>
           </TouchableOpacity>
@@ -250,13 +276,15 @@ const MainScreen = ({navigation}: MainScreenProps) => {
             You are currently in session!
           </Text>
         </TouchableOpacity>
-      ) : (
-        null
-      )}
+      ) : null}
       {/* <View style={styles.yearMonthContainer}>
         <Text style={styles.yearMonthText}>{thisYearMonth}</Text>
       </View> */}
-      <ScrollView style={styles.mainScreenContent}>
+      <ScrollView
+        style={styles.mainScreenContent}
+        refreshControl={
+          <RefreshControl refreshing={state.refreshing} onRefresh={onRefresh} />
+        }>
         <View style={styles.menuInfoContainer}>
           <View style={styles.menuInfoItemContainer}>
             <Text style={styles.menuInfoText}>Units:</Text>
@@ -295,7 +323,9 @@ const MainScreen = ({navigation}: MainScreenProps) => {
             iconSource={require('../../assets/icons/social.png')}
             containerStyle={styles.menuIconContainer}
             iconStyle={styles.menuIcon}
-            onPress={() => navigation.navigate('Social Screen')}
+            onPress={() =>
+              navigation.navigate('Social Screen', {screen: 'Friend List'})
+            }
           />
           <MenuIcon
             iconId="achievement-icon"
@@ -350,6 +380,7 @@ export default MainScreen;
 const styles = StyleSheet.create({
   profileContainer: {
     //Ensure the container fills all space between, no more, no less
+    padding: 10,
     flexGrow: 1,
     flexShrink: 1,
   },
@@ -446,10 +477,9 @@ const styles = StyleSheet.create({
   },
   menuInfoText: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '500',
     color: 'black',
     alignSelf: 'center',
-    // alignContent: "center",
     padding: 6,
     marginRight: 4,
     marginLeft: 4,

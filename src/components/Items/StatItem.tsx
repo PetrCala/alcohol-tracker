@@ -31,12 +31,11 @@ const styles = StyleSheet.create({
   overviewStatsContents: {
     textAlign: 'center',
     fontSize: 23,
-    fontWeight: 'bold',
     color: 'black',
   },
   overviewStatsHeader: {
     textAlign: 'center',
-    fontSize: 16,
+    fontSize: 15,
     paddingRight: 3,
     paddingLeft: 3,
     color: 'black',

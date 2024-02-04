@@ -11,6 +11,7 @@ import MenuIcon from '../components/Buttons/MenuIcon';
 import {PrivacyPolicyScreenProps} from '../types/screens';
 import {WebView} from 'react-native-webview';
 import commonStyles from '../styles/commonStyles';
+import MainHeader from '@components/Header/MainHeader';
 
 const PrivacyPolicyScreen = ({navigation}: PrivacyPolicyScreenProps) => {
   const policyHtml =
@@ -32,15 +33,7 @@ const PrivacyPolicyScreen = ({navigation}: PrivacyPolicyScreenProps) => {
 
   return (
     <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
-      <View style={commonStyles.mainHeader}>
-        <MenuIcon
-          iconId="escape-privacy-policy-screen"
-          iconSource={require('../../assets/icons/arrow_back.png')}
-          containerStyle={styles.backArrowContainer}
-          iconStyle={styles.backArrow}
-          onPress={() => navigation.goBack()}
-        />
-      </View>
+      <MainHeader headerText="" onGoBack={() => navigation.goBack()} />
       <View style={styles.mainContainer}>
         <WebView
           originWhitelist={['*']}
@@ -57,17 +50,6 @@ const PrivacyPolicyScreen = ({navigation}: PrivacyPolicyScreenProps) => {
 export default PrivacyPolicyScreen;
 
 const styles = StyleSheet.create({
-  backArrowContainer: {
-    justifyContent: 'center',
-    marginTop: 10,
-    marginLeft: 10,
-    padding: 10,
-    position: 'absolute',
-  },
-  backArrow: {
-    width: 25,
-    height: 25,
-  },
   mainContainer: {
     flex: 1,
   },

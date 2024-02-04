@@ -14,13 +14,16 @@ import {
   ProfileDisplayData,
 } from '../../types/database';
 import {useEffect, useMemo, useReducer, useState} from 'react';
-import {useFirebase} from '../../context/FirebaseContext';
+import {useFirebase} from '../../context/global/FirebaseContext';
 import {acceptFriendRequest, deleteFriendRequest} from '../../database/friends';
 import {auth} from '../../services/firebaseSetup';
 import LoadingData from '../../components/LoadingData';
 import {Database} from 'firebase/database';
 import NoFriendUserOverview from '@components/Social/NoFriendUserOverview';
 import {fetchUserProfiles} from '@database/profile';
+import headerStyles from '@src/styles/headerStyles';
+import GrayHeader from '@components/Header/GrayHeader';
+import {objKeys} from '@src/utils/dataHandling';
 
 type FriendRequestButtonsProps = {
   requestId: string;
@@ -43,11 +46,7 @@ type FriendRequestItemProps = {
 
 type ScreenProps = {
   friendRequests: FriendRequestDisplayData | undefined;
-  setFriendRequests: React.Dispatch<
-    React.SetStateAction<FriendRequestDisplayData | undefined>
-  >;
   friends: FriendsData | undefined;
-  setFriends: React.Dispatch<React.SetStateAction<FriendsData | undefined>>;
 };
 
 const handleAcceptFriendRequest = async (
@@ -149,7 +148,7 @@ const FriendRequestItem: React.FC<FriendRequestItemProps> = ({
   friendRequests,
   displayData,
 }) => {
-  if (!friendRequests || !displayData) return <></>;
+  if (!friendRequests || !displayData) return null;
   const profileData = displayData[requestId];
   const requestStatus = friendRequests[requestId];
 
@@ -214,23 +213,19 @@ const FriendRequestScreen = (props: ScreenProps) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const updateDisplayData = async (
-    db: Database | undefined,
+    db: Database,
     friendRequests: FriendRequestDisplayData | undefined,
   ): Promise<void> => {
-    const newDisplayData: ProfileDisplayData = {};
-    if (db && friendRequests) {
-      const dataIds = Object.keys(friendRequests);
-      const userProfiles: ProfileData[] = await fetchUserProfiles(db, dataIds);
-      dataIds.forEach((id, index) => {
-        newDisplayData[id] = userProfiles[index];
-      });
-    }
+    let newDisplayData: ProfileDisplayData = await fetchUserProfiles(
+      db,
+      objKeys(friendRequests),
+    );
     dispatch({type: 'SET_DISPLAY_DATA', payload: newDisplayData});
   };
 
   useEffect(() => {
     const updateLocalHooks = async () => {
-      dispatch({type: 'SET_IS_LOADING', payload: false});
+      dispatch({type: 'SET_IS_LOADING', payload: true});
       await updateDisplayData(db, friendRequests);
       dispatch({type: 'SET_IS_LOADING', payload: false});
     };
@@ -267,14 +262,12 @@ const FriendRequestScreen = (props: ScreenProps) => {
         style={styles.scrollViewContainer}
         keyboardShouldPersistTaps="handled">
         {state.isLoading ? (
-          <LoadingData />
+          <LoadingData style={styles.loadingData} />
         ) : (
           <View style={styles.friendList}>
-            <View style={styles.requestsInfoContainer}>
-              <Text style={styles.requestsInfoText}>
-                Requests Received ({state.requestsReceivedCount})
-              </Text>
-            </View>
+            <GrayHeader
+              headerText={`Requests Received (${state.requestsReceivedCount})`}
+            />
             <View style={styles.requestsContainer}>
               {state.requestsReceived.map(requestId => (
                 <FriendRequestItem
@@ -285,8 +278,8 @@ const FriendRequestScreen = (props: ScreenProps) => {
                 />
               ))}
             </View>
-            <View style={styles.requestsInfoContainer}>
-              <Text style={styles.requestsInfoText}>
+            <View style={headerStyles.grayHeaderContainer}>
+              <Text style={headerStyles.grayHeaderText}>
                 Requests Sent ({state.requestsSentCount})
               </Text>
             </View>
@@ -317,6 +310,13 @@ const styles = StyleSheet.create({
   scrollViewContainer: {
     flex: 1,
     backgroundColor: '#ffff99',
+  },
+  loadingData: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 100,
+    margin: 5,
   },
   friendList: {
     width: '100%',

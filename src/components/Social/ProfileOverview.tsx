@@ -1,6 +1,6 @@
 import {Dimensions, StyleSheet, Text, View} from 'react-native';
 import {ProfileData} from '../../types/database';
-import {useFirebase} from '../../context/FirebaseContext';
+import {useFirebase} from '../../context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
 import {auth} from '@src/services/firebaseSetup';
 import UploadImageComponent from '@components/UploadImage';
@@ -20,16 +20,21 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
 
   const [imageSource, setImageSource] = useState<string>(profileData.photo_url);
 
+  useEffect(() => {
+    setImageSource(profileData.photo_url);
+  }, [profileData.photo_url]);
+
   if (!db || !profileData) return;
 
   return (
     <View style={styles.profileOverviewContainer}>
       <View style={styles.profileImageContainer} />
       <ProfileImage
+        key={`${userId}-profile-image`}
         storage={storage}
         userId={userId}
+        downloadPath={imageSource}
         style={styles.profileOverviewImage}
-        localImageSource={imageSource}
       />
       {user?.uid === userId ? (
         <View style={styles.editProfileButton}>
@@ -68,7 +73,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     padding: 5,
-    marginTop: 20,
+    marginTop: 15,
   },
   profileImageContainer: {
     height: profileImageSize,
@@ -81,7 +86,7 @@ const styles = StyleSheet.create({
     height: profileImageSize,
     borderRadius: profileImageSize / 2,
     backgroundColor: 'white',
-    top: 0,
+    top: 5,
     position: 'absolute',
     zIndex: 0, // Ensure that the profile image is below the edit button
   },
@@ -106,9 +111,11 @@ const styles = StyleSheet.create({
     zIndex: 4,
   },
   userInfoContainer: {
-    flexDirection: 'column',
+    width: screenWidth,
+    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'flex-start',
+    marginTop: 10,
     padding: 5,
     textAlign: 'center',
   },

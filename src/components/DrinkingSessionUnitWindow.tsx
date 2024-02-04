@@ -5,9 +5,7 @@ import {
   addUnits,
   findUnitName,
   removeUnits,
-  sumAllUnits,
   sumUnitTypes,
-  sumUnitsOfSingleType,
 } from '../utils/dataHandling';
 import {UnitTypesKeys, UnitTypesProps, UnitsObject} from '../types/database';
 

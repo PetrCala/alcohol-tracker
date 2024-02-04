@@ -1,14 +1,13 @@
 ﻿import {ReactNode, useEffect, useMemo, useReducer} from 'react';
 
-import ForceUpdateScreen from '../screens/ForceUpdateScreen';
+import ForceUpdateScreen from '../../screens/ForceUpdateScreen';
 import {useUserConnection} from './UserConnectionContext';
-import UserOffline from '../components/UserOffline';
-import {listenForDataChanges, readDataOnce} from '../database/baseFunctions';
-import LoadingData from '../components/LoadingData';
+import UserOffline from '../../components/UserOffline';
+import {listenForDataChanges, readDataOnce} from '../../database/baseFunctions';
+import LoadingData from '../../components/LoadingData';
 import {useFirebase} from './FirebaseContext';
-import {validateAppVersion} from '../utils/validation';
+import {validateAppVersion} from '../../utils/validation';
 import {ConfigProps} from '@src/types/database';
-import {isEqual} from 'lodash';
 import UnderMaintenance from '@components/UnderMaintenance';
 
 const initialState = {

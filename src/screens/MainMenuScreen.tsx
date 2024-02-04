@@ -10,15 +10,8 @@ import {
 } from 'react-native';
 
 import {MainMenuItemProps} from '../types/components';
-import MenuIcon from '../components/Buttons/MenuIcon';
 import YesNoPopup from '../components/Popups/YesNoPopup';
-import {
-  EmailAuthProvider,
-  UserCredential,
-  deleteUser,
-  reauthenticateWithCredential,
-  signOut,
-} from 'firebase/auth';
+import {UserCredential, deleteUser, signOut} from 'firebase/auth';
 import {auth} from '../services/firebaseSetup';
 import {deleteUserData, reauthentificateUser} from '../database/users';
 import FeedbackPopup from '../components/Popups/FeedbackPopup';
@@ -29,17 +22,16 @@ import {FeedbackData} from '../types/database';
 import {listenForDataChanges, readDataOnce} from '../database/baseFunctions';
 import InputTextPopup from '../components/Popups/InputTextPopup';
 import UserOffline from '../components/UserOffline';
-import {useUserConnection} from '../context/UserConnectionContext';
-import {getDatabaseData} from '../context/DatabaseDataContext';
+import {useUserConnection} from '../context/global/UserConnectionContext';
+import {getDatabaseData} from '../context/global/DatabaseDataContext';
 import ItemListPopup from '../components/Popups/ItemListPopup';
-import commonStyles from '../styles/commonStyles';
-import {useFirebase} from '../context/FirebaseContext';
+import {useFirebase} from '../context/global/FirebaseContext';
+import MainHeader from '@components/Header/MainHeader';
+import GrayHeader from '@components/Header/GrayHeader';
 
 const MenuItem: React.FC<MainMenuItemProps> = ({heading, data, index}) => (
   <View key={index}>
-    <View style={styles.groupMarker}>
-      <Text style={styles.groupText}>{heading}</Text>
-    </View>
+    <GrayHeader headerText={heading} />
     {data.map((button, bIndex) => (
       <TouchableOpacity
         key={bIndex}
@@ -293,15 +285,7 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
 
   return (
     <View style={styles.mainContainer}>
-      <View style={commonStyles.mainHeader}>
-        <MenuIcon
-          iconId="escape-main-menu"
-          iconSource={require('../../assets/icons/arrow_back.png')}
-          containerStyle={styles.backArrowContainer}
-          iconStyle={styles.backArrow}
-          onPress={() => navigation.goBack()}
-        />
-      </View>
+      <MainHeader headerText="" onGoBack={() => navigation.goBack()} />
       <ScrollView style={styles.scrollView}>
         {modalData.map((group, index) => (
           <MenuItem
@@ -376,15 +360,6 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     backgroundColor: '#FFFF99',
   },
-  backArrowContainer: {
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-    padding: 10,
-  },
-  backArrow: {
-    width: 25,
-    height: 25,
-  },
   modalText: {
     marginBottom: 15,
     textAlign: 'center',
@@ -409,16 +384,7 @@ const styles = StyleSheet.create({
   buttonText: {
     marginLeft: 10,
     color: 'black',
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '500',
-  },
-  groupMarker: {
-    width: '100%',
-    padding: 10,
-    backgroundColor: 'gray',
-  },
-  groupText: {
-    color: 'white',
-    fontWeight: 'bold',
   },
 });

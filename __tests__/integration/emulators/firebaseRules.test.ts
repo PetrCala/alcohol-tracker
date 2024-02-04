@@ -6,20 +6,27 @@ import {
   assertSucceeds,
   RulesTestEnvironment,
 } from '@firebase/rules-unit-testing';
-import {describeWithEmulator, makeFriends} from '../../utils/emulators/emulatorTools';
+import {
+  describeWithEmulator,
+  makeFriends,
+} from '../../utils/emulators/emulatorTools';
 import {
   setupFirebaseRulesTestEnv,
   teardownFirebaseRulesTestEnv,
 } from '../../utils/emulators/firebaseRulesSetup';
 import {FeedbackProps} from '@src/types/database';
 import {setupGlobalMocks} from '../../utils/testUtils';
-import {createMockSession} from '../../utils/mockDatabase';
+import {
+  createMockSession,
+  createMockUserData,
+  createMockUserStatus,
+} from '../../utils/mockDatabase';
 import {getDefaultPreferences} from '@database/users';
 import {
   SAMPLE_UNITS_TO_COLORS,
   SAMPLE_UNITS_TO_POINTS,
 } from '../../utils/testsStatic';
-import { mock } from 'node:test';
+import {mock} from 'node:test';
 
 const projectId = process.env.TEST_PROJECT_ID;
 if (!projectId) throw new Error(`Missing environment variable ${projectId}.`);
@@ -33,6 +40,11 @@ const testFeedback: FeedbackProps = {
 const authUserId = 'authUserId';
 const otherUserId = 'otherUserId';
 const mockSessionKey = `${authUserId}-mock-session-999`;
+const mockDrinkingSession = createMockSession(new Date());
+const mockUserStatus = createMockUserStatus(
+  mockSessionKey,
+  mockDrinkingSession,
+);
 
 describeWithEmulator('Test drinking session rules', () => {
   let testEnv: RulesTestEnvironment;
@@ -224,7 +236,7 @@ describeWithEmulator('Test feedback rules', () => {
   });
 });
 
-describeWithEmulator('Test user current session rules', () => {
+describeWithEmulator('Test user status rules', () => {
   let testEnv: RulesTestEnvironment;
   let authDb: any;
   let unauthDb: any;
@@ -243,73 +255,129 @@ describeWithEmulator('Test user current session rules', () => {
     await teardownFirebaseRulesTestEnv(testEnv);
   });
 
-  it('should allow reading user current session node when admin is true', async () => {
-    const authRef = adminDb.ref(`user_current_session`);
+  it('should allow reading user user status node when admin is true', async () => {
+    const authRef = adminDb.ref(`user_status`);
     await assertSucceeds(authRef.get());
   });
 
-  it('should not allow reading user current session node when not an admin', async () => {
-    const authRef = authDb.ref(`user_current_session`);
-    const unauthRef = unauthDb.ref(`user_current_session`);
+  it('should not allow reading user user status node when not an admin', async () => {
+    const authRef = authDb.ref(`user_status`);
+    const unauthRef = unauthDb.ref(`user_status`);
     await assertFails(authRef.get());
     await assertFails(unauthRef.get());
   });
 
-  it('should allow writing to user current session node when admin is true', async () => {
-    const authRef = adminDb.ref(`user_current_session`);
-    await assertSucceeds(authRef.set({test_user: {current_session_id: 'test'}}));
+  it('should allow writing to user user status node when admin is true', async () => {
+    const authRef = adminDb.ref(`user_status`);
+    await assertSucceeds(authRef.set({test_user: mockUserStatus}));
   });
 
-  it('should not allow writing to user current session node when not an admin', async () => {
-    const authRef = authDb.ref(`user_current_session`);
-    const unauthRef = unauthDb.ref(`user_current_session`);
-    await assertFails(authRef.set({data: 'test'}));
-    await assertFails(unauthRef.set({data: 'test'}));
+  it('should not allow writing to user user status node when not an admin', async () => {
+    const authRef = authDb.ref(`user_status`);
+    const unauthRef = unauthDb.ref(`user_status`);
+    await assertFails(authRef.set({test_user: mockUserStatus}));
+    await assertFails(unauthRef.set({test_user: mockUserStatus}));
   });
 
-  it('should allow an authenticated user to write into their own current session node', async () => {
-    const authRef = authDb.ref(`user_current_session/${authUserId}`);
-    await assertSucceeds(authRef.set({current_session_id: mockSessionKey}));
+  it('should allow an authenticated user to write into their own user status node', async () => {
+    const authRef = authDb.ref(`user_status/${authUserId}`);
+    await assertSucceeds(authRef.set(mockUserStatus));
   });
 
-  it('should not allow an authenticated user to write with incorrect keys into their own current session node', async () => {
-    const authRef = authDb.ref(`user_current_session/${authUserId}`);
-    await assertFails(authRef.set({incorrect_key: mockSessionKey}));
+  it('should not allow an authenticated user to write with incorrect values into their own user status node', async () => {
+    const authRef = authDb.ref(`user_status/${authUserId}`);
+    await assertFails(authRef.set(123));
   });
 
-  it('should not allow an authenticated user to write with incorrect values into their own current session node', async () => {
-    const authRef = authDb.ref(`user_current_session/${authUserId}`);
-    await assertFails(authRef.set({current_session_id: 123}));
+  it("should not allow an authenticated user to write into other user's user status nodes", async () => {
+    const authRef = authDb.ref(`user_status/${otherUserId}`);
+    await assertFails(authRef.set(mockUserStatus));
   });
 
-  it("should not allow an authenticated user to write into other user's current session nodes", async () => {
-    const authRef = authDb.ref(`user_current_session/${otherUserId}`);
-    await assertFails(authRef.set({current_session_id: mockSessionKey}));
+  it('should not allow an unauthenticated user to write into their own user status node', async () => {
+    const unauthRef = unauthDb.ref(`user_status/${authUserId}`);
+    await assertFails(unauthRef.set(mockUserStatus));
   });
 
-  it('should not allow an unauthenticated user to write into their own current session node', async () => {
-    const unauthRef = unauthDb.ref(`user_current_session/${authUserId}`);
-    await assertFails(unauthRef.set({current_session_id: mockSessionKey}));
-  });
-
-  it('should allow an authenticated user to read their own current session node', async () => {
-    const authRef = authDb.ref(`user_drinking_sessions/${authUserId}`);
+  it('should allow an authenticated user to read their own user status node', async () => {
+    const authRef = authDb.ref(`user_status/${authUserId}`);
     await assertSucceeds(authRef.get());
   });
 
-  it('should not allow an authenticated user to read other users\' current session node', async () => {
-    const authRef = authDb.ref(`user_drinking_sessions/${otherUserId}`);
+  it("should not allow an authenticated user to read other users' user status node", async () => {
+    const authRef = authDb.ref(`user_status/${otherUserId}`);
     await assertFails(authRef.get());
   });
 
-  it('should allow an authenticated user to read their friends\' current session node', async () => {
+  it("should allow an authenticated user to read their friends' user status node", async () => {
     await makeFriends(authDb, authUserId, otherUserId); // Set the friend connection first
-    const authRef = authDb.ref(`user_drinking_sessions/${otherUserId}`);
+    const authRef = authDb.ref(`user_status/${otherUserId}`);
     await assertSucceeds(authRef.get());
   });
 
-  it('should not allow an authenticated user to read their own current session node', async () => {
-    const authRef = unauthDb.ref(`user_drinking_sessions/${authUserId}`);
+  it('should not allow an authenticated user to read their own user status node', async () => {
+    const authRef = unauthDb.ref(`user_status/${authUserId}`);
+    await assertFails(authRef.get());
+  });
+});
+
+describeWithEmulator('Test user last online rules', () => {
+  let testEnv: RulesTestEnvironment;
+  let authDb: any;
+  let unauthDb: any;
+  let adminDb: any;
+  setupGlobalMocks(); // Silence permission denied warnings
+
+  beforeAll(async () => {
+    ({testEnv, authDb, unauthDb, adminDb} = await setupFirebaseRulesTestEnv());
+  });
+
+  afterEach(async () => {
+    await testEnv.clearDatabase();
+  });
+
+  afterAll(async () => {
+    await teardownFirebaseRulesTestEnv(testEnv);
+  });
+
+  it('should allow an authenticated user to write into their own user last online node', async () => {
+    const authRef = authDb.ref(`user_status/${authUserId}/last_online`);
+    await assertSucceeds(authRef.set(123));
+  });
+
+  it('should not allow an authenticated user to write with incorrect values into their own user last online node', async () => {
+    const authRef = authDb.ref(`user_status/${authUserId}/last_online`);
+    await assertFails(authRef.set('not a number'));
+  });
+
+  it("should not allow an authenticated user to write into other user's user last online nodes", async () => {
+    const authRef = authDb.ref(`user_status/${otherUserId}/last_online`);
+    await assertFails(authRef.set(123));
+  });
+
+  it('should not allow an unauthenticated user to write into their own user last online node', async () => {
+    const unauthRef = unauthDb.ref(`user_status/${authUserId}/last_online`);
+    await assertFails(unauthRef.set(123));
+  });
+
+  it('should allow an authenticated user to read their own user last online node', async () => {
+    const authRef = authDb.ref(`user_status/${authUserId}/last_online`);
+    await assertSucceeds(authRef.get());
+  });
+
+  it("should not allow an authenticated user to read other users' user last online node", async () => {
+    const authRef = authDb.ref(`user_status/${otherUserId}/last_online`);
+    await assertFails(authRef.get());
+  });
+
+  it("should allow an authenticated user to read their friends' user last online node", async () => {
+    await makeFriends(authDb, authUserId, otherUserId); // Set the friend connection first
+    const authRef = authDb.ref(`user_status/${otherUserId}/last_online`);
+    await assertSucceeds(authRef.get());
+  });
+
+  it('should not allow an authenticated user to read their own user last online node', async () => {
+    const authRef = unauthDb.ref(`user_status/${authUserId}/last_online`);
     await assertFails(authRef.get());
   });
 });
@@ -334,39 +402,39 @@ describeWithEmulator('Test friend rules', () => {
   });
 
   it('should allow a user to write valid values into their own friend list', async () => {
-    const authRef = authDb.ref(`users/authUserId/friends/otherUserId`);
+    const authRef = authDb.ref(`users/${authUserId}/friends/${otherUserId}`);
     await assertSucceeds(authRef.set(true));
     await assertSucceeds(authRef.set(null));
   });
 
   it("should allow a user to write valid values into other user's friend list", async () => {
-    const authRef = authDb.ref(`users/otherUserId/friends/authUserId`);
+    const authRef = authDb.ref(`users/${otherUserId}/friends/${authUserId}`);
     await assertSucceeds(authRef.set(true));
     await assertSucceeds(authRef.set(null));
   });
 
   it('should not allow a user to write their own name into their friend list', async () => {
-    const authRef = authDb.ref(`users/authUserId/friends/authUserId`);
+    const authRef = authDb.ref(`users/${authUserId}/friends/${authUserId}`);
     await assertFails(authRef.set(true));
   });
 
   it('should not allow writing invalid values into their friend list', async () => {
-    const authRef = authDb.ref(`users/authUserId/friends/otherUserId`);
+    const authRef = authDb.ref(`users/${authUserId}/friends/${otherUserId}`);
     await assertFails(authRef.set('invalid'));
   });
 
   it("should not allow writing invalid values into other user's friend list", async () => {
-    const authRef = authDb.ref(`users/otherUserId/friends/authUserId`);
+    const authRef = authDb.ref(`users/${otherUserId}/friends/${authUserId}`);
     await assertFails(authRef.set('invalid'));
   });
 
   it('should allow reading own friend list when authenticated', async () => {
-    const authRef = authDb.ref(`users/authUserId/friends`);
+    const authRef = authDb.ref(`users/${authUserId}/friends`);
     await assertSucceeds(authRef.get());
   });
 
   it('should not allow reading own friend list when unauthenticated', async () => {
-    const unauthRef = unauthDb.ref(`users/authUserId/friends`);
+    const unauthRef = unauthDb.ref(`users/${authUserId}/friends`);
     await assertFails(unauthRef.get());
   });
 });

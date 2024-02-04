@@ -10,22 +10,18 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import MenuIcon from '../components/Buttons/MenuIcon';
 import BasicButton from '../components/Buttons/BasicButton';
 import {EditSessionScreenProps} from '../types/screens';
 import {
   DrinkingSessionArrayItem,
-  DrinkingSessionData,
-  UnitTypesKeys,
   UnitTypesProps,
   UnitsObject,
 } from '../types/database';
-import {useFirebase} from '../context/FirebaseContext';
+import {useFirebase} from '../context/global/FirebaseContext';
 import {
   removeDrinkingSessionData,
   saveDrinkingSessionData,
 } from '../database/drinkingSessions';
-import SessionUnitsInputWindow from '../components/Buttons/SessionUnitsInputWindow';
 import {
   addUnits,
   dateToDateObject,
@@ -41,15 +37,17 @@ import {
 } from '../utils/dataHandling';
 import {auth} from '../services/firebaseSetup';
 import YesNoPopup from '../components/Popups/YesNoPopup';
-import {useUserConnection} from '../context/UserConnectionContext';
+import {useUserConnection} from '../context/global/UserConnectionContext';
 import UserOffline from '../components/UserOffline';
 import {DrinkDataProps, UnitTypesViewProps} from '../types/components';
 import UnitTypesView from '../components/UnitTypesView';
 import SessionDetailsSlider from '../components/SessionDetailsSlider';
-import {getDatabaseData} from '../context/DatabaseDataContext';
-import commonStyles from '../styles/commonStyles';
+import {getDatabaseData} from '../context/global/DatabaseDataContext';
 import {getPreviousRouteName} from '@navigation/navigationUtils';
 import CONST from '@src/CONST';
+import MainHeader from '@components/Header/MainHeader';
+import MainHeaderButton from '@components/Header/MainHeaderButton';
+import {isEqual} from 'lodash';
 
 const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
   if (!route || !navigation) return null; // Should never be null
@@ -183,7 +181,7 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
   };
 
   const hasSessionChanged = () => {
-    return JSON.stringify(initialSession.current) !== JSON.stringify(currentSession);
+    return !isEqual(initialSession.current, currentSession);
   };
 
   const handleBackPress = () => {
@@ -195,7 +193,7 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
   };
 
   const confirmGoBack = (
-    finalSessionData: DrinkingSessionArrayItem // Decide which session to go back with
+    finalSessionData: DrinkingSessionArrayItem, // Decide which session to go back with
   ) => {
     const previousRouteName = getPreviousRouteName(navigation);
     // Navigate back explicitly to avoid errors
@@ -225,12 +223,19 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
     }
     // Save the session
     if (totalPoints > 0) {
-      let newSessionData: DrinkingSessionArrayItem = removeZeroObjectsFromSession(currentSession); // Delete the initial log of zero units that was used as a placeholder
+      let newSessionData: DrinkingSessionArrayItem = currentSession;
       // Handle old versions of drinking session data where note/blackout were missing - remove this later
       newSessionData.blackout = isBlackout ? isBlackout : false;
       newSessionData.note = note ? note : '';
       try {
-        await saveDrinkingSessionData(db, userId, newSessionData, sessionKey); // Finish editing
+        // Finish editing
+        await saveDrinkingSessionData(
+          db,
+          userId,
+          newSessionData,
+          sessionKey,
+          false, // Do not update live status
+        );
       } catch (error: any) {
         Alert.alert(
           'Sesison edit failed',
@@ -291,24 +296,18 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
 
   return (
     <>
-      <View style={commonStyles.mainHeader}>
-        <MenuIcon
-          iconId="escape-edit-session"
-          iconSource={require('../../assets/icons/arrow_back.png')}
-          containerStyle={styles.backArrowContainer}
-          iconStyle={styles.backArrow}
-          onPress={handleBackPress}
-        />
-        <BasicButton
-          text={monkeMode ? 'Exit Monke Mode' : 'Monke Mode'}
-          buttonStyle={[
-            styles.monkeModeButton,
-            monkeMode ? styles.monkeModeButtonEnabled : {},
-          ]}
-          textStyle={styles.monkeModeButtonText}
-          onPress={() => setMonkeMode(!monkeMode)}
-        />
-      </View>
+      <MainHeader
+        headerText=""
+        onGoBack={handleBackPress}
+        rightSideComponent={
+          <MainHeaderButton
+            buttonOn={monkeMode}
+            textOn="Exit Monke Mode"
+            textOff="Monke Mode"
+            onPress={() => setMonkeMode(!monkeMode)}
+          />
+        }
+      />
       <ScrollView
         style={styles.scrollView}
         ref={scrollViewRef}
@@ -477,30 +476,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
     textAlign: 'center',
-  },
-  monkeModeContainer: {
-    height: '10%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#FFFF99',
-  },
-  monkeModeButton: {
-    width: '50%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 10,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#000',
-    backgroundColor: '#fcf50f',
-  },
-  monkeModeButtonEnabled: {
-    backgroundColor: '#FFFF99',
-  },
-  monkeModeButtonText: {
-    color: 'black',
-    fontSize: 17,
-    fontWeight: '600',
   },
   saveSessionDelimiter: {
     height: 5,

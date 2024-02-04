@@ -1,15 +1,17 @@
-﻿import {Database, ref, child, update, push} from 'firebase/database';
+﻿import {Database, ref, update} from 'firebase/database';
 import {
-  CurrentSessionData,
+  UserStatusData,
   DrinkingSessionArrayItem,
   UnitsObject,
 } from '../types/database';
+import {removeZeroObjectsFromSession} from '@src/utils/dataHandling';
 
 /** Write drinking session data into the database
  *
  * @param db Firebase Database object
  * @param string userId User ID
  * @param newSessionData Data to save the new drinking session with
+ * @param updateStatus Whether to update the user status data or not
  * @return Promise void.
  *  */
 export async function saveDrinkingSessionData(
@@ -17,9 +19,19 @@ export async function saveDrinkingSessionData(
   userId: string,
   newSessionData: DrinkingSessionArrayItem,
   sessionKey: string,
+  updateStatus?: boolean,
 ): Promise<void> {
-  var updates: {[key: string]: DrinkingSessionArrayItem} = {};
+  newSessionData = removeZeroObjectsFromSession(newSessionData); // Delete the initial log of zero units that was used as a placeholder
+  var updates: {[key: string]: any} = {};
   updates[`user_drinking_sessions/${userId}/` + sessionKey] = newSessionData;
+  if (updateStatus) {
+    const userStatusData: UserStatusData = {
+      last_online: new Date().getTime(),
+      latest_session_id: sessionKey,
+      latest_session: newSessionData,
+    };
+    updates[`user_status/${userId}`] = userStatusData;
+  }
   await update(ref(db), updates);
 }
 
@@ -38,10 +50,12 @@ export async function startLiveDrinkingSession(
   sessionKey: string,
 ): Promise<void> {
   var updates: {[key: string]: any} = {};
-  const newCurrentSessionData: CurrentSessionData = {
-    current_session_id: sessionKey,
+  const userStatusData: UserStatusData = {
+    last_online: new Date().getTime(),
+    latest_session_id: sessionKey,
+    latest_session: newSessionData,
   };
-  updates[`user_current_session/${userId}`] = newCurrentSessionData;
+  updates[`user_status/${userId}`] = userStatusData;
   updates[`user_drinking_sessions/${userId}/` + sessionKey] = newSessionData;
   await update(ref(db), updates);
 }
@@ -60,11 +74,15 @@ export async function endLiveDrinkingSession(
   newSessionData: DrinkingSessionArrayItem,
   sessionKey: string,
 ): Promise<void> {
+  newSessionData = removeZeroObjectsFromSession(newSessionData);
   var updates: {[key: string]: any} = {};
-  const newCurrentSessionData: CurrentSessionData = {
-    current_session_id: null, // Remove the record from current session data
+  const userStatusData: UserStatusData = {
+    // ETC - 1
+    last_online: new Date().getTime(),
+    latest_session_id: sessionKey,
+    latest_session: newSessionData,
   };
-  updates[`user_current_session/${userId}`] = newCurrentSessionData;
+  updates[`user_status/${userId}`] = userStatusData;
   updates[`user_drinking_sessions/${userId}/` + sessionKey] = newSessionData;
   await update(ref(db), updates);
 }
@@ -76,7 +94,7 @@ export async function endLiveDrinkingSession(
  * @param db Firebase Database object
  * @param userId User ID
  * @param sessionKey ID of the session to remove
- * @returns 
+ * @returns
  *  */
 export async function removeDrinkingSessionData(
   db: Database,
@@ -102,8 +120,9 @@ export async function discardLiveDrinkingSession(
   sessionKey: string,
 ): Promise<void> {
   var updates: {[key: string]: any} = {};
+  const userStatusData: UserStatusData = {last_online: new Date().getTime()}; // No session info
   updates['/user_drinking_sessions/' + userId + '/' + sessionKey] = null;
-  updates[`/user_current_session/${userId}`] = null;
+  updates[`/user_status/${userId}`] = userStatusData;
   await update(ref(db), updates);
 }
 

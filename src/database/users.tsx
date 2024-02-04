@@ -40,12 +40,16 @@ export const getDefaultUserData = (
   betaKeyId: number, // Beta feature
 ): UserData => {
   let userRole = CONST.APP_IN_BETA ? 'beta_user' : 'user'; // Beta feature
-  let timestampNow = new Date().getTime();
   return {
     profile: profileData,
     role: userRole,
-    last_online: timestampNow,
     beta_key_id: betaKeyId, // Beta feature
+  };
+};
+
+export const getDefaultUserStatus = (): {last_online: number} => {
+  return {
+    last_online: new Date().getTime(),
   };
 };
 
@@ -88,11 +92,13 @@ export async function pushNewUserInfo(
   } = {};
   // Nickname to ID
   updates[`nickname_to_id/${nicknameKey}/${userId}`] = userNickname;
-  // // User preferences
+  // User Status
+  updates[`user_status/${userId}`] = getDefaultUserStatus();
+  // User preferences
   updates[`user_preferences/${userId}`] = getDefaultPreferences();
-  // // Users
+  // Users
   updates[`users/${userId}`] = getDefaultUserData(profileData, betaKeyId);
-  // // Beta feature
+  // Beta feature
   updates[`beta_keys/${betaKeyId}/in_usage`] = true;
   updates[`beta_keys/${betaKeyId}/user_id`] = userId;
   await update(ref(db), updates);
@@ -121,21 +127,21 @@ export async function deleteUserData(
   // Clean up friend requests
   updates[`nickname_to_id/${nicknameKey}/${userId}`] = null;
   updates[`users/${userId}`] = null;
-  updates[`user_current_session/${userId}`] = null;
+  updates[`user_status/${userId}`] = null;
   updates[`user_preferences/${userId}`] = null;
   updates[`user_drinking_sessions/${userId}`] = null;
   updates[`user_unconfirmed_days/${userId}`] = null;
   // Data stored in other users' nodes
   if (friends) {
-    Object.keys(friends).forEach((friendId) => {
+    Object.keys(friends).forEach(friendId => {
       updates[`users/${friendId}/friends/${userId}`] = null;
     });
-  };
+  }
   if (friendRequests) {
-    Object.keys(friendRequests).forEach((friendRequestId) => {
+    Object.keys(friendRequests).forEach(friendRequestId => {
       updates[`users/${friendRequestId}/friend_requests/${userId}`] = null;
     });
-  };
+  }
   // Beta feature
   if (betaKeyId) {
     // Reset the beta key to a usable form
@@ -159,7 +165,7 @@ export async function updateUserLastOnline(
 ): Promise<void> {
   let lastOnline: number = new Date().getTime();
   let updates: {[key: string]: number} = {};
-  updates[`users/${userId}/last_online`] = lastOnline;
+  updates[`user_status/${userId}/last_online`] = lastOnline;
   await update(ref(db), updates);
 }
 

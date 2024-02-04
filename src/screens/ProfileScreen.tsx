@@ -10,20 +10,25 @@
 } from 'react-native';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import commonStyles from '../styles/commonStyles';
-
-import {useFirebase} from '../context/FirebaseContext';
+import {useFirebase} from '../context/global/FirebaseContext';
 import {ProfileProps} from '@src/types/screens';
 import {auth} from '../services/firebaseSetup';
 import {StatData, StatsOverview} from '@components/Items/StatOverview';
 import ProfileOverview from '@components/Social/ProfileOverview';
 import {useEffect, useMemo, useReducer} from 'react';
 import {readDataOnce} from '@database/baseFunctions';
-import {DrinkingSessionArrayItem, PreferencesData} from '@src/types/database';
+import {
+  DrinkingSessionArrayItem,
+  DrinkingSessionData,
+  FriendsData,
+  PreferencesData,
+} from '@src/types/database';
 import {
   calculateThisMonthPoints,
   calculateThisMonthUnits,
   dateToDateObject,
   getSingleMonthDrinkingSessions,
+  objKeys,
   timestampToDate,
 } from '@src/utils/dataHandling';
 import {DateObject} from '@src/types/components';
@@ -32,11 +37,20 @@ import LoadingData from '@components/LoadingData';
 import ItemListPopup from '@components/Popups/ItemListPopup';
 import {unfriend} from '@database/friends';
 import YesNoPopup from '@components/Popups/YesNoPopup';
+import {
+  fetchUserFriends,
+  getCommonFriendsCount,
+} from '@src/utils/social/friendUtils';
+import MainHeader from '@components/Header/MainHeader';
+import ManageFriendPopup from '@components/Popups/Profile/ManageFriendPopup';
 
 interface State {
   isLoading: boolean;
   preferences: PreferencesData | null;
   drinkingSessionData: DrinkingSessionArrayItem[] | null;
+  friends: FriendsData | null;
+  friendCount: number;
+  commonFriendCount: number;
   visibleDateObject: DateObject;
   drinkingSessionsCount: number;
   unitsConsumed: number;
@@ -54,6 +68,9 @@ const initialState: State = {
   isLoading: true,
   preferences: null,
   drinkingSessionData: null,
+  friends: null,
+  friendCount: 0,
+  commonFriendCount: 0,
   visibleDateObject: dateToDateObject(new Date()),
   drinkingSessionsCount: 0,
   unitsConsumed: 0,
@@ -70,6 +87,12 @@ const reducer = (state: State, action: Action): State => {
       return {...state, preferences: action.payload};
     case 'SET_DRINKING_SESSION_DATA':
       return {...state, drinkingSessionData: action.payload};
+    case 'SET_FRIENDS':
+      return {...state, friends: action.payload};
+    case 'SET_FRIEND_COUNT':
+      return {...state, friendCount: action.payload};
+    case 'SET_COMMON_FRIEND_COUNT':
+      return {...state, commonFriendCount: action.payload};
     case 'SET_VISIBLE_DATE_OBJECT':
       return {...state, visibleDateObject: action.payload};
     case 'SET_DRINKING_SESSIONS_COUNT':
@@ -90,35 +113,16 @@ const reducer = (state: State, action: Action): State => {
 const ProfileScreen = ({route, navigation}: ProfileProps) => {
   if (!route || !navigation) return null;
   const user = auth.currentUser;
-  const {userId, profileData, drinkingSessionData, preferences} = route.params;
+  const {
+    userId,
+    profileData,
+    friends,
+    currentUserFriends,
+    drinkingSessionData,
+    preferences,
+  } = route.params;
   const {db, storage} = useFirebase();
   const [state, dispatch] = useReducer(reducer, initialState);
-
-  const handleUnfriend = async () => {
-    if (!user) return;
-    try {
-      await unfriend(db, user.uid, userId);
-      navigation.goBack();
-    } catch (error: any) {
-      Alert.alert(
-        'User does not exist in the database',
-        'Could not unfriend this user: ' + error.message,
-      );
-    } finally {
-      dispatch({type: 'SET_UNFRIEND_MODAL_VISIBLE', payload: false});
-      dispatch({type: 'SET_MANAGE_FRIEND_MODAL_VISIBLE', payload: false});
-    }
-  };
-
-  const manageFriendData = [
-    {
-      label: 'Unfriend',
-      icon: require('../../assets/icons/remove-user.png'),
-      action: () => {
-        dispatch({type: 'SET_UNFRIEND_MODAL_VISIBLE', payload: true});
-      },
-    },
-  ];
 
   // Define your stats data
   const statsData: StatData = [
@@ -138,11 +142,11 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
         let userPreferences: PreferencesData | null = preferences;
 
         if (!userSessions) {
-          const newSessions = await readDataOnce(
+          const newSessions: DrinkingSessionData | null = await readDataOnce(
             db,
             `user_drinking_sessions/${userId}`,
           );
-          userSessions = Object.values(newSessions);
+          userSessions = newSessions ? Object.values(newSessions) : [];
         }
         if (!userPreferences) {
           userPreferences = await readDataOnce(
@@ -166,6 +170,44 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
     fetchData();
   }, [userId, drinkingSessionData, preferences]);
 
+  // Monitor friends
+  useEffect(() => {
+    const fetchFriends = async () => {
+      dispatch({type: 'SET_IS_LOADING', payload: true});
+
+      try {
+        let userFriends: FriendsData | null = friends;
+
+        if (!userFriends) {
+          userFriends = await fetchUserFriends(db, userId);
+        }
+
+        dispatch({type: 'SET_FRIENDS', payload: userFriends});
+      } catch (error: any) {
+        Alert.alert(
+          'Error fetching data',
+          `Could not connect to the database: ${error.message}`,
+        );
+      }
+
+      dispatch({type: 'SET_IS_LOADING', payload: false});
+    };
+
+    fetchFriends();
+  }, [userId, friends]);
+
+  // Monitor friends count
+  useMemo(() => {
+    const friendCount = state.friends ? objKeys(state.friends).length : 0;
+    const commonFriendCount = getCommonFriendsCount(
+      objKeys(currentUserFriends),
+      objKeys(state.friends),
+    );
+    dispatch({type: 'SET_FRIEND_COUNT', payload: friendCount});
+    dispatch({type: 'SET_COMMON_FRIEND_COUNT', payload: commonFriendCount});
+  }, [state.friends]);
+
+  // Monitor stats
   useMemo(() => {
     if (!state.drinkingSessionData || !state.preferences) return;
 
@@ -192,29 +234,53 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
     dispatch({type: 'SET_POINTS_EARNED', payload: thisMonthPoints});
   }, [state.drinkingSessionData, state.preferences, state.visibleDateObject]);
 
-  if (state.isLoading) return <LoadingData />;
+  if (state.isLoading) return <LoadingData blendBackground={true} />;
   if (!db || !storage || !state.preferences || !state.drinkingSessionData)
     return;
 
   return (
-    <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
-      <View style={commonStyles.mainHeader}>
-        <MenuIcon
-          iconId="escape-profile-screen"
-          iconSource={require('../../assets/icons/arrow_back.png')}
-          containerStyle={styles.backArrowContainer}
-          iconStyle={styles.backArrow}
-          onPress={() => navigation.goBack()}
-        />
-        <View style={styles.menuContainer}>
-          <Text style={styles.sectionText}>
-            {user?.uid === userId ? 'Profile' : 'Friend Overview'}
-          </Text>
-        </View>
-      </View>
+    <View style={styles.mainContainer}>
+      <MainHeader
+        headerText={user?.uid === userId ? 'Profile' : 'Friend Overview'}
+        onGoBack={() => navigation.goBack()}
+      />
       <ScrollView style={styles.scrollView} keyboardShouldPersistTaps="handled">
         <ProfileOverview userId={userId} profileData={profileData} />
-        <View style={styles.horizontalLine} />
+        <View style={styles.friendsInfoContainer}>
+          <View style={styles.leftContainer}>
+            <Text style={styles.friendsInfoHeading}>Friends:</Text>
+            <Text
+              style={[styles.friendsInfoText, commonStyles.smallMarginLeft]}>
+              {state.friendCount}
+            </Text>
+            {userId === user?.uid ? null : (
+              <Text
+                style={[styles.friendsInfoText, commonStyles.smallMarginLeft]}>
+                ({state.commonFriendCount} common)
+              </Text>
+            )}
+          </View>
+          <View style={styles.rightContainer}>
+            <TouchableOpacity
+              onPress={() => {
+                userId === user?.uid
+                  ? navigation.navigate('Social Screen', {
+                      screen: 'Friend List',
+                    })
+                  : navigation.navigate('Friends Friends Screen', {
+                      userId: userId,
+                      friends: state.friends,
+                      currentUserFriends: currentUserFriends,
+                    });
+              }}
+              style={styles.seeFriendsButton}>
+              <Text style={[styles.friendsInfoText, commonStyles.linkText]}>
+                See all friends
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View style={commonStyles.horizontalLine} />
         <View style={styles.statsOverviewHolder}>
           <StatsOverview statsData={statsData} />
         </View>
@@ -245,24 +311,13 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
         </View>
         <View style={{height: 200, backgroundColor: '#ffff99'}}></View>
       </ScrollView>
-      <ItemListPopup
+      <ManageFriendPopup
         visible={state.manageFriendModalVisible}
-        transparent={true}
-        heading={'Manage Friend'}
-        actions={manageFriendData}
-        onRequestClose={() => {
-          dispatch({type: 'SET_MANAGE_FRIEND_MODAL_VISIBLE', payload: false});
-          dispatch({type: 'SET_UNFRIEND_MODAL_VISIBLE', payload: false}); // Extra safety
-        }}
-      />
-      <YesNoPopup
-        visible={state.unfriendModalVisible}
-        transparent={true}
-        message={'Do you really want to\nunfriend this user?'}
-        onRequestClose={() => {
-          dispatch({type: 'SET_UNFRIEND_MODAL_VISIBLE', payload: false});
-        }}
-        onYes={handleUnfriend}
+        setVisibility={(visible: boolean) =>
+          dispatch({type: 'SET_MANAGE_FRIEND_MODAL_VISIBLE', payload: visible})
+        }
+        onGoBack={() => navigation.goBack()}
+        friendId={userId}
       />
     </View>
   );
@@ -274,20 +329,16 @@ const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
-  backArrowContainer: {
-    justifyContent: 'center',
-    marginLeft: 10,
-  },
-  backArrow: {
-    width: 25,
-    height: 25,
-  },
-  menuContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    width: 200,
+  mainContainer: {
+    flex: 1,
+    backgroundColor: '#ffff99',
+    overflow: 'hidden', // For the shadow
+    // shadowColor: 'black',
+    // shadowOffset: {width: 0, height: 2},
+    // shadowOpacity: 0.25,
+    // shadowRadius: 3.84,
+    // elevation: 5,
+    // zIndex: 1,
   },
   sectionText: {
     fontSize: 20,
@@ -300,14 +351,44 @@ const styles = StyleSheet.create({
     width: '100%',
     flexGrow: 1,
     flexShrink: 1,
-    backgroundColor: '#FFFF99',
   },
-  horizontalLine: {
-    width: screenWidth * 0.9,
-    height: 1,
-    backgroundColor: 'grey',
+  friendsInfoContainer: {
+    width: '90%',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     alignSelf: 'center',
-    marginTop: 5,
+    flexDirection: 'row',
+    margin: 10,
+  },
+  friendsInfoHeading: {
+    fontSize: 16,
+    color: 'black',
+    fontWeight: '500',
+    textAlign: 'center',
+  },
+  friendsInfoText: {
+    fontSize: 16,
+    color: 'black',
+    textAlign: 'center',
+  },
+  leftContainer: {
+    width: '60%',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+  rightContainer: {
+    width: '40%',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  seeFriendsButton: {
+    paddingTop: 5,
+    paddingBottom: 5,
+    paddingLeft: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   statsOverviewHolder: {
     height: 120,

@@ -30,17 +30,17 @@
         }
       }
     },
-    "user_current_session": {
+    "user_status": {
       ".read": "auth.token.admin === true",
       ".write": "auth.token.admin === true",
       "$uid": {
-        ".validate": "newData.hasChild('current_session_id') || newData.val() === null",
+        ".validate": "newData.hasChild('last_online') || newData.val() === null",
         ".read": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('friends').child($uid).exists())",
         ".write": "auth != null && auth.uid === $uid",
-        "current_session_id": {
-          ".validate": "newData.isString()",
-          ".write": false,
-          ".read": false
+        "last_online": {
+          ".validate": "newData.isNumber()",
+          ".read": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('friends').child($uid).exists())",
+          ".write": "auth != null && auth.uid === $uid"
         }
       }
     },

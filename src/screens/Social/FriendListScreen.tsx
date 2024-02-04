@@ -1,4 +1,5 @@
 ﻿import {
+  Alert,
   Dimensions,
   ScrollView,
   StyleSheet,
@@ -6,121 +7,149 @@
   TouchableOpacity,
   View,
 } from 'react-native';
-import {FriendsData, ProfileData, ProfileDisplayData} from '../../types/database';
-import {useEffect, useReducer, useState} from 'react';
-import {useFirebase} from '../../context/FirebaseContext';
+import {ProfileData} from '../../types/database';
 import LoadingData from '../../components/LoadingData';
 import UserOverview from '@components/Social/UserOverview';
-import { Database } from 'firebase/database';
-import { fetchUserProfiles } from '@database/profile';
+import useProfileDisplayData from '@hooks/useProfileDisplayData';
+import SearchWindow from '@components/Social/SearchWindow';
+import {Database} from 'firebase/database';
+import {SearchWindowRef, UserSearchResults} from '@src/types/search';
+import {GeneralAction} from '@src/types/states';
+import {useMemo, useReducer, useRef} from 'react';
+import {searchDatabaseForUsers} from '@database/search';
+import {objKeys} from '@src/utils/dataHandling';
+import {isNonEmptyArray} from '@src/utils/validation';
+import commonStyles from '@src/styles/commonStyles';
+import {FriendListScreenProps} from '@src/types/screens';
 
 interface State {
-  isLoading: boolean;
-  displayData: ProfileDisplayData;
-}
-
-interface Action {
-  type: string;
-  payload: any;
+  searching: boolean;
+  displayedFriends: UserSearchResults;
 }
 
 const initialState: State = {
-  isLoading: true,
-  displayData: {},
+  searching: false,
+  displayedFriends: [],
 };
 
-const reducer = (state: State, action: Action): State => {
+const reducer = (state: State, action: GeneralAction): State => {
   switch (action.type) {
-    case 'SET_IS_LOADING':
-      return {...state, isLoading: action.payload};
-    case 'SET_DISPLAY_DATA':
-      return {...state, displayData: action.payload};
+    case 'SET_SEARCHING':
+      return {...state, searching: action.payload};
+    case 'SET_DISPLAYED_FRIENDS':
+      return {...state, displayedFriends: action.payload};
     default:
       return state;
   }
 };
 
-type ScreenProps = {
-  navigation: any;
-  friends: FriendsData | undefined;
-  setIndex: React.Dispatch<React.SetStateAction<number>>;
-};
-
-const FriendListScreen = (props: ScreenProps) => {
+const FriendListScreen = (props: FriendListScreenProps) => {
   const {navigation, friends, setIndex} = props;
-  const {db} = useFirebase();
+  const {loadingDisplayData, profileDisplayData, userStatusDisplayData} =
+    useProfileDisplayData(friends);
+  const friendListInputRef = useRef<SearchWindowRef>(null);
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const updateDisplayData = async (
-    db: Database | undefined,
-    friends: FriendsData | undefined,
-  ): Promise<void> => {
-    const newDisplayData: ProfileDisplayData = {};
-    if (db && friends) {
-      const dataIds = Object.keys(friends);
-      const userProfiles: ProfileData[] = await fetchUserProfiles(db, dataIds);
-      dataIds.forEach((id, index) => {
-        newDisplayData[id] = userProfiles[index];
-      });
+  const doSearch = async (db: Database, searchText: string) => {
+    try {
+      dispatch({type: 'SET_SEARCHING', payload: true});
+      let searchResultData: UserSearchResults = await searchDatabaseForUsers(
+        db,
+        searchText,
+      );
+      let relevantResults = searchResultData.filter(userId =>
+        objKeys(friends).includes(userId),
+      );
+      dispatch({type: 'SET_DISPLAYED_FRIENDS', payload: relevantResults}); // Hide irrelevant
+    } catch (error: any) {
+      Alert.alert(
+        'Database serach failed',
+        'Could not search the database: ' + error.message,
+      );
+      return;
+    } finally {
+      dispatch({type: 'SET_SEARCHING', payload: false});
     }
-    dispatch({type: 'SET_DISPLAY_DATA', payload: newDisplayData});
   };
 
-  useEffect(() => {
-    const updateLocalHooks = async () => {
-      dispatch({type: 'SET_IS_LOADING', payload: false});
-      await updateDisplayData(db, friends);
-      dispatch({type: 'SET_IS_LOADING', payload: false});
-    };
-    updateLocalHooks();
+  const resetSearch = () => {
+    dispatch({type: 'SET_DISPLAYED_FRIENDS', payload: objKeys(friends)});
+  };
+
+  const navigateToProfile = (
+    friendId: string,
+    profileData: ProfileData,
+  ): void => {
+    navigation.navigate('Profile Screen', {
+      userId: friendId,
+      profileData: profileData,
+      friends: null, // Fetch on render
+      currentUserFriends: friends,
+      drinkingSessionData: null, // Fetch on render
+      preferences: null, // Fetch on render
+    });
+  };
+
+  useMemo(() => {
+    dispatch({type: 'SET_DISPLAYED_FRIENDS', payload: objKeys(friends)});
   }, [friends]);
 
   if (!navigation) return null;
 
   return (
-    <ScrollView style={styles.scrollViewContainer}>
-        {state.isLoading ? (
-          <LoadingData style={styles.loadingContainer}/>
+    <View style={styles.mainContainer}>
+      <SearchWindow
+        ref={friendListInputRef}
+        doSearch={doSearch}
+        onResetSearch={resetSearch}
+      />
+      <ScrollView
+        style={styles.scrollViewContainer}
+        keyboardShouldPersistTaps="handled">
+        {loadingDisplayData ? (
+          <LoadingData style={styles.loadingContainer} />
         ) : friends ? (
-        <View style={styles.friendList}>
-          {Object.keys(friends).map(friendId => {
-            const profileData = state.displayData[friendId];
+          <View style={styles.friendList}>
+            {isNonEmptyArray(state.displayedFriends) ? (
+              Object.keys(friends).map(friendId => {
+                if (!state.displayedFriends.includes(friendId)) return null; // Hide irrelevant
+                const profileData = profileDisplayData[friendId];
+                const userStatusData = userStatusDisplayData[friendId];
 
-            return (
-              <TouchableOpacity
-                key={friendId + '-button'}
-                style={styles.friendOverviewButton}
-                onPress={() =>
-                  navigation.navigate('Profile Screen', {
-                    userId: friendId,
-                    profileData: profileData,
-                    drinkingSessionData: null, // Fetch on render
-                    preferences: null,
-                  })
-                }>
-                <UserOverview
-                  key={friendId + '-user-overview'}
-                  userId={friendId}
-                  profileData={profileData}
-                  RightSideComponent={<></>}
-                />
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-      ) : (
-        <View style={styles.emptyList}>
-          <Text style={styles.emptyListText}>
-            You do not have any friends yet
-          </Text>
-          <TouchableOpacity
-            onPress={() => setIndex(1)}
-            style={styles.navigateToSearchButton}>
-            <Text style={styles.navigateToSearchText}>Add them here</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-    </ScrollView>
+                return (
+                  <TouchableOpacity
+                    key={friendId + '-button'}
+                    style={styles.friendOverviewButton}
+                    onPress={() => navigateToProfile(friendId, profileData)}>
+                    <UserOverview
+                      key={friendId + '-user-overview'}
+                      userId={friendId}
+                      profileData={profileData}
+                      userStatusData={userStatusData}
+                    />
+                  </TouchableOpacity>
+                );
+              })
+            ) : (
+              <Text style={commonStyles.noUsersFoundText}>
+                {`No friends found.\n\nTry modifying the search text.`}
+              </Text>
+            )}
+          </View>
+        ) : (
+          <View style={styles.emptyList}>
+            <Text style={styles.emptyListText}>
+              You do not have any friends yet
+            </Text>
+            <TouchableOpacity
+              onPress={() => setIndex(1)}
+              style={styles.navigateToSearchButton}>
+              <Text style={styles.navigateToSearchText}>Add them here</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </ScrollView>
+    </View>
   );
 };
 
@@ -129,8 +158,13 @@ export default FriendListScreen;
 const screenHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+    backgroundColor: '#ffff99',
+  },
   scrollViewContainer: {
     flex: 1,
+    // backgroundColor: 'white',
     // justifyContent: 'center',
   },
   loadingContainer: {
@@ -141,11 +175,11 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'column',
     justifyContent: 'center',
-    backgroundColor: 'white',
+    paddingTop: 5,
   },
   friendOverviewButton: {
     width: '100%',
-    height: '100%',
+    backgroundColor: 'white',
   },
   emptyList: {
     width: '100%',

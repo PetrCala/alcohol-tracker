@@ -7,20 +7,20 @@ import {
   useReducer,
 } from 'react';
 import {
-  CurrentSessionData,
   DrinkingSessionArrayItem,
   DrinkingSessionData,
   PreferencesData,
   UnconfirmedDaysData,
   UserData,
-} from '../types/database';
-import {auth} from '../services/firebaseSetup';
-import {listenForDataChanges} from '../database/baseFunctions';
+  UserStatusData,
+} from '../../types/database';
+import {auth} from '../../services/firebaseSetup';
+import {listenForDataChanges} from '../../database/baseFunctions';
 import {isEqual} from 'lodash';
 import {useFirebase} from './FirebaseContext';
 
 type DatabaseDataContextType = {
-  currentSessionData: CurrentSessionData | null;
+  userStatusData: UserStatusData | null;
   drinkingSessionData: DrinkingSessionArrayItem[];
   drinkingSessionKeys: string[];
   preferences: PreferencesData | null;
@@ -53,13 +53,13 @@ type DatabaseDataProviderProps = {
 };
 
 const initialState = {
-  currentSessionData: null,
+  userStatusData: null,
   drinkingSessionData: [],
   drinkingSessionKeys: [],
   preferences: null,
   unconfirmedDays: null,
   userData: null,
-  loadingCurrentSessionData: true,
+  loadingUserStatusData: true,
   loadingDrinkingSessionData: true,
   loadingUserPreferences: true,
   loadingUnconfirmedDays: true,
@@ -68,8 +68,8 @@ const initialState = {
 
 const reducer = (state: any, action: any) => {
   switch (action.type) {
-    case 'SET_CURRENT_SESSION_DATA':
-      return {...state, currentSessionData: action.payload};
+    case 'SET_USER_STATUS_DATA':
+      return {...state, userStatusData: action.payload};
     case 'SET_DRINKING_SESSION_DATA':
       return {...state, drinkingSessionData: action.payload};
     case 'SET_DRINKING_SESSION_KEYS':
@@ -80,8 +80,8 @@ const reducer = (state: any, action: any) => {
       return {...state, unconfirmedDays: action.payload};
     case 'SET_USER_DATA':
       return {...state, userData: action.payload};
-    case 'SET_LOADING_CURRENT_SESSION_DATA':
-      return {...state, loadingCurrentSessionData: action.payload};
+    case 'SET_LOADING_USER_STATUS_DATA':
+      return {...state, loadingUserStatusData: action.payload};
     case 'SET_LOADING_DRINKING_SESSION_DATA':
       return {...state, loadingDrinkingSessionData: action.payload};
     case 'SET_LOADING_USER_PREFERENCES':
@@ -104,23 +104,23 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
 
   // Database data hooks
   const isLoading = [
-    state.loadingCurrentSessionData,
+    state.loadingUserStatus,
     state.loadingDrinkingSessionData,
     state.loadingUserPreferences,
     state.loadingUnconfirmedDays,
     state.loadingUserData,
   ].some(Boolean); // true if any of them is true
 
-  // Monitor current session data
+  // Monitor user status data
   useEffect(() => {
     if (!user || !db) return;
-    let userRef = `user_current_session/${user.uid}`;
+    let userRef = `user_status/${user.uid}`;
     let stopListening = listenForDataChanges(
       db,
       userRef,
-      (data: CurrentSessionData) => {
-        dispatch({type: 'SET_CURRENT_SESSION_DATA', payload: data});
-        dispatch({type: 'SET_LOADING_CURRENT_SESSION_DATA', payload: false});
+      (data: UserStatusData) => {
+        dispatch({type: 'SET_USER_STATUS_DATA', payload: data});
+        dispatch({type: 'SET_LOADING_USER_STATUS_DATA', payload: false});
       },
     );
 
@@ -155,7 +155,6 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
       stopListening();
     };
   }, []);
-
 
   // Monitor user preferences
   useEffect(() => {
@@ -220,7 +219,7 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
   // if (isLoading) return <LoadingData loadingText=''/>;
 
   const value = {
-    currentSessionData: state.currentSessionData,
+    userStatusData: state.userStatusData,
     drinkingSessionData: state.drinkingSessionData,
     drinkingSessionKeys: state.drinkingSessionKeys,
     preferences: state.preferences,

@@ -6,8 +6,8 @@ export type DatabaseProps = {
   nickname_to_id: {
     [nickname_key: string]: NicknameToIdData;
   };
-  user_current_session: {
-    [user_id: string]: CurrentSessionData;
+  user_status: {
+    [user_id: string]: UserStatusData;
   };
   user_drinking_sessions: {
     [user_id: string]: DrinkingSessionData;
@@ -65,8 +65,10 @@ export type NicknameToIdData = {
   [user_id: string]: string; // User UID - Raw nickname pair
 };
 
-export type CurrentSessionData = {
-  current_session_id: string | null;
+export type UserStatusData = {
+  last_online: number;
+  latest_session_id?: string | null;
+  latest_session?: DrinkingSessionArrayItem | null;
 };
 
 export type DrinkingSessionData = {
@@ -138,7 +140,6 @@ export type UserData = {
   friends?: FriendsData;
   friend_requests?: FriendRequestData;
   role: string;
-  last_online: number;
   beta_key_id: number;
 };
 
@@ -157,20 +158,32 @@ export type FriendRequestData = {
   [request_id: string]: FriendRequestStatus;
 };
 
+export type DisplayData = {
+  [user_id: string]: any;
+};
+
 export type ProfileDisplayData = {
   [user_id: string]: ProfileData;
+};
+
+export type UserStatusDisplayData = {
+  [user_id: string]: UserStatusData;
 };
 
 export type FriendRequestStatus = 'sent' | 'received';
 
 // Used when rendering friend request screen
-export type FriendRequestStatusState = 'self' | 'sent' | 'received' | 'friend' | 'undefined';
+export type FriendRequestStatusState =
+  | 'self'
+  | 'sent'
+  | 'received'
+  | 'friend'
+  | 'undefined';
 
 // Used when displaying the data on the social screens
 export type FriendRequestDisplayData = {
   [request_id: string]: FriendRequestStatusState;
 };
-
 
 // Used when rendering drinking session day overview
 export type DrinkingSessionProps = {
