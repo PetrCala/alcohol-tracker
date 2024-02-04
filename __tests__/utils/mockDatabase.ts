@@ -7,7 +7,6 @@ import {
   DatabaseProps,
   DrinkingSessionArrayItem,
   DrinkingSessionData,
-  DrinkingSessionItem,
   FeedbackData,
   FeedbackProps,
   FriendRequestData,
@@ -127,7 +126,7 @@ export function createMockFeedback(): FeedbackProps {
 
 export function createMockUserStatus(
   latest_session_id?: string,
-  latest_session?: DrinkingSessionItem,
+  latest_session?: DrinkingSessionArrayItem,
 ): UserStatusData {
   const mockUserStatus: UserStatusData = {
     last_online: Date.now(),
@@ -295,7 +294,6 @@ export function createMockUserData(
   const mockUserData: UserData = {
     profile: mockProfileData,
     role: 'mock-user',
-    last_online: Date.now(),
     beta_key_id: index + 1,
   };
   if (!noFriends) {

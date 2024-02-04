@@ -65,23 +65,21 @@ export type NicknameToIdData = {
   [user_id: string]: string; // User UID - Raw nickname pair
 };
 
-export type DrinkingSessionItem = {
-  start_time: number;
-  end_time: number;
-  units: UnitsObject;
-  blackout: boolean;
-  note: string;
-  ongoing?: boolean | null;
-};
-
 export type UserStatusData = {
   last_online: number;
   latest_session_id?: string | null;
-  latest_session?: DrinkingSessionItem | null;
+  latest_session?: DrinkingSessionArrayItem | null;
 };
 
 export type DrinkingSessionData = {
-  [session_id: string]: DrinkingSessionItem;
+  [session_id: string]: {
+    start_time: number;
+    end_time: number;
+    units: UnitsObject;
+    blackout: boolean;
+    note: string;
+    ongoing?: boolean | null;
+  };
 };
 
 /** Type for drinking session data when stored as an array */
@@ -142,7 +140,6 @@ export type UserData = {
   friends?: FriendsData;
   friend_requests?: FriendRequestData;
   role: string;
-  last_online: number;
   beta_key_id: number;
 };
 

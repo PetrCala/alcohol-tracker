@@ -23,7 +23,6 @@ import {
   UnconfirmedDaysData,
   UserData,
   UnitsToColorsData,
-  DrinkingSessionItem,
   UserStatusData,
 } from '../../src/types/database';
 
@@ -261,11 +260,7 @@ function validateUserUnconfirmedDaysData(userUnconfirmedDays: {
  * @returns bool
  */
 function isUserData(obj: any): obj is UserData {
-  return (
-    typeof obj.role === 'string' &&
-    typeof obj.last_online === 'number' &&
-    typeof obj.beta_key_id === 'number'
-  );
+  return typeof obj.role === 'string' && typeof obj.beta_key_id === 'number';
 }
 
 /** Enter a data object containing supposed user data, and validate that all objects (values) are indeed of the supposed type. If yes, return true, otherwise return false.

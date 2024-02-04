@@ -1,7 +1,6 @@
 ﻿import {StackNavigationProp} from '@react-navigation/stack';
 import {
   DrinkingSessionData,
-  CurrentSessionData,
   PreferencesData,
   UserData,
   DrinkingSessionArrayItem,

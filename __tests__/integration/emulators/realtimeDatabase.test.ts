@@ -278,11 +278,23 @@ describeWithEmulator('Test pushing new user info into the database', () => {
       newUserBetaKeyId,
     );
     const dbUserData = await readDataOnce(db, `users/${newUserId}`);
-    expect(dbUserData).toMatchObject({
-      ...expectedData,
+    expect(dbUserData).toMatchObject(dbUserData);
+  });
+
+  it('pushes the user status into the database', async () => {
+    const expectedStatus = createMockUserStatus(
+      mockSessionKey,
+      mockDrinkingSession,
+    );
+    const dbStatusData = await readDataOnce(db, `user_status/${newUserId}`);
+    expect(dbStatusData).toMatchObject({
+      ...expectedStatus,
       last_online: expect.any(Number),
     });
-    expect(dbUserData.last_online).toBeCloseTo(expectedData.last_online, -2); // Within 100ms
+    expect(dbStatusData.last_online).toBeCloseTo(
+      expectedStatus.last_online,
+      -2,
+    ); // Within 100ms
   });
 });
 

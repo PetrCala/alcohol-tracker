@@ -29,14 +29,6 @@ describe('<MainScreen />', () => {
     expect(tree).toMatchSnapshot();
   });
 
-  // it('navigate to the drinking session screen when in session', () => {
-  //   // Mock current session data to be in session
-  //   // For the sake of this example, I'm assuming the mock can be done as below, but you might need to adjust
-  //   setCurrentSessionData({ in_session: true });
-
-  //   navigateFromMainScreen('userInSessionWarningContainer', 'Drinking Session Screen');
-  // });
-
   it('navigate to the profile screen', () => {
     navigateFromMainScreen('profile-icon', 'Profile Screen');
   });

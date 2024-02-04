@@ -216,6 +216,7 @@ const DrinkingSessionScreen = ({
             user.uid,
             newSessionData,
             sessionKey,
+            true, // Update live session status
           );
         } catch (error: any) {
           throw new Error('Could not save the drinking session data');

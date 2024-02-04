@@ -229,7 +229,14 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
       newSessionData.blackout = isBlackout ? isBlackout : false;
       newSessionData.note = note ? note : '';
       try {
-        await saveDrinkingSessionData(db, userId, newSessionData, sessionKey); // Finish editing
+        // Finish editing
+        await saveDrinkingSessionData(
+          db,
+          userId,
+          newSessionData,
+          sessionKey,
+          false, // Do not update live status
+        );
       } catch (error: any) {
         Alert.alert(
           'Sesison edit failed',

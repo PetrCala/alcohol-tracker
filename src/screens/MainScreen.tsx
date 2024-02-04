@@ -94,7 +94,7 @@ const MainScreen = ({navigation}: MainScreenProps) => {
   const {db, storage} = useFirebase();
   const {isOnline} = useUserConnection();
   const {
-    currentSessionData,
+    userStatusData,
     drinkingSessionData,
     drinkingSessionKeys,
     preferences,
@@ -144,7 +144,9 @@ const MainScreen = ({navigation}: MainScreenProps) => {
         return;
       }
     } else {
-      const currentsessionKey = currentSessionData?.current_session_id ?? null;
+      const currentsessionKey = state.ongoingSession
+        ? userStatusData?.latest_session_id
+        : null;
       if (!currentsessionKey) {
         Alert.alert(
           'New session initialization failed',
@@ -195,7 +197,7 @@ const MainScreen = ({navigation}: MainScreenProps) => {
   useMemo(() => {
     let result = findOngoingSession(drinkingSessionData);
     dispatch({type: 'SET_ONGOING_SESSION', payload: result});
-  }, [drinkingSessionData, currentSessionData]);
+  }, [drinkingSessionData, userStatusData]);
 
   // Monitor visible month and various statistics
   useMemo(() => {
