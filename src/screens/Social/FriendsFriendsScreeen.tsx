@@ -141,7 +141,7 @@ const FriendsFriendsScreen = ({
   };
 
   const renderSearchResults = (renderCommonFriends: boolean): JSX.Element[] => {
-    return objKeys(state.displayedFriends)
+    return state.displayedFriends
       .filter(
         userId => state.commonFriends.includes(userId) === renderCommonFriends,
       )
@@ -209,8 +209,9 @@ const FriendsFriendsScreen = ({
   useEffect(() => {
     const initialSearch = async (): Promise<void> => {
       dispatch({type: 'SET_SEARCHING', payload: true});
-      await updateHooksBasedOnSearchResults(objKeys(friends));
-      dispatch({type: 'SET_DISPLAYED_FRIENDS', payload: friends});
+      const friendIds = objKeys(friends);
+      await updateHooksBasedOnSearchResults(friendIds);
+      dispatch({type: 'SET_DISPLAYED_FRIENDS', payload: friendIds});
       dispatch({type: 'SET_SEARCHING', payload: false});
     };
     initialSearch();
@@ -218,7 +219,8 @@ const FriendsFriendsScreen = ({
 
   const resetSearch = (): void => {
     // Reset all values displayed on screen
-    dispatch({type: 'SET_DISPLAYED_FRIENDS', payload: friends}); // Uncover all
+    const friendIds = objKeys(friends);
+    dispatch({type: 'SET_DISPLAYED_FRIENDS', payload: friendIds});
     dispatch({type: 'SET_SEARCHING', payload: false});
     dispatch({type: 'SET_NO_USERS_FOUND', payload: false});
   };
