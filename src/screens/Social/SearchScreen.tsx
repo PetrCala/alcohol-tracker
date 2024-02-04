@@ -85,16 +85,10 @@ const SearchScreen = (props: SearchScreenProps) => {
   const updateDisplayData = async (
     searchResultData: UserSearchResults,
   ): Promise<void> => {
-    const newDisplayData: ProfileDisplayData = {};
-    if (searchResultData) {
-      const userProfiles: ProfileData[] = await fetchUserProfiles(
-        db,
-        searchResultData,
-      );
-      searchResultData.forEach((id, index) => {
-        newDisplayData[id] = userProfiles[index];
-      });
-    }
+    let newDisplayData: ProfileDisplayData = await fetchUserProfiles(
+      db,
+      searchResultData,
+    );
     dispatch({type: 'SET_DISPLAY_DATA', payload: newDisplayData});
   };
 

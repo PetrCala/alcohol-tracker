@@ -158,8 +158,16 @@ export type FriendRequestData = {
   [request_id: string]: FriendRequestStatus;
 };
 
+export type DisplayData = {
+  [user_id: string]: any;
+};
+
 export type ProfileDisplayData = {
   [user_id: string]: ProfileData;
+};
+
+export type UserStatusDisplayData = {
+  [user_id: string]: UserStatusData;
 };
 
 export type FriendRequestStatus = 'sent' | 'received';

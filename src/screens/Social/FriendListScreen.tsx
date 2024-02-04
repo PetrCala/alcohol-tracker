@@ -45,7 +45,8 @@ const reducer = (state: State, action: GeneralAction): State => {
 
 const FriendListScreen = (props: FriendListScreenProps) => {
   const {navigation, friends, setIndex} = props;
-  const {loadingDisplayData, displayData} = useProfileDisplayData(friends);
+  const {loadingDisplayData, profileDisplayData} =
+    useProfileDisplayData(friends);
   const friendListInputRef = useRef<SearchWindowRef>(null);
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -112,7 +113,7 @@ const FriendListScreen = (props: FriendListScreenProps) => {
             {isNonEmptyArray(state.displayedFriends) ? (
               Object.keys(friends).map(friendId => {
                 if (!state.displayedFriends.includes(friendId)) return null; // Hide irrelevant
-                const profileData = displayData[friendId];
+                const profileData = profileDisplayData[friendId];
 
                 return (
                   <TouchableOpacity

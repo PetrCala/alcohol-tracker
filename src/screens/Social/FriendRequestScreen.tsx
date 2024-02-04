@@ -23,6 +23,7 @@ import NoFriendUserOverview from '@components/Social/NoFriendUserOverview';
 import {fetchUserProfiles} from '@database/profile';
 import headerStyles from '@src/styles/headerStyles';
 import GrayHeader from '@components/Header/GrayHeader';
+import {objKeys} from '@src/utils/dataHandling';
 
 type FriendRequestButtonsProps = {
   requestId: string;
@@ -212,17 +213,13 @@ const FriendRequestScreen = (props: ScreenProps) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const updateDisplayData = async (
-    db: Database | undefined,
+    db: Database,
     friendRequests: FriendRequestDisplayData | undefined,
   ): Promise<void> => {
-    const newDisplayData: ProfileDisplayData = {};
-    if (db && friendRequests) {
-      const dataIds = Object.keys(friendRequests);
-      const userProfiles: ProfileData[] = await fetchUserProfiles(db, dataIds);
-      dataIds.forEach((id, index) => {
-        newDisplayData[id] = userProfiles[index];
-      });
-    }
+    let newDisplayData: ProfileDisplayData = await fetchUserProfiles(
+      db,
+      objKeys(friendRequests),
+    );
     dispatch({type: 'SET_DISPLAY_DATA', payload: newDisplayData});
   };
 

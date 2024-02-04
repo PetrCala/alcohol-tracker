@@ -1,62 +1,19 @@
-﻿import {Database, ref, get, update} from 'firebase/database';
-import {ProfileData, ProfileDisplayData} from '../types/database';
+﻿import {Database, ref, update} from 'firebase/database';
 import {
   FirebaseStorage,
   ref as StorageRef,
   getDownloadURL,
 } from 'firebase/storage';
 import {Auth, User, updateProfile} from 'firebase/auth';
-import {cacheProfileImage} from '@src/utils/cache';
+import {fetchDisplayDataForUsers} from './baseFunctions';
+import {ProfileDisplayData} from '@src/types/database';
 
-/**
- * Fetch the profile details of a given user.
- *
- * @param {Database} db - The database object against which to validate this conditio
- * @param {string} userId - User ID whose profile details need to be fetched.
- * @returns {Promise<ProfileData>} - Returns the user profile data if they exist, otherwise undefined.
- */
-export async function fetchUserProfile(
+export async function fetchUserProfiles(
   db: Database,
-  userId: string,
-): Promise<ProfileData> {
-  const dbRef = ref(db, `/users/${userId}/profile`);
-  const snapshot = await get(dbRef);
-  return snapshot.val();
-}
-
-/**
- * Using a firebase database object and a list of userIds, fetch the profiles of all these users and return them as an array.
- *
- * @param {Database} db Firebase database object
- * @param {string[]} userIds An array of user IDs to fetch
- * @returns {Promise<ProfileData[]>} An array of profile data objects
- */
-export function fetchUserProfiles(
-  db: Database,
-  userIds: string[],
-): Promise<ProfileData[]> {
-  return Promise.all(userIds.map(id => fetchUserProfile(db, id)));
-}
-
-/**
- * Fetches profile display data for the given user IDs.
- *
- * @param db - The database instance.
- * @param userIds - An array of user IDs.
- * @returns A promise that resolves to an object containing the profile display data.
- */
-export async function fetchProfileDisplayData(
-  db: Database | undefined,
   userIds: string[],
 ): Promise<ProfileDisplayData> {
-  const newDisplayData: ProfileDisplayData = {};
-  if (db && userIds) {
-    const userProfiles: ProfileData[] = await fetchUserProfiles(db, userIds);
-    userIds.forEach((id, index) => {
-      newDisplayData[id] = userProfiles[index];
-    });
-  }
-  return newDisplayData;
+  const profileRef = 'users/{userId}/profile';
+  return await fetchDisplayDataForUsers(db, userIds, profileRef);
 }
 
 /**

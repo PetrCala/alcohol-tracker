@@ -4,29 +4,36 @@ import {
   FriendsData,
   NicknameToIdData,
   ProfileDisplayData,
+  UserStatusDisplayData,
 } from '@src/types/database';
-import {fetchProfileDisplayData} from '@database/profile';
+import {objKeys} from '@src/utils/dataHandling';
+import {fetchUserProfiles} from '@database/profile';
 
 interface State {
   loadingDisplayData: boolean;
-  displayData: ProfileDisplayData;
+  profileDisplayData: ProfileDisplayData;
+  userStatusDisplayData: UserStatusDisplayData;
 }
 
 type Action =
-  | {type: 'SET_DISPLAY_DATA'; payload: ProfileDisplayData}
-  | {type: 'SET_LOADING_DISPLAY_DATA'; payload: boolean};
+  | {type: 'SET_LOADING_DISPLAY_DATA'; payload: boolean}
+  | {type: 'SET_PROFILE_DISPLAY_DATA'; payload: ProfileDisplayData}
+  | {type: 'SET_USER_STATUS_DISPLAY_DATA'; payload: UserStatusDisplayData};
 
 const initialState: State = {
   loadingDisplayData: false,
-  displayData: {},
+  profileDisplayData: {},
+  userStatusDisplayData: {},
 };
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
-    case 'SET_DISPLAY_DATA':
-      return {...state, displayData: action.payload};
+    case 'SET_PROFILE_DISPLAY_DATA':
+      return {...state, profileDisplayData: action.payload};
     case 'SET_LOADING_DISPLAY_DATA':
       return {...state, loadingDisplayData: action.payload};
+    case 'SET_USER_STATUS_DISPLAY_DATA':
+      return {...state, userStatusDisplayData: action.payload};
     default:
       return state;
   }
@@ -57,11 +64,14 @@ const useProfileDisplayData = (
 
   const updateDisplayData = useCallback(async (): Promise<void> => {
     dispatch({type: 'SET_LOADING_DISPLAY_DATA', payload: true});
-    let newDisplayData: ProfileDisplayData = {};
-    if (db && friends) {
-      newDisplayData = await fetchProfileDisplayData(db, Object.keys(friends));
-    }
-    dispatch({type: 'SET_DISPLAY_DATA', payload: newDisplayData});
+    let newProfileDisplayData: ProfileDisplayData = await fetchUserProfiles(
+      db,
+      objKeys(friends),
+    );
+    dispatch({
+      type: 'SET_PROFILE_DISPLAY_DATA',
+      payload: newProfileDisplayData,
+    });
     dispatch({type: 'SET_LOADING_DISPLAY_DATA', payload: false});
   }, [friends]);
 
