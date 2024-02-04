@@ -33,6 +33,7 @@ import {
   deleteUserData,
   getDefaultPreferences,
   getDefaultUserData,
+  getDefaultUserStatus,
   pushNewUserInfo,
 } from '@database/users';
 import {cleanStringForFirebaseKey} from '@src/utils/strings';
@@ -278,14 +279,11 @@ describeWithEmulator('Test pushing new user info into the database', () => {
       newUserBetaKeyId,
     );
     const dbUserData = await readDataOnce(db, `users/${newUserId}`);
-    expect(dbUserData).toMatchObject(dbUserData);
+    expect(dbUserData).toMatchObject(expectedData);
   });
 
   it('pushes the user status into the database', async () => {
-    const expectedStatus = createMockUserStatus(
-      mockSessionKey,
-      mockDrinkingSession,
-    );
+    const expectedStatus = getDefaultUserStatus();
     const dbStatusData = await readDataOnce(db, `user_status/${newUserId}`);
     expect(dbStatusData).toMatchObject({
       ...expectedStatus,

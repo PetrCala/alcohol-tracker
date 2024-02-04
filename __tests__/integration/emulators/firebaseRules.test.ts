@@ -321,6 +321,67 @@ describeWithEmulator('Test user status rules', () => {
   });
 });
 
+describeWithEmulator('Test user last online rules', () => {
+  let testEnv: RulesTestEnvironment;
+  let authDb: any;
+  let unauthDb: any;
+  let adminDb: any;
+  setupGlobalMocks(); // Silence permission denied warnings
+
+  beforeAll(async () => {
+    ({testEnv, authDb, unauthDb, adminDb} = await setupFirebaseRulesTestEnv());
+  });
+
+  afterEach(async () => {
+    await testEnv.clearDatabase();
+  });
+
+  afterAll(async () => {
+    await teardownFirebaseRulesTestEnv(testEnv);
+  });
+
+  it('should allow an authenticated user to write into their own user last online node', async () => {
+    const authRef = authDb.ref(`user_status/${authUserId}/last_online`);
+    await assertSucceeds(authRef.set(123));
+  });
+
+  it('should not allow an authenticated user to write with incorrect values into their own user last online node', async () => {
+    const authRef = authDb.ref(`user_status/${authUserId}/last_online`);
+    await assertFails(authRef.set('not a number'));
+  });
+
+  it("should not allow an authenticated user to write into other user's user last online nodes", async () => {
+    const authRef = authDb.ref(`user_status/${otherUserId}/last_online`);
+    await assertFails(authRef.set(123));
+  });
+
+  it('should not allow an unauthenticated user to write into their own user last online node', async () => {
+    const unauthRef = unauthDb.ref(`user_status/${authUserId}/last_online`);
+    await assertFails(unauthRef.set(123));
+  });
+
+  it('should allow an authenticated user to read their own user last online node', async () => {
+    const authRef = authDb.ref(`user_status/${authUserId}/last_online`);
+    await assertSucceeds(authRef.get());
+  });
+
+  it("should not allow an authenticated user to read other users' user last online node", async () => {
+    const authRef = authDb.ref(`user_status/${otherUserId}/last_online`);
+    await assertFails(authRef.get());
+  });
+
+  it("should allow an authenticated user to read their friends' user last online node", async () => {
+    await makeFriends(authDb, authUserId, otherUserId); // Set the friend connection first
+    const authRef = authDb.ref(`user_status/${otherUserId}/last_online`);
+    await assertSucceeds(authRef.get());
+  });
+
+  it('should not allow an authenticated user to read their own user last online node', async () => {
+    const authRef = unauthDb.ref(`user_status/${authUserId}/last_online`);
+    await assertFails(authRef.get());
+  });
+});
+
 describeWithEmulator('Test friend rules', () => {
   let testEnv: RulesTestEnvironment;
   let authDb: any;
@@ -341,39 +402,39 @@ describeWithEmulator('Test friend rules', () => {
   });
 
   it('should allow a user to write valid values into their own friend list', async () => {
-    const authRef = authDb.ref(`users/authUserId/friends/otherUserId`);
+    const authRef = authDb.ref(`users/${authUserId}/friends/${otherUserId}`);
     await assertSucceeds(authRef.set(true));
     await assertSucceeds(authRef.set(null));
   });
 
   it("should allow a user to write valid values into other user's friend list", async () => {
-    const authRef = authDb.ref(`users/otherUserId/friends/authUserId`);
+    const authRef = authDb.ref(`users/${otherUserId}/friends/${authUserId}`);
     await assertSucceeds(authRef.set(true));
     await assertSucceeds(authRef.set(null));
   });
 
   it('should not allow a user to write their own name into their friend list', async () => {
-    const authRef = authDb.ref(`users/authUserId/friends/authUserId`);
+    const authRef = authDb.ref(`users/${authUserId}/friends/${authUserId}`);
     await assertFails(authRef.set(true));
   });
 
   it('should not allow writing invalid values into their friend list', async () => {
-    const authRef = authDb.ref(`users/authUserId/friends/otherUserId`);
+    const authRef = authDb.ref(`users/${authUserId}/friends/${otherUserId}`);
     await assertFails(authRef.set('invalid'));
   });
 
   it("should not allow writing invalid values into other user's friend list", async () => {
-    const authRef = authDb.ref(`users/otherUserId/friends/authUserId`);
+    const authRef = authDb.ref(`users/${otherUserId}/friends/${authUserId}`);
     await assertFails(authRef.set('invalid'));
   });
 
   it('should allow reading own friend list when authenticated', async () => {
-    const authRef = authDb.ref(`users/authUserId/friends`);
+    const authRef = authDb.ref(`users/${authUserId}/friends`);
     await assertSucceeds(authRef.get());
   });
 
   it('should not allow reading own friend list when unauthenticated', async () => {
-    const unauthRef = unauthDb.ref(`users/authUserId/friends`);
+    const unauthRef = unauthDb.ref(`users/${authUserId}/friends`);
     await assertFails(unauthRef.get());
   });
 });
