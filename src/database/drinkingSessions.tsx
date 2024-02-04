@@ -4,6 +4,7 @@ import {
   DrinkingSessionArrayItem,
   UnitsObject,
 } from '../types/database';
+import {removeZeroObjectsFromSession} from '@src/utils/dataHandling';
 
 /** Write drinking session data into the database
  *
@@ -20,6 +21,7 @@ export async function saveDrinkingSessionData(
   sessionKey: string,
   updateStatus?: boolean,
 ): Promise<void> {
+  newSessionData = removeZeroObjectsFromSession(newSessionData); // Delete the initial log of zero units that was used as a placeholder
   var updates: {[key: string]: any} = {};
   updates[`user_drinking_sessions/${userId}/` + sessionKey] = newSessionData;
   if (updateStatus) {
@@ -72,6 +74,7 @@ export async function endLiveDrinkingSession(
   newSessionData: DrinkingSessionArrayItem,
   sessionKey: string,
 ): Promise<void> {
+  newSessionData = removeZeroObjectsFromSession(newSessionData);
   var updates: {[key: string]: any} = {};
   const userStatusData: UserStatusData = {
     // ETC - 1

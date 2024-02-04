@@ -931,6 +931,20 @@ describe('removeZeroObjectsFromSession', () => {
     expect(result.units[12345680]).toBeDefined();
   });
 
+  it('should remove UnitsObject children where one object has a single key set to 0', () => {
+    const mockSession: DrinkingSessionArrayItem = createMockSessionWithUnits({
+      12345679: {
+        other: 0,
+      },
+      12345680: {beer: 1},
+    });
+
+    const result = removeZeroObjectsFromSession(mockSession);
+    expect(Object.keys(result.units)).toHaveLength(1);
+    expect(sumAllUnits(result.units)).toEqual(1);
+    expect(result.units[12345680]).toBeDefined();
+  });
+
   it('should keep UnitsObject children with at least one unit value not set to 0', () => {
     const mockSession: DrinkingSessionArrayItem = createMockSessionWithUnits({
       12345679: {beer: 1, cocktail: 0},

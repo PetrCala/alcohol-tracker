@@ -223,8 +223,7 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
     }
     // Save the session
     if (totalPoints > 0) {
-      let newSessionData: DrinkingSessionArrayItem =
-        removeZeroObjectsFromSession(currentSession); // Delete the initial log of zero units that was used as a placeholder
+      let newSessionData: DrinkingSessionArrayItem = currentSession;
       // Handle old versions of drinking session data where note/blackout were missing - remove this later
       newSessionData.blackout = isBlackout ? isBlackout : false;
       newSessionData.note = note ? note : '';

@@ -272,7 +272,6 @@ const DrinkingSessionScreen = ({
         note: note,
         ongoing: null,
       };
-      newSessionData = removeZeroObjectsFromSession(newSessionData); // Delete the initial log of zero units that was used as a placeholder
       try {
         if (timeSinceLastUpdate < 1000) {
           await sleep(1000 - timeSinceLastUpdate); // Wait for database synchronization
