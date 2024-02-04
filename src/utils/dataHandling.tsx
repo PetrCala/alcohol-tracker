@@ -591,8 +591,8 @@ export const removeZeroObjectsFromSession = (
         updatedSession.units[timestamp][key] === undefined,
     );
 
-    // If all unit values are 0, delete the timestamp from the units object
-    if (allZero) {
+    // If all unit values are 0, delete the timestamp from the units object, unless it is the last one
+    if (allZero && Object.keys(updatedSession.units).length > 1) {
       delete updatedSession.units[+timestamp];
     }
   }
