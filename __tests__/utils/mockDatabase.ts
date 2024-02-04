@@ -7,6 +7,7 @@ import {
   DatabaseProps,
   DrinkingSessionArrayItem,
   DrinkingSessionData,
+  DrinkingSessionItem,
   FeedbackData,
   FeedbackProps,
   FriendRequestData,
@@ -21,6 +22,7 @@ import {
   UnitsObject,
   UnitsToColorsData,
   UserData,
+  UserStatusData,
 } from '../../src/types/database';
 import {getRandomChoice, getRandomInt} from '../../src/utils/choice';
 import {
@@ -30,6 +32,7 @@ import {
 } from '../../src/utils/dataHandling';
 import {cleanStringForFirebaseKey} from '../../src/utils/strings';
 import {MOCK_SESSION_IDS, MOCK_USER_IDS} from './testsStatic';
+import {create} from 'lodash';
 
 /**
  * Creates a mock app settings object.
@@ -75,7 +78,7 @@ export function initializeEmptyMockDatabase(): DatabaseProps {
     },
     feedback: {},
     nickname_to_id: {},
-    user_latest_session: {},
+    user_status: {},
     user_drinking_sessions: {},
     user_preferences: {},
     user_unconfirmed_days: {},
@@ -120,6 +123,20 @@ export function createMockFeedback(): FeedbackProps {
     text: 'Mock feedback',
     user_id: 'mock-user-id',
   };
+}
+
+export function createMockUserStatus(
+  latest_session_id?: string,
+  latest_session?: DrinkingSessionItem,
+): UserStatusData {
+  const mockUserStatus: UserStatusData = {
+    last_online: Date.now(),
+  };
+  if (latest_session_id && latest_session) {
+    mockUserStatus.latest_session_id = latest_session_id;
+    mockUserStatus.latest_session = latest_session;
+  }
+  return mockUserStatus;
 }
 
 /** Create a mock nicknames to user IDs data object.
@@ -323,8 +340,11 @@ export function createMockDatabase(noFriends: boolean = false): DatabaseProps {
     mockSessionData[latestSessionId].ongoing = true;
     db.user_drinking_sessions[userId] = mockSessionData;
 
-    // Set the ongoing session id to the current session data
-    db.user_latest_session[userId] = mockSessionData[latestSessionId];
+    // User status
+    db.user_status[userId] = createMockUserStatus(
+      latestSessionId,
+      mockSessionData[latestSessionId],
+    );
 
     // User preferences
     db.user_preferences[userId] = createMockPreferences();

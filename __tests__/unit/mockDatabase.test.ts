@@ -24,6 +24,7 @@ import {
   UserData,
   UnitsToColorsData,
   DrinkingSessionItem,
+  UserStatusData,
 } from '../../src/types/database';
 
 /**
@@ -93,19 +94,13 @@ function validateFeedback(feedbackData: {[feedbackId: string]: any}): boolean {
   return true;
 }
 
-function isLatestSessionData(obj: any): obj is DrinkingSessionItem {
-  return (
-    typeof obj.start_time === 'number' &&
-    typeof obj.end_time === 'number' &&
-    typeof obj.blackout === 'boolean' // TODO: Add more checks
-  );
+function isUserStatus(obj: any): obj is UserStatusData {
+  return typeof obj.last_online === 'number';
 }
 
-function validateUserLatestSession(userSessions: {
-  [userId: string]: any;
-}): boolean {
-  for (const userId in userSessions) {
-    if (!isLatestSessionData(userSessions[userId])) {
+function validateUserStatus(userStatuses: {[userId: string]: any}): boolean {
+  for (const userId in userStatuses) {
+    if (!isUserStatus(userStatuses[userId])) {
       return false;
     }
   }
@@ -373,8 +368,8 @@ describe('mockDatabase data structure', () => {
     expect(validateFeedback(db.feedback)).toBe(true);
   });
 
-  it('should have user latest session data', () => {
-    expect(validateUserLatestSession(db.user_latest_session)).toBe(true);
+  it('should have user status', () => {
+    expect(validateUserStatus(db.user_status)).toBe(true);
   });
 
   it('should have user drinking session data', () => {

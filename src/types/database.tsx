@@ -6,8 +6,8 @@ export type DatabaseProps = {
   nickname_to_id: {
     [nickname_key: string]: NicknameToIdData;
   };
-  user_latest_session: {
-    [user_id: string]: DrinkingSessionItem;
+  user_status: {
+    [user_id: string]: UserStatusData;
   };
   user_drinking_sessions: {
     [user_id: string]: DrinkingSessionData;
@@ -72,6 +72,12 @@ export type DrinkingSessionItem = {
   blackout: boolean;
   note: string;
   ongoing?: boolean | null;
+};
+
+export type UserStatusData = {
+  last_online: number;
+  latest_session_id?: string | null;
+  latest_session?: DrinkingSessionItem | null;
 };
 
 export type DrinkingSessionData = {

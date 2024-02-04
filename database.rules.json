@@ -30,11 +30,11 @@
         }
       }
     },
-    "user_latest_session": {
+    "user_status": {
       ".read": "auth.token.admin === true",
       ".write": "auth.token.admin === true",
       "$uid": {
-        ".validate": "newData.hasChild('units') || newData.val() === null",
+        ".validate": "newData.hasChild('last_online') || newData.val() === null",
         ".read": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('friends').child($uid).exists())",
         ".write": "auth != null && auth.uid === $uid"
       }
