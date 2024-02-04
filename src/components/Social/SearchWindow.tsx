@@ -77,7 +77,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginTop: 10,
     marginBottom: 5,
-    // backgroundColor: 'pink',
   },
   textContainer: {
     width: '80%',

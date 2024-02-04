@@ -97,13 +97,15 @@ const SearchScreen = (props: ScreenProps) => {
     searchResultData: UserSearchResults,
   ): Promise<void> => {
     const newDisplayData: ProfileDisplayData = {};
-    const userProfiles: ProfileData[] = await fetchUserProfiles(
-      db,
-      searchResultData,
-    );
-    searchResultData.forEach((id, index) => {
-      newDisplayData[id] = userProfiles[index];
-    });
+    if (searchResultData) {
+      const userProfiles: ProfileData[] = await fetchUserProfiles(
+        db,
+        searchResultData,
+      );
+      searchResultData.forEach((id, index) => {
+        newDisplayData[id] = userProfiles[index];
+      });
+    }
     dispatch({type: 'SET_DISPLAY_DATA', payload: newDisplayData});
   };
 

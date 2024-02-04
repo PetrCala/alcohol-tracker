@@ -36,11 +36,11 @@ export async function searchDbByNickname(
  * @returns A Promise that resolves to a string of IDs that match the search text.
  */
 export async function searchDatabaseForUsers(
-  db: Database | null,
+  db: Database,
   searchText: string,
   useQuirkyNicknames: boolean = true,
 ): Promise<UserSearchResults> {
-  if (!db || !searchText) {
+  if (!searchText) {
     return [];
   }
   let searchResultData: UserSearchResults = [];

@@ -1,19 +1,8 @@
+import {Alert, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {
-  Alert,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import {
-  NicknameToIdData,
   FriendRequestStatusState,
-  FriendsData,
-  FriendRequestDisplayData,
   ProfileDisplayData,
   ProfileData,
-  UserData,
   FriendRequestData,
 } from '../../types/database';
 import {useEffect, useMemo, useReducer} from 'react';
@@ -22,10 +11,7 @@ import {auth} from '../../services/firebaseSetup';
 import {isNonEmptyArray, isNonEmptyObject} from '../../utils/validation';
 import LoadingData from '../../components/LoadingData';
 import {Database} from 'firebase/database';
-import {
-  searchDatabaseForUsers,
-  searchDbByNickname,
-} from '../../database/search';
+import {searchDatabaseForUsers} from '../../database/search';
 import {fetchUserProfiles} from '@database/profile';
 import SearchResult from '@components/Social/SearchResult';
 import SearchWindow from '@components/Social/SearchWindow';
@@ -37,7 +23,8 @@ import {UserSearchResults} from '@src/types/search';
 import {objKeys} from '@src/utils/dataHandling';
 import {getDatabaseData} from '@src/context/DatabaseDataContext';
 import SeeProfileButton from '@components/Buttons/SeeProfileButton';
-import {update} from 'lodash';
+import {GeneralAction} from '@src/types/states';
+import commonStyles from '@src/styles/commonStyles';
 
 interface State {
   searching: boolean;
@@ -47,11 +34,6 @@ interface State {
   requestStatuses: {[userId: string]: FriendRequestStatusState | undefined};
   noUsersFound: boolean;
   displayData: ProfileDisplayData;
-}
-
-interface Action {
-  type: string;
-  payload: any;
 }
 
 const initialState: State = {
@@ -64,7 +46,7 @@ const initialState: State = {
   displayData: {},
 };
 
-const reducer = (state: State, action: Action): State => {
+const reducer = (state: State, action: GeneralAction): State => {
   switch (action.type) {
     case 'SET_SEARCHING':
       return {...state, searching: action.payload};
@@ -256,7 +238,7 @@ const FriendsFriendsScreen = ({
         <View style={styles.searchResultsContainer}>
           {state.searching ? (
             <LoadingData style={styles.loadingData} />
-          ) : isNonEmptyObject(state.displayedFriends) ? (
+          ) : isNonEmptyArray(state.displayedFriends) ? (
             <>
               <GrayHeader
                 headerText={`Common Friends (${state.commonFriends.length})`}
@@ -268,7 +250,7 @@ const FriendsFriendsScreen = ({
               {renderSearchResults(false)}
             </>
           ) : state.noUsersFound ? (
-            <Text style={styles.noUsersFoundText}>
+            <Text style={commonStyles.noUsersFoundText}>
               {objKeys(friends).length > 0
                 ? 'No friends found.\n\nTry searching for other users.'
                 : 'This user has not added any friends yet.'}
@@ -350,13 +332,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 50,
     margin: 5,
-  },
-  noUsersFoundText: {
-    color: 'black',
-    fontSize: 16,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginTop: 15,
   },
 });
 

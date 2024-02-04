@@ -106,7 +106,7 @@ const MainScreen = ({navigation}: MainScreenProps) => {
 
   // Handle drinking session button press
   const startDrinkingSession = async () => {
-    if (!preferences || !db || !user) return null; // Should never be null
+    if (!preferences || !user) return null; // Should never be null
     let sessionData: DrinkingSessionArrayItem;
     let sessionKey: string;
     if (!state.ongoingSession) {
@@ -177,7 +177,7 @@ const MainScreen = ({navigation}: MainScreenProps) => {
   // Update the user last login time
   useEffect(() => {
     const fetchData = async () => {
-      if (!db || !user) return;
+      if (!user) return;
       try {
         await updateUserLastOnline(db, user.uid);
       } catch (error: any) {
@@ -234,7 +234,7 @@ const MainScreen = ({navigation}: MainScreenProps) => {
         loadingText={state.loadingNewSession ? 'Starting a new session...' : ''}
       />
     );
-  if (!db || !preferences || !drinkingSessionData || !userData) return;
+  if (!preferences || !drinkingSessionData || !userData) return;
 
   return (
     <>

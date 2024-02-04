@@ -69,6 +69,13 @@ const commonStyles = StyleSheet.create({
   smallMarginLeft: {
     marginLeft: 5,
   },
+  noUsersFoundText: {
+    color: 'black',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 15,
+  },
 });
 
 export default commonStyles;
