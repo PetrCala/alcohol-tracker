@@ -1,9 +1,8 @@
-import {Dimensions, StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import {ProfileData, UserStatusData} from '../../types/database';
 import {useFirebase} from '../../context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
 import {getTimestampAge, isRecent} from '@src/utils/timeUtils';
-import SuccessIndicator from '@components/SuccessIndicator';
 import commonStyles from '@src/styles/commonStyles';
 import {sumAllUnits} from '@src/utils/dataHandling';
 
@@ -13,9 +12,6 @@ type UserOverviewProps = {
   userStatusData: UserStatusData;
 };
 
-/**
- * Should always be rendered inside a button
- */
 const UserOverview: React.FC<UserOverviewProps> = ({
   userId,
   profileData,
@@ -95,6 +91,7 @@ export default UserOverview;
 const styles = StyleSheet.create({
   userOverviewContainer: {
     width: '100%',
+    height: 80,
     flexDirection: 'row',
     padding: 5,
   },
@@ -116,7 +113,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
-    paddingTop: 7,
   },
   imageContainer: {
     width: '30%',
