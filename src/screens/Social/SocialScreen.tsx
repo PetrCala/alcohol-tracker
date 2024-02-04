@@ -80,13 +80,6 @@ const SocialScreen = ({route, navigation}: SocialScreenProps) => {
   if (!route || !navigation) return null;
   const {screen} = route.params;
   const {userData} = getDatabaseData();
-  const [friendRequests, setFriendRequests] = useState<
-    FriendRequestDisplayData | undefined
-  >(userData?.friend_requests);
-  const [friends, setFriends] = useState<FriendsData | undefined>(
-    userData?.friends,
-  );
-  const userHasFriends = userData?.friends ?? false;
   const [routes] = useState([
     {key: 'friendList', title: 'Friend List', userData: userData},
     {key: 'friendSearch', title: 'Friend Search', userData: userData},
@@ -95,7 +88,6 @@ const SocialScreen = ({route, navigation}: SocialScreenProps) => {
   const [index, setIndex] = useState<number>(
     routes.findIndex(route => route.title === screen) || 0, // Get the index of the screen based on the title
   );
-  // const [friendRequestCount, setFriendRequestCount] = useEffect<number | null>(null);
 
   const renderScene = ({route}: {route: RouteType}) => {
     if (!userData) return null;
@@ -104,26 +96,22 @@ const SocialScreen = ({route, navigation}: SocialScreenProps) => {
         return (
           <FriendListScreen
             navigation={navigation}
-            friends={friends}
+            friends={userData?.friends}
             setIndex={setIndex}
           />
         );
       case 'friendSearch':
         return (
           <SearchScreen
-            friendRequests={friendRequests}
-            setFriendRequests={setFriendRequests}
-            friends={friends}
-            setFriends={setFriends}
+            friendRequests={userData?.friend_requests}
+            friends={userData?.friends}
           />
         );
       case 'friendRequests':
         return (
           <FriendRequestScreen
-            friendRequests={friendRequests}
-            setFriendRequests={setFriendRequests}
-            friends={friends}
-            setFriends={setFriends}
+            friendRequests={userData?.friend_requests}
+            friends={userData?.friends}
           />
         );
       default:
@@ -146,15 +134,9 @@ const SocialScreen = ({route, navigation}: SocialScreenProps) => {
       index: 2,
       source: require('../../../assets/icons/add_user.png'),
       label: 'Friend Requests',
-      infoNumberValue: getReceivedRequestsCount(friendRequests),
+      infoNumberValue: getReceivedRequestsCount(userData?.friend_requests),
     },
   ];
-
-  useMemo(() => {
-    if (!userData) return;
-    setFriendRequests(userData.friend_requests);
-    setFriends(userData.friends);
-  }, [userData]);
 
   if (!userData) return null;
 

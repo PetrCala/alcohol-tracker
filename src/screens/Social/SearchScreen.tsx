@@ -60,11 +60,7 @@ const reducer = (state: State, action: Action): State => {
 
 type ScreenProps = {
   friendRequests: FriendRequestDisplayData | undefined;
-  setFriendRequests: React.Dispatch<
-    React.SetStateAction<FriendRequestDisplayData | undefined>
-  >;
   friends: FriendsData | undefined;
-  setFriends: React.Dispatch<React.SetStateAction<FriendsData | undefined>>;
 };
 
 const SearchScreen = (props: ScreenProps) => {
