@@ -1,4 +1,4 @@
-﻿import React, {useEffect, useMemo, useState} from 'react';
+﻿import React, {useState} from 'react';
 import {
   Dimensions,
   Image,
@@ -9,18 +9,13 @@ import {
 } from 'react-native';
 import {getDatabaseData} from '../../context/DatabaseDataContext';
 import commonStyles from '../../styles/commonStyles';
-import {
-  FriendRequestDisplayData,
-  FriendsData,
-  UserData,
-} from '../../types/database';
+import {UserData} from '../../types/database';
 import {TabView} from 'react-native-tab-view';
 import FriendListScreen from './FriendListScreen';
 import FriendRequestScreen from './FriendRequestScreen';
 import SearchScreen from './SearchScreen';
 import {SocialScreenProps} from '@src/types/screens';
 import MainHeader from '@components/Header/MainHeader';
-import {objKeys} from '@src/utils/dataHandling';
 import {getReceivedRequestsCount} from '@src/utils/social/friendUtils';
 
 type SocialFooterButtonProps = {
