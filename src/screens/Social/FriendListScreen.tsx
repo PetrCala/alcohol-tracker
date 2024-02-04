@@ -105,56 +105,58 @@ const FriendListScreen = (props: FriendListScreenProps) => {
   if (!navigation) return null;
 
   return (
-    <ScrollView
-      style={styles.scrollViewContainer}
-      keyboardShouldPersistTaps="handled">
+    <View style={styles.mainContainer}>
       <SearchWindow
         ref={friendListInputRef}
         doSearch={doSearch}
         onResetSearch={resetSearch}
       />
-      {loadingDisplayData ? (
-        <LoadingData style={styles.loadingContainer} />
-      ) : friends ? (
-        <View style={styles.friendList}>
-          {isNonEmptyArray(state.displayedFriends) ? (
-            Object.keys(friends).map(friendId => {
-              if (!state.displayedFriends.includes(friendId)) return null; // Hide irrelevant
-              const profileData = displayData[friendId];
+      <ScrollView
+        style={styles.scrollViewContainer}
+        keyboardShouldPersistTaps="handled">
+        {loadingDisplayData ? (
+          <LoadingData style={styles.loadingContainer} />
+        ) : friends ? (
+          <View style={styles.friendList}>
+            {isNonEmptyArray(state.displayedFriends) ? (
+              Object.keys(friends).map(friendId => {
+                if (!state.displayedFriends.includes(friendId)) return null; // Hide irrelevant
+                const profileData = displayData[friendId];
 
-              return (
-                <TouchableOpacity
-                  key={friendId + '-button'}
-                  style={styles.friendOverviewButton}
-                  onPress={() => navigateToProfile(friendId, profileData)}>
-                  <UserOverview
-                    key={friendId + '-user-overview'}
-                    userId={friendId}
-                    profileData={profileData}
-                    RightSideComponent={null}
-                  />
-                </TouchableOpacity>
-              );
-            })
-          ) : (
-            <Text style={commonStyles.noUsersFoundText}>
-              {`No friends found.\n\nTry modifying the search text.`}
+                return (
+                  <TouchableOpacity
+                    key={friendId + '-button'}
+                    style={styles.friendOverviewButton}
+                    onPress={() => navigateToProfile(friendId, profileData)}>
+                    <UserOverview
+                      key={friendId + '-user-overview'}
+                      userId={friendId}
+                      profileData={profileData}
+                      RightSideComponent={null}
+                    />
+                  </TouchableOpacity>
+                );
+              })
+            ) : (
+              <Text style={commonStyles.noUsersFoundText}>
+                {`No friends found.\n\nTry modifying the search text.`}
+              </Text>
+            )}
+          </View>
+        ) : (
+          <View style={styles.emptyList}>
+            <Text style={styles.emptyListText}>
+              You do not have any friends yet
             </Text>
-          )}
-        </View>
-      ) : (
-        <View style={styles.emptyList}>
-          <Text style={styles.emptyListText}>
-            You do not have any friends yet
-          </Text>
-          <TouchableOpacity
-            onPress={() => setIndex(1)}
-            style={styles.navigateToSearchButton}>
-            <Text style={styles.navigateToSearchText}>Add them here</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-    </ScrollView>
+            <TouchableOpacity
+              onPress={() => setIndex(1)}
+              style={styles.navigateToSearchButton}>
+              <Text style={styles.navigateToSearchText}>Add them here</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </ScrollView>
+    </View>
   );
 };
 
@@ -163,6 +165,10 @@ export default FriendListScreen;
 const screenHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+    backgroundColor: '#ffff99',
+  },
   scrollViewContainer: {
     flex: 1,
     // backgroundColor: 'white',

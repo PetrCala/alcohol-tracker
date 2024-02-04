@@ -236,10 +236,10 @@ const FriendsFriendsScreen = ({
         headerText="Find Friends of Friends"
         onGoBack={() => navigation.goBack()}
       />
+      <SearchWindow doSearch={doSearch} onResetSearch={resetSearch} />
       <ScrollView
         style={styles.scrollViewContainer}
         keyboardShouldPersistTaps="handled">
-        <SearchWindow doSearch={doSearch} onResetSearch={resetSearch} />
         <View style={styles.searchResultsContainer}>
           {state.searching ? (
             <LoadingData style={styles.loadingData} />

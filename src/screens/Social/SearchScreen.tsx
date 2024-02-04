@@ -150,14 +150,14 @@ const SearchScreen = (props: SearchScreenProps) => {
 
   return (
     <View style={styles.mainContainer}>
+      <SearchWindow
+        ref={searchInputRef}
+        doSearch={doSearch}
+        onResetSearch={resetSearch}
+      />
       <ScrollView
         style={styles.scrollViewContainer}
         keyboardShouldPersistTaps="handled">
-        <SearchWindow
-          ref={searchInputRef}
-          doSearch={doSearch}
-          onResetSearch={resetSearch}
-        />
         <View style={styles.searchResultsContainer}>
           {state.searching ? (
             <LoadingData style={styles.loadingData} />
