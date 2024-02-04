@@ -7,6 +7,7 @@ import {
   createMockConfig,
   createMockMaintenance,
   createMockSession,
+  createMockUserStatus,
 } from '../../utils/mockDatabase';
 import {isConnectedToDatabaseEmulator} from '@src/services/firebaseUtils';
 import {
@@ -59,6 +60,10 @@ const mockDrinkingSession = createMockSession(
   undefined,
   mockSessionUnits,
   undefined,
+);
+const mockUserStatus = createMockUserStatus(
+  mockSessionKey,
+  mockDrinkingSession,
 );
 
 describeWithEmulator(
@@ -177,17 +182,10 @@ describeWithEmulator('Test drinking session functionality', () => {
     await teardownRealtimeDatabaseTestEnv(testApp, db);
   });
 
-  it('should correctly save latest session info', async () => {
-    await set(
-      ref(db, `user_latest_session/${testUserId}`),
-      mockDrinkingSession,
-    );
-    const newSessionInfo = await readDataOnce(
-      db,
-      `user_latest_session/${testUserId}`,
-    );
-    const expectedSessionKey = mockSessionKey;
-    expect(newSessionInfo).toEqual(expectedSessionKey);
+  it('should correctly save user status info', async () => {
+    await set(ref(db, `user_status/${testUserId}`), mockUserStatus);
+    const newSessionInfo = await readDataOnce(db, `user_status/${testUserId}`);
+    expect(newSessionInfo).toEqual(newSessionInfo);
   });
 
   it('should save drinking session data', async () => {
@@ -225,7 +223,7 @@ describeWithEmulator('Test pushing new user info into the database', () => {
   beforeEach(async () => {
     await fillDatabaseWithMockData(db);
 
-    let userList = await readDataOnce(db, 'user_latest_session'); // Arbitrary node with all user ids in top level
+    let userList = await readDataOnce(db, 'user_status'); // Arbitrary node with all user ids in top level
     const userKeys = Object.keys(userList);
     expect(userKeys).not.toContain(newUserId); // Check that the user does not exist in the mock database
 
@@ -340,11 +338,8 @@ describeWithEmulator('Test deleting data from the database', () => {
     expect(dbData).toBeNull();
   });
 
-  it('deletes the latest session data from the database', async () => {
-    const dbSessionData = await readDataOnce(
-      db,
-      `user_latest_session/${testUserId}`,
-    );
+  it('deletes the user status data from the database', async () => {
+    const dbSessionData = await readDataOnce(db, `user_status/${testUserId}`);
     expect(dbSessionData).toBeNull();
   });
 
