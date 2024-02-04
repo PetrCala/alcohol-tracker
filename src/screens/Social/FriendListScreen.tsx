@@ -14,14 +14,15 @@ import useProfileDisplayData from '@hooks/userProfileDisplayData';
 import SearchWindow from '@components/Social/SearchWindow';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import {Database} from 'firebase/database';
-import {UserSearchResults} from '@src/types/search';
+import {SearchWindowRef, UserSearchResults} from '@src/types/search';
 import {GeneralAction} from '@src/types/states';
-import {useMemo, useReducer} from 'react';
+import {useEffect, useMemo, useReducer, useRef} from 'react';
 import {searchDatabaseForUsers} from '@database/search';
 import {objKeys} from '@src/utils/dataHandling';
 import {isNonEmptyArray} from '@src/utils/validation';
 import commonStyles from '@src/styles/commonStyles';
 import {FriendListScreenProps} from '@src/types/screens';
+import {useTabView} from '@src/context/local/TabViewContext';
 
 interface State {
   searching: boolean;
@@ -47,8 +48,9 @@ const reducer = (state: State, action: GeneralAction): State => {
 const FriendListScreen = (props: FriendListScreenProps) => {
   const {navigation, friends, setIndex} = props;
   const {loadingDisplayData, displayData} = useProfileDisplayData(friends);
+  const friendListInputRef = useRef<SearchWindowRef>(null);
   const [state, dispatch] = useReducer(reducer, initialState);
-  const db = useFirebase().db;
+  const {currentScreenIndex} = useTabView();
 
   const doSearch = async (db: Database, searchText: string) => {
     try {
@@ -94,13 +96,23 @@ const FriendListScreen = (props: FriendListScreenProps) => {
     dispatch({type: 'SET_DISPLAYED_FRIENDS', payload: objKeys(friends)});
   }, [friends]);
 
+  useEffect(() => {
+    // Focus the search input when the screen is active
+    if (currentScreenIndex !== 0) return;
+    friendListInputRef.current?.focus();
+  }, [currentScreenIndex]);
+
   if (!navigation) return null;
 
   return (
     <ScrollView
       style={styles.scrollViewContainer}
       keyboardShouldPersistTaps="handled">
-      <SearchWindow doSearch={doSearch} onResetSearch={resetSearch} />
+      <SearchWindow
+        ref={friendListInputRef}
+        doSearch={doSearch}
+        onResetSearch={resetSearch}
+      />
       {loadingDisplayData ? (
         <LoadingData style={styles.loadingContainer} />
       ) : friends ? (

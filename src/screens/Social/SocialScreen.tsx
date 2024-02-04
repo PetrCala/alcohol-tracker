@@ -1,4 +1,4 @@
-﻿import React, {useEffect, useRef, useState} from 'react';
+﻿import React, {useState} from 'react';
 import {
   Dimensions,
   Image,
@@ -22,6 +22,7 @@ import {
 import MainHeader from '@components/Header/MainHeader';
 import {getReceivedRequestsCount} from '@src/utils/social/friendUtils';
 import {useIsFocused} from '@react-navigation/native';
+import {TabViewProvider} from '@src/context/local/TabViewContext';
 
 type SocialFooterButtonProps = {
   index: number;
@@ -85,8 +86,7 @@ const SocialScreen = ({route, navigation}: SocialScreenProps) => {
     {key: 'friendSearch', title: 'Friend Search', userData: userData},
     {key: 'friendRequests', title: 'Friend Requests', userData: userData},
   ]);
-  const friendListRef = useRef<FriendListScreenProps>(null);
-  const searchScreenRef = useRef<SearchScreenProps>(null);
+
   const [index, setIndex] = useState<number>(
     routes.findIndex(route => route.title === screen) || 0, // Get the index of the screen based on the title
   );
@@ -143,31 +143,33 @@ const SocialScreen = ({route, navigation}: SocialScreenProps) => {
   if (!userData) return null;
 
   return (
-    <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
-      <MainHeader headerText="Friends" onGoBack={() => navigation.goBack()} />
-      <TabView
-        navigationState={{index, routes}}
-        renderScene={renderScene}
-        onIndexChange={setIndex}
-        initialLayout={{width: Dimensions.get('window').width}}
-        swipeEnabled={true}
-        tabBarPosition="bottom"
-        renderTabBar={() => null} // Do not render the default tab bar
-      />
-      <View style={commonStyles.mainFooter}>
-        {footerButtons.map(button => (
-          <SocialFooterButton
-            key={button.index}
-            index={button.index}
-            currentIndex={index}
-            setImageIndex={setIndex}
-            source={button.source}
-            label={button.label}
-            infoNumberValue={button.infoNumberValue}
-          />
-        ))}
+    <TabViewProvider currentScreenIndex={index}>
+      <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
+        <MainHeader headerText="Friends" onGoBack={() => navigation.goBack()} />
+        <TabView
+          navigationState={{index, routes}}
+          renderScene={renderScene}
+          onIndexChange={setIndex}
+          initialLayout={{width: Dimensions.get('window').width}}
+          swipeEnabled={true}
+          tabBarPosition="bottom"
+          renderTabBar={() => null} // Do not render the default tab bar
+        />
+        <View style={commonStyles.mainFooter}>
+          {footerButtons.map(button => (
+            <SocialFooterButton
+              key={button.index}
+              index={button.index}
+              currentIndex={index}
+              setImageIndex={setIndex}
+              source={button.source}
+              label={button.label}
+              infoNumberValue={button.infoNumberValue}
+            />
+          ))}
+        </View>
       </View>
-    </View>
+    </TabViewProvider>
   );
 };
 
