@@ -12,6 +12,7 @@
     "pod-install": "cd ios && pod install && cd ..",
     "pod-reset": "./scripts/podReset.sh",
     "docs": "cd docs && bundle exec jekyll serve --livereload",
+    "gradle-clean": "cd android && ./gradlew clean && cd ..",
     "lint": "eslint . --max-warnings=0 --cache --cache-location=node_modules/.cache/eslint",
     "lint-changed": "eslint --fix $(git diff --diff-filter=AM --name-only main -- \"*.js\" \"*.ts\" \"*.tsx\")",
     "lint-watch": "npx eslint-watch --watch --changed",
