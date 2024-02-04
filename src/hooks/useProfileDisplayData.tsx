@@ -7,7 +7,8 @@ import {
   UserStatusDisplayData,
 } from '@src/types/database';
 import {objKeys} from '@src/utils/dataHandling';
-import {fetchUserProfiles} from '@database/profile';
+import {fetchUserProfiles, fetchUserStatuses} from '@database/profile';
+import {Alert} from 'react-native';
 
 interface State {
   loadingDisplayData: boolean;
@@ -64,15 +65,29 @@ const useProfileDisplayData = (
 
   const updateDisplayData = useCallback(async (): Promise<void> => {
     dispatch({type: 'SET_LOADING_DISPLAY_DATA', payload: true});
-    let newProfileDisplayData: ProfileDisplayData = await fetchUserProfiles(
-      db,
-      objKeys(friends),
-    );
-    dispatch({
-      type: 'SET_PROFILE_DISPLAY_DATA',
-      payload: newProfileDisplayData,
-    });
-    dispatch({type: 'SET_LOADING_DISPLAY_DATA', payload: false});
+    try {
+      let newProfileDisplayData: ProfileDisplayData = await fetchUserProfiles(
+        db,
+        objKeys(friends),
+      );
+      let newUserStatusDisplayData: UserStatusDisplayData =
+        await fetchUserStatuses(db, objKeys(friends));
+      dispatch({
+        type: 'SET_PROFILE_DISPLAY_DATA',
+        payload: newProfileDisplayData,
+      });
+      dispatch({
+        type: 'SET_USER_STATUS_DISPLAY_DATA',
+        payload: newUserStatusDisplayData,
+      });
+    } catch (error: any) {
+      Alert.alert(
+        'Database fetch failed',
+        'Could not fetch user display data: ' + error.message,
+      );
+    } finally {
+      dispatch({type: 'SET_LOADING_DISPLAY_DATA', payload: false});
+    }
   }, [friends]);
 
   useEffect(() => {

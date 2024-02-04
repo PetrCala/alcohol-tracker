@@ -383,7 +383,7 @@ const DrinkingSessionScreen = ({
           )}
           <SuccessIndicator
             visible={dbSyncSuccessful}
-            successStyle={styles.successStyle}
+            successStyle={[styles.successStyle, commonStyles.successIndicator]}
           />
         </View>
         <View style={styles.unitCountContainer}>
@@ -498,11 +498,6 @@ const styles = StyleSheet.create({
     right: 0,
   },
   successStyle: {
-    width: 20,
-    height: 20,
-    borderRadius: 25,
-    margin: 10,
-    backgroundColor: 'green',
     position: 'absolute',
     right: 0,
   },

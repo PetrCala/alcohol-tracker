@@ -1,47 +1,69 @@
 import {StyleSheet, Text, View} from 'react-native';
-import {ProfileData} from '../../types/database';
+import {ProfileData, UserStatusData} from '../../types/database';
 import {useFirebase} from '../../context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
+import {getTimestampAge, isRecent} from '@src/utils/timeUtils';
+import SuccessIndicator from '@components/SuccessIndicator';
+import commonStyles from '@src/styles/commonStyles';
 
 type UserOverviewProps = {
   userId: string;
   profileData: ProfileData;
-  RightSideComponent: React.ReactNode;
+  userStatusData: UserStatusData;
 };
 
+/**
+ * Should always be rendered inside a button
+ */
 const UserOverview: React.FC<UserOverviewProps> = ({
   userId,
   profileData,
-  RightSideComponent,
+  userStatusData,
 }) => {
-  const {db, storage} = useFirebase();
-
-  if (!db || !profileData) return;
+  const {storage} = useFirebase();
+  if (!profileData || !userStatusData) return null;
+  const {last_online, latest_session, latest_session_id} = userStatusData;
+  const activeNow = isRecent(last_online);
+  const lastSeen = getTimestampAge(last_online);
 
   return (
     <View key={userId + '-container'} style={styles.userOverviewContainer}>
-      <View key={userId + 'profile'} style={styles.userOverviewProfile}>
-        <ProfileImage
-          key={userId + '-profile-icon'}
-          storage={storage}
-          userId={userId}
-          downloadPath={profileData.photo_url}
-          style={styles.userOverviewImage}
-        />
-        <View key={userId + 'info'} style={styles.userInfoContainer}>
-          <Text
-            key={userId + '-nickname'}
-            style={[styles.userOverviewText, {flexShrink: 1}]}
-            numberOfLines={1}
-            ellipsizeMode="tail">
-            {profileData.display_name}
-          </Text>
-          <Text key={userId + '-sessions'} style={styles.userOverviewText}>
-            {/* User details */}
-          </Text>
+      <View key={userId + '-left-container'} style={styles.leftContainer}>
+        <View key={userId + '-profile'} style={styles.userOverviewProfile}>
+          <ProfileImage
+            key={userId + '-profile-icon'}
+            storage={storage}
+            userId={userId}
+            downloadPath={profileData.photo_url}
+            style={styles.userOverviewImage}
+          />
+          <View key={userId + 'info'} style={styles.userInfoContainer}>
+            <Text
+              key={userId + '-nickname'}
+              style={[styles.userOverviewText, {flexShrink: 1}]}
+              numberOfLines={1}
+              ellipsizeMode="tail">
+              {profileData.display_name}
+            </Text>
+            <Text
+              key={userId + '-sessions'}
+              style={[styles.userDetailsText, styles.leftContainerText]}>
+              some info
+            </Text>
+          </View>
         </View>
       </View>
-      {RightSideComponent}
+      <View key={userId + '-right-container'} style={styles.rightContainer}>
+        {activeNow ? (
+          <View style={commonStyles.successIndicator} />
+        ) : (
+          <Text
+            key={userId + '-status'}
+            style={[styles.userDetailsText, styles.rightContainerText]}>
+            {`Last seen:\n${lastSeen}`}
+          </Text>
+        )}
+      </View>
     </View>
   );
 };
@@ -53,6 +75,20 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     padding: 5,
+  },
+  leftContainer: {
+    flexDirection: 'column',
+    width: '70%',
+    height: '100%',
+  },
+  rightContainer: {
+    flexDirection: 'column',
+    width: '30%',
+    height: '100%',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-end',
+    padding: 5,
+    // backgroundColor: 'pink',
   },
   userOverviewProfile: {
     width: '60%',
@@ -79,5 +115,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     marginLeft: 10,
+  },
+  userDetailsText: {
+    color: 'black',
+    fontSize: 12,
+  },
+  leftContainerText: {
+    marginLeft: 20,
+    marginTop: 5,
+  },
+  rightContainerText: {
+    margin: 5,
+    textAlign: 'right',
   },
 });

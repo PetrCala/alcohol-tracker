@@ -10,7 +10,7 @@
 import {ProfileData} from '../../types/database';
 import LoadingData from '../../components/LoadingData';
 import UserOverview from '@components/Social/UserOverview';
-import useProfileDisplayData from '@hooks/userProfileDisplayData';
+import useProfileDisplayData from '@hooks/useProfileDisplayData';
 import SearchWindow from '@components/Social/SearchWindow';
 import {Database} from 'firebase/database';
 import {SearchWindowRef, UserSearchResults} from '@src/types/search';
@@ -45,7 +45,7 @@ const reducer = (state: State, action: GeneralAction): State => {
 
 const FriendListScreen = (props: FriendListScreenProps) => {
   const {navigation, friends, setIndex} = props;
-  const {loadingDisplayData, profileDisplayData} =
+  const {loadingDisplayData, profileDisplayData, userStatusDisplayData} =
     useProfileDisplayData(friends);
   const friendListInputRef = useRef<SearchWindowRef>(null);
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -114,6 +114,7 @@ const FriendListScreen = (props: FriendListScreenProps) => {
               Object.keys(friends).map(friendId => {
                 if (!state.displayedFriends.includes(friendId)) return null; // Hide irrelevant
                 const profileData = profileDisplayData[friendId];
+                const userStatusData = userStatusDisplayData[friendId];
 
                 return (
                   <TouchableOpacity
@@ -124,7 +125,7 @@ const FriendListScreen = (props: FriendListScreenProps) => {
                       key={friendId + '-user-overview'}
                       userId={friendId}
                       profileData={profileData}
-                      RightSideComponent={null}
+                      userStatusData={userStatusData}
                     />
                   </TouchableOpacity>
                 );
