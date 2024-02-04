@@ -1,5 +1,6 @@
 import {
   Image,
+  Keyboard,
   StyleSheet,
   Text,
   TextInput,
@@ -27,6 +28,7 @@ const SearchWindow: React.FC<SearchWindowProps> = ({
     if (searchText) {
       doSearch(db, searchText);
       setSearchCount(searchCount + 1);
+      Keyboard.dismiss();
     }
   };
 
