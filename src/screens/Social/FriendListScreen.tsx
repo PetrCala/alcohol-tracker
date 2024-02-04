@@ -22,7 +22,6 @@ import {objKeys} from '@src/utils/dataHandling';
 import {isNonEmptyArray} from '@src/utils/validation';
 import commonStyles from '@src/styles/commonStyles';
 import {FriendListScreenProps} from '@src/types/screens';
-import {useTabView} from '@src/context/local/TabViewContext';
 
 interface State {
   searching: boolean;
@@ -50,7 +49,6 @@ const FriendListScreen = (props: FriendListScreenProps) => {
   const {loadingDisplayData, displayData} = useProfileDisplayData(friends);
   const friendListInputRef = useRef<SearchWindowRef>(null);
   const [state, dispatch] = useReducer(reducer, initialState);
-  const {currentScreenIndex} = useTabView();
 
   const doSearch = async (db: Database, searchText: string) => {
     try {
@@ -95,12 +93,6 @@ const FriendListScreen = (props: FriendListScreenProps) => {
   useMemo(() => {
     dispatch({type: 'SET_DISPLAYED_FRIENDS', payload: objKeys(friends)});
   }, [friends]);
-
-  useEffect(() => {
-    // Focus the search input when the screen is active
-    if (currentScreenIndex !== 0) return;
-    friendListInputRef.current?.focus();
-  }, [currentScreenIndex]);
 
   if (!navigation) return null;
 

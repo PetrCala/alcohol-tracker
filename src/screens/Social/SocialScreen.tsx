@@ -22,7 +22,6 @@ import {
 import MainHeader from '@components/Header/MainHeader';
 import {getReceivedRequestsCount} from '@src/utils/social/friendUtils';
 import {useIsFocused} from '@react-navigation/native';
-import {TabViewProvider} from '@src/context/local/TabViewContext';
 
 type SocialFooterButtonProps = {
   index: number;
@@ -143,33 +142,31 @@ const SocialScreen = ({route, navigation}: SocialScreenProps) => {
   if (!userData) return null;
 
   return (
-    <TabViewProvider currentScreenIndex={index}>
-      <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
-        <MainHeader headerText="Friends" onGoBack={() => navigation.goBack()} />
-        <TabView
-          navigationState={{index, routes}}
-          renderScene={renderScene}
-          onIndexChange={setIndex}
-          initialLayout={{width: Dimensions.get('window').width}}
-          swipeEnabled={true}
-          tabBarPosition="bottom"
-          renderTabBar={() => null} // Do not render the default tab bar
-        />
-        <View style={commonStyles.mainFooter}>
-          {footerButtons.map(button => (
-            <SocialFooterButton
-              key={button.index}
-              index={button.index}
-              currentIndex={index}
-              setImageIndex={setIndex}
-              source={button.source}
-              label={button.label}
-              infoNumberValue={button.infoNumberValue}
-            />
-          ))}
-        </View>
+    <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
+      <MainHeader headerText="Friends" onGoBack={() => navigation.goBack()} />
+      <TabView
+        navigationState={{index, routes}}
+        renderScene={renderScene}
+        onIndexChange={setIndex}
+        initialLayout={{width: Dimensions.get('window').width}}
+        swipeEnabled={true}
+        tabBarPosition="bottom"
+        renderTabBar={() => null} // Do not render the default tab bar
+      />
+      <View style={commonStyles.mainFooter}>
+        {footerButtons.map(button => (
+          <SocialFooterButton
+            key={button.index}
+            index={button.index}
+            currentIndex={index}
+            setImageIndex={setIndex}
+            source={button.source}
+            label={button.label}
+            infoNumberValue={button.infoNumberValue}
+          />
+        ))}
       </View>
-    </TabViewProvider>
+    </View>
   );
 };
 

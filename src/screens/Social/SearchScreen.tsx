@@ -16,7 +16,6 @@ import SearchResult from '@components/Social/SearchResult';
 import SearchWindow from '@components/Social/SearchWindow';
 import {SearchWindowRef, UserSearchResults} from '@src/types/search';
 import {SearchScreenProps} from '@src/types/screens';
-import {useTabView} from '@src/context/local/TabViewContext';
 
 interface State {
   searchResultData: UserSearchResults;
@@ -62,7 +61,6 @@ const SearchScreen = (props: SearchScreenProps) => {
   const searchInputRef = useRef<SearchWindowRef>(null);
   const user = auth.currentUser;
   const [state, dispatch] = useReducer(reducer, initialState);
-  const {currentScreenIndex} = useTabView();
 
   const doSearch = async (db: Database, searchText: string): Promise<void> => {
     try {
@@ -139,12 +137,6 @@ const SearchScreen = (props: SearchScreenProps) => {
   useMemo(() => {
     updateRequestStatuses();
   }, [friendRequests]); // When updated in the database, not locally
-
-  useEffect(() => {
-    // Focus the search input when the screen is active
-    if (currentScreenIndex !== 1) return;
-    searchInputRef.current?.focus();
-  }, [currentScreenIndex]);
 
   if (!user || !storage) return;
 
