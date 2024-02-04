@@ -367,6 +367,7 @@ export function monthEntriesToColors(
  * @param all_units Units to sum up.
  */
 export function sumAllUnits(units: UnitsObject): number {
+  if (!units) return 0;
   return Object.values(units).reduce((total, unitTypes) => {
     return (
       total +
@@ -424,6 +425,7 @@ export function sumAllPoints(
   unitsObject: UnitsObject,
   unitsToPoints: UnitTypesProps,
 ): number {
+  if (!unitsObject) return 0;
   let totalPoints = 0;
   // Iterate over each timestamp in unitsObject
   for (const unitTypes of Object.values(unitsObject)) {
