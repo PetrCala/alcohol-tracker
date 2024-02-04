@@ -42,6 +42,7 @@ import {
   getCommonFriendsCount,
 } from '@src/utils/social/friendUtils';
 import MainHeader from '@components/Header/MainHeader';
+import ManageFriendPopup from '@components/Popups/Profile/ManageFriendPopup';
 
 interface State {
   isLoading: boolean;
@@ -122,32 +123,6 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
   } = route.params;
   const {db, storage} = useFirebase();
   const [state, dispatch] = useReducer(reducer, initialState);
-
-  const handleUnfriend = async () => {
-    if (!user) return;
-    try {
-      await unfriend(db, user.uid, userId);
-      navigation.goBack();
-    } catch (error: any) {
-      Alert.alert(
-        'User does not exist in the database',
-        'Could not unfriend this user: ' + error.message,
-      );
-    } finally {
-      dispatch({type: 'SET_UNFRIEND_MODAL_VISIBLE', payload: false});
-      dispatch({type: 'SET_MANAGE_FRIEND_MODAL_VISIBLE', payload: false});
-    }
-  };
-
-  const manageFriendData = [
-    {
-      label: 'Unfriend',
-      icon: require('../../assets/icons/remove-user.png'),
-      action: () => {
-        dispatch({type: 'SET_UNFRIEND_MODAL_VISIBLE', payload: true});
-      },
-    },
-  ];
 
   // Define your stats data
   const statsData: StatData = [
@@ -336,24 +311,13 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
         </View>
         <View style={{height: 200, backgroundColor: '#ffff99'}}></View>
       </ScrollView>
-      <ItemListPopup
+      <ManageFriendPopup
         visible={state.manageFriendModalVisible}
-        transparent={true}
-        heading={'Manage Friend'}
-        actions={manageFriendData}
-        onRequestClose={() => {
-          dispatch({type: 'SET_MANAGE_FRIEND_MODAL_VISIBLE', payload: false});
-          dispatch({type: 'SET_UNFRIEND_MODAL_VISIBLE', payload: false}); // Extra safety
-        }}
-      />
-      <YesNoPopup
-        visible={state.unfriendModalVisible}
-        transparent={true}
-        message={'Do you really want to\nunfriend this user?'}
-        onRequestClose={() => {
-          dispatch({type: 'SET_UNFRIEND_MODAL_VISIBLE', payload: false});
-        }}
-        onYes={handleUnfriend}
+        setVisibility={(visible: boolean) =>
+          dispatch({type: 'SET_MANAGE_FRIEND_MODAL_VISIBLE', payload: visible})
+        }
+        onGoBack={() => navigation.goBack()}
+        friendId={userId}
       />
     </View>
   );
