@@ -18,7 +18,10 @@ import SearchWindow from '@components/Social/SearchWindow';
 import {FriendsFriendsScreenProps} from '@src/types/screens';
 import MainHeader from '@components/Header/MainHeader';
 import GrayHeader from '@components/Header/GrayHeader';
-import {getCommonFriends} from '@src/utils/social/friendUtils';
+import {
+  getCommonFriends,
+  getCommonFriendsCount,
+} from '@src/utils/social/friendUtils';
 import {UserSearchResults} from '@src/types/search';
 import {objKeys} from '@src/utils/dataHandling';
 import {getDatabaseData} from '@src/context/global/DatabaseDataContext';
@@ -243,11 +246,17 @@ const FriendsFriendsScreen = ({
           ) : isNonEmptyArray(state.displayedFriends) ? (
             <>
               <GrayHeader
-                headerText={`Common Friends (${state.commonFriends.length})`}
+                headerText={`Common Friends (${getCommonFriendsCount(
+                  state.commonFriends,
+                  state.displayedFriends,
+                )})`}
               />
               {renderSearchResults(true)}
               <GrayHeader
-                headerText={`Other Friends (${state.otherFriends.length})`}
+                headerText={`Other Friends (${getCommonFriendsCount(
+                  state.otherFriends,
+                  state.displayedFriends,
+                )})`}
               />
               {renderSearchResults(false)}
             </>
