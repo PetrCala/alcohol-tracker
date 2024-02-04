@@ -2,7 +2,6 @@
   initializeEmptyMockDatabase,
   createMockConfig,
   createMockFeedback,
-  createMockCurrentSession,
   createMockUnitsObject,
   createMockSession,
   createMockPreferences,
@@ -16,7 +15,6 @@ import {
   DatabaseProps,
   ConfigProps,
   FeedbackProps,
-  CurrentSessionData,
   DrinkingSessionData,
   UnitsObject,
   UnitTypesKeys,
@@ -25,6 +23,7 @@ import {
   UnconfirmedDaysData,
   UserData,
   UnitsToColorsData,
+  DrinkingSessionItem,
 } from '../../src/types/database';
 
 /**
@@ -94,29 +93,23 @@ function validateFeedback(feedbackData: {[feedbackId: string]: any}): boolean {
   return true;
 }
 
-/** Input an object of supposed current session data and validate that the object is indeed of the CurrentSessionData type. Return true if yes, and false otherwise.
- *
- * @param obj Object to validate.
- * @returns bool
- */
-function isCurrentSessionData(obj: any): obj is CurrentSessionData {
-  return typeof obj.current_session_id === 'string';
+function isLatestSessionData(obj: any): obj is DrinkingSessionItem {
+  return (
+    typeof obj.start_time === 'number' &&
+    typeof obj.end_time === 'number' &&
+    typeof obj.blackout === 'boolean' // TODO: Add more checks
+  );
 }
 
-/** Enter a data object containing supposed current sessions, and validate that all objects (values) are indeed of the supposed type. If yes, return true, otherwise return false.
- *
- * @param userSessions Data to validate
- * @returns bool
- */
-function validateUserCurrentSession(userSessions: {
+function validateUserLatestSession(userSessions: {
   [userId: string]: any;
 }): boolean {
   for (const userId in userSessions) {
-    if (!isCurrentSessionData(userSessions[userId])) {
-      return false; // If any value is not a valid CurrentSessionData, return false
+    if (!isLatestSessionData(userSessions[userId])) {
+      return false;
     }
   }
-  return true; // All values are valid
+  return true;
 }
 
 /** Type guard for UnitTypesProps. Return true if an object is of UnitTypesProps type, and false otherwise.
@@ -327,11 +320,6 @@ describe('mockDatabase functions', () => {
     expect(feedback.text).toBe('Mock feedback');
   });
 
-  it('should create a mock current session', () => {
-    const session = createMockCurrentSession('mock-session-id');
-    expect(session.current_session_id).toBe('mock-session-id');
-  });
-
   it('should create a mock units object', () => {
     const units = createMockUnitsObject({wine: 5});
     expect(units).toBeDefined();
@@ -385,8 +373,8 @@ describe('mockDatabase data structure', () => {
     expect(validateFeedback(db.feedback)).toBe(true);
   });
 
-  it('should have user current session data', () => {
-    expect(validateUserCurrentSession(db.user_current_session)).toBe(true);
+  it('should have user latest session data', () => {
+    expect(validateUserLatestSession(db.user_latest_session)).toBe(true);
   });
 
   it('should have user drinking session data', () => {

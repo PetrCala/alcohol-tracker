@@ -6,8 +6,8 @@ export type DatabaseProps = {
   nickname_to_id: {
     [nickname_key: string]: NicknameToIdData;
   };
-  user_current_session: {
-    [user_id: string]: CurrentSessionData;
+  user_latest_session: {
+    [user_id: string]: DrinkingSessionItem;
   };
   user_drinking_sessions: {
     [user_id: string]: DrinkingSessionData;
@@ -65,19 +65,17 @@ export type NicknameToIdData = {
   [user_id: string]: string; // User UID - Raw nickname pair
 };
 
-export type CurrentSessionData = {
-  current_session_id: string | null;
+export type DrinkingSessionItem = {
+  start_time: number;
+  end_time: number;
+  units: UnitsObject;
+  blackout: boolean;
+  note: string;
+  ongoing?: boolean | null;
 };
 
 export type DrinkingSessionData = {
-  [session_id: string]: {
-    start_time: number;
-    end_time: number;
-    units: UnitsObject;
-    blackout: boolean;
-    note: string;
-    ongoing?: boolean | null;
-  };
+  [session_id: string]: DrinkingSessionItem;
 };
 
 /** Type for drinking session data when stored as an array */
@@ -164,13 +162,17 @@ export type ProfileDisplayData = {
 export type FriendRequestStatus = 'sent' | 'received';
 
 // Used when rendering friend request screen
-export type FriendRequestStatusState = 'self' | 'sent' | 'received' | 'friend' | 'undefined';
+export type FriendRequestStatusState =
+  | 'self'
+  | 'sent'
+  | 'received'
+  | 'friend'
+  | 'undefined';
 
 // Used when displaying the data on the social screens
 export type FriendRequestDisplayData = {
   [request_id: string]: FriendRequestStatusState;
 };
-
 
 // Used when rendering drinking session day overview
 export type DrinkingSessionProps = {
