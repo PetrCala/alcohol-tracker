@@ -37,7 +37,7 @@ const SearchWindow: React.FC<SearchWindowProps> = ({
   };
 
   return (
-    <>
+    <View style={styles.mainContainer}>
       <View style={styles.textContainer}>
         <TextInput
           placeholder="Search for a user"
@@ -65,31 +65,41 @@ const SearchWindow: React.FC<SearchWindowProps> = ({
           <Text style={styles.searchButtonText}>Search</Text>
         </TouchableOpacity>
       </View>
-    </>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  textContainer: {
+  mainContainer: {
     width: '95%',
     height: 50,
+    alignSelf: 'center',
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    marginTop: 10,
+    marginBottom: 5,
+    // backgroundColor: 'pink',
+  },
+  textContainer: {
+    width: '80%',
+    height: '90%',
+    justifyContent: 'flex-start',
+    alignContent: 'center',
+    alignSelf: 'center',
+    flexDirection: 'row',
+    paddingRight: 5,
     borderWidth: 2,
     borderColor: '#000',
     borderRadius: 10,
     backgroundColor: 'white',
-    marginTop: 10,
-    marginBottom: 5,
-    alignSelf: 'center',
   },
   searchText: {
     height: '100%',
     width: '90%',
-    padding: 10,
-    marginTop: 5,
-    marginBottom: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    // justifyContent: 'space-between',
+    paddingLeft: 10,
   },
   searchTextResetContainer: {
     width: '10%',
@@ -103,24 +113,22 @@ const styles = StyleSheet.create({
     tintColor: 'gray',
   },
   searchButtonContainer: {
-    width: '95%',
+    width: '20%',
+    height: '100%',
     flexDirection: 'column',
-    alignItems: 'center',
-    alignSelf: 'center',
-    marginBottom: 5,
-  },
-  searchResultsContainer: {
-    width: '100%',
-    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'flex-end',
   },
   searchButton: {
-    width: '100%',
+    width: '95%',
+    height: '90%',
     backgroundColor: '#fcf50f',
-    padding: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
     borderRadius: 8,
     borderWidth: 2,
     borderColor: 'black',
-    alignItems: 'center',
+    marginLeft: '5%',
   },
   searchButtonText: {
     color: 'black',
