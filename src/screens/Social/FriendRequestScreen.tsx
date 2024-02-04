@@ -269,7 +269,7 @@ const FriendRequestScreen = (props: ScreenProps) => {
         style={styles.scrollViewContainer}
         keyboardShouldPersistTaps="handled">
         {state.isLoading ? (
-          <LoadingData />
+          <LoadingData style={styles.loadingData} />
         ) : (
           <View style={styles.friendList}>
             <GrayHeader
@@ -317,6 +317,13 @@ const styles = StyleSheet.create({
   scrollViewContainer: {
     flex: 1,
     backgroundColor: '#ffff99',
+  },
+  loadingData: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 100,
+    margin: 5,
   },
   friendList: {
     width: '100%',

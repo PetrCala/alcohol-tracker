@@ -1,4 +1,4 @@
-﻿import React, {useMemo, useState} from 'react';
+﻿import React, {useEffect, useMemo, useState} from 'react';
 import {
   Dimensions,
   Image,
@@ -20,6 +20,8 @@ import FriendRequestScreen from './FriendRequestScreen';
 import SearchScreen from './SearchScreen';
 import {SocialScreenProps} from '@src/types/screens';
 import MainHeader from '@components/Header/MainHeader';
+import {objKeys} from '@src/utils/dataHandling';
+import {getReceivedRequestsCount} from '@src/utils/social/friendUtils';
 
 type SocialFooterButtonProps = {
   index: number;
@@ -27,6 +29,7 @@ type SocialFooterButtonProps = {
   setImageIndex: (index: number) => void;
   source: any;
   label: string;
+  infoNumberValue?: number;
 };
 
 const SocialFooterButton: React.FC<SocialFooterButtonProps> = ({
@@ -35,7 +38,9 @@ const SocialFooterButton: React.FC<SocialFooterButtonProps> = ({
   setImageIndex,
   source,
   label,
+  infoNumberValue,
 }) => {
+  const displayNumberValue = infoNumberValue && infoNumberValue > 0;
   return (
     <View style={styles.footerPartContainer}>
       <TouchableOpacity
@@ -44,7 +49,21 @@ const SocialFooterButton: React.FC<SocialFooterButtonProps> = ({
           currentIndex === index ? {backgroundColor: '#ebeb02'} : {},
         ]}
         onPress={() => setImageIndex(index)}>
-        <Image source={source} style={styles.footerImage} />
+        <View
+          style={
+            displayNumberValue
+              ? [styles.imageContainer, styles.extraSpacing]
+              : styles.imageContainer
+          }>
+          <Image source={source} style={styles.footerImage} />
+          {displayNumberValue ? (
+            <View style={styles.friendRequestCounter}>
+              <Text style={styles.friendRequestCounterValue}>
+                {infoNumberValue}
+              </Text>
+            </View>
+          ) : null}
+        </View>
         <Text style={styles.footerText}>{label}</Text>
       </TouchableOpacity>
     </View>
@@ -76,6 +95,7 @@ const SocialScreen = ({route, navigation}: SocialScreenProps) => {
   const [index, setIndex] = useState<number>(
     routes.findIndex(route => route.title === screen) || 0, // Get the index of the screen based on the title
   );
+  // const [friendRequestCount, setFriendRequestCount] = useEffect<number | null>(null);
 
   const renderScene = ({route}: {route: RouteType}) => {
     if (!userData) return null;
@@ -126,6 +146,7 @@ const SocialScreen = ({route, navigation}: SocialScreenProps) => {
       index: 2,
       source: require('../../../assets/icons/add_user.png'),
       label: 'Friend Requests',
+      infoNumberValue: getReceivedRequestsCount(friendRequests),
     },
   ];
 
@@ -158,6 +179,7 @@ const SocialScreen = ({route, navigation}: SocialScreenProps) => {
             setImageIndex={setIndex}
             source={button.source}
             label={button.label}
+            infoNumberValue={button.infoNumberValue}
           />
         ))}
       </View>
@@ -220,6 +242,32 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 3,
     backgroundColor: '#ebeb02',
+  },
+  imageContainer: {
+    flexDirection: 'row',
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  extraSpacing: {
+    marginLeft: 30, // 20 + 10
+  },
+  friendRequestCounter: {
+    width: 20,
+    height: 20,
+    backgroundColor: '#4CAF50',
+    borderRadius: 10,
+    marginLeft: 10,
+    marginBottom: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'black',
+  },
+  friendRequestCounterValue: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: 'white',
   },
   footerImage: {
     width: 25,

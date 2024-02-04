@@ -1,5 +1,10 @@
 import {readDataOnce} from '@database/baseFunctions';
-import {FriendsData} from '@src/types/database';
+import {
+  FriendRequestData,
+  FriendRequestDisplayData,
+  FriendRequestStatus,
+  FriendsData,
+} from '@src/types/database';
 import {Database} from 'firebase/database';
 import {isNonEmptyArray} from '../validation';
 
@@ -42,3 +47,35 @@ export function getCommonFriendsCount(
 ): number {
   return getCommonFriends(user1FriendIds, user2FriendIds).length;
 }
+
+/**
+ * Calculates the count of friend requests with a specific status.
+ *
+ * @param friendRequests - The friend requests object.
+ * @param requestStatus - The status of the friend requests to count.
+ * @returns The count of friend requests with the specified status.
+ */
+const getFriendRequestsCount = (
+  friendRequests: FriendRequestDisplayData | FriendRequestData | undefined,
+  requestStatus: FriendRequestStatus,
+): number => {
+  if (!friendRequests) return 0;
+
+  return Object.keys(friendRequests).reduce((acc, requestId) => {
+    return acc + (friendRequests[requestId] === requestStatus ? 1 : 0);
+  }, 0);
+};
+
+export const getReceivedRequestsCount = (
+  friendRequests: FriendRequestDisplayData | FriendRequestData | undefined,
+): number => {
+  const status: FriendRequestStatus = 'received';
+  return getFriendRequestsCount(friendRequests, status);
+};
+
+export const getSentRequestsCount = (
+  friendRequests: FriendRequestDisplayData | FriendRequestData | undefined,
+): number => {
+  const status: FriendRequestStatus = 'sent';
+  return getFriendRequestsCount(friendRequests, status);
+};
