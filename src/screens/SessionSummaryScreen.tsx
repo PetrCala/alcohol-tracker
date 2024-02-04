@@ -15,7 +15,7 @@ import {
 } from '../utils/dataHandling';
 import BasicButton from '../components/Buttons/BasicButton';
 import {DrinkingSessionArrayItem} from '../types/database';
-import {getDatabaseData} from '../context/DatabaseDataContext';
+import {getDatabaseData} from '../context/global/DatabaseDataContext';
 import commonStyles from '../styles/commonStyles';
 import MainHeader from '@components/Header/MainHeader';
 

@@ -6,7 +6,7 @@ import {
   FriendRequestData,
 } from '../../types/database';
 import {useEffect, useMemo, useReducer} from 'react';
-import {useFirebase} from '../../context/FirebaseContext';
+import {useFirebase} from '../../context/global/FirebaseContext';
 import {auth} from '../../services/firebaseSetup';
 import {isNonEmptyArray, isNonEmptyObject} from '../../utils/validation';
 import LoadingData from '../../components/LoadingData';
@@ -21,7 +21,7 @@ import GrayHeader from '@components/Header/GrayHeader';
 import {getCommonFriends} from '@src/utils/social/friendUtils';
 import {UserSearchResults} from '@src/types/search';
 import {objKeys} from '@src/utils/dataHandling';
-import {getDatabaseData} from '@src/context/DatabaseDataContext';
+import {getDatabaseData} from '@src/context/global/DatabaseDataContext';
 import SeeProfileButton from '@components/Buttons/SeeProfileButton';
 import {GeneralAction} from '@src/types/states';
 import commonStyles from '@src/styles/commonStyles';

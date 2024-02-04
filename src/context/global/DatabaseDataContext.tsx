@@ -13,9 +13,9 @@ import {
   PreferencesData,
   UnconfirmedDaysData,
   UserData,
-} from '../types/database';
-import {auth} from '../services/firebaseSetup';
-import {listenForDataChanges} from '../database/baseFunctions';
+} from '../../types/database';
+import {auth} from '../../services/firebaseSetup';
+import {listenForDataChanges} from '../../database/baseFunctions';
 import {isEqual} from 'lodash';
 import {useFirebase} from './FirebaseContext';
 
@@ -155,7 +155,6 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
       stopListening();
     };
   }, []);
-
 
   // Monitor user preferences
   useEffect(() => {

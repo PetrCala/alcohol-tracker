@@ -18,7 +18,7 @@ import {signInUserWithEmailAndPassword} from '../auth/auth';
 import commonStyles from '../styles/commonStyles';
 import {LoginScreenProps} from '../types/screens';
 import LoadingData from '../components/LoadingData';
-import {useUserConnection} from '../context/UserConnectionContext';
+import {useUserConnection} from '../context/global/UserConnectionContext';
 import InputTextPopup from '../components/Popups/InputTextPopup';
 import {handleErrors} from '../utils/errorHandling';
 import WarningMessage from '@components/Info/WarningMessage';

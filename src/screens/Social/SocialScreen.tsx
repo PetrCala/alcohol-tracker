@@ -1,4 +1,4 @@
-﻿import React, {useState} from 'react';
+﻿import React, {useEffect, useRef, useState} from 'react';
 import {
   Dimensions,
   Image,
@@ -7,16 +7,21 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {getDatabaseData} from '../../context/DatabaseDataContext';
-import commonStyles from '../../styles/commonStyles';
-import {UserData} from '../../types/database';
+import {getDatabaseData} from '@src/context/global/DatabaseDataContext';
+import commonStyles from '@src/styles/commonStyles';
+import {UserData} from '@src/types/database';
 import {TabView} from 'react-native-tab-view';
 import FriendListScreen from './FriendListScreen';
 import FriendRequestScreen from './FriendRequestScreen';
 import SearchScreen from './SearchScreen';
-import {SocialScreenProps} from '@src/types/screens';
+import {
+  FriendListScreenProps,
+  SearchScreenProps,
+  SocialScreenProps,
+} from '@src/types/screens';
 import MainHeader from '@components/Header/MainHeader';
 import {getReceivedRequestsCount} from '@src/utils/social/friendUtils';
+import {useIsFocused} from '@react-navigation/native';
 
 type SocialFooterButtonProps = {
   index: number;
@@ -80,6 +85,8 @@ const SocialScreen = ({route, navigation}: SocialScreenProps) => {
     {key: 'friendSearch', title: 'Friend Search', userData: userData},
     {key: 'friendRequests', title: 'Friend Requests', userData: userData},
   ]);
+  const friendListRef = useRef<FriendListScreenProps>(null);
+  const searchScreenRef = useRef<SearchScreenProps>(null);
   const [index, setIndex] = useState<number>(
     routes.findIndex(route => route.title === screen) || 0, // Get the index of the screen based on the title
   );

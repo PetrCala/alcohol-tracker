@@ -9,10 +9,10 @@ import {
 import MenuIcon from '../components/Buttons/MenuIcon';
 import {SettingsScreenProps} from '../types/screens';
 import {auth} from '../services/firebaseSetup';
-import {useUserConnection} from '../context/UserConnectionContext';
+import {useUserConnection} from '../context/global/UserConnectionContext';
 import UserOffline from '../components/UserOffline';
 import BasicButton from '../components/Buttons/BasicButton';
-import {getDatabaseData} from '../context/DatabaseDataContext';
+import {getDatabaseData} from '../context/global/DatabaseDataContext';
 import commonStyles from '../styles/commonStyles';
 import MainHeader from '@components/Header/MainHeader';
 

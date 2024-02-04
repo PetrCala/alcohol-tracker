@@ -11,7 +11,7 @@ import {
 import MenuIcon from '../components/Buttons/MenuIcon';
 import BasicButton from '../components/Buttons/BasicButton';
 import {DrinkingSessionScreenProps} from '../types/screens';
-import {useFirebase} from '../context/FirebaseContext';
+import {useFirebase} from '../context/global/FirebaseContext';
 import {
   discardLiveDrinkingSession,
   endLiveDrinkingSession,
@@ -37,7 +37,7 @@ import {
   UnitsObject,
 } from '../types/database';
 import YesNoPopup from '../components/Popups/YesNoPopup';
-import {useUserConnection} from '../context/UserConnectionContext';
+import {useUserConnection} from '../context/global/UserConnectionContext';
 import UserOffline from '../components/UserOffline';
 import {DrinkDataProps} from '../types/components';
 import UnitTypesView from '../components/UnitTypesView';

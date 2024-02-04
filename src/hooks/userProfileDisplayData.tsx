@@ -1,5 +1,5 @@
 import {useEffect, useReducer, useCallback} from 'react';
-import {useFirebase} from '@src/context/FirebaseContext';
+import {useFirebase} from '@src/context/global/FirebaseContext';
 import {
   FriendsData,
   NicknameToIdData,

@@ -7,6 +7,7 @@ import {
   DrinkingSessionArrayItem,
   ProfileData,
   FriendsData,
+  FriendRequestDisplayData,
 } from './database';
 import {RouteProp} from '@react-navigation/native';
 import {DateObject} from './components';
@@ -155,4 +156,15 @@ export type TermsOfServiceScreenProps = {
 export type PrivacyPolicyScreenProps = {
   // navigation?: StackNavigationProp<AppStackParamList, 'Privacy Policy Screen'>;
   navigation?: any;
+};
+
+export type FriendListScreenProps = {
+  navigation: any;
+  friends: FriendsData | undefined;
+  setIndex: React.Dispatch<React.SetStateAction<number>>;
+};
+
+export type SearchScreenProps = {
+  friendRequests: FriendRequestDisplayData | undefined;
+  friends: FriendsData | undefined;
 };

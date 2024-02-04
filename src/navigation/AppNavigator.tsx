@@ -20,7 +20,7 @@ import TermsOfServiceScreen from '../screens/TermsOfServiceScreen';
 import PrivacyPolicyScreen from '../screens/PrivacyPolicyScreen';
 
 import Stack from './Stack';
-import {DatabaseDataProvider} from '../context/DatabaseDataContext';
+import {DatabaseDataProvider} from '../context/global/DatabaseDataContext';
 import FriendsFriendsScreen from '@screens/Social/FriendsFriendsScreeen';
 
 const AppNavigator = () => {

@@ -26,13 +26,13 @@ import {
   timestampToDate,
   getYearMonthVerbose,
 } from '../utils/dataHandling';
-import {useUserConnection} from '../context/UserConnectionContext';
+import {useUserConnection} from '../context/global/UserConnectionContext';
 import UserOffline from '../components/UserOffline';
 import {updateUserLastOnline} from '../database/users';
 import {startLiveDrinkingSession} from '../database/drinkingSessions';
-import {getDatabaseData} from '../context/DatabaseDataContext';
+import {getDatabaseData} from '../context/global/DatabaseDataContext';
 import commonStyles from '@src/styles/commonStyles';
-import {useFirebase} from '../context/FirebaseContext';
+import {useFirebase} from '../context/global/FirebaseContext';
 import ProfileImage from '../components/ProfileImage';
 import {generateDatabaseKey} from '@database/baseFunctions';
 

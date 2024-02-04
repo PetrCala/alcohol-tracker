@@ -7,69 +7,77 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {useState} from 'react';
+import {useState, forwardRef, useRef, useImperativeHandle} from 'react';
 import {Database} from 'firebase/database';
-import {useFirebase} from '@src/context/FirebaseContext';
+import {useFirebase} from '@src/context/global/FirebaseContext';
+import {SearchWindowRef} from '@src/types/search';
 
 type SearchWindowProps = {
   doSearch: (db: Database, searchText: string) => void;
   onResetSearch: () => void;
 };
 
-const SearchWindow: React.FC<SearchWindowProps> = ({
-  doSearch,
-  onResetSearch,
-}) => {
-  const db = useFirebase().db;
-  const [searchText, setSearchText] = useState<string>('');
-  const [searchCount, setSearchCount] = useState<number>(0);
+const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
+  ({doSearch, onResetSearch}, parentRef) => {
+    const db = useFirebase().db;
+    const inputRef = useRef<TextInput>(null); // Input field ref for focus handling
+    const [searchText, setSearchText] = useState<string>('');
+    const [searchCount, setSearchCount] = useState<number>(0);
 
-  const handleDoSearch = (db: Database, searchText: string): void => {
-    if (searchText) {
-      doSearch(db, searchText);
-      setSearchCount(searchCount + 1);
-      Keyboard.dismiss();
-    }
-  };
+    const handleDoSearch = (db: Database, searchText: string): void => {
+      if (searchText) {
+        doSearch(db, searchText);
+        setSearchCount(searchCount + 1);
+        Keyboard.dismiss();
+      }
+    };
 
-  const handleResetSearch = () => {
-    onResetSearch();
-    setSearchText('');
-    setSearchCount(0);
-  };
+    const handleResetSearch = () => {
+      onResetSearch();
+      setSearchText('');
+      setSearchCount(0);
+    };
 
-  return (
-    <View style={styles.mainContainer}>
-      <View style={styles.textContainer}>
-        <TextInput
-          placeholder="Search for a user"
-          value={searchText}
-          onChangeText={text => setSearchText(text)}
-          style={styles.searchText}
-          keyboardType="default"
-          textContentType="nickname"
-        />
-        {searchText !== '' || searchCount > 0 ? (
+    useImperativeHandle(parentRef, () => ({
+      focus: () => {
+        inputRef.current?.focus();
+      },
+    }));
+
+    return (
+      <View style={styles.mainContainer}>
+        <View style={styles.textContainer}>
+          <TextInput
+            placeholder="Search for a user"
+            value={searchText}
+            onChangeText={text => setSearchText(text)}
+            style={styles.searchText}
+            keyboardType="default"
+            textContentType="nickname"
+            ref={inputRef}
+          />
+          {searchText !== '' || searchCount > 0 ? (
+            <TouchableOpacity
+              onPress={handleResetSearch}
+              style={styles.searchTextResetContainer}>
+              <Image
+                style={styles.searchTextResetImage}
+                source={require('../../../assets/icons/thin_x.png')}
+              />
+            </TouchableOpacity>
+          ) : null}
+        </View>
+        <View style={styles.searchButtonContainer}>
           <TouchableOpacity
-            onPress={handleResetSearch}
-            style={styles.searchTextResetContainer}>
-            <Image
-              style={styles.searchTextResetImage}
-              source={require('../../../assets/icons/thin_x.png')}
-            />
+            style={styles.searchButton}
+            onPress={() => handleDoSearch(db, searchText)}>
+            <Text style={styles.searchButtonText}>Search</Text>
           </TouchableOpacity>
-        ) : null}
+        </View>
       </View>
-      <View style={styles.searchButtonContainer}>
-        <TouchableOpacity
-          style={styles.searchButton}
-          onPress={() => handleDoSearch(db, searchText)}>
-          <Text style={styles.searchButtonText}>Search</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-};
+    );
+  },
+);
 
 const styles = StyleSheet.create({
   mainContainer: {

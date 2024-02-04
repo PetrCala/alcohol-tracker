@@ -12,7 +12,7 @@ import LoadingData from '../../components/LoadingData';
 import UserOverview from '@components/Social/UserOverview';
 import useProfileDisplayData from '@hooks/userProfileDisplayData';
 import SearchWindow from '@components/Social/SearchWindow';
-import {useFirebase} from '@src/context/FirebaseContext';
+import {useFirebase} from '@src/context/global/FirebaseContext';
 import {Database} from 'firebase/database';
 import {UserSearchResults} from '@src/types/search';
 import {GeneralAction} from '@src/types/states';
@@ -21,6 +21,7 @@ import {searchDatabaseForUsers} from '@database/search';
 import {objKeys} from '@src/utils/dataHandling';
 import {isNonEmptyArray} from '@src/utils/validation';
 import commonStyles from '@src/styles/commonStyles';
+import {FriendListScreenProps} from '@src/types/screens';
 
 interface State {
   searching: boolean;
@@ -43,13 +44,7 @@ const reducer = (state: State, action: GeneralAction): State => {
   }
 };
 
-type ScreenProps = {
-  navigation: any;
-  friends: FriendsData | undefined;
-  setIndex: React.Dispatch<React.SetStateAction<number>>;
-};
-
-const FriendListScreen = (props: ScreenProps) => {
+const FriendListScreen = (props: FriendListScreenProps) => {
   const {navigation, friends, setIndex} = props;
   const {loadingDisplayData, displayData} = useProfileDisplayData(friends);
   const [state, dispatch] = useReducer(reducer, initialState);

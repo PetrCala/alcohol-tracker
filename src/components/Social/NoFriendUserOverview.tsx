@@ -1,6 +1,6 @@
 ﻿import {auth} from '../../services/firebaseSetup';
 import {StyleSheet, Text, View} from 'react-native';
-import {useFirebase} from '../../context/FirebaseContext';
+import {useFirebase} from '../../context/global/FirebaseContext';
 import {ProfileData} from '../../types/database';
 import ProfileImage from '../ProfileImage';
 
@@ -20,7 +20,9 @@ const NoFriendUserOverview: React.FC<NoFriendUserOverviewProps> = ({
   if (!db || !profileData) return;
 
   return (
-    <View key={userId + '-container'} style={styles.noFriendUserOverviewContainer}>
+    <View
+      key={userId + '-container'}
+      style={styles.noFriendUserOverviewContainer}>
       <View key={userId + 'profile'} style={styles.noFriendUserOverviewProfile}>
         <ProfileImage
           key={userId + '-profile-icon'}
@@ -29,11 +31,11 @@ const NoFriendUserOverview: React.FC<NoFriendUserOverviewProps> = ({
           userId={userId}
           style={styles.noFriendUserOverviewImage}
         />
-        <Text 
-        key={userId + '-nickname'} 
-        style={styles.noFriendUserOverviewText}
-        numberOfLines={1}
-        ellipsizeMode="tail">
+        <Text
+          key={userId + '-nickname'}
+          style={styles.noFriendUserOverviewText}
+          numberOfLines={1}
+          ellipsizeMode="tail">
           {profileData.display_name}
         </Text>
       </View>

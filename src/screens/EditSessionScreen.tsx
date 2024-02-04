@@ -17,7 +17,7 @@ import {
   UnitTypesProps,
   UnitsObject,
 } from '../types/database';
-import {useFirebase} from '../context/FirebaseContext';
+import {useFirebase} from '../context/global/FirebaseContext';
 import {
   removeDrinkingSessionData,
   saveDrinkingSessionData,
@@ -37,12 +37,12 @@ import {
 } from '../utils/dataHandling';
 import {auth} from '../services/firebaseSetup';
 import YesNoPopup from '../components/Popups/YesNoPopup';
-import {useUserConnection} from '../context/UserConnectionContext';
+import {useUserConnection} from '../context/global/UserConnectionContext';
 import UserOffline from '../components/UserOffline';
 import {DrinkDataProps, UnitTypesViewProps} from '../types/components';
 import UnitTypesView from '../components/UnitTypesView';
 import SessionDetailsSlider from '../components/SessionDetailsSlider';
-import {getDatabaseData} from '../context/DatabaseDataContext';
+import {getDatabaseData} from '../context/global/DatabaseDataContext';
 import {getPreviousRouteName} from '@navigation/navigationUtils';
 import CONST from '@src/CONST';
 import MainHeader from '@components/Header/MainHeader';

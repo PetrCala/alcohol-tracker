@@ -24,7 +24,7 @@ import {checkPermission} from '@src/permissions/checkPermission';
 import {requestPermission} from '@src/permissions/requestPermission';
 import {setProfilePictureURL, updateProfileInfo} from '@database/profile';
 import {auth} from '@src/services/firebaseSetup';
-import {useFirebase} from '@src/context/FirebaseContext';
+import {useFirebase} from '@src/context/global/FirebaseContext';
 import {updateProfile} from 'firebase/auth';
 import path from 'path';
 import {cacheProfileImage} from '@src/utils/cache';

@@ -1,13 +1,11 @@
 ﻿import {Alert, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {
   FriendRequestStatusState,
-  FriendsData,
-  FriendRequestDisplayData,
   ProfileDisplayData,
   ProfileData,
 } from '@src/types/database';
-import {useMemo, useReducer} from 'react';
-import {useFirebase} from '@src/context/FirebaseContext';
+import {useEffect, useMemo, useReducer, useRef} from 'react';
+import {useFirebase} from '@src/context/global/FirebaseContext';
 import {auth} from '@src/services/firebaseSetup';
 import {isNonEmptyArray} from '@src/utils/validation';
 import LoadingData from '@src/components/LoadingData';
@@ -16,7 +14,8 @@ import {searchDatabaseForUsers} from '@src/database/search';
 import {fetchUserProfiles} from '@database/profile';
 import SearchResult from '@components/Social/SearchResult';
 import SearchWindow from '@components/Social/SearchWindow';
-import {UserSearchResults} from '@src/types/search';
+import {SearchWindowRef, UserSearchResults} from '@src/types/search';
+import {SearchScreenProps} from '@src/types/screens';
 
 interface State {
   searchResultData: UserSearchResults;
@@ -56,14 +55,10 @@ const reducer = (state: State, action: Action): State => {
   }
 };
 
-type ScreenProps = {
-  friendRequests: FriendRequestDisplayData | undefined;
-  friends: FriendsData | undefined;
-};
-
-const SearchScreen = (props: ScreenProps) => {
+const SearchScreen = (props: SearchScreenProps) => {
   const {friendRequests, friends} = props;
   const {db, storage} = useFirebase();
+  const searchInputRef = useRef<SearchWindowRef>(null);
   const user = auth.currentUser;
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -143,6 +138,10 @@ const SearchScreen = (props: ScreenProps) => {
     updateRequestStatuses();
   }, [friendRequests]); // When updated in the database, not locally
 
+  useEffect(() => {
+    searchInputRef.current?.focus(); // Focus on the search input field
+  }, []);
+
   if (!user || !storage) return;
 
   return (
@@ -150,7 +149,12 @@ const SearchScreen = (props: ScreenProps) => {
       <ScrollView
         style={styles.scrollViewContainer}
         keyboardShouldPersistTaps="handled">
-        <SearchWindow doSearch={doSearch} onResetSearch={resetSearch} />
+        {/* <SearchWindow doSearch={doSearch} onResetSearch={resetSearch} /> */}
+        <SearchWindow
+          ref={searchInputRef}
+          doSearch={() => {}}
+          onResetSearch={() => {}}
+        />
         <View style={styles.searchResultsContainer}>
           {state.searching ? (
             <LoadingData style={styles.loadingData} />

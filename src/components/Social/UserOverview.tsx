@@ -1,6 +1,6 @@
 import {StyleSheet, Text, View} from 'react-native';
 import {ProfileData} from '../../types/database';
-import {useFirebase} from '../../context/FirebaseContext';
+import {useFirebase} from '../../context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
 
 type UserOverviewProps = {

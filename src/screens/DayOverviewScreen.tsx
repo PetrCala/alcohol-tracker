@@ -34,9 +34,9 @@ import {
 import {DayOverviewScreenProps} from '../types/screens';
 import {auth} from '../services/firebaseSetup';
 import UserOffline from '../components/UserOffline';
-import {useUserConnection} from '../context/UserConnectionContext';
+import {useUserConnection} from '../context/global/UserConnectionContext';
 import BasicButton from '../components/Buttons/BasicButton';
-import {getDatabaseData} from '../context/DatabaseDataContext';
+import {getDatabaseData} from '../context/global/DatabaseDataContext';
 import CONST from '@src/CONST';
 
 type CombinedDataProps = {
@@ -45,7 +45,7 @@ type CombinedDataProps = {
 };
 import commonStyles from '../styles/commonStyles';
 import {generateDatabaseKey} from '@database/baseFunctions';
-import {useFirebase} from '@src/context/FirebaseContext';
+import {useFirebase} from '@src/context/global/FirebaseContext';
 import MainHeader from '@components/Header/MainHeader';
 import MainHeaderButton from '@components/Header/MainHeaderButton';
 

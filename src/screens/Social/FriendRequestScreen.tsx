@@ -14,7 +14,7 @@ import {
   ProfileDisplayData,
 } from '../../types/database';
 import {useEffect, useMemo, useReducer, useState} from 'react';
-import {useFirebase} from '../../context/FirebaseContext';
+import {useFirebase} from '../../context/global/FirebaseContext';
 import {acceptFriendRequest, deleteFriendRequest} from '../../database/friends';
 import {auth} from '../../services/firebaseSetup';
 import LoadingData from '../../components/LoadingData';

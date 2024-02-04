@@ -1,6 +1,6 @@
 import {Dimensions, StyleSheet, Text, View} from 'react-native';
 import {ProfileData} from '../../types/database';
-import {useFirebase} from '../../context/FirebaseContext';
+import {useFirebase} from '../../context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
 import {auth} from '@src/services/firebaseSetup';
 import UploadImageComponent from '@components/UploadImage';

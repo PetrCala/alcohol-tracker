@@ -10,7 +10,7 @@
 } from 'react-native';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import commonStyles from '../styles/commonStyles';
-import {useFirebase} from '../context/FirebaseContext';
+import {useFirebase} from '../context/global/FirebaseContext';
 import {ProfileProps} from '@src/types/screens';
 import {auth} from '../services/firebaseSetup';
 import {StatData, StatsOverview} from '@components/Items/StatOverview';

@@ -15,7 +15,7 @@ import {
   extractHostAndPort,
   isConnectedToDatabaseEmulator,
   isConnectedToStorageEmulator,
-} from '../../src/services/firebaseUtils';
+} from '../../services/firebaseUtils';
 import CONFIG from '@src/CONFIG';
 import CONST from '@src/CONST';
 
@@ -60,8 +60,10 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
 
   // Check if emulators should be used
   if (isTestEnv) {
-    if (!firebaseConfig.databaseURL) throw new Error('Database URL not defined in firebaseConfig');
-    if (!firebaseConfig.storageBucket) throw new Error('Storage bucket not defined in firebaseConfig');
+    if (!firebaseConfig.databaseURL)
+      throw new Error('Database URL not defined in firebaseConfig');
+    if (!firebaseConfig.storageBucket)
+      throw new Error('Storage bucket not defined in firebaseConfig');
 
     const [dbHost, dbPort] = extractHostAndPort(firebaseConfig.databaseURL);
     const [storageHost, storagePort] = extractHostAndPort(
