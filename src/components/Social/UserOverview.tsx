@@ -127,5 +127,6 @@ const styles = StyleSheet.create({
   rightContainerText: {
     margin: 5,
     textAlign: 'right',
+    color: '#333',
   },
 });
