@@ -11,6 +11,7 @@ import {useState, forwardRef, useRef, useImperativeHandle} from 'react';
 import {Database} from 'firebase/database';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import {SearchWindowRef} from '@src/types/search';
+import KeyboardFocusHandler from '@components/KeyboardFocusHandler';
 
 type SearchWindowProps = {
   doSearch: (db: Database, searchText: string) => void;
@@ -47,15 +48,17 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
     return (
       <View style={styles.mainContainer}>
         <View style={styles.textContainer}>
-          <TextInput
-            placeholder="Search for a user"
-            value={searchText}
-            onChangeText={text => setSearchText(text)}
-            style={styles.searchText}
-            keyboardType="default"
-            textContentType="nickname"
-            ref={inputRef}
-          />
+          <KeyboardFocusHandler>
+            <TextInput
+              placeholder="Search for a user"
+              value={searchText}
+              onChangeText={text => setSearchText(text)}
+              style={styles.searchText}
+              keyboardType="default"
+              textContentType="nickname"
+              ref={inputRef}
+            />
+          </KeyboardFocusHandler>
           {searchText !== '' || searchCount > 0 ? (
             <TouchableOpacity
               onPress={handleResetSearch}
