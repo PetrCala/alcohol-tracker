@@ -7,16 +7,15 @@
   TouchableOpacity,
   View,
 } from 'react-native';
-import {FriendsData, ProfileData} from '../../types/database';
+import {ProfileData} from '../../types/database';
 import LoadingData from '../../components/LoadingData';
 import UserOverview from '@components/Social/UserOverview';
 import useProfileDisplayData from '@hooks/userProfileDisplayData';
 import SearchWindow from '@components/Social/SearchWindow';
-import {useFirebase} from '@src/context/global/FirebaseContext';
 import {Database} from 'firebase/database';
 import {SearchWindowRef, UserSearchResults} from '@src/types/search';
 import {GeneralAction} from '@src/types/states';
-import {useEffect, useMemo, useReducer, useRef} from 'react';
+import {useMemo, useReducer, useRef} from 'react';
 import {searchDatabaseForUsers} from '@database/search';
 import {objKeys} from '@src/utils/dataHandling';
 import {isNonEmptyArray} from '@src/utils/validation';
