@@ -18,7 +18,7 @@ const DismissableTextInput: React.FC<DismissableTextInputProps> = ({
 }) => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <View>
+      <View style={{flex: 1}}>
         <TextInput {...props} style={style} />
       </View>
     </TouchableWithoutFeedback>

@@ -261,15 +261,6 @@ const MainScreen = ({navigation}: MainScreenProps) => {
               <Text style={styles.yearMonthText}>{thisYearMonth}</Text>
           </View> */}
       </View>
-      {sessionOngoing ? (
-        <TouchableOpacity
-          style={styles.userInSessionWarningContainer}
-          onPress={startDrinkingSession}>
-          <Text style={styles.userInSessionWarningText}>
-            You are currently in session!
-          </Text>
-        </TouchableOpacity>
-      ) : null}
       {/* <View style={styles.yearMonthContainer}>
         <Text style={styles.yearMonthText}>{thisYearMonth}</Text>
       </View> */}
@@ -278,6 +269,15 @@ const MainScreen = ({navigation}: MainScreenProps) => {
         refreshControl={
           <RefreshControl refreshing={state.refreshing} onRefresh={onRefresh} />
         }>
+        {sessionOngoing ? (
+          <TouchableOpacity
+            style={styles.userInSessionWarningContainer}
+            onPress={startDrinkingSession}>
+            <Text style={styles.userInSessionWarningText}>
+              You are currently in session!
+            </Text>
+          </TouchableOpacity>
+        ) : null}
         <View style={styles.menuInfoContainer}>
           <View style={styles.menuInfoItemContainer}>
             <Text style={styles.menuInfoText}>Units:</Text>
