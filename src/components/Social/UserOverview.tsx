@@ -1,5 +1,9 @@
 import {StyleSheet, Text, View} from 'react-native';
-import {ProfileData, UserStatusData} from '../../types/database';
+import {
+  DrinkingSessionArrayItem,
+  ProfileData,
+  UserStatusData,
+} from '../../types/database';
 import {useFirebase} from '../../context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
 import {getTimestampAge, isRecent} from '@src/utils/timeUtils';
@@ -23,6 +27,9 @@ const UserOverview: React.FC<UserOverviewProps> = ({
   const activeNow = isRecent(last_online);
   const lastSeen = getTimestampAge(last_online);
   const inSession = latest_session?.ongoing;
+  const sessionLength = latest_session?.end_time
+    ? getTimestampAge(latest_session.end_time, false)
+    : '';
   const unitsThisSession = latest_session
     ? sumAllUnits(latest_session?.units)
     : null;
@@ -59,7 +66,7 @@ const UserOverview: React.FC<UserOverviewProps> = ({
                 <Text
                   key={userId + '-sessions'}
                   style={[styles.userDetailsText, styles.leftContainerText]}>
-                  Currently in session
+                  In session for: {sessionLength}
                 </Text>
                 <Text
                   key={userId + '-units'}
@@ -136,7 +143,7 @@ const styles = StyleSheet.create({
   },
   centerUserInfo: {
     justifyContent: 'center',
-    marginTop: 0,
+    marginTop: -5, // 5 is the margin of the text
   },
   userOverviewText: {
     color: 'black',
@@ -144,6 +151,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     marginLeft: 5,
     marginBottom: 3,
+    marginTop: 5,
   },
   userDetailsText: {
     color: 'black',
@@ -151,7 +159,7 @@ const styles = StyleSheet.create({
   },
   leftContainerText: {
     marginLeft: 15,
-    margin: 2,
+    margin: 1,
   },
   rightContainerText: {
     margin: 5,
