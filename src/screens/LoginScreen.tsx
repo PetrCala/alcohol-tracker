@@ -291,9 +291,12 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     marginTop: screenHeight * 0.15,
     width: '80%',
+    height: 50,
+    backgroundColor: 'blue',
   },
   input: {
     backgroundColor: 'white',
+    height: 50,
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 10,

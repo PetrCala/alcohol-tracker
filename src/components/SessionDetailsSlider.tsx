@@ -97,7 +97,7 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
           <View style={styles.noteWindowContainer}>
             <DismissableTextInput
               defaultValue={note}
-              style={styles.noteText}
+              style={styles.noteTextInput}
               onChangeText={value => onNoteChange(value)}
               placeholder={'Write your note here'}
               placeholderTextColor={'#a8a8a8'}
@@ -194,7 +194,8 @@ const styles = StyleSheet.create({
     paddingRight: 15,
     marginTop: 5,
   },
-  noteText: {
+  noteTextInput: {
+    backgroundColor: 'pink',
     width: '100%',
     height: 100,
     flexGrow: 1,
