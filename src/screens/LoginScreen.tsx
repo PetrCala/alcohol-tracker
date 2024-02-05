@@ -138,90 +138,87 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
   if (state.loadingUser) return <LoadingData />;
 
   return (
-    <ScrollView
-      keyboardShouldPersistTaps="handled"
-      onScrollBeginDrag={Keyboard.dismiss}
-      contentContainerStyle={{flexGrow: 1, flexShrink: 1}}>
-      <KeyboardAvoidingView
+    <View style={styles.mainContainer}>
+      {/* <KeyboardAvoidingView
         style={styles.mainContainer}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <WarningMessage warningText={state.warning} dispatch={dispatch} />
-        <SuccessMessage successText={state.success} dispatch={dispatch} />
-        <View style={styles.logoContainer}>
-          <Image
-            source={require('../../assets/logo/alcohol-tracker-source-icon.png')}
-            style={styles.logo}
-          />
-        </View>
-        <View style={styles.inputContainer}>
-          <DismissableTextInput
-            placeholder="Email"
-            placeholderTextColor={'#a8a8a8'}
-            keyboardType="email-address"
-            textContentType="emailAddress"
-            value={state.email}
-            onChangeText={text =>
-              dispatch({type: 'UPDATE_EMAIL', payload: text})
-            }
-            style={styles.input}
-          />
-          <DismissableTextInput
-            placeholder="Password"
-            placeholderTextColor={'#a8a8a8'}
-            textContentType="password"
-            value={state.password}
-            onChangeText={text =>
-              dispatch({type: 'UPDATE_PASSWORD', payload: text})
-            }
-            secureTextEntry
-            style={styles.input}
-          />
-          <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
-            <Text style={styles.loginButtonText}>Login</Text>
-          </TouchableOpacity>
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}> */}
+      <WarningMessage warningText={state.warning} dispatch={dispatch} />
+      <SuccessMessage successText={state.success} dispatch={dispatch} />
+      <View style={styles.logoContainer}>
+        <Image
+          source={require('../../assets/logo/alcohol-tracker-source-icon.png')}
+          style={styles.logo}
+        />
+      </View>
+      <View style={styles.inputContainer}>
+        <DismissableTextInput
+          placeholder="Email"
+          placeholderTextColor={'#a8a8a8'}
+          keyboardType="email-address"
+          textContentType="emailAddress"
+          value={state.email}
+          onChangeText={text => dispatch({type: 'UPDATE_EMAIL', payload: text})}
+          style={styles.input}
+        />
+        <DismissableTextInput
+          placeholder="Password"
+          placeholderTextColor={'#a8a8a8'}
+          textContentType="password"
+          value={state.password}
+          onChangeText={text =>
+            dispatch({type: 'UPDATE_PASSWORD', payload: text})
+          }
+          secureTextEntry
+          style={styles.input}
+        />
+        <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
+          <Text style={styles.loginButtonText}>Login</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() =>
+            dispatch({
+              type: 'SET_RESET_PASSWORD_MODAL_VISIBLE',
+              payload: true,
+            })
+          }
+          style={styles.forgottenPasswordButton}>
+          <Text style={styles.forgottenPasswordText}>
+            Forgot your password?
+          </Text>
+        </TouchableOpacity>
+        <View style={[commonStyles.horizontalLine, styles.customLineWidth]} />
+        <View style={styles.signUpContainer}>
           <TouchableOpacity
+            style={styles.signUpButtonContainer}
             onPress={() =>
-              dispatch({
-                type: 'SET_RESET_PASSWORD_MODAL_VISIBLE',
-                payload: true,
+              navigation.navigate('Sign Up Screen', {
+                loginEmail: state.email,
               })
-            }
-            style={styles.forgottenPasswordButton}>
-            <Text style={styles.forgottenPasswordText}>
-              Forgot your password?
-            </Text>
+            }>
+            <Text style={styles.signUpInfoText}>Don't have an account?</Text>
+            <Text style={styles.signUpButtonText}>Sign up</Text>
           </TouchableOpacity>
-          <View style={[commonStyles.horizontalLine, styles.customLineWidth]} />
-          <View style={styles.signUpContainer}>
-            <TouchableOpacity
-              style={styles.signUpButtonContainer}
-              onPress={() =>
-                navigation.navigate('Sign Up Screen', {loginEmail: state.email})
-              }>
-              <Text style={styles.signUpInfoText}>Don't have an account?</Text>
-              <Text style={styles.signUpButtonText}>Sign up</Text>
-            </TouchableOpacity>
-          </View>
-          <InputTextPopup
-            visible={state.resetPasswordModalVisible}
-            transparent={true}
-            message={'E-mail to send the reset link to:'}
-            confirmationMessage={'Send link'}
-            placeholder={'E-mail'}
-            onRequestClose={() =>
-              dispatch({
-                type: 'SET_RESET_PASSWORD_MODAL_VISIBLE',
-                payload: false,
-              })
-            }
-            onSubmit={mail => handleResetPassword(mail)}
-            keyboardType="email-address"
-            textContentType="emailAddress"
-            secureTextEntry={false}
-          />
         </View>
-      </KeyboardAvoidingView>
-    </ScrollView>
+        <InputTextPopup
+          visible={state.resetPasswordModalVisible}
+          transparent={true}
+          message={'E-mail to send the reset link to:'}
+          confirmationMessage={'Send link'}
+          placeholder={'E-mail'}
+          onRequestClose={() =>
+            dispatch({
+              type: 'SET_RESET_PASSWORD_MODAL_VISIBLE',
+              payload: false,
+            })
+          }
+          onSubmit={mail => handleResetPassword(mail)}
+          keyboardType="email-address"
+          textContentType="emailAddress"
+          secureTextEntry={false}
+        />
+      </View>
+      {/* </KeyboardAvoidingView> */}
+    </View>
   );
 };
 
@@ -232,34 +229,22 @@ const screenHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
   mainContainer: {
-    flexGrow: 1,
-    flexShrink: 1,
-    justifyContent: 'center',
+    flex: 1,
+    justifyContent: 'flex-start',
     alignItems: 'center',
+    flexDirection: 'column',
     backgroundColor: '#FFFF99',
   },
   logoContainer: {
-    flexShrink: 1,
     justifyContent: 'flex-end',
     alignItems: 'center',
-    backgroundColor: '#FFFF99',
-    marginTop: screenHeight * 0.2,
     width: '100%',
+    height: screenHeight * 0.2,
   },
   logo: {
     width: 50,
     height: 50,
     borderRadius: 25,
-  },
-  infoContainer: {
-    width: '80%',
-    height: 'auto',
-    position: 'absolute', // Temp
-    top: '10%', // Temp
-    borderRadius: 5,
-    borderWidth: 2,
-    alignItems: 'center',
-    alignSelf: 'center',
   },
   warningInfoContainer: {
     backgroundColor: '#fce3e1',
@@ -287,16 +272,13 @@ const styles = StyleSheet.create({
     color: 'green',
   },
   inputContainer: {
-    flexGrow: 1,
-    flexShrink: 1,
-    marginTop: screenHeight * 0.15,
+    paddingTop: screenHeight * 0.15,
     width: '80%',
-    height: 50,
-    backgroundColor: 'blue',
+    height: screenHeight * 0.85,
   },
   input: {
     backgroundColor: 'white',
-    height: 50,
+    height: 45,
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 10,

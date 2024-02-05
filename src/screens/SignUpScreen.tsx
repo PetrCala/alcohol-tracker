@@ -266,77 +266,69 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
   if (!route || !navigation) return null; // Should never be null
 
   return (
-    <ScrollView
-      keyboardShouldPersistTaps="handled"
-      onScrollBeginDrag={Keyboard.dismiss}
-      contentContainerStyle={{flexGrow: 1, flexShrink: 1}}>
-      <KeyboardAvoidingView
+    <View style={styles.mainContainer}>
+      {/* <KeyboardAvoidingView
         style={styles.mainContainer}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <WarningMessage warningText={state.warning} dispatch={dispatch} />
-        <View style={styles.logoContainer}>
-          <Image
-            source={require('../../assets/logo/alcohol-tracker-source-icon.png')}
-            style={styles.logo}
-          />
-        </View>
-        <View style={styles.inputContainer}>
-          <DismissableTextInput
-            placeholder="Email"
-            placeholderTextColor={'#a8a8a8'}
-            keyboardType="email-address"
-            textContentType="emailAddress"
-            value={state.email}
-            onChangeText={text =>
-              dispatch({type: 'UPDATE_EMAIL', payload: text})
-            }
-            style={styles.input}
-          />
-          <DismissableTextInput
-            placeholder="Username"
-            placeholderTextColor={'#a8a8a8'}
-            textContentType="username"
-            value={state.username}
-            onChangeText={text =>
-              dispatch({type: 'UPDATE_USERNAME', payload: text})
-            }
-            style={styles.input}
-          />
-          <DismissableTextInput
-            placeholder="Password"
-            placeholderTextColor={'#a8a8a8'}
-            textContentType="password"
-            value={state.password}
-            onChangeText={text =>
-              dispatch({type: 'UPDATE_PASSWORD', payload: text})
-            }
-            style={styles.input}
-            secureTextEntry
-          />
-          <DismissableTextInput
-            placeholder="Beta key"
-            placeholderTextColor={'#a8a8a8'}
-            value={state.betaKey}
-            onChangeText={text =>
-              dispatch({type: 'SET_BETA_KEY', payload: text})
-            }
-            style={styles.input}
-            secureTextEntry
-          />
-          <TouchableOpacity onPress={handleSignUp} style={styles.signUpButton}>
-            <Text style={styles.signUpButtonText}>Create account</Text>
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}> */}
+      <WarningMessage warningText={state.warning} dispatch={dispatch} />
+      <View style={styles.logoContainer}>
+        <Image
+          source={require('../../assets/logo/alcohol-tracker-source-icon.png')}
+          style={styles.logo}
+        />
+      </View>
+      <View style={styles.inputContainer}>
+        <DismissableTextInput
+          placeholder="Email"
+          placeholderTextColor={'#a8a8a8'}
+          keyboardType="email-address"
+          textContentType="emailAddress"
+          value={state.email}
+          onChangeText={text => dispatch({type: 'UPDATE_EMAIL', payload: text})}
+          style={styles.input}
+        />
+        <DismissableTextInput
+          placeholder="Username"
+          placeholderTextColor={'#a8a8a8'}
+          textContentType="username"
+          value={state.username}
+          onChangeText={text =>
+            dispatch({type: 'UPDATE_USERNAME', payload: text})
+          }
+          style={styles.input}
+        />
+        <DismissableTextInput
+          placeholder="Password"
+          placeholderTextColor={'#a8a8a8'}
+          textContentType="password"
+          value={state.password}
+          onChangeText={text =>
+            dispatch({type: 'UPDATE_PASSWORD', payload: text})
+          }
+          style={styles.input}
+          secureTextEntry
+        />
+        <DismissableTextInput
+          placeholder="Beta key"
+          placeholderTextColor={'#a8a8a8'}
+          value={state.betaKey}
+          onChangeText={text => dispatch({type: 'SET_BETA_KEY', payload: text})}
+          style={styles.input}
+          secureTextEntry
+        />
+        <TouchableOpacity onPress={handleSignUp} style={styles.signUpButton}>
+          <Text style={styles.signUpButtonText}>Create account</Text>
+        </TouchableOpacity>
+        <View style={styles.loginContainer}>
+          <TouchableOpacity
+            style={styles.loginButtonContainer}
+            onPress={() => navigation.navigate('Login Screen')}>
+            <Text style={styles.loginInfoText}>Already a user?</Text>
+            <Text style={styles.loginButtonText}>Log in</Text>
           </TouchableOpacity>
-          <View style={styles.loginContainer}>
-            <TouchableOpacity
-              style={styles.loginButtonContainer}
-              onPress={() => navigation.navigate('Login Screen')}>
-              <Text style={styles.loginInfoText}>Already a user?</Text>
-              <Text style={styles.loginButtonText}>Log in</Text>
-            </TouchableOpacity>
-          </View>
         </View>
-      </KeyboardAvoidingView>
-    </ScrollView>
+      </View>
+    </View>
   );
 };
 
@@ -346,19 +338,17 @@ const screenHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
   mainContainer: {
-    flexGrow: 1,
-    flexShrink: 1,
-    justifyContent: 'center',
+    flex: 1,
+    justifyContent: 'flex-start',
     alignItems: 'center',
+    flexDirection: 'column',
     backgroundColor: '#FFFF99',
   },
   logoContainer: {
-    flexShrink: 1,
     justifyContent: 'flex-end',
     alignItems: 'center',
-    backgroundColor: '#FFFF99',
-    marginTop: screenHeight * 0.2,
     width: '100%',
+    height: screenHeight * 0.2,
   },
   logo: {
     width: 50,
@@ -387,13 +377,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   inputContainer: {
-    flexGrow: 1,
-    flexShrink: 1,
-    marginTop: screenHeight * 0.15,
+    paddingTop: screenHeight * 0.1,
     width: '80%',
+    height: screenHeight * 0.85,
   },
   input: {
     backgroundColor: 'white',
+    height: 45,
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 10,
@@ -410,7 +400,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 2,
     borderColor: '#000',
-    marginTop: 25,
+    marginTop: 10,
     alignItems: 'center',
     alignSelf: 'center',
   },
