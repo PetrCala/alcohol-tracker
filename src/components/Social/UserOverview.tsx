@@ -66,7 +66,7 @@ const UserOverview: React.FC<UserOverviewProps> = ({
                 <Text
                   key={userId + '-sessions'}
                   style={[styles.userDetailsText, styles.leftContainerText]}>
-                  In session for: {sessionLength}
+                  Currently in session{/*// for: {sessionLength}*/}
                 </Text>
                 <Text
                   key={userId + '-units'}
