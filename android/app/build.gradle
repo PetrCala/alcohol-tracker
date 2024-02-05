@@ -100,8 +100,8 @@ android {
         applicationId "com.alcohol_tracker"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1000021502
-        versionName "0.2.15-2"
+        versionCode 1000021503
+        versionName "0.2.15-3"
     }
 
     splits {
