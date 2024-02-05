@@ -8,6 +8,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -18,12 +19,11 @@ import {signInUserWithEmailAndPassword} from '../auth/auth';
 import commonStyles from '../styles/commonStyles';
 import {LoginScreenProps} from '../types/screens';
 import LoadingData from '../components/LoadingData';
-import {useUserConnection} from '../context/global/UserConnectionContext';
 import InputTextPopup from '../components/Popups/InputTextPopup';
 import {handleErrors} from '../utils/errorHandling';
 import WarningMessage from '@components/Info/WarningMessage';
 import SuccessMessage from '@components/Info/SuccessMessage';
-import DismissableTextInput from '@components/Keyboard/DismissableTextInput';
+import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 
 interface State {
   email: string;
@@ -138,87 +138,87 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
   if (state.loadingUser) return <LoadingData />;
 
   return (
-    <View style={styles.mainContainer}>
-      {/* <KeyboardAvoidingView
-        style={styles.mainContainer}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}> */}
-      <WarningMessage warningText={state.warning} dispatch={dispatch} />
-      <SuccessMessage successText={state.success} dispatch={dispatch} />
-      <View style={styles.logoContainer}>
-        <Image
-          source={require('../../assets/logo/alcohol-tracker-source-icon.png')}
-          style={styles.logo}
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <DismissableTextInput
-          placeholder="Email"
-          placeholderTextColor={'#a8a8a8'}
-          keyboardType="email-address"
-          textContentType="emailAddress"
-          value={state.email}
-          onChangeText={text => dispatch({type: 'UPDATE_EMAIL', payload: text})}
-          style={styles.input}
-        />
-        <DismissableTextInput
-          placeholder="Password"
-          placeholderTextColor={'#a8a8a8'}
-          textContentType="password"
-          value={state.password}
-          onChangeText={text =>
-            dispatch({type: 'UPDATE_PASSWORD', payload: text})
-          }
-          secureTextEntry
-          style={styles.input}
-        />
-        <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
-          <Text style={styles.loginButtonText}>Login</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() =>
-            dispatch({
-              type: 'SET_RESET_PASSWORD_MODAL_VISIBLE',
-              payload: true,
-            })
-          }
-          style={styles.forgottenPasswordButton}>
-          <Text style={styles.forgottenPasswordText}>
-            Forgot your password?
-          </Text>
-        </TouchableOpacity>
-        <View style={[commonStyles.horizontalLine, styles.customLineWidth]} />
-        <View style={styles.signUpContainer}>
-          <TouchableOpacity
-            style={styles.signUpButtonContainer}
-            onPress={() =>
-              navigation.navigate('Sign Up Screen', {
-                loginEmail: state.email,
-              })
-            }>
-            <Text style={styles.signUpInfoText}>Don't have an account?</Text>
-            <Text style={styles.signUpButtonText}>Sign up</Text>
-          </TouchableOpacity>
+    <DismissKeyboard>
+      <View style={styles.mainContainer}>
+        <WarningMessage warningText={state.warning} dispatch={dispatch} />
+        <SuccessMessage successText={state.success} dispatch={dispatch} />
+        <View style={styles.logoContainer}>
+          <Image
+            source={require('../../assets/logo/alcohol-tracker-source-icon.png')}
+            style={styles.logo}
+          />
         </View>
-        <InputTextPopup
-          visible={state.resetPasswordModalVisible}
-          transparent={true}
-          message={'E-mail to send the reset link to:'}
-          confirmationMessage={'Send link'}
-          placeholder={'E-mail'}
-          onRequestClose={() =>
-            dispatch({
-              type: 'SET_RESET_PASSWORD_MODAL_VISIBLE',
-              payload: false,
-            })
-          }
-          onSubmit={mail => handleResetPassword(mail)}
-          keyboardType="email-address"
-          textContentType="emailAddress"
-          secureTextEntry={false}
-        />
+        <View style={styles.inputContainer}>
+          <TextInput
+            placeholder="Email"
+            placeholderTextColor={'#a8a8a8'}
+            keyboardType="email-address"
+            textContentType="emailAddress"
+            value={state.email}
+            onChangeText={text =>
+              dispatch({type: 'UPDATE_EMAIL', payload: text})
+            }
+            style={styles.input}
+          />
+          <TextInput
+            placeholder="Password"
+            placeholderTextColor={'#a8a8a8'}
+            textContentType="password"
+            value={state.password}
+            onChangeText={text =>
+              dispatch({type: 'UPDATE_PASSWORD', payload: text})
+            }
+            secureTextEntry
+            style={styles.input}
+          />
+          <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
+            <Text style={styles.loginButtonText}>Login</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() =>
+              dispatch({
+                type: 'SET_RESET_PASSWORD_MODAL_VISIBLE',
+                payload: true,
+              })
+            }
+            style={styles.forgottenPasswordButton}>
+            <Text style={styles.forgottenPasswordText}>
+              Forgot your password?
+            </Text>
+          </TouchableOpacity>
+          <View style={[commonStyles.horizontalLine, styles.customLineWidth]} />
+          <View style={styles.signUpContainer}>
+            <TouchableOpacity
+              style={styles.signUpButtonContainer}
+              onPress={() =>
+                navigation.navigate('Sign Up Screen', {
+                  loginEmail: state.email,
+                })
+              }>
+              <Text style={styles.signUpInfoText}>Don't have an account?</Text>
+              <Text style={styles.signUpButtonText}>Sign up</Text>
+            </TouchableOpacity>
+          </View>
+          <InputTextPopup
+            visible={state.resetPasswordModalVisible}
+            transparent={true}
+            message={'E-mail to send the reset link to:'}
+            confirmationMessage={'Send link'}
+            placeholder={'E-mail'}
+            onRequestClose={() =>
+              dispatch({
+                type: 'SET_RESET_PASSWORD_MODAL_VISIBLE',
+                payload: false,
+              })
+            }
+            onSubmit={mail => handleResetPassword(mail)}
+            keyboardType="email-address"
+            textContentType="emailAddress"
+            secureTextEntry={false}
+          />
+        </View>
       </View>
-      {/* </KeyboardAvoidingView> */}
-    </View>
+    </DismissKeyboard>
   );
 };
 

@@ -9,19 +9,21 @@ const SuccessMessage: React.FC<SuccessMessageProps> = ({
   successText,
   dispatch,
 }) => {
-  return successText && (
-    <View style={[styles.infoContainer, styles.successInfoContainer]}>
-      <TouchableOpacity
-        id={'success'}
-        testID={'success'}
-        accessibilityRole="button"
-        onPress={() => dispatch({type: 'SET_SUCCESS', payload: ''})}
-        style={styles.infoButton}>
-        <Text style={[styles.infoText, styles.successInfoText]}>
-          {successText}
-        </Text>
-      </TouchableOpacity>
-    </View>
+  return (
+    successText && (
+      <View style={[styles.infoContainer, styles.successInfoContainer]}>
+        <TouchableOpacity
+          id={'success'}
+          testID={'success'}
+          accessibilityRole="button"
+          onPress={() => dispatch({type: 'SET_SUCCESS', payload: ''})}
+          style={styles.infoButton}>
+          <Text style={[styles.infoText, styles.successInfoText]}>
+            {successText}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    )
   );
 };
 
@@ -32,7 +34,7 @@ const styles = StyleSheet.create({
     width: '80%',
     height: 'auto',
     position: 'absolute', // Temp
-    top: '10%', // Temp
+    top: 50, // Temp
     borderRadius: 5,
     borderWidth: 2,
     alignItems: 'center',

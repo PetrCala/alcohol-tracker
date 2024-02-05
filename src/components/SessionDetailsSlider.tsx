@@ -9,8 +9,8 @@ import {
   ScrollView,
   LayoutChangeEvent,
   Switch,
+  TextInput,
 } from 'react-native';
-import DismissableTextInput from './Keyboard/DismissableTextInput';
 
 interface SessionSliderProps {
   scrollViewRef: React.RefObject<ScrollView>;
@@ -95,7 +95,7 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
         <View style={[styles.tileContainerBase, styles.tileContainerVertical]}>
           <Text style={styles.tileHeading}>Session note:</Text>
           <View style={styles.noteWindowContainer}>
-            <DismissableTextInput
+            <TextInput
               defaultValue={note}
               style={styles.noteTextInput}
               onChangeText={value => onNoteChange(value)}

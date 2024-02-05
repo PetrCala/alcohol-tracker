@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   View,
   Keyboard,
+  TextInput,
 } from 'react-native';
 import {updateProfile} from 'firebase/auth';
 import {auth} from '../services/firebaseSetup';
@@ -26,7 +27,7 @@ import {ProfileData} from 'src/types/database';
 import {handleErrors} from '@src/utils/errorHandling';
 import CONST from '@src/CONST';
 import WarningMessage from '@components/Info/WarningMessage';
-import DismissableTextInput from '@components/Keyboard/DismissableTextInput';
+import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 
 interface State {
   email: string;
@@ -266,69 +267,72 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
   if (!route || !navigation) return null; // Should never be null
 
   return (
-    <View style={styles.mainContainer}>
-      {/* <KeyboardAvoidingView
-        style={styles.mainContainer}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}> */}
-      <WarningMessage warningText={state.warning} dispatch={dispatch} />
-      <View style={styles.logoContainer}>
-        <Image
-          source={require('../../assets/logo/alcohol-tracker-source-icon.png')}
-          style={styles.logo}
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <DismissableTextInput
-          placeholder="Email"
-          placeholderTextColor={'#a8a8a8'}
-          keyboardType="email-address"
-          textContentType="emailAddress"
-          value={state.email}
-          onChangeText={text => dispatch({type: 'UPDATE_EMAIL', payload: text})}
-          style={styles.input}
-        />
-        <DismissableTextInput
-          placeholder="Username"
-          placeholderTextColor={'#a8a8a8'}
-          textContentType="username"
-          value={state.username}
-          onChangeText={text =>
-            dispatch({type: 'UPDATE_USERNAME', payload: text})
-          }
-          style={styles.input}
-        />
-        <DismissableTextInput
-          placeholder="Password"
-          placeholderTextColor={'#a8a8a8'}
-          textContentType="password"
-          value={state.password}
-          onChangeText={text =>
-            dispatch({type: 'UPDATE_PASSWORD', payload: text})
-          }
-          style={styles.input}
-          secureTextEntry
-        />
-        <DismissableTextInput
-          placeholder="Beta key"
-          placeholderTextColor={'#a8a8a8'}
-          value={state.betaKey}
-          onChangeText={text => dispatch({type: 'SET_BETA_KEY', payload: text})}
-          style={styles.input}
-          secureTextEntry
-        />
-        <TouchableOpacity onPress={handleSignUp} style={styles.signUpButton}>
-          <Text style={styles.signUpButtonText}>Create account</Text>
-        </TouchableOpacity>
-        <View style={styles.loginContainer}>
-          <TouchableOpacity
-            style={styles.loginButtonContainer}
-            onPress={() => navigation.navigate('Login Screen')}>
-            <Text style={styles.loginInfoText}>Already a user?</Text>
-            <Text style={styles.loginButtonText}>Log in</Text>
+    <DismissKeyboard>
+      <View style={styles.mainContainer}>
+        <WarningMessage warningText={state.warning} dispatch={dispatch} />
+        <View style={styles.logoContainer}>
+          <Image
+            source={require('../../assets/logo/alcohol-tracker-source-icon.png')}
+            style={styles.logo}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <TextInput
+            placeholder="Email"
+            placeholderTextColor={'#a8a8a8'}
+            keyboardType="email-address"
+            textContentType="emailAddress"
+            value={state.email}
+            onChangeText={text =>
+              dispatch({type: 'UPDATE_EMAIL', payload: text})
+            }
+            style={styles.input}
+          />
+          <TextInput
+            placeholder="Username"
+            placeholderTextColor={'#a8a8a8'}
+            textContentType="username"
+            value={state.username}
+            onChangeText={text =>
+              dispatch({type: 'UPDATE_USERNAME', payload: text})
+            }
+            style={styles.input}
+          />
+          <TextInput
+            placeholder="Password"
+            placeholderTextColor={'#a8a8a8'}
+            textContentType="password"
+            value={state.password}
+            onChangeText={text =>
+              dispatch({type: 'UPDATE_PASSWORD', payload: text})
+            }
+            style={styles.input}
+            secureTextEntry
+          />
+          <TextInput
+            placeholder="Beta key"
+            placeholderTextColor={'#a8a8a8'}
+            value={state.betaKey}
+            onChangeText={text =>
+              dispatch({type: 'SET_BETA_KEY', payload: text})
+            }
+            style={styles.input}
+            secureTextEntry
+          />
+          <TouchableOpacity onPress={handleSignUp} style={styles.signUpButton}>
+            <Text style={styles.signUpButtonText}>Create account</Text>
           </TouchableOpacity>
+          <View style={styles.loginContainer}>
+            <TouchableOpacity
+              style={styles.loginButtonContainer}
+              onPress={() => navigation.navigate('Login Screen')}>
+              <Text style={styles.loginInfoText}>Already a user?</Text>
+              <Text style={styles.loginButtonText}>Log in</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
-    </View>
+    </DismissKeyboard>
   );
 };
 

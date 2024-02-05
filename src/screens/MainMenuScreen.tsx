@@ -29,6 +29,7 @@ import ItemListPopup from '../components/Popups/ItemListPopup';
 import {useFirebase} from '../context/global/FirebaseContext';
 import MainHeader from '@components/Header/MainHeader';
 import GrayHeader from '@components/Header/GrayHeader';
+import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 
 const MenuItem: React.FC<MainMenuItemProps> = ({heading, data, index}) => (
   <View key={index}>
@@ -285,69 +286,71 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
   if (!db || !preferences || !userData) return null; // Should never be null
 
   return (
-    <View style={styles.mainContainer}>
-      <MainHeader headerText="" onGoBack={() => navigation.goBack()} />
-      <ScrollView
-        keyboardShouldPersistTaps="handled"
-        onScrollBeginDrag={Keyboard.dismiss}
-        style={styles.scrollView}>
-        {modalData.map((group, index) => (
-          <MenuItem
-            key={index}
-            heading={group.heading}
-            data={group.data}
-            index={index}
+    <DismissKeyboard>
+      <View style={styles.mainContainer}>
+        <MainHeader headerText="" onGoBack={() => navigation.goBack()} />
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          onScrollBeginDrag={Keyboard.dismiss}
+          style={styles.scrollView}>
+          {modalData.map((group, index) => (
+            <MenuItem
+              key={index}
+              heading={group.heading}
+              data={group.data}
+              index={index}
+            />
+          ))}
+          <ItemListPopup
+            visible={policiesModalVisible}
+            transparent={true}
+            heading={'Our Policies'}
+            actions={policiesData}
+            onRequestClose={() => setPoliciesModalVisible(false)}
           />
-        ))}
-        <ItemListPopup
-          visible={policiesModalVisible}
-          transparent={true}
-          heading={'Our Policies'}
-          actions={policiesData}
-          onRequestClose={() => setPoliciesModalVisible(false)}
-        />
-        <FeedbackPopup
-          visible={feedbackModalVisible}
-          transparent={true}
-          message={'What would you like us to improve?'}
-          onRequestClose={() => setFeedbackModalVisible(false)}
-          onSubmit={feedback => handleSubmitFeedback(feedback)}
-        />
-        <YesNoPopup
-          visible={signoutModalVisible}
-          transparent={true}
-          message={'Do you really want to\nsign out?'}
-          onRequestClose={() => setSignoutModalVisible(false)}
-          onYes={handleConfirmSignout}
-        />
-        <YesNoPopup
-          visible={deleteUserModalVisible}
-          transparent={true}
-          message={
-            'WARNING: Destructive action\n\nDo you really want to\ndelete this user?'
-          }
-          onRequestClose={() => setDeleteUserModalVisible(false)}
-          onYes={handleConfirmDeleteUser}
-        />
-        <InputTextPopup
-          visible={reauthentificateModalVisible}
-          transparent={true}
-          message={'Please retype your password\nin order to proceed'}
-          confirmationMessage={'Delete user'}
-          placeholder={'Password'}
-          onRequestClose={() => setReauthentificateModalVisible(false)}
-          onSubmit={password => handleDeleteUser(password)}
-          textContentType="password"
-          secureTextEntry
-        />
-        <AdminFeedbackPopup
-          visible={adminFeedbackModalVisible}
-          transparent={true}
-          onRequestClose={() => setAdminFeedbackModalVisible(false)}
-          feedbackData={feedbackData}
-        />
-      </ScrollView>
-    </View>
+          <FeedbackPopup
+            visible={feedbackModalVisible}
+            transparent={true}
+            message={'What would you like us to improve?'}
+            onRequestClose={() => setFeedbackModalVisible(false)}
+            onSubmit={feedback => handleSubmitFeedback(feedback)}
+          />
+          <YesNoPopup
+            visible={signoutModalVisible}
+            transparent={true}
+            message={'Do you really want to\nsign out?'}
+            onRequestClose={() => setSignoutModalVisible(false)}
+            onYes={handleConfirmSignout}
+          />
+          <YesNoPopup
+            visible={deleteUserModalVisible}
+            transparent={true}
+            message={
+              'WARNING: Destructive action\n\nDo you really want to\ndelete this user?'
+            }
+            onRequestClose={() => setDeleteUserModalVisible(false)}
+            onYes={handleConfirmDeleteUser}
+          />
+          <InputTextPopup
+            visible={reauthentificateModalVisible}
+            transparent={true}
+            message={'Please retype your password\nin order to proceed'}
+            confirmationMessage={'Delete user'}
+            placeholder={'Password'}
+            onRequestClose={() => setReauthentificateModalVisible(false)}
+            onSubmit={password => handleDeleteUser(password)}
+            textContentType="password"
+            secureTextEntry
+          />
+          <AdminFeedbackPopup
+            visible={adminFeedbackModalVisible}
+            transparent={true}
+            onRequestClose={() => setAdminFeedbackModalVisible(false)}
+            feedbackData={feedbackData}
+          />
+        </ScrollView>
+      </View>
+    </DismissKeyboard>
   );
 };
 
