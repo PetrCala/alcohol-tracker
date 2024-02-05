@@ -55,18 +55,18 @@ const UserOverview: React.FC<UserOverviewProps> = ({
               {profileData.display_name}
             </Text>
             {inSession && (
-              <Text
-                key={userId + '-sessions'}
-                style={[styles.userDetailsText, styles.leftContainerText]}>
-                Currently in session
-              </Text>
-            )}
-            {inSession && unitsThisSession && (
-              <Text
-                key={userId + '-units'}
-                style={[styles.userDetailsText, styles.leftContainerText]}>
-                Units so far: {unitsThisSession}
-              </Text>
+              <>
+                <Text
+                  key={userId + '-sessions'}
+                  style={[styles.userDetailsText, styles.leftContainerText]}>
+                  Currently in session
+                </Text>
+                <Text
+                  key={userId + '-units'}
+                  style={[styles.userDetailsText, styles.leftContainerText]}>
+                  Units so far: {unitsThisSession}
+                </Text>
+              </>
             )}
           </View>
         </View>
