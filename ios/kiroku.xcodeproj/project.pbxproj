@@ -14,7 +14,8 @@
 		5C096BECE9C7703FF84D4A5D /* libPods-kiroku-kirokuTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C1C74621A248C2EFE23F04EB /* libPods-kiroku-kirokuTests.a */; };
 		77172417431110667EF2D9FC /* libPods-kiroku.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 29D313D88911A5FA7CDF3450 /* libPods-kiroku.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		8C966A492B37644200716D69 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB61A68108700A75B9A /* Info.plist */; };
+		8CCCAE2F2B7188B4008DCF56 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB61A68108700A75B9A /* Info.plist */; };
+		8CCCAE302B7188B4008DCF56 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB61A68108700A75B9A /* Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -239,7 +240,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8C966A492B37644200716D69 /* Info.plist in Resources */,
+				8CCCAE2F2B7188B4008DCF56 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -249,6 +250,7 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				8CCCAE302B7188B4008DCF56 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
