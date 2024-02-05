@@ -12,5 +12,7 @@ export async function makeFriends(
   userId2: string,
 ) {
   const friendRef = authDb.ref(`users/${userId1}/friends/${userId2}`);
+  const friendRef2 = authDb.ref(`users/${userId2}/friends/${userId1}`);
   await friendRef.set(true);
+  await friendRef2.set(true);
 }
