@@ -74,7 +74,7 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
         <Text style={styles.sendFriendRequestText}>{statusToTextMap.sent}</Text>
       ) : requestStatus === 'received' ? (
         <TouchableOpacity
-          style={styles.acceptFriendRequestButton}
+          style={styles.sendFriendRequestButton}
           onPress={() => handleAcceptFriendRequestPress(db, userFrom, userTo)}>
           <Text style={styles.sendFriendRequestText}>
             {statusToTextMap.received}
@@ -185,16 +185,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#4CAF50',
-    borderWidth: 1,
-    borderColor: 'black',
-    borderRadius: 10,
-  },
-  acceptFriendRequestButton: {
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'green',
     borderWidth: 1,
     borderColor: 'black',
     borderRadius: 10,

@@ -242,7 +242,6 @@ const MainScreen = ({navigation}: MainScreenProps) => {
                 userId: user.uid,
                 profileData: userData.profile,
                 friends: userData.friends,
-                currentUserFriends: userData.friends,
                 drinkingSessionData: drinkingSessionData,
                 preferences: preferences,
               })

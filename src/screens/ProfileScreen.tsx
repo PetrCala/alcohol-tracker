@@ -34,15 +34,13 @@ import {
 import {DateObject} from '@src/types/components';
 import SessionsCalendar from '@components/Calendar';
 import LoadingData from '@components/LoadingData';
-import ItemListPopup from '@components/Popups/ItemListPopup';
-import {unfriend} from '@database/friends';
-import YesNoPopup from '@components/Popups/YesNoPopup';
 import {
   fetchUserFriends,
   getCommonFriendsCount,
 } from '@src/utils/social/friendUtils';
 import MainHeader from '@components/Header/MainHeader';
 import ManageFriendPopup from '@components/Popups/Profile/ManageFriendPopup';
+import {getDatabaseData} from '@src/context/global/DatabaseDataContext';
 
 interface State {
   isLoading: boolean;
@@ -113,15 +111,10 @@ const reducer = (state: State, action: Action): State => {
 const ProfileScreen = ({route, navigation}: ProfileProps) => {
   if (!route || !navigation) return null;
   const user = auth.currentUser;
-  const {
-    userId,
-    profileData,
-    friends,
-    currentUserFriends,
-    drinkingSessionData,
-    preferences,
-  } = route.params;
+  const {userId, profileData, friends, drinkingSessionData, preferences} =
+    route.params;
   const {db, storage} = useFirebase();
+  const {userData} = getDatabaseData();
   const [state, dispatch] = useReducer(reducer, initialState);
 
   // Define your stats data
@@ -200,7 +193,7 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
   useMemo(() => {
     const friendCount = state.friends ? objKeys(state.friends).length : 0;
     const commonFriendCount = getCommonFriendsCount(
-      objKeys(currentUserFriends),
+      objKeys(userData?.friends),
       objKeys(state.friends),
     );
     dispatch({type: 'SET_FRIEND_COUNT', payload: friendCount});
@@ -270,7 +263,6 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
                   : navigation.navigate('Friends Friends Screen', {
                       userId: userId,
                       friends: state.friends,
-                      currentUserFriends: currentUserFriends,
                     });
               }}
               style={styles.seeFriendsButton}>

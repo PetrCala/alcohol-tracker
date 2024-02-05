@@ -75,7 +75,7 @@ const FriendsFriendsScreen = ({
   navigation,
 }: FriendsFriendsScreenProps) => {
   if (!route || !navigation) return null;
-  const {userId, friends, currentUserFriends} = route.params;
+  const {userId, friends} = route.params;
   const {db, storage} = useFirebase();
   const {userData} = getDatabaseData();
   const user = auth.currentUser;
@@ -154,11 +154,10 @@ const FriendsFriendsScreen = ({
           //@ts-ignore
           userFrom={user.uid}
           requestStatus={
-            renderCommonFriends ? undefined : state.requestStatuses[userId]
+            // renderCommonFriends ? undefined : state.requestStatuses[userId]
+            state.requestStatuses[userId]
           }
-          alreadyAFriend={
-            currentUserFriends ? currentUserFriends[userId] : false
-          }
+          alreadyAFriend={userData?.friends ? userData?.friends[userId] : false}
           customButton={
             renderCommonFriends ? (
               <SeeProfileButton
@@ -168,7 +167,6 @@ const FriendsFriendsScreen = ({
                     userId: userId,
                     profileData: state.displayData[userId],
                     friends: null, // Fetch on render
-                    currentUserFriends: currentUserFriends,
                     drinkingSessionData: null, // Fetch on render
                     preferences: null, // Fetch on render
                   })
@@ -187,7 +185,7 @@ const FriendsFriendsScreen = ({
     if (friends) {
       commonFriends = getCommonFriends(
         objKeys(friends),
-        objKeys(currentUserFriends),
+        objKeys(userData?.friends),
       );
       otherFriends = objKeys(friends).filter(
         friend => !commonFriends.includes(friend),
@@ -195,7 +193,7 @@ const FriendsFriendsScreen = ({
     }
     dispatch({type: 'SET_COMMON_FRIENDS', payload: commonFriends});
     dispatch({type: 'SET_OTHER_FRIENDS', payload: otherFriends});
-  }, [currentUserFriends, friends]);
+  }, [userData, friends, state.requestStatuses]);
 
   useMemo(() => {
     let noUsersFound: boolean = true;
@@ -320,20 +318,6 @@ const styles = StyleSheet.create({
   searchResultsContainer: {
     width: '100%',
     flexDirection: 'column',
-  },
-  searchButton: {
-    width: '100%',
-    backgroundColor: '#fcf50f',
-    padding: 10,
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: 'black',
-    alignItems: 'center',
-  },
-  searchButtonText: {
-    color: 'black',
-    fontSize: 16,
-    fontWeight: '500',
   },
   loadingData: {
     width: '100%',

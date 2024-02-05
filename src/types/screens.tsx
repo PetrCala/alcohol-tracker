@@ -36,7 +36,6 @@ export type AppStackParamList = {
     userId: string;
     profileData: ProfileData;
     friends: FriendsData | null;
-    currentUserFriends: FriendsData | null;
     drinkingSessionData: DrinkingSessionArrayItem[] | null;
     preferences: PreferencesData | null;
   };
@@ -46,7 +45,6 @@ export type AppStackParamList = {
   'Friends Friends Screen': {
     userId: string;
     friends: FriendsData | null;
-    currentUserFriends: FriendsData | null;
   };
   'Achievement Screen': undefined;
   'Statistics Screen': undefined;
