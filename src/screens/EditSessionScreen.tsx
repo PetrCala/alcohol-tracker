@@ -4,6 +4,7 @@ import {
   BackHandler,
   Image,
   ImageSourcePropType,
+  Keyboard,
   ScrollView,
   StyleSheet,
   Text,
@@ -311,6 +312,7 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
       <ScrollView
         style={styles.scrollView}
         ref={scrollViewRef}
+        onScrollBeginDrag={Keyboard.dismiss}
         keyboardShouldPersistTaps="handled">
         <View style={styles.sessionInfoContainer}>
           <Text style={styles.sessionInfoText}>Session date: {sessionDay}</Text>

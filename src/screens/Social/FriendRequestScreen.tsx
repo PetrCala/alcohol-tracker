@@ -1,5 +1,6 @@
 ﻿import {
   Alert,
+  Keyboard,
   ScrollView,
   StyleSheet,
   Text,
@@ -260,6 +261,7 @@ const FriendRequestScreen = (props: ScreenProps) => {
     <View style={styles.mainContainer}>
       <ScrollView
         style={styles.scrollViewContainer}
+        onScrollBeginDrag={Keyboard.dismiss}
         keyboardShouldPersistTaps="handled">
         {state.isLoading ? (
           <LoadingData style={styles.loadingData} />

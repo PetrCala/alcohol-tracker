@@ -2,6 +2,7 @@
 import {
   Dimensions,
   Image,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -139,6 +140,7 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
   return (
     <ScrollView
       keyboardShouldPersistTaps="handled"
+      onScrollBeginDrag={Keyboard.dismiss}
       contentContainerStyle={{flexGrow: 1, flexShrink: 1}}>
       <KeyboardAvoidingView
         style={styles.mainContainer}

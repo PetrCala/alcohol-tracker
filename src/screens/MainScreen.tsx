@@ -3,6 +3,7 @@ import {
   Alert,
   Dimensions,
   Image,
+  Keyboard,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -266,6 +267,8 @@ const MainScreen = ({navigation}: MainScreenProps) => {
       </View> */}
       <ScrollView
         style={styles.mainScreenContent}
+        keyboardShouldPersistTaps="handled"
+        onScrollBeginDrag={Keyboard.dismiss}
         refreshControl={
           <RefreshControl refreshing={state.refreshing} onRefresh={onRefresh} />
         }>

@@ -2,6 +2,7 @@
 import {
   Alert,
   BackHandler,
+  Keyboard,
   ScrollView,
   StyleSheet,
   Text,
@@ -172,7 +173,10 @@ const PreferencesScreen = ({route, navigation}: PreferencesScreenProps) => {
   return (
     <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
       <MainHeader headerText="Preferences" onGoBack={handleGoBack} />
-      <ScrollView style={styles.scrollView} keyboardShouldPersistTaps="handled">
+      <ScrollView
+        style={styles.scrollView}
+        onScrollBeginDrag={Keyboard.dismiss}
+        keyboardShouldPersistTaps="handled">
         <View style={[styles.container, styles.horizontalContainer]}>
           <Text style={styles.label}>First Day of Week</Text>
           <View style={styles.itemContainer}>

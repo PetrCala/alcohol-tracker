@@ -1,6 +1,7 @@
 ﻿import {
   Alert,
   Dimensions,
+  Keyboard,
   ScrollView,
   StyleSheet,
   Text,
@@ -105,6 +106,7 @@ const FriendListScreen = (props: FriendListScreenProps) => {
       />
       <ScrollView
         style={styles.scrollViewContainer}
+        onScrollBeginDrag={Keyboard.dismiss}
         keyboardShouldPersistTaps="handled">
         {loadingDisplayData ? (
           <LoadingData style={styles.loadingContainer} />

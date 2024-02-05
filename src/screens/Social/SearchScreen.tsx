@@ -1,4 +1,11 @@
-﻿import {Alert, ScrollView, StyleSheet, Text, View} from 'react-native';
+﻿import {
+  Alert,
+  Keyboard,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import {
   FriendRequestStatusState,
   ProfileDisplayData,
@@ -143,6 +150,7 @@ const SearchScreen = (props: SearchScreenProps) => {
       />
       <ScrollView
         style={styles.scrollViewContainer}
+        onScrollBeginDrag={Keyboard.dismiss}
         keyboardShouldPersistTaps="handled">
         <View style={styles.searchResultsContainer}>
           {state.searching ? (

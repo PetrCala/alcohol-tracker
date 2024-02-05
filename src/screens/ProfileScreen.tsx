@@ -2,6 +2,7 @@
   Alert,
   Dimensions,
   Image,
+  Keyboard,
   ScrollView,
   StyleSheet,
   Text,
@@ -237,7 +238,10 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
         headerText={user?.uid === userId ? 'Profile' : 'Friend Overview'}
         onGoBack={() => navigation.goBack()}
       />
-      <ScrollView style={styles.scrollView} keyboardShouldPersistTaps="handled">
+      <ScrollView
+        style={styles.scrollView}
+        onScrollBeginDrag={Keyboard.dismiss}
+        keyboardShouldPersistTaps="handled">
         <ProfileOverview userId={userId} profileData={profileData} />
         <View style={styles.friendsInfoContainer}>
           <View style={styles.leftContainer}>

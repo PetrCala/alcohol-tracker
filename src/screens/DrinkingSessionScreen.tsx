@@ -2,6 +2,7 @@
 import {
   ActivityIndicator,
   Alert,
+  Keyboard,
   ScrollView,
   StyleSheet,
   Text,
@@ -367,6 +368,7 @@ const DrinkingSessionScreen = ({
       <ScrollView
         style={styles.scrollView}
         ref={scrollViewRef}
+        onScrollBeginDrag={Keyboard.dismiss}
         keyboardShouldPersistTaps="handled">
         <View style={styles.sessionInfoContainer}>
           <View style={styles.sessionTextContainer}>

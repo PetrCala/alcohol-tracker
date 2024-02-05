@@ -10,6 +10,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Keyboard,
 } from 'react-native';
 import {updateProfile} from 'firebase/auth';
 import {auth} from '../services/firebaseSetup';
@@ -267,6 +268,7 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
   return (
     <ScrollView
       keyboardShouldPersistTaps="handled"
+      onScrollBeginDrag={Keyboard.dismiss}
       contentContainerStyle={{flexGrow: 1, flexShrink: 1}}>
       <KeyboardAvoidingView
         style={styles.mainContainer}

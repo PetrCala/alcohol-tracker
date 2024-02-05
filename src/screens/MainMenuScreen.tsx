@@ -7,6 +7,7 @@ import {
   ScrollView,
   Image,
   Alert,
+  Keyboard,
 } from 'react-native';
 
 import {MainMenuItemProps} from '../types/components';
@@ -286,7 +287,10 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
   return (
     <View style={styles.mainContainer}>
       <MainHeader headerText="" onGoBack={() => navigation.goBack()} />
-      <ScrollView style={styles.scrollView}>
+      <ScrollView
+        keyboardShouldPersistTaps="handled"
+        onScrollBeginDrag={Keyboard.dismiss}
+        style={styles.scrollView}>
         {modalData.map((group, index) => (
           <MenuItem
             key={index}
