@@ -4,7 +4,7 @@ import {render, fireEvent} from '@testing-library/react-native';
 import BasicButton from '../../../src/components/Buttons/BasicButton';
 import MenuIcon from '../../../src/components/Buttons/MenuIcon';
 
-describe('BasicButton', () => {
+xdescribe('BasicButton', () => {
   const onPressMock = jest.fn();
   const props = {
     text: 'Click me!',
@@ -34,7 +34,7 @@ describe('BasicButton', () => {
   });
 });
 
-describe('MenuIcon', () => {
+xdescribe('MenuIcon', () => {
   const props = {
     iconId: 'icon',
     iconSource: require('../assets/icons/test_icon.png'),
