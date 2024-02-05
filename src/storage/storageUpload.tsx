@@ -1,4 +1,4 @@
-﻿import { toPercentageVerbose } from '@src/utils/dataHandling';
+﻿import {toPercentageVerbose} from '@src/utils/dataHandling';
 import {handleErrors} from '@src/utils/errorHandling';
 import {
   FirebaseStorage,
@@ -9,7 +9,7 @@ import {
 
 /**
  * Uploads an image to Firebase storage.
- * 
+ *
  * @param storage - The Firebase storage instance.
  * @param uri - The URI of the image to upload.
  * @param pathToUpload - The path in Firebase storage where the image should be uploaded.
@@ -22,36 +22,49 @@ export async function uploadImageToFirebase(
   pathToUpload: string,
   dispatch: React.Dispatch<any>,
 ): Promise<void> {
-  if (!uri) return;
-  const storageRef = ref(storage, pathToUpload);
-  const response = await fetch(uri); // Fetch the image from the local file system using its URI:
-  const blob = await response.blob(); // Convert the response to a blob:
-  const uploadTask = uploadBytesResumable(storageRef, blob); // Use Firebase's uploadBytesResumable to upload the blob:
-  // Monitor the upload progress:
-  uploadTask.on(
-    'state_changed',
-    (snapshot: any) => {
-      const progressFraction = (snapshot.bytesTransferred / snapshot.totalBytes)
-      const progressVerbose = toPercentageVerbose(progressFraction);
-      dispatch({type: 'SET_UPLOAD_PROGRESS', payload: progressVerbose});
-      switch (snapshot.state) {
-        case 'paused':
-          // console.log('Upload is paused');
-          break;
-        case 'running':
-          // console.log('Upload is running');
-          break;
-      }
-    },
-    (error: any) => {
-      handleErrors(error, 'Error uploading image', error.message, dispatch);
-    },
-    () => {
-      // On success
-      dispatch({type: 'SET_UPLOAD_PROGRESS', payload: 0});
-      dispatch({type: 'SET_SUCESS', payload: 'Image uploaded successfully'});
+  return new Promise(async (resolve, reject) => {
+    // Wrap the logic in a new Promise
+    if (!uri) {
+      reject('No URI provided');
       return;
-    },
-  );
-  return;
+    }
+    try {
+      const storageRef = ref(storage, pathToUpload);
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      const uploadTask = uploadBytesResumable(storageRef, blob);
+
+      uploadTask.on(
+        'state_changed',
+        (snapshot: any) => {
+          const progressFraction =
+            snapshot.bytesTransferred / snapshot.totalBytes;
+          const progressVerbose = toPercentageVerbose(progressFraction);
+          dispatch({type: 'SET_UPLOAD_PROGRESS', payload: progressVerbose});
+          switch (snapshot.state) {
+            case 'paused':
+              // console.log('Upload is paused');
+              break;
+            case 'running':
+              // console.log('Upload is running');
+              break;
+          }
+        },
+        (error: any) => {
+          handleErrors(error, 'Error uploading image', error.message, dispatch);
+          reject(error);
+        },
+        () => {
+          dispatch({type: 'SET_UPLOAD_PROGRESS', payload: 0});
+          dispatch({
+            type: 'SET_SUCESS',
+            payload: 'Image uploaded successfully',
+          });
+          resolve();
+        },
+      );
+    } catch (error: any) {
+      reject(error);
+    }
+  });
 }

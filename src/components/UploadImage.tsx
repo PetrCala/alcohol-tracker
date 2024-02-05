@@ -79,15 +79,6 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
   const {db, storage} = useFirebase();
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const uploadImage = async (sourceURI: string) => {
-    try {
-      await uploadImageToFirebase(storage, sourceURI, pathToUpload, dispatch);
-    } catch (error: any) {
-      handleErrors(error, 'Error uploading image', error.message, dispatch);
-      throw error; // Rethrow the error to be handled by the caller
-    }
-  };
-
   const handleUpload = async (sourceURI: string | null) => {
     if (!sourceURI) {
       dispatch({type: 'SET_WARNING', payload: 'No image selected'});
@@ -97,14 +88,19 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
     try {
       dispatch({type: 'SET_UPLOAD_ONGOING', payload: true});
       const compressedURI = await CompressorImage.compress(sourceURI);
-      await uploadImage(compressedURI);
+      await uploadImageToFirebase(
+        storage,
+        compressedURI,
+        pathToUpload,
+        dispatch,
+      ); // Wait for the promise to resolve
       if (isProfilePicture) {
         await updateProfileInfo(pathToUpload, user, auth, db, storage);
       }
     } catch (error: any) {
       dispatch({type: 'SET_UPLOAD_ONGOING', payload: false}); // Otherwise dispatch upon success in child component
       dispatch({type: 'SET_IMAGE_SOURCE', payload: null});
-      Alert.alert('Error uploading image', error.message);
+      Alert.alert('Image upload error', error.message);
       // handleErrors(error, 'Error uploading image', error.message, dispatch); // Use after popup alerts have been implemented
     }
   };
