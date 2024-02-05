@@ -1,9 +1,9 @@
-﻿import React, {useState} from 'react';
+﻿import DismissableTextInput from '@components/Keyboard/DismissableTextInput';
+import React, {useState} from 'react';
 import {
   View,
   Text,
   Modal,
-  TextInput,
   TouchableOpacity,
   StyleSheet,
   KeyboardTypeOptions,
@@ -47,7 +47,7 @@ const InputTextPopup = (props: InputTextPopupProps) => {
         <View style={styles.modalView}>
           <Text style={styles.modalText}>{message}</Text>
           <View style={styles.textContainer}>
-            <TextInput
+            <DismissableTextInput
               placeholder={placeholder}
               value={text}
               onChangeText={text => setText(text)}

@@ -1,14 +1,8 @@
 ﻿import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  Modal,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-} from 'react-native';
+import {View, Text, Modal, TouchableOpacity, StyleSheet} from 'react-native';
 
 import {FeedbackPopupProps} from '../../types/components';
+import DismissableTextInput from '@components/Keyboard/DismissableTextInput';
 
 const FeedbackPopup = (props: FeedbackPopupProps) => {
   const {visible, transparent, message, onRequestClose, onSubmit} = props;
@@ -24,7 +18,7 @@ const FeedbackPopup = (props: FeedbackPopupProps) => {
         <View style={styles.modalView}>
           <Text style={styles.modalText}>{message}</Text>
           <View style={styles.feedbackWindowContainer}>
-            <TextInput
+            <DismissableTextInput
               style={styles.feedbackWindowText}
               onChangeText={setFeedbackText}
               placeholder={'Write your feedback here'}

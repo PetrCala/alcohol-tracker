@@ -8,7 +8,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -26,6 +25,7 @@ import {ProfileData} from 'src/types/database';
 import {handleErrors} from '@src/utils/errorHandling';
 import CONST from '@src/CONST';
 import WarningMessage from '@components/Info/WarningMessage';
+import DismissableTextInput from '@components/Keyboard/DismissableTextInput';
 
 interface State {
   email: string;
@@ -279,7 +279,7 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
           />
         </View>
         <View style={styles.inputContainer}>
-          <TextInput
+          <DismissableTextInput
             placeholder="Email"
             placeholderTextColor={'#a8a8a8'}
             keyboardType="email-address"
@@ -290,7 +290,7 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
             }
             style={styles.input}
           />
-          <TextInput
+          <DismissableTextInput
             placeholder="Username"
             placeholderTextColor={'#a8a8a8'}
             textContentType="username"
@@ -300,7 +300,7 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
             }
             style={styles.input}
           />
-          <TextInput
+          <DismissableTextInput
             placeholder="Password"
             placeholderTextColor={'#a8a8a8'}
             textContentType="password"
@@ -311,7 +311,7 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
             style={styles.input}
             secureTextEntry
           />
-          <TextInput
+          <DismissableTextInput
             placeholder="Beta key"
             placeholderTextColor={'#a8a8a8'}
             value={state.betaKey}

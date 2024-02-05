@@ -7,7 +7,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -23,6 +22,7 @@ import InputTextPopup from '../components/Popups/InputTextPopup';
 import {handleErrors} from '../utils/errorHandling';
 import WarningMessage from '@components/Info/WarningMessage';
 import SuccessMessage from '@components/Info/SuccessMessage';
+import DismissableTextInput from '@components/Keyboard/DismissableTextInput';
 
 interface State {
   email: string;
@@ -86,7 +86,7 @@ const reducer = (state: State, action: Action) => {
 
 const LoginScreen = ({navigation}: LoginScreenProps) => {
   if (!navigation) return null; // Should never be null
-  const {isOnline} = useUserConnection();
+  // const {isOnline} = useUserConnection();
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useFocusEffect(
@@ -152,7 +152,7 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
           />
         </View>
         <View style={styles.inputContainer}>
-          <TextInput
+          <DismissableTextInput
             placeholder="Email"
             placeholderTextColor={'#a8a8a8'}
             keyboardType="email-address"
@@ -163,7 +163,7 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
             }
             style={styles.input}
           />
-          <TextInput
+          <DismissableTextInput
             placeholder="Password"
             placeholderTextColor={'#a8a8a8'}
             textContentType="password"
@@ -171,8 +171,8 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
             onChangeText={text =>
               dispatch({type: 'UPDATE_PASSWORD', payload: text})
             }
-            style={styles.input}
             secureTextEntry
+            style={styles.input}
           />
           <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
             <Text style={styles.loginButtonText}>Login</Text>

@@ -5,12 +5,9 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import Slider from '@react-native-community/slider';
-import MenuIcon from '../components/Buttons/MenuIcon';
 import {PreferencesScreenProps} from '../types/screens';
 import {auth} from '../services/firebaseSetup';
 import {useUserConnection} from '../context/global/UserConnectionContext';
@@ -21,8 +18,6 @@ import {
   PreferencesData,
   UnitTypesKeys,
   UnitTypesNames,
-  UnitTypesProps,
-  UnitsToColorsData,
 } from '../types/database';
 import {savePreferencesData} from '../database/preferences';
 import YesNoPopup from '../components/Popups/YesNoPopup';
