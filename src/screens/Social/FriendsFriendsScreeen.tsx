@@ -2,13 +2,12 @@ import {Alert, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {
   FriendRequestStatusState,
   ProfileDisplayData,
-  ProfileData,
   FriendRequestData,
 } from '../../types/database';
 import {useEffect, useMemo, useReducer} from 'react';
 import {useFirebase} from '../../context/global/FirebaseContext';
 import {auth} from '../../services/firebaseSetup';
-import {isNonEmptyArray, isNonEmptyObject} from '../../utils/validation';
+import {isNonEmptyArray} from '../../utils/validation';
 import LoadingData from '../../components/LoadingData';
 import {Database} from 'firebase/database';
 import {searchDatabaseForUsers} from '../../database/search';
