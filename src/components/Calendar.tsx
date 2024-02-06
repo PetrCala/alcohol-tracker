@@ -114,7 +114,6 @@ const DayComponent: React.FC<{
       return {...baseStyle, backgroundColor: marking?.color};
     } else {
       return {...baseStyle, backgroundColor: 'green'};
-      throw new Error('Unspecied color in the calendar');
     }
   };
 
@@ -137,7 +136,7 @@ const DayComponent: React.FC<{
       return {...baseStyle, color: colorToTextColorMap[marking?.color]};
     }
 
-    return {...baseStyle, fontSize: 0}; // Default case
+    return {...baseStyle, fontSize: 0, color: 'transparent'}; // Default case
   };
 
   return (

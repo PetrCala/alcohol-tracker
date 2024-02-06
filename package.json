@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "android": "npx react-native run-android --mode=Debug --active-arch-only",
-    "ios": "npx react-native run-ios --list-devices --mode=\"Debug\"",
+    "ios": "npx react-native run-ios --simulator=\"iPhone 15 Pro\" --mode=\"Debug\"",
     "build:android": "fastlane android build",
     "build:ios": "fastlane ios build",
     "pod-install": "cd ios && pod install && cd ..",
