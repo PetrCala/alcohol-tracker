@@ -17,7 +17,7 @@ import {auth} from '@src/services/firebaseSetup';
 import {isNonEmptyArray} from '@src/utils/validation';
 import LoadingData from '@src/components/LoadingData';
 import {Database} from 'firebase/database';
-import {searchDatabaseForUsers} from '@src/database/search';
+import {searchDatabaseForUsers} from '@src/services/search/search';
 import {fetchUserProfiles} from '@database/profile';
 import SearchResult from '@components/Social/SearchResult';
 import SearchWindow from '@components/Social/SearchWindow';
@@ -69,7 +69,7 @@ const SearchScreen = (props: SearchScreenProps) => {
   const user = auth.currentUser;
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const doSearch = async (db: Database, searchText: string): Promise<void> => {
+  const dbSearch = async (searchText: string, db?: Database): Promise<void> => {
     try {
       dispatch({type: 'SET_SEARCHING', payload: true});
       let searchResultData: UserSearchResults = await searchDatabaseForUsers(
@@ -145,7 +145,7 @@ const SearchScreen = (props: SearchScreenProps) => {
     <View style={styles.mainContainer}>
       <SearchWindow
         ref={searchInputRef}
-        doSearch={doSearch}
+        onSearch={dbSearch}
         onResetSearch={resetSearch}
       />
       <ScrollView

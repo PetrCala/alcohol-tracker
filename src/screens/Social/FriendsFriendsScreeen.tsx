@@ -17,7 +17,10 @@ import {auth} from '../../services/firebaseSetup';
 import {isNonEmptyArray} from '../../utils/validation';
 import LoadingData from '../../components/LoadingData';
 import {Database} from 'firebase/database';
-import {searchDatabaseForUsers} from '../../database/search';
+import {
+  searchArrayByText,
+  searchDatabaseForUsers,
+} from '../../services/search/search';
 import {fetchUserProfiles} from '@database/profile';
 import SearchResult from '@components/Social/SearchResult';
 import SearchWindow from '@components/Social/SearchWindow';
@@ -28,12 +31,13 @@ import {
   getCommonFriends,
   getCommonFriendsCount,
 } from '@src/utils/social/friendUtils';
-import {UserSearchResults} from '@src/types/search';
+import {UserIdToNicknameMapping, UserSearchResults} from '@src/types/search';
 import {objKeys} from '@src/utils/dataHandling';
 import {getDatabaseData} from '@src/context/global/DatabaseDataContext';
 import SeeProfileButton from '@components/Buttons/SeeProfileButton';
 import {GeneralAction} from '@src/types/states';
 import commonStyles from '@src/styles/commonStyles';
+import {getNicknameMapping} from '@src/services/search/searchUtils';
 
 interface State {
   searching: boolean;
@@ -87,15 +91,16 @@ const FriendsFriendsScreen = ({
   const user = auth.currentUser;
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const doSearch = async (db: Database, searchText: string): Promise<void> => {
+  const localSearch = async (searchText: string): Promise<void> => {
     try {
-      dispatch({type: 'SET_SEARCHING', payload: true});
-      let searchResultData: UserSearchResults = await searchDatabaseForUsers(
-        db,
-        searchText,
+      let searchMapping: UserIdToNicknameMapping = getNicknameMapping(
+        state.displayData,
+        'display_name',
       );
-      let relevantResults = searchResultData.filter(userId =>
-        objKeys(friends).includes(userId),
+      let relevantResults = searchArrayByText(
+        objKeys(friends),
+        searchText,
+        searchMapping,
       );
       dispatch({type: 'SET_DISPLAYED_FRIENDS', payload: relevantResults}); // Hide irrelevant
     } catch (error: any) {
@@ -104,8 +109,6 @@ const FriendsFriendsScreen = ({
         'Could not search the database: ' + error.message,
       );
       return;
-    } finally {
-      dispatch({type: 'SET_SEARCHING', payload: false});
     }
   };
 
@@ -236,7 +239,11 @@ const FriendsFriendsScreen = ({
         headerText="Find Friends of Friends"
         onGoBack={() => navigation.goBack()}
       />
-      <SearchWindow doSearch={doSearch} onResetSearch={resetSearch} />
+      <SearchWindow
+        onSearch={localSearch}
+        onResetSearch={resetSearch}
+        searchOnTextChange={true}
+      />
       <ScrollView
         style={styles.scrollViewContainer}
         onScrollBeginDrag={Keyboard.dismiss}

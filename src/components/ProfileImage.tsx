@@ -89,10 +89,7 @@ function ProfileImage(props: ProfileImageProps) {
             userId,
             downloadPath,
           );
-          // if (downloadUrl === downloadPath) // If the resulting download path has not changed
-          if (downloadUrl !== downloadPath) {
-            await cacheImage(downloadUrl);
-          }
+          await cacheImage(downloadUrl);
         }
 
         dispatch({type: 'SET_IMAGE_URL', payload: downloadUrl});

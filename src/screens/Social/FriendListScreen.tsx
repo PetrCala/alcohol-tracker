@@ -14,14 +14,19 @@ import UserOverview from '@components/Social/UserOverview';
 import useProfileDisplayData from '@hooks/useProfileDisplayData';
 import SearchWindow from '@components/Social/SearchWindow';
 import {Database} from 'firebase/database';
-import {SearchWindowRef, UserSearchResults} from '@src/types/search';
+import {
+  SearchWindowRef,
+  UserIdToNicknameMapping,
+  UserSearchResults,
+} from '@src/types/search';
 import {GeneralAction} from '@src/types/states';
 import {useMemo, useReducer, useRef} from 'react';
-import {searchDatabaseForUsers} from '@database/search';
 import {objKeys} from '@src/utils/dataHandling';
 import {isNonEmptyArray} from '@src/utils/validation';
 import commonStyles from '@src/styles/commonStyles';
 import {FriendListScreenProps} from '@src/types/screens';
+import {getNicknameMapping} from '@src/services/search/searchUtils';
+import {searchArrayByText} from '@src/services/search/search';
 
 interface State {
   searching: boolean;
@@ -51,15 +56,17 @@ const FriendListScreen = (props: FriendListScreenProps) => {
   const friendListInputRef = useRef<SearchWindowRef>(null);
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const doSearch = async (db: Database, searchText: string) => {
+  const localSearch = async (searchText: string) => {
     try {
       dispatch({type: 'SET_SEARCHING', payload: true});
-      let searchResultData: UserSearchResults = await searchDatabaseForUsers(
-        db,
-        searchText,
+      let searchMapping: UserIdToNicknameMapping = getNicknameMapping(
+        profileDisplayData,
+        'display_name',
       );
-      let relevantResults = searchResultData.filter(userId =>
-        objKeys(friends).includes(userId),
+      let relevantResults = searchArrayByText(
+        objKeys(friends),
+        searchText,
+        searchMapping,
       );
       dispatch({type: 'SET_DISPLAYED_FRIENDS', payload: relevantResults}); // Hide irrelevant
     } catch (error: any) {
@@ -101,8 +108,9 @@ const FriendListScreen = (props: FriendListScreenProps) => {
     <View style={styles.mainContainer}>
       <SearchWindow
         ref={friendListInputRef}
-        doSearch={doSearch}
+        onSearch={localSearch}
         onResetSearch={resetSearch}
+        searchOnTextChange={true}
       />
       <ScrollView
         style={styles.scrollViewContainer}

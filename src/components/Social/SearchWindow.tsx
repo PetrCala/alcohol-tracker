@@ -7,7 +7,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {useState, forwardRef, useRef, useImperativeHandle} from 'react';
+import {
+  useState,
+  forwardRef,
+  useRef,
+  useImperativeHandle,
+  useEffect,
+} from 'react';
 import {Database} from 'firebase/database';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import {SearchWindowRef} from '@src/types/search';
@@ -15,20 +21,21 @@ import KeyboardFocusHandler from '@components/Keyboard/KeyboardFocusHandler';
 import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 
 type SearchWindowProps = {
-  doSearch: (db: Database, searchText: string) => void;
+  onSearch: (searchText: string, db?: Database) => void;
   onResetSearch: () => void;
+  searchOnTextChange?: boolean;
 };
 
 const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
-  ({doSearch, onResetSearch}, parentRef) => {
+  ({onSearch, onResetSearch, searchOnTextChange}, parentRef) => {
     const db = useFirebase().db;
     // const inputRef = useRef<TextInput>(null); // Input field ref for focus handling
     const [searchText, setSearchText] = useState<string>('');
     const [searchCount, setSearchCount] = useState<number>(0);
 
-    const handleDoSearch = (db: Database, searchText: string): void => {
-      if (searchText) {
-        doSearch(db, searchText);
+    const handleDoSearch = (searchText: string, db?: Database): void => {
+      onSearch(searchText, db);
+      if (!searchOnTextChange) {
         setSearchCount(searchCount + 1);
         Keyboard.dismiss();
       }
@@ -39,6 +46,12 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
       setSearchText('');
       setSearchCount(0);
     };
+
+    useEffect(() => {
+      if (searchOnTextChange) {
+        handleDoSearch(searchText, db);
+      }
+    }, [searchText]);
 
     // useImperativeHandle(parentRef, () => ({
     //   focus: () => {
@@ -75,7 +88,7 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
           <View style={styles.searchButtonContainer}>
             <TouchableOpacity
               style={styles.searchButton}
-              onPress={() => handleDoSearch(db, searchText)}>
+              onPress={() => handleDoSearch(searchText, db)}>
               <Text style={styles.searchButtonText}>Search</Text>
             </TouchableOpacity>
           </View>
