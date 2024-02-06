@@ -26,23 +26,36 @@ import commonStyles from '@src/styles/commonStyles';
 import {FriendListScreenProps} from '@src/types/screens';
 import {getNicknameMapping} from '@src/services/search/searchUtils';
 import {searchArrayByText} from '@src/services/search/search';
+import {
+  calculateAllUsersPriority,
+  orderUsersByPriority,
+} from '@src/services/algorithms/displayPriority';
+import {UsersPriority} from '@src/types/algorithms';
 
 interface State {
   searching: boolean;
-  displayedFriends: UserSearchResults;
+  friendsToDisplay: UserSearchResults;
+  usersPriority: UsersPriority;
+  displayArray: string[]; // Main array to display
 }
 
 const initialState: State = {
   searching: false,
-  displayedFriends: [],
+  friendsToDisplay: [],
+  usersPriority: {},
+  displayArray: [],
 };
 
 const reducer = (state: State, action: GeneralAction): State => {
   switch (action.type) {
     case 'SET_SEARCHING':
       return {...state, searching: action.payload};
-    case 'SET_DISPLAYED_FRIENDS':
-      return {...state, displayedFriends: action.payload};
+    case 'SET_FRIENDS_TO_DISPLAY':
+      return {...state, friendsToDisplay: action.payload};
+    case 'SET_USERS_PRIORITY':
+      return {...state, usersPriority: action.payload};
+    case 'SET_DISPLAY_ARRAY':
+      return {...state, displayArray: action.payload};
     default:
       return state;
   }
@@ -67,7 +80,7 @@ const FriendListScreen = (props: FriendListScreenProps) => {
         searchText,
         searchMapping,
       );
-      dispatch({type: 'SET_DISPLAYED_FRIENDS', payload: relevantResults}); // Hide irrelevant
+      dispatch({type: 'SET_FRIENDS_TO_DISPLAY', payload: relevantResults}); // Hide irrelevant
     } catch (error: any) {
       Alert.alert(
         'Database serach failed',
@@ -98,11 +111,26 @@ const FriendListScreen = (props: FriendListScreenProps) => {
   };
 
   useMemo(() => {
-    dispatch({type: 'SET_DISPLAYED_FRIENDS', payload: objKeys(friends)});
+    let friendsArray = objKeys(friends);
+    if (userStatusDisplayData) {
+      let newUsersPriority: UsersPriority = calculateAllUsersPriority(
+        friendsArray,
+        userStatusDisplayData,
+      );
+      dispatch({type: 'SET_USERS_PRIORITY', payload: newUsersPriority});
+    }
+    dispatch({type: 'SET_FRIENDS_TO_DISPLAY', payload: friendsArray});
   }, [friends]);
 
+  useMemo(() => {
+    let newDisplayArray = orderUsersByPriority(
+      state.friendsToDisplay,
+      state.usersPriority,
+    );
+    dispatch({type: 'SET_DISPLAY_ARRAY', payload: newDisplayArray});
+  }, [state.friendsToDisplay]);
+
   if (!navigation) return null;
-  console.log(state.displayedFriends);
 
   return (
     <View style={styles.mainContainer}>
@@ -121,8 +149,8 @@ const FriendListScreen = (props: FriendListScreenProps) => {
           <LoadingData style={styles.loadingContainer} />
         ) : friends ? (
           <View style={styles.friendList}>
-            {isNonEmptyArray(state.displayedFriends) ? (
-              state.displayedFriends.map((friendId: string) => {
+            {isNonEmptyArray(state.displayArray) ? (
+              state.displayArray.map((friendId: string) => {
                 const profileData = profileDisplayData[friendId];
                 const userStatusData = userStatusDisplayData[friendId];
 

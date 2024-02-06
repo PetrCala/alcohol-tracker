@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as readline from 'readline';
 
-import { DatabaseProps } from '../../src/types/database';
+import {DatabaseProps} from '@src/types/database';
 
 /**
  * Loads JSON data from a file.
@@ -22,7 +22,7 @@ export function loadJsonData(filename: string): DatabaseProps | null {
     const jsonData: DatabaseProps = JSON.parse(rawData);
 
     return jsonData;
-  } catch (error:any) {
+  } catch (error: any) {
     throw new Error('Error reading or parsing the JSON file: ' + error.message);
   }
 }
@@ -108,7 +108,7 @@ export function findSingleValueByKey(node: any, keyToFind: string): any {
   searchNode(node);
 
   if (foundValues.length !== 1) {
-    throw new Error("No value found for the specified key.");
+    throw new Error('No value found for the specified key.');
   }
 
   return foundValues[0];
@@ -120,10 +120,10 @@ export function findSingleValueByKey(node: any, keyToFind: string): any {
  * @returns A promise that resolves to a boolean value indicating the user's confirmation.
  */
 export async function confirmExecution(question: string): Promise<boolean> {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     const rl = readline.createInterface({
       input: process.stdin,
-      output: process.stdout
+      output: process.stdout,
     });
 
     rl.question(question, (answer: string) => {
@@ -139,10 +139,10 @@ export async function confirmExecution(question: string): Promise<boolean> {
  * @returns A promise that resolves to the inputted value.
  */
 export async function askForValue(question: string): Promise<string> {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     const rl = readline.createInterface({
       input: process.stdin,
-      output: process.stdout
+      output: process.stdout,
     });
 
     rl.question(question, (answer: string) => {
@@ -153,7 +153,7 @@ export async function askForValue(question: string): Promise<string> {
 }
 /**
  * Validates and parses the input string to a timestamp.
- * 
+ *
  * @param input - The input string representing a date and time in the format "YYYY-MM-DD HH:MM".
  * @returns The timestamp value of the input string.
  * @throws Error if the input string is not in the correct format or if it represents an invalid date.
