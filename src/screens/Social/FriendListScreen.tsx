@@ -108,6 +108,7 @@ const FriendListScreen = (props: FriendListScreenProps) => {
     <View style={styles.mainContainer}>
       <SearchWindow
         ref={friendListInputRef}
+        windowText="Search your friend list"
         onSearch={localSearch}
         onResetSearch={resetSearch}
         searchOnTextChange={true}

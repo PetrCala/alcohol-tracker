@@ -240,6 +240,7 @@ const FriendsFriendsScreen = ({
         onGoBack={() => navigation.goBack()}
       />
       <SearchWindow
+        windowText="Search this user's friends"
         onSearch={localSearch}
         onResetSearch={resetSearch}
         searchOnTextChange={true}

@@ -145,6 +145,7 @@ const SearchScreen = (props: SearchScreenProps) => {
     <View style={styles.mainContainer}>
       <SearchWindow
         ref={searchInputRef}
+        windowText="Search for new friends"
         onSearch={dbSearch}
         onResetSearch={resetSearch}
       />

@@ -21,13 +21,14 @@ import KeyboardFocusHandler from '@components/Keyboard/KeyboardFocusHandler';
 import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 
 type SearchWindowProps = {
+  windowText: string;
   onSearch: (searchText: string, db?: Database) => void;
   onResetSearch: () => void;
   searchOnTextChange?: boolean;
 };
 
 const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
-  ({onSearch, onResetSearch, searchOnTextChange}, parentRef) => {
+  ({windowText, onSearch, onResetSearch, searchOnTextChange}, parentRef) => {
     const db = useFirebase().db;
     // const inputRef = useRef<TextInput>(null); // Input field ref for focus handling
     const [searchText, setSearchText] = useState<string>('');
@@ -62,10 +63,15 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
     return (
       <DismissKeyboard>
         <View style={styles.mainContainer}>
-          <View style={styles.textContainer}>
+          <View
+            style={
+              searchOnTextChange
+                ? [styles.textContainer, styles.responsiveTextContainer]
+                : styles.textContainer
+            }>
             <KeyboardFocusHandler>
               <TextInput
-                placeholder="Search for a user"
+                placeholder={windowText}
                 value={searchText}
                 onChangeText={text => setSearchText(text)}
                 style={styles.searchText}
@@ -85,13 +91,15 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
               </TouchableOpacity>
             ) : null}
           </View>
-          <View style={styles.searchButtonContainer}>
-            <TouchableOpacity
-              style={styles.searchButton}
-              onPress={() => handleDoSearch(searchText, db)}>
-              <Text style={styles.searchButtonText}>Search</Text>
-            </TouchableOpacity>
-          </View>
+          {searchOnTextChange ? null : (
+            <View style={styles.searchButtonContainer}>
+              <TouchableOpacity
+                style={styles.searchButton}
+                onPress={() => handleDoSearch(searchText, db)}>
+                <Text style={styles.searchButtonText}>Search</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
       </DismissKeyboard>
     );
@@ -119,6 +127,9 @@ const styles = StyleSheet.create({
     borderColor: '#000',
     borderRadius: 10,
     backgroundColor: 'white',
+  },
+  responsiveTextContainer: {
+    width: '100%',
   },
   searchText: {
     height: '100%',
