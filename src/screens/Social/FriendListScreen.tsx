@@ -13,7 +13,6 @@ import LoadingData from '../../components/LoadingData';
 import UserOverview from '@components/Social/UserOverview';
 import useProfileDisplayData from '@hooks/useProfileDisplayData';
 import SearchWindow from '@components/Social/SearchWindow';
-import {Database} from 'firebase/database';
 import {
   SearchWindowRef,
   UserIdToNicknameMapping,
@@ -103,6 +102,7 @@ const FriendListScreen = (props: FriendListScreenProps) => {
   }, [friends]);
 
   if (!navigation) return null;
+  console.log(state.displayedFriends);
 
   return (
     <View style={styles.mainContainer}>
@@ -122,8 +122,7 @@ const FriendListScreen = (props: FriendListScreenProps) => {
         ) : friends ? (
           <View style={styles.friendList}>
             {isNonEmptyArray(state.displayedFriends) ? (
-              Object.keys(friends).map(friendId => {
-                if (!state.displayedFriends.includes(friendId)) return null; // Hide irrelevant
+              state.displayedFriends.map((friendId: string) => {
                 const profileData = profileDisplayData[friendId];
                 const userStatusData = userStatusDisplayData[friendId];
 
