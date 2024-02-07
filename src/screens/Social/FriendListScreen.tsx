@@ -31,6 +31,7 @@ import {
   orderUsersByPriority,
 } from '@src/services/algorithms/displayPriority';
 import {UsersPriority} from '@src/types/algorithms';
+import FillerView from '@components/FillerView';
 
 interface State {
   searching: boolean;
@@ -186,6 +187,7 @@ const FriendListScreen = (props: FriendListScreenProps) => {
             </TouchableOpacity>
           </View>
         )}
+        <FillerView height={100} />
       </ScrollView>
     </View>
   );

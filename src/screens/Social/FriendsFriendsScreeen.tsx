@@ -38,6 +38,7 @@ import SeeProfileButton from '@components/Buttons/SeeProfileButton';
 import {GeneralAction} from '@src/types/states';
 import commonStyles from '@src/styles/commonStyles';
 import {getNicknameMapping} from '@src/services/search/searchUtils';
+import FillerView from '@components/FillerView';
 
 interface State {
   searching: boolean;
@@ -277,6 +278,7 @@ const FriendsFriendsScreen = ({
             </Text>
           ) : null}
         </View>
+        <FillerView height={100} />
       </ScrollView>
     </View>
   );
