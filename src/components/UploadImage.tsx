@@ -1,4 +1,4 @@
-﻿import React, {useReducer} from 'react';
+﻿import React, {useEffect, useReducer} from 'react';
 import {
   Image,
   View,
@@ -7,10 +7,6 @@ import {
   StyleSheet,
   ImageSourcePropType,
 } from 'react-native';
-// import {
-//   ImageLibraryOptions,
-//   launchImageLibrary,
-// } from 'react-native-image-picker';
 import ImagePicker from 'react-native-image-crop-picker';
 import {Image as CompressorImage} from 'react-native-compressor';
 import {uploadImageToFirebase} from '../storage/storageUpload';
@@ -73,32 +69,6 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
   const {db, storage} = useFirebase();
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const handleUpload = async (sourceURI: string | null) => {
-    if (!sourceURI) {
-      dispatch({type: 'SET_WARNING', payload: 'No image selected'});
-      return;
-    }
-
-    try {
-      dispatch({type: 'SET_UPLOAD_ONGOING', payload: true});
-      const compressedURI = await CompressorImage.compress(sourceURI);
-      await uploadImageToFirebase(
-        storage,
-        compressedURI,
-        pathToUpload,
-        dispatch,
-      ); // Wait for the promise to resolve
-      if (isProfilePicture) {
-        await updateProfileInfo(pathToUpload, user, auth, db, storage);
-      }
-    } catch (error: any) {
-      dispatch({type: 'SET_UPLOAD_ONGOING', payload: false}); // Otherwise dispatch upon success in child component
-      dispatch({type: 'SET_IMAGE_SOURCE', payload: null});
-      Alert.alert('Image upload error', error.message);
-      // handleErrors(error, 'Error uploading image', error.message, dispatch); // Use after popup alerts have been implemented
-    }
-  };
-
   const chooseImage = async () => {
     ImagePicker.openPicker({
       width: 300,
@@ -121,8 +91,7 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
           // });
           return;
         }
-        dispatch({type: 'SET_UPLOAD_MODAL_VISIBLE', payload: true});
-        dispatch({type: 'SET_IMAGE_SOURCE', payload: source.uri});
+        dispatch({type: 'SET_IMAGE_SOURCE', payload: source.uri}); // Triggers upload
       })
       .catch((error: any) => {
         // TODO add clever error handling
@@ -156,6 +125,35 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
     dispatch({type: 'SET_SUCCESS', payload: ''});
   };
 
+  useEffect(() => {
+    const handleUpload = async (sourceURI: string | null) => {
+      if (!sourceURI) return;
+
+      try {
+        dispatch({type: 'SET_UPLOAD_MODAL_VISIBLE', payload: true});
+        dispatch({type: 'SET_UPLOAD_ONGOING', payload: true});
+        const compressedURI = await CompressorImage.compress(sourceURI);
+        await uploadImageToFirebase(
+          storage,
+          compressedURI,
+          pathToUpload,
+          dispatch,
+        ); // Wait for the promise to resolve
+        if (isProfilePicture) {
+          await updateProfileInfo(pathToUpload, user, auth, db, storage);
+        }
+      } catch (error: any) {
+        dispatch({type: 'SET_UPLOAD_ONGOING', payload: false}); // Otherwise dispatch upon success in child component
+        dispatch({type: 'SET_IMAGE_SOURCE', payload: null});
+        dispatch({type: 'SET_UPLOAD_MODAL_VISIBLE', payload: false});
+        Alert.alert('Image upload error', error.message);
+        // handleErrors(error, 'Error uploading image', error.message, dispatch); // Use after popup alerts have been implemented
+      }
+    };
+
+    handleUpload(state.imageSource);
+  }, [state.imageSource]);
+
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={handleChooseImagePress} style={styles.button}>
@@ -164,14 +162,11 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
 
       {state.imageSource && (
         <UploadImagePopup
-          imageSource={state.imageSource}
           visible={state.uploadModalVisible}
           transparent={true}
-          message={'Do you want to upload this image?'}
           onRequestClose={() =>
             dispatch({type: 'SET_UPLOAD_MODAL_VISIBLE', payload: false})
           }
-          onSubmit={() => handleUpload(state.imageSource)}
           parentState={state}
           parentDispatch={dispatch}
         />

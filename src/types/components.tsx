@@ -133,12 +133,9 @@ export interface UploadImageState {
 }
 
 export type UploadImagePopupProps = {
-  imageSource: string;
   visible: boolean;
   transparent: boolean;
-  message: string;
   onRequestClose: () => void;
-  onSubmit: () => Promise<void>;
   parentState: UploadImageState;
   parentDispatch: React.Dispatch<GeneralAction>;
 };
