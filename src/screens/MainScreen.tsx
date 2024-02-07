@@ -464,6 +464,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#FFFF99',
     width: '100%',
+    marginTop: 2,
   },
   menuInfoItemContainer: {
     flexDirection: 'row',
