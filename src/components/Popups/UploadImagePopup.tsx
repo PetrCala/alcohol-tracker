@@ -17,7 +17,6 @@ import {
 const UploadImagePopup = (props: UploadImagePopupProps) => {
   const {
     imageSource,
-    setImageSource,
     visible,
     transparent,
     message,
@@ -114,7 +113,6 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
         parentState.uploadProgress.includes('100') &&
         user
       ) {
-        setImageSource(imageSource); // Propagate immediate local changes
         await AsyncStorage.removeItem(
           CONST.CACHE.PROFILE_PICTURE_KEY + user.uid,
         );
@@ -176,6 +174,7 @@ const styles = StyleSheet.create({
   image: {
     width: imageSize * 0.5,
     height: imageSize * 0.5,
+    borderRadius: imageSize * 0.25,
     marginBottom: 10,
   },
   uploadText: {

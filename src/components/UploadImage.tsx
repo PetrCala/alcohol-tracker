@@ -7,10 +7,11 @@ import {
   StyleSheet,
   ImageSourcePropType,
 } from 'react-native';
-import {
-  ImageLibraryOptions,
-  launchImageLibrary,
-} from 'react-native-image-picker';
+// import {
+//   ImageLibraryOptions,
+//   launchImageLibrary,
+// } from 'react-native-image-picker';
+import ImagePicker from 'react-native-image-crop-picker';
 import {Image as CompressorImage} from 'react-native-compressor';
 import {uploadImageToFirebase} from '../storage/storageUpload';
 import WarningMessage from './Info/WarningMessage';
@@ -59,7 +60,6 @@ type UploadImageComponentProps = {
   pathToUpload: string;
   imageSource: ImageSourcePropType;
   imageStyle: any;
-  setImageSource: (newUrl: string) => void;
   isProfilePicture: boolean;
 };
 
@@ -67,7 +67,6 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
   pathToUpload,
   imageSource,
   imageStyle,
-  setImageSource,
   isProfilePicture = false,
 }) => {
   const user = auth.currentUser;
@@ -101,30 +100,36 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
   };
 
   const chooseImage = async () => {
-    const options: ImageLibraryOptions = {
+    ImagePicker.openPicker({
+      width: 300,
+      height: 400,
+      cropping: true,
+      includeBase64: true,
+      cropperCircleOverlay: true, // could use isProfilePicture
+      cropperToolbarTitle: 'Crop the image',
+      compressImageQuality: 0.8,
+      writeTempFile: true,
       mediaType: 'photo',
-      includeBase64: false,
-    };
-
-    // Assume granted permissions
-    launchImageLibrary(options, async (response: any) => {
-      if (response.didCancel) {
-        // console.log('User cancelled image picker');
-      } else if (response.errorCode) {
-        Alert.alert('ImagePicker Error', response.errorMessage);
-      } else {
-        const source = {uri: response.assets[0].uri};
+    })
+      .then((image: any) => {
+        const source = {uri: image.path};
         if (!source) {
-          dispatch({
-            type: 'SET_WARNING',
-            payload: 'Could not fetch the image. Please try again.',
-          });
+          Alert.alert('Error', 'Could not fetch the image. Please try again.');
+          // dispatch({
+          //   type: 'SET_WARNING',
+          //   payload: 'Could not fetch the image. Please try again.',
+          // });
           return;
         }
         dispatch({type: 'SET_UPLOAD_MODAL_VISIBLE', payload: true});
         dispatch({type: 'SET_IMAGE_SOURCE', payload: source.uri});
-      }
-    });
+      })
+      .catch((error: any) => {
+        // TODO add clever error handling
+        if ('User cancelled image selection' === error.message) return;
+        Alert.alert('Error choosing image', error.message);
+        // dispatch({type: 'SET_WARNING', payload: error.message});
+      });
   };
 
   const handleChooseImagePress = async () => {
@@ -160,7 +165,6 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
       {state.imageSource && (
         <UploadImagePopup
           imageSource={state.imageSource}
-          setImageSource={setImageSource}
           visible={state.uploadModalVisible}
           transparent={true}
           message={'Do you want to upload this image?'}

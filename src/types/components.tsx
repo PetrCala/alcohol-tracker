@@ -11,7 +11,7 @@ import {
 import {StackNavigationProp} from '@react-navigation/stack';
 import {AppStackParamList} from './screens';
 import {Calendar} from 'react-native-calendars';
-import { GeneralAction } from './states';
+import {GeneralAction} from './states';
 
 // FeedbackPopup props
 
@@ -134,7 +134,6 @@ export interface UploadImageState {
 
 export type UploadImagePopupProps = {
   imageSource: string;
-  setImageSource: (newUrl: string) => void;
   visible: boolean;
   transparent: boolean;
   message: string;

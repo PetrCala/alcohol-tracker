@@ -229,7 +229,13 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
   }, [state.drinkingSessionData, state.preferences, state.visibleDateObject]);
 
   if (state.isLoading) return <LoadingData blendBackground={true} />;
-  if (!db || !storage || !state.preferences || !state.drinkingSessionData)
+  if (
+    !db ||
+    !storage ||
+    !state.preferences ||
+    !state.drinkingSessionData ||
+    !userData
+  )
     return;
 
   return (
@@ -242,7 +248,10 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
         style={styles.scrollView}
         onScrollBeginDrag={Keyboard.dismiss}
         keyboardShouldPersistTaps="handled">
-        <ProfileOverview userId={userId} profileData={profileData} />
+        <ProfileOverview
+          userId={userId}
+          profileData={user?.uid === userId ? userData.profile : profileData} // For live propagation of current user
+        />
         <View style={styles.friendsInfoContainer}>
           <View style={styles.leftContainer}>
             <Text style={styles.friendsInfoHeading}>Friends:</Text>
