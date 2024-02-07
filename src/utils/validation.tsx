@@ -63,6 +63,17 @@ export const validateSignInInput = (
   return {success: true};
 };
 
+/**
+ * Cleans a semantic version string by extracting the major, minor, and patch version components.
+ * @param version - The semantic version string to clean.
+ * @returns The cleaned semantic version string containing only the major, minor, and patch version components.
+ */
+export function cleanSemver(version: string): string {
+  const regex = /^(\d+\.\d+\.\d+)/;
+  const match = version.match(regex);
+  return match ? match[1] : version;
+}
+
 /** Input the minimum supported version of the application and validate that the current version is not older than that one. If it is newer, return true, otherwise return false.
  *
  * @param minSupportedVersion Version to validate against.
@@ -81,7 +92,8 @@ export const validateAppVersion = (
         'This version of the application is outdated. Please upgrade to the newest version.',
     };
   // Compare versions
-  if (semver.lt(currentAppVersion, minSupportedVersion)) {
+  let cleanCurrentAppVersion = cleanSemver(currentAppVersion); // No build metadata
+  if (semver.lt(cleanCurrentAppVersion, minSupportedVersion)) {
     return {
       success: false,
       message:
