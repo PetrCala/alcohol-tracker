@@ -12,22 +12,17 @@ import {
   launchImageLibrary,
 } from 'react-native-image-picker';
 import {Image as CompressorImage} from 'react-native-compressor';
-import {FirebaseStorage, getDownloadURL, ref} from 'firebase/storage';
 import {uploadImageToFirebase} from '../storage/storageUpload';
-import {handleErrors} from '@src/utils/errorHandling';
 import WarningMessage from './Info/WarningMessage';
 import SuccessMessage from './Info/SuccessMessage';
 import UploadImagePopup from './Popups/UploadImagePopup';
 import {UploadImageState} from '@src/types/components';
 import {GeneralAction} from '@src/types/states';
-import {checkPermission} from '@src/permissions/checkPermission';
+import checkPermission from '@src/permissions/checkPermission';
 import {requestPermission} from '@src/permissions/requestPermission';
-import {setProfilePictureURL, updateProfileInfo} from '@database/profile';
+import {updateProfileInfo} from '@database/profile';
 import {auth} from '@src/services/firebaseSetup';
 import {useFirebase} from '@src/context/global/FirebaseContext';
-import {updateProfile} from 'firebase/auth';
-import path from 'path';
-import {cacheProfileImage} from '@src/utils/cache';
 
 const initialState: UploadImageState = {
   imageSource: null,
