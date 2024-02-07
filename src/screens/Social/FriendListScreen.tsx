@@ -106,7 +106,7 @@ const FriendListScreen = (props: FriendListScreenProps) => {
       friends: null, // Fetch on render
       currentUserFriends: friends,
       drinkingSessionData: null, // Fetch on render
-      preferences: null, // Fetch on render
+      preferences: null, // Fetch on render - if you want to calculate with current user, pass here
     });
   };
 
