@@ -51,6 +51,7 @@ const InputTextPopup = (props: InputTextPopupProps) => {
             <View style={styles.textContainer}>
               <TextInput
                 placeholder={placeholder}
+                placeholderTextColor={'#a8a8a8'}
                 value={text}
                 onChangeText={text => setText(text)}
                 style={styles.password}
@@ -121,6 +122,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginTop: 5,
     marginBottom: 5,
+    color: 'black',
   },
   buttonsContainer: {
     width: '100%',

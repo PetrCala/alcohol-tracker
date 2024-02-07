@@ -72,6 +72,7 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
             <KeyboardFocusHandler>
               <TextInput
                 placeholder={windowText}
+                placeholderTextColor={'#a8a8a8'}
                 value={searchText}
                 onChangeText={text => setSearchText(text)}
                 style={styles.searchText}
@@ -139,6 +140,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     // justifyContent: 'space-between',
     paddingLeft: 10,
+    color: 'black',
   },
   searchTextResetContainer: {
     width: '10%',
