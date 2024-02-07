@@ -16,7 +16,6 @@ import {
 import BasicButton from '../components/Buttons/BasicButton';
 import {DrinkingSessionArrayItem} from '../types/database';
 import {getDatabaseData} from '../context/global/DatabaseDataContext';
-import commonStyles from '../styles/commonStyles';
 import MainHeader from '@components/Header/MainHeader';
 
 const SessionDataItem = ({
@@ -60,6 +59,7 @@ const SessionSummaryScreen = ({
   const totalUnits = sumAllUnits(session.units);
   const totalPoints = sumAllPoints(session.units, preferences.units_to_points);
   const unitSums = {
+    small_beer: sumUnitsOfSingleType(session.units, 'small_beer'),
     beer: sumUnitsOfSingleType(session.units, 'beer'),
     wine: sumUnitsOfSingleType(session.units, 'wine'),
     weak_shot: sumUnitsOfSingleType(session.units, 'weak_shot'),
@@ -107,6 +107,7 @@ const SessionSummaryScreen = ({
 
   const unitData = [
     {heading: 'Units:', data: totalUnits.toString()},
+    {heading: 'Small Beer:', data: unitSums.small_beer.toString()},
     {heading: 'Beer:', data: unitSums.beer.toString()},
     {heading: 'Wine:', data: unitSums.wine.toString()},
     {heading: 'Weak Shot:', data: unitSums.weak_shot.toString()},

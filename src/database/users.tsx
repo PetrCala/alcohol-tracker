@@ -25,6 +25,7 @@ export const getDefaultPreferences = (): PreferencesData => {
       yellow: 5,
     },
     units_to_points: {
+      small_beer: 0.5,
       beer: 1,
       cocktail: 1.5,
       other: 1,
