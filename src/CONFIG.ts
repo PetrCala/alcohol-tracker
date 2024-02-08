@@ -26,14 +26,14 @@ export default {
   },
   DB_CONFIG_PROD: {
     // The keys have to be camelcase for firebase to work
-    apiKey: get(Config, 'API_KEY', ''),
-    authDomain: get(Config, 'AUTH_DOMAIN', ''),
-    databaseURL: get(Config, 'DATABASE_URL', ''),
-    projectId: get(Config, 'PROJECT_ID', ''),
-    storageBucket: get(Config, 'STORAGE_BUCKET', ''),
-    messagineSenderId: get(Config, 'MESSAGING_SENDER_ID', ''),
-    appId: get(Config, 'APP_ID', ''),
-    measurementId: get(Config, 'MEASUREMENT_ID', ''),
+    apiKey: get(Config, 'PROD_API_KEY', ''),
+    authDomain: get(Config, 'PROD_AUTH_DOMAIN', ''),
+    databaseURL: get(Config, 'PROD_DATABASE_URL', ''),
+    projectId: get(Config, 'PROD_PROJECT_ID', ''),
+    storageBucket: get(Config, 'PROD_STORAGE_BUCKET', ''),
+    messagineSenderId: get(Config, 'PROD_MESSAGING_SENDER_ID', ''),
+    appId: get(Config, 'PROD_APP_ID', ''),
+    measurementId: get(Config, 'PROD_MEASUREMENT_ID', ''),
   },
   DB_CONFIG_DEV: {
     apiKey: get(Config, 'DEV_API_KEY', ''),
