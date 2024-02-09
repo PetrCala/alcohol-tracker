@@ -1,70 +1,119 @@
-﻿import 
-  React,
-{
-  useState,
-  useContext,
-  useEffect,
-} from 'react';
-import { 
+﻿import React, {useState, useEffect, useMemo, useReducer} from 'react';
+import {
   Alert,
   Dimensions,
   Image,
+  Keyboard,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import BasicButton from '../components/Buttons/BasicButton';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import SessionsCalendar from '../components/Calendar';
 import LoadingData from '../components/LoadingData';
-import { DrinkingSessionArrayItem } from '../types/database';
-import { MainScreenProps } from '../types/screens';
-import { DateObject } from '../types/components';
-import { auth } from "../../src/services/firebaseConfig"
-import { dateToDateObject, getZeroUnitsObject, calculateThisMonthUnits, findOngoingSession, calculateThisMonthPoints, getSingleMonthDrinkingSessions, timestampToDate, getYearMonthVerbose } from '../utils/dataHandling';
-import { useUserConnection } from '../context/UserConnectionContext';
+import {DrinkingSessionArrayItem} from '../types/database';
+import {MainScreenProps} from '../types/screens';
+import {DateObject} from '../types/components';
+import {auth} from '../services/firebaseSetup';
+import {
+  dateToDateObject,
+  calculateThisMonthUnits,
+  findOngoingSession,
+  calculateThisMonthPoints,
+  getSingleMonthDrinkingSessions,
+  timestampToDate,
+  getYearMonthVerbose,
+} from '../utils/dataHandling';
+import {useUserConnection} from '../context/global/UserConnectionContext';
 import UserOffline from '../components/UserOffline';
-import { updateUserLastOnline } from '../database/users';
-import { saveDrinkingSessionData, updateCurrentSessionKey } from '../database/drinkingSessions';
-import { getDatabaseData } from '../context/DatabaseDataContext';
-import commonStyles from '../styles/commonStyles';
-import ItemListPopup from '../components/Popups/ItemListPopup';
-import { useFirebase } from '../context/FirebaseContext';
+import {updateUserLastOnline} from '../database/users';
+import {startLiveDrinkingSession} from '../database/drinkingSessions';
+import {getDatabaseData} from '../context/global/DatabaseDataContext';
+import commonStyles from '@src/styles/commonStyles';
+import {useFirebase} from '../context/global/FirebaseContext';
 import ProfileImage from '../components/ProfileImage';
+import {generateDatabaseKey} from '@database/baseFunctions';
 
-const MainScreen = ( { navigation }: MainScreenProps) => {
-  // Context, database, and authentification
+interface State {
+  visibleDateObject: DateObject;
+  drinkingSessionsCount: number;
+  unitsConsumed: number;
+  pointsEarned: number;
+  ongoingSession: DrinkingSessionArrayItem | null;
+  loadingNewSession: boolean;
+  refreshing: boolean;
+  refreshCounter: number;
+}
+
+interface Action {
+  type: string;
+  payload: any;
+}
+
+const initialState: State = {
+  visibleDateObject: dateToDateObject(new Date()),
+  drinkingSessionsCount: 0,
+  unitsConsumed: 0,
+  pointsEarned: 0,
+  ongoingSession: null,
+  loadingNewSession: false,
+  refreshing: false,
+  refreshCounter: 0,
+};
+
+const reducer = (state: State, action: Action): State => {
+  switch (action.type) {
+    case 'SET_VISIBLE_DATE_OBJECT':
+      return {...state, visibleDateObject: action.payload};
+    case 'SET_DRINKING_SESSIONS_COUNT':
+      return {...state, drinkingSessionsCount: action.payload};
+    case 'SET_UNITS_CONSUMED':
+      return {...state, unitsConsumed: action.payload};
+    case 'SET_POINTS_EARNED':
+      return {...state, pointsEarned: action.payload};
+    case 'SET_ONGOING_SESSION':
+      return {...state, ongoingSession: action.payload};
+    case 'SET_LOADING_NEW_SESSION':
+      return {...state, loadingNewSession: action.payload};
+    case 'SET_REFRESHING':
+      return {...state, refreshing: action.payload};
+    case 'SET_REFRESH_COUNTER':
+      return {...state, refreshCounter: action.payload};
+    default:
+      return state;
+  }
+};
+
+// const [startSessionModalVisible, setStartSessionModalVisible] =
+//   useState<boolean>(false);
+
+const MainScreen = ({navigation}: MainScreenProps) => {
   const user = auth.currentUser;
-  const { db, storage } = useFirebase();
-  const { isOnline } = useUserConnection();
-  const { 
-    currentSessionData,
+  const {db, storage} = useFirebase();
+  const {isOnline} = useUserConnection();
+  const {
+    userStatusData,
     drinkingSessionData,
     drinkingSessionKeys,
     preferences,
     unconfirmedDays,
     userData,
-    isLoading
+    isLoading,
   } = getDatabaseData();
-  const [startSessionModalVisible, setStartSessionModalVisible] = useState<boolean>(false);
-  const [visibleDateObject, setVisibleDateObject] = useState<DateObject>(
-    dateToDateObject(new Date()));
-  const [thisMonthUnits, setThisMonthUnits] = useState<number>(0);
-  const [thisMonthPoints, setThisMonthPoints] = useState<number>(0);
-  const [thisMonthSessionCount, setThisMonthSessionCount] = useState<number>(0);
-  const [loadingNewSession, setLoadingNewSession] = useState<boolean>(false);
-  const thisYearMonth = getYearMonthVerbose(visibleDateObject, false);
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const sessionOngoing = userStatusData?.latest_session?.ongoing;
 
   // Handle drinking session button press
   const startDrinkingSession = async () => {
-    if (!preferences || !db || !user) return null; // Should never be null 
-    let sessionData:DrinkingSessionArrayItem;
-    let sessionKey:string;
-    let ongoingSession = findOngoingSession(drinkingSessionData);
-    if (!ongoingSession){
-      setLoadingNewSession(true);
+    if (!preferences || !user) return null; // Should never be null
+    let sessionData: DrinkingSessionArrayItem;
+    let sessionKey: string;
+    let latest_session = userStatusData?.latest_session;
+    if (!latest_session?.ongoing) {
+      dispatch({type: 'SET_LOADING_NEW_SESSION', payload: true});
       // The user is not in an active session
       sessionData = {
         start_time: Date.now(),
@@ -72,47 +121,73 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
         blackout: false,
         note: '',
         units: {
-          [Date.now()]: {other: 0} // Necessary placeholder, will be deleted
+          [Date.now()]: {other: 0}, // Necessary placeholder, will be deleted
         },
-        ongoing: true
+        ongoing: true,
       };
+      const newSessionKey = generateDatabaseKey(
+        db,
+        `user_drinking_sessions/${user.uid}`,
+      );
+      if (!newSessionKey) {
+        Alert.alert(
+          'New session key generation failed',
+          "Couldn't generate a new session key",
+        );
+        return;
+      }
+      sessionKey = newSessionKey;
       try {
-        // Create a new session and return its session key
-        sessionKey = await saveDrinkingSessionData(db, user.uid, sessionData);
-      } catch (error:any) {
-        throw new Error("Failed to create a new key in the database");
-      };
-      try {
-        // Create a new session and return its session key
-        await updateCurrentSessionKey(db, user.uid, sessionKey);
-      } catch (error:any) {
-        throw new Error("Failed to update the current session key info");
-      };
+        await startLiveDrinkingSession(db, user.uid, sessionData, sessionKey);
+      } catch (error: any) {
+        Alert.alert(
+          'New session initialization failed',
+          'Could not start a new session: ' + error.message,
+        );
+        return;
+      }
     } else {
-      if (!currentSessionData) return null; // Should never be null with ongoing session
-      // The user already has an active session
-      sessionData = ongoingSession;
-      if (!currentSessionData.current_session_id){
-        throw new Error("There is no active data key in the database");
-      };
-      sessionKey = currentSessionData.current_session_id;
-    };
-    navigation.navigate("Drinking Session Screen", {
+      const currentsessionKey = userStatusData?.latest_session_id;
+      if (!currentsessionKey) {
+        Alert.alert(
+          'New session initialization failed',
+          'Could not find the existing session',
+        );
+        return;
+      }
+      sessionData = latest_session;
+      sessionKey = currentsessionKey;
+    }
+    navigation.navigate('Drinking Session Screen', {
       session: sessionData,
       sessionKey: sessionKey,
-      preferences: preferences
+      preferences: preferences,
     });
-    setLoadingNewSession(false);
-  }
+    dispatch({type: 'SET_LOADING_NEW_SESSION', payload: false});
+  };
+
+  const onRefresh = React.useCallback(() => {
+    dispatch({type: 'SET_REFRESHING', payload: true});
+    setTimeout(() => {
+      dispatch({type: 'SET_REFRESHING', payload: false});
+      dispatch({
+        type: 'SET_REFRESH_COUNTER',
+        payload: state.refreshCounter + 1,
+      });
+    }, 1000);
+  }, []);
 
   // Update the user last login time
   useEffect(() => {
     const fetchData = async () => {
-      if (!db || !user) return;
+      if (!user) return;
       try {
         await updateUserLastOnline(db, user.uid);
-      } catch (error:any) {
-        Alert.alert("Failed to contact the database", "Could not update user online status:" + error.message);
+      } catch (error: any) {
+        Alert.alert(
+          'Failed to contact the database',
+          'Could not update user online status:' + error.message,
+        );
       }
     };
 
@@ -120,152 +195,188 @@ const MainScreen = ( { navigation }: MainScreenProps) => {
   }, []);
 
   // Monitor visible month and various statistics
-  useEffect(() => {
+  useMemo(() => {
     if (!preferences) return;
-    let thisMonthUnits = calculateThisMonthUnits(visibleDateObject, drinkingSessionData);
-    let thisMonthPoints = calculateThisMonthPoints(visibleDateObject, drinkingSessionData, preferences.units_to_points);
-    let thisMonthSessionCount = getSingleMonthDrinkingSessions(timestampToDate(visibleDateObject.timestamp), drinkingSessionData, false).length; // Replace this in the future
-    
-    setThisMonthPoints(thisMonthPoints);
-    setThisMonthUnits(thisMonthUnits);
-    setThisMonthSessionCount(thisMonthSessionCount);
-  }, [drinkingSessionData, visibleDateObject, preferences]);
+    let thisMonthUnits = calculateThisMonthUnits(
+      state.visibleDateObject,
+      drinkingSessionData,
+    );
+    let thisMonthPoints = calculateThisMonthPoints(
+      state.visibleDateObject,
+      drinkingSessionData,
+      preferences.units_to_points,
+    );
+    let thisMonthSessionCount = getSingleMonthDrinkingSessions(
+      timestampToDate(state.visibleDateObject.timestamp),
+      drinkingSessionData,
+      false,
+    ).length; // Replace this in the future
+
+    dispatch({
+      type: 'SET_DRINKING_SESSIONS_COUNT',
+      payload: thisMonthSessionCount,
+    });
+    dispatch({type: 'SET_UNITS_CONSUMED', payload: thisMonthUnits});
+    dispatch({type: 'SET_POINTS_EARNED', payload: thisMonthPoints});
+  }, [drinkingSessionData, state.visibleDateObject, preferences]);
 
   if (!user) {
-    navigation.replace("Auth", {screen: "Login Screen"});
+    navigation.replace('Auth', {screen: 'Login Screen'});
     return;
   }
   if (!isOnline) return <UserOffline />;
-  if (isLoading || loadingNewSession) return <LoadingData loadingText={loadingNewSession ? 'Starting a new session...' : ''} />;
-  if (!db || !preferences || !drinkingSessionData || !userData) return;
+  if (isLoading || state.loadingNewSession)
+    return (
+      <LoadingData
+        loadingText={state.loadingNewSession ? 'Starting a new session...' : ''}
+      />
+    );
+  if (!preferences || !drinkingSessionData || !userData) return;
 
-  return ( 
+  return (
     <>
-      <View style={commonStyles.mainHeader}>
-          <View style={styles.profileContainer}>
-            <TouchableOpacity
-              onPress = {() => navigation.navigate('Profile Screen')}
-              style={styles.profileButton}
-            >
-              <ProfileImage
-                storage={storage}
-                userId={user.uid}
-                photoURL={userData.profile.photo_url}
-                style={styles.profileImage}
-              />
-              <Text style={styles.headerUsername}>{user.displayName}</Text> 
-            </TouchableOpacity>
-          </View>
-          {/* <View style={styles.menuContainer}>
+      <View style={commonStyles.headerContainer}>
+        <View style={styles.profileContainer}>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('Profile Screen', {
+                userId: user.uid,
+                profileData: userData.profile,
+                friends: userData.friends,
+                drinkingSessionData: drinkingSessionData,
+                preferences: preferences,
+              })
+            }
+            style={styles.profileButton}>
+            <ProfileImage
+              storage={storage}
+              userId={user.uid}
+              downloadPath={userData.profile.photo_url}
+              style={styles.profileImage}
+              refreshTrigger={state.refreshCounter}
+            />
+            <Text style={styles.headerUsername}>{user.displayName}</Text>
+          </TouchableOpacity>
+        </View>
+        {/* <View style={styles.menuContainer}>
               <Text style={styles.yearMonthText}>{thisYearMonth}</Text>
           </View> */}
       </View>
-      {currentSessionData?.current_session_id ?
-      <TouchableOpacity 
-      style={styles.userInSessionWarningContainer}
-      onPress={startDrinkingSession}
-      >
-        <Text style={styles.userInSessionWarningText}>
-        You are currently in session!
-        </Text> 
-      </TouchableOpacity>
-      :
-      <></>
-      } 
       {/* <View style={styles.yearMonthContainer}>
         <Text style={styles.yearMonthText}>{thisYearMonth}</Text>
       </View> */}
-      <ScrollView style={styles.mainScreenContent}>
-          <View style={styles.menuInfoContainer}>
-            <View style={styles.menuInfoItemContainer}>
-              <Text style={styles.menuInfoText}>Units:</Text> 
-              <Text style={styles.menuInfoText}>{thisMonthUnits}</Text> 
-            </View>
-            <View style={styles.menuInfoItemContainer}>
-              <Text style={styles.menuInfoText}>Points:</Text> 
-              <Text style={styles.menuInfoText}>{thisMonthPoints}</Text> 
-            </View>
-            <View style={styles.menuInfoItemContainer}>
-              <Text style={styles.menuInfoText}>Sessions:</Text> 
-              <Text style={styles.menuInfoText}>{thisMonthSessionCount}</Text> 
-            </View>
+      <ScrollView
+        style={styles.mainScreenContent}
+        keyboardShouldPersistTaps="handled"
+        onScrollBeginDrag={Keyboard.dismiss}
+        refreshControl={
+          <RefreshControl refreshing={state.refreshing} onRefresh={onRefresh} />
+        }>
+        {sessionOngoing ? (
+          <TouchableOpacity
+            style={styles.userInSessionWarningContainer}
+            onPress={startDrinkingSession}>
+            <Text style={styles.userInSessionWarningText}>
+              You are currently in session!
+            </Text>
+          </TouchableOpacity>
+        ) : null}
+        <View style={styles.menuInfoContainer}>
+          <View style={styles.menuInfoItemContainer}>
+            <Text style={styles.menuInfoText}>Units:</Text>
+            <Text style={styles.menuInfoText}>{state.unitsConsumed}</Text>
           </View>
-          <SessionsCalendar
-            drinkingSessionData = {drinkingSessionData}
-            preferences = {preferences}
-            visibleDateObject={visibleDateObject}
-            setVisibleDateObject={setVisibleDateObject}
-            onDayPress = {(day:DateObject) => {
-              navigation.navigate('Day Overview Screen', { dateObject: day })
-            }}
-          />
-          <View style={{height:200, backgroundColor: '#ffff99'}}></View>
+          <View style={styles.menuInfoItemContainer}>
+            <Text style={styles.menuInfoText}>Points:</Text>
+            <Text style={styles.menuInfoText}>{state.pointsEarned}</Text>
+          </View>
+          <View style={styles.menuInfoItemContainer}>
+            <Text style={styles.menuInfoText}>Sessions:</Text>
+            <Text style={styles.menuInfoText}>
+              {state.drinkingSessionsCount}
+            </Text>
+          </View>
+        </View>
+        <SessionsCalendar
+          drinkingSessionData={drinkingSessionData}
+          preferences={preferences}
+          visibleDateObject={state.visibleDateObject}
+          dispatch={dispatch}
+          onDayPress={(day: DateObject) => {
+            navigation.navigate('Day Overview Screen', {dateObject: day});
+          }}
+        />
+        <View style={{height: 200, backgroundColor: '#ffff99'}}></View>
       </ScrollView>
       <View style={commonStyles.mainFooter}>
-        <View style={[
-          styles.mainScreenFooterHalfContainer,
-          styles.mainScreenFooterLeftContainer
-        ]}>
-          <MenuIcon 
-            iconId='social-icon'
-            iconSource={require('../../assets/icons/social.png')} 
+        <View
+          style={[
+            styles.mainScreenFooterHalfContainer,
+            styles.mainScreenFooterLeftContainer,
+          ]}>
+          <MenuIcon
+            iconId="social-icon"
+            iconSource={require('../../assets/icons/social.png')}
             containerStyle={styles.menuIconContainer}
             iconStyle={styles.menuIcon}
-            onPress = {() => navigation.navigate('Social Screen')}
+            onPress={() =>
+              navigation.navigate('Social Screen', {screen: 'Friend List'})
+            }
           />
-          <MenuIcon 
-            iconId='achievement-icon'
-            iconSource={require('../../assets/icons/achievements.png')} 
+          <MenuIcon
+            iconId="achievement-icon"
+            iconSource={require('../../assets/icons/achievements.png')}
             containerStyle={styles.menuIconContainer}
             iconStyle={styles.menuIcon}
-            onPress = {() => navigation.navigate('Achievement Screen')}
+            onPress={() => navigation.navigate('Achievement Screen')}
           />
         </View>
-        <View style={[
-          styles.mainScreenFooterHalfContainer,
-          styles.mainScreenFooterRightContainer
-        ]}>
-          <MenuIcon 
-            iconId='main-menu-popup-icon'
-            iconSource={require('../../assets/icons/statistics.png')} 
+        <View
+          style={[
+            styles.mainScreenFooterHalfContainer,
+            styles.mainScreenFooterRightContainer,
+          ]}>
+          <MenuIcon
+            iconId="main-menu-popup-icon"
+            iconSource={require('../../assets/icons/statistics.png')}
             containerStyle={styles.menuIconContainer}
             iconStyle={styles.menuIcon}
-            onPress = {() => navigation.navigate('Statistics Screen')}
+            onPress={() => navigation.navigate('Statistics Screen')}
           />
-          <MenuIcon 
-            iconId='main-menu-popup-icon'
-            iconSource={require('../../assets/icons/bar_menu.png')} 
+          <MenuIcon
+            iconId="main-menu-popup-icon"
+            iconSource={require('../../assets/icons/bar_menu.png')}
             containerStyle={styles.menuIconContainer}
             iconStyle={styles.menuIcon}
-            onPress = {() => navigation.navigate('Main Menu Screen', {
-              userData: userData,
-              preferences: preferences
-            })}
+            onPress={() =>
+              navigation.navigate('Main Menu Screen', {
+                userData: userData,
+                preferences: preferences,
+              })
+            }
           />
         </View>
       </View>
-      {currentSessionData?.current_session_id ? <></> :
+      {sessionOngoing ? null : (
         <TouchableOpacity
           style={styles.startSessionButton}
-          onPress={startDrinkingSession}
-        >
+          onPress={startDrinkingSession}>
           <Image
             source={require('../../assets/icons/plus.png')}
             style={styles.startSessionImage}
           />
         </TouchableOpacity>
-      }
+      )}
     </>
   );
 };
-   
-export default MainScreen;
 
-const screenWidth = Dimensions.get('window').width;
+export default MainScreen;
 
 const styles = StyleSheet.create({
   profileContainer: {
     //Ensure the container fills all space between, no more, no less
+    padding: 10,
     flexGrow: 1,
     flexShrink: 1,
   },
@@ -321,7 +432,7 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   mainScreenContent: {
-    flexGrow:1, 
+    flexGrow: 1,
     flexShrink: 1,
     backgroundColor: '#FFFF99',
   },
@@ -338,7 +449,7 @@ const styles = StyleSheet.create({
       width: 0,
       height: 2,
     },
-    alignItems: "center",
+    alignItems: 'center',
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
@@ -353,6 +464,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#FFFF99',
     width: '100%',
+    marginTop: 2,
   },
   menuInfoItemContainer: {
     flexDirection: 'row',
@@ -362,27 +474,26 @@ const styles = StyleSheet.create({
   },
   menuInfoText: {
     fontSize: 16,
-    fontWeight: "bold",
-    color: "black",
-    alignSelf: "center",
-    // alignContent: "center",
+    fontWeight: '500',
+    color: 'black',
+    alignSelf: 'center',
     padding: 6,
     marginRight: 4,
     marginLeft: 4,
   },
   thisMonthUnitsText: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginBottom: 12,
-    color: "black",
-    alignSelf: "center",
-    alignContent: "center",
+    color: 'black',
+    alignSelf: 'center',
+    alignContent: 'center',
   },
   startSessionButton: {
     position: 'absolute',
     bottom: 20,
     left: '50%',
-    transform: [{ translateX: -35 }],
+    transform: [{translateX: -35}],
     borderRadius: 50,
     width: 70,
     height: 70,
@@ -403,11 +514,11 @@ const styles = StyleSheet.create({
     // lineHeight: 70,
   },
   navigationArrowContainer: {
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      width: '100%',
-      backgroundColor: '#ffff99',
-      flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    backgroundColor: '#ffff99',
+    flexDirection: 'row',
   },
   navigationArrowButton: {
     width: '50%',
@@ -417,13 +528,13 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     borderRadius: 3,
     borderWidth: 1,
-    backgroundColor:'white',
+    backgroundColor: 'white',
   },
   navigationArrowText: {
-      color: 'black',
-      fontSize: 30,
-      fontWeight: '500',
-      textAlign: 'center',
+    color: 'black',
+    fontSize: 30,
+    fontWeight: '500',
+    textAlign: 'center',
   },
   mainScreenFooterHalfContainer: {
     width: '50%',

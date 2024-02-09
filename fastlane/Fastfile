@@ -1,0 +1,55 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+platform :android do
+  desc "Generate a new local APK"
+  lane :build do
+    # ENV["ENVFILE"]=".env.production"
+
+    gradle(
+      project_dir: './android',
+      task: 'assemble',
+      # flavor: 'Production',
+      build_type: 'Release',
+    )
+  end
+
+  desc "Build the application for Google Play"
+  lane :beta do
+    # ENV["ENVFILE"]=".env.production"
+
+    gradle(
+        project_dir: './android',
+        task: 'bundle',
+        # flavor: 'Production',
+        build_type: 'Release',
+    )
+  end
+end
+
+platform :ios do
+  desc "Generate a local iOS production build"
+  lane :build do
+    # ENV["ENVFILE"]=".env.production"
+    build_app(workspace: "./ios/kiroku.xcworkspace", scheme: "kiroku")
+  end
+
+  desc "Push a new beta build to TestFlight"
+  lane :beta do
+    increment_build_number(xcodeproj: "./ios/kiroku.xcodeproj")
+    build_app(workspace: "./ios/kiroku.xcworkspace", scheme: "kiroku")
+    upload_to_testflight
+  end
+end

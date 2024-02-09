@@ -1,11 +1,46 @@
-module.exports = function (api) {
-  api.cache(true);
-  return {
-    presets: [
-      'module:metro-react-native-babel-preset',
-      ['@babel/preset-env', {targets: {node: 'current'}}],
-      '@babel/preset-typescript'
+module.exports = {
+  presets: [
+    'module:metro-react-native-babel-preset',
+    ['@babel/preset-env', {targets: {node: 'current'}}],
+    '@babel/preset-typescript',
+  ],
+  plugins: [
+    [
+      'module-resolver',
+      {
+        extensions: [
+          '.native.js',
+          '.native.jsx',
+          '.native.ts',
+          '.native.tsx',
+          '.js',
+          '.jsx',
+          '.ts',
+          '.tsx',
+          '.ios.js',
+          '.ios.jsx',
+          '.ios.ts',
+          '.ios.tsx',
+          '.android.js',
+          '.android.jsx',
+          '.android.ts',
+          '.android.tx',
+        ],
+        alias: {
+          '@assets': './assets',
+          '@components': './src/components',
+          '@database': './src/database',
+          '@hooks': './src/hooks',
+          '@libs': './src/libs',
+          '@navigation': './src/navigation',
+          '@screens': './src/screens',
+          '@src': './src',
+          '@storage': './src/storage',
+          '@styles': './src/styles',
+          '@types': './src/types',
+          '@utils': './src/utils',
+        },
+      },
     ],
-    plugins: [],
-  };
-}
+  ],
+};

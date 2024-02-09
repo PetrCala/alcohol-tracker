@@ -1,52 +1,74 @@
 ﻿/** Main database props object */
 export type DatabaseProps = {
-  config: ConfigProps,
-  feedback: FeedbackData,
+  beta_keys: BetaKeysProps; // beta feature
+  config: ConfigProps;
+  feedback: FeedbackData;
   nickname_to_id: {
-    [nickname_key: string]: NicknameToIdData
-  },
-  user_current_session: {
-    [user_id: string]: CurrentSessionData
-  },
+    [nickname_key: string]: NicknameToIdData;
+  };
+  user_status: {
+    [user_id: string]: UserStatusData;
+  };
   user_drinking_sessions: {
-    [user_id: string]: DrinkingSessionData
-  },
+    [user_id: string]: DrinkingSessionData;
+  };
   user_preferences: {
-    [user_id: string]: PreferencesData
-  },
+    [user_id: string]: PreferencesData;
+  };
   user_unconfirmed_days: {
-    [user_id: string]: UnconfirmedDaysData
-  },
+    [user_id: string]: UnconfirmedDaysData;
+  };
   users: {
-    [user_id: string] : UserData
-  }
+    [user_id: string]: UserData;
+  };
+};
+
+export type BetaKeyProps = {
+  // beta feature
+  key: string;
+  in_usage: boolean;
+  user_id?: string;
+};
+
+export type BetaKeysProps = {
+  // beta feature
+  [key_id: number]: BetaKeyProps;
 };
 
 export type ConfigProps = {
   app_settings: AppSettings;
+  maintenance: MaintenanceProps;
 };
 
 export type AppSettings = {
   min_supported_version: string;
   min_user_creation_possible_version: string;
-}
+};
+
+export type MaintenanceProps = {
+  maintenance_mode: boolean;
+  start_time: number;
+  end_time: number;
+};
 
 export type FeedbackProps = {
   submit_time: number;
   text: string;
   user_id: string;
-}
+};
 
 export type FeedbackData = {
-  [feedback_id: string]: FeedbackProps
-}
+  [feedback_id: string]: FeedbackProps;
+};
 
 export type NicknameToIdData = {
   [user_id: string]: string; // User UID - Raw nickname pair
 };
 
-export type CurrentSessionData = {
-  current_session_id: string | null;
+export type UserStatusData = {
+  last_online: number;
+  latest_session_id?: string | null;
+  latest_session?: DrinkingSessionArrayItem | null;
 };
 
 export type DrinkingSessionData = {
@@ -61,88 +83,114 @@ export type DrinkingSessionData = {
 };
 
 /** Type for drinking session data when stored as an array */
-export type DrinkingSessionArrayItem = Omit<DrinkingSessionData[string], 'session_id'>;
+export type DrinkingSessionArrayItem = Omit<
+  DrinkingSessionData[string],
+  'session_id'
+>;
 
 export type UnitsObject = {
   [timestamp: number]: UnitTypesProps;
 };
 
 /** An array that represents all available alcohol units
- * 
+ *
  * Used to construct UnitTypesProps where the expected values of all
  * these keys are set to numbers - main storage of units in the db
- * 
+ *
  */
 export const UnitTypesKeys = [
-  'beer', 
-  'cocktail', 
-  'other', 
+  'small_beer',
+  'beer',
+  'cocktail',
+  'other',
   'strong_shot',
   'weak_shot',
-  'wine'
-] as const;  // Infer a readonly tuple
+  'wine',
+] as const; // Infer a readonly tuple
 
 export const UnitTypesNames = [
-  'Beer', 
-  'Cocktail', 
-  'Other', 
+  'Small Beer',
+  'Beer',
+  'Cocktail',
+  'Other',
   'Strong Shot',
   'Weak Shot',
-  'Wine'
+  'Wine',
 ] as const; // Should always match the UnitTypesKeys
 
-export type UnitTypesProps = Partial<Record<typeof UnitTypesKeys[number], number>>;
+export type UnitTypesProps = Partial<
+  Record<(typeof UnitTypesKeys)[number], number>
+>;
 
 export type UnitsToColorsData = {
   yellow: number;
   orange: number;
-}
+};
 
 export type PreferencesData = {
   first_day_of_week: string;
   units_to_colors: UnitsToColorsData;
   units_to_points: UnitTypesProps;
-}
+};
 
 export type UnconfirmedDaysData = {
-  [day_string: string]: boolean,
-}
+  [day_string: string]: boolean;
+};
 
 export type UserData = {
   profile: ProfileData;
-  friends: FriendsData;
-  friend_requests: FriendRequestData;
+  friends?: FriendsData;
+  friend_requests?: FriendRequestData;
   role: string;
-  last_online: number;
-  beta_key_id: string;
-}
+  beta_key_id: number;
+};
 
 export type ProfileData = {
-  display_name: string,
-  photo_url: string,
-}
+  display_name: string;
+  photo_url: string;
+};
 
 export type FriendsData = {
-  [friend_id: string]: boolean
-}
+  [friend_id: string]: boolean;
+};
 
-export type FriendIds = string[] // An array of friend IDs
+export type FriendIds = string[]; // An array of friend IDs
 
 export type FriendRequestData = {
   [request_id: string]: FriendRequestStatus;
-}
+};
+
+export type DisplayData = {
+  [user_id: string]: any;
+};
 
 export type ProfileDisplayData = {
   [user_id: string]: ProfileData;
-}
+};
 
-export type FriendRequestStatus = "sent" | "received";
+export type UserStatusDisplayData = {
+  [user_id: string]: UserStatusData;
+};
 
+export type FriendRequestStatus = 'sent' | 'received';
+
+// Used when rendering friend request screen
+export type FriendRequestStatusState =
+  | 'self'
+  | 'sent'
+  | 'received'
+  | 'friend'
+  | 'undefined';
+
+// Used when displaying the data on the social screens
+export type FriendRequestDisplayData = {
+  [request_id: string]: FriendRequestStatusState;
+};
 
 // Used when rendering drinking session day overview
 export type DrinkingSessionProps = {
-  sessionKey: string,
-  session: DrinkingSessionArrayItem
+  sessionKey: string;
+  session: DrinkingSessionArrayItem;
 };
 
 export type MeasureType = 'units' | 'points';

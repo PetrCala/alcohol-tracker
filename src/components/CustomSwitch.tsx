@@ -1,20 +1,20 @@
-﻿import { useRef } from "react";
-import { Animated, StyleSheet, Text, TouchableOpacity } from "react-native";
+﻿import {useRef} from 'react';
+import {Animated, StyleSheet, Text, TouchableOpacity} from 'react-native';
 
 type CustomSwitchProps = {
-    offText: string;
-    onText: string;
-    value: boolean;
-    onValueChange: (value: boolean) => void;
+  offText: string;
+  onText: string;
+  value: boolean;
+  onValueChange: (value: boolean) => void;
 };
 
-const CustomSwitch: React.FC<CustomSwitchProps> = ({ 
-    offText,
-    onText,
-    value, 
-    onValueChange 
+const CustomSwitch: React.FC<CustomSwitchProps> = ({
+  offText,
+  onText,
+  value,
+  onValueChange,
 }) => {
-  const backgroundColor = value ? "#fcf50f" : "#767577";
+  const backgroundColor = value ? '#fcf50f' : '#767577';
   const translateX = useRef(new Animated.Value(value ? 58 : 0)).current; // Start value
 
   const handlePress = () => {
@@ -28,8 +28,10 @@ const CustomSwitch: React.FC<CustomSwitchProps> = ({
   };
 
   return (
-    <TouchableOpacity style={[styles.container, { backgroundColor }]} onPress={handlePress}>
-      <Animated.View style={[styles.slider, { transform: [{ translateX }] }]}>
+    <TouchableOpacity
+      style={[styles.container, {backgroundColor}]}
+      onPress={handlePress}>
+      <Animated.View style={[styles.slider, {transform: [{translateX}]}]}>
         <Text style={styles.sliderText}>{value ? onText : offText}</Text>
       </Animated.View>
     </TouchableOpacity>
@@ -55,7 +57,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     borderWidth: 2,
     borderColor: '#e0e0e0',
-    backgroundColor: "#f4f3f4",
+    backgroundColor: '#f4f3f4',
     justifyContent: 'center',
     alignItems: 'center',
   },

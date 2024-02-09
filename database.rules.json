@@ -1,107 +1,115 @@
 {
   "rules": {
-    // Admin has full access to the database
-    ".read": "auth.token.admin === true",
-    ".write": "auth.token.admin === true",
-      
-    // Main rules
     "beta_keys": {
-      	".read": true,
-      	".write": "auth !== null",
+      ".read": true,
+      ".write": "auth.token.admin === true",
+      "$key": {
+        ".validate": "newData.hasChildren()",
+        ".write": "auth != null"
+      }
     },
-      
     "config": {
-      	".read": true,
-      	".write": "auth.token.admin === true"
+      ".read": true,
+      ".write": "auth.token.admin === true"
     },
-      
     "feedback": {
-      	".read": "auth.token.admin === true",
-      	".write": "auth !== null"
+      ".read": "auth.token.admin === true",
+      ".write": "auth.token.admin === true",
+      "$feedback_id": {
+        ".validate": "newData.val() === null || newData.hasChildren(['submit_time', 'text', 'user_id'])",
+        ".write": "auth != null"
+      }
     },
-      
     "nickname_to_id": {
-      ".read": "auth !== null",
+      ".read": "auth != null",
+      ".write": "auth.token.admin === true",
       "$display_key": {
         "$uid": {
-          ".validate": "auth.uid === $uid && newData.val() === root.child('users').child(auth.uid).child('profile').child('display_name').val()",
+          ".validate": "newData.isString() || newData.val() === null",
           ".write": "auth.uid === $uid"
         }
       }
     },
-      
-    "users": {
+    "user_status": {
+      ".read": "auth.token.admin === true",
+      ".write": "auth.token.admin === true",
       "$uid": {
-        // Only allow the user themselves and the admin to read user top-level node.
-        ".read": "auth != null && auth.uid === $uid",
-        ".write": "auth != null && (auth.uid === $uid || !data.exists())",
-        
-        "profile": {
-          // Any authentificated user can read other users' profiles.
-          ".read": "auth != null",
-          // Only allow the user themselves to write to their profile.
+        ".validate": "newData.hasChild('last_online') || newData.val() === null",
+        ".read": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('friends').child($uid).exists())",
+        ".write": "auth != null && auth.uid === $uid",
+        "last_online": {
+          ".validate": "newData.isNumber()",
+          ".read": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('friends').child($uid).exists())",
           ".write": "auth != null && auth.uid === $uid"
-        },
-          
-    		"friends": {
-      		"$friend_uid": {
-            ".validate": "newData.isBoolean()",
-        		".read": "auth != null",
-        		".write": "auth != null"// &&
-            	// Case when the friend relationship does not exist -> validate friend request existence
-              //((!data.exists() &&
-            	//(root.child('users').child(auth.uid).child('friend_requests').child($friend_uid).exists()) &&
-              //(root.child('users').child($friend_uid).child('friend_requests').child($uid).exists())) ||
-              // Case when the friend relationship exists -> either self or friend
-              //(data.exists() && (auth.uid === $uid || auth.uid === $friend_uid)))"
-      		}
-    		},
-        
-		    "friend_requests": {
-		      "$request_uid": {
-            //".validate": "newData.isString() && (newData.val() === 'sent' || newData.val() === 'received')",//" || !newData.exists()",
-		        ".read": "auth != null && (auth.uid === $uid || auth.uid === $request_uid)",
-		        ".write": "auth != null"// && 
-		                  //((data.exists() && (auth.uid === $uid || auth.uid === $request_uid)) ||
-		                  // (!data.exists() && ((newData.val() === 'received' && auth.uid === $request_uid) || 
-                      //                  (newData.val() === 'sent' && auth.uid === $uid))))"
-		      }
-		    }
-      }
-    },
-      
-    "user_drinking_sessions": {
-      "$uid": {
-				// Allow the user or their friends to read their drinking session data
-        ".read": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('friends').child($uid).exists())",
-        ".write": "auth !== null && auth.uid === $uid" // Only the user can write his own drinking session data
-      }
-    },
-      
-    "user_preferences": {
-      "$uid": {
-				// Allow the user or their friends to read their preferences
-        ".read": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('friends').child($uid).exists())",
-        ".write": "auth != null && (auth.uid === $uid || !data.exists())",
-        "first_day_of_week": {
-          ".validate": "newData.val() === 'Monday' || newData.val() === 'Sunday'"
         }
       }
     },
-      
-    "user_unconfirmed_days": {
+    "user_drinking_sessions": {
+      ".read": "auth.token.admin === true",
+      ".write": "auth.token.admin === true",
       "$uid": {
-        // Allow only authenticated content owners access to their unconfirmed days data
-        ".read": "auth !== null  && auth.uid === $uid",
-        ".write": "auth !== null && auth.uid === $uid"
+        ".validate": "newData.val() === null || newData.hasChildren()",
+        ".read": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('friends').child($uid).exists())",
+        ".write": "auth != null && auth.uid === $uid"
       }
     },
-      
-    "user_current_session": {
-    	"$uid": {
-				// Allow the user or their friends to read their current drinking session data
+    "user_preferences": {
+      ".read": "auth.token.admin === true",
+      ".write": "auth.token.admin === true",
+      "$uid": {
+        ".validate": "newData.val() === null || newData.hasChildren()",
         ".read": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('friends').child($uid).exists())",
-        ".write": "auth !== null && auth.uid === $uid"
+        ".write": "auth != null && auth.uid === $uid",
+        "first_day_of_week": {
+          ".validate": "newData.isString() && (newData.val() === 'Monday' || newData.val() === 'Sunday')"
+        },
+        "units_to_colors": {
+          ".validate": "newData.hasChildren(['yellow', 'orange'])"
+        },
+        "units_to_points": {
+          ".validate": "newData.hasChildren(['beer', 'cocktail', 'other', 'strong_shot', 'weak_shot', 'wine'])"
+        }
+      }
+    },
+    "user_unconfirmed_days": {
+      ".read": "auth.token.admin === true",
+      ".write": "auth.token.admin === true",
+      "$uid": {
+        ".validate": "newData.val() === true || newData.val() === null",
+        ".read": "auth != null  && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+    "users": {
+      "$uid": {
+        ".validate": "newData.val() === null || newData.hasChildren()",
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid",
+        "friends": {
+          ".validate": "newData.val() === null || newData.hasChildren()",
+          ".read": "auth != null",
+          "$friend_uid": {
+            ".validate": "(newData.val() === true || newData.val() === null) && $uid != $friend_uid && ($uid === auth.uid || $friend_uid === auth.uid)",
+            ".write": "auth != null && root.child('users').child($uid).exists()"
+          }
+        },
+        "friend_requests": {
+          ".validate": "newData.val() === null || newData.hasChildren()",
+          "$request_id": {
+            ".validate": "(($uid === auth.uid && newData.val() === 'sent') || ($request_id === auth.uid && newData.val() === 'received') || newData.val() === null) && $uid != $request_id",
+            ".write": "auth != null && root.child('users').child($uid).exists() && (!root.child('users').child(auth.uid).child('friends').child($request_id).exists()) && (!root.child('users').child($request_id).child('friends').child(auth.uid).exists())"
+          }
+        },
+        "profile": {
+          ".validate": "newData.val() === null || newData.hasChildren(['photo_url', 'display_name'])",
+          ".read": "auth != null",
+          "photo_url": {
+            ".validate": "newData.isString()"
+          },
+          "display_name": {
+            ".validate": "newData.isString()"
+          }
+        }
       }
     }
   }

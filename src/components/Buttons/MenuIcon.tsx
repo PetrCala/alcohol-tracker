@@ -1,5 +1,5 @@
 ﻿import React from 'react';
-import { View, TouchableOpacity, Image } from 'react-native';
+import {View, TouchableOpacity, Image} from 'react-native';
 
 type Props = {
   iconId: string;
@@ -7,22 +7,22 @@ type Props = {
   containerStyle: any;
   iconStyle: any;
   onPress: () => void;
-}
+};
 
 /**
  * A touchable icon, that can be stylized.
  */
 const MenuIcon = (props: Props) => {
-  const { iconId, iconSource, containerStyle, iconStyle, onPress } = props;
+  const {iconId, iconSource, containerStyle, iconStyle, onPress} = props;
 
-  return(
+  return (
     <TouchableOpacity
-      id={iconId} 
-      testID = {iconId}
-      accessibilityRole='button' 
-      onPress={onPress} 
+      id={iconId}
+      testID={iconId}
+      accessibilityRole="button"
+      onPress={onPress}
       style={containerStyle}>
-        <Image source={iconSource} style={iconStyle} />
+      <Image source={iconSource} style={iconStyle} />
     </TouchableOpacity>
   );
 };

@@ -2,11 +2,17 @@
 set -e
 
 SCRIPTS_DIR=$(dirname "${BASH_SOURCE[0]}")
-source "$SCRIPTS_DIR/shellUtils.sh";
+source "$SCRIPTS_DIR/shellUtils.sh"
 
 # Check if an argument is provided
 if [ $# -eq 0 ]; then
     error "No version type specified. Please specify BUILD, PATCH, MINOR, or MAJOR."
+    exit 1
+fi
+
+# Check if there are unsaved changes
+if [[ $(git status --porcelain) ]]; then
+    error "There are unsaved changes. Please commit or stash your changes before running this script."
     exit 1
 fi
 

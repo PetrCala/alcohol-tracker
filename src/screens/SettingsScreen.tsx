@@ -1,5 +1,6 @@
 ﻿import React, {useContext, useState} from 'react';
 import {
+  Keyboard,
   ScrollView,
   StyleSheet,
   Text,
@@ -7,25 +8,24 @@ import {
   View,
 } from 'react-native';
 import MenuIcon from '../components/Buttons/MenuIcon';
-import { SettingsScreenProps } from '../types/screens';
-import { auth } from "../../src/services/firebaseConfig";
-import { useUserConnection } from '../context/UserConnectionContext';
+import {SettingsScreenProps} from '../types/screens';
+import {auth} from '../services/firebaseSetup';
+import {useUserConnection} from '../context/global/UserConnectionContext';
 import UserOffline from '../components/UserOffline';
 import BasicButton from '../components/Buttons/BasicButton';
-import { getDatabase } from 'firebase/database';
-import { getDatabaseData } from '../context/DatabaseDataContext';
+import {getDatabaseData} from '../context/global/DatabaseDataContext';
 import commonStyles from '../styles/commonStyles';
+import MainHeader from '@components/Header/MainHeader';
 
-const SettingsItem: React.FC<{ item: any }> = ({ item }) => (
+const SettingsItem: React.FC<{item: any}> = ({item}) => (
   <View style={styles.settingContainer}>
     <Text style={styles.settingLabel}>{item.label}</Text>
     <View style={styles.buttonsContainer}>
-      {item.buttons.map((button:any, index:any) => (
-        <TouchableOpacity 
-          key={index} 
-          style={[styles.button, { backgroundColor: button.color }]}
-          onPress={button.action}
-        >
+      {item.buttons.map((button: any, index: any) => (
+        <TouchableOpacity
+          key={index}
+          style={[styles.button, {backgroundColor: button.color}]}
+          onPress={button.action}>
           <Text style={styles.buttonText}>{button.text}</Text>
         </TouchableOpacity>
       ))}
@@ -33,17 +33,16 @@ const SettingsItem: React.FC<{ item: any }> = ({ item }) => (
   </View>
 );
 
-
-const SettingsScreen = ({ route, navigation }: SettingsScreenProps) => {
-  if (!route || ! navigation) return null; // Should never be null
-  const { preferences } = getDatabaseData();
+const SettingsScreen = ({route, navigation}: SettingsScreenProps) => {
+  if (!route || !navigation) return null; // Should never be null
+  const {preferences} = getDatabaseData();
   const user = auth.currentUser;
-  const { isOnline } = useUserConnection();
+  const {isOnline} = useUserConnection();
 
   // Automatically navigate to login screen if login expires
-  if (!user || !preferences){
-      navigation.replace("Login Screen");
-      return null;
+  if (!user || !preferences) {
+    navigation.replace('Login Screen');
+    return null;
   }
 
   const handleSaveSettings = () => {
@@ -54,44 +53,47 @@ const SettingsScreen = ({ route, navigation }: SettingsScreenProps) => {
     {
       label: 'Unit Colors',
       buttons: [
-        { color: 'green', text: '9', action: () => console.log('Green 9 pressed') },
-        { color: 'yellow', text: '10', action: () => console.log('Yellow 10 pressed') },
+        {
+          color: 'green',
+          text: '9',
+          action: () => console.log('Green 9 pressed'),
+        },
+        {
+          color: 'yellow',
+          text: '10',
+          action: () => console.log('Yellow 10 pressed'),
+        },
       ],
     },
     {
       label: 'Point Conversion',
       buttons: [
-        { color: 'blue', text: '5', action: () => console.log('Blue 5 pressed') },
+        {color: 'blue', text: '5', action: () => console.log('Blue 5 pressed')},
       ],
     },
     // Add more settings items as needed
   ];
 
-  if (!isOnline) return (<UserOffline/>);
+  if (!isOnline) return <UserOffline />;
 
   return (
-    <View style={{flex:1, backgroundColor: '#FFFF99'}}>
-      <View style={commonStyles.mainHeader}>
-        <MenuIcon
-          iconId='escape-settings-screen'
-          iconSource={require('../../assets/icons/arrow_back.png')}
-          containerStyle={styles.backArrowContainer}
-          iconStyle={styles.backArrow}
-          onPress={() => navigation.goBack() }
-        />
-      </View>
-      <ScrollView style={styles.scrollView}>
+    <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
+      <MainHeader headerText="" onGoBack={() => navigation.goBack()} />
+      <ScrollView
+        style={styles.scrollView}
+        onScrollBeginDrag={Keyboard.dismiss}
+        keyboardShouldPersistTaps="handled">
         {settingsData.map((item, index) => (
           <SettingsItem key={index} item={item} />
         ))}
       </ScrollView>
       <View style={styles.saveSettingsButtonContainer}>
-          <BasicButton 
-              text='Save Settings'
-              buttonStyle={styles.saveSettingsButton}
-              textStyle={styles.saveSettingsButtonText}
-              onPress={handleSaveSettings}
-          />
+        <BasicButton
+          text="Save Settings"
+          buttonStyle={styles.saveSettingsButton}
+          textStyle={styles.saveSettingsButtonText}
+          onPress={handleSaveSettings}
+        />
       </View>
     </View>
   );
@@ -99,24 +101,12 @@ const SettingsScreen = ({ route, navigation }: SettingsScreenProps) => {
 
 export default SettingsScreen;
 
-
 const styles = StyleSheet.create({
-  backArrowContainer: {
-    justifyContent: 'center',
-    marginTop: 10,
-    marginLeft: 10,
-    padding: 10,
-    position: 'absolute',
-  },
-  backArrow: {
-    width: 25,
-    height: 25,
-  },
   scrollView: {
-      width: '100%',
-      flexGrow:1, 
-      flexShrink: 1,
-      backgroundColor: '#FFFF99',
+    width: '100%',
+    flexGrow: 1,
+    flexShrink: 1,
+    backgroundColor: '#FFFF99',
   },
   settingContainer: {
     flexDirection: 'row',
@@ -149,9 +139,9 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '10%',
     flexShrink: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "row",
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
     backgroundColor: '#FFFF99',
     marginBottom: 5,
     padding: 5,
@@ -159,7 +149,7 @@ const styles = StyleSheet.create({
   saveSettingsButton: {
     width: '50%',
     height: '90%',
-    alignItems: "center",
+    alignItems: 'center',
     justifyContent: 'center',
     padding: 10,
     backgroundColor: '#fcf50f',

@@ -1,9 +1,11 @@
-﻿import { 
-    View,
-} from "react-native";
+﻿import {View} from 'react-native';
 
-const FillerView = () => {
-    return (<View style={{height: 200, backgroundColor: '#ffff99'}}/>);
-}    
+type FillerViewProps = {
+  height?: number;
+};
+const FillerView = ({height}: FillerViewProps) => {
+  let fillerHeight = height ? height : 200;
+  return <View style={{height: fillerHeight, backgroundColor: '#ffff99'}} />;
+};
 
 export default FillerView;

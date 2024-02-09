@@ -1,166 +1,308 @@
 ﻿import {
   Alert,
-  Dimensions,
-  Image,
+  Keyboard,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import { FriendRequestData, FriendRequestStatus, UserData } from '../../types/database';
-import { useEffect, useState } from 'react';
-import { useFirebase } from '../../context/FirebaseContext';
-import { acceptFriendRequest, deleteFriendRequest } from '../../database/friends';
-import { auth } from "../../../src/services/firebaseConfig";
-import { isNonEmptyObject } from '../../utils/validation';
-import useProfileDisplayData from '../../hooks/useProfileDisplayData';
+import {
+  FriendRequestDisplayData,
+  FriendRequestStatusState,
+  FriendsData,
+  ProfileData,
+  ProfileDisplayData,
+} from '../../types/database';
+import {useEffect, useMemo, useReducer, useState} from 'react';
+import {useFirebase} from '../../context/global/FirebaseContext';
+import {acceptFriendRequest, deleteFriendRequest} from '../../database/friends';
+import {auth} from '../../services/firebaseSetup';
 import LoadingData from '../../components/LoadingData';
-import { Database } from 'firebase/database';
-import UserOverview from '../../components/UserOverview';
+import {Database} from 'firebase/database';
+import NoFriendUserOverview from '@components/Social/NoFriendUserOverview';
+import {fetchUserProfiles} from '@database/profile';
+import headerStyles from '@src/styles/headerStyles';
+import GrayHeader from '@components/Header/GrayHeader';
+import {objKeys} from '@src/utils/dataHandling';
 
 type FriendRequestButtonsProps = {
-  requestId: string
-}
+  requestId: string;
+};
+
+type FriendRequestPendingProps = {
+  requestId: string;
+};
 
 type FriendRequestComponentProps = {
-  requestStatus: FriendRequestStatus | undefined;
-  requestId: string
+  requestStatus: FriendRequestStatusState | undefined;
+  requestId: string;
+};
+
+type FriendRequestItemProps = {
+  requestId: string;
+  friendRequests: FriendRequestDisplayData | undefined;
+  displayData: ProfileDisplayData;
 };
 
 type ScreenProps = {
-  userData: UserData | null;
-}
+  friendRequests: FriendRequestDisplayData | undefined;
+  friends: FriendsData | undefined;
+};
+
+const handleAcceptFriendRequest = async (
+  db: Database,
+  userId: string,
+  requestId: string,
+): Promise<void> => {
+  try {
+    await acceptFriendRequest(db, userId, requestId);
+  } catch (error: any) {
+    Alert.alert(
+      'User does not exist in the database',
+      'Could not accept the friend request: ' + error.message,
+    );
+  }
+};
+
+const handleRejectFriendRequest = async (
+  db: Database,
+  userId: string,
+  requestId: string,
+): Promise<void> => {
+  try {
+    await deleteFriendRequest(db, userId, requestId);
+  } catch (error: any) {
+    Alert.alert(
+      'User does not exist in the database',
+      'Could not accept the friend request: ' + error.message,
+    );
+  }
+};
 
 // Component to be shown for a received friend request
-const FriendRequestButtons:React.FC<FriendRequestButtonsProps> = ({
-  requestId
+const FriendRequestButtons: React.FC<FriendRequestButtonsProps> = ({
+  requestId,
 }) => {
-  const { db } = useFirebase();
+  const {db} = useFirebase();
   const user = auth.currentUser;
-
-  const handleAcceptFriendRequest = async (db:Database, userId:string, requestId: string):Promise<void> => {
-    try {
-      await acceptFriendRequest(db, userId, requestId);
-    } catch (error:any){
-      Alert.alert("Friend request accept failed", "Could not accept the friend request: " + error.message);
-    };
-  };
-
-  const handleRejectFriendRequest = async (db:Database, userId:string, requestId: string):Promise<void> => {
-    try {
-      await deleteFriendRequest(db, userId, requestId);
-    } catch (error:any){
-      Alert.alert("Friend request accept failed", "Could not accept the friend request: " + error.message);
-    };
-  };
 
   if (!db || !user) return;
 
-  return(
+  return (
     <View style={styles.friendRequestButtonsContainer}>
-      <TouchableOpacity 
-        key={requestId+'-accept-request-button'}
-        style={[
-          styles.handleRequestButton,
-          styles.acceptRequestButton
-        ]}
-        onPress = {() => handleAcceptFriendRequest(db, user.uid, requestId)}
-      >
+      <TouchableOpacity
+        key={requestId + '-accept-request-button'}
+        style={[styles.handleRequestButton, styles.acceptRequestButton]}
+        onPress={() => handleAcceptFriendRequest(db, user.uid, requestId)}>
         <Text style={styles.handleRequestButtonText}>Accept</Text>
       </TouchableOpacity>
-      <TouchableOpacity 
-        key={requestId+'-reject-request-button'}
-        style={[
-          styles.handleRequestButton,
-          styles.rejectRequestButton
-        ]}
-        onPress = {() => handleRejectFriendRequest(db, user.uid, requestId)}
-      >
+      <TouchableOpacity
+        key={requestId + '-reject-request-button'}
+        style={[styles.handleRequestButton, styles.rejectRequestButton]}
+        onPress={() => handleRejectFriendRequest(db, user.uid, requestId)}>
         <Text style={styles.handleRequestButtonText}>Remove</Text>
       </TouchableOpacity>
     </View>
-  )
+  );
 };
 
 // Component to be shown when the friend request is pending
-const FriendRequestPending:React.FC = () => {
+const FriendRequestPending: React.FC<FriendRequestPendingProps> = ({
+  requestId,
+}) => {
+  const {db} = useFirebase();
+  const user = auth.currentUser;
+
+  if (!db || !user) return;
   return (
     <View style={styles.friendRequestPendingContainer}>
-      <Text style={styles.handleRequestText}>Pending</Text>
+      <TouchableOpacity
+        style={[styles.handleRequestButton, styles.rejectRequestButton]}
+        onPress={() => handleRejectFriendRequest(db, user.uid, requestId)}>
+        <Text style={styles.handleRequestButtonText}>Cancel</Text>
+      </TouchableOpacity>
     </View>
   );
 };
 
 // Component to be rendered on the right hand side of each friend request container
-const FriendRequestComponent:React.FC<FriendRequestComponentProps> = ({
+const FriendRequestComponent: React.FC<FriendRequestComponentProps> = ({
   requestStatus,
-  requestId
+  requestId,
 }) => {
-  return (
-    requestStatus === 'received' ?
-    <FriendRequestButtons 
-      key={requestId+'-friend-request-buttons'}
+  return requestStatus === 'received' ? (
+    <FriendRequestButtons
+      key={requestId + '-friend-request-buttons'}
       requestId={requestId}
     />
-    : requestStatus === 'sent' ?
-    <FriendRequestPending key={requestId+'-friend-request-pending'}/>
-    : 
-    <></>
-  )
-}
+  ) : requestStatus === 'sent' ? (
+    <FriendRequestPending
+      key={requestId + '-friend-request-pending'}
+      requestId={requestId}
+    />
+  ) : null;
+};
 
-const FriendRequestScreen = (props:ScreenProps) => {
-  const {userData} = props;
-  const { db } = useFirebase();
-  const [friendRequests, setFriendRequests] = useState<FriendRequestData>(userData ? userData?.friend_requests : {});
-  const [loadingDisplayData, setLoadingDisplayData] = useState<boolean>(false);
-  const [displayData, setDisplayData] = useProfileDisplayData({
-    data: friendRequests,
-    db: db,
-    setLoadingDisplayData: setLoadingDisplayData
-  });
-
-  useEffect(() => {
-    if (!userData) return;
-    setFriendRequests(userData.friend_requests);
-  }, [userData]);
+const FriendRequestItem: React.FC<FriendRequestItemProps> = ({
+  requestId,
+  friendRequests,
+  displayData,
+}) => {
+  if (!friendRequests || !displayData) return null;
+  const profileData = displayData[requestId];
+  const requestStatus = friendRequests[requestId];
 
   return (
-  <View style={styles.mainContainer}>
-    <ScrollView 
-      style={styles.scrollViewContainer}
-      keyboardShouldPersistTaps="handled"
-    >
-      {isNonEmptyObject(friendRequests) ?
-      <View style={styles.friendList}>
-        {Object.keys(friendRequests).map(requestId => {
-          const profileData = displayData[requestId];
-          const requestStatus = friendRequests[requestId];
+    <NoFriendUserOverview
+      key={requestId + '-friend-request'}
+      userId={requestId}
+      profileData={profileData}
+      RightSideComponent={FriendRequestComponent({
+        requestId,
+        requestStatus,
+      })}
+    />
+  );
+};
 
-          if (loadingDisplayData) return <LoadingData key={requestId+'-loading'}/>
+interface State {
+  isLoading: boolean;
+  displayData: ProfileDisplayData;
+  requestsSent: string[];
+  requestsReceived: string[];
+  requestsSentCount: number;
+  requestsReceivedCount: number;
+}
 
-          return (
-          <UserOverview
-            key={requestId+'-friend-request'}
-            userId={requestId}
-            profileData={profileData}
-            RightSideComponent={FriendRequestComponent({requestId, requestStatus})}
-          />
-          )
-        })}
-      </View>
-      :
-      <></>
-      }
-    </ScrollView>
-  </View>
+interface Action {
+  type: string;
+  payload: any;
+}
+
+const initialState: State = {
+  isLoading: true,
+  displayData: {},
+  requestsSent: [],
+  requestsReceived: [],
+  requestsSentCount: 0,
+  requestsReceivedCount: 0,
+};
+
+const reducer = (state: State, action: Action): State => {
+  switch (action.type) {
+    case 'SET_IS_LOADING':
+      return {...state, isLoading: action.payload};
+    case 'SET_DISPLAY_DATA':
+      return {...state, displayData: action.payload};
+    case 'SET_REQUESTS_SENT':
+      return {...state, requestsSent: action.payload};
+    case 'SET_REQUESTS_RECEIVED':
+      return {...state, requestsReceived: action.payload};
+    case 'SET_REQUESTS_SENT_COUNT':
+      return {...state, requestsSentCount: action.payload};
+    case 'SET_REQUESTS_RECEIVED_COUNT':
+      return {...state, requestsReceivedCount: action.payload};
+    default:
+      return state;
+  }
+};
+
+const FriendRequestScreen = (props: ScreenProps) => {
+  const {friendRequests} = props;
+  const {db} = useFirebase();
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  const updateDisplayData = async (
+    db: Database,
+    friendRequests: FriendRequestDisplayData | undefined,
+  ): Promise<void> => {
+    let newDisplayData: ProfileDisplayData = await fetchUserProfiles(
+      db,
+      objKeys(friendRequests),
+    );
+    dispatch({type: 'SET_DISPLAY_DATA', payload: newDisplayData});
+  };
+
+  useEffect(() => {
+    const updateLocalHooks = async () => {
+      dispatch({type: 'SET_IS_LOADING', payload: true});
+      await updateDisplayData(db, friendRequests);
+      dispatch({type: 'SET_IS_LOADING', payload: false});
+    };
+    updateLocalHooks();
+  }, [friendRequests]);
+
+  useMemo(() => {
+    const newRequestsSent: string[] = [];
+    const newRequestsReceived: string[] = [];
+    if (friendRequests) {
+      Object.keys(friendRequests).forEach(requestId => {
+        if (friendRequests[requestId] === 'sent') {
+          newRequestsSent.push(requestId);
+        } else if (friendRequests[requestId] === 'received') {
+          newRequestsReceived.push(requestId);
+        }
+      });
+    }
+    const newRequestsSentCount = newRequestsSent.length;
+    const newRequestsReceivedCount = newRequestsReceived.length;
+
+    dispatch({type: 'SET_REQUESTS_SENT', payload: newRequestsSent});
+    dispatch({type: 'SET_REQUESTS_RECEIVED', payload: newRequestsReceived});
+    dispatch({type: 'SET_REQUESTS_SENT_COUNT', payload: newRequestsSentCount});
+    dispatch({
+      type: 'SET_REQUESTS_RECEIVED_COUNT',
+      payload: newRequestsReceivedCount,
+    });
+  }, [friendRequests]);
+
+  return (
+    <View style={styles.mainContainer}>
+      <ScrollView
+        style={styles.scrollViewContainer}
+        onScrollBeginDrag={Keyboard.dismiss}
+        keyboardShouldPersistTaps="handled">
+        {state.isLoading ? (
+          <LoadingData style={styles.loadingData} />
+        ) : (
+          <View style={styles.friendList}>
+            <GrayHeader
+              headerText={`Requests Received (${state.requestsReceivedCount})`}
+            />
+            <View style={styles.requestsContainer}>
+              {state.requestsReceived.map(requestId => (
+                <FriendRequestItem
+                  key={requestId + '-friend-request-item'}
+                  requestId={requestId}
+                  friendRequests={friendRequests}
+                  displayData={state.displayData}
+                />
+              ))}
+            </View>
+            <View style={headerStyles.grayHeaderContainer}>
+              <Text style={headerStyles.grayHeaderText}>
+                Requests Sent ({state.requestsSentCount})
+              </Text>
+            </View>
+            <View style={styles.requestsContainer}>
+              {state.requestsSent.map(requestId => (
+                <FriendRequestItem
+                  key={requestId + '-friend-request-item'}
+                  requestId={requestId}
+                  friendRequests={friendRequests}
+                  displayData={state.displayData}
+                />
+              ))}
+            </View>
+          </View>
+        )}
+      </ScrollView>
+    </View>
   );
 };
 
 export default FriendRequestScreen;
-
-const screenWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -171,44 +313,44 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#ffff99',
   },
+  loadingData: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 100,
+    margin: 5,
+  },
   friendList: {
     width: '100%',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  friendRequestContainer: {
+  requestsInfoContainer: {
     width: '100%',
-    flexDirection: 'row',
-    backgroundColor: 'white',
-    padding: 5,
-  },
-  friendRequestProfile: {
-    width: '60%',
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
-    padding: 5,
-    paddingTop: 7
-  },
-  friendRequestImage: {
-    width: 70,
-    height: 70,
     padding: 10,
-    borderRadius: 35,
+    backgroundColor: 'gray',
   },
-  friendRequestText: {
-    color: 'black',
+  requestsInfoText: {
     fontSize: 16,
-    fontWeight: '400',
-    marginLeft: 10,
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  requestsContainer: {
+    width: '100%',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   friendRequestButtonsContainer: {
-    width: '40%',
+    width: '45%',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 2,
+    paddingRight: 5,
   },
   handleRequestButton: {
     width: '50%',
@@ -216,8 +358,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 5,
-    marginLeft: 2,
-    marginRight: 2,
+    margin: 2,
   },
   acceptRequestButton: {
     backgroundColor: 'green',
@@ -235,12 +376,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '400',
   },
+  cancelRequestImage: {
+    height: '110%',
+    width: '110%',
+    tintColor: 'white',
+  },
   friendRequestPendingContainer: {
-    width: '40%',
+    width: '45%',
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
-    paddingRight: 10,
   },
   newRequestContainer: {
     position: 'absolute',
@@ -260,7 +405,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 10,
     alignItems: 'center',
-    backgroundColor:'white',
+    backgroundColor: 'white',
   },
   newRequestText: {
     fontSize: 15,
@@ -268,10 +413,9 @@ const styles = StyleSheet.create({
     color: 'black',
     textAlign: 'center',
   },
-//   newRequestPlusSign: {
-//     width: 50,
-//     height: 50,
-//     tintColor: 'white',
-//   },
-
+  //   newRequestPlusSign: {
+  //     width: 50,
+  //     height: 50,
+  //     tintColor: 'white',
+  //   },
 });

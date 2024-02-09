@@ -1,79 +1,100 @@
-﻿import { useState, useEffect } from 'react';
-import { Alert } from 'react-native';
+import {useEffect, useReducer, useCallback} from 'react';
+import {useFirebase} from '@src/context/global/FirebaseContext';
+import {
+  FriendsData,
+  NicknameToIdData,
+  ProfileDisplayData,
+  UserStatusDisplayData,
+} from '@src/types/database';
+import {objKeys} from '@src/utils/dataHandling';
+import {fetchUserProfiles, fetchUserStatuses} from '@database/profile';
+import {Alert} from 'react-native';
 
-import { ProfileData, ProfileDisplayData } from '../types/database';
-import { isNonEmptyObject } from '../utils/validation';
-import { Database } from 'firebase/database';
-import { fetchUserProfiles } from '../database/profile';
+interface State {
+  loadingDisplayData: boolean;
+  profileDisplayData: ProfileDisplayData;
+  userStatusDisplayData: UserStatusDisplayData;
+}
 
-type Options = {
-  data: { [id: string]: any };
-  db: Database | null;
-  setLoadingDisplayData: (value: boolean) => void;
+type Action =
+  | {type: 'SET_LOADING_DISPLAY_DATA'; payload: boolean}
+  | {type: 'SET_PROFILE_DISPLAY_DATA'; payload: ProfileDisplayData}
+  | {type: 'SET_USER_STATUS_DISPLAY_DATA'; payload: UserStatusDisplayData};
+
+const initialState: State = {
+  loadingDisplayData: false,
+  profileDisplayData: {},
+  userStatusDisplayData: {},
+};
+
+function reducer(state: State, action: Action): State {
+  switch (action.type) {
+    case 'SET_PROFILE_DISPLAY_DATA':
+      return {...state, profileDisplayData: action.payload};
+    case 'SET_LOADING_DISPLAY_DATA':
+      return {...state, loadingDisplayData: action.payload};
+    case 'SET_USER_STATUS_DISPLAY_DATA':
+      return {...state, userStatusDisplayData: action.payload};
+    default:
+      return state;
+  }
 }
 
 /**
- * useProfileDisplayData - A React hook to fetch and manage user profile data for display.
+ * Custom hook for fetching and managing profile display data based on a list of friends.
  *
- * This hook abstracts the logic of fetching user profile data from a Firebase database
- * and provides an interface to manage the fetched data's state. It also manages loading
- * state for any associated UI components.
+ * This hook encapsulates the logic for loading profile data from a Firebase database,
+ * managing loading states, and updating the component state with the fetched data.
+ * It uses the `useFirebase` hook to access the Firebase database and a reducer for state management.
  *
- * @param {Options} options - The configuration options for the hook.
- * @param {{ [id: string]: any }} options.data - A mapping from user IDs or request IDs to their associated data.
- * @param {Database} options.db - The Firebase database instance used to fetch user profiles.
- * @param {(value: boolean) => void} [options.setLoadingDisplayData] - An optional function to update the UI's loading state.
+ * @param friends - An object or undefined, where the object keys represent the unique
+ *  user IDs of the friends.
+ * @returns An object containing the following properties:
+ *   - loadingDisplayData: boolean - Represents if the hook is currently loading data.
+ *   - displayData: ProfileDisplayData - An object holding the fetched profile data,
+ *     structured according to the ProfileDisplayData interface.
  *
- * @returns {[ProfileDisplayData, (data: ProfileDisplayData) => void]} - A tuple where the first element is
- * the fetched profile display data, and the second element is a setter function for that data.
- *
- * @example
- * const [displayData, setDisplayData] = useProfileDisplayData({
- *   data: friendRequests,
- *   db: firebase.database(),
- *   setLoadingDisplayData: setLoading
- * });
- *
- * @throws Will throw an error if fetching user profile data from the database fails.
+ * Usage:
+ * const { loadingDisplayData, displayData } = useProfileDisplayData(friends);
  */
-const useProfileDisplayData = ({
-  data,
-  db,
-  setLoadingDisplayData
-}: Options): [ProfileDisplayData, (data: ProfileDisplayData) => void] => {
-  const [displayData, setDisplayData] = useState<ProfileDisplayData>({});
+const useProfileDisplayData = (
+  friends: FriendsData | NicknameToIdData | undefined,
+) => {
+  const {db} = useFirebase();
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  const updateDisplayData = useCallback(async (): Promise<void> => {
+    dispatch({type: 'SET_LOADING_DISPLAY_DATA', payload: true});
+    try {
+      let newProfileDisplayData: ProfileDisplayData = await fetchUserProfiles(
+        db,
+        objKeys(friends),
+      );
+      let newUserStatusDisplayData: UserStatusDisplayData =
+        await fetchUserStatuses(db, objKeys(friends));
+      dispatch({
+        type: 'SET_PROFILE_DISPLAY_DATA',
+        payload: newProfileDisplayData,
+      });
+      dispatch({
+        type: 'SET_USER_STATUS_DISPLAY_DATA',
+        payload: newUserStatusDisplayData,
+      });
+    } catch (error: any) {
+      Alert.alert(
+        'Database fetch failed',
+        'Could not fetch user display data: ' + error.message,
+      );
+    } finally {
+      dispatch({type: 'SET_LOADING_DISPLAY_DATA', payload: false});
+    }
+  }, [friends]);
 
   useEffect(() => {
-    const fetchDisplayData = async () => {
-      if (!db || !isNonEmptyObject(data)) {
-        setDisplayData({});
-        return;
-      };
+    updateDisplayData();
+  }, [updateDisplayData]);
 
-      const newDisplayData: ProfileDisplayData = {};
-      setLoadingDisplayData && setLoadingDisplayData(true);
-
-      try {
-        const dataIds = Object.keys(data);
-        const userProfiles: ProfileData[] = await fetchUserProfiles(db, dataIds);
-        dataIds.forEach((id, index) => {
-          newDisplayData[id] = userProfiles[index];
-        });
-      } catch (error: any) {
-        Alert.alert(
-          "Database connection failed",
-          "Could not fetch the profile data: " + error.message
-        );
-      } finally {
-        setDisplayData(newDisplayData);
-        setLoadingDisplayData && setLoadingDisplayData(false);
-      };
-    };
-
-    fetchDisplayData();
-  }, [data, db, fetchUserProfiles, setLoadingDisplayData]);
-
-  return [displayData, setDisplayData];
+  return state;
 };
 
 export default useProfileDisplayData;

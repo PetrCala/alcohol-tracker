@@ -1,6 +1,8 @@
 #import "AppDelegate.h"
 
 #import <React/RCTBundleURLProvider.h>
+// #import <Firebase.h> // custom
+// #import <React/RCTLinkingManager.h> // custom
 
 @implementation AppDelegate
 

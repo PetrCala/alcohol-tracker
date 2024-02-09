@@ -1,6 +1,13 @@
 ﻿import React from 'react';
-import { View, Modal, Text, StyleSheet, TouchableOpacity, Image, Dimensions } from 'react-native';
-
+import {
+  View,
+  Modal,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  Dimensions,
+} from 'react-native';
 
 type ItemList = {
   label: string;
@@ -28,13 +35,15 @@ const ItemListPopup: React.FC<ItemListPopupProps> = ({
       animationType="none"
       transparent={transparent}
       visible={visible}
-      onRequestClose={onRequestClose}
-    >
+      onRequestClose={onRequestClose}>
       <View style={styles.modalContainer}>
         <View style={styles.modalView}>
           <Text style={styles.modalHeading}>{heading}</Text>
           {actions.map((item, index) => (
-            <TouchableOpacity key={index} style={styles.actionButton} onPress={item.action}>
+            <TouchableOpacity
+              key={index}
+              style={styles.actionButton}
+              onPress={item.action}>
               <Image source={item.icon} style={styles.actionIcon} />
               <Text style={styles.actionText}>{item.label}</Text>
             </TouchableOpacity>
@@ -49,13 +58,13 @@ const ItemListPopup: React.FC<ItemListPopupProps> = ({
 };
 
 const screenWidth = Dimensions.get('window').width;
-  
+
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', 
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalView: {
     width: screenWidth * 0.8,

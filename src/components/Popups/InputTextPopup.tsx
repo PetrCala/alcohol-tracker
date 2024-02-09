@@ -1,77 +1,84 @@
-﻿import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  Modal, 
-  TextInput,
-  TouchableOpacity, 
+﻿import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
+import React, {useState} from 'react';
+import {
+  View,
+  Text,
+  Modal,
+  TouchableOpacity,
   StyleSheet,
-  KeyboardTypeOptions, 
+  KeyboardTypeOptions,
+  TextInput,
 } from 'react-native';
 
 export type InputTextPopupProps = {
-    visible: boolean;
-    transparent: boolean;
-    message: string;
-    confirmationMessage: string;
-    placeholder: string;
-    onRequestClose: () => void;
-    onSubmit: (password: string) => void;
-    keyboardType?: KeyboardTypeOptions | undefined;
-    textContentType?: any; // Many options
-    secureTextEntry?: boolean | undefined;
+  visible: boolean;
+  transparent: boolean;
+  message: string;
+  confirmationMessage: string;
+  placeholder: string;
+  onRequestClose: () => void;
+  onSubmit: (password: string) => void;
+  keyboardType?: KeyboardTypeOptions | undefined;
+  textContentType?: any; // Many options
+  secureTextEntry?: boolean | undefined;
 };
 
 const InputTextPopup = (props: InputTextPopupProps) => {
-    const { 
-        visible, 
-        transparent, 
-        message, 
-        confirmationMessage,
-        placeholder,
-        onRequestClose, 
-        onSubmit, 
-        keyboardType,
-        textContentType,
-        secureTextEntry
-    } = props;
-    const [text, setText] = useState<string>('');
+  const {
+    visible,
+    transparent,
+    message,
+    confirmationMessage,
+    placeholder,
+    onRequestClose,
+    onSubmit,
+    keyboardType,
+    textContentType,
+    secureTextEntry,
+  } = props;
+  const [text, setText] = useState<string>('');
 
-    return (
-        <Modal
-        animationType="none"
-        transparent={transparent}
-        visible={visible}
-        onRequestClose={onRequestClose}
-        >
+  return (
+    <Modal
+      animationType="none"
+      transparent={transparent}
+      visible={visible}
+      onRequestClose={onRequestClose}>
+      <DismissKeyboard>
         <View style={styles.modalContainer}>
-        <View style={styles.modalView}>
-            <Text style={styles.modalText}>
-            {message}
-            </Text>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>{message}</Text>
             <View style={styles.textContainer}>
-            <TextInput
+              <TextInput
                 placeholder={placeholder}
+                placeholderTextColor={'#a8a8a8'}
                 value={text}
                 onChangeText={text => setText(text)}
                 style={styles.password}
                 keyboardType={keyboardType}
                 textContentType={textContentType}
                 secureTextEntry={secureTextEntry}
-            />
+              />
             </View>
             <View style={styles.buttonsContainer}>
-                <TouchableOpacity style={styles.confirmButton} onPress={() => onSubmit(text)}>
-                    <Text style={styles.confirmButtonText}>{confirmationMessage}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.cancelButton} onPress={onRequestClose}>
-                    <Text style={styles.cancelButtonText}>Close</Text>
-                </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.confirmButton}
+                onPress={() => onSubmit(text)}>
+                <Text style={styles.confirmButtonText}>
+                  {confirmationMessage}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={onRequestClose}>
+                <Text style={styles.cancelButtonText}>Close</Text>
+              </TouchableOpacity>
             </View>
+          </View>
         </View>
-        </View>
-        </Modal>
-    );
+      </DismissKeyboard>
+    </Modal>
+  );
 };
 
 export default InputTextPopup;
@@ -115,6 +122,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginTop: 5,
     marginBottom: 5,
+    color: 'black',
   },
   buttonsContainer: {
     width: '100%',
@@ -150,4 +158,3 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
-
