@@ -1,5 +1,6 @@
 ﻿import React, {useContext, useState} from 'react';
 import {
+  Keyboard,
   ScrollView,
   StyleSheet,
   Text,
@@ -78,7 +79,10 @@ const SettingsScreen = ({route, navigation}: SettingsScreenProps) => {
   return (
     <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
       <MainHeader headerText="" onGoBack={() => navigation.goBack()} />
-      <ScrollView style={styles.scrollView}>
+      <ScrollView
+        style={styles.scrollView}
+        onScrollBeginDrag={Keyboard.dismiss}
+        keyboardShouldPersistTaps="handled">
         {settingsData.map((item, index) => (
           <SettingsItem key={index} item={item} />
         ))}

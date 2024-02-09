@@ -6,12 +6,15 @@ export function isRecent(timestamp: number): boolean {
   return now - timestamp < fiveMinutes;
 }
 
-export function getTimestampAge(timestamp: number): string {
+export function getTimestampAge(
+  timestamp: number,
+  addAgo: boolean = true,
+): string {
   const now = Date.now();
   const difference = now - timestamp;
   const plural = (input: number) => (input > 1 ? 's' : '');
   const formatText = (input: number, unit: string) =>
-    `${input} ${unit}${plural(input)} ago`;
+    `${input} ${unit}${plural(input)}${addAgo ? ' ago' : ''}`;
 
   // Format the timestamp into human-readable form based on its age
   switch (true) {

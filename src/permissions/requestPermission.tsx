@@ -15,9 +15,13 @@ import {
   requestNotifications,
   NotificationsResponse,
 } from 'react-native-permissions';
-import {PermissionKey} from './permissionsUtils';
-import {permissionsMap} from './PermissionsList';
-import {permissionsMessages} from './PermissionsMessages';
+import {
+  PermissionKey,
+  permissionIsDenied,
+  permissionIsGranted,
+} from './PermissionsUtils';
+import permissionsMap from './PermissionsList';
+import permissionsMessages from './PermissionsMessages';
 
 const openSettings = () => {
   Linking.openSettings();
@@ -77,18 +81,10 @@ export const requestPermission = async (permissionType: PermissionKey) => {
     status = await requestPermissionIOS(permission as RNPermission);
   }
 
-  const isGranted = [
-    PermissionsAndroid.RESULTS.GRANTED,
-    RESULTS.GRANTED,
-  ].includes(status);
+  const isGranted = permissionIsGranted(status);
 
   if (!isGranted) {
-    const restrictedAccess = [
-      PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN,
-      RESULTS.BLOCKED,
-      RESULTS.LIMITED,
-      RESULTS.UNAVAILABLE,
-    ].includes(status);
+    const restrictedAccess = permissionIsDenied(status);
     if (restrictedAccess) {
       Alert.alert(
         'Storage Permission Required',

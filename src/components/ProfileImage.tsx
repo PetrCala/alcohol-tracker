@@ -38,7 +38,7 @@ const reducer = (state: State, action: Action) => {
 type ProfileImageProps = {
   storage: FirebaseStorage;
   userId: string;
-  downloadPath: string | null;
+  downloadPath: string | null | undefined;
   style: any;
   refreshTrigger?: number; // Likely a number, used to force a refresh
 };
@@ -49,6 +49,11 @@ function ProfileImage(props: ProfileImageProps) {
   const {cachedUrl, cacheImage, isCacheChecked} = useProfileImageCache(userId);
   const prevCachedUrl = useRef(cachedUrl); // Crucial
   const initialDownloadPath = useRef(downloadPath); //
+
+  const imageSource =
+    state.imageUrl && state.imageUrl !== CONST.NO_IMAGE
+      ? {uri: state.imageUrl}
+      : require('../../assets/temp/user.png');
 
   const checkAvailableCache = async (url: string | null): Promise<boolean> => {
     if (downloadPath?.startsWith(CONST.LOCAL_IMAGE_PREFIX)) {
@@ -89,10 +94,7 @@ function ProfileImage(props: ProfileImageProps) {
             userId,
             downloadPath,
           );
-          // if (downloadUrl === downloadPath) // If the resulting download path has not changed
-          if (downloadUrl !== downloadPath) {
-            await cacheImage(downloadUrl);
-          }
+          await cacheImage(downloadUrl);
         }
 
         dispatch({type: 'SET_IMAGE_URL', payload: downloadUrl});
@@ -116,16 +118,7 @@ function ProfileImage(props: ProfileImageProps) {
   if (state.loadingImage)
     return <ActivityIndicator size="large" color="#0000ff" style={style} />;
 
-  return (
-    <Image
-      source={
-        state.imageUrl && state.imageUrl !== CONST.NO_IMAGE
-          ? {uri: state.imageUrl}
-          : require('../../assets/temp/user.png')
-      }
-      style={style}
-    />
-  );
+  return <Image source={imageSource} style={style} />;
 }
 
 export default ProfileImage;

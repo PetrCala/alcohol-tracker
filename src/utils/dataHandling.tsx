@@ -562,6 +562,11 @@ export const removeUnits = (
       if (Object.keys(unitsAtTimestamp).length === 0) {
         delete updatedUnits[+timestamp];
       }
+
+      // Add a zero-unit placeholder if there are no units left in the object
+      if (Object.keys(updatedUnits).length === 0) {
+        updatedUnits[+timestamp] = {other: 0};
+      }
     }
 
     if (unitsToRemove <= 0) {

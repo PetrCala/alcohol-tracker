@@ -2,6 +2,7 @@
 import {
   Dimensions,
   Image,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -18,11 +19,11 @@ import {signInUserWithEmailAndPassword} from '../auth/auth';
 import commonStyles from '../styles/commonStyles';
 import {LoginScreenProps} from '../types/screens';
 import LoadingData from '../components/LoadingData';
-import {useUserConnection} from '../context/global/UserConnectionContext';
 import InputTextPopup from '../components/Popups/InputTextPopup';
 import {handleErrors} from '../utils/errorHandling';
 import WarningMessage from '@components/Info/WarningMessage';
 import SuccessMessage from '@components/Info/SuccessMessage';
+import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 
 interface State {
   email: string;
@@ -86,7 +87,7 @@ const reducer = (state: State, action: Action) => {
 
 const LoginScreen = ({navigation}: LoginScreenProps) => {
   if (!navigation) return null; // Should never be null
-  const {isOnline} = useUserConnection();
+  // const {isOnline} = useUserConnection();
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useFocusEffect(
@@ -137,12 +138,8 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
   if (state.loadingUser) return <LoadingData />;
 
   return (
-    <ScrollView
-      keyboardShouldPersistTaps="handled"
-      contentContainerStyle={{flexGrow: 1, flexShrink: 1}}>
-      <KeyboardAvoidingView
-        style={styles.mainContainer}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+    <DismissKeyboard>
+      <View style={styles.mainContainer}>
         <WarningMessage warningText={state.warning} dispatch={dispatch} />
         <SuccessMessage successText={state.success} dispatch={dispatch} />
         <View style={styles.logoContainer}>
@@ -171,8 +168,8 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
             onChangeText={text =>
               dispatch({type: 'UPDATE_PASSWORD', payload: text})
             }
-            style={styles.input}
             secureTextEntry
+            style={styles.input}
           />
           <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
             <Text style={styles.loginButtonText}>Login</Text>
@@ -194,7 +191,9 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
             <TouchableOpacity
               style={styles.signUpButtonContainer}
               onPress={() =>
-                navigation.navigate('Sign Up Screen', {loginEmail: state.email})
+                navigation.navigate('Sign Up Screen', {
+                  loginEmail: state.email,
+                })
               }>
               <Text style={styles.signUpInfoText}>Don't have an account?</Text>
               <Text style={styles.signUpButtonText}>Sign up</Text>
@@ -218,8 +217,8 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
             secureTextEntry={false}
           />
         </View>
-      </KeyboardAvoidingView>
-    </ScrollView>
+      </View>
+    </DismissKeyboard>
   );
 };
 
@@ -230,34 +229,22 @@ const screenHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
   mainContainer: {
-    flexGrow: 1,
-    flexShrink: 1,
-    justifyContent: 'center',
+    flex: 1,
+    justifyContent: 'flex-start',
     alignItems: 'center',
+    flexDirection: 'column',
     backgroundColor: '#FFFF99',
   },
   logoContainer: {
-    flexShrink: 1,
     justifyContent: 'flex-end',
     alignItems: 'center',
-    backgroundColor: '#FFFF99',
-    marginTop: screenHeight * 0.2,
     width: '100%',
+    height: screenHeight * 0.2,
   },
   logo: {
     width: 50,
     height: 50,
     borderRadius: 25,
-  },
-  infoContainer: {
-    width: '80%',
-    height: 'auto',
-    position: 'absolute', // Temp
-    top: '10%', // Temp
-    borderRadius: 5,
-    borderWidth: 2,
-    alignItems: 'center',
-    alignSelf: 'center',
   },
   warningInfoContainer: {
     backgroundColor: '#fce3e1',
@@ -285,13 +272,13 @@ const styles = StyleSheet.create({
     color: 'green',
   },
   inputContainer: {
-    flexGrow: 1,
-    flexShrink: 1,
-    marginTop: screenHeight * 0.15,
+    paddingTop: screenHeight * 0.15,
     width: '80%',
+    height: screenHeight * 0.85,
   },
   input: {
     backgroundColor: 'white',
+    height: 45,
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 10,

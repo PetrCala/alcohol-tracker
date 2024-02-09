@@ -2,7 +2,7 @@
 import {NicknameToIdData} from '@src/types/database';
 import {cleanStringForFirebaseKey} from '@src/utils/strings';
 import {QUIRKY_NICKNAMES} from '@src/utils/QuirkyNicknames';
-import {UserSearchResults} from '@src/types/search';
+import {UserIdToNicknameMapping, UserSearchResults} from '@src/types/search';
 
 /**
  * Using a database object and a nickname to search,
@@ -36,11 +36,11 @@ export async function searchDbByNickname(
  * @returns A Promise that resolves to a string of IDs that match the search text.
  */
 export async function searchDatabaseForUsers(
-  db: Database,
+  db: Database | undefined,
   searchText: string,
   useQuirkyNicknames: boolean = true,
 ): Promise<UserSearchResults> {
-  if (!searchText) {
+  if (!searchText || !db) {
     return [];
   }
   let searchResultData: UserSearchResults = [];
@@ -52,4 +52,47 @@ export async function searchDatabaseForUsers(
     searchResultData.push(searchText);
   }
   return searchResultData;
+}
+
+function searchItemIsRelevant(
+  item: string,
+  cleanedText: string,
+  mapping: UserIdToNicknameMapping,
+): boolean {
+  const mappingText = mapping[item];
+  if (mappingText) {
+    const cleanedMappingText = cleanStringForFirebaseKey(mappingText);
+    return cleanedMappingText.includes(cleanedText);
+  }
+  return false;
+}
+
+export function searchArrayByText(
+  arr: string[],
+  searchText: string,
+  mapping: UserIdToNicknameMapping,
+): string[] {
+  if (!searchText) return arr;
+  const cleanedSearchText = cleanStringForFirebaseKey(searchText);
+  return arr.filter(item =>
+    searchItemIsRelevant(item, cleanedSearchText, mapping),
+  );
+}
+
+export function searchObjectByText(
+  obj: Record<string, any>,
+  searchText: string,
+  mapping: UserIdToNicknameMapping,
+): Record<string, any> {
+  if (!searchText) return obj;
+  const cleanedSearchText = cleanStringForFirebaseKey(searchText);
+  return Object.keys(obj)
+    .filter(key => searchItemIsRelevant(key, cleanedSearchText, mapping))
+    .reduce(
+      (acc, key) => {
+        acc[key] = obj[key];
+        return acc;
+      },
+      {} as Record<string, any>,
+    );
 }

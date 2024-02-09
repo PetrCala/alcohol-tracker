@@ -3,6 +3,7 @@ import {
   Alert,
   Dimensions,
   Image,
+  Keyboard,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -103,13 +104,15 @@ const MainScreen = ({navigation}: MainScreenProps) => {
     isLoading,
   } = getDatabaseData();
   const [state, dispatch] = useReducer(reducer, initialState);
+  const sessionOngoing = userStatusData?.latest_session?.ongoing;
 
   // Handle drinking session button press
   const startDrinkingSession = async () => {
     if (!preferences || !user) return null; // Should never be null
     let sessionData: DrinkingSessionArrayItem;
     let sessionKey: string;
-    if (!state.ongoingSession) {
+    let latest_session = userStatusData?.latest_session;
+    if (!latest_session?.ongoing) {
       dispatch({type: 'SET_LOADING_NEW_SESSION', payload: true});
       // The user is not in an active session
       sessionData = {
@@ -144,9 +147,7 @@ const MainScreen = ({navigation}: MainScreenProps) => {
         return;
       }
     } else {
-      const currentsessionKey = state.ongoingSession
-        ? userStatusData?.latest_session_id
-        : null;
+      const currentsessionKey = userStatusData?.latest_session_id;
       if (!currentsessionKey) {
         Alert.alert(
           'New session initialization failed',
@@ -154,7 +155,7 @@ const MainScreen = ({navigation}: MainScreenProps) => {
         );
         return;
       }
-      sessionData = state.ongoingSession;
+      sessionData = latest_session;
       sessionKey = currentsessionKey;
     }
     navigation.navigate('Drinking Session Screen', {
@@ -192,12 +193,6 @@ const MainScreen = ({navigation}: MainScreenProps) => {
 
     fetchData();
   }, []);
-
-  // Monitor ongoing sessions in database
-  useMemo(() => {
-    let result = findOngoingSession(drinkingSessionData);
-    dispatch({type: 'SET_ONGOING_SESSION', payload: result});
-  }, [drinkingSessionData, userStatusData]);
 
   // Monitor visible month and various statistics
   useMemo(() => {
@@ -248,7 +243,6 @@ const MainScreen = ({navigation}: MainScreenProps) => {
                 userId: user.uid,
                 profileData: userData.profile,
                 friends: userData.friends,
-                currentUserFriends: userData.friends,
                 drinkingSessionData: drinkingSessionData,
                 preferences: preferences,
               })
@@ -268,23 +262,25 @@ const MainScreen = ({navigation}: MainScreenProps) => {
               <Text style={styles.yearMonthText}>{thisYearMonth}</Text>
           </View> */}
       </View>
-      {state.ongoingSession ? (
-        <TouchableOpacity
-          style={styles.userInSessionWarningContainer}
-          onPress={startDrinkingSession}>
-          <Text style={styles.userInSessionWarningText}>
-            You are currently in session!
-          </Text>
-        </TouchableOpacity>
-      ) : null}
       {/* <View style={styles.yearMonthContainer}>
         <Text style={styles.yearMonthText}>{thisYearMonth}</Text>
       </View> */}
       <ScrollView
         style={styles.mainScreenContent}
+        keyboardShouldPersistTaps="handled"
+        onScrollBeginDrag={Keyboard.dismiss}
         refreshControl={
           <RefreshControl refreshing={state.refreshing} onRefresh={onRefresh} />
         }>
+        {sessionOngoing ? (
+          <TouchableOpacity
+            style={styles.userInSessionWarningContainer}
+            onPress={startDrinkingSession}>
+            <Text style={styles.userInSessionWarningText}>
+              You are currently in session!
+            </Text>
+          </TouchableOpacity>
+        ) : null}
         <View style={styles.menuInfoContainer}>
           <View style={styles.menuInfoItemContainer}>
             <Text style={styles.menuInfoText}>Units:</Text>
@@ -361,7 +357,7 @@ const MainScreen = ({navigation}: MainScreenProps) => {
           />
         </View>
       </View>
-      {state.ongoingSession ? null : (
+      {sessionOngoing ? null : (
         <TouchableOpacity
           style={styles.startSessionButton}
           onPress={startDrinkingSession}>
@@ -468,6 +464,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#FFFF99',
     width: '100%',
+    marginTop: 2,
   },
   menuInfoItemContainer: {
     flexDirection: 'row',

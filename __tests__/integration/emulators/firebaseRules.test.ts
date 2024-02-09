@@ -26,7 +26,6 @@ import {
   SAMPLE_UNITS_TO_COLORS,
   SAMPLE_UNITS_TO_POINTS,
 } from '../../utils/testsStatic';
-import {mock} from 'node:test';
 
 const projectId = process.env.TEST_PROJECT_ID;
 if (!projectId) throw new Error(`Missing environment variable ${projectId}.`);
@@ -444,6 +443,8 @@ describeWithEmulator('Test friend request rules', () => {
   let authDb: any;
   let unauthDb: any;
   let adminDb: any;
+  let sentFriendRequest: string = 'sent';
+  let receivedFriendRequest: string = 'received';
   setupGlobalMocks(); // Silence permission denied warnings
 
   beforeAll(async () => {
@@ -462,7 +463,7 @@ describeWithEmulator('Test friend request rules', () => {
     const authRef = authDb.ref(
       `users/${authUserId}/friend_requests/${otherUserId}`,
     );
-    await assertSucceeds(authRef.set('sent'));
+    await assertSucceeds(authRef.set(sentFriendRequest));
     await assertSucceeds(authRef.set(null));
   });
 
@@ -478,7 +479,7 @@ describeWithEmulator('Test friend request rules', () => {
     const authRef = authDb.ref(
       `users/${otherUserId}/friend_requests/${authUserId}`,
     );
-    await assertSucceeds(authRef.set('received'));
+    await assertSucceeds(authRef.set(receivedFriendRequest));
     await assertSucceeds(authRef.set(null));
   });
 
@@ -488,7 +489,7 @@ describeWithEmulator('Test friend request rules', () => {
     );
 
     // Attempt to write under different id into the other user's friend_requests database part
-    await assertFails(authRef.set('received'));
+    await assertFails(authRef.set(receivedFriendRequest));
   });
 
   it("should not allow authenticated user to write into other user's friend_requests any value other than received", async () => {
@@ -496,7 +497,7 @@ describeWithEmulator('Test friend request rules', () => {
       `users/${otherUserId}/friend_requests/${authUserId}`,
     );
     await assertFails(authRef.set(123));
-    await assertFails(authRef.set('sent'));
+    await assertFails(authRef.set(sentFriendRequest));
   });
 
   it('should not allow writing invalid values to friend_requests node', async () => {
@@ -519,7 +520,23 @@ describeWithEmulator('Test friend request rules', () => {
     const authRef = authDb.ref(
       `users/${authUserId}/friend_requests/${authUserId}`,
     );
-    await assertFails(authRef.set('sent'));
+    await assertFails(authRef.set(sentFriendRequest));
+  });
+
+  it('should not allow a user to send a friend request to a user they are already friends with', async () => {
+    await makeFriends(authDb, authUserId, otherUserId); // Set the friend connection first
+    const authRef = authDb.ref(
+      `users/${otherUserId}/friend_requests/${authUserId}`,
+    );
+    await assertFails(authRef.set(receivedFriendRequest));
+  });
+
+  it('should not allow a user to write into their own friend request an id of a user they are already friends with', async () => {
+    await makeFriends(authDb, authUserId, otherUserId); // Set the friend connection first
+    const authRef = authDb.ref(
+      `users/${authUserId}/friend_requests/${otherUserId}`,
+    );
+    await assertFails(authRef.set(sentFriendRequest));
   });
 
   it('should allow reading own friend_requests when authenticated', async () => {

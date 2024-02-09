@@ -97,7 +97,7 @@
           ".validate": "newData.val() === null || newData.hasChildren()",
           "$request_id": {
             ".validate": "(($uid === auth.uid && newData.val() === 'sent') || ($request_id === auth.uid && newData.val() === 'received') || newData.val() === null) && $uid != $request_id",
-            ".write": "auth != null && root.child('users').child($uid).exists()"
+            ".write": "auth != null && root.child('users').child($uid).exists() && (!root.child('users').child(auth.uid).child('friends').child($request_id).exists()) && (!root.child('users').child($request_id).child('friends').child(auth.uid).exists())"
           }
         },
         "profile": {

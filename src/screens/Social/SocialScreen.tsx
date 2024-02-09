@@ -129,7 +129,7 @@ const SocialScreen = ({route, navigation}: SocialScreenProps) => {
     {
       index: 1,
       source: require('../../../assets/icons/search.png'),
-      label: 'Search',
+      label: 'Find New Friends',
     },
     {
       index: 2,

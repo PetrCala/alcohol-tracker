@@ -1,4 +1,4 @@
-﻿import React, {useReducer} from 'react';
+﻿import React, {useEffect, useReducer} from 'react';
 import {
   Image,
   View,
@@ -7,27 +7,19 @@ import {
   StyleSheet,
   ImageSourcePropType,
 } from 'react-native';
-import {
-  ImageLibraryOptions,
-  launchImageLibrary,
-} from 'react-native-image-picker';
+import ImagePicker from 'react-native-image-crop-picker';
 import {Image as CompressorImage} from 'react-native-compressor';
-import {FirebaseStorage, getDownloadURL, ref} from 'firebase/storage';
 import {uploadImageToFirebase} from '../storage/storageUpload';
-import {handleErrors} from '@src/utils/errorHandling';
 import WarningMessage from './Info/WarningMessage';
 import SuccessMessage from './Info/SuccessMessage';
 import UploadImagePopup from './Popups/UploadImagePopup';
 import {UploadImageState} from '@src/types/components';
 import {GeneralAction} from '@src/types/states';
-import {checkPermission} from '@src/permissions/checkPermission';
+import checkPermission from '@src/permissions/checkPermission';
 import {requestPermission} from '@src/permissions/requestPermission';
-import {setProfilePictureURL, updateProfileInfo} from '@database/profile';
+import {updateProfileInfo} from '@database/profile';
 import {auth} from '@src/services/firebaseSetup';
 import {useFirebase} from '@src/context/global/FirebaseContext';
-import {updateProfile} from 'firebase/auth';
-import path from 'path';
-import {cacheProfileImage} from '@src/utils/cache';
 
 const initialState: UploadImageState = {
   imageSource: null,
@@ -64,7 +56,6 @@ type UploadImageComponentProps = {
   pathToUpload: string;
   imageSource: ImageSourcePropType;
   imageStyle: any;
-  setImageSource: (newUrl: string) => void;
   isProfilePicture: boolean;
 };
 
@@ -72,68 +63,42 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
   pathToUpload,
   imageSource,
   imageStyle,
-  setImageSource,
   isProfilePicture = false,
 }) => {
   const user = auth.currentUser;
   const {db, storage} = useFirebase();
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const uploadImage = async (sourceURI: string) => {
-    try {
-      await uploadImageToFirebase(storage, sourceURI, pathToUpload, dispatch);
-    } catch (error: any) {
-      handleErrors(error, 'Error uploading image', error.message, dispatch);
-      throw error; // Rethrow the error to be handled by the caller
-    }
-  };
-
-  const handleUpload = async (sourceURI: string | null) => {
-    if (!sourceURI) {
-      dispatch({type: 'SET_WARNING', payload: 'No image selected'});
-      return;
-    }
-
-    try {
-      dispatch({type: 'SET_UPLOAD_ONGOING', payload: true});
-      const compressedURI = await CompressorImage.compress(sourceURI);
-      await uploadImage(compressedURI);
-      if (isProfilePicture) {
-        await updateProfileInfo(pathToUpload, user, auth, db, storage);
-      }
-    } catch (error: any) {
-      dispatch({type: 'SET_UPLOAD_ONGOING', payload: false}); // Otherwise dispatch upon success in child component
-      dispatch({type: 'SET_IMAGE_SOURCE', payload: null});
-      Alert.alert('Error uploading image', error.message);
-      // handleErrors(error, 'Error uploading image', error.message, dispatch); // Use after popup alerts have been implemented
-    }
-  };
-
   const chooseImage = async () => {
-    const options: ImageLibraryOptions = {
+    ImagePicker.openPicker({
+      width: 300,
+      height: 400,
+      cropping: true,
+      includeBase64: true,
+      cropperCircleOverlay: true, // could use isProfilePicture
+      cropperToolbarTitle: 'Crop the image',
+      compressImageQuality: 0.8,
+      writeTempFile: true,
       mediaType: 'photo',
-      includeBase64: false,
-    };
-
-    // Assume granted permissions
-    launchImageLibrary(options, async (response: any) => {
-      if (response.didCancel) {
-        // console.log('User cancelled image picker');
-      } else if (response.errorCode) {
-        Alert.alert('ImagePicker Error', response.errorMessage);
-      } else {
-        const source = {uri: response.assets[0].uri};
+    })
+      .then((image: any) => {
+        const source = {uri: image.path};
         if (!source) {
-          dispatch({
-            type: 'SET_WARNING',
-            payload: 'Could not fetch the image. Please try again.',
-          });
+          Alert.alert('Error', 'Could not fetch the image. Please try again.');
+          // dispatch({
+          //   type: 'SET_WARNING',
+          //   payload: 'Could not fetch the image. Please try again.',
+          // });
           return;
         }
-        dispatch({type: 'SET_UPLOAD_MODAL_VISIBLE', payload: true});
-        dispatch({type: 'SET_IMAGE_SOURCE', payload: source.uri});
-      }
-    });
+        dispatch({type: 'SET_IMAGE_SOURCE', payload: source.uri}); // Triggers upload
+      })
+      .catch((error: any) => {
+        // TODO add clever error handling
+        if ('User cancelled image selection' === error.message) return;
+        Alert.alert('Error choosing image', error.message);
+        // dispatch({type: 'SET_WARNING', payload: error.message});
+      });
   };
 
   const handleChooseImagePress = async () => {
@@ -160,6 +125,35 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
     dispatch({type: 'SET_SUCCESS', payload: ''});
   };
 
+  useEffect(() => {
+    const handleUpload = async (sourceURI: string | null) => {
+      if (!sourceURI) return;
+
+      try {
+        dispatch({type: 'SET_UPLOAD_MODAL_VISIBLE', payload: true});
+        dispatch({type: 'SET_UPLOAD_ONGOING', payload: true});
+        const compressedURI = await CompressorImage.compress(sourceURI);
+        await uploadImageToFirebase(
+          storage,
+          compressedURI,
+          pathToUpload,
+          dispatch,
+        ); // Wait for the promise to resolve
+        if (isProfilePicture) {
+          await updateProfileInfo(pathToUpload, user, auth, db, storage);
+        }
+      } catch (error: any) {
+        dispatch({type: 'SET_UPLOAD_ONGOING', payload: false}); // Otherwise dispatch upon success in child component
+        dispatch({type: 'SET_IMAGE_SOURCE', payload: null});
+        dispatch({type: 'SET_UPLOAD_MODAL_VISIBLE', payload: false});
+        Alert.alert('Image upload error', error.message);
+        // handleErrors(error, 'Error uploading image', error.message, dispatch); // Use after popup alerts have been implemented
+      }
+    };
+
+    handleUpload(state.imageSource);
+  }, [state.imageSource]);
+
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={handleChooseImagePress} style={styles.button}>
@@ -168,15 +162,11 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
 
       {state.imageSource && (
         <UploadImagePopup
-          imageSource={state.imageSource}
-          setImageSource={setImageSource}
           visible={state.uploadModalVisible}
           transparent={true}
-          message={'Do you want to upload this image?'}
           onRequestClose={() =>
             dispatch({type: 'SET_UPLOAD_MODAL_VISIBLE', payload: false})
           }
-          onSubmit={() => handleUpload(state.imageSource)}
           parentState={state}
           parentDispatch={dispatch}
         />

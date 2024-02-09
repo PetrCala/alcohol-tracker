@@ -189,7 +189,7 @@ function isUnitsObject(obj: any): obj is UnitsObject {
  * @returns bool
  */
 function isUnitsToColorsData(obj: any): obj is UnitsToColorsData {
-  return typeof obj.yellow === 'string' && typeof obj.red === 'string';
+  return typeof obj.yellow === 'number' && typeof obj.orange === 'number';
 }
 
 /** Using any object, validate that this object is of the FeedbackProps type. If yes, return true, otherwise return false.

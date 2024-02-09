@@ -1,6 +1,6 @@
-import { PermissionKey } from "./permissionsUtils";
+import {PermissionKey} from './PermissionsUtils';
 
-export const permissionsMessages: Record<PermissionKey, Record<string, string>> = {
+const permissionsMessages: Record<PermissionKey, Record<string, string>> = {
   camera: {
     title: 'Camera Access Required',
     message: 'This app needs access to your camera for taking pictures.',
@@ -22,3 +22,5 @@ export const permissionsMessages: Record<PermissionKey, Record<string, string>> 
   //   message: 'This app needs access to your location for navigation purposes.',
   // },
 };
+
+export default permissionsMessages;

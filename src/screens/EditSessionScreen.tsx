@@ -4,6 +4,7 @@ import {
   BackHandler,
   Image,
   ImageSourcePropType,
+  Keyboard,
   ScrollView,
   StyleSheet,
   Text,
@@ -60,6 +61,9 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
   const [totalPoints, setTotalPoints] = useState<number>(0);
   const [availableUnits, setAvailableUnits] = useState<number>(0);
   // Hooks for immediate display info - update these manually to improve efficiency
+  const [smallBeerSum, setSmallBeerSum] = useState<number>(
+    sumUnitsOfSingleType(currentUnits, 'small_beer'),
+  );
   const [beerSum, setBeerSum] = useState<number>(
     sumUnitsOfSingleType(currentUnits, 'beer'),
   );
@@ -97,6 +101,12 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
   const scrollViewRef = useRef<ScrollView>(null); // To navigate the view
 
   const drinkData: DrinkDataProps = [
+    {
+      key: 'small_beer',
+      icon: require('../../assets/icons/beer.png'),
+      typeSum: smallBeerSum,
+      setTypeSum: setSmallBeerSum,
+    },
     {
       key: 'beer',
       icon: require('../../assets/icons/beer.png'),
@@ -311,6 +321,7 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
       <ScrollView
         style={styles.scrollView}
         ref={scrollViewRef}
+        onScrollBeginDrag={Keyboard.dismiss}
         keyboardShouldPersistTaps="handled">
         <View style={styles.sessionInfoContainer}>
           <Text style={styles.sessionInfoText}>Session date: {sessionDay}</Text>

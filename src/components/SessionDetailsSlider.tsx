@@ -1,7 +1,6 @@
 ﻿import React, {useState} from 'react';
 import {
   Text,
-  TextInput,
   TouchableOpacity,
   View,
   Animated,
@@ -10,6 +9,7 @@ import {
   ScrollView,
   LayoutChangeEvent,
   Switch,
+  TextInput,
 } from 'react-native';
 
 interface SessionSliderProps {
@@ -97,7 +97,7 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
           <View style={styles.noteWindowContainer}>
             <TextInput
               defaultValue={note}
-              style={styles.noteText}
+              style={styles.noteTextInput}
               onChangeText={value => onNoteChange(value)}
               placeholder={'Write your note here'}
               placeholderTextColor={'#a8a8a8'}
@@ -186,21 +186,23 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   noteWindowContainer: {
-    alignItems: 'flex-start',
+    alignItems: 'center',
+    justifyContent: 'center',
     borderWidth: 1,
     borderColor: '#000',
     borderRadius: 5,
     backgroundColor: 'white',
-    paddingRight: 15,
     marginTop: 5,
   },
-  noteText: {
+  noteTextInput: {
     width: '100%',
     height: 100,
     flexGrow: 1,
     flexShrink: 1,
     textAlignVertical: 'top',
-    margin: 10,
+    padding: 10,
+    paddingTop: 10,
+    borderRadius: 5,
     color: 'black',
   },
 });

@@ -79,10 +79,10 @@ export async function acceptFriendRequest(
   userTo: string,
 ): Promise<void> {
   var updates: {[requestId: string]: string | boolean | null} = {};
-  updates[`users/${userFrom}/friends/${userTo}`] = true;
-  updates[`users/${userTo}/friends/${userFrom}`] = true;
   updates[`users/${userFrom}/friend_requests/${userTo}`] = null;
   updates[`users/${userTo}/friend_requests/${userFrom}`] = null;
+  updates[`users/${userFrom}/friends/${userTo}`] = true;
+  updates[`users/${userTo}/friends/${userFrom}`] = true;
   await update(ref(db), updates);
 }
 

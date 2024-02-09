@@ -99,6 +99,7 @@ export type UnitsObject = {
  *
  */
 export const UnitTypesKeys = [
+  'small_beer',
   'beer',
   'cocktail',
   'other',
@@ -108,6 +109,7 @@ export const UnitTypesKeys = [
 ] as const; // Infer a readonly tuple
 
 export const UnitTypesNames = [
+  'Small Beer',
   'Beer',
   'Cocktail',
   'Other',

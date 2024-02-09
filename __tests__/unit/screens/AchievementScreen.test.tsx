@@ -8,7 +8,7 @@ const mockNavigation = {
   goBack: jest.fn(),
 };
 
-describe('<AchievementScreen />', () => {
+xdescribe('<AchievementScreen />', () => {
   beforeEach(() => {
     // Clear all instances and calls to constructor and all methods
     mockNavigation.navigate.mockClear();

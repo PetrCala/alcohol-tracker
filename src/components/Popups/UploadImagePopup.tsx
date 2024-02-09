@@ -4,7 +4,6 @@ import {auth} from '@src/services/firebaseSetup';
 import {UploadImagePopupProps} from '@src/types/components';
 import {useEffect, useState} from 'react';
 import {
-  Alert,
   Dimensions,
   Image,
   Modal,
@@ -15,68 +14,16 @@ import {
 } from 'react-native';
 
 const UploadImagePopup = (props: UploadImagePopupProps) => {
-  const {
-    imageSource,
-    setImageSource,
-    visible,
-    transparent,
-    message,
-    onRequestClose,
-    onSubmit,
-    parentState,
-    parentDispatch,
-  } = props;
+  const {visible, transparent, onRequestClose, parentState, parentDispatch} =
+    props;
   const user = auth.currentUser;
   const [uploadFinished, setUploadFinished] = useState<boolean>(false);
 
-  const ConfirmationWindow: React.FC = () => {
-    const startUpload = async () => {
-      try {
-        await onSubmit();
-      } catch (error: any) {
-        Alert.alert(
-          'Upload failed',
-          'Failed to upload the image' + error.message,
-        ); // Rewrite in the future
-      }
-    };
-
-    return (
-      <>
-        <Text style={styles.modalText}>{message}</Text>
-        {imageSource && (
-          <Image source={{uri: imageSource}} style={styles.image} />
-        )}
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={onRequestClose}>
-            <Text style={styles.buttonText}>No</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={startUpload}>
-            <Text style={styles.buttonText}>Yes</Text>
-          </TouchableOpacity>
-        </View>
-      </>
-    );
-  };
-
   const UploadWindow: React.FC = () => {
-    // const handleCancelUpload = () => {
-
-    //   setUploadOngoing(false);
-    //   onRequestClose();
-    // };
-
     return (
       <>
         <Text style={styles.modalText}>Uploading image...</Text>
         <Text style={styles.uploadText}>{parentState.uploadProgress}</Text>
-        {/* <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={[styles.button, styles.cancelButton]}
-            onPress={handleCancelUpload}>
-            <Text style={styles.buttonText}>Cancel upload</Text>
-          </TouchableOpacity>
-        </View> */}
       </>
     );
   };
@@ -114,7 +61,6 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
         parentState.uploadProgress.includes('100') &&
         user
       ) {
-        setImageSource(imageSource); // Propagate immediate local changes
         await AsyncStorage.removeItem(
           CONST.CACHE.PROFILE_PICTURE_KEY + user.uid,
         );
@@ -138,9 +84,7 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
             <UploadFinishedWindow />
           ) : parentState.uploadOngoing ? (
             <UploadWindow />
-          ) : (
-            <ConfirmationWindow />
-          )}
+          ) : null}
         </View>
       </View>
     </Modal>
@@ -176,6 +120,7 @@ const styles = StyleSheet.create({
   image: {
     width: imageSize * 0.5,
     height: imageSize * 0.5,
+    borderRadius: imageSize * 0.25,
     marginBottom: 10,
   },
   uploadText: {

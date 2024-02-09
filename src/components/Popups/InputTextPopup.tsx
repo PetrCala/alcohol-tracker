@@ -1,12 +1,13 @@
-﻿import React, {useState} from 'react';
+﻿import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
+import React, {useState} from 'react';
 import {
   View,
   Text,
   Modal,
-  TextInput,
   TouchableOpacity,
   StyleSheet,
   KeyboardTypeOptions,
+  TextInput,
 } from 'react-native';
 
 export type InputTextPopupProps = {
@@ -43,36 +44,39 @@ const InputTextPopup = (props: InputTextPopupProps) => {
       transparent={transparent}
       visible={visible}
       onRequestClose={onRequestClose}>
-      <View style={styles.modalContainer}>
-        <View style={styles.modalView}>
-          <Text style={styles.modalText}>{message}</Text>
-          <View style={styles.textContainer}>
-            <TextInput
-              placeholder={placeholder}
-              value={text}
-              onChangeText={text => setText(text)}
-              style={styles.password}
-              keyboardType={keyboardType}
-              textContentType={textContentType}
-              secureTextEntry={secureTextEntry}
-            />
-          </View>
-          <View style={styles.buttonsContainer}>
-            <TouchableOpacity
-              style={styles.confirmButton}
-              onPress={() => onSubmit(text)}>
-              <Text style={styles.confirmButtonText}>
-                {confirmationMessage}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.cancelButton}
-              onPress={onRequestClose}>
-              <Text style={styles.cancelButtonText}>Close</Text>
-            </TouchableOpacity>
+      <DismissKeyboard>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>{message}</Text>
+            <View style={styles.textContainer}>
+              <TextInput
+                placeholder={placeholder}
+                placeholderTextColor={'#a8a8a8'}
+                value={text}
+                onChangeText={text => setText(text)}
+                style={styles.password}
+                keyboardType={keyboardType}
+                textContentType={textContentType}
+                secureTextEntry={secureTextEntry}
+              />
+            </View>
+            <View style={styles.buttonsContainer}>
+              <TouchableOpacity
+                style={styles.confirmButton}
+                onPress={() => onSubmit(text)}>
+                <Text style={styles.confirmButtonText}>
+                  {confirmationMessage}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={onRequestClose}>
+                <Text style={styles.cancelButtonText}>Close</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-      </View>
+      </DismissKeyboard>
     </Modal>
   );
 };
@@ -118,6 +122,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginTop: 5,
     marginBottom: 5,
+    color: 'black',
   },
   buttonsContainer: {
     width: '100%',

@@ -2,6 +2,7 @@
 import {
   ActivityIndicator,
   Alert,
+  Keyboard,
   ScrollView,
   StyleSheet,
   Text,
@@ -68,6 +69,9 @@ const DrinkingSessionScreen = ({
   const [totalPoints, setTotalPoints] = useState<number>(0);
   const [availableUnits, setAvailableUnits] = useState<number>(0);
   // Hooks for immediate display info - update these manually to improve efficiency
+  const [smallBeerSum, setSmallBeerSum] = useState<number>(
+    sumUnitsOfSingleType(currentUnits, 'small_beer'),
+  );
   const [beerSum, setBeerSum] = useState<number>(
     sumUnitsOfSingleType(currentUnits, 'beer'),
   );
@@ -105,6 +109,12 @@ const DrinkingSessionScreen = ({
   const scrollViewRef = useRef<ScrollView>(null); // To navigate the view
 
   const drinkData: DrinkDataProps = [
+    {
+      key: 'small_beer',
+      icon: require('../../assets/icons/beer.png'),
+      typeSum: smallBeerSum,
+      setTypeSum: setSmallBeerSum,
+    },
     {
       key: 'beer',
       icon: require('../../assets/icons/beer.png'),
@@ -367,6 +377,7 @@ const DrinkingSessionScreen = ({
       <ScrollView
         style={styles.scrollView}
         ref={scrollViewRef}
+        onScrollBeginDrag={Keyboard.dismiss}
         keyboardShouldPersistTaps="handled">
         <View style={styles.sessionInfoContainer}>
           <View style={styles.sessionTextContainer}>

@@ -4,7 +4,6 @@ import {useFirebase} from '../../context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
 import {auth} from '@src/services/firebaseSetup';
 import UploadImageComponent from '@components/UploadImage';
-import {useEffect, useState} from 'react';
 
 type ProfileOverviewProps = {
   userId: string;
@@ -16,15 +15,7 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
   profileData,
 }) => {
   const user = auth.currentUser;
-  const {db, storage} = useFirebase();
-
-  const [imageSource, setImageSource] = useState<string>(profileData.photo_url);
-
-  useEffect(() => {
-    setImageSource(profileData.photo_url);
-  }, [profileData.photo_url]);
-
-  if (!db || !profileData) return;
+  const storage = useFirebase().storage;
 
   return (
     <View style={styles.profileOverviewContainer}>
@@ -33,7 +24,7 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
         key={`${userId}-profile-image`}
         storage={storage}
         userId={userId}
-        downloadPath={imageSource}
+        downloadPath={profileData.photo_url}
         style={styles.profileOverviewImage}
       />
       {user?.uid === userId ? (
@@ -42,7 +33,6 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
             pathToUpload={`users/${userId}/profile/profile_image.jpg`}
             imageSource={require('../../../assets/icons/camera.png')}
             imageStyle={styles.editProfileButtonImage}
-            setImageSource={setImageSource}
             isProfilePicture={true}
           />
         </View>
@@ -55,7 +45,6 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
           ellipsizeMode="tail">
           {profileData.display_name}
         </Text>
-        {/* More text here */}
       </View>
     </View>
   );
@@ -94,7 +83,7 @@ const styles = StyleSheet.create({
     height: profileImageSize / 3,
     width: profileImageSize / 3,
     position: 'absolute',
-    top: profileImageSize / 2 + profileImageSize / 7, // 7 is a magic number
+    top: profileImageSize / 2 + profileImageSize / 6,
     left: screenWidth / 2 + profileImageSize / 2 - profileImageSize / 3,
     justifyContent: 'center',
     alignItems: 'center',

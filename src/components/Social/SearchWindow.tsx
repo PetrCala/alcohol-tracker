@@ -7,27 +7,36 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {useState, forwardRef, useRef, useImperativeHandle} from 'react';
+import {
+  useState,
+  forwardRef,
+  useRef,
+  useImperativeHandle,
+  useEffect,
+} from 'react';
 import {Database} from 'firebase/database';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import {SearchWindowRef} from '@src/types/search';
-import KeyboardFocusHandler from '@components/KeyboardFocusHandler';
+import KeyboardFocusHandler from '@components/Keyboard/KeyboardFocusHandler';
+import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 
 type SearchWindowProps = {
-  doSearch: (db: Database, searchText: string) => void;
+  windowText: string;
+  onSearch: (searchText: string, db?: Database) => void;
   onResetSearch: () => void;
+  searchOnTextChange?: boolean;
 };
 
 const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
-  ({doSearch, onResetSearch}, parentRef) => {
+  ({windowText, onSearch, onResetSearch, searchOnTextChange}, parentRef) => {
     const db = useFirebase().db;
-    const inputRef = useRef<TextInput>(null); // Input field ref for focus handling
+    // const inputRef = useRef<TextInput>(null); // Input field ref for focus handling
     const [searchText, setSearchText] = useState<string>('');
     const [searchCount, setSearchCount] = useState<number>(0);
 
-    const handleDoSearch = (db: Database, searchText: string): void => {
-      if (searchText) {
-        doSearch(db, searchText);
+    const handleDoSearch = (searchText: string, db?: Database): void => {
+      onSearch(searchText, db);
+      if (!searchOnTextChange) {
         setSearchCount(searchCount + 1);
         Keyboard.dismiss();
       }
@@ -39,45 +48,61 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
       setSearchCount(0);
     };
 
-    useImperativeHandle(parentRef, () => ({
-      focus: () => {
-        inputRef.current?.focus();
-      },
-    }));
+    useEffect(() => {
+      if (searchOnTextChange) {
+        handleDoSearch(searchText, db);
+      }
+    }, [searchText]);
+
+    // useImperativeHandle(parentRef, () => ({
+    //   focus: () => {
+    //     inputRef.current?.focus();
+    //   },
+    // }));
 
     return (
-      <View style={styles.mainContainer}>
-        <View style={styles.textContainer}>
-          <KeyboardFocusHandler>
-            <TextInput
-              placeholder="Search for a user"
-              value={searchText}
-              onChangeText={text => setSearchText(text)}
-              style={styles.searchText}
-              keyboardType="default"
-              textContentType="nickname"
-              ref={inputRef}
-            />
-          </KeyboardFocusHandler>
-          {searchText !== '' || searchCount > 0 ? (
-            <TouchableOpacity
-              onPress={handleResetSearch}
-              style={styles.searchTextResetContainer}>
-              <Image
-                style={styles.searchTextResetImage}
-                source={require('../../../assets/icons/thin_x.png')}
+      <DismissKeyboard>
+        <View style={styles.mainContainer}>
+          <View
+            style={
+              searchOnTextChange
+                ? [styles.textContainer, styles.responsiveTextContainer]
+                : styles.textContainer
+            }>
+            <KeyboardFocusHandler>
+              <TextInput
+                placeholder={windowText}
+                placeholderTextColor={'#a8a8a8'}
+                value={searchText}
+                onChangeText={text => setSearchText(text)}
+                style={styles.searchText}
+                keyboardType="default"
+                textContentType="nickname"
+                // ref={inputRef}
               />
-            </TouchableOpacity>
-          ) : null}
+            </KeyboardFocusHandler>
+            {searchText !== '' || searchCount > 0 ? (
+              <TouchableOpacity
+                onPress={handleResetSearch}
+                style={styles.searchTextResetContainer}>
+                <Image
+                  style={styles.searchTextResetImage}
+                  source={require('../../../assets/icons/thin_x.png')}
+                />
+              </TouchableOpacity>
+            ) : null}
+          </View>
+          {searchOnTextChange ? null : (
+            <View style={styles.searchButtonContainer}>
+              <TouchableOpacity
+                style={styles.searchButton}
+                onPress={() => handleDoSearch(searchText, db)}>
+                <Text style={styles.searchButtonText}>Search</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
-        <View style={styles.searchButtonContainer}>
-          <TouchableOpacity
-            style={styles.searchButton}
-            onPress={() => handleDoSearch(db, searchText)}>
-            <Text style={styles.searchButtonText}>Search</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+      </DismissKeyboard>
     );
   },
 );
@@ -104,6 +129,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: 'white',
   },
+  responsiveTextContainer: {
+    width: '100%',
+  },
   searchText: {
     height: '100%',
     width: '90%',
@@ -112,6 +140,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     // justifyContent: 'space-between',
     paddingLeft: 10,
+    color: 'black',
   },
   searchTextResetContainer: {
     width: '10%',

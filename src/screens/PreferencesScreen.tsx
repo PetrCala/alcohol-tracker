@@ -2,15 +2,13 @@
 import {
   Alert,
   BackHandler,
+  Keyboard,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import Slider from '@react-native-community/slider';
-import MenuIcon from '../components/Buttons/MenuIcon';
 import {PreferencesScreenProps} from '../types/screens';
 import {auth} from '../services/firebaseSetup';
 import {useUserConnection} from '../context/global/UserConnectionContext';
@@ -21,8 +19,6 @@ import {
   PreferencesData,
   UnitTypesKeys,
   UnitTypesNames,
-  UnitTypesProps,
-  UnitsToColorsData,
 } from '../types/database';
 import {savePreferencesData} from '../database/preferences';
 import YesNoPopup from '../components/Popups/YesNoPopup';
@@ -177,7 +173,10 @@ const PreferencesScreen = ({route, navigation}: PreferencesScreenProps) => {
   return (
     <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
       <MainHeader headerText="Preferences" onGoBack={handleGoBack} />
-      <ScrollView style={styles.scrollView} keyboardShouldPersistTaps="handled">
+      <ScrollView
+        style={styles.scrollView}
+        onScrollBeginDrag={Keyboard.dismiss}
+        keyboardShouldPersistTaps="handled">
         <View style={[styles.container, styles.horizontalContainer]}>
           <Text style={styles.label}>First Day of Week</Text>
           <View style={styles.itemContainer}>

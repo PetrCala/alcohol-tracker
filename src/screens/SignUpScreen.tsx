@@ -8,9 +8,10 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
+  Keyboard,
+  TextInput,
 } from 'react-native';
 import {updateProfile} from 'firebase/auth';
 import {auth} from '../services/firebaseSetup';
@@ -26,6 +27,7 @@ import {ProfileData} from 'src/types/database';
 import {handleErrors} from '@src/utils/errorHandling';
 import CONST from '@src/CONST';
 import WarningMessage from '@components/Info/WarningMessage';
+import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 
 interface State {
   email: string;
@@ -265,12 +267,8 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
   if (!route || !navigation) return null; // Should never be null
 
   return (
-    <ScrollView
-      keyboardShouldPersistTaps="handled"
-      contentContainerStyle={{flexGrow: 1, flexShrink: 1}}>
-      <KeyboardAvoidingView
-        style={styles.mainContainer}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+    <DismissKeyboard>
+      <View style={styles.mainContainer}>
         <WarningMessage warningText={state.warning} dispatch={dispatch} />
         <View style={styles.logoContainer}>
           <Image
@@ -333,8 +331,8 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
             </TouchableOpacity>
           </View>
         </View>
-      </KeyboardAvoidingView>
-    </ScrollView>
+      </View>
+    </DismissKeyboard>
   );
 };
 
@@ -344,19 +342,17 @@ const screenHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
   mainContainer: {
-    flexGrow: 1,
-    flexShrink: 1,
-    justifyContent: 'center',
+    flex: 1,
+    justifyContent: 'flex-start',
     alignItems: 'center',
+    flexDirection: 'column',
     backgroundColor: '#FFFF99',
   },
   logoContainer: {
-    flexShrink: 1,
     justifyContent: 'flex-end',
     alignItems: 'center',
-    backgroundColor: '#FFFF99',
-    marginTop: screenHeight * 0.2,
     width: '100%',
+    height: screenHeight * 0.2,
   },
   logo: {
     width: 50,
@@ -385,13 +381,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   inputContainer: {
-    flexGrow: 1,
-    flexShrink: 1,
-    marginTop: screenHeight * 0.15,
+    paddingTop: screenHeight * 0.1,
     width: '80%',
+    height: screenHeight * 0.85,
   },
   input: {
     backgroundColor: 'white',
+    height: 45,
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 10,
@@ -408,7 +404,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 2,
     borderColor: '#000',
-    marginTop: 25,
+    marginTop: 10,
     alignItems: 'center',
     alignSelf: 'center',
   },

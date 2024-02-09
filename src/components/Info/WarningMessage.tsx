@@ -9,19 +9,21 @@ const WarningMessage: React.FC<WarningMessageProps> = ({
   warningText,
   dispatch,
 }) => {
-  return warningText && (
-    <View style={[styles.infoContainer, styles.warningInfoContainer]}>
-      <TouchableOpacity
-        id={'warning'}
-        testID={'warning'}
-        accessibilityRole="button"
-        onPress={() => dispatch({type: 'SET_WARNING', payload: ''})}
-        style={styles.infoButton}>
-        <Text style={[styles.infoText, styles.warningInfoText]}>
-          {warningText}
-        </Text>
-      </TouchableOpacity>
-    </View>
+  return (
+    warningText && (
+      <View style={[styles.infoContainer, styles.warningInfoContainer]}>
+        <TouchableOpacity
+          id={'warning'}
+          testID={'warning'}
+          accessibilityRole="button"
+          onPress={() => dispatch({type: 'SET_WARNING', payload: ''})}
+          style={styles.infoButton}>
+          <Text style={[styles.infoText, styles.warningInfoText]}>
+            {warningText}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    )
   );
 };
 
@@ -32,7 +34,7 @@ const styles = StyleSheet.create({
     width: '80%',
     height: 'auto',
     position: 'absolute', // Temp
-    top: '10%', // Temp
+    top: 50, // Temp
     borderRadius: 5,
     borderWidth: 2,
     alignItems: 'center',
