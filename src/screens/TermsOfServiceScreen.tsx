@@ -10,6 +10,7 @@ import MenuIcon from '../components/Buttons/MenuIcon';
 import {TermsOfServiceScreenProps} from '../types/screens';
 import {WebView} from 'react-native-webview';
 import commonStyles from '../styles/commonStyles';
+import MainHeader from '@components/Header/MainHeader';
 
 const TermsOfServiceScreen = ({navigation}: TermsOfServiceScreenProps) => {
   if (!navigation) return null; // Should never be null
@@ -31,15 +32,7 @@ const TermsOfServiceScreen = ({navigation}: TermsOfServiceScreenProps) => {
 
   return (
     <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
-      <View style={commonStyles.mainHeader}>
-        <MenuIcon
-          iconId="escape-terms-of-service-screen"
-          iconSource={require('../../assets/icons/arrow_back.png')}
-          containerStyle={styles.backArrowContainer}
-          iconStyle={styles.backArrow}
-          onPress={() => navigation.goBack()}
-        />
-      </View>
+      <MainHeader headerText="" onGoBack={() => navigation.goBack()} />
       <View style={styles.mainContainer}>
         <WebView
           originWhitelist={['*']}
@@ -56,17 +49,6 @@ const TermsOfServiceScreen = ({navigation}: TermsOfServiceScreenProps) => {
 export default TermsOfServiceScreen;
 
 const styles = StyleSheet.create({
-  backArrowContainer: {
-    justifyContent: 'center',
-    marginTop: 10,
-    marginLeft: 10,
-    padding: 10,
-    position: 'absolute',
-  },
-  backArrow: {
-    width: 25,
-    height: 25,
-  },
   mainContainer: {
     flex: 1,
   },

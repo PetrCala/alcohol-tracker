@@ -2,8 +2,8 @@
 
 import {
   AppSettings,
+  BetaKeysProps,
   ConfigProps,
-  CurrentSessionData,
   DatabaseProps,
   DrinkingSessionArrayItem,
   DrinkingSessionData,
@@ -12,6 +12,7 @@ import {
   FriendRequestData,
   FriendRequestStatus,
   FriendsData,
+  MaintenanceProps,
   NicknameToIdData,
   PreferencesData,
   ProfileData,
@@ -20,6 +21,7 @@ import {
   UnitsObject,
   UnitsToColorsData,
   UserData,
+  UserStatusData,
 } from '../../src/types/database';
 import {getRandomChoice, getRandomInt} from '../../src/utils/choice';
 import {
@@ -29,6 +31,37 @@ import {
 } from '../../src/utils/dataHandling';
 import {cleanStringForFirebaseKey} from '../../src/utils/strings';
 import {MOCK_SESSION_IDS, MOCK_USER_IDS} from './testsStatic';
+import {create} from 'lodash';
+
+/**
+ * Creates a mock app settings object.
+ * @returns The mock app settings object.
+ */
+export function createMockAppSettings(
+  minSupportedVersion: string = '0.0.1',
+  minUserCreationPossibleVersion: string = '0.0.1',
+): AppSettings {
+  return {
+    min_supported_version: minSupportedVersion,
+    min_user_creation_possible_version: minUserCreationPossibleVersion,
+  };
+}
+
+/**
+ * Creates a mock maintenance object.
+ * @returns The mock maintenance object.
+ */
+export function createMockMaintenance(
+  maintenanceModeOn: boolean = false,
+  startTime: number = 0,
+  endTime: number = 0,
+): MaintenanceProps {
+  return {
+    maintenance_mode: maintenanceModeOn,
+    start_time: startTime,
+    end_time: endTime,
+  };
+}
 
 /** Initialize an empty database object to be
  * used for easier populating
@@ -37,20 +70,32 @@ import {MOCK_SESSION_IDS, MOCK_USER_IDS} from './testsStatic';
  */
 export function initializeEmptyMockDatabase(): DatabaseProps {
   return {
+    beta_keys: {},
     config: {
-      app_settings: {
-        min_supported_version: '0.0.1',
-        min_user_creation_possible_version: '0.0.1',
-      },
+      app_settings: createMockAppSettings(),
+      maintenance: createMockMaintenance(),
     },
     feedback: {},
     nickname_to_id: {},
-    user_current_session: {},
+    user_status: {},
     user_drinking_sessions: {},
     user_preferences: {},
     user_unconfirmed_days: {},
     users: {},
   };
+}
+
+export function createMockBetaKeys(number: number): BetaKeysProps {
+  const betaKeys: BetaKeysProps = {};
+  for (let i = 0; i < number; i++) {
+    const idx = i + 1; // Start indexing from key 1
+    const key = `beta-key-${idx}`;
+    betaKeys[idx] = {
+      key: key,
+      in_usage: false,
+    };
+  }
+  return betaKeys;
 }
 
 /** Create a mock configuration data record
@@ -59,16 +104,10 @@ export function initializeEmptyMockDatabase(): DatabaseProps {
  * version of the app. Defaults to 0.0.1.
  * @returns Mock configuration data record
  */
-export function createMockConfig(
-  min_supported_version: string = '0.0.1',
-  min_user_creation_possible_version: string = '0.0.1',
-): ConfigProps {
-  let mockAppSettings: AppSettings = {
-    min_supported_version: min_supported_version,
-    min_user_creation_possible_version: min_user_creation_possible_version,
-  };
+export function createMockConfig(): ConfigProps {
   let mockConfig: ConfigProps = {
-    app_settings: mockAppSettings,
+    app_settings: createMockAppSettings(),
+    maintenance: createMockMaintenance(),
   };
   return mockConfig;
 }
@@ -85,31 +124,29 @@ export function createMockFeedback(): FeedbackProps {
   };
 }
 
+export function createMockUserStatus(
+  latest_session_id?: string,
+  latest_session?: DrinkingSessionArrayItem,
+): UserStatusData {
+  const mockUserStatus: UserStatusData = {
+    last_online: Date.now(),
+  };
+  if (latest_session_id && latest_session) {
+    mockUserStatus.latest_session_id = latest_session_id;
+    mockUserStatus.latest_session = latest_session;
+  }
+  return mockUserStatus;
+}
+
 /** Create a mock nicknames to user IDs data object.
  *
- * @returns {NicknameToIdData} The mock object.
+ * @returns The mock object.
  */
 export function createMockNicknameToIdData(userId: string): NicknameToIdData {
   const returnObject: NicknameToIdData = {
     [userId]: 'mock nickname',
   };
   return returnObject;
-}
-
-/** Create and return a mock current session object.
- * This object will contain a random current live
- * session id.
- *
- * @param ongoingSessionId ID of the ongoing
- * mock session.
- * @returns Mock current session object
- */
-export function createMockCurrentSession(
-  ongoing_session_id: string,
-): CurrentSessionData {
-  return {
-    current_session_id: ongoing_session_id,
-  };
 }
 
 /** Generate a mock object of units
@@ -222,8 +259,8 @@ export function createMockUnconfirmedDays(): UnconfirmedDaysData {
 /** Create and return mock friend request data. Is created at random.
  *  (possibly improve in the future)
  *
- * @param {string} userId ID of the mock user
- * @returns {FriendRequestData} Mock FriendRequest type data.
+ * @param userId ID of the mock user
+ * @returns Mock FriendRequest type data.
  */
 export function createMockFriendRequests(userId: string): FriendRequestData {
   let mockRequestData: FriendRequestData = {};
@@ -240,40 +277,52 @@ export function createMockFriendRequests(userId: string): FriendRequestData {
 }
 
 /** Create and return a mock user data object
- * @param {string} userId ID of the mock user
- *
- * @returns {UserData} Mock user data
+ * @param userId ID of the mock user
+ * @param index Index of the mock user
+ * @param noFriends If set to true, no friends or friend requests will be created.
+ * @returns Mock user data
  */
-export function createMockUserData(userId: string): UserData {
+export function createMockUserData(
+  userId: string,
+  index: number,
+  noFriends: boolean = false,
+): UserData {
   let mockProfileData: ProfileData = {
     display_name: 'mock-user',
     photo_url: '',
   };
-  // let mockFriendsData: FriendsData | undefined = undefined;
-  let mockFriendRequests: FriendRequestData = createMockFriendRequests(userId);
-  return {
+  const mockUserData: UserData = {
     profile: mockProfileData,
-    // friends: mockFriendsData,
-    friend_requests: mockFriendRequests,
     role: 'mock-user',
-    last_online: Date.now(),
-    beta_key_id: 'mock-beta-key',
+    beta_key_id: index + 1,
   };
+  if (!noFriends) {
+    // mockUserData['friends'] = // TODO
+    mockUserData['friend_requests'] = createMockFriendRequests(userId);
+  }
+  return mockUserData;
 }
 
 /** Create and return an object that will mock
  * the firebase database. This object has the
  * type DatabaseProps.
  *
+ * @param noFriends If set to true, no friends or friend requests will be created.
  * @returns A mock object of the firebase database
  */
-export function createMockDatabase(): DatabaseProps {
+export function createMockDatabase(noFriends: boolean = false): DatabaseProps {
   const db = initializeEmptyMockDatabase();
+  // Beta keys
+  db.beta_keys = createMockBetaKeys(10); // beta feature
   // Configuration
   db.config = createMockConfig();
 
   // Data that varies across users
-  MOCK_USER_IDS.forEach(userId => {
+  MOCK_USER_IDS.forEach((userId, index) => {
+    // Choose beta key for the user - beta feature
+    db.beta_keys[index + 1].in_usage = true;
+    db.beta_keys[index + 1].user_id = userId;
+
     // Feedback
     db.feedback[userId] = createMockFeedback();
 
@@ -289,8 +338,11 @@ export function createMockDatabase(): DatabaseProps {
     mockSessionData[latestSessionId].ongoing = true;
     db.user_drinking_sessions[userId] = mockSessionData;
 
-    // Set the ongoing session id to the current session data
-    db.user_current_session[userId] = {current_session_id: latestSessionId};
+    // User status
+    db.user_status[userId] = createMockUserStatus(
+      latestSessionId,
+      mockSessionData[latestSessionId],
+    );
 
     // User preferences
     db.user_preferences[userId] = createMockPreferences();
@@ -299,7 +351,7 @@ export function createMockDatabase(): DatabaseProps {
     db.user_unconfirmed_days[userId] = createMockUnconfirmedDays();
 
     // User data
-    db.users[userId] = createMockUserData(userId);
+    db.users[userId] = createMockUserData(userId, index, noFriends);
 
     // Nicknames to user ids
     let nickname = db.users[userId].profile.display_name;
@@ -313,13 +365,16 @@ export function createMockDatabase(): DatabaseProps {
 /**
  * Export the mock database as a JSON file at the current folder location.
  *
- * @returns {string} The path of the exported JSON file.
+ * @returns The path of the exported JSON file.
  */
-export function exportMockDatabase(): string {
+export function exportMockDatabase(verbose: boolean = false): string {
   const mockDatabase = createMockDatabase();
   const filePath = './mockDatabase.json';
   fs.writeFileSync(filePath, JSON.stringify(mockDatabase));
+  if (verbose) {
+    console.log('Mock database exported to: ' + filePath);
+  }
   return filePath;
 }
-// 
-exportMockDatabase() // Run script to export
+//
+exportMockDatabase(); // Run script to export

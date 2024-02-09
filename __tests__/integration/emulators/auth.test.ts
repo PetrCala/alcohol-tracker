@@ -5,42 +5,23 @@ jest.mock('@react-native-async-storage/async-storage', () => ({}));
 
 require('dotenv').config(); // Use .env variables in this file - CONFIG does not work here
 import {
-  initializeAuth,
-  getReactNativePersistence,
-  connectAuthEmulator,
   Auth,
 } from 'firebase/auth';
-import {initializeApp, deleteApp, FirebaseApp} from 'firebase/app';
-import {isConnectedToAuthEmulator} from '@src/services/firebaseUtils';
-import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
+import {FirebaseApp} from 'firebase/app';
+import {isConnectedToAuthEmulator} from '../../../src/services/firebaseUtils';
 import {describeWithEmulator} from '../../utils/emulators/emulatorTools';
-
-const authDomain = process.env.TEST_AUTH_DOMAIN;
-const projectId = process.env.TEST_PROJECT_ID;
-if (!authDomain || !projectId) {
-  throw new Error(
-    `Missing environment variables ${authDomain} or ${projectId} for storage emulator`,
-  );
-}
+import {createMockAuthUsers, setupAuthTestEnv, teardownAuthTestEnv} from '../../utils/emulators/authSetup';
 
 describeWithEmulator('Connect to the storage emulator', () => {
   let testApp: FirebaseApp;
   let auth: Auth;
 
   beforeAll(async () => {
-    testApp = initializeApp({
-      authDomain: authDomain,
-      projectId: projectId,
-    });
-
-    auth = initializeAuth(testApp, {
-      persistence: getReactNativePersistence(ReactNativeAsyncStorage),
-    });
-    connectAuthEmulator(auth, authDomain);
+    ({testApp, auth} = setupAuthTestEnv());
   });
 
   beforeEach(async () => {
-    // do something
+    await createMockAuthUsers(auth);
   });
 
   afterEach(async () => {
@@ -48,10 +29,10 @@ describeWithEmulator('Connect to the storage emulator', () => {
   });
 
   afterAll(async () => {
-    await deleteApp(testApp); // Delete the app
+    await teardownAuthTestEnv(testApp);
   });
 
-  xit('should connect to the auth emulator', async () => {
+  it('should connect to the auth emulator', async () => {
     expect(auth).not.toBeNull();
     expect(isConnectedToAuthEmulator(auth)).toBe(true);
   });

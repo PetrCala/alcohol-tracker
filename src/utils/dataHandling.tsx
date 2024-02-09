@@ -9,12 +9,12 @@
   UnitsToColorsData,
 } from '../types/database';
 import {
-  DateObject,
-  SessionsCalendarDatesType,
   SessionsCalendarMarkedDates,
-} from '../types/components';
+  SessionsCalendarDatesType,
+} from '@components/Calendar';
+import {DateObject, CalendarColors, DayMarking} from '@src/types/components';
 import {getRandomInt} from './choice';
-import {MONTHS, MONTHS_ABBREVIATED} from './static';
+import CONST from '../CONST';
 
 export function formatDate(date: Date): string {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
@@ -137,10 +137,10 @@ export const getPreviousMonth = (currentDate: DateObject): DateObject => {
  * For example, if given a DateObject for September and n = 2, the returned array will have
  * DateObjects for July, August, September, October, and November.
  *
- * @param {DateObject} currentDate - The reference date from which adjacent months are computed.
- * @param {number} n - The number of months to compute before and after the `currentDate`.
+ * @param currentDate - The reference date from which adjacent months are computed.
+ * @param n - The number of months to compute before and after the `currentDate`.
  *
- * @returns {DateObject[]} - An array of DateObjects, including the `currentDate` and `n` months before and after it.
+ * @returns - An array of DateObjects, including the `currentDate` and `n` months before and after it.
  *
  * @example
  * const inputDate: DateObject = {
@@ -191,9 +191,9 @@ export function getYearMonth(dateObject: DateObject): string {
 /**
  * Returns a string representation of the month and year in the format "MMM/YYYY" or with full month names (default)
  *
- * @param {DateObject} dateObject - An object containing numeric values for 'year' and 'month'.
- * @param {bool} abbreviated - If true, return the months in the abbreviated format, returns to false.
- * @returns {string} - A string in the format "MMM/YYYY", where "MMM" is the abbreviated or full month name.
+ * @param dateObject - An object containing numeric values for 'year' and 'month'.
+ * @param abbreviated - If true, return the months in the abbreviated format, returns to false.
+ * @returns - A string in the format "MMM/YYYY", where "MMM" is the abbreviated or full month name.
  *
  * @example
  * const date = { year: 2023, month: 10 };
@@ -203,7 +203,7 @@ export function getYearMonthVerbose(
   dateObject: DateObject,
   abbreviated: boolean = false,
 ): string {
-  const months = abbreviated ? MONTHS_ABBREVIATED : MONTHS;
+  const months = abbreviated ? CONST.MONTHS_ABBREVIATED : CONST.MONTHS;
   const monthName = months[dateObject.month - 1];
   return `${monthName} ${dateObject.year}`;
 }
@@ -341,19 +341,20 @@ export function monthEntriesToColors(
       [key, {units: value, blackout: blackoutInfo}],
     ) => {
       let unitsToColorsInfo = preferences.units_to_colors;
-      let color: string = unitsToColors(value, unitsToColorsInfo);
+      let color: CalendarColors = unitsToColors(value, unitsToColorsInfo);
       if (blackoutInfo === true) {
         color = 'black';
       }
       let textColor: string = 'black';
-      if (color == 'red' || color == 'green' || color == 'black') {
+      if (color == 'red' ?? color == 'green' ?? color == 'black') {
         textColor = 'white';
       }
-      acc[key] = {
+      let markingObject: DayMarking = {
         units: value, // number of units
         color: color,
         textColor: textColor,
       };
+      acc[key] = markingObject;
       return acc;
     },
     {},
@@ -366,11 +367,12 @@ export function monthEntriesToColors(
  * @param all_units Units to sum up.
  */
 export function sumAllUnits(units: UnitsObject): number {
+  if (!units) return 0;
   return Object.values(units).reduce((total, unitTypes) => {
     return (
       total +
       Object.values(unitTypes).reduce(
-        (subTotal, unitCount) => subTotal + (unitCount || 0),
+        (subTotal, unitCount) => subTotal + (unitCount ?? 0),
         0,
       )
     );
@@ -387,7 +389,7 @@ export function sumUnitsOfSingleType(
   unitType: (typeof UnitTypesKeys)[number],
 ): number {
   return Object.values(unitsObject).reduce((total, session) => {
-    return total + (session[unitType] || 0);
+    return total + (session[unitType] ?? 0);
   }, 0);
 }
 
@@ -398,7 +400,7 @@ export function sumUnitsOfSingleType(
  */
 export function sumUnitTypes(unitTypes: UnitTypesProps): number {
   return Object.values(unitTypes).reduce(
-    (subTotal, unitCount) => subTotal + (unitCount || 0),
+    (subTotal, unitCount) => subTotal + (unitCount ?? 0),
     0,
   );
 }
@@ -423,14 +425,15 @@ export function sumAllPoints(
   unitsObject: UnitsObject,
   unitsToPoints: UnitTypesProps,
 ): number {
+  if (!unitsObject) return 0;
   let totalPoints = 0;
   // Iterate over each timestamp in unitsObject
   for (const unitTypes of Object.values(unitsObject)) {
     // Iterate over each key in the unitTypes of the current timestamp
     for (const unitKey of Object.keys(unitTypes)) {
       if (isUnitTypeKey(unitKey)) {
-        const typeUnits = unitTypes[unitKey] || 0;
-        const typePoints = unitsToPoints[unitKey] || 0;
+        const typeUnits = unitTypes[unitKey] ?? 0;
+        const typePoints = unitsToPoints[unitKey] ?? 0;
         totalPoints += typeUnits * typePoints;
       }
     }
@@ -489,10 +492,10 @@ export const calculateThisMonthUnits = (
 /** Enter a dateObject and an array of drinking sessions and calculate
  * points for units consumed in the current month.
  *
- * @param {DateObject} dateObject DateObject
- * @param {DrinkingSessionArrayItem[]} sessions Array of drinking sessions
- * @param {UnitTypesProps} unitsToPoints Units to points conversion object
- * @returns {number} Number of points for units consumed during the current month
+ * @param dateObject DateObject
+ * @param sessions Array of drinking sessions
+ * @param unitsToPoints Units to points conversion object
+ * @returns Number of points for units consumed during the current month
  */
 export const calculateThisMonthPoints = (
   dateObject: DateObject,
@@ -559,6 +562,11 @@ export const removeUnits = (
       if (Object.keys(unitsAtTimestamp).length === 0) {
         delete updatedUnits[+timestamp];
       }
+
+      // Add a zero-unit placeholder if there are no units left in the object
+      if (Object.keys(updatedUnits).length === 0) {
+        updatedUnits[+timestamp] = {other: 0};
+      }
     }
 
     if (unitsToRemove <= 0) {
@@ -590,8 +598,8 @@ export const removeZeroObjectsFromSession = (
         updatedSession.units[timestamp][key] === undefined,
     );
 
-    // If all unit values are 0, delete the timestamp from the units object
-    if (allZero) {
+    // If all unit values are 0, delete the timestamp from the units object, unless it is the last one
+    if (allZero && Object.keys(updatedSession.units).length > 1) {
       delete updatedSession.units[+timestamp];
     }
   }
@@ -637,8 +645,8 @@ export function getZeroUnitsObject(): UnitsObject {
 export function unitsToColors(
   units: number,
   unitsToColorsInfo: UnitsToColorsData,
-): string {
-  let sessionColor: string;
+): CalendarColors {
+  let sessionColor: CalendarColors;
   if (units === 0) {
     sessionColor = 'green';
   } else if (units <= unitsToColorsInfo.yellow) {
@@ -661,4 +669,36 @@ export const findUnitName = (unitKey: (typeof UnitTypesKeys)[number]) => {
   return unitName;
 };
 
-// test, getAdjacentMonths, aggregatesessionsbydays, month entries to colors (move these maybe to a different location)
+/**
+ * Checks if a number has a decimal point.
+ * @param number - The number to check.
+ * @returns True if the number has a decimal point, false otherwise.
+ */
+export function hasDecimalPoint(number: number): boolean {
+  const numberAsString = number.toString();
+  return numberAsString.includes('.');
+}
+
+export function toPercentageVerbose(number: number): string {
+  if (number > 1 || number < 0) {
+    throw new Error('A fraction number must be between 0 and 1.');
+  }
+  const percentage = number * 100;
+  return `${percentage.toFixed(2).toString()}%`;
+}
+
+/**
+ * Returns an array of keys from the provided object.
+ * @param obj - The object to retrieve keys from.
+ * @returns An array of keys from the object.
+ */
+export function objKeys(obj: any): string[] {
+  // Check if obj is an object and not null
+  if (typeof obj === 'object' && obj !== null) {
+    return Object.keys(obj);
+  }
+  // Return an empty array for non-object inputs or null
+  return [];
+}
+
+// test, getAdjacentMonths, findongoingsession, aggregatesessionsbydays, month entries to colors (move these maybe to a different location), toPercentageVerbose

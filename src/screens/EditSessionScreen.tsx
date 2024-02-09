@@ -1,30 +1,28 @@
-﻿import React, {useEffect, useState, useContext, useRef} from 'react';
+﻿import React, {useEffect, useState, useContext, useRef, useMemo} from 'react';
 import {
   Alert,
+  BackHandler,
   Image,
   ImageSourcePropType,
+  Keyboard,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import MenuIcon from '../components/Buttons/MenuIcon';
 import BasicButton from '../components/Buttons/BasicButton';
 import {EditSessionScreenProps} from '../types/screens';
 import {
   DrinkingSessionArrayItem,
-  DrinkingSessionData,
-  UnitTypesKeys,
   UnitTypesProps,
   UnitsObject,
 } from '../types/database';
-import {useFirebase} from '../context/FirebaseContext';
+import {useFirebase} from '../context/global/FirebaseContext';
 import {
   removeDrinkingSessionData,
-  editDrinkingSessionData,
+  saveDrinkingSessionData,
 } from '../database/drinkingSessions';
-import SessionUnitsInputWindow from '../components/Buttons/SessionUnitsInputWindow';
 import {
   addUnits,
   dateToDateObject,
@@ -39,16 +37,18 @@ import {
   unitsToColors,
 } from '../utils/dataHandling';
 import {auth} from '../services/firebaseSetup';
-import DrinkingSessionUnitWindow from '../components/DrinkingSessionUnitWindow';
-import {maxAllowedUnits} from '../utils/static';
 import YesNoPopup from '../components/Popups/YesNoPopup';
-import {useUserConnection} from '../context/UserConnectionContext';
+import {useUserConnection} from '../context/global/UserConnectionContext';
 import UserOffline from '../components/UserOffline';
 import {DrinkDataProps, UnitTypesViewProps} from '../types/components';
 import UnitTypesView from '../components/UnitTypesView';
 import SessionDetailsSlider from '../components/SessionDetailsSlider';
-import {getDatabaseData} from '../context/DatabaseDataContext';
-import commonStyles from '../styles/commonStyles';
+import {getDatabaseData} from '../context/global/DatabaseDataContext';
+import {getPreviousRouteName} from '@navigation/navigationUtils';
+import CONST from '@src/CONST';
+import MainHeader from '@components/Header/MainHeader';
+import MainHeaderButton from '@components/Header/MainHeaderButton';
+import {isEqual} from 'lodash';
 
 const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
   if (!route || !navigation) return null; // Should never be null
@@ -61,6 +61,9 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
   const [totalPoints, setTotalPoints] = useState<number>(0);
   const [availableUnits, setAvailableUnits] = useState<number>(0);
   // Hooks for immediate display info - update these manually to improve efficiency
+  const [smallBeerSum, setSmallBeerSum] = useState<number>(
+    sumUnitsOfSingleType(currentUnits, 'small_beer'),
+  );
   const [beerSum, setBeerSum] = useState<number>(
     sumUnitsOfSingleType(currentUnits, 'beer'),
   );
@@ -87,13 +90,23 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
   const sessionDay = formatDateToDay(sessionDate);
   const sessionStartTime = formatDateToTime(sessionDate);
   const {db} = useFirebase();
+  // Session object hooks
+  const initialSession = useRef(session);
+  const [currentSession, setCurrentSession] =
+    useState<DrinkingSessionArrayItem>(session); // Track the session object modifications
   // Other
+  const [showLeaveConfirmation, setShowLeaveConfirmation] = useState(false);
   const [monkeMode, setMonkeMode] = useState<boolean>(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
   const scrollViewRef = useRef<ScrollView>(null); // To navigate the view
-  const sessionIsNew = sessionKey == 'edit-session-id' ? true : false;
 
   const drinkData: DrinkDataProps = [
+    {
+      key: 'small_beer',
+      icon: require('../../assets/icons/beer.png'),
+      typeSum: smallBeerSum,
+      setTypeSum: setSmallBeerSum,
+    },
     {
       key: 'beer',
       icon: require('../../assets/icons/beer.png'),
@@ -159,17 +172,55 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
     setNote(value);
   };
 
-  // Update the hooks whenever current units change
-  useEffect(() => {
-    if (!preferences) return;
-    let newTotalPoints = sumAllPoints(
-      currentUnits,
-      preferences.units_to_points,
-    );
-    let newAvailableUnits = maxAllowedUnits - newTotalPoints;
-    setTotalPoints(newTotalPoints);
-    setAvailableUnits(newAvailableUnits);
-  }, [currentUnits]);
+  const handleConfirmDelete = async () => {
+    if (!user) return;
+    try {
+      await removeDrinkingSessionData(db, user.uid, sessionKey);
+    } catch (error: any) {
+      Alert.alert(
+        'Failed to delete the session',
+        'Session could not be deleted',
+        error.message,
+      );
+      return;
+    }
+    setDeleteModalVisible(false);
+    navigation.navigate('Day Overview Screen', {
+      dateObject: dateToDateObject(sessionDate),
+    });
+  };
+
+  const hasSessionChanged = () => {
+    return !isEqual(initialSession.current, currentSession);
+  };
+
+  const handleBackPress = () => {
+    if (hasSessionChanged()) {
+      setShowLeaveConfirmation(true); // Unsaved changes
+    } else {
+      confirmGoBack(session); // No changes to the session object
+    }
+  };
+
+  const confirmGoBack = (
+    finalSessionData: DrinkingSessionArrayItem, // Decide which session to go back with
+  ) => {
+    const previousRouteName = getPreviousRouteName(navigation);
+    // Navigate back explicitly to avoid errors
+    if (previousRouteName.includes('Day Overview Screen')) {
+      const sessionDateObject = dateToDateObject(sessionDate);
+      navigation.navigate('Day Overview Screen', {
+        dateObject: sessionDateObject,
+      });
+    } else if (previousRouteName.includes('Session Summary Screen')) {
+      navigation.navigate('Session Summary Screen', {
+        session: finalSessionData,
+        sessionKey: sessionKey,
+      });
+    } else {
+      navigation.goBack();
+    }
+  };
 
   async function saveSession(db: any, userId: string) {
     if (totalPoints > 99) {
@@ -180,67 +231,69 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
       Alert.alert('Navigation not found', 'Failed to fetch the navigation');
       return null;
     }
-    // Handle old versions of drinking session data where note/blackout were missing
-    let sessionNote = note ? note : '';
-    let sessionBlackout = isBlackout ? isBlackout : false;
     // Save the session
     if (totalPoints > 0) {
-      let newSessionData: DrinkingSessionArrayItem = {
-        start_time: session.start_time,
-        end_time: session.end_time,
-        units: currentUnits,
-        blackout: sessionBlackout,
-        note: sessionNote,
-        ongoing: null,
-      };
-      newSessionData = removeZeroObjectsFromSession(newSessionData); // Delete the initial log of zero units that was used as a placeholder
+      let newSessionData: DrinkingSessionArrayItem = currentSession;
+      // Handle old versions of drinking session data where note/blackout were missing - remove this later
+      newSessionData.blackout = isBlackout ? isBlackout : false;
+      newSessionData.note = note ? note : '';
       try {
-        await editDrinkingSessionData(
+        // Finish editing
+        await saveDrinkingSessionData(
           db,
           userId,
           newSessionData,
           sessionKey,
-          sessionIsNew,
-        ); // Finish editing
+          false, // Do not update live status
+        );
       } catch (error: any) {
-        throw new Error(
+        Alert.alert(
+          'Sesison edit failed',
           'Failed to edit the drinking session data: ' + error.message,
         );
+        return;
       }
-      navigation.goBack();
+      confirmGoBack(newSessionData);
     }
   }
 
-  /** Discard the current session, reset current units and
-   * session status, and navigate to main menu.
-   */
-  async function deleteSession(db: any, userId: string, sessionId: string) {
-    try {
-      await removeDrinkingSessionData(db, userId, sessionId);
-    } catch (error: any) {
-      throw new Error('Failed to delete the session: ' + error.message);
-    }
-  }
+  // Update the hooks whenever current units change
+  useMemo(() => {
+    if (!preferences) return;
+    let newTotalPoints = sumAllPoints(
+      currentUnits,
+      preferences.units_to_points,
+    );
+    let newAvailableUnits = CONST.MAX_ALLOWED_UNITS - newTotalPoints;
+    setTotalPoints(newTotalPoints);
+    setAvailableUnits(newAvailableUnits);
+  }, [currentUnits]);
 
-  const handleConfirmDelete = async () => {
-    if (!sessionIsNew) {
-      if (!user) return;
-      try {
-        await deleteSession(db, user.uid, sessionKey);
-      } catch (error: any) {
-        throw new Error('Failed to delete the session: ' + error.message);
-      } finally {
-        setDeleteModalVisible(false);
-        navigation.navigate('Day Overview Screen', {
-          dateObject: dateToDateObject(sessionDate),
-        });
-      }
-    }
-  };
+  useMemo(() => {
+    if (!preferences) return;
+    let newSession: DrinkingSessionArrayItem = {
+      start_time: session.start_time,
+      end_time: session.end_time,
+      units: currentUnits,
+      blackout: isBlackout,
+      note: note,
+    };
+    setCurrentSession(newSession);
+  }, [currentUnits, isBlackout, note]);
 
-  const handleBackPress = () => {
-    navigation.goBack();
-  };
+  // Make the system back press toggle the go back handler
+  useEffect(() => {
+    const backAction = () => {
+      handleBackPress();
+      return true; // Prevent the event from bubbling up and being handled by the default handler
+    };
+
+    BackHandler.addEventListener('hardwareBackPress', backAction);
+
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', backAction);
+    };
+  }, [currentSession]); // Add your state dependencies here
 
   if (!isOnline) return <UserOffline />;
   if (!user || !preferences) {
@@ -253,27 +306,22 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
 
   return (
     <>
-      <View style={commonStyles.mainHeader}>
-        <MenuIcon
-          iconId="escape-edit-session"
-          iconSource={require('../../assets/icons/arrow_back.png')}
-          containerStyle={styles.backArrowContainer}
-          iconStyle={styles.backArrow}
-          onPress={handleBackPress}
-        />
-        <BasicButton
-          text={monkeMode ? 'Exit Monke Mode' : 'Monke Mode'}
-          buttonStyle={[
-            styles.monkeModeButton,
-            monkeMode ? styles.monkeModeButtonEnabled : {},
-          ]}
-          textStyle={styles.monkeModeButtonText}
-          onPress={() => setMonkeMode(!monkeMode)}
-        />
-      </View>
+      <MainHeader
+        headerText=""
+        onGoBack={handleBackPress}
+        rightSideComponent={
+          <MainHeaderButton
+            buttonOn={monkeMode}
+            textOn="Exit Monke Mode"
+            textOff="Monke Mode"
+            onPress={() => setMonkeMode(!monkeMode)}
+          />
+        }
+      />
       <ScrollView
         style={styles.scrollView}
         ref={scrollViewRef}
+        onScrollBeginDrag={Keyboard.dismiss}
         keyboardShouldPersistTaps="handled">
         <View style={styles.sessionInfoContainer}>
           <Text style={styles.sessionInfoText}>Session date: {sessionDay}</Text>
@@ -337,6 +385,13 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
           buttonStyle={styles.saveSessionButton}
           textStyle={styles.saveSessionButtonText}
           onPress={() => saveSession(db, user.uid)}
+        />
+        <YesNoPopup
+          visible={showLeaveConfirmation}
+          transparent={true}
+          onRequestClose={() => setShowLeaveConfirmation(false)}
+          message="You have unsaved changes. Are you sure you want to go back?"
+          onYes={() => confirmGoBack(session)} // No changes to the session object
         />
       </View>
     </>
@@ -432,30 +487,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
     textAlign: 'center',
-  },
-  monkeModeContainer: {
-    height: '10%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#FFFF99',
-  },
-  monkeModeButton: {
-    width: '50%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 10,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#000',
-    backgroundColor: '#fcf50f',
-  },
-  monkeModeButtonEnabled: {
-    backgroundColor: '#FFFF99',
-  },
-  monkeModeButtonText: {
-    color: 'black',
-    fontSize: 17,
-    fontWeight: '600',
   },
   saveSessionDelimiter: {
     height: 5,

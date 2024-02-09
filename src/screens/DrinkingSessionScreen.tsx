@@ -1,34 +1,32 @@
-﻿import React, {useRef, useState, useContext, useEffect} from 'react';
+﻿import React, {useRef, useState, useContext, useEffect, useMemo} from 'react';
 import {
   ActivityIndicator,
   Alert,
-  Image,
+  Keyboard,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import BasicButton from '../components/Buttons/BasicButton';
 import {DrinkingSessionScreenProps} from '../types/screens';
-import {useFirebase} from '../context/FirebaseContext';
+import {useFirebase} from '../context/global/FirebaseContext';
 import {
-  removeDrinkingSessionData,
+  discardLiveDrinkingSession,
+  endLiveDrinkingSession,
   saveDrinkingSessionData,
-  updateCurrentSessionKey,
   updateSessionUnits,
 } from '../database/drinkingSessions';
-import SessionUnitsInputWindow from '../components/Buttons/SessionUnitsInputWindow';
 import {
   addUnits,
+  dateToDateObject,
   formatDateToDay,
   formatDateToTime,
   removeUnits,
   removeZeroObjectsFromSession,
   sumAllPoints,
-  sumAllUnits,
   sumUnitsOfSingleType,
   timestampToDate,
   unitsToColors,
@@ -36,15 +34,11 @@ import {
 import {auth} from '../services/firebaseSetup';
 import {
   DrinkingSessionArrayItem,
-  DrinkingSessionData,
-  UnitTypesKeys,
   UnitTypesProps,
   UnitsObject,
 } from '../types/database';
-import DrinkingSessionUnitWindow from '../components/DrinkingSessionUnitWindow';
-import {maxAllowedUnits} from '../utils/static';
 import YesNoPopup from '../components/Popups/YesNoPopup';
-import {useUserConnection} from '../context/UserConnectionContext';
+import {useUserConnection} from '../context/global/UserConnectionContext';
 import UserOffline from '../components/UserOffline';
 import {DrinkDataProps} from '../types/components';
 import UnitTypesView from '../components/UnitTypesView';
@@ -54,6 +48,10 @@ import {usePrevious} from '../hooks/usePrevious';
 import SuccessIndicator from '../components/SuccessIndicator';
 import commonStyles from '../styles/commonStyles';
 import FillerView from '../components/FillerView';
+import {getPreviousRouteName} from '@navigation/navigationUtils';
+import CONST from '@src/CONST';
+import MainHeader from '@components/Header/MainHeader';
+import MainHeaderButton from '@components/Header/MainHeaderButton';
 
 const DrinkingSessionScreen = ({
   route,
@@ -71,6 +69,9 @@ const DrinkingSessionScreen = ({
   const [totalPoints, setTotalPoints] = useState<number>(0);
   const [availableUnits, setAvailableUnits] = useState<number>(0);
   // Hooks for immediate display info - update these manually to improve efficiency
+  const [smallBeerSum, setSmallBeerSum] = useState<number>(
+    sumUnitsOfSingleType(currentUnits, 'small_beer'),
+  );
   const [beerSum, setBeerSum] = useState<number>(
     sumUnitsOfSingleType(currentUnits, 'beer'),
   );
@@ -108,6 +109,12 @@ const DrinkingSessionScreen = ({
   const scrollViewRef = useRef<ScrollView>(null); // To navigate the view
 
   const drinkData: DrinkDataProps = [
+    {
+      key: 'small_beer',
+      icon: require('../../assets/icons/beer.png'),
+      typeSum: smallBeerSum,
+      setTypeSum: setSmallBeerSum,
+    },
     {
       key: 'beer',
       icon: require('../../assets/icons/beer.png'),
@@ -174,13 +181,13 @@ const DrinkingSessionScreen = ({
   };
 
   // Update the hooks whenever current units change
-  useEffect(() => {
+  useMemo(() => {
     if (!preferences) return;
     let newTotalPoints = sumAllPoints(
       currentUnits,
       preferences.units_to_points,
     );
-    let newAvailableUnits = maxAllowedUnits - newTotalPoints;
+    let newAvailableUnits = CONST.MAX_ALLOWED_UNITS - newTotalPoints;
     setTotalPoints(newTotalPoints);
     setAvailableUnits(newAvailableUnits);
   }, [currentUnits]);
@@ -219,6 +226,7 @@ const DrinkingSessionScreen = ({
             user.uid,
             newSessionData,
             sessionKey,
+            true, // Update live session status
           );
         } catch (error: any) {
           throw new Error('Could not save the drinking session data');
@@ -231,7 +239,7 @@ const DrinkingSessionScreen = ({
       // Clear timer on unmount or when units changes
       return () => clearTimeout(timer);
     }
-  }, [currentUnits, isBlackout, note, db, user]);
+  }, [currentUnits, isBlackout, note]);
 
   async function sleep(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -274,25 +282,24 @@ const DrinkingSessionScreen = ({
         note: note,
         ongoing: null,
       };
-      newSessionData = removeZeroObjectsFromSession(newSessionData); // Delete the initial log of zero units that was used as a placeholder
       try {
         if (timeSinceLastUpdate < 1000) {
           await sleep(1000 - timeSinceLastUpdate); // Wait for database synchronization
         }
-        await updateCurrentSessionKey(db, userId, null); // Remove the current session id info
-        await saveDrinkingSessionData(db, userId, newSessionData, sessionKey); // Save drinking session data
+        await endLiveDrinkingSession(db, userId, newSessionData, sessionKey);
       } catch (error: any) {
-        throw new Error(
+        Alert.alert(
+          'Session save failed',
           'Failed to save drinking session data: ' + error.message,
         );
-      } finally {
-        // Reroute to session summary, do not allow user to return
-        navigation.replace('Session Summary Screen', {
-          session: newSessionData,
-          sessionKey: sessionKey,
-        });
-        setSavingSession(false);
+        return;
       }
+      // Reroute to session summary, do not allow user to return
+      navigation.replace('Session Summary Screen', {
+        session: newSessionData,
+        sessionKey: sessionKey,
+      });
+      setSavingSession(false);
     }
   }
 
@@ -308,8 +315,7 @@ const DrinkingSessionScreen = ({
       await sleep(1000 - timeSinceLastUpdate); // Wait for database synchronization
     }
     try {
-      await removeDrinkingSessionData(db, user.uid, sessionKey);
-      await updateCurrentSessionKey(db, user.uid, null);
+      await discardLiveDrinkingSession(db, user.uid, sessionKey);
     } catch (error: any) {
       Alert.alert(
         'Session discard failed',
@@ -317,7 +323,15 @@ const DrinkingSessionScreen = ({
       );
     } finally {
       setDiscardModalVisible(false);
-      navigation.navigate('Main Screen');
+      const previousRouteName = getPreviousRouteName(navigation);
+      if (previousRouteName.includes('Day Overview Screen')) {
+        const sessionDateObject = dateToDateObject(sessionDate);
+        navigation.navigate('Day Overview Screen', {
+          dateObject: sessionDateObject,
+        });
+      } else {
+        navigation.navigate('Main Screen');
+      }
     }
   };
 
@@ -348,27 +362,22 @@ const DrinkingSessionScreen = ({
 
   return (
     <>
-      <View style={commonStyles.mainHeader}>
-        <MenuIcon
-          iconId="escape-drinking-session"
-          iconSource={require('../../assets/icons/arrow_back.png')}
-          containerStyle={styles.backArrowContainer}
-          iconStyle={styles.backArrow}
-          onPress={handleBackPress}
-        />
-        <BasicButton
-          text={monkeMode ? 'Exit Monke Mode' : 'Monke Mode'}
-          buttonStyle={[
-            styles.monkeModeButton,
-            monkeMode ? styles.monkeModeButtonEnabled : {},
-          ]}
-          textStyle={styles.monkeModeButtonText}
-          onPress={() => setMonkeMode(!monkeMode)}
-        />
-      </View>
+      <MainHeader
+        headerText=""
+        onGoBack={handleBackPress}
+        rightSideComponent={
+          <MainHeaderButton
+            buttonOn={monkeMode}
+            textOn="Exit Monke Mode"
+            textOff="Monke Mode"
+            onPress={() => setMonkeMode(!monkeMode)}
+          />
+        }
+      />
       <ScrollView
         style={styles.scrollView}
         ref={scrollViewRef}
+        onScrollBeginDrag={Keyboard.dismiss}
         keyboardShouldPersistTaps="handled">
         <View style={styles.sessionInfoContainer}>
           <View style={styles.sessionTextContainer}>
@@ -385,7 +394,7 @@ const DrinkingSessionScreen = ({
           )}
           <SuccessIndicator
             visible={dbSyncSuccessful}
-            successStyle={styles.successStyle}
+            successStyle={[styles.successStyle, commonStyles.successIndicator]}
           />
         </View>
         <View style={styles.unitCountContainer}>
@@ -500,11 +509,6 @@ const styles = StyleSheet.create({
     right: 0,
   },
   successStyle: {
-    width: 20,
-    height: 20,
-    borderRadius: 25,
-    margin: 10,
-    backgroundColor: 'green',
     position: 'absolute',
     right: 0,
   },
@@ -573,30 +577,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
     textAlign: 'center',
-  },
-  monkeModeContainer: {
-    height: '10%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#FFFF99',
-  },
-  monkeModeButton: {
-    width: '50%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 10,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#000',
-    backgroundColor: '#fcf50f',
-  },
-  monkeModeButtonEnabled: {
-    backgroundColor: '#FFFF99',
-  },
-  monkeModeButtonText: {
-    color: 'black',
-    fontSize: 17,
-    fontWeight: '600',
   },
   sessionDetailsContainer: {
     alignItems: 'center',

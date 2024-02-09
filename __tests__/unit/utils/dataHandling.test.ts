@@ -45,8 +45,8 @@ import {
   createMockPreferences,
   createMockSession,
   createMockUnitsObject,
-} from '../../utils/mockDatabase.js';
-import {MONTHS, MONTHS_ABBREVIATED} from '../../../src/utils/static';
+} from '../../utils/mockDatabase';
+import CONST from '@src/CONST';
 
 describe('formatDate function', () => {
   function checkFormattedDate(date: Date, expectedFormattedDate: string) {
@@ -313,9 +313,9 @@ describe('getYearMonthVerbose', () => {
   it('should handle all months correctly', () => {
     for (let i = 0; i < 12; i++) {
       const date: DateObject = dateToDateObject(new Date(2023, i));
-      expect(getYearMonthVerbose(date)).toBe(`${MONTHS[i]} 2023`);
+      expect(getYearMonthVerbose(date)).toBe(`${CONST.MONTHS[i]} 2023`);
       expect(getYearMonthVerbose(date, true)).toBe(
-        `${MONTHS_ABBREVIATED[i]} 2023`,
+        `${CONST.MONTHS_ABBREVIATED[i]} 2023`,
       );
     }
   });
@@ -931,6 +931,31 @@ describe('removeZeroObjectsFromSession', () => {
     expect(result.units[12345680]).toBeDefined();
   });
 
+  it('should remove UnitsObject children where one object has a single key set to 0', () => {
+    const mockSession: DrinkingSessionArrayItem = createMockSessionWithUnits({
+      12345679: {
+        other: 0,
+      },
+      12345680: {beer: 1},
+    });
+
+    const result = removeZeroObjectsFromSession(mockSession);
+    expect(Object.keys(result.units)).toHaveLength(1);
+    expect(sumAllUnits(result.units)).toEqual(1);
+    expect(result.units[12345680]).toBeDefined();
+  });
+
+  it('should not do anything if there are only zero-unit objects', () => {
+    const mockSession: DrinkingSessionArrayItem = createMockSessionWithUnits({
+      12345679: {
+        other: 0,
+      },
+    });
+
+    const result = removeZeroObjectsFromSession(mockSession);
+    expect(result).toMatchObject(mockSession);
+  });
+
   it('should keep UnitsObject children with at least one unit value not set to 0', () => {
     const mockSession: DrinkingSessionArrayItem = createMockSessionWithUnits({
       12345679: {beer: 1, cocktail: 0},
@@ -977,7 +1002,7 @@ describe('removeZeroObjectsFromSession', () => {
 
     const result = removeZeroObjectsFromSession(mockSession);
     expect(sumAllUnits(result.units)).toEqual(0);
-    expect(Object.keys(result.units)).toHaveLength(0);
+    expect(Object.keys(result.units)).toHaveLength(1);
   });
 });
 

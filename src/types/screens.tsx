@@ -1,10 +1,12 @@
 ﻿import {StackNavigationProp} from '@react-navigation/stack';
 import {
   DrinkingSessionData,
-  CurrentSessionData,
   PreferencesData,
   UserData,
   DrinkingSessionArrayItem,
+  ProfileData,
+  FriendsData,
+  FriendRequestDisplayData,
 } from './database';
 import {RouteProp} from '@react-navigation/native';
 import {DateObject} from './components';
@@ -30,8 +32,20 @@ export type AppStackParamList = {
     sessionKey: string;
     preferences: PreferencesData;
   };
-  'Profile Screen': undefined;
-  'Social Screen': undefined;
+  'Profile Screen': {
+    userId: string;
+    profileData: ProfileData;
+    friends: FriendsData | null;
+    drinkingSessionData: DrinkingSessionArrayItem[] | null;
+    preferences: PreferencesData | null;
+  };
+  'Social Screen': {
+    screen: string; // 'Friend List' | 'Friend Requests' | 'Search';
+  };
+  'Friends Friends Screen': {
+    userId: string;
+    friends: FriendsData | null;
+  };
   'Achievement Screen': undefined;
   'Statistics Screen': undefined;
   'Settings Screen': undefined;
@@ -74,6 +88,24 @@ export type MainScreenProps = {
 export type MainMenuScreenProps = {
   route?: RouteProp<AppStackParamList, 'Main Menu Screen'>;
   // navigation?: StackNavigationProp<AppStackParamList, 'Main Menu Screen'>;
+  navigation?: any;
+};
+
+export type SocialScreenProps = {
+  route?: RouteProp<AppStackParamList, 'Social Screen'>;
+  // navigation: StackNavigationProp<AppStackParamList, 'Main Screen'>;
+  navigation?: any;
+};
+
+export type FriendsFriendsScreenProps = {
+  route?: RouteProp<AppStackParamList, 'Friends Friends Screen'>;
+  // navigation: StackNavigationProp<AppStackParamList, 'Main Screen'>;
+  navigation?: any;
+};
+
+export type ProfileProps = {
+  route?: RouteProp<AppStackParamList, 'Profile Screen'>;
+  // navigation?: StackNavigationProp<AppStackParamList, 'Profile Screen'>;
   navigation?: any;
 };
 
@@ -121,4 +153,15 @@ export type TermsOfServiceScreenProps = {
 export type PrivacyPolicyScreenProps = {
   // navigation?: StackNavigationProp<AppStackParamList, 'Privacy Policy Screen'>;
   navigation?: any;
+};
+
+export type FriendListScreenProps = {
+  navigation: any;
+  friends: FriendsData | undefined;
+  setIndex: React.Dispatch<React.SetStateAction<number>>;
+};
+
+export type SearchScreenProps = {
+  friendRequests: FriendRequestDisplayData | undefined;
+  friends: FriendsData | undefined;
 };

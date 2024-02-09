@@ -11,6 +11,7 @@ import {
 import {StackNavigationProp} from '@react-navigation/stack';
 import {AppStackParamList} from './screens';
 import {Calendar} from 'react-native-calendars';
+import {GeneralAction} from './states';
 
 // FeedbackPopup props
 
@@ -62,31 +63,6 @@ export type AdminFeedbackPopupProps = {
   feedbackData: FeedbackData;
 };
 
-// Sessions calendar props
-
-export type SessionsCalendarProps = {
-  drinkingSessionData: DrinkingSessionArrayItem[];
-  preferences: PreferencesData;
-  visibleDateObject: DateObject;
-  setVisibleDateObject: React.Dispatch<React.SetStateAction<DateObject>>;
-  onDayPress: (day: any) => void;
-};
-
-export type SessionsCalendarMarkedDates = {
-  [date: string]: {
-    units: number;
-    color: string;
-    textColor?: string;
-  };
-};
-
-export type SessionsCalendarDatesType = {
-  [key: string]: {
-    units: number;
-    blackout: boolean;
-  };
-};
-
 export type DateObject = {
   dateString: string;
   day: number;
@@ -94,6 +70,14 @@ export type DateObject = {
   timestamp: number;
   year: number;
 };
+
+export type DayMarking = {
+  units?: number;
+  color?: CalendarColors;
+  textColor?: string;
+};
+
+export type CalendarColors = 'yellow' | 'red' | 'orange' | 'black' | 'green';
 
 export type DayState = 'selected' | 'disabled' | 'today' | '';
 
@@ -135,4 +119,23 @@ export type SessionUnitsInputWindowProps = {
     unitsInputButton: {};
     unitsInputText: {};
   };
+};
+
+// Upload image
+
+export interface UploadImageState {
+  imageSource: string | null;
+  uploadModalVisible: boolean;
+  uploadOngoing: boolean;
+  uploadProgress: string | null;
+  warning: string;
+  success: string;
+}
+
+export type UploadImagePopupProps = {
+  visible: boolean;
+  transparent: boolean;
+  onRequestClose: () => void;
+  parentState: UploadImageState;
+  parentDispatch: React.Dispatch<GeneralAction>;
 };

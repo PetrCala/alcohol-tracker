@@ -34,21 +34,27 @@ import {
 import {DayOverviewScreenProps} from '../types/screens';
 import {auth} from '../services/firebaseSetup';
 import UserOffline from '../components/UserOffline';
-import {useUserConnection} from '../context/UserConnectionContext';
+import {useUserConnection} from '../context/global/UserConnectionContext';
 import BasicButton from '../components/Buttons/BasicButton';
-import {getDatabaseData} from '../context/DatabaseDataContext';
+import {getDatabaseData} from '../context/global/DatabaseDataContext';
+import CONST from '@src/CONST';
 
 type CombinedDataProps = {
   sessionKey: string;
   session: DrinkingSessionArrayItem;
 };
 import commonStyles from '../styles/commonStyles';
+import {generateDatabaseKey} from '@database/baseFunctions';
+import {useFirebase} from '@src/context/global/FirebaseContext';
+import MainHeader from '@components/Header/MainHeader';
+import MainHeaderButton from '@components/Header/MainHeaderButton';
 
 const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
   if (!route || !navigation) return null; // Should never be null
   const {dateObject} = route.params; // Params for navigation
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
+  const {db} = useFirebase();
   const {drinkingSessionData, drinkingSessionKeys, preferences} =
     getDatabaseData();
   const [date, setDate] = useState<Date>(timestampToDate(dateObject.timestamp));
@@ -108,7 +114,7 @@ const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
     var totalUnits = sumAllUnits(session.units);
     var totalPoints = sumAllPoints(session.units, preferences.units_to_points);
     var unitsToColorsInfo = preferences.units_to_colors;
-    var sessionColor = unitsToColors(totalUnits, unitsToColorsInfo);
+    var sessionColor = unitsToColors(totalPoints, unitsToColorsInfo);
     if (session.blackout === true) {
       sessionColor = 'black';
     }
@@ -172,9 +178,7 @@ const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
               iconStyle={styles.menuIcon}
               onPress={() => onEditSessionPress(session, sessionKey)} // Use keyextractor to load id here
             />
-          ) : (
-            <></>
-          )}
+          ) : null}
         </View>
       </View>
     );
@@ -198,13 +202,13 @@ const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
     if (date == null) {
       return <LoadingData loadingText="" />;
     }
-    if (!editMode) return <></>; // Do not display outside edit mode
+    if (!editMode || !user) return null; // Do not display outside edit mode
     // No button if the date is in the future
     let today = new Date();
     let tomorrowMidnight = changeDateBySomeDays(today, 1);
     tomorrowMidnight.setHours(0, 0, 0, 0);
     if (date >= tomorrowMidnight) {
-      return <></>;
+      return null;
     }
     // Create a new mock drinking session
     let newTimestamp = setDateToCurrentTime(date).getTime(); // At noon
@@ -215,13 +219,21 @@ const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
       note: '',
       units: getZeroUnitsObject(),
     };
+    let newSessionKey = generateDatabaseKey(
+      db,
+      `user_drinking_sessions/${user.uid}`,
+    );
+    if (!newSessionKey) {
+      Alert.alert('Error', 'Could not generate a new session key.');
+      return;
+    }
     return (
       <TouchableOpacity
         style={styles.addSessionButton}
         onPress={() =>
           navigation.navigate('Edit Session Screen', {
             session: newSession,
-            sessionKey: 'edit-session-id',
+            sessionKey: newSessionKey,
           })
         }>
         <Image
@@ -259,24 +271,18 @@ const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
 
   return (
     <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
-      <View style={commonStyles.mainHeader}>
-        <MenuIcon
-          iconId="escape-settings-screen"
-          iconSource={require('../../assets/icons/arrow_back.png')}
-          containerStyle={styles.backArrowContainer}
-          iconStyle={styles.backArrow}
-          onPress={() => navigation.goBack()}
-        />
-        <BasicButton
-          text={editMode ? 'Exit Edit Mode' : 'Edit Mode'}
-          buttonStyle={[
-            styles.editModeButton,
-            editMode ? styles.editModeButtonEnabled : {},
-          ]}
-          textStyle={styles.editModeButtonText}
-          onPress={() => setEditMode(!editMode)}
-        />
-      </View>
+      <MainHeader
+        headerText=""
+        onGoBack={() => navigation.goBack()}
+        rightSideComponent={
+          <MainHeaderButton
+            buttonOn={editMode}
+            textOn="Exit Edit Mode"
+            textOff="Edit Mode"
+            onPress={() => setEditMode(!editMode)}
+          />
+        }
+      />
       <View style={styles.dayOverviewContainer}>
         <Text style={styles.menuDrinkingSessionInfoText}>
           {date ? formatDateToDay(date) : 'Loading date...'}
@@ -290,9 +296,7 @@ const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
             ListFooterComponent={addSessionButton}
             ListFooterComponentStyle={styles.addSessionButtonContainer}
           />
-        ) : (
-          <></>
-        )}
+        ) : null}
       </View>
       <View style={styles.dayOverviewFooter}>
         <MenuIcon
@@ -346,30 +350,6 @@ const styles = StyleSheet.create({
   backArrow: {
     width: 25,
     height: 25,
-  },
-  editModeContainer: {
-    height: '10%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#FFFF99',
-  },
-  editModeButton: {
-    width: '45%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 10,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#000',
-    backgroundColor: '#fcf50f',
-  },
-  editModeButtonEnabled: {
-    backgroundColor: '#FFFF99',
-  },
-  editModeButtonText: {
-    color: 'black',
-    fontSize: 17,
-    fontWeight: '600',
   },
   menuIconContainer: {
     width: 40,

@@ -1,6 +1,6 @@
-﻿import semver from 'semver';
+﻿import semver, {minSatisfying} from 'semver';
 import {Platform} from 'react-native';
-import {availablePlatforms, invalidChars} from './static';
+import CONST from '@src/CONST';
 
 import {version as _version} from '../../package.json';
 
@@ -15,7 +15,7 @@ type ValidationResult = {
  * Check that the current platform is valid.
  */
 export const platformIsValid = (): boolean => {
-  return availablePlatforms.includes(Platform.OS);
+  return CONST.AVAILABLE_PLATFORMS.includes(Platform.OS as any);
 };
 
 /**
@@ -26,7 +26,7 @@ export const platformIsValid = (): boolean => {
  * @returns {boolean} True if the string is valid, false otherwise.
  */
 export function isValidString(input: string) {
-  for (const char of invalidChars) {
+  for (const char of CONST.INVALID_CHARS) {
     if (input.includes(char)) {
       return false;
     }
@@ -56,11 +56,23 @@ export const validateSignInInput = (
   if (!isValidString(username)) {
     return {
       success: false,
-      message: 'Your nickname can not contain ' + invalidChars.join(', '),
+      message:
+        'Your nickname can not contain ' + CONST.INVALID_CHARS.join(', '),
     };
   }
   return {success: true};
 };
+
+/**
+ * Cleans a semantic version string by extracting the major, minor, and patch version components.
+ * @param version - The semantic version string to clean.
+ * @returns The cleaned semantic version string containing only the major, minor, and patch version components.
+ */
+export function cleanSemver(version: string): string {
+  const regex = /^(\d+\.\d+\.\d+)/;
+  const match = version.match(regex);
+  return match ? match[1] : version;
+}
 
 /** Input the minimum supported version of the application and validate that the current version is not older than that one. If it is newer, return true, otherwise return false.
  *
@@ -69,11 +81,19 @@ export const validateSignInInput = (
  * @returns {ValidationResult} Validation result type object.
  */
 export const validateAppVersion = (
-  minSupportedVersion: string,
+  minSupportedVersion: string | undefined,
   currentAppVersion: string = version,
 ): ValidationResult => {
+  if (!minSupportedVersion)
+    // Allowing to be null allows cleaner code down the line
+    return {
+      success: false,
+      message:
+        'This version of the application is outdated. Please upgrade to the newest version.',
+    };
   // Compare versions
-  if (semver.lt(currentAppVersion, minSupportedVersion)) {
+  let cleanCurrentAppVersion = cleanSemver(currentAppVersion); // No build metadata
+  if (semver.lt(cleanCurrentAppVersion, minSupportedVersion)) {
     return {
       success: false,
       message:
@@ -104,4 +124,13 @@ export function isNonEmptyObject(input: any) {
   } catch (error: any) {
     return false;
   }
+}
+
+/**
+ * Checks if the input is a non-empty array.
+ * @param input - The input to be checked.
+ * @returns True if the input is a non-empty array, false otherwise.
+ */
+export function isNonEmptyArray(input: any) {
+  return Array.isArray(input) && input.length > 0;
 }

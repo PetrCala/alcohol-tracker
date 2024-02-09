@@ -5,9 +5,7 @@ import {
   addUnits,
   findUnitName,
   removeUnits,
-  sumAllUnits,
   sumUnitTypes,
-  sumUnitsOfSingleType,
 } from '../utils/dataHandling';
 import {UnitTypesKeys, UnitTypesProps, UnitsObject} from '../types/database';
 
@@ -44,7 +42,16 @@ const DrinkingSessionUnitWindow = ({
 
   return (
     <View style={styles.sessionUnitContainer}>
-      <Image source={iconSource} style={styles.iconStyle} />
+      <View style={styles.iconContainer}>
+        <Image
+          source={iconSource}
+          style={
+            unitKey === 'small_beer'
+              ? styles.smallIconStyle
+              : styles.normalIconStyle
+          }
+        />
+      </View>
       <Text style={styles.unitInfoText}>{unitName}</Text>
       <TouchableOpacity
         style={styles.adjustUnitsButton}
@@ -83,14 +90,25 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     backgroundColor: '#fcf50f',
     flexDirection: 'row',
-    padding: 2,
+    padding: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  iconStyle: {
+  iconContainer: {
     width: 30,
     height: 30,
     marginLeft: 5,
     marginRight: 5,
-    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  normalIconStyle: {
+    width: '100%',
+    height: '100%',
+  },
+  smallIconStyle: {
+    width: '75%',
+    height: '75%',
   },
   unitInfoText: {
     flexGrow: 1,

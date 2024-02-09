@@ -22,29 +22,48 @@ import {
   getTimestampAtMidnight,
   aggregateSessionsByDays,
   monthEntriesToColors,
+  hasDecimalPoint,
 } from '../utils/dataHandling';
-import {
-  SessionsCalendarProps,
-  SessionsCalendarMarkedDates,
-} from '../types/components';
 import {
   DrinkingSessionArrayItem,
   DrinkingSessionData,
   PreferencesData,
 } from '../types/database';
-import {DateObject, DayState} from '../types/components';
+import {
+  DateObject,
+  DayState,
+  DayMarking,
+  CalendarColors,
+} from '../types/components';
 import LoadingData from './LoadingData';
-import MenuIcon from './Buttons/MenuIcon';
 
-type CalendarColors = 'yellow' | 'red' | 'orange' | 'black';
-
-type DayMarking = {
-  color?: CalendarColors;
-  textColor?: string;
-  units?: number;
+type SessionsCalendarProps = {
+  drinkingSessionData: DrinkingSessionArrayItem[];
+  preferences: PreferencesData;
+  visibleDateObject: DateObject;
+  dispatch: React.Dispatch<any>;
+  // setVisibleDateObject: React.Dispatch<React.SetStateAction<DateObject>>;
+  onDayPress: (day: any) => void;
 };
 
-const screenWidth = Dimensions.get('window').width;
+export type SessionsCalendarMarkedDates = {
+  [date: string]: DayMarking;
+};
+
+export type SessionsCalendarDatesType = {
+  [key: string]: {
+    units: number;
+    blackout: boolean;
+  };
+};
+
+const colorToTextColorMap: Record<CalendarColors, string> = {
+  yellow: 'black',
+  red: 'white',
+  orange: 'black',
+  black: 'white',
+  green: 'white',
+};
 
 // Custom Day Component
 const DayComponent: React.FC<{
@@ -95,27 +114,29 @@ const DayComponent: React.FC<{
       return {...baseStyle, backgroundColor: marking?.color};
     } else {
       return {...baseStyle, backgroundColor: 'green'};
-      throw new Error('Unspecied color in the calendar');
     }
   };
 
   const getMarkingTextStyle = (marking: DayMarking) => {
     let baseStyle = styles.daySessionMarkingText;
 
-    const colorToTextColorMap: Record<CalendarColors, string> = {
-      yellow: 'black',
-      red: 'white',
-      orange: 'black',
-      black: 'white',
-    };
+    if (
+      marking?.units &&
+      hasDecimalPoint(marking.units) &&
+      marking.units >= 10
+    ) {
+      baseStyle = {...baseStyle, fontSize: 15}; // Handle overflow
+    }
 
-    if (!marking?.color) {
-      return {...baseStyle, fontSize: 0};
-    } else if (colorToTextColorMap[marking?.color]) {
+    if (
+      marking?.color &&
+      colorToTextColorMap[marking?.color] &&
+      marking?.units != 0
+    ) {
       return {...baseStyle, color: colorToTextColorMap[marking?.color]};
     }
-    return {...baseStyle, fontSize: 0};
-    throw new Error('Unspecied color in the calendar');
+
+    return {...baseStyle, fontSize: 0, color: 'transparent'}; // Default case
   };
 
   return (
@@ -157,7 +178,7 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
   drinkingSessionData,
   preferences,
   visibleDateObject,
-  setVisibleDateObject,
+  dispatch,
   onDayPress,
 }) => {
   const [calendarData, setCalendarData] =
@@ -188,7 +209,7 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
    */
   const handleLeftArrowPress = (subtractMonth: () => void) => {
     const previousMonth = getPreviousMonth(visibleDateObject);
-    setVisibleDateObject(previousMonth);
+    dispatch({type: 'SET_VISIBLE_DATE_OBJECT', payload: previousMonth});
     subtractMonth(); // Use the callback to move to the previous month
   };
 
@@ -199,7 +220,7 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
    */
   const handleRightArrowPress = (addMonth: () => void) => {
     const nextMonth = getNextMonth(visibleDateObject);
-    setVisibleDateObject(nextMonth);
+    dispatch({type: 'SET_VISIBLE_DATE_OBJECT', payload: nextMonth});
     addMonth(); // Use the callback to move to the next month
   };
 
@@ -269,6 +290,8 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
 };
 
 export default SessionsCalendar;
+
+const screenWidth = Dimensions.get('window').width;
 
 const arrowStyles = StyleSheet.create({
   customArrowContainer: {

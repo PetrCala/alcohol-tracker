@@ -7,8 +7,8 @@
  *
  * @param {FirebaseStorage} storage The Firebase Storage object.
  * @param {string} userId User UID.
- * @param {string} photoURL Name of the new file, including the suffix (e.g., profile_picture.jpg)
- * @returns {Promise<string>} Full path to the image
+ * @param {string} downloadPath Full path to where the image can be downloaded on the storage.
+ * @returns Promise<string>} Full path to the image
  *
  * @example
  * const url = await setProfilePictureURL(db, 'test-user-id', 'profile_picture.jpg');
@@ -17,9 +17,13 @@
 export async function getProfilePictureURL(
   storage: FirebaseStorage,
   userId: string,
-  photoURL: string,
-): Promise<string> {
-  const imageRef = ref(storage, `users/${userId}/profile/${photoURL}`);
-  const url = await getDownloadURL(imageRef);
-  return url;
+  downloadPath: string,
+): Promise<string | null> {
+  if (!storage || !userId || !downloadPath)
+    throw new Error('Missing parameters');
+
+  const httpsRef = ref(storage, downloadPath);
+  let downloadURL = await getDownloadURL(httpsRef);
+
+  return downloadURL;
 }

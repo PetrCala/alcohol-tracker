@@ -5,21 +5,21 @@
     "module": "esnext",
     "types": ["react-native", "jest", "node"],
     "lib": [
-        "DOM",
-        "es2019",
-        "es2020.bigint",
-        "es2020.date",
-        "es2020.number",
-        "es2020.promise",
-        "es2020.string",
-        "es2020.symbol.wellknown",
-        "es2021.promise",
-        "es2021.string",
-        "es2021.weakref",
-        "es2022.array",
-        "es2022.object",
-        "es2022.string",
-        "ES2021.Intl"
+      "DOM",
+      "es2019",
+      "es2020.bigint",
+      "es2020.date",
+      "es2020.number",
+      "es2020.promise",
+      "es2020.string",
+      "es2020.symbol.wellknown",
+      "es2021.promise",
+      "es2021.string",
+      "es2021.weakref",
+      "es2022.array",
+      "es2022.object",
+      "es2022.string",
+      "ES2021.Intl"
     ],
     "allowJs": true,
     "checkJs": false,
@@ -33,7 +33,7 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "composite": true,
-    "noEmit":true,
+    "noEmit": true,
     "declaration": true,
     "declarationMap": true,
     "rootDir": ".",
@@ -52,7 +52,7 @@
       "@storage/*": ["./src/storage/*"],
       "@styles/*": ["./src/styles/*"],
       "@types/*": ["./src/types/*"],
-      "@utils/*": ["./src/utils/*"],
+      "@utils/*": ["./src/utils/*"]
       // "@userActions/*": ["./src/libs/actions/*"]
     }
   },
@@ -60,7 +60,14 @@
     // these options are overrides used only by ts-node
     // same as the --compilerOptions flag and the TS_NODE_COMPILER_OPTIONS environment variable
     "compilerOptions": {
-      "module": "ESNext"
+      "module": "commonjs",
+      "rootDir": ".",
+      "paths": {
+        "@local/*": ["./local/*"],
+        "@firebase/auth": ["./node_modules/@firebase/auth/dist/index.rn.d.ts"],
+        "@components/*": ["./src/components/*"],
+        "@src/*": ["./src/*"]
+      }
     }
   },
   "include": [
@@ -76,6 +83,7 @@
     "app.json",
     "package.json", // Application version import
     "firebase.json",
-    "**/alcohol-tracker*.json", 
-    "react-native.config.js"]
+    "**/alcohol-tracker*.json",
+    "react-native.config.js"
+  ]
 }

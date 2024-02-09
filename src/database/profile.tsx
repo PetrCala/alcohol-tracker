@@ -1,34 +1,27 @@
-﻿import {Database, ref, get, update} from 'firebase/database';
-import {ProfileData} from '../types/database';
+﻿import {Database, ref, update} from 'firebase/database';
+import {
+  FirebaseStorage,
+  ref as StorageRef,
+  getDownloadURL,
+} from 'firebase/storage';
+import {Auth, User, updateProfile} from 'firebase/auth';
+import {fetchDisplayDataForUsers} from './baseFunctions';
+import {ProfileDisplayData, UserStatusDisplayData} from '@src/types/database';
 
-/**
- * Fetch the profile details of a given user.
- *
- * @param {Database} db - The database object against which to validate this conditio
- * @param {string} userId - User ID whose profile details need to be fetched.
- * @returns {Promise<ProfileData>} - Returns the user profile data if they exist, otherwise undefined.
- */
-export async function fetchUserProfile(
-  db: Database,
-  userId: string,
-): Promise<ProfileData> {
-  const dbRef = ref(db, `/users/${userId}/profile`);
-  const snapshot = await get(dbRef);
-  return snapshot.val();
-}
-
-/**
- * Using a firebase database object and a list of userIds, fetch the profiles of all these users and return them as an array.
- *
- * @param {Database} db Firebase database object
- * @param {string[]} userIds An array of user IDs to fetch
- * @returns {Promise<ProfileData[]>} An array of profile data objects
- */
-export function fetchUserProfiles(
+export async function fetchUserProfiles(
   db: Database,
   userIds: string[],
-): Promise<ProfileData[]> {
-  return Promise.all(userIds.map(id => fetchUserProfile(db, id)));
+): Promise<ProfileDisplayData> {
+  const profileRef = 'users/{userId}/profile';
+  return await fetchDisplayDataForUsers(db, userIds, profileRef);
+}
+
+export async function fetchUserStatuses(
+  db: Database,
+  userIds: string[],
+): Promise<UserStatusDisplayData> {
+  const profileRef = 'user_status/{userId}';
+  return await fetchDisplayDataForUsers(db, userIds, profileRef);
 }
 
 /**
@@ -54,4 +47,28 @@ export async function setProfilePictureURL(
   var updates: {[key: string]: string} = {};
   updates[`users/${userId}/profile/photo_url`] = photoURL;
   await update(ref(db), updates);
+}
+
+/**
+ * Updates the profile information of a user.
+ *
+ * @param pathToUpload - The path to the file to upload.
+ * @param user - The user object.
+ * @param auth - The authentication object.
+ * @param db - The database object.
+ * @param storage - The Firebase storage object.
+ * @returns A promise that resolves when the profile information is updated.
+ */
+export async function updateProfileInfo(
+  pathToUpload: string,
+  user: User | null,
+  auth: Auth,
+  db: Database,
+  storage: FirebaseStorage,
+): Promise<void> {
+  if (!user || !auth.currentUser) return;
+  const downloadURL = await getDownloadURL(StorageRef(storage, pathToUpload));
+  await setProfilePictureURL(db, user.uid, downloadURL);
+  await updateProfile(auth.currentUser, {photoURL: downloadURL});
+  return;
 }

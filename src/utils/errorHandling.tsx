@@ -1,74 +1,75 @@
 ﻿import {Alert} from 'react-native';
 
-/** Set the warning hook to include a warning text informing
- * the user of an unsuccessful firebase request. Return an alert
- * in case of an uncaught warning, otherwise return null.
- *
- * @param {any} error Error thrown by the signInWithUserEmailAndPassword method
- * @param {string} alertHeading Error heading message
- * @param {string} alertMessage Error explanation message
- * @param {React.Dispatch} setWarning Function to update the hook with the warning string
- */
-export const handleInvalidInput = (
+export const handleErrors = (
   error: any,
   alertHeading: string,
   alertMessage: string,
-  setWarning: React.Dispatch<React.SetStateAction<string>>,
+  dispatch: React.Dispatch<any>,
 ): null => {
   const err = error.message;
-  if (err.includes('auth/missing-email')) {
-    setWarning('Missing email');
-  } else if (err.includes('auth/invalid-email')) {
-    setWarning('Invalid email');
-  } else if (err.includes('auth/missing-password')) {
-    setWarning('Missing password');
-  } else if (err.includes('auth/weak-password')) {
-    setWarning(
-      'Your password is too weak - password should be at least 6 characters',
-    );
-  } else if (err.includes('auth/email-already-in-use')) {
-    setWarning('This email is already in use');
-  } else if (err.includes('auth/user-not-found')) {
-    setWarning('User not found');
-  } else if (err.includes('auth/wrong-password')) {
-    setWarning('Incorrect password');
-  } else if (err.includes('auth/network-request-failed')) {
-    setWarning('You are offline');
-  } else if (err.includes('auth/api-key-not-valid')) {
-    setWarning(
-      'The app is not configured correctly. Please contact the developer.',
-    );
-  } else {
-    // Uncaught error
-    Alert.alert(alertHeading, alertMessage + error.message);
-  }
-  return null;
-};
-
-export const handleStorageErrors = (error: any): void => {
-  // TODO
-  // A full list of error codes is available at
-  // https://firebase.google.com/docs/storage/web/handle-errors
-  switch (error.code) {
-    case 'storage/object-not-found':
-      // File doesn't exist
+  switch (true) {
+    case err.includes('storage/object-not-found'):
+      dispatch({type: 'SET_WARNING', payload: 'Object not found'});
       break;
-    case 'storage/unauthorized':
-      // User doesn't have permission to access the object
+    case err.includes('storage/unauthorized'):
+      dispatch({type: 'SET_WARNING', payload: 'Unauthorized access'});
       break;
-    case 'storage/canceled':
-      // User canceled the upload
+    // TODO: Add more cases
+    case err.includes('auth/missing-email'):
+      dispatch({type: 'SET_WARNING', payload: 'Missing email'});
       break;
-
-    // ...
-
-    case 'storage/unknown':
-      // Unknown error occurred, inspect the server response
+    case err.includes('auth/invalid-email'):
+      dispatch({type: 'SET_WARNING', payload: 'Invalid email'});
+      break;
+    case err.includes('auth/missing-password'):
+      dispatch({type: 'SET_WARNING', payload: 'Missing password'});
+      break;
+    case err.includes('auth/invalid-credential'):
+      dispatch({type: 'SET_WARNING', payload: 'Invalid credentials'});
+      break;
+    case err.includes('auth/weak-password'):
+      dispatch({
+        type: 'SET_WARNING',
+        payload:
+          'Your password is too weak - password should be at least 6 characters',
+      });
+      break;
+    case err.includes('auth/email-already-in-use'):
+      dispatch({type: 'SET_WARNING', payload: 'This email is already in use'});
+      break;
+    case err.includes('auth/user-not-found'):
+      dispatch({type: 'SET_WARNING', payload: 'User not found'});
+      break;
+    case err.includes('auth/wrong-password'):
+      dispatch({type: 'SET_WARNING', payload: 'Incorrect password'});
+      break;
+    case err.includes('auth/network-request-failed'):
+      dispatch({type: 'SET_WARNING', payload: 'You are offline'});
+      break;
+    case err.includes('auth/api-key-not-valid'):
+      dispatch({
+        type: 'SET_WARNING',
+        payload:
+          'The app is not configured correctly. Please contact the developer.',
+      });
+      break;
+    case err.includes('auth/too-many-requests'):
+      dispatch({
+        type: 'SET_WARNING',
+        payload: 'Too many requests. Please wait a moment and try again later.',
+      });
+      break;
+    case err.includes('PERMISSION_DENIED: Permission denied'):
+      dispatch({
+        type: 'SET_WARNING',
+        payload:
+          'Permission denied. Please contact the administrator for assistance.',
+      });
       break;
     default:
-      Alert.alert(
-        'Storage error',
-        'Could not fetch data from the storage: ' + error.message,
-      );
+      // Uncaught error
+      Alert.alert(alertHeading, alertMessage + error.message);
+      break;
   }
+  return null;
 };

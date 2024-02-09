@@ -30,13 +30,18 @@
         }
       }
     },
-    "user_current_session": {
+    "user_status": {
       ".read": "auth.token.admin === true",
       ".write": "auth.token.admin === true",
       "$uid": {
-        ".validate": "newData.isString() || newData.val() === null",
+        ".validate": "newData.hasChild('last_online') || newData.val() === null",
         ".read": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('friends').child($uid).exists())",
-        ".write": "auth != null && auth.uid === $uid"
+        ".write": "auth != null && auth.uid === $uid",
+        "last_online": {
+          ".validate": "newData.isNumber()",
+          ".read": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('friends').child($uid).exists())",
+          ".write": "auth != null && auth.uid === $uid"
+        }
       }
     },
     "user_drinking_sessions": {
@@ -56,17 +61,19 @@
         ".read": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('friends').child($uid).exists())",
         ".write": "auth != null && auth.uid === $uid",
         "first_day_of_week": {
-          ".validate": "newData.val() === 'Monday' || newData.val() === 'Sunday'"
+          ".validate": "newData.isString() && (newData.val() === 'Monday' || newData.val() === 'Sunday')"
         },
         "units_to_colors": {
-          ".validate": "newData.hasChildren(['orange', 'yellow'])"
+          ".validate": "newData.hasChildren(['yellow', 'orange'])"
         },
         "units_to_points": {
-          ".validate": "newData.hasChildren(['beer', 'cocktail', 'other', 'stron_shot', 'weak_shot', 'wine'])"
+          ".validate": "newData.hasChildren(['beer', 'cocktail', 'other', 'strong_shot', 'weak_shot', 'wine'])"
         }
-        }
+      }
     },
     "user_unconfirmed_days": {
+      ".read": "auth.token.admin === true",
+      ".write": "auth.token.admin === true",
       "$uid": {
         ".validate": "newData.val() === true || newData.val() === null",
         ".read": "auth != null  && auth.uid === $uid",
@@ -83,14 +90,14 @@
           ".read": "auth != null",
           "$friend_uid": {
             ".validate": "(newData.val() === true || newData.val() === null) && $uid != $friend_uid && ($uid === auth.uid || $friend_uid === auth.uid)",
-            ".write": "auth != null"
+            ".write": "auth != null && root.child('users').child($uid).exists()"
           }
         },
         "friend_requests": {
           ".validate": "newData.val() === null || newData.hasChildren()",
           "$request_id": {
             ".validate": "(($uid === auth.uid && newData.val() === 'sent') || ($request_id === auth.uid && newData.val() === 'received') || newData.val() === null) && $uid != $request_id",
-            ".write": "auth != null"
+            ".write": "auth != null && root.child('users').child($uid).exists() && (!root.child('users').child(auth.uid).child('friends').child($request_id).exists()) && (!root.child('users').child($request_id).child('friends').child(auth.uid).exists())"
           }
         },
         "profile": {

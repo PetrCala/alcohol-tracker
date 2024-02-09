@@ -1,7 +1,8 @@
-﻿import React, {useEffect, useState} from 'react';
+﻿import React, {useEffect, useReducer, useState} from 'react';
 import {
   Dimensions,
   Image,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -11,48 +12,109 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {useFocusEffect} from '@react-navigation/native';
 import {sendPasswordResetEmail, signOut} from 'firebase/auth';
 import {auth} from '../services/firebaseSetup';
 import {signInUserWithEmailAndPassword} from '../auth/auth';
-
+import commonStyles from '../styles/commonStyles';
 import {LoginScreenProps} from '../types/screens';
 import LoadingData from '../components/LoadingData';
-import {useUserConnection} from '../context/UserConnectionContext';
 import InputTextPopup from '../components/Popups/InputTextPopup';
-import {handleInvalidInput} from '../utils/errorHandling';
+import {handleErrors} from '../utils/errorHandling';
+import WarningMessage from '@components/Info/WarningMessage';
+import SuccessMessage from '@components/Info/SuccessMessage';
+import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
+
+interface State {
+  email: string;
+  password: string;
+  loadingUser: boolean;
+  warning: string;
+  success: string;
+  resetPasswordModalVisible: boolean;
+}
+
+interface Action {
+  type: string;
+  payload: any;
+}
+
+const initialState: State = {
+  email: '',
+  password: '',
+  loadingUser: true,
+  warning: '',
+  success: '',
+  resetPasswordModalVisible: false,
+};
+
+const reducer = (state: State, action: Action) => {
+  switch (action.type) {
+    case 'UPDATE_EMAIL':
+      return {
+        ...state,
+        email: action.payload,
+      };
+    case 'UPDATE_PASSWORD':
+      return {
+        ...state,
+        password: action.payload,
+      };
+    case 'SET_LOADING_USER':
+      return {
+        ...state,
+        loadingUser: action.payload,
+      };
+    case 'SET_WARNING':
+      return {
+        ...state,
+        warning: action.payload,
+      };
+    case 'SET_SUCCESS':
+      return {
+        ...state,
+        success: action.payload,
+      };
+    case 'SET_RESET_PASSWORD_MODAL_VISIBLE':
+      return {
+        ...state,
+        resetPasswordModalVisible: action.payload,
+      };
+    default:
+      return state;
+  }
+};
 
 const LoginScreen = ({navigation}: LoginScreenProps) => {
   if (!navigation) return null; // Should never be null
-  const {isOnline} = useUserConnection();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loadingUser, setLoadingUser] = useState<boolean>(true);
-  const [warning, setWarning] = useState<string>('');
-  const [success, setSuccess] = useState<string>('');
-  const [resetPasswordModalVisible, setResetPasswordModalVisible] =
-    useState<boolean>(false);
+  // const {isOnline} = useUserConnection();
+  const [state, dispatch] = useReducer(reducer, initialState);
 
-  useEffect(() => {
-    const stopListening = auth.onAuthStateChanged(user => {
-      // Handle the case when the user does not have all data ready
-      if (user) {
-        navigation.replace('App', {screen: 'Main Screen'}); // Redirect to main screen
-      }
-      setLoadingUser(false);
-    });
+  useFocusEffect(
+    // Redirect to main screen if user is already logged in (from login screen only)
+    React.useCallback(() => {
+      const stopListening = auth.onAuthStateChanged(user => {
+        if (user) {
+          navigation.replace('App', {screen: 'Main Screen'}); // Redirect to main screen
+        }
+        dispatch({type: 'SET_LOADING_USER', payload: false});
+      });
 
-    return stopListening;
-  }, []);
+      return () => {
+        stopListening(); // This will be called when the screen loses focus
+      };
+    }, []),
+  );
 
   const handleLogin = async () => {
     // Validate all hooks on the screen first, return null if invalid
     // Attempt to login
     try {
-      await signInUserWithEmailAndPassword(auth, email, password);
+      await signInUserWithEmailAndPassword(auth, state.email, state.password);
     } catch (error: any) {
       const errorHeading = 'Failed to log in';
       const errorMessage = 'There was an error trying to log in: ';
-      handleInvalidInput(error, errorHeading, errorMessage, setWarning);
+      handleErrors(error, errorHeading, errorMessage, dispatch);
     }
     return;
   };
@@ -61,59 +123,25 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
     // reset the user password
     try {
       await sendPasswordResetEmail(auth, mail);
-      setSuccess('Password reset link sent');
+      dispatch({type: 'SET_SUCCESS', payload: 'Password reset link sent'});
     } catch (error: any) {
       const errorHeading = 'Error When Resetting Password';
       const errorMessage = 'There was an error when resetting your password: ';
-      return handleInvalidInput(error, errorHeading, errorMessage, setWarning);
+      return handleErrors(error, errorHeading, errorMessage, dispatch);
     } finally {
-      setResetPasswordModalVisible(false);
+      dispatch({type: 'SET_RESET_PASSWORD_MODAL_VISIBLE', payload: false});
     }
   };
 
   // Wait to see whether there already is an authentificated user
   // Possibly here display the app logo instead of the loading screen
-  if (loadingUser) return <LoadingData />;
+  if (state.loadingUser) return <LoadingData />;
 
   return (
-    <ScrollView
-      keyboardShouldPersistTaps="handled"
-      contentContainerStyle={{flexGrow: 1, flexShrink: 1}}>
-      <KeyboardAvoidingView
-        style={styles.mainContainer}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        {warning ? (
-          <View style={[styles.infoContainer, styles.warningInfoContainer]}>
-            <TouchableOpacity
-              id={'warning'}
-              testID={'warning'}
-              accessibilityRole="button"
-              onPress={() => setWarning('')}
-              style={styles.infoButton}>
-              <Text style={[styles.infoText, styles.warningInfoText]}>
-                {warning}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <></>
-        )}
-        {success ? (
-          <View style={[styles.infoContainer, styles.successInfoContainer]}>
-            <TouchableOpacity
-              id={'success'}
-              testID={'success'}
-              accessibilityRole="button"
-              onPress={() => setSuccess('')}
-              style={styles.infoButton}>
-              <Text style={[styles.infoText, styles.successInfoText]}>
-                {success}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <></>
-        )}
+    <DismissKeyboard>
+      <View style={styles.mainContainer}>
+        <WarningMessage warningText={state.warning} dispatch={dispatch} />
+        <SuccessMessage successText={state.success} dispatch={dispatch} />
         <View style={styles.logoContainer}>
           <Image
             source={require('../../assets/logo/alcohol-tracker-source-icon.png')}
@@ -126,92 +154,97 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
             placeholderTextColor={'#a8a8a8'}
             keyboardType="email-address"
             textContentType="emailAddress"
-            value={email}
-            onChangeText={text => setEmail(text)}
+            value={state.email}
+            onChangeText={text =>
+              dispatch({type: 'UPDATE_EMAIL', payload: text})
+            }
             style={styles.input}
           />
           <TextInput
             placeholder="Password"
             placeholderTextColor={'#a8a8a8'}
             textContentType="password"
-            value={password}
-            onChangeText={text => setPassword(text)}
-            style={styles.input}
+            value={state.password}
+            onChangeText={text =>
+              dispatch({type: 'UPDATE_PASSWORD', payload: text})
+            }
             secureTextEntry
+            style={styles.input}
           />
           <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
             <Text style={styles.loginButtonText}>Login</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => setResetPasswordModalVisible(true)}
+            onPress={() =>
+              dispatch({
+                type: 'SET_RESET_PASSWORD_MODAL_VISIBLE',
+                payload: true,
+              })
+            }
             style={styles.forgottenPasswordButton}>
             <Text style={styles.forgottenPasswordText}>
               Forgot your password?
             </Text>
           </TouchableOpacity>
-          <View style={styles.horizontalLine} />
+          <View style={[commonStyles.horizontalLine, styles.customLineWidth]} />
           <View style={styles.signUpContainer}>
             <TouchableOpacity
               style={styles.signUpButtonContainer}
               onPress={() =>
-                navigation.navigate('Sign Up Screen', {loginEmail: email})
+                navigation.navigate('Sign Up Screen', {
+                  loginEmail: state.email,
+                })
               }>
               <Text style={styles.signUpInfoText}>Don't have an account?</Text>
               <Text style={styles.signUpButtonText}>Sign up</Text>
             </TouchableOpacity>
           </View>
           <InputTextPopup
-            visible={resetPasswordModalVisible}
+            visible={state.resetPasswordModalVisible}
             transparent={true}
             message={'E-mail to send the reset link to:'}
             confirmationMessage={'Send link'}
             placeholder={'E-mail'}
-            onRequestClose={() => setResetPasswordModalVisible(false)}
+            onRequestClose={() =>
+              dispatch({
+                type: 'SET_RESET_PASSWORD_MODAL_VISIBLE',
+                payload: false,
+              })
+            }
             onSubmit={mail => handleResetPassword(mail)}
             keyboardType="email-address"
             textContentType="emailAddress"
             secureTextEntry={false}
           />
         </View>
-      </KeyboardAvoidingView>
-    </ScrollView>
+      </View>
+    </DismissKeyboard>
   );
 };
 
 export default LoginScreen;
 
 const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
   mainContainer: {
-    flexGrow: 1,
-    flexShrink: 1,
-    justifyContent: 'center',
+    flex: 1,
+    justifyContent: 'flex-start',
     alignItems: 'center',
+    flexDirection: 'column',
     backgroundColor: '#FFFF99',
   },
   logoContainer: {
-    flexShrink: 1,
     justifyContent: 'flex-end',
     alignItems: 'center',
-    backgroundColor: '#FFFF99',
-    marginTop: '40%',
     width: '100%',
+    height: screenHeight * 0.2,
   },
   logo: {
     width: 50,
     height: 50,
     borderRadius: 25,
-  },
-  infoContainer: {
-    width: '80%',
-    height: 'auto',
-    position: 'absolute', // Temp
-    top: '10%', // Temp
-    borderRadius: 5,
-    borderWidth: 2,
-    alignItems: 'center',
-    alignSelf: 'center',
   },
   warningInfoContainer: {
     backgroundColor: '#fce3e1',
@@ -239,13 +272,13 @@ const styles = StyleSheet.create({
     color: 'green',
   },
   inputContainer: {
-    flexGrow: 1,
-    flexShrink: 1,
-    marginTop: '25%',
+    paddingTop: screenHeight * 0.15,
     width: '80%',
+    height: screenHeight * 0.85,
   },
   input: {
     backgroundColor: 'white',
+    height: 45,
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 10,
@@ -285,12 +318,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 14,
   },
-  horizontalLine: {
-    width: screenWidth * 0.55,
-    height: 1,
-    backgroundColor: 'grey',
-    alignSelf: 'center',
-  },
   signUpContainer: {
     width: '100%',
     marginTop: 5,
@@ -313,5 +340,8 @@ const styles = StyleSheet.create({
     marginLeft: 4,
     paddingTop: 10,
     paddingBottom: 10,
+  },
+  customLineWidth: {
+    width: screenWidth * 0.7,
   },
 });

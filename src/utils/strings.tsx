@@ -1,4 +1,4 @@
-﻿import {invalidChars} from './static';
+﻿import CONST from '@src/CONST';
 
 /**
  * Clean a string to be used as a key for the Firebase Realtime Database.
@@ -27,9 +27,10 @@ export function cleanStringForFirebaseKey(rawStr: string): string {
   // Remove diacritical marks and replace invalid characters or whitespace with an underscore.
   const intermediateStr = normalizedStr
     .replace(/[\u0300-\u036f]/g, '')
+    .replace(/-/g, '_') // No dashes
     .split('')
     .map(char =>
-      invalidChars.includes(char) || char.trim() === '' ? '_' : char,
+      CONST.INVALID_CHARS.includes(char as any) || char.trim() === '' ? '_' : char,
     )
     .join('');
 

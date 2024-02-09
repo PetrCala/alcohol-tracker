@@ -7,20 +7,14 @@ import {
   ScrollView,
   Image,
   Alert,
+  Keyboard,
 } from 'react-native';
 
 import {MainMenuItemProps} from '../types/components';
-import MenuIcon from '../components/Buttons/MenuIcon';
 import YesNoPopup from '../components/Popups/YesNoPopup';
-import {
-  EmailAuthProvider,
-  UserCredential,
-  deleteUser,
-  reauthenticateWithCredential,
-  signOut,
-} from 'firebase/auth';
+import {UserCredential, deleteUser, signOut} from 'firebase/auth';
 import {auth} from '../services/firebaseSetup';
-import {deleteUserInfo, reauthentificateUser} from '../database/users';
+import {deleteUserData, reauthentificateUser} from '../database/users';
 import FeedbackPopup from '../components/Popups/FeedbackPopup';
 import {submitFeedback} from '../database/feedback';
 import {MainMenuScreenProps} from '../types/screens';
@@ -29,17 +23,17 @@ import {FeedbackData} from '../types/database';
 import {listenForDataChanges, readDataOnce} from '../database/baseFunctions';
 import InputTextPopup from '../components/Popups/InputTextPopup';
 import UserOffline from '../components/UserOffline';
-import {useUserConnection} from '../context/UserConnectionContext';
-import {getDatabaseData} from '../context/DatabaseDataContext';
+import {useUserConnection} from '../context/global/UserConnectionContext';
+import {getDatabaseData} from '../context/global/DatabaseDataContext';
 import ItemListPopup from '../components/Popups/ItemListPopup';
-import commonStyles from '../styles/commonStyles';
-import {useFirebase} from '../context/FirebaseContext';
+import {useFirebase} from '../context/global/FirebaseContext';
+import MainHeader from '@components/Header/MainHeader';
+import GrayHeader from '@components/Header/GrayHeader';
+import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 
 const MenuItem: React.FC<MainMenuItemProps> = ({heading, data, index}) => (
   <View key={index}>
-    <View style={styles.groupMarker}>
-      <Text style={styles.groupText}>{heading}</Text>
-    </View>
+    <GrayHeader headerText={heading} />
     {data.map((button, bIndex) => (
       <TouchableOpacity
         key={bIndex}
@@ -107,7 +101,14 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
     // Delete the user's information from the realtime database
     try {
       let userNickname = userData.profile.display_name;
-      await deleteUserInfo(db, user.uid, userNickname, userData.beta_key_id); // Beta feature
+      await deleteUserData(
+        db,
+        user.uid,
+        userNickname,
+        userData.beta_key_id,
+        userData.friends,
+        userData.friend_requests,
+      ); // Beta feature
     } catch (error: any) {
       handleInvalidDeleteUser(error);
     }
@@ -285,74 +286,71 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
   if (!db || !preferences || !userData) return null; // Should never be null
 
   return (
-    <View style={styles.mainContainer}>
-      <View style={commonStyles.mainHeader}>
-        <MenuIcon
-          iconId="escape-main-menu"
-          iconSource={require('../../assets/icons/arrow_back.png')}
-          containerStyle={styles.backArrowContainer}
-          iconStyle={styles.backArrow}
-          onPress={() => navigation.goBack()}
-        />
-      </View>
-      <ScrollView style={styles.scrollView}>
-        {modalData.map((group, index) => (
-          <MenuItem
-            key={index}
-            heading={group.heading}
-            data={group.data}
-            index={index}
+    <DismissKeyboard>
+      <View style={styles.mainContainer}>
+        <MainHeader headerText="" onGoBack={() => navigation.goBack()} />
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          onScrollBeginDrag={Keyboard.dismiss}
+          style={styles.scrollView}>
+          {modalData.map((group, index) => (
+            <MenuItem
+              key={index}
+              heading={group.heading}
+              data={group.data}
+              index={index}
+            />
+          ))}
+          <ItemListPopup
+            visible={policiesModalVisible}
+            transparent={true}
+            heading={'Our Policies'}
+            actions={policiesData}
+            onRequestClose={() => setPoliciesModalVisible(false)}
           />
-        ))}
-        <ItemListPopup
-          visible={policiesModalVisible}
-          transparent={true}
-          heading={'Our Policies'}
-          actions={policiesData}
-          onRequestClose={() => setPoliciesModalVisible(false)}
-        />
-        <FeedbackPopup
-          visible={feedbackModalVisible}
-          transparent={true}
-          message={'What would you like us to improve?'}
-          onRequestClose={() => setFeedbackModalVisible(false)}
-          onSubmit={feedback => handleSubmitFeedback(feedback)}
-        />
-        <YesNoPopup
-          visible={signoutModalVisible}
-          transparent={true}
-          message={'Do you really want to\nsign out?'}
-          onRequestClose={() => setSignoutModalVisible(false)}
-          onYes={handleConfirmSignout}
-        />
-        <YesNoPopup
-          visible={deleteUserModalVisible}
-          transparent={true}
-          message={
-            'WARNING: Destructive action\n\nDo you really want to\ndelete this user?'
-          }
-          onRequestClose={() => setDeleteUserModalVisible(false)}
-          onYes={handleConfirmDeleteUser}
-        />
-        <InputTextPopup
-          visible={reauthentificateModalVisible}
-          transparent={true}
-          message={'Please retype your password\nin order to proceed'}
-          confirmationMessage={'Delete user'}
-          placeholder={'Password'}
-          onRequestClose={() => setReauthentificateModalVisible(false)}
-          onSubmit={password => handleDeleteUser(password)}
-          textContentType="password"
-          secureTextEntry
-        />
-        <AdminFeedbackPopup
-          visible={adminFeedbackModalVisible}
-          transparent={true}
-          onRequestClose={() => setAdminFeedbackModalVisible(false)}
-          feedbackData={feedbackData}
-        />
-      </ScrollView>
-    </View>
+          <FeedbackPopup
+            visible={feedbackModalVisible}
+            transparent={true}
+            message={'What would you like us to improve?'}
+            onRequestClose={() => setFeedbackModalVisible(false)}
+            onSubmit={feedback => handleSubmitFeedback(feedback)}
+          />
+          <YesNoPopup
+            visible={signoutModalVisible}
+            transparent={true}
+            message={'Do you really want to\nsign out?'}
+            onRequestClose={() => setSignoutModalVisible(false)}
+            onYes={handleConfirmSignout}
+          />
+          <YesNoPopup
+            visible={deleteUserModalVisible}
+            transparent={true}
+            message={
+              'WARNING: Destructive action\n\nDo you really want to\ndelete this user?'
+            }
+            onRequestClose={() => setDeleteUserModalVisible(false)}
+            onYes={handleConfirmDeleteUser}
+          />
+          <InputTextPopup
+            visible={reauthentificateModalVisible}
+            transparent={true}
+            message={'Please retype your password\nin order to proceed'}
+            confirmationMessage={'Delete user'}
+            placeholder={'Password'}
+            onRequestClose={() => setReauthentificateModalVisible(false)}
+            onSubmit={password => handleDeleteUser(password)}
+            textContentType="password"
+            secureTextEntry
+          />
+          <AdminFeedbackPopup
+            visible={adminFeedbackModalVisible}
+            transparent={true}
+            onRequestClose={() => setAdminFeedbackModalVisible(false)}
+            feedbackData={feedbackData}
+          />
+        </ScrollView>
+      </View>
+    </DismissKeyboard>
   );
 };
 
@@ -368,15 +366,6 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     flexShrink: 1,
     backgroundColor: '#FFFF99',
-  },
-  backArrowContainer: {
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-    padding: 10,
-  },
-  backArrow: {
-    width: 25,
-    height: 25,
   },
   modalText: {
     marginBottom: 15,
@@ -402,16 +391,7 @@ const styles = StyleSheet.create({
   buttonText: {
     marginLeft: 10,
     color: 'black',
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '500',
-  },
-  groupMarker: {
-    width: '100%',
-    padding: 10,
-    backgroundColor: 'gray',
-  },
-  groupText: {
-    color: 'white',
-    fontWeight: 'bold',
   },
 });

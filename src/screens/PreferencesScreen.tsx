@@ -1,36 +1,33 @@
-﻿import React, {useContext, useEffect, useRef, useState} from 'react';
+﻿import React, {useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {
   Alert,
   BackHandler,
+  Keyboard,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import Slider from '@react-native-community/slider';
-import MenuIcon from '../components/Buttons/MenuIcon';
 import {PreferencesScreenProps} from '../types/screens';
 import {auth} from '../services/firebaseSetup';
-import {useUserConnection} from '../context/UserConnectionContext';
-import {useFirebase} from '../context/FirebaseContext';
+import {useUserConnection} from '../context/global/UserConnectionContext';
+import {useFirebase} from '../context/global/FirebaseContext';
 import UserOffline from '../components/UserOffline';
 import BasicButton from '../components/Buttons/BasicButton';
 import {
   PreferencesData,
   UnitTypesKeys,
   UnitTypesNames,
-  UnitTypesProps,
-  UnitsToColorsData,
 } from '../types/database';
 import {savePreferencesData} from '../database/preferences';
 import YesNoPopup from '../components/Popups/YesNoPopup';
 import CustomSwitch from '../components/CustomSwitch';
 import NumericSlider from '../components/Popups/NumericSlider';
-import {getDatabaseData} from '../context/DatabaseDataContext';
+import {getDatabaseData} from '../context/global/DatabaseDataContext';
 import {getDefaultPreferences} from '../database/users';
 import commonStyles from '../styles/commonStyles';
+import MainHeader from '@components/Header/MainHeader';
 
 interface PreferencesListProps {
   id: string;
@@ -141,7 +138,7 @@ const PreferencesScreen = ({route, navigation}: PreferencesScreenProps) => {
     }));
   };
 
-  useEffect(() => {
+  useMemo(() => {
     if (!preferences) return;
     let newPreferences = {
       first_day_of_week: preferences.first_day_of_week,
@@ -175,16 +172,11 @@ const PreferencesScreen = ({route, navigation}: PreferencesScreenProps) => {
 
   return (
     <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
-      <View style={commonStyles.mainHeader}>
-        <MenuIcon
-          iconId="escape-preferences-screen"
-          iconSource={require('../../assets/icons/arrow_back.png')}
-          containerStyle={styles.backArrowContainer}
-          iconStyle={styles.backArrow}
-          onPress={handleGoBack}
-        />
-      </View>
-      <ScrollView style={styles.scrollView} keyboardShouldPersistTaps="handled">
+      <MainHeader headerText="Preferences" onGoBack={handleGoBack} />
+      <ScrollView
+        style={styles.scrollView}
+        onScrollBeginDrag={Keyboard.dismiss}
+        keyboardShouldPersistTaps="handled">
         <View style={[styles.container, styles.horizontalContainer]}>
           <Text style={styles.label}>First Day of Week</Text>
           <View style={styles.itemContainer}>
@@ -294,17 +286,6 @@ const PreferencesScreen = ({route, navigation}: PreferencesScreenProps) => {
 export default PreferencesScreen;
 
 const styles = StyleSheet.create({
-  backArrowContainer: {
-    justifyContent: 'center',
-    marginTop: 10,
-    marginLeft: 10,
-    padding: 10,
-    position: 'absolute',
-  },
-  backArrow: {
-    width: 25,
-    height: 25,
-  },
   scrollView: {
     width: '100%',
     flexGrow: 1,

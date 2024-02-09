@@ -1,5 +1,6 @@
 ﻿import React, {useContext, useState} from 'react';
 import {
+  Keyboard,
   ScrollView,
   StyleSheet,
   Text,
@@ -9,11 +10,12 @@ import {
 import MenuIcon from '../components/Buttons/MenuIcon';
 import {SettingsScreenProps} from '../types/screens';
 import {auth} from '../services/firebaseSetup';
-import {useUserConnection} from '../context/UserConnectionContext';
+import {useUserConnection} from '../context/global/UserConnectionContext';
 import UserOffline from '../components/UserOffline';
 import BasicButton from '../components/Buttons/BasicButton';
-import {getDatabaseData} from '../context/DatabaseDataContext';
+import {getDatabaseData} from '../context/global/DatabaseDataContext';
 import commonStyles from '../styles/commonStyles';
+import MainHeader from '@components/Header/MainHeader';
 
 const SettingsItem: React.FC<{item: any}> = ({item}) => (
   <View style={styles.settingContainer}>
@@ -76,16 +78,11 @@ const SettingsScreen = ({route, navigation}: SettingsScreenProps) => {
 
   return (
     <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
-      <View style={commonStyles.mainHeader}>
-        <MenuIcon
-          iconId="escape-settings-screen"
-          iconSource={require('../../assets/icons/arrow_back.png')}
-          containerStyle={styles.backArrowContainer}
-          iconStyle={styles.backArrow}
-          onPress={() => navigation.goBack()}
-        />
-      </View>
-      <ScrollView style={styles.scrollView}>
+      <MainHeader headerText="" onGoBack={() => navigation.goBack()} />
+      <ScrollView
+        style={styles.scrollView}
+        onScrollBeginDrag={Keyboard.dismiss}
+        keyboardShouldPersistTaps="handled">
         {settingsData.map((item, index) => (
           <SettingsItem key={index} item={item} />
         ))}
@@ -105,17 +102,6 @@ const SettingsScreen = ({route, navigation}: SettingsScreenProps) => {
 export default SettingsScreen;
 
 const styles = StyleSheet.create({
-  backArrowContainer: {
-    justifyContent: 'center',
-    marginTop: 10,
-    marginLeft: 10,
-    padding: 10,
-    position: 'absolute',
-  },
-  backArrow: {
-    width: 25,
-    height: 25,
-  },
   scrollView: {
     width: '100%',
     flexGrow: 1,

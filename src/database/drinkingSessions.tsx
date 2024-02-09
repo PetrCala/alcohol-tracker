@@ -1,68 +1,100 @@
-﻿import {Database, ref, child, update, push} from 'firebase/database';
+﻿import {Database, ref, update} from 'firebase/database';
 import {
-  DrinkingSessionData,
-  UnitTypesProps,
-  CurrentSessionData,
+  UserStatusData,
   DrinkingSessionArrayItem,
   UnitsObject,
 } from '../types/database';
+import {removeZeroObjectsFromSession} from '@src/utils/dataHandling';
 
 /** Write drinking session data into the database
  *
- * @param {Database} db Firebase Database object
- * @param {string} userId User ID
- * @param {DrinkingSessionArrayItem} newSessionData Data to save the new drinking session with
- * @return {Promise<string>} ID of the saved session
+ * @param db Firebase Database object
+ * @param string userId User ID
+ * @param newSessionData Data to save the new drinking session with
+ * @param updateStatus Whether to update the user status data or not
+ * @return Promise void.
  *  */
 export async function saveDrinkingSessionData(
   db: Database,
   userId: string,
   newSessionData: DrinkingSessionArrayItem,
-  sessionKey?: string,
-): Promise<string> {
-  if (!sessionKey) {
-    // Generate a new automatic key for the a drinking session
-    let newSessionKey = await push(
-      child(ref(db), `/user_drinking_sessions/${userId}/`),
-    ).key;
-    if (!newSessionKey) {
-      throw new Error('Failed to create a new session reference point');
-    }
-    sessionKey = newSessionKey;
-  }
-  // Update the database with this new key
-  var updates: {[key: string]: DrinkingSessionArrayItem} = {};
+  sessionKey: string,
+  updateStatus?: boolean,
+): Promise<void> {
+  newSessionData = removeZeroObjectsFromSession(newSessionData); // Delete the initial log of zero units that was used as a placeholder
+  var updates: {[key: string]: any} = {};
   updates[`user_drinking_sessions/${userId}/` + sessionKey] = newSessionData;
+  if (updateStatus) {
+    const userStatusData: UserStatusData = {
+      last_online: new Date().getTime(),
+      latest_session_id: sessionKey,
+      latest_session: newSessionData,
+    };
+    updates[`user_status/${userId}`] = userStatusData;
+  }
   await update(ref(db), updates);
-  return sessionKey;
 }
 
-/** Update the current session key info in the database. If there is no key, store one. If there is one, remove it.
+/** Start a live drinking session
  *
- * @param {Database} db Database
- * @param {string} userId User ID
- * @param {string|null} key Current session data key
- * @returns {Promise<void>}
- */
-export async function updateCurrentSessionKey(
+ * @param db Firebase Database object
+ * @param string userId User ID
+ * @param newSessionData Data to save the new drinking session with
+ * @param sesisonKey ID of the session to edit (can be null in case of finishing the session)
+ * @return Promise void.
+ *  */
+export async function startLiveDrinkingSession(
   db: Database,
   userId: string,
-  key: string | null,
+  newSessionData: DrinkingSessionArrayItem,
+  sessionKey: string,
 ): Promise<void> {
-  let newCurrentSessionData: CurrentSessionData = {
-    current_session_id: key, // Add or remove current session id
+  var updates: {[key: string]: any} = {};
+  const userStatusData: UserStatusData = {
+    last_online: new Date().getTime(),
+    latest_session_id: sessionKey,
+    latest_session: newSessionData,
   };
-  var updates: {[key: string]: CurrentSessionData} = {};
-  updates[`user_current_session/${userId}`] = newCurrentSessionData;
+  updates[`user_status/${userId}`] = userStatusData;
+  updates[`user_drinking_sessions/${userId}/` + sessionKey] = newSessionData;
+  await update(ref(db), updates);
+}
+
+/** End a live drinking session
+ *
+ * @param db Firebase Database object
+ * @param string userId User ID
+ * @param newSessionData Data to save the new drinking session with
+ * @param sesisonKey ID of the session to edit (can be null in case of finishing the session)
+ * @return Promise void.
+ *  */
+export async function endLiveDrinkingSession(
+  db: Database,
+  userId: string,
+  newSessionData: DrinkingSessionArrayItem,
+  sessionKey: string,
+): Promise<void> {
+  newSessionData = removeZeroObjectsFromSession(newSessionData);
+  var updates: {[key: string]: any} = {};
+  const userStatusData: UserStatusData = {
+    // ETC - 1
+    last_online: new Date().getTime(),
+    latest_session_id: sessionKey,
+    latest_session: newSessionData,
+  };
+  updates[`user_status/${userId}`] = userStatusData;
+  updates[`user_drinking_sessions/${userId}/` + sessionKey] = newSessionData;
   await update(ref(db), updates);
 }
 
 /** Remove drinking session data from the database
  *
- * @param {Database} db Firebase Database object
- * @param {string} userId User ID
- * @param {string} sessionKey ID of the session to remove
- * @returns {Promise<void>}
+ * Should only be used to edit non-live sessions.
+ *
+ * @param db Firebase Database object
+ * @param userId User ID
+ * @param sessionKey ID of the session to remove
+ * @returns
  *  */
 export async function removeDrinkingSessionData(
   db: Database,
@@ -74,48 +106,34 @@ export async function removeDrinkingSessionData(
   await update(ref(db), updates);
 }
 
-/** Edit an existing drinking session data in database,
- * or add a new one in case the user wishes to add a new
- * session data without starting a new session
+/**
+ * Discards a drinking session for a specific user.
  *
- * @param {Database} db Database Database object
- * @param {string} userId User ID
- * @param {DrinkingSessionArrayItem} session Session to edit
- * @param {string} sessionKey ID of the session to edit
- * @param {boolean} newSession True if the session has not existed up to this function call, false otherwise.
- * @returns {Promise<void>}
- *  */
-export async function editDrinkingSessionData(
+ * @param db - The database instance.
+ * @param userId - The ID of the user.
+ * @param sessionKey - The key of the session to be discarded.
+ * @returns A Promise that resolves when the session is discarded.
+ */
+export async function discardLiveDrinkingSession(
   db: Database,
   userId: string,
-  session: DrinkingSessionArrayItem,
   sessionKey: string,
-  newSession: boolean,
 ): Promise<void> {
-  var updates: {[key: string]: DrinkingSessionArrayItem} = {};
-  let newKey = sessionKey;
-  if (newSession) {
-    // Handle the case of an unexisting session
-    let generatedKey = await push(
-      child(ref(db), `/user_drinking_sessions/${userId}/`),
-    ).key;
-    if (!generatedKey) {
-      throw new Error('Failed to create a new session reference point');
-    }
-    newKey = generatedKey;
-  }
-  updates[`/user_drinking_sessions/${userId}/` + newKey] = session;
+  var updates: {[key: string]: any} = {};
+  const userStatusData: UserStatusData = {last_online: new Date().getTime()}; // No session info
+  updates['/user_drinking_sessions/' + userId + '/' + sessionKey] = null;
+  updates[`/user_status/${userId}`] = userStatusData;
   await update(ref(db), updates);
 }
 
 /** Access the database reference point of a user's drinking session
  * and update the units of that session.
  *
- * @param {Database} db Firebase Database object
- * @param {string} userId User ID
- * @param {string} sessionKey ID of the session to edit
- * @param {UnitsObject} newUnits UnitsObject containing the new units
- * @returns {Promise<void>}
+ * @param db Firebase Database object
+ * @param userId User ID
+ * @param sessionKey ID of the session to edit
+ * @param UnitsObject containing the new units
+ * @returns A promise.
  */
 export async function updateSessionUnits(
   db: Database,

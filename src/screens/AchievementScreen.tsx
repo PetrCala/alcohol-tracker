@@ -2,6 +2,7 @@
 import {StyleSheet, Text, View} from 'react-native';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import commonStyles from '../styles/commonStyles';
+import MainHeader from '@components/Header/MainHeader';
 
 type AchievementsProps = {
   navigation: any;
@@ -12,18 +13,10 @@ const AchievementScreen = (props: AchievementsProps) => {
 
   return (
     <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
-      <View style={commonStyles.mainHeader}>
-        <MenuIcon
-          iconId="escape-achievement-screen"
-          iconSource={require('../../assets/icons/arrow_back.png')}
-          containerStyle={styles.backArrowContainer}
-          iconStyle={styles.backArrow}
-          onPress={() => navigation.goBack()}
-        />
-        <View style={styles.menuContainer}>
-          <Text style={styles.sectionText}>Achievements</Text>
-        </View>
-      </View>
+      <MainHeader
+        headerText="Achievements"
+        onGoBack={() => navigation.goBack()}
+      />
       <View style={styles.mainContainer}>
         <Text style={styles.sectionText}>Coming soon...</Text>
       </View>
@@ -34,21 +27,6 @@ const AchievementScreen = (props: AchievementsProps) => {
 export default AchievementScreen;
 
 const styles = StyleSheet.create({
-  backArrowContainer: {
-    justifyContent: 'center',
-    marginLeft: 10,
-  },
-  backArrow: {
-    width: 25,
-    height: 25,
-  },
-  menuContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    width: 200,
-  },
   sectionText: {
     fontSize: 20,
     color: 'black',

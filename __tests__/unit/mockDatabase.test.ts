@@ -2,19 +2,19 @@
   initializeEmptyMockDatabase,
   createMockConfig,
   createMockFeedback,
-  createMockCurrentSession,
   createMockUnitsObject,
   createMockSession,
   createMockPreferences,
   createMockUnconfirmedDays,
   createMockUserData,
   createMockDatabase,
+  createMockMaintenance,
+  createMockAppSettings,
 } from '../utils/mockDatabase';
 import {
   DatabaseProps,
   ConfigProps,
   FeedbackProps,
-  CurrentSessionData,
   DrinkingSessionData,
   UnitsObject,
   UnitTypesKeys,
@@ -23,7 +23,38 @@ import {
   UnconfirmedDaysData,
   UserData,
   UnitsToColorsData,
+  UserStatusData,
 } from '../../src/types/database';
+
+/**
+ * Checks if the given object is a valid beta key.
+ * @param obj - The object to be checked.
+ * @returns True if the object is a valid beta key, false otherwise.
+ */
+function isBetaKey(obj: any): obj is any {
+  // beta feature
+  return (
+    typeof obj.key === 'string' &&
+    typeof obj.in_usage === 'boolean' &&
+    (obj.user_id === undefined || typeof obj.user_id === 'string')
+  );
+}
+
+/**
+ * Validates the beta keys data.
+ *
+ * @param betaKeysData - The beta keys data to validate.
+ * @returns True if all beta keys are valid, false otherwise.
+ */
+function validateBetaKeys(betaKeysData: {[betaKeyId: number]: any}): boolean {
+  // beta feature
+  for (const betaKeyId in betaKeysData) {
+    if (!isBetaKey(betaKeysData[betaKeyId])) {
+      return false;
+    }
+  }
+  return true;
+}
 
 /** Enter an object that is supposed to be of the ConfigProps type and validate it. Return true if it has that type, and false otherwise.
  *
@@ -62,29 +93,17 @@ function validateFeedback(feedbackData: {[feedbackId: string]: any}): boolean {
   return true;
 }
 
-/** Input an object of supposed current session data and validate that the object is indeed of the CurrentSessionData type. Return true if yes, and false otherwise.
- *
- * @param obj Object to validate.
- * @returns bool
- */
-function isCurrentSessionData(obj: any): obj is CurrentSessionData {
-  return typeof obj.current_session_id === 'string';
+function isUserStatus(obj: any): obj is UserStatusData {
+  return typeof obj.last_online === 'number';
 }
 
-/** Enter a data object containing supposed current sessions, and validate that all objects (values) are indeed of the supposed type. If yes, return true, otherwise return false.
- *
- * @param userSessions Data to validate
- * @returns bool
- */
-function validateUserCurrentSession(userSessions: {
-  [userId: string]: any;
-}): boolean {
-  for (const userId in userSessions) {
-    if (!isCurrentSessionData(userSessions[userId])) {
-      return false; // If any value is not a valid CurrentSessionData, return false
+function validateUserStatus(userStatuses: {[userId: string]: any}): boolean {
+  for (const userId in userStatuses) {
+    if (!isUserStatus(userStatuses[userId])) {
+      return false;
     }
   }
-  return true; // All values are valid
+  return true;
 }
 
 /** Type guard for UnitTypesProps. Return true if an object is of UnitTypesProps type, and false otherwise.
@@ -170,7 +189,7 @@ function isUnitsObject(obj: any): obj is UnitsObject {
  * @returns bool
  */
 function isUnitsToColorsData(obj: any): obj is UnitsToColorsData {
-  return typeof obj.yellow === 'string' && typeof obj.red === 'string';
+  return typeof obj.yellow === 'number' && typeof obj.orange === 'number';
 }
 
 /** Using any object, validate that this object is of the FeedbackProps type. If yes, return true, otherwise return false.
@@ -241,11 +260,7 @@ function validateUserUnconfirmedDaysData(userUnconfirmedDays: {
  * @returns bool
  */
 function isUserData(obj: any): obj is UserData {
-  return (
-    typeof obj.role === 'string' &&
-    typeof obj.last_online === 'number' &&
-    typeof obj.beta_key_id === 'string'
-  );
+  return typeof obj.role === 'string' && typeof obj.beta_key_id === 'number';
 }
 
 /** Enter a data object containing supposed user data, and validate that all objects (values) are indeed of the supposed type. If yes, return true, otherwise return false.
@@ -272,23 +287,27 @@ describe('mockDatabase functions', () => {
     );
   });
 
-  it('should create a mock config', () => {
-    const config = createMockConfig('0.0.2', '0.0.2');
-    expect(config.app_settings.min_supported_version).toBe('0.0.2');
-    expect(config.app_settings.min_user_creation_possible_version).toBe(
-      '0.0.2',
-    );
+  it('should create mock config', () => {
+    const config = createMockConfig();
+    expect(config.app_settings).not.toBe(null);
+    expect(config.maintenance).not.toBe(null);
+  });
+
+  it('should create a mock app settings', () => {
+    const app_settings = createMockAppSettings('0.0.2', '0.0.2');
+    expect(app_settings.min_supported_version).toBe('0.0.2');
+    expect(app_settings.min_user_creation_possible_version).toBe('0.0.2');
+  });
+
+  it('should create a mock maintenance object', () => {
+    const maintenance = createMockMaintenance();
+    expect(maintenance.maintenance_mode).toBe(false);
   });
 
   it('should create a mock feedback object', () => {
     const feedback = createMockFeedback();
     expect(feedback).toBeDefined();
     expect(feedback.text).toBe('Mock feedback');
-  });
-
-  it('should create a mock current session', () => {
-    const session = createMockCurrentSession('mock-session-id');
-    expect(session.current_session_id).toBe('mock-session-id');
   });
 
   it('should create a mock units object', () => {
@@ -316,7 +335,7 @@ describe('mockDatabase functions', () => {
   });
 
   it('should create mock user data', () => {
-    const userData = createMockUserData('mock-user-id');
+    const userData = createMockUserData('mock-user-id', 1);
     expect(userData).toBeDefined();
     expect(userData.role).toBe('mock-user');
   });
@@ -331,6 +350,11 @@ describe('mockDatabase functions', () => {
 describe('mockDatabase data structure', () => {
   let db: DatabaseProps = initializeEmptyMockDatabase();
 
+  it('should have beta keys data', () => {
+    // beta feature
+    expect(validateBetaKeys(db.beta_keys)).toBe(true);
+  });
+
   it('should have config data', () => {
     expect(validateConfig(db.config)).toBe(true);
   });
@@ -339,8 +363,8 @@ describe('mockDatabase data structure', () => {
     expect(validateFeedback(db.feedback)).toBe(true);
   });
 
-  it('should have user current session data', () => {
-    expect(validateUserCurrentSession(db.user_current_session)).toBe(true);
+  it('should have user status', () => {
+    expect(validateUserStatus(db.user_status)).toBe(true);
   });
 
   it('should have user drinking session data', () => {

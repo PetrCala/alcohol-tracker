@@ -1,4 +1,4 @@
-﻿import React, {useState} from 'react';
+﻿import React from 'react';
 import {View, Text, Modal, TouchableOpacity, StyleSheet} from 'react-native';
 
 import {YesNoPopupProps} from '../../types/components';
@@ -37,6 +37,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)', // This will fade the background
+    // position: 'absolute',
+    // top: 10,
+    // left: 10,
   },
   modalView: {
     backgroundColor: '#FFFF99',
