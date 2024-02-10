@@ -4,7 +4,6 @@ import {Animated, Pressable, StyleSheet} from 'react-native';
 type PressableWithAnimationProps = {
   onPress?: () => void;
   style: any;
-  //   duration: number;
   children: React.ReactNode;
 };
 

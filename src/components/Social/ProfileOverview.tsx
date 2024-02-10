@@ -26,6 +26,7 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
         userId={userId}
         downloadPath={profileData.photo_url}
         style={styles.profileOverviewImage}
+        enlargable={true}
       />
       {user?.uid === userId ? (
         <View style={styles.editProfileButton}>
@@ -50,8 +51,6 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
   );
 };
 
-export default ProfileOverview;
-
 const screenWidth = Dimensions.get('window').width;
 const profileImageSize = 110;
 
@@ -69,6 +68,8 @@ const styles = StyleSheet.create({
     width: profileImageSize,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'transparent',
+    zIndex: 0,
   },
   profileOverviewImage: {
     width: profileImageSize,
@@ -77,7 +78,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     top: 5,
     position: 'absolute',
-    zIndex: 0, // Ensure that the profile image is below the edit button
+    zIndex: 1, // Ensure that the profile image is below the edit button
   },
   editProfileButton: {
     height: profileImageSize / 3,
@@ -91,13 +92,13 @@ const styles = StyleSheet.create({
     borderRadius: profileImageSize / 3,
     borderColor: 'black',
     borderWidth: 2,
-    zIndex: 0,
+    zIndex: 2,
   },
   editProfileButtonImage: {
     height: profileImageSize / 6,
     width: profileImageSize / 6,
     tintColor: 'gray',
-    zIndex: 4,
+    zIndex: 3, // Always pressable
   },
   userInfoContainer: {
     width: screenWidth,
@@ -116,3 +117,5 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
 });
+
+export default ProfileOverview;

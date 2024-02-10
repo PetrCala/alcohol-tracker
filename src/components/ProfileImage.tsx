@@ -1,9 +1,16 @@
 ﻿import React, {useEffect, useMemo, useReducer, useRef, useState} from 'react';
-import {ActivityIndicator, Alert, Image} from 'react-native'; // or 'react-native-web' if you're using React for web
+import {
+  ActivityIndicator,
+  Alert,
+  Image,
+  ImageSourcePropType,
+  TouchableOpacity,
+} from 'react-native';
 import {FirebaseStorage} from 'firebase/storage';
 import {getProfilePictureURL} from '@src/storage/storageProfile';
 import useProfileImageCache from '@hooks/useProfileImageCache';
 import CONST from '@src/CONST';
+import EnlargableImage from './Buttons/EnlargableImage';
 
 interface State {
   imageUrl: string | null;
@@ -41,6 +48,7 @@ type ProfileImageProps = {
   downloadPath: string | null | undefined;
   style: any;
   refreshTrigger?: number; // Likely a number, used to force a refresh
+  enlargable?: boolean;
 };
 
 function ProfileImage(props: ProfileImageProps) {
@@ -50,7 +58,7 @@ function ProfileImage(props: ProfileImageProps) {
   const prevCachedUrl = useRef(cachedUrl); // Crucial
   const initialDownloadPath = useRef(downloadPath); //
 
-  const imageSource =
+  const imageSource: ImageSourcePropType =
     state.imageUrl && state.imageUrl !== CONST.NO_IMAGE
       ? {uri: state.imageUrl}
       : require('../../assets/temp/user.png');
@@ -118,7 +126,11 @@ function ProfileImage(props: ProfileImageProps) {
   if (state.loadingImage)
     return <ActivityIndicator size="large" color="#0000ff" style={style} />;
 
-  return <Image source={imageSource} style={style} />;
+  return props.enlargable ? (
+    <EnlargableImage imageSource={imageSource} imageStyle={style} />
+  ) : (
+    <Image source={imageSource} style={style} />
+  );
 }
 
 export default ProfileImage;
