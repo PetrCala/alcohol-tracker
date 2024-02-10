@@ -4,6 +4,7 @@ import {useFirebase} from '../../context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
 import {auth} from '@src/services/firebaseSetup';
 import UploadImageComponent from '@components/UploadImage';
+import CONST from '@src/CONST';
 
 type ProfileOverviewProps = {
   userId: string;
@@ -32,7 +33,7 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
         <View style={styles.editProfileButton}>
           <UploadImageComponent
             pathToUpload={`users/${userId}/profile/profile_image.jpg`}
-            imageSource={require('@assets/icons/camera.png')}
+            imageSource={CONST.ICONS.CAMERA}
             imageStyle={styles.editProfileButtonImage}
             isProfilePicture={true}
           />

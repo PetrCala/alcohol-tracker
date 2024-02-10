@@ -36,6 +36,7 @@ import commonStyles from '@src/styles/commonStyles';
 import {useFirebase} from '../context/global/FirebaseContext';
 import ProfileImage from '../components/ProfileImage';
 import {generateDatabaseKey} from '@database/baseFunctions';
+import CONST from '@src/CONST';
 
 interface State {
   visibleDateObject: DateObject;
@@ -316,7 +317,7 @@ const MainScreen = ({navigation}: MainScreenProps) => {
           ]}>
           <MenuIcon
             iconId="social-icon"
-            iconSource={require('@assets/icons/social.png')}
+            iconSource={CONST.ICONS.SOCIAL}
             containerStyle={styles.menuIconContainer}
             iconStyle={styles.menuIcon}
             onPress={() =>
@@ -325,7 +326,7 @@ const MainScreen = ({navigation}: MainScreenProps) => {
           />
           <MenuIcon
             iconId="achievement-icon"
-            iconSource={require('@assets/icons/achievements.png')}
+            iconSource={CONST.ICONS.ACHIEVEMENTS}
             containerStyle={styles.menuIconContainer}
             iconStyle={styles.menuIcon}
             onPress={() => navigation.navigate('Achievement Screen')}
@@ -338,14 +339,14 @@ const MainScreen = ({navigation}: MainScreenProps) => {
           ]}>
           <MenuIcon
             iconId="main-menu-popup-icon"
-            iconSource={require('@assets/icons/statistics.png')}
+            iconSource={CONST.ICONS.STATISTICS}
             containerStyle={styles.menuIconContainer}
             iconStyle={styles.menuIcon}
             onPress={() => navigation.navigate('Statistics Screen')}
           />
           <MenuIcon
             iconId="main-menu-popup-icon"
-            iconSource={require('@assets/icons/bar_menu.png')}
+            iconSource={CONST.ICONS.BAR_MENU}
             containerStyle={styles.menuIconContainer}
             iconStyle={styles.menuIcon}
             onPress={() =>
@@ -361,10 +362,7 @@ const MainScreen = ({navigation}: MainScreenProps) => {
         <TouchableOpacity
           style={styles.startSessionButton}
           onPress={startDrinkingSession}>
-          <Image
-            source={require('@assets/icons/plus.png')}
-            style={styles.startSessionImage}
-          />
+          <Image source={CONST.ICONS.PLUS} style={styles.startSessionImage} />
         </TouchableOpacity>
       )}
     </>

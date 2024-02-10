@@ -170,7 +170,7 @@ const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
           ) : editMode ? (
             <MenuIcon
               iconId="edit-session-icon"
-              iconSource={require('@assets/icons/edit.png')}
+              iconSource={CONST.ICONS.EDIT}
               containerStyle={[
                 styles.menuIconContainer,
                 session.blackout === true ? {backgroundColor: 'white'} : {},
@@ -236,10 +236,7 @@ const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
             sessionKey: newSessionKey,
           })
         }>
-        <Image
-          source={require('@assets/icons/plus.png')}
-          style={styles.addSessionImage}
-        />
+        <Image source={CONST.ICONS.PLUS} style={styles.addSessionImage} />
       </TouchableOpacity>
     );
   };
@@ -301,7 +298,7 @@ const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
       <View style={styles.dayOverviewFooter}>
         <MenuIcon
           iconId="navigate-day-back"
-          iconSource={require('@assets/icons/arrow_back.png')}
+          iconSource={CONST.ICONS.ARROW_BACK}
           containerStyle={styles.footerArrowContainer}
           iconStyle={[styles.dayArrowIcon, styles.previousDayArrow]}
           onPress={() => {
@@ -310,7 +307,7 @@ const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
         />
         <MenuIcon
           iconId="navigate-day-forward"
-          iconSource={require('@assets/icons/arrow_back.png')}
+          iconSource={CONST.ICONS.ARROW_BACK}
           containerStyle={styles.footerArrowContainer}
           iconStyle={[styles.dayArrowIcon, styles.nextDayArrow]}
           onPress={() => {

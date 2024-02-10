@@ -61,7 +61,7 @@ function ProfileImage(props: ProfileImageProps) {
   const imageSource: ImageSourcePropType =
     state.imageUrl && state.imageUrl !== CONST.NO_IMAGE
       ? {uri: state.imageUrl}
-      : require('@assets/temp/user.png');
+      : CONST.IMAGES.USER;
 
   const checkAvailableCache = async (url: string | null): Promise<boolean> => {
     if (downloadPath?.startsWith(CONST.LOCAL_IMAGE_PREFIX)) {

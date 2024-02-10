@@ -5,6 +5,7 @@ import {auth} from '@src/services/firebaseSetup';
 import {unfriend} from '@database/friends';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import ItemListPopup from '../ItemListPopup';
+import CONST from '@src/CONST';
 
 export type ManageFriendPopupProps = {
   visible: boolean;
@@ -28,7 +29,7 @@ const ManageFriendPopup: React.FC<ManageFriendPopupProps> = ({
   const manageFriendData = [
     {
       label: 'Unfriend',
-      icon: require('@assets/icons/remove-user.png'),
+      icon: CONST.ICONS.REMOVE_USER,
       action: () => {
         setVisibility(false);
         setUnfriendModalVisible(true);

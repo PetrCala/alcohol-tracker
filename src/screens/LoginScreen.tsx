@@ -24,6 +24,7 @@ import {handleErrors} from '../utils/errorHandling';
 import WarningMessage from '@components/Info/WarningMessage';
 import SuccessMessage from '@components/Info/SuccessMessage';
 import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
+import CONST from '@src/CONST';
 
 interface State {
   email: string;
@@ -143,10 +144,7 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
         <WarningMessage warningText={state.warning} dispatch={dispatch} />
         <SuccessMessage successText={state.success} dispatch={dispatch} />
         <View style={styles.logoContainer}>
-          <Image
-            source={require('@assets/logo/alcohol-tracker-source-icon.png')}
-            style={styles.logo}
-          />
+          <Image source={CONST.IMAGES.LOGO} style={styles.logo} />
         </View>
         <View style={styles.inputContainer}>
           <TextInput

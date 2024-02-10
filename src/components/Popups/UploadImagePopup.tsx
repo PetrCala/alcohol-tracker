@@ -39,7 +39,7 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
         <Text style={styles.modalText}>Upload finished!</Text>
         <View style={styles.uploadFinishedContainer}>
           <Image
-            source={require('@assets/icons/check.png')}
+            source={CONST.ICONS.CHECK}
             style={styles.uploadFinishedImage}
           />
         </View>

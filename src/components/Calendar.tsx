@@ -36,6 +36,7 @@ import {
   CalendarColors,
 } from '../types/components';
 import LoadingData from './LoadingData';
+import CONST from '@src/CONST';
 
 type SessionsCalendarProps = {
   drinkingSessionData: DrinkingSessionArrayItem[];
@@ -161,7 +162,7 @@ function CustomArrow(direction: string): ReactNode {
           : arrowStyles.rightContainer,
       ]}>
       <Image
-        source={require('@assets/icons/arrow_back.png')}
+        source={CONST.ICONS.ARROW_BACK}
         style={[
           arrowStyles.customArrowIcon,
           direction === 'left'

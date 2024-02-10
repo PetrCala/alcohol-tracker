@@ -20,6 +20,7 @@ import {
 import {removeFeedback} from '../../database/feedback';
 import {fetchNicknameByUID} from '../../database/baseFunctions';
 import {useFirebase} from '../../context/global/FirebaseContext';
+import CONST from '@src/CONST';
 
 const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
   const {visible, transparent, onRequestClose, feedbackData} = props;
@@ -91,7 +92,7 @@ const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
             onPress={() => handleDeleteFeedback(db, item.feedback_id)}
             style={styles.deleteFeedbackButton}>
             <Image
-              source={require('@assets/icons/remove.png')}
+              source={CONST.ICONS.REMOVE}
               style={styles.deleteFeedbackButtonImage}
             />
           </TouchableOpacity>

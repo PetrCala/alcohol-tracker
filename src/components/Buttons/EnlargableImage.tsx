@@ -10,6 +10,7 @@ import {
   Dimensions,
 } from 'react-native';
 import FullScreenModal from '@components/Modals/FullScreenModal';
+import CONST from '@src/CONST';
 
 type EnlargableImageProps = {
   imageSource: ImageSourcePropType;
@@ -52,10 +53,7 @@ const EnlargableImage: React.FC<EnlargableImageProps> = props => {
       </TouchableOpacity>
       <FullScreenModal visible={modalVisible}>
         <TouchableOpacity style={styles.modalButton} onPress={closeModal}>
-          <Image
-            source={require('@assets/icons/thin_x.png')}
-            style={styles.modalButtonImage}
-          />
+          <Image source={CONST.ICONS.THIN_X} style={styles.modalButtonImage} />
         </TouchableOpacity>
         <Animated.Image
           source={imageSource}

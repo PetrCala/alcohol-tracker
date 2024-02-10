@@ -8,6 +8,7 @@ import {
   sumUnitTypes,
 } from '../utils/dataHandling';
 import {UnitTypesKeys, UnitTypesProps, UnitsObject} from '../types/database';
+import CONST from '@src/CONST';
 
 const DrinkingSessionUnitWindow = ({
   unitKey,
@@ -56,10 +57,7 @@ const DrinkingSessionUnitWindow = ({
       <TouchableOpacity
         style={styles.adjustUnitsButton}
         onPress={() => handleRemoveUnits(unitKey, 1)}>
-        <Image
-          source={require('@assets/icons/minus.png')}
-          style={styles.adjustUnitsIcon}
-        />
+        <Image source={CONST.ICONS.MINUS} style={styles.adjustUnitsIcon} />
       </TouchableOpacity>
       <SessionUnitsInputWindow
         unitKey={unitKey}
@@ -73,10 +71,7 @@ const DrinkingSessionUnitWindow = ({
       <TouchableOpacity
         style={styles.adjustUnitsButton}
         onPress={() => handleAddUnits({[unitKey]: 1})}>
-        <Image
-          source={require('@assets/icons/plus.png')}
-          style={styles.adjustUnitsIcon}
-        />
+        <Image source={CONST.ICONS.PLUS} style={styles.adjustUnitsIcon} />
       </TouchableOpacity>
     </View>
   );

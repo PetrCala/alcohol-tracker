@@ -30,6 +30,7 @@ import {useFirebase} from '../context/global/FirebaseContext';
 import MainHeader from '@components/Header/MainHeader';
 import GrayHeader from '@components/Header/GrayHeader';
 import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
+import CONST from '@src/CONST';
 
 const MenuItem: React.FC<MainMenuItemProps> = ({heading, data, index}) => (
   <View key={index}>
@@ -196,17 +197,17 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
       data: [
         // {
         //     label: 'Settings',
-        //     icon: require('@assets/icons/settings.png'),
+        //     icon: CONST.ICONS.SETTINGS,
         //     action: () => navigation.navigate("Settings Screen")
         // },
         {
           label: 'Preferences',
-          icon: require('@assets/icons/settings.png'),
+          icon: CONST.ICONS.SETTINGS,
           action: () => navigation.navigate('Preferences Screen'),
         },
         {
           label: 'Legal and Policies',
-          icon: require('@assets/icons/book.png'),
+          icon: CONST.ICONS.BOOK,
           action: () => setPoliciesModalVisible(true),
         },
       ],
@@ -214,14 +215,14 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
     {
       heading: 'Feedback',
       data: [
-        {
-          label: 'Report a bug',
-          icon: require('@assets/icons/bug.png'),
-          action: () => console.log('Bug reporting'), // Throw an information window - not yet implemented
-        },
+        // {
+        //   label: 'Report a bug',
+        //   icon: CONST.ICONS.BUG,
+        //   action: () => console.log('Bug reporting'),
+        // },
         {
           label: 'Give us a feedback',
-          icon: require('@assets/icons/idea.png'),
+          icon: CONST.ICONS.IDEA,
           action: () => setFeedbackModalVisible(true),
         },
       ],
@@ -231,12 +232,12 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
       data: [
         {
           label: 'Sign out',
-          icon: require('@assets/icons/exit.png'),
+          icon: CONST.ICONS.EXIT,
           action: () => setSignoutModalVisible(true),
         },
         {
           label: 'Delete user',
-          icon: require('@assets/icons/delete.png'),
+          icon: CONST.ICONS.DELETE,
           action: () => setDeleteUserModalVisible(true),
         },
       ],
@@ -249,7 +250,7 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
       data: [
         {
           label: 'See feedback',
-          icon: require('@assets/icons/book.png'),
+          icon: CONST.ICONS.BOOK,
           action: () => {
             setAdminFeedbackModalVisible(true);
           },
@@ -261,7 +262,7 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
   let policiesData = [
     {
       label: 'Terms of service',
-      icon: require('@assets/icons/book.png'),
+      icon: CONST.ICONS.BOOK,
       action: () => {
         navigation.navigate('Terms Of Service Screen');
         setPoliciesModalVisible(false);
@@ -269,7 +270,7 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
     },
     {
       label: 'Privacy Policy',
-      icon: require('@assets/icons/book.png'),
+      icon: CONST.ICONS.BOOK,
       action: () => {
         navigation.navigate('Privacy Policy Screen');
         setPoliciesModalVisible(false);

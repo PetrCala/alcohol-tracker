@@ -28,7 +28,7 @@ const UnderMaintenance = ({config}: UnderMaintenanceProps) => {
     <View style={styles.container}>
       <Image
         style={styles.beaverImage}
-        source={require('@assets/images/under_maintenance.jpg')}
+        source={CONST.IMAGES.UNDER_MAINTENANCE}
       />
       <Text style={styles.heading}>Under maintenance</Text>
       <Text style={[styles.text, styles.messageText]}>

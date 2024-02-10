@@ -19,6 +19,7 @@ import {useFirebase} from '@src/context/global/FirebaseContext';
 import {SearchWindowRef} from '@src/types/search';
 import KeyboardFocusHandler from '@components/Keyboard/KeyboardFocusHandler';
 import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
+import CONST from '@src/CONST';
 
 type SearchWindowProps = {
   windowText: string;
@@ -87,7 +88,7 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
                 style={styles.searchTextResetContainer}>
                 <Image
                   style={styles.searchTextResetImage}
-                  source={require('@assets/icons/thin_x.png')}
+                  source={CONST.ICONS.THIN_X}
                 />
               </TouchableOpacity>
             ) : null}

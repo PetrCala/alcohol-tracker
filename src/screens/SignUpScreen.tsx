@@ -271,10 +271,7 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
       <View style={styles.mainContainer}>
         <WarningMessage warningText={state.warning} dispatch={dispatch} />
         <View style={styles.logoContainer}>
-          <Image
-            source={require('@assets/logo/alcohol-tracker-source-icon.png')}
-            style={styles.logo}
-          />
+          <Image source={CONST.IMAGES.LOGO} style={styles.logo} />
         </View>
         <View style={styles.inputContainer}>
           <TextInput

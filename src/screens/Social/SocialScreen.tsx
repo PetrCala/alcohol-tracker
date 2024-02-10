@@ -22,6 +22,7 @@ import {
 import MainHeader from '@components/Header/MainHeader';
 import {getReceivedRequestsCount} from '@src/utils/social/friendUtils';
 import {useIsFocused} from '@react-navigation/native';
+import CONST from '@src/CONST';
 
 type SocialFooterButtonProps = {
   index: number;
@@ -123,17 +124,17 @@ const SocialScreen = ({route, navigation}: SocialScreenProps) => {
   const footerButtons = [
     {
       index: 0,
-      source: require('@assets/icons/friend_list.png'),
+      source: CONST.ICONS.FRIEND_LIST,
       label: 'Friend List',
     },
     {
       index: 1,
-      source: require('@assets/icons/search.png'),
+      source: CONST.ICONS.SEARCH,
       label: 'Find New Friends',
     },
     {
       index: 2,
-      source: require('@assets/icons/add_user.png'),
+      source: CONST.ICONS.ADD_USER,
       label: 'Friend Requests',
       infoNumberValue: getReceivedRequestsCount(userData?.friend_requests),
     },

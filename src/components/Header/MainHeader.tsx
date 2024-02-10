@@ -3,6 +3,7 @@ import {Dimensions, StyleSheet, Text, View} from 'react-native';
 import MenuIcon from '../Buttons/MenuIcon';
 import commonStyles from '@src/styles/commonStyles';
 import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
+import CONST from '@src/CONST';
 
 type HeaderProps = {
   headerText: string;
@@ -20,7 +21,7 @@ const MainHeader: React.FC<HeaderProps> = ({
       <View style={commonStyles.headerContainer}>
         <MenuIcon
           iconId="header-icon"
-          iconSource={require('@assets/icons/arrow_back.png')}
+          iconSource={CONST.ICONS.ARROW_BACK}
           containerStyle={commonStyles.backArrowContainer}
           iconStyle={commonStyles.backArrow}
           onPress={() => onGoBack()}

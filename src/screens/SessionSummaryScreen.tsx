@@ -17,6 +17,7 @@ import BasicButton from '../components/Buttons/BasicButton';
 import {DrinkingSessionArrayItem} from '../types/database';
 import {getDatabaseData} from '../context/global/DatabaseDataContext';
 import MainHeader from '@components/Header/MainHeader';
+import CONST from '@src/CONST';
 
 const SessionDataItem = ({
   heading,
@@ -134,7 +135,7 @@ const SessionSummaryScreen = ({
           session.ongoing ? null : (
             <MenuIcon
               iconId="edit-session-icon"
-              iconSource={require('@assets/icons/edit.png')}
+              iconSource={CONST.ICONS.EDIT}
               containerStyle={styles.menuIconContainer}
               iconStyle={styles.menuIcon}
               onPress={() => onEditSessionPress(sessionKey, session)} // Use keyextractor to load id here
