@@ -28,7 +28,7 @@ const ManageFriendPopup: React.FC<ManageFriendPopupProps> = ({
   const manageFriendData = [
     {
       label: 'Unfriend',
-      icon: require('../../../../assets/icons/remove-user.png'),
+      icon: require('@assets/icons/remove-user.png'),
       action: () => {
         setVisibility(false);
         setUnfriendModalVisible(true);

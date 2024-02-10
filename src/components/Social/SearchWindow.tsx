@@ -87,7 +87,7 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
                 style={styles.searchTextResetContainer}>
                 <Image
                   style={styles.searchTextResetImage}
-                  source={require('../../../assets/icons/thin_x.png')}
+                  source={require('@assets/icons/thin_x.png')}
                 />
               </TouchableOpacity>
             ) : null}

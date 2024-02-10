@@ -57,7 +57,7 @@ const DrinkingSessionUnitWindow = ({
         style={styles.adjustUnitsButton}
         onPress={() => handleRemoveUnits(unitKey, 1)}>
         <Image
-          source={require('../../assets/icons/minus.png')}
+          source={require('@assets/icons/minus.png')}
           style={styles.adjustUnitsIcon}
         />
       </TouchableOpacity>
@@ -74,7 +74,7 @@ const DrinkingSessionUnitWindow = ({
         style={styles.adjustUnitsButton}
         onPress={() => handleAddUnits({[unitKey]: 1})}>
         <Image
-          source={require('../../assets/icons/plus.png')}
+          source={require('@assets/icons/plus.png')}
           style={styles.adjustUnitsIcon}
         />
       </TouchableOpacity>

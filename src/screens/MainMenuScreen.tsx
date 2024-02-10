@@ -196,17 +196,17 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
       data: [
         // {
         //     label: 'Settings',
-        //     icon: require('../../assets/icons/settings.png'),
+        //     icon: require('@assets/icons/settings.png'),
         //     action: () => navigation.navigate("Settings Screen")
         // },
         {
           label: 'Preferences',
-          icon: require('../../assets/icons/settings.png'),
+          icon: require('@assets/icons/settings.png'),
           action: () => navigation.navigate('Preferences Screen'),
         },
         {
           label: 'Legal and Policies',
-          icon: require('../../assets/icons/book.png'),
+          icon: require('@assets/icons/book.png'),
           action: () => setPoliciesModalVisible(true),
         },
       ],
@@ -216,12 +216,12 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
       data: [
         {
           label: 'Report a bug',
-          icon: require('../../assets/icons/bug.png'),
+          icon: require('@assets/icons/bug.png'),
           action: () => console.log('Bug reporting'), // Throw an information window - not yet implemented
         },
         {
           label: 'Give us a feedback',
-          icon: require('../../assets/icons/idea.png'),
+          icon: require('@assets/icons/idea.png'),
           action: () => setFeedbackModalVisible(true),
         },
       ],
@@ -231,12 +231,12 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
       data: [
         {
           label: 'Sign out',
-          icon: require('../../assets/icons/exit.png'),
+          icon: require('@assets/icons/exit.png'),
           action: () => setSignoutModalVisible(true),
         },
         {
           label: 'Delete user',
-          icon: require('../../assets/icons/delete.png'),
+          icon: require('@assets/icons/delete.png'),
           action: () => setDeleteUserModalVisible(true),
         },
       ],
@@ -249,7 +249,7 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
       data: [
         {
           label: 'See feedback',
-          icon: require('../../assets/icons/book.png'),
+          icon: require('@assets/icons/book.png'),
           action: () => {
             setAdminFeedbackModalVisible(true);
           },
@@ -261,7 +261,7 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
   let policiesData = [
     {
       label: 'Terms of service',
-      icon: require('../../assets/icons/book.png'),
+      icon: require('@assets/icons/book.png'),
       action: () => {
         navigation.navigate('Terms Of Service Screen');
         setPoliciesModalVisible(false);
@@ -269,7 +269,7 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
     },
     {
       label: 'Privacy Policy',
-      icon: require('../../assets/icons/book.png'),
+      icon: require('@assets/icons/book.png'),
       action: () => {
         navigation.navigate('Privacy Policy Screen');
         setPoliciesModalVisible(false);

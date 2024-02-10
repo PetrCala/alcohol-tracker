@@ -316,7 +316,7 @@ const MainScreen = ({navigation}: MainScreenProps) => {
           ]}>
           <MenuIcon
             iconId="social-icon"
-            iconSource={require('../../assets/icons/social.png')}
+            iconSource={require('@assets/icons/social.png')}
             containerStyle={styles.menuIconContainer}
             iconStyle={styles.menuIcon}
             onPress={() =>
@@ -325,7 +325,7 @@ const MainScreen = ({navigation}: MainScreenProps) => {
           />
           <MenuIcon
             iconId="achievement-icon"
-            iconSource={require('../../assets/icons/achievements.png')}
+            iconSource={require('@assets/icons/achievements.png')}
             containerStyle={styles.menuIconContainer}
             iconStyle={styles.menuIcon}
             onPress={() => navigation.navigate('Achievement Screen')}
@@ -338,14 +338,14 @@ const MainScreen = ({navigation}: MainScreenProps) => {
           ]}>
           <MenuIcon
             iconId="main-menu-popup-icon"
-            iconSource={require('../../assets/icons/statistics.png')}
+            iconSource={require('@assets/icons/statistics.png')}
             containerStyle={styles.menuIconContainer}
             iconStyle={styles.menuIcon}
             onPress={() => navigation.navigate('Statistics Screen')}
           />
           <MenuIcon
             iconId="main-menu-popup-icon"
-            iconSource={require('../../assets/icons/bar_menu.png')}
+            iconSource={require('@assets/icons/bar_menu.png')}
             containerStyle={styles.menuIconContainer}
             iconStyle={styles.menuIcon}
             onPress={() =>
@@ -362,7 +362,7 @@ const MainScreen = ({navigation}: MainScreenProps) => {
           style={styles.startSessionButton}
           onPress={startDrinkingSession}>
           <Image
-            source={require('../../assets/icons/plus.png')}
+            source={require('@assets/icons/plus.png')}
             style={styles.startSessionImage}
           />
         </TouchableOpacity>

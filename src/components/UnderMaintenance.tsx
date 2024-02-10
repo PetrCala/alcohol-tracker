@@ -28,7 +28,7 @@ const UnderMaintenance = ({config}: UnderMaintenanceProps) => {
     <View style={styles.container}>
       <Image
         style={styles.beaverImage}
-        source={require('../../assets/images/under_maintenance.jpg')}
+        source={require('@assets/images/under_maintenance.jpg')}
       />
       <Text style={styles.heading}>Under maintenance</Text>
       <Text style={[styles.text, styles.messageText]}>
@@ -75,14 +75,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   beaverImage: {
-    width:
-      screenWidth > screenHeight
-        ? screenHeight * 0.8
-        : screenWidth * 0.8,
-    height:
-      screenWidth > screenHeight
-        ? screenHeight * 0.8
-        : screenWidth * 0.8,
+    width: screenWidth > screenHeight ? screenHeight * 0.8 : screenWidth * 0.8,
+    height: screenWidth > screenHeight ? screenHeight * 0.8 : screenWidth * 0.8,
     aspectRatio: 1, // Maintain aspect ratio
     marginTop: -50,
     marginBottom: 30,

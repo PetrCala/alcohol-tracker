@@ -20,7 +20,7 @@ const MainHeader: React.FC<HeaderProps> = ({
       <View style={commonStyles.headerContainer}>
         <MenuIcon
           iconId="header-icon"
-          iconSource={require('../../../assets/icons/arrow_back.png')}
+          iconSource={require('@assets/icons/arrow_back.png')}
           containerStyle={commonStyles.backArrowContainer}
           iconStyle={commonStyles.backArrow}
           onPress={() => onGoBack()}

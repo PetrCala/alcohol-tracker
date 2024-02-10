@@ -69,7 +69,7 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
                     styles.tabArrow,
                     isExpanded ? styles.tabArrowExpanded : styles.tabArrowDefault
                 ]}
-                source={require('../../assets/icons/arrow_down.png')}
+                source={require('@assets/icons/arrow_down.png')}
                 />
             </TouchableOpacity> */}
       {/* {isExpanded ?

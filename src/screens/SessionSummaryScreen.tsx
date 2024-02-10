@@ -134,7 +134,7 @@ const SessionSummaryScreen = ({
           session.ongoing ? null : (
             <MenuIcon
               iconId="edit-session-icon"
-              iconSource={require('../../assets/icons/edit.png')}
+              iconSource={require('@assets/icons/edit.png')}
               containerStyle={styles.menuIconContainer}
               iconStyle={styles.menuIcon}
               onPress={() => onEditSessionPress(sessionKey, session)} // Use keyextractor to load id here

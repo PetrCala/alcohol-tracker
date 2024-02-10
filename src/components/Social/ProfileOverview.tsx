@@ -32,7 +32,7 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
         <View style={styles.editProfileButton}>
           <UploadImageComponent
             pathToUpload={`users/${userId}/profile/profile_image.jpg`}
-            imageSource={require('../../../assets/icons/camera.png')}
+            imageSource={require('@assets/icons/camera.png')}
             imageStyle={styles.editProfileButtonImage}
             isProfilePicture={true}
           />

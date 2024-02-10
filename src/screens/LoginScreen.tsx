@@ -144,7 +144,7 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
         <SuccessMessage successText={state.success} dispatch={dispatch} />
         <View style={styles.logoContainer}>
           <Image
-            source={require('../../assets/logo/alcohol-tracker-source-icon.png')}
+            source={require('@assets/logo/alcohol-tracker-source-icon.png')}
             style={styles.logo}
           />
         </View>

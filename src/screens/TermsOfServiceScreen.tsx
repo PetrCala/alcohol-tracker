@@ -18,7 +18,7 @@ const TermsOfServiceScreen = ({navigation}: TermsOfServiceScreenProps) => {
   const termsHtml =
     Platform.OS === 'android'
       ? {uri: 'file:///android_asset/html/terms-of-service.html'}
-      : require('../../assets/html/terms-of-service.html');
+      : require('@assets/html/terms-of-service.html');
 
   const handleStartLoadWithRequest = (request: any) => {
     // Check if the URL has "mailto:" scheme

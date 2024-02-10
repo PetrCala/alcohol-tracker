@@ -123,17 +123,17 @@ const SocialScreen = ({route, navigation}: SocialScreenProps) => {
   const footerButtons = [
     {
       index: 0,
-      source: require('../../../assets/icons/friend_list.png'),
+      source: require('@assets/icons/friend_list.png'),
       label: 'Friend List',
     },
     {
       index: 1,
-      source: require('../../../assets/icons/search.png'),
+      source: require('@assets/icons/search.png'),
       label: 'Find New Friends',
     },
     {
       index: 2,
-      source: require('../../../assets/icons/add_user.png'),
+      source: require('@assets/icons/add_user.png'),
       label: 'Friend Requests',
       infoNumberValue: getReceivedRequestsCount(userData?.friend_requests),
     },
