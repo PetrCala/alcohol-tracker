@@ -1,47 +1,75 @@
 import React, {useState, useRef} from 'react';
 import {
-  View,
   Image,
-  Modal,
   TouchableOpacity,
   Animated,
   ImageSourcePropType,
   StyleSheet,
   Dimensions,
+  LayoutChangeEvent,
 } from 'react-native';
 import FullScreenModal from '@components/Modals/FullScreenModal';
 import CONST from '@src/CONST';
+import {ImageLayout} from '@src/types/components';
+import commonStyles from '@src/styles/commonStyles';
 
 type EnlargableImageProps = {
   imageSource: ImageSourcePropType;
   imageStyle: any;
+  imageLayout: ImageLayout;
+  onImageLayout: (event: LayoutChangeEvent) => void;
 };
 
 const ScreenWidth = Dimensions.get('window').width;
 const ScreenHeight = Dimensions.get('window').height;
 
 const EnlargableImage: React.FC<EnlargableImageProps> = props => {
-  const {imageSource, imageStyle} = props;
+  const {imageSource, imageStyle, imageLayout, onImageLayout} = props;
   const [modalVisible, setModalVisible] = useState(false);
-  const initialValue = 0;
-  const finalValue = 1; // Use this to adjust the end scale
-  const animation = useRef(new Animated.Value(initialValue)).current;
+  const scaleAnimation = useRef(new Animated.Value(1)).current;
+  const positionAnimation = useRef(new Animated.ValueXY()).current;
+  const enlargedImageScale = ScreenWidth / imageStyle.width;
+  const headerHeight = commonStyles.headerContainer.height; // Assume always rendered with header visible
+
+  const handleOnLayout = (event: LayoutChangeEvent) => {
+    onImageLayout(event);
+    positionAnimation.setValue({
+      x: imageLayout.x,
+      y: imageLayout.y + headerHeight,
+    });
+  };
 
   const handlePress = () => {
     setModalVisible(true);
-    Animated.timing(animation, {
-      toValue: finalValue,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
+    // Animate scale and position simultaneously
+    Animated.parallel([
+      Animated.timing(scaleAnimation, {
+        toValue: enlargedImageScale,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(positionAnimation, {
+        toValue: {x: 0, y: ScreenHeight / 9}, // Move to center
+        duration: 300,
+        useNativeDriver: true,
+      }),
+    ]).start();
   };
 
   const closeModal = () => {
-    Animated.timing(animation, {
-      toValue: initialValue,
-      duration: 300,
-      useNativeDriver: true,
-    }).start(() => {
+    // Reverse the animation
+    Animated.parallel([
+      Animated.timing(scaleAnimation, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(positionAnimation, {
+        toValue: {x: imageLayout.x, y: imageLayout.y + headerHeight},
+        duration: 300,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
       setModalVisible(false);
     });
   };
@@ -49,45 +77,35 @@ const EnlargableImage: React.FC<EnlargableImageProps> = props => {
   return (
     <>
       <TouchableOpacity style={imageStyle} onPress={handlePress}>
-        <Image source={imageSource} style={imageStyle} />
+        <Image
+          onLayout={handleOnLayout}
+          source={imageSource}
+          style={imageStyle}
+        />
       </TouchableOpacity>
-      <FullScreenModal visible={modalVisible}>
-        <TouchableOpacity style={styles.modalButton} onPress={closeModal}>
-          <Image source={CONST.ICONS.THIN_X} style={styles.modalButtonImage} />
-        </TouchableOpacity>
+      <FullScreenModal visible={modalVisible} onClose={closeModal}>
         <Animated.Image
           source={imageSource}
-          style={[styles.enlargedImage, {transform: [{scale: animation}]}]}
+          style={[
+            imageStyle,
+            {
+              width: imageLayout.width,
+              height: imageLayout.height,
+              transform: [
+                {scaleX: scaleAnimation},
+                {scaleY: scaleAnimation},
+                {translateX: positionAnimation.x},
+                {translateY: positionAnimation.y},
+              ],
+              resizeMode: 'cover',
+              zIndex: 0,
+            },
+          ]}
         />
       </FullScreenModal>
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  mainView: {
-    flex: 1,
-    backgroundColor: 'black',
-  },
-  modalButton: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
-    top: 25,
-    right: 25,
-    zIndex: 1,
-  },
-  modalButtonImage: {
-    height: 30,
-    width: 30,
-    tintColor: '#F2F2F2',
-  },
-  enlargedImage: {
-    width: ScreenWidth,
-    height: ScreenHeight,
-    resizeMode: 'contain', // Fit the screen
-  },
-});
 
 export default EnlargableImage;
 export type {EnlargableImageProps};

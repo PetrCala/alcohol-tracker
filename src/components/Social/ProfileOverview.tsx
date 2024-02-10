@@ -1,15 +1,27 @@
-import {Dimensions, StyleSheet, Text, View} from 'react-native';
+import {
+  Dimensions,
+  LayoutChangeEvent,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import {ProfileData} from '../../types/database';
 import {useFirebase} from '../../context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
 import {auth} from '@src/services/firebaseSetup';
 import UploadImageComponent from '@components/UploadImage';
 import CONST from '@src/CONST';
+import {useState} from 'react';
+import {ImageLayout} from '@src/types/components';
 
 type ProfileOverviewProps = {
   userId: string;
   profileData: ProfileData;
 };
+
+const screenWidth = Dimensions.get('window').width;
+const profileImageSize = 110;
+const topOffset = 20; // Profile image offset from main container top
 
 const ProfileOverview: React.FC<ProfileOverviewProps> = ({
   userId,
@@ -17,6 +29,22 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
 }) => {
   const user = auth.currentUser;
   const storage = useFirebase().storage;
+  const [layout, setLayout] = useState<ImageLayout>({
+    x: 0,
+    y: topOffset,
+    width: 0,
+    height: 0,
+  });
+
+  const onLayout = (event: LayoutChangeEvent) => {
+    const layout = event.nativeEvent.layout;
+    setLayout({
+      x: layout.x,
+      y: layout.y + topOffset,
+      width: layout.width,
+      height: layout.height,
+    });
+  };
 
   return (
     <View style={styles.profileOverviewContainer}>
@@ -28,6 +56,8 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
         downloadPath={profileData.photo_url}
         style={styles.profileOverviewImage}
         enlargable={true}
+        layout={layout}
+        onLayout={onLayout}
       />
       {user?.uid === userId ? (
         <View style={styles.editProfileButton}>
@@ -52,9 +82,6 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
   );
 };
 
-const screenWidth = Dimensions.get('window').width;
-const profileImageSize = 110;
-
 const styles = StyleSheet.create({
   profileOverviewContainer: {
     width: screenWidth,
@@ -62,7 +89,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     padding: 5,
-    marginTop: 15,
+    marginTop: topOffset,
   },
   profileImageContainer: {
     height: profileImageSize,
@@ -77,15 +104,15 @@ const styles = StyleSheet.create({
     height: profileImageSize,
     borderRadius: profileImageSize / 2,
     backgroundColor: 'white',
-    top: 5,
     position: 'absolute',
+    top: 0, // Makes layout recognize the position
     zIndex: 1, // Ensure that the profile image is below the edit button
   },
   editProfileButton: {
     height: profileImageSize / 3,
     width: profileImageSize / 3,
     position: 'absolute',
-    top: profileImageSize / 2 + profileImageSize / 6,
+    top: profileImageSize / 2 + profileImageSize / 7,
     left: screenWidth / 2 + profileImageSize / 2 - profileImageSize / 3,
     justifyContent: 'center',
     alignItems: 'center',
@@ -106,7 +133,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'flex-start',
-    marginTop: 10,
+    marginTop: 5,
     padding: 5,
     textAlign: 'center',
   },

@@ -139,3 +139,10 @@ export type UploadImagePopupProps = {
   parentState: UploadImageState;
   parentDispatch: React.Dispatch<GeneralAction>;
 };
+
+export type ImageLayout = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};

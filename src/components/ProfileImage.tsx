@@ -4,6 +4,7 @@ import {
   Alert,
   Image,
   ImageSourcePropType,
+  LayoutChangeEvent,
   TouchableOpacity,
 } from 'react-native';
 import {FirebaseStorage} from 'firebase/storage';
@@ -11,6 +12,7 @@ import {getProfilePictureURL} from '@src/storage/storageProfile';
 import useProfileImageCache from '@hooks/useProfileImageCache';
 import CONST from '@src/CONST';
 import EnlargableImage from './Buttons/EnlargableImage';
+import {ImageLayout} from '@src/types/components';
 
 interface State {
   imageUrl: string | null;
@@ -49,10 +51,12 @@ type ProfileImageProps = {
   style: any;
   refreshTrigger?: number; // Likely a number, used to force a refresh
   enlargable?: boolean;
+  layout?: ImageLayout;
+  onLayout?: (event: LayoutChangeEvent) => void;
 };
 
 function ProfileImage(props: ProfileImageProps) {
-  const {storage, userId, downloadPath, style, refreshTrigger} = props;
+  const {storage, userId, downloadPath, style} = props;
   const [state, dispatch] = useReducer(reducer, initialState);
   const {cachedUrl, cacheImage, isCacheChecked} = useProfileImageCache(userId);
   const prevCachedUrl = useRef(cachedUrl); // Crucial
@@ -75,7 +79,7 @@ function ProfileImage(props: ProfileImageProps) {
       url &&
       url === prevCachedUrl.current &&
       downloadPath === initialDownloadPath.current && // Only if the download path has not changed
-      !refreshTrigger // Only if the refresh trigger is not set
+      !props.refreshTrigger // Only if the refresh trigger is not set
     ) {
       // Use cache if available and unchanged
       dispatch({type: 'SET_IMAGE_URL', payload: cachedUrl});
@@ -121,15 +125,23 @@ function ProfileImage(props: ProfileImageProps) {
 
     fetchImage();
     prevCachedUrl.current = cachedUrl;
-  }, [downloadPath, cachedUrl, isCacheChecked, refreshTrigger]);
+  }, [downloadPath, cachedUrl, isCacheChecked, props.refreshTrigger]);
 
   if (state.loadingImage)
     return <ActivityIndicator size="large" color="#0000ff" style={style} />;
-
-  return props.enlargable ? (
-    <EnlargableImage imageSource={imageSource} imageStyle={style} />
-  ) : (
-    <Image source={imageSource} style={style} />
+  if (!props.enlargable) {
+    return <Image source={imageSource} style={style} />;
+  }
+  if (!props.layout || !props.onLayout) {
+    return;
+  }
+  return (
+    <EnlargableImage
+      imageSource={imageSource}
+      imageStyle={style}
+      imageLayout={props.layout}
+      onImageLayout={props.onLayout}
+    />
   );
 }
 
