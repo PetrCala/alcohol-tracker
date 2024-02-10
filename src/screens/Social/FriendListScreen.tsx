@@ -32,12 +32,14 @@ import {
 } from '@src/services/algorithms/displayPriority';
 import {UsersPriority} from '@src/types/algorithms';
 import FillerView from '@components/FillerView';
+import PressableWithAnimation from '@components/Buttons/PressableWithAnimation';
 
 interface State {
   searching: boolean;
   friendsToDisplay: UserSearchResults;
   usersPriority: UsersPriority;
   displayArray: string[]; // Main array to display
+  scrolling: boolean;
 }
 
 const initialState: State = {
@@ -45,6 +47,7 @@ const initialState: State = {
   friendsToDisplay: [],
   usersPriority: {},
   displayArray: [],
+  scrolling: false,
 };
 
 const reducer = (state: State, action: GeneralAction): State => {
@@ -57,6 +60,8 @@ const reducer = (state: State, action: GeneralAction): State => {
       return {...state, usersPriority: action.payload};
     case 'SET_DISPLAY_ARRAY':
       return {...state, displayArray: action.payload};
+    case 'SET_SCROLLING':
+      return {...state, scrolling: action.payload};
     default:
       return state;
   }
@@ -133,6 +138,8 @@ const FriendListScreen = (props: FriendListScreenProps) => {
 
   if (!navigation) return null;
 
+  console.log(state.scrolling);
+
   return (
     <View style={styles.mainContainer}>
       <SearchWindow
@@ -144,8 +151,14 @@ const FriendListScreen = (props: FriendListScreenProps) => {
       />
       <ScrollView
         style={styles.scrollViewContainer}
-        onScrollBeginDrag={Keyboard.dismiss}
-        keyboardShouldPersistTaps="handled">
+        onScrollBeginDrag={() => {
+          Keyboard.dismiss;
+          dispatch({type: 'SET_SCROLLING', payload: true});
+        }}
+        keyboardShouldPersistTaps="handled"
+        onScrollEndDrag={() =>
+          dispatch({type: 'SET_SCROLLING', payload: false})
+        }>
         {loadingDisplayData ? (
           <LoadingData style={styles.loadingContainer} />
         ) : friends ? (
@@ -156,7 +169,7 @@ const FriendListScreen = (props: FriendListScreenProps) => {
                 const userStatusData = userStatusDisplayData[friendId];
 
                 return (
-                  <TouchableOpacity
+                  <PressableWithAnimation
                     key={friendId + '-button'}
                     style={styles.friendOverviewButton}
                     onPress={() => navigateToProfile(friendId, profileData)}>
@@ -166,7 +179,7 @@ const FriendListScreen = (props: FriendListScreenProps) => {
                       profileData={profileData}
                       userStatusData={userStatusData}
                     />
-                  </TouchableOpacity>
+                  </PressableWithAnimation>
                 );
               })
             ) : (
