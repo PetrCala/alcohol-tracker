@@ -23,6 +23,13 @@ const CONST = {
   EMPTY_ARRAY,
   EMPTY_OBJECT,
   FIREBASE_STORAGE_URL: 'https://firebasestorage.googleapis.com',
+  FRIEND_REQUEST_STATUS: {
+    SELF: 'self',
+    SENT: 'sent',
+    RECEIVED: 'received',
+    FRIEND: 'friend',
+    UNDEFINED: 'undefined',
+  },
   ICONS: {
     ACHIEVEMENTS: require('@assets/icons/achievements.png'),
     ADD_IMAGE: require('@assets/icons/add-image.png'), //

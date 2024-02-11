@@ -24,6 +24,7 @@ import {fetchUserProfiles} from '@database/profile';
 import headerStyles from '@src/styles/headerStyles';
 import GrayHeader from '@components/Header/GrayHeader';
 import {objKeys} from '@src/utils/dataHandling';
+import CONST from '@src/CONST';
 
 type FriendRequestButtonsProps = {
   requestId: string;
@@ -130,12 +131,12 @@ const FriendRequestComponent: React.FC<FriendRequestComponentProps> = ({
   requestStatus,
   requestId,
 }) => {
-  return requestStatus === 'received' ? (
+  return requestStatus === CONST.FRIEND_REQUEST_STATUS.RECEIVED ? (
     <FriendRequestButtons
       key={requestId + '-friend-request-buttons'}
       requestId={requestId}
     />
-  ) : requestStatus === 'sent' ? (
+  ) : requestStatus === CONST.FRIEND_REQUEST_STATUS.SENT ? (
     <FriendRequestPending
       key={requestId + '-friend-request-pending'}
       requestId={requestId}
@@ -237,9 +238,11 @@ const FriendRequestScreen = (props: ScreenProps) => {
     const newRequestsReceived: string[] = [];
     if (friendRequests) {
       Object.keys(friendRequests).forEach(requestId => {
-        if (friendRequests[requestId] === 'sent') {
+        if (friendRequests[requestId] === CONST.FRIEND_REQUEST_STATUS.SENT) {
           newRequestsSent.push(requestId);
-        } else if (friendRequests[requestId] === 'received') {
+        } else if (
+          friendRequests[requestId] === CONST.FRIEND_REQUEST_STATUS.RECEIVED
+        ) {
           newRequestsReceived.push(requestId);
         }
       });

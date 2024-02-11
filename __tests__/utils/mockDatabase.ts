@@ -17,7 +17,7 @@ import {
   UnconfirmedDays,
   Units,
   UnitsToColors,
-  User,
+  UserProps,
   UserStatus,
   UnitsToPoints,
 } from '../../src/types/database';
@@ -30,6 +30,7 @@ import {
 import {cleanStringForFirebaseKey} from '../../src/utils/strings';
 import {MOCK_SESSION_IDS, MOCK_USER_IDS} from './testsStatic';
 import {UnitsList} from '../../src/types/database';
+import CONST from '@src/CONST';
 
 /**
  * Creates a mock app settings object.
@@ -261,7 +262,9 @@ export function createMockUnconfirmedDays(): UnconfirmedDays {
  */
 export function createMockFriendRequests(userId: string): FriendRequestList {
   let mockRequestData: FriendRequestList = {};
-  const statuses: FriendRequestStatus[] = ['sent', 'received'];
+  const statuses: FriendRequestStatus[] = Object.values(
+    CONST.FRIEND_REQUEST_STATUS,
+  );
   for (let mockId of MOCK_USER_IDS) {
     if (mockId === userId) {
       continue; // Skip self
@@ -283,12 +286,12 @@ export function createMockUserData(
   userId: string,
   index: number,
   noFriends: boolean = false,
-): User {
+): UserProps {
   let mockProfile: Profile = {
     display_name: 'mock-user',
     photo_url: '',
   };
-  const mockUserData: User = {
+  const mockUserData: UserProps = {
     profile: mockProfile,
     role: 'mock-user',
     beta_key_id: index + 1,

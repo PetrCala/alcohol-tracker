@@ -4,10 +4,10 @@ import {
   FriendRequestStatus,
   FriendList,
   FriendArray,
-  FriendRequestArray,
 } from '@src/types/database';
 import {Database} from 'firebase/database';
 import {isNonEmptyArray} from '../validation';
+import CONST from '@src/CONST';
 
 export async function fetchUserFriends(
   db: Database,
@@ -70,13 +70,13 @@ const getFriendRequestsCount = (
 export const getReceivedRequestsCount = (
   friendRequests: FriendRequestList | FriendRequestList | undefined,
 ): number => {
-  const status: FriendRequestStatus = 'received';
+  const status: FriendRequestStatus = CONST.FRIEND_REQUEST_STATUS.RECEIVED;
   return getFriendRequestsCount(friendRequests, status);
 };
 
 export const getSentRequestsCount = (
   friendRequests: FriendRequestList | FriendRequestList | undefined,
 ): number => {
-  const status: FriendRequestStatus = 'sent';
+  const status: FriendRequestStatus = CONST.FRIEND_REQUEST_STATUS.SENT;
   return getFriendRequestsCount(friendRequests, status);
 };

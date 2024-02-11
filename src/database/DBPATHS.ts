@@ -25,7 +25,7 @@ const DBPATHS = {
     getRoute: (nicknameKey: NicknameKey) =>
       `nickname_to_id/${nicknameKey}` as const,
   },
-  NICKNAME_TO_ID_USER_ID: {
+  NICKNAME_TO_ID_NICKNAME_KEY_USER_ID: {
     route: '/nickname_to_id/:key/:user_id',
     getRoute: (key: NicknameKey, user_id: UserId) =>
       `nickname_to_id/${key}/${user_id}` as const,

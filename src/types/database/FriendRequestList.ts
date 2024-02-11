@@ -1,9 +1,7 @@
-type FriendRequestStatus =
-  | 'self'
-  | 'sent'
-  | 'received'
-  | 'friend'
-  | 'undefined';
+import CONST from '@src/CONST';
+import {ValueOf} from 'type-fest';
+
+type FriendRequestStatus = ValueOf<(typeof CONST)['FRIEND_REQUEST_STATUS']>;
 
 type FriendRequestId = string;
 

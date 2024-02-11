@@ -26,6 +26,7 @@ import {
   SAMPLE_UNITS_TO_COLORS,
   SAMPLE_UNITS_TO_POINTS,
 } from '../../utils/testsStatic';
+import CONST from '@src/CONST';
 
 const projectId = process.env.TEST_PROJECT_ID;
 if (!projectId) throw new Error(`Missing environment variable ${projectId}.`);
@@ -443,8 +444,8 @@ describeWithEmulator('Test friend request rules', () => {
   let authDb: any;
   let unauthDb: any;
   let adminDb: any;
-  let sentFriendRequest: string = 'sent';
-  let receivedFriendRequest: string = 'received';
+  let sentFriendRequest: string = CONST.FRIEND_REQUEST_STATUS.SENT;
+  let receivedFriendRequest: string = CONST.FRIEND_REQUEST_STATUS.RECEIVED;
   setupGlobalMocks(); // Silence permission denied warnings
 
   beforeAll(async () => {

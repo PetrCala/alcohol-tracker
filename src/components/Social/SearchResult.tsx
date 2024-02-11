@@ -5,6 +5,7 @@ import ProfileImage from '@components/ProfileImage';
 import {FirebaseStorage} from 'firebase/storage';
 import React from 'react';
 import {FriendRequestStatus, Profile} from '@src/types/database';
+import CONST from '@src/CONST';
 
 const statusToTextMap: {[key in FriendRequestStatus]: string} = {
   self: 'You',
@@ -70,9 +71,9 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
         <Text style={styles.sendFriendRequestText}>
           {statusToTextMap.friend}
         </Text>
-      ) : requestStatus === 'sent' ? (
+      ) : requestStatus === CONST.FRIEND_REQUEST_STATUS.SENT ? (
         <Text style={styles.sendFriendRequestText}>{statusToTextMap.sent}</Text>
-      ) : requestStatus === 'received' ? (
+      ) : requestStatus === CONST.FRIEND_REQUEST_STATUS.RECEIVED ? (
         <TouchableOpacity
           style={styles.sendFriendRequestButton}
           onPress={() => handleAcceptFriendRequestPress(db, userFrom, userTo)}>

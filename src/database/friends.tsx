@@ -1,4 +1,6 @@
-﻿import {Database, ref, get, update} from 'firebase/database';
+﻿import CONST from '@src/CONST';
+import {FriendRequestStatus} from '@src/types/database';
+import {Database, ref, get, update} from 'firebase/database';
 
 /**
  * Check if userB is in userA's friend list.
@@ -36,9 +38,11 @@ export async function sendFriendRequest(
   userFrom: string,
   userTo: string,
 ): Promise<void> {
-  var updates: {[requestId: string]: string} = {};
-  updates[`users/${userFrom}/friend_requests/${userTo}`] = 'sent';
-  updates[`users/${userTo}/friend_requests/${userFrom}`] = 'received';
+  var updates: {[requestId: string]: FriendRequestStatus} = {};
+  updates[`users/${userFrom}/friend_requests/${userTo}`] =
+    CONST.FRIEND_REQUEST_STATUS.SENT;
+  updates[`users/${userTo}/friend_requests/${userFrom}`] =
+    CONST.FRIEND_REQUEST_STATUS.RECEIVED;
   await update(ref(db), updates);
 }
 
@@ -78,7 +82,7 @@ export async function acceptFriendRequest(
   userFrom: string,
   userTo: string,
 ): Promise<void> {
-  var updates: {[requestId: string]: string | boolean | null} = {};
+  var updates: {[requestId: string]: boolean | null} = {};
   updates[`users/${userFrom}/friend_requests/${userTo}`] = null;
   updates[`users/${userTo}/friend_requests/${userFrom}`] = null;
   updates[`users/${userFrom}/friends/${userTo}`] = true;
