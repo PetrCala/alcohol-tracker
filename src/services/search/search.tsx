@@ -1,8 +1,11 @@
 ﻿import {Database, ref, get} from 'firebase/database';
-import {NicknameToIdData} from '@src/types/database';
 import {cleanStringForFirebaseKey} from '@src/utils/strings';
 import {QUIRKY_NICKNAMES} from '@src/utils/QuirkyNicknames';
-import {UserIdToNicknameMapping, UserSearchResults} from '@src/types/search';
+import {
+  UserIdToNicknameMapping,
+  UserSearchResults,
+} from '@src/types/various/Search';
+import {NicknameToId} from '@src/types/database';
 
 /**
  * Using a database object and a nickname to search,
@@ -18,7 +21,7 @@ import {UserIdToNicknameMapping, UserSearchResults} from '@src/types/search';
 export async function searchDbByNickname(
   db: Database,
   searchText: string,
-): Promise<NicknameToIdData | null> {
+): Promise<NicknameToId | null> {
   const nicknameKey = cleanStringForFirebaseKey(searchText);
   const dbRef = ref(db, `nickname_to_id/${nicknameKey}`);
   const snapshot = await get(dbRef);

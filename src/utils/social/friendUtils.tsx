@@ -1,9 +1,10 @@
 import {readDataOnce} from '@database/baseFunctions';
 import {
-  FriendRequestData,
-  FriendRequestDisplayData,
+  FriendRequestList,
   FriendRequestStatus,
-  FriendsData,
+  FriendList,
+  FriendArray,
+  FriendRequestArray,
 } from '@src/types/database';
 import {Database} from 'firebase/database';
 import {isNonEmptyArray} from '../validation';
@@ -11,7 +12,7 @@ import {isNonEmptyArray} from '../validation';
 export async function fetchUserFriends(
   db: Database,
   userId: string,
-): Promise<FriendsData | null> {
+): Promise<FriendList | null> {
   return await readDataOnce(db, `users/${userId}/friends`);
 }
 
@@ -22,10 +23,10 @@ export async function fetchUserFriends(
  * @returns An array of common friends.
  */
 export function getCommonFriends(
-  user1FriendIds: string[],
-  user2FriendIds: string[],
-): string[] {
-  let commonFriends: string[] = [];
+  user1FriendIds: FriendArray,
+  user2FriendIds: FriendArray,
+): FriendArray {
+  let commonFriends: FriendArray = [];
   if (!isNonEmptyArray(user1FriendIds) && !isNonEmptyArray(user2FriendIds)) {
     return commonFriends;
   }
@@ -42,8 +43,8 @@ export function getCommonFriends(
  * @returns The number of common friends.
  */
 export function getCommonFriendsCount(
-  user1FriendIds: string[],
-  user2FriendIds: string[],
+  user1FriendIds: FriendArray,
+  user2FriendIds: FriendArray,
 ): number {
   return getCommonFriends(user1FriendIds, user2FriendIds).length;
 }
@@ -56,7 +57,7 @@ export function getCommonFriendsCount(
  * @returns The count of friend requests with the specified status.
  */
 const getFriendRequestsCount = (
-  friendRequests: FriendRequestDisplayData | FriendRequestData | undefined,
+  friendRequests: FriendRequestList | FriendRequestList | undefined,
   requestStatus: FriendRequestStatus,
 ): number => {
   if (!friendRequests) return 0;
@@ -67,14 +68,14 @@ const getFriendRequestsCount = (
 };
 
 export const getReceivedRequestsCount = (
-  friendRequests: FriendRequestDisplayData | FriendRequestData | undefined,
+  friendRequests: FriendRequestList | FriendRequestList | undefined,
 ): number => {
   const status: FriendRequestStatus = 'received';
   return getFriendRequestsCount(friendRequests, status);
 };
 
 export const getSentRequestsCount = (
-  friendRequests: FriendRequestDisplayData | FriendRequestData | undefined,
+  friendRequests: FriendRequestList | FriendRequestList | undefined,
 ): number => {
   const status: FriendRequestStatus = 'sent';
   return getFriendRequestsCount(friendRequests, status);

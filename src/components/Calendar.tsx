@@ -3,7 +3,6 @@
   useState,
   useMemo,
   useCallback,
-  forwardRef,
   ReactNode,
 } from 'react';
 import {
@@ -23,35 +22,36 @@ import {
   aggregateSessionsByDays,
   monthEntriesToColors,
   hasDecimalPoint,
-} from '../utils/dataHandling';
-import {
-  DrinkingSessionArrayItem,
-  DrinkingSessionData,
-  PreferencesData,
-} from '../types/database';
-import {
-  DateObject,
-  DayState,
-  DayMarking,
-  CalendarColors,
-} from '../types/components';
+} from '@utils/dataHandling';
+import {DateObject} from '@src/types/time';
 import LoadingData from './LoadingData';
 import CONST from '@src/CONST';
+import {DrinkingSessionArray, Preferences} from '@src/types/database';
+
+type DayMarking = {
+  units?: number;
+  color?: CalendarColors;
+  textColor?: string;
+};
+
+type CalendarColors = 'yellow' | 'red' | 'orange' | 'black' | 'green';
+
+type DayState = 'selected' | 'disabled' | 'today' | '';
 
 type SessionsCalendarProps = {
-  drinkingSessionData: DrinkingSessionArrayItem[];
-  preferences: PreferencesData;
+  drinkingSessionData: DrinkingSessionArray;
+  preferences: Preferences;
   visibleDateObject: DateObject;
   dispatch: React.Dispatch<any>;
   // setVisibleDateObject: React.Dispatch<React.SetStateAction<DateObject>>;
   onDayPress: (day: any) => void;
 };
 
-export type SessionsCalendarMarkedDates = {
+type SessionsCalendarMarkedDates = {
   [date: string]: DayMarking;
 };
 
-export type SessionsCalendarDatesType = {
+type SessionsCalendarDatesType = {
   [key: string]: {
     units: number;
     blackout: boolean;
@@ -183,15 +183,15 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
   onDayPress,
 }) => {
   const [calendarData, setCalendarData] =
-    useState<DrinkingSessionArrayItem[]>(drinkingSessionData);
+    useState<DrinkingSessionArray>(drinkingSessionData);
   const [markedDates, setMarkedDates] = useState<SessionsCalendarMarkedDates>(
     {},
   );
   const [loadingMarkedDates, setLoadingMarkedDays] = useState<boolean>(true);
 
   const getMarkedDates = (
-    drinkingSessionData: DrinkingSessionArrayItem[],
-    preferences: PreferencesData,
+    drinkingSessionData: DrinkingSessionArray,
+    preferences: Preferences,
   ): SessionsCalendarMarkedDates => {
     // Use points to calculate the point sum (flagged as units)
     var aggergatedSessions = aggregateSessionsByDays(
@@ -290,8 +290,6 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
   );
 };
 
-export default SessionsCalendar;
-
 const screenWidth = Dimensions.get('window').width;
 
 const arrowStyles = StyleSheet.create({
@@ -376,3 +374,12 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
 });
+
+export default SessionsCalendar;
+export type {
+  DayMarking,
+  CalendarColors,
+  DayState,
+  SessionsCalendarDatesType,
+  SessionsCalendarMarkedDates,
+};

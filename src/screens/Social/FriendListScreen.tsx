@@ -8,17 +8,16 @@
   TouchableOpacity,
   View,
 } from 'react-native';
-import {ProfileData} from '../../types/database';
 import LoadingData from '../../components/LoadingData';
 import UserOverview from '@components/Social/UserOverview';
-import useProfileDisplayData from '@hooks/useProfileDisplayData';
+import useProfileList from '@hooks/useProfileList';
 import SearchWindow from '@components/Social/SearchWindow';
 import {
   SearchWindowRef,
   UserIdToNicknameMapping,
   UserSearchResults,
-} from '@src/types/search';
-import {GeneralAction} from '@src/types/states';
+} from '@src/types/various/Search';
+import GeneralAction from '@src/types/various/GeneralAction';
 import {useMemo, useReducer, useRef} from 'react';
 import {objKeys} from '@src/utils/dataHandling';
 import {isNonEmptyArray} from '@src/utils/validation';
@@ -30,9 +29,10 @@ import {
   calculateAllUsersPriority,
   orderUsersByPriority,
 } from '@src/services/algorithms/displayPriority';
-import {UsersPriority} from '@src/types/algorithms';
+import {UsersPriority} from '@src/types/various/Algorithms';
 import FillerView from '@components/FillerView';
 import PressableWithAnimation from '@components/Buttons/PressableWithAnimation';
+import {Profile} from '@src/types/database/UserProps';
 
 interface State {
   searching: boolean;
@@ -69,8 +69,8 @@ const reducer = (state: State, action: GeneralAction): State => {
 
 const FriendListScreen = (props: FriendListScreenProps) => {
   const {navigation, friends, setIndex} = props;
-  const {loadingDisplayData, profileDisplayData, userStatusDisplayData} =
-    useProfileDisplayData(friends);
+  const {loadingDisplayData, profileList, userStatusList} =
+    useProfileList(friends);
   const friendListInputRef = useRef<SearchWindowRef>(null);
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -78,7 +78,7 @@ const FriendListScreen = (props: FriendListScreenProps) => {
     try {
       dispatch({type: 'SET_SEARCHING', payload: true});
       let searchMapping: UserIdToNicknameMapping = getNicknameMapping(
-        profileDisplayData,
+        profileList,
         'display_name',
       );
       let relevantResults = searchArrayByText(
@@ -102,10 +102,7 @@ const FriendListScreen = (props: FriendListScreenProps) => {
     dispatch({type: 'SET_DISPLAYED_FRIENDS', payload: objKeys(friends)});
   };
 
-  const navigateToProfile = (
-    friendId: string,
-    profileData: ProfileData,
-  ): void => {
+  const navigateToProfile = (friendId: string, profileData: Profile): void => {
     navigation.navigate('Profile Screen', {
       userId: friendId,
       profileData: profileData,
@@ -118,10 +115,10 @@ const FriendListScreen = (props: FriendListScreenProps) => {
 
   useMemo(() => {
     let friendsArray = objKeys(friends);
-    if (userStatusDisplayData) {
+    if (userStatusList) {
       let newUsersPriority: UsersPriority = calculateAllUsersPriority(
         friendsArray,
-        userStatusDisplayData,
+        userStatusList,
       );
       dispatch({type: 'SET_USERS_PRIORITY', payload: newUsersPriority});
     }
@@ -137,8 +134,6 @@ const FriendListScreen = (props: FriendListScreenProps) => {
   }, [state.friendsToDisplay]);
 
   if (!navigation) return null;
-
-  console.log(state.scrolling);
 
   return (
     <View style={styles.mainContainer}>
@@ -165,8 +160,8 @@ const FriendListScreen = (props: FriendListScreenProps) => {
           <View style={styles.friendList}>
             {isNonEmptyArray(state.displayArray) ? (
               state.displayArray.map((friendId: string) => {
-                const profileData = profileDisplayData[friendId];
-                const userStatusData = userStatusDisplayData[friendId];
+                const profileData = profileList[friendId];
+                const userStatusData = userStatusList[friendId];
 
                 return (
                   <PressableWithAnimation

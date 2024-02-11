@@ -1,7 +1,14 @@
-﻿import {ImageSourcePropType, StyleSheet, Text, View} from 'react-native';
-import {UnitTypesKeys} from '../types/database';
-import {UnitTypesViewProps} from '../types/components';
+﻿import {StyleSheet, Text, View} from 'react-native';
 import DrinkingSessionUnitWindow from './DrinkingSessionUnitWindow';
+import {UnitsList} from '@src/types/database';
+import DrinkDataProps from '@src/types/various/DrinkDataProps';
+
+export type UnitTypesViewProps = {
+  drinkData: DrinkDataProps;
+  currentUnits: UnitsList;
+  setCurrentUnits: React.Dispatch<React.SetStateAction<UnitsList>>;
+  availableUnits: number;
+};
 
 const UnitTypesView = ({
   drinkData,

@@ -6,11 +6,7 @@
   Text,
   View,
 } from 'react-native';
-import {
-  FriendRequestStatusState,
-  ProfileDisplayData,
-  ProfileData,
-} from '@src/types/database';
+import {FriendRequestStatus, ProfileList} from '@src/types/database';
 import {useEffect, useMemo, useReducer, useRef} from 'react';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import {auth} from '@src/services/firebaseSetup';
@@ -21,15 +17,15 @@ import {searchDatabaseForUsers} from '@src/services/search/search';
 import {fetchUserProfiles} from '@database/profile';
 import SearchResult from '@components/Social/SearchResult';
 import SearchWindow from '@components/Social/SearchWindow';
-import {SearchWindowRef, UserSearchResults} from '@src/types/search';
+import {SearchWindowRef, UserSearchResults} from '@src/types/various/Search';
 import {SearchScreenProps} from '@src/types/screens';
 
 interface State {
   searchResultData: UserSearchResults;
   searching: boolean;
-  requestStatuses: {[userId: string]: FriendRequestStatusState | undefined};
+  requestStatuses: {[userId: string]: FriendRequestStatus | undefined};
   noUsersFound: boolean;
-  displayData: ProfileDisplayData;
+  displayData: ProfileList;
 }
 
 interface Action {
@@ -92,7 +88,7 @@ const SearchScreen = (props: SearchScreenProps) => {
   const updateDisplayData = async (
     searchResultData: UserSearchResults,
   ): Promise<void> => {
-    let newDisplayData: ProfileDisplayData = await fetchUserProfiles(
+    let newDisplayData: ProfileList = await fetchUserProfiles(
       db,
       searchResultData,
     );
@@ -107,7 +103,7 @@ const SearchScreen = (props: SearchScreenProps) => {
     searchResultData: UserSearchResults = state.searchResultData,
   ): void => {
     let newRequestStatuses: {
-      [userId: string]: FriendRequestStatusState;
+      [userId: string]: FriendRequestStatus;
     } = {};
     searchResultData.forEach(userId => {
       if (friendRequests && friendRequests[userId]) {

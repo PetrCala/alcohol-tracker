@@ -1,5 +1,5 @@
 ﻿import {Database, get, ref, child, push, onValue, off} from 'firebase/database';
-import {DisplayData, ProfileData, ProfileDisplayData} from '../types/database';
+import {Profile, ProfileList, UserStatusList} from '@src/types/database';
 
 /** Read data once from the realtime database using get(). Return the data if it exists.
  *
@@ -91,7 +91,7 @@ export function fetchDataForUsers(
   db: Database,
   userIds: string[],
   refTemplate: string,
-): Promise<ProfileData[]> {
+): Promise<Profile[]> {
   if (!userIds || userIds.length === 0) return Promise.resolve([]);
   if (!refTemplate.includes('{userId}'))
     throw new Error('Invalid ref template');
@@ -112,8 +112,8 @@ export async function fetchDisplayDataForUsers(
   db: Database | undefined,
   userIds: string[],
   refTemplate: string,
-): Promise<DisplayData> {
-  const newDisplayData: ProfileDisplayData = {};
+): Promise<ProfileList | UserStatusList> {
+  const newDisplayData: ProfileList = {};
   if (db && userIds) {
     const data: any[] = await fetchDataForUsers(db, userIds, refTemplate);
     userIds.forEach((id, index) => {

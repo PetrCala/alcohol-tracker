@@ -6,26 +6,26 @@ import {
   useEffect,
   useReducer,
 } from 'react';
-import {
-  DrinkingSessionArrayItem,
-  DrinkingSessionData,
-  PreferencesData,
-  UnconfirmedDaysData,
-  UserData,
-  UserStatusData,
-} from '../../types/database';
 import {auth} from '../../services/firebaseSetup';
 import {listenForDataChanges} from '../../database/baseFunctions';
 import {isEqual} from 'lodash';
 import {useFirebase} from './FirebaseContext';
+import {
+  DrinkingSessionArray,
+  DrinkingSessionList,
+  Preferences,
+  UnconfirmedDays,
+  User,
+  UserStatus,
+} from '@src/types/database';
 
 type DatabaseDataContextType = {
-  userStatusData: UserStatusData | null;
-  drinkingSessionData: DrinkingSessionArrayItem[];
+  userStatusData: UserStatus | null;
+  drinkingSessionData: DrinkingSessionArray;
   drinkingSessionKeys: string[];
-  preferences: PreferencesData | null;
-  unconfirmedDays: UnconfirmedDaysData | null;
-  userData: UserData | null;
+  preferences: Preferences | null;
+  unconfirmedDays: UnconfirmedDays | null;
+  userData: User | null;
   isLoading: boolean;
 };
 
@@ -118,7 +118,7 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
     let stopListening = listenForDataChanges(
       db,
       userRef,
-      (data: UserStatusData) => {
+      (data: UserStatus) => {
         dispatch({type: 'SET_USER_STATUS_DATA', payload: data});
         dispatch({type: 'SET_LOADING_USER_STATUS_DATA', payload: false});
       },
@@ -131,13 +131,13 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
   useEffect(() => {
     if (!user || !db) return;
     // Start listening for changes when the component mounts
-    let newData: DrinkingSessionArrayItem[];
+    let newData: DrinkingSessionArray;
     let newKeys: string[];
     let sessionsRef = `user_drinking_sessions/${user.uid}`;
     let stopListening = listenForDataChanges(
       db,
       sessionsRef,
-      (data: DrinkingSessionData) => {
+      (data: DrinkingSessionList) => {
         newData = data ? Object.values(data) : [];
         newKeys = data ? Object.keys(data) : [];
         if (!isEqual(newData, state.drinkingSessionData)) {
@@ -163,7 +163,7 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
     let stopListening = listenForDataChanges(
       db,
       userRef,
-      (data: PreferencesData) => {
+      (data: Preferences) => {
         if (!isEqual(data, state.preferences)) {
           dispatch({type: 'SET_PREFERENCES', payload: data});
         }
@@ -177,12 +177,12 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
   // Monitor unconfirmed days
   useEffect(() => {
     if (!user || !db) return;
-    let newData: UnconfirmedDaysData = {};
+    let newData: UnconfirmedDays = {};
     let userRef = `user_unconfirmed_days/${user.uid}`;
     let stopListening = listenForDataChanges(
       db,
       userRef,
-      (data: UnconfirmedDaysData) => {
+      (data: UnconfirmedDays) => {
         newData = data ? data : {};
         if (!isEqual(newData, state.unconfirmedDays)) {
           dispatch({type: 'SET_UNCONFIRMED_DAYS', payload: newData});
@@ -198,7 +198,7 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
   useEffect(() => {
     if (!user || !db) return;
     let userRef = `users/${user.uid}`;
-    let stopListening = listenForDataChanges(db, userRef, (data: UserData) => {
+    let stopListening = listenForDataChanges(db, userRef, (data: User) => {
       if (!isEqual(data, state.userData)) {
         dispatch({type: 'SET_USER_DATA', payload: data});
       }

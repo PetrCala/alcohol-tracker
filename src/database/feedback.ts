@@ -1,5 +1,5 @@
 ﻿import {Database, child, push, ref, update} from 'firebase/database';
-import {FeedbackData, FeedbackProps} from '../types/database';
+import {FeedbackList, Feedback} from '../types/database';
 import {Alert} from 'react-native';
 
 /** Submit feedback into the database
@@ -18,7 +18,7 @@ export async function submitFeedback(
   text: string,
 ): Promise<void> {
   let timestampNow = new Date().getTime();
-  let newFeedback: FeedbackProps = {
+  let newFeedback: Feedback = {
     submit_time: timestampNow,
     text: text,
     user_id: userId,
@@ -33,7 +33,7 @@ export async function submitFeedback(
     return;
   }
   // Create the updates object
-  var updates: FeedbackData = {};
+  var updates: FeedbackList = {};
   updates[`feedback/${newFeedbackKey}`] = newFeedback;
 
   // Submit the feedback

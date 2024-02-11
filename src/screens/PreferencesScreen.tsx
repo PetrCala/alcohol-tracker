@@ -9,25 +9,21 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {PreferencesScreenProps} from '../types/screens';
-import {auth} from '../services/firebaseSetup';
-import {useUserConnection} from '../context/global/UserConnectionContext';
-import {useFirebase} from '../context/global/FirebaseContext';
-import UserOffline from '../components/UserOffline';
-import BasicButton from '../components/Buttons/BasicButton';
-import {
-  PreferencesData,
-  UnitTypesKeys,
-  UnitTypesNames,
-} from '../types/database';
-import {savePreferencesData} from '../database/preferences';
-import YesNoPopup from '../components/Popups/YesNoPopup';
-import CustomSwitch from '../components/CustomSwitch';
-import NumericSlider from '../components/Popups/NumericSlider';
-import {getDatabaseData} from '../context/global/DatabaseDataContext';
-import {getDefaultPreferences} from '../database/users';
-import commonStyles from '../styles/commonStyles';
+import {PreferencesScreenProps} from '@src/types/screens';
+import {auth} from '@src/services/firebaseSetup';
+import {useUserConnection} from '@context/global/UserConnectionContext';
+import {useFirebase} from '@context/global/FirebaseContext';
+import UserOffline from '@components/UserOffline';
+import BasicButton from '@components/Buttons/BasicButton';
+import {savePreferencesData} from '@database/preferences';
+import YesNoPopup from '@components/Popups/YesNoPopup';
+import CustomSwitch from '@components/CustomSwitch';
+import NumericSlider from '@components/Popups/NumericSlider';
+import {getDatabaseData} from '@context/global/DatabaseDataContext';
+import {getDefaultPreferences} from '@database/users';
 import MainHeader from '@components/Header/MainHeader';
+import {Preferences} from '@src/types/database';
+import CONST from '@src/CONST';
 
 interface PreferencesListProps {
   id: string;
@@ -79,7 +75,7 @@ const PreferencesScreen = ({route, navigation}: PreferencesScreenProps) => {
   const [sliderKey, setSliderKey] = useState<string>('');
   // Deconstruct the preferences
   let defaultPreferences = getDefaultPreferences();
-  const [currentPreferences, setCurrentPreferences] = useState<PreferencesData>(
+  const [currentPreferences, setCurrentPreferences] = useState<Preferences>(
     preferences || defaultPreferences,
   );
 
@@ -222,11 +218,13 @@ const PreferencesScreen = ({route, navigation}: PreferencesScreenProps) => {
           <View style={styles.itemContainer}>
             <PreferencesList
               id="units_to_points" // Another unique identifier
-              initialContents={UnitTypesKeys.map((key, index) => ({
-                key: key,
-                label: UnitTypesNames[index],
-                value: currentPreferences.units_to_points[key]!.toString(), // Non-null assertion
-              }))}
+              initialContents={Object.values(CONST.UNITS.KEYS).map(
+                (key, index) => ({
+                  key: key,
+                  label: Object.values(CONST.UNITS.NAMES)[index],
+                  value: currentPreferences.units_to_points[key]!.toString(), // Non-null assertion
+                }),
+              )}
               onButtonPress={(key, label, value) => {
                 setSliderHeading(label);
                 setSliderStep(0.1);

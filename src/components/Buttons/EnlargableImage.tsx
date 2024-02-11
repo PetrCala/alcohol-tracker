@@ -9,8 +9,7 @@ import {
   LayoutChangeEvent,
 } from 'react-native';
 import FullScreenModal from '@components/Modals/FullScreenModal';
-import CONST from '@src/CONST';
-import {ImageLayout} from '@src/types/components';
+import ImageLayout from '@src/types/various/ImageLayout';
 import commonStyles from '@src/styles/commonStyles';
 
 type EnlargableImageProps = {

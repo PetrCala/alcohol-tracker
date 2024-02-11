@@ -1,19 +1,15 @@
 import {StyleSheet, Text, View} from 'react-native';
-import {
-  DrinkingSessionArrayItem,
-  ProfileData,
-  UserStatusData,
-} from '../../types/database';
 import {useFirebase} from '../../context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
 import {getTimestampAge, isRecent} from '@src/utils/timeUtils';
 import commonStyles from '@src/styles/commonStyles';
 import {sumAllUnits} from '@src/utils/dataHandling';
+import {Profile, UserStatus} from '@src/types/database';
 
 type UserOverviewProps = {
   userId: string;
-  profileData: ProfileData;
-  userStatusData: UserStatusData;
+  profileData: Profile;
+  userStatusData: UserStatus;
 };
 
 const UserOverview: React.FC<UserOverviewProps> = ({

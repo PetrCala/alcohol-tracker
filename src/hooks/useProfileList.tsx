@@ -1,10 +1,10 @@
 import {useEffect, useReducer, useCallback} from 'react';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import {
-  FriendsData,
-  NicknameToIdData,
-  ProfileDisplayData,
-  UserStatusDisplayData,
+  FriendList,
+  NicknameToIdList,
+  ProfileList,
+  UserStatusList,
 } from '@src/types/database';
 import {objKeys} from '@src/utils/dataHandling';
 import {fetchUserProfiles, fetchUserStatuses} from '@database/profile';
@@ -12,36 +12,36 @@ import {Alert} from 'react-native';
 
 interface State {
   loadingDisplayData: boolean;
-  profileDisplayData: ProfileDisplayData;
-  userStatusDisplayData: UserStatusDisplayData;
+  profileList: ProfileList;
+  userStatusList: UserStatusList;
 }
 
 type Action =
   | {type: 'SET_LOADING_DISPLAY_DATA'; payload: boolean}
-  | {type: 'SET_PROFILE_DISPLAY_DATA'; payload: ProfileDisplayData}
-  | {type: 'SET_USER_STATUS_DISPLAY_DATA'; payload: UserStatusDisplayData};
+  | {type: 'SET_PROFILE_LIST'; payload: ProfileList}
+  | {type: 'SET_USER_STATUS_LIST'; payload: UserStatusList};
 
 const initialState: State = {
   loadingDisplayData: false,
-  profileDisplayData: {},
-  userStatusDisplayData: {},
+  profileList: {},
+  userStatusList: {},
 };
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
-    case 'SET_PROFILE_DISPLAY_DATA':
-      return {...state, profileDisplayData: action.payload};
+    case 'SET_PROFILE_LIST':
+      return {...state, profileList: action.payload};
     case 'SET_LOADING_DISPLAY_DATA':
       return {...state, loadingDisplayData: action.payload};
-    case 'SET_USER_STATUS_DISPLAY_DATA':
-      return {...state, userStatusDisplayData: action.payload};
+    case 'SET_USER_STATUS_LIST':
+      return {...state, userStatusList: action.payload};
     default:
       return state;
   }
 }
 
 /**
- * Custom hook for fetching and managing profile display data based on a list of friends.
+ * Custom hook for fetching and managing list of profiles based on a list of friends.
  *
  * This hook encapsulates the logic for loading profile data from a Firebase database,
  * managing loading states, and updating the component state with the fetched data.
@@ -51,34 +51,34 @@ function reducer(state: State, action: Action): State {
  *  user IDs of the friends.
  * @returns An object containing the following properties:
  *   - loadingDisplayData: boolean - Represents if the hook is currently loading data.
- *   - displayData: ProfileDisplayData - An object holding the fetched profile data,
- *     structured according to the ProfileDisplayData interface.
+ *   - displayData: ProfileList - An object holding the fetched profile data,
+ *     structured according to the ProfileList interface.
  *
  * Usage:
- * const { loadingDisplayData, displayData } = useProfileDisplayData(friends);
+ * const { loadingDisplayData, displayData } = useProfileList(friends);
  */
-const useProfileDisplayData = (
-  friends: FriendsData | NicknameToIdData | undefined,
-) => {
+const useProfileList = (friends: FriendList | NicknameToIdList | undefined) => {
   const {db} = useFirebase();
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const updateDisplayData = useCallback(async (): Promise<void> => {
     dispatch({type: 'SET_LOADING_DISPLAY_DATA', payload: true});
     try {
-      let newProfileDisplayData: ProfileDisplayData = await fetchUserProfiles(
+      let newProfileList: ProfileList = await fetchUserProfiles(
         db,
         objKeys(friends),
       );
-      let newUserStatusDisplayData: UserStatusDisplayData =
-        await fetchUserStatuses(db, objKeys(friends));
+      let newUserStatusList: UserStatusList = await fetchUserStatuses(
+        db,
+        objKeys(friends),
+      );
       dispatch({
-        type: 'SET_PROFILE_DISPLAY_DATA',
-        payload: newProfileDisplayData,
+        type: 'SET_PROFILE_LIST',
+        payload: newProfileList,
       });
       dispatch({
-        type: 'SET_USER_STATUS_DISPLAY_DATA',
-        payload: newUserStatusDisplayData,
+        type: 'SET_USER_STATUS_LIST',
+        payload: newUserStatusList,
       });
     } catch (error: any) {
       Alert.alert(
@@ -97,4 +97,4 @@ const useProfileDisplayData = (
   return state;
 };
 
-export default useProfileDisplayData;
+export default useProfileList;

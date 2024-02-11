@@ -1,7 +1,6 @@
 ﻿import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  onAuthStateChanged,
 } from 'firebase/auth';
 
 /** Create a new user in the database

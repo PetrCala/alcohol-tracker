@@ -23,11 +23,11 @@ import {validateBetaKey} from '../database/beta';
 import {useUserConnection} from '../context/global/UserConnectionContext';
 import {isValidString, validateAppVersion} from '../utils/validation';
 import {deleteUserData, pushNewUserInfo} from '../database/users';
-import {ProfileData} from 'src/types/database';
 import {handleErrors} from '@src/utils/errorHandling';
 import CONST from '@src/CONST';
 import WarningMessage from '@components/Info/WarningMessage';
 import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
+import {Profile} from '@src/types/database';
 
 interface State {
   email: string;
@@ -201,7 +201,7 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
     }
 
     // Pushing initial user data to Realtime Database
-    const newProfileData: ProfileData = {
+    const newProfileData: Profile = {
       display_name: state.username,
       photo_url: '',
     };

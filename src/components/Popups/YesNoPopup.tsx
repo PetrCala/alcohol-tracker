@@ -1,7 +1,13 @@
 ﻿import React from 'react';
 import {View, Text, Modal, TouchableOpacity, StyleSheet} from 'react-native';
 
-import {YesNoPopupProps} from '../../types/components';
+type YesNoPopupProps = {
+  visible: boolean;
+  transparent: boolean;
+  message: string;
+  onRequestClose: () => void;
+  onYes: () => void;
+};
 
 const YesNoPopup = (props: YesNoPopupProps) => {
   const {visible, transparent, onRequestClose, message, onYes} = props;
@@ -28,8 +34,6 @@ const YesNoPopup = (props: YesNoPopupProps) => {
     </Modal>
   );
 };
-
-export default YesNoPopup;
 
 const styles = StyleSheet.create({
   modalContainer: {
@@ -76,3 +80,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
+export default YesNoPopup;

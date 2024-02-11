@@ -1,9 +1,9 @@
-import {ConfigProps, MaintenanceProps} from '@src/types/database';
+import {Config, Maintenance} from '@src/types/database';
 import {View, StyleSheet, Text, Image, Dimensions} from 'react-native';
 import CONST from '@src/CONST';
 
 type UnderMaintenanceProps = {
-  config: ConfigProps | null;
+  config: Config | null;
 };
 
 /** Given a date, return this date in human-legible hours and minutes */
@@ -15,7 +15,7 @@ function getHourMinute(date: Date): string {
 }
 
 const UnderMaintenance = ({config}: UnderMaintenanceProps) => {
-  const defaultMaintenance: MaintenanceProps = {
+  const defaultMaintenance: Maintenance = {
     maintenance_mode: true,
     start_time: 1704067200,
     end_time: 1704067200,

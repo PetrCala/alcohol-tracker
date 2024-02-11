@@ -1,4 +1,4 @@
-﻿import semver, {minSatisfying} from 'semver';
+﻿import semver from 'semver';
 import {Platform} from 'react-native';
 import CONST from '@src/CONST';
 

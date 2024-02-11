@@ -7,20 +7,17 @@ import {
   View,
 } from 'react-native';
 import {
-  FriendRequestStatusState,
-  ProfileDisplayData,
-  FriendRequestData,
-} from '../../types/database';
+  FriendRequestStatus,
+  ProfileList,
+  FriendRequestList,
+} from '@src/types/database';
 import {useEffect, useMemo, useReducer} from 'react';
-import {useFirebase} from '../../context/global/FirebaseContext';
-import {auth} from '../../services/firebaseSetup';
-import {isNonEmptyArray} from '../../utils/validation';
-import LoadingData from '../../components/LoadingData';
+import {useFirebase} from '@context/global/FirebaseContext';
+import {auth} from '@src/services/firebaseSetup';
+import {isNonEmptyArray} from '@utils/validation';
+import LoadingData from '@components/LoadingData';
 import {Database} from 'firebase/database';
-import {
-  searchArrayByText,
-  searchDatabaseForUsers,
-} from '../../services/search/search';
+import {searchArrayByText} from '@src/services/search/search';
 import {fetchUserProfiles} from '@database/profile';
 import SearchResult from '@components/Social/SearchResult';
 import SearchWindow from '@components/Social/SearchWindow';
@@ -31,11 +28,14 @@ import {
   getCommonFriends,
   getCommonFriendsCount,
 } from '@src/utils/social/friendUtils';
-import {UserIdToNicknameMapping, UserSearchResults} from '@src/types/search';
+import {
+  UserIdToNicknameMapping,
+  UserSearchResults,
+} from '@src/types/various/Search';
 import {objKeys} from '@src/utils/dataHandling';
 import {getDatabaseData} from '@src/context/global/DatabaseDataContext';
 import SeeProfileButton from '@components/Buttons/SeeProfileButton';
-import {GeneralAction} from '@src/types/states';
+import GeneralAction from '@src/types/various/GeneralAction';
 import commonStyles from '@src/styles/commonStyles';
 import {getNicknameMapping} from '@src/services/search/searchUtils';
 import FillerView from '@components/FillerView';
@@ -45,9 +45,9 @@ interface State {
   displayedFriends: UserSearchResults;
   commonFriends: UserSearchResults;
   otherFriends: UserSearchResults;
-  requestStatuses: {[userId: string]: FriendRequestStatusState | undefined};
+  requestStatuses: {[userId: string]: FriendRequestStatus | undefined};
   noUsersFound: boolean;
-  displayData: ProfileDisplayData;
+  displayData: ProfileList;
 }
 
 const initialState: State = {
@@ -116,7 +116,7 @@ const FriendsFriendsScreen = ({
   const updateDisplayData = async (
     searchResultData: UserSearchResults,
   ): Promise<void> => {
-    let newDisplayData: ProfileDisplayData = await fetchUserProfiles(
+    let newDisplayData: ProfileList = await fetchUserProfiles(
       db,
       searchResultData,
     );
@@ -125,10 +125,10 @@ const FriendsFriendsScreen = ({
 
   useMemo(() => {
     const updateRequestStatuses = (
-      friendRequests: FriendRequestData | undefined,
+      friendRequests: FriendRequestList | undefined,
     ): void => {
       let newRequestStatuses: {
-        [userId: string]: FriendRequestStatusState;
+        [userId: string]: FriendRequestStatus;
       } = {};
       if (friendRequests) {
         Object.keys(friendRequests).forEach(userId => {

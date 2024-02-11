@@ -1,5 +1,11 @@
-﻿import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {DrinkingSessionUnitWindowProps} from '../types/components';
+﻿import {
+  Image,
+  ImageSourcePropType,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import SessionUnitsInputWindow from './Buttons/SessionUnitsInputWindow';
 import {
   addUnits,
@@ -7,8 +13,18 @@ import {
   removeUnits,
   sumUnitTypes,
 } from '../utils/dataHandling';
-import {UnitTypesKeys, UnitTypesProps, UnitsObject} from '../types/database';
 import CONST from '@src/CONST';
+import {UnitKey, Units, UnitsList} from '@src/types/database';
+
+type DrinkingSessionUnitWindowProps = {
+  unitKey: UnitKey;
+  iconSource: ImageSourcePropType;
+  currentUnits: UnitsList;
+  setCurrentUnits: React.Dispatch<React.SetStateAction<UnitsList>>;
+  availableUnits: number;
+  typeSum: number;
+  setTypeSum: React.Dispatch<React.SetStateAction<number>>;
+};
 
 const DrinkingSessionUnitWindow = ({
   unitKey,
@@ -19,21 +35,18 @@ const DrinkingSessionUnitWindow = ({
   typeSum,
   setTypeSum,
 }: DrinkingSessionUnitWindowProps) => {
-  const handleAddUnits = (units: UnitTypesProps) => {
+  const handleAddUnits = (units: Units) => {
     let newUnitCount = sumUnitTypes(units); // Number of added units
     if (newUnitCount > 0 && newUnitCount <= availableUnits) {
-      let newUnits: UnitsObject = addUnits(currentUnits, units);
+      let newUnits: UnitsList = addUnits(currentUnits, units);
       setCurrentUnits(newUnits);
       setTypeSum(typeSum + newUnitCount);
     }
   };
 
-  const handleRemoveUnits = (
-    unitType: (typeof UnitTypesKeys)[number],
-    count: number,
-  ) => {
+  const handleRemoveUnits = (unitType: UnitKey, count: number) => {
     if (typeSum > 0) {
-      let newUnits: UnitsObject = removeUnits(currentUnits, unitType, count);
+      let newUnits: UnitsList = removeUnits(currentUnits, unitType, count);
       setCurrentUnits(newUnits);
       setTypeSum(typeSum - count);
     }

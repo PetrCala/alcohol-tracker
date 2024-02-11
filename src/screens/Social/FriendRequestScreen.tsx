@@ -8,17 +8,16 @@
   View,
 } from 'react-native';
 import {
-  FriendRequestDisplayData,
-  FriendRequestStatusState,
-  FriendsData,
-  ProfileData,
-  ProfileDisplayData,
-} from '../../types/database';
-import {useEffect, useMemo, useReducer, useState} from 'react';
-import {useFirebase} from '../../context/global/FirebaseContext';
-import {acceptFriendRequest, deleteFriendRequest} from '../../database/friends';
-import {auth} from '../../services/firebaseSetup';
-import LoadingData from '../../components/LoadingData';
+  FriendRequestList,
+  FriendRequestStatus,
+  FriendList,
+  ProfileList,
+} from '@src/types/database';
+import {useEffect, useMemo, useReducer} from 'react';
+import {useFirebase} from '@context/global/FirebaseContext';
+import {acceptFriendRequest, deleteFriendRequest} from '@database/friends';
+import {auth} from '@src/services/firebaseSetup';
+import LoadingData from '@components/LoadingData';
 import {Database} from 'firebase/database';
 import NoFriendUserOverview from '@components/Social/NoFriendUserOverview';
 import {fetchUserProfiles} from '@database/profile';
@@ -35,19 +34,19 @@ type FriendRequestPendingProps = {
 };
 
 type FriendRequestComponentProps = {
-  requestStatus: FriendRequestStatusState | undefined;
+  requestStatus: FriendRequestStatus | undefined;
   requestId: string;
 };
 
 type FriendRequestItemProps = {
   requestId: string;
-  friendRequests: FriendRequestDisplayData | undefined;
-  displayData: ProfileDisplayData;
+  friendRequests: FriendRequestList | undefined;
+  displayData: ProfileList;
 };
 
 type ScreenProps = {
-  friendRequests: FriendRequestDisplayData | undefined;
-  friends: FriendsData | undefined;
+  friendRequests: FriendRequestList | undefined;
+  friends: FriendList | undefined;
 };
 
 const handleAcceptFriendRequest = async (
@@ -168,7 +167,7 @@ const FriendRequestItem: React.FC<FriendRequestItemProps> = ({
 
 interface State {
   isLoading: boolean;
-  displayData: ProfileDisplayData;
+  displayData: ProfileList;
   requestsSent: string[];
   requestsReceived: string[];
   requestsSentCount: number;
@@ -215,9 +214,9 @@ const FriendRequestScreen = (props: ScreenProps) => {
 
   const updateDisplayData = async (
     db: Database,
-    friendRequests: FriendRequestDisplayData | undefined,
+    friendRequests: FriendRequestList | undefined,
   ): Promise<void> => {
-    let newDisplayData: ProfileDisplayData = await fetchUserProfiles(
+    let newDisplayData: ProfileList = await fetchUserProfiles(
       db,
       objKeys(friendRequests),
     );

@@ -1,17 +1,7 @@
-﻿import {
-  Dimensions,
-  Linking,
-  Platform,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-import MenuIcon from '../components/Buttons/MenuIcon';
+﻿import {Linking, Platform, StyleSheet, View} from 'react-native';
 import {TermsOfServiceScreenProps} from '../types/screens';
 import {WebView} from 'react-native-webview';
-import commonStyles from '../styles/commonStyles';
 import MainHeader from '@components/Header/MainHeader';
-import CONST from '@src/CONST';
 
 const TermsOfServiceScreen = ({navigation}: TermsOfServiceScreenProps) => {
   if (!navigation) return null; // Should never be null
@@ -19,7 +9,7 @@ const TermsOfServiceScreen = ({navigation}: TermsOfServiceScreenProps) => {
   const termsHtml =
     Platform.OS === 'android'
       ? {uri: 'file:///android_asset/html/terms-of-service.html'}
-      : CONST.DOCUMENTS.TERMS_OF_SERVICE;
+      : require('@assets/html/terms-of-service.html');
 
   const handleStartLoadWithRequest = (request: any) => {
     // Check if the URL has "mailto:" scheme

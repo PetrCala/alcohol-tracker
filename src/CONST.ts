@@ -22,10 +22,7 @@ const CONST = {
   },
   EMPTY_ARRAY,
   EMPTY_OBJECT,
-  DOCUMENTS: {
-    PRIVACY_POLICY: require('@assets/html/privacy-policy.html'),
-    TERMS_OF_SERVICE: require('@assets/html/terms-of-service.html'),
-  },
+  FIREBASE_STORAGE_URL: 'https://firebasestorage.googleapis.com',
   ICONS: {
     ACHIEVEMENTS: require('@assets/icons/achievements.png'),
     ADD_IMAGE: require('@assets/icons/add-image.png'), //
@@ -102,7 +99,26 @@ const CONST = {
       'https://play.google.com/store/apps/details?id=com.alcohol_tracker',
     IOS: 'https://testflight.apple.com/join/DgY9IieL',
   },
-  FIREBASE_STORAGE_URL: 'https://firebasestorage.googleapis.com',
+  UNITS: {
+    KEYS: {
+      SMALL_BEER: 'small_beer',
+      BEER: 'beer',
+      COCKTAIL: 'cocktail',
+      OTHER: 'other',
+      STRONG_SHOT: 'strong_shot',
+      WEAK_SHOT: 'weak_shot',
+      WINE: 'wine',
+    },
+    NAMES: {
+      SMALL_BEER: 'Small Beer',
+      BEER: 'Beer',
+      COCKTAIL: 'Cocktail',
+      OTHER: 'Other',
+      STRONG_SHOT: 'Strong Shot',
+      WEAK_SHOT: 'Weak Shot',
+      WINE: 'Wine',
+    },
+  },
 } as const;
 
 export default CONST;

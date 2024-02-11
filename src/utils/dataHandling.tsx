@@ -1,20 +1,22 @@
-﻿import {
-  DrinkingSessionArrayItem,
-  MeasureType,
-  PreferencesData,
-  UnitTypesKeys,
-  UnitTypesNames,
-  UnitTypesProps,
-  UnitsObject,
-  UnitsToColorsData,
-} from '../types/database';
-import {
-  SessionsCalendarMarkedDates,
-  SessionsCalendarDatesType,
-} from '@components/Calendar';
-import {DateObject, CalendarColors, DayMarking} from '@src/types/components';
+﻿import {DateObject} from '@src/types/time';
 import {getRandomInt} from './choice';
+import type {
+  CalendarColors,
+  DayMarking,
+  SessionsCalendarDatesType,
+  SessionsCalendarMarkedDates,
+} from '@components/Calendar';
+import type {
+  DrinkingSession,
+  Preferences,
+  UnitKey,
+  UnitName,
+  Units,
+  UnitsList,
+  UnitsToColors,
+} from '@src/types/database';
 import CONST from '../CONST';
+import {MeasureType} from '@src/types/database/DatabaseCommon';
 
 export function formatDate(date: Date): string {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
@@ -230,7 +232,7 @@ export function setDateToCurrentTime(inputDate: Date): Date {
  */
 export function getSingleDayDrinkingSessions(
   date: Date,
-  sessions: DrinkingSessionArrayItem[],
+  sessions: DrinkingSession[],
 ) {
   // Define the time boundaries
   date.setHours(0, 0, 0, 0); // set to start of day
@@ -260,7 +262,7 @@ export function getSingleDayDrinkingSessions(
  */
 export function getSingleMonthDrinkingSessions(
   date: Date,
-  sessions: DrinkingSessionArrayItem[],
+  sessions: DrinkingSession[],
   untilToday: boolean = false,
 ) {
   date.setHours(0, 0, 0, 0); // To midnight
@@ -293,12 +295,12 @@ export function getSingleMonthDrinkingSessions(
 }
 
 export function aggregateSessionsByDays(
-  sessions: DrinkingSessionArrayItem[],
+  sessions: DrinkingSession[],
   measureType: MeasureType = 'points',
-  unitsToPoints?: UnitTypesProps,
+  unitsToPoints?: Units,
 ): SessionsCalendarDatesType {
   return sessions.reduce(
-    (acc: SessionsCalendarDatesType, item: DrinkingSessionArrayItem) => {
+    (acc: SessionsCalendarDatesType, item: DrinkingSession) => {
       let dateString = formatDate(new Date(item.start_time)); // MM-DD-YYYY
       let newUnits: number;
       if (measureType === 'points') {
@@ -330,7 +332,7 @@ export function aggregateSessionsByDays(
 
 export function monthEntriesToColors(
   sessions: SessionsCalendarDatesType,
-  preferences: PreferencesData,
+  preferences: Preferences,
 ) {
   // MarkedDates object, see official react-native-calendars docs
   let markedDates: SessionsCalendarMarkedDates = Object.entries(
@@ -366,7 +368,7 @@ export function monthEntriesToColors(
  *
  * @param all_units Units to sum up.
  */
-export function sumAllUnits(units: UnitsObject): number {
+export function sumAllUnits(units: UnitsList): number {
   if (!units) return 0;
   return Object.values(units).reduce((total, unitTypes) => {
     return (
@@ -381,12 +383,12 @@ export function sumAllUnits(units: UnitsObject): number {
 
 /** Sum up units of a specific type of alcohol across multiple sessions
  *
- * @param unitsObject UnitsObject to sum up.
+ * @param unitsObject UnitsList to sum up.
  * @param unitType The type of unit to sum.
  */
 export function sumUnitsOfSingleType(
-  unitsObject: UnitsObject,
-  unitType: (typeof UnitTypesKeys)[number],
+  unitsObject: UnitsList,
+  unitType: UnitKey,
 ): number {
   return Object.values(unitsObject).reduce((total, session) => {
     return total + (session[unitType] ?? 0);
@@ -395,10 +397,10 @@ export function sumUnitsOfSingleType(
 
 /** Sum up units of a single Unit type object.
  *
- * @param unitTypes A UnitTypesProps kind of object
+ * @param unitTypes A Units kind of object
  * @returns The sum
  */
-export function sumUnitTypes(unitTypes: UnitTypesProps): number {
+export function sumUnitTypes(unitTypes: Units): number {
   return Object.values(unitTypes).reduce(
     (subTotal, unitCount) => subTotal + (unitCount ?? 0),
     0,
@@ -406,13 +408,13 @@ export function sumUnitTypes(unitTypes: UnitTypesProps): number {
 }
 
 /** Type guard to check if a given key is a valid UnitType key */
-export function isUnitTypeKey(key: string): key is keyof UnitTypesProps {
-  return UnitTypesKeys.includes(key as any);
+export function isUnitTypeKey(key: string): key is keyof Units {
+  return Object.values(CONST.UNITS.KEYS).includes(key as any);
 }
 
-/** Using a UnitsObject and the units to points conversion object, calculate how many points this object amounts to.
+/** Using a UnitsList and the units to points conversion object, calculate how many points this object amounts to.
  *
- * @param unitsObject UnitsObject type
+ * @param unitsObject UnitsList type
  * @param unitsToPoits Units to point conversion object
  * @returns Number of points
  *
@@ -422,8 +424,8 @@ export function isUnitTypeKey(key: string): key is keyof UnitTypesProps {
  * }, unitsToPoints)
  */
 export function sumAllPoints(
-  unitsObject: UnitsObject,
-  unitsToPoints: UnitTypesProps,
+  unitsObject: UnitsList,
+  unitsToPoints: Units,
 ): number {
   if (!unitsObject) return 0;
   let totalPoints = 0;
@@ -447,9 +449,7 @@ export function sumAllPoints(
  * @param session Drinking session array item
  * @return Timestamp of the last unit consumed
  */
-export function getLastUnitAddedTime(
-  session: DrinkingSessionArrayItem,
-): number | null {
+export function getLastUnitAddedTime(session: DrinkingSession): number | null {
   const timestamps = Object.keys(session.units).map(Number); // All timestamps
   // Return the maximum timestamp or null if there aren't any
   return timestamps.length ? Math.max(...timestamps) : null;
@@ -458,8 +458,8 @@ export function getLastUnitAddedTime(
 /** Out of an array of session items, return an a session that is ongoing. If there is no such session, return null
  */
 export function findOngoingSession(
-  sessions: DrinkingSessionArrayItem[],
-): DrinkingSessionArrayItem | null {
+  sessions: DrinkingSession[],
+): DrinkingSession | null {
   const ongoingSession = sessions.find(session => session.ongoing === true);
   return ongoingSession ? ongoingSession : null;
 }
@@ -473,7 +473,7 @@ export function findOngoingSession(
  */
 export const calculateThisMonthUnits = (
   dateObject: DateObject,
-  sessions: DrinkingSessionArrayItem[],
+  sessions: DrinkingSession[],
 ): number => {
   // Subset to this month's sessions only
   const currentDate = timestampToDate(dateObject.timestamp);
@@ -499,8 +499,8 @@ export const calculateThisMonthUnits = (
  */
 export const calculateThisMonthPoints = (
   dateObject: DateObject,
-  sessions: DrinkingSessionArrayItem[],
-  unitsToPoints: UnitTypesProps,
+  sessions: DrinkingSession[],
+  unitsToPoints: Units,
 ): number => {
   // Subset to this month's sessions only
   const currentDate = timestampToDate(dateObject.timestamp);
@@ -518,13 +518,10 @@ export const calculateThisMonthPoints = (
 
 /** List all units to add and their amounts and add this to the current units hook
  *
- * @param units UnitTypesProps kind of object listing each unit to add and its amount
+ * @param units Units kind of object listing each unit to add and its amount
  */
-export const addUnits = (
-  existingUnits: UnitsObject,
-  units: UnitTypesProps,
-): UnitsObject => {
-  let newUnits: UnitsObject = {
+export const addUnits = (existingUnits: UnitsList, units: Units): UnitsList => {
+  let newUnits: UnitsList = {
     ...existingUnits,
     [Date.now()]: units,
   };
@@ -538,12 +535,12 @@ export const addUnits = (
  * @param number Number of units to remove
  */
 export const removeUnits = (
-  existingUnits: UnitsObject,
-  unitType: (typeof UnitTypesKeys)[number],
+  existingUnits: UnitsList,
+  unitType: UnitKey,
   count: number,
-): UnitsObject => {
+): UnitsList => {
   let unitsToRemove = count;
-  const updatedUnits: UnitsObject = JSON.parse(JSON.stringify(existingUnits)); // Deep copy
+  const updatedUnits: UnitsList = JSON.parse(JSON.stringify(existingUnits)); // Deep copy
   for (const timestamp of Object.keys(updatedUnits).sort((a, b) => +b - +a)) {
     // sort in descending order
     const unitsAtTimestamp = updatedUnits[+timestamp] ?? {};
@@ -576,23 +573,23 @@ export const removeUnits = (
   return updatedUnits;
 };
 
-/** Input an array of drinkng sessions and remove all unit records
+/** Input a drinking session and remove all unit records
  * where all units of a given timestamp are set to 0. Return the
- * updated array.
+ * updated session.
  *
- * @param session Array of drinking sessions
- * @returns The updated array
+ * @param session Drinking session
+ * @returns The updated session
  */
 export const removeZeroObjectsFromSession = (
-  session: DrinkingSessionArrayItem,
-): DrinkingSessionArrayItem => {
+  session: DrinkingSession,
+): DrinkingSession => {
   // Clone the session object to avoid mutating the original object
   const updatedSession = {...session};
 
   // Go through each timestamp in the session's units object
   for (const timestamp in updatedSession.units) {
     // Check if all the unit values are set to 0
-    const allZero = UnitTypesKeys.every(
+    const allZero = Object.values(CONST.UNITS.KEYS).every(
       key =>
         updatedSession.units[timestamp][key] === 0 ||
         updatedSession.units[timestamp][key] === undefined,
@@ -611,19 +608,17 @@ export const removeZeroObjectsFromSession = (
  * each unit's value is set to a random integer.
  */
 
-export const getRandomUnitsObject = (
-  maxUnitValue: number = 30,
-): UnitsObject => {
-  const unitWithRandomValues: UnitTypesProps = {};
+export const getRandomUnitsList = (maxUnitValue: number = 30): UnitsList => {
+  const unitWithRandomValues: Units = {};
 
   // Loop over each item in UnitTypesKeys and set its value to a random number between 0 and maxUnitValue
-  for (const key of UnitTypesKeys) {
+  for (const key of Object.values(CONST.UNITS.KEYS)) {
     unitWithRandomValues[key] = getRandomInt(0, maxUnitValue);
   }
 
   // Create a new object with a current timestamp
   const timestamp = Date.now();
-  const result: UnitsObject = {
+  const result: UnitsList = {
     [timestamp]: unitWithRandomValues,
   };
 
@@ -632,26 +627,26 @@ export const getRandomUnitsObject = (
 
 /** Generate an object with all available units where each unit's value is set to 0.
  */
-export function getZeroUnitsObject(): UnitsObject {
-  return getRandomUnitsObject(0);
+export function getZeroUnitsList(): UnitsList {
+  return getRandomUnitsList(0);
 }
 
 /** Convert the units consumed to colors.
  *
  * @param units Number of units consumed
- * @param unitsToColorsInfo Information about limits for different colors
+ * @param unitsToColors Information about limits for different colors
  * @returns String
  */
 export function unitsToColors(
   units: number,
-  unitsToColorsInfo: UnitsToColorsData,
+  unitsToColors: UnitsToColors,
 ): CalendarColors {
   let sessionColor: CalendarColors;
   if (units === 0) {
     sessionColor = 'green';
-  } else if (units <= unitsToColorsInfo.yellow) {
+  } else if (units <= unitsToColors.yellow) {
     sessionColor = 'yellow';
-  } else if (units <= unitsToColorsInfo.orange) {
+  } else if (units <= unitsToColors.orange) {
     sessionColor = 'orange';
   } else {
     sessionColor = 'red';
@@ -663,10 +658,12 @@ export function unitsToColors(
  *
  * @returns The verbose name of that unit.
  */
-export const findUnitName = (unitKey: (typeof UnitTypesKeys)[number]) => {
-  let unitIdx = UnitTypesKeys.findIndex(type => type === unitKey);
-  let unitName = UnitTypesNames[unitIdx];
-  return unitName;
+export const findUnitName = (key: UnitKey): UnitName | undefined => {
+  const unitIdx = Object.values(CONST.UNITS.KEYS).findIndex(
+    type => type === key,
+  );
+  if (unitIdx === -1) return undefined;
+  return Object.values(CONST.UNITS.NAMES)[unitIdx];
 };
 
 /**

@@ -1,24 +1,13 @@
-﻿import {useState, useEffect} from 'react';
-import {
-  Dimensions,
-  Linking,
-  Platform,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-import MenuIcon from '../components/Buttons/MenuIcon';
+﻿import {Linking, Platform, StyleSheet, View} from 'react-native';
 import {PrivacyPolicyScreenProps} from '../types/screens';
 import {WebView} from 'react-native-webview';
-import commonStyles from '../styles/commonStyles';
 import MainHeader from '@components/Header/MainHeader';
-import CONST from '@src/CONST';
 
 const PrivacyPolicyScreen = ({navigation}: PrivacyPolicyScreenProps) => {
   const policyHtml =
     Platform.OS === 'android'
       ? {uri: 'file:///android_asset/html/privacy-policy.html'}
-      : CONST.DOCUMENTS.PRIVACY_POLICY;
+      : require('@assets/html/privacy-policy.html');
 
   const handleStartLoadWithRequest = (request: any) => {
     // Check if the URL has "mailto:" scheme

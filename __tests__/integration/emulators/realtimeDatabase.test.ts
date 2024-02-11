@@ -11,11 +11,10 @@ import {
 } from '../../utils/mockDatabase';
 import {isConnectedToDatabaseEmulator} from '@src/services/firebaseUtils';
 import {
-  BetaKeyProps,
-  FriendRequestData,
-  MaintenanceProps,
-  ProfileData,
-  UnitTypesProps,
+  BetaKeyList,
+  FriendRequestList,
+  Profile,
+  Units,
 } from '@src/types/database';
 import {Database} from 'firebase/database';
 import {describeWithEmulator} from '../../utils/emulators/emulatorTools';
@@ -51,7 +50,7 @@ const testUserBetaKey: string = 'beta-key-1';
 const testUserId2: string = MOCK_USER_IDS[1];
 
 const mockSessionKey = `${testUserId}-mock-session-999`;
-const mockSessionUnits: UnitTypesProps = {
+const mockSessionUnits: Units = {
   beer: 2,
   wine: 1,
   other: 3,
@@ -209,7 +208,7 @@ describeWithEmulator('Test pushing new user info into the database', () => {
   let testApp: FirebaseApp;
   let db: Database;
   let newUserDisplayName = 'mock-user-6';
-  let newUserProfileData: ProfileData = {
+  let newUserProfileData: Profile = {
     display_name: newUserDisplayName,
     photo_url: '',
   };
@@ -245,7 +244,7 @@ describeWithEmulator('Test pushing new user info into the database', () => {
       key: expect.anything(),
       user_id: newUserId,
     };
-    const dbBetaKey: BetaKeyProps = await readDataOnce(
+    const dbBetaKey: BetaKeyList = await readDataOnce(
       db,
       `beta_keys/${newUserBetaKeyId}`,
     );
@@ -330,7 +329,7 @@ describeWithEmulator('Test deleting data from the database', () => {
       in_usage: false,
       key: testUserBetaKey,
     };
-    const dbBetaKey: BetaKeyProps = await readDataOnce(db, `beta_keys/1`);
+    const dbBetaKey: BetaKeyList = await readDataOnce(db, `beta_keys/1`);
     expect(dbBetaKey).toMatchObject(expectedBetaKey);
   });
 
@@ -422,10 +421,10 @@ describeWithEmulator('Test friend request functionality', () => {
   });
 
   it('should send a friend request', async () => {
-    const expectedRequestsUser1: FriendRequestData = {
+    const expectedRequestsUser1: FriendRequestList = {
       [testUserId2]: 'sent',
     };
-    const expectedRequestsUser2: FriendRequestData = {
+    const expectedRequestsUser2: FriendRequestList = {
       [testUserId]: 'received',
     };
     await sendFriendRequest(db, testUserId, testUserId2);

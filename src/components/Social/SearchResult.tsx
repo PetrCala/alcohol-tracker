@@ -1,12 +1,12 @@
 import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {FriendRequestStatusState, ProfileData} from '../../types/database';
 import {acceptFriendRequest, sendFriendRequest} from '../../database/friends';
 import {Database} from 'firebase/database';
 import ProfileImage from '@components/ProfileImage';
 import {FirebaseStorage} from 'firebase/storage';
 import React from 'react';
+import {FriendRequestStatus, Profile} from '@src/types/database';
 
-const statusToTextMap: {[key in FriendRequestStatusState]: string} = {
+const statusToTextMap: {[key in FriendRequestStatus]: string} = {
   self: 'You',
   friend: 'Already a friend',
   sent: 'Awaiting a response',
@@ -18,7 +18,7 @@ type SendFriendRequestButtonProps = {
   db: Database;
   userFrom: string;
   userTo: string;
-  requestStatus: FriendRequestStatusState | undefined;
+  requestStatus: FriendRequestStatus | undefined;
   alreadyAFriend: boolean;
 };
 
@@ -95,11 +95,11 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
 
 type SearchResultProps = {
   userId: string;
-  userDisplayData: ProfileData;
+  userDisplayData: Profile;
   db: Database;
   storage: FirebaseStorage;
   userFrom: string;
-  requestStatus: FriendRequestStatusState | undefined;
+  requestStatus: FriendRequestStatus | undefined;
   alreadyAFriend: boolean;
   customButton?: React.ReactNode;
 };

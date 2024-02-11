@@ -1,5 +1,5 @@
-import {UserPriority, UsersPriority} from '@src/types/algorithms';
-import {UserStatusData, UserStatusDisplayData} from '@src/types/database';
+import {UserPriority, UsersPriority} from '@src/types/various/Algorithms';
+import {UserStatus, UserStatusList} from '@src/types/database';
 import {sumAllUnits} from '@src/utils/dataHandling';
 import {User} from 'firebase/auth';
 
@@ -19,12 +19,12 @@ export function orderUsersByPriority(
 
 export function calculateAllUsersPriority(
   userIds: string[],
-  userStatusDisplayData: UserStatusDisplayData,
+  userStatusList: UserStatusList,
 ): UsersPriority {
   let usersPriority: UsersPriority = {};
   userIds.forEach(userId => {
     let userPriority: UserPriority = 0;
-    let userStatusData: UserStatusData = userStatusDisplayData[userId];
+    let userStatusData: UserStatus = userStatusList[userId];
     if (userStatusData) {
       userPriority = calculateUserPriority(userStatusData);
     }
@@ -33,7 +33,7 @@ export function calculateAllUsersPriority(
   return usersPriority;
 }
 
-export function calculateUserPriority(userStatusData: UserStatusData): number {
+export function calculateUserPriority(userStatusData: UserStatus): number {
   let time_since_last_online =
     new Date().getTime() - userStatusData.last_online;
   let session_active = userStatusData.latest_session?.ongoing ? 1 : 0;

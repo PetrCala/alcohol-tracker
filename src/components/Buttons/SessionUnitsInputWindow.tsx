@@ -1,12 +1,21 @@
-﻿import React, {useState, useEffect, useRef} from 'react';
+﻿import React, {useState, useRef} from 'react';
 import {Keyboard, TextInput, TouchableOpacity, View} from 'react-native';
-import {SessionUnitsInputWindowProps} from '../../types/components';
-import {
-  addUnits,
-  removeUnits,
-  sumUnitsOfSingleType,
-} from '../../utils/dataHandling';
-import {UnitTypesProps, UnitsObject} from '../../types/database';
+import {addUnits, removeUnits} from '../../utils/dataHandling';
+import {UnitKey, Units, UnitsList} from '@src/types/database';
+
+type SessionUnitsInputWindowProps = {
+  unitKey: UnitKey;
+  currentUnits: UnitsList;
+  setCurrentUnits: (newUnits: UnitsList) => void;
+  availableUnits: number;
+  typeSum: number;
+  setTypeSum: React.Dispatch<React.SetStateAction<number>>;
+  styles: {
+    unitsInputContainer: {};
+    unitsInputButton: {};
+    unitsInputText: {};
+  };
+};
 
 const SessionUnitsInputWindow = ({
   unitKey,
@@ -73,11 +82,11 @@ const SessionUnitsInputWindow = ({
 
     if (numericValue == typeSum) return; // Do nothing if the value is the same
     // Determine whether the new value is higher or lower than the current one
-    let newUnits: UnitsObject = {...currentUnits};
+    let newUnits: UnitsList = {...currentUnits};
     if (numericValue > typeSum) {
       // Add units
       let numberToAdd: number = numericValue - typeSum;
-      let unitsToAdd: UnitTypesProps = {[unitKey]: numberToAdd};
+      let unitsToAdd: Units = {[unitKey]: numberToAdd};
       newUnits = addUnits(newUnits, unitsToAdd);
     } else {
       // Remove units

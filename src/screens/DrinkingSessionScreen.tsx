@@ -2,6 +2,7 @@
 import {
   ActivityIndicator,
   Alert,
+  ImageSourcePropType,
   Keyboard,
   ScrollView,
   StyleSheet,
@@ -9,7 +10,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import MenuIcon from '../components/Buttons/MenuIcon';
 import BasicButton from '../components/Buttons/BasicButton';
 import {DrinkingSessionScreenProps} from '../types/screens';
 import {useFirebase} from '../context/global/FirebaseContext';
@@ -25,22 +25,16 @@ import {
   formatDateToDay,
   formatDateToTime,
   removeUnits,
-  removeZeroObjectsFromSession,
   sumAllPoints,
   sumUnitsOfSingleType,
   timestampToDate,
   unitsToColors,
 } from '../utils/dataHandling';
 import {auth} from '../services/firebaseSetup';
-import {
-  DrinkingSessionArrayItem,
-  UnitTypesProps,
-  UnitsObject,
-} from '../types/database';
+import {DrinkingSession, UnitKey, Units, UnitsList} from '../types/database';
 import YesNoPopup from '../components/Popups/YesNoPopup';
 import {useUserConnection} from '../context/global/UserConnectionContext';
 import UserOffline from '../components/UserOffline';
-import {DrinkDataProps} from '../types/components';
 import UnitTypesView from '../components/UnitTypesView';
 import SessionDetailsSlider from '../components/SessionDetailsSlider';
 import LoadingData from '../components/LoadingData';
@@ -52,6 +46,7 @@ import {getPreviousRouteName} from '@navigation/navigationUtils';
 import CONST from '@src/CONST';
 import MainHeader from '@components/Header/MainHeader';
 import MainHeaderButton from '@components/Header/MainHeaderButton';
+import DrinkDataProps from '@src/types/various/DrinkDataProps';
 
 const DrinkingSessionScreen = ({
   route,
@@ -65,7 +60,7 @@ const DrinkingSessionScreen = ({
   const {db} = useFirebase();
   const {isOnline} = useUserConnection();
   // Units
-  const [currentUnits, setCurrentUnits] = useState<UnitsObject>(session.units);
+  const [currentUnits, setCurrentUnits] = useState<UnitsList>(session.units);
   const [totalPoints, setTotalPoints] = useState<number>(0);
   const [availableUnits, setAvailableUnits] = useState<number>(0);
   // Hooks for immediate display info - update these manually to improve efficiency
@@ -155,8 +150,8 @@ const DrinkingSessionScreen = ({
 
   const handleMonkePlus = () => {
     if (availableUnits > 0) {
-      let unitsToAdd: UnitTypesProps = {other: 1};
-      let newUnits: UnitsObject = addUnits(currentUnits, unitsToAdd);
+      let unitsToAdd: Units = {other: 1};
+      let newUnits: UnitsList = addUnits(currentUnits, unitsToAdd);
       setCurrentUnits(newUnits);
       setOtherSum(otherSum + 1);
     }
@@ -164,7 +159,7 @@ const DrinkingSessionScreen = ({
 
   const handleMonkeMinus = () => {
     if (otherSum > 0) {
-      let newUnits: UnitsObject = removeUnits(currentUnits, 'other', 1);
+      let newUnits: UnitsList = removeUnits(currentUnits, 'other', 1);
       setCurrentUnits(newUnits);
       setOtherSum(otherSum - 1);
     }
@@ -213,7 +208,7 @@ const DrinkingSessionScreen = ({
       setPendingUpdate(true);
       const timer = setTimeout(async () => {
         try {
-          let newSessionData: DrinkingSessionArrayItem = {
+          let newSessionData: DrinkingSession = {
             start_time: session.start_time,
             end_time: session.end_time,
             units: currentUnits,
@@ -274,13 +269,12 @@ const DrinkingSessionScreen = ({
     // Save the data into the database
     if (totalPoints > 0) {
       setSavingSession(true);
-      let newSessionData: DrinkingSessionArrayItem = {
+      let newSessionData: DrinkingSession = {
         start_time: session.start_time,
         end_time: Date.now(),
         units: currentUnits,
         blackout: isBlackout,
         note: note,
-        ongoing: null,
       };
       try {
         if (timeSinceLastUpdate < 1000) {

@@ -5,18 +5,18 @@ import {
   Text,
   View,
 } from 'react-native';
-import {ProfileData} from '../../types/database';
 import {useFirebase} from '../../context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
 import {auth} from '@src/services/firebaseSetup';
 import UploadImageComponent from '@components/UploadImage';
 import CONST from '@src/CONST';
 import {useState} from 'react';
-import {ImageLayout} from '@src/types/components';
+import ImageLayout from '@src/types/various/ImageLayout';
+import {Profile} from '@src/types/database';
 
 type ProfileOverviewProps = {
   userId: string;
-  profileData: ProfileData;
+  profileData: Profile;
 };
 
 const screenWidth = Dimensions.get('window').width;

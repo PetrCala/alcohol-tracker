@@ -30,20 +30,6 @@
         }
       }
     },
-    "user_status": {
-      ".read": "auth.token.admin === true",
-      ".write": "auth.token.admin === true",
-      "$uid": {
-        ".validate": "newData.hasChild('last_online') || newData.val() === null",
-        ".read": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('friends').child($uid).exists())",
-        ".write": "auth != null && auth.uid === $uid",
-        "last_online": {
-          ".validate": "newData.isNumber()",
-          ".read": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('friends').child($uid).exists())",
-          ".write": "auth != null && auth.uid === $uid"
-        }
-      }
-    },
     "user_drinking_sessions": {
       ".read": "auth.token.admin === true",
       ".write": "auth.token.admin === true",
@@ -68,6 +54,20 @@
         },
         "units_to_points": {
           ".validate": "newData.hasChildren(['beer', 'cocktail', 'other', 'strong_shot', 'weak_shot', 'wine'])"
+        }
+      }
+    },
+    "user_status": {
+      ".read": "auth.token.admin === true",
+      ".write": "auth.token.admin === true",
+      "$uid": {
+        ".validate": "newData.hasChild('last_online') || newData.val() === null",
+        ".read": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('friends').child($uid).exists())",
+        ".write": "auth != null && auth.uid === $uid",
+        "last_online": {
+          ".validate": "newData.isNumber()",
+          ".read": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('friends').child($uid).exists())",
+          ".write": "auth != null && auth.uid === $uid"
         }
       }
     },

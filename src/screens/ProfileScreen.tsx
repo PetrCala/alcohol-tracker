@@ -19,12 +19,6 @@ import ProfileOverview from '@components/Social/ProfileOverview';
 import {useEffect, useMemo, useReducer} from 'react';
 import {readDataOnce} from '@database/baseFunctions';
 import {
-  DrinkingSessionArrayItem,
-  DrinkingSessionData,
-  FriendsData,
-  PreferencesData,
-} from '@src/types/database';
-import {
   calculateThisMonthPoints,
   calculateThisMonthUnits,
   dateToDateObject,
@@ -32,7 +26,7 @@ import {
   objKeys,
   timestampToDate,
 } from '@src/utils/dataHandling';
-import {DateObject} from '@src/types/components';
+import {DateObject} from '@src/types/time';
 import SessionsCalendar from '@components/Calendar';
 import LoadingData from '@components/LoadingData';
 import {
@@ -42,12 +36,18 @@ import {
 import MainHeader from '@components/Header/MainHeader';
 import ManageFriendPopup from '@components/Popups/Profile/ManageFriendPopup';
 import {getDatabaseData} from '@src/context/global/DatabaseDataContext';
+import {
+  DrinkingSessionArray,
+  DrinkingSessionList,
+  FriendList,
+  Preferences,
+} from '@src/types/database';
 
 interface State {
   isLoading: boolean;
-  preferences: PreferencesData | null;
-  drinkingSessionData: DrinkingSessionArrayItem[] | null;
-  friends: FriendsData | null;
+  preferences: Preferences | null;
+  drinkingSessionData: DrinkingSessionArray | null;
+  friends: FriendList | null;
   friendCount: number;
   commonFriendCount: number;
   visibleDateObject: DateObject;
@@ -131,12 +131,11 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
       dispatch({type: 'SET_IS_LOADING', payload: true});
 
       try {
-        let userSessions: DrinkingSessionArrayItem[] | null =
-          drinkingSessionData;
-        let userPreferences: PreferencesData | null = preferences;
+        let userSessions: DrinkingSessionArray | null = drinkingSessionData;
+        let userPreferences: Preferences | null = preferences;
 
         if (!userSessions) {
-          const newSessions: DrinkingSessionData | null = await readDataOnce(
+          const newSessions: DrinkingSessionList | null = await readDataOnce(
             db,
             `user_drinking_sessions/${userId}`,
           );
@@ -170,7 +169,7 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
       dispatch({type: 'SET_IS_LOADING', payload: true});
 
       try {
-        let userFriends: FriendsData | null = friends;
+        let userFriends: FriendList | null = friends;
 
         if (!userFriends) {
           userFriends = await fetchUserFriends(db, userId);

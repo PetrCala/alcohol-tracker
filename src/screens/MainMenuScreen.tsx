@@ -9,28 +9,38 @@ import {
   Alert,
   Keyboard,
 } from 'react-native';
-
-import {MainMenuItemProps} from '../types/components';
-import YesNoPopup from '../components/Popups/YesNoPopup';
+import YesNoPopup from '@components/Popups/YesNoPopup';
 import {UserCredential, deleteUser, signOut} from 'firebase/auth';
-import {auth} from '../services/firebaseSetup';
-import {deleteUserData, reauthentificateUser} from '../database/users';
-import FeedbackPopup from '../components/Popups/FeedbackPopup';
-import {submitFeedback} from '../database/feedback';
-import {MainMenuScreenProps} from '../types/screens';
-import AdminFeedbackPopup from '../components/Popups/AdminFeedbackPopup';
-import {FeedbackData} from '../types/database';
-import {listenForDataChanges, readDataOnce} from '../database/baseFunctions';
-import InputTextPopup from '../components/Popups/InputTextPopup';
-import UserOffline from '../components/UserOffline';
-import {useUserConnection} from '../context/global/UserConnectionContext';
-import {getDatabaseData} from '../context/global/DatabaseDataContext';
-import ItemListPopup from '../components/Popups/ItemListPopup';
-import {useFirebase} from '../context/global/FirebaseContext';
+import {auth} from '@src/services/firebaseSetup';
+import {deleteUserData, reauthentificateUser} from '@database/users';
+import FeedbackPopup from '@components/Popups/FeedbackPopup';
+import {submitFeedback} from '@database/feedback';
+import {MainMenuScreenProps} from '@src/types/screens';
+import AdminFeedbackPopup from '@components/Popups/AdminFeedbackPopup';
+import {listenForDataChanges, readDataOnce} from '@database/baseFunctions';
+import InputTextPopup from '@components/Popups/InputTextPopup';
+import UserOffline from '@components/UserOffline';
+import {useUserConnection} from '@context/global/UserConnectionContext';
+import {getDatabaseData} from '@context/global/DatabaseDataContext';
+import ItemListPopup from '@components/Popups/ItemListPopup';
+import {useFirebase} from '@context/global/FirebaseContext';
 import MainHeader from '@components/Header/MainHeader';
 import GrayHeader from '@components/Header/GrayHeader';
 import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 import CONST from '@src/CONST';
+import type {FeedbackList} from '@src/types/database';
+
+type MainMenuButtonData = {
+  label: string;
+  icon: number;
+  action: () => void;
+};
+
+type MainMenuItemProps = {
+  heading: string;
+  data: MainMenuButtonData[];
+  index: number;
+};
 
 const MenuItem: React.FC<MainMenuItemProps> = ({heading, data, index}) => (
   <View key={index}>
@@ -55,7 +65,7 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
   const {isOnline} = useUserConnection();
   if (!user) return null;
   // Hooks
-  const [feedbackData, setFeedbackData] = useState<FeedbackData>({});
+  const [FeedbackList, setFeedbackList] = useState<FeedbackList>({});
   // Modals
   const [policiesModalVisible, setPoliciesModalVisible] =
     useState<boolean>(false);
@@ -177,9 +187,9 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
       let stopListening = listenForDataChanges(
         db,
         dbRef,
-        (data: FeedbackData) => {
+        (data: FeedbackList) => {
           if (data != null) {
-            setFeedbackData(data);
+            setFeedbackList(data);
           }
         },
       );
@@ -347,15 +357,13 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
             visible={adminFeedbackModalVisible}
             transparent={true}
             onRequestClose={() => setAdminFeedbackModalVisible(false)}
-            feedbackData={feedbackData}
+            FeedbackList={FeedbackList}
           />
         </ScrollView>
       </View>
     </DismissKeyboard>
   );
 };
-
-export default MainMenuScreen;
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -396,3 +404,5 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
 });
+
+export default MainMenuScreen;

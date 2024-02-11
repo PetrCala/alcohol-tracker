@@ -1,10 +1,6 @@
 ﻿import {Database, ref, update} from 'firebase/database';
-import {
-  UserStatusData,
-  DrinkingSessionArrayItem,
-  UnitsObject,
-} from '../types/database';
 import {removeZeroObjectsFromSession} from '@src/utils/dataHandling';
+import {DrinkingSession, UnitsList, UserStatus} from '@src/types/database';
 
 /** Write drinking session data into the database
  *
@@ -17,7 +13,7 @@ import {removeZeroObjectsFromSession} from '@src/utils/dataHandling';
 export async function saveDrinkingSessionData(
   db: Database,
   userId: string,
-  newSessionData: DrinkingSessionArrayItem,
+  newSessionData: DrinkingSession,
   sessionKey: string,
   updateStatus?: boolean,
 ): Promise<void> {
@@ -25,7 +21,7 @@ export async function saveDrinkingSessionData(
   var updates: {[key: string]: any} = {};
   updates[`user_drinking_sessions/${userId}/` + sessionKey] = newSessionData;
   if (updateStatus) {
-    const userStatusData: UserStatusData = {
+    const userStatusData: UserStatus = {
       last_online: new Date().getTime(),
       latest_session_id: sessionKey,
       latest_session: newSessionData,
@@ -46,11 +42,11 @@ export async function saveDrinkingSessionData(
 export async function startLiveDrinkingSession(
   db: Database,
   userId: string,
-  newSessionData: DrinkingSessionArrayItem,
+  newSessionData: DrinkingSession,
   sessionKey: string,
 ): Promise<void> {
   var updates: {[key: string]: any} = {};
-  const userStatusData: UserStatusData = {
+  const userStatusData: UserStatus = {
     last_online: new Date().getTime(),
     latest_session_id: sessionKey,
     latest_session: newSessionData,
@@ -71,12 +67,12 @@ export async function startLiveDrinkingSession(
 export async function endLiveDrinkingSession(
   db: Database,
   userId: string,
-  newSessionData: DrinkingSessionArrayItem,
+  newSessionData: DrinkingSession,
   sessionKey: string,
 ): Promise<void> {
   newSessionData = removeZeroObjectsFromSession(newSessionData);
   var updates: {[key: string]: any} = {};
-  const userStatusData: UserStatusData = {
+  const userStatusData: UserStatus = {
     // ETC - 1
     last_online: new Date().getTime(),
     latest_session_id: sessionKey,
@@ -120,7 +116,7 @@ export async function discardLiveDrinkingSession(
   sessionKey: string,
 ): Promise<void> {
   var updates: {[key: string]: any} = {};
-  const userStatusData: UserStatusData = {last_online: new Date().getTime()}; // No session info
+  const userStatusData: UserStatus = {last_online: new Date().getTime()}; // No session info
   updates['/user_drinking_sessions/' + userId + '/' + sessionKey] = null;
   updates[`/user_status/${userId}`] = userStatusData;
   await update(ref(db), updates);
@@ -139,9 +135,9 @@ export async function updateSessionUnits(
   db: Database,
   userId: string,
   sessionKey: string,
-  newUnits: UnitsObject,
+  newUnits: UnitsList,
 ): Promise<void> {
-  var updates: {[key: string]: UnitsObject} = {};
+  var updates: {[key: string]: UnitsList} = {};
   updates[`/user_drinking_sessions/${userId}/${sessionKey}/units`] = newUnits;
   await update(ref(db), updates);
 }

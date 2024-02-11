@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import {getDatabaseData} from '@src/context/global/DatabaseDataContext';
 import commonStyles from '@src/styles/commonStyles';
-import {UserData} from '@src/types/database';
 import {TabView} from 'react-native-tab-view';
 import FriendListScreen from './FriendListScreen';
 import FriendRequestScreen from './FriendRequestScreen';
@@ -23,6 +22,7 @@ import MainHeader from '@components/Header/MainHeader';
 import {getReceivedRequestsCount} from '@src/utils/social/friendUtils';
 import {useIsFocused} from '@react-navigation/native';
 import CONST from '@src/CONST';
+import {UserProps} from '@src/types/database';
 
 type SocialFooterButtonProps = {
   index: number;
@@ -74,7 +74,7 @@ const SocialFooterButton: React.FC<SocialFooterButtonProps> = ({
 type RouteType = {
   key: string;
   title: string;
-  userData: UserData | null;
+  userData: UserProps | null;
 };
 
 const SocialScreen = ({route, navigation}: SocialScreenProps) => {

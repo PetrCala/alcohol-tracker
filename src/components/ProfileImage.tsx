@@ -12,7 +12,7 @@ import {getProfilePictureURL} from '@src/storage/storageProfile';
 import useProfileImageCache from '@hooks/useProfileImageCache';
 import CONST from '@src/CONST';
 import EnlargableImage from './Buttons/EnlargableImage';
-import {ImageLayout} from '@src/types/components';
+import ImageLayout from '@src/types/various/ImageLayout';
 
 interface State {
   imageUrl: string | null;

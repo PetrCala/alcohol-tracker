@@ -29,7 +29,7 @@ const FullScreenModal: React.FC<FullScreenModalProps> = props => {
           height: ScreenHeight,
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: 'white', // perhaps black
+          backgroundColor: 'black', // later adjust to color scheme
         }}>
         {props.children}
       </View>

@@ -13,13 +13,21 @@ import {uploadImageToFirebase} from '../storage/storageUpload';
 import WarningMessage from './Info/WarningMessage';
 import SuccessMessage from './Info/SuccessMessage';
 import UploadImagePopup from './Popups/UploadImagePopup';
-import {UploadImageState} from '@src/types/components';
-import {GeneralAction} from '@src/types/states';
+import GeneralAction from '@src/types/various/GeneralAction';
 import checkPermission from '@src/permissions/checkPermission';
 import {requestPermission} from '@src/permissions/requestPermission';
 import {updateProfileInfo} from '@database/profile';
 import {auth} from '@src/services/firebaseSetup';
 import {useFirebase} from '@src/context/global/FirebaseContext';
+
+type UploadImageState = {
+  imageSource: string | null;
+  uploadModalVisible: boolean;
+  uploadOngoing: boolean;
+  uploadProgress: string | null;
+  warning: string;
+  success: string;
+};
 
 const initialState: UploadImageState = {
   imageSource: null,
@@ -177,8 +185,6 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
   );
 };
 
-export default UploadImageComponent;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -196,3 +202,6 @@ const styles = StyleSheet.create({
     zIndex: 3,
   },
 });
+
+export default UploadImageComponent;
+export type {UploadImageState};

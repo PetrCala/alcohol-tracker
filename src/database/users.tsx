@@ -1,12 +1,12 @@
 ﻿import {Database, update, ref, get} from 'firebase/database';
 import {
-  PreferencesData,
-  UserData,
-  ProfileData,
-  NicknameToIdData,
-  FriendsData,
-  FriendRequestData,
-} from '../types/database';
+  FriendList,
+  FriendRequestList,
+  NicknameToId,
+  Preferences,
+  Profile,
+  UserProps,
+} from '@src/types/database';
 import {
   EmailAuthProvider,
   User,
@@ -17,7 +17,7 @@ import {Alert} from 'react-native';
 import {cleanStringForFirebaseKey} from '../utils/strings';
 import CONST from '@src/CONST';
 
-export const getDefaultPreferences = (): PreferencesData => {
+export const getDefaultPreferences = (): Preferences => {
   return {
     first_day_of_week: 'Monday',
     units_to_colors: {
@@ -37,9 +37,9 @@ export const getDefaultPreferences = (): PreferencesData => {
 };
 
 export const getDefaultUserData = (
-  profileData: ProfileData,
+  profileData: Profile,
   betaKeyId: number, // Beta feature
-): UserData => {
+): UserProps => {
   let userRole = CONST.APP_IN_BETA ? 'beta_user' : 'user'; // Beta feature
   return {
     profile: profileData,
@@ -82,14 +82,14 @@ export async function userExistsInDatabase(
 export async function pushNewUserInfo(
   db: Database,
   userId: string,
-  profileData: ProfileData,
+  profileData: Profile,
   betaKeyId: number, // Beta feature
 ): Promise<void> {
   const userNickname = profileData.display_name;
   const nicknameKey = cleanStringForFirebaseKey(userNickname);
   // Allowed types
   let updates: {
-    [key: string]: UserData | PreferencesData | NicknameToIdData | any;
+    [key: string]: UserProps | Preferences | string | any;
   } = {};
   // Nickname to ID
   updates[`nickname_to_id/${nicknameKey}/${userId}`] = userNickname;
@@ -120,8 +120,8 @@ export async function deleteUserData(
   userId: string,
   userNickname: string,
   betaKeyId: number | undefined, // Beta feature
-  friends: FriendsData | undefined,
-  friendRequests: FriendRequestData | undefined,
+  friends: FriendList | undefined,
+  friendRequests: FriendRequestList | undefined,
 ): Promise<void> {
   const nicknameKey = cleanStringForFirebaseKey(userNickname);
   let updates: {[key: string]: null | false} = {};

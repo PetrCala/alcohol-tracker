@@ -2,7 +2,7 @@
   initializeEmptyMockDatabase,
   createMockConfig,
   createMockFeedback,
-  createMockUnitsObject,
+  createMockUnitsList,
   createMockSession,
   createMockPreferences,
   createMockUnconfirmedDays,
@@ -13,18 +13,19 @@
 } from '../utils/mockDatabase';
 import {
   DatabaseProps,
-  ConfigProps,
-  FeedbackProps,
-  DrinkingSessionData,
-  UnitsObject,
-  UnitTypesKeys,
-  UnitTypesProps,
-  PreferencesData,
-  UnconfirmedDaysData,
-  UserData,
-  UnitsToColorsData,
-  UserStatusData,
+  Config,
+  Feedback,
+  DrinkingSessionList,
+  UnitsList,
+  Units,
+  Preferences,
+  UnconfirmedDays,
+  User,
+  UnitsToColors,
+  UserStatus,
+  UserList,
 } from '../../src/types/database';
+import CONST from '@src/CONST';
 
 /**
  * Checks if the given object is a valid beta key.
@@ -56,21 +57,21 @@ function validateBetaKeys(betaKeysData: {[betaKeyId: number]: any}): boolean {
   return true;
 }
 
-/** Enter an object that is supposed to be of the ConfigProps type and validate it. Return true if it has that type, and false otherwise.
+/** Enter an object that is supposed to be of the Config type and validate it. Return true if it has that type, and false otherwise.
  *
  * @param obj
  * @returns
  */
-function validateConfig(obj: any): obj is ConfigProps {
+function validateConfig(obj: any): obj is Config {
   return typeof obj.app_settings.min_supported_version === 'string';
 }
 
-/** Using any object, validate that this object is of the FeedbackProps type. If yes, return true, otherwise return false.
+/** Using any object, validate that this object is of the Feedback type. If yes, return true, otherwise return false.
  *
  * @param obj Object to validate
  * @returns bool
  */
-function isFeedback(obj: any): obj is FeedbackProps {
+function isFeedback(obj: any): obj is Feedback {
   return (
     typeof obj.submit_time === 'number' &&
     typeof obj.text === 'string' &&
@@ -79,21 +80,21 @@ function isFeedback(obj: any): obj is FeedbackProps {
   );
 }
 
-/** Using an object containing supposed FeedbackProps data, validate that all this data is indeed of the FeedbackProps type. Return true if all data is valid, and false otherwise.
+/** Using an object containing supposed Feedback data, validate that all this data is indeed of the Feedback type. Return true if all data is valid, and false otherwise.
  *
- * @param feedbackData Data to validate
+ * @param FeedbackList Data to validate
  * @returns bool
  */
-function validateFeedback(feedbackData: {[feedbackId: string]: any}): boolean {
-  for (const feedbackId in feedbackData) {
-    if (!isFeedback(feedbackData[feedbackId])) {
+function validateFeedback(FeedbackList: {[feedbackId: string]: any}): boolean {
+  for (const feedbackId in FeedbackList) {
+    if (!isFeedback(FeedbackList[feedbackId])) {
       return false;
     }
   }
   return true;
 }
 
-function isUserStatus(obj: any): obj is UserStatusData {
+function isUserStatus(obj: any): obj is UserStatus {
   return typeof obj.last_online === 'number';
 }
 
@@ -106,14 +107,14 @@ function validateUserStatus(userStatuses: {[userId: string]: any}): boolean {
   return true;
 }
 
-/** Type guard for UnitTypesProps. Return true if an object is of UnitTypesProps type, and false otherwise.
+/** Type guard for Units. Return true if an object is of Units type, and false otherwise.
  *
  * @param obj Object to check
  * @returns bool
  */
-function isUnitTypesProps(obj: any): obj is UnitTypesProps {
+function isUnits(obj: any): obj is Units {
   for (const key of Object.keys(obj)) {
-    if (!UnitTypesKeys.includes(key as any)) {
+    if (!Object.values(CONST.UNITS.KEYS).includes(key as any)) {
       return false; // Unexpected key
     }
 
@@ -124,19 +125,19 @@ function isUnitTypesProps(obj: any): obj is UnitTypesProps {
   return true;
 }
 
-/** Input an object of supposed current drinking data and validate that the object is indeed of the DrinkingSessionData type. Return true if yes, and false otherwise.
+/** Input an object of supposed current drinking data and validate that the object is indeed of the DrinkingSessionList type. Return true if yes, and false otherwise.
  *
  * @param obj Object to validate.
  * @returns bool
  */
-function isDrinkingSessionData(obj: any): obj is DrinkingSessionData {
+function isDrinkingSessionList(obj: any): obj is DrinkingSessionList {
   for (const sessionId in obj) {
     const session = obj[sessionId];
 
     if (
       typeof session.start_time !== 'number' ||
       typeof session.end_time !== 'number' ||
-      !isUnitsObject(session.units) ||
+      !isUnitsList(session.units) ||
       typeof session.blackout !== 'boolean' ||
       typeof session.note !== 'string' ||
       (session.ongoing !== undefined &&
@@ -158,49 +159,49 @@ function validateUserDrinkingSessions(userSessions: {
   [userId: string]: any;
 }): boolean {
   for (const userId in userSessions) {
-    if (!isDrinkingSessionData(userSessions[userId])) {
+    if (!isDrinkingSessionList(userSessions[userId])) {
       return false;
     }
   }
   return true;
 }
 
-/** Check that an object is of type UnitsObject. If yes, return true, otherwise return false.
+/** Check that an object is of type UnitsList. If yes, return true, otherwise return false.
  *
  * @param obj Object to check
  * @returns bool
  */
-function isUnitsObject(obj: any): obj is UnitsObject {
+function isUnitsList(obj: any): obj is UnitsList {
   for (const timestamp of Object.keys(obj)) {
     if (isNaN(Number(timestamp))) {
       return false; // Key is not a valid timestamp (not a number)
     }
 
-    if (!isUnitTypesProps(obj[timestamp])) {
-      return false; // Value does not match the UnitTypesProps structure
+    if (!isUnits(obj[timestamp])) {
+      return false; // Value does not match the Units structure
     }
   }
   return true;
 }
 
-/** Type guard for UnitsObject. Return true if an object is of UnitTypesProps type, and false otherwise.
+/** Type guard for UnitsList. Return true if an object is of Units type, and false otherwise.
  *
  * @param obj Object to check
  * @returns bool
  */
-function isUnitsToColorsData(obj: any): obj is UnitsToColorsData {
+function isUnitsToColors(obj: any): obj is UnitsToColors {
   return typeof obj.yellow === 'number' && typeof obj.orange === 'number';
 }
 
-/** Using any object, validate that this object is of the FeedbackProps type. If yes, return true, otherwise return false.
+/** Using any object, validate that this object is of the Feedback type. If yes, return true, otherwise return false.
  *
  * @param obj Object to validate
  * @returns bool
  */
-function isUserPreferencesData(obj: any): obj is PreferencesData {
+function isUserPreferences(obj: any): obj is Preferences {
   return (
     typeof obj.first_day_of_week === 'string' &&
-    isUnitsToColorsData(obj.units_to_colors)
+    isUnitsToColors(obj.units_to_colors)
   );
 }
 
@@ -213,19 +214,19 @@ function validateUserPreferences(userPreferences: {
   [userId: string]: any;
 }): boolean {
   for (const userId in userPreferences) {
-    if (!isUserPreferencesData(userPreferences[userId])) {
+    if (!isUserPreferences(userPreferences[userId])) {
       return false;
     }
   }
   return true;
 }
 
-/** Using any object, validate that this object is of the UnconfirmedDaysData type. If yes, return true, otherwise return false.
+/** Using any object, validate that this object is of the UnconfirmedDays type. If yes, return true, otherwise return false.
  *
  * @param obj Object to validate
  * @returns bool
  */
-function isUserUnconfirmedDaysData(obj: any): obj is UnconfirmedDaysData {
+function isUserUnconfirmedDays(obj: any): obj is UnconfirmedDays {
   for (const dayString of Object.keys(obj)) {
     if (typeof dayString !== 'string') {
       return false;
@@ -243,11 +244,11 @@ function isUserUnconfirmedDaysData(obj: any): obj is UnconfirmedDaysData {
  * @param userUnconfirmedDays Data to validate
  * @returns bool
  */
-function validateUserUnconfirmedDaysData(userUnconfirmedDays: {
+function validateUserUnconfirmedDays(userUnconfirmedDays: {
   [userId: string]: any;
 }): boolean {
   for (const userId in userUnconfirmedDays) {
-    if (!isUserUnconfirmedDaysData(userUnconfirmedDays[userId])) {
+    if (!isUserUnconfirmedDays(userUnconfirmedDays[userId])) {
       return false;
     }
   }
@@ -259,7 +260,7 @@ function validateUserUnconfirmedDaysData(userUnconfirmedDays: {
  * @param obj Object to validate
  * @returns bool
  */
-function isUserData(obj: any): obj is UserData {
+function isUserData(obj: any): obj is User {
   return typeof obj.role === 'string' && typeof obj.beta_key_id === 'number';
 }
 
@@ -268,7 +269,7 @@ function isUserData(obj: any): obj is UserData {
  * @param userData Data to validate
  * @returns bool
  */
-function validateUserData(userData: {[userId: string]: any}): boolean {
+function validateUserData(userData: UserList): boolean {
   for (const userId in userData) {
     if (!isUserData(userData[userId])) {
       return false;
@@ -311,7 +312,7 @@ describe('mockDatabase functions', () => {
   });
 
   it('should create a mock units object', () => {
-    const units = createMockUnitsObject({wine: 5});
+    const units = createMockUnitsList({wine: 5});
     expect(units).toBeDefined();
     expect(Object.values(units)[0].wine).toBe(5);
   });
@@ -376,9 +377,7 @@ describe('mockDatabase data structure', () => {
   });
 
   it('should have user unconfirmed days data', () => {
-    expect(validateUserUnconfirmedDaysData(db.user_unconfirmed_days)).toBe(
-      true,
-    );
+    expect(validateUserUnconfirmedDays(db.user_unconfirmed_days)).toBe(true);
   });
 
   it('should have user data', () => {

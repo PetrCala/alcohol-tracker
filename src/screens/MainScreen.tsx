@@ -1,7 +1,6 @@
-﻿import React, {useState, useEffect, useMemo, useReducer} from 'react';
+﻿import React, {useEffect, useMemo, useReducer} from 'react';
 import {
   Alert,
-  Dimensions,
   Image,
   Keyboard,
   RefreshControl,
@@ -11,39 +10,37 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import MenuIcon from '../components/Buttons/MenuIcon';
-import SessionsCalendar from '../components/Calendar';
-import LoadingData from '../components/LoadingData';
-import {DrinkingSessionArrayItem} from '../types/database';
-import {MainScreenProps} from '../types/screens';
-import {DateObject} from '../types/components';
-import {auth} from '../services/firebaseSetup';
+import MenuIcon from '@components/Buttons/MenuIcon';
+import SessionsCalendar from '@components/Calendar';
+import LoadingData from '@components/LoadingData';
+import {MainScreenProps} from '@src/types/screens';
+import {DateObject} from '@src/types/time';
+import {auth} from '@src/services/firebaseSetup';
 import {
   dateToDateObject,
   calculateThisMonthUnits,
-  findOngoingSession,
   calculateThisMonthPoints,
   getSingleMonthDrinkingSessions,
   timestampToDate,
-  getYearMonthVerbose,
-} from '../utils/dataHandling';
-import {useUserConnection} from '../context/global/UserConnectionContext';
-import UserOffline from '../components/UserOffline';
-import {updateUserLastOnline} from '../database/users';
-import {startLiveDrinkingSession} from '../database/drinkingSessions';
-import {getDatabaseData} from '../context/global/DatabaseDataContext';
+} from '@utils/dataHandling';
+import {useUserConnection} from '@context/global/UserConnectionContext';
+import UserOffline from '@components/UserOffline';
+import {updateUserLastOnline} from '@database/users';
+import {startLiveDrinkingSession} from '@database/drinkingSessions';
+import {getDatabaseData} from '@context/global/DatabaseDataContext';
 import commonStyles from '@src/styles/commonStyles';
-import {useFirebase} from '../context/global/FirebaseContext';
-import ProfileImage from '../components/ProfileImage';
+import {useFirebase} from '@context/global/FirebaseContext';
+import ProfileImage from '@components/ProfileImage';
 import {generateDatabaseKey} from '@database/baseFunctions';
 import CONST from '@src/CONST';
+import {DrinkingSession} from '@src/types/database';
 
 interface State {
   visibleDateObject: DateObject;
   drinkingSessionsCount: number;
   unitsConsumed: number;
   pointsEarned: number;
-  ongoingSession: DrinkingSessionArrayItem | null;
+  ongoingSession: DrinkingSession | null;
   loadingNewSession: boolean;
   refreshing: boolean;
   refreshCounter: number;
@@ -110,7 +107,7 @@ const MainScreen = ({navigation}: MainScreenProps) => {
   // Handle drinking session button press
   const startDrinkingSession = async () => {
     if (!preferences || !user) return null; // Should never be null
-    let sessionData: DrinkingSessionArrayItem;
+    let sessionData: DrinkingSession;
     let sessionKey: string;
     let latest_session = userStatusData?.latest_session;
     if (!latest_session?.ongoing) {
@@ -369,8 +366,6 @@ const MainScreen = ({navigation}: MainScreenProps) => {
   );
 };
 
-export default MainScreen;
-
 const styles = StyleSheet.create({
   profileContainer: {
     //Ensure the container fills all space between, no more, no less
@@ -548,3 +543,5 @@ const styles = StyleSheet.create({
     paddingLeft: 30,
   },
 });
+
+export default MainScreen;

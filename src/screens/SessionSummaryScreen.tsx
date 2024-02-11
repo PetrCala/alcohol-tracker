@@ -1,7 +1,6 @@
 ﻿import {ScrollView, StyleSheet, Text, View} from 'react-native';
-import {SessionSummaryScreenProps} from '../types/screens';
-import {auth} from '../services/firebaseSetup';
-import MenuIcon from '../components/Buttons/MenuIcon';
+import {SessionSummaryScreenProps} from '@src/types/screens';
+import MenuIcon from '@components/Buttons/MenuIcon';
 import {
   formatDate,
   formatDateToDay,
@@ -12,12 +11,12 @@ import {
   sumUnitsOfSingleType,
   timestampToDate,
   unitsToColors,
-} from '../utils/dataHandling';
-import BasicButton from '../components/Buttons/BasicButton';
-import {DrinkingSessionArrayItem} from '../types/database';
-import {getDatabaseData} from '../context/global/DatabaseDataContext';
+} from '@utils/dataHandling';
+import BasicButton from '@components/Buttons/BasicButton';
+import {getDatabaseData} from '@context/global/DatabaseDataContext';
 import MainHeader from '@components/Header/MainHeader';
 import CONST from '@src/CONST';
+import {DrinkingSession} from '@src/types/database';
 
 const SessionDataItem = ({
   heading,
@@ -84,10 +83,7 @@ const SessionSummaryScreen = ({
     lastUnitAdded = formatDateToTime(lastUnitAddedDate);
   }
 
-  const onEditSessionPress = (
-    sessionKey: string,
-    session: DrinkingSessionArrayItem,
-  ) => {
+  const onEditSessionPress = (sessionKey: string, session: DrinkingSession) => {
     navigation.navigate('Edit Session Screen', {
       session: session,
       sessionKey: sessionKey,

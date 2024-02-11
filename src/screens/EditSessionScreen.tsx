@@ -1,9 +1,7 @@
-﻿import React, {useEffect, useState, useContext, useRef, useMemo} from 'react';
+﻿import React, {useEffect, useState, useRef, useMemo} from 'react';
 import {
   Alert,
   BackHandler,
-  Image,
-  ImageSourcePropType,
   Keyboard,
   ScrollView,
   StyleSheet,
@@ -13,11 +11,7 @@ import {
 } from 'react-native';
 import BasicButton from '../components/Buttons/BasicButton';
 import {EditSessionScreenProps} from '../types/screens';
-import {
-  DrinkingSessionArrayItem,
-  UnitTypesProps,
-  UnitsObject,
-} from '../types/database';
+import {DrinkingSession, Units, UnitsList} from '../types/database';
 import {useFirebase} from '../context/global/FirebaseContext';
 import {
   removeDrinkingSessionData,
@@ -29,9 +23,7 @@ import {
   formatDateToDay,
   formatDateToTime,
   removeUnits,
-  removeZeroObjectsFromSession,
   sumAllPoints,
-  sumAllUnits,
   sumUnitsOfSingleType,
   timestampToDate,
   unitsToColors,
@@ -40,7 +32,6 @@ import {auth} from '../services/firebaseSetup';
 import YesNoPopup from '../components/Popups/YesNoPopup';
 import {useUserConnection} from '../context/global/UserConnectionContext';
 import UserOffline from '../components/UserOffline';
-import {DrinkDataProps, UnitTypesViewProps} from '../types/components';
 import UnitTypesView from '../components/UnitTypesView';
 import SessionDetailsSlider from '../components/SessionDetailsSlider';
 import {getDatabaseData} from '../context/global/DatabaseDataContext';
@@ -49,6 +40,7 @@ import CONST from '@src/CONST';
 import MainHeader from '@components/Header/MainHeader';
 import MainHeaderButton from '@components/Header/MainHeaderButton';
 import {isEqual} from 'lodash';
+import DrinkDataProps from '@src/types/various/DrinkDataProps';
 
 const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
   if (!route || !navigation) return null; // Should never be null
@@ -57,7 +49,7 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
   const {isOnline} = useUserConnection();
   const {preferences} = getDatabaseData();
   // Units
-  const [currentUnits, setCurrentUnits] = useState<UnitsObject>(session.units);
+  const [currentUnits, setCurrentUnits] = useState<UnitsList>(session.units);
   const [totalPoints, setTotalPoints] = useState<number>(0);
   const [availableUnits, setAvailableUnits] = useState<number>(0);
   // Hooks for immediate display info - update these manually to improve efficiency
@@ -93,7 +85,7 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
   // Session object hooks
   const initialSession = useRef(session);
   const [currentSession, setCurrentSession] =
-    useState<DrinkingSessionArrayItem>(session); // Track the session object modifications
+    useState<DrinkingSession>(session); // Track the session object modifications
   // Other
   const [showLeaveConfirmation, setShowLeaveConfirmation] = useState(false);
   const [monkeMode, setMonkeMode] = useState<boolean>(false);
@@ -147,8 +139,8 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
 
   const handleMonkePlus = () => {
     if (availableUnits > 0) {
-      let unitsToAdd: UnitTypesProps = {other: 1};
-      let newUnits: UnitsObject = addUnits(currentUnits, unitsToAdd);
+      let unitsToAdd: Units = {other: 1};
+      let newUnits: UnitsList = addUnits(currentUnits, unitsToAdd);
       setCurrentUnits(newUnits);
       setOtherSum(otherSum + 1);
     }
@@ -156,7 +148,7 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
 
   const handleMonkeMinus = () => {
     if (otherSum > 0) {
-      let newUnits: UnitsObject = removeUnits(currentUnits, 'other', 1);
+      let newUnits: UnitsList = removeUnits(currentUnits, 'other', 1);
       setCurrentUnits(newUnits);
       setOtherSum(otherSum - 1);
     }
@@ -203,7 +195,7 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
   };
 
   const confirmGoBack = (
-    finalSessionData: DrinkingSessionArrayItem, // Decide which session to go back with
+    finalSessionData: DrinkingSession, // Decide which session to go back with
   ) => {
     const previousRouteName = getPreviousRouteName(navigation);
     // Navigate back explicitly to avoid errors
@@ -233,7 +225,7 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
     }
     // Save the session
     if (totalPoints > 0) {
-      let newSessionData: DrinkingSessionArrayItem = currentSession;
+      let newSessionData: DrinkingSession = currentSession;
       // Handle old versions of drinking session data where note/blackout were missing - remove this later
       newSessionData.blackout = isBlackout ? isBlackout : false;
       newSessionData.note = note ? note : '';
@@ -271,7 +263,7 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
 
   useMemo(() => {
     if (!preferences) return;
-    let newSession: DrinkingSessionArrayItem = {
+    let newSession: DrinkingSession = {
       start_time: session.start_time,
       end_time: session.end_time,
       units: currentUnits,

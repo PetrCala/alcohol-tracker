@@ -29,6 +29,7 @@ module.exports = {
         alias: {
           '@assets': './assets',
           '@components': './src/components',
+          '@context': './src/context',
           '@database': './src/database',
           '@hooks': './src/hooks',
           '@libs': './src/libs',
@@ -37,7 +38,6 @@ module.exports = {
           '@src': './src',
           '@storage': './src/storage',
           '@styles': './src/styles',
-          '@types': './src/types',
           '@utils': './src/utils',
         },
       },

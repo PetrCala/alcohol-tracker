@@ -7,7 +7,7 @@ import {DatabaseProps} from '@src/types/database';
  * Loads JSON data from a file.
  *
  * @param filename - The path to the JSON file.
- * @returns The parsed JSON data as a DatabaseProps object, or null if there was an error.
+ * @returns The parsed JSON data as a Database object, or null if there was an error.
  *
  * @example
  * const data = loadJsonData('path_to_your_file.json');

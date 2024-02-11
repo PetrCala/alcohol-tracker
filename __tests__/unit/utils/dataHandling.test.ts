@@ -12,14 +12,14 @@
   getLastUnitAddedTime,
   getNextMonth,
   getPreviousMonth,
-  getRandomUnitsObject,
+  getRandomUnitsList,
   getSingleDayDrinkingSessions,
   getSingleMonthDrinkingSessions,
   getTimestampAtMidnight,
   getTimestampAtNoon,
   getYearMonth,
   getYearMonthVerbose,
-  getZeroUnitsObject,
+  getZeroUnitsList,
   removeUnits,
   removeZeroObjectsFromSession,
   setDateToCurrentTime,
@@ -30,23 +30,21 @@
   timestampToDate,
   unitsToColors,
 } from '../../../src/utils/dataHandling';
-import {DateObject} from '../../../src/types/components';
-import {
-  DrinkingSessionArrayItem,
-  DrinkingSessionData,
-  PreferencesData,
-  UnitTypesKeys,
-  UnitTypesNames,
-  UnitTypesProps,
-  UnitsObject,
-  UnitsToColorsData,
-} from '../../../src/types/database';
+import {DateObject} from '../../../src/types/time';
 import {
   createMockPreferences,
   createMockSession,
-  createMockUnitsObject,
+  createMockUnitsList,
 } from '../../utils/mockDatabase';
-import CONST from '@src/CONST';
+import {
+  DrinkingSession,
+  DrinkingSessionArray,
+  Preferences,
+  Units,
+  UnitsList,
+  UnitsToColors,
+} from '../../../src/types/database';
+import CONST from '../../../src/CONST';
 
 describe('formatDate function', () => {
   function checkFormattedDate(date: Date, expectedFormattedDate: string) {
@@ -394,7 +392,7 @@ describe('setDateToCurrentTime function', () => {
 describe('getSingleDayDrinkingSessions', () => {
   it('should return sessions that only fall within the given date', () => {
     const baseDate = new Date('2023-08-20');
-    const testSessions: DrinkingSessionArrayItem[] = [
+    const testSessions: DrinkingSessionArray = [
       createMockSession(baseDate, 0), // Session from 'today'
       createMockSession(baseDate, -1), // Session from 'yesterday'
       createMockSession(baseDate, 1), // Session from 'tomorrow'
@@ -406,7 +404,7 @@ describe('getSingleDayDrinkingSessions', () => {
 
   it('should return an empty array if no sessions fall within the given date', () => {
     const baseDate = new Date('2023-08-22');
-    const testSessions: DrinkingSessionArrayItem[] = [
+    const testSessions: DrinkingSessionArray = [
       createMockSession(baseDate, -2),
       createMockSession(baseDate, -3),
     ];
@@ -420,7 +418,7 @@ describe('getSingleDayDrinkingSessions', () => {
 describe('getSingleMonthDrinkingSessions', () => {
   it('should return sessions that only fall within the given month', () => {
     const baseDate = new Date('2023-08-20');
-    const testSessions: DrinkingSessionArrayItem[] = [
+    const testSessions: DrinkingSessionArray = [
       createMockSession(baseDate, 0), // Session from this month
       createMockSession(baseDate, -30), // Session from last month
       createMockSession(baseDate, 30), // Session from next month
@@ -435,7 +433,7 @@ describe('getSingleMonthDrinkingSessions', () => {
     const futureSessionDate = new Date();
     futureSessionDate.setDate(futureSessionDate.getDate() + 5); // A session 5 days into the future
 
-    const testSessions: DrinkingSessionArrayItem[] = [
+    const testSessions: DrinkingSessionArray = [
       createMockSession(baseDate, 0), // Session from this month
       {
         ...createMockSession(baseDate, 0),
@@ -449,7 +447,7 @@ describe('getSingleMonthDrinkingSessions', () => {
 
   it('should return an empty array if no sessions fall within the given month', () => {
     const baseDate = new Date('2023-08-22');
-    const testSessions: DrinkingSessionArrayItem[] = [
+    const testSessions: DrinkingSessionArray = [
       createMockSession(baseDate, -60),
       createMockSession(baseDate, -90),
     ];
@@ -462,7 +460,7 @@ describe('getSingleMonthDrinkingSessions', () => {
 
 describe('sumAllUnits', () => {
   it('should correctly sum up all units of alcohol', () => {
-    const sampleUnits: UnitsObject = getRandomUnitsObject();
+    const sampleUnits: UnitsList = getRandomUnitsList();
 
     const result = sumAllUnits(sampleUnits);
     const expectedSum = Object.values(sampleUnits).reduce(
@@ -481,14 +479,14 @@ describe('sumAllUnits', () => {
   });
 
   it('should return 0 if all units are 0', () => {
-    const zeroUnits = getZeroUnitsObject();
+    const zeroUnits = getZeroUnitsList();
     const result = sumAllUnits(zeroUnits);
     expect(result).toBe(0);
   });
 });
 
 describe('sumUnitsOfSingleType function', () => {
-  let unitsData: UnitsObject;
+  let unitsData: UnitsList;
 
   beforeEach(() => {
     unitsData = {
@@ -513,8 +511,8 @@ describe('sumUnitsOfSingleType function', () => {
     expect(sumUnitsOfSingleType(unitsData, 'wine')).toBe(0);
   });
 
-  it('should return 0 if unitsObject is empty', () => {
-    const emptyUnitsData: UnitsObject = {};
+  it('should return 0 if unitsList is empty', () => {
+    const emptyUnitsData: UnitsList = {};
     expect(sumUnitsOfSingleType(emptyUnitsData, 'beer')).toBe(0);
   });
 
@@ -575,13 +573,8 @@ describe('sumUnitTypes', () => {
 });
 
 describe('sumAllPoints', () => {
-  // Helper to get a random UnitsObject for testing purposes
-  // function getRandomPointsUnitsObject(): [UnitsObject, UnitTypesProps] {
-  // }
-  // Test for all units and point conversion metrics present
-
   it('should return 0 if all units are 0', () => {
-    const zeroUnits: UnitsObject = {
+    const zeroUnits: UnitsList = {
       1632423423: {
         beer: 0,
         cocktail: 0,
@@ -591,7 +584,7 @@ describe('sumAllPoints', () => {
         beer: 0,
       },
     };
-    const zeroPoints: UnitTypesProps = {
+    const zeroPoints: Units = {
       beer: 0,
       cocktail: 0,
       other: 0,
@@ -603,8 +596,8 @@ describe('sumAllPoints', () => {
     expect(result).toBe(0);
   });
 
-  it('should correctly handle missing keys in UnitsObject', () => {
-    const partialUnits: UnitsObject = {
+  it('should correctly handle missing keys in UnitsList', () => {
+    const partialUnits: UnitsList = {
       1632423423: {
         beer: 2,
         cocktail: 1,
@@ -613,7 +606,7 @@ describe('sumAllPoints', () => {
         other: 3,
       },
     };
-    const samplePoints: UnitTypesProps = {
+    const samplePoints: Units = {
       beer: 5,
       cocktail: 10,
       other: 1,
@@ -626,7 +619,7 @@ describe('sumAllPoints', () => {
   });
 
   it('should correctly handle missing keys in unitsToPoints', () => {
-    const sampleUnits: UnitsObject = {
+    const sampleUnits: UnitsList = {
       1632423423: {
         beer: 2,
         cocktail: 1,
@@ -635,7 +628,7 @@ describe('sumAllPoints', () => {
         other: 3,
       },
     };
-    const partialPoints: UnitTypesProps = {
+    const partialPoints: Units = {
       beer: 5,
       other: 1,
     };
@@ -646,7 +639,7 @@ describe('sumAllPoints', () => {
 
 describe('getLastUnitAddedTime', () => {
   let dateNow: Date = new Date();
-  let mockSession: DrinkingSessionArrayItem;
+  let mockSession: DrinkingSession;
 
   beforeEach(() => {
     mockSession = createMockSession(dateNow);
@@ -654,7 +647,7 @@ describe('getLastUnitAddedTime', () => {
 
   it('should correctly identify last added unit timestamp', () => {
     let now = dateNow.getTime();
-    let testUnits: UnitsObject = {
+    let testUnits: UnitsList = {
       [now + 10]: {
         beer: 2,
       },
@@ -681,9 +674,9 @@ describe('getLastUnitAddedTime', () => {
 describe('calculateThisMonthUnits', () => {
   let currentDate = new Date();
   let mockDateObject: DateObject = dateToDateObject(currentDate);
-  let twoBeers: UnitsObject = createMockUnitsObject({beer: 2});
-  let threeWines: UnitsObject = createMockUnitsObject({wine: 3});
-  let fourOther: UnitsObject = createMockUnitsObject({other: 4});
+  let twoBeers: UnitsList = createMockUnitsList({beer: 2});
+  let threeWines: UnitsList = createMockUnitsList({wine: 3});
+  let fourOther: UnitsList = createMockUnitsList({other: 4});
 
   it('should return 0 when there are no drinking sessions this month', () => {
     const result = calculateThisMonthUnits(mockDateObject, []);
@@ -691,7 +684,7 @@ describe('calculateThisMonthUnits', () => {
   });
 
   it('should sum units for sessions that only fall within the current month', () => {
-    const testSessions: DrinkingSessionArrayItem[] = [
+    const testSessions: DrinkingSessionArray = [
       createMockSession(new Date(), -31, twoBeers),
       createMockSession(new Date(), 31, twoBeers),
       createMockSession(new Date(), 0, threeWines),
@@ -704,7 +697,7 @@ describe('calculateThisMonthUnits', () => {
 
   it('should sum units for all sessions if all fall within the current month', () => {
     // Mock sumAllUnits function and getSingleMonthDrinkingSessions to return an array of sessions
-    const testSessions: DrinkingSessionArrayItem[] = [
+    const testSessions: DrinkingSessionArray = [
       createMockSession(new Date(), 0, threeWines),
       createMockSession(new Date(), 0, twoBeers),
       createMockSession(new Date(), 0, fourOther),
@@ -716,16 +709,16 @@ describe('calculateThisMonthUnits', () => {
 });
 
 describe('calculateThisMonthPoints', () => {
-  let mockPreferences: PreferencesData = createMockPreferences();
+  let mockPreferences: Preferences = createMockPreferences();
   let mockUnitsToPoints = mockPreferences.units_to_points;
   mockUnitsToPoints.beer = 1;
   mockUnitsToPoints.weak_shot = 0.5;
   mockUnitsToPoints.other = 1;
   let currentDate = new Date();
   let mockDateObject: DateObject = dateToDateObject(currentDate);
-  let twoBeers: UnitsObject = createMockUnitsObject({beer: 2});
-  let threeWeakShots: UnitsObject = createMockUnitsObject({weak_shot: 3});
-  let fourOther: UnitsObject = createMockUnitsObject({other: 4});
+  let twoBeers: UnitsList = createMockUnitsList({beer: 2});
+  let threeWeakShots: UnitsList = createMockUnitsList({weak_shot: 3});
+  let fourOther: UnitsList = createMockUnitsList({other: 4});
 
   it('should return 0 when there are no drinking sessions this month', () => {
     const result = calculateThisMonthPoints(
@@ -737,7 +730,7 @@ describe('calculateThisMonthPoints', () => {
   });
 
   it('should sum units for sessions that only fall within the current month', () => {
-    const testSessions: DrinkingSessionArrayItem[] = [
+    const testSessions: DrinkingSessionArray = [
       createMockSession(new Date(), -31, twoBeers),
       createMockSession(new Date(), 31, twoBeers),
       createMockSession(new Date(), 0, threeWeakShots),
@@ -754,7 +747,7 @@ describe('calculateThisMonthPoints', () => {
 
   it('should sum units for all sessions if all fall within the current month', () => {
     // Mock sumAllUnits function and getSingleMonthDrinkingSessions to return an array of sessions
-    const testSessions: DrinkingSessionArrayItem[] = [
+    const testSessions: DrinkingSessionArray = [
       createMockSession(new Date(), 0, threeWeakShots),
       createMockSession(new Date(), 0, twoBeers),
       createMockSession(new Date(), 0, fourOther),
@@ -770,7 +763,7 @@ describe('calculateThisMonthPoints', () => {
 });
 
 describe('addUnits function', () => {
-  let existingUnits: UnitsObject;
+  let existingUnits: UnitsList;
 
   beforeEach(() => {
     existingUnits = {
@@ -786,7 +779,7 @@ describe('addUnits function', () => {
   });
 
   it('should add new units with a new timestamp', () => {
-    const unitsToAdd: UnitTypesProps = {beer: 4, wine: 2};
+    const unitsToAdd: Units = {beer: 4, wine: 2};
     const newUnits = addUnits(existingUnits, unitsToAdd);
     const newTimestamps = Object.keys(newUnits).map(Number);
 
@@ -799,7 +792,7 @@ describe('addUnits function', () => {
   });
 
   it('should keep all existing units unchanged', () => {
-    const unitsToAdd: UnitTypesProps = {beer: 4, wine: 2};
+    const unitsToAdd: Units = {beer: 4, wine: 2};
     const newUnits = addUnits(existingUnits, unitsToAdd);
 
     Object.keys(existingUnits).forEach(timestamp => {
@@ -810,7 +803,7 @@ describe('addUnits function', () => {
   });
 
   it('should handle empty units to add', () => {
-    const unitsToAdd: UnitTypesProps = {};
+    const unitsToAdd: Units = {};
     const newUnits = addUnits(existingUnits, unitsToAdd);
     const newTimestamps = Object.keys(newUnits).map(Number);
 
@@ -823,7 +816,7 @@ describe('addUnits function', () => {
   });
 
   it('should handle undefined values in units to add', () => {
-    const unitsToAdd: UnitTypesProps = {beer: undefined, wine: 2};
+    const unitsToAdd: Units = {beer: undefined, wine: 2};
     const newUnits = addUnits(existingUnits, unitsToAdd);
     const newTimestamps = Object.keys(newUnits).map(Number);
 
@@ -837,7 +830,7 @@ describe('addUnits function', () => {
 });
 
 describe('removeUnits function', () => {
-  let existingUnits: UnitsObject;
+  let existingUnits: UnitsList;
 
   beforeEach(() => {
     existingUnits = {
@@ -900,9 +893,7 @@ describe('removeUnits function', () => {
 
 describe('removeZeroObjectsFromSession', () => {
   // Helper function to create mock session with units
-  const createMockSessionWithUnits = (
-    units: UnitsObject,
-  ): DrinkingSessionArrayItem => {
+  const createMockSessionWithUnits = (units: UnitsList): DrinkingSession => {
     return {
       start_time: Date.now(),
       end_time: Date.now() + 1000,
@@ -912,8 +903,8 @@ describe('removeZeroObjectsFromSession', () => {
     };
   };
 
-  it('should remove UnitsObject children with all unit values set to 0', () => {
-    const mockSession: DrinkingSessionArrayItem = createMockSessionWithUnits({
+  it('should remove UnitsList children with all unit values set to 0', () => {
+    const mockSession: DrinkingSession = createMockSessionWithUnits({
       12345679: {
         beer: 0,
         cocktail: 0,
@@ -931,8 +922,8 @@ describe('removeZeroObjectsFromSession', () => {
     expect(result.units[12345680]).toBeDefined();
   });
 
-  it('should remove UnitsObject children where one object has a single key set to 0', () => {
-    const mockSession: DrinkingSessionArrayItem = createMockSessionWithUnits({
+  it('should remove UnitsList children where one object has a single key set to 0', () => {
+    const mockSession: DrinkingSession = createMockSessionWithUnits({
       12345679: {
         other: 0,
       },
@@ -946,7 +937,7 @@ describe('removeZeroObjectsFromSession', () => {
   });
 
   it('should not do anything if there are only zero-unit objects', () => {
-    const mockSession: DrinkingSessionArrayItem = createMockSessionWithUnits({
+    const mockSession: DrinkingSession = createMockSessionWithUnits({
       12345679: {
         other: 0,
       },
@@ -956,8 +947,8 @@ describe('removeZeroObjectsFromSession', () => {
     expect(result).toMatchObject(mockSession);
   });
 
-  it('should keep UnitsObject children with at least one unit value not set to 0', () => {
-    const mockSession: DrinkingSessionArrayItem = createMockSessionWithUnits({
+  it('should keep UnitsList children with at least one unit value not set to 0', () => {
+    const mockSession: DrinkingSession = createMockSessionWithUnits({
       12345679: {beer: 1, cocktail: 0},
       12345680: {beer: 0, wine: 1},
     });
@@ -969,8 +960,8 @@ describe('removeZeroObjectsFromSession', () => {
     expect(result.units[12345680]).toBeDefined();
   });
 
-  it('should return the same session if no UnitsObject children have all unit values set to 0', () => {
-    const mockSession: DrinkingSessionArrayItem = createMockSessionWithUnits({
+  it('should return the same session if no UnitsList children have all unit values set to 0', () => {
+    const mockSession: DrinkingSession = createMockSessionWithUnits({
       12345679: {beer: 1},
       12345680: {wine: 1},
     });
@@ -980,8 +971,8 @@ describe('removeZeroObjectsFromSession', () => {
     expect(result).toEqual(mockSession);
   });
 
-  it('should return a session with no units if all UnitsObject children have all unit values set to 0', () => {
-    const mockSession: DrinkingSessionArrayItem = createMockSessionWithUnits({
+  it('should return a session with no units if all UnitsList children have all unit values set to 0', () => {
+    const mockSession: DrinkingSession = createMockSessionWithUnits({
       12345679: {
         beer: 0,
         cocktail: 0,
@@ -1006,92 +997,90 @@ describe('removeZeroObjectsFromSession', () => {
   });
 });
 
-describe('getRandomUnitsObject', () => {
-  let randomUnitsObject: UnitsObject = {};
-  let randomUnits: UnitTypesProps = {};
+describe('getRandomUnitsList', () => {
+  let randomUnitsList: UnitsList = {};
+  let randomUnits: Units = {};
 
   beforeEach(() => {
-    randomUnitsObject = getRandomUnitsObject(30);
-    randomUnits = Object.values(randomUnitsObject)[0];
+    randomUnitsList = getRandomUnitsList(30);
+    randomUnits = Object.values(randomUnitsList)[0];
   });
 
   it('should return an object with all values between 0 and maxUnitValue (exclusive)', () => {
     for (let unit in randomUnits) {
-      expect(randomUnits[unit as keyof UnitTypesProps]).toBeGreaterThanOrEqual(
-        0,
-      );
-      expect(randomUnits[unit as keyof UnitTypesProps]).toBeLessThanOrEqual(30);
+      expect(randomUnits[unit as keyof Units]).toBeGreaterThanOrEqual(0);
+      expect(randomUnits[unit as keyof Units]).toBeLessThanOrEqual(30);
     }
   });
 
-  it('should have all the expected keys based on UnitTypesProps type', () => {
-    const expectedKeys = UnitTypesKeys;
+  it('should have all the expected keys based on UnitKey type', () => {
+    const expectedKeys = Object.values(CONST.UNITS.KEYS);
 
     expect(Object.keys(randomUnits)).toEqual(expectedKeys);
   });
 });
 
-describe('getZeroUnitsObject', () => {
-  let zeroUnitsObject: UnitsObject = {};
-  let zeroUnits: UnitTypesProps = {};
+describe('getZeroUnitsList', () => {
+  let zeroUnitsList: UnitsList = {};
+  let zeroUnits: Units = {};
 
   beforeEach(() => {
-    zeroUnitsObject = getZeroUnitsObject();
-    zeroUnits = Object.values(zeroUnitsObject)[0];
+    zeroUnitsList = getZeroUnitsList();
+    zeroUnits = Object.values(zeroUnitsList)[0];
   });
 
   it('should return an object with all values equal to 0', () => {
-    for (let unit in zeroUnits) {
-      expect(zeroUnits[unit as keyof UnitTypesProps]).toEqual(0);
-    }
+    Object.values(zeroUnits).forEach(unit => {
+      expect(unit).toEqual(0);
+    });
   });
 
-  it('should have all the expected keys based on UnitTypesProps type', () => {
-    const expectedKeys = UnitTypesKeys;
+  it('should have all the expected keys based on Units type', () => {
+    const expectedKeys = Object.values(CONST.UNITS.KEYS);
 
     expect(Object.keys(zeroUnits)).toEqual(expectedKeys);
   });
 });
 
 describe('unitsToColors', () => {
-  // Create a mock for UnitsToColorsData for consistent testing
-  const mockUnitsToColorsData: UnitsToColorsData = {
+  // Create a mock for UnitsToColors for consistent testing
+  const mockUnitsToColors: UnitsToColors = {
     yellow: 2,
     orange: 4,
   };
 
   it('should return green for 0 units', () => {
-    expect(unitsToColors(0, mockUnitsToColorsData)).toBe('green');
+    expect(unitsToColors(0, mockUnitsToColors)).toBe('green');
   });
 
   it('should return yellow for units up to yellow limit', () => {
-    expect(unitsToColors(1, mockUnitsToColorsData)).toBe('yellow');
-    expect(unitsToColors(2, mockUnitsToColorsData)).toBe('yellow');
+    expect(unitsToColors(1, mockUnitsToColors)).toBe('yellow');
+    expect(unitsToColors(2, mockUnitsToColors)).toBe('yellow');
   });
 
   it('should return orange for units between yellow and orange limits', () => {
-    expect(unitsToColors(3, mockUnitsToColorsData)).toBe('orange');
-    expect(unitsToColors(4, mockUnitsToColorsData)).toBe('orange');
+    expect(unitsToColors(3, mockUnitsToColors)).toBe('orange');
+    expect(unitsToColors(4, mockUnitsToColors)).toBe('orange');
   });
 
   it('should return red for units above the orange limit', () => {
-    expect(unitsToColors(5, mockUnitsToColorsData)).toBe('red');
-    expect(unitsToColors(6, mockUnitsToColorsData)).toBe('red');
+    expect(unitsToColors(5, mockUnitsToColors)).toBe('red');
+    expect(unitsToColors(6, mockUnitsToColors)).toBe('red');
   });
 });
 
 describe('findUnitName', () => {
   it('should return the verbose name for each unit key', () => {
-    const verboseNames = UnitTypesNames;
+    const verboseNames = Object.values(CONST.UNITS.NAMES);
 
-    for (let unitKey of UnitTypesKeys) {
+    for (let unitKey of Object.values(CONST.UNITS.KEYS)) {
       const verboseName = findUnitName(unitKey);
       expect(verboseNames).toContain(verboseName);
     }
   });
 
   it('should return undefined for an invalid unit key', () => {
-    const invalidUnitKey = 'invalid_key'; // This key doesn't exist in UnitTypesKeys
+    const invalidUnitKey = 'invalid_key'; // This key doesn't exist in UnitType object
     const result = findUnitName(invalidUnitKey as any); // Type cast here to any to bypass TypeScript's type checking for the purpose of this test
     expect(result).toBeUndefined();
   });

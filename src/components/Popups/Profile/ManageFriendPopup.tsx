@@ -79,8 +79,4 @@ const ManageFriendPopup: React.FC<ManageFriendPopupProps> = ({
   );
 };
 
-const screenWidth = Dimensions.get('window').width;
-
-const styles = StyleSheet.create({});
-
 export default ManageFriendPopup;

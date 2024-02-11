@@ -1,4 +1,4 @@
-﻿import React, {useState, useEffect, useCallback} from 'react';
+﻿import React, {useState, useEffect} from 'react';
 import {
   Text,
   Image,
@@ -9,7 +9,6 @@ import {
   Alert,
   Dimensions,
 } from 'react-native';
-import {useFocusEffect} from '@react-navigation/native';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import {
   timestampToDate,
@@ -20,34 +19,23 @@ import {
   getSingleDayDrinkingSessions,
   setDateToCurrentTime,
   sumAllUnits,
-  getZeroUnitsObject,
+  getZeroUnitsList,
   sumAllPoints,
 } from '../utils/dataHandling';
-import {useContext} from 'react';
 import LoadingData from '../components/LoadingData';
-import {
-  DrinkingSessionProps,
-  DrinkingSessionData,
-  DrinkingSessionArrayItem,
-  PreferencesData,
-} from '../types/database';
+// import { PreferencesData} from '../types/database';
 import {DayOverviewScreenProps} from '../types/screens';
 import {auth} from '../services/firebaseSetup';
 import UserOffline from '../components/UserOffline';
 import {useUserConnection} from '../context/global/UserConnectionContext';
-import BasicButton from '../components/Buttons/BasicButton';
 import {getDatabaseData} from '../context/global/DatabaseDataContext';
+import {DrinkingSession, Preferences} from '@src/types/database';
 import CONST from '@src/CONST';
-
-type CombinedDataProps = {
-  sessionKey: string;
-  session: DrinkingSessionArrayItem;
-};
-import commonStyles from '../styles/commonStyles';
 import {generateDatabaseKey} from '@database/baseFunctions';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import MainHeader from '@components/Header/MainHeader';
 import MainHeaderButton from '@components/Header/MainHeaderButton';
+import {DrinkingSessionKeyValue} from '@src/types/utils/databaseUtils';
 
 const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
   if (!route || !navigation) return null; // Should never be null
@@ -58,12 +46,12 @@ const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
   const {drinkingSessionData, drinkingSessionKeys, preferences} =
     getDatabaseData();
   const [date, setDate] = useState<Date>(timestampToDate(dateObject.timestamp));
-  const [dailySessionData, setDailyData] = useState<DrinkingSessionArrayItem[]>(
-    [],
-  );
+  const [dailySessionData, setDailyData] = useState<DrinkingSession[]>([]);
   const [editMode, setEditMode] = useState<boolean>(false);
   // Create a combined data object
-  const [combinedData, setCombinedData] = useState<CombinedDataProps[]>([]);
+  const [combinedData, setCombinedData] = useState<DrinkingSessionKeyValue[]>(
+    [],
+  );
 
   // Monitor the daily sessions data
   useEffect(() => {
@@ -73,19 +61,21 @@ const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
 
   // Monitor the combined data
   useEffect(() => {
-    let newCombinedData = dailySessionData.map((session): CombinedDataProps => {
-      return {
-        sessionKey: drinkingSessionKeys[drinkingSessionData.indexOf(session)],
-        session: session,
-      };
-    });
+    let newCombinedData = dailySessionData.map(
+      (session): DrinkingSessionKeyValue => {
+        return {
+          sessionKey: drinkingSessionKeys[drinkingSessionData.indexOf(session)],
+          session: session,
+        };
+      },
+    );
     setCombinedData(newCombinedData);
   }, [dailySessionData]);
 
   const onSessionButtonPress = (
     sessionKey: string,
-    session: DrinkingSessionArrayItem,
-    preferences: PreferencesData,
+    session: DrinkingSession,
+    preferences: Preferences,
   ) => {
     if (!preferences) return null;
     let navigateToScreen: string = session?.ongoing
@@ -98,17 +88,14 @@ const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
     });
   };
 
-  const onEditSessionPress = (
-    session: DrinkingSessionArrayItem,
-    sessionKey: string,
-  ) => {
+  const onEditSessionPress = (session: DrinkingSession, sessionKey: string) => {
     navigation.navigate('Edit Session Screen', {
       session: session,
       sessionKey: sessionKey,
     });
   };
 
-  const DrinkingSession = ({sessionKey, session}: DrinkingSessionProps) => {
+  const DrinkingSession = ({sessionKey, session}: DrinkingSessionKeyValue) => {
     if (!preferences) return;
     // Calculate the session color
     var totalUnits = sumAllUnits(session.units);
@@ -184,7 +171,7 @@ const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
     );
   };
 
-  const renderDrinkingSession = ({item}: {item: CombinedDataProps}) => {
+  const renderDrinkingSession = ({item}: {item: DrinkingSessionKeyValue}) => {
     return (
       <DrinkingSession sessionKey={item.sessionKey} session={item.session} />
     );
@@ -212,12 +199,12 @@ const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
     }
     // Create a new mock drinking session
     let newTimestamp = setDateToCurrentTime(date).getTime(); // At noon
-    let newSession: DrinkingSessionArrayItem = {
+    let newSession: DrinkingSession = {
       start_time: newTimestamp, // Arbitrary timestamp of today's noon
       end_time: newTimestamp,
       blackout: false,
       note: '',
-      units: getZeroUnitsObject(),
+      units: getZeroUnitsList(),
     };
     let newSessionKey = generateDatabaseKey(
       db,

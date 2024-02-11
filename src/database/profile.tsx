@@ -6,22 +6,30 @@ import {
 } from 'firebase/storage';
 import {Auth, User, updateProfile} from 'firebase/auth';
 import {fetchDisplayDataForUsers} from './baseFunctions';
-import {ProfileDisplayData, UserStatusDisplayData} from '@src/types/database';
+import {ProfileList, UserStatusList} from '@src/types/database';
 
 export async function fetchUserProfiles(
   db: Database,
   userIds: string[],
-): Promise<ProfileDisplayData> {
+): Promise<ProfileList> {
   const profileRef = 'users/{userId}/profile';
-  return await fetchDisplayDataForUsers(db, userIds, profileRef);
+  return (await fetchDisplayDataForUsers(
+    db,
+    userIds,
+    profileRef,
+  )) as ProfileList;
 }
 
 export async function fetchUserStatuses(
   db: Database,
   userIds: string[],
-): Promise<UserStatusDisplayData> {
+): Promise<UserStatusList> {
   const profileRef = 'user_status/{userId}';
-  return await fetchDisplayDataForUsers(db, userIds, profileRef);
+  return (await fetchDisplayDataForUsers(
+    db,
+    userIds,
+    profileRef,
+  )) as UserStatusList;
 }
 
 /**

@@ -1,12 +1,12 @@
-﻿import {Database, ref, get, push, child, set, update} from 'firebase/database';
+﻿import {Database, ref, get, update} from 'firebase/database';
 
 /**
  * Check if userB is in userA's friend list.
  *
- * @param {Database} db - The database object against which to validate this conditio
- * @param {string} userA - User ID of the authenticated user.
- * @param {string} userB - User ID of the friend being checked.
- * @returns {Promise<boolean>} - Returns true if userB is a friend of userA, otherwise false.
+ * @param db - The database object against which to validate this conditio
+ * @param userA - User ID of the authenticated user.
+ * @param userB - User ID of the friend being checked.
+ * @returns Returns true if userB is a friend of userA, otherwise false.
  */
 export async function isFriend(
   db: Database,
@@ -45,11 +45,11 @@ export async function sendFriendRequest(
 /**
  * Remove from the database friend request data that existed between two users.
  *
- * @param {Database} db Firebase Database object.
- * @param {string} userFrom ID of user 1.
- * @param {string} userTo ID of user 2.
- * @returns {Promise<void>}
- * @throws {Alert} In case the database fails to
+ * @param db Firebase Database object.
+ * @param userFrom ID of user 1.
+ * @param userTo ID of user 2.
+ * @returns
+ * @throws In case the database fails to
  *  save the data.
  */
 export async function deleteFriendRequest(
@@ -66,11 +66,11 @@ export async function deleteFriendRequest(
 /**
  * Accept a friend request sent from another user.
  *
- * @param {Database} db Firebase Database object.
- * @param {string} userFrom ID of the user that is accepting the request
- * @param {string} userTo ID of the user that sent the request.
- * @returns {Promise<void>}
- * @throws {Alert} In case the database fails to
+ * @param db Firebase Database object.
+ * @param userFrom ID of the user that is accepting the request
+ * @param userTo ID of the user that sent the request.
+ * @returns
+ * @throws In case the database fails to
  *  save the data.
  */
 export async function acceptFriendRequest(
@@ -89,11 +89,11 @@ export async function acceptFriendRequest(
 /**
  * Remove from the database friend status data that existed between two users.
  *
- * @param {Database} db Firebase Database object.
- * @param {string} userFrom ID of user 1.
- * @param {string} userTo ID of user 2.
- * @returns {Promise<void>}
- * @throws {Alert} In case the database fails to save the data.
+ * @param db Firebase Database object.
+ * @param userFrom ID of user 1.
+ * @param userTo ID of user 2.
+ * @returns
+ * @throws In case the database fails to save the data.
  */
 export async function unfriend(
   db: Database,

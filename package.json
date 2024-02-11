@@ -64,6 +64,7 @@
     "react-native-webview": "^13.6.2",
     "semver": "^7.5.4",
     "ts-node": "^10.9.2",
+    "type-fest": "^4.10.2",
     "underscore": "^1.13.6",
     "yargs": "^17.7.2"
   },
@@ -136,10 +137,11 @@
     "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
     "testPathIgnorePatterns": [
       "\\.snap$",
+      "\\.html$",
       "<rootDir>/node_modules/",
-      "/node_modules/(?!(firebase)/)",
-      "/node_modules/(?!react-native-calendars/)",
-      "__tests__/utils/"
+      "<rootDir>/node_modules/(?!(firebase)/)",
+      "<rootDir>/node_modules/(?!react-native-calendars/)",
+      "<rootDir>/__tests__/utils/"
     ]
   },
   "overrides": {

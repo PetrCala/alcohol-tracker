@@ -1,15 +1,13 @@
-﻿import {StackNavigationProp} from '@react-navigation/stack';
+﻿import {RouteProp} from '@react-navigation/native';
+import {DateObject} from './time';
 import {
-  DrinkingSessionData,
-  PreferencesData,
-  UserData,
-  DrinkingSessionArrayItem,
-  ProfileData,
-  FriendsData,
-  FriendRequestDisplayData,
+  DrinkingSession,
+  FriendRequestList,
+  Preferences,
+  DrinkingSessionArray,
+  Profile,
+  FriendList,
 } from './database';
-import {RouteProp} from '@react-navigation/native';
-import {DateObject} from './components';
 
 export type RootStackParamList = {
   Auth: undefined;
@@ -28,23 +26,23 @@ export type AppStackParamList = {
   'Main Screen': undefined;
   'Main Menu Screen': undefined;
   'Drinking Session Screen': {
-    session: DrinkingSessionArrayItem;
+    session: DrinkingSession;
     sessionKey: string;
-    preferences: PreferencesData;
+    preferences: Preferences;
   };
   'Profile Screen': {
     userId: string;
-    profileData: ProfileData;
-    friends: FriendsData | null;
-    drinkingSessionData: DrinkingSessionArrayItem[] | null;
-    preferences: PreferencesData | null;
+    profileData: Profile;
+    friends: FriendList | null;
+    drinkingSessionData: DrinkingSessionArray | null;
+    preferences: Preferences | null;
   };
   'Social Screen': {
     screen: string; // 'Friend List' | 'Friend Requests' | 'Search';
   };
   'Friends Friends Screen': {
     userId: string;
-    friends: FriendsData | null;
+    friends: FriendList | null;
   };
   'Achievement Screen': undefined;
   'Statistics Screen': undefined;
@@ -52,11 +50,11 @@ export type AppStackParamList = {
   'Preferences Screen': undefined;
   'Day Overview Screen': {dateObject: DateObject};
   'Edit Session Screen': {
-    session: DrinkingSessionArrayItem;
+    session: DrinkingSession;
     sessionKey: string;
   };
   'Session Summary Screen': {
-    session: DrinkingSessionArrayItem;
+    session: DrinkingSession;
     sessionKey: string;
   };
   'Terms And Agreements Screen': undefined;
@@ -157,11 +155,11 @@ export type PrivacyPolicyScreenProps = {
 
 export type FriendListScreenProps = {
   navigation: any;
-  friends: FriendsData | undefined;
+  friends: FriendList | undefined;
   setIndex: React.Dispatch<React.SetStateAction<number>>;
 };
 
 export type SearchScreenProps = {
-  friendRequests: FriendRequestDisplayData | undefined;
-  friends: FriendsData | undefined;
+  friendRequests: FriendRequestList | undefined;
+  friends: FriendList | undefined;
 };

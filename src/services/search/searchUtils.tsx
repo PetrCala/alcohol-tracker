@@ -1,4 +1,4 @@
-import {UserIdToNicknameMapping} from '@src/types/search';
+import {UserIdToNicknameMapping} from '@src/types/various/Search';
 
 /**
  * Input an object where the keys are userIds, and the first level

@@ -14,7 +14,7 @@ import {
   setupFirebaseRulesTestEnv,
   teardownFirebaseRulesTestEnv,
 } from '../../utils/emulators/firebaseRulesSetup';
-import {FeedbackProps} from '@src/types/database';
+import {Feedback} from '@src/types/database';
 import {setupGlobalMocks} from '../../utils/testUtils';
 import {
   createMockSession,
@@ -31,7 +31,7 @@ const projectId = process.env.TEST_PROJECT_ID;
 if (!projectId) throw new Error(`Missing environment variable ${projectId}.`);
 
 const testFeedbackId: string = 'testFeedbackId';
-const testFeedback: FeedbackProps = {
+const testFeedback: Feedback = {
   submit_time: 0,
   text: 'test',
   user_id: 'testId',

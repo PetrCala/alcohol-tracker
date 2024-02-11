@@ -42,6 +42,7 @@
     "paths": {
       "@assets/*": ["./assets/*"],
       "@components/*": ["./src/components/*"],
+      "@context/*": ["./src/context/*"],
       "@database/*": ["./src/database/*"],
       "@firebase/auth": ["./node_modules/@firebase/auth/dist/index.rn.d.ts"],
       "@hooks/*": ["./src/hooks/*"],
@@ -51,7 +52,6 @@
       "@src/*": ["./src/*"],
       "@storage/*": ["./src/storage/*"],
       "@styles/*": ["./src/styles/*"],
-      "@types/*": ["./src/types/*"],
       "@utils/*": ["./src/utils/*"]
       // "@userActions/*": ["./src/libs/actions/*"]
     }

@@ -7,16 +7,10 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {
-  useState,
-  forwardRef,
-  useRef,
-  useImperativeHandle,
-  useEffect,
-} from 'react';
+import {useState, forwardRef, useEffect} from 'react';
 import {Database} from 'firebase/database';
 import {useFirebase} from '@src/context/global/FirebaseContext';
-import {SearchWindowRef} from '@src/types/search';
+import {SearchWindowRef} from '@src/types/various/Search';
 import KeyboardFocusHandler from '@components/Keyboard/KeyboardFocusHandler';
 import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 import CONST from '@src/CONST';
