@@ -20,7 +20,7 @@ import {
   Units,
   Preferences,
   UnconfirmedDays,
-  User,
+  UserProps,
   UnitsToColors,
   UserStatus,
   UserList,
@@ -260,7 +260,7 @@ function validateUserUnconfirmedDays(userUnconfirmedDays: {
  * @param obj Object to validate
  * @returns bool
  */
-function isUserData(obj: any): obj is User {
+function isUserData(obj: any): obj is UserProps {
   return typeof obj.role === 'string' && typeof obj.beta_key_id === 'number';
 }
 

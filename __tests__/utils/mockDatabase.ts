@@ -6,7 +6,6 @@ import {
   Config,
   DatabaseProps,
   DrinkingSession,
-  UserDrinkingSessions,
   Feedback,
   FriendRequestList,
   FriendRequestStatus,
@@ -20,6 +19,8 @@ import {
   UserProps,
   UserStatus,
   UnitsToPoints,
+  DrinkingSessionList,
+  DrinkingSessionId,
 } from '../../src/types/database';
 import {getRandomChoice, getRandomInt} from '../../src/utils/choice';
 import {
@@ -327,10 +328,10 @@ export function createMockDatabase(noFriends: boolean = false): DatabaseProps {
     db.feedback[userId] = createMockFeedback();
 
     // Drinking sessions
-    const mockSessionData: UserDrinkingSessions = {};
+    const mockSessionData: DrinkingSessionList = {};
     let latestSessionId: string = '';
     MOCK_SESSION_IDS.forEach(sessionId => {
-      const fullSessionId = `${userId}-${sessionId}`;
+      const fullSessionId: DrinkingSessionId = `${userId}-${sessionId}`;
       const mockSession = createMockSession(new Date());
       mockSessionData[fullSessionId] = mockSession;
       latestSessionId = fullSessionId;

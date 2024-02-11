@@ -14,6 +14,7 @@ import type {
   DrinkingSessionId,
   DrinkingSessionArray,
   DrinkingSessionList,
+  UserDrinkingSessionsList,
 } from './DrinkingSession';
 import type Feedback from './Feedback';
 import type {FeedbackList, FeedbackId} from './Feedback';
@@ -38,7 +39,6 @@ import type Units from './Units';
 import type {UnitKey, UnitName, UnitsList, UnitsTimestamp} from './Units';
 import type UserProps from './UserProps';
 import type {UserList, Profile, ProfileList} from './UserProps';
-import type UserDrinkingSessions from './UserDrinkingSessions';
 import type UserStatus from './UserStatus';
 import type {UserStatusList} from './UserStatus';
 
@@ -84,7 +84,7 @@ export type {
   UnitsToColors,
   UnitsToPoints,
   UserProps,
-  UserDrinkingSessions,
+  UserDrinkingSessionsList,
   UserId,
   UserList,
   UserStatus,

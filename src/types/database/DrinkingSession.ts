@@ -1,3 +1,4 @@
+import {UserId} from './DatabaseCommon';
 import {UnitsList} from './Units';
 
 type DrinkingSessionId = string;
@@ -15,5 +16,12 @@ type DrinkingSessionList = Record<DrinkingSessionId, DrinkingSession>;
 
 type DrinkingSessionArray = Array<DrinkingSession>;
 
+type UserDrinkingSessionsList = Record<UserId, DrinkingSessionList>;
+
 export default DrinkingSession;
-export type {DrinkingSessionId, DrinkingSessionList, DrinkingSessionArray};
+export type {
+  DrinkingSessionId,
+  DrinkingSessionList,
+  DrinkingSessionArray,
+  UserDrinkingSessionsList,
+};

@@ -15,7 +15,7 @@ import {
   DrinkingSessionList,
   Preferences,
   UnconfirmedDays,
-  User,
+  UserProps,
   UserStatus,
 } from '@src/types/database';
 
@@ -25,7 +25,7 @@ type DatabaseDataContextType = {
   drinkingSessionKeys: string[];
   preferences: Preferences | null;
   unconfirmedDays: UnconfirmedDays | null;
-  userData: User | null;
+  userData: UserProps | null;
   isLoading: boolean;
 };
 
@@ -198,7 +198,7 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
   useEffect(() => {
     if (!user || !db) return;
     let userRef = `users/${user.uid}`;
-    let stopListening = listenForDataChanges(db, userRef, (data: User) => {
+    let stopListening = listenForDataChanges(db, userRef, (data: UserProps) => {
       if (!isEqual(data, state.userData)) {
         dispatch({type: 'SET_USER_DATA', payload: data});
       }

@@ -27,6 +27,8 @@ import {
   SAMPLE_UNITS_TO_POINTS,
 } from '../../utils/testsStatic';
 import CONST from '@src/CONST';
+import DBPATHS from '@database/DBPATHS';
+import {isFriend} from '@database/friends';
 
 const projectId = process.env.TEST_PROJECT_ID;
 if (!projectId) throw new Error(`Missing environment variable ${projectId}.`);
@@ -51,6 +53,12 @@ describeWithEmulator('Test drinking session rules', () => {
   let authDb: any; // firebase.database.Database
   let unauthDb: any; // firebase.database.Database
   let adminDb: any;
+  const user1DrinkingsessionsRef =
+    DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(testFeedbackId);
+  const authUserDrinkingsessionsRef =
+    DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(authUserId);
+  const otherUserDrinkingsessionsRef =
+    DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(otherUserId);
   setupGlobalMocks(); // Silence permission denied warnings
 
   beforeAll(async () => {
@@ -66,60 +74,60 @@ describeWithEmulator('Test drinking session rules', () => {
   });
 
   it('should allow admins to write into the drinking sessions node', async () => {
-    const adminRef = adminDb.ref(`user_drinking_sessions/${testFeedbackId}`);
+    const adminRef = adminDb.ref(user1DrinkingsessionsRef);
     await assertSucceeds(adminRef.set(testFeedback));
   });
 
   it('should not allow authenticated user to write into the drinking sessions node', async () => {
-    const authRef = authDb.ref(`user_drinking_sessions/${testFeedbackId}`);
+    const authRef = authDb.ref(user1DrinkingsessionsRef);
     await assertFails(authRef.set(testFeedback));
   });
 
   it('should not allow unauthenticated user to write into the drinking sessions node', async () => {
-    const unauthRef = unauthDb.ref(`user_drinking_sessions/${testFeedbackId}`);
+    const unauthRef = unauthDb.ref(user1DrinkingsessionsRef);
     await assertFails(unauthRef.set(testFeedback));
   });
 
   it('should allow admins to read into the drinking sessions node', async () => {
-    const adminRef = adminDb.ref(`user_drinking_sessions/${testFeedbackId}`);
+    const adminRef = adminDb.ref(user1DrinkingsessionsRef);
     await assertSucceeds(adminRef.get(testFeedback));
   });
 
   it('should not allow authenticated user to read into the drinking sessions node', async () => {
-    const authRef = authDb.ref(`user_drinking_sessions/${testFeedbackId}`);
+    const authRef = authDb.ref(user1DrinkingsessionsRef);
     await assertFails(authRef.get(testFeedback));
   });
 
   it('should not allow unauthenticated user to read into the drinking sessions node', async () => {
-    const unauthRef = unauthDb.ref(`user_drinking_sessions/${testFeedbackId}`);
+    const unauthRef = unauthDb.ref(user1DrinkingsessionsRef);
     await assertFails(unauthRef.get(testFeedback));
   });
 
   it('should allow the user themselves to write into their own data', async () => {
-    const authRef = authDb.ref(`user_drinking_sessions/${authUserId}`);
+    const authRef = authDb.ref(authUserDrinkingsessionsRef);
     const mockDrinkingSession = createMockSession(new Date());
     await assertSucceeds(authRef.set(mockDrinkingSession));
   });
 
   it("should not allow a user to write into other user's data", async () => {
-    const authRef = authDb.ref(`user_drinking_sessions/${otherUserId}`);
+    const authRef = authDb.ref(otherUserDrinkingsessionsRef);
     const mockDrinkingSession = createMockSession(new Date());
     await assertFails(authRef.set(mockDrinkingSession));
   });
 
   it('should allow the user to read their own drinking session data', async () => {
-    const authRef = authDb.ref(`user_drinking_sessions/${authUserId}`);
+    const authRef = authDb.ref(authUserDrinkingsessionsRef);
     await assertSucceeds(authRef.get());
   });
 
   it("should allow a user to read friend's drinking session data", async () => {
     await makeFriends(authDb, authUserId, otherUserId); // Set the friend connection first
-    const authRef = authDb.ref(`user_drinking_sessions/${otherUserId}`);
+    const authRef = authDb.ref(otherUserDrinkingsessionsRef);
     await assertSucceeds(authRef.get());
   });
 
   it('should not allow a user to drinking session data of a non-friend', async () => {
-    const authRef = authDb.ref(`user_drinking_sessions/${otherUserId}`);
+    const authRef = authDb.ref(otherUserDrinkingsessionsRef);
     await assertFails(authRef.get());
   });
 });
