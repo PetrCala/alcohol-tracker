@@ -20,7 +20,7 @@ export async function fetchUserProfiles(
   db: Database,
   userIds: string[],
 ): Promise<ProfileList> {
-  const profileRef = 'users/{userId}/profile';
+  const profileRef = 'users/{userId}/profile'; // TODO clear this up
   return (await fetchDisplayDataForUsers(
     db,
     userIds,
