@@ -85,7 +85,7 @@ export const validateSignInInput = (
     password == '' ||
     passwordConfirm == ''
   ) {
-    return {success: false, message: 'You must fill out all fields first'};
+    return {success: false, message: 'Please fill out all fields first'};
   }
   if (!isValidEmail(email)) {
     return {
