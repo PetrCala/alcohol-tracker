@@ -89,8 +89,8 @@ export async function acceptFriendRequest(
   var updates: {[requestId: string]: boolean | null} = {};
   updates[friendRequestRef.getRoute(userFrom, userTo)] = null;
   updates[friendRequestRef.getRoute(userTo, userFrom)] = null;
-  updates[friendRef.getRoute(userFrom, userTo)] = null;
-  updates[friendRef.getRoute(userTo, userFrom)] = null;
+  updates[friendRef.getRoute(userFrom, userTo)] = true;
+  updates[friendRef.getRoute(userTo, userFrom)] = true;
   await update(ref(db), updates);
 }
 
