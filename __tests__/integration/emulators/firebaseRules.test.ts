@@ -137,6 +137,16 @@ describeWithEmulator('Test user preferences rules', () => {
   let authDb: any; // firebase.database.Database
   let unauthDb: any; // firebase.database.Database
   let adminDb: any;
+  const authPreferencesRef =
+    DBPATHS.USER_PREFERENCES_USER_ID.getRoute(authUserId);
+  const otherPreferencesRef =
+    DBPATHS.USER_PREFERENCES_USER_ID.getRoute(otherUserId);
+  const authFirstDayOfWeekRef =
+    DBPATHS.USER_PREFERENCES_USER_ID_FIRST_DAY_OF_WEEK.getRoute(authUserId);
+  const authUnitsToColorsRef =
+    DBPATHS.USER_PREFERENCES_USER_ID_UNITS_TO_COLORS.getRoute(authUserId);
+  const authUnitsToPointsRef =
+    DBPATHS.USER_PREFERENCES_USER_ID_UNITS_TO_POINTS.getRoute(authUserId);
   setupGlobalMocks(); // Silence permission denied warnings
 
   beforeAll(async () => {
@@ -153,53 +163,45 @@ describeWithEmulator('Test user preferences rules', () => {
 
   it('should allow an authenticated user to set default preferences', async () => {
     const defaultPreferences = getDefaultPreferences();
-    const authRef = authDb.ref(`user_preferences/${authUserId}`);
+    const authRef = authDb.ref(authPreferencesRef);
     await assertSucceeds(authRef.set(defaultPreferences));
   });
 
   it('should allow an authenticater user to read their own preferences', async () => {
-    const authRef = authDb.ref(`user_preferences/${authUserId}`);
+    const authRef = authDb.ref(authPreferencesRef);
     await assertSucceeds(authRef.get());
   });
 
   it("should not allow general authenticated users to read other user's preferences", async () => {
-    const authRef = authDb.ref(`user_preferences/${otherUserId}`);
+    const authRef = authDb.ref(otherPreferencesRef);
     await assertFails(authRef.get());
   });
 
   it("should allow authenticated friend users to read other user's preferences", async () => {
     await makeFriends(authDb, authUserId, otherUserId);
-    const authRef = authDb.ref(`user_preferences/${otherUserId}`);
+    const authRef = authDb.ref(otherPreferencesRef);
     await assertSucceeds(authRef.get());
   });
 
   it('should allow an authenticated user to set their preferred day of week', async () => {
-    const authRef = authDb.ref(
-      `user_preferences/${authUserId}/first_day_of_week`,
-    );
+    const authRef = authDb.ref(authFirstDayOfWeekRef);
     await assertSucceeds(authRef.set('Monday'));
     await assertSucceeds(authRef.set('Sunday'));
   });
 
   it('should not allow an authenticated user to set incorrect day of week', async () => {
-    const authRef = authDb.ref(
-      `user_preferences/${authUserId}/first_day_of_week`,
-    );
+    const authRef = authDb.ref(authFirstDayOfWeekRef);
     await assertFails(authRef.set('Wednesday'));
     await assertFails(authRef.set(123));
   });
 
   it('should allow an authenticated user to set their units to colors data', async () => {
-    const authRef = authDb.ref(
-      `user_preferences/${authUserId}/units_to_colors`,
-    );
+    const authRef = authDb.ref(authUnitsToColorsRef);
     await assertSucceeds(authRef.set(SAMPLE_UNITS_TO_COLORS));
   });
 
   it('should allow an authenticated user to set their units to points data', async () => {
-    const authRef = authDb.ref(
-      `user_preferences/${authUserId}/units_to_points`,
-    );
+    const authRef = authDb.ref(authUnitsToPointsRef);
     await assertSucceeds(authRef.set(SAMPLE_UNITS_TO_POINTS));
   });
 });
@@ -209,6 +211,7 @@ describeWithEmulator('Test feedback rules', () => {
   let authDb: any;
   let unauthDb: any;
   let adminDb: any;
+  const feedbackRef = DBPATHS.FEEDBACK_FEEDBACK_ID.getRoute(testFeedbackId);
   setupGlobalMocks(); // Silence permission denied warnings
 
   beforeAll(async () => {
@@ -224,22 +227,22 @@ describeWithEmulator('Test feedback rules', () => {
   });
 
   it('should write feedback when authorized', async () => {
-    const authRef = authDb.ref(`feedback/${testFeedbackId}`);
+    const authRef = authDb.ref(feedbackRef);
     await assertSucceeds(authRef.set(testFeedback));
   });
 
   it('should not write feedback when unauthorized', async () => {
-    const unauthRef = unauthDb.ref(`feedback/${testFeedbackId}`);
+    const unauthRef = unauthDb.ref(feedbackRef);
     await assertFails(unauthRef.set(testFeedback));
   });
 
   it('should allow reading feedback when admin is true', async () => {
-    const authRef = adminDb.ref(`feedback/${testFeedbackId}`);
+    const authRef = adminDb.ref(feedbackRef);
     await assertSucceeds(authRef.get());
   });
 
   it('should not read feedback when not an admin', async () => {
-    const unauthRef = unauthDb.ref(`feedback/${testFeedbackId}`);
+    const unauthRef = unauthDb.ref(feedbackRef);
     await assertFails(unauthRef.get());
   });
 });
@@ -249,6 +252,9 @@ describeWithEmulator('Test user status rules', () => {
   let authDb: any;
   let unauthDb: any;
   let adminDb: any;
+  const userStatusRef = DBPATHS.USER_STATUS;
+  const authUserStatusRef = DBPATHS.USER_STATUS_USER_ID.getRoute(authUserId);
+  const otherUserStatusRef = DBPATHS.USER_STATUS_USER_ID.getRoute(otherUserId);
   setupGlobalMocks(); // Silence permission denied warnings
 
   beforeAll(async () => {
@@ -264,67 +270,67 @@ describeWithEmulator('Test user status rules', () => {
   });
 
   it('should allow reading user user status node when admin is true', async () => {
-    const authRef = adminDb.ref(`user_status`);
+    const authRef = adminDb.ref(userStatusRef);
     await assertSucceeds(authRef.get());
   });
 
   it('should not allow reading user user status node when not an admin', async () => {
-    const authRef = authDb.ref(`user_status`);
-    const unauthRef = unauthDb.ref(`user_status`);
+    const authRef = authDb.ref(userStatusRef);
+    const unauthRef = unauthDb.ref(userStatusRef);
     await assertFails(authRef.get());
     await assertFails(unauthRef.get());
   });
 
   it('should allow writing to user user status node when admin is true', async () => {
-    const authRef = adminDb.ref(`user_status`);
+    const authRef = adminDb.ref(userStatusRef);
     await assertSucceeds(authRef.set({test_user: mockUserStatus}));
   });
 
   it('should not allow writing to user user status node when not an admin', async () => {
-    const authRef = authDb.ref(`user_status`);
-    const unauthRef = unauthDb.ref(`user_status`);
+    const authRef = authDb.ref(userStatusRef);
+    const unauthRef = unauthDb.ref(userStatusRef);
     await assertFails(authRef.set({test_user: mockUserStatus}));
     await assertFails(unauthRef.set({test_user: mockUserStatus}));
   });
 
   it('should allow an authenticated user to write into their own user status node', async () => {
-    const authRef = authDb.ref(`user_status/${authUserId}`);
+    const authRef = authDb.ref(authUserStatusRef);
     await assertSucceeds(authRef.set(mockUserStatus));
   });
 
   it('should not allow an authenticated user to write with incorrect values into their own user status node', async () => {
-    const authRef = authDb.ref(`user_status/${authUserId}`);
+    const authRef = authDb.ref(authUserStatusRef);
     await assertFails(authRef.set(123));
   });
 
   it("should not allow an authenticated user to write into other user's user status nodes", async () => {
-    const authRef = authDb.ref(`user_status/${otherUserId}`);
+    const authRef = authDb.ref(otherUserStatusRef);
     await assertFails(authRef.set(mockUserStatus));
   });
 
   it('should not allow an unauthenticated user to write into their own user status node', async () => {
-    const unauthRef = unauthDb.ref(`user_status/${authUserId}`);
+    const unauthRef = unauthDb.ref(authUserStatusRef);
     await assertFails(unauthRef.set(mockUserStatus));
   });
 
   it('should allow an authenticated user to read their own user status node', async () => {
-    const authRef = authDb.ref(`user_status/${authUserId}`);
+    const authRef = authDb.ref(authUserStatusRef);
     await assertSucceeds(authRef.get());
   });
 
   it("should not allow an authenticated user to read other users' user status node", async () => {
-    const authRef = authDb.ref(`user_status/${otherUserId}`);
+    const authRef = authDb.ref(otherUserStatusRef);
     await assertFails(authRef.get());
   });
 
   it("should allow an authenticated user to read their friends' user status node", async () => {
     await makeFriends(authDb, authUserId, otherUserId); // Set the friend connection first
-    const authRef = authDb.ref(`user_status/${otherUserId}`);
+    const authRef = authDb.ref(otherUserStatusRef);
     await assertSucceeds(authRef.get());
   });
 
   it('should not allow an authenticated user to read their own user status node', async () => {
-    const authRef = unauthDb.ref(`user_status/${authUserId}`);
+    const authRef = unauthDb.ref(authUserStatusRef);
     await assertFails(authRef.get());
   });
 });
@@ -334,6 +340,10 @@ describeWithEmulator('Test user last online rules', () => {
   let authDb: any;
   let unauthDb: any;
   let adminDb: any;
+  const authUserLastOnlineRef =
+    DBPATHS.USER_STATUS_USER_ID_LAST_ONLINE.getRoute(authUserId);
+  const otherUserLastOnlineRef =
+    DBPATHS.USER_STATUS_USER_ID_LAST_ONLINE.getRoute(otherUserId);
   setupGlobalMocks(); // Silence permission denied warnings
 
   beforeAll(async () => {
@@ -349,43 +359,43 @@ describeWithEmulator('Test user last online rules', () => {
   });
 
   it('should allow an authenticated user to write into their own user last online node', async () => {
-    const authRef = authDb.ref(`user_status/${authUserId}/last_online`);
+    const authRef = authDb.ref(authUserLastOnlineRef);
     await assertSucceeds(authRef.set(123));
   });
 
   it('should not allow an authenticated user to write with incorrect values into their own user last online node', async () => {
-    const authRef = authDb.ref(`user_status/${authUserId}/last_online`);
+    const authRef = authDb.ref(authUserLastOnlineRef);
     await assertFails(authRef.set('not a number'));
   });
 
   it("should not allow an authenticated user to write into other user's user last online nodes", async () => {
-    const authRef = authDb.ref(`user_status/${otherUserId}/last_online`);
+    const authRef = authDb.ref(otherUserLastOnlineRef);
     await assertFails(authRef.set(123));
   });
 
   it('should not allow an unauthenticated user to write into their own user last online node', async () => {
-    const unauthRef = unauthDb.ref(`user_status/${authUserId}/last_online`);
+    const unauthRef = unauthDb.ref(authUserLastOnlineRef);
     await assertFails(unauthRef.set(123));
   });
 
   it('should allow an authenticated user to read their own user last online node', async () => {
-    const authRef = authDb.ref(`user_status/${authUserId}/last_online`);
+    const authRef = authDb.ref(authUserLastOnlineRef);
     await assertSucceeds(authRef.get());
   });
 
   it("should not allow an authenticated user to read other users' user last online node", async () => {
-    const authRef = authDb.ref(`user_status/${otherUserId}/last_online`);
+    const authRef = authDb.ref(otherUserLastOnlineRef);
     await assertFails(authRef.get());
   });
 
   it("should allow an authenticated user to read their friends' user last online node", async () => {
     await makeFriends(authDb, authUserId, otherUserId); // Set the friend connection first
-    const authRef = authDb.ref(`user_status/${otherUserId}/last_online`);
+    const authRef = authDb.ref(otherUserLastOnlineRef);
     await assertSucceeds(authRef.get());
   });
 
   it('should not allow an authenticated user to read their own user last online node', async () => {
-    const authRef = unauthDb.ref(`user_status/${authUserId}/last_online`);
+    const authRef = unauthDb.ref(authUserLastOnlineRef);
     await assertFails(authRef.get());
   });
 });
@@ -395,6 +405,15 @@ describeWithEmulator('Test friend rules', () => {
   let authDb: any;
   let unauthDb: any;
   let adminDb: any;
+  const fromAuthToOtherRef = DBPATHS.USERS_USER_ID_FRIENDS_FRIEND_ID.getRoute(
+    authUserId,
+    otherUserId,
+  );
+  const fromOtherToAuthRef = DBPATHS.USERS_USER_ID_FRIENDS_FRIEND_ID.getRoute(
+    otherUserId,
+    authUserId,
+  );
+  const authFriendsRef = DBPATHS.USERS_USER_ID_FRIENDS.getRoute(authUserId);
   setupGlobalMocks(); // Silence permission denied warnings
 
   beforeAll(async () => {
@@ -410,39 +429,39 @@ describeWithEmulator('Test friend rules', () => {
   });
 
   it('should allow a user to write valid values into their own friend list', async () => {
-    const authRef = authDb.ref(`users/${authUserId}/friends/${otherUserId}`);
+    const authRef = authDb.ref(fromAuthToOtherRef);
     await assertSucceeds(authRef.set(true));
     await assertSucceeds(authRef.set(null));
   });
 
   it("should allow a user to write valid values into other user's friend list", async () => {
-    const authRef = authDb.ref(`users/${otherUserId}/friends/${authUserId}`);
+    const authRef = authDb.ref(fromOtherToAuthRef);
     await assertSucceeds(authRef.set(true));
     await assertSucceeds(authRef.set(null));
   });
 
   it('should not allow a user to write their own name into their friend list', async () => {
-    const authRef = authDb.ref(`users/${authUserId}/friends/${authUserId}`);
+    const authRef = authDb.ref(fromAuthToOtherRef);
     await assertFails(authRef.set(true));
   });
 
   it('should not allow writing invalid values into their friend list', async () => {
-    const authRef = authDb.ref(`users/${authUserId}/friends/${otherUserId}`);
+    const authRef = authDb.ref(fromAuthToOtherRef);
     await assertFails(authRef.set('invalid'));
   });
 
   it("should not allow writing invalid values into other user's friend list", async () => {
-    const authRef = authDb.ref(`users/${otherUserId}/friends/${authUserId}`);
+    const authRef = authDb.ref(fromOtherToAuthRef);
     await assertFails(authRef.set('invalid'));
   });
 
   it('should allow reading own friend list when authenticated', async () => {
-    const authRef = authDb.ref(`users/${authUserId}/friends`);
+    const authRef = authDb.ref(authFriendsRef);
     await assertSucceeds(authRef.get());
   });
 
   it('should not allow reading own friend list when unauthenticated', async () => {
-    const unauthRef = unauthDb.ref(`users/${authUserId}/friends`);
+    const unauthRef = unauthDb.ref(authFriendsRef);
     await assertFails(unauthRef.get());
   });
 });
@@ -454,7 +473,18 @@ describeWithEmulator('Test friend request rules', () => {
   let adminDb: any;
   let sentFriendRequest: string = CONST.FRIEND_REQUEST_STATUS.SENT;
   let receivedFriendRequest: string = CONST.FRIEND_REQUEST_STATUS.RECEIVED;
-  setupGlobalMocks(); // Silence permission denied warnings
+  const friendRequestRef = DBPATHS.USERS_USER_ID_FRIEND_REQUESTS_REQUEST_ID;
+  const friendRequestNodeRef = DBPATHS.USERS_USER_ID_FRIEND_REQUESTS;
+  const fromAuthToOtherRef = friendRequestRef.getRoute(authUserId, otherUserId);
+  const fromOtherToAuthRef = friendRequestRef.getRoute(otherUserId, authUserId);
+  const fromOtherToOtherRef = friendRequestRef.getRoute(
+    otherUserId,
+    otherUserId,
+  );
+  const authFriendRequestRef = friendRequestNodeRef.getRoute(authUserId);
+  const otherFriendRequestRef = friendRequestNodeRef.getRoute(otherUserId);
+
+  const fromAuthToAuthRef = setupGlobalMocks(); // Silence permission denied warnings
 
   beforeAll(async () => {
     ({testEnv, authDb, unauthDb, adminDb} = await setupFirebaseRulesTestEnv());
@@ -469,98 +499,82 @@ describeWithEmulator('Test friend request rules', () => {
   });
 
   it('should allow authenticated user to write into their own friend_requests with valid values', async () => {
-    const authRef = authDb.ref(
-      `users/${authUserId}/friend_requests/${otherUserId}`,
-    );
+    const authRef = authDb.ref(fromAuthToOtherRef);
     await assertSucceeds(authRef.set(sentFriendRequest));
     await assertSucceeds(authRef.set(null));
   });
 
   it('should not allow authenticated user to write into their own friend_requests with invalid values', async () => {
-    const authRef = authDb.ref(
-      `users/${authUserId}/friend_requests/${otherUserId}`,
-    );
+    const authRef = authDb.ref(fromAuthToOtherRef);
     await assertFails(authRef.set(123));
     await assertFails(authRef.set('rejected'));
   });
 
   it("should allow authenticated user to write into other user's friend_requests with their own id", async () => {
-    const authRef = authDb.ref(
-      `users/${otherUserId}/friend_requests/${authUserId}`,
-    );
+    const authRef = authDb.ref(fromOtherToAuthRef);
     await assertSucceeds(authRef.set(receivedFriendRequest));
     await assertSucceeds(authRef.set(null));
   });
 
   it("should not allow authenticated user to write into other user's friend_requests with different id", async () => {
-    const authRef = authDb.ref(
-      `users/${otherUserId}/friend_requests/${otherUserId}`,
-    );
+    const authRef = authDb.ref(fromOtherToOtherRef);
 
     // Attempt to write under different id into the other user's friend_requests database part
     await assertFails(authRef.set(receivedFriendRequest));
   });
 
   it("should not allow authenticated user to write into other user's friend_requests any value other than received", async () => {
-    const authRef = authDb.ref(
-      `users/${otherUserId}/friend_requests/${authUserId}`,
-    );
+    const authRef = authDb.ref(fromOtherToOtherRef);
     await assertFails(authRef.set(123));
     await assertFails(authRef.set(sentFriendRequest));
   });
 
   it('should not allow writing invalid values to friend_requests node', async () => {
-    const authRef = authDb.ref(`users/${authUserId}/friend_requests`);
+    const authRef = authDb.ref(authFriendRequestRef);
     await assertFails(authRef.set(123));
     await assertFails(authRef.set(true));
   });
 
   it('should allow writing valid values to own friend_requests node', async () => {
-    const authRef = authDb.ref(`users/${authUserId}/friend_requests`);
+    const authRef = authDb.ref(authFriendRequestRef);
     await assertSucceeds(authRef.set(null));
   });
 
   it('should not allow writing valid values to other friend_requests node', async () => {
-    const authRef = authDb.ref(`users/${otherUserId}/friend_requests`);
+    const authRef = authDb.ref(otherFriendRequestRef);
     await assertFails(authRef.set(null));
   });
 
   it('should not allow the user to write their own name into their friend_requests', async () => {
-    const authRef = authDb.ref(
-      `users/${authUserId}/friend_requests/${authUserId}`,
-    );
+    const authRef = authDb.ref(fromAuthToAuthRef);
     await assertFails(authRef.set(sentFriendRequest));
   });
 
   it('should not allow a user to send a friend request to a user they are already friends with', async () => {
     await makeFriends(authDb, authUserId, otherUserId); // Set the friend connection first
-    const authRef = authDb.ref(
-      `users/${otherUserId}/friend_requests/${authUserId}`,
-    );
+    const authRef = authDb.ref(fromOtherToAuthRef);
     await assertFails(authRef.set(receivedFriendRequest));
   });
 
   it('should not allow a user to write into their own friend request an id of a user they are already friends with', async () => {
     await makeFriends(authDb, authUserId, otherUserId); // Set the friend connection first
-    const authRef = authDb.ref(
-      `users/${authUserId}/friend_requests/${otherUserId}`,
-    );
+    const authRef = authDb.ref(fromAuthToOtherRef);
     await assertFails(authRef.set(sentFriendRequest));
   });
 
   it('should allow reading own friend_requests when authenticated', async () => {
-    const authRef = authDb.ref(`users/${authUserId}/friend_requests`);
+    const authRef = authDb.ref(authFriendRequestRef);
     await assertSucceeds(authRef.get());
   });
 
   it('should not allow reading own friend_requests when unauthenticated', async () => {
-    const unauthRef = unauthDb.ref(`users/${authUserId}/friend_requests`);
+    const unauthRef = unauthDb.ref(authFriendRequestRef);
     await assertFails(unauthRef.get());
   });
 
   it("should not allow reading other people's friend requests", async () => {
     const authDb = testEnv.authenticatedContext(authUserId).database();
-    const authRef = authDb.ref(`users/${otherUserId}/friend_requests`);
+    const authRef = authDb.ref(otherFriendRequestRef);
     await assertFails(authRef.get());
   });
 

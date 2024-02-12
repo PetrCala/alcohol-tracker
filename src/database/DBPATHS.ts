@@ -45,6 +45,21 @@ const DBPATHS = {
     route: '/user_preferences/:user_id',
     getRoute: (user_id: UserId) => `user_preferences/${user_id}` as const,
   },
+  USER_PREFERENCES_USER_ID_FIRST_DAY_OF_WEEK: {
+    route: '/user_preferences/:user_id/first_day_of_week',
+    getRoute: (user_id: UserId) =>
+      `user_preferences/${user_id}/first_day_of_week` as const,
+  },
+  USER_PREFERENCES_USER_ID_UNITS_TO_COLORS: {
+    route: '/user_preferences/:user_id/units_to_colors',
+    getRoute: (user_id: UserId) =>
+      `user_preferences/${user_id}/units_to_colors` as const,
+  },
+  USER_PREFERENCES_USER_ID_UNITS_TO_POINTS: {
+    route: '/user_preferences/:user_id/units_to_points',
+    getRoute: (user_id: UserId) =>
+      `user_preferences/${user_id}/units_to_points` as const,
+  },
   USER_STATUS: 'user_status',
   USER_STATUS_USER_ID: {
     route: '/user_status/:user_id',
