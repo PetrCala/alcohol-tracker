@@ -9,6 +9,13 @@ import {fetchDisplayDataForUsers} from './baseFunctions';
 import {ProfileList, UserStatusList} from '@src/types/database';
 import DBPATHS from './DBPATHS';
 
+/**
+ * Fetches user profiles from the database.
+ *
+ * @param db The database instance.
+ * @param userIds An array of user IDs.
+ * @returns A promise that resolves to a list of user profiles.
+ */
 export async function fetchUserProfiles(
   db: Database,
   userIds: string[],
@@ -21,6 +28,13 @@ export async function fetchUserProfiles(
   )) as ProfileList;
 }
 
+/**
+ * Fetches the statuses of multiple users from the database.
+ *
+ * @param db The database instance.
+ * @param userIds An array of user IDs.
+ * @returns A promise that resolves to a UserStatusList object.
+ */
 export async function fetchUserStatuses(
   db: Database,
   userIds: string[],
@@ -40,10 +54,10 @@ export async function fetchUserStatuses(
  * @description
  * Should be called together with uploading of the picture to the storage.
  *
- * @param {Database} db The Firebase realtime database instance.
- * @param {string} userId User UID.
- * @param {string} photoURL Name of the new file, including the suffix (e.g., profile_picture.jpg)
- * @returns {Promise<string>} Full path to the image
+ * @param db The Firebase realtime database instance.
+ * @param userId User UID.
+ * @param photoURL Name of the new file, including the suffix (e.g., profile_picture.jpg)
+ * @returns Promise with the full path to the image
  *
  * @example
  * await setProfilePictureURL(db, 'test-user-id', 'profile_picture.jpg');
