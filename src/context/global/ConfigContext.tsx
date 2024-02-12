@@ -9,6 +9,7 @@ import {useFirebase} from './FirebaseContext';
 import {validateAppVersion} from '../../utils/validation';
 import {Config} from '@src/types/database';
 import UnderMaintenance from '@components/UnderMaintenance';
+import DBPATHS from '@database/DBPATHS';
 
 const initialState = {
   isLoading: true,
@@ -56,8 +57,8 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({children}) => {
 
   useEffect(() => {
     if (!db) return;
-    const configRef = `config`;
-    let stopListening = listenForDataChanges(db, configRef, (data: Config) => {
+    const configPath = DBPATHS.CONFIG;
+    let stopListening = listenForDataChanges(db, configPath, (data: Config) => {
       dispatch({type: 'SET_IS_LOADING', payload: true});
       dispatch({type: 'SET_CONFIG', payload: data});
       updateLocalHooks(data);
