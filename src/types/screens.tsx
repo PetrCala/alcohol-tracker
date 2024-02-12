@@ -17,9 +17,7 @@ export type RootStackParamList = {
 export type AuthStackParamList = {
   'Login Screen': undefined;
   'Force Update Screen': undefined;
-  'Sign Up Screen': {
-    loginEmail: string;
-  };
+  'Sign Up Screen': undefined;
 };
 
 export type AppStackParamList = {

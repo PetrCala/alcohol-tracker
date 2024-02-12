@@ -1,11 +1,7 @@
-﻿import React, {useEffect, useReducer, useState} from 'react';
+﻿import React, {useReducer} from 'react';
 import {
   Dimensions,
   Image,
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -188,11 +184,7 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
           <View style={styles.signUpContainer}>
             <TouchableOpacity
               style={styles.signUpButtonContainer}
-              onPress={() =>
-                navigation.navigate('Sign Up Screen', {
-                  loginEmail: state.email,
-                })
-              }>
+              onPress={() => navigation.navigate('Sign Up Screen')}>
               <Text style={styles.signUpInfoText}>Don't have an account?</Text>
               <Text style={styles.signUpButtonText}>Sign up</Text>
             </TouchableOpacity>

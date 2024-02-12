@@ -1,38 +1,43 @@
-﻿import React, {useReducer, useState} from 'react';
+﻿import React, {useEffect, useReducer} from 'react';
 import {
   Dimensions,
   Alert,
   Image,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  Keyboard,
   TextInput,
 } from 'react-native';
 import {updateProfile} from 'firebase/auth';
-import {auth} from '../services/firebaseSetup';
-import {signUpUserWithEmailAndPassword} from '../auth/auth';
-import {useFirebase} from '../context/global/FirebaseContext';
-import {SignUpScreenProps} from '../types/screens';
-import {readDataOnce} from '../database/baseFunctions';
-import {useUserConnection} from '../context/global/UserConnectionContext';
-import {isValidString, validateAppVersion} from '../utils/validation';
-import {deleteUserData, pushNewUserInfo} from '../database/users';
+import {auth} from '@src/services/firebaseSetup';
+import {signUpUserWithEmailAndPassword} from '@src/auth/auth';
+import {useFirebase} from '@context/global/FirebaseContext';
+import {SignUpScreenProps} from '@src/types/screens';
+import {readDataOnce} from '@database/baseFunctions';
+import {useUserConnection} from '@context/global/UserConnectionContext';
+import {
+  isValidPassword,
+  isValidPasswordConfirm,
+  validateAppVersion,
+  validateSignInInput,
+} from '@utils/validation';
+import {deleteUserData, pushNewUserInfo} from '@database/users';
 import {handleErrors} from '@src/utils/errorHandling';
 import CONST from '@src/CONST';
 import WarningMessage from '@components/Info/WarningMessage';
 import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 import {Profile} from '@src/types/database';
 import DBPATHS from '@database/DBPATHS';
+import ValidityIndicatorIcon from '@components/ValidityIndicatorIcon';
 
 interface State {
   email: string;
   username: string;
   password: string;
+  passwordIsValid: boolean;
+  passwordConfirm: string;
+  passwordsMatch: boolean;
   warning: string;
 }
 
@@ -45,6 +50,9 @@ const initialState: State = {
   email: '',
   username: '',
   password: '',
+  passwordIsValid: false,
+  passwordConfirm: '',
+  passwordsMatch: false,
   warning: '',
 };
 
@@ -65,6 +73,21 @@ const reducer = (state: State, action: Action) => {
         ...state,
         password: action.payload,
       };
+    case 'UPDATE_PASSWORD_VALIDITY':
+      return {
+        ...state,
+        passwordIsValid: action.payload,
+      };
+    case 'UPDATE_PASSWORD_CONFIRM':
+      return {
+        ...state,
+        passwordConfirm: action.payload,
+      };
+    case 'UPDATE_PASSWORDS_MATCH':
+      return {
+        ...state,
+        passwordsMatch: action.payload,
+      };
     case 'SET_WARNING':
       return {
         ...state,
@@ -76,33 +99,10 @@ const reducer = (state: State, action: Action) => {
 };
 
 const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
-  const {loginEmail} = route ? route.params : {loginEmail: ''};
   const {db} = useFirebase();
   const {isOnline} = useUserConnection();
   const [state, dispatch] = useReducer(reducer, initialState);
   if (!db) return null; // Should never be null
-
-  /** Check that all user input is valid and return true if it is.
-   * Otherwise return false.
-   */
-  const validateUserInput = (): boolean => {
-    if (state.email == '' || state.username == '' || state.password == '') {
-      dispatch({
-        type: 'SET_WARNING',
-        payload: 'You must fill out all fields first',
-      });
-      return false;
-    }
-    if (!isValidString(state.username)) {
-      dispatch({
-        type: 'SET_WARNING',
-        payload:
-          'Your nickname can not contain ' + CONST.INVALID_CHARS.join(', '),
-      });
-      return false;
-    }
-    return true;
-  };
 
   async function rollbackChanges(
     newUserId: string,
@@ -118,7 +118,19 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
   }
 
   const handleSignUp = async () => {
-    if (!validateUserInput() || !isOnline || !auth) return;
+    if (!isOnline || !auth) return;
+
+    const inputValidation = validateSignInInput(
+      state.email,
+      state.username,
+      state.password,
+      state.passwordConfirm,
+    );
+    if (!inputValidation.success) {
+      dispatch({type: 'SET_WARNING', payload: inputValidation.message});
+      return;
+    }
+
     const currentUser = auth.currentUser;
 
     if (currentUser) {
@@ -222,6 +234,24 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
     return;
   };
 
+  // Track password validity
+  useEffect(() => {
+    if (isValidPassword(state.password)) {
+      dispatch({type: 'UPDATE_PASSWORD_VALIDITY', payload: true});
+    } else {
+      dispatch({type: 'UPDATE_PASSWORD_VALIDITY', payload: false});
+    }
+  }, [state.password]);
+
+  // Track password matching
+  useEffect(() => {
+    if (isValidPasswordConfirm(state.password, state.passwordConfirm)) {
+      dispatch({type: 'UPDATE_PASSWORDS_MATCH', payload: true});
+    } else {
+      dispatch({type: 'UPDATE_PASSWORDS_MATCH', payload: false});
+    }
+  }, [state.password, state.passwordConfirm]);
+
   if (!route || !navigation) return null; // Should never be null
 
   return (
@@ -232,39 +262,63 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
           <Image source={CONST.IMAGES.LOGO} style={styles.logo} />
         </View>
         <View style={styles.inputContainer}>
-          <TextInput
-            placeholder="Email"
-            placeholderTextColor={'#a8a8a8'}
-            keyboardType="email-address"
-            textContentType="emailAddress"
-            value={state.email}
-            onChangeText={text =>
-              dispatch({type: 'UPDATE_EMAIL', payload: text})
-            }
-            style={styles.input}
-          />
-          <TextInput
-            placeholder="Username"
-            placeholderTextColor={'#a8a8a8'}
-            textContentType="username"
-            value={state.username}
-            onChangeText={text =>
-              dispatch({type: 'UPDATE_USERNAME', payload: text})
-            }
-            style={styles.input}
-          />
-          <TextInput
-            placeholder="Password"
-            placeholderTextColor={'#a8a8a8'}
-            textContentType="password"
-            value={state.password}
-            onChangeText={text =>
-              dispatch({type: 'UPDATE_PASSWORD', payload: text})
-            }
-            style={styles.input}
-            secureTextEntry
-          />
-          {/* Password confirmation here*/}
+          <View style={styles.inputItemContainer}>
+            <TextInput
+              placeholder="Email"
+              placeholderTextColor={'#a8a8a8'}
+              keyboardType="email-address"
+              textContentType="emailAddress"
+              value={state.email}
+              onChangeText={text =>
+                dispatch({type: 'UPDATE_EMAIL', payload: text})
+              }
+              style={styles.inputItemText}
+            />
+          </View>
+          <View style={styles.inputItemContainer}>
+            <TextInput
+              placeholder="Username"
+              placeholderTextColor={'#a8a8a8'}
+              textContentType="username"
+              value={state.username}
+              onChangeText={text =>
+                dispatch({type: 'UPDATE_USERNAME', payload: text})
+              }
+              style={styles.inputItemText}
+            />
+          </View>
+          <View style={styles.inputItemContainer}>
+            <TextInput
+              placeholder="Password"
+              placeholderTextColor={'#a8a8a8'}
+              textContentType="password"
+              value={state.password}
+              onChangeText={text =>
+                dispatch({type: 'UPDATE_PASSWORD', payload: text})
+              }
+              style={styles.inputItemText}
+              secureTextEntry
+            />
+            {state.password ? (
+              <ValidityIndicatorIcon isValid={state.passwordIsValid} />
+            ) : null}
+          </View>
+          <View style={styles.inputItemContainer}>
+            <TextInput
+              placeholder="Confirm your password"
+              placeholderTextColor={'#a8a8a8'}
+              textContentType="password"
+              value={state.passwordConfirm}
+              onChangeText={text =>
+                dispatch({type: 'UPDATE_PASSWORD_CONFIRM', payload: text})
+              }
+              style={styles.inputItemText}
+              secureTextEntry
+            />
+            {state.passwordConfirm && state.password ? (
+              <ValidityIndicatorIcon isValid={state.passwordsMatch} />
+            ) : null}
+          </View>
           <TouchableOpacity onPress={handleSignUp} style={styles.signUpButton}>
             <Text style={styles.signUpButtonText}>Create account</Text>
           </TouchableOpacity>
@@ -329,17 +383,37 @@ const styles = StyleSheet.create({
     width: '80%',
     height: screenHeight * 0.85,
   },
-  input: {
+  inputItemContainer: {
     backgroundColor: 'white',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    alignItems: 'center',
     height: 45,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
+    paddingLeft: 10,
+    paddingRight: 5,
     borderRadius: 10,
     borderColor: '#000',
     borderWidth: 2,
     marginTop: 5,
     marginBottom: 5,
-    color: 'black',
+  },
+  inputItemText: {
+    fontSize: 14,
+    width: '90%',
+  },
+  passwordCheckContainer: {
+    backgroundColor: 'purple',
+    marginRight: 10,
+  },
+  passwordCheckIcon: {
+    width: 20,
+    height: 20,
+  },
+  passwordsMatch: {
+    backgroundColor: 'green',
+  },
+  passwordsMismatch: {
+    backgroundColor: 'red',
   },
   signUpButton: {
     backgroundColor: '#fcf50f',

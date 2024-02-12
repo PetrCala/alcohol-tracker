@@ -42,6 +42,7 @@ const CONST = {
     BOOK: require('@assets/icons/book.png'),
     BUG: require('@assets/icons/bug.png'),
     CAMERA: require('@assets/icons/camera.png'),
+    CLOSE: require('@assets/icons/close.png'),
     CHECK: require('@assets/icons/check.png'),
     COCKTAIL: require('@assets/icons/cocktail.png'),
     DELETE_SESSION: require('@assets/icons/delete-session.png'),

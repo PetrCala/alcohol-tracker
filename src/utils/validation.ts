@@ -19,19 +19,50 @@ export const platformIsValid = (): boolean => {
 };
 
 /**
+ * Checks if the given email is valid.
+ * @param email - The email to be validated.
+ * @returns True if the email is valid, false otherwise.
+ */
+export function isValidEmail(email: string): boolean {
+  return /\S+@\S+\.\S+/.test(email);
+}
+
+/**
  * Validate that a string does not contain any characters not accepted
  * as keys by the Realtime Firebase.
  *
  * @param {string} input Input string to check.
  * @returns {boolean} True if the string is valid, false otherwise.
  */
-export function isValidString(input: string) {
+export function isValidString(input: string): boolean {
   for (const char of CONST.INVALID_CHARS) {
     if (input.includes(char)) {
       return false;
     }
   }
   return true;
+}
+
+/**
+ * Checks if a password is valid.
+ * @param password - The password to validate.
+ * @returns True if the password is valid, false otherwise.
+ */
+export function isValidPassword(password: string): boolean {
+  return password.length >= 6;
+}
+
+/**
+ * Checks if the given password matches the password confirmation.
+ * @param password - The password to be validated.
+ * @param passwordConfirm - The password confirmation to be compared with the password.
+ * @returns True if the password matches the password confirmation, false otherwise.
+ */
+export function isValidPasswordConfirm(
+  password: string,
+  passwordConfirm: string,
+): boolean {
+  return password === passwordConfirm;
 }
 
 /**
@@ -46,15 +77,39 @@ export const validateSignInInput = (
   email: string,
   username: string,
   password: string,
+  passwordConfirm: string,
 ): ValidationResult => {
-  if (email == '' || username == '' || password == '') {
+  if (
+    email == '' ||
+    username == '' ||
+    password == '' ||
+    passwordConfirm == ''
+  ) {
     return {success: false, message: 'You must fill out all fields first'};
   }
-  if (!isValidString(username)) {
+  if (!isValidEmail(email)) {
+    return {
+      success: false,
+      message: 'Please enter a valid email address',
+    };
+  }
+  if (!isValidString(username) && username !== '') {
     return {
       success: false,
       message:
         'Your nickname can not contain ' + CONST.INVALID_CHARS.join(', '),
+    };
+  }
+  if (!isValidPassword(password)) {
+    return {
+      success: false,
+      message: 'Your password must be at least 6 characters long',
+    };
+  }
+  if (!isValidPasswordConfirm(password, passwordConfirm)) {
+    return {
+      success: false,
+      message: 'Your passwords do not match',
     };
   }
   return {success: true};
@@ -110,7 +165,7 @@ export const validateAppVersion = (
  * @param {any} input Element/variable to check
  * @returns {boolean} True if the element is a non-empty object, false otherwise.
  */
-export function isNonEmptyObject(input: any) {
+export function isNonEmptyObject(input: any): boolean {
   try {
     return (
       input &&
