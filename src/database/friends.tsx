@@ -1,6 +1,10 @@
 ﻿import CONST from '@src/CONST';
 import {FriendRequestStatus} from '@src/types/database';
 import {Database, ref, get, update} from 'firebase/database';
+import DBPATHS from './DBPATHS';
+
+const friendRef = DBPATHS.USERS_USER_ID_FRIENDS_FRIEND_ID;
+const friendRequestRef = DBPATHS.USERS_USER_ID_FRIEND_REQUESTS_REQUEST_ID;
 
 /**
  * Check if userB is in userA's friend list.
@@ -15,7 +19,7 @@ export async function isFriend(
   userA: string,
   userB: string,
 ): Promise<boolean> {
-  const dbRef = ref(db, `/users/${userA}/friends/${userB}`);
+  const dbRef = ref(db, friendRef.getRoute(userA, userB));
   const snapshot = await get(dbRef);
   return snapshot.exists();
 }
@@ -39,9 +43,9 @@ export async function sendFriendRequest(
   userTo: string,
 ): Promise<void> {
   var updates: {[requestId: string]: FriendRequestStatus} = {};
-  updates[`users/${userFrom}/friend_requests/${userTo}`] =
+  updates[friendRequestRef.getRoute(userFrom, userTo)] =
     CONST.FRIEND_REQUEST_STATUS.SENT;
-  updates[`users/${userTo}/friend_requests/${userFrom}`] =
+  updates[friendRequestRef.getRoute(userTo, userFrom)] =
     CONST.FRIEND_REQUEST_STATUS.RECEIVED;
   await update(ref(db), updates);
 }
@@ -62,8 +66,8 @@ export async function deleteFriendRequest(
   userTo: string,
 ): Promise<void> {
   var updates: {[requestId: string]: null} = {};
-  updates[`users/${userFrom}/friend_requests/${userTo}`] = null;
-  updates[`users/${userTo}/friend_requests/${userFrom}`] = null;
+  updates[friendRequestRef.getRoute(userFrom, userTo)] = null;
+  updates[friendRequestRef.getRoute(userTo, userFrom)] = null;
   await update(ref(db), updates);
 }
 
@@ -83,10 +87,10 @@ export async function acceptFriendRequest(
   userTo: string,
 ): Promise<void> {
   var updates: {[requestId: string]: boolean | null} = {};
-  updates[`users/${userFrom}/friend_requests/${userTo}`] = null;
-  updates[`users/${userTo}/friend_requests/${userFrom}`] = null;
-  updates[`users/${userFrom}/friends/${userTo}`] = true;
-  updates[`users/${userTo}/friends/${userFrom}`] = true;
+  updates[friendRequestRef.getRoute(userFrom, userTo)] = null;
+  updates[friendRequestRef.getRoute(userTo, userFrom)] = null;
+  updates[friendRef.getRoute(userFrom, userTo)] = null;
+  updates[friendRef.getRoute(userTo, userFrom)] = null;
   await update(ref(db), updates);
 }
 
@@ -105,7 +109,7 @@ export async function unfriend(
   userTo: string,
 ): Promise<void> {
   var updates: {[userId: string]: null} = {};
-  updates[`users/${userFrom}/friends/${userTo}`] = null;
-  updates[`users/${userTo}/friends/${userFrom}`] = null;
+  updates[friendRef.getRoute(userFrom, userTo)] = null;
+  updates[friendRef.getRoute(userTo, userFrom)] = null;
   await update(ref(db), updates);
 }

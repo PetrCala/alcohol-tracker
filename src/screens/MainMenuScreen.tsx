@@ -116,7 +116,6 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
         db,
         user.uid,
         userNickname,
-        userData.beta_key_id,
         userData.friends,
         userData.friend_requests,
       ); // Beta feature

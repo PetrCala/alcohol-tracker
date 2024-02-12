@@ -7,6 +7,7 @@ import {
 import {Auth, User, updateProfile} from 'firebase/auth';
 import {fetchDisplayDataForUsers} from './baseFunctions';
 import {ProfileList, UserStatusList} from '@src/types/database';
+import DBPATHS from './DBPATHS';
 
 export async function fetchUserProfiles(
   db: Database,
@@ -53,7 +54,8 @@ export async function setProfilePictureURL(
   photoURL: string,
 ): Promise<void> {
   var updates: {[key: string]: string} = {};
-  updates[`users/${userId}/profile/photo_url`] = photoURL;
+  const photoUrlPath = DBPATHS.USERS_USER_ID_PROFILE_PHOTO_URL.getRoute(userId);
+  updates[photoUrlPath] = photoURL;
   await update(ref(db), updates);
 }
 

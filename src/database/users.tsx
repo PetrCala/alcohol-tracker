@@ -2,7 +2,6 @@
 import {
   FriendList,
   FriendRequestList,
-  NicknameToId,
   Preferences,
   Profile,
   UserProps,
@@ -16,6 +15,7 @@ import {
 import {Alert} from 'react-native';
 import {cleanStringForFirebaseKey} from '../utils/strings';
 import CONST from '@src/CONST';
+import DBPATHS from './DBPATHS';
 
 export const getDefaultPreferences = (): Preferences => {
   return {
@@ -65,7 +65,8 @@ export async function userExistsInDatabase(
   db: Database,
   userId: string,
 ): Promise<boolean> {
-  const dbRef = ref(db, `/users/${userId}/profile`);
+  const profilePath = DBPATHS.USERS_USER_ID_PROFILE.getRoute(userId);
+  const dbRef = ref(db, profilePath);
   const snapshot = await get(dbRef);
   return snapshot.exists();
 }
@@ -88,20 +89,23 @@ export async function pushNewUserInfo(
   const userNickname = profileData.display_name;
   const nicknameKey = cleanStringForFirebaseKey(userNickname);
   // Allowed types
+
+  const nicknameRef = DBPATHS.NICKNAME_TO_ID_NICKNAME_KEY_USER_ID;
+  const userStatusRef = DBPATHS.USER_STATUS_USER_ID;
+  const userPreferencesRef = DBPATHS.USER_PREFERENCES_USER_ID;
+  const userRef = DBPATHS.USERS_USER_ID;
+
   let updates: {
     [key: string]: UserProps | Preferences | string | any;
   } = {};
-  // Nickname to ID
-  updates[`nickname_to_id/${nicknameKey}/${userId}`] = userNickname;
-  // User Status
-  updates[`user_status/${userId}`] = getDefaultUserStatus();
-  // User preferences
-  updates[`user_preferences/${userId}`] = getDefaultPreferences();
-  // Users
-  updates[`users/${userId}`] = getDefaultUserData(profileData, betaKeyId);
-  // Beta feature
-  updates[`beta_keys/${betaKeyId}/in_usage`] = true;
-  updates[`beta_keys/${betaKeyId}/user_id`] = userId;
+  updates[nicknameRef.getRoute(nicknameKey, userId)] = userNickname;
+  updates[userStatusRef.getRoute(userId)] = getDefaultUserStatus();
+  updates[userPreferencesRef.getRoute(userId)] = getDefaultPreferences();
+  updates[userRef.getRoute(userId)] = getDefaultUserData(
+    profileData,
+    betaKeyId,
+  );
+
   await update(ref(db), updates);
 }
 
@@ -119,35 +123,37 @@ export async function deleteUserData(
   db: Database,
   userId: string,
   userNickname: string,
-  betaKeyId: number | undefined, // Beta feature
   friends: FriendList | undefined,
   friendRequests: FriendRequestList | undefined,
 ): Promise<void> {
   const nicknameKey = cleanStringForFirebaseKey(userNickname);
+
+  const nicknameRef = DBPATHS.NICKNAME_TO_ID_NICKNAME_KEY_USER_ID;
+  const userStatusRef = DBPATHS.USER_STATUS_USER_ID;
+  const userPreferencesRef = DBPATHS.USER_PREFERENCES_USER_ID;
+  const userRef = DBPATHS.USERS_USER_ID;
+  const drinkingSessionsRef = DBPATHS.USER_DRINKING_SESSIONS_USER_ID;
+  const unconfirmedDaysRef = DBPATHS.USER_UNCONFIRMED_DAYS_USER_ID;
+  const friendsRef = DBPATHS.USERS_USER_ID_FRIENDS_FRIEND_ID;
+  const friendRequestsRef = DBPATHS.USERS_USER_ID_FRIEND_REQUESTS_REQUEST_ID;
+
   let updates: {[key: string]: null | false} = {};
-  // Clean up friend requests
-  updates[`nickname_to_id/${nicknameKey}/${userId}`] = null;
-  updates[`users/${userId}`] = null;
-  updates[`user_status/${userId}`] = null;
-  updates[`user_preferences/${userId}`] = null;
-  updates[`user_drinking_sessions/${userId}`] = null;
-  updates[`user_unconfirmed_days/${userId}`] = null;
+  updates[nicknameRef.getRoute(nicknameKey, userId)] = null;
+  updates[userStatusRef.getRoute(userId)] = null;
+  updates[userPreferencesRef.getRoute(userId)] = null;
+  updates[userRef.getRoute(userId)] = null;
+  updates[drinkingSessionsRef.getRoute(userId)] = null;
+  updates[unconfirmedDaysRef.getRoute(userId)] = null;
   // Data stored in other users' nodes
   if (friends) {
     Object.keys(friends).forEach(friendId => {
-      updates[`users/${friendId}/friends/${userId}`] = null;
+      updates[friendsRef.getRoute(friendId, userId)] = null;
     });
   }
   if (friendRequests) {
     Object.keys(friendRequests).forEach(friendRequestId => {
-      updates[`users/${friendRequestId}/friend_requests/${userId}`] = null;
+      updates[friendRequestsRef.getRoute(friendRequestId, userId)] = null;
     });
-  }
-  // Beta feature
-  if (betaKeyId) {
-    // Reset the beta key to a usable form
-    updates[`beta_keys/${betaKeyId}/in_usage`] = false;
-    updates[`beta_keys/${betaKeyId}/user_id`] = null;
   }
   await update(ref(db), updates);
 }
@@ -165,8 +171,9 @@ export async function updateUserLastOnline(
   userId: string,
 ): Promise<void> {
   let lastOnline: number = new Date().getTime();
+  const lastOnlineRef = DBPATHS.USER_STATUS_USER_ID_LAST_ONLINE;
   let updates: {[key: string]: number} = {};
-  updates[`user_status/${userId}/last_online`] = lastOnline;
+  updates[lastOnlineRef.getRoute(userId)] = lastOnline;
   await update(ref(db), updates);
 }
 

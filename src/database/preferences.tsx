@@ -1,5 +1,6 @@
-﻿import {Database, ref, child, update, push} from 'firebase/database';
+﻿import {Database, ref, update} from 'firebase/database';
 import {Preferences} from '../types/database';
+import DBPATHS from './DBPATHS';
 
 /** Save preferences data into the database.
  *
@@ -16,6 +17,7 @@ export async function savePreferencesData(
   preferencesData: Preferences,
 ): Promise<void> {
   var updates: {[key: string]: Preferences} = {};
-  updates['/user_preferences/' + userId] = preferencesData;
+  const preferencesRoute = DBPATHS.USER_PREFERENCES_USER_ID.getRoute(userId);
+  updates[preferencesRoute] = preferencesData;
   await update(ref(db), updates);
 }

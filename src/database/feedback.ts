@@ -1,15 +1,18 @@
 ﻿import {Database, child, push, ref, update} from 'firebase/database';
 import {FeedbackList, Feedback} from '../types/database';
 import {Alert} from 'react-native';
+import DBPATHS from './DBPATHS';
+
+const feedbackItemRef = DBPATHS.FEEDBACK_FEEDBACK_ID;
 
 /** Submit feedback into the database
  *
  * @description Each feedback has its own unique ID that gets created upon pushing the data into the database. The function also automatically creates a timestamp corresponding to the time when the feedback was submitted.
  *
- * @param {Database} db The database object
- * @param {string} userId The user ID
- * @param {string} text The text to be submitted
- * @returns {Promise<void>}
+ * @param db The database object
+ * @param userId The user ID
+ * @param text The text to be submitted
+ * @returns An empty promise
  *
  *  */
 export async function submitFeedback(
@@ -24,7 +27,7 @@ export async function submitFeedback(
     user_id: userId,
   };
   // Create a new feedback id
-  let newFeedbackKey = await push(child(ref(db), `/feedback/`)).key;
+  let newFeedbackKey = push(child(ref(db), DBPATHS.FEEDBACK)).key;
   if (!newFeedbackKey) {
     Alert.alert(
       'Failed to submit feedback',
@@ -34,7 +37,7 @@ export async function submitFeedback(
   }
   // Create the updates object
   var updates: FeedbackList = {};
-  updates[`feedback/${newFeedbackKey}`] = newFeedback;
+  updates[feedbackItemRef.getRoute(newFeedbackKey)] = newFeedback;
 
   // Submit the feedback
   await update(ref(db), updates);
@@ -43,14 +46,14 @@ export async function submitFeedback(
 /**
  * Remove a feedback item from the database
  *
- * @param {Database} db The database object
- * @param {string} feedbackKey Feedback ID
+ * @param db The database object
+ * @param feedbackKey Feedback ID
  */
 export async function removeFeedback(
   db: Database,
   feedbackKey: string,
 ): Promise<void> {
   var updates: {[key: string]: null} = {};
-  updates[`/feedback/${feedbackKey}`] = null;
+  updates[feedbackItemRef.getRoute(feedbackKey)] = null;
   return await update(ref(db), updates);
 }
