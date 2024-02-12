@@ -1,6 +1,12 @@
 ﻿import {Database, ref, update} from 'firebase/database';
 import {removeZeroObjectsFromSession} from '@src/utils/dataHandling';
 import {DrinkingSession, UnitsList, UserStatus} from '@src/types/database';
+import DBPATHS from './DBPATHS';
+
+const drinkingSessionRef = DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID;
+const drinkingSessionUnitsRef =
+  DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID_UNITS;
+const userStatusRef = DBPATHS.USER_STATUS_USER_ID;
 
 /** Write drinking session data into the database
  *
@@ -19,14 +25,14 @@ export async function saveDrinkingSessionData(
 ): Promise<void> {
   newSessionData = removeZeroObjectsFromSession(newSessionData); // Delete the initial log of zero units that was used as a placeholder
   var updates: {[key: string]: any} = {};
-  updates[`user_drinking_sessions/${userId}/` + sessionKey] = newSessionData;
+  updates[drinkingSessionRef.getRoute(userId, sessionKey)] = newSessionData;
   if (updateStatus) {
     const userStatusData: UserStatus = {
       last_online: new Date().getTime(),
       latest_session_id: sessionKey,
       latest_session: newSessionData,
     };
-    updates[`user_status/${userId}`] = userStatusData;
+    updates[userStatusRef.getRoute(userId)] = userStatusData;
   }
   await update(ref(db), updates);
 }
@@ -51,8 +57,8 @@ export async function startLiveDrinkingSession(
     latest_session_id: sessionKey,
     latest_session: newSessionData,
   };
-  updates[`user_status/${userId}`] = userStatusData;
-  updates[`user_drinking_sessions/${userId}/` + sessionKey] = newSessionData;
+  updates[userStatusRef.getRoute(userId)] = userStatusData;
+  updates[drinkingSessionRef.getRoute(userId, sessionKey)] = newSessionData;
   await update(ref(db), updates);
 }
 
@@ -78,8 +84,8 @@ export async function endLiveDrinkingSession(
     latest_session_id: sessionKey,
     latest_session: newSessionData,
   };
-  updates[`user_status/${userId}`] = userStatusData;
-  updates[`user_drinking_sessions/${userId}/` + sessionKey] = newSessionData;
+  updates[userStatusRef.getRoute(userId)] = userStatusData;
+  updates[drinkingSessionRef.getRoute(userId, sessionKey)] = newSessionData;
   await update(ref(db), updates);
 }
 
@@ -98,7 +104,7 @@ export async function removeDrinkingSessionData(
   sessionKey: string,
 ): Promise<void> {
   var updates: {[key: string]: any} = {};
-  updates['/user_drinking_sessions/' + userId + '/' + sessionKey] = null;
+  updates[drinkingSessionRef.getRoute(userId, sessionKey)] = null;
   await update(ref(db), updates);
 }
 
@@ -117,8 +123,8 @@ export async function discardLiveDrinkingSession(
 ): Promise<void> {
   var updates: {[key: string]: any} = {};
   const userStatusData: UserStatus = {last_online: new Date().getTime()}; // No session info
-  updates['/user_drinking_sessions/' + userId + '/' + sessionKey] = null;
-  updates[`/user_status/${userId}`] = userStatusData;
+  updates[drinkingSessionRef.getRoute(userId, sessionKey)] = null;
+  updates[userStatusRef.getRoute(userId)] = userStatusData;
   await update(ref(db), updates);
 }
 
@@ -138,6 +144,6 @@ export async function updateSessionUnits(
   newUnits: UnitsList,
 ): Promise<void> {
   var updates: {[key: string]: UnitsList} = {};
-  updates[`/user_drinking_sessions/${userId}/${sessionKey}/units`] = newUnits;
+  updates[drinkingSessionUnitsRef.getRoute(userId, sessionKey)] = newUnits;
   await update(ref(db), updates);
 }

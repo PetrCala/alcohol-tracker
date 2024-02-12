@@ -466,8 +466,6 @@ const DrinkingSessionScreen = ({
   );
 };
 
-export default DrinkingSessionScreen;
-
 const styles = StyleSheet.create({
   backArrowContainer: {
     justifyContent: 'center',
@@ -627,3 +625,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
+export default DrinkingSessionScreen;

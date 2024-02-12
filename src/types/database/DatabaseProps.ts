@@ -13,7 +13,6 @@ import {UserStatusList} from './UserStatus';
  * Not named "Database" to avoid confusion with the Firebase database object.
  */
 type DatabaseProps = {
-  [x: string]: any;
   beta_keys: BetaKeyList; // beta feature
   config: Config;
   feedback: FeedbackList;

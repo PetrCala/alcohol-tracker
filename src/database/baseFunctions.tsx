@@ -1,5 +1,6 @@
 ﻿import {Database, get, ref, child, push, onValue, off} from 'firebase/database';
 import {Profile, ProfileList, UserStatusList} from '@src/types/database';
+import DBPATHS from './DBPATHS';
 
 /** Read data once from the realtime database using get(). Return the data if it exists.
  *
@@ -56,7 +57,7 @@ export async function fetchNicknameByUID(
   db: Database,
   uid: string,
 ): Promise<string | null> {
-  const userRef = ref(db, `users/${uid}/profile`);
+  const userRef = ref(db, DBPATHS.USERS_USER_ID_PROFILE.getRoute(uid));
   const userSnapshot = await get(userRef);
   if (!userSnapshot.exists()) {
     // console.error("No user found for the given UID.");

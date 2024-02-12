@@ -40,6 +40,11 @@ const DBPATHS = {
     getRoute: (user_id: UserId, session_id: string) =>
       `user_drinking_sessions/${user_id}/${session_id}` as const,
   },
+  USER_DRINKING_SESSIONS_USER_ID_SESSION_ID_UNITS: {
+    route: '/user_drinking_sessions/:user_id/:session_id/units',
+    getRoute: (user_id: UserId, session_id: string) =>
+      `user_drinking_sessions/${user_id}/${session_id}/units` as const,
+  },
   USER_PREFERENCES: 'user_preferences',
   USER_PREFERENCES_USER_ID: {
     route: '/user_preferences/:user_id',
