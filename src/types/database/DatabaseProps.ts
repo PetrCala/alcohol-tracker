@@ -1,5 +1,4 @@
-﻿import {BetaKeyList} from './BetaKey';
-import Config from './Config';
+﻿import Config from './Config';
 import {FeedbackList} from './Feedback';
 import {NicknameToIdList} from './NicknameToId';
 import {PreferencesList} from './Preferences';
@@ -13,7 +12,6 @@ import {UserStatusList} from './UserStatus';
  * Not named "Database" to avoid confusion with the Firebase database object.
  */
 type DatabaseProps = {
-  beta_keys: BetaKeyList; // beta feature
   config: Config;
   feedback: FeedbackList;
   nickname_to_id: NicknameToIdList;

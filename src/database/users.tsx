@@ -36,15 +36,11 @@ export const getDefaultPreferences = (): Preferences => {
   };
 };
 
-export const getDefaultUserData = (
-  profileData: Profile,
-  betaKeyId: number, // Beta feature
-): UserProps => {
-  let userRole = CONST.APP_IN_BETA ? 'beta_user' : 'user'; // Beta feature
+export const getDefaultUserData = (profileData: Profile): UserProps => {
+  let userRole = 'user';
   return {
     profile: profileData,
     role: userRole,
-    beta_key_id: betaKeyId, // Beta feature
   };
 };
 
@@ -77,14 +73,12 @@ export async function userExistsInDatabase(
  * @param db The firebase realtime database object
  * @param userId The user ID
  * @param profileData Profile data of the user to create
- * @param betaKeyId Beta key // Beta feature
  * @returns {Promise<void>}
  */
 export async function pushNewUserInfo(
   db: Database,
   userId: string,
   profileData: Profile,
-  betaKeyId: number, // Beta feature
 ): Promise<void> {
   const userNickname = profileData.display_name;
   const nicknameKey = cleanStringForFirebaseKey(userNickname);
@@ -101,10 +95,7 @@ export async function pushNewUserInfo(
   updates[nicknameRef.getRoute(nicknameKey, userId)] = userNickname;
   updates[userStatusRef.getRoute(userId)] = getDefaultUserStatus();
   updates[userPreferencesRef.getRoute(userId)] = getDefaultPreferences();
-  updates[userRef.getRoute(userId)] = getDefaultUserData(
-    profileData,
-    betaKeyId,
-  );
+  updates[userRef.getRoute(userId)] = getDefaultUserData(profileData);
 
   await update(ref(db), updates);
 }
@@ -116,7 +107,6 @@ export async function pushNewUserInfo(
  * @param db The firebase database object;
  * @param userId The user ID
  * @param userNickname The user nickname
- * @param betaKeyId Beta key // Beta feature
  * @returns {Promise<void>}
  */
 export async function deleteUserData(

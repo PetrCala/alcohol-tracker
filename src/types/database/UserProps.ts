@@ -12,7 +12,6 @@ type UserProps = {
   friends?: FriendList;
   friend_requests?: FriendRequestList;
   role: string;
-  beta_key_id: number;
 };
 
 type UserList = Record<UserId, UserProps>;

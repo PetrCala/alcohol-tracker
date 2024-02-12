@@ -1,4 +1,4 @@
-import {BetaKeyId, FeedbackId} from '@src/types/database';
+import {FeedbackId} from '@src/types/database';
 import {UserId} from '@src/types/database/DatabaseCommon';
 import {NicknameKey} from '@src/types/database/NicknameToId';
 import type {IsEqual} from 'type-fest';
@@ -6,13 +6,10 @@ import type {IsEqual} from 'type-fest';
 const DBPATHS = {
   ROOT: '',
 
-  BETA_KEYS: 'beta_keys',
-  BETA_KEYS_BETA_KEY: {
-    route: '/beta_keys/:beta_key',
-    getRoute: (betaKey: BetaKeyId) => `beta_keys/${betaKey}` as const,
-  },
   CONFIG: 'config',
   CONFIG_APP_SETTINGS: 'config/app_settings',
+  CONFIG_APP_SETTINGS_MIN_USER_CREATION_POSSIBLE_VERSION:
+    'config/app_settings/min_user_creation_possible_version',
   CONFIG_MAINTENANCE: 'config/maintenance',
   FEEDBACK: 'feedback',
   FEEDBACK_FEEDBACK_ID: {

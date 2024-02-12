@@ -19,7 +19,6 @@ import {signUpUserWithEmailAndPassword} from '../auth/auth';
 import {useFirebase} from '../context/global/FirebaseContext';
 import {SignUpScreenProps} from '../types/screens';
 import {readDataOnce} from '../database/baseFunctions';
-import {validateBetaKey} from '../database/beta';
 import {useUserConnection} from '../context/global/UserConnectionContext';
 import {isValidString, validateAppVersion} from '../utils/validation';
 import {deleteUserData, pushNewUserInfo} from '../database/users';
@@ -28,13 +27,13 @@ import CONST from '@src/CONST';
 import WarningMessage from '@components/Info/WarningMessage';
 import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 import {Profile} from '@src/types/database';
+import DBPATHS from '@database/DBPATHS';
 
 interface State {
   email: string;
   username: string;
   password: string;
   warning: string;
-  betaKey: string;
 }
 
 interface Action {
@@ -47,7 +46,6 @@ const initialState: State = {
   username: '',
   password: '',
   warning: '',
-  betaKey: '',
 };
 
 const reducer = (state: State, action: Action) => {
@@ -72,11 +70,6 @@ const reducer = (state: State, action: Action) => {
         ...state,
         warning: action.payload,
       };
-    case 'SET_BETA_KEY':
-      return {
-        ...state,
-        betaKey: action.payload,
-      };
     default:
       return state;
   }
@@ -93,13 +86,7 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
    * Otherwise return false.
    */
   const validateUserInput = (): boolean => {
-    if (
-      state.email == '' ||
-      state.username == '' ||
-      state.password == '' ||
-      state.betaKey == ''
-    ) {
-      // Beta feature
+    if (state.email == '' || state.username == '' || state.password == '') {
       dispatch({
         type: 'SET_WARNING',
         payload: 'You must fill out all fields first',
@@ -120,17 +107,9 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
   async function rollbackChanges(
     newUserId: string,
     userNickname: string,
-    betaKeyId: number,
   ): Promise<void> {
     // Delete the user data from the Realtime Database
-    await deleteUserData(
-      db,
-      newUserId,
-      userNickname,
-      betaKeyId,
-      undefined,
-      undefined,
-    );
+    await deleteUserData(db, newUserId, userNickname, undefined, undefined);
 
     // Delete the user from Firebase authentication
     if (auth.currentUser) {
@@ -153,14 +132,11 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
 
     let newUserId: string | undefined;
     let minSupportedVersion: string | null;
-    let betaKeys: any;
+    let minUserCreationPath =
+      DBPATHS.CONFIG_APP_SETTINGS_MIN_USER_CREATION_POSSIBLE_VERSION;
 
     try {
-      minSupportedVersion = await readDataOnce(
-        db,
-        '/config/app_settings/min_user_creation_possible_version',
-      );
-      betaKeys = await readDataOnce(db, 'beta_keys/');
+      minSupportedVersion = await readDataOnce(db, minUserCreationPath);
     } catch (error: any) {
       Alert.alert(
         'Data fetch failed',
@@ -183,20 +159,6 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
         payload:
           'This version of the application is outdated. Please upgrade to the newest version.',
       });
-      return;
-    }
-
-    if (!betaKeys) {
-      dispatch({
-        type: 'SET_WARNING',
-        payload: 'Failed to fetch beta keys. Please try again later.',
-      });
-      return;
-    }
-
-    const betaKeyId = validateBetaKey(betaKeys, state.betaKey);
-    if (!betaKeyId) {
-      dispatch({type: 'SET_WARNING', payload: 'Invalid beta key.'});
       return;
     }
 
@@ -228,7 +190,7 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
 
     try {
       // Realtime Database updates
-      await pushNewUserInfo(db, newUserId, newProfileData, betaKeyId);
+      await pushNewUserInfo(db, newUserId, newProfileData);
     } catch (error: any) {
       const errorHeading = 'Sign-up failed';
       const errorMessage = 'There was an error during sign-up: ';
@@ -236,11 +198,7 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
 
       // Attempt to rollback any changes made
       try {
-        await rollbackChanges(
-          newUserId,
-          newProfileData.display_name,
-          betaKeyId,
-        );
+        await rollbackChanges(newUserId, newProfileData.display_name);
       } catch (rollbackError: any) {
         const errorHeading = 'Rollback error';
         const errorMessage = 'Error during sign-up rollback:';
@@ -306,16 +264,7 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
             style={styles.input}
             secureTextEntry
           />
-          <TextInput
-            placeholder="Beta key"
-            placeholderTextColor={'#a8a8a8'}
-            value={state.betaKey}
-            onChangeText={text =>
-              dispatch({type: 'SET_BETA_KEY', payload: text})
-            }
-            style={styles.input}
-            secureTextEntry
-          />
+          {/* Password confirmation here*/}
           <TouchableOpacity onPress={handleSignUp} style={styles.signUpButton}>
             <Text style={styles.signUpButtonText}>Create account</Text>
           </TouchableOpacity>
@@ -332,8 +281,6 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
     </DismissKeyboard>
   );
 };
-
-export default SignUpScreen;
 
 const screenHeight = Dimensions.get('window').height;
 
@@ -433,21 +380,4 @@ const styles = StyleSheet.create({
   },
 });
 
-// Firebase functions approach to sign-up handling
-// try {
-//   const createUserFunction = functions().httpsCallable('createUser')
-//   const result = await createUserFunction({ email, password, username, betaKey });
-
-//   if (result.data.success) {
-//     navigation.replace("App", {screen: "Main Screen"}); // Navigate to main screen
-//   } else {
-//     setWarning(result.data?.message);
-//   }
-// } catch (error:any) {
-//   // Handle the error
-//   setWarning('Error during sign-up: ' + error.message);
-// }
-
-// const handleGoBack = async () => {
-//   navigation.navigate("Login Screen");
-// };
+export default SignUpScreen;

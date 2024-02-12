@@ -38,19 +38,16 @@ export function isValidString(input: string) {
  * Having a list of input sign in text, check that all fields are valid. Return the
  * results as a ValidationResult object.
  *
- * @param {string} email User mail
- * @param {string} username User name
- * @param {string} password User password
- * @param {string} betaKey Beta key // Beta feature
+ * @param email User mail
+ * @param username User name
+ * @param password User password
  */
 export const validateSignInInput = (
   email: string,
   username: string,
   password: string,
-  betaKey: string, // Beta feature
 ): ValidationResult => {
-  if (email == '' || username == '' || password == '' || betaKey == '') {
-    // Beta feature
+  if (email == '' || username == '' || password == '') {
     return {success: false, message: 'You must fill out all fields first'};
   }
   if (!isValidString(username)) {

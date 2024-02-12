@@ -10,12 +10,7 @@ import {
   createMockUserStatus,
 } from '../../utils/mockDatabase';
 import {isConnectedToDatabaseEmulator} from '@src/services/firebaseUtils';
-import {
-  BetaKeyList,
-  FriendRequestList,
-  Profile,
-  Units,
-} from '@src/types/database';
+import {FriendRequestList, Profile, Units} from '@src/types/database';
 import {Database} from 'firebase/database';
 import {describeWithEmulator} from '../../utils/emulators/emulatorTools';
 import {saveDrinkingSessionData} from '@database/drinkingSessions';
@@ -48,7 +43,6 @@ import CONST from '@src/CONST';
 
 const testUserId: string = MOCK_USER_IDS[0];
 const testUserDisplayName: string = 'mock-user';
-const testUserBetaKey: string = 'beta-key-1';
 const testUserId2: string = MOCK_USER_IDS[1];
 
 const mockSessionKey = `${testUserId}-mock-session-999`;
@@ -219,7 +213,6 @@ describeWithEmulator('Test pushing new user info into the database', () => {
     photo_url: '',
   };
   let newUserId = 'mock-user-6'; // This user should not be created in the mock database
-  let newUserBetaKeyId = 6;
   setupGlobalMocks();
 
   beforeAll(async () => {
@@ -233,7 +226,7 @@ describeWithEmulator('Test pushing new user info into the database', () => {
     const userKeys = Object.keys(userList);
     expect(userKeys).not.toContain(newUserId); // Check that the user does not exist in the mock database
 
-    await pushNewUserInfo(db, newUserId, newUserProfileData, newUserBetaKeyId);
+    await pushNewUserInfo(db, newUserId, newUserProfileData);
   });
 
   afterEach(async () => {
@@ -242,17 +235,6 @@ describeWithEmulator('Test pushing new user info into the database', () => {
 
   afterAll(async () => {
     await teardownRealtimeDatabaseTestEnv(testApp, db);
-  });
-
-  it('pushes the beta keys data into the database', async () => {
-    const expectedBetaKey = {
-      in_usage: true,
-      key: expect.anything(),
-      user_id: newUserId,
-    };
-    const dbRef = DBPATHS.BETA_KEYS_BETA_KEY.getRoute(newUserBetaKeyId);
-    const dbBetaKey: BetaKeyList = await readDataOnce(db, dbRef);
-    expect(dbBetaKey).toMatchObject(expectedBetaKey);
   });
 
   it('pushes the nickname to id data into the database', async () => {
@@ -276,10 +258,7 @@ describeWithEmulator('Test pushing new user info into the database', () => {
   });
 
   it('pushes the user data into the database', async () => {
-    const expectedData = getDefaultUserData(
-      newUserProfileData,
-      newUserBetaKeyId,
-    );
+    const expectedData = getDefaultUserData(newUserProfileData);
     const dbRef = DBPATHS.USERS_USER_ID.getRoute(newUserId);
     const dbUserData = await readDataOnce(db, dbRef);
     expect(dbUserData).toMatchObject(expectedData);
@@ -315,10 +294,9 @@ describeWithEmulator('Test deleting data from the database', () => {
       db,
       testUserId,
       testUserDisplayName,
-      1,
       undefined,
       undefined,
-    ); // beta feature // TODO: Add friend requests, friends
+    ); // TODO: Add friend requests, friends
   });
 
   afterEach(async () => {
@@ -327,16 +305,6 @@ describeWithEmulator('Test deleting data from the database', () => {
 
   afterAll(async () => {
     await teardownRealtimeDatabaseTestEnv(testApp, db);
-  });
-
-  it('deletes the beta keys data from the database', async () => {
-    const expectedBetaKey = {
-      in_usage: false,
-      key: testUserBetaKey,
-    };
-    const dbRef = DBPATHS.BETA_KEYS_BETA_KEY.getRoute(1);
-    const dbBetaKey: BetaKeyList = await readDataOnce(db, dbRef);
-    expect(dbBetaKey).toMatchObject(expectedBetaKey);
   });
 
   it('deletes the user nickname ID data from the database', async () => {
@@ -395,10 +363,9 @@ describeWithEmulator('Test friend request functionality', () => {
       db,
       testUserId,
       testUserDisplayName,
-      1,
       undefined,
       undefined,
-    ); // beta feature
+    );
     const user1FriendsRef = DBPATHS.USERS_USER_ID_FRIENDS.getRoute(testUserId);
     const friendRequestsRef =
       DBPATHS.USERS_USER_ID_FRIEND_REQUESTS.getRoute(testUserId);

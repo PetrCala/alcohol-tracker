@@ -1,5 +1,3 @@
-import type BetaKey from './BetaKey';
-import type {BetaKeyList, BetaKeyId} from './BetaKey';
 import type Config from './Config';
 import type {AppSettings, Maintenance} from './Config';
 import type DatabaseProps from './DatabaseProps';
@@ -44,9 +42,6 @@ import type {UserStatusList} from './UserStatus';
 
 export type {
   AppSettings,
-  BetaKey,
-  BetaKeyId,
-  BetaKeyList,
   Config,
   DatabaseProps,
   DrinkingSession,

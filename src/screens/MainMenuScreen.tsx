@@ -118,7 +118,7 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
         userNickname,
         userData.friends,
         userData.friend_requests,
-      ); // Beta feature
+      );
     } catch (error: any) {
       handleInvalidDeleteUser(error);
     }

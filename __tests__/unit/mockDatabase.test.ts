@@ -27,36 +27,6 @@ import {
 } from '../../src/types/database';
 import CONST from '@src/CONST';
 
-/**
- * Checks if the given object is a valid beta key.
- * @param obj - The object to be checked.
- * @returns True if the object is a valid beta key, false otherwise.
- */
-function isBetaKey(obj: any): obj is any {
-  // beta feature
-  return (
-    typeof obj.key === 'string' &&
-    typeof obj.in_usage === 'boolean' &&
-    (obj.user_id === undefined || typeof obj.user_id === 'string')
-  );
-}
-
-/**
- * Validates the beta keys data.
- *
- * @param betaKeysData - The beta keys data to validate.
- * @returns True if all beta keys are valid, false otherwise.
- */
-function validateBetaKeys(betaKeysData: {[betaKeyId: number]: any}): boolean {
-  // beta feature
-  for (const betaKeyId in betaKeysData) {
-    if (!isBetaKey(betaKeysData[betaKeyId])) {
-      return false;
-    }
-  }
-  return true;
-}
-
 /** Enter an object that is supposed to be of the Config type and validate it. Return true if it has that type, and false otherwise.
  *
  * @param obj
@@ -261,7 +231,7 @@ function validateUserUnconfirmedDays(userUnconfirmedDays: {
  * @returns bool
  */
 function isUserData(obj: any): obj is UserProps {
-  return typeof obj.role === 'string' && typeof obj.beta_key_id === 'number';
+  return typeof obj.role === 'string';
 }
 
 /** Enter a data object containing supposed user data, and validate that all objects (values) are indeed of the supposed type. If yes, return true, otherwise return false.
@@ -336,7 +306,7 @@ describe('mockDatabase functions', () => {
   });
 
   it('should create mock user data', () => {
-    const userData = createMockUserData('mock-user-id', 1);
+    const userData = createMockUserData('mock-user-id');
     expect(userData).toBeDefined();
     expect(userData.role).toBe('mock-user');
   });
@@ -350,11 +320,6 @@ describe('mockDatabase functions', () => {
 
 describe('mockDatabase data structure', () => {
   let db: DatabaseProps = initializeEmptyMockDatabase();
-
-  it('should have beta keys data', () => {
-    // beta feature
-    expect(validateBetaKeys(db.beta_keys)).toBe(true);
-  });
 
   it('should have config data', () => {
     expect(validateConfig(db.config)).toBe(true);

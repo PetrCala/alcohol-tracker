@@ -582,5 +582,5 @@ describeWithEmulator('Test friend request rules', () => {
 });
 
 // TODO
-// Test out beta keys, config, rest of the rules
+// Test out config, rest of the rules
 // Make an explicit list of opperations the user can do (has to do) before being authenticated

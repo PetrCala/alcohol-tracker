@@ -2,7 +2,6 @@
 
 import {
   AppSettings,
-  BetaKeyList,
   Config,
   DatabaseProps,
   DrinkingSession,
@@ -70,7 +69,6 @@ export function createMockMaintenance(
  */
 export function initializeEmptyMockDatabase(): DatabaseProps {
   return {
-    beta_keys: {},
     config: {
       app_settings: createMockAppSettings(),
       maintenance: createMockMaintenance(),
@@ -83,19 +81,6 @@ export function initializeEmptyMockDatabase(): DatabaseProps {
     user_unconfirmed_days: {},
     users: {},
   };
-}
-
-export function createMockBetaKeys(number: number): BetaKeyList {
-  const betaKeys: BetaKeyList = {};
-  for (let i = 0; i < number; i++) {
-    const idx = i + 1; // Start indexing from key 1
-    const key = `beta-key-${idx}`;
-    betaKeys[idx] = {
-      key: key,
-      in_usage: false,
-    };
-  }
-  return betaKeys;
 }
 
 /** Create a mock configuration data record
@@ -285,7 +270,6 @@ export function createMockFriendRequests(userId: string): FriendRequestList {
  */
 export function createMockUserData(
   userId: string,
-  index: number,
   noFriends: boolean = false,
 ): UserProps {
   let mockProfile: Profile = {
@@ -295,7 +279,6 @@ export function createMockUserData(
   const mockUserData: UserProps = {
     profile: mockProfile,
     role: 'mock-user',
-    beta_key_id: index + 1,
   };
   if (!noFriends) {
     // mockUserData['friends'] = // TODO
@@ -313,17 +296,11 @@ export function createMockUserData(
  */
 export function createMockDatabase(noFriends: boolean = false): DatabaseProps {
   const db = initializeEmptyMockDatabase();
-  // Beta keys
-  db.beta_keys = createMockBetaKeys(10); // beta feature
   // Configuration
   db.config = createMockConfig();
 
   // Data that varies across users
   MOCK_USER_IDS.forEach((userId, index) => {
-    // Choose beta key for the user - beta feature
-    db.beta_keys[index + 1].in_usage = true;
-    db.beta_keys[index + 1].user_id = userId;
-
     // Feedback
     db.feedback[userId] = createMockFeedback();
 
@@ -352,7 +329,7 @@ export function createMockDatabase(noFriends: boolean = false): DatabaseProps {
     db.user_unconfirmed_days[userId] = createMockUnconfirmedDays();
 
     // User data
-    db.users[userId] = createMockUserData(userId, index, noFriends);
+    db.users[userId] = createMockUserData(userId, noFriends);
 
     // Nicknames to user ids
     let nickname = db.users[userId].profile.display_name;

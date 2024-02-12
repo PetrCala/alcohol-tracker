@@ -12,8 +12,8 @@
  * This ensures that for any given input string, the cleaned result is consistent,
  * enabling it to be reliably used as a key in the database.
  *
- * @param {string} rawStr - The raw input string to be cleaned.
- * @returns {string} - The cleaned string.
+ * @param rawStr - The raw input string to be cleaned.
+ * @returns The cleaned string.
  *
  * @example
  * const rawNickname = "John.Doe #1 č ";
@@ -30,7 +30,9 @@ export function cleanStringForFirebaseKey(rawStr: string): string {
     .replace(/-/g, '_') // No dashes
     .split('')
     .map(char =>
-      CONST.INVALID_CHARS.includes(char as any) || char.trim() === '' ? '_' : char,
+      CONST.INVALID_CHARS.includes(char as any) || char.trim() === ''
+        ? '_'
+        : char,
     )
     .join('');
 
