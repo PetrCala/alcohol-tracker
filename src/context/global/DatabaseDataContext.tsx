@@ -6,8 +6,8 @@ import {
   useEffect,
   useReducer,
 } from 'react';
-import {auth} from '../../services/firebaseSetup';
-import {listenForDataChanges} from '../../database/baseFunctions';
+import {auth} from '@src/services/firebaseSetup';
+import {listenForDataChanges} from '@database/baseFunctions';
 import {isEqual} from 'lodash';
 import {useFirebase} from './FirebaseContext';
 import {
@@ -18,6 +18,7 @@ import {
   UserProps,
   UserStatus,
 } from '@src/types/database';
+import DBPATHS from '@database/DBPATHS';
 
 type DatabaseDataContextType = {
   userStatusData: UserStatus | null;
@@ -114,10 +115,10 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
   // Monitor user status data
   useEffect(() => {
     if (!user || !db) return;
-    let userRef = `user_status/${user.uid}`;
+    let userPath = DBPATHS.USER_STATUS_USER_ID.getRoute(user.uid);
     let stopListening = listenForDataChanges(
       db,
-      userRef,
+      userPath,
       (data: UserStatus) => {
         dispatch({type: 'SET_USER_STATUS_DATA', payload: data});
         dispatch({type: 'SET_LOADING_USER_STATUS_DATA', payload: false});
@@ -133,10 +134,12 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
     // Start listening for changes when the component mounts
     let newData: DrinkingSessionArray;
     let newKeys: string[];
-    let sessionsRef = `user_drinking_sessions/${user.uid}`;
+    let sessionsPath = DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(
+      user.uid,
+    );
     let stopListening = listenForDataChanges(
       db,
-      sessionsRef,
+      sessionsPath,
       (data: DrinkingSessionList) => {
         newData = data ? Object.values(data) : [];
         newKeys = data ? Object.keys(data) : [];
@@ -159,10 +162,10 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
   // Monitor user preferences
   useEffect(() => {
     if (!user || !db) return;
-    let userRef = `user_preferences/${user.uid}`;
+    let preferencesPath = DBPATHS.USER_PREFERENCES_USER_ID.getRoute(user.uid);
     let stopListening = listenForDataChanges(
       db,
-      userRef,
+      preferencesPath,
       (data: Preferences) => {
         if (!isEqual(data, state.preferences)) {
           dispatch({type: 'SET_PREFERENCES', payload: data});
@@ -178,10 +181,12 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
   useEffect(() => {
     if (!user || !db) return;
     let newData: UnconfirmedDays = {};
-    let userRef = `user_unconfirmed_days/${user.uid}`;
+    let unconfirmedDaysRef = DBPATHS.USER_UNCONFIRMED_DAYS_USER_ID.getRoute(
+      user.uid,
+    );
     let stopListening = listenForDataChanges(
       db,
-      userRef,
+      unconfirmedDaysRef,
       (data: UnconfirmedDays) => {
         newData = data ? data : {};
         if (!isEqual(newData, state.unconfirmedDays)) {
@@ -197,13 +202,17 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
   // Monitor user data
   useEffect(() => {
     if (!user || !db) return;
-    let userRef = `users/${user.uid}`;
-    let stopListening = listenForDataChanges(db, userRef, (data: UserProps) => {
-      if (!isEqual(data, state.userData)) {
-        dispatch({type: 'SET_USER_DATA', payload: data});
-      }
-      dispatch({type: 'SET_LOADING_USER_DATA', payload: false});
-    });
+    let userPath = DBPATHS.USERS_USER_ID.getRoute(user.uid);
+    let stopListening = listenForDataChanges(
+      db,
+      userPath,
+      (data: UserProps) => {
+        if (!isEqual(data, state.userData)) {
+          dispatch({type: 'SET_USER_DATA', payload: data});
+        }
+        dispatch({type: 'SET_LOADING_USER_DATA', payload: false});
+      },
+    );
 
     return () => stopListening();
   }, []);
