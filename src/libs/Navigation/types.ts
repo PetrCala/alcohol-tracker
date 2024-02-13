@@ -1,0 +1,155 @@
+/* eslint-disable @typescript-eslint/naming-convention  */
+import type {
+  CommonActions,
+  NavigationContainerRefWithCurrent,
+  NavigationHelpers,
+  NavigationState,
+  NavigatorScreenParams,
+  ParamListBase,
+  PartialRoute,
+  PartialState,
+  Route,
+} from '@react-navigation/native';
+import type {ValueOf} from 'type-fest';
+import type CONST from '@src/CONST';
+import type NAVIGATORS from '@src/NAVIGATORS';
+import type SCREENS from '@src/SCREENS';
+// import type {HybridAppRoute, Route as Routes} from '@src/ROUTES';
+
+type NavigationRef = NavigationContainerRefWithCurrent<RootStackParamList>;
+
+type NavigationRoot = NavigationHelpers<RootStackParamList>;
+
+type GoBackAction = Extract<CommonActions.Action, {type: 'GO_BACK'}>;
+type ResetAction = Extract<CommonActions.Action, {type: 'RESET'}>;
+type SetParamsAction = Extract<CommonActions.Action, {type: 'SET_PARAMS'}>;
+
+type ActionNavigate = {
+  type: ValueOf<typeof CONST.NAVIGATION.ACTION_TYPE>;
+  payload: {
+    name?: string;
+    key?: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    params?: any;
+    path?: string;
+    merge?: boolean;
+  };
+  source?: string;
+  target?: string;
+};
+
+type StackNavigationAction =
+  | GoBackAction
+  | ResetAction
+  | SetParamsAction
+  | ActionNavigate
+  | undefined;
+
+type NavigationStateRoute = NavigationState['routes'][number];
+type NavigationPartialRoute<TRouteName extends string = string> = PartialRoute<
+  Route<TRouteName>
+>;
+type StateOrRoute =
+  | NavigationState
+  | NavigationStateRoute
+  | NavigationPartialRoute;
+type State<TParamList extends ParamListBase = ParamListBase> =
+  | NavigationState<TParamList>
+  | PartialState<NavigationState<TParamList>>;
+
+type CentralPaneNavigatorParamList = {
+  //   [SCREENS.REPORT]: {
+  //     reportActionID: string;
+  //     reportID: string;
+  //     openOnAdminRoom?: boolean;
+  //   };
+  //   [SCREENS.SETTINGS.WORKSPACES]: undefined;
+  //   [SCREENS.WORKSPACE.PROFILE]: {
+  //     policyID: string;
+  //   };
+  //   [SCREENS.WORKSPACE.CARD]: {
+  //     policyID: string;
+  //   };
+  //   [SCREENS.WORKSPACE.REIMBURSE]: {
+  //     policyID: string;
+  //   };
+  //   [SCREENS.WORKSPACE.BILLS]: {
+  //     policyID: string;
+  //   };
+  //   [SCREENS.WORKSPACE.INVOICES]: {
+  //     policyID: string;
+  //   };
+  //   [SCREENS.WORKSPACE.TRAVEL]: {
+  //     policyID: string;
+  //   };
+  //   [SCREENS.WORKSPACE.MEMBERS]: {
+  //     policyID: string;
+  //   };
+};
+
+type FullScreenNavigatorParamList = {
+  //   [SCREENS.SETTINGS.ROOT]: undefined;
+  //   [SCREENS.SETTINGS_CENTRAL_PANE]: NavigatorScreenParams<SettingsCentralPaneNavigatorParamList>;
+};
+
+type BottomTabNavigatorParamList = {
+  // [SCREENS.HOME]: undefined;
+  // [SCREENS.ALL_SETTINGS]: undefined;
+  // [SCREENS.WORKSPACE.INITIAL]: undefined;
+};
+
+type PublicScreensParamList = {
+  // LOGIN SCREEN
+  // SIGNUP SCREEN
+  // [NAVIGATORS.BOTTOM_TAB_NAVIGATOR]: NavigatorScreenParams<BottomTabNavigatorParamList>;
+  // [SCREENS.TRANSITION_BETWEEN_APPS]: {
+  //     email?: string;
+  //     error?: string;
+  //     shortLivedAuthToken?: string;
+  //     shortLivedToken?: string;
+  //     exitTo?: Routes | HybridAppRoute;
+  // };
+  // [SCREENS.VALIDATE_LOGIN]: {
+  //     accountID: string;
+  //     validateCode: string;
+  // };
+  // [SCREENS.UNLINK_LOGIN]: {
+  //     accountID?: string;
+  //     validateCode?: string;
+  // };
+  // [SCREENS.SIGN_IN_WITH_APPLE_DESKTOP]: undefined;
+  // [SCREENS.SIGN_IN_WITH_GOOGLE_DESKTOP]: undefined;
+  // [SCREENS.SAML_SIGN_IN]: undefined;
+};
+type AuthScreensParamList = {};
+
+type RootStackParamList = PublicScreensParamList; // & AuthScreensParamList;
+
+type BottomTabName = keyof BottomTabNavigatorParamList;
+
+type CentralPaneName = keyof CentralPaneNavigatorParamList;
+
+// type FullScreenName = keyof SettingsCentralPaneNavigatorParamList;
+
+type SwitchPolicyIDParams = {
+  policyID?: string;
+  //   route?: Routes; // keep!!
+  isPolicyAdmin?: boolean;
+};
+
+export type {
+  AuthScreensParamList,
+  BottomTabName,
+  CentralPaneName,
+  //   FullScreenName,
+  NavigationStateRoute,
+  NavigationPartialRoute,
+  NavigationRef,
+  NavigationRoot,
+  RootStackParamList,
+  StackNavigationAction,
+  State,
+  StateOrRoute,
+  SwitchPolicyIDParams,
+  // Various param lists
+};

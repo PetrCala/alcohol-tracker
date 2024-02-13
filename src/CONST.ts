@@ -101,11 +101,26 @@ const CONST = {
     'Nov',
     'Dec',
   ],
+  NAVIGATION: {
+    TYPE: {
+      FORCED_UP: 'FORCED_UP',
+      UP: 'UP',
+    },
+    ACTION_TYPE: {
+      REPLACE: 'REPLACE',
+      PUSH: 'PUSH',
+      NAVIGATE: 'NAVIGATE',
+    },
+  },
   NO_IMAGE: 'NO_IMAGE', // Used for the profile avatar when there is no image
   STORE_LINKS: {
     ANDROID:
       'https://play.google.com/store/apps/details?id=com.alcohol_tracker',
     IOS: 'https://testflight.apple.com/join/DgY9IieL',
+  },
+  TIME_PERIOD: {
+    AM: 'AM',
+    PM: 'PM',
   },
   UNITS: {
     KEYS: {

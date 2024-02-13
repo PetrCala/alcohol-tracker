@@ -2,9 +2,9 @@ import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {app} from './services/firebaseSetup';
 
-import AuthNavigator from './libs/Navigation/AuthNavigator';
-import AppNavigator from './libs/Navigation/AppNavigator';
-import Stack from './libs/Navigation/Stack';
+import AuthNavigator from './libs/Navigation/AppNavigator/AuthNavigator';
+import AppNavigator from './libs/Navigation/AppNavigator/AppNavigator';
+import Stack from './libs/Navigation/AppNavigator/Stack';
 import {ContextProvider} from './context/global/Context';
 
 const Kiroku = () => {

@@ -42,7 +42,7 @@ import {usePrevious} from '../hooks/usePrevious';
 import SuccessIndicator from '../components/SuccessIndicator';
 import commonStyles from '../styles/commonStyles';
 import FillerView from '../components/FillerView';
-import {getPreviousRouteName} from '@libs/Navigation/NavigationUtils';
+import {getPreviousRouteName} from '@libs/Navigation/Navigation';
 import CONST from '@src/CONST';
 import MainHeader from '@components/Header/MainHeader';
 import MainHeaderButton from '@components/Header/MainHeaderButton';

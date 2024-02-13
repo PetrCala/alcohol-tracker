@@ -1,6 +1,6 @@
-﻿import ForceUpdateScreen from '../../screens/ForceUpdateScreen';
-import LoginScreen from '../../screens/LoginScreen';
-import SignUpScreen from '../../screens/SignUpScreen';
+﻿import ForceUpdateScreen from '../../../screens/ForceUpdateScreen';
+import LoginScreen from '../../../screens/LoginScreen';
+import SignUpScreen from '../../../screens/SignUpScreen';
 
 import Stack from './Stack';
 

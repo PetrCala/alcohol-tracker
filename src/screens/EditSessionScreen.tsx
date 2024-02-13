@@ -35,7 +35,7 @@ import UserOffline from '../components/UserOffline';
 import UnitTypesView from '../components/UnitTypesView';
 import SessionDetailsSlider from '../components/SessionDetailsSlider';
 import {getDatabaseData} from '../context/global/DatabaseDataContext';
-import {getPreviousRouteName} from '@libs/Navigation/NavigationUtils';
+import {getPreviousRouteName} from '@libs/Navigation/Navigation';
 import CONST from '@src/CONST';
 import MainHeader from '@components/Header/MainHeader';
 import MainHeaderButton from '@components/Header/MainHeaderButton';
