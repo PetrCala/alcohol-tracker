@@ -16,7 +16,7 @@ import commonStyles from '../styles/commonStyles';
 import {LoginScreenProps} from '../types/screens';
 import LoadingData from '../components/LoadingData';
 import InputTextPopup from '../components/Popups/InputTextPopup';
-import {handleErrors} from '../utils/errorHandling';
+import {handleErrors} from '../libs/ErrorHandling';
 import WarningMessage from '@components/Info/WarningMessage';
 import SuccessMessage from '@components/Info/SuccessMessage';
 import DismissKeyboard from '@components/Keyboard/DismissKeyboard';

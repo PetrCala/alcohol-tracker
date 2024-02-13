@@ -29,7 +29,7 @@ import {
   sumUnitsOfSingleType,
   timestampToDate,
   unitsToColors,
-} from '../utils/dataHandling';
+} from '../libs/DataHandling';
 import {auth} from '../services/firebaseSetup';
 import {DrinkingSession, UnitKey, Units, UnitsList} from '../types/database';
 import YesNoPopup from '../components/Popups/YesNoPopup';

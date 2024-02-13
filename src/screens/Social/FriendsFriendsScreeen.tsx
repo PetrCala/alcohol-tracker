@@ -14,7 +14,7 @@ import {
 import {useEffect, useMemo, useReducer} from 'react';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {auth} from '@src/services/firebaseSetup';
-import {isNonEmptyArray} from '@utils/validation';
+import {isNonEmptyArray} from '@libs/Validation';
 import LoadingData from '@components/LoadingData';
 import {Database} from 'firebase/database';
 import {searchArrayByText} from '@src/services/search/search';
@@ -27,12 +27,12 @@ import GrayHeader from '@components/Header/GrayHeader';
 import {
   getCommonFriends,
   getCommonFriendsCount,
-} from '@src/utils/social/friendUtils';
+} from '@libs/social/FriendUtils';
 import {
   UserIdToNicknameMapping,
   UserSearchResults,
 } from '@src/types/various/Search';
-import {objKeys} from '@src/utils/dataHandling';
+import {objKeys} from '@libs/DataHandling';
 import {getDatabaseData} from '@src/context/global/DatabaseDataContext';
 import SeeProfileButton from '@components/Buttons/SeeProfileButton';
 import GeneralAction from '@src/types/various/GeneralAction';

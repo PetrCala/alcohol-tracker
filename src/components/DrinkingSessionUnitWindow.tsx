@@ -12,7 +12,7 @@ import {
   findUnitName,
   removeUnits,
   sumUnitTypes,
-} from '../utils/dataHandling';
+} from '../libs/DataHandling';
 import CONST from '@src/CONST';
 import {UnitKey, Units, UnitsList} from '@src/types/database';
 

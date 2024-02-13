@@ -1,6 +1,6 @@
 import {UserPriority, UsersPriority} from '@src/types/various/Algorithms';
 import {UserStatus, UserStatusList} from '@src/types/database';
-import {sumAllUnits} from '@src/utils/dataHandling';
+import {sumAllUnits} from '@libs/DataHandling';
 import {User} from 'firebase/auth';
 
 /**

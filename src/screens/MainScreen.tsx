@@ -22,7 +22,7 @@ import {
   calculateThisMonthPoints,
   getSingleMonthDrinkingSessions,
   timestampToDate,
-} from '@utils/dataHandling';
+} from '@libs/DataHandling';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import UserOffline from '@components/UserOffline';
 import {updateUserLastOnline} from '@database/users';

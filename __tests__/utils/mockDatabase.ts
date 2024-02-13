@@ -21,13 +21,13 @@ import {
   DrinkingSessionList,
   DrinkingSessionId,
 } from '../../src/types/database';
-import {getRandomChoice, getRandomInt} from '../../src/utils/choice';
+import {getRandomChoice, getRandomInt} from '../../src/libs/Choice';
 import {
   formatDate,
   getRandomUnitsList,
   getZeroUnitsList,
-} from '../../src/utils/dataHandling';
-import {cleanStringForFirebaseKey} from '../../src/utils/strings';
+} from '../../src/libs/DataHandling';
+import {cleanStringForFirebaseKey} from '../../src/libs/Strings';
 import {MOCK_SESSION_IDS, MOCK_USER_IDS} from './testsStatic';
 import {UnitsList} from '../../src/types/database';
 import CONST from '@src/CONST';

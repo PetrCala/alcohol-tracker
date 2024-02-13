@@ -1,4 +1,4 @@
-import {validateAndParseInputToTimestamp} from '@src/utils/utils';
+import {validateAndParseInputToTimestamp} from '@libs/utils';
 
 describe('Test validateAndParseInputToTimestamp', () => {
   const validInput = '2020-01-01 00:00';

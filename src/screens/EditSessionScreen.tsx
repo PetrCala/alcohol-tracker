@@ -27,7 +27,7 @@ import {
   sumUnitsOfSingleType,
   timestampToDate,
   unitsToColors,
-} from '../utils/dataHandling';
+} from '../libs/DataHandling';
 import {auth} from '../services/firebaseSetup';
 import YesNoPopup from '../components/Popups/YesNoPopup';
 import {useUserConnection} from '../context/global/UserConnectionContext';

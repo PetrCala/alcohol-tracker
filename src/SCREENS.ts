@@ -5,7 +5,7 @@
 import type DeepValueOf from './types/utils/DeepValueOf';
 
 const PROTECTED_SCREENS = {
-  HOME: 'Home',
+  // HOME: 'Home',
 } as const;
 
 const SCREENS = {

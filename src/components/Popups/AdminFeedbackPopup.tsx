@@ -13,7 +13,7 @@ import {
   formatDateToDay,
   formatDateToTime,
   timestampToDate,
-} from '@utils/dataHandling';
+} from '@libs/DataHandling';
 import {removeFeedback} from '@database/feedback';
 import {fetchNicknameByUID} from '@database/baseFunctions';
 import {useFirebase} from '@context/global/FirebaseContext';

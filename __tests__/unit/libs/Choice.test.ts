@@ -1,4 +1,4 @@
-﻿import {getRandomChoice, getRandomInt} from '../../../src/utils/choice';
+﻿import {getRandomChoice, getRandomInt} from '../../../src/libs/Choice';
 
 describe('getRandomChoice', () => {
   let stringChoices = ['test-choice1', 'test-choice2', 'test-choice3'];

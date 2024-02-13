@@ -1,9 +1,9 @@
 import {StyleSheet, Text, View} from 'react-native';
 import {useFirebase} from '../../context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
-import {getTimestampAge, isRecent} from '@src/utils/timeUtils';
+import {getTimestampAge, isRecent} from '@libs/timeUtils';
 import commonStyles from '@src/styles/commonStyles';
-import {sumAllUnits} from '@src/utils/dataHandling';
+import {sumAllUnits} from '@libs/DataHandling';
 import {Profile, UserStatus} from '@src/types/database';
 
 type UserOverviewProps = {

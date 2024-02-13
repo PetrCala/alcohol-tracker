@@ -1,6 +1,6 @@
 ﻿import {Database, ref, get} from 'firebase/database';
-import {cleanStringForFirebaseKey} from '@src/utils/strings';
-import {QUIRKY_NICKNAMES} from '@src/utils/quirkyNicknames';
+import {cleanStringForFirebaseKey} from '@libs/Strings';
+import {QUIRKY_NICKNAMES} from '@libs/QuirkyNicknames';
 import {
   UserIdToNicknameMapping,
   UserSearchResults,

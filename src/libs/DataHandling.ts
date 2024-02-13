@@ -1,5 +1,5 @@
 ﻿import {DateObject} from '@src/types/time';
-import {getRandomInt} from './choice';
+import {getRandomInt} from './Choice';
 import type {
   CalendarColors,
   DayMarking,

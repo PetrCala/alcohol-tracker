@@ -11,7 +11,7 @@ import {
   sumUnitsOfSingleType,
   timestampToDate,
   unitsToColors,
-} from '@utils/dataHandling';
+} from '@libs/DataHandling';
 import BasicButton from '@components/Buttons/BasicButton';
 import {getDatabaseData} from '@context/global/DatabaseDataContext';
 import MainHeader from '@components/Header/MainHeader';

@@ -23,7 +23,7 @@ import NoFriendUserOverview from '@components/Social/NoFriendUserOverview';
 import {fetchUserProfiles} from '@database/profile';
 import headerStyles from '@src/styles/headerStyles';
 import GrayHeader from '@components/Header/GrayHeader';
-import {objKeys} from '@src/utils/dataHandling';
+import {objKeys} from '@libs/DataHandling';
 import CONST from '@src/CONST';
 
 type FriendRequestButtonsProps = {

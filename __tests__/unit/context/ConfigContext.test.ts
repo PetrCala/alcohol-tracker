@@ -1,4 +1,4 @@
-﻿import {validateAppVersion} from '../../../src/utils/validation';
+﻿import {validateAppVersion} from '../../../src/libs/Validation';
 
 describe('validateAppVersion', () => {
   // Mock the current version of the application

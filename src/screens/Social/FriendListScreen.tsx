@@ -19,8 +19,8 @@ import {
 } from '@src/types/various/Search';
 import GeneralAction from '@src/types/various/GeneralAction';
 import {useMemo, useReducer, useRef} from 'react';
-import {objKeys} from '@src/utils/dataHandling';
-import {isNonEmptyArray} from '@src/utils/validation';
+import {objKeys} from '@libs/DataHandling';
+import {isNonEmptyArray} from '@libs/Validation';
 import commonStyles from '@src/styles/commonStyles';
 import {FriendListScreenProps} from '@src/types/screens';
 import {getNicknameMapping} from '@src/services/search/searchUtils';

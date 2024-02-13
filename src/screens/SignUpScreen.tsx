@@ -21,9 +21,9 @@ import {
   isValidPasswordConfirm,
   validateAppVersion,
   validateSignInInput,
-} from '@utils/validation';
+} from '@libs/Validation';
 import {deleteUserData, pushNewUserInfo} from '@database/users';
-import {handleErrors} from '@src/utils/errorHandling';
+import {handleErrors} from '@libs/ErrorHandling';
 import CONST from '@src/CONST';
 import WarningMessage from '@components/Info/WarningMessage';
 import DismissKeyboard from '@components/Keyboard/DismissKeyboard';

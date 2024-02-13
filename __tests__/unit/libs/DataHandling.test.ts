@@ -29,7 +29,7 @@
   sumUnitsOfSingleType,
   timestampToDate,
   unitsToColors,
-} from '../../../src/utils/dataHandling';
+} from '../../../src/libs/DataHandling';
 import {DateObject} from '../../../src/types/time';
 import {
   createMockPreferences,

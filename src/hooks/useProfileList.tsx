@@ -6,7 +6,7 @@ import {
   ProfileList,
   UserStatusList,
 } from '@src/types/database';
-import {objKeys} from '@src/utils/dataHandling';
+import {objKeys} from '@libs/DataHandling';
 import {fetchUserProfiles, fetchUserStatuses} from '@database/profile';
 import {Alert} from 'react-native';
 

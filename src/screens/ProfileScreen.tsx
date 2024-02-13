@@ -25,14 +25,14 @@ import {
   getSingleMonthDrinkingSessions,
   objKeys,
   timestampToDate,
-} from '@src/utils/dataHandling';
+} from '@libs/DataHandling';
 import {DateObject} from '@src/types/time';
 import SessionsCalendar from '@components/Calendar';
 import LoadingData from '@components/LoadingData';
 import {
   fetchUserFriends,
   getCommonFriendsCount,
-} from '@src/utils/social/friendUtils';
+} from '@libs/social/FriendUtils';
 import MainHeader from '@components/Header/MainHeader';
 import ManageFriendPopup from '@components/Popups/Profile/ManageFriendPopup';
 import {getDatabaseData} from '@src/context/global/DatabaseDataContext';

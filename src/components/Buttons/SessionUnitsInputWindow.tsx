@@ -1,6 +1,6 @@
 ﻿import React, {useState, useRef} from 'react';
 import {Keyboard, TextInput, TouchableOpacity, View} from 'react-native';
-import {addUnits, removeUnits} from '../../utils/dataHandling';
+import {addUnits, removeUnits} from '../../libs/DataHandling';
 import {UnitKey, Units, UnitsList} from '@src/types/database';
 
 type SessionUnitsInputWindowProps = {

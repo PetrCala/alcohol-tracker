@@ -21,7 +21,7 @@ import {
   sumAllUnits,
   getZeroUnitsList,
   sumAllPoints,
-} from '../utils/dataHandling';
+} from '../libs/DataHandling';
 import LoadingData from '../components/LoadingData';
 // import { PreferencesData} from '../types/database';
 import {DayOverviewScreenProps} from '../types/screens';

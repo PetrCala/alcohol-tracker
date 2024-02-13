@@ -1,5 +1,5 @@
 ﻿import {Database, ref, update} from 'firebase/database';
-import {removeZeroObjectsFromSession} from '@src/utils/dataHandling';
+import {removeZeroObjectsFromSession} from '@libs/DataHandling';
 import {DrinkingSession, UnitsList, UserStatus} from '@src/types/database';
 import DBPATHS from './DBPATHS';
 

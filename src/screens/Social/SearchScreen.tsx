@@ -10,7 +10,7 @@ import {FriendRequestStatus, ProfileList} from '@src/types/database';
 import {useEffect, useMemo, useReducer, useRef} from 'react';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import {auth} from '@src/services/firebaseSetup';
-import {isNonEmptyArray} from '@src/utils/validation';
+import {isNonEmptyArray} from '@libs/Validation';
 import LoadingData from '@src/components/LoadingData';
 import {Database} from 'firebase/database';
 import {searchDatabaseForUsers} from '@src/services/search/search';

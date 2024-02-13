@@ -1,4 +1,4 @@
-﻿import {cleanSemver, isNonEmptyObject} from '../../../src/utils/validation';
+﻿import {cleanSemver, isNonEmptyObject} from '../../../src/libs/Validation';
 
 describe('isNonEmptyObject', () => {
   it('should return true for non-empty objects', () => {

@@ -22,7 +22,7 @@ import {
   aggregateSessionsByDays,
   monthEntriesToColors,
   hasDecimalPoint,
-} from '@utils/dataHandling';
+} from '@libs/DataHandling';
 import {DateObject} from '@src/types/time';
 import LoadingData from './LoadingData';
 import CONST from '@src/CONST';

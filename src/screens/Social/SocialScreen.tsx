@@ -19,7 +19,7 @@ import {
   SocialScreenProps,
 } from '@src/types/screens';
 import MainHeader from '@components/Header/MainHeader';
-import {getReceivedRequestsCount} from '@src/utils/social/friendUtils';
+import {getReceivedRequestsCount} from '@libs/social/FriendUtils';
 import {useIsFocused} from '@react-navigation/native';
 import CONST from '@src/CONST';
 import {UserProps} from '@src/types/database';

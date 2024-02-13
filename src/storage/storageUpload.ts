@@ -1,5 +1,5 @@
-﻿import {toPercentageVerbose} from '@src/utils/dataHandling';
-import {handleErrors} from '@src/utils/errorHandling';
+﻿import {toPercentageVerbose} from '@libs/DataHandling';
+import {handleErrors} from '@libs/ErrorHandling';
 import {
   FirebaseStorage,
   StorageReference,

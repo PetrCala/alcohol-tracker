@@ -6,7 +6,7 @@ import UserOffline from '../../components/UserOffline';
 import {listenForDataChanges} from '../../database/baseFunctions';
 import LoadingData from '../../components/LoadingData';
 import {useFirebase} from './FirebaseContext';
-import {validateAppVersion} from '../../utils/validation';
+import {validateAppVersion} from '../../libs/Validation';
 import {Config} from '@src/types/database';
 import UnderMaintenance from '@components/UnderMaintenance';
 import DBPATHS from '@database/DBPATHS';
