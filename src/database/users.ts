@@ -13,7 +13,7 @@ import {
   reauthenticateWithCredential,
 } from 'firebase/auth';
 import {Alert} from 'react-native';
-import {cleanStringForFirebaseKey} from '../libs/Strings';
+import {cleanStringForFirebaseKey} from '../libs/StringUtils';
 import CONST from '@src/CONST';
 import DBPATHS from './DBPATHS';
 

@@ -4,23 +4,23 @@ import {
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 
-import MainScreen from '../screens/MainScreen';
-import DrinkingSessionScreen from '../screens/DrinkingSessionScreen';
-import ProfileScreen from '../screens/ProfileScreen';
-import MainMenuScreen from '../screens/MainMenuScreen';
-import SocialScreen from '../screens/Social/SocialScreen';
-import AchievementScreen from '../screens/AchievementScreen';
-import StatisticsScreen from '../screens/StatisticsScreen';
-import SettingsScreen from '../screens/SettingsScreen';
-import PreferencesScreen from '../screens/PreferencesScreen';
-import DayOverviewScreen from '../screens/DayOverviewScreen';
-import EditSessionScreen from '../screens/EditSessionScreen';
-import SessionSummaryScreen from '../screens/SessionSummaryScreen';
-import TermsOfServiceScreen from '../screens/TermsOfServiceScreen';
-import PrivacyPolicyScreen from '../screens/PrivacyPolicyScreen';
+import MainScreen from '../../screens/MainScreen';
+import DrinkingSessionScreen from '../../screens/DrinkingSessionScreen';
+import ProfileScreen from '../../screens/ProfileScreen';
+import MainMenuScreen from '../../screens/MainMenuScreen';
+import SocialScreen from '../../screens/Social/SocialScreen';
+import AchievementScreen from '../../screens/AchievementScreen';
+import StatisticsScreen from '../../screens/StatisticsScreen';
+import SettingsScreen from '../../screens/SettingsScreen';
+import PreferencesScreen from '../../screens/PreferencesScreen';
+import DayOverviewScreen from '../../screens/DayOverviewScreen';
+import EditSessionScreen from '../../screens/EditSessionScreen';
+import SessionSummaryScreen from '../../screens/SessionSummaryScreen';
+import TermsOfServiceScreen from '../../screens/TermsOfServiceScreen';
+import PrivacyPolicyScreen from '../../screens/PrivacyPolicyScreen';
 
 import Stack from './Stack';
-import {DatabaseDataProvider} from '../context/global/DatabaseDataContext';
+import {DatabaseDataProvider} from '../../context/global/DatabaseDataContext';
 import FriendsFriendsScreen from '@screens/Social/FriendsFriendsScreeen';
 
 const AppNavigator = () => {

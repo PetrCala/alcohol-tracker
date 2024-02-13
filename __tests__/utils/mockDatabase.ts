@@ -27,7 +27,7 @@ import {
   getRandomUnitsList,
   getZeroUnitsList,
 } from '../../src/libs/DataHandling';
-import {cleanStringForFirebaseKey} from '../../src/libs/Strings';
+import {cleanStringForFirebaseKey} from '../../src/libs/StringUtils';
 import {MOCK_SESSION_IDS, MOCK_USER_IDS} from './testsStatic';
 import {UnitsList} from '../../src/types/database';
 import CONST from '@src/CONST';

@@ -30,7 +30,7 @@ import {
   getDefaultUserStatus,
   pushNewUserInfo,
 } from '@database/users';
-import {cleanStringForFirebaseKey} from '@libs/Strings';
+import {cleanStringForFirebaseKey} from '@libs/StringUtils';
 import {
   acceptFriendRequest,
   deleteFriendRequest,

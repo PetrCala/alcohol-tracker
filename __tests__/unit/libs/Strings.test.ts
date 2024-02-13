@@ -1,4 +1,4 @@
-﻿import {cleanStringForFirebaseKey} from '../../../src/libs/Strings';
+﻿import {cleanStringForFirebaseKey} from '../../../src/libs/StringUtils';
 
 describe('cleanStringForFirebaseKey', () => {
   const testCleanString = (input: string, expected: string) => {

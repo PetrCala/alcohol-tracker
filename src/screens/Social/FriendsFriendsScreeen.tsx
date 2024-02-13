@@ -27,7 +27,7 @@ import GrayHeader from '@components/Header/GrayHeader';
 import {
   getCommonFriends,
   getCommonFriendsCount,
-} from '@libs/social/FriendUtils';
+} from '@libs/Social/FriendUtils';
 import {
   UserIdToNicknameMapping,
   UserSearchResults,
