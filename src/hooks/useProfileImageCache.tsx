@@ -1,7 +1,7 @@
 import {useState, useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CONST from '@src/CONST';
-import {cacheProfileImage} from '@libs/cache';
+import {cacheProfileImage} from '@libs/Cache';
 
 /**
  * Custom hook for caching and retrieving profile images based on user ID.
