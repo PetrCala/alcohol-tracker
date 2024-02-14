@@ -5,15 +5,18 @@
 import type DeepValueOf from './types/utils/DeepValueOf';
 
 const PROTECTED_SCREENS = {
-  // HOME: 'Home',
+  HOME: 'Home',
 } as const;
 
 const SCREENS = {
   ...PROTECTED_SCREENS,
+  NOT_FOUND: 'not-found',
+  // Public screens
   SIGNUP: 'SignUp',
   LOGIN: 'Login',
   FORCE_UPDATE: 'ForceUpdate',
-
+  // Auth screens
+  // TBA
   // Example with nested screens
   // SETTINGS: {
   //   ROOT: 'Settings_Root',

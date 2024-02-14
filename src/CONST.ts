@@ -113,6 +113,18 @@ const CONST = {
     },
   },
   NO_IMAGE: 'NO_IMAGE', // Used for the profile avatar when there is no image
+  REGEX: {
+    ROUTES: {
+      REDUNDANT_SLASHES: /(\/{2,})|(\/$)/g,
+    },
+    // DATE_TIME_FORMAT: /^\d{2}-\d{2} \d{2}:\d{2} [AP]M$/,
+  },
+  SOCIALS: {
+    TWITTER: '',
+    INSTAGRAM: '',
+    FACEBOOK: '',
+    LINKEDIN: '',
+  },
   STORE_LINKS: {
     ANDROID:
       'https://play.google.com/store/apps/details?id=com.alcohol_tracker',
@@ -123,6 +135,7 @@ const CONST = {
     PM: 'PM',
   },
   UNITS: {
+    // Perhaps move to types?
     KEYS: {
       SMALL_BEER: 'small_beer',
       BEER: 'beer',
