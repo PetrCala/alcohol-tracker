@@ -1,27 +1,26 @@
 import React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
 import {app} from './services/firebaseSetup';
 
-import AuthNavigator from './libs/Navigation/AppNavigator/AuthNavigator';
-import AppNavigator from './libs/Navigation/AppNavigator/AppNavigator';
-import Stack from './libs/Navigation/AppNavigator/Stack';
 import {ContextProvider} from './context/global/Context';
+import type {Route} from './ROUTES';
+import InitialUrlContext from '@libs/InitialUrlContext';
+import Kiroku from './Kiroku';
 
-const Kiroku = () => {
+type KirokuProps = {
+  /** true if there is an authToken */
+  url?: Route;
+};
+
+const App = ({url}: KirokuProps) => {
   return (
-    <ContextProvider app={app}>
-      <NavigationContainer>
-        <Stack.Navigator
-          initialRouteName="Auth"
-          screenOptions={{
-            headerShown: false,
-          }}>
-          <Stack.Screen name="Auth" component={AuthNavigator} />
-          <Stack.Screen name="App" component={AppNavigator} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </ContextProvider>
+    <InitialUrlContext.Provider value={url}>
+      <ContextProvider app={app}>
+        <Kiroku />
+      </ContextProvider>
+    </InitialUrlContext.Provider>
   );
 };
 
-export default Kiroku;
+App.displayName = 'App';
+
+export default App;

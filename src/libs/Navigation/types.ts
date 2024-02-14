@@ -14,7 +14,7 @@ import type {ValueOf} from 'type-fest';
 import type CONST from '@src/CONST';
 import type NAVIGATORS from '@src/NAVIGATORS';
 import type SCREENS from '@src/SCREENS';
-// import type {HybridAppRoute, Route as Routes} from '@src/ROUTES';
+import type {Route as Routes} from '@src/ROUTES';
 
 type NavigationRef = NavigationContainerRefWithCurrent<RootStackParamList>;
 
@@ -87,13 +87,31 @@ type CentralPaneNavigatorParamList = {
   //   };
 };
 
+type RightModalNavigatorParamList = {
+  // [SCREENS.RIGHT_MODAL.SETTINGS]: NavigatorScreenParams<SettingsNavigatorParamList>;
+  // [SCREENS.RIGHT_MODAL.NEW_CHAT]: NavigatorScreenParams<NewChatNavigatorParamList>;
+  // [SCREENS.RIGHT_MODAL.DETAILS]: NavigatorScreenParams<DetailsNavigatorParamList>;
+};
+
+type LeftModalNavigatorParamList = {
+  // [SCREENS.LEFT_MODAL.SEARCH]: NavigatorScreenParams<SearchNavigatorParamList>;
+  // [SCREENS.LEFT_MODAL.WORKSPACE_SWITCHER]: NavigatorScreenParams<WorkspaceSwitcherNavigatorParamList>;
+};
+
+type SettingsCentralPaneNavigatorParamList = {
+  // [SCREENS.SETTINGS.SHARE_CODE]: undefined;
+  // [SCREENS.SETTINGS.PROFILE.ROOT]: undefined;
+  // [SCREENS.SETTINGS.PREFERENCES.ROOT]: undefined;
+  // [SCREENS.SETTINGS.ABOUT]: undefined;
+};
+
 type FullScreenNavigatorParamList = {
   //   [SCREENS.SETTINGS.ROOT]: undefined;
   //   [SCREENS.SETTINGS_CENTRAL_PANE]: NavigatorScreenParams<SettingsCentralPaneNavigatorParamList>;
 };
 
 type BottomTabNavigatorParamList = {
-  // [SCREENS.HOME]: undefined;
+  [SCREENS.HOME]: undefined;
   // [SCREENS.ALL_SETTINGS]: undefined;
   // [SCREENS.WORKSPACE.INITIAL]: undefined;
 };
@@ -102,8 +120,7 @@ type PublicScreensParamList = {
   [NAVIGATORS.BOTTOM_TAB_NAVIGATOR]: NavigatorScreenParams<BottomTabNavigatorParamList>;
   [SCREENS.FORCE_UPDATE]: undefined;
   [SCREENS.SIGNUP]: undefined;
-  // [SCREENS.LOGIN]: undefined;
-  // [NAVIGATORS.BOTTOM_TAB_NAVIGATOR]: NavigatorScreenParams<BottomTabNavigatorParamList>;
+  [SCREENS.LOGIN]: undefined;
   // [SCREENS.TRANSITION_BETWEEN_APPS]: {
   //     email?: string;
   //     error?: string;
@@ -114,19 +131,24 @@ type PublicScreensParamList = {
 };
 type AuthScreensParamList = {
   [NAVIGATORS.BOTTOM_TAB_NAVIGATOR]: NavigatorScreenParams<BottomTabNavigatorParamList>;
+  [NAVIGATORS.CENTRAL_PANE_NAVIGATOR]: NavigatorScreenParams<CentralPaneNavigatorParamList>;
+  [SCREENS.NOT_FOUND]: undefined;
+  [NAVIGATORS.LEFT_MODAL_NAVIGATOR]: NavigatorScreenParams<LeftModalNavigatorParamList>;
+  [NAVIGATORS.RIGHT_MODAL_NAVIGATOR]: NavigatorScreenParams<RightModalNavigatorParamList>;
+  [NAVIGATORS.FULL_SCREEN_NAVIGATOR]: NavigatorScreenParams<FullScreenNavigatorParamList>;
 };
 
-type RootStackParamList = PublicScreensParamList; // & AuthScreensParamList;
+type RootStackParamList = PublicScreensParamList & AuthScreensParamList;
 
 type BottomTabName = keyof BottomTabNavigatorParamList;
 
 type CentralPaneName = keyof CentralPaneNavigatorParamList;
 
-// type FullScreenName = keyof SettingsCentralPaneNavigatorParamList;
+type FullScreenName = keyof SettingsCentralPaneNavigatorParamList;
 
 type SwitchPolicyIDParams = {
   policyID?: string;
-  //   route?: Routes; // keep!!
+  route?: Routes;
   isPolicyAdmin?: boolean;
 };
 
@@ -135,16 +157,18 @@ export type {
   BottomTabName,
   CentralPaneName,
   CentralPaneNavigatorParamList,
+  FullScreenName,
   FullScreenNavigatorParamList,
+  LeftModalNavigatorParamList,
   NavigationStateRoute,
   NavigationPartialRoute,
   NavigationRef,
   NavigationRoot,
   PublicScreensParamList,
+  RightModalNavigatorParamList,
   RootStackParamList,
   StackNavigationAction,
   State,
   StateOrRoute,
   SwitchPolicyIDParams,
-  // Various param lists
 };

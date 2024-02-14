@@ -1,5 +1,3 @@
-import {format} from 'path';
-
 export function isRecent(timestamp: number): boolean {
   const now = Date.now();
   const fiveMinutes = 5 * 60 * 1000; // 5 minutes in milliseconds

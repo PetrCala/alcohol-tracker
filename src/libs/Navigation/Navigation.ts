@@ -16,9 +16,8 @@ import {PROTECTED_SCREENS} from '@src/SCREENS';
 import type {EmptyObject} from '@src/types/utils/EmptyObject';
 import originalDismissModal from './dismissModal';
 import linkingConfig from './linkingConfig';
-import linkTo from './linkTo';
+// import linkTo from './linkTo';
 import navigationRef from './navigationRef';
-import switchPolicyID from './switchPolicyID';
 import type {State, StateOrRoute, SwitchPolicyIDParams} from './types';
 
 let resolveNavigationIsReadyPromise: () => void;
@@ -356,14 +355,6 @@ function waitForProtectedRoutes() {
   });
 }
 
-function navigateWithSwitchPolicyID(params: SwitchPolicyIDParams) {
-  if (!canNavigate('navigateWithSwitchPolicyID')) {
-    return;
-  }
-
-  return switchPolicyID(navigationRef.current, params);
-}
-
 // To be deprecated later
 const getPreviousRouteName = (navigation: any) => {
   const state = navigation.getState();
@@ -392,7 +383,6 @@ export default {
   getRouteNameFromStateEvent,
   waitForProtectedRoutes,
   closeFullScreen,
-  navigateWithSwitchPolicyID,
 };
 
 export {navigationRef};

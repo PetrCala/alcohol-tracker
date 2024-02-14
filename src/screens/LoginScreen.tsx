@@ -92,7 +92,7 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
     React.useCallback(() => {
       const stopListening = auth.onAuthStateChanged(user => {
         if (user) {
-          navigation.replace('App', {screen: 'Main Screen'}); // Redirect to main screen
+          // navigation.replace('App', {screen: 'Main Screen'}); // Redirect to main screen
         }
         dispatch({type: 'SET_LOADING_USER', payload: false});
       });
@@ -211,8 +211,6 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
     </DismissKeyboard>
   );
 };
-
-export default LoginScreen;
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -335,3 +333,5 @@ const styles = StyleSheet.create({
     width: screenWidth * 0.7,
   },
 });
+
+export default LoginScreen;

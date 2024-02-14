@@ -3,6 +3,7 @@
 
 import Config, {NativeConfig} from 'react-native-config';
 import CONST from './CONST';
+import {Platform} from 'react-native';
 
 // react-native-config doesn't trim whitespace on iOS for some reason so we
 // add a trim() call to prevent headaches
@@ -18,8 +19,9 @@ if (ENVIRONMENT === CONST.ENVIRONMENT.DEV) {
 }
 
 export default {
-  APP_NAME: get(Config, 'APP_NAME', 'Kiroku'),
-  APP_ENVIRONMENT: get(Config, 'APP_ENVIRONMENT', ''),
+  APP_NAME: 'Kiroku',
+  COMPONENT_NAME: Platform.OS === 'ios' ? 'kiroku' : 'alcohol_tracker',
+  APP_ENVIRONMENT: get(Config, 'APP_ENVIRONMENT', CONST.ENVIRONMENT.DEV),
   ADMIN_SDK: {
     PROD: get(Config, 'ADMIN_SDK_PROD', ''),
     DEV: get(Config, 'ADMIN_SDK_DEV', ''),
