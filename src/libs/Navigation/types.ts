@@ -99,8 +99,10 @@ type BottomTabNavigatorParamList = {
 };
 
 type PublicScreensParamList = {
-  // LOGIN SCREEN
-  // SIGNUP SCREEN
+  [NAVIGATORS.BOTTOM_TAB_NAVIGATOR]: NavigatorScreenParams<BottomTabNavigatorParamList>;
+  [SCREENS.FORCE_UPDATE]: undefined;
+  [SCREENS.SIGNUP]: undefined;
+  // [SCREENS.LOGIN]: undefined;
   // [NAVIGATORS.BOTTOM_TAB_NAVIGATOR]: NavigatorScreenParams<BottomTabNavigatorParamList>;
   // [SCREENS.TRANSITION_BETWEEN_APPS]: {
   //     email?: string;
@@ -109,19 +111,10 @@ type PublicScreensParamList = {
   //     shortLivedToken?: string;
   //     exitTo?: Routes | HybridAppRoute;
   // };
-  // [SCREENS.VALIDATE_LOGIN]: {
-  //     accountID: string;
-  //     validateCode: string;
-  // };
-  // [SCREENS.UNLINK_LOGIN]: {
-  //     accountID?: string;
-  //     validateCode?: string;
-  // };
-  // [SCREENS.SIGN_IN_WITH_APPLE_DESKTOP]: undefined;
-  // [SCREENS.SIGN_IN_WITH_GOOGLE_DESKTOP]: undefined;
-  // [SCREENS.SAML_SIGN_IN]: undefined;
 };
-type AuthScreensParamList = {};
+type AuthScreensParamList = {
+  [NAVIGATORS.BOTTOM_TAB_NAVIGATOR]: NavigatorScreenParams<BottomTabNavigatorParamList>;
+};
 
 type RootStackParamList = PublicScreensParamList; // & AuthScreensParamList;
 
@@ -141,11 +134,13 @@ export type {
   AuthScreensParamList,
   BottomTabName,
   CentralPaneName,
-  //   FullScreenName,
+  CentralPaneNavigatorParamList,
+  FullScreenNavigatorParamList,
   NavigationStateRoute,
   NavigationPartialRoute,
   NavigationRef,
   NavigationRoot,
+  PublicScreensParamList,
   RootStackParamList,
   StackNavigationAction,
   State,

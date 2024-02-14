@@ -10,13 +10,15 @@ const PROTECTED_SCREENS = {
 
 const SCREENS = {
   ...PROTECTED_SCREENS,
-  ALL_SETTINGS: 'AllSettings',
-  //...
-  SETTINGS: {
-    ROOT: 'Settings_Root',
-    SHARE_CODE: 'Settings_Share_Code',
-  },
-  //...
+  SIGNUP: 'SignUp',
+  LOGIN: 'Login',
+  FORCE_UPDATE: 'ForceUpdate',
+
+  // Example with nested screens
+  // SETTINGS: {
+  //   ROOT: 'Settings_Root',
+  //   SHARE_CODE: 'Settings_Share_Code',
+  // },
 } as const;
 
 type Screen = DeepValueOf<typeof SCREENS>;

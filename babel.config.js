@@ -33,7 +33,7 @@ module.exports = {
           '@database': './src/database',
           '@hooks': './src/hooks',
           '@libs': './src/libs',
-          '@navigation': './src/navigation',
+          '@navigation': './src/libs/Navigation',
           '@screens': './src/screens',
           '@src': './src',
           '@storage': './src/storage',

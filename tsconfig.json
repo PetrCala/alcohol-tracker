@@ -47,7 +47,7 @@
       "@firebase/auth": ["./node_modules/@firebase/auth/dist/index.rn.d.ts"],
       "@hooks/*": ["./src/hooks/*"],
       "@libs/*": ["./src/libs/*"],
-      "@navigation/*": ["./src/navigation/*"],
+      "@navigation/*": ["./src/libs/Navigation/*"],
       "@screens/*": ["./src/screens/*"],
       "@src/*": ["./src/*"],
       "@storage/*": ["./src/storage/*"],
