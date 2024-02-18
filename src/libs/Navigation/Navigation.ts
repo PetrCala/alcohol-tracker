@@ -16,7 +16,7 @@ import {PROTECTED_SCREENS} from '@src/SCREENS';
 import type {EmptyObject} from '@src/types/utils/EmptyObject';
 import originalDismissModal from './dismissModal';
 import linkingConfig from './linkingConfig';
-// import linkTo from './linkTo';
+import linkTo from './linkTo';
 import navigationRef from './navigationRef';
 import type {State, StateOrRoute, SwitchPolicyIDParams} from './types';
 
@@ -43,6 +43,10 @@ function canNavigate(
   if (navigationRef.isReady()) {
     return true;
   }
+  console.log(
+    `[Navigation] ${methodName} failed because navigation ref was not yet ready`,
+    params,
+  );
   return false;
 }
 
