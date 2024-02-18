@@ -31,6 +31,8 @@ import {Profile} from '@src/types/database';
 import DBPATHS from '@database/DBPATHS';
 import ValidityIndicatorIcon from '@components/ValidityIndicatorIcon';
 import SCREENS from '@src/SCREENS';
+import Navigation from '@libs/Navigation/Navigation';
+import ROUTES from '@src/ROUTES';
 
 interface State {
   email: string;
@@ -326,7 +328,8 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
           <View style={styles.loginContainer}>
             <TouchableOpacity
               style={styles.loginButtonContainer}
-              onPress={() => navigation.navigate(SCREENS.LOGIN)}>
+              // onPress={() => navigation.navigate(SCREENS.LOGIN)}>
+              onPress={() => Navigation.navigate(ROUTES.FORCE_UPDATE)}>
               <Text style={styles.loginInfoText}>Already a user?</Text>
               <Text style={styles.loginButtonText}>Log in</Text>
             </TouchableOpacity>

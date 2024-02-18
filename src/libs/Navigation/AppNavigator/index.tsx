@@ -16,15 +16,15 @@ type AppNavigatorProps = {
 function AppNavigator() {
   const initUrl = useContext(InitialUrlContext);
 
-  // useEffect(() => {
-  //     if (!NativeModules.HybridAppModule || !initUrl) {
-  //         return;
-  //     }
+  useEffect(() => {
+    if (!NativeModules.HybridAppModule || !initUrl) {
+      return;
+    }
 
-  //     Navigation.isNavigationReady().then(() => {
-  //         Navigation.navigate(initUrl);
-  //     });
-  // }, [initUrl]);
+    Navigation.isNavigationReady().then(() => {
+      Navigation.navigate(initUrl);
+    });
+  }, [initUrl]);
 
   // if (authenticated) {
   //     return <AuthScreens />;
