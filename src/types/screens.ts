@@ -21,7 +21,7 @@ export type AuthStackParamList = {
 };
 
 export type AppStackParamList = {
-  'Main Screen': undefined;
+  'Home Screen': undefined;
   'Main Menu Screen': undefined;
   'Drinking Session Screen': {
     session: DrinkingSession;
@@ -76,7 +76,7 @@ export type SignUpScreenProps = {
   navigation?: any;
 };
 
-export type MainScreenProps = {
+export type HomeScreenProps = {
   // navigation: StackNavigationProp<AppStackParamList, 'Main Screen'>;
   navigation?: any;
 };

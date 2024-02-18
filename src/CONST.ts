@@ -11,8 +11,40 @@ const EMPTY_OBJECT = Object.freeze({});
 const CONST = {
   APP_IN_BETA: true,
   AVAILABLE_PLATFORMS: ['ios', 'android'],
+  AVATAR_SIZE: {
+    XLARGE: 'xlarge',
+    LARGE: 'large',
+    MEDIUM: 'medium',
+    DEFAULT: 'default',
+    SMALL: 'small',
+    SMALLER: 'smaller',
+    SUBSCRIPT: 'subscript',
+    SMALL_SUBSCRIPT: 'small-subscript',
+    MID_SUBSCRIPT: 'mid-subscript',
+    LARGE_BORDERED: 'large-bordered',
+    HEADER: 'header',
+    MENTION_ICON: 'mention-icon',
+    SMALL_NORMAL: 'small-normal',
+  },
+  BROWSER: {
+    CHROME: 'chrome',
+    FIREFOX: 'firefox',
+    IE: 'ie',
+    EDGE: 'edge',
+    Opera: 'opera',
+    SAFARI: 'safari',
+    OTHER: 'other',
+  },
   CACHE: {
     PROFILE_PICTURE_KEY: 'profilePicture',
+  },
+  COLOR_SCHEME: {
+    LIGHT: 'light',
+    DARK: 'dark',
+  },
+  DROPDOWN_BUTTON_SIZE: {
+    LARGE: 'large',
+    MEDIUM: 'medium',
   },
   ENVIRONMENT: {
     DEV: 'development',
@@ -125,10 +157,21 @@ const CONST = {
     FACEBOOK: '',
     LINKEDIN: '',
   },
+  STATUS_BAR_STYLE: {
+    LIGHT_CONTENT: 'light-content',
+    DARK_CONTENT: 'dark-content',
+  },
   STORE_LINKS: {
     ANDROID:
       'https://play.google.com/store/apps/details?id=com.alcohol_tracker',
     IOS: 'https://testflight.apple.com/join/DgY9IieL',
+  },
+  THEME: {
+    DEFAULT: 'system',
+    FALLBACK: 'dark',
+    DARK: 'dark',
+    LIGHT: 'light',
+    SYSTEM: 'system',
   },
   TIME_PERIOD: {
     AM: 'AM',

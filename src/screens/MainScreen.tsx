@@ -13,7 +13,7 @@ import {
 import MenuIcon from '@components/Buttons/MenuIcon';
 import SessionsCalendar from '@components/Calendar';
 import LoadingData from '@components/LoadingData';
-import {MainScreenProps} from '@src/types/screens';
+import {HomeScreenProps} from '@src/types/screens';
 import {DateObject} from '@src/types/time';
 import {auth} from '@src/services/firebaseSetup';
 import {
@@ -88,7 +88,7 @@ const reducer = (state: State, action: Action): State => {
 // const [startSessionModalVisible, setStartSessionModalVisible] =
 //   useState<boolean>(false);
 
-const MainScreen = ({navigation}: MainScreenProps) => {
+const HomeScreen = ({navigation}: HomeScreenProps) => {
   const user = auth.currentUser;
   const {db, storage} = useFirebase();
   const {isOnline} = useUserConnection();
@@ -544,4 +544,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MainScreen;
+export default HomeScreen;

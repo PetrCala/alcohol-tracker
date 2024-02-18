@@ -2,7 +2,7 @@
 import LoginScreen from '../../../screens/LoginScreen';
 import SignUpScreen from '../../../screens/SignUpScreen';
 
-import Stack from './Stack';
+import Stack from './OldStack';
 
 const AuthNavigator = () => (
   <Stack.Navigator

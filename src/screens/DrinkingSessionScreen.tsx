@@ -324,7 +324,7 @@ const DrinkingSessionScreen = ({
           dateObject: sessionDateObject,
         });
       } else {
-        navigation.navigate('Main Screen');
+        navigation.navigate('Home Screen');
       }
     }
   };

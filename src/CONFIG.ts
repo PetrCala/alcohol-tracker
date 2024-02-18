@@ -67,4 +67,5 @@ export default {
     ),
     MYAPP_RELEASE_KEY_PASSWORD: get(Config, 'MYAPP_RELEASE_KEY_PASSWORD', ''),
   },
+  SITE_TITLE: 'Kiroku',
 } as const;

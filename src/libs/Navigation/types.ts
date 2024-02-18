@@ -155,6 +155,7 @@ type SwitchPolicyIDParams = {
 export type {
   AuthScreensParamList,
   BottomTabName,
+  BottomTabNavigatorParamList,
   CentralPaneName,
   CentralPaneNavigatorParamList,
   FullScreenName,
