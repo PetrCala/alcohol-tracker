@@ -23,6 +23,7 @@ import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 import CONST from '@src/CONST';
 import SCREENS from '@src/SCREENS';
 import ROUTES from '@src/ROUTES';
+import Navigation from '@libs/Navigation/Navigation';
 
 interface State {
   email: string;
@@ -186,7 +187,7 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
           <View style={styles.signUpContainer}>
             <TouchableOpacity
               style={styles.signUpButtonContainer}
-              onPress={() => navigation.navigate(ROUTES.SIGNUP)}>
+              onPress={() => Navigation.navigate(ROUTES.SIGNUP)}>
               <Text style={styles.signUpInfoText}>Don't have an account?</Text>
               <Text style={styles.signUpButtonText}>Sign up</Text>
             </TouchableOpacity>
