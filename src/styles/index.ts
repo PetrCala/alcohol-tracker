@@ -147,6 +147,11 @@ const styles = (theme: ThemeColors) =>
       borderTopColor: theme.border,
       backgroundColor: theme.appBG,
     },
+
+    navigationScreenCardStyle: {
+      backgroundColor: theme.appBG,
+      height: '100%',
+    },
   }) satisfies Styles;
 
 type ThemeStyles = ReturnType<typeof styles>;

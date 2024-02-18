@@ -6,11 +6,6 @@ import type {
   PartialState,
 } from '@react-navigation/native';
 import type {Writable} from 'type-fest';
-import getIsNarrowLayout from '@libs/getIsNarrowLayout';
-import {
-  extractPolicyIDFromPath,
-  getPathWithoutPolicyID,
-} from '@libs/PolicyUtils';
 import CONST from '@src/CONST';
 import NAVIGATORS from '@src/NAVIGATORS';
 import type {Route} from '@src/ROUTES';
@@ -18,16 +13,11 @@ import SCREENS from '@src/SCREENS';
 import getActionsFromPartialDiff from './AppNavigator/getActionsFromPartialDiff';
 import getPartialStateDiff from './AppNavigator/getPartialStateDiff';
 import dismissModal from './dismissModal';
-import getPolicyIDFromState from './getPolicyIDFromState';
 import getStateFromPath from './getStateFromPath';
 import getTopmostBottomTabRoute from './getTopmostBottomTabRoute';
 import getTopmostCentralPaneRoute from './getTopmostCentralPaneRoute';
-import getTopmostReportId from './getTopmostReportId';
 import linkingConfig from './linkingConfig';
 import getAdaptedStateFromPath from './linkingConfig/getAdaptedStateFromPath';
-import getMatchingBottomTabRouteForState from './linkingConfig/getMatchingBottomTabRouteForState';
-import getMatchingCentralPaneRouteForState from './linkingConfig/getMatchingCentralPaneRouteForState';
-import replacePathInNestedState from './linkingConfig/replacePathInNestedState';
 import type {
   NavigationRoot,
   RootStackParamList,
@@ -93,8 +83,6 @@ function getMinimalAction(
 function getActionForBottomTabNavigator(
   action: StackNavigationAction,
   state: NavigationState<RootStackParamList>,
-  policyID?: string,
-  shouldNavigate?: boolean,
 ): Writable<NavigationAction> | undefined {
   const bottomTabNavigatorRoute = state.routes.at(0);
 
@@ -112,21 +100,15 @@ function getActionForBottomTabNavigator(
   const screen = params.screen;
 
   if (!payloadParams) {
-    payloadParams = {policyID};
-  } else if (!('policyID' in payloadParams && !!payloadParams?.policyID)) {
-    payloadParams = {...payloadParams, policyID};
+    payloadParams = {};
   }
+  // } else if (!('policyID' in payloadParams && !!payloadParams?.policyID)) {
+  //   payloadParams = {...payloadParams, policyID};
+  // }
 
   // Check if the current bottom tab is the same as the one we want to navigate to. If it is, we don't need to do anything.
   const bottomTabCurrentTab = getTopmostBottomTabRoute(state);
-  const bottomTabParams = bottomTabCurrentTab?.params as Record<
-    string,
-    string | undefined
-  >;
-
-  // Verify if the policyID is different than the one we are currently on. If it is, we need to navigate to the new policyID.
-  const isNewPolicy = bottomTabParams?.policyID !== payloadParams?.policyID;
-  if (bottomTabCurrentTab?.name === screen && !shouldNavigate && !isNewPolicy) {
+  if (bottomTabCurrentTab?.name === screen) {
     return;
   }
 
@@ -167,31 +149,11 @@ export default function linkTo(
   while ((current = root.getParent())) {
     root = current;
   }
-  const pathWithoutPolicyID = getPathWithoutPolicyID(`/${path}`) as Route;
   const rootState =
     navigation.getRootState() as NavigationState<RootStackParamList>;
-  const stateFromPath = getStateFromPath(pathWithoutPolicyID) as PartialState<
+  const stateFromPath = getStateFromPath(path) as PartialState<
     NavigationState<RootStackParamList>
   >;
-
-  // Creating path with /w/ included if necessary.
-  const extractedPolicyID = extractPolicyIDFromPath(`/${path}`);
-  const policyIDFromState = getPolicyIDFromState(rootState);
-  const policyID = extractedPolicyID ?? policyIDFromState;
-
-  const isWorkspaceSettingsOpened =
-    getTopmostBottomTabRoute(rootState as State<RootStackParamList>)?.name ===
-      SCREENS.WORKSPACE.INITIAL && path.includes('workspace');
-
-  if (policyID && !isWorkspaceSettingsOpened) {
-    // The stateFromPath doesn't include proper path if there is a policy passed with /w/id.
-    // We need to replace the path in the state with the proper one.
-    // To avoid this hacky solution we may want to create custom getActionFromState function in the future.
-    replacePathInNestedState(
-      stateFromPath,
-      `/w/${policyID}${pathWithoutPolicyID}`,
-    );
-  }
 
   const action: StackNavigationAction = getActionFromState(
     stateFromPath,
@@ -212,30 +174,23 @@ export default function linkTo(
     } else if (
       action.payload.name === NAVIGATORS.CENTRAL_PANE_NAVIGATOR &&
       topmostCentralPaneRoute &&
-      (topmostCentralPaneRoute.name !== action.payload.params?.screen ||
-        getTopmostReportId(rootState) !== getTopmostReportId(stateFromPath))
+      topmostCentralPaneRoute.name !== action.payload.params?.screen
     ) {
       // We need to push a tab if the tab doesn't match the central pane route that we are going to push.
-      const topmostBottomTabRoute = getTopmostBottomTabRoute(rootState);
-      const matchingBottomTabRoute = getMatchingBottomTabRouteForState(
-        stateFromPath,
-        policyID,
-      );
-      const isNewPolicyID =
-        (topmostBottomTabRoute?.params as Record<string, string | undefined>)
-          ?.policyID !==
-        (matchingBottomTabRoute?.params as Record<string, string | undefined>)
-          ?.policyID;
-      if (
-        topmostBottomTabRoute &&
-        (topmostBottomTabRoute.name !== matchingBottomTabRoute.name ||
-          isNewPolicyID)
-      ) {
-        root.dispatch({
-          type: CONST.NAVIGATION.ACTION_TYPE.PUSH,
-          payload: matchingBottomTabRoute,
-        });
-      }
+      // const topmostBottomTabRoute = getTopmostBottomTabRoute(rootState);
+      // const matchingBottomTabRoute = getMatchingBottomTabRouteForState(
+      //   stateFromPath,
+      //   policyID,
+      // );
+      // if (
+      //   topmostBottomTabRoute &&
+      //   topmostBottomTabRoute.name !== matchingBottomTabRoute.name
+      // ) {
+      //   root.dispatch({
+      //     type: CONST.NAVIGATION.ACTION_TYPE.PUSH,
+      //     payload: matchingBottomTabRoute,
+      //   });
+      // }
 
       action.type = CONST.NAVIGATION.ACTION_TYPE.PUSH;
 
@@ -276,13 +231,9 @@ export default function linkTo(
       }
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     } else if (action.payload.name === NAVIGATORS.BOTTOM_TAB_NAVIGATOR) {
-      // If path contains a policyID, we should invoke the navigate function
-      const shouldNavigate = !!extractedPolicyID;
       const actionForBottomTabNavigator = getActionForBottomTabNavigator(
         action,
         rootState,
-        policyID,
-        shouldNavigate,
       );
 
       if (!actionForBottomTabNavigator) {
@@ -291,31 +242,11 @@ export default function linkTo(
 
       root.dispatch(actionForBottomTabNavigator);
 
-      // If the layout is wide we need to push matching central pane route to the stack.
-      if (!getIsNarrowLayout()) {
-        // stateFromPath should always include bottom tab navigator state, so getMatchingCentralPaneRouteForState will be always defined.
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const matchingCentralPaneRoute =
-          getMatchingCentralPaneRouteForState(stateFromPath)!;
-        if (matchingCentralPaneRoute && 'name' in matchingCentralPaneRoute) {
-          root.dispatch({
-            type: CONST.NAVIGATION.ACTION_TYPE.PUSH,
-            payload: {
-              name: NAVIGATORS.CENTRAL_PANE_NAVIGATOR,
-              params: {
-                screen: matchingCentralPaneRoute.name,
-                params: matchingCentralPaneRoute.params,
-              },
-            },
-          });
-        }
-      } else {
-        // If the layout is small we need to pop everything from the central pane so the bottom tab navigator is visible.
-        root.dispatch({
-          type: 'POP_TO_TOP',
-          target: rootState.key,
-        });
-      }
+      // Pop everything from the central pane so the bottom tab navigator is visible. (only for narrow layouts)
+      root.dispatch({
+        type: 'POP_TO_TOP',
+        target: rootState.key,
+      });
       return;
     }
   }
