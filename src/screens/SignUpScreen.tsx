@@ -30,6 +30,7 @@ import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 import {Profile} from '@src/types/database';
 import DBPATHS from '@database/DBPATHS';
 import ValidityIndicatorIcon from '@components/ValidityIndicatorIcon';
+import SCREENS from '@src/SCREENS';
 
 interface State {
   email: string;
@@ -325,7 +326,7 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
           <View style={styles.loginContainer}>
             <TouchableOpacity
               style={styles.loginButtonContainer}
-              onPress={() => navigation.navigate('Login Screen')}>
+              onPress={() => navigation.navigate(SCREENS.LOGIN)}>
               <Text style={styles.loginInfoText}>Already a user?</Text>
               <Text style={styles.loginButtonText}>Log in</Text>
             </TouchableOpacity>

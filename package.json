@@ -55,6 +55,7 @@
     "react-native-compressor": "^1.8.23",
     "react-native-config": "^1.5.1",
     "react-native-fs": "^2.20.0",
+    "react-native-gesture-handler": "^2.15.0",
     "react-native-gradle-plugin": "^0.71.19",
     "react-native-image-crop-picker": "^0.40.2",
     "react-native-linear-gradient": "^2.8.3",
