@@ -34,6 +34,7 @@ import ValidityIndicatorIcon from '@components/ValidityIndicatorIcon';
 import SCREENS from '@src/SCREENS';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
+import NAVIGATORS from '@src/NAVIGATORS';
 
 interface State {
   email: string;
@@ -329,8 +330,9 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
           <View style={styles.loginContainer}>
             <TouchableOpacity
               style={styles.loginButtonContainer}
-              // onPress={() => navigation.navigate(SCREENS.LOGIN)}>
-              onPress={() => Navigation.navigate(ROUTES.FORCE_UPDATE)}>
+              onPress={() =>
+                navigation.navigate(NAVIGATORS.BOTTOM_TAB_NAVIGATOR)
+              }>
               <Text style={styles.loginInfoText}>Already a user?</Text>
               <Text style={styles.loginButtonText}>Log in</Text>
             </TouchableOpacity>

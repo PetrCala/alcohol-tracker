@@ -11,7 +11,6 @@ import AppNavigator from './AppNavigator';
 import linkingConfig from './linkingConfig';
 import customGetPathFromState from './linkingConfig/customGetPathFromState';
 import Navigation, {navigationRef} from './Navigation';
-import type {RootStackParamList} from './types';
 import useWindowDimensions from '@hooks/useWindowDimensions';
 import useTheme from '@hooks/useTheme';
 import {updateLastVisitedPath} from '@libs/actions/App';
