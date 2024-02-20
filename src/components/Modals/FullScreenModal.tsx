@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
 
 type FullScreenModalProps = {
   visible: boolean;
@@ -21,7 +22,7 @@ const FullScreenModal: React.FC<FullScreenModalProps> = props => {
   return (
     <Modal animationType="fade" transparent={false} visible={props.visible}>
       <TouchableOpacity style={styles.modalButton} onPress={props.onClose}>
-        <Image source={CONST.ICONS.THIN_X} style={styles.modalButtonImage} />
+        <Image source={KirokuIcons.ThinX} style={styles.modalButtonImage} />
       </TouchableOpacity>
       <View
         style={{

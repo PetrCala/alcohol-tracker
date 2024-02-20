@@ -9,6 +9,7 @@ import {
   Alert,
   Keyboard,
 } from 'react-native';
+import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
 import YesNoPopup from '@components/Popups/YesNoPopup';
 import {UserCredential, deleteUser, signOut} from 'firebase/auth';
 import {auth} from '@src/services/firebaseSetup';
@@ -206,17 +207,17 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
       data: [
         // {
         //     label: 'Settings',
-        //     icon: CONST.ICONS.SETTINGS,
+        //     icon: KirokuIcons.Settings,
         //     action: () => navigation.navigate("Settings Screen")
         // },
         {
           label: 'Preferences',
-          icon: CONST.ICONS.SETTINGS,
+          icon: KirokuIcons.Settings,
           action: () => navigation.navigate('Preferences Screen'),
         },
         {
           label: 'Legal and Policies',
-          icon: CONST.ICONS.BOOK,
+          icon: KirokuIcons.Book,
           action: () => setPoliciesModalVisible(true),
         },
       ],
@@ -226,12 +227,12 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
       data: [
         // {
         //   label: 'Report a bug',
-        //   icon: CONST.ICONS.BUG,
+        //   icon: KirokuIcons.Bug,
         //   action: () => console.log('Bug reporting'),
         // },
         {
           label: 'Give us a feedback',
-          icon: CONST.ICONS.IDEA,
+          icon: KirokuIcons.Idea,
           action: () => setFeedbackModalVisible(true),
         },
       ],
@@ -241,12 +242,12 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
       data: [
         {
           label: 'Sign out',
-          icon: CONST.ICONS.EXIT,
+          icon: KirokuIcons.Exit,
           action: () => setSignoutModalVisible(true),
         },
         {
           label: 'Delete user',
-          icon: CONST.ICONS.DELETE,
+          icon: KirokuIcons.Delete,
           action: () => setDeleteUserModalVisible(true),
         },
       ],
@@ -259,7 +260,7 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
       data: [
         {
           label: 'See feedback',
-          icon: CONST.ICONS.BOOK,
+          icon: KirokuIcons.Book,
           action: () => {
             setAdminFeedbackModalVisible(true);
           },
@@ -271,7 +272,7 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
   let policiesData = [
     {
       label: 'Terms of service',
-      icon: CONST.ICONS.BOOK,
+      icon: KirokuIcons.Book,
       action: () => {
         navigation.navigate('Terms Of Service Screen');
         setPoliciesModalVisible(false);
@@ -279,7 +280,7 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
     },
     {
       label: 'Privacy Policy',
-      icon: CONST.ICONS.BOOK,
+      icon: KirokuIcons.Book,
       action: () => {
         navigation.navigate('Privacy Policy Screen');
         setPoliciesModalVisible(false);

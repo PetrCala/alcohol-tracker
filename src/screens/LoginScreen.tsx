@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import * as KirokuImages from '@src/components/Icon/KirokuImages';
 import {useFocusEffect} from '@react-navigation/native';
 import {sendPasswordResetEmail, signOut} from 'firebase/auth';
 import {auth} from '../services/firebaseSetup';
@@ -143,7 +144,7 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
         <WarningMessage warningText={state.warning} dispatch={dispatch} />
         <SuccessMessage successText={state.success} dispatch={dispatch} />
         <View style={styles.logoContainer}>
-          <Image source={CONST.IMAGES.LOGO} style={styles.logo} />
+          <Image source={KirokuImages.Logo} style={styles.logo} />
         </View>
         <View style={styles.inputContainer}>
           <TextInput

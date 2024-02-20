@@ -1,5 +1,6 @@
 import React from 'react';
 import {Image, StyleSheet, View} from 'react-native';
+import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
 import CONST from '@src/CONST';
 
 const ValidityIndicatorIcon: React.FC<{
@@ -8,7 +9,7 @@ const ValidityIndicatorIcon: React.FC<{
   return (
     <View style={[styles.container, isValid ? styles.match : styles.mismatch]}>
       <Image
-        source={isValid ? CONST.ICONS.CHECK : CONST.ICONS.CLOSE}
+        source={isValid ? KirokuIcons.Check : KirokuIcons.Close}
         style={styles.icon}
       />
     </View>

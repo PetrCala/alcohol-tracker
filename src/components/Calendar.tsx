@@ -23,6 +23,7 @@ import {
   monthEntriesToColors,
   hasDecimalPoint,
 } from '@libs/DataHandling';
+import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
 import {DateObject} from '@src/types/time';
 import LoadingData from './LoadingData';
 import CONST from '@src/CONST';
@@ -162,7 +163,7 @@ function CustomArrow(direction: string): ReactNode {
           : arrowStyles.rightContainer,
       ]}>
       <Image
-        source={CONST.ICONS.ARROW_BACK}
+        source={KirokuIcons.ArrowBack}
         style={[
           arrowStyles.customArrowIcon,
           direction === 'left'

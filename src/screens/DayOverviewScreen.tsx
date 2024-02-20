@@ -9,6 +9,7 @@ import {
   Alert,
   Dimensions,
 } from 'react-native';
+import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import {
   timestampToDate,
@@ -157,7 +158,7 @@ const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
           ) : editMode ? (
             <MenuIcon
               iconId="edit-session-icon"
-              iconSource={CONST.ICONS.EDIT}
+              iconSource={KirokuIcons.Edit}
               containerStyle={[
                 styles.menuIconContainer,
                 session.blackout === true ? {backgroundColor: 'white'} : {},
@@ -223,7 +224,7 @@ const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
             sessionKey: newSessionKey,
           })
         }>
-        <Image source={CONST.ICONS.PLUS} style={styles.addSessionImage} />
+        <Image source={KirokuIcons.Plus} style={styles.addSessionImage} />
       </TouchableOpacity>
     );
   };
@@ -285,7 +286,7 @@ const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
       <View style={styles.dayOverviewFooter}>
         <MenuIcon
           iconId="navigate-day-back"
-          iconSource={CONST.ICONS.ARROW_BACK}
+          iconSource={KirokuIcons.ArrowBack}
           containerStyle={styles.footerArrowContainer}
           iconStyle={[styles.dayArrowIcon, styles.previousDayArrow]}
           onPress={() => {
@@ -294,7 +295,7 @@ const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
         />
         <MenuIcon
           iconId="navigate-day-forward"
-          iconSource={CONST.ICONS.ARROW_BACK}
+          iconSource={KirokuIcons.ArrowBack}
           containerStyle={styles.footerArrowContainer}
           iconStyle={[styles.dayArrowIcon, styles.nextDayArrow]}
           onPress={() => {

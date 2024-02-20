@@ -12,6 +12,7 @@ import {
 import BasicButton from '../components/Buttons/BasicButton';
 import {EditSessionScreenProps} from '../types/screens';
 import {DrinkingSession, Units, UnitsList} from '../types/database';
+import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
 import {useFirebase} from '../context/global/FirebaseContext';
 import {
   removeDrinkingSessionData,
@@ -95,43 +96,43 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
   const drinkData: DrinkDataProps = [
     {
       key: 'small_beer',
-      icon: CONST.ICONS.BEER,
+      icon: KirokuIcons.Beer,
       typeSum: smallBeerSum,
       setTypeSum: setSmallBeerSum,
     },
     {
       key: 'beer',
-      icon: CONST.ICONS.BEER,
+      icon: KirokuIcons.Beer,
       typeSum: beerSum,
       setTypeSum: setBeerSum,
     },
     {
       key: 'wine',
-      icon: CONST.ICONS.WINE,
+      icon: KirokuIcons.Wine,
       typeSum: wineSum,
       setTypeSum: setWineSum,
     },
     {
       key: 'weak_shot',
-      icon: CONST.ICONS.WEAK_SHOT,
+      icon: KirokuIcons.WeakShot,
       typeSum: weakShotSum,
       setTypeSum: setWeakShotSum,
     },
     {
       key: 'strong_shot',
-      icon: CONST.ICONS.STRONG_SHOT,
+      icon: KirokuIcons.StrongShot,
       typeSum: strongShotSum,
       setTypeSum: setStrongShotSum,
     },
     {
       key: 'cocktail',
-      icon: CONST.ICONS.COCKTAIL,
+      icon: KirokuIcons.Cocktail,
       typeSum: cocktailSum,
       setTypeSum: setCocktailSum,
     },
     {
       key: 'other',
-      icon: CONST.ICONS.ALCOHOL_ASSORTMENT,
+      icon: KirokuIcons.AlcoholAssortment,
       typeSum: otherSum,
       setTypeSum: setOtherSum,
     },

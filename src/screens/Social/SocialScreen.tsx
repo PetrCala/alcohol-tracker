@@ -18,6 +18,7 @@ import {
   SearchScreenProps,
   SocialScreenProps,
 } from '@src/types/screens';
+import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
 import MainHeader from '@components/Header/MainHeader';
 import {getReceivedRequestsCount} from '@libs/Social/FriendUtils';
 import {useIsFocused} from '@react-navigation/native';
@@ -124,17 +125,17 @@ const SocialScreen = ({route, navigation}: SocialScreenProps) => {
   const footerButtons = [
     {
       index: 0,
-      source: CONST.ICONS.FRIEND_LIST,
+      source: KirokuIcons.FriendList,
       label: 'Friend List',
     },
     {
       index: 1,
-      source: CONST.ICONS.SEARCH,
+      source: KirokuIcons.Search,
       label: 'Find New Friends',
     },
     {
       index: 2,
-      source: CONST.ICONS.ADD_USER,
+      source: KirokuIcons.AddUser,
       label: 'Friend Requests',
       infoNumberValue: getReceivedRequestsCount(userData?.friend_requests),
     },

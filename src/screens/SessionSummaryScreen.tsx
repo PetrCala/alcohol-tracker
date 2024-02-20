@@ -12,6 +12,7 @@ import {
   timestampToDate,
   unitsToColors,
 } from '@libs/DataHandling';
+import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
 import BasicButton from '@components/Buttons/BasicButton';
 import {getDatabaseData} from '@context/global/DatabaseDataContext';
 import MainHeader from '@components/Header/MainHeader';
@@ -131,7 +132,7 @@ const SessionSummaryScreen = ({
           session.ongoing ? null : (
             <MenuIcon
               iconId="edit-session-icon"
-              iconSource={CONST.ICONS.EDIT}
+              iconSource={KirokuIcons.Edit}
               containerStyle={styles.menuIconContainer}
               iconStyle={styles.menuIcon}
               onPress={() => onEditSessionPress(sessionKey, session)} // Use keyextractor to load id here

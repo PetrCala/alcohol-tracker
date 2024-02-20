@@ -16,6 +16,7 @@ import LoadingData from '@components/LoadingData';
 import {HomeScreenProps} from '@src/types/screens';
 import {DateObject} from '@src/types/time';
 import {auth} from '@src/services/firebaseSetup';
+import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
 import {
   dateToDateObject,
   calculateThisMonthUnits,
@@ -314,7 +315,7 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
           ]}>
           <MenuIcon
             iconId="social-icon"
-            iconSource={CONST.ICONS.SOCIAL}
+            iconSource={KirokuIcons.Social}
             containerStyle={styles.menuIconContainer}
             iconStyle={styles.menuIcon}
             onPress={() =>
@@ -323,7 +324,7 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
           />
           <MenuIcon
             iconId="achievement-icon"
-            iconSource={CONST.ICONS.ACHIEVEMENTS}
+            iconSource={KirokuIcons.Achievements}
             containerStyle={styles.menuIconContainer}
             iconStyle={styles.menuIcon}
             onPress={() => navigation.navigate('Achievement Screen')}
@@ -336,14 +337,14 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
           ]}>
           <MenuIcon
             iconId="main-menu-popup-icon"
-            iconSource={CONST.ICONS.STATISTICS}
+            iconSource={KirokuIcons.Statistics}
             containerStyle={styles.menuIconContainer}
             iconStyle={styles.menuIcon}
             onPress={() => navigation.navigate('Statistics Screen')}
           />
           <MenuIcon
             iconId="main-menu-popup-icon"
-            iconSource={CONST.ICONS.BAR_MENU}
+            iconSource={KirokuIcons.BarMenu}
             containerStyle={styles.menuIconContainer}
             iconStyle={styles.menuIcon}
             onPress={() =>
@@ -359,7 +360,7 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
         <TouchableOpacity
           style={styles.startSessionButton}
           onPress={startDrinkingSession}>
-          <Image source={CONST.ICONS.PLUS} style={styles.startSessionImage} />
+          <Image source={KirokuIcons.Plus} style={styles.startSessionImage} />
         </TouchableOpacity>
       )}
     </>

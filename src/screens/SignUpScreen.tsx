@@ -9,6 +9,7 @@ import {
   View,
   TextInput,
 } from 'react-native';
+import * as KirokuImages from '@src/components/Icon/KirokuImages';
 import {updateProfile} from 'firebase/auth';
 import {auth} from '@src/services/firebaseSetup';
 import {signUpUserWithEmailAndPassword} from '@src/auth/auth';
@@ -262,7 +263,7 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
       <View style={styles.mainContainer}>
         <WarningMessage warningText={state.warning} dispatch={dispatch} />
         <View style={styles.logoContainer}>
-          <Image source={CONST.IMAGES.LOGO} style={styles.logo} />
+          <Image source={KirokuImages.Logo} style={styles.logo} />
         </View>
         <View style={styles.inputContainer}>
           <View style={styles.inputItemContainer}>

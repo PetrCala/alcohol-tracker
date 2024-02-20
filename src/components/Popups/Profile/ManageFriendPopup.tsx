@@ -1,5 +1,6 @@
 import React from 'react';
 import {StyleSheet, Dimensions, Alert} from 'react-native';
+import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
 import YesNoPopup from '../YesNoPopup';
 import {auth} from '@src/services/firebaseSetup';
 import {unfriend} from '@database/friends';
@@ -29,7 +30,7 @@ const ManageFriendPopup: React.FC<ManageFriendPopupProps> = ({
   const manageFriendData = [
     {
       label: 'Unfriend',
-      icon: CONST.ICONS.REMOVE_USER,
+      icon: KirokuIcons.RemoveUser,
       action: () => {
         setVisibility(false);
         setUnfriendModalVisible(true);

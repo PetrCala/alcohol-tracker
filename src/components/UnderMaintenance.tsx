@@ -1,6 +1,6 @@
 import {Config, Maintenance} from '@src/types/database';
+import * as KirokuImages from '@src/components/Icon/KirokuImages';
 import {View, StyleSheet, Text, Image, Dimensions} from 'react-native';
-import CONST from '@src/CONST';
 
 type UnderMaintenanceProps = {
   config: Config | null;
@@ -28,7 +28,7 @@ const UnderMaintenance = ({config}: UnderMaintenanceProps) => {
     <View style={styles.container}>
       <Image
         style={styles.beaverImage}
-        source={CONST.IMAGES.UNDER_MAINTENANCE}
+        source={KirokuImages.UnderMaintenance}
       />
       <Text style={styles.heading}>Under maintenance</Text>
       <Text style={[styles.text, styles.messageText]}>

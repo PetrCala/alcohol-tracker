@@ -7,6 +7,8 @@ import {
   LayoutChangeEvent,
   TouchableOpacity,
 } from 'react-native';
+import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
+import * as KirokuImages from '@src/components/Icon/KirokuImages';
 import {FirebaseStorage} from 'firebase/storage';
 import {getProfilePictureURL} from '@src/storage/storageProfile';
 import useProfileImageCache from '@hooks/useProfileImageCache';
@@ -65,7 +67,7 @@ function ProfileImage(props: ProfileImageProps) {
   const imageSource: ImageSourcePropType =
     state.imageUrl && state.imageUrl !== CONST.NO_IMAGE
       ? {uri: state.imageUrl}
-      : CONST.IMAGES.USER;
+      : KirokuImages.UserIcon;
 
   const checkAvailableCache = async (url: string | null): Promise<boolean> => {
     if (downloadPath?.startsWith(CONST.LOCAL_IMAGE_PREFIX)) {

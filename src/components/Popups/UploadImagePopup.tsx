@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import CONST from '@src/CONST';
 import {auth} from '@src/services/firebaseSetup';
 import GeneralAction from '@src/types/various/GeneralAction';
+import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
 import {useEffect, useState} from 'react';
 import {
   Dimensions,
@@ -48,7 +49,7 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
         <Text style={styles.modalText}>Upload finished!</Text>
         <View style={styles.uploadFinishedContainer}>
           <Image
-            source={CONST.ICONS.CHECK}
+            source={KirokuIcons.Check}
             style={styles.uploadFinishedImage}
           />
         </View>

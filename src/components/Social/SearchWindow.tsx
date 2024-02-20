@@ -13,6 +13,7 @@ import {useFirebase} from '@src/context/global/FirebaseContext';
 import {SearchWindowRef} from '@src/types/various/Search';
 import KeyboardFocusHandler from '@components/Keyboard/KeyboardFocusHandler';
 import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
+import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
 import CONST from '@src/CONST';
 
 type SearchWindowProps = {
@@ -82,7 +83,7 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
                 style={styles.searchTextResetContainer}>
                 <Image
                   style={styles.searchTextResetImage}
-                  source={CONST.ICONS.THIN_X}
+                  source={KirokuIcons.ThinX}
                 />
               </TouchableOpacity>
             ) : null}

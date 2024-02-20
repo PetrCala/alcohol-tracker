@@ -5,6 +5,7 @@ import {
   Text,
   View,
 } from 'react-native';
+import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
 import {useFirebase} from '../../context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
 import {auth} from '@src/services/firebaseSetup';
@@ -63,7 +64,7 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
         <View style={styles.editProfileButton}>
           <UploadImageComponent
             pathToUpload={`users/${userId}/profile/profile_image.jpg`}
-            imageSource={CONST.ICONS.CAMERA}
+            imageSource={KirokuIcons.Camera}
             imageStyle={styles.editProfileButtonImage}
             isProfilePicture={true}
           />

@@ -13,6 +13,7 @@ import {
   removeUnits,
   sumUnitTypes,
 } from '../libs/DataHandling';
+import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
 import CONST from '@src/CONST';
 import {UnitKey, Units, UnitsList} from '@src/types/database';
 
@@ -70,7 +71,7 @@ const DrinkingSessionUnitWindow = ({
       <TouchableOpacity
         style={styles.adjustUnitsButton}
         onPress={() => handleRemoveUnits(unitKey, 1)}>
-        <Image source={CONST.ICONS.MINUS} style={styles.adjustUnitsIcon} />
+        <Image source={KirokuIcons.Minus} style={styles.adjustUnitsIcon} />
       </TouchableOpacity>
       <SessionUnitsInputWindow
         unitKey={unitKey}
@@ -84,7 +85,7 @@ const DrinkingSessionUnitWindow = ({
       <TouchableOpacity
         style={styles.adjustUnitsButton}
         onPress={() => handleAddUnits({[unitKey]: 1})}>
-        <Image source={CONST.ICONS.PLUS} style={styles.adjustUnitsIcon} />
+        <Image source={KirokuIcons.Plus} style={styles.adjustUnitsIcon} />
       </TouchableOpacity>
     </View>
   );
