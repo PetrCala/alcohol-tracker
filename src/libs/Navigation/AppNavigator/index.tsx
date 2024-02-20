@@ -25,9 +25,10 @@ function AppNavigator({authenticated}: AppNavigatorProps) {
     });
   }, [initUrl]);
 
-  if (authenticated) {
-    return <AuthScreens />;
-  }
+  // TODO handle authentication
+  // if (authenticated) {
+  //   return <AuthScreens />;
+  // }
   return <PublicScreens />;
 }
 

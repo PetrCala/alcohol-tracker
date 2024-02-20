@@ -40,7 +40,6 @@ function AuthScreens() {
   const styles = useThemeStyles();
   const StyleUtils = useStyleUtils();
   const {isSmallScreenWidth} = useWindowDimensions();
-  console.log('style utils', StyleUtils);
   const screenOptions = getRootNavigatorScreenOptions(
     isSmallScreenWidth,
     styles,
@@ -57,17 +56,7 @@ function AuthScreens() {
   // More cools things here - see the original lib
 
   return (
-    // Use the safe area provider from the source lib, if traceable
-    // <SafeAreaProvider
-    //   style={[
-    //     styles.safeArea,
-    //     {
-    //       paddingTop: insets.top,
-    //       paddingLeft: insets.left,
-    //       paddingRight: insets.right,
-    //       paddingBottom: insets.bottom,
-    //     },
-    //   ]}>
+    // Here, it would be possible to use the old safe-area
     <DatabaseDataProvider>
       <View style={styles.rootNavigatorContainerStyles(isSmallScreenWidth)}>
         <RootStack.Navigator isSmallScreenWidth={isSmallScreenWidth}>
@@ -164,13 +153,5 @@ function AuthScreens() {
 {
   /* // </SafeAreaProvider> */
 }
-
-// const styles = StyleSheet.create({
-//   safeArea: {
-//     flex: 1,
-//     backgroundColor: '#fff',
-//     // ...
-//   },
-// });
 
 export default AuthScreens;
