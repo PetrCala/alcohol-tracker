@@ -4,16 +4,15 @@ import InitialUrlContext from '@libs/InitialUrlContext';
 import Navigation from '@libs/Navigation/Navigation';
 // import PublicScreens from './PublicScreens';
 // import AuthNavigator from './OldAuthNavigator';
-import AuthNavigator from './OldAuthNavigator';
 import PublicScreens from './PublicScreens';
+import AuthScreens from './AuthScreens';
 
 type AppNavigatorProps = {
   /** If we have an authToken this is true */
-  //   authenticated: boolean;
+  authenticated: boolean;
 };
 
-// function AppNavigator({authenticated}: AppNavigatorProps) {
-function AppNavigator() {
+function AppNavigator({authenticated}: AppNavigatorProps) {
   const initUrl = useContext(InitialUrlContext);
 
   useEffect(() => {
@@ -26,11 +25,10 @@ function AppNavigator() {
     });
   }, [initUrl]);
 
-  // if (authenticated) {
-  //     return <AuthScreens />;
-  // }
+  if (authenticated) {
+    return <AuthScreens />;
+  }
   return <PublicScreens />;
-  // return <AuthNavigator />;
 }
 
 AppNavigator.displayName = 'AppNavigator';

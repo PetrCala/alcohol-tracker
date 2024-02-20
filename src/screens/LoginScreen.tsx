@@ -21,8 +21,6 @@ import {handleErrors} from '../libs/ErrorHandling';
 import WarningMessage from '@components/Info/WarningMessage';
 import SuccessMessage from '@components/Info/SuccessMessage';
 import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
-import CONST from '@src/CONST';
-import SCREENS from '@src/SCREENS';
 import ROUTES from '@src/ROUTES';
 import Navigation from '@libs/Navigation/Navigation';
 
@@ -96,7 +94,7 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
     React.useCallback(() => {
       const stopListening = auth.onAuthStateChanged(user => {
         if (user) {
-          // navigation.replace('App', {screen: 'Main Screen'}); // Redirect to main screen
+          Navigation.navigate(ROUTES.HOME);
         }
         dispatch({type: 'SET_LOADING_USER', payload: false});
       });

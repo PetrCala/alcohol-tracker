@@ -1,26 +1,10 @@
-import {SafeAreaView, StyleSheet} from 'react-native';
+import {SafeAreaView, StyleSheet, View} from 'react-native';
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 import useStyleUtils from '@hooks/useStyleUtils';
 import useThemeStyles from '@hooks/useThemeStyles';
-
-// import MainScreen from '@screens/MainScreen';
-// import DrinkingSessionScreen from '@screens/DrinkingSessionScreen';
-// import ProfileScreen from '@screens/ProfileScreen';
-// import MainMenuScreen from '@screens/MainMenuScreen';
-// import SocialScreen from '@screens/Social/SocialScreen';
-// import AchievementScreen from '@screens/AchievementScreen';
-// import StatisticsScreen from '@screens/StatisticsScreen';
-// import SettingsScreen from '@screens/SettingsScreen';
-// import PreferencesScreen from '@screens/PreferencesScreen';
-// import DayOverviewScreen from '@screens/DayOverviewScreen';
-// import EditSessionScreen from '@screens/EditSessionScreen';
-// import SessionSummaryScreen from '@screens/SessionSummaryScreen';
-// import TermsOfServiceScreen from '@screens/TermsOfServiceScreen';
-// import PrivacyPolicyScreen from '@screens/PrivacyPolicyScreen';
-// import FriendsFriendsScreen from '@screens/Social/FriendsFriendsScreeen';
 
 import {DatabaseDataProvider} from '@context/global/DatabaseDataContext';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -36,8 +20,10 @@ import useWindowDimensions from '@hooks/useWindowDimensions';
 import BottomTabNavigator from './Navigators/BottomTabNavigator';
 import RightModalNavigator from './Navigators/RightModalNavigator';
 import NotFoundScreen from '@screens/ErrorScreen/NotFoundScreen';
+import createCustomStackNavigator from './createCustomStackNavigator';
+import CONST from '@src/CONST';
 
-const RootStack = createStackNavigator<AuthScreensParamList>();
+const RootStack = createCustomStackNavigator<AuthScreensParamList>();
 
 // const modalScreenListeners = {
 //   focus: () => {
@@ -54,19 +40,18 @@ function AuthScreens() {
   const styles = useThemeStyles();
   const StyleUtils = useStyleUtils();
   const {isSmallScreenWidth} = useWindowDimensions();
-  const insets = useSafeAreaInsets();
   const screenOptions = getRootNavigatorScreenOptions(
     isSmallScreenWidth,
     styles,
-    // StyleUtils,
-    null,
+    StyleUtils,
   );
   const isInitialRender = useRef(true);
+  // const insets = useSafeAreaInsets(); // For old safe-area
 
-  // if (isInitialRender.current) {
-  //     Timing.start(CONST.TIMING.HOMEPAGE_INITIAL_RENDER);
-  //     isInitialRender.current = false;
-  // }
+  if (isInitialRender.current) {
+    // Timing.start(CONST.TIMING.HOMEPAGE_INITIAL_RENDER);
+    isInitialRender.current = false;
+  }
 
   // More cools things here - see the original lib
 
@@ -83,45 +68,46 @@ function AuthScreens() {
     //     },
     //   ]}>
     <DatabaseDataProvider>
-      <RootStack.Navigator>
-        <RootStack.Screen
-          name={NAVIGATORS.BOTTOM_TAB_NAVIGATOR}
-          options={screenOptions.bottomTab}
-          component={BottomTabNavigator}
-        />
-        {/* <RootStack.Screen
+      <View style={styles.rootNavigatorContainerStyles(isSmallScreenWidth)}>
+        <RootStack.Navigator isSmallScreenWidth={isSmallScreenWidth}>
+          <RootStack.Screen
+            name={NAVIGATORS.BOTTOM_TAB_NAVIGATOR}
+            options={screenOptions.bottomTab}
+            component={BottomTabNavigator}
+          />
+          {/* <RootStack.Screen
           name={NAVIGATORS.CENTRAL_PANE_NAVIGATOR}
           options={screenOptions.centralPaneNavigator}
           component={CentralPaneNavigator}
         /> */}
-        {/* <RootStack.Screen
-          name={SCREENS.NOT_FOUND}
-          options={screenOptions.fullScreen}
-          component={NotFoundScreen}
-        /> */}
-        {/* <RootStack.Screen
+          <RootStack.Screen
+            name={SCREENS.NOT_FOUND}
+            options={screenOptions.fullScreen}
+            component={NotFoundScreen}
+          />
+          {/* <RootStack.Screen
           name={NAVIGATORS.RIGHT_MODAL_NAVIGATOR}
           options={screenOptions.rightModalNavigator}
           component={RightModalNavigator}
           // listeners={modalScreenListeners} // For modal screen listeners
         /> */}
-        {/* <RootStack.Screen
+          {/* <RootStack.Screen
           name={NAVIGATORS.FULL_SCREEN_NAVIGATOR}
           options={screenOptions.fullScreen}
           component={FullScreenNavigator}
         /> */}
-        {/* <RootStack.Screen
+          {/* <RootStack.Screen
           name={NAVIGATORS.LEFT_MODAL_NAVIGATOR}
           options={screenOptions.leftModalNavigator}
           component={LeftModalNavigator}
           listeners={modalScreenListeners}
         /> */}
-        {/* <RootStack.Screen
+          {/* <RootStack.Screen
           name={SCREENS.DESKTOP_SIGN_IN_REDIRECT}
           options={screenOptions.fullScreen}
           component={DesktopSignInRedirectPage}
         /> */}
-        {/* <RootStack.Screen name="Main Screen" component={MainScreen} />
+          {/* <RootStack.Screen name="Main Screen" component={MainScreen} />
           <RootStack.Screen name="Profile Screen" component={ProfileScreen} />
           <RootStack.Screen
             name="Main Menu Screen"
@@ -169,10 +155,13 @@ function AuthScreens() {
             name="Privacy Policy Screen"
             component={PrivacyPolicyScreen}
           /> */}
-      </RootStack.Navigator>
+        </RootStack.Navigator>
+      </View>
     </DatabaseDataProvider>
-    // </SafeAreaProvider>
   );
+}
+{
+  /* // </SafeAreaProvider> */
 }
 
 // const styles = StyleSheet.create({

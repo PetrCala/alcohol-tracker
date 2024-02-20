@@ -4,7 +4,7 @@ import {
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 
-import MainScreen from '@screens/MainScreen';
+import MainScreen from '@screens/HomeScreen';
 import DrinkingSessionScreen from '@screens/DrinkingSessionScreen';
 import ProfileScreen from '@screens/ProfileScreen';
 import MainMenuScreen from '@screens/MainMenuScreen';

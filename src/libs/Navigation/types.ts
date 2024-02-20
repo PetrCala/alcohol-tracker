@@ -121,14 +121,8 @@ type PublicScreensParamList = {
   [SCREENS.FORCE_UPDATE]: undefined;
   [SCREENS.SIGNUP]: undefined;
   [SCREENS.LOGIN]: undefined;
-  // [SCREENS.TRANSITION_BETWEEN_APPS]: {
-  //     email?: string;
-  //     error?: string;
-  //     shortLivedAuthToken?: string;
-  //     shortLivedToken?: string;
-  //     exitTo?: Routes | HybridAppRoute;
-  // };
 };
+
 type AuthScreensParamList = {
   [NAVIGATORS.BOTTOM_TAB_NAVIGATOR]: NavigatorScreenParams<BottomTabNavigatorParamList>;
   [NAVIGATORS.CENTRAL_PANE_NAVIGATOR]: NavigatorScreenParams<CentralPaneNavigatorParamList>;

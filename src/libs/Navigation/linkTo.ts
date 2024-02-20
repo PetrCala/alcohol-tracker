@@ -83,6 +83,7 @@ function getMinimalAction(
 function getActionForBottomTabNavigator(
   action: StackNavigationAction,
   state: NavigationState<RootStackParamList>,
+  shouldNavigate?: boolean,
 ): Writable<NavigationAction> | undefined {
   const bottomTabNavigatorRoute = state.routes.at(0);
 
@@ -108,7 +109,7 @@ function getActionForBottomTabNavigator(
 
   // Check if the current bottom tab is the same as the one we want to navigate to. If it is, we don't need to do anything.
   const bottomTabCurrentTab = getTopmostBottomTabRoute(state);
-  if (bottomTabCurrentTab?.name === screen) {
+  if (bottomTabCurrentTab?.name === screen && !shouldNavigate) {
     return;
   }
 
@@ -231,9 +232,11 @@ export default function linkTo(
       }
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     } else if (action.payload.name === NAVIGATORS.BOTTOM_TAB_NAVIGATOR) {
+      const shouldNavigate = undefined; // !isTargetNavigatorOnTop; // custom
       const actionForBottomTabNavigator = getActionForBottomTabNavigator(
         action,
         rootState,
+        shouldNavigate,
       );
 
       if (!actionForBottomTabNavigator) {

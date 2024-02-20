@@ -19,7 +19,7 @@ import {getPathFromURL} from '@libs/Url';
 
 type NavigationRootProps = {
   /** Whether the current user is logged in with an authToken */
-  // authenticated: boolean;
+  authenticated: boolean;
 
   /** Stores path of last visited page */
   lastVisitedPath: Route;
@@ -50,8 +50,8 @@ function parseAndLogRoute(state: NavigationState) {
   Navigation.setIsNavigationReady();
 }
 
-// function NavigationRoot({authenticated, lastVisitedPath, initialUrl, onReady}: NavigationRootProps) {
 function NavigationRoot({
+  authenticated,
   lastVisitedPath,
   initialUrl,
   onReady,
@@ -136,7 +136,7 @@ function NavigationRoot({
       documentTitle={{
         enabled: false,
       }}>
-      <AppNavigator />
+      <AppNavigator authenticated={authenticated} />
     </NavigationContainer>
   );
 }

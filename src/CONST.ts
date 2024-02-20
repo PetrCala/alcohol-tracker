@@ -133,6 +133,15 @@ const CONST = {
     LIGHT: 'light',
     SYSTEM: 'system',
   },
+  TIMING: {
+    HOMEPAGE_INITIAL_RENDER: 'homepage_initial_render',
+    SEARCH_RENDER: 'search_render',
+    COLD: 'cold',
+    WARM: 'warm',
+    COMMENT_LENGTH_DEBOUNCE_TIME: 500,
+    SEARCH_OPTION_LIST_DEBOUNCE_TIME: 300,
+    RESIZE_DEBOUNCE_TIME: 100,
+  },
   TIME_PERIOD: {
     AM: 'AM',
     PM: 'PM',

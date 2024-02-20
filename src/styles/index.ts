@@ -152,6 +152,20 @@ const styles = (theme: ThemeColors) =>
       backgroundColor: theme.appBG,
       height: '100%',
     },
+
+    rootNavigatorContainerStyles: (isSmallScreenWidth: boolean) =>
+      ({
+        marginLeft: isSmallScreenWidth ? 0 : variables.sideBarWidth,
+        flex: 1,
+      }) satisfies ViewStyle,
+
+    RHPNavigatorContainerNavigatorContainerStyles: (
+      isSmallScreenWidth: boolean,
+    ) =>
+      ({
+        marginLeft: isSmallScreenWidth ? 0 : variables.sideBarWidth,
+        flex: 1,
+      }) satisfies ViewStyle,
   }) satisfies Styles;
 
 type ThemeStyles = ReturnType<typeof styles>;

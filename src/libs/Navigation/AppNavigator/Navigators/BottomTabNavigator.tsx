@@ -6,7 +6,7 @@ import getTopmostCentralPaneRoute from '@libs/Navigation/getTopmostCentralPaneRo
 import type {BottomTabNavigatorParamList} from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
 import ActiveRouteContext from './ActiveRouteContext';
-import HomeScreen from '@screens/MainScreen';
+import HomeScreen from '@screens/HomeScreen';
 
 // const loadWorkspaceInitialPage = () =>
 //   require('../../../../pages/workspace/WorkspaceInitialPage')
@@ -25,12 +25,6 @@ function BottomTabNavigator() {
     <ActiveRouteContext.Provider value={activeRoute?.name ?? ''}>
       <Tab.Navigator screenOptions={screenOptions}>
         <Tab.Screen name={SCREENS.HOME} component={HomeScreen} />
-        {/* <Tab.Screen name={SCREENS.HOME} component={SidebarScreen} />
-        <Tab.Screen name={SCREENS.ALL_SETTINGS} component={AllSettingsScreen} />
-        <Tab.Screen
-          name={SCREENS.WORKSPACE.INITIAL}
-          getComponent={loadWorkspaceInitialPage}
-        /> */}
       </Tab.Navigator>
     </ActiveRouteContext.Provider>
   );
