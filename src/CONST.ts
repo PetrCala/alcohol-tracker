@@ -8,7 +8,17 @@
 const EMPTY_ARRAY = Object.freeze([]);
 const EMPTY_OBJECT = Object.freeze({});
 
+const ANDROID_PACKAGE_NAME = 'com.alcohol_tracker';
+
 const CONST = {
+  ANDROID_PACKAGE_NAME,
+  ANIMATED_TRANSITION: 300,
+  ANIMATED_TRANSITION_FROM_VALUE: 100,
+  ANIMATION_IN_TIMING: 100,
+  ANIMATION_DIRECTION: {
+    IN: 'in',
+    OUT: 'out',
+  },
   APP_IN_BETA: true,
   AVAILABLE_PLATFORMS: ['ios', 'android'],
   AVATAR_SIZE: {
@@ -35,12 +45,23 @@ const CONST = {
     SAFARI: 'safari',
     OTHER: 'other',
   },
+  BUTTON_STATES: {
+    DEFAULT: 'default',
+    ACTIVE: 'active',
+    PRESSED: 'pressed',
+    COMPLETE: 'complete',
+    DISABLED: 'disabled',
+  },
   CACHE: {
     PROFILE_PICTURE_KEY: 'profilePicture',
   },
   COLOR_SCHEME: {
     LIGHT: 'light',
     DARK: 'dark',
+  },
+  DIRECTION: {
+    LEFT: 'left',
+    RIGHT: 'right',
   },
   DROPDOWN_BUTTON_SIZE: {
     LARGE: 'large',
@@ -105,6 +126,14 @@ const CONST = {
     },
   },
   NO_IMAGE: 'NO_IMAGE', // Used for the profile avatar when there is no image
+  OS: {
+    WINDOWS: 'Windows',
+    MAC_OS: 'Mac OS',
+    ANDROID: 'Android',
+    IOS: 'iOS',
+    LINUX: 'Linux',
+    NATIVE: 'Native',
+  },
   REGEX: {
     ROUTES: {
       REDUNDANT_SLASHES: /(\/{2,})|(\/$)/g,

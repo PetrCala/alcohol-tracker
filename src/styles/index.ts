@@ -32,7 +32,6 @@ import flex from './utils/flex';
 // import objectFit from './utils/objectFit';
 // import optionAlternateTextPlatformStyles from './utils/optionAlternateTextPlatformStyles';
 import overflow from './utils/overflow';
-// import overflowXHidden from './utils/overflowXHidden';
 // import pointerEventsAuto from './utils/pointerEventsAuto';
 // import pointerEventsBoxNone from './utils/pointerEventsBoxNone';
 // import pointerEventsNone from './utils/pointerEventsNone';
@@ -40,6 +39,8 @@ import positioning from './utils/positioning';
 import sizing from './utils/sizing';
 import spacing from './utils/spacing';
 import variables from './variables';
+import addOutlineWidth from './utils/addOutlineWidth';
+import FontUtils from './utils/FontUtils';
 // import textDecorationLine from './utils/textDecorationLine';
 // import textUnderline from './utils/textUnderline';
 // import userSelect from './utils/userSelect';
@@ -166,6 +167,56 @@ const styles = (theme: ThemeColors) =>
         marginLeft: isSmallScreenWidth ? 0 : variables.sideBarWidth,
         flex: 1,
       }) satisfies ViewStyle,
+
+    // Be extremely careful when editing the compose styles, as it is easy to introduce regressions.
+    textInputCompose: addOutlineWidth(
+      theme,
+      {
+        backgroundColor: theme.componentBG,
+        borderColor: theme.border,
+        color: theme.text,
+        fontFamily: FontUtils.fontFamily.platform.SYSTEM,
+        fontSize: variables.fontSizeNormal,
+        borderWidth: 0,
+        height: 'auto',
+        lineHeight: variables.lineHeightXLarge,
+        ...overflow,
+
+        // On Android, multiline TextInput with height: 'auto' will show extra padding unless they are configured with
+        // paddingVertical: 0, alignSelf: 'center', and verticalAlign: 'middle'
+
+        paddingHorizontal: variables.avatarChatSpacing,
+        paddingTop: 0,
+        paddingBottom: 0,
+        alignSelf: 'center',
+        verticalAlign: 'middle',
+      },
+      0,
+    ),
+
+    textInputFullCompose: {
+      alignSelf: 'stretch',
+      flex: 1,
+      maxHeight: '100%',
+      verticalAlign: 'top',
+    },
+
+    textInputCollapseCompose: {
+      maxHeight: '100%',
+      flex: 4,
+    },
+
+    // composer padding should not be modified unless thoroughly tested against the cases in this PR: #12669
+    textInputComposeSpacing: {
+      paddingVertical: 5,
+      ...flex.flexRow,
+      flex: 1,
+    },
+
+    textInputComposeBorder: {
+      borderLeftWidth: 1,
+      borderColor: theme.border,
+    },
   }) satisfies Styles;
 
 type ThemeStyles = ReturnType<typeof styles>;

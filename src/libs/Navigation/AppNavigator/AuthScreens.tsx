@@ -40,6 +40,7 @@ function AuthScreens() {
   const styles = useThemeStyles();
   const StyleUtils = useStyleUtils();
   const {isSmallScreenWidth} = useWindowDimensions();
+  console.log('style utils', StyleUtils);
   const screenOptions = getRootNavigatorScreenOptions(
     isSmallScreenWidth,
     styles,
