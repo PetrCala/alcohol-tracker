@@ -11,18 +11,18 @@ import {
 import * as KirokuImages from '@src/components/Icon/KirokuImages';
 import {useFocusEffect} from '@react-navigation/native';
 import {sendPasswordResetEmail, signOut} from 'firebase/auth';
-import {auth} from '../services/firebaseSetup';
-import {signInUserWithEmailAndPassword} from '../auth/auth';
-import commonStyles from '../styles/commonStyles';
+import {signInUserWithEmailAndPassword} from '@auth/auth';
+import commonStyles from '@styles/commonStyles';
 import {LoginScreenProps} from '../types/screens';
-import LoadingData from '../components/LoadingData';
-import InputTextPopup from '../components/Popups/InputTextPopup';
-import {handleErrors} from '../libs/ErrorHandling';
+import LoadingData from '@components/LoadingData';
+import InputTextPopup from '@components/Popups/InputTextPopup';
+import {handleErrors} from '@libs/ErrorHandling';
 import WarningMessage from '@components/Info/WarningMessage';
 import SuccessMessage from '@components/Info/SuccessMessage';
 import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 import ROUTES from '@src/ROUTES';
 import Navigation from '@libs/Navigation/Navigation';
+import {useFirebase} from '@context/global/FirebaseContext';
 
 interface State {
   email: string;
@@ -87,6 +87,7 @@ const reducer = (state: State, action: Action) => {
 const LoginScreen = ({navigation}: LoginScreenProps) => {
   if (!navigation) return null; // Should never be null
   // const {isOnline} = useUserConnection();
+  const {auth} = useFirebase();
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useFocusEffect(

@@ -12,7 +12,7 @@ import {
 import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
 import YesNoPopup from '@components/Popups/YesNoPopup';
 import {UserCredential, deleteUser, signOut} from 'firebase/auth';
-import {auth} from '@src/services/firebaseSetup';
+
 import {deleteUserData, reauthentificateUser} from '@database/users';
 import FeedbackPopup from '@components/Popups/FeedbackPopup';
 import {submitFeedback} from '@database/feedback';
@@ -61,8 +61,8 @@ const MenuItem: React.FC<MainMenuItemProps> = ({heading, data, index}) => (
 const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
   const {userData, preferences} = getDatabaseData();
   // Context, database, and authentification
+  const {auth, db} = useFirebase();
   const user = auth.currentUser;
-  const {db} = useFirebase();
   const {isOnline} = useUserConnection();
   if (!user) return null;
   // Hooks

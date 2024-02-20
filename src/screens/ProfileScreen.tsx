@@ -13,7 +13,7 @@ import MenuIcon from '../components/Buttons/MenuIcon';
 import commonStyles from '../styles/commonStyles';
 import {useFirebase} from '../context/global/FirebaseContext';
 import {ProfileProps} from '@src/types/screens';
-import {auth} from '../services/firebaseSetup';
+
 import {StatData, StatsOverview} from '@components/Items/StatOverview';
 import ProfileOverview from '@components/Social/ProfileOverview';
 import {useEffect, useMemo, useReducer} from 'react';
@@ -111,10 +111,10 @@ const reducer = (state: State, action: Action): State => {
 
 const ProfileScreen = ({route, navigation}: ProfileProps) => {
   if (!route || !navigation) return null;
+  const {auth, db, storage} = useFirebase();
   const user = auth.currentUser;
   const {userId, profileData, friends, drinkingSessionData, preferences} =
     route.params;
-  const {db, storage} = useFirebase();
   const {userData} = getDatabaseData();
   const [state, dispatch] = useReducer(reducer, initialState);
 

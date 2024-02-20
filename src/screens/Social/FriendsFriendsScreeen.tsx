@@ -13,7 +13,7 @@ import {
 } from '@src/types/database';
 import {useEffect, useMemo, useReducer} from 'react';
 import {useFirebase} from '@context/global/FirebaseContext';
-import {auth} from '@src/services/firebaseSetup';
+
 import {isNonEmptyArray} from '@libs/Validation';
 import LoadingData from '@components/LoadingData';
 import {Database} from 'firebase/database';
@@ -87,7 +87,7 @@ const FriendsFriendsScreen = ({
 }: FriendsFriendsScreenProps) => {
   if (!route || !navigation) return null;
   const {userId, friends} = route.params;
-  const {db, storage} = useFirebase();
+  const {auth, db, storage} = useFirebase();
   const {userData} = getDatabaseData();
   const user = auth.currentUser;
   const [state, dispatch] = useReducer(reducer, initialState);

@@ -8,7 +8,7 @@ import {
 import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
 import {useFirebase} from '../../context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
-import {auth} from '@src/services/firebaseSetup';
+
 import UploadImageComponent from '@components/UploadImage';
 import CONST from '@src/CONST';
 import {useState} from 'react';
@@ -28,8 +28,8 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
   userId,
   profileData,
 }) => {
+  const {auth, storage} = useFirebase();
   const user = auth.currentUser;
-  const storage = useFirebase().storage;
   const [layout, setLayout] = useState<ImageLayout>({
     x: 0,
     y: topOffset,

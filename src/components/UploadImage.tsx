@@ -17,7 +17,7 @@ import GeneralAction from '@src/types/various/GeneralAction';
 import checkPermission from '@libs/Permissions/checkPermission';
 import {requestPermission} from '@libs/Permissions/requestPermission';
 import {updateProfileInfo} from '@database/profile';
-import {auth} from '@src/services/firebaseSetup';
+
 import {useFirebase} from '@src/context/global/FirebaseContext';
 
 type UploadImageState = {
@@ -73,8 +73,8 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
   imageStyle,
   isProfilePicture = false,
 }) => {
+  const {auth, db, storage} = useFirebase();
   const user = auth.currentUser;
-  const {db, storage} = useFirebase();
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const chooseImage = async () => {

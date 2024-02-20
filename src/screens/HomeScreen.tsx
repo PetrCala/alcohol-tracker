@@ -15,7 +15,6 @@ import SessionsCalendar from '@components/Calendar';
 import LoadingData from '@components/LoadingData';
 import {HomeScreenProps} from '@src/types/screens';
 import {DateObject} from '@src/types/time';
-import {auth} from '@src/services/firebaseSetup';
 import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
 import {
   dateToDateObject,
@@ -90,8 +89,8 @@ const reducer = (state: State, action: Action): State => {
 //   useState<boolean>(false);
 
 const HomeScreen = ({navigation}: HomeScreenProps) => {
+  const {auth, db, storage} = useFirebase();
   const user = auth.currentUser;
-  const {db, storage} = useFirebase();
   const {isOnline} = useUserConnection();
   const {
     userStatusData,

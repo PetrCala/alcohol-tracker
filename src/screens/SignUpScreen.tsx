@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import * as KirokuImages from '@src/components/Icon/KirokuImages';
 import {updateProfile} from 'firebase/auth';
-import {auth} from '@src/services/firebaseSetup';
+
 import {signUpUserWithEmailAndPassword} from '@src/auth/auth';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {SignUpScreenProps} from '@src/types/screens';

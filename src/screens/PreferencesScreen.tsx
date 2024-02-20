@@ -10,7 +10,7 @@ import {
   View,
 } from 'react-native';
 import {PreferencesScreenProps} from '@src/types/screens';
-import {auth} from '@src/services/firebaseSetup';
+
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import {useFirebase} from '@context/global/FirebaseContext';
 import UserOffline from '@components/UserOffline';
@@ -60,8 +60,8 @@ const PreferencesList: React.FC<PreferencesListProps> = ({
 
 const PreferencesScreen = ({route, navigation}: PreferencesScreenProps) => {
   if (!route || !navigation) return null; // Should never be null
+  const {auth, db} = useFirebase();
   const user = auth.currentUser;
-  const {db} = useFirebase();
   const {isOnline} = useUserConnection();
   const {userData, preferences} = getDatabaseData();
   const initialPreferences = useRef(preferences);

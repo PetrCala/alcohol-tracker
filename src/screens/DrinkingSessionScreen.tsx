@@ -31,7 +31,6 @@ import {
   timestampToDate,
   unitsToColors,
 } from '../libs/DataHandling';
-import {auth} from '../services/firebaseSetup';
 import {DrinkingSession, UnitKey, Units, UnitsList} from '../types/database';
 import YesNoPopup from '../components/Popups/YesNoPopup';
 import {useUserConnection} from '../context/global/UserConnectionContext';
@@ -43,11 +42,12 @@ import {usePrevious} from '../hooks/usePrevious';
 import SuccessIndicator from '../components/SuccessIndicator';
 import commonStyles from '../styles/commonStyles';
 import FillerView from '../components/FillerView';
-import {getPreviousRouteName} from '@libs/Navigation/Navigation';
+// import {getPreviousRouteName} from '@libs/Navigation/Navigation';
 import CONST from '@src/CONST';
 import MainHeader from '@components/Header/MainHeader';
 import MainHeaderButton from '@components/Header/MainHeaderButton';
 import DrinkDataProps from '@src/types/various/DrinkDataProps';
+import Navigation from '@libs/Navigation/Navigation';
 
 const DrinkingSessionScreen = ({
   route,
@@ -57,8 +57,8 @@ const DrinkingSessionScreen = ({
   if (!route || !navigation) return null; // Should never be null
   const {session, sessionKey, preferences} = route.params;
   // Context, database, and authentification
+  const {auth, db} = useFirebase();
   const user = auth.currentUser;
-  const {db} = useFirebase();
   const {isOnline} = useUserConnection();
   // Units
   const [currentUnits, setCurrentUnits] = useState<UnitsList>(session.units);
@@ -318,7 +318,7 @@ const DrinkingSessionScreen = ({
       );
     } finally {
       setDiscardModalVisible(false);
-      const previousRouteName = getPreviousRouteName(navigation);
+      const previousRouteName = Navigation.getPreviousRouteName(navigation);
       if (previousRouteName.includes('Day Overview Screen')) {
         const sessionDateObject = dateToDateObject(sessionDate);
         navigation.navigate('Day Overview Screen', {

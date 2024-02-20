@@ -9,13 +9,14 @@ import {
 } from 'react-native';
 import MenuIcon from '../components/Buttons/MenuIcon';
 import {SettingsScreenProps} from '../types/screens';
-import {auth} from '../services/firebaseSetup';
+
 import {useUserConnection} from '../context/global/UserConnectionContext';
 import UserOffline from '../components/UserOffline';
 import BasicButton from '../components/Buttons/BasicButton';
 import {getDatabaseData} from '../context/global/DatabaseDataContext';
 import commonStyles from '../styles/commonStyles';
 import MainHeader from '@components/Header/MainHeader';
+import {useFirebase} from '@context/global/FirebaseContext';
 
 const SettingsItem: React.FC<{item: any}> = ({item}) => (
   <View style={styles.settingContainer}>
@@ -35,8 +36,9 @@ const SettingsItem: React.FC<{item: any}> = ({item}) => (
 
 const SettingsScreen = ({route, navigation}: SettingsScreenProps) => {
   if (!route || !navigation) return null; // Should never be null
-  const {preferences} = getDatabaseData();
+  const {auth} = useFirebase();
   const user = auth.currentUser;
+  const {preferences} = getDatabaseData();
   const {isOnline} = useUserConnection();
 
   // Automatically navigate to login screen if login expires

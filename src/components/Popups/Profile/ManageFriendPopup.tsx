@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, Dimensions, Alert} from 'react-native';
 import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
 import YesNoPopup from '../YesNoPopup';
-import {auth} from '@src/services/firebaseSetup';
+
 import {unfriend} from '@database/friends';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import ItemListPopup from '../ItemListPopup';
@@ -23,8 +23,8 @@ const ManageFriendPopup: React.FC<ManageFriendPopupProps> = ({
   friendId,
   onGoBack,
 }) => {
+  const {auth, db} = useFirebase();
   const user = auth.currentUser;
-  const db = useFirebase().db;
   const [unfriendModalVisible, setUnfriendModalVisible] = React.useState(false);
 
   const manageFriendData = [

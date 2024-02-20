@@ -5,8 +5,7 @@ import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 // import BootSplash from './libs/BootSplash';
 import Visibility from './libs/Visibility';
 import {AppState, Linking} from 'react-native';
-
-// Could register logger here
+import {useFirebase} from '@context/global/FirebaseContext';
 
 const propTypes = {
   /** Whether a new update is available and ready to install. */
@@ -27,12 +26,12 @@ const defaultProps = {
 
 // function Kiroku(props) {
 function Kiroku(props) {
+  const {auth} = useFirebase();
   const appStateChangeListener = useRef(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isNavigationReady, setIsNavigationReady] = useState(false);
   const [isSplashHidden, setIsSplashHidden] = useState(false);
   const [initialUrl, setInitialUrl] = useState(null);
-
-  const isAuthenticated = useMemo(() => Boolean(true), []); // TODO: replace with actual auth check
 
   const contextValue = useMemo(
     () => ({
@@ -51,6 +50,14 @@ function Kiroku(props) {
 
     // ActiveClientManager.init();
   };
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(user => {
+      setIsAuthenticated(!!user);
+    });
+
+    return () => unsubscribe();
+  }, [auth]);
 
   const setNavigationReady = useCallback(() => {
     setIsNavigationReady(true);

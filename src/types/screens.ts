@@ -1,4 +1,5 @@
-﻿import {RouteProp} from '@react-navigation/native';
+﻿// Soon, this will be removed and replaced with the new types
+import {RouteProp} from '@react-navigation/native';
 import {DateObject} from './time';
 import {
   DrinkingSession,

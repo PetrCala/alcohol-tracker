@@ -1,7 +1,7 @@
 import {UploadImageState} from '@components/UploadImage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CONST from '@src/CONST';
-import {auth} from '@src/services/firebaseSetup';
+
 import GeneralAction from '@src/types/various/GeneralAction';
 import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
 import {useEffect, useState} from 'react';
@@ -14,6 +14,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {useFirebase} from '@context/global/FirebaseContext';
 
 type UploadImagePopupProps = {
   visible: boolean;
@@ -26,6 +27,7 @@ type UploadImagePopupProps = {
 const UploadImagePopup = (props: UploadImagePopupProps) => {
   const {visible, transparent, onRequestClose, parentState, parentDispatch} =
     props;
+  const {auth} = useFirebase();
   const user = auth.currentUser;
   const [uploadFinished, setUploadFinished] = useState<boolean>(false);
 

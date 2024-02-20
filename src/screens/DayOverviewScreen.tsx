@@ -26,7 +26,6 @@ import {
 import LoadingData from '../components/LoadingData';
 // import { PreferencesData} from '../types/database';
 import {DayOverviewScreenProps} from '../types/screens';
-import {auth} from '../services/firebaseSetup';
 import UserOffline from '../components/UserOffline';
 import {useUserConnection} from '../context/global/UserConnectionContext';
 import {getDatabaseData} from '../context/global/DatabaseDataContext';
@@ -41,9 +40,9 @@ import {DrinkingSessionKeyValue} from '@src/types/utils/databaseUtils';
 const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
   if (!route || !navigation) return null; // Should never be null
   const {dateObject} = route.params; // Params for navigation
+  const {auth, db} = useFirebase();
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
-  const {db} = useFirebase();
   const {drinkingSessionData, drinkingSessionKeys, preferences} =
     getDatabaseData();
   const [date, setDate] = useState<Date>(timestampToDate(dateObject.timestamp));

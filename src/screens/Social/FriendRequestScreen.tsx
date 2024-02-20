@@ -16,7 +16,7 @@ import {
 import {useEffect, useMemo, useReducer} from 'react';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {acceptFriendRequest, deleteFriendRequest} from '@database/friends';
-import {auth} from '@src/services/firebaseSetup';
+
 import LoadingData from '@components/LoadingData';
 import {Database} from 'firebase/database';
 import NoFriendUserOverview from '@components/Social/NoFriendUserOverview';
@@ -84,10 +84,10 @@ const handleRejectFriendRequest = async (
 const FriendRequestButtons: React.FC<FriendRequestButtonsProps> = ({
   requestId,
 }) => {
-  const {db} = useFirebase();
+  const {auth, db} = useFirebase();
   const user = auth.currentUser;
 
-  if (!db || !user) return;
+  if (!user) return;
 
   return (
     <View style={styles.friendRequestButtonsContainer}>
@@ -111,10 +111,10 @@ const FriendRequestButtons: React.FC<FriendRequestButtonsProps> = ({
 const FriendRequestPending: React.FC<FriendRequestPendingProps> = ({
   requestId,
 }) => {
-  const {db} = useFirebase();
+  const {auth, db} = useFirebase();
   const user = auth.currentUser;
 
-  if (!db || !user) return;
+  if (!user) return;
   return (
     <View style={styles.friendRequestPendingContainer}>
       <TouchableOpacity

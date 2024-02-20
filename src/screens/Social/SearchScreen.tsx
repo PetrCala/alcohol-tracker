@@ -9,7 +9,7 @@
 import {FriendRequestStatus, ProfileList} from '@src/types/database';
 import {useEffect, useMemo, useReducer, useRef} from 'react';
 import {useFirebase} from '@src/context/global/FirebaseContext';
-import {auth} from '@src/services/firebaseSetup';
+
 import {isNonEmptyArray} from '@libs/Validation';
 import LoadingData from '@src/components/LoadingData';
 import {Database} from 'firebase/database';
@@ -60,7 +60,7 @@ const reducer = (state: State, action: Action): State => {
 
 const SearchScreen = (props: SearchScreenProps) => {
   const {friendRequests, friends} = props;
-  const {db, storage} = useFirebase();
+  const {auth, db, storage} = useFirebase();
   const searchInputRef = useRef<SearchWindowRef>(null);
   const user = auth.currentUser;
   const [state, dispatch] = useReducer(reducer, initialState);

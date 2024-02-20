@@ -28,6 +28,7 @@ module.exports = {
         ],
         alias: {
           '@assets': './assets',
+          '@auth': './src/auth',
           '@components': './src/components',
           '@context': './src/context',
           '@database': './src/database',

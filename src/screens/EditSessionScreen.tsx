@@ -29,23 +29,24 @@ import {
   timestampToDate,
   unitsToColors,
 } from '../libs/DataHandling';
-import {auth} from '../services/firebaseSetup';
+
 import YesNoPopup from '../components/Popups/YesNoPopup';
 import {useUserConnection} from '../context/global/UserConnectionContext';
 import UserOffline from '../components/UserOffline';
 import UnitTypesView from '../components/UnitTypesView';
 import SessionDetailsSlider from '../components/SessionDetailsSlider';
 import {getDatabaseData} from '../context/global/DatabaseDataContext';
-import {getPreviousRouteName} from '@libs/Navigation/Navigation';
 import CONST from '@src/CONST';
 import MainHeader from '@components/Header/MainHeader';
 import MainHeaderButton from '@components/Header/MainHeaderButton';
 import {isEqual} from 'lodash';
 import DrinkDataProps from '@src/types/various/DrinkDataProps';
+import Navigation from '@libs/Navigation/Navigation';
 
 const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
   if (!route || !navigation) return null; // Should never be null
   const {session, sessionKey} = route.params;
+  const {auth} = useFirebase();
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
   const {preferences} = getDatabaseData();
@@ -198,7 +199,7 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
   const confirmGoBack = (
     finalSessionData: DrinkingSession, // Decide which session to go back with
   ) => {
-    const previousRouteName = getPreviousRouteName(navigation);
+    const previousRouteName = Navigation.getPreviousRouteName(navigation);
     // Navigate back explicitly to avoid errors
     if (previousRouteName.includes('Day Overview Screen')) {
       const sessionDateObject = dateToDateObject(sessionDate);

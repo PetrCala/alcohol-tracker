@@ -6,7 +6,7 @@ import {
   useEffect,
   useReducer,
 } from 'react';
-import {auth} from '@src/services/firebaseSetup';
+
 import {listenForDataChanges} from '@database/baseFunctions';
 import {isEqual} from 'lodash';
 import {useFirebase} from './FirebaseContext';
@@ -99,8 +99,8 @@ const reducer = (state: any, action: any) => {
 export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
   children,
 }) => {
+  const {auth, db} = useFirebase();
   const user = auth.currentUser;
-  const {db} = useFirebase();
   const [state, dispatch] = useReducer(reducer, initialState);
 
   // Database data hooks
