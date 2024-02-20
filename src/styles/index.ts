@@ -38,7 +38,6 @@ import overflow from './utils/overflow';
 import positioning from './utils/positioning';
 import sizing from './utils/sizing';
 import spacing from './utils/spacing';
-import variables from './variables';
 import addOutlineWidth from './utils/addOutlineWidth';
 import FontUtils from './utils/FontUtils';
 // import textDecorationLine from './utils/textDecorationLine';
@@ -48,7 +47,7 @@ import FontUtils from './utils/FontUtils';
 // import whiteSpace from './utils/whiteSpace';
 // import wordBreak from './utils/wordBreak';
 // import writingDirection from './utils/writingDirection';
-// import variables from './variables';
+import variables from './variables';
 
 type ColorScheme = (typeof CONST.COLOR_SCHEME)[keyof typeof CONST.COLOR_SCHEME];
 type StatusBarStyle =
