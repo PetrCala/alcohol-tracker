@@ -121,8 +121,8 @@ type SettingsNavigatorParamList = {
 type SocialNavigatorParamList = {
   [SCREENS.SOCIAL.ROOT]: undefined;
   [SCREENS.SOCIAL.FRIEND_LIST]: undefined;
-  [SCREENS.SOCIAL.SEARCH_FRIENDS]: undefined;
   [SCREENS.SOCIAL.FRIEND_REQUESTS]: undefined;
+  [SCREENS.SOCIAL.FRIEND_SEARCH]: undefined;
 };
 
 type StatisticsNavigatorParamList = {

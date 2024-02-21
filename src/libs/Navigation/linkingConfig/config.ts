@@ -45,57 +45,78 @@ const config: LinkingOptions<RootStackParamList>['config'] = {
         //                 [SCREENS.SEARCH_ROOT]: ROUTES.SEARCH,
         //             },
         //         },
-        //         [SCREENS.LEFT_MODAL.WORKSPACE_SWITCHER]: {
-        //             screens: {
-        //                 [SCREENS.WORKSPACE_SWITCHER.ROOT]: {
-        //                     path: ROUTES.WORKSPACE_SWITCHER,
-        //                 },
-        //             },
-        //         },
+        // ...
       },
     },
     [NAVIGATORS.RIGHT_MODAL_NAVIGATOR]: {
       screens: {
-        [SCREENS.RIGHT_MODAL.MAIN_MENU]: {
+        [SCREENS.RIGHT_MODAL.ACHIEVEMENTS]: {
           screens: {
-            [SCREENS.MAIN_MENU.ROOT]: {
-              path: ROUTES.MAIN_MENU,
-            },
-            [SCREENS.MAIN_MENU.PREFERENCES]: {
-              path: ROUTES.MAIN_MENU_PREFERENCES,
+            [SCREENS.ACHIEVEMENTS.ROOT]: ROUTES.ACHIEVEMENTS,
+          },
+        },
+        [SCREENS.RIGHT_MODAL.DAY_OVERVIEW]: {
+          screens: {
+            [SCREENS.DAY_OVERVIEW.ROOT]: {
+              path: ROUTES.DAY_OVERVIEW.route,
             },
           },
         },
-        // [SCREENS.RIGHT_MODAL.SETTINGS]: {
-        //   screens: {
-        //     [SCREENS.SETTINGS.PREFERENCES.PRIORITY_MODE]: {
-        //       path: ROUTES.SETTINGS_PRIORITY_MODE,
-        //       exact: true,
-        //     },
-        //     [SCREENS.SETTINGS.PREFERENCES.LANGUAGE]: {
-        //       path: ROUTES.SETTINGS_LANGUAGE,
-        //       exact: true,
-        //     },
-        //     [SCREENS.SETTINGS.PREFERENCES.THEME]: {
-        //       path: ROUTES.SETTINGS_THEME,
-        //       exact: true,
-        //     },
-        // [SCREENS.SETTINGS.PROFILE.DISPLAY_NAME]: {
-        //   path: ROUTES.SETTINGS_DISPLAY_NAME,
-        //   exact: true,
-        // },
-        // [SCREENS.SETTINGS.PROFILE.TIMEZONE]: {
-        //   path: ROUTES.SETTINGS_TIMEZONE,
-        //   exact: true,
-        // },
+        [SCREENS.RIGHT_MODAL.DRINKING_SESSION]: {
+          screens: {
+            [SCREENS.DRINKING_SESSION.ROOT]: {
+              path: ROUTES.DRINKING_SESSION.route,
+            },
+            [SCREENS.DRINKING_SESSION.LIVE]: {
+              path: ROUTES.DRINKING_SESSION_LIVE.route,
+            },
+            [SCREENS.DRINKING_SESSION.EDIT]: {
+              path: ROUTES.DRINKING_SESSION_EDIT.route,
+            },
+            [SCREENS.DRINKING_SESSION.SUMMARY]: {
+              path: ROUTES.DRINKING_SESSION_SUMMARY.route,
+            },
+          },
+        },
+        [SCREENS.RIGHT_MODAL.MAIN_MENU]: {
+          screens: {
+            [SCREENS.MAIN_MENU.ROOT]: ROUTES.MAIN_MENU,
+            [SCREENS.MAIN_MENU.PREFERENCES]: ROUTES.MAIN_MENU_PREFERENCES,
+            [SCREENS.MAIN_MENU.POLICIES.PRIVACY_POLICY]:
+              ROUTES.MAIN_MENU_POLICIES_PRIVACY_POLICY,
+            [SCREENS.MAIN_MENU.POLICIES.TERMS_OF_SERVICE]:
+              ROUTES.MAIN_MENU_POLICIES_TERMS_OF_SERVICE,
+          },
+        },
+        [SCREENS.RIGHT_MODAL.PROFILE]: {
+          screens: {
+            [SCREENS.PROFILE.ROOT]: {
+              path: ROUTES.PROFILE.route,
+            },
+            [SCREENS.PROFILE.FRIENDS_FRIENDS]: {
+              path: ROUTES.PROFILE_FRIENDS_FRIENDS.route,
+            },
+          },
+        },
+        [SCREENS.RIGHT_MODAL.SETTINGS]: {
+          screens: {
+            [SCREENS.SETTINGS.ROOT]: ROUTES.SETTINGS,
+          },
+        },
+        [SCREENS.RIGHT_MODAL.SOCIAL]: {
+          screens: {
+            [SCREENS.SOCIAL.ROOT]: ROUTES.SOCIAL,
+            [SCREENS.SOCIAL.FRIEND_LIST]: ROUTES.SOCIAL_FRIEND_LIST,
+            [SCREENS.SOCIAL.FRIEND_REQUESTS]: ROUTES.SOCIAL_FRIEND_REQUESTS,
+            [SCREENS.SOCIAL.FRIEND_SEARCH]: ROUTES.SOCIAL_FRIEND_SEARCH,
+          },
+        },
+        [SCREENS.RIGHT_MODAL.STATISTICS]: {
+          screens: {
+            [SCREENS.STATISTICS.ROOT]: ROUTES.STATISTICS,
+          },
+        },
       },
-      // [SCREENS.RIGHT_MODAL.PRIVATE_NOTES]: {
-      //   screens: {
-      //     [SCREENS.PRIVATE_NOTES.LIST]: ROUTES.PRIVATE_NOTES_LIST.route,
-      //     [SCREENS.PRIVATE_NOTES.EDIT]: ROUTES.PRIVATE_NOTES_EDIT.route,
-      //   },
-      // },
-      // },
     },
 
     [NAVIGATORS.FULL_SCREEN_NAVIGATOR]: {

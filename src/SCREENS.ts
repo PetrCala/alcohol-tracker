@@ -62,8 +62,8 @@ const SCREENS = {
   SOCIAL: {
     ROOT: 'Social_Root',
     FRIEND_LIST: 'Social_FriendList',
-    FRIEND_SEARCH: 'Social_FriendSearch',
     FRIEND_REQUESTS: 'Social_FriendRequests',
+    FRIEND_SEARCH: 'Social_FriendSearch',
   },
 
   STATISTICS: {
