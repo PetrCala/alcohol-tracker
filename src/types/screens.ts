@@ -106,7 +106,7 @@ export type ProfileProps = {
   navigation?: any;
 };
 
-export type DrinkingSessionScreenProps = {
+export type LiveDrinkingSessionScreenProps = {
   route?: RouteProp<AppStackParamList, 'Drinking Session Screen'>;
   // navigation?: StackNavigationProp<AppStackParamList, 'Drinking Session Screen'>;
   navigation?: any;

@@ -1,12 +1,12 @@
-import getTopmostBottomTabRoute from '@libs/Navigation/getTopmostBottomTabRoute';
-import getTopmostCentralPaneRoute from '@libs/Navigation/getTopmostCentralPaneRoute';
+import getTopmostBottomTabRoute from '@navigation/getTopmostBottomTabRoute';
+import getTopmostCentralPaneRoute from '@navigation/getTopmostCentralPaneRoute';
 import type {
   NavigationPartialRoute,
   RootStackParamList,
   State,
-} from '@libs/Navigation/types';
+} from '@navigation/types';
 import NAVIGATORS from '@src/NAVIGATORS';
-import {Metainfo} from '@libs/Navigation/linkingConfig/getAdaptedStateFromPath';
+import {Metainfo} from '@navigation/linkingConfig/getAdaptedStateFromPath';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 const shallowCompare = (obj1?: object, obj2?: object) => {

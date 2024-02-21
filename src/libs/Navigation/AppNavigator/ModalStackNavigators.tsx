@@ -6,15 +6,15 @@ import {
 } from '@react-navigation/stack';
 import React, {useMemo} from 'react';
 import useThemeStyles from '@hooks/useThemeStyles';
-// import type {
-//   MoneyRequestNavigatorParamList,
-//   SettingsNavigatorParamList,
-//   SignInNavigatorParamList,
-// } from '@navigation/types';
 import type {ThemeStyles} from '@styles/index';
 import type {Screen} from '@src/SCREENS';
 import SCREENS from '@src/SCREENS';
-import {MainMenuNavigatorParamList} from '@libs/Navigation/types';
+import {
+  AchievementsNavigatorParamList,
+  DayOverviewNavigatorParamList,
+  DrinkingSessionNavigatorParamList,
+  MainMenuNavigatorParamList,
+} from '@navigation/types';
 
 type Screens = Partial<Record<Screen, () => React.ComponentType>>;
 
@@ -61,6 +61,36 @@ function createModalStackNavigator<TStackParams extends ParamListBase>(
   return ModalStack;
 }
 
+const AchievementsModalStackNavigator =
+  createModalStackNavigator<AchievementsNavigatorParamList>({
+    [SCREENS.ACHIEVEMENTS.ROOT]: () =>
+      require('@screens/Achievements/AchievementsScreen')
+        .default as React.ComponentType,
+  });
+
+const DayOverviewModalStackNavigator =
+  createModalStackNavigator<DayOverviewNavigatorParamList>({
+    [SCREENS.DAY_OVERVIEW.ROOT]: () =>
+      require('@screens/DayOverview/DayOverviewScreen')
+        .default as React.ComponentType,
+  });
+
+const DrinkingSessionModalStackNavigator =
+  createModalStackNavigator<DrinkingSessionNavigatorParamList>({
+    [SCREENS.DRINKING_SESSION.ROOT]: () =>
+      require('@screens/DrinkingSession/DrinkingSessionScreen')
+        .default as React.ComponentType,
+    [SCREENS.DRINKING_SESSION.EDIT]: () =>
+      require('@screens/DrinkingSession/EditSessionScreen')
+        .default as React.ComponentType,
+    [SCREENS.DRINKING_SESSION.LIVE]: () =>
+      require('@screens/DrinkingSession/LiveSessionScreen')
+        .default as React.ComponentType,
+    [SCREENS.DRINKING_SESSION.SUMMARY]: () =>
+      require('@screens/DrinkingSession/SessionSummaryScreen')
+        .default as React.ComponentType,
+  });
+
 const MainMenuModalStackNavigator =
   createModalStackNavigator<MainMenuNavigatorParamList>({
     [SCREENS.MAIN_MENU.ROOT]: () =>
@@ -71,37 +101,51 @@ const MainMenuModalStackNavigator =
         .default as React.ComponentType,
   });
 
-// const TaskModalStackNavigator = createModalStackNavigator<TaskDetailsNavigatorParamList>({
-//     [SCREENS.TASK.TITLE]: () => require('../../../pages/tasks/TaskTitlePage').default as React.ComponentType,
-//     [SCREENS.TASK.ASSIGNEE]: () => require('../../../pages/tasks/TaskAssigneeSelectorModal').default as React.ComponentType,
-// });
+const ProfileModalStackNavigator =
+  createModalStackNavigator<MainMenuNavigatorParamList>({
+    [SCREENS.PROFILE.ROOT]: () =>
+      require('@screens/Profile/ProfileScreen').default as React.ComponentType,
+    [SCREENS.PROFILE.FRIENDS_FRIENDS]: () =>
+      require('@screens/Profile/FriendsFriendsScreen')
+        .default as React.ComponentType,
+  });
 
-// const ReportDescriptionModalStackNavigator = createModalStackNavigator<ReportDescriptionNavigatorParamList>({
-//     [SCREENS.REPORT_DESCRIPTION_ROOT]: () => require('../../../pages/ReportDescriptionPage').default as React.ComponentType,
-// });
+const SettingsModalStackNavigator =
+  createModalStackNavigator<MainMenuNavigatorParamList>({
+    [SCREENS.SETTINGS.ROOT]: () =>
+      require('@screens/Settings/SettingsScreen')
+        .default as React.ComponentType,
+  });
 
-// const MoneyRequestModalStackNavigator =
-//   createModalStackNavigator<MoneyRequestNavigatorParamList>({
-//     [SCREENS.MONEY_REQUEST.START]: () =>
-//       require('../../../pages/iou/request/IOURequestRedirectToStartPage')
-//         .default as React.ComponentType,
-//   });
+const SocialModalStackNavigator =
+  createModalStackNavigator<MainMenuNavigatorParamList>({
+    [SCREENS.SOCIAL.ROOT]: () =>
+      require('@screens/Social/SocialScreen').default as React.ComponentType,
+    [SCREENS.SOCIAL.FRIEND_LIST]: () =>
+      require('@screens/Social/FriendListScreen')
+        .default as React.ComponentType,
+    [SCREENS.SOCIAL.FRIEND_REQUESTS]: () =>
+      require('@screens/Social/FriendRequestScreen')
+        .default as React.ComponentType,
+    [SCREENS.SOCIAL.FRIEND_SEARCH]: () =>
+      require('@screens/Social/FriendSearchScreen')
+        .default as React.ComponentType,
+  });
 
-// const SettingsModalStackNavigator =
-//   createModalStackNavigator<SettingsNavigatorParamList>({
-//     [SCREENS.SETTINGS.PROFILE.PRONOUNS]: () =>
-//       require('../../../pages/settings/Profile/PronounsPage')
-//         .default as React.ComponentType,
-//     [SCREENS.SETTINGS.PROFILE.DISPLAY_NAME]: () =>
-//       require('../../../pages/settings/Profile/DisplayNamePage')
-//         .default as React.ComponentType,
-//   });
+const StatisticsModalStackNavigator =
+  createModalStackNavigator<MainMenuNavigatorParamList>({
+    [SCREENS.STATISTICS.ROOT]: () =>
+      require('@screens/Statistics/StatisticsScreen')
+        .default as React.ComponentType,
+  });
 
-// const SignInModalStackNavigator =
-//   createModalStackNavigator<SignInNavigatorParamList>({
-//     [SCREENS.SIGN_IN_ROOT]: () =>
-//       require('../../../pages/signin/SignInModal')
-//         .default as React.ComponentType,
-//   });
-
-export {MainMenuModalStackNavigator};
+export {
+  AchievementsModalStackNavigator,
+  DayOverviewModalStackNavigator,
+  DrinkingSessionModalStackNavigator,
+  MainMenuModalStackNavigator,
+  ProfileModalStackNavigator,
+  SettingsModalStackNavigator,
+  SocialModalStackNavigator,
+  StatisticsModalStackNavigator,
+};

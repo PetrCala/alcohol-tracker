@@ -1,7 +1,7 @@
 ﻿import React, {useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import MenuIcon from '../components/Buttons/MenuIcon';
-import commonStyles from '../styles/commonStyles';
+import MenuIcon from '../../components/Buttons/MenuIcon';
+import commonStyles from '../../styles/commonStyles';
 import MainHeader from '@components/Header/MainHeader';
 
 type StatisticsProps = {

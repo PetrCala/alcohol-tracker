@@ -1,14 +1,14 @@
 ﻿import React, {useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import MenuIcon from '../components/Buttons/MenuIcon';
-import commonStyles from '../styles/commonStyles';
+import MenuIcon from '../../components/Buttons/MenuIcon';
+import commonStyles from '../../styles/commonStyles';
 import MainHeader from '@components/Header/MainHeader';
 
-type AchievementsProps = {
+type AchievementsScreenProps = {
   navigation: any;
 };
 
-const AchievementScreen = (props: AchievementsProps) => {
+const AchievementsScreen = (props: AchievementsScreenProps) => {
   const {navigation} = props;
 
   return (
@@ -24,8 +24,6 @@ const AchievementScreen = (props: AchievementsProps) => {
   );
 };
 
-export default AchievementScreen;
-
 const styles = StyleSheet.create({
   sectionText: {
     fontSize: 20,
@@ -38,3 +36,5 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
+export default AchievementsScreen;

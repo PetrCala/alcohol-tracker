@@ -114,6 +114,10 @@ type ProfileNavigatorParamList = {
   [SCREENS.PROFILE.FRIENDS_FRIENDS]: undefined;
 };
 
+type SettingsNavigatorParamList = {
+  [SCREENS.SETTINGS.ROOT]: undefined;
+};
+
 type SocialNavigatorParamList = {
   [SCREENS.SOCIAL.ROOT]: undefined;
   [SCREENS.SOCIAL.FRIEND_LIST]: undefined;
@@ -123,10 +127,6 @@ type SocialNavigatorParamList = {
 
 type StatisticsNavigatorParamList = {
   [SCREENS.STATISTICS.ROOT]: undefined;
-};
-
-type SettingsNavigatorParamList = {
-  [SCREENS.SETTINGS.ROOT]: undefined;
 };
 
 type RightModalNavigatorParamList = {
@@ -142,9 +142,9 @@ type RightModalNavigatorParamList = {
     .PROFILE]: NavigatorScreenParams<ProfileNavigatorParamList>;
   [SCREENS.RIGHT_MODAL.SOCIAL]: NavigatorScreenParams<SocialNavigatorParamList>;
   [SCREENS.RIGHT_MODAL
-    .STATISTICS]: NavigatorScreenParams<StatisticsNavigatorParamList>;
-  [SCREENS.RIGHT_MODAL
     .SETTINGS]: NavigatorScreenParams<SettingsNavigatorParamList>;
+  [SCREENS.RIGHT_MODAL
+    .STATISTICS]: NavigatorScreenParams<StatisticsNavigatorParamList>;
 };
 
 type LeftModalNavigatorParamList = {
@@ -201,11 +201,14 @@ type SwitchPolicyIDParams = {
 };
 
 export type {
+  AchievementsNavigatorParamList,
   AuthScreensParamList,
   BottomTabName,
   BottomTabNavigatorParamList,
   CentralPaneName,
   CentralPaneNavigatorParamList,
+  DayOverviewNavigatorParamList,
+  DrinkingSessionNavigatorParamList,
   FullScreenName,
   FullScreenNavigatorParamList,
   LeftModalNavigatorParamList,
@@ -214,11 +217,15 @@ export type {
   NavigationPartialRoute,
   NavigationRef,
   NavigationRoot,
+  ProfileNavigatorParamList,
   PublicScreensParamList,
   RightModalNavigatorParamList,
   RootStackParamList,
+  SettingsNavigatorParamList,
+  SocialNavigatorParamList,
   StackNavigationAction,
   State,
   StateOrRoute,
+  StatisticsNavigatorParamList,
   SwitchPolicyIDParams,
 };

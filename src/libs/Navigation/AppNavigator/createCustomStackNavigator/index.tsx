@@ -14,7 +14,7 @@ import type {
 import {StackView} from '@react-navigation/stack';
 import React, {useEffect, useMemo} from 'react';
 import useWindowDimensions from '@hooks/useWindowDimensions';
-import navigationRef from '@libs/Navigation/navigationRef';
+import navigationRef from '@navigation/navigationRef';
 import NAVIGATORS from '@src/NAVIGATORS';
 import CustomRouter from './CustomRouter';
 import type {

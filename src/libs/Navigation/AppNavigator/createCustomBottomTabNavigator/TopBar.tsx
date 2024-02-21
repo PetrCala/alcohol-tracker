@@ -5,7 +5,7 @@ import {Text, View} from 'react-native';
 // import useActiveWorkspace from '@hooks/useActiveWorkspace';
 // import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
-import Navigation from '@libs/Navigation/Navigation';
+import Navigation from '@navigation/Navigation';
 // import SignInOrAvatarWithOptionalStatus from '@pages/home/sidebar/SignInOrAvatarWithOptionalStatus';
 // import * as Session from '@userActions/Session';
 import ROUTES from '@src/ROUTES';

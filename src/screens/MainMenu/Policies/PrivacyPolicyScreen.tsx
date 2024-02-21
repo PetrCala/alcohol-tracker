@@ -1,15 +1,13 @@
 ﻿import {Linking, Platform, StyleSheet, View} from 'react-native';
-import {TermsOfServiceScreenProps} from '../types/screens';
+import {PrivacyPolicyScreenProps} from '../../../types/screens';
 import {WebView} from 'react-native-webview';
 import MainHeader from '@components/Header/MainHeader';
 
-const TermsOfServiceScreen = ({navigation}: TermsOfServiceScreenProps) => {
-  if (!navigation) return null; // Should never be null
-
-  const termsHtml =
+const PrivacyPolicyScreen = ({navigation}: PrivacyPolicyScreenProps) => {
+  const policyHtml =
     Platform.OS === 'android'
-      ? {uri: 'file:///android_asset/html/terms-of-service.html'}
-      : require('@assets/html/terms-of-service.html');
+      ? {uri: 'file:///android_asset/html/privacy-policy.html'}
+      : require('@assets/html/privacy-policy.html');
 
   const handleStartLoadWithRequest = (request: any) => {
     // Check if the URL has "mailto:" scheme
@@ -21,13 +19,15 @@ const TermsOfServiceScreen = ({navigation}: TermsOfServiceScreenProps) => {
     return true;
   };
 
+  if (!navigation) return null; // Should never be null
+
   return (
     <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
       <MainHeader headerText="" onGoBack={() => navigation.goBack()} />
       <View style={styles.mainContainer}>
         <WebView
           originWhitelist={['*']}
-          source={termsHtml}
+          source={policyHtml}
           onShouldStartLoadWithRequest={handleStartLoadWithRequest}
           style={{flex: 1}}
           javaScriptEnabled
@@ -37,7 +37,7 @@ const TermsOfServiceScreen = ({navigation}: TermsOfServiceScreenProps) => {
   );
 };
 
-export default TermsOfServiceScreen;
+export default PrivacyPolicyScreen;
 
 const styles = StyleSheet.create({
   mainContainer: {

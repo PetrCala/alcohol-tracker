@@ -19,7 +19,7 @@ import React from 'react';
 import {View} from 'react-native';
 // import ScreenWrapper from '@components/ScreenWrapper';
 import useThemeStyles from '@hooks/useThemeStyles';
-import type {NavigationStateRoute} from '@libs/Navigation/types';
+import type {NavigationStateRoute} from '@navigation/types';
 import SCREENS from '@src/SCREENS';
 import BottomTabBar from './BottomTabBar';
 import TopBar from './TopBar';

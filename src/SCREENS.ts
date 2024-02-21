@@ -21,9 +21,9 @@ const SCREENS = {
     DRINKING_SESSION: 'DrinkingSession',
     MAIN_MENU: 'MainMenu',
     PROFILE: 'Profile',
+    SETTINGS: 'Settings',
     SOCIAL: 'Social',
     STATISTICS: 'Statistics',
-    SETTINGS: 'Settings',
   },
 
   ACHIEVEMENTS: {
@@ -55,19 +55,19 @@ const SCREENS = {
     FRIENDS_FRIENDS: 'Profile_FriendsFriends',
   },
 
+  SETTINGS: {
+    ROOT: 'Settings_Root',
+  },
+
   SOCIAL: {
     ROOT: 'Social_Root',
     FRIEND_LIST: 'Social_FriendList',
-    SEARCH_FRIENDS: 'Social_SearchFriends',
+    FRIEND_SEARCH: 'Social_FriendSearch',
     FRIEND_REQUESTS: 'Social_FriendRequests',
   },
 
   STATISTICS: {
     ROOT: 'Statistics_Root',
-  },
-
-  SETTINGS: {
-    ROOT: 'Settings_Root',
   },
 } as const;
 

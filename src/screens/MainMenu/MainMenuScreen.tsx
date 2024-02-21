@@ -31,9 +31,9 @@ import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 import CONST from '@src/CONST';
 import type {FeedbackList} from '@src/types/database';
 import {StackScreenProps} from '@react-navigation/stack';
-import {MainMenuNavigatorParamList} from '@libs/Navigation/types';
+import {MainMenuNavigatorParamList} from '@navigation/types';
 import SCREENS from '@src/SCREENS';
-import Navigation from '@libs/Navigation/Navigation';
+import Navigation from '@navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 
 type MainMenuButtonData = {

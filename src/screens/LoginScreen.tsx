@@ -21,7 +21,7 @@ import WarningMessage from '@components/Info/WarningMessage';
 import SuccessMessage from '@components/Info/SuccessMessage';
 import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 import ROUTES from '@src/ROUTES';
-import Navigation from '@libs/Navigation/Navigation';
+import Navigation from '@navigation/Navigation';
 import {useFirebase} from '@context/global/FirebaseContext';
 
 interface State {

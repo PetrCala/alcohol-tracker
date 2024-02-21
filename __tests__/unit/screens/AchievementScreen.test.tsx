@@ -1,6 +1,6 @@
 ﻿import React from 'react';
 import {render, fireEvent, screen} from '@testing-library/react-native';
-import AchievementScreen from '../../../src/screens/AchievementScreen';
+import AchievementScreen from '../../../src/screens/Achievements/AchievementScreen';
 
 // Mock the navigation prop used by the component
 const mockNavigation = {

@@ -1,7 +1,7 @@
 import React, {useContext, useEffect} from 'react';
 import {NativeModules} from 'react-native';
 import InitialUrlContext from '@libs/InitialUrlContext';
-import Navigation from '@libs/Navigation/Navigation';
+import Navigation from '@navigation/Navigation';
 // import PublicScreens from './PublicScreens';
 // import AuthNavigator from './OldAuthNavigator';
 import PublicScreens from './PublicScreens';

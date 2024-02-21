@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import {findFocusedRoute} from '@react-navigation/native';
 import type {NavigationState, PartialState} from '@react-navigation/native';
-import type {RootStackParamList} from '@libs/Navigation/types';
+import type {RootStackParamList} from '@navigation/types';
 
 function replacePathInNestedState(
   state: PartialState<NavigationState<RootStackParamList>>,

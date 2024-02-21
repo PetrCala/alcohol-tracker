@@ -10,7 +10,7 @@ import {
   Dimensions,
 } from 'react-native';
 import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
-import MenuIcon from '../components/Buttons/MenuIcon';
+import MenuIcon from '../../components/Buttons/MenuIcon';
 import {
   timestampToDate,
   formatDateToDay,
@@ -22,13 +22,13 @@ import {
   sumAllUnits,
   getZeroUnitsList,
   sumAllPoints,
-} from '../libs/DataHandling';
-import LoadingData from '../components/LoadingData';
+} from '../../libs/DataHandling';
+import LoadingData from '../../components/LoadingData';
 // import { PreferencesData} from '../types/database';
-import {DayOverviewScreenProps} from '../types/screens';
-import UserOffline from '../components/UserOffline';
-import {useUserConnection} from '../context/global/UserConnectionContext';
-import {getDatabaseData} from '../context/global/DatabaseDataContext';
+import {DayOverviewScreenProps} from '../../types/screens';
+import UserOffline from '../../components/UserOffline';
+import {useUserConnection} from '../../context/global/UserConnectionContext';
+import {getDatabaseData} from '../../context/global/DatabaseDataContext';
 import {DrinkingSession, Preferences} from '@src/types/database';
 import CONST from '@src/CONST';
 import {generateDatabaseKey} from '@database/baseFunctions';
@@ -306,8 +306,6 @@ const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
   );
 };
 
-export default DayOverviewScreen;
-
 const screenWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
@@ -455,3 +453,5 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
 });
+
+export default DayOverviewScreen;

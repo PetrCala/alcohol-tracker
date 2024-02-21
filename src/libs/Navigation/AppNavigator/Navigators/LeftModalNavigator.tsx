@@ -5,12 +5,12 @@ import {View} from 'react-native';
 import NoDropZone from '@components/DragAndDrop/NoDropZone';
 import useThemeStyles from '@hooks/useThemeStyles';
 import useWindowDimensions from '@hooks/useWindowDimensions';
-import ModalNavigatorScreenOptions from '@libs/Navigation/AppNavigator/ModalNavigatorScreenOptions';
-import * as ModalStackNavigators from '@libs/Navigation/AppNavigator/ModalStackNavigators';
+import ModalNavigatorScreenOptions from '@navigation/AppNavigator/ModalNavigatorScreenOptions';
+import * as ModalStackNavigators from '@navigation/AppNavigator/ModalStackNavigators';
 import type {
   AuthScreensParamList,
   LeftModalNavigatorParamList,
-} from '@libs/Navigation/types';
+} from '@navigation/types';
 import type NAVIGATORS from '@src/NAVIGATORS';
 import SCREENS from '@src/SCREENS';
 import Overlay from './Overlay';

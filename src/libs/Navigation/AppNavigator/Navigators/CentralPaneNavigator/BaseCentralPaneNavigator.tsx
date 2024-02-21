@@ -1,8 +1,8 @@
 import {createStackNavigator} from '@react-navigation/stack';
 import React from 'react';
 import useThemeStyles from '@hooks/useThemeStyles';
-import ReportScreenWrapper from '@libs/Navigation/AppNavigator/ReportScreenWrapper';
-import getCurrentUrl from '@libs/Navigation/currentUrl';
+import ReportScreenWrapper from '@navigation/AppNavigator/ReportScreenWrapper';
+import getCurrentUrl from '@navigation/currentUrl';
 import type {CentralPaneNavigatorParamList} from '@navigation/types';
 import SCREENS from '@src/SCREENS';
 import CONFIG from '@src/CONFIG';

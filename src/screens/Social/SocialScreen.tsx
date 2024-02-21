@@ -12,18 +12,14 @@ import commonStyles from '@src/styles/commonStyles';
 import {TabView} from 'react-native-tab-view';
 import FriendListScreen from './FriendListScreen';
 import FriendRequestScreen from './FriendRequestScreen';
-import SearchScreen from './SearchScreen';
-import {
-  FriendListScreenProps,
-  SearchScreenProps,
-  SocialScreenProps,
-} from '@src/types/screens';
+import {FriendListScreenProps, SocialScreenProps} from '@src/types/screens';
 import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
 import MainHeader from '@components/Header/MainHeader';
 import {getReceivedRequestsCount} from '@libs/FriendUtils';
 import {useIsFocused} from '@react-navigation/native';
 import CONST from '@src/CONST';
 import {UserProps} from '@src/types/database';
+import FriendSearchScreen from './FriendSearchScreen';
 
 type SocialFooterButtonProps = {
   index: number;
@@ -105,7 +101,7 @@ const SocialScreen = ({route, navigation}: SocialScreenProps) => {
         );
       case 'friendSearch':
         return (
-          <SearchScreen
+          <FriendSearchScreen
             friendRequests={userData?.friend_requests}
             friends={userData?.friends}
           />

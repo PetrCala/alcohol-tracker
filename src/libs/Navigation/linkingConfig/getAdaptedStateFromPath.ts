@@ -2,14 +2,14 @@ import type {NavigationState, PartialState} from '@react-navigation/native';
 import {getStateFromPath} from '@react-navigation/native';
 // import {isAnonymousUser} from '@libs/actions/Session';
 // import getIsNarrowLayout from '@libs/getIsNarrowLayout';
-// import getTopmostNestedRHPRoute from '@libs/Navigation/getTopmostNestedRHPRoute';
+// import getTopmostNestedRHPRoute from '@navigation/getTopmostNestedRHPRoute';
 import type {
   BottomTabName,
   CentralPaneName,
   FullScreenName,
   NavigationPartialRoute,
   RootStackParamList,
-} from '@libs/Navigation/types';
+} from '@navigation/types';
 import NAVIGATORS from '@src/NAVIGATORS';
 import SCREENS from '@src/SCREENS';
 // import getMatchingBottomTabRouteForState from './getMatchingBottomTabRouteForState';

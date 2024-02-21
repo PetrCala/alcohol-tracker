@@ -35,7 +35,7 @@ import {generateDatabaseKey} from '@database/baseFunctions';
 import CONST from '@src/CONST';
 import {DrinkingSession} from '@src/types/database';
 import ROUTES from '@src/ROUTES';
-import Navigation from '@libs/Navigation/Navigation';
+import Navigation from '@navigation/Navigation';
 
 interface State {
   visibleDateObject: DateObject;

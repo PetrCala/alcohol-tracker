@@ -1,5 +1,5 @@
-import Navigation from '@libs/Navigation/Navigation';
-import NavigationRoot from '@libs/Navigation/NavigationRoot';
+import Navigation from '@navigation/Navigation';
+import NavigationRoot from '@navigation/NavigationRoot';
 import PropTypes from 'prop-types';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 // import BootSplash from './libs/BootSplash';

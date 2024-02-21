@@ -5,15 +5,15 @@ import type {
 import {getPathFromState, StackRouter} from '@react-navigation/native';
 import type {ParamListBase} from '@react-navigation/routers';
 import getIsNarrowLayout from '@libs/getIsNarrowLayout';
-import getTopmostBottomTabRoute from '@libs/Navigation/getTopmostBottomTabRoute';
-import getTopmostCentralPaneRoute from '@libs/Navigation/getTopmostCentralPaneRoute';
-import linkingConfig from '@libs/Navigation/linkingConfig';
-import getAdaptedStateFromPath from '@libs/Navigation/linkingConfig/getAdaptedStateFromPath';
+import getTopmostBottomTabRoute from '@navigation/getTopmostBottomTabRoute';
+import getTopmostCentralPaneRoute from '@navigation/getTopmostCentralPaneRoute';
+import linkingConfig from '@navigation/linkingConfig';
+import getAdaptedStateFromPath from '@navigation/linkingConfig/getAdaptedStateFromPath';
 import type {
   NavigationPartialRoute,
   RootStackParamList,
   State,
-} from '@libs/Navigation/types';
+} from '@navigation/types';
 import NAVIGATORS from '@src/NAVIGATORS';
 import SCREENS from '@src/SCREENS';
 import type {ResponsiveStackNavigatorRouterOptions} from './types';

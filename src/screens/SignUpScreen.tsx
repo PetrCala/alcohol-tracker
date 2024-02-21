@@ -32,7 +32,7 @@ import {Profile} from '@src/types/database';
 import DBPATHS from '@database/DBPATHS';
 import ValidityIndicatorIcon from '@components/ValidityIndicatorIcon';
 import SCREENS from '@src/SCREENS';
-import Navigation from '@libs/Navigation/Navigation';
+import Navigation from '@navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import NAVIGATORS from '@src/NAVIGATORS';
 

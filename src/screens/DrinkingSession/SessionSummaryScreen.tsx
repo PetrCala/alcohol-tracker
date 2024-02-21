@@ -200,8 +200,6 @@ const SessionSummaryScreen = ({
   );
 };
 
-export default SessionSummaryScreen;
-
 const styles = StyleSheet.create({
   menuIconContainer: {
     width: 40,
@@ -307,3 +305,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
+export default SessionSummaryScreen;

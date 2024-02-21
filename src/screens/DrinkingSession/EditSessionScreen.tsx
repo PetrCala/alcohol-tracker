@@ -1,8 +1,7 @@
-﻿import React, {useRef, useState, useContext, useEffect, useMemo} from 'react';
+﻿import React, {useEffect, useState, useRef, useMemo} from 'react';
 import {
-  ActivityIndicator,
   Alert,
-  ImageSourcePropType,
+  BackHandler,
   Keyboard,
   ScrollView,
   StyleSheet,
@@ -10,16 +9,15 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import BasicButton from '../../components/Buttons/BasicButton';
+import {EditSessionScreenProps} from '../../types/screens';
+import {DrinkingSession, Units, UnitsList} from '../../types/database';
 import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
-import BasicButton from '../components/Buttons/BasicButton';
-import {DrinkingSessionScreenProps} from '../types/screens';
-import {useFirebase} from '../context/global/FirebaseContext';
+import {useFirebase} from '../../context/global/FirebaseContext';
 import {
-  discardLiveDrinkingSession,
-  endLiveDrinkingSession,
+  removeDrinkingSessionData,
   saveDrinkingSessionData,
-  updateSessionUnits,
-} from '../database/drinkingSessions';
+} from '../../database/drinkingSessions';
 import {
   addUnits,
   dateToDateObject,
@@ -30,36 +28,28 @@ import {
   sumUnitsOfSingleType,
   timestampToDate,
   unitsToColors,
-} from '../libs/DataHandling';
-import {DrinkingSession, UnitKey, Units, UnitsList} from '../types/database';
-import YesNoPopup from '../components/Popups/YesNoPopup';
-import {useUserConnection} from '../context/global/UserConnectionContext';
-import UserOffline from '../components/UserOffline';
-import UnitTypesView from '../components/UnitTypesView';
-import SessionDetailsSlider from '../components/SessionDetailsSlider';
-import LoadingData from '../components/LoadingData';
-import {usePrevious} from '../hooks/usePrevious';
-import SuccessIndicator from '../components/SuccessIndicator';
-import commonStyles from '../styles/commonStyles';
-import FillerView from '../components/FillerView';
-// import {getPreviousRouteName} from '@libs/Navigation/Navigation';
+} from '../../libs/DataHandling';
+
+import YesNoPopup from '../../components/Popups/YesNoPopup';
+import {useUserConnection} from '../../context/global/UserConnectionContext';
+import UserOffline from '../../components/UserOffline';
+import UnitTypesView from '../../components/UnitTypesView';
+import SessionDetailsSlider from '../../components/SessionDetailsSlider';
+import {getDatabaseData} from '../../context/global/DatabaseDataContext';
 import CONST from '@src/CONST';
 import MainHeader from '@components/Header/MainHeader';
 import MainHeaderButton from '@components/Header/MainHeaderButton';
+import {isEqual} from 'lodash';
 import DrinkDataProps from '@src/types/various/DrinkDataProps';
-import Navigation from '@libs/Navigation/Navigation';
+import Navigation from '@navigation/Navigation';
 
-const DrinkingSessionScreen = ({
-  route,
-  navigation,
-}: DrinkingSessionScreenProps) => {
-  // Navigation
+const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
   if (!route || !navigation) return null; // Should never be null
-  const {session, sessionKey, preferences} = route.params;
-  // Context, database, and authentification
-  const {auth, db} = useFirebase();
+  const {session, sessionKey} = route.params;
+  const {auth} = useFirebase();
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
+  const {preferences} = getDatabaseData();
   // Units
   const [currentUnits, setCurrentUnits] = useState<UnitsList>(session.units);
   const [totalPoints, setTotalPoints] = useState<number>(0);
@@ -90,18 +80,18 @@ const DrinkingSessionScreen = ({
   const [isBlackout, setIsBlackout] = useState<boolean>(session.blackout);
   const [note, setNote] = useState<string>(session.note);
   // Time info
-  const [pendingUpdate, setPendingUpdate] = useState(false);
-  const [lastUpdate, setLastUpdate] = useState<number>(Date.now());
-  const updateTimeout = 1000; // Synchronize with DB every x milliseconds
-  const [dbSyncSuccessful, setDbSyncSuccessful] = useState(false);
   const sessionDate = timestampToDate(session.start_time);
   const sessionDay = formatDateToDay(sessionDate);
   const sessionStartTime = formatDateToTime(sessionDate);
+  const {db} = useFirebase();
+  // Session object hooks
+  const initialSession = useRef(session);
+  const [currentSession, setCurrentSession] =
+    useState<DrinkingSession>(session); // Track the session object modifications
   // Other
+  const [showLeaveConfirmation, setShowLeaveConfirmation] = useState(false);
   const [monkeMode, setMonkeMode] = useState<boolean>(false);
-  const [discardModalVisible, setDiscardModalVisible] =
-    useState<boolean>(false);
-  const [savingSession, setSavingSession] = useState<boolean>(false);
+  const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
   const scrollViewRef = useRef<ScrollView>(null); // To navigate the view
 
   const drinkData: DrinkDataProps = [
@@ -176,6 +166,91 @@ const DrinkingSessionScreen = ({
     setNote(value);
   };
 
+  const handleConfirmDelete = async () => {
+    if (!user) return;
+    try {
+      await removeDrinkingSessionData(db, user.uid, sessionKey);
+    } catch (error: any) {
+      Alert.alert(
+        'Failed to delete the session',
+        'Session could not be deleted',
+        error.message,
+      );
+      return;
+    }
+    setDeleteModalVisible(false);
+    navigation.navigate('Day Overview Screen', {
+      dateObject: dateToDateObject(sessionDate),
+    });
+  };
+
+  const hasSessionChanged = () => {
+    return !isEqual(initialSession.current, currentSession);
+  };
+
+  const handleBackPress = () => {
+    if (hasSessionChanged()) {
+      setShowLeaveConfirmation(true); // Unsaved changes
+    } else {
+      confirmGoBack(session); // No changes to the session object
+    }
+  };
+
+  const confirmGoBack = (
+    finalSessionData: DrinkingSession, // Decide which session to go back with
+  ) => {
+    const previousRouteName = Navigation.getPreviousRouteName(navigation);
+    // Navigate back explicitly to avoid errors
+    if (previousRouteName.includes('Day Overview Screen')) {
+      const sessionDateObject = dateToDateObject(sessionDate);
+      navigation.navigate('Day Overview Screen', {
+        dateObject: sessionDateObject,
+      });
+    } else if (previousRouteName.includes('Session Summary Screen')) {
+      navigation.navigate('Session Summary Screen', {
+        session: finalSessionData,
+        sessionKey: sessionKey,
+      });
+    } else {
+      navigation.goBack();
+    }
+  };
+
+  async function saveSession(db: any, userId: string) {
+    if (totalPoints > 99) {
+      console.log('cannot save this session');
+      return null;
+    }
+    if (!navigation) {
+      Alert.alert('Navigation not found', 'Failed to fetch the navigation');
+      return null;
+    }
+    // Save the session
+    if (totalPoints > 0) {
+      let newSessionData: DrinkingSession = currentSession;
+      // Handle old versions of drinking session data where note/blackout were missing - remove this later
+      newSessionData.blackout = isBlackout ? isBlackout : false;
+      newSessionData.note = note ? note : '';
+      try {
+        // Finish editing
+        await saveDrinkingSessionData(
+          db,
+          userId,
+          newSessionData,
+          sessionKey,
+          false, // Do not update live status
+        );
+      } catch (error: any) {
+        Alert.alert(
+          'Sesison edit failed',
+          'Failed to edit the drinking session data: ' + error.message,
+        );
+        return;
+      }
+      confirmGoBack(newSessionData);
+    }
+  }
+
   // Update the hooks whenever current units change
   useMemo(() => {
     if (!preferences) return;
@@ -188,166 +263,34 @@ const DrinkingSessionScreen = ({
     setAvailableUnits(newAvailableUnits);
   }, [currentUnits]);
 
-  // Monitor changes on screen using a custom hook
-  const prevUnits = usePrevious(currentUnits);
-  const prevIsBlackout = usePrevious(isBlackout);
-  const prevNote = usePrevious(note);
-
-  // Change database value once every second
-  useEffect(() => {
-    if (!db || !user) return;
-    // Compare previous values with current values
-    const unitsChanged = prevUnits !== currentUnits;
-    const blackoutChanged = prevIsBlackout !== isBlackout;
-    const noteChanged = prevNote !== note;
-    // Determine if any value has changed
-    const anyValueChanged = unitsChanged || blackoutChanged || noteChanged;
-
-    // Only schedule a database update if any hooks changed
-    if (anyValueChanged) {
-      setDbSyncSuccessful(false);
-      setPendingUpdate(true);
-      const timer = setTimeout(async () => {
-        try {
-          let newSessionData: DrinkingSession = {
-            start_time: session.start_time,
-            end_time: session.end_time,
-            units: currentUnits,
-            blackout: isBlackout,
-            note: note,
-            ongoing: true,
-          };
-          await saveDrinkingSessionData(
-            db,
-            user.uid,
-            newSessionData,
-            sessionKey,
-            true, // Update live session status
-          );
-        } catch (error: any) {
-          throw new Error('Could not save the drinking session data');
-        } finally {
-          setPendingUpdate(false); // Data has been synchronized with DB
-          setLastUpdate(Date.now());
-          setDbSyncSuccessful(true);
-        }
-      }, updateTimeout); // Update every x milliseconds
-      // Clear timer on unmount or when units changes
-      return () => clearTimeout(timer);
-    }
+  useMemo(() => {
+    if (!preferences) return;
+    let newSession: DrinkingSession = {
+      start_time: session.start_time,
+      end_time: session.end_time,
+      units: currentUnits,
+      blackout: isBlackout,
+      note: note,
+    };
+    setCurrentSession(newSession);
   }, [currentUnits, isBlackout, note]);
 
-  async function sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
+  // Make the system back press toggle the go back handler
+  useEffect(() => {
+    const backAction = () => {
+      handleBackPress();
+      return true; // Prevent the event from bubbling up and being handled by the default handler
+    };
 
-  async function waitForPendingUpdateToComplete(): Promise<boolean> {
-    if (!pendingUpdate) {
-      return false; // No waiting was needed
-    }
-    return new Promise(resolve => {
-      const checkInterval = setInterval(() => {
-        if (!pendingUpdate) {
-          clearInterval(checkInterval);
-          resolve(true);
-        }
-      }, 100); // Check every 100ms
-    });
-  }
+    BackHandler.addEventListener('hardwareBackPress', backAction);
 
-  async function saveSession(db: any, userId: string) {
-    if (totalPoints > 99) {
-      console.log('Cannot save this session');
-      return null;
-    }
-    if (!navigation) return null; // Should not happen
-    // Wait for any pending updates to resolve first
-    if (pendingUpdate) {
-      console.log('Data synchronization ongoing');
-      return null;
-    }
-    let timeSinceLastUpdate = Date.now() - lastUpdate;
-    // Save the data into the database
-    if (totalPoints > 0) {
-      setSavingSession(true);
-      let newSessionData: DrinkingSession = {
-        start_time: session.start_time,
-        end_time: Date.now(),
-        units: currentUnits,
-        blackout: isBlackout,
-        note: note,
-      };
-      try {
-        if (timeSinceLastUpdate < 1000) {
-          await sleep(1000 - timeSinceLastUpdate); // Wait for database synchronization
-        }
-        await endLiveDrinkingSession(db, userId, newSessionData, sessionKey);
-      } catch (error: any) {
-        Alert.alert(
-          'Session save failed',
-          'Failed to save drinking session data: ' + error.message,
-        );
-        return;
-      }
-      // Reroute to session summary, do not allow user to return
-      navigation.replace('Session Summary Screen', {
-        session: newSessionData,
-        sessionKey: sessionKey,
-      });
-      setSavingSession(false);
-    }
-  }
-
-  const handleDiscardSession = () => {
-    if (pendingUpdate) return null;
-    setDiscardModalVisible(true);
-  };
-
-  const handleConfirmDiscard = async () => {
-    if (!db || !user) return;
-    let timeSinceLastUpdate = Date.now() - lastUpdate;
-    if (timeSinceLastUpdate < 1000) {
-      await sleep(1000 - timeSinceLastUpdate); // Wait for database synchronization
-    }
-    try {
-      await discardLiveDrinkingSession(db, user.uid, sessionKey);
-    } catch (error: any) {
-      Alert.alert(
-        'Session discard failed',
-        'Could not discard the session: ' + error.message,
-      );
-    } finally {
-      setDiscardModalVisible(false);
-      const previousRouteName = Navigation.getPreviousRouteName(navigation);
-      if (previousRouteName.includes('Day Overview Screen')) {
-        const sessionDateObject = dateToDateObject(sessionDate);
-        navigation.navigate('Day Overview Screen', {
-          dateObject: sessionDateObject,
-        });
-      } else {
-        navigation.navigate('Home Screen');
-      }
-    }
-  };
-
-  /** If an update is pending, update immediately before navigating away
-   */
-  const handleBackPress = async () => {
-    if (!db || !user) return;
-    if (pendingUpdate) {
-      try {
-        await updateSessionUnits(db, user.uid, sessionKey, currentUnits);
-      } catch (error: any) {
-        Alert.alert('Database synchronization failed', error.message);
-      }
-    }
-    // navigation.navigate("Main Screen");
-    navigation.goBack();
-  };
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', backAction);
+    };
+  }, [currentSession]); // Add your state dependencies here
 
   if (!isOnline) return <UserOffline />;
-  if (savingSession) return <LoadingData loadingText="Saving session..." />;
-  if (user == null) {
+  if (!user || !preferences) {
     navigation.replace('Login Screen');
     return null;
   }
@@ -375,22 +318,7 @@ const DrinkingSessionScreen = ({
         onScrollBeginDrag={Keyboard.dismiss}
         keyboardShouldPersistTaps="handled">
         <View style={styles.sessionInfoContainer}>
-          <View style={styles.sessionTextContainer}>
-            <Text style={styles.sessionInfoText}>
-              Session started at {sessionStartTime}
-            </Text>
-          </View>
-          {pendingUpdate && (
-            <ActivityIndicator
-              size="small"
-              color="#0000ff"
-              style={styles.pendingUpdateIndicator}
-            />
-          )}
-          <SuccessIndicator
-            visible={dbSyncSuccessful}
-            successStyle={[styles.successStyle, commonStyles.successIndicator]}
-          />
+          <Text style={styles.sessionInfoText}>Session date: {sessionDay}</Text>
         </View>
         <View style={styles.unitCountContainer}>
           <Text style={[styles.unitCountText, {color: sessionColor}]}>
@@ -429,43 +357,42 @@ const DrinkingSessionScreen = ({
             />
           </>
         )}
-        <FillerView />
+        <View style={{height: 200, backgroundColor: '#ffff99'}}></View>
       </ScrollView>
       <View style={styles.saveSessionDelimiter} />
       <View style={styles.saveSessionContainer}>
         <BasicButton
-          text="Discard Session"
-          buttonStyle={[
-            styles.saveSessionButton,
-            pendingUpdate
-              ? styles.disabledSaveSessionButton
-              : styles.enabledSaveSessionButton,
-          ]}
+          text="Delete Session"
+          buttonStyle={styles.saveSessionButton}
           textStyle={styles.saveSessionButtonText}
-          onPress={handleDiscardSession}
+          onPress={() => setDeleteModalVisible(true)}
         />
         <YesNoPopup
-          visible={discardModalVisible}
+          visible={deleteModalVisible}
           transparent={true}
-          onRequestClose={() => setDiscardModalVisible(false)}
-          message={'Do you really want to\ndiscard this session?'}
-          onYes={handleConfirmDiscard}
+          message={'Do you really want to\ndelete this session?'}
+          onRequestClose={() => setDeleteModalVisible(false)}
+          onYes={handleConfirmDelete}
         />
         <BasicButton
           text="Save Session"
-          buttonStyle={[
-            styles.saveSessionButton,
-            pendingUpdate
-              ? styles.disabledSaveSessionButton
-              : styles.enabledSaveSessionButton,
-          ]}
+          buttonStyle={styles.saveSessionButton}
           textStyle={styles.saveSessionButtonText}
           onPress={() => saveSession(db, user.uid)}
+        />
+        <YesNoPopup
+          visible={showLeaveConfirmation}
+          transparent={true}
+          onRequestClose={() => setShowLeaveConfirmation(false)}
+          message="You have unsaved changes. Are you sure you want to go back?"
+          onYes={() => confirmGoBack(session)} // No changes to the session object
         />
       </View>
     </>
   );
 };
+
+export default EditSessionScreen;
 
 const styles = StyleSheet.create({
   backArrowContainer: {
@@ -477,14 +404,6 @@ const styles = StyleSheet.create({
     width: 25,
     height: 25,
   },
-  sessionInfoContainer: {
-    backgroundColor: '#FFFF99',
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  sessionTextContainer: {
-    alignItems: 'center',
-  },
   sessionInfoText: {
     fontSize: 20,
     fontWeight: 'bold',
@@ -494,16 +413,8 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     padding: 5,
   },
-  pendingUpdateIndicator: {
-    width: 25,
-    height: 25,
-    margin: 10,
-    position: 'absolute',
-    right: 0,
-  },
-  successStyle: {
-    position: 'absolute',
-    right: 0,
+  sessionInfoContainer: {
+    backgroundColor: '#FFFF99',
   },
   unitCountContainer: {
     backgroundColor: '#FFFF99',
@@ -571,19 +482,12 @@ const styles = StyleSheet.create({
     color: 'white',
     textAlign: 'center',
   },
-  sessionDetailsContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    marginTop: 20,
-  },
   saveSessionDelimiter: {
-    width: 0,
-    // height: 5,
-    // width: '100%',
-    // backgroundColor: 'white',
-    // borderTopWidth: 1,
-    // borderColor: '#000',
+    height: 5,
+    width: '100%',
+    backgroundColor: 'white',
+    borderTopWidth: 1,
+    borderColor: '#000',
   },
   saveSessionContainer: {
     height: '8%',
@@ -611,14 +515,9 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 10,
     marginTop: 10,
+    backgroundColor: '#fcf50f',
     borderWidth: 1,
     borderColor: '#000',
-  },
-  enabledSaveSessionButton: {
-    backgroundColor: '#fcf50f',
-  },
-  disabledSaveSessionButton: {
-    backgroundColor: '#fffb82',
   },
   saveSessionButtonText: {
     color: 'black',
@@ -626,5 +525,3 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
-
-export default DrinkingSessionScreen;

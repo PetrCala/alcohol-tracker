@@ -3,9 +3,9 @@ import {View} from 'react-native';
 import useStyleUtils from '@hooks/useStyleUtils';
 import useThemeStyles from '@hooks/useThemeStyles';
 import useWindowDimensions from '@hooks/useWindowDimensions';
-import createCustomFullScreenNavigator from '@libs/Navigation/AppNavigator/createCustomFullScreenNavigator';
-import getRootNavigatorScreenOptions from '@libs/Navigation/AppNavigator/getRootNavigatorScreenOptions';
-import * as ModalStackNavigators from '@libs/Navigation/AppNavigator/ModalStackNavigators';
+import createCustomFullScreenNavigator from '@navigation/AppNavigator/createCustomFullScreenNavigator';
+import getRootNavigatorScreenOptions from '@navigation/AppNavigator/getRootNavigatorScreenOptions';
+import * as ModalStackNavigators from '@navigation/AppNavigator/ModalStackNavigators';
 import SCREENS from '@src/SCREENS';
 
 const loadInitialSettingsPage = () =>

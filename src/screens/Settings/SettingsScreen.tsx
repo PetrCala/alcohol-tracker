@@ -7,14 +7,14 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import MenuIcon from '../components/Buttons/MenuIcon';
-import {SettingsScreenProps} from '../types/screens';
+import MenuIcon from '../../components/Buttons/MenuIcon';
+import {SettingsScreenProps} from '../../types/screens';
 
-import {useUserConnection} from '../context/global/UserConnectionContext';
-import UserOffline from '../components/UserOffline';
-import BasicButton from '../components/Buttons/BasicButton';
-import {getDatabaseData} from '../context/global/DatabaseDataContext';
-import commonStyles from '../styles/commonStyles';
+import {useUserConnection} from '../../context/global/UserConnectionContext';
+import UserOffline from '../../components/UserOffline';
+import BasicButton from '../../components/Buttons/BasicButton';
+import {getDatabaseData} from '../../context/global/DatabaseDataContext';
+import commonStyles from '../../styles/commonStyles';
 import MainHeader from '@components/Header/MainHeader';
 import {useFirebase} from '@context/global/FirebaseContext';
 

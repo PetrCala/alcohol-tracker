@@ -58,7 +58,7 @@ const reducer = (state: State, action: Action): State => {
   }
 };
 
-const SearchScreen = (props: SearchScreenProps) => {
+const FriendSearchScreen = (props: FriendSearchScreenProps) => {
   const {friendRequests, friends} = props;
   const {auth, db, storage} = useFirebase();
   const searchInputRef = useRef<SearchWindowRef>(null);
@@ -256,4 +256,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SearchScreen;
+export default FriendSearchScreen;
