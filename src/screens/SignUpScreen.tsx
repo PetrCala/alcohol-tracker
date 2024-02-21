@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import * as KirokuImages from '@src/components/Icon/KirokuImages';
 import {updateProfile} from 'firebase/auth';
-
 import {signUpUserWithEmailAndPassword} from '@libs/auth/auth';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {SignUpScreenProps} from '@src/types/screens';
@@ -25,7 +24,6 @@ import {
 } from '@libs/Validation';
 import {deleteUserData, pushNewUserInfo} from '@database/users';
 import {handleErrors} from '@libs/ErrorHandling';
-import CONST from '@src/CONST';
 import WarningMessage from '@components/Info/WarningMessage';
 import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 import {Profile} from '@src/types/database';
@@ -35,6 +33,7 @@ import SCREENS from '@src/SCREENS';
 import Navigation from '@navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import NAVIGATORS from '@src/NAVIGATORS';
+import {StackScreenProps} from '@react-navigation/stack';
 
 interface State {
   email: string;
@@ -103,8 +102,10 @@ const reducer = (state: State, action: Action) => {
   }
 };
 
+// type SignUpScreenProps = .. // TODO
+
 const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
-  const {db} = useFirebase();
+  const {auth, db} = useFirebase();
   const {isOnline} = useUserConnection();
   const [state, dispatch] = useReducer(reducer, initialState);
   if (!db) return null; // Should never be null
@@ -200,7 +201,7 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
       return;
     }
 
-    if (!auth.currentUser) {
+    if (!auth.currentUser.uid) {
       throw new Error('User creation failed');
     }
     newUserId = auth.currentUser.uid;
