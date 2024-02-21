@@ -8,12 +8,12 @@ import {
   Auth,
 } from 'firebase/auth';
 import {initializeApp, deleteApp, FirebaseApp} from 'firebase/app';
-import {isConnectedToAuthEmulator} from '../../../src/services/firebaseUtils';
+import {isConnectedToAuthEmulator} from '../../../src/libs/Firebase/FirebaseUtils';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 
 export function setupAuthTestEnv(): {
-  testApp: FirebaseApp,
-  auth: Auth
+  testApp: FirebaseApp;
+  auth: Auth;
 } {
   const authDomain = process.env.TEST_AUTH_DOMAIN;
   const projectId = process.env.TEST_PROJECT_ID;
@@ -35,10 +35,7 @@ export function setupAuthTestEnv(): {
   return {testApp, auth};
 }
 
-
-export async function teardownAuthTestEnv(
-  testApp: FirebaseApp,
-): Promise<void> {
+export async function teardownAuthTestEnv(testApp: FirebaseApp): Promise<void> {
   await deleteApp(testApp); // Delete the app
 }
 

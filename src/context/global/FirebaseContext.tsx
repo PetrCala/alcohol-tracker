@@ -16,14 +16,14 @@ import {
   connectStorageEmulator,
 } from 'firebase/storage';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
-import {isConnectedToAuthEmulator} from '@src/services/firebaseUtils';
+import {isConnectedToAuthEmulator} from '@src/libs/Firebase/FirebaseUtils';
 import {FirebaseApp} from 'firebase/app';
 import firebaseConfig from '@src/services/firebaseConfig';
 import {
   extractHostAndPort,
   isConnectedToDatabaseEmulator,
   isConnectedToStorageEmulator,
-} from '../../services/firebaseUtils';
+} from '@src/libs/Firebase/FirebaseUtils';
 import CONFIG from '@src/CONFIG';
 import CONST from '@src/CONST';
 

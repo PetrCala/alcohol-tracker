@@ -6,11 +6,11 @@ import {Auth} from 'firebase/auth';
 /**
  * Extracts the host and port from the specified environment name.
  * @description Helper function.
- * @param {string} envName - The name of the environment.
+ * @param envName - The name of the environment.
  * @returns An array containing the host and port.
  * @throws Error if the emulator host is not specified in the Config object.
  */
-export function extractHostAndPort(envName: string): [string, string] {
+function extractHostAndPort(envName: string): [string, string] {
   const emulatorHost = Config[envName];
   if (!emulatorHost) {
     throw new Error(
@@ -37,9 +37,7 @@ export function extractHostAndPort(envName: string): [string, string] {
  * const connectedToStorageEmulator = isConnectedToStorageEmulator(storage);
  * console.log('Connected to Storage Emulator:', connectedToStorageEmulator);
  */
-export function isConnectedToStorageEmulator(
-  storage: FirebaseStorage,
-): boolean {
+function isConnectedToStorageEmulator(storage: FirebaseStorage): boolean {
   const storageConfig = storage.app.options.storageBucket;
   if (!storageConfig) return false;
   const [host, port] = extractHostAndPort('TEST_STORAGE_BUCKET');
@@ -56,7 +54,7 @@ export function isConnectedToStorageEmulator(
  * const connectedToAuthEmulator = isConnectedToAuthEmulator(auth);
  * console.log('Connected to Auth Emulator:', connectedToAuthEmulator);
  */
-export function isConnectedToAuthEmulator(auth: Auth): boolean {
+function isConnectedToAuthEmulator(auth: Auth): boolean {
   const authConfig = auth.app.options.authDomain;
   if (!authConfig) return false;
   const [host, port] = extractHostAndPort('TEST_AUTH_DOMAIN');
@@ -70,7 +68,7 @@ export function isConnectedToAuthEmulator(auth: Auth): boolean {
  * @param database The Firebase Database instance.
  * @returns True if connected to the emulator, false otherwise.
  */
-export function isConnectedToDatabaseEmulator(database: Database): boolean {
+function isConnectedToDatabaseEmulator(database: Database): boolean {
   const dbConfig = database.app.options.databaseURL;
   if (!dbConfig) return false;
 
@@ -78,3 +76,10 @@ export function isConnectedToDatabaseEmulator(database: Database): boolean {
 
   return dbConfig.includes(`${host}:${port}`);
 }
+
+export {
+  extractHostAndPort,
+  isConnectedToAuthEmulator,
+  isConnectedToDatabaseEmulator,
+  isConnectedToStorageEmulator,
+};

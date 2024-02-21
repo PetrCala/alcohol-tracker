@@ -9,7 +9,7 @@ import {
   createMockSession,
   createMockUserStatus,
 } from '../../utils/mockDatabase';
-import {isConnectedToDatabaseEmulator} from '@src/services/firebaseUtils';
+import {isConnectedToDatabaseEmulator} from '@src/libs/Firebase/FirebaseUtils';
 import {FriendRequestList, Profile, Units} from '@src/types/database';
 import {Database} from 'firebase/database';
 import {describeWithEmulator} from '../../utils/emulators/emulatorTools';
