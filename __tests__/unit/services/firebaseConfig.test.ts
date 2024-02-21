@@ -12,7 +12,7 @@ jest.mock('firebase/auth', () => ({
 jest.mock('@react-native-async-storage/async-storage', () => ({}));
 
 // Helper function to set environment variables
-const setEnvironmentVariables = (env:any) => {
+const setEnvironmentVariables = (env: any) => {
   Object.assign(process.env, env);
 };
 
@@ -38,7 +38,7 @@ beforeEach(() => {
 describe('Firebase Configuration', () => {
   xit('should initialize Firebase with correct configuration in development environment', () => {
     // Dynamically import the configuration module
-    require('../../../src/services/firebaseConfig');
+    require('../../../src/services/FirebaseConfig');
 
     const {initializeApp} = require('firebase/app');
 
@@ -69,7 +69,7 @@ describe('Firebase Configuration', () => {
     });
 
     // Import the configuration module
-    require('../../../src/services/firebaseConfig');
+    require('../../../src/services/FirebaseConfig');
 
     const {connectAuthEmulator} = require('firebase/auth');
     // Check if the auth emulator connection is attempted
@@ -91,8 +91,8 @@ describe('Firebase Configuration', () => {
 
 // ### Practical Example:
 
-// - In your `firebaseConfig` file, you might have code that initializes Firebase based on the current environment variables.
+// - In your `FirebaseConfig` file, you might have code that initializes Firebase based on the current environment variables.
 // - If this initialization code runs only once (the first time the module is imported) and you change environment variables in your tests, the changes won't be picked up unless the module is re-imported.
-// - By resetting the module cache (`jest.resetModules()`) and then re-importing `firebaseConfig` and the mocked modules (`firebase/app` and `firebase/auth`) inside each test, you ensure that the initialization code in `firebaseConfig` runs with the correct, test-specific environment variables.
+// - By resetting the module cache (`jest.resetModules()`) and then re-importing `FirebaseConfig` and the mocked modules (`firebase/app` and `firebase/auth`) inside each test, you ensure that the initialization code in `FirebaseConfig` runs with the correct, test-specific environment variables.
 
 // In summary, the re-importing of modules after `jest.resetModules()` in each test ensures that your module logic, which may depend on different environment setups, is correctly executed for each test scenario, while still using the mocks defined for external dependencies.

@@ -17,8 +17,8 @@ import {
 } from 'firebase/storage';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 import {isConnectedToAuthEmulator} from '@src/libs/Firebase/FirebaseUtils';
-import {FirebaseApp} from 'firebase/app';
-import firebaseConfig from '@src/services/firebaseConfig';
+import {FirebaseApp} from '@libs/Firebase/FirebaseApp';
+import FirebaseConfig from '@libs/Firebase/FirebaseConfig';
 import {
   extractHostAndPort,
   isConnectedToDatabaseEmulator,
@@ -54,39 +54,37 @@ export const useFirebase = (): FirebaseContextProps => {
 };
 
 type FirebaseProviderProps = {
-  app: FirebaseApp;
   children: ReactNode;
 };
 
 /** Provide a firebase context to the application
  */
 export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
-  app,
   children,
 }) => {
   // Initialize Auth with React Native persistence
-  const auth: Auth = initializeAuth(app, {
+  const auth: Auth = initializeAuth(FirebaseApp, {
     persistence: getReactNativePersistence(ReactNativeAsyncStorage),
   });
-  const db = getDatabase(app);
-  const storage = getStorage(app);
+  const db = getDatabase(FirebaseApp);
+  const storage = getStorage(FirebaseApp);
 
   // Check if emulators should be used
   if (isTestEnv) {
-    if (!firebaseConfig.authDomain)
-      throw new Error('Auth URL not defined in firebaseConfig');
-    if (!firebaseConfig.databaseURL)
-      throw new Error('Database URL not defined in firebaseConfig');
-    if (!firebaseConfig.storageBucket)
-      throw new Error('Storage bucket not defined in firebaseConfig');
+    if (!FirebaseConfig.authDomain)
+      throw new Error('Auth URL not defined in FirebaseConfig');
+    if (!FirebaseConfig.databaseURL)
+      throw new Error('Database URL not defined in FirebaseConfig');
+    if (!FirebaseConfig.storageBucket)
+      throw new Error('Storage bucket not defined in FirebaseConfig');
 
-    const [dbHost, dbPort] = extractHostAndPort(firebaseConfig.databaseURL);
+    const [dbHost, dbPort] = extractHostAndPort(FirebaseConfig.databaseURL);
     const [storageHost, storagePort] = extractHostAndPort(
-      firebaseConfig.storageBucket,
+      FirebaseConfig.storageBucket,
     );
 
     if (!isConnectedToAuthEmulator(auth)) {
-      connectAuthEmulator(auth, firebaseConfig.authDomain);
+      connectAuthEmulator(auth, FirebaseConfig.authDomain);
     }
 
     // Safety check to connect to emulators only if they are not already running

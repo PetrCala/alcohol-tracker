@@ -21,10 +21,10 @@ import CONST from '@src/CONST';
  * import { initializeApp } from 'firebase/app';
  *
  * // Initialize Firebase with the dynamic configuration
- * initializeApp(firebaseConfig);
+ * initializeApp(FirebaseConfig);
  * ```
  */
-const firebaseConfig: FirebaseOptions = (() => {
+const FirebaseConfig: FirebaseOptions = (() => {
   switch (CONFIG.APP_ENVIRONMENT) {
     case CONST.ENVIRONMENT.TEST:
       return CONFIG.DB_CONFIG_TEST;
@@ -37,4 +37,4 @@ const firebaseConfig: FirebaseOptions = (() => {
   }
 })();
 
-export default firebaseConfig;
+export default FirebaseConfig;

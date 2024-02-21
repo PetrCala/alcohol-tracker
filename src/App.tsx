@@ -1,5 +1,4 @@
 import React from 'react';
-import {app} from './services/firebaseSetup';
 
 import {ContextProvider} from './context/global/Context';
 import type {Route} from './ROUTES';
@@ -14,7 +13,7 @@ type KirokuProps = {
 const App = ({url}: KirokuProps) => {
   return (
     <InitialUrlContext.Provider value={url}>
-      <ContextProvider app={app}>
+      <ContextProvider>
         <Kiroku />
       </ContextProvider>
     </InitialUrlContext.Provider>
