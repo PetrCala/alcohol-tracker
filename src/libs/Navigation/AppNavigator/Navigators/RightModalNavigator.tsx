@@ -13,7 +13,6 @@ import type {
 } from '@navigation/types';
 import type NAVIGATORS from '@src/NAVIGATORS';
 import SCREENS from '@src/SCREENS';
-import MainMenuScreen from '@screens/MainMenuScreen';
 // import Overlay from './Overlay';
 
 type RightModalNavigatorProps = StackScreenProps<

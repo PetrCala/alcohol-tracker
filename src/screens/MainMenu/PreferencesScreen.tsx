@@ -281,8 +281,6 @@ const PreferencesScreen = ({route, navigation}: PreferencesScreenProps) => {
   );
 };
 
-export default PreferencesScreen;
-
 const styles = StyleSheet.create({
   scrollView: {
     width: '100%',
@@ -393,3 +391,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
+export default PreferencesScreen;

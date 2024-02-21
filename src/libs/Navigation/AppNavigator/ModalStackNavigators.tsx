@@ -64,7 +64,11 @@ function createModalStackNavigator<TStackParams extends ParamListBase>(
 const MainMenuModalStackNavigator =
   createModalStackNavigator<MainMenuNavigatorParamList>({
     [SCREENS.MAIN_MENU.ROOT]: () =>
-      require('@screens/MainMenuScreen').default as React.ComponentType,
+      require('@screens/MainMenu/MainMenuScreen')
+        .default as React.ComponentType,
+    [SCREENS.MAIN_MENU.PREFERENCES]: () =>
+      require('@screens/MainMenu/PreferencesScreen')
+        .default as React.ComponentType,
   });
 
 // const TaskModalStackNavigator = createModalStackNavigator<TaskDetailsNavigatorParamList>({

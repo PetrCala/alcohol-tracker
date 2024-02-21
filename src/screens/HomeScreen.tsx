@@ -34,6 +34,8 @@ import ProfileImage from '@components/ProfileImage';
 import {generateDatabaseKey} from '@database/baseFunctions';
 import CONST from '@src/CONST';
 import {DrinkingSession} from '@src/types/database';
+import ROUTES from '@src/ROUTES';
+import Navigation from '@libs/Navigation/Navigation';
 
 interface State {
   visibleDateObject: DateObject;
@@ -346,12 +348,7 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
             iconSource={KirokuIcons.BarMenu}
             containerStyle={styles.menuIconContainer}
             iconStyle={styles.menuIcon}
-            onPress={() =>
-              navigation.navigate('Main Menu Screen', {
-                userData: userData,
-                preferences: preferences,
-              })
-            }
+            onPress={() => Navigation.navigate(ROUTES.MAIN_MENU)}
           />
         </View>
       </View>

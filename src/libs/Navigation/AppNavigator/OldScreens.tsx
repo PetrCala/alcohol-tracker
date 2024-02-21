@@ -7,12 +7,12 @@ import {
 import MainScreen from '@screens/HomeScreen';
 import DrinkingSessionScreen from '@screens/DrinkingSessionScreen';
 import ProfileScreen from '@screens/ProfileScreen';
-import MainMenuScreen from '@screens/MainMenuScreen';
+import MainMenuScreen from '@screens/MainMenu/MainMenuScreen';
 import SocialScreen from '@screens/Social/SocialScreen';
 import AchievementScreen from '@screens/AchievementScreen';
 import StatisticsScreen from '@screens/StatisticsScreen';
 import SettingsScreen from '@screens/SettingsScreen';
-import PreferencesScreen from '@screens/PreferencesScreen';
+import PreferencesScreen from '@screens/MainMenu/PreferencesScreen';
 import DayOverviewScreen from '@screens/DayOverviewScreen';
 import EditSessionScreen from '@screens/EditSessionScreen';
 import SessionSummaryScreen from '@screens/SessionSummaryScreen';
