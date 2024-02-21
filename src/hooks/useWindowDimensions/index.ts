@@ -4,7 +4,7 @@ import {Dimensions, useWindowDimensions} from 'react-native';
 import variables from '@styles/variables';
 import type WindowDimensions from './types';
 
-const initalViewportHeight =
+const initialViewportHeight =
   window.visualViewport?.height ?? window.innerHeight;
 const tagNamesOpenKeyboard = ['INPUT', 'TEXTAREA'];
 
@@ -15,7 +15,7 @@ export default function (useCachedViewportHeight = false): WindowDimensions {
   const isCachedViewportHeight = false; // Only for browsers
   //   const isCachedViewportHeight =
   //     useCachedViewportHeight && Browser.isMobileSafari();
-  const cachedViewportHeightWithKeyboardRef = useRef(initalViewportHeight);
+  const cachedViewportHeightWithKeyboardRef = useRef(initialViewportHeight);
   const {width: windowWidth, height: windowHeight} = useWindowDimensions();
 
   // When the soft keyboard opens on mWeb, the window height changes. Use static screen height instead to get real screenHeight.
@@ -58,7 +58,7 @@ export default function (useCachedViewportHeight = false): WindowDimensions {
   const handleFocusOut = useRef((event: FocusEvent) => {
     const targetElement = event.target as HTMLElement;
     if (tagNamesOpenKeyboard.includes(targetElement.tagName)) {
-      setCachedViewportHeight(initalViewportHeight);
+      setCachedViewportHeight(initialViewportHeight);
     }
   });
 
@@ -87,7 +87,7 @@ export default function (useCachedViewportHeight = false): WindowDimensions {
     if (
       !isCachedViewportHeight ||
       !window.matchMedia('(orientation: portrait)').matches ||
-      windowHeight >= initalViewportHeight
+      windowHeight >= initialViewportHeight
     ) {
       return;
     }

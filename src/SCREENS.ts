@@ -15,7 +15,14 @@ const SCREENS = {
   SIGNUP: 'SignUp',
   LOGIN: 'Login',
   FORCE_UPDATE: 'ForceUpdate',
-  // RIGHT_MODAL: {},
+  RIGHT_MODAL: {
+    MAIN_MENU: 'MainMenu',
+  },
+
+  MAIN_MENU: {
+    ROOT: 'MainMenu_Root',
+    PREFERENCES: 'MainMenu_Preferences',
+  },
   // Auth screens
   // TBA
   // Example with nested screens

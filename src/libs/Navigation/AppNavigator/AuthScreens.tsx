@@ -75,12 +75,12 @@ function AuthScreens() {
             options={screenOptions.fullScreen}
             component={NotFoundScreen}
           />
-          {/* <RootStack.Screen
-          name={NAVIGATORS.RIGHT_MODAL_NAVIGATOR}
-          options={screenOptions.rightModalNavigator}
-          component={RightModalNavigator}
-          // listeners={modalScreenListeners} // For modal screen listeners
-        /> */}
+          <RootStack.Screen
+            name={NAVIGATORS.RIGHT_MODAL_NAVIGATOR}
+            options={screenOptions.rightModalNavigator}
+            component={RightModalNavigator}
+            // listeners={modalScreenListeners} // For modal screen listeners
+          />
           {/* <RootStack.Screen
           name={NAVIGATORS.FULL_SCREEN_NAVIGATOR}
           options={screenOptions.fullScreen}
@@ -97,54 +97,6 @@ function AuthScreens() {
           options={screenOptions.fullScreen}
           component={DesktopSignInRedirectPage}
         /> */}
-          {/* <RootStack.Screen name="Main Screen" component={MainScreen} />
-          <RootStack.Screen name="Profile Screen" component={ProfileScreen} />
-          <RootStack.Screen
-            name="Main Menu Screen"
-            component={MainMenuScreen}
-          />
-          <RootStack.Screen
-            name="Drinking Session Screen"
-            component={DrinkingSessionScreen}
-          />
-          <RootStack.Screen name="Social Screen" component={SocialScreen} />
-          <RootStack.Screen
-            name="Friends Friends Screen"
-            component={FriendsFriendsScreen}
-          />
-          <RootStack.Screen
-            name="Achievement Screen"
-            component={AchievementScreen}
-          />
-          <RootStack.Screen
-            name="Statistics Screen"
-            component={StatisticsScreen}
-          />
-          <RootStack.Screen name="Settings Screen" component={SettingsScreen} />
-          <RootStack.Screen
-            name="Preferences Screen"
-            component={PreferencesScreen}
-          />
-          <RootStack.Screen
-            name="Day Overview Screen"
-            component={DayOverviewScreen}
-          />
-          <RootStack.Screen
-            name="Edit Session Screen"
-            component={EditSessionScreen}
-          />
-          <RootStack.Screen
-            name="Session Summary Screen"
-            component={SessionSummaryScreen}
-          />
-          <RootStack.Screen
-            name="Terms Of Service Screen"
-            component={TermsOfServiceScreen}
-          />
-          <RootStack.Screen
-            name="Privacy Policy Screen"
-            component={PrivacyPolicyScreen}
-          /> */}
         </RootStack.Navigator>
       </View>
     </DatabaseDataProvider>

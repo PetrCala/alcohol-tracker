@@ -56,6 +56,16 @@ const config: LinkingOptions<RootStackParamList>['config'] = {
     },
     [NAVIGATORS.RIGHT_MODAL_NAVIGATOR]: {
       screens: {
+        [SCREENS.RIGHT_MODAL.MAIN_MENU]: {
+          screens: {
+            [SCREENS.MAIN_MENU.ROOT]: {
+              path: ROUTES.MAIN_MENU,
+            },
+            [SCREENS.MAIN_MENU.PREFERENCES]: {
+              path: ROUTES.MAIN_MENU_PREFERENCES,
+            },
+          },
+        },
         // [SCREENS.RIGHT_MODAL.SETTINGS]: {
         //   screens: {
         //     [SCREENS.SETTINGS.PREFERENCES.PRIORITY_MODE]: {

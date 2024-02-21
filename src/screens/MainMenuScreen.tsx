@@ -8,6 +8,7 @@ import {
   Image,
   Alert,
   Keyboard,
+  ImageSourcePropType,
 } from 'react-native';
 import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
 import YesNoPopup from '@components/Popups/YesNoPopup';
@@ -16,7 +17,6 @@ import {UserCredential, deleteUser, signOut} from 'firebase/auth';
 import {deleteUserData, reauthentificateUser} from '@database/users';
 import FeedbackPopup from '@components/Popups/FeedbackPopup';
 import {submitFeedback} from '@database/feedback';
-import {MainMenuScreenProps} from '@src/types/screens';
 import AdminFeedbackPopup from '@components/Popups/AdminFeedbackPopup';
 import {listenForDataChanges, readDataOnce} from '@database/baseFunctions';
 import InputTextPopup from '@components/Popups/InputTextPopup';
@@ -30,10 +30,15 @@ import GrayHeader from '@components/Header/GrayHeader';
 import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 import CONST from '@src/CONST';
 import type {FeedbackList} from '@src/types/database';
+import {StackScreenProps} from '@react-navigation/stack';
+import {MainMenuNavigatorParamList} from '@libs/Navigation/types';
+import SCREENS from '@src/SCREENS';
+import Navigation from '@libs/Navigation/Navigation';
+import ROUTES from '@src/ROUTES';
 
 type MainMenuButtonData = {
   label: string;
-  icon: number;
+  icon: ImageSourcePropType;
   action: () => void;
 };
 
@@ -58,7 +63,12 @@ const MenuItem: React.FC<MainMenuItemProps> = ({heading, data, index}) => (
   </View>
 );
 
-const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
+type MainMenuScreenProps = StackScreenProps<
+  MainMenuNavigatorParamList,
+  typeof SCREENS.MAIN_MENU.ROOT
+>;
+
+const MainMenuScreen = ({route}: MainMenuScreenProps) => {
   const {userData, preferences} = getDatabaseData();
   // Context, database, and authentification
   const {auth, db} = useFirebase();
@@ -131,7 +141,7 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
     }
     handleSignOut(); // Sign out the user
     // Add an alert here informing about the user deletion
-    navigation.navigate('Auth', {screen: 'Login Screen'});
+    Navigation.navigate(ROUTES.LOGIN);
   };
 
   /** Handle cases when deleting a user fails */
@@ -170,7 +180,7 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
   const handleConfirmSignout = () => {
     handleSignOut();
     setSignoutModalVisible(false);
-    navigation.navigate('Auth', {screen: 'Login Screen'});
+    Navigation.navigate(ROUTES.LOGIN);
   };
 
   const handleConfirmDeleteUser = () => {
@@ -213,7 +223,7 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
         {
           label: 'Preferences',
           icon: KirokuIcons.Settings,
-          action: () => navigation.navigate('Preferences Screen'),
+          action: () => Navigation.navigate(ROUTES.MAIN_MENU_PREFERENCES),
         },
         {
           label: 'Legal and Policies',
@@ -274,7 +284,8 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
       label: 'Terms of service',
       icon: KirokuIcons.Book,
       action: () => {
-        navigation.navigate('Terms Of Service Screen');
+        // TODO
+        // navigation.navigate('Terms Of Service Screen');
         setPoliciesModalVisible(false);
       },
     },
@@ -282,7 +293,8 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
       label: 'Privacy Policy',
       icon: KirokuIcons.Book,
       action: () => {
-        navigation.navigate('Privacy Policy Screen');
+        // TODO
+        // navigation.navigate('Privacy Policy Screen');
         setPoliciesModalVisible(false);
       },
     },
@@ -292,14 +304,13 @@ const MainMenuScreen = ({route, navigation}: MainMenuScreenProps) => {
     modalData = [...modalData, ...adminData]; // Add admin settings
   }
 
-  if (!route || !navigation) return null; // Should never be null
   if (!isOnline) return <UserOffline />;
   if (!db || !preferences || !userData) return null; // Should never be null
 
   return (
     <DismissKeyboard>
       <View style={styles.mainContainer}>
-        <MainHeader headerText="" onGoBack={() => navigation.goBack()} />
+        <MainHeader headerText="" onGoBack={() => Navigation.goBack()} />
         <ScrollView
           keyboardShouldPersistTaps="handled"
           onScrollBeginDrag={Keyboard.dismiss}

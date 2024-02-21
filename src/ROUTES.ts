@@ -10,6 +10,9 @@ const ROUTES = {
   LOGIN: 'login',
   SIGNUP: 'signup',
 
+  MAIN_MENU: 'main-menu',
+  MAIN_MENU_PREFERENCES: 'main-menu/preferences'
+
   // This is a utility route used to go to the user's concierge chat, or the sign-in page if the user's not authenticated
   //   CONCIERGE: 'concierge',
   //   FLAG_COMMENT: {

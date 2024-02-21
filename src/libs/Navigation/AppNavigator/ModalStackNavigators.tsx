@@ -14,6 +14,7 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import type {ThemeStyles} from '@styles/index';
 import type {Screen} from '@src/SCREENS';
 import SCREENS from '@src/SCREENS';
+import {MainMenuNavigatorParamList} from '../types';
 
 type Screens = Partial<Record<Screen, () => React.ComponentType>>;
 
@@ -60,6 +61,21 @@ function createModalStackNavigator<TStackParams extends ParamListBase>(
   return ModalStack;
 }
 
+const MainMenuModalStackNavigator =
+  createModalStackNavigator<MainMenuNavigatorParamList>({
+    [SCREENS.MAIN_MENU.ROOT]: () =>
+      require('@screens/MainMenuScreen').default as React.ComponentType,
+  });
+
+// const TaskModalStackNavigator = createModalStackNavigator<TaskDetailsNavigatorParamList>({
+//     [SCREENS.TASK.TITLE]: () => require('../../../pages/tasks/TaskTitlePage').default as React.ComponentType,
+//     [SCREENS.TASK.ASSIGNEE]: () => require('../../../pages/tasks/TaskAssigneeSelectorModal').default as React.ComponentType,
+// });
+
+// const ReportDescriptionModalStackNavigator = createModalStackNavigator<ReportDescriptionNavigatorParamList>({
+//     [SCREENS.REPORT_DESCRIPTION_ROOT]: () => require('../../../pages/ReportDescriptionPage').default as React.ComponentType,
+// });
+
 // const MoneyRequestModalStackNavigator =
 //   createModalStackNavigator<MoneyRequestNavigatorParamList>({
 //     [SCREENS.MONEY_REQUEST.START]: () =>
@@ -84,7 +100,4 @@ function createModalStackNavigator<TStackParams extends ParamListBase>(
 //         .default as React.ComponentType,
 //   });
 
-export //   MoneyRequestModalStackNavigator,
-//   SettingsModalStackNavigator,
-//   SignInModalStackNavigator,
- {};
+export {MainMenuModalStackNavigator};

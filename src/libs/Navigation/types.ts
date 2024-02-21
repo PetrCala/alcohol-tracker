@@ -88,6 +88,7 @@ type CentralPaneNavigatorParamList = {
 };
 
 type RightModalNavigatorParamList = {
+  [SCREENS.RIGHT_MODAL.MAIN_MENU]: undefined;
   // [SCREENS.RIGHT_MODAL.SETTINGS]: NavigatorScreenParams<SettingsNavigatorParamList>;
   // [SCREENS.RIGHT_MODAL.NEW_CHAT]: NavigatorScreenParams<NewChatNavigatorParamList>;
   // [SCREENS.RIGHT_MODAL.DETAILS]: NavigatorScreenParams<DetailsNavigatorParamList>;
@@ -114,6 +115,11 @@ type BottomTabNavigatorParamList = {
   [SCREENS.HOME]: undefined;
   // [SCREENS.ALL_SETTINGS]: undefined;
   // [SCREENS.WORKSPACE.INITIAL]: undefined;
+};
+
+type MainMenuNavigatorParamList = {
+  [SCREENS.MAIN_MENU.ROOT]: undefined;
+  [SCREENS.MAIN_MENU.PREFERENCES]: undefined;
 };
 
 type PublicScreensParamList = {
@@ -155,6 +161,7 @@ export type {
   FullScreenName,
   FullScreenNavigatorParamList,
   LeftModalNavigatorParamList,
+  MainMenuNavigatorParamList,
   NavigationStateRoute,
   NavigationPartialRoute,
   NavigationRef,
