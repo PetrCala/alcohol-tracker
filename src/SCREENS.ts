@@ -17,19 +17,52 @@ const SCREENS = {
   FORCE_UPDATE: 'ForceUpdate',
   RIGHT_MODAL: {
     MAIN_MENU: 'MainMenu',
+    DRINKING_SESSION: 'DrinkingSession',
+  },
+
+  ACHIEVEMENTS: {
+    ROOT: 'Achievements',
+  },
+
+  DAY_OVERVIEW: {
+    ROOT: 'DayOverview',
+  },
+
+  DRINKING_SESSION: {
+    ROOT: 'DrinkingSession',
+    LIVE: 'DrinkingSession_Live',
+    EDIT: 'DrinkingSession_Edit',
+    SUMMARY: 'DrinkingSession_Summary',
   },
 
   MAIN_MENU: {
     ROOT: 'MainMenu_Root',
     PREFERENCES: 'MainMenu_Preferences',
+    POLICIES: {
+      TERMS_OF_SERVICE: 'MainMenu_Policies_TermsOfService',
+      PRIVACY_POLICY: 'MainMenu_Policies_PrivacyPolicy',
+    },
   },
-  // Auth screens
-  // TBA
-  // Example with nested screens
-  // SETTINGS: {
-  //   ROOT: 'Settings_Root',
-  //   SHARE_CODE: 'Settings_Share_Code',
-  // },
+
+  PROFILE: {
+    ROOT: 'Profile',
+    FRIENDS_FRIENDS: 'Profile_FriendsFriends',
+  },
+
+  SOCIAL: {
+    ROOT: 'Social',
+    FRIEND_LIST: 'Social_FriendList',
+    SEARCH_FRIENDS: 'Social_SearchFriends',
+    FRIEND_REQUESTS: 'Social_FriendRequests',
+  },
+
+  STATISTICS: {
+    ROOT: 'Statistics',
+  },
+
+  SETTINGS: {
+    ROOT: 'Settings',
+  },
 } as const;
 
 type Screen = DeepValueOf<typeof SCREENS>;
