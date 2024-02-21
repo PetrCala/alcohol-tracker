@@ -8,7 +8,7 @@ import {UserIdToNicknameMapping} from '@src/types/various/Search';
  * @param displayNameKey - The key to access the display name of the user, defaults to "display_name"
  * @returns A mapping of user ids to nicknames
  */
-export function getNicknameMapping(
+function getNicknameMapping(
   object: {
     [userId: string]: {[displayNameKey: string]: string} & {[key: string]: any};
   },
@@ -24,3 +24,5 @@ export function getNicknameMapping(
 
   return mapping;
 }
+
+export {getNicknameMapping};

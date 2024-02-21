@@ -13,7 +13,7 @@ import {useFirebase} from '@src/context/global/FirebaseContext';
 import {isNonEmptyArray} from '@libs/Validation';
 import LoadingData from '@src/components/LoadingData';
 import {Database} from 'firebase/database';
-import {searchDatabaseForUsers} from '@src/services/search/search';
+import {searchDatabaseForUsers} from '@libs/Search';
 import {fetchUserProfiles} from '@database/profile';
 import SearchResult from '@components/Social/SearchResult';
 import SearchWindow from '@components/Social/SearchWindow';

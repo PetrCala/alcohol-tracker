@@ -18,7 +18,7 @@ import {NicknameToId} from '@src/types/database';
  * @returns {Promise<NicknameToIdData|null>} The user IDs
  *  that belong to this nickname
  */
-export async function searchDbByNickname(
+async function searchDbByNickname(
   db: Database,
   searchText: string,
 ): Promise<NicknameToId | null> {
@@ -38,7 +38,7 @@ export async function searchDbByNickname(
  * @param useQuirkyNicknames - Whether to include quirky nicknames in the search results. Default is true.
  * @returns A Promise that resolves to a string of IDs that match the search text.
  */
-export async function searchDatabaseForUsers(
+async function searchDatabaseForUsers(
   db: Database | undefined,
   searchText: string,
   useQuirkyNicknames: boolean = true,
@@ -70,7 +70,7 @@ function searchItemIsRelevant(
   return false;
 }
 
-export function searchArrayByText(
+function searchArrayByText(
   arr: string[],
   searchText: string,
   mapping: UserIdToNicknameMapping,
@@ -82,7 +82,7 @@ export function searchArrayByText(
   );
 }
 
-export function searchObjectByText(
+function searchObjectByText(
   obj: Record<string, any>,
   searchText: string,
   mapping: UserIdToNicknameMapping,
@@ -99,3 +99,10 @@ export function searchObjectByText(
       {} as Record<string, any>,
     );
 }
+
+export {
+  searchDbByNickname,
+  searchDatabaseForUsers,
+  searchArrayByText,
+  searchObjectByText,
+};

@@ -1,5 +1,4 @@
 import React from 'react';
-
 import {ContextProvider} from './context/global/Context';
 import type {Route} from './ROUTES';
 import InitialUrlContext from '@libs/InitialUrlContext';

@@ -17,17 +17,14 @@ import {useFirebase} from '@context/global/FirebaseContext';
 import {isNonEmptyArray} from '@libs/Validation';
 import LoadingData from '@components/LoadingData';
 import {Database} from 'firebase/database';
-import {searchArrayByText} from '@src/services/search/search';
+import {searchArrayByText} from '@libs/Search';
 import {fetchUserProfiles} from '@database/profile';
 import SearchResult from '@components/Social/SearchResult';
 import SearchWindow from '@components/Social/SearchWindow';
 import {FriendsFriendsScreenProps} from '@src/types/screens';
 import MainHeader from '@components/Header/MainHeader';
 import GrayHeader from '@components/Header/GrayHeader';
-import {
-  getCommonFriends,
-  getCommonFriendsCount,
-} from '@libs/Social/FriendUtils';
+import {getCommonFriends, getCommonFriendsCount} from '@libs/FriendUtils';
 import {
   UserIdToNicknameMapping,
   UserSearchResults,
@@ -37,7 +34,7 @@ import {getDatabaseData} from '@src/context/global/DatabaseDataContext';
 import SeeProfileButton from '@components/Buttons/SeeProfileButton';
 import GeneralAction from '@src/types/various/GeneralAction';
 import commonStyles from '@src/styles/commonStyles';
-import {getNicknameMapping} from '@src/services/search/searchUtils';
+import {getNicknameMapping} from '@libs/SearchUtils';
 import FillerView from '@components/FillerView';
 
 interface State {

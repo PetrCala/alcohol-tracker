@@ -29,10 +29,7 @@ import {
 import {DateObject} from '@src/types/time';
 import SessionsCalendar from '@components/Calendar';
 import LoadingData from '@components/LoadingData';
-import {
-  fetchUserFriends,
-  getCommonFriendsCount,
-} from '@libs/Social/FriendUtils';
+import {fetchUserFriends, getCommonFriendsCount} from '@libs/FriendUtils';
 import MainHeader from '@components/Header/MainHeader';
 import ManageFriendPopup from '@components/Popups/Profile/ManageFriendPopup';
 import {getDatabaseData} from '@src/context/global/DatabaseDataContext';

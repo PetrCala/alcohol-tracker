@@ -6,7 +6,7 @@ import {
   FriendArray,
 } from '@src/types/database';
 import {Database} from 'firebase/database';
-import {isNonEmptyArray} from '../Validation';
+import {isNonEmptyArray} from './Validation';
 import CONST from '@src/CONST';
 
 export async function fetchUserFriends(

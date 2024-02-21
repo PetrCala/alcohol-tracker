@@ -20,7 +20,7 @@ import {
 } from '@src/types/screens';
 import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
 import MainHeader from '@components/Header/MainHeader';
-import {getReceivedRequestsCount} from '@libs/Social/FriendUtils';
+import {getReceivedRequestsCount} from '@libs/FriendUtils';
 import {useIsFocused} from '@react-navigation/native';
 import CONST from '@src/CONST';
 import {UserProps} from '@src/types/database';

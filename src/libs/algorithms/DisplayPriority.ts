@@ -1,7 +1,6 @@
 import {UserPriority, UsersPriority} from '@src/types/various/Algorithms';
 import {UserStatus, UserStatusList} from '@src/types/database';
 import {sumAllUnits} from '@libs/DataHandling';
-import {User} from 'firebase/auth';
 
 /**
  * Based on the user status data, calculate the display priority of the users.
@@ -10,14 +9,14 @@ import {User} from 'firebase/auth';
  * @param userIds Array of user IDs to calculate the display priority for.
  * @param usersPriority Object containing the display priority of each user.
  */
-export function orderUsersByPriority(
+function orderUsersByPriority(
   userIds: string[],
   usersPriority: UsersPriority,
 ): string[] {
   return userIds.sort((a, b) => usersPriority[b] - usersPriority[a]);
 }
 
-export function calculateAllUsersPriority(
+function calculateAllUsersPriority(
   userIds: string[],
   userStatusList: UserStatusList,
 ): UsersPriority {
@@ -33,7 +32,7 @@ export function calculateAllUsersPriority(
   return usersPriority;
 }
 
-export function calculateUserPriority(userStatusData: UserStatus): number {
+function calculateUserPriority(userStatusData: UserStatus): number {
   let time_since_last_online =
     new Date().getTime() - userStatusData.last_online;
   let session_active = userStatusData.latest_session?.ongoing ? 1 : 0;
@@ -46,3 +45,5 @@ export function calculateUserPriority(userStatusData: UserStatus): number {
     Math.log(time_since_last_online) * 50
   );
 }
+
+export {calculateAllUsersPriority, calculateUserPriority, orderUsersByPriority};

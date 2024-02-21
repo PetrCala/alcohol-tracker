@@ -23,12 +23,12 @@ import {objKeys} from '@libs/DataHandling';
 import {isNonEmptyArray} from '@libs/Validation';
 import commonStyles from '@src/styles/commonStyles';
 import {FriendListScreenProps} from '@src/types/screens';
-import {getNicknameMapping} from '@src/services/search/searchUtils';
-import {searchArrayByText} from '@src/services/search/search';
+import {getNicknameMapping} from '@libs/SearchUtils';
+import {searchArrayByText} from '@libs/Search';
 import {
   calculateAllUsersPriority,
   orderUsersByPriority,
-} from '@src/services/algorithms/displayPriority';
+} from '@libs/algorithms/DisplayPriority';
 import {UsersPriority} from '@src/types/various/Algorithms';
 import FillerView from '@components/FillerView';
 import PressableWithAnimation from '@components/Buttons/PressableWithAnimation';

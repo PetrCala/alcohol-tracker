@@ -1,7 +1,7 @@
-﻿import {initializeApp, FirebaseApp} from 'firebase/app';
+﻿import {initializeApp, FirebaseApp as FirebaseAppProps} from 'firebase/app';
 import FirebaseConfig from './FirebaseConfig';
 
 // Initialize Firebase
-const FirebaseApp: FirebaseApp = initializeApp(FirebaseConfig);
+const FirebaseApp: FirebaseAppProps = initializeApp(FirebaseConfig);
 
 export {FirebaseApp};
