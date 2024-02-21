@@ -1,6 +1,6 @@
 require('dotenv').config(); // for the process.env variables to read the .env file
 import {MOCK_USER_IDS} from '../testsStatic';
-import {signUpUserWithEmailAndPassword} from '../../../src/auth/auth';
+import {signUpUserWithEmailAndPassword} from '../../../src/libs/auth/auth';
 import {
   initializeAuth,
   getReactNativePersistence,

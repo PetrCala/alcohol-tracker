@@ -11,7 +11,7 @@ import {
 import * as KirokuImages from '@src/components/Icon/KirokuImages';
 import {useFocusEffect} from '@react-navigation/native';
 import {sendPasswordResetEmail, signOut} from 'firebase/auth';
-import {signInUserWithEmailAndPassword} from '@auth/auth';
+import {signInUserWithEmailAndPassword} from '@libs/auth/auth';
 import commonStyles from '@styles/commonStyles';
 import {LoginScreenProps} from '../types/screens';
 import LoadingData from '@components/LoadingData';

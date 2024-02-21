@@ -10,7 +10,7 @@
  * @param password
  * @returns
  */
-export async function signUpUserWithEmailAndPassword(
+async function signUpUserWithEmailAndPassword(
   auth: any,
   email: string,
   password: string,
@@ -24,7 +24,7 @@ export async function signUpUserWithEmailAndPassword(
   }
 }
 
-export async function signInUserWithEmailAndPassword(
+async function signInUserWithEmailAndPassword(
   auth: any,
   email: string,
   password: string,
@@ -40,3 +40,5 @@ export async function signInUserWithEmailAndPassword(
     throw new Error('User login failed: ' + error.message);
   }
 }
+
+export {signInUserWithEmailAndPassword, signUpUserWithEmailAndPassword};

@@ -12,7 +12,7 @@ import {
 import * as KirokuImages from '@src/components/Icon/KirokuImages';
 import {updateProfile} from 'firebase/auth';
 
-import {signUpUserWithEmailAndPassword} from '@src/auth/auth';
+import {signUpUserWithEmailAndPassword} from '@libs/auth/auth';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {SignUpScreenProps} from '@src/types/screens';
 import {readDataOnce} from '@database/baseFunctions';
