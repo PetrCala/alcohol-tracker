@@ -16,20 +16,26 @@ const SCREENS = {
   LOGIN: 'Login',
   FORCE_UPDATE: 'ForceUpdate',
   RIGHT_MODAL: {
-    MAIN_MENU: 'MainMenu',
+    ACHIEVEMENTS: 'Achievements',
+    DAY_OVERVIEW: 'DayOverview',
     DRINKING_SESSION: 'DrinkingSession',
+    MAIN_MENU: 'MainMenu',
+    PROFILE: 'Profile',
+    SOCIAL: 'Social',
+    STATISTICS: 'Statistics',
+    SETTINGS: 'Settings',
   },
 
   ACHIEVEMENTS: {
-    ROOT: 'Achievements',
+    ROOT: 'Achievements_Root',
   },
 
   DAY_OVERVIEW: {
-    ROOT: 'DayOverview',
+    ROOT: 'DayOverview_Root',
   },
 
   DRINKING_SESSION: {
-    ROOT: 'DrinkingSession',
+    ROOT: 'DrinkingSession_Root',
     LIVE: 'DrinkingSession_Live',
     EDIT: 'DrinkingSession_Edit',
     SUMMARY: 'DrinkingSession_Summary',
@@ -45,23 +51,23 @@ const SCREENS = {
   },
 
   PROFILE: {
-    ROOT: 'Profile',
+    ROOT: 'Profile_Root',
     FRIENDS_FRIENDS: 'Profile_FriendsFriends',
   },
 
   SOCIAL: {
-    ROOT: 'Social',
+    ROOT: 'Social_Root',
     FRIEND_LIST: 'Social_FriendList',
     SEARCH_FRIENDS: 'Social_SearchFriends',
     FRIEND_REQUESTS: 'Social_FriendRequests',
   },
 
   STATISTICS: {
-    ROOT: 'Statistics',
+    ROOT: 'Statistics_Root',
   },
 
   SETTINGS: {
-    ROOT: 'Settings',
+    ROOT: 'Settings_Root',
   },
 } as const;
 

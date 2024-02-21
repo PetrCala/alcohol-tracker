@@ -14,7 +14,7 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import type {ThemeStyles} from '@styles/index';
 import type {Screen} from '@src/SCREENS';
 import SCREENS from '@src/SCREENS';
-import {MainMenuNavigatorParamList} from '../types';
+import {MainMenuNavigatorParamList} from '@libs/Navigation/types';
 
 type Screens = Partial<Record<Screen, () => React.ComponentType>>;
 

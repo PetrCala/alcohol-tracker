@@ -39,6 +39,14 @@ function RightModalNavigator({navigation}: RightModalNavigatorProps) {
         name={SCREENS.RIGHT_MODAL.MAIN_MENU}
         component={ModalStackNavigators.MainMenuModalStackNavigator}
       />
+      <Stack.Screen
+        name={SCREENS.RIGHT_MODAL.PROFILE}
+        component={ModalStackNavigators.ProfileModalStackNavigator}
+      />
+      ACHIEVEMENTS: 'Achievements', DAY_OVERVIEW: 'DayOverview',
+      DRINKING_SESSION: 'DrinkingSession', MAIN_MENU: 'MainMenu', PROFILE:
+      'Profile', SOCIAL: 'Social', STATISTICS: 'Statistics', SETTINGS:
+      'Settings',
       {/* <RootStack.Screen name="Main Screen" component={MainScreen} />
           <RootStack.Screen name="Profile Screen" component={ProfileScreen} />
           <RootStack.Screen
