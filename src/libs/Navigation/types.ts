@@ -92,7 +92,9 @@ type AchievementsNavigatorParamList = {
 };
 
 type DayOverviewNavigatorParamList = {
-  [SCREENS.DAY_OVERVIEW.ROOT]: undefined;
+  [SCREENS.DAY_OVERVIEW.ROOT]: {
+    timestamp: number;
+  };
 };
 
 type DrinkingSessionNavigatorParamList = {

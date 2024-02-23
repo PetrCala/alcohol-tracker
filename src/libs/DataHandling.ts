@@ -1,4 +1,4 @@
-﻿import {DateObject} from '@src/types/time';
+﻿import {DateObject, DateString} from '@src/types/time';
 import {getRandomInt} from './Choice';
 import type {
   CalendarColors,
@@ -18,11 +18,11 @@ import type {
 import CONST from '../CONST';
 import {MeasureType} from '@src/types/database/DatabaseCommon';
 
-export function formatDate(date: Date): string {
+export function formatDate(date: Date): DateString {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
     2,
     '0',
-  )}-${String(date.getDate()).padStart(2, '0')}`;
+  )}-${String(date.getDate()).padStart(2, '0')}` as DateString;
 }
 
 export function formatDateToDay(date: Date): string {
@@ -57,6 +57,16 @@ export function dateToDateObject(date: Date): DateObject {
     year: date.getFullYear(),
   };
   return dateObject;
+}
+
+/**
+ * Convert a timestamp to a date string.
+ *
+ * @param timestamp Timestamp
+ * @returns Date string
+ */
+export function timestampToDateString(timestamp: number): DateString {
+  return formatDate(timestampToDate(timestamp));
 }
 
 /** Inverse of timestampToDate, sets time to midnight

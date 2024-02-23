@@ -1,5 +1,8 @@
+import CONST from '@src/CONST';
+import DateString from './DateString';
+
 type DateObject = {
-  dateString: string;
+  dateString: DateString;
   day: number;
   month: number;
   timestamp: number;

@@ -22,13 +22,12 @@ import {
   sumAllUnits,
   getZeroUnitsList,
   sumAllPoints,
-} from '../../libs/DataHandling';
-import LoadingData from '../../components/LoadingData';
+} from '@libs/DataHandling';
+import LoadingData from '@components/LoadingData';
 // import { PreferencesData} from '../types/database';
-import {DayOverviewScreenProps} from '../../types/screens';
-import UserOffline from '../../components/UserOffline';
-import {useUserConnection} from '../../context/global/UserConnectionContext';
-import {getDatabaseData} from '../../context/global/DatabaseDataContext';
+import UserOffline from '@components/UserOffline';
+import {useUserConnection} from '@context/global/UserConnectionContext';
+import {getDatabaseData} from '@context/global/DatabaseDataContext';
 import {DrinkingSession, Preferences} from '@src/types/database';
 import CONST from '@src/CONST';
 import {generateDatabaseKey} from '@database/baseFunctions';
@@ -36,16 +35,32 @@ import {useFirebase} from '@src/context/global/FirebaseContext';
 import MainHeader from '@components/Header/MainHeader';
 import MainHeaderButton from '@components/Header/MainHeaderButton';
 import {DrinkingSessionKeyValue} from '@src/types/utils/databaseUtils';
+import {StackScreenProps} from '@react-navigation/stack';
+import {DayOverviewNavigatorParamList} from '@libs/Navigation/types';
+import SCREENS from '@src/SCREENS';
+import Navigation from '@libs/Navigation/Navigation';
+import ROUTES from '@src/ROUTES';
 
-const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
-  if (!route || !navigation) return null; // Should never be null
-  const {dateObject} = route.params; // Params for navigation
+// type WorkspacesListRowProps = WithCurrentUserPersonalDetailsProps & {
+//     /** Name of the workspace */
+//     title: string;
+
+//     /** Account ID of the workspace's owner */
+//     ownerAccountID?: number;
+
+type DayOverviewScreenProps = StackScreenProps<
+  DayOverviewNavigatorParamList,
+  typeof SCREENS.DAY_OVERVIEW.ROOT
+>;
+
+const DayOverviewScreen = ({route}: DayOverviewScreenProps) => {
+  const {timestamp} = route.params;
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
   const {drinkingSessionData, drinkingSessionKeys, preferences} =
     getDatabaseData();
-  const [date, setDate] = useState<Date>(timestampToDate(dateObject.timestamp));
+  const [date, setDate] = useState<Date>(timestampToDate(timestamp));
   const [dailySessionData, setDailyData] = useState<DrinkingSession[]>([]);
   const [editMode, setEditMode] = useState<boolean>(false);
   // Create a combined data object
@@ -249,7 +264,7 @@ const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
   if (!isOnline) return <UserOffline />;
   if (!date) return <LoadingData />;
   if (!user || !preferences) {
-    navigation.replace('Login Screen');
+    Navigation.navigate(ROUTES.LOGIN);
     return;
   }
 
@@ -257,7 +272,7 @@ const DayOverviewScreen = ({route, navigation}: DayOverviewScreenProps) => {
     <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
       <MainHeader
         headerText=""
-        onGoBack={() => navigation.goBack()}
+        onGoBack={() => Navigation.goBack()}
         rightSideComponent={
           <MainHeaderButton
             buttonOn={editMode}

@@ -13,7 +13,6 @@ import {
 import MenuIcon from '@components/Buttons/MenuIcon';
 import SessionsCalendar from '@components/Calendar';
 import LoadingData from '@components/LoadingData';
-import {HomeScreenProps} from '@src/types/screens';
 import {DateObject} from '@src/types/time';
 import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
 import {
@@ -36,6 +35,9 @@ import CONST from '@src/CONST';
 import {DrinkingSession} from '@src/types/database';
 import ROUTES from '@src/ROUTES';
 import Navigation from '@navigation/Navigation';
+import {StackScreenProps} from '@react-navigation/stack';
+import {BottomTabNavigatorParamList} from '@libs/Navigation/types';
+import SCREENS from '@src/SCREENS';
 
 interface State {
   visibleDateObject: DateObject;
@@ -87,10 +89,12 @@ const reducer = (state: State, action: Action): State => {
   }
 };
 
-// const [startSessionModalVisible, setStartSessionModalVisible] =
-//   useState<boolean>(false);
+type HomeScreenProps = StackScreenProps<
+  BottomTabNavigatorParamList,
+  typeof SCREENS.HOME
+>;
 
-const HomeScreen = ({navigation}: HomeScreenProps) => {
+const HomeScreen = ({}: HomeScreenProps) => {
   const {auth, db, storage} = useFirebase();
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
@@ -303,7 +307,7 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
           visibleDateObject={state.visibleDateObject}
           dispatch={dispatch}
           onDayPress={(day: DateObject) => {
-            navigation.navigate('Day Overview Screen', {dateObject: day});
+            Navigation.navigate(ROUTES.DAY_OVERVIEW.getRoute(day.timestamp));
           }}
         />
         <View style={{height: 200, backgroundColor: '#ffff99'}}></View>
@@ -328,7 +332,7 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
             iconSource={KirokuIcons.Achievements}
             containerStyle={styles.menuIconContainer}
             iconStyle={styles.menuIcon}
-            onPress={() => navigation.navigate('Achievement Screen')}
+            onPress={() => Navigation.navigate(ROUTES.ACHIEVEMENTS)}
           />
         </View>
         <View
@@ -341,7 +345,7 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
             iconSource={KirokuIcons.Statistics}
             containerStyle={styles.menuIconContainer}
             iconStyle={styles.menuIcon}
-            onPress={() => navigation.navigate('Statistics Screen')}
+            onPress={() => Navigation.navigate(ROUTES.STATISTICS)}
           />
           <MenuIcon
             iconId="main-menu-popup-icon"

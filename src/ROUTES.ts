@@ -1,6 +1,7 @@
 import type {IsEqual, ValueOf} from 'type-fest';
 import type CONST from './CONST';
 import {DrinkingSessionId, UserId} from './types/database';
+import {timestampToDate, timestampToDateString} from '@libs/DataHandling';
 
 const ROUTES = {
   // If the user opens this route, we'll redirect them to the path saved in the last visited path or to the home page if the last visited path is empty.
@@ -15,8 +16,8 @@ const ROUTES = {
 
   DAY_OVERVIEW: {
     route: 'day-overview/:date',
-    getRoute: (date: typeof CONST.DATE.FNS_FORMAT_STRING) =>
-      `day-overview/${date}` as const,
+    getRoute: (timestamp: number) =>
+      `day-overview/${timestampToDateString(timestamp)}` as const,
   },
 
   DRINKING_SESSION: {
