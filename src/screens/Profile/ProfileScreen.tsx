@@ -13,7 +13,6 @@ import MenuIcon from '../../components/Buttons/MenuIcon';
 import commonStyles from '../../styles/commonStyles';
 import {useFirebase} from '../../context/global/FirebaseContext';
 import {ProfileProps} from '@src/types/screens';
-
 import {StatData, StatsOverview} from '@components/Items/StatOverview';
 import ProfileOverview from '@components/Social/ProfileOverview';
 import {useEffect, useMemo, useReducer} from 'react';
@@ -224,7 +223,7 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
     dispatch({type: 'SET_POINTS_EARNED', payload: thisMonthPoints});
   }, [state.drinkingSessionData, state.preferences, state.visibleDateObject]);
 
-  if (state.isLoading) return <LoadingData blendBackground={true} />;
+  if (state.isLoading) return <LoadingData />;
   if (
     !db ||
     !storage ||
