@@ -11,14 +11,14 @@ import {
   View,
 } from 'react-native';
 import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
-import BasicButton from '../../components/Buttons/BasicButton';
-import {useFirebase} from '../../context/global/FirebaseContext';
+import BasicButton from '@components/Buttons/BasicButton';
+import {useFirebase} from '@context/global/FirebaseContext';
 import {
   discardLiveDrinkingSession,
   endLiveDrinkingSession,
   saveDrinkingSessionData,
   updateSessionUnits,
-} from '../../database/drinkingSessions';
+} from '@database/drinkingSessions';
 import {
   addUnits,
   dateToDateObject,
@@ -29,33 +29,51 @@ import {
   sumUnitsOfSingleType,
   timestampToDate,
   unitsToColors,
-} from '../../libs/DataHandling';
-import {DrinkingSession, UnitKey, Units, UnitsList} from '../../types/database';
-import YesNoPopup from '../../components/Popups/YesNoPopup';
-import {useUserConnection} from '../../context/global/UserConnectionContext';
-import UserOffline from '../../components/UserOffline';
-import UnitTypesView from '../../components/UnitTypesView';
-import SessionDetailsSlider from '../../components/SessionDetailsSlider';
-import LoadingData from '../../components/LoadingData';
-import {usePrevious} from '../../hooks/usePrevious';
-import SuccessIndicator from '../../components/SuccessIndicator';
-import commonStyles from '../../styles/commonStyles';
-import FillerView from '../../components/FillerView';
-// import {getPreviousRouteName} from '@navigation/Navigation';
+} from '@libs/DataHandling';
+import {DrinkingSession, UnitKey, Units, UnitsList} from '@src/types/database';
+import YesNoPopup from '@components/Popups/YesNoPopup';
+import {useUserConnection} from '@context/global/UserConnectionContext';
+import UserOffline from '@components/UserOffline';
+import UnitTypesView from '@components/UnitTypesView';
+import SessionDetailsSlider from '@components/SessionDetailsSlider';
+import LoadingData from '@components/LoadingData';
+import {usePrevious} from '@hooks/usePrevious';
+import SuccessIndicator from '@components/SuccessIndicator';
+import commonStyles from '@styles/commonStyles';
+import FillerView from '@components/FillerView';
 import CONST from '@src/CONST';
 import MainHeader from '@components/Header/MainHeader';
 import MainHeaderButton from '@components/Header/MainHeaderButton';
 import DrinkDataProps from '@src/types/various/DrinkDataProps';
 import Navigation from '@navigation/Navigation';
+import {StackScreenProps} from '@react-navigation/stack';
+import {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
+import SCREENS from '@src/SCREENS';
+import {getDatabaseData} from '@context/global/DatabaseDataContext';
+import {
+  extractSessionOrEmpty,
+  getEmptySession,
+  isEmptySession,
+} from '@libs/SessionUtils';
+import ROUTES from '@src/ROUTES';
+import compose from '@libs/compose';
 
-const LiveSessionScreen = ({route, navigation}: LiveSessionScreenProps) => {
-  // Navigation
-  if (!route || !navigation) return null; // Should never be null
-  const {session, sessionKey, preferences} = route.params;
+type LiveSessionScreenProps = StackScreenProps<
+  DrinkingSessionNavigatorParamList,
+  typeof SCREENS.DRINKING_SESSION.LIVE
+>;
+
+const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
+  const {sessionId} = route.params;
   // Context, database, and authentification
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
+  const {preferences, drinkingSessionData} = getDatabaseData();
+  // const session = extractSessionOrEmpty(sessionId, drinkingSessionData);
+  const [session, setSession] = useState<DrinkingSession>(
+    extractSessionOrEmpty(sessionId, drinkingSessionData),
+  );
   // Units
   const [currentUnits, setCurrentUnits] = useState<UnitsList>(session.units);
   const [totalPoints, setTotalPoints] = useState<number>(0);
@@ -93,6 +111,9 @@ const LiveSessionScreen = ({route, navigation}: LiveSessionScreenProps) => {
   const sessionDate = timestampToDate(session.start_time);
   const sessionDay = formatDateToDay(sessionDate);
   const sessionStartTime = formatDateToTime(sessionDate);
+  const sessionColor = preferences
+    ? unitsToColors(totalPoints, preferences.units_to_colors)
+    : 'green';
   // Other
   const [monkeMode, setMonkeMode] = useState<boolean>(false);
   const [discardModalVisible, setDiscardModalVisible] =
@@ -217,7 +238,7 @@ const LiveSessionScreen = ({route, navigation}: LiveSessionScreenProps) => {
             db,
             user.uid,
             newSessionData,
-            sessionKey,
+            sessionId,
             true, // Update live session status
           );
         } catch (error: any) {
@@ -256,7 +277,6 @@ const LiveSessionScreen = ({route, navigation}: LiveSessionScreenProps) => {
       console.log('Cannot save this session');
       return null;
     }
-    if (!navigation) return null; // Should not happen
     // Wait for any pending updates to resolve first
     if (pendingUpdate) {
       console.log('Data synchronization ongoing');
@@ -277,7 +297,7 @@ const LiveSessionScreen = ({route, navigation}: LiveSessionScreenProps) => {
         if (timeSinceLastUpdate < 1000) {
           await sleep(1000 - timeSinceLastUpdate); // Wait for database synchronization
         }
-        await endLiveDrinkingSession(db, userId, newSessionData, sessionKey);
+        await endLiveDrinkingSession(db, userId, newSessionData, sessionId);
       } catch (error: any) {
         Alert.alert(
           'Session save failed',
@@ -286,10 +306,7 @@ const LiveSessionScreen = ({route, navigation}: LiveSessionScreenProps) => {
         return;
       }
       // Reroute to session summary, do not allow user to return
-      navigation.replace('Session Summary Screen', {
-        session: newSessionData,
-        sessionKey: sessionKey,
-      });
+      Navigation.navigate(ROUTES.DRINKING_SESSION_SUMMARY.getRoute(sessionId));
       setSavingSession(false);
     }
   }
@@ -306,7 +323,7 @@ const LiveSessionScreen = ({route, navigation}: LiveSessionScreenProps) => {
       await sleep(1000 - timeSinceLastUpdate); // Wait for database synchronization
     }
     try {
-      await discardLiveDrinkingSession(db, user.uid, sessionKey);
+      await discardLiveDrinkingSession(db, user.uid, sessionId);
     } catch (error: any) {
       Alert.alert(
         'Session discard failed',
@@ -314,14 +331,14 @@ const LiveSessionScreen = ({route, navigation}: LiveSessionScreenProps) => {
       );
     } finally {
       setDiscardModalVisible(false);
-      const previousRouteName = Navigation.getPreviousRouteName(navigation);
-      if (previousRouteName.includes('Day Overview Screen')) {
+      const lastRouteName = Navigation.getLastRouteName();
+      if (lastRouteName && lastRouteName.includes('Day Overview Screen')) {
         const sessionDateObject = dateToDateObject(sessionDate);
-        navigation.navigate('Day Overview Screen', {
-          dateObject: sessionDateObject,
-        });
+        Navigation.navigate(
+          ROUTES.DAY_OVERVIEW.getRoute(sessionDateObject.timestamp),
+        );
       } else {
-        navigation.navigate('Home Screen');
+        Navigation.navigate(ROUTES.HOME);
       }
     }
   };
@@ -332,24 +349,28 @@ const LiveSessionScreen = ({route, navigation}: LiveSessionScreenProps) => {
     if (!db || !user) return;
     if (pendingUpdate) {
       try {
-        await updateSessionUnits(db, user.uid, sessionKey, currentUnits);
+        await updateSessionUnits(db, user.uid, sessionId, currentUnits);
       } catch (error: any) {
         Alert.alert('Database synchronization failed', error.message);
       }
     }
     // navigation.navigate("Main Screen");
-    navigation.goBack();
+    Navigation.goBack();
   };
+
+  useEffect(() => {
+    const newSession = extractSessionOrEmpty(sessionId, drinkingSessionData);
+    setSession(newSession);
+  }, [drinkingSessionData]);
 
   if (!isOnline) return <UserOffline />;
   if (savingSession) return <LoadingData loadingText="Saving session..." />;
-  if (user == null) {
-    navigation.replace('Login Screen');
-    return null;
+  if (!user) {
+    Navigation.navigate(ROUTES.LOGIN);
+    return;
   }
-  if (!db) return null; // Should never be null
-
-  const sessionColor = unitsToColors(totalPoints, preferences.units_to_colors);
+  if (!preferences || !drinkingSessionData) return;
+  if (isEmptySession(session)) return;
 
   return (
     <>
@@ -623,4 +644,5 @@ const styles = StyleSheet.create({
   },
 });
 
+LiveSessionScreen.displayName = 'Live Session Screen';
 export default LiveSessionScreen;

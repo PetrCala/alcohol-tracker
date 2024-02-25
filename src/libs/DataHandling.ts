@@ -8,12 +8,15 @@ import type {
 } from '@components/Calendar';
 import type {
   DrinkingSession,
+  DrinkingSessionArray,
+  DrinkingSessionList,
   Preferences,
   UnitKey,
   UnitName,
   Units,
   UnitsList,
   UnitsToColors,
+  UnitsToPoints,
 } from '@src/types/database';
 import CONST from '../CONST';
 import {MeasureType} from '@src/types/database/DatabaseCommon';
@@ -272,7 +275,7 @@ export function getSingleDayDrinkingSessions(
  */
 export function getSingleMonthDrinkingSessions(
   date: Date,
-  sessions: DrinkingSession[],
+  sessions: DrinkingSessionArray,
   untilToday: boolean = false,
 ) {
   date.setHours(0, 0, 0, 0); // To midnight
@@ -468,9 +471,12 @@ export function getLastUnitAddedTime(session: DrinkingSession): number | null {
 /** Out of an array of session items, return an a session that is ongoing. If there is no such session, return null
  */
 export function findOngoingSession(
-  sessions: DrinkingSession[],
+  sessions: DrinkingSessionList,
 ): DrinkingSession | null {
-  const ongoingSession = sessions.find(session => session.ongoing === true);
+  if (!sessions) return null;
+  const ongoingSession = Object.values(sessions).find(
+    session => session.ongoing === true,
+  );
   return ongoingSession ? ongoingSession : null;
 }
 
@@ -483,7 +489,7 @@ export function findOngoingSession(
  */
 export const calculateThisMonthUnits = (
   dateObject: DateObject,
-  sessions: DrinkingSession[],
+  sessions: DrinkingSessionArray,
 ): number => {
   // Subset to this month's sessions only
   const currentDate = timestampToDate(dateObject.timestamp);
@@ -509,8 +515,8 @@ export const calculateThisMonthUnits = (
  */
 export const calculateThisMonthPoints = (
   dateObject: DateObject,
-  sessions: DrinkingSession[],
-  unitsToPoints: Units,
+  sessions: DrinkingSessionArray,
+  unitsToPoints: UnitsToPoints,
 ): number => {
   // Subset to this month's sessions only
   const currentDate = timestampToDate(dateObject.timestamp);

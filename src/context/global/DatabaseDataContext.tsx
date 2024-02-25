@@ -22,8 +22,7 @@ import DBPATHS from '@database/DBPATHS';
 
 type DatabaseDataContextType = {
   userStatusData: UserStatus | null;
-  drinkingSessionData: DrinkingSessionArray;
-  drinkingSessionKeys: string[];
+  drinkingSessionData: DrinkingSessionList | null;
   preferences: Preferences | null;
   unconfirmedDays: UnconfirmedDays | null;
   userData: UserProps | null;
@@ -55,8 +54,7 @@ type DatabaseDataProviderProps = {
 
 const initialState = {
   userStatusData: null,
-  drinkingSessionData: [],
-  drinkingSessionKeys: [],
+  drinkingSessionData: null,
   preferences: null,
   unconfirmedDays: null,
   userData: null,
@@ -73,8 +71,6 @@ const reducer = (state: any, action: any) => {
       return {...state, userStatusData: action.payload};
     case 'SET_DRINKING_SESSION_DATA':
       return {...state, drinkingSessionData: action.payload};
-    case 'SET_DRINKING_SESSION_KEYS':
-      return {...state, drinkingSessionKeys: action.payload};
     case 'SET_PREFERENCES':
       return {...state, preferences: action.payload};
     case 'SET_UNCONFIRMED_DAYS':
@@ -132,8 +128,6 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
   useEffect(() => {
     if (!user || !db) return;
     // Start listening for changes when the component mounts
-    let newData: DrinkingSessionArray;
-    let newKeys: string[];
     let sessionsPath = DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(
       user.uid,
     );
@@ -141,13 +135,8 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
       db,
       sessionsPath,
       (data: DrinkingSessionList) => {
-        newData = data ? Object.values(data) : [];
-        newKeys = data ? Object.keys(data) : [];
-        if (!isEqual(newData, state.drinkingSessionData)) {
-          dispatch({type: 'SET_DRINKING_SESSION_DATA', payload: newData});
-        }
-        if (!isEqual(newKeys, state.drinkingSessionKeys)) {
-          dispatch({type: 'SET_DRINKING_SESSION_KEYS', payload: newKeys});
+        if (!isEqual(data, state.drinkingSessionData)) {
+          dispatch({type: 'SET_DRINKING_SESSION_DATA', payload: data});
         }
         dispatch({type: 'SET_LOADING_DRINKING_SESSION_DATA', payload: false});
       },

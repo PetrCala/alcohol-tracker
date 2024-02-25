@@ -15,6 +15,7 @@ import type CONST from '@src/CONST';
 import type NAVIGATORS from '@src/NAVIGATORS';
 import type SCREENS from '@src/SCREENS';
 import type {Route as Routes} from '@src/ROUTES';
+import {DrinkingSession, DrinkingSessionId} from '@src/types/database';
 
 type NavigationRef = NavigationContainerRefWithCurrent<RootStackParamList>;
 
@@ -99,7 +100,9 @@ type DayOverviewNavigatorParamList = {
 
 type DrinkingSessionNavigatorParamList = {
   [SCREENS.DRINKING_SESSION.ROOT]: undefined;
-  [SCREENS.DRINKING_SESSION.LIVE]: undefined;
+  [SCREENS.DRINKING_SESSION.LIVE]: {
+    sessionId: DrinkingSessionId;
+  };
   [SCREENS.DRINKING_SESSION.EDIT]: undefined;
   [SCREENS.DRINKING_SESSION.SUMMARY]: undefined;
 };

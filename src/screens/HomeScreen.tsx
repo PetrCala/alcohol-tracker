@@ -32,7 +32,7 @@ import {useFirebase} from '@context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
 import {generateDatabaseKey} from '@database/baseFunctions';
 import CONST from '@src/CONST';
-import {DrinkingSession} from '@src/types/database';
+import {DrinkingSession, DrinkingSessionArray} from '@src/types/database';
 import ROUTES from '@src/ROUTES';
 import Navigation from '@navigation/Navigation';
 import {StackScreenProps} from '@react-navigation/stack';
@@ -101,7 +101,6 @@ const HomeScreen = ({}: HomeScreenProps) => {
   const {
     userStatusData,
     drinkingSessionData,
-    drinkingSessionKeys,
     preferences,
     unconfirmedDays,
     userData,
@@ -113,13 +112,12 @@ const HomeScreen = ({}: HomeScreenProps) => {
   // Handle drinking session button press
   const startDrinkingSession = async () => {
     if (!preferences || !user) return null; // Should never be null
-    let sessionData: DrinkingSession;
-    let sessionKey: string;
+    let sessionId: string;
     let latest_session = userStatusData?.latest_session;
     if (!latest_session?.ongoing) {
       dispatch({type: 'SET_LOADING_NEW_SESSION', payload: true});
       // The user is not in an active session
-      sessionData = {
+      const sessionData: DrinkingSession = {
         start_time: Date.now(),
         end_time: Date.now(), // Will be overwritten
         blackout: false,
@@ -129,20 +127,21 @@ const HomeScreen = ({}: HomeScreenProps) => {
         },
         ongoing: true,
       };
-      const newSessionKey = generateDatabaseKey(
+      const newSessionId = generateDatabaseKey(
         db,
         `user_drinking_sessions/${user.uid}`,
       );
-      if (!newSessionKey) {
+      if (!newSessionId) {
         Alert.alert(
           'New session key generation failed',
           "Couldn't generate a new session key",
         );
         return;
       }
-      sessionKey = newSessionKey;
+      sessionId = newSessionId;
       try {
-        await startLiveDrinkingSession(db, user.uid, sessionData, sessionKey);
+        await startLiveDrinkingSession(db, user.uid, sessionData, sessionId);
+        Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(sessionId));
       } catch (error: any) {
         Alert.alert(
           'New session initialization failed',
@@ -151,22 +150,17 @@ const HomeScreen = ({}: HomeScreenProps) => {
         return;
       }
     } else {
-      const currentsessionKey = userStatusData?.latest_session_id;
-      if (!currentsessionKey) {
+      const currentSessionId = userStatusData?.latest_session_id;
+      if (!currentSessionId) {
         Alert.alert(
           'New session initialization failed',
           'Could not find the existing session',
         );
         return;
       }
-      sessionData = latest_session;
-      sessionKey = currentsessionKey;
+      sessionId = currentSessionId;
+      Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(sessionId));
     }
-    navigation.navigate('Drinking Session Screen', {
-      session: sessionData,
-      sessionKey: sessionKey,
-      preferences: preferences,
-    });
     dispatch({type: 'SET_LOADING_NEW_SESSION', payload: false});
   };
 
@@ -201,18 +195,21 @@ const HomeScreen = ({}: HomeScreenProps) => {
   // Monitor visible month and various statistics
   useMemo(() => {
     if (!preferences) return;
+    const drinkingSessionArray: DrinkingSessionArray = drinkingSessionData
+      ? Object.values(drinkingSessionData)
+      : [];
     let thisMonthUnits = calculateThisMonthUnits(
       state.visibleDateObject,
-      drinkingSessionData,
+      drinkingSessionArray,
     );
     let thisMonthPoints = calculateThisMonthPoints(
       state.visibleDateObject,
-      drinkingSessionData,
+      drinkingSessionArray,
       preferences.units_to_points,
     );
     let thisMonthSessionCount = getSingleMonthDrinkingSessions(
       timestampToDate(state.visibleDateObject.timestamp),
-      drinkingSessionData,
+      drinkingSessionArray,
       false,
     ).length; // Replace this in the future
 
@@ -225,7 +222,7 @@ const HomeScreen = ({}: HomeScreenProps) => {
   }, [drinkingSessionData, state.visibleDateObject, preferences]);
 
   if (!user) {
-    navigation.replace('Auth', {screen: 'Login Screen'});
+    Navigation.navigate(ROUTES.LOGIN);
     return;
   }
   if (!isOnline) return <UserOffline />;
@@ -235,7 +232,7 @@ const HomeScreen = ({}: HomeScreenProps) => {
         loadingText={state.loadingNewSession ? 'Starting a new session...' : ''}
       />
     );
-  if (!preferences || !drinkingSessionData || !userData) return;
+  if (!preferences || !userData) return;
 
   return (
     <>

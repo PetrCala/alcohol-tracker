@@ -109,9 +109,9 @@ function getActionForBottomTabNavigator(
 
   // Check if the current bottom tab is the same as the one we want to navigate to. If it is, we don't need to do anything.
   const bottomTabCurrentTab = getTopmostBottomTabRoute(state);
-  if (bottomTabCurrentTab?.name === screen && !shouldNavigate) {
-    return;
-  }
+  // if (bottomTabCurrentTab?.name === screen && !shouldNavigate) {
+  //   return; // TODO this is commented because home is the only tab in the navigator as of now --> navigate always
+  // }
 
   return {
     type: CONST.NAVIGATION.ACTION_TYPE.PUSH,

@@ -39,6 +39,7 @@ import {
 import {
   DrinkingSession,
   DrinkingSessionArray,
+  DrinkingSessionList,
   Preferences,
   Units,
   UnitsList,
@@ -674,9 +675,9 @@ describe('getLastUnitAddedTime', () => {
 describe('calculateThisMonthUnits', () => {
   let currentDate = new Date();
   let mockDateObject: DateObject = dateToDateObject(currentDate);
-  let twoBeers: UnitsList = createMockUnitsList({beer: 2});
-  let threeWines: UnitsList = createMockUnitsList({wine: 3});
-  let fourOther: UnitsList = createMockUnitsList({other: 4});
+  let twoBeers: Units = createMockUnitsList({beer: 2});
+  let threeWines: Units = createMockUnitsList({wine: 3});
+  let fourOther: Units = createMockUnitsList({other: 4});
 
   it('should return 0 when there are no drinking sessions this month', () => {
     const result = calculateThisMonthUnits(mockDateObject, []);

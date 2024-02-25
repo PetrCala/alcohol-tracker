@@ -79,7 +79,7 @@ function CustomBottomTabNavigator({
     //   testID={CustomBottomTabNavigator.displayName}
     //   shouldShowOfflineIndicator={false}>
     <View style={styles.flex1}>
-      <TopBar />
+      {/* <TopBar /> */}
       <NavigationContent>
         <StackView
           // eslint-disable-next-line react/jsx-props-no-spreading
@@ -89,7 +89,7 @@ function CustomBottomTabNavigator({
           navigation={navigation}
         />
       </NavigationContent>
-      <BottomTabBar />
+      {/* <BottomTabBar /> */}
     </View>
     // </ScreenWrapper>
   );

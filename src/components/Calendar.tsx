@@ -27,7 +27,11 @@ import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
 import {DateObject} from '@src/types/time';
 import LoadingData from './LoadingData';
 import CONST from '@src/CONST';
-import {DrinkingSessionArray, Preferences} from '@src/types/database';
+import {
+  DrinkingSessionArray,
+  DrinkingSessionList,
+  Preferences,
+} from '@src/types/database';
 
 type DayMarking = {
   units?: number;
@@ -40,7 +44,7 @@ type CalendarColors = 'yellow' | 'red' | 'orange' | 'black' | 'green';
 type DayState = 'selected' | 'disabled' | 'today' | '';
 
 type SessionsCalendarProps = {
-  drinkingSessionData: DrinkingSessionArray;
+  drinkingSessionData: DrinkingSessionList | null;
   preferences: Preferences;
   visibleDateObject: DateObject;
   dispatch: React.Dispatch<any>;
@@ -183,20 +187,21 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
   dispatch,
   onDayPress,
 }) => {
-  const [calendarData, setCalendarData] =
-    useState<DrinkingSessionArray>(drinkingSessionData);
+  const [calendarData, setCalendarData] = useState<DrinkingSessionArray>(
+    drinkingSessionData ? Object.values(drinkingSessionData) : [],
+  );
   const [markedDates, setMarkedDates] = useState<SessionsCalendarMarkedDates>(
     {},
   );
   const [loadingMarkedDates, setLoadingMarkedDays] = useState<boolean>(true);
 
   const getMarkedDates = (
-    drinkingSessionData: DrinkingSessionArray,
+    calendarData: DrinkingSessionArray,
     preferences: Preferences,
   ): SessionsCalendarMarkedDates => {
     // Use points to calculate the point sum (flagged as units)
     var aggergatedSessions = aggregateSessionsByDays(
-      drinkingSessionData,
+      calendarData,
       'points',
       preferences.units_to_points,
     );
@@ -228,7 +233,10 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
 
   // Monitor the local calendarData hook that depends on the drinking session data
   useEffect(() => {
-    setCalendarData(drinkingSessionData);
+    const newData = drinkingSessionData
+      ? Object.values(drinkingSessionData)
+      : [];
+    setCalendarData(newData);
   }, [drinkingSessionData]);
 
   // Monitor marked days

@@ -21,21 +21,24 @@ const ROUTES = {
   },
 
   DRINKING_SESSION: {
-    route: 'drinking-session/:id',
-    getRoute: (id: DrinkingSessionId) => `drinking-session/${id}` as const,
+    route: 'drinking-session/:sessionId',
+    getRoute: (sessionId: DrinkingSessionId) =>
+      `drinking-session/${sessionId}` as const,
   },
   DRINKING_SESSION_LIVE: {
-    route: 'drinking-session/:id/live',
-    getRoute: (id: DrinkingSessionId) => `drinking-session/${id}/live` as const,
+    route: 'drinking-session/:sessionId/live',
+    getRoute: (sessionId: DrinkingSessionId) =>
+      `drinking-session/${sessionId}/live` as const,
   },
   DRINKING_SESSION_EDIT: {
-    route: 'drinking-session/:id/edit',
-    getRoute: (id: DrinkingSessionId) => `drinking-session/${id}/edit` as const,
+    route: 'drinking-session/:sessionId/edit',
+    getRoute: (sessionId: DrinkingSessionId) =>
+      `drinking-session/${sessionId}/edit` as const,
   },
   DRINKING_SESSION_SUMMARY: {
-    route: 'drinking-session/:id/summary',
-    getRoute: (id: DrinkingSessionId) =>
-      `drinking-session/${id}/summary` as const,
+    route: 'drinking-session/:sessionId/summary',
+    getRoute: (sessionId: DrinkingSessionId) =>
+      `drinking-session/${sessionId}/summary` as const,
   },
 
   MAIN_MENU: 'main-menu',
@@ -44,12 +47,12 @@ const ROUTES = {
   MAIN_MENU_POLICIES_PRIVACY_POLICY: 'main-menu/policies/privacy-policy',
 
   PROFILE: {
-    route: 'profile/:id',
-    getRoute: (id: UserId) => `profile/${id}` as const,
+    route: 'profile/:userId',
+    getRoute: (userId: UserId) => `profile/${userId}` as const,
   },
   PROFILE_FRIENDS_FRIENDS: {
-    route: 'profile/:id/friends',
-    getRoute: (id: UserId) => `profile/${id}/friends` as const,
+    route: 'profile/:userId/friends',
+    getRoute: (userId: UserId) => `profile/${userId}/friends` as const,
   },
 
   SETTINGS: 'settings',

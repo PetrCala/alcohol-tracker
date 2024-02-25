@@ -2,6 +2,8 @@ import {findFocusedRoute} from '@react-navigation/core';
 import type {
   EventArg,
   NavigationContainerEventMap,
+  ParamListBase,
+  RouteProp,
 } from '@react-navigation/native';
 import {
   CommonActions,
@@ -310,6 +312,11 @@ function setIsNavigationReady() {
   resolveNavigationIsReadyPromise();
 }
 
+function getLastRouteName(): string | undefined {
+  const rootState = navigationRef.getRootState();
+  return rootState.routes.at(-1)?.path;
+}
+
 /**
  * Checks if the navigation state contains routes that are protected (over the auth wall).
  *
@@ -359,20 +366,6 @@ function waitForProtectedRoutes() {
   });
 }
 
-// To be deprecated later
-const getPreviousRouteName = (navigation: any) => {
-  const state = navigation.getState();
-  const routes = state.routes;
-  const currentRouteIndex = state.index;
-
-  // Check if there is a previous state
-  if (currentRouteIndex > 0) {
-    return routes[currentRouteIndex - 1].name;
-  }
-
-  return null; // No previous route
-};
-
 export default {
   setShouldPopAllStateOnUP,
   navigate,
@@ -380,10 +373,10 @@ export default {
   isActiveRoute,
   getActiveRoute,
   getActiveRouteWithoutParams,
-  getPreviousRouteName,
   goBack,
   isNavigationReady,
   setIsNavigationReady,
+  getLastRouteName,
   getRouteNameFromStateEvent,
   waitForProtectedRoutes,
   closeFullScreen,
