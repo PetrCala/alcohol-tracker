@@ -4,6 +4,7 @@ import {
   createContext,
   useContext,
   useEffect,
+  useMemo,
   useReducer,
 } from 'react';
 
@@ -19,13 +20,14 @@ import {
   UserStatus,
 } from '@src/types/database';
 import DBPATHS from '@database/DBPATHS';
+import useFetchData, {UserFetchDataKey} from '@hooks/useFetchData';
 
 type DatabaseDataContextType = {
-  userStatusData: UserStatus | null;
-  drinkingSessionData: DrinkingSessionList | null;
-  preferences: Preferences | null;
-  unconfirmedDays: UnconfirmedDays | null;
-  userData: UserProps | null;
+  userStatusData: UserStatus | undefined;
+  drinkingSessionData: DrinkingSessionList | undefined;
+  preferences: Preferences | undefined;
+  unconfirmedDays: UnconfirmedDays | undefined;
+  userData: UserProps | undefined;
   isLoading: boolean;
 };
 
@@ -91,6 +93,45 @@ const reducer = (state: any, action: any) => {
       return state;
   }
 };
+
+// export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
+//   children,
+// }) => {
+//   const {auth} = useFirebase();
+//   const user = auth.currentUser;
+//   const userId = user ? user.uid : '';
+
+// Use useMemo to ensure dataTypes array reference stability
+// const dataTypes = useMemo(
+//   () => [
+//     'userStatus',
+//     'drinkingSessionData',
+//     'preferences',
+//     'unconfirmedDays',
+//     'userData',
+//   ],
+//   [],
+// );
+
+//   // Use the custom hook to fetch data
+//   const {data, isLoading} = useFetchData(userId, dataTypes);
+
+// Prepare the value to be provided through the context
+// const value = useMemo(() => ({
+//   userStatusData: data.userStatusData,
+//   drinkingSessionData: data.drinkingSessionData,
+//   preferences: data.preferences,
+//   unconfirmedDays: data.unconfirmedDays,
+//   userData: data.userData,
+//   isLoading,
+// }), [data, isLoading]); // Only recalculate the value if data or isLoading changes
+
+//   return (
+//     <DatabaseDataContext.Provider value={value}>
+//       {children}
+//     </DatabaseDataContext.Provider>
+//   );
+// };
 
 export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
   children,

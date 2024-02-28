@@ -44,7 +44,7 @@ type CalendarColors = 'yellow' | 'red' | 'orange' | 'black' | 'green';
 type DayState = 'selected' | 'disabled' | 'today' | '';
 
 type SessionsCalendarProps = {
-  drinkingSessionData: DrinkingSessionList | null;
+  drinkingSessionData: DrinkingSessionList | undefined;
   preferences: Preferences;
   visibleDateObject: DateObject;
   dispatch: React.Dispatch<any>;

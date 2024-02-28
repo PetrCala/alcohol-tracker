@@ -239,14 +239,15 @@ const HomeScreen = ({}: HomeScreenProps) => {
       <View style={commonStyles.headerContainer}>
         <View style={styles.profileContainer}>
           <TouchableOpacity
-            onPress={() =>
-              navigation.navigate('Profile Screen', {
-                userId: user.uid,
-                profileData: userData.profile,
-                friends: userData.friends,
-                drinkingSessionData: drinkingSessionData,
-                preferences: preferences,
-              })
+            onPress={
+              () => Navigation.navigate(ROUTES.PROFILE.getRoute(user.uid))
+              // navigation.navigate('Profile Screen', {
+              //   userId: user.uid,
+              //   profileData: userData.profile,
+              //   friends: userData.friends,
+              //   drinkingSessionData: drinkingSessionData,
+              //   preferences: preferences,
+              // })
             }
             style={styles.profileButton}>
             <ProfileImage

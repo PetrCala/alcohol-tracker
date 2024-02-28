@@ -9,10 +9,10 @@
   TouchableOpacity,
   View,
 } from 'react-native';
+import PropTypes from 'prop-types';
 import MenuIcon from '../../components/Buttons/MenuIcon';
 import commonStyles from '../../styles/commonStyles';
 import {useFirebase} from '../../context/global/FirebaseContext';
-import {ProfileProps} from '@src/types/screens';
 import {StatData, StatsOverview} from '@components/Items/StatOverview';
 import ProfileOverview from '@components/Social/ProfileOverview';
 import {useEffect, useMemo, useReducer} from 'react';
@@ -37,7 +37,13 @@ import {
   DrinkingSessionList,
   FriendList,
   Preferences,
+  Profile,
 } from '@src/types/database';
+import {StackScreenProps} from '@react-navigation/stack';
+import {ProfileNavigatorParamList} from '@libs/Navigation/types';
+import SCREENS from '@src/SCREENS';
+import Navigation from '@libs/Navigation/Navigation';
+import DBPATHS from '@database/DBPATHS';
 
 interface State {
   isLoading: boolean;
@@ -105,13 +111,16 @@ const reducer = (state: State, action: Action): State => {
   }
 };
 
-const ProfileScreen = ({route, navigation}: ProfileProps) => {
-  if (!route || !navigation) return null;
+type ProfileScreenProps = StackScreenProps<
+  ProfileNavigatorParamList,
+  typeof SCREENS.PROFILE.ROOT
+>;
+
+const ProfileScreen = ({route}: ProfileScreenProps) => {
   const {auth, db, storage} = useFirebase();
-  const user = auth.currentUser;
-  const {userId, profileData, friends, drinkingSessionData, preferences} =
-    route.params;
   const {userData} = getDatabaseData();
+  const {userId} = route.params;
+  const user = auth.currentUser;
   const [state, dispatch] = useReducer(reducer, initialState);
 
   // Define your stats data
@@ -126,6 +135,7 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
     const fetchData = async () => {
       dispatch({type: 'SET_IS_LOADING', payload: true});
 
+      // Here use the custom data hook that fetches all data based on the specified data that the user needs to fetch
       try {
         let userSessions: DrinkingSessionArray | null = drinkingSessionData;
         let userPreferences: Preferences | null = preferences;
@@ -133,14 +143,14 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
         if (!userSessions) {
           const newSessions: DrinkingSessionList | null = await readDataOnce(
             db,
-            `user_drinking_sessions/${userId}`,
+            DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(userId),
           );
           userSessions = newSessions ? Object.values(newSessions) : [];
         }
         if (!userPreferences) {
           userPreferences = await readDataOnce(
             db,
-            `user_preferences/${userId}`,
+            DBPATHS.USER_PREFERENCES_USER_ID.getRoute(userId),
           );
         }
 
@@ -237,7 +247,7 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
     <View style={styles.mainContainer}>
       <MainHeader
         headerText={user?.uid === userId ? 'Profile' : 'Friend Overview'}
-        onGoBack={() => navigation.goBack()}
+        onGoBack={() => Navigation.goBack()}
       />
       <ScrollView
         style={styles.scrollView}
@@ -316,7 +326,7 @@ const ProfileScreen = ({route, navigation}: ProfileProps) => {
         setVisibility={(visible: boolean) =>
           dispatch({type: 'SET_MANAGE_FRIEND_MODAL_VISIBLE', payload: visible})
         }
-        onGoBack={() => navigation.goBack()}
+        onGoBack={() => Navigation.goBack()}
         friendId={userId}
       />
     </View>
