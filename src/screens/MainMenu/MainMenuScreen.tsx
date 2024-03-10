@@ -22,7 +22,6 @@ import {listenForDataChanges, readDataOnce} from '@database/baseFunctions';
 import InputTextPopup from '@components/Popups/InputTextPopup';
 import UserOffline from '@components/UserOffline';
 import {useUserConnection} from '@context/global/UserConnectionContext';
-import {getDatabaseData} from '@context/global/DatabaseDataContext';
 import ItemListPopup from '@components/Popups/ItemListPopup';
 import {useFirebase} from '@context/global/FirebaseContext';
 import MainHeader from '@components/Header/MainHeader';
@@ -35,6 +34,7 @@ import {MainMenuNavigatorParamList} from '@navigation/types';
 import SCREENS from '@src/SCREENS';
 import Navigation from '@navigation/Navigation';
 import ROUTES from '@src/ROUTES';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
 
 type MainMenuButtonData = {
   label: string;
@@ -69,7 +69,7 @@ type MainMenuScreenProps = StackScreenProps<
 >;
 
 const MainMenuScreen = ({route}: MainMenuScreenProps) => {
-  const {userData, preferences} = getDatabaseData();
+  const {userData, preferences} = useDatabaseData();
   // Context, database, and authentification
   const {auth, db} = useFirebase();
   const user = auth.currentUser;

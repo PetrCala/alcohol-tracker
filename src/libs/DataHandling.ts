@@ -20,6 +20,7 @@ import type {
 } from '@src/types/database';
 import CONST from '../CONST';
 import {MeasureType} from '@src/types/database/DatabaseCommon';
+import {isEmptyObject} from '@src/types/utils/EmptyObject';
 
 export function formatDate(date: Date): DateString {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
@@ -278,6 +279,7 @@ export function getSingleMonthDrinkingSessions(
   sessions: DrinkingSessionArray,
   untilToday: boolean = false,
 ) {
+  if (!sessions) return [];
   date.setHours(0, 0, 0, 0); // To midnight
   // Find the beginning date
   let firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
@@ -403,6 +405,7 @@ export function sumUnitsOfSingleType(
   unitsObject: UnitsList,
   unitType: UnitKey,
 ): number {
+  if (!unitsObject) return 0;
   return Object.values(unitsObject).reduce((total, session) => {
     return total + (session[unitType] ?? 0);
   }, 0);
@@ -414,6 +417,7 @@ export function sumUnitsOfSingleType(
  * @returns The sum
  */
 export function sumUnitTypes(unitTypes: Units): number {
+  if (!unitTypes) return 0;
   return Object.values(unitTypes).reduce(
     (subTotal, unitCount) => subTotal + (unitCount ?? 0),
     0,
@@ -463,6 +467,7 @@ export function sumAllPoints(
  * @return Timestamp of the last unit consumed
  */
 export function getLastUnitAddedTime(session: DrinkingSession): number | null {
+  if (!session.units) return null;
   const timestamps = Object.keys(session.units).map(Number); // All timestamps
   // Return the maximum timestamp or null if there aren't any
   return timestamps.length ? Math.max(...timestamps) : null;
@@ -518,6 +523,7 @@ export const calculateThisMonthPoints = (
   sessions: DrinkingSessionArray,
   unitsToPoints: UnitsToPoints,
 ): number => {
+  if (!sessions) return 0;
   // Subset to this month's sessions only
   const currentDate = timestampToDate(dateObject.timestamp);
   const sessionsThisMonth = getSingleMonthDrinkingSessions(
@@ -537,6 +543,7 @@ export const calculateThisMonthPoints = (
  * @param units Units kind of object listing each unit to add and its amount
  */
 export const addUnits = (existingUnits: UnitsList, units: Units): UnitsList => {
+  if (isEmptyObject(units)) return existingUnits;
   let newUnits: UnitsList = {
     ...existingUnits,
     [Date.now()]: units,

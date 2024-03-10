@@ -49,14 +49,10 @@ import Navigation from '@navigation/Navigation';
 import {StackScreenProps} from '@react-navigation/stack';
 import {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
-import {getDatabaseData} from '@context/global/DatabaseDataContext';
-import {
-  extractSessionOrEmpty,
-  getEmptySession,
-  isEmptySession,
-} from '@libs/SessionUtils';
+import {extractSessionOrEmpty, isEmptySession} from '@libs/SessionUtils';
 import ROUTES from '@src/ROUTES';
 import compose from '@libs/compose';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
 
 type LiveSessionScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -69,7 +65,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
-  const {preferences, drinkingSessionData} = getDatabaseData();
+  const {preferences, drinkingSessionData} = useDatabaseData();
   // const session = extractSessionOrEmpty(sessionId, drinkingSessionData);
   const [session, setSession] = useState<DrinkingSession>(
     extractSessionOrEmpty(sessionId, drinkingSessionData),
@@ -371,6 +367,8 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
   }
   if (!preferences || !drinkingSessionData) return;
   if (isEmptySession(session)) return;
+
+  console.log(session);
 
   return (
     <>

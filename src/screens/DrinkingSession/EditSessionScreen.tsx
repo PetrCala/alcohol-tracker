@@ -10,7 +10,6 @@ import {
   View,
 } from 'react-native';
 import BasicButton from '../../components/Buttons/BasicButton';
-import {EditSessionScreenProps} from '../../types/screens';
 import {DrinkingSession, Units, UnitsList} from '../../types/database';
 import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
 import {useFirebase} from '../../context/global/FirebaseContext';
@@ -35,21 +34,33 @@ import {useUserConnection} from '../../context/global/UserConnectionContext';
 import UserOffline from '../../components/UserOffline';
 import UnitTypesView from '../../components/UnitTypesView';
 import SessionDetailsSlider from '../../components/SessionDetailsSlider';
-import {getDatabaseData} from '../../context/global/DatabaseDataContext';
 import CONST from '@src/CONST';
 import MainHeader from '@components/Header/MainHeader';
 import MainHeaderButton from '@components/Header/MainHeaderButton';
 import {isEqual} from 'lodash';
 import DrinkDataProps from '@src/types/various/DrinkDataProps';
 import Navigation from '@navigation/Navigation';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
+import {StackScreenProps} from '@react-navigation/stack';
+import {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
+import SCREENS from '@src/SCREENS';
+import {extractSessionOrEmpty} from '@libs/SessionUtils';
+import ROUTES from '@src/ROUTES';
+
+type EditSessionScreenProps = StackScreenProps<
+  DrinkingSessionNavigatorParamList,
+  typeof SCREENS.DRINKING_SESSION.EDIT
+>;
 
 const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
-  if (!route || !navigation) return null; // Should never be null
-  const {session, sessionKey} = route.params;
+  const {sessionId} = route.params;
   const {auth} = useFirebase();
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
-  const {preferences} = getDatabaseData();
+  const {preferences, drinkingSessionData} = useDatabaseData();
+  const [session, setSession] = useState<DrinkingSession>(
+    extractSessionOrEmpty(sessionId, drinkingSessionData),
+  );
   // Units
   const [currentUnits, setCurrentUnits] = useState<UnitsList>(session.units);
   const [totalPoints, setTotalPoints] = useState<number>(0);
@@ -169,7 +180,7 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
   const handleConfirmDelete = async () => {
     if (!user) return;
     try {
-      await removeDrinkingSessionData(db, user.uid, sessionKey);
+      await removeDrinkingSessionData(db, user.uid, sessionId);
     } catch (error: any) {
       Alert.alert(
         'Failed to delete the session',
@@ -179,9 +190,7 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
       return;
     }
     setDeleteModalVisible(false);
-    navigation.navigate('Day Overview Screen', {
-      dateObject: dateToDateObject(sessionDate),
-    });
+    Navigation.navigate(ROUTES.DAY_OVERVIEW.getRoute(sessionDate.getTime()));
   };
 
   const hasSessionChanged = () => {
@@ -199,21 +208,17 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
   const confirmGoBack = (
     finalSessionData: DrinkingSession, // Decide which session to go back with
   ) => {
-    const previousRouteName = Navigation.getPreviousRouteName(navigation);
-    // Navigate back explicitly to avoid errors
-    if (previousRouteName.includes('Day Overview Screen')) {
-      const sessionDateObject = dateToDateObject(sessionDate);
-      navigation.navigate('Day Overview Screen', {
-        dateObject: sessionDateObject,
-      });
-    } else if (previousRouteName.includes('Session Summary Screen')) {
-      navigation.navigate('Session Summary Screen', {
-        session: finalSessionData,
-        sessionKey: sessionKey,
-      });
-    } else {
-      navigation.goBack();
-    }
+    // TODO
+    // const previousRouteName = Navigation.getPreviousRouteName(navigation);
+    // const previousRouteName = SCREENS.DAY_OVERVIEW;
+    // // Navigate back explicitly to avoid errors
+    // if (previousRouteName == SCREENS.DAY_OVERVIEW) {
+    //   Navigation.navigate(ROUTES.DAY_OVERVIEW.getRoute(sessionDate.getTime()));
+    // } else if (previousRouteName == SCREENS.DRINKING_SESSION.SUMMARY) {
+    //   Navigation.navigate(ROUTES.DRINKING_SESSION_SUMMARY.getRoute(sessionId));
+    // } else {
+    navigation.goBack();
+    // }
   };
 
   async function saveSession(db: any, userId: string) {
@@ -237,7 +242,7 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
           db,
           userId,
           newSessionData,
-          sessionKey,
+          sessionId,
           false, // Do not update live status
         );
       } catch (error: any) {
@@ -291,7 +296,7 @@ const EditSessionScreen = ({route, navigation}: EditSessionScreenProps) => {
 
   if (!isOnline) return <UserOffline />;
   if (!user || !preferences) {
-    navigation.replace('Login Screen');
+    Navigation.navigate(ROUTES.LOGIN);
     return null;
   }
   if (!db) return null; // Should never be null

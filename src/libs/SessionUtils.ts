@@ -3,11 +3,17 @@ import {
   DrinkingSessionId,
   DrinkingSessionList,
 } from '@src/types/database';
+import CONST from '@src/CONST';
 
 /**
  * @returns An empty drinking session object.
  */
-function getEmptySession(): DrinkingSession {
+function getEmptySession(usePlaceholderUnits?: boolean): DrinkingSession {
+  // const currentUnits = usePlaceholderUnits
+  //   ? {
+  //       now: {other: 1},
+  //     }
+  //   : {};
   return {
     start_time: 0,
     end_time: 0,
@@ -36,7 +42,7 @@ function isEmptySession(session: DrinkingSession): boolean {
  */
 function extractSessionOrEmpty(
   sessionId: DrinkingSessionId,
-  drinkingSessionData: DrinkingSessionList | null,
+  drinkingSessionData: DrinkingSessionList | undefined,
 ): DrinkingSession {
   if (
     drinkingSessionData &&

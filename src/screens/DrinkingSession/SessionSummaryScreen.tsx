@@ -1,5 +1,4 @@
 ﻿import {ScrollView, StyleSheet, Text, View} from 'react-native';
-import {SessionSummaryScreenProps} from '@src/types/screens';
 import MenuIcon from '@components/Buttons/MenuIcon';
 import {
   formatDate,
@@ -14,10 +13,17 @@ import {
 } from '@libs/DataHandling';
 import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
 import BasicButton from '@components/Buttons/BasicButton';
-import {getDatabaseData} from '@context/global/DatabaseDataContext';
 import MainHeader from '@components/Header/MainHeader';
 import CONST from '@src/CONST';
 import {DrinkingSession} from '@src/types/database';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
+import {StackScreenProps} from '@react-navigation/stack';
+import SCREENS from '@src/SCREENS';
+import {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
+import {useState} from 'react';
+import {extractSessionOrEmpty} from '@libs/SessionUtils';
+import Navigation from '@libs/Navigation/Navigation';
+import ROUTES from '@src/ROUTES';
 
 const SessionDataItem = ({
   heading,
@@ -48,14 +54,21 @@ const SessionDataItem = ({
   </View>
 );
 
+type SessionSummaryScreenProps = StackScreenProps<
+  DrinkingSessionNavigatorParamList,
+  typeof SCREENS.DRINKING_SESSION.SUMMARY
+>;
+
 const SessionSummaryScreen = ({
   route,
   navigation,
 }: SessionSummaryScreenProps) => {
-  if (!route || !navigation) return null; // Should never be null
-  const {session, sessionKey} = route.params;
-  const {preferences} = getDatabaseData();
+  const {sessionId} = route.params;
+  const {preferences, drinkingSessionData} = useDatabaseData();
   if (!preferences) return null; // Careful when writing hooks after this line
+  const [session, setSession] = useState<DrinkingSession>(
+    extractSessionOrEmpty(sessionId, drinkingSessionData),
+  );
   // Units info
   const totalUnits = sumAllUnits(session.units);
   const totalPoints = sumAllPoints(session.units, preferences.units_to_points);
@@ -84,11 +97,8 @@ const SessionSummaryScreen = ({
     lastUnitAdded = formatDateToTime(lastUnitAddedDate);
   }
 
-  const onEditSessionPress = (sessionKey: string, session: DrinkingSession) => {
-    navigation.navigate('Edit Session Screen', {
-      session: session,
-      sessionKey: sessionKey,
-    });
+  const onEditSessionPress = (sessionId: string) => {
+    Navigation.navigate(ROUTES.DRINKING_SESSION_EDIT.getRoute(sessionId));
   };
 
   const handleBackPress = () => {
@@ -135,7 +145,7 @@ const SessionSummaryScreen = ({
               iconSource={KirokuIcons.Edit}
               containerStyle={styles.menuIconContainer}
               iconStyle={styles.menuIcon}
-              onPress={() => onEditSessionPress(sessionKey, session)} // Use keyextractor to load id here
+              onPress={() => onEditSessionPress(sessionId)} // Use keyextractor to load id here
             />
           )
         }
