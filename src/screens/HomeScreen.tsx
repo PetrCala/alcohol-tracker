@@ -105,6 +105,7 @@ const HomeScreen = ({}: HomeScreenProps) => {
     unconfirmedDays,
     userData,
     isLoading,
+    refetch,
   } = useDatabaseData();
   const [state, dispatch] = useReducer(reducer, initialState);
   const sessionOngoing = userStatusData?.latest_session?.ongoing;
@@ -167,6 +168,7 @@ const HomeScreen = ({}: HomeScreenProps) => {
   const onRefresh = React.useCallback(() => {
     dispatch({type: 'SET_REFRESHING', payload: true});
     setTimeout(() => {
+      refetch();
       dispatch({type: 'SET_REFRESHING', payload: false});
       dispatch({
         type: 'SET_REFRESH_COUNTER',

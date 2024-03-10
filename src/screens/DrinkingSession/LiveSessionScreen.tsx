@@ -78,6 +78,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
   // Session details
   const [isBlackout, setIsBlackout] = useState<boolean>(session.blackout);
   const [note, setNote] = useState<string>(session.note);
+  const [sessionFinished, setSessionFinished] = useState<boolean>(false);
   // Time info
   const [pendingUpdate, setPendingUpdate] = useState(false);
   const [lastUpdate, setLastUpdate] = useState<number>(Date.now());
@@ -180,7 +181,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
 
   // Change database value once every second
   useEffect(() => {
-    if (!db || !user) return;
+    if (!user) return;
     // Compare previous values with current values
     const unitsChanged = prevUnits !== currentUnits;
     const blackoutChanged = prevIsBlackout !== isBlackout;
@@ -189,7 +190,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
     const anyValueChanged = unitsChanged || blackoutChanged || noteChanged;
 
     // Only schedule a database update if any hooks changed
-    if (anyValueChanged) {
+    if (anyValueChanged && !sessionFinished) {
       setDbSyncSuccessful(false);
       setPendingUpdate(true);
       const timer = setTimeout(async () => {
@@ -270,6 +271,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
           await sleep(1000 - timeSinceLastUpdate); // Wait for database synchronization
         }
         await endLiveDrinkingSession(db, userId, newSessionData, sessionId);
+        setSessionFinished(true);
       } catch (error: any) {
         Alert.alert(
           'Session save failed',

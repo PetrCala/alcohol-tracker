@@ -14,13 +14,12 @@ import {
 import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
 import BasicButton from '@components/Buttons/BasicButton';
 import MainHeader from '@components/Header/MainHeader';
-import CONST from '@src/CONST';
 import {DrinkingSession} from '@src/types/database';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {StackScreenProps} from '@react-navigation/stack';
 import SCREENS from '@src/SCREENS';
 import {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {extractSessionOrEmpty} from '@libs/SessionUtils';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
@@ -59,12 +58,9 @@ type SessionSummaryScreenProps = StackScreenProps<
   typeof SCREENS.DRINKING_SESSION.SUMMARY
 >;
 
-const SessionSummaryScreen = ({
-  route,
-  navigation,
-}: SessionSummaryScreenProps) => {
+const SessionSummaryScreen = ({route}: SessionSummaryScreenProps) => {
   const {sessionId} = route.params;
-  const {preferences, drinkingSessionData} = useDatabaseData();
+  const {preferences, drinkingSessionData, refetch} = useDatabaseData();
   if (!preferences) return null; // Careful when writing hooks after this line
   const [session, setSession] = useState<DrinkingSession>(
     extractSessionOrEmpty(sessionId, drinkingSessionData),
@@ -102,7 +98,7 @@ const SessionSummaryScreen = ({
   };
 
   const handleBackPress = () => {
-    navigation.goBack();
+    Navigation.goBack();
   };
 
   const generalData = [
@@ -132,6 +128,16 @@ const SessionSummaryScreen = ({
   let sessionColor = session.blackout
     ? 'black'
     : unitsToColors(totalUnits, preferences.units_to_colors);
+
+  // Trigger refetch on component mount
+  useEffect(() => {
+    refetch();
+  }, []);
+
+  useEffect(() => {
+    const newSession = extractSessionOrEmpty(sessionId, drinkingSessionData);
+    setSession(newSession);
+  }, [drinkingSessionData]);
 
   return (
     <>
@@ -203,7 +209,7 @@ const SessionSummaryScreen = ({
           text="Confirm"
           buttonStyle={styles.confirmButton}
           textStyle={styles.confirmButtonText}
-          onPress={() => navigation.goBack()}
+          onPress={() => Navigation.goBack()}
         />
       </View>
     </>
