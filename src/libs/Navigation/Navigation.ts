@@ -14,7 +14,7 @@ import CONST from '@src/CONST';
 import NAVIGATORS from '@src/NAVIGATORS';
 import type {Route} from '@src/ROUTES';
 import ROUTES from '@src/ROUTES';
-import {PROTECTED_SCREENS} from '@src/SCREENS';
+import SCREENS, {PROTECTED_SCREENS, Screen} from '@src/SCREENS';
 import type {EmptyObject} from '@src/types/utils/EmptyObject';
 import originalDismissModal from './dismissModal';
 import linkingConfig from './linkingConfig';
@@ -318,6 +318,21 @@ function getLastRouteName(): string | undefined {
 }
 
 /**
+ * Attempts to get the name of the last screen in the navigation stack.
+ * If the last screen is a modal, it will attempt to get the name of the last screen in the modal stack.
+ * If the last screen is a modal and the modal stack is empty, it will attempt to get the name of the screen before the modal.
+ *
+ * @returns The name of the last screen in the navigation stack.
+ */
+function getLastScreenName(): Screen {
+  const rootState = navigationRef.getRootState();
+  const route = rootState.routes.at(-1);
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  const screenParams = route?.state?.routes.at(-1)?.params as EmptyObject;
+  return (screenParams?.screen as Screen) ?? SCREENS.HOME;
+}
+
+/**
  * Checks if the navigation state contains routes that are protected (over the auth wall).
  *
  * @param state - react-navigation state object
@@ -377,6 +392,7 @@ export default {
   isNavigationReady,
   setIsNavigationReady,
   getLastRouteName,
+  getLastScreenName,
   getRouteNameFromStateEvent,
   waitForProtectedRoutes,
   closeFullScreen,

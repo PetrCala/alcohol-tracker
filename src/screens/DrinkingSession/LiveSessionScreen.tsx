@@ -190,6 +190,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
     const anyValueChanged = unitsChanged || blackoutChanged || noteChanged;
 
     // Only schedule a database update if any hooks changed
+    // Do not automatically save if the session is over
     if (anyValueChanged && !sessionFinished) {
       setDbSyncSuccessful(false);
       setPendingUpdate(true);

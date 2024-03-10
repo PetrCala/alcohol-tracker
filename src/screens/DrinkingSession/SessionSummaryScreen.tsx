@@ -98,7 +98,12 @@ const SessionSummaryScreen = ({route}: SessionSummaryScreenProps) => {
   };
 
   const handleBackPress = () => {
-    Navigation.goBack();
+    const lastScreenName = Navigation.getLastScreenName();
+    if (lastScreenName === SCREENS.DAY_OVERVIEW.ROOT) {
+      Navigation.goBack();
+    } else {
+      Navigation.navigate(ROUTES.HOME);
+    }
   };
 
   const generalData = [
@@ -209,7 +214,7 @@ const SessionSummaryScreen = ({route}: SessionSummaryScreenProps) => {
           text="Confirm"
           buttonStyle={styles.confirmButton}
           textStyle={styles.confirmButtonText}
-          onPress={() => Navigation.goBack()}
+          onPress={handleBackPress}
         />
       </View>
     </>
