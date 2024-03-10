@@ -2,6 +2,8 @@ import type {IsEqual, ValueOf} from 'type-fest';
 import type CONST from './CONST';
 import {DrinkingSessionId, UserId} from './types/database';
 import {timestampToDate, timestampToDateString} from '@libs/DataHandling';
+import DeepValueOf from './types/utils/DeepValueOf';
+import SCREENS from './SCREENS';
 
 const ROUTES = {
   // If the user opens this route, we'll redirect them to the path saved in the last visited path or to the home page if the last visited path is empty.
@@ -58,6 +60,13 @@ const ROUTES = {
   SETTINGS: 'settings',
 
   SOCIAL: 'social',
+
+  // Causes an error
+  // SOCIAL: {
+  //   route: 'social/:screen',
+  //   getRoute: (screen: DeepValueOf<typeof SCREENS.SOCIAL>) =>
+  //     `social/${screen}` as const,
+  // },
   SOCIAL_FRIEND_LIST: 'social/friend-list',
   SOCIAL_FRIEND_REQUESTS: 'social/friend-requests',
   SOCIAL_FRIEND_SEARCH: 'social/friend-search',

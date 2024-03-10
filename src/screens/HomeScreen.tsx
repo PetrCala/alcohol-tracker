@@ -26,7 +26,6 @@ import {useUserConnection} from '@context/global/UserConnectionContext';
 import UserOffline from '@components/UserOffline';
 import {updateUserLastOnline} from '@database/users';
 import {startLiveDrinkingSession} from '@database/drinkingSessions';
-import {getDatabaseData} from '@context/global/DatabaseDataContext';
 import commonStyles from '@src/styles/commonStyles';
 import {useFirebase} from '@context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
@@ -38,6 +37,7 @@ import Navigation from '@navigation/Navigation';
 import {StackScreenProps} from '@react-navigation/stack';
 import {BottomTabNavigatorParamList} from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
 
 interface State {
   visibleDateObject: DateObject;
@@ -105,7 +105,7 @@ const HomeScreen = ({}: HomeScreenProps) => {
     unconfirmedDays,
     userData,
     isLoading,
-  } = getDatabaseData();
+  } = useDatabaseData();
   const [state, dispatch] = useReducer(reducer, initialState);
   const sessionOngoing = userStatusData?.latest_session?.ongoing;
 
@@ -322,7 +322,10 @@ const HomeScreen = ({}: HomeScreenProps) => {
             containerStyle={styles.menuIconContainer}
             iconStyle={styles.menuIcon}
             onPress={() =>
-              navigation.navigate('Social Screen', {screen: 'Friend List'})
+              Navigation.navigate(
+                // ROUTES.SOCIAL.getRoute(SCREENS.SOCIAL.FRIEND_LIST),
+                ROUTES.SOCIAL_FRIEND_LIST,
+              )
             }
           />
           <MenuIcon

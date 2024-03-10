@@ -12,7 +12,6 @@ import commonStyles from '@src/styles/commonStyles';
 import {TabView} from 'react-native-tab-view';
 import FriendListScreen from './FriendListScreen';
 import FriendRequestScreen from './FriendRequestScreen';
-import {FriendListScreenProps, SocialScreenProps} from '@src/types/screens';
 import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
 import MainHeader from '@components/Header/MainHeader';
 import {getReceivedRequestsCount} from '@libs/FriendUtils';
@@ -20,6 +19,10 @@ import {useIsFocused} from '@react-navigation/native';
 import CONST from '@src/CONST';
 import {UserProps} from '@src/types/database';
 import FriendSearchScreen from './FriendSearchScreen';
+import {StackScreenProps} from '@react-navigation/stack';
+import SCREENS from '@src/SCREENS';
+import {SocialNavigatorParamList} from '@libs/Navigation/types';
+import Navigation from '@libs/Navigation/Navigation';
 
 type SocialFooterButtonProps = {
   index: number;
@@ -68,14 +71,18 @@ const SocialFooterButton: React.FC<SocialFooterButtonProps> = ({
   );
 };
 
+type SocialScreenProps = StackScreenProps<
+  SocialNavigatorParamList,
+  typeof SCREENS.SOCIAL.ROOT
+>;
+
 type RouteType = {
   key: string;
   title: string;
   userData: UserProps | null;
 };
 
-const SocialScreen = ({route, navigation}: SocialScreenProps) => {
-  if (!route || !navigation) return null;
+const SocialScreen = ({route}: SocialScreenProps) => {
   const {screen} = route.params;
   const {userData} = getDatabaseData();
   const [routes] = useState([
@@ -141,7 +148,7 @@ const SocialScreen = ({route, navigation}: SocialScreenProps) => {
 
   return (
     <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
-      <MainHeader headerText="Friends" onGoBack={() => navigation.goBack()} />
+      <MainHeader headerText="Friends" onGoBack={() => Navigation.goBack()} />
       <TabView
         navigationState={{index, routes}}
         renderScene={renderScene}

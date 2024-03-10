@@ -16,6 +16,7 @@ import type NAVIGATORS from '@src/NAVIGATORS';
 import type SCREENS from '@src/SCREENS';
 import type {Route as Routes} from '@src/ROUTES';
 import {DrinkingSession, DrinkingSessionId, Profile} from '@src/types/database';
+import DeepValueOf from '@src/types/utils/DeepValueOf';
 
 type NavigationRef = NavigationContainerRefWithCurrent<RootStackParamList>;
 
@@ -126,7 +127,9 @@ type SettingsNavigatorParamList = {
 };
 
 type SocialNavigatorParamList = {
-  [SCREENS.SOCIAL.ROOT]: undefined;
+  [SCREENS.SOCIAL.ROOT]: {
+    screen: DeepValueOf<typeof SCREENS.SOCIAL>;
+  };
   [SCREENS.SOCIAL.FRIEND_LIST]: undefined;
   [SCREENS.SOCIAL.FRIEND_REQUESTS]: undefined;
   [SCREENS.SOCIAL.FRIEND_SEARCH]: undefined;

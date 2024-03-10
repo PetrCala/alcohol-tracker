@@ -1,6 +1,5 @@
 import {useEffect, useState} from 'react';
-import {isEqual} from 'lodash';
-import {listenForDataChanges} from '@database/baseFunctions';
+import {readDataOnce} from '@database/baseFunctions'; // Ensure this import is added
 import DBPATHS from '@database/DBPATHS';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {
@@ -11,7 +10,6 @@ import {
   UserStatus,
 } from '@src/types/database';
 import {ValueOf} from 'type-fest';
-import DeepValueOf from '@src/types/utils/DeepValueOf';
 
 // Define a type for the hook's return value
 type UseFetchUserDataReturn = {
@@ -28,28 +26,6 @@ type UseFetchUserDataReturn = {
 type UserFetchDataKey = keyof UseFetchUserDataReturn['data'];
 type UserFetchDataValue = ValueOf<UseFetchUserDataReturn['data']>;
 
-/**
- * Custom hook to fetch and listen for updates on specified user-related data from the database.
- *
- * This hook abstracts away the database fetching logic, allowing components to request various types
- * of data based on a user ID. It listens for real-time updates to the specified data types and
- * manages the loading state.
- *
- * @param {string} userId The ID of the user for whom data is to be fetched.
- * @param {DataType[]} dataTypes An array of data types to fetch for the user.
- *
- * @returns {UseFetchDataReturn} An object containing the fetched data and a loading state.
- *
- * @example
- * const { data, isLoading } = useFetchData(userId, ['userStatus', 'preferences']);
- * if (isLoading) return <LoadingSpinner />;
- * return (
- *   <div>
- *     <p>User Status: {data.userStatusData?.status}</p>
- *     <p>Preferences: {JSON.stringify(data.preferences)}</p>
- *   </div>
- * );
- */
 const useFetchData = (
   userId: string,
   dataTypes: UserFetchDataKey[],
@@ -64,51 +40,51 @@ const useFetchData = (
       return;
     }
 
-    const stopListeningFns: Function[] = [];
-    setIsLoading(true);
+    const fetchData = async () => {
+      setIsLoading(true);
+      const promises = dataTypes.map(async dataType => {
+        let path;
+        switch (dataType) {
+          case 'userStatusData':
+            path = DBPATHS.USER_STATUS_USER_ID.getRoute(userId);
+            break;
+          case 'drinkingSessionData':
+            path = DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(userId);
+            break;
+          case 'preferences':
+            path = DBPATHS.USER_PREFERENCES_USER_ID.getRoute(userId);
+            break;
+          case 'unconfirmedDays':
+            path = DBPATHS.USER_UNCONFIRMED_DAYS_USER_ID.getRoute(userId);
+            break;
+          case 'userData':
+            path = DBPATHS.USERS_USER_ID.getRoute(userId);
+            break;
+        }
 
-    dataTypes.forEach(dataType => {
-      let path;
-      switch (dataType) {
-        case 'userStatusData':
-          path = DBPATHS.USER_STATUS_USER_ID.getRoute(userId);
-          break;
-        case 'drinkingSessionData':
-          path = DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(userId);
-          break;
-        case 'preferences':
-          path = DBPATHS.USER_PREFERENCES_USER_ID.getRoute(userId);
-          break;
-        case 'unconfirmedDays':
-          path = DBPATHS.USER_UNCONFIRMED_DAYS_USER_ID.getRoute(userId);
-          break;
-        case 'userData':
-          path = DBPATHS.USERS_USER_ID.getRoute(userId);
-          break;
-      }
+        if (path) {
+          const fetchedData = await readDataOnce(db, path);
+          return {[dataType]: fetchedData};
+        }
+        return {};
+      });
 
-      if (path) {
-        const stopListening = listenForDataChanges(
-          db,
-          path,
-          (fetchedData: any) => {
-            console.log('fetchedData', fetchedData);
-            setData(prevData => ({
-              ...prevData,
-              [dataType]: fetchedData,
-            }));
-          },
-        );
-        stopListeningFns.push(stopListening);
-      }
-    });
+      const results = await Promise.all(promises);
+      const newData = results.reduce(
+        (acc, currentData) => ({
+          ...acc,
+          ...currentData,
+        }),
+        {},
+      );
 
-    setIsLoading(false);
-
-    return () => {
-      stopListeningFns.forEach(stopListening => stopListening());
+      setData(newData);
+      setIsLoading(false);
     };
-  }, [userId, dataTypes, db]);
+
+    fetchData();
+    // }, [userId, dataTypes, db]);
+  }, []);
 
   return {
     data: {
