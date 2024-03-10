@@ -1,7 +1,7 @@
 import {DrinkingSession, DrinkingSessionId} from '@src/types/database';
 
 type DrinkingSessionKeyValue = {
-  sessionKey: DrinkingSessionId;
+  sessionId: DrinkingSessionId;
   session: DrinkingSession;
 };
 

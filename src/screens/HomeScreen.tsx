@@ -38,6 +38,7 @@ import {StackScreenProps} from '@react-navigation/stack';
 import {BottomTabNavigatorParamList} from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
+import {DateData} from 'react-native-calendars';
 
 interface State {
   visibleDateObject: DateObject;
@@ -306,7 +307,7 @@ const HomeScreen = ({}: HomeScreenProps) => {
           preferences={preferences}
           visibleDateObject={state.visibleDateObject}
           dispatch={dispatch}
-          onDayPress={(day: DateObject) => {
+          onDayPress={(day: DateData) => {
             Navigation.navigate(ROUTES.DAY_OVERVIEW.getRoute(day.timestamp));
           }}
         />

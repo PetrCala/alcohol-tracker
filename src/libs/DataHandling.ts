@@ -246,8 +246,9 @@ export function setDateToCurrentTime(inputDate: Date): Date {
  */
 export function getSingleDayDrinkingSessions(
   date: Date,
-  sessions: DrinkingSession[],
+  sessions: DrinkingSessionList | undefined,
 ) {
+  if (isEmptyObject(sessions)) return [];
   // Define the time boundaries
   date.setHours(0, 0, 0, 0); // set to start of day
 
@@ -258,7 +259,7 @@ export function getSingleDayDrinkingSessions(
   const todayUnix = Math.floor(date.getTime());
   const tomorrowUnix = Math.floor(tomorrow.getTime());
 
-  const filteredSessions = sessions.filter(
+  const filteredSessions = Object.values(sessions).filter(
     session =>
       session.start_time >= todayUnix && session.start_time < tomorrowUnix,
   );
@@ -725,6 +726,20 @@ export function objKeys(obj: any): string[] {
   // Check if obj is an object and not null
   if (typeof obj === 'object' && obj !== null) {
     return Object.keys(obj);
+  }
+  // Return an empty array for non-object inputs or null
+  return [];
+}
+
+/**
+ * Returns an array of values from the provided object.
+ * @param obj - The object to retrieve keys from.
+ * @returns An array of keys from the object.
+ */
+export function objVals(obj: any): string[] {
+  // Check if obj is an object and not null
+  if (typeof obj === 'object' && obj !== null) {
+    return Object.values(obj);
   }
   // Return an empty array for non-object inputs or null
   return [];

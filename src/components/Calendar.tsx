@@ -13,7 +13,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Calendar} from 'react-native-calendars';
+import {Calendar, DateData} from 'react-native-calendars';
 import {
   getPreviousMonth,
   getNextMonth,
@@ -49,7 +49,7 @@ type SessionsCalendarProps = {
   visibleDateObject: DateObject;
   dispatch: React.Dispatch<any>;
   // setVisibleDateObject: React.Dispatch<React.SetStateAction<DateObject>>;
-  onDayPress: (day: any) => void;
+  onDayPress: (day: DateData) => void;
 };
 
 type SessionsCalendarMarkedDates = {
@@ -73,12 +73,13 @@ const colorToTextColorMap: Record<CalendarColors, string> = {
 
 // Custom Day Component
 const DayComponent: React.FC<{
-  date: DateObject;
+  date: (string & DateData) | undefined;
   state: DayState;
   marking: DayMarking;
   theme: any;
-  onPress: (day: DateObject) => void;
+  onPress: (day: DateData) => void;
 }> = ({date, state, marking, theme, onPress}) => {
+  if (!date) return null;
   // Calculate the date information with memos to avoid recalculation
   const today = useMemo(() => new Date(), []);
   const tomorrow = useMemo(() => changeDateBySomeDays(today, 1), [today]);
@@ -88,7 +89,7 @@ const DayComponent: React.FC<{
   );
 
   const dateNoLaterThanToday = useCallback(
-    (date: DateObject): boolean => {
+    (date: DateData): boolean => {
       return date.timestamp < tomorrowMidnight;
     },
     [tomorrowMidnight],
@@ -104,7 +105,7 @@ const DayComponent: React.FC<{
     return textStyle;
   };
 
-  const getMarkingContainerStyle = (date: DateObject, marking: DayMarking) => {
+  const getMarkingContainerStyle = (date: DateData, marking: DayMarking) => {
     let baseStyle = styles.daySessionsMarkingContainer;
 
     if (state === 'disabled') {
@@ -253,7 +254,7 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
       current={visibleDateObject.dateString}
       dayComponent={({date, state, marking, theme}) => (
         <DayComponent
-          date={date as DateObject}
+          date={date}
           state={state as DayState}
           marking={marking as any}
           theme={theme as any}

@@ -1,4 +1,4 @@
-﻿import React, {useState, useEffect} from 'react';
+﻿import React, {useState, useEffect, useMemo} from 'react';
 import {
   Text,
   Image,
@@ -22,13 +22,17 @@ import {
   sumAllUnits,
   getZeroUnitsList,
   sumAllPoints,
+  objVals,
 } from '@libs/DataHandling';
 import LoadingData from '@components/LoadingData';
 // import { PreferencesData} from '../types/database';
 import UserOffline from '@components/UserOffline';
 import {useUserConnection} from '@context/global/UserConnectionContext';
-import {getDatabaseData} from '@context/global/DatabaseDataContext';
-import {DrinkingSession, Preferences} from '@src/types/database';
+import {
+  DrinkingSession,
+  DrinkingSessionArray,
+  Preferences,
+} from '@src/types/database';
 import CONST from '@src/CONST';
 import {generateDatabaseKey} from '@database/baseFunctions';
 import {useFirebase} from '@src/context/global/FirebaseContext';
@@ -40,13 +44,7 @@ import {DayOverviewNavigatorParamList} from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
-
-// type WorkspacesListRowProps = WithCurrentUserPersonalDetailsProps & {
-//     /** Name of the workspace */
-//     title: string;
-
-//     /** Account ID of the workspace's owner */
-//     ownerAccountID?: number;
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
 
 type DayOverviewScreenProps = StackScreenProps<
   DayOverviewNavigatorParamList,
@@ -58,34 +56,25 @@ const DayOverviewScreen = ({route}: DayOverviewScreenProps) => {
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
-  const {drinkingSessionData, drinkingSessionKeys, preferences} =
-    getDatabaseData();
+  const {drinkingSessionData, preferences, refetch} = useDatabaseData();
   const [date, setDate] = useState<Date>(timestampToDate(timestamp));
-  const [dailySessionData, setDailyData] = useState<DrinkingSession[]>([]);
   const [editMode, setEditMode] = useState<boolean>(false);
-  // Create a combined data object
-  const [combinedData, setCombinedData] = useState<DrinkingSessionKeyValue[]>(
-    [],
-  );
-
-  // Monitor the daily sessions data
-  useEffect(() => {
-    let newSessions = getSingleDayDrinkingSessions(date, drinkingSessionData);
-    setDailyData(newSessions);
-  }, [date, drinkingSessionData]);
+  const [dailyData, setDailyData] = useState<DrinkingSessionKeyValue[]>([]);
 
   // Monitor the combined data
-  useEffect(() => {
-    let newCombinedData = dailySessionData.map(
-      (session): DrinkingSessionKeyValue => {
-        return {
-          sessionKey: drinkingSessionKeys[drinkingSessionData.indexOf(session)],
-          session: session,
-        };
+  useMemo(() => {
+    if (!drinkingSessionData) {
+      setDailyData([]);
+      return;
+    }
+    let relevantData = getSingleDayDrinkingSessions(date, drinkingSessionData);
+    let newDailyData = Object.entries(relevantData).map(
+      ([sessionId, session]) => {
+        return {sessionId: sessionId, session: session};
       },
     );
-    setCombinedData(newCombinedData);
-  }, [dailySessionData]);
+    setDailyData(newDailyData);
+  }, [date, drinkingSessionData]);
 
   const onSessionButtonPress = (
     sessionKey: string,
@@ -110,7 +99,7 @@ const DayOverviewScreen = ({route}: DayOverviewScreenProps) => {
     });
   };
 
-  const DrinkingSession = ({sessionKey, session}: DrinkingSessionKeyValue) => {
+  const DrinkingSession = ({sessionId, session}: DrinkingSessionKeyValue) => {
     if (!preferences) return;
     // Calculate the session color
     var totalUnits = sumAllUnits(session.units);
@@ -134,7 +123,7 @@ const DayOverviewScreen = ({route}: DayOverviewScreenProps) => {
             <TouchableOpacity
               style={styles.menuDrinkingSessionButton}
               onPress={() =>
-                onSessionButtonPress(sessionKey, session, preferences)
+                onSessionButtonPress(sessionId, session, preferences)
               }>
               <Text
                 style={[
@@ -164,7 +153,7 @@ const DayOverviewScreen = ({route}: DayOverviewScreenProps) => {
               <TouchableOpacity
                 style={styles.ongoingSessionButton}
                 onPress={() =>
-                  onSessionButtonPress(sessionKey, session, preferences)
+                  onSessionButtonPress(sessionId, session, preferences)
                 }>
                 <Text style={styles.ongoingSessionText}>In Session</Text>
               </TouchableOpacity>
@@ -178,7 +167,7 @@ const DayOverviewScreen = ({route}: DayOverviewScreenProps) => {
                 session.blackout === true ? {backgroundColor: 'white'} : {},
               ]}
               iconStyle={styles.menuIcon}
-              onPress={() => onEditSessionPress(session, sessionKey)} // Use keyextractor to load id here
+              onPress={() => onEditSessionPress(session, sessionId)} // Use keyextractor to load id here
             />
           ) : null}
         </View>
@@ -188,7 +177,7 @@ const DayOverviewScreen = ({route}: DayOverviewScreenProps) => {
 
   const renderDrinkingSession = ({item}: {item: DrinkingSessionKeyValue}) => {
     return (
-      <DrinkingSession sessionKey={item.sessionKey} session={item.session} />
+      <DrinkingSession sessionId={item.sessionId} session={item.session} />
     );
   };
 
@@ -221,11 +210,11 @@ const DayOverviewScreen = ({route}: DayOverviewScreenProps) => {
       note: '',
       units: getZeroUnitsList(),
     };
-    let newSessionKey = generateDatabaseKey(
+    let newSessionId = generateDatabaseKey(
       db,
       `user_drinking_sessions/${user.uid}`,
     );
-    if (!newSessionKey) {
+    if (!newSessionId) {
       Alert.alert('Error', 'Could not generate a new session key.');
       return;
     }
@@ -235,7 +224,7 @@ const DayOverviewScreen = ({route}: DayOverviewScreenProps) => {
         onPress={() =>
           navigation.navigate('Edit Session Screen', {
             session: newSession,
-            sessionKey: newSessionKey,
+            sessionId: newSessionId,
           })
         }>
         <Image source={KirokuIcons.Plus} style={styles.addSessionImage} />
@@ -260,6 +249,11 @@ const DayOverviewScreen = ({route}: DayOverviewScreenProps) => {
   //         console.log(newSessions.length)
   //     }, [date, drinkingSessionData])
   // );
+
+  // Trigger refetch on component mount
+  useEffect(() => {
+    refetch();
+  }, []);
 
   if (!isOnline) return <UserOffline />;
   if (!date) return <LoadingData />;
@@ -288,9 +282,9 @@ const DayOverviewScreen = ({route}: DayOverviewScreenProps) => {
         </Text>
         {drinkingSessionData ? (
           <FlatList
-            data={combinedData}
+            data={dailyData}
             renderItem={renderDrinkingSession}
-            keyExtractor={item => String(item.sessionKey)} // Use start time as id
+            keyExtractor={item => String(item.sessionId)} // Use start time as id
             ListEmptyComponent={noDrinkingSessionsComponent}
             ListFooterComponent={addSessionButton}
             ListFooterComponentStyle={styles.addSessionButtonContainer}
