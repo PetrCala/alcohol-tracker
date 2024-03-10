@@ -1,6 +1,6 @@
-﻿import React, {useState, useRef} from 'react';
+﻿import React, {useState, useRef, useMemo} from 'react';
 import {Keyboard, TextInput, TouchableOpacity, View} from 'react-native';
-import {addUnits, removeUnits} from '../../libs/DataHandling';
+import {addUnits, removeUnits, sumUnitsOfSingleType} from '@libs/DataHandling';
 import {UnitKey, Units, UnitsList} from '@src/types/database';
 
 type SessionUnitsInputWindowProps = {
@@ -8,8 +8,6 @@ type SessionUnitsInputWindowProps = {
   currentUnits: UnitsList | undefined;
   setCurrentUnits: (newUnits: UnitsList | undefined) => void;
   availableUnits: number;
-  typeSum: number;
-  setTypeSum: React.Dispatch<React.SetStateAction<number>>;
   styles: {
     unitsInputContainer: {};
     unitsInputButton: {};
@@ -22,11 +20,11 @@ const SessionUnitsInputWindow = ({
   currentUnits,
   setCurrentUnits,
   availableUnits,
-  typeSum,
-  setTypeSum,
   styles,
 }: SessionUnitsInputWindowProps) => {
-  const [inputValue, setInputValue] = useState<string>(typeSum.toString());
+  const [inputValue, setInputValue] = useState<string>(
+    sumUnitsOfSingleType(currentUnits, unitKey).toString(),
+  );
   const inputRef = useRef<TextInput>(null);
 
   const handleKeyPress = (event: {nativeEvent: {key: string}}): void => {
@@ -79,6 +77,7 @@ const SessionUnitsInputWindow = ({
     if (isNaN(numericValue)) {
       numericValue = 0;
     }
+    const typeSum = parseFloat(inputValue);
 
     if (numericValue == typeSum) return; // Do nothing if the value is the same
     // Determine whether the new value is higher or lower than the current one
@@ -94,7 +93,6 @@ const SessionUnitsInputWindow = ({
       newUnits = removeUnits(newUnits, unitKey, numberToRemove);
     }
     setCurrentUnits(newUnits);
-    setTypeSum(numericValue);
   };
 
   const handleContainerPress = () => {
@@ -108,6 +106,10 @@ const SessionUnitsInputWindow = ({
     }
   };
 
+  useMemo(() => {
+    setInputValue(sumUnitsOfSingleType(currentUnits, unitKey).toString());
+  }, [currentUnits, unitKey]);
+
   return (
     <View style={styles.unitsInputContainer}>
       <TouchableOpacity
@@ -117,7 +119,7 @@ const SessionUnitsInputWindow = ({
         <TextInput
           ref={inputRef}
           style={styles.unitsInputText}
-          value={typeSum.toString()}
+          value={inputValue}
           onKeyPress={handleKeyPress}
           keyboardType="numeric"
           caretHidden={true}

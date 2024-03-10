@@ -75,28 +75,6 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
   );
   const [totalPoints, setTotalPoints] = useState<number>(0);
   const [availableUnits, setAvailableUnits] = useState<number>(0);
-  // Hooks for immediate display info - update these manually to improve efficiency
-  const [smallBeerSum, setSmallBeerSum] = useState<number>(
-    sumUnitsOfSingleType(currentUnits, 'small_beer'),
-  );
-  const [beerSum, setBeerSum] = useState<number>(
-    sumUnitsOfSingleType(currentUnits, 'beer'),
-  );
-  const [cocktailSum, setCocktailSum] = useState<number>(
-    sumUnitsOfSingleType(currentUnits, 'cocktail'),
-  );
-  const [otherSum, setOtherSum] = useState<number>(
-    sumUnitsOfSingleType(currentUnits, 'other'),
-  );
-  const [strongShotSum, setStrongShotSum] = useState<number>(
-    sumUnitsOfSingleType(currentUnits, 'strong_shot'),
-  );
-  const [weakShotSum, setWeakShotSum] = useState<number>(
-    sumUnitsOfSingleType(currentUnits, 'weak_shot'),
-  );
-  const [wineSum, setWineSum] = useState<number>(
-    sumUnitsOfSingleType(currentUnits, 'wine'),
-  );
   // Session details
   const [isBlackout, setIsBlackout] = useState<boolean>(session.blackout);
   const [note, setNote] = useState<string>(session.note);
@@ -122,44 +100,30 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
     {
       key: 'small_beer',
       icon: KirokuIcons.Beer,
-      typeSum: smallBeerSum,
-      setTypeSum: setSmallBeerSum,
     },
     {
       key: 'beer',
       icon: KirokuIcons.Beer,
-      typeSum: beerSum,
-      setTypeSum: setBeerSum,
     },
     {
       key: 'wine',
       icon: KirokuIcons.Wine,
-      typeSum: wineSum,
-      setTypeSum: setWineSum,
     },
     {
       key: 'weak_shot',
       icon: KirokuIcons.WeakShot,
-      typeSum: weakShotSum,
-      setTypeSum: setWeakShotSum,
     },
     {
       key: 'strong_shot',
       icon: KirokuIcons.StrongShot,
-      typeSum: strongShotSum,
-      setTypeSum: setStrongShotSum,
     },
     {
       key: 'cocktail',
       icon: KirokuIcons.Cocktail,
-      typeSum: cocktailSum,
-      setTypeSum: setCocktailSum,
     },
     {
       key: 'other',
       icon: KirokuIcons.AlcoholAssortment,
-      typeSum: otherSum,
-      setTypeSum: setOtherSum,
     },
   ];
 
@@ -168,19 +132,17 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
       let unitsToAdd: Units = {other: 1};
       let newUnits: UnitsList | undefined = addUnits(currentUnits, unitsToAdd);
       setCurrentUnits(newUnits);
-      setOtherSum(otherSum + 1);
     }
   };
 
   const handleMonkeMinus = () => {
-    if (otherSum > 0) {
+    if (sumUnitsOfSingleType(currentUnits, CONST.UNITS.KEYS.OTHER) > 0) {
       let newUnits: UnitsList | undefined = removeUnits(
         currentUnits,
         'other',
         1,
       );
       setCurrentUnits(newUnits);
-      setOtherSum(otherSum - 1);
     }
     // Here, as else, maybe send an alert that there are other types of
     // units logged

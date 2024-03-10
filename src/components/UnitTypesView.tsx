@@ -29,8 +29,6 @@ const UnitTypesView = ({
           currentUnits={currentUnits}
           setCurrentUnits={setCurrentUnits}
           availableUnits={availableUnits}
-          typeSum={drink.typeSum}
-          setTypeSum={drink.setTypeSum}
         />
       ))}
     </View>

@@ -4,8 +4,6 @@ import {ImageSourcePropType} from 'react-native';
 type DrinkDataProps = {
   key: UnitKey;
   icon: ImageSourcePropType;
-  typeSum: number;
-  setTypeSum: React.Dispatch<React.SetStateAction<number>>;
 }[];
 
 export default DrinkDataProps;

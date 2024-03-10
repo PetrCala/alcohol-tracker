@@ -12,6 +12,7 @@ import {
   findUnitName,
   removeUnits,
   sumUnitTypes,
+  sumUnitsOfSingleType,
 } from '../libs/DataHandling';
 import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
 import CONST from '@src/CONST';
@@ -23,8 +24,6 @@ type DrinkingSessionUnitWindowProps = {
   currentUnits: UnitsList | undefined;
   setCurrentUnits: React.Dispatch<React.SetStateAction<UnitsList | undefined>>;
   availableUnits: number;
-  typeSum: number;
-  setTypeSum: React.Dispatch<React.SetStateAction<number>>;
 };
 
 const DrinkingSessionUnitWindow = ({
@@ -33,27 +32,23 @@ const DrinkingSessionUnitWindow = ({
   currentUnits,
   setCurrentUnits,
   availableUnits,
-  typeSum,
-  setTypeSum,
 }: DrinkingSessionUnitWindowProps) => {
   const handleAddUnits = (units: Units) => {
     let newUnitCount = sumUnitTypes(units); // Number of added units
     if (newUnitCount > 0 && newUnitCount <= availableUnits) {
       let newUnits: UnitsList | undefined = addUnits(currentUnits, units);
       setCurrentUnits(newUnits);
-      setTypeSum(typeSum + newUnitCount);
     }
   };
 
   const handleRemoveUnits = (unitType: UnitKey, count: number) => {
-    if (typeSum > 0) {
+    if (sumUnitsOfSingleType(currentUnits, unitKey) > 0) {
       let newUnits: UnitsList | undefined = removeUnits(
         currentUnits,
         unitType,
         count,
       );
       setCurrentUnits(newUnits);
-      setTypeSum(typeSum - count);
     }
   };
 
@@ -82,8 +77,6 @@ const DrinkingSessionUnitWindow = ({
         currentUnits={currentUnits}
         setCurrentUnits={setCurrentUnits}
         availableUnits={availableUnits}
-        typeSum={typeSum}
-        setTypeSum={setTypeSum}
         styles={styles}
       />
       <TouchableOpacity
