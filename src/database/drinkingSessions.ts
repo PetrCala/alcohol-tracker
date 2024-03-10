@@ -24,6 +24,7 @@ export async function saveDrinkingSessionData(
   updateStatus?: boolean,
 ): Promise<void> {
   newSessionData = removeZeroObjectsFromSession(newSessionData); // Delete the initial log of zero units that was used as a placeholder
+  newSessionData.units = newSessionData.units ?? {}; // Can not send undefined
   var updates: {[key: string]: any} = {};
   updates[drinkingSessionRef.getRoute(userId, sessionKey)] = newSessionData;
   if (updateStatus) {
@@ -51,6 +52,7 @@ export async function startLiveDrinkingSession(
   newSessionData: DrinkingSession,
   sessionKey: string,
 ): Promise<void> {
+  newSessionData.units = newSessionData.units ?? {}; // Can not send undefined
   var updates: {[key: string]: any} = {};
   const userStatusData: UserStatus = {
     last_online: new Date().getTime(),
@@ -77,6 +79,7 @@ export async function endLiveDrinkingSession(
   sessionKey: string,
 ): Promise<void> {
   newSessionData = removeZeroObjectsFromSession(newSessionData);
+  newSessionData.units = newSessionData.units ?? {}; // Can not send undefined
   var updates: {[key: string]: any} = {};
   const userStatusData: UserStatus = {
     // ETC - 1
@@ -141,9 +144,10 @@ export async function updateSessionUnits(
   db: Database,
   userId: string,
   sessionKey: string,
-  newUnits: UnitsList,
+  newUnits: UnitsList | undefined,
 ): Promise<void> {
   var updates: {[key: string]: UnitsList} = {};
-  updates[drinkingSessionUnitsRef.getRoute(userId, sessionKey)] = newUnits;
+  updates[drinkingSessionUnitsRef.getRoute(userId, sessionKey)] =
+    newUnits ?? {}; // Can not send undefined
   await update(ref(db), updates);
 }

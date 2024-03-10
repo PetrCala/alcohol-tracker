@@ -383,8 +383,8 @@ export function monthEntriesToColors(
  *
  * @param all_units Units to sum up.
  */
-export function sumAllUnits(units: UnitsList): number {
-  if (!units) return 0;
+export function sumAllUnits(units: UnitsList | undefined): number {
+  if (isEmptyObject(units)) return 0;
   return Object.values(units).reduce((total, unitTypes) => {
     return (
       total +
@@ -402,7 +402,7 @@ export function sumAllUnits(units: UnitsList): number {
  * @param unitType The type of unit to sum.
  */
 export function sumUnitsOfSingleType(
-  unitsObject: UnitsList,
+  unitsObject: UnitsList | undefined,
   unitType: UnitKey,
 ): number {
   if (!unitsObject) return 0;
@@ -441,10 +441,10 @@ export function isUnitTypeKey(key: string): key is keyof Units {
  * }, unitsToPoints)
  */
 export function sumAllPoints(
-  unitsObject: UnitsList,
+  unitsObject: UnitsList | undefined,
   unitsToPoints: Units,
 ): number {
-  if (!unitsObject) return 0;
+  if (isEmptyObject(unitsObject)) return 0;
   let totalPoints = 0;
   // Iterate over each timestamp in unitsObject
   for (const unitTypes of Object.values(unitsObject)) {
@@ -467,7 +467,7 @@ export function sumAllPoints(
  * @return Timestamp of the last unit consumed
  */
 export function getLastUnitAddedTime(session: DrinkingSession): number | null {
-  if (!session.units) return null;
+  if (isEmptyObject(session?.units)) return null;
   const timestamps = Object.keys(session.units).map(Number); // All timestamps
   // Return the maximum timestamp or null if there aren't any
   return timestamps.length ? Math.max(...timestamps) : null;
@@ -478,7 +478,7 @@ export function getLastUnitAddedTime(session: DrinkingSession): number | null {
 export function findOngoingSession(
   sessions: DrinkingSessionList,
 ): DrinkingSession | null {
-  if (!sessions) return null;
+  if (isEmptyObject(sessions)) return null;
   const ongoingSession = Object.values(sessions).find(
     session => session.ongoing === true,
   );
@@ -542,7 +542,10 @@ export const calculateThisMonthPoints = (
  *
  * @param units Units kind of object listing each unit to add and its amount
  */
-export const addUnits = (existingUnits: UnitsList, units: Units): UnitsList => {
+export const addUnits = (
+  existingUnits: UnitsList | undefined,
+  units: Units,
+): UnitsList | undefined => {
   if (isEmptyObject(units)) return existingUnits;
   let newUnits: UnitsList = {
     ...existingUnits,
@@ -558,10 +561,11 @@ export const addUnits = (existingUnits: UnitsList, units: Units): UnitsList => {
  * @param number Number of units to remove
  */
 export const removeUnits = (
-  existingUnits: UnitsList,
+  existingUnits: UnitsList | undefined,
   unitType: UnitKey,
   count: number,
-): UnitsList => {
+): UnitsList | undefined => {
+  if (isEmptyObject(existingUnits)) return existingUnits;
   let unitsToRemove = count;
   const updatedUnits: UnitsList = JSON.parse(JSON.stringify(existingUnits)); // Deep copy
   for (const timestamp of Object.keys(updatedUnits).sort((a, b) => +b - +a)) {
@@ -609,13 +613,18 @@ export const removeZeroObjectsFromSession = (
   // Clone the session object to avoid mutating the original object
   const updatedSession = {...session};
 
+  if (updatedSession.units === undefined) {
+    return updatedSession;
+  }
+
   // Go through each timestamp in the session's units object
   for (const timestamp in updatedSession.units) {
     // Check if all the unit values are set to 0
     const allZero = Object.values(CONST.UNITS.KEYS).every(
       key =>
-        updatedSession.units[timestamp][key] === 0 ||
-        updatedSession.units[timestamp][key] === undefined,
+        // ! to assert that the value is not undefined
+        updatedSession.units![timestamp][key] === 0 ||
+        updatedSession.units![timestamp][key] === undefined,
     );
 
     // If all unit values are 0, delete the timestamp from the units object, unless it is the last one

@@ -17,6 +17,7 @@ type DatabaseDataContextType = {
   unconfirmedDays?: UnconfirmedDays;
   userData?: UserProps;
   isLoading: boolean;
+  refetch: () => void;
 };
 
 export const DatabaseDataContext = createContext<
@@ -52,7 +53,7 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
     'userData',
   ];
 
-  const {data, isLoading} = useFetchData(userId, dataTypes);
+  const {data, isLoading, refetch} = useFetchData(userId, dataTypes);
 
   const value = useMemo(
     () => ({
@@ -62,8 +63,9 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
       unconfirmedDays: data.unconfirmedDays,
       userData: data.userData,
       isLoading,
+      refetch,
     }),
-    [data, isLoading],
+    [data, isLoading, refetch],
   );
 
   return (

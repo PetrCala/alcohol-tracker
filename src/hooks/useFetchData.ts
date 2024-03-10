@@ -11,16 +11,19 @@ import {
 } from '@src/types/database';
 import {ValueOf} from 'type-fest';
 
+type Data = {
+  userStatusData?: UserStatus;
+  drinkingSessionData?: DrinkingSessionList;
+  preferences?: Preferences;
+  unconfirmedDays?: UnconfirmedDays;
+  userData?: UserProps;
+};
+
 // Define a type for the hook's return value
 type UseFetchUserDataReturn = {
-  data: {
-    userStatusData?: UserStatus;
-    drinkingSessionData?: DrinkingSessionList;
-    preferences?: Preferences;
-    unconfirmedDays?: UnconfirmedDays;
-    userData?: UserProps;
-  };
+  data: Data;
   isLoading: boolean;
+  refetch: () => void;
 };
 
 type UserFetchDataKey = keyof UseFetchUserDataReturn['data'];
@@ -31,8 +34,11 @@ const useFetchData = (
   dataTypes: UserFetchDataKey[],
 ): UseFetchUserDataReturn => {
   const {db} = useFirebase();
+  const [refetchIndex, setRefetchIndex] = useState(0); // Used to trigger refetch
   const [data, setData] = useState<{[key in UserFetchDataKey]?: any}>({});
   const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  const refetch = () => setRefetchIndex(prev => prev + 1);
 
   useEffect(() => {
     if (!userId || !db) {
@@ -83,8 +89,7 @@ const useFetchData = (
     };
 
     fetchData();
-    // }, [userId, dataTypes, db]);
-  }, []);
+  }, [userId, db, refetchIndex]);
 
   return {
     data: {
@@ -95,6 +100,7 @@ const useFetchData = (
       userData: data.userData,
     },
     isLoading,
+    refetch,
   };
 };
 

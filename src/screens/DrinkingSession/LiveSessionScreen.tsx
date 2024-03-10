@@ -65,13 +65,14 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
-  const {preferences, drinkingSessionData} = useDatabaseData();
-  // const session = extractSessionOrEmpty(sessionId, drinkingSessionData);
+  const {preferences, drinkingSessionData, refetch} = useDatabaseData();
   const [session, setSession] = useState<DrinkingSession>(
     extractSessionOrEmpty(sessionId, drinkingSessionData),
   );
   // Units
-  const [currentUnits, setCurrentUnits] = useState<UnitsList>(session.units);
+  const [currentUnits, setCurrentUnits] = useState<UnitsList | undefined>(
+    session.units,
+  );
   const [totalPoints, setTotalPoints] = useState<number>(0);
   const [availableUnits, setAvailableUnits] = useState<number>(0);
   // Hooks for immediate display info - update these manually to improve efficiency
@@ -165,7 +166,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
   const handleMonkePlus = () => {
     if (availableUnits > 0) {
       let unitsToAdd: Units = {other: 1};
-      let newUnits: UnitsList = addUnits(currentUnits, unitsToAdd);
+      let newUnits: UnitsList | undefined = addUnits(currentUnits, unitsToAdd);
       setCurrentUnits(newUnits);
       setOtherSum(otherSum + 1);
     }
@@ -173,7 +174,11 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
 
   const handleMonkeMinus = () => {
     if (otherSum > 0) {
-      let newUnits: UnitsList = removeUnits(currentUnits, 'other', 1);
+      let newUnits: UnitsList | undefined = removeUnits(
+        currentUnits,
+        'other',
+        1,
+      );
       setCurrentUnits(newUnits);
       setOtherSum(otherSum - 1);
     }
@@ -188,6 +193,11 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
   const handleNoteChange = (value: string) => {
     setNote(value);
   };
+
+  // Trigger refetch on component mount
+  useEffect(() => {
+    refetch();
+  }, []);
 
   // Update the hooks whenever current units change
   useMemo(() => {
@@ -238,6 +248,10 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
             true, // Update live session status
           );
         } catch (error: any) {
+          console.log(
+            'Could not save the drinking session data',
+            error.message,
+          );
           throw new Error('Could not save the drinking session data');
         } finally {
           setPendingUpdate(false); // Data has been synchronized with DB
@@ -359,6 +373,14 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
     setSession(newSession);
   }, [drinkingSessionData]);
 
+  useMemo(() => {
+    if (session) {
+      setCurrentUnits(session.units);
+      setIsBlackout(session.blackout);
+      setNote(session.note);
+    }
+  }, [session]);
+
   if (!isOnline) return <UserOffline />;
   if (savingSession) return <LoadingData loadingText="Saving session..." />;
   if (!user) {
@@ -366,9 +388,6 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
     return;
   }
   if (!preferences || !drinkingSessionData) return;
-  if (isEmptySession(session)) return;
-
-  console.log(session);
 
   return (
     <>

@@ -5,8 +5,8 @@ import {UnitKey, Units, UnitsList} from '@src/types/database';
 
 type SessionUnitsInputWindowProps = {
   unitKey: UnitKey;
-  currentUnits: UnitsList;
-  setCurrentUnits: (newUnits: UnitsList) => void;
+  currentUnits: UnitsList | undefined;
+  setCurrentUnits: (newUnits: UnitsList | undefined) => void;
   availableUnits: number;
   typeSum: number;
   setTypeSum: React.Dispatch<React.SetStateAction<number>>;
@@ -82,7 +82,7 @@ const SessionUnitsInputWindow = ({
 
     if (numericValue == typeSum) return; // Do nothing if the value is the same
     // Determine whether the new value is higher or lower than the current one
-    let newUnits: UnitsList = {...currentUnits};
+    let newUnits: UnitsList | undefined = {...currentUnits};
     if (numericValue > typeSum) {
       // Add units
       let numberToAdd: number = numericValue - typeSum;

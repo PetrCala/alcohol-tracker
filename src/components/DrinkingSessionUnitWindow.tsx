@@ -20,8 +20,8 @@ import {UnitKey, Units, UnitsList} from '@src/types/database';
 type DrinkingSessionUnitWindowProps = {
   unitKey: UnitKey;
   iconSource: ImageSourcePropType;
-  currentUnits: UnitsList;
-  setCurrentUnits: React.Dispatch<React.SetStateAction<UnitsList>>;
+  currentUnits: UnitsList | undefined;
+  setCurrentUnits: React.Dispatch<React.SetStateAction<UnitsList | undefined>>;
   availableUnits: number;
   typeSum: number;
   setTypeSum: React.Dispatch<React.SetStateAction<number>>;
@@ -39,7 +39,7 @@ const DrinkingSessionUnitWindow = ({
   const handleAddUnits = (units: Units) => {
     let newUnitCount = sumUnitTypes(units); // Number of added units
     if (newUnitCount > 0 && newUnitCount <= availableUnits) {
-      let newUnits: UnitsList = addUnits(currentUnits, units);
+      let newUnits: UnitsList | undefined = addUnits(currentUnits, units);
       setCurrentUnits(newUnits);
       setTypeSum(typeSum + newUnitCount);
     }
@@ -47,7 +47,11 @@ const DrinkingSessionUnitWindow = ({
 
   const handleRemoveUnits = (unitType: UnitKey, count: number) => {
     if (typeSum > 0) {
-      let newUnits: UnitsList = removeUnits(currentUnits, unitType, count);
+      let newUnits: UnitsList | undefined = removeUnits(
+        currentUnits,
+        unitType,
+        count,
+      );
       setCurrentUnits(newUnits);
       setTypeSum(typeSum - count);
     }

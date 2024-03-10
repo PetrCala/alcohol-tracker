@@ -127,6 +127,7 @@ const HomeScreen = ({}: HomeScreenProps) => {
         },
         ongoing: true,
       };
+      console.log('sessionData', sessionData);
       const newSessionId = generateDatabaseKey(
         db,
         `user_drinking_sessions/${user.uid}`,
@@ -141,7 +142,6 @@ const HomeScreen = ({}: HomeScreenProps) => {
       sessionId = newSessionId;
       try {
         await startLiveDrinkingSession(db, user.uid, sessionData, sessionId);
-        Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(sessionId));
       } catch (error: any) {
         Alert.alert(
           'New session initialization failed',
@@ -159,8 +159,8 @@ const HomeScreen = ({}: HomeScreenProps) => {
         return;
       }
       sessionId = currentSessionId;
-      Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(sessionId));
     }
+    Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(sessionId));
     dispatch({type: 'SET_LOADING_NEW_SESSION', payload: false});
   };
 

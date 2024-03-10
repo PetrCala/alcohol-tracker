@@ -6,7 +6,7 @@ type DrinkingSessionId = string;
 type DrinkingSession = {
   start_time: number;
   end_time: number;
-  units: UnitsList;
+  units?: UnitsList;
   blackout: boolean;
   note: string;
   ongoing?: boolean;

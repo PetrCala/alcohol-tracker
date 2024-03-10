@@ -4,6 +4,7 @@ import {
   DrinkingSessionList,
 } from '@src/types/database';
 import CONST from '@src/CONST';
+import {isEmptyObject} from '@src/types/utils/EmptyObject';
 
 /**
  * @returns An empty drinking session object.
@@ -30,7 +31,7 @@ function isEmptySession(session: DrinkingSession): boolean {
   return (
     session.start_time === 0 &&
     session.end_time === 0 &&
-    Object.keys(session.units).length === 0 &&
+    isEmptyObject(session?.units) &&
     session.blackout === false &&
     session.note === ''
   );
@@ -44,6 +45,7 @@ function extractSessionOrEmpty(
   sessionId: DrinkingSessionId,
   drinkingSessionData: DrinkingSessionList | undefined,
 ): DrinkingSession {
+  if (isEmptyObject(drinkingSessionData)) return getEmptySession();
   if (
     drinkingSessionData &&
     Object.keys(drinkingSessionData).includes(sessionId)
