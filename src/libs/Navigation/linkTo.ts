@@ -263,7 +263,7 @@ export default function linkTo(
   ) {
     const minimalAction = getMinimalAction(action, navigation.getRootState());
     if (minimalAction) {
-      // There are situations where a route already exists on the current navigation stack
+      // There are situations w.paramshere a route already exists on the current navigation stack
       // But we want to push the same route instead of going back in the stack
       // Which would break the user navigation history
       if (!isActiveRoute && type === CONST.NAVIGATION.ACTION_TYPE.PUSH) {

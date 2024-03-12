@@ -21,6 +21,8 @@ import {
   calculateThisMonthPoints,
   getSingleMonthDrinkingSessions,
   timestampToDate,
+  formatDate,
+  timestampToDateString,
 } from '@libs/DataHandling';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import UserOffline from '@components/UserOffline';
@@ -308,7 +310,11 @@ const HomeScreen = ({}: HomeScreenProps) => {
           visibleDateObject={state.visibleDateObject}
           dispatch={dispatch}
           onDayPress={(day: DateData) => {
-            Navigation.navigate(ROUTES.DAY_OVERVIEW.getRoute(day.timestamp));
+            Navigation.navigate(
+              ROUTES.DAY_OVERVIEW.getRoute(
+                timestampToDateString(day.timestamp),
+              ),
+            );
           }}
         />
         <View style={{height: 200, backgroundColor: '#ffff99'}}></View>

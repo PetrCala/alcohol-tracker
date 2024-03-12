@@ -17,6 +17,7 @@ import type SCREENS from '@src/SCREENS';
 import type {Route as Routes} from '@src/ROUTES';
 import {DrinkingSession, DrinkingSessionId, Profile} from '@src/types/database';
 import DeepValueOf from '@src/types/utils/DeepValueOf';
+import {DateString} from '@src/types/time';
 
 type NavigationRef = NavigationContainerRefWithCurrent<RootStackParamList>;
 
@@ -95,7 +96,7 @@ type AchievementsNavigatorParamList = {
 
 type DayOverviewNavigatorParamList = {
   [SCREENS.DAY_OVERVIEW.ROOT]: {
-    timestamp: number;
+    date: DateString;
   };
 };
 

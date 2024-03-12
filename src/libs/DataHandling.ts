@@ -87,6 +87,10 @@ export function getTimestampAtNoon(date: Date): number {
   return dateAtMidnight.getTime();
 }
 
+export function dateStringToDate(dateString: DateString): Date {
+  return new Date(dateString);
+}
+
 /** Input a Date type object and change its day by a certain amount
  *
  * @param date Date type object
