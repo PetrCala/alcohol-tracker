@@ -240,7 +240,6 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
     }
     return new Promise(resolve => {
       const checkInterval = setInterval(() => {
-        console.log(pendingUpdate);
         if (!pendingUpdate) {
           clearInterval(checkInterval);
           resolve(true);
@@ -396,7 +395,6 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
     return;
   }
   if (!preferences) return;
-  console.log('pening update', pendingUpdate);
 
   return (
     <>
