@@ -80,9 +80,6 @@ const DrinkingSessionModalStackNavigator =
     [SCREENS.DRINKING_SESSION.ROOT]: () =>
       require('@screens/DrinkingSession/DrinkingSessionScreen')
         .default as React.ComponentType,
-    [SCREENS.DRINKING_SESSION.EDIT]: () =>
-      require('@screens/DrinkingSession/EditSessionScreen')
-        .default as React.ComponentType,
     [SCREENS.DRINKING_SESSION.LIVE]: () =>
       require('@screens/DrinkingSession/LiveSessionScreen')
         .default as React.ComponentType,

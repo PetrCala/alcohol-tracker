@@ -70,9 +70,6 @@ const config: LinkingOptions<RootStackParamList>['config'] = {
             [SCREENS.DRINKING_SESSION.LIVE]: {
               path: ROUTES.DRINKING_SESSION_LIVE.route,
             },
-            [SCREENS.DRINKING_SESSION.EDIT]: {
-              path: ROUTES.DRINKING_SESSION_EDIT.route,
-            },
             [SCREENS.DRINKING_SESSION.SUMMARY]: {
               path: ROUTES.DRINKING_SESSION_SUMMARY.route,
             },

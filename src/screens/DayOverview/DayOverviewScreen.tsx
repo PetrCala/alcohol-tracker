@@ -69,11 +69,10 @@ const DayOverviewScreen = ({route}: DayOverviewScreenProps) => {
       currentDate,
       drinkingSessionData,
     );
-    let newDailyData = Object.entries(relevantData).map(
-      ([sessionId, session]) => {
-        return {sessionId: sessionId, session: session};
-      },
-    );
+    let newDailyData = Object.entries(relevantData).map(([idx, session]) => ({
+      sessionId: Object.keys(drinkingSessionData)[Number(idx)],
+      session,
+    }));
     setDailyData(newDailyData);
   }, [currentDate, drinkingSessionData]);
 
@@ -91,7 +90,7 @@ const DayOverviewScreen = ({route}: DayOverviewScreenProps) => {
   };
 
   const onEditSessionPress = (sessionId: string) => {
-    Navigation.navigate(ROUTES.DRINKING_SESSION_EDIT.getRoute(sessionId));
+    Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(sessionId));
   };
 
   const DrinkingSession = ({sessionId, session}: DrinkingSessionKeyValue) => {
@@ -214,7 +213,7 @@ const DayOverviewScreen = ({route}: DayOverviewScreenProps) => {
         style={styles.addSessionButton}
         onPress={() =>
           Navigation.navigate(
-            ROUTES.DRINKING_SESSION_EDIT.getRoute(newSessionId as string),
+            ROUTES.DRINKING_SESSION_LIVE.getRoute(newSessionId as string),
           )
         }>
         <Image source={KirokuIcons.Plus} style={styles.addSessionImage} />

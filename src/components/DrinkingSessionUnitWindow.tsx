@@ -22,7 +22,7 @@ type DrinkingSessionUnitWindowProps = {
   unitKey: UnitKey;
   iconSource: ImageSourcePropType;
   currentUnits: UnitsList | undefined;
-  setCurrentUnits: React.Dispatch<React.SetStateAction<UnitsList | undefined>>;
+  setCurrentUnits: (newUnits: UnitsList | undefined) => void;
   availableUnits: number;
 };
 

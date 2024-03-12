@@ -6,7 +6,7 @@ import DrinkDataProps from '@src/types/various/DrinkDataProps';
 export type UnitTypesViewProps = {
   drinkData: DrinkDataProps;
   currentUnits: UnitsList | undefined;
-  setCurrentUnits: React.Dispatch<React.SetStateAction<UnitsList | undefined>>;
+  setCurrentUnits: (newUnits: UnitsList | undefined) => void;
   availableUnits: number;
 };
 

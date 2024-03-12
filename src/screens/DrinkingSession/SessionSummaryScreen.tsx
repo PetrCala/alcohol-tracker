@@ -94,7 +94,7 @@ const SessionSummaryScreen = ({route}: SessionSummaryScreenProps) => {
   }
 
   const onEditSessionPress = (sessionId: string) => {
-    Navigation.navigate(ROUTES.DRINKING_SESSION_EDIT.getRoute(sessionId));
+    Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(sessionId));
   };
 
   const handleBackPress = () => {

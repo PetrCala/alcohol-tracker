@@ -2,7 +2,7 @@
 import {
   ActivityIndicator,
   Alert,
-  ImageSourcePropType,
+  BackHandler,
   Keyboard,
   ScrollView,
   StyleSheet,
@@ -16,6 +16,7 @@ import {useFirebase} from '@context/global/FirebaseContext';
 import {
   discardLiveDrinkingSession,
   endLiveDrinkingSession,
+  removeDrinkingSessionData,
   saveDrinkingSessionData,
   updateSessionUnits,
 } from '@database/drinkingSessions';
@@ -28,6 +29,7 @@ import {
   sumAllPoints,
   sumUnitsOfSingleType,
   timestampToDate,
+  timestampToDateString,
   unitsToColors,
 } from '@libs/DataHandling';
 import {DrinkingSession, UnitKey, Units, UnitsList} from '@src/types/database';
@@ -51,8 +53,8 @@ import {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
 import {extractSessionOrEmpty, isEmptySession} from '@libs/SessionUtils';
 import ROUTES from '@src/ROUTES';
-import compose from '@libs/compose';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
+import {has, isEqual} from 'lodash';
 
 type LiveSessionScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -68,20 +70,17 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
   const {preferences, drinkingSessionData, refetch} = useDatabaseData();
   const [session, setSession] = useState<DrinkingSession>(
     extractSessionOrEmpty(sessionId, drinkingSessionData),
-  );
-  // Units
-  const [currentUnits, setCurrentUnits] = useState<UnitsList | undefined>(
-    session.units,
-  );
+  ); // Session as it is saved in database
+  const [currentSession, setCurrentSession] =
+    useState<DrinkingSession>(session);
+  const initialSession = useRef(currentSession);
+  // Session details
   const [totalPoints, setTotalPoints] = useState<number>(0);
   const [availableUnits, setAvailableUnits] = useState<number>(0);
-  // Session details
-  const [isBlackout, setIsBlackout] = useState<boolean>(session.blackout);
-  const [note, setNote] = useState<string>(session.note);
   const [sessionFinished, setSessionFinished] = useState<boolean>(false);
   // Time info
   const [pendingUpdate, setPendingUpdate] = useState(false);
-  const [lastUpdate, setLastUpdate] = useState<number>(Date.now());
+  const [lastUpdate, setLastUpdate] = useState<number>(Date.now() - 1000);
   const updateTimeout = 1000; // Synchronize with DB every x milliseconds
   const [dbSyncSuccessful, setDbSyncSuccessful] = useState(false);
   const sessionDate = timestampToDate(session.start_time);
@@ -95,6 +94,8 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
   const [discardModalVisible, setDiscardModalVisible] =
     useState<boolean>(false);
   const [savingSession, setSavingSession] = useState<boolean>(false);
+  const [showLeaveConfirmation, setShowLeaveConfirmation] = useState(false);
+  const sessionIsLive = currentSession?.ongoing;
   const scrollViewRef = useRef<ScrollView>(null); // To navigate the view
 
   const drinkData: DrinkDataProps = [
@@ -128,33 +129,46 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
     },
   ];
 
+  const hasSessionChanged = () => {
+    return !isEqual(initialSession.current, currentSession);
+  };
+
   const handleMonkePlus = () => {
     if (availableUnits > 0) {
       let unitsToAdd: Units = {other: 1};
-      let newUnits: UnitsList | undefined = addUnits(currentUnits, unitsToAdd);
-      setCurrentUnits(newUnits);
+      let newUnits: UnitsList | undefined = addUnits(
+        currentSession?.units,
+        unitsToAdd,
+      );
+      setCurrentSession({...currentSession, units: newUnits});
     }
   };
 
   const handleMonkeMinus = () => {
-    if (sumUnitsOfSingleType(currentUnits, CONST.UNITS.KEYS.OTHER) > 0) {
+    if (
+      sumUnitsOfSingleType(currentSession.units, CONST.UNITS.KEYS.OTHER) > 0
+    ) {
       let newUnits: UnitsList | undefined = removeUnits(
-        currentUnits,
+        currentSession.units,
         'other',
         1,
       );
-      setCurrentUnits(newUnits);
+      setCurrentSession({...currentSession, units: newUnits});
     }
     // Here, as else, maybe send an alert that there are other types of
     // units logged
   };
 
   const handleBlackoutChange = (value: boolean) => {
-    setIsBlackout(value);
+    setCurrentSession({...currentSession, blackout: value});
   };
 
   const handleNoteChange = (value: string) => {
-    setNote(value);
+    setCurrentSession({...currentSession, note: value});
+  };
+
+  const setCurrentUnits = (newUnits: UnitsList | undefined) => {
+    setCurrentSession({...currentSession, units: newUnits});
   };
 
   // Trigger refetch on component mount
@@ -166,42 +180,27 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
   useMemo(() => {
     if (!preferences) return;
     let newTotalPoints = sumAllPoints(
-      currentUnits,
+      currentSession.units,
       preferences.units_to_points,
     );
     let newAvailableUnits = CONST.MAX_ALLOWED_UNITS - newTotalPoints;
     setTotalPoints(newTotalPoints);
     setAvailableUnits(newAvailableUnits);
-  }, [currentUnits]);
+  }, [currentSession.units]);
 
-  // Monitor changes on screen using a custom hook
-  const prevUnits = usePrevious(currentUnits);
-  const prevIsBlackout = usePrevious(isBlackout);
-  const prevNote = usePrevious(note);
-
-  // Change database value once every second
+  // Change database value once every second (only for live sessions)
   useEffect(() => {
-    if (!user) return;
-    // Compare previous values with current values
-    const unitsChanged = prevUnits !== currentUnits;
-    const blackoutChanged = prevIsBlackout !== isBlackout;
-    const noteChanged = prevNote !== note;
-    // Determine if any value has changed
-    const anyValueChanged = unitsChanged || blackoutChanged || noteChanged;
+    if (!user || !sessionIsLive) return;
 
     // Only schedule a database update if any hooks changed
     // Do not automatically save if the session is over
-    if (anyValueChanged && !sessionFinished) {
+    if (hasSessionChanged() && !sessionFinished) {
       setDbSyncSuccessful(false);
       setPendingUpdate(true);
       const timer = setTimeout(async () => {
         try {
           let newSessionData: DrinkingSession = {
-            start_time: session.start_time,
-            end_time: session.end_time,
-            units: currentUnits,
-            blackout: isBlackout,
-            note: note,
+            ...currentSession,
             ongoing: true,
           };
           await saveDrinkingSessionData(
@@ -226,7 +225,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
       // Clear timer on unmount or when units changes
       return () => clearTimeout(timer);
     }
-  }, [currentUnits, isBlackout, note]);
+  }, [currentSession]);
 
   async function sleep(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -261,17 +260,24 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
     if (totalPoints > 0) {
       setSavingSession(true);
       let newSessionData: DrinkingSession = {
-        start_time: session.start_time,
-        end_time: Date.now(),
-        units: currentUnits,
-        blackout: isBlackout,
-        note: note,
+        ...currentSession,
+        end_time: sessionIsLive ? Date.now() : session.start_time + 1,
       };
       try {
         if (timeSinceLastUpdate < 1000) {
           await sleep(1000 - timeSinceLastUpdate); // Wait for database synchronization
         }
-        await endLiveDrinkingSession(db, userId, newSessionData, sessionId);
+        if (sessionIsLive) {
+          await endLiveDrinkingSession(db, userId, newSessionData, sessionId);
+        } else {
+          await saveDrinkingSessionData(
+            db,
+            userId,
+            newSessionData,
+            sessionId,
+            false, // Do not update live status
+          );
+        }
         setSessionFinished(true);
       } catch (error: any) {
         Alert.alert(
@@ -294,11 +300,14 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
   const handleConfirmDiscard = async () => {
     if (!db || !user) return;
     let timeSinceLastUpdate = Date.now() - lastUpdate;
-    if (timeSinceLastUpdate < 1000) {
+    if (timeSinceLastUpdate < 1000 && sessionIsLive) {
       await sleep(1000 - timeSinceLastUpdate); // Wait for database synchronization
     }
     try {
-      await discardLiveDrinkingSession(db, user.uid, sessionId);
+      const discardFunction = sessionIsLive
+        ? discardLiveDrinkingSession
+        : removeDrinkingSessionData;
+      await discardFunction(db, user.uid, sessionId);
     } catch (error: any) {
       Alert.alert(
         'Session discard failed',
@@ -306,11 +315,13 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
       );
     } finally {
       setDiscardModalVisible(false);
-      const lastRouteName = Navigation.getLastRouteName();
-      if (lastRouteName && lastRouteName.includes('Day Overview Screen')) {
+      const previousScreenName = Navigation.getLastScreenName(true);
+      if (previousScreenName == SCREENS.DAY_OVERVIEW.ROOT) {
         const sessionDateObject = dateToDateObject(sessionDate);
         Navigation.navigate(
-          ROUTES.DAY_OVERVIEW.getRoute(sessionDateObject.timestamp),
+          ROUTES.DAY_OVERVIEW.getRoute(
+            timestampToDateString(sessionDateObject.timestamp),
+          ),
         );
       } else {
         Navigation.navigate(ROUTES.HOME);
@@ -321,30 +332,43 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
   /** If an update is pending, update immediately before navigating away
    */
   const handleBackPress = async () => {
-    if (!db || !user) return;
-    if (pendingUpdate) {
+    if (!user) return;
+    if (pendingUpdate && sessionIsLive) {
       try {
-        await updateSessionUnits(db, user.uid, sessionId, currentUnits);
+        await updateSessionUnits(db, user.uid, sessionId, currentSession.units);
       } catch (error: any) {
         Alert.alert('Database synchronization failed', error.message);
       }
+    } else if (!sessionIsLive && hasSessionChanged()) {
+      setShowLeaveConfirmation(true); // Unsaved changes
+    } else {
+      confirmGoBack();
     }
-    // navigation.navigate("Main Screen");
+  };
+
+  const confirmGoBack = () => {
+    setShowLeaveConfirmation(false);
     Navigation.goBack();
   };
 
   useEffect(() => {
     const newSession = extractSessionOrEmpty(sessionId, drinkingSessionData);
     setSession(newSession);
-  }, [drinkingSessionData]);
+  }, [drinkingSessionData, sessionId]);
 
-  useMemo(() => {
-    if (session) {
-      setCurrentUnits(session.units);
-      setIsBlackout(session.blackout);
-      setNote(session.note);
-    }
-  }, [session]);
+  // Make the system back press toggle the go back handler
+  useEffect(() => {
+    const backAction = () => {
+      handleBackPress();
+      return true; // Prevent the event from bubbling up and being handled by the default handler
+    };
+
+    BackHandler.addEventListener('hardwareBackPress', backAction);
+
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', backAction);
+    };
+  }, [currentSession]);
 
   if (!isOnline) return <UserOffline />;
   if (savingSession) return <LoadingData loadingText="Saving session..." />;
@@ -414,16 +438,16 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
             <View style={styles.unitTypesContainer}>
               <UnitTypesView
                 drinkData={drinkData}
-                currentUnits={currentUnits}
+                currentUnits={currentSession.units}
                 setCurrentUnits={setCurrentUnits}
                 availableUnits={availableUnits}
               />
             </View>
             <SessionDetailsSlider
               scrollViewRef={scrollViewRef}
-              isBlackout={isBlackout}
+              isBlackout={currentSession.blackout}
               onBlackoutChange={handleBlackoutChange}
-              note={note}
+              note={currentSession.note}
               onNoteChange={handleNoteChange}
             />
           </>
@@ -460,6 +484,13 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
           ]}
           textStyle={styles.saveSessionButtonText}
           onPress={() => saveSession(db, user.uid)}
+        />
+        <YesNoPopup
+          visible={showLeaveConfirmation}
+          transparent={true}
+          onRequestClose={() => setShowLeaveConfirmation(false)}
+          message="You have unsaved changes. Are you sure you want to go back?"
+          onYes={() => confirmGoBack()} // No changes to the session object
         />
       </View>
     </>

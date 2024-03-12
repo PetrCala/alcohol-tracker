@@ -131,7 +131,6 @@ const HomeScreen = ({}: HomeScreenProps) => {
         },
         ongoing: true,
       };
-      console.log('sessionData', sessionData);
       const newSessionId = generateDatabaseKey(
         db,
         `user_drinking_sessions/${user.uid}`,
