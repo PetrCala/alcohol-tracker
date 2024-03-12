@@ -324,11 +324,12 @@ function getLastRouteName(): string | undefined {
  *
  * @returns The name of the last screen in the navigation stack.
  */
-function getLastScreenName(): Screen {
+function getLastScreenName(getOneDeepInstead: boolean = false): Screen {
   const rootState = navigationRef.getRootState();
   const route = rootState.routes.at(-1);
   // eslint-disable-next-line @typescript-eslint/ban-types
-  const screenParams = route?.state?.routes.at(-1)?.params as EmptyObject;
+  const idx = getOneDeepInstead ? -2 : -1;
+  const screenParams = route?.state?.routes.at(idx)?.params as EmptyObject;
   return (screenParams?.screen as Screen) ?? SCREENS.HOME;
 }
 
