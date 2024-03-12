@@ -75,7 +75,7 @@ const DayOverviewScreen = ({route}: DayOverviewScreenProps) => {
       },
     );
     setDailyData(newDailyData);
-  }, [date, drinkingSessionData]);
+  }, [currentDate, drinkingSessionData]);
 
   const onSessionButtonPress = (
     sessionId: string,
@@ -232,13 +232,6 @@ const DayOverviewScreen = ({route}: DayOverviewScreenProps) => {
       setCurrentDate(newDate);
     }
   };
-  // useFocusEffect(
-  //     useCallback(() => {
-  //         let newSessions = getSingleDayDrinkingSessions(date, drinkingSessionData);
-  //         setDailyData(newSessions);
-  //         console.log(newSessions.length)
-  //     }, [date, drinkingSessionData])
-  // );
 
   // Trigger refetch on component mount
   useEffect(() => {
