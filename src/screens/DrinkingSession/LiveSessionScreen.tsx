@@ -234,16 +234,13 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
     return () => clearTimeout(timer);
   }, [session, openingSession]);
 
-  async function sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
   async function waitForPendingUpdateToComplete(): Promise<boolean> {
     if (!pendingUpdate) {
       return false; // No waiting was needed
     }
     return new Promise(resolve => {
       const checkInterval = setInterval(() => {
+        console.log(pendingUpdate);
         if (!pendingUpdate) {
           clearInterval(checkInterval);
           resolve(true);
@@ -258,13 +255,6 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
       console.log('Cannot save this session');
       return null;
     }
-    // Wait for any pending updates to resolve first
-    if (pendingUpdate) {
-      console.log('Data synchronization ongoing');
-      return null;
-    }
-    let timeSinceLastUpdate = Date.now() - lastUpdate;
-    // Save the data into the database
     if (totalPoints > 0) {
       setSavingSession(true);
       let newSessionData: DrinkingSession = {
@@ -272,9 +262,8 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
         end_time: sessionIsLive ? Date.now() : session.start_time + 1,
       };
       try {
-        if (timeSinceLastUpdate < 1000) {
-          await sleep(1000 - timeSinceLastUpdate); // Wait for database synchronization
-        }
+        // Wait for any pending updates to resolve first
+        await waitForPendingUpdateToComplete();
         if (sessionIsLive) {
           await endLiveDrinkingSession(db, userId, newSessionData, sessionId);
         } else {
@@ -307,10 +296,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
 
   const handleConfirmDiscard = async () => {
     if (!db || !user) return;
-    let timeSinceLastUpdate = Date.now() - lastUpdate;
-    if (timeSinceLastUpdate < 1000 && sessionIsLive) {
-      await sleep(1000 - timeSinceLastUpdate); // Wait for database synchronization
-    }
+    await waitForPendingUpdateToComplete();
     try {
       const discardFunction = sessionIsLive
         ? discardLiveDrinkingSession
@@ -342,6 +328,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
     if (!user) return;
     if (pendingUpdate && sessionIsLive) {
       try {
+        await waitForPendingUpdateToComplete();
         await updateSessionUnits(db, user.uid, sessionId, session?.units);
       } catch (error: any) {
         Alert.alert('Database synchronization failed', error.message);
@@ -409,6 +396,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
     return;
   }
   if (!preferences) return;
+  console.log('pening update', pendingUpdate);
 
   return (
     <>
