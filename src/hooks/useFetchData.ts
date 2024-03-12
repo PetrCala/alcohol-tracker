@@ -23,7 +23,7 @@ type Data = {
 type UseFetchUserDataReturn = {
   data: Data;
   isLoading: boolean;
-  refetch: () => void;
+  refetch: () => Promise<void>;
 };
 
 type UserFetchDataKey = keyof UseFetchUserDataReturn['data'];
@@ -37,8 +37,16 @@ const useFetchData = (
   const [refetchIndex, setRefetchIndex] = useState(0); // Used to trigger refetch
   const [data, setData] = useState<{[key in UserFetchDataKey]?: any}>({});
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [resolveRefetch, setResolveRefetch] = useState<() => void>(
+    () => () => {},
+  );
 
-  const refetch = () => setRefetchIndex(prev => prev + 1);
+  const refetch = (): Promise<void> => {
+    return new Promise<void>(resolve => {
+      setResolveRefetch(() => resolve);
+      setRefetchIndex(prev => prev + 1);
+    });
+  };
 
   useEffect(() => {
     if (!userId || !db) {
@@ -86,6 +94,7 @@ const useFetchData = (
 
       setData(newData);
       setIsLoading(false);
+      resolveRefetch(); // Resolve the promise only after fetching is complete
     };
 
     fetchData();

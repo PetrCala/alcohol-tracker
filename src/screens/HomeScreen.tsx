@@ -170,11 +170,12 @@ const HomeScreen = ({}: HomeScreenProps) => {
   const onRefresh = React.useCallback(() => {
     dispatch({type: 'SET_REFRESHING', payload: true});
     setTimeout(() => {
-      refetch();
-      dispatch({type: 'SET_REFRESHING', payload: false});
-      dispatch({
-        type: 'SET_REFRESH_COUNTER',
-        payload: state.refreshCounter + 1,
+      refetch().then(() => {
+        dispatch({type: 'SET_REFRESHING', payload: false});
+        dispatch({
+          type: 'SET_REFRESH_COUNTER',
+          payload: state.refreshCounter + 1,
+        });
       });
     }, 1000);
   }, []);

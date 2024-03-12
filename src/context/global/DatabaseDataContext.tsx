@@ -17,7 +17,7 @@ type DatabaseDataContextType = {
   unconfirmedDays?: UnconfirmedDays;
   userData?: UserProps;
   isLoading: boolean;
-  refetch: () => void;
+  refetch: () => Promise<void>;
 };
 
 export const DatabaseDataContext = createContext<

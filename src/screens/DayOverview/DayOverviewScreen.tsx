@@ -234,7 +234,7 @@ const DayOverviewScreen = ({route}: DayOverviewScreenProps) => {
 
   // Trigger refetch on component mount
   useEffect(() => {
-    refetch();
+    refetch().then(() => {}); // Possibly add a catch here
   }, []);
 
   if (!isOnline) return <UserOffline />;

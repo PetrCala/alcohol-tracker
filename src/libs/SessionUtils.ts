@@ -2,26 +2,28 @@ import {
   DrinkingSession,
   DrinkingSessionId,
   DrinkingSessionList,
+  UnitsList,
 } from '@src/types/database';
-import CONST from '@src/CONST';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
+
+const PlaceholderUnits: UnitsList = {[Date.now()]: {other: 0}};
 
 /**
  * @returns An empty drinking session object.
  */
-function getEmptySession(usePlaceholderUnits?: boolean): DrinkingSession {
-  // const currentUnits = usePlaceholderUnits
-  //   ? {
-  //       now: {other: 1},
-  //     }
-  //   : {};
-  return {
+function getEmptySession(
+  usePlaceholderUnits?: boolean,
+  ongoing?: boolean,
+): DrinkingSession {
+  let emptySession: DrinkingSession = {
     start_time: 0,
     end_time: 0,
-    units: {},
+    units: usePlaceholderUnits ? PlaceholderUnits : {},
     blackout: false,
     note: '',
+    ...(ongoing && {ongoing: true}),
   };
+  return emptySession;
 }
 
 /**
@@ -55,4 +57,9 @@ function extractSessionOrEmpty(
   return getEmptySession();
 }
 
-export {extractSessionOrEmpty, getEmptySession, isEmptySession};
+export {
+  PlaceholderUnits,
+  extractSessionOrEmpty,
+  getEmptySession,
+  isEmptySession,
+};

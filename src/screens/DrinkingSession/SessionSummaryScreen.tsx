@@ -136,7 +136,7 @@ const SessionSummaryScreen = ({route}: SessionSummaryScreenProps) => {
 
   // Trigger refetch on component mount
   useEffect(() => {
-    refetch();
+    refetch().then(() => {}); // Possibly add a catch here
   }, []);
 
   useEffect(() => {
