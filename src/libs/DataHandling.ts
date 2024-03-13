@@ -246,12 +246,15 @@ export function setDateToCurrentTime(inputDate: Date): Date {
  *
  * @param dateObject Date type object for whose day to subset the sessions to
  * @param sessions An array of sessions to subset
+ * @param returnArray If true, return an array of sessions without IDs. If false,
+ *  simply subset the drinking session list to the relevant sessions.
  * @returns The subsetted array of sessions
  */
 export function getSingleDayDrinkingSessions(
   date: Date,
   sessions: DrinkingSessionList | undefined,
-) {
+  returnArray: boolean = true,
+): DrinkingSessionArray | DrinkingSessionList {
   if (isEmptyObject(sessions)) return [];
   // Define the time boundaries
   date.setHours(0, 0, 0, 0); // set to start of day
@@ -262,14 +265,21 @@ export function getSingleDayDrinkingSessions(
   // Convert to UNIX timestamp
   const todayUnix = Math.floor(date.getTime());
   const tomorrowUnix = Math.floor(tomorrow.getTime());
-
-  const filteredSessions = Object.values(sessions).filter(
-    session =>
-      session.start_time >= todayUnix && session.start_time < tomorrowUnix,
-  );
-
-  // Return the sessions between those indices
-  return filteredSessions;
+  if (returnArray){
+    return Object.values(sessions).filter(
+      session =>
+        session.start_time >= todayUnix && session.start_time < tomorrowUnix,
+    );
+  }
+  return Object.entries(sessions)
+    .filter(([sessionId, session]) => {
+      return (
+        session.start_time >= todayUnix && session.start_time < tomorrowUnix
+      )})
+    .reduce((acc, [sessionId, session]) => {
+      acc[sessionId] = session;
+      return acc;
+    }, {} as DrinkingSessionList);
 }
 
 /** Subset an array of drinking sessions to the current month only.

@@ -29,7 +29,7 @@ import LoadingData from '@components/LoadingData';
 // import { PreferencesData} from '../types/database';
 import UserOffline from '@components/UserOffline';
 import {useUserConnection} from '@context/global/UserConnectionContext';
-import {DrinkingSession} from '@src/types/database';
+import {DrinkingSession, DrinkingSessionList} from '@src/types/database';
 import {generateDatabaseKey} from '@database/baseFunctions';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import MainHeader from '@components/Header/MainHeader';
@@ -69,11 +69,14 @@ const DayOverviewScreen = ({route}: DayOverviewScreenProps) => {
     let relevantData = getSingleDayDrinkingSessions(
       currentDate,
       drinkingSessionData,
-    );
-    let newDailyData = Object.entries(relevantData).map(([idx, session]) => ({
-      sessionId: Object.keys(drinkingSessionData)[Number(idx)],
-      session,
-    }));
+      false
+    ) as DrinkingSessionList;
+    let newDailyData = Object.entries(relevantData).map(([sessionId, session]) => {
+      return {
+        sessionId: sessionId,
+        session: session,
+      }
+    });
     setDailyData(newDailyData);
   }, [currentDate, drinkingSessionData]);
 
