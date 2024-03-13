@@ -10,7 +10,6 @@ const useWaitForBooleanToBeTrue = (
   boolRef.current = bool;
 
   return React.useMemo(() => {
-    console.log('Waiting for boolean to be true...');
     if (!boolRef.current) {
       return Promise.resolve(false); // No waiting was needed
     }

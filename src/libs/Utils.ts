@@ -13,7 +13,7 @@ import {DatabaseProps} from '@src/types/database';
  * const data = loadJsonData('path_to_your_file.json');
  * console.log(data);
  */
-export function loadJsonData(filename: string): DatabaseProps | null {
+function loadJsonData(filename: string): DatabaseProps | null {
   try {
     // Read the file synchronously (you can also use async methods)
     const rawData = fs.readFileSync(filename, 'utf8');
@@ -39,7 +39,7 @@ export function loadJsonData(filename: string): DatabaseProps | null {
  * const success = saveJsonData('/path/to/save.json', data);
  * console.log(success); // true
  */
-export function saveJsonData(filePath: string, data: any): boolean {
+function saveJsonData(filePath: string, data: any): boolean {
   try {
     // Convert the JSON object to a string
     const jsonData = JSON.stringify(data, null, 2);
@@ -60,7 +60,7 @@ export function saveJsonData(filePath: string, data: any): boolean {
  * @param keyToFind - The key to match.
  * @returns An array of values that match the given key.
  */
-export function findValuesByKey(node: any, keyToFind: string): any[] {
+function findValuesByKey(node: any, keyToFind: string): any[] {
   let foundValues: any[] = [];
 
   if (node instanceof Array) {
@@ -86,7 +86,7 @@ export function findValuesByKey(node: any, keyToFind: string): any[] {
  * @returns The value associated with the specified key.
  * @throws Error if no value is found for the specified key or if more than one value is found.
  */
-export function findSingleValueByKey(node: any, keyToFind: string): any {
+function findSingleValueByKey(node: any, keyToFind: string): any {
   let foundValues: any[] = [];
 
   const searchNode = (currentNode: any) => {
@@ -119,7 +119,7 @@ export function findSingleValueByKey(node: any, keyToFind: string): any {
  * @param question - The question to ask the user.
  * @returns A promise that resolves to a boolean value indicating the user's confirmation.
  */
-export async function confirmExecution(question: string): Promise<boolean> {
+async function confirmExecution(question: string): Promise<boolean> {
   return new Promise(resolve => {
     const rl = readline.createInterface({
       input: process.stdin,
@@ -138,7 +138,7 @@ export async function confirmExecution(question: string): Promise<boolean> {
  * @param question - The question to ask the user.
  * @returns A promise that resolves to the inputted value.
  */
-export async function askForValue(question: string): Promise<string> {
+async function askForValue(question: string): Promise<string> {
   return new Promise(resolve => {
     const rl = readline.createInterface({
       input: process.stdin,
@@ -158,7 +158,7 @@ export async function askForValue(question: string): Promise<string> {
  * @returns The timestamp value of the input string.
  * @throws Error if the input string is not in the correct format or if it represents an invalid date.
  */
-export function validateAndParseInputToTimestamp(input: string): number {
+function validateAndParseInputToTimestamp(input: string): number {
   const regex = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/;
   if (!regex.test(input)) {
     throw new Error(
@@ -173,3 +173,42 @@ export function validateAndParseInputToTimestamp(input: string): number {
 
   return date.getTime();
 }
+
+/**
+ * Executes a task only after a condition is met or the maximum number of retries is reached.
+ * @param task A function to execute that returns a promise.
+ * @param condition A function that returns a boolean indicating whether the task should be retried.
+ * @param maxRetries The maximum number of times to check for the condition.
+ * @param delay The delay between retries in milliseconds.
+ * @returns A promise that resolves when the task is completed or if the condition does not become true after the maximum number of retries.
+ */
+async function executeAfterCondition(
+  task: () => Promise<void>,
+  condition: boolean,
+  maxRetries: number = 5,
+  delay: number = 100,
+): Promise<void> {
+  let attempt = 0;
+  while (!condition && attempt < maxRetries) {
+    console.log('waiting...');
+    await new Promise(resolve => setTimeout(resolve, delay));
+    attempt++;
+  }
+  if (attempt === maxRetries) {
+    console.log(`Maximum attempts reached (${maxRetries}).`);
+    return;
+  }
+  console.log('condition met, executing task...');
+  await task();
+}
+
+export {
+  loadJsonData,
+  saveJsonData,
+  findValuesByKey,
+  findSingleValueByKey,
+  validateAndParseInputToTimestamp,
+  confirmExecution,
+  askForValue,
+  executeAfterCondition,
+};

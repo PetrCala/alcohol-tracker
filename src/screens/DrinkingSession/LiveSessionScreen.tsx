@@ -61,7 +61,8 @@ import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {isEqual} from 'lodash';
 import {readDataOnce} from '@database/baseFunctions';
 import DBPATHS from '@database/DBPATHS';
-import {waitForBooleanToBeTrue} from '@libs/TimeUtils';
+import useAsyncQueue from '@hooks/useAsyncQueue';
+import {executeAfterCondition} from '@libs/Utils';
 
 type LiveSessionScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -82,8 +83,6 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
   const [availableUnits, setAvailableUnits] = useState<number>(0);
   const [sessionFinished, setSessionFinished] = useState<boolean>(false);
   // Time info
-  const [pendingUpdate, setPendingUpdate] = useState(true);
-  const [lastUpdate, setLastUpdate] = useState<number>(Date.now() - 1000);
   const updateTimeout = 1000; // Synchronize with DB every x milliseconds
   const [dbSyncSuccessful, setDbSyncSuccessful] = useState(false);
   const sessionDate = timestampToDate(session?.start_time ?? Date.now());
@@ -100,6 +99,27 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
   const [showLeaveConfirmation, setShowLeaveConfirmation] = useState(false);
   const sessionIsLive = session?.ongoing ? true : false;
   const scrollViewRef = useRef<ScrollView>(null); // To navigate the view
+
+  const {isPending, enqueueUpdate} = useAsyncQueue(
+    async (newSession: DrinkingSession) => await syncWithDb(newSession),
+  );
+
+  const syncWithDb = async (newSessionData: DrinkingSession) => {
+    if (!user || !session) return;
+    try {
+      await saveDrinkingSessionData(
+        db,
+        user.uid,
+        newSessionData,
+        sessionId,
+        true, // Update live session status
+      );
+      await new Promise(resolve => setTimeout(resolve, 1500)); // Wait for 2 seconds
+    } catch (error: any) {
+      console.log('Could not save the drinking session data', error.message);
+      throw new Error('Could not save the drinking session data');
+    }
+  };
 
   const drinkData: DrinkDataProps = [
     {
@@ -177,29 +197,10 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
     setSession({...session, units: newUnits});
   };
 
-  const syncWithDb = async () => {
-    if (!user || !session) return;
-    setDbSyncSuccessful(false);
-    setPendingUpdate(true);
-    try {
-      let newSessionData: DrinkingSession = {
-        ...session,
-        ongoing: true,
-      };
-      await saveDrinkingSessionData(
-        db,
-        user.uid,
-        newSessionData,
-        sessionId,
-        true, // Update live session status
-      );
-    } catch (error: any) {
-      console.log('Could not save the drinking session data', error.message);
-      throw new Error('Could not save the drinking session data');
-    } finally {
-      setPendingUpdate(false); // Data has been synchronized with DB
-      setLastUpdate(Date.now());
-      setDbSyncSuccessful(true);
+  // Function to wait for pending updates to finish
+  const waitForNoPendingUpdate = async () => {
+    while (isPending) {
+      await new Promise(resolve => setTimeout(resolve, 100)); // Wait for 100ms before checking again
     }
   };
 
@@ -215,26 +216,6 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
     setAvailableUnits(newAvailableUnits);
   }, [session?.units]);
 
-  // Change database value once every second (only for live sessions)
-  useEffect(() => {
-    // Only schedule a database update if any hooks changed
-    // Do not automatically save if the session is over, or
-    // if the initial fetch has not finished
-    if (
-      !user ||
-      !sessionIsLive ||
-      !session ||
-      sessionFinished ||
-      openingSession
-    )
-      return;
-    const timer = setTimeout(async () => {
-      await syncWithDb();
-    }, updateTimeout); // Update every x milliseconds
-    // Clear timer on unmount or when units changes
-    return () => clearTimeout(timer);
-  }, [session, openingSession]);
-
   async function saveSession(db: any, userId: string) {
     if (!session || !user) return;
     if (totalPoints > 99) {
@@ -249,7 +230,9 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
       };
       try {
         // Wait for any pending updates to resolve first
-        await waitForBooleanToBeTrue(pendingUpdate);
+        while (isPending) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
         if (sessionIsLive) {
           await endLiveDrinkingSession(db, userId, newSessionData, sessionId);
         } else {
@@ -276,13 +259,13 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
   }
 
   const handleDiscardSession = () => {
-    if (pendingUpdate) return null;
+    if (isPending) return null;
     setDiscardModalVisible(true);
   };
 
   const handleConfirmDiscard = async () => {
     if (!db || !user) return;
-    await waitForBooleanToBeTrue(pendingUpdate);
+    await waitForNoPendingUpdate();
     try {
       const discardFunction = sessionIsLive
         ? discardLiveDrinkingSession
@@ -312,18 +295,23 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
    */
   const handleBackPress = async () => {
     if (!user) return;
-    if (pendingUpdate && sessionIsLive) {
-      try {
-        await waitForBooleanToBeTrue(pendingUpdate);
-        await updateSessionUnits(db, user.uid, sessionId, session?.units);
-      } catch (error: any) {
-        Alert.alert('Database synchronization failed', error.message);
-      } finally {
-        return;
-      }
-    } else if (!sessionIsLive && hasSessionChanged()) {
+    if (!sessionIsLive && hasSessionChanged()) {
       setShowLeaveConfirmation(true); // Unsaved changes
       return;
+    }
+    if (sessionIsLive) {
+      console.log('Session is live, waiting for pending update');
+      try {
+        console.log('hello');
+        await executeAfterCondition(
+          () => updateSessionUnits(db, user.uid, sessionId, session?.units),
+          isPending,
+          10,
+          100,
+        );
+      } catch (error: any) {
+        Alert.alert('Database synchronization failed', error.message);
+      }
     }
     confirmGoBack();
   };
@@ -354,6 +342,23 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
     openSession();
   }, []);
 
+  // Synchronize the session with database
+  useEffect(() => {
+    // Only schedule a database update if any hooks changed
+    // Do not automatically save if the session is over, or
+    // if the initial fetch has not finished
+    if (
+      !user ||
+      !sessionIsLive ||
+      !session ||
+      sessionFinished ||
+      openingSession
+    )
+      return;
+    console.log('queueing update');
+    enqueueUpdate({...session, ongoing: true});
+  }, [session, openingSession]);
+
   // Make the system back press toggle the go back handler
   useEffect(() => {
     const backAction = () => {
@@ -367,6 +372,26 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
       BackHandler.removeEventListener('hardwareBackPress', backAction);
     };
   }, [session]);
+
+  const asyncOperation = async (
+    triggerRef: React.MutableRefObject<any>,
+    checkIsActive: () => boolean,
+  ) => {
+    console.log('Async operation started with trigger:', triggerRef.current);
+
+    // Simulating an async task (e.g., data fetching)
+    await new Promise(resolve => setTimeout(resolve, 5));
+
+    if (!checkIsActive()) {
+      console.log(
+        'Async operation halted or results ignored because the trigger changed or component unmounted',
+      );
+      return;
+    }
+
+    console.log('Async operation completed with trigger:', triggerRef.current);
+    // Here, you could check triggerRef.current to decide how to proceed based on its latest value
+  };
 
   if (!isOnline) return <UserOffline />;
   if (openingSession)
@@ -408,11 +433,11 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
               Session started at {sessionStartTime}
             </Text>
           </View>
-          {pendingUpdate && (
+          {isPending && (
             <ActivityIndicator
               size="small"
               color="#0000ff"
-              style={styles.pendingUpdateIndicator}
+              style={styles.isPendingIndicator}
             />
           )}
           <SuccessIndicator
@@ -465,7 +490,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
           text="Discard Session"
           buttonStyle={[
             styles.saveSessionButton,
-            pendingUpdate
+            isPending
               ? styles.disabledSaveSessionButton
               : styles.enabledSaveSessionButton,
           ]}
@@ -483,7 +508,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
           text="Save Session"
           buttonStyle={[
             styles.saveSessionButton,
-            pendingUpdate
+            isPending
               ? styles.disabledSaveSessionButton
               : styles.enabledSaveSessionButton,
           ]}
@@ -497,6 +522,10 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
           message="You have unsaved changes. Are you sure you want to go back?"
           onYes={() => confirmGoBack()} // No changes to the session object
         />
+        {/* <AsyncResponsiveComponent
+          trigger={isPending}
+          asyncOperation={asyncOperation}
+        /> */}
       </View>
     </>
   );
@@ -529,7 +558,7 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     padding: 5,
   },
-  pendingUpdateIndicator: {
+  isPendingIndicator: {
     width: 25,
     height: 25,
     margin: 10,

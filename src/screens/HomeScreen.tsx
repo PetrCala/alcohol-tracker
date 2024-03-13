@@ -105,7 +105,6 @@ const HomeScreen = ({}: HomeScreenProps) => {
     userStatusData,
     drinkingSessionData,
     preferences,
-    unconfirmedDays,
     userData,
     isLoading,
     refetch,
