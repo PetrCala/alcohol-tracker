@@ -61,6 +61,7 @@ import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {isEqual} from 'lodash';
 import {readDataOnce} from '@database/baseFunctions';
 import DBPATHS from '@database/DBPATHS';
+import {waitForBooleanToBeTrue} from '@libs/TimeUtils';
 
 type LiveSessionScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -234,20 +235,6 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
     return () => clearTimeout(timer);
   }, [session, openingSession]);
 
-  async function waitForPendingUpdateToComplete(): Promise<boolean> {
-    if (!pendingUpdate) {
-      return false; // No waiting was needed
-    }
-    return new Promise(resolve => {
-      const checkInterval = setInterval(() => {
-        if (!pendingUpdate) {
-          clearInterval(checkInterval);
-          resolve(true);
-        }
-      }, 100); // Check every 100ms
-    });
-  }
-
   async function saveSession(db: any, userId: string) {
     if (!session || !user) return;
     if (totalPoints > 99) {
@@ -262,7 +249,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
       };
       try {
         // Wait for any pending updates to resolve first
-        await waitForPendingUpdateToComplete();
+        await waitForBooleanToBeTrue(pendingUpdate);
         if (sessionIsLive) {
           await endLiveDrinkingSession(db, userId, newSessionData, sessionId);
         } else {
@@ -295,7 +282,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
 
   const handleConfirmDiscard = async () => {
     if (!db || !user) return;
-    await waitForPendingUpdateToComplete();
+    await waitForBooleanToBeTrue(pendingUpdate);
     try {
       const discardFunction = sessionIsLive
         ? discardLiveDrinkingSession
@@ -327,7 +314,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
     if (!user) return;
     if (pendingUpdate && sessionIsLive) {
       try {
-        await waitForPendingUpdateToComplete();
+        await waitForBooleanToBeTrue(pendingUpdate);
         await updateSessionUnits(db, user.uid, sessionId, session?.units);
       } catch (error: any) {
         Alert.alert('Database synchronization failed', error.message);

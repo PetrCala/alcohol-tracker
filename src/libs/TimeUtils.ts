@@ -1,13 +1,10 @@
-export function isRecent(timestamp: number): boolean {
+function isRecent(timestamp: number): boolean {
   const now = Date.now();
   const fiveMinutes = 5 * 60 * 1000; // 5 minutes in milliseconds
   return now - timestamp < fiveMinutes;
 }
 
-export function getTimestampAge(
-  timestamp: number,
-  addAgo: boolean = true,
-): string {
+function getTimestampAge(timestamp: number, addAgo: boolean = true): string {
   const now = Date.now();
   const difference = now - timestamp;
   const plural = (input: number) => (input > 1 ? 's' : '');
@@ -39,3 +36,39 @@ export function getTimestampAge(
       return formatText(years, 'year');
   }
 }
+
+/**
+ * Waits for a boolean value to be true within a specified timeout period.
+ * @param bool The boolean value to wait for.
+ * @param timeout The timeout period in milliseconds (default: 30000ms).
+ * @returns A promise that resolves to `true` if the boolean value becomes true within the timeout, or `false` if no waiting was needed.
+ * @throws {Error} If the timeout period is exceeded before the boolean value becomes true.
+ */
+async function waitForBooleanToBeTrue(
+  bool: boolean,
+  timeout: number = 30000,
+): Promise<boolean> {
+  console.log('Waiting for boolean to be true...');
+  if (!bool) {
+    return false; // No waiting was needed
+  }
+  return new Promise((resolve, reject) => {
+    const checkInterval = setInterval(() => {
+      if (!bool) {
+        clearInterval(checkInterval);
+        resolve(true);
+      }
+    }, 100); // Check every 100ms
+
+    // Timeout to prevent infinite waiting
+    const timeoutId = setTimeout(() => {
+      clearInterval(checkInterval);
+      reject(new Error('Timeout waiting for a boolean to be true'));
+    }, timeout);
+
+    // Optionally clear the timeout if the condition is met before the timeout
+    return () => clearTimeout(timeoutId);
+  });
+}
+
+export {isRecent, getTimestampAge, waitForBooleanToBeTrue};
