@@ -119,7 +119,7 @@ const useFetchData = (
     };
 
     fetchData();
-  }, [userId, db, refetchIndex]); // No dataTypes, as that would duplicate the refetch
+  }, [userId, refetchIndex]); // No dataTypes, as that would duplicate the refetch
 
   return {
     data: {

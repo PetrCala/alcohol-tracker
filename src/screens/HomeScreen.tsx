@@ -33,15 +33,15 @@ import {useFirebase} from '@context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
 import {generateDatabaseKey} from '@database/baseFunctions';
 import CONST from '@src/CONST';
-import {DrinkingSession, DrinkingSessionArray} from '@src/types/database';
+import {DrinkingSession, DrinkingSessionArray, DrinkingSessionId} from '@src/types/database';
 import ROUTES from '@src/ROUTES';
 import Navigation, { navigationRef } from '@navigation/Navigation';
 import {StackScreenProps} from '@react-navigation/stack';
+import { useFocusEffect } from '@react-navigation/native';
 import {BottomTabNavigatorParamList} from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {DateData} from 'react-native-calendars';
-import { UserFetchDataKey } from '@hooks/useFetchData';
 import { getEmptySession } from '@libs/SessionUtils';
 import DBPATHS from '@database/DBPATHS';
 
@@ -50,8 +50,8 @@ interface State {
   drinkingSessionsCount: number;
   unitsConsumed: number;
   pointsEarned: number;
-  ongoingSession: DrinkingSession | null;
-  loadingNewSession: boolean;
+  initializingSession: boolean;
+  ongoingSessionId: DrinkingSessionId | undefined;
   refreshing: boolean;
   refreshCounter: number;
 }
@@ -66,8 +66,8 @@ const initialState: State = {
   drinkingSessionsCount: 0,
   unitsConsumed: 0,
   pointsEarned: 0,
-  ongoingSession: null,
-  loadingNewSession: false,
+  initializingSession: false,
+  ongoingSessionId: undefined,
   refreshing: false,
   refreshCounter: 0,
 };
@@ -82,10 +82,10 @@ const reducer = (state: State, action: Action): State => {
       return {...state, unitsConsumed: action.payload};
     case 'SET_POINTS_EARNED':
       return {...state, pointsEarned: action.payload};
-    case 'SET_ONGOING_SESSION':
-      return {...state, ongoingSession: action.payload};
-    case 'SET_LOADING_NEW_SESSION':
-      return {...state, loadingNewSession: action.payload};
+    case 'SET_INITIALIZING_SESSION':
+      return {...state, initializingSession: action.payload};
+    case 'SET_ONGOING_SESSION_ID':
+      return {...state, ongoingSessionId: action.payload};
     case 'SET_REFRESHING':
       return {...state, refreshing: action.payload};
     case 'SET_REFRESH_COUNTER':
@@ -113,52 +113,52 @@ const HomeScreen = ({}: HomeScreenProps) => {
     refetch,
   } = useDatabaseData();
   const [state, dispatch] = useReducer(reducer, initialState);
-  const sessionOngoing = userStatusData?.latest_session?.ongoing;
 
   // Handle drinking session button press
   const startDrinkingSession = async () => {
-    if (!preferences || !user) return null; // Should never be null
-    let sessionId: string;
-    let latest_session = userStatusData?.latest_session;
-    if (!latest_session?.ongoing) {
-      dispatch({type: 'SET_LOADING_NEW_SESSION', payload: true});
-      // The user is not in an active session
-      const sessionData: DrinkingSession = getEmptySession(true, true);
-      const newSessionId = generateDatabaseKey(
-        db,
-        DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(user.uid),
-      );
-      if (!newSessionId) {
-        Alert.alert(
-          'New session key generation failed',
-          "Couldn't generate a new session key",
-        );
-        return;
-      }
-      sessionId = newSessionId;
-      try {
-        await startLiveDrinkingSession(db, user.uid, sessionData, sessionId);
-      } catch (error: any) {
-        Alert.alert(
-          'New session initialization failed',
-          'Could not start a new session: ' + error.message,
-        );
-        return;
-      }
-    } else {
-      const currentSessionId = userStatusData?.latest_session_id;
-      if (!currentSessionId) {
-        Alert.alert(
-          'New session initialization failed',
-          'Could not find the existing session',
-        );
-        return;
-      }
-      sessionId = currentSessionId;
+    if (!user) return null;
+    if (state.ongoingSessionId) {
+      Alert.alert("A session already exists", "You can't start a new session while you are in one");
+      return;
     }
-    Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(sessionId));
-    dispatch({type: 'SET_LOADING_NEW_SESSION', payload: false});
+    dispatch({type: 'SET_INITIALIZING_SESSION', payload: true});
+    // The user is not in an active session
+    const newSessionData: DrinkingSession = getEmptySession(true, true);
+    const newSessionId = generateDatabaseKey(
+      db,
+      DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(user.uid),
+    );
+    if (!newSessionId) {
+      Alert.alert(
+        'New session key generation failed',
+        "Couldn't generate a new session key",
+      );
+      return;
+    }
+    try {
+      await startLiveDrinkingSession(db, user.uid, newSessionData, newSessionId);
+      Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(newSessionId));
+      dispatch({type: 'SET_ONGOING_SESSION_ID', payload: newSessionId});
+      dispatch({type: 'SET_INITIALIZING_SESSION', payload: false});
+    } catch (error: any) {
+      Alert.alert(
+        'New session initialization failed',
+        'Could not start a new session: ' + error.message,
+      );
+      return;
+    }
   };
+
+  const openSessionInProgress = () => {
+    if (!state.ongoingSessionId) {
+      Alert.alert(
+        'New session initialization failed',
+        'Could not find the existing session',
+      );
+      return;
+    }
+    Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(state.ongoingSessionId));
+  }
 
   const onRefresh = React.useCallback(() => {
     dispatch({type: 'SET_REFRESHING', payload: true});
@@ -219,20 +219,34 @@ const HomeScreen = ({}: HomeScreenProps) => {
     dispatch({type: 'SET_POINTS_EARNED', payload: thisMonthPoints});
   }, [drinkingSessionData, state.visibleDateObject, preferences]);
 
-  // useEffect(() => {
-  //   console.log("navigationRef", navigationRef)
+  useEffect(() => {
+    if (!userStatusData) return;
 
-  // }, [navigationRef])
+    const currentSessionId: DrinkingSessionId | undefined = userStatusData.latest_session?.ongoing 
+      ? userStatusData.latest_session_id 
+      : undefined;
 
+    dispatch({
+      type: 'SET_ONGOING_SESSION_ID',
+      payload: currentSessionId,
+    });
+  }, [userStatusData]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      // Refetch relevant data every time the screen is focused
+      refetch(['userStatusData'])
+    }, [])
+  )
   if (!user) {
     Navigation.navigate(ROUTES.LOGIN);
     return;
   }
   if (!isOnline) return <UserOffline />;
-  if (isLoading || state.loadingNewSession)
+  if (isLoading || state.initializingSession)
     return (
       <LoadingData
-        loadingText={state.loadingNewSession ? 'Starting a new session...' : ''}
+        loadingText={state.initializingSession ? 'Starting a new session...' : ''}
       />
     );
   if (!preferences || !userData) return;
@@ -277,10 +291,10 @@ const HomeScreen = ({}: HomeScreenProps) => {
         refreshControl={
           <RefreshControl refreshing={state.refreshing} onRefresh={onRefresh} />
         }>
-        {sessionOngoing ? (
+        {state.ongoingSessionId ? (
           <TouchableOpacity
             style={styles.userInSessionWarningContainer}
-            onPress={startDrinkingSession}>
+            onPress={openSessionInProgress}>
             <Text style={styles.userInSessionWarningText}>
               You are currently in session!
             </Text>
@@ -364,7 +378,7 @@ const HomeScreen = ({}: HomeScreenProps) => {
           />
         </View>
       </View>
-      {sessionOngoing ? null : (
+      {state.ongoingSessionId ? null : (
         <TouchableOpacity
           style={styles.startSessionButton}
           onPress={startDrinkingSession}>

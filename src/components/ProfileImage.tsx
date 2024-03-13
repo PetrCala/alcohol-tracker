@@ -127,7 +127,7 @@ function ProfileImage(props: ProfileImageProps) {
 
     fetchImage();
     prevCachedUrl.current = cachedUrl;
-  }, [downloadPath, cachedUrl, isCacheChecked, props.refreshTrigger]);
+  }, [downloadPath, cachedUrl, isCacheChecked]); // add props.refreshTrigger if necessary
 
   if (state.loadingImage)
     return <ActivityIndicator size="large" color="#0000ff" style={style} />;

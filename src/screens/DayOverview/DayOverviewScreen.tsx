@@ -195,6 +195,7 @@ const DayOverviewScreen = ({route}: DayOverviewScreenProps) => {
     if (currentDate >= tomorrowMidnight) {
       return null;
     }
+
     // Generate a new drinking session key
     let newSessionId = generateDatabaseKey(
       db,
