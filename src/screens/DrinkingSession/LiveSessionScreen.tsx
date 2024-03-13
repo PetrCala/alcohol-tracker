@@ -51,18 +51,13 @@ import Navigation from '@navigation/Navigation';
 import {StackScreenProps} from '@react-navigation/stack';
 import {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
-import {
-  extractSessionOrEmpty,
-  getEmptySession,
-  isEmptySession,
-} from '@libs/SessionUtils';
+import {getEmptySession} from '@libs/SessionUtils';
 import ROUTES from '@src/ROUTES';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {isEqual} from 'lodash';
 import {readDataOnce} from '@database/baseFunctions';
 import DBPATHS from '@database/DBPATHS';
 import useAsyncQueue from '@hooks/useAsyncQueue';
-import {executeAfterCondition} from '@libs/SessionUtils';
 
 type LiveSessionScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
