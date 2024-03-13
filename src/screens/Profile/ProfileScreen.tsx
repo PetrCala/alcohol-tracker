@@ -43,17 +43,15 @@ import {ProfileNavigatorParamList} from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
 import Navigation from '@libs/Navigation/Navigation';
 import DBPATHS from '@database/DBPATHS';
-import { useDatabaseData } from '@context/global/DatabaseDataContext';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import ROUTES from '@src/ROUTES';
-import { DateData } from 'react-native-calendars';
-import { RefreshControl } from 'react-native-gesture-handler';
+import {DateData} from 'react-native-calendars';
+import {RefreshControl} from 'react-native-gesture-handler';
+import useFetchData, {UserFetchDataKey} from '@hooks/useFetchData';
+import {sendFriendRequest} from '@database/friends';
 
 interface State {
-  isLoading: boolean;
-  preferences: Preferences | undefined;
-  drinkingSessionData: DrinkingSessionList | undefined;
-  profileData: Profile | undefined;
-  friends: FriendList | undefined;
+  selfFriends: FriendList | undefined;
   friendCount: number;
   commonFriendCount: number;
   visibleDateObject: DateObject;
@@ -70,11 +68,7 @@ interface Action {
 }
 
 const initialState: State = {
-  isLoading: true,
-  preferences: undefined,
-  drinkingSessionData: undefined,
-  profileData: undefined,
-  friends: undefined,
+  selfFriends: undefined,
   friendCount: 0,
   commonFriendCount: 0,
   visibleDateObject: dateToDateObject(new Date()),
@@ -87,16 +81,8 @@ const initialState: State = {
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
-    case 'SET_IS_LOADING':
-      return {...state, isLoading: action.payload};
-    case 'SET_PREFERENCES':
-      return {...state, preferences: action.payload};
-    case 'SET_DRINKING_SESSION_DATA':
-      return {...state, drinkingSessionData: action.payload};
-    case 'SET_PROFILE_DATA':
-      return {...state, profileData: action.payload};
-    case 'SET_FRIENDS':
-      return {...state, friends: action.payload};
+    case 'SET_SELF_FRIENDS':
+      return {...state, selfFriends: action.payload};
     case 'SET_FRIEND_COUNT':
       return {...state, friendCount: action.payload};
     case 'SET_COMMON_FRIEND_COUNT':
@@ -125,10 +111,18 @@ type ProfileScreenProps = StackScreenProps<
 
 const ProfileScreen = ({route}: ProfileScreenProps) => {
   const {auth, db, storage} = useFirebase();
-  const {userData, drinkingSessionData, preferences, refetch} = useDatabaseData();
   const {userId} = route.params;
   const user = auth.currentUser;
   const userIsSelf = user?.uid === userId;
+  const relevantDataKeys: UserFetchDataKey[] = [
+    'userData',
+    'drinkingSessionData',
+    'preferences',
+  ];
+  const {data, isLoading, refetch} = useFetchData(userId, relevantDataKeys);
+  const {userData, drinkingSessionData, preferences} = data;
+  const profileData = userData?.profile;
+  const friends = userData?.friends;
   const [state, dispatch] = useReducer(reducer, initialState);
 
   // Define your stats data
@@ -138,74 +132,81 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
     {header: 'Points Earned', content: String(state.pointsEarned)},
   ];
 
-    const fetchData = async () => {
-      try {
-        dispatch({type: 'SET_IS_LOADING', payload: true});
-        let userSessions: DrinkingSessionList | undefined = drinkingSessionData;
-        let userPreferences: Preferences | undefined = preferences;
-        let userFriends: FriendList | undefined = userData?.friends;
-        let userProfileData: Profile | undefined = userData?.profile;
+  // const fetchData = async () => {
+  //   try {
+  //     dispatch({type: 'SET_IS_LOADING', payload: true});
+  //     let userSessions: DrinkingSessionList | undefined = drinkingSessionData;
+  //     let userPreferences: Preferences | undefined = preferences;
+  //     let userFriends: FriendList | undefined = userData?.friends;
+  //     let userProfileData: Profile | undefined = userData?.profile;
 
-        if (!userIsSelf) {
-          userSessions =  await readDataOnce(
-            db,
-            DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(userId),
-          );
-          userPreferences = await readDataOnce(
-            db,
-            DBPATHS.USER_PREFERENCES_USER_ID.getRoute(userId),
-          );
-          userFriends = await fetchUserFriends(db, userId);
-          userProfileData = await readDataOnce(
-            db,
-            DBPATHS.USERS_USER_ID_PROFILE.getRoute(userId),
-          );
-        }
+  //     if (!userIsSelf) {
+  //       userSessions = await readDataOnce(
+  //         db,
+  //         DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(userId),
+  //       );
+  //       userPreferences = await readDataOnce(
+  //         db,
+  //         DBPATHS.USER_PREFERENCES_USER_ID.getRoute(userId),
+  //       );
+  //       userFriends = await fetchUserFriends(db, userId);
+  //       userProfileData = await readDataOnce(
+  //         db,
+  //         DBPATHS.USERS_USER_ID_PROFILE.getRoute(userId),
+  //       );
+  //     }
 
-        dispatch({type: 'SET_DRINKING_SESSION_DATA', payload: userSessions});
-        dispatch({type: 'SET_PREFERENCES', payload: userPreferences});
-        dispatch({type: 'SET_FRIENDS', payload: userFriends});
-        dispatch({type: 'SET_PROFILE_DATA', payload: userProfileData})
-      } catch (error: any) {
-        Alert.alert(
-          'Error fetching data',
-          `Could not connect to the database: ${error.message}`,
-        );
-      } finally {
-        dispatch({type: 'SET_IS_LOADING', payload: false});
-      }
-    };
-
+  //     dispatch({type: 'SET_DRINKING_SESSION_DATA', payload: userSessions});
+  //     dispatch({type: 'SET_PREFERENCES', payload: userPreferences});
+  //     dispatch({type: 'SET_FRIENDS', payload: userFriends});
+  //     dispatch({type: 'SET_PROFILE_DATA', payload: userProfileData});
+  //   } catch (error: any) {
+  //     Alert.alert(
+  //       'Error fetching data',
+  //       `Could not connect to the database: ${error.message}`,
+  //     );
+  //   } finally {
+  //     dispatch({type: 'SET_IS_LOADING', payload: false});
+  //   }
+  // };
 
   // Database data hooks
   useEffect(() => {
-    fetchData();
+    refetch(relevantDataKeys);
   }, [userId]);
 
   const onRefresh = React.useCallback(() => {
-    dispatch({type: 'SET_IS_LOADING', payload: true});
     setTimeout(() => {
-      fetchData().then(() => {
-        dispatch({type: 'SET_IS_LOADING', payload: false});
-      });
+      refetch(relevantDataKeys);
     }, 1000);
+  }, []);
+
+  // Track own friends
+  useEffect(() => {
+    let ownFriends = friends;
+    if (!userIsSelf) {
+      let {userData} = useDatabaseData(); // Authenticated user data
+      ownFriends = userData?.friends;
+    }
+    dispatch({type: 'SET_SELF_FRIENDS', payload: ownFriends});
   }, []);
 
   // Monitor friends count
   useMemo(() => {
-    const friendCount = state.friends ? objKeys(state.friends).length : 0;
+    const friendCount = friends ? objKeys(friends).length : 0;
     const commonFriendCount = getCommonFriendsCount(
-      objKeys(userData?.friends),
-      objKeys(state.friends),
+      objKeys(state.selfFriends),
+      objKeys(friends),
     );
     dispatch({type: 'SET_FRIEND_COUNT', payload: friendCount});
     dispatch({type: 'SET_COMMON_FRIEND_COUNT', payload: commonFriendCount});
-  }, [state.friends]);
+  }, [friends]);
 
   // Monitor stats
   useMemo(() => {
-    if (!state.drinkingSessionData || !state.preferences) return;
-    let drinkingSessionArray: DrinkingSessionArray = Object.values(state.drinkingSessionData)
+    if (!drinkingSessionData || !preferences) return;
+    let drinkingSessionArray: DrinkingSessionArray =
+      Object.values(drinkingSessionData);
 
     let thisMonthUnits = calculateThisMonthUnits(
       state.visibleDateObject,
@@ -214,7 +215,7 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
     let thisMonthPoints = calculateThisMonthPoints(
       state.visibleDateObject,
       drinkingSessionArray,
-      state.preferences.units_to_points,
+      preferences.units_to_points,
     );
     let thisMonthSessionCount = getSingleMonthDrinkingSessions(
       timestampToDate(state.visibleDateObject.timestamp),
@@ -228,23 +229,15 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
     });
     dispatch({type: 'SET_UNITS_CONSUMED', payload: thisMonthUnits});
     dispatch({type: 'SET_POINTS_EARNED', payload: thisMonthPoints});
-  }, [state.drinkingSessionData, state.preferences, state.visibleDateObject]);
+  }, [drinkingSessionData, preferences, state.visibleDateObject]);
 
-  if (state.isLoading) return <LoadingData />;
-  if (
-    !db ||
-    !storage ||
-    !state.preferences ||
-    !state.drinkingSessionData ||
-    !state.profileData ||
-    !userData
-  )
-    return;
+  if (isLoading) return <LoadingData />;
+  if (!db || !storage || !profileData || !preferences || !userData) return;
 
   return (
     <View style={styles.mainContainer}>
       <MainHeader
-        headerText={user?.uid === userId ? 'Profile' : 'Friend Overview'}
+        headerText={userIsSelf ? 'Profile' : 'Friend Overview'}
         onGoBack={() => Navigation.goBack()}
       />
       <ScrollView
@@ -252,11 +245,11 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
         onScrollBeginDrag={Keyboard.dismiss}
         keyboardShouldPersistTaps="handled"
         refreshControl={
-          <RefreshControl refreshing={state.isLoading} onRefresh={onRefresh} />
+          <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
         }>
         <ProfileOverview
           userId={userId}
-          profileData={user?.uid === userId ? userData.profile : state.profileData} // For live propagation of current user
+          profileData={profileData} // For live propagation of current user
         />
         <View style={styles.friendsInfoContainer}>
           <View style={styles.leftContainer}>
@@ -265,7 +258,7 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
               style={[styles.friendsInfoText, commonStyles.smallMarginLeft]}>
               {state.friendCount}
             </Text>
-            {userId === user?.uid ? null : (
+            {userIsSelf ? null : (
               <Text
                 style={[styles.friendsInfoText, commonStyles.smallMarginLeft]}>
                 ({state.commonFriendCount} common)
@@ -275,9 +268,11 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
           <View style={styles.rightContainer}>
             <TouchableOpacity
               onPress={() => {
-                userId === user?.uid
+                userIsSelf
                   ? Navigation.navigate(ROUTES.SOCIAL_FRIEND_LIST)
-                  : Navigation.navigate(ROUTES.PROFILE_FRIENDS_FRIENDS.getRoute(userId));
+                  : Navigation.navigate(
+                      ROUTES.PROFILE_FRIENDS_FRIENDS.getRoute(userId),
+                    );
               }}
               style={styles.seeFriendsButton}>
               <Text style={[styles.friendsInfoText, commonStyles.linkText]}>
@@ -291,18 +286,22 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
           <StatsOverview statsData={statsData} />
         </View>
         <SessionsCalendar
-          drinkingSessionData={state.drinkingSessionData}
-          preferences={state.preferences}
+          drinkingSessionData={drinkingSessionData}
+          preferences={preferences}
           visibleDateObject={state.visibleDateObject}
           dispatch={dispatch}
           onDayPress={(day: DateData) => {
-            user?.uid === userId
-              ? Navigation.navigate(ROUTES.DAY_OVERVIEW.getRoute(timestampToDateString(day.timestamp)))
+            userIsSelf
+              ? Navigation.navigate(
+                  ROUTES.DAY_OVERVIEW.getRoute(
+                    timestampToDateString(day.timestamp),
+                  ),
+                )
               : null;
           }}
         />
         <View style={styles.bottomContainer}>
-          {user?.uid !== userId ? (
+          {userIsSelf ? (
             <TouchableOpacity
               style={styles.manageFriendButton}
               onPress={() =>
