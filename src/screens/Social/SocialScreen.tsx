@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {getDatabaseData} from '@src/context/global/DatabaseDataContext';
 import commonStyles from '@src/styles/commonStyles';
 import {TabView} from 'react-native-tab-view';
 import FriendListScreen from './FriendListScreen';
@@ -15,14 +14,13 @@ import FriendRequestScreen from './FriendRequestScreen';
 import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
 import MainHeader from '@components/Header/MainHeader';
 import {getReceivedRequestsCount} from '@libs/FriendUtils';
-import {useIsFocused} from '@react-navigation/native';
-import CONST from '@src/CONST';
 import {UserProps} from '@src/types/database';
 import FriendSearchScreen from './FriendSearchScreen';
 import {StackScreenProps} from '@react-navigation/stack';
 import SCREENS from '@src/SCREENS';
 import {SocialNavigatorParamList} from '@libs/Navigation/types';
 import Navigation from '@libs/Navigation/Navigation';
+import { useDatabaseData } from '@context/global/DatabaseDataContext';
 
 type SocialFooterButtonProps = {
   index: number;
@@ -79,21 +77,18 @@ type SocialScreenProps = StackScreenProps<
 type RouteType = {
   key: string;
   title: string;
-  userData: UserProps | null;
+  userData: UserProps | undefined;
 };
 
 const SocialScreen = ({route}: SocialScreenProps) => {
-  const {screen} = route.params;
-  const {userData} = getDatabaseData();
+  const {userData, refetch} = useDatabaseData();
   const [routes] = useState([
     {key: 'friendList', title: 'Friend List', userData: userData},
     {key: 'friendSearch', title: 'Friend Search', userData: userData},
     {key: 'friendRequests', title: 'Friend Requests', userData: userData},
   ]);
 
-  const [index, setIndex] = useState<number>(
-    routes.findIndex(route => route.title === screen) || 0, // Get the index of the screen based on the title
-  );
+  const [index, setIndex] = useState<number>(0)
 
   const renderScene = ({route}: {route: RouteType}) => {
     if (!userData) return null;
@@ -101,7 +96,6 @@ const SocialScreen = ({route}: SocialScreenProps) => {
       case 'friendList':
         return (
           <FriendListScreen
-            navigation={navigation}
             friends={userData?.friends}
             setIndex={setIndex}
           />

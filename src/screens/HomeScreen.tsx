@@ -343,10 +343,7 @@ const HomeScreen = ({}: HomeScreenProps) => {
             containerStyle={styles.menuIconContainer}
             iconStyle={styles.menuIcon}
             onPress={() =>
-              Navigation.navigate(
-                // ROUTES.SOCIAL.getRoute(SCREENS.SOCIAL.FRIEND_LIST),
-                ROUTES.SOCIAL_FRIEND_LIST,
-              )
+              Navigation.navigate(ROUTES.SOCIAL)
             }
           />
           <MenuIcon
