@@ -186,13 +186,6 @@ const FriendsFriendsScreen = ({ route }: FriendsFriendsScreenProps) => {
                 key={userId + '-button'}
                 onPress={() =>
                   Navigation.navigate(ROUTES.PROFILE.getRoute(userId))
-                  // navigation.navigate('Profile Screen', {
-                  //   userId: userId,
-                  //   profileData: state.displayData[userId],
-                  //   friends: null, // Fetch on render
-                  //   drinkingSessionData: null, // Fetch on render
-                  //   preferences: null, // Fetch on render
-                  // })
                 }
               />
             ) : null

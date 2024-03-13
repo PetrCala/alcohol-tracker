@@ -114,14 +114,6 @@ const FriendListScreen = () => {
 
   const navigateToProfile = (friendId: string): void => {
     Navigation.navigate(ROUTES.PROFILE.getRoute(friendId));
-    // navigation.navigate('Profile Screen', {
-    //   userId: friendId,
-    //   profileData: profileData,
-    //   friends: null, // Fetch on render
-    //   currentUserFriends: friends,
-    //   drinkingSessionData: null, // Fetch on render
-    //   preferences: null, // Fetch on render - if you want to calculate with current user, pass here
-    // });
   };
 
   const fetchData = async () => {
