@@ -321,7 +321,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
         sessionId,
       ),
     );
-    sessionToOpen = sessionToOpen || getEmptySession(true, true);
+    sessionToOpen = sessionToOpen || getEmptySession(true, false);
     setSession(sessionToOpen);
     initialSession.current = sessionToOpen;
     setOpeningSession(false);

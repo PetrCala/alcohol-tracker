@@ -41,6 +41,7 @@ import SCREENS from '@src/SCREENS';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
+import DBPATHS from '@database/DBPATHS';
 
 type DayOverviewScreenProps = StackScreenProps<
   DayOverviewNavigatorParamList,
@@ -191,18 +192,10 @@ const DayOverviewScreen = ({route}: DayOverviewScreenProps) => {
     if (currentDate >= tomorrowMidnight) {
       return null;
     }
-    // Create a new mock drinking session
-    let newTimestamp = setDateToCurrentTime(currentDate).getTime(); // At noon
-    let newSession: DrinkingSession = {
-      start_time: newTimestamp, // Arbitrary timestamp of today's noon
-      end_time: newTimestamp,
-      blackout: false,
-      note: '',
-      units: getZeroUnitsList(),
-    };
+    // Generate a new drinking session key
     let newSessionId = generateDatabaseKey(
       db,
-      `user_drinking_sessions/${user.uid}`,
+      DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(user.uid),
     );
     if (!newSessionId) {
       Alert.alert('Error', 'Could not generate a new session key.');
