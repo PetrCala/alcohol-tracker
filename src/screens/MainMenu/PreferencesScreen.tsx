@@ -9,8 +9,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {PreferencesScreenProps} from '@src/types/screens';
-
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import {useFirebase} from '@context/global/FirebaseContext';
 import UserOffline from '@components/UserOffline';
@@ -19,11 +17,18 @@ import {savePreferencesData} from '@database/preferences';
 import YesNoPopup from '@components/Popups/YesNoPopup';
 import CustomSwitch from '@components/CustomSwitch';
 import NumericSlider from '@components/Popups/NumericSlider';
-import {getDatabaseData} from '@context/global/DatabaseDataContext';
 import {getDefaultPreferences} from '@database/users';
 import MainHeader from '@components/Header/MainHeader';
 import {Preferences} from '@src/types/database';
 import CONST from '@src/CONST';
+import { useDatabaseData } from '@context/global/DatabaseDataContext';
+import { StackScreenProps } from '@react-navigation/stack';
+import { MainMenuNavigatorParamList } from '@libs/Navigation/types';
+import SCREENS from '@src/SCREENS';
+import Navigation from '@libs/Navigation/Navigation';
+import ROUTES from '@src/ROUTES';
+import { set } from 'lodash';
+import LoadingData from '@components/LoadingData';
 
 interface PreferencesListProps {
   id: string;
@@ -58,12 +63,16 @@ const PreferencesList: React.FC<PreferencesListProps> = ({
   );
 };
 
-const PreferencesScreen = ({route, navigation}: PreferencesScreenProps) => {
-  if (!route || !navigation) return null; // Should never be null
+type PreferencesScreenProps = StackScreenProps<
+  MainMenuNavigatorParamList,
+  typeof SCREENS.MAIN_MENU.PREFERENCES
+>;
+
+const PreferencesScreen = ({route}: PreferencesScreenProps) => {
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
-  const {userData, preferences} = getDatabaseData();
+  const {preferences, refetch} = useDatabaseData();
   const initialPreferences = useRef(preferences);
   const [showLeaveConfirmation, setShowLeaveConfirmation] = useState(false);
   const [sliderVisible, setSliderVisible] = useState<boolean>(false);
@@ -73,6 +82,7 @@ const PreferencesScreen = ({route, navigation}: PreferencesScreenProps) => {
   const [sliderHeading, setSliderHeading] = useState<string>('');
   const [sliderList, setSliderList] = useState<string>('');
   const [sliderKey, setSliderKey] = useState<string>('');
+  const [saving, setSaving] = useState<boolean>(false);
   // Deconstruct the preferences
   let defaultPreferences = getDefaultPreferences();
   const [currentPreferences, setCurrentPreferences] = useState<Preferences>(
@@ -90,17 +100,18 @@ const PreferencesScreen = ({route, navigation}: PreferencesScreenProps) => {
     if (havePreferencesChanged()) {
       setShowLeaveConfirmation(true); // Unsaved changes
     } else {
-      navigation.goBack();
+      Navigation.goBack();
     }
   };
 
   const handleSavePreferences = async () => {
     if (!db || !user) return;
     try {
+      setSaving(true);
       await savePreferencesData(db, user.uid, currentPreferences);
-      navigation.navigate('Main Menu Screen', {
-        userData: userData,
-        preferences: currentPreferences,
+      refetch(['preferences']).then(() => {
+        Navigation.navigate(ROUTES.MAIN_MENU);
+        setSaving(false);
       });
     } catch (error: any) {
       Alert.alert('Preferences saving failed', error.message);
@@ -161,10 +172,11 @@ const PreferencesScreen = ({route, navigation}: PreferencesScreenProps) => {
   }, [currentPreferences]); // Add your state dependencies here
 
   if (!isOnline) return <UserOffline />;
-  if (!db || !user || !preferences) {
-    navigation.replace('Login Screen');
+  if (!user || !preferences) {
+    Navigation.navigate(ROUTES.LOGIN);
     return null;
   }
+  if (saving) return <LoadingData loadingText='Saving your preferences...'/>
 
   return (
     <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
@@ -274,7 +286,7 @@ const PreferencesScreen = ({route, navigation}: PreferencesScreenProps) => {
         message="You have unsaved changes. Are you sure you want to go back?"
         onYes={() => {
           setShowLeaveConfirmation(false);
-          navigation.goBack();
+          Navigation.goBack();
         }}
       />
     </View>
