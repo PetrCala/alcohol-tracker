@@ -57,9 +57,39 @@ function extractSessionOrEmpty(
   return getEmptySession();
 }
 
+/**
+ * Executes a task only after a condition is met or the maximum number of retries is reached.
+ * @param task A function to execute that returns a promise.
+ * @param condition A function that returns a boolean indicating whether the task should be retried.
+ * @param maxRetries The maximum number of times to check for the condition.
+ * @param delay The delay between retries in milliseconds.
+ * @returns A promise that resolves when the task is completed or if the condition does not become true after the maximum number of retries.
+ */
+async function executeAfterCondition(
+  task: () => Promise<void>,
+  condition: boolean,
+  maxRetries: number = 5,
+  delay: number = 100,
+): Promise<void> {
+  let attempt = 0;
+  while (!condition && attempt < maxRetries) {
+    console.log('waiting...');
+    await new Promise(resolve => setTimeout(resolve, delay));
+    attempt++;
+  }
+  if (attempt === maxRetries) {
+    console.log(`Maximum attempts reached (${maxRetries}).`);
+    return;
+  }
+  console.log('condition met, executing task...');
+  await task();
+}
+
+
 export {
   PlaceholderUnits,
   extractSessionOrEmpty,
   getEmptySession,
   isEmptySession,
+  executeAfterCondition,
 };

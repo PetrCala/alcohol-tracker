@@ -1,6 +1,26 @@
 import React, {useState, useEffect, useRef, useCallback} from 'react';
 import {AsyncResponsiveComponentProps} from './types';
 
+
+  // const asyncOperation = async (
+  //   triggerRef: React.MutableRefObject<any>,
+  //   checkIsActive: () => boolean,
+  // ) => {
+  //   console.log('Async operation started with trigger:', triggerRef.current);
+
+  //   // Simulating an async task (e.g., data fetching)
+  //   await new Promise(resolve => setTimeout(resolve, 5));
+
+  //   if (!checkIsActive()) {
+  //     console.log(
+  //       'Async operation halted or results ignored because the trigger changed or component unmounted',
+  //     );
+  //     return;
+  //   }
+
+  //   console.log('Async operation completed with trigger:', triggerRef.current);
+  //   // Here, you could check triggerRef.current to decide how to proceed based on its latest value
+  // };
 const AsyncResponsiveComponent: React.FC<AsyncResponsiveComponentProps> = ({
   trigger, // pendingUpdate
   asyncOperation, // waitForPendingUpdate
@@ -33,3 +53,4 @@ const AsyncResponsiveComponent: React.FC<AsyncResponsiveComponentProps> = ({
 };
 
 export default AsyncResponsiveComponent;
+

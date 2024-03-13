@@ -62,7 +62,7 @@ import {isEqual} from 'lodash';
 import {readDataOnce} from '@database/baseFunctions';
 import DBPATHS from '@database/DBPATHS';
 import useAsyncQueue from '@hooks/useAsyncQueue';
-import {executeAfterCondition} from '@libs/Utils';
+import {executeAfterCondition} from '@libs/SessionUtils';
 
 type LiveSessionScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -83,7 +83,6 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
   const [availableUnits, setAvailableUnits] = useState<number>(0);
   const [sessionFinished, setSessionFinished] = useState<boolean>(false);
   // Time info
-  const updateTimeout = 1000; // Synchronize with DB every x milliseconds
   const [dbSyncSuccessful, setDbSyncSuccessful] = useState(false);
   const sessionDate = timestampToDate(session?.start_time ?? Date.now());
   const sessionStartTime = formatDateToTime(sessionDate);
@@ -107,6 +106,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
   const syncWithDb = async (newSessionData: DrinkingSession) => {
     if (!user || !session) return;
     try {
+      setDbSyncSuccessful(false);
       await saveDrinkingSessionData(
         db,
         user.uid,
@@ -114,7 +114,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
         sessionId,
         true, // Update live session status
       );
-      await new Promise(resolve => setTimeout(resolve, 1500)); // Wait for 2 seconds
+      setDbSyncSuccessful(true);
     } catch (error: any) {
       console.log('Could not save the drinking session data', error.message);
       throw new Error('Could not save the drinking session data');
@@ -200,7 +200,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
   // Function to wait for pending updates to finish
   const waitForNoPendingUpdate = async () => {
     while (isPending) {
-      await new Promise(resolve => setTimeout(resolve, 100)); // Wait for 100ms before checking again
+      await new Promise(resolve => setTimeout(resolve, 1000));
     }
   };
 
@@ -265,11 +265,11 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
 
   const handleConfirmDiscard = async () => {
     if (!db || !user) return;
-    await waitForNoPendingUpdate();
     try {
       const discardFunction = sessionIsLive
         ? discardLiveDrinkingSession
         : removeDrinkingSessionData;
+      await waitForNoPendingUpdate();
       await discardFunction(db, user.uid, sessionId);
     } catch (error: any) {
       Alert.alert(
@@ -300,15 +300,9 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
       return;
     }
     if (sessionIsLive) {
-      console.log('Session is live, waiting for pending update');
       try {
-        console.log('hello');
-        await executeAfterCondition(
-          () => updateSessionUnits(db, user.uid, sessionId, session?.units),
-          isPending,
-          10,
-          100,
-        );
+        await waitForNoPendingUpdate();
+        await updateSessionUnits(db, user.uid, sessionId, session?.units);
       } catch (error: any) {
         Alert.alert('Database synchronization failed', error.message);
       }
@@ -355,7 +349,6 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
       openingSession
     )
       return;
-    console.log('queueing update');
     enqueueUpdate({...session, ongoing: true});
   }, [session, openingSession]);
 
@@ -372,26 +365,6 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
       BackHandler.removeEventListener('hardwareBackPress', backAction);
     };
   }, [session]);
-
-  const asyncOperation = async (
-    triggerRef: React.MutableRefObject<any>,
-    checkIsActive: () => boolean,
-  ) => {
-    console.log('Async operation started with trigger:', triggerRef.current);
-
-    // Simulating an async task (e.g., data fetching)
-    await new Promise(resolve => setTimeout(resolve, 5));
-
-    if (!checkIsActive()) {
-      console.log(
-        'Async operation halted or results ignored because the trigger changed or component unmounted',
-      );
-      return;
-    }
-
-    console.log('Async operation completed with trigger:', triggerRef.current);
-    // Here, you could check triggerRef.current to decide how to proceed based on its latest value
-  };
 
   if (!isOnline) return <UserOffline />;
   if (openingSession)
