@@ -155,12 +155,11 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
             db,
             DBPATHS.USER_PREFERENCES_USER_ID.getRoute(userId),
           );
-          const userData: UserProps | null = await readDataOnce(
+          userFriends = await fetchUserFriends(db, userId);
+          userProfileData = await readDataOnce(
             db,
-            DBPATHS.USERS_USER_ID.getRoute(userId),
+            DBPATHS.USERS_USER_ID_PROFILE.getRoute(userId),
           );
-          userFriends = userData?.friends
-          userProfileData = userData?.profile
         }
 
         dispatch({type: 'SET_DRINKING_SESSION_DATA', payload: userSessions});

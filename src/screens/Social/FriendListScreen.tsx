@@ -211,6 +211,7 @@ const FriendListScreen = () => {
             </Text>
             <TouchableOpacity
               // onPress={() => setIndex(1)}
+              // TODO fix this
               onPress={() => Navigation.navigate(ROUTES.SOCIAL_FRIEND_SEARCH)}
               style={styles.navigateToSearchButton}>
               <Text style={styles.navigateToSearchText}>Add them here</Text>

@@ -8,12 +8,13 @@ import {
 import {Database} from 'firebase/database';
 import {isNonEmptyArray} from './Validation';
 import CONST from '@src/CONST';
+import DBPATHS from '@database/DBPATHS';
 
 export async function fetchUserFriends(
   db: Database,
   userId: string,
 ): Promise<FriendList | undefined> {
-  return await readDataOnce(db, `users/${userId}/friends`);
+  return await readDataOnce(db, DBPATHS.USERS_USER_ID_FRIENDS.getRoute(userId));
 }
 
 /**
