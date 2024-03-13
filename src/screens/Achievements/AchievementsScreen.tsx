@@ -1,21 +1,15 @@
 ﻿import React, {useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import MenuIcon from '../../components/Buttons/MenuIcon';
-import commonStyles from '../../styles/commonStyles';
 import MainHeader from '@components/Header/MainHeader';
+import Navigation from '@libs/Navigation/Navigation';
 
-type AchievementsScreenProps = {
-  navigation: any;
-};
-
-const AchievementsScreen = (props: AchievementsScreenProps) => {
-  const {navigation} = props;
+const AchievementsScreen = () => {
 
   return (
     <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
       <MainHeader
         headerText="Achievements"
-        onGoBack={() => navigation.goBack()}
+        onGoBack={() => Navigation.goBack()}
       />
       <View style={styles.mainContainer}>
         <Text style={styles.sectionText}>Coming soon...</Text>
