@@ -183,12 +183,18 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
 
   // Track own friends
   useEffect(() => {
-    let ownFriends = friends;
-    if (!userIsSelf) {
-      let {userData} = useDatabaseData(); // Authenticated user data
-      ownFriends = userData?.friends;
-    }
-    dispatch({type: 'SET_SELF_FRIENDS', payload: ownFriends});
+    const getOwnFriends = async () => {
+      if (!user) return;
+      let ownFriends = friends;
+      if (!userIsSelf) {
+        ownFriends = await readDataOnce(
+          db,
+          DBPATHS.USERS_USER_ID_FRIENDS.getRoute(user.uid),
+        );
+      }
+      dispatch({type: 'SET_SELF_FRIENDS', payload: ownFriends});
+    };
+    getOwnFriends();
   }, []);
 
   // Monitor friends count
