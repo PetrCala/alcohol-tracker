@@ -9,13 +9,11 @@
   TouchableOpacity,
   View,
 } from 'react-native';
-import PropTypes from 'prop-types';
-import MenuIcon from '../../components/Buttons/MenuIcon';
 import commonStyles from '../../styles/commonStyles';
 import {useFirebase} from '../../context/global/FirebaseContext';
 import {StatData, StatsOverview} from '@components/Items/StatOverview';
 import ProfileOverview from '@components/Social/ProfileOverview';
-import {useEffect, useMemo, useReducer} from 'react';
+import React, {useEffect, useMemo, useReducer} from 'react';
 import {readDataOnce} from '@database/baseFunctions';
 import {
   calculateThisMonthPoints,
@@ -24,6 +22,7 @@ import {
   getSingleMonthDrinkingSessions,
   objKeys,
   timestampToDate,
+  timestampToDateString,
 } from '@libs/DataHandling';
 import {DateObject} from '@src/types/time';
 import SessionsCalendar from '@components/Calendar';
@@ -31,25 +30,30 @@ import LoadingData from '@components/LoadingData';
 import {fetchUserFriends, getCommonFriendsCount} from '@libs/FriendUtils';
 import MainHeader from '@components/Header/MainHeader';
 import ManageFriendPopup from '@components/Popups/Profile/ManageFriendPopup';
-import {getDatabaseData} from '@src/context/global/DatabaseDataContext';
 import {
   DrinkingSessionArray,
   DrinkingSessionList,
   FriendList,
   Preferences,
   Profile,
+  UserProps,
 } from '@src/types/database';
 import {StackScreenProps} from '@react-navigation/stack';
 import {ProfileNavigatorParamList} from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
 import Navigation from '@libs/Navigation/Navigation';
 import DBPATHS from '@database/DBPATHS';
+import { useDatabaseData } from '@context/global/DatabaseDataContext';
+import ROUTES from '@src/ROUTES';
+import { DateData } from 'react-native-calendars';
+import { RefreshControl } from 'react-native-gesture-handler';
 
 interface State {
   isLoading: boolean;
-  preferences: Preferences | null;
-  drinkingSessionData: DrinkingSessionArray | null;
-  friends: FriendList | null;
+  preferences: Preferences | undefined;
+  drinkingSessionData: DrinkingSessionList | undefined;
+  profileData: Profile | undefined;
+  friends: FriendList | undefined;
   friendCount: number;
   commonFriendCount: number;
   visibleDateObject: DateObject;
@@ -67,9 +71,10 @@ interface Action {
 
 const initialState: State = {
   isLoading: true,
-  preferences: null,
-  drinkingSessionData: null,
-  friends: null,
+  preferences: undefined,
+  drinkingSessionData: undefined,
+  profileData: undefined,
+  friends: undefined,
   friendCount: 0,
   commonFriendCount: 0,
   visibleDateObject: dateToDateObject(new Date()),
@@ -88,6 +93,8 @@ const reducer = (state: State, action: Action): State => {
       return {...state, preferences: action.payload};
     case 'SET_DRINKING_SESSION_DATA':
       return {...state, drinkingSessionData: action.payload};
+    case 'SET_PROFILE_DATA':
+      return {...state, profileData: action.payload};
     case 'SET_FRIENDS':
       return {...state, friends: action.payload};
     case 'SET_FRIEND_COUNT':
@@ -118,9 +125,10 @@ type ProfileScreenProps = StackScreenProps<
 
 const ProfileScreen = ({route}: ProfileScreenProps) => {
   const {auth, db, storage} = useFirebase();
-  const {userData} = getDatabaseData();
+  const {userData, drinkingSessionData, preferences, refetch} = useDatabaseData();
   const {userId} = route.params;
   const user = auth.currentUser;
+  const userIsSelf = user?.uid === userId;
   const [state, dispatch] = useReducer(reducer, initialState);
 
   // Define your stats data
@@ -130,70 +138,59 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
     {header: 'Points Earned', content: String(state.pointsEarned)},
   ];
 
-  // Database data hooks
-  useEffect(() => {
     const fetchData = async () => {
-      dispatch({type: 'SET_IS_LOADING', payload: true});
-
-      // Here use the custom data hook that fetches all data based on the specified data that the user needs to fetch
       try {
-        let userSessions: DrinkingSessionArray | null = drinkingSessionData;
-        let userPreferences: Preferences | null = preferences;
+        dispatch({type: 'SET_IS_LOADING', payload: true});
+        let userSessions: DrinkingSessionList | undefined = drinkingSessionData;
+        let userPreferences: Preferences | undefined = preferences;
+        let userFriends: FriendList | undefined = userData?.friends;
+        let userProfileData: Profile | undefined = userData?.profile;
 
-        if (!userSessions) {
-          const newSessions: DrinkingSessionList | null = await readDataOnce(
+        if (!userIsSelf) {
+          userSessions =  await readDataOnce(
             db,
             DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(userId),
           );
-          userSessions = newSessions ? Object.values(newSessions) : [];
-        }
-        if (!userPreferences) {
           userPreferences = await readDataOnce(
             db,
             DBPATHS.USER_PREFERENCES_USER_ID.getRoute(userId),
           );
+          const userData: UserProps | null = await readDataOnce(
+            db,
+            DBPATHS.USERS_USER_ID.getRoute(userId),
+          );
+          userFriends = userData?.friends
+          userProfileData = userData?.profile
         }
 
         dispatch({type: 'SET_DRINKING_SESSION_DATA', payload: userSessions});
         dispatch({type: 'SET_PREFERENCES', payload: userPreferences});
-      } catch (error: any) {
-        Alert.alert(
-          'Error fetching data',
-          `Could not connect to the database: ${error.message}`,
-        );
-      }
-
-      dispatch({type: 'SET_IS_LOADING', payload: false});
-    };
-
-    fetchData();
-  }, [userId, drinkingSessionData, preferences]);
-
-  // Monitor friends
-  useEffect(() => {
-    const fetchFriends = async () => {
-      dispatch({type: 'SET_IS_LOADING', payload: true});
-
-      try {
-        let userFriends: FriendList | null = friends;
-
-        if (!userFriends) {
-          userFriends = await fetchUserFriends(db, userId);
-        }
-
         dispatch({type: 'SET_FRIENDS', payload: userFriends});
+        dispatch({type: 'SET_PROFILE_DATA', payload: userProfileData})
       } catch (error: any) {
         Alert.alert(
           'Error fetching data',
           `Could not connect to the database: ${error.message}`,
         );
+      } finally {
+        dispatch({type: 'SET_IS_LOADING', payload: false});
       }
-
-      dispatch({type: 'SET_IS_LOADING', payload: false});
     };
 
-    fetchFriends();
-  }, [userId, friends]);
+
+  // Database data hooks
+  useEffect(() => {
+    fetchData();
+  }, [userId]);
+
+  const onRefresh = React.useCallback(() => {
+    dispatch({type: 'SET_IS_LOADING', payload: true});
+    setTimeout(() => {
+      fetchData().then(() => {
+        dispatch({type: 'SET_IS_LOADING', payload: false});
+      });
+    }, 1000);
+  }, []);
 
   // Monitor friends count
   useMemo(() => {
@@ -209,19 +206,20 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
   // Monitor stats
   useMemo(() => {
     if (!state.drinkingSessionData || !state.preferences) return;
+    let drinkingSessionArray: DrinkingSessionArray = Object.values(state.drinkingSessionData)
 
     let thisMonthUnits = calculateThisMonthUnits(
       state.visibleDateObject,
-      state.drinkingSessionData,
+      drinkingSessionArray,
     );
     let thisMonthPoints = calculateThisMonthPoints(
       state.visibleDateObject,
-      state.drinkingSessionData,
+      drinkingSessionArray,
       state.preferences.units_to_points,
     );
     let thisMonthSessionCount = getSingleMonthDrinkingSessions(
       timestampToDate(state.visibleDateObject.timestamp),
-      state.drinkingSessionData,
+      drinkingSessionArray,
       false,
     ).length; // Replace this in the future
 
@@ -239,6 +237,7 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
     !storage ||
     !state.preferences ||
     !state.drinkingSessionData ||
+    !state.profileData ||
     !userData
   )
     return;
@@ -252,10 +251,13 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
       <ScrollView
         style={styles.scrollView}
         onScrollBeginDrag={Keyboard.dismiss}
-        keyboardShouldPersistTaps="handled">
+        keyboardShouldPersistTaps="handled"
+        refreshControl={
+          <RefreshControl refreshing={state.isLoading} onRefresh={onRefresh} />
+        }>
         <ProfileOverview
           userId={userId}
-          profileData={user?.uid === userId ? userData.profile : profileData} // For live propagation of current user
+          profileData={user?.uid === userId ? userData.profile : state.profileData} // For live propagation of current user
         />
         <View style={styles.friendsInfoContainer}>
           <View style={styles.leftContainer}>
@@ -275,13 +277,8 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
             <TouchableOpacity
               onPress={() => {
                 userId === user?.uid
-                  ? navigation.navigate('Social Screen', {
-                      screen: 'Friend List',
-                    })
-                  : navigation.navigate('Friends Friends Screen', {
-                      userId: userId,
-                      friends: state.friends,
-                    });
+                  ? Navigation.navigate(ROUTES.SOCIAL_FRIEND_LIST)
+                  : Navigation.navigate(ROUTES.PROFILE_FRIENDS_FRIENDS.getRoute(userId));
               }}
               style={styles.seeFriendsButton}>
               <Text style={[styles.friendsInfoText, commonStyles.linkText]}>
@@ -299,9 +296,9 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
           preferences={state.preferences}
           visibleDateObject={state.visibleDateObject}
           dispatch={dispatch}
-          onDayPress={(day: DateObject) => {
+          onDayPress={(day: DateData) => {
             user?.uid === userId
-              ? navigation.navigate('Day Overview Screen', {dateObject: day})
+              ? Navigation.navigate(ROUTES.DAY_OVERVIEW.getRoute(timestampToDateString(day.timestamp)))
               : null;
           }}
         />

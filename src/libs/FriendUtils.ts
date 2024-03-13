@@ -12,7 +12,7 @@ import CONST from '@src/CONST';
 export async function fetchUserFriends(
   db: Database,
   userId: string,
-): Promise<FriendList | null> {
+): Promise<FriendList | undefined> {
   return await readDataOnce(db, `users/${userId}/friends`);
 }
 
