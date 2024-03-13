@@ -41,6 +41,7 @@ import {BottomTabNavigatorParamList} from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {DateData} from 'react-native-calendars';
+import { UserFetchDataKey } from '@hooks/useFetchData';
 
 interface State {
   visibleDateObject: DateObject;

@@ -9,7 +9,7 @@ import {
   UserProps,
   UserStatus,
 } from '@src/types/database';
-import {ValueOf} from 'type-fest';
+import {StringKeyOf, ValueOf} from 'type-fest';
 
 type Data = {
   userStatusData?: UserStatus;
@@ -19,15 +19,16 @@ type Data = {
   userData?: UserProps;
 };
 
+type UserFetchDataKey = StringKeyOf<Data>;
+type UserFetchDataValue = ValueOf<Data>;
+
 // Define a type for the hook's return value
 type UseFetchUserDataReturn = {
   data: Data;
   isLoading: boolean;
-  refetch: () => Promise<void>;
+  refetch: (keys?: UserFetchDataKey[]) => Promise<void>;
 };
 
-type UserFetchDataKey = keyof UseFetchUserDataReturn['data'];
-type UserFetchDataValue = ValueOf<UseFetchUserDataReturn['data']>;
 
 const useFetchData = (
   userId: string,
@@ -40,10 +41,17 @@ const useFetchData = (
   const [resolveRefetch, setResolveRefetch] = useState<() => void>(
     () => () => {},
   );
+  const [keysToFetch, setKeysToFetch] = useState<UserFetchDataKey[]>(dataTypes);
 
-  const refetch = (): Promise<void> => {
+
+  const refetch = (keys?: UserFetchDataKey[]): Promise<void> => {
     return new Promise<void>(resolve => {
       setResolveRefetch(() => resolve);
+      if (keys) {
+        setKeysToFetch(keys);
+      } else {
+        setKeysToFetch(dataTypes); // Reset to default
+      }
       setRefetchIndex(prev => prev + 1);
     });
   };
@@ -56,7 +64,7 @@ const useFetchData = (
 
     const fetchData = async () => {
       setIsLoading(true);
-      const promises = dataTypes.map(async dataType => {
+      const promises = keysToFetch.map(async dataType => {
         let path;
         switch (dataType) {
           case 'userStatusData':
@@ -92,13 +100,26 @@ const useFetchData = (
         {},
       );
 
-      setData(newData);
+      setData(prevData => {
+        // Merge newData with prevData, ensuring only specified keys are updated
+        const updatedData = { ...prevData };
+
+        for (const key of keysToFetch) {
+          if (newData.hasOwnProperty(key)) {
+            updatedData[key] = newData[key];
+          }
+          // If newData does not have the key, prevData[key] remains unchanged
+        }
+
+        return updatedData;
+      });
+
       setIsLoading(false);
       resolveRefetch(); // Resolve the promise only after fetching is complete
     };
 
     fetchData();
-  }, [userId, db, refetchIndex]);
+  }, [userId, db, refetchIndex]); // No dataTypes, as that would duplicate the refetch
 
   return {
     data: {
