@@ -218,12 +218,14 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
       return null;
     }
     if (totalPoints > 0) {
-      setSavingSession(true);
-      let newSessionData: DrinkingSession = {
-        ...session,
-        end_time: sessionIsLive ? Date.now() : session.start_time + 1,
-      };
       try {
+        setSavingSession(true);
+        setSessionFinished(true); // No more db syncs
+        let newSessionData: DrinkingSession = {
+          ...session,
+          end_time: sessionIsLive ? Date.now() : session.start_time + 1,
+        };
+        delete newSessionData['ongoing'];
         // Wait for any pending updates to resolve first
         while (isPending) {
           await new Promise(resolve => setTimeout(resolve, 100));
@@ -239,17 +241,16 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
             false, // Do not update live status
           );
         }
-        setSessionFinished(true);
+        // Reroute to session summary, do not allow user to return
+        Navigation.navigate(ROUTES.DRINKING_SESSION_SUMMARY.getRoute(sessionId));
       } catch (error: any) {
         Alert.alert(
           'Session save failed',
           'Failed to save drinking session data: ' + error.message,
         );
-        return;
+      } finally {
+        setSavingSession(false);
       }
-      // Reroute to session summary, do not allow user to return
-      Navigation.navigate(ROUTES.DRINKING_SESSION_SUMMARY.getRoute(sessionId));
-      setSavingSession(false);
     }
   }
 
