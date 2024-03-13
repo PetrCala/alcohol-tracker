@@ -16,8 +16,8 @@ function getEmptySession(
   ongoing?: boolean,
 ): DrinkingSession {
   let emptySession: DrinkingSession = {
-    start_time: 0,
-    end_time: 0,
+    start_time: Date.now(),
+    end_time: Date.now(),
     units: usePlaceholderUnits ? PlaceholderUnits : {},
     blackout: false,
     note: '',

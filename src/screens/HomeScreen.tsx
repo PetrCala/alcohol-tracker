@@ -35,13 +35,15 @@ import {generateDatabaseKey} from '@database/baseFunctions';
 import CONST from '@src/CONST';
 import {DrinkingSession, DrinkingSessionArray} from '@src/types/database';
 import ROUTES from '@src/ROUTES';
-import Navigation from '@navigation/Navigation';
+import Navigation, { navigationRef } from '@navigation/Navigation';
 import {StackScreenProps} from '@react-navigation/stack';
 import {BottomTabNavigatorParamList} from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {DateData} from 'react-native-calendars';
 import { UserFetchDataKey } from '@hooks/useFetchData';
+import { getEmptySession } from '@libs/SessionUtils';
+import DBPATHS from '@database/DBPATHS';
 
 interface State {
   visibleDateObject: DateObject;
@@ -121,19 +123,10 @@ const HomeScreen = ({}: HomeScreenProps) => {
     if (!latest_session?.ongoing) {
       dispatch({type: 'SET_LOADING_NEW_SESSION', payload: true});
       // The user is not in an active session
-      const sessionData: DrinkingSession = {
-        start_time: Date.now(),
-        end_time: Date.now(), // Will be overwritten
-        blackout: false,
-        note: '',
-        units: {
-          [Date.now()]: {other: 0}, // Necessary placeholder, will be deleted
-        },
-        ongoing: true,
-      };
+      const sessionData: DrinkingSession = getEmptySession(true, true);
       const newSessionId = generateDatabaseKey(
         db,
-        `user_drinking_sessions/${user.uid}`,
+        DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(user.uid),
       );
       if (!newSessionId) {
         Alert.alert(
@@ -225,6 +218,11 @@ const HomeScreen = ({}: HomeScreenProps) => {
     dispatch({type: 'SET_UNITS_CONSUMED', payload: thisMonthUnits});
     dispatch({type: 'SET_POINTS_EARNED', payload: thisMonthPoints});
   }, [drinkingSessionData, state.visibleDateObject, preferences]);
+
+  // useEffect(() => {
+  //   console.log("navigationRef", navigationRef)
+
+  // }, [navigationRef])
 
   if (!user) {
     Navigation.navigate(ROUTES.LOGIN);
