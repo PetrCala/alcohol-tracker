@@ -1,10 +1,9 @@
 ﻿import {Linking, Platform, StyleSheet, View} from 'react-native';
-import {TermsOfServiceScreenProps} from '../../../types/screens';
 import {WebView} from 'react-native-webview';
 import MainHeader from '@components/Header/MainHeader';
+import Navigation from '@libs/Navigation/Navigation';
 
-const TermsOfServiceScreen = ({navigation}: TermsOfServiceScreenProps) => {
-  if (!navigation) return null; // Should never be null
+const TermsOfServiceScreen = () => {
 
   const termsHtml =
     Platform.OS === 'android'
@@ -23,7 +22,7 @@ const TermsOfServiceScreen = ({navigation}: TermsOfServiceScreenProps) => {
 
   return (
     <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
-      <MainHeader headerText="" onGoBack={() => navigation.goBack()} />
+      <MainHeader headerText="" onGoBack={() => Navigation.goBack()} />
       <View style={styles.mainContainer}>
         <WebView
           originWhitelist={['*']}
@@ -37,10 +36,10 @@ const TermsOfServiceScreen = ({navigation}: TermsOfServiceScreenProps) => {
   );
 };
 
-export default TermsOfServiceScreen;
-
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
   },
 });
+
+export default TermsOfServiceScreen;

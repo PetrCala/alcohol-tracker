@@ -284,8 +284,7 @@ const MainMenuScreen = ({route}: MainMenuScreenProps) => {
       label: 'Terms of service',
       icon: KirokuIcons.Book,
       action: () => {
-        // TODO
-        // navigation.navigate('Terms Of Service Screen');
+        Navigation.navigate(ROUTES.MAIN_MENU_POLICIES_TERMS_OF_SERVICE)
         setPoliciesModalVisible(false);
       },
     },
@@ -293,8 +292,7 @@ const MainMenuScreen = ({route}: MainMenuScreenProps) => {
       label: 'Privacy Policy',
       icon: KirokuIcons.Book,
       action: () => {
-        // TODO
-        // navigation.navigate('Privacy Policy Screen');
+        Navigation.navigate(ROUTES.MAIN_MENU_POLICIES_PRIVACY_POLICY)
         setPoliciesModalVisible(false);
       },
     },

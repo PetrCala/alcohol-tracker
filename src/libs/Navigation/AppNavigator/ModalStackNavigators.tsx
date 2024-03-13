@@ -96,6 +96,12 @@ const MainMenuModalStackNavigator =
     [SCREENS.MAIN_MENU.PREFERENCES]: () =>
       require('@screens/MainMenu/PreferencesScreen')
         .default as React.ComponentType,
+    [SCREENS.MAIN_MENU.POLICIES.TERMS_OF_SERVICE]: () =>
+      require('@screens/MainMenu/Policies/TermsOfServiceScreen')
+      .default as React.ComponentType,
+    [SCREENS.MAIN_MENU.POLICIES.PRIVACY_POLICY]: () =>
+      require('@screens/MainMenu/Policies/PrivacyPolicyScreen')
+      .default as React.ComponentType,
   });
 
 const ProfileModalStackNavigator =

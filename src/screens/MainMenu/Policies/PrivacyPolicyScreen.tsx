@@ -1,9 +1,9 @@
 ﻿import {Linking, Platform, StyleSheet, View} from 'react-native';
-import {PrivacyPolicyScreenProps} from '../../../types/screens';
 import {WebView} from 'react-native-webview';
 import MainHeader from '@components/Header/MainHeader';
+import Navigation from '@libs/Navigation/Navigation';
 
-const PrivacyPolicyScreen = ({navigation}: PrivacyPolicyScreenProps) => {
+const PrivacyPolicyScreen = () => {
   const policyHtml =
     Platform.OS === 'android'
       ? {uri: 'file:///android_asset/html/privacy-policy.html'}
@@ -19,11 +19,9 @@ const PrivacyPolicyScreen = ({navigation}: PrivacyPolicyScreenProps) => {
     return true;
   };
 
-  if (!navigation) return null; // Should never be null
-
   return (
     <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
-      <MainHeader headerText="" onGoBack={() => navigation.goBack()} />
+      <MainHeader headerText="" onGoBack={() => Navigation.goBack()} />
       <View style={styles.mainContainer}>
         <WebView
           originWhitelist={['*']}

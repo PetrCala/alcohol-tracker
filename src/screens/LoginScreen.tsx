@@ -13,7 +13,6 @@ import {useFocusEffect} from '@react-navigation/native';
 import {sendPasswordResetEmail, signOut} from 'firebase/auth';
 import {signInUserWithEmailAndPassword} from '@libs/auth/auth';
 import commonStyles from '@styles/commonStyles';
-import {LoginScreenProps} from '../types/screens';
 import LoadingData from '@components/LoadingData';
 import InputTextPopup from '@components/Popups/InputTextPopup';
 import {handleErrors} from '@libs/ErrorHandling';
@@ -84,8 +83,7 @@ const reducer = (state: State, action: Action) => {
   }
 };
 
-const LoginScreen = ({navigation}: LoginScreenProps) => {
-  if (!navigation) return null; // Should never be null
+const LoginScreen = () => {
   // const {isOnline} = useUserConnection();
   const {auth} = useFirebase();
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -95,6 +93,7 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
     React.useCallback(() => {
       const stopListening = auth.onAuthStateChanged(user => {
         if (user) {
+          dispatch({type: 'SET_LOADING_USER', payload: true});
           Navigation.navigate(ROUTES.HOME);
         }
         dispatch({type: 'SET_LOADING_USER', payload: false});
@@ -110,6 +109,7 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
     // Validate all hooks on the screen first, return null if invalid
     // Attempt to login
     try {
+      dispatch({type: 'SET_LOADING_USER', payload: true});
       await signInUserWithEmailAndPassword(auth, state.email, state.password);
     } catch (error: any) {
       const errorHeading = 'Failed to log in';
@@ -135,7 +135,7 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
 
   // Wait to see whether there already is an authentificated user
   // Possibly here display the app logo instead of the loading screen
-  if (state.loadingUser) return <LoadingData />;
+  if (state.loadingUser) return <LoadingData loadingText='Signing in...'/>;
 
   return (
     <DismissKeyboard>
