@@ -121,7 +121,9 @@ type ProfileNavigatorParamList = {
   [SCREENS.PROFILE.ROOT]: {
     userId: string;
   };
-  [SCREENS.PROFILE.FRIENDS_FRIENDS]: undefined;
+  [SCREENS.PROFILE.FRIENDS_FRIENDS]: {
+    userId: string;
+  };
 };
 
 type SettingsNavigatorParamList = {

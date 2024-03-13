@@ -10,18 +10,17 @@ import {
   FriendRequestStatus,
   ProfileList,
   FriendRequestList,
+  FriendList,
 } from '@src/types/database';
 import {useEffect, useMemo, useReducer} from 'react';
 import {useFirebase} from '@context/global/FirebaseContext';
 
 import {isNonEmptyArray} from '@libs/Validation';
 import LoadingData from '@components/LoadingData';
-import {Database} from 'firebase/database';
 import {searchArrayByText} from '@libs/Search';
 import {fetchUserProfiles} from '@database/profile';
 import SearchResult from '@components/Social/SearchResult';
 import SearchWindow from '@components/Social/SearchWindow';
-import {FriendsFriendsScreenProps} from '@src/types/screens';
 import MainHeader from '@components/Header/MainHeader';
 import GrayHeader from '@components/Header/GrayHeader';
 import {getCommonFriends, getCommonFriendsCount} from '@libs/FriendUtils';
@@ -30,37 +29,50 @@ import {
   UserSearchResults,
 } from '@src/types/various/Search';
 import {objKeys} from '@libs/DataHandling';
-import {getDatabaseData} from '@src/context/global/DatabaseDataContext';
 import SeeProfileButton from '@components/Buttons/SeeProfileButton';
 import GeneralAction from '@src/types/various/GeneralAction';
 import commonStyles from '@src/styles/commonStyles';
 import {getNicknameMapping} from '@libs/SearchUtils';
 import FillerView from '@components/FillerView';
+import { StackScreenProps } from '@react-navigation/stack';
+import { ProfileNavigatorParamList } from '@libs/Navigation/types';
+import SCREENS from '@src/SCREENS';
+import { useDatabaseData } from '@context/global/DatabaseDataContext';
+import Navigation from '@libs/Navigation/Navigation';
+import ROUTES from '@src/ROUTES';
+import DBPATHS from '@database/DBPATHS';
+import { readDataOnce } from '@database/baseFunctions';
 
 interface State {
   searching: boolean;
+  friends: FriendList | undefined;
   displayedFriends: UserSearchResults;
   commonFriends: UserSearchResults;
   otherFriends: UserSearchResults;
   requestStatuses: {[userId: string]: FriendRequestStatus | undefined};
   noUsersFound: boolean;
   displayData: ProfileList;
+  isLoading: boolean;
 }
 
 const initialState: State = {
   searching: false,
+  friends: undefined,
   displayedFriends: [],
   commonFriends: [],
   otherFriends: [],
   requestStatuses: {},
   noUsersFound: false,
   displayData: {},
+  isLoading: true,
 };
 
 const reducer = (state: State, action: GeneralAction): State => {
   switch (action.type) {
     case 'SET_SEARCHING':
       return {...state, searching: action.payload};
+    case 'SET_FRIENDS':
+      return {...state, friends: action.payload};
     case 'SET_DISPLAYED_FRIENDS':
       return {...state, displayedFriends: action.payload};
     case 'SET_COMMON_FRIENDS':
@@ -73,19 +85,22 @@ const reducer = (state: State, action: GeneralAction): State => {
       return {...state, noUsersFound: action.payload};
     case 'SET_DISPLAY_DATA':
       return {...state, displayData: action.payload};
+    case 'SET_IS_LOADING':
+      return {...state, isLoading: action.payload};
     default:
       return state;
   }
 };
 
-const FriendsFriendsScreen = ({
-  route,
-  navigation,
-}: FriendsFriendsScreenProps) => {
-  if (!route || !navigation) return null;
-  const {userId, friends} = route.params;
+type FriendsFriendsScreenProps = StackScreenProps<
+  ProfileNavigatorParamList,
+  typeof SCREENS.PROFILE.FRIENDS_FRIENDS
+>;
+
+const FriendsFriendsScreen = ({ route }: FriendsFriendsScreenProps) => {
+  const {userId} = route.params;
   const {auth, db, storage} = useFirebase();
-  const {userData} = getDatabaseData();
+  const {userData} = useDatabaseData();
   const user = auth.currentUser;
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -96,7 +111,7 @@ const FriendsFriendsScreen = ({
         'display_name',
       );
       let relevantResults = searchArrayByText(
-        objKeys(friends),
+        objKeys(state.friends),
         searchText,
         searchMapping,
       );
@@ -135,7 +150,7 @@ const FriendsFriendsScreen = ({
       dispatch({type: 'SET_REQUEST_STATUSES', payload: newRequestStatuses});
     };
     updateRequestStatuses(userData?.friend_requests);
-  }, [userData?.friend_requests, friends]);
+  }, [userData?.friend_requests, state.friends]);
 
   const updateHooksBasedOnSearchResults = async (
     searchResults: UserSearchResults,
@@ -170,13 +185,14 @@ const FriendsFriendsScreen = ({
               <SeeProfileButton
                 key={userId + '-button'}
                 onPress={() =>
-                  navigation.navigate('Profile Screen', {
-                    userId: userId,
-                    profileData: state.displayData[userId],
-                    friends: null, // Fetch on render
-                    drinkingSessionData: null, // Fetch on render
-                    preferences: null, // Fetch on render
-                  })
+                  Navigation.navigate(ROUTES.PROFILE.getRoute(userId))
+                  // navigation.navigate('Profile Screen', {
+                  //   userId: userId,
+                  //   profileData: state.displayData[userId],
+                  //   friends: null, // Fetch on render
+                  //   drinkingSessionData: null, // Fetch on render
+                  //   preferences: null, // Fetch on render
+                  // })
                 }
               />
             ) : null
@@ -185,22 +201,40 @@ const FriendsFriendsScreen = ({
       ));
   };
 
+  const fetchData = async () => {
+    try {
+      dispatch({type: 'SET_IS_LOADING', payload: true});
+      let userFriends: FriendList | undefined = await readDataOnce(
+        db,
+        DBPATHS.USERS_USER_ID_FRIENDS.getRoute(userId),
+      )
+      dispatch({type: 'SET_FRIENDS', payload: userFriends})
+    } finally {
+      dispatch({type: 'SET_IS_LOADING', payload: false});
+    }
+  };
+
+  // Database data hooks
+  useEffect(() => {
+    fetchData();
+  }, [userId]);
+
   // Monitor friend groups
   useMemo(() => {
     let commonFriends: string[] = [];
     let otherFriends: string[] = [];
-    if (friends) {
+    if (state.friends) {
       commonFriends = getCommonFriends(
-        objKeys(friends),
+        objKeys(state.friends),
         objKeys(userData?.friends),
       );
-      otherFriends = objKeys(friends).filter(
+      otherFriends = objKeys(state.friends).filter(
         friend => !commonFriends.includes(friend),
       );
     }
     dispatch({type: 'SET_COMMON_FRIENDS', payload: commonFriends});
     dispatch({type: 'SET_OTHER_FRIENDS', payload: otherFriends});
-  }, [userData, friends, state.requestStatuses]);
+  }, [userData, state.friends, state.requestStatuses]);
 
   useMemo(() => {
     let noUsersFound: boolean = true;
@@ -213,7 +247,7 @@ const FriendsFriendsScreen = ({
   useEffect(() => {
     const initialSearch = async (): Promise<void> => {
       dispatch({type: 'SET_SEARCHING', payload: true});
-      const friendIds = objKeys(friends);
+      const friendIds = objKeys(state.friends);
       await updateHooksBasedOnSearchResults(friendIds);
       dispatch({type: 'SET_DISPLAYED_FRIENDS', payload: friendIds});
       dispatch({type: 'SET_SEARCHING', payload: false});
@@ -223,7 +257,7 @@ const FriendsFriendsScreen = ({
 
   const resetSearch = (): void => {
     // Reset all values displayed on screen
-    const friendIds = objKeys(friends);
+    const friendIds = objKeys(state.friends);
     dispatch({type: 'SET_DISPLAYED_FRIENDS', payload: friendIds});
     dispatch({type: 'SET_SEARCHING', payload: false});
     dispatch({type: 'SET_NO_USERS_FOUND', payload: false});
@@ -235,7 +269,7 @@ const FriendsFriendsScreen = ({
     <View style={styles.mainContainer}>
       <MainHeader
         headerText="Find Friends of Friends"
-        onGoBack={() => navigation.goBack()}
+        onGoBack={() => Navigation.goBack()}
       />
       <SearchWindow
         windowText="Search this user's friends"
@@ -269,7 +303,7 @@ const FriendsFriendsScreen = ({
             </>
           ) : state.noUsersFound ? (
             <Text style={commonStyles.noUsersFoundText}>
-              {objKeys(friends).length > 0
+              {objKeys(state.friends).length > 0
                 ? 'No friends found.\n\nTry searching for other users.'
                 : 'This user has not added any friends yet.'}
             </Text>

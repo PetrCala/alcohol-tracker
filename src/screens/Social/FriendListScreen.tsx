@@ -18,11 +18,10 @@ import {
   UserSearchResults,
 } from '@src/types/various/Search';
 import GeneralAction from '@src/types/various/GeneralAction';
-import {useMemo, useReducer, useRef} from 'react';
+import {useEffect, useMemo, useReducer, useRef} from 'react';
 import {objKeys} from '@libs/DataHandling';
 import {isNonEmptyArray} from '@libs/Validation';
 import commonStyles from '@src/styles/commonStyles';
-import {FriendListScreenProps} from '@src/types/screens';
 import {getNicknameMapping} from '@libs/SearchUtils';
 import {searchArrayByText} from '@libs/Search';
 import {
@@ -32,10 +31,16 @@ import {
 import {UsersPriority} from '@src/types/various/Algorithms';
 import FillerView from '@components/FillerView';
 import PressableWithAnimation from '@components/Buttons/PressableWithAnimation';
-import {Profile} from '@src/types/database/UserProps';
+import Navigation from '@libs/Navigation/Navigation';
+import ROUTES from '@src/ROUTES';
+import { FriendList } from '@src/types/database';
+import { readDataOnce } from '@database/baseFunctions';
+import { useFirebase } from '@context/global/FirebaseContext';
+import DBPATHS from '@database/DBPATHS';
 
 interface State {
   searching: boolean;
+  friends: FriendList | undefined;
   friendsToDisplay: UserSearchResults;
   usersPriority: UsersPriority;
   displayArray: string[]; // Main array to display
@@ -44,6 +49,7 @@ interface State {
 
 const initialState: State = {
   searching: false,
+  friends: undefined,
   friendsToDisplay: [],
   usersPriority: {},
   displayArray: [],
@@ -54,6 +60,8 @@ const reducer = (state: State, action: GeneralAction): State => {
   switch (action.type) {
     case 'SET_SEARCHING':
       return {...state, searching: action.payload};
+    case 'SET_FRIENDS':
+      return {...state, friends: action.payload};
     case 'SET_FRIENDS_TO_DISPLAY':
       return {...state, friendsToDisplay: action.payload};
     case 'SET_USERS_PRIORITY':
@@ -67,12 +75,14 @@ const reducer = (state: State, action: GeneralAction): State => {
   }
 };
 
-const FriendListScreen = (props: FriendListScreenProps) => {
-  const {navigation, friends, setIndex} = props;
-  const {loadingDisplayData, profileList, userStatusList} =
-    useProfileList(friends);
+const FriendListScreen = () => {
+  // const {friends, setIndex} = ;
   const friendListInputRef = useRef<SearchWindowRef>(null);
   const [state, dispatch] = useReducer(reducer, initialState);
+  const {db, auth} = useFirebase();
+  const user = auth.currentUser;
+  const {loadingDisplayData, profileList, userStatusList} =
+    useProfileList(state.friends);
 
   const localSearch = async (searchText: string) => {
     try {
@@ -82,7 +92,7 @@ const FriendListScreen = (props: FriendListScreenProps) => {
         'display_name',
       );
       let relevantResults = searchArrayByText(
-        objKeys(friends),
+        objKeys(state.friends),
         searchText,
         searchMapping,
       );
@@ -99,22 +109,43 @@ const FriendListScreen = (props: FriendListScreenProps) => {
   };
 
   const resetSearch = () => {
-    dispatch({type: 'SET_DISPLAYED_FRIENDS', payload: objKeys(friends)});
+    dispatch({type: 'SET_DISPLAYED_FRIENDS', payload: objKeys(state.friends)});
   };
 
-  const navigateToProfile = (friendId: string, profileData: Profile): void => {
-    navigation.navigate('Profile Screen', {
-      userId: friendId,
-      profileData: profileData,
-      friends: null, // Fetch on render
-      currentUserFriends: friends,
-      drinkingSessionData: null, // Fetch on render
-      preferences: null, // Fetch on render - if you want to calculate with current user, pass here
-    });
+  const navigateToProfile = (friendId: string): void => {
+    Navigation.navigate(ROUTES.PROFILE.getRoute(friendId));
+    // navigation.navigate('Profile Screen', {
+    //   userId: friendId,
+    //   profileData: profileData,
+    //   friends: null, // Fetch on render
+    //   currentUserFriends: friends,
+    //   drinkingSessionData: null, // Fetch on render
+    //   preferences: null, // Fetch on render - if you want to calculate with current user, pass here
+    // });
   };
+
+  const fetchData = async () => {
+    if (!user) return;
+    try {
+      dispatch({type: 'SET_IS_LOADING', payload: true});
+      let userFriends: FriendList | undefined = await readDataOnce(
+        db,
+        DBPATHS.USERS_USER_ID_FRIENDS.getRoute(user.uid),
+      )
+      dispatch({type: 'SET_FRIENDS', payload: userFriends})
+    } finally {
+      dispatch({type: 'SET_IS_LOADING', payload: false});
+    }
+  };
+
+  // Database data hooks
+  useEffect(() => {
+    fetchData();
+  }, [user?.uid]);
+
 
   useMemo(() => {
-    let friendsArray = objKeys(friends);
+    let friendsArray = objKeys(state.friends);
     if (userStatusList) {
       let newUsersPriority: UsersPriority = calculateAllUsersPriority(
         friendsArray,
@@ -123,7 +154,7 @@ const FriendListScreen = (props: FriendListScreenProps) => {
       dispatch({type: 'SET_USERS_PRIORITY', payload: newUsersPriority});
     }
     dispatch({type: 'SET_FRIENDS_TO_DISPLAY', payload: friendsArray});
-  }, [friends]);
+  }, [state.friends]);
 
   useMemo(() => {
     let newDisplayArray = orderUsersByPriority(
@@ -132,8 +163,6 @@ const FriendListScreen = (props: FriendListScreenProps) => {
     );
     dispatch({type: 'SET_DISPLAY_ARRAY', payload: newDisplayArray});
   }, [state.friendsToDisplay]);
-
-  if (!navigation) return null;
 
   return (
     <View style={styles.mainContainer}>
@@ -156,7 +185,7 @@ const FriendListScreen = (props: FriendListScreenProps) => {
         }>
         {loadingDisplayData ? (
           <LoadingData style={styles.loadingContainer} />
-        ) : friends ? (
+        ) : state.friends ? (
           <View style={styles.friendList}>
             {isNonEmptyArray(state.displayArray) ? (
               state.displayArray.map((friendId: string) => {
@@ -167,7 +196,7 @@ const FriendListScreen = (props: FriendListScreenProps) => {
                   <PressableWithAnimation
                     key={friendId + '-button'}
                     style={styles.friendOverviewButton}
-                    onPress={() => navigateToProfile(friendId, profileData)}>
+                    onPress={() => navigateToProfile(friendId)}>
                     <UserOverview
                       key={friendId + '-user-overview'}
                       userId={friendId}
@@ -189,7 +218,8 @@ const FriendListScreen = (props: FriendListScreenProps) => {
               You do not have any friends yet
             </Text>
             <TouchableOpacity
-              onPress={() => setIndex(1)}
+              // onPress={() => setIndex(1)}
+              onPress={() => Navigation.navigate(ROUTES.SOCIAL_FRIEND_SEARCH)}
               style={styles.navigateToSearchButton}>
               <Text style={styles.navigateToSearchText}>Add them here</Text>
             </TouchableOpacity>
