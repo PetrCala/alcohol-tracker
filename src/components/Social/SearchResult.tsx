@@ -209,6 +209,7 @@ const styles = StyleSheet.create({
   sendFriendRequestContainer: {
     width: '35%',
     height: '100%',
+    maxHeight: 100,
     justifyContent: 'center',
     alignItems: 'center',
   },

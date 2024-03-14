@@ -34,14 +34,14 @@ import GeneralAction from '@src/types/various/GeneralAction';
 import commonStyles from '@src/styles/commonStyles';
 import {getNicknameMapping} from '@libs/SearchUtils';
 import FillerView from '@components/FillerView';
-import { StackScreenProps } from '@react-navigation/stack';
-import { ProfileNavigatorParamList } from '@libs/Navigation/types';
+import {StackScreenProps} from '@react-navigation/stack';
+import {ProfileNavigatorParamList} from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
-import { useDatabaseData } from '@context/global/DatabaseDataContext';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import DBPATHS from '@database/DBPATHS';
-import { readDataOnce } from '@database/baseFunctions';
+import {readDataOnce} from '@database/baseFunctions';
 
 interface State {
   searching: boolean;
@@ -97,7 +97,7 @@ type FriendsFriendsScreenProps = StackScreenProps<
   typeof SCREENS.PROFILE.FRIENDS_FRIENDS
 >;
 
-const FriendsFriendsScreen = ({ route }: FriendsFriendsScreenProps) => {
+const FriendsFriendsScreen = ({route}: FriendsFriendsScreenProps) => {
   const {userId} = route.params;
   const {auth, db, storage} = useFirebase();
   const {userData} = useDatabaseData();
@@ -175,10 +175,7 @@ const FriendsFriendsScreen = ({ route }: FriendsFriendsScreenProps) => {
           storage={storage}
           //@ts-ignore
           userFrom={user.uid}
-          requestStatus={
-            // renderCommonFriends ? undefined : state.requestStatuses[userId]
-            state.requestStatuses[userId]
-          }
+          requestStatus={state.requestStatuses[userId]}
           alreadyAFriend={userData?.friends ? userData?.friends[userId] : false}
           customButton={
             renderCommonFriends ? (
@@ -200,8 +197,8 @@ const FriendsFriendsScreen = ({ route }: FriendsFriendsScreenProps) => {
       let userFriends: FriendList | undefined = await readDataOnce(
         db,
         DBPATHS.USERS_USER_ID_FRIENDS.getRoute(userId),
-      )
-      dispatch({type: 'SET_FRIENDS', payload: userFriends})
+      );
+      dispatch({type: 'SET_FRIENDS', payload: userFriends});
     } finally {
       dispatch({type: 'SET_IS_LOADING', payload: false});
     }
@@ -246,7 +243,7 @@ const FriendsFriendsScreen = ({ route }: FriendsFriendsScreenProps) => {
       dispatch({type: 'SET_SEARCHING', payload: false});
     };
     initialSearch();
-  }, []);
+  }, [state.friends]);
 
   const resetSearch = (): void => {
     // Reset all values displayed on screen
@@ -255,8 +252,6 @@ const FriendsFriendsScreen = ({ route }: FriendsFriendsScreenProps) => {
     dispatch({type: 'SET_SEARCHING', payload: false});
     dispatch({type: 'SET_NO_USERS_FOUND', payload: false});
   };
-
-  if (!user || !storage) return;
 
   return (
     <View style={styles.mainContainer}>

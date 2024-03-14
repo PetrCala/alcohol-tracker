@@ -20,7 +20,7 @@ import {StackScreenProps} from '@react-navigation/stack';
 import SCREENS from '@src/SCREENS';
 import {SocialNavigatorParamList} from '@libs/Navigation/types';
 import Navigation from '@libs/Navigation/Navigation';
-import { useDatabaseData } from '@context/global/DatabaseDataContext';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
 
 type SocialFooterButtonProps = {
   index: number;
@@ -88,32 +88,17 @@ const SocialScreen = ({route}: SocialScreenProps) => {
     {key: 'friendRequests', title: 'Friend Requests', userData: userData},
   ]);
 
-  const [index, setIndex] = useState<number>(0)
+  const [index, setIndex] = useState<number>(0);
 
   const renderScene = ({route}: {route: RouteType}) => {
     if (!userData) return null;
     switch (route.key) {
       case 'friendList':
-        return (
-          <FriendListScreen
-            friends={userData?.friends}
-            setIndex={setIndex}
-          />
-        );
+        return <FriendListScreen setIndex={setIndex} />;
       case 'friendSearch':
-        return (
-          <FriendSearchScreen
-            friendRequests={userData?.friend_requests}
-            friends={userData?.friends}
-          />
-        );
+        return <FriendSearchScreen />;
       case 'friendRequests':
-        return (
-          <FriendRequestScreen
-            friendRequests={userData?.friend_requests}
-            friends={userData?.friends}
-          />
-        );
+        return <FriendRequestScreen />;
       default:
         return null;
     }
@@ -137,8 +122,6 @@ const SocialScreen = ({route}: SocialScreenProps) => {
       infoNumberValue: getReceivedRequestsCount(userData?.friend_requests),
     },
   ];
-
-  if (!userData) return null;
 
   return (
     <View style={{flex: 1, backgroundColor: '#FFFF99'}}>

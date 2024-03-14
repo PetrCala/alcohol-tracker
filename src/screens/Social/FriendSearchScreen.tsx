@@ -1,6 +1,7 @@
 ﻿import {
   Alert,
   Keyboard,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -24,6 +25,7 @@ import SearchResult from '@components/Social/SearchResult';
 import SearchWindow from '@components/Social/SearchWindow';
 import {SearchWindowRef, UserSearchResults} from '@src/types/various/Search';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
+import useRefresh from '@hooks/useRefresh';
 
 interface State {
   searchResultData: UserSearchResults;
@@ -73,10 +75,11 @@ const reducer = (state: State, action: Action): State => {
 
 const FriendSearchScreen = () => {
   const {auth, db, storage} = useFirebase();
-  const {userData} = useDatabaseData();
+  const {userData, refetch} = useDatabaseData();
   const searchInputRef = useRef<SearchWindowRef>(null);
   const user = auth.currentUser;
   const [state, dispatch] = useReducer(reducer, initialState);
+  const {onRefresh, refreshing, refreshCounter} = useRefresh({refetch});
 
   const dbSearch = async (searchText: string, db?: Database): Promise<void> => {
     try {
@@ -171,7 +174,13 @@ const FriendSearchScreen = () => {
       <ScrollView
         style={styles.scrollViewContainer}
         onScrollBeginDrag={Keyboard.dismiss}
-        keyboardShouldPersistTaps="handled">
+        keyboardShouldPersistTaps="handled"
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => onRefresh(['userData'])}
+          />
+        }>
         <View style={styles.searchResultsContainer}>
           {state.searching ? (
             <LoadingData style={styles.loadingData} />

@@ -110,7 +110,7 @@ type ProfileScreenProps = StackScreenProps<
 >;
 
 const ProfileScreen = ({route}: ProfileScreenProps) => {
-  const {auth, db, storage} = useFirebase();
+  const {auth, db} = useFirebase();
   const {userId} = route.params;
   const user = auth.currentUser;
   const relevantDataKeys: UserFetchDataKey[] = [
