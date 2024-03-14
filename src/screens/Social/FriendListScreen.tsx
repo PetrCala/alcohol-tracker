@@ -117,7 +117,7 @@ const FriendListScreen = (props: FriendListScreenProps) => {
   };
 
   const resetSearch = () => {
-    dispatch({type: 'SET_DISPLAYED_FRIENDS', payload: objKeys(state.friends)});
+    dispatch({type: 'SET_FRIENDS_TO_DISPLAY', payload: objKeys(state.friends)});
   };
 
   const navigateToProfile = (friendId: string): void => {
@@ -133,25 +133,22 @@ const FriendListScreen = (props: FriendListScreenProps) => {
     dispatch({type: 'SET_FRIENDS', payload: userData?.friends});
   }, [userData]);
 
-  useMemo(() => {
-    let friendsArray = objKeys(state.friends);
-    if (userStatusList) {
-      let newUsersPriority: UsersPriority = calculateAllUsersPriority(
+  useEffect(() => {
+    if (state.friends && userStatusList) {
+      let friendsArray = objKeys(state.friends);
+      let newUsersPriority = calculateAllUsersPriority(
         friendsArray,
         userStatusList,
       );
       dispatch({type: 'SET_USERS_PRIORITY', payload: newUsersPriority});
-    }
-    dispatch({type: 'SET_FRIENDS_TO_DISPLAY', payload: friendsArray});
-  }, [state.friends]);
 
-  useMemo(() => {
-    let newDisplayArray = orderUsersByPriority(
-      state.friendsToDisplay,
-      state.usersPriority,
-    );
-    dispatch({type: 'SET_DISPLAY_ARRAY', payload: newDisplayArray});
-  }, [state.friendsToDisplay]);
+      let newDisplayArray = orderUsersByPriority(
+        friendsArray,
+        newUsersPriority,
+      );
+      dispatch({type: 'SET_DISPLAY_ARRAY', payload: newDisplayArray});
+    }
+  }, [state.friends, userStatusList, userData]); // Dependency array includes anything that should trigger a re-order
 
   return (
     <View style={styles.mainContainer}>
