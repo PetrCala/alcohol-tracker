@@ -1,4 +1,11 @@
-import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  ActivityIndicator,
+  Alert,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {acceptFriendRequest, sendFriendRequest} from '../../database/friends';
 import {Database} from 'firebase/database';
 import ProfileImage from '@components/ProfileImage';
@@ -6,6 +13,8 @@ import {FirebaseStorage} from 'firebase/storage';
 import React from 'react';
 import {FriendRequestStatus, Profile} from '@src/types/database';
 import CONST from '@src/CONST';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
+import LoadingData from '@components/LoadingData';
 
 const statusToTextMap: {[key in FriendRequestStatus]: string} = {
   self: 'You',
@@ -30,13 +39,20 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
   requestStatus,
   alreadyAFriend,
 }) => {
+  const {refetch} = useDatabaseData();
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+
   const handleSendRequestPress = async (
     db: Database,
     userFrom: string,
     userTo: string,
+    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
   ): Promise<void> => {
     try {
+      setIsLoading(true);
       await sendFriendRequest(db, userFrom, userTo);
+      await refetch(['userData']);
+      setIsLoading(false);
     } catch (error: any) {
       Alert.alert(
         'User does not exist in the database',
@@ -50,9 +66,13 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
     db: Database,
     userFrom: string,
     userTo: string,
+    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
   ): Promise<void> => {
     try {
+      setIsLoading(true);
       await acceptFriendRequest(db, userFrom, userTo);
+      await refetch(['userData']);
+      setIsLoading(false);
     } catch (error: any) {
       Alert.alert(
         'User does not exist in the database',
@@ -76,18 +96,30 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
       ) : requestStatus === CONST.FRIEND_REQUEST_STATUS.RECEIVED ? (
         <TouchableOpacity
           style={styles.sendFriendRequestButton}
-          onPress={() => handleAcceptFriendRequestPress(db, userFrom, userTo)}>
-          <Text style={styles.sendFriendRequestText}>
-            {statusToTextMap.received}
-          </Text>
+          onPress={() =>
+            handleAcceptFriendRequestPress(db, userFrom, userTo, setIsLoading)
+          }>
+          {isLoading ? (
+            <ActivityIndicator size="small" color="#0000ff" />
+          ) : (
+            <Text style={styles.sendFriendRequestText}>
+              {statusToTextMap.received}
+            </Text>
+          )}
         </TouchableOpacity>
       ) : (
         <TouchableOpacity
           style={styles.sendFriendRequestButton}
-          onPress={() => handleSendRequestPress(db, userFrom, userTo)}>
-          <Text style={styles.sendFriendRequestText}>
-            {statusToTextMap.undefined}
-          </Text>
+          onPress={() =>
+            handleSendRequestPress(db, userFrom, userTo, setIsLoading)
+          }>
+          {isLoading ? (
+            <ActivityIndicator size="small" color="#0000ff" />
+          ) : (
+            <Text style={styles.sendFriendRequestText}>
+              {statusToTextMap.undefined}
+            </Text>
+          )}
         </TouchableOpacity>
       )}
     </View>
@@ -156,8 +188,9 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   userInfoContainer: {
+    width: '65%',
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     padding: 5,
   },
@@ -174,15 +207,14 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   sendFriendRequestContainer: {
-    width: 'auto',
-    height: 35,
+    width: '35%',
+    height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    margin: 5,
   },
   sendFriendRequestButton: {
-    width: '100%',
-    height: '100%',
+    width: '95%',
+    height: 35,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#4CAF50',

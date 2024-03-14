@@ -9,6 +9,7 @@ import {
   UserStatus,
 } from '@src/types/database';
 import useFetchData, {UserFetchDataKey} from '@hooks/useFetchData'; // Ensure this import is corrected if needed
+import {RefetchDatabaseData} from '@src/types/utils/RefetchDatabaseData';
 
 type DatabaseDataContextType = {
   userStatusData?: UserStatus;
@@ -17,7 +18,7 @@ type DatabaseDataContextType = {
   unconfirmedDays?: UnconfirmedDays;
   userData?: UserProps;
   isLoading: boolean;
-  refetch: (keys?: UserFetchDataKey[]) => Promise<void>;
+  refetch: RefetchDatabaseData;
 };
 
 export const DatabaseDataContext = createContext<

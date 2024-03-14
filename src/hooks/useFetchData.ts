@@ -10,6 +10,7 @@ import {
   UserStatus,
 } from '@src/types/database';
 import {StringKeyOf, ValueOf} from 'type-fest';
+import {RefetchDatabaseData} from '@src/types/utils/RefetchDatabaseData';
 
 type Data = {
   userStatusData?: UserStatus;
@@ -26,9 +27,8 @@ type UserFetchDataValue = ValueOf<Data>;
 type UseFetchUserDataReturn = {
   data: Data;
   isLoading: boolean;
-  refetch: (keys?: UserFetchDataKey[]) => Promise<void>;
+  refetch: RefetchDatabaseData;
 };
-
 
 const useFetchData = (
   userId: string,
@@ -42,7 +42,6 @@ const useFetchData = (
     () => () => {},
   );
   const [keysToFetch, setKeysToFetch] = useState<UserFetchDataKey[]>(dataTypes);
-
 
   const refetch = (keys?: UserFetchDataKey[]): Promise<void> => {
     return new Promise<void>(resolve => {
@@ -102,7 +101,7 @@ const useFetchData = (
 
       setData(prevData => {
         // Merge newData with prevData, ensuring only specified keys are updated
-        const updatedData = { ...prevData };
+        const updatedData = {...prevData};
 
         for (const key of keysToFetch) {
           if (newData.hasOwnProperty(key)) {

@@ -1,4 +1,5 @@
 ﻿import {
+  ActivityIndicator,
   Alert,
   Keyboard,
   RefreshControl,
@@ -14,7 +15,7 @@ import {
   FriendList,
   ProfileList,
 } from '@src/types/database';
-import {useEffect, useMemo, useReducer} from 'react';
+import {useEffect, useMemo, useReducer, useState} from 'react';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {acceptFriendRequest, deleteFriendRequest} from '@database/friends';
 
@@ -29,12 +30,9 @@ import CONST from '@src/CONST';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import useFetchData from '@hooks/useFetchData';
 import useRefresh from '@hooks/useRefresh';
+import {RefetchDatabaseData} from '@src/types/utils/RefetchDatabaseData';
 
-type FriendRequestButtonsProps = {
-  requestId: string;
-};
-
-type FriendRequestPendingProps = {
+type RequestIdProps = {
   requestId: string;
 };
 
@@ -58,9 +56,14 @@ const handleAcceptFriendRequest = async (
   db: Database,
   userId: string,
   requestId: string,
+  refetch: RefetchDatabaseData,
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
 ): Promise<void> => {
   try {
+    setIsLoading(true);
     await acceptFriendRequest(db, userId, requestId);
+    await refetch(['userData']);
+    setIsLoading(false);
   } catch (error: any) {
     Alert.alert(
       'User does not exist in the database',
@@ -73,9 +76,14 @@ const handleRejectFriendRequest = async (
   db: Database,
   userId: string,
   requestId: string,
+  refetch: RefetchDatabaseData,
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
 ): Promise<void> => {
   try {
+    setIsLoading(true);
     await deleteFriendRequest(db, userId, requestId);
+    await refetch(['userData']);
+    setIsLoading(false);
   } catch (error: any) {
     Alert.alert(
       'User does not exist in the database',
@@ -85,12 +93,11 @@ const handleRejectFriendRequest = async (
 };
 
 // Component to be shown for a received friend request
-const FriendRequestButtons: React.FC<FriendRequestButtonsProps> = ({
-  requestId,
-}) => {
+const FriendRequestButtons: React.FC<RequestIdProps> = ({requestId}) => {
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
-
+  const {refetch} = useDatabaseData();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   if (!user) return;
 
   return (
@@ -98,13 +105,33 @@ const FriendRequestButtons: React.FC<FriendRequestButtonsProps> = ({
       <TouchableOpacity
         key={requestId + '-accept-request-button'}
         style={[styles.handleRequestButton, styles.acceptRequestButton]}
-        onPress={() => handleAcceptFriendRequest(db, user.uid, requestId)}>
-        <Text style={styles.handleRequestButtonText}>Accept</Text>
+        onPress={() =>
+          handleAcceptFriendRequest(
+            db,
+            user.uid,
+            requestId,
+            refetch,
+            setIsLoading,
+          )
+        }>
+        {isLoading ? (
+          <ActivityIndicator size="small" color="#0000ff" />
+        ) : (
+          <Text style={styles.handleRequestButtonText}>Accept</Text>
+        )}
       </TouchableOpacity>
       <TouchableOpacity
         key={requestId + '-reject-request-button'}
         style={[styles.handleRequestButton, styles.rejectRequestButton]}
-        onPress={() => handleRejectFriendRequest(db, user.uid, requestId)}>
+        onPress={() =>
+          handleRejectFriendRequest(
+            db,
+            user.uid,
+            requestId,
+            refetch,
+            setIsLoading,
+          )
+        }>
         <Text style={styles.handleRequestButtonText}>Remove</Text>
       </TouchableOpacity>
     </View>
@@ -112,10 +139,10 @@ const FriendRequestButtons: React.FC<FriendRequestButtonsProps> = ({
 };
 
 // Component to be shown when the friend request is pending
-const FriendRequestPending: React.FC<FriendRequestPendingProps> = ({
-  requestId,
-}) => {
+const FriendRequestPending: React.FC<RequestIdProps> = ({requestId}) => {
   const {auth, db} = useFirebase();
+  const {refetch} = useDatabaseData();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const user = auth.currentUser;
 
   if (!user) return;
@@ -123,8 +150,20 @@ const FriendRequestPending: React.FC<FriendRequestPendingProps> = ({
     <View style={styles.friendRequestPendingContainer}>
       <TouchableOpacity
         style={[styles.handleRequestButton, styles.rejectRequestButton]}
-        onPress={() => handleRejectFriendRequest(db, user.uid, requestId)}>
-        <Text style={styles.handleRequestButtonText}>Cancel</Text>
+        onPress={() =>
+          handleRejectFriendRequest(
+            db,
+            user.uid,
+            requestId,
+            refetch,
+            setIsLoading,
+          )
+        }>
+        {isLoading ? (
+          <ActivityIndicator size="small" color="#0000ff" />
+        ) : (
+          <Text style={styles.handleRequestButtonText}>Cancel</Text>
+        )}
       </TouchableOpacity>
     </View>
   );
@@ -397,7 +436,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
   },
   handleRequestButtonText: {
+    width: '100%',
     color: 'white',
+    textAlign: 'center',
     fontSize: 16,
     fontWeight: '400',
   },

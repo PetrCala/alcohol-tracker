@@ -73,7 +73,7 @@ const reducer = (state: State, action: Action): State => {
 
 const FriendSearchScreen = () => {
   const {auth, db, storage} = useFirebase();
-  const {userData, refetch} = useDatabaseData();
+  const {userData} = useDatabaseData();
   const searchInputRef = useRef<SearchWindowRef>(null);
   const user = auth.currentUser;
   const [state, dispatch] = useReducer(reducer, initialState);

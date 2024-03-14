@@ -2,12 +2,14 @@
 
 export type LoadingDataProps = {
   loadingText?: string;
+  containerStyle?: any;
   style?: any;
   backgroundColor?: any;
 };
 
 const LoadingData = ({
   loadingText,
+  containerStyle,
   style,
   backgroundColor,
 }: LoadingDataProps) => {
@@ -16,6 +18,7 @@ const LoadingData = ({
       style={[
         styles.loadingContainer,
         backgroundColor ? {backgroundColor: backgroundColor} : null,
+        containerStyle,
       ]}>
       {loadingText ? (
         <Text style={styles.loadingText}>{loadingText}</Text>
@@ -37,6 +40,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FFFF99',
+    width: '100%',
+    height: '100%',
   },
   loadingText: {
     fontSize: 24,
