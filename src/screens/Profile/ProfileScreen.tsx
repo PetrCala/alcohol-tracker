@@ -236,7 +236,7 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
             <TouchableOpacity
               onPress={() => {
                 user?.uid === userId
-                  ? Navigation.navigate(ROUTES.SOCIAL_FRIEND_LIST)
+                  ? Navigation.navigate(ROUTES.SOCIAL)
                   : Navigation.navigate(
                       ROUTES.PROFILE_FRIENDS_FRIENDS.getRoute(userId),
                     );
