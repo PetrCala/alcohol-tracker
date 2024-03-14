@@ -178,9 +178,8 @@ const MainMenuScreen = ({route}: MainMenuScreenProps) => {
   };
 
   const handleConfirmSignout = () => {
-    handleSignOut();
+    handleSignOut(); // Automatically sets the navigation to public screens
     setSignoutModalVisible(false);
-    Navigation.navigate(ROUTES.LOGIN);
   };
 
   const handleConfirmDeleteUser = () => {
@@ -284,7 +283,7 @@ const MainMenuScreen = ({route}: MainMenuScreenProps) => {
       label: 'Terms of service',
       icon: KirokuIcons.Book,
       action: () => {
-        Navigation.navigate(ROUTES.MAIN_MENU_POLICIES_TERMS_OF_SERVICE)
+        Navigation.navigate(ROUTES.MAIN_MENU_POLICIES_TERMS_OF_SERVICE);
         setPoliciesModalVisible(false);
       },
     },
@@ -292,7 +291,7 @@ const MainMenuScreen = ({route}: MainMenuScreenProps) => {
       label: 'Privacy Policy',
       icon: KirokuIcons.Book,
       action: () => {
-        Navigation.navigate(ROUTES.MAIN_MENU_POLICIES_PRIVACY_POLICY)
+        Navigation.navigate(ROUTES.MAIN_MENU_POLICIES_PRIVACY_POLICY);
         setPoliciesModalVisible(false);
       },
     },

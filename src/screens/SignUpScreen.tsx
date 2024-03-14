@@ -10,10 +10,9 @@ import {
   TextInput,
 } from 'react-native';
 import * as KirokuImages from '@src/components/Icon/KirokuImages';
-import {updateProfile} from 'firebase/auth';
+import {getAuth, updateProfile} from 'firebase/auth';
 import {signUpUserWithEmailAndPassword} from '@libs/auth/auth';
 import {useFirebase} from '@context/global/FirebaseContext';
-import {SignUpScreenProps} from '@src/types/screens';
 import {readDataOnce} from '@database/baseFunctions';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import {
@@ -102,13 +101,10 @@ const reducer = (state: State, action: Action) => {
   }
 };
 
-// type SignUpScreenProps = .. // TODO
-
-const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
-  const {auth, db} = useFirebase();
+const SignUpScreen = () => {
+  const {db} = useFirebase();
   const {isOnline} = useUserConnection();
   const [state, dispatch] = useReducer(reducer, initialState);
-  if (!db) return null; // Should never be null
 
   async function rollbackChanges(
     newUserId: string,
@@ -118,13 +114,14 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
     await deleteUserData(db, newUserId, userNickname, undefined, undefined);
 
     // Delete the user from Firebase authentication
+    let auth = getAuth();
     if (auth.currentUser) {
       await auth.currentUser.delete();
     }
   }
 
   const handleSignUp = async () => {
-    if (!isOnline || !auth) return;
+    if (!isOnline) return;
 
     const inputValidation = validateSignInInput(
       state.email,
@@ -137,6 +134,7 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
       return;
     }
 
+    let auth = getAuth();
     const currentUser = auth.currentUser;
 
     if (currentUser) {
@@ -201,7 +199,8 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
       return;
     }
 
-    if (!auth.currentUser.uid) {
+    auth = getAuth(); // Refresh
+    if (!auth.currentUser) {
       throw new Error('User creation failed');
     }
     newUserId = auth.currentUser.uid;
@@ -235,8 +234,7 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
         return;
       }
     }
-    // Navigate to the main screen with a success message
-    navigation.replace('App', {screen: 'Main Screen'});
+    Navigation.navigate(ROUTES.HOME);
     return;
   };
 
@@ -257,8 +255,6 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
       dispatch({type: 'UPDATE_PASSWORDS_MATCH', payload: false});
     }
   }, [state.password, state.passwordConfirm]);
-
-  if (!route || !navigation) return null; // Should never be null
 
   return (
     <DismissKeyboard>
@@ -331,9 +327,7 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
           <View style={styles.loginContainer}>
             <TouchableOpacity
               style={styles.loginButtonContainer}
-              onPress={() =>
-                navigation.navigate(NAVIGATORS.BOTTOM_TAB_NAVIGATOR)
-              }>
+              onPress={() => Navigation.goBack()}>
               <Text style={styles.loginInfoText}>Already a user?</Text>
               <Text style={styles.loginButtonText}>Log in</Text>
             </TouchableOpacity>
