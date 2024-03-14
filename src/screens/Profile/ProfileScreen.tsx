@@ -113,7 +113,6 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
   const {auth, db, storage} = useFirebase();
   const {userId} = route.params;
   const user = auth.currentUser;
-  const userIsSelf = user?.uid === userId;
   const relevantDataKeys: UserFetchDataKey[] = [
     'userData',
     'drinkingSessionData',
@@ -132,44 +131,6 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
     {header: 'Points Earned', content: String(state.pointsEarned)},
   ];
 
-  // const fetchData = async () => {
-  //   try {
-  //     dispatch({type: 'SET_IS_LOADING', payload: true});
-  //     let userSessions: DrinkingSessionList | undefined = drinkingSessionData;
-  //     let userPreferences: Preferences | undefined = preferences;
-  //     let userFriends: FriendList | undefined = userData?.friends;
-  //     let userProfileData: Profile | undefined = userData?.profile;
-
-  //     if (!userIsSelf) {
-  //       userSessions = await readDataOnce(
-  //         db,
-  //         DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(userId),
-  //       );
-  //       userPreferences = await readDataOnce(
-  //         db,
-  //         DBPATHS.USER_PREFERENCES_USER_ID.getRoute(userId),
-  //       );
-  //       userFriends = await fetchUserFriends(db, userId);
-  //       userProfileData = await readDataOnce(
-  //         db,
-  //         DBPATHS.USERS_USER_ID_PROFILE.getRoute(userId),
-  //       );
-  //     }
-
-  //     dispatch({type: 'SET_DRINKING_SESSION_DATA', payload: userSessions});
-  //     dispatch({type: 'SET_PREFERENCES', payload: userPreferences});
-  //     dispatch({type: 'SET_FRIENDS', payload: userFriends});
-  //     dispatch({type: 'SET_PROFILE_DATA', payload: userProfileData});
-  //   } catch (error: any) {
-  //     Alert.alert(
-  //       'Error fetching data',
-  //       `Could not connect to the database: ${error.message}`,
-  //     );
-  //   } finally {
-  //     dispatch({type: 'SET_IS_LOADING', payload: false});
-  //   }
-  // };
-
   // Database data hooks
   useEffect(() => {
     refetch(relevantDataKeys);
@@ -186,7 +147,7 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
     const getOwnFriends = async () => {
       if (!user) return;
       let ownFriends = friends;
-      if (!userIsSelf) {
+      if (user?.uid !== userId) {
         ownFriends = await readDataOnce(
           db,
           DBPATHS.USERS_USER_ID_FRIENDS.getRoute(user.uid),
@@ -238,12 +199,12 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
   }, [drinkingSessionData, preferences, state.visibleDateObject]);
 
   if (isLoading) return <LoadingData />;
-  if (!db || !storage || !profileData || !preferences || !userData) return;
+  if (!profileData || !preferences || !userData) return;
 
   return (
     <View style={styles.mainContainer}>
       <MainHeader
-        headerText={userIsSelf ? 'Profile' : 'Friend Overview'}
+        headerText={user?.uid === userId ? 'Profile' : 'Friend Overview'}
         onGoBack={() => Navigation.goBack()}
       />
       <ScrollView
@@ -264,7 +225,7 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
               style={[styles.friendsInfoText, commonStyles.smallMarginLeft]}>
               {state.friendCount}
             </Text>
-            {userIsSelf ? null : (
+            {user?.uid === userId ? null : (
               <Text
                 style={[styles.friendsInfoText, commonStyles.smallMarginLeft]}>
                 ({state.commonFriendCount} common)
@@ -274,7 +235,7 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
           <View style={styles.rightContainer}>
             <TouchableOpacity
               onPress={() => {
-                userIsSelf
+                user?.uid === userId
                   ? Navigation.navigate(ROUTES.SOCIAL_FRIEND_LIST)
                   : Navigation.navigate(
                       ROUTES.PROFILE_FRIENDS_FRIENDS.getRoute(userId),
@@ -297,7 +258,7 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
           visibleDateObject={state.visibleDateObject}
           dispatch={dispatch}
           onDayPress={(day: DateData) => {
-            userIsSelf
+            user?.uid === userId
               ? Navigation.navigate(
                   ROUTES.DAY_OVERVIEW.getRoute(
                     timestampToDateString(day.timestamp),
@@ -307,7 +268,7 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
           }}
         />
         <View style={styles.bottomContainer}>
-          {userIsSelf ? (
+          {user?.uid !== userId ? (
             <TouchableOpacity
               style={styles.manageFriendButton}
               onPress={() =>
