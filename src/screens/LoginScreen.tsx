@@ -100,6 +100,7 @@ const LoginScreen = () => {
       });
 
       return () => {
+        dispatch({type: 'SET_LOADING_USER', payload: false});
         stopListening(); // This will be called when the screen loses focus
       };
     }, []),
@@ -115,6 +116,8 @@ const LoginScreen = () => {
       const errorHeading = 'Failed to log in';
       const errorMessage = 'There was an error trying to log in: ';
       handleErrors(error, errorHeading, errorMessage, dispatch);
+    } finally {
+      dispatch({type: 'SET_LOADING_USER', payload: false});
     }
     return;
   };
@@ -135,7 +138,7 @@ const LoginScreen = () => {
 
   // Wait to see whether there already is an authentificated user
   // Possibly here display the app logo instead of the loading screen
-  if (state.loadingUser) return <LoadingData loadingText='Signing in...'/>;
+  if (state.loadingUser) return <LoadingData loadingText="Signing in..." />;
 
   return (
     <DismissKeyboard>
