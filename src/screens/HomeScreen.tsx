@@ -169,23 +169,6 @@ const HomeScreen = ({}: HomeScreenProps) => {
 
   const {onRefresh, refreshing, refreshCounter} = useRefresh({refetch});
 
-  // Update the user last login time
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!user) return;
-      try {
-        await updateUserLastOnline(db, user.uid);
-      } catch (error: any) {
-        Alert.alert(
-          'Failed to contact the database',
-          'Could not update user online status:' + error.message,
-        );
-      }
-    };
-
-    fetchData();
-  }, []);
-
   // Monitor visible month and various statistics
   useMemo(() => {
     if (!preferences) return;
@@ -232,9 +215,19 @@ const HomeScreen = ({}: HomeScreenProps) => {
   useFocusEffect(
     React.useCallback(() => {
       // Refetch relevant data every time the screen is focused
-      refetch(['userStatusData', 'preferences', 'userData']);
+      if (!user) return;
+      try {
+        updateUserLastOnline(db, user.uid);
+        refetch(['userStatusData', 'preferences', 'userData']);
+      } catch (error: any) {
+        Alert.alert(
+          'Failed to contact the database',
+          'Could not update user online status:' + error.message,
+        );
+      }
     }, []),
   );
+
   if (!user) {
     Navigation.navigate(ROUTES.LOGIN);
     return;
