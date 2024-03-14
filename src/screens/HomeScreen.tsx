@@ -33,17 +33,22 @@ import {useFirebase} from '@context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
 import {generateDatabaseKey} from '@database/baseFunctions';
 import CONST from '@src/CONST';
-import {DrinkingSession, DrinkingSessionArray, DrinkingSessionId} from '@src/types/database';
+import {
+  DrinkingSession,
+  DrinkingSessionArray,
+  DrinkingSessionId,
+} from '@src/types/database';
 import ROUTES from '@src/ROUTES';
-import Navigation, { navigationRef } from '@navigation/Navigation';
+import Navigation, {navigationRef} from '@navigation/Navigation';
 import {StackScreenProps} from '@react-navigation/stack';
-import { useFocusEffect } from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
 import {BottomTabNavigatorParamList} from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {DateData} from 'react-native-calendars';
-import { getEmptySession } from '@libs/SessionUtils';
+import {getEmptySession} from '@libs/SessionUtils';
 import DBPATHS from '@database/DBPATHS';
+import useRefresh from '@hooks/useRefresh';
 
 interface State {
   visibleDateObject: DateObject;
@@ -52,8 +57,6 @@ interface State {
   pointsEarned: number;
   initializingSession: boolean;
   ongoingSessionId: DrinkingSessionId | undefined;
-  refreshing: boolean;
-  refreshCounter: number;
 }
 
 interface Action {
@@ -68,8 +71,6 @@ const initialState: State = {
   pointsEarned: 0,
   initializingSession: false,
   ongoingSessionId: undefined,
-  refreshing: false,
-  refreshCounter: 0,
 };
 
 const reducer = (state: State, action: Action): State => {
@@ -86,10 +87,6 @@ const reducer = (state: State, action: Action): State => {
       return {...state, initializingSession: action.payload};
     case 'SET_ONGOING_SESSION_ID':
       return {...state, ongoingSessionId: action.payload};
-    case 'SET_REFRESHING':
-      return {...state, refreshing: action.payload};
-    case 'SET_REFRESH_COUNTER':
-      return {...state, refreshCounter: action.payload};
     default:
       return state;
   }
@@ -118,7 +115,10 @@ const HomeScreen = ({}: HomeScreenProps) => {
   const startDrinkingSession = async () => {
     if (!user) return null;
     if (state.ongoingSessionId) {
-      Alert.alert("A session already exists", "You can't start a new session while you are in one");
+      Alert.alert(
+        'A session already exists',
+        "You can't start a new session while you are in one",
+      );
       return;
     }
     dispatch({type: 'SET_INITIALIZING_SESSION', payload: true});
@@ -136,7 +136,12 @@ const HomeScreen = ({}: HomeScreenProps) => {
       return;
     }
     try {
-      await startLiveDrinkingSession(db, user.uid, newSessionData, newSessionId);
+      await startLiveDrinkingSession(
+        db,
+        user.uid,
+        newSessionData,
+        newSessionId,
+      );
       Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(newSessionId));
       dispatch({type: 'SET_ONGOING_SESSION_ID', payload: newSessionId});
       dispatch({type: 'SET_INITIALIZING_SESSION', payload: false});
@@ -157,21 +162,12 @@ const HomeScreen = ({}: HomeScreenProps) => {
       );
       return;
     }
-    Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(state.ongoingSessionId));
-  }
+    Navigation.navigate(
+      ROUTES.DRINKING_SESSION_LIVE.getRoute(state.ongoingSessionId),
+    );
+  };
 
-  const onRefresh = React.useCallback(() => {
-    dispatch({type: 'SET_REFRESHING', payload: true});
-    setTimeout(() => {
-      refetch().then(() => {
-        dispatch({type: 'SET_REFRESHING', payload: false});
-        dispatch({
-          type: 'SET_REFRESH_COUNTER',
-          payload: state.refreshCounter + 1,
-        });
-      });
-    }, 1000);
-  }, []);
+  const {onRefresh, refreshing, refreshCounter} = useRefresh({refetch});
 
   // Update the user last login time
   useEffect(() => {
@@ -222,8 +218,9 @@ const HomeScreen = ({}: HomeScreenProps) => {
   useEffect(() => {
     if (!userStatusData) return;
 
-    const currentSessionId: DrinkingSessionId | undefined = userStatusData.latest_session?.ongoing 
-      ? userStatusData.latest_session_id 
+    const currentSessionId: DrinkingSessionId | undefined = userStatusData
+      .latest_session?.ongoing
+      ? userStatusData.latest_session_id
       : undefined;
 
     dispatch({
@@ -235,9 +232,9 @@ const HomeScreen = ({}: HomeScreenProps) => {
   useFocusEffect(
     React.useCallback(() => {
       // Refetch relevant data every time the screen is focused
-      refetch(['userStatusData', 'preferences', 'userData'])
-    }, [])
-  )
+      refetch(['userStatusData', 'preferences', 'userData']);
+    }, []),
+  );
   if (!user) {
     Navigation.navigate(ROUTES.LOGIN);
     return;
@@ -246,7 +243,9 @@ const HomeScreen = ({}: HomeScreenProps) => {
   if (isLoading || state.initializingSession)
     return (
       <LoadingData
-        loadingText={state.initializingSession ? 'Starting a new session...' : ''}
+        loadingText={
+          state.initializingSession ? 'Starting a new session...' : ''
+        }
       />
     );
   if (!preferences || !userData) return;
@@ -272,7 +271,7 @@ const HomeScreen = ({}: HomeScreenProps) => {
               userId={user.uid}
               downloadPath={userData.profile.photo_url}
               style={styles.profileImage}
-              refreshTrigger={state.refreshCounter}
+              refreshTrigger={refreshCounter}
             />
             <Text style={styles.headerUsername}>{user.displayName}</Text>
           </TouchableOpacity>
@@ -289,7 +288,16 @@ const HomeScreen = ({}: HomeScreenProps) => {
         keyboardShouldPersistTaps="handled"
         onScrollBeginDrag={Keyboard.dismiss}
         refreshControl={
-          <RefreshControl refreshing={state.refreshing} onRefresh={onRefresh} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() =>
+              onRefresh([
+                'userStatusData',
+                'preferences',
+                'drinkingSessionData',
+              ])
+            }
+          />
         }>
         {state.ongoingSessionId ? (
           <TouchableOpacity
@@ -342,9 +350,7 @@ const HomeScreen = ({}: HomeScreenProps) => {
             iconSource={KirokuIcons.Social}
             containerStyle={styles.menuIconContainer}
             iconStyle={styles.menuIcon}
-            onPress={() =>
-              Navigation.navigate(ROUTES.SOCIAL)
-            }
+            onPress={() => Navigation.navigate(ROUTES.SOCIAL)}
           />
           <MenuIcon
             iconId="achievement-icon"

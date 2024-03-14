@@ -6,7 +6,12 @@
   Text,
   View,
 } from 'react-native';
-import {FriendRequestStatus, ProfileList} from '@src/types/database';
+import {
+  FriendList,
+  FriendRequestList,
+  FriendRequestStatus,
+  ProfileList,
+} from '@src/types/database';
 import {useEffect, useMemo, useReducer, useRef} from 'react';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 
@@ -18,11 +23,13 @@ import {fetchUserProfiles} from '@database/profile';
 import SearchResult from '@components/Social/SearchResult';
 import SearchWindow from '@components/Social/SearchWindow';
 import {SearchWindowRef, UserSearchResults} from '@src/types/various/Search';
-import {SearchScreenProps} from '@src/types/screens';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
 
 interface State {
   searchResultData: UserSearchResults;
   searching: boolean;
+  friends: FriendList | undefined;
+  friendRequests: FriendRequestList | undefined;
   requestStatuses: {[userId: string]: FriendRequestStatus | undefined};
   noUsersFound: boolean;
   displayData: ProfileList;
@@ -36,6 +43,8 @@ interface Action {
 const initialState: State = {
   searchResultData: [],
   searching: false,
+  friends: undefined,
+  friendRequests: undefined,
   requestStatuses: {},
   noUsersFound: false,
   displayData: {},
@@ -47,6 +56,10 @@ const reducer = (state: State, action: Action): State => {
       return {...state, searchResultData: action.payload};
     case 'SET_SEARCHING':
       return {...state, searching: action.payload};
+    case 'SET_FRIENDS':
+      return {...state, friends: action.payload};
+    case 'SET_FRIEND_REQUESTS':
+      return {...state, friendRequests: action.payload};
     case 'SET_REQUEST_STATUSES':
       return {...state, requestStatuses: action.payload};
     case 'SET_NO_USERS_FOUND':
@@ -58,9 +71,9 @@ const reducer = (state: State, action: Action): State => {
   }
 };
 
-const FriendSearchScreen = (props: FriendSearchScreenProps) => {
-  const {friendRequests, friends} = props;
+const FriendSearchScreen = () => {
   const {auth, db, storage} = useFirebase();
+  const {userData, refetch} = useDatabaseData();
   const searchInputRef = useRef<SearchWindowRef>(null);
   const user = auth.currentUser;
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -106,8 +119,8 @@ const FriendSearchScreen = (props: FriendSearchScreenProps) => {
       [userId: string]: FriendRequestStatus;
     } = {};
     searchResultData.forEach(userId => {
-      if (friendRequests && friendRequests[userId]) {
-        newRequestStatuses[userId] = friendRequests[userId];
+      if (state.friendRequests && state.friendRequests[userId]) {
+        newRequestStatuses[userId] = state.friendRequests[userId];
       }
     });
     dispatch({type: 'SET_REQUEST_STATUSES', payload: newRequestStatuses});
@@ -132,8 +145,18 @@ const FriendSearchScreen = (props: FriendSearchScreenProps) => {
   };
 
   useMemo(() => {
+    if (userData) {
+      dispatch({type: 'SET_FRIENDS', payload: userData?.friends});
+      dispatch({
+        type: 'SET_FRIEND_REQUESTS',
+        payload: userData?.friend_requests,
+      });
+    }
+  }, [userData]);
+
+  useMemo(() => {
     updateRequestStatuses();
-  }, [friendRequests]); // When updated in the database, not locally
+  }, [state.friendRequests]); // When updated in the database, not locally
 
   if (!user || !storage) return;
 
@@ -162,7 +185,7 @@ const FriendSearchScreen = (props: FriendSearchScreenProps) => {
                 storage={storage}
                 userFrom={user.uid}
                 requestStatus={state.requestStatuses[userId]}
-                alreadyAFriend={friends ? friends[userId] : false}
+                alreadyAFriend={state.friends ? state.friends[userId] : false}
               />
             ))
           ) : state.noUsersFound ? (

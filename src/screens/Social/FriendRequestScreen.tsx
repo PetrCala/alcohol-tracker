@@ -1,6 +1,7 @@
 ﻿import {
   Alert,
   Keyboard,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -25,6 +26,9 @@ import headerStyles from '@src/styles/headerStyles';
 import GrayHeader from '@components/Header/GrayHeader';
 import {objKeys} from '@libs/DataHandling';
 import CONST from '@src/CONST';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
+import useFetchData from '@hooks/useFetchData';
+import useRefresh from '@hooks/useRefresh';
 
 type FriendRequestButtonsProps = {
   requestId: string;
@@ -168,6 +172,7 @@ const FriendRequestItem: React.FC<FriendRequestItemProps> = ({
 
 interface State {
   isLoading: boolean;
+  friendRequests: FriendRequestList | undefined;
   displayData: ProfileList;
   requestsSent: string[];
   requestsReceived: string[];
@@ -182,6 +187,7 @@ interface Action {
 
 const initialState: State = {
   isLoading: true,
+  friendRequests: undefined,
   displayData: {},
   requestsSent: [],
   requestsReceived: [],
@@ -193,6 +199,8 @@ const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case 'SET_IS_LOADING':
       return {...state, isLoading: action.payload};
+    case 'SET_FRIEND_REQUESTS':
+      return {...state, friendRequests: action.payload};
     case 'SET_DISPLAY_DATA':
       return {...state, displayData: action.payload};
     case 'SET_REQUESTS_SENT':
@@ -208,10 +216,20 @@ const reducer = (state: State, action: Action): State => {
   }
 };
 
-const FriendRequestScreen = (props: ScreenProps) => {
-  const {friendRequests} = props;
+const FriendRequestScreen = () => {
   const {db} = useFirebase();
+  const {userData, isLoading, refetch} = useDatabaseData();
   const [state, dispatch] = useReducer(reducer, initialState);
+  const {onRefresh, refreshing, refreshCounter} = useRefresh({refetch});
+
+  useMemo(() => {
+    if (userData) {
+      dispatch({
+        type: 'SET_FRIEND_REQUESTS',
+        payload: userData?.friend_requests,
+      });
+    }
+  }, [userData]);
 
   const updateDisplayData = async (
     db: Database,
@@ -227,21 +245,25 @@ const FriendRequestScreen = (props: ScreenProps) => {
   useEffect(() => {
     const updateLocalHooks = async () => {
       dispatch({type: 'SET_IS_LOADING', payload: true});
-      await updateDisplayData(db, friendRequests);
+      await updateDisplayData(db, state.friendRequests);
       dispatch({type: 'SET_IS_LOADING', payload: false});
     };
     updateLocalHooks();
-  }, [friendRequests]);
+  }, [state.friendRequests]);
 
   useMemo(() => {
     const newRequestsSent: string[] = [];
     const newRequestsReceived: string[] = [];
-    if (friendRequests) {
-      Object.keys(friendRequests).forEach(requestId => {
-        if (friendRequests[requestId] === CONST.FRIEND_REQUEST_STATUS.SENT) {
+    if (state.friendRequests) {
+      Object.keys(state.friendRequests).forEach(requestId => {
+        if (!state.friendRequests) return;
+        if (
+          state.friendRequests[requestId] === CONST.FRIEND_REQUEST_STATUS.SENT
+        ) {
           newRequestsSent.push(requestId);
         } else if (
-          friendRequests[requestId] === CONST.FRIEND_REQUEST_STATUS.RECEIVED
+          state.friendRequests[requestId] ===
+          CONST.FRIEND_REQUEST_STATUS.RECEIVED
         ) {
           newRequestsReceived.push(requestId);
         }
@@ -257,15 +279,21 @@ const FriendRequestScreen = (props: ScreenProps) => {
       type: 'SET_REQUESTS_RECEIVED_COUNT',
       payload: newRequestsReceivedCount,
     });
-  }, [friendRequests]);
+  }, [state.friendRequests]);
 
   return (
     <View style={styles.mainContainer}>
       <ScrollView
         style={styles.scrollViewContainer}
         onScrollBeginDrag={Keyboard.dismiss}
-        keyboardShouldPersistTaps="handled">
-        {state.isLoading ? (
+        keyboardShouldPersistTaps="handled"
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => onRefresh(['userData'])}
+          />
+        }>
+        {state.isLoading || isLoading ? (
           <LoadingData style={styles.loadingData} />
         ) : (
           <View style={styles.friendList}>
@@ -277,7 +305,7 @@ const FriendRequestScreen = (props: ScreenProps) => {
                 <FriendRequestItem
                   key={requestId + '-friend-request-item'}
                   requestId={requestId}
-                  friendRequests={friendRequests}
+                  friendRequests={state.friendRequests}
                   displayData={state.displayData}
                 />
               ))}
@@ -292,7 +320,7 @@ const FriendRequestScreen = (props: ScreenProps) => {
                 <FriendRequestItem
                   key={requestId + '-friend-request-item'}
                   requestId={requestId}
-                  friendRequests={friendRequests}
+                  friendRequests={state.friendRequests}
                   displayData={state.displayData}
                 />
               ))}

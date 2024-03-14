@@ -33,10 +33,11 @@ import FillerView from '@components/FillerView';
 import PressableWithAnimation from '@components/Buttons/PressableWithAnimation';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
-import { FriendList } from '@src/types/database';
-import { readDataOnce } from '@database/baseFunctions';
-import { useFirebase } from '@context/global/FirebaseContext';
-import DBPATHS from '@database/DBPATHS';
+import {FriendList} from '@src/types/database';
+import {useFirebase} from '@context/global/FirebaseContext';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
+import useRefresh from '@hooks/useRefresh';
+import {RefreshControl} from 'react-native-gesture-handler';
 
 interface State {
   searching: boolean;
@@ -75,14 +76,21 @@ const reducer = (state: State, action: GeneralAction): State => {
   }
 };
 
-const FriendListScreen = () => {
-  // const {friends, setIndex} = ;
+type FriendListScreenProps = {
+  setIndex: (index: number) => void;
+};
+
+const FriendListScreen = (props: FriendListScreenProps) => {
+  const {setIndex} = props;
+  const {auth} = useFirebase();
+  const {userData, refetch} = useDatabaseData();
   const friendListInputRef = useRef<SearchWindowRef>(null);
   const [state, dispatch] = useReducer(reducer, initialState);
-  const {db, auth} = useFirebase();
+  const {onRefresh, refreshing, refreshCounter} = useRefresh({refetch});
+  const {loadingDisplayData, profileList, userStatusList} = useProfileList(
+    userData?.friends,
+  );
   const user = auth.currentUser;
-  const {loadingDisplayData, profileList, userStatusList} =
-    useProfileList(state.friends);
 
   const localSearch = async (searchText: string) => {
     try {
@@ -116,25 +124,14 @@ const FriendListScreen = () => {
     Navigation.navigate(ROUTES.PROFILE.getRoute(friendId));
   };
 
-  const fetchData = async () => {
-    if (!user) return;
-    try {
-      dispatch({type: 'SET_IS_LOADING', payload: true});
-      let userFriends: FriendList | undefined = await readDataOnce(
-        db,
-        DBPATHS.USERS_USER_ID_FRIENDS.getRoute(user.uid),
-      )
-      dispatch({type: 'SET_FRIENDS', payload: userFriends})
-    } finally {
-      dispatch({type: 'SET_IS_LOADING', payload: false});
-    }
-  };
-
   // Database data hooks
   useEffect(() => {
-    fetchData();
+    refetch();
   }, [user?.uid]);
 
+  useMemo(() => {
+    dispatch({type: 'SET_FRIENDS', payload: userData?.friends});
+  }, [userData]);
 
   useMemo(() => {
     let friendsArray = objKeys(state.friends);
@@ -174,6 +171,12 @@ const FriendListScreen = () => {
         keyboardShouldPersistTaps="handled"
         onScrollEndDrag={() =>
           dispatch({type: 'SET_SCROLLING', payload: false})
+        }
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => onRefresh(['userData'])}
+          />
         }>
         {loadingDisplayData ? (
           <LoadingData style={styles.loadingContainer} />
@@ -210,9 +213,7 @@ const FriendListScreen = () => {
               You do not have any friends yet
             </Text>
             <TouchableOpacity
-              // onPress={() => setIndex(1)}
-              // TODO fix this
-              onPress={() => Navigation.navigate(ROUTES.SOCIAL_FRIEND_SEARCH)}
+              onPress={() => setIndex(1)}
               style={styles.navigateToSearchButton}>
               <Text style={styles.navigateToSearchText}>Add them here</Text>
             </TouchableOpacity>
