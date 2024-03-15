@@ -17,7 +17,6 @@ import React, {useEffect, useMemo, useReducer} from 'react';
 import {readDataOnce} from '@database/baseFunctions';
 import {
   calculateThisMonthUnits,
-  calculateThisMonthDrinks,
   dateToDateObject,
   getSingleMonthDrinkingSessions,
   objKeys,
@@ -30,14 +29,7 @@ import LoadingData from '@components/LoadingData';
 import {fetchUserFriends, getCommonFriendsCount} from '@libs/FriendUtils';
 import MainHeader from '@components/Header/MainHeader';
 import ManageFriendPopup from '@components/Popups/Profile/ManageFriendPopup';
-import {
-  DrinkingSessionArray,
-  DrinkingSessionList,
-  FriendList,
-  Preferences,
-  Profile,
-  UserProps,
-} from '@src/types/database';
+import {DrinkingSessionArray, FriendList} from '@src/types/database';
 import {StackScreenProps} from '@react-navigation/stack';
 import {ProfileNavigatorParamList} from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
@@ -49,6 +41,7 @@ import {DateData} from 'react-native-calendars';
 import {RefreshControl} from 'react-native-gesture-handler';
 import useFetchData, {UserFetchDataKey} from '@hooks/useFetchData';
 import {sendFriendRequest} from '@database/friends';
+import {getPlural} from '@libs/StringUtils';
 
 interface State {
   selfFriends: FriendList | undefined;
@@ -56,7 +49,6 @@ interface State {
   commonFriendCount: number;
   visibleDateObject: DateObject;
   drinkingSessionsCount: number;
-  drinksConsumed: number;
   unitsConsumed: number;
   manageFriendModalVisible: boolean;
   unfriendModalVisible: boolean;
@@ -73,7 +65,6 @@ const initialState: State = {
   commonFriendCount: 0,
   visibleDateObject: dateToDateObject(new Date()),
   drinkingSessionsCount: 0,
-  drinksConsumed: 0,
   unitsConsumed: 0,
   manageFriendModalVisible: false,
   unfriendModalVisible: false,
@@ -91,8 +82,6 @@ const reducer = (state: State, action: Action): State => {
       return {...state, visibleDateObject: action.payload};
     case 'SET_DRINKING_SESSIONS_COUNT':
       return {...state, drinkingSessionsCount: action.payload};
-    case 'SET_DRINKS_CONSUMED':
-      return {...state, drinksConsumed: action.payload};
     case 'SET_UNITS_CONSUMED':
       return {...state, unitsConsumed: action.payload};
     case 'SET_MANAGE_FRIEND_MODAL_VISIBLE':
@@ -126,9 +115,11 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
 
   // Define your stats data
   const statsData: StatData = [
-    {header: 'Drinking Sessions', content: String(state.drinkingSessionsCount)},
-    {header: 'Units Consumed', content: String(state.drinksConsumed)},
-    {header: 'Units Earned', content: String(state.unitsConsumed)},
+    {
+      header: `Drinking Session${getPlural(state.drinkingSessionsCount)}`,
+      content: String(state.drinkingSessionsCount),
+    },
+    {header: 'Units Consumed', content: String(state.unitsConsumed)},
   ];
 
   // Database data hooks
@@ -175,10 +166,6 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
     let drinkingSessionArray: DrinkingSessionArray =
       Object.values(drinkingSessionData);
 
-    let thisMonthDrinks = calculateThisMonthDrinks(
-      state.visibleDateObject,
-      drinkingSessionArray,
-    );
     let thisMonthUnits = calculateThisMonthUnits(
       state.visibleDateObject,
       drinkingSessionArray,
@@ -194,7 +181,6 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
       type: 'SET_DRINKING_SESSIONS_COUNT',
       payload: thisMonthSessionCount,
     });
-    dispatch({type: 'SET_DRINKS_CONSUMED', payload: thisMonthDrinks});
     dispatch({type: 'SET_UNITS_CONSUMED', payload: thisMonthUnits});
   }, [drinkingSessionData, preferences, state.visibleDateObject]);
 

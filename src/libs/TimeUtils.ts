@@ -1,3 +1,5 @@
+import {getPlural} from './StringUtils';
+
 function isRecent(timestamp: number): boolean {
   const now = Date.now();
   const fiveMinutes = 5 * 60 * 1000; // 5 minutes in milliseconds
@@ -7,9 +9,8 @@ function isRecent(timestamp: number): boolean {
 function getTimestampAge(timestamp: number, addAgo: boolean = true): string {
   const now = Date.now();
   const difference = now - timestamp;
-  const plural = (input: number) => (input > 1 ? 's' : '');
   const formatText = (input: number, unit: string) =>
-    `${input} ${unit}${plural(input)}${addAgo ? ' ago' : ''}`;
+    `${input} ${unit}${getPlural(input)}${addAgo ? ' ago' : ''}`;
 
   // Format the timestamp into human-readable form based on its age
   switch (true) {

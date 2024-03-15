@@ -44,3 +44,7 @@ export function cleanStringForFirebaseKey(rawStr: string): string {
     ? '_'
     : cleanedStr.replace(/_+$/, '');
 }
+
+export function getPlural(input: number): string {
+  return input > 1 ? 's' : '';
+}

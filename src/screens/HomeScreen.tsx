@@ -306,10 +306,6 @@ const HomeScreen = ({}: HomeScreenProps) => {
         ) : null}
         <View style={styles.menuInfoContainer}>
           <View style={styles.menuInfoItemContainer}>
-            <Text style={styles.menuInfoText}>Drinks:</Text>
-            <Text style={styles.menuInfoText}>{state.drinksConsumed}</Text>
-          </View>
-          <View style={styles.menuInfoItemContainer}>
             <Text style={styles.menuInfoText}>Units:</Text>
             <Text style={styles.menuInfoText}>{state.unitsConsumed}</Text>
           </View>
