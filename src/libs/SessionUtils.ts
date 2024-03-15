@@ -6,19 +6,19 @@ import {
 } from '@src/types/database';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 
-const PlaceholderUnits: DrinksList = {[Date.now()]: {other: 0}};
+const PlaceholderDrinks: DrinksList = {[Date.now()]: {other: 0}};
 
 /**
  * @returns An empty drinking session object.
  */
 function getEmptySession(
-  usePlaceholderUnits?: boolean,
+  usePlaceholderDrinks?: boolean,
   ongoing?: boolean,
 ): DrinkingSession {
   let emptySession: DrinkingSession = {
     start_time: Date.now(),
     end_time: Date.now(),
-    units: usePlaceholderUnits ? PlaceholderUnits : {},
+    drinks: usePlaceholderDrinks ? PlaceholderDrinks : {},
     blackout: false,
     note: '',
     ...(ongoing && {ongoing: true}),

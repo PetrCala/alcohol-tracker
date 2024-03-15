@@ -23,7 +23,7 @@ type DrinkingSessionDrinksWindowProps = {
   iconSource: ImageSourcePropType;
   currentDrinks: DrinksList | undefined;
   setCurrentDrinks: (newDrinks: DrinksList | undefined) => void;
-  availableDrinks: number;
+  availableUnits: number;
 };
 
 const DrinkingSessionDrinksWindow = ({
@@ -31,11 +31,12 @@ const DrinkingSessionDrinksWindow = ({
   iconSource,
   currentDrinks,
   setCurrentDrinks,
-  availableDrinks,
+  availableUnits,
 }: DrinkingSessionDrinksWindowProps) => {
   const handleAddDrinks = (drinks: Drinks) => {
     let newDrinkCount = sumDrinkTypes(drinks); // Number of added drinks
-    if (newDrinkCount > 0 && newDrinkCount <= availableDrinks) {
+    if (newDrinkCount > 0 && newDrinkCount <= availableUnits) {
+      // TODO this could overflow
       let newDrinks: DrinksList | undefined = addDrinks(currentDrinks, drinks);
       setCurrentDrinks(newDrinks);
     }
@@ -76,7 +77,7 @@ const DrinkingSessionDrinksWindow = ({
         drinkKey={drinkKey}
         currentDrinks={currentDrinks}
         setCurrentDrinks={setCurrentDrinks}
-        availableDrinks={availableDrinks}
+        availableUnits={availableUnits}
         styles={styles}
       />
       <TouchableOpacity
@@ -122,13 +123,13 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginLeft: 5,
   },
-  unitsInputContainer: {
+  drinksInputContainer: {
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 4,
     marginBottom: 4,
   },
-  unitsInputButton: {
+  drinksInputButton: {
     width: 43,
     height: 43,
     borderRadius: 5,
@@ -138,7 +139,7 @@ const styles = StyleSheet.create({
     borderColor: '#212421',
     backgroundColor: 'white',
   },
-  unitsInputText: {
+  drinksInputText: {
     width: 43,
     height: 43,
     fontSize: 17,

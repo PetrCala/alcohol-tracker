@@ -37,7 +37,6 @@ import {
   DrinksList,
   DrinkKey,
   Drinks,
-  DrinksList,
 } from '@src/types/database';
 import YesNoPopup from '@components/Popups/YesNoPopup';
 import {useUserConnection} from '@context/global/UserConnectionContext';
@@ -80,8 +79,8 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
   const [session, setSession] = useState<DrinkingSession | null>(null);
   const initialSession = useRef<DrinkingSession | null>(null);
   // Session details
-  const [totalUnits, settotalUnits] = useState<number>(0);
-  const [availableDrinks, setavailableDrinks] = useState<number>(0);
+  const [totalUnits, setTotalUnits] = useState<number>(0);
+  const [availableUnits, setAvailableUnits] = useState<number>(0);
   const [sessionFinished, setSessionFinished] = useState<boolean>(false);
   // Time info
   const [dbSyncSuccessful, setDbSyncSuccessful] = useState(false);
@@ -159,13 +158,13 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
 
   const handleMonkePlus = () => {
     if (!session) return;
-    if (availableDrinks > 0) {
-      let unitsToAdd: Units = {other: 1};
+    if (availableUnits > 0) {
+      let drinksToAdd: Drinks = {other: 1};
       let newDrinks: DrinksList | undefined = addDrinks(
         session?.drinks,
-        unitsToAdd,
+        drinksToAdd,
       );
-      setSession({...session, units: newDrinks});
+      setSession({...session, drinks: newDrinks});
     }
   };
 
@@ -180,7 +179,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
       setSession({...session, drinks: newDrinks});
     }
     // Here, as else, maybe send an alert that there are other types of
-    // units logged
+    // drinks logged
   };
 
   const handleBlackoutChange = (value: boolean) => {
@@ -195,7 +194,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
 
   const setCurrentDrinks = (newDrinks: DrinksList | undefined) => {
     if (!session) return;
-    setSession({...session, units: newDrinks});
+    setSession({...session, drinks: newDrinks});
   };
 
   // Function to wait for pending updates to finish
@@ -205,16 +204,16 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
     }
   };
 
-  // Update the hooks whenever current units change
+  // Update the hooks whenever drinks change
   useMemo(() => {
     if (!preferences) return;
-    let newtotalUnits = sumAllUnits(
+    let newTotalUnits = sumAllUnits(
       session?.drinks,
       preferences.drinks_to_units,
     );
-    let newavailableDrinks = CONST.MAX_ALLOWED_UNITS - newtotalUnits;
-    settotalUnits(newtotalUnits);
-    setavailableDrinks(newavailableDrinks);
+    let newAvailableUnits = CONST.MAX_ALLOWED_UNITS - newTotalUnits;
+    setTotalUnits(newTotalUnits);
+    setAvailableUnits(newAvailableUnits);
   }, [session?.drinks]);
 
   async function saveSession(db: any, userId: string) {
@@ -306,7 +305,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
     if (sessionIsLive) {
       try {
         await waitForNoPendingUpdate();
-        await updateSessionUnits(db, user.uid, sessionId, session?.drinks);
+        await updateSessionDrinks(db, user.uid, sessionId, session?.drinks);
       } catch (error: any) {
         Alert.alert('Database synchronization failed', error.message);
       }
@@ -445,9 +444,9 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
             <View style={styles.drinkTypesContainer}>
               <DrinkTypesView
                 drinkData={drinkData}
-                currentUnits={session.drinks}
+                currentDrinks={session.drinks}
                 setCurrentDrinks={setCurrentDrinks}
-                availableDrinks={availableDrinks}
+                availableUnits={availableUnits}
               />
             </View>
             <SessionDetailsSlider
@@ -570,15 +569,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: '100%',
   },
-  unitsInputContainer: {
+  drinksInputContainer: {
     alignItems: 'center',
     justifyContent: 'center',
   },
-  unitsInputButton: {
+  drinksInputButton: {
     width: '40%',
     alignItems: 'center',
   },
-  unitsInputText: {
+  drinksInputText: {
     fontSize: 90,
     fontWeight: 'bold',
     // marginTop: 5,

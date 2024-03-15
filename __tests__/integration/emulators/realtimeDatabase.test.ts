@@ -10,7 +10,7 @@ import {
   createMockUserStatus,
 } from '../../utils/mockDatabase';
 import {isConnectedToDatabaseEmulator} from '@src/libs/Firebase/FirebaseUtils';
-import {FriendRequestList, Profile, Units} from '@src/types/database';
+import {FriendRequestList, Profile, Drinks} from '@src/types/database';
 import {Database} from 'firebase/database';
 import {describeWithEmulator} from '../../utils/emulators/emulatorTools';
 import {saveDrinkingSessionData} from '@database/drinkingSessions';
@@ -46,7 +46,7 @@ const testUserDisplayName: string = 'mock-user';
 const testUserId2: string = MOCK_USER_IDS[1];
 
 const mockSessionKey = `${testUserId}-mock-session-999`;
-const mockSessionUnits: Units = {
+const mockSessionDrinks: Drinks = {
   beer: 2,
   wine: 1,
   other: 3,

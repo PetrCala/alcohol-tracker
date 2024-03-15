@@ -8,26 +8,26 @@ import {
 import {DrinkKey, Drinks, DrinksList} from '@src/types/database';
 
 type SessionDrinksInputWindowProps = {
-  DrinkKey: DrinkKey;
-  currentUnits: DrinksList | undefined;
+  drinkKey: DrinkKey;
+  currentDrinks: DrinksList | undefined;
   setCurrentDrinks: (newDrinks: DrinksList | undefined) => void;
-  availableDrinks: number;
+  availableUnits: number;
   styles: {
-    unitsInputContainer: {};
-    unitsInputButton: {};
-    unitsInputText: {};
+    drinksInputContainer: {};
+    drinksInputButton: {};
+    drinksInputText: {};
   };
 };
 
 const SessionDrinksInputWindow = ({
-  DrinkKey,
+  drinkKey,
   currentDrinks,
   setCurrentDrinks,
-  availableDrinks,
+  availableUnits,
   styles,
 }: SessionDrinksInputWindowProps) => {
   const [inputValue, setInputValue] = useState<string>(
-    sumDrinksOfSingleType(currentDrinks, DrinkKey).toString(),
+    sumDrinksOfSingleType(currentDrinks, drinkKey).toString(),
   );
   const inputRef = useRef<TextInput>(null);
 
@@ -60,14 +60,14 @@ const SessionDrinksInputWindow = ({
       }
 
       let inputValueNumeric = parseFloat(inputValue); // In case one digit is already input, adjust the availableDrinks for this digit
-      if (numericValue > availableDrinks + inputValueNumeric) {
+      if (numericValue > availableUnits + inputValueNumeric) {
         return; // If the new value is greater than available units, do nothing.
       }
 
       setInputValue(updatedValue);
     }
 
-    // Update units
+    // Update drinks
     let numericValue = parseFloat(updatedValue);
     handleNewNumericValue(numericValue);
   };
@@ -85,16 +85,16 @@ const SessionDrinksInputWindow = ({
 
     if (numericValue == typeSum) return; // Do nothing if the value is the same
     // Determine whether the new value is higher or lower than the current one
-    let newDrinks: DrinksList | undefined = {...currentUnits};
+    let newDrinks: DrinksList | undefined = {...currentDrinks};
     if (numericValue > typeSum) {
-      // Add units
+      // Add drinks
       let numberToAdd: number = numericValue - typeSum;
-      let unitsToAdd: Units = {[DrinkKey]: numberToAdd};
-      newDrinks = addDrinks(newDrinks, unitsToAdd);
+      let drinksToAdd: Drinks = {[drinkKey]: numberToAdd};
+      newDrinks = addDrinks(newDrinks, drinksToAdd);
     } else {
-      // Remove units
+      // Remove drinks
       let numberToRemove: number = typeSum - numericValue;
-      newDrinks = removeDrinks(newDrinks, DrinkKey, numberToRemove);
+      newDrinks = removeDrinks(newDrinks, drinkKey, numberToRemove);
     }
     setCurrentDrinks(newDrinks);
   };
@@ -111,18 +111,18 @@ const SessionDrinksInputWindow = ({
   };
 
   useMemo(() => {
-    setInputValue(sumDrinksOfSingleType(currentDrinks, DrinkKey).toString());
-  }, [currentDrinks, DrinkKey]);
+    setInputValue(sumDrinksOfSingleType(currentDrinks, drinkKey).toString());
+  }, [currentDrinks, drinkKey]);
 
   return (
-    <View style={styles.unitsInputContainer}>
+    <View style={styles.drinksInputContainer}>
       <TouchableOpacity
         activeOpacity={1}
         onPress={handleContainerPress}
-        style={styles.unitsInputButton}>
+        style={styles.drinksInputButton}>
         <TextInput
           ref={inputRef}
-          style={styles.unitsInputText}
+          style={styles.drinksInputText}
           value={inputValue}
           onKeyPress={handleKeyPress}
           keyboardType="numeric"

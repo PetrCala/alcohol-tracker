@@ -57,7 +57,7 @@ interface State {
   visibleDateObject: DateObject;
   drinkingSessionsCount: number;
   drinksConsumed: number;
-  unitsEarned: number;
+  unitsConsumed: number;
   manageFriendModalVisible: boolean;
   unfriendModalVisible: boolean;
 }
@@ -74,7 +74,7 @@ const initialState: State = {
   visibleDateObject: dateToDateObject(new Date()),
   drinkingSessionsCount: 0,
   drinksConsumed: 0,
-  unitsEarned: 0,
+  unitsConsumed: 0,
   manageFriendModalVisible: false,
   unfriendModalVisible: false,
 };
@@ -93,8 +93,8 @@ const reducer = (state: State, action: Action): State => {
       return {...state, drinkingSessionsCount: action.payload};
     case 'SET_DRINKS_CONSUMED':
       return {...state, drinksConsumed: action.payload};
-    case 'SET_UNITS_EARNED':
-      return {...state, unitsEarned: action.payload};
+    case 'SET_UNITS_CONSUMED':
+      return {...state, unitsConsumed: action.payload};
     case 'SET_MANAGE_FRIEND_MODAL_VISIBLE':
       return {...state, manageFriendModalVisible: action.payload};
     case 'SET_UNFRIEND_MODAL_VISIBLE':
@@ -128,7 +128,7 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
   const statsData: StatData = [
     {header: 'Drinking Sessions', content: String(state.drinkingSessionsCount)},
     {header: 'Units Consumed', content: String(state.drinksConsumed)},
-    {header: 'Units Earned', content: String(state.unitsEarned)},
+    {header: 'Units Earned', content: String(state.unitsConsumed)},
   ];
 
   // Database data hooks
@@ -175,7 +175,7 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
     let drinkingSessionArray: DrinkingSessionArray =
       Object.values(drinkingSessionData);
 
-    let thisMonthUnits = calculateThisMonthUnits(
+    let thisMonthDrinks = calculateThisMonthDrinks(
       state.visibleDateObject,
       drinkingSessionArray,
     );
@@ -194,8 +194,8 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
       type: 'SET_DRINKING_SESSIONS_COUNT',
       payload: thisMonthSessionCount,
     });
-    dispatch({type: 'SET_DRINKS_CONSUMED', payload: thisMonthUnits});
-    dispatch({type: 'SET_UNITS_EARNED', payload: thisMonthUnits});
+    dispatch({type: 'SET_DRINKS_CONSUMED', payload: thisMonthDrinks});
+    dispatch({type: 'SET_UNITS_CONSUMED', payload: thisMonthUnits});
   }, [drinkingSessionData, preferences, state.visibleDateObject]);
 
   if (isLoading) return <LoadingData />;

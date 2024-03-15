@@ -65,10 +65,10 @@ const SessionSummaryScreen = ({route}: SessionSummaryScreenProps) => {
   const [session, setSession] = useState<DrinkingSession>(
     extractSessionOrEmpty(sessionId, drinkingSessionData),
   );
-  // Units info
+  // Drinks info
   const totalDrinks = sumAllDrinks(session.drinks);
   const totalUnits = sumAllUnits(session.drinks, preferences.drinks_to_units);
-  const unitSums = {
+  const drinkSums = {
     small_beer: sumDrinksOfSingleType(session.drinks, 'small_beer'),
     beer: sumDrinksOfSingleType(session.drinks, 'beer'),
     wine: sumDrinksOfSingleType(session.drinks, 'wine'),
@@ -83,14 +83,14 @@ const SessionSummaryScreen = ({route}: SessionSummaryScreenProps) => {
   const sessionDay = formatDateToDay(sessionStartDate);
   const sessionStartTime = formatDateToTime(sessionStartDate);
   const sessionEndTime = formatDateToTime(sessionEndDate);
-  // Figure out last unit added
-  let lastUnitAdded: string;
-  const lastUnitEditTimestamp = getLastDrinkAddedTime(session);
-  if (!lastUnitEditTimestamp) {
-    lastUnitAdded = 'Unknown';
+  // Figure out last drink added
+  let lastDrinkAdded: string;
+  const lastDrinkEditTimestamp = getLastDrinkAddedTime(session);
+  if (!lastDrinkEditTimestamp) {
+    lastDrinkAdded = 'Unknown';
   } else {
-    const lastUnitAddedDate = timestampToDate(lastUnitEditTimestamp);
-    lastUnitAdded = formatDateToTime(lastUnitAddedDate);
+    const lastDrinkAddedDate = timestampToDate(lastDrinkEditTimestamp);
+    lastDrinkAdded = formatDateToTime(lastDrinkAddedDate);
   }
 
   const onEditSessionPress = (sessionId: string) => {
@@ -110,19 +110,19 @@ const SessionSummaryScreen = ({route}: SessionSummaryScreenProps) => {
     {heading: 'Units:', data: totalUnits.toString()},
     {heading: 'Date:', data: sessionDay},
     {heading: 'Start time:', data: sessionStartTime},
-    {heading: 'Last unit added:', data: lastUnitAdded},
+    {heading: 'Last drink added:', data: lastDrinkAdded},
     {heading: 'End time:', data: sessionEndTime},
   ];
 
-  const unitData = [
+  const drinkData = [
     {heading: 'Drinks:', data: totalDrinks.toString()},
-    {heading: 'Small Beer:', data: unitSums.small_beer.toString()},
-    {heading: 'Beer:', data: unitSums.beer.toString()},
-    {heading: 'Wine:', data: unitSums.wine.toString()},
-    {heading: 'Weak Shot:', data: unitSums.weak_shot.toString()},
-    {heading: 'Strong Shot:', data: unitSums.strong_shot.toString()},
-    {heading: 'Cocktail:', data: unitSums.cocktail.toString()},
-    {heading: 'Other:', data: unitSums.other.toString()},
+    {heading: 'Small Beer:', data: drinkSums.small_beer.toString()},
+    {heading: 'Beer:', data: drinkSums.beer.toString()},
+    {heading: 'Wine:', data: drinkSums.wine.toString()},
+    {heading: 'Weak Shot:', data: drinkSums.weak_shot.toString()},
+    {heading: 'Strong Shot:', data: drinkSums.strong_shot.toString()},
+    {heading: 'Cocktail:', data: drinkSums.cocktail.toString()},
+    {heading: 'Other:', data: drinkSums.other.toString()},
   ];
 
   const otherData = [
@@ -186,8 +186,10 @@ const SessionSummaryScreen = ({route}: SessionSummaryScreenProps) => {
         </View>
 
         <View style={styles.sessionSectionContainer}>
-          <Text style={styles.sessionDataContainerHeading}>Units consumed</Text>
-          {unitData.map((item, index) => (
+          <Text style={styles.sessionDataContainerHeading}>
+            Drinks consumed
+          </Text>
+          {drinkData.map((item, index) => (
             <SessionDataItem
               key={index}
               heading={item.heading}

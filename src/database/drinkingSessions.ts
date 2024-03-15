@@ -23,8 +23,8 @@ export async function saveDrinkingSessionData(
   sessionKey: string,
   updateStatus?: boolean,
 ): Promise<void> {
-  newSessionData = removeZeroObjectsFromSession(newSessionData); // Delete the initial log of zero units that was used as a placeholder
-  newSessionData.units = newSessionData.units ?? {}; // Can not send undefined
+  newSessionData = removeZeroObjectsFromSession(newSessionData); // Delete the initial log of zero drinks that was used as a placeholder
+  newSessionData.drinks = newSessionData.drinks ?? {}; // Can not send undefined
   var updates: {[key: string]: any} = {};
   updates[drinkingSessionRef.getRoute(userId, sessionKey)] = newSessionData;
   if (updateStatus) {
@@ -52,7 +52,7 @@ export async function startLiveDrinkingSession(
   newSessionData: DrinkingSession,
   sessionKey: string,
 ): Promise<void> {
-  newSessionData.units = newSessionData.units ?? {}; // Can not send undefined
+  newSessionData.drinks = newSessionData.drinks ?? {}; // Can not send undefined
   var updates: {[key: string]: any} = {};
   const userStatusData: UserStatus = {
     last_online: new Date().getTime(),
@@ -79,7 +79,7 @@ export async function endLiveDrinkingSession(
   sessionKey: string,
 ): Promise<void> {
   newSessionData = removeZeroObjectsFromSession(newSessionData);
-  newSessionData.units = newSessionData.units ?? {}; // Can not send undefined
+  newSessionData.drinks = newSessionData.drinks ?? {}; // Can not send undefined
   var updates: {[key: string]: any} = {};
   const userStatusData: UserStatus = {
     // ETC - 1
@@ -132,22 +132,22 @@ export async function discardLiveDrinkingSession(
 }
 
 /** Access the database reference point of a user's drinking session
- * and update the units of that session.
+ * and update the drinks of that session.
  *
  * @param db Firebase Database object
  * @param userId User ID
  * @param sessionKey ID of the session to edit
- * @param UnitsObject containing the new units
+ * @param newDrinks An object containing the new drinks
  * @returns A promise.
  */
-export async function updateSessionUnits(
+export async function updateSessionDrinks(
   db: Database,
   userId: string,
   sessionKey: string,
   newDrinks: DrinksList | undefined,
 ): Promise<void> {
   var updates: {[key: string]: DrinksList} = {};
-  updates[drinkingSessionUnitsRef.getRoute(userId, sessionKey)] =
+  updates[drinkingSessionDrinksRef.getRoute(userId, sessionKey)] =
     newDrinks ?? {}; // Can not send undefined
   await update(ref(db), updates);
 }

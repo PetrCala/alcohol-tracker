@@ -7,14 +7,14 @@ export type DrinkTypesViewProps = {
   drinkData: DrinkDataProps;
   currentDrinks: DrinksList | undefined;
   setCurrentDrinks: (newDrinks: DrinksList | undefined) => void;
-  availableDrinks: number;
+  availableUnits: number;
 };
 
 const DrinkTypesView = ({
   drinkData,
   currentDrinks,
   setCurrentDrinks,
-  availableDrinks,
+  availableUnits,
 }: DrinkTypesViewProps) => {
   return (
     <View style={styles.mainContainer}>
@@ -28,7 +28,7 @@ const DrinkTypesView = ({
           iconSource={drink.icon}
           currentDrinks={currentDrinks}
           setCurrentDrinks={setCurrentDrinks}
-          availableDrinks={availableDrinks}
+          availableUnits={availableUnits}
         />
       ))}
     </View>

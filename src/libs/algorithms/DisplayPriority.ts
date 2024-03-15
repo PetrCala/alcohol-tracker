@@ -36,11 +36,11 @@ function calculateUserPriority(userStatusData: UserStatus): number {
   let time_since_last_online =
     new Date().getTime() - userStatusData.last_online;
   let session_active = userStatusData.latest_session?.ongoing ? 1 : 0;
-  let session_units = userStatusData.latest_session?.drinks
+  let session_drinks = userStatusData.latest_session?.drinks
     ? sumAllDrinks(userStatusData.latest_session.drinks) // TODO units should be used here perhaps
     : 0;
   return (
-    session_units * 10 +
+    session_drinks * 10 +
     session_active * 100 -
     Math.log(time_since_last_online) * 50
   );

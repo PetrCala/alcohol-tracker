@@ -226,14 +226,14 @@ const PreferencesScreen = ({route}: PreferencesScreenProps) => {
           </View>
         </View>
         <View style={[styles.container, styles.verticalContainer]}>
-          <Text style={styles.label}>Point Conversion</Text>
+          <Text style={styles.label}>Drinks to Units Conversion</Text>
           <View style={styles.itemContainer}>
             <PreferencesList
               id="drinks_to_units" // Another unique identifier
-              initialContents={Object.values(CONST.UNITS.KEYS).map(
+              initialContents={Object.values(CONST.DRINKS.KEYS).map(
                 (key, index) => ({
                   key: key,
-                  label: Object.values(CONST.UNITS.NAMES)[index],
+                  label: Object.values(CONST.DRINKS.NAMES)[index],
                   value: currentPreferences.drinks_to_units[key]!.toString(), // Non-null assertion
                 }),
               )}

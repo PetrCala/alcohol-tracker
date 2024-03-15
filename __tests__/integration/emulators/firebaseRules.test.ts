@@ -146,7 +146,7 @@ describeWithEmulator('Test user preferences rules', () => {
   const authUnitsToColorsRef =
     DBPATHS.USER_PREFERENCES_USER_ID_UNITS_TO_COLORS.getRoute(authUserId);
   const authDrinksToUnitsRef =
-    DBPATHS.USER_PREFERENCES_USER_ID_drinks_to_units.getRoute(authUserId);
+    DBPATHS.USER_PREFERENCES_USER_ID_DRINKS_TO_UNITS.getRoute(authUserId);
   setupGlobalMocks(); // Silence permission denied warnings
 
   beforeAll(async () => {
@@ -200,7 +200,7 @@ describeWithEmulator('Test user preferences rules', () => {
     await assertSucceeds(authRef.set(SAMPLE_UNITS_TO_COLORS));
   });
 
-  it('should allow an authenticated user to set their units to points data', async () => {
+  it('should allow an authenticated user to set their drinks to units data', async () => {
     const authRef = authDb.ref(authDrinksToUnitsRef);
     await assertSucceeds(authRef.set(SAMPLE_DRINKS_TO_UNITS));
   });

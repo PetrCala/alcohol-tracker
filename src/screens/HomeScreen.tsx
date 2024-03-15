@@ -54,7 +54,7 @@ interface State {
   visibleDateObject: DateObject;
   drinkingSessionsCount: number;
   drinksConsumed: number;
-  unitsEarned: number;
+  unitsConsumed: number;
   initializingSession: boolean;
   ongoingSessionId: DrinkingSessionId | undefined;
 }
@@ -68,7 +68,7 @@ const initialState: State = {
   visibleDateObject: dateToDateObject(new Date()),
   drinkingSessionsCount: 0,
   drinksConsumed: 0,
-  unitsEarned: 0,
+  unitsConsumed: 0,
   initializingSession: false,
   ongoingSessionId: undefined,
 };
@@ -81,8 +81,8 @@ const reducer = (state: State, action: Action): State => {
       return {...state, drinkingSessionsCount: action.payload};
     case 'SET_DRINKS_CONSUMED':
       return {...state, drinksConsumed: action.payload};
-    case 'SET_UNITS_EARNED':
-      return {...state, unitsEarned: action.payload};
+    case 'SET_UNITS_CONSUMED':
+      return {...state, unitsConsumed: action.payload};
     case 'SET_INITIALIZING_SESSION':
       return {...state, initializingSession: action.payload};
     case 'SET_ONGOING_SESSION_ID':
@@ -175,7 +175,7 @@ const HomeScreen = ({}: HomeScreenProps) => {
     const drinkingSessionArray: DrinkingSessionArray = drinkingSessionData
       ? Object.values(drinkingSessionData)
       : [];
-    let thisMonthUnits = calculateThisMonthUnits(
+    let thisMonthDrinks = calculateThisMonthDrinks(
       state.visibleDateObject,
       drinkingSessionArray,
     );
@@ -194,8 +194,8 @@ const HomeScreen = ({}: HomeScreenProps) => {
       type: 'SET_DRINKING_SESSIONS_COUNT',
       payload: thisMonthSessionCount,
     });
-    dispatch({type: 'SET_DRINKS_CONSUMED', payload: thisMonthUnits});
-    dispatch({type: 'SET_UNITS_EARNED', payload: thisMonthUnits});
+    dispatch({type: 'SET_DRINKS_CONSUMED', payload: thisMonthDrinks});
+    dispatch({type: 'SET_UNITS_CONSUMED', payload: thisMonthUnits});
   }, [drinkingSessionData, state.visibleDateObject, preferences]);
 
   useEffect(() => {
@@ -308,7 +308,7 @@ const HomeScreen = ({}: HomeScreenProps) => {
           </View>
           <View style={styles.menuInfoItemContainer}>
             <Text style={styles.menuInfoText}>Units:</Text>
-            <Text style={styles.menuInfoText}>{state.unitsEarned}</Text>
+            <Text style={styles.menuInfoText}>{state.unitsConsumed}</Text>
           </View>
           <View style={styles.menuInfoItemContainer}>
             <Text style={styles.menuInfoText}>Sessions:</Text>

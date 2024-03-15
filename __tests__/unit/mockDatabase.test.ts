@@ -77,12 +77,12 @@ function validateUserStatus(userStatuses: {[userId: string]: any}): boolean {
   return true;
 }
 
-/** Type guard for Units. Return true if an object is of Units type, and false otherwise.
+/** Type guard for Drinks. Return true if an object is of Drinks type, and false otherwise.
  *
  * @param obj Object to check
  * @returns bool
  */
-function isUnits(obj: any): obj is Units {
+function isDrinks(obj: any): obj is Drinks {
   for (const key of Object.keys(obj)) {
     if (!Object.values(CONST.DRINKS.KEYS).includes(key as any)) {
       return false; // Unexpected key
@@ -147,14 +147,14 @@ function isDrinksList(obj: any): obj is DrinksList {
       return false; // Key is not a valid timestamp (not a number)
     }
 
-    if (!isUnits(obj[timestamp])) {
-      return false; // Value does not match the Units structure
+    if (!isDrinks(obj[timestamp])) {
+      return false; // Value does not match the Drinks structure
     }
   }
   return true;
 }
 
-/** Type guard for DrinksList. Return true if an object is of Units type, and false otherwise.
+/** Type guard for DrinksList. Return true if an object is of Drinks type, and false otherwise.
  *
  * @param obj Object to check
  * @returns bool
@@ -281,10 +281,10 @@ describe('mockDatabase functions', () => {
     expect(feedback.text).toBe('Mock feedback');
   });
 
-  it('should create a mock units object', () => {
-    const units = createMockDrinksList({wine: 5});
-    expect(units).toBeDefined();
-    expect(Object.values(units)[0].wine).toBe(5);
+  it('should create a mock drinks object', () => {
+    const drinks = createMockDrinksList({wine: 5});
+    expect(drinks).toBeDefined();
+    expect(Object.values(drinks)[0].wine).toBe(5);
   });
 
   it('should create a mock session', () => {

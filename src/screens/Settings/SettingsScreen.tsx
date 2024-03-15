@@ -8,15 +8,15 @@ import {
   View,
 } from 'react-native';
 import MenuIcon from '../../components/Buttons/MenuIcon';
-import {SettingsScreenProps} from '../../types/screens';
-
 import {useUserConnection} from '../../context/global/UserConnectionContext';
 import UserOffline from '../../components/UserOffline';
 import BasicButton from '../../components/Buttons/BasicButton';
-import {getDatabaseData} from '../../context/global/DatabaseDataContext';
 import commonStyles from '../../styles/commonStyles';
 import MainHeader from '@components/Header/MainHeader';
 import {useFirebase} from '@context/global/FirebaseContext';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
+import Navigation from '@libs/Navigation/Navigation';
+import ROUTES from '@src/ROUTES';
 
 const SettingsItem: React.FC<{item: any}> = ({item}) => (
   <View style={styles.settingContainer}>
@@ -34,21 +34,20 @@ const SettingsItem: React.FC<{item: any}> = ({item}) => (
   </View>
 );
 
-const SettingsScreen = ({route, navigation}: SettingsScreenProps) => {
-  if (!route || !navigation) return null; // Should never be null
+const SettingsScreen = () => {
   const {auth} = useFirebase();
   const user = auth.currentUser;
-  const {preferences} = getDatabaseData();
+  const {preferences} = useDatabaseData();
   const {isOnline} = useUserConnection();
 
   // Automatically navigate to login screen if login expires
   if (!user || !preferences) {
-    navigation.replace('Login Screen');
+    Navigation.navigate(ROUTES.LOGIN);
     return null;
   }
 
   const handleSaveSettings = () => {
-    navigation.goBack();
+    Navigation.goBack();
   };
 
   const settingsData = [
@@ -68,7 +67,7 @@ const SettingsScreen = ({route, navigation}: SettingsScreenProps) => {
       ],
     },
     {
-      label: 'Point Conversion',
+      label: 'Drink to Unit Conversion',
       buttons: [
         {color: 'blue', text: '5', action: () => console.log('Blue 5 pressed')},
       ],
@@ -80,7 +79,7 @@ const SettingsScreen = ({route, navigation}: SettingsScreenProps) => {
 
   return (
     <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
-      <MainHeader headerText="" onGoBack={() => navigation.goBack()} />
+      <MainHeader headerText="" onGoBack={() => Navigation.goBack()} />
       <ScrollView
         style={styles.scrollView}
         onScrollBeginDrag={Keyboard.dismiss}

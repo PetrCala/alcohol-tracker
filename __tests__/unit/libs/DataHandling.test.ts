@@ -631,7 +631,7 @@ describe('getLastDrinkAddedTime', () => {
     mockSession = createMockSession(dateNow);
   });
 
-  it('should correctly identify last added unit timestamp', () => {
+  it('should correctly identify last added drink timestamp', () => {
     let now = dateNow.getTime();
     let testDrinks: DrinksList = {
       [now + 10]: {
@@ -644,8 +644,8 @@ describe('getLastDrinkAddedTime', () => {
     };
     mockSession.drinks = testDrinks;
 
-    const lastUnitAddedTime = getLastDrinkAddedTime(mockSession);
-    expect(lastUnitAddedTime).toBe(now + 20);
+    const lastDrinkAddedTime = getLastDrinkAddedTime(mockSession);
+    expect(lastDrinkAddedTime).toBe(now + 20);
   });
 
   it('should return null for an empty units object', () => {
@@ -946,7 +946,7 @@ describe('removeZeroObjectsFromSession', () => {
     expect(result).toEqual(mockSession);
   });
 
-  it('should return a session with no units if all DrinksList children have all drink values set to 0', () => {
+  it('should return a session with no drinks if all DrinksList children have all drink values set to 0', () => {
     const mockSession: DrinkingSession = createMockSessionWithDrinks({
       12345679: {
         beer: 0,
@@ -982,7 +982,7 @@ describe('getRandomDrinksList', () => {
     randomDrinks = Object.values(randomDrinksList)[0];
   });
 
-  it('should return an object with all values between 0 and maxUnitValue (exclusive)', () => {
+  it('should return an object with all values between 0 and maxDrinkValue (exclusive)', () => {
     for (let drink in randomDrinks) {
       expect(randomDrinks[drink as keyof Drinks]).toBeGreaterThanOrEqual(0);
       expect(randomDrinks[drink as keyof Drinks]).toBeLessThanOrEqual(30);
