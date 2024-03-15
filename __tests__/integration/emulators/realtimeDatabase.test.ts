@@ -32,6 +32,7 @@ import {
   teardownRealtimeDatabaseTestEnv,
 } from '../../utils/emulators/realtimeDatabaseSetup';
 import {
+  changeDisplayName,
   deleteUserData,
   getDefaultPreferences,
   getDefaultUserData,
@@ -49,6 +50,17 @@ import {
 import DBPATHS from '@database/DBPATHS';
 import CONST from '@src/CONST';
 import {getEmptySession} from '@libs/SessionUtils';
+import {
+  Auth,
+  connectAuthEmulator,
+  getReactNativePersistence,
+  initializeAuth,
+} from 'firebase/auth';
+import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  createMockAuthUsers,
+  setupAuthTestEnv,
+} from '__tests__/utils/emulators/authSetup';
 
 const testUserId: string = MOCK_USER_IDS[0];
 const testUserDisplayName: string = 'mock-user';
@@ -511,5 +523,50 @@ describeWithEmulator('Test friend request functionality', () => {
 
     const usersAreFriends = await isFriend(db, testUserId, testUserId2); // Extra check
     expect(usersAreFriends).toBe(false);
+  });
+});
+
+describeWithEmulator('Test user data modifications', () => {
+  let testApp: FirebaseApp;
+  let db: Database;
+  let auth: Auth;
+  setupGlobalMocks();
+
+  beforeAll(async () => {
+    ({testApp, auth} = setupAuthTestEnv());
+    ({testApp, db} = setupRealtimeDatabaseTestEnv()); // Overrides the testApp
+  });
+
+  beforeEach(async () => {
+    await fillDatabaseWithMockData(db, true); // No friends
+    await createMockAuthUsers(auth);
+  });
+
+  afterEach(async () => {
+    await set(ref(db), null);
+  });
+
+  afterAll(async () => {
+    await teardownRealtimeDatabaseTestEnv(testApp, db);
+  });
+
+  it("should correctly modify a user's display name", async () => {
+    const displayNameRef =
+      DBPATHS.USERS_USER_ID_PROFILE_DISPLAY_NAME.getRoute(testUserId);
+    const displayNameToUpdate = 'test-new-display-name';
+
+    await changeDisplayName(db, auth.currentUser, displayNameToUpdate);
+
+    const newDisplayName = await readDataOnce(db, displayNameRef);
+    expect(newDisplayName).toEqual(displayNameToUpdate);
+
+    const newNicknameKey = cleanStringForFirebaseKey(displayNameToUpdate);
+    const nicknameRef = DBPATHS.NICKNAME_TO_ID_NICKNAME_KEY_USER_ID.getRoute(
+      newNicknameKey,
+      testUserId,
+    );
+
+    const newNicknameToId = await readDataOnce(db, nicknameRef);
+    expect(newNicknameToId).toEqual(displayNameToUpdate);
   });
 });

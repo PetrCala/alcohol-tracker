@@ -6,6 +6,7 @@ import {
   getReactNativePersistence,
   connectAuthEmulator,
   Auth,
+  updateProfile,
 } from 'firebase/auth';
 import {initializeApp, deleteApp, FirebaseApp} from 'firebase/app';
 import {isConnectedToAuthEmulator} from '../../../src/libs/Firebase/FirebaseUtils';
@@ -57,6 +58,17 @@ export async function createMockAuthUsers(emulatorAuth: Auth): Promise<void> {
       await signUpUserWithEmailAndPassword(emulatorAuth, email, password);
     } catch (error) {
       throw new Error(`Error creating mock user ${userId}: ${error}`);
+    }
+
+    if (!emulatorAuth.currentUser) {
+      throw new Error('Failed to create a new mock user');
+    }
+    try {
+      await updateProfile(emulatorAuth.currentUser, {displayName: userId});
+    } catch (error) {
+      throw new Error(
+        `Error updating profile data for mock user ${userId}: ${error}`,
+      );
     }
   });
 }

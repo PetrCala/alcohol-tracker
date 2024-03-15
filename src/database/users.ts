@@ -11,12 +11,14 @@ import {
   User,
   UserCredential,
   reauthenticateWithCredential,
+  updateProfile,
 } from 'firebase/auth';
 import {Alert} from 'react-native';
 import {cleanStringForFirebaseKey} from '../libs/StringUtils';
 import DBPATHS from './DBPATHS';
+import {readDataOnce} from './baseFunctions';
 
-export const getDefaultPreferences = (): Preferences => {
+const getDefaultPreferences = (): Preferences => {
   return {
     first_day_of_week: 'Monday',
     units_to_colors: {
@@ -35,7 +37,7 @@ export const getDefaultPreferences = (): Preferences => {
   };
 };
 
-export const getDefaultUserData = (profileData: Profile): UserProps => {
+const getDefaultUserData = (profileData: Profile): UserProps => {
   let userRole = 'open_beta_user';
   return {
     profile: profileData,
@@ -43,7 +45,7 @@ export const getDefaultUserData = (profileData: Profile): UserProps => {
   };
 };
 
-export const getDefaultUserStatus = (): {last_online: number} => {
+const getDefaultUserStatus = (): {last_online: number} => {
   return {
     last_online: new Date().getTime(),
   };
@@ -56,7 +58,7 @@ export const getDefaultUserStatus = (): {last_online: number} => {
  * @param userId - User ID of the user to check.
  * @returns {Promise<boolean>} - Returns true if the user exists, false otherwise.
  */
-export async function userExistsInDatabase(
+async function userExistsInDatabase(
   db: Database,
   userId: string,
 ): Promise<boolean> {
@@ -74,7 +76,7 @@ export async function userExistsInDatabase(
  * @param profileData Profile data of the user to create
  * @returns {Promise<void>}
  */
-export async function pushNewUserInfo(
+async function pushNewUserInfo(
   db: Database,
   userId: string,
   profileData: Profile,
@@ -108,7 +110,7 @@ export async function pushNewUserInfo(
  * @param userNickname The user nickname
  * @returns {Promise<void>}
  */
-export async function deleteUserData(
+async function deleteUserData(
   db: Database,
   userId: string,
   userNickname: string,
@@ -155,7 +157,7 @@ export async function deleteUserData(
  * @param userId ID of the user to update the data for
  * @return
  */
-export async function updateUserLastOnline(
+async function updateUserLastOnline(
   db: Database,
   userId: string,
 ): Promise<void> {
@@ -177,7 +179,7 @@ export async function updateUserLastOnline(
  * @param password Password to reauthentificate with
  * @returns {Promise<void|UserCredential>} Null if the user does not exist, otherwise the result of the authentification.
  */
-export async function reauthentificateUser(
+async function reauthentificateUser(
   user: User,
   password: string,
 ): Promise<void | UserCredential> {
@@ -192,3 +194,54 @@ export async function reauthentificateUser(
   var result = await reauthenticateWithCredential(user, credential);
   return result;
 }
+
+/**
+ * Change a display name for a user both in the realtime database,
+ *  and in the authentication system.
+ *
+ * @param db Database to change the display name in
+ * @param user User to change the display name for
+ * @param newDisplayName The new display name
+ * @returns An empty promise
+ */
+async function changeDisplayName(
+  db: Database,
+  user: User | null,
+  newDisplayName: string,
+): Promise<void> {
+  if (!user) {
+    throw new Error('User is null');
+  }
+  const userId = user.uid;
+  const nicknameKey = cleanStringForFirebaseKey(newDisplayName);
+  const nicknameRef = DBPATHS.NICKNAME_TO_ID_NICKNAME_KEY_USER_ID;
+  const displayNameRef = DBPATHS.USERS_USER_ID_PROFILE_DISPLAY_NAME;
+
+  const currentDisplayName = await readDataOnce(
+    db,
+    displayNameRef.getRoute(userId),
+  );
+  if (currentDisplayName === newDisplayName) {
+    return;
+  }
+
+  let updates: {[key: string]: string} = {};
+  updates[nicknameRef.getRoute(nicknameKey, userId)] = newDisplayName;
+  updates[displayNameRef.getRoute(userId)] = newDisplayName;
+  // TODO possibly rewrite these into a transaction
+  await update(ref(db), updates);
+  await updateProfile(user, {displayName: newDisplayName});
+  return;
+}
+
+export {
+  getDefaultPreferences,
+  getDefaultUserData,
+  getDefaultUserStatus,
+  userExistsInDatabase,
+  pushNewUserInfo,
+  deleteUserData,
+  updateUserLastOnline,
+  reauthentificateUser,
+  changeDisplayName,
+};
