@@ -37,7 +37,7 @@ export const getDefaultPreferences = (): Preferences => {
 };
 
 export const getDefaultUserData = (profileData: Profile): UserProps => {
-  let userRole = 'user';
+  let userRole = 'open_beta_user';
   return {
     profile: profileData,
     role: userRole,
