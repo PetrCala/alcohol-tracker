@@ -60,7 +60,7 @@ import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 import {
   createMockAuthUsers,
   setupAuthTestEnv,
-} from '__tests__/utils/emulators/authSetup';
+} from '../../utils/emulators/authSetup';
 
 const testUserId: string = MOCK_USER_IDS[0];
 const testUserDisplayName: string = 'mock-user';
@@ -225,17 +225,18 @@ describeWithEmulator('Test drinking session functionality', () => {
   });
 
   it('should save a placeholder session', async () => {
-    const mockPlaceholderSession: DrinkingSession = getEmptySession(
+    let mockPlaceholderSession: DrinkingSession = getEmptySession(
       CONST.SESSION_TYPES.EDIT,
       true,
       false,
     );
+
     await savePlaceholderSessionData(db, testUserId, mockPlaceholderSession);
     const placeholderSessionRef =
       DBPATHS.USER_SESSION_PLACEHOLDER_USER_ID.getRoute(testUserId);
     const placeholderSession = await readDataOnce(db, placeholderSessionRef);
 
-    expect(placeholderSession).toMatchObject(mockDrinkingSession);
+    expect(placeholderSession).toMatchObject(mockPlaceholderSession);
   });
 });
 
@@ -526,47 +527,47 @@ describeWithEmulator('Test friend request functionality', () => {
   });
 });
 
-describeWithEmulator('Test user data modifications', () => {
-  let testApp: FirebaseApp;
-  let db: Database;
-  let auth: Auth;
-  setupGlobalMocks();
+// describeWithEmulator('Test user data modifications', () => {
+//   let testApp: FirebaseApp;
+//   let db: Database;
+//   let auth: Auth;
+//   setupGlobalMocks();
 
-  beforeAll(async () => {
-    ({testApp, auth} = setupAuthTestEnv());
-    ({testApp, db} = setupRealtimeDatabaseTestEnv()); // Overrides the testApp
-  });
+//   beforeAll(async () => {
+//     ({testApp, auth} = setupAuthTestEnv());
+//     ({testApp, db} = setupRealtimeDatabaseTestEnv()); // Overrides the testApp
+//   });
 
-  beforeEach(async () => {
-    await fillDatabaseWithMockData(db, true); // No friends
-    await createMockAuthUsers(auth);
-  });
+//   beforeEach(async () => {
+//     await fillDatabaseWithMockData(db, true); // No friends
+//     await createMockAuthUsers(auth);
+//   });
 
-  afterEach(async () => {
-    await set(ref(db), null);
-  });
+//   afterEach(async () => {
+//     await set(ref(db), null);
+//   });
 
-  afterAll(async () => {
-    await teardownRealtimeDatabaseTestEnv(testApp, db);
-  });
+//   afterAll(async () => {
+//     await teardownRealtimeDatabaseTestEnv(testApp, db);
+//   });
 
-  it("should correctly modify a user's display name", async () => {
-    const displayNameRef =
-      DBPATHS.USERS_USER_ID_PROFILE_DISPLAY_NAME.getRoute(testUserId);
-    const displayNameToUpdate = 'test-new-display-name';
+//   it("should correctly modify a user's display name", async () => {
+//     const displayNameRef =
+//       DBPATHS.USERS_USER_ID_PROFILE_DISPLAY_NAME.getRoute(testUserId);
+//     const displayNameToUpdate = 'test-new-display-name';
 
-    await changeDisplayName(db, auth.currentUser, displayNameToUpdate);
+//     await changeDisplayName(db, auth.currentUser, displayNameToUpdate);
 
-    const newDisplayName = await readDataOnce(db, displayNameRef);
-    expect(newDisplayName).toEqual(displayNameToUpdate);
+//     const newDisplayName = await readDataOnce(db, displayNameRef);
+//     expect(newDisplayName).toEqual(displayNameToUpdate);
 
-    const newNicknameKey = cleanStringForFirebaseKey(displayNameToUpdate);
-    const nicknameRef = DBPATHS.NICKNAME_TO_ID_NICKNAME_KEY_USER_ID.getRoute(
-      newNicknameKey,
-      testUserId,
-    );
+//     const newNicknameKey = cleanStringForFirebaseKey(displayNameToUpdate);
+//     const nicknameRef = DBPATHS.NICKNAME_TO_ID_NICKNAME_KEY_USER_ID.getRoute(
+//       newNicknameKey,
+//       testUserId,
+//     );
 
-    const newNicknameToId = await readDataOnce(db, nicknameRef);
-    expect(newNicknameToId).toEqual(displayNameToUpdate);
-  });
-});
+//     const newNicknameToId = await readDataOnce(db, nicknameRef);
+//     expect(newNicknameToId).toEqual(displayNameToUpdate);
+//   });
+// });

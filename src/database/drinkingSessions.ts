@@ -51,6 +51,7 @@ export async function savePlaceholderSessionData(
   userId: UserId,
   newSessionData: DrinkingSession,
 ): Promise<void> {
+  newSessionData = removeZeroObjectsFromSession(newSessionData);
   newSessionData.drinks = newSessionData.drinks ?? {}; // Can not send undefined
   var updates: {[key: string]: any} = {};
   updates[placeholderSessionRef.getRoute(userId)] = newSessionData;
