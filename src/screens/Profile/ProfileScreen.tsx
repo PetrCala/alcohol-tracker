@@ -119,7 +119,10 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
       header: `Drinking Session${getPlural(state.drinkingSessionsCount)}`,
       content: String(state.drinkingSessionsCount),
     },
-    {header: 'Units Consumed', content: String(state.unitsConsumed)},
+    {
+      header: 'Units Consumed',
+      content: String(state.unitsConsumed.toPrecision(2)),
+    },
   ];
 
   // Database data hooks

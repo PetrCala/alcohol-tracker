@@ -129,7 +129,7 @@ const DayComponent: React.FC<{
 
     if (
       marking?.units &&
-      hasDecimalPoint(marking.units) &&
+      hasDecimalPoint(parseFloat(marking.units.toPrecision(2))) &&
       marking.units >= 10
     ) {
       baseStyle = {...baseStyle, fontSize: 15}; // Handle overflow
@@ -151,7 +151,7 @@ const DayComponent: React.FC<{
       <Text style={getTextStyle(state)}>{date.day}</Text>
       <View style={getMarkingContainerStyle(date, marking)}>
         <Text style={getMarkingTextStyle(marking)}>
-          {state === 'disabled' ? '' : marking?.units}
+          {state === 'disabled' ? '' : marking?.units?.toPrecision(2)}
         </Text>
       </View>
     </TouchableOpacity>
