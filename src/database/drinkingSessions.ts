@@ -1,11 +1,11 @@
 ﻿import {Database, ref, update} from 'firebase/database';
 import {removeZeroObjectsFromSession} from '@libs/DataHandling';
-import {DrinkingSession, UnitsList, UserStatus} from '@src/types/database';
+import {DrinkingSession, DrinksList, UserStatus} from '@src/types/database';
 import DBPATHS from './DBPATHS';
 
 const drinkingSessionRef = DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID;
-const drinkingSessionUnitsRef =
-  DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID_UNITS;
+const drinkingSessionDrinksRef =
+  DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID_DRINKS;
 const userStatusRef = DBPATHS.USER_STATUS_USER_ID;
 
 /** Write drinking session data into the database
@@ -144,10 +144,10 @@ export async function updateSessionUnits(
   db: Database,
   userId: string,
   sessionKey: string,
-  newUnits: UnitsList | undefined,
+  newDrinks: DrinksList | undefined,
 ): Promise<void> {
-  var updates: {[key: string]: UnitsList} = {};
+  var updates: {[key: string]: DrinksList} = {};
   updates[drinkingSessionUnitsRef.getRoute(userId, sessionKey)] =
-    newUnits ?? {}; // Can not send undefined
+    newDrinks ?? {}; // Can not send undefined
   await update(ref(db), updates);
 }

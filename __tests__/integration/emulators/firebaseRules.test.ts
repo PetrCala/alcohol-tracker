@@ -24,7 +24,7 @@ import {
 import {getDefaultPreferences} from '@database/users';
 import {
   SAMPLE_UNITS_TO_COLORS,
-  SAMPLE_UNITS_TO_POINTS,
+  SAMPLE_DRINKS_TO_UNITS,
 } from '../../utils/testsStatic';
 import CONST from '@src/CONST';
 import DBPATHS from '@database/DBPATHS';
@@ -145,8 +145,8 @@ describeWithEmulator('Test user preferences rules', () => {
     DBPATHS.USER_PREFERENCES_USER_ID_FIRST_DAY_OF_WEEK.getRoute(authUserId);
   const authUnitsToColorsRef =
     DBPATHS.USER_PREFERENCES_USER_ID_UNITS_TO_COLORS.getRoute(authUserId);
-  const authUnitsToPointsRef =
-    DBPATHS.USER_PREFERENCES_USER_ID_UNITS_TO_POINTS.getRoute(authUserId);
+  const authDrinksToUnitsRef =
+    DBPATHS.USER_PREFERENCES_USER_ID_drinks_to_units.getRoute(authUserId);
   setupGlobalMocks(); // Silence permission denied warnings
 
   beforeAll(async () => {
@@ -201,8 +201,8 @@ describeWithEmulator('Test user preferences rules', () => {
   });
 
   it('should allow an authenticated user to set their units to points data', async () => {
-    const authRef = authDb.ref(authUnitsToPointsRef);
-    await assertSucceeds(authRef.set(SAMPLE_UNITS_TO_POINTS));
+    const authRef = authDb.ref(authDrinksToUnitsRef);
+    await assertSucceeds(authRef.set(SAMPLE_DRINKS_TO_UNITS));
   });
 });
 

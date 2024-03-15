@@ -1,32 +1,32 @@
 ﻿import {
-  addUnits,
-  calculateThisMonthPoints,
+  addDrinks,
   calculateThisMonthUnits,
+  calculateThisMonthDrinks,
   changeDateBySomeDays,
   dateToDateObject,
-  findUnitName,
+  findDrinkName,
   formatDate,
   formatDateToDay,
   formatDateToTime,
   getAdjacentMonths,
-  getLastUnitAddedTime,
+  getLastDrinkAddedTime,
   getNextMonth,
   getPreviousMonth,
-  getRandomUnitsList,
+  getRandomDrinksList,
   getSingleDayDrinkingSessions,
   getSingleMonthDrinkingSessions,
   getTimestampAtMidnight,
   getTimestampAtNoon,
   getYearMonth,
   getYearMonthVerbose,
-  getZeroUnitsList,
-  removeUnits,
+  getZeroDrinksList,
+  removeDrinks,
   removeZeroObjectsFromSession,
   setDateToCurrentTime,
-  sumAllPoints,
   sumAllUnits,
-  sumUnitTypes,
-  sumUnitsOfSingleType,
+  sumAllDrinks,
+  sumDrinkTypes,
+  sumDrinksOfSingleType,
   timestampToDate,
   unitsToColors,
 } from '../../../src/libs/DataHandling';
@@ -34,16 +34,17 @@ import {DateObject} from '../../../src/types/time';
 import {
   createMockPreferences,
   createMockSession,
-  createMockUnitsList,
+  createMockDrinksList,
 } from '../../utils/mockDatabase';
 import {
   DrinkingSession,
   DrinkingSessionArray,
   DrinkingSessionList,
+  DrinksList,
   Preferences,
-  Units,
-  UnitsList,
+  Drinks,
   UnitsToColors,
+  DrinksToUnits,
 } from '../../../src/types/database';
 import CONST from '../../../src/CONST';
 
@@ -397,7 +398,7 @@ describe('getSingleDayDrinkingSessions', () => {
       [new Date().getTime()]: createMockSession(baseDate, 0), // Session from 'today'
       [new Date().getTime() + 1]: createMockSession(baseDate, -1), // Session from 'yesterday'
       [new Date().getTime() + 2]: createMockSession(baseDate, 1), // Session from 'tomorrow'
-    }
+    };
 
     const result = getSingleDayDrinkingSessions(baseDate, testSessions);
     expect(result).toHaveLength(1);
@@ -408,8 +409,7 @@ describe('getSingleDayDrinkingSessions', () => {
     const testSessions: DrinkingSessionList = {
       [new Date().getTime()]: createMockSession(baseDate, -2),
       [new Date().getTime() + 1]: createMockSession(baseDate, -3),
-
-    }
+    };
 
     const result = getSingleDayDrinkingSessions(baseDate, testSessions);
     expect(result).toHaveLength(0);
@@ -460,17 +460,17 @@ describe('getSingleMonthDrinkingSessions', () => {
   });
 });
 
-describe('sumAllUnits', () => {
-  it('should correctly sum up all units of alcohol', () => {
-    const sampleUnits: UnitsList = getRandomUnitsList();
+describe('sumAllDrinks', () => {
+  it('should correctly sum up all drinks', () => {
+    const sampleDrinks: DrinksList = getRandomDrinksList();
 
-    const result = sumAllUnits(sampleUnits);
-    const expectedSum = Object.values(sampleUnits).reduce(
-      (total, unitTypes) => {
+    const result = sumAllDrinks(sampleDrinks);
+    const expectedSum = Object.values(sampleDrinks).reduce(
+      (total, drinkTypes) => {
         return (
           total +
-          Object.values(unitTypes).reduce(
-            (subTotal, unitCount) => subTotal + (unitCount || 0),
+          Object.values(drinkTypes).reduce(
+            (subTotal, drinkCount) => subTotal + (drinkCount || 0),
             0,
           )
         );
@@ -480,18 +480,18 @@ describe('sumAllUnits', () => {
     expect(result).toBe(expectedSum);
   });
 
-  it('should return 0 if all units are 0', () => {
-    const zeroUnits = getZeroUnitsList();
-    const result = sumAllUnits(zeroUnits);
+  it('should return 0 if all drinks are 0', () => {
+    const zeroDrinks = getZeroDrinksList();
+    const result = sumAllDrinks(zeroDrinks);
     expect(result).toBe(0);
   });
 });
 
-describe('sumUnitsOfSingleType function', () => {
-  let unitsData: UnitsList;
+describe('sumDrinksOfSingleType function', () => {
+  let drinksData: DrinksList;
 
   beforeEach(() => {
-    unitsData = {
+    drinksData = {
       1632423423: {
         beer: 2,
         cocktail: 1,
@@ -503,80 +503,80 @@ describe('sumUnitsOfSingleType function', () => {
     };
   });
 
-  it('should return sum of specified unit type across all sessions', () => {
-    expect(sumUnitsOfSingleType(unitsData, 'beer')).toBe(2);
-    expect(sumUnitsOfSingleType(unitsData, 'cocktail')).toBe(1);
-    expect(sumUnitsOfSingleType(unitsData, 'other')).toBe(6);
+  it('should return sum of specified drink type across all sessions', () => {
+    expect(sumDrinksOfSingleType(drinksData, 'beer')).toBe(2);
+    expect(sumDrinksOfSingleType(drinksData, 'cocktail')).toBe(1);
+    expect(sumDrinksOfSingleType(drinksData, 'other')).toBe(6);
   });
 
-  it('should return 0 if unit type does not exist in any of the sessions', () => {
-    expect(sumUnitsOfSingleType(unitsData, 'wine')).toBe(0);
+  it('should return 0 if drink type does not exist in any of the sessions', () => {
+    expect(sumDrinksOfSingleType(drinksData, 'wine')).toBe(0);
   });
 
-  it('should return 0 if unitsList is empty', () => {
-    const emptyUnitsData: UnitsList = {};
-    expect(sumUnitsOfSingleType(emptyUnitsData, 'beer')).toBe(0);
+  it('should return 0 if drinksList is empty', () => {
+    const emptyDrinksData: DrinksList = {};
+    expect(sumDrinksOfSingleType(emptyDrinksData, 'beer')).toBe(0);
   });
 
-  it('should handle a mix of existing and non-existing unit types', () => {
-    unitsData[1632434223].wine = 5;
-    expect(sumUnitsOfSingleType(unitsData, 'wine')).toBe(5);
+  it('should handle a mix of existing and non-existing drink types', () => {
+    drinksData[1632434223].wine = 5;
+    expect(sumDrinksOfSingleType(drinksData, 'wine')).toBe(5);
   });
 
   it('should handle undefined values without throwing errors', () => {
-    unitsData[1632434223] = {
+    drinksData[1632434223] = {
       beer: undefined,
       wine: 5,
     };
-    expect(sumUnitsOfSingleType(unitsData, 'beer')).toBe(2);
+    expect(sumDrinksOfSingleType(drinksData, 'beer')).toBe(2);
   });
 });
 
-describe('sumUnitTypes', () => {
-  it('should correctly sum units of multiple types', () => {
-    let testUnits = {
+describe('sumDrinkTypes', () => {
+  it('should correctly sum drinks of multiple types', () => {
+    let testDrinks = {
       beer: 2,
       cocktail: 1,
       wine: 3,
     };
 
-    const result = sumUnitTypes(testUnits);
+    const result = sumDrinkTypes(testDrinks);
     expect(result).toBe(6);
   });
 
   it('should return 0 for an empty units object', () => {
-    let testUnits = {};
+    let testDrinks = {};
 
-    const result = sumUnitTypes(testUnits);
+    const result = sumDrinkTypes(testDrinks);
     expect(result).toBe(0);
   });
 
-  it('should handle missing unit types correctly', () => {
-    let testUnits = {
+  it('should handle missing drink types correctly', () => {
+    let testDrinks = {
       beer: 2,
       wine: 3,
       // No cocktail, strong_shot, weak_shot, or other
     };
 
-    const result = sumUnitTypes(testUnits);
+    const result = sumDrinkTypes(testDrinks);
     expect(result).toBe(5);
   });
 
-  it('should treat undefined unit counts as 0', () => {
-    let testUnits = {
+  it('should treat undefined drink counts as 0', () => {
+    let testDrinks = {
       beer: 2,
       cocktail: undefined,
       wine: 3,
     };
 
-    const result = sumUnitTypes(testUnits);
+    const result = sumDrinkTypes(testDrinks);
     expect(result).toBe(5);
   });
 });
 
-describe('sumAllPoints', () => {
-  it('should return 0 if all units are 0', () => {
-    const zeroUnits: UnitsList = {
+describe('sumAllUnits', () => {
+  it('should return 0 if all drinks are 0', () => {
+    const zeroDrinks: DrinksList = {
       1632423423: {
         beer: 0,
         cocktail: 0,
@@ -586,7 +586,8 @@ describe('sumAllPoints', () => {
         beer: 0,
       },
     };
-    const zeroPoints: Units = {
+    const zeroDrinksToUnits: DrinksToUnits = {
+      small_beer: 0,
       beer: 0,
       cocktail: 0,
       other: 0,
@@ -594,12 +595,12 @@ describe('sumAllPoints', () => {
       weak_shot: 0,
       wine: 0,
     };
-    const result = sumAllPoints(zeroUnits, zeroPoints);
+    const result = sumAllUnits(zeroDrinks, zeroDrinksToUnits);
     expect(result).toBe(0);
   });
 
-  it('should correctly handle missing keys in UnitsList', () => {
-    const partialUnits: UnitsList = {
+  it('should correctly handle missing keys in DrinksList', () => {
+    const partialDrinks: DrinksList = {
       1632423423: {
         beer: 2,
         cocktail: 1,
@@ -608,7 +609,8 @@ describe('sumAllPoints', () => {
         other: 3,
       },
     };
-    const samplePoints: Units = {
+    const sampleDrinksToUnits: DrinksToUnits = {
+      small_beer: 3,
       beer: 5,
       cocktail: 10,
       other: 1,
@@ -616,30 +618,12 @@ describe('sumAllPoints', () => {
       weak_shot: 5,
       wine: 7,
     };
-    const result = sumAllPoints(partialUnits, samplePoints);
+    const result = sumAllUnits(partialDrinks, sampleDrinksToUnits);
     expect(result).toBe(2 * 5 + 1 * 10 + 3 * 1);
-  });
-
-  it('should correctly handle missing keys in unitsToPoints', () => {
-    const sampleUnits: UnitsList = {
-      1632423423: {
-        beer: 2,
-        cocktail: 1,
-      },
-      1632434223: {
-        other: 3,
-      },
-    };
-    const partialPoints: Units = {
-      beer: 5,
-      other: 1,
-    };
-    const result = sumAllPoints(sampleUnits, partialPoints);
-    expect(result).toBe(2 * 5 + 1 * 0 + 3 * 1); // cocktail has a missing key in unitsToPoints, so its value is considered 0
   });
 });
 
-describe('getLastUnitAddedTime', () => {
+describe('getLastDrinkAddedTime', () => {
   let dateNow: Date = new Date();
   let mockSession: DrinkingSession;
 
@@ -649,7 +633,7 @@ describe('getLastUnitAddedTime', () => {
 
   it('should correctly identify last added unit timestamp', () => {
     let now = dateNow.getTime();
-    let testUnits: UnitsList = {
+    let testDrinks: DrinksList = {
       [now + 10]: {
         beer: 2,
       },
@@ -658,34 +642,34 @@ describe('getLastUnitAddedTime', () => {
         other: 1,
       },
     };
-    mockSession.units = testUnits;
+    mockSession.drinks = testDrinks;
 
-    const lastUnitAddedTime = getLastUnitAddedTime(mockSession);
+    const lastUnitAddedTime = getLastDrinkAddedTime(mockSession);
     expect(lastUnitAddedTime).toBe(now + 20);
   });
 
   it('should return null for an empty units object', () => {
-    let testUnits = {};
-    mockSession.units = testUnits;
+    let testDrinks = {};
+    mockSession.drinks = testDrinks;
 
-    const result = getLastUnitAddedTime(mockSession);
+    const result = getLastDrinkAddedTime(mockSession);
     expect(result).toBe(null);
   });
 });
 
-describe('calculateThisMonthUnits', () => {
+describe('calculateThisMonthDrinks', () => {
   let currentDate = new Date();
   let mockDateObject: DateObject = dateToDateObject(currentDate);
-  let twoBeers: Units = createMockUnitsList({beer: 2});
-  let threeWines: Units = createMockUnitsList({wine: 3});
-  let fourOther: Units = createMockUnitsList({other: 4});
+  let twoBeers: Drinks = createMockDrinksList({beer: 2});
+  let threeWines: Drinks = createMockDrinksList({wine: 3});
+  let fourOther: Drinks = createMockDrinksList({other: 4});
 
   it('should return 0 when there are no drinking sessions this month', () => {
-    const result = calculateThisMonthUnits(mockDateObject, []);
+    const result = calculateThisMonthDrinks(mockDateObject, []);
     expect(result).toBe(0);
   });
 
-  it('should sum units for sessions that only fall within the current month', () => {
+  it('should sum drinks for sessions that only fall within the current month', () => {
     const testSessions: DrinkingSessionArray = [
       createMockSession(new Date(), -31, twoBeers),
       createMockSession(new Date(), 31, twoBeers),
@@ -693,45 +677,45 @@ describe('calculateThisMonthUnits', () => {
       createMockSession(new Date(), 0, twoBeers),
     ];
 
-    const result = calculateThisMonthUnits(mockDateObject, testSessions);
+    const result = calculateThisMonthDrinks(mockDateObject, testSessions);
     expect(result).toBe(5); // 3 + 2
   });
 
-  it('should sum units for all sessions if all fall within the current month', () => {
-    // Mock sumAllUnits function and getSingleMonthDrinkingSessions to return an array of sessions
+  it('should sum drinks for all sessions if all fall within the current month', () => {
+    // Mock sumAllDrinks function and getSingleMonthDrinkingSessions to return an array of sessions
     const testSessions: DrinkingSessionArray = [
       createMockSession(new Date(), 0, threeWines),
       createMockSession(new Date(), 0, twoBeers),
       createMockSession(new Date(), 0, fourOther),
     ];
 
-    const result = calculateThisMonthUnits(mockDateObject, testSessions);
+    const result = calculateThisMonthDrinks(mockDateObject, testSessions);
     expect(result).toBe(9); // 4 + 3 + 2
   });
 });
 
-describe('calculateThisMonthPoints', () => {
+describe('calculateThisMonthUnits', () => {
   let mockPreferences: Preferences = createMockPreferences();
-  let mockUnitsToPoints = mockPreferences.units_to_points;
-  mockUnitsToPoints.beer = 1;
-  mockUnitsToPoints.weak_shot = 0.5;
-  mockUnitsToPoints.other = 1;
+  let mockDrinksToUnits = mockPreferences.drinks_to_units;
+  mockDrinksToUnits.beer = 1;
+  mockDrinksToUnits.weak_shot = 0.5;
+  mockDrinksToUnits.other = 1;
   let currentDate = new Date();
   let mockDateObject: DateObject = dateToDateObject(currentDate);
-  let twoBeers: UnitsList = createMockUnitsList({beer: 2});
-  let threeWeakShots: UnitsList = createMockUnitsList({weak_shot: 3});
-  let fourOther: UnitsList = createMockUnitsList({other: 4});
+  let twoBeers: DrinksList = createMockDrinksList({beer: 2});
+  let threeWeakShots: DrinksList = createMockDrinksList({weak_shot: 3});
+  let fourOther: DrinksList = createMockDrinksList({other: 4});
 
   it('should return 0 when there are no drinking sessions this month', () => {
-    const result = calculateThisMonthPoints(
+    const result = calculateThisMonthUnits(
       mockDateObject,
       [],
-      mockUnitsToPoints,
+      mockDrinksToUnits,
     );
     expect(result).toBe(0);
   });
 
-  it('should sum units for sessions that only fall within the current month', () => {
+  it('should sum drinks for sessions that only fall within the current month', () => {
     const testSessions: DrinkingSessionArray = [
       createMockSession(new Date(), -31, twoBeers),
       createMockSession(new Date(), 31, twoBeers),
@@ -739,36 +723,36 @@ describe('calculateThisMonthPoints', () => {
       createMockSession(new Date(), 0, twoBeers),
     ];
 
-    const result = calculateThisMonthPoints(
+    const result = calculateThisMonthUnits(
       mockDateObject,
       testSessions,
-      mockUnitsToPoints,
+      mockDrinksToUnits,
     );
     expect(result).toBe(3.5); // 3 * 0.5 + 2 * 1
   });
 
-  it('should sum units for all sessions if all fall within the current month', () => {
-    // Mock sumAllUnits function and getSingleMonthDrinkingSessions to return an array of sessions
+  it('should sum drinks for all sessions if all fall within the current month', () => {
+    // Mock sumAllDrinks function and getSingleMonthDrinkingSessions to return an array of sessions
     const testSessions: DrinkingSessionArray = [
       createMockSession(new Date(), 0, threeWeakShots),
       createMockSession(new Date(), 0, twoBeers),
       createMockSession(new Date(), 0, fourOther),
     ];
 
-    const result = calculateThisMonthPoints(
+    const result = calculateThisMonthUnits(
       mockDateObject,
       testSessions,
-      mockUnitsToPoints,
+      mockDrinksToUnits,
     );
     expect(result).toBe(7.5); // 3 * 0.5 + 2 * 1 + 4 * 1
   });
 });
 
-describe('addUnits function', () => {
-  let existingUnits: UnitsList;
+describe('addDrinks function', () => {
+  let existingDrinks: DrinksList;
 
   beforeEach(() => {
-    existingUnits = {
+    existingDrinks = {
       1632423423: {
         beer: 2,
         cocktail: 1,
@@ -780,55 +764,55 @@ describe('addUnits function', () => {
     };
   });
 
-  it('should add new units with a new timestamp', () => {
-    const unitsToAdd: Units = {beer: 4, wine: 2};
-    const newUnits = addUnits(existingUnits, unitsToAdd) as UnitsList;
-    const newTimestamps = Object.keys(newUnits).map(Number);
+  it('should add new drinks with a new timestamp', () => {
+    const drinksToAdd: Drinks = {beer: 4, wine: 2};
+    const newDrinks = addDrinks(existingDrinks, drinksToAdd) as DrinksList;
+    const newTimestamps = Object.keys(newDrinks).map(Number);
 
     // Expect that there is one more session than before
-    expect(newTimestamps.length).toBe(Object.keys(existingUnits).length + 1);
+    expect(newTimestamps.length).toBe(Object.keys(existingDrinks).length + 1);
 
-    // Expect the most recent session data to match unitsToAdd
+    // Expect the most recent session data to match drinksToAdd
     const mostRecentTimestamp = Math.max(...newTimestamps);
-    expect(newUnits[mostRecentTimestamp]).toEqual(unitsToAdd);
+    expect(newDrinks[mostRecentTimestamp]).toEqual(drinksToAdd);
   });
 
-  it('should keep all existing units unchanged', () => {
-    const unitsToAdd: Units = {beer: 4, wine: 2};
-    const newUnits = addUnits(existingUnits, unitsToAdd) as UnitsList;
+  it('should keep all existing drinks unchanged', () => {
+    const drinksToAdd: Drinks = {beer: 4, wine: 2};
+    const newDrinks = addDrinks(existingDrinks, drinksToAdd) as DrinksList;
 
-    Object.keys(existingUnits).forEach(timestamp => {
-      expect(newUnits[Number(timestamp)]).toEqual(
-        existingUnits[Number(timestamp)],
+    Object.keys(existingDrinks).forEach(timestamp => {
+      expect(newDrinks[Number(timestamp)]).toEqual(
+        existingDrinks[Number(timestamp)],
       );
     });
   });
 
-  it('should handle empty units to add', () => {
-    const unitsToAdd: Units = {};
-    const newUnits = addUnits(existingUnits, unitsToAdd) as UnitsList;
-    expect(newUnits).toEqual(existingUnits);
+  it('should handle empty drinks to add', () => {
+    const drinksToAdd: Drinks = {};
+    const newDrinks = addDrinks(existingDrinks, drinksToAdd) as DrinksList;
+    expect(newDrinks).toEqual(existingDrinks);
   });
 
-  it('should handle undefined values in units to add', () => {
-    const unitsToAdd: Units = {beer: undefined, wine: 2};
-    const newUnits = addUnits(existingUnits, unitsToAdd) as UnitsList;
-    const newTimestamps = Object.keys(newUnits).map(Number);
+  it('should handle undefined values in drinks to add', () => {
+    const drinksToAdd: Drinks = {beer: undefined, wine: 2};
+    const newDrinks = addDrinks(existingDrinks, drinksToAdd) as DrinksList;
+    const newTimestamps = Object.keys(newDrinks).map(Number);
 
     // Expect that there is one more session than before
-    expect(newTimestamps.length).toBe(Object.keys(existingUnits).length + 1);
+    expect(newTimestamps.length).toBe(Object.keys(existingDrinks).length + 1);
 
-    // Expect the most recent session data to match unitsToAdd
+    // Expect the most recent session data to match drinksToAdd
     const mostRecentTimestamp = Math.max(...newTimestamps);
-    expect(newUnits[mostRecentTimestamp]).toEqual(unitsToAdd);
+    expect(newDrinks[mostRecentTimestamp]).toEqual(drinksToAdd);
   });
 });
 
-describe('removeUnits function', () => {
-  let existingUnits: UnitsList;
+describe('removeDrinks function', () => {
+  let existingDrinks: DrinksList;
 
   beforeEach(() => {
-    existingUnits = {
+    existingDrinks = {
       1632423423: {
         beer: 4,
         cocktail: 2,
@@ -842,64 +826,57 @@ describe('removeUnits function', () => {
     };
   });
 
-  it('should remove units starting from the most recent session', () => {
-    const newUnits = removeUnits(existingUnits, 'beer', 5) as UnitsList;
-    expect(newUnits[1632434223]).toBeUndefined();
-    expect(newUnits[1632423423]?.beer).toBe(2);
+  it('should remove drinks starting from the most recent session', () => {
+    const newDrinks = removeDrinks(existingDrinks, 'beer', 5) as DrinksList;
+    expect(newDrinks[1632434223]).toBeUndefined();
+    expect(newDrinks[1632423423]?.beer).toBe(2);
   });
 
-  it('should remove all units if the count equals the total', () => {
-    const newUnits = removeUnits(existingUnits, 'beer', 7) as UnitsList;
-    expect(newUnits[1632434223]).toBeUndefined();
-    expect(newUnits[1632423423]?.beer).toBeUndefined();
+  it('should remove all drinks if the count equals the total', () => {
+    const newDrinks = removeDrinks(existingDrinks, 'beer', 7) as DrinksList;
+    expect(newDrinks[1632434223]).toBeUndefined();
+    expect(newDrinks[1632423423]?.beer).toBeUndefined();
   });
 
-  it('should handle removing more units than exist', () => {
-    const newUnits = removeUnits(existingUnits, 'beer', 10) as UnitsList;
-    expect(newUnits[1632434223]).toBeUndefined();
-    expect(newUnits[1632423423]?.beer).toBeUndefined();
+  it('should handle removing more drinks than exist', () => {
+    const newDrinks = removeDrinks(existingDrinks, 'beer', 10) as DrinksList;
+    expect(newDrinks[1632434223]).toBeUndefined();
+    expect(newDrinks[1632423423]?.beer).toBeUndefined();
   });
 
-  it('should not modify other unit types when removing units', () => {
-    const newUnits = removeUnits(existingUnits, 'beer', 5) as UnitsList;
-    expect(newUnits[1632423423]?.cocktail).toBe(2);
-    expect(newUnits[1632435223]?.cocktail).toBe(1);
-    expect(sumUnitsOfSingleType(newUnits, 'cocktail')).toBe(3);
+  it('should not modify other drink types when removing drinks', () => {
+    const newDrinks = removeDrinks(existingDrinks, 'beer', 5) as DrinksList;
+    expect(newDrinks[1632423423]?.cocktail).toBe(2);
+    expect(newDrinks[1632435223]?.cocktail).toBe(1);
+    expect(sumDrinksOfSingleType(newDrinks, 'cocktail')).toBe(3);
   });
 
-  it('should remove 0 units if the count is 0', () => {
-    const newUnits = removeUnits(existingUnits, 'beer', 0);
-    expect(newUnits).toEqual(existingUnits);
+  it('should remove 0 drinks if the count is 0', () => {
+    const newDrinks = removeDrinks(existingDrinks, 'beer', 0);
+    expect(newDrinks).toEqual(existingDrinks);
   });
 
-  // it('should handle undefined and zero values without throwing errors', () => {
-  //   existingUnits[1632434223]!.beer = undefined;
-  //   const newUnits = removeUnits(existingUnits, 'beer', 5);
-  //   expect(newUnits[1632434223]).toBeUndefined();
-  //   expect(newUnits[1632423423]?.beer).toBe(2);
-  // });
-
-  it('should clean up sessions that have zero units left', () => {
-    const newUnits = removeUnits(existingUnits, 'cocktail', 3) as UnitsList;
-    expect(newUnits[1632423423]?.cocktail).toBeUndefined();
-    expect(newUnits[1632435223]).toBeUndefined();
+  it('should clean up sessions that have zero drinks left', () => {
+    const newDrinks = removeDrinks(existingDrinks, 'cocktail', 3) as DrinksList;
+    expect(newDrinks[1632423423]?.cocktail).toBeUndefined();
+    expect(newDrinks[1632435223]).toBeUndefined();
   });
 });
 
 describe('removeZeroObjectsFromSession', () => {
-  // Helper function to create mock session with units
-  const createMockSessionWithUnits = (units: UnitsList): DrinkingSession => {
+  // Helper function to create mock session with drinks
+  const createMockSessionWithDrinks = (drinks: DrinksList): DrinkingSession => {
     return {
       start_time: Date.now(),
       end_time: Date.now() + 1000,
       blackout: false,
       note: '',
-      units: units,
+      drinks: drinks,
     };
   };
 
-  it('should remove UnitsList children with all unit values set to 0', () => {
-    const mockSession: DrinkingSession = createMockSessionWithUnits({
+  it('should remove DrinksList children with all drink values set to 0', () => {
+    const mockSession: DrinkingSession = createMockSessionWithDrinks({
       12345679: {
         beer: 0,
         cocktail: 0,
@@ -912,14 +889,14 @@ describe('removeZeroObjectsFromSession', () => {
     });
 
     const result = removeZeroObjectsFromSession(mockSession);
-    const units = result.units as UnitsList;
-    expect(Object.keys(units)).toHaveLength(1);
-    expect(sumAllUnits(units)).toEqual(1);
-    expect(units).toBeDefined();
+    const drinks = result.drinks as DrinksList;
+    expect(Object.keys(drinks)).toHaveLength(1);
+    expect(sumAllDrinks(drinks)).toEqual(1);
+    expect(drinks).toBeDefined();
   });
 
-  it('should remove UnitsList children where one object has a single key set to 0', () => {
-    const mockSession: DrinkingSession = createMockSessionWithUnits({
+  it('should remove DrinksList children where one object has a single key set to 0', () => {
+    const mockSession: DrinkingSession = createMockSessionWithDrinks({
       12345679: {
         other: 0,
       },
@@ -927,14 +904,14 @@ describe('removeZeroObjectsFromSession', () => {
     });
 
     const result = removeZeroObjectsFromSession(mockSession);
-    const units = result.units as UnitsList;
-    expect(Object.keys(units)).toHaveLength(1);
-    expect(sumAllUnits(units)).toEqual(1);
-    expect(units).toBeDefined();
+    const drinks = result.drinks as DrinksList;
+    expect(Object.keys(drinks)).toHaveLength(1);
+    expect(sumAllDrinks(drinks)).toEqual(1);
+    expect(drinks).toBeDefined();
   });
 
-  it('should not do anything if there are only zero-unit objects', () => {
-    const mockSession: DrinkingSession = createMockSessionWithUnits({
+  it('should not do anything if there are only zero-drink objects', () => {
+    const mockSession: DrinkingSession = createMockSessionWithDrinks({
       12345679: {
         other: 0,
       },
@@ -944,33 +921,33 @@ describe('removeZeroObjectsFromSession', () => {
     expect(result).toMatchObject(mockSession);
   });
 
-  it('should keep UnitsList children with at least one unit value not set to 0', () => {
-    const mockSession: DrinkingSession = createMockSessionWithUnits({
+  it('should keep DrinksList children with at least one drink value not set to 0', () => {
+    const mockSession: DrinkingSession = createMockSessionWithDrinks({
       12345679: {beer: 1, cocktail: 0},
       12345680: {beer: 0, wine: 1},
     });
 
     const result = removeZeroObjectsFromSession(mockSession);
-    const units = result.units as UnitsList;
-    expect(Object.keys(units)).toHaveLength(2);
-    expect(sumAllUnits(units)).toEqual(2);
-    expect(units[12345679]).toBeDefined();
-    expect(units[12345680]).toBeDefined();
+    const drinks = result.drinks as DrinksList;
+    expect(Object.keys(drinks)).toHaveLength(2);
+    expect(sumAllDrinks(drinks)).toEqual(2);
+    expect(drinks[12345679]).toBeDefined();
+    expect(drinks[12345680]).toBeDefined();
   });
 
-  it('should return the same session if no UnitsList children have all unit values set to 0', () => {
-    const mockSession: DrinkingSession = createMockSessionWithUnits({
+  it('should return the same session if no DrinksList children have all drink values set to 0', () => {
+    const mockSession: DrinkingSession = createMockSessionWithDrinks({
       12345679: {beer: 1},
       12345680: {wine: 1},
     });
 
     const result = removeZeroObjectsFromSession(mockSession);
-    expect(sumAllUnits(result.units)).toEqual(2);
+    expect(sumAllDrinks(result.drinks)).toEqual(2);
     expect(result).toEqual(mockSession);
   });
 
-  it('should return a session with no units if all UnitsList children have all unit values set to 0', () => {
-    const mockSession: DrinkingSession = createMockSessionWithUnits({
+  it('should return a session with no units if all DrinksList children have all drink values set to 0', () => {
+    const mockSession: DrinkingSession = createMockSessionWithDrinks({
       12345679: {
         beer: 0,
         cocktail: 0,
@@ -990,54 +967,54 @@ describe('removeZeroObjectsFromSession', () => {
     });
 
     const result = removeZeroObjectsFromSession(mockSession);
-    const units = result.units as UnitsList;
-    expect(sumAllUnits(units)).toEqual(0);
-    expect(Object.keys(units)).toHaveLength(1);
+    const drinks = result.drinks as DrinksList;
+    expect(sumAllDrinks(drinks)).toEqual(0);
+    expect(Object.keys(drinks)).toHaveLength(1);
   });
 });
 
-describe('getRandomUnitsList', () => {
-  let randomUnitsList: UnitsList = {};
-  let randomUnits: Units = {};
+describe('getRandomDrinksList', () => {
+  let randomDrinksList: DrinksList = {};
+  let randomDrinks: Drinks = {};
 
   beforeEach(() => {
-    randomUnitsList = getRandomUnitsList(30);
-    randomUnits = Object.values(randomUnitsList)[0];
+    randomDrinksList = getRandomDrinksList(30);
+    randomDrinks = Object.values(randomDrinksList)[0];
   });
 
   it('should return an object with all values between 0 and maxUnitValue (exclusive)', () => {
-    for (let unit in randomUnits) {
-      expect(randomUnits[unit as keyof Units]).toBeGreaterThanOrEqual(0);
-      expect(randomUnits[unit as keyof Units]).toBeLessThanOrEqual(30);
+    for (let drink in randomDrinks) {
+      expect(randomDrinks[drink as keyof Drinks]).toBeGreaterThanOrEqual(0);
+      expect(randomDrinks[drink as keyof Drinks]).toBeLessThanOrEqual(30);
     }
   });
 
-  it('should have all the expected keys based on UnitKey type', () => {
-    const expectedKeys = Object.values(CONST.UNITS.KEYS);
+  it('should have all the expected keys based on DrinkKey type', () => {
+    const expectedKeys = Object.values(CONST.DRINKS.KEYS);
 
-    expect(Object.keys(randomUnits)).toEqual(expectedKeys);
+    expect(Object.keys(randomDrinks)).toEqual(expectedKeys);
   });
 });
 
-describe('getZeroUnitsList', () => {
-  let zeroUnitsList: UnitsList = {};
-  let zeroUnits: Units = {};
+describe('getZeroDrinksList', () => {
+  let zeroDrinksList: DrinksList = {};
+  let zeroDrinks: Drinks = {};
 
   beforeEach(() => {
-    zeroUnitsList = getZeroUnitsList();
-    zeroUnits = Object.values(zeroUnitsList)[0];
+    zeroDrinksList = getZeroDrinksList();
+    zeroDrinks = Object.values(zeroDrinksList)[0];
   });
 
   it('should return an object with all values equal to 0', () => {
-    Object.values(zeroUnits).forEach(unit => {
-      expect(unit).toEqual(0);
+    Object.values(zeroDrinks).forEach(drink => {
+      expect(drink).toEqual(0);
     });
   });
 
-  it('should have all the expected keys based on Units type', () => {
-    const expectedKeys = Object.values(CONST.UNITS.KEYS);
+  it('should have all the expected keys based on Drinks type', () => {
+    const expectedKeys = Object.values(CONST.DRINKS.KEYS);
 
-    expect(Object.keys(zeroUnits)).toEqual(expectedKeys);
+    expect(Object.keys(zeroDrinks)).toEqual(expectedKeys);
   });
 });
 
@@ -1068,19 +1045,19 @@ describe('unitsToColors', () => {
   });
 });
 
-describe('findUnitName', () => {
-  it('should return the verbose name for each unit key', () => {
-    const verboseNames = Object.values(CONST.UNITS.NAMES);
+describe('findDrinkName', () => {
+  it('should return the verbose name for each drink key', () => {
+    const verboseNames = Object.values(CONST.DRINKS.NAMES);
 
-    for (let unitKey of Object.values(CONST.UNITS.KEYS)) {
-      const verboseName = findUnitName(unitKey);
+    for (let DrinkKey of Object.values(CONST.DRINKS.KEYS)) {
+      const verboseName = findDrinkName(DrinkKey);
       expect(verboseNames).toContain(verboseName);
     }
   });
 
-  it('should return undefined for an invalid unit key', () => {
-    const invalidUnitKey = 'invalid_key'; // This key doesn't exist in UnitType object
-    const result = findUnitName(invalidUnitKey as any); // Type cast here to any to bypass TypeScript's type checking for the purpose of this test
+  it('should return undefined for an invalid drink key', () => {
+    const invalidDrinkKey = 'invalid_key'; // This key doesn't exist in DrinkType object
+    const result = findDrinkName(invalidDrinkKey as any); // Type cast here to any to bypass TypeScript's type checking for the purpose of this test
     expect(result).toBeUndefined();
   });
 });

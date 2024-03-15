@@ -1,12 +1,12 @@
 import {UserId} from './DatabaseCommon';
-import {UnitsList} from './Units';
+import {DrinksList} from './Drinks';
 
 type DrinkingSessionId = string;
 
 type DrinkingSession = {
   start_time: number;
   end_time: number;
-  units?: UnitsList;
+  drinks?: DrinksList;
   blackout: boolean;
   note: string;
   ongoing?: boolean;

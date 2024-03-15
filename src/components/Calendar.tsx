@@ -203,8 +203,8 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
     // Use points to calculate the point sum (flagged as units)
     var aggergatedSessions = aggregateSessionsByDays(
       calendarData,
-      'points',
-      preferences.units_to_points,
+      'units',
+      preferences.drinks_to_units,
     );
     var newMarkedDates = monthEntriesToColors(aggergatedSessions, preferences);
     return newMarkedDates;

@@ -13,23 +13,23 @@ import {
   Preferences,
   Profile,
   UnconfirmedDays,
-  Units,
+  Drinks,
   UnitsToColors,
   UserProps,
   UserStatus,
-  UnitsToPoints,
+  DrinksList,
   DrinkingSessionList,
   DrinkingSessionId,
+  DrinksToUnits,
 } from '../../src/types/database';
 import {getRandomChoice, getRandomInt} from '../../src/libs/Choice';
 import {
   formatDate,
-  getRandomUnitsList,
-  getZeroUnitsList,
+  getRandomDrinksList,
+  getZeroDrinksList,
 } from '../../src/libs/DataHandling';
 import {cleanStringForFirebaseKey} from '../../src/libs/StringUtils';
 import {MOCK_SESSION_IDS, MOCK_USER_IDS} from './testsStatic';
-import {UnitsList} from '../../src/types/database';
 import CONST from '@src/CONST';
 
 /**
@@ -134,18 +134,18 @@ export function createMockNicknameToId(userId: string): NicknameToId {
   return returnObject;
 }
 
-/** Generate a mock object of units
+/** Generate a mock object of drinks
  *
- * @usage const onlyWine = generateMockUnitsList({ wine: 5 });
+ * @usage const onlyWine = generateMockDrinksList({ wine: 5 });
  */
-export function createMockUnitsList(units: Units = {}): UnitsList {
-  if (Object.keys(units).length === 0) {
-    // If units are unspecified
-    return getRandomUnitsList();
+export function createMockDrinksList(drinks: Drinks = {}): DrinksList {
+  if (Object.keys(drinks).length === 0) {
+    // If drinks are unspecified
+    return getRandomDrinksList();
   }
   let timestampNow = new Date().getTime();
   return {
-    [timestampNow]: units,
+    [timestampNow]: drinks,
   };
 }
 
@@ -154,18 +154,18 @@ export function createMockUnitsList(units: Units = {}): UnitsList {
  *
  * @param baseDate Date around which sessions are created.
  * @param offsetDays Number of days to offset from baseDate. If not provided, a random offset between -7 and 7 days is used.
- * @param units Units consumed during the session
+ * @param drinks Drinks consumed during the session
  * @param ongoing Whether the session is ongoing or not
  * @returns A DrinkingSession object.
  */
 export function createMockSession(
   baseDate: Date,
   offsetDays?: number,
-  units?: UnitsList,
+  drinks?: DrinksList,
   ongoing?: boolean,
 ): DrinkingSession {
-  if (!units) {
-    units = getZeroUnitsList();
+  if (!drinks) {
+    drinks = getZeroDrinksList();
   }
   const sessionDate = new Date(baseDate);
 
@@ -184,7 +184,7 @@ export function createMockSession(
     end_time: sessionDate.getTime() + 2 * 60 * 60 * 1000, // +2 hours
     blackout: false,
     note: '',
-    units: units,
+    drinks: drinks,
   };
   if (ongoing) newSession.ongoing = true;
 
@@ -200,7 +200,7 @@ export function createMockPreferences(): Preferences {
     yellow: getRandomInt(3, 6),
     orange: getRandomInt(7, 10),
   };
-  let mockUnitsToPointsData: UnitsToPoints = {
+  let mockDrinksToUnitsData: DrinksToUnits = {
     small_beer: 0.5,
     beer: 1,
     cocktail: 1.5,
@@ -212,7 +212,7 @@ export function createMockPreferences(): Preferences {
   let mockPreferences: Preferences = {
     first_day_of_week: getRandomChoice(['Monday', 'Sunday']),
     units_to_colors: mockUnitsToColors,
-    units_to_points: mockUnitsToPointsData,
+    drinks_to_units: mockDrinksToUnitsData,
   };
   return mockPreferences;
 }

@@ -29,12 +29,12 @@ import type Preferences from './Preferences';
 import type {
   PreferencesList,
   UnitsToColors,
-  UnitsToPoints,
+  DrinksToUnits,
 } from './Preferences';
 import type UnconfirmedDays from './UnconfirmedDays';
 import type {UnconfirmedDaysList, UnconfirmedDayKey} from './UnconfirmedDays';
-import type Units from './Units';
-import type {UnitKey, UnitName, UnitsList, UnitsTimestamp} from './Units';
+import type Drinks from './Drinks';
+import type {DrinkKey, DrinkName, DrinksList, DrinksTimestamp} from './Drinks';
 import type UserProps from './UserProps';
 import type {UserList, Profile, ProfileList} from './UserProps';
 import type UserStatus from './UserStatus';
@@ -48,6 +48,12 @@ export type {
   DrinkingSessionArray,
   DrinkingSessionId,
   DrinkingSessionList,
+  Drinks,
+  DrinkKey,
+  DrinksList,
+  DrinkName,
+  DrinksTimestamp,
+  DrinksToUnits,
   Feedback,
   FeedbackId,
   FeedbackList,
@@ -71,13 +77,7 @@ export type {
   UnconfirmedDayKey,
   UnconfirmedDays,
   UnconfirmedDaysList,
-  Units,
-  UnitKey,
-  UnitName,
-  UnitsList,
-  UnitsTimestamp,
   UnitsToColors,
-  UnitsToPoints,
   UserProps,
   UserDrinkingSessionsList,
   UserId,

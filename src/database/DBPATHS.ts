@@ -37,10 +37,10 @@ const DBPATHS = {
     getRoute: (user_id: UserId, session_id: string) =>
       `user_drinking_sessions/${user_id}/${session_id}` as const,
   },
-  USER_DRINKING_SESSIONS_USER_ID_SESSION_ID_UNITS: {
-    route: '/user_drinking_sessions/:user_id/:session_id/units',
+  USER_DRINKING_SESSIONS_USER_ID_SESSION_ID_DRINKS: {
+    route: '/user_drinking_sessions/:user_id/:session_id/drinks',
     getRoute: (user_id: UserId, session_id: string) =>
-      `user_drinking_sessions/${user_id}/${session_id}/units` as const,
+      `user_drinking_sessions/${user_id}/${session_id}/drinks` as const,
   },
   USER_PREFERENCES: 'user_preferences',
   USER_PREFERENCES_USER_ID: {
@@ -57,10 +57,10 @@ const DBPATHS = {
     getRoute: (user_id: UserId) =>
       `user_preferences/${user_id}/units_to_colors` as const,
   },
-  USER_PREFERENCES_USER_ID_UNITS_TO_POINTS: {
-    route: '/user_preferences/:user_id/units_to_points',
+  USER_PREFERENCES_USER_ID_DRINKS_TO_UNITS: {
+    route: '/user_preferences/:user_id/drinks_to_units',
     getRoute: (user_id: UserId) =>
-      `user_preferences/${user_id}/units_to_points` as const,
+      `user_preferences/${user_id}/drinks_to_units` as const,
   },
   USER_STATUS: 'user_status',
   USER_STATUS_USER_ID: {

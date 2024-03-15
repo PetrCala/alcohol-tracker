@@ -2,7 +2,7 @@
   initializeEmptyMockDatabase,
   createMockConfig,
   createMockFeedback,
-  createMockUnitsList,
+  createMockDrinksList,
   createMockSession,
   createMockPreferences,
   createMockUnconfirmedDays,
@@ -16,8 +16,8 @@ import {
   Config,
   Feedback,
   DrinkingSessionList,
-  UnitsList,
-  Units,
+  DrinksList,
+  Drinks,
   Preferences,
   UnconfirmedDays,
   UserProps,
@@ -84,7 +84,7 @@ function validateUserStatus(userStatuses: {[userId: string]: any}): boolean {
  */
 function isUnits(obj: any): obj is Units {
   for (const key of Object.keys(obj)) {
-    if (!Object.values(CONST.UNITS.KEYS).includes(key as any)) {
+    if (!Object.values(CONST.DRINKS.KEYS).includes(key as any)) {
       return false; // Unexpected key
     }
 
@@ -107,7 +107,7 @@ function isDrinkingSessionList(obj: any): obj is DrinkingSessionList {
     if (
       typeof session.start_time !== 'number' ||
       typeof session.end_time !== 'number' ||
-      !isUnitsList(session.units) ||
+      !isDrinksList(session.drinks) ||
       typeof session.blackout !== 'boolean' ||
       typeof session.note !== 'string' ||
       (session.ongoing !== undefined &&
@@ -136,12 +136,12 @@ function validateUserDrinkingSessions(userSessions: {
   return true;
 }
 
-/** Check that an object is of type UnitsList. If yes, return true, otherwise return false.
+/** Check that an object is of type DrinksList. If yes, return true, otherwise return false.
  *
  * @param obj Object to check
  * @returns bool
  */
-function isUnitsList(obj: any): obj is UnitsList {
+function isDrinksList(obj: any): obj is DrinksList {
   for (const timestamp of Object.keys(obj)) {
     if (isNaN(Number(timestamp))) {
       return false; // Key is not a valid timestamp (not a number)
@@ -154,7 +154,7 @@ function isUnitsList(obj: any): obj is UnitsList {
   return true;
 }
 
-/** Type guard for UnitsList. Return true if an object is of Units type, and false otherwise.
+/** Type guard for DrinksList. Return true if an object is of Units type, and false otherwise.
  *
  * @param obj Object to check
  * @returns bool
@@ -282,7 +282,7 @@ describe('mockDatabase functions', () => {
   });
 
   it('should create a mock units object', () => {
-    const units = createMockUnitsList({wine: 5});
+    const units = createMockDrinksList({wine: 5});
     expect(units).toBeDefined();
     expect(Object.values(units)[0].wine).toBe(5);
   });

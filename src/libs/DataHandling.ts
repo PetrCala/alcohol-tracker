@@ -11,12 +11,12 @@ import type {
   DrinkingSessionArray,
   DrinkingSessionList,
   Preferences,
-  UnitKey,
-  UnitName,
-  Units,
-  UnitsList,
   UnitsToColors,
-  UnitsToPoints,
+  DrinksToUnits,
+  DrinksList,
+  DrinkKey,
+  DrinkName,
+  Drinks,
 } from '@src/types/database';
 import CONST from '../CONST';
 import {MeasureType} from '@src/types/database/DatabaseCommon';
@@ -265,7 +265,7 @@ export function getSingleDayDrinkingSessions(
   // Convert to UNIX timestamp
   const todayUnix = Math.floor(date.getTime());
   const tomorrowUnix = Math.floor(tomorrow.getTime());
-  if (returnArray){
+  if (returnArray) {
     return Object.values(sessions).filter(
       session =>
         session.start_time >= todayUnix && session.start_time < tomorrowUnix,
@@ -275,7 +275,8 @@ export function getSingleDayDrinkingSessions(
     .filter(([sessionId, session]) => {
       return (
         session.start_time >= todayUnix && session.start_time < tomorrowUnix
-      )})
+      );
+    })
     .reduce((acc, [sessionId, session]) => {
       acc[sessionId] = session;
       return acc;
@@ -326,31 +327,31 @@ export function getSingleMonthDrinkingSessions(
 
 export function aggregateSessionsByDays(
   sessions: DrinkingSession[],
-  measureType: MeasureType = 'points',
-  unitsToPoints?: Units,
+  measureType: MeasureType = 'units',
+  drinksToUnits?: DrinksToUnits,
 ): SessionsCalendarDatesType {
   return sessions.reduce(
     (acc: SessionsCalendarDatesType, item: DrinkingSession) => {
       let dateString = formatDate(new Date(item.start_time)); // MM-DD-YYYY
-      let newUnits: number;
-      if (measureType === 'points') {
-        if (!unitsToPoints)
-          throw new Error('You must specify the point conversion');
-        newUnits = sumAllPoints(item.units, unitsToPoints);
-      } else if (measureType === 'units') {
-        newUnits = sumAllUnits(item.units);
+      let newDrinks: number;
+      if (measureType === 'units') {
+        if (!drinksToUnits)
+          throw new Error('You must specify the drink to unit conversion');
+        newDrinks = sumAllUnits(item.drinks, drinksToUnits);
+      } else if (measureType === 'drinks') {
+        newDrinks = sumAllDrinks(item.drinks);
       } else {
         throw new Error('Unknown measure type');
       }
       acc[dateString] = acc[dateString]
         ? {
             // Already an entry exists
-            units: acc[dateString].units + newUnits, // Does not distinguish between units/points
+            units: acc[dateString].units + newDrinks, // Does not distinguish between drinks/units
             blackout: acc[dateString].blackout === false ? item.blackout : true,
           }
         : {
             // First entry
-            units: newUnits,
+            units: newDrinks,
             blackout: item.blackout,
           };
 
@@ -394,96 +395,96 @@ export function monthEntriesToColors(
   return markedDates;
 }
 
-/** Sum up all units of alcohol regardless of category
+/** Sum up all drinks regardless of category
  *
- * @param all_units Units to sum up.
+ * @param all_drinks Drinks to sum up.
  */
-export function sumAllUnits(units: UnitsList | undefined): number {
-  if (isEmptyObject(units)) return 0;
-  return Object.values(units).reduce((total, unitTypes) => {
+export function sumAllDrinks(drinks: DrinksList | undefined): number {
+  if (isEmptyObject(drinks)) return 0;
+  return Object.values(drinks).reduce((total, drinkTypes) => {
     return (
       total +
-      Object.values(unitTypes).reduce(
-        (subTotal, unitCount) => subTotal + (unitCount ?? 0),
+      Object.values(drinkTypes).reduce(
+        (subTotal, drinkCount) => subTotal + (drinkCount ?? 0),
         0,
       )
     );
   }, 0);
 }
 
-/** Sum up units of a specific type of alcohol across multiple sessions
+/** Sum up drinks of a specific type of alcohol across multiple sessions
  *
- * @param unitsObject UnitsList to sum up.
- * @param unitType The type of unit to sum.
+ * @param drinksOjbect DrinksList to sum up.
+ * @param drinkType The type of drink to sum.
  */
-export function sumUnitsOfSingleType(
-  unitsObject: UnitsList | undefined,
-  unitType: UnitKey,
+export function sumDrinksOfSingleType(
+  drinksObject: DrinksList | undefined,
+  drinkType: DrinkKey,
 ): number {
-  if (!unitsObject) return 0;
-  return Object.values(unitsObject).reduce((total, session) => {
-    return total + (session[unitType] ?? 0);
+  if (!drinksObject) return 0;
+  return Object.values(drinksObject).reduce((total, session) => {
+    return total + (session[drinkType] ?? 0);
   }, 0);
 }
 
-/** Sum up units of a single Unit type object.
+/** Sum up drinks of a single Drink type object.
  *
- * @param unitTypes A Units kind of object
+ * @param drinkTypes A Drinks kind of object
  * @returns The sum
  */
-export function sumUnitTypes(unitTypes: Units): number {
-  if (!unitTypes) return 0;
-  return Object.values(unitTypes).reduce(
-    (subTotal, unitCount) => subTotal + (unitCount ?? 0),
+export function sumDrinkTypes(drinkTypes: Drinks): number {
+  if (!drinkTypes) return 0;
+  return Object.values(drinkTypes).reduce(
+    (subTotal, drinkCount) => subTotal + (drinkCount ?? 0),
     0,
   );
 }
 
-/** Type guard to check if a given key is a valid UnitType key */
-export function isUnitTypeKey(key: string): key is keyof Units {
-  return Object.values(CONST.UNITS.KEYS).includes(key as any);
+/** Type guard to check if a given key is a valid DrinkType key */
+export function isDrinkTypeKey(key: string): key is keyof Drinks {
+  return Object.values(CONST.DRINKS.KEYS).includes(key as any);
 }
 
-/** Using a UnitsList and the units to points conversion object, calculate how many points this object amounts to.
+/** Using a DrinksList and the drinks to units conversion object, calculate how many units this object amounts to.
  *
- * @param unitsObject UnitsList type
- * @param unitsToPoits Units to point conversion object
+ * @param drinksObject DrinksList type
+ * @param unitsToPoits Drinks to units conversion object
  * @returns Number of points
  *
- * @example let points = sumAllPoints({
+ * @example let points = sumAllUnits({
  * [1694819284]: {'beer': 5},
  * [1694819286]: {'wine': 2, 'cocktail': 1},
- * }, unitsToPoints)
+ * }, DrinksToUnits)
  */
-export function sumAllPoints(
-  unitsObject: UnitsList | undefined,
-  unitsToPoints: Units,
+export function sumAllUnits(
+  drinksObject: DrinksList | undefined,
+  drinksToUnits: DrinksToUnits,
 ): number {
-  if (isEmptyObject(unitsObject)) return 0;
-  let totalPoints = 0;
-  // Iterate over each timestamp in unitsObject
-  for (const unitTypes of Object.values(unitsObject)) {
-    // Iterate over each key in the unitTypes of the current timestamp
-    for (const unitKey of Object.keys(unitTypes)) {
-      if (isUnitTypeKey(unitKey)) {
-        const typeUnits = unitTypes[unitKey] ?? 0;
-        const typePoints = unitsToPoints[unitKey] ?? 0;
-        totalPoints += typeUnits * typePoints;
+  if (isEmptyObject(drinksObject)) return 0;
+  let totalUnits = 0;
+  // Iterate over each timestamp in drinksObject
+  for (const drinkTypes of Object.values(drinksObject)) {
+    // Iterate over each key in the drinkTypes of the current timestamp
+    for (const DrinkKey of Object.keys(drinkTypes)) {
+      if (isDrinkTypeKey(DrinkKey)) {
+        const typeDrinks = drinkTypes[DrinkKey] ?? 0;
+        const typeUnits = drinksToUnits[DrinkKey] ?? 0;
+        totalUnits += typeDrinks * typeUnits;
       }
     }
   }
-  return totalPoints;
+  return totalUnits;
 }
 
-/** Input a session item and return the timestamp of the last unit
+/** Input a session item and return the timestamp of the last drink
  * consumed in that session.
  *
  * @param session Drinking session array item
- * @return Timestamp of the last unit consumed
+ * @return Timestamp of the last drink consumed
  */
-export function getLastUnitAddedTime(session: DrinkingSession): number | null {
-  if (isEmptyObject(session?.units)) return null;
-  const timestamps = Object.keys(session.units).map(Number); // All timestamps
+export function getLastDrinkAddedTime(session: DrinkingSession): number | null {
+  if (isEmptyObject(session?.drinks)) return null;
+  const timestamps = Object.keys(session.drinks).map(Number); // All timestamps
   // Return the maximum timestamp or null if there aren't any
   return timestamps.length ? Math.max(...timestamps) : null;
 }
@@ -501,13 +502,13 @@ export function findOngoingSession(
 }
 
 /** Enter a dateObject and an array of drinking sessions and calculate
- * units consumed in the current month.
+ * drinks consumed in the current month.
  *
  * @param dateObject DateObject
  * @param sessions Array of drinking sessions
- * @returns Number of units consumed during the current month
+ * @returns Number of drinks consumed during the current month
  */
-export const calculateThisMonthUnits = (
+export const calculateThisMonthDrinks = (
   dateObject: DateObject,
   sessions: DrinkingSessionArray,
 ): number => {
@@ -520,23 +521,23 @@ export const calculateThisMonthUnits = (
   );
   // Sum up the units
   return sessionsThisMonth.reduce(
-    (sum, session) => sum + sumAllUnits(session.units),
+    (sum, session) => sum + sumAllDrinks(session.drinks),
     0,
   );
 };
 
 /** Enter a dateObject and an array of drinking sessions and calculate
- * points for units consumed in the current month.
+ * units for drinks consumed in the current month.
  *
  * @param dateObject DateObject
  * @param sessions Array of drinking sessions
- * @param unitsToPoints Units to points conversion object
- * @returns Number of points for units consumed during the current month
+ * @param drinksToUnits Drinks to units conversion object
+ * @returns Number of units consumed during the current month
  */
-export const calculateThisMonthPoints = (
+export const calculateThisMonthUnits = (
   dateObject: DateObject,
   sessions: DrinkingSessionArray,
-  unitsToPoints: UnitsToPoints,
+  drinksToUnits: DrinksToUnits,
 ): number => {
   if (!sessions) return 0;
   // Subset to this month's sessions only
@@ -546,77 +547,77 @@ export const calculateThisMonthPoints = (
     sessions,
     false,
   );
-  // Sum up the units
+  // Sum up the drinks
   return sessionsThisMonth.reduce(
-    (sum, session) => sum + sumAllPoints(session.units, unitsToPoints),
+    (sum, session) => sum + sumAllUnits(session.drinks, drinksToUnits),
     0,
   );
 };
 
-/** List all units to add and their amounts and add this to the current units hook
+/** List all drinks to add and their amounts and add this to the current drinks hook
  *
- * @param units Units kind of object listing each unit to add and its amount
+ * @param drinks Drinks kind of object listing each drink to add and its amount
  */
-export const addUnits = (
-  existingUnits: UnitsList | undefined,
-  units: Units,
-): UnitsList | undefined => {
-  if (isEmptyObject(units)) return existingUnits;
-  let newUnits: UnitsList = {
-    ...existingUnits,
-    [Date.now()]: units,
+export const addDrinks = (
+  existingDrinks: DrinksList | undefined,
+  drinks: Drinks,
+): DrinksList | undefined => {
+  if (isEmptyObject(drinks)) return existingDrinks;
+  let newDrinks: DrinksList = {
+    ...existingDrinks,
+    [Date.now()]: drinks,
   };
-  return newUnits;
+  return newDrinks;
 };
 
-/** Specify the kind of unit to remove units from and the number of units to remove.
- * Remove this many units from that kind of unit
+/** Specify the kind of drink to remove units from and the number of drinks to remove.
+ * Remove this many drinks from that kind of drink
  *
- * @param unitType Kind of unit to remove the units from
- * @param number Number of units to remove
+ * @param drinkType Kind of drink to remove the units from
+ * @param number Number of drinks to remove
  */
-export const removeUnits = (
-  existingUnits: UnitsList | undefined,
-  unitType: UnitKey,
+export const removeDrinks = (
+  existingDrinks: DrinksList | undefined,
+  drinkType: DrinkKey,
   count: number,
-): UnitsList | undefined => {
-  if (isEmptyObject(existingUnits)) return existingUnits;
-  let unitsToRemove = count;
-  const updatedUnits: UnitsList = JSON.parse(JSON.stringify(existingUnits)); // Deep copy
-  for (const timestamp of Object.keys(updatedUnits).sort((a, b) => +b - +a)) {
+): DrinksList | undefined => {
+  if (isEmptyObject(existingDrinks)) return existingDrinks;
+  let drinksToRemove = count;
+  const updatedDrinks: DrinksList = JSON.parse(JSON.stringify(existingDrinks)); // Deep copy
+  for (const timestamp of Object.keys(updatedDrinks).sort((a, b) => +b - +a)) {
     // sort in descending order
-    const unitsAtTimestamp = updatedUnits[+timestamp] ?? {};
-    const availableUnits = unitsAtTimestamp[unitType] ?? 0;
-    if (availableUnits > 0) {
-      const unitsToRemoveNow = Math.min(unitsToRemove, availableUnits);
-      unitsAtTimestamp[unitType] = availableUnits - unitsToRemoveNow;
-      unitsToRemove -= unitsToRemoveNow;
+    const drinksAtTimestamp = updatedDrinks[+timestamp] ?? {};
+    const availableDrinks = drinksAtTimestamp[drinkType] ?? 0;
+    if (availableDrinks > 0) {
+      const drinksToRemoveNow = Math.min(drinksToRemove, availableDrinks);
+      drinksAtTimestamp[drinkType] = availableDrinks - drinksToRemoveNow;
+      drinksToRemove -= drinksToRemoveNow;
 
-      // Clean up if there are zero units left for this type at this timestamp
-      if (unitsAtTimestamp[unitType] === 0) {
-        delete unitsAtTimestamp[unitType];
+      // Clean up if there are zero drinks left for this type at this timestamp
+      if (drinksAtTimestamp[drinkType] === 0) {
+        delete drinksAtTimestamp[drinkType];
       }
 
-      // Clean up if there are zero units left at this timestamp
-      if (Object.keys(unitsAtTimestamp).length === 0) {
-        delete updatedUnits[+timestamp];
+      // Clean up if there are zero drinks left at this timestamp
+      if (Object.keys(drinksAtTimestamp).length === 0) {
+        delete updatedDrinks[+timestamp];
       }
 
-      // Add a zero-unit placeholder if there are no units left in the object
-      if (Object.keys(updatedUnits).length === 0) {
-        updatedUnits[+timestamp] = {other: 0};
+      // Add a zero-drink placeholder if there are no drinks left in the object
+      if (Object.keys(updatedDrinks).length === 0) {
+        updatedDrinks[+timestamp] = {other: 0};
       }
     }
 
-    if (unitsToRemove <= 0) {
+    if (drinksToRemove <= 0) {
       break;
     }
   }
-  return updatedUnits;
+  return updatedDrinks;
 };
 
-/** Input a drinking session and remove all unit records
- * where all units of a given timestamp are set to 0. Return the
+/** Input a drinking session and remove all drink records
+ * where add drinks of a given timestamp are set to 0. Return the
  * updated session.
  *
  * @param session Drinking session
@@ -628,54 +629,54 @@ export const removeZeroObjectsFromSession = (
   // Clone the session object to avoid mutating the original object
   const updatedSession = {...session};
 
-  if (updatedSession.units === undefined) {
+  if (updatedSession.drinks === undefined) {
     return updatedSession;
   }
 
-  // Go through each timestamp in the session's units object
-  for (const timestamp in updatedSession.units) {
-    // Check if all the unit values are set to 0
-    const allZero = Object.values(CONST.UNITS.KEYS).every(
+  // Go through each timestamp in the session's drinks object
+  for (const timestamp in updatedSession.drinks) {
+    // Check if all the drink values are set to 0
+    const allZero = Object.values(CONST.DRINKS.KEYS).every(
       key =>
         // ! to assert that the value is not undefined
-        updatedSession.units![timestamp][key] === 0 ||
-        updatedSession.units![timestamp][key] === undefined,
+        updatedSession.drinks![timestamp][key] === 0 ||
+        updatedSession.drinks![timestamp][key] === undefined,
     );
 
-    // If all unit values are 0, delete the timestamp from the units object, unless it is the last one
-    if (allZero && Object.keys(updatedSession.units).length > 1) {
-      delete updatedSession.units[+timestamp];
+    // If all drink values are 0, delete the timestamp from the drinks object, unless it is the last one
+    if (allZero && Object.keys(updatedSession.drinks).length > 1) {
+      delete updatedSession.drinks[+timestamp];
     }
   }
 
   return updatedSession;
 };
 
-/** Generate an object with all available units where
- * each unit's value is set to a random integer.
+/** Generate an object with all available drinks where
+ * each drink's value is set to a random integer.
  */
 
-export const getRandomUnitsList = (maxUnitValue: number = 30): UnitsList => {
-  const unitWithRandomValues: Units = {};
+export const getRandomDrinksList = (maxDrinkValue: number = 30): DrinksList => {
+  const drinkWithRandomValues: Drinks = {};
 
-  // Loop over each item in UnitTypesKeys and set its value to a random number between 0 and maxUnitValue
-  for (const key of Object.values(CONST.UNITS.KEYS)) {
-    unitWithRandomValues[key] = getRandomInt(0, maxUnitValue);
+  // Loop over each item in DrinkTypesKeys and set its value to a random number between 0 and maxDrinkValue
+  for (const key of Object.values(CONST.DRINKS.KEYS)) {
+    drinkWithRandomValues[key] = getRandomInt(0, maxDrinkValue);
   }
 
   // Create a new object with a current timestamp
   const timestamp = Date.now();
-  const result: UnitsList = {
-    [timestamp]: unitWithRandomValues,
+  const result: DrinksList = {
+    [timestamp]: drinkWithRandomValues,
   };
 
   return result;
 };
 
-/** Generate an object with all available units where each unit's value is set to 0.
+/** Generate an object with all available drinks where each drink's value is set to 0.
  */
-export function getZeroUnitsList(): UnitsList {
-  return getRandomUnitsList(0);
+export function getZeroDrinksList(): DrinksList {
+  return getRandomDrinksList(0);
 }
 
 /** Convert the units consumed to colors.
@@ -701,16 +702,16 @@ export function unitsToColors(
   return sessionColor;
 }
 
-/** Insert the key of a unit and find its matching verbose name.
+/** Insert the key of a drink and find its matching verbose name.
  *
- * @returns The verbose name of that unit.
+ * @returns The verbose name of that drink.
  */
-export const findUnitName = (key: UnitKey): UnitName | undefined => {
-  const unitIdx = Object.values(CONST.UNITS.KEYS).findIndex(
+export const findDrinkName = (key: DrinkKey): DrinkName | undefined => {
+  const drinkIdx = Object.values(CONST.DRINKS.KEYS).findIndex(
     type => type === key,
   );
-  if (unitIdx === -1) return undefined;
-  return Object.values(CONST.UNITS.NAMES)[unitIdx];
+  if (drinkIdx === -1) return undefined;
+  return Object.values(CONST.DRINKS.NAMES)[drinkIdx];
 };
 
 /**

@@ -54,7 +54,7 @@ const mockSessionUnits: Units = {
 const mockDrinkingSession = createMockSession(
   new Date(),
   undefined,
-  mockSessionUnits,
+  mockSessionDrinks,
   undefined,
 );
 const mockUserStatus = createMockUserStatus(

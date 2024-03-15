@@ -17,8 +17,8 @@ import {DateObject} from '@src/types/time';
 import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
 import {
   dateToDateObject,
+  calculateThisMonthDrinks,
   calculateThisMonthUnits,
-  calculateThisMonthPoints,
   getSingleMonthDrinkingSessions,
   timestampToDate,
   formatDate,
@@ -53,8 +53,8 @@ import useRefresh from '@hooks/useRefresh';
 interface State {
   visibleDateObject: DateObject;
   drinkingSessionsCount: number;
-  unitsConsumed: number;
-  pointsEarned: number;
+  drinksConsumed: number;
+  unitsEarned: number;
   initializingSession: boolean;
   ongoingSessionId: DrinkingSessionId | undefined;
 }
@@ -67,8 +67,8 @@ interface Action {
 const initialState: State = {
   visibleDateObject: dateToDateObject(new Date()),
   drinkingSessionsCount: 0,
-  unitsConsumed: 0,
-  pointsEarned: 0,
+  drinksConsumed: 0,
+  unitsEarned: 0,
   initializingSession: false,
   ongoingSessionId: undefined,
 };
@@ -79,10 +79,10 @@ const reducer = (state: State, action: Action): State => {
       return {...state, visibleDateObject: action.payload};
     case 'SET_DRINKING_SESSIONS_COUNT':
       return {...state, drinkingSessionsCount: action.payload};
-    case 'SET_UNITS_CONSUMED':
-      return {...state, unitsConsumed: action.payload};
-    case 'SET_POINTS_EARNED':
-      return {...state, pointsEarned: action.payload};
+    case 'SET_DRINKS_CONSUMED':
+      return {...state, drinksConsumed: action.payload};
+    case 'SET_UNITS_EARNED':
+      return {...state, unitsEarned: action.payload};
     case 'SET_INITIALIZING_SESSION':
       return {...state, initializingSession: action.payload};
     case 'SET_ONGOING_SESSION_ID':
@@ -179,10 +179,10 @@ const HomeScreen = ({}: HomeScreenProps) => {
       state.visibleDateObject,
       drinkingSessionArray,
     );
-    let thisMonthPoints = calculateThisMonthPoints(
+    let thisMonthUnits = calculateThisMonthUnits(
       state.visibleDateObject,
       drinkingSessionArray,
-      preferences.units_to_points,
+      preferences.drinks_to_units,
     );
     let thisMonthSessionCount = getSingleMonthDrinkingSessions(
       timestampToDate(state.visibleDateObject.timestamp),
@@ -194,8 +194,8 @@ const HomeScreen = ({}: HomeScreenProps) => {
       type: 'SET_DRINKING_SESSIONS_COUNT',
       payload: thisMonthSessionCount,
     });
-    dispatch({type: 'SET_UNITS_CONSUMED', payload: thisMonthUnits});
-    dispatch({type: 'SET_POINTS_EARNED', payload: thisMonthPoints});
+    dispatch({type: 'SET_DRINKS_CONSUMED', payload: thisMonthUnits});
+    dispatch({type: 'SET_UNITS_EARNED', payload: thisMonthUnits});
   }, [drinkingSessionData, state.visibleDateObject, preferences]);
 
   useEffect(() => {
@@ -303,12 +303,12 @@ const HomeScreen = ({}: HomeScreenProps) => {
         ) : null}
         <View style={styles.menuInfoContainer}>
           <View style={styles.menuInfoItemContainer}>
-            <Text style={styles.menuInfoText}>Units:</Text>
-            <Text style={styles.menuInfoText}>{state.unitsConsumed}</Text>
+            <Text style={styles.menuInfoText}>Drinks:</Text>
+            <Text style={styles.menuInfoText}>{state.drinksConsumed}</Text>
           </View>
           <View style={styles.menuInfoItemContainer}>
-            <Text style={styles.menuInfoText}>Points:</Text>
-            <Text style={styles.menuInfoText}>{state.pointsEarned}</Text>
+            <Text style={styles.menuInfoText}>Units:</Text>
+            <Text style={styles.menuInfoText}>{state.unitsEarned}</Text>
           </View>
           <View style={styles.menuInfoItemContainer}>
             <Text style={styles.menuInfoText}>Sessions:</Text>

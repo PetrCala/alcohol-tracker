@@ -1,13 +1,17 @@
 ﻿import React, {useState, useRef, useMemo} from 'react';
 import {Keyboard, TextInput, TouchableOpacity, View} from 'react-native';
-import {addUnits, removeUnits, sumUnitsOfSingleType} from '@libs/DataHandling';
-import {UnitKey, Units, UnitsList} from '@src/types/database';
+import {
+  addDrinks,
+  removeDrinks,
+  sumDrinksOfSingleType,
+} from '@libs/DataHandling';
+import {DrinkKey, Drinks, DrinksList} from '@src/types/database';
 
-type SessionUnitsInputWindowProps = {
-  unitKey: UnitKey;
-  currentUnits: UnitsList | undefined;
-  setCurrentUnits: (newUnits: UnitsList | undefined) => void;
-  availableUnits: number;
+type SessionDrinksInputWindowProps = {
+  DrinkKey: DrinkKey;
+  currentUnits: DrinksList | undefined;
+  setCurrentDrinks: (newDrinks: DrinksList | undefined) => void;
+  availableDrinks: number;
   styles: {
     unitsInputContainer: {};
     unitsInputButton: {};
@@ -15,15 +19,15 @@ type SessionUnitsInputWindowProps = {
   };
 };
 
-const SessionUnitsInputWindow = ({
-  unitKey,
-  currentUnits,
-  setCurrentUnits,
-  availableUnits,
+const SessionDrinksInputWindow = ({
+  DrinkKey,
+  currentDrinks,
+  setCurrentDrinks,
+  availableDrinks,
   styles,
-}: SessionUnitsInputWindowProps) => {
+}: SessionDrinksInputWindowProps) => {
   const [inputValue, setInputValue] = useState<string>(
-    sumUnitsOfSingleType(currentUnits, unitKey).toString(),
+    sumDrinksOfSingleType(currentDrinks, DrinkKey).toString(),
   );
   const inputRef = useRef<TextInput>(null);
 
@@ -49,14 +53,14 @@ const SessionUnitsInputWindow = ({
         updatedValue = inputValue; // Same value
       }
 
-      // Check that updatedValue is not greater than availableUnits
+      // Check that updatedValue is not greater than availableDrinks
       let numericValue = parseFloat(updatedValue);
       if (isNaN(numericValue)) {
         numericValue = 0;
       }
 
-      let inputValueNumeric = parseFloat(inputValue); // In case one digit is already input, adjust the availableUnits for this digit
-      if (numericValue > availableUnits + inputValueNumeric) {
+      let inputValueNumeric = parseFloat(inputValue); // In case one digit is already input, adjust the availableDrinks for this digit
+      if (numericValue > availableDrinks + inputValueNumeric) {
         return; // If the new value is greater than available units, do nothing.
       }
 
@@ -81,18 +85,18 @@ const SessionUnitsInputWindow = ({
 
     if (numericValue == typeSum) return; // Do nothing if the value is the same
     // Determine whether the new value is higher or lower than the current one
-    let newUnits: UnitsList | undefined = {...currentUnits};
+    let newDrinks: DrinksList | undefined = {...currentUnits};
     if (numericValue > typeSum) {
       // Add units
       let numberToAdd: number = numericValue - typeSum;
-      let unitsToAdd: Units = {[unitKey]: numberToAdd};
-      newUnits = addUnits(newUnits, unitsToAdd);
+      let unitsToAdd: Units = {[DrinkKey]: numberToAdd};
+      newDrinks = addDrinks(newDrinks, unitsToAdd);
     } else {
       // Remove units
       let numberToRemove: number = typeSum - numericValue;
-      newUnits = removeUnits(newUnits, unitKey, numberToRemove);
+      newDrinks = removeDrinks(newDrinks, DrinkKey, numberToRemove);
     }
-    setCurrentUnits(newUnits);
+    setCurrentDrinks(newDrinks);
   };
 
   const handleContainerPress = () => {
@@ -107,8 +111,8 @@ const SessionUnitsInputWindow = ({
   };
 
   useMemo(() => {
-    setInputValue(sumUnitsOfSingleType(currentUnits, unitKey).toString());
-  }, [currentUnits, unitKey]);
+    setInputValue(sumDrinksOfSingleType(currentDrinks, DrinkKey).toString());
+  }, [currentDrinks, DrinkKey]);
 
   return (
     <View style={styles.unitsInputContainer}>
@@ -132,4 +136,4 @@ const SessionUnitsInputWindow = ({
   );
 };
 
-export default SessionUnitsInputWindow;
+export default SessionDrinksInputWindow;

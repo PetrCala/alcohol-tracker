@@ -1,8 +1,8 @@
-import {UnitKey} from '@src/types/database';
+import {DrinkKey} from '@src/types/database';
 import {ImageSourcePropType} from 'react-native';
 
 type DrinkDataProps = {
-  key: UnitKey;
+  key: DrinkKey;
   icon: ImageSourcePropType;
 }[];
 

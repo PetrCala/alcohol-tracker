@@ -194,7 +194,7 @@ const CONST = {
     AM: 'AM',
     PM: 'PM',
   },
-  UNITS: {
+  DRINKS: {
     // Perhaps move to types?
     KEYS: {
       SMALL_BEER: 'small_beer',

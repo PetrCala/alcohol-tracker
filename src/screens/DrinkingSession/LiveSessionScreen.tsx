@@ -18,25 +18,31 @@ import {
   endLiveDrinkingSession,
   removeDrinkingSessionData,
   saveDrinkingSessionData,
-  updateSessionUnits,
+  updateSessionDrinks,
 } from '@database/drinkingSessions';
 import {
-  addUnits,
+  addDrinks,
   dateToDateObject,
   formatDateToDay,
   formatDateToTime,
-  removeUnits,
-  sumAllPoints,
-  sumUnitsOfSingleType,
+  removeDrinks,
+  sumAllUnits,
+  sumDrinksOfSingleType,
   timestampToDate,
   timestampToDateString,
   unitsToColors,
 } from '@libs/DataHandling';
-import {DrinkingSession, UnitKey, Units, UnitsList} from '@src/types/database';
+import {
+  DrinkingSession,
+  DrinksList,
+  DrinkKey,
+  Drinks,
+  DrinksList,
+} from '@src/types/database';
 import YesNoPopup from '@components/Popups/YesNoPopup';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import UserOffline from '@components/UserOffline';
-import UnitTypesView from '@components/UnitTypesView';
+import DrinkTypesView from '@components/DrinkTypesView';
 import SessionDetailsSlider from '@components/SessionDetailsSlider';
 import LoadingData from '@components/LoadingData';
 import {usePrevious} from '@hooks/usePrevious';
@@ -74,15 +80,15 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
   const [session, setSession] = useState<DrinkingSession | null>(null);
   const initialSession = useRef<DrinkingSession | null>(null);
   // Session details
-  const [totalPoints, setTotalPoints] = useState<number>(0);
-  const [availableUnits, setAvailableUnits] = useState<number>(0);
+  const [totalUnits, settotalUnits] = useState<number>(0);
+  const [availableDrinks, setavailableDrinks] = useState<number>(0);
   const [sessionFinished, setSessionFinished] = useState<boolean>(false);
   // Time info
   const [dbSyncSuccessful, setDbSyncSuccessful] = useState(false);
   const sessionDate = timestampToDate(session?.start_time ?? Date.now());
   const sessionStartTime = formatDateToTime(sessionDate);
   const sessionColor = preferences
-    ? unitsToColors(totalPoints, preferences.units_to_colors)
+    ? unitsToColors(totalUnits, preferences.units_to_colors)
     : 'green';
   // Other
   const [monkeMode, setMonkeMode] = useState<boolean>(false);
@@ -153,25 +159,25 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
 
   const handleMonkePlus = () => {
     if (!session) return;
-    if (availableUnits > 0) {
+    if (availableDrinks > 0) {
       let unitsToAdd: Units = {other: 1};
-      let newUnits: UnitsList | undefined = addUnits(
-        session?.units,
+      let newDrinks: DrinksList | undefined = addDrinks(
+        session?.drinks,
         unitsToAdd,
       );
-      setSession({...session, units: newUnits});
+      setSession({...session, units: newDrinks});
     }
   };
 
   const handleMonkeMinus = () => {
     if (!session) return;
-    if (sumUnitsOfSingleType(session.units, CONST.UNITS.KEYS.OTHER) > 0) {
-      let newUnits: UnitsList | undefined = removeUnits(
-        session.units,
+    if (sumDrinksOfSingleType(session.drinks, CONST.DRINKS.KEYS.OTHER) > 0) {
+      let newDrinks: DrinksList | undefined = removeDrinks(
+        session.drinks,
         'other',
         1,
       );
-      setSession({...session, units: newUnits});
+      setSession({...session, drinks: newDrinks});
     }
     // Here, as else, maybe send an alert that there are other types of
     // units logged
@@ -187,9 +193,9 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
     setSession({...session, note: value});
   };
 
-  const setCurrentUnits = (newUnits: UnitsList | undefined) => {
+  const setCurrentDrinks = (newDrinks: DrinksList | undefined) => {
     if (!session) return;
-    setSession({...session, units: newUnits});
+    setSession({...session, units: newDrinks});
   };
 
   // Function to wait for pending updates to finish
@@ -202,22 +208,22 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
   // Update the hooks whenever current units change
   useMemo(() => {
     if (!preferences) return;
-    let newTotalPoints = sumAllPoints(
-      session?.units,
-      preferences.units_to_points,
+    let newtotalUnits = sumAllUnits(
+      session?.drinks,
+      preferences.drinks_to_units,
     );
-    let newAvailableUnits = CONST.MAX_ALLOWED_UNITS - newTotalPoints;
-    setTotalPoints(newTotalPoints);
-    setAvailableUnits(newAvailableUnits);
-  }, [session?.units]);
+    let newavailableDrinks = CONST.MAX_ALLOWED_UNITS - newtotalUnits;
+    settotalUnits(newtotalUnits);
+    setavailableDrinks(newavailableDrinks);
+  }, [session?.drinks]);
 
   async function saveSession(db: any, userId: string) {
     if (!session || !user) return;
-    if (totalPoints > 99) {
+    if (totalUnits > 99) {
       console.log('Cannot save this session');
       return null;
     }
-    if (totalPoints > 0) {
+    if (totalUnits > 0) {
       try {
         setSavingSession(true);
         setSessionFinished(true); // No more db syncs
@@ -242,7 +248,9 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
           );
         }
         // Reroute to session summary, do not allow user to return
-        Navigation.navigate(ROUTES.DRINKING_SESSION_SUMMARY.getRoute(sessionId));
+        Navigation.navigate(
+          ROUTES.DRINKING_SESSION_SUMMARY.getRoute(sessionId),
+        );
       } catch (error: any) {
         Alert.alert(
           'Session save failed',
@@ -298,7 +306,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
     if (sessionIsLive) {
       try {
         await waitForNoPendingUpdate();
-        await updateSessionUnits(db, user.uid, sessionId, session?.units);
+        await updateSessionUnits(db, user.uid, sessionId, session?.drinks);
       } catch (error: any) {
         Alert.alert('Database synchronization failed', error.message);
       }
@@ -416,7 +424,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
         </View>
         <View style={styles.unitCountContainer}>
           <Text style={[styles.unitCountText, {color: sessionColor}]}>
-            {totalPoints}
+            {totalUnits}
           </Text>
         </View>
         {monkeMode ? (
@@ -434,12 +442,12 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
           </View>
         ) : (
           <>
-            <View style={styles.unitTypesContainer}>
-              <UnitTypesView
+            <View style={styles.drinkTypesContainer}>
+              <DrinkTypesView
                 drinkData={drinkData}
-                currentUnits={session.units}
-                setCurrentUnits={setCurrentUnits}
-                availableUnits={availableUnits}
+                currentUnits={session.drinks}
+                setCurrentDrinks={setCurrentDrinks}
+                availableDrinks={availableDrinks}
               />
             </View>
             <SessionDetailsSlider
@@ -557,7 +565,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFF99',
   },
-  unitTypesContainer: {
+  drinkTypesContainer: {
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',

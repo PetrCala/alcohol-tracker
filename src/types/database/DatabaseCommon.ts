@@ -4,6 +4,6 @@ type FriendId = string;
 
 type FriendRequestId = string;
 
-type MeasureType = 'units' | 'points';
+type MeasureType = 'drinks' | 'units';
 
 export type {UserId, FriendId, FriendRequestId, MeasureType};

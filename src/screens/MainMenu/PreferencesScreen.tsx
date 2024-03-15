@@ -21,13 +21,13 @@ import {getDefaultPreferences} from '@database/users';
 import MainHeader from '@components/Header/MainHeader';
 import {Preferences} from '@src/types/database';
 import CONST from '@src/CONST';
-import { useDatabaseData } from '@context/global/DatabaseDataContext';
-import { StackScreenProps } from '@react-navigation/stack';
-import { MainMenuNavigatorParamList } from '@libs/Navigation/types';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
+import {StackScreenProps} from '@react-navigation/stack';
+import {MainMenuNavigatorParamList} from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
-import { set } from 'lodash';
+import {set} from 'lodash';
 import LoadingData from '@components/LoadingData';
 
 interface PreferencesListProps {
@@ -134,13 +134,13 @@ const PreferencesScreen = ({route}: PreferencesScreenProps) => {
     }));
   };
 
-  // const updateUnitsToPoints = (unitKey: typeof UnitTypesKeys[number], value: number) => {
-  const updateUnitsToPoints = (unitKey: string, value: number) => {
+  // const updateDrinksToUnits = (DrinkKey: typeof DrinkTypesKeys[number], value: number) => {
+  const updateDrinksToUnits = (DrinkKey: string, value: number) => {
     setCurrentPreferences(prev => ({
       ...prev,
-      units_to_points: {
-        ...prev.units_to_points,
-        [unitKey]: value,
+      drinks_to_units: {
+        ...prev.drinks_to_units,
+        [DrinkKey]: value,
       },
     }));
   };
@@ -150,7 +150,7 @@ const PreferencesScreen = ({route}: PreferencesScreenProps) => {
     let newPreferences = {
       first_day_of_week: preferences.first_day_of_week,
       units_to_colors: preferences.units_to_colors,
-      units_to_points: preferences.units_to_points,
+      drinks_to_units: preferences.drinks_to_units,
     };
     if (JSON.stringify(newPreferences) !== JSON.stringify(preferences)) {
       setCurrentPreferences(newPreferences);
@@ -176,7 +176,7 @@ const PreferencesScreen = ({route}: PreferencesScreenProps) => {
     Navigation.navigate(ROUTES.LOGIN);
     return null;
   }
-  if (saving) return <LoadingData loadingText='Saving your preferences...'/>
+  if (saving) return <LoadingData loadingText="Saving your preferences..." />;
 
   return (
     <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
@@ -229,12 +229,12 @@ const PreferencesScreen = ({route}: PreferencesScreenProps) => {
           <Text style={styles.label}>Point Conversion</Text>
           <View style={styles.itemContainer}>
             <PreferencesList
-              id="units_to_points" // Another unique identifier
+              id="drinks_to_units" // Another unique identifier
               initialContents={Object.values(CONST.UNITS.KEYS).map(
                 (key, index) => ({
                   key: key,
                   label: Object.values(CONST.UNITS.NAMES)[index],
-                  value: currentPreferences.units_to_points[key]!.toString(), // Non-null assertion
+                  value: currentPreferences.drinks_to_units[key]!.toString(), // Non-null assertion
                 }),
               )}
               onButtonPress={(key, label, value) => {
@@ -243,7 +243,7 @@ const PreferencesScreen = ({route}: PreferencesScreenProps) => {
                 setSliderMaxValue(3);
                 setSliderValue(value);
                 setSliderVisible(true);
-                setSliderList('units_to_points');
+                setSliderList('drinks_to_units');
                 setSliderKey(key);
               }}
             />
@@ -265,8 +265,8 @@ const PreferencesScreen = ({route}: PreferencesScreenProps) => {
         onSave={newValue => {
           if (sliderList == 'units_to_colors') {
             updateUnitsToColors(sliderKey, newValue);
-          } else if (sliderList == 'units_to_points') {
-            updateUnitsToPoints(sliderKey, newValue);
+          } else if (sliderList == 'drinks_to_units') {
+            updateDrinksToUnits(sliderKey, newValue);
           }
           setSliderVisible(false);
         }}

@@ -24,7 +24,7 @@ export const getDefaultPreferences = (): Preferences => {
       orange: 10,
       yellow: 5,
     },
-    units_to_points: {
+    drinks_to_units: {
       small_beer: 0.5,
       beer: 1,
       cocktail: 1.5,

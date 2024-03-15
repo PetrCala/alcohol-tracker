@@ -1,6 +1,6 @@
 import {UserPriority, UsersPriority} from '@src/types/various/Algorithms';
 import {UserStatus, UserStatusList} from '@src/types/database';
-import {sumAllUnits} from '@libs/DataHandling';
+import {sumAllDrinks} from '@libs/DataHandling';
 
 /**
  * Based on the user status data, calculate the display priority of the users.
@@ -36,8 +36,8 @@ function calculateUserPriority(userStatusData: UserStatus): number {
   let time_since_last_online =
     new Date().getTime() - userStatusData.last_online;
   let session_active = userStatusData.latest_session?.ongoing ? 1 : 0;
-  let session_units = userStatusData.latest_session?.units
-    ? sumAllUnits(userStatusData.latest_session.units)
+  let session_units = userStatusData.latest_session?.drinks
+    ? sumAllDrinks(userStatusData.latest_session.drinks) // TODO units should be used here perhaps
     : 0;
   return (
     session_units * 10 +

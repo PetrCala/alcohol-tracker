@@ -3,7 +3,7 @@ import {useFirebase} from '../../context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
 import {getTimestampAge, isRecent} from '@libs/TimeUtils';
 import commonStyles from '@src/styles/commonStyles';
-import {sumAllUnits} from '@libs/DataHandling';
+import {sumAllDrinks} from '@libs/DataHandling';
 import {Profile, UserStatus} from '@src/types/database';
 
 type UserOverviewProps = {
@@ -26,8 +26,8 @@ const UserOverview: React.FC<UserOverviewProps> = ({
   const sessionLength = latest_session?.end_time
     ? getTimestampAge(latest_session.end_time, false)
     : '';
-  const unitsThisSession = latest_session
-    ? sumAllUnits(latest_session?.units)
+  const drinksThisSession = latest_session
+    ? sumAllDrinks(latest_session?.drinks)
     : null;
 
   return (
@@ -67,7 +67,8 @@ const UserOverview: React.FC<UserOverviewProps> = ({
                 <Text
                   key={userId + '-units'}
                   style={[styles.userDetailsText, styles.leftContainerText]}>
-                  Units so far: {unitsThisSession}
+                  Drinks so far: {drinksThisSession}{' '}
+                  {/* TODO should be units */}
                 </Text>
               </>
             )}

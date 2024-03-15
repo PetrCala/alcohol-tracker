@@ -1,41 +1,41 @@
 ﻿import {StyleSheet, Text, View} from 'react-native';
-import DrinkingSessionUnitWindow from './DrinkingSessionUnitWindow';
-import {UnitsList} from '@src/types/database';
+import DrinkingSessionDrinksWindow from './DrinkingSessionDrinksWindow';
+import {DrinksList} from '@src/types/database';
 import DrinkDataProps from '@src/types/various/DrinkDataProps';
 
-export type UnitTypesViewProps = {
+export type DrinkTypesViewProps = {
   drinkData: DrinkDataProps;
-  currentUnits: UnitsList | undefined;
-  setCurrentUnits: (newUnits: UnitsList | undefined) => void;
-  availableUnits: number;
+  currentDrinks: DrinksList | undefined;
+  setCurrentDrinks: (newDrinks: DrinksList | undefined) => void;
+  availableDrinks: number;
 };
 
-const UnitTypesView = ({
+const DrinkTypesView = ({
   drinkData,
-  currentUnits,
-  setCurrentUnits,
-  availableUnits,
-}: UnitTypesViewProps) => {
+  currentDrinks,
+  setCurrentDrinks,
+  availableDrinks,
+}: DrinkTypesViewProps) => {
   return (
     <View style={styles.mainContainer}>
       <View style={styles.tab}>
-        <Text style={styles.tabText}>Units consumed</Text>
+        <Text style={styles.tabText}>Drinks consumed</Text>
       </View>
       {drinkData.map(drink => (
-        <DrinkingSessionUnitWindow
+        <DrinkingSessionDrinksWindow
           key={drink.key} // JS unique key property - no need to list
-          unitKey={drink.key}
+          drinkKey={drink.key}
           iconSource={drink.icon}
-          currentUnits={currentUnits}
-          setCurrentUnits={setCurrentUnits}
-          availableUnits={availableUnits}
+          currentDrinks={currentDrinks}
+          setCurrentDrinks={setCurrentDrinks}
+          availableDrinks={availableDrinks}
         />
       ))}
     </View>
   );
 };
 
-export default UnitTypesView;
+export default DrinkTypesView;
 
 const styles = StyleSheet.create({
   mainContainer: {

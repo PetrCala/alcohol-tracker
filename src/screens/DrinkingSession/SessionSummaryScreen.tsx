@@ -4,10 +4,10 @@ import {
   formatDate,
   formatDateToDay,
   formatDateToTime,
-  getLastUnitAddedTime,
-  sumAllPoints,
+  getLastDrinkAddedTime,
   sumAllUnits,
-  sumUnitsOfSingleType,
+  sumAllDrinks,
+  sumDrinksOfSingleType,
   timestampToDate,
   unitsToColors,
 } from '@libs/DataHandling';
@@ -66,16 +66,16 @@ const SessionSummaryScreen = ({route}: SessionSummaryScreenProps) => {
     extractSessionOrEmpty(sessionId, drinkingSessionData),
   );
   // Units info
-  const totalUnits = sumAllUnits(session.units);
-  const totalPoints = sumAllPoints(session.units, preferences.units_to_points);
+  const totalDrinks = sumAllDrinks(session.drinks);
+  const totalUnits = sumAllUnits(session.drinks, preferences.drinks_to_units);
   const unitSums = {
-    small_beer: sumUnitsOfSingleType(session.units, 'small_beer'),
-    beer: sumUnitsOfSingleType(session.units, 'beer'),
-    wine: sumUnitsOfSingleType(session.units, 'wine'),
-    weak_shot: sumUnitsOfSingleType(session.units, 'weak_shot'),
-    strong_shot: sumUnitsOfSingleType(session.units, 'strong_shot'),
-    cocktail: sumUnitsOfSingleType(session.units, 'cocktail'),
-    other: sumUnitsOfSingleType(session.units, 'other'),
+    small_beer: sumDrinksOfSingleType(session.drinks, 'small_beer'),
+    beer: sumDrinksOfSingleType(session.drinks, 'beer'),
+    wine: sumDrinksOfSingleType(session.drinks, 'wine'),
+    weak_shot: sumDrinksOfSingleType(session.drinks, 'weak_shot'),
+    strong_shot: sumDrinksOfSingleType(session.drinks, 'strong_shot'),
+    cocktail: sumDrinksOfSingleType(session.drinks, 'cocktail'),
+    other: sumDrinksOfSingleType(session.drinks, 'other'),
   };
   // Time info
   const sessionStartDate = timestampToDate(session.start_time);
@@ -85,7 +85,7 @@ const SessionSummaryScreen = ({route}: SessionSummaryScreenProps) => {
   const sessionEndTime = formatDateToTime(sessionEndDate);
   // Figure out last unit added
   let lastUnitAdded: string;
-  const lastUnitEditTimestamp = getLastUnitAddedTime(session);
+  const lastUnitEditTimestamp = getLastDrinkAddedTime(session);
   if (!lastUnitEditTimestamp) {
     lastUnitAdded = 'Unknown';
   } else {
@@ -107,7 +107,7 @@ const SessionSummaryScreen = ({route}: SessionSummaryScreenProps) => {
   };
 
   const generalData = [
-    {heading: 'Points:', data: totalPoints.toString()},
+    {heading: 'Units:', data: totalUnits.toString()},
     {heading: 'Date:', data: sessionDay},
     {heading: 'Start time:', data: sessionStartTime},
     {heading: 'Last unit added:', data: lastUnitAdded},
@@ -115,7 +115,7 @@ const SessionSummaryScreen = ({route}: SessionSummaryScreenProps) => {
   ];
 
   const unitData = [
-    {heading: 'Units:', data: totalUnits.toString()},
+    {heading: 'Drinks:', data: totalDrinks.toString()},
     {heading: 'Small Beer:', data: unitSums.small_beer.toString()},
     {heading: 'Beer:', data: unitSums.beer.toString()},
     {heading: 'Wine:', data: unitSums.wine.toString()},

@@ -52,7 +52,7 @@
         "units_to_colors": {
           ".validate": "newData.hasChildren(['yellow', 'orange'])"
         },
-        "units_to_points": {
+        "drinks_to_units": {
           ".validate": "newData.hasChildren(['beer', 'cocktail', 'other', 'strong_shot', 'weak_shot', 'wine'])"
         }
       }

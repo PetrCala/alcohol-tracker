@@ -19,9 +19,9 @@ import {
   unitsToColors,
   getSingleDayDrinkingSessions,
   setDateToCurrentTime,
+  sumAllDrinks,
+  getZeroDrinksList,
   sumAllUnits,
-  getZeroUnitsList,
-  sumAllPoints,
   objVals,
   dateStringToDate,
 } from '@libs/DataHandling';
@@ -69,14 +69,16 @@ const DayOverviewScreen = ({route}: DayOverviewScreenProps) => {
     let relevantData = getSingleDayDrinkingSessions(
       currentDate,
       drinkingSessionData,
-      false
+      false,
     ) as DrinkingSessionList;
-    let newDailyData = Object.entries(relevantData).map(([sessionId, session]) => {
-      return {
-        sessionId: sessionId,
-        session: session,
-      }
-    });
+    let newDailyData = Object.entries(relevantData).map(
+      ([sessionId, session]) => {
+        return {
+          sessionId: sessionId,
+          session: session,
+        };
+      },
+    );
     setDailyData(newDailyData);
   }, [currentDate, drinkingSessionData]);
 
@@ -100,10 +102,10 @@ const DayOverviewScreen = ({route}: DayOverviewScreenProps) => {
   const DrinkingSession = ({sessionId, session}: DrinkingSessionKeyValue) => {
     if (!preferences) return;
     // Calculate the session color
-    var totalUnits = sumAllUnits(session.units);
-    var totalPoints = sumAllPoints(session.units, preferences.units_to_points);
+    var totalDrinks = sumAllDrinks(session.drinks);
+    var totalUnits = sumAllUnits(session.drinks, preferences.drinks_to_units);
     var unitsToColorsInfo = preferences.units_to_colors;
-    var sessionColor = unitsToColors(totalPoints, unitsToColorsInfo);
+    var sessionColor = unitsToColors(totalUnits, unitsToColorsInfo);
     if (session.blackout === true) {
       sessionColor = 'black';
     }
@@ -133,14 +135,14 @@ const DayOverviewScreen = ({route}: DayOverviewScreenProps) => {
                   styles.menuDrinkingSessionText,
                   session.blackout === true ? {color: 'white'} : {},
                 ]}>
-                Units: {totalUnits}
+                Drinks: {totalDrinks}
               </Text>
               <Text
                 style={[
                   styles.menuDrinkingSessionText,
                   session.blackout === true ? {color: 'white'} : {},
                 ]}>
-                Points: {totalPoints}
+                Units: {totalUnits}
               </Text>
             </TouchableOpacity>
           </View>

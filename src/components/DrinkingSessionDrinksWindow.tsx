@@ -6,92 +6,90 @@
   TouchableOpacity,
   View,
 } from 'react-native';
-import SessionUnitsInputWindow from './Buttons/SessionUnitsInputWindow';
+import SessionDrinksInputWindow from './Buttons/SessionDrinksInputWindow';
 import {
-  addUnits,
-  findUnitName,
-  removeUnits,
-  sumUnitTypes,
-  sumUnitsOfSingleType,
+  addDrinks,
+  findDrinkName,
+  removeDrinks,
+  sumDrinkTypes,
+  sumDrinksOfSingleType,
 } from '../libs/DataHandling';
 import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
 import CONST from '@src/CONST';
-import {UnitKey, Units, UnitsList} from '@src/types/database';
+import {DrinkKey, Drinks, DrinksList} from '@src/types/database';
 
-type DrinkingSessionUnitWindowProps = {
-  unitKey: UnitKey;
+type DrinkingSessionDrinksWindowProps = {
+  drinkKey: DrinkKey;
   iconSource: ImageSourcePropType;
-  currentUnits: UnitsList | undefined;
-  setCurrentUnits: (newUnits: UnitsList | undefined) => void;
-  availableUnits: number;
+  currentDrinks: DrinksList | undefined;
+  setCurrentDrinks: (newDrinks: DrinksList | undefined) => void;
+  availableDrinks: number;
 };
 
-const DrinkingSessionUnitWindow = ({
-  unitKey,
+const DrinkingSessionDrinksWindow = ({
+  drinkKey,
   iconSource,
-  currentUnits,
-  setCurrentUnits,
-  availableUnits,
-}: DrinkingSessionUnitWindowProps) => {
-  const handleAddUnits = (units: Units) => {
-    let newUnitCount = sumUnitTypes(units); // Number of added units
-    if (newUnitCount > 0 && newUnitCount <= availableUnits) {
-      let newUnits: UnitsList | undefined = addUnits(currentUnits, units);
-      setCurrentUnits(newUnits);
+  currentDrinks,
+  setCurrentDrinks,
+  availableDrinks,
+}: DrinkingSessionDrinksWindowProps) => {
+  const handleAddDrinks = (drinks: Drinks) => {
+    let newDrinkCount = sumDrinkTypes(drinks); // Number of added drinks
+    if (newDrinkCount > 0 && newDrinkCount <= availableDrinks) {
+      let newDrinks: DrinksList | undefined = addDrinks(currentDrinks, drinks);
+      setCurrentDrinks(newDrinks);
     }
   };
 
-  const handleRemoveUnits = (unitType: UnitKey, count: number) => {
-    if (sumUnitsOfSingleType(currentUnits, unitKey) > 0) {
-      let newUnits: UnitsList | undefined = removeUnits(
-        currentUnits,
-        unitType,
+  const handleRemoveDrinks = (drinkType: DrinkKey, count: number) => {
+    if (sumDrinksOfSingleType(currentDrinks, drinkKey) > 0) {
+      let newDrinks: DrinksList | undefined = removeDrinks(
+        currentDrinks,
+        drinkType,
         count,
       );
-      setCurrentUnits(newUnits);
+      setCurrentDrinks(newDrinks);
     }
   };
 
-  const unitName = findUnitName(unitKey);
+  const drinkName = findDrinkName(drinkKey);
 
   return (
-    <View style={styles.sessionUnitContainer}>
+    <View style={styles.sessionDrinkContainer}>
       <View style={styles.iconContainer}>
         <Image
           source={iconSource}
           style={
-            unitKey === 'small_beer'
+            drinkKey === 'small_beer'
               ? styles.smallIconStyle
               : styles.normalIconStyle
           }
         />
       </View>
-      <Text style={styles.unitInfoText}>{unitName}</Text>
+      <Text style={styles.drinkInfoText}>{drinkName}</Text>
       <TouchableOpacity
-        style={styles.adjustUnitsButton}
-        onPress={() => handleRemoveUnits(unitKey, 1)}>
-        <Image source={KirokuIcons.Minus} style={styles.adjustUnitsIcon} />
+        style={styles.adjustDrinksButton}
+        onPress={() => handleRemoveDrinks(drinkKey, 1)}>
+        <Image source={KirokuIcons.Minus} style={styles.adjustDrinksIcon} />
       </TouchableOpacity>
-      <SessionUnitsInputWindow
-        unitKey={unitKey}
-        currentUnits={currentUnits}
-        setCurrentUnits={setCurrentUnits}
-        availableUnits={availableUnits}
+      <SessionDrinksInputWindow
+        drinkKey={drinkKey}
+        currentDrinks={currentDrinks}
+        setCurrentDrinks={setCurrentDrinks}
+        availableDrinks={availableDrinks}
         styles={styles}
       />
       <TouchableOpacity
-        style={styles.adjustUnitsButton}
-        onPress={() => handleAddUnits({[unitKey]: 1})}>
-        <Image source={KirokuIcons.Plus} style={styles.adjustUnitsIcon} />
+        style={styles.adjustDrinksButton}
+        onPress={() => handleAddDrinks({[drinkKey]: 1})}>
+        <Image source={KirokuIcons.Plus} style={styles.adjustDrinksIcon} />
       </TouchableOpacity>
     </View>
   );
 };
 
-export default DrinkingSessionUnitWindow;
-
 const styles = StyleSheet.create({
-  sessionUnitContainer: {
+  sessionDrinkContainer: {
     borderWidth: 1,
     borderColor: 'black',
     backgroundColor: '#fcf50f',
@@ -116,7 +114,7 @@ const styles = StyleSheet.create({
     width: '75%',
     height: '75%',
   },
-  unitInfoText: {
+  drinkInfoText: {
     flexGrow: 1,
     fontSize: 14,
     color: 'black',
@@ -148,16 +146,18 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#212421',
   },
-  adjustUnitsButton: {
+  adjustDrinksButton: {
     width: 50,
     height: 50,
     alignSelf: 'flex-end',
     alignContent: 'center',
     justifyContent: 'center',
   },
-  adjustUnitsIcon: {
+  adjustDrinksIcon: {
     width: 17,
     height: 17,
     alignSelf: 'center',
   },
 });
+
+export default DrinkingSessionDrinksWindow;

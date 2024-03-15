@@ -1,4 +1,4 @@
-﻿import {UnitsToColors, UnitsToPoints} from '@src/types/database';
+﻿import {UnitsToColors, DrinksToUnits} from '@src/types/database';
 
 // Realtime database test user information
 export const TEST_UID = 'dmXj9O2SqWWHPRtqtKGGdaUzGFt2';
@@ -24,7 +24,7 @@ export const SAMPLE_UNITS_TO_COLORS: UnitsToColors = {
   orange: 4,
 };
 
-export const SAMPLE_UNITS_TO_POINTS: UnitsToPoints = {
+export const SAMPLE_DRINKS_TO_UNITS: DrinksToUnits = {
   small_beer: 3,
   beer: 5,
   cocktail: 10,
