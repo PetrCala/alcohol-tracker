@@ -6,6 +6,7 @@ import {UnconfirmedDaysList} from './UnconfirmedDays';
 import {UserList} from './UserProps';
 import {UserDrinkingSessionsList} from './DrinkingSession';
 import {UserStatusList} from './UserStatus';
+import {SessionPlaceholderList} from './SessionPlaceholder';
 
 /** Main database props object
  *
@@ -17,6 +18,7 @@ type DatabaseProps = {
   nickname_to_id: NicknameToIdList;
   user_drinking_sessions: UserDrinkingSessionsList;
   user_preferences: PreferencesList;
+  user_session_placeholder: SessionPlaceholderList;
   user_status: UserStatusList;
   user_unconfirmed_days: UnconfirmedDaysList;
   users: UserList;

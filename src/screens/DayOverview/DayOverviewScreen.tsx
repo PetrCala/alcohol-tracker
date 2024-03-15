@@ -42,6 +42,12 @@ import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import DBPATHS from '@database/DBPATHS';
+import {getEmptySession} from '@libs/SessionUtils';
+import CONST from '@src/CONST';
+import {
+  saveDrinkingSessionData,
+  savePlaceholderSessionData,
+} from '@database/drinkingSessions';
 
 type DayOverviewScreenProps = StackScreenProps<
   DayOverviewNavigatorParamList,
@@ -203,18 +209,41 @@ const DayOverviewScreen = ({route}: DayOverviewScreenProps) => {
       db,
       DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(user.uid),
     );
+
     if (!newSessionId) {
       Alert.alert('Error', 'Could not generate a new session key.');
       return;
     }
+
+    /** Generate a placeholder session that corresponds to the current day */
+    const getPlaceholderSession = (): DrinkingSession => {
+      let timestamp = currentDate.getTime();
+      let session: DrinkingSession = getEmptySession(
+        CONST.SESSION_TYPES.EDIT,
+        true,
+        false,
+      );
+      session.start_time = timestamp;
+      session.end_time = timestamp;
+      return session;
+    };
+
+    const handleButtonPress = async () => {
+      try {
+        const placeholderSession = getPlaceholderSession();
+        await savePlaceholderSessionData(db, user.uid, placeholderSession);
+        Navigation.navigate(
+          ROUTES.DRINKING_SESSION_LIVE.getRoute(newSessionId as string),
+        );
+      } catch (error: any) {
+        Alert.alert('Database Error', 'Failed to create a new session.');
+      }
+    };
+
     return (
       <TouchableOpacity
         style={styles.addSessionButton}
-        onPress={() =>
-          Navigation.navigate(
-            ROUTES.DRINKING_SESSION_LIVE.getRoute(newSessionId as string),
-          )
-        }>
+        onPress={handleButtonPress}>
         <Image source={KirokuIcons.Plus} style={styles.addSessionImage} />
       </TouchableOpacity>
     );

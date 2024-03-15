@@ -159,6 +159,10 @@ const CONST = {
     },
     // DATE_TIME_FORMAT: /^\d{2}-\d{2} \d{2}:\d{2} [AP]M$/,
   },
+  SESSION_TYPES: {
+    LIVE: 'live',
+    EDIT: 'edit',
+  },
   SOCIALS: {
     TWITTER: '',
     INSTAGRAM: '',

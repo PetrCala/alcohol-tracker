@@ -14,7 +14,6 @@ import {
 } from 'firebase/auth';
 import {Alert} from 'react-native';
 import {cleanStringForFirebaseKey} from '../libs/StringUtils';
-import CONST from '@src/CONST';
 import DBPATHS from './DBPATHS';
 
 export const getDefaultPreferences = (): Preferences => {

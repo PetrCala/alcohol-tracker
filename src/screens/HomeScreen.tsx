@@ -123,7 +123,11 @@ const HomeScreen = ({}: HomeScreenProps) => {
     }
     dispatch({type: 'SET_INITIALIZING_SESSION', payload: true});
     // The user is not in an active session
-    const newSessionData: DrinkingSession = getEmptySession(true, true);
+    const newSessionData: DrinkingSession = getEmptySession(
+      CONST.SESSION_TYPES.LIVE,
+      true,
+      true,
+    );
     const newSessionId = generateDatabaseKey(
       db,
       DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(user.uid),

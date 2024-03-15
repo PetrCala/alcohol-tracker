@@ -10,10 +10,18 @@ import {
   createMockUserStatus,
 } from '../../utils/mockDatabase';
 import {isConnectedToDatabaseEmulator} from '@src/libs/Firebase/FirebaseUtils';
-import {FriendRequestList, Profile, Drinks} from '@src/types/database';
+import {
+  FriendRequestList,
+  Profile,
+  Drinks,
+  DrinkingSession,
+} from '@src/types/database';
 import {Database} from 'firebase/database';
 import {describeWithEmulator} from '../../utils/emulators/emulatorTools';
-import {saveDrinkingSessionData} from '@database/drinkingSessions';
+import {
+  saveDrinkingSessionData,
+  savePlaceholderSessionData,
+} from '@database/drinkingSessions';
 
 import {MOCK_USER_IDS} from '../../utils/testsStatic';
 import {readDataOnce} from '@database/baseFunctions';
@@ -40,6 +48,7 @@ import {
 } from '@database/friends';
 import DBPATHS from '@database/DBPATHS';
 import CONST from '@src/CONST';
+import {getEmptySession} from '@libs/SessionUtils';
 
 const testUserId: string = MOCK_USER_IDS[0];
 const testUserDisplayName: string = 'mock-user';
@@ -201,6 +210,20 @@ describeWithEmulator('Test drinking session functionality', () => {
 
     expect(userSession).not.toBeNull();
     expect(userSession).toMatchObject(mockDrinkingSession);
+  });
+
+  it('should save a placeholder session', async () => {
+    const mockPlaceholderSession: DrinkingSession = getEmptySession(
+      CONST.SESSION_TYPES.EDIT,
+      true,
+      false,
+    );
+    await savePlaceholderSessionData(db, testUserId, mockPlaceholderSession);
+    const placeholderSessionRef =
+      DBPATHS.USER_SESSION_PLACEHOLDER_USER_ID.getRoute(testUserId);
+    const placeholderSession = await readDataOnce(db, placeholderSessionRef);
+
+    expect(placeholderSession).toMatchObject(mockDrinkingSession);
   });
 });
 

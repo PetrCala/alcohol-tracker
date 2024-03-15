@@ -1,12 +1,18 @@
 ﻿import {Database, ref, update} from 'firebase/database';
 import {removeZeroObjectsFromSession} from '@libs/DataHandling';
-import {DrinkingSession, DrinksList, UserStatus} from '@src/types/database';
+import {
+  DrinkingSession,
+  DrinksList,
+  UserId,
+  UserStatus,
+} from '@src/types/database';
 import DBPATHS from './DBPATHS';
 
 const drinkingSessionRef = DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID;
 const drinkingSessionDrinksRef =
   DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID_DRINKS;
 const userStatusRef = DBPATHS.USER_STATUS_USER_ID;
+const placeholderSessionRef = DBPATHS.USER_SESSION_PLACEHOLDER_USER_ID;
 
 /** Write drinking session data into the database
  *
@@ -18,7 +24,7 @@ const userStatusRef = DBPATHS.USER_STATUS_USER_ID;
  *  */
 export async function saveDrinkingSessionData(
   db: Database,
-  userId: string,
+  userId: UserId,
   newSessionData: DrinkingSession,
   sessionKey: string,
   updateStatus?: boolean,
@@ -35,6 +41,30 @@ export async function saveDrinkingSessionData(
     };
     updates[userStatusRef.getRoute(userId)] = userStatusData;
   }
+  await update(ref(db), updates);
+}
+
+/** Save a placeholder session in the database. Update only the placeholder session node.
+ */
+export async function savePlaceholderSessionData(
+  db: Database,
+  userId: UserId,
+  newSessionData: DrinkingSession,
+): Promise<void> {
+  newSessionData.drinks = newSessionData.drinks ?? {}; // Can not send undefined
+  var updates: {[key: string]: any} = {};
+  updates[placeholderSessionRef.getRoute(userId)] = newSessionData;
+  await update(ref(db), updates);
+}
+
+/** Remove any potentially existing placeholder session data from the database.
+ */
+export async function removePlaceholderSessionData(
+  db: Database,
+  userId: UserId,
+): Promise<void> {
+  var updates: {[key: string]: any} = {};
+  updates[placeholderSessionRef.getRoute(userId)] = null;
   await update(ref(db), updates);
 }
 

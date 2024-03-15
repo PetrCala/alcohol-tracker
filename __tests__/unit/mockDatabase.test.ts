@@ -112,7 +112,8 @@ function isDrinkingSessionList(obj: any): obj is DrinkingSessionList {
       typeof session.note !== 'string' ||
       (session.ongoing !== undefined &&
         typeof session.ongoing !== 'boolean' &&
-        session.ongoing !== null)
+        session.ongoing !== null) ||
+      typeof session.type !== 'string'
     ) {
       return false;
     }

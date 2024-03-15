@@ -12,6 +12,7 @@ import type {
   DrinkingSessionId,
   DrinkingSessionArray,
   DrinkingSessionList,
+  DrinkingSessionType,
   UserDrinkingSessionsList,
 } from './DrinkingSession';
 import type Feedback from './Feedback';
@@ -31,6 +32,8 @@ import type {
   UnitsToColors,
   DrinksToUnits,
 } from './Preferences';
+import type SessionPlaceholder from './SessionPlaceholder';
+import type {SessionPlaceholderList} from './SessionPlaceholder';
 import type UnconfirmedDays from './UnconfirmedDays';
 import type {UnconfirmedDaysList, UnconfirmedDayKey} from './UnconfirmedDays';
 import type Drinks from './Drinks';
@@ -48,6 +51,7 @@ export type {
   DrinkingSessionArray,
   DrinkingSessionId,
   DrinkingSessionList,
+  DrinkingSessionType,
   Drinks,
   DrinkKey,
   DrinksList,
@@ -74,6 +78,8 @@ export type {
   PreferencesList,
   Profile,
   ProfileList,
+  SessionPlaceholder,
+  SessionPlaceholderList,
   UnconfirmedDayKey,
   UnconfirmedDays,
   UnconfirmedDaysList,

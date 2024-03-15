@@ -47,6 +47,7 @@ const mockUserStatus = createMockUserStatus(
   mockSessionKey,
   mockDrinkingSession,
 );
+const mockSessionPlaceholder = mockDrinkingSession;
 
 describeWithEmulator('Test drinking session rules', () => {
   let testEnv: RulesTestEnvironment;
@@ -244,6 +245,75 @@ describeWithEmulator('Test feedback rules', () => {
   it('should not read feedback when not an admin', async () => {
     const unauthRef = unauthDb.ref(feedbackRef);
     await assertFails(unauthRef.get());
+  });
+});
+
+describeWithEmulator('Test user session placeholder rules', () => {
+  let testEnv: RulesTestEnvironment;
+  let authDb: any;
+  let unauthDb: any;
+  let adminDb: any;
+  const userSessionPlaceholderRef = DBPATHS.USER_SESSION_PLACEHOLDER;
+  const placeholderRef =
+    DBPATHS.USER_SESSION_PLACEHOLDER_USER_ID.getRoute(authUserId);
+  const otherUserPlaceholderRef =
+    DBPATHS.USER_SESSION_PLACEHOLDER_USER_ID.getRoute(otherUserId);
+  setupGlobalMocks(); // Silence permission denied warnings
+
+  beforeAll(async () => {
+    ({testEnv, authDb, unauthDb, adminDb} = await setupFirebaseRulesTestEnv());
+  });
+
+  afterEach(async () => {
+    await testEnv.clearDatabase();
+  });
+
+  afterAll(async () => {
+    await teardownFirebaseRulesTestEnv(testEnv);
+  });
+
+  it('should allow reading user session placeholder node when admin is true', async () => {
+    const authRef = adminDb.ref(placeholderRef);
+    await assertSucceeds(authRef.get());
+  });
+
+  it('should not allow reading user session placeholder node when not an admin', async () => {
+    const authRef = authDb.ref(placeholderRef);
+    const unauthRef = unauthDb.ref(placeholderRef);
+    await assertFails(authRef.get());
+    await assertFails(unauthRef.get());
+  });
+
+  it('should allow writing to user session placeholder node when admin is true', async () => {
+    const authRef = adminDb.ref(placeholderRef);
+    await assertSucceeds(authRef.set({test_user: mockSessionPlaceholder}));
+  });
+
+  it('should not allow writing to user session placeholder node when not an admin', async () => {
+    const authRef = authDb.ref(placeholderRef);
+    const unauthRef = unauthDb.ref(placeholderRef);
+    await assertFails(authRef.set({test_user: mockSessionPlaceholder}));
+    await assertFails(unauthRef.set({test_user: mockSessionPlaceholder}));
+  });
+
+  it('should allow an authenticated user to write to their own session placeholder node', async () => {
+    const authRef = authDb.ref(userSessionPlaceholderRef);
+    await assertSucceeds(authRef.set({test_user: mockSessionPlaceholder}));
+  });
+
+  it("should not allow an authenticated user to write to other users' session placeholder node", async () => {
+    const authRef = authDb.ref(otherUserPlaceholderRef);
+    await assertFails(authRef.set({test_user: mockSessionPlaceholder}));
+  });
+
+  it('should allow an authenticated user to read own session placeholder', async () => {
+    const authRef = authDb.ref(userSessionPlaceholderRef);
+    await assertSucceeds(authRef.get());
+  });
+
+  it('should not allow an authenticated user to read other user session placeholder node', async () => {
+    const authRef = authDb.ref(otherUserPlaceholderRef);
+    await assertFails(authRef.get());
   });
 });
 

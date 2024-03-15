@@ -57,6 +57,15 @@
         }
       }
     },
+    "user_session_placeholder": {
+      ".read": "auth.token.admin === true",
+      ".write": "auth.token.admin === true",
+      "$uid": {
+        ".validate": "newData.val() === null || newData.hasChildren()",
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
     "user_status": {
       ".read": "auth.token.admin === true",
       ".write": "auth.token.admin === true",

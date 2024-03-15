@@ -1,7 +1,9 @@
+import CONST from '@src/CONST';
 import {
   DrinkingSession,
   DrinkingSessionId,
   DrinkingSessionList,
+  DrinkingSessionType,
   DrinksList,
 } from '@src/types/database';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
@@ -12,6 +14,7 @@ const PlaceholderDrinks: DrinksList = {[Date.now()]: {other: 0}};
  * @returns An empty drinking session object.
  */
 function getEmptySession(
+  type?: DrinkingSessionType,
   usePlaceholderDrinks?: boolean,
   ongoing?: boolean,
 ): DrinkingSession {
@@ -21,6 +24,7 @@ function getEmptySession(
     drinks: usePlaceholderDrinks ? PlaceholderDrinks : {},
     blackout: false,
     note: '',
+    type: type ?? CONST.SESSION_TYPES.EDIT,
     ...(ongoing && {ongoing: true}),
   };
   return emptySession;

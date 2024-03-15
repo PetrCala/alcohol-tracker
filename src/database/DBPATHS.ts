@@ -62,6 +62,12 @@ const DBPATHS = {
     getRoute: (user_id: UserId) =>
       `user_preferences/${user_id}/drinks_to_units` as const,
   },
+  USER_SESSION_PLACEHOLDER: 'user_session_placeholder',
+  USER_SESSION_PLACEHOLDER_USER_ID: {
+    route: '/user_session_placeholder/:user_id',
+    getRoute: (user_id: UserId) =>
+      `user_session_placeholder/${user_id}` as const,
+  },
   USER_STATUS: 'user_status',
   USER_STATUS_USER_ID: {
     route: '/user_status/:user_id',

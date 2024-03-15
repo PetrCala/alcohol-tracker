@@ -185,6 +185,7 @@ export function createMockSession(
     blackout: false,
     note: '',
     drinks: drinks,
+    type: getRandomChoice(Object.values(CONST.SESSION_TYPES)),
   };
   if (ongoing) newSession.ongoing = true;
 

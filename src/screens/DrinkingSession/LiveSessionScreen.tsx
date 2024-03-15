@@ -17,7 +17,9 @@ import {
   discardLiveDrinkingSession,
   endLiveDrinkingSession,
   removeDrinkingSessionData,
+  removePlaceholderSessionData,
   saveDrinkingSessionData,
+  savePlaceholderSessionData,
   updateSessionDrinks,
 } from '@database/drinkingSessions';
 import {
@@ -218,7 +220,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
 
   async function saveSession(db: any, userId: string) {
     if (!session || !user) return;
-    if (totalUnits > 99) {
+    if (totalUnits > CONST.MAX_ALLOWED_UNITS) {
       console.log('Cannot save this session');
       return null;
     }
@@ -228,7 +230,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
         setSessionFinished(true); // No more db syncs
         let newSessionData: DrinkingSession = {
           ...session,
-          end_time: sessionIsLive ? Date.now() : session.start_time + 1,
+          end_time: sessionIsLive ? Date.now() : session.start_time,
         };
         delete newSessionData['ongoing'];
         // Wait for any pending updates to resolve first
@@ -246,6 +248,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
             false, // Do not update live status
           );
         }
+        await removePlaceholderSessionData(db, userId);
         // Reroute to session summary, do not allow user to return
         Navigation.navigate(
           ROUTES.DRINKING_SESSION_SUMMARY.getRoute(sessionId),
@@ -274,6 +277,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
         : removeDrinkingSessionData;
       await waitForNoPendingUpdate();
       await discardFunction(db, user.uid, sessionId);
+      await removePlaceholderSessionData(db, user.uid);
     } catch (error: any) {
       Alert.alert(
         'Session discard failed',
@@ -328,7 +332,20 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
         sessionId,
       ),
     );
-    sessionToOpen = sessionToOpen || getEmptySession(true, false);
+    if (!sessionToOpen) {
+      // No drinking session with this ID => check for a placeholder session.
+      let existingPlaceholderSession: DrinkingSession | null =
+        await readDataOnce(
+          db,
+          DBPATHS.USER_SESSION_PLACEHOLDER_USER_ID.getRoute(user.uid),
+        );
+      if (!existingPlaceholderSession) {
+        Alert.alert('Database Error', 'Failed to start a new session');
+        Navigation.navigate(ROUTES.HOME);
+        return;
+      }
+      sessionToOpen = existingPlaceholderSession;
+    }
     setSession(sessionToOpen);
     initialSession.current = sessionToOpen;
     setOpeningSession(false);
