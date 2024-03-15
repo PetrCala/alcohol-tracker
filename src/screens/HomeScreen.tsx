@@ -1,6 +1,7 @@
 ﻿import React, {useEffect, useMemo, useReducer} from 'react';
 import {
   Alert,
+  Dimensions,
   Image,
   Keyboard,
   RefreshControl,
@@ -49,6 +50,8 @@ import {DateData} from 'react-native-calendars';
 import {getEmptySession} from '@libs/SessionUtils';
 import DBPATHS from '@database/DBPATHS';
 import useRefresh from '@hooks/useRefresh';
+import {StatData, StatsOverview} from '@components/Items/StatOverview';
+import {getPlural} from '@libs/StringUtils';
 
 interface State {
   visibleDateObject: DateObject;
@@ -111,6 +114,14 @@ const HomeScreen = ({}: HomeScreenProps) => {
   } = useDatabaseData();
   const [state, dispatch] = useReducer(reducer, initialState);
   const {onRefresh, refreshing, refreshCounter} = useRefresh({refetch});
+
+  const statsData: StatData = [
+    {
+      header: `Drinking Session${getPlural(state.drinkingSessionsCount)}`,
+      content: String(state.drinkingSessionsCount),
+    },
+    {header: 'Units Consumed', content: String(state.unitsConsumed)},
+  ];
 
   // Handle drinking session button press
   const startDrinkingSession = async () => {
@@ -251,15 +262,8 @@ const HomeScreen = ({}: HomeScreenProps) => {
       <View style={commonStyles.headerContainer}>
         <View style={styles.profileContainer}>
           <TouchableOpacity
-            onPress={
-              () => Navigation.navigate(ROUTES.PROFILE.getRoute(user.uid))
-              // navigation.navigate('Profile Screen', {
-              //   userId: user.uid,
-              //   profileData: userData.profile,
-              //   friends: userData.friends,
-              //   drinkingSessionData: drinkingSessionData,
-              //   preferences: preferences,
-              // })
+            onPress={() =>
+              Navigation.navigate(ROUTES.PROFILE.getRoute(user.uid))
             }
             style={styles.profileButton}>
             <ProfileImage
@@ -304,17 +308,8 @@ const HomeScreen = ({}: HomeScreenProps) => {
             </Text>
           </TouchableOpacity>
         ) : null}
-        <View style={styles.menuInfoContainer}>
-          <View style={styles.menuInfoItemContainer}>
-            <Text style={styles.menuInfoText}>Units:</Text>
-            <Text style={styles.menuInfoText}>{state.unitsConsumed}</Text>
-          </View>
-          <View style={styles.menuInfoItemContainer}>
-            <Text style={styles.menuInfoText}>Sessions:</Text>
-            <Text style={styles.menuInfoText}>
-              {state.drinkingSessionsCount}
-            </Text>
-          </View>
+        <View style={styles.statsOverviewHolder}>
+          <StatsOverview statsData={statsData} />
         </View>
         <SessionsCalendar
           drinkingSessionData={drinkingSessionData}
@@ -383,6 +378,8 @@ const HomeScreen = ({}: HomeScreenProps) => {
     </>
   );
 };
+
+const screenWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
   profileContainer: {
@@ -470,6 +467,11 @@ const styles = StyleSheet.create({
     color: '#ffffff', // White color for the text
     fontWeight: 'bold',
   },
+  statsOverviewHolder: {
+    height: 120,
+    flexDirection: 'row',
+    width: screenWidth,
+  },
   menuInfoContainer: {
     flexDirection: 'column',
     justifyContent: 'center',
@@ -482,6 +484,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: '#FFFF99',
     width: '100%',
+  },
+  menuInfoHeadingText: {
+    textAlign: 'center',
+    fontSize: 18,
+    fontWeight: '500',
+    color: 'black',
+    padding: 5,
   },
   menuInfoText: {
     fontSize: 16,
