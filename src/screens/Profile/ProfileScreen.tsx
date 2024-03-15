@@ -20,6 +20,7 @@ import {
   dateToDateObject,
   getSingleMonthDrinkingSessions,
   objKeys,
+  roundToTwoDecimalPlaces,
   timestampToDate,
   timestampToDateString,
 } from '@libs/DataHandling';
@@ -121,7 +122,7 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
     },
     {
       header: 'Units Consumed',
-      content: String(state.unitsConsumed.toPrecision(2)),
+      content: String(roundToTwoDecimalPlaces(state.unitsConsumed)),
     },
   ];
 

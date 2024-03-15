@@ -760,4 +760,18 @@ export function objVals(obj: any): string[] {
   return [];
 }
 
+/**
+ * Rounds a number to two decimal places.
+ * @param value - The number to be rounded.
+ * @returns The rounded number.
+ */
+export function roundToTwoDecimalPlaces(value: number): number {
+  const decimalCheck = value.toString().split('.')[1];
+  if (decimalCheck && decimalCheck.length > 2) {
+    return parseFloat(value.toFixed(2));
+  } else {
+    return value;
+  }
+}
+
 // test, getAdjacentMonths, findongoingsession, aggregatesessionsbydays, month entries to colors (move these maybe to a different location), toPercentageVerbose

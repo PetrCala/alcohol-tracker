@@ -24,6 +24,7 @@ import {
   timestampToDate,
   formatDate,
   timestampToDateString,
+  roundToTwoDecimalPlaces,
 } from '@libs/DataHandling';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import UserOffline from '@components/UserOffline';
@@ -122,7 +123,7 @@ const HomeScreen = ({}: HomeScreenProps) => {
     },
     {
       header: 'Units Consumed',
-      content: String(state.unitsConsumed.toPrecision(2)),
+      content: String(roundToTwoDecimalPlaces(state.unitsConsumed)),
     },
   ];
 

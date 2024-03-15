@@ -22,6 +22,7 @@ import {
   aggregateSessionsByDays,
   monthEntriesToColors,
   hasDecimalPoint,
+  roundToTwoDecimalPlaces,
 } from '@libs/DataHandling';
 import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
 import {DateObject} from '@src/types/time';
@@ -126,6 +127,11 @@ const DayComponent: React.FC<{
 
   const getMarkingTextStyle = (marking: DayMarking) => {
     let baseStyle = styles.daySessionMarkingText;
+
+    // Ensure no funky numbers
+    if (marking?.units) {
+      marking.units = roundToTwoDecimalPlaces(marking.units);
+    }
 
     if (
       marking?.units &&
