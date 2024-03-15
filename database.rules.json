@@ -1,13 +1,5 @@
 {
   "rules": {
-    "beta_keys": {
-      ".read": true,
-      ".write": "auth.token.admin === true",
-      "$key": {
-        ".validate": "newData.hasChildren()",
-        ".write": "auth != null"
-      }
-    },
     "config": {
       ".read": true,
       ".write": "auth.token.admin === true"
