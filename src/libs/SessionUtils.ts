@@ -43,6 +43,12 @@ function isEmptySession(session: DrinkingSession): boolean {
   );
 }
 
+function sessionIsExpired(session: DrinkingSession | undefined): boolean {
+  if (!session) return false;
+  const expirationBoundary = Date.now() - CONST.SESSION_EXPIRY;
+  return session.start_time < expirationBoundary;
+}
+
 /**
  * From a list of drinking sessions, extract a single session object.
  * If the list does not contain the session, return an empty session.
@@ -64,6 +70,7 @@ function extractSessionOrEmpty(
 export {
   PlaceholderDrinks,
   extractSessionOrEmpty,
+  sessionIsExpired,
   getEmptySession,
   isEmptySession,
 };

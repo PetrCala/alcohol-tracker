@@ -163,6 +163,7 @@ const CONST = {
     },
     // DATE_TIME_FORMAT: /^\d{2}-\d{2} \d{2}:\d{2} [AP]M$/,
   },
+  SESSION_EXPIRY: 60 * 60 * 1000 * 12, // 12 hours
   SESSION_TYPES: {
     LIVE: 'live',
     EDIT: 'edit',
