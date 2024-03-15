@@ -143,6 +143,10 @@ const CONST = {
       PUSH: 'PUSH',
       NAVIGATE: 'NAVIGATE',
     },
+    SESSION_ACTION: {
+      SAVE: 'SAVE',
+      DISCARD: 'DISCARD',
+    },
   },
   NO_IMAGE: 'NO_IMAGE', // Used for the profile avatar when there is no image
   OS: {

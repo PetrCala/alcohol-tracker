@@ -48,6 +48,7 @@ import {
   saveDrinkingSessionData,
   savePlaceholderSessionData,
 } from '@database/drinkingSessions';
+import {useFocusEffect} from '@react-navigation/native';
 
 type DayOverviewScreenProps = StackScreenProps<
   DayOverviewNavigatorParamList,
@@ -260,10 +261,21 @@ const DayOverviewScreen = ({route}: DayOverviewScreenProps) => {
     }
   };
 
-  // Trigger refetch on component mount
-  useEffect(() => {
-    refetch().then(() => {}); // Possibly add a catch here
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      // Refetch relevant data every time the screen is focused
+      // Used when editing the sessions
+      if (!user) return;
+      try {
+        refetch(['drinkingSessionData', 'preferences']);
+      } catch (error: any) {
+        Alert.alert(
+          'Failed to contact the database',
+          'Could not update user online status:' + error.message,
+        );
+      }
+    }, []),
+  );
 
   if (!isOnline) return <UserOffline />;
   if (!date) return <LoadingData />;

@@ -110,6 +110,7 @@ const HomeScreen = ({}: HomeScreenProps) => {
     refetch,
   } = useDatabaseData();
   const [state, dispatch] = useReducer(reducer, initialState);
+  const {onRefresh, refreshing, refreshCounter} = useRefresh({refetch});
 
   // Handle drinking session button press
   const startDrinkingSession = async () => {
@@ -170,8 +171,6 @@ const HomeScreen = ({}: HomeScreenProps) => {
       ROUTES.DRINKING_SESSION_LIVE.getRoute(state.ongoingSessionId),
     );
   };
-
-  const {onRefresh, refreshing, refreshCounter} = useRefresh({refetch});
 
   // Monitor visible month and various statistics
   useMemo(() => {

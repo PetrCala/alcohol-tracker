@@ -25,6 +25,7 @@ import {
 import {
   addDrinks,
   dateToDateObject,
+  formatDate,
   formatDateToDay,
   formatDateToTime,
   removeDrinks,
@@ -59,12 +60,14 @@ import {StackScreenProps} from '@react-navigation/stack';
 import {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
 import {getEmptySession} from '@libs/SessionUtils';
-import ROUTES from '@src/ROUTES';
+import ROUTES, {Route} from '@src/ROUTES';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {isEqual} from 'lodash';
 import {readDataOnce} from '@database/baseFunctions';
 import DBPATHS from '@database/DBPATHS';
 import useAsyncQueue from '@hooks/useAsyncQueue';
+import {ValueOf} from 'type-fest';
+import DeepValueOf from '@src/types/utils/DeepValueOf';
 
 type LiveSessionScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -98,6 +101,8 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
   const [openingSession, setOpeningSession] = useState<boolean>(true);
   const [savingSession, setSavingSession] = useState<boolean>(false);
   const [showLeaveConfirmation, setShowLeaveConfirmation] = useState(false);
+  const [isPlaceholderSession, setIsPlaceholderSession] =
+    useState<boolean>(false);
   const sessionIsLive = session?.ongoing ? true : false;
   const scrollViewRef = useRef<ScrollView>(null); // To navigate the view
 
@@ -206,6 +211,31 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
     }
   };
 
+  /** Determine the screen to return to, and navigate to it */
+  const navigateBackDynamically = (
+    action: DeepValueOf<typeof CONST.NAVIGATION.SESSION_ACTION>,
+  ) => {
+    const previousScreenName = Navigation.getLastScreenName(true);
+
+    const routesMap = {
+      SAVE: () => ROUTES.DRINKING_SESSION_SUMMARY.getRoute(sessionId),
+      DISCARD: () => ROUTES.HOME,
+    };
+
+    const navigateToOverview = () =>
+      ROUTES.DAY_OVERVIEW.getRoute(
+        timestampToDateString(session?.start_time || Date.now()),
+      );
+
+    // Decide the route based on the action or previous screen
+    const route =
+      previousScreenName === SCREENS.DAY_OVERVIEW.ROOT
+        ? navigateToOverview
+        : routesMap[action];
+
+    Navigation.navigate(route());
+  };
+
   // Update the hooks whenever drinks change
   useMemo(() => {
     if (!preferences) return;
@@ -250,9 +280,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
         }
         await removePlaceholderSessionData(db, userId);
         // Reroute to session summary, do not allow user to return
-        Navigation.navigate(
-          ROUTES.DRINKING_SESSION_SUMMARY.getRoute(sessionId),
-        );
+        navigateBackDynamically(CONST.NAVIGATION.SESSION_ACTION.SAVE);
       } catch (error: any) {
         Alert.alert(
           'Session save failed',
@@ -285,16 +313,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
       );
     } finally {
       setDiscardModalVisible(false);
-      const previousScreenName = Navigation.getLastScreenName(true);
-      if (previousScreenName == SCREENS.DAY_OVERVIEW.ROOT) {
-        Navigation.navigate(
-          ROUTES.DAY_OVERVIEW.getRoute(
-            timestampToDateString(session?.start_time || Date.now()),
-          ),
-        );
-      } else {
-        Navigation.navigate(ROUTES.HOME);
-      }
+      navigateBackDynamically(CONST.NAVIGATION.SESSION_ACTION.DISCARD);
     }
   };
 
@@ -314,12 +333,21 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
         Alert.alert('Database synchronization failed', error.message);
       }
     }
-    confirmGoBack();
+    await confirmGoBack();
   };
 
-  const confirmGoBack = () => {
-    setShowLeaveConfirmation(false);
-    Navigation.goBack();
+  const confirmGoBack = async () => {
+    if (!user) return;
+    try {
+      if (isPlaceholderSession) {
+        await removePlaceholderSessionData(db, user.uid);
+      }
+    } catch (error: any) {
+      console.log('Could not remove placeholder session data', error.message); // Unimportant
+    } finally {
+      setShowLeaveConfirmation(false);
+      Navigation.goBack();
+    }
   };
 
   const openSession = async () => {
@@ -345,6 +373,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
         return;
       }
       sessionToOpen = existingPlaceholderSession;
+      setIsPlaceholderSession(true);
     }
     setSession(sessionToOpen);
     initialSession.current = sessionToOpen;
@@ -423,7 +452,9 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
         <View style={styles.sessionInfoContainer}>
           <View style={styles.sessionTextContainer}>
             <Text style={styles.sessionInfoText}>
-              Session started at {sessionStartTime}
+              {isPlaceholderSession
+                ? `Session on ${formatDateToDay(sessionDate)}`
+                : `Session from ${sessionStartTime}`}
             </Text>
           </View>
           {isPending && (
