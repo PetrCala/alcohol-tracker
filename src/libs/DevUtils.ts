@@ -174,13 +174,6 @@ function validateAndParseInputToTimestamp(input: string): number {
   return date.getTime();
 }
 
-function objectsAreEqual(
-  object1: Record<string, any>,
-  object2: Record<string, any>,
-): boolean {
-  return JSON.stringify(object1) === JSON.stringify(object2);
-}
-
 export {
   loadJsonData,
   saveJsonData,
@@ -189,5 +182,4 @@ export {
   validateAndParseInputToTimestamp,
   confirmExecution,
   askForValue,
-  objectsAreEqual,
 };

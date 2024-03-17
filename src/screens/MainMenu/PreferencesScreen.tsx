@@ -27,8 +27,8 @@ import {MainMenuNavigatorParamList} from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
-import {set} from 'lodash';
 import LoadingData from '@components/LoadingData';
+import {objectsAreEqual} from '@libs/Utils';
 
 interface PreferencesListProps {
   id: string;
@@ -90,10 +90,7 @@ const PreferencesScreen = ({route}: PreferencesScreenProps) => {
   );
 
   const havePreferencesChanged = () => {
-    return (
-      JSON.stringify(initialPreferences.current) !==
-      JSON.stringify(currentPreferences)
-    );
+    return !objectsAreEqual(initialPreferences.current, currentPreferences);
   };
 
   const handleGoBack = () => {
