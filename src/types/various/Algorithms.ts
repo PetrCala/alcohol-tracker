@@ -1,7 +1,7 @@
+import {UserId} from '../database';
+
 type UserPriority = number;
 
-type UsersPriority = {
-  [userId: string]: UserPriority;
-};
+type UserPriorityList = Record<UserId, UserPriority>;
 
-export type {UserPriority, UsersPriority};
+export type {UserPriority, UserPriorityList};

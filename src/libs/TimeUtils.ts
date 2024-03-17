@@ -49,7 +49,6 @@ async function waitForBooleanToBeTrue(
   bool: boolean,
   timeout: number = 30000,
 ): Promise<boolean> {
-  console.log('Waiting for boolean to be true...');
   if (!bool) {
     return false; // No waiting was needed
   }
@@ -72,4 +71,13 @@ async function waitForBooleanToBeTrue(
   });
 }
 
-export {isRecent, getTimestampAge, waitForBooleanToBeTrue};
+/**
+ * Asynchronously waits for a specified number of milliseconds.
+ * @example
+ * await sleep(1000); // Wait for 1 second
+ */
+function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+export {isRecent, getTimestampAge, waitForBooleanToBeTrue, sleep};

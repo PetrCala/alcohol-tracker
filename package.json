@@ -68,6 +68,7 @@
     "react-native-screens": "^3.22.1",
     "react-native-tab-view": "^3.5.2",
     "react-native-webview": "^13.6.2",
+    "seedrandom": "^3.0.5",
     "semver": "^7.5.4",
     "ts-node": "^10.9.2",
     "type-fest": "^4.10.2",

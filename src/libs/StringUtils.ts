@@ -1,4 +1,5 @@
 ﻿import CONST from '@src/CONST';
+import seedrandom from 'seedrandom';
 
 /**
  * Clean a string to be used as a key for the Firebase Realtime Database.
@@ -20,7 +21,7 @@
  * const key = cleanStringForFirebaseKey(rawNickname);
  * console.log(key);  // Outputs: "john_doe_1_c"
  */
-export function cleanStringForFirebaseKey(rawStr: string): string {
+function cleanStringForFirebaseKey(rawStr: string): string {
   // Trim spaces and normalize the string to its canonical decomposed form.
   const normalizedStr = rawStr.trim().normalize('NFD');
 
@@ -45,6 +46,20 @@ export function cleanStringForFirebaseKey(rawStr: string): string {
     : cleanedStr.replace(/_+$/, '');
 }
 
-export function getPlural(input: number): string {
+function getPlural(input: number): string {
   return input > 1 ? 's' : '';
 }
+
+function generateRandomString(length: number, seed: string): string {
+  const rng = seedrandom(seed); // Create a new seeded RNG
+  const characters =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  const charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(rng() * charactersLength));
+  }
+  return result;
+}
+
+export {cleanStringForFirebaseKey, getPlural, generateRandomString};

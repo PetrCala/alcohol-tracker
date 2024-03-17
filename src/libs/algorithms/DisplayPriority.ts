@@ -1,4 +1,4 @@
-import {UserPriority, UsersPriority} from '@src/types/various/Algorithms';
+import {UserPriority, UserPriorityList} from '@src/types/various/Algorithms';
 import {UserStatus, UserStatusList} from '@src/types/database';
 import {sumAllDrinks} from '@libs/DataHandling';
 
@@ -11,7 +11,7 @@ import {sumAllDrinks} from '@libs/DataHandling';
  */
 function orderUsersByPriority(
   userIds: string[],
-  usersPriority: UsersPriority,
+  usersPriority: UserPriorityList,
 ): string[] {
   return userIds.sort((a, b) => usersPriority[b] - usersPriority[a]);
 }
@@ -19,8 +19,8 @@ function orderUsersByPriority(
 function calculateAllUsersPriority(
   userIds: string[],
   userStatusList: UserStatusList,
-): UsersPriority {
-  let usersPriority: UsersPriority = {};
+): UserPriorityList {
+  let usersPriority: UserPriorityList = {};
   userIds.forEach(userId => {
     let userPriority: UserPriority = 0;
     let userStatusData: UserStatus = userStatusList[userId];
