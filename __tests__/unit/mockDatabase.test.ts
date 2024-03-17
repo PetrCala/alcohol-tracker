@@ -23,7 +23,7 @@ import {
   UserProps,
   UnitsToColors,
   UserStatus,
-  UserList,
+  UserPropsList,
 } from '../../src/types/database';
 import CONST from '@src/CONST';
 
@@ -240,7 +240,7 @@ function isUserData(obj: any): obj is UserProps {
  * @param userData Data to validate
  * @returns bool
  */
-function validateUserData(userData: UserList): boolean {
+function validateUserData(userData: UserPropsList): boolean {
   for (const userId in userData) {
     if (!isUserData(userData[userId])) {
       return false;

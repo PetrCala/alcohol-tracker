@@ -1,9 +1,11 @@
 type UserId = string;
 
-type FriendId = string;
+type UserList = Record<UserId, boolean>;
 
-type FriendRequestId = string;
+type UserArray = Array<UserId>;
 
 type MeasureType = 'drinks' | 'units';
 
-export type {UserId, FriendId, FriendRequestId, MeasureType};
+export type {UserId, UserList, UserArray, MeasureType};
+
+// FriendArray, FriendId, FriendRequestId

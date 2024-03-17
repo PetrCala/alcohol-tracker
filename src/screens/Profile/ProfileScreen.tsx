@@ -30,7 +30,7 @@ import LoadingData from '@components/LoadingData';
 import {fetchUserFriends, getCommonFriendsCount} from '@libs/FriendUtils';
 import MainHeader from '@components/Header/MainHeader';
 import ManageFriendPopup from '@components/Popups/Profile/ManageFriendPopup';
-import {DrinkingSessionArray, FriendList} from '@src/types/database';
+import {DrinkingSessionArray, UserList} from '@src/types/database';
 import {StackScreenProps} from '@react-navigation/stack';
 import {ProfileNavigatorParamList} from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
@@ -45,7 +45,7 @@ import {sendFriendRequest} from '@database/friends';
 import {getPlural} from '@libs/StringUtils';
 
 interface State {
-  selfFriends: FriendList | undefined;
+  selfFriends: UserList | undefined;
   friendCount: number;
   commonFriendCount: number;
   visibleDateObject: DateObject;

@@ -8,10 +8,10 @@
   View,
 } from 'react-native';
 import {
-  FriendList,
   FriendRequestList,
   FriendRequestStatus,
   ProfileList,
+  UserList,
 } from '@src/types/database';
 import {useEffect, useMemo, useReducer, useRef} from 'react';
 import {useFirebase} from '@src/context/global/FirebaseContext';
@@ -30,7 +30,7 @@ import useRefresh from '@hooks/useRefresh';
 interface State {
   searchResultData: UserSearchResults;
   searching: boolean;
-  friends: FriendList | undefined;
+  friends: UserList | undefined;
   friendRequests: FriendRequestList | undefined;
   requestStatuses: {[userId: string]: FriendRequestStatus | undefined};
   noUsersFound: boolean;

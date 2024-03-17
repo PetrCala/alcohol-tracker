@@ -1,12 +1,7 @@
 import type Config from './Config';
 import type {AppSettings, Maintenance} from './Config';
 import type DatabaseProps from './DatabaseProps';
-import type {
-  FriendId,
-  UserId,
-  FriendRequestId,
-  MeasureType,
-} from './DatabaseCommon';
+import type {UserId, UserList, UserArray, MeasureType} from './DatabaseCommon';
 import type DrinkingSession from './DrinkingSession';
 import type {
   DrinkingSessionId,
@@ -17,8 +12,6 @@ import type {
 } from './DrinkingSession';
 import type Feedback from './Feedback';
 import type {FeedbackList, FeedbackId} from './Feedback';
-import type FriendList from './FriendList';
-import type {FriendArray} from './FriendList';
 import type FriendRequestList from './FriendRequestList';
 import type {
   FriendRequestArray,
@@ -39,7 +32,7 @@ import type {UnconfirmedDaysList, UnconfirmedDayKey} from './UnconfirmedDays';
 import type Drinks from './Drinks';
 import type {DrinkKey, DrinkName, DrinksList, DrinksTimestamp} from './Drinks';
 import type UserProps from './UserProps';
-import type {UserList, Profile, ProfileList} from './UserProps';
+import type {UserPropsList, Profile, ProfileList} from './UserProps';
 import type UserStatus from './UserStatus';
 import type {UserStatusList} from './UserStatus';
 
@@ -61,11 +54,7 @@ export type {
   Feedback,
   FeedbackId,
   FeedbackList,
-  FriendArray,
-  FriendId,
-  FriendList,
   FriendRequestArray,
-  FriendRequestId,
   FriendRequestList,
   FriendRequestStatus,
   Maintenance,
@@ -84,10 +73,12 @@ export type {
   UnconfirmedDays,
   UnconfirmedDaysList,
   UnitsToColors,
+  UserArray,
   UserProps,
   UserDrinkingSessionsList,
   UserId,
   UserList,
+  UserPropsList,
   UserStatus,
   UserStatusList,
 };

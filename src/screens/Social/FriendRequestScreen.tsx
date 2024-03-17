@@ -12,8 +12,8 @@
 import {
   FriendRequestList,
   FriendRequestStatus,
-  FriendList,
   ProfileList,
+  UserList,
 } from '@src/types/database';
 import {useEffect, useMemo, useReducer, useState} from 'react';
 import {useFirebase} from '@context/global/FirebaseContext';
@@ -49,7 +49,7 @@ type FriendRequestItemProps = {
 
 type ScreenProps = {
   friendRequests: FriendRequestList | undefined;
-  friends: FriendList | undefined;
+  friends: UserList | undefined;
 };
 
 const handleAcceptFriendRequest = async (

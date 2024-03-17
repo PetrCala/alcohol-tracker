@@ -1,5 +1,4 @@
-import {UserId} from './DatabaseCommon';
-import FriendList from './FriendList';
+import {UserId, UserList} from './DatabaseCommon';
 import FriendRequestList from './FriendRequestList';
 
 type Profile = {
@@ -9,14 +8,14 @@ type Profile = {
 
 type UserProps = {
   profile: Profile;
-  friends?: FriendList;
+  friends?: UserList;
   friend_requests?: FriendRequestList;
   role: string;
 };
 
-type UserList = Record<UserId, UserProps>;
+type UserPropsList = Record<UserId, UserProps>;
 
 type ProfileList = Record<UserId, Profile>;
 
 export default UserProps;
-export type {Profile, UserList, ProfileList};
+export type {Profile, UserPropsList, ProfileList};

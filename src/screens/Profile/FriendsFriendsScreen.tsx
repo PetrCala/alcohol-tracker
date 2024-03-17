@@ -10,7 +10,7 @@ import {
   FriendRequestStatus,
   ProfileList,
   FriendRequestList,
-  FriendList,
+  UserList,
 } from '@src/types/database';
 import {useEffect, useMemo, useReducer} from 'react';
 import {useFirebase} from '@context/global/FirebaseContext';
@@ -45,7 +45,7 @@ import {readDataOnce} from '@database/baseFunctions';
 
 interface State {
   searching: boolean;
-  friends: FriendList | undefined;
+  friends: UserList | undefined;
   displayedFriends: UserSearchResults;
   commonFriends: UserSearchResults;
   otherFriends: UserSearchResults;
@@ -194,7 +194,7 @@ const FriendsFriendsScreen = ({route}: FriendsFriendsScreenProps) => {
   const fetchData = async () => {
     try {
       dispatch({type: 'SET_IS_LOADING', payload: true});
-      let userFriends: FriendList | undefined = await readDataOnce(
+      let userFriends: UserList | undefined = await readDataOnce(
         db,
         DBPATHS.USERS_USER_ID_FRIENDS.getRoute(userId),
       );

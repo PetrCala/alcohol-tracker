@@ -1,9 +1,9 @@
 ﻿import {Database, update, ref, get} from 'firebase/database';
 import {
-  FriendList,
   FriendRequestList,
   Preferences,
   Profile,
+  UserList,
   UserProps,
 } from '@src/types/database';
 import {
@@ -114,7 +114,7 @@ async function deleteUserData(
   db: Database,
   userId: string,
   userNickname: string,
-  friends: FriendList | undefined,
+  friends: UserList | undefined,
   friendRequests: FriendRequestList | undefined,
 ): Promise<void> {
   const nicknameKey = cleanStringForFirebaseKey(userNickname);

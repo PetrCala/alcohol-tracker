@@ -1,9 +1,9 @@
 import {useEffect, useReducer, useCallback} from 'react';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import {
-  FriendList,
   NicknameToIdList,
   ProfileList,
+  UserList,
   UserStatusList,
 } from '@src/types/database';
 import {objKeys} from '@libs/DataHandling';
@@ -57,7 +57,7 @@ function reducer(state: State, action: Action): State {
  * Usage:
  * const { loadingDisplayData, displayData } = useProfileList(friends);
  */
-const useProfileList = (friends: FriendList | NicknameToIdList | undefined) => {
+const useProfileList = (friends: UserList | NicknameToIdList | undefined) => {
   const {db} = useFirebase();
   const [state, dispatch] = useReducer(reducer, initialState);
 

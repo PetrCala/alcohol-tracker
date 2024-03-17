@@ -258,8 +258,8 @@ describeWithEmulator('Test pushing new user info into the database', () => {
   beforeEach(async () => {
     await fillDatabaseWithMockData(db);
 
-    let userList = await readDataOnce(db, DBPATHS.USER_STATUS); // Arbitrary node with all user ids in top level
-    const userKeys = Object.keys(userList);
+    let userStatusList = await readDataOnce(db, DBPATHS.USER_STATUS); // Arbitrary node with all user ids in top level
+    const userKeys = Object.keys(userStatusList);
     expect(userKeys).not.toContain(newUserId); // Check that the user does not exist in the mock database
 
     await pushNewUserInfo(db, newUserId, newUserProfileData);

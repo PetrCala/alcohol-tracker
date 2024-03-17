@@ -33,15 +33,15 @@ import FillerView from '@components/FillerView';
 import PressableWithAnimation from '@components/Buttons/PressableWithAnimation';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
-import {FriendList} from '@src/types/database';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import useRefresh from '@hooks/useRefresh';
 import {RefreshControl} from 'react-native-gesture-handler';
+import {UserList} from '@src/types/database';
 
 interface State {
   searching: boolean;
-  friends: FriendList | undefined;
+  friends: UserList | undefined;
   friendsToDisplay: UserSearchResults;
   usersPriority: UsersPriority;
   displayArray: string[]; // Main array to display

@@ -1,13 +1,12 @@
 import CONST from '@src/CONST';
 import {ValueOf} from 'type-fest';
+import {UserId} from './DatabaseCommon';
 
 type FriendRequestStatus = ValueOf<(typeof CONST)['FRIEND_REQUEST_STATUS']>;
 
-type FriendRequestId = string;
-
-type FriendRequestList = Record<FriendRequestId, FriendRequestStatus>;
+type FriendRequestList = Record<UserId, FriendRequestStatus>;
 
 type FriendRequestArray = Array<FriendRequestStatus>;
 
 export default FriendRequestList;
-export type {FriendRequestStatus, FriendRequestId, FriendRequestArray};
+export type {FriendRequestStatus, FriendRequestArray};

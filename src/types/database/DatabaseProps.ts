@@ -3,7 +3,7 @@ import {FeedbackList} from './Feedback';
 import {NicknameToIdList} from './NicknameToId';
 import {PreferencesList} from './Preferences';
 import {UnconfirmedDaysList} from './UnconfirmedDays';
-import {UserList} from './UserProps';
+import {UserPropsList} from './UserProps';
 import {UserDrinkingSessionsList} from './DrinkingSession';
 import {UserStatusList} from './UserStatus';
 import {SessionPlaceholderList} from './SessionPlaceholder';
@@ -21,7 +21,7 @@ type DatabaseProps = {
   user_session_placeholder: SessionPlaceholderList;
   user_status: UserStatusList;
   user_unconfirmed_days: UnconfirmedDaysList;
-  users: UserList;
+  users: UserPropsList;
 };
 
 export default DatabaseProps;

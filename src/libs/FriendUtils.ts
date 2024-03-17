@@ -2,8 +2,8 @@ import {readDataOnce} from '@database/baseFunctions';
 import {
   FriendRequestList,
   FriendRequestStatus,
-  FriendList,
-  FriendArray,
+  UserArray,
+  UserList,
 } from '@src/types/database';
 import {Database} from 'firebase/database';
 import {isNonEmptyArray} from './Validation';
@@ -13,7 +13,7 @@ import DBPATHS from '@database/DBPATHS';
 export async function fetchUserFriends(
   db: Database,
   userId: string,
-): Promise<FriendList | undefined> {
+): Promise<UserList | undefined> {
   return await readDataOnce(db, DBPATHS.USERS_USER_ID_FRIENDS.getRoute(userId));
 }
 
@@ -24,10 +24,10 @@ export async function fetchUserFriends(
  * @returns An array of common friends.
  */
 export function getCommonFriends(
-  user1FriendIds: FriendArray,
-  user2FriendIds: FriendArray,
-): FriendArray {
-  let commonFriends: FriendArray = [];
+  user1FriendIds: UserArray,
+  user2FriendIds: UserArray,
+): UserArray {
+  let commonFriends: UserArray = [];
   if (!isNonEmptyArray(user1FriendIds) && !isNonEmptyArray(user2FriendIds)) {
     return commonFriends;
   }
@@ -44,8 +44,8 @@ export function getCommonFriends(
  * @returns The number of common friends.
  */
 export function getCommonFriendsCount(
-  user1FriendIds: FriendArray,
-  user2FriendIds: FriendArray,
+  user1FriendIds: UserArray,
+  user2FriendIds: UserArray,
 ): number {
   return getCommonFriends(user1FriendIds, user2FriendIds).length;
 }
