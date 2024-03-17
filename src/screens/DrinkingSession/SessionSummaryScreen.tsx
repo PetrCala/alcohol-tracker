@@ -20,9 +20,13 @@ import {StackScreenProps} from '@react-navigation/stack';
 import SCREENS from '@src/SCREENS';
 import {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
 import {useEffect, useState} from 'react';
-import {extractSessionOrEmpty} from '@libs/SessionUtils';
+import {
+  calculateSessionLength,
+  extractSessionOrEmpty,
+} from '@libs/SessionUtils';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
+import ScreenWrapper from '@components/ScreenWrapper';
 
 const SessionDataItem = ({
   heading,
@@ -83,6 +87,7 @@ const SessionSummaryScreen = ({route}: SessionSummaryScreenProps) => {
   const sessionDay = formatDateToDay(sessionStartDate);
   const sessionStartTime = formatDateToTime(sessionStartDate);
   const sessionEndTime = formatDateToTime(sessionEndDate);
+  const sessionLength = calculateSessionLength(session, false);
   // Figure out last drink added
   let lastDrinkAdded: string;
   const lastDrinkEditTimestamp = getLastDrinkAddedTime(session);
@@ -109,9 +114,15 @@ const SessionSummaryScreen = ({route}: SessionSummaryScreenProps) => {
   const generalData = [
     {heading: 'Units:', data: totalUnits.toString()},
     {heading: 'Date:', data: sessionDay},
-    {heading: 'Start time:', data: sessionStartTime},
-    {heading: 'Last drink added:', data: lastDrinkAdded},
-    {heading: 'End time:', data: sessionEndTime},
+    {
+      heading: 'Start time:',
+      data: sessionLength === 0 ? '-' : sessionStartTime,
+    },
+    {
+      heading: 'Last drink added:',
+      data: sessionLength === 0 ? '-' : lastDrinkAdded,
+    },
+    {heading: 'End time:', data: sessionLength === 0 ? '-' : sessionEndTime},
   ];
 
   const drinkData = [
@@ -145,7 +156,7 @@ const SessionSummaryScreen = ({route}: SessionSummaryScreenProps) => {
   }, [drinkingSessionData]);
 
   return (
-    <>
+    <ScreenWrapper testID={SessionSummaryScreen.displayName}>
       <MainHeader
         headerText=""
         onGoBack={handleBackPress}
@@ -219,7 +230,7 @@ const SessionSummaryScreen = ({route}: SessionSummaryScreenProps) => {
           onPress={handleBackPress}
         />
       </View>
-    </>
+    </ScreenWrapper>
   );
 };
 
@@ -329,4 +340,5 @@ const styles = StyleSheet.create({
   },
 });
 
+SessionSummaryScreen.displayName = 'Session Summary Screen';
 export default SessionSummaryScreen;

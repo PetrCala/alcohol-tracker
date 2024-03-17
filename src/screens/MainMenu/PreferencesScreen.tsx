@@ -29,6 +29,7 @@ import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import LoadingData from '@components/LoadingData';
 import {isEqual} from 'lodash';
+import ScreenWrapper from '@components/ScreenWrapper';
 
 interface PreferencesListProps {
   id: string;
@@ -176,11 +177,12 @@ const PreferencesScreen = ({route}: PreferencesScreenProps) => {
   if (saving) return <LoadingData loadingText="Saving your preferences..." />;
 
   return (
-    <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
+    <ScreenWrapper testID={PreferencesScreen.displayName}>
       <MainHeader headerText="Preferences" onGoBack={handleGoBack} />
       <ScrollView
         style={styles.scrollView}
         onScrollBeginDrag={Keyboard.dismiss}
+        showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled">
         <View style={[styles.container, styles.horizontalContainer]}>
           <Text style={styles.label}>First Day of Week</Text>
@@ -286,7 +288,7 @@ const PreferencesScreen = ({route}: PreferencesScreenProps) => {
           Navigation.goBack();
         }}
       />
-    </View>
+    </ScreenWrapper>
   );
 };
 
@@ -401,4 +403,5 @@ const styles = StyleSheet.create({
   },
 });
 
+PreferencesScreen.displayName = 'Preferences Screen';
 export default PreferencesScreen;

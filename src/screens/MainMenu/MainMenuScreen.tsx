@@ -35,6 +35,7 @@ import SCREENS from '@src/SCREENS';
 import Navigation from '@navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
+import ScreenWrapper from '@components/ScreenWrapper';
 
 type MainMenuButtonData = {
   label: string;
@@ -305,7 +306,7 @@ const MainMenuScreen = ({route}: MainMenuScreenProps) => {
   if (!db || !preferences || !userData) return null; // Should never be null
 
   return (
-    <DismissKeyboard>
+    <ScreenWrapper testID={MainMenuScreen.displayName}>
       <View style={styles.mainContainer}>
         <MainHeader headerText="" onGoBack={() => Navigation.goBack()} />
         <ScrollView
@@ -369,7 +370,7 @@ const MainMenuScreen = ({route}: MainMenuScreenProps) => {
           />
         </ScrollView>
       </View>
-    </DismissKeyboard>
+    </ScreenWrapper>
   );
 };
 
@@ -413,4 +414,5 @@ const styles = StyleSheet.create({
   },
 });
 
+MainMenuScreen.displayName = 'Main Menu Screen';
 export default MainMenuScreen;

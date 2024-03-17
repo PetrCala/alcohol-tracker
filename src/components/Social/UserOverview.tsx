@@ -5,7 +5,7 @@ import {getTimestampAge, isRecent} from '@libs/TimeUtils';
 import commonStyles from '@src/styles/commonStyles';
 import {sumAllDrinks} from '@libs/DataHandling';
 import {Profile, UserStatus} from '@src/types/database';
-import {sessionIsExpired} from '@libs/SessionUtils';
+import {calculateSessionLength, sessionIsExpired} from '@libs/SessionUtils';
 
 type UserOverviewProps = {
   userId: string;
@@ -25,9 +25,7 @@ const UserOverview: React.FC<UserOverviewProps> = ({
   const lastSeen = getTimestampAge(last_online);
   const inSession = latest_session?.ongoing;
   const displaySessionInfo = inSession && !sessionIsExpired(latest_session);
-  const sessionLength = latest_session?.end_time
-    ? getTimestampAge(latest_session.end_time, false)
-    : '';
+  const sessionLength = calculateSessionLength(latest_session, true);
   const drinksThisSession = latest_session
     ? sumAllDrinks(latest_session?.drinks)
     : null;

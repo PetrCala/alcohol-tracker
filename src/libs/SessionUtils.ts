@@ -7,6 +7,7 @@ import {
   DrinksList,
 } from '@src/types/database';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
+import {getTimestampAge, numberToVerboseString} from './TimeUtils';
 
 const PlaceholderDrinks: DrinksList = {[Date.now()]: {other: 0}};
 
@@ -49,6 +50,19 @@ function sessionIsExpired(session: DrinkingSession | undefined): boolean {
   return session.start_time < expirationBoundary;
 }
 
+/** Calculate a length of a sesison either as a number, or as a string */
+function calculateSessionLength(
+  session: DrinkingSession | undefined,
+  returnString?: boolean,
+): number | string {
+  if (!session) return returnString ? '0s' : 0;
+  const length = session?.end_time ? session.end_time - session.start_time : 0;
+  if (returnString) {
+    return numberToVerboseString(length, false);
+  }
+  return length;
+}
+
 /**
  * From a list of drinking sessions, extract a single session object.
  * If the list does not contain the session, return an empty session.
@@ -69,6 +83,7 @@ function extractSessionOrEmpty(
 
 export {
   PlaceholderDrinks,
+  calculateSessionLength,
   extractSessionOrEmpty,
   sessionIsExpired,
   getEmptySession,

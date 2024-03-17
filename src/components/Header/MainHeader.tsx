@@ -18,29 +18,27 @@ const MainHeader: React.FC<HeaderProps> = ({
   rightSideComponent,
 }) => {
   return (
-    <DismissKeyboard>
-      <View style={commonStyles.headerContainer}>
-        <MenuIcon
-          iconId="header-icon"
-          iconSource={KirokuIcons.ArrowBack}
-          containerStyle={commonStyles.backArrowContainer}
-          iconStyle={commonStyles.backArrow}
-          onPress={() => onGoBack()}
-        />
-        <View style={commonStyles.headerRightContainer}>
-          {rightSideComponent ? (
-            rightSideComponent
-          ) : (
-            <Text
-              style={styles.sectionText}
-              numberOfLines={1}
-              ellipsizeMode="tail">
-              {headerText}
-            </Text>
-          )}
-        </View>
+    <View style={commonStyles.headerContainer}>
+      <MenuIcon
+        iconId="header-icon"
+        iconSource={KirokuIcons.ArrowBack}
+        containerStyle={commonStyles.backArrowContainer}
+        iconStyle={commonStyles.backArrow}
+        onPress={() => onGoBack()}
+      />
+      <View style={commonStyles.headerRightContainer}>
+        {rightSideComponent ? (
+          rightSideComponent
+        ) : (
+          <Text
+            style={styles.sectionText}
+            numberOfLines={1}
+            ellipsizeMode="tail">
+            {headerText}
+          </Text>
+        )}
       </View>
-    </DismissKeyboard>
+    </View>
   );
 };
 

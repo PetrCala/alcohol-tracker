@@ -2,6 +2,7 @@
 import {WebView} from 'react-native-webview';
 import MainHeader from '@components/Header/MainHeader';
 import Navigation from '@libs/Navigation/Navigation';
+import ScreenWrapper from '@components/ScreenWrapper';
 
 const PrivacyPolicyScreen = () => {
   const policyHtml =
@@ -20,7 +21,7 @@ const PrivacyPolicyScreen = () => {
   };
 
   return (
-    <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
+    <ScreenWrapper testID={PrivacyPolicyScreen.displayName}>
       <MainHeader headerText="" onGoBack={() => Navigation.goBack()} />
       <View style={styles.mainContainer}>
         <WebView
@@ -31,14 +32,16 @@ const PrivacyPolicyScreen = () => {
           javaScriptEnabled
         />
       </View>
-    </View>
+    </ScreenWrapper>
   );
 };
-
-export default PrivacyPolicyScreen;
 
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
+    backgroundColor: '#FFFF99',
   },
 });
+
+PrivacyPolicyScreen.displayName = 'Privacy Policy Screen';
+export default PrivacyPolicyScreen;

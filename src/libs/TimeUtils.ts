@@ -6,36 +6,46 @@ function isRecent(timestamp: number): boolean {
   return now - timestamp < fiveMinutes;
 }
 
-function getTimestampAge(timestamp: number, addAgo: boolean = true): string {
-  const now = Date.now();
-  const difference = now - timestamp;
+/**
+ * Converts a number into a verbose string representation of its age.
+ * @param number - The number to convert.
+ * @param addAgo - Optional. Specifies whether to add "ago" at the end of the string. Default is true.
+ * @returns The verbose string representation of the number's age.
+ */
+function numberToVerboseString(number: number, addAgo: boolean = true): string {
   const formatText = (input: number, unit: string) =>
     `${input} ${unit}${getPlural(input)}${addAgo ? ' ago' : ''}`;
 
-  // Format the timestamp into human-readable form based on its age
+  // Format the number into human-readable form based on its age
   switch (true) {
-    case difference < 60 * 1000:
-      const seconds = Math.floor(difference / 1000);
+    case number < 60 * 1000:
+      const seconds = Math.floor(number / 1000);
       return formatText(seconds, 'second');
-    case difference < 60 * 60 * 1000:
-      const minutes = Math.floor(difference / (60 * 1000));
+    case number < 60 * 60 * 1000:
+      const minutes = Math.floor(number / (60 * 1000));
       return formatText(minutes, 'minute');
-    case difference < 24 * 60 * 60 * 1000:
-      const hours = Math.floor(difference / (60 * 60 * 1000));
+    case number < 24 * 60 * 60 * 1000:
+      const hours = Math.floor(number / (60 * 60 * 1000));
       return formatText(hours, 'hour');
-    case difference < 7 * 24 * 60 * 60 * 1000:
-      const days = Math.floor(difference / (24 * 60 * 60 * 1000));
+    case number < 7 * 24 * 60 * 60 * 1000:
+      const days = Math.floor(number / (24 * 60 * 60 * 1000));
       return formatText(days, 'day');
-    case difference < 30 * 24 * 60 * 60 * 1000:
-      const weeks = Math.floor(difference / (7 * 24 * 60 * 60 * 1000));
+    case number < 30 * 24 * 60 * 60 * 1000:
+      const weeks = Math.floor(number / (7 * 24 * 60 * 60 * 1000));
       return formatText(weeks, 'week');
-    case difference < 365 * 24 * 60 * 60 * 1000:
-      const months = Math.floor(difference / (30 * 24 * 60 * 60 * 1000));
+    case number < 365 * 24 * 60 * 60 * 1000:
+      const months = Math.floor(number / (30 * 24 * 60 * 60 * 1000));
       return formatText(months, 'month');
     default:
-      const years = Math.floor(difference / (365 * 24 * 60 * 60 * 1000));
+      const years = Math.floor(number / (365 * 24 * 60 * 60 * 1000));
       return formatText(years, 'year');
   }
+}
+
+function getTimestampAge(timestamp: number, addAgo: boolean = true): string {
+  const now = Date.now();
+  const difference = now - timestamp;
+  return numberToVerboseString(difference, addAgo);
 }
 
 /**
@@ -80,4 +90,10 @@ function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export {isRecent, getTimestampAge, waitForBooleanToBeTrue, sleep};
+export {
+  isRecent,
+  getTimestampAge,
+  waitForBooleanToBeTrue,
+  sleep,
+  numberToVerboseString,
+};

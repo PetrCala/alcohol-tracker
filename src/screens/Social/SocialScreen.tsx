@@ -22,6 +22,7 @@ import {SocialNavigatorParamList} from '@libs/Navigation/types';
 import Navigation from '@libs/Navigation/Navigation';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import FriendRequestCounter from '@components/Social/FriendRequestCounter';
+import ScreenWrapper from '@components/ScreenWrapper';
 
 type SocialFooterButtonProps = {
   index: number;
@@ -118,7 +119,7 @@ const SocialScreen = ({route}: SocialScreenProps) => {
   ];
 
   return (
-    <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
+    <ScreenWrapper testID={SocialScreen.displayName}>
       <MainHeader headerText="Friends" onGoBack={() => Navigation.goBack()} />
       <TabView
         navigationState={{index, routes}}
@@ -142,11 +143,9 @@ const SocialScreen = ({route}: SocialScreenProps) => {
           />
         ))}
       </View>
-    </View>
+    </ScreenWrapper>
   );
 };
-
-export default SocialScreen;
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -241,3 +240,6 @@ const styles = StyleSheet.create({
     color: 'gray',
   },
 });
+
+SocialScreen.displayName = 'SocialScreen';
+export default SocialScreen;

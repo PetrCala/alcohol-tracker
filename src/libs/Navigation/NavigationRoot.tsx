@@ -92,7 +92,8 @@ function NavigationRoot({
       ...DefaultTheme,
       colors: {
         ...DefaultTheme.colors,
-        background: theme.appBG,
+        // background: theme.appBG, // Here, change the safe area color
+        background: theme.white,
       },
     }),
     [theme],

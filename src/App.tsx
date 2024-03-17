@@ -1,8 +1,15 @@
 import React from 'react';
-import {ContextProvider} from './context/global/Context';
 import type {Route} from './ROUTES';
 import InitialUrlContext from '@libs/InitialUrlContext';
 import Kiroku from './Kiroku';
+import ComposeProviders from '@components/ComposeProviders';
+import {FirebaseProvider} from '@context/global/FirebaseContext';
+import {UserConnectionProvider} from '@context/global/UserConnectionContext';
+import {ConfigProvider} from '@context/global/ConfigContext';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+// import {WindowDimensionsProvider} from '@src/components/withWindowDimensions';
+import {KeyboardStateProvider} from '@components/withKeyboardState';
+import SafeArea from '@src/components/SafeArea';
 
 type KirokuProps = {
   /** true if there is an authToken */
@@ -12,9 +19,17 @@ type KirokuProps = {
 const App = ({url}: KirokuProps) => {
   return (
     <InitialUrlContext.Provider value={url}>
-      <ContextProvider>
+      <ComposeProviders
+        components={[
+          FirebaseProvider,
+          UserConnectionProvider,
+          ConfigProvider,
+          SafeAreaProvider,
+          SafeArea,
+          KeyboardStateProvider,
+        ]}>
         <Kiroku />
-      </ContextProvider>
+      </ComposeProviders>
     </InitialUrlContext.Provider>
   );
 };

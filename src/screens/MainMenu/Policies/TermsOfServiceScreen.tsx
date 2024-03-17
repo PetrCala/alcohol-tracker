@@ -2,9 +2,9 @@
 import {WebView} from 'react-native-webview';
 import MainHeader from '@components/Header/MainHeader';
 import Navigation from '@libs/Navigation/Navigation';
+import ScreenWrapper from '@components/ScreenWrapper';
 
 const TermsOfServiceScreen = () => {
-
   const termsHtml =
     Platform.OS === 'android'
       ? {uri: 'file:///android_asset/html/terms-of-service.html'}
@@ -21,7 +21,7 @@ const TermsOfServiceScreen = () => {
   };
 
   return (
-    <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
+    <ScreenWrapper testID={TermsOfServiceScreen.displayName}>
       <MainHeader headerText="" onGoBack={() => Navigation.goBack()} />
       <View style={styles.mainContainer}>
         <WebView
@@ -32,14 +32,16 @@ const TermsOfServiceScreen = () => {
           javaScriptEnabled
         />
       </View>
-    </View>
+    </ScreenWrapper>
   );
 };
 
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
+    backgroundColor: '#FFFF99',
   },
 });
 
+TermsOfServiceScreen.displayName = 'Terms Of Service Screen';
 export default TermsOfServiceScreen;

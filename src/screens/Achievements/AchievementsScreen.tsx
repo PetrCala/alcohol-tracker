@@ -2,11 +2,11 @@
 import {StyleSheet, Text, View} from 'react-native';
 import MainHeader from '@components/Header/MainHeader';
 import Navigation from '@libs/Navigation/Navigation';
+import ScreenWrapper from '@components/ScreenWrapper';
 
 const AchievementsScreen = () => {
-
   return (
-    <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
+    <ScreenWrapper testID={AchievementsScreen.displayName}>
       <MainHeader
         headerText="Achievements"
         onGoBack={() => Navigation.goBack()}
@@ -14,7 +14,7 @@ const AchievementsScreen = () => {
       <View style={styles.mainContainer}>
         <Text style={styles.sectionText}>Coming soon...</Text>
       </View>
-    </View>
+    </ScreenWrapper>
   );
 };
 
@@ -28,7 +28,9 @@ const styles = StyleSheet.create({
   },
   mainContainer: {
     flex: 1,
+    backgroundColor: '#ffff99',
   },
 });
 
+AchievementsScreen.displayName = 'Achievements Screen';
 export default AchievementsScreen;

@@ -47,7 +47,12 @@ function cleanStringForFirebaseKey(rawStr: string): string {
 }
 
 function getPlural(input: number): string {
-  return input > 1 ? 's' : '';
+  return input !== 1 ? 's' : '';
+}
+
+/** If a string is equal to 00:00, return a dash. Otherwise return the string. */
+function nonMidnightString(string: string): string {
+  return string === '00:00' ? '-' : string;
 }
 
 function generateRandomString(length: number, seed: string): string {
@@ -62,4 +67,9 @@ function generateRandomString(length: number, seed: string): string {
   return result;
 }
 
-export {cleanStringForFirebaseKey, getPlural, generateRandomString};
+export {
+  nonMidnightString,
+  cleanStringForFirebaseKey,
+  getPlural,
+  generateRandomString,
+};

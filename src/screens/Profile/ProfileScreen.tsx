@@ -43,6 +43,7 @@ import {RefreshControl} from 'react-native-gesture-handler';
 import useFetchData, {UserFetchDataKey} from '@hooks/useFetchData';
 import {sendFriendRequest} from '@database/friends';
 import {getPlural} from '@libs/StringUtils';
+import ScreenWrapper from '@components/ScreenWrapper';
 
 interface State {
   selfFriends: UserList | undefined;
@@ -192,7 +193,7 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
   if (!profileData || !preferences || !userData) return;
 
   return (
-    <View style={styles.mainContainer}>
+    <ScreenWrapper testID={ProfileScreen.displayName}>
       <MainHeader
         headerText={user?.uid === userId ? 'Profile' : 'Friend Overview'}
         onGoBack={() => Navigation.goBack()}
@@ -201,6 +202,7 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
         style={styles.scrollView}
         onScrollBeginDrag={Keyboard.dismiss}
         keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
         }>
@@ -281,27 +283,14 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
         onGoBack={() => Navigation.goBack()}
         friendId={userId}
       />
-    </View>
+    </ScreenWrapper>
   );
 };
-
-export default ProfileScreen;
 
 const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-    backgroundColor: '#ffff99',
-    overflow: 'hidden', // For the shadow
-    // shadowColor: 'black',
-    // shadowOffset: {width: 0, height: 2},
-    // shadowOpacity: 0.25,
-    // shadowRadius: 3.84,
-    // elevation: 5,
-    // zIndex: 1,
-  },
   sectionText: {
     fontSize: 20,
     color: 'black',
@@ -310,6 +299,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   scrollView: {
+    backgroundColor: '#ffff99',
     width: '100%',
     flexGrow: 1,
     flexShrink: 1,
@@ -379,3 +369,6 @@ const styles = StyleSheet.create({
     color: 'black',
   },
 });
+
+ProfileScreen.displayName = 'Profile Screen';
+export default ProfileScreen;

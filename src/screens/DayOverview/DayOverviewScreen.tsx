@@ -42,13 +42,15 @@ import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import DBPATHS from '@database/DBPATHS';
-import {getEmptySession} from '@libs/SessionUtils';
+import {calculateSessionLength, getEmptySession} from '@libs/SessionUtils';
 import CONST from '@src/CONST';
 import {
   saveDrinkingSessionData,
   savePlaceholderSessionData,
 } from '@database/drinkingSessions';
 import {useFocusEffect} from '@react-navigation/native';
+import ScreenWrapper from '@components/ScreenWrapper';
+import {nonMidnightString} from '@libs/StringUtils';
 
 type DayOverviewScreenProps = StackScreenProps<
   DayOverviewNavigatorParamList,
@@ -109,7 +111,6 @@ const DayOverviewScreen = ({route}: DayOverviewScreenProps) => {
   const DrinkingSession = ({sessionId, session}: DrinkingSessionKeyValue) => {
     if (!preferences) return;
     // Calculate the session color
-    var totalDrinks = sumAllDrinks(session.drinks);
     var totalUnits = sumAllUnits(session.drinks, preferences.drinks_to_units);
     var unitsToColorsInfo = preferences.units_to_colors;
     var sessionColor = unitsToColors(totalUnits, unitsToColorsInfo);
@@ -118,6 +119,7 @@ const DayOverviewScreen = ({route}: DayOverviewScreenProps) => {
     }
     // Convert the timestamp to a Date object
     const date = timestampToDate(session.start_time);
+    const timeString = formatDateToTime(date);
     const viewStyle = {
       ...styles.menuDrinkingSessionContainer,
       backgroundColor: sessionColor,
@@ -135,21 +137,14 @@ const DayOverviewScreen = ({route}: DayOverviewScreenProps) => {
                   styles.menuDrinkingSessionText,
                   session.blackout === true ? {color: 'white'} : {},
                 ]}>
-                Time: {formatDateToTime(date)}
-              </Text>
-              <Text
-                style={[
-                  styles.menuDrinkingSessionText,
-                  session.blackout === true ? {color: 'white'} : {},
-                ]}>
-                Drinks: {totalDrinks}
-              </Text>
-              <Text
-                style={[
-                  styles.menuDrinkingSessionText,
-                  session.blackout === true ? {color: 'white'} : {},
-                ]}>
                 Units: {totalUnits}
+              </Text>
+              <Text
+                style={[
+                  styles.menuDrinkingSessionText,
+                  session.blackout === true ? {color: 'white'} : {},
+                ]}>
+                Time: {nonMidnightString(timeString)}
               </Text>
             </TouchableOpacity>
           </View>
@@ -285,7 +280,7 @@ const DayOverviewScreen = ({route}: DayOverviewScreenProps) => {
   }
 
   return (
-    <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
+    <ScreenWrapper testID={DayOverviewScreen.displayName}>
       <MainHeader
         headerText=""
         onGoBack={() => Navigation.goBack()}
@@ -333,7 +328,7 @@ const DayOverviewScreen = ({route}: DayOverviewScreenProps) => {
           }}
         />
       </View>
-    </View>
+    </ScreenWrapper>
   );
 };
 
@@ -342,7 +337,7 @@ const screenWidth = Dimensions.get('window').width;
 const styles = StyleSheet.create({
   menuDrinkingSessionContainer: {
     backgroundColor: 'white',
-    padding: 16,
+    padding: 8,
     borderRadius: 8,
     marginVertical: 4,
     borderColor: '#ddd',
@@ -352,8 +347,8 @@ const styles = StyleSheet.create({
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
     elevation: 5,
   },
   backArrowContainer: {
@@ -379,12 +374,17 @@ const styles = StyleSheet.create({
   dayOverviewContainer: {
     flex: 1,
     overflow: 'hidden',
+    backgroundColor: '#FFFF99',
   },
   menuDrinkingSessionButton: {
     flexGrow: 1,
     flexShrink: 1,
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    padding: 5,
   },
   menuDrinkingSessionText: {
+    padding: 4,
     fontSize: 16,
     color: 'black',
   },
@@ -409,10 +409,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     shadowOffset: {
       width: 0,
-      height: -2,
+      height: -9,
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 10,
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
     borderRadius: 2,
     marginVertical: 0,
     borderColor: '#ddd',
@@ -485,4 +485,5 @@ const styles = StyleSheet.create({
   },
 });
 
+DayOverviewScreen.displayName = 'Day Overview Screen';
 export default DayOverviewScreen;

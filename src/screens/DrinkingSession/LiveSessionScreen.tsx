@@ -68,6 +68,7 @@ import DBPATHS from '@database/DBPATHS';
 import useAsyncQueue from '@hooks/useAsyncQueue';
 import {ValueOf} from 'type-fest';
 import DeepValueOf from '@src/types/utils/DeepValueOf';
+import ScreenWrapper from '@components/ScreenWrapper';
 
 type LiveSessionScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -431,7 +432,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
   if (!preferences) return;
 
   return (
-    <>
+    <ScreenWrapper testID={LiveSessionScreen.displayName}>
       <MainHeader
         headerText=""
         onGoBack={handleBackPress}
@@ -452,9 +453,9 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
         <View style={styles.sessionInfoContainer}>
           <View style={styles.sessionTextContainer}>
             <Text style={styles.sessionInfoText}>
-              {isPlaceholderSession
-                ? `Session on ${formatDateToDay(sessionDate)}`
-                : `Session from ${sessionStartTime}`}
+              {session?.ongoing
+                ? `Session from ${sessionStartTime}`
+                : `Session on ${formatDateToDay(sessionDate)}`}
             </Text>
           </View>
           {isPending && (
@@ -551,7 +552,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
           asyncOperation={asyncOperation}
         /> */}
       </View>
-    </>
+    </ScreenWrapper>
   );
 };
 
@@ -606,7 +607,7 @@ const styles = StyleSheet.create({
     padding: 2,
     textShadowColor: 'black',
     textShadowOffset: {width: 1, height: 1},
-    textShadowRadius: 9,
+    textShadowRadius: 4,
   },
   scrollView: {
     flex: 1,

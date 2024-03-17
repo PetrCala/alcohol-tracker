@@ -22,6 +22,8 @@ import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 import ROUTES from '@src/ROUTES';
 import Navigation from '@navigation/Navigation';
 import {useFirebase} from '@context/global/FirebaseContext';
+import ScreenWrapper from '@components/ScreenWrapper';
+import useTheme from '@hooks/useTheme';
 
 interface State {
   email: string;
@@ -87,6 +89,7 @@ const LoginScreen = () => {
   // const {isOnline} = useUserConnection();
   const {auth} = useFirebase();
   const [state, dispatch] = useReducer(reducer, initialState);
+  const theme = useTheme();
 
   useFocusEffect(
     // Redirect to main screen if user is already logged in (from login screen only)
@@ -141,7 +144,9 @@ const LoginScreen = () => {
   if (state.loadingUser) return <LoadingData loadingText="Signing in..." />;
 
   return (
-    <DismissKeyboard>
+    <ScreenWrapper
+      testID={LoginScreen.displayName}
+      style={{backgroundColor: theme.appBG}}>
       <View style={styles.mainContainer}>
         <WarningMessage warningText={state.warning} dispatch={dispatch} />
         <SuccessMessage successText={state.success} dispatch={dispatch} />
@@ -214,7 +219,7 @@ const LoginScreen = () => {
           />
         </View>
       </View>
-    </DismissKeyboard>
+    </ScreenWrapper>
   );
 };
 
@@ -340,4 +345,5 @@ const styles = StyleSheet.create({
   },
 });
 
+LoginScreen.displayName = 'Login Screen';
 export default LoginScreen;

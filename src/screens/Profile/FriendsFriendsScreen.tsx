@@ -42,6 +42,7 @@ import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import DBPATHS from '@database/DBPATHS';
 import {readDataOnce} from '@database/baseFunctions';
+import ScreenWrapper from '@components/ScreenWrapper';
 
 interface State {
   searching: boolean;
@@ -254,52 +255,54 @@ const FriendsFriendsScreen = ({route}: FriendsFriendsScreenProps) => {
   };
 
   return (
-    <View style={styles.mainContainer}>
-      <MainHeader
-        headerText="Find Friends of Friends"
-        onGoBack={() => Navigation.goBack()}
-      />
-      <SearchWindow
-        windowText="Search this user's friends"
-        onSearch={localSearch}
-        onResetSearch={resetSearch}
-        searchOnTextChange={true}
-      />
-      <ScrollView
-        style={styles.scrollViewContainer}
-        onScrollBeginDrag={Keyboard.dismiss}
-        keyboardShouldPersistTaps="handled">
-        <View style={styles.searchResultsContainer}>
-          {state.searching ? (
-            <LoadingData style={styles.loadingData} />
-          ) : isNonEmptyArray(state.displayedFriends) ? (
-            <>
-              <GrayHeader
-                headerText={`Common Friends (${getCommonFriendsCount(
-                  state.commonFriends,
-                  state.displayedFriends,
-                )})`}
-              />
-              {renderSearchResults(true)}
-              <GrayHeader
-                headerText={`Other Friends (${getCommonFriendsCount(
-                  state.otherFriends,
-                  state.displayedFriends,
-                )})`}
-              />
-              {renderSearchResults(false)}
-            </>
-          ) : state.noUsersFound ? (
-            <Text style={commonStyles.noUsersFoundText}>
-              {objKeys(state.friends).length > 0
-                ? 'No friends found.\n\nTry searching for other users.'
-                : 'This user has not added any friends yet.'}
-            </Text>
-          ) : null}
-        </View>
-        <FillerView height={100} />
-      </ScrollView>
-    </View>
+    <ScreenWrapper testID={FriendsFriendsScreen.displayName}>
+      <View style={styles.mainContainer}>
+        <MainHeader
+          headerText="Find Friends of Friends"
+          onGoBack={() => Navigation.goBack()}
+        />
+        <SearchWindow
+          windowText="Search this user's friends"
+          onSearch={localSearch}
+          onResetSearch={resetSearch}
+          searchOnTextChange={true}
+        />
+        <ScrollView
+          style={styles.scrollViewContainer}
+          onScrollBeginDrag={Keyboard.dismiss}
+          keyboardShouldPersistTaps="handled">
+          <View style={styles.searchResultsContainer}>
+            {state.searching ? (
+              <LoadingData style={styles.loadingData} />
+            ) : isNonEmptyArray(state.displayedFriends) ? (
+              <>
+                <GrayHeader
+                  headerText={`Common Friends (${getCommonFriendsCount(
+                    state.commonFriends,
+                    state.displayedFriends,
+                  )})`}
+                />
+                {renderSearchResults(true)}
+                <GrayHeader
+                  headerText={`Other Friends (${getCommonFriendsCount(
+                    state.otherFriends,
+                    state.displayedFriends,
+                  )})`}
+                />
+                {renderSearchResults(false)}
+              </>
+            ) : state.noUsersFound ? (
+              <Text style={commonStyles.noUsersFoundText}>
+                {objKeys(state.friends).length > 0
+                  ? 'No friends found.\n\nTry searching for other users.'
+                  : 'This user has not added any friends yet.'}
+              </Text>
+            ) : null}
+          </View>
+          <FillerView height={100} />
+        </ScrollView>
+      </View>
+    </ScreenWrapper>
   );
 };
 
@@ -362,4 +365,5 @@ const styles = StyleSheet.create({
   },
 });
 
+FriendsFriendsScreen.displayName = 'Friends Friends Screen';
 export default FriendsFriendsScreen;

@@ -11,7 +11,6 @@ import type {
 } from 'react-native';
 import {StyleSheet} from 'react-native';
 import type {CustomAnimation} from 'react-native-animatable';
-import type {PickerStyle} from 'react-native-picker-select';
 import type {
   MixedStyleDeclaration,
   MixedStyleRecord,
@@ -58,8 +57,6 @@ type AnchorPosition = {
   vertical: number;
 };
 
-type CustomPickerStyle = PickerStyle & {icon?: ViewStyle};
-
 type Styles = Record<
   string,
   | ViewStyle
@@ -72,13 +69,7 @@ type Styles = Record<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   | ((
       ...args: any[]
-    ) =>
-      | ViewStyle
-      | TextStyle
-      | ImageStyle
-      | AnchorPosition
-      | CustomAnimation
-      | CustomPickerStyle)
+    ) => ViewStyle | TextStyle | ImageStyle | AnchorPosition | CustomAnimation)
 >;
 
 const styles = (theme: ThemeColors) =>
@@ -145,11 +136,23 @@ const styles = (theme: ThemeColors) =>
       height: variables.bottomTabHeight,
       borderTopWidth: 1,
       borderTopColor: theme.border,
-      backgroundColor: theme.appBG,
+      // backgroundColor: theme.appBG,
+      backgroundColor: colors.white,
+    },
+
+    headerGap: {
+      // height: CONST.DESKTOP_HEADER_PADDING,
+      height: 0,
+    },
+
+    iPhoneXSafeArea: {
+      backgroundColor: theme.inverse,
+      flex: 1,
     },
 
     navigationScreenCardStyle: {
-      backgroundColor: theme.appBG,
+      // backgroundColor: theme.appBG,
+      backgroundColor: theme.white,
       height: '100%',
     },
 

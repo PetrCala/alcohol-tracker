@@ -55,6 +55,7 @@ import {StatData, StatsOverview} from '@components/Items/StatOverview';
 import {getPlural} from '@libs/StringUtils';
 import {getReceivedRequestsCount} from '@libs/FriendUtils';
 import FriendRequestCounter from '@components/Social/FriendRequestCounter';
+import ScreenWrapper from '@components/ScreenWrapper';
 
 interface State {
   visibleDateObject: DateObject;
@@ -264,7 +265,7 @@ const HomeScreen = ({}: HomeScreenProps) => {
   if (!preferences || !userData) return;
 
   return (
-    <>
+    <ScreenWrapper testID={HomeScreen.displayName}>
       <View style={commonStyles.headerContainer}>
         <View style={styles.profileContainer}>
           <TouchableOpacity
@@ -387,7 +388,7 @@ const HomeScreen = ({}: HomeScreenProps) => {
           <Image source={KirokuIcons.Plus} style={styles.startSessionImage} />
         </TouchableOpacity>
       )}
-    </>
+    </ScreenWrapper>
   );
 };
 // infoNumberValue: getReceivedRequestsCount(userData?.friend_requests),
@@ -591,4 +592,5 @@ const styles = StyleSheet.create({
   },
 });
 
+HomeScreen.displayName = 'Home Screen';
 export default HomeScreen;

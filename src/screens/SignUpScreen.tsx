@@ -33,6 +33,8 @@ import Navigation from '@navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import NAVIGATORS from '@src/NAVIGATORS';
 import {StackScreenProps} from '@react-navigation/stack';
+import ScreenWrapper from '@components/ScreenWrapper';
+import useTheme from '@hooks/useTheme';
 
 interface State {
   email: string;
@@ -105,6 +107,7 @@ const SignUpScreen = () => {
   const {db} = useFirebase();
   const {isOnline} = useUserConnection();
   const [state, dispatch] = useReducer(reducer, initialState);
+  const theme = useTheme();
 
   async function rollbackChanges(
     newUserId: string,
@@ -257,7 +260,9 @@ const SignUpScreen = () => {
   }, [state.password, state.passwordConfirm]);
 
   return (
-    <DismissKeyboard>
+    <ScreenWrapper
+      testID={SignUpScreen.displayName}
+      style={{backgroundColor: theme.appBG}}>
       <View style={styles.mainContainer}>
         <WarningMessage warningText={state.warning} dispatch={dispatch} />
         <View style={styles.logoContainer}>
@@ -334,7 +339,7 @@ const SignUpScreen = () => {
           </View>
         </View>
       </View>
-    </DismissKeyboard>
+    </ScreenWrapper>
   );
 };
 
@@ -456,4 +461,5 @@ const styles = StyleSheet.create({
   },
 });
 
+SignUpScreen.displayName = 'Sign Up Screen';
 export default SignUpScreen;
