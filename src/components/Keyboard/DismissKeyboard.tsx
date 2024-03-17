@@ -5,6 +5,9 @@ interface DismissKeyboardProps {
   children: any;
 }
 
+/**
+ * A component that dismisses the keyboard when the user taps outside of the keyboard.
+ */
 const DismissKeyboard: React.FC<DismissKeyboardProps> = ({children}) => {
   return (
     <TouchableWithoutFeedback

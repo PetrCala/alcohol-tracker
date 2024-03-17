@@ -21,6 +21,7 @@ import SCREENS from '@src/SCREENS';
 import {SocialNavigatorParamList} from '@libs/Navigation/types';
 import Navigation from '@libs/Navigation/Navigation';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
+import FriendRequestCounter from '@components/Social/FriendRequestCounter';
 
 type SocialFooterButtonProps = {
   index: number;
@@ -39,7 +40,6 @@ const SocialFooterButton: React.FC<SocialFooterButtonProps> = ({
   label,
   infoNumberValue,
 }) => {
-  const displayNumberValue = infoNumberValue && infoNumberValue > 0;
   return (
     <View style={styles.footerPartContainer}>
       <TouchableOpacity
@@ -50,18 +50,12 @@ const SocialFooterButton: React.FC<SocialFooterButtonProps> = ({
         onPress={() => setImageIndex(index)}>
         <View
           style={
-            displayNumberValue
+            infoNumberValue && infoNumberValue > 0
               ? [styles.imageContainer, styles.extraSpacing]
               : styles.imageContainer
           }>
           <Image source={source} style={styles.footerImage} />
-          {displayNumberValue ? (
-            <View style={styles.friendRequestCounter}>
-              <Text style={styles.friendRequestCounterValue}>
-                {infoNumberValue}
-              </Text>
-            </View>
-          ) : null}
+          <FriendRequestCounter count={infoNumberValue} />
         </View>
         <Text style={styles.footerText}>{label}</Text>
       </TouchableOpacity>
@@ -84,7 +78,7 @@ const SocialScreen = ({route}: SocialScreenProps) => {
   const {userData, refetch} = useDatabaseData();
   const [routes] = useState([
     {key: 'friendList', title: 'Friend List', userData: userData},
-    {key: 'friendSearch', title: 'Friend Search', userData: userData},
+    // {key: 'friendSearch', title: 'Friend Search', userData: userData},
     {key: 'friendRequests', title: 'Friend Requests', userData: userData},
   ]);
 
@@ -94,9 +88,9 @@ const SocialScreen = ({route}: SocialScreenProps) => {
     if (!userData) return null;
     switch (route.key) {
       case 'friendList':
-        return <FriendListScreen setIndex={setIndex} />;
-      case 'friendSearch':
-        return <FriendSearchScreen />;
+        return <FriendListScreen />;
+      // case 'friendSearch':
+      //   return <FriendSearchScreen />;
       case 'friendRequests':
         return <FriendRequestScreen />;
       default:
@@ -110,13 +104,13 @@ const SocialScreen = ({route}: SocialScreenProps) => {
       source: KirokuIcons.FriendList,
       label: 'Friend List',
     },
+    // {
+    //   index: 1,
+    //   source: KirokuIcons.Search,
+    //   label: 'Find New Friends',
+    // },
     {
       index: 1,
-      source: KirokuIcons.Search,
-      label: 'Find New Friends',
-    },
-    {
-      index: 2,
       source: KirokuIcons.AddUser,
       label: 'Friend Requests',
       infoNumberValue: getReceivedRequestsCount(userData?.friend_requests),
@@ -194,7 +188,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   footerButton: {
-    width: screenWidth / 3,
+    width: screenWidth / 2,
     height: '100%',
     flexDirection: 'column',
     justifyContent: 'center',

@@ -14,8 +14,7 @@ import {UserArray} from '@src/types/database';
 import UserListComponent from '@components/Social/UserListComponent';
 import useProfileList from '@hooks/useProfileList';
 import {useFocusEffect} from '@react-navigation/native';
-import {arrayItemsAreEqual} from '@libs/Utils';
-import {isNonEmptyArray} from '@libs/Validation';
+import NoFriendInfo from '@components/Social/NoFriendInfo';
 
 interface State {
   searching: boolean;
@@ -42,12 +41,9 @@ const reducer = (state: State, action: GeneralAction): State => {
   }
 };
 
-type FriendListScreenProps = {
-  setIndex: (index: number) => void;
-};
+type FriendListScreenProps = {};
 
 const FriendListScreen = (props: FriendListScreenProps) => {
-  const {setIndex} = props;
   const {userData, refetch} = useDatabaseData();
   const friendListInputRef = useRef<SearchWindowRef>(null);
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -81,21 +77,6 @@ const FriendListScreen = (props: FriendListScreenProps) => {
     dispatch({type: 'SET_FRIENDS_TO_DISPLAY', payload: state.friends});
   };
 
-  const EmptyList: React.FC = () => {
-    return (
-      <View style={styles.emptyList}>
-        <Text style={styles.emptyListText}>
-          You do not have any friends yet
-        </Text>
-        <TouchableOpacity
-          onPress={() => setIndex(1)}
-          style={styles.navigateToSearchButton}>
-          <Text style={styles.navigateToSearchText}>Add them here</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  };
-
   useMemo(() => {
     let friendsArray = objKeys(userData?.friends);
     dispatch({type: 'SET_FRIENDS', payload: friendsArray});
@@ -127,7 +108,7 @@ const FriendListScreen = (props: FriendListScreenProps) => {
       <UserListComponent
         fullUserArray={state.friends}
         initialLoadSize={15}
-        emptyListComponent={<EmptyList />}
+        emptyListComponent={<NoFriendInfo />}
         userSubset={state.friendsToDisplay}
         orderUsers={true}
       />
@@ -139,34 +120,6 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     backgroundColor: '#ffff99',
-  },
-  emptyList: {
-    width: '100%',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  emptyListText: {
-    color: 'black',
-    fontSize: 18,
-    fontWeight: '400',
-    padding: 20,
-  },
-  navigateToSearchButton: {
-    width: 150,
-    height: 50,
-    backgroundColor: 'white',
-    padding: 5,
-    borderColor: 'black',
-    borderWidth: 2,
-    borderRadius: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  navigateToSearchText: {
-    color: 'black',
-    fontSize: 16,
-    fontWeight: '500',
   },
 });
 

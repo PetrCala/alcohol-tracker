@@ -5,6 +5,7 @@
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from 'react-native';
 import {
@@ -13,7 +14,7 @@ import {
   ProfileList,
   UserList,
 } from '@src/types/database';
-import {useEffect, useMemo, useReducer, useRef} from 'react';
+import React, {useEffect, useMemo, useReducer, useRef} from 'react';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 
 import {isNonEmptyArray} from '@libs/Validation';
@@ -26,6 +27,10 @@ import SearchWindow from '@components/Social/SearchWindow';
 import {SearchWindowRef, UserSearchResults} from '@src/types/various/Search';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import useRefresh from '@hooks/useRefresh';
+import {useFocusEffect} from '@react-navigation/native';
+import MainHeader from '@components/Header/MainHeader';
+import Navigation from '@libs/Navigation/Navigation';
+import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 
 interface State {
   searchResultData: UserSearchResults;
@@ -161,50 +166,56 @@ const FriendSearchScreen = () => {
     updateRequestStatuses();
   }, [state.friendRequests]); // When updated in the database, not locally
 
-  if (!user || !storage) return;
+  if (!user) return;
 
   return (
-    <View style={styles.mainContainer}>
-      <SearchWindow
-        ref={searchInputRef}
-        windowText="Search for new friends"
-        onSearch={dbSearch}
-        onResetSearch={resetSearch}
-      />
-      <ScrollView
-        style={styles.scrollViewContainer}
-        onScrollBeginDrag={Keyboard.dismiss}
-        keyboardShouldPersistTaps="handled"
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={() => onRefresh(['userData'])}
-          />
-        }>
-        <View style={styles.searchResultsContainer}>
-          {state.searching ? (
-            <LoadingData style={styles.loadingData} />
-          ) : isNonEmptyArray(state.searchResultData) ? (
-            state.searchResultData.map(userId => (
-              <SearchResult
-                key={userId + '-container'}
-                userId={userId}
-                userDisplayData={state.displayData[userId]}
-                db={db}
-                storage={storage}
-                userFrom={user.uid}
-                requestStatus={state.requestStatuses[userId]}
-                alreadyAFriend={state.friends ? state.friends[userId] : false}
-              />
-            ))
-          ) : state.noUsersFound ? (
-            <Text style={styles.noUsersFoundText}>
-              There are no users with this nickname.
-            </Text>
-          ) : null}
-        </View>
-      </ScrollView>
-    </View>
+    <DismissKeyboard>
+      <View style={styles.mainContainer}>
+        <MainHeader
+          headerText="Search For New Friends"
+          onGoBack={() => Navigation.goBack()}
+        />
+        <SearchWindow
+          ref={searchInputRef}
+          windowText="Search for new friends"
+          onSearch={dbSearch}
+          onResetSearch={resetSearch}
+        />
+        <ScrollView
+          style={styles.scrollViewContainer}
+          onScrollBeginDrag={Keyboard.dismiss}
+          keyboardShouldPersistTaps="handled"
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={() => onRefresh(['userData'])}
+            />
+          }>
+          <View style={styles.searchResultsContainer}>
+            {state.searching ? (
+              <LoadingData style={styles.loadingData} />
+            ) : isNonEmptyArray(state.searchResultData) ? (
+              state.searchResultData.map(userId => (
+                <SearchResult
+                  key={userId + '-container'}
+                  userId={userId}
+                  userDisplayData={state.displayData[userId]}
+                  db={db}
+                  storage={storage}
+                  userFrom={user.uid}
+                  requestStatus={state.requestStatuses[userId]}
+                  alreadyAFriend={state.friends ? state.friends[userId] : false}
+                />
+              ))
+            ) : state.noUsersFound ? (
+              <Text style={styles.noUsersFoundText}>
+                There are no users with this nickname.
+              </Text>
+            ) : null}
+          </View>
+        </ScrollView>
+      </View>
+    </DismissKeyboard>
   );
 };
 

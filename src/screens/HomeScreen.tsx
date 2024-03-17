@@ -53,6 +53,8 @@ import DBPATHS from '@database/DBPATHS';
 import useRefresh from '@hooks/useRefresh';
 import {StatData, StatsOverview} from '@components/Items/StatOverview';
 import {getPlural} from '@libs/StringUtils';
+import {getReceivedRequestsCount} from '@libs/FriendUtils';
+import FriendRequestCounter from '@components/Social/FriendRequestCounter';
 
 interface State {
   visibleDateObject: DateObject;
@@ -336,13 +338,19 @@ const HomeScreen = ({}: HomeScreenProps) => {
             styles.mainScreenFooterHalfContainer,
             styles.mainScreenFooterLeftContainer,
           ]}>
-          <MenuIcon
-            iconId="social-icon"
-            iconSource={KirokuIcons.Social}
-            containerStyle={styles.menuIconContainer}
-            iconStyle={styles.menuIcon}
-            onPress={() => Navigation.navigate(ROUTES.SOCIAL)}
-          />
+          <View style={styles.socialContainer}>
+            <MenuIcon
+              iconId="social-icon"
+              iconSource={KirokuIcons.Social}
+              containerStyle={styles.menuIconContainer}
+              iconStyle={styles.menuIcon}
+              onPress={() => Navigation.navigate(ROUTES.SOCIAL)}
+            />
+            <FriendRequestCounter
+              count={getReceivedRequestsCount(userData?.friend_requests)}
+              style={styles.friendRequestCounter}
+            />
+          </View>
           <MenuIcon
             iconId="achievement-icon"
             iconSource={KirokuIcons.Achievements}
@@ -382,6 +390,7 @@ const HomeScreen = ({}: HomeScreenProps) => {
     </>
   );
 };
+// infoNumberValue: getReceivedRequestsCount(userData?.friend_requests),
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -427,6 +436,13 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     padding: 10,
+  },
+  socialContainer: {
+    flexDirection: 'row',
+  },
+  friendRequestCounter: {
+    marginLeft: -4,
+    marginRight: 4,
   },
   yearMonthContainer: {
     width: '100%',

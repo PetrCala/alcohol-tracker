@@ -16,6 +16,7 @@ const KeyboardFocusHandler: React.FC<KeyboardFocusHandlerProps> = ({
       const dismissKeyboard = () => {
         Keyboard.dismiss();
       };
+      console.log('screen focused');
 
       // Dismiss keyboard when the screen gains focus
       dismissKeyboard();

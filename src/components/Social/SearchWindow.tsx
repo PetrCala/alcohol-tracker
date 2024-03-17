@@ -7,14 +7,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {useState, forwardRef, useEffect} from 'react';
+import {useState, forwardRef, useEffect, useRef} from 'react';
 import {Database} from 'firebase/database';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import {SearchWindowRef} from '@src/types/various/Search';
 import KeyboardFocusHandler from '@components/Keyboard/KeyboardFocusHandler';
 import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
-import CONST from '@src/CONST';
 
 type SearchWindowProps = {
   windowText: string;
@@ -26,9 +25,9 @@ type SearchWindowProps = {
 const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
   ({windowText, onSearch, onResetSearch, searchOnTextChange}, parentRef) => {
     const db = useFirebase().db;
-    // const inputRef = useRef<TextInput>(null); // Input field ref for focus handling
     const [searchText, setSearchText] = useState<string>('');
     const [searchCount, setSearchCount] = useState<number>(0);
+    const textInputRef = useRef<TextInput>(null); // Input field ref for focus handling
 
     const handleDoSearch = (searchText: string, db?: Database): void => {
       onSearch(searchText, db);
@@ -74,7 +73,7 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
                 style={styles.searchText}
                 keyboardType="default"
                 textContentType="nickname"
-                // ref={inputRef}
+                ref={textInputRef}
               />
             </KeyboardFocusHandler>
             {searchText !== '' || searchCount > 0 ? (

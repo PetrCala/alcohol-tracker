@@ -1,6 +1,7 @@
 ﻿import {
   ActivityIndicator,
   Alert,
+  Image,
   Keyboard,
   RefreshControl,
   ScrollView,
@@ -16,6 +17,7 @@ import {
   UserList,
 } from '@src/types/database';
 import {useEffect, useMemo, useReducer, useState} from 'react';
+import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {acceptFriendRequest, deleteFriendRequest} from '@database/friends';
 
@@ -31,6 +33,10 @@ import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import useFetchData from '@hooks/useFetchData';
 import useRefresh from '@hooks/useRefresh';
 import {RefetchDatabaseData} from '@src/types/utils/RefetchDatabaseData';
+import Navigation from '@libs/Navigation/Navigation';
+import ROUTES from '@src/ROUTES';
+import {isNonEmptyArray} from '@libs/Validation';
+import NoFriendInfo from '@components/Social/NoFriendInfo';
 
 type RequestIdProps = {
   requestId: string;
@@ -334,7 +340,7 @@ const FriendRequestScreen = () => {
         }>
         {state.isLoading || isLoading ? (
           <LoadingData style={styles.loadingData} />
-        ) : (
+        ) : isNonEmptyArray(state.requestsReceived) ? (
           <View style={styles.friendList}>
             <GrayHeader
               headerText={`Requests Received (${state.requestsReceivedCount})`}
@@ -365,8 +371,15 @@ const FriendRequestScreen = () => {
               ))}
             </View>
           </View>
+        ) : (
+          <NoFriendInfo />
         )}
       </ScrollView>
+      <TouchableOpacity
+        style={styles.searchScreenButton}
+        onPress={() => Navigation.navigate(ROUTES.SOCIAL_FRIEND_SEARCH)}>
+        <Image source={KirokuIcons.Search} style={styles.searchScreenImage} />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -484,9 +497,24 @@ const styles = StyleSheet.create({
     color: 'black',
     textAlign: 'center',
   },
-  //   newRequestPlusSign: {
-  //     width: 50,
-  //     height: 50,
-  //     tintColor: 'white',
-  //   },
+  searchScreenButton: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    borderWidth: 2,
+    borderColor: 'gray',
+    borderRadius: 50,
+    width: 70,
+    height: 70,
+    backgroundColor: 'white',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: 'black',
+  },
+  searchScreenImage: {
+    width: 30,
+    height: 30,
+    tintColor: 'black',
+    alignItems: 'center',
+  },
 });
