@@ -4,6 +4,7 @@ function isObject(item: any): boolean {
 
 /**
  * Checks if two objects are equal by comparing their keys and values.
+ * DEPRECATED: Use lodash.isEqual instead.
  * @param obj1 - The first object to compare.
  * @param obj2 - The second object to compare.
  * @returns True if the objects are equal, false otherwise.

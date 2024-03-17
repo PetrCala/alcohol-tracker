@@ -28,7 +28,7 @@ import SCREENS from '@src/SCREENS';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import LoadingData from '@components/LoadingData';
-import {objectsAreEqual} from '@libs/Utils';
+import {isEqual} from 'lodash';
 
 interface PreferencesListProps {
   id: string;
@@ -90,7 +90,7 @@ const PreferencesScreen = ({route}: PreferencesScreenProps) => {
   );
 
   const havePreferencesChanged = () => {
-    return !objectsAreEqual(initialPreferences.current, currentPreferences);
+    return !isEqual(initialPreferences.current, currentPreferences);
   };
 
   const handleGoBack = () => {
