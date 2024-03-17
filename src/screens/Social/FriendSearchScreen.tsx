@@ -31,6 +31,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import MainHeader from '@components/Header/MainHeader';
 import Navigation from '@libs/Navigation/Navigation';
 import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
+import ScreenWrapper from '@components/ScreenWrapper';
 
 interface State {
   searchResultData: UserSearchResults;
@@ -169,7 +170,7 @@ const FriendSearchScreen = () => {
   if (!user) return;
 
   return (
-    <DismissKeyboard>
+    <ScreenWrapper testID={FriendSearchScreen.displayName}>
       <View style={styles.mainContainer}>
         <MainHeader
           headerText="Search For New Friends"
@@ -215,7 +216,7 @@ const FriendSearchScreen = () => {
           </View>
         </ScrollView>
       </View>
-    </DismissKeyboard>
+    </ScreenWrapper>
   );
 };
 
@@ -299,4 +300,5 @@ const styles = StyleSheet.create({
   },
 });
 
+FriendSearchScreen.displayName = 'Friend Search Screen';
 export default FriendSearchScreen;

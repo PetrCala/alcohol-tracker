@@ -707,7 +707,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fcf50f',
   },
   disabledSaveSessionButton: {
-    backgroundColor: '#fffb82',
+    // backgroundColor: '#fffb82', // No longer used
+    backgroundColor: '#fcf50f',
   },
   saveSessionButtonText: {
     color: 'black',
