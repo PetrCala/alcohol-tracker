@@ -100,7 +100,7 @@ const FriendListScreen = (props: FriendListScreenProps) => {
         'display_name',
       );
       let relevantResults = searchArrayByText(
-        objKeys(state.friends),
+        state.displayArray,
         searchText,
         searchMapping,
       );
@@ -179,8 +179,8 @@ const FriendListScreen = (props: FriendListScreenProps) => {
           <LoadingData style={styles.loadingContainer} />
         ) : state.friends ? (
           <View style={styles.friendList}>
-            {isNonEmptyArray(state.displayArray) ? (
-              state.displayArray.map((friendId: string) => {
+            {isNonEmptyArray(state.friendsToDisplay) ? (
+              state.friendsToDisplay.map((friendId: string) => {
                 const profileData = profileList[friendId];
                 const userStatusData = userStatusList[friendId];
 
