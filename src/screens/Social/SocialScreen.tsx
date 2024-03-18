@@ -7,21 +7,22 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {getDatabaseData} from '@src/context/global/DatabaseDataContext';
 import commonStyles from '@src/styles/commonStyles';
-import {UserData} from '@src/types/database';
 import {TabView} from 'react-native-tab-view';
 import FriendListScreen from './FriendListScreen';
 import FriendRequestScreen from './FriendRequestScreen';
-import SearchScreen from './SearchScreen';
-import {
-  FriendListScreenProps,
-  SearchScreenProps,
-  SocialScreenProps,
-} from '@src/types/screens';
+import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
 import MainHeader from '@components/Header/MainHeader';
-import {getReceivedRequestsCount} from '@src/utils/social/friendUtils';
-import {useIsFocused} from '@react-navigation/native';
+import {getReceivedRequestsCount} from '@libs/FriendUtils';
+import {UserProps} from '@src/types/database';
+import FriendSearchScreen from './FriendSearchScreen';
+import {StackScreenProps} from '@react-navigation/stack';
+import SCREENS from '@src/SCREENS';
+import {SocialNavigatorParamList} from '@libs/Navigation/types';
+import Navigation from '@libs/Navigation/Navigation';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
+import FriendRequestCounter from '@components/Social/FriendRequestCounter';
+import ScreenWrapper from '@components/ScreenWrapper';
 
 type SocialFooterButtonProps = {
   index: number;
@@ -40,7 +41,6 @@ const SocialFooterButton: React.FC<SocialFooterButtonProps> = ({
   label,
   infoNumberValue,
 }) => {
-  const displayNumberValue = infoNumberValue && infoNumberValue > 0;
   return (
     <View style={styles.footerPartContainer}>
       <TouchableOpacity
@@ -51,18 +51,12 @@ const SocialFooterButton: React.FC<SocialFooterButtonProps> = ({
         onPress={() => setImageIndex(index)}>
         <View
           style={
-            displayNumberValue
+            infoNumberValue && infoNumberValue > 0
               ? [styles.imageContainer, styles.extraSpacing]
               : styles.imageContainer
           }>
           <Image source={source} style={styles.footerImage} />
-          {displayNumberValue ? (
-            <View style={styles.friendRequestCounter}>
-              <Text style={styles.friendRequestCounterValue}>
-                {infoNumberValue}
-              </Text>
-            </View>
-          ) : null}
+          <FriendRequestCounter count={infoNumberValue} />
         </View>
         <Text style={styles.footerText}>{label}</Text>
       </TouchableOpacity>
@@ -70,51 +64,36 @@ const SocialFooterButton: React.FC<SocialFooterButtonProps> = ({
   );
 };
 
+type SocialScreenProps = StackScreenProps<
+  SocialNavigatorParamList,
+  typeof SCREENS.SOCIAL.ROOT
+>;
+
 type RouteType = {
   key: string;
   title: string;
-  userData: UserData | null;
+  userData: UserProps | undefined;
 };
 
-const SocialScreen = ({route, navigation}: SocialScreenProps) => {
-  if (!route || !navigation) return null;
-  const {screen} = route.params;
-  const {userData} = getDatabaseData();
+const SocialScreen = ({route}: SocialScreenProps) => {
+  const {userData, refetch} = useDatabaseData();
   const [routes] = useState([
     {key: 'friendList', title: 'Friend List', userData: userData},
-    {key: 'friendSearch', title: 'Friend Search', userData: userData},
+    // {key: 'friendSearch', title: 'Friend Search', userData: userData},
     {key: 'friendRequests', title: 'Friend Requests', userData: userData},
   ]);
 
-  const [index, setIndex] = useState<number>(
-    routes.findIndex(route => route.title === screen) || 0, // Get the index of the screen based on the title
-  );
+  const [index, setIndex] = useState<number>(0);
 
   const renderScene = ({route}: {route: RouteType}) => {
     if (!userData) return null;
     switch (route.key) {
       case 'friendList':
-        return (
-          <FriendListScreen
-            navigation={navigation}
-            friends={userData?.friends}
-            setIndex={setIndex}
-          />
-        );
-      case 'friendSearch':
-        return (
-          <SearchScreen
-            friendRequests={userData?.friend_requests}
-            friends={userData?.friends}
-          />
-        );
+        return <FriendListScreen />;
+      // case 'friendSearch':
+      //   return <FriendSearchScreen />;
       case 'friendRequests':
-        return (
-          <FriendRequestScreen
-            friendRequests={userData?.friend_requests}
-            friends={userData?.friends}
-          />
-        );
+        return <FriendRequestScreen />;
       default:
         return null;
     }
@@ -123,27 +102,25 @@ const SocialScreen = ({route, navigation}: SocialScreenProps) => {
   const footerButtons = [
     {
       index: 0,
-      source: require('../../../assets/icons/friend_list.png'),
+      source: KirokuIcons.FriendList,
       label: 'Friend List',
     },
+    // {
+    //   index: 1,
+    //   source: KirokuIcons.Search,
+    //   label: 'Find New Friends',
+    // },
     {
       index: 1,
-      source: require('../../../assets/icons/search.png'),
-      label: 'Find New Friends',
-    },
-    {
-      index: 2,
-      source: require('../../../assets/icons/add_user.png'),
+      source: KirokuIcons.AddUser,
       label: 'Friend Requests',
       infoNumberValue: getReceivedRequestsCount(userData?.friend_requests),
     },
   ];
 
-  if (!userData) return null;
-
   return (
-    <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
-      <MainHeader headerText="Friends" onGoBack={() => navigation.goBack()} />
+    <ScreenWrapper testID={SocialScreen.displayName}>
+      <MainHeader headerText="Friends" onGoBack={() => Navigation.goBack()} />
       <TabView
         navigationState={{index, routes}}
         renderScene={renderScene}
@@ -166,11 +143,9 @@ const SocialScreen = ({route, navigation}: SocialScreenProps) => {
           />
         ))}
       </View>
-    </View>
+    </ScreenWrapper>
   );
 };
-
-export default SocialScreen;
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -212,7 +187,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   footerButton: {
-    width: screenWidth / 3,
+    width: screenWidth / 2,
     height: '100%',
     flexDirection: 'column',
     justifyContent: 'center',
@@ -265,3 +240,6 @@ const styles = StyleSheet.create({
     color: 'gray',
   },
 });
+
+SocialScreen.displayName = 'SocialScreen';
+export default SocialScreen;

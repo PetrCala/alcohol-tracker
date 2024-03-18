@@ -1,40 +1,49 @@
-﻿import React, {useReducer, useState} from 'react';
+﻿import React, {useEffect, useReducer} from 'react';
 import {
   Dimensions,
   Alert,
   Image,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  Keyboard,
   TextInput,
 } from 'react-native';
-import {updateProfile} from 'firebase/auth';
-import {auth} from '../services/firebaseSetup';
-import {signUpUserWithEmailAndPassword} from '../auth/auth';
-import {useFirebase} from '../context/global/FirebaseContext';
-import {SignUpScreenProps} from '../types/screens';
-import {readDataOnce} from '../database/baseFunctions';
-import {validateBetaKey} from '../database/beta';
-import {useUserConnection} from '../context/global/UserConnectionContext';
-import {isValidString, validateAppVersion} from '../utils/validation';
-import {deleteUserData, pushNewUserInfo} from '../database/users';
-import {ProfileData} from 'src/types/database';
-import {handleErrors} from '@src/utils/errorHandling';
-import CONST from '@src/CONST';
+import * as KirokuImages from '@src/components/Icon/KirokuImages';
+import {getAuth, updateProfile} from 'firebase/auth';
+import {signUpUserWithEmailAndPassword} from '@libs/auth/auth';
+import {useFirebase} from '@context/global/FirebaseContext';
+import {readDataOnce} from '@database/baseFunctions';
+import {useUserConnection} from '@context/global/UserConnectionContext';
+import {
+  isValidPassword,
+  isValidPasswordConfirm,
+  validateAppVersion,
+  validateSignInInput,
+} from '@libs/Validation';
+import {deleteUserData, pushNewUserInfo} from '@database/users';
+import {handleErrors} from '@libs/ErrorHandling';
 import WarningMessage from '@components/Info/WarningMessage';
 import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
+import {Profile} from '@src/types/database';
+import DBPATHS from '@database/DBPATHS';
+import ValidityIndicatorIcon from '@components/ValidityIndicatorIcon';
+import SCREENS from '@src/SCREENS';
+import Navigation from '@navigation/Navigation';
+import ROUTES from '@src/ROUTES';
+import NAVIGATORS from '@src/NAVIGATORS';
+import {StackScreenProps} from '@react-navigation/stack';
+import ScreenWrapper from '@components/ScreenWrapper';
+import useTheme from '@hooks/useTheme';
 
 interface State {
   email: string;
   username: string;
   password: string;
+  passwordIsValid: boolean;
+  passwordConfirm: string;
+  passwordsMatch: boolean;
   warning: string;
-  betaKey: string;
 }
 
 interface Action {
@@ -46,8 +55,10 @@ const initialState: State = {
   email: '',
   username: '',
   password: '',
+  passwordIsValid: false,
+  passwordConfirm: '',
+  passwordsMatch: false,
   warning: '',
-  betaKey: '',
 };
 
 const reducer = (state: State, action: Action) => {
@@ -67,79 +78,66 @@ const reducer = (state: State, action: Action) => {
         ...state,
         password: action.payload,
       };
+    case 'UPDATE_PASSWORD_VALIDITY':
+      return {
+        ...state,
+        passwordIsValid: action.payload,
+      };
+    case 'UPDATE_PASSWORD_CONFIRM':
+      return {
+        ...state,
+        passwordConfirm: action.payload,
+      };
+    case 'UPDATE_PASSWORDS_MATCH':
+      return {
+        ...state,
+        passwordsMatch: action.payload,
+      };
     case 'SET_WARNING':
       return {
         ...state,
         warning: action.payload,
-      };
-    case 'SET_BETA_KEY':
-      return {
-        ...state,
-        betaKey: action.payload,
       };
     default:
       return state;
   }
 };
 
-const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
-  const {loginEmail} = route ? route.params : {loginEmail: ''};
+const SignUpScreen = () => {
   const {db} = useFirebase();
   const {isOnline} = useUserConnection();
   const [state, dispatch] = useReducer(reducer, initialState);
-  if (!db) return null; // Should never be null
-
-  /** Check that all user input is valid and return true if it is.
-   * Otherwise return false.
-   */
-  const validateUserInput = (): boolean => {
-    if (
-      state.email == '' ||
-      state.username == '' ||
-      state.password == '' ||
-      state.betaKey == ''
-    ) {
-      // Beta feature
-      dispatch({
-        type: 'SET_WARNING',
-        payload: 'You must fill out all fields first',
-      });
-      return false;
-    }
-    if (!isValidString(state.username)) {
-      dispatch({
-        type: 'SET_WARNING',
-        payload:
-          'Your nickname can not contain ' + CONST.INVALID_CHARS.join(', '),
-      });
-      return false;
-    }
-    return true;
-  };
+  const theme = useTheme();
 
   async function rollbackChanges(
     newUserId: string,
     userNickname: string,
-    betaKeyId: number,
   ): Promise<void> {
     // Delete the user data from the Realtime Database
-    await deleteUserData(
-      db,
-      newUserId,
-      userNickname,
-      betaKeyId,
-      undefined,
-      undefined,
-    );
+    await deleteUserData(db, newUserId, userNickname, undefined, undefined);
 
     // Delete the user from Firebase authentication
+    let auth = getAuth();
     if (auth.currentUser) {
       await auth.currentUser.delete();
     }
   }
 
   const handleSignUp = async () => {
-    if (!validateUserInput() || !isOnline || !auth) return;
+    if (!isOnline) return;
+
+    const inputValidation = validateSignInInput(
+      state.email,
+      state.username,
+      state.password,
+      state.passwordConfirm,
+    );
+    if (!inputValidation.success) {
+      dispatch({type: 'SET_WARNING', payload: inputValidation.message});
+      return;
+    }
+
+    let auth = getAuth();
     const currentUser = auth.currentUser;
 
     if (currentUser) {
@@ -153,14 +151,11 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
 
     let newUserId: string | undefined;
     let minSupportedVersion: string | null;
-    let betaKeys: any;
+    let minUserCreationPath =
+      DBPATHS.CONFIG_APP_SETTINGS_MIN_USER_CREATION_POSSIBLE_VERSION;
 
     try {
-      minSupportedVersion = await readDataOnce(
-        db,
-        '/config/app_settings/min_user_creation_possible_version',
-      );
-      betaKeys = await readDataOnce(db, 'beta_keys/');
+      minSupportedVersion = await readDataOnce(db, minUserCreationPath);
     } catch (error: any) {
       Alert.alert(
         'Data fetch failed',
@@ -186,22 +181,8 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
       return;
     }
 
-    if (!betaKeys) {
-      dispatch({
-        type: 'SET_WARNING',
-        payload: 'Failed to fetch beta keys. Please try again later.',
-      });
-      return;
-    }
-
-    const betaKeyId = validateBetaKey(betaKeys, state.betaKey);
-    if (!betaKeyId) {
-      dispatch({type: 'SET_WARNING', payload: 'Invalid beta key.'});
-      return;
-    }
-
     // Pushing initial user data to Realtime Database
-    const newProfileData: ProfileData = {
+    const newProfileData: Profile = {
       display_name: state.username,
       photo_url: '',
     };
@@ -221,6 +202,7 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
       return;
     }
 
+    auth = getAuth(); // Refresh
     if (!auth.currentUser) {
       throw new Error('User creation failed');
     }
@@ -228,7 +210,7 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
 
     try {
       // Realtime Database updates
-      await pushNewUserInfo(db, newUserId, newProfileData, betaKeyId);
+      await pushNewUserInfo(db, newUserId, newProfileData);
     } catch (error: any) {
       const errorHeading = 'Sign-up failed';
       const errorMessage = 'There was an error during sign-up: ';
@@ -236,11 +218,7 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
 
       // Attempt to rollback any changes made
       try {
-        await rollbackChanges(
-          newUserId,
-          newProfileData.display_name,
-          betaKeyId,
-        );
+        await rollbackChanges(newUserId, newProfileData.display_name);
       } catch (rollbackError: any) {
         const errorHeading = 'Rollback error';
         const errorMessage = 'Error during sign-up rollback:';
@@ -259,84 +237,111 @@ const SignUpScreen = ({route, navigation}: SignUpScreenProps) => {
         return;
       }
     }
-    // Navigate to the main screen with a success message
-    navigation.replace('App', {screen: 'Main Screen'});
+    Navigation.navigate(ROUTES.HOME);
     return;
   };
 
-  if (!route || !navigation) return null; // Should never be null
+  // Track password validity
+  useEffect(() => {
+    if (isValidPassword(state.password)) {
+      dispatch({type: 'UPDATE_PASSWORD_VALIDITY', payload: true});
+    } else {
+      dispatch({type: 'UPDATE_PASSWORD_VALIDITY', payload: false});
+    }
+  }, [state.password]);
+
+  // Track password matching
+  useEffect(() => {
+    if (isValidPasswordConfirm(state.password, state.passwordConfirm)) {
+      dispatch({type: 'UPDATE_PASSWORDS_MATCH', payload: true});
+    } else {
+      dispatch({type: 'UPDATE_PASSWORDS_MATCH', payload: false});
+    }
+  }, [state.password, state.passwordConfirm]);
 
   return (
-    <DismissKeyboard>
+    <ScreenWrapper
+      testID={SignUpScreen.displayName}
+      style={{backgroundColor: theme.appBG}}>
       <View style={styles.mainContainer}>
         <WarningMessage warningText={state.warning} dispatch={dispatch} />
         <View style={styles.logoContainer}>
-          <Image
-            source={require('../../assets/logo/alcohol-tracker-source-icon.png')}
-            style={styles.logo}
-          />
+          <Image source={KirokuImages.Logo} style={styles.logo} />
         </View>
         <View style={styles.inputContainer}>
-          <TextInput
-            placeholder="Email"
-            placeholderTextColor={'#a8a8a8'}
-            keyboardType="email-address"
-            textContentType="emailAddress"
-            value={state.email}
-            onChangeText={text =>
-              dispatch({type: 'UPDATE_EMAIL', payload: text})
-            }
-            style={styles.input}
-          />
-          <TextInput
-            placeholder="Username"
-            placeholderTextColor={'#a8a8a8'}
-            textContentType="username"
-            value={state.username}
-            onChangeText={text =>
-              dispatch({type: 'UPDATE_USERNAME', payload: text})
-            }
-            style={styles.input}
-          />
-          <TextInput
-            placeholder="Password"
-            placeholderTextColor={'#a8a8a8'}
-            textContentType="password"
-            value={state.password}
-            onChangeText={text =>
-              dispatch({type: 'UPDATE_PASSWORD', payload: text})
-            }
-            style={styles.input}
-            secureTextEntry
-          />
-          <TextInput
-            placeholder="Beta key"
-            placeholderTextColor={'#a8a8a8'}
-            value={state.betaKey}
-            onChangeText={text =>
-              dispatch({type: 'SET_BETA_KEY', payload: text})
-            }
-            style={styles.input}
-            secureTextEntry
-          />
+          <View style={styles.inputItemContainer}>
+            <TextInput
+              placeholder="Email"
+              placeholderTextColor={'#a8a8a8'}
+              keyboardType="email-address"
+              textContentType="emailAddress"
+              value={state.email}
+              onChangeText={text =>
+                dispatch({type: 'UPDATE_EMAIL', payload: text})
+              }
+              style={styles.inputItemText}
+            />
+          </View>
+          <View style={styles.inputItemContainer}>
+            <TextInput
+              placeholder="Username"
+              placeholderTextColor={'#a8a8a8'}
+              textContentType="username"
+              value={state.username}
+              onChangeText={text =>
+                dispatch({type: 'UPDATE_USERNAME', payload: text})
+              }
+              style={styles.inputItemText}
+            />
+          </View>
+          <View style={styles.inputItemContainer}>
+            <TextInput
+              placeholder="Password"
+              placeholderTextColor={'#a8a8a8'}
+              textContentType="password"
+              value={state.password}
+              onChangeText={text =>
+                dispatch({type: 'UPDATE_PASSWORD', payload: text})
+              }
+              style={styles.inputItemText}
+              secureTextEntry
+            />
+            {state.password ? (
+              <ValidityIndicatorIcon isValid={state.passwordIsValid} />
+            ) : null}
+          </View>
+          <View style={styles.inputItemContainer}>
+            <TextInput
+              placeholder="Confirm your password"
+              placeholderTextColor={'#a8a8a8'}
+              textContentType="password"
+              value={state.passwordConfirm}
+              onChangeText={text =>
+                dispatch({type: 'UPDATE_PASSWORD_CONFIRM', payload: text})
+              }
+              style={styles.inputItemText}
+              secureTextEntry
+            />
+            {state.passwordConfirm && state.password ? (
+              <ValidityIndicatorIcon isValid={state.passwordsMatch} />
+            ) : null}
+          </View>
           <TouchableOpacity onPress={handleSignUp} style={styles.signUpButton}>
             <Text style={styles.signUpButtonText}>Create account</Text>
           </TouchableOpacity>
           <View style={styles.loginContainer}>
             <TouchableOpacity
               style={styles.loginButtonContainer}
-              onPress={() => navigation.navigate('Login Screen')}>
+              onPress={() => Navigation.goBack()}>
               <Text style={styles.loginInfoText}>Already a user?</Text>
               <Text style={styles.loginButtonText}>Log in</Text>
             </TouchableOpacity>
           </View>
         </View>
       </View>
-    </DismissKeyboard>
+    </ScreenWrapper>
   );
 };
-
-export default SignUpScreen;
 
 const screenHeight = Dimensions.get('window').height;
 
@@ -385,17 +390,37 @@ const styles = StyleSheet.create({
     width: '80%',
     height: screenHeight * 0.85,
   },
-  input: {
+  inputItemContainer: {
     backgroundColor: 'white',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    alignItems: 'center',
     height: 45,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
+    paddingLeft: 10,
+    paddingRight: 5,
     borderRadius: 10,
     borderColor: '#000',
     borderWidth: 2,
     marginTop: 5,
     marginBottom: 5,
-    color: 'black',
+  },
+  inputItemText: {
+    fontSize: 14,
+    width: '90%',
+  },
+  passwordCheckContainer: {
+    backgroundColor: 'purple',
+    marginRight: 10,
+  },
+  passwordCheckIcon: {
+    width: 20,
+    height: 20,
+  },
+  passwordsMatch: {
+    backgroundColor: 'green',
+  },
+  passwordsMismatch: {
+    backgroundColor: 'red',
   },
   signUpButton: {
     backgroundColor: '#fcf50f',
@@ -436,21 +461,5 @@ const styles = StyleSheet.create({
   },
 });
 
-// Firebase functions approach to sign-up handling
-// try {
-//   const createUserFunction = functions().httpsCallable('createUser')
-//   const result = await createUserFunction({ email, password, username, betaKey });
-
-//   if (result.data.success) {
-//     navigation.replace("App", {screen: "Main Screen"}); // Navigate to main screen
-//   } else {
-//     setWarning(result.data?.message);
-//   }
-// } catch (error:any) {
-//   // Handle the error
-//   setWarning('Error during sign-up: ' + error.message);
-// }
-
-// const handleGoBack = async () => {
-//   navigation.navigate("Login Screen");
-// };
+SignUpScreen.displayName = 'Sign Up Screen';
+export default SignUpScreen;

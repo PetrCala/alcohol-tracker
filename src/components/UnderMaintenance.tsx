@@ -1,9 +1,9 @@
-import {ConfigProps, MaintenanceProps} from '@src/types/database';
+import {Config, Maintenance} from '@src/types/database';
+import * as KirokuImages from '@src/components/Icon/KirokuImages';
 import {View, StyleSheet, Text, Image, Dimensions} from 'react-native';
-import CONST from '@src/CONST';
 
 type UnderMaintenanceProps = {
-  config: ConfigProps | null;
+  config: Config | null;
 };
 
 /** Given a date, return this date in human-legible hours and minutes */
@@ -15,7 +15,7 @@ function getHourMinute(date: Date): string {
 }
 
 const UnderMaintenance = ({config}: UnderMaintenanceProps) => {
-  const defaultMaintenance: MaintenanceProps = {
+  const defaultMaintenance: Maintenance = {
     maintenance_mode: true,
     start_time: 1704067200,
     end_time: 1704067200,
@@ -28,7 +28,7 @@ const UnderMaintenance = ({config}: UnderMaintenanceProps) => {
     <View style={styles.container}>
       <Image
         style={styles.beaverImage}
-        source={require('../../assets/images/under_maintenance.jpg')}
+        source={KirokuImages.UnderMaintenance}
       />
       <Text style={styles.heading}>Under maintenance</Text>
       <Text style={[styles.text, styles.messageText]}>
@@ -75,14 +75,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   beaverImage: {
-    width:
-      screenWidth > screenHeight
-        ? screenHeight * 0.8
-        : screenWidth * 0.8,
-    height:
-      screenWidth > screenHeight
-        ? screenHeight * 0.8
-        : screenWidth * 0.8,
+    width: screenWidth > screenHeight ? screenHeight * 0.8 : screenWidth * 0.8,
+    height: screenWidth > screenHeight ? screenHeight * 0.8 : screenWidth * 0.8,
     aspectRatio: 1, // Maintain aspect ratio
     marginTop: -50,
     marginBottom: 30,

@@ -1,27 +1,39 @@
 import React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
-import {app} from './services/firebaseSetup';
+import type {Route} from './ROUTES';
+import InitialUrlContext from '@libs/InitialUrlContext';
+import Kiroku from './Kiroku';
+import ComposeProviders from '@components/ComposeProviders';
+import {FirebaseProvider} from '@context/global/FirebaseContext';
+import {UserConnectionProvider} from '@context/global/UserConnectionContext';
+import {ConfigProvider} from '@context/global/ConfigContext';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+// import {WindowDimensionsProvider} from '@src/components/withWindowDimensions';
+import {KeyboardStateProvider} from '@components/withKeyboardState';
+import SafeArea from '@src/components/SafeArea';
 
-import AuthNavigator from './navigation/AuthNavigator';
-import AppNavigator from './navigation/AppNavigator';
-import Stack from './navigation/Stack';
-import {ContextProvider} from './context/global/Context';
+type KirokuProps = {
+  /** true if there is an authToken */
+  url?: Route;
+};
 
-const Kiroku = () => {
+const App = ({url}: KirokuProps) => {
   return (
-    <ContextProvider app={app}>
-      <NavigationContainer>
-        <Stack.Navigator
-          initialRouteName="Auth"
-          screenOptions={{
-            headerShown: false,
-          }}>
-          <Stack.Screen name="Auth" component={AuthNavigator} />
-          <Stack.Screen name="App" component={AppNavigator} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </ContextProvider>
+    <InitialUrlContext.Provider value={url}>
+      <ComposeProviders
+        components={[
+          FirebaseProvider,
+          UserConnectionProvider,
+          ConfigProvider,
+          SafeAreaProvider,
+          SafeArea,
+          KeyboardStateProvider,
+        ]}>
+        <Kiroku />
+      </ComposeProviders>
+    </InitialUrlContext.Provider>
   );
 };
 
-export default Kiroku;
+App.displayName = 'App';
+
+export default App;

@@ -1,29 +1,29 @@
-﻿import React, {useEffect, useReducer, useState} from 'react';
+﻿import React, {useReducer} from 'react';
 import {
   Dimensions,
   Image,
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
+import * as KirokuImages from '@src/components/Icon/KirokuImages';
 import {useFocusEffect} from '@react-navigation/native';
 import {sendPasswordResetEmail, signOut} from 'firebase/auth';
-import {auth} from '../services/firebaseSetup';
-import {signInUserWithEmailAndPassword} from '../auth/auth';
-import commonStyles from '../styles/commonStyles';
-import {LoginScreenProps} from '../types/screens';
-import LoadingData from '../components/LoadingData';
-import InputTextPopup from '../components/Popups/InputTextPopup';
-import {handleErrors} from '../utils/errorHandling';
+import {signInUserWithEmailAndPassword} from '@libs/auth/auth';
+import commonStyles from '@styles/commonStyles';
+import LoadingData from '@components/LoadingData';
+import InputTextPopup from '@components/Popups/InputTextPopup';
+import {handleErrors} from '@libs/ErrorHandling';
 import WarningMessage from '@components/Info/WarningMessage';
 import SuccessMessage from '@components/Info/SuccessMessage';
 import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
+import ROUTES from '@src/ROUTES';
+import Navigation from '@navigation/Navigation';
+import {useFirebase} from '@context/global/FirebaseContext';
+import ScreenWrapper from '@components/ScreenWrapper';
+import useTheme from '@hooks/useTheme';
 
 interface State {
   email: string;
@@ -85,22 +85,25 @@ const reducer = (state: State, action: Action) => {
   }
 };
 
-const LoginScreen = ({navigation}: LoginScreenProps) => {
-  if (!navigation) return null; // Should never be null
+const LoginScreen = () => {
   // const {isOnline} = useUserConnection();
+  const {auth} = useFirebase();
   const [state, dispatch] = useReducer(reducer, initialState);
+  const theme = useTheme();
 
   useFocusEffect(
     // Redirect to main screen if user is already logged in (from login screen only)
     React.useCallback(() => {
       const stopListening = auth.onAuthStateChanged(user => {
         if (user) {
-          navigation.replace('App', {screen: 'Main Screen'}); // Redirect to main screen
+          dispatch({type: 'SET_LOADING_USER', payload: true});
+          Navigation.navigate(ROUTES.HOME);
         }
         dispatch({type: 'SET_LOADING_USER', payload: false});
       });
 
       return () => {
+        dispatch({type: 'SET_LOADING_USER', payload: false});
         stopListening(); // This will be called when the screen loses focus
       };
     }, []),
@@ -110,11 +113,14 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
     // Validate all hooks on the screen first, return null if invalid
     // Attempt to login
     try {
+      dispatch({type: 'SET_LOADING_USER', payload: true});
       await signInUserWithEmailAndPassword(auth, state.email, state.password);
     } catch (error: any) {
       const errorHeading = 'Failed to log in';
       const errorMessage = 'There was an error trying to log in: ';
       handleErrors(error, errorHeading, errorMessage, dispatch);
+    } finally {
+      dispatch({type: 'SET_LOADING_USER', payload: false});
     }
     return;
   };
@@ -135,18 +141,17 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
 
   // Wait to see whether there already is an authentificated user
   // Possibly here display the app logo instead of the loading screen
-  if (state.loadingUser) return <LoadingData />;
+  if (state.loadingUser) return <LoadingData loadingText="Signing in..." />;
 
   return (
-    <DismissKeyboard>
+    <ScreenWrapper
+      testID={LoginScreen.displayName}
+      style={{backgroundColor: theme.appBG}}>
       <View style={styles.mainContainer}>
         <WarningMessage warningText={state.warning} dispatch={dispatch} />
         <SuccessMessage successText={state.success} dispatch={dispatch} />
         <View style={styles.logoContainer}>
-          <Image
-            source={require('../../assets/logo/alcohol-tracker-source-icon.png')}
-            style={styles.logo}
-          />
+          <Image source={KirokuImages.Logo} style={styles.logo} />
         </View>
         <View style={styles.inputContainer}>
           <TextInput
@@ -190,11 +195,7 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
           <View style={styles.signUpContainer}>
             <TouchableOpacity
               style={styles.signUpButtonContainer}
-              onPress={() =>
-                navigation.navigate('Sign Up Screen', {
-                  loginEmail: state.email,
-                })
-              }>
+              onPress={() => Navigation.navigate(ROUTES.SIGNUP)}>
               <Text style={styles.signUpInfoText}>Don't have an account?</Text>
               <Text style={styles.signUpButtonText}>Sign up</Text>
             </TouchableOpacity>
@@ -218,11 +219,9 @@ const LoginScreen = ({navigation}: LoginScreenProps) => {
           />
         </View>
       </View>
-    </DismissKeyboard>
+    </ScreenWrapper>
   );
 };
-
-export default LoginScreen;
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -345,3 +344,6 @@ const styles = StyleSheet.create({
     width: screenWidth * 0.7,
   },
 });
+
+LoginScreen.displayName = 'Login Screen';
+export default LoginScreen;

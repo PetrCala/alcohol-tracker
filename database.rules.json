@@ -1,13 +1,5 @@
 {
   "rules": {
-    "beta_keys": {
-      ".read": true,
-      ".write": "auth.token.admin === true",
-      "$key": {
-        ".validate": "newData.hasChildren()",
-        ".write": "auth != null"
-      }
-    },
     "config": {
       ".read": true,
       ".write": "auth.token.admin === true"
@@ -27,20 +19,6 @@
         "$uid": {
           ".validate": "newData.isString() || newData.val() === null",
           ".write": "auth.uid === $uid"
-        }
-      }
-    },
-    "user_status": {
-      ".read": "auth.token.admin === true",
-      ".write": "auth.token.admin === true",
-      "$uid": {
-        ".validate": "newData.hasChild('last_online') || newData.val() === null",
-        ".read": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('friends').child($uid).exists())",
-        ".write": "auth != null && auth.uid === $uid",
-        "last_online": {
-          ".validate": "newData.isNumber()",
-          ".read": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('friends').child($uid).exists())",
-          ".write": "auth != null && auth.uid === $uid"
         }
       }
     },
@@ -66,8 +44,31 @@
         "units_to_colors": {
           ".validate": "newData.hasChildren(['yellow', 'orange'])"
         },
-        "units_to_points": {
+        "drinks_to_units": {
           ".validate": "newData.hasChildren(['beer', 'cocktail', 'other', 'strong_shot', 'weak_shot', 'wine'])"
+        }
+      }
+    },
+    "user_session_placeholder": {
+      ".read": "auth.token.admin === true",
+      ".write": "auth.token.admin === true",
+      "$uid": {
+        ".validate": "newData.val() === null || newData.hasChildren()",
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+    "user_status": {
+      ".read": "auth.token.admin === true",
+      ".write": "auth.token.admin === true",
+      "$uid": {
+        ".validate": "newData.hasChild('last_online') || newData.val() === null",
+        ".read": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('friends').child($uid).exists())",
+        ".write": "auth != null && auth.uid === $uid",
+        "last_online": {
+          ".validate": "newData.isNumber()",
+          ".read": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('friends').child($uid).exists())",
+          ".write": "auth != null && auth.uid === $uid"
         }
       }
     },
@@ -83,7 +84,7 @@
     "users": {
       "$uid": {
         ".validate": "newData.val() === null || newData.hasChildren()",
-        ".read": "auth != null && auth.uid === $uid",
+        ".read": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('friends').child($uid).exists())",
         ".write": "auth != null && auth.uid === $uid",
         "friends": {
           ".validate": "newData.val() === null || newData.hasChildren()",

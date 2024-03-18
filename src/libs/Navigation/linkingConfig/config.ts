@@ -1,0 +1,150 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+import type {LinkingOptions} from '@react-navigation/native';
+import type {RootStackParamList} from '@navigation/types';
+import NAVIGATORS from '@src/NAVIGATORS';
+import ROUTES from '@src/ROUTES';
+import SCREENS from '@src/SCREENS';
+
+// Moved to a separate file to avoid cyclic dependencies.
+const config: LinkingOptions<RootStackParamList>['config'] = {
+  initialRouteName: NAVIGATORS.BOTTOM_TAB_NAVIGATOR,
+  screens: {
+    // Main Routes
+    [SCREENS.FORCE_UPDATE]: ROUTES.FORCE_UPDATE,
+    [SCREENS.LOGIN]: ROUTES.LOGIN,
+    [SCREENS.SIGNUP]: ROUTES.SIGNUP,
+
+    // Sidebar
+    [NAVIGATORS.BOTTOM_TAB_NAVIGATOR]: {
+      path: ROUTES.ROOT,
+      initialRouteName: SCREENS.HOME,
+      screens: {
+        [SCREENS.HOME]: ROUTES.HOME,
+        // [SCREENS.ALL_SETTINGS]: ROUTES.ALL_SETTINGS,
+        // [SCREENS.WORKSPACE.INITIAL]: {
+        //   path: ROUTES.WORKSPACE_INITIAL.route,
+        //   exact: true,
+        // },
+      },
+    },
+
+    [NAVIGATORS.CENTRAL_PANE_NAVIGATOR]: {
+      screens: {
+        // [SCREENS.SETTINGS.WORKSPACES]: ROUTES.SETTINGS_WORKSPACES,
+        // [SCREENS.WORKSPACE.PROFILE]: ROUTES.WORKSPACE_PROFILE.route,
+        // [SCREENS.WORKSPACE.CARD]: {
+        //   path: ROUTES.WORKSPACE_CARD.route,
+        // },
+      },
+    },
+    [SCREENS.NOT_FOUND]: '*',
+    [NAVIGATORS.LEFT_MODAL_NAVIGATOR]: {
+      screens: {
+        //         [SCREENS.LEFT_MODAL.SEARCH]: {
+        //             screens: {
+        //                 [SCREENS.SEARCH_ROOT]: ROUTES.SEARCH,
+        //             },
+        //         },
+        // ...
+      },
+    },
+    [NAVIGATORS.RIGHT_MODAL_NAVIGATOR]: {
+      screens: {
+        [SCREENS.RIGHT_MODAL.ACHIEVEMENTS]: {
+          screens: {
+            [SCREENS.ACHIEVEMENTS.ROOT]: ROUTES.ACHIEVEMENTS,
+          },
+        },
+        [SCREENS.RIGHT_MODAL.DAY_OVERVIEW]: {
+          screens: {
+            [SCREENS.DAY_OVERVIEW.ROOT]: {
+              path: ROUTES.DAY_OVERVIEW.route,
+            },
+          },
+        },
+        [SCREENS.RIGHT_MODAL.DRINKING_SESSION]: {
+          screens: {
+            [SCREENS.DRINKING_SESSION.ROOT]: {
+              path: ROUTES.DRINKING_SESSION.route,
+            },
+            [SCREENS.DRINKING_SESSION.LIVE]: {
+              path: ROUTES.DRINKING_SESSION_LIVE.route,
+            },
+            [SCREENS.DRINKING_SESSION.SUMMARY]: {
+              path: ROUTES.DRINKING_SESSION_SUMMARY.route,
+            },
+          },
+        },
+        [SCREENS.RIGHT_MODAL.MAIN_MENU]: {
+          screens: {
+            [SCREENS.MAIN_MENU.ROOT]: ROUTES.MAIN_MENU,
+            [SCREENS.MAIN_MENU.PREFERENCES]: ROUTES.MAIN_MENU_PREFERENCES,
+            [SCREENS.MAIN_MENU.POLICIES.PRIVACY_POLICY]:
+              ROUTES.MAIN_MENU_POLICIES_PRIVACY_POLICY,
+            [SCREENS.MAIN_MENU.POLICIES.TERMS_OF_SERVICE]:
+              ROUTES.MAIN_MENU_POLICIES_TERMS_OF_SERVICE,
+          },
+        },
+        [SCREENS.RIGHT_MODAL.PROFILE]: {
+          screens: {
+            [SCREENS.PROFILE.ROOT]: {
+              path: ROUTES.PROFILE.route,
+            },
+            [SCREENS.PROFILE.FRIENDS_FRIENDS]: {
+              path: ROUTES.PROFILE_FRIENDS_FRIENDS.route,
+            },
+          },
+        },
+        [SCREENS.RIGHT_MODAL.SETTINGS]: {
+          screens: {
+            [SCREENS.SETTINGS.ROOT]: ROUTES.SETTINGS,
+          },
+        },
+        [SCREENS.RIGHT_MODAL.SOCIAL]: {
+          screens: {
+            [SCREENS.SOCIAL.ROOT]: ROUTES.SOCIAL,
+            [SCREENS.SOCIAL.FRIEND_LIST]: ROUTES.SOCIAL_FRIEND_LIST,
+            [SCREENS.SOCIAL.FRIEND_REQUESTS]: ROUTES.SOCIAL_FRIEND_REQUESTS,
+            [SCREENS.SOCIAL.FRIEND_SEARCH]: ROUTES.SOCIAL_FRIEND_SEARCH,
+          },
+        },
+        [SCREENS.RIGHT_MODAL.STATISTICS]: {
+          screens: {
+            [SCREENS.STATISTICS.ROOT]: ROUTES.STATISTICS,
+          },
+        },
+      },
+    },
+
+    [NAVIGATORS.FULL_SCREEN_NAVIGATOR]: {
+      screens: {
+        // [SCREENS.SETTINGS.ROOT]: {
+        //   path: ROUTES.SETTINGS,
+        // },
+        // [SCREENS.SETTINGS_CENTRAL_PANE]: {
+        //   screens: {
+        //     [SCREENS.SETTINGS.SHARE_CODE]: {
+        //       path: ROUTES.SETTINGS_SHARE_CODE,
+        //       exact: true,
+        //     },
+        //     [SCREENS.SETTINGS.PROFILE.ROOT]: {
+        //       path: ROUTES.SETTINGS_PROFILE,
+        //       exact: true,
+        //     },
+        //     [SCREENS.SETTINGS.PREFERENCES.ROOT]: {
+        //       path: ROUTES.SETTINGS_PREFERENCES,
+        //       exact: true,
+        //     },
+        // [SCREENS.SETTINGS.ABOUT]: {
+        //   path: ROUTES.SETTINGS_ABOUT,
+        //   exact: true,
+        // },
+        //       },
+        //     },
+        //   },
+      },
+    },
+  },
+};
+
+export default config;

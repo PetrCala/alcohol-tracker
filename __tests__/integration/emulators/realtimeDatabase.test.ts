@@ -9,17 +9,19 @@ import {
   createMockSession,
   createMockUserStatus,
 } from '../../utils/mockDatabase';
-import {isConnectedToDatabaseEmulator} from '@src/services/firebaseUtils';
+import {isConnectedToDatabaseEmulator} from '@src/libs/Firebase/FirebaseUtils';
 import {
-  BetaKeyProps,
-  FriendRequestData,
-  MaintenanceProps,
-  ProfileData,
-  UnitTypesProps,
+  FriendRequestList,
+  Profile,
+  Drinks,
+  DrinkingSession,
 } from '@src/types/database';
 import {Database} from 'firebase/database';
 import {describeWithEmulator} from '../../utils/emulators/emulatorTools';
-import {saveDrinkingSessionData} from '@database/drinkingSessions';
+import {
+  saveDrinkingSessionData,
+  savePlaceholderSessionData,
+} from '@database/drinkingSessions';
 
 import {MOCK_USER_IDS} from '../../utils/testsStatic';
 import {readDataOnce} from '@database/baseFunctions';
@@ -30,13 +32,14 @@ import {
   teardownRealtimeDatabaseTestEnv,
 } from '../../utils/emulators/realtimeDatabaseSetup';
 import {
+  changeDisplayName,
   deleteUserData,
   getDefaultPreferences,
   getDefaultUserData,
   getDefaultUserStatus,
   pushNewUserInfo,
 } from '@database/users';
-import {cleanStringForFirebaseKey} from '@src/utils/strings';
+import {cleanStringForFirebaseKey} from '@libs/StringUtils';
 import {
   acceptFriendRequest,
   deleteFriendRequest,
@@ -44,14 +47,27 @@ import {
   sendFriendRequest,
   unfriend,
 } from '@database/friends';
+import DBPATHS from '@database/DBPATHS';
+import CONST from '@src/CONST';
+import {getEmptySession} from '@libs/SessionUtils';
+import {
+  Auth,
+  connectAuthEmulator,
+  getReactNativePersistence,
+  initializeAuth,
+} from 'firebase/auth';
+import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  createMockAuthUsers,
+  setupAuthTestEnv,
+} from '../../utils/emulators/authSetup';
 
 const testUserId: string = MOCK_USER_IDS[0];
 const testUserDisplayName: string = 'mock-user';
-const testUserBetaKey: string = 'beta-key-1';
 const testUserId2: string = MOCK_USER_IDS[1];
 
 const mockSessionKey = `${testUserId}-mock-session-999`;
-const mockSessionUnits: UnitTypesProps = {
+const mockSessionDrinks: Drinks = {
   beer: 2,
   wine: 1,
   other: 3,
@@ -59,7 +75,7 @@ const mockSessionUnits: UnitTypesProps = {
 const mockDrinkingSession = createMockSession(
   new Date(),
   undefined,
-  mockSessionUnits,
+  mockSessionDrinks,
   undefined,
 );
 const mockUserStatus = createMockUserStatus(
@@ -155,8 +171,7 @@ describeWithEmulator('Test config functionality', () => {
 
   it('should correctly read the config', async () => {
     const expectedConfig = createMockConfig();
-    const configRef = 'config';
-    const config = await readDataOnce(db, configRef);
+    const config = await readDataOnce(db, DBPATHS.CONFIG);
     expect(config).not.toBeNull();
     expect(config).toEqual(expectedConfig);
   });
@@ -184,8 +199,9 @@ describeWithEmulator('Test drinking session functionality', () => {
   });
 
   it('should correctly save user status info', async () => {
-    await set(ref(db, `user_status/${testUserId}`), mockUserStatus);
-    const newSessionInfo = await readDataOnce(db, `user_status/${testUserId}`);
+    const dbRef = DBPATHS.USER_STATUS_USER_ID.getRoute(testUserId);
+    await set(ref(db, dbRef), mockUserStatus);
+    const newSessionInfo = await readDataOnce(db, dbRef);
     expect(newSessionInfo).toEqual(newSessionInfo);
   });
 
@@ -197,11 +213,30 @@ describeWithEmulator('Test drinking session functionality', () => {
       mockSessionKey,
     );
 
-    const userSessionRef = `user_drinking_sessions/${testUserId}/${mockSessionKey}`;
+    const userSessionRef =
+      DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID.getRoute(
+        testUserId,
+        mockSessionKey,
+      );
     const userSession = await readDataOnce(db, userSessionRef);
 
     expect(userSession).not.toBeNull();
     expect(userSession).toMatchObject(mockDrinkingSession);
+  });
+
+  it('should save a placeholder session', async () => {
+    let mockPlaceholderSession: DrinkingSession = getEmptySession(
+      CONST.SESSION_TYPES.EDIT,
+      true,
+      false,
+    );
+
+    await savePlaceholderSessionData(db, testUserId, mockPlaceholderSession);
+    const placeholderSessionRef =
+      DBPATHS.USER_SESSION_PLACEHOLDER_USER_ID.getRoute(testUserId);
+    const placeholderSession = await readDataOnce(db, placeholderSessionRef);
+
+    expect(placeholderSession).toMatchObject(mockPlaceholderSession);
   });
 });
 
@@ -209,12 +244,11 @@ describeWithEmulator('Test pushing new user info into the database', () => {
   let testApp: FirebaseApp;
   let db: Database;
   let newUserDisplayName = 'mock-user-6';
-  let newUserProfileData: ProfileData = {
+  let newUserProfileData: Profile = {
     display_name: newUserDisplayName,
     photo_url: '',
   };
   let newUserId = 'mock-user-6'; // This user should not be created in the mock database
-  let newUserBetaKeyId = 6;
   setupGlobalMocks();
 
   beforeAll(async () => {
@@ -224,11 +258,11 @@ describeWithEmulator('Test pushing new user info into the database', () => {
   beforeEach(async () => {
     await fillDatabaseWithMockData(db);
 
-    let userList = await readDataOnce(db, 'user_status'); // Arbitrary node with all user ids in top level
-    const userKeys = Object.keys(userList);
+    let userStatusList = await readDataOnce(db, DBPATHS.USER_STATUS); // Arbitrary node with all user ids in top level
+    const userKeys = Object.keys(userStatusList);
     expect(userKeys).not.toContain(newUserId); // Check that the user does not exist in the mock database
 
-    await pushNewUserInfo(db, newUserId, newUserProfileData, newUserBetaKeyId);
+    await pushNewUserInfo(db, newUserId, newUserProfileData);
   });
 
   afterEach(async () => {
@@ -239,52 +273,37 @@ describeWithEmulator('Test pushing new user info into the database', () => {
     await teardownRealtimeDatabaseTestEnv(testApp, db);
   });
 
-  it('pushes the beta keys data into the database', async () => {
-    const expectedBetaKey = {
-      in_usage: true,
-      key: expect.anything(),
-      user_id: newUserId,
-    };
-    const dbBetaKey: BetaKeyProps = await readDataOnce(
-      db,
-      `beta_keys/${newUserBetaKeyId}`,
-    );
-    expect(dbBetaKey).toMatchObject(expectedBetaKey);
-  });
-
   it('pushes the nickname to id data into the database', async () => {
     const expectedNickname = newUserDisplayName;
     const nicknameKey = cleanStringForFirebaseKey(
       newUserProfileData.display_name,
     );
-    const dbNickname: string = await readDataOnce(
-      db,
-      `nickname_to_id/${nicknameKey}/${newUserId}`,
+    const dbRef = DBPATHS.NICKNAME_TO_ID_NICKNAME_KEY_USER_ID.getRoute(
+      nicknameKey,
+      newUserId,
     );
+    const dbNickname: string = await readDataOnce(db, dbRef);
     expect(dbNickname).toEqual(expectedNickname);
   });
 
   it('pushes the user preferences into the database', async () => {
     const expectedPreferences = getDefaultPreferences();
-    const dbPreferencesData = await readDataOnce(
-      db,
-      `user_preferences/${newUserId}`,
-    );
+    const dbRef = DBPATHS.USER_PREFERENCES_USER_ID.getRoute(newUserId);
+    const dbPreferencesData = await readDataOnce(db, dbRef);
     expect(dbPreferencesData).toMatchObject(expectedPreferences);
   });
 
   it('pushes the user data into the database', async () => {
-    const expectedData = getDefaultUserData(
-      newUserProfileData,
-      newUserBetaKeyId,
-    );
-    const dbUserData = await readDataOnce(db, `users/${newUserId}`);
+    const expectedData = getDefaultUserData(newUserProfileData);
+    const dbRef = DBPATHS.USERS_USER_ID.getRoute(newUserId);
+    const dbUserData = await readDataOnce(db, dbRef);
     expect(dbUserData).toMatchObject(expectedData);
   });
 
   it('pushes the user status into the database', async () => {
     const expectedStatus = getDefaultUserStatus();
-    const dbStatusData = await readDataOnce(db, `user_status/${newUserId}`);
+    const dbRef = DBPATHS.USER_STATUS_USER_ID.getRoute(newUserId);
+    const dbStatusData = await readDataOnce(db, dbRef);
     expect(dbStatusData).toMatchObject({
       ...expectedStatus,
       last_online: expect.any(Number),
@@ -311,10 +330,9 @@ describeWithEmulator('Test deleting data from the database', () => {
       db,
       testUserId,
       testUserDisplayName,
-      1,
       undefined,
       undefined,
-    ); // beta feature // TODO: Add friend requests, friends
+    ); // TODO: Add friend requests, friends
   });
 
   afterEach(async () => {
@@ -325,55 +343,43 @@ describeWithEmulator('Test deleting data from the database', () => {
     await teardownRealtimeDatabaseTestEnv(testApp, db);
   });
 
-  it('deletes the beta keys data from the database', async () => {
-    const expectedBetaKey = {
-      in_usage: false,
-      key: testUserBetaKey,
-    };
-    const dbBetaKey: BetaKeyProps = await readDataOnce(db, `beta_keys/1`);
-    expect(dbBetaKey).toMatchObject(expectedBetaKey);
-  });
-
   it('deletes the user nickname ID data from the database', async () => {
     const nicknameKey = cleanStringForFirebaseKey(testUserDisplayName);
-    const dbNickname = await readDataOnce(
-      db,
-      `nickname_to_id/${nicknameKey}/${testUserId}`,
+    const dbRef = DBPATHS.NICKNAME_TO_ID_NICKNAME_KEY_USER_ID.getRoute(
+      nicknameKey,
+      testUserId,
     );
+    const dbNickname = await readDataOnce(db, dbRef);
     expect(dbNickname).toBeNull();
   });
 
   it('deletes the user data from the database', async () => {
-    const dbData = await readDataOnce(db, `users/${testUserId}`);
+    const dbRef = DBPATHS.USERS_USER_ID.getRoute(testUserId);
+    const dbData = await readDataOnce(db, dbRef);
     expect(dbData).toBeNull();
   });
 
   it('deletes the user status data from the database', async () => {
-    const dbSessionData = await readDataOnce(db, `user_status/${testUserId}`);
+    const dbRef = DBPATHS.USER_STATUS_USER_ID.getRoute(testUserId);
+    const dbSessionData = await readDataOnce(db, dbRef);
     expect(dbSessionData).toBeNull();
   });
 
   it('deletes the user preferences from the database', async () => {
-    const dbPreferencesData = await readDataOnce(
-      db,
-      `user_preferences/${testUserId}`,
-    );
+    const dbRef = DBPATHS.USER_PREFERENCES_USER_ID.getRoute(testUserId);
+    const dbPreferencesData = await readDataOnce(db, dbRef);
     expect(dbPreferencesData).toBeNull();
   });
 
   it('deletes the user drinking sessions from the database', async () => {
-    const dbSessionsData = await readDataOnce(
-      db,
-      `user_drinking_sessions/${testUserId}`,
-    );
+    const dbRef = DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(testUserId);
+    const dbSessionsData = await readDataOnce(db, dbRef);
     expect(dbSessionsData).toBeNull();
   });
 
   it('deletes the user unconfirmed days from the database', async () => {
-    const dbUnconfirmedDays = await readDataOnce(
-      db,
-      `user_unconfirmed_days/${testUserId}`,
-    );
+    const dbRef = DBPATHS.USER_UNCONFIRMED_DAYS_USER_ID.getRoute(testUserId);
+    const dbUnconfirmedDays = await readDataOnce(db, dbRef);
     expect(dbUnconfirmedDays).toBeNull();
   });
 });
@@ -393,15 +399,14 @@ describeWithEmulator('Test friend request functionality', () => {
       db,
       testUserId,
       testUserDisplayName,
-      1,
       undefined,
       undefined,
-    ); // beta feature
-    const friends = await readDataOnce(db, `users/${testUserId}/friends`);
-    const friendRequests = await readDataOnce(
-      db,
-      `users/${testUserId}/friend_requests`,
     );
+    const user1FriendsRef = DBPATHS.USERS_USER_ID_FRIENDS.getRoute(testUserId);
+    const friendRequestsRef =
+      DBPATHS.USERS_USER_ID_FRIEND_REQUESTS.getRoute(testUserId);
+    const friends = await readDataOnce(db, user1FriendsRef);
+    const friendRequests = await readDataOnce(db, friendRequestsRef);
     expect(friends).toBeNull();
     expect(friendRequests).toBeNull();
   });
@@ -415,87 +420,105 @@ describeWithEmulator('Test friend request functionality', () => {
   });
 
   it('should correctly determine friends', async () => {
-    await set(ref(db, `users/${testUserId}/friends/${testUserId2}`), true);
-    await set(ref(db, `users/${testUserId2}/friends/${testUserId}`), true);
+    const friend1Ref = DBPATHS.USERS_USER_ID_FRIENDS_FRIEND_ID.getRoute(
+      testUserId,
+      testUserId2,
+    );
+    const friend2Ref = DBPATHS.USERS_USER_ID_FRIENDS_FRIEND_ID.getRoute(
+      testUserId2,
+      testUserId,
+    );
+    await set(ref(db, friend1Ref), true);
+    await set(ref(db, friend2Ref), true);
     const usersAreFriends = await isFriend(db, testUserId, testUserId2);
     expect(usersAreFriends).toBe(true);
   });
 
   it('should send a friend request', async () => {
-    const expectedRequestsUser1: FriendRequestData = {
-      [testUserId2]: 'sent',
+    const user1Ref = DBPATHS.USERS_USER_ID_FRIEND_REQUESTS.getRoute(testUserId);
+    const user2Ref =
+      DBPATHS.USERS_USER_ID_FRIEND_REQUESTS.getRoute(testUserId2);
+    const expectedRequestsUser1: FriendRequestList = {
+      [testUserId2]: CONST.FRIEND_REQUEST_STATUS.SENT,
     };
-    const expectedRequestsUser2: FriendRequestData = {
-      [testUserId]: 'received',
+    const expectedRequestsUser2: FriendRequestList = {
+      [testUserId]: CONST.FRIEND_REQUEST_STATUS.RECEIVED,
     };
     await sendFriendRequest(db, testUserId, testUserId2);
-    const user1FriendRequests = await readDataOnce(
-      db,
-      `users/${testUserId}/friend_requests`,
-    );
-    const user2FriendRequests = await readDataOnce(
-      db,
-      `users/${testUserId2}/friend_requests`,
-    );
+    const user1FriendRequests = await readDataOnce(db, user1Ref);
+    const user2FriendRequests = await readDataOnce(db, user2Ref);
     expect(user1FriendRequests).toMatchObject(expectedRequestsUser1);
     expect(user2FriendRequests).toMatchObject(expectedRequestsUser2);
   });
 
   it('should delete a friend request', async () => {
-    await set(
-      ref(db, `users/${testUserId}/friend_requests/${testUserId2}`),
-      'sent',
+    const user1Ref = DBPATHS.USERS_USER_ID_FRIEND_REQUESTS_REQUEST_ID.getRoute(
+      testUserId,
+      testUserId2,
     );
-    await set(
-      ref(db, `users/${testUserId2}/friend_requests/${testUserId}`),
-      'received',
+    const user2Ref = DBPATHS.USERS_USER_ID_FRIEND_REQUESTS_REQUEST_ID.getRoute(
+      testUserId2,
+      testUserId,
     );
+    await set(ref(db, user1Ref), CONST.FRIEND_REQUEST_STATUS.SENT);
+    await set(ref(db, user2Ref), CONST.FRIEND_REQUEST_STATUS.RECEIVED);
     await deleteFriendRequest(db, testUserId, testUserId2);
-    const user1FriendRequests = await readDataOnce(
-      db,
-      `users/${testUserId}/friend_requests`,
-    );
-    const user2FriendRequests = await readDataOnce(
-      db,
-      `users/${testUserId2}/friend_requests`,
-    );
+    const user1FriendRequestsRef =
+      DBPATHS.USERS_USER_ID_FRIEND_REQUESTS.getRoute(testUserId);
+    const user2FriendRequestsRef =
+      DBPATHS.USERS_USER_ID_FRIEND_REQUESTS.getRoute(testUserId2);
+    const user1FriendRequests = await readDataOnce(db, user1FriendRequestsRef);
+    const user2FriendRequests = await readDataOnce(db, user2FriendRequestsRef);
     expect(user1FriendRequests).toBeNull();
     expect(user2FriendRequests).toBeNull();
   });
 
   it('should accept a friend request', async () => {
-    await set(
-      ref(db, `users/${testUserId}/friend_requests/${testUserId2}`),
-      'sent',
+    const user1Ref = DBPATHS.USERS_USER_ID_FRIEND_REQUESTS_REQUEST_ID.getRoute(
+      testUserId,
+      testUserId2,
     );
-    await set(
-      ref(db, `users/${testUserId2}/friend_requests/${testUserId}`),
-      'received',
+    const user2Ref = DBPATHS.USERS_USER_ID_FRIEND_REQUESTS_REQUEST_ID.getRoute(
+      testUserId2,
+      testUserId,
     );
+    const user1FriendRequestsRef =
+      DBPATHS.USERS_USER_ID_FRIEND_REQUESTS.getRoute(testUserId);
+    const user2FriendRequestsRef =
+      DBPATHS.USERS_USER_ID_FRIEND_REQUESTS.getRoute(testUserId2);
+    const user1FriendsRef = DBPATHS.USERS_USER_ID_FRIENDS.getRoute(testUserId);
+    const user2FriendsRef = DBPATHS.USERS_USER_ID_FRIENDS.getRoute(testUserId2);
+
+    await set(ref(db, user1Ref), CONST.FRIEND_REQUEST_STATUS.SENT);
+    await set(ref(db, user2Ref), CONST.FRIEND_REQUEST_STATUS.RECEIVED);
     await acceptFriendRequest(db, testUserId, testUserId2);
-    const user1FriendRequests = await readDataOnce(
-      db,
-      `users/${testUserId}/friend_requests`,
-    );
-    const user2FriendRequests = await readDataOnce(
-      db,
-      `users/${testUserId2}/friend_requests`,
-    );
+    const user1FriendRequests = await readDataOnce(db, user1FriendRequestsRef);
+    const user2FriendRequests = await readDataOnce(db, user2FriendRequestsRef);
     expect(user1FriendRequests).toBeNull();
     expect(user2FriendRequests).toBeNull();
 
-    const user1Friends = await readDataOnce(db, `users/${testUserId}/friends`);
-    const user2Friends = await readDataOnce(db, `users/${testUserId2}/friends`);
+    const user1Friends = await readDataOnce(db, user1FriendsRef);
+    const user2Friends = await readDataOnce(db, user2FriendsRef);
     expect(user1Friends).toMatchObject({[testUserId2]: true});
     expect(user2Friends).toMatchObject({[testUserId]: true});
   });
 
   it('should unfriend a user', async () => {
-    await set(ref(db, `users/${testUserId}/friends/${testUserId2}`), true);
-    await set(ref(db, `users/${testUserId2}/friends/${testUserId}`), true);
+    const user1Ref = DBPATHS.USERS_USER_ID_FRIENDS_FRIEND_ID.getRoute(
+      testUserId,
+      testUserId2,
+    );
+    const user2Ref = DBPATHS.USERS_USER_ID_FRIENDS_FRIEND_ID.getRoute(
+      testUserId2,
+      testUserId,
+    );
+    const user1FriendsRef = DBPATHS.USERS_USER_ID_FRIENDS.getRoute(testUserId);
+    const user2FriendsRef = DBPATHS.USERS_USER_ID_FRIENDS.getRoute(testUserId2);
+    await set(ref(db, user1Ref), true);
+    await set(ref(db, user2Ref), true);
     await unfriend(db, testUserId, testUserId2);
-    const user1Friends = await readDataOnce(db, `users/${testUserId}/friends`);
-    const user2Friends = await readDataOnce(db, `users/${testUserId2}/friends`);
+    const user1Friends = await readDataOnce(db, user1FriendsRef);
+    const user2Friends = await readDataOnce(db, user2FriendsRef);
     expect(user1Friends).toBeNull();
     expect(user2Friends).toBeNull();
 
@@ -503,3 +526,48 @@ describeWithEmulator('Test friend request functionality', () => {
     expect(usersAreFriends).toBe(false);
   });
 });
+
+// describeWithEmulator('Test user data modifications', () => {
+//   let testApp: FirebaseApp;
+//   let db: Database;
+//   let auth: Auth;
+//   setupGlobalMocks();
+
+//   beforeAll(async () => {
+//     ({testApp, auth} = setupAuthTestEnv());
+//     ({testApp, db} = setupRealtimeDatabaseTestEnv()); // Overrides the testApp
+//   });
+
+//   beforeEach(async () => {
+//     await fillDatabaseWithMockData(db, true); // No friends
+//     await createMockAuthUsers(auth);
+//   });
+
+//   afterEach(async () => {
+//     await set(ref(db), null);
+//   });
+
+//   afterAll(async () => {
+//     await teardownRealtimeDatabaseTestEnv(testApp, db);
+//   });
+
+//   it("should correctly modify a user's display name", async () => {
+//     const displayNameRef =
+//       DBPATHS.USERS_USER_ID_PROFILE_DISPLAY_NAME.getRoute(testUserId);
+//     const displayNameToUpdate = 'test-new-display-name';
+
+//     await changeDisplayName(db, auth.currentUser, displayNameToUpdate);
+
+//     const newDisplayName = await readDataOnce(db, displayNameRef);
+//     expect(newDisplayName).toEqual(displayNameToUpdate);
+
+//     const newNicknameKey = cleanStringForFirebaseKey(displayNameToUpdate);
+//     const nicknameRef = DBPATHS.NICKNAME_TO_ID_NICKNAME_KEY_USER_ID.getRoute(
+//       newNicknameKey,
+//       testUserId,
+//     );
+
+//     const newNicknameToId = await readDataOnce(db, nicknameRef);
+//     expect(newNicknameToId).toEqual(displayNameToUpdate);
+//   });
+// });

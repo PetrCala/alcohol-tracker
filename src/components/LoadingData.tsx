@@ -2,18 +2,24 @@
 
 export type LoadingDataProps = {
   loadingText?: string;
+  containerStyle?: any;
   style?: any;
-  blendBackground?: boolean;
+  backgroundColor?: any;
 };
 
 const LoadingData = ({
   loadingText,
+  containerStyle,
   style,
-  blendBackground,
+  backgroundColor,
 }: LoadingDataProps) => {
-  const backgroundStyle = blendBackground ? styles.blendBackground : {};
   return (
-    <View style={[styles.loadingContainer, backgroundStyle]}>
+    <View
+      style={[
+        styles.loadingContainer,
+        backgroundColor ? {backgroundColor: backgroundColor} : null,
+        containerStyle,
+      ]}>
       {loadingText ? (
         <Text style={styles.loadingText}>{loadingText}</Text>
       ) : null}
@@ -33,14 +39,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#FFFF99',
+    width: '100%',
+    height: '100%',
   },
   loadingText: {
     fontSize: 24,
     fontWeight: 'bold',
     color: 'black',
     marginBottom: 15,
-  },
-  blendBackground: {
-    backgroundColor: '#FFFF99', // Could be automized
   },
 });

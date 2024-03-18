@@ -3,7 +3,6 @@
   useState,
   useMemo,
   useCallback,
-  forwardRef,
   ReactNode,
 } from 'react';
 import {
@@ -14,7 +13,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Calendar} from 'react-native-calendars';
+import {Calendar, DateData} from 'react-native-calendars';
 import {
   getPreviousMonth,
   getNextMonth,
@@ -23,34 +22,42 @@ import {
   aggregateSessionsByDays,
   monthEntriesToColors,
   hasDecimalPoint,
-} from '../utils/dataHandling';
-import {
-  DrinkingSessionArrayItem,
-  DrinkingSessionData,
-  PreferencesData,
-} from '../types/database';
-import {
-  DateObject,
-  DayState,
-  DayMarking,
-  CalendarColors,
-} from '../types/components';
+  roundToTwoDecimalPlaces,
+} from '@libs/DataHandling';
+import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
+import {DateObject} from '@src/types/time';
 import LoadingData from './LoadingData';
+import CONST from '@src/CONST';
+import {
+  DrinkingSessionArray,
+  DrinkingSessionList,
+  Preferences,
+} from '@src/types/database';
+
+type DayMarking = {
+  units?: number;
+  color?: CalendarColors;
+  textColor?: string;
+};
+
+type CalendarColors = 'yellow' | 'red' | 'orange' | 'black' | 'green';
+
+type DayState = 'selected' | 'disabled' | 'today' | '';
 
 type SessionsCalendarProps = {
-  drinkingSessionData: DrinkingSessionArrayItem[];
-  preferences: PreferencesData;
+  drinkingSessionData: DrinkingSessionList | undefined;
+  preferences: Preferences;
   visibleDateObject: DateObject;
   dispatch: React.Dispatch<any>;
   // setVisibleDateObject: React.Dispatch<React.SetStateAction<DateObject>>;
-  onDayPress: (day: any) => void;
+  onDayPress: (day: DateData) => void;
 };
 
-export type SessionsCalendarMarkedDates = {
+type SessionsCalendarMarkedDates = {
   [date: string]: DayMarking;
 };
 
-export type SessionsCalendarDatesType = {
+type SessionsCalendarDatesType = {
   [key: string]: {
     units: number;
     blackout: boolean;
@@ -67,12 +74,13 @@ const colorToTextColorMap: Record<CalendarColors, string> = {
 
 // Custom Day Component
 const DayComponent: React.FC<{
-  date: DateObject;
+  date: (string & DateData) | undefined;
   state: DayState;
   marking: DayMarking;
   theme: any;
-  onPress: (day: DateObject) => void;
+  onPress: (day: DateData) => void;
 }> = ({date, state, marking, theme, onPress}) => {
+  if (!date) return null;
   // Calculate the date information with memos to avoid recalculation
   const today = useMemo(() => new Date(), []);
   const tomorrow = useMemo(() => changeDateBySomeDays(today, 1), [today]);
@@ -82,7 +90,7 @@ const DayComponent: React.FC<{
   );
 
   const dateNoLaterThanToday = useCallback(
-    (date: DateObject): boolean => {
+    (date: DateData): boolean => {
       return date.timestamp < tomorrowMidnight;
     },
     [tomorrowMidnight],
@@ -98,7 +106,7 @@ const DayComponent: React.FC<{
     return textStyle;
   };
 
-  const getMarkingContainerStyle = (date: DateObject, marking: DayMarking) => {
+  const getMarkingContainerStyle = (date: DateData, marking: DayMarking) => {
     let baseStyle = styles.daySessionsMarkingContainer;
 
     if (state === 'disabled') {
@@ -119,6 +127,11 @@ const DayComponent: React.FC<{
 
   const getMarkingTextStyle = (marking: DayMarking) => {
     let baseStyle = styles.daySessionMarkingText;
+
+    // Ensure no funky numbers
+    if (marking?.units) {
+      marking.units = roundToTwoDecimalPlaces(marking.units);
+    }
 
     if (
       marking?.units &&
@@ -161,7 +174,7 @@ function CustomArrow(direction: string): ReactNode {
           : arrowStyles.rightContainer,
       ]}>
       <Image
-        source={require('../../assets/icons/arrow_back.png')}
+        source={KirokuIcons.ArrowBack}
         style={[
           arrowStyles.customArrowIcon,
           direction === 'left'
@@ -181,22 +194,23 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
   dispatch,
   onDayPress,
 }) => {
-  const [calendarData, setCalendarData] =
-    useState<DrinkingSessionArrayItem[]>(drinkingSessionData);
+  const [calendarData, setCalendarData] = useState<DrinkingSessionArray>(
+    drinkingSessionData ? Object.values(drinkingSessionData) : [],
+  );
   const [markedDates, setMarkedDates] = useState<SessionsCalendarMarkedDates>(
     {},
   );
   const [loadingMarkedDates, setLoadingMarkedDays] = useState<boolean>(true);
 
   const getMarkedDates = (
-    drinkingSessionData: DrinkingSessionArrayItem[],
-    preferences: PreferencesData,
+    calendarData: DrinkingSessionArray,
+    preferences: Preferences,
   ): SessionsCalendarMarkedDates => {
     // Use points to calculate the point sum (flagged as units)
     var aggergatedSessions = aggregateSessionsByDays(
-      drinkingSessionData,
-      'points',
-      preferences.units_to_points,
+      calendarData,
+      'units',
+      preferences.drinks_to_units,
     );
     var newMarkedDates = monthEntriesToColors(aggergatedSessions, preferences);
     return newMarkedDates;
@@ -226,7 +240,10 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
 
   // Monitor the local calendarData hook that depends on the drinking session data
   useEffect(() => {
-    setCalendarData(drinkingSessionData);
+    const newData = drinkingSessionData
+      ? Object.values(drinkingSessionData)
+      : [];
+    setCalendarData(newData);
   }, [drinkingSessionData]);
 
   // Monitor marked days
@@ -243,7 +260,7 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
       current={visibleDateObject.dateString}
       dayComponent={({date, state, marking, theme}) => (
         <DayComponent
-          date={date as DateObject}
+          date={date}
           state={state as DayState}
           marking={marking as any}
           theme={theme as any}
@@ -288,8 +305,6 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
     />
   );
 };
-
-export default SessionsCalendar;
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -375,3 +390,12 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
 });
+
+export default SessionsCalendar;
+export type {
+  DayMarking,
+  CalendarColors,
+  DayState,
+  SessionsCalendarDatesType,
+  SessionsCalendarMarkedDates,
+};
