@@ -1,4 +1,8 @@
-﻿import {cleanSemver, isNonEmptyObject} from '../../../src/libs/Validation';
+﻿import {
+  cleanSemver,
+  isNonEmptyObject,
+  validateSemver,
+} from '../../../src/libs/Validation';
 
 describe('isNonEmptyObject', () => {
   it('should return true for non-empty objects', () => {
@@ -42,6 +46,43 @@ describe('isNonEmptyObject', () => {
   it('should return false undefined', () => {
     const nonEmptyArray = undefined;
     expect(isNonEmptyObject(nonEmptyArray)).toBeFalsy();
+  });
+});
+
+describe('Test the validateSemver function', () => {
+  it('validates correct SemVer strings', () => {
+    expect(() => validateSemver('1.0.0')).not.toThrow();
+    expect(() => validateSemver('2.10.3-alpha.1+build.456')).not.toThrow();
+    expect(() => validateSemver('0.0.4')).not.toThrow();
+    expect(() => validateSemver('1.2.3-4')).not.toThrow();
+    expect(() => validateSemver('1.2.3-4+build')).not.toThrow();
+    expect(() => validateSemver('1.2.3+20200101')).not.toThrow();
+  });
+  it('throws an error for invalid SemVer strings', () => {
+    expect(() => validateSemver('01.0.0')).toThrow('Invalid SemVer version.');
+    expect(() => validateSemver('1.0')).toThrow('Invalid SemVer version.');
+    expect(() => validateSemver('1.0.0.0')).toThrow('Invalid SemVer version.');
+    expect(() => validateSemver('abc')).toThrow('Invalid SemVer version.');
+    expect(() => validateSemver('1.2')).toThrow('Invalid SemVer version.');
+    expect(() => validateSemver('')).toThrow('Invalid SemVer version.');
+  });
+
+  it('throws an error for non-strings', () => {
+    // @ts-expect-error
+    expect(() => validateSemver(1)).toThrow('Invalid SemVer version.');
+    // @ts-expect-error
+    expect(() => validateSemver(undefined)).toThrow('Invalid SemVer version.');
+    // @ts-expect-error
+    expect(() => validateSemver(null)).toThrow('Invalid SemVer version.');
+    // @ts-expect-error
+    expect(() => validateSemver([1, 2, 3])).toThrow('Invalid SemVer version.');
+    // @ts-expect-error
+    expect(() => validateSemver({a: 1})).toThrow('Invalid SemVer version.');
+  });
+
+  it('validates versions with or without v prefix', () => {
+    expect(() => validateSemver('v1.0.0')).not.toThrow();
+    expect(() => validateSemver('v2.10.3-alpha.1+build.456')).not.toThrow();
   });
 });
 
