@@ -1,5 +1,4 @@
 ﻿import semver from 'semver';
-import {Platform} from 'react-native';
 import CONST from '@src/CONST';
 
 import {version as _version} from '../../package.json';
@@ -9,13 +8,6 @@ const version: string = _version;
 type ValidationResult = {
   success: boolean;
   message?: string;
-};
-
-/**
- * Check that the current platform is valid.
- */
-export const platformIsValid = (): boolean => {
-  return CONST.AVAILABLE_PLATFORMS.includes(Platform.OS as any);
 };
 
 /**
