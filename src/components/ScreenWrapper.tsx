@@ -15,6 +15,7 @@ import CONST from '@src/CONST';
 import HeaderGap from './HeaderGap';
 import KeyboardAvoidingView from './KeyboardAvoidingView';
 import SafeAreaConsumer from './SafeAreaConsumer';
+import DismissKeyboard from './Keyboard/DismissKeyboard';
 // import OfflineIndicator from './OfflineIndicator';
 // import useNetwork from '@hooks/useNetwork';
 
@@ -77,7 +78,7 @@ function ScreenWrapper(
   {
     shouldEnableMaxHeight = false,
     shouldEnableMinHeight = false,
-    includePaddingTop = true,
+    includePaddingTop = false,
     keyboardAvoidingViewBehavior = 'padding',
     includeSafeAreaPaddingBottom = true,
     shouldEnableKeyboardAvoidingView = true,
@@ -171,29 +172,32 @@ function ScreenWrapper(
         return (
           <View ref={ref} style={[styles.flex1, {minHeight}]} testID={testID}>
             <View style={[styles.flex1, paddingStyle, style]}>
-              <KeyboardAvoidingView
-                style={[styles.w100, styles.h100, {maxHeight}]}
-                behavior={keyboardAvoidingViewBehavior}
-                enabled={shouldEnableKeyboardAvoidingView}>
-                <HeaderGap styles={headerGapStyles} />
-                {
-                  // If props.children is a function, call it to provide the insets to the children.
-                  typeof children === 'function'
-                    ? children({
-                        insets,
-                        safeAreaPaddingBottomStyle,
-                        didScreenTransitionEnd,
-                      })
-                    : children
-                }
-                {/* {isSmallScreenWidth && shouldShowOfflineIndicator && <OfflineIndicator style={offlineIndicatorStyle} />}
+              {/* experimental */}
+              <DismissKeyboard>
+                <KeyboardAvoidingView
+                  style={[styles.w100, styles.h100, {maxHeight}]}
+                  behavior={keyboardAvoidingViewBehavior}
+                  enabled={shouldEnableKeyboardAvoidingView}>
+                  <HeaderGap styles={headerGapStyles} />
+                  {
+                    // If props.children is a function, call it to provide the insets to the children.
+                    typeof children === 'function'
+                      ? children({
+                          insets,
+                          safeAreaPaddingBottomStyle,
+                          didScreenTransitionEnd,
+                        })
+                      : children
+                  }
+                  {/* {isSmallScreenWidth && shouldShowOfflineIndicator && <OfflineIndicator style={offlineIndicatorStyle} />}
                                      {!isSmallScreenWidth && shouldShowOfflineIndicatorInWideScreen && (
                                          <OfflineIndicator
                                              containerStyles={[]}
                                              style={[styles.pl5, styles.offlineIndicatorRow, offlineIndicatorStyle]}
                                          />
                                      )} */}
-              </KeyboardAvoidingView>
+                </KeyboardAvoidingView>
+              </DismissKeyboard>
             </View>
           </View>
         );
