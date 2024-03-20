@@ -144,9 +144,7 @@ const LoginScreen = () => {
   if (state.loadingUser) return <LoadingData loadingText="Signing in..." />;
 
   return (
-    <ScreenWrapper
-      testID={LoginScreen.displayName}
-      style={{backgroundColor: theme.appBG}}>
+    <DismissKeyboard>
       <View style={styles.mainContainer}>
         <WarningMessage warningText={state.warning} dispatch={dispatch} />
         <SuccessMessage successText={state.success} dispatch={dispatch} />
@@ -219,7 +217,7 @@ const LoginScreen = () => {
           />
         </View>
       </View>
-    </ScreenWrapper>
+    </DismissKeyboard>
   );
 };
 
@@ -271,7 +269,7 @@ const styles = StyleSheet.create({
     color: 'green',
   },
   inputContainer: {
-    paddingTop: screenHeight * 0.15,
+    paddingTop: screenHeight * 0.1,
     width: '80%',
     height: screenHeight * 0.85,
   },

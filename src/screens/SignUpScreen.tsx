@@ -8,6 +8,9 @@ import {
   TouchableOpacity,
   View,
   TextInput,
+  Keyboard,
+  Platform,
+  ScrollView,
 } from 'react-native';
 import * as KirokuImages from '@src/components/Icon/KirokuImages';
 import {getAuth, updateProfile} from 'firebase/auth';
@@ -36,6 +39,8 @@ import ScreenWrapper from '@components/ScreenWrapper';
 import useTheme from '@hooks/useTheme';
 import {checkAccountCreationLimit} from '@database/protection';
 import LoadingData from '@components/LoadingData';
+import KeyboardAvoidingView from '@components/KeyboardAvoidingView';
+import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 
 interface State {
   email: string;
@@ -132,6 +137,7 @@ const SignUpScreen = () => {
   }
 
   const handleSignUp = async () => {
+    Keyboard.dismiss();
     if (!isOnline) return;
 
     const inputValidation = validateSignInInput(
@@ -291,9 +297,7 @@ const SignUpScreen = () => {
     return <LoadingData loadingText="Creating your account..." />;
 
   return (
-    <ScreenWrapper
-      testID={SignUpScreen.displayName}
-      style={{backgroundColor: theme.appBG}}>
+    <DismissKeyboard>
       <View style={styles.mainContainer}>
         <WarningMessage warningText={state.warning} dispatch={dispatch} />
         <View style={styles.logoContainer}>
@@ -370,7 +374,7 @@ const SignUpScreen = () => {
           </View>
         </View>
       </View>
-    </ScreenWrapper>
+    </DismissKeyboard>
   );
 };
 
@@ -417,7 +421,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   inputContainer: {
-    paddingTop: screenHeight * 0.1,
+    paddingTop: screenHeight * 0.04,
     width: '80%',
     height: screenHeight * 0.85,
   },
