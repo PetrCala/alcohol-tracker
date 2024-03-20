@@ -7,9 +7,9 @@ import {FirebaseProvider} from '@context/global/FirebaseContext';
 import {UserConnectionProvider} from '@context/global/UserConnectionContext';
 import {ConfigProvider} from '@context/global/ConfigContext';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-// import {WindowDimensionsProvider} from '@src/components/withWindowDimensions';
+// import {WindowDimensionsProvider} from '@components/withWindowDimensions';
 import {KeyboardStateProvider} from '@components/withKeyboardState';
-import SafeArea from '@src/components/SafeArea';
+import SafeArea from '@components/SafeArea';
 
 type KirokuProps = {
   /** true if there is an authToken */

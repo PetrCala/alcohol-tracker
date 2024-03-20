@@ -17,7 +17,7 @@ import {
   UserList,
 } from '@src/types/database';
 import {useEffect, useMemo, useReducer, useState} from 'react';
-import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {acceptFriendRequest, deleteFriendRequest} from '@database/friends';
 

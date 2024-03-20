@@ -1,5 +1,7 @@
 ﻿import CONST from '@src/CONST';
+import Clipboard from '@react-native-community/clipboard';
 import seedrandom from 'seedrandom';
+import {Alert} from 'react-native';
 
 /**
  * Clean a string to be used as a key for the Firebase Realtime Database.
@@ -67,9 +69,16 @@ function generateRandomString(length: number, seed: string): string {
   return result;
 }
 
+/** Copy a text to a clipboard */
+const copyToClipboard = (text: string) => {
+  Clipboard.setString(text);
+  Alert.alert('Success', 'Copied to clipboard!');
+};
+
 export {
   nonMidnightString,
   cleanStringForFirebaseKey,
   getPlural,
   generateRandomString,
+  copyToClipboard,
 };

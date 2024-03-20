@@ -24,7 +24,7 @@ import {
   timestampToDate,
   timestampToDateString,
 } from '@libs/DataHandling';
-import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {DateObject} from '@src/types/time';
 import SessionsCalendar from '@components/Calendar';
 import LoadingData from '@components/LoadingData';

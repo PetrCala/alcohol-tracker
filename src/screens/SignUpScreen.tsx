@@ -12,7 +12,7 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
-import * as KirokuImages from '@src/components/Icon/KirokuImages';
+import * as KirokuImages from '@components/Icon/KirokuImages';
 import {getAuth, updateProfile} from 'firebase/auth';
 import {signUpUserWithEmailAndPassword} from '@libs/auth/auth';
 import {useFirebase} from '@context/global/FirebaseContext';

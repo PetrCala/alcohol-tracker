@@ -10,7 +10,7 @@ import {
   Keyboard,
   ImageSourcePropType,
 } from 'react-native';
-import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import YesNoPopup from '@components/Popups/YesNoPopup';
 import {UserCredential, deleteUser, signOut} from 'firebase/auth';
 
@@ -229,6 +229,11 @@ const MainMenuScreen = ({route}: MainMenuScreenProps) => {
           label: 'Legal and Policies',
           icon: KirokuIcons.Book,
           action: () => setPoliciesModalVisible(true),
+        },
+        {
+          label: 'Share the app',
+          icon: KirokuIcons.Share,
+          action: () => Navigation.navigate(ROUTES.MAIN_MENU_APP_SHARE),
         },
       ],
     },

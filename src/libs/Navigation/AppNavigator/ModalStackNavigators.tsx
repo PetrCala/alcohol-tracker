@@ -93,6 +93,9 @@ const MainMenuModalStackNavigator =
     [SCREENS.MAIN_MENU.ROOT]: () =>
       require('@screens/MainMenu/MainMenuScreen')
         .default as React.ComponentType,
+    [SCREENS.MAIN_MENU.APP_SHARE]: () =>
+      require('@screens/MainMenu/AppShareScreen')
+        .default as React.ComponentType,
     [SCREENS.MAIN_MENU.PREFERENCES]: () =>
       require('@screens/MainMenu/PreferencesScreen')
         .default as React.ComponentType,

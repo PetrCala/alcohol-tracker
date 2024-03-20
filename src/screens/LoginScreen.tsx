@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import * as KirokuImages from '@src/components/Icon/KirokuImages';
+import * as KirokuImages from '@components/Icon/KirokuImages';
 import {useFocusEffect} from '@react-navigation/native';
 import {sendPasswordResetEmail, signOut} from 'firebase/auth';
 import {signInUserWithEmailAndPassword} from '@libs/auth/auth';

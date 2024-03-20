@@ -19,7 +19,7 @@ import {fetchNicknameByUID} from '@database/baseFunctions';
 import {useFirebase} from '@context/global/FirebaseContext';
 import CONST from '@src/CONST';
 import {FeedbackList, Feedback} from '@src/types/database';
-import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
 
 // AdminFeedbackModal props
 type AdminFeedbackPopupProps = {

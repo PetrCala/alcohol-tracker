@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, Dimensions, Alert} from 'react-native';
-import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import YesNoPopup from '../YesNoPopup';
 
 import {unfriend} from '@database/friends';

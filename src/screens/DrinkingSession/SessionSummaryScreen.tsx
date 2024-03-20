@@ -11,7 +11,7 @@ import {
   timestampToDate,
   unitsToColors,
 } from '@libs/DataHandling';
-import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import BasicButton from '@components/Buttons/BasicButton';
 import MainHeader from '@components/Header/MainHeader';
 import {DrinkingSession} from '@src/types/database';

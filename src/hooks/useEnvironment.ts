@@ -1,6 +1,6 @@
 import {useContext} from 'react';
-import {EnvironmentContext} from '@src/components/withEnvironment';
-import type {EnvironmentContextValue} from '@src/components/withEnvironment';
+import {EnvironmentContext} from '@components/withEnvironment';
+import type {EnvironmentContextValue} from '@components/withEnvironment';
 import CONST from '@src/CONST';
 
 type UseEnvironment = EnvironmentContextValue & {

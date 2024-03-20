@@ -20,6 +20,8 @@ const CONST = {
     IN: 'in',
     OUT: 'out',
   },
+  APP_DOWNLOAD_LINK:
+    'https://petrcala.github.io/Kiroku/assets/html/qr-link.html',
   APP_IN_BETA: true,
   AVAILABLE_PLATFORMS: ['ios', 'android'],
   AVATAR_SIZE: {

@@ -39,6 +39,7 @@ const ROUTES = {
   },
 
   MAIN_MENU: 'main-menu',
+  MAIN_MENU_APP_SHARE: 'main-menu/app-share',
   MAIN_MENU_PREFERENCES: 'main-menu/preferences',
   MAIN_MENU_POLICIES_TERMS_OF_SERVICE: 'main-menu/policies/terms-of-service',
   MAIN_MENU_POLICIES_PRIVACY_POLICY: 'main-menu/policies/privacy-policy',

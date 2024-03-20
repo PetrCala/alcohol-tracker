@@ -1,5 +1,5 @@
 import {Config, Maintenance} from '@src/types/database';
-import * as KirokuImages from '@src/components/Icon/KirokuImages';
+import * as KirokuImages from '@components/Icon/KirokuImages';
 import {View, StyleSheet, Text, Image, Dimensions} from 'react-native';
 
 type UnderMaintenanceProps = {
