@@ -101,6 +101,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
     useState<boolean>(false);
   const [openingSession, setOpeningSession] = useState<boolean>(true);
   const [savingSession, setSavingSession] = useState<boolean>(false);
+  const [discardingSession, setDiscardingSession] = useState<boolean>(false);
   const [showLeaveConfirmation, setShowLeaveConfirmation] = useState(false);
   const [isPlaceholderSession, setIsPlaceholderSession] =
     useState<boolean>(false);
@@ -302,6 +303,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
   const handleConfirmDiscard = async () => {
     if (!db || !user) return;
     try {
+      setDiscardingSession(true);
       const discardFunction = sessionIsLive
         ? discardLiveDrinkingSession
         : removeDrinkingSessionData;
@@ -315,8 +317,9 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
         'Could not discard the session: ' + error.message,
       );
     } finally {
-      setDiscardModalVisible(false);
       navigateBackDynamically(CONST.NAVIGATION.SESSION_ACTION.DISCARD);
+      setDiscardModalVisible(false);
+      setDiscardingSession(false);
     }
   };
 
@@ -419,10 +422,12 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
   }, [session]);
 
   if (!isOnline) return <UserOffline />;
-  if (openingSession)
-    return <LoadingData loadingText="Opening your session..." />;
-  if (savingSession)
-    return <LoadingData loadingText="Saving your session..." />;
+  if (openingSession || savingSession || discardingSession)
+    return (
+      <LoadingData
+        loadingText={`${openingSession ? 'Opening' : savingSession ? 'Saving' : 'Discarding'} your session...`}
+      />
+    );
   if (!user) {
     Navigation.navigate(ROUTES.LOGIN);
     return;
