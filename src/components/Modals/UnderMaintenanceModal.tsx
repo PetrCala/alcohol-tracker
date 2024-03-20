@@ -14,7 +14,7 @@ function getHourMinute(date: Date): string {
   return `${hours}:${minutes}`;
 }
 
-const UnderMaintenance = ({config}: UnderMaintenanceProps) => {
+const UnderMaintenanceModal = ({config}: UnderMaintenanceProps) => {
   const defaultMaintenance: Maintenance = {
     maintenance_mode: true,
     start_time: 1704067200,
@@ -40,8 +40,6 @@ const UnderMaintenance = ({config}: UnderMaintenanceProps) => {
     </View>
   );
 };
-
-export default UnderMaintenance;
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -83,3 +81,5 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
 });
+
+export default UnderMaintenanceModal;

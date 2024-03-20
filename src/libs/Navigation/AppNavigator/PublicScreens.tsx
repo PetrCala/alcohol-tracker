@@ -2,7 +2,7 @@
 import {createStackNavigator} from '@react-navigation/stack';
 import React from 'react';
 import type {PublicScreensParamList} from '@navigation/types';
-import ForceUpdateScreen from '@screens/ForceUpdateScreen';
+import ForceUpdateScreen from '@components/Modals/ForceUpdateModal';
 import LoginScreen from '@screens/LoginScreen';
 import SignUpScreen from '@screens/SignUpScreen';
 import NAVIGATORS from '@src/NAVIGATORS';
