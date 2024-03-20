@@ -30,6 +30,7 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
     props;
   const {auth} = useFirebase();
   const user = auth.currentUser;
+  const {refetch} = useDatabaseData();
   const [uploadFinished, setUploadFinished] = useState<boolean>(false);
 
   const UploadWindow: React.FC = () => {

@@ -76,7 +76,6 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
 }) => {
   const {auth, db, storage} = useFirebase();
   const user = auth.currentUser;
-  const {refetch} = useDatabaseData();
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const chooseImage = async () => {
@@ -152,7 +151,6 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
         if (isProfilePicture) {
           await updateProfileInfo(pathToUpload, user, auth, db, storage);
         }
-        await refetch(['userData']); // Propagate the changes to the current screen
       } catch (error: any) {
         dispatch({type: 'SET_UPLOAD_ONGOING', payload: false}); // Otherwise dispatch upon success in child component
         dispatch({type: 'SET_IMAGE_SOURCE', payload: null});
@@ -168,7 +166,7 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={handleChooseImagePress} style={styles.button}>
-        <Image source={imageSource as any} style={imageStyle} />
+        <Image source={imageSource} style={imageStyle} />
       </TouchableOpacity>
 
       {state.imageSource && (
@@ -182,8 +180,8 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
           parentDispatch={dispatch}
         />
       )}
-      <WarningMessage warningText={state.warning} dispatch={dispatch} />
-      <SuccessMessage successText={state.success} dispatch={dispatch} />
+      {/* <WarningMessage warningText={state.warning} dispatch={dispatch} />
+      <SuccessMessage successText={state.success} dispatch={dispatch} /> */}
     </View>
   );
 };

@@ -35,6 +35,7 @@ const styles = StyleSheet.create({
     height: 'auto',
     position: 'absolute', // Temp
     top: 50, // Temp
+    left: 10,
     borderRadius: 5,
     borderWidth: 2,
     alignItems: 'center',

@@ -2,7 +2,7 @@
 import {Platform} from 'react-native';
 import {check, RESULTS, checkNotifications} from 'react-native-permissions';
 import {PermissionKey, permissionIsGranted} from './PermissionsUtils';
-import permissionsMap from './PermissionsList';
+import permissionsMap from './PermissionsMap';
 
 const getPermission = (permissionType: PermissionKey) => {
   return permissionsMap[permissionType][Platform.OS];

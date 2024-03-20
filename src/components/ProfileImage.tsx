@@ -137,6 +137,7 @@ function ProfileImage(props: ProfileImageProps) {
   if (!props.layout || !props.onLayout) {
     return;
   }
+
   return (
     <EnlargableImage
       imageSource={imageSource}
