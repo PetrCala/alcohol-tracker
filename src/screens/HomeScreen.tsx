@@ -282,9 +282,11 @@ const HomeScreen = ({}: HomeScreenProps) => {
             <Text style={styles.headerUsername}>{user.displayName}</Text>
           </TouchableOpacity>
         </View>
-        {/* <View style={styles.menuContainer}>
-              <Text style={styles.yearMonthText}>{thisYearMonth}</Text>
-          </View> */}
+        <View style={styles.menuContainer}>
+          <TouchableOpacity style={styles.notificationsButton}>
+            <Image source={KirokuIcons.Bell} style={styles.notificationsIcon} />
+          </TouchableOpacity>
+        </View>
       </View>
       {/* <View style={styles.yearMonthContainer}>
         <Text style={styles.yearMonthText}>{thisYearMonth}</Text>
@@ -398,8 +400,8 @@ const styles = StyleSheet.create({
   profileContainer: {
     //Ensure the container fills all space between, no more, no less
     padding: 10,
-    flexGrow: 1,
-    flexShrink: 1,
+    height: '100%',
+    width: '85%',
   },
   profileButton: {
     flexDirection: 'row',
@@ -419,15 +421,13 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   menuContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
     alignItems: 'center',
-    width: 200,
+    width: '15%',
   },
   menuIconContainer: {
-    width: 40,
-    height: 40,
+    width: 'auto',
+    height: 'auto',
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
@@ -436,6 +436,16 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     padding: 10,
+  },
+  notificationsButton: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  notificationsIcon: {
+    width: 24,
+    height: 24,
   },
   socialContainer: {
     flexDirection: 'row',

@@ -6,6 +6,7 @@ import ArrowBack from '@assets/icons/arrow-back.png';
 import ArrowDown from '@assets/icons/arrow-down.png';
 import BarMenu from '@assets/icons/bar-menu.png';
 import Beer from '@assets/icons/beer.png';
+import Bell from '@assets/icons/bell.png';
 import Book from '@assets/icons/book.png';
 import Bug from '@assets/icons/bug.png';
 import Camera from '@assets/icons/camera.png';
@@ -41,6 +42,7 @@ export {
   ArrowDown,
   BarMenu,
   Beer,
+  Bell,
   Book,
   Bug,
   Camera,
