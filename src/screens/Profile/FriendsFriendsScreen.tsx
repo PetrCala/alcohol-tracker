@@ -255,7 +255,9 @@ const FriendsFriendsScreen = ({route}: FriendsFriendsScreenProps) => {
   };
 
   return (
-    <ScreenWrapper testID={FriendsFriendsScreen.displayName}>
+    <ScreenWrapper
+      testID={FriendsFriendsScreen.displayName}
+      shouldEnableDismissKeyboard={false}>
       <View style={styles.mainContainer}>
         <MainHeader
           headerText="Find Friends of Friends"

@@ -53,6 +53,10 @@ type ScreenWrapperProps = {
    *  Search 'switch(behavior)' in ./node_modules/react-native/Libraries/Components/Keyboard/KeyboardAvoidingView.js for more context */
   keyboardAvoidingViewBehavior?: 'padding' | 'height' | 'position';
 
+  /** Whether DismissKeyboard should be enabled. If true, the keyboard disappears upon clicking away from it. May cause some elements to
+  be unclickable if set to false. */
+  shouldEnableDismissKeyboard?: boolean;
+
   /** Whether KeyboardAvoidingView should be enabled. Use false for screens where this functionality is not necessary */
   shouldEnableKeyboardAvoidingView?: boolean;
 
@@ -81,6 +85,7 @@ function ScreenWrapper(
     includePaddingTop = true,
     keyboardAvoidingViewBehavior = 'padding',
     includeSafeAreaPaddingBottom = true,
+    shouldEnableDismissKeyboard = true,
     shouldEnableKeyboardAvoidingView = true,
     headerGapStyles,
     children,
@@ -172,8 +177,7 @@ function ScreenWrapper(
         return (
           <View ref={ref} style={[styles.flex1, {minHeight}]} testID={testID}>
             <View style={[styles.flex1, paddingStyle, style]}>
-              {/* experimental */}
-              <DismissKeyboard>
+              <DismissKeyboard disable={!shouldEnableDismissKeyboard}>
                 <KeyboardAvoidingView
                   style={[styles.w100, styles.h100, {maxHeight}]}
                   behavior={keyboardAvoidingViewBehavior}
