@@ -1,4 +1,4 @@
-import {FeedbackId} from '@src/types/database';
+import {DeviceId, FeedbackId} from '@src/types/database';
 import {UserId} from '@src/types/database/DatabaseCommon';
 import {NicknameKey} from '@src/types/database/NicknameToId';
 import type {IsEqual} from 'type-fest';
@@ -6,6 +6,17 @@ import type {IsEqual} from 'type-fest';
 const DBPATHS = {
   ROOT: '',
 
+  ACCOUNT_CREATIONS: 'account_creations',
+  ACCOUNT_CREATIONS_DEVICE_ID: {
+    route: '/account_creations/:device_id',
+    getRoute: (device_id: DeviceId) =>
+      `account_creations/${device_id}` as const,
+  },
+  ACCOUNT_CREATIONS_DEVICE_ID_USER_ID: {
+    route: '/account_creations/:device_id/:user_id',
+    getRoute: (device_id: DeviceId, user_id: UserId) =>
+      `account_creations/${device_id}/${user_id}` as const,
+  },
   CONFIG: 'config',
   CONFIG_APP_SETTINGS: 'config/app_settings',
   CONFIG_APP_SETTINGS_MIN_USER_CREATION_POSSIBLE_VERSION:

@@ -35,6 +35,7 @@ import NAVIGATORS from '@src/NAVIGATORS';
 import {StackScreenProps} from '@react-navigation/stack';
 import ScreenWrapper from '@components/ScreenWrapper';
 import useTheme from '@hooks/useTheme';
+import {checkAccountCreationLimit} from '@database/protection';
 
 interface State {
   email: string;
@@ -178,6 +179,14 @@ const SignUpScreen = () => {
         payload:
           'This version of the application is outdated. Please upgrade to the newest version.',
       });
+      return;
+    }
+
+    // Validate that the user is not spamming account creation
+    try {
+      await checkAccountCreationLimit(db);
+    } catch (error: any) {
+      dispatch({type: 'SET_WARNING', payload: error.message});
       return;
     }
 

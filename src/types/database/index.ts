@@ -1,3 +1,5 @@
+import type AccountCreations from './AccountCreations';
+import type {AccountCreationsList, DeviceId} from './AccountCreations';
 import type Config from './Config';
 import type {AppSettings, Maintenance} from './Config';
 import type DatabaseProps from './DatabaseProps';
@@ -37,9 +39,12 @@ import type UserStatus from './UserStatus';
 import type {UserStatusList} from './UserStatus';
 
 export type {
+  AccountCreations,
+  AccountCreationsList,
   AppSettings,
   Config,
   DatabaseProps,
+  DeviceId,
   DrinkingSession,
   DrinkingSessionArray,
   DrinkingSessionId,
