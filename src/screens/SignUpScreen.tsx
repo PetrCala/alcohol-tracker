@@ -24,7 +24,6 @@ import {
 import {deleteUserData, pushNewUserInfo} from '@database/users';
 import {handleErrors} from '@libs/ErrorHandling';
 import WarningMessage from '@components/Info/WarningMessage';
-import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 import {Profile} from '@src/types/database';
 import DBPATHS from '@database/DBPATHS';
 import ValidityIndicatorIcon from '@components/ValidityIndicatorIcon';
@@ -36,6 +35,7 @@ import {StackScreenProps} from '@react-navigation/stack';
 import ScreenWrapper from '@components/ScreenWrapper';
 import useTheme from '@hooks/useTheme';
 import {checkAccountCreationLimit} from '@database/protection';
+import LoadingData from '@components/LoadingData';
 
 interface State {
   email: string;
@@ -45,6 +45,7 @@ interface State {
   passwordConfirm: string;
   passwordsMatch: boolean;
   warning: string;
+  isLoading: boolean;
 }
 
 interface Action {
@@ -60,6 +61,7 @@ const initialState: State = {
   passwordConfirm: '',
   passwordsMatch: false,
   warning: '',
+  isLoading: false,
 };
 
 const reducer = (state: State, action: Action) => {
@@ -98,6 +100,11 @@ const reducer = (state: State, action: Action) => {
       return {
         ...state,
         warning: action.payload,
+      };
+    case 'SET_LOADING':
+      return {
+        ...state,
+        isLoading: action.payload,
       };
     default:
       return state;
@@ -155,6 +162,7 @@ const SignUpScreen = () => {
     let minUserCreationPath =
       DBPATHS.CONFIG_APP_SETTINGS_MIN_USER_CREATION_POSSIBLE_VERSION;
 
+    dispatch({type: 'SET_LOADING', payload: true});
     try {
       minSupportedVersion = await readDataOnce(db, minUserCreationPath);
     } catch (error: any) {
@@ -162,6 +170,7 @@ const SignUpScreen = () => {
         'Data fetch failed',
         'Could not fetch the sign-up source data: ' + error.message,
       );
+      dispatch({type: 'SET_LOADING', payload: false});
       return;
     }
 
@@ -171,6 +180,7 @@ const SignUpScreen = () => {
         payload:
           'Failed to fetch the minimum supported version. Please try again later.',
       });
+      dispatch({type: 'SET_LOADING', payload: false});
       return;
     }
     if (!validateAppVersion(minSupportedVersion)) {
@@ -179,6 +189,7 @@ const SignUpScreen = () => {
         payload:
           'This version of the application is outdated. Please upgrade to the newest version.',
       });
+      dispatch({type: 'SET_LOADING', payload: false});
       return;
     }
 
@@ -187,6 +198,7 @@ const SignUpScreen = () => {
       await checkAccountCreationLimit(db);
     } catch (error: any) {
       dispatch({type: 'SET_WARNING', payload: error.message});
+      dispatch({type: 'SET_LOADING', payload: false});
       return;
     }
 
@@ -208,11 +220,13 @@ const SignUpScreen = () => {
         'Sign-up failed',
         'There was an error during sign-up: ' + error.message,
       );
+      dispatch({type: 'SET_LOADING', payload: false});
       return;
     }
 
     auth = getAuth(); // Refresh
     if (!auth.currentUser) {
+      dispatch({type: 'SET_LOADING', payload: false});
       throw new Error('User creation failed');
     }
     newUserId = auth.currentUser.uid;
@@ -234,6 +248,8 @@ const SignUpScreen = () => {
         handleErrors(rollbackError, errorHeading, errorMessage, dispatch);
       }
       return;
+    } finally {
+      dispatch({type: 'SET_LOADING', payload: false});
     }
     // Update Firebase authentication
     if (auth.currentUser) {
@@ -244,9 +260,12 @@ const SignUpScreen = () => {
         const errorMessage = 'There was an error during sign-up: ';
         handleErrors(error, errorHeading, errorMessage, dispatch);
         return;
+      } finally {
+        dispatch({type: 'SET_LOADING', payload: false});
       }
     }
     Navigation.navigate(ROUTES.HOME);
+    dispatch({type: 'SET_LOADING', payload: false});
     return;
   };
 
@@ -267,6 +286,9 @@ const SignUpScreen = () => {
       dispatch({type: 'UPDATE_PASSWORDS_MATCH', payload: false});
     }
   }, [state.password, state.passwordConfirm]);
+
+  if (state.isLoading)
+    return <LoadingData loadingText="Creating your account..." />;
 
   return (
     <ScreenWrapper

@@ -236,7 +236,7 @@ const HomeScreen = ({}: HomeScreenProps) => {
   useFocusEffect(
     React.useCallback(() => {
       // Refetch relevant data every time the screen is focused
-      if (!user) return;
+      if (!user || isLoading || !preferences || !userData) return;
       try {
         updateUserLastOnline(db, user.uid);
         refetch(['userStatusData', 'preferences', 'userData']);
