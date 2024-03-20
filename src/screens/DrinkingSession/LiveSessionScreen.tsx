@@ -81,7 +81,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
-  const {preferences} = useDatabaseData();
+  const {preferences, refetch} = useDatabaseData();
   const [session, setSession] = useState<DrinkingSession | null>(null);
   const initialSession = useRef<DrinkingSession | null>(null);
   // Session details
@@ -280,6 +280,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
           );
         }
         await removePlaceholderSessionData(db, userId);
+        await refetch(['drinkingSessionData']);
         // Reroute to session summary, do not allow user to return
         navigateBackDynamically(CONST.NAVIGATION.SESSION_ACTION.SAVE);
       } catch (error: any) {
@@ -307,6 +308,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
       await waitForNoPendingUpdate();
       await discardFunction(db, user.uid, sessionId);
       await removePlaceholderSessionData(db, user.uid);
+      await refetch(['drinkingSessionData']);
     } catch (error: any) {
       Alert.alert(
         'Session discard failed',

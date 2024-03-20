@@ -239,12 +239,7 @@ const HomeScreen = ({}: HomeScreenProps) => {
       if (!user) return;
       try {
         updateUserLastOnline(db, user.uid);
-        refetch([
-          'userStatusData',
-          'preferences',
-          'userData',
-          'drinkingSessionData',
-        ]);
+        refetch(['userStatusData', 'preferences', 'userData']);
       } catch (error: any) {
         Alert.alert(
           'Failed to contact the database',
