@@ -235,11 +235,10 @@ const HomeScreen = ({}: HomeScreenProps) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      // Refetch relevant data every time the screen is focused
-      if (!user || isLoading || !preferences || !userData) return;
+      // Update user status on home screen focus
+      if (!user) return;
       try {
         updateUserLastOnline(db, user.uid);
-        refetch(['userStatusData', 'preferences', 'userData']);
       } catch (error: any) {
         Alert.alert(
           'Failed to contact the database',

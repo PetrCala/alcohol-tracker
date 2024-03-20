@@ -148,6 +148,7 @@ const UserListComponent: React.FC<UserListProps> = ({
   return (
     <ScrollView
       style={styles.scrollViewContainer}
+      onScrollBeginDrag={Keyboard.dismiss}
       onScrollEndDrag={handleScroll}
       scrollEventThrottle={400}
       keyboardShouldPersistTaps="handled"
