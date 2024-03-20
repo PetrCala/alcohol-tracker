@@ -1,14 +1,15 @@
-﻿import {ReactNode, useEffect, useMemo, useReducer} from 'react';
+﻿import {ReactNode, useEffect, useReducer} from 'react';
 
-import ForceUpdateScreen from '../../screens/ForceUpdateScreen';
 import {useUserConnection} from './UserConnectionContext';
 import UserOffline from '../../components/UserOffline';
-import {listenForDataChanges, readDataOnce} from '../../database/baseFunctions';
+import {listenForDataChanges} from '../../database/baseFunctions';
 import LoadingData from '../../components/LoadingData';
 import {useFirebase} from './FirebaseContext';
-import {validateAppVersion} from '../../utils/validation';
-import {ConfigProps} from '@src/types/database';
-import UnderMaintenance from '@components/UnderMaintenance';
+import {validateAppVersion} from '../../libs/Validation';
+import {Config} from '@src/types/database';
+import ForceUpdateModal from '@components/Modals/ForceUpdateModal';
+import DBPATHS from '@database/DBPATHS';
+import UnderMaintenanceModal from '@components/Modals/UnderMaintenanceModal';
 
 const initialState = {
   isLoading: true,
@@ -41,7 +42,7 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({children}) => {
   const {db} = useFirebase();
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const updateLocalHooks = (newConfigData: ConfigProps | null) => {
+  const updateLocalHooks = (newConfigData: Config | null) => {
     let underMaintenance: boolean =
       newConfigData?.maintenance.maintenance_mode ?? false;
     let minSupportedVersion = newConfigData?.app_settings.min_supported_version;
@@ -56,26 +57,23 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({children}) => {
 
   useEffect(() => {
     if (!db) return;
-    const configRef = `config`;
-    let stopListening = listenForDataChanges(
-      db,
-      configRef,
-      (data: ConfigProps) => {
-        dispatch({type: 'SET_IS_LOADING', payload: true});
-        dispatch({type: 'SET_CONFIG', payload: data});
-        updateLocalHooks(data);
-        dispatch({type: 'SET_IS_LOADING', payload: false});
-      },
-    );
+    const configPath = DBPATHS.CONFIG;
+    let stopListening = listenForDataChanges(db, configPath, (data: Config) => {
+      dispatch({type: 'SET_IS_LOADING', payload: true});
+      dispatch({type: 'SET_CONFIG', payload: data});
+      updateLocalHooks(data);
+      dispatch({type: 'SET_IS_LOADING', payload: false});
+    });
 
     return () => stopListening();
   }, []);
 
-  // Monitor user preferences
+  // Modals to render before navigation is initialized
   if (!isOnline) return <UserOffline />;
   if (state.isLoading) return <LoadingData />;
-  if (state.underMaintenance) return <UnderMaintenance config={state.config} />;
-  if (!state.versionValid) return <ForceUpdateScreen />;
+  if (state.underMaintenance)
+    return <UnderMaintenanceModal config={state.config} />;
+  if (!state.versionValid) return <ForceUpdateModal />;
 
   return <>{children}</>;
 };

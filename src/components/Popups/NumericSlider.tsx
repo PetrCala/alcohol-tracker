@@ -2,8 +2,6 @@
 import {Modal, StyleSheet, Text, View} from 'react-native';
 import Slider from '@react-native-community/slider';
 import BasicButton from '../Buttons/BasicButton';
-import MenuIcon from '../Buttons/MenuIcon';
-import {ModalFadeTransition} from '@react-navigation/stack/lib/typescript/src/TransitionConfigs/TransitionPresets';
 
 type NumericSliderProps = {
   visible: boolean;

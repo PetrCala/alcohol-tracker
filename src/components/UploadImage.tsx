@@ -13,13 +13,22 @@ import {uploadImageToFirebase} from '../storage/storageUpload';
 import WarningMessage from './Info/WarningMessage';
 import SuccessMessage from './Info/SuccessMessage';
 import UploadImagePopup from './Popups/UploadImagePopup';
-import {UploadImageState} from '@src/types/components';
-import {GeneralAction} from '@src/types/states';
-import checkPermission from '@src/permissions/checkPermission';
-import {requestPermission} from '@src/permissions/requestPermission';
+import GeneralAction from '@src/types/various/GeneralAction';
+import checkPermission from '@libs/Permissions/checkPermission';
+import {requestPermission} from '@libs/Permissions/requestPermission';
 import {updateProfileInfo} from '@database/profile';
-import {auth} from '@src/services/firebaseSetup';
+
 import {useFirebase} from '@src/context/global/FirebaseContext';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
+
+type UploadImageState = {
+  imageSource: string | null;
+  uploadModalVisible: boolean;
+  uploadOngoing: boolean;
+  uploadProgress: string | null;
+  warning: string;
+  success: string;
+};
 
 const initialState: UploadImageState = {
   imageSource: null,
@@ -65,8 +74,8 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
   imageStyle,
   isProfilePicture = false,
 }) => {
+  const {auth, db, storage} = useFirebase();
   const user = auth.currentUser;
-  const {db, storage} = useFirebase();
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const chooseImage = async () => {
@@ -157,7 +166,7 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={handleChooseImagePress} style={styles.button}>
-        <Image source={imageSource as any} style={imageStyle} />
+        <Image source={imageSource} style={imageStyle} />
       </TouchableOpacity>
 
       {state.imageSource && (
@@ -171,13 +180,11 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
           parentDispatch={dispatch}
         />
       )}
-      <WarningMessage warningText={state.warning} dispatch={dispatch} />
-      <SuccessMessage successText={state.success} dispatch={dispatch} />
+      {/* <WarningMessage warningText={state.warning} dispatch={dispatch} />
+      <SuccessMessage successText={state.success} dispatch={dispatch} /> */}
     </View>
   );
 };
-
-export default UploadImageComponent;
 
 const styles = StyleSheet.create({
   container: {
@@ -196,3 +203,6 @@ const styles = StyleSheet.create({
     zIndex: 3,
   },
 });
+
+export default UploadImageComponent;
+export type {UploadImageState};

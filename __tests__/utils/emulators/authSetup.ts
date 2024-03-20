@@ -1,19 +1,20 @@
 require('dotenv').config(); // for the process.env variables to read the .env file
 import {MOCK_USER_IDS} from '../testsStatic';
-import {signUpUserWithEmailAndPassword} from '../../../src/auth/auth';
+import {signUpUserWithEmailAndPassword} from '../../../src/libs/auth/auth';
 import {
   initializeAuth,
   getReactNativePersistence,
   connectAuthEmulator,
   Auth,
+  updateProfile,
 } from 'firebase/auth';
 import {initializeApp, deleteApp, FirebaseApp} from 'firebase/app';
-import {isConnectedToAuthEmulator} from '../../../src/services/firebaseUtils';
+import {isConnectedToAuthEmulator} from '../../../src/libs/Firebase/FirebaseUtils';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 
 export function setupAuthTestEnv(): {
-  testApp: FirebaseApp,
-  auth: Auth
+  testApp: FirebaseApp;
+  auth: Auth;
 } {
   const authDomain = process.env.TEST_AUTH_DOMAIN;
   const projectId = process.env.TEST_PROJECT_ID;
@@ -35,10 +36,7 @@ export function setupAuthTestEnv(): {
   return {testApp, auth};
 }
 
-
-export async function teardownAuthTestEnv(
-  testApp: FirebaseApp,
-): Promise<void> {
+export async function teardownAuthTestEnv(testApp: FirebaseApp): Promise<void> {
   await deleteApp(testApp); // Delete the app
 }
 
@@ -60,6 +58,17 @@ export async function createMockAuthUsers(emulatorAuth: Auth): Promise<void> {
       await signUpUserWithEmailAndPassword(emulatorAuth, email, password);
     } catch (error) {
       throw new Error(`Error creating mock user ${userId}: ${error}`);
+    }
+
+    if (!emulatorAuth.currentUser) {
+      throw new Error('Failed to create a new mock user');
+    }
+    try {
+      await updateProfile(emulatorAuth.currentUser, {displayName: userId});
+    } catch (error) {
+      throw new Error(
+        `Error updating profile data for mock user ${userId}: ${error}`,
+      );
     }
   });
 }

@@ -1,83 +1,63 @@
-﻿import {
-  Alert,
-  Dimensions,
-  Keyboard,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import {ProfileData} from '../../types/database';
-import LoadingData from '../../components/LoadingData';
-import UserOverview from '@components/Social/UserOverview';
-import useProfileDisplayData from '@hooks/useProfileDisplayData';
+﻿import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import SearchWindow from '@components/Social/SearchWindow';
 import {
   SearchWindowRef,
   UserIdToNicknameMapping,
-  UserSearchResults,
-} from '@src/types/search';
-import {GeneralAction} from '@src/types/states';
-import {useMemo, useReducer, useRef} from 'react';
-import {objKeys} from '@src/utils/dataHandling';
-import {isNonEmptyArray} from '@src/utils/validation';
-import commonStyles from '@src/styles/commonStyles';
-import {FriendListScreenProps} from '@src/types/screens';
-import {getNicknameMapping} from '@src/services/search/searchUtils';
-import {searchArrayByText} from '@src/services/search/search';
-import {
-  calculateAllUsersPriority,
-  orderUsersByPriority,
-} from '@src/services/algorithms/displayPriority';
-import {UsersPriority} from '@src/types/algorithms';
-import FillerView from '@components/FillerView';
+} from '@src/types/various/Search';
+import GeneralAction from '@src/types/various/GeneralAction';
+import React, {useMemo, useReducer, useRef} from 'react';
+import {objKeys} from '@libs/DataHandling';
+import {getNicknameMapping} from '@libs/SearchUtils';
+import {searchArrayByText} from '@libs/Search';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
+import {UserArray} from '@src/types/database';
+import UserListComponent from '@components/Social/UserListComponent';
+import useProfileList from '@hooks/useProfileList';
+import {useFocusEffect} from '@react-navigation/native';
+import NoFriendInfo from '@components/Social/NoFriendInfo';
 
 interface State {
   searching: boolean;
-  friendsToDisplay: UserSearchResults;
-  usersPriority: UsersPriority;
-  displayArray: string[]; // Main array to display
+  friends: UserArray;
+  friendsToDisplay: UserArray;
 }
 
 const initialState: State = {
   searching: false,
+  friends: [],
   friendsToDisplay: [],
-  usersPriority: {},
-  displayArray: [],
 };
 
 const reducer = (state: State, action: GeneralAction): State => {
   switch (action.type) {
     case 'SET_SEARCHING':
       return {...state, searching: action.payload};
+    case 'SET_FRIENDS':
+      return {...state, friends: action.payload};
     case 'SET_FRIENDS_TO_DISPLAY':
       return {...state, friendsToDisplay: action.payload};
-    case 'SET_USERS_PRIORITY':
-      return {...state, usersPriority: action.payload};
-    case 'SET_DISPLAY_ARRAY':
-      return {...state, displayArray: action.payload};
     default:
       return state;
   }
 };
 
+type FriendListScreenProps = {};
+
 const FriendListScreen = (props: FriendListScreenProps) => {
-  const {navigation, friends, setIndex} = props;
-  const {loadingDisplayData, profileDisplayData, userStatusDisplayData} =
-    useProfileDisplayData(friends);
+  const {userData, refetch} = useDatabaseData();
   const friendListInputRef = useRef<SearchWindowRef>(null);
   const [state, dispatch] = useReducer(reducer, initialState);
+  const {profileList} = useProfileList(state.friends);
 
   const localSearch = async (searchText: string) => {
     try {
       dispatch({type: 'SET_SEARCHING', payload: true});
       let searchMapping: UserIdToNicknameMapping = getNicknameMapping(
-        profileDisplayData,
+        profileList,
         'display_name',
       );
       let relevantResults = searchArrayByText(
-        objKeys(friends),
+        state.friends,
         searchText,
         searchMapping,
       );
@@ -94,44 +74,27 @@ const FriendListScreen = (props: FriendListScreenProps) => {
   };
 
   const resetSearch = () => {
-    dispatch({type: 'SET_DISPLAYED_FRIENDS', payload: objKeys(friends)});
-  };
-
-  const navigateToProfile = (
-    friendId: string,
-    profileData: ProfileData,
-  ): void => {
-    navigation.navigate('Profile Screen', {
-      userId: friendId,
-      profileData: profileData,
-      friends: null, // Fetch on render
-      currentUserFriends: friends,
-      drinkingSessionData: null, // Fetch on render
-      preferences: null, // Fetch on render - if you want to calculate with current user, pass here
-    });
+    dispatch({type: 'SET_FRIENDS_TO_DISPLAY', payload: state.friends});
   };
 
   useMemo(() => {
-    let friendsArray = objKeys(friends);
-    if (userStatusDisplayData) {
-      let newUsersPriority: UsersPriority = calculateAllUsersPriority(
-        friendsArray,
-        userStatusDisplayData,
-      );
-      dispatch({type: 'SET_USERS_PRIORITY', payload: newUsersPriority});
-    }
+    let friendsArray = objKeys(userData?.friends);
+    dispatch({type: 'SET_FRIENDS', payload: friendsArray});
     dispatch({type: 'SET_FRIENDS_TO_DISPLAY', payload: friendsArray});
-  }, [friends]);
+  }, [userData]);
 
-  useMemo(() => {
-    let newDisplayArray = orderUsersByPriority(
-      state.friendsToDisplay,
-      state.usersPriority,
-    );
-    dispatch({type: 'SET_DISPLAY_ARRAY', payload: newDisplayArray});
-  }, [state.friendsToDisplay]);
-
-  if (!navigation) return null;
+  useFocusEffect(
+    React.useCallback(() => {
+      try {
+        refetch(['userData']);
+      } catch (error: any) {
+        Alert.alert(
+          'Failed to contact the database',
+          'Could not update user data:' + error.message,
+        );
+      }
+    }, []),
+  );
 
   return (
     <View style={styles.mainContainer}>
@@ -142,111 +105,22 @@ const FriendListScreen = (props: FriendListScreenProps) => {
         onResetSearch={resetSearch}
         searchOnTextChange={true}
       />
-      <ScrollView
-        style={styles.scrollViewContainer}
-        onScrollBeginDrag={Keyboard.dismiss}
-        keyboardShouldPersistTaps="handled">
-        {loadingDisplayData ? (
-          <LoadingData style={styles.loadingContainer} />
-        ) : friends ? (
-          <View style={styles.friendList}>
-            {isNonEmptyArray(state.displayArray) ? (
-              state.displayArray.map((friendId: string) => {
-                const profileData = profileDisplayData[friendId];
-                const userStatusData = userStatusDisplayData[friendId];
-
-                return (
-                  <TouchableOpacity
-                    key={friendId + '-button'}
-                    style={styles.friendOverviewButton}
-                    onPress={() => navigateToProfile(friendId, profileData)}>
-                    <UserOverview
-                      key={friendId + '-user-overview'}
-                      userId={friendId}
-                      profileData={profileData}
-                      userStatusData={userStatusData}
-                    />
-                  </TouchableOpacity>
-                );
-              })
-            ) : (
-              <Text style={commonStyles.noUsersFoundText}>
-                {`No friends found.\n\nTry modifying the search text.`}
-              </Text>
-            )}
-          </View>
-        ) : (
-          <View style={styles.emptyList}>
-            <Text style={styles.emptyListText}>
-              You do not have any friends yet
-            </Text>
-            <TouchableOpacity
-              onPress={() => setIndex(1)}
-              style={styles.navigateToSearchButton}>
-              <Text style={styles.navigateToSearchText}>Add them here</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-        <FillerView height={100} />
-      </ScrollView>
+      <UserListComponent
+        fullUserArray={state.friends}
+        initialLoadSize={15}
+        emptyListComponent={<NoFriendInfo />}
+        userSubset={state.friendsToDisplay}
+        orderUsers={true}
+      />
     </View>
   );
 };
-
-export default FriendListScreen;
-
-const screenHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     backgroundColor: '#ffff99',
   },
-  scrollViewContainer: {
-    flex: 1,
-    // backgroundColor: 'white',
-    // justifyContent: 'center',
-  },
-  loadingContainer: {
-    width: '100%',
-    height: screenHeight * 0.8,
-  },
-  friendList: {
-    width: '100%',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    paddingTop: 5,
-  },
-  friendOverviewButton: {
-    width: '100%',
-    backgroundColor: 'white',
-  },
-  emptyList: {
-    width: '100%',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  emptyListText: {
-    color: 'black',
-    fontSize: 18,
-    fontWeight: '400',
-    padding: 20,
-  },
-  navigateToSearchButton: {
-    width: 150,
-    height: 50,
-    backgroundColor: 'white',
-    padding: 5,
-    borderColor: 'black',
-    borderWidth: 2,
-    borderRadius: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  navigateToSearchText: {
-    color: 'black',
-    fontSize: 16,
-    fontWeight: '500',
-  },
 });
+
+export default FriendListScreen;

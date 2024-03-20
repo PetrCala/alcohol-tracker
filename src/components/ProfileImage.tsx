@@ -1,9 +1,20 @@
 ﻿import React, {useEffect, useMemo, useReducer, useRef, useState} from 'react';
-import {ActivityIndicator, Alert, Image} from 'react-native'; // or 'react-native-web' if you're using React for web
+import {
+  ActivityIndicator,
+  Alert,
+  Image,
+  ImageSourcePropType,
+  LayoutChangeEvent,
+  TouchableOpacity,
+} from 'react-native';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
+import * as KirokuImages from '@components/Icon/KirokuImages';
 import {FirebaseStorage} from 'firebase/storage';
 import {getProfilePictureURL} from '@src/storage/storageProfile';
 import useProfileImageCache from '@hooks/useProfileImageCache';
 import CONST from '@src/CONST';
+import EnlargableImage from './Buttons/EnlargableImage';
+import ImageLayout from '@src/types/various/ImageLayout';
 
 interface State {
   imageUrl: string | null;
@@ -41,19 +52,22 @@ type ProfileImageProps = {
   downloadPath: string | null | undefined;
   style: any;
   refreshTrigger?: number; // Likely a number, used to force a refresh
+  enlargable?: boolean;
+  layout?: ImageLayout;
+  onLayout?: (event: LayoutChangeEvent) => void;
 };
 
 function ProfileImage(props: ProfileImageProps) {
-  const {storage, userId, downloadPath, style, refreshTrigger} = props;
+  const {storage, userId, downloadPath, style} = props;
   const [state, dispatch] = useReducer(reducer, initialState);
   const {cachedUrl, cacheImage, isCacheChecked} = useProfileImageCache(userId);
   const prevCachedUrl = useRef(cachedUrl); // Crucial
   const initialDownloadPath = useRef(downloadPath); //
 
-  const imageSource =
+  const imageSource: ImageSourcePropType =
     state.imageUrl && state.imageUrl !== CONST.NO_IMAGE
       ? {uri: state.imageUrl}
-      : require('../../assets/temp/user.png');
+      : KirokuImages.UserIcon;
 
   const checkAvailableCache = async (url: string | null): Promise<boolean> => {
     if (downloadPath?.startsWith(CONST.LOCAL_IMAGE_PREFIX)) {
@@ -67,7 +81,7 @@ function ProfileImage(props: ProfileImageProps) {
       url &&
       url === prevCachedUrl.current &&
       downloadPath === initialDownloadPath.current && // Only if the download path has not changed
-      !refreshTrigger // Only if the refresh trigger is not set
+      !props.refreshTrigger // Only if the refresh trigger is not set
     ) {
       // Use cache if available and unchanged
       dispatch({type: 'SET_IMAGE_URL', payload: cachedUrl});
@@ -113,12 +127,25 @@ function ProfileImage(props: ProfileImageProps) {
 
     fetchImage();
     prevCachedUrl.current = cachedUrl;
-  }, [downloadPath, cachedUrl, isCacheChecked, refreshTrigger]);
+  }, [downloadPath, cachedUrl, isCacheChecked]); // add props.refreshTrigger if necessary
 
   if (state.loadingImage)
     return <ActivityIndicator size="large" color="#0000ff" style={style} />;
+  if (!props.enlargable) {
+    return <Image source={imageSource} style={style} />;
+  }
+  if (!props.layout || !props.onLayout) {
+    return;
+  }
 
-  return <Image source={imageSource} style={style} />;
+  return (
+    <EnlargableImage
+      imageSource={imageSource}
+      imageStyle={style}
+      imageLayout={props.layout}
+      onImageLayout={props.onLayout}
+    />
+  );
 }
 
 export default ProfileImage;

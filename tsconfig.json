@@ -41,18 +41,19 @@
     "baseUrl": ".",
     "paths": {
       "@assets/*": ["./assets/*"],
+      "@auth/*": ["src/libs/auth/*"],
       "@components/*": ["./src/components/*"],
+      "@context/*": ["./src/context/*"],
       "@database/*": ["./src/database/*"],
       "@firebase/auth": ["./node_modules/@firebase/auth/dist/index.rn.d.ts"],
       "@hooks/*": ["./src/hooks/*"],
-      // "@libs/*": ["./src/libs/*"],
-      "@navigation/*": ["./src/navigation/*"],
+      "@libs/*": ["./src/libs/*"],
+      "@navigation/*": ["./src/libs/Navigation/*"],
       "@screens/*": ["./src/screens/*"],
       "@src/*": ["./src/*"],
       "@storage/*": ["./src/storage/*"],
       "@styles/*": ["./src/styles/*"],
-      "@types/*": ["./src/types/*"],
-      "@utils/*": ["./src/utils/*"]
+      "@utils/*": ["src/libs/*"]
       // "@userActions/*": ["./src/libs/actions/*"]
     }
   },

@@ -3,9 +3,12 @@
 require('dotenv').config(); // Use .env variables in this file - CONFIG does not work here
 import {FirebaseStorage} from 'firebase/storage';
 import {FirebaseApp} from 'firebase/app';
-import {isConnectedToStorageEmulator} from '../../../src/services/firebaseUtils';
+import {isConnectedToStorageEmulator} from '../../../src/libs/Firebase/FirebaseUtils';
 import {describeWithEmulator} from '../../utils/emulators/emulatorTools';
-import { setupStorageTestEnv, teardownStorageTestEnv } from '../../utils/emulators/storageSetup';
+import {
+  setupStorageTestEnv,
+  teardownStorageTestEnv,
+} from '../../utils/emulators/storageSetup';
 
 const storageBucket = process.env.TEST_STORAGE_BUCKET;
 const projectId = process.env.TEST_PROJECT_ID;
@@ -39,7 +42,6 @@ describeWithEmulator('Test connecting to the storage emulator', () => {
     expect(storage).not.toBeNull();
     expect(isConnectedToStorageEmulator(storage)).toBe(true);
   });
-
 });
 
 describeWithEmulator('Test uploading objects', () => {
@@ -66,5 +68,4 @@ describeWithEmulator('Test uploading objects', () => {
     expect(storage).not.toBeNull();
     expect(isConnectedToStorageEmulator(storage)).toBe(true);
   });
-
 });
