@@ -106,6 +106,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
   const [isPlaceholderSession, setIsPlaceholderSession] =
     useState<boolean>(false);
   const sessionIsLive = session?.ongoing ? true : false;
+  const deleteSessionWording = session?.ongoing ? 'Discard' : 'Delete';
   const scrollViewRef = useRef<ScrollView>(null); // To navigate the view
 
   const {isPending, enqueueUpdate} = useAsyncQueue(
@@ -425,7 +426,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
   if (openingSession || savingSession || discardingSession)
     return (
       <LoadingData
-        loadingText={`${openingSession ? 'Opening' : savingSession ? 'Saving' : 'Discarding'} your session...`}
+        loadingText={`${openingSession ? 'Opening' : savingSession ? 'Saving' : session?.ongoing ? 'Discarding' : 'Deleting'} your session...`}
       />
     );
   if (!user) {
@@ -519,7 +520,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
       <View style={styles.saveSessionDelimiter} />
       <View style={styles.saveSessionContainer}>
         <BasicButton
-          text="Discard Session"
+          text={`${deleteSessionWording} Session`}
           buttonStyle={[
             styles.saveSessionButton,
             isPending
@@ -533,7 +534,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
           visible={discardModalVisible}
           transparent={true}
           onRequestClose={() => setDiscardModalVisible(false)}
-          message={'Do you really want to\ndiscard this session?'}
+          message={`Do you really want to\n${deleteSessionWording.toLowerCase()} this session?`}
           onYes={handleConfirmDiscard}
         />
         <BasicButton
