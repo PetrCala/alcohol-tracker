@@ -26,3 +26,8 @@ export const permissionIsDenied = (status: any) => {
     RESULTS.UNAVAILABLE,
   ].includes(status);
 };
+
+export const AndroidFilePermissions = [
+  PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+  PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+];

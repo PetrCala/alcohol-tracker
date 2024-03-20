@@ -13,6 +13,7 @@ import {
   reauthenticateWithCredential,
   updateProfile,
 } from 'firebase/auth';
+import {getUniqueId} from 'react-native-device-info';
 import {Alert} from 'react-native';
 import {cleanStringForFirebaseKey} from '../libs/StringUtils';
 import DBPATHS from './DBPATHS';
@@ -84,15 +85,18 @@ async function pushNewUserInfo(
   const userNickname = profileData.display_name;
   const nicknameKey = cleanStringForFirebaseKey(userNickname);
   // Allowed types
+  const deviceId = await getUniqueId(); // Use a device identifier
 
+  const accountCreationsRef = DBPATHS.ACCOUNT_CREATIONS_DEVICE_ID_USER_ID;
   const nicknameRef = DBPATHS.NICKNAME_TO_ID_NICKNAME_KEY_USER_ID;
   const userStatusRef = DBPATHS.USER_STATUS_USER_ID;
   const userPreferencesRef = DBPATHS.USER_PREFERENCES_USER_ID;
   const userRef = DBPATHS.USERS_USER_ID;
 
   let updates: {
-    [key: string]: UserProps | Preferences | string | any;
+    [key: string]: UserProps | Preferences | string | number | any;
   } = {};
+  updates[accountCreationsRef.getRoute(deviceId, userId)] = Date.now();
   updates[nicknameRef.getRoute(nicknameKey, userId)] = userNickname;
   updates[userStatusRef.getRoute(userId)] = getDefaultUserStatus();
   updates[userPreferencesRef.getRoute(userId)] = getDefaultPreferences();

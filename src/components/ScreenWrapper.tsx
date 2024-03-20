@@ -3,7 +3,7 @@ import type {StackNavigationProp} from '@react-navigation/stack';
 import type {ForwardedRef, ReactNode} from 'react';
 import React, {forwardRef, useEffect, useRef, useState} from 'react';
 import type {DimensionValue, StyleProp, ViewStyle} from 'react-native';
-import {Keyboard, View} from 'react-native';
+import {Keyboard, PanResponder, Platform, View} from 'react-native';
 import type {EdgeInsets} from 'react-native-safe-area-context';
 import useEnvironment from '@hooks/useEnvironment';
 import useInitialDimensions from '@hooks/useInitialWindowDimensions';
@@ -117,6 +117,21 @@ function ScreenWrapper(
 
   isKeyboardShownRef.current = keyboardState?.isKeyboardShown ?? false;
 
+  const keyboardDissmissPanResponder = useRef(
+    PanResponder.create({
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      onMoveShouldSetPanResponderCapture: (_e, gestureState) => {
+        const isHorizontalSwipe =
+          Math.abs(gestureState.dx) > Math.abs(gestureState.dy);
+        const shouldDismissKeyboard =
+          shouldDismissKeyboardBeforeClose && isKeyboardShown; // && Browser.isMobile();
+
+        return isHorizontalSwipe && shouldDismissKeyboard;
+      },
+      onPanResponderGrant: Keyboard.dismiss,
+    }),
+  ).current;
+
   useEffect(() => {
     const unsubscribeTransitionEnd = navigation.addListener(
       'transitionEnd',
@@ -159,7 +174,7 @@ function ScreenWrapper(
       {({insets, paddingTop, paddingBottom, safeAreaPaddingBottomStyle}) => {
         const paddingStyle: StyleProp<ViewStyle> = {};
 
-        if (includePaddingTop) {
+        if (includePaddingTop && Platform.OS === 'ios') {
           paddingStyle.paddingTop = paddingTop;
         }
 
@@ -170,7 +185,10 @@ function ScreenWrapper(
 
         return (
           <View ref={ref} style={[styles.flex1, {minHeight}]} testID={testID}>
-            <View style={[styles.flex1, paddingStyle, style]}>
+            <View
+              style={[styles.flex1, paddingStyle, style]}
+              // eslint-disable-next-line react/jsx-props-no-spreading
+              {...keyboardDissmissPanResponder.panHandlers}>
               <KeyboardAvoidingView
                 style={[styles.w100, styles.h100, {maxHeight}]}
                 behavior={keyboardAvoidingViewBehavior}

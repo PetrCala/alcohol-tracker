@@ -24,7 +24,7 @@ import {
   hasDecimalPoint,
   roundToTwoDecimalPlaces,
 } from '@libs/DataHandling';
-import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {DateObject} from '@src/types/time';
 import LoadingData from './LoadingData';
 import CONST from '@src/CONST';

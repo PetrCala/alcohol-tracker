@@ -94,7 +94,7 @@ function Kiroku(props) {
       initializeClient,
     );
 
-    // If the app is opened from a deep link, get the reportID (if exists) from the deep link and navigate to the chat report
+    // If the app is opened from a deep link, get the session ID from the deep link and navigate to the session
     Linking.getInitialURL().then(url => {
       setInitialUrl(url);
     });

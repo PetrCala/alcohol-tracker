@@ -11,6 +11,7 @@ const EMPTY_OBJECT = Object.freeze({});
 const ANDROID_PACKAGE_NAME = 'com.alcohol_tracker';
 
 const CONST = {
+  ACCOUNT_CREATION_LIMIT: 3,
   ANDROID_PACKAGE_NAME,
   ANIMATED_TRANSITION: 300,
   ANIMATED_TRANSITION_FROM_VALUE: 100,
@@ -19,6 +20,10 @@ const CONST = {
     IN: 'in',
     OUT: 'out',
   },
+  APP_DOWNLOAD_LINK:
+    'https://petrcala.github.io/Kiroku/assets/html/qr-link.html',
+  APP_QR_CODE_LINK:
+    'https://petrcala.github.io/Kiroku/assets/images/kiroku-qr-code-with-logo.png',
   APP_IN_BETA: true,
   AVAILABLE_PLATFORMS: ['ios', 'android'],
   AVATAR_SIZE: {
@@ -104,7 +109,7 @@ const CONST = {
   },
   INVALID_CHARS: ['.', '#', '$', '[', ']'],
   LOCAL_IMAGE_PREFIX: 'file://',
-  MAX_ALLOWED_UNITS: 99,
+  MAX_ALLOWED_UNITS: 100,
   MONTHS: [
     'January',
     'February',

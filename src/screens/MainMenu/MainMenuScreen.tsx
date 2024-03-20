@@ -10,10 +10,10 @@ import {
   Keyboard,
   ImageSourcePropType,
 } from 'react-native';
-import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import YesNoPopup from '@components/Popups/YesNoPopup';
 import {UserCredential, deleteUser, signOut} from 'firebase/auth';
-
+import {version as _version} from '../../../package.json';
 import {deleteUserData, reauthentificateUser} from '@database/users';
 import FeedbackPopup from '@components/Popups/FeedbackPopup';
 import {submitFeedback} from '@database/feedback';
@@ -230,6 +230,11 @@ const MainMenuScreen = ({route}: MainMenuScreenProps) => {
           icon: KirokuIcons.Book,
           action: () => setPoliciesModalVisible(true),
         },
+        {
+          label: 'Share the app',
+          icon: KirokuIcons.Share,
+          action: () => Navigation.navigate(ROUTES.MAIN_MENU_APP_SHARE),
+        },
       ],
     },
     {
@@ -370,6 +375,9 @@ const MainMenuScreen = ({route}: MainMenuScreenProps) => {
           />
         </ScrollView>
       </View>
+      <View style={styles.versionContainer}>
+        <Text style={styles.versionText}>{_version}</Text>
+      </View>
     </ScreenWrapper>
   );
 };
@@ -411,6 +419,17 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 15,
     fontWeight: '500',
+  },
+  versionContainer: {
+    position: 'absolute',
+    bottom: 5,
+    right: 5,
+    width: 'auto',
+    height: 'auto',
+  },
+  versionText: {
+    color: 'gray',
+    fontSize: 13,
   },
 });
 

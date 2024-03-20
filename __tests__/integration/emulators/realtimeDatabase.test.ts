@@ -273,6 +273,16 @@ describeWithEmulator('Test pushing new user info into the database', () => {
     await teardownRealtimeDatabaseTestEnv(testApp, db);
   });
 
+  it('pushes the account creation data into the database', async () => {
+    const deviceId = 'mock-device-id';
+    const dbRef = DBPATHS.ACCOUNT_CREATIONS_DEVICE_ID_USER_ID.getRoute(
+      deviceId,
+      newUserId,
+    );
+    const dbCreationData = await readDataOnce(db, dbRef);
+    expect(dbCreationData).toBeCloseTo(Date.now(), -2); // Within 100ms
+  });
+
   it('pushes the nickname to id data into the database', async () => {
     const expectedNickname = newUserDisplayName;
     const nicknameKey = cleanStringForFirebaseKey(

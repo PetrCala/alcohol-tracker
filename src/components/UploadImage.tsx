@@ -19,6 +19,7 @@ import {requestPermission} from '@libs/Permissions/requestPermission';
 import {updateProfileInfo} from '@database/profile';
 
 import {useFirebase} from '@src/context/global/FirebaseContext';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
 
 type UploadImageState = {
   imageSource: string | null;
@@ -165,7 +166,7 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={handleChooseImagePress} style={styles.button}>
-        <Image source={imageSource as any} style={imageStyle} />
+        <Image source={imageSource} style={imageStyle} />
       </TouchableOpacity>
 
       {state.imageSource && (
@@ -179,8 +180,8 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
           parentDispatch={dispatch}
         />
       )}
-      <WarningMessage warningText={state.warning} dispatch={dispatch} />
-      <SuccessMessage successText={state.success} dispatch={dispatch} />
+      {/* <WarningMessage warningText={state.warning} dispatch={dispatch} />
+      <SuccessMessage successText={state.success} dispatch={dispatch} /> */}
     </View>
   );
 };

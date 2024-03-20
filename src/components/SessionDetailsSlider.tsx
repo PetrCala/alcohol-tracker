@@ -11,7 +11,7 @@ import {
   Switch,
   TextInput,
 } from 'react-native';
-import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
 
 interface SessionSliderProps {
   scrollViewRef: React.RefObject<ScrollView>;

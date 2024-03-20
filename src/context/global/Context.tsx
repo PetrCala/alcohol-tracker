@@ -3,9 +3,9 @@
 // import {UserConnectionProvider} from './UserConnectionContext';
 // import {ConfigProvider} from './ConfigContext';
 // import { SafeAreaProvider } from 'react-native-safe-area-context';
-// // import {WindowDimensionsProvider} from '@src/components/withWindowDimensions';
+// // import {WindowDimensionsProvider} from '@components/withWindowDimensions';
 // import { KeyboardStateProvider } from '@components/withKeyboardState';
-// import SafeArea from '@src/components/SafeArea';
+// import SafeArea from '@components/SafeArea';
 // import ComposeProviders from '@components/ComposeProviders';
 
 // type ContextProviderProps = {

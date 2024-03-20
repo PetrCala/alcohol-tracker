@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import BasicButton from '@components/Buttons/BasicButton';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {
@@ -59,7 +59,6 @@ import Navigation from '@navigation/Navigation';
 import {StackScreenProps} from '@react-navigation/stack';
 import {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
-import {getEmptySession} from '@libs/SessionUtils';
 import ROUTES, {Route} from '@src/ROUTES';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {isEqual} from 'lodash';
@@ -81,7 +80,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
-  const {preferences} = useDatabaseData();
+  const {preferences, refetch} = useDatabaseData();
   const [session, setSession] = useState<DrinkingSession | null>(null);
   const initialSession = useRef<DrinkingSession | null>(null);
   // Session details
@@ -100,11 +99,12 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
   const [discardModalVisible, setDiscardModalVisible] =
     useState<boolean>(false);
   const [openingSession, setOpeningSession] = useState<boolean>(true);
-  const [savingSession, setSavingSession] = useState<boolean>(false);
+  const [loadingText, setLoadingText] = useState<string>('');
   const [showLeaveConfirmation, setShowLeaveConfirmation] = useState(false);
   const [isPlaceholderSession, setIsPlaceholderSession] =
     useState<boolean>(false);
   const sessionIsLive = session?.ongoing ? true : false;
+  const deleteSessionWording = session?.ongoing ? 'Discard' : 'Delete';
   const scrollViewRef = useRef<ScrollView>(null); // To navigate the view
 
   const {isPending, enqueueUpdate} = useAsyncQueue(
@@ -257,7 +257,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
     }
     if (totalUnits > 0) {
       try {
-        setSavingSession(true);
+        setLoadingText('Saving your session...');
         setSessionFinished(true); // No more db syncs
         let newSessionData: DrinkingSession = {
           ...session,
@@ -280,15 +280,16 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
           );
         }
         await removePlaceholderSessionData(db, userId);
-        // Reroute to session summary, do not allow user to return
-        navigateBackDynamically(CONST.NAVIGATION.SESSION_ACTION.SAVE);
+        refetch(['drinkingSessionData', 'userStatusData']);
       } catch (error: any) {
         Alert.alert(
           'Session save failed',
           'Failed to save drinking session data: ' + error.message,
         );
       } finally {
-        setSavingSession(false);
+        // Reroute to session summary, do not allow user to return
+        navigateBackDynamically(CONST.NAVIGATION.SESSION_ACTION.SAVE);
+        setLoadingText('');
       }
     }
   }
@@ -301,20 +302,25 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
   const handleConfirmDiscard = async () => {
     if (!db || !user) return;
     try {
+      setLoadingText(
+        `${sessionIsLive ? 'Discarding' : 'Deleting'} this session...`,
+      );
       const discardFunction = sessionIsLive
         ? discardLiveDrinkingSession
         : removeDrinkingSessionData;
       await waitForNoPendingUpdate();
       await discardFunction(db, user.uid, sessionId);
       await removePlaceholderSessionData(db, user.uid);
+      await refetch(['drinkingSessionData', 'userStatusData']);
     } catch (error: any) {
       Alert.alert(
         'Session discard failed',
         'Could not discard the session: ' + error.message,
       );
     } finally {
-      setDiscardModalVisible(false);
       navigateBackDynamically(CONST.NAVIGATION.SESSION_ACTION.DISCARD);
+      setDiscardModalVisible(false);
+      setLoadingText('');
     }
   };
 
@@ -328,10 +334,14 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
     }
     if (sessionIsLive) {
       try {
+        setLoadingText('Synchronizing data...');
         await waitForNoPendingUpdate();
         await updateSessionDrinks(db, user.uid, sessionId, session?.drinks);
+        await refetch(['drinkingSessionData', 'userStatusData']);
       } catch (error: any) {
         Alert.alert('Database synchronization failed', error.message);
+      } finally {
+        setLoadingText('');
       }
     }
     await confirmGoBack();
@@ -354,6 +364,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
   const openSession = async () => {
     if (!user) return;
     // Fetch the latest database data and use it to open the session
+    setLoadingText('Opening your session...');
     let sessionToOpen: DrinkingSession | null = await readDataOnce(
       db,
       DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID.getRoute(
@@ -379,6 +390,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
     setSession(sessionToOpen);
     initialSession.current = sessionToOpen;
     setOpeningSession(false);
+    setLoadingText('');
   };
 
   // Prepare the session for the user upon component mount
@@ -417,10 +429,8 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
   }, [session]);
 
   if (!isOnline) return <UserOffline />;
-  if (openingSession)
-    return <LoadingData loadingText="Opening your session..." />;
-  if (savingSession)
-    return <LoadingData loadingText="Saving your session..." />;
+  if (openingSession || loadingText)
+    return <LoadingData loadingText={loadingText} />;
   if (!user) {
     Navigation.navigate(ROUTES.LOGIN);
     return;
@@ -512,7 +522,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
       <View style={styles.saveSessionDelimiter} />
       <View style={styles.saveSessionContainer}>
         <BasicButton
-          text="Discard Session"
+          text={`${deleteSessionWording} Session`}
           buttonStyle={[
             styles.saveSessionButton,
             isPending
@@ -526,7 +536,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
           visible={discardModalVisible}
           transparent={true}
           onRequestClose={() => setDiscardModalVisible(false)}
-          message={'Do you really want to\ndiscard this session?'}
+          message={`Do you really want to\n${deleteSessionWording.toLowerCase()} this session?`}
           onYes={handleConfirmDiscard}
         />
         <BasicButton
@@ -605,9 +615,11 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     alignContent: 'center',
     padding: 2,
-    textShadowColor: 'black',
+    textShadowColor: '#000',
     textShadowOffset: {width: 1, height: 1},
-    textShadowRadius: 4,
+    textShadowRadius: 8,
+    elevation: 5,
+    zIndex: 1,
   },
   scrollView: {
     flex: 1,

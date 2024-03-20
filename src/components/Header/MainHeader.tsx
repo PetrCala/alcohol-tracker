@@ -3,7 +3,7 @@ import {Dimensions, StyleSheet, Text, View} from 'react-native';
 import MenuIcon from '../Buttons/MenuIcon';
 import commonStyles from '@src/styles/commonStyles';
 import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
-import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import CONST from '@src/CONST';
 
 type HeaderProps = {

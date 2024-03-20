@@ -1,5 +1,4 @@
 ﻿import semver from 'semver';
-import {Platform} from 'react-native';
 import CONST from '@src/CONST';
 
 import {version as _version} from '../../package.json';
@@ -9,13 +8,6 @@ const version: string = _version;
 type ValidationResult = {
   success: boolean;
   message?: string;
-};
-
-/**
- * Check that the current platform is valid.
- */
-export const platformIsValid = (): boolean => {
-  return CONST.AVAILABLE_PLATFORMS.includes(Platform.OS as any);
 };
 
 /**
@@ -114,6 +106,31 @@ export const validateSignInInput = (
   }
   return {success: true};
 };
+
+/** Validate that a string is semver-able. If not, throw an error.
+ *
+ * SemVer regex pattern to match MAJOR.MINOR.PATCH[-PRERELEASE][+BUILD]
+ * Explanation:
+ * - ^v? optional 'v' at the beginning
+ * - (0|[1-9]\d*) matches the major version (0, or any non-zero digit followed by any digits)
+ * - \.(0|[1-9]\d*) matches the minor version, prefixed by a dot
+ * - \.(0|[1-9]\d*) matches the patch version, prefixed by a dot
+ * - (-[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)? optionally matches pre-release version, prefixed by a hyphen
+ * - (\+[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)? optionally matches build metadata, prefixed by a plus
+ * - $ end of string
+ *
+ * @example
+ * validateSemver('1.0.0'); // Valid, no error thrown
+ * validateSemver('2.10.3-alpha.1+build.456'); // Valid, no error thrown
+ * validateSemver('01.0.0'); // Invalid, error thrown
+ */
+export function validateSemver(version: string): void {
+  const semverRegex =
+    /^v?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?$/;
+  if (!semverRegex.test(version)) {
+    throw new Error('Invalid SemVer version.');
+  }
+}
 
 /**
  * Cleans a semantic version string by extracting the major, minor, and patch version components.

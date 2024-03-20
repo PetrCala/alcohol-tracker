@@ -9,7 +9,7 @@ import {
   Alert,
   Dimensions,
 } from 'react-native';
-import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import MenuIcon from '../../components/Buttons/MenuIcon';
 import {
   timestampToDate,
@@ -119,7 +119,8 @@ const DayOverviewScreen = ({route}: DayOverviewScreenProps) => {
     }
     // Convert the timestamp to a Date object
     const date = timestampToDate(session.start_time);
-    const timeString = formatDateToTime(date);
+    const timeString = nonMidnightString(formatDateToTime(date));
+    const shouldDisplayTime = timeString !== nonMidnightString('00:00');
     const viewStyle = {
       ...styles.menuDrinkingSessionContainer,
       backgroundColor: sessionColor,
@@ -139,13 +140,15 @@ const DayOverviewScreen = ({route}: DayOverviewScreenProps) => {
                 ]}>
                 Units: {totalUnits}
               </Text>
-              <Text
-                style={[
-                  styles.menuDrinkingSessionText,
-                  session.blackout === true ? {color: 'white'} : {},
-                ]}>
-                Time: {nonMidnightString(timeString)}
-              </Text>
+              {shouldDisplayTime && (
+                <Text
+                  style={[
+                    styles.menuDrinkingSessionText,
+                    session.blackout === true ? {color: 'white'} : {},
+                  ]}>
+                  Time: {nonMidnightString(timeString)}
+                </Text>
+              )}
             </TouchableOpacity>
           </View>
           {session?.ongoing ? (
@@ -337,6 +340,7 @@ const screenWidth = Dimensions.get('window').width;
 const styles = StyleSheet.create({
   menuDrinkingSessionContainer: {
     backgroundColor: 'white',
+    height: 85,
     padding: 8,
     borderRadius: 8,
     marginVertical: 4,
@@ -377,10 +381,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFF99',
   },
   menuDrinkingSessionButton: {
-    flexGrow: 1,
-    flexShrink: 1,
+    width: '100%',
+    height: '100%',
     flexDirection: 'column',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
     padding: 5,
   },
   menuDrinkingSessionText: {

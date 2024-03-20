@@ -1,6 +1,5 @@
 ﻿import {ReactNode, useEffect, useReducer} from 'react';
 
-import ForceUpdateScreen from '../../screens/ForceUpdateScreen';
 import {useUserConnection} from './UserConnectionContext';
 import UserOffline from '../../components/UserOffline';
 import {listenForDataChanges} from '../../database/baseFunctions';
@@ -8,8 +7,9 @@ import LoadingData from '../../components/LoadingData';
 import {useFirebase} from './FirebaseContext';
 import {validateAppVersion} from '../../libs/Validation';
 import {Config} from '@src/types/database';
-import UnderMaintenance from '@components/UnderMaintenance';
+import ForceUpdateModal from '@components/Modals/ForceUpdateModal';
 import DBPATHS from '@database/DBPATHS';
+import UnderMaintenanceModal from '@components/Modals/UnderMaintenanceModal';
 
 const initialState = {
   isLoading: true,
@@ -68,11 +68,12 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({children}) => {
     return () => stopListening();
   }, []);
 
-  // Monitor user preferences
+  // Modals to render before navigation is initialized
   if (!isOnline) return <UserOffline />;
   if (state.isLoading) return <LoadingData />;
-  if (state.underMaintenance) return <UnderMaintenance config={state.config} />;
-  if (!state.versionValid) return <ForceUpdateScreen />;
+  if (state.underMaintenance)
+    return <UnderMaintenanceModal config={state.config} />;
+  if (!state.versionValid) return <ForceUpdateModal />;
 
   return <>{children}</>;
 };

@@ -7,8 +7,8 @@ import {
   LayoutChangeEvent,
   TouchableOpacity,
 } from 'react-native';
-import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
-import * as KirokuImages from '@src/components/Icon/KirokuImages';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
+import * as KirokuImages from '@components/Icon/KirokuImages';
 import {FirebaseStorage} from 'firebase/storage';
 import {getProfilePictureURL} from '@src/storage/storageProfile';
 import useProfileImageCache from '@hooks/useProfileImageCache';
@@ -137,6 +137,7 @@ function ProfileImage(props: ProfileImageProps) {
   if (!props.layout || !props.onLayout) {
     return;
   }
+
   return (
     <EnlargableImage
       imageSource={imageSource}

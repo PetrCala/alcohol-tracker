@@ -112,6 +112,7 @@ type DrinkingSessionNavigatorParamList = {
 
 type MainMenuNavigatorParamList = {
   [SCREENS.MAIN_MENU.ROOT]: undefined;
+  [SCREENS.MAIN_MENU.APP_SHARE]: undefined;
   [SCREENS.MAIN_MENU.PREFERENCES]: undefined;
   [SCREENS.MAIN_MENU.POLICIES.TERMS_OF_SERVICE]: undefined;
   [SCREENS.MAIN_MENU.POLICIES.PRIVACY_POLICY]: undefined;
@@ -119,6 +120,9 @@ type MainMenuNavigatorParamList = {
 
 type ProfileNavigatorParamList = {
   [SCREENS.PROFILE.ROOT]: {
+    userId: string;
+  };
+  [SCREENS.PROFILE.EDIT]: {
     userId: string;
   };
   [SCREENS.PROFILE.FRIENDS_FRIENDS]: {

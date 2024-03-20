@@ -18,7 +18,7 @@ import React, {useEffect, useMemo, useReducer, useRef} from 'react';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 
 import {isNonEmptyArray} from '@libs/Validation';
-import LoadingData from '@src/components/LoadingData';
+import LoadingData from '@components/LoadingData';
 import {Database} from 'firebase/database';
 import {searchDatabaseForUsers} from '@libs/Search';
 import {fetchUserProfiles} from '@database/profile';

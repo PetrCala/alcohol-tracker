@@ -15,7 +15,7 @@ import MenuIcon from '@components/Buttons/MenuIcon';
 import SessionsCalendar from '@components/Calendar';
 import LoadingData from '@components/LoadingData';
 import {DateObject} from '@src/types/time';
-import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {
   dateToDateObject,
   calculateThisMonthDrinks,
@@ -235,11 +235,10 @@ const HomeScreen = ({}: HomeScreenProps) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      // Refetch relevant data every time the screen is focused
+      // Update user status on home screen focus
       if (!user) return;
       try {
         updateUserLastOnline(db, user.uid);
-        refetch(['userStatusData', 'preferences', 'userData']);
       } catch (error: any) {
         Alert.alert(
           'Failed to contact the database',
@@ -283,9 +282,12 @@ const HomeScreen = ({}: HomeScreenProps) => {
             <Text style={styles.headerUsername}>{user.displayName}</Text>
           </TouchableOpacity>
         </View>
+        {/* Enable later on */}
         {/* <View style={styles.menuContainer}>
-              <Text style={styles.yearMonthText}>{thisYearMonth}</Text>
-          </View> */}
+          <TouchableOpacity style={styles.notificationsButton}>
+            <Image source={KirokuIcons.Bell} style={styles.notificationsIcon} />
+          </TouchableOpacity>
+        </View> */}
       </View>
       {/* <View style={styles.yearMonthContainer}>
         <Text style={styles.yearMonthText}>{thisYearMonth}</Text>
@@ -399,8 +401,8 @@ const styles = StyleSheet.create({
   profileContainer: {
     //Ensure the container fills all space between, no more, no less
     padding: 10,
-    flexGrow: 1,
-    flexShrink: 1,
+    height: '100%',
+    width: '85%',
   },
   profileButton: {
     flexDirection: 'row',
@@ -420,15 +422,13 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   menuContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
     alignItems: 'center',
-    width: 200,
+    width: '15%',
   },
   menuIconContainer: {
-    width: 40,
-    height: 40,
+    width: 'auto',
+    height: 'auto',
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
@@ -437,6 +437,16 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     padding: 10,
+  },
+  notificationsButton: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  notificationsIcon: {
+    width: 24,
+    height: 24,
   },
   socialContainer: {
     flexDirection: 'row',

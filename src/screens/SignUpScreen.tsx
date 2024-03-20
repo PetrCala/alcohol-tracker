@@ -8,8 +8,11 @@ import {
   TouchableOpacity,
   View,
   TextInput,
+  Keyboard,
+  Platform,
+  ScrollView,
 } from 'react-native';
-import * as KirokuImages from '@src/components/Icon/KirokuImages';
+import * as KirokuImages from '@components/Icon/KirokuImages';
 import {getAuth, updateProfile} from 'firebase/auth';
 import {signUpUserWithEmailAndPassword} from '@libs/auth/auth';
 import {useFirebase} from '@context/global/FirebaseContext';
@@ -24,7 +27,6 @@ import {
 import {deleteUserData, pushNewUserInfo} from '@database/users';
 import {handleErrors} from '@libs/ErrorHandling';
 import WarningMessage from '@components/Info/WarningMessage';
-import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 import {Profile} from '@src/types/database';
 import DBPATHS from '@database/DBPATHS';
 import ValidityIndicatorIcon from '@components/ValidityIndicatorIcon';
@@ -35,6 +37,10 @@ import NAVIGATORS from '@src/NAVIGATORS';
 import {StackScreenProps} from '@react-navigation/stack';
 import ScreenWrapper from '@components/ScreenWrapper';
 import useTheme from '@hooks/useTheme';
+import {checkAccountCreationLimit} from '@database/protection';
+import LoadingData from '@components/LoadingData';
+import KeyboardAvoidingView from '@components/KeyboardAvoidingView';
+import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 
 interface State {
   email: string;
@@ -44,6 +50,7 @@ interface State {
   passwordConfirm: string;
   passwordsMatch: boolean;
   warning: string;
+  isLoading: boolean;
 }
 
 interface Action {
@@ -59,6 +66,7 @@ const initialState: State = {
   passwordConfirm: '',
   passwordsMatch: false,
   warning: '',
+  isLoading: false,
 };
 
 const reducer = (state: State, action: Action) => {
@@ -98,6 +106,11 @@ const reducer = (state: State, action: Action) => {
         ...state,
         warning: action.payload,
       };
+    case 'SET_LOADING':
+      return {
+        ...state,
+        isLoading: action.payload,
+      };
     default:
       return state;
   }
@@ -124,6 +137,7 @@ const SignUpScreen = () => {
   }
 
   const handleSignUp = async () => {
+    Keyboard.dismiss();
     if (!isOnline) return;
 
     const inputValidation = validateSignInInput(
@@ -154,6 +168,7 @@ const SignUpScreen = () => {
     let minUserCreationPath =
       DBPATHS.CONFIG_APP_SETTINGS_MIN_USER_CREATION_POSSIBLE_VERSION;
 
+    dispatch({type: 'SET_LOADING', payload: true});
     try {
       minSupportedVersion = await readDataOnce(db, minUserCreationPath);
     } catch (error: any) {
@@ -161,6 +176,7 @@ const SignUpScreen = () => {
         'Data fetch failed',
         'Could not fetch the sign-up source data: ' + error.message,
       );
+      dispatch({type: 'SET_LOADING', payload: false});
       return;
     }
 
@@ -170,6 +186,7 @@ const SignUpScreen = () => {
         payload:
           'Failed to fetch the minimum supported version. Please try again later.',
       });
+      dispatch({type: 'SET_LOADING', payload: false});
       return;
     }
     if (!validateAppVersion(minSupportedVersion)) {
@@ -178,6 +195,16 @@ const SignUpScreen = () => {
         payload:
           'This version of the application is outdated. Please upgrade to the newest version.',
       });
+      dispatch({type: 'SET_LOADING', payload: false});
+      return;
+    }
+
+    // Validate that the user is not spamming account creation
+    try {
+      await checkAccountCreationLimit(db);
+    } catch (error: any) {
+      dispatch({type: 'SET_WARNING', payload: error.message});
+      dispatch({type: 'SET_LOADING', payload: false});
       return;
     }
 
@@ -199,11 +226,13 @@ const SignUpScreen = () => {
         'Sign-up failed',
         'There was an error during sign-up: ' + error.message,
       );
+      dispatch({type: 'SET_LOADING', payload: false});
       return;
     }
 
     auth = getAuth(); // Refresh
     if (!auth.currentUser) {
+      dispatch({type: 'SET_LOADING', payload: false});
       throw new Error('User creation failed');
     }
     newUserId = auth.currentUser.uid;
@@ -225,6 +254,8 @@ const SignUpScreen = () => {
         handleErrors(rollbackError, errorHeading, errorMessage, dispatch);
       }
       return;
+    } finally {
+      dispatch({type: 'SET_LOADING', payload: false});
     }
     // Update Firebase authentication
     if (auth.currentUser) {
@@ -235,9 +266,12 @@ const SignUpScreen = () => {
         const errorMessage = 'There was an error during sign-up: ';
         handleErrors(error, errorHeading, errorMessage, dispatch);
         return;
+      } finally {
+        dispatch({type: 'SET_LOADING', payload: false});
       }
     }
     Navigation.navigate(ROUTES.HOME);
+    dispatch({type: 'SET_LOADING', payload: false});
     return;
   };
 
@@ -259,10 +293,11 @@ const SignUpScreen = () => {
     }
   }, [state.password, state.passwordConfirm]);
 
+  if (state.isLoading)
+    return <LoadingData loadingText="Creating your account..." />;
+
   return (
-    <ScreenWrapper
-      testID={SignUpScreen.displayName}
-      style={{backgroundColor: theme.appBG}}>
+    <DismissKeyboard>
       <View style={styles.mainContainer}>
         <WarningMessage warningText={state.warning} dispatch={dispatch} />
         <View style={styles.logoContainer}>
@@ -339,7 +374,7 @@ const SignUpScreen = () => {
           </View>
         </View>
       </View>
-    </ScreenWrapper>
+    </DismissKeyboard>
   );
 };
 
@@ -386,7 +421,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   inputContainer: {
-    paddingTop: screenHeight * 0.1,
+    paddingTop: screenHeight * 0.04,
     width: '80%',
     height: screenHeight * 0.85,
   },

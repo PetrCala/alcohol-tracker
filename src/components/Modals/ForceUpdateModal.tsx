@@ -1,19 +1,16 @@
-﻿import ScreenWrapper from '@components/ScreenWrapper';
-import useTheme from '@hooks/useTheme';
+﻿import useTheme from '@hooks/useTheme';
 import CONST from '@src/CONST';
 import React from 'react';
 import {View, Text, Linking, StyleSheet, Platform} from 'react-native';
 
-const ForceUpdateScreen = () => {
+const ForceUpdateModal = () => {
   const theme = useTheme();
   const storeLink =
     Platform.OS === 'android'
       ? CONST.STORE_LINKS.ANDROID
       : CONST.STORE_LINKS.IOS;
   return (
-    <ScreenWrapper
-      testID={ForceUpdateScreen.displayName}
-      style={{backgroundColor: theme.appBG}}>
+    <View style={[styles.mainContainer, {backgroundColor: theme.appBG}]}>
       <Text style={styles.title}>App Update Required</Text>
       <Text style={styles.description}>
         This version of the app is now discontinued. Please update to the latest
@@ -23,16 +20,20 @@ const ForceUpdateScreen = () => {
       {storeLink ? (
         <Text
           style={styles.updateLink}
-          // onPress={() => Linking.openURL('itms-apps://your-app-store-link')}
           onPress={() => Linking.openURL(storeLink)}>
           Update Now
         </Text>
       ) : null}
-    </ScreenWrapper>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -50,5 +51,4 @@ const styles = StyleSheet.create({
   },
 });
 
-ForceUpdateScreen.displayName = 'Force Update Screen';
-export default ForceUpdateScreen;
+export default ForceUpdateModal;

@@ -1,5 +1,16 @@
 {
   "rules": {
+    "account_creations": {
+      ".read": "auth.token.admin === true",
+      ".write": "auth.token.admin === true",
+      "$device_id": {
+        ".read": true,
+        "$user_id": {
+          ".validate": "newData.val() === null || newData.isNumber()",
+          ".write": "auth != null && auth.uid === $user_id"
+        }
+      }
+    },
     "config": {
       ".read": true,
       ".write": "auth.token.admin === true"

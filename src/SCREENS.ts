@@ -42,6 +42,7 @@ const SCREENS = {
 
   MAIN_MENU: {
     ROOT: 'MainMenu_Root',
+    APP_SHARE: 'MainMenu_AppShare',
     PREFERENCES: 'MainMenu_Preferences',
     POLICIES: {
       TERMS_OF_SERVICE: 'MainMenu_Policies_TermsOfService',
@@ -51,6 +52,7 @@ const SCREENS = {
 
   PROFILE: {
     ROOT: 'Profile_Root',
+    EDIT: 'Profile_Edit',
     FRIENDS_FRIENDS: 'Profile_FriendsFriends',
   },
 

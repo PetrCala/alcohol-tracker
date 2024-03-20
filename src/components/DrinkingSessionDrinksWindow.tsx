@@ -14,7 +14,7 @@ import {
   sumDrinkTypes,
   sumDrinksOfSingleType,
 } from '../libs/DataHandling';
-import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import CONST from '@src/CONST';
 import {DrinkKey, Drinks, DrinksList} from '@src/types/database';
 

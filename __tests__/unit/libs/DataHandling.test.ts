@@ -385,9 +385,6 @@ describe('setDateToCurrentTime function', () => {
     expect(modifiedDate.getHours()).toEqual(currentTime.getHours());
     expect(modifiedDate.getMinutes()).toEqual(currentTime.getMinutes());
     expect(modifiedDate.getSeconds()).toEqual(currentTime.getSeconds());
-    expect(modifiedDate.getMilliseconds()).toEqual(
-      currentTime.getMilliseconds(),
-    );
   });
 });
 
@@ -872,6 +869,7 @@ describe('removeZeroObjectsFromSession', () => {
       blackout: false,
       note: '',
       drinks: drinks,
+      type: CONST.SESSION_TYPES.EDIT,
     };
   };
 

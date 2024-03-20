@@ -16,22 +16,68 @@ import {
   NotificationsResponse,
 } from 'react-native-permissions';
 import {
+  AndroidFilePermissions,
   PermissionKey,
   permissionIsDenied,
   permissionIsGranted,
 } from './PermissionsUtils';
-import permissionsMap from './PermissionsList';
+import permissionsMap from './PermissionsMap';
 import permissionsMessages from './PermissionsMessages';
 
 const openSettings = () => {
   Linking.openSettings();
 };
 
+/**
+ * Android permission check to store/read images
+ */
+async function hasAndroidFilePermission(): Promise<boolean> {
+  // On Android API Level 33 and above, these permissions do nothing and always return 'never_ask_again'
+  // More info here: https://stackoverflow.com/a/74296799
+  if (Number(Platform.Version) >= 33) {
+    return Promise.resolve(true);
+  }
+
+  // Read and write permission
+  const writePromise = PermissionsAndroid.check(
+    PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+  );
+  const readPromise = PermissionsAndroid.check(
+    PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+  );
+
+  return Promise.all([writePromise, readPromise]).then(
+    ([hasWritePermission, hasReadPermission]) => {
+      if (hasWritePermission && hasReadPermission) {
+        return true; // Return true if permission is already given
+      }
+
+      // Ask for permission if not given
+      return PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+      ]).then(
+        status =>
+          status['android.permission.READ_EXTERNAL_STORAGE'] === 'granted' &&
+          status['android.permission.WRITE_EXTERNAL_STORAGE'] === 'granted',
+      );
+    },
+  );
+}
+
 const requestPermissionAndroid = async (
   permission: Permission,
   permissionType: PermissionKey,
 ): Promise<PermissionStatus> => {
   try {
+    // Handle android file permissions separately
+    if (AndroidFilePermissions.includes(permission)) {
+      const hasPermission = await hasAndroidFilePermission();
+      if (hasPermission) {
+        return PermissionsAndroid.RESULTS.GRANTED;
+      }
+      return PermissionsAndroid.RESULTS.DENIED;
+    }
     const rationale: Rationale = {
       title: permissionsMessages[permissionType].title,
       message: permissionsMessages[permissionType].message,
@@ -39,6 +85,7 @@ const requestPermissionAndroid = async (
       buttonNegative: 'Cancel',
       buttonPositive: 'OK',
     };
+    // const status = await PermissionsAndroid.request(permission, rationale);
     const status = await PermissionsAndroid.request(permission, rationale);
     return status; // status === PermissionsAndroid.RESULTS.GRANTED;
   } catch (err: any) {
