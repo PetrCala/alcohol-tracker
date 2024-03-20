@@ -22,6 +22,8 @@ const CONST = {
   },
   APP_DOWNLOAD_LINK:
     'https://petrcala.github.io/Kiroku/assets/html/qr-link.html',
+  APP_QR_CODE_LINK:
+    'https://petrcala.github.io/Kiroku/assets/images/kiroku-qr-code-with-logo.png',
   APP_IN_BETA: true,
   AVAILABLE_PLATFORMS: ['ios', 'android'],
   AVATAR_SIZE: {

@@ -18,7 +18,6 @@ import {
 } from 'react-native';
 import CONST from '@src/CONST';
 import {copyToClipboard} from '@libs/StringUtils';
-import checkPermission from '@libs/Permissions/checkPermission';
 
 type AppShareScreenProps = StackScreenProps<
   MainMenuNavigatorParamList,
@@ -32,19 +31,6 @@ const AppShareScreen = ({route}: AppShareScreenProps) => {
     } catch (error: any) {
       Alert.alert('Error', error.message);
     }
-  };
-
-  const handleDownloadQrCodePress = async () => {
-    // try {
-    //   // Check for permissions
-    //   const permissionAllowed = await checkPermission('write_photos');
-    //   if (!permissionAllowed) {
-    //     const permissionGranted = await requestPermission('write_photos');
-    //     if (!permissionGranted) {
-    //       return; // Permission denied - info message automatically handled by requestPermission
-    //     }
-    //   }
-    //   await chooseImage(); // Call automatically
   };
 
   return (
@@ -81,17 +67,11 @@ const AppShareScreen = ({route}: AppShareScreenProps) => {
           <View style={[styles.centeringContainer, {height: '15%'}]}>
             <Text style={styles.mainText}>or through a QR code</Text>
           </View>
-          <View style={[styles.centeringContainer, {height: 'auto'}]}>
+          <TouchableOpacity
+            onPress={() => Linking.openURL(CONST.APP_QR_CODE_LINK)}
+            style={[styles.centeringContainer, {height: 'auto'}]}>
             <Image source={KirokuImages.QrCodeWithLogo} style={styles.qrCode} />
-          </View>
-          {/* <TouchableOpacity
-            onPress={handleDownloadQrCodePress}
-            style={styles.downloadQrCodeButton}>
-            <Image
-              source={KirokuIcons.Download}
-              style={styles.downloadQrCodeImage}
-            />
-          </TouchableOpacity> */}
+          </TouchableOpacity>
         </View>
       </View>
     </ScreenWrapper>
@@ -147,6 +127,7 @@ const styles = StyleSheet.create({
   },
   linkCopyImage: {
     marginLeft: 10,
+    tintColor: 'black',
     width: 25,
     height: 25,
   },
@@ -154,15 +135,15 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
   },
-  downloadQrCodeButton: {
+  copyQrCodeButton: {
     height: 'auto',
     width: 'auto',
     padding: 15,
   },
-  downloadQrCodeImage: {
+  copyQrCodeImage: {
     tintColor: 'black',
-    width: 50,
-    height: 50,
+    width: 30,
+    height: 30,
   },
 });
 
