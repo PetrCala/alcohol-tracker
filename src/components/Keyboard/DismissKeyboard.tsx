@@ -20,7 +20,7 @@ const DismissKeyboard: React.FC<DismissKeyboardProps> = ({
       onPressIn={Keyboard.dismiss}
       onPress={Keyboard.dismiss}
       onLongPress={Keyboard.dismiss}
-      accessible={false}>
+      accessible={true}>
       {children}
     </TouchableWithoutFeedback>
   );

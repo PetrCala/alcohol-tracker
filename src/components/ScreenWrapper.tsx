@@ -3,7 +3,7 @@ import type {StackNavigationProp} from '@react-navigation/stack';
 import type {ForwardedRef, ReactNode} from 'react';
 import React, {forwardRef, useEffect, useRef, useState} from 'react';
 import type {DimensionValue, StyleProp, ViewStyle} from 'react-native';
-import {Keyboard, Platform, View} from 'react-native';
+import {Keyboard, PanResponder, Platform, View} from 'react-native';
 import type {EdgeInsets} from 'react-native-safe-area-context';
 import useEnvironment from '@hooks/useEnvironment';
 import useInitialDimensions from '@hooks/useInitialWindowDimensions';
@@ -15,7 +15,6 @@ import CONST from '@src/CONST';
 import HeaderGap from './HeaderGap';
 import KeyboardAvoidingView from './KeyboardAvoidingView';
 import SafeAreaConsumer from './SafeAreaConsumer';
-import DismissKeyboard from './Keyboard/DismissKeyboard';
 // import OfflineIndicator from './OfflineIndicator';
 // import useNetwork from '@hooks/useNetwork';
 
@@ -53,10 +52,6 @@ type ScreenWrapperProps = {
    *  Search 'switch(behavior)' in ./node_modules/react-native/Libraries/Components/Keyboard/KeyboardAvoidingView.js for more context */
   keyboardAvoidingViewBehavior?: 'padding' | 'height' | 'position';
 
-  /** Whether DismissKeyboard should be enabled. If true, the keyboard disappears upon clicking away from it. May cause some elements to
-  be unclickable if set to false. */
-  shouldEnableDismissKeyboard?: boolean;
-
   /** Whether KeyboardAvoidingView should be enabled. Use false for screens where this functionality is not necessary */
   shouldEnableKeyboardAvoidingView?: boolean;
 
@@ -85,7 +80,6 @@ function ScreenWrapper(
     includePaddingTop = true,
     keyboardAvoidingViewBehavior = 'padding',
     includeSafeAreaPaddingBottom = true,
-    shouldEnableDismissKeyboard = true,
     shouldEnableKeyboardAvoidingView = true,
     headerGapStyles,
     children,
@@ -122,6 +116,21 @@ function ScreenWrapper(
   const isKeyboardShownRef = useRef<boolean>(false);
 
   isKeyboardShownRef.current = keyboardState?.isKeyboardShown ?? false;
+
+  const keyboardDissmissPanResponder = useRef(
+    PanResponder.create({
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      onMoveShouldSetPanResponderCapture: (_e, gestureState) => {
+        const isHorizontalSwipe =
+          Math.abs(gestureState.dx) > Math.abs(gestureState.dy);
+        const shouldDismissKeyboard =
+          shouldDismissKeyboardBeforeClose && isKeyboardShown; // && Browser.isMobile();
+
+        return isHorizontalSwipe && shouldDismissKeyboard;
+      },
+      onPanResponderGrant: Keyboard.dismiss,
+    }),
+  ).current;
 
   useEffect(() => {
     const unsubscribeTransitionEnd = navigation.addListener(
@@ -176,32 +185,33 @@ function ScreenWrapper(
 
         return (
           <View ref={ref} style={[styles.flex1, {minHeight}]} testID={testID}>
-            <View style={[styles.flex1, paddingStyle, style]}>
-              <DismissKeyboard disable={!shouldEnableDismissKeyboard}>
-                <KeyboardAvoidingView
-                  style={[styles.w100, styles.h100, {maxHeight}]}
-                  behavior={keyboardAvoidingViewBehavior}
-                  enabled={shouldEnableKeyboardAvoidingView}>
-                  <HeaderGap styles={headerGapStyles} />
-                  {
-                    // If props.children is a function, call it to provide the insets to the children.
-                    typeof children === 'function'
-                      ? children({
-                          insets,
-                          safeAreaPaddingBottomStyle,
-                          didScreenTransitionEnd,
-                        })
-                      : children
-                  }
-                  {/* {isSmallScreenWidth && shouldShowOfflineIndicator && <OfflineIndicator style={offlineIndicatorStyle} />}
+            <View
+              style={[styles.flex1, paddingStyle, style]}
+              // eslint-disable-next-line react/jsx-props-no-spreading
+              {...keyboardDissmissPanResponder.panHandlers}>
+              <KeyboardAvoidingView
+                style={[styles.w100, styles.h100, {maxHeight}]}
+                behavior={keyboardAvoidingViewBehavior}
+                enabled={shouldEnableKeyboardAvoidingView}>
+                <HeaderGap styles={headerGapStyles} />
+                {
+                  // If props.children is a function, call it to provide the insets to the children.
+                  typeof children === 'function'
+                    ? children({
+                        insets,
+                        safeAreaPaddingBottomStyle,
+                        didScreenTransitionEnd,
+                      })
+                    : children
+                }
+                {/* {isSmallScreenWidth && shouldShowOfflineIndicator && <OfflineIndicator style={offlineIndicatorStyle} />}
                                      {!isSmallScreenWidth && shouldShowOfflineIndicatorInWideScreen && (
                                          <OfflineIndicator
                                              containerStyles={[]}
                                              style={[styles.pl5, styles.offlineIndicatorRow, offlineIndicatorStyle]}
                                          />
                                      )} */}
-                </KeyboardAvoidingView>
-              </DismissKeyboard>
+              </KeyboardAvoidingView>
             </View>
           </View>
         );

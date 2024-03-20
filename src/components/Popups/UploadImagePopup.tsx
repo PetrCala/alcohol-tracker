@@ -29,7 +29,6 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
   const {visible, transparent, onRequestClose, parentState, parentDispatch} =
     props;
   const {auth} = useFirebase();
-  const {refetch} = useDatabaseData();
   const user = auth.currentUser;
   const [uploadFinished, setUploadFinished] = useState<boolean>(false);
 
@@ -78,7 +77,6 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
         await AsyncStorage.removeItem(
           CONST.CACHE.PROFILE_PICTURE_KEY + user.uid,
         );
-        await refetch(['userData']);
         setUploadFinished(true);
         parentDispatch({type: 'SET_UPLOAD_ONGOING', payload: false});
       }
