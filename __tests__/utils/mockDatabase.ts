@@ -2,36 +2,35 @@
 
 import {
   AppSettings,
-  BetaKeysProps,
-  ConfigProps,
+  Config,
   DatabaseProps,
-  DrinkingSessionArrayItem,
-  DrinkingSessionData,
-  FeedbackData,
-  FeedbackProps,
-  FriendRequestData,
+  DrinkingSession,
+  Feedback,
+  FriendRequestList,
   FriendRequestStatus,
-  FriendsData,
-  MaintenanceProps,
-  NicknameToIdData,
-  PreferencesData,
-  ProfileData,
-  UnconfirmedDaysData,
-  UnitTypesProps,
-  UnitsObject,
-  UnitsToColorsData,
-  UserData,
-  UserStatusData,
+  Maintenance,
+  NicknameToId,
+  Preferences,
+  Profile,
+  UnconfirmedDays,
+  Drinks,
+  UnitsToColors,
+  UserProps,
+  UserStatus,
+  DrinksList,
+  DrinkingSessionList,
+  DrinkingSessionId,
+  DrinksToUnits,
 } from '../../src/types/database';
-import {getRandomChoice, getRandomInt} from '../../src/utils/choice';
+import {getRandomChoice, getRandomInt} from '../../src/libs/Choice';
 import {
   formatDate,
-  getRandomUnitsObject,
-  getZeroUnitsObject,
-} from '../../src/utils/dataHandling';
-import {cleanStringForFirebaseKey} from '../../src/utils/strings';
+  getRandomDrinksList,
+  getZeroDrinksList,
+} from '../../src/libs/DataHandling';
+import {cleanStringForFirebaseKey} from '../../src/libs/StringUtils';
 import {MOCK_SESSION_IDS, MOCK_USER_IDS} from './testsStatic';
-import {create} from 'lodash';
+import CONST from '@src/CONST';
 
 /**
  * Creates a mock app settings object.
@@ -55,7 +54,7 @@ export function createMockMaintenance(
   maintenanceModeOn: boolean = false,
   startTime: number = 0,
   endTime: number = 0,
-): MaintenanceProps {
+): Maintenance {
   return {
     maintenance_mode: maintenanceModeOn,
     start_time: startTime,
@@ -70,7 +69,6 @@ export function createMockMaintenance(
  */
 export function initializeEmptyMockDatabase(): DatabaseProps {
   return {
-    beta_keys: {},
     config: {
       app_settings: createMockAppSettings(),
       maintenance: createMockMaintenance(),
@@ -85,27 +83,14 @@ export function initializeEmptyMockDatabase(): DatabaseProps {
   };
 }
 
-export function createMockBetaKeys(number: number): BetaKeysProps {
-  const betaKeys: BetaKeysProps = {};
-  for (let i = 0; i < number; i++) {
-    const idx = i + 1; // Start indexing from key 1
-    const key = `beta-key-${idx}`;
-    betaKeys[idx] = {
-      key: key,
-      in_usage: false,
-    };
-  }
-  return betaKeys;
-}
-
 /** Create a mock configuration data record
  *
  * @param min_supported_version Minimum supported
  * version of the app. Defaults to 0.0.1.
  * @returns Mock configuration data record
  */
-export function createMockConfig(): ConfigProps {
-  let mockConfig: ConfigProps = {
+export function createMockConfig(): Config {
+  let mockConfig: Config = {
     app_settings: createMockAppSettings(),
     maintenance: createMockMaintenance(),
   };
@@ -116,7 +101,7 @@ export function createMockConfig(): ConfigProps {
  *
  * @returns Feedback object.
  */
-export function createMockFeedback(): FeedbackProps {
+export function createMockFeedback(): Feedback {
   return {
     submit_time: Date.now(),
     text: 'Mock feedback',
@@ -126,9 +111,9 @@ export function createMockFeedback(): FeedbackProps {
 
 export function createMockUserStatus(
   latest_session_id?: string,
-  latest_session?: DrinkingSessionArrayItem,
-): UserStatusData {
-  const mockUserStatus: UserStatusData = {
+  latest_session?: DrinkingSession,
+): UserStatus {
+  const mockUserStatus: UserStatus = {
     last_online: Date.now(),
   };
   if (latest_session_id && latest_session) {
@@ -142,47 +127,45 @@ export function createMockUserStatus(
  *
  * @returns The mock object.
  */
-export function createMockNicknameToIdData(userId: string): NicknameToIdData {
-  const returnObject: NicknameToIdData = {
+export function createMockNicknameToId(userId: string): NicknameToId {
+  const returnObject: NicknameToId = {
     [userId]: 'mock nickname',
   };
   return returnObject;
 }
 
-/** Generate a mock object of units
+/** Generate a mock object of drinks
  *
- * @usage const onlyWine = generateMockUnitsObject({ wine: 5 });
+ * @usage const onlyWine = generateMockDrinksList({ wine: 5 });
  */
-export function createMockUnitsObject(
-  units: Partial<UnitTypesProps> = {},
-): UnitsObject {
-  if (Object.keys(units).length === 0) {
-    // If units are unspecified
-    return getRandomUnitsObject();
+export function createMockDrinksList(drinks: Drinks = {}): DrinksList {
+  if (Object.keys(drinks).length === 0) {
+    // If drinks are unspecified
+    return getRandomDrinksList();
   }
   let timestampNow = new Date().getTime();
   return {
-    [timestampNow]: units,
+    [timestampNow]: drinks,
   };
 }
 
 /**
- * Generates a DrinkingSessionData for a specified offset relative to a given date.
+ * Generates a DrinkingSession for a specified offset relative to a given date.
  *
  * @param baseDate Date around which sessions are created.
  * @param offsetDays Number of days to offset from baseDate. If not provided, a random offset between -7 and 7 days is used.
- * @param units Units consumed during the session
+ * @param drinks Drinks consumed during the session
  * @param ongoing Whether the session is ongoing or not
- * @returns A DrinkingSessionData object.
+ * @returns A DrinkingSession object.
  */
 export function createMockSession(
   baseDate: Date,
   offsetDays?: number,
-  units?: UnitsObject,
+  drinks?: DrinksList,
   ongoing?: boolean,
-): DrinkingSessionArrayItem {
-  if (!units) {
-    units = getZeroUnitsObject();
+): DrinkingSession {
+  if (!drinks) {
+    drinks = getZeroDrinksList();
   }
   const sessionDate = new Date(baseDate);
 
@@ -196,12 +179,13 @@ export function createMockSession(
 
   sessionDate.setHours(startHour, 0, 0, 0);
 
-  const newSession: DrinkingSessionArrayItem = {
+  const newSession: DrinkingSession = {
     start_time: sessionDate.getTime(),
     end_time: sessionDate.getTime() + 2 * 60 * 60 * 1000, // +2 hours
     blackout: false,
     note: '',
-    units: units,
+    drinks: drinks,
+    type: getRandomChoice(Object.values(CONST.SESSION_TYPES)),
   };
   if (ongoing) newSession.ongoing = true;
 
@@ -212,12 +196,13 @@ export function createMockSession(
  *
  * @returns User preferences type object
  */
-export function createMockPreferences(): PreferencesData {
-  let mockUnitsToColorsData: UnitsToColorsData = {
+export function createMockPreferences(): Preferences {
+  let mockUnitsToColors: UnitsToColors = {
     yellow: getRandomInt(3, 6),
     orange: getRandomInt(7, 10),
   };
-  let mockUnitsToPointsData: UnitTypesProps = {
+  let mockDrinksToUnitsData: DrinksToUnits = {
+    small_beer: 0.5,
     beer: 1,
     cocktail: 1.5,
     other: 1,
@@ -225,20 +210,20 @@ export function createMockPreferences(): PreferencesData {
     weak_shot: 0.5,
     wine: 1,
   };
-  let mockPreferencesData: PreferencesData = {
+  let mockPreferences: Preferences = {
     first_day_of_week: getRandomChoice(['Monday', 'Sunday']),
-    units_to_colors: mockUnitsToColorsData,
-    units_to_points: mockUnitsToPointsData,
+    units_to_colors: mockUnitsToColors,
+    drinks_to_units: mockDrinksToUnitsData,
   };
-  return mockPreferencesData;
+  return mockPreferences;
 }
 
 /** Create and return an unconfirmed days type object.
  *
  * @returns Unconfirmed days object
  */
-export function createMockUnconfirmedDays(): UnconfirmedDaysData {
-  const data: UnconfirmedDaysData = {};
+export function createMockUnconfirmedDays(): UnconfirmedDays {
+  const data: UnconfirmedDays = {};
   const today = new Date();
 
   // Randomly choose the number of entries to generate
@@ -262,9 +247,11 @@ export function createMockUnconfirmedDays(): UnconfirmedDaysData {
  * @param userId ID of the mock user
  * @returns Mock FriendRequest type data.
  */
-export function createMockFriendRequests(userId: string): FriendRequestData {
-  let mockRequestData: FriendRequestData = {};
-  const statuses: FriendRequestStatus[] = ['sent', 'received'];
+export function createMockFriendRequests(userId: string): FriendRequestList {
+  let mockRequestData: FriendRequestList = {};
+  const statuses: FriendRequestStatus[] = Object.values(
+    CONST.FRIEND_REQUEST_STATUS,
+  );
   for (let mockId of MOCK_USER_IDS) {
     if (mockId === userId) {
       continue; // Skip self
@@ -284,17 +271,15 @@ export function createMockFriendRequests(userId: string): FriendRequestData {
  */
 export function createMockUserData(
   userId: string,
-  index: number,
   noFriends: boolean = false,
-): UserData {
-  let mockProfileData: ProfileData = {
+): UserProps {
+  let mockProfile: Profile = {
     display_name: 'mock-user',
     photo_url: '',
   };
-  const mockUserData: UserData = {
-    profile: mockProfileData,
+  const mockUserData: UserProps = {
+    profile: mockProfile,
     role: 'mock-user',
-    beta_key_id: index + 1,
   };
   if (!noFriends) {
     // mockUserData['friends'] = // TODO
@@ -305,32 +290,26 @@ export function createMockUserData(
 
 /** Create and return an object that will mock
  * the firebase database. This object has the
- * type DatabaseProps.
+ * type Database.
  *
  * @param noFriends If set to true, no friends or friend requests will be created.
  * @returns A mock object of the firebase database
  */
 export function createMockDatabase(noFriends: boolean = false): DatabaseProps {
   const db = initializeEmptyMockDatabase();
-  // Beta keys
-  db.beta_keys = createMockBetaKeys(10); // beta feature
   // Configuration
   db.config = createMockConfig();
 
   // Data that varies across users
   MOCK_USER_IDS.forEach((userId, index) => {
-    // Choose beta key for the user - beta feature
-    db.beta_keys[index + 1].in_usage = true;
-    db.beta_keys[index + 1].user_id = userId;
-
     // Feedback
     db.feedback[userId] = createMockFeedback();
 
     // Drinking sessions
-    const mockSessionData: DrinkingSessionData = {};
+    const mockSessionData: DrinkingSessionList = {};
     let latestSessionId: string = '';
     MOCK_SESSION_IDS.forEach(sessionId => {
-      const fullSessionId = `${userId}-${sessionId}`;
+      const fullSessionId: DrinkingSessionId = `${userId}-${sessionId}`;
       const mockSession = createMockSession(new Date());
       mockSessionData[fullSessionId] = mockSession;
       latestSessionId = fullSessionId;
@@ -351,12 +330,12 @@ export function createMockDatabase(noFriends: boolean = false): DatabaseProps {
     db.user_unconfirmed_days[userId] = createMockUnconfirmedDays();
 
     // User data
-    db.users[userId] = createMockUserData(userId, index, noFriends);
+    db.users[userId] = createMockUserData(userId, noFriends);
 
     // Nicknames to user ids
     let nickname = db.users[userId].profile.display_name;
     let nickname_key = cleanStringForFirebaseKey(nickname);
-    db.nickname_to_id[nickname_key] = createMockNicknameToIdData(userId);
+    db.nickname_to_id[nickname_key] = createMockNicknameToId(userId);
   });
 
   return db;

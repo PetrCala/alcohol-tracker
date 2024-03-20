@@ -1,0 +1,606 @@
+﻿import React, {useEffect, useMemo, useReducer} from 'react';
+import {
+  Alert,
+  Dimensions,
+  Image,
+  Keyboard,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import MenuIcon from '@components/Buttons/MenuIcon';
+import SessionsCalendar from '@components/Calendar';
+import LoadingData from '@components/LoadingData';
+import {DateObject} from '@src/types/time';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
+import {
+  dateToDateObject,
+  calculateThisMonthDrinks,
+  calculateThisMonthUnits,
+  getSingleMonthDrinkingSessions,
+  timestampToDate,
+  formatDate,
+  timestampToDateString,
+  roundToTwoDecimalPlaces,
+} from '@libs/DataHandling';
+import {useUserConnection} from '@context/global/UserConnectionContext';
+import UserOffline from '@components/UserOffline';
+import {updateUserLastOnline} from '@database/users';
+import {startLiveDrinkingSession} from '@database/drinkingSessions';
+import commonStyles from '@src/styles/commonStyles';
+import {useFirebase} from '@context/global/FirebaseContext';
+import ProfileImage from '@components/ProfileImage';
+import {generateDatabaseKey} from '@database/baseFunctions';
+import CONST from '@src/CONST';
+import {
+  DrinkingSession,
+  DrinkingSessionArray,
+  DrinkingSessionId,
+} from '@src/types/database';
+import ROUTES from '@src/ROUTES';
+import Navigation, {navigationRef} from '@navigation/Navigation';
+import {StackScreenProps} from '@react-navigation/stack';
+import {useFocusEffect} from '@react-navigation/native';
+import {BottomTabNavigatorParamList} from '@libs/Navigation/types';
+import SCREENS from '@src/SCREENS';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
+import {DateData} from 'react-native-calendars';
+import {getEmptySession} from '@libs/SessionUtils';
+import DBPATHS from '@database/DBPATHS';
+import useRefresh from '@hooks/useRefresh';
+import {StatData, StatsOverview} from '@components/Items/StatOverview';
+import {getPlural} from '@libs/StringUtils';
+import {getReceivedRequestsCount} from '@libs/FriendUtils';
+import FriendRequestCounter from '@components/Social/FriendRequestCounter';
+import ScreenWrapper from '@components/ScreenWrapper';
+
+interface State {
+  visibleDateObject: DateObject;
+  drinkingSessionsCount: number;
+  drinksConsumed: number;
+  unitsConsumed: number;
+  initializingSession: boolean;
+  ongoingSessionId: DrinkingSessionId | undefined;
+}
+
+interface Action {
+  type: string;
+  payload: any;
+}
+
+const initialState: State = {
+  visibleDateObject: dateToDateObject(new Date()),
+  drinkingSessionsCount: 0,
+  drinksConsumed: 0,
+  unitsConsumed: 0,
+  initializingSession: false,
+  ongoingSessionId: undefined,
+};
+
+const reducer = (state: State, action: Action): State => {
+  switch (action.type) {
+    case 'SET_VISIBLE_DATE_OBJECT':
+      return {...state, visibleDateObject: action.payload};
+    case 'SET_DRINKING_SESSIONS_COUNT':
+      return {...state, drinkingSessionsCount: action.payload};
+    case 'SET_DRINKS_CONSUMED':
+      return {...state, drinksConsumed: action.payload};
+    case 'SET_UNITS_CONSUMED':
+      return {...state, unitsConsumed: action.payload};
+    case 'SET_INITIALIZING_SESSION':
+      return {...state, initializingSession: action.payload};
+    case 'SET_ONGOING_SESSION_ID':
+      return {...state, ongoingSessionId: action.payload};
+    default:
+      return state;
+  }
+};
+
+type HomeScreenProps = StackScreenProps<
+  BottomTabNavigatorParamList,
+  typeof SCREENS.HOME
+>;
+
+const HomeScreen = ({}: HomeScreenProps) => {
+  const {auth, db, storage} = useFirebase();
+  const user = auth.currentUser;
+  const {isOnline} = useUserConnection();
+  const {
+    userStatusData,
+    drinkingSessionData,
+    preferences,
+    userData,
+    isLoading,
+    refetch,
+  } = useDatabaseData();
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const {onRefresh, refreshing, refreshCounter} = useRefresh({refetch});
+
+  const statsData: StatData = [
+    {
+      header: `Drinking Session${getPlural(state.drinkingSessionsCount)}`,
+      content: String(state.drinkingSessionsCount),
+    },
+    {
+      header: 'Units Consumed',
+      content: String(roundToTwoDecimalPlaces(state.unitsConsumed)),
+    },
+  ];
+
+  // Handle drinking session button press
+  const startDrinkingSession = async () => {
+    if (!user) return null;
+    if (state.ongoingSessionId) {
+      Alert.alert(
+        'A session already exists',
+        "You can't start a new session while you are in one",
+      );
+      return;
+    }
+    dispatch({type: 'SET_INITIALIZING_SESSION', payload: true});
+    // The user is not in an active session
+    const newSessionData: DrinkingSession = getEmptySession(
+      CONST.SESSION_TYPES.LIVE,
+      true,
+      true,
+    );
+    const newSessionId = generateDatabaseKey(
+      db,
+      DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(user.uid),
+    );
+    if (!newSessionId) {
+      Alert.alert(
+        'New session key generation failed',
+        "Couldn't generate a new session key",
+      );
+      return;
+    }
+    try {
+      await startLiveDrinkingSession(
+        db,
+        user.uid,
+        newSessionData,
+        newSessionId,
+      );
+      Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(newSessionId));
+      dispatch({type: 'SET_ONGOING_SESSION_ID', payload: newSessionId});
+      dispatch({type: 'SET_INITIALIZING_SESSION', payload: false});
+    } catch (error: any) {
+      Alert.alert(
+        'New session initialization failed',
+        'Could not start a new session: ' + error.message,
+      );
+      return;
+    }
+  };
+
+  const openSessionInProgress = () => {
+    if (!state.ongoingSessionId) {
+      Alert.alert(
+        'New session initialization failed',
+        'Could not find the existing session',
+      );
+      return;
+    }
+    Navigation.navigate(
+      ROUTES.DRINKING_SESSION_LIVE.getRoute(state.ongoingSessionId),
+    );
+  };
+
+  // Monitor visible month and various statistics
+  useMemo(() => {
+    if (!preferences) return;
+    const drinkingSessionArray: DrinkingSessionArray = drinkingSessionData
+      ? Object.values(drinkingSessionData)
+      : [];
+    let thisMonthDrinks = calculateThisMonthDrinks(
+      state.visibleDateObject,
+      drinkingSessionArray,
+    );
+    let thisMonthUnits = calculateThisMonthUnits(
+      state.visibleDateObject,
+      drinkingSessionArray,
+      preferences.drinks_to_units,
+    );
+    let thisMonthSessionCount = getSingleMonthDrinkingSessions(
+      timestampToDate(state.visibleDateObject.timestamp),
+      drinkingSessionArray,
+      false,
+    ).length; // Replace this in the future
+
+    dispatch({
+      type: 'SET_DRINKING_SESSIONS_COUNT',
+      payload: thisMonthSessionCount,
+    });
+    dispatch({type: 'SET_DRINKS_CONSUMED', payload: thisMonthDrinks});
+    dispatch({type: 'SET_UNITS_CONSUMED', payload: thisMonthUnits});
+  }, [drinkingSessionData, state.visibleDateObject, preferences]);
+
+  useEffect(() => {
+    if (!userStatusData) return;
+
+    const currentSessionId: DrinkingSessionId | undefined = userStatusData
+      .latest_session?.ongoing
+      ? userStatusData.latest_session_id
+      : undefined;
+
+    dispatch({
+      type: 'SET_ONGOING_SESSION_ID',
+      payload: currentSessionId,
+    });
+  }, [userStatusData]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      // Update user status on home screen focus
+      if (!user) return;
+      try {
+        updateUserLastOnline(db, user.uid);
+      } catch (error: any) {
+        Alert.alert(
+          'Failed to contact the database',
+          'Could not update user online status:' + error.message,
+        );
+      }
+    }, []),
+  );
+
+  if (!user) {
+    Navigation.navigate(ROUTES.LOGIN);
+    return;
+  }
+  if (!isOnline) return <UserOffline />;
+  if (isLoading || state.initializingSession)
+    return (
+      <LoadingData
+        loadingText={
+          state.initializingSession ? 'Starting a new session...' : ''
+        }
+      />
+    );
+  if (!preferences || !userData) return;
+
+  return (
+    <ScreenWrapper testID={HomeScreen.displayName}>
+      <View style={commonStyles.headerContainer}>
+        <View style={styles.profileContainer}>
+          <TouchableOpacity
+            onPress={() =>
+              Navigation.navigate(ROUTES.PROFILE.getRoute(user.uid))
+            }
+            style={styles.profileButton}>
+            <ProfileImage
+              storage={storage}
+              userId={user.uid}
+              downloadPath={userData.profile.photo_url}
+              style={styles.profileImage}
+              refreshTrigger={refreshCounter}
+            />
+            <Text style={styles.headerUsername}>{user.displayName}</Text>
+          </TouchableOpacity>
+        </View>
+        {/* Enable later on */}
+        {/* <View style={styles.menuContainer}>
+          <TouchableOpacity style={styles.notificationsButton}>
+            <Image source={KirokuIcons.Bell} style={styles.notificationsIcon} />
+          </TouchableOpacity>
+        </View> */}
+      </View>
+      {/* <View style={styles.yearMonthContainer}>
+        <Text style={styles.yearMonthText}>{thisYearMonth}</Text>
+      </View> */}
+      <ScrollView
+        style={styles.mainScreenContent}
+        keyboardShouldPersistTaps="handled"
+        onScrollBeginDrag={Keyboard.dismiss}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() =>
+              onRefresh([
+                'userStatusData',
+                'preferences',
+                'drinkingSessionData',
+              ])
+            }
+          />
+        }>
+        {state.ongoingSessionId ? (
+          <TouchableOpacity
+            style={styles.userInSessionWarningContainer}
+            onPress={openSessionInProgress}>
+            <Text style={styles.userInSessionWarningText}>
+              You are currently in session!
+            </Text>
+          </TouchableOpacity>
+        ) : null}
+        <View style={styles.statsOverviewHolder}>
+          <StatsOverview statsData={statsData} />
+        </View>
+        <SessionsCalendar
+          drinkingSessionData={drinkingSessionData}
+          preferences={preferences}
+          visibleDateObject={state.visibleDateObject}
+          dispatch={dispatch}
+          onDayPress={(day: DateData) => {
+            Navigation.navigate(
+              ROUTES.DAY_OVERVIEW.getRoute(
+                timestampToDateString(day.timestamp),
+              ),
+            );
+          }}
+        />
+        <View style={{height: 200, backgroundColor: '#ffff99'}}></View>
+      </ScrollView>
+      <View style={commonStyles.mainFooter}>
+        <View
+          style={[
+            styles.mainScreenFooterHalfContainer,
+            styles.mainScreenFooterLeftContainer,
+          ]}>
+          <View style={styles.socialContainer}>
+            <MenuIcon
+              iconId="social-icon"
+              iconSource={KirokuIcons.Social}
+              containerStyle={styles.menuIconContainer}
+              iconStyle={styles.menuIcon}
+              onPress={() => Navigation.navigate(ROUTES.SOCIAL)}
+            />
+            <FriendRequestCounter
+              count={getReceivedRequestsCount(userData?.friend_requests)}
+              style={styles.friendRequestCounter}
+            />
+          </View>
+          <MenuIcon
+            iconId="achievement-icon"
+            iconSource={KirokuIcons.Achievements}
+            containerStyle={styles.menuIconContainer}
+            iconStyle={styles.menuIcon}
+            onPress={() => Navigation.navigate(ROUTES.ACHIEVEMENTS)}
+          />
+        </View>
+        <View
+          style={[
+            styles.mainScreenFooterHalfContainer,
+            styles.mainScreenFooterRightContainer,
+          ]}>
+          <MenuIcon
+            iconId="main-menu-popup-icon"
+            iconSource={KirokuIcons.Statistics}
+            containerStyle={styles.menuIconContainer}
+            iconStyle={styles.menuIcon}
+            onPress={() => Navigation.navigate(ROUTES.STATISTICS)}
+          />
+          <MenuIcon
+            iconId="main-menu-popup-icon"
+            iconSource={KirokuIcons.BarMenu}
+            containerStyle={styles.menuIconContainer}
+            iconStyle={styles.menuIcon}
+            onPress={() => Navigation.navigate(ROUTES.MAIN_MENU)}
+          />
+        </View>
+      </View>
+      {state.ongoingSessionId ? null : (
+        <TouchableOpacity
+          style={styles.startSessionButton}
+          onPress={startDrinkingSession}>
+          <Image source={KirokuIcons.Plus} style={styles.startSessionImage} />
+        </TouchableOpacity>
+      )}
+    </ScreenWrapper>
+  );
+};
+// infoNumberValue: getReceivedRequestsCount(userData?.friend_requests),
+
+const screenWidth = Dimensions.get('window').width;
+
+const styles = StyleSheet.create({
+  profileContainer: {
+    //Ensure the container fills all space between, no more, no less
+    padding: 10,
+    height: '100%',
+    width: '85%',
+  },
+  profileButton: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+  },
+  profileImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+  },
+  headerUsername: {
+    flexWrap: 'wrap',
+    fontSize: 18,
+    fontWeight: '500',
+    color: 'black',
+    marginLeft: 10,
+    alignSelf: 'center',
+  },
+  menuContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '15%',
+  },
+  menuIconContainer: {
+    width: 'auto',
+    height: 'auto',
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  menuIcon: {
+    width: 28,
+    height: 28,
+    padding: 10,
+  },
+  notificationsButton: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  notificationsIcon: {
+    width: 24,
+    height: 24,
+  },
+  socialContainer: {
+    flexDirection: 'row',
+  },
+  friendRequestCounter: {
+    marginLeft: -4,
+    marginRight: 4,
+  },
+  yearMonthContainer: {
+    width: '100%',
+    backgroundColor: '#ffff99',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderBottomColor: 'black',
+    borderBottomWidth: 1,
+    borderColor: 'grey',
+  },
+  yearMonthText: {
+    fontSize: 18,
+    color: 'black',
+    fontWeight: 'bold',
+    margin: 10,
+  },
+  mainScreenContent: {
+    flexGrow: 1,
+    flexShrink: 1,
+    backgroundColor: '#FFFF99',
+  },
+  ///
+  userInSessionWarningContainer: {
+    backgroundColor: '#ff5d54',
+    padding: 16,
+    borderRadius: 8,
+    marginVertical: 4,
+    borderColor: '#ddd',
+    borderWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    alignItems: 'center',
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  userInSessionWarningText: {
+    fontSize: 22,
+    color: '#ffffff', // White color for the text
+    fontWeight: 'bold',
+  },
+  statsOverviewHolder: {
+    height: 120,
+    flexDirection: 'row',
+    width: screenWidth,
+  },
+  menuInfoContainer: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    backgroundColor: '#FFFF99',
+    width: '100%',
+    marginTop: 2,
+  },
+  menuInfoItemContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: '#FFFF99',
+    width: '100%',
+  },
+  menuInfoHeadingText: {
+    textAlign: 'center',
+    fontSize: 18,
+    fontWeight: '500',
+    color: 'black',
+    padding: 5,
+  },
+  menuInfoText: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: 'black',
+    alignSelf: 'center',
+    padding: 6,
+    marginRight: 4,
+    marginLeft: 4,
+  },
+  thisMonthUnitsText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 12,
+    color: 'black',
+    alignSelf: 'center',
+    alignContent: 'center',
+  },
+  startSessionButton: {
+    position: 'absolute',
+    bottom: 20,
+    left: '50%',
+    transform: [{translateX: -35}],
+    borderRadius: 50,
+    width: 70,
+    height: 70,
+    backgroundColor: 'green',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: 'black',
+  },
+  startSessionImage: {
+    width: 30,
+    height: 30,
+    tintColor: 'white',
+    alignItems: 'center',
+    // color: 'white',
+    // fontSize: 50,
+    // fontWeight: 'bold',
+    // textAlign: 'center',
+    // lineHeight: 70,
+  },
+  navigationArrowContainer: {
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    backgroundColor: '#ffff99',
+    flexDirection: 'row',
+  },
+  navigationArrowButton: {
+    width: '50%',
+    height: 45,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    borderColor: 'black',
+    borderRadius: 3,
+    borderWidth: 1,
+    backgroundColor: 'white',
+  },
+  navigationArrowText: {
+    color: 'black',
+    fontSize: 30,
+    fontWeight: '500',
+    textAlign: 'center',
+  },
+  mainScreenFooterHalfContainer: {
+    width: '50%',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    backgroundColor: 'shite',
+  },
+  mainScreenFooterLeftContainer: {
+    paddingRight: 30,
+  },
+  mainScreenFooterRightContainer: {
+    paddingLeft: 30,
+  },
+});
+
+HomeScreen.displayName = 'Home Screen';
+export default HomeScreen;

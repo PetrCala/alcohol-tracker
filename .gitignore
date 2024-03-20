@@ -2,6 +2,9 @@
 #
 .DS_Store
 
+# Temporary
+src/screens/Profile/resources
+
 # Xcode
 #
 build/

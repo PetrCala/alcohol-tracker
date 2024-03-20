@@ -1,4 +1,4 @@
-﻿import React, {useCallback, useContext, useEffect, useState} from 'react';
+﻿import React, {useEffect, useState} from 'react';
 import {
   Alert,
   FlatList,
@@ -9,28 +9,36 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-
-import {AdminFeedbackPopupProps} from '../../types/components';
-import {FeedbackData, FeedbackProps} from '../../types/database';
 import {
   formatDateToDay,
   formatDateToTime,
   timestampToDate,
-} from '../../utils/dataHandling';
-import {removeFeedback} from '../../database/feedback';
-import {fetchNicknameByUID} from '../../database/baseFunctions';
-import {useFirebase} from '../../context/global/FirebaseContext';
+} from '@libs/DataHandling';
+import {removeFeedback} from '@database/feedback';
+import {fetchNicknameByUID} from '@database/baseFunctions';
+import {useFirebase} from '@context/global/FirebaseContext';
+import CONST from '@src/CONST';
+import {FeedbackList, Feedback} from '@src/types/database';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
+
+// AdminFeedbackModal props
+type AdminFeedbackPopupProps = {
+  visible: boolean;
+  transparent: boolean;
+  onRequestClose: () => void;
+  FeedbackList: FeedbackList;
+};
 
 const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
-  const {visible, transparent, onRequestClose, feedbackData} = props;
+  const {visible, transparent, onRequestClose, FeedbackList} = props;
   const [nicknames, setNicknames] = useState<{[key: string]: string}>({});
   const {db} = useFirebase();
   if (!db) return null;
 
-  const feedbackDataArray = Object.entries(feedbackData).map(
-    ([feedback_id, feedbackProps]) => ({
+  const FeedbackListArray = Object.entries(FeedbackList).map(
+    ([feedback_id, Feedback]) => ({
       feedback_id: feedback_id,
-      ...feedbackProps,
+      ...Feedback,
     }),
   );
 
@@ -49,7 +57,7 @@ const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
     const fetchNicknames = async () => {
       let newNicknames = {...nicknames};
 
-      for (let item of feedbackDataArray) {
+      for (let item of FeedbackListArray) {
         try {
           let data = await fetchNicknameByUID(db, item.user_id);
           if (data) {
@@ -68,13 +76,9 @@ const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
     };
 
     fetchNicknames();
-  }, [feedbackData, db]);
+  }, [FeedbackList, db]);
 
-  const renderFeedback = ({
-    item,
-  }: {
-    item: FeedbackProps & {feedback_id: string};
-  }) => {
+  const renderFeedback = ({item}: {item: Feedback & {feedback_id: string}}) => {
     let dateSubmitted = timestampToDate(item.submit_time);
     let daySubmitted = formatDateToDay(dateSubmitted);
     let timeSubmitted = formatDateToTime(dateSubmitted);
@@ -91,7 +95,7 @@ const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
             onPress={() => handleDeleteFeedback(db, item.feedback_id)}
             style={styles.deleteFeedbackButton}>
             <Image
-              source={require('../../../assets/icons/remove.png')}
+              source={KirokuIcons.Remove}
               style={styles.deleteFeedbackButtonImage}
             />
           </TouchableOpacity>
@@ -116,7 +120,7 @@ const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
       <View style={styles.modalContainer}>
         <View style={styles.modalView}>
           <FlatList
-            data={feedbackDataArray}
+            data={FeedbackListArray}
             renderItem={renderFeedback}
             ListEmptyComponent={noFeedbackComponent}
             // keyExtractor={(item) => item.feedback_id}

@@ -7,9 +7,15 @@ import {
   StyleSheet,
   TextInput,
 } from 'react-native';
-
-import {FeedbackPopupProps} from '../../types/components';
 import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
+
+type FeedbackPopupProps = {
+  visible: boolean;
+  transparent: boolean;
+  message: string;
+  onRequestClose: () => void;
+  onSubmit: (feedback: string) => void;
+};
 
 const FeedbackPopup = (props: FeedbackPopupProps) => {
   const {visible, transparent, message, onRequestClose, onSubmit} = props;
@@ -54,8 +60,6 @@ const FeedbackPopup = (props: FeedbackPopupProps) => {
     </Modal>
   );
 };
-
-export default FeedbackPopup;
 
 const styles = StyleSheet.create({
   modalContainer: {
@@ -130,3 +134,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
+export default FeedbackPopup;

@@ -1,6 +1,6 @@
 ﻿import React from 'react';
 import {render, fireEvent, screen} from '@testing-library/react-native';
-import StatisticsScreen from '../../../src/screens/StatisticsScreen';
+import StatisticsScreen from '../../../src/screens/Statistics/StatisticsScreen';
 
 // Mock the navigation prop used by the component
 const mockNavigation = {

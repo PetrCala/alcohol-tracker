@@ -1,0 +1,110 @@
+import React, {useState, useRef} from 'react';
+import {
+  Image,
+  TouchableOpacity,
+  Animated,
+  ImageSourcePropType,
+  StyleSheet,
+  Dimensions,
+  LayoutChangeEvent,
+} from 'react-native';
+import FullScreenModal from '@components/Modals/FullScreenModal';
+import ImageLayout from '@src/types/various/ImageLayout';
+import commonStyles from '@src/styles/commonStyles';
+
+type EnlargableImageProps = {
+  imageSource: ImageSourcePropType;
+  imageStyle: any;
+  imageLayout: ImageLayout;
+  onImageLayout: (event: LayoutChangeEvent) => void;
+};
+
+const ScreenWidth = Dimensions.get('window').width;
+const ScreenHeight = Dimensions.get('window').height;
+
+const EnlargableImage: React.FC<EnlargableImageProps> = props => {
+  const {imageSource, imageStyle, imageLayout, onImageLayout} = props;
+  const [modalVisible, setModalVisible] = useState(false);
+  const scaleAnimation = useRef(new Animated.Value(1)).current;
+  const positionAnimation = useRef(new Animated.ValueXY()).current;
+  const enlargedImageScale = ScreenWidth / imageStyle.width;
+  const headerHeight = commonStyles.headerContainer.height; // Assume always rendered with header visible
+
+  const handleOnLayout = (event: LayoutChangeEvent) => {
+    onImageLayout(event);
+    positionAnimation.setValue({
+      x: imageLayout.x,
+      y: imageLayout.y + headerHeight,
+    });
+  };
+
+  const handlePress = () => {
+    setModalVisible(true);
+    // Animate scale and position simultaneously
+    Animated.parallel([
+      Animated.timing(scaleAnimation, {
+        toValue: enlargedImageScale,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(positionAnimation, {
+        toValue: {x: 0, y: ScreenHeight / 9}, // Move to center
+        duration: 300,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  const closeModal = () => {
+    // Reverse the animation
+    Animated.parallel([
+      Animated.timing(scaleAnimation, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(positionAnimation, {
+        toValue: {x: imageLayout.x, y: imageLayout.y + headerHeight},
+        duration: 300,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      setModalVisible(false);
+    });
+  };
+
+  return (
+    <>
+      <TouchableOpacity style={imageStyle} onPress={handlePress}>
+        <Image
+          onLayout={handleOnLayout}
+          source={imageSource}
+          style={imageStyle}
+        />
+      </TouchableOpacity>
+      <FullScreenModal visible={modalVisible} onClose={closeModal}>
+        <Animated.Image
+          source={imageSource}
+          style={[
+            imageStyle,
+            {
+              width: imageLayout.width,
+              height: imageLayout.height,
+              transform: [
+                {scaleX: scaleAnimation},
+                {scaleY: scaleAnimation},
+                {translateX: positionAnimation.x},
+                {translateY: positionAnimation.y},
+              ],
+              resizeMode: 'cover',
+              zIndex: 0,
+            },
+          ]}
+        />
+      </FullScreenModal>
+    </>
+  );
+};
+
+export default EnlargableImage;
+export type {EnlargableImageProps};

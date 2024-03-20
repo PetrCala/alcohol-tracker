@@ -1,12 +1,11 @@
-﻿import {auth} from '../../services/firebaseSetup';
-import {StyleSheet, Text, View} from 'react-native';
+﻿import {StyleSheet, Text, View} from 'react-native';
 import {useFirebase} from '../../context/global/FirebaseContext';
-import {ProfileData} from '../../types/database';
 import ProfileImage from '../ProfileImage';
+import {Profile} from '@src/types/database';
 
 type NoFriendUserOverviewProps = {
   userId: string; // Other user's ID
-  profileData: ProfileData;
+  profileData: Profile;
   RightSideComponent: React.ReactNode; // Render directly as a ReactNode without JSX syntax
 };
 

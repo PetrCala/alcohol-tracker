@@ -2,11 +2,12 @@
 import NetInfo from '@react-native-community/netinfo';
 
 type UserConnectionContextProps = {
-  isOnline: boolean | null;
+  isOnline: boolean | undefined;
 };
 
-export const UserConnectionContext =
-  createContext<UserConnectionContextProps | null>(null);
+export const UserConnectionContext = createContext<
+  UserConnectionContextProps | undefined
+>(undefined);
 
 /** Fetch the useConnection context. If the context does not exist, throw an error.
  *
@@ -34,17 +35,17 @@ type UserConnectionProviderProps = {
 export const UserConnectionProvider: React.FC<UserConnectionProviderProps> = ({
   children,
 }) => {
-  const [isOnline, setIsOnline] = useState<boolean | null>(true);
+  const [isOnline, setIsOnline] = useState<boolean | undefined>(true);
 
   useEffect(() => {
     // Subscribe to network state updates
     const unsubscribe = NetInfo.addEventListener(state => {
-      setIsOnline(state.isConnected);
+      setIsOnline(state.isConnected as boolean | undefined);
     });
 
     // Check the initial network status
     NetInfo.fetch().then(state => {
-      setIsOnline(state.isConnected);
+      setIsOnline(state.isConnected as boolean | undefined);
     });
 
     // Unsubscribe to clean up the subscription

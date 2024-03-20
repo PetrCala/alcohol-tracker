@@ -1,7 +1,9 @@
+import {UploadImageState} from '@components/UploadImage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CONST from '@src/CONST';
-import {auth} from '@src/services/firebaseSetup';
-import {UploadImagePopupProps} from '@src/types/components';
+
+import GeneralAction from '@src/types/various/GeneralAction';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {useEffect, useState} from 'react';
 import {
   Dimensions,
@@ -12,10 +14,21 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {useFirebase} from '@context/global/FirebaseContext';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
+
+type UploadImagePopupProps = {
+  visible: boolean;
+  transparent: boolean;
+  onRequestClose: () => void;
+  parentState: UploadImageState;
+  parentDispatch: React.Dispatch<GeneralAction>;
+};
 
 const UploadImagePopup = (props: UploadImagePopupProps) => {
   const {visible, transparent, onRequestClose, parentState, parentDispatch} =
     props;
+  const {auth} = useFirebase();
   const user = auth.currentUser;
   const [uploadFinished, setUploadFinished] = useState<boolean>(false);
 
@@ -39,7 +52,7 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
         <Text style={styles.modalText}>Upload finished!</Text>
         <View style={styles.uploadFinishedContainer}>
           <Image
-            source={require('../../../assets/icons/check.png')}
+            source={KirokuIcons.Check}
             style={styles.uploadFinishedImage}
           />
         </View>

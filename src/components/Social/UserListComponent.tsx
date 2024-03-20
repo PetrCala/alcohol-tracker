@@ -1,0 +1,250 @@
+import PressableWithAnimation from '@components/Buttons/PressableWithAnimation';
+import LoadingData from '@components/LoadingData';
+import {useFirebase} from '@context/global/FirebaseContext';
+import {fetchUserStatuses} from '@database/profile';
+import useProfileList from '@hooks/useProfileList';
+import {isNonEmptyArray} from '@libs/Validation';
+import {
+  calculateAllUsersPriority,
+  orderUsersByPriority,
+} from '@libs/algorithms/DisplayPriority';
+import {UserStatusList} from '@src/types/database';
+import {UserArray} from '@src/types/database/DatabaseCommon';
+import React, {useState, useEffect, useMemo} from 'react';
+import {
+  ActivityIndicator,
+  Dimensions,
+  Keyboard,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import UserOverview from './UserOverview';
+import commonStyles from '@src/styles/commonStyles';
+import Navigation from '@libs/Navigation/Navigation';
+import ROUTES from '@src/ROUTES';
+import {isEmptyObject} from '@src/types/utils/EmptyObject';
+import FillerView from '@components/FillerView';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
+import useRefresh from '@hooks/useRefresh';
+import {generateRandomString} from '@libs/StringUtils';
+import {sleep} from '@libs/TimeUtils';
+
+interface UserListProps {
+  fullUserArray: UserArray;
+  initialLoadSize: number;
+  emptyListComponent?: React.ReactNode;
+  userSubset?: UserArray;
+  orderUsers?: boolean;
+}
+
+/**
+ * A component for lazy data loading and display of a list of users.
+ * Utilizes the UserList object to store user data.
+ *
+ * @param fullUserArray - An array of user IDs to display.
+ * @param initialLoadSize - The number of users to load initially.
+ * @param userSubset - An optional subset of the full user array to display.
+ * @param orderUsers - If true, the users will be ordered by display priority.
+ * @returns A component for lazy data loading and display of a list of users.
+ */
+const UserListComponent: React.FC<UserListProps> = ({
+  fullUserArray,
+  initialLoadSize,
+  emptyListComponent,
+  userSubset,
+  orderUsers,
+}) => {
+  const {auth, db} = useFirebase();
+  const {refetch} = useDatabaseData();
+  const user = auth.currentUser;
+  // Partial list of users for initial display and dynamic updates
+  const [displayUserArray, setDisplayUserArray] = useState<UserArray>([]);
+  const [userStatusList, setUserStatusList] = useState<UserStatusList>({});
+  const [currentLoadSize, setCurrentLoadSize] =
+    useState<number>(initialLoadSize);
+  const {loadingDisplayData, profileList} = useProfileList(displayUserArray);
+  const [loadingMoreUsers, setLoadingMoreUsers] = useState<boolean>(false);
+  const {onRefresh, refreshing, refreshCounter} = useRefresh({refetch});
+
+  const loadMoreUsers = async (additionalCount: number) => {
+    let arrayToSlice = userSubset ?? fullUserArray;
+    let newLoadSize = Math.min(
+      currentLoadSize + additionalCount,
+      arrayToSlice.length,
+    );
+    if (newLoadSize <= currentLoadSize) {
+      return; // No more users to load
+    }
+    setLoadingMoreUsers(true);
+    const additionalUsers = arrayToSlice.slice(currentLoadSize, newLoadSize);
+    setDisplayUserArray([
+      ...new Set([...displayUserArray, ...additionalUsers]),
+    ]);
+    setCurrentLoadSize(newLoadSize);
+    await sleep(500); // Give the user list time to update
+    setLoadingMoreUsers(false);
+  };
+
+  const handleScroll = async (
+    event: NativeSyntheticEvent<NativeScrollEvent>,
+  ) => {
+    const y = event.nativeEvent.contentOffset.y;
+    const height = event.nativeEvent.layoutMeasurement.height;
+    const contentHeight = event.nativeEvent.contentSize.height;
+
+    // Check for more users to load upon reaching the bottom
+    if (y + height >= contentHeight - 20) {
+      await loadMoreUsers(initialLoadSize);
+    }
+  };
+
+  const navigateToProfile = (userId: string): void => {
+    Navigation.navigate(ROUTES.PROFILE.getRoute(userId));
+  };
+
+  // Database data hooks
+  useEffect(() => {
+    refetch();
+  }, [user?.uid]);
+
+  // Monitor the user status list
+  useEffect(() => {
+    async function fetchUsers() {
+      if (!isNonEmptyArray(fullUserArray)) {
+        setUserStatusList({});
+        return;
+      }
+      const newUsers = fullUserArray.filter(userId => !userStatusList[userId]);
+      if (isNonEmptyArray(newUsers)) {
+        const newUserStatusList: UserStatusList = await fetchUserStatuses(
+          db,
+          newUsers,
+        );
+        setUserStatusList({...userStatusList, ...newUserStatusList});
+      }
+    }
+    fetchUsers();
+  }, [initialLoadSize, fullUserArray]);
+
+  // Update the display list when the user status list changes
+  useEffect(() => {
+    let arrayToSlice = userSubset ?? fullUserArray;
+    if (orderUsers) {
+      let userPriorityList = calculateAllUsersPriority(
+        fullUserArray,
+        userStatusList,
+      );
+      arrayToSlice = orderUsersByPriority(arrayToSlice, userPriorityList);
+    }
+    let newDisplayArray = arrayToSlice.slice(0, currentLoadSize);
+    setDisplayUserArray(newDisplayArray);
+  }, [userStatusList, userSubset]); // Full array changes change the status list
+
+  return (
+    <ScrollView
+      style={styles.scrollViewContainer}
+      onScrollBeginDrag={Keyboard.dismiss}
+      onScrollEndDrag={handleScroll}
+      scrollEventThrottle={400}
+      keyboardShouldPersistTaps="handled"
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={() => onRefresh(['userData'])}
+        />
+      }>
+      {loadingDisplayData ? (
+        <LoadingData style={styles.loadingContainer} />
+      ) : displayUserArray ? (
+        <>
+          <View style={styles.userList}>
+            {isNonEmptyArray(displayUserArray) ? (
+              displayUserArray.map((userId: string) => {
+                const profileData = profileList[userId] ?? {};
+                const userStatusData = userStatusList[userId] ?? {};
+
+                // Catch the initial load of the user list (profileList and userStatusList are empty objects at first)
+                if (
+                  isEmptyObject(profileData) ||
+                  isEmptyObject(userStatusData)
+                ) {
+                  return null;
+                }
+                return (
+                  <PressableWithAnimation
+                    key={userId + '-button'}
+                    style={styles.friendOverviewButton}
+                    onPress={() => navigateToProfile(userId)}>
+                    <UserOverview
+                      key={userId + '-user-overview'}
+                      userId={userId}
+                      profileData={profileData}
+                      userStatusData={userStatusData}
+                    />
+                  </PressableWithAnimation>
+                );
+              })
+            ) : (
+              <Text style={commonStyles.noUsersFoundText}>
+                {`No friends found.\n\nTry modifying the search text.`}
+              </Text>
+            )}
+          </View>
+          {loadingMoreUsers ? (
+            <View style={styles.loadingMoreUsersContainer}>
+              <ActivityIndicator size="large" color="#0000ff" />
+            </View>
+          ) : (
+            <FillerView height={100} />
+          )}
+        </>
+      ) : (
+        emptyListComponent
+      )}
+    </ScrollView>
+  );
+};
+
+const screenHeight = Dimensions.get('window').height;
+
+const styles = StyleSheet.create({
+  scrollViewContainer: {
+    flex: 1,
+    // backgroundColor: 'white',
+    // justifyContent: 'center',
+  },
+  loadingContainer: {
+    width: '100%',
+    height: screenHeight * 0.8,
+  },
+  userList: {
+    width: '100%',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    paddingTop: 5,
+  },
+  friendOverviewButton: {
+    width: '100%',
+    maxHeight: 100,
+    backgroundColor: 'white',
+  },
+  loadingMoreUsersContainer: {
+    width: '100%',
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 10,
+  },
+  loadingMoreUsersText: {
+    fontSize: 18,
+    fontWeight: '400',
+    color: 'black',
+  },
+});
+
+export default UserListComponent;

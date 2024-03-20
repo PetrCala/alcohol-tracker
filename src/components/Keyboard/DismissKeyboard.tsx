@@ -3,15 +3,24 @@ import {Keyboard, TouchableWithoutFeedback} from 'react-native';
 
 interface DismissKeyboardProps {
   children: any;
+  disable?: boolean;
 }
 
-const DismissKeyboard: React.FC<DismissKeyboardProps> = ({children}) => {
-  return (
+/**
+ * A component that dismisses the keyboard when the user taps outside of the keyboard.
+ */
+const DismissKeyboard: React.FC<DismissKeyboardProps> = ({
+  children,
+  disable,
+}) => {
+  return disable ? (
+    children
+  ) : (
     <TouchableWithoutFeedback
       onPressIn={Keyboard.dismiss}
       onPress={Keyboard.dismiss}
       onLongPress={Keyboard.dismiss}
-      accessible={false}>
+      accessible={true}>
       {children}
     </TouchableWithoutFeedback>
   );
