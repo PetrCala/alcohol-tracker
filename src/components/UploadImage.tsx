@@ -19,6 +19,7 @@ import {requestPermission} from '@libs/Permissions/requestPermission';
 import {updateProfileInfo} from '@database/profile';
 
 import {useFirebase} from '@src/context/global/FirebaseContext';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
 
 type UploadImageState = {
   imageSource: string | null;
@@ -75,6 +76,7 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
 }) => {
   const {auth, db, storage} = useFirebase();
   const user = auth.currentUser;
+  const {refetch} = useDatabaseData();
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const chooseImage = async () => {
@@ -150,6 +152,7 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
         if (isProfilePicture) {
           await updateProfileInfo(pathToUpload, user, auth, db, storage);
         }
+        await refetch(['userData']); // Propagate the changes to the current screen
       } catch (error: any) {
         dispatch({type: 'SET_UPLOAD_ONGOING', payload: false}); // Otherwise dispatch upon success in child component
         dispatch({type: 'SET_IMAGE_SOURCE', payload: null});
