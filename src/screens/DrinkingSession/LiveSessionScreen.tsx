@@ -280,15 +280,15 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
           );
         }
         await removePlaceholderSessionData(db, userId);
-        await refetch(['drinkingSessionData', 'userStatusData']);
-        // Reroute to session summary, do not allow user to return
-        navigateBackDynamically(CONST.NAVIGATION.SESSION_ACTION.SAVE);
+        refetch(['drinkingSessionData', 'userStatusData']);
       } catch (error: any) {
         Alert.alert(
           'Session save failed',
           'Failed to save drinking session data: ' + error.message,
         );
       } finally {
+        // Reroute to session summary, do not allow user to return
+        navigateBackDynamically(CONST.NAVIGATION.SESSION_ACTION.SAVE);
         setLoadingText('');
       }
     }
