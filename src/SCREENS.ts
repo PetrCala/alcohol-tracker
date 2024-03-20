@@ -51,6 +51,7 @@ const SCREENS = {
 
   PROFILE: {
     ROOT: 'Profile_Root',
+    EDIT: 'Profile_Edit',
     FRIENDS_FRIENDS: 'Profile_FriendsFriends',
   },
 

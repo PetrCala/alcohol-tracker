@@ -105,7 +105,7 @@ const CONST = {
   },
   INVALID_CHARS: ['.', '#', '$', '[', ']'],
   LOCAL_IMAGE_PREFIX: 'file://',
-  MAX_ALLOWED_UNITS: 99,
+  MAX_ALLOWED_UNITS: 100,
   MONTHS: [
     'January',
     'February',

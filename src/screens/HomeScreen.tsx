@@ -282,11 +282,12 @@ const HomeScreen = ({}: HomeScreenProps) => {
             <Text style={styles.headerUsername}>{user.displayName}</Text>
           </TouchableOpacity>
         </View>
-        <View style={styles.menuContainer}>
+        {/* Enable later on */}
+        {/* <View style={styles.menuContainer}>
           <TouchableOpacity style={styles.notificationsButton}>
             <Image source={KirokuIcons.Bell} style={styles.notificationsIcon} />
           </TouchableOpacity>
-        </View>
+        </View> */}
       </View>
       {/* <View style={styles.yearMonthContainer}>
         <Text style={styles.yearMonthText}>{thisYearMonth}</Text>

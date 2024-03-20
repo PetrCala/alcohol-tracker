@@ -121,6 +121,9 @@ type ProfileNavigatorParamList = {
   [SCREENS.PROFILE.ROOT]: {
     userId: string;
   };
+  [SCREENS.PROFILE.EDIT]: {
+    userId: string;
+  };
   [SCREENS.PROFILE.FRIENDS_FRIENDS]: {
     userId: string;
   };

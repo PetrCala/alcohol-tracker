@@ -21,6 +21,7 @@ import FriendList from '@assets/icons/friend-list.png';
 import Idea from '@assets/icons/idea.png';
 import Menu from '@assets/icons/menu.png';
 import Minus from '@assets/icons/minus.png';
+import Pencil from '@assets/icons/pencil.png';
 import Plus from '@assets/icons/plus.png';
 import RemoveUser from '@assets/icons/remove-user.png';
 import Remove from '@assets/icons/remove.png';
@@ -57,6 +58,7 @@ export {
   Idea,
   Menu,
   Minus,
+  Pencil,
   Plus,
   RemoveUser,
   Remove,

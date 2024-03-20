@@ -98,16 +98,18 @@ const MainMenuModalStackNavigator =
         .default as React.ComponentType,
     [SCREENS.MAIN_MENU.POLICIES.TERMS_OF_SERVICE]: () =>
       require('@screens/MainMenu/Policies/TermsOfServiceScreen')
-      .default as React.ComponentType,
+        .default as React.ComponentType,
     [SCREENS.MAIN_MENU.POLICIES.PRIVACY_POLICY]: () =>
       require('@screens/MainMenu/Policies/PrivacyPolicyScreen')
-      .default as React.ComponentType,
+        .default as React.ComponentType,
   });
 
 const ProfileModalStackNavigator =
   createModalStackNavigator<MainMenuNavigatorParamList>({
     [SCREENS.PROFILE.ROOT]: () =>
       require('@screens/Profile/ProfileScreen').default as React.ComponentType,
+    [SCREENS.PROFILE.EDIT]: () =>
+      require('@screens/Profile/EditScreen').default as React.ComponentType,
     [SCREENS.PROFILE.FRIENDS_FRIENDS]: () =>
       require('@screens/Profile/FriendsFriendsScreen')
         .default as React.ComponentType,

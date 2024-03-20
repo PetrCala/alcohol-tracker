@@ -24,6 +24,7 @@ import {
   timestampToDate,
   timestampToDateString,
 } from '@libs/DataHandling';
+import * as KirokuIcons from '@src/components/Icon/KirokuIcons';
 import {DateObject} from '@src/types/time';
 import SessionsCalendar from '@components/Calendar';
 import LoadingData from '@components/LoadingData';
@@ -206,6 +207,15 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
         refreshControl={
           <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
         }>
+        {/* {user?.uid === userId && (
+          <TouchableOpacity
+            onPress={() =>
+              Navigation.navigate(ROUTES.PROFILE_EDIT.getRoute(userId))
+            }
+            style={styles.editProfileButton}>
+            <Image source={KirokuIcons.Pencil} style={styles.editProfileIcon} />
+          </TouchableOpacity>
+        )} */}
         <ProfileOverview
           userId={userId}
           profileData={profileData} // For live propagation of current user
@@ -303,6 +313,19 @@ const styles = StyleSheet.create({
     width: '100%',
     flexGrow: 1,
     flexShrink: 1,
+  },
+  editProfileButton: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    width: 'auto',
+    height: 'auto',
+  },
+  editProfileIcon: {
+    width: 25,
+    height: 25,
+    padding: 5,
+    tintColor: '#000',
   },
   friendsInfoContainer: {
     width: '90%',

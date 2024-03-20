@@ -47,6 +47,10 @@ const ROUTES = {
     route: 'profile/:userId',
     getRoute: (userId: UserId) => `profile/${userId}` as const,
   },
+  PROFILE_EDIT: {
+    route: 'profile/:userId/edit',
+    getRoute: (userId: UserId) => `profile/${userId}/edit` as const,
+  },
   PROFILE_FRIENDS_FRIENDS: {
     route: 'profile/:userId/friends',
     getRoute: (userId: UserId) => `profile/${userId}/friends` as const,

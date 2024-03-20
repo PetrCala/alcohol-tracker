@@ -90,6 +90,9 @@ const config: LinkingOptions<RootStackParamList>['config'] = {
             [SCREENS.PROFILE.ROOT]: {
               path: ROUTES.PROFILE.route,
             },
+            [SCREENS.PROFILE.EDIT]: {
+              path: ROUTES.PROFILE_EDIT.route,
+            },
             [SCREENS.PROFILE.FRIENDS_FRIENDS]: {
               path: ROUTES.PROFILE_FRIENDS_FRIENDS.route,
             },
