@@ -41,6 +41,7 @@ const testFeedback: Feedback = {
 };
 const authUserId = 'authUserId';
 const otherUserId = 'otherUserId';
+const testDeviceId = 'testDeviceId';
 const mockSessionKey = `${authUserId}-mock-session-999`;
 const mockDrinkingSession = createMockSession(new Date());
 const mockUserStatus = createMockUserStatus(
@@ -48,6 +49,46 @@ const mockUserStatus = createMockUserStatus(
   mockDrinkingSession,
 );
 const mockSessionPlaceholder = mockDrinkingSession;
+
+describeWithEmulator('Test account creations rules', () => {
+  let testEnv: RulesTestEnvironment;
+  let authDb: any; // firebase.database.Database
+  let unauthDb: any; // firebase.database.Database
+  let adminDb: any;
+  const deviceRef = DBPATHS.ACCOUNT_CREATIONS_DEVICE_ID.getRoute(testDeviceId);
+  const authUserRef = DBPATHS.ACCOUNT_CREATIONS_DEVICE_ID_USER_ID.getRoute(
+    testDeviceId,
+    authUserId,
+  );
+  setupGlobalMocks(); // Silence permission denied warnings
+
+  beforeAll(async () => {
+    ({testEnv, authDb, unauthDb, adminDb} = await setupFirebaseRulesTestEnv());
+  });
+
+  afterEach(async () => {
+    await testEnv.clearDatabase();
+  });
+
+  afterAll(async () => {
+    await teardownFirebaseRulesTestEnv(testEnv);
+  });
+
+  it('should allow an authenticated user to write into their own account creations node', async () => {
+    const authRef = authDb.ref(authUserRef);
+    await assertSucceeds(authRef.set(Date.now()));
+  });
+
+  it('should not allow an authenticated user to write into other user account creations device node', async () => {
+    const authRef = authDb.ref(deviceRef);
+    await assertFails(authRef.set({otherUserId: Date.now()}));
+  });
+
+  it('should allow an authenticated user to read from the device ID node', async () => {
+    const authRef = authDb.ref(deviceRef);
+    await assertSucceeds(authRef.get());
+  });
+});
 
 describeWithEmulator('Test drinking session rules', () => {
   let testEnv: RulesTestEnvironment;
