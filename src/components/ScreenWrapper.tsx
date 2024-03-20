@@ -3,7 +3,7 @@ import type {StackNavigationProp} from '@react-navigation/stack';
 import type {ForwardedRef, ReactNode} from 'react';
 import React, {forwardRef, useEffect, useRef, useState} from 'react';
 import type {DimensionValue, StyleProp, ViewStyle} from 'react-native';
-import {Keyboard, View} from 'react-native';
+import {Keyboard, Platform, View} from 'react-native';
 import type {EdgeInsets} from 'react-native-safe-area-context';
 import useEnvironment from '@hooks/useEnvironment';
 import useInitialDimensions from '@hooks/useInitialWindowDimensions';
@@ -78,7 +78,7 @@ function ScreenWrapper(
   {
     shouldEnableMaxHeight = false,
     shouldEnableMinHeight = false,
-    includePaddingTop = false,
+    includePaddingTop = true,
     keyboardAvoidingViewBehavior = 'padding',
     includeSafeAreaPaddingBottom = true,
     shouldEnableKeyboardAvoidingView = true,
@@ -160,7 +160,7 @@ function ScreenWrapper(
       {({insets, paddingTop, paddingBottom, safeAreaPaddingBottomStyle}) => {
         const paddingStyle: StyleProp<ViewStyle> = {};
 
-        if (includePaddingTop) {
+        if (includePaddingTop && Platform.OS === 'ios') {
           paddingStyle.paddingTop = paddingTop;
         }
 

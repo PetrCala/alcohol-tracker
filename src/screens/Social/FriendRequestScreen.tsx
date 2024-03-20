@@ -37,6 +37,7 @@ import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import {isNonEmptyArray} from '@libs/Validation';
 import NoFriendInfo from '@components/Social/NoFriendInfo';
+import {isEmptyObject} from '@src/types/utils/EmptyObject';
 
 type RequestIdProps = {
   requestId: string;
@@ -340,7 +341,7 @@ const FriendRequestScreen = () => {
         }>
         {state.isLoading || isLoading ? (
           <LoadingData style={styles.loadingData} />
-        ) : isNonEmptyArray(state.requestsReceived) ? (
+        ) : !isEmptyObject(state.friendRequests) ? (
           <View style={styles.friendList}>
             <GrayHeader
               headerText={`Requests Received (${state.requestsReceivedCount})`}
@@ -372,7 +373,10 @@ const FriendRequestScreen = () => {
             </View>
           </View>
         ) : (
-          <NoFriendInfo />
+          <NoFriendInfo
+            message="Looking for new friends?"
+            buttonText="Try searching here"
+          />
         )}
       </ScrollView>
       <TouchableOpacity
