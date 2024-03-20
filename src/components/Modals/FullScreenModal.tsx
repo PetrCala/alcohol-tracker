@@ -3,11 +3,13 @@ import {
   Dimensions,
   Image,
   Modal,
+  PanResponder,
   StyleSheet,
   TouchableOpacity,
   View,
 } from 'react-native';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
+import {useEffect, useRef, useState} from 'react';
 
 type FullScreenModalProps = {
   visible: boolean;
@@ -19,9 +21,34 @@ const ScreenWidth = Dimensions.get('window').width;
 const ScreenHeight = Dimensions.get('window').height;
 
 const FullScreenModal: React.FC<FullScreenModalProps> = props => {
+  const [modalVisible, setModalVisible] = useState(props.visible);
+
+  // Use a pan responsder to dismiss the modal upon swiping up
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderMove: (evt, gestureState) => {
+        if (gestureState.dy < -50) {
+          // Swipe up detected
+          handleCloseModal();
+        }
+      },
+    }),
+  ).current;
+
+  useEffect(() => {
+    setModalVisible(props.visible);
+  }, [props.visible]);
+
+  const handleCloseModal = () => {
+    setModalVisible(false);
+    if (props.onClose) {
+      props.onClose();
+    }
+  };
   return (
-    <Modal animationType="fade" transparent={false} visible={props.visible}>
-      <TouchableOpacity style={styles.modalButton} onPress={props.onClose}>
+    <Modal animationType="fade" transparent={false} visible={modalVisible}>
+      <TouchableOpacity style={styles.modalButton} onPress={handleCloseModal}>
         <Image source={KirokuIcons.ThinX} style={styles.modalButtonImage} />
       </TouchableOpacity>
       <View
@@ -30,8 +57,10 @@ const FullScreenModal: React.FC<FullScreenModalProps> = props => {
           height: ScreenHeight,
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: 'black', // later adjust to color scheme
-        }}>
+          backgroundColor: 'black', // Adjust to your color scheme
+        }}
+        {...panResponder.panHandlers} // This applies the swipe up functionality
+      >
         {props.children}
       </View>
     </Modal>
@@ -43,7 +72,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',
-    top: 25,
+    top: 70,
     right: 25,
     zIndex: 1,
   },
