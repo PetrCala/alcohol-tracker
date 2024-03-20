@@ -319,7 +319,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexDirection: 'row',
     backgroundColor: '#FFFF99',
-    marginBottom: 5,
     padding: 5,
   },
   confirmButton: {
