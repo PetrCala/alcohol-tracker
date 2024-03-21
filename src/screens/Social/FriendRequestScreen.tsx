@@ -38,6 +38,7 @@ import ROUTES from '@src/ROUTES';
 import {isNonEmptyArray} from '@libs/Validation';
 import NoFriendInfo from '@components/Social/NoFriendInfo';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
+import FillerView from '@components/FillerView';
 
 type RequestIdProps = {
   requestId: string;
@@ -300,7 +301,7 @@ const FriendRequestScreen = () => {
   useMemo(() => {
     const newRequestsSent: string[] = [];
     const newRequestsReceived: string[] = [];
-    if (state.friendRequests) {
+    if (!isEmptyObject(state.friendRequests)) {
       Object.keys(state.friendRequests).forEach(requestId => {
         if (!state.friendRequests) return;
         if (
@@ -371,6 +372,7 @@ const FriendRequestScreen = () => {
                 />
               ))}
             </View>
+            <FillerView height={100} />
           </View>
         ) : (
           <NoFriendInfo

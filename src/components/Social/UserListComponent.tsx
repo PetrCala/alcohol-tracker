@@ -69,6 +69,7 @@ const UserListComponent: React.FC<UserListProps> = ({
     useState<number>(initialLoadSize);
   const {loadingDisplayData, profileList} = useProfileList(displayUserArray);
   const [loadingMoreUsers, setLoadingMoreUsers] = useState<boolean>(false);
+  const [isInitialLoad, setIsInitialLoad] = useState<boolean>(true);
   const {onRefresh, refreshing, refreshCounter} = useRefresh({refetch});
 
   const loadMoreUsers = async (additionalCount: number) => {
@@ -133,23 +134,34 @@ const UserListComponent: React.FC<UserListProps> = ({
 
   // Update the display list when the user status list changes
   useEffect(() => {
-    let arrayToSlice = userSubset ?? fullUserArray;
-    if (orderUsers) {
-      let userPriorityList = calculateAllUsersPriority(
-        fullUserArray,
-        userStatusList,
-      );
-      arrayToSlice = orderUsersByPriority(arrayToSlice, userPriorityList);
-    }
-    let newDisplayArray = arrayToSlice.slice(0, currentLoadSize);
-    setDisplayUserArray(newDisplayArray);
+    const updateDisplayArray = () => {
+      if (
+        !isNonEmptyArray(fullUserArray) ||
+        isEmptyObject(userStatusList) ||
+        !isNonEmptyArray(userSubset)
+      )
+        return;
+      let arrayToSlice = userSubset ?? fullUserArray;
+      if (orderUsers) {
+        let userPriorityList = calculateAllUsersPriority(
+          fullUserArray,
+          userStatusList,
+        );
+        arrayToSlice = orderUsersByPriority(arrayToSlice, userPriorityList);
+      }
+      let newDisplayArray = arrayToSlice.slice(0, currentLoadSize);
+      setDisplayUserArray(newDisplayArray);
+      setIsInitialLoad(false);
+    };
+
+    updateDisplayArray();
   }, [userStatusList, userSubset]); // Full array changes change the status list
 
   return (
     <ScrollView
       style={styles.scrollViewContainer}
       onScrollBeginDrag={Keyboard.dismiss}
-      onScrollEndDrag={handleScroll}
+      onMomentumScrollEnd={handleScroll}
       scrollEventThrottle={400}
       keyboardShouldPersistTaps="handled"
       refreshControl={
@@ -158,7 +170,7 @@ const UserListComponent: React.FC<UserListProps> = ({
           onRefresh={() => onRefresh(['userData'])}
         />
       }>
-      {loadingDisplayData ? (
+      {loadingDisplayData && isInitialLoad ? (
         <LoadingData style={styles.loadingContainer} />
       ) : displayUserArray ? (
         <>
