@@ -50,6 +50,8 @@ const PreferencesList: React.FC<PreferencesListProps> = ({
         return (
           <View key={index} style={styles.preferencesListRowContainer}>
             <Text style={styles.preferencesListLabel}>{item.label}</Text>
+            {/* <View style={styles.preferencesListUseContainer}>
+            </View> */}
             <View style={styles.preferencesListNumericContainer}>
               <TouchableOpacity
                 style={styles.preferencesListButton}
@@ -344,6 +346,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
+    // backgroundColor: 'pink',
   },
   preferencesListLabel: {
     fontSize: 16,

@@ -2,48 +2,44 @@ import {useEffect, useState} from 'react';
 import {readDataOnce} from '@database/baseFunctions'; // Ensure this import is added
 import DBPATHS from '@database/DBPATHS';
 import {useFirebase} from '@context/global/FirebaseContext';
-import {
-  DrinkingSessionList,
-  Preferences,
-  UnconfirmedDays,
-  UserProps,
-  UserStatus,
-} from '@src/types/database';
-import {StringKeyOf, ValueOf} from 'type-fest';
 import {RefetchDatabaseData} from '@src/types/utils/RefetchDatabaseData';
-
-type Data = {
-  userStatusData?: UserStatus;
-  drinkingSessionData?: DrinkingSessionList;
-  preferences?: Preferences;
-  unconfirmedDays?: UnconfirmedDays;
-  userData?: UserProps;
-};
-
-type UserFetchDataKey = StringKeyOf<Data>;
-type UserFetchDataValue = ValueOf<Data>;
+import {FetchData, FetchDataKey, FetchDataKeys} from './types';
+import {fetchDataKeyToDbPath} from './utils';
 
 // Define a type for the hook's return value
-type UseFetchUserDataReturn = {
-  data: Data;
+type UseFetchDataReturn = {
+  data: FetchData;
   isLoading: boolean;
   refetch: RefetchDatabaseData;
 };
 
+/**
+ * Custom hook to fetch data from the database.
+ *
+ * Allows to fetch data for a user only for relevant database nodes. Does not fetch
+ * the data for the unused keys. The refetch function can refetch the data, and it
+ * does so only for the specified keys.
+ *
+ * @param userId User to fetch the data for
+ * @param dataTypes Database node keys to fetch data for
+ * @returns An object with the fetched data and a refetch function
+ * @example
+ * const {data, isLoading, refetch} = useFetchData(userId, ['userStatusData', 'drinkingSessionData']);
+ */
 const useFetchData = (
   userId: string,
-  dataTypes: UserFetchDataKey[],
-): UseFetchUserDataReturn => {
+  dataTypes: FetchDataKeys,
+): UseFetchDataReturn => {
   const {db} = useFirebase();
   const [refetchIndex, setRefetchIndex] = useState(0); // Used to trigger refetch
-  const [data, setData] = useState<{[key in UserFetchDataKey]?: any}>({});
+  const [data, setData] = useState<{[key in FetchDataKey]?: any}>({});
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [resolveRefetch, setResolveRefetch] = useState<() => void>(
     () => () => {},
   );
-  const [keysToFetch, setKeysToFetch] = useState<UserFetchDataKey[]>(dataTypes);
+  const [keysToFetch, setKeysToFetch] = useState<FetchDataKeys>(dataTypes);
 
-  const refetch = (keys?: UserFetchDataKey[]): Promise<void> => {
+  const refetch = (keys?: FetchDataKeys): Promise<void> => {
     return new Promise<void>(resolve => {
       setResolveRefetch(() => resolve);
       if (keys) {
@@ -64,25 +60,7 @@ const useFetchData = (
     const fetchData = async () => {
       setIsLoading(true);
       const promises = keysToFetch.map(async dataType => {
-        let path;
-        switch (dataType) {
-          case 'userStatusData':
-            path = DBPATHS.USER_STATUS_USER_ID.getRoute(userId);
-            break;
-          case 'drinkingSessionData':
-            path = DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(userId);
-            break;
-          case 'preferences':
-            path = DBPATHS.USER_PREFERENCES_USER_ID.getRoute(userId);
-            break;
-          case 'unconfirmedDays':
-            path = DBPATHS.USER_UNCONFIRMED_DAYS_USER_ID.getRoute(userId);
-            break;
-          case 'userData':
-            path = DBPATHS.USERS_USER_ID.getRoute(userId);
-            break;
-        }
-
+        const path = fetchDataKeyToDbPath(dataType, userId);
         if (path) {
           const fetchedData = await readDataOnce(db, path);
           return {[dataType]: fetchedData};
@@ -133,4 +111,3 @@ const useFetchData = (
 };
 
 export default useFetchData;
-export type {UseFetchUserDataReturn, UserFetchDataKey};
