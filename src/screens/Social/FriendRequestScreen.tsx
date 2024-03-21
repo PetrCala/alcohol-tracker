@@ -238,7 +238,7 @@ const reducer = (state: State, action: Action): State => {
   }
 };
 
-const FriendRequestScreen = () => {
+function FriendRequestScreen() {
   const {db} = useFirebase();
   const {userData, isLoading} = useDatabaseData();
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -356,7 +356,7 @@ const FriendRequestScreen = () => {
       </TouchableOpacity>
     </View>
   );
-};
+}
 
 export default FriendRequestScreen;
 

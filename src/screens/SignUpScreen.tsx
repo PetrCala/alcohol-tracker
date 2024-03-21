@@ -117,7 +117,7 @@ const reducer = (state: State, action: Action) => {
   }
 };
 
-const SignUpScreen = () => {
+function SignUpScreen() {
   const {db} = useFirebase();
   const {isOnline} = useUserConnection();
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -380,7 +380,7 @@ const SignUpScreen = () => {
       </View>
     </DismissKeyboard>
   );
-};
+}
 
 const screenHeight = Dimensions.get('window').height;
 

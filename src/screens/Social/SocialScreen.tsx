@@ -75,7 +75,7 @@ type RouteType = {
   userData: UserProps | undefined;
 };
 
-const SocialScreen = ({route}: SocialScreenProps) => {
+function SocialScreen({route}: SocialScreenProps) {
   const {userData} = useDatabaseData();
   const [routes] = useState([
     {key: 'friendList', title: 'Friend List', userData: userData},
@@ -145,7 +145,7 @@ const SocialScreen = ({route}: SocialScreenProps) => {
       </View>
     </ScreenWrapper>
   );
-};
+}
 
 const screenWidth = Dimensions.get('window').width;
 

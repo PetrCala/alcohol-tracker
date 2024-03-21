@@ -62,7 +62,7 @@ type SessionSummaryScreenProps = StackScreenProps<
   typeof SCREENS.DRINKING_SESSION.SUMMARY
 >;
 
-const SessionSummaryScreen = ({route}: SessionSummaryScreenProps) => {
+function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
   const {sessionId} = route.params;
   const {preferences, drinkingSessionData} = useDatabaseData();
   if (!preferences) return null; // Careful when writing hooks after this line
@@ -227,7 +227,7 @@ const SessionSummaryScreen = ({route}: SessionSummaryScreenProps) => {
       </View>
     </ScreenWrapper>
   );
-};
+}
 
 const styles = StyleSheet.create({
   menuIconContainer: {

@@ -2,8 +2,8 @@ import {useEffect, useState} from 'react';
 import {readDataOnce} from '@database/baseFunctions'; // Ensure this import is added
 import DBPATHS from '@database/DBPATHS';
 import {useFirebase} from '@context/global/FirebaseContext';
-import {RefetchDatabaseData} from '@src/types/utils/RefetchDatabaseData';
-import {FetchData, FetchDataKey, FetchDataKeys} from './types';
+import type {RefetchDatabaseData} from '@src/types/utils/RefetchDatabaseData';
+import type {FetchData, FetchDataKey, FetchDataKeys} from './types';
 import {fetchDataKeyToDbPath} from './utils';
 
 // Define a type for the hook's return value

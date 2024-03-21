@@ -36,7 +36,7 @@ type EditScreenProps = StackScreenProps<
   typeof SCREENS.PROFILE.EDIT
 >;
 
-const EditScreen = ({route}: EditScreenProps) => {
+function EditScreen({route}: EditScreenProps) {
   const userId = route.params.userId;
   const {userData, isLoading} = useDatabaseData();
   const profileData = userData?.profile;
@@ -107,7 +107,7 @@ const EditScreen = ({route}: EditScreenProps) => {
       </View>
     </ScreenWrapper>
   );
-};
+}
 
 const styles = StyleSheet.create({
   scrollView: {

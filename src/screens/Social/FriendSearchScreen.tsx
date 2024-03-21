@@ -79,7 +79,7 @@ const reducer = (state: State, action: Action): State => {
   }
 };
 
-const FriendSearchScreen = () => {
+function FriendSearchScreen() {
   const {auth, db, storage} = useFirebase();
   const {userData} = useDatabaseData();
   const searchInputRef = useRef<SearchWindowRef>(null);
@@ -211,7 +211,7 @@ const FriendSearchScreen = () => {
       </View>
     </ScreenWrapper>
   );
-};
+}
 
 const styles = StyleSheet.create({
   mainContainer: {

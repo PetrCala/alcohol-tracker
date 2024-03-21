@@ -4,7 +4,7 @@ import MainHeader from '@components/Header/MainHeader';
 import Navigation from '@libs/Navigation/Navigation';
 import ScreenWrapper from '@components/ScreenWrapper';
 
-const TermsOfServiceScreen = () => {
+function TermsOfServiceScreen() {
   const termsHtml =
     Platform.OS === 'android'
       ? {uri: 'file:///android_asset/html/terms-of-service.html'}
@@ -34,7 +34,7 @@ const TermsOfServiceScreen = () => {
       </View>
     </ScreenWrapper>
   );
-};
+}
 
 const styles = StyleSheet.create({
   mainContainer: {

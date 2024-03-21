@@ -71,7 +71,7 @@ type PreferencesScreenProps = StackScreenProps<
   typeof SCREENS.MAIN_MENU.PREFERENCES
 >;
 
-const PreferencesScreen = ({route}: PreferencesScreenProps) => {
+function PreferencesScreen({route}: PreferencesScreenProps) {
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
@@ -290,7 +290,7 @@ const PreferencesScreen = ({route}: PreferencesScreenProps) => {
       />
     </ScreenWrapper>
   );
-};
+}
 
 const styles = StyleSheet.create({
   scrollView: {

@@ -4,7 +4,7 @@ import MainHeader from '@components/Header/MainHeader';
 import Navigation from '@libs/Navigation/Navigation';
 import ScreenWrapper from '@components/ScreenWrapper';
 
-const PrivacyPolicyScreen = () => {
+function PrivacyPolicyScreen() {
   const policyHtml =
     Platform.OS === 'android'
       ? {uri: 'file:///android_asset/html/privacy-policy.html'}
@@ -34,7 +34,7 @@ const PrivacyPolicyScreen = () => {
       </View>
     </ScreenWrapper>
   );
-};
+}
 
 const styles = StyleSheet.create({
   mainContainer: {

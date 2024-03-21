@@ -511,47 +511,6 @@ describeWithEmulator('Test user last online rules', () => {
   });
 });
 
-describeWithEmulator('Test email verification rules', () => {
-  let testEnv: RulesTestEnvironment;
-  let authDb: any;
-  let unauthDb: any;
-  let adminDb: any;
-  const emailRef = DBPATHS.USERS_USER_ID_EMAIL_VERIFIED.getRoute(authUserId);
-  setupGlobalMocks(); // Silence permission denied warnings
-
-  beforeAll(async () => {
-    ({testEnv, authDb, unauthDb, adminDb} = await setupFirebaseRulesTestEnv());
-  });
-
-  afterEach(async () => {
-    await testEnv.clearDatabase();
-  });
-
-  afterAll(async () => {
-    await teardownFirebaseRulesTestEnv(testEnv);
-  });
-
-  it('should allow an authenticated user to write into their own email verified node', async () => {
-    const authRef = authDb.ref(emailRef);
-    await assertSucceeds(authRef.set(true));
-  });
-
-  it('should not allow an authenticated user to write with incorrect values into their own email verified node', async () => {
-    const authRef = authDb.ref(emailRef);
-    await assertFails(authRef.set('not a boolean'));
-  });
-
-  it("should not allow an authenticated user to write into other user's email verified nodes", async () => {
-    const authRef = authDb.ref(emailRef);
-    await assertFails(authRef.set(true));
-  });
-
-  it('should not allow an unauthenticated user to write into their own email verified node', async () => {
-    const unauthRef = unauthDb.ref(emailRef);
-    await assertFails(unauthRef.set(true));
-  });
-});
-
 describeWithEmulator('Test friend rules', () => {
   let testEnv: RulesTestEnvironment;
   let authDb: any;

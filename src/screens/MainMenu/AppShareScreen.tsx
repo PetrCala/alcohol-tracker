@@ -24,7 +24,7 @@ type AppShareScreenProps = StackScreenProps<
   typeof SCREENS.MAIN_MENU.APP_SHARE
 >;
 
-const AppShareScreen = ({route}: AppShareScreenProps) => {
+function AppShareScreen({route}: AppShareScreenProps) {
   const handleCopyLinkPress = () => {
     try {
       copyToClipboard(CONST.APP_DOWNLOAD_LINK, false);
@@ -76,7 +76,7 @@ const AppShareScreen = ({route}: AppShareScreenProps) => {
       </View>
     </ScreenWrapper>
   );
-};
+}
 
 const styles = StyleSheet.create({
   mainContainer: {

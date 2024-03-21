@@ -43,7 +43,7 @@ const reducer = (state: State, action: GeneralAction): State => {
 
 type FriendListScreenProps = {};
 
-const FriendListScreen = (props: FriendListScreenProps) => {
+function FriendListScreen({}: FriendListScreenProps) {
   const {userData} = useDatabaseData();
   const friendListInputRef = useRef<SearchWindowRef>(null);
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -101,7 +101,7 @@ const FriendListScreen = (props: FriendListScreenProps) => {
       />
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   mainContainer: {

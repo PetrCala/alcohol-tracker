@@ -85,7 +85,7 @@ const reducer = (state: State, action: Action) => {
   }
 };
 
-const LoginScreen = () => {
+function LoginScreen() {
   // const {isOnline} = useUserConnection();
   const {auth} = useFirebase();
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -219,7 +219,7 @@ const LoginScreen = () => {
       </View>
     </DismissKeyboard>
   );
-};
+}
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;

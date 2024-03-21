@@ -4,7 +4,7 @@ import MainHeader from '@components/Header/MainHeader';
 import Navigation from '@libs/Navigation/Navigation';
 import ScreenWrapper from '@components/ScreenWrapper';
 
-const AchievementsScreen = () => {
+function AchievementsScreen() {
   return (
     <ScreenWrapper testID={AchievementsScreen.displayName}>
       <MainHeader
@@ -16,7 +16,7 @@ const AchievementsScreen = () => {
       </View>
     </ScreenWrapper>
   );
-};
+}
 
 const styles = StyleSheet.create({
   sectionText: {

@@ -57,7 +57,7 @@ type DayOverviewScreenProps = StackScreenProps<
   typeof SCREENS.DAY_OVERVIEW.ROOT
 >;
 
-const DayOverviewScreen = ({route}: DayOverviewScreenProps) => {
+function DayOverviewScreen({route}: DayOverviewScreenProps) {
   const {date} = route.params;
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
@@ -317,7 +317,7 @@ const DayOverviewScreen = ({route}: DayOverviewScreenProps) => {
       </View>
     </ScreenWrapper>
   );
-};
+}
 
 const screenWidth = Dimensions.get('window').width;
 

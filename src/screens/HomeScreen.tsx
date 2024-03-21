@@ -50,12 +50,13 @@ import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {DateData} from 'react-native-calendars';
 import {getEmptySession} from '@libs/SessionUtils';
 import DBPATHS from '@database/DBPATHS';
-import useRefresh from '@hooks/useRefresh';
 import {StatData, StatsOverview} from '@components/Items/StatOverview';
 import {getPlural} from '@libs/StringUtils';
 import {getReceivedRequestsCount} from '@libs/FriendUtils';
 import FriendRequestCounter from '@components/Social/FriendRequestCounter';
 import ScreenWrapper from '@components/ScreenWrapper';
+import MessageBanner from '@components/Info/MessageBanner';
+import VerifyEmailPopup from '@components/Popups/VerifyEmailPopup';
 
 interface State {
   visibleDateObject: DateObject;
@@ -64,6 +65,7 @@ interface State {
   unitsConsumed: number;
   initializingSession: boolean;
   ongoingSessionId: DrinkingSessionId | undefined;
+  verifyEmailModalVisible: boolean;
 }
 
 interface Action {
@@ -78,6 +80,7 @@ const initialState: State = {
   unitsConsumed: 0,
   initializingSession: false,
   ongoingSessionId: undefined,
+  verifyEmailModalVisible: false,
 };
 
 const reducer = (state: State, action: Action): State => {
@@ -94,6 +97,8 @@ const reducer = (state: State, action: Action): State => {
       return {...state, initializingSession: action.payload};
     case 'SET_ONGOING_SESSION_ID':
       return {...state, ongoingSessionId: action.payload};
+    case 'SET_VERIFY_EMAIL_MODAL_VISIBLE':
+      return {...state, verifyEmailModalVisible: action.payload};
     default:
       return state;
   }
@@ -104,7 +109,7 @@ type HomeScreenProps = StackScreenProps<
   typeof SCREENS.HOME
 >;
 
-const HomeScreen = ({}: HomeScreenProps) => {
+function HomeScreen({}: HomeScreenProps) {
   const {auth, db, storage} = useFirebase();
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
@@ -176,6 +181,7 @@ const HomeScreen = ({}: HomeScreenProps) => {
   };
 
   const openSessionInProgress = () => {
+    console.log('Opening session in progress');
     if (!state.ongoingSessionId) {
       Alert.alert(
         'New session initialization failed',
@@ -231,19 +237,12 @@ const HomeScreen = ({}: HomeScreenProps) => {
     });
   }, [userStatusData]);
 
-  // Load data on component mount
-  // useEffect(() => {
-  //   const doInitialLoad = async () => {
-  //     try {
-  //       await refetch();
-  //     } catch (error: any) {
-  //       Alert.alert('Database connection error', 'Failed to load the data.');
-  //     } finally {
-  //       dispatch({type: 'SET_INITIAL_LOAD', payload: false});
-  //     }
-  //   };
-  //   doInitialLoad();
-  // }, []);
+  useEffect(() => {
+    dispatch({
+      type: 'SET_VERIFY_EMAIL_MODAL_VISIBLE',
+      payload: !user?.emailVerified,
+    });
+  }, [user?.emailVerified]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -304,35 +303,24 @@ const HomeScreen = ({}: HomeScreenProps) => {
           </TouchableOpacity>
         </View> */}
       </View>
-      {/* <View style={styles.yearMonthContainer}>
-        <Text style={styles.yearMonthText}>{thisYearMonth}</Text>
-      </View> */}
       <ScrollView
         style={styles.mainScreenContent}
         keyboardShouldPersistTaps="handled"
-        onScrollBeginDrag={Keyboard.dismiss}
-        // refreshControl={
-        //   <RefreshControl
-        //     refreshing={refreshing}
-        //     onRefresh={() =>
-        //       onRefresh([
-        //         'userStatusData',
-        //         'preferences',
-        //         'drinkingSessionData',
-        //       ])
-        //     }
-        //   />
-        // }
-      >
+        onScrollBeginDrag={Keyboard.dismiss}>
         {state.ongoingSessionId ? (
-          <TouchableOpacity
-            style={styles.userInSessionWarningContainer}
-            onPress={openSessionInProgress}>
-            <Text style={styles.userInSessionWarningText}>
-              You are currently in session!
-            </Text>
-          </TouchableOpacity>
+          <MessageBanner
+            text="You are currently in session!"
+            onPress={openSessionInProgress}
+          />
         ) : null}
+        {user.emailVerified ? null : (
+          <MessageBanner
+            text="Your email is not verified!"
+            onPress={() =>
+              dispatch({type: 'SET_VERIFY_EMAIL_MODAL_VISIBLE', payload: true})
+            }
+          />
+        )}
         <View style={styles.statsOverviewHolder}>
           <StatsOverview statsData={statsData} />
         </View>
@@ -406,9 +394,18 @@ const HomeScreen = ({}: HomeScreenProps) => {
           <Image source={KirokuIcons.Plus} style={styles.startSessionImage} />
         </TouchableOpacity>
       )}
+      <VerifyEmailPopup
+        visible={state.verifyEmailModalVisible}
+        onRequestClose={() =>
+          dispatch({
+            type: 'SET_VERIFY_EMAIL_MODAL_VISIBLE',
+            payload: false,
+          })
+        }
+      />
     </ScreenWrapper>
   );
-};
+}
 // infoNumberValue: getReceivedRequestsCount(userData?.friend_requests),
 
 const screenWidth = Dimensions.get('window').width;

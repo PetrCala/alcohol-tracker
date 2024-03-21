@@ -97,11 +97,6 @@
         ".validate": "newData.val() === null || newData.hasChildren()",
         ".read": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('friends').child($uid).exists())",
         ".write": "auth != null && auth.uid === $uid",
-        ".email_verified": {
-          ".validate": "newData.val() === null || newData.isBoolean()",
-          ".read": "auth != null  && auth.uid === $uid",
-          ".write": "auth != null && auth.uid === $uid"
-        },
         "friends": {
           ".validate": "newData.val() === null || newData.hasChildren()",
           ".read": "auth != null",

@@ -98,7 +98,7 @@ type FriendsFriendsScreenProps = StackScreenProps<
   typeof SCREENS.PROFILE.FRIENDS_FRIENDS
 >;
 
-const FriendsFriendsScreen = ({route}: FriendsFriendsScreenProps) => {
+function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
   const {userId} = route.params;
   const {auth, db, storage} = useFirebase();
   const {userData} = useDatabaseData();
@@ -304,7 +304,7 @@ const FriendsFriendsScreen = ({route}: FriendsFriendsScreenProps) => {
       </View>
     </ScreenWrapper>
   );
-};
+}
 
 const styles = StyleSheet.create({
   mainContainer: {

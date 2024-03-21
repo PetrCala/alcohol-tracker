@@ -1,6 +1,6 @@
 import {useFirebase} from '@context/global/FirebaseContext';
 import {listenForDataChanges} from '@database/baseFunctions';
-import {
+import type {
   FetchData,
   FetchDataKey,
   FetchDataKeys,
@@ -41,12 +41,12 @@ const useListenToData = (
     }
 
     setIsLoading(true);
-    const unsubscribers = dataTypes.map(dataType => {
-      const path = fetchDataKeyToDbPath(dataType, userId);
+    const unsubscribers = dataTypes.map(dataTypes => {
+      const path = fetchDataKeyToDbPath(dataTypes, userId);
 
       if (path) {
         return listenForDataChanges(db, path, fetchedData => {
-          setData(prevData => ({...prevData, [dataType]: fetchedData}));
+          setData(prevData => ({...prevData, [dataTypes]: fetchedData}));
         });
       }
       return () => {};

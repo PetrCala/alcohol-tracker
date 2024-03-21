@@ -69,7 +69,7 @@ type MainMenuScreenProps = StackScreenProps<
   typeof SCREENS.MAIN_MENU.ROOT
 >;
 
-const MainMenuScreen = ({route}: MainMenuScreenProps) => {
+function MainMenuScreen({route}: MainMenuScreenProps) {
   const {userData, preferences} = useDatabaseData();
   // Context, database, and authentification
   const {auth, db} = useFirebase();
@@ -388,7 +388,7 @@ const MainMenuScreen = ({route}: MainMenuScreenProps) => {
       </View>
     </ScreenWrapper>
   );
-};
+}
 
 const styles = StyleSheet.create({
   mainContainer: {

@@ -103,7 +103,7 @@ type ProfileScreenProps = StackScreenProps<
   typeof SCREENS.PROFILE.ROOT
 >;
 
-const ProfileScreen = ({route}: ProfileScreenProps) => {
+function ProfileScreen({route}: ProfileScreenProps) {
   const {auth, db} = useFirebase();
   const {userId} = route.params;
   const user = auth.currentUser;
@@ -292,7 +292,7 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
       />
     </ScreenWrapper>
   );
-};
+}
 
 const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;

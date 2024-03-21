@@ -34,7 +34,7 @@ const SettingsItem: React.FC<{item: any}> = ({item}) => (
   </View>
 );
 
-const SettingsScreen = () => {
+function SettingsScreen() {
   const {auth} = useFirebase();
   const user = auth.currentUser;
   const {preferences} = useDatabaseData();
@@ -98,7 +98,7 @@ const SettingsScreen = () => {
       </View>
     </View>
   );
-};
+}
 
 export default SettingsScreen;
 

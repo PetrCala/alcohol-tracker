@@ -74,7 +74,7 @@ type LiveSessionScreenProps = StackScreenProps<
   typeof SCREENS.DRINKING_SESSION.LIVE
 >;
 
-const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
+function LiveSessionScreen({route}: LiveSessionScreenProps) {
   const {sessionId} = route.params;
   // Context, database, and authentification
   const {auth, db} = useFirebase();
@@ -561,7 +561,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
       </View>
     </ScreenWrapper>
   );
-};
+}
 
 const styles = StyleSheet.create({
   backArrowContainer: {
