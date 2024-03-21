@@ -10,6 +10,7 @@ import {Config} from '@src/types/database';
 import ForceUpdateModal from '@components/Modals/ForceUpdateModal';
 import DBPATHS from '@database/DBPATHS';
 import UnderMaintenanceModal from '@components/Modals/UnderMaintenanceModal';
+import {isUnderMaintenance} from '@libs/Maintenance';
 
 const initialState = {
   isLoading: true,
@@ -43,8 +44,9 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({children}) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const updateLocalHooks = (newConfigData: Config | null) => {
-    let underMaintenance: boolean =
-      newConfigData?.maintenance.maintenance_mode ?? false;
+    let underMaintenance: boolean = isUnderMaintenance(
+      newConfigData?.maintenance,
+    );
     let minSupportedVersion = newConfigData?.app_settings.min_supported_version;
     const versionValidationResult = validateAppVersion(minSupportedVersion);
 
