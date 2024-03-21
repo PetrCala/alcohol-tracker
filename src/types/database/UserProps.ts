@@ -7,6 +7,7 @@ type Profile = {
 };
 
 type UserProps = {
+  email_verified?: boolean;
   profile: Profile;
   friends?: UserList;
   friend_requests?: FriendRequestList;
