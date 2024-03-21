@@ -422,8 +422,8 @@ const styles = StyleSheet.create({
   },
   versionContainer: {
     position: 'absolute',
-    bottom: 5,
-    right: 5,
+    bottom: 10,
+    right: 10,
     width: 'auto',
     height: 'auto',
   },
