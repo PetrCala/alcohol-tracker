@@ -8,8 +8,8 @@ import {
   UserProps,
   UserStatus,
 } from '@src/types/database';
-import useFetchData, {UserFetchDataKey} from '@hooks/useFetchData'; // Ensure this import is corrected if needed
-import {RefetchDatabaseData} from '@src/types/utils/RefetchDatabaseData';
+import {FetchDataKeys} from '@hooks/useFetchData/types';
+import useListenToData from '@hooks/useListenToData';
 
 type DatabaseDataContextType = {
   userStatusData?: UserStatus;
@@ -18,7 +18,6 @@ type DatabaseDataContextType = {
   unconfirmedDays?: UnconfirmedDays;
   userData?: UserProps;
   isLoading: boolean;
-  refetch: RefetchDatabaseData;
 };
 
 export const DatabaseDataContext = createContext<
@@ -46,7 +45,7 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
   const user = auth.currentUser;
   const userId = user ? user.uid : '';
 
-  const dataTypes: UserFetchDataKey[] = [
+  const dataTypes: FetchDataKeys = [
     'userStatusData',
     'drinkingSessionData',
     'preferences',
@@ -54,7 +53,7 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
     'userData',
   ];
 
-  const {data, isLoading, refetch} = useFetchData(userId, dataTypes);
+  const {data, isLoading} = useListenToData(userId, dataTypes);
 
   const value = useMemo(
     () => ({
@@ -64,9 +63,8 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
       unconfirmedDays: data.unconfirmedDays,
       userData: data.userData,
       isLoading,
-      refetch,
     }),
-    [data, isLoading, refetch],
+    [data, isLoading],
   );
 
   return (

@@ -60,7 +60,6 @@ const UserListComponent: React.FC<UserListProps> = ({
   orderUsers,
 }) => {
   const {auth, db} = useFirebase();
-  const {refetch} = useDatabaseData();
   const user = auth.currentUser;
   // Partial list of users for initial display and dynamic updates
   const [displayUserArray, setDisplayUserArray] = useState<UserArray>([]);
@@ -70,7 +69,6 @@ const UserListComponent: React.FC<UserListProps> = ({
   const {loadingDisplayData, profileList} = useProfileList(displayUserArray);
   const [loadingMoreUsers, setLoadingMoreUsers] = useState<boolean>(false);
   const [isInitialLoad, setIsInitialLoad] = useState<boolean>(true);
-  const {onRefresh, refreshing, refreshCounter} = useRefresh({refetch});
 
   const loadMoreUsers = async (additionalCount: number) => {
     let arrayToSlice = userSubset ?? fullUserArray;
@@ -107,11 +105,6 @@ const UserListComponent: React.FC<UserListProps> = ({
   const navigateToProfile = (userId: string): void => {
     Navigation.navigate(ROUTES.PROFILE.getRoute(userId));
   };
-
-  // Database data hooks
-  useEffect(() => {
-    refetch();
-  }, [user?.uid]);
 
   // Monitor the user status list
   useEffect(() => {
@@ -165,13 +158,7 @@ const UserListComponent: React.FC<UserListProps> = ({
       onScrollBeginDrag={Keyboard.dismiss}
       onMomentumScrollEnd={handleScroll}
       scrollEventThrottle={400}
-      keyboardShouldPersistTaps="handled"
-      refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={() => onRefresh(['userData'])}
-        />
-      }>
+      keyboardShouldPersistTaps="handled">
       {loadingDisplayData && isInitialLoad ? (
         <LoadingData style={styles.loadingContainer} />
       ) : isNonEmptyArray(displayUserArray) ? (

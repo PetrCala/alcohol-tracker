@@ -81,11 +81,10 @@ const reducer = (state: State, action: Action): State => {
 
 const FriendSearchScreen = () => {
   const {auth, db, storage} = useFirebase();
-  const {userData, refetch} = useDatabaseData();
+  const {userData} = useDatabaseData();
   const searchInputRef = useRef<SearchWindowRef>(null);
   const user = auth.currentUser;
   const [state, dispatch] = useReducer(reducer, initialState);
-  const {onRefresh, refreshing, refreshCounter} = useRefresh({refetch});
 
   const dbSearch = async (searchText: string, db?: Database): Promise<void> => {
     try {
@@ -185,13 +184,7 @@ const FriendSearchScreen = () => {
         <ScrollView
           style={styles.scrollViewContainer}
           onScrollBeginDrag={Keyboard.dismiss}
-          keyboardShouldPersistTaps="handled"
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={() => onRefresh(['userData'])}
-            />
-          }>
+          keyboardShouldPersistTaps="handled">
           <View style={styles.searchResultsContainer}>
             {state.searching ? (
               <LoadingData style={styles.loadingData} />

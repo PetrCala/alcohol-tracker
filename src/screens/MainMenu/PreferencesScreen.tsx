@@ -75,7 +75,7 @@ const PreferencesScreen = ({route}: PreferencesScreenProps) => {
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
-  const {preferences, refetch} = useDatabaseData();
+  const {preferences} = useDatabaseData();
   const initialPreferences = useRef(preferences);
   const [showLeaveConfirmation, setShowLeaveConfirmation] = useState(false);
   const [sliderVisible, setSliderVisible] = useState<boolean>(false);
@@ -109,10 +109,8 @@ const PreferencesScreen = ({route}: PreferencesScreenProps) => {
     try {
       setSaving(true);
       await savePreferencesData(db, user.uid, currentPreferences);
-      refetch(['preferences']).then(() => {
-        Navigation.navigate(ROUTES.MAIN_MENU);
-        setSaving(false);
-      });
+      Navigation.navigate(ROUTES.MAIN_MENU);
+      setSaving(false);
     } catch (error: any) {
       Alert.alert('Preferences saving failed', error.message);
     }

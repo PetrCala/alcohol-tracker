@@ -76,7 +76,7 @@ type RouteType = {
 };
 
 const SocialScreen = ({route}: SocialScreenProps) => {
-  const {userData, refetch} = useDatabaseData();
+  const {userData} = useDatabaseData();
   const [routes] = useState([
     {key: 'friendList', title: 'Friend List', userData: userData},
     // {key: 'friendSearch', title: 'Friend Search', userData: userData},

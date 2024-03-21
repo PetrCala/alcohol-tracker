@@ -64,7 +64,7 @@ type SessionSummaryScreenProps = StackScreenProps<
 
 const SessionSummaryScreen = ({route}: SessionSummaryScreenProps) => {
   const {sessionId} = route.params;
-  const {preferences, drinkingSessionData, refetch} = useDatabaseData();
+  const {preferences, drinkingSessionData} = useDatabaseData();
   if (!preferences) return null; // Careful when writing hooks after this line
   const [session, setSession] = useState<DrinkingSession>(
     extractSessionOrEmpty(sessionId, drinkingSessionData),
@@ -144,11 +144,6 @@ const SessionSummaryScreen = ({route}: SessionSummaryScreenProps) => {
   let sessionColor = session.blackout
     ? 'black'
     : unitsToColors(totalUnits, preferences.units_to_colors);
-
-  // Trigger refetch on component mount
-  useEffect(() => {
-    refetch().then(() => {}); // Possibly add a catch here
-  }, []);
 
   useEffect(() => {
     const newSession = extractSessionOrEmpty(sessionId, drinkingSessionData);

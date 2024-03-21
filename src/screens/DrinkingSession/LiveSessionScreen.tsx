@@ -80,7 +80,7 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
-  const {preferences, refetch} = useDatabaseData();
+  const {preferences} = useDatabaseData();
   const [session, setSession] = useState<DrinkingSession | null>(null);
   const initialSession = useRef<DrinkingSession | null>(null);
   // Session details
@@ -280,7 +280,6 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
           );
         }
         await removePlaceholderSessionData(db, userId);
-        refetch(['drinkingSessionData', 'userStatusData']);
       } catch (error: any) {
         Alert.alert(
           'Session save failed',
@@ -311,7 +310,6 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
       await waitForNoPendingUpdate();
       await discardFunction(db, user.uid, sessionId);
       await removePlaceholderSessionData(db, user.uid);
-      await refetch(['drinkingSessionData', 'userStatusData']);
     } catch (error: any) {
       Alert.alert(
         'Session discard failed',
@@ -337,7 +335,6 @@ const LiveSessionScreen = ({route}: LiveSessionScreenProps) => {
         setLoadingText('Synchronizing data...');
         await waitForNoPendingUpdate();
         await updateSessionDrinks(db, user.uid, sessionId, session?.drinks);
-        await refetch(['drinkingSessionData', 'userStatusData']);
       } catch (error: any) {
         Alert.alert('Database synchronization failed', error.message);
       } finally {

@@ -62,7 +62,6 @@ interface State {
   drinkingSessionsCount: number;
   drinksConsumed: number;
   unitsConsumed: number;
-  initialLoad: boolean;
   initializingSession: boolean;
   ongoingSessionId: DrinkingSessionId | undefined;
 }
@@ -77,7 +76,6 @@ const initialState: State = {
   drinkingSessionsCount: 0,
   drinksConsumed: 0,
   unitsConsumed: 0,
-  initialLoad: true,
   initializingSession: false,
   ongoingSessionId: undefined,
 };
@@ -92,8 +90,6 @@ const reducer = (state: State, action: Action): State => {
       return {...state, drinksConsumed: action.payload};
     case 'SET_UNITS_CONSUMED':
       return {...state, unitsConsumed: action.payload};
-    case 'SET_INITIAL_LOAD':
-      return {...state, initialLoad: action.payload};
     case 'SET_INITIALIZING_SESSION':
       return {...state, initializingSession: action.payload};
     case 'SET_ONGOING_SESSION_ID':
@@ -118,10 +114,8 @@ const HomeScreen = ({}: HomeScreenProps) => {
     preferences,
     userData,
     isLoading,
-    refetch,
   } = useDatabaseData();
   const [state, dispatch] = useReducer(reducer, initialState);
-  const {onRefresh, refreshing, refreshCounter} = useRefresh({refetch});
 
   const statsData: StatData = [
     {
@@ -238,18 +232,18 @@ const HomeScreen = ({}: HomeScreenProps) => {
   }, [userStatusData]);
 
   // Load data on component mount
-  useEffect(() => {
-    const doInitialLoad = async () => {
-      try {
-        await refetch();
-      } catch (error: any) {
-        Alert.alert('Database connection error', 'Failed to load the data.');
-      } finally {
-        dispatch({type: 'SET_INITIAL_LOAD', payload: false});
-      }
-    };
-    doInitialLoad();
-  }, []);
+  // useEffect(() => {
+  //   const doInitialLoad = async () => {
+  //     try {
+  //       await refetch();
+  //     } catch (error: any) {
+  //       Alert.alert('Database connection error', 'Failed to load the data.');
+  //     } finally {
+  //       dispatch({type: 'SET_INITIAL_LOAD', payload: false});
+  //     }
+  //   };
+  //   doInitialLoad();
+  // }, []);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -271,7 +265,7 @@ const HomeScreen = ({}: HomeScreenProps) => {
     return;
   }
   if (!isOnline) return <UserOffline />;
-  if (isLoading || state.initializingSession || state.initialLoad)
+  if (isLoading || state.initializingSession)
     return (
       <LoadingData
         loadingText={
@@ -296,7 +290,8 @@ const HomeScreen = ({}: HomeScreenProps) => {
                 userId={user.uid}
                 downloadPath={userData.profile.photo_url}
                 style={styles.profileImage}
-                refreshTrigger={refreshCounter}
+                // refreshTrigger={refreshCounter}
+                refreshTrigger={0}
               />
               <Text style={styles.headerUsername}>{user.displayName}</Text>
             </TouchableOpacity>
@@ -316,18 +311,19 @@ const HomeScreen = ({}: HomeScreenProps) => {
         style={styles.mainScreenContent}
         keyboardShouldPersistTaps="handled"
         onScrollBeginDrag={Keyboard.dismiss}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={() =>
-              onRefresh([
-                'userStatusData',
-                'preferences',
-                'drinkingSessionData',
-              ])
-            }
-          />
-        }>
+        // refreshControl={
+        //   <RefreshControl
+        //     refreshing={refreshing}
+        //     onRefresh={() =>
+        //       onRefresh([
+        //         'userStatusData',
+        //         'preferences',
+        //         'drinkingSessionData',
+        //       ])
+        //     }
+        //   />
+        // }
+      >
         {state.ongoingSessionId ? (
           <TouchableOpacity
             style={styles.userInSessionWarningContainer}

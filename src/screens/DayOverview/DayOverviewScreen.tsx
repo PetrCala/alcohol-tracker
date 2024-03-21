@@ -62,7 +62,7 @@ const DayOverviewScreen = ({route}: DayOverviewScreenProps) => {
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
-  const {drinkingSessionData, preferences, refetch} = useDatabaseData();
+  const {drinkingSessionData, preferences} = useDatabaseData();
   const [currentDate, setCurrentDate] = useState<Date>(
     date ? dateStringToDate(date) : new Date(),
   );
@@ -258,22 +258,6 @@ const DayOverviewScreen = ({route}: DayOverviewScreenProps) => {
       setCurrentDate(newDate);
     }
   };
-
-  useFocusEffect(
-    React.useCallback(() => {
-      // Refetch relevant data every time the screen is focused
-      // Used when editing the sessions
-      if (!user) return;
-      try {
-        refetch(['drinkingSessionData', 'preferences']);
-      } catch (error: any) {
-        Alert.alert(
-          'Failed to contact the database',
-          'Could not update user online status:' + error.message,
-        );
-      }
-    }, []),
-  );
 
   if (!isOnline) return <UserOffline />;
   if (!date) return <LoadingData />;

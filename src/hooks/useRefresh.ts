@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
-import {UserFetchDataKey} from './useFetchData';
 import {RefetchDatabaseData} from '@src/types/utils/RefetchDatabaseData';
+import {FetchDataKeys} from './useFetchData/types';
 
 interface UseRefreshProps {
   refetch: RefetchDatabaseData;
@@ -29,7 +29,7 @@ const useRefresh = ({refetch}: UseRefreshProps) => {
   const [refreshCounter, setRefreshCounter] = useState<number>(0);
 
   const onRefresh = React.useCallback(
-    (keys?: UserFetchDataKey[]) => {
+    (keys?: FetchDataKeys) => {
       setRefreshing(true);
 
       setTimeout(() => {

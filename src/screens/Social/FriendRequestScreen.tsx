@@ -32,7 +32,6 @@ import CONST from '@src/CONST';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import useFetchData from '@hooks/useFetchData';
 import useRefresh from '@hooks/useRefresh';
-import {RefetchDatabaseData} from '@src/types/utils/RefetchDatabaseData';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import {isNonEmptyArray} from '@libs/Validation';
@@ -64,13 +63,11 @@ const handleAcceptFriendRequest = async (
   db: Database,
   userId: string,
   requestId: string,
-  refetch: RefetchDatabaseData,
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
 ): Promise<void> => {
   try {
     setIsLoading(true);
     await acceptFriendRequest(db, userId, requestId);
-    await refetch(['userData']);
     setIsLoading(false);
   } catch (error: any) {
     Alert.alert(
@@ -84,13 +81,11 @@ const handleRejectFriendRequest = async (
   db: Database,
   userId: string,
   requestId: string,
-  refetch: RefetchDatabaseData,
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
 ): Promise<void> => {
   try {
     setIsLoading(true);
     await deleteFriendRequest(db, userId, requestId);
-    await refetch(['userData']);
     setIsLoading(false);
   } catch (error: any) {
     Alert.alert(
@@ -104,7 +99,6 @@ const handleRejectFriendRequest = async (
 const FriendRequestButtons: React.FC<RequestIdProps> = ({requestId}) => {
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
-  const {refetch} = useDatabaseData();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   if (!user) return;
 
@@ -114,13 +108,7 @@ const FriendRequestButtons: React.FC<RequestIdProps> = ({requestId}) => {
         key={requestId + '-accept-request-button'}
         style={[styles.handleRequestButton, styles.acceptRequestButton]}
         onPress={() =>
-          handleAcceptFriendRequest(
-            db,
-            user.uid,
-            requestId,
-            refetch,
-            setIsLoading,
-          )
+          handleAcceptFriendRequest(db, user.uid, requestId, setIsLoading)
         }>
         {isLoading ? (
           <ActivityIndicator size="small" color="#0000ff" />
@@ -132,13 +120,7 @@ const FriendRequestButtons: React.FC<RequestIdProps> = ({requestId}) => {
         key={requestId + '-reject-request-button'}
         style={[styles.handleRequestButton, styles.rejectRequestButton]}
         onPress={() =>
-          handleRejectFriendRequest(
-            db,
-            user.uid,
-            requestId,
-            refetch,
-            setIsLoading,
-          )
+          handleRejectFriendRequest(db, user.uid, requestId, setIsLoading)
         }>
         <Text style={styles.handleRequestButtonText}>Remove</Text>
       </TouchableOpacity>
@@ -149,7 +131,6 @@ const FriendRequestButtons: React.FC<RequestIdProps> = ({requestId}) => {
 // Component to be shown when the friend request is pending
 const FriendRequestPending: React.FC<RequestIdProps> = ({requestId}) => {
   const {auth, db} = useFirebase();
-  const {refetch} = useDatabaseData();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const user = auth.currentUser;
 
@@ -159,13 +140,7 @@ const FriendRequestPending: React.FC<RequestIdProps> = ({requestId}) => {
       <TouchableOpacity
         style={[styles.handleRequestButton, styles.rejectRequestButton]}
         onPress={() =>
-          handleRejectFriendRequest(
-            db,
-            user.uid,
-            requestId,
-            refetch,
-            setIsLoading,
-          )
+          handleRejectFriendRequest(db, user.uid, requestId, setIsLoading)
         }>
         {isLoading ? (
           <ActivityIndicator size="small" color="#0000ff" />
@@ -265,9 +240,8 @@ const reducer = (state: State, action: Action): State => {
 
 const FriendRequestScreen = () => {
   const {db} = useFirebase();
-  const {userData, isLoading, refetch} = useDatabaseData();
+  const {userData, isLoading} = useDatabaseData();
   const [state, dispatch] = useReducer(reducer, initialState);
-  const {onRefresh, refreshing, refreshCounter} = useRefresh({refetch});
 
   useMemo(() => {
     if (userData) {
@@ -333,13 +307,7 @@ const FriendRequestScreen = () => {
       <ScrollView
         style={styles.scrollViewContainer}
         onScrollBeginDrag={Keyboard.dismiss}
-        keyboardShouldPersistTaps="handled"
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={() => onRefresh(['userData'])}
-          />
-        }>
+        keyboardShouldPersistTaps="handled">
         {state.isLoading || isLoading ? (
           <LoadingData style={styles.loadingData} />
         ) : !isEmptyObject(state.friendRequests) ? (

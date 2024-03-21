@@ -38,7 +38,7 @@ type EditScreenProps = StackScreenProps<
 
 const EditScreen = ({route}: EditScreenProps) => {
   const userId = route.params.userId;
-  const {userData, isLoading, refetch} = useDatabaseData();
+  const {userData, isLoading} = useDatabaseData();
   const profileData = userData?.profile;
 
   // Hooks

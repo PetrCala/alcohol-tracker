@@ -44,7 +44,7 @@ const reducer = (state: State, action: GeneralAction): State => {
 type FriendListScreenProps = {};
 
 const FriendListScreen = (props: FriendListScreenProps) => {
-  const {userData, refetch} = useDatabaseData();
+  const {userData} = useDatabaseData();
   const friendListInputRef = useRef<SearchWindowRef>(null);
   const [state, dispatch] = useReducer(reducer, initialState);
   const {profileList} = useProfileList(state.friends);
@@ -82,19 +82,6 @@ const FriendListScreen = (props: FriendListScreenProps) => {
     dispatch({type: 'SET_FRIENDS', payload: friendsArray});
     dispatch({type: 'SET_FRIENDS_TO_DISPLAY', payload: friendsArray});
   }, [userData]);
-
-  useFocusEffect(
-    React.useCallback(() => {
-      try {
-        refetch(['userData']);
-      } catch (error: any) {
-        Alert.alert(
-          'Failed to contact the database',
-          'Could not update user data:' + error.message,
-        );
-      }
-    }, []),
-  );
 
   return (
     <View style={styles.mainContainer}>
