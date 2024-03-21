@@ -19,6 +19,7 @@ import {useFirebase} from '@context/global/FirebaseContext';
 import {readDataOnce} from '@database/baseFunctions';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import {
+  ValidationResult,
   isValidPassword,
   isValidPasswordConfirm,
   validateAppVersion,
@@ -189,7 +190,9 @@ const SignUpScreen = () => {
       dispatch({type: 'SET_LOADING', payload: false});
       return;
     }
-    if (!validateAppVersion(minSupportedVersion)) {
+    const validationResult: ValidationResult =
+      validateAppVersion(minSupportedVersion);
+    if (!validationResult.success) {
       dispatch({
         type: 'SET_WARNING',
         payload:
@@ -200,6 +203,7 @@ const SignUpScreen = () => {
     }
 
     // Validate that the user is not spamming account creation
+    console.log('done');
     try {
       await checkAccountCreationLimit(db);
     } catch (error: any) {
@@ -270,8 +274,8 @@ const SignUpScreen = () => {
         dispatch({type: 'SET_LOADING', payload: false});
       }
     }
-    Navigation.navigate(ROUTES.HOME);
     dispatch({type: 'SET_LOADING', payload: false});
+    Navigation.navigate(ROUTES.HOME);
     return;
   };
 

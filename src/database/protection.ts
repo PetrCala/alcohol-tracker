@@ -18,9 +18,9 @@ async function checkAccountCreationLimit(db: Database): Promise<void> {
   const deviceData: AccountCreations | null = await readDataOnce(db, deviceRef);
   if (!deviceData) return;
 
-  const recentAccountCreations = Object.keys(deviceData)
-    .filter(timestamp => parseInt(timestamp) >= oneDayAgo)
-    .map(timestamp => parseInt(timestamp));
+  const recentAccountCreations = Object.values(deviceData).filter(
+    timestamp => timestamp >= oneDayAgo,
+  );
 
   if (recentAccountCreations.length >= limit) {
     throw new Error('Rate limit exceeded. Please try again later.');

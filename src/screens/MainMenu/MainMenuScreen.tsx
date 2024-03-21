@@ -93,6 +93,7 @@ const MainMenuScreen = ({route}: MainMenuScreenProps) => {
     useState<boolean>(false);
   const [adminFeedbackModalVisible, setAdminFeedbackModalVisible] =
     useState<boolean>(false);
+  const [deletingUser, setDeletingUser] = useState<boolean>(false);
 
   const handleSignOut = async () => {
     try {
@@ -123,6 +124,7 @@ const MainMenuScreen = ({route}: MainMenuScreenProps) => {
     }
     // Delete the user's information from the realtime database
     try {
+      setDeletingUser(true);
       let userNickname = userData.profile.display_name;
       await deleteUserData(
         db,
@@ -133,16 +135,22 @@ const MainMenuScreen = ({route}: MainMenuScreenProps) => {
       );
     } catch (error: any) {
       handleInvalidDeleteUser(error);
+      setDeletingUser(false);
+      return;
     }
     // Delete user from authentification database
     try {
       await deleteUser(user);
     } catch (error: any) {
       handleInvalidDeleteUser(error);
+      return;
+    } finally {
+      setDeletingUser(false);
     }
-    handleSignOut(); // Sign out the user
+    // Updating the loading state here might cause some issues
+    handleSignOut();
     // Add an alert here informing about the user deletion
-    Navigation.navigate(ROUTES.LOGIN);
+    Navigation.navigate(ROUTES.SIGNUP);
   };
 
   /** Handle cases when deleting a user fails */

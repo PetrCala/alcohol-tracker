@@ -98,7 +98,6 @@ const useFetchData = (
         }),
         {},
       );
-
       setData(prevData => {
         // Merge newData with prevData, ensuring only specified keys are updated
         const updatedData = {...prevData};

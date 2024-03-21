@@ -62,6 +62,7 @@ interface State {
   drinkingSessionsCount: number;
   drinksConsumed: number;
   unitsConsumed: number;
+  initialLoad: boolean;
   initializingSession: boolean;
   ongoingSessionId: DrinkingSessionId | undefined;
 }
@@ -76,6 +77,7 @@ const initialState: State = {
   drinkingSessionsCount: 0,
   drinksConsumed: 0,
   unitsConsumed: 0,
+  initialLoad: true,
   initializingSession: false,
   ongoingSessionId: undefined,
 };
@@ -90,6 +92,8 @@ const reducer = (state: State, action: Action): State => {
       return {...state, drinksConsumed: action.payload};
     case 'SET_UNITS_CONSUMED':
       return {...state, unitsConsumed: action.payload};
+    case 'SET_INITIAL_LOAD':
+      return {...state, initialLoad: action.payload};
     case 'SET_INITIALIZING_SESSION':
       return {...state, initializingSession: action.payload};
     case 'SET_ONGOING_SESSION_ID':
@@ -233,6 +237,20 @@ const HomeScreen = ({}: HomeScreenProps) => {
     });
   }, [userStatusData]);
 
+  // Load data on component mount
+  useEffect(() => {
+    const doInitialLoad = async () => {
+      try {
+        await refetch();
+      } catch (error: any) {
+        Alert.alert('Database connection error', 'Failed to load the data.');
+      } finally {
+        dispatch({type: 'SET_INITIAL_LOAD', payload: false});
+      }
+    };
+    doInitialLoad();
+  }, []);
+
   useFocusEffect(
     React.useCallback(() => {
       // Update user status on home screen focus
@@ -253,7 +271,7 @@ const HomeScreen = ({}: HomeScreenProps) => {
     return;
   }
   if (!isOnline) return <UserOffline />;
-  if (isLoading || state.initializingSession)
+  if (isLoading || state.initializingSession || state.initialLoad)
     return (
       <LoadingData
         loadingText={
@@ -266,22 +284,24 @@ const HomeScreen = ({}: HomeScreenProps) => {
   return (
     <ScreenWrapper testID={HomeScreen.displayName}>
       <View style={commonStyles.headerContainer}>
-        <View style={styles.profileContainer}>
-          <TouchableOpacity
-            onPress={() =>
-              Navigation.navigate(ROUTES.PROFILE.getRoute(user.uid))
-            }
-            style={styles.profileButton}>
-            <ProfileImage
-              storage={storage}
-              userId={user.uid}
-              downloadPath={userData.profile.photo_url}
-              style={styles.profileImage}
-              refreshTrigger={refreshCounter}
-            />
-            <Text style={styles.headerUsername}>{user.displayName}</Text>
-          </TouchableOpacity>
-        </View>
+        {userData && (
+          <View style={styles.profileContainer}>
+            <TouchableOpacity
+              onPress={() =>
+                Navigation.navigate(ROUTES.PROFILE.getRoute(user.uid))
+              }
+              style={styles.profileButton}>
+              <ProfileImage
+                storage={storage}
+                userId={user.uid}
+                downloadPath={userData.profile.photo_url}
+                style={styles.profileImage}
+                refreshTrigger={refreshCounter}
+              />
+              <Text style={styles.headerUsername}>{user.displayName}</Text>
+            </TouchableOpacity>
+          </View>
+        )}
         {/* Enable later on */}
         {/* <View style={styles.menuContainer}>
           <TouchableOpacity style={styles.notificationsButton}>

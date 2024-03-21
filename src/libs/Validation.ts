@@ -203,3 +203,5 @@ export function isNonEmptyObject(input: any): boolean {
 export function isNonEmptyArray(input: any) {
   return Array.isArray(input) && input.length > 0;
 }
+
+export type {ValidationResult};

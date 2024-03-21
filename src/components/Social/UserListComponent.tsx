@@ -135,12 +135,14 @@ const UserListComponent: React.FC<UserListProps> = ({
   // Update the display list when the user status list changes
   useEffect(() => {
     const updateDisplayArray = () => {
-      if (
-        !isNonEmptyArray(fullUserArray) ||
-        isEmptyObject(userStatusList) ||
-        !isNonEmptyArray(userSubset)
-      )
+      // No users to display
+      if (!isNonEmptyArray(fullUserArray) || !isNonEmptyArray(userSubset)) {
+        setDisplayUserArray([]);
+        setIsInitialLoad(false);
         return;
+      }
+      // Data not yet initialized during the initial load
+      if (isEmptyObject(userStatusList)) return;
       let arrayToSlice = userSubset ?? fullUserArray;
       if (orderUsers) {
         let userPriorityList = calculateAllUsersPriority(
@@ -172,7 +174,7 @@ const UserListComponent: React.FC<UserListProps> = ({
       }>
       {loadingDisplayData && isInitialLoad ? (
         <LoadingData style={styles.loadingContainer} />
-      ) : displayUserArray ? (
+      ) : isNonEmptyArray(displayUserArray) ? (
         <>
           <View style={styles.userList}>
             {isNonEmptyArray(displayUserArray) ? (
