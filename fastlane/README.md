@@ -66,7 +66,15 @@ Generate a local iOS production build
 [bundle exec] fastlane ios beta
 ```
 
-Push a new beta build to TestFlight
+Build and upload app to TestFlight
+
+### ios production
+
+```sh
+[bundle exec] fastlane ios production
+```
+
+Move app to App Store Review
 
 ----
 
