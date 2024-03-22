@@ -138,8 +138,8 @@ platform :ios do
     begin
       upload_to_testflight(
           api_key_path: "./ios/ios-fastlane-json-key.json",
-          distribute_external: false, # could be set to true
-          notify_external_testers: false, # could be set to true
+          distribute_external: true,
+          notify_external_testers: true,
           changelog: "Thank your being a beta tester! Please provide feedback and report any issues you encounter.",
           groups: ["Beta"],
           demo_account_required: true,
