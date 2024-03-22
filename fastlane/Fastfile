@@ -59,7 +59,7 @@ platform :android do
         json_key: './android/app/android-fastlane-json-key.json',
         aab: './android/app/build/outputs/bundle/productionRelease/app-production-release.aab',
         track: 'internal',
-        rollout: '1.0'
+        rollout: '1.0',
         skip_upload_apk: true,
     )
   end
