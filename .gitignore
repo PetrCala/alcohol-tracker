@@ -4,6 +4,7 @@
 
 # Temporary
 src/screens/Profile/resources
+debug.txt
 
 # Xcode
 #
@@ -37,6 +38,7 @@ local.properties
 *.keystore
 !debug.keystore
 functions/lib/*
+android/app/android-fastlane-json-key.json
 
 # node.js
 #
@@ -107,4 +109,4 @@ mockDatabase.json
 *.apk
 *.ipa
 *.lnk
-*.env*
+*.env
