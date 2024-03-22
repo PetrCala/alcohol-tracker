@@ -60,7 +60,6 @@ platform :android do
         aab: './android/app/build/outputs/bundle/productionRelease/app-production-release.aab',
         track: 'internal',
         rollout: '1.0',
-        skip_upload_apk: true,
     )
   end
 
