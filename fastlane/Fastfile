@@ -151,8 +151,8 @@ platform :ios do
     begin
       upload_to_testflight(
           api_key_path: "./ios/ios-fastlane-json-key.json",
-          distribute_external: true,
-          notify_external_testers: true,
+          distribute_external: false, # could be set to true
+          notify_external_testers: false, # could be set to true
           changelog: "Thank your being a beta tester! Please provide feedback and report any issues you encounter.",
           groups: ["Beta"],
           demo_account_required: true,
@@ -196,8 +196,11 @@ platform :ios do
       # We want to release the app as soon as it's approved
       automatic_release: true,
 
-      # We need to upload metadata to upload the release notes which is required for rach new version
+      # We need to upload metadata to upload the release notes which is required for each new version
       skip_metadata: false,
+
+      # Define the metadata path
+      metadata_path: "./fastlane/metadata",
 
       # We do not want to upload any screenshots
       skip_screenshots: true,
@@ -236,6 +239,7 @@ platform :ios do
         content_rights_has_rights: true
       },
       release_notes: {
+        'default' => "Improvements and bug fixes",
         'en-US' => "Improvements and bug fixes"
       }
     )
