@@ -23,7 +23,7 @@ react {
     //   The list of variants to that are debuggable. For those we're going to
     //   skip the bundling of the JS bundle and the assets. By default is just 'debug'.
     //   If you add flavors like lite, prod, etc. you'll have to list your debuggableVariants.
-    // debuggableVariants = ["liteDebug", "prodDebug"]
+    debuggableVariants = ["developmentDebug", "stagingDebug", "productionDebug"]
 
     /* Bundling */
     //   A list containing the node command and its flags. Default is just 'node'.
@@ -54,11 +54,14 @@ react {
 }
 
 project.ext.envConfigFiles = [
-    release: ".env.production",
-    staging: ".env.staging",
-    developmentRelease: ".env",
-    developmentDebug: ".env",
+    productionDebug: ".env.production",
+    productionRelease: ".env.production",
+    stagingDebug: ".env.staging",
+    stagingRelease: ".env.staging",
+    developmentDebug: "env.development",
+    developmentRelease: "env.development",
 ]
+
 
 /**
  * Set this to true to create four separate APKs instead of one,
@@ -117,8 +120,14 @@ android {
     productFlavors {
         // we need to define a production flavor but since it has default config, we can leave it empty
         production
-        // staging flavor has a default config too
-        staging
+        // Same for staging
+        staging {
+            // If  are building a version that won't be uploaded to the play store, we don't have to use production keys
+            // applies all non-production flavors
+            applicationIdSuffix ".staging"
+            signingConfig signingConfigs.debug
+            resValue "string", "build_config_package", "com.alcohol_tracker"
+        }
         development {
             // If  are building a version that won't be uploaded to the play store, we don't have to use production keys
             // applies all non-production flavors
@@ -169,27 +178,11 @@ android {
                 // All release builds should be signed with the release config ...
                 flavor.signingConfig signingConfigs.release
             }
-            // ... except for the e2e flavor, which we maybe want to build locally:
+            // ... except for the development (originally e2e) flavor, which we maybe want to build locally:
             productFlavors.development.signingConfig signingConfigs.debug
         }
     }
 
-    // applicationVariants are e.g. debug, release
-    // todelete
-    // applicationVariants.all { variant ->
-    //     variant.outputs.each { output ->
-    //         // For each separate APK per architecture, set a unique version code as described here:
-    //         // https://developer.android.com/studio/build/configure-apk-splits.html
-    //         // Example: versionCode 1 will generate 1001 for armeabi-v7a, 1002 for x86, etc.
-    //         def versionCodes = ["armeabi-v7a": 1, "x86": 2, "arm64-v8a": 3, "x86_64": 4]
-    //         def abi = output.getFilter(OutputFile.ABI)
-    //         if (abi != null) {  // null for the universal-debug, universal-release variants
-    //             output.versionCodeOverride =
-    //                     defaultConfig.versionCode * 1000 + versionCodes.get(abi)
-    //         }
-
-    //     }
-    // }
 }
 
 dependencies {

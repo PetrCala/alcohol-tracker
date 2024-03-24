@@ -23,6 +23,22 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 Generate a new local APK
 
+### android build_staging
+
+```sh
+[bundle exec] fastlane android build_staging
+```
+
+Generate a new local APK for staging
+
+### android build_debug
+
+```sh
+[bundle exec] fastlane android build_debug
+```
+
+Generate a new local APK for testing
+
 ### android beta
 
 ```sh

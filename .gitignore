@@ -94,7 +94,7 @@ bun.lockb
 __snapshots__/
 
 # Other
-*-adminsdk-*.json
+*-admin-sdk-*.json
 _dev/beta/beta_keys.tsx
 _dev/utils/admin.js
 _dev/migrations/
@@ -110,4 +110,4 @@ mockDatabase.json
 *.apk
 *.ipa
 *.lnk
-*.env
+*.env.*

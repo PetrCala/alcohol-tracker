@@ -28,6 +28,31 @@ platform :android do
     )
   end
 
+
+  desc "Generate a new local APK for staging"
+  lane :build_staging do
+    ENV["ENVFILE"]=".env.staging"
+
+    gradle(
+      project_dir: './android',
+      task: 'assemble',
+      flavor: 'Staging',
+      build_type: 'Release',
+    )
+  end
+
+  desc "Generate a new local APK for testing"
+  lane :build_debug do
+    ENV["ENVFILE"]=".env.development"
+
+    gradle(
+      project_dir: './android',
+      task: 'assemble',
+      flavor: 'Development',
+      build_type: 'Debug',
+    )
+  end
+
   desc "Build and upload app to Google Play"
   lane :beta do
     ENV["ENVFILE"]=".env.production"
