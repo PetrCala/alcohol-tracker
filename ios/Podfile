@@ -84,9 +84,11 @@ target 'kiroku' do
     'DebugDevelopment' => :debug,
     'DebugStaging' => :debug,
     'DebugProduction' => :debug,
+    'Debug' => :debug,
     'ReleaseDevelopment' => :release,
     'ReleaseStaging' => :release,
-    'ReleaseProduction' => :release
+    'ReleaseProduction' => :release,
+    'Release' => :release
 
   config = use_native_modules!
 
