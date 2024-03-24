@@ -6,7 +6,6 @@
 } from 'firebase/app';
 import FirebaseConfig from './FirebaseConfig';
 
-// Initialize or get the FirebaseApp
 const FirebaseApp: FirebaseAppProps =
   getApps().length === 0 ? initializeApp(FirebaseConfig) : getApp();
 

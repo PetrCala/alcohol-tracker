@@ -81,13 +81,13 @@ target 'kiroku' do
   permissions_path = '../node_modules/react-native-permissions/ios'
 
   project 'kiroku',
-    'DebugDevelopment' => :debug,
-    'DebugStaging' => :debug,
-    'DebugProduction' => :debug,
+    # 'DebugDevelopment' => :debug,
+    # 'DebugStaging' => :debug,
+    # 'DebugProduction' => :debug,
     'Debug' => :debug,
-    'ReleaseDevelopment' => :release,
-    'ReleaseStaging' => :release,
-    'ReleaseProduction' => :release,
+    # 'ReleaseDevelopment' => :release,
+    # 'ReleaseStaging' => :release,
+    # 'ReleaseProduction' => :release,
     'Release' => :release
 
   config = use_native_modules!

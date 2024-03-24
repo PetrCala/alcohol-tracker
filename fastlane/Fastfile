@@ -112,7 +112,17 @@ platform :ios do
 
     build_app(
         workspace: "./ios/kiroku.xcworkspace",
-        scheme: "kiroku"
+        scheme: "Kiroku (production)"
+    )
+  end
+
+  desc "Generate a local iOS staging build"
+  lane :build do
+    ENV["ENVFILE"]=".env.staging"
+
+    build_app(
+        workspace: "./ios/kiroku.xcworkspace",
+        scheme: "Kiroku (staging)"
     )
   end
 
@@ -148,7 +158,7 @@ platform :ios do
 
     build_app(
         workspace: "./ios/kiroku.xcworkspace",
-        scheme: "kiroku",
+        scheme: "Kiroku (production)",
         output_name: "kiroku.ipa",
         output_directory: "./ios/build",
         export_options: {

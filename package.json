@@ -6,10 +6,11 @@
   "license": "MIT",
   "scripts": {
     "android": "npx react-native run-android --mode=developmentDebug --active-arch-only",
-    "ios": "npx react-native run-ios --simulator=\"iPhone 15 Pro\" --mode=\"Debug\"",
+    "ios": "npx react-native run-ios --simulator=\"iPhone 15 Pro\" --scheme \"Kiroku (development)\" --mode=\"Debug\"",
     "pod-install": "cd ios && pod install && cd ..",
     "pod-reset": "./scripts/podReset.sh",
     "ios-build": "bundle exec fastlane ios build",
+    "ios-build-staging": "bundle exec fastlane ios build_staging",
     "android-build": "bundle exec fastlane android build",
     "android-build-staging": "bundle exec fastlane android build_staging",
     "android-build-debug": "bundle exec fastlane android build_debug",
