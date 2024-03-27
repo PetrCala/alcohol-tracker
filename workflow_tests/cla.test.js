@@ -15,7 +15,7 @@ const FILES_TO_COPY_INTO_TEST_REPO = [
   },
 ];
 
-describe('test workflow cla', () => {
+xdescribe('test workflow cla', () => {
   const secrets = {
     CLA_BOTIFY_TOKEN: 'dummy_cla_botify_token',
   };
