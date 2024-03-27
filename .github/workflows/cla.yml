@@ -34,8 +34,8 @@ jobs:
           PERSONAL_ACCESS_TOKEN: ${{ secrets.CLA_BOTIFY_TOKEN }}
         with:
           path-to-signatures: '${{ github.repository }}/signatures/version1/cla.json'
-          path-to-document: 'https://github.com/${{ github.repository }}/blob/dev/contributingGuides/CLA.md'
-          branch: 'dev'
+          path-to-document: 'https://github.com/${{ github.repository }}/blob/master/contributingGuides/CLA.md'
+          branch: 'master'
           remote-organization-name: 'Kiroku'
           remote-repository-name: 'CLA'
           lock-pullrequest-aftermerge: false
