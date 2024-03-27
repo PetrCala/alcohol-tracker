@@ -33,10 +33,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PERSONAL_ACCESS_TOKEN: ${{ secrets.CLA_BOTIFY_TOKEN }}
         with:
-          path-to-signatures: '${{ github.repository }}/cla.json'
-          path-to-document: 'https://github.com/${{ github.repository }}/blob/master/contributingGuides/CLA.md'
-          branch: 'signatures'
-          remote-organization-name: 'Kiroku'
-          remote-repository-name: 'CLA'
+          path-to-signatures: 'cla.json'
+          path-to-document: 'https://github.com/${{ github.repository }}/blob/petr/contributingGuides/CLA.md'
+          branch: 'main'
+          remote-repository-name: 'PetrCala/Kiroku-CLA'
           lock-pullrequest-aftermerge: false
           allowlist: OSBotify,snyk-bot, some-user
