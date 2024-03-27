@@ -35,7 +35,7 @@ jobs:
         with:
           path-to-signatures: '${{ github.repository }}/signatures/version1/cla.json'
           path-to-document: 'https://github.com/${{ github.repository }}/blob/master/contributingGuides/CLA.md'
-          branch: 'master'
+          branch: 'signatures'
           remote-organization-name: 'Kiroku'
           remote-repository-name: 'CLA'
           lock-pullrequest-aftermerge: false
