@@ -6,6 +6,13 @@ on:
   pull_request_target:
     types: [opened, synchronize]
 
+# explicitly configure permissions - could be moved to the GITHUB_TOKEN configuration
+permissions:
+  actions: write
+  contents: write
+  pull-requests: write
+  statuses: write
+
 jobs:
   CLA:
     runs-on: ubuntu-latest
@@ -33,9 +40,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PERSONAL_ACCESS_TOKEN: ${{ secrets.CLA_BOTIFY_TOKEN }}
         with:
-          path-to-signatures: 'cla.json'
+          path-to-signatures: 'signatures/Kiroku/cla.json'
           path-to-document: 'https://github.com/${{ github.repository }}/blob/petr/contributingGuides/CLA.md'
           branch: 'signatures'
           # remote-repository-name: 'PetrCala/Kiroku-CLA'
           lock-pullrequest-aftermerge: false
-          allowlist: OSBotify,snyk-bot , some-user
+          allowlist: OSBotify,bot*
