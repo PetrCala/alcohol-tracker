@@ -1,7 +1,7 @@
-// import {useContext} from 'react';
-// import type {LocaleContextProps} from '@components/LocaleContextProvider';
-// import {LocaleContext} from '@components/LocaleContextProvider';
+import {useContext} from 'react';
+import type {LocaleContextProps} from '@components/LocaleContextProvider';
+import {LocaleContext} from '@components/LocaleContextProvider';
 
-// export default function useLocalize(): LocaleContextProps {
-//   return useContext(LocaleContext);
-// }
+export default function useLocalize(): LocaleContextProps {
+  return useContext(LocaleContext);
+}

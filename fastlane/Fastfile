@@ -117,7 +117,7 @@ platform :ios do
   end
 
   desc "Generate a local iOS staging build"
-  lane :build do
+  lane :build_staging do
     ENV["ENVFILE"]=".env.staging"
 
     build_app(

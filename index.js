@@ -4,6 +4,11 @@
 
 import {AppRegistry} from 'react-native';
 import App from '@src/App';
-import Config from '@src/CONFIG';
+import CONFIG from '@src/CONFIG';
+console.log(
+  'registering the app component under name',
+  CONFIG.COMPONENT_NAME,
+  '...',
+);
 
-AppRegistry.registerComponent(Config.COMPONENT_NAME, () => App);
+AppRegistry.registerComponent(CONFIG.COMPONENT_NAME, () => App);

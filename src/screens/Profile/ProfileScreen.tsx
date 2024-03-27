@@ -40,7 +40,6 @@ import DBPATHS from '@database/DBPATHS';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import ROUTES from '@src/ROUTES';
 import {DateData} from 'react-native-calendars';
-import {RefreshControl} from 'react-native-gesture-handler';
 import useFetchData from '@hooks/useFetchData';
 import {sendFriendRequest} from '@database/friends';
 import {getPlural} from '@libs/StringUtils';

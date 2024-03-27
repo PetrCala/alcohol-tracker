@@ -68,6 +68,14 @@ Deploy app to Google Play open beta
 
 Generate a local iOS production build
 
+### ios build_staging
+
+```sh
+[bundle exec] fastlane ios build_staging
+```
+
+Generate a local iOS staging build
+
 ### ios beta
 
 ```sh

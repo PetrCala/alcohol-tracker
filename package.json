@@ -5,7 +5,7 @@
   "type": "commonjs",
   "license": "MIT",
   "scripts": {
-    "android": "npx react-native run-android --mode=developmentDebug --active-arch-only",
+    "android": "ENVFILE=.env.development npx react-native run-android --mode=debug --active-arch-only",
     "ios": "npx react-native run-ios --simulator=\"iPhone 15 Pro\" --scheme \"Kiroku (development)\" --mode=\"Debug\"",
     "pod-install": "cd ios && pod install && cd ..",
     "pod-reset": "./scripts/podReset.sh",
@@ -64,7 +64,6 @@
     "react-native-config": "^1.5.1",
     "react-native-device-info": "^10.13.1",
     "react-native-fs": "^2.20.0",
-    "react-native-gesture-handler": "^2.15.0",
     "react-native-gradle-plugin": "^0.71.19",
     "react-native-image-crop-picker": "^0.40.2",
     "react-native-linear-gradient": "^2.8.3",
