@@ -3,20 +3,20 @@ import {PermissionEntry, PermissionKey} from './PermissionsUtils';
 
 const PermissionsMap: Record<PermissionKey, PermissionEntry> = {
   camera: {
-    ios: PERMISSIONS.IOS.CAMERA,
-    android: PERMISSIONS.ANDROID.CAMERA,
+    iOS: PERMISSIONS.IOS.CAMERA,
+    Android: PERMISSIONS.ANDROID.CAMERA,
   },
   read_photos: {
-    ios: PERMISSIONS.IOS.PHOTO_LIBRARY,
-    android: PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
+    iOS: PERMISSIONS.IOS.PHOTO_LIBRARY,
+    Android: PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
   },
   write_photos: {
-    ios: PERMISSIONS.IOS.PHOTO_LIBRARY_ADD_ONLY,
-    android: PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
+    iOS: PERMISSIONS.IOS.PHOTO_LIBRARY_ADD_ONLY,
+    Android: PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
   },
   notifications: {
-    ios: undefined, // Handle through the checkNotifications, requestNotifications functions
-    android: PERMISSIONS.ANDROID.POST_NOTIFICATIONS,
+    iOS: undefined, // Handle through the checkNotifications, requestNotifications functions
+    Android: PERMISSIONS.ANDROID.POST_NOTIFICATIONS,
   },
 };
 

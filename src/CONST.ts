@@ -9,6 +9,7 @@ const EMPTY_ARRAY = Object.freeze([]);
 const EMPTY_OBJECT = Object.freeze({});
 
 const ANDROID_PACKAGE_NAME = 'com.alcohol_tracker';
+const GH_PAGES_URL = 'https://petrcala.github.io/Kiroku';
 
 const CONST = {
   ACCOUNT_CREATION_LIMIT: 3,
@@ -20,10 +21,10 @@ const CONST = {
     IN: 'in',
     OUT: 'out',
   },
-  APP_DOWNLOAD_LINK:
-    'https://petrcala.github.io/Kiroku/assets/html/qr-link.html',
-  APP_QR_CODE_LINK:
-    'https://petrcala.github.io/Kiroku/assets/images/kiroku-qr-code-with-logo.png',
+  APP_DOWNLOAD_LINK: `${GH_PAGES_URL}/assets/html/qr-link.html`,
+  APP_QR_CODE_LINK: `${GH_PAGES_URL}/assets/images/kiroku-qr-code-with-logo.png`,
+  PRIVACY_POLICY_URL: `${GH_PAGES_URL}/assets/html/privacy-policy.html`,
+  TERMS_OF_SERVICE_URL: `${GH_PAGES_URL}/assets/html/terms-of-service.html`,
   APP_IN_BETA: true,
   AVAILABLE_PLATFORMS: ['ios', 'android'],
   AVATAR_SIZE: {
@@ -161,6 +162,11 @@ const CONST = {
     IOS: 'iOS',
     LINUX: 'Linux',
     NATIVE: 'Native',
+  },
+  PLATFORM: {
+    IOS: 'iOS',
+    ANDROID: 'Android',
+    WEB: 'Web',
   },
   REGEX: {
     ROUTES: {

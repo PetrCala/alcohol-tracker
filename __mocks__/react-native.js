@@ -23,12 +23,6 @@ jest.doMock('react-native', () => {
     fontScale: 1,
   };
 
-  const Platform = {
-    ...ReactNative.Platform,
-    OS: 'test',
-    select: objs => objs.test, // Ensure this matches the mocked OS key if not using 'ios' or 'android'
-  };
-
   return Object.setPrototypeOf(
     {
       NativeModules: {
@@ -80,7 +74,12 @@ jest.doMock('react-native', () => {
           dimensions = newDimensions;
         },
       },
-      Platform,
+
+      Platform: {
+        ...ReactNative.Platform,
+        OS: 'test',
+        select: objs => objs.test, // Ensure this matches the mocked OS key if not using 'ios' or 'android'
+      },
 
       // `runAfterInteractions` method would normally be triggered after the native animation is completed,
       // we would have to mock waiting for the animation end and more state changes,

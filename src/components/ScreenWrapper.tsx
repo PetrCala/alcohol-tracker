@@ -15,6 +15,7 @@ import CONST from '@src/CONST';
 import HeaderGap from './HeaderGap';
 import KeyboardAvoidingView from './KeyboardAvoidingView';
 import SafeAreaConsumer from './SafeAreaConsumer';
+import getPlatform from '@libs/getPlatform';
 // import OfflineIndicator from './OfflineIndicator';
 // import useNetwork from '@hooks/useNetwork';
 
@@ -174,7 +175,7 @@ function ScreenWrapper(
       {({insets, paddingTop, paddingBottom, safeAreaPaddingBottomStyle}) => {
         const paddingStyle: StyleProp<ViewStyle> = {};
 
-        if (includePaddingTop && Platform.OS === 'ios') {
+        if (includePaddingTop && getPlatform() === CONST.PLATFORM.IOS) {
           paddingStyle.paddingTop = paddingTop;
         }
 

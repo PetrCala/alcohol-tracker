@@ -1,4 +1,5 @@
 ﻿import useTheme from '@hooks/useTheme';
+import getPlatform from '@libs/getPlatform';
 import CONST from '@src/CONST';
 import React from 'react';
 import {View, Text, Linking, StyleSheet, Platform} from 'react-native';
@@ -6,7 +7,7 @@ import {View, Text, Linking, StyleSheet, Platform} from 'react-native';
 const ForceUpdateModal = () => {
   const theme = useTheme();
   const storeLink =
-    Platform.OS === 'android'
+    getPlatform() === CONST.PLATFORM.ANDROID
       ? CONST.STORE_LINKS.ANDROID
       : CONST.STORE_LINKS.IOS;
   return (
@@ -15,7 +16,10 @@ const ForceUpdateModal = () => {
       <Text style={styles.description}>
         This version of the app is now discontinued. Please update to the latest
         version using the link below
-        {Platform.OS === 'ios' ? ' or from within the TestFlight app' : ''}.
+        {getPlatform() === CONST.PLATFORM.IOS
+          ? ' or from within the TestFlight app'
+          : ''}
+        .
       </Text>
       {storeLink ? (
         <Text

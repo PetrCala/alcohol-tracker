@@ -3,7 +3,7 @@
 
 import Config, {NativeConfig} from 'react-native-config';
 import CONST from './CONST';
-import {Platform} from 'react-native';
+import getPlatform from '@libs/getPlatform';
 
 // react-native-config doesn't trim whitespace on iOS for some reason so we
 // add a trim() call to prevent headaches
@@ -15,7 +15,8 @@ const ENVIRONMENT = get(Config, 'ENVIRONMENT', CONST.ENVIRONMENT.DEV);
 
 export default {
   APP_NAME: 'Kiroku',
-  COMPONENT_NAME: Platform.OS === 'ios' ? 'kiroku' : 'alcohol_tracker',
+  COMPONENT_NAME:
+    getPlatform() === CONST.PLATFORM.IOS ? 'kiroku' : 'alcohol_tracker',
   ENVIRONMENT,
   FIREBASE_CONFIG: {
     apiKey: get(Config, 'API_KEY', ''),
@@ -28,7 +29,8 @@ export default {
     measurementId: get(Config, 'MEASUREMENT_ID', ''),
   },
   IS_IN_PRODUCTION:
-    Platform.OS === 'web' ? process.env.NODE_ENV === 'production' : !__DEV__,
+    // Platform.OS === 'web' ? process.env.NODE_ENV === 'production' : !__DEV__,
+    process.env.NODE_ENV === 'production' && !__DEV__,
   IS_IN_STAGING: ENVIRONMENT === CONST.ENVIRONMENT.STAGING,
   IS_IN_DEVELOPMENT: ENVIRONMENT === CONST.ENVIRONMENT.DEV,
   IS_IN_TEST:

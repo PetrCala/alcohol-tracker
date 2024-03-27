@@ -3,9 +3,11 @@ import {Platform} from 'react-native';
 import {check, RESULTS, checkNotifications} from 'react-native-permissions';
 import {PermissionKey, permissionIsGranted} from './PermissionsUtils';
 import permissionsMap from './PermissionsMap';
+import getPlatform from '@libs/getPlatform';
+import CONST from '@src/CONST';
 
 const getPermission = (permissionType: PermissionKey) => {
-  return permissionsMap[permissionType][Platform.OS];
+  return permissionsMap[permissionType][getPlatform()];
 };
 
 const checkGeneralPermission = async (
@@ -29,7 +31,10 @@ const checkPermission = async (
   permissionType: PermissionKey,
 ): Promise<boolean> => {
   let result: boolean;
-  if (permissionType === 'notifications' && Platform.OS === 'ios') {
+  if (
+    permissionType === 'notifications' &&
+    getPlatform() === CONST.PLATFORM.IOS
+  ) {
     result = await checkNotificationPermission();
   } else {
     result = await checkGeneralPermission(permissionType);

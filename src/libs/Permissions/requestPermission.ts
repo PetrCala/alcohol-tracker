@@ -23,6 +23,9 @@ import {
 } from './PermissionsUtils';
 import permissionsMap from './PermissionsMap';
 import permissionsMessages from './PermissionsMessages';
+import getPlatform from '@libs/getPlatform';
+import CONST from '@src/CONST';
+import {get} from 'lodash';
 
 const openSettings = () => {
   Linking.openSettings();
@@ -113,18 +116,21 @@ const requestNotificationsPermissionIOS =
  * @returns A promise that resolves to a boolean indicating whether the permission was granted.
  */
 export const requestPermission = async (permissionType: PermissionKey) => {
-  const permission: Permission | RNPermission =
-    permissionsMap[permissionType][Platform.OS];
-
   let status: any;
-  if (Platform.OS === 'android') {
+  const currentPlatform = getPlatform();
+  const permission: Permission | RNPermission =
+    permissionsMap[permissionType][currentPlatform];
+
+  const isAndroid = currentPlatform === CONST.PLATFORM.ANDROID;
+  const isIOS = currentPlatform === CONST.PLATFORM.IOS;
+  if (isAndroid) {
     status = await requestPermissionAndroid(
       permission as Permission,
       permissionType,
     );
-  } else if (Platform.OS === 'ios' && permissionType === 'notifications') {
+  } else if (isIOS && permissionType === 'notifications') {
     status = await requestNotificationsPermissionIOS();
-  } else if (Platform.OS === 'ios') {
+  } else if (isIOS) {
     status = await requestPermissionIOS(permission as RNPermission);
   }
 
