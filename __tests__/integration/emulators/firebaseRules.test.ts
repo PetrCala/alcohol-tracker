@@ -9,7 +9,7 @@ import {
 import {
   describeWithEmulator,
   makeFriends,
-} from '../../utils/emulators/emulatorTools';
+} from '../../utils/emulators/emulatorUtils';
 import {
   setupFirebaseRulesTestEnv,
   teardownFirebaseRulesTestEnv,
@@ -26,12 +26,8 @@ import {
   SAMPLE_UNITS_TO_COLORS,
   SAMPLE_DRINKS_TO_UNITS,
 } from '../../utils/testsStatic';
-import CONST from '@src/CONST';
+import CONST from '../../../src/CONST';
 import DBPATHS from '@database/DBPATHS';
-import {isFriend} from '@database/friends';
-
-const projectId = process.env.TEST_PROJECT_ID;
-if (!projectId) throw new Error(`Missing environment variable ${projectId}.`);
 
 const testFeedbackId: string = 'testFeedbackId';
 const testFeedback: Feedback = {

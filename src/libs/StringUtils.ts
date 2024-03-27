@@ -1,5 +1,5 @@
 ﻿import CONST from '@src/CONST';
-import Clipboard from '@react-native-community/clipboard';
+import Clipboard from '@react-native-clipboard/clipboard';
 import seedrandom from 'seedrandom';
 import {Alert} from 'react-native';
 

@@ -1,26 +1,20 @@
 require('dotenv').config(); // Use .env variables in this file - CONFIG does not work here
 import {initializeApp, deleteApp, FirebaseApp} from 'firebase/app';
 import * as firebaseJson from '../../../firebase.json';
-import { FirebaseStorage, connectStorageEmulator, getStorage } from 'firebase/storage';
+import {
+  FirebaseStorage,
+  connectStorageEmulator,
+  getStorage,
+} from 'firebase/storage';
+import CONFIG from '../../../src/CONFIG';
+import {getTestStorageBucket} from './emulatorUtils';
 
 export function setupStorageTestEnv(): {
   testApp: FirebaseApp;
   storage: FirebaseStorage;
 } {
-  const storageBucket = process.env.TEST_STORAGE_BUCKET;
-  const projectId = process.env.TEST_PROJECT_ID;
-
-  if (!storageBucket) {
-    throw new Error(
-      `Missing environment variable TEST_STORAGE_BUCKET for storage emulator`,
-    );
-  }
-
-  if (!projectId) {
-    throw new Error(
-      `Missing environment variable TEST_PROJECT_ID for storage emulator`,
-    );
-  }
+  const storageBucket = getTestStorageBucket();
+  const projectId = CONFIG.TEST_PROJECT_ID;
 
   const testApp: FirebaseApp = initializeApp({
     storageBucket: storageBucket,

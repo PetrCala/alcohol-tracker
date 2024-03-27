@@ -11,18 +11,16 @@ import {
 import {initializeApp, deleteApp, FirebaseApp} from 'firebase/app';
 import {isConnectedToAuthEmulator} from '../../../src/libs/Firebase/FirebaseUtils';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
+import CONFIG from '../../../src/CONFIG';
+import {getTestAuthDomain} from './emulatorUtils';
 
 export function setupAuthTestEnv(): {
   testApp: FirebaseApp;
   auth: Auth;
 } {
-  const authDomain = process.env.TEST_AUTH_DOMAIN;
-  const projectId = process.env.TEST_PROJECT_ID;
-  if (!authDomain || !projectId) {
-    throw new Error(
-      `Missing environment variables ${authDomain} or ${projectId} for storage emulator`,
-    );
-  }
+  const authDomain = getTestAuthDomain();
+  const projectId = CONFIG.TEST_PROJECT_ID;
+
   const testApp = initializeApp({
     authDomain: authDomain,
     projectId: projectId,

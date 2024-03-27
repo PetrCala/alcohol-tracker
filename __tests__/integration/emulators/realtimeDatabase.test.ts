@@ -17,7 +17,7 @@ import {
   DrinkingSession,
 } from '@src/types/database';
 import {Database} from 'firebase/database';
-import {describeWithEmulator} from '../../utils/emulators/emulatorTools';
+import {describeWithEmulator} from '../../utils/emulators/emulatorUtils';
 import {
   saveDrinkingSessionData,
   savePlaceholderSessionData,

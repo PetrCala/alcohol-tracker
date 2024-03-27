@@ -3,6 +3,7 @@ import {
   initializeTestEnvironment,
   RulesTestEnvironment,
 } from '@firebase/rules-unit-testing';
+import CONFIG from '../../../src/CONFIG';
 import * as firebaseJson from '../../../firebase.json';
 
 interface TestEnvironmentResult {
@@ -13,7 +14,7 @@ interface TestEnvironmentResult {
 }
 
 export async function setupFirebaseRulesTestEnv(): Promise<TestEnvironmentResult> {
-  const projectId = process.env.TEST_PROJECT_ID;
+  const projectId = CONFIG.TEST_PROJECT_ID;
   if (!projectId) {
     throw new Error('Missing environment variable TEST_PROJECT_ID.');
   }
