@@ -49,6 +49,7 @@ yarn-error.log
 functions/ui-debug.log
 **/*-debug.log
 ui-debug.log
+workflow_tests/**.log
 
 # Fastlane
 
