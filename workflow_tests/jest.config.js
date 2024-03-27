@@ -6,4 +6,5 @@ module.exports = {
   },
   clearMocks: true,
   resetMocks: true,
+  setupFiles: ['../node_modules/react-native-gesture-handler/jestSetup.js'],
 };

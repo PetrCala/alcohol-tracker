@@ -2,7 +2,6 @@ apply plugin: "com.android.application"
 apply plugin: "com.facebook.react"
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle" // Load the .env file
 
-// import com.android.build.OutputFile
 
 /**
  * This is the configuration block to customize your React Native Android app.
@@ -53,13 +52,14 @@ react {
     // hermesFlags = ["-O", "-output-source-map"]
 }
 
+
 project.ext.envConfigFiles = [
     productionDebug: ".env.production",
     productionRelease: ".env.production",
     stagingDebug: ".env.staging",
     stagingRelease: ".env.staging",
-    developmentDebug: "env.development",
-    developmentRelease: "env.development",
+    developmentDebug: ".env.development",
+    developmentRelease: ".env.development",
 ]
 
 
@@ -74,7 +74,7 @@ def enableSeparateBuildPerCPUArchitecture = false
 /**
  * Set this to true to Run Proguard on Release builds to minify the Java bytecode.
  */
-def enableProguardInReleaseBuilds = true
+def enableProguardInReleaseBuilds = false
 
 /**
  * The preferred build flavor of JavaScriptCore (JSC)
@@ -103,7 +103,6 @@ def reactNativeArchitectures() {
 android {
     ndkVersion rootProject.ext.ndkVersion
 
-    buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     namespace "com.alcohol_tracker"
@@ -111,31 +110,30 @@ android {
         applicationId "com.alcohol_tracker"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1000030306
-        versionName "0.3.3-6"
+        versionCode 1000030106
+        versionName "0.3.1-6"
         vectorDrawables.useSupportLibrary = true
     }
 
-    flavorDimensions "default"
-    productFlavors {
-        // we need to define a production flavor but since it has default config, we can leave it empty
-        production
-        // Same for staging
-        staging {
-            // If  are building a version that won't be uploaded to the play store, we don't have to use production keys
-            // applies all non-production flavors
-            applicationIdSuffix ".staging"
-            signingConfig signingConfigs.debug
-            resValue "string", "build_config_package", "com.alcohol_tracker"
-        }
-        development {
-            // If  are building a version that won't be uploaded to the play store, we don't have to use production keys
-            // applies all non-production flavors
-            applicationIdSuffix ".dev"
-            signingConfig signingConfigs.debug
-            resValue "string", "build_config_package", "com.alcohol_tracker"
-        }
-    }
+    // flavorDimensions "default"
+    // productFlavors {
+    //     // we need to define a production flavor but since it has default config, we can leave it empty
+    //     production
+    //     staging {
+    //         // If  are building a version that won't be uploaded to the play store, we don't have to use production keys
+    //         // applies all non-production flavors
+    //         applicationIdSuffix ".staging"
+    //         signingConfig signingConfigs.debug
+    //         resValue "string", "build_config_package", "com.alcohol_tracker"
+    //     }
+    //     development {
+    //         // If  are building a version that won't be uploaded to the play store, we don't have to use production keys
+    //         // applies all non-production flavors
+    //         applicationIdSuffix ".dev"
+    //         signingConfig signingConfigs.debug
+    //         resValue "string", "build_config_package", "com.alcohol_tracker"
+    //     }
+    // }
 
     splits {
         abi {
@@ -145,19 +143,18 @@ android {
             include (*reactNativeArchitectures())
         }
     }
-
     signingConfigs {
-        release {
-            storeFile file(MYAPP_UPLOAD_STORE_FILE)
-            storePassword System.getenv('MYAPP_UPLOAD_STORE_PASSWORD')
-            keyAlias MYAPP_UPLOAD_KEY_ALIAS
-            keyPassword System.getenv('MYAPP_UPLOAD_KEY_PASSWORD')
-        }
         debug {
             storeFile file('debug.keystore')
             storePassword 'android'
             keyAlias 'androiddebugkey'
             keyPassword 'android'
+        }
+        release {
+            storeFile file(MYAPP_UPLOAD_STORE_FILE)
+            storePassword System.getenv('MYAPP_UPLOAD_STORE_PASSWORD')
+            keyAlias MYAPP_UPLOAD_KEY_ALIAS
+            keyPassword System.getenv('MYAPP_UPLOAD_KEY_PASSWORD')
         }
     }
     buildTypes {
@@ -165,8 +162,8 @@ android {
             signingConfig signingConfigs.debug
         }
         release {
-            // signingConfig signingConfigs.release
-            productFlavors.production.signingConfig signingConfigs.release
+            signingConfig signingConfigs.release
+            // productFlavors.production.signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
 
@@ -179,7 +176,7 @@ android {
                 flavor.signingConfig signingConfigs.release
             }
             // ... except for the development (originally e2e) flavor, which we maybe want to build locally:
-            productFlavors.development.signingConfig signingConfigs.debug
+            // productFlavors.development.signingConfig signingConfigs.debug
         }
     }
 

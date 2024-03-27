@@ -82,7 +82,7 @@ const VerifyEmailPopup = (props: VerifyEmailPopupProps) => {
                   <ActivityIndicator size="small" color="#0000ff" />
                 ) : (
                   <Text style={styles.sendButtonText}>
-                    Send a verfiication email
+                    Send a verification email
                   </Text>
                 )}
               </TouchableOpacity>
