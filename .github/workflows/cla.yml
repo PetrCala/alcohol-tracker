@@ -39,4 +39,4 @@ jobs:
           remote-organization-name: 'Kiroku'
           remote-repository-name: 'CLA'
           lock-pullrequest-aftermerge: false
-          allowlist: OSBotify,snyk-bot
+          allowlist: OSBotify,snyk-bot, some-user
