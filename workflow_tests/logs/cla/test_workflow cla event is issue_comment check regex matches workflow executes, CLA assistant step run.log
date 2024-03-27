@@ -1,0 +1,6 @@
+time="2024-03-27T15:44:05+01:00" level=info msg="Using docker host 'unix:///var/run/docker.sock', and daemon socket 'unix:///var/run/docker.sock'"
+level=warning msg= ⚠ You are using Apple M-series chip and you have not specified container architecture, you might encounter issues while running act. If so, try running it with '--container-architecture linux/amd64'. ⚠ 
+
+[CLA Assistant/CLA] 🚀  Start image=ghcr.io/catthehacker/ubuntu:act-latest
+time="2024-03-27T15:44:05+01:00" level=info msg="Parallel tasks (0) below minimum, setting to 1"
+[CLA Assistant/CLA]   🐳  docker pull image=ghcr.io/catthehacker/ubuntu:act-latest platform= username= forcePull=true

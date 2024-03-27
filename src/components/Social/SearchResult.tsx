@@ -39,7 +39,6 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
   requestStatus,
   alreadyAFriend,
 }) => {
-  const {refetch} = useDatabaseData();
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
   const handleSendRequestPress = async (
@@ -51,7 +50,6 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
     try {
       setIsLoading(true);
       await sendFriendRequest(db, userFrom, userTo);
-      await refetch(['userData']);
       setIsLoading(false);
     } catch (error: any) {
       Alert.alert(
@@ -71,7 +69,6 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
     try {
       setIsLoading(true);
       await acceptFriendRequest(db, userFrom, userTo);
-      await refetch(['userData']);
       setIsLoading(false);
     } catch (error: any) {
       Alert.alert(

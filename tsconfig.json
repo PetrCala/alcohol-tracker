@@ -85,6 +85,7 @@
     "package.json", // Application version import
     "firebase.json",
     "**/alcohol-tracker*.json",
-    "react-native.config.js"
+    "react-native.config.js",
+    "workflow_tests"
   ]
 }

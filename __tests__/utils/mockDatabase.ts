@@ -78,6 +78,7 @@ export function initializeEmptyMockDatabase(): DatabaseProps {
     user_status: {},
     user_drinking_sessions: {},
     user_preferences: {},
+    user_session_placeholder: {},
     user_unconfirmed_days: {},
     users: {},
   };

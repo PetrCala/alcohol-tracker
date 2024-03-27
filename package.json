@@ -32,10 +32,13 @@
     "test-ts": "ts-node ./__tests__/e2e/SignUpRoutine.tsx",
     "deploy-functions": "firebase deploy --only functions --debug",
     "bump": "./scripts/bumpVersion.sh",
-    "analysis:run": "ts-node _dev/analysis/main.tsx"
+    "analysis:run": "ts-node _dev/analysis/main.tsx",
+    "workflow-test": "./workflow_tests/scripts/runWorkflowTests.sh"
   },
   "dependencies": {
     "@firebase/rules-unit-testing": "^3.0.1",
+    "@kie/act-js": "^2.6.0",
+    "@kie/mock-github": "^2.0.1",
     "@react-native-async-storage/async-storage": "1.18.2",
     "@react-native-community/clipboard": "^1.5.1",
     "@react-native-community/netinfo": "^9.4.1",

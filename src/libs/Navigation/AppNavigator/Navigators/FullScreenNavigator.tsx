@@ -1,47 +1,47 @@
-import React from 'react';
-import {View} from 'react-native';
-import useStyleUtils from '@hooks/useStyleUtils';
-import useThemeStyles from '@hooks/useThemeStyles';
-import useWindowDimensions from '@hooks/useWindowDimensions';
-import createCustomFullScreenNavigator from '@navigation/AppNavigator/createCustomFullScreenNavigator';
-import getRootNavigatorScreenOptions from '@navigation/AppNavigator/getRootNavigatorScreenOptions';
-import * as ModalStackNavigators from '@navigation/AppNavigator/ModalStackNavigators';
-import SCREENS from '@src/SCREENS';
+// import React from 'react';
+// import {View} from 'react-native';
+// import useStyleUtils from '@hooks/useStyleUtils';
+// import useThemeStyles from '@hooks/useThemeStyles';
+// import useWindowDimensions from '@hooks/useWindowDimensions';
+// import createCustomFullScreenNavigator from '@navigation/AppNavigator/createCustomFullScreenNavigator';
+// import getRootNavigatorScreenOptions from '@navigation/AppNavigator/getRootNavigatorScreenOptions';
+// import * as ModalStackNavigators from '@navigation/AppNavigator/ModalStackNavigators';
+// import SCREENS from '@src/SCREENS';
 
-const loadInitialSettingsPage = () =>
-  require('../../../../pages/settings/InitialSettingsPage')
-    .default as React.ComponentType;
+// const loadInitialSettingsPage = () =>
+//   require('../../../../pages/settings/InitialSettingsPage')
+//     .default as React.ComponentType;
 
-const RootStack = createCustomFullScreenNavigator();
+// const RootStack = createCustomFullScreenNavigator();
 
-function FullScreenNavigator() {
-  const styles = useThemeStyles();
-  const StyleUtils = useStyleUtils();
-  const {isSmallScreenWidth} = useWindowDimensions();
-  const screenOptions = getRootNavigatorScreenOptions(
-    isSmallScreenWidth,
-    styles,
-    StyleUtils,
-  );
+// function FullScreenNavigator() {
+//   const styles = useThemeStyles();
+//   const StyleUtils = useStyleUtils();
+//   const {isSmallScreenWidth} = useWindowDimensions();
+//   const screenOptions = getRootNavigatorScreenOptions(
+//     isSmallScreenWidth,
+//     styles,
+//     StyleUtils,
+//   );
 
-  return (
-    <View style={styles.rootNavigatorContainerStyles(isSmallScreenWidth)}>
-      <RootStack.Navigator>
-        <RootStack.Screen
-          name={SCREENS.SETTINGS.ROOT}
-          options={screenOptions.homeScreen}
-          getComponent={loadInitialSettingsPage}
-        />
-        <RootStack.Screen
-          name={SCREENS.SETTINGS_CENTRAL_PANE}
-          options={screenOptions.centralPaneNavigator}
-          component={ModalStackNavigators.AccountSettingsModalStackNavigator}
-        />
-      </RootStack.Navigator>
-    </View>
-  );
-}
+//   return (
+//     <View style={styles.rootNavigatorContainerStyles(isSmallScreenWidth)}>
+//       <RootStack.Navigator>
+//         <RootStack.Screen
+//           name={SCREENS.SETTINGS.ROOT}
+//           options={screenOptions.homeScreen}
+//           getComponent={loadInitialSettingsPage}
+//         />
+//         <RootStack.Screen
+//           name={SCREENS.SETTINGS_CENTRAL_PANE}
+//           options={screenOptions.centralPaneNavigator}
+//           component={ModalStackNavigators.AccountSettingsModalStackNavigator}
+//         />
+//       </RootStack.Navigator>
+//     </View>
+//   );
+// }
 
-FullScreenNavigator.displayName = 'FullScreenNavigator';
+// FullScreenNavigator.displayName = 'FullScreenNavigator';
 
-export default FullScreenNavigator;
+// export default FullScreenNavigator;
