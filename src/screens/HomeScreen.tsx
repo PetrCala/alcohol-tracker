@@ -237,13 +237,6 @@ function HomeScreen({}: HomeScreenProps) {
     });
   }, [userStatusData]);
 
-  useEffect(() => {
-    dispatch({
-      type: 'SET_VERIFY_EMAIL_MODAL_VISIBLE',
-      payload: !user?.emailVerified,
-    });
-  }, [user?.emailVerified]);
-
   useFocusEffect(
     React.useCallback(() => {
       // Update user status on home screen focus
