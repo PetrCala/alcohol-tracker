@@ -42,7 +42,7 @@ jobs:
         with:
           path-to-signatures: 'signatures/Kiroku/cla.json'
           path-to-document: 'https://github.com/${{ github.repository }}/blob/master/contributingGuides/CLA.md'
-          branch: 'signatures'
+          branch: 'main'
           remote-organization-name: 'PetrCala'
           remote-repository-name: 'Kiroku-CLA'
           lock-pullrequest-aftermerge: false
