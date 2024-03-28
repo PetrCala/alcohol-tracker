@@ -1,6 +1,5 @@
 apply plugin: "com.android.application"
 apply plugin: "com.facebook.react"
-apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle" // Load the .env file
 
 
 /**
@@ -180,6 +179,20 @@ android {
         }
     }
 
+   // Dynamically select the correct .env file
+    // applicationVariants.all { variant ->
+    //     def buildType = variant.buildType.name
+    //     def flavorName = variant.flavorName
+    //     // Construct the key for the env file based on the variant
+    //     def envFileKey = "${flavorName}${buildType.capitalize()}"
+    //     def envFile = project.ext.envConfigFiles[envFileKey]
+    //     if (envFile == null) {
+    //         throw GradleException("No .env configuration found for ${envFileKey}")
+    //     }
+    //     println("Using env file: $envFile")
+    //     // Here you set the path for the dotenv.gradle to find
+    //     project.ext.set("ENVFILE", envFile)
+    // }
 }
 
 dependencies {
@@ -201,4 +214,5 @@ dependencies {
     }
 }
 
+apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle" // Load the .env file
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
