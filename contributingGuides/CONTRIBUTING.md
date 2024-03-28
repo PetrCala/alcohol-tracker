@@ -33,7 +33,7 @@ program = gpg
 ```
 
 3. Open a **draft** a pull request using the pull request template, and make sure to fill in the required fields.
-4. A member of the Kiroku team will automatically be assigned to your pull request for review.
+4. A member of the Kiroku head developer team will automatically be assigned to your pull request for review.
 
 #### Submitting your pull request for review
 
@@ -44,7 +44,7 @@ program = gpg
    1. Lint - All code must pass lint checks before a merge of a pull request
 
 6. Make sure you do not use GitHub keywords in your comments (such as `fixes`), as these can mess with worfklows and other automatic checks. To avoid this, follow the pull request template when modifying your comments.
-7. Upon submission, include an explicit list of testing steps for all available platforms that validate your code works and does not break anything.
+7. Upon submission, include an explicit manual tests you performed that validates your changes work on all platforms.
 8. You're now ready to submit your pull request for final evaluation. Following your submission, the assigned reviewer will examine your PR. Depending on their assessment, your request may be accepted and merged, rejected, or you might be asked to make changes to your code.
 
 <!-- README links -->
