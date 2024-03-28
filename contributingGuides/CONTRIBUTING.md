@@ -4,7 +4,7 @@ Greetings, and thank you for your interest in contributing to the Kiroku open so
 
 ## Getting started
 
-Before you can jump into writing code, there are several mandatory things you must do. First, we kindly ask you to read this readme file in its entirety. Once you have done that, go ahead and review our coding practices in [this README file][main README].
+Before you can jump into writing code, there are several mandatory things you must do. First, we kindly ask you to read this readme file in its entirety. Once you have done that, go ahead and review our coding practices in [this README file][main README]. If you are not acquainted with the technology stack we employ in this project, make sure to also take a look at [this document][technology README], where you can find a list of concepts you need to familiarize yourself with before you can contribute to this repository.
 
 ## Join our Discord
 
@@ -50,4 +50,5 @@ program = gpg
 <!-- README links -->
 
 [main README]: https://github.com/PetrCala/Kiroku/blob/master/README.md
+[technology README]: https://github.com/PetrCala/Kiroku/blob/master/contributingGuides/TECHNOLOGY.md
 [Discord invitation]: https://discord.gg/mv8zcQz5
