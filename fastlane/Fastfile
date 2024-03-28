@@ -268,4 +268,10 @@ platform :ios do
 
   end
 
+  # https://docs.fastlane.tools/getting-started/ios/screenshots/
+  # lane :screenshots do
+  #   capture_screenshots
+  #   upload_to_app_store
+  # end
+
 end
