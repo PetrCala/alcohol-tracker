@@ -1,6 +1,6 @@
 # Contributing to Kiroku
 
-Greetings, and thank you for your interest in contributing to the Kiroku open source repository.
+Greetings, and thank you for your interest in contributing to the Kiroku open source repository. Your contribution, no matter how large or small it may be, is always highly welcome and appreciated.
 
 ## Getting started
 
