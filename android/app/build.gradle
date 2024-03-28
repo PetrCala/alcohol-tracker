@@ -115,25 +115,25 @@ android {
         vectorDrawables.useSupportLibrary = true
     }
 
-    // flavorDimensions "default"
-    // productFlavors {
-    //     // we need to define a production flavor but since it has default config, we can leave it empty
-    //     production
-    //     staging {
-    //         // If  are building a version that won't be uploaded to the play store, we don't have to use production keys
-    //         // applies all non-production flavors
-    //         applicationIdSuffix ".staging"
-    //         signingConfig signingConfigs.debug
-    //         resValue "string", "build_config_package", "com.alcohol_tracker"
-    //     }
-    //     development {
-    //         // If  are building a version that won't be uploaded to the play store, we don't have to use production keys
-    //         // applies all non-production flavors
-    //         applicationIdSuffix ".dev"
-    //         signingConfig signingConfigs.debug
-    //         resValue "string", "build_config_package", "com.alcohol_tracker"
-    //     }
-    // }
+    flavorDimensions "default"
+    productFlavors {
+        // we need to define a production flavor but since it has default config, we can leave it empty
+        production
+        staging {
+            // If  are building a version that won't be uploaded to the play store, we don't have to use production keys
+            // applies all non-production flavors
+            applicationIdSuffix ".staging"
+            signingConfig signingConfigs.debug
+            resValue "string", "build_config_package", "com.alcohol_tracker"
+        }
+        development {
+            // If  are building a version that won't be uploaded to the play store, we don't have to use production keys
+            // applies all non-production flavors
+            applicationIdSuffix ".dev"
+            signingConfig signingConfigs.debug
+            resValue "string", "build_config_package", "com.alcohol_tracker"
+        }
+    }
 
     splits {
         abi {
@@ -176,7 +176,7 @@ android {
                 flavor.signingConfig signingConfigs.release
             }
             // ... except for the development (originally e2e) flavor, which we maybe want to build locally:
-            // productFlavors.development.signingConfig signingConfigs.debug
+            productFlavors.development.signingConfig signingConfigs.debug
         }
     }
 

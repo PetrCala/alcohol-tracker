@@ -5,7 +5,7 @@
   "type": "commonjs",
   "license": "MIT",
   "scripts": {
-    "android": "ENVFILE=.env.development npx react-native run-android --mode=Debug --active-arch-only",
+    "android": "ENVFILE=.env.development npx react-native run-android --mode=developmentDebug --active-arch-only",
     "ios": "npx react-native run-ios --simulator=\"iPhone 15 Pro\" --scheme \"Kiroku (development)\" --mode=\"Debug\"",
     "pod-install": "cd ios && pod install && cd ..",
     "pod-reset": "./scripts/podReset.sh",
