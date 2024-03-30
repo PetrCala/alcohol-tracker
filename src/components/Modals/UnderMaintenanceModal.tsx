@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
   beaverImage: {
     width: screenWidth > screenHeight ? screenHeight * 0.8 : screenWidth * 0.8,
     height: screenWidth > screenHeight ? screenHeight * 0.8 : screenWidth * 0.8,
-    aspectRatio: 1, // Maintain aspect ratio
+    aspectRatio: 1,
     marginTop: -50,
     marginBottom: 30,
     borderRadius: 10,
