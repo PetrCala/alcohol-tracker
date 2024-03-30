@@ -51,7 +51,7 @@ import type {DateData} from 'react-native-calendars';
 import {getEmptySession} from '@libs/SessionUtils';
 import DBPATHS from '@database/DBPATHS';
 import type {StatData} from '@components/Items/StatOverview';
-import { StatsOverview} from '@components/Items/StatOverview';
+import {StatsOverview} from '@components/Items/StatOverview';
 import {getPlural} from '@libs/StringUtils';
 import {getReceivedRequestsCount} from '@libs/FriendUtils';
 import FriendRequestCounter from '@components/Social/FriendRequestCounter';
@@ -67,12 +67,12 @@ type State = {
   initializingSession: boolean;
   ongoingSessionId: DrinkingSessionId | undefined;
   verifyEmailModalVisible: boolean;
-}
+};
 
 type Action = {
   type: string;
   payload: any;
-}
+};
 
 const initialState: State = {
   visibleDateObject: dateToDateObject(new Date()),
@@ -136,7 +136,9 @@ function HomeScreen({}: HomeScreenProps) {
 
   // Handle drinking session button press
   const startDrinkingSession = async () => {
-    if (!user) {return null;}
+    if (!user) {
+      return null;
+    }
     if (state.ongoingSessionId) {
       Alert.alert(
         'A session already exists',
@@ -197,7 +199,9 @@ function HomeScreen({}: HomeScreenProps) {
 
   // Monitor visible month and various statistics
   useMemo(() => {
-    if (!preferences) {return;}
+    if (!preferences) {
+      return;
+    }
     const drinkingSessionArray: DrinkingSessionArray = drinkingSessionData
       ? Object.values(drinkingSessionData)
       : [];
@@ -225,7 +229,9 @@ function HomeScreen({}: HomeScreenProps) {
   }, [drinkingSessionData, state.visibleDateObject, preferences]);
 
   useEffect(() => {
-    if (!userStatusData) {return;}
+    if (!userStatusData) {
+      return;
+    }
 
     const currentSessionId: DrinkingSessionId | undefined = userStatusData
       .latest_session?.ongoing
@@ -241,7 +247,9 @@ function HomeScreen({}: HomeScreenProps) {
   useFocusEffect(
     React.useCallback(() => {
       // Update user status on home screen focus
-      if (!user) {return;}
+      if (!user) {
+        return;
+      }
       try {
         updateUserLastOnline(db, user.uid);
       } catch (error: any) {
@@ -257,23 +265,29 @@ function HomeScreen({}: HomeScreenProps) {
     Navigation.navigate(ROUTES.LOGIN);
     return;
   }
-  if (!isOnline) {return <UserOffline />;}
-  if (isLoading || state.initializingSession)
-    {return (
+  if (!isOnline) {
+    return <UserOffline />;
+  }
+  if (isLoading || state.initializingSession) {
+    return (
       <LoadingData
         loadingText={
           state.initializingSession ? 'Starting a new session...' : ''
         }
       />
-    );}
-  if (!preferences || !userData) {return;}
+    );
+  }
+  if (!preferences || !userData) {
+    return;
+  }
 
   return (
     <ScreenWrapper testID={HomeScreen.displayName}>
       <View style={commonStyles.headerContainer}>
         {userData && (
           <View style={styles.profileContainer}>
-            <TouchableOpacity accessibilityRole="button"
+            <TouchableOpacity
+              accessibilityRole="button"
               onPress={() =>
                 Navigation.navigate(ROUTES.PROFILE.getRoute(user.uid))
               }
@@ -307,6 +321,7 @@ function HomeScreen({}: HomeScreenProps) {
             onPress={openSessionInProgress}
           />
         ) : null}
+        {/* User verification modal -- Enable later on
         {user.emailVerified ? null : (
           <MessageBanner
             text="Your email is not verified!"
@@ -314,7 +329,7 @@ function HomeScreen({}: HomeScreenProps) {
               dispatch({type: 'SET_VERIFY_EMAIL_MODAL_VISIBLE', payload: true})
             }
           />
-        )}
+        )} */}
         <View style={styles.statsOverviewHolder}>
           <StatsOverview statsData={statsData} />
         </View>
@@ -382,7 +397,8 @@ function HomeScreen({}: HomeScreenProps) {
         </View>
       </View>
       {state.ongoingSessionId ? null : (
-        <TouchableOpacity accessibilityRole="button"
+        <TouchableOpacity
+          accessibilityRole="button"
           style={styles.startSessionButton}
           onPress={startDrinkingSession}>
           <Image source={KirokuIcons.Plus} style={styles.startSessionImage} />

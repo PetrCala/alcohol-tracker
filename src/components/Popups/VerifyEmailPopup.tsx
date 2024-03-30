@@ -73,9 +73,10 @@ const VerifyEmailPopup = (props: VerifyEmailPopupProps) => {
               <Text
                 style={
                   styles.emailSentText
-                }>{`Email has been sent to\n${email}`}</Text>
+                }>{`A verification email has been sent to\n${email}`}</Text>
             ) : (
-              <TouchableOpacity accessibilityRole="button"
+              <TouchableOpacity
+                accessibilityRole="button"
                 style={styles.sendButton}
                 onPress={handleSendEmailPress}>
                 {sendingEmail ? (
@@ -87,7 +88,8 @@ const VerifyEmailPopup = (props: VerifyEmailPopupProps) => {
                 )}
               </TouchableOpacity>
             )}
-            <TouchableOpacity accessibilityRole="button"
+            <TouchableOpacity
+              accessibilityRole="button"
               style={styles.cancelButton}
               onPress={handleCloseModal}>
               <Text style={styles.cancelButtonText}>Close</Text>
