@@ -19,7 +19,7 @@ As a general outline, you should follow these contribution steps:
 #### Write code and create a pull request
 
 1. Fork the repository and create a new branch.
-2. All of your commits need to be signed. The easiest way to do that is to generate a new GPG key and add it to your GitHub account. Once you've done that, you can automatically sign all your commits by adding the following to your `.gitconfig`:
+2. All of your commits need to be [signed](https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits). The easiest way to do that is to [generate a new GPG key](https://docs.github.com/en/authentication/managing-commit-signature-verification/generating-a-new-gpg-key) and [add it to your GitHub account](https://docs.github.com/en/authentication/managing-commit-signature-verification/adding-a-gpg-key-to-your-github-account). Once you've done that, you can automatically sign all your commits by adding the following to your `.gitconfig`:
 
 ```bash
 [commit]
