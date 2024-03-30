@@ -76,7 +76,7 @@ class JobMocker {
           }
           if (jobWith && 'with' in mockStep) {
             // Assuming there's a logical condition where jobWith should be assigned.
-            (mockStep as any)['with'] = jobWith; // Use bracket notation if `with` is a problematic keyword
+            (mockStep as any).with = jobWith; // Use bracket notation if `with` is a problematic keyword
           }
 
           // TypeScript should now recognize `mockStep` as a valid StepIdentifier, but make sure to adjust logic for id and with properties as necessary.

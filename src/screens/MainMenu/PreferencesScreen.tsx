@@ -19,21 +19,21 @@ import CustomSwitch from '@components/CustomSwitch';
 import NumericSlider from '@components/Popups/NumericSlider';
 import {getDefaultPreferences} from '@database/users';
 import MainHeader from '@components/Header/MainHeader';
-import {Preferences} from '@src/types/database';
+import type {Preferences} from '@src/types/database';
 import CONST from '@src/CONST';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
-import {StackScreenProps} from '@react-navigation/stack';
-import {MainMenuNavigatorParamList} from '@libs/Navigation/types';
-import SCREENS from '@src/SCREENS';
+import type {StackScreenProps} from '@react-navigation/stack';
+import type {MainMenuNavigatorParamList} from '@libs/Navigation/types';
+import type SCREENS from '@src/SCREENS';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import LoadingData from '@components/LoadingData';
 import {isEqual} from 'lodash';
 import ScreenWrapper from '@components/ScreenWrapper';
 
-interface PreferencesListProps {
+type PreferencesListProps = {
   id: string;
-  initialContents: {key: string; label: string; value: string}[];
+  initialContents: Array<{key: string; label: string; value: string}>;
   onButtonPress: (key: string, label: string, value: number) => void;
 }
 
@@ -45,7 +45,7 @@ const PreferencesList: React.FC<PreferencesListProps> = ({
   return (
     <View style={styles.preferencesListContainer}>
       {initialContents.map((item, index) => {
-        let itemValue = parseFloat(item.value);
+        const itemValue = parseFloat(item.value);
 
         return (
           <View key={index} style={styles.preferencesListRowContainer}>
@@ -53,7 +53,7 @@ const PreferencesList: React.FC<PreferencesListProps> = ({
             {/* <View style={styles.preferencesListUseContainer}>
             </View> */}
             <View style={styles.preferencesListNumericContainer}>
-              <TouchableOpacity
+              <TouchableOpacity accessibilityRole="button"
                 style={styles.preferencesListButton}
                 onPress={() => onButtonPress(item.key, item.label, itemValue)}>
                 <Text style={styles.preferencesListText}>{itemValue}</Text>
@@ -87,7 +87,7 @@ function PreferencesScreen({route}: PreferencesScreenProps) {
   const [sliderKey, setSliderKey] = useState<string>('');
   const [saving, setSaving] = useState<boolean>(false);
   // Deconstruct the preferences
-  let defaultPreferences = getDefaultPreferences();
+  const defaultPreferences = getDefaultPreferences();
   const [currentPreferences, setCurrentPreferences] = useState<Preferences>(
     preferences || defaultPreferences,
   );
@@ -105,7 +105,7 @@ function PreferencesScreen({route}: PreferencesScreenProps) {
   };
 
   const handleSavePreferences = async () => {
-    if (!db || !user) return;
+    if (!db || !user) {return;}
     try {
       setSaving(true);
       await savePreferencesData(db, user.uid, currentPreferences);
@@ -117,7 +117,7 @@ function PreferencesScreen({route}: PreferencesScreenProps) {
   };
 
   const handleFirstDayOfWeekToggle = (value: boolean) => {
-    let newValue = value ? 'Monday' : 'Sunday';
+    const newValue = value ? 'Monday' : 'Sunday';
     setCurrentPreferences(prev => ({...prev, first_day_of_week: newValue}));
   };
 
@@ -144,8 +144,8 @@ function PreferencesScreen({route}: PreferencesScreenProps) {
   };
 
   useMemo(() => {
-    if (!preferences) return;
-    let newPreferences = {
+    if (!preferences) {return;}
+    const newPreferences = {
       first_day_of_week: preferences.first_day_of_week,
       units_to_colors: preferences.units_to_colors,
       drinks_to_units: preferences.drinks_to_units,
@@ -169,12 +169,12 @@ function PreferencesScreen({route}: PreferencesScreenProps) {
     };
   }, [currentPreferences]); // Add your state dependencies here
 
-  if (!isOnline) return <UserOffline />;
+  if (!isOnline) {return <UserOffline />;}
   if (!user || !preferences) {
     Navigation.navigate(ROUTES.LOGIN);
     return null;
   }
-  if (saving) return <LoadingData loadingText="Saving your preferences..." />;
+  if (saving) {return <LoadingData loadingText="Saving your preferences..." />;}
 
   return (
     <ScreenWrapper testID={PreferencesScreen.displayName}>
@@ -233,7 +233,7 @@ function PreferencesScreen({route}: PreferencesScreenProps) {
                 (key, index) => ({
                   key: key,
                   label: Object.values(CONST.DRINKS.NAMES)[index],
-                  value: currentPreferences.drinks_to_units[key]!.toString(), // Non-null assertion
+                  value: currentPreferences.drinks_to_units[key].toString(), // Non-null assertion
                 }),
               )}
               onButtonPress={(key, label, value) => {

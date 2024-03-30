@@ -1,8 +1,10 @@
 require('dotenv').config(); // Use .env variables in this file - CONFIG does not work here
-import {initializeApp, deleteApp, FirebaseApp} from 'firebase/app';
+import type { FirebaseApp} from 'firebase/app';
+import {initializeApp, deleteApp} from 'firebase/app';
 import * as firebaseJson from '../../../firebase.json';
+import type {
+  FirebaseStorage} from 'firebase/storage';
 import {
-  FirebaseStorage,
   connectStorageEmulator,
   getStorage,
 } from 'firebase/storage';

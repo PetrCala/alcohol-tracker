@@ -4,8 +4,8 @@
 jest.mock('@react-native-async-storage/async-storage', () => ({}));
 
 require('dotenv').config(); // Use .env variables in this file - CONFIG does not work here
-import {Auth} from 'firebase/auth';
-import {FirebaseApp} from 'firebase/app';
+import type {Auth} from 'firebase/auth';
+import type {FirebaseApp} from 'firebase/app';
 import {isConnectedToAuthEmulator} from '../../../src/libs/Firebase/FirebaseUtils';
 import {describeWithEmulator} from '../../utils/emulators/emulatorUtils';
 import {

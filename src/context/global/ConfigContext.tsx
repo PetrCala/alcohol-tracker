@@ -1,4 +1,5 @@
-﻿import {ReactNode, useEffect, useReducer} from 'react';
+﻿import type {ReactNode} from 'react';
+import { useEffect, useReducer} from 'react';
 
 import {useUserConnection} from './UserConnectionContext';
 import UserOffline from '../../components/UserOffline';
@@ -6,7 +7,7 @@ import {listenForDataChanges} from '../../database/baseFunctions';
 import LoadingData from '../../components/LoadingData';
 import {useFirebase} from './FirebaseContext';
 import {validateAppVersion} from '../../libs/Validation';
-import {Config} from '@src/types/database';
+import type {Config} from '@src/types/database';
 import ForceUpdateModal from '@components/Modals/ForceUpdateModal';
 import DBPATHS from '@database/DBPATHS';
 import UnderMaintenanceModal from '@components/Modals/UnderMaintenanceModal';
@@ -44,10 +45,10 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({children}) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const updateLocalHooks = (newConfigData: Config | null) => {
-    let underMaintenance: boolean = isUnderMaintenance(
+    const underMaintenance: boolean = isUnderMaintenance(
       newConfigData?.maintenance,
     );
-    let minSupportedVersion = newConfigData?.app_settings.min_supported_version;
+    const minSupportedVersion = newConfigData?.app_settings.min_supported_version;
     const versionValidationResult = validateAppVersion(minSupportedVersion);
 
     dispatch({type: 'SET_UNDER_MAINTENANCE', payload: underMaintenance});
@@ -58,9 +59,9 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({children}) => {
   };
 
   useEffect(() => {
-    if (!db) return;
+    if (!db) {return;}
     const configPath = DBPATHS.CONFIG;
-    let stopListening = listenForDataChanges(db, configPath, (data: Config) => {
+    const stopListening = listenForDataChanges(db, configPath, (data: Config) => {
       dispatch({type: 'SET_IS_LOADING', payload: true});
       dispatch({type: 'SET_CONFIG', payload: data});
       updateLocalHooks(data);
@@ -71,11 +72,11 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({children}) => {
   }, []);
 
   // Modals to render before navigation is initialized
-  if (!isOnline) return <UserOffline />;
-  if (state.isLoading) return <LoadingData />;
+  if (!isOnline) {return <UserOffline />;}
+  if (state.isLoading) {return <LoadingData />;}
   if (state.underMaintenance)
-    return <UnderMaintenanceModal config={state.config} />;
-  if (!state.versionValid) return <ForceUpdateModal />;
+    {return <UnderMaintenanceModal config={state.config} />;}
+  if (!state.versionValid) {return <ForceUpdateModal />;}
 
   return <>{children}</>;
 };

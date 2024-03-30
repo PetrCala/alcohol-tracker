@@ -1,8 +1,8 @@
-import CONST from '@src/CONST';
-import DeepValueOf from './utils/DeepValueOf';
+import type CONST from '@src/CONST';
+import type DeepValueOf from './utils/DeepValueOf';
 
 declare module 'react-native-config' {
-  export interface NativeConfig {
+  export type NativeConfig = {
     ENVIRONMENT: DeepValueOf<typeof CONST.ENVIRONMENT>;
     API_KEY: string;
     AUTH_DOMAIN: string;

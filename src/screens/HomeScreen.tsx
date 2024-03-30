@@ -14,7 +14,7 @@ import {
 import MenuIcon from '@components/Buttons/MenuIcon';
 import SessionsCalendar from '@components/Calendar';
 import LoadingData from '@components/LoadingData';
-import {DateObject} from '@src/types/time';
+import type {DateObject} from '@src/types/time';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {
   dateToDateObject,
@@ -35,22 +35,23 @@ import {useFirebase} from '@context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
 import {generateDatabaseKey} from '@database/baseFunctions';
 import CONST from '@src/CONST';
-import {
+import type {
   DrinkingSession,
   DrinkingSessionArray,
   DrinkingSessionId,
 } from '@src/types/database';
 import ROUTES from '@src/ROUTES';
 import Navigation, {navigationRef} from '@navigation/Navigation';
-import {StackScreenProps} from '@react-navigation/stack';
+import type {StackScreenProps} from '@react-navigation/stack';
 import {useFocusEffect} from '@react-navigation/native';
-import {BottomTabNavigatorParamList} from '@libs/Navigation/types';
-import SCREENS from '@src/SCREENS';
+import type {BottomTabNavigatorParamList} from '@libs/Navigation/types';
+import type SCREENS from '@src/SCREENS';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
-import {DateData} from 'react-native-calendars';
+import type {DateData} from 'react-native-calendars';
 import {getEmptySession} from '@libs/SessionUtils';
 import DBPATHS from '@database/DBPATHS';
-import {StatData, StatsOverview} from '@components/Items/StatOverview';
+import type {StatData} from '@components/Items/StatOverview';
+import { StatsOverview} from '@components/Items/StatOverview';
 import {getPlural} from '@libs/StringUtils';
 import {getReceivedRequestsCount} from '@libs/FriendUtils';
 import FriendRequestCounter from '@components/Social/FriendRequestCounter';
@@ -58,7 +59,7 @@ import ScreenWrapper from '@components/ScreenWrapper';
 import MessageBanner from '@components/Info/MessageBanner';
 import VerifyEmailPopup from '@components/Popups/VerifyEmailPopup';
 
-interface State {
+type State = {
   visibleDateObject: DateObject;
   drinkingSessionsCount: number;
   drinksConsumed: number;
@@ -68,7 +69,7 @@ interface State {
   verifyEmailModalVisible: boolean;
 }
 
-interface Action {
+type Action = {
   type: string;
   payload: any;
 }
@@ -135,7 +136,7 @@ function HomeScreen({}: HomeScreenProps) {
 
   // Handle drinking session button press
   const startDrinkingSession = async () => {
-    if (!user) return null;
+    if (!user) {return null;}
     if (state.ongoingSessionId) {
       Alert.alert(
         'A session already exists',
@@ -196,20 +197,20 @@ function HomeScreen({}: HomeScreenProps) {
 
   // Monitor visible month and various statistics
   useMemo(() => {
-    if (!preferences) return;
+    if (!preferences) {return;}
     const drinkingSessionArray: DrinkingSessionArray = drinkingSessionData
       ? Object.values(drinkingSessionData)
       : [];
-    let thisMonthDrinks = calculateThisMonthDrinks(
+    const thisMonthDrinks = calculateThisMonthDrinks(
       state.visibleDateObject,
       drinkingSessionArray,
     );
-    let thisMonthUnits = calculateThisMonthUnits(
+    const thisMonthUnits = calculateThisMonthUnits(
       state.visibleDateObject,
       drinkingSessionArray,
       preferences.drinks_to_units,
     );
-    let thisMonthSessionCount = getSingleMonthDrinkingSessions(
+    const thisMonthSessionCount = getSingleMonthDrinkingSessions(
       timestampToDate(state.visibleDateObject.timestamp),
       drinkingSessionArray,
       false,
@@ -224,7 +225,7 @@ function HomeScreen({}: HomeScreenProps) {
   }, [drinkingSessionData, state.visibleDateObject, preferences]);
 
   useEffect(() => {
-    if (!userStatusData) return;
+    if (!userStatusData) {return;}
 
     const currentSessionId: DrinkingSessionId | undefined = userStatusData
       .latest_session?.ongoing
@@ -240,7 +241,7 @@ function HomeScreen({}: HomeScreenProps) {
   useFocusEffect(
     React.useCallback(() => {
       // Update user status on home screen focus
-      if (!user) return;
+      if (!user) {return;}
       try {
         updateUserLastOnline(db, user.uid);
       } catch (error: any) {
@@ -256,23 +257,23 @@ function HomeScreen({}: HomeScreenProps) {
     Navigation.navigate(ROUTES.LOGIN);
     return;
   }
-  if (!isOnline) return <UserOffline />;
+  if (!isOnline) {return <UserOffline />;}
   if (isLoading || state.initializingSession)
-    return (
+    {return (
       <LoadingData
         loadingText={
           state.initializingSession ? 'Starting a new session...' : ''
         }
       />
-    );
-  if (!preferences || !userData) return;
+    );}
+  if (!preferences || !userData) {return;}
 
   return (
     <ScreenWrapper testID={HomeScreen.displayName}>
       <View style={commonStyles.headerContainer}>
         {userData && (
           <View style={styles.profileContainer}>
-            <TouchableOpacity
+            <TouchableOpacity accessibilityRole="button"
               onPress={() =>
                 Navigation.navigate(ROUTES.PROFILE.getRoute(user.uid))
               }
@@ -381,7 +382,7 @@ function HomeScreen({}: HomeScreenProps) {
         </View>
       </View>
       {state.ongoingSessionId ? null : (
-        <TouchableOpacity
+        <TouchableOpacity accessibilityRole="button"
           style={styles.startSessionButton}
           onPress={startDrinkingSession}>
           <Image source={KirokuIcons.Plus} style={styles.startSessionImage} />

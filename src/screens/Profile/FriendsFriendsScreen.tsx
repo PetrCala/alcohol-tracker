@@ -6,7 +6,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import {
+import type {
   FriendRequestStatus,
   ProfileList,
   FriendRequestList,
@@ -24,19 +24,19 @@ import SearchWindow from '@components/Social/SearchWindow';
 import MainHeader from '@components/Header/MainHeader';
 import GrayHeader from '@components/Header/GrayHeader';
 import {getCommonFriends, getCommonFriendsCount} from '@libs/FriendUtils';
-import {
+import type {
   UserIdToNicknameMapping,
   UserSearchResults,
 } from '@src/types/various/Search';
 import {objKeys} from '@libs/DataHandling';
 import SeeProfileButton from '@components/Buttons/SeeProfileButton';
-import GeneralAction from '@src/types/various/GeneralAction';
+import type GeneralAction from '@src/types/various/GeneralAction';
 import commonStyles from '@src/styles/commonStyles';
 import {getNicknameMapping} from '@libs/SearchUtils';
 import FillerView from '@components/FillerView';
-import {StackScreenProps} from '@react-navigation/stack';
-import {ProfileNavigatorParamList} from '@libs/Navigation/types';
-import SCREENS from '@src/SCREENS';
+import type {StackScreenProps} from '@react-navigation/stack';
+import type {ProfileNavigatorParamList} from '@libs/Navigation/types';
+import type SCREENS from '@src/SCREENS';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
@@ -44,13 +44,13 @@ import DBPATHS from '@database/DBPATHS';
 import {readDataOnce} from '@database/baseFunctions';
 import ScreenWrapper from '@components/ScreenWrapper';
 
-interface State {
+type State = {
   searching: boolean;
   friends: UserList | undefined;
   displayedFriends: UserSearchResults;
   commonFriends: UserSearchResults;
   otherFriends: UserSearchResults;
-  requestStatuses: {[userId: string]: FriendRequestStatus | undefined};
+  requestStatuses: Record<string, FriendRequestStatus | undefined>;
   noUsersFound: boolean;
   displayData: ProfileList;
   isLoading: boolean;
@@ -107,11 +107,11 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
 
   const localSearch = async (searchText: string): Promise<void> => {
     try {
-      let searchMapping: UserIdToNicknameMapping = getNicknameMapping(
+      const searchMapping: UserIdToNicknameMapping = getNicknameMapping(
         state.displayData,
         'display_name',
       );
-      let relevantResults = searchArrayByText(
+      const relevantResults = searchArrayByText(
         objKeys(state.friends),
         searchText,
         searchMapping,
@@ -129,7 +129,7 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
   const updateDisplayData = async (
     searchResultData: UserSearchResults,
   ): Promise<void> => {
-    let newDisplayData: ProfileList = await fetchUserProfiles(
+    const newDisplayData: ProfileList = await fetchUserProfiles(
       db,
       searchResultData,
     );
@@ -140,9 +140,7 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
     const updateRequestStatuses = (
       friendRequests: FriendRequestList | undefined,
     ): void => {
-      let newRequestStatuses: {
-        [userId: string]: FriendRequestStatus;
-      } = {};
+      const newRequestStatuses: Record<string, FriendRequestStatus> = {};
       if (friendRequests) {
         Object.keys(friendRequests).forEach(userId => {
           newRequestStatuses[userId] = friendRequests[userId];
@@ -195,7 +193,7 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
   const fetchData = async () => {
     try {
       dispatch({type: 'SET_IS_LOADING', payload: true});
-      let userFriends: UserList | undefined = await readDataOnce(
+      const userFriends: UserList | undefined = await readDataOnce(
         db,
         DBPATHS.USERS_USER_ID_FRIENDS.getRoute(userId),
       );
@@ -228,7 +226,7 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
   }, [userData, state.friends, state.requestStatuses]);
 
   useMemo(() => {
-    let noUsersFound: boolean = true;
+    let noUsersFound = true;
     if (isNonEmptyArray(state.displayedFriends)) {
       noUsersFound = false;
     }

@@ -1,4 +1,6 @@
 ﻿import React, {useContext, useEffect, useState} from 'react';
+import type {
+  ImageSourcePropType} from 'react-native';
 import {
   View,
   Text,
@@ -7,12 +9,12 @@ import {
   ScrollView,
   Image,
   Alert,
-  Keyboard,
-  ImageSourcePropType,
+  Keyboard
 } from 'react-native';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import YesNoPopup from '@components/Popups/YesNoPopup';
-import {UserCredential, deleteUser, signOut} from 'firebase/auth';
+import type {UserCredential} from 'firebase/auth';
+import { deleteUser, signOut} from 'firebase/auth';
 import {version as _version} from '../../../package.json';
 import {deleteUserData, reauthentificateUser} from '@database/users';
 import FeedbackPopup from '@components/Popups/FeedbackPopup';
@@ -29,9 +31,9 @@ import GrayHeader from '@components/Header/GrayHeader';
 import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 import CONST from '@src/CONST';
 import type {FeedbackList} from '@src/types/database';
-import {StackScreenProps} from '@react-navigation/stack';
-import {MainMenuNavigatorParamList} from '@navigation/types';
-import SCREENS from '@src/SCREENS';
+import type {StackScreenProps} from '@react-navigation/stack';
+import type {MainMenuNavigatorParamList} from '@navigation/types';
+import type SCREENS from '@src/SCREENS';
 import Navigation from '@navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
@@ -53,7 +55,7 @@ const MenuItem: React.FC<MainMenuItemProps> = ({heading, data, index}) => (
   <View key={index}>
     <GrayHeader headerText={heading} />
     {data.map((button, bIndex) => (
-      <TouchableOpacity
+      <TouchableOpacity accessibilityRole="button"
         key={bIndex}
         style={styles.button}
         onPress={button.action}>
@@ -75,7 +77,7 @@ function MainMenuScreen({route}: MainMenuScreenProps) {
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
-  if (!user) return null;
+  if (!user) {return null;}
   // Hooks
   const [FeedbackList, setFeedbackList] = useState<FeedbackList>({});
   // Modals
@@ -107,7 +109,7 @@ function MainMenuScreen({route}: MainMenuScreenProps) {
   };
 
   const handleDeleteUser = async (password: string) => {
-    if (!db || !userData) return;
+    if (!db || !userData) {return;}
     // Reauthentificate the user
     let authentificationResult: void | UserCredential;
     try {
@@ -125,7 +127,7 @@ function MainMenuScreen({route}: MainMenuScreenProps) {
     // Delete the user's information from the realtime database
     try {
       setDeletingUser(true);
-      let userNickname = userData.profile.display_name;
+      const userNickname = userData.profile.display_name;
       await deleteUserData(
         db,
         user.uid,
@@ -155,7 +157,7 @@ function MainMenuScreen({route}: MainMenuScreenProps) {
 
   /** Handle cases when deleting a user fails */
   const handleInvalidDeleteUser = (error: any) => {
-    var err = error.message;
+    const err = error.message;
     if (err.includes('auth/requires-recent-login')) {
       // Should never happen
       Alert.alert(
@@ -178,7 +180,7 @@ function MainMenuScreen({route}: MainMenuScreenProps) {
   };
 
   const handleSubmitFeedback = (feedback: string) => {
-    if (!db) return;
+    if (!db) {return;}
     if (feedback !== '') {
       submitFeedback(db, user.uid, feedback);
       // Popup an information button at the top (your feedback has been submitted)
@@ -199,10 +201,10 @@ function MainMenuScreen({route}: MainMenuScreenProps) {
   // Monitor feedback data
   if (userData?.role == 'admin') {
     useEffect(() => {
-      if (!db) return;
+      if (!db) {return;}
       // Start listening for changes when the component mounts
-      let dbRef = `feedback/`;
-      let stopListening = listenForDataChanges(
+      const dbRef = `feedback/`;
+      const stopListening = listenForDataChanges(
         db,
         dbRef,
         (data: FeedbackList) => {
@@ -277,7 +279,7 @@ function MainMenuScreen({route}: MainMenuScreenProps) {
     },
   ];
 
-  let adminData = [
+  const adminData = [
     {
       heading: 'Admin settings',
       data: [
@@ -292,7 +294,7 @@ function MainMenuScreen({route}: MainMenuScreenProps) {
     },
   ];
 
-  let policiesData = [
+  const policiesData = [
     {
       label: 'Terms of service',
       icon: KirokuIcons.Book,
@@ -315,8 +317,8 @@ function MainMenuScreen({route}: MainMenuScreenProps) {
     modalData = [...modalData, ...adminData]; // Add admin settings
   }
 
-  if (!isOnline) return <UserOffline />;
-  if (!db || !preferences || !userData) return null; // Should never be null
+  if (!isOnline) {return <UserOffline />;}
+  if (!db || !preferences || !userData) {return null;} // Should never be null
 
   return (
     <ScreenWrapper testID={MainMenuScreen.displayName}>

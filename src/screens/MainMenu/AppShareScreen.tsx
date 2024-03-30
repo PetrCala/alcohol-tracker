@@ -1,9 +1,9 @@
 import MainHeader from '@components/Header/MainHeader';
 import ScreenWrapper from '@components/ScreenWrapper';
 import Navigation from '@libs/Navigation/Navigation';
-import {MainMenuNavigatorParamList} from '@libs/Navigation/types';
-import {StackScreenProps} from '@react-navigation/stack';
-import SCREENS from '@src/SCREENS';
+import type {MainMenuNavigatorParamList} from '@libs/Navigation/types';
+import type {StackScreenProps} from '@react-navigation/stack';
+import type SCREENS from '@src/SCREENS';
 import commonStyles from '@src/styles/commonStyles';
 import * as KirokuImages from '@components/Icon/KirokuImages';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
@@ -52,7 +52,7 @@ function AppShareScreen({route}: AppShareScreenProps) {
             <Text style={styles.mainText}>either through a link</Text>
           </View>
           <View style={[styles.centeringContainer, {height: '80%'}]}>
-            <TouchableOpacity
+            <TouchableOpacity accessibilityRole="button"
               style={styles.linkCopyButton}
               onPress={handleCopyLinkPress}>
               <Text style={styles.shareLinkText}>
@@ -67,7 +67,7 @@ function AppShareScreen({route}: AppShareScreenProps) {
           <View style={[styles.centeringContainer, {height: '15%'}]}>
             <Text style={styles.mainText}>or through a QR code</Text>
           </View>
-          <TouchableOpacity
+          <TouchableOpacity accessibilityRole="button"
             onPress={() => Linking.openURL(CONST.APP_QR_CODE_LINK)}
             style={[styles.centeringContainer, {height: 'auto'}]}>
             <Image source={KirokuImages.QrCodeWithLogo} style={styles.qrCode} />

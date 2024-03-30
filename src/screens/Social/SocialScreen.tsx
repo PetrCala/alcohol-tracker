@@ -14,11 +14,11 @@ import FriendRequestScreen from './FriendRequestScreen';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import MainHeader from '@components/Header/MainHeader';
 import {getReceivedRequestsCount} from '@libs/FriendUtils';
-import {UserProps} from '@src/types/database';
+import type {UserProps} from '@src/types/database';
 import FriendSearchScreen from './FriendSearchScreen';
-import {StackScreenProps} from '@react-navigation/stack';
-import SCREENS from '@src/SCREENS';
-import {SocialNavigatorParamList} from '@libs/Navigation/types';
+import type {StackScreenProps} from '@react-navigation/stack';
+import type SCREENS from '@src/SCREENS';
+import type {SocialNavigatorParamList} from '@libs/Navigation/types';
 import Navigation from '@libs/Navigation/Navigation';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import FriendRequestCounter from '@components/Social/FriendRequestCounter';
@@ -43,7 +43,7 @@ const SocialFooterButton: React.FC<SocialFooterButtonProps> = ({
 }) => {
   return (
     <View style={styles.footerPartContainer}>
-      <TouchableOpacity
+      <TouchableOpacity accessibilityRole="button"
         style={[
           styles.footerButton,
           currentIndex === index ? {backgroundColor: '#ebeb02'} : {},
@@ -86,7 +86,7 @@ function SocialScreen({route}: SocialScreenProps) {
   const [index, setIndex] = useState<number>(0);
 
   const renderScene = ({route}: {route: RouteType}) => {
-    if (!userData) return null;
+    if (!userData) {return null;}
     switch (route.key) {
       case 'friendList':
         return <FriendListScreen />;

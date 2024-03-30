@@ -1,5 +1,5 @@
-import {UserId, UserList} from './DatabaseCommon';
-import FriendRequestList from './FriendRequestList';
+import type {UserId, UserList} from './DatabaseCommon';
+import type FriendRequestList from './FriendRequestList';
 
 type Profile = {
   display_name: string;

@@ -1,10 +1,11 @@
 // !! Run using npm test - to run using bun test, resolve first issue with Config -> mock react-native-config
 
 require('dotenv').config(); // Use .env variables in this file - CONFIG does not work here
+import type {
+  RulesTestEnvironment} from '@firebase/rules-unit-testing';
 import {
   assertFails,
-  assertSucceeds,
-  RulesTestEnvironment,
+  assertSucceeds
 } from '@firebase/rules-unit-testing';
 import {
   describeWithEmulator,
@@ -14,7 +15,7 @@ import {
   setupFirebaseRulesTestEnv,
   teardownFirebaseRulesTestEnv,
 } from '../../utils/emulators/firebaseRulesSetup';
-import {Feedback} from '@src/types/database';
+import type {Feedback} from '@src/types/database';
 import {setupGlobalMocks} from '../../utils/testUtils';
 import {
   createMockSession,
@@ -29,7 +30,7 @@ import {
 import CONST from '../../../src/CONST';
 import DBPATHS from '@database/DBPATHS';
 
-const testFeedbackId: string = 'testFeedbackId';
+const testFeedbackId = 'testFeedbackId';
 const testFeedback: Feedback = {
   submit_time: 0,
   text: 'test',
@@ -578,8 +579,8 @@ describeWithEmulator('Test friend request rules', () => {
   let authDb: any;
   let unauthDb: any;
   let adminDb: any;
-  let sentFriendRequest: string = CONST.FRIEND_REQUEST_STATUS.SENT;
-  let receivedFriendRequest: string = CONST.FRIEND_REQUEST_STATUS.RECEIVED;
+  const sentFriendRequest: string = CONST.FRIEND_REQUEST_STATUS.SENT;
+  const receivedFriendRequest: string = CONST.FRIEND_REQUEST_STATUS.RECEIVED;
   const friendRequestRef = DBPATHS.USERS_USER_ID_FRIEND_REQUESTS_REQUEST_ID;
   const friendRequestNodeRef = DBPATHS.USERS_USER_ID_FRIEND_REQUESTS;
   const fromAuthToOtherRef = friendRequestRef.getRoute(authUserId, otherUserId);

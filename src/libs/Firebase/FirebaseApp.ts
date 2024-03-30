@@ -1,8 +1,9 @@
-﻿import {
+﻿import type {
+  FirebaseApp as FirebaseAppProps} from 'firebase/app';
+import {
   initializeApp,
   getApp,
-  getApps,
-  FirebaseApp as FirebaseAppProps,
+  getApps
 } from 'firebase/app';
 import FirebaseConfig from './FirebaseConfig';
 

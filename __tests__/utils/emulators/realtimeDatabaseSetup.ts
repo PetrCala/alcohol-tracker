@@ -4,8 +4,9 @@ import {
   connectDatabaseEmulator,
   goOffline,
 } from 'firebase/database';
-import {initializeApp, deleteApp, FirebaseApp} from 'firebase/app';
-import {Database} from 'firebase/database';
+import type { FirebaseApp} from 'firebase/app';
+import {initializeApp, deleteApp} from 'firebase/app';
+import type {Database} from 'firebase/database';
 import * as firebaseJson from '../../../firebase.json';
 import {createMockDatabase} from '../mockDatabase';
 import {ref, set} from 'firebase/database';
@@ -25,7 +26,7 @@ export function setupRealtimeDatabaseTestEnv(): {
   });
 
   // Initialize the database
-  let db: Database = getDatabase(testApp);
+  const db: Database = getDatabase(testApp);
   const dbPort = parseInt(firebaseJson.emulators.database.port);
   connectDatabaseEmulator(db, 'localhost', dbPort);
 
@@ -48,9 +49,9 @@ export async function teardownRealtimeDatabaseTestEnv(
  */
 export async function fillDatabaseWithMockData(
   db: any,
-  noFriends: boolean = false,
+  noFriends = false,
 ): Promise<void> {
-  let mockDatabase = createMockDatabase(noFriends);
+  const mockDatabase = createMockDatabase(noFriends);
   await set(ref(db), mockDatabase);
   return db;
 }

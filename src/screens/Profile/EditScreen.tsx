@@ -5,9 +5,9 @@ import ScreenWrapper from '@components/ScreenWrapper';
 import ProfileOverview from '@components/Social/ProfileOverview';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import Navigation from '@libs/Navigation/Navigation';
-import {ProfileNavigatorParamList} from '@libs/Navigation/types';
-import {StackScreenProps} from '@react-navigation/stack';
-import SCREENS from '@src/SCREENS';
+import type {ProfileNavigatorParamList} from '@libs/Navigation/types';
+import type {StackScreenProps} from '@react-navigation/stack';
+import type SCREENS from '@src/SCREENS';
 import {useState} from 'react';
 import {
   Keyboard,
@@ -29,7 +29,7 @@ type EditItem = {
   // multiline: boolean;
 };
 
-type EditDataArray = Array<EditItem>;
+type EditDataArray = EditItem[];
 
 type EditScreenProps = StackScreenProps<
   ProfileNavigatorParamList,
@@ -71,7 +71,7 @@ function EditScreen({route}: EditScreenProps) {
     Navigation.goBack();
   };
 
-  if (!profileData) return;
+  if (!profileData) {return;}
 
   return (
     <ScreenWrapper testID={EditScreen.displayName}>
@@ -86,7 +86,7 @@ function EditScreen({route}: EditScreenProps) {
           keyboardShouldPersistTaps="handled"
           onScrollBeginDrag={Keyboard.dismiss}
           style={styles.scrollView}>
-          <TextInput
+          <TextInput accessibilityLabel="Text input field"
             style={styles.feedbackWindowText}
             onChangeText={() => {}}
             placeholder={'Write your feedback here'}

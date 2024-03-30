@@ -1,5 +1,5 @@
-import {UserId} from '@src/types/database';
-import {FetchDataKey} from './types';
+import type {UserId} from '@src/types/database';
+import type {FetchDataKey} from './types';
 import DBPATHS from '@database/DBPATHS';
 
 /** Given a database base key, fetch the full route to the database node

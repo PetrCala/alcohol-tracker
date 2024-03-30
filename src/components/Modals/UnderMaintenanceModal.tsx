@@ -1,4 +1,4 @@
-import {Config, Maintenance} from '@src/types/database';
+import type {Config, Maintenance} from '@src/types/database';
 import * as KirokuImages from '@components/Icon/KirokuImages';
 import {View, StyleSheet, Text, Image, Dimensions} from 'react-native';
 
@@ -9,8 +9,8 @@ type UnderMaintenanceProps = {
 /** Given a date, return this date in human-legible hours and minutes */
 function getHourMinute(date: Date): string {
   const pad = (num: number) => num.toString().padStart(2, '0');
-  let hours = pad(date.getHours());
-  let minutes = pad(date.getMinutes());
+  const hours = pad(date.getHours());
+  const minutes = pad(date.getMinutes());
   return `${hours}:${minutes}`;
 }
 

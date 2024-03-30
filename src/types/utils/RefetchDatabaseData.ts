@@ -1,4 +1,4 @@
-import {FetchDataKeys} from '@hooks/useFetchData/types';
+import type {FetchDataKeys} from '@hooks/useFetchData/types';
 
 type RefetchDatabaseData = (keys?: FetchDataKeys) => Promise<void>;
 

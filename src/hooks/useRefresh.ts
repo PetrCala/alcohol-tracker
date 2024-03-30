@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
-import {RefetchDatabaseData} from '@src/types/utils/RefetchDatabaseData';
-import {FetchDataKeys} from './useFetchData/types';
+import type {RefetchDatabaseData} from '@src/types/utils/RefetchDatabaseData';
+import type {FetchDataKeys} from './useFetchData/types';
 
-interface UseRefreshProps {
+type UseRefreshProps = {
   refetch: RefetchDatabaseData;
 }
 

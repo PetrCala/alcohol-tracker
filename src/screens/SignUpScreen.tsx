@@ -18,8 +18,9 @@ import {signUpUserWithEmailAndPassword} from '@libs/auth/auth';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {readDataOnce} from '@database/baseFunctions';
 import {useUserConnection} from '@context/global/UserConnectionContext';
+import type {
+  ValidationResult} from '@libs/Validation';
 import {
-  ValidationResult,
   isValidPassword,
   isValidPasswordConfirm,
   validateAppVersion,
@@ -28,7 +29,7 @@ import {
 import {deleteUserData, pushNewUserInfo} from '@database/users';
 import {handleErrors} from '@libs/ErrorHandling';
 import WarningMessage from '@components/Info/WarningMessage';
-import {Profile} from '@src/types/database';
+import type {Profile} from '@src/types/database';
 import DBPATHS from '@database/DBPATHS';
 import ValidityIndicatorIcon from '@components/ValidityIndicatorIcon';
 import SCREENS from '@src/SCREENS';
@@ -43,7 +44,7 @@ import LoadingData from '@components/LoadingData';
 import KeyboardAvoidingView from '@components/KeyboardAvoidingView';
 import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 
-interface State {
+type State = {
   email: string;
   username: string;
   password: string;
@@ -54,7 +55,7 @@ interface State {
   isLoading: boolean;
 }
 
-interface Action {
+type Action = {
   type: string;
   payload: any;
 }
@@ -131,7 +132,7 @@ function SignUpScreen() {
     await deleteUserData(db, newUserId, userNickname, undefined, undefined);
 
     // Delete the user from Firebase authentication
-    let auth = getAuth();
+    const auth = getAuth();
     if (auth.currentUser) {
       await auth.currentUser.delete();
     }
@@ -139,7 +140,7 @@ function SignUpScreen() {
 
   const handleSignUp = async () => {
     Keyboard.dismiss();
-    if (!isOnline) return;
+    if (!isOnline) {return;}
 
     const inputValidation = validateSignInInput(
       state.email,
@@ -166,7 +167,7 @@ function SignUpScreen() {
 
     let newUserId: string | undefined;
     let minSupportedVersion: string | null;
-    let minUserCreationPath =
+    const minUserCreationPath =
       DBPATHS.CONFIG_APP_SETTINGS_MIN_USER_CREATION_POSSIBLE_VERSION;
 
     dispatch({type: 'SET_LOADING', payload: true});
@@ -298,7 +299,7 @@ function SignUpScreen() {
   }, [state.password, state.passwordConfirm]);
 
   if (state.isLoading)
-    return <LoadingData loadingText="Creating your account..." />;
+    {return <LoadingData loadingText="Creating your account..." />;}
 
   return (
     <DismissKeyboard>
@@ -309,7 +310,7 @@ function SignUpScreen() {
         </View>
         <View style={styles.inputContainer}>
           <View style={styles.inputItemContainer}>
-            <TextInput
+            <TextInput accessibilityLabel="Text input field"
               placeholder="Email"
               placeholderTextColor={'#a8a8a8'}
               keyboardType="email-address"
@@ -322,7 +323,7 @@ function SignUpScreen() {
             />
           </View>
           <View style={styles.inputItemContainer}>
-            <TextInput
+            <TextInput accessibilityLabel="Text input field"
               placeholder="Username"
               placeholderTextColor={'#a8a8a8'}
               textContentType="username"
@@ -334,7 +335,7 @@ function SignUpScreen() {
             />
           </View>
           <View style={styles.inputItemContainer}>
-            <TextInput
+            <TextInput accessibilityLabel="Text input field"
               placeholder="Password"
               placeholderTextColor={'#a8a8a8'}
               textContentType="password"
@@ -350,7 +351,7 @@ function SignUpScreen() {
             ) : null}
           </View>
           <View style={styles.inputItemContainer}>
-            <TextInput
+            <TextInput accessibilityLabel="Text input field"
               placeholder="Confirm your password"
               placeholderTextColor={'#a8a8a8'}
               textContentType="password"
@@ -365,11 +366,11 @@ function SignUpScreen() {
               <ValidityIndicatorIcon isValid={state.passwordsMatch} />
             ) : null}
           </View>
-          <TouchableOpacity onPress={handleSignUp} style={styles.signUpButton}>
+          <TouchableOpacity accessibilityRole="button" onPress={handleSignUp} style={styles.signUpButton}>
             <Text style={styles.signUpButtonText}>Create account</Text>
           </TouchableOpacity>
           <View style={styles.loginContainer}>
-            <TouchableOpacity
+            <TouchableOpacity accessibilityRole="button"
               style={styles.loginButtonContainer}
               onPress={() => Navigation.goBack()}>
               <Text style={styles.loginInfoText}>Already a user?</Text>

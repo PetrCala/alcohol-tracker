@@ -10,7 +10,7 @@
   TouchableOpacity,
   View,
 } from 'react-native';
-import {
+import type {
   FriendRequestList,
   FriendRequestStatus,
   ProfileList,
@@ -22,7 +22,7 @@ import {useFirebase} from '@context/global/FirebaseContext';
 import {acceptFriendRequest, deleteFriendRequest} from '@database/friends';
 
 import LoadingData from '@components/LoadingData';
-import {Database} from 'firebase/database';
+import type {Database} from 'firebase/database';
 import NoFriendUserOverview from '@components/Social/NoFriendUserOverview';
 import {fetchUserProfiles} from '@database/profile';
 import headerStyles from '@src/styles/headerStyles';
@@ -100,11 +100,11 @@ const FriendRequestButtons: React.FC<RequestIdProps> = ({requestId}) => {
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  if (!user) return;
+  if (!user) {return;}
 
   return (
     <View style={styles.friendRequestButtonsContainer}>
-      <TouchableOpacity
+      <TouchableOpacity accessibilityRole="button"
         key={requestId + '-accept-request-button'}
         style={[styles.handleRequestButton, styles.acceptRequestButton]}
         onPress={() =>
@@ -116,7 +116,7 @@ const FriendRequestButtons: React.FC<RequestIdProps> = ({requestId}) => {
           <Text style={styles.handleRequestButtonText}>Accept</Text>
         )}
       </TouchableOpacity>
-      <TouchableOpacity
+      <TouchableOpacity accessibilityRole="button"
         key={requestId + '-reject-request-button'}
         style={[styles.handleRequestButton, styles.rejectRequestButton]}
         onPress={() =>
@@ -134,10 +134,10 @@ const FriendRequestPending: React.FC<RequestIdProps> = ({requestId}) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const user = auth.currentUser;
 
-  if (!user) return;
+  if (!user) {return;}
   return (
     <View style={styles.friendRequestPendingContainer}>
-      <TouchableOpacity
+      <TouchableOpacity accessibilityRole="button"
         style={[styles.handleRequestButton, styles.rejectRequestButton]}
         onPress={() =>
           handleRejectFriendRequest(db, user.uid, requestId, setIsLoading)
@@ -175,7 +175,7 @@ const FriendRequestItem: React.FC<FriendRequestItemProps> = ({
   friendRequests,
   displayData,
 }) => {
-  if (!friendRequests || !displayData) return null;
+  if (!friendRequests || !displayData) {return null;}
   const profileData = displayData[requestId];
   const requestStatus = friendRequests[requestId];
 
@@ -192,7 +192,7 @@ const FriendRequestItem: React.FC<FriendRequestItemProps> = ({
   );
 };
 
-interface State {
+type State = {
   isLoading: boolean;
   friendRequests: FriendRequestList | undefined;
   displayData: ProfileList;
@@ -202,7 +202,7 @@ interface State {
   requestsReceivedCount: number;
 }
 
-interface Action {
+type Action = {
   type: string;
   payload: any;
 }
@@ -256,7 +256,7 @@ function FriendRequestScreen() {
     db: Database,
     friendRequests: FriendRequestList | undefined,
   ): Promise<void> => {
-    let newDisplayData: ProfileList = await fetchUserProfiles(
+    const newDisplayData: ProfileList = await fetchUserProfiles(
       db,
       objKeys(friendRequests),
     );
@@ -277,7 +277,7 @@ function FriendRequestScreen() {
     const newRequestsReceived: string[] = [];
     if (!isEmptyObject(state.friendRequests)) {
       Object.keys(state.friendRequests).forEach(requestId => {
-        if (!state.friendRequests) return;
+        if (!state.friendRequests) {return;}
         if (
           state.friendRequests[requestId] === CONST.FRIEND_REQUEST_STATUS.SENT
         ) {
@@ -349,7 +349,7 @@ function FriendRequestScreen() {
           />
         )}
       </ScrollView>
-      <TouchableOpacity
+      <TouchableOpacity accessibilityRole="button"
         style={styles.searchScreenButton}
         onPress={() => Navigation.navigate(ROUTES.SOCIAL_FRIEND_SEARCH)}>
         <Image source={KirokuIcons.Search} style={styles.searchScreenImage} />

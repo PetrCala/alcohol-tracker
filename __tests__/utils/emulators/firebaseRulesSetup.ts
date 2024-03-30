@@ -1,12 +1,13 @@
 import fs from 'fs';
+import type {
+  RulesTestEnvironment} from '@firebase/rules-unit-testing';
 import {
-  initializeTestEnvironment,
-  RulesTestEnvironment,
+  initializeTestEnvironment
 } from '@firebase/rules-unit-testing';
 import CONFIG from '../../../src/CONFIG';
 import * as firebaseJson from '../../../firebase.json';
 
-interface TestEnvironmentResult {
+type TestEnvironmentResult = {
   testEnv: RulesTestEnvironment;
   authDb: any;
   unauthDb: any;
@@ -24,14 +25,14 @@ export async function setupFirebaseRulesTestEnv(): Promise<TestEnvironmentResult
     rules: fs.readFileSync('database.rules.json', 'utf8'),
   };
 
-  let testEnv: RulesTestEnvironment = await initializeTestEnvironment({
+  const testEnv: RulesTestEnvironment = await initializeTestEnvironment({
     projectId: projectId,
     database: emulatorConfig,
   });
 
-  let authDb: any = testEnv.authenticatedContext('authUserId').database();
-  let unauthDb: any = testEnv.unauthenticatedContext().database();
-  let adminDb: any = testEnv
+  const authDb: any = testEnv.authenticatedContext('authUserId').database();
+  const unauthDb: any = testEnv.unauthenticatedContext().database();
+  const adminDb: any = testEnv
     .authenticatedContext('authUserId', {admin: true})
     .database();
 

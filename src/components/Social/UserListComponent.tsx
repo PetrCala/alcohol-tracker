@@ -8,15 +8,16 @@ import {
   calculateAllUsersPriority,
   orderUsersByPriority,
 } from '@libs/algorithms/DisplayPriority';
-import {UserStatusList} from '@src/types/database';
-import {UserArray} from '@src/types/database/DatabaseCommon';
+import type {UserStatusList} from '@src/types/database';
+import type {UserArray} from '@src/types/database/DatabaseCommon';
 import React, {useState, useEffect, useMemo} from 'react';
+import type {
+  NativeScrollEvent,
+  NativeSyntheticEvent} from 'react-native';
 import {
   ActivityIndicator,
   Dimensions,
   Keyboard,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -34,7 +35,7 @@ import useRefresh from '@hooks/useRefresh';
 import {generateRandomString} from '@libs/StringUtils';
 import {sleep} from '@libs/TimeUtils';
 
-interface UserListProps {
+type UserListProps = {
   fullUserArray: UserArray;
   initialLoadSize: number;
   emptyListComponent?: React.ReactNode;
@@ -71,8 +72,8 @@ const UserListComponent: React.FC<UserListProps> = ({
   const [isInitialLoad, setIsInitialLoad] = useState<boolean>(true);
 
   const loadMoreUsers = async (additionalCount: number) => {
-    let arrayToSlice = userSubset ?? fullUserArray;
-    let newLoadSize = Math.min(
+    const arrayToSlice = userSubset ?? fullUserArray;
+    const newLoadSize = Math.min(
       currentLoadSize + additionalCount,
       arrayToSlice.length,
     );
@@ -135,16 +136,16 @@ const UserListComponent: React.FC<UserListProps> = ({
         return;
       }
       // Data not yet initialized during the initial load
-      if (isEmptyObject(userStatusList)) return;
+      if (isEmptyObject(userStatusList)) {return;}
       let arrayToSlice = userSubset ?? fullUserArray;
       if (orderUsers) {
-        let userPriorityList = calculateAllUsersPriority(
+        const userPriorityList = calculateAllUsersPriority(
           fullUserArray,
           userStatusList,
         );
         arrayToSlice = orderUsersByPriority(arrayToSlice, userPriorityList);
       }
-      let newDisplayArray = arrayToSlice.slice(0, currentLoadSize);
+      const newDisplayArray = arrayToSlice.slice(0, currentLoadSize);
       setDisplayUserArray(newDisplayArray);
       setIsInitialLoad(false);
     };

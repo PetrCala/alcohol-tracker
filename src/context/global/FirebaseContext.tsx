@@ -1,17 +1,21 @@
-﻿import {ReactNode, createContext, useContext} from 'react';
+﻿import type {ReactNode} from 'react';
+import { createContext, useContext} from 'react';
+import type {
+  Auth} from 'firebase/auth';
 import {
   initializeAuth,
   getReactNativePersistence,
-  connectAuthEmulator,
-  Auth,
+  connectAuthEmulator
 } from 'firebase/auth';
+import type {
+  Database} from 'firebase/database';
 import {
-  Database,
   connectDatabaseEmulator,
   getDatabase,
 } from 'firebase/database';
+import type {
+  FirebaseStorage} from 'firebase/storage';
 import {
-  FirebaseStorage,
   getStorage,
   connectStorageEmulator,
 } from 'firebase/storage';
@@ -67,11 +71,11 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
   // Check if emulators should be used
   if (CONFIG.IS_IN_TEST) {
     if (!FirebaseConfig.authDomain)
-      throw new Error('Auth URL not defined in FirebaseConfig');
+      {throw new Error('Auth URL not defined in FirebaseConfig');}
     if (!FirebaseConfig.databaseURL)
-      throw new Error('Database URL not defined in FirebaseConfig');
+      {throw new Error('Database URL not defined in FirebaseConfig');}
     if (!FirebaseConfig.storageBucket)
-      throw new Error('Storage bucket not defined in FirebaseConfig');
+      {throw new Error('Storage bucket not defined in FirebaseConfig');}
 
     if (!isConnectedToAuthEmulator(auth)) {
       connectAuthEmulator(auth, FirebaseConfig.authDomain);

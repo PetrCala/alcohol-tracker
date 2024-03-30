@@ -1,14 +1,15 @@
 ﻿// DatabaseDataContext.tsx
-import React, {createContext, useContext, ReactNode, useMemo} from 'react';
+import type { ReactNode} from 'react';
+import React, {createContext, useContext, useMemo} from 'react';
 import {useFirebase} from './FirebaseContext';
-import {
+import type {
   DrinkingSessionList,
   Preferences,
   UnconfirmedDays,
   UserProps,
   UserStatus,
 } from '@src/types/database';
-import {FetchDataKeys} from '@hooks/useFetchData/types';
+import type {FetchDataKeys} from '@hooks/useFetchData/types';
 import useListenToData from '@hooks/useListenToData';
 
 type DatabaseDataContextType = {

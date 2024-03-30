@@ -1,7 +1,8 @@
 // SinglePermissionHandler.js
 import {Platform} from 'react-native';
 import {check, RESULTS, checkNotifications} from 'react-native-permissions';
-import {PermissionKey, permissionIsGranted} from './PermissionsUtils';
+import type {PermissionKey} from './PermissionsUtils';
+import { permissionIsGranted} from './PermissionsUtils';
 import permissionsMap from './PermissionsMap';
 import getPlatform from '@libs/getPlatform';
 import CONST from '@src/CONST';

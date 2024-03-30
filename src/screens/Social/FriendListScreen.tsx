@@ -1,22 +1,22 @@
 ﻿import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import SearchWindow from '@components/Social/SearchWindow';
-import {
+import type {
   SearchWindowRef,
   UserIdToNicknameMapping,
 } from '@src/types/various/Search';
-import GeneralAction from '@src/types/various/GeneralAction';
+import type GeneralAction from '@src/types/various/GeneralAction';
 import React, {useMemo, useReducer, useRef} from 'react';
 import {objKeys} from '@libs/DataHandling';
 import {getNicknameMapping} from '@libs/SearchUtils';
 import {searchArrayByText} from '@libs/Search';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
-import {UserArray} from '@src/types/database';
+import type {UserArray} from '@src/types/database';
 import UserListComponent from '@components/Social/UserListComponent';
 import useProfileList from '@hooks/useProfileList';
 import {useFocusEffect} from '@react-navigation/native';
 import NoFriendInfo from '@components/Social/NoFriendInfo';
 
-interface State {
+type State = {
   searching: boolean;
   friends: UserArray;
   friendsToDisplay: UserArray;
@@ -52,11 +52,11 @@ function FriendListScreen({}: FriendListScreenProps) {
   const localSearch = async (searchText: string) => {
     try {
       dispatch({type: 'SET_SEARCHING', payload: true});
-      let searchMapping: UserIdToNicknameMapping = getNicknameMapping(
+      const searchMapping: UserIdToNicknameMapping = getNicknameMapping(
         profileList,
         'display_name',
       );
-      let relevantResults = searchArrayByText(
+      const relevantResults = searchArrayByText(
         state.friends,
         searchText,
         searchMapping,
@@ -78,7 +78,7 @@ function FriendListScreen({}: FriendListScreenProps) {
   };
 
   useMemo(() => {
-    let friendsArray = objKeys(userData?.friends);
+    const friendsArray = objKeys(userData?.friends);
     dispatch({type: 'SET_FRIENDS', payload: friendsArray});
     dispatch({type: 'SET_FRIENDS_TO_DISPLAY', payload: friendsArray});
   }, [userData]);

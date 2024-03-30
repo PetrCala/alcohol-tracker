@@ -1,4 +1,5 @@
-﻿import {Database, get, ref, child, push, onValue, off} from 'firebase/database';
+﻿import type {Database} from 'firebase/database';
+import { get, ref, child, push, onValue, off} from 'firebase/database';
 import type {Profile, ProfileList, UserStatusList} from '@src/types/database';
 import DBPATHS from './DBPATHS';
 
@@ -93,9 +94,9 @@ export function fetchDataForUsers(
   userIds: string[],
   refTemplate: string,
 ): Promise<Profile[]> {
-  if (!userIds || userIds.length === 0) return Promise.resolve([]);
+  if (!userIds || userIds.length === 0) {return Promise.resolve([]);}
   if (!refTemplate.includes('{userId}'))
-    throw new Error('Invalid ref template');
+    {throw new Error('Invalid ref template');}
   return Promise.all(
     userIds.map(id => readDataOnce(db, refTemplate.replace('{userId}', id))),
   );

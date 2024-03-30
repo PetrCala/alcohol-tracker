@@ -8,7 +8,7 @@
   TextInput,
   View,
 } from 'react-native';
-import {
+import type {
   FriendRequestList,
   FriendRequestStatus,
   ProfileList,
@@ -19,12 +19,12 @@ import {useFirebase} from '@src/context/global/FirebaseContext';
 
 import {isNonEmptyArray} from '@libs/Validation';
 import LoadingData from '@components/LoadingData';
-import {Database} from 'firebase/database';
+import type {Database} from 'firebase/database';
 import {searchDatabaseForUsers} from '@libs/Search';
 import {fetchUserProfiles} from '@database/profile';
 import SearchResult from '@components/Social/SearchResult';
 import SearchWindow from '@components/Social/SearchWindow';
-import {SearchWindowRef, UserSearchResults} from '@src/types/various/Search';
+import type {SearchWindowRef, UserSearchResults} from '@src/types/various/Search';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import useRefresh from '@hooks/useRefresh';
 import {useFocusEffect} from '@react-navigation/native';
@@ -33,17 +33,17 @@ import Navigation from '@libs/Navigation/Navigation';
 import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 import ScreenWrapper from '@components/ScreenWrapper';
 
-interface State {
+type State = {
   searchResultData: UserSearchResults;
   searching: boolean;
   friends: UserList | undefined;
   friendRequests: FriendRequestList | undefined;
-  requestStatuses: {[userId: string]: FriendRequestStatus | undefined};
+  requestStatuses: Record<string, FriendRequestStatus | undefined>;
   noUsersFound: boolean;
   displayData: ProfileList;
 }
 
-interface Action {
+type Action = {
   type: string;
   payload: any;
 }
@@ -89,7 +89,7 @@ function FriendSearchScreen() {
   const dbSearch = async (searchText: string, db?: Database): Promise<void> => {
     try {
       dispatch({type: 'SET_SEARCHING', payload: true});
-      let searchResultData: UserSearchResults = await searchDatabaseForUsers(
+      const searchResultData: UserSearchResults = await searchDatabaseForUsers(
         db,
         searchText,
       );
@@ -109,7 +109,7 @@ function FriendSearchScreen() {
   const updateDisplayData = async (
     searchResultData: UserSearchResults,
   ): Promise<void> => {
-    let newDisplayData: ProfileList = await fetchUserProfiles(
+    const newDisplayData: ProfileList = await fetchUserProfiles(
       db,
       searchResultData,
     );
@@ -123,11 +123,9 @@ function FriendSearchScreen() {
   const updateRequestStatuses = (
     searchResultData: UserSearchResults = state.searchResultData,
   ): void => {
-    let newRequestStatuses: {
-      [userId: string]: FriendRequestStatus;
-    } = {};
+    const newRequestStatuses: Record<string, FriendRequestStatus> = {};
     searchResultData.forEach(userId => {
-      if (state.friendRequests && state.friendRequests[userId]) {
+      if (state.friendRequests?.[userId]) {
         newRequestStatuses[userId] = state.friendRequests[userId];
       }
     });
@@ -166,7 +164,7 @@ function FriendSearchScreen() {
     updateRequestStatuses();
   }, [state.friendRequests]); // When updated in the database, not locally
 
-  if (!user) return;
+  if (!user) {return;}
 
   return (
     <ScreenWrapper testID={FriendSearchScreen.displayName}>
