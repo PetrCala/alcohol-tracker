@@ -32,7 +32,7 @@ signingkey = <your_signing_key>
 program = gpg
 ```
 
-3. Open a **draft** a pull request using the pull request template, and make sure to fill in the required fields.
+3. [Open a draft pull request](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork), and make sure to fill in the required fields. All PRs should target the **dev** branch, never the **staging**, or **master** branches.
 4. A member of the Kiroku head developer team will automatically be assigned to your pull request for review.
 
 #### Submitting your pull request for review
