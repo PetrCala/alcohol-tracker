@@ -1,4 +1,4 @@
-﻿import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+﻿import {Alert, StyleSheet, View} from 'react-native';
 import SearchWindow from '@components/Social/SearchWindow';
 import type {
   SearchWindowRef,
@@ -13,14 +13,13 @@ import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import type {UserArray} from '@src/types/database';
 import UserListComponent from '@components/Social/UserListComponent';
 import useProfileList from '@hooks/useProfileList';
-import {useFocusEffect} from '@react-navigation/native';
 import NoFriendInfo from '@components/Social/NoFriendInfo';
 
 type State = {
   searching: boolean;
   friends: UserArray;
   friendsToDisplay: UserArray;
-}
+};
 
 const initialState: State = {
   searching: false,
@@ -41,7 +40,7 @@ const reducer = (state: State, action: GeneralAction): State => {
   }
 };
 
-type FriendListScreenProps = {};
+type FriendListScreenProps = object; // TODO: Add props
 
 function FriendListScreen({}: FriendListScreenProps) {
   const {userData} = useDatabaseData();
@@ -49,7 +48,7 @@ function FriendListScreen({}: FriendListScreenProps) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const {profileList} = useProfileList(state.friends);
 
-  const localSearch = async (searchText: string) => {
+  const localSearch = (searchText: string) => {
     try {
       dispatch({type: 'SET_SEARCHING', payload: true});
       const searchMapping: UserIdToNicknameMapping = getNicknameMapping(

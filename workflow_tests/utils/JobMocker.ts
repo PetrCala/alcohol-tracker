@@ -65,6 +65,7 @@ class JobMocker {
           if (isStepIdentifierUsingName(step)) {
             mockStep = {name: step.name}; // Assuming step has a name property
           } else if (isStepIdentifierUsingRun(step)) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             mockStep = {run: step.mockWith as any}; // Assuming step has a run property
           }
 
@@ -72,10 +73,12 @@ class JobMocker {
           // This approach might need to be adjusted based on actual requirements and how these properties fit into the StepIdentifier types.
           if ('id' in step) {
             // Assuming your logic dictates that the original step might have an id property to be copied.
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (mockStep as any).id = step.id; // Use `any` or a more specific type if possible
           }
           if (jobWith && 'with' in mockStep) {
             // Assuming there's a logical condition where jobWith should be assigned.
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (mockStep as any).with = jobWith; // Use bracket notation if `with` is a problematic keyword
           }
 

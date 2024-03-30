@@ -9,8 +9,6 @@ import {
   View,
   TextInput,
   Keyboard,
-  Platform,
-  ScrollView,
 } from 'react-native';
 import * as KirokuImages from '@components/Icon/KirokuImages';
 import {getAuth, updateProfile} from 'firebase/auth';
@@ -18,8 +16,7 @@ import {signUpUserWithEmailAndPassword} from '@libs/auth/auth';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {readDataOnce} from '@database/baseFunctions';
 import {useUserConnection} from '@context/global/UserConnectionContext';
-import type {
-  ValidationResult} from '@libs/Validation';
+import type {ValidationResult} from '@libs/Validation';
 import {
   isValidPassword,
   isValidPasswordConfirm,
@@ -32,16 +29,11 @@ import WarningMessage from '@components/Info/WarningMessage';
 import type {Profile} from '@src/types/database';
 import DBPATHS from '@database/DBPATHS';
 import ValidityIndicatorIcon from '@components/ValidityIndicatorIcon';
-import SCREENS from '@src/SCREENS';
 import Navigation from '@navigation/Navigation';
 import ROUTES from '@src/ROUTES';
-import NAVIGATORS from '@src/NAVIGATORS';
-import {StackScreenProps} from '@react-navigation/stack';
-import ScreenWrapper from '@components/ScreenWrapper';
 import useTheme from '@hooks/useTheme';
 import {checkAccountCreationLimit} from '@database/protection';
 import LoadingData from '@components/LoadingData';
-import KeyboardAvoidingView from '@components/KeyboardAvoidingView';
 import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 
 type State = {
@@ -53,12 +45,12 @@ type State = {
   passwordsMatch: boolean;
   warning: string;
   isLoading: boolean;
-}
+};
 
 type Action = {
   type: string;
   payload: any;
-}
+};
 
 const initialState: State = {
   email: '',
@@ -122,7 +114,7 @@ function SignUpScreen() {
   const {db} = useFirebase();
   const {isOnline} = useUserConnection();
   const [state, dispatch] = useReducer(reducer, initialState);
-  const theme = useTheme();
+  // const theme = useTheme();
 
   async function rollbackChanges(
     newUserId: string,
@@ -140,7 +132,9 @@ function SignUpScreen() {
 
   const handleSignUp = async () => {
     Keyboard.dismiss();
-    if (!isOnline) {return;}
+    if (!isOnline) {
+      return;
+    }
 
     const inputValidation = validateSignInInput(
       state.email,
@@ -298,8 +292,9 @@ function SignUpScreen() {
     }
   }, [state.password, state.passwordConfirm]);
 
-  if (state.isLoading)
-    {return <LoadingData loadingText="Creating your account..." />;}
+  if (state.isLoading) {
+    return <LoadingData loadingText="Creating your account..." />;
+  }
 
   return (
     <DismissKeyboard>
@@ -310,7 +305,8 @@ function SignUpScreen() {
         </View>
         <View style={styles.inputContainer}>
           <View style={styles.inputItemContainer}>
-            <TextInput accessibilityLabel="Text input field"
+            <TextInput
+              accessibilityLabel="Text input field"
               placeholder="Email"
               placeholderTextColor={'#a8a8a8'}
               keyboardType="email-address"
@@ -323,7 +319,8 @@ function SignUpScreen() {
             />
           </View>
           <View style={styles.inputItemContainer}>
-            <TextInput accessibilityLabel="Text input field"
+            <TextInput
+              accessibilityLabel="Text input field"
               placeholder="Username"
               placeholderTextColor={'#a8a8a8'}
               textContentType="username"
@@ -335,7 +332,8 @@ function SignUpScreen() {
             />
           </View>
           <View style={styles.inputItemContainer}>
-            <TextInput accessibilityLabel="Text input field"
+            <TextInput
+              accessibilityLabel="Text input field"
               placeholder="Password"
               placeholderTextColor={'#a8a8a8'}
               textContentType="password"
@@ -351,7 +349,8 @@ function SignUpScreen() {
             ) : null}
           </View>
           <View style={styles.inputItemContainer}>
-            <TextInput accessibilityLabel="Text input field"
+            <TextInput
+              accessibilityLabel="Text input field"
               placeholder="Confirm your password"
               placeholderTextColor={'#a8a8a8'}
               textContentType="password"
@@ -366,11 +365,15 @@ function SignUpScreen() {
               <ValidityIndicatorIcon isValid={state.passwordsMatch} />
             ) : null}
           </View>
-          <TouchableOpacity accessibilityRole="button" onPress={handleSignUp} style={styles.signUpButton}>
+          <TouchableOpacity
+            accessibilityRole="button"
+            onPress={handleSignUp}
+            style={styles.signUpButton}>
             <Text style={styles.signUpButtonText}>Create account</Text>
           </TouchableOpacity>
           <View style={styles.loginContainer}>
-            <TouchableOpacity accessibilityRole="button"
+            <TouchableOpacity
+              accessibilityRole="button"
               style={styles.loginButtonContainer}
               onPress={() => Navigation.goBack()}>
               <Text style={styles.loginInfoText}>Already a user?</Text>
