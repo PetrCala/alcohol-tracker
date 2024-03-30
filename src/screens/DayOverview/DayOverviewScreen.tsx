@@ -89,7 +89,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
   ) => {
     {
       session?.ongoing
-        ? Navigation.navigate(ROUTES.DRINKING_SESSION.getRoute(sessionId))
+        ? Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(sessionId))
         : Navigation.navigate(
             ROUTES.DRINKING_SESSION_SUMMARY.getRoute(sessionId),
           );
@@ -214,7 +214,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
       return session;
     };
 
-    const handleButtonPress = async () => {
+    const onAddSessionButtonPress = async () => {
       // Generate a new drinking session key
       const newSessionId = generateDatabaseKey(
         db,
@@ -239,7 +239,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
       <TouchableOpacity
         accessibilityRole="button"
         style={styles.addSessionButton}
-        onPress={handleButtonPress}>
+        onPress={onAddSessionButtonPress}>
         <Image source={KirokuIcons.Plus} style={styles.addSessionImage} />
       </TouchableOpacity>
     );

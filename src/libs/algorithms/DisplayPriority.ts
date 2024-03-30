@@ -30,7 +30,6 @@ function calculateAllUsersPriority(
     }
     usersPriority[userId] = userPriority;
   });
-  console.log('usersPriority', usersPriority);
   return usersPriority;
 }
 
