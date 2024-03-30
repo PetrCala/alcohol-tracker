@@ -63,10 +63,10 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 20,
     color: 'black',
-    lineHeight: 28, // Increased line height
-    marginBottom: 10, // Added bottom margin
-    marginLeft: 30, // Added left margin
-    marginRight: 30, // Added right margin
+    lineHeight: 28,
+    marginBottom: 10,
+    marginLeft: 30,
+    marginRight: 30,
     textAlign: 'center',
   },
   messageText: {
