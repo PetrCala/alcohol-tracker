@@ -35,13 +35,8 @@ import {
   timestampToDateString,
   unitsToColors,
 } from '@libs/DataHandling';
-import type {
-  DrinkingSession,
-  DrinksList,
-  Drinks} from '@src/types/database';
-import {
-  DrinkKey
-} from '@src/types/database';
+import type {DrinkingSession, DrinksList, Drinks} from '@src/types/database';
+import {DrinkKey} from '@src/types/database';
 import YesNoPopup from '@components/Popups/YesNoPopup';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import UserOffline from '@components/UserOffline';
@@ -55,7 +50,6 @@ import FillerView from '@components/FillerView';
 import CONST from '@src/CONST';
 import MainHeader from '@components/Header/MainHeader';
 import MainHeaderButton from '@components/Header/MainHeaderButton';
-import type DrinkDataProps from '@src/types/various/DrinkDataProps';
 import Navigation from '@navigation/Navigation';
 import type {StackScreenProps} from '@react-navigation/stack';
 import type {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
@@ -69,6 +63,7 @@ import useAsyncQueue from '@hooks/useAsyncQueue';
 import {ValueOf} from 'type-fest';
 import type DeepValueOf from '@src/types/utils/DeepValueOf';
 import ScreenWrapper from '@components/ScreenWrapper';
+import DrinkData from '@libs/DrinkData';
 
 type LiveSessionScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -113,7 +108,9 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   );
 
   const syncWithDb = async (newSessionData: DrinkingSession) => {
-    if (!user || !session) {return;}
+    if (!user || !session) {
+      return;
+    }
     try {
       setDbSyncSuccessful(false);
       await saveDrinkingSessionData(
@@ -130,43 +127,14 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     }
   };
 
-  const drinkData: DrinkDataProps = [
-    {
-      key: 'small_beer',
-      icon: KirokuIcons.Beer,
-    },
-    {
-      key: 'beer',
-      icon: KirokuIcons.Beer,
-    },
-    {
-      key: 'wine',
-      icon: KirokuIcons.Wine,
-    },
-    {
-      key: 'weak_shot',
-      icon: KirokuIcons.WeakShot,
-    },
-    {
-      key: 'strong_shot',
-      icon: KirokuIcons.StrongShot,
-    },
-    {
-      key: 'cocktail',
-      icon: KirokuIcons.Cocktail,
-    },
-    {
-      key: 'other',
-      icon: KirokuIcons.AlcoholAssortment,
-    },
-  ];
-
   const hasSessionChanged = () => {
     return !isEqual(initialSession.current, session);
   };
 
   const handleMonkePlus = () => {
-    if (!session) {return;}
+    if (!session) {
+      return;
+    }
     if (availableUnits > 0) {
       const drinksToAdd: Drinks = {other: 1};
       const newDrinks: DrinksList | undefined = addDrinks(
@@ -178,7 +146,9 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   };
 
   const handleMonkeMinus = () => {
-    if (!session) {return;}
+    if (!session) {
+      return;
+    }
     if (sumDrinksOfSingleType(session.drinks, CONST.DRINKS.KEYS.OTHER) > 0) {
       const newDrinks: DrinksList | undefined = removeDrinks(
         session.drinks,
@@ -192,17 +162,23 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   };
 
   const handleBlackoutChange = (value: boolean) => {
-    if (!session) {return;}
+    if (!session) {
+      return;
+    }
     setSession({...session, blackout: value});
   };
 
   const handleNoteChange = (value: string) => {
-    if (!session) {return;}
+    if (!session) {
+      return;
+    }
     setSession({...session, note: value});
   };
 
   const setCurrentDrinks = (newDrinks: DrinksList | undefined) => {
-    if (!session) {return;}
+    if (!session) {
+      return;
+    }
     setSession({...session, drinks: newDrinks});
   };
 
@@ -240,7 +216,9 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
 
   // Update the hooks whenever drinks change
   useMemo(() => {
-    if (!preferences) {return;}
+    if (!preferences) {
+      return;
+    }
     const newTotalUnits = sumAllUnits(
       session?.drinks,
       preferences.drinks_to_units,
@@ -251,7 +229,9 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   }, [session?.drinks]);
 
   async function saveSession(db: any, userId: string) {
-    if (!session || !user) {return;}
+    if (!session || !user) {
+      return;
+    }
     if (totalUnits > CONST.MAX_ALLOWED_UNITS) {
       console.log('Cannot save this session');
       return null;
@@ -295,12 +275,16 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   }
 
   const handleDiscardSession = () => {
-    if (isPending) {return null;}
+    if (isPending) {
+      return null;
+    }
     setDiscardModalVisible(true);
   };
 
   const handleConfirmDiscard = async () => {
-    if (!db || !user) {return;}
+    if (!db || !user) {
+      return;
+    }
     try {
       setLoadingText(
         `${sessionIsLive ? 'Discarding' : 'Deleting'} this session...`,
@@ -326,7 +310,9 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   /** If an update is pending, update immediately before navigating away
    */
   const handleBackPress = async () => {
-    if (!user) {return;}
+    if (!user) {
+      return;
+    }
     if (!sessionIsLive && hasSessionChanged()) {
       setShowLeaveConfirmation(true); // Unsaved changes
       return;
@@ -346,7 +332,9 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   };
 
   const confirmGoBack = async () => {
-    if (!user) {return;}
+    if (!user) {
+      return;
+    }
     try {
       if (isPlaceholderSession) {
         await removePlaceholderSessionData(db, user.uid);
@@ -360,7 +348,9 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   };
 
   const openSession = async () => {
-    if (!user) {return;}
+    if (!user) {
+      return;
+    }
     // Fetch the latest database data and use it to open the session
     setLoadingText('Opening your session...');
     let sessionToOpen: DrinkingSession | null = await readDataOnce(
@@ -407,8 +397,9 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       !session ||
       sessionFinished ||
       openingSession
-    )
-      {return;}
+    ) {
+      return;
+    }
     enqueueUpdate({...session, ongoing: true});
   }, [session, openingSession]);
 
@@ -426,9 +417,12 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     };
   }, [session]);
 
-  if (!isOnline) {return <UserOffline />;}
-  if (openingSession || loadingText)
-    {return <LoadingData loadingText={loadingText} />;}
+  if (!isOnline) {
+    return <UserOffline />;
+  }
+  if (openingSession || loadingText) {
+    return <LoadingData loadingText={loadingText} />;
+  }
   if (!user) {
     Navigation.navigate(ROUTES.LOGIN);
     return;
@@ -437,7 +431,9 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     Navigation.navigate(ROUTES.HOME); // If a session fails to load
     return;
   }
-  if (!preferences) {return;}
+  if (!preferences) {
+    return;
+  }
 
   return (
     <ScreenWrapper testID={LiveSessionScreen.displayName}>
@@ -485,12 +481,14 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
         </View>
         {monkeMode ? (
           <View style={styles.modifyUnitsContainer}>
-            <TouchableOpacity accessibilityRole="button"
+            <TouchableOpacity
+              accessibilityRole="button"
               style={[styles.modifyUnitsButton, {backgroundColor: 'red'}]}
               onPress={() => handleMonkeMinus()}>
               <Text style={styles.modifyUnitsText}>-</Text>
             </TouchableOpacity>
-            <TouchableOpacity accessibilityRole="button"
+            <TouchableOpacity
+              accessibilityRole="button"
               style={[styles.modifyUnitsButton, {backgroundColor: 'green'}]}
               onPress={() => handleMonkePlus()}>
               <Text style={styles.modifyUnitsText}>+</Text>
@@ -500,7 +498,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
           <>
             <View style={styles.drinkTypesContainer}>
               <DrinkTypesView
-                drinkData={drinkData}
+                drinkData={DrinkData}
                 currentDrinks={session.drinks}
                 setCurrentDrinks={setCurrentDrinks}
                 availableUnits={availableUnits}

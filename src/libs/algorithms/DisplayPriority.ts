@@ -1,6 +1,7 @@
 import {UserPriority, UserPriorityList} from '@src/types/various/Algorithms';
 import {UserStatus, UserStatusList} from '@src/types/database';
 import {sumAllDrinks} from '@libs/DataHandling';
+import {sessionIsExpired} from '@libs/SessionUtils';
 
 /**
  * Based on the user status data, calculate the display priority of the users.
@@ -29,20 +30,29 @@ function calculateAllUsersPriority(
     }
     usersPriority[userId] = userPriority;
   });
+  console.log('usersPriority', usersPriority);
   return usersPriority;
 }
 
 function calculateUserPriority(userStatusData: UserStatus): number {
-  let time_since_last_online =
-    new Date().getTime() - userStatusData.last_online;
-  let session_active = userStatusData.latest_session?.ongoing ? 1 : 0;
-  let session_drinks = userStatusData.latest_session?.drinks
-    ? sumAllDrinks(userStatusData.latest_session.drinks) // TODO units should be used here perhaps
+  const latestSession = userStatusData.latest_session;
+  const timeSinceLastSession = latestSession
+    ? new Date().getTime() - latestSession.start_time
+    : 1e15;
+
+  const expired = sessionIsExpired(latestSession);
+  // The older the last session, the lower the priority
+  const timeCoefficient = Math.log(timeSinceLastSession) * 50 * -1;
+  if (expired) return timeCoefficient; // Do not account for session if expired
+
+  const sessionActive = latestSession?.ongoing ? 1 : 0;
+  const sessionDrinks = latestSession?.drinks
+    ? sumAllDrinks(latestSession.drinks) // TODO units should be used here perhaps
     : 0;
   return (
-    session_drinks * 10 +
-    session_active * 100 -
-    Math.log(time_since_last_online) * 50
+    sessionDrinks * sessionActive * 10 + // Only count active sessions
+    sessionActive * 100 +
+    timeCoefficient
   );
 }
 

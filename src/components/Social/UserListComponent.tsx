@@ -10,15 +10,12 @@ import {
 } from '@libs/algorithms/DisplayPriority';
 import type {UserStatusList} from '@src/types/database';
 import type {UserArray} from '@src/types/database/DatabaseCommon';
-import React, {useState, useEffect, useMemo} from 'react';
-import type {
-  NativeScrollEvent,
-  NativeSyntheticEvent} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import type {NativeScrollEvent, NativeSyntheticEvent} from 'react-native';
 import {
   ActivityIndicator,
   Dimensions,
   Keyboard,
-  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -30,9 +27,6 @@ import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import FillerView from '@components/FillerView';
-import {useDatabaseData} from '@context/global/DatabaseDataContext';
-import useRefresh from '@hooks/useRefresh';
-import {generateRandomString} from '@libs/StringUtils';
 import {sleep} from '@libs/TimeUtils';
 
 type UserListProps = {
@@ -41,7 +35,7 @@ type UserListProps = {
   emptyListComponent?: React.ReactNode;
   userSubset?: UserArray;
   orderUsers?: boolean;
-}
+};
 
 /**
  * A component for lazy data loading and display of a list of users.
@@ -136,7 +130,9 @@ const UserListComponent: React.FC<UserListProps> = ({
         return;
       }
       // Data not yet initialized during the initial load
-      if (isEmptyObject(userStatusList)) {return;}
+      if (isEmptyObject(userStatusList)) {
+        return;
+      }
       let arrayToSlice = userSubset ?? fullUserArray;
       if (orderUsers) {
         const userPriorityList = calculateAllUsersPriority(
