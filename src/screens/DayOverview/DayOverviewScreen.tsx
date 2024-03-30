@@ -1,4 +1,4 @@
-﻿import React, {useState, useEffect, useMemo} from 'react';
+﻿import React, {useState, useMemo} from 'react';
 import {
   Text,
   Image,
@@ -18,11 +18,7 @@ import {
   changeDateBySomeDays,
   unitsToColors,
   getSingleDayDrinkingSessions,
-  setDateToCurrentTime,
-  sumAllDrinks,
-  getZeroDrinksList,
   sumAllUnits,
-  objVals,
   dateStringToDate,
 } from '@libs/DataHandling';
 import LoadingData from '@components/LoadingData';
@@ -42,13 +38,9 @@ import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import DBPATHS from '@database/DBPATHS';
-import {calculateSessionLength, getEmptySession} from '@libs/SessionUtils';
+import {getEmptySession} from '@libs/SessionUtils';
 import CONST from '@src/CONST';
-import {
-  saveDrinkingSessionData,
-  savePlaceholderSessionData,
-} from '@database/drinkingSessions';
-import {useFocusEffect} from '@react-navigation/native';
+import {savePlaceholderSessionData} from '@database/drinkingSessions';
 import ScreenWrapper from '@components/ScreenWrapper';
 import {nonMidnightString} from '@libs/StringUtils';
 
@@ -109,7 +101,9 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
   };
 
   const DrinkingSession = ({sessionId, session}: DrinkingSessionKeyValue) => {
-    if (!preferences) {return;}
+    if (!preferences) {
+      return;
+    }
     // Calculate the session color
     const totalUnits = sumAllUnits(session.drinks, preferences.drinks_to_units);
     const unitsToColorsInfo = preferences.units_to_colors;
@@ -130,7 +124,8 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
       <View style={viewStyle}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <View style={{flex: 1}}>
-            <TouchableOpacity accessibilityRole="button"
+            <TouchableOpacity
+              accessibilityRole="button"
               style={styles.menuDrinkingSessionButton}
               onPress={() => onSessionButtonPress(sessionId, session)}>
               <Text
@@ -153,7 +148,8 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
           </View>
           {session?.ongoing ? (
             <View style={styles.ongoingSessionContainer}>
-              <TouchableOpacity accessibilityRole="button"
+              <TouchableOpacity
+                accessibilityRole="button"
                 style={styles.ongoingSessionButton}
                 onPress={() => onSessionButtonPress(sessionId, session)}>
                 <Text style={styles.ongoingSessionText}>In Session</Text>
@@ -194,24 +190,15 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
     if (date == null) {
       return <LoadingData loadingText="" />;
     }
-    if (!editMode || !user) {return null;} // Do not display outside edit mode
+    if (!editMode || !user) {
+      return null;
+    } // Do not display outside edit mode
     // No button if the date is in the future
     const today = new Date();
     const tomorrowMidnight = changeDateBySomeDays(today, 1);
     tomorrowMidnight.setHours(0, 0, 0, 0);
     if (currentDate >= tomorrowMidnight) {
       return null;
-    }
-
-    // Generate a new drinking session key
-    const newSessionId = generateDatabaseKey(
-      db,
-      DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(user.uid),
-    );
-
-    if (!newSessionId) {
-      Alert.alert('Error', 'Could not generate a new session key.');
-      return;
     }
 
     /** Generate a placeholder session that corresponds to the current day */
@@ -228,6 +215,15 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
     };
 
     const handleButtonPress = async () => {
+      // Generate a new drinking session key
+      const newSessionId = generateDatabaseKey(
+        db,
+        DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(user.uid),
+      );
+      if (!newSessionId) {
+        Alert.alert('Error', 'Could not generate a new session key.');
+        return;
+      }
       try {
         const placeholderSession = getPlaceholderSession();
         await savePlaceholderSessionData(db, user.uid, placeholderSession);
@@ -240,7 +236,8 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
     };
 
     return (
-      <TouchableOpacity accessibilityRole="button"
+      <TouchableOpacity
+        accessibilityRole="button"
         style={styles.addSessionButton}
         onPress={handleButtonPress}>
         <Image source={KirokuIcons.Plus} style={styles.addSessionImage} />
@@ -259,8 +256,12 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
     }
   };
 
-  if (!isOnline) {return <UserOffline />;}
-  if (!date) {return <LoadingData />;}
+  if (!isOnline) {
+    return <UserOffline />;
+  }
+  if (!date) {
+    return <LoadingData />;
+  }
   if (!user) {
     Navigation.navigate(ROUTES.LOGIN);
     return;
@@ -284,16 +285,14 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
         <Text style={styles.menuDrinkingSessionInfoText}>
           {date ? formatDateToDay(currentDate) : 'Loading date...'}
         </Text>
-        {drinkingSessionData ? (
-          <FlatList
-            data={dailyData}
-            renderItem={renderDrinkingSession}
-            keyExtractor={item => String(item.sessionId)} // Use start time as id
-            ListEmptyComponent={noDrinkingSessionsComponent}
-            ListFooterComponent={addSessionButton}
-            ListFooterComponentStyle={styles.addSessionButtonContainer}
-          />
-        ) : null}
+        <FlatList
+          data={dailyData}
+          renderItem={renderDrinkingSession}
+          keyExtractor={item => String(item.sessionId)} // Use start time as id
+          ListEmptyComponent={noDrinkingSessionsComponent}
+          ListFooterComponent={addSessionButton}
+          ListFooterComponentStyle={styles.addSessionButtonContainer}
+        />
       </View>
       <View style={styles.dayOverviewFooter}>
         <MenuIcon
