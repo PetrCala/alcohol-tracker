@@ -184,7 +184,6 @@ function HomeScreen({}: HomeScreenProps) {
   };
 
   const openSessionInProgress = () => {
-    console.log('Opening session in progress');
     if (!state.ongoingSessionId) {
       Alert.alert(
         'New session initialization failed',
