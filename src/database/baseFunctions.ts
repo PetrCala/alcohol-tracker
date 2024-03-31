@@ -50,7 +50,7 @@ export function listenForDataChanges(
  * Fetch the Firebase nickname of a user given their UID.
  * @param {Database} db The Realtime Database instance.
  * @param {string} uid The user's UID.
- * @return {Promise<string|null>} The nickname or null if not found.
+ * @returns{Promise<string|null>} The nickname or null if not found.
  *
  * @example const userNickname = await fetchNicknameByUID(db, "userUIDHere");
  */

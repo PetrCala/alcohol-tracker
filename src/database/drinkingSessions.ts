@@ -20,7 +20,7 @@ const placeholderSessionRef = DBPATHS.USER_SESSION_PLACEHOLDER_USER_ID;
  * @param string userId User ID
  * @param newSessionData Data to save the new drinking session with
  * @param updateStatus Whether to update the user status data or not
- * @return Promise void.
+ * @returnsPromise void.
  *  */
 export async function saveDrinkingSessionData(
   db: Database,
@@ -75,7 +75,7 @@ export async function removePlaceholderSessionData(
  * @param string userId User ID
  * @param newSessionData Data to save the new drinking session with
  * @param sesisonKey ID of the session to edit (can be null in case of finishing the session)
- * @return Promise void.
+ * @returnsPromise void.
  *  */
 export async function startLiveDrinkingSession(
   db: Database,
@@ -101,7 +101,7 @@ export async function startLiveDrinkingSession(
  * @param string userId User ID
  * @param newSessionData Data to save the new drinking session with
  * @param sesisonKey ID of the session to edit (can be null in case of finishing the session)
- * @return Promise void.
+ * @returnsPromise void.
  *  */
 export async function endLiveDrinkingSession(
   db: Database,

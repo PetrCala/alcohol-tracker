@@ -480,7 +480,7 @@ export function sumAllUnits(
  * consumed in that session.
  *
  * @param session Drinking session array item
- * @return Timestamp of the last drink consumed
+ * @returnsTimestamp of the last drink consumed
  */
 export function getLastDrinkAddedTime(session: DrinkingSession): number | null {
   if (isEmptyObject(session?.drinks)) return null;
