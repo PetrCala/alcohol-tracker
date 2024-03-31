@@ -158,7 +158,7 @@ const UserListComponent: React.FC<UserListProps> = ({
       keyboardShouldPersistTaps="handled">
       {loadingDisplayData && isInitialLoad ? (
         <LoadingData style={styles.loadingContainer} />
-      ) : isNonEmptyArray(displayUserArray) ? (
+      ) : isNonEmptyArray(fullUserArray) ? (
         <>
           <View style={styles.userList}>
             {isNonEmptyArray(displayUserArray) ? (
