@@ -15,7 +15,7 @@ import UserOffline from '@components/UserOffline';
 import BasicButton from '@components/Buttons/BasicButton';
 import {savePreferencesData} from '@database/preferences';
 import YesNoPopup from '@components/Popups/YesNoPopup';
-import CustomSwitch from '@components/CustomSwitch';
+import TextSwitch from '@components/TextSwitch';
 import NumericSlider from '@components/Popups/NumericSlider';
 import {getDefaultPreferences} from '@database/users';
 import MainHeader from '@components/Header/MainHeader';
@@ -35,7 +35,7 @@ type PreferencesListProps = {
   id: string;
   initialContents: Array<{key: string; label: string; value: string}>;
   onButtonPress: (key: string, label: string, value: number) => void;
-}
+};
 
 const PreferencesList: React.FC<PreferencesListProps> = ({
   id,
@@ -53,7 +53,8 @@ const PreferencesList: React.FC<PreferencesListProps> = ({
             {/* <View style={styles.preferencesListUseContainer}>
             </View> */}
             <View style={styles.preferencesListNumericContainer}>
-              <TouchableOpacity accessibilityRole="button"
+              <TouchableOpacity
+                accessibilityRole="button"
                 style={styles.preferencesListButton}
                 onPress={() => onButtonPress(item.key, item.label, itemValue)}>
                 <Text style={styles.preferencesListText}>{itemValue}</Text>
@@ -105,7 +106,7 @@ function PreferencesScreen({route}: PreferencesScreenProps) {
   };
 
   const handleSavePreferences = async () => {
-    if (!db || !user) {return;}
+    if (!user) return;
     try {
       setSaving(true);
       await savePreferencesData(db, user.uid, currentPreferences);
@@ -144,7 +145,9 @@ function PreferencesScreen({route}: PreferencesScreenProps) {
   };
 
   useMemo(() => {
-    if (!preferences) {return;}
+    if (!preferences) {
+      return;
+    }
     const newPreferences = {
       first_day_of_week: preferences.first_day_of_week,
       units_to_colors: preferences.units_to_colors,
@@ -169,12 +172,16 @@ function PreferencesScreen({route}: PreferencesScreenProps) {
     };
   }, [currentPreferences]); // Add your state dependencies here
 
-  if (!isOnline) {return <UserOffline />;}
+  if (!isOnline) {
+    return <UserOffline />;
+  }
   if (!user || !preferences) {
     Navigation.navigate(ROUTES.LOGIN);
     return null;
   }
-  if (saving) {return <LoadingData loadingText="Saving your preferences..." />;}
+  if (saving) {
+    return <LoadingData loadingText="Saving your preferences..." />;
+  }
 
   return (
     <ScreenWrapper testID={PreferencesScreen.displayName}>
@@ -187,7 +194,7 @@ function PreferencesScreen({route}: PreferencesScreenProps) {
         <View style={[styles.container, styles.horizontalContainer]}>
           <Text style={styles.label}>First Day of Week</Text>
           <View style={styles.itemContainer}>
-            <CustomSwitch
+            <TextSwitch
               offText="Sun"
               onText="Mon"
               value={currentPreferences.first_day_of_week === 'Monday'}
@@ -248,6 +255,14 @@ function PreferencesScreen({route}: PreferencesScreenProps) {
             />
           </View>
         </View>
+        {/* <View style={[styles.container, styles.horizontalContainer]}>
+          <Text style={styles.label}>
+            Automatically order drinks in session window
+          </Text>
+          <View style={styles.itemContainer}>
+            <Text>hello</Text>
+          </View>
+        </View> */}
       </ScrollView>
       <NumericSlider
         visible={sliderVisible}
@@ -319,6 +334,8 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 16,
     fontWeight: 'bold',
+    width: 'auto',
+    maxWidth: '75%',
   },
   itemContainer: {
     flexDirection: 'row',

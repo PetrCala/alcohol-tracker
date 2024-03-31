@@ -1,14 +1,14 @@
 ﻿import {useRef} from 'react';
 import {Animated, StyleSheet, Text, TouchableOpacity} from 'react-native';
 
-type CustomSwitchProps = {
+type TextSwitchProps = {
   offText: string;
   onText: string;
   value: boolean;
   onValueChange: (value: boolean) => void;
 };
 
-const CustomSwitch: React.FC<CustomSwitchProps> = ({
+const TextSwitch: React.FC<TextSwitchProps> = ({
   offText,
   onText,
   value,
@@ -38,7 +38,7 @@ const CustomSwitch: React.FC<CustomSwitchProps> = ({
   );
 };
 
-export default CustomSwitch;
+export default TextSwitch;
 
 const styles = StyleSheet.create({
   container: {
