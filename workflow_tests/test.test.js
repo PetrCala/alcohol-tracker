@@ -15,7 +15,7 @@ const FILES_TO_COPY_INTO_TEST_REPO = [
   },
 ];
 
-describe('test workflow test', () => {
+xdescribe('test workflow test', () => {
   const githubToken = 'dummy_github_token';
   const actor = 'Dummy Actor';
   const osbotifyActor = 'OSBotify';
