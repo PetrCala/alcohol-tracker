@@ -91,7 +91,8 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
       ) : requestStatus === CONST.FRIEND_REQUEST_STATUS.SENT ? (
         <Text style={styles.sendFriendRequestText}>{statusToTextMap.sent}</Text>
       ) : requestStatus === CONST.FRIEND_REQUEST_STATUS.RECEIVED ? (
-        <TouchableOpacity accessibilityRole="button"
+        <TouchableOpacity
+          accessibilityRole="button"
           style={styles.sendFriendRequestButton}
           onPress={() =>
             handleAcceptFriendRequestPress(db, userFrom, userTo, setIsLoading)
@@ -105,7 +106,8 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
           )}
         </TouchableOpacity>
       ) : (
-        <TouchableOpacity accessibilityRole="button"
+        <TouchableOpacity
+          accessibilityRole="button"
           style={styles.sendFriendRequestButton}
           onPress={() =>
             handleSendRequestPress(db, userFrom, userTo, setIsLoading)

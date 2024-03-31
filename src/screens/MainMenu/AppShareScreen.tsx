@@ -52,7 +52,8 @@ function AppShareScreen({route}: AppShareScreenProps) {
             <Text style={styles.mainText}>either through a link</Text>
           </View>
           <View style={[styles.centeringContainer, {height: '80%'}]}>
-            <TouchableOpacity accessibilityRole="button"
+            <TouchableOpacity
+              accessibilityRole="button"
               style={styles.linkCopyButton}
               onPress={handleCopyLinkPress}>
               <Text style={styles.shareLinkText}>
@@ -67,7 +68,8 @@ function AppShareScreen({route}: AppShareScreenProps) {
           <View style={[styles.centeringContainer, {height: '15%'}]}>
             <Text style={styles.mainText}>or through a QR code</Text>
           </View>
-          <TouchableOpacity accessibilityRole="button"
+          <TouchableOpacity
+            accessibilityRole="button"
             onPress={() => Linking.openURL(CONST.APP_QR_CODE_LINK)}
             style={[styles.centeringContainer, {height: 'auto'}]}>
             <Image source={KirokuImages.QrCodeWithLogo} style={styles.qrCode} />

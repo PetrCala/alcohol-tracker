@@ -24,7 +24,10 @@ import {searchDatabaseForUsers} from '@libs/Search';
 import {fetchUserProfiles} from '@database/profile';
 import SearchResult from '@components/Social/SearchResult';
 import SearchWindow from '@components/Social/SearchWindow';
-import type {SearchWindowRef, UserSearchResults} from '@src/types/various/Search';
+import type {
+  SearchWindowRef,
+  UserSearchResults,
+} from '@src/types/various/Search';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import useRefresh from '@hooks/useRefresh';
 import {useFocusEffect} from '@react-navigation/native';
@@ -41,12 +44,12 @@ type State = {
   requestStatuses: Record<string, FriendRequestStatus | undefined>;
   noUsersFound: boolean;
   displayData: ProfileList;
-}
+};
 
 type Action = {
   type: string;
   payload: any;
-}
+};
 
 const initialState: State = {
   searchResultData: [],
@@ -164,7 +167,9 @@ function FriendSearchScreen() {
     updateRequestStatuses();
   }, [state.friendRequests]); // When updated in the database, not locally
 
-  if (!user) {return;}
+  if (!user) {
+    return;
+  }
 
   return (
     <ScreenWrapper testID={FriendSearchScreen.displayName}>

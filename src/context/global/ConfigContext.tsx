@@ -1,5 +1,5 @@
 ﻿import type {ReactNode} from 'react';
-import { useEffect, useReducer} from 'react';
+import {useEffect, useReducer} from 'react';
 
 import {useUserConnection} from './UserConnectionContext';
 import UserOffline from '../../components/UserOffline';
@@ -48,7 +48,8 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({children}) => {
     const underMaintenance: boolean = isUnderMaintenance(
       newConfigData?.maintenance,
     );
-    const minSupportedVersion = newConfigData?.app_settings.min_supported_version;
+    const minSupportedVersion =
+      newConfigData?.app_settings.min_supported_version;
     const versionValidationResult = validateAppVersion(minSupportedVersion);
 
     dispatch({type: 'SET_UNDER_MAINTENANCE', payload: underMaintenance});
@@ -59,24 +60,37 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({children}) => {
   };
 
   useEffect(() => {
-    if (!db) {return;}
+    if (!db) {
+      return;
+    }
     const configPath = DBPATHS.CONFIG;
-    const stopListening = listenForDataChanges(db, configPath, (data: Config) => {
-      dispatch({type: 'SET_IS_LOADING', payload: true});
-      dispatch({type: 'SET_CONFIG', payload: data});
-      updateLocalHooks(data);
-      dispatch({type: 'SET_IS_LOADING', payload: false});
-    });
+    const stopListening = listenForDataChanges(
+      db,
+      configPath,
+      (data: Config) => {
+        dispatch({type: 'SET_IS_LOADING', payload: true});
+        dispatch({type: 'SET_CONFIG', payload: data});
+        updateLocalHooks(data);
+        dispatch({type: 'SET_IS_LOADING', payload: false});
+      },
+    );
 
     return () => stopListening();
   }, []);
 
   // Modals to render before navigation is initialized
-  if (!isOnline) {return <UserOffline />;}
-  if (state.isLoading) {return <LoadingData />;}
-  if (state.underMaintenance)
-    {return <UnderMaintenanceModal config={state.config} />;}
-  if (!state.versionValid) {return <ForceUpdateModal />;}
+  if (!isOnline) {
+    return <UserOffline />;
+  }
+  if (state.isLoading) {
+    return <LoadingData />;
+  }
+  if (state.underMaintenance) {
+    return <UnderMaintenanceModal config={state.config} />;
+  }
+  if (!state.versionValid) {
+    return <ForceUpdateModal />;
+  }
 
   return <>{children}</>;
 };

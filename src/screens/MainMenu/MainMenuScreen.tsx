@@ -1,6 +1,5 @@
 ﻿import React, {useContext, useEffect, useState} from 'react';
-import type {
-  ImageSourcePropType} from 'react-native';
+import type {ImageSourcePropType} from 'react-native';
 import {
   View,
   Text,
@@ -9,12 +8,12 @@ import {
   ScrollView,
   Image,
   Alert,
-  Keyboard
+  Keyboard,
 } from 'react-native';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import YesNoPopup from '@components/Popups/YesNoPopup';
 import type {UserCredential} from 'firebase/auth';
-import { deleteUser, signOut} from 'firebase/auth';
+import {deleteUser, signOut} from 'firebase/auth';
 import {version as _version} from '../../../package.json';
 import {deleteUserData, reauthentificateUser} from '@database/users';
 import FeedbackPopup from '@components/Popups/FeedbackPopup';
@@ -55,7 +54,8 @@ const MenuItem: React.FC<MainMenuItemProps> = ({heading, data, index}) => (
   <View key={index}>
     <GrayHeader headerText={heading} />
     {data.map((button, bIndex) => (
-      <TouchableOpacity accessibilityRole="button"
+      <TouchableOpacity
+        accessibilityRole="button"
         key={bIndex}
         style={styles.button}
         onPress={button.action}>
@@ -77,7 +77,9 @@ function MainMenuScreen({route}: MainMenuScreenProps) {
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
-  if (!user) {return null;}
+  if (!user) {
+    return null;
+  }
   // Hooks
   const [FeedbackList, setFeedbackList] = useState<FeedbackList>({});
   // Modals
@@ -109,7 +111,9 @@ function MainMenuScreen({route}: MainMenuScreenProps) {
   };
 
   const handleDeleteUser = async (password: string) => {
-    if (!db || !userData) {return;}
+    if (!db || !userData) {
+      return;
+    }
     // Reauthentificate the user
     let authentificationResult: void | UserCredential;
     try {
@@ -180,7 +184,9 @@ function MainMenuScreen({route}: MainMenuScreenProps) {
   };
 
   const handleSubmitFeedback = (feedback: string) => {
-    if (!db) {return;}
+    if (!db) {
+      return;
+    }
     if (feedback !== '') {
       submitFeedback(db, user.uid, feedback);
       // Popup an information button at the top (your feedback has been submitted)
@@ -201,7 +207,9 @@ function MainMenuScreen({route}: MainMenuScreenProps) {
   // Monitor feedback data
   if (userData?.role == 'admin') {
     useEffect(() => {
-      if (!db) {return;}
+      if (!db) {
+        return;
+      }
       // Start listening for changes when the component mounts
       const dbRef = `feedback/`;
       const stopListening = listenForDataChanges(
@@ -317,8 +325,12 @@ function MainMenuScreen({route}: MainMenuScreenProps) {
     modalData = [...modalData, ...adminData]; // Add admin settings
   }
 
-  if (!isOnline) {return <UserOffline />;}
-  if (!db || !preferences || !userData) {return null;} // Should never be null
+  if (!isOnline) {
+    return <UserOffline />;
+  }
+  if (!db || !preferences || !userData) {
+    return null;
+  } // Should never be null
 
   return (
     <ScreenWrapper testID={MainMenuScreen.displayName}>

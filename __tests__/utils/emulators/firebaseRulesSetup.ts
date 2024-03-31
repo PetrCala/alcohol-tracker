@@ -1,9 +1,6 @@
 import fs from 'fs';
-import type {
-  RulesTestEnvironment} from '@firebase/rules-unit-testing';
-import {
-  initializeTestEnvironment
-} from '@firebase/rules-unit-testing';
+import type {RulesTestEnvironment} from '@firebase/rules-unit-testing';
+import {initializeTestEnvironment} from '@firebase/rules-unit-testing';
 import CONFIG from '../../../src/CONFIG';
 import * as firebaseJson from '../../../firebase.json';
 
@@ -12,7 +9,7 @@ type TestEnvironmentResult = {
   authDb: any;
   unauthDb: any;
   adminDb: any;
-}
+};
 
 export async function setupFirebaseRulesTestEnv(): Promise<TestEnvironmentResult> {
   const projectId = CONFIG.TEST_PROJECT_ID;

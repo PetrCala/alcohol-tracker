@@ -153,13 +153,14 @@ export const validateAppVersion = (
   minSupportedVersion: string | undefined,
   currentAppVersion: string = version,
 ): ValidationResult => {
-  if (!minSupportedVersion)
+  if (!minSupportedVersion) {
     // Allowing to be null allows cleaner code down the line
-    {return {
+    return {
       success: false,
       message:
         'This version of the application is outdated. Please upgrade to the newest version.',
-    };}
+    };
+  }
   // Compare versions
   const cleanCurrentAppVersion = cleanSemver(currentAppVersion); // No build metadata
   if (semver.lt(cleanCurrentAppVersion, minSupportedVersion)) {

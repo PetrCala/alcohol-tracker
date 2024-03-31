@@ -100,11 +100,14 @@ const FriendRequestButtons: React.FC<RequestIdProps> = ({requestId}) => {
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  if (!user) {return;}
+  if (!user) {
+    return;
+  }
 
   return (
     <View style={styles.friendRequestButtonsContainer}>
-      <TouchableOpacity accessibilityRole="button"
+      <TouchableOpacity
+        accessibilityRole="button"
         key={requestId + '-accept-request-button'}
         style={[styles.handleRequestButton, styles.acceptRequestButton]}
         onPress={() =>
@@ -116,7 +119,8 @@ const FriendRequestButtons: React.FC<RequestIdProps> = ({requestId}) => {
           <Text style={styles.handleRequestButtonText}>Accept</Text>
         )}
       </TouchableOpacity>
-      <TouchableOpacity accessibilityRole="button"
+      <TouchableOpacity
+        accessibilityRole="button"
         key={requestId + '-reject-request-button'}
         style={[styles.handleRequestButton, styles.rejectRequestButton]}
         onPress={() =>
@@ -134,10 +138,13 @@ const FriendRequestPending: React.FC<RequestIdProps> = ({requestId}) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const user = auth.currentUser;
 
-  if (!user) {return;}
+  if (!user) {
+    return;
+  }
   return (
     <View style={styles.friendRequestPendingContainer}>
-      <TouchableOpacity accessibilityRole="button"
+      <TouchableOpacity
+        accessibilityRole="button"
         style={[styles.handleRequestButton, styles.rejectRequestButton]}
         onPress={() =>
           handleRejectFriendRequest(db, user.uid, requestId, setIsLoading)
@@ -175,7 +182,9 @@ const FriendRequestItem: React.FC<FriendRequestItemProps> = ({
   friendRequests,
   displayData,
 }) => {
-  if (!friendRequests || !displayData) {return null;}
+  if (!friendRequests || !displayData) {
+    return null;
+  }
   const profileData = displayData[requestId];
   const requestStatus = friendRequests[requestId];
 
@@ -200,12 +209,12 @@ type State = {
   requestsReceived: string[];
   requestsSentCount: number;
   requestsReceivedCount: number;
-}
+};
 
 type Action = {
   type: string;
   payload: any;
-}
+};
 
 const initialState: State = {
   isLoading: true,
@@ -277,7 +286,9 @@ function FriendRequestScreen() {
     const newRequestsReceived: string[] = [];
     if (!isEmptyObject(state.friendRequests)) {
       Object.keys(state.friendRequests).forEach(requestId => {
-        if (!state.friendRequests) {return;}
+        if (!state.friendRequests) {
+          return;
+        }
         if (
           state.friendRequests[requestId] === CONST.FRIEND_REQUEST_STATUS.SENT
         ) {
@@ -349,7 +360,8 @@ function FriendRequestScreen() {
           />
         )}
       </ScrollView>
-      <TouchableOpacity accessibilityRole="button"
+      <TouchableOpacity
+        accessibilityRole="button"
         style={styles.searchScreenButton}
         onPress={() => Navigation.navigate(ROUTES.SOCIAL_FRIEND_SEARCH)}>
         <Image source={KirokuIcons.Search} style={styles.searchScreenImage} />

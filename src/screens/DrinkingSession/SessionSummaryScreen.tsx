@@ -65,7 +65,9 @@ type SessionSummaryScreenProps = StackScreenProps<
 function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
   const {sessionId} = route.params;
   const {preferences, drinkingSessionData} = useDatabaseData();
-  if (!preferences) {return null;} // Careful when writing hooks after this line
+  if (!preferences) {
+    return null;
+  } // Careful when writing hooks after this line
   const [session, setSession] = useState<DrinkingSession>(
     extractSessionOrEmpty(sessionId, drinkingSessionData),
   );

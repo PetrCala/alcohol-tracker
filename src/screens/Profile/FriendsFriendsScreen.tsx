@@ -54,7 +54,7 @@ type State = {
   noUsersFound: boolean;
   displayData: ProfileList;
   isLoading: boolean;
-}
+};
 
 const initialState: State = {
   searching: false,

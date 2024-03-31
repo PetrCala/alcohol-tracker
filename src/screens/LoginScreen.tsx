@@ -32,12 +32,12 @@ type State = {
   warning: string;
   success: string;
   resetPasswordModalVisible: boolean;
-}
+};
 
 type Action = {
   type: string;
   payload: any;
-}
+};
 
 const initialState: State = {
   email: '',
@@ -141,7 +141,9 @@ function LoginScreen() {
 
   // Wait to see whether there already is an authentificated user
   // Possibly here display the app logo instead of the loading screen
-  if (state.loadingUser) {return <LoadingData loadingText="Signing in..." />;}
+  if (state.loadingUser) {
+    return <LoadingData loadingText="Signing in..." />;
+  }
 
   return (
     <DismissKeyboard>
@@ -152,7 +154,8 @@ function LoginScreen() {
           <Image source={KirokuImages.Logo} style={styles.logo} />
         </View>
         <View style={styles.inputContainer}>
-          <TextInput accessibilityLabel="Text input field"
+          <TextInput
+            accessibilityLabel="Text input field"
             placeholder="Email"
             placeholderTextColor={'#a8a8a8'}
             keyboardType="email-address"
@@ -163,7 +166,8 @@ function LoginScreen() {
             }
             style={styles.input}
           />
-          <TextInput accessibilityLabel="Text input field"
+          <TextInput
+            accessibilityLabel="Text input field"
             placeholder="Password"
             placeholderTextColor={'#a8a8a8'}
             textContentType="password"
@@ -174,10 +178,14 @@ function LoginScreen() {
             secureTextEntry
             style={styles.input}
           />
-          <TouchableOpacity accessibilityRole="button" onPress={handleLogin} style={styles.loginButton}>
+          <TouchableOpacity
+            accessibilityRole="button"
+            onPress={handleLogin}
+            style={styles.loginButton}>
             <Text style={styles.loginButtonText}>Login</Text>
           </TouchableOpacity>
-          <TouchableOpacity accessibilityRole="button"
+          <TouchableOpacity
+            accessibilityRole="button"
             onPress={() =>
               dispatch({
                 type: 'SET_RESET_PASSWORD_MODAL_VISIBLE',
@@ -191,7 +199,8 @@ function LoginScreen() {
           </TouchableOpacity>
           <View style={[commonStyles.horizontalLine, styles.customLineWidth]} />
           <View style={styles.signUpContainer}>
-            <TouchableOpacity accessibilityRole="button"
+            <TouchableOpacity
+              accessibilityRole="button"
               style={styles.signUpButtonContainer}
               onPress={() => Navigation.navigate(ROUTES.SIGNUP)}>
               <Text style={styles.signUpInfoText}>Don't have an account?</Text>

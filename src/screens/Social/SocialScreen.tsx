@@ -43,7 +43,8 @@ const SocialFooterButton: React.FC<SocialFooterButtonProps> = ({
 }) => {
   return (
     <View style={styles.footerPartContainer}>
-      <TouchableOpacity accessibilityRole="button"
+      <TouchableOpacity
+        accessibilityRole="button"
         style={[
           styles.footerButton,
           currentIndex === index ? {backgroundColor: '#ebeb02'} : {},
@@ -86,7 +87,9 @@ function SocialScreen({route}: SocialScreenProps) {
   const [index, setIndex] = useState<number>(0);
 
   const renderScene = ({route}: {route: RouteType}) => {
-    if (!userData) {return null;}
+    if (!userData) {
+      return null;
+    }
     switch (route.key) {
       case 'friendList':
         return <FriendListScreen />;

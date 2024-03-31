@@ -1,10 +1,5 @@
-﻿import type {
-  FirebaseApp as FirebaseAppProps} from 'firebase/app';
-import {
-  initializeApp,
-  getApp,
-  getApps
-} from 'firebase/app';
+﻿import type {FirebaseApp as FirebaseAppProps} from 'firebase/app';
+import {initializeApp, getApp, getApps} from 'firebase/app';
 import FirebaseConfig from './FirebaseConfig';
 
 const FirebaseApp: FirebaseAppProps =

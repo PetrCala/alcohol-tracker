@@ -1,5 +1,5 @@
 ﻿// DatabaseDataContext.tsx
-import type { ReactNode} from 'react';
+import type {ReactNode} from 'react';
 import React, {createContext, useContext, useMemo} from 'react';
 import {useFirebase} from './FirebaseContext';
 import type {

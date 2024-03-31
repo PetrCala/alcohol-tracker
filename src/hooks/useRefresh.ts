@@ -4,7 +4,7 @@ import type {FetchDataKeys} from './useFetchData/types';
 
 type UseRefreshProps = {
   refetch: RefetchDatabaseData;
-}
+};
 
 /**
  * Custom hook for handling refresh functionality.

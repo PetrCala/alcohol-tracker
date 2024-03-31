@@ -1,24 +1,12 @@
-import type {
-  Permission,
-  Rationale,
-  PermissionStatus} from 'react-native';
-import {
-  Alert,
-  Platform,
-  PermissionsAndroid,
-  Linking
-} from 'react-native';
+import type {Permission, Rationale, PermissionStatus} from 'react-native';
+import {Alert, Platform, PermissionsAndroid, Linking} from 'react-native';
 import type {
   Permission as RNPermission,
   PermissionStatus as RNPermissionStatus,
-  NotificationsResponse} from 'react-native-permissions';
-import {
-  request,
-  RESULTS,
-  requestNotifications
+  NotificationsResponse,
 } from 'react-native-permissions';
-import type {
-  PermissionKey} from './PermissionsUtils';
+import {request, RESULTS, requestNotifications} from 'react-native-permissions';
+import type {PermissionKey} from './PermissionsUtils';
 import {
   AndroidFilePermissions,
   permissionIsDenied,

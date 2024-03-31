@@ -12,7 +12,7 @@ declare module 'react-native-config' {
     MESSAGING_SENDER_ID: number;
     APP_ID: string;
     MEASUREMENT_ID: string;
-  }
+  };
 
   export const Config: NativeConfig;
   export default Config;

@@ -1,24 +1,15 @@
 ﻿import type {ReactNode} from 'react';
-import { createContext, useContext} from 'react';
-import type {
-  Auth} from 'firebase/auth';
+import {createContext, useContext} from 'react';
+import type {Auth} from 'firebase/auth';
 import {
   initializeAuth,
   getReactNativePersistence,
-  connectAuthEmulator
+  connectAuthEmulator,
 } from 'firebase/auth';
-import type {
-  Database} from 'firebase/database';
-import {
-  connectDatabaseEmulator,
-  getDatabase,
-} from 'firebase/database';
-import type {
-  FirebaseStorage} from 'firebase/storage';
-import {
-  getStorage,
-  connectStorageEmulator,
-} from 'firebase/storage';
+import type {Database} from 'firebase/database';
+import {connectDatabaseEmulator, getDatabase} from 'firebase/database';
+import type {FirebaseStorage} from 'firebase/storage';
+import {getStorage, connectStorageEmulator} from 'firebase/storage';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 import {isConnectedToAuthEmulator} from '@src/libs/Firebase/FirebaseUtils';
 import {FirebaseApp} from '@libs/Firebase/FirebaseApp';
@@ -70,12 +61,15 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
 
   // Check if emulators should be used
   if (CONFIG.IS_IN_TEST) {
-    if (!FirebaseConfig.authDomain)
-      {throw new Error('Auth URL not defined in FirebaseConfig');}
-    if (!FirebaseConfig.databaseURL)
-      {throw new Error('Database URL not defined in FirebaseConfig');}
-    if (!FirebaseConfig.storageBucket)
-      {throw new Error('Storage bucket not defined in FirebaseConfig');}
+    if (!FirebaseConfig.authDomain) {
+      throw new Error('Auth URL not defined in FirebaseConfig');
+    }
+    if (!FirebaseConfig.databaseURL) {
+      throw new Error('Database URL not defined in FirebaseConfig');
+    }
+    if (!FirebaseConfig.storageBucket) {
+      throw new Error('Storage bucket not defined in FirebaseConfig');
+    }
 
     if (!isConnectedToAuthEmulator(auth)) {
       connectAuthEmulator(auth, FirebaseConfig.authDomain);

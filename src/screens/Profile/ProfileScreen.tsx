@@ -12,7 +12,7 @@
 import commonStyles from '../../styles/commonStyles';
 import {useFirebase} from '../../context/global/FirebaseContext';
 import type {StatData} from '@components/Items/StatOverview';
-import { StatsOverview} from '@components/Items/StatOverview';
+import {StatsOverview} from '@components/Items/StatOverview';
 import ProfileOverview from '@components/Social/ProfileOverview';
 import React, {useEffect, useMemo, useReducer} from 'react';
 import {readDataOnce} from '@database/baseFunctions';
@@ -33,7 +33,7 @@ import {fetchUserFriends, getCommonFriendsCount} from '@libs/FriendUtils';
 import MainHeader from '@components/Header/MainHeader';
 import ManageFriendPopup from '@components/Popups/Profile/ManageFriendPopup';
 import type {DrinkingSessionArray, UserList} from '@src/types/database';
-import { UserProps} from '@src/types/database';
+import {UserProps} from '@src/types/database';
 import type {StackScreenProps} from '@react-navigation/stack';
 import type {ProfileNavigatorParamList} from '@libs/Navigation/types';
 import type SCREENS from '@src/SCREENS';
@@ -46,7 +46,7 @@ import useFetchData from '@hooks/useFetchData';
 import {sendFriendRequest} from '@database/friends';
 import {getPlural} from '@libs/StringUtils';
 import ScreenWrapper from '@components/ScreenWrapper';
-import type { FetchDataKeys} from '@hooks/useFetchData/types';
+import type {FetchDataKeys} from '@hooks/useFetchData/types';
 import {FetchData} from '@hooks/useFetchData/types';
 import useListenToData from '@hooks/useListenToData';
 
@@ -59,12 +59,12 @@ type State = {
   unitsConsumed: number;
   manageFriendModalVisible: boolean;
   unfriendModalVisible: boolean;
-}
+};
 
 type Action = {
   type: string;
   payload: any;
-}
+};
 
 const initialState: State = {
   selfFriends: undefined,
@@ -144,7 +144,9 @@ function ProfileScreen({route}: ProfileScreenProps) {
   // Track own friends
   useEffect(() => {
     const getOwnFriends = async () => {
-      if (!user) {return;}
+      if (!user) {
+        return;
+      }
       let ownFriends = friends;
       if (user?.uid !== userId) {
         ownFriends = await readDataOnce(
@@ -170,7 +172,9 @@ function ProfileScreen({route}: ProfileScreenProps) {
 
   // Monitor stats
   useMemo(() => {
-    if (!drinkingSessionData || !preferences) {return;}
+    if (!drinkingSessionData || !preferences) {
+      return;
+    }
     const drinkingSessionArray: DrinkingSessionArray =
       Object.values(drinkingSessionData);
 
@@ -192,8 +196,12 @@ function ProfileScreen({route}: ProfileScreenProps) {
     dispatch({type: 'SET_UNITS_CONSUMED', payload: thisMonthUnits});
   }, [drinkingSessionData, preferences, state.visibleDateObject]);
 
-  if (isLoading) {return <LoadingData />;}
-  if (!profileData || !preferences || !userData) {return;}
+  if (isLoading) {
+    return <LoadingData />;
+  }
+  if (!profileData || !preferences || !userData) {
+    return;
+  }
 
   return (
     <ScreenWrapper testID={ProfileScreen.displayName}>
@@ -234,7 +242,8 @@ function ProfileScreen({route}: ProfileScreenProps) {
             )}
           </View>
           <View style={styles.rightContainer}>
-            <TouchableOpacity accessibilityRole="button"
+            <TouchableOpacity
+              accessibilityRole="button"
               onPress={() => {
                 user?.uid === userId
                   ? Navigation.navigate(ROUTES.SOCIAL)
@@ -270,7 +279,8 @@ function ProfileScreen({route}: ProfileScreenProps) {
         />
         <View style={styles.bottomContainer}>
           {user?.uid !== userId ? (
-            <TouchableOpacity accessibilityRole="button"
+            <TouchableOpacity
+              accessibilityRole="button"
               style={styles.manageFriendButton}
               onPress={() =>
                 dispatch({

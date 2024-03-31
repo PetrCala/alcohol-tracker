@@ -71,7 +71,9 @@ function EditScreen({route}: EditScreenProps) {
     Navigation.goBack();
   };
 
-  if (!profileData) {return;}
+  if (!profileData) {
+    return;
+  }
 
   return (
     <ScreenWrapper testID={EditScreen.displayName}>
@@ -86,7 +88,8 @@ function EditScreen({route}: EditScreenProps) {
           keyboardShouldPersistTaps="handled"
           onScrollBeginDrag={Keyboard.dismiss}
           style={styles.scrollView}>
-          <TextInput accessibilityLabel="Text input field"
+          <TextInput
+            accessibilityLabel="Text input field"
             style={styles.feedbackWindowText}
             onChangeText={() => {}}
             placeholder={'Write your feedback here'}

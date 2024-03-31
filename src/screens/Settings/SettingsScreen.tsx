@@ -23,7 +23,8 @@ const SettingsItem: React.FC<{item: any}> = ({item}) => (
     <Text style={styles.settingLabel}>{item.label}</Text>
     <View style={styles.buttonsContainer}>
       {item.buttons.map((button: any, index: any) => (
-        <TouchableOpacity accessibilityRole="button"
+        <TouchableOpacity
+          accessibilityRole="button"
           key={index}
           style={[styles.button, {backgroundColor: button.color}]}
           onPress={button.action}>
@@ -75,7 +76,9 @@ function SettingsScreen() {
     // Add more settings items as needed
   ];
 
-  if (!isOnline) {return <UserOffline />;}
+  if (!isOnline) {
+    return <UserOffline />;
+  }
 
   return (
     <View style={{flex: 1, backgroundColor: '#FFFF99'}}>

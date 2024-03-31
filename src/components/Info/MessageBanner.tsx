@@ -7,7 +7,10 @@ type MessageBannerProps = {
 
 const MessageBanner: React.FC<MessageBannerProps> = ({text, onPress}) => {
   return (
-    <TouchableOpacity accessibilityRole="button" style={styles.container} onPress={onPress}>
+    <TouchableOpacity
+      accessibilityRole="button"
+      style={styles.container}
+      onPress={onPress}>
       <Text style={styles.text}>{text}</Text>
     </TouchableOpacity>
   );

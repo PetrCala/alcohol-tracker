@@ -4,7 +4,7 @@ import {
   connectDatabaseEmulator,
   goOffline,
 } from 'firebase/database';
-import type { FirebaseApp} from 'firebase/app';
+import type {FirebaseApp} from 'firebase/app';
 import {initializeApp, deleteApp} from 'firebase/app';
 import type {Database} from 'firebase/database';
 import * as firebaseJson from '../../../firebase.json';

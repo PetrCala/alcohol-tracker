@@ -16,7 +16,9 @@ async function checkAccountCreationLimit(db: Database): Promise<void> {
 
   const deviceRef = DBPATHS.ACCOUNT_CREATIONS_DEVICE_ID.getRoute(deviceId);
   const deviceData: AccountCreations | null = await readDataOnce(db, deviceRef);
-  if (!deviceData) {return;}
+  if (!deviceData) {
+    return;
+  }
 
   const recentAccountCreations = Object.values(deviceData).filter(
     timestamp => timestamp >= oneDayAgo,
