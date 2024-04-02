@@ -77,9 +77,6 @@ function MainMenuScreen({route}: MainMenuScreenProps) {
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
-  if (!user) {
-    return null;
-  }
   // Hooks
   const [FeedbackList, setFeedbackList] = useState<FeedbackList>({});
   // Modals
@@ -111,7 +108,7 @@ function MainMenuScreen({route}: MainMenuScreenProps) {
   };
 
   const handleDeleteUser = async (password: string) => {
-    if (!db || !userData) {
+    if (!db || !userData || !user) {
       return;
     }
     // Reauthentificate the user
@@ -161,6 +158,9 @@ function MainMenuScreen({route}: MainMenuScreenProps) {
 
   /** Handle cases when deleting a user fails */
   const handleInvalidDeleteUser = (error: any) => {
+    if (!user) {
+      return null;
+    }
     const err = error.message;
     if (err.includes('auth/requires-recent-login')) {
       // Should never happen
@@ -184,7 +184,7 @@ function MainMenuScreen({route}: MainMenuScreenProps) {
   };
 
   const handleSubmitFeedback = (feedback: string) => {
-    if (!db) {
+    if (!db || !user) {
       return;
     }
     if (feedback !== '') {
@@ -328,7 +328,7 @@ function MainMenuScreen({route}: MainMenuScreenProps) {
   if (!isOnline) {
     return <UserOffline />;
   }
-  if (!db || !preferences || !userData) {
+  if (!preferences || !userData || !user) {
     return null;
   } // Should never be null
 
