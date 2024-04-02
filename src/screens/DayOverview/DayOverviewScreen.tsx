@@ -114,7 +114,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
     // Convert the timestamp to a Date object
     const date = timestampToDate(session.start_time);
     const timeString = nonMidnightString(formatDateToTime(date));
-    const shouldDisplayTime = timeString !== nonMidnightString('00:00');
+    const shouldDisplayTime = session.type === CONST.SESSION_TYPES.LIVE;
     const viewStyle = {
       ...styles.menuDrinkingSessionContainer,
       backgroundColor: sessionColor,
