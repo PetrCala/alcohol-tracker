@@ -37,6 +37,7 @@ import Navigation from '@navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import ScreenWrapper from '@components/ScreenWrapper';
+import LoadingData from '@components/LoadingData';
 
 type MainMenuButtonData = {
   label: string;
@@ -327,6 +328,9 @@ function MainMenuScreen({route}: MainMenuScreenProps) {
 
   if (!isOnline) {
     return <UserOffline />;
+  }
+  if (deletingUser) {
+    return <LoadingData loadingText="Deleting your account..." />;
   }
   if (!preferences || !userData || !user) {
     return null;
