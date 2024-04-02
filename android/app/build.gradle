@@ -109,8 +109,8 @@ android {
         applicationId "com.alcohol_tracker"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1000030106
-        versionName "0.3.1-6"
+        versionCode 1000030307
+        versionName "0.3.3-7"
         vectorDrawables.useSupportLibrary = true
     }
 
