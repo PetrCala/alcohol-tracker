@@ -28,6 +28,7 @@ import ROUTES from '@src/ROUTES';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import FillerView from '@components/FillerView';
 import {sleep} from '@libs/TimeUtils';
+import _ from 'lodash';
 
 type UserListProps = {
   fullUserArray: UserArray;
@@ -162,7 +163,7 @@ const UserListComponent: React.FC<UserListProps> = ({
         <>
           <View style={styles.userList}>
             {isNonEmptyArray(displayUserArray) ? (
-              displayUserArray.map((userId: string) => {
+              _.map(displayUserArray, (userId: string) => {
                 const profileData = profileList[userId] ?? {};
                 const userStatusData = userStatusList[userId] ?? {};
 

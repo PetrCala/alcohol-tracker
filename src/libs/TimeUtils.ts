@@ -20,7 +20,6 @@ function numberToVerboseString(
   // Format the number into human-readable form based on its age
   let count: number;
   let unit: string;
-  console.log(number);
   switch (true) {
     case number < 60 * 1000:
       count = Math.floor(number / 1000);
@@ -60,10 +59,11 @@ function numberToVerboseString(
 }
 
 function getTimestampAge(
-  timestamp: number,
+  timestamp: number | null | undefined,
   addAgo: boolean = true,
   useAbbreviation: boolean = false,
-): string {
+): string | null | undefined {
+  if (!timestamp) return null;
   const now = Date.now();
   const difference = now - timestamp;
   return numberToVerboseString(difference, addAgo, useAbbreviation);

@@ -14,6 +14,7 @@ import {
   sessionIsExpired,
 } from '@libs/SessionUtils';
 import DrinkData from '@libs/DrinkData';
+import _, {get} from 'lodash';
 
 type UserOverviewProps = {
   userId: string;
@@ -27,14 +28,17 @@ const UserOverview: React.FC<UserOverviewProps> = ({
   userStatusData,
 }) => {
   const {storage} = useFirebase();
-  if (!profileData || !userStatusData) return null;
   const {last_online, latest_session, latest_session_id} = userStatusData;
   // const activeNow = isRecent(last_online);
   const inSession = latest_session?.ongoing;
-  const lastSessionEndTime = latest_session
-    ? getTimestampAge(latest_session.end_time, false, true)
-    : null;
-  const displaySessionInfo = inSession && !sessionIsExpired(latest_session);
+  const lastSessionEndTime = get(latest_session, 'end_time', null);
+  const sessionEndTimeVerbose = getTimestampAge(
+    lastSessionEndTime,
+    false,
+    true,
+  );
+  const shouldDisplaySessionInfo =
+    inSession && !sessionIsExpired(latest_session);
   // const sessionLength = calculateSessionLength(latest_session, true);
   const sessionStartTime = latest_session?.start_time
     ? formatDateToTime(timestampToDate(latest_session?.start_time))
@@ -60,7 +64,7 @@ const UserOverview: React.FC<UserOverviewProps> = ({
           <View
             key={userId + 'info'}
             style={
-              // displaySessionInfo ?
+              // shouldDisplaySessionInfo ?
               // : [styles.userInfoContainer, styles.centerUserInfo]
               [styles.userInfoContainer, styles.centerUserInfo]
             }>
@@ -76,7 +80,7 @@ const UserOverview: React.FC<UserOverviewProps> = ({
       </View>
       <View key={userId + '-right-container'} style={styles.rightContainer}>
         {/* ? `In session:\n${drinksThisSession} ${mostCommonDrink}` */}
-        {inSession && displaySessionInfo ? (
+        {inSession && shouldDisplaySessionInfo ? (
           <>
             <View style={commonStyles.flexRow}>
               <Text
@@ -101,9 +105,8 @@ const UserOverview: React.FC<UserOverviewProps> = ({
           <Text
             key={userId + '-status'}
             style={[styles.userDetailsText, styles.rightContainerText]}>
-            {lastSessionEndTime
-              ? // ? `Last session:\n${lastSessionEndTime}`
-                `${lastSessionEndTime}\nsober`
+            {!_.isEmpty(sessionEndTimeVerbose)
+              ? `${sessionEndTimeVerbose}\nsober`
               : inSession
                 ? `Session started:\n${sessionStartTime}`
                 : 'No sessions yet'}
