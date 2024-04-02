@@ -30,7 +30,7 @@ export async function saveDrinkingSessionData(
   updateStatus?: boolean,
 ): Promise<void> {
   newSessionData = removeZeroObjectsFromSession(newSessionData); // Delete the initial log of zero drinks that was used as a placeholder
-  newSessionData.drinks = newSessionData.drinks ?? {}; // Can not send undefined
+  newSessionData.drinks = newSessionData.drinks || {}; // Can not send undefined
   var updates: {[key: string]: any} = {};
   updates[drinkingSessionRef.getRoute(userId, sessionKey)] = newSessionData;
   if (updateStatus) {
@@ -52,7 +52,7 @@ export async function savePlaceholderSessionData(
   newSessionData: DrinkingSession,
 ): Promise<void> {
   newSessionData = removeZeroObjectsFromSession(newSessionData);
-  newSessionData.drinks = newSessionData.drinks ?? {}; // Can not send undefined
+  newSessionData.drinks = newSessionData.drinks || {}; // Can not send undefined
   var updates: {[key: string]: any} = {};
   updates[placeholderSessionRef.getRoute(userId)] = newSessionData;
   await update(ref(db), updates);
@@ -83,7 +83,7 @@ export async function startLiveDrinkingSession(
   newSessionData: DrinkingSession,
   sessionKey: string,
 ): Promise<void> {
-  newSessionData.drinks = newSessionData.drinks ?? {}; // Can not send undefined
+  newSessionData.drinks = newSessionData.drinks || {}; // Can not send undefined
   var updates: {[key: string]: any} = {};
   const userStatusData: UserStatus = {
     last_online: new Date().getTime(),
@@ -110,7 +110,7 @@ export async function endLiveDrinkingSession(
   sessionKey: string,
 ): Promise<void> {
   newSessionData = removeZeroObjectsFromSession(newSessionData);
-  newSessionData.drinks = newSessionData.drinks ?? {}; // Can not send undefined
+  newSessionData.drinks = newSessionData.drinks || {}; // Can not send undefined
   var updates: {[key: string]: any} = {};
   const userStatusData: UserStatus = {
     // ETC - 1
@@ -179,6 +179,6 @@ export async function updateSessionDrinks(
 ): Promise<void> {
   var updates: {[key: string]: DrinksList} = {};
   updates[drinkingSessionDrinksRef.getRoute(userId, sessionKey)] =
-    newDrinks ?? {}; // Can not send undefined
+    newDrinks || {}; // Can not send undefined
   await update(ref(db), updates);
 }
