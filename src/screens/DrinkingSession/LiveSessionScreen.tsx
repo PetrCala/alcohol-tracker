@@ -279,9 +279,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   };
 
   const handleConfirmDiscard = async () => {
-    if (!db || !user) {
-      return;
-    }
+    if (!user) return;
     try {
       setLoadingText(
         `${sessionIsLive ? 'Discarding' : 'Deleting'} this session...`,

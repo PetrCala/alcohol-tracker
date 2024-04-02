@@ -556,6 +556,27 @@ export const calculateThisMonthUnits = (
   );
 };
 
+export function getLastStartedSession(
+  sessions: DrinkingSessionList | undefined,
+): DrinkingSession | undefined {
+  if (!sessions) return undefined;
+  return _.maxBy(_.values(sessions), 'start_time');
+}
+
+export function getLastStartedSessionId(
+  sessions: DrinkingSessionList | undefined,
+): string | undefined {
+  if (!sessions) return undefined;
+
+  const latestSession = _.maxBy(
+    _.entries(sessions),
+    ([, sessionValue]) => sessionValue.start_time,
+  );
+
+  // Return the key (session ID) of the latest session, if it exists
+  return latestSession ? latestSession[0] : undefined;
+}
+
 /** List all drinks to add and their amounts and add this to the current drinks hook
  *
  * @param drinks Drinks kind of object listing each drink to add and its amount

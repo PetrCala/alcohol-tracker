@@ -28,7 +28,7 @@ import {
 } from '@libs/DataHandling';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import UserOffline from '@components/UserOffline';
-import {updateUserLastOnline} from '@database/users';
+import {synchronizeUserStatus} from '@database/users';
 import {startLiveDrinkingSession} from '@database/drinkingSessions';
 import commonStyles from '@src/styles/commonStyles';
 import {useFirebase} from '@context/global/FirebaseContext';
@@ -246,18 +246,23 @@ function HomeScreen({}: HomeScreenProps) {
   useFocusEffect(
     React.useCallback(() => {
       // Update user status on home screen focus
-      if (!user) {
+      if (!user || !userData || !preferences || !drinkingSessionData) {
         return;
       }
       try {
-        updateUserLastOnline(db, user.uid);
+        synchronizeUserStatus(
+          db,
+          user.uid,
+          userStatusData,
+          drinkingSessionData,
+        );
       } catch (error: any) {
         Alert.alert(
           'Failed to contact the database',
           'Could not update user online status:' + error.message,
         );
       }
-    }, []),
+    }, [userData, preferences, drinkingSessionData]),
   );
 
   if (!user) {
@@ -267,7 +272,13 @@ function HomeScreen({}: HomeScreenProps) {
   if (!isOnline) {
     return <UserOffline />;
   }
-  if (isLoading || state.initializingSession || !preferences || !userData) {
+  if (
+    isLoading ||
+    state.initializingSession ||
+    !preferences ||
+    !userData ||
+    !userStatusData
+  ) {
     return (
       <LoadingData
         loadingText={
