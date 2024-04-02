@@ -19,7 +19,6 @@ import {
   removeDrinkingSessionData,
   removePlaceholderSessionData,
   saveDrinkingSessionData,
-  savePlaceholderSessionData,
   updateSessionDrinks,
 } from '@database/drinkingSessions';
 import {

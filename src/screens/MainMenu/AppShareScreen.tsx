@@ -27,7 +27,7 @@ type AppShareScreenProps = StackScreenProps<
 function AppShareScreen({route}: AppShareScreenProps) {
   const handleCopyLinkPress = () => {
     try {
-      copyToClipboard(CONST.APP_DOWNLOAD_LINK, false);
+      copyToClipboard(CONST.APP_DOWNLOAD_LINK, true);
     } catch (error: any) {
       Alert.alert('Error', error.message);
     }
