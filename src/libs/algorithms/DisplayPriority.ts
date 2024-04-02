@@ -2,6 +2,7 @@ import {UserPriority, UserPriorityList} from '@src/types/various/Algorithms';
 import {UserStatus, UserStatusList} from '@src/types/database';
 import {sumAllDrinks} from '@libs/DataHandling';
 import {sessionIsExpired} from '@libs/SessionUtils';
+import _, {get} from 'lodash';
 
 /**
  * Based on the user status data, calculate the display priority of the users.
@@ -35,10 +36,10 @@ function calculateAllUsersPriority(
 
 function calculateUserPriority(userStatusData: UserStatus): number {
   const latestSession = userStatusData.latest_session;
-  const timeSinceLastSession = latestSession
-    ? new Date().getTime() - latestSession.start_time
+  const latestSessionTime = get(latestSession, 'start_time', null);
+  const timeSinceLastSession = latestSessionTime
+    ? new Date().getTime() - latestSessionTime
     : 1e15;
-
   const expired = sessionIsExpired(latestSession);
   // The older the last session, the lower the priority
   const timeCoefficient = Math.log(timeSinceLastSession) * 50 * -1;
@@ -49,8 +50,8 @@ function calculateUserPriority(userStatusData: UserStatus): number {
     ? sumAllDrinks(latestSession.drinks) // TODO units should be used here perhaps
     : 0;
   return (
+    sessionActive * 500 +
     sessionDrinks * sessionActive * 10 + // Only count active sessions
-    sessionActive * 100 +
     timeCoefficient
   );
 }
