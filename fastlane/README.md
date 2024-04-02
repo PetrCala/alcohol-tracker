@@ -1,4 +1,5 @@
-## fastlane documentation
+fastlane documentation
+----
 
 # Installation
 
@@ -54,7 +55,8 @@ Build and upload app to Google Play
 
 Deploy app to Google Play open beta
 
----
+----
+
 
 ## iOS
 
@@ -90,7 +92,7 @@ Build and upload app to TestFlight
 
 Move app to App Store Review
 
----
+----
 
 This README.md is auto-generated and will be re-generated every time [_fastlane_](https://fastlane.tools) is run.
 
