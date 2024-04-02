@@ -32,7 +32,7 @@ const UserOverview: React.FC<UserOverviewProps> = ({
   // const activeNow = isRecent(last_online);
   const inSession = latest_session?.ongoing;
   const lastSessionEndTime = latest_session
-    ? getTimestampAge(latest_session.end_time)
+    ? getTimestampAge(latest_session.end_time, false, true)
     : null;
   const displaySessionInfo = inSession && !sessionIsExpired(latest_session);
   // const sessionLength = calculateSessionLength(latest_session, true);
@@ -102,7 +102,8 @@ const UserOverview: React.FC<UserOverviewProps> = ({
             key={userId + '-status'}
             style={[styles.userDetailsText, styles.rightContainerText]}>
             {lastSessionEndTime
-              ? `Last session:\n${lastSessionEndTime}`
+              ? // ? `Last session:\n${lastSessionEndTime}`
+                `${lastSessionEndTime}\nsober`
               : inSession
                 ? `Session started:\n${sessionStartTime}`
                 : 'No sessions yet'}
@@ -186,7 +187,7 @@ const styles = StyleSheet.create({
   },
   leftContainerText: {},
   rightContainerText: {
-    textAlign: 'right',
+    textAlign: 'center',
     color: '#333',
   },
 });

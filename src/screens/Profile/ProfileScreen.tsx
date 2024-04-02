@@ -229,17 +229,19 @@ function ProfileScreen({route}: ProfileScreenProps) {
         />
         <View style={styles.friendsInfoContainer}>
           <View style={styles.leftContainer}>
-            <Text style={styles.friendsInfoHeading}>Friends:</Text>
+            <Text style={styles.friendsInfoHeading}>
+              {`${
+                user?.uid !== userId && state.commonFriendCount > 0
+                  ? 'Common f'
+                  : 'F'
+              }riends:`}
+            </Text>
             <Text
               style={[styles.friendsInfoText, commonStyles.smallMarginLeft]}>
-              {state.friendCount}
+              {user?.uid !== userId && state.commonFriendCount > 0
+                ? state.commonFriendCount
+                : state.friendCount}
             </Text>
-            {user?.uid === userId ? null : (
-              <Text
-                style={[styles.friendsInfoText, commonStyles.smallMarginLeft]}>
-                ({state.commonFriendCount} common)
-              </Text>
-            )}
           </View>
           <View style={styles.rightContainer}>
             <TouchableOpacity

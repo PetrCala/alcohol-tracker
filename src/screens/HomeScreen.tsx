@@ -261,13 +261,13 @@ function HomeScreen({}: HomeScreenProps) {
   );
 
   if (!user) {
-    Navigation.navigate(ROUTES.LOGIN);
+    Navigation.navigate(ROUTES.SIGNUP);
     return;
   }
   if (!isOnline) {
     return <UserOffline />;
   }
-  if (isLoading || state.initializingSession) {
+  if (isLoading || state.initializingSession || !preferences || !userData) {
     return (
       <LoadingData
         loadingText={
@@ -275,9 +275,6 @@ function HomeScreen({}: HomeScreenProps) {
         }
       />
     );
-  }
-  if (!preferences || !userData) {
-    return;
   }
 
   return (

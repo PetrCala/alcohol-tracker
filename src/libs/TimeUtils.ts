@@ -12,40 +12,61 @@ function isRecent(timestamp: number): boolean {
  * @param addAgo - Optional. Specifies whether to add "ago" at the end of the string. Default is true.
  * @returns The verbose string representation of the number's age.
  */
-function numberToVerboseString(number: number, addAgo: boolean = true): string {
-  const formatText = (input: number, unit: string) =>
-    `${input} ${unit}${getPlural(input)}${addAgo ? ' ago' : ''}`;
-
+function numberToVerboseString(
+  number: number,
+  addAgo: boolean = true,
+  useAbbreviation: boolean = false,
+): string {
   // Format the number into human-readable form based on its age
+  let count: number;
+  let unit: string;
+  console.log(number);
   switch (true) {
     case number < 60 * 1000:
-      const seconds = Math.floor(number / 1000);
-      return formatText(seconds, 'second');
+      count = Math.floor(number / 1000);
+      unit = 'second';
+      break;
     case number < 60 * 60 * 1000:
-      const minutes = Math.floor(number / (60 * 1000));
-      return formatText(minutes, 'minute');
+      count = Math.floor(number / (60 * 1000));
+      unit = 'minute';
+      break;
     case number < 24 * 60 * 60 * 1000:
-      const hours = Math.floor(number / (60 * 60 * 1000));
-      return formatText(hours, 'hour');
-    case number < 7 * 24 * 60 * 60 * 1000:
-      const days = Math.floor(number / (24 * 60 * 60 * 1000));
-      return formatText(days, 'day');
-    case number < 30 * 24 * 60 * 60 * 1000:
-      const weeks = Math.floor(number / (7 * 24 * 60 * 60 * 1000));
-      return formatText(weeks, 'week');
+      count = Math.floor(number / (60 * 60 * 1000));
+      unit = 'hour';
+      break;
+    case number < 2 * 7 * 24 * 60 * 60 * 1000: // 2 weeks
+      count = Math.floor(number / (24 * 60 * 60 * 1000));
+      unit = 'day';
+      break;
+    case number < 2 * 30 * 24 * 60 * 60 * 1000: // 2 months
+      count = Math.floor(number / (7 * 24 * 60 * 60 * 1000));
+      unit = 'week';
+      break;
     case number < 365 * 24 * 60 * 60 * 1000:
-      const months = Math.floor(number / (30 * 24 * 60 * 60 * 1000));
-      return formatText(months, 'month');
+      count = Math.floor(number / (30 * 24 * 60 * 60 * 1000));
+      unit = 'month';
+      break;
     default:
-      const years = Math.floor(number / (365 * 24 * 60 * 60 * 1000));
-      return formatText(years, 'year');
+      count = Math.floor(number / (365 * 24 * 60 * 60 * 1000));
+      unit = 'year';
   }
+
+  const unitInfo = useAbbreviation
+    ? unit.charAt(0)
+    : `
+     ${unit}${getPlural(count)}
+    `;
+  return `${count}${unitInfo}${addAgo ? ' ago' : ''}`;
 }
 
-function getTimestampAge(timestamp: number, addAgo: boolean = true): string {
+function getTimestampAge(
+  timestamp: number,
+  addAgo: boolean = true,
+  useAbbreviation: boolean = false,
+): string {
   const now = Date.now();
   const difference = now - timestamp;
-  return numberToVerboseString(difference, addAgo);
+  return numberToVerboseString(difference, addAgo, useAbbreviation);
 }
 
 /**
