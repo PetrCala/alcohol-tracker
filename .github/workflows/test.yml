@@ -1,8 +1,8 @@
 name: Jest Unit Tests
 
 on:
-  push:
-    branches: []
+  pull_request:
+    branches-ignore: [master, staging, dev]
   # Do not run for now
   # workflow_call:
   # pull_request:
