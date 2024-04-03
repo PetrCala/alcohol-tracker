@@ -8,16 +8,14 @@ import {
   calculateAllUsersPriority,
   orderUsersByPriority,
 } from '@libs/algorithms/DisplayPriority';
-import {UserStatusList} from '@src/types/database';
-import {UserArray} from '@src/types/database/DatabaseCommon';
-import React, {useState, useEffect, useMemo} from 'react';
+import type {UserStatusList} from '@src/types/database';
+import type {UserArray} from '@src/types/database/DatabaseCommon';
+import React, {useState, useEffect} from 'react';
+import type {NativeScrollEvent, NativeSyntheticEvent} from 'react-native';
 import {
   ActivityIndicator,
   Dimensions,
   Keyboard,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -29,18 +27,16 @@ import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import FillerView from '@components/FillerView';
-import {useDatabaseData} from '@context/global/DatabaseDataContext';
-import useRefresh from '@hooks/useRefresh';
-import {generateRandomString} from '@libs/StringUtils';
 import {sleep} from '@libs/TimeUtils';
+import _ from 'lodash';
 
-interface UserListProps {
+type UserListProps = {
   fullUserArray: UserArray;
   initialLoadSize: number;
   emptyListComponent?: React.ReactNode;
   userSubset?: UserArray;
   orderUsers?: boolean;
-}
+};
 
 /**
  * A component for lazy data loading and display of a list of users.
@@ -60,7 +56,6 @@ const UserListComponent: React.FC<UserListProps> = ({
   orderUsers,
 }) => {
   const {auth, db} = useFirebase();
-  const {refetch} = useDatabaseData();
   const user = auth.currentUser;
   // Partial list of users for initial display and dynamic updates
   const [displayUserArray, setDisplayUserArray] = useState<UserArray>([]);
@@ -69,11 +64,11 @@ const UserListComponent: React.FC<UserListProps> = ({
     useState<number>(initialLoadSize);
   const {loadingDisplayData, profileList} = useProfileList(displayUserArray);
   const [loadingMoreUsers, setLoadingMoreUsers] = useState<boolean>(false);
-  const {onRefresh, refreshing, refreshCounter} = useRefresh({refetch});
+  const [isInitialLoad, setIsInitialLoad] = useState<boolean>(true);
 
   const loadMoreUsers = async (additionalCount: number) => {
-    let arrayToSlice = userSubset ?? fullUserArray;
-    let newLoadSize = Math.min(
+    const arrayToSlice = userSubset ?? fullUserArray;
+    const newLoadSize = Math.min(
       currentLoadSize + additionalCount,
       arrayToSlice.length,
     );
@@ -107,11 +102,6 @@ const UserListComponent: React.FC<UserListProps> = ({
     Navigation.navigate(ROUTES.PROFILE.getRoute(userId));
   };
 
-  // Database data hooks
-  useEffect(() => {
-    refetch();
-  }, [user?.uid]);
-
   // Monitor the user status list
   useEffect(() => {
     async function fetchUsers() {
@@ -133,38 +123,47 @@ const UserListComponent: React.FC<UserListProps> = ({
 
   // Update the display list when the user status list changes
   useEffect(() => {
-    let arrayToSlice = userSubset ?? fullUserArray;
-    if (orderUsers) {
-      let userPriorityList = calculateAllUsersPriority(
-        fullUserArray,
-        userStatusList,
-      );
-      arrayToSlice = orderUsersByPriority(arrayToSlice, userPriorityList);
-    }
-    let newDisplayArray = arrayToSlice.slice(0, currentLoadSize);
-    setDisplayUserArray(newDisplayArray);
+    const updateDisplayArray = () => {
+      // No users to display
+      if (!isNonEmptyArray(fullUserArray) || !isNonEmptyArray(userSubset)) {
+        setDisplayUserArray([]);
+        setIsInitialLoad(false);
+        return;
+      }
+      // Data not yet initialized during the initial load
+      if (isEmptyObject(userStatusList)) {
+        return;
+      }
+      let arrayToSlice = userSubset ?? fullUserArray;
+      if (orderUsers) {
+        const userPriorityList = calculateAllUsersPriority(
+          fullUserArray,
+          userStatusList,
+        );
+        arrayToSlice = orderUsersByPriority(arrayToSlice, userPriorityList);
+      }
+      const newDisplayArray = arrayToSlice.slice(0, currentLoadSize);
+      setDisplayUserArray(newDisplayArray);
+      setIsInitialLoad(false);
+    };
+
+    updateDisplayArray();
   }, [userStatusList, userSubset]); // Full array changes change the status list
 
   return (
     <ScrollView
       style={styles.scrollViewContainer}
       onScrollBeginDrag={Keyboard.dismiss}
-      onScrollEndDrag={handleScroll}
+      onMomentumScrollEnd={handleScroll}
       scrollEventThrottle={400}
-      keyboardShouldPersistTaps="handled"
-      refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={() => onRefresh(['userData'])}
-        />
-      }>
-      {loadingDisplayData ? (
+      keyboardShouldPersistTaps="handled">
+      {loadingDisplayData && isInitialLoad ? (
         <LoadingData style={styles.loadingContainer} />
-      ) : displayUserArray ? (
+      ) : isNonEmptyArray(fullUserArray) ? (
         <>
           <View style={styles.userList}>
             {isNonEmptyArray(displayUserArray) ? (
-              displayUserArray.map((userId: string) => {
+              _.map(displayUserArray, (userId: string) => {
                 const profileData = profileList[userId] ?? {};
                 const userStatusData = userStatusList[userId] ?? {};
 

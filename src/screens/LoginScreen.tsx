@@ -25,19 +25,19 @@ import {useFirebase} from '@context/global/FirebaseContext';
 import ScreenWrapper from '@components/ScreenWrapper';
 import useTheme from '@hooks/useTheme';
 
-interface State {
+type State = {
   email: string;
   password: string;
   loadingUser: boolean;
   warning: string;
   success: string;
   resetPasswordModalVisible: boolean;
-}
+};
 
-interface Action {
+type Action = {
   type: string;
   payload: any;
-}
+};
 
 const initialState: State = {
   email: '',
@@ -85,7 +85,7 @@ const reducer = (state: State, action: Action) => {
   }
 };
 
-const LoginScreen = () => {
+function LoginScreen() {
   // const {isOnline} = useUserConnection();
   const {auth} = useFirebase();
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -141,7 +141,9 @@ const LoginScreen = () => {
 
   // Wait to see whether there already is an authentificated user
   // Possibly here display the app logo instead of the loading screen
-  if (state.loadingUser) return <LoadingData loadingText="Signing in..." />;
+  if (state.loadingUser) {
+    return <LoadingData loadingText="Signing in..." />;
+  }
 
   return (
     <DismissKeyboard>
@@ -153,6 +155,7 @@ const LoginScreen = () => {
         </View>
         <View style={styles.inputContainer}>
           <TextInput
+            accessibilityLabel="Text input field"
             placeholder="Email"
             placeholderTextColor={'#a8a8a8'}
             keyboardType="email-address"
@@ -164,6 +167,7 @@ const LoginScreen = () => {
             style={styles.input}
           />
           <TextInput
+            accessibilityLabel="Text input field"
             placeholder="Password"
             placeholderTextColor={'#a8a8a8'}
             textContentType="password"
@@ -174,10 +178,14 @@ const LoginScreen = () => {
             secureTextEntry
             style={styles.input}
           />
-          <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
+          <TouchableOpacity
+            accessibilityRole="button"
+            onPress={handleLogin}
+            style={styles.loginButton}>
             <Text style={styles.loginButtonText}>Login</Text>
           </TouchableOpacity>
           <TouchableOpacity
+            accessibilityRole="button"
             onPress={() =>
               dispatch({
                 type: 'SET_RESET_PASSWORD_MODAL_VISIBLE',
@@ -192,6 +200,7 @@ const LoginScreen = () => {
           <View style={[commonStyles.horizontalLine, styles.customLineWidth]} />
           <View style={styles.signUpContainer}>
             <TouchableOpacity
+              accessibilityRole="button"
               style={styles.signUpButtonContainer}
               onPress={() => Navigation.navigate(ROUTES.SIGNUP)}>
               <Text style={styles.signUpInfoText}>Don't have an account?</Text>
@@ -219,7 +228,7 @@ const LoginScreen = () => {
       </View>
     </DismissKeyboard>
   );
-};
+}
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;

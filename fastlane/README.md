@@ -23,13 +23,37 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 Generate a new local APK
 
+### android build_staging
+
+```sh
+[bundle exec] fastlane android build_staging
+```
+
+Generate a new local APK for staging
+
+### android build_debug
+
+```sh
+[bundle exec] fastlane android build_debug
+```
+
+Generate a new local APK for testing
+
 ### android beta
 
 ```sh
 [bundle exec] fastlane android beta
 ```
 
-Build the application for Google Play
+Build and upload app to Google Play
+
+### android production
+
+```sh
+[bundle exec] fastlane android production
+```
+
+Deploy app to Google Play open beta
 
 ----
 
@@ -44,13 +68,29 @@ Build the application for Google Play
 
 Generate a local iOS production build
 
+### ios build_staging
+
+```sh
+[bundle exec] fastlane ios build_staging
+```
+
+Generate a local iOS staging build
+
 ### ios beta
 
 ```sh
 [bundle exec] fastlane ios beta
 ```
 
-Push a new beta build to TestFlight
+Build and upload app to TestFlight
+
+### ios production
+
+```sh
+[bundle exec] fastlane ios production
+```
+
+Move app to App Store Review
 
 ----
 

@@ -14,11 +14,11 @@ import {
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import BasicButton from '@components/Buttons/BasicButton';
 import MainHeader from '@components/Header/MainHeader';
-import {DrinkingSession} from '@src/types/database';
+import type {DrinkingSession} from '@src/types/database';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
-import {StackScreenProps} from '@react-navigation/stack';
+import type {StackScreenProps} from '@react-navigation/stack';
 import SCREENS from '@src/SCREENS';
-import {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
+import type {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
 import {useEffect, useState} from 'react';
 import {
   calculateSessionLength,
@@ -62,10 +62,12 @@ type SessionSummaryScreenProps = StackScreenProps<
   typeof SCREENS.DRINKING_SESSION.SUMMARY
 >;
 
-const SessionSummaryScreen = ({route}: SessionSummaryScreenProps) => {
+function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
   const {sessionId} = route.params;
-  const {preferences, drinkingSessionData, refetch} = useDatabaseData();
-  if (!preferences) return null; // Careful when writing hooks after this line
+  const {preferences, drinkingSessionData} = useDatabaseData();
+  if (!preferences) {
+    return null;
+  } // Careful when writing hooks after this line
   const [session, setSession] = useState<DrinkingSession>(
     extractSessionOrEmpty(sessionId, drinkingSessionData),
   );
@@ -141,14 +143,9 @@ const SessionSummaryScreen = ({route}: SessionSummaryScreenProps) => {
     {heading: 'Note:', data: session.note},
   ];
 
-  let sessionColor = session.blackout
+  const sessionColor = session.blackout
     ? 'black'
     : unitsToColors(totalUnits, preferences.units_to_colors);
-
-  // Trigger refetch on component mount
-  useEffect(() => {
-    refetch().then(() => {}); // Possibly add a catch here
-  }, []);
 
   useEffect(() => {
     const newSession = extractSessionOrEmpty(sessionId, drinkingSessionData);
@@ -232,7 +229,7 @@ const SessionSummaryScreen = ({route}: SessionSummaryScreenProps) => {
       </View>
     </ScreenWrapper>
   );
-};
+}
 
 const styles = StyleSheet.create({
   menuIconContainer: {

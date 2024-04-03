@@ -4,6 +4,7 @@
 
 # Temporary
 src/screens/Profile/resources
+debug.txt
 
 # Xcode
 #
@@ -24,6 +25,7 @@ DerivedData
 *.ipa
 *.xcuserstate
 ios/.xcode.env.local
+ios-fastlane-json-key.json
 
 # Android/IntelliJ
 #
@@ -37,6 +39,7 @@ local.properties
 *.keystore
 !debug.keystore
 functions/lib/*
+android/app/android-fastlane-json-key.json
 
 # node.js
 #
@@ -46,6 +49,7 @@ yarn-error.log
 functions/ui-debug.log
 **/*-debug.log
 ui-debug.log
+workflow_tests/**.log
 
 # Fastlane
 
@@ -57,6 +61,7 @@ ui-debug.log
 # Jest
 #
 .jest/
+.jest-cache
 
 # Bun
 #
@@ -91,7 +96,7 @@ bun.lockb
 __snapshots__/
 
 # Other
-*-adminsdk-*.json
+*-admin-sdk-*.json
 _dev/beta/beta_keys.tsx
 _dev/utils/admin.js
 _dev/migrations/
@@ -107,4 +112,4 @@ mockDatabase.json
 *.apk
 *.ipa
 *.lnk
-*.env*
+*.env.*

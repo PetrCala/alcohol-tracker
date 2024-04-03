@@ -3,10 +3,12 @@ import {WebView} from 'react-native-webview';
 import MainHeader from '@components/Header/MainHeader';
 import Navigation from '@libs/Navigation/Navigation';
 import ScreenWrapper from '@components/ScreenWrapper';
+import getPlatform from '@libs/getPlatform';
+import CONST from '@src/CONST';
 
-const TermsOfServiceScreen = () => {
+function TermsOfServiceScreen() {
   const termsHtml =
-    Platform.OS === 'android'
+    getPlatform() === CONST.PLATFORM.ANDROID
       ? {uri: 'file:///android_asset/html/terms-of-service.html'}
       : require('@assets/html/terms-of-service.html');
 
@@ -34,7 +36,7 @@ const TermsOfServiceScreen = () => {
       </View>
     </ScreenWrapper>
   );
-};
+}
 
 const styles = StyleSheet.create({
   mainContainer: {

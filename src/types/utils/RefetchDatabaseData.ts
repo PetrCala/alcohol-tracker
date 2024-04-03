@@ -1,5 +1,5 @@
-import {UserFetchDataKey} from '@hooks/useFetchData';
+import type {FetchDataKeys} from '@hooks/useFetchData/types';
 
-type RefetchDatabaseData = (keys?: UserFetchDataKey[]) => Promise<void>;
+type RefetchDatabaseData = (keys?: FetchDataKeys) => Promise<void>;
 
 export type {RefetchDatabaseData};

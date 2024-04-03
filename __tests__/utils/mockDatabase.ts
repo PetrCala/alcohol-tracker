@@ -1,6 +1,6 @@
 ﻿import fs from 'fs';
 
-import {
+import type {
   AppSettings,
   Config,
   DatabaseProps,
@@ -37,8 +37,8 @@ import CONST from '@src/CONST';
  * @returns The mock app settings object.
  */
 export function createMockAppSettings(
-  minSupportedVersion: string = '0.0.1',
-  minUserCreationPossibleVersion: string = '0.0.1',
+  minSupportedVersion = '0.0.1',
+  minUserCreationPossibleVersion = '0.0.1',
 ): AppSettings {
   return {
     min_supported_version: minSupportedVersion,
@@ -51,9 +51,9 @@ export function createMockAppSettings(
  * @returns The mock maintenance object.
  */
 export function createMockMaintenance(
-  maintenanceModeOn: boolean = false,
-  startTime: number = 0,
-  endTime: number = 0,
+  maintenanceModeOn = false,
+  startTime = 0,
+  endTime = 0,
 ): Maintenance {
   return {
     maintenance_mode: maintenanceModeOn,
@@ -78,6 +78,7 @@ export function initializeEmptyMockDatabase(): DatabaseProps {
     user_status: {},
     user_drinking_sessions: {},
     user_preferences: {},
+    user_session_placeholder: {},
     user_unconfirmed_days: {},
     users: {},
   };
@@ -90,7 +91,7 @@ export function initializeEmptyMockDatabase(): DatabaseProps {
  * @returns Mock configuration data record
  */
 export function createMockConfig(): Config {
-  let mockConfig: Config = {
+  const mockConfig: Config = {
     app_settings: createMockAppSettings(),
     maintenance: createMockMaintenance(),
   };
@@ -143,7 +144,7 @@ export function createMockDrinksList(drinks: Drinks = {}): DrinksList {
     // If drinks are unspecified
     return getRandomDrinksList();
   }
-  let timestampNow = new Date().getTime();
+  const timestampNow = new Date().getTime();
   return {
     [timestampNow]: drinks,
   };
@@ -187,7 +188,9 @@ export function createMockSession(
     drinks: drinks,
     type: getRandomChoice(Object.values(CONST.SESSION_TYPES)),
   };
-  if (ongoing) newSession.ongoing = true;
+  if (ongoing) {
+    newSession.ongoing = true;
+  }
 
   return newSession;
 }
@@ -197,11 +200,11 @@ export function createMockSession(
  * @returns User preferences type object
  */
 export function createMockPreferences(): Preferences {
-  let mockUnitsToColors: UnitsToColors = {
+  const mockUnitsToColors: UnitsToColors = {
     yellow: getRandomInt(3, 6),
     orange: getRandomInt(7, 10),
   };
-  let mockDrinksToUnitsData: DrinksToUnits = {
+  const mockDrinksToUnitsData: DrinksToUnits = {
     small_beer: 0.5,
     beer: 1,
     cocktail: 1.5,
@@ -210,7 +213,7 @@ export function createMockPreferences(): Preferences {
     weak_shot: 0.5,
     wine: 1,
   };
-  let mockPreferences: Preferences = {
+  const mockPreferences: Preferences = {
     first_day_of_week: getRandomChoice(['Monday', 'Sunday']),
     units_to_colors: mockUnitsToColors,
     drinks_to_units: mockDrinksToUnitsData,
@@ -248,16 +251,16 @@ export function createMockUnconfirmedDays(): UnconfirmedDays {
  * @returns Mock FriendRequest type data.
  */
 export function createMockFriendRequests(userId: string): FriendRequestList {
-  let mockRequestData: FriendRequestList = {};
+  const mockRequestData: FriendRequestList = {};
   const statuses: FriendRequestStatus[] = Object.values(
     CONST.FRIEND_REQUEST_STATUS,
   );
-  for (let mockId of MOCK_USER_IDS) {
+  for (const mockId of MOCK_USER_IDS) {
     if (mockId === userId) {
       continue; // Skip self
     }
-    let randomIndex = Math.floor(Math.random() * statuses.length);
-    let mockStatus = statuses[randomIndex];
+    const randomIndex = Math.floor(Math.random() * statuses.length);
+    const mockStatus = statuses[randomIndex];
     mockRequestData[mockId] = mockStatus;
   }
   return mockRequestData;
@@ -271,9 +274,9 @@ export function createMockFriendRequests(userId: string): FriendRequestList {
  */
 export function createMockUserData(
   userId: string,
-  noFriends: boolean = false,
+  noFriends = false,
 ): UserProps {
-  let mockProfile: Profile = {
+  const mockProfile: Profile = {
     display_name: 'mock-user',
     photo_url: '',
   };
@@ -283,7 +286,7 @@ export function createMockUserData(
   };
   if (!noFriends) {
     // mockUserData['friends'] = // TODO
-    mockUserData['friend_requests'] = createMockFriendRequests(userId);
+    mockUserData.friend_requests = createMockFriendRequests(userId);
   }
   return mockUserData;
 }
@@ -295,7 +298,7 @@ export function createMockUserData(
  * @param noFriends If set to true, no friends or friend requests will be created.
  * @returns A mock object of the firebase database
  */
-export function createMockDatabase(noFriends: boolean = false): DatabaseProps {
+export function createMockDatabase(noFriends = false): DatabaseProps {
   const db = initializeEmptyMockDatabase();
   // Configuration
   db.config = createMockConfig();
@@ -307,7 +310,7 @@ export function createMockDatabase(noFriends: boolean = false): DatabaseProps {
 
     // Drinking sessions
     const mockSessionData: DrinkingSessionList = {};
-    let latestSessionId: string = '';
+    let latestSessionId = '';
     MOCK_SESSION_IDS.forEach(sessionId => {
       const fullSessionId: DrinkingSessionId = `${userId}-${sessionId}`;
       const mockSession = createMockSession(new Date());
@@ -333,8 +336,8 @@ export function createMockDatabase(noFriends: boolean = false): DatabaseProps {
     db.users[userId] = createMockUserData(userId, noFriends);
 
     // Nicknames to user ids
-    let nickname = db.users[userId].profile.display_name;
-    let nickname_key = cleanStringForFirebaseKey(nickname);
+    const nickname = db.users[userId].profile.display_name;
+    const nickname_key = cleanStringForFirebaseKey(nickname);
     db.nickname_to_id[nickname_key] = createMockNicknameToId(userId);
   });
 
@@ -346,7 +349,7 @@ export function createMockDatabase(noFriends: boolean = false): DatabaseProps {
  *
  * @returns The path of the exported JSON file.
  */
-export function exportMockDatabase(verbose: boolean = false): string {
+export function exportMockDatabase(verbose = false): string {
   const mockDatabase = createMockDatabase();
   const filePath = './mockDatabase.json';
   fs.writeFileSync(filePath, JSON.stringify(mockDatabase));

@@ -20,7 +20,7 @@ const placeholderSessionRef = DBPATHS.USER_SESSION_PLACEHOLDER_USER_ID;
  * @param string userId User ID
  * @param newSessionData Data to save the new drinking session with
  * @param updateStatus Whether to update the user status data or not
- * @return Promise void.
+ * @returnsPromise void.
  *  */
 export async function saveDrinkingSessionData(
   db: Database,
@@ -30,7 +30,7 @@ export async function saveDrinkingSessionData(
   updateStatus?: boolean,
 ): Promise<void> {
   newSessionData = removeZeroObjectsFromSession(newSessionData); // Delete the initial log of zero drinks that was used as a placeholder
-  newSessionData.drinks = newSessionData.drinks ?? {}; // Can not send undefined
+  newSessionData.drinks = newSessionData.drinks || {}; // Can not send undefined
   var updates: {[key: string]: any} = {};
   updates[drinkingSessionRef.getRoute(userId, sessionKey)] = newSessionData;
   if (updateStatus) {
@@ -52,7 +52,7 @@ export async function savePlaceholderSessionData(
   newSessionData: DrinkingSession,
 ): Promise<void> {
   newSessionData = removeZeroObjectsFromSession(newSessionData);
-  newSessionData.drinks = newSessionData.drinks ?? {}; // Can not send undefined
+  newSessionData.drinks = newSessionData.drinks || {}; // Can not send undefined
   var updates: {[key: string]: any} = {};
   updates[placeholderSessionRef.getRoute(userId)] = newSessionData;
   await update(ref(db), updates);
@@ -75,7 +75,7 @@ export async function removePlaceholderSessionData(
  * @param string userId User ID
  * @param newSessionData Data to save the new drinking session with
  * @param sesisonKey ID of the session to edit (can be null in case of finishing the session)
- * @return Promise void.
+ * @returnsPromise void.
  *  */
 export async function startLiveDrinkingSession(
   db: Database,
@@ -83,7 +83,7 @@ export async function startLiveDrinkingSession(
   newSessionData: DrinkingSession,
   sessionKey: string,
 ): Promise<void> {
-  newSessionData.drinks = newSessionData.drinks ?? {}; // Can not send undefined
+  newSessionData.drinks = newSessionData.drinks || {}; // Can not send undefined
   var updates: {[key: string]: any} = {};
   const userStatusData: UserStatus = {
     last_online: new Date().getTime(),
@@ -101,7 +101,7 @@ export async function startLiveDrinkingSession(
  * @param string userId User ID
  * @param newSessionData Data to save the new drinking session with
  * @param sesisonKey ID of the session to edit (can be null in case of finishing the session)
- * @return Promise void.
+ * @returnsPromise void.
  *  */
 export async function endLiveDrinkingSession(
   db: Database,
@@ -110,7 +110,7 @@ export async function endLiveDrinkingSession(
   sessionKey: string,
 ): Promise<void> {
   newSessionData = removeZeroObjectsFromSession(newSessionData);
-  newSessionData.drinks = newSessionData.drinks ?? {}; // Can not send undefined
+  newSessionData.drinks = newSessionData.drinks || {}; // Can not send undefined
   var updates: {[key: string]: any} = {};
   const userStatusData: UserStatus = {
     // ETC - 1
@@ -179,6 +179,6 @@ export async function updateSessionDrinks(
 ): Promise<void> {
   var updates: {[key: string]: DrinksList} = {};
   updates[drinkingSessionDrinksRef.getRoute(userId, sessionKey)] =
-    newDrinks ?? {}; // Can not send undefined
+    newDrinks || {}; // Can not send undefined
   await update(ref(db), updates);
 }

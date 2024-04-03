@@ -1,0 +1,69 @@
+﻿import {useRef} from 'react';
+import {Animated, StyleSheet, Text, TouchableOpacity} from 'react-native';
+
+type TextSwitchProps = {
+  offText: string;
+  onText: string;
+  value: boolean;
+  onValueChange: (value: boolean) => void;
+};
+
+const TextSwitch: React.FC<TextSwitchProps> = ({
+  offText,
+  onText,
+  value,
+  onValueChange,
+}) => {
+  const backgroundColor = value ? '#fcf50f' : '#767577';
+  const translateX = useRef(new Animated.Value(value ? 58 : 0)).current; // Start value
+
+  const handlePress = () => {
+    const newValue = !value;
+    onValueChange(newValue);
+    Animated.timing(translateX, {
+      toValue: newValue ? 58 : 0,
+      duration: 200,
+      useNativeDriver: true, // Use native driver for smoother animation
+    }).start();
+  };
+
+  return (
+    <TouchableOpacity
+      style={[styles.container, {backgroundColor}]}
+      onPress={handlePress}>
+      <Animated.View style={[styles.slider, {transform: [{translateX}]}]}>
+        <Text style={styles.sliderText}>{value ? onText : offText}</Text>
+      </Animated.View>
+    </TouchableOpacity>
+  );
+};
+
+export default TextSwitch;
+
+const styles = StyleSheet.create({
+  container: {
+    width: 120,
+    height: 40,
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: '#000',
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 5,
+  },
+  slider: {
+    width: 50,
+    height: 30,
+    borderRadius: 15,
+    borderWidth: 2,
+    borderColor: '#e0e0e0',
+    backgroundColor: '#f4f3f4',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  sliderText: {
+    fontSize: 16,
+    color: 'black',
+    fontWeight: '500',
+  },
+});

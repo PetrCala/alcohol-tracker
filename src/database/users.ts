@@ -1,10 +1,12 @@
 ﻿import {Database, update, ref, get} from 'firebase/database';
 import {
+  DrinkingSessionList,
   FriendRequestList,
   Preferences,
   Profile,
   UserList,
   UserProps,
+  UserStatus,
 } from '@src/types/database';
 import {
   EmailAuthProvider,
@@ -18,6 +20,11 @@ import {Alert} from 'react-native';
 import {cleanStringForFirebaseKey} from '../libs/StringUtils';
 import DBPATHS from './DBPATHS';
 import {readDataOnce} from './baseFunctions';
+import {
+  getLastStartedSession,
+  getLastStartedSessionId,
+} from '@libs/DataHandling';
+import _ from 'lodash';
 
 const getDefaultPreferences = (): Preferences => {
   return {
@@ -153,22 +160,25 @@ async function deleteUserData(
   await update(ref(db), updates);
 }
 
-/**
- * Update the timestamp denoting when a user has lsat
- * been seen online
- *
- * @param db Firebase database object.
- * @param userId ID of the user to update the data for
- * @return
- */
-async function updateUserLastOnline(
+async function synchronizeUserStatus(
   db: Database,
   userId: string,
+  currentUserStatus: UserStatus | undefined,
+  drinkingSessions: DrinkingSessionList | undefined,
 ): Promise<void> {
-  let lastOnline: number = new Date().getTime();
-  const lastOnlineRef = DBPATHS.USER_STATUS_USER_ID_LAST_ONLINE;
-  let updates: {[key: string]: number} = {};
-  updates[lastOnlineRef.getRoute(userId)] = lastOnline;
+  if (!currentUserStatus) return;
+  const newUserStatus: UserStatus = currentUserStatus;
+  newUserStatus.last_online = new Date().getTime();
+  const latestSessionId = getLastStartedSessionId(drinkingSessions);
+  if (newUserStatus.latest_session_id !== latestSessionId) {
+    newUserStatus.latest_session = latestSessionId
+      ? _.get(drinkingSessions, latestSessionId, undefined)
+      : undefined;
+    newUserStatus.latest_session_id = latestSessionId;
+  }
+  const userStatusRef = DBPATHS.USER_STATUS_USER_ID;
+  let updates: {[key: string]: UserStatus} = {};
+  updates[userStatusRef.getRoute(userId)] = newUserStatus;
   await update(ref(db), updates);
 }
 
@@ -245,7 +255,7 @@ export {
   userExistsInDatabase,
   pushNewUserInfo,
   deleteUserData,
-  updateUserLastOnline,
+  synchronizeUserStatus,
   reauthentificateUser,
   changeDisplayName,
 };

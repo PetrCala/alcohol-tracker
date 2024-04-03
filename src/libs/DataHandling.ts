@@ -21,6 +21,7 @@ import type {
 import CONST from '../CONST';
 import {MeasureType} from '@src/types/database/DatabaseCommon';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
+import _, {get} from 'lodash';
 
 export function formatDate(date: Date): DateString {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
@@ -266,12 +267,13 @@ export function getSingleDayDrinkingSessions(
   const todayUnix = Math.floor(date.getTime());
   const tomorrowUnix = Math.floor(tomorrow.getTime());
   if (returnArray) {
-    return Object.values(sessions).filter(
+    return _.filter(
+      sessions,
       session =>
         session.start_time >= todayUnix && session.start_time < tomorrowUnix,
     );
   }
-  return Object.entries(sessions)
+  return _.entries(sessions)
     .filter(([sessionId, session]) => {
       return (
         session.start_time >= todayUnix && session.start_time < tomorrowUnix
@@ -366,9 +368,7 @@ export function monthEntriesToColors(
   preferences: Preferences,
 ) {
   // MarkedDates object, see official react-native-calendars docs
-  let markedDates: SessionsCalendarMarkedDates = Object.entries(
-    sessions,
-  ).reduce(
+  let markedDates: SessionsCalendarMarkedDates = _.entries(sessions).reduce(
     (
       acc: SessionsCalendarMarkedDates,
       [key, {units: value, blackout: blackoutInfo}],
@@ -422,9 +422,11 @@ export function sumDrinksOfSingleType(
   drinkType: DrinkKey,
 ): number {
   if (!drinksObject) return 0;
-  return Object.values(drinksObject).reduce((total, session) => {
-    return total + (session[drinkType] ?? 0);
-  }, 0);
+  return _.reduce(
+    drinksObject,
+    (total, session) => total + (session[drinkType] ?? 0),
+    0,
+  );
 }
 
 /** Sum up drinks of a single Drink type object.
@@ -434,15 +436,16 @@ export function sumDrinksOfSingleType(
  */
 export function sumDrinkTypes(drinkTypes: Drinks): number {
   if (!drinkTypes) return 0;
-  return Object.values(drinkTypes).reduce(
-    (subTotal, drinkCount) => subTotal + (drinkCount ?? 0),
+  return _.reduce(
+    drinkTypes,
+    (total, drinkCount) => total + (drinkCount ?? 0),
     0,
   );
 }
 
 /** Type guard to check if a given key is a valid DrinkType key */
 export function isDrinkTypeKey(key: string): key is keyof Drinks {
-  return Object.values(CONST.DRINKS.KEYS).includes(key as any);
+  return _.includes(Object.values(CONST.DRINKS.KEYS), key);
 }
 
 /** Using a DrinksList and the drinks to units conversion object, calculate how many units this object amounts to.
@@ -460,19 +463,18 @@ export function sumAllUnits(
   drinksObject: DrinksList | undefined,
   drinksToUnits: DrinksToUnits,
 ): number {
-  if (isEmptyObject(drinksObject)) return 0;
+  if (_.isEmpty(drinksObject)) return 0;
   let totalUnits = 0;
   // Iterate over each timestamp in drinksObject
-  for (const drinkTypes of Object.values(drinksObject)) {
-    // Iterate over each key in the drinkTypes of the current timestamp
-    for (const DrinkKey of Object.keys(drinkTypes)) {
+  _.forEach(Object.values(drinksObject), drinkTypes => {
+    _.forEach(Object.keys(drinkTypes), DrinkKey => {
       if (isDrinkTypeKey(DrinkKey)) {
         const typeDrinks = drinkTypes[DrinkKey] ?? 0;
         const typeUnits = drinksToUnits[DrinkKey] ?? 0;
         totalUnits += typeDrinks * typeUnits;
       }
-    }
-  }
+    });
+  });
   return totalUnits;
 }
 
@@ -480,11 +482,11 @@ export function sumAllUnits(
  * consumed in that session.
  *
  * @param session Drinking session array item
- * @return Timestamp of the last drink consumed
+ * @returnsTimestamp of the last drink consumed
  */
 export function getLastDrinkAddedTime(session: DrinkingSession): number | null {
-  if (isEmptyObject(session?.drinks)) return null;
-  const timestamps = Object.keys(session.drinks).map(Number); // All timestamps
+  if (_.isEmpty(session?.drinks)) return null;
+  const timestamps = _.map(Object.keys(session.drinks), Number);
   // Return the maximum timestamp or null if there aren't any
   return timestamps.length ? Math.max(...timestamps) : null;
 }
@@ -553,6 +555,27 @@ export const calculateThisMonthUnits = (
     0,
   );
 };
+
+export function getLastStartedSession(
+  sessions: DrinkingSessionList | undefined,
+): DrinkingSession | undefined {
+  if (!sessions) return undefined;
+  return _.maxBy(_.values(sessions), 'start_time');
+}
+
+export function getLastStartedSessionId(
+  sessions: DrinkingSessionList | undefined,
+): string | undefined {
+  if (!sessions) return undefined;
+
+  const latestSession = _.maxBy(
+    _.entries(sessions),
+    ([, sessionValue]) => sessionValue.start_time,
+  );
+
+  // Return the key (session ID) of the latest session, if it exists
+  return latestSession ? latestSession[0] : undefined;
+}
 
 /** List all drinks to add and their amounts and add this to the current drinks hook
  *

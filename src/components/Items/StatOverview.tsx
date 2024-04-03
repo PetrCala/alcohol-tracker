@@ -10,7 +10,7 @@ type StatsOverviewProps = {
   statsData: StatData;
 };
 
-export const StatsOverview: React.FC<StatsOverviewProps> = ({ statsData }) => (
+export const StatsOverview: React.FC<StatsOverviewProps> = ({statsData}) => (
   <View style={styles.overviewStatsContainer}>
     {statsData.map((stat, index) => (
       <StatItem key={index} header={stat.header} content={stat.content} />

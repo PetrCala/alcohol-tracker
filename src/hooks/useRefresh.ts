@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
-import {UserFetchDataKey} from './useFetchData';
-import {RefetchDatabaseData} from '@src/types/utils/RefetchDatabaseData';
+import type {RefetchDatabaseData} from '@src/types/utils/RefetchDatabaseData';
+import type {FetchDataKeys} from './useFetchData/types';
 
-interface UseRefreshProps {
+type UseRefreshProps = {
   refetch: RefetchDatabaseData;
-}
+};
 
 /**
  * Custom hook for handling refresh functionality.
@@ -29,7 +29,7 @@ const useRefresh = ({refetch}: UseRefreshProps) => {
   const [refreshCounter, setRefreshCounter] = useState<number>(0);
 
   const onRefresh = React.useCallback(
-    (keys?: UserFetchDataKey[]) => {
+    (keys?: FetchDataKeys) => {
       setRefreshing(true);
 
       setTimeout(() => {

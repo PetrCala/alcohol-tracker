@@ -1,5 +1,6 @@
 import CONST from '@src/CONST';
 import {
+  DrinkKey,
   DrinkingSession,
   DrinkingSessionId,
   DrinkingSessionList,
@@ -81,8 +82,56 @@ function extractSessionOrEmpty(
   return getEmptySession();
 }
 
+/** Given a DrinkingSession object, determine its type (i.e.,
+ *  the most number of units the user has in this session).
+ *
+ * If there are no drinks in the session, return null.
+ * */
+function determineSessionMostCommonDrink(
+  session: DrinkingSession | undefined | null,
+): DrinkKey | undefined | null {
+  if (!session) return null;
+  const drinks = session.drinks;
+  if (!drinks) return null;
+  const drinkCounts: Partial<Record<DrinkKey, number>> = {};
+
+  Object.values(drinks).forEach(drinksAtTimestamp => {
+    Object.entries(drinksAtTimestamp).forEach(([drinkKey, count]) => {
+      if (count) {
+        const key = drinkKey as DrinkKey; // Initialize safely
+        // Increment the count, initializing to 0 if necessary
+        drinkCounts[key] = (drinkCounts[key] || 0) + count;
+      }
+    });
+  });
+
+  // Find the drink with the highest count
+  let mostCommonDrink: DrinkKey | null = null;
+  let highestCount = 0;
+  let isTie = false;
+  Object.entries(drinkCounts).forEach(([drinkKey, count]) => {
+    if (count) {
+      if (count > highestCount) {
+        highestCount = count;
+        mostCommonDrink = drinkKey as DrinkKey;
+        isTie = false; // Reset the tie flag as we have a new leader
+      } else if (count === highestCount) {
+        isTie = true; // A tie has occurred
+      }
+    }
+  });
+
+  // In case of no single winner, return 'other'
+  if (isTie && highestCount > 0) {
+    return CONST.DRINKS.KEYS.OTHER;
+  }
+
+  return mostCommonDrink;
+}
+
 export {
   PlaceholderDrinks,
+  determineSessionMostCommonDrink,
   calculateSessionLength,
   extractSessionOrEmpty,
   sessionIsExpired,

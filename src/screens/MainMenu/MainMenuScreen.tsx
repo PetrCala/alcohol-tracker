@@ -1,4 +1,5 @@
 ﻿import React, {useContext, useEffect, useState} from 'react';
+import type {ImageSourcePropType} from 'react-native';
 import {
   View,
   Text,
@@ -8,11 +9,11 @@ import {
   Image,
   Alert,
   Keyboard,
-  ImageSourcePropType,
 } from 'react-native';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import YesNoPopup from '@components/Popups/YesNoPopup';
-import {UserCredential, deleteUser, signOut} from 'firebase/auth';
+import type {UserCredential} from 'firebase/auth';
+import {deleteUser, signOut} from 'firebase/auth';
 import {version as _version} from '../../../package.json';
 import {deleteUserData, reauthentificateUser} from '@database/users';
 import FeedbackPopup from '@components/Popups/FeedbackPopup';
@@ -29,13 +30,14 @@ import GrayHeader from '@components/Header/GrayHeader';
 import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 import CONST from '@src/CONST';
 import type {FeedbackList} from '@src/types/database';
-import {StackScreenProps} from '@react-navigation/stack';
-import {MainMenuNavigatorParamList} from '@navigation/types';
-import SCREENS from '@src/SCREENS';
+import type {StackScreenProps} from '@react-navigation/stack';
+import type {MainMenuNavigatorParamList} from '@navigation/types';
+import type SCREENS from '@src/SCREENS';
 import Navigation from '@navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import ScreenWrapper from '@components/ScreenWrapper';
+import LoadingData from '@components/LoadingData';
 
 type MainMenuButtonData = {
   label: string;
@@ -54,6 +56,7 @@ const MenuItem: React.FC<MainMenuItemProps> = ({heading, data, index}) => (
     <GrayHeader headerText={heading} />
     {data.map((button, bIndex) => (
       <TouchableOpacity
+        accessibilityRole="button"
         key={bIndex}
         style={styles.button}
         onPress={button.action}>
@@ -69,13 +72,12 @@ type MainMenuScreenProps = StackScreenProps<
   typeof SCREENS.MAIN_MENU.ROOT
 >;
 
-const MainMenuScreen = ({route}: MainMenuScreenProps) => {
+function MainMenuScreen({route}: MainMenuScreenProps) {
   const {userData, preferences} = useDatabaseData();
   // Context, database, and authentification
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
-  if (!user) return null;
   // Hooks
   const [FeedbackList, setFeedbackList] = useState<FeedbackList>({});
   // Modals
@@ -93,6 +95,7 @@ const MainMenuScreen = ({route}: MainMenuScreenProps) => {
     useState<boolean>(false);
   const [adminFeedbackModalVisible, setAdminFeedbackModalVisible] =
     useState<boolean>(false);
+  const [deletingUser, setDeletingUser] = useState<boolean>(false);
 
   const handleSignOut = async () => {
     try {
@@ -106,7 +109,9 @@ const MainMenuScreen = ({route}: MainMenuScreenProps) => {
   };
 
   const handleDeleteUser = async (password: string) => {
-    if (!db || !userData) return;
+    if (!db || !userData || !user) {
+      return;
+    }
     // Reauthentificate the user
     let authentificationResult: void | UserCredential;
     try {
@@ -123,7 +128,8 @@ const MainMenuScreen = ({route}: MainMenuScreenProps) => {
     }
     // Delete the user's information from the realtime database
     try {
-      let userNickname = userData.profile.display_name;
+      setDeletingUser(true);
+      const userNickname = userData.profile.display_name;
       await deleteUserData(
         db,
         user.uid,
@@ -133,21 +139,30 @@ const MainMenuScreen = ({route}: MainMenuScreenProps) => {
       );
     } catch (error: any) {
       handleInvalidDeleteUser(error);
+      setDeletingUser(false);
+      return;
     }
     // Delete user from authentification database
     try {
       await deleteUser(user);
     } catch (error: any) {
       handleInvalidDeleteUser(error);
+      return;
+    } finally {
+      setDeletingUser(false);
     }
-    handleSignOut(); // Sign out the user
+    // Updating the loading state here might cause some issues
+    handleSignOut();
     // Add an alert here informing about the user deletion
-    Navigation.navigate(ROUTES.LOGIN);
+    Navigation.navigate(ROUTES.SIGNUP);
   };
 
   /** Handle cases when deleting a user fails */
   const handleInvalidDeleteUser = (error: any) => {
-    var err = error.message;
+    if (!user) {
+      return null;
+    }
+    const err = error.message;
     if (err.includes('auth/requires-recent-login')) {
       // Should never happen
       Alert.alert(
@@ -170,7 +185,9 @@ const MainMenuScreen = ({route}: MainMenuScreenProps) => {
   };
 
   const handleSubmitFeedback = (feedback: string) => {
-    if (!db) return;
+    if (!db || !user) {
+      return;
+    }
     if (feedback !== '') {
       submitFeedback(db, user.uid, feedback);
       // Popup an information button at the top (your feedback has been submitted)
@@ -191,10 +208,12 @@ const MainMenuScreen = ({route}: MainMenuScreenProps) => {
   // Monitor feedback data
   if (userData?.role == 'admin') {
     useEffect(() => {
-      if (!db) return;
+      if (!db) {
+        return;
+      }
       // Start listening for changes when the component mounts
-      let dbRef = `feedback/`;
-      let stopListening = listenForDataChanges(
+      const dbRef = `feedback/`;
+      const stopListening = listenForDataChanges(
         db,
         dbRef,
         (data: FeedbackList) => {
@@ -269,7 +288,7 @@ const MainMenuScreen = ({route}: MainMenuScreenProps) => {
     },
   ];
 
-  let adminData = [
+  const adminData = [
     {
       heading: 'Admin settings',
       data: [
@@ -284,7 +303,7 @@ const MainMenuScreen = ({route}: MainMenuScreenProps) => {
     },
   ];
 
-  let policiesData = [
+  const policiesData = [
     {
       label: 'Terms of service',
       icon: KirokuIcons.Book,
@@ -307,8 +326,15 @@ const MainMenuScreen = ({route}: MainMenuScreenProps) => {
     modalData = [...modalData, ...adminData]; // Add admin settings
   }
 
-  if (!isOnline) return <UserOffline />;
-  if (!db || !preferences || !userData) return null; // Should never be null
+  if (!isOnline) {
+    return <UserOffline />;
+  }
+  if (deletingUser) {
+    return <LoadingData loadingText="Deleting your account..." />;
+  }
+  if (!preferences || !userData || !user) {
+    return null;
+  } // Should never be null
 
   return (
     <ScreenWrapper testID={MainMenuScreen.displayName}>
@@ -380,7 +406,7 @@ const MainMenuScreen = ({route}: MainMenuScreenProps) => {
       </View>
     </ScreenWrapper>
   );
-};
+}
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -422,8 +448,8 @@ const styles = StyleSheet.create({
   },
   versionContainer: {
     position: 'absolute',
-    bottom: 5,
-    right: 5,
+    bottom: 10,
+    right: 10,
     width: 'auto',
     height: 'auto',
   },

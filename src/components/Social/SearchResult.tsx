@@ -7,11 +7,11 @@ import {
   View,
 } from 'react-native';
 import {acceptFriendRequest, sendFriendRequest} from '../../database/friends';
-import {Database} from 'firebase/database';
+import type {Database} from 'firebase/database';
 import ProfileImage from '@components/ProfileImage';
-import {FirebaseStorage} from 'firebase/storage';
+import type {FirebaseStorage} from 'firebase/storage';
 import React from 'react';
-import {FriendRequestStatus, Profile} from '@src/types/database';
+import type {FriendRequestStatus, Profile} from '@src/types/database';
 import CONST from '@src/CONST';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import LoadingData from '@components/LoadingData';
@@ -39,7 +39,6 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
   requestStatus,
   alreadyAFriend,
 }) => {
-  const {refetch} = useDatabaseData();
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
   const handleSendRequestPress = async (
@@ -51,7 +50,6 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
     try {
       setIsLoading(true);
       await sendFriendRequest(db, userFrom, userTo);
-      await refetch(['userData']);
       setIsLoading(false);
     } catch (error: any) {
       Alert.alert(
@@ -71,7 +69,6 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
     try {
       setIsLoading(true);
       await acceptFriendRequest(db, userFrom, userTo);
-      await refetch(['userData']);
       setIsLoading(false);
     } catch (error: any) {
       Alert.alert(
@@ -95,6 +92,7 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
         <Text style={styles.sendFriendRequestText}>{statusToTextMap.sent}</Text>
       ) : requestStatus === CONST.FRIEND_REQUEST_STATUS.RECEIVED ? (
         <TouchableOpacity
+          accessibilityRole="button"
           style={styles.sendFriendRequestButton}
           onPress={() =>
             handleAcceptFriendRequestPress(db, userFrom, userTo, setIsLoading)
@@ -109,6 +107,7 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
         </TouchableOpacity>
       ) : (
         <TouchableOpacity
+          accessibilityRole="button"
           style={styles.sendFriendRequestButton}
           onPress={() =>
             handleSendRequestPress(db, userFrom, userTo, setIsLoading)
