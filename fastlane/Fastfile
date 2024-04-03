@@ -14,42 +14,264 @@
 # update_fastlane
 
 platform :android do
+
+
   desc "Generate a new local APK"
   lane :build do
-    # ENV["ENVFILE"]=".env.production"
+    ENV["ENVFILE"]=".env.production"
 
     gradle(
       project_dir: './android',
       task: 'assemble',
-      # flavor: 'Production',
+      flavor: 'Production',
       build_type: 'Release',
     )
   end
 
-  desc "Build the application for Google Play"
+
+  desc "Generate a new local APK for staging"
+  lane :build_staging do
+    ENV["ENVFILE"]=".env.staging"
+
+    gradle(
+      project_dir: './android',
+      task: 'assemble',
+      flavor: 'Staging',
+      build_type: 'Release',
+    )
+  end
+
+  desc "Generate a new local APK for testing"
+  lane :build_debug do
+    ENV["ENVFILE"]=".env.development"
+
+    gradle(
+      project_dir: './android',
+      task: 'assemble',
+      flavor: 'Development',
+      build_type: 'Debug',
+    )
+  end
+
+  desc "Build and upload app to Google Play"
   lane :beta do
-    # ENV["ENVFILE"]=".env.production"
+    ENV["ENVFILE"]=".env.production"
+    # Google is very unreliable, so we retry a few times
+    ENV["SUPPLY_UPLOAD_MAX_RETRIES"]="5"
 
     gradle(
         project_dir: './android',
         task: 'bundle',
-        # flavor: 'Production',
+        flavor: 'Production',
         build_type: 'Release',
+    )
+
+    upload_to_play_store(
+        package_name: "com.alcohol_tracker",
+        json_key: './android/app/android-fastlane-json-key.json',
+        aab: './android/app/build/outputs/bundle/productionRelease/app-production-release.aab',
+        track: 'internal',
+        rollout: '1.0',
+        skip_upload_apk: true,
+    )
+  end
+
+
+  desc "Deploy app to Google Play open beta"
+  lane :production do
+    # Google is very unreliable, so we retry a few times
+    ENV["SUPPLY_UPLOAD_MAX_RETRIES"]="5"
+    google_play_track_version_codes(
+      package_name: "com.alcohol_tracker",
+      json_key: './android/app/android-fastlane-json-key.json',
+      track: 'beta' # modify to 'production' when ready
+    )
+
+    upload_to_play_store(
+      package_name: "com.alcohol_tracker",
+      json_key: './android/app/android-fastlane-json-key.json',
+      version_code: ENV["VERSION"].to_i,
+      track: 'internal',
+      track_promote_to: 'beta', # Modify to production when ready
+      rollout: '1.0',
+      skip_upload_apk: true,
+      skip_upload_aab: true,
+      skip_upload_metadata: true,
+      skip_upload_changelogs: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
     )
   end
 end
 
 platform :ios do
+
   desc "Generate a local iOS production build"
   lane :build do
-    # ENV["ENVFILE"]=".env.production"
-    build_app(workspace: "./ios/kiroku.xcworkspace", scheme: "kiroku")
+    ENV["ENVFILE"]=".env.production"
+
+    build_app(
+        workspace: "./ios/kiroku.xcworkspace",
+        scheme: "Kiroku (production)"
+    )
   end
 
-  desc "Push a new beta build to TestFlight"
-  lane :beta do
-    increment_build_number(xcodeproj: "./ios/kiroku.xcodeproj")
-    build_app(workspace: "./ios/kiroku.xcworkspace", scheme: "kiroku")
-    upload_to_testflight
+  desc "Generate a local iOS staging build"
+  lane :build_staging do
+    ENV["ENVFILE"]=".env.staging"
+
+    build_app(
+        workspace: "./ios/kiroku.xcworkspace",
+        scheme: "Kiroku (staging)"
+    )
   end
+
+  desc "Build and upload app to TestFlight"
+  lane :beta do
+    # require 'securerandom'
+    ENV["ENVFILE"]=".env.production"
+
+    # keychain_password = SecureRandom.uuid
+
+    # create_keychain(
+    #     name: "ios-build.keychain",
+    #     password: keychain_password,
+    #     default_keychain: "true",
+    #     unlock: "true",
+    #     timeout: "3600",
+    #     add_to_search_list: "true"
+    # )
+
+    # import_certificate(
+    #     certificate_path: "./ios/Certificates.p12",
+    #     keychain_name: "ios-build.keychain",
+    #     keychain_password: keychain_password
+    # )
+
+    # install_provisioning_profile(
+    #     path: "./ios/Kiroku_AppStore.mobileprovision"
+    # )
+
+    # install_provisioning_profile(
+    #     path: "./ios/Kiroku_AppStore_Notification_Service.mobileprovision"
+    # )
+
+    build_app(
+        workspace: "./ios/kiroku.xcworkspace",
+        scheme: "Kiroku (production)",
+        output_name: "kiroku.ipa",
+        output_directory: "./ios/build",
+        export_options: {
+            # provisioningProfiles: {
+            #   "com.alcohol_tracker" => "(Kiroku) AppStore",
+            #   "com.alcohol_tracker.NotificationServiceExtension" => "(Kiroku) AppStore: Notification Service",
+            # },
+            manageAppVersionAndBuildNumber: false
+        }
+    )
+
+    begin
+      upload_to_testflight(
+          api_key_path: "./ios/ios-fastlane-json-key.json",
+          distribute_external: true,
+          notify_external_testers: true,
+          changelog: "Thank your being a beta tester! Please provide feedback and report any issues you encounter.",
+          groups: ["Beta"],
+          demo_account_required: true,
+          beta_app_review_info: {
+              contact_email: "kiroku.alcohol.tracker@gmail.com",
+              contact_first_name: "Petr",
+              contact_last_name: "Čala",
+              contact_phone: ENV["APPLE_CONTACT_PHONE"],
+              demo_account_name: ENV["APPLE_DEMO_EMAIL"],
+              demo_account_password: ENV["APPLE_DEMO_PASSWORD"],
+              notes: "You should be able to login using the provided credentials."
+          }
+      )
+    rescue Exception => e
+      if e.message.include? "Another build is in review"
+        UI.important("Another build is already in external beta review. Skipping external beta review submission")
+      else
+        raise
+      end
+    end
+
+  end
+
+  desc "Move app to App Store Review"
+  lane :production do
+    deliver(
+      api_key_path: "./ios/ios-fastlane-json-key.json",
+
+      # Skip HTMl report verification
+      force: true,
+
+      # VERSION will be set to the full build_number e.g. '1.0.92.0'
+      build_number: ENV["VERSION"],
+
+      # app_version needs to be set to the short version, without the last digit e.g. '1.0.92'
+      app_version: ENV["VERSION"].rpartition(".")[0],
+
+      # We want to submit the version for Apple to review
+      submit_for_review: true,
+
+      # We want to release the app as soon as it's approved
+      automatic_release: true,
+
+      # We need to upload metadata to upload the release notes which is required for each new version
+      skip_metadata: false,
+
+      # Define the metadata path
+      metadata_path: "./fastlane/metadata",
+
+      # We do not want to upload any screenshots
+      skip_screenshots: true,
+
+      # We do not have any binary to upload as it's already in TestFlight
+      skip_binary_upload: true,
+
+      # Reject the current build if there is one in review
+      reject_if_possible: true,
+
+      # We do not want to reset the ratings
+      reset_ratings: false,
+
+      # Precheck cannot check for in app purchases with the API key we use
+      precheck_include_in_app_purchases: false,
+      submission_information: {
+
+        # We currently do not use idfa: https://developer.apple.com/app-store/user-privacy-and-data-use/
+        add_id_info_uses_idfa: false,
+
+        # We do not need any additional compliance
+        export_compliance_compliance_required: false,
+
+        # We do not use any encrpytion
+        export_compliance_encryption_updated: false,
+        export_compliance_app_type: nil,
+        export_compliance_uses_encryption: false,
+        export_compliance_is_exempt: false,
+        export_compliance_contains_third_party_cryptography: false,
+        export_compliance_contains_proprietary_cryptography: false,
+
+        # We do not show any third party content
+        content_rights_contains_third_party_content: false,
+
+        # Indicate that our key has admin permissions
+        content_rights_has_rights: true
+      },
+      release_notes: {
+        'default' => "Improvements and bug fixes",
+        'en-US' => "Improvements and bug fixes"
+      }
+    )
+
+  end
+
+  # https://docs.fastlane.tools/getting-started/ios/screenshots/
+  # lane :screenshots do
+  #   capture_screenshots
+  #   upload_to_app_store
+  # end
+
 end

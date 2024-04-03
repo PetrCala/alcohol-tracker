@@ -1,5 +1,5 @@
 ﻿import CONST from '@src/CONST';
-import Clipboard from '@react-native-community/clipboard';
+import Clipboard from '@react-native-clipboard/clipboard';
 import seedrandom from 'seedrandom';
 import {Alert} from 'react-native';
 
@@ -70,9 +70,11 @@ function generateRandomString(length: number, seed: string): string {
 }
 
 /** Copy a text to a clipboard */
-const copyToClipboard = (text: string) => {
+const copyToClipboard = (text: string, alert?: boolean) => {
   Clipboard.setString(text);
-  Alert.alert('Success', 'Copied to clipboard!');
+  if (alert) {
+    Alert.alert('Success', 'Copied to clipboard!');
+  }
 };
 
 export {

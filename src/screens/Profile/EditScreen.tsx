@@ -5,9 +5,9 @@ import ScreenWrapper from '@components/ScreenWrapper';
 import ProfileOverview from '@components/Social/ProfileOverview';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import Navigation from '@libs/Navigation/Navigation';
-import {ProfileNavigatorParamList} from '@libs/Navigation/types';
-import {StackScreenProps} from '@react-navigation/stack';
-import SCREENS from '@src/SCREENS';
+import type {ProfileNavigatorParamList} from '@libs/Navigation/types';
+import type {StackScreenProps} from '@react-navigation/stack';
+import type SCREENS from '@src/SCREENS';
 import {useState} from 'react';
 import {
   Keyboard,
@@ -29,16 +29,16 @@ type EditItem = {
   // multiline: boolean;
 };
 
-type EditDataArray = Array<EditItem>;
+type EditDataArray = EditItem[];
 
 type EditScreenProps = StackScreenProps<
   ProfileNavigatorParamList,
   typeof SCREENS.PROFILE.EDIT
 >;
 
-const EditScreen = ({route}: EditScreenProps) => {
+function EditScreen({route}: EditScreenProps) {
   const userId = route.params.userId;
-  const {userData, isLoading, refetch} = useDatabaseData();
+  const {userData, isLoading} = useDatabaseData();
   const profileData = userData?.profile;
 
   // Hooks
@@ -71,7 +71,9 @@ const EditScreen = ({route}: EditScreenProps) => {
     Navigation.goBack();
   };
 
-  if (!profileData) return;
+  if (!profileData) {
+    return;
+  }
 
   return (
     <ScreenWrapper testID={EditScreen.displayName}>
@@ -87,6 +89,7 @@ const EditScreen = ({route}: EditScreenProps) => {
           onScrollBeginDrag={Keyboard.dismiss}
           style={styles.scrollView}>
           <TextInput
+            accessibilityLabel="Text input field"
             style={styles.feedbackWindowText}
             onChangeText={() => {}}
             placeholder={'Write your feedback here'}
@@ -107,7 +110,7 @@ const EditScreen = ({route}: EditScreenProps) => {
       </View>
     </ScreenWrapper>
   );
-};
+}
 
 const styles = StyleSheet.create({
   scrollView: {

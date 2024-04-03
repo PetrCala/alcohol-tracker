@@ -1,34 +1,33 @@
 require('dotenv').config(); // for the process.env variables to read the .env file
 import {MOCK_USER_IDS} from '../testsStatic';
 import {signUpUserWithEmailAndPassword} from '../../../src/libs/auth/auth';
+import type {Auth} from 'firebase/auth';
 import {
   initializeAuth,
   getReactNativePersistence,
   connectAuthEmulator,
-  Auth,
   updateProfile,
 } from 'firebase/auth';
-import {initializeApp, deleteApp, FirebaseApp} from 'firebase/app';
+import type {FirebaseApp} from 'firebase/app';
+import {initializeApp, deleteApp} from 'firebase/app';
 import {isConnectedToAuthEmulator} from '../../../src/libs/Firebase/FirebaseUtils';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
+import CONFIG from '../../../src/CONFIG';
+import {getTestAuthDomain} from './emulatorUtils';
 
 export function setupAuthTestEnv(): {
   testApp: FirebaseApp;
   auth: Auth;
 } {
-  const authDomain = process.env.TEST_AUTH_DOMAIN;
-  const projectId = process.env.TEST_PROJECT_ID;
-  if (!authDomain || !projectId) {
-    throw new Error(
-      `Missing environment variables ${authDomain} or ${projectId} for storage emulator`,
-    );
-  }
+  const authDomain = getTestAuthDomain();
+  const projectId = CONFIG.TEST_PROJECT_ID;
+
   const testApp = initializeApp({
     authDomain: authDomain,
     projectId: projectId,
   });
 
-  let auth = initializeAuth(testApp, {
+  const auth = initializeAuth(testApp, {
     persistence: getReactNativePersistence(ReactNativeAsyncStorage),
   });
   connectAuthEmulator(auth, authDomain);
@@ -51,8 +50,8 @@ export async function createMockAuthUsers(emulatorAuth: Auth): Promise<void> {
     throw new Error('Not connected to the auth emulator');
   }
   MOCK_USER_IDS.forEach(userId => async () => {
-    let email = `${userId}@gmail.com`;
-    let password = 'mock-password';
+    const email = `${userId}@gmail.com`;
+    const password = 'mock-password';
 
     try {
       await signUpUserWithEmailAndPassword(emulatorAuth, email, password);

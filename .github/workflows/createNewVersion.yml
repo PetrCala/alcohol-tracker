@@ -3,7 +3,7 @@ name: Create New Version
 on:
   pull_request:
     branches:
-        - None
+      - None
     types: [closed]
 
 jobs:
@@ -28,17 +28,17 @@ jobs:
         uses: actions/github-script@v3
         with:
           script: |
-              const pr = context.payload.pull_request;
-              const labelMap = {
-                  'v-build': 'BUILD',
-                  'v-patch': 'PATCH',
-                  'v-minor': 'MINOR',
-                  'v-major': 'MAJOR'
-              };
-              // Find the first label that matches the keys in labelMap
-              const matchedLabel = pr.labels.find(label => labelMap[label.name]);
-              const inputValue = matchedLabel ? labelMap[matchedLabel.name] : 'BUILD';
-              return inputValue;
+            const pr = context.payload.pull_request;
+            const labelMap = {
+                'v-build': 'BUILD',
+                'v-patch': 'PATCH',
+                'v-minor': 'MINOR',
+                'v-major': 'MAJOR'
+            };
+            // Find the first label that matches the keys in labelMap
+            const matchedLabel = pr.labels.find(label => labelMap[label.name]);
+            const inputValue = matchedLabel ? labelMap[matchedLabel.name] : 'BUILD';
+            return inputValue;
 
       - name: Install dependencies
         run: npm ci

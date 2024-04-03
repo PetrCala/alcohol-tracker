@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
     width: '80%',
     height: 'auto',
     position: 'absolute', // Temp
-    top: 50, // Temp
+    top: 70, // Temp
     borderRadius: 5,
     borderWidth: 2,
     alignItems: 'center',

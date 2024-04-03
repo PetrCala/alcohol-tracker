@@ -1,8 +1,6 @@
 apply plugin: "com.android.application"
 apply plugin: "com.facebook.react"
-apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle" // Load the .env file
 
-import com.android.build.OutputFile
 
 /**
  * This is the configuration block to customize your React Native Android app.
@@ -23,7 +21,7 @@ react {
     //   The list of variants to that are debuggable. For those we're going to
     //   skip the bundling of the JS bundle and the assets. By default is just 'debug'.
     //   If you add flavors like lite, prod, etc. you'll have to list your debuggableVariants.
-    // debuggableVariants = ["liteDebug", "prodDebug"]
+    debuggableVariants = ["developmentDebug", "stagingDebug", "productionDebug"]
 
     /* Bundling */
     //   A list containing the node command and its flags. Default is just 'node'.
@@ -52,6 +50,17 @@ react {
     //   The list of flags to pass to the Hermes compiler. By default is "-O", "-output-source-map"
     // hermesFlags = ["-O", "-output-source-map"]
 }
+
+
+project.ext.envConfigFiles = [
+    productionDebug: ".env.production",
+    productionRelease: ".env.production",
+    stagingDebug: ".env.staging",
+    stagingRelease: ".env.staging",
+    developmentDebug: ".env.development",
+    developmentRelease: ".env.development",
+]
+
 
 /**
  * Set this to true to create four separate APKs instead of one,
@@ -100,9 +109,29 @@ android {
         applicationId "com.alcohol_tracker"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1000030106
-        versionName "0.3.1-6"
+        versionCode 1000030402
+        versionName "0.3.4-2"
         vectorDrawables.useSupportLibrary = true
+    }
+
+    flavorDimensions "default"
+    productFlavors {
+        // we need to define a production flavor but since it has default config, we can leave it empty
+        production
+        staging {
+            // If  are building a version that won't be uploaded to the play store, we don't have to use production keys
+            // applies all non-production flavors
+            applicationIdSuffix ".staging"
+            signingConfig signingConfigs.debug
+            resValue "string", "build_config_package", "com.alcohol_tracker"
+        }
+        development {
+            // If  are building a version that won't be uploaded to the play store, we don't have to use production keys
+            // applies all non-production flavors
+            applicationIdSuffix ".dev"
+            signingConfig signingConfigs.debug
+            resValue "string", "build_config_package", "com.alcohol_tracker"
+        }
     }
 
     splits {
@@ -121,10 +150,10 @@ android {
             keyPassword 'android'
         }
         release {
-            storeFile file(project.env.get("MYAPP_RELEASE_STORE_FILE"))
-            keyAlias project.env.get("MYAPP_RELEASE_KEY_ALIAS")
-            storePassword project.env.get("MYAPP_RELEASE_STORE_PASSWORD")
-            keyPassword project.env.get("MYAPP_RELEASE_KEY_PASSWORD")
+            storeFile file(MYAPP_UPLOAD_STORE_FILE)
+            storePassword System.getenv('MYAPP_UPLOAD_STORE_PASSWORD')
+            keyAlias MYAPP_UPLOAD_KEY_ALIAS
+            keyPassword System.getenv('MYAPP_UPLOAD_KEY_PASSWORD')
         }
     }
     buildTypes {
@@ -132,29 +161,38 @@ android {
             signingConfig signingConfigs.debug
         }
         release {
-            // Caution! In production, you need to generate your own keystore file.
-            // see https://reactnative.dev/docs/signed-apk-android.
             signingConfig signingConfigs.release
+            // productFlavors.production.signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-        }
-    }
 
-    // applicationVariants are e.g. debug, release
-    applicationVariants.all { variant ->
-        variant.outputs.each { output ->
-            // For each separate APK per architecture, set a unique version code as described here:
-            // https://developer.android.com/studio/build/configure-apk-splits.html
-            // Example: versionCode 1 will generate 1001 for armeabi-v7a, 1002 for x86, etc.
-            def versionCodes = ["armeabi-v7a": 1, "x86": 2, "arm64-v8a": 3, "x86_64": 4]
-            def abi = output.getFilter(OutputFile.ABI)
-            if (abi != null) {  // null for the universal-debug, universal-release variants
-                output.versionCodeOverride =
-                        defaultConfig.versionCode * 1000 + versionCodes.get(abi)
+            signingConfig null
+            // buildTypes take precedence over productFlavors when it comes to the signing configuration,
+            // thus we need to manually set the signing config, so that the e2e dev env uses the debug config again.
+            // In other words, the signingConfig setting above will be ignored when we build the flavor in release mode. 
+            productFlavors.all { flavor ->
+                // All release builds should be signed with the release config ...
+                flavor.signingConfig signingConfigs.release
             }
-
+            // ... except for the development (originally e2e) flavor, which we maybe want to build locally:
+            productFlavors.development.signingConfig signingConfigs.debug
         }
     }
+
+   // Dynamically select the correct .env file
+    // applicationVariants.all { variant ->
+    //     def buildType = variant.buildType.name
+    //     def flavorName = variant.flavorName
+    //     // Construct the key for the env file based on the variant
+    //     def envFileKey = "${flavorName}${buildType.capitalize()}"
+    //     def envFile = project.ext.envConfigFiles[envFileKey]
+    //     if (envFile == null) {
+    //         throw GradleException("No .env configuration found for ${envFileKey}")
+    //     }
+    //     println("Using env file: $envFile")
+    //     // Here you set the path for the dotenv.gradle to find
+    //     project.ext.set("ENVFILE", envFile)
+    // }
 }
 
 dependencies {
@@ -176,4 +214,5 @@ dependencies {
     }
 }
 
+apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle" // Load the .env file
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)

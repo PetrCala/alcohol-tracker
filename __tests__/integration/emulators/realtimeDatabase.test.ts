@@ -2,7 +2,7 @@
 
 require('dotenv').config(); // Use .env variables in this file - CONFIG does not work here
 import {ref, get, set} from 'firebase/database';
-import {FirebaseApp} from 'firebase/app';
+import type {FirebaseApp} from 'firebase/app';
 import {
   createMockConfig,
   createMockMaintenance,
@@ -10,14 +10,14 @@ import {
   createMockUserStatus,
 } from '../../utils/mockDatabase';
 import {isConnectedToDatabaseEmulator} from '@src/libs/Firebase/FirebaseUtils';
-import {
+import type {
   FriendRequestList,
   Profile,
   Drinks,
   DrinkingSession,
 } from '@src/types/database';
-import {Database} from 'firebase/database';
-import {describeWithEmulator} from '../../utils/emulators/emulatorTools';
+import type {Database} from 'firebase/database';
+import {describeWithEmulator} from '../../utils/emulators/emulatorUtils';
 import {
   saveDrinkingSessionData,
   savePlaceholderSessionData,
@@ -63,7 +63,7 @@ import {
 } from '../../utils/emulators/authSetup';
 
 const testUserId: string = MOCK_USER_IDS[0];
-const testUserDisplayName: string = 'mock-user';
+const testUserDisplayName = 'mock-user';
 const testUserId2: string = MOCK_USER_IDS[1];
 
 const mockSessionKey = `${testUserId}-mock-session-999`;
@@ -138,7 +138,7 @@ describeWithEmulator('Test realtime database emulator', () => {
 
   it('should write non-empty mock data', async () => {
     async function getDatabaseRef() {
-      var tempRef = ref(db, 'config');
+      const tempRef = ref(db, 'config');
       const snapshot = await get(tempRef); // One-off fetch
       return snapshot;
     }
@@ -225,7 +225,7 @@ describeWithEmulator('Test drinking session functionality', () => {
   });
 
   it('should save a placeholder session', async () => {
-    let mockPlaceholderSession: DrinkingSession = getEmptySession(
+    const mockPlaceholderSession: DrinkingSession = getEmptySession(
       CONST.SESSION_TYPES.EDIT,
       true,
       false,
@@ -243,12 +243,12 @@ describeWithEmulator('Test drinking session functionality', () => {
 describeWithEmulator('Test pushing new user info into the database', () => {
   let testApp: FirebaseApp;
   let db: Database;
-  let newUserDisplayName = 'mock-user-6';
-  let newUserProfileData: Profile = {
+  const newUserDisplayName = 'mock-user-6';
+  const newUserProfileData: Profile = {
     display_name: newUserDisplayName,
     photo_url: '',
   };
-  let newUserId = 'mock-user-6'; // This user should not be created in the mock database
+  const newUserId = 'mock-user-6'; // This user should not be created in the mock database
   setupGlobalMocks();
 
   beforeAll(async () => {
@@ -258,7 +258,7 @@ describeWithEmulator('Test pushing new user info into the database', () => {
   beforeEach(async () => {
     await fillDatabaseWithMockData(db);
 
-    let userStatusList = await readDataOnce(db, DBPATHS.USER_STATUS); // Arbitrary node with all user ids in top level
+    const userStatusList = await readDataOnce(db, DBPATHS.USER_STATUS); // Arbitrary node with all user ids in top level
     const userKeys = Object.keys(userStatusList);
     expect(userKeys).not.toContain(newUserId); // Check that the user does not exist in the mock database
 

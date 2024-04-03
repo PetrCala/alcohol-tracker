@@ -1,35 +1,25 @@
-﻿import {ReactNode, createContext, useContext} from 'react';
+﻿import type {ReactNode} from 'react';
+import {createContext, useContext} from 'react';
+import type {Auth} from 'firebase/auth';
 import {
   initializeAuth,
   getReactNativePersistence,
   connectAuthEmulator,
-  Auth,
 } from 'firebase/auth';
-import {
-  Database,
-  connectDatabaseEmulator,
-  getDatabase,
-} from 'firebase/database';
-import {
-  FirebaseStorage,
-  getStorage,
-  connectStorageEmulator,
-} from 'firebase/storage';
+import type {Database} from 'firebase/database';
+import {connectDatabaseEmulator, getDatabase} from 'firebase/database';
+import type {FirebaseStorage} from 'firebase/storage';
+import {getStorage, connectStorageEmulator} from 'firebase/storage';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 import {isConnectedToAuthEmulator} from '@src/libs/Firebase/FirebaseUtils';
 import {FirebaseApp} from '@libs/Firebase/FirebaseApp';
 import FirebaseConfig from '@libs/Firebase/FirebaseConfig';
 import {
-  extractHostAndPort,
   isConnectedToDatabaseEmulator,
   isConnectedToStorageEmulator,
 } from '@src/libs/Firebase/FirebaseUtils';
 import CONFIG from '@src/CONFIG';
 import CONST from '@src/CONST';
-
-const isTestEnv =
-  process.env.NODE_ENV === 'test' ||
-  CONFIG.APP_ENVIRONMENT === CONST.ENVIRONMENT.TEST;
 
 type FirebaseContextProps = {
   auth: Auth;
@@ -70,18 +60,16 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
   const storage = getStorage(FirebaseApp);
 
   // Check if emulators should be used
-  if (isTestEnv) {
-    if (!FirebaseConfig.authDomain)
+  if (CONFIG.IS_IN_TEST) {
+    if (!FirebaseConfig.authDomain) {
       throw new Error('Auth URL not defined in FirebaseConfig');
-    if (!FirebaseConfig.databaseURL)
+    }
+    if (!FirebaseConfig.databaseURL) {
       throw new Error('Database URL not defined in FirebaseConfig');
-    if (!FirebaseConfig.storageBucket)
+    }
+    if (!FirebaseConfig.storageBucket) {
       throw new Error('Storage bucket not defined in FirebaseConfig');
-
-    const [dbHost, dbPort] = extractHostAndPort(FirebaseConfig.databaseURL);
-    const [storageHost, storagePort] = extractHostAndPort(
-      FirebaseConfig.storageBucket,
-    );
+    }
 
     if (!isConnectedToAuthEmulator(auth)) {
       connectAuthEmulator(auth, FirebaseConfig.authDomain);
@@ -89,11 +77,19 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
 
     // Safety check to connect to emulators only if they are not already running
     if (!isConnectedToDatabaseEmulator(db)) {
-      connectDatabaseEmulator(db, dbHost, parseInt(dbPort));
+      connectDatabaseEmulator(
+        db,
+        CONFIG.TEST_HOST,
+        CONFIG.TEST_REALTIME_DATABASE_PORT,
+      );
     }
 
     if (!isConnectedToStorageEmulator(storage)) {
-      connectStorageEmulator(storage, storageHost, parseInt(storagePort));
+      connectStorageEmulator(
+        storage,
+        CONFIG.TEST_HOST,
+        CONFIG.TEST_STORAGE_BUCKET_PORT,
+      );
     }
   }
 

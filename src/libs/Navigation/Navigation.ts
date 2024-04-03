@@ -84,7 +84,7 @@ function getActiveRouteIndex(
  * Gets distance from the path in root navigator. In other words how much screen you have to pop to get to the route with this path.
  * The search is limited to 5 screens from the top for performance reasons.
  * @param path - Path that you are looking for.
- * @return - Returns distance to path or -1 if the path is not found in root navigator.
+ * @returns- Returns distance to path or -1 if the path is not found in root navigator.
  */
 function getDistanceFromPathInRootNavigator(path?: string): number {
   let currentState = navigationRef.getRootState();
@@ -140,7 +140,7 @@ function getActiveRoute(): string {
  * is undefined in the first navigation.
  *
  * @param routePath Path to check
- * @return is active
+ * @returnsis active
  */
 function isActiveRoute(routePath: Route): boolean {
   let activeRoute = getActiveRoute();

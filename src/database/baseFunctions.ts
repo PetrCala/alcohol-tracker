@@ -1,5 +1,6 @@
-﻿import {Database, get, ref, child, push, onValue, off} from 'firebase/database';
-import {Profile, ProfileList, UserStatusList} from '@src/types/database';
+﻿import type {Database} from 'firebase/database';
+import {get, ref, child, push, onValue, off} from 'firebase/database';
+import type {Profile, ProfileList, UserStatusList} from '@src/types/database';
 import DBPATHS from './DBPATHS';
 
 /** Read data once from the realtime database using get(). Return the data if it exists.
@@ -49,7 +50,7 @@ export function listenForDataChanges(
  * Fetch the Firebase nickname of a user given their UID.
  * @param {Database} db The Realtime Database instance.
  * @param {string} uid The user's UID.
- * @return {Promise<string|null>} The nickname or null if not found.
+ * @returns{Promise<string|null>} The nickname or null if not found.
  *
  * @example const userNickname = await fetchNicknameByUID(db, "userUIDHere");
  */
@@ -93,9 +94,12 @@ export function fetchDataForUsers(
   userIds: string[],
   refTemplate: string,
 ): Promise<Profile[]> {
-  if (!userIds || userIds.length === 0) return Promise.resolve([]);
-  if (!refTemplate.includes('{userId}'))
+  if (!userIds || userIds.length === 0) {
+    return Promise.resolve([]);
+  }
+  if (!refTemplate.includes('{userId}')) {
     throw new Error('Invalid ref template');
+  }
   return Promise.all(
     userIds.map(id => readDataOnce(db, refTemplate.replace('{userId}', id))),
   );

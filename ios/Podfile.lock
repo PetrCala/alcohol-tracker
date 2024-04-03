@@ -324,6 +324,7 @@ PODS:
     - react-native-config/App (= 1.5.1)
   - react-native-config/App (1.5.1):
     - React-Core
+  - react-native-config/Extension (1.5.1)
   - react-native-netinfo (9.5.0):
     - React-Core
   - react-native-pager-view (6.2.3):
@@ -451,11 +452,13 @@ PODS:
     - React-perflogger (= 0.72.3)
   - RNCAsyncStorage (1.18.2):
     - React-Core
+  - RNCClipboard (1.13.2):
+    - React-Core
   - RNDeviceInfo (10.13.1):
     - React-Core
   - RNFS (2.20.0):
     - React-Core
-  - RNGestureHandler (2.15.0):
+  - RNGestureHandler (2.16.0):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
   - RNImageCropPicker (0.40.3):
@@ -503,6 +506,7 @@ DEPENDENCIES:
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - react-native-compressor (from `../node_modules/react-native-compressor`)
   - react-native-config (from `../node_modules/react-native-config`)
+  - react-native-config/Extension (from `../node_modules/react-native-config`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-pager-view (from `../node_modules/react-native-pager-view`)
   - react-native-render-html (from `../node_modules/react-native-render-html`)
@@ -527,6 +531,7 @@ DEPENDENCIES:
   - React-utils (from `../node_modules/react-native/ReactCommon/react/utils`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
+  - "RNCClipboard (from `../node_modules/@react-native-clipboard/clipboard`)"
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNFS (from `../node_modules/react-native-fs`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
@@ -640,6 +645,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-async-storage/async-storage"
+  RNCClipboard:
+    :path: "../node_modules/@react-native-clipboard/clipboard"
   RNDeviceInfo:
     :path: "../node_modules/react-native-device-info"
   RNFS:
@@ -706,9 +713,10 @@ SPEC CHECKSUMS:
   React-utils: bcb57da67eec2711f8b353f6e3d33bd8e4b2efa3
   ReactCommon: 3ccb8fb14e6b3277e38c73b0ff5e4a1b8db017a9
   RNCAsyncStorage: ddc4ee162bfd41b0d2c68bf2d95acd81dd7f1f93
+  RNCClipboard: 60fed4b71560d7bfe40e9d35dea9762b024da86d
   RNDeviceInfo: 4f9c7cfd6b9db1b05eb919620a001cf35b536423
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
-  RNGestureHandler: 7909c50383a18f0cb10ce1db7262b9a6da504c03
+  RNGestureHandler: 69d0a928253547ef857a7be4f453220b9c472e07
   RNImageCropPicker: e7ab6fb43d2fc3e84651e786ef4a080d63b0ed3d
   RNPermissions: c1c8d151dcc77b8d2eddfa47f608409b8ef06ee9
   RNScreens: 3c5b9f4a9dcde752466854b6109b79c0e205dad3
@@ -716,6 +724,6 @@ SPEC CHECKSUMS:
   TOCropViewController: edfd4f25713d56905ad1e0b9f5be3fbe0f59c863
   Yoga: 8796b55dba14d7004f980b54bcc9833ee45b28ce
 
-PODFILE CHECKSUM: ab662131aa2160ac6f5e1191d0e21334fe219dff
+PODFILE CHECKSUM: c194e2abccb1464a7e2db04f3c946debffb0d086
 
-COCOAPODS: 1.14.3
+COCOAPODS: 1.15.2

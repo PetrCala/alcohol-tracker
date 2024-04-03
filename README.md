@@ -105,6 +105,19 @@
 
 - We officially use Ruby version 2.6.10. To read about ruby version configuration see [this link](https://rbenv.org/man/rbenv.1).
 
+## Platform-Specific File Extensions
+
+In most cases, the code written for this repo should be platform-independent. In such cases, each module should have a single file, `index.js`, which defines the module's exports. There are, however, some cases in which a feature is intrinsically tied to the underlying platform. In such cases, the following file extensions can be used to export platform-specific code from a module:
+
+- Mobile => `index.native.js`
+- iOS Native App/Android Native App => `index.ios.js`/`index.android.js`
+- Web => `index.website.js`
+- Desktop => `index.desktop.js`
+
+Note that `index.js` should be the default and only platform-specific implementations should be done in their respective files. i.e: If you have mobile-specific implementation in `index.native.js`, then the desktop/web implementation can be contained in a shared `index.js`.
+
+`index.ios.js` and `index.android.js` are used when the app is running natively on respective platforms. These files are not used when users access the app through mobile browsers, but `index.website.js` is used instead. `index.native.js` are for both iOS and Android native apps. `index.native.js` should not be included in the same module as `index.ios.js` or `index.android.js`.
+
 ### Working with Firebase
 
 - Firebase CLI is necessary for any Firebase tests/emulators to run correctly. In order to set up your local environment, run these commands first

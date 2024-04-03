@@ -2,7 +2,8 @@
   "extends": "@tsconfig/react-native/tsconfig.json",
   "compilerOptions": {
     "target": "esnext",
-    "module": "esnext",
+    "module": "commonjs",
+    // "module": "esnext",
     "types": ["react-native", "jest", "node"],
     "lib": [
       "DOM",
@@ -28,16 +29,15 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "incremental": true,
     "isolatedModules": true,
     "moduleResolution": "node",
     "strict": true,
+    "noEmit": true,
     "forceConsistentCasingInFileNames": true,
     "composite": true,
-    "noEmit": true,
     "declaration": true,
     "declarationMap": true,
-    "rootDir": ".",
-    "outDir": "./build",
     "baseUrl": ".",
     "paths": {
       "@assets/*": ["./assets/*"],
@@ -62,7 +62,6 @@
     // same as the --compilerOptions flag and the TS_NODE_COMPILER_OPTIONS environment variable
     "compilerOptions": {
       "module": "commonjs",
-      "rootDir": ".",
       "paths": {
         "@local/*": ["./local/*"],
         "@firebase/auth": ["./node_modules/@firebase/auth/dist/index.rn.d.ts"],
@@ -71,12 +70,20 @@
       }
     }
   },
+  "exclude": [
+    "**/node_modules/*",
+    "**/dist/*",
+    ".github/actions/**/index.js",
+    "**/docs/*"
+  ],
   "include": [
     "__mocks__",
     "__tests__",
     "assets",
     "docs",
     "src",
+    "config",
+    ".github/**/*",
     "**/*.js",
     "**/*.jsx",
     "**/*.ts",
@@ -86,5 +93,6 @@
     "firebase.json",
     "**/alcohol-tracker*.json",
     "react-native.config.js"
+    // "workflow_tests"
   ]
 }

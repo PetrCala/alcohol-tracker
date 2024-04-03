@@ -4,7 +4,7 @@ import MainHeader from '@components/Header/MainHeader';
 import Navigation from '@libs/Navigation/Navigation';
 import ScreenWrapper from '@components/ScreenWrapper';
 
-const StatisticsScreen = () => {
+function StatisticsScreen() {
   return (
     <ScreenWrapper testID={StatisticsScreen.displayName}>
       <MainHeader
@@ -16,7 +16,7 @@ const StatisticsScreen = () => {
       </View>
     </ScreenWrapper>
   );
-};
+}
 
 const styles = StyleSheet.create({
   sectionText: {

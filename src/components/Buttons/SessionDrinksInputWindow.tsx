@@ -75,7 +75,7 @@ const SessionDrinksInputWindow = ({
   /** Given a new numeric value, update the necessary hooks upstream.
    *
    * @param numericValue The value to handle.
-   * @return void, the upstream hooks get updated
+   * @returnsvoid, the upstream hooks get updated
    */
   const handleNewNumericValue = (numericValue: number): void => {
     if (isNaN(numericValue)) {
