@@ -10,7 +10,7 @@
   TouchableOpacity,
   View,
 } from 'react-native';
-import {
+import type {
   FriendRequestList,
   FriendRequestStatus,
   ProfileList,
@@ -22,7 +22,7 @@ import {useFirebase} from '@context/global/FirebaseContext';
 import {acceptFriendRequest, deleteFriendRequest} from '@database/friends';
 
 import LoadingData from '@components/LoadingData';
-import {Database} from 'firebase/database';
+import type {Database} from 'firebase/database';
 import NoFriendUserOverview from '@components/Social/NoFriendUserOverview';
 import {fetchUserProfiles} from '@database/profile';
 import headerStyles from '@src/styles/headerStyles';
@@ -32,12 +32,12 @@ import CONST from '@src/CONST';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import useFetchData from '@hooks/useFetchData';
 import useRefresh from '@hooks/useRefresh';
-import {RefetchDatabaseData} from '@src/types/utils/RefetchDatabaseData';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import {isNonEmptyArray} from '@libs/Validation';
 import NoFriendInfo from '@components/Social/NoFriendInfo';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
+import FillerView from '@components/FillerView';
 
 type RequestIdProps = {
   requestId: string;
@@ -63,13 +63,11 @@ const handleAcceptFriendRequest = async (
   db: Database,
   userId: string,
   requestId: string,
-  refetch: RefetchDatabaseData,
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
 ): Promise<void> => {
   try {
     setIsLoading(true);
     await acceptFriendRequest(db, userId, requestId);
-    await refetch(['userData']);
     setIsLoading(false);
   } catch (error: any) {
     Alert.alert(
@@ -83,13 +81,11 @@ const handleRejectFriendRequest = async (
   db: Database,
   userId: string,
   requestId: string,
-  refetch: RefetchDatabaseData,
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
 ): Promise<void> => {
   try {
     setIsLoading(true);
     await deleteFriendRequest(db, userId, requestId);
-    await refetch(['userData']);
     setIsLoading(false);
   } catch (error: any) {
     Alert.alert(
@@ -103,23 +99,19 @@ const handleRejectFriendRequest = async (
 const FriendRequestButtons: React.FC<RequestIdProps> = ({requestId}) => {
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
-  const {refetch} = useDatabaseData();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  if (!user) return;
+  if (!user) {
+    return;
+  }
 
   return (
     <View style={styles.friendRequestButtonsContainer}>
       <TouchableOpacity
+        accessibilityRole="button"
         key={requestId + '-accept-request-button'}
         style={[styles.handleRequestButton, styles.acceptRequestButton]}
         onPress={() =>
-          handleAcceptFriendRequest(
-            db,
-            user.uid,
-            requestId,
-            refetch,
-            setIsLoading,
-          )
+          handleAcceptFriendRequest(db, user.uid, requestId, setIsLoading)
         }>
         {isLoading ? (
           <ActivityIndicator size="small" color="#0000ff" />
@@ -128,16 +120,11 @@ const FriendRequestButtons: React.FC<RequestIdProps> = ({requestId}) => {
         )}
       </TouchableOpacity>
       <TouchableOpacity
+        accessibilityRole="button"
         key={requestId + '-reject-request-button'}
         style={[styles.handleRequestButton, styles.rejectRequestButton]}
         onPress={() =>
-          handleRejectFriendRequest(
-            db,
-            user.uid,
-            requestId,
-            refetch,
-            setIsLoading,
-          )
+          handleRejectFriendRequest(db, user.uid, requestId, setIsLoading)
         }>
         <Text style={styles.handleRequestButtonText}>Remove</Text>
       </TouchableOpacity>
@@ -148,23 +135,19 @@ const FriendRequestButtons: React.FC<RequestIdProps> = ({requestId}) => {
 // Component to be shown when the friend request is pending
 const FriendRequestPending: React.FC<RequestIdProps> = ({requestId}) => {
   const {auth, db} = useFirebase();
-  const {refetch} = useDatabaseData();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const user = auth.currentUser;
 
-  if (!user) return;
+  if (!user) {
+    return;
+  }
   return (
     <View style={styles.friendRequestPendingContainer}>
       <TouchableOpacity
+        accessibilityRole="button"
         style={[styles.handleRequestButton, styles.rejectRequestButton]}
         onPress={() =>
-          handleRejectFriendRequest(
-            db,
-            user.uid,
-            requestId,
-            refetch,
-            setIsLoading,
-          )
+          handleRejectFriendRequest(db, user.uid, requestId, setIsLoading)
         }>
         {isLoading ? (
           <ActivityIndicator size="small" color="#0000ff" />
@@ -199,7 +182,9 @@ const FriendRequestItem: React.FC<FriendRequestItemProps> = ({
   friendRequests,
   displayData,
 }) => {
-  if (!friendRequests || !displayData) return null;
+  if (!friendRequests || !displayData) {
+    return null;
+  }
   const profileData = displayData[requestId];
   const requestStatus = friendRequests[requestId];
 
@@ -216,7 +201,7 @@ const FriendRequestItem: React.FC<FriendRequestItemProps> = ({
   );
 };
 
-interface State {
+type State = {
   isLoading: boolean;
   friendRequests: FriendRequestList | undefined;
   displayData: ProfileList;
@@ -224,12 +209,12 @@ interface State {
   requestsReceived: string[];
   requestsSentCount: number;
   requestsReceivedCount: number;
-}
+};
 
-interface Action {
+type Action = {
   type: string;
   payload: any;
-}
+};
 
 const initialState: State = {
   isLoading: true,
@@ -262,11 +247,10 @@ const reducer = (state: State, action: Action): State => {
   }
 };
 
-const FriendRequestScreen = () => {
+function FriendRequestScreen() {
   const {db} = useFirebase();
-  const {userData, isLoading, refetch} = useDatabaseData();
+  const {userData, isLoading} = useDatabaseData();
   const [state, dispatch] = useReducer(reducer, initialState);
-  const {onRefresh, refreshing, refreshCounter} = useRefresh({refetch});
 
   useMemo(() => {
     if (userData) {
@@ -281,7 +265,7 @@ const FriendRequestScreen = () => {
     db: Database,
     friendRequests: FriendRequestList | undefined,
   ): Promise<void> => {
-    let newDisplayData: ProfileList = await fetchUserProfiles(
+    const newDisplayData: ProfileList = await fetchUserProfiles(
       db,
       objKeys(friendRequests),
     );
@@ -300,9 +284,11 @@ const FriendRequestScreen = () => {
   useMemo(() => {
     const newRequestsSent: string[] = [];
     const newRequestsReceived: string[] = [];
-    if (state.friendRequests) {
+    if (!isEmptyObject(state.friendRequests)) {
       Object.keys(state.friendRequests).forEach(requestId => {
-        if (!state.friendRequests) return;
+        if (!state.friendRequests) {
+          return;
+        }
         if (
           state.friendRequests[requestId] === CONST.FRIEND_REQUEST_STATUS.SENT
         ) {
@@ -332,13 +318,7 @@ const FriendRequestScreen = () => {
       <ScrollView
         style={styles.scrollViewContainer}
         onScrollBeginDrag={Keyboard.dismiss}
-        keyboardShouldPersistTaps="handled"
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={() => onRefresh(['userData'])}
-          />
-        }>
+        keyboardShouldPersistTaps="handled">
         {state.isLoading || isLoading ? (
           <LoadingData style={styles.loadingData} />
         ) : !isEmptyObject(state.friendRequests) ? (
@@ -371,6 +351,7 @@ const FriendRequestScreen = () => {
                 />
               ))}
             </View>
+            <FillerView height={100} />
           </View>
         ) : (
           <NoFriendInfo
@@ -380,13 +361,14 @@ const FriendRequestScreen = () => {
         )}
       </ScrollView>
       <TouchableOpacity
+        accessibilityRole="button"
         style={styles.searchScreenButton}
         onPress={() => Navigation.navigate(ROUTES.SOCIAL_FRIEND_SEARCH)}>
         <Image source={KirokuIcons.Search} style={styles.searchScreenImage} />
       </TouchableOpacity>
     </View>
   );
-};
+}
 
 export default FriendRequestScreen;
 

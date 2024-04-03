@@ -1,9 +1,9 @@
 import CONST from '@src/CONST';
-import {Database} from 'firebase/database';
+import type {Database} from 'firebase/database';
 import {getUniqueId} from 'react-native-device-info';
 import DBPATHS from './DBPATHS';
 import {readDataOnce} from './baseFunctions';
-import {AccountCreations} from '@src/types/database';
+import type {AccountCreations} from '@src/types/database';
 
 /** Check that the current device has not created too many accounts
  * in the last 24 hours. If the limit is exceeded, an error is thrown.
@@ -16,11 +16,13 @@ async function checkAccountCreationLimit(db: Database): Promise<void> {
 
   const deviceRef = DBPATHS.ACCOUNT_CREATIONS_DEVICE_ID.getRoute(deviceId);
   const deviceData: AccountCreations | null = await readDataOnce(db, deviceRef);
-  if (!deviceData) return;
+  if (!deviceData) {
+    return;
+  }
 
-  const recentAccountCreations = Object.keys(deviceData)
-    .filter(timestamp => parseInt(timestamp) >= oneDayAgo)
-    .map(timestamp => parseInt(timestamp));
+  const recentAccountCreations = Object.values(deviceData).filter(
+    timestamp => timestamp >= oneDayAgo,
+  );
 
   if (recentAccountCreations.length >= limit) {
     throw new Error('Rate limit exceeded. Please try again later.');

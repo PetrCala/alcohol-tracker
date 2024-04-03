@@ -36,6 +36,14 @@ const commonStyles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
+  flexRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  spaceBetween: {
+    justifyContent: 'space-between',
+  },
   mainFooter: {
     height: 55,
     width: screenWidth,

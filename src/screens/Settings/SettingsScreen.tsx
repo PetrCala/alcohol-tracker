@@ -24,6 +24,7 @@ const SettingsItem: React.FC<{item: any}> = ({item}) => (
     <View style={styles.buttonsContainer}>
       {item.buttons.map((button: any, index: any) => (
         <TouchableOpacity
+          accessibilityRole="button"
           key={index}
           style={[styles.button, {backgroundColor: button.color}]}
           onPress={button.action}>
@@ -34,7 +35,7 @@ const SettingsItem: React.FC<{item: any}> = ({item}) => (
   </View>
 );
 
-const SettingsScreen = () => {
+function SettingsScreen() {
   const {auth} = useFirebase();
   const user = auth.currentUser;
   const {preferences} = useDatabaseData();
@@ -75,7 +76,9 @@ const SettingsScreen = () => {
     // Add more settings items as needed
   ];
 
-  if (!isOnline) return <UserOffline />;
+  if (!isOnline) {
+    return <UserOffline />;
+  }
 
   return (
     <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
@@ -98,7 +101,7 @@ const SettingsScreen = () => {
       </View>
     </View>
   );
-};
+}
 
 export default SettingsScreen;
 

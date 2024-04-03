@@ -1,3 +1,4 @@
+import type Platform from '@libs/getPlatform/types';
 import {PermissionsAndroid} from 'react-native';
 import {RESULTS} from 'react-native-permissions';
 
@@ -7,7 +8,7 @@ export type PermissionKey =
   | 'read_photos'
   | 'write_photos';
 
-export type PermissionEntry = {[key: string]: any};
+export type PermissionEntry = Partial<{[P in Platform]: any}>;
 
 export const permissionIsGranted = (status: any) => {
   return [

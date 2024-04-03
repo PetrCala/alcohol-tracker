@@ -82,16 +82,20 @@ target 'kiroku' do
 
   project 'kiroku',
     'DebugDevelopment' => :debug,
-    'DebugAdHoc' => :debug,
+    'DebugStaging' => :debug,
     'DebugProduction' => :debug,
     'ReleaseDevelopment' => :release,
-    'ReleaseAdHoc' => :release,
+    'ReleaseStaging' => :release,
     'ReleaseProduction' => :release
 
   config = use_native_modules!
 
+
   # Flags change depending on the env values.
   flags = get_default_flags()
+
+  # Enable react-native-config for environment file management
+  pod 'react-native-config/Extension', :path => '../node_modules/react-native-config'
 
   use_react_native!(
     :path => config[:reactNativePath],
@@ -113,6 +117,7 @@ target 'kiroku' do
     inherit! :complete
     # Pods for testing
   end
+
 
   post_install do |installer|
 

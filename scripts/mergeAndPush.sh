@@ -24,5 +24,6 @@ git checkout $target_branch_name
 git merge $current_branch
 git push origin $target_branch_name
 git checkout $current_branch
+git push origin $current_branch # Push the changes to the current branch too
 
 success "Merge complete!"

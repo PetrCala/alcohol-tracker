@@ -1,9 +1,9 @@
 import MainHeader from '@components/Header/MainHeader';
 import ScreenWrapper from '@components/ScreenWrapper';
 import Navigation from '@libs/Navigation/Navigation';
-import {MainMenuNavigatorParamList} from '@libs/Navigation/types';
-import {StackScreenProps} from '@react-navigation/stack';
-import SCREENS from '@src/SCREENS';
+import type {MainMenuNavigatorParamList} from '@libs/Navigation/types';
+import type {StackScreenProps} from '@react-navigation/stack';
+import type SCREENS from '@src/SCREENS';
 import commonStyles from '@src/styles/commonStyles';
 import * as KirokuImages from '@components/Icon/KirokuImages';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
@@ -24,10 +24,10 @@ type AppShareScreenProps = StackScreenProps<
   typeof SCREENS.MAIN_MENU.APP_SHARE
 >;
 
-const AppShareScreen = ({route}: AppShareScreenProps) => {
+function AppShareScreen({route}: AppShareScreenProps) {
   const handleCopyLinkPress = () => {
     try {
-      copyToClipboard(CONST.APP_DOWNLOAD_LINK);
+      copyToClipboard(CONST.APP_DOWNLOAD_LINK, true);
     } catch (error: any) {
       Alert.alert('Error', error.message);
     }
@@ -53,6 +53,7 @@ const AppShareScreen = ({route}: AppShareScreenProps) => {
           </View>
           <View style={[styles.centeringContainer, {height: '80%'}]}>
             <TouchableOpacity
+              accessibilityRole="button"
               style={styles.linkCopyButton}
               onPress={handleCopyLinkPress}>
               <Text style={styles.shareLinkText}>
@@ -68,6 +69,7 @@ const AppShareScreen = ({route}: AppShareScreenProps) => {
             <Text style={styles.mainText}>or through a QR code</Text>
           </View>
           <TouchableOpacity
+            accessibilityRole="button"
             onPress={() => Linking.openURL(CONST.APP_QR_CODE_LINK)}
             style={[styles.centeringContainer, {height: 'auto'}]}>
             <Image source={KirokuImages.QrCodeWithLogo} style={styles.qrCode} />
@@ -76,7 +78,7 @@ const AppShareScreen = ({route}: AppShareScreenProps) => {
       </View>
     </ScreenWrapper>
   );
-};
+}
 
 const styles = StyleSheet.create({
   mainContainer: {

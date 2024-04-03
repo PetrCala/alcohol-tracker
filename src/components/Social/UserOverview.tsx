@@ -1,11 +1,20 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {Image, StyleSheet, Text, View} from 'react-native';
 import {useFirebase} from '../../context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
 import {getTimestampAge, isRecent} from '@libs/TimeUtils';
 import commonStyles from '@src/styles/commonStyles';
-import {sumAllDrinks} from '@libs/DataHandling';
+import {
+  formatDateToTime,
+  sumAllDrinks,
+  timestampToDate,
+} from '@libs/DataHandling';
 import {Profile, UserStatus} from '@src/types/database';
-import {calculateSessionLength, sessionIsExpired} from '@libs/SessionUtils';
+import {
+  determineSessionMostCommonDrink,
+  sessionIsExpired,
+} from '@libs/SessionUtils';
+import DrinkData from '@libs/DrinkData';
+import _, {get} from 'lodash';
 
 type UserOverviewProps = {
   userId: string;
@@ -19,16 +28,25 @@ const UserOverview: React.FC<UserOverviewProps> = ({
   userStatusData,
 }) => {
   const {storage} = useFirebase();
-  if (!profileData || !userStatusData) return null;
   const {last_online, latest_session, latest_session_id} = userStatusData;
-  const activeNow = isRecent(last_online);
-  const lastSeen = getTimestampAge(last_online);
+  // const activeNow = isRecent(last_online);
   const inSession = latest_session?.ongoing;
-  const displaySessionInfo = inSession && !sessionIsExpired(latest_session);
-  const sessionLength = calculateSessionLength(latest_session, true);
-  const drinksThisSession = latest_session
-    ? sumAllDrinks(latest_session?.drinks)
+  const lastSessionEndTime = get(latest_session, 'end_time', null);
+  const sessionEndTimeVerbose = getTimestampAge(
+    lastSessionEndTime,
+    false,
+    true,
+  );
+  const shouldDisplaySessionInfo =
+    inSession && !sessionIsExpired(latest_session);
+  // const sessionLength = calculateSessionLength(latest_session, true);
+  const sessionStartTime = latest_session?.start_time
+    ? formatDateToTime(timestampToDate(latest_session?.start_time))
     : null;
+  const mostCommonDrink = determineSessionMostCommonDrink(latest_session);
+  const mostCommonDrinkIcon = DrinkData.find(
+    drink => drink.key === mostCommonDrink,
+  )?.icon;
 
   return (
     <View key={userId + '-container'} style={styles.userOverviewContainer}>
@@ -46,9 +64,9 @@ const UserOverview: React.FC<UserOverviewProps> = ({
           <View
             key={userId + 'info'}
             style={
-              displaySessionInfo
-                ? styles.userInfoContainer
-                : [styles.userInfoContainer, styles.centerUserInfo]
+              // shouldDisplaySessionInfo ?
+              // : [styles.userInfoContainer, styles.centerUserInfo]
+              [styles.userInfoContainer, styles.centerUserInfo]
             }>
             <Text
               key={userId + '-nickname'}
@@ -57,32 +75,41 @@ const UserOverview: React.FC<UserOverviewProps> = ({
               ellipsizeMode="tail">
               {profileData.display_name}
             </Text>
-            {displaySessionInfo && (
-              <>
-                <Text
-                  key={userId + '-sessions'}
-                  style={[styles.userDetailsText, styles.leftContainerText]}>
-                  Currently in session{/*// for: {sessionLength}*/}
-                </Text>
-                <Text
-                  key={userId + '-units'}
-                  style={[styles.userDetailsText, styles.leftContainerText]}>
-                  Drinks so far: {drinksThisSession}{' '}
-                  {/* TODO should be units */}
-                </Text>
-              </>
-            )}
           </View>
         </View>
       </View>
       <View key={userId + '-right-container'} style={styles.rightContainer}>
-        {activeNow ? (
-          <View style={commonStyles.successIndicator} />
+        {/* ? `In session:\n${drinksThisSession} ${mostCommonDrink}` */}
+        {inSession && shouldDisplaySessionInfo ? (
+          <>
+            <View style={commonStyles.flexRow}>
+              <Text
+                key={userId + '-status-info'}
+                style={[styles.userDetailsText, styles.rightContainerText]}>
+                {`In session${mostCommonDrinkIcon ? ':' : ''}`}
+              </Text>
+              {mostCommonDrinkIcon && (
+                <Image
+                  source={mostCommonDrinkIcon}
+                  style={styles.userDetailsIcon}
+                />
+              )}
+            </View>
+            <Text
+              key={userId + '-status-time'}
+              style={[styles.userDetailsText, styles.rightContainerText]}>
+              {`From: ${sessionStartTime}`}
+            </Text>
+          </>
         ) : (
           <Text
             key={userId + '-status'}
             style={[styles.userDetailsText, styles.rightContainerText]}>
-            {`Last seen:\n${lastSeen}`}
+            {!_.isEmpty(sessionEndTimeVerbose)
+              ? `${sessionEndTimeVerbose}\nsober`
+              : inSession
+                ? `Session started:\n${sessionStartTime}`
+                : 'No sessions yet'}
           </Text>
         )}
       </View>
@@ -111,6 +138,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'flex-end',
     padding: 5,
+    paddingRight: 7,
   },
   userOverviewProfile: {
     width: '100%',
@@ -153,14 +181,16 @@ const styles = StyleSheet.create({
   userDetailsText: {
     color: 'black',
     fontSize: 12,
+    textAlign: 'center',
+    padding: 2,
   },
-  leftContainerText: {
-    marginLeft: 15,
-    margin: 1,
+  userDetailsIcon: {
+    width: 15,
+    height: 15,
   },
+  leftContainerText: {},
   rightContainerText: {
-    margin: 5,
-    textAlign: 'right',
+    textAlign: 'center',
     color: '#333',
   },
 });

@@ -153,15 +153,16 @@ export const validateAppVersion = (
   minSupportedVersion: string | undefined,
   currentAppVersion: string = version,
 ): ValidationResult => {
-  if (!minSupportedVersion)
+  if (!minSupportedVersion) {
     // Allowing to be null allows cleaner code down the line
     return {
       success: false,
       message:
         'This version of the application is outdated. Please upgrade to the newest version.',
     };
+  }
   // Compare versions
-  let cleanCurrentAppVersion = cleanSemver(currentAppVersion); // No build metadata
+  const cleanCurrentAppVersion = cleanSemver(currentAppVersion); // No build metadata
   if (semver.lt(cleanCurrentAppVersion, minSupportedVersion)) {
     return {
       success: false,
@@ -203,3 +204,5 @@ export function isNonEmptyObject(input: any): boolean {
 export function isNonEmptyArray(input: any) {
   return Array.isArray(input) && input.length > 0;
 }
+
+export type {ValidationResult};

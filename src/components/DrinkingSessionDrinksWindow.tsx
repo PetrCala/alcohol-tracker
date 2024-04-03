@@ -61,7 +61,7 @@ const DrinkingSessionDrinksWindow = ({
         <Image
           source={iconSource}
           style={
-            drinkKey === 'small_beer'
+            drinkKey === CONST.DRINKS.KEYS.SMALL_BEER
               ? styles.smallIconStyle
               : styles.normalIconStyle
           }

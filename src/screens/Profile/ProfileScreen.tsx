@@ -11,7 +11,8 @@
 } from 'react-native';
 import commonStyles from '../../styles/commonStyles';
 import {useFirebase} from '../../context/global/FirebaseContext';
-import {StatData, StatsOverview} from '@components/Items/StatOverview';
+import type {StatData} from '@components/Items/StatOverview';
+import {StatsOverview} from '@components/Items/StatOverview';
 import ProfileOverview from '@components/Social/ProfileOverview';
 import React, {useEffect, useMemo, useReducer} from 'react';
 import {readDataOnce} from '@database/baseFunctions';
@@ -25,28 +26,31 @@ import {
   timestampToDateString,
 } from '@libs/DataHandling';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
-import {DateObject} from '@src/types/time';
+import type {DateObject} from '@src/types/time';
 import SessionsCalendar from '@components/Calendar';
 import LoadingData from '@components/LoadingData';
 import {fetchUserFriends, getCommonFriendsCount} from '@libs/FriendUtils';
 import MainHeader from '@components/Header/MainHeader';
 import ManageFriendPopup from '@components/Popups/Profile/ManageFriendPopup';
-import {DrinkingSessionArray, UserList} from '@src/types/database';
-import {StackScreenProps} from '@react-navigation/stack';
-import {ProfileNavigatorParamList} from '@libs/Navigation/types';
-import SCREENS from '@src/SCREENS';
+import type {DrinkingSessionArray, UserList} from '@src/types/database';
+import {UserProps} from '@src/types/database';
+import type {StackScreenProps} from '@react-navigation/stack';
+import type {ProfileNavigatorParamList} from '@libs/Navigation/types';
+import type SCREENS from '@src/SCREENS';
 import Navigation from '@libs/Navigation/Navigation';
 import DBPATHS from '@database/DBPATHS';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import ROUTES from '@src/ROUTES';
-import {DateData} from 'react-native-calendars';
-import {RefreshControl} from 'react-native-gesture-handler';
-import useFetchData, {UserFetchDataKey} from '@hooks/useFetchData';
+import type {DateData} from 'react-native-calendars';
+import useFetchData from '@hooks/useFetchData';
 import {sendFriendRequest} from '@database/friends';
 import {getPlural} from '@libs/StringUtils';
 import ScreenWrapper from '@components/ScreenWrapper';
+import type {FetchDataKeys} from '@hooks/useFetchData/types';
+import {FetchData} from '@hooks/useFetchData/types';
+import useListenToData from '@hooks/useListenToData';
 
-interface State {
+type State = {
   selfFriends: UserList | undefined;
   friendCount: number;
   commonFriendCount: number;
@@ -55,12 +59,12 @@ interface State {
   unitsConsumed: number;
   manageFriendModalVisible: boolean;
   unfriendModalVisible: boolean;
-}
+};
 
-interface Action {
+type Action = {
   type: string;
   payload: any;
-}
+};
 
 const initialState: State = {
   selfFriends: undefined,
@@ -101,17 +105,26 @@ type ProfileScreenProps = StackScreenProps<
   typeof SCREENS.PROFILE.ROOT
 >;
 
-const ProfileScreen = ({route}: ProfileScreenProps) => {
+function ProfileScreen({route}: ProfileScreenProps) {
   const {auth, db} = useFirebase();
   const {userId} = route.params;
   const user = auth.currentUser;
-  const relevantDataKeys: UserFetchDataKey[] = [
+  const relevantDataKeys: FetchDataKeys = [
     'userData',
     'drinkingSessionData',
     'preferences',
   ];
-  const {data, isLoading, refetch} = useFetchData(userId, relevantDataKeys);
-  const {userData, drinkingSessionData, preferences} = data;
+  // Use the user's data at first (cost-free). If this is not self profile, fetch the data.
+  let {userData, drinkingSessionData, preferences, isLoading} =
+    useDatabaseData();
+  let loading = isLoading;
+  if (userId !== user?.uid) {
+    const {data, isLoading} = useFetchData(userId, relevantDataKeys);
+    userData = data.userData;
+    drinkingSessionData = data.drinkingSessionData;
+    preferences = data.preferences;
+    loading = isLoading;
+  }
   const profileData = userData?.profile;
   const friends = userData?.friends;
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -128,21 +141,12 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
     },
   ];
 
-  // Database data hooks
-  useEffect(() => {
-    refetch(relevantDataKeys);
-  }, [userId]);
-
-  const onRefresh = React.useCallback(() => {
-    setTimeout(() => {
-      refetch(relevantDataKeys);
-    }, 1000);
-  }, []);
-
   // Track own friends
   useEffect(() => {
     const getOwnFriends = async () => {
-      if (!user) return;
+      if (!user) {
+        return;
+      }
       let ownFriends = friends;
       if (user?.uid !== userId) {
         ownFriends = await readDataOnce(
@@ -168,16 +172,18 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
 
   // Monitor stats
   useMemo(() => {
-    if (!drinkingSessionData || !preferences) return;
-    let drinkingSessionArray: DrinkingSessionArray =
+    if (!drinkingSessionData || !preferences) {
+      return;
+    }
+    const drinkingSessionArray: DrinkingSessionArray =
       Object.values(drinkingSessionData);
 
-    let thisMonthUnits = calculateThisMonthUnits(
+    const thisMonthUnits = calculateThisMonthUnits(
       state.visibleDateObject,
       drinkingSessionArray,
       preferences.drinks_to_units,
     );
-    let thisMonthSessionCount = getSingleMonthDrinkingSessions(
+    const thisMonthSessionCount = getSingleMonthDrinkingSessions(
       timestampToDate(state.visibleDateObject.timestamp),
       drinkingSessionArray,
       false,
@@ -190,8 +196,12 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
     dispatch({type: 'SET_UNITS_CONSUMED', payload: thisMonthUnits});
   }, [drinkingSessionData, preferences, state.visibleDateObject]);
 
-  if (isLoading) return <LoadingData />;
-  if (!profileData || !preferences || !userData) return;
+  if (isLoading) {
+    return <LoadingData />;
+  }
+  if (!profileData || !preferences || !userData) {
+    return;
+  }
 
   return (
     <ScreenWrapper testID={ProfileScreen.displayName}>
@@ -203,10 +213,7 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
         style={styles.scrollView}
         onScrollBeginDrag={Keyboard.dismiss}
         keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
-        }>
+        showsVerticalScrollIndicator={false}>
         {/* {user?.uid === userId && (
           <TouchableOpacity
             onPress={() =>
@@ -222,20 +229,23 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
         />
         <View style={styles.friendsInfoContainer}>
           <View style={styles.leftContainer}>
-            <Text style={styles.friendsInfoHeading}>Friends:</Text>
+            <Text style={styles.friendsInfoHeading}>
+              {`${
+                user?.uid !== userId && state.commonFriendCount > 0
+                  ? 'Common f'
+                  : 'F'
+              }riends:`}
+            </Text>
             <Text
               style={[styles.friendsInfoText, commonStyles.smallMarginLeft]}>
-              {state.friendCount}
+              {user?.uid !== userId && state.commonFriendCount > 0
+                ? state.commonFriendCount
+                : state.friendCount}
             </Text>
-            {user?.uid === userId ? null : (
-              <Text
-                style={[styles.friendsInfoText, commonStyles.smallMarginLeft]}>
-                ({state.commonFriendCount} common)
-              </Text>
-            )}
           </View>
           <View style={styles.rightContainer}>
             <TouchableOpacity
+              accessibilityRole="button"
               onPress={() => {
                 user?.uid === userId
                   ? Navigation.navigate(ROUTES.SOCIAL)
@@ -272,6 +282,7 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
         <View style={styles.bottomContainer}>
           {user?.uid !== userId ? (
             <TouchableOpacity
+              accessibilityRole="button"
               style={styles.manageFriendButton}
               onPress={() =>
                 dispatch({
@@ -295,7 +306,7 @@ const ProfileScreen = ({route}: ProfileScreenProps) => {
       />
     </ScreenWrapper>
   );
-};
+}
 
 const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;

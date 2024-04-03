@@ -7,7 +7,6 @@ import {
   UserList,
   UserStatusList,
 } from '@src/types/database';
-import {objKeys} from '@libs/DataHandling';
 import {fetchUserProfiles, fetchUserStatuses} from '@database/profile';
 import {Alert} from 'react-native';
 import {isNonEmptyArray} from '@libs/Validation';

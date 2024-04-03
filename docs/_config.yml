@@ -17,12 +17,11 @@ title: Kiroku Documentation
 email: kiroku.alcohol.tracker@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
   This documentaiton should help you delve into the inner workings of Kiroku. Become a contributor by understanding how this project works first.
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "" # the base hostname & protocol for your site, e.g. http://example.com
+baseurl: '' # the subpath of your site, e.g. /blog
+url: '' # the base hostname & protocol for your site, e.g. http://example.com
 author: Kiroku
 # twitter_username: None
-github_username:  PetrCala
-
+github_username: PetrCala
 
 # Build settings
 markdown: kramdown
@@ -30,7 +29,6 @@ exclude: [README.md, TEMPLATE.md, vendor]
 theme: minima
 plugins:
   - jekyll-feed
-
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
 # to override the default setting.

@@ -11,7 +11,10 @@ const getPatchVersion = require('semver/functions/patch');
 const getBuildVersion = require('semver/functions/prerelease');
 
 // Filepath constants
-const BUILD_GRADLE_PATH = process.env.NODE_ENV === 'test' ? path.resolve(__dirname, '../../android/app/build.gradle') : './android/app/build.gradle';
+const BUILD_GRADLE_PATH =
+  process.env.NODE_ENV === 'test'
+    ? path.resolve(__dirname, '../../android/app/build.gradle')
+    : './android/app/build.gradle';
 const PLIST_PATH = './ios/kiroku/Info.plist';
 const PLIST_PATH_TEST = './ios/kirokuTests/Info.plist';
 
@@ -26,10 +29,10 @@ exports.PLIST_PATH_TEST = PLIST_PATH_TEST;
  * @returns {String} - A string representation of the number with length 2.
  */
 function padToTwoDigits(number) {
-    if (number >= 10) {
-        return number.toString();
-    }
-    return `0${number.toString()}`;
+  if (number >= 10) {
+    return number.toString();
+  }
+  return `0${number.toString()}`;
 }
 
 /**
@@ -40,15 +43,17 @@ function padToTwoDigits(number) {
  * @param {String} npmVersion
  * @returns {String}
  */
-exports.generateAndroidVersionCode = function generateAndroidVersionCode(npmVersion) {
-    const prefix = '10'; // Pad to 10 digits with this prefix
-    return ''.concat(
-        prefix,
-        padToTwoDigits(getMajorVersion(npmVersion) || 0),
-        padToTwoDigits(getMinorVersion(npmVersion) || 0),
-        padToTwoDigits(getPatchVersion(npmVersion) || 0),
-        padToTwoDigits(getBuildVersion(npmVersion) || 0),
-    );
+exports.generateAndroidVersionCode = function generateAndroidVersionCode(
+  npmVersion,
+) {
+  const prefix = '10'; // Pad to 10 digits with this prefix
+  return ''.concat(
+    prefix,
+    padToTwoDigits(getMajorVersion(npmVersion) || 0),
+    padToTwoDigits(getMinorVersion(npmVersion) || 0),
+    padToTwoDigits(getPatchVersion(npmVersion) || 0),
+    padToTwoDigits(getBuildVersion(npmVersion) || 0),
+  );
 };
 
 /**
@@ -58,15 +63,29 @@ exports.generateAndroidVersionCode = function generateAndroidVersionCode(npmVers
  * @param {String} versionCode
  * @returns {Promise}
  */
-exports.updateAndroidVersion = function updateAndroidVersion(versionName, versionCode) {
-    console.log('Updating android:', `versionName: ${versionName}`, `versionCode: ${versionCode}`);
-    return fs
-        .readFile(BUILD_GRADLE_PATH, {encoding: 'utf8'})
-        .then((content) => {
-            let updatedContent = content.toString().replace(/versionName "([0-9.-]*)"/, `versionName "${versionName}"`);
-            return (updatedContent = updatedContent.replace(/versionCode ([0-9]*)/, `versionCode ${versionCode}`));
-        })
-        .then((updatedContent) => fs.writeFile(BUILD_GRADLE_PATH, updatedContent, {encoding: 'utf8'}));
+exports.updateAndroidVersion = function updateAndroidVersion(
+  versionName,
+  versionCode,
+) {
+  console.log(
+    'Updating android:',
+    `versionName: ${versionName}`,
+    `versionCode: ${versionCode}`,
+  );
+  return fs
+    .readFile(BUILD_GRADLE_PATH, {encoding: 'utf8'})
+    .then(content => {
+      let updatedContent = content
+        .toString()
+        .replace(/versionName "([0-9.-]*)"/, `versionName "${versionName}"`);
+      return (updatedContent = updatedContent.replace(
+        /versionCode ([0-9]*)/,
+        `versionCode ${versionCode}`,
+      ));
+    })
+    .then(updatedContent =>
+      fs.writeFile(BUILD_GRADLE_PATH, updatedContent, {encoding: 'utf8'}),
+    );
 };
 
 /**
@@ -77,16 +96,30 @@ exports.updateAndroidVersion = function updateAndroidVersion(versionName, versio
  * @returns {String}
  */
 exports.updateiOSVersion = function updateiOSVersion(version) {
-    const shortVersion = version.split('-')[0];
-    const cfVersion = version.includes('-') ? version.replace('-', '.') : `${version}.0`;
-    console.log('Updating iOS', `CFBundleShortVersionString: ${shortVersion}`, `CFBundleVersion: ${cfVersion}`);
+  const shortVersion = version.split('-')[0];
+  const cfVersion = version.includes('-')
+    ? version.replace('-', '.')
+    : `${version}.0`;
+  console.log(
+    'Updating iOS',
+    `CFBundleShortVersionString: ${shortVersion}`,
+    `CFBundleVersion: ${cfVersion}`,
+  );
 
-    // Update Plists
-    execSync(`/usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString ${shortVersion}" ${PLIST_PATH}`);
-    execSync(`/usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString ${shortVersion}" ${PLIST_PATH_TEST}`);
-    execSync(`/usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${cfVersion}" ${PLIST_PATH}`);
-    execSync(`/usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${cfVersion}" ${PLIST_PATH_TEST}`);
+  // Update Plists
+  execSync(
+    `/usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString ${shortVersion}" ${PLIST_PATH}`,
+  );
+  execSync(
+    `/usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString ${shortVersion}" ${PLIST_PATH_TEST}`,
+  );
+  execSync(
+    `/usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${cfVersion}" ${PLIST_PATH}`,
+  );
+  execSync(
+    `/usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${cfVersion}" ${PLIST_PATH_TEST}`,
+  );
 
-    // Return the cfVersion so we can set the NEW_IOS_VERSION in ios.yml
-    return cfVersion;
+  // Return the cfVersion so we can set the NEW_IOS_VERSION in ios.yml
+  return cfVersion;
 };
