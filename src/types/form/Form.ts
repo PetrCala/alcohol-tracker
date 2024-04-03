@@ -1,15 +1,15 @@
 import type {FormValue} from '@components/Form/types';
-import type * as OnyxCommon from '@src/types/onyx/OnyxCommon';
+import type * as DatabaseCommon from '@src/types/database/DatabaseCommon';
 
 type BaseForm = {
   /** Controls the loading state of the form */
   isLoading?: boolean;
 
   /** Server side errors keyed by microtime */
-  errors?: OnyxCommon.Errors | null;
+  errors?: DatabaseCommon.Errors | null;
 
   /** Field-specific server side errors keyed by microtime */
-  errorFields?: OnyxCommon.ErrorFields | null;
+  errorFields?: DatabaseCommon.ErrorFields | null;
 };
 
 type FormValues = Record<string, FormValue>;
