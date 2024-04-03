@@ -1,12 +1,7 @@
 const CONST = {
   GITHUB_OWNER: 'PetrCala',
   APP_REPO: 'Kiroku',
-  // OS_BOTIFY: 'OSBotify',
-  //   LABELS: {
-  //     STAGING_DEPLOY: 'StagingDeployCash',
-  //     DEPLOY_BLOCKER: 'DeployBlockerCash',
-  //     INTERNAL_QA: 'InternalQA',
-  //   },
+  OS_BOTIFY: 'OSBotify',
   DATE_FORMAT_STRING: 'yyyy-MM-dd',
 };
 

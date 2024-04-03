@@ -90,3 +90,19 @@ This is a checklist for PR authors. Please make sure to complete all tasks and c
   - [ ] I added `design` label and/or tagged `@Kiroku/design` so the design team can review the changes.
 - [ ] If a new screen is added, I verified it's using the `ScrollView` component to make it scrollable when more elements are added to the screen.
 - [ ] If the `master` branch was merged into this PR after a review, I tested again and verified the outcome was still expected according to the `Test` steps.
+
+### Screenshots/Videos
+
+<details>
+<summary>Android</summary>
+
+<!-- add screenshots or videos here -->
+
+</details>
+
+<details>
+<summary>iOS</summary>
+
+<!-- add screenshots or videos here -->
+
+</details>
