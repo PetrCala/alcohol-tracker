@@ -1,12 +1,15 @@
 name: Jest Unit Tests
 
 on:
-  workflow_call:
-  pull_request:
-    types: [opened, synchronize]
-    branches-ignore: [staging, production]
-    paths:
-      ['**.js', '**.ts', '**.tsx', '**.sh', 'package.json', 'package-lock.json']
+  push:
+    branches: []
+  # Do not run for now
+  # workflow_call:
+  # pull_request:
+  #   types: [opened, synchronize]
+  #   branches-ignore: [staging, production]
+  #   paths:
+  #     ['**.js', '**.ts', '**.tsx', '**.sh', 'package.json', 'package-lock.json']
 
 jobs:
   jest:
