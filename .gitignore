@@ -112,4 +112,4 @@ mockDatabase.json
 *.apk
 *.ipa
 *.lnk
-*.env.*
+*.env*
