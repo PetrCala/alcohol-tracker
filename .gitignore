@@ -96,7 +96,7 @@ bun.lockb
 __snapshots__/
 
 # Other
-*-admin-sdk-*.json
+*admin*sdk*.json
 _dev/beta/beta_keys.tsx
 _dev/utils/admin.js
 _dev/migrations/

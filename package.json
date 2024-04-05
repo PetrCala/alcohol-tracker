@@ -23,6 +23,7 @@
     "gh-actions-build": "./.github/scripts/buildActions.sh",
     "gh-actions-validate": "./.github/scripts/validateActionsAndWorkflows.sh",
     "merge": "./scripts/mergeAndPush.sh",
+    "pull-all": "./scripts/pullAll.sh",
     "maintenance:schedule": "ts-node ./_dev/config/maintenance/maintenanceMain.tsx schedule",
     "maintenance:cancel": "ts-node ./_dev/config/maintenance/maintenanceMain.tsx cancel",
     "prettier": "prettier --write .",
