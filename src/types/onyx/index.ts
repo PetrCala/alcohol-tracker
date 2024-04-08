@@ -2,6 +2,7 @@ import type AccountCreations from './AccountCreations';
 import type {AccountCreationsList, DeviceId} from './AccountCreations';
 import type Config from './Config';
 import type {AppSettings, Maintenance} from './Config';
+import type {CapturedLogs, Log} from './Console';
 import type DatabaseProps from './DatabaseProps';
 import type {UserId, UserList, UserArray, MeasureType} from './DatabaseCommon';
 import type DrinkingSession from './DrinkingSession';
@@ -19,14 +20,21 @@ import type {
   FriendRequestArray,
   FriendRequestStatus,
 } from './FriendRequestList';
+import type Locale from './Locale';
+import type Modal from './Modal';
+import type Network from './Network';
 import type NicknameToId from './NicknameToId';
 import type {Nickname, NicknameKey, NicknameToIdList} from './NicknameToId';
+import type {OnyxUpdatesFromServer} from './OnyxUpdatesFromServer';
 import type Preferences from './Preferences';
 import type {
   PreferencesList,
   UnitsToColors,
   DrinksToUnits,
 } from './Preferences';
+import type Request from './Request';
+import type Response from './Response';
+import type Session from './Session';
 import type SessionPlaceholder from './SessionPlaceholder';
 import type {SessionPlaceholderList} from './SessionPlaceholder';
 import type UnconfirmedDays from './UnconfirmedDays';
@@ -42,6 +50,7 @@ export type {
   AccountCreations,
   AccountCreationsList,
   AppSettings,
+  CapturedLogs,
   Config,
   DatabaseProps,
   DeviceId,
@@ -62,16 +71,24 @@ export type {
   FriendRequestArray,
   FriendRequestList,
   FriendRequestStatus,
+  Locale,
+  Log,
   Maintenance,
   MeasureType,
+  Modal,
+  Network,
   Nickname,
   NicknameKey,
   NicknameToId,
   NicknameToIdList,
+  OnyxUpdatesFromServer,
   Preferences,
   PreferencesList,
   Profile,
   ProfileList,
+  Request,
+  Response,
+  Session,
   SessionPlaceholder,
   SessionPlaceholderList,
   UnconfirmedDayKey,

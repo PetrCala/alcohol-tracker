@@ -1,4 +1,4 @@
-import {UserId} from '../database';
+import {UserId} from '../onyx';
 
 type UserPriority = number;
 

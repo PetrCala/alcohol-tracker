@@ -1,7 +1,7 @@
 ﻿import {StyleSheet, Text, View} from 'react-native';
 import {useFirebase} from '../../context/global/FirebaseContext';
 import ProfileImage from '../ProfileImage';
-import {Profile} from '@src/types/database';
+import {Profile} from '@src/types/onyx';
 
 type NoFriendUserOverviewProps = {
   userId: string; // Other user's ID

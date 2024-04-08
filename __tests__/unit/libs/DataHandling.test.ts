@@ -45,7 +45,7 @@ import {
   Drinks,
   UnitsToColors,
   DrinksToUnits,
-} from '../../../src/types/database';
+} from '../../../src/types/onyx';
 import CONST from '../../../src/CONST';
 
 describe('formatDate function', () => {

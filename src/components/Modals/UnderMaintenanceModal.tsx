@@ -1,4 +1,4 @@
-import type {Config, Maintenance} from '@src/types/database';
+import type {Config, Maintenance} from '@src/types/onyx';
 import * as KirokuImages from '@components/Icon/KirokuImages';
 import {View, StyleSheet, Text, Image, Dimensions} from 'react-native';
 

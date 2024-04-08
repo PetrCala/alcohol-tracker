@@ -14,7 +14,7 @@ import {
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import BasicButton from '@components/Buttons/BasicButton';
 import MainHeader from '@components/Header/MainHeader';
-import type {DrinkingSession} from '@src/types/database';
+import type {DrinkingSession} from '@src/types/onyx';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import type {StackScreenProps} from '@react-navigation/stack';
 import SCREENS from '@src/SCREENS';

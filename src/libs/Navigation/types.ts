@@ -15,7 +15,7 @@ import type CONST from '@src/CONST';
 import type NAVIGATORS from '@src/NAVIGATORS';
 import type SCREENS from '@src/SCREENS';
 import type {Route as Routes} from '@src/ROUTES';
-import {DrinkingSession, DrinkingSessionId, Profile} from '@src/types/database';
+import {DrinkingSession, DrinkingSessionId, Profile} from '@src/types/onyx';
 import DeepValueOf from '@src/types/utils/DeepValueOf';
 import {DateString} from '@src/types/time';
 

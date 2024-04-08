@@ -8,7 +8,7 @@ import {
   sumAllDrinks,
   timestampToDate,
 } from '@libs/DataHandling';
-import {Profile, UserStatus} from '@src/types/database';
+import {Profile, UserStatus} from '@src/types/onyx';
 import {
   determineSessionMostCommonDrink,
   sessionIsExpired,

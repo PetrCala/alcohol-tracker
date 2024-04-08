@@ -15,7 +15,7 @@ import type {
   Profile,
   Drinks,
   DrinkingSession,
-} from '@src/types/database';
+} from '@src/types/onyx';
 import type {Database} from 'firebase/database';
 import {describeWithEmulator} from '../../utils/emulators/emulatorUtils';
 import {

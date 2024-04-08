@@ -17,9 +17,9 @@ import type {
   DrinkKey,
   DrinkName,
   Drinks,
-} from '@src/types/database';
+} from '@src/types/onyx';
 import CONST from '../CONST';
-import {MeasureType} from '@src/types/database/DatabaseCommon';
+import {MeasureType} from '@src/types/onyx/DatabaseCommon';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import _, {get} from 'lodash';
 

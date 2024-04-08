@@ -13,7 +13,7 @@ import UploadImageComponent from '@components/UploadImage';
 import CONST from '@src/CONST';
 import {useState} from 'react';
 import ImageLayout from '@src/types/various/ImageLayout';
-import {Profile} from '@src/types/database';
+import {Profile} from '@src/types/onyx';
 
 type ProfileOverviewProps = {
   userId: string;

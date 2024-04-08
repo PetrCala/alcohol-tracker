@@ -1,6 +1,6 @@
 import type {IsEqual, ValueOf} from 'type-fest';
 import type CONST from './CONST';
-import {DrinkingSessionId, UserId} from './types/database';
+import {DrinkingSessionId, UserId} from './types/onyx';
 import {timestampToDate, timestampToDateString} from '@libs/DataHandling';
 import DeepValueOf from './types/utils/DeepValueOf';
 import SCREENS from './SCREENS';

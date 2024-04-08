@@ -5,7 +5,7 @@ import {
   UserIdToNicknameMapping,
   UserSearchResults,
 } from '@src/types/various/Search';
-import {NicknameToId} from '@src/types/database';
+import {NicknameToId} from '@src/types/onyx';
 
 /**
  * Using a database object and a nickname to search,

@@ -5,7 +5,7 @@ import {
   removeDrinks,
   sumDrinksOfSingleType,
 } from '@libs/DataHandling';
-import {DrinkKey, Drinks, DrinksList} from '@src/types/database';
+import {DrinkKey, Drinks, DrinksList} from '@src/types/onyx';
 
 type SessionDrinksInputWindowProps = {
   drinkKey: DrinkKey;

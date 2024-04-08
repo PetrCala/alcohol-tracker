@@ -1,5 +1,5 @@
 ﻿import CONST from '@src/CONST';
-import {FriendRequestStatus} from '@src/types/database';
+import {FriendRequestStatus} from '@src/types/onyx';
 import {Database, ref, get, update} from 'firebase/database';
 import DBPATHS from './DBPATHS';
 

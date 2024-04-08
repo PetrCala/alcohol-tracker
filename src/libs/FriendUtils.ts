@@ -4,7 +4,7 @@ import {
   FriendRequestStatus,
   UserArray,
   UserList,
-} from '@src/types/database';
+} from '@src/types/onyx';
 import {Database} from 'firebase/database';
 import {isNonEmptyArray} from './Validation';
 import CONST from '@src/CONST';

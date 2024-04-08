@@ -25,7 +25,27 @@ const CONST = {
   APP_QR_CODE_LINK: `${GH_PAGES_URL}/assets/images/kiroku-qr-code-with-logo.png`,
   PRIVACY_POLICY_URL: `${GH_PAGES_URL}/assets/html/privacy-policy.html`,
   TERMS_OF_SERVICE_URL: `${GH_PAGES_URL}/assets/html/terms-of-service.html`,
+  API_REQUEST_TYPE: {
+    READ: 'read',
+    WRITE: 'write',
+    MAKE_REQUEST_WITH_SIDE_EFFECTS: 'makeRequestWithSideEffects',
+  },
+  AUTO_AUTH_STATE: {
+    NOT_STARTED: 'not-started',
+    SIGNING_IN: 'signing-in',
+    JUST_SIGNED_IN: 'just-signed-in',
+    FAILED: 'failed',
+  },
+  APP_STATE: {
+    ACTIVE: 'active',
+    BACKGROUND: 'background',
+    INACTIVE: 'inactive',
+  },
   APP_IN_BETA: true,
+  AUTH_TOKEN_TYPES: {
+    ANONYMOUS: 'anonymousAccount',
+    SUPPORT: 'support',
+  },
   AVAILABLE_PLATFORMS: ['ios', 'android'],
   AVATAR_SIZE: {
     XLARGE: 'xlarge',
@@ -88,6 +108,14 @@ const CONST = {
     MIN_DATE: '0001-01-01',
     ORDINAL_DAY_OF_MONTH: 'do',
   },
+  DEBUG_CONSOLE: {
+    LEVELS: {
+      INFO: 'INFO',
+      ERROR: 'ERROR',
+      RESULT: 'RESULT',
+      DEBUG: 'DEBUG',
+    },
+  },
   DIRECTION: {
     LEFT: 'left',
     RIGHT: 'right',
@@ -104,6 +132,30 @@ const CONST = {
   },
   EMPTY_ARRAY,
   EMPTY_OBJECT,
+  ERROR: {
+    XHR_FAILED: 'xhrFailed',
+    THROTTLED: 'throttled',
+    UNKNOWN_ERROR: 'Unknown error',
+    REQUEST_CANCELLED: 'AbortError',
+    FAILED_TO_FETCH: 'Failed to fetch',
+    ENSURE_BUGBOT: 'ENSURE_BUGBOT',
+    PUSHER_ERROR: 'PusherError',
+    WEB_SOCKET_ERROR: 'WebSocketError',
+    NETWORK_REQUEST_FAILED: 'Network request failed',
+    SAFARI_DOCUMENT_LOAD_ABORTED: 'cancelled',
+    FIREFOX_DOCUMENT_LOAD_ABORTED:
+      'NetworkError when attempting to fetch resource.',
+    IOS_NETWORK_CONNECTION_LOST: 'The network connection was lost.',
+    IOS_NETWORK_CONNECTION_LOST_CZECH: 'Spojení bylo ztraceno.',
+    IOS_LOAD_FAILED: 'Load failed',
+    SAFARI_CANNOT_PARSE_RESPONSE: 'cannot parse response',
+    GATEWAY_TIMEOUT: 'Gateway Timeout',
+    EXPENSIFY_SERVICE_INTERRUPTED: 'Expensify service interrupted',
+    DUPLICATE_RECORD: 'A record already exists with this ID',
+
+    // The "Upgrade" is intentional as the 426 HTTP code means "Upgrade Required" and sent by the API. We use the "Update" language everywhere else in the front end when this gets returned.
+    UPDATE_REQUIRED: 'Upgrade Required',
+  },
   FIREBASE_STORAGE_URL: 'https://firebasestorage.googleapis.com',
   FRIEND_REQUEST_STATUS: {
     SELF: 'self',
@@ -164,7 +216,24 @@ const CONST = {
       DISCARD: 'DISCARD',
     },
   },
+  NETWORK: {
+    METHOD: {
+      POST: 'post',
+    },
+    MIN_RETRY_WAIT_TIME_MS: 10,
+    MAX_RANDOM_RETRY_WAIT_TIME_MS: 100,
+    MAX_RETRY_WAIT_TIME_MS: 10 * 1000,
+    PROCESS_REQUEST_DELAY_MS: 1000,
+    MAX_PENDING_TIME_MS: 10 * 1000,
+    MAX_REQUEST_RETRIES: 10,
+  },
+  DEFAULT_NETWORK_DATA: {isOffline: false},
   NO_IMAGE: 'NO_IMAGE', // Used for the profile avatar when there is no image
+  ONYX_UPDATE_TYPES: {
+    HTTPS: 'https',
+    PUSHER: 'pusher',
+    AIRSHIP: 'airship',
+  },
   OS: {
     WINDOWS: 'Windows',
     MAC_OS: 'Mac OS',

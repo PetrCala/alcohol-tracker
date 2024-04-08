@@ -24,7 +24,7 @@ import {
   UnitsToColors,
   UserStatus,
   UserPropsList,
-} from '../../src/types/database';
+} from '../../src/types/onyx';
 import CONST from '@src/CONST';
 
 /** Enter an object that is supposed to be of the Config type and validate it. Return true if it has that type, and false otherwise.

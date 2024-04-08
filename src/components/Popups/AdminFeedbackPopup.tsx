@@ -18,7 +18,7 @@ import {removeFeedback} from '@database/feedback';
 import {fetchNicknameByUID} from '@database/baseFunctions';
 import {useFirebase} from '@context/global/FirebaseContext';
 import CONST from '@src/CONST';
-import {FeedbackList, Feedback} from '@src/types/database';
+import {FeedbackList, Feedback} from '@src/types/onyx';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 
 // AdminFeedbackModal props

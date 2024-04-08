@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as readline from 'readline';
 
-import {DatabaseProps} from '@src/types/database';
+import {DatabaseProps} from '@src/types/onyx';
 
 /**
  * Loads JSON data from a file.

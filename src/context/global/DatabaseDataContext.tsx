@@ -8,7 +8,7 @@ import type {
   UnconfirmedDays,
   UserProps,
   UserStatus,
-} from '@src/types/database';
+} from '@src/types/onyx';
 import type {FetchDataKeys} from '@hooks/useFetchData/types';
 import useListenToData from '@hooks/useListenToData';
 

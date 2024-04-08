@@ -1,4 +1,4 @@
-import {DrinkKey} from '@src/types/database';
+import {DrinkKey} from '@src/types/onyx';
 import {ImageSourcePropType} from 'react-native';
 
 type DrinkDataProps = {

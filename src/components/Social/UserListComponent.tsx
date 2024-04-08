@@ -8,8 +8,8 @@ import {
   calculateAllUsersPriority,
   orderUsersByPriority,
 } from '@libs/algorithms/DisplayPriority';
-import type {UserStatusList} from '@src/types/database';
-import type {UserArray} from '@src/types/database/DatabaseCommon';
+import type {UserStatusList} from '@src/types/onyx';
+import type {UserArray} from '@src/types/onyx/DatabaseCommon';
 import React, {useState, useEffect} from 'react';
 import type {NativeScrollEvent, NativeSyntheticEvent} from 'react-native';
 import {

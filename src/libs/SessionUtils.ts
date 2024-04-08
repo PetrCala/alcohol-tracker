@@ -6,7 +6,7 @@ import {
   DrinkingSessionList,
   DrinkingSessionType,
   DrinksList,
-} from '@src/types/database';
+} from '@src/types/onyx';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import {getTimestampAge, numberToVerboseString} from './TimeUtils';
 

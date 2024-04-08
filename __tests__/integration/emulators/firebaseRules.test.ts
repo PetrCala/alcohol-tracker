@@ -11,7 +11,7 @@ import {
   setupFirebaseRulesTestEnv,
   teardownFirebaseRulesTestEnv,
 } from '../../utils/emulators/firebaseRulesSetup';
-import type {Feedback} from '@src/types/database';
+import type {Feedback} from '@src/types/onyx';
 import {setupGlobalMocks} from '../../utils/testUtils';
 import {
   createMockSession,

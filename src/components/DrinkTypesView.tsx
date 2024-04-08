@@ -1,6 +1,6 @@
 ﻿import {StyleSheet, Text, View} from 'react-native';
 import DrinkingSessionDrinksWindow from './DrinkingSessionDrinksWindow';
-import {DrinksList} from '@src/types/database';
+import {DrinksList} from '@src/types/onyx';
 import DrinkDataProps from '@libs/DrinkData/types';
 
 export type DrinkTypesViewProps = {

@@ -1,4 +1,4 @@
-﻿import {UnitsToColors, DrinksToUnits} from '@src/types/database';
+﻿import {UnitsToColors, DrinksToUnits} from '@src/types/onyx';
 
 // Realtime database test user information
 export const TEST_UID = 'dmXj9O2SqWWHPRtqtKGGdaUzGFt2';

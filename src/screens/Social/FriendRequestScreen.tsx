@@ -15,7 +15,7 @@ import type {
   FriendRequestStatus,
   ProfileList,
   UserList,
-} from '@src/types/database';
+} from '@src/types/onyx';
 import {useEffect, useMemo, useReducer, useState} from 'react';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {useFirebase} from '@context/global/FirebaseContext';

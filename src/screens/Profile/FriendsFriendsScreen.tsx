@@ -11,7 +11,7 @@ import type {
   ProfileList,
   FriendRequestList,
   UserList,
-} from '@src/types/database';
+} from '@src/types/onyx';
 import {useEffect, useMemo, useReducer} from 'react';
 import {useFirebase} from '@context/global/FirebaseContext';
 

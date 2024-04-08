@@ -26,7 +26,7 @@ import {
 import {deleteUserData, pushNewUserInfo} from '@database/users';
 import {handleErrors} from '@libs/ErrorHandling';
 import WarningMessage from '@components/Info/WarningMessage';
-import type {Profile} from '@src/types/database';
+import type {Profile} from '@src/types/onyx';
 import DBPATHS from '@database/DBPATHS';
 import ValidityIndicatorIcon from '@components/ValidityIndicatorIcon';
 import Navigation from '@navigation/Navigation';

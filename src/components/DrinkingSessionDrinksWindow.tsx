@@ -16,7 +16,7 @@ import {
 } from '../libs/DataHandling';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import CONST from '@src/CONST';
-import {DrinkKey, Drinks, DrinksList} from '@src/types/database';
+import {DrinkKey, Drinks, DrinksList} from '@src/types/onyx';
 
 type DrinkingSessionDrinksWindowProps = {
   drinkKey: DrinkKey;

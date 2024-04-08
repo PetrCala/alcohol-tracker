@@ -6,7 +6,7 @@ import {
   UserArray,
   UserList,
   UserStatusList,
-} from '@src/types/database';
+} from '@src/types/onyx';
 import {fetchUserProfiles, fetchUserStatuses} from '@database/profile';
 import {Alert} from 'react-native';
 import {isNonEmptyArray} from '@libs/Validation';

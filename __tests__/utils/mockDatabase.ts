@@ -21,7 +21,7 @@ import type {
   DrinkingSessionList,
   DrinkingSessionId,
   DrinksToUnits,
-} from '../../src/types/database';
+} from '../../src/types/onyx';
 import {getRandomChoice, getRandomInt} from '../../src/libs/Choice';
 import {
   formatDate,

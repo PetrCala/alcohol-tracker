@@ -19,7 +19,7 @@ import TextSwitch from '@components/TextSwitch';
 import NumericSlider from '@components/Popups/NumericSlider';
 import {getDefaultPreferences} from '@database/users';
 import MainHeader from '@components/Header/MainHeader';
-import type {Preferences} from '@src/types/database';
+import type {Preferences} from '@src/types/onyx';
 import CONST from '@src/CONST';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import type {StackScreenProps} from '@react-navigation/stack';

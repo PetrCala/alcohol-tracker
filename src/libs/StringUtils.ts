@@ -77,10 +77,15 @@ const copyToClipboard = (text: string, alert?: boolean) => {
   }
 };
 
+function UCFirst(str: String) {
+  return str.substr(0, 1).toUpperCase() + str.substr(1);
+}
+
 export {
   nonMidnightString,
   cleanStringForFirebaseKey,
   getPlural,
   generateRandomString,
   copyToClipboard,
+  UCFirst,
 };

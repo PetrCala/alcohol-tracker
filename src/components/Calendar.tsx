@@ -32,7 +32,7 @@ import {
   DrinkingSessionArray,
   DrinkingSessionList,
   Preferences,
-} from '@src/types/database';
+} from '@src/types/onyx';
 
 type DayMarking = {
   units?: number;

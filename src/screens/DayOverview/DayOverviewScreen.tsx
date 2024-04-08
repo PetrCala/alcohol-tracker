@@ -25,7 +25,7 @@ import LoadingData from '@components/LoadingData';
 // import { PreferencesData} from '../types/database';
 import UserOffline from '@components/UserOffline';
 import {useUserConnection} from '@context/global/UserConnectionContext';
-import type {DrinkingSession, DrinkingSessionList} from '@src/types/database';
+import type {DrinkingSession, DrinkingSessionList} from '@src/types/onyx';
 import {generateDatabaseKey} from '@database/baseFunctions';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import MainHeader from '@components/Header/MainHeader';

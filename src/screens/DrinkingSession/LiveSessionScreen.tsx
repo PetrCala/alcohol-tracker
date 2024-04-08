@@ -34,8 +34,8 @@ import {
   timestampToDateString,
   unitsToColors,
 } from '@libs/DataHandling';
-import type {DrinkingSession, DrinksList, Drinks} from '@src/types/database';
-import {DrinkKey} from '@src/types/database';
+import type {DrinkingSession, DrinksList, Drinks} from '@src/types/onyx';
+import {DrinkKey} from '@src/types/onyx';
 import YesNoPopup from '@components/Popups/YesNoPopup';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import UserOffline from '@components/UserOffline';

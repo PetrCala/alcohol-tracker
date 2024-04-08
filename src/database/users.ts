@@ -7,7 +7,7 @@ import {
   UserList,
   UserProps,
   UserStatus,
-} from '@src/types/database';
+} from '@src/types/onyx';
 import {
   EmailAuthProvider,
   User,

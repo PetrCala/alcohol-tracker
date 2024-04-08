@@ -14,7 +14,7 @@ import FriendRequestScreen from './FriendRequestScreen';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import MainHeader from '@components/Header/MainHeader';
 import {getReceivedRequestsCount} from '@libs/FriendUtils';
-import type {UserProps} from '@src/types/database';
+import type {UserProps} from '@src/types/onyx';
 import FriendSearchScreen from './FriendSearchScreen';
 import type {StackScreenProps} from '@react-navigation/stack';
 import type SCREENS from '@src/SCREENS';

@@ -1,6 +1,6 @@
-import {DeviceId, FeedbackId} from '@src/types/database';
-import {UserId} from '@src/types/database/DatabaseCommon';
-import {NicknameKey} from '@src/types/database/NicknameToId';
+import {DeviceId, FeedbackId} from '@src/types/onyx';
+import {UserId} from '@src/types/onyx/DatabaseCommon';
+import {NicknameKey} from '@src/types/onyx/NicknameToId';
 import type {IsEqual} from 'type-fest';
 
 const DBPATHS = {

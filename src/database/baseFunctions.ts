@@ -1,6 +1,6 @@
 ﻿import type {Database} from 'firebase/database';
 import {get, ref, child, push, onValue, off} from 'firebase/database';
-import type {Profile, ProfileList, UserStatusList} from '@src/types/database';
+import type {Profile, ProfileList, UserStatusList} from '@src/types/onyx';
 import DBPATHS from './DBPATHS';
 
 /** Read data once from the realtime database using get(). Return the data if it exists.

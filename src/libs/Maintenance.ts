@@ -1,4 +1,4 @@
-import type {Maintenance} from '@src/types/database';
+import type {Maintenance} from '@src/types/onyx';
 
 /** Determine whether the app is under maintenance. */
 function isUnderMaintenance(

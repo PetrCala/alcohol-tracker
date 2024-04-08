@@ -29,7 +29,7 @@ import MainHeader from '@components/Header/MainHeader';
 import GrayHeader from '@components/Header/GrayHeader';
 import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 import CONST from '@src/CONST';
-import type {FeedbackList} from '@src/types/database';
+import type {FeedbackList} from '@src/types/onyx';
 import type {StackScreenProps} from '@react-navigation/stack';
 import type {MainMenuNavigatorParamList} from '@navigation/types';
 import type SCREENS from '@src/SCREENS';

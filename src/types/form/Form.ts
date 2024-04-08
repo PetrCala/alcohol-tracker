@@ -1,5 +1,5 @@
 import type {FormValue} from '@components/Form/types';
-import type * as DatabaseCommon from '@src/types/database/DatabaseCommon';
+import type * as DatabaseCommon from '@src/types/onyx/DatabaseCommon';
 
 type BaseForm = {
   /** Controls the loading state of the form */

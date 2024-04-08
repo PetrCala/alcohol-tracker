@@ -17,7 +17,7 @@ import type {
 import type {ValueOf} from 'type-fest';
 // import type AddressSearch from '@components/AddressSearch';
 // import type AmountForm from '@components/AmountForm';
-import type AmountTextInput from '@components/AmountTextInput';
+// import type AmountTextInput from '@components/AmountTextInput';
 // import type CheckboxWithLabel from '@components/CheckboxWithLabel';
 // import type CountrySelector from '@components/CountrySelector';
 // import type Picker from '@components/Picker';
@@ -26,7 +26,7 @@ import type AmountTextInput from '@components/AmountTextInput';
 import type TextInput from '@components/TextInput';
 // import type BusinessTypePicker from '@pages/ReimbursementAccount/BusinessInfo/substeps/TypeBusiness/BusinessTypePicker';
 import type {TranslationPaths} from '@src/languages/types';
-import type {DatabaseFormKey, DatabaseValues} from '@src/ONYXKEYS';
+import type {DatabaseFormKey, DatabaseValues} from '@src/DBKEYS';
 import type {BaseForm} from '@src/types/form/Form';
 
 /**
@@ -37,7 +37,7 @@ import type {BaseForm} from '@src/types/form/Form';
  * EmojiPickerButtonDropdown | RoomNameInput | ValuePicker
  */
 type ValidInputs = any;
-// typeof TextInput
+typeof TextInput;
 //   | typeof AmountTextInput;
 //   | typeof SingleChoiceQuestion
 //   | typeof CheckboxWithLabel

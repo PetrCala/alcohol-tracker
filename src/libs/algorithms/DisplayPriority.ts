@@ -1,5 +1,5 @@
 import {UserPriority, UserPriorityList} from '@src/types/various/Algorithms';
-import {UserStatus, UserStatusList} from '@src/types/database';
+import {UserStatus, UserStatusList} from '@src/types/onyx';
 import {sumAllDrinks} from '@libs/DataHandling';
 import {sessionIsExpired} from '@libs/SessionUtils';
 import _, {get} from 'lodash';

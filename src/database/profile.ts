@@ -6,7 +6,7 @@ import {
 } from 'firebase/storage';
 import {Auth, User, updateProfile} from 'firebase/auth';
 import {fetchDisplayDataForUsers} from './baseFunctions';
-import {ProfileList, UserStatusList} from '@src/types/database';
+import {ProfileList, UserStatusList} from '@src/types/onyx';
 import DBPATHS from './DBPATHS';
 
 /**

@@ -7,7 +7,7 @@ import {listenForDataChanges} from '../../database/baseFunctions';
 import LoadingData from '../../components/LoadingData';
 import {useFirebase} from './FirebaseContext';
 import {validateAppVersion} from '../../libs/Validation';
-import type {Config} from '@src/types/database';
+import type {Config} from '@src/types/onyx';
 import ForceUpdateModal from '@components/Modals/ForceUpdateModal';
 import DBPATHS from '@database/DBPATHS';
 import UnderMaintenanceModal from '@components/Modals/UnderMaintenanceModal';

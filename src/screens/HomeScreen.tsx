@@ -39,7 +39,7 @@ import type {
   DrinkingSession,
   DrinkingSessionArray,
   DrinkingSessionId,
-} from '@src/types/database';
+} from '@src/types/onyx';
 import ROUTES from '@src/ROUTES';
 import Navigation, {navigationRef} from '@navigation/Navigation';
 import type {StackScreenProps} from '@react-navigation/stack';

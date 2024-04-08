@@ -1,5 +1,5 @@
 ﻿import {Database, child, push, ref, update} from 'firebase/database';
-import {FeedbackList, Feedback} from '../types/database';
+import {FeedbackList, Feedback} from '../types/onyx';
 import {Alert} from 'react-native';
 import DBPATHS from './DBPATHS';
 
