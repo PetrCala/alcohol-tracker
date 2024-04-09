@@ -8,7 +8,7 @@ import Log from './Log';
 
 export default function () {
   const startTime = Date.now();
-  Log.info('[Migrate Onyx] start');
+  // Log.info('[Migrate Onyx] start');
 
   return new Promise<void>(resolve => {
     // Add all migrations to an array so they are executed in order
@@ -36,7 +36,7 @@ export default function () {
       // Once all migrations are done, resolve the main promise
       .then(() => {
         const timeElapsed = Date.now() - startTime;
-        Log.info(`[Migrate Onyx] finished in ${timeElapsed}ms`);
+        // Log.info(`[Migrate Onyx] finished in ${timeElapsed}ms`);
         resolve();
       });
   });

@@ -105,7 +105,7 @@ function subscribeToNetInfo(): void {
   // Subscribe to the state change event via NetInfo so we can update
   // whether a user has internet connectivity or not.
   NetInfo.addEventListener(state => {
-    Log.info('[NetworkConnection] NetInfo state change', false, {...state});
+    // Log.info('[NetworkConnection] NetInfo state change', false, {...state});
     if (shouldForceOffline) {
       Log.info(
         '[NetworkConnection] Not setting offline status because shouldForceOffline = true',

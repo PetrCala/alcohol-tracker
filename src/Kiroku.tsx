@@ -238,14 +238,14 @@ function Kiroku(
       {/* <AppleAuthWrapper /> */}
 
       {/* Possibly conditional display for the next block */}
-      <SplashScreenHiddenContext.Provider value={contextValue}>
-        <NavigationRoot
-          onReady={setNavigationReady}
-          authenticated={isAuthenticated}
-          lastVisitedPath={lastVisitedPath as Route}
-          initialUrl={initialUrl}
-        />
-      </SplashScreenHiddenContext.Provider>
+      {/* <SplashScreenHiddenContext.Provider value={contextValue}> */}
+      <NavigationRoot
+        onReady={setNavigationReady}
+        authenticated={isAuthenticated}
+        lastVisitedPath={lastVisitedPath as Route}
+        initialUrl={initialUrl}
+      />
+      {/* </SplashScreenHiddenContext.Provider> */}
 
       {/* {shouldHideSplash && <SplashScreenHider onHide={onSplashHide} />} */}
     </>
