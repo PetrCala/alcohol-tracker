@@ -1,6 +1,7 @@
 import Onyx from 'react-native-onyx';
 import type {ValueOf} from 'type-fest';
-import alert from '@components/Alert';
+// import alert from '@components/Alert';
+import {Alert} from 'react-native';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
 import type {RequestType} from '@src/types/onyx/Request';
@@ -37,7 +38,7 @@ const exemptedCommandsWithAuthWrites: string[] = [
  * The API commands that require the skew calculation
  */
 const addSkewList: string[] = [
-  SIDE_EFFECT_REQUEST_COMMANDS.OPEN_REPORT,
+  // SIDE_EFFECT_REQUEST_COMMANDS.OPEN_REPORT,
   SIDE_EFFECT_REQUEST_COMMANDS.RECONNECT_APP,
   WRITE_COMMANDS.OPEN_APP,
 ];
@@ -164,7 +165,8 @@ function processHTTPRequest(
           }, commands: ${authWriteCommands.join(
             ', ',
           )}. Check the APIWriteCommands class in Web-Expensify`;
-          alert('Too many auth writes', message);
+          // TODO modify this to alert
+          Alert.alert('Too many auth writes', message);
         }
       }
       if (response.jsonCode === CONST.JSON_CODE.UPDATE_REQUIRED) {

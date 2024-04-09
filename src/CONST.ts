@@ -164,7 +164,24 @@ const CONST = {
     FRIEND: 'friend',
     UNDEFINED: 'undefined',
   },
+  HTTP_STATUS: {
+    // When Cloudflare throttles
+    TOO_MANY_REQUESTS: 429,
+    INTERNAL_SERVER_ERROR: 500,
+    BAD_GATEWAY: 502,
+    GATEWAY_TIMEOUT: 504,
+    UNKNOWN_ERROR: 520,
+  },
   INVALID_CHARS: ['.', '#', '$', '[', ']'],
+  JSON_CODE: {
+    SUCCESS: 200,
+    BAD_REQUEST: 400,
+    NOT_AUTHENTICATED: 407,
+    EXP_ERROR: 666,
+    MANY_WRITES_ERROR: 665,
+    UNABLE_TO_RETRY: 'unableToRetry',
+    UPDATE_REQUIRED: 426,
+  },
   LOCAL_IMAGE_PREFIX: 'file://',
   LOCALES: {
     EN: 'en',
@@ -225,6 +242,14 @@ const CONST = {
       SAVE: 'SAVE',
       DISCARD: 'DISCARD',
     },
+  },
+
+  ERROR_TYPE: {
+    SOCKET: 'Kiroku\\Auth\\Error\\Socket',
+  },
+  ERROR_TITLE: {
+    SOCKET: 'Issue connecting to database',
+    DUPLICATE_RECORD: '400 Unique Constraints Violation',
   },
   NETWORK: {
     METHOD: {

@@ -11,6 +11,8 @@ import getPlatform from '@libs/getPlatform';
 const get = (config: NativeConfig, key: string, defaultValue: string): string =>
   (config?.[key] ?? defaultValue).trim();
 
+const useWebProxy = get(Config, 'USE_WEB_PROXY', 'true') === 'true';
+
 // Set default values to contributor friendly values to make development work out of the box without an .env file
 const ENVIRONMENT = get(Config, 'ENVIRONMENT', CONST.ENVIRONMENT.DEV);
 
@@ -36,6 +38,13 @@ export default {
   IS_IN_DEVELOPMENT: ENVIRONMENT === CONST.ENVIRONMENT.DEV,
   IS_IN_TEST:
     process.env.NODE_ENV === 'test' || ENVIRONMENT === CONST.ENVIRONMENT.TEST,
+  IS_USING_WEB_PROXY: getPlatform() === CONST.PLATFORM.WEB && useWebProxy,
+  KIROKU: {
+    DEFAULT_API_ROOT: '',
+    DEFAULT_SECURE_API_ROOT: '',
+    STAGING_SECURE_API_ROOT: '',
+    STAGING_API_ROOT: '',
+  },
   PUSHER: {
     APP_KEY: get(Config, 'PUSHER_APP_KEY', '268df511a204fbb60884'),
     SUFFIX: get(Config, 'PUSHER_DEV_SUFFIX', ''),

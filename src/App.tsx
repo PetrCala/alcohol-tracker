@@ -33,29 +33,29 @@ LogBox.ignoreLogs([
 ]);
 
 const App = ({url}: KirokuProps) => {
-  OnyxUpdateManager(); // Untested
+  // OnyxUpdateManager(); // Untested
   return (
     <InitialUrlContext.Provider value={url}>
       <ComposeProviders
         components={[
-          OnyxProvider,
-          ThemeProvider, // Untested
-          ThemeStylesProvider, // Untested
+          // OnyxProvider, // Untested
+          // ThemeProvider, // Untested
+          // ThemeStylesProvider, // Untested
           FirebaseProvider,
           UserConnectionProvider,
           ConfigProvider,
           SafeAreaProvider,
           SafeArea,
-          WindowDimensionsProvider, // Untested
+          // WindowDimensionsProvider, // Untested
           KeyboardStateProvider,
-          CustomStatusBarAndBackgroundContextProvider, // Untested
+          // CustomStatusBarAndBackgroundContextProvider, // Untested
         ]}>
-        <CustomStatusBarAndBackground />
-        <ErrorBoundary errorMessage="Kiroku crash caught by error boundary">
-          <ColorSchemeWrapper>
-            <Kiroku />
-          </ColorSchemeWrapper>
-        </ErrorBoundary>
+        {/* <CustomStatusBarAndBackground /> */}
+        {/* <ErrorBoundary errorMessage="Kiroku crash caught by error boundary">
+          <ColorSchemeWrapper> */}
+        <Kiroku />
+        {/* </ColorSchemeWrapper>
+        </ErrorBoundary> */}
       </ComposeProviders>
     </InitialUrlContext.Provider>
   );

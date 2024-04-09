@@ -45,6 +45,7 @@ import type {SessionPlaceholderList} from './SessionPlaceholder';
 import type UnconfirmedDays from './UnconfirmedDays';
 import type {UnconfirmedDaysList, UnconfirmedDayKey} from './UnconfirmedDays';
 import type Drinks from './Drinks';
+import type User from './User';
 import type {DrinkKey, DrinkName, DrinksList, DrinksTimestamp} from './Drinks';
 import type UserIsTyping from './UserIsTyping';
 import type UserProps from './UserProps';
@@ -104,6 +105,7 @@ export type {
   UnconfirmedDays,
   UnconfirmedDaysList,
   UnitsToColors,
+  User,
   UserArray,
   UserProps,
   UserDrinkingSessionsList,

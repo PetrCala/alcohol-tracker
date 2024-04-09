@@ -98,8 +98,8 @@ const ONYXKEYS = {
   //    * It is expected to provide a two-letter country code such as US for United States, and so on. */
   //   COUNTRY: 'country',
 
-  //   /** Contains all the users settings for the Settings page and sub pages */
-  //   USER: 'user',
+  /** Contains all the users settings for the Settings page and sub pages */
+  USER: 'user',
 
   //   /** Contains latitude and longitude of user's last known location */
   //   USER_LOCATION: 'userLocation',
@@ -600,7 +600,7 @@ type OnyxValuesMapping = {
   //   [ONYXKEYS.SCREEN_SHARE_REQUEST]: OnyxTypes.ScreenShareRequest;
   //   [ONYXKEYS.COUNTRY_CODE]: number;
   //   [ONYXKEYS.COUNTRY]: string;
-  //   [ONYXKEYS.USER]: OnyxTypes.User;
+  [ONYXKEYS.USER]: OnyxTypes.User;
   //   [ONYXKEYS.USER_LOCATION]: OnyxTypes.UserLocation;
   //   [ONYXKEYS.LOGIN_LIST]: OnyxTypes.LoginList;
   [ONYXKEYS.SESSION]: OnyxTypes.Session;
