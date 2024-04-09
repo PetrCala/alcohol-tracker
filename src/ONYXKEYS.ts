@@ -23,7 +23,7 @@ const ONYXKEYS = {
   //   ACTIVE_CLIENTS: 'activeClients',
 
   //   /** A unique ID for the device */
-  //   DEVICE_ID: 'deviceID',
+  DEVICE_ID: 'deviceID',
 
   //   /** Boolean flag set whenever the sidebar has loaded */
   IS_SIDEBAR_LOADED: 'isSidebarLoaded',
@@ -84,8 +84,8 @@ const ONYXKEYS = {
   //    * select a currency based on the list */
   //   CURRENCY_LIST: 'currencyList',
 
-  //   /** Indicates whether an update is available and ready to be installed. */
-  //   UPDATE_AVAILABLE: 'updateAvailable',
+  /** Indicates whether an update is available and ready to be installed. */
+  UPDATE_AVAILABLE: 'updateAvailable',
 
   //   /** Indicates that a request to join a screen share with a GuidesPlus agent was received */
   //   SCREEN_SHARE_REQUEST: 'screenShareRequest',
@@ -163,7 +163,7 @@ const ONYXKEYS = {
   //   NVP_QUICK_ACTION_GLOBAL_CREATE: 'nvp_quickActionGlobalCreate',
 
   //   /** Does this user have push notifications enabled for this device? */
-  //   PUSH_NOTIFICATIONS_ENABLED: 'pushNotificationsEnabled',
+  PUSH_NOTIFICATIONS_ENABLED: 'pushNotificationsEnabled',
 
   //   /** Plaid data (access tokens, bank accounts ...) */
   //   PLAID_DATA: 'plaidData',
@@ -202,8 +202,8 @@ const ONYXKEYS = {
   //   /** The user's cash card and imported cards (including the Expensify Card) */
   //   CARD_LIST: 'cardList',
 
-  //   /** Boolean flag used to display the focus mode notification */
-  //   FOCUS_MODE_NOTIFICATION: 'focusModeNotification',
+  /** Boolean flag used to display the focus mode notification */
+  FOCUS_MODE_NOTIFICATION: 'focusModeNotification',
 
   //   /** Stores information about the user's saved statements */
   //   WALLET_STATEMENT: 'walletStatement',
@@ -220,10 +220,10 @@ const ONYXKEYS = {
   //   /** Set when we are loading payment methods */
   //   IS_LOADING_PAYMENT_METHODS: 'isLoadingPaymentMethods',
 
-  //   /** Is report data loading? */
-  //   IS_LOADING_REPORT_DATA: 'isLoadingReportData',
+  /** Is session data loading? */
+  IS_LOADING_SESSION_DATA: 'isLoadingSessionData',
 
-  //   /** Is report data loading? */
+  /** Is the app loading? */
   IS_LOADING_APP: 'isLoadingApp',
 
   //   /** Is the user in the process of switching to OldDot? */
@@ -282,19 +282,19 @@ const ONYXKEYS = {
   //   // Max width supported for HTML <canvas> element
   //   MAX_CANVAS_WIDTH: 'maxCanvasWidth',
 
-  //   // Stores last visited path
+  // Stores last visited path
   LAST_VISITED_PATH: 'lastVisitedPath',
 
   //   // Stores the recently used report fields
   //   RECENTLY_USED_REPORT_FIELDS: 'recentlyUsedReportFields',
 
-  //   /** Indicates whether an forced upgrade is required */
-  //   UPDATE_REQUIRED: 'updateRequired',
+  /** Indicates whether an forced upgrade is required */
+  UPDATE_REQUIRED: 'updateRequired',
 
-  //   /** Stores the logs of the app for debugging purposes */
+  /** Stores the logs of the app for debugging purposes */
   LOGS: 'logs',
 
-  //   /** Indicates whether we should store logs or not */
+  /** Indicates whether we should store logs or not */
   SHOULD_STORE_LOGS: 'shouldStoreLogs',
 
   //   /** Stores new group chat draft */
@@ -307,159 +307,159 @@ const ONYXKEYS = {
   //   POLICY_OWNERSHIP_CHANGE_CHECKS: 'policyOwnershipChangeChecks',
 
   //   /** Collection Keys */
-  //   COLLECTION: {
-  //     DOWNLOAD: 'download_',
-  //     POLICY: 'policy_',
-  //     POLICY_MEMBERS: 'policyMembers_',
-  //     POLICY_DRAFTS: 'policyDrafts_',
-  //     POLICY_MEMBERS_DRAFTS: 'policyMembersDrafts_',
-  //     POLICY_JOIN_MEMBER: 'policyJoinMember_',
-  //     POLICY_CATEGORIES: 'policyCategories_',
-  //     POLICY_RECENTLY_USED_CATEGORIES: 'policyRecentlyUsedCategories_',
-  //     POLICY_TAGS: 'policyTags_',
-  //     POLICY_RECENTLY_USED_TAGS: 'nvp_recentlyUsedTags_',
-  //     OLD_POLICY_RECENTLY_USED_TAGS: 'policyRecentlyUsedTags_',
-  //     WORKSPACE_INVITE_MEMBERS_DRAFT: 'workspaceInviteMembersDraft_',
-  //     WORKSPACE_INVITE_MESSAGE_DRAFT: 'workspaceInviteMessageDraft_',
-  //     REPORT: 'report_',
-  //     // REPORT_METADATA is a perf optimization used to hold loading states (isLoadingInitialReportActions, isLoadingOlderReportActions, isLoadingNewerReportActions).
-  //     // A lot of components are connected to the Report entity and do not care about the actions. Setting the loading state
-  //     // directly on the report caused a lot of unnecessary re-renders
-  //     REPORT_METADATA: 'reportMetadata_',
-  //     REPORT_ACTIONS: 'reportActions_',
-  //     REPORT_ACTIONS_DRAFTS: 'reportActionsDrafts_',
-  //     REPORT_ACTIONS_REACTIONS: 'reportActionsReactions_',
-  //     REPORT_DRAFT_COMMENT: 'reportDraftComment_',
-  //     REPORT_DRAFT_COMMENT_NUMBER_OF_LINES: 'reportDraftCommentNumberOfLines_',
-  //     REPORT_IS_COMPOSER_FULL_SIZE: 'reportIsComposerFullSize_',
-  //     REPORT_USER_IS_TYPING: 'reportUserIsTyping_',
-  //     REPORT_USER_IS_LEAVING_ROOM: 'reportUserIsLeavingRoom_',
-  //     SECURITY_GROUP: 'securityGroup_',
-  //     TRANSACTION: 'transactions_',
-  //     TRANSACTION_VIOLATIONS: 'transactionViolations_',
+  COLLECTION: {
+    DOWNLOAD: 'download_',
+    //     POLICY: 'policy_',
+    //     POLICY_MEMBERS: 'policyMembers_',
+    //     POLICY_DRAFTS: 'policyDrafts_',
+    //     POLICY_MEMBERS_DRAFTS: 'policyMembersDrafts_',
+    //     POLICY_JOIN_MEMBER: 'policyJoinMember_',
+    //     POLICY_CATEGORIES: 'policyCategories_',
+    //     POLICY_RECENTLY_USED_CATEGORIES: 'policyRecentlyUsedCategories_',
+    //     POLICY_TAGS: 'policyTags_',
+    //     POLICY_RECENTLY_USED_TAGS: 'nvp_recentlyUsedTags_',
+    //     OLD_POLICY_RECENTLY_USED_TAGS: 'policyRecentlyUsedTags_',
+    //     WORKSPACE_INVITE_MEMBERS_DRAFT: 'workspaceInviteMembersDraft_',
+    //     WORKSPACE_INVITE_MESSAGE_DRAFT: 'workspaceInviteMessageDraft_',
+    //     REPORT: 'report_',
+    //     // REPORT_METADATA is a perf optimization used to hold loading states (isLoadingInitialReportActions, isLoadingOlderReportActions, isLoadingNewerReportActions).
+    //     // A lot of components are connected to the Report entity and do not care about the actions. Setting the loading state
+    //     // directly on the report caused a lot of unnecessary re-renders
+    //     REPORT_METADATA: 'reportMetadata_',
+    //     REPORT_ACTIONS: 'reportActions_',
+    //     REPORT_ACTIONS_DRAFTS: 'reportActionsDrafts_',
+    //     REPORT_ACTIONS_REACTIONS: 'reportActionsReactions_',
+    //     REPORT_DRAFT_COMMENT: 'reportDraftComment_',
+    //     REPORT_DRAFT_COMMENT_NUMBER_OF_LINES: 'reportDraftCommentNumberOfLines_',
+    //     REPORT_IS_COMPOSER_FULL_SIZE: 'reportIsComposerFullSize_',
+    //     REPORT_USER_IS_TYPING: 'reportUserIsTyping_',
+    //     REPORT_USER_IS_LEAVING_ROOM: 'reportUserIsLeavingRoom_',
+    //     SECURITY_GROUP: 'securityGroup_',
+    //     TRANSACTION: 'transactions_',
+    //     TRANSACTION_VIOLATIONS: 'transactionViolations_',
 
-  //     // Holds temporary transactions used during the creation and edit flow
-  //     TRANSACTION_DRAFT: 'transactionsDraft_',
-  //     SPLIT_TRANSACTION_DRAFT: 'splitTransactionDraft_',
-  //     PRIVATE_NOTES_DRAFT: 'privateNotesDraft_',
-  //     NEXT_STEP: 'reportNextStep_',
+    //     // Holds temporary transactions used during the creation and edit flow
+    //     TRANSACTION_DRAFT: 'transactionsDraft_',
+    //     SPLIT_TRANSACTION_DRAFT: 'splitTransactionDraft_',
+    //     PRIVATE_NOTES_DRAFT: 'privateNotesDraft_',
+    //     NEXT_STEP: 'reportNextStep_',
 
-  //     // Manual request tab selector
-  //     SELECTED_TAB: 'selectedTab_',
+    //     // Manual request tab selector
+    //     SELECTED_TAB: 'selectedTab_',
 
-  //     /** This is deprecated, but needed for a migration, so we still need to include it here so that it will be initialized in Onyx.init */
-  //     DEPRECATED_POLICY_MEMBER_LIST: 'policyMemberList_',
-  //   },
+    //     /** This is deprecated, but needed for a migration, so we still need to include it here so that it will be initialized in Onyx.init */
+    //     DEPRECATED_POLICY_MEMBER_LIST: 'policyMemberList_',
+  },
 
   //   /** List of Form ids */
-  //   FORMS: {
-  //     ADD_DEBIT_CARD_FORM: 'addDebitCardForm',
-  //     ADD_DEBIT_CARD_FORM_DRAFT: 'addDebitCardFormDraft',
-  //     WORKSPACE_SETTINGS_FORM: 'workspaceSettingsForm',
-  //     WORKSPACE_CATEGORY_FORM: 'workspaceCategoryForm',
-  //     WORKSPACE_CATEGORY_FORM_DRAFT: 'workspaceCategoryFormDraft',
-  //     WORKSPACE_TAG_FORM: 'workspaceTagForm',
-  //     WORKSPACE_TAG_FORM_DRAFT: 'workspaceTagFormDraft',
-  //     WORKSPACE_SETTINGS_FORM_DRAFT: 'workspaceSettingsFormDraft',
-  //     WORKSPACE_DESCRIPTION_FORM: 'workspaceDescriptionForm',
-  //     WORKSPACE_DESCRIPTION_FORM_DRAFT: 'workspaceDescriptionFormDraft',
-  //     WORKSPACE_RATE_AND_UNIT_FORM: 'workspaceRateAndUnitForm',
-  //     WORKSPACE_RATE_AND_UNIT_FORM_DRAFT: 'workspaceRateAndUnitFormDraft',
-  //     WORKSPACE_TAX_CUSTOM_NAME: 'workspaceTaxCustomName',
-  //     WORKSPACE_TAX_CUSTOM_NAME_DRAFT: 'workspaceTaxCustomNameDraft',
-  //     POLICY_CREATE_DISTANCE_RATE_FORM: 'policyCreateDistanceRateForm',
-  //     POLICY_CREATE_DISTANCE_RATE_FORM_DRAFT: 'policyCreateDistanceRateFormDraft',
-  //     POLICY_DISTANCE_RATE_EDIT_FORM: 'policyDistanceRateEditForm',
-  //     POLICY_DISTANCE_RATE_EDIT_FORM_DRAFT: 'policyDistanceRateEditFormDraft',
-  //     CLOSE_ACCOUNT_FORM: 'closeAccount',
-  //     CLOSE_ACCOUNT_FORM_DRAFT: 'closeAccountDraft',
-  //     PROFILE_SETTINGS_FORM: 'profileSettingsForm',
-  //     PROFILE_SETTINGS_FORM_DRAFT: 'profileSettingsFormDraft',
-  //     DISPLAY_NAME_FORM: 'displayNameForm',
-  //     DISPLAY_NAME_FORM_DRAFT: 'displayNameFormDraft',
-  //     ONBOARDING_PERSONAL_DETAILS_FORM: 'onboardingPersonalDetailsForm',
-  //     ONBOARDING_PERSONAL_DETAILS_FORM_DRAFT:
-  //       'onboardingPersonalDetailsFormDraft',
-  //     ROOM_NAME_FORM: 'roomNameForm',
-  //     ROOM_NAME_FORM_DRAFT: 'roomNameFormDraft',
-  //     REPORT_DESCRIPTION_FORM: 'reportDescriptionForm',
-  //     REPORT_DESCRIPTION_FORM_DRAFT: 'reportDescriptionFormDraft',
-  //     LEGAL_NAME_FORM: 'legalNameForm',
-  //     LEGAL_NAME_FORM_DRAFT: 'legalNameFormDraft',
-  //     WORKSPACE_INVITE_MESSAGE_FORM: 'workspaceInviteMessageForm',
-  //     WORKSPACE_INVITE_MESSAGE_FORM_DRAFT: 'workspaceInviteMessageFormDraft',
-  //     DATE_OF_BIRTH_FORM: 'dateOfBirthForm',
-  //     DATE_OF_BIRTH_FORM_DRAFT: 'dateOfBirthFormDraft',
-  //     HOME_ADDRESS_FORM: 'homeAddressForm',
-  //     HOME_ADDRESS_FORM_DRAFT: 'homeAddressFormDraft',
-  //     NEW_ROOM_FORM: 'newRoomForm',
-  //     NEW_ROOM_FORM_DRAFT: 'newRoomFormDraft',
-  //     ROOM_SETTINGS_FORM: 'roomSettingsForm',
-  //     ROOM_SETTINGS_FORM_DRAFT: 'roomSettingsFormDraft',
-  //     NEW_TASK_FORM: 'newTaskForm',
-  //     NEW_TASK_FORM_DRAFT: 'newTaskFormDraft',
-  //     EDIT_TASK_FORM: 'editTaskForm',
-  //     EDIT_TASK_FORM_DRAFT: 'editTaskFormDraft',
-  //     MONEY_REQUEST_DESCRIPTION_FORM: 'moneyRequestDescriptionForm',
-  //     MONEY_REQUEST_DESCRIPTION_FORM_DRAFT: 'moneyRequestDescriptionFormDraft',
-  //     MONEY_REQUEST_MERCHANT_FORM: 'moneyRequestMerchantForm',
-  //     MONEY_REQUEST_MERCHANT_FORM_DRAFT: 'moneyRequestMerchantFormDraft',
-  //     MONEY_REQUEST_AMOUNT_FORM: 'moneyRequestAmountForm',
-  //     MONEY_REQUEST_AMOUNT_FORM_DRAFT: 'moneyRequestAmountFormDraft',
-  //     MONEY_REQUEST_DATE_FORM: 'moneyRequestCreatedForm',
-  //     MONEY_REQUEST_DATE_FORM_DRAFT: 'moneyRequestCreatedFormDraft',
-  //     MONEY_REQUEST_HOLD_FORM: 'moneyHoldReasonForm',
-  //     MONEY_REQUEST_HOLD_FORM_DRAFT: 'moneyHoldReasonFormDraft',
-  //     NEW_CONTACT_METHOD_FORM: 'newContactMethodForm',
-  //     NEW_CONTACT_METHOD_FORM_DRAFT: 'newContactMethodFormDraft',
-  //     WAYPOINT_FORM: 'waypointForm',
-  //     WAYPOINT_FORM_DRAFT: 'waypointFormDraft',
-  //     SETTINGS_STATUS_SET_FORM: 'settingsStatusSetForm',
-  //     SETTINGS_STATUS_SET_FORM_DRAFT: 'settingsStatusSetFormDraft',
-  //     SETTINGS_STATUS_SET_CLEAR_AFTER_FORM: 'settingsStatusSetClearAfterForm',
-  //     SETTINGS_STATUS_SET_CLEAR_AFTER_FORM_DRAFT:
-  //       'settingsStatusSetClearAfterFormDraft',
-  //     SETTINGS_STATUS_CLEAR_DATE_FORM: 'settingsStatusClearDateForm',
-  //     SETTINGS_STATUS_CLEAR_DATE_FORM_DRAFT: 'settingsStatusClearDateFormDraft',
-  //     PRIVATE_NOTES_FORM: 'privateNotesForm',
-  //     PRIVATE_NOTES_FORM_DRAFT: 'privateNotesFormDraft',
-  //     I_KNOW_A_TEACHER_FORM: 'iKnowTeacherForm',
-  //     I_KNOW_A_TEACHER_FORM_DRAFT: 'iKnowTeacherFormDraft',
-  //     INTRO_SCHOOL_PRINCIPAL_FORM: 'introSchoolPrincipalForm',
-  //     INTRO_SCHOOL_PRINCIPAL_FORM_DRAFT: 'introSchoolPrincipalFormDraft',
-  //     REPORT_PHYSICAL_CARD_FORM: 'requestPhysicalCardForm',
-  //     REPORT_PHYSICAL_CARD_FORM_DRAFT: 'requestPhysicalCardFormDraft',
-  //     REPORT_VIRTUAL_CARD_FRAUD: 'reportVirtualCardFraudForm',
-  //     REPORT_VIRTUAL_CARD_FRAUD_DRAFT: 'reportVirtualCardFraudFormDraft',
-  //     GET_PHYSICAL_CARD_FORM: 'getPhysicalCardForm',
-  //     GET_PHYSICAL_CARD_FORM_DRAFT: 'getPhysicalCardFormDraft',
-  //     REPORT_FIELD_EDIT_FORM: 'reportFieldEditForm',
-  //     REPORT_FIELD_EDIT_FORM_DRAFT: 'reportFieldEditFormDraft',
-  //     REIMBURSEMENT_ACCOUNT_FORM: 'reimbursementAccount',
-  //     REIMBURSEMENT_ACCOUNT_FORM_DRAFT: 'reimbursementAccountDraft',
-  //     PERSONAL_BANK_ACCOUNT_FORM: 'personalBankAccountForm',
-  //     PERSONAL_BANK_ACCOUNT_FORM_DRAFT: 'personalBankAccountFormDraft',
-  //     EXIT_SURVEY_REASON_FORM: 'exitSurveyReasonForm',
-  //     EXIT_SURVEY_REASON_FORM_DRAFT: 'exitSurveyReasonFormDraft',
-  //     EXIT_SURVEY_RESPONSE_FORM: 'exitSurveyResponseForm',
-  //     EXIT_SURVEY_RESPONSE_FORM_DRAFT: 'exitSurveyResponseFormDraft',
-  //     WALLET_ADDITIONAL_DETAILS: 'walletAdditionalDetails',
-  //     WALLET_ADDITIONAL_DETAILS_DRAFT: 'walletAdditionalDetailsDraft',
-  //     POLICY_TAG_NAME_FORM: 'policyTagNameForm',
-  //     POLICY_TAG_NAME_FORM_DRAFT: 'policyTagNameFormDraft',
-  //     WORKSPACE_NEW_TAX_FORM: 'workspaceNewTaxForm',
-  //     WORKSPACE_NEW_TAX_FORM_DRAFT: 'workspaceNewTaxFormDraft',
-  //     WORKSPACE_TAX_NAME_FORM: 'workspaceTaxNameForm',
-  //     WORKSPACE_TAX_NAME_FORM_DRAFT: 'workspaceTaxNameFormDraft',
-  //     WORKSPACE_TAX_VALUE_FORM: 'workspaceTaxValueForm',
-  //     WORKSPACE_TAX_VALUE_FORM_DRAFT: 'workspaceTaxValueFormDraft',
-  //   },
+  FORMS: {
+    // ADD_DEBIT_CARD_FORM: 'addDebitCardForm',
+    //     ADD_DEBIT_CARD_FORM_DRAFT: 'addDebitCardFormDraft',
+    //     WORKSPACE_SETTINGS_FORM: 'workspaceSettingsForm',
+    //     WORKSPACE_CATEGORY_FORM: 'workspaceCategoryForm',
+    //     WORKSPACE_CATEGORY_FORM_DRAFT: 'workspaceCategoryFormDraft',
+    //     WORKSPACE_TAG_FORM: 'workspaceTagForm',
+    //     WORKSPACE_TAG_FORM_DRAFT: 'workspaceTagFormDraft',
+    //     WORKSPACE_SETTINGS_FORM_DRAFT: 'workspaceSettingsFormDraft',
+    //     WORKSPACE_DESCRIPTION_FORM: 'workspaceDescriptionForm',
+    //     WORKSPACE_DESCRIPTION_FORM_DRAFT: 'workspaceDescriptionFormDraft',
+    //     WORKSPACE_RATE_AND_UNIT_FORM: 'workspaceRateAndUnitForm',
+    //     WORKSPACE_RATE_AND_UNIT_FORM_DRAFT: 'workspaceRateAndUnitFormDraft',
+    //     WORKSPACE_TAX_CUSTOM_NAME: 'workspaceTaxCustomName',
+    //     WORKSPACE_TAX_CUSTOM_NAME_DRAFT: 'workspaceTaxCustomNameDraft',
+    //     POLICY_CREATE_DISTANCE_RATE_FORM: 'policyCreateDistanceRateForm',
+    //     POLICY_CREATE_DISTANCE_RATE_FORM_DRAFT: 'policyCreateDistanceRateFormDraft',
+    //     POLICY_DISTANCE_RATE_EDIT_FORM: 'policyDistanceRateEditForm',
+    //     POLICY_DISTANCE_RATE_EDIT_FORM_DRAFT: 'policyDistanceRateEditFormDraft',
+    //     CLOSE_ACCOUNT_FORM: 'closeAccount',
+    //     CLOSE_ACCOUNT_FORM_DRAFT: 'closeAccountDraft',
+    //     PROFILE_SETTINGS_FORM: 'profileSettingsForm',
+    //     PROFILE_SETTINGS_FORM_DRAFT: 'profileSettingsFormDraft',
+    //     DISPLAY_NAME_FORM: 'displayNameForm',
+    //     DISPLAY_NAME_FORM_DRAFT: 'displayNameFormDraft',
+    //     ONBOARDING_PERSONAL_DETAILS_FORM: 'onboardingPersonalDetailsForm',
+    //     ONBOARDING_PERSONAL_DETAILS_FORM_DRAFT:
+    //       'onboardingPersonalDetailsFormDraft',
+    //     ROOM_NAME_FORM: 'roomNameForm',
+    //     ROOM_NAME_FORM_DRAFT: 'roomNameFormDraft',
+    //     REPORT_DESCRIPTION_FORM: 'reportDescriptionForm',
+    //     REPORT_DESCRIPTION_FORM_DRAFT: 'reportDescriptionFormDraft',
+    LEGAL_NAME_FORM: 'legalNameForm',
+    LEGAL_NAME_FORM_DRAFT: 'legalNameFormDraft',
+    //     WORKSPACE_INVITE_MESSAGE_FORM: 'workspaceInviteMessageForm',
+    //     WORKSPACE_INVITE_MESSAGE_FORM_DRAFT: 'workspaceInviteMessageFormDraft',
+    //     DATE_OF_BIRTH_FORM: 'dateOfBirthForm',
+    //     DATE_OF_BIRTH_FORM_DRAFT: 'dateOfBirthFormDraft',
+    //     HOME_ADDRESS_FORM: 'homeAddressForm',
+    //     HOME_ADDRESS_FORM_DRAFT: 'homeAddressFormDraft',
+    //     NEW_ROOM_FORM: 'newRoomForm',
+    //     NEW_ROOM_FORM_DRAFT: 'newRoomFormDraft',
+    //     ROOM_SETTINGS_FORM: 'roomSettingsForm',
+    //     ROOM_SETTINGS_FORM_DRAFT: 'roomSettingsFormDraft',
+    //     NEW_TASK_FORM: 'newTaskForm',
+    //     NEW_TASK_FORM_DRAFT: 'newTaskFormDraft',
+    //     EDIT_TASK_FORM: 'editTaskForm',
+    //     EDIT_TASK_FORM_DRAFT: 'editTaskFormDraft',
+    //     MONEY_REQUEST_DESCRIPTION_FORM: 'moneyRequestDescriptionForm',
+    //     MONEY_REQUEST_DESCRIPTION_FORM_DRAFT: 'moneyRequestDescriptionFormDraft',
+    //     MONEY_REQUEST_MERCHANT_FORM: 'moneyRequestMerchantForm',
+    //     MONEY_REQUEST_MERCHANT_FORM_DRAFT: 'moneyRequestMerchantFormDraft',
+    //     MONEY_REQUEST_AMOUNT_FORM: 'moneyRequestAmountForm',
+    //     MONEY_REQUEST_AMOUNT_FORM_DRAFT: 'moneyRequestAmountFormDraft',
+    //     MONEY_REQUEST_DATE_FORM: 'moneyRequestCreatedForm',
+    //     MONEY_REQUEST_DATE_FORM_DRAFT: 'moneyRequestCreatedFormDraft',
+    //     MONEY_REQUEST_HOLD_FORM: 'moneyHoldReasonForm',
+    //     MONEY_REQUEST_HOLD_FORM_DRAFT: 'moneyHoldReasonFormDraft',
+    //     NEW_CONTACT_METHOD_FORM: 'newContactMethodForm',
+    //     NEW_CONTACT_METHOD_FORM_DRAFT: 'newContactMethodFormDraft',
+    //     WAYPOINT_FORM: 'waypointForm',
+    //     WAYPOINT_FORM_DRAFT: 'waypointFormDraft',
+    //     SETTINGS_STATUS_SET_FORM: 'settingsStatusSetForm',
+    //     SETTINGS_STATUS_SET_FORM_DRAFT: 'settingsStatusSetFormDraft',
+    //     SETTINGS_STATUS_SET_CLEAR_AFTER_FORM: 'settingsStatusSetClearAfterForm',
+    //     SETTINGS_STATUS_SET_CLEAR_AFTER_FORM_DRAFT:
+    //       'settingsStatusSetClearAfterFormDraft',
+    //     SETTINGS_STATUS_CLEAR_DATE_FORM: 'settingsStatusClearDateForm',
+    //     SETTINGS_STATUS_CLEAR_DATE_FORM_DRAFT: 'settingsStatusClearDateFormDraft',
+    //     PRIVATE_NOTES_FORM: 'privateNotesForm',
+    //     PRIVATE_NOTES_FORM_DRAFT: 'privateNotesFormDraft',
+    //     I_KNOW_A_TEACHER_FORM: 'iKnowTeacherForm',
+    //     I_KNOW_A_TEACHER_FORM_DRAFT: 'iKnowTeacherFormDraft',
+    //     INTRO_SCHOOL_PRINCIPAL_FORM: 'introSchoolPrincipalForm',
+    //     INTRO_SCHOOL_PRINCIPAL_FORM_DRAFT: 'introSchoolPrincipalFormDraft',
+    //     REPORT_PHYSICAL_CARD_FORM: 'requestPhysicalCardForm',
+    //     REPORT_PHYSICAL_CARD_FORM_DRAFT: 'requestPhysicalCardFormDraft',
+    //     REPORT_VIRTUAL_CARD_FRAUD: 'reportVirtualCardFraudForm',
+    //     REPORT_VIRTUAL_CARD_FRAUD_DRAFT: 'reportVirtualCardFraudFormDraft',
+    //     GET_PHYSICAL_CARD_FORM: 'getPhysicalCardForm',
+    //     GET_PHYSICAL_CARD_FORM_DRAFT: 'getPhysicalCardFormDraft',
+    //     REPORT_FIELD_EDIT_FORM: 'reportFieldEditForm',
+    //     REPORT_FIELD_EDIT_FORM_DRAFT: 'reportFieldEditFormDraft',
+    //     REIMBURSEMENT_ACCOUNT_FORM: 'reimbursementAccount',
+    //     REIMBURSEMENT_ACCOUNT_FORM_DRAFT: 'reimbursementAccountDraft',
+    //     PERSONAL_BANK_ACCOUNT_FORM: 'personalBankAccountForm',
+    //     PERSONAL_BANK_ACCOUNT_FORM_DRAFT: 'personalBankAccountFormDraft',
+    //     EXIT_SURVEY_REASON_FORM: 'exitSurveyReasonForm',
+    //     EXIT_SURVEY_REASON_FORM_DRAFT: 'exitSurveyReasonFormDraft',
+    //     EXIT_SURVEY_RESPONSE_FORM: 'exitSurveyResponseForm',
+    //     EXIT_SURVEY_RESPONSE_FORM_DRAFT: 'exitSurveyResponseFormDraft',
+    //     WALLET_ADDITIONAL_DETAILS: 'walletAdditionalDetails',
+    //     WALLET_ADDITIONAL_DETAILS_DRAFT: 'walletAdditionalDetailsDraft',
+    //     POLICY_TAG_NAME_FORM: 'policyTagNameForm',
+    //     POLICY_TAG_NAME_FORM_DRAFT: 'policyTagNameFormDraft',
+    //     WORKSPACE_NEW_TAX_FORM: 'workspaceNewTaxForm',
+    //     WORKSPACE_NEW_TAX_FORM_DRAFT: 'workspaceNewTaxFormDraft',
+    //     WORKSPACE_TAX_NAME_FORM: 'workspaceTaxNameForm',
+    //     WORKSPACE_TAX_NAME_FORM_DRAFT: 'workspaceTaxNameFormDraft',
+    //     WORKSPACE_TAX_VALUE_FORM: 'workspaceTaxValueForm',
+    //     WORKSPACE_TAX_VALUE_FORM_DRAFT: 'workspaceTaxValueFormDraft',
+  },
 } as const;
 
 type AllOnyxKeys = DeepValueOf<typeof ONYXKEYS>;
 
 type OnyxFormValuesMapping = {
-  //   [ONYXKEYS.FORMS.ADD_DEBIT_CARD_FORM]: FormTypes.AddDebitCardForm;
+  // [ONYXKEYS.FORMS.ADD_DEBIT_CARD_FORM]: FormTypes.AddDebitCardForm;
   //   [ONYXKEYS.FORMS.WORKSPACE_SETTINGS_FORM]: FormTypes.WorkspaceSettingsForm;
   //   [ONYXKEYS.FORMS.WORKSPACE_CATEGORY_FORM]: FormTypes.WorkspaceCategoryForm;
   //   [ONYXKEYS.FORMS.WORKSPACE_TAG_FORM]: FormTypes.WorkspaceTagForm;
@@ -472,7 +472,7 @@ type OnyxFormValuesMapping = {
   //   [ONYXKEYS.FORMS.ONBOARDING_PERSONAL_DETAILS_FORM]: FormTypes.DisplayNameForm;
   //   [ONYXKEYS.FORMS.ROOM_NAME_FORM]: FormTypes.RoomNameForm;
   //   [ONYXKEYS.FORMS.REPORT_DESCRIPTION_FORM]: FormTypes.ReportDescriptionForm;
-  //   [ONYXKEYS.FORMS.LEGAL_NAME_FORM]: FormTypes.LegalNameForm;
+  [ONYXKEYS.FORMS.LEGAL_NAME_FORM]: FormTypes.LegalNameForm;
   //   [ONYXKEYS.FORMS
   //     .WORKSPACE_INVITE_MESSAGE_FORM]: FormTypes.WorkspaceInviteMessageForm;
   //   [ONYXKEYS.FORMS.DATE_OF_BIRTH_FORM]: FormTypes.DateOfBirthForm;
@@ -531,7 +531,7 @@ type OnyxFormDraftValuesMapping = {
 
 type OnyxCollectionValuesMapping = {
   //   [ONYXKEYS.COLLECTION.TEST_ITEM_IN_COLLECTION]: number;
-  //   [ONYXKEYS.COLLECTION.DOWNLOAD]: OnyxTypes.Download;
+  [ONYXKEYS.COLLECTION.DOWNLOAD]: OnyxTypes.Download;
   //   [ONYXKEYS.COLLECTION.POLICY]: OnyxTypes.Policy;
   //   [ONYXKEYS.COLLECTION.POLICY_DRAFTS]: OnyxTypes.Policy;
   //   [ONYXKEYS.COLLECTION.POLICY_CATEGORIES]: OnyxTypes.PolicyCategories;
@@ -575,7 +575,7 @@ type OnyxValuesMapping = {
   //   [ONYXKEYS.ACCOUNT_MANAGER_REPORT_ID]: string;
   //   [ONYXKEYS.NVP_IS_FIRST_TIME_NEW_EXPENSIFY_USER]: boolean;
   //   [ONYXKEYS.ACTIVE_CLIENTS]: string[];
-  //   [ONYXKEYS.DEVICE_ID]: string;
+  [ONYXKEYS.DEVICE_ID]: string;
   [ONYXKEYS.IS_SIDEBAR_LOADED]: boolean;
   //   [ONYXKEYS.PERSISTED_REQUESTS]: OnyxTypes.Request[];
   //   [ONYXKEYS.CURRENT_DATE]: string;
@@ -596,7 +596,7 @@ type OnyxValuesMapping = {
   //   [ONYXKEYS.TASK]: OnyxTypes.Task;
   //   [ONYXKEYS.WORKSPACE_RATE_AND_UNIT]: OnyxTypes.WorkspaceRateAndUnit;
   //   [ONYXKEYS.CURRENCY_LIST]: OnyxTypes.CurrencyList;
-  //   [ONYXKEYS.UPDATE_AVAILABLE]: boolean;
+  [ONYXKEYS.UPDATE_AVAILABLE]: boolean;
   //   [ONYXKEYS.SCREEN_SHARE_REQUEST]: OnyxTypes.ScreenShareRequest;
   //   [ONYXKEYS.COUNTRY_CODE]: number;
   //   [ONYXKEYS.COUNTRY]: string;
@@ -610,13 +610,13 @@ type OnyxValuesMapping = {
   //   [ONYXKEYS.NVP_PRIVATE_PUSH_NOTIFICATION_ID]: string;
   //   [ONYXKEYS.NVP_TRY_FOCUS_MODE]: boolean;
   //   [ONYXKEYS.NVP_HOLD_USE_EXPLAINED]: boolean;
-  //   [ONYXKEYS.FOCUS_MODE_NOTIFICATION]: boolean;
+  [ONYXKEYS.FOCUS_MODE_NOTIFICATION]: boolean;
   //   [ONYXKEYS.NVP_LAST_PAYMENT_METHOD]: OnyxTypes.LastPaymentMethod;
   //   [ONYXKEYS.NVP_RECENT_WAYPOINTS]: OnyxTypes.RecentWaypoint[];
   //   [ONYXKEYS.NVP_HAS_DISMISSED_IDLE_PANEL]: boolean;
   //   [ONYXKEYS.NVP_INTRO_SELECTED]: OnyxTypes.IntroSelected;
   //   [ONYXKEYS.NVP_LAST_SELECTED_DISTANCE_RATES]: OnyxTypes.LastSelectedDistanceRates;
-  //   [ONYXKEYS.PUSH_NOTIFICATIONS_ENABLED]: boolean;
+  [ONYXKEYS.PUSH_NOTIFICATIONS_ENABLED]: boolean;
   //   [ONYXKEYS.PLAID_DATA]: OnyxTypes.PlaidData;
   //   [ONYXKEYS.IS_PLAID_DISABLED]: boolean;
   //   [ONYXKEYS.PLAID_LINK_TOKEN]: string;
@@ -639,7 +639,7 @@ type OnyxValuesMapping = {
   //   [ONYXKEYS.FREQUENTLY_USED_EMOJIS]: OnyxTypes.FrequentlyUsedEmoji[];
   //   [ONYXKEYS.REIMBURSEMENT_ACCOUNT_WORKSPACE_ID]: string;
   //   [ONYXKEYS.IS_LOADING_PAYMENT_METHODS]: boolean;
-  //   [ONYXKEYS.IS_LOADING_REPORT_DATA]: boolean;
+  [ONYXKEYS.IS_LOADING_SESSION_DATA]: boolean;
   //   [ONYXKEYS.IS_TEST_TOOLS_MODAL_OPEN]: boolean;
   //   [ONYXKEYS.APP_PROFILING_IN_PROGRESS]: boolean;
   [ONYXKEYS.IS_LOADING_APP]: boolean;
@@ -662,7 +662,7 @@ type OnyxValuesMapping = {
   //   [ONYXKEYS.IS_SEARCHING_FOR_REPORTS]: boolean;
   [ONYXKEYS.LAST_VISITED_PATH]: string | undefined;
   //   [ONYXKEYS.RECENTLY_USED_REPORT_FIELDS]: OnyxTypes.RecentlyUsedReportFields;
-  //   [ONYXKEYS.UPDATE_REQUIRED]: boolean;
+  [ONYXKEYS.UPDATE_REQUIRED]: boolean;
   //   [ONYXKEYS.PLAID_CURRENT_EVENT]: string;
   [ONYXKEYS.LOGS]: OnyxTypes.CapturedLogs;
   [ONYXKEYS.SHOULD_STORE_LOGS]: boolean;

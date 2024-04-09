@@ -32,6 +32,7 @@ module.exports = {
           '@components': './src/components',
           '@context': './src/context',
           '@database': './src/database',
+          '@desktop': './desktop',
           '@hooks': './src/hooks',
           '@libs': './src/libs',
           '@navigation': './src/libs/Navigation',

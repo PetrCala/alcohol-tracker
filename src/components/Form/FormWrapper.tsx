@@ -1,13 +1,20 @@
 import React, {useCallback, useMemo, useRef} from 'react';
 import type {RefObject} from 'react';
-import type {StyleProp, View, ViewStyle} from 'react-native';
-import {Keyboard, ScrollView} from 'react-native';
+// eslint-disable-next-line no-restricted-imports
+import type {
+  ScrollView as RNScrollView,
+  StyleProp,
+  View,
+  ViewStyle,
+} from 'react-native';
+import {Keyboard} from 'react-native';
 import type {OnyxEntry} from 'react-native-onyx';
 import {withOnyx} from 'react-native-onyx';
 import FormAlertWithSubmitButton from '@components/FormAlertWithSubmitButton';
 import FormElement from '@components/FormElement';
 import SafeAreaConsumer from '@components/SafeAreaConsumer';
 import type {SafeAreaChildrenProps} from '@components/SafeAreaConsumer/types';
+import ScrollView from '@components/ScrollView';
 import ScrollViewWithContext from '@components/ScrollViewWithContext';
 import useThemeStyles from '@hooks/useThemeStyles';
 import * as ErrorUtils from '@libs/ErrorUtils';
@@ -60,7 +67,7 @@ function FormWrapper({
   disablePressOnEnter = true,
 }: FormWrapperProps) {
   const styles = useThemeStyles();
-  const formRef = useRef<ScrollView>(null);
+  const formRef = useRef<RNScrollView>(null);
   const formContentRef = useRef<View>(null);
   const errorMessage = useMemo(
     () => (formState ? ErrorUtils.getLatestErrorMessage(formState) : undefined),
@@ -198,6 +205,6 @@ export default withOnyx<FormWrapperProps, FormWrapperOnyxProps>({
   formState: {
     // withOnyx typings are not able to handle such generic cases like this one, since it's a generic component we need to cast the keys to any
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-explicit-any
-    key: (props: any) => props.formID as any,
+    key: props => props.formID as any,
   },
 })(FormWrapper);

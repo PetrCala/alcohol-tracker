@@ -5,6 +5,7 @@ import type {AppSettings, Maintenance} from './Config';
 import type {CapturedLogs, Log} from './Console';
 import type DatabaseProps from './DatabaseProps';
 import type {UserId, UserList, UserArray, MeasureType} from './DatabaseCommon';
+import type Download from './Download';
 import type DrinkingSession from './DrinkingSession';
 import type {
   DrinkingSessionId,
@@ -25,7 +26,10 @@ import type Modal from './Modal';
 import type Network from './Network';
 import type NicknameToId from './NicknameToId';
 import type {Nickname, NicknameKey, NicknameToIdList} from './NicknameToId';
-import type {OnyxUpdatesFromServer} from './OnyxUpdatesFromServer';
+import type {
+  OnyxUpdateEvent,
+  OnyxUpdatesFromServer,
+} from './OnyxUpdatesFromServer';
 import type Preferences from './Preferences';
 import type {
   PreferencesList,
@@ -41,6 +45,7 @@ import type UnconfirmedDays from './UnconfirmedDays';
 import type {UnconfirmedDaysList, UnconfirmedDayKey} from './UnconfirmedDays';
 import type Drinks from './Drinks';
 import type {DrinkKey, DrinkName, DrinksList, DrinksTimestamp} from './Drinks';
+import type UserIsTyping from './UserIsTyping';
 import type UserProps from './UserProps';
 import type {UserPropsList, Profile, ProfileList} from './UserProps';
 import type UserStatus from './UserStatus';
@@ -54,6 +59,7 @@ export type {
   Config,
   DatabaseProps,
   DeviceId,
+  Download,
   DrinkingSession,
   DrinkingSessionArray,
   DrinkingSessionId,
@@ -81,6 +87,7 @@ export type {
   NicknameKey,
   NicknameToId,
   NicknameToIdList,
+  OnyxUpdateEvent,
   OnyxUpdatesFromServer,
   Preferences,
   PreferencesList,
@@ -99,6 +106,7 @@ export type {
   UserProps,
   UserDrinkingSessionsList,
   UserId,
+  UserIsTyping,
   UserList,
   UserPropsList,
   UserStatus,

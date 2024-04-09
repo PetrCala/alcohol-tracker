@@ -15,18 +15,26 @@ import type {
   ViewStyle,
 } from 'react-native';
 import type {ValueOf} from 'type-fest';
+// import type AddPlaidBankAccount from '@components/AddPlaidBankAccount';
 // import type AddressSearch from '@components/AddressSearch';
 // import type AmountForm from '@components/AmountForm';
-// import type AmountTextInput from '@components/AmountTextInput';
+// import type AmountPicker from '@components/AmountPicker';
+import type AmountTextInput from '@components/AmountTextInput';
 // import type CheckboxWithLabel from '@components/CheckboxWithLabel';
 // import type CountrySelector from '@components/CountrySelector';
+// import type DatePicker from '@components/DatePicker';
 // import type Picker from '@components/Picker';
+// import type RadioButtons from '@components/RadioButtons';
+// import type RoomNameInput from '@components/RoomNameInput';
 // import type SingleChoiceQuestion from '@components/SingleChoiceQuestion';
-// import type StatePicker from '@components/StatePicker';
-import type TextInput from '@components/TextInput';
+// import type StateSelector from '@components/StateSelector';
+// import type TextInput from '@components/TextInput';
+// import type TextPicker from '@components/TextPicker';
+// import type ValuePicker from '@components/ValuePicker';
+import type {MaybePhraseKey} from '@libs/Localize';
 // import type BusinessTypePicker from '@pages/ReimbursementAccount/BusinessInfo/substeps/TypeBusiness/BusinessTypePicker';
-import type {TranslationPaths} from '@src/languages/types';
-import type {DatabaseFormKey, DatabaseValues} from '@src/DBKEYS';
+import type {Country} from '@src/CONST';
+import type {OnyxFormKey, OnyxValues} from '@src/ONYXKEYS';
 import type {BaseForm} from '@src/types/form/Form';
 
 /**
@@ -34,11 +42,11 @@ import type {BaseForm} from '@src/types/form/Form';
  * when adding new inputs or removing old ones.
  *
  * TODO: Add remaining inputs here once these components are migrated to Typescript:
- * EmojiPickerButtonDropdown | RoomNameInput | ValuePicker
+ * EmojiPickerButtonDropdown
  */
-type ValidInputs = any;
-typeof TextInput;
-//   | typeof AmountTextInput;
+type ValidInputs =
+  //   | typeof TextInput
+  typeof AmountTextInput;
 //   | typeof SingleChoiceQuestion
 //   | typeof CheckboxWithLabel
 //   | typeof Picker
@@ -46,13 +54,21 @@ typeof TextInput;
 //   | typeof CountrySelector
 //   | typeof AmountForm
 //   | typeof BusinessTypePicker
-//   | typeof StatePicker;
+//   | typeof StateSelector
+//   | typeof RoomNameInput
+//   | typeof ValuePicker
+// |  typeof DatePicker;
+//   | typeof RadioButtons
+//   | typeof AmountPicker
+//   | typeof TextPicker
+//   | typeof AddPlaidBankAccount;
 
-type ValueTypeKey = 'string' | 'boolean' | 'date';
+type ValueTypeKey = 'string' | 'boolean' | 'date' | 'country';
 type ValueTypeMap = {
   string: string;
   boolean: boolean;
   date: Date;
+  country: Country | '';
 };
 type FormValue = ValueOf<ValueTypeMap>;
 
@@ -83,6 +99,9 @@ type InputComponentBaseProps<TValue extends ValueTypeKey = ValueTypeKey> =
       callback: MeasureLayoutOnSuccessCallback,
     ) => void;
     focus?: () => void;
+    label?: string;
+    minDate?: Date;
+    maxDate?: Date;
     onTouched?: (event: GestureResponderEvent) => void;
     onBlur?: (
       event: FocusEvent | NativeSyntheticEvent<TextInputFocusEventData>,
@@ -101,13 +120,15 @@ type InputComponentBaseProps<TValue extends ValueTypeKey = ValueTypeKey> =
     shouldSubmitForm?: boolean;
   };
 
-type FormDatabaseValues<TFormID extends DatabaseFormKey = DatabaseFormKey> =
-  Omit<DatabaseValues[TFormID], keyof BaseForm>;
-type FormDatabaseKeys<TFormID extends DatabaseFormKey = DatabaseFormKey> =
-  keyof FormDatabaseValues<TFormID>;
+type FormOnyxValues<TFormID extends OnyxFormKey = OnyxFormKey> = Omit<
+  OnyxValues[TFormID],
+  keyof BaseForm
+>;
+type FormOnyxKeys<TFormID extends OnyxFormKey = OnyxFormKey> =
+  keyof FormOnyxValues<TFormID>;
 
-type FormProps<TFormID extends DatabaseFormKey = DatabaseFormKey> = {
-  /** A unique Database key identifying the form */
+type FormProps<TFormID extends OnyxFormKey = OnyxFormKey> = {
+  /** A unique Onyx key identifying the form */
   formID: TFormID;
 
   /** Text to be displayed in the submit button */
@@ -120,7 +141,7 @@ type FormProps<TFormID extends DatabaseFormKey = DatabaseFormKey> = {
   isSubmitButtonVisible?: boolean;
 
   /** Callback to submit the form */
-  onSubmit: (values: FormDatabaseValues<TFormID>) => void;
+  onSubmit: (values: FormOnyxValues<TFormID>) => void;
 
   /** Should the button be enabled when offline */
   enabledWhenOffline?: boolean;
@@ -144,10 +165,15 @@ type FormProps<TFormID extends DatabaseFormKey = DatabaseFormKey> = {
   disablePressOnEnter?: boolean;
 };
 
+type FormRef<TFormID extends OnyxFormKey = OnyxFormKey> = {
+  resetForm: (optionalValue: FormOnyxValues<TFormID>) => void;
+};
+
 type InputRefs = Record<string, MutableRefObject<InputComponentBaseProps>>;
 
-type FormInputErrors<TFormID extends DatabaseFormKey = DatabaseFormKey> =
-  Partial<Record<FormDatabaseKeys<TFormID>, TranslationPaths>>;
+type FormInputErrors<TFormID extends OnyxFormKey = OnyxFormKey> = Partial<
+  Record<FormOnyxKeys<TFormID>, MaybePhraseKey>
+>;
 
 export type {
   FormProps,
@@ -155,10 +181,11 @@ export type {
   InputComponentValueProps,
   FormValue,
   ValueTypeKey,
-  FormDatabaseValues,
-  FormDatabaseKeys,
+  FormOnyxValues,
+  FormOnyxKeys,
   FormInputErrors,
   InputRefs,
   InputComponentBaseProps,
   ValueTypeMap,
+  FormRef,
 };

@@ -247,6 +247,9 @@ const CONST = {
     ANDROID: 'Android',
     WEB: 'Web',
   },
+  PUSHER: {
+    PRIVATE_USER_CHANNEL_PREFIX: 'private-encrypted-user-accountID-',
+  },
   REGEX: {
     ROUTES: {
       REDUNDANT_SLASHES: /(\/{2,})|(\/$)/g,

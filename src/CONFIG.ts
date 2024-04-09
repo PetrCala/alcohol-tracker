@@ -36,6 +36,11 @@ export default {
   IS_IN_DEVELOPMENT: ENVIRONMENT === CONST.ENVIRONMENT.DEV,
   IS_IN_TEST:
     process.env.NODE_ENV === 'test' || ENVIRONMENT === CONST.ENVIRONMENT.TEST,
+  PUSHER: {
+    APP_KEY: get(Config, 'PUSHER_APP_KEY', '268df511a204fbb60884'),
+    SUFFIX: get(Config, 'PUSHER_DEV_SUFFIX', ''),
+    CLUSTER: 'mt1',
+  },
   TEST_PROJECT_ID: 'alcohol-tracker-db',
   TEST_HOST: 'localhost',
   TEST_AUTH_PORT: 9099,

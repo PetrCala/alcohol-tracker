@@ -140,6 +140,8 @@ const styles = (theme: ThemeColors) =>
       backgroundColor: colors.white,
     },
 
+    colorSchemeStyle: (colorScheme: ColorScheme) => ({colorScheme}),
+
     headerGap: {
       // height: CONST.DESKTOP_HEADER_PADDING,
       height: 0,
@@ -169,6 +171,12 @@ const styles = (theme: ThemeColors) =>
         marginLeft: isSmallScreenWidth ? 0 : variables.sideBarWidth,
         flex: 1,
       }) satisfies ViewStyle,
+
+    splashScreenHider: {
+      backgroundColor: theme.splashBG,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
 
     // Be extremely careful when editing the compose styles, as it is easy to introduce regressions.
     textInputCompose: addOutlineWidth(

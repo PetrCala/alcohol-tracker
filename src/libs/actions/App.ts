@@ -4,20 +4,20 @@ import {AppState} from 'react-native';
 import type {OnyxCollection, OnyxEntry, OnyxUpdate} from 'react-native-onyx';
 import Onyx from 'react-native-onyx';
 import type {ValueOf} from 'type-fest';
-// import * as API from '@libs/API';
+import * as API from '@libs/API';
 import type {
   GetMissingOnyxMessagesParams,
   //   HandleRestrictedEventParams,
-  //   OpenAppParams,
+  OpenAppParams,
   //   OpenOldDotLinkParams,
   //   // OpenProfileParams,
-  //   ReconnectAppParams,
+  ReconnectAppParams,
   //   UpdatePreferredLocaleParams,
 } from '@libs/API/parameters';
-// import {SIDE_EFFECT_REQUEST_COMMANDS, WRITE_COMMANDS} from '@libs/API/types';
+import {SIDE_EFFECT_REQUEST_COMMANDS, WRITE_COMMANDS} from '@libs/API/types';
 // import * as Browser from '@libs/Browser';
 // import DateUtils from '@libs/DateUtils';
-// import Log from '@libs/Log';
+import Log from '@libs/Log';
 import getCurrentUrl from '@libs/Navigation/currentUrl';
 import Navigation from '@libs/Navigation/Navigation';
 // import Performance from '@libs/Performance';
@@ -30,13 +30,8 @@ import ONYXKEYS from '@src/ONYXKEYS';
 import type * as OnyxTypes from '@src/types/onyx';
 // import type {SelectedTimezone} from '@src/types/onyx/PersonalDetails';
 import type {OnyxData} from '@src/types/onyx/Request';
-// import * as Policy from './Policy';
 // import * as Session from './Session';
 // import Timing from './Timing';
-
-// type PolicyParamsForOpenOrReconnect = {
-//   policyIDList: string[];
-// };
 
 type Locale = ValueOf<typeof CONST.LOCALES>;
 
@@ -123,65 +118,65 @@ AppState.addEventListener('change', nextAppState => {
   appState = nextAppState;
 });
 
-// /**
-//  * Returns the Onyx data that is used for both the OpenApp and ReconnectApp API commands.
-//  */
-// function getOnyxDataForOpenOrReconnect(isOpenApp = false): OnyxData {
-//   const defaultData = {
-//     optimisticData: [
-//       {
-//         onyxMethod: Onyx.METHOD.MERGE,
-//         key: ONYXKEYS.IS_LOADING_REPORT_DATA,
-//         value: true,
-//       },
-//     ],
-//     finallyData: [
-//       {
-//         onyxMethod: Onyx.METHOD.MERGE,
-//         key: ONYXKEYS.IS_LOADING_REPORT_DATA,
-//         value: false,
-//       },
-//     ],
-//   };
-//   if (!isOpenApp) {
-//     return defaultData;
-//   }
-//   return {
-//     optimisticData: [
-//       ...defaultData.optimisticData,
-//       {
-//         onyxMethod: Onyx.METHOD.MERGE,
-//         key: ONYXKEYS.IS_LOADING_APP,
-//         value: true,
-//       },
-//     ],
-//     finallyData: [
-//       ...defaultData.finallyData,
-//       {
-//         onyxMethod: Onyx.METHOD.MERGE,
-//         key: ONYXKEYS.IS_LOADING_APP,
-//         value: false,
-//       },
-//     ],
-//   };
-// }
+/**
+ * Returns the Onyx data that is used for both the OpenApp and ReconnectApp API commands.
+ */
+function getOnyxDataForOpenOrReconnect(isOpenApp = false): OnyxData {
+  const defaultData = {
+    optimisticData: [
+      {
+        onyxMethod: Onyx.METHOD.MERGE,
+        key: ONYXKEYS.IS_LOADING_SESSION_DATA,
+        value: true,
+      },
+    ],
+    finallyData: [
+      {
+        onyxMethod: Onyx.METHOD.MERGE,
+        key: ONYXKEYS.IS_LOADING_SESSION_DATA,
+        value: false,
+      },
+    ],
+  };
+  if (!isOpenApp) {
+    return defaultData;
+  }
+  return {
+    optimisticData: [
+      ...defaultData.optimisticData,
+      {
+        onyxMethod: Onyx.METHOD.MERGE,
+        key: ONYXKEYS.IS_LOADING_APP,
+        value: true,
+      },
+    ],
+    finallyData: [
+      ...defaultData.finallyData,
+      {
+        onyxMethod: Onyx.METHOD.MERGE,
+        key: ONYXKEYS.IS_LOADING_APP,
+        value: false,
+      },
+    ],
+  };
+}
 
 /**
  * Fetches data needed for app initialization
  */
 function openApp() {
   // getPolicyParamsForOpenOrReconnect().then(
-  //   (policyParams: PolicyParamsForOpenOrReconnect) => {
-  //     const params: OpenAppParams = {
-  //       enablePriorityModeFilter: true,
-  //       ...policyParams,
-  //     };
-  //     API.write(
-  //       WRITE_COMMANDS.OPEN_APP,
-  //       params,
-  //       getOnyxDataForOpenOrReconnect(true),
-  //     );
-  //   },
+  // (policyParams: PolicyParamsForOpenOrReconnect) => {
+  const params: OpenAppParams = {
+    enablePriorityModeFilter: true,
+    // ...policyParams,
+  };
+  API.write(
+    WRITE_COMMANDS.OPEN_APP,
+    params,
+    getOnyxDataForOpenOrReconnect(true),
+  );
+  // },
   // );
 }
 
@@ -195,6 +190,7 @@ function reconnectApp(updateIDFrom: OnyxEntry<number> = 0) {
   );
   // getPolicyParamsForOpenOrReconnect().then(policyParams => {
   //   const params: ReconnectAppParams = policyParams;
+  const params: ReconnectAppParams = {};
 
   //   // When the app reconnects we do a fast "sync" of the LHN and only return chats that have new messages. We achieve this by sending the most recent reportActionID.
   //   // we have locally. And then only update the user about chats with messages that have occurred after that reportActionID.
@@ -216,17 +212,17 @@ function reconnectApp(updateIDFrom: OnyxEntry<number> = 0) {
   //     params.updateIDFrom = updateIDFrom;
   //   }
 
-  //   API.write(
-  //     WRITE_COMMANDS.RECONNECT_APP,
-  //     params,
-  //     getOnyxDataForOpenOrReconnect(),
-  //     {
-  //       getConflictingRequests: persistedRequests =>
-  //         persistedRequests.filter(
-  //           request => request?.command === WRITE_COMMANDS.RECONNECT_APP,
-  //         ),
-  //     },
-  //   );
+  API.write(
+    WRITE_COMMANDS.RECONNECT_APP,
+    params,
+    getOnyxDataForOpenOrReconnect(),
+    {
+      getConflictingRequests: persistedRequests =>
+        persistedRequests.filter(
+          request => request?.command === WRITE_COMMANDS.RECONNECT_APP,
+        ),
+    },
+  );
   // });
 }
 
@@ -237,66 +233,66 @@ function reconnectApp(updateIDFrom: OnyxEntry<number> = 0) {
  */
 function finalReconnectAppAfterActivatingReliableUpdates(): Promise<void | OnyxTypes.Response> {
   console.debug(`[OnyxUpdates] Executing last reconnect app with promise`);
-  return;
 
   // return getPolicyParamsForOpenOrReconnect().then(policyParams => {
-  //   const params: ReconnectAppParams = {...policyParams};
+  // const params: ReconnectAppParams = {...policyParams};
+  const params: ReconnectAppParams = {};
 
-  //   // When the app reconnects we do a fast "sync" of the LHN and only return chats that have new messages. We achieve this by sending the most recent reportActionID.
-  //   // we have locally. And then only update the user about chats with messages that have occurred after that reportActionID.
-  //   //
-  //   // - Look through the local report actions and reports to find the most recently modified report action or report.
-  //   // - We send this to the server so that it can compute which new chats the user needs to see and return only those as an optimization.
-  //   Timing.start(CONST.TIMING.CALCULATE_MOST_RECENT_LAST_MODIFIED_ACTION);
-  //   params.mostRecentReportActionLastModified =
-  //     ReportActionsUtils.getMostRecentReportActionLastModified();
-  //   Timing.end(
-  //     CONST.TIMING.CALCULATE_MOST_RECENT_LAST_MODIFIED_ACTION,
-  //     '',
-  //     500,
-  //   );
+  // When the app reconnects we do a fast "sync" of the LHN and only return chats that have new messages. We achieve this by sending the most recent reportActionID.
+  // we have locally. And then only update the user about chats with messages that have occurred after that reportActionID.
+  //
+  // - Look through the local report actions and reports to find the most recently modified report action or report.
+  // - We send this to the server so that it can compute which new chats the user needs to see and return only those as an optimization.
+  // Timing.start(CONST.TIMING.CALCULATE_MOST_RECENT_LAST_MODIFIED_ACTION);
+  // params.mostRecentReportActionLastModified =
+  //   ReportActionsUtils.getMostRecentReportActionLastModified();
+  // Timing.end(
+  //   CONST.TIMING.CALCULATE_MOST_RECENT_LAST_MODIFIED_ACTION,
+  //   '',
+  //   500,
+  // );
 
-  //   // It is SUPER BAD FORM to return promises from action methods.
-  //   // DO NOT FOLLOW THIS PATTERN!!!!!
-  //   // It was absolutely necessary in order to not break the app while migrating to the new reliable updates pattern. This method will be removed
-  //   // as soon as we have everyone migrated to the reliableUpdate beta.
-  //   // eslint-disable-next-line rulesdir/no-api-side-effects-method
-  //   return API.makeRequestWithSideEffects(
-  //     SIDE_EFFECT_REQUEST_COMMANDS.RECONNECT_APP,
-  //     params,
-  //     getOnyxDataForOpenOrReconnect(),
-  //   );
+  // It is SUPER BAD FORM to return promises from action methods.
+  // DO NOT FOLLOW THIS PATTERN!!!!!
+  // It was absolutely necessary in order to not break the app while migrating to the new reliable updates pattern. This method will be removed
+  // as soon as we have everyone migrated to the reliableUpdate beta.
+  // eslint-disable-next-line rulesdir/no-api-side-effects-method
+  return API.makeRequestWithSideEffects(
+    SIDE_EFFECT_REQUEST_COMMANDS.RECONNECT_APP,
+    params,
+    getOnyxDataForOpenOrReconnect(),
+  );
   // });
 }
 
-// /**
-//  * Fetches data when the client has discovered it missed some Onyx updates from the server
-//  * @param [updateIDFrom] the ID of the Onyx update that we want to start fetching from
-//  * @param [updateIDTo] the ID of the Onyx update that we want to fetch up to
-//  */
-// function getMissingOnyxUpdates(
-//   updateIDFrom = 0,
-//   updateIDTo: number | string = 0,
-// ): Promise<void | OnyxTypes.Response> {
-//   console.debug(
-//     `[OnyxUpdates] Fetching missing updates updateIDFrom: ${updateIDFrom} and updateIDTo: ${updateIDTo}`,
-//   );
+/**
+ * Fetches data when the client has discovered it missed some Onyx updates from the server
+ * @param [updateIDFrom] the ID of the Onyx update that we want to start fetching from
+ * @param [updateIDTo] the ID of the Onyx update that we want to fetch up to
+ */
+function getMissingOnyxUpdates(
+  updateIDFrom = 0,
+  updateIDTo: number | string = 0,
+): Promise<void | OnyxTypes.Response> {
+  console.debug(
+    `[OnyxUpdates] Fetching missing updates updateIDFrom: ${updateIDFrom} and updateIDTo: ${updateIDTo}`,
+  );
 
-//   const parameters: GetMissingOnyxMessagesParams = {
-//     updateIDFrom,
-//     updateIDTo,
-//   };
+  const parameters: GetMissingOnyxMessagesParams = {
+    updateIDFrom,
+    updateIDTo,
+  };
 
-//   // It is SUPER BAD FORM to return promises from action methods.
-//   // DO NOT FOLLOW THIS PATTERN!!!!!
-//   // It was absolutely necessary in order to block OnyxUpdates while fetching the missing updates from the server or else the udpates aren't applied in the proper order.
-//   // eslint-disable-next-line rulesdir/no-api-side-effects-method
-//   return API.makeRequestWithSideEffects(
-//     SIDE_EFFECT_REQUEST_COMMANDS.GET_MISSING_ONYX_MESSAGES,
-//     parameters,
-//     getOnyxDataForOpenOrReconnect(),
-//   );
-// }
+  // It is SUPER BAD FORM to return promises from action methods.
+  // DO NOT FOLLOW THIS PATTERN!!!!!
+  // It was absolutely necessary in order to block OnyxUpdates while fetching the missing updates from the server or else the udpates aren't applied in the proper order.
+  // eslint-disable-next-line rulesdir/no-api-side-effects-method
+  return API.makeRequestWithSideEffects(
+    SIDE_EFFECT_REQUEST_COMMANDS.GET_MISSING_ONYX_MESSAGES,
+    parameters,
+    getOnyxDataForOpenOrReconnect(),
+  );
+}
 
 /**
  * This promise is used so that deeplink component know when a transition is end.
@@ -569,7 +565,7 @@ export {
   // handleRestrictedEvent,
   // beginDeepLinkRedirect,
   // beginDeepLinkRedirectAfterTransition,
-  // getMissingOnyxUpdates,
+  getMissingOnyxUpdates,
   finalReconnectAppAfterActivatingReliableUpdates,
   // savePolicyDraftByNewWorkspace,
   // createWorkspaceWithPolicyDraftAndNavigateToIt,

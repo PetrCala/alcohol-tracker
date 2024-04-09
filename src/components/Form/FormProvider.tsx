@@ -1,5 +1,10 @@
 import lodashIsEqual from 'lodash/isEqual';
-import type {ForwardedRef, MutableRefObject, ReactNode} from 'react';
+import type {
+  ForwardedRef,
+  MutableRefObject,
+  ReactNode,
+  RefAttributes,
+} from 'react';
 import React, {
   createRef,
   forwardRef,
@@ -16,14 +21,16 @@ import type {
   TextInputSubmitEditingEventData,
   ViewStyle,
 } from 'react-native';
+import type {OnyxEntry} from 'react-native-onyx';
+import {withOnyx} from 'react-native-onyx';
 import useLocalize from '@hooks/useLocalize';
 import * as ValidationUtils from '@libs/ValidationUtils';
 import Visibility from '@libs/Visibility';
 import * as FormActions from '@userActions/FormActions';
 import CONST from '@src/CONST';
 import type {TranslationPaths} from '@src/languages/types';
-import type {OnyxFormKey} from '@src/DBKEYS';
-import ONYXKEYS from '@src/DBKEYS';
+import type {OnyxFormKey} from '@src/ONYXKEYS';
+import ONYXKEYS from '@src/ONYXKEYS';
 import type {Form} from '@src/types/form';
 import type {Network} from '@src/types/onyx';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
@@ -34,6 +41,7 @@ import type {
   FormInputErrors,
   FormOnyxValues,
   FormProps,
+  FormRef,
   InputComponentBaseProps,
   InputRefs,
   ValueTypeKey,
@@ -88,16 +96,15 @@ type FormProviderProps<TFormID extends OnyxFormKey = OnyxFormKey> =
       /** Should validate function be called when the value of the input is changed */
       shouldValidateOnChange?: boolean;
 
+      /** Whether to remove invisible characters from strings before validation and submission */
+      shouldTrimValues?: boolean;
+
       /** Styles that will be applied to the submit button only */
       submitButtonStyles?: StyleProp<ViewStyle>;
 
       /** Whether to apply flex to the submit button */
       submitFlexEnabled?: boolean;
     };
-
-type FormRef<TFormID extends OnyxFormKey = OnyxFormKey> = {
-  resetForm: (optionalValue: FormOnyxValues<TFormID>) => void;
-};
 
 function FormProvider(
   {
@@ -111,6 +118,7 @@ function FormProvider(
     enabledWhenOffline = false,
     draftValues,
     onSubmit,
+    shouldTrimValues = true,
     ...rest
   }: FormProviderProps,
   forwardedRef: ForwardedRef<FormRef>,
@@ -129,7 +137,9 @@ function FormProvider(
 
   const onValidate = useCallback(
     (values: FormOnyxValues, shouldClearServerError = true) => {
-      const trimmedStringValues = ValidationUtils.prepareValues(values);
+      const trimmedStringValues = shouldTrimValues
+        ? ValidationUtils.prepareValues(values)
+        : values;
 
       if (shouldClearServerError) {
         FormActions.clearErrors(formID);
@@ -200,7 +210,7 @@ function FormProvider(
 
       return touchedInputErrors;
     },
-    [errors, formID, validate],
+    [errors, formID, validate, shouldTrimValues],
   );
 
   // When locales change from another session of the same account,
@@ -212,7 +222,9 @@ function FormProvider(
     }
 
     // Prepare validation values
-    const trimmedStringValues = ValidationUtils.prepareValues(inputValues);
+    const trimmedStringValues = shouldTrimValues
+      ? ValidationUtils.prepareValues(inputValues)
+      : inputValues;
 
     // Validate in order to make sure the correct error translations are displayed,
     // making sure to not clear server errors if they exist
@@ -237,7 +249,9 @@ function FormProvider(
     }
 
     // Prepare values before submitting
-    const trimmedStringValues = ValidationUtils.prepareValues(inputValues);
+    const trimmedStringValues = shouldTrimValues
+      ? ValidationUtils.prepareValues(inputValues)
+      : inputValues;
 
     // Touches all form inputs, so we can validate the entire form
     Object.keys(inputRefs.current).forEach(
@@ -262,6 +276,7 @@ function FormProvider(
     network?.isOffline,
     onSubmit,
     onValidate,
+    shouldTrimValues,
   ]);
 
   const resetForm = useCallback(
@@ -465,6 +480,24 @@ function FormProvider(
 
 FormProvider.displayName = 'Form';
 
-export default forwardRef(FormProvider); // as <TFormID extends OnyxFormKey>(
-//   props: Omit<FormProviderProps<TFormID>, keyof FormProviderOnyxProps>,
-// ) => ReactNode;
+export default withOnyx<FormProviderProps, FormProviderOnyxProps>({
+  network: {
+    key: ONYXKEYS.NETWORK,
+  },
+  // withOnyx typings are not able to handle such generic cases like this one, since it's a generic component we need to cast the keys to any
+  formState: {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-explicit-any
+    key: ({formID}) => formID as any,
+  },
+  draftValues: {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-explicit-any
+    key: props => `${props.formID}Draft` as any,
+  },
+})(forwardRef(FormProvider)) as <TFormID extends OnyxFormKey>(
+  props: Omit<
+    FormProviderProps<TFormID> & RefAttributes<FormRef>,
+    keyof FormProviderOnyxProps
+  >,
+) => ReactNode;
+
+export type {FormProviderProps};
