@@ -11,7 +11,7 @@ type NotFoundScreenProps = {
 function NotFoundScreen({onBackButtonPress}: NotFoundScreenProps) {
   return (
     <ScreenWrapper testID={NotFoundScreen.displayName}>
-      <View style={{flex: 1, backgroundColor: 'pink'}}>
+      <View style={{flex: 1, backgroundColor: '#ffff99'}}>
         <Text>Not Found</Text>
       </View>
       {/* //   <FullPageNotFoundView shouldShow onBackButtonPress={onBackButtonPress} /> */}

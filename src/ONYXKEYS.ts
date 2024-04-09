@@ -31,15 +31,15 @@ const ONYXKEYS = {
   //   /** Boolean flag set whenever we are searching for reports in the server */
   //   IS_SEARCHING_FOR_REPORTS: 'isSearchingForReports',
 
-  //   /** Note: These are Persisted Requests - not all requests in the main queue as the key name might lead one to believe */
-  //   PERSISTED_REQUESTS: 'networkRequestQueue',
+  /** Note: These are Persisted Requests - not all requests in the main queue as the key name might lead one to believe */
+  PERSISTED_REQUESTS: 'networkRequestQueue',
 
   //   /** Stores current date */
   //   CURRENT_DATE: 'currentDate',
 
-  //   /** Credentials to authenticate the user */
-  //   CREDENTIALS: 'credentials',
-  //   STASHED_CREDENTIALS: 'stashedCredentials',
+  /** Credentials to authenticate the user */
+  CREDENTIALS: 'credentials',
+  STASHED_CREDENTIALS: 'stashedCredentials',
 
   //   // Contains loading data for the IOU feature (MoneyRequestModal, IOUDetail, & MoneyRequestPreview Components)
   //   IOU: 'iou',
@@ -577,10 +577,10 @@ type OnyxValuesMapping = {
   //   [ONYXKEYS.ACTIVE_CLIENTS]: string[];
   [ONYXKEYS.DEVICE_ID]: string;
   [ONYXKEYS.IS_SIDEBAR_LOADED]: boolean;
-  //   [ONYXKEYS.PERSISTED_REQUESTS]: OnyxTypes.Request[];
+  [ONYXKEYS.PERSISTED_REQUESTS]: OnyxTypes.Request[];
   //   [ONYXKEYS.CURRENT_DATE]: string;
-  //   [ONYXKEYS.CREDENTIALS]: OnyxTypes.Credentials;
-  //   [ONYXKEYS.STASHED_CREDENTIALS]: OnyxTypes.Credentials;
+  [ONYXKEYS.CREDENTIALS]: OnyxTypes.Credentials;
+  [ONYXKEYS.STASHED_CREDENTIALS]: OnyxTypes.Credentials;
   //   [ONYXKEYS.IOU]: OnyxTypes.IOU;
   //   [ONYXKEYS.MODAL]: OnyxTypes.Modal;
   [ONYXKEYS.NETWORK]: OnyxTypes.Network;

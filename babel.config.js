@@ -41,6 +41,7 @@ module.exports = {
           '@storage': './src/storage',
           '@styles': './src/styles',
           '@utils': './src/utils',
+          '@userActions': './src/libs/actions',
         },
       },
     ],

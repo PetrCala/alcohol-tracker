@@ -8,7 +8,8 @@ import Reanimated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import Logo from '@assets/images/new-expensify-dark.svg';
+// import Logo from '@assets/images/new-expensify-dark.svg';
+import * as KirokuImages from '@components/Icon/KirokuImages';
 import ImageSVG from '@components/ImageSVG';
 import useThemeStyles from '@hooks/useThemeStyles';
 import BootSplash from '@libs/BootSplash';
@@ -77,7 +78,8 @@ function SplashScreenHider({
         <ImageSVG
           contentFit="fill"
           style={{width: 100 * logoSizeRatio, height: 100 * logoSizeRatio}}
-          src={Logo}
+          // src={Logo}
+          src={KirokuImages.Logo}
         />
       </Reanimated.View>
     </Reanimated.View>

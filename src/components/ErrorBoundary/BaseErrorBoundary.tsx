@@ -1,11 +1,12 @@
 import React, {useState} from 'react';
 import {ErrorBoundary} from 'react-error-boundary';
 import BootSplash from '@libs/BootSplash';
-import GenericErrorScreen from '@screens/ErrorScreen/GenericErrorScreen';
+// import GenericErrorScreen from '@screens/ErrorScreen/GenericErrorScreen';
 // import UpdateRequiredView from '@pages/ErrorPage/UpdateRequiredView';
 import ForceUpdateModal from '@components/Modals/ForceUpdateModal';
 import CONST from '@src/CONST';
 import type {BaseErrorBoundaryProps, LogError} from './types';
+import NotFoundScreen from '@screens/ErrorScreen/NotFoundScreen';
 
 /**
  * This component captures an error in the child component tree and logs it to the server
@@ -30,7 +31,7 @@ function BaseErrorBoundary({
   return (
     <ErrorBoundary
       //   fallback={updateRequired ? <UpdateRequiredView /> : <GenericErrorPage />}
-      fallback={updateRequired ? <ForceUpdateModal /> : <GenericErrorScreen />}
+      fallback={updateRequired ? <ForceUpdateModal /> : <NotFoundScreen />}
       onError={catchError}>
       {children}
     </ErrorBoundary>

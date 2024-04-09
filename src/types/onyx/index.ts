@@ -3,6 +3,7 @@ import type {AccountCreationsList, DeviceId} from './AccountCreations';
 import type Config from './Config';
 import type {AppSettings, Maintenance} from './Config';
 import type {CapturedLogs, Log} from './Console';
+import type Credentials from './Credentials';
 import type DatabaseProps from './DatabaseProps';
 import type {UserId, UserList, UserArray, MeasureType} from './DatabaseCommon';
 import type Download from './Download';
@@ -57,6 +58,7 @@ export type {
   AppSettings,
   CapturedLogs,
   Config,
+  Credentials,
   DatabaseProps,
   DeviceId,
   Download,

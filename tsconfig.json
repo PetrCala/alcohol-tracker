@@ -54,8 +54,8 @@
       "@src/*": ["./src/*"],
       "@storage/*": ["./src/storage/*"],
       "@styles/*": ["./src/styles/*"],
-      "@utils/*": ["src/libs/*"]
-      // "@userActions/*": ["./src/libs/actions/*"]
+      "@utils/*": ["src/utils/*"],
+      "@userActions/*": ["./src/libs/actions/*"]
     }
   },
   "ts-node": {
