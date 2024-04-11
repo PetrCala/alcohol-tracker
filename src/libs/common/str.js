@@ -26,6 +26,18 @@ const Str = {
   UCFirst(str) {
     return str.substr(0, 1).toUpperCase() + str.substr(1);
   },
+
+  /**
+   * Extracts the domain name from the given email address
+   * (e.g. "domain.com" for "joe@domain.com").
+   *
+   * @param {String} email The email address.
+   *
+   * @returns {String} The domain name in the email address.
+   */
+  extractEmailDomain(email) {
+    return this.cutBefore(email, '@');
+  },
 };
 
 export default Str;

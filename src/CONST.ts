@@ -89,6 +89,14 @@ const CONST = {
     US: 'US',
     CZ: 'CZ',
   },
+  CUSTOM_STATUS_TYPES: {
+    NEVER: 'never',
+    THIRTY_MINUTES: 'thirtyMinutes',
+    ONE_HOUR: 'oneHour',
+    AFTER_TODAY: 'afterToday',
+    AFTER_WEEK: 'afterWeek',
+    CUSTOM: 'custom',
+  },
   DATE: {
     SQL_DATE_TIME: 'YYYY-MM-DD HH:mm:ss',
     FNS_FORMAT_STRING: 'yyyy-MM-dd',
@@ -108,6 +116,12 @@ const CONST = {
     MIN_DATE: '0001-01-01',
     ORDINAL_DAY_OF_MONTH: 'do',
   },
+
+  DATE_BIRTH: {
+    MIN_AGE: 18,
+    MAX_AGE: 150,
+  },
+
   DEBUG_CONSOLE: {
     LEVELS: {
       INFO: 'INFO',
@@ -116,9 +130,14 @@ const CONST = {
       DEBUG: 'DEBUG',
     },
   },
+  DEFAULT_AVATAR_COUNT: 24,
   DIRECTION: {
     LEFT: 'left',
     RIGHT: 'right',
+  },
+  DISPLAY_NAME: {
+    MAX_LENGTH: 50,
+    RESERVED_NAMES: ['Kiroku'],
   },
   DROPDOWN_BUTTON_SIZE: {
     LARGE: 'large',
@@ -129,6 +148,9 @@ const CONST = {
     STAGING: 'staging',
     PROD: 'production',
     TEST: 'test',
+  },
+  EMAIL: {
+    KIROKU: 'kiroku.alcohol.tracker@gmail.com',
   },
   EMPTY_ARRAY,
   EMPTY_OBJECT,
@@ -172,6 +194,8 @@ const CONST = {
     GATEWAY_TIMEOUT: 504,
     UNKNOWN_ERROR: 520,
   },
+  ICON_TYPE_ICON: 'icon',
+  ICON_TYPE_AVATAR: 'avatar',
   INVALID_CHARS: ['.', '#', '$', '[', ']'],
   JSON_CODE: {
     SUCCESS: 200,
@@ -263,6 +287,16 @@ const CONST = {
     MAX_REQUEST_RETRIES: 10,
   },
   DEFAULT_NETWORK_DATA: {isOffline: false},
+  MICROSECONDS_PER_MS: 1000,
+  RED_BRICK_ROAD_PENDING_ACTION: {
+    ADD: 'add',
+    DELETE: 'delete',
+    UPDATE: 'update',
+  },
+  BRICK_ROAD_INDICATOR_STATUS: {
+    ERROR: 'error',
+    INFO: 'info',
+  },
   NO_IMAGE: 'NO_IMAGE', // Used for the profile avatar when there is no image
   ONYX_UPDATE_TYPES: {
     HTTPS: 'https',
@@ -289,7 +323,75 @@ const CONST = {
     ROUTES: {
       REDUNDANT_SLASHES: /(\/{2,})|(\/$)/g,
     },
+    CODE_2FA: /^\d{6}$/,
+    NUMBER: /^[0-9]+$/,
+    CARD_NUMBER: /^[0-9]{15,16}$/,
+    CARD_SECURITY_CODE: /^[0-9]{3,4}$/,
+    CARD_EXPIRATION_DATE: /^(0[1-9]|1[0-2])([^0-9])?([0-9]{4}|([0-9]{2}))$/,
     // DATE_TIME_FORMAT: /^\d{2}-\d{2} \d{2}:\d{2} [AP]M$/,
+  },
+
+  /**
+   * Acceptable values for the `role` attribute on react native components.
+   *
+   * **IMPORTANT:** Not for use with the `accessibilityRole` prop, as it accepts different values, and new components
+   * should use the `role` prop instead.
+   */
+  ROLE: {
+    /** Use for elements with important, time-sensitive information. */
+    ALERT: 'alert',
+    /** Use for elements that act as buttons. */
+    BUTTON: 'button',
+    /** Use for elements representing checkboxes. */
+    CHECKBOX: 'checkbox',
+    /** Use for elements that allow a choice from multiple options. */
+    COMBOBOX: 'combobox',
+    /** Use with scrollable lists to represent a grid layout. */
+    GRID: 'grid',
+    /** Use for section headers or titles. */
+    HEADING: 'heading',
+    /** Use for image elements. */
+    IMG: 'img',
+    /** Use for elements that navigate to other pages or content. */
+    LINK: 'link',
+    /** Use to identify a list of items. */
+    LIST: 'list',
+    /** Use for a list of choices or options. */
+    MENU: 'menu',
+    /** Use for a container of multiple menus. */
+    MENUBAR: 'menubar',
+    /** Use for items within a menu. */
+    MENUITEM: 'menuitem',
+    /** Use when no specific role is needed. */
+    NONE: 'none',
+    /** Use for elements that don't require a specific role. */
+    PRESENTATION: 'presentation',
+    /** Use for elements showing progress of a task. */
+    PROGRESSBAR: 'progressbar',
+    /** Use for radio buttons. */
+    RADIO: 'radio',
+    /** Use for groups of radio buttons. */
+    RADIOGROUP: 'radiogroup',
+    /** Use for scrollbar elements. */
+    SCROLLBAR: 'scrollbar',
+    /** Use for text fields that are used for searching. */
+    SEARCHBOX: 'searchbox',
+    /** Use for adjustable elements like sliders. */
+    SLIDER: 'slider',
+    /** Use for a button that opens a list of choices. */
+    SPINBUTTON: 'spinbutton',
+    /** Use for elements providing a summary of app conditions. */
+    SUMMARY: 'summary',
+    /** Use for on/off switch elements. */
+    SWITCH: 'switch',
+    /** Use for tab elements in a tab list. */
+    TAB: 'tab',
+    /** Use for a list of tabs. */
+    TABLIST: 'tablist',
+    /** Use for timer elements. */
+    TIMER: 'timer',
+    /** Use for toolbars containing action buttons or components. */
+    TOOLBAR: 'toolbar',
   },
   SESSION_EXPIRY: 60 * 60 * 1000 * 12, // 12 hours
   SESSION_TYPES: {
@@ -352,6 +454,15 @@ const CONST = {
       WINE: 'Wine',
     },
   },
+
+  // 6 numeric digits
+  VALIDATE_CODE_REGEX_STRING: /^\d{6}$/,
+
+  // 8 alphanumeric characters
+  RECOVERY_CODE_REGEX_STRING: /^[a-zA-Z0-9]{8}$/,
+
+  WEEK_STARTS_ON: 1, // Monday
+  DEFAULT_TIME_ZONE: {automatic: true, selected: 'Europe/Prague'},
 
   ALL_COUNTRIES: {
     AF: 'Afghanistan',

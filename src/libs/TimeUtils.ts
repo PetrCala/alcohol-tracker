@@ -1,4 +1,4 @@
-import {getPlural} from './StringUtils';
+import {getPlural} from './StringUtilsKiroku';
 
 function isRecent(timestamp: number): boolean {
   const now = Date.now();

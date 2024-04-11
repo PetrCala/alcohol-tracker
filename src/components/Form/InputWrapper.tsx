@@ -5,8 +5,8 @@ import type {
 } from 'react';
 import React, {forwardRef, useContext} from 'react';
 import type {AnimatedTextInputRef} from '@components/RNTextInput';
-import RoomNameInput from '@components/RoomNameInput';
-import type RoomNameInputProps from '@components/RoomNameInput/types';
+// import RoomNameInput from '@components/RoomNameInput';
+// import type RoomNameInputProps from '@components/RoomNameInput/types';
 import TextInput from '@components/TextInput';
 import type {BaseTextInputProps} from '@components/TextInput/BaseTextInput/types';
 import {canUseTouchScreen} from '@libs/DeviceCapabilities';
@@ -20,12 +20,12 @@ import type {
 
 type TextInputBasedComponents = [
   ComponentType<BaseTextInputProps>,
-  ComponentType<RoomNameInputProps>,
+  // ComponentType<RoomNameInputProps>,
 ];
 
 const textInputBasedComponents: TextInputBasedComponents = [
   TextInput,
-  RoomNameInput,
+  // RoomNameInput,
 ];
 
 type ComputedComponentSpecificRegistrationParams = {

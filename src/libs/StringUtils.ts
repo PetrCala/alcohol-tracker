@@ -1,91 +1,82 @@
-﻿import CONST from '@src/CONST';
-import Clipboard from '@react-native-clipboard/clipboard';
-import seedrandom from 'seedrandom';
-import {Alert} from 'react-native';
+import _ from 'lodash';
+import CONST from '@src/CONST';
 
 /**
- * Clean a string to be used as a key for the Firebase Realtime Database.
- *
- * The function will:
- * 1.Replace any sequence of characters in the 'invalidChars' array or whitespace with a single underscore.
- * 2. Remove any white space from the string.
- * 3. Remove any diacritics.
- * 3. If the string is empty, an underscore will be returned
- *
- * This ensures that for any given input string, the cleaned result is consistent,
- * enabling it to be reliably used as a key in the database.
- *
- * @param rawStr - The raw input string to be cleaned.
- * @returns The cleaned string.
- *
- * @example
- * const rawNickname = "John.Doe #1 č ";
- * const key = cleanStringForFirebaseKey(rawNickname);
- * console.log(key);  // Outputs: "john_doe_1_c"
+ * Removes diacritical marks and non-alphabetic and non-latin characters from a string.
+ * @param str - The input string to be sanitized.
+ * @returns The sanitized string
  */
-function cleanStringForFirebaseKey(rawStr: string): string {
-  // Trim spaces and normalize the string to its canonical decomposed form.
-  const normalizedStr = rawStr.trim().normalize('NFD');
-
-  // Remove diacritical marks and replace invalid characters or whitespace with an underscore.
-  const intermediateStr = normalizedStr
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/-/g, '_') // No dashes
-    .split('')
-    .map(char =>
-      CONST.INVALID_CHARS.includes(char as any) || char.trim() === ''
-        ? '_'
-        : char,
-    )
-    .join('');
-
-  // Replace any sequence of underscores and/or whitespaces with a single underscore and convert to lowercase.
-  const cleanedStr = intermediateStr.replace(/[_\s]+/g, '_').toLowerCase();
-
-  // If the cleaned string is empty or just "_", return "_". Otherwise, remove trailing underscores.
-  return cleanedStr === '' || cleanedStr === '_'
-    ? '_'
-    : cleanedStr.replace(/_+$/, '');
+function sanitizeString(str: string): string {
+  return _.deburr(str)
+    .toLowerCase()
+    .replaceAll(CONST.REGEX.NON_ALPHABETIC_AND_NON_LATIN_CHARS, '');
 }
 
-function getPlural(input: number): string {
-  return input !== 1 ? 's' : '';
+/**
+ *  Check if the string would be empty if all invisible characters were removed.
+ */
+function isEmptyString(value: string): boolean {
+  // \p{C} matches all 'Other' characters
+  // \p{Z} matches all separators (spaces etc.)
+  // Source: http://www.unicode.org/reports/tr18/#General_Category_Property
+  let transformed = value.replace(CONST.REGEX.INVISIBLE_CHARACTERS_GROUPS, '');
+
+  // Remove other invisible characters that are not in the above unicode categories
+  transformed = transformed.replace(CONST.REGEX.OTHER_INVISIBLE_CHARACTERS, '');
+
+  // Check if after removing invisible characters the string is empty
+  return transformed === '';
 }
 
-/** If a string is equal to 00:00, return a dash. Otherwise return the string. */
-function nonMidnightString(string: string): string {
-  return string === '00:00' ? '-' : string;
-}
+/**
+ *  Remove invisible characters from a string except for spaces and format characters for emoji, and trim it.
+ */
+function removeInvisibleCharacters(value: string): string {
+  let result = value;
 
-function generateRandomString(length: number, seed: string): string {
-  const rng = seedrandom(seed); // Create a new seeded RNG
-  const characters =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-  const charactersLength = characters.length;
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(rng() * charactersLength));
+  // Remove spaces:
+  // - \u200B: zero-width space
+  // - \u00A0: non-breaking space
+  // - \u2060: word joiner
+  result = result.replace(/[\u200B\u00A0\u2060]/g, '');
+
+  // Temporarily replace all newlines with non-breaking spaces
+  // It is necessary because the next step removes all newlines because they are in the (Cc) category
+  result = result.replace(/\n/g, '\u00A0');
+
+  // Remove all characters from the 'Other' (C) category except for format characters (Cf)
+  // because some of them are used for emojis
+  result = result.replace(/[\p{Cc}\p{Cs}\p{Co}\p{Cn}]/gu, '');
+
+  // Replace all non-breaking spaces with newlines
+  result = result.replace(/\u00A0/g, '\n');
+
+  // Remove characters from the (Cf) category that are not used for emojis
+  result = result.replace(/[\u200E-\u200F]/g, '');
+
+  // Remove all characters from the 'Separator' (Z) category except for Space Separator (Zs)
+  result = result.replace(/[\p{Zl}\p{Zp}]/gu, '');
+
+  // If the result consist of only invisible characters, return an empty string
+  if (isEmptyString(result)) {
+    return '';
   }
-  return result;
+
+  return result.trim();
 }
 
-/** Copy a text to a clipboard */
-const copyToClipboard = (text: string, alert?: boolean) => {
-  Clipboard.setString(text);
-  if (alert) {
-    Alert.alert('Success', 'Copied to clipboard!');
-  }
-};
-
-function UCFirst(str: String) {
-  return str.substr(0, 1).toUpperCase() + str.substr(1);
+/**
+ *  Replace all CRLF with LF
+ *  @param value - The input string
+ *  @returns The string with all CRLF replaced with LF
+ */
+function normalizeCRLF(value?: string): string | undefined {
+  return value?.replace(/\r\n/g, '\n');
 }
 
-export {
-  nonMidnightString,
-  cleanStringForFirebaseKey,
-  getPlural,
-  generateRandomString,
-  copyToClipboard,
-  UCFirst,
+export default {
+  sanitizeString,
+  isEmptyString,
+  removeInvisibleCharacters,
+  normalizeCRLF,
 };

@@ -84,7 +84,6 @@ function Kiroku(
   const [isNavigationReady, setIsNavigationReady] = useState(false);
   const [isOnyxMigrated, setIsOnyxMigrated] = useState(false);
   const [isSplashHidden, setIsSplashHidden] = useState(false);
-  // const {translate} = useLocalize();
   const [initialUrl, setInitialUrl] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 

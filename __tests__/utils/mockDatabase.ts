@@ -28,7 +28,7 @@ import {
   getRandomDrinksList,
   getZeroDrinksList,
 } from '../../src/libs/DataHandling';
-import {cleanStringForFirebaseKey} from '../../src/libs/StringUtils';
+import {cleanStringForFirebaseKey} from '../../src/libs/StringUtilsKiroku';
 import {MOCK_SESSION_IDS, MOCK_USER_IDS} from './testsStatic';
 import CONST from '@src/CONST';
 

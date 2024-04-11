@@ -8,8 +8,8 @@ import createOnyxContext from './createOnyxContext';
 const [withNetwork, NetworkProvider, NetworkContext] = createOnyxContext(
   ONYXKEYS.NETWORK,
 );
-// const [withPersonalDetails, PersonalDetailsProvider, , usePersonalDetails] =
-//   createOnyxContext(ONYXKEYS.PERSONAL_DETAILS_LIST);
+const [withPersonalDetails, PersonalDetailsProvider, , usePersonalDetails] =
+  createOnyxContext(ONYXKEYS.PERSONAL_DETAILS_LIST);
 // const [withCurrentDate, CurrentDateProvider] = createOnyxContext(
 //   ONYXKEYS.CURRENT_DATE,
 // );
@@ -55,7 +55,7 @@ function OnyxProvider(props: OnyxProviderProps) {
     <ComposeProviders
       components={[
         NetworkProvider,
-        // PersonalDetailsProvider,
+        PersonalDetailsProvider,
         // ReportActionsDraftsProvider,
         // CurrentDateProvider,
         // BlockedFromConciergeProvider,
@@ -77,8 +77,8 @@ export default OnyxProvider;
 
 export {
   withNetwork,
-  //   withPersonalDetails,
-  //   usePersonalDetails,
+  withPersonalDetails,
+  usePersonalDetails,
   //   withReportActionsDrafts,
   //   withCurrentDate,
   //   withBlockedFromConcierge,

@@ -38,6 +38,7 @@ import ROUTES from '@src/ROUTES';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import ScreenWrapper from '@components/ScreenWrapper';
 import LoadingData from '@components/LoadingData';
+import useLocalize from '@hooks/useLocalize';
 
 type MainMenuButtonData = {
   label: string;
@@ -78,6 +79,7 @@ function MainMenuScreen({route}: MainMenuScreenProps) {
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
+  const {translate} = useLocalize();
   // Hooks
   const [FeedbackList, setFeedbackList] = useState<FeedbackList>({});
   // Modals
@@ -362,7 +364,7 @@ function MainMenuScreen({route}: MainMenuScreenProps) {
           <FeedbackPopup
             visible={feedbackModalVisible}
             transparent={true}
-            message={'What would you like us to improve?'}
+            message={translate('mainMenuScreen.improvementThoughts')}
             onRequestClose={() => setFeedbackModalVisible(false)}
             onSubmit={feedback => handleSubmitFeedback(feedback)}
           />
@@ -386,8 +388,8 @@ function MainMenuScreen({route}: MainMenuScreenProps) {
             visible={reauthentificateModalVisible}
             transparent={true}
             message={'Please retype your password\nin order to proceed'}
-            confirmationMessage={'Delete user'}
-            placeholder={'Password'}
+            confirmationMessage={translate('mainMenuScreen.deleteConfirmation')}
+            placeholder={translate('common.password')}
             onRequestClose={() => setReauthentificateModalVisible(false)}
             onSubmit={password => handleDeleteUser(password)}
             textContentType="password"

@@ -11,7 +11,7 @@ import {withOnyx} from 'react-native-onyx';
 import getComponentDisplayName from '@libs/getComponentDisplayName';
 import type {OnyxKey, OnyxValue} from '@src/ONYXKEYS';
 import type ChildrenProps from '@src/types/utils/ChildrenProps';
-import {UCFirst} from '@libs/StringUtils';
+import {UCFirst} from '@libs/StringUtilsKiroku';
 
 // Provider types
 type ProviderOnyxProps<TOnyxKey extends OnyxKey> = Record<

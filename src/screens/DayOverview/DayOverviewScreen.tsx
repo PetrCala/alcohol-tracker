@@ -42,7 +42,7 @@ import {getEmptySession} from '@libs/SessionUtils';
 import CONST from '@src/CONST';
 import {savePlaceholderSessionData} from '@database/drinkingSessions';
 import ScreenWrapper from '@components/ScreenWrapper';
-import {nonMidnightString} from '@libs/StringUtils';
+import {nonMidnightString} from '@libs/StringUtilsKiroku';
 
 type DayOverviewScreenProps = StackScreenProps<
   DayOverviewNavigatorParamList,

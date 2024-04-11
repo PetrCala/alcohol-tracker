@@ -31,6 +31,12 @@ import type {
   OnyxUpdateEvent,
   OnyxUpdatesFromServer,
 } from './OnyxUpdatesFromServer';
+
+import type {
+  PersonalDetailsList,
+  PersonalDetailsMetadata,
+} from './PersonalDetails';
+import type PersonalDetails from './PersonalDetails';
 import type Preferences from './Preferences';
 import type {
   PreferencesList,
@@ -92,6 +98,9 @@ export type {
   NicknameToIdList,
   OnyxUpdateEvent,
   OnyxUpdatesFromServer,
+  PersonalDetailsList,
+  PersonalDetailsMetadata,
+  PersonalDetails,
   Preferences,
   PreferencesList,
   Profile,

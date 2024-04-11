@@ -61,6 +61,7 @@ import useAsyncQueue from '@hooks/useAsyncQueue';
 import type DeepValueOf from '@src/types/utils/DeepValueOf';
 import ScreenWrapper from '@components/ScreenWrapper';
 import DrinkData from '@libs/DrinkData';
+import useLocalize from '@hooks/useLocalize';
 
 type LiveSessionScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -72,6 +73,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   // Context, database, and authentification
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
+  const {translate} = useLocalize();
   const {isOnline} = useUserConnection();
   const {preferences} = useDatabaseData();
   const [session, setSession] = useState<DrinkingSession | null>(null);
@@ -97,7 +99,9 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   const [isPlaceholderSession, setIsPlaceholderSession] =
     useState<boolean>(false);
   const sessionIsLive = session?.ongoing ? true : false;
-  const deleteSessionWording = session?.ongoing ? 'Discard' : 'Delete';
+  const deleteSessionWording = session?.ongoing
+    ? translate('common.discard')
+    : translate('common.delete');
   const scrollViewRef = useRef<ScrollView>(null); // To navigate the view
 
   const {isPending, enqueueUpdate} = useAsyncQueue(
@@ -119,8 +123,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       );
       setDbSyncSuccessful(true);
     } catch (error: any) {
-      console.log('Could not save the drinking session data', error.message);
-      throw new Error('Could not save the drinking session data');
+      throw new Error(translate('LiveSessionScreen.error.save'));
     }
   };
 
@@ -230,12 +233,12 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       return;
     }
     if (totalUnits > CONST.MAX_ALLOWED_UNITS) {
-      console.log('Cannot save this session');
+      console.log(translate('LiveSessionScreen.error.save'));
       return null;
     }
     if (totalUnits > 0) {
       try {
-        setLoadingText('Saving your session...');
+        setLoadingText(translate('LiveSessionScreen.saving'));
         setSessionFinished(true); // No more db syncs
         const newSessionData: DrinkingSession = {
           ...session,
@@ -260,8 +263,8 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
         await removePlaceholderSessionData(db, userId);
       } catch (error: any) {
         Alert.alert(
-          'Session save failed',
-          'Failed to save drinking session data: ' + error.message,
+          translate('LiveSessionScreen.error.saveTitle'),
+          translate('LiveSessionScreen.error.save'),
         );
       } finally {
         // Reroute to session summary, do not allow user to return

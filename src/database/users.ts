@@ -17,7 +17,7 @@ import {
 } from 'firebase/auth';
 import {getUniqueId} from 'react-native-device-info';
 import {Alert} from 'react-native';
-import {cleanStringForFirebaseKey} from '../libs/StringUtils';
+import {cleanStringForFirebaseKey} from '../libs/StringUtilsKiroku';
 import DBPATHS from './DBPATHS';
 import {readDataOnce} from './baseFunctions';
 import {

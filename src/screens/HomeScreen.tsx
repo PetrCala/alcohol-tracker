@@ -52,7 +52,7 @@ import {getEmptySession} from '@libs/SessionUtils';
 import DBPATHS from '@database/DBPATHS';
 import type {StatData} from '@components/Items/StatOverview';
 import {StatsOverview} from '@components/Items/StatOverview';
-import {getPlural} from '@libs/StringUtils';
+import {getPlural} from '@libs/StringUtilsKiroku';
 import {getReceivedRequestsCount} from '@libs/FriendUtils';
 import FriendRequestCounter from '@components/Social/FriendRequestCounter';
 import ScreenWrapper from '@components/ScreenWrapper';

@@ -39,7 +39,7 @@ import {
   getDefaultUserStatus,
   pushNewUserInfo,
 } from '@database/users';
-import {cleanStringForFirebaseKey} from '@libs/StringUtils';
+import {cleanStringForFirebaseKey} from '@libs/StringUtilsKiroku';
 import {
   acceptFriendRequest,
   deleteFriendRequest,

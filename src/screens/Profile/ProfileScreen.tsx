@@ -44,7 +44,7 @@ import ROUTES from '@src/ROUTES';
 import type {DateData} from 'react-native-calendars';
 import useFetchData from '@hooks/useFetchData';
 import {sendFriendRequest} from '@database/friends';
-import {getPlural} from '@libs/StringUtils';
+import {getPlural} from '@libs/StringUtilsKiroku';
 import ScreenWrapper from '@components/ScreenWrapper';
 import type {FetchDataKeys} from '@hooks/useFetchData/types';
 import {FetchData} from '@hooks/useFetchData/types';

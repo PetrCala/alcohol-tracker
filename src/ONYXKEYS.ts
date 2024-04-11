@@ -34,8 +34,8 @@ const ONYXKEYS = {
   /** Note: These are Persisted Requests - not all requests in the main queue as the key name might lead one to believe */
   PERSISTED_REQUESTS: 'networkRequestQueue',
 
-  //   /** Stores current date */
-  //   CURRENT_DATE: 'currentDate',
+  /** Stores current date */
+  CURRENT_DATE: 'currentDate',
 
   /** Credentials to authenticate the user */
   CREDENTIALS: 'credentials',
@@ -56,18 +56,18 @@ const ONYXKEYS = {
   //   // keep edit message focus state
   //   INPUT_FOCUSED: 'inputFocused',
 
-  //   /** Contains all the personalDetails the user has access to, keyed by accountID */
-  //   PERSONAL_DETAILS_LIST: 'personalDetailsList',
+  /** Contains all the personalDetails the user has access to, keyed by accountID */
+  PERSONAL_DETAILS_LIST: 'personalDetailsList',
 
   //   /** Contains all the private personal details of the user */
   //   PRIVATE_PERSONAL_DETAILS: 'private_personalDetails',
 
-  //   /**
-  //    * PERSONAL_DETAILS_METADATA is a perf optimization used to hold loading states of each entry in PERSONAL_DETAILS_LIST.
-  //    * A lot of components are connected to the PERSONAL_DETAILS_LIST entity and do not care about the loading state.
-  //    * Setting the loading state directly on the personal details entry caused a lot of unnecessary re-renders.
-  //    */
-  //   PERSONAL_DETAILS_METADATA: 'personalDetailsMetadata',
+  /**
+   * PERSONAL_DETAILS_METADATA is a perf optimization used to hold loading states of each entry in PERSONAL_DETAILS_LIST.
+   * A lot of components are connected to the PERSONAL_DETAILS_LIST entity and do not care about the loading state.
+   * Setting the loading state directly on the personal details entry caused a lot of unnecessary re-renders.
+   */
+  PERSONAL_DETAILS_METADATA: 'personalDetailsMetadata',
 
   //   /** Contains all the info for Tasks */
   //   TASK: 'task',
@@ -90,9 +90,9 @@ const ONYXKEYS = {
   //   /** Indicates that a request to join a screen share with a GuidesPlus agent was received */
   //   SCREEN_SHARE_REQUEST: 'screenShareRequest',
 
-  //   /** Saves the current country code which is displayed when the user types a phone number without
-  //    *  an international code */
-  //   COUNTRY_CODE: 'countryCode',
+  /** Saves the current country code which is displayed when the user types a phone number without
+   *  an international code */
+  COUNTRY_CODE: 'countryCode',
 
   //   /**  The 'country' field in this code represents the return country based on the user's IP address.
   //    * It is expected to provide a two-letter country code such as US for United States, and so on. */
@@ -578,7 +578,7 @@ type OnyxValuesMapping = {
   [ONYXKEYS.DEVICE_ID]: string;
   [ONYXKEYS.IS_SIDEBAR_LOADED]: boolean;
   [ONYXKEYS.PERSISTED_REQUESTS]: OnyxTypes.Request[];
-  //   [ONYXKEYS.CURRENT_DATE]: string;
+  [ONYXKEYS.CURRENT_DATE]: string;
   [ONYXKEYS.CREDENTIALS]: OnyxTypes.Credentials;
   [ONYXKEYS.STASHED_CREDENTIALS]: OnyxTypes.Credentials;
   //   [ONYXKEYS.IOU]: OnyxTypes.IOU;
@@ -587,18 +587,18 @@ type OnyxValuesMapping = {
   //   [ONYXKEYS.NEW_GROUP_CHAT_DRAFT]: OnyxTypes.NewGroupChatDraft;
   //   [ONYXKEYS.CUSTOM_STATUS_DRAFT]: OnyxTypes.CustomStatusDraft;
   //   [ONYXKEYS.INPUT_FOCUSED]: boolean;
-  //   [ONYXKEYS.PERSONAL_DETAILS_LIST]: OnyxTypes.PersonalDetailsList;
+  [ONYXKEYS.PERSONAL_DETAILS_LIST]: OnyxTypes.PersonalDetailsList;
   //   [ONYXKEYS.PRIVATE_PERSONAL_DETAILS]: OnyxTypes.PrivatePersonalDetails;
-  //   [ONYXKEYS.PERSONAL_DETAILS_METADATA]: Record<
-  //     string,
-  //     OnyxTypes.PersonalDetailsMetadata
-  //   >;
+  [ONYXKEYS.PERSONAL_DETAILS_METADATA]: Record<
+    string,
+    OnyxTypes.PersonalDetailsMetadata
+  >;
   //   [ONYXKEYS.TASK]: OnyxTypes.Task;
   //   [ONYXKEYS.WORKSPACE_RATE_AND_UNIT]: OnyxTypes.WorkspaceRateAndUnit;
   //   [ONYXKEYS.CURRENCY_LIST]: OnyxTypes.CurrencyList;
   [ONYXKEYS.UPDATE_AVAILABLE]: boolean;
   //   [ONYXKEYS.SCREEN_SHARE_REQUEST]: OnyxTypes.ScreenShareRequest;
-  //   [ONYXKEYS.COUNTRY_CODE]: number;
+  [ONYXKEYS.COUNTRY_CODE]: number;
   //   [ONYXKEYS.COUNTRY]: string;
   [ONYXKEYS.USER]: OnyxTypes.User;
   //   [ONYXKEYS.USER_LOCATION]: OnyxTypes.UserLocation;
