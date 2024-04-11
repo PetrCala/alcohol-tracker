@@ -1,15 +1,42 @@
 // Taken and modified form the Expensify GitHub
 // Source: https://github.com/Expensify/App/blob/main/src/CONST.ts
 
-// import Config from 'react-native-config';
+import Config from 'react-native-config';
+import * as KeyCommand from 'react-native-key-command';
 
 // Creating a default array and object this way because objects ({}) and arrays ([]) are not stable types.
 // Freezing the array ensures that it cannot be unintentionally modified.
 const EMPTY_ARRAY = Object.freeze([]);
 const EMPTY_OBJECT = Object.freeze({});
 
+const PLATFORM_OS_MACOS = 'Mac OS';
+const PLATFORM_IOS = 'iOS';
+
 const ANDROID_PACKAGE_NAME = 'com.alcohol_tracker';
 const GH_PAGES_URL = 'https://petrcala.github.io/Kiroku';
+
+const keyModifierControl =
+  KeyCommand?.constants?.keyModifierControl ?? 'keyModifierControl';
+const keyModifierCommand =
+  KeyCommand?.constants?.keyModifierCommand ?? 'keyModifierCommand';
+const keyModifierShiftControl =
+  KeyCommand?.constants?.keyModifierShiftControl ?? 'keyModifierShiftControl';
+const keyModifierShiftCommand =
+  KeyCommand?.constants?.keyModifierShiftCommand ?? 'keyModifierShiftCommand';
+const keyInputEscape =
+  KeyCommand?.constants?.keyInputEscape ?? 'keyInputEscape';
+const keyInputEnter = KeyCommand?.constants?.keyInputEnter ?? 'keyInputEnter';
+const keyInputUpArrow =
+  KeyCommand?.constants?.keyInputUpArrow ?? 'keyInputUpArrow';
+const keyInputDownArrow =
+  KeyCommand?.constants?.keyInputDownArrow ?? 'keyInputDownArrow';
+const keyInputLeftArrow =
+  KeyCommand?.constants?.keyInputLeftArrow ?? 'keyInputLeftArrow';
+const keyInputRightArrow =
+  KeyCommand?.constants?.keyInputRightArrow ?? 'keyInputRightArrow';
+
+// describes if a shortcut key can cause navigation
+const KEYBOARD_SHORTCUT_NAVIGATION_TYPE = 'NAVIGATION_SHORTCUT';
 
 const CONST = {
   ACCOUNT_CREATION_LIMIT: 3,
@@ -206,6 +233,153 @@ const CONST = {
     UNABLE_TO_RETRY: 'unableToRetry',
     UPDATE_REQUIRED: 426,
   },
+  PLATFORM_SPECIFIC_KEYS: {
+    CTRL: {
+      DEFAULT: 'control',
+      [PLATFORM_OS_MACOS]: 'meta',
+      [PLATFORM_IOS]: 'meta',
+    },
+    SHIFT: {
+      DEFAULT: 'shift',
+    },
+  },
+  KEYBOARD_SHORTCUTS: {
+    SEARCH: {
+      descriptionKey: 'search',
+      shortcutKey: 'K',
+      modifiers: ['CTRL'],
+      trigger: {
+        DEFAULT: {input: 'k', modifierFlags: keyModifierControl},
+        [PLATFORM_OS_MACOS]: {input: 'k', modifierFlags: keyModifierCommand},
+        [PLATFORM_IOS]: {input: 'k', modifierFlags: keyModifierCommand},
+      },
+      type: KEYBOARD_SHORTCUT_NAVIGATION_TYPE,
+    },
+    NEW_CHAT: {
+      descriptionKey: 'newChat',
+      shortcutKey: 'K',
+      modifiers: ['CTRL', 'SHIFT'],
+      trigger: {
+        DEFAULT: {input: 'k', modifierFlags: keyModifierShiftControl},
+        [PLATFORM_OS_MACOS]: {
+          input: 'k',
+          modifierFlags: keyModifierShiftCommand,
+        },
+        [PLATFORM_IOS]: {input: 'k', modifierFlags: keyModifierShiftCommand},
+      },
+      type: KEYBOARD_SHORTCUT_NAVIGATION_TYPE,
+    },
+    SHORTCUTS: {
+      descriptionKey: 'openShortcutDialog',
+      shortcutKey: 'J',
+      modifiers: ['CTRL'],
+      trigger: {
+        DEFAULT: {input: 'j', modifierFlags: keyModifierControl},
+        [PLATFORM_OS_MACOS]: {input: 'j', modifierFlags: keyModifierCommand},
+        [PLATFORM_IOS]: {input: 'j', modifierFlags: keyModifierCommand},
+      },
+    },
+    ESCAPE: {
+      descriptionKey: 'escape',
+      shortcutKey: 'Escape',
+      modifiers: [],
+      trigger: {
+        DEFAULT: {input: keyInputEscape},
+        [PLATFORM_OS_MACOS]: {input: keyInputEscape},
+        [PLATFORM_IOS]: {input: keyInputEscape},
+      },
+    },
+    ENTER: {
+      descriptionKey: null,
+      shortcutKey: 'Enter',
+      modifiers: [],
+      trigger: {
+        DEFAULT: {input: keyInputEnter},
+        [PLATFORM_OS_MACOS]: {input: keyInputEnter},
+        [PLATFORM_IOS]: {input: keyInputEnter},
+      },
+    },
+    CTRL_ENTER: {
+      descriptionKey: null,
+      shortcutKey: 'Enter',
+      modifiers: ['CTRL'],
+      trigger: {
+        DEFAULT: {input: keyInputEnter, modifierFlags: keyModifierControl},
+        [PLATFORM_OS_MACOS]: {
+          input: keyInputEnter,
+          modifierFlags: keyModifierCommand,
+        },
+        [PLATFORM_IOS]: {
+          input: keyInputEnter,
+          modifierFlags: keyModifierCommand,
+        },
+      },
+    },
+    COPY: {
+      descriptionKey: 'copy',
+      shortcutKey: 'C',
+      modifiers: ['CTRL'],
+      trigger: {
+        DEFAULT: {input: 'c', modifierFlags: keyModifierControl},
+        [PLATFORM_OS_MACOS]: {input: 'c', modifierFlags: keyModifierCommand},
+        [PLATFORM_IOS]: {input: 'c', modifierFlags: keyModifierCommand},
+      },
+    },
+    ARROW_UP: {
+      descriptionKey: null,
+      shortcutKey: 'ArrowUp',
+      modifiers: [],
+      trigger: {
+        DEFAULT: {input: keyInputUpArrow},
+        [PLATFORM_OS_MACOS]: {input: keyInputUpArrow},
+        [PLATFORM_IOS]: {input: keyInputUpArrow},
+      },
+    },
+    ARROW_DOWN: {
+      descriptionKey: null,
+      shortcutKey: 'ArrowDown',
+      modifiers: [],
+      trigger: {
+        DEFAULT: {input: keyInputDownArrow},
+        [PLATFORM_OS_MACOS]: {input: keyInputDownArrow},
+        [PLATFORM_IOS]: {input: keyInputDownArrow},
+      },
+    },
+    ARROW_LEFT: {
+      descriptionKey: null,
+      shortcutKey: 'ArrowLeft',
+      modifiers: [],
+      trigger: {
+        DEFAULT: {input: keyInputLeftArrow},
+        [PLATFORM_OS_MACOS]: {input: keyInputLeftArrow},
+        [PLATFORM_IOS]: {input: keyInputLeftArrow},
+      },
+    },
+    ARROW_RIGHT: {
+      descriptionKey: null,
+      shortcutKey: 'ArrowRight',
+      modifiers: [],
+      trigger: {
+        DEFAULT: {input: keyInputRightArrow},
+        [PLATFORM_OS_MACOS]: {input: keyInputRightArrow},
+        [PLATFORM_IOS]: {input: keyInputRightArrow},
+      },
+    },
+    TAB: {
+      descriptionKey: null,
+      shortcutKey: 'Tab',
+      modifiers: [],
+    },
+  },
+  KEYBOARD_SHORTCUTS_TYPES: {
+    NAVIGATION_SHORTCUT: KEYBOARD_SHORTCUT_NAVIGATION_TYPE,
+  },
+  KEYBOARD_SHORTCUT_KEY_DISPLAY_NAME: {
+    CONTROL: 'CTRL',
+    ESCAPE: 'ESC',
+    META: 'CMD',
+    SHIFT: 'Shift',
+  },
   LOCAL_IMAGE_PREFIX: 'file://',
   LOCALES: {
     EN: 'en',
@@ -388,11 +562,14 @@ const CONST = {
     TAB: 'tab',
     /** Use for a list of tabs. */
     TABLIST: 'tablist',
+    /** Use for text elements */
+    TEXT: 'text',
     /** Use for timer elements. */
     TIMER: 'timer',
     /** Use for toolbars containing action buttons or components. */
     TOOLBAR: 'toolbar',
   },
+  SELECTION_SCRAPER_HIDDEN_ELEMENT: 'selection-scrapper-hidden-element',
   SESSION_EXPIRY: 60 * 60 * 1000 * 12, // 12 hours
   SESSION_TYPES: {
     LIVE: 'live',
@@ -460,6 +637,24 @@ const CONST = {
 
   // 8 alphanumeric characters
   RECOVERY_CODE_REGEX_STRING: /^[a-zA-Z0-9]{8}$/,
+
+  // The server has a WAF (Web Application Firewall) which will strip out HTML/XML tags using this regex pattern.
+  // It's copied here so that the same regex pattern can be used in form validations to be consistent with the server.
+  VALIDATE_FOR_HTML_TAG_REGEX: /<([^>\s]+)(?:[^>]*?)>/g,
+
+  VALIDATE_FOR_LEADINGSPACES_HTML_TAG_REGEX: /<([\s]+.+[\s]*)>/g,
+
+  WHITELISTED_TAGS: [/<>/, /< >/, /<->/, /<-->/, /<br>/, /<br\/>/],
+
+  /**
+   * native IDs for close buttons in Overlay component
+   */
+  OVERLAY: {
+    TOP_BUTTON_NATIVE_ID: 'overLayTopButton',
+    BOTTOM_BUTTON_NATIVE_ID: 'overLayBottomButton',
+  },
+
+  BACK_BUTTON_NATIVE_ID: 'backButton',
 
   WEEK_STARTS_ON: 1, // Monday
   DEFAULT_TIME_ZONE: {automatic: true, selected: 'Europe/Prague'},

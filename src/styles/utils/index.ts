@@ -11,8 +11,9 @@ import type {
 } from 'react-native';
 import type {EdgeInsets} from 'react-native-safe-area-context';
 import type {ValueOf} from 'type-fest';
+import type ImageSVGProps from '@components/ImageSVG/types';
 // import * as Browser from '@libs/Browser';
-// import * as UserUtils from '@libs/UserUtils';
+import * as UserUtils from '@libs/UserUtils';
 // eslint-disable-next-line no-restricted-imports
 import {defaultTheme} from '@styles/theme';
 import colors from '@styles/theme/colors';
@@ -42,27 +43,6 @@ import type {
   TextColorStyle,
   WorkspaceColorStyle,
 } from './types';
-
-const workspaceColorOptions: WorkspaceColorStyle[] = [
-  {backgroundColor: colors.blue200, fill: colors.blue700},
-  {backgroundColor: colors.blue400, fill: colors.blue800},
-  {backgroundColor: colors.blue700, fill: colors.blue200},
-  {backgroundColor: colors.green200, fill: colors.green700},
-  {backgroundColor: colors.green400, fill: colors.green800},
-  {backgroundColor: colors.green700, fill: colors.green200},
-  {backgroundColor: colors.yellow200, fill: colors.yellow700},
-  {backgroundColor: colors.yellow400, fill: colors.yellow800},
-  {backgroundColor: colors.yellow700, fill: colors.yellow200},
-  {backgroundColor: colors.tangerine200, fill: colors.tangerine700},
-  {backgroundColor: colors.tangerine400, fill: colors.tangerine800},
-  {backgroundColor: colors.tangerine700, fill: colors.tangerine400},
-  {backgroundColor: colors.pink200, fill: colors.pink700},
-  {backgroundColor: colors.pink400, fill: colors.pink800},
-  {backgroundColor: colors.pink700, fill: colors.pink200},
-  {backgroundColor: colors.ice200, fill: colors.ice700},
-  {backgroundColor: colors.ice400, fill: colors.ice800},
-  {backgroundColor: colors.ice700, fill: colors.ice200},
-];
 
 const avatarBorderSizes: Partial<Record<AvatarSizeName, number>> = {
   [CONST.AVATAR_SIZE.SMALL_SUBSCRIPT]: variables.componentBorderRadiusSmall,
@@ -260,9 +240,9 @@ function getAvatarBorderWidth(size: AvatarSizeName): ViewStyle {
  * Return the border radius for an avatar
  */
 function getAvatarBorderRadius(size: AvatarSizeName, type?: string): ViewStyle {
-  //   if (type === CONST.ICON_TYPE_WORKSPACE) {
-  //     return {borderRadius: avatarBorderSizes[size]};
-  //   }
+  // if (type === CONST.ICON_TYPE_WORKSPACE) {
+  //   return {borderRadius: avatarBorderSizes[size]};
+  // }
 
   // Default to rounded border
   return {borderRadius: variables.buttonBorderRadius};
@@ -277,18 +257,6 @@ function getAvatarBorderStyle(size: AvatarSizeName, type: string): ViewStyle {
     ...getAvatarBorderRadius(size, type),
   };
 }
-
-/**
- * Helper method to return workspace avatar color styles
- */
-// function getDefaultWorkspaceAvatarColor(workspaceName: string): ViewStyle {
-//   const colorHash = UserUtils.hashText(
-//     workspaceName.trim(),
-//     workspaceColorOptions.length,
-//   );
-
-//   return workspaceColorOptions[colorHash];
-// }
 
 type SafeAreaPadding = {
   paddingTop: number;
@@ -572,21 +540,94 @@ function getModalPaddingStyles({
   };
 }
 
-// /**
-//  * Takes fontStyle and fontWeight and returns the correct fontFamily
-//  */
-// function getFontFamilyMonospace({fontStyle, fontWeight}: TextStyle): string {
-//   const italic =
-//     fontStyle === 'italic' && FontUtils.fontFamily.platform.MONOSPACE_ITALIC;
-//   const bold =
-//     fontWeight === 'bold' && FontUtils.fontFamily.platform.MONOSPACE_BOLD;
-//   const italicBold =
-//     italic && bold && FontUtils.fontFamily.platform.MONOSPACE_BOLD_ITALIC;
+function getIconWidthAndHeightStyle(
+  small: boolean,
+  medium: boolean,
+  large: boolean,
+  width: number,
+  height: number,
+  hasText?: boolean,
+): Pick<ImageSVGProps, 'width' | 'height'> {
+  switch (true) {
+    case small:
+      return {
+        width: hasText ? variables.iconSizeExtraSmall : variables.iconSizeSmall,
+        height: hasText
+          ? variables.iconSizeExtraSmall
+          : variables?.iconSizeSmall,
+      };
+    case medium:
+      return {
+        width: hasText ? variables.iconSizeSmall : variables.iconSizeNormal,
+        height: hasText ? variables.iconSizeSmall : variables.iconSizeNormal,
+      };
+    case large:
+      return {
+        width: hasText ? variables.iconSizeNormal : variables.iconSizeLarge,
+        height: hasText ? variables.iconSizeNormal : variables.iconSizeLarge,
+      };
+    default: {
+      return {width, height};
+    }
+  }
+}
 
-//   return (
-//     italicBold || bold || italic || FontUtils.fontFamily.platform.MONOSPACE
-//   );
-// }
+function getButtonStyleWithIcon(
+  styles: ThemeStyles,
+  small: boolean,
+  medium: boolean,
+  large: boolean,
+  hasIcon?: boolean,
+  hasText?: boolean,
+  shouldShowRightIcon?: boolean,
+): ViewStyle | undefined {
+  const useDefaultButtonStyles =
+    Boolean(hasIcon && shouldShowRightIcon) ||
+    Boolean(!hasIcon && !shouldShowRightIcon);
+  switch (true) {
+    case small: {
+      const verticalStyle = hasIcon ? styles.pl2 : styles.pr2;
+      return useDefaultButtonStyles
+        ? styles.buttonSmall
+        : {...styles.buttonSmall, ...(hasText ? verticalStyle : styles.ph0)};
+    }
+    case medium: {
+      const verticalStyle = hasIcon ? styles.pl3 : styles.pr3;
+      return useDefaultButtonStyles
+        ? styles.buttonMedium
+        : {...styles.buttonMedium, ...(hasText ? verticalStyle : styles.ph0)};
+    }
+    case large: {
+      const verticalStyle = hasIcon ? styles.pl4 : styles.pr4;
+      return useDefaultButtonStyles
+        ? styles.buttonLarge
+        : {...styles.buttonLarge, ...(hasText ? verticalStyle : styles.ph0)};
+    }
+    default: {
+      if (hasIcon && !hasText) {
+        return {...styles.buttonMedium, ...styles.ph0};
+      }
+
+      return undefined;
+    }
+  }
+}
+
+/**
+ * Takes fontStyle and fontWeight and returns the correct fontFamily
+ */
+function getFontFamilyMonospace({fontStyle, fontWeight}: TextStyle): string {
+  const italic =
+    fontStyle === 'italic' && FontUtils.fontFamily.platform.MONOSPACE_ITALIC;
+  const bold =
+    fontWeight === 'bold' && FontUtils.fontFamily.platform.MONOSPACE_BOLD;
+  const italicBold =
+    italic && bold && FontUtils.fontFamily.platform.MONOSPACE_BOLD_ITALIC;
+
+  return (
+    italicBold || bold || italic || FontUtils.fontFamily.platform.MONOSPACE
+  );
+}
 
 /**
  * Returns the font size for the HTML code tag renderer.
@@ -989,14 +1030,33 @@ const staticStyleUtils = {
   combineStyles,
   displayIfTrue,
   getAmountFontSizeAndLineHeight,
+  getAvatarBorderRadius,
+  getAvatarBorderStyle,
+  getAvatarBorderWidth,
+  getAvatarExtraFontSizeStyle,
+  getAvatarSize,
+  getAvatarWidthStyle,
+  getBackgroundAndBorderStyle,
+  getBackgroundColorStyle,
+  getBackgroundColorWithOpacityStyle,
+  getPaddingLeft,
+  hasSafeAreas,
+  getHeight,
+  getMinimumHeight,
+  getMinimumWidth,
+  getMaximumHeight,
+  getMaximumWidth,
+  fade,
+  getHorizontalStackedAvatarBorderStyle,
+  getHorizontalStackedAvatarStyle,
+  getHorizontalStackedOverlayAvatarStyle,
   getBorderColorStyle,
   getCheckboxPressableStyle,
   getComposeTextAreaPadding,
   getColorStyle,
-  // getDefaultWorkspaceAvatarColor,
   getDirectionStyle,
   getDropDownButtonHeight,
-  // getFontFamilyMonospace,
+  getFontFamilyMonospace,
   getCodeFontSize,
   getFontSizeStyle,
   getLineHeightStyle,
@@ -1015,13 +1075,15 @@ const staticStyleUtils = {
   getZoomSizingStyle,
   parseStyleAsArray,
   parseStyleFromFunction,
+  // getFileExtensionColorCode,
   getNavigationModalCardStyle,
   getCardStyles,
   getOpacityStyle,
   getMultiGestureCanvasContainerStyle,
   // getSignInBgStyles,
+  // getIconWidthAndHeightStyle,
+  getButtonStyleWithIcon,
 };
-
 const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
   ...staticStyleUtils,
   // TODO quite important potentially
@@ -1219,42 +1281,42 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
   //   return isDragging ? styles.cursorGrabbing : styles.cursorZoomOut;
   // },
 
-  // /**
-  //  * Returns container styles for showing the icons in MultipleAvatars/SubscriptAvatar
-  //  */
-  // getContainerStyles: (size: string, isInReportAction = false): ViewStyle[] => {
-  //   let containerStyles: ViewStyle[];
+  /**
+   * Returns container styles for showing the icons in MultipleAvatars/SubscriptAvatar
+   */
+  getContainerStyles: (size: string, isInReportAction = false): ViewStyle[] => {
+    let containerStyles: ViewStyle[];
 
-  //   switch (size) {
-  //     case CONST.AVATAR_SIZE.SMALL:
-  //       containerStyles = [
-  //         styles.emptyAvatarSmall,
-  //         styles.emptyAvatarMarginSmall,
-  //       ];
-  //       break;
-  //     case CONST.AVATAR_SIZE.SMALLER:
-  //       containerStyles = [
-  //         styles.emptyAvatarSmaller,
-  //         styles.emptyAvatarMarginSmaller,
-  //       ];
-  //       break;
-  //     case CONST.AVATAR_SIZE.MEDIUM:
-  //       containerStyles = [styles.emptyAvatarMedium, styles.emptyAvatarMargin];
-  //       break;
-  //     case CONST.AVATAR_SIZE.LARGE:
-  //       containerStyles = [styles.emptyAvatarLarge, styles.mb2, styles.mr2];
-  //       break;
-  //     default:
-  //       containerStyles = [
-  //         styles.emptyAvatar,
-  //         isInReportAction
-  //           ? styles.emptyAvatarMarginChat
-  //           : styles.emptyAvatarMargin,
-  //       ];
-  //   }
+    switch (size) {
+      case CONST.AVATAR_SIZE.SMALL:
+        containerStyles = [
+          styles.emptyAvatarSmall,
+          styles.emptyAvatarMarginSmall,
+        ];
+        break;
+      case CONST.AVATAR_SIZE.SMALLER:
+        containerStyles = [
+          styles.emptyAvatarSmaller,
+          styles.emptyAvatarMarginSmaller,
+        ];
+        break;
+      case CONST.AVATAR_SIZE.MEDIUM:
+        containerStyles = [styles.emptyAvatarMedium, styles.emptyAvatarMargin];
+        break;
+      case CONST.AVATAR_SIZE.LARGE:
+        containerStyles = [styles.emptyAvatarLarge, styles.mb2, styles.mr2];
+        break;
+      default:
+        containerStyles = [
+          styles.emptyAvatar,
+          isInReportAction
+            ? styles.emptyAvatarMarginChat
+            : styles.emptyAvatarMargin,
+        ];
+    }
 
-  //   return containerStyles;
-  // },
+    return containerStyles;
+  },
 
   getUpdateRequiredViewStyles: (isSmallScreenWidth: boolean): ViewStyle[] => [
     {
