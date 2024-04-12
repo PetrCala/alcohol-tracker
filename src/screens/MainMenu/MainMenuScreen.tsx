@@ -27,8 +27,6 @@ import ItemListPopup from '@components/Popups/ItemListPopup';
 import {useFirebase} from '@context/global/FirebaseContext';
 import MainHeader from '@components/Header/MainHeader';
 import GrayHeader from '@components/Header/GrayHeader';
-import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
-import CONST from '@src/CONST';
 import type {FeedbackList} from '@src/types/onyx';
 import type {StackScreenProps} from '@react-navigation/stack';
 import type {MainMenuNavigatorParamList} from '@navigation/types';
@@ -41,6 +39,7 @@ import LoadingData from '@components/LoadingData';
 import useLocalize from '@hooks/useLocalize';
 import ONYXKEYS from '@src/ONYXKEYS';
 import {OnyxEntry, withOnyx} from 'react-native-onyx';
+import en from '@src/languages/en';
 
 type MainMenuButtonData = {
   label: string;
@@ -70,11 +69,6 @@ const MenuItem: React.FC<MainMenuItemProps> = ({heading, data, index}) => (
   </View>
 );
 
-// type MainMenuScreenProps = StackScreenProps<
-//   MainMenuNavigatorParamList,
-//   typeof SCREENS.MAIN_MENU.ROOT
-// >;
-
 type MainMenuScreenOnyxProps = {
   pushNotificationsEnabled: OnyxEntry<boolean>;
 };
@@ -92,6 +86,7 @@ function MainMenuScreen({
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
   const {translate} = useLocalize();
+
   // Hooks
   const [FeedbackList, setFeedbackList] = useState<FeedbackList>({});
   // Modals
@@ -376,7 +371,8 @@ function MainMenuScreen({
           <FeedbackPopup
             visible={feedbackModalVisible}
             transparent={true}
-            message={translate('mainMenuScreen.improvementThoughts')}
+            // message={translate('mainMenuScreen.improvementThoughts')}
+            message={en.mainMenuScreen.improvementThoughts}
             onRequestClose={() => setFeedbackModalVisible(false)}
             onSubmit={feedback => handleSubmitFeedback(feedback)}
           />
@@ -400,8 +396,10 @@ function MainMenuScreen({
             visible={reauthentificateModalVisible}
             transparent={true}
             message={'Please retype your password\nin order to proceed'}
-            confirmationMessage={translate('mainMenuScreen.deleteConfirmation')}
-            placeholder={translate('common.password')}
+            // confirmationMessage={translate('mainMenuScreen.deleteConfirmation')}
+            // placeholder={translate('common.password')}
+            confirmationMessage={en.mainMenuScreen.deleteConfirmation}
+            placeholder={'Password'}
             onRequestClose={() => setReauthentificateModalVisible(false)}
             onSubmit={password => handleDeleteUser(password)}
             textContentType="password"

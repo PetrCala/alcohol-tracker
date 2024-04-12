@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {withOnyx} from 'react-native-onyx';
 import MenuIcon from '@components/Buttons/MenuIcon';
 import SessionsCalendar from '@components/Calendar';
 import LoadingData from '@components/LoadingData';
@@ -106,12 +107,12 @@ const reducer = (state: State, action: Action): State => {
   }
 };
 
-type HomeScreenProps = StackScreenProps<
-  BottomTabNavigatorParamList,
-  typeof SCREENS.HOME
->;
+type HomeScreenOnyxProps = {};
 
-function HomeScreen({}: HomeScreenProps) {
+type HomeScreenProps = HomeScreenOnyxProps &
+  StackScreenProps<BottomTabNavigatorParamList, typeof SCREENS.HOME>;
+
+function HomeScreen({route}: HomeScreenProps) {
   const {auth, db, storage} = useFirebase();
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
@@ -289,7 +290,6 @@ function HomeScreen({}: HomeScreenProps) {
       />
     );
   }
-
   return (
     <ScreenWrapper testID={HomeScreen.displayName}>
       <View style={commonStyles.headerContainer}>
@@ -635,4 +635,5 @@ const styles = StyleSheet.create({
 });
 
 HomeScreen.displayName = 'Home Screen';
-export default HomeScreen;
+
+export default withOnyx<HomeScreenProps, HomeScreenOnyxProps>({})(HomeScreen);

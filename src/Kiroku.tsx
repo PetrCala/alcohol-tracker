@@ -203,11 +203,6 @@ function Kiroku({
     throw new Error(CONST.ERROR.UPDATE_REQUIRED);
   }
 
-  // Remove this - custom
-  // {/* {props.updateAvailable && !props.updateRequired ? (
-  //   <UpdateAppModal />
-  // ) : null} */}
-
   return (
     // TODO
     // <DeeplinkWrapper
@@ -225,14 +220,14 @@ function Kiroku({
       {/* <AppleAuthWrapper /> */}
 
       {/* Possibly conditional display for the next block */}
-      {/* <SplashScreenHiddenContext.Provider value={contextValue}> */}
-      <NavigationRoot
-        onReady={setNavigationReady}
-        authenticated={isAuthenticated}
-        lastVisitedPath={lastVisitedPath as Route}
-        initialUrl={initialUrl}
-      />
-      {/* </SplashScreenHiddenContext.Provider> */}
+      <SplashScreenHiddenContext.Provider value={contextValue}>
+        <NavigationRoot
+          onReady={setNavigationReady}
+          authenticated={isAuthenticated}
+          lastVisitedPath={lastVisitedPath as Route}
+          initialUrl={initialUrl}
+        />
+      </SplashScreenHiddenContext.Provider>
 
       {/* {shouldHideSplash && <SplashScreenHider onHide={onSplashHide} />} */}
     </>

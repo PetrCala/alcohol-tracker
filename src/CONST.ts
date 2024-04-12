@@ -672,6 +672,7 @@ const CONST = {
     ANDROID:
       'https://play.google.com/store/apps/details?id=com.alcohol_tracker',
     IOS: 'https://testflight.apple.com/join/DgY9IieL',
+    DESKTOP: '',
   },
   TOOLTIP_MAX_LINES: 3,
   THEME: {

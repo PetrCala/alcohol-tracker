@@ -100,8 +100,10 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     useState<boolean>(false);
   const sessionIsLive = session?.ongoing ? true : false;
   const deleteSessionWording = session?.ongoing
-    ? translate('common.discard')
-    : translate('common.delete');
+    ? // ? translate('common.discard')
+      // : translate('common.delete');
+      'Discard'
+    : 'Delete';
   const scrollViewRef = useRef<ScrollView>(null); // To navigate the view
 
   const {isPending, enqueueUpdate} = useAsyncQueue(
