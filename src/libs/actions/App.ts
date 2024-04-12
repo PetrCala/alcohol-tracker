@@ -7,28 +7,28 @@ import type {ValueOf} from 'type-fest';
 import * as API from '@libs/API';
 import type {
   GetMissingOnyxMessagesParams,
-  //   HandleRestrictedEventParams,
+  HandleRestrictedEventParams,
   OpenAppParams,
   //   OpenOldDotLinkParams,
   //   // OpenProfileParams,
   ReconnectAppParams,
-  //   UpdatePreferredLocaleParams,
+  UpdatePreferredLocaleParams,
 } from '@libs/API/parameters';
 import {SIDE_EFFECT_REQUEST_COMMANDS, WRITE_COMMANDS} from '@libs/API/types';
-// import * as Browser from '@libs/Browser';
-// import DateUtils from '@libs/DateUtils';
+import * as Browser from '@libs/Browser';
+import DateUtils from '@libs/DateUtils';
 import Log from '@libs/Log';
 import getCurrentUrl from '@libs/Navigation/currentUrl';
 import Navigation from '@libs/Navigation/Navigation';
 // import Performance from '@libs/Performance';
 // import * as ReportActionsUtils from '@libs/ReportActionsUtils';
-// import * as SessionUtils from '@libs/SessionUtils';
+import * as SessionUtils from '@libs/SessionUtils';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
-// import type {Route} from '@src/ROUTES';
-// import ROUTES from '@src/ROUTES';
+import type {Route} from '@src/ROUTES';
+import ROUTES from '@src/ROUTES';
 import type * as OnyxTypes from '@src/types/onyx';
-// import type {SelectedTimezone} from '@src/types/onyx/PersonalDetails';
+import type {SelectedTimezone} from '@src/types/onyx/PersonalDetails';
 import type {OnyxData} from '@src/types/onyx/Request';
 // import * as Session from './Session';
 // import Timing from './Timing';
@@ -78,22 +78,22 @@ function setLocale(locale: Locale) {
     return;
   }
 
-  // // Optimistically change preferred locale
-  // const optimisticData: OnyxUpdate[] = [
-  //   {
-  //     onyxMethod: Onyx.METHOD.MERGE,
-  //     key: ONYXKEYS.NVP_PREFERRED_LOCALE,
-  //     value: locale,
-  //   },
-  // ];
+  // Optimistically change preferred locale
+  const optimisticData: OnyxUpdate[] = [
+    {
+      onyxMethod: Onyx.METHOD.MERGE,
+      key: ONYXKEYS.NVP_PREFERRED_LOCALE,
+      value: locale,
+    },
+  ];
 
-  // const parameters: UpdatePreferredLocaleParams = {
-  //   value: locale,
-  // };
+  const parameters: UpdatePreferredLocaleParams = {
+    value: locale,
+  };
 
-  // API.write(WRITE_COMMANDS.UPDATE_PREFERRED_LOCALE, parameters, {
-  //   optimisticData,
-  // });
+  API.write(WRITE_COMMANDS.UPDATE_PREFERRED_LOCALE, parameters, {
+    optimisticData,
+  });
 }
 
 function setLocaleAndNavigate(locale: Locale) {
@@ -206,11 +206,11 @@ function reconnectApp(updateIDFrom: OnyxEntry<number> = 0) {
   //     500,
   //   );
 
-  //   // Include the update IDs when reconnecting so that the server can send incremental updates if they are available.
-  //   // Otherwise, a full set of app data will be returned.
-  //   if (updateIDFrom) {
-  //     params.updateIDFrom = updateIDFrom;
-  //   }
+  // Include the update IDs when reconnecting so that the server can send incremental updates if they are available.
+  // Otherwise, a full set of app data will be returned.
+  if (updateIDFrom) {
+    params.updateIDFrom = updateIDFrom;
+  }
 
   API.write(
     WRITE_COMMANDS.RECONNECT_APP,
@@ -542,11 +542,11 @@ function endSignOnTransition() {
 //   );
 // }
 
-// function handleRestrictedEvent(eventName: string) {
-//   const parameters: HandleRestrictedEventParams = {eventName};
+function handleRestrictedEvent(eventName: string) {
+  const parameters: HandleRestrictedEventParams = {eventName};
 
-//   API.write(WRITE_COMMANDS.HANDLE_RESTRICTED_EVENT, parameters);
-// }
+  API.write(WRITE_COMMANDS.HANDLE_RESTRICTED_EVENT, parameters);
+}
 
 function updateLastVisitedPath(path: string) {
   Onyx.merge(ONYXKEYS.LAST_VISITED_PATH, path);

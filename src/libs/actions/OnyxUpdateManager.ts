@@ -28,7 +28,7 @@ Onyx.connect({
 });
 
 export default () => {
-  console.debug('[OnyxUpdateManager] Listening for updates from the server');
+  // console.debug('[OnyxUpdateManager] Listening for updates from the server');
   Onyx.connect({
     key: ONYXKEYS.ONYX_UPDATES_FROM_SERVER,
     callback: value => {
@@ -111,7 +111,7 @@ export default () => {
 
       canUnpauseQueuePromise.finally(() => {
         OnyxUpdates.apply(updateParams).finally(() => {
-          console.debug('[OnyxUpdateManager] Done applying all updates');
+          // console.debug('[OnyxUpdateManager] Done applying all updates');
           Onyx.set(ONYXKEYS.ONYX_UPDATES_FROM_SERVER, null);
           SequentialQueue.unpause();
         });

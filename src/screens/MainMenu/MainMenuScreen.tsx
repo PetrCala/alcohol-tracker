@@ -39,6 +39,8 @@ import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import ScreenWrapper from '@components/ScreenWrapper';
 import LoadingData from '@components/LoadingData';
 import useLocalize from '@hooks/useLocalize';
+import ONYXKEYS from '@src/ONYXKEYS';
+import {OnyxEntry, withOnyx} from 'react-native-onyx';
 
 type MainMenuButtonData = {
   label: string;
@@ -68,12 +70,23 @@ const MenuItem: React.FC<MainMenuItemProps> = ({heading, data, index}) => (
   </View>
 );
 
-type MainMenuScreenProps = StackScreenProps<
-  MainMenuNavigatorParamList,
-  typeof SCREENS.MAIN_MENU.ROOT
->;
+// type MainMenuScreenProps = StackScreenProps<
+//   MainMenuNavigatorParamList,
+//   typeof SCREENS.MAIN_MENU.ROOT
+// >;
 
-function MainMenuScreen({route}: MainMenuScreenProps) {
+type MainMenuScreenOnyxProps = {
+  pushNotificationsEnabled: OnyxEntry<boolean>;
+};
+
+type MainMenuScreenProps = MainMenuScreenOnyxProps &
+  StackScreenProps<MainMenuNavigatorParamList, typeof SCREENS.MAIN_MENU.ROOT>;
+
+function MainMenuScreen({
+  route,
+  pushNotificationsEnabled,
+}: MainMenuScreenProps) {
+  console.log('Push notifications enabled:', pushNotificationsEnabled);
   const {userData, preferences} = useDatabaseData();
   // Context, database, and authentification
   const {auth, db} = useFirebase();
@@ -462,4 +475,8 @@ const styles = StyleSheet.create({
 });
 
 MainMenuScreen.displayName = 'Main Menu Screen';
-export default MainMenuScreen;
+// export default MainMenuScreen;
+
+export default withOnyx<MainMenuScreenProps, MainMenuScreenOnyxProps>({
+  pushNotificationsEnabled: {key: ONYXKEYS.PUSH_NOTIFICATIONS_ENABLED},
+})(MainMenuScreen);

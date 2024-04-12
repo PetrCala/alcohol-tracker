@@ -7,8 +7,10 @@ import type * as Parameters from './parameters';
 type ApiRequest = ValueOf<typeof CONST.API_REQUEST_TYPE>;
 
 const WRITE_COMMANDS = {
+  UPDATE_PREFERRED_LOCALE: 'UpdatePreferredLocale',
   OPEN_APP: 'OpenApp',
   RECONNECT_APP: 'ReconnectApp',
+  HANDLE_RESTRICTED_EVENT: 'HandleRestrictedEvent',
   //   OPEN_PROFILE: 'OpenProfile',
   //   UPDATE_DISPLAY_NAME: 'UpdateDisplayName',
   //   UPDATE_LEGAL_NAME: 'UpdateLegalName',
@@ -25,8 +27,10 @@ const WRITE_COMMANDS = {
 type WriteCommand = ValueOf<typeof WRITE_COMMANDS>;
 
 type WriteCommandParameters = {
+  [WRITE_COMMANDS.UPDATE_PREFERRED_LOCALE]: Parameters.UpdatePreferredLocaleParams;
   [WRITE_COMMANDS.OPEN_APP]: Parameters.OpenAppParams;
   [WRITE_COMMANDS.RECONNECT_APP]: Parameters.ReconnectAppParams;
+  [WRITE_COMMANDS.HANDLE_RESTRICTED_EVENT]: Parameters.HandleRestrictedEventParams;
   //   [WRITE_COMMANDS.OPEN_PROFILE]: Parameters.OpenProfileParams;
   //   [WRITE_COMMANDS.UPDATE_DISPLAY_NAME]: Parameters.UpdateDisplayNameParams;
   //   [WRITE_COMMANDS.UPDATE_LEGAL_NAME]: Parameters.UpdateLegalNameParams;
