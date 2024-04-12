@@ -191,12 +191,13 @@ function AuthScreens({
 
     // If we are on this screen then we are "logged in", but the user might not have "just logged in". They could be reopening the app
     // or returning from background. If so, we'll assume they have some app data already and we can call reconnectApp() instead of openApp().
-    if (SessionUtils.didUserLogInDuringSession()) {
-      App.openApp();
-    } else {
-      Log.info('[AuthScreens] Sending ReconnectApp');
-      App.reconnectApp(initialLastUpdateIDAppliedToClient);
-    }
+    // TODO enable this after the API is working
+    // if (SessionUtils.didUserLogInDuringSession()) {
+    //   App.openApp();
+    // } else {
+    //   Log.info('[AuthScreens] Sending ReconnectApp');
+    //   App.reconnectApp(initialLastUpdateIDAppliedToClient);
+    // }
 
     // PriorityMode.autoSwitchToFocusMode();
 
@@ -288,7 +289,7 @@ function AuthScreens({
             name={NAVIGATORS.RIGHT_MODAL_NAVIGATOR}
             options={screenOptions.rightModalNavigator}
             component={RightModalNavigator}
-            // listeners={modalScreenListeners} // For modal screen listeners
+            listeners={modalScreenListeners}
           />
           {/* <RootStack.Screen
           name={NAVIGATORS.FULL_SCREEN_NAVIGATOR}
@@ -316,14 +317,11 @@ AuthScreens.displayName = 'AuthScreens';
 
 const AuthScreensMemoized = memo(AuthScreens, () => true);
 
-export default AuthScreens;
-
-// TODO enable this
-// export default withOnyx<AuthScreensProps, AuthScreensProps>({
-//   session: {
-//     key: ONYXKEYS.SESSION,
-//   },
-//   initialLastUpdateIDAppliedToClient: {
-//     key: ONYXKEYS.ONYX_UPDATES_LAST_UPDATE_ID_APPLIED_TO_CLIENT,
-//   },
-// })(AuthScreensMemoized);
+export default withOnyx<AuthScreensProps, AuthScreensProps>({
+  session: {
+    key: ONYXKEYS.SESSION,
+  },
+  initialLastUpdateIDAppliedToClient: {
+    key: ONYXKEYS.ONYX_UPDATES_LAST_UPDATE_ID_APPLIED_TO_CLIENT,
+  },
+})(AuthScreensMemoized);

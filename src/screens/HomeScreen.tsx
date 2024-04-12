@@ -59,8 +59,6 @@ import ScreenWrapper from '@components/ScreenWrapper';
 import MessageBanner from '@components/Info/MessageBanner';
 import VerifyEmailPopup from '@components/Popups/VerifyEmailPopup';
 import useLocalize from '@hooks/useLocalize';
-import useTheme from '@hooks/useTheme';
-import useThemeStyles from '@hooks/useThemeStyles';
 
 type State = {
   visibleDateObject: DateObject;
@@ -291,7 +289,6 @@ function HomeScreen({}: HomeScreenProps) {
       />
     );
   }
-  // console.log(translate('common.add'));
 
   return (
     <ScreenWrapper testID={HomeScreen.displayName}>

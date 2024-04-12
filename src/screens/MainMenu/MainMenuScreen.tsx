@@ -86,7 +86,6 @@ function MainMenuScreen({
   route,
   pushNotificationsEnabled,
 }: MainMenuScreenProps) {
-  console.log('Push notifications enabled:', pushNotificationsEnabled);
   const {userData, preferences} = useDatabaseData();
   // Context, database, and authentification
   const {auth, db} = useFirebase();
@@ -475,7 +474,6 @@ const styles = StyleSheet.create({
 });
 
 MainMenuScreen.displayName = 'Main Menu Screen';
-// export default MainMenuScreen;
 
 export default withOnyx<MainMenuScreenProps, MainMenuScreenOnyxProps>({
   pushNotificationsEnabled: {key: ONYXKEYS.PUSH_NOTIFICATIONS_ENABLED},

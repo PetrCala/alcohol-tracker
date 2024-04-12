@@ -26,7 +26,7 @@ import type {
 Request.use(Middleware.Logging);
 
 // RecheckConnection - Sets a timer for a request that will "recheck" if we are connected to the internet if time runs out. Also triggers the connection recheck when we encounter any error.
-Request.use(Middleware.RecheckConnection);
+// Request.use(Middleware.RecheckConnection); // TODO enable this
 
 // Reauthentication - Handles jsonCode 407 which indicates an expired authToken. We need to reauthenticate and get a new authToken with our stored credentials.
 // Request.use(Middleware.Reauthentication);

@@ -60,21 +60,14 @@ type KirokuProps = KirokuOnyxProps;
 
 const SplashScreenHiddenContext = React.createContext({});
 
-function Kiroku() {
-  // function Kiroku({
-  //   session,
-  //   updateAvailable,
-  //   isSidebarLoaded = false,
-  //   updateRequired = false,
-  //   focusModeNotification = false,
-  //   lastVisitedPath,
-  // }: KirokuProps) {
-  const session = null;
-  const updateAvailable = false;
-  const isSidebarLoaded = true;
-  const updateRequired = false;
-  const focusModeNotification = false;
-  const lastVisitedPath = '';
+function Kiroku({
+  session,
+  updateAvailable,
+  isSidebarLoaded = false,
+  updateRequired = false,
+  focusModeNotification = false,
+  lastVisitedPath,
+}: KirokuProps) {
   const {auth} = useFirebase();
   const appStateChangeListener = useRef<NativeEventSubscription | null>(null);
   const [isNavigationReady, setIsNavigationReady] = useState(false);
@@ -129,7 +122,7 @@ function Kiroku() {
     ActiveClientManager.init();
 
     // Used for the offline indicator appearing when someone is offline
-    NetworkConnection.subscribeToNetInfo();
+    // NetworkConnection.subscribeToNetInfo(); // TODO enable this
   }, []);
 
   useEffect(() => {
@@ -245,29 +238,28 @@ function Kiroku() {
     </>
   );
 }
-export default Kiroku;
-// export default withOnyx<KirokuProps, KirokuOnyxProps>({
-//   session: {
-//     key: ONYXKEYS.SESSION,
-//   },
-//   updateAvailable: {
-//     key: ONYXKEYS.UPDATE_AVAILABLE,
-//     initWithStoredValues: false,
-//   },
-//   updateRequired: {
-//     key: ONYXKEYS.UPDATE_REQUIRED,
-//     initWithStoredValues: false,
-//   },
-//   isSidebarLoaded: {
-//     key: ONYXKEYS.IS_SIDEBAR_LOADED,
-//   },
-//   focusModeNotification: {
-//     key: ONYXKEYS.FOCUS_MODE_NOTIFICATION,
-//     initWithStoredValues: false,
-//   },
-//   lastVisitedPath: {
-//     key: ONYXKEYS.LAST_VISITED_PATH,
-//   },
-// })(Kiroku);
+export default withOnyx<KirokuProps, KirokuOnyxProps>({
+  session: {
+    key: ONYXKEYS.SESSION,
+  },
+  updateAvailable: {
+    key: ONYXKEYS.UPDATE_AVAILABLE,
+    initWithStoredValues: false,
+  },
+  updateRequired: {
+    key: ONYXKEYS.UPDATE_REQUIRED,
+    initWithStoredValues: false,
+  },
+  isSidebarLoaded: {
+    key: ONYXKEYS.IS_SIDEBAR_LOADED,
+  },
+  focusModeNotification: {
+    key: ONYXKEYS.FOCUS_MODE_NOTIFICATION,
+    initWithStoredValues: false,
+  },
+  lastVisitedPath: {
+    key: ONYXKEYS.LAST_VISITED_PATH,
+  },
+})(Kiroku);
 
 export {SplashScreenHiddenContext};
