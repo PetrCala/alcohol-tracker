@@ -7,7 +7,6 @@ import {
   LayoutChangeEvent,
   TouchableOpacity,
 } from 'react-native';
-import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import * as KirokuImages from '@components/Icon/KirokuImages';
 import {FirebaseStorage} from 'firebase/storage';
 import {getProfilePictureURL} from '@src/storage/storageProfile';

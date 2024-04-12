@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {withOnyx} from 'react-native-onyx';
+import {useOnyx, withOnyx} from 'react-native-onyx';
 import MenuIcon from '@components/Buttons/MenuIcon';
 import SessionsCalendar from '@components/Calendar';
 import LoadingData from '@components/LoadingData';
@@ -60,6 +60,8 @@ import ScreenWrapper from '@components/ScreenWrapper';
 import MessageBanner from '@components/Info/MessageBanner';
 import VerifyEmailPopup from '@components/Popups/VerifyEmailPopup';
 import useLocalize from '@hooks/useLocalize';
+import useThemeStyles from '@hooks/useThemeStyles';
+import ONYXKEYS from '@src/ONYXKEYS';
 
 type State = {
   visibleDateObject: DateObject;
@@ -124,6 +126,7 @@ function HomeScreen({route}: HomeScreenProps) {
     isLoading,
   } = useDatabaseData();
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [preferredTheme] = useOnyx(ONYXKEYS.PREFERRED_THEME);
   const {translate} = useLocalize();
 
   const statsData: StatData = [

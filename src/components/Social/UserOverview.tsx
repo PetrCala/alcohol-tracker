@@ -1,13 +1,9 @@
 import {Image, StyleSheet, Text, View} from 'react-native';
 import {useFirebase} from '../../context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
-import {getTimestampAge, isRecent} from '@libs/TimeUtils';
+import {getTimestampAge} from '@libs/TimeUtils';
 import commonStyles from '@src/styles/commonStyles';
-import {
-  formatDateToTime,
-  sumAllDrinks,
-  timestampToDate,
-} from '@libs/DataHandling';
+import {formatDateToTime, timestampToDate} from '@libs/DataHandling';
 import {Profile, UserStatus} from '@src/types/onyx';
 import {
   determineSessionMostCommonDrink,

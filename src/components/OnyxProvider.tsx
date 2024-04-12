@@ -53,21 +53,19 @@ type OnyxProviderProps = {
 function OnyxProvider(props: OnyxProviderProps) {
   return (
     <ComposeProviders
-      components={
-        [
-          // NetworkProvider, //
-          // PersonalDetailsProvider, //
-          // ReportActionsDraftsProvider,
-          // CurrentDateProvider,
-          // BlockedFromConciergeProvider,
-          // BetasProvider,
-          // ReportCommentDraftsProvider,
-          // PreferredThemeProvider, //
-          // FrequentlyUsedEmojisProvider,
-          // PreferredEmojiSkinToneProvider,
-          // SessionProvider,//
-        ]
-      }>
+      components={[
+        NetworkProvider,
+        PersonalDetailsProvider,
+        // ReportActionsDraftsProvider,
+        // CurrentDateProvider,
+        // BlockedFromConciergeProvider,
+        // BetasProvider,
+        // ReportCommentDraftsProvider,
+        PreferredThemeProvider,
+        // FrequentlyUsedEmojisProvider,
+        // PreferredEmojiSkinToneProvider,
+        SessionProvider,
+      ]}>
       {props.children}
     </ComposeProviders>
   );
