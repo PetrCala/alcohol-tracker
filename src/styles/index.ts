@@ -43,7 +43,7 @@ import FontUtils from './utils/FontUtils';
 // import textUnderline from './utils/textUnderline';
 import userSelect from './utils/userSelect';
 import visibility from './utils/visibility';
-// import whiteSpace from './utils/whiteSpace';
+import whiteSpace from './utils/whiteSpace';
 import wordBreak from './utils/wordBreak';
 import writingDirection from './utils/writingDirection';
 import variables from './variables';
@@ -289,7 +289,7 @@ const styles = (theme: ThemeColors) =>
     ...overflow,
     ...positioning,
     ...wordBreak,
-    // ...whiteSpace,
+    ...whiteSpace,
     ...writingDirection,
     ...cursor,
     ...userSelect,
@@ -335,6 +335,55 @@ const styles = (theme: ThemeColors) =>
         maxHeight: maxHeight && maxHeight + 1,
         overflow: 'hidden',
       }) satisfies TextStyle,
+
+    badge: {
+      backgroundColor: theme.border,
+      borderRadius: 14,
+      height: variables.iconSizeNormal,
+      flexDirection: 'row',
+      paddingHorizontal: 7,
+      alignItems: 'center',
+    },
+
+    badgeSuccess: {
+      backgroundColor: theme.success,
+    },
+
+    badgeSuccessPressed: {
+      backgroundColor: theme.successHover,
+    },
+
+    badgeAdHocSuccess: {
+      backgroundColor: theme.badgeAdHoc,
+    },
+
+    badgeAdHocSuccessPressed: {
+      backgroundColor: theme.badgeAdHocHover,
+    },
+
+    badgeDanger: {
+      backgroundColor: theme.danger,
+    },
+
+    badgeDangerPressed: {
+      backgroundColor: theme.dangerPressed,
+    },
+
+    badgeBordered: {
+      backgroundColor: theme.transparent,
+      borderWidth: 1,
+      borderRadius: variables.componentBorderRadiusSmall,
+      borderColor: theme.border,
+      paddingHorizontal: 12,
+      minHeight: 28,
+    },
+
+    badgeText: {
+      color: theme.text,
+      fontSize: variables.fontSizeSmall,
+      ...lineHeightBadge,
+      ...whiteSpace.noWrap,
+    },
 
     bgTransparent: {
       backgroundColor: 'transparent',
@@ -624,6 +673,10 @@ const styles = (theme: ThemeColors) =>
       transform: [{rotate: '180deg'}],
     },
 
+    fontWeightNormal: {
+      fontWeight: FontUtils.fontWeight.normal,
+    },
+
     formHelp: {
       color: theme.textSupporting,
       fontSize: variables.fontSizeLabel,
@@ -643,6 +696,71 @@ const styles = (theme: ThemeColors) =>
       fontSize: variables.fontSizeLabel,
       lineHeight: 18,
       marginBottom: 4,
+    },
+
+    fullScreenLoading: {
+      backgroundColor: theme.componentBG,
+      opacity: 0.8,
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: 10,
+    },
+
+    headerBar: {
+      overflow: 'hidden',
+      justifyContent: 'center',
+      display: 'flex',
+      paddingLeft: 20,
+      height: variables.contentHeaderHeight,
+      width: '100%',
+    },
+
+    headerBarDesktopHeight: {
+      height: variables.contentHeaderDesktopHeight,
+    },
+    headerEnvBadge: {
+      position: 'absolute',
+      bottom: -8,
+      left: -8,
+      height: 12,
+      width: 22,
+      paddingLeft: 4,
+      paddingRight: 4,
+      alignItems: 'center',
+      zIndex: -1,
+    },
+
+    headerEnvBadgeText: {
+      fontSize: 7,
+      fontWeight: FontUtils.fontWeight.bold,
+      lineHeight: undefined,
+    },
+
+    headerProgressBarContainer: {
+      position: 'absolute',
+      width: '100%',
+      zIndex: -1,
+    },
+
+    headerProgressBar: {
+      width: variables.componentSizeMedium,
+      height: variables.iconSizeXXXSmall,
+      borderRadius: variables.componentBorderRadiusRounded,
+      backgroundColor: theme.border,
+      alignSelf: 'center',
+    },
+
+    headerProgressBarFill: {
+      borderRadius: variables.componentBorderRadiusRounded,
+      height: '100%',
+      backgroundColor: theme.success,
+    },
+
+    headerText: {
+      color: theme.heading,
+      fontFamily: FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
+      fontSize: variables.fontSizeNormal,
+      fontWeight: FontUtils.fontWeight.bold,
     },
 
     hoveredComponentBG: {
@@ -807,6 +925,77 @@ const styles = (theme: ThemeColors) =>
       justifyContent: 'center',
     },
 
+    textLabel: {
+      color: theme.text,
+      fontSize: variables.fontSizeLabel,
+      lineHeight: variables.lineHeightLarge,
+    },
+
+    mutedTextLabel: {
+      color: theme.textSupporting,
+      fontSize: variables.fontSizeLabel,
+      lineHeight: variables.lineHeightLarge,
+    },
+
+    textMicro: {
+      fontFamily: FontUtils.fontFamily.platform.EXP_NEUE,
+      fontSize: variables.fontSizeSmall,
+      lineHeight: variables.lineHeightSmall,
+    },
+
+    textMicroBold: {
+      color: theme.text,
+      fontWeight: FontUtils.fontWeight.bold,
+      fontFamily: FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
+      fontSize: variables.fontSizeSmall,
+      lineHeight: variables.lineHeightSmall,
+    },
+
+    textMicroSupporting: {
+      color: theme.textSupporting,
+      fontFamily: FontUtils.fontFamily.platform.EXP_NEUE,
+      fontSize: variables.fontSizeSmall,
+      lineHeight: variables.lineHeightSmall,
+    },
+
+    textExtraSmallSupporting: {
+      color: theme.textSupporting,
+      fontFamily: FontUtils.fontFamily.platform.EXP_NEUE,
+      fontSize: variables.fontSizeExtraSmall,
+    },
+
+    textNormal: {
+      fontSize: variables.fontSizeNormal,
+    },
+
+    textNormalThemeText: {
+      color: theme.text,
+      fontSize: variables.fontSizeNormal,
+    },
+
+    textLarge: {
+      fontSize: variables.fontSizeLarge,
+    },
+
+    textXXLarge: {
+      fontSize: variables.fontSizeXXLarge,
+    },
+
+    textXXXLarge: {
+      fontSize: variables.fontSizeXXXLarge,
+    },
+
+    textHero: {
+      fontSize: variables.fontSizeHero,
+      fontFamily: FontUtils.fontFamily.platform.EXP_NEW_KANSAS_MEDIUM,
+      lineHeight: variables.lineHeightHero,
+    },
+
+    textStrong: {
+      fontFamily: FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
+      fontWeight: FontUtils.fontWeight.bold,
+    },
+
     textDanger: {
       color: theme.danger,
     },
@@ -898,6 +1087,38 @@ const styles = (theme: ThemeColors) =>
       textAlign: 'left',
     },
 
+    textHeadline: {
+      ...headlineFont,
+      ...whiteSpace.preWrap,
+      color: theme.heading,
+      fontSize: variables.fontSizeXLarge,
+      lineHeight: variables.lineHeightXXXLarge,
+    },
+
+    textHeadlineH2: {
+      ...headlineFont,
+      ...whiteSpace.preWrap,
+      color: theme.heading,
+      fontSize: variables.fontSizeh2,
+      lineHeight: variables.lineHeightSizeh2,
+    },
+
+    textHeadlineH1: {
+      ...headlineFont,
+      ...whiteSpace.preWrap,
+      color: theme.heading,
+      fontSize: variables.fontSizeXLarge,
+      lineHeight: variables.lineHeightSizeh1,
+    },
+
+    textWhite: {
+      color: theme.textLight,
+    },
+
+    textBlue: {
+      color: theme.link,
+    },
+
     timePickerInput: {
       fontSize: 69,
       minWidth: 56,
@@ -918,6 +1139,13 @@ const styles = (theme: ThemeColors) =>
       flexDirection: 'row',
       alignItems: 'flex-start',
       justifyContent: 'center',
+    },
+
+    touchableButtonImage: {
+      alignItems: 'center',
+      height: variables.componentSizeNormal,
+      justifyContent: 'center',
+      width: variables.componentSizeNormal,
     },
 
     verticalAlignTop: {

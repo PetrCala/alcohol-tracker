@@ -38,6 +38,7 @@ import Social from '@assets/icons/social.png';
 import Statistics from '@assets/icons/statistics.png';
 import StrongShot from '@assets/icons/strong-shot.png';
 import ThinX from '@assets/icons/thin-x.png';
+import ThreeDots from '@assets/icons/three-dots.svg';
 import WeakShot from '@assets/icons/weak-shot.png';
 import Wine from '@assets/icons/wine.png';
 
@@ -82,6 +83,7 @@ export {
   Statistics,
   StrongShot,
   ThinX,
+  ThreeDots,
   WeakShot,
   Wine,
 };

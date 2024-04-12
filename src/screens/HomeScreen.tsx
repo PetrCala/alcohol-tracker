@@ -62,6 +62,7 @@ import VerifyEmailPopup from '@components/Popups/VerifyEmailPopup';
 import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
 import ONYXKEYS from '@src/ONYXKEYS';
+import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 
 type State = {
   visibleDateObject: DateObject;
@@ -115,6 +116,7 @@ type HomeScreenProps = HomeScreenOnyxProps &
   StackScreenProps<BottomTabNavigatorParamList, typeof SCREENS.HOME>;
 
 function HomeScreen({route}: HomeScreenProps) {
+  const styles = useThemeStyles();
   const {auth, db, storage} = useFirebase();
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
@@ -293,38 +295,39 @@ function HomeScreen({route}: HomeScreenProps) {
       />
     );
   }
+
   return (
     <ScreenWrapper testID={HomeScreen.displayName}>
       <View style={commonStyles.headerContainer}>
         {userData && (
-          <View style={styles.profileContainer}>
+          <View style={localStyles.profileContainer}>
             <TouchableOpacity
               accessibilityRole="button"
               onPress={() =>
                 Navigation.navigate(ROUTES.PROFILE.getRoute(user.uid))
               }
-              style={styles.profileButton}>
+              style={localStyles.profileButton}>
               <ProfileImage
                 storage={storage}
                 userId={user.uid}
                 downloadPath={userData.profile.photo_url}
-                style={styles.profileImage}
+                style={localStyles.profileImage}
                 // refreshTrigger={refreshCounter}
                 refreshTrigger={0}
               />
-              <Text style={styles.headerUsername}>{user.displayName}</Text>
+              <Text style={localStyles.headerUsername}>{user.displayName}</Text>
             </TouchableOpacity>
           </View>
         )}
         {/* Enable later on */}
-        {/* <View style={styles.menuContainer}>
-          <TouchableOpacity style={styles.notificationsButton}>
-            <Image source={KirokuIcons.Bell} style={styles.notificationsIcon} />
+        {/* <View style={localStyles.menuContainer}>
+          <TouchableOpacity style={localStyles.notificationsButton}>
+            <Image source={KirokuIcons.Bell} style={localStyles.notificationsIcon} />
           </TouchableOpacity>
         </View> */}
       </View>
       <ScrollView
-        style={styles.mainScreenContent}
+        style={localStyles.mainScreenContent}
         keyboardShouldPersistTaps="handled"
         onScrollBeginDrag={Keyboard.dismiss}>
         {state.ongoingSessionId ? (
@@ -342,7 +345,7 @@ function HomeScreen({route}: HomeScreenProps) {
             }
           />
         )} */}
-        <View style={styles.statsOverviewHolder}>
+        <View style={localStyles.statsOverviewHolder}>
           <StatsOverview statsData={statsData} />
         </View>
         <SessionsCalendar
@@ -363,47 +366,47 @@ function HomeScreen({route}: HomeScreenProps) {
       <View style={commonStyles.mainFooter}>
         <View
           style={[
-            styles.mainScreenFooterHalfContainer,
-            styles.mainScreenFooterLeftContainer,
+            localStyles.mainScreenFooterHalfContainer,
+            localStyles.mainScreenFooterLeftContainer,
           ]}>
-          <View style={styles.socialContainer}>
+          <View style={localStyles.socialContainer}>
             <MenuIcon
               iconId="social-icon"
               iconSource={KirokuIcons.Social}
-              containerStyle={styles.menuIconContainer}
-              iconStyle={styles.menuIcon}
+              containerStyle={localStyles.menuIconContainer}
+              iconStyle={localStyles.menuIcon}
               onPress={() => Navigation.navigate(ROUTES.SOCIAL)}
             />
             <FriendRequestCounter
               count={getReceivedRequestsCount(userData?.friend_requests)}
-              style={styles.friendRequestCounter}
+              style={localStyles.friendRequestCounter}
             />
           </View>
           <MenuIcon
             iconId="achievement-icon"
             iconSource={KirokuIcons.Achievements}
-            containerStyle={styles.menuIconContainer}
-            iconStyle={styles.menuIcon}
+            containerStyle={localStyles.menuIconContainer}
+            iconStyle={localStyles.menuIcon}
             onPress={() => Navigation.navigate(ROUTES.ACHIEVEMENTS)}
           />
         </View>
         <View
           style={[
-            styles.mainScreenFooterHalfContainer,
-            styles.mainScreenFooterRightContainer,
+            localStyles.mainScreenFooterHalfContainer,
+            localStyles.mainScreenFooterRightContainer,
           ]}>
           <MenuIcon
             iconId="main-menu-popup-icon"
             iconSource={KirokuIcons.Statistics}
-            containerStyle={styles.menuIconContainer}
-            iconStyle={styles.menuIcon}
+            containerStyle={localStyles.menuIconContainer}
+            iconStyle={localStyles.menuIcon}
             onPress={() => Navigation.navigate(ROUTES.STATISTICS)}
           />
           <MenuIcon
             iconId="main-menu-popup-icon"
             iconSource={KirokuIcons.BarMenu}
-            containerStyle={styles.menuIconContainer}
-            iconStyle={styles.menuIcon}
+            containerStyle={localStyles.menuIconContainer}
+            iconStyle={localStyles.menuIcon}
             onPress={() => Navigation.navigate(ROUTES.MAIN_MENU)}
           />
         </View>
@@ -411,9 +414,12 @@ function HomeScreen({route}: HomeScreenProps) {
       {state.ongoingSessionId ? null : (
         <TouchableOpacity
           accessibilityRole="button"
-          style={styles.startSessionButton}
+          style={localStyles.startSessionButton}
           onPress={startDrinkingSession}>
-          <Image source={KirokuIcons.Plus} style={styles.startSessionImage} />
+          <Image
+            source={KirokuIcons.Plus}
+            style={localStyles.startSessionImage}
+          />
         </TouchableOpacity>
       )}
       <VerifyEmailPopup
@@ -432,7 +438,7 @@ function HomeScreen({route}: HomeScreenProps) {
 
 const screenWidth = Dimensions.get('window').width;
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   profileContainer: {
     //Ensure the container fills all space between, no more, no less
     padding: 10,

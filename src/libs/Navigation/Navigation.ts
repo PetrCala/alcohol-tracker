@@ -52,6 +52,12 @@ function canNavigate(
   return false;
 }
 
+// Re-exporting the dismissModal here to fill in default value for navigationRef. The dismissModal isn't defined in this file to avoid cyclic dependencies.
+const dismissModal = (ref = navigationRef) => {
+  originalDismissModal(ref);
+  return;
+};
+
 /** Method for finding on which index in stack we are. */
 function getActiveRouteIndex(
   stateOrRoute: StateOrRoute,
@@ -386,6 +392,7 @@ export default {
   setShouldPopAllStateOnUP,
   navigate,
   setParams,
+  dismissModal,
   isActiveRoute,
   getActiveRoute,
   getActiveRouteWithoutParams,
