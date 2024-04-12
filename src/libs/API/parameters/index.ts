@@ -1,6 +1,17 @@
+export type {default as CloseAccountParams} from './CloseAccountParams';
 export type {default as GetMissingOnyxMessagesParams} from './GetMissingOnyxMessagesParams';
 export type {default as HandleRestrictedEventParams} from './HandleRestrictedEventParams';
 export type {default as OpenAppParams} from './OpenAppParams';
+export type {default as OpenPublicProfilePageParams} from './OpenPublicProfilePageParams';
 export type {default as OptInOutToPushNotificationsParams} from './OptInOutToPushNotificationsParams';
 export type {default as ReconnectAppParams} from './ReconnectAppParams';
+export type {default as UpdateAutomaticTimezoneParams} from './UpdateAutomaticTimezoneParams';
+export type {default as UpdateDateOfBirthParams} from './UpdateDateOfBirthParams';
+export type {default as UpdateDisplayNameParams} from './UpdateDisplayNameParams';
+export type {default as UpdateHomeAddressParams} from './UpdateHomeAddressParams';
+export type {default as UpdateLegalNameParams} from './UpdateLegalNameParams';
 export type {default as UpdatePreferredLocaleParams} from './UpdatePreferredLocaleParams';
+export type {default as UpdatePronounsParams} from './UpdatePronounsParams';
+export type {default as UpdateSelectedTimezoneParams} from './UpdateSelectedTimezoneParams';
+export type {default as UpdateThemeParams} from './UpdateThemeParams';
+export type {default as UpdateUserAvatarParams} from './UpdateUserAvatarParams';

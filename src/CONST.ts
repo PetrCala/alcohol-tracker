@@ -40,6 +40,34 @@ const KEYBOARD_SHORTCUT_NAVIGATION_TYPE = 'NAVIGATION_SHORTCUT';
 
 const CONST = {
   ACCOUNT_CREATION_LIMIT: 3,
+
+  ACCOUNT_ID: {
+    ACCOUNTING: Number(Config?.EXPENSIFY_ACCOUNT_ID_ACCOUNTING ?? 9645353),
+    ADMIN: Number(Config?.EXPENSIFY_ACCOUNT_ID_ADMIN ?? -1),
+    BILLS: Number(Config?.EXPENSIFY_ACCOUNT_ID_BILLS ?? 1371),
+    CHRONOS: Number(Config?.EXPENSIFY_ACCOUNT_ID_CHRONOS ?? 10027416),
+    CONCIERGE: Number(Config?.EXPENSIFY_ACCOUNT_ID_CONCIERGE ?? 8392101),
+    CONTRIBUTORS: Number(Config?.EXPENSIFY_ACCOUNT_ID_CONTRIBUTORS ?? 9675014),
+    FIRST_RESPONDER: Number(
+      Config?.EXPENSIFY_ACCOUNT_ID_FIRST_RESPONDER ?? 9375152,
+    ),
+    HELP: Number(Config?.EXPENSIFY_ACCOUNT_ID_HELP ?? -1),
+    INTEGRATION_TESTING_CREDS: Number(
+      Config?.EXPENSIFY_ACCOUNT_ID_INTEGRATION_TESTING_CREDS ?? -1,
+    ),
+    NOTIFICATIONS: Number(
+      Config?.EXPENSIFY_ACCOUNT_ID_NOTIFICATIONS ?? 11665625,
+    ),
+    PAYROLL: Number(Config?.EXPENSIFY_ACCOUNT_ID_PAYROLL ?? 9679724),
+    QA: Number(Config?.EXPENSIFY_ACCOUNT_ID_QA ?? 3126513),
+    QA_TRAVIS: Number(Config?.EXPENSIFY_ACCOUNT_ID_QA_TRAVIS ?? 8595733),
+    RECEIPTS: Number(Config?.EXPENSIFY_ACCOUNT_ID_RECEIPTS ?? -1),
+    REWARDS: Number(Config?.EXPENSIFY_ACCOUNT_ID_REWARDS ?? 11023767), // rewards@expensify.com
+    STUDENT_AMBASSADOR: Number(
+      Config?.EXPENSIFY_ACCOUNT_ID_STUDENT_AMBASSADOR ?? 10476956,
+    ),
+    SVFG: Number(Config?.EXPENSIFY_ACCOUNT_ID_SVFG ?? 2012843),
+  },
   ANDROID_PACKAGE_NAME,
   ANIMATED_TRANSITION: 300,
   ANIMATED_TRANSITION_FROM_VALUE: 100,
@@ -401,6 +429,7 @@ const CONST = {
 
   // When generating a random value to fit in 7 digits (for the `middle` or `right` parts above), this is the maximum value to multiply by Math.random().
   MAX_INT_FOR_RANDOM_7_DIGIT_VALUE: 10000000,
+  MERGED_ACCOUNT_PREFIX: 'MERGED_',
   MODAL: {
     MODAL_TYPE: {
       CONFIRM: 'confirm',
@@ -474,6 +503,15 @@ const CONST = {
     SOCKET: 'Issue connecting to database',
     DUPLICATE_RECORD: '400 Unique Constraints Violation',
   },
+  FORMS: {
+    // Forms to load upon onyx initialization
+    LOGIN_FORM: 'LoginForm',
+    // VALIDATE_CODE_FORM: 'ValidateCodeForm',
+    // VALIDATE_TFA_CODE_FORM: 'ValidateTfaCodeForm',
+    // RESEND_VALIDATION_FORM: 'ResendValidationForm',
+    // UNLINK_LOGIN_FORM: 'UnlinkLoginForm',
+    // RESEND_VALIDATE_CODE_FORM: 'ResendValidateCodeForm',
+  },
   NETWORK: {
     METHOD: {
       POST: 'post',
@@ -485,7 +523,11 @@ const CONST = {
     MAX_PENDING_TIME_MS: 10 * 1000,
     MAX_REQUEST_RETRIES: 10,
   },
+  DEFAULT_TIME_ZONE: {automatic: true, selected: 'Europe/Prague'},
+  DEFAULT_ACCOUNT_DATA: {errors: null, success: '', isLoading: false},
+  DEFAULT_CLOSE_ACCOUNT_DATA: {errors: null, success: '', isLoading: false},
   DEFAULT_NETWORK_DATA: {isOffline: false},
+
   MICROSECONDS_PER_MS: 1000,
   RED_BRICK_ROAD_PENDING_ACTION: {
     ADD: 'add',
@@ -515,6 +557,15 @@ const CONST = {
     ANDROID: 'Android',
     WEB: 'Web',
   },
+  // Values for checking if polyfill is required on a platform
+  POLYFILL_TEST: {
+    STYLE: 'currency',
+    CURRENCY: 'XAF',
+    FORMAT: 'symbol',
+    SAMPLE_INPUT: '123456.789',
+    EXPECTED_OUTPUT: 'FCFA 123,457',
+  },
+
   PUSHER: {
     PRIVATE_USER_CHANNEL_PREFIX: 'private-encrypted-user-accountID-',
   },
@@ -644,6 +695,13 @@ const CONST = {
     AM: 'AM',
     PM: 'PM',
   },
+  TWO_FACTOR_AUTH_STEPS: {
+    CODES: 'CODES',
+    VERIFY: 'VERIFY',
+    SUCCESS: 'SUCCESS',
+    ENABLED: 'ENABLED',
+    DISABLED: 'DISABLED',
+  },
   DRINKS: {
     // Perhaps move to types?
     KEYS: {
@@ -704,7 +762,6 @@ const CONST = {
   BACK_BUTTON_NATIVE_ID: 'backButton',
 
   WEEK_STARTS_ON: 1, // Monday
-  DEFAULT_TIME_ZONE: {automatic: true, selected: 'Europe/Prague'},
 
   ALL_COUNTRIES: {
     AF: 'Afghanistan',

@@ -12,7 +12,7 @@ import {Profile, UserStatus} from '@src/types/onyx';
 import {
   determineSessionMostCommonDrink,
   sessionIsExpired,
-} from '@libs/SessionUtils';
+} from '@libs/DrinkingSessionUtils';
 import DrinkData from '@libs/DrinkData';
 import _, {get} from 'lodash';
 

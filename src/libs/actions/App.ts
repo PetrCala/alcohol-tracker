@@ -380,69 +380,69 @@ function endSignOnTransition() {
  * pass it in as a parameter. withOnyx guarantees that the value has been read
  * from Onyx because it will not render the AuthScreens until that point.
  */
-// function setUpPoliciesAndNavigate(session: OnyxEntry<OnyxTypes.Session>) {
-//   const currentUrl = getCurrentUrl();
-//   if (!session || !currentUrl || !currentUrl.includes('exitTo')) {
-//     return;
-//   }
+function setUpPoliciesAndNavigate(session: OnyxEntry<OnyxTypes.Session>) {
+  const currentUrl = getCurrentUrl();
+  if (!session || !currentUrl || !currentUrl.includes('exitTo')) {
+    return;
+  }
 
-//   const isLoggingInAsNewUser =
-//     !!session.email &&
-//     SessionUtils.isLoggingInAsNewUser(currentUrl, session.email);
-//   const url = new URL(currentUrl);
-//   const exitTo = url.searchParams.get('exitTo') as Route | null;
+  const isLoggingInAsNewUser =
+    !!session.email &&
+    SessionUtils.isLoggingInAsNewUser(currentUrl, session.email);
+  const url = new URL(currentUrl);
+  const exitTo = url.searchParams.get('exitTo') as Route | null;
 
-// // Approved Accountants and Guides can enter a flow where they make a workspace for other users,
-// // and those are passed as a search parameter when using transition links
-// const policyOwnerEmail = url.searchParams.get('ownerEmail') ?? '';
-// const makeMeAdmin = !!url.searchParams.get('makeMeAdmin');
-// const policyName = url.searchParams.get('policyName') ?? '';
+  // Approved Accountants and Guides can enter a flow where they make a workspace for other users,
+  // and those are passed as a search parameter when using transition links
+  // const policyOwnerEmail = url.searchParams.get('ownerEmail') ?? '';
+  // const makeMeAdmin = !!url.searchParams.get('makeMeAdmin');
+  // const policyName = url.searchParams.get('policyName') ?? '';
 
-// // Sign out the current user if we're transitioning with a different user
-// const isTransitioning = Str.startsWith(
-//   url.pathname,
-//   Str.normalizeUrl(ROUTES.TRANSITION_BETWEEN_APPS),
-// );
+  // Sign out the current user if we're transitioning with a different user
+  // const isTransitioning = Str.startsWith(
+  //   url.pathname,
+  //   Str.normalizeUrl(ROUTES.TRANSITION_BETWEEN_APPS),
+  // );
 
-// const shouldCreateFreePolicy =
-//   !isLoggingInAsNewUser && isTransitioning && exitTo === ROUTES.WORKSPACE_NEW;
-// if (shouldCreateFreePolicy) {
-//   createWorkspaceWithPolicyDraftAndNavigateToIt(
-//     policyOwnerEmail,
-//     policyName,
-//     true,
-//     makeMeAdmin,
-//   );
-//   return;
-// }
-//   if (!isLoggingInAsNewUser && exitTo) {
-//     Navigation.waitForProtectedRoutes()
-//       .then(() => {
-//         // We must call goBack() to remove the /transition route from history
-//         Navigation.goBack();
-//         Navigation.navigate(exitTo);
-//       })
-//       .then(endSignOnTransition);
-//   }
-// }
+  // const shouldCreateFreePolicy =
+  // !isLoggingInAsNewUser && isTransitioning && exitTo === ROUTES.WORKSPACE_NEW;
+  // if (shouldCreateFreePolicy) {
+  //   createWorkspaceWithPolicyDraftAndNavigateToIt(
+  //     policyOwnerEmail,
+  //     policyName,
+  //     true,
+  //     makeMeAdmin,
+  //   );
+  //   return;
+  // }
+  if (!isLoggingInAsNewUser && exitTo) {
+    Navigation.waitForProtectedRoutes()
+      .then(() => {
+        // We must call goBack() to remove the /transition route from history
+        Navigation.goBack();
+        Navigation.navigate(exitTo);
+      })
+      .then(endSignOnTransition);
+  }
+}
 
-// function redirectThirdPartyDesktopSignIn() {
-//   const currentUrl = getCurrentUrl();
-//   if (!currentUrl) {
-//     return;
-//   }
-//   const url = new URL(currentUrl);
+function redirectThirdPartyDesktopSignIn() {
+  const currentUrl = getCurrentUrl();
+  if (!currentUrl) {
+    return;
+  }
+  const url = new URL(currentUrl);
 
-//   if (
-//     url.pathname === `/${ROUTES.GOOGLE_SIGN_IN}` ||
-//     url.pathname === `/${ROUTES.APPLE_SIGN_IN}`
-//   ) {
-//     Navigation.isNavigationReady().then(() => {
-//       Navigation.goBack();
-//       Navigation.navigate(ROUTES.DESKTOP_SIGN_IN_REDIRECT);
-//     });
-//   }
-// }
+  if (
+    url.pathname === `/${ROUTES.GOOGLE_SIGN_IN}` ||
+    url.pathname === `/${ROUTES.APPLE_SIGN_IN}`
+  ) {
+    Navigation.isNavigationReady().then(() => {
+      Navigation.goBack();
+      Navigation.navigate(ROUTES.DESKTOP_SIGN_IN_REDIRECT);
+    });
+  }
+}
 
 // function openProfile(personalDetails: OnyxTypes.PersonalDetails) {
 //   const oldTimezoneData = personalDetails.timezone ?? {};
@@ -556,13 +556,13 @@ export {
   setLocale,
   setLocaleAndNavigate,
   setSidebarLoaded,
-  // setUpPoliciesAndNavigate,
+  setUpPoliciesAndNavigate,
   // openProfile,
-  // redirectThirdPartyDesktopSignIn,
+  redirectThirdPartyDesktopSignIn,
   openApp,
   reconnectApp,
   confirmReadyToOpenApp,
-  // handleRestrictedEvent,
+  handleRestrictedEvent,
   // beginDeepLinkRedirect,
   // beginDeepLinkRedirectAfterTransition,
   getMissingOnyxUpdates,

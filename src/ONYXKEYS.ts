@@ -13,7 +13,7 @@ const ONYXKEYS = {
   /** Keeps track if there is modal currently visible or not */
   MODAL: 'modal',
   //   /** Holds information about the users account that is logging in */
-  //   ACCOUNT: 'account',
+  ACCOUNT: 'account',
 
   //   /** Holds the reportID for the report between the user and their account manager */
   //   ACCOUNT_MANAGER_REPORT_ID: 'accountManagerReportID',
@@ -59,8 +59,8 @@ const ONYXKEYS = {
   /** Contains all the personalDetails the user has access to, keyed by accountID */
   PERSONAL_DETAILS_LIST: 'personalDetailsList',
 
-  //   /** Contains all the private personal details of the user */
-  //   PRIVATE_PERSONAL_DETAILS: 'private_personalDetails',
+  /** Contains all the private personal details of the user */
+  PRIVATE_PERSONAL_DETAILS: 'private_personalDetails',
 
   /**
    * PERSONAL_DETAILS_METADATA is a perf optimization used to hold loading states of each entry in PERSONAL_DETAILS_LIST.
@@ -241,10 +241,10 @@ const ONYXKEYS = {
   //   /** The policyID of the last workspace whose settings were accessed by the user */
   //   LAST_ACCESSED_WORKSPACE_POLICY_ID: 'lastAccessedWorkspacePolicyID',
 
-  //   /** Whether we should show the compose input or not */
-  //   SHOULD_SHOW_COMPOSE_INPUT: 'shouldShowComposeInput',
+  /** Whether we should show the compose input or not */
+  SHOULD_SHOW_COMPOSE_INPUT: 'shouldShowComposeInput',
 
-  //   /** Is app in beta version */
+  /** Is app in beta version */
   IS_BETA: 'isBeta',
 
   //   /** Whether we're checking if the room is public or not */
@@ -388,8 +388,8 @@ const ONYXKEYS = {
     LEGAL_NAME_FORM_DRAFT: 'legalNameFormDraft',
     //     WORKSPACE_INVITE_MESSAGE_FORM: 'workspaceInviteMessageForm',
     //     WORKSPACE_INVITE_MESSAGE_FORM_DRAFT: 'workspaceInviteMessageFormDraft',
-    //     DATE_OF_BIRTH_FORM: 'dateOfBirthForm',
-    //     DATE_OF_BIRTH_FORM_DRAFT: 'dateOfBirthFormDraft',
+    DATE_OF_BIRTH_FORM: 'dateOfBirthForm',
+    DATE_OF_BIRTH_FORM_DRAFT: 'dateOfBirthFormDraft',
     //     HOME_ADDRESS_FORM: 'homeAddressForm',
     //     HOME_ADDRESS_FORM_DRAFT: 'homeAddressFormDraft',
     //     NEW_ROOM_FORM: 'newRoomForm',
@@ -475,8 +475,8 @@ type OnyxFormValuesMapping = {
   [ONYXKEYS.FORMS.LEGAL_NAME_FORM]: FormTypes.LegalNameForm;
   //   [ONYXKEYS.FORMS
   //     .WORKSPACE_INVITE_MESSAGE_FORM]: FormTypes.WorkspaceInviteMessageForm;
-  //   [ONYXKEYS.FORMS.DATE_OF_BIRTH_FORM]: FormTypes.DateOfBirthForm;
-  //   [ONYXKEYS.FORMS.HOME_ADDRESS_FORM]: FormTypes.HomeAddressForm;
+  [ONYXKEYS.FORMS.DATE_OF_BIRTH_FORM]: FormTypes.DateOfBirthForm;
+  // [ONYXKEYS.FORMS.HOME_ADDRESS_FORM]: FormTypes.HomeAddressForm;
   //   [ONYXKEYS.FORMS.NEW_ROOM_FORM]: FormTypes.NewRoomForm;
   //   [ONYXKEYS.FORMS.ROOM_SETTINGS_FORM]: FormTypes.RoomSettingsForm;
   //   [ONYXKEYS.FORMS.NEW_TASK_FORM]: FormTypes.NewTaskForm;
@@ -571,7 +571,7 @@ type OnyxCollectionValuesMapping = {
 
 type OnyxValuesMapping = {
   [ONYXKEYS.MODAL]: OnyxTypes.Modal;
-  //   [ONYXKEYS.ACCOUNT]: OnyxTypes.Account;
+  [ONYXKEYS.ACCOUNT]: OnyxTypes.Account;
   //   [ONYXKEYS.ACCOUNT_MANAGER_REPORT_ID]: string;
   //   [ONYXKEYS.NVP_IS_FIRST_TIME_NEW_EXPENSIFY_USER]: boolean;
   //   [ONYXKEYS.ACTIVE_CLIENTS]: string[];
@@ -588,7 +588,7 @@ type OnyxValuesMapping = {
   //   [ONYXKEYS.CUSTOM_STATUS_DRAFT]: OnyxTypes.CustomStatusDraft;
   //   [ONYXKEYS.INPUT_FOCUSED]: boolean;
   [ONYXKEYS.PERSONAL_DETAILS_LIST]: OnyxTypes.PersonalDetailsList;
-  //   [ONYXKEYS.PRIVATE_PERSONAL_DETAILS]: OnyxTypes.PrivatePersonalDetails;
+  [ONYXKEYS.PRIVATE_PERSONAL_DETAILS]: OnyxTypes.PrivatePersonalDetails;
   [ONYXKEYS.PERSONAL_DETAILS_METADATA]: Record<
     string,
     OnyxTypes.PersonalDetailsMetadata
@@ -646,7 +646,7 @@ type OnyxValuesMapping = {
   //   [ONYXKEYS.IS_SWITCHING_TO_OLD_DOT]: boolean;
   //   [ONYXKEYS.WALLET_TRANSFER]: OnyxTypes.WalletTransfer;
   //   [ONYXKEYS.LAST_ACCESSED_WORKSPACE_POLICY_ID]: string;
-  //   [ONYXKEYS.SHOULD_SHOW_COMPOSE_INPUT]: boolean;
+  [ONYXKEYS.SHOULD_SHOW_COMPOSE_INPUT]: boolean;
   [ONYXKEYS.IS_BETA]: boolean;
   //   [ONYXKEYS.IS_CHECKING_PUBLIC_ROOM]: boolean;
   //   [ONYXKEYS.MY_DOMAIN_SECURITY_GROUPS]: Record<string, string>;

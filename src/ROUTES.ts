@@ -15,6 +15,9 @@ const ROUTES = {
   LOGIN: 'login',
   SIGNUP: 'signup',
   DESKTOP_SIGN_IN_REDIRECT: 'desktop-signin-redirect',
+  APPLE_SIGN_IN: 'sign-in-with-apple',
+  GOOGLE_SIGN_IN: 'sign-in-with-google',
+  TRANSITION_BETWEEN_APPS: 'transition',
 
   ACHIEVEMENTS: 'achievements',
 

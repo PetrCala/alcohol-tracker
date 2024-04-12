@@ -1,5 +1,7 @@
+import type Account from './Account';
 import type AccountCreations from './AccountCreations';
 import type {AccountCreationsList, DeviceId} from './AccountCreations';
+import type {Address} from './PrivatePersonalDetails';
 import type Config from './Config';
 import type {AppSettings, Maintenance} from './Config';
 import type {CapturedLogs, Log} from './Console';
@@ -23,6 +25,8 @@ import type {
   FriendRequestStatus,
 } from './FriendRequestList';
 import type Locale from './Locale';
+import type {LoginList} from './Login';
+import type Login from './Login';
 import type Modal from './Modal';
 import type Network from './Network';
 import type NicknameToId from './NicknameToId';
@@ -43,6 +47,7 @@ import type {
   UnitsToColors,
   DrinksToUnits,
 } from './Preferences';
+import type PrivatePersonalDetails from './PrivatePersonalDetails';
 import type Request from './Request';
 import type Response from './Response';
 import type Session from './Session';
@@ -60,8 +65,10 @@ import type UserStatus from './UserStatus';
 import type {UserStatusList} from './UserStatus';
 
 export type {
+  Account,
   AccountCreations,
   AccountCreationsList,
+  Address,
   AppSettings,
   CapturedLogs,
   Config,
@@ -88,6 +95,8 @@ export type {
   FriendRequestStatus,
   Locale,
   Log,
+  Login,
+  LoginList,
   Maintenance,
   MeasureType,
   Modal,
@@ -103,6 +112,7 @@ export type {
   PersonalDetails,
   Preferences,
   PreferencesList,
+  PrivatePersonalDetails,
   Profile,
   ProfileList,
   Request,

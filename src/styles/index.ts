@@ -649,6 +649,19 @@ const styles = (theme: ThemeColors) =>
       backgroundColor: theme.hoverComponentBG,
     },
 
+    nativeOverlayStyles: (current: OverlayStylesParams) =>
+      ({
+        position: 'absolute',
+        backgroundColor: theme.overlay,
+        width: '100%',
+        height: '100%',
+        opacity: current.progress.interpolate({
+          inputRange: [0, 1],
+          outputRange: [0, variables.overlayOpacity],
+          extrapolate: 'clamp',
+        }),
+      }) satisfies ViewStyle,
+
     noBorderRadius: {
       borderRadius: 0,
     },

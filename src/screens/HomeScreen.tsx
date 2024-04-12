@@ -48,7 +48,7 @@ import type {BottomTabNavigatorParamList} from '@libs/Navigation/types';
 import type SCREENS from '@src/SCREENS';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import type {DateData} from 'react-native-calendars';
-import {getEmptySession} from '@libs/SessionUtils';
+import {getEmptySession} from '@libs/DrinkingSessionUtils';
 import DBPATHS from '@database/DBPATHS';
 import type {StatData} from '@components/Items/StatOverview';
 import {StatsOverview} from '@components/Items/StatOverview';

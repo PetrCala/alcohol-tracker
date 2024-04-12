@@ -23,7 +23,7 @@ import {useEffect, useState} from 'react';
 import {
   calculateSessionLength,
   extractSessionOrEmpty,
-} from '@libs/SessionUtils';
+} from '@libs/DrinkingSessionUtils';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import ScreenWrapper from '@components/ScreenWrapper';

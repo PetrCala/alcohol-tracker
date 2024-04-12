@@ -49,7 +49,7 @@ import {
 } from '@database/friends';
 import DBPATHS from '@database/DBPATHS';
 import CONST from '@src/CONST';
-import {getEmptySession} from '@libs/SessionUtils';
+import {getEmptySession} from '@libs/DrinkingSessionUtils';
 import {
   Auth,
   connectAuthEmulator,

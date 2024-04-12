@@ -11,9 +11,17 @@ const WRITE_COMMANDS = {
   OPEN_APP: 'OpenApp',
   RECONNECT_APP: 'ReconnectApp',
   HANDLE_RESTRICTED_EVENT: 'HandleRestrictedEvent',
+  UPDATE_PRONOUNS: 'UpdatePronouns',
+  UPDATE_DISPLAY_NAME: 'UpdateDisplayName',
+  UPDATE_LEGAL_NAME: 'UpdateLegalName',
+  UPDATE_DATE_OF_BIRTH: 'UpdateDateOfBirth',
+  UPDATE_HOME_ADDRESS: 'UpdateHomeAddress',
+  UPDATE_AUTOMATIC_TIMEZONE: 'UpdateAutomaticTimezone',
+  UPDATE_SELECTED_TIMEZONE: 'UpdateSelectedTimezone',
+  UPDATE_USER_AVATAR: 'UpdateUserAvatar',
+  DELETE_USER_AVATAR: 'DeleteUserAvatar',
+  CLOSE_ACCOUNT: 'CloseAccount',
   //   OPEN_PROFILE: 'OpenProfile',
-  //   UPDATE_DISPLAY_NAME: 'UpdateDisplayName',
-  //   UPDATE_LEGAL_NAME: 'UpdateLegalName',
   //   SIGN_IN_WITH_APPLE: 'SignInWithApple',
   //   SIGN_IN_WITH_GOOGLE: 'SignInWithGoogle',
   //   SIGN_IN_USER: 'SigninUser',
@@ -31,9 +39,17 @@ type WriteCommandParameters = {
   [WRITE_COMMANDS.OPEN_APP]: Parameters.OpenAppParams;
   [WRITE_COMMANDS.RECONNECT_APP]: Parameters.ReconnectAppParams;
   [WRITE_COMMANDS.HANDLE_RESTRICTED_EVENT]: Parameters.HandleRestrictedEventParams;
+  [WRITE_COMMANDS.UPDATE_PRONOUNS]: Parameters.UpdatePronounsParams;
+  [WRITE_COMMANDS.UPDATE_DISPLAY_NAME]: Parameters.UpdateDisplayNameParams;
+  [WRITE_COMMANDS.UPDATE_LEGAL_NAME]: Parameters.UpdateLegalNameParams;
+  [WRITE_COMMANDS.UPDATE_DATE_OF_BIRTH]: Parameters.UpdateDateOfBirthParams;
+  [WRITE_COMMANDS.UPDATE_HOME_ADDRESS]: Parameters.UpdateHomeAddressParams;
+  [WRITE_COMMANDS.UPDATE_AUTOMATIC_TIMEZONE]: Parameters.UpdateAutomaticTimezoneParams;
+  [WRITE_COMMANDS.UPDATE_SELECTED_TIMEZONE]: Parameters.UpdateSelectedTimezoneParams;
+  [WRITE_COMMANDS.UPDATE_USER_AVATAR]: Parameters.UpdateUserAvatarParams;
+  [WRITE_COMMANDS.DELETE_USER_AVATAR]: EmptyObject;
+  [WRITE_COMMANDS.CLOSE_ACCOUNT]: Parameters.CloseAccountParams;
   //   [WRITE_COMMANDS.OPEN_PROFILE]: Parameters.OpenProfileParams;
-  //   [WRITE_COMMANDS.UPDATE_DISPLAY_NAME]: Parameters.UpdateDisplayNameParams;
-  //   [WRITE_COMMANDS.UPDATE_LEGAL_NAME]: Parameters.UpdateLegalNameParams;
   //   [WRITE_COMMANDS.SIGN_IN_WITH_APPLE]: Parameters.BeginAppleSignInParams;
   //   [WRITE_COMMANDS.SIGN_IN_WITH_GOOGLE]: Parameters.BeginGoogleSignInParams;
   //   [WRITE_COMMANDS.SIGN_IN_USER]: SignInUserParams;
@@ -47,7 +63,7 @@ const READ_COMMANDS = {
   //   GET_MAPBOX_ACCESS_TOKEN: 'GetMapboxAccessToken',
   //   OPEN_PAYMENTS_PAGE: 'OpenPaymentsPage',
   //   OPEN_PERSONAL_DETAILS: 'OpenPersonalDetailsPage',
-  //   OPEN_PUBLIC_PROFILE_PAGE: 'OpenPublicProfilePage',
+  OPEN_PUBLIC_PROFILE_PAGE: 'OpenPublicProfilePage',
   //   OPEN_PLAID_BANK_LOGIN: 'OpenPlaidBankLogin',
   //   OPEN_PLAID_BANK_ACCOUNT_SELECTOR: 'OpenPlaidBankAccountSelector',
   //   GET_ROUTE: 'GetRoute',
@@ -65,7 +81,7 @@ type ReadCommandParameters = {
   //   [READ_COMMANDS.GET_MAPBOX_ACCESS_TOKEN]: EmptyObject;
   //   [READ_COMMANDS.OPEN_PAYMENTS_PAGE]: EmptyObject;
   //   [READ_COMMANDS.OPEN_PERSONAL_DETAILS]: EmptyObject;
-  //   [READ_COMMANDS.OPEN_PUBLIC_PROFILE_PAGE]: Parameters.OpenPublicProfilePageParams;
+  [READ_COMMANDS.OPEN_PUBLIC_PROFILE_PAGE]: Parameters.OpenPublicProfilePageParams;
   //    ...
 };
 

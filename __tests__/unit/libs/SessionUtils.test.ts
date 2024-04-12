@@ -1,4 +1,4 @@
-import {determineSessionMostCommonDrink} from '@libs/SessionUtils';
+import {determineSessionMostCommonDrink} from '@libs/DrinkingSessionUtils';
 import {DrinkingSession} from '@src/types/onyx';
 import {createMockSession} from '../../utils/mockDatabase';
 import CONST from '@src/CONST';

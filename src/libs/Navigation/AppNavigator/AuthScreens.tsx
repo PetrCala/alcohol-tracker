@@ -1,58 +1,271 @@
+import React, {memo, useEffect, useMemo, useRef} from 'react';
 import {View} from 'react-native';
+import type {OnyxEntry} from 'react-native-onyx';
+import Onyx, {withOnyx} from 'react-native-onyx';
+// import OptionsListContextProvider from '@components/OptionListContextProvider';
+// import useOnboardingLayout from '@hooks/useOnboardingLayout';
 import useStyleUtils from '@hooks/useStyleUtils';
 import useThemeStyles from '@hooks/useThemeStyles';
-
-import {DatabaseDataProvider} from '@context/global/DatabaseDataContext';
-import {createStackNavigator} from '@react-navigation/stack';
-import {AuthScreensParamList} from '../types';
-import NAVIGATORS from '@src/NAVIGATORS';
-import SCREENS from '@src/SCREENS';
-import CentralPaneNavigator from './Navigators/CentralPaneNavigator';
-import FullScreenNavigator from './Navigators/FullScreenNavigator';
-import LeftModalNavigator from './Navigators/LeftModalNavigator';
-import {useRef} from 'react';
-import getRootNavigatorScreenOptions from './getRootNavigatorScreenOptions';
 import useWindowDimensions from '@hooks/useWindowDimensions';
-import BottomTabNavigator from './Navigators/BottomTabNavigator';
-import RightModalNavigator from './Navigators/RightModalNavigator';
+import KeyboardShortcut from '@libs/KeyboardShortcut';
+import Log from '@libs/Log';
+import getCurrentUrl from '@libs/Navigation/currentUrl';
+import Navigation from '@libs/Navigation/Navigation';
+import type {AuthScreensParamList} from '@libs/Navigation/types';
+import NetworkConnection from '@libs/NetworkConnection';
+import * as Pusher from '@libs/Pusher/pusher';
+import PusherConnectionManager from '@libs/PusherConnectionManager';
+import * as SessionUtils from '@libs/SessionUtils';
+// import NotFoundPage from '@pages/ErrorPage/NotFoundPage';
 import NotFoundScreen from '@screens/ErrorScreen/NotFoundScreen';
-import createCustomStackNavigator from './createCustomStackNavigator';
+// import DesktopSignInRedirectPage from '@pages/signin/DesktopSignInRedirectPage';
+import * as App from '@userActions/App';
+// import * as Download from '@userActions/Download';
+import * as Modal from '@userActions/Modal';
+import * as PersonalDetails from '@userActions/PersonalDetails';
+// import * as PriorityMode from '@userActions/PriorityMode';
+import * as Session from '@userActions/Session';
+import Timing from '@userActions/Timing';
+// import * as User from '@userActions/User';
+import CONFIG from '@src/CONFIG';
 import CONST from '@src/CONST';
+import NAVIGATORS from '@src/NAVIGATORS';
+import ONYXKEYS from '@src/ONYXKEYS';
+import ROUTES from '@src/ROUTES';
+import SCREENS from '@src/SCREENS';
+import type * as OnyxTypes from '@src/types/onyx';
+import {DatabaseDataProvider} from '@context/global/DatabaseDataContext';
+import type {SelectedTimezone, Timezone} from '@src/types/onyx/PersonalDetails';
+import createCustomStackNavigator from './createCustomStackNavigator';
+import defaultScreenOptions from './defaultScreenOptions';
+import getRootNavigatorScreenOptions from './getRootNavigatorScreenOptions';
+import BottomTabNavigator from './Navigators/BottomTabNavigator';
+import CentralPaneNavigator from './Navigators/CentralPaneNavigator';
+// import FullScreenNavigator from './Navigators/FullScreenNavigator';
+// import LeftModalNavigator from './Navigators/LeftModalNavigator';
+// import OnboardingModalNavigator from './Navigators/OnboardingModalNavigator';
+import RightModalNavigator from './Navigators/RightModalNavigator';
+// import WelcomeVideoModalNavigator from './Navigators/WelcomeVideoModalNavigator';
+
+type AuthScreensProps = {
+  /** Session of currently logged in user */
+  session: OnyxEntry<OnyxTypes.Session>;
+
+  /** The last Onyx update ID was applied to the client */
+  initialLastUpdateIDAppliedToClient: OnyxEntry<number>;
+};
+
+let timezone: Timezone | null;
+let currentAccountID = -1;
+let isLoadingApp = false;
+let lastUpdateIDAppliedToClient: OnyxEntry<number>;
+
+Onyx.connect({
+  key: ONYXKEYS.SESSION,
+  callback: value => {
+    // When signed out, val hasn't accountID
+    if (!(value && 'accountID' in value)) {
+      timezone = null;
+      return;
+    }
+
+    currentAccountID = value.accountID ?? -1;
+
+    // TODO
+    // if (Navigation.isActiveRoute(ROUTES.SIGN_IN_MODAL)) {
+    //   // This means sign in in RHP was successful, so we can subscribe to user events
+    //   User.subscribeToUserEvents();
+    // }
+  },
+});
+
+Onyx.connect({
+  key: ONYXKEYS.PERSONAL_DETAILS_LIST,
+  callback: value => {
+    if (!value || timezone) {
+      return;
+    }
+
+    timezone = value?.[currentAccountID]?.timezone ?? {};
+    const currentTimezone = Intl.DateTimeFormat().resolvedOptions()
+      .timeZone as SelectedTimezone;
+
+    // If the current timezone is different than the user's timezone, and their timezone is set to automatic, then update their timezone.
+    if (timezone?.automatic && timezone?.selected !== currentTimezone) {
+      timezone.selected = currentTimezone;
+      PersonalDetails.updateAutomaticTimezone({
+        automatic: true,
+        selected: currentTimezone,
+      });
+    }
+  },
+});
+
+Onyx.connect({
+  key: ONYXKEYS.IS_LOADING_APP,
+  callback: value => {
+    isLoadingApp = !!value;
+  },
+});
+
+Onyx.connect({
+  key: ONYXKEYS.ONYX_UPDATES_LAST_UPDATE_ID_APPLIED_TO_CLIENT,
+  callback: (value: OnyxEntry<number>) => {
+    lastUpdateIDAppliedToClient = value;
+  },
+});
+
+function handleNetworkReconnect() {
+  if (isLoadingApp) {
+    App.openApp();
+  } else {
+    Log.info('[handleNetworkReconnect] Sending ReconnectApp');
+    App.reconnectApp(lastUpdateIDAppliedToClient);
+  }
+}
 
 const RootStack = createCustomStackNavigator<AuthScreensParamList>();
+// We want to delay the re-rendering for components
+// that depends on modal visibility until Modal is completely closed and its focused
+// When modal screen is focused, update modal visibility in Onyx
+// https://reactnavigation.org/docs/navigation-events/
 
-// const modalScreenListeners = {
-//   focus: () => {
-//     Modal.setModalVisibility(true);
-//   },
-//   beforeRemove: () => {
-//     // Clear search input (WorkspaceInvitePage) when modal is closed
-//     SearchInputManager.searchInput = '';
-//     Modal.setModalVisibility(false);
-//   },
-// };
+const modalScreenListeners = {
+  focus: () => {
+    Modal.setModalVisibility(true);
+  },
+  beforeRemove: () => {
+    Modal.setModalVisibility(false);
+    Modal.willAlertModalBecomeVisible(false);
+  },
+};
 
-function AuthScreens() {
+function AuthScreens({
+  session,
+  initialLastUpdateIDAppliedToClient,
+}: AuthScreensProps) {
   const styles = useThemeStyles();
   const StyleUtils = useStyleUtils();
   const {isSmallScreenWidth} = useWindowDimensions();
+  // const {shouldUseNarrowLayout} = useOnboardingLayout();
   const screenOptions = getRootNavigatorScreenOptions(
     isSmallScreenWidth,
     styles,
     StyleUtils,
   );
   const isInitialRender = useRef(true);
-  // const insets = useSafeAreaInsets(); // For old safe-area
 
   if (isInitialRender.current) {
-    // Timing.start(CONST.TIMING.HOMEPAGE_INITIAL_RENDER);
+    Timing.start(CONST.TIMING.HOMEPAGE_INITIAL_RENDER);
     isInitialRender.current = false;
   }
 
-  // More cools things here - see the original lib
+  useEffect(() => {
+    const shortcutsOverviewShortcutConfig = CONST.KEYBOARD_SHORTCUTS.SHORTCUTS;
+    const searchShortcutConfig = CONST.KEYBOARD_SHORTCUTS.SEARCH;
+    const chatShortcutConfig = CONST.KEYBOARD_SHORTCUTS.NEW_CHAT;
+    const currentUrl = getCurrentUrl();
+    const isLoggingInAsNewUser =
+      !!session?.email &&
+      SessionUtils.isLoggingInAsNewUser(currentUrl, session.email);
+    // Sign out the current user if we're transitioning with a different user
+    const isTransitioning = currentUrl.includes(ROUTES.TRANSITION_BETWEEN_APPS);
+    const isSupportalTransition = currentUrl.includes('authTokenType=support');
+    // TODO enable this after signing in is put into place
+    // if (isLoggingInAsNewUser && isTransitioning) {
+    //   Session.signOutAndRedirectToSignIn(false, isSupportalTransition);
+    //   return;
+    // }
+
+    NetworkConnection.listenForReconnect();
+    NetworkConnection.onReconnect(handleNetworkReconnect);
+    // TODO enable this
+    // PusherConnectionManager.init();
+    // Pusher.init({
+    //   appKey: CONFIG.PUSHER.APP_KEY,
+    //   cluster: CONFIG.PUSHER.CLUSTER,
+    //   authEndpoint: `${CONFIG.KIROKU.DEFAULT_API_ROOT}api/AuthenticatePusher?`,
+    // }).then(() => {
+    //   User.subscribeToUserEvents();
+    // });
+
+    // If we are on this screen then we are "logged in", but the user might not have "just logged in". They could be reopening the app
+    // or returning from background. If so, we'll assume they have some app data already and we can call reconnectApp() instead of openApp().
+    if (SessionUtils.didUserLogInDuringSession()) {
+      App.openApp();
+    } else {
+      Log.info('[AuthScreens] Sending ReconnectApp');
+      App.reconnectApp(initialLastUpdateIDAppliedToClient);
+    }
+
+    // PriorityMode.autoSwitchToFocusMode();
+
+    App.setUpPoliciesAndNavigate(session);
+
+    App.redirectThirdPartyDesktopSignIn();
+
+    // Download.clearDownloads();
+
+    Timing.end(CONST.TIMING.HOMEPAGE_INITIAL_RENDER);
+
+    // Listen to keyboard shortcuts for opening certain pages
+    // const unsubscribeShortcutsOverviewShortcut = KeyboardShortcut.subscribe(
+    //   shortcutsOverviewShortcutConfig.shortcutKey,
+    //   () => {
+    //     Modal.close(() => {
+    //       if (Navigation.isActiveRoute(ROUTES.KEYBOARD_SHORTCUTS)) {
+    //         return;
+    //       }
+    //       return Navigation.navigate(ROUTES.KEYBOARD_SHORTCUTS);
+    //     });
+    //   },
+    //   shortcutsOverviewShortcutConfig.descriptionKey,
+    //   shortcutsOverviewShortcutConfig.modifiers,
+    //   true,
+    // );
+
+    // Listen for the key K being pressed so that focus can be given to
+    // the chat switcher, or new group chat
+    // based on the key modifiers pressed and the operating system
+    // const unsubscribeSearchShortcut = KeyboardShortcut.subscribe(
+    //   searchShortcutConfig.shortcutKey,
+    //   () => {
+    //     Modal.close(
+    //       Session.checkIfActionIsAllowed(() =>
+    //         Navigation.navigate(ROUTES.SEARCH),
+    //       ),
+    //     );
+    //   },
+    //   shortcutsOverviewShortcutConfig.descriptionKey,
+    //   shortcutsOverviewShortcutConfig.modifiers,
+    //   true,
+    // );
+
+    // const unsubscribeChatShortcut = KeyboardShortcut.subscribe(
+    //   chatShortcutConfig.shortcutKey,
+    //   () => {
+    //     Modal.close(
+    //       Session.checkIfActionIsAllowed(() => Navigation.navigate(ROUTES.NEW)),
+    //     );
+    //   },
+    //   chatShortcutConfig.descriptionKey,
+    //   chatShortcutConfig.modifiers,
+    //   true,
+    // );
+
+    return () => {
+      // unsubscribeShortcutsOverviewShortcut();
+      // unsubscribeSearchShortcut();
+      // unsubscribeChatShortcut();
+      Session.cleanupSession();
+    };
+
+    // Rule disabled because this effect is only for component did mount & will component unmount lifecycle event
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
-    // Here, it would be possible to use the old safe-area
+    // <OptionsListContextProvider></OptionsListContextProvider>
     <DatabaseDataProvider>
       <View style={styles.rootNavigatorContainerStyles(isSmallScreenWidth)}>
         <RootStack.Navigator isSmallScreenWidth={isSmallScreenWidth}>
@@ -98,8 +311,19 @@ function AuthScreens() {
     </DatabaseDataProvider>
   );
 }
-{
-  /* // </SafeAreaProvider> */
-}
+
+AuthScreens.displayName = 'AuthScreens';
+
+const AuthScreensMemoized = memo(AuthScreens, () => true);
 
 export default AuthScreens;
+
+// TODO enable this
+// export default withOnyx<AuthScreensProps, AuthScreensProps>({
+//   session: {
+//     key: ONYXKEYS.SESSION,
+//   },
+//   initialLastUpdateIDAppliedToClient: {
+//     key: ONYXKEYS.ONYX_UPDATES_LAST_UPDATE_ID_APPLIED_TO_CLIENT,
+//   },
+// })(AuthScreensMemoized);

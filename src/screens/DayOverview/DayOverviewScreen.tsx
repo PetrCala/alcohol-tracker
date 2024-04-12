@@ -38,7 +38,7 @@ import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import DBPATHS from '@database/DBPATHS';
-import {getEmptySession} from '@libs/SessionUtils';
+import {getEmptySession} from '@libs/DrinkingSessionUtils';
 import CONST from '@src/CONST';
 import {savePlaceholderSessionData} from '@database/drinkingSessions';
 import ScreenWrapper from '@components/ScreenWrapper';
