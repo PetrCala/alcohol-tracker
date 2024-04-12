@@ -257,3 +257,6 @@ export default {
       "Looks like you're offline. Please check your connection and try again.",
   },
 } satisfies TranslationBase;
+
+// Example of how to pluralize strings
+// deleteRates: ({count}: DistanceRateOperationsParams) => `Delete ${Str.pluralize('rate', 'rates', count)}`,

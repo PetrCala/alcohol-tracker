@@ -371,8 +371,7 @@ function MainMenuScreen({
           <FeedbackPopup
             visible={feedbackModalVisible}
             transparent={true}
-            // message={translate('mainMenuScreen.improvementThoughts')}
-            message={en.mainMenuScreen.improvementThoughts}
+            message={translate('mainMenuScreen.improvementThoughts')}
             onRequestClose={() => setFeedbackModalVisible(false)}
             onSubmit={feedback => handleSubmitFeedback(feedback)}
           />
@@ -396,10 +395,8 @@ function MainMenuScreen({
             visible={reauthentificateModalVisible}
             transparent={true}
             message={'Please retype your password\nin order to proceed'}
-            // confirmationMessage={translate('mainMenuScreen.deleteConfirmation')}
-            // placeholder={translate('common.password')}
-            confirmationMessage={en.mainMenuScreen.deleteConfirmation}
-            placeholder={'Password'}
+            confirmationMessage={translate('mainMenuScreen.deleteConfirmation')}
+            placeholder={translate('common.password')}
             onRequestClose={() => setReauthentificateModalVisible(false)}
             onSubmit={password => handleDeleteUser(password)}
             textContentType="password"
