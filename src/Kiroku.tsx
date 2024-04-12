@@ -12,21 +12,21 @@ import type {OnyxEntry} from 'react-native-onyx';
 import Onyx, {withOnyx} from 'react-native-onyx';
 import Navigation from '@navigation/Navigation';
 import NavigationRoot from '@navigation/NavigationRoot';
-import NetworkConnection from './libs/NetworkConnection';
-// import PushNotification from './libs/Notification/PushNotification';
-// import BootSplash from './libs/BootSplash';
-import Log from './libs/Log';
-import migrateOnyx from './libs/migrateOnyx';
-// import SplashScreenHider from './components/SplashScreenHider';
-import CONST from './CONST';
-import * as ActiveClientManager from './libs/ActiveClientManager';
-import StartupTimer from './libs/StartupTimer';
-import Visibility from './libs/Visibility';
-import ONYXKEYS from './ONYXKEYS';
+import NetworkConnection from '@libs/NetworkConnection';
+// import PushNotification from '@libs/Notification/PushNotification';
+// import BootSplash from '@libs/BootSplash';
+import Log from '@libs/Log';
+import migrateOnyx from '@libs/migrateOnyx';
+// import SplashScreenHider from '@components/SplashScreenHider';
+import CONST from '@src/CONST';
+import * as ActiveClientManager from '@libs/ActiveClientManager';
+import StartupTimer from '@libs/StartupTimer';
+import Visibility from '@libs/Visibility';
 import {useFirebase} from '@context/global/FirebaseContext';
-// import {Session} from './types/onyx';
-import {Route} from './ROUTES';
+import ONYXKEYS from '@src/ONYXKEYS';
+import {Route} from '@src/ROUTES';
 import ForceUpdateModal from '@components/Modals/ForceUpdateModal';
+import {Session} from '@src/types/onyx';
 
 Onyx.registerLogger(({level, message}) => {
   if (level === 'alert') {
@@ -41,44 +41,40 @@ type KirokuOnyxProps = {
   /** Whether the app is waiting for the server's response to determine if a room is public */
   // isCheckingPublicRoom: OnyxEntry<boolean>;
   /** Session info for the currently logged in user. */
-  // session: OnyxEntry<Session>;
+  session: OnyxEntry<Session>;
   /** Whether a new update is available and ready to install. */
-  // updateAvailable: OnyxEntry<boolean>;
+  updateAvailable: OnyxEntry<boolean>;
   /** Tells us if the sidebar has rendered */
-  // isSidebarLoaded: OnyxEntry<boolean>;
+  isSidebarLoaded: OnyxEntry<boolean>;
   /** Information about a screen share call requested by a GuidesPlus agent */
   // screenShareRequest: OnyxEntry<ScreenShareRequest>;
   /** True when the user must update to the latest minimum version of the app */
-  // updateRequired: OnyxEntry<boolean>;
+  updateRequired: OnyxEntry<boolean>;
   /** Whether we should display the notification alerting the user that focus mode has been auto-enabled */
-  // focusModeNotification: OnyxEntry<boolean>;
+  focusModeNotification: OnyxEntry<boolean>;
   /** Last visited path in the app */
-  // lastVisitedPath: OnyxEntry<string | undefined>;
+  lastVisitedPath: OnyxEntry<string | undefined>;
 };
 
 type KirokuProps = KirokuOnyxProps;
 
 const SplashScreenHiddenContext = React.createContext({});
 
-// function Kiroku(props) {
-
-function Kiroku(
-  {
-    // session,
-    // updateAvailable,
-    // isSidebarLoaded = false,
-    // updateRequired = false,
-    // focusModeNotification = false,
-    // lastVisitedPath,
-  }: KirokuProps,
-) {
+function Kiroku() {
+  // function Kiroku({
+  //   session,
+  //   updateAvailable,
+  //   isSidebarLoaded = false,
+  //   updateRequired = false,
+  //   focusModeNotification = false,
+  //   lastVisitedPath,
+  // }: KirokuProps) {
   const session = null;
   const updateAvailable = false;
   const isSidebarLoaded = true;
   const updateRequired = false;
   const focusModeNotification = false;
   const lastVisitedPath = '';
-
   const {auth} = useFirebase();
   const appStateChangeListener = useRef<NativeEventSubscription | null>(null);
   const [isNavigationReady, setIsNavigationReady] = useState(false);
@@ -137,7 +133,6 @@ function Kiroku(
   }, []);
 
   useEffect(() => {
-    // TODO uncomment this
     // setTimeout(() => {
     //   BootSplash.getVisibilityStatus().then(status => {
     //     const appState = AppState.currentState;

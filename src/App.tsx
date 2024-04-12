@@ -39,16 +39,16 @@ const App = ({url}: KirokuProps) => {
       <ComposeProviders
         components={[
           // OnyxProvider, // Untested
-          // ThemeProvider, // Untested
-          // ThemeStylesProvider, // Untested
+          ThemeProvider,
+          ThemeStylesProvider,
           FirebaseProvider,
           UserConnectionProvider,
           ConfigProvider,
           SafeAreaProvider,
           SafeArea,
-          // WindowDimensionsProvider, // Untested
+          WindowDimensionsProvider,
           KeyboardStateProvider,
-          // CustomStatusBarAndBackgroundContextProvider, // Untested
+          CustomStatusBarAndBackgroundContextProvider,
         ]}>
         {/* <CustomStatusBarAndBackground /> */}
         {/* <ErrorBoundary errorMessage="Kiroku crash caught by error boundary">

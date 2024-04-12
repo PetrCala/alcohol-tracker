@@ -24,6 +24,7 @@ const connect: LocaleListenerConnect = (callbackAfterChange = () => {}) => {
 };
 
 function getPreferredLocale(): BaseLocale {
+  console.log('preferredLocale', preferredLocale);
   return preferredLocale;
 }
 

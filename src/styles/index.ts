@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import type {LineLayerStyleProps} from '@rnmapbox/maps/src/utils/MapboxStyles';
 import lodashClamp from 'lodash/clamp';
 import type {LineLayer} from 'react-map-gl';
 import type {
@@ -105,10 +104,6 @@ type OfflineFeedbackStyle = Record<
   ViewStyle | TextStyle
 >;
 
-type MapDirectionStyle = Pick<LineLayerStyleProps, 'lineColor' | 'lineWidth'>;
-
-type MapDirectionLayerStyle = Pick<LineLayer, 'layout' | 'paint'>;
-
 type Styles = Record<
   string,
   | ViewStyle
@@ -116,8 +111,6 @@ type Styles = Record<
   | ImageStyle
   | WebViewStyle
   | OfflineFeedbackStyle
-  | MapDirectionStyle
-  | MapDirectionLayerStyle
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   | ((
       ...args: any[]
