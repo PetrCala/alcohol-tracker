@@ -22,13 +22,14 @@ import variables from '@styles/variables';
 import CONST from '@src/CONST';
 import {defaultStyles} from '..';
 import type {ThemeStyles} from '..';
-// import containerComposeStyles from './containerComposeStyles';
+import containerComposeStyles from './containerComposeStyles';
 import FontUtils from './FontUtils';
-// import createModalStyleUtils from './generators/ModalStyleUtils';
-// import createTooltipStyleUtils from './generators/TooltipStyleUtils';
-// import getContextMenuItemStyles from './getContextMenuItemStyles';
+import createModalStyleUtils from './generators/ModalStyleUtils';
+import createTooltipStyleUtils from './generators/TooltipStyleUtils';
+import getContextMenuItemStyles from './getContextMenuItemStyles';
 import getNavigationModalCardStyle from './getNavigationModalCardStyles';
-// import {compactContentContainerStyles} from './optionRowStyles';
+import getSignInBgStyles from './getSignInBgStyles';
+import {compactContentContainerStyles} from './optionRowStyles';
 import getCardStyles from './cardStyles';
 import positioning from './positioning';
 import type {
@@ -835,7 +836,7 @@ function getDirectionStyle(
   direction: ValueOf<typeof CONST.DIRECTION>,
 ): ViewStyle {
   if (direction === CONST.DIRECTION.LEFT) {
-    return {transform: 'rotate(180deg)' as any};
+    return {transform: [{rotate: '180deg'}]};
   }
 
   return {};
@@ -1080,49 +1081,81 @@ const staticStyleUtils = {
   getCardStyles,
   getOpacityStyle,
   getMultiGestureCanvasContainerStyle,
-  // getSignInBgStyles,
-  // getIconWidthAndHeightStyle,
+  getSignInBgStyles,
+  getIconWidthAndHeightStyle,
   getButtonStyleWithIcon,
 };
+
 const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
   ...staticStyleUtils,
-  // TODO quite important potentially
-  // ...createModalStyleUtils({theme, styles}),
-  // ...createTooltipStyleUtils({theme, styles}),
-  // ...createReportActionContextMenuStyleUtils({theme, styles}),
+  ...createModalStyleUtils({theme, styles}),
+  ...createTooltipStyleUtils({theme, styles}),
+  // ...createReportActionConextMenuStyleUtils({theme, styles}),
 
-  // getCompactContentContainerStyles: () => compactContentContainerStyles(styles),
-  // getContextMenuItemStyles: (windowWidth?: number) =>
-  //   getContextMenuItemStyles(styles, windowWidth),
-  // getContainerComposeStyles: () => containerComposeStyles(styles),
+  getCompactContentContainerStyles: () => compactContentContainerStyles(styles),
+  getContextMenuItemStyles: (windowWidth?: number) =>
+    getContextMenuItemStyles(styles, windowWidth),
+  getContainerComposeStyles: () => containerComposeStyles(styles),
 
-  // /**
-  //  * Returns auto grow height text input style
-  //  */
-  // getAutoGrowHeightInputStyle: (
-  //   textInputHeight: number,
-  //   maxHeight: number,
-  // ): ViewStyle => {
-  //   if (textInputHeight > maxHeight) {
-  //     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  //     return {
-  //       ...styles.pr0,
-  //       ...styles.overflowHidden, // Was overflowAuto
-  //     };
-  //   }
+  /**
+   * Gets styles for AutoCompleteSuggestion row
+   */
+  getAutoCompleteSuggestionItemStyle: (
+    highlightedEmojiIndex: number,
+    rowHeight: number,
+    isHovered: boolean,
+    currentEmojiIndex: number,
+  ): ViewStyle[] => {
+    let backgroundColor;
 
-  //   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  //   return {
-  //     ...styles.pr0,
-  //     ...styles.overflowHidden,
-  //     // maxHeight is not of the input only but the of the whole input container
-  //     // which also includes the top padding and bottom border
-  //     height:
-  //       maxHeight -
-  //       styles.textInputMultilineContainer.paddingTop -
-  //       styles.textInputContainer.borderBottomWidth,
-  //   };
-  // },
+    if (currentEmojiIndex === highlightedEmojiIndex) {
+      backgroundColor = theme.activeComponentBG;
+    } else if (isHovered) {
+      backgroundColor = theme.hoverComponentBG;
+    }
+
+    return [
+      {
+        height: rowHeight,
+        justifyContent: 'center',
+      },
+      backgroundColor
+        ? {
+            backgroundColor,
+          }
+        : {},
+    ];
+  },
+
+  /**
+   * Returns auto grow height text input style
+   */
+  getAutoGrowHeightInputStyle: (
+    textInputHeight: number,
+    maxHeight: number,
+  ): ViewStyle => {
+    if (textInputHeight > maxHeight) {
+      // TODO: Remove this "eslint-disable-next" once the theme switching migration is done and styles are fully typed (GH Issue: https://github.com/Expensify/App/issues/27337)
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return {
+        ...styles.pr0,
+        ...styles.overflowAuto,
+      };
+    }
+
+    // TODO: Remove this "eslint-disable-next" once the theme switching migration is done and styles are fully typed (GH Issue: https://github.com/Expensify/App/issues/27337)
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return {
+      ...styles.pr0,
+      ...styles.overflowHidden,
+      // maxHeight is not of the input only but the of the whole input container
+      // which also includes the top padding and bottom border
+      height:
+        maxHeight -
+        styles.textInputMultilineContainer.paddingTop -
+        styles.textInputContainer.borderBottomWidth,
+    };
+  },
 
   /**
    * Return the style from an avatar size constant
@@ -1136,6 +1169,35 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
       backgroundColor: theme.offline,
     };
   },
+
+  // /**
+  //  * Generate a style for the background color of the Badge
+  //  */
+  // getBadgeColorStyle: (
+  //   isSuccess: boolean,
+  //   isError: boolean,
+  //   isPressed = false,
+  //   isAdHoc = false,
+  // ): ViewStyle => {
+  //   if (isSuccess) {
+  //     if (isAdHoc) {
+  //       // TODO: Remove this "eslint-disable-next" once the theme switching migration is done and styles are fully typed (GH Issue: https://github.com/Expensify/App/issues/27337)
+  //       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  //       return isPressed
+  //         ? styles.badgeAdHocSuccessPressed
+  //         : styles.badgeAdHocSuccess;
+  //     }
+  //     // TODO: Remove this "eslint-disable-next" once the theme switching migration is done and styles are fully typed (GH Issue: https://github.com/Expensify/App/issues/27337)
+  //     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  //     return isPressed ? styles.badgeSuccessPressed : styles.badgeSuccess;
+  //   }
+  //   if (isError) {
+  //     // TODO: Remove this "eslint-disable-next" once the theme switching migration is done and styles are fully typed (GH Issue: https://github.com/Expensify/App/issues/27337)
+  //     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  //     return isPressed ? styles.badgeDangerPressed : styles.badgeDanger;
+  //   }
+  //   return {};
+  // },
 
   /**
    * Generate a style for the background color of the button, based on its current state.
@@ -1183,27 +1245,126 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
     backgroundColor: isColored ? theme.mentionBG : undefined,
   }),
 
-  // /**
-  //  * Returns link styles based on whether the link is disabled or not
-  //  */
-  // getDisabledLinkStyles: (isDisabled = false): ViewStyle => {
-  //   const disabledLinkStyles = {
-  //     color: theme.textSupporting,
-  //     ...styles.cursorDisabled,
-  //   };
+  /**
+   * Returns link styles based on whether the link is disabled or not
+   */
+  getDisabledLinkStyles: (isDisabled = false): ViewStyle => {
+    const disabledLinkStyles = {
+      color: theme.textSupporting,
+      ...styles.cursorDisabled,
+    };
 
-  //   // TODO: Remove this "eslint-disable-next" once the theme switching migration is done and styles are fully typed (GH Issue: https://github.com/Expensify/App/issues/27337)
-  //   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  //   return {
-  //     ...styles.link,
-  //     ...(isDisabled ? disabledLinkStyles : {}),
-  //   };
-  // },
+    // TODO: Remove this "eslint-disable-next" once the theme switching migration is done and styles are fully typed (GH Issue: https://github.com/Expensify/App/issues/27337)
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return {
+      ...styles.link,
+      ...(isDisabled ? disabledLinkStyles : {}),
+    };
+  },
+
+  /**
+   * Get the style for the AM and PM buttons in the TimePicker
+   */
+  getStatusAMandPMButtonStyle: (
+    amPmValue: string,
+  ): {styleForAM: ViewStyle; styleForPM: ViewStyle} => {
+    const computedStyleForAM: ViewStyle =
+      amPmValue !== CONST.TIME_PERIOD.AM
+        ? {backgroundColor: theme.componentBG}
+        : {};
+    const computedStyleForPM: ViewStyle =
+      amPmValue !== CONST.TIME_PERIOD.PM
+        ? {backgroundColor: theme.componentBG}
+        : {};
+
+    return {
+      styleForAM: [
+        styles.timePickerWidth100,
+        computedStyleForAM,
+      ] as unknown as ViewStyle,
+      styleForPM: [
+        styles.timePickerWidth100,
+        computedStyleForPM,
+      ] as unknown as ViewStyle,
+    };
+  },
+
+  /**
+   * Get the styles of the text next to dot indicators
+   */
+  getDotIndicatorTextStyles: (isErrorText = true): TextStyle =>
+    isErrorText
+      ? {...styles.offlineFeedback.text, color: styles.formError.color}
+      : {...styles.offlineFeedback.text},
+
+  getEmojiReactionBubbleStyle: (
+    isHovered: boolean,
+    hasUserReacted: boolean,
+    isContextMenu = false,
+  ): ViewStyle => {
+    let backgroundColor = theme.border;
+
+    if (isHovered) {
+      backgroundColor = theme.buttonHoveredBG;
+    }
+
+    if (hasUserReacted) {
+      backgroundColor = theme.reactionActiveBackground;
+    }
+
+    if (isContextMenu) {
+      return {
+        paddingVertical: 3,
+        paddingHorizontal: 12,
+        backgroundColor,
+      };
+    }
+
+    return {
+      paddingVertical: 2,
+      paddingHorizontal: 8,
+      backgroundColor,
+    };
+  },
+
+  getEmojiReactionCounterTextStyle: (hasUserReacted: boolean): TextStyle => {
+    if (hasUserReacted) {
+      return {color: theme.reactionActiveText};
+    }
+
+    return {color: theme.text};
+  },
 
   getErrorPageContainerStyle: (safeAreaPaddingBottom = 0): ViewStyle => ({
     backgroundColor: theme.componentBG,
     paddingBottom: 40 + safeAreaPaddingBottom,
   }),
+
+  // getGoogleListViewStyle: (shouldDisplayBorder: boolean): ViewStyle => {
+  //   if (shouldDisplayBorder) {
+  //     // TODO: Remove this "eslint-disable-next" once the theme switching migration is done and styles are fully typed (GH Issue: https://github.com/Expensify/App/issues/27337)
+  //     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  //     return {
+  //       ...styles.borderTopRounded,
+  //       ...styles.borderBottomRounded,
+  //       marginTop: 4,
+  //       paddingVertical: 6,
+  //     };
+  //   }
+
+  //   return {
+  //     transform: 'scale(0)',
+  //   };
+  // },
+
+  /**
+   * Return the height of magic code input container
+   */
+  // getHeightOfMagicCodeInput: (): ViewStyle => ({
+  //   height:
+  //     styles.magicCodeInputContainer.minHeight -
+  //     styles.textInputContainer.borderBottomWidth,
+  // }),
 
   /**
    * Generate fill color of an icon based on its state.
@@ -1235,6 +1396,58 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
         return theme.icon;
     }
   },
+
+  /**
+   * Returns style object for the user mention component based on whether the mention is ours or not.
+   */
+  getMentionStyle: (isOurMention: boolean): TextStyle => {
+    const backgroundColor = isOurMention ? theme.ourMentionBG : theme.mentionBG;
+    return {
+      backgroundColor,
+      borderRadius: variables.componentBorderRadiusSmall,
+      paddingHorizontal: 2,
+    };
+  },
+
+  /**
+   * Returns text color for the user mention text based on whether the mention is ours or not.
+   */
+  getMentionTextColor: (isOurMention: boolean): string =>
+    isOurMention ? theme.ourMentionText : theme.mentionText,
+
+  /**
+   * Generate the wrapper styles for the mini ReportActionContextMenu.
+   */
+  getMiniReportActionContextMenuWrapperStyle: (
+    isReportActionItemGrouped: boolean,
+  ): ViewStyle =>
+    // TODO: Remove this "eslint-disable-next" once the theme switching migration is done and styles are fully typed (GH Issue: https://github.com/Expensify/App/issues/27337)
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    ({
+      ...(isReportActionItemGrouped ? positioning.tn8 : positioning.tn4),
+      ...positioning.r4,
+      ...styles.cursorDefault,
+      ...styles.userSelectNone,
+      position: 'absolute',
+      zIndex: 8,
+    }),
+
+  /**
+   * Generate the styles for the ReportActionItem wrapper view.
+   */
+  getReportActionItemStyle: (isHovered = false): ViewStyle =>
+    // TODO: Remove this "eslint-disable-next" once the theme switching migration is done and styles are fully typed (GH Issue: https://github.com/Expensify/App/issues/27337)
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    ({
+      display: 'flex',
+      justifyContent: 'space-between',
+      backgroundColor: isHovered
+        ? theme.hoverComponentBG
+        : // Warning: Setting this to a non-transparent color will cause unread indicator to break on Android
+          theme.transparent,
+      opacity: 1,
+      ...styles.cursorInitial,
+    }),
 
   /**
    * Determines the theme color for a modal based on the app's background color,
@@ -1270,16 +1483,16 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
     return `rgb(${themeRGB.join(', ')})`;
   },
 
-  // getZoomCursorStyle: (isZoomed: boolean, isDragging: boolean): ViewStyle => {
-  //   if (!isZoomed) {
-  //     // TODO: Remove this "eslint-disable-next" once the theme switching migration is done and styles are fully typed (GH Issue: https://github.com/Expensify/App/issues/27337)
-  //     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  //     return styles.cursorZoomIn;
-  //   }
+  getZoomCursorStyle: (isZoomed: boolean, isDragging: boolean): ViewStyle => {
+    if (!isZoomed) {
+      // TODO: Remove this "eslint-disable-next" once the theme switching migration is done and styles are fully typed (GH Issue: https://github.com/Expensify/App/issues/27337)
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return styles.cursorZoomIn;
+    }
 
-  //   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  //   return isDragging ? styles.cursorGrabbing : styles.cursorZoomOut;
-  // },
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return isDragging ? styles.cursorGrabbing : styles.cursorZoomOut;
+  },
 
   /**
    * Returns container styles for showing the icons in MultipleAvatars/SubscriptAvatar

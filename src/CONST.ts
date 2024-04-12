@@ -157,6 +157,7 @@ const CONST = {
       DEBUG: 'DEBUG',
     },
   },
+  DEEPLINK_BASE_URL: 'kiroku://',
   DEFAULT_AVATAR_COUNT: 24,
   DIRECTION: {
     LEFT: 'left',
@@ -204,6 +205,9 @@ const CONST = {
 
     // The "Upgrade" is intentional as the 426 HTTP code means "Upgrade Required" and sent by the API. We use the "Update" language everywhere else in the front end when this gets returned.
     UPDATE_REQUIRED: 'Upgrade Required',
+  },
+  EVENTS: {
+    SCROLLING: 'scrolling',
   },
   FIREBASE_STORAGE_URL: 'https://firebasestorage.googleapis.com',
   FRIEND_REQUEST_STATUS: {
@@ -397,7 +401,28 @@ const CONST = {
 
   // When generating a random value to fit in 7 digits (for the `middle` or `right` parts above), this is the maximum value to multiply by Math.random().
   MAX_INT_FOR_RANDOM_7_DIGIT_VALUE: 10000000,
-
+  MODAL: {
+    MODAL_TYPE: {
+      CONFIRM: 'confirm',
+      CENTERED: 'centered',
+      CENTERED_UNSWIPEABLE: 'centered_unswipeable',
+      CENTERED_SMALL: 'centered_small',
+      BOTTOM_DOCKED: 'bottom_docked',
+      POPOVER: 'popover',
+      RIGHT_DOCKED: 'right_docked',
+    },
+    ANCHOR_ORIGIN_VERTICAL: {
+      TOP: 'top',
+      CENTER: 'center',
+      BOTTOM: 'bottom',
+    },
+    ANCHOR_ORIGIN_HORIZONTAL: {
+      LEFT: 'left',
+      CENTER: 'center',
+      RIGHT: 'right',
+    },
+    POPOVER_MENU_PADDING: 8,
+  },
   MONTHS: [
     'January',
     'February',
@@ -569,6 +594,12 @@ const CONST = {
     /** Use for toolbars containing action buttons or components. */
     TOOLBAR: 'toolbar',
   },
+
+  SCREEN_READER_STATES: {
+    ALL: 'all',
+    ACTIVE: 'active',
+    DISABLED: 'disabled',
+  },
   SELECTION_SCRAPER_HIDDEN_ELEMENT: 'selection-scrapper-hidden-element',
   SESSION_EXPIRY: 60 * 60 * 1000 * 12, // 12 hours
   SESSION_TYPES: {
@@ -581,6 +612,7 @@ const CONST = {
     FACEBOOK: '',
     LINKEDIN: '',
   },
+  SPACE_CHARACTER_WIDTH: 4,
   STATUS_BAR_STYLE: {
     LIGHT_CONTENT: 'light-content',
     DARK_CONTENT: 'dark-content',
@@ -590,6 +622,7 @@ const CONST = {
       'https://play.google.com/store/apps/details?id=com.alcohol_tracker',
     IOS: 'https://testflight.apple.com/join/DgY9IieL',
   },
+  TOOLTIP_MAX_LINES: 3,
   THEME: {
     DEFAULT: 'system',
     FALLBACK: 'dark',
@@ -603,8 +636,9 @@ const CONST = {
     COLD: 'cold',
     WARM: 'warm',
     COMMENT_LENGTH_DEBOUNCE_TIME: 500,
-    SEARCH_OPTION_LIST_DEBOUNCE_TIME: 300,
     RESIZE_DEBOUNCE_TIME: 100,
+    SEARCH_OPTION_LIST_DEBOUNCE_TIME: 300,
+    TOOLTIP_SENSE: 1000,
   },
   TIME_PERIOD: {
     AM: 'AM',
@@ -643,6 +677,19 @@ const CONST = {
   VALIDATE_FOR_HTML_TAG_REGEX: /<([^>\s]+)(?:[^>]*?)>/g,
 
   VALIDATE_FOR_LEADINGSPACES_HTML_TAG_REGEX: /<([\s]+.+[\s]*)>/g,
+
+  VIDEO_PLAYER: {
+    POPOVER_Y_OFFSET: -30,
+    PLAYBACK_SPEEDS: [0.25, 0.5, 1, 1.5, 2],
+    HIDE_TIME_TEXT_WIDTH: 250,
+    MIN_WIDTH: 170,
+    MIN_HEIGHT: 120,
+    CONTROLS_POSITION: {
+      NATIVE: 32,
+      NORMAL: 8,
+    },
+    DEFAULT_VIDEO_DIMENSIONS: {width: 1900, height: 1400},
+  },
 
   WHITELISTED_TAGS: [/<>/, /< >/, /<->/, /<-->/, /<br>/, /<br\/>/],
 

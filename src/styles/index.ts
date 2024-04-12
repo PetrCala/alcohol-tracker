@@ -10,22 +10,22 @@ import type {
   ViewStyle,
 } from 'react-native';
 import type {PickerStyle} from 'react-native-picker-select';
-import {StyleSheet} from 'react-native';
 import type {CustomAnimation} from 'react-native-animatable';
 import type {
   MixedStyleDeclaration,
   MixedStyleRecord,
 } from 'react-native-render-html';
+import * as Browser from '@libs/Browser';
 import CONST from '@src/CONST';
 import {defaultTheme} from './theme';
 import colors from './theme/colors';
 import type {ThemeColors} from './theme/types';
 // import addOutlineWidth from './utils/addOutlineWidth';
 import borders from './utils/borders';
-// import codeStyles from './utils/codeStyles';
-// import cursor from './utils/cursor';
+import codeStyles from './utils/codeStyles';
+import cursor from './utils/cursor';
 import display from './utils/display';
-// import editedLabelStyles from './utils/editedLabelStyles';
+import editedLabelStyles from './utils/editedLabelStyles';
 import flex from './utils/flex';
 // import FontUtils from './utils/FontUtils';
 // import getPopOverVerticalOffset from './utils/getPopOverVerticalOffset';
@@ -42,11 +42,11 @@ import addOutlineWidth from './utils/addOutlineWidth';
 import FontUtils from './utils/FontUtils';
 // import textDecorationLine from './utils/textDecorationLine';
 // import textUnderline from './utils/textUnderline';
-// import userSelect from './utils/userSelect';
-// import visibility from './utils/visibility';
+import userSelect from './utils/userSelect';
+import visibility from './utils/visibility';
 // import whiteSpace from './utils/whiteSpace';
-// import wordBreak from './utils/wordBreak';
-// import writingDirection from './utils/writingDirection';
+import wordBreak from './utils/wordBreak';
+import writingDirection from './utils/writingDirection';
 import variables from './variables';
 
 type ColorScheme = (typeof CONST.COLOR_SCHEME)[keyof typeof CONST.COLOR_SCHEME];
@@ -130,6 +130,14 @@ type Styles = Record<
       | CustomPickerStyle)
 >;
 
+// touchCallout is an iOS safari only property that controls the display of the callout information when you touch and hold a target
+const touchCalloutNone: Pick<ViewStyle, 'WebkitTouchCallout'> =
+  Browser.isMobileSafari() ? {WebkitTouchCallout: 'none'} : {};
+// to prevent vertical text offset in Safari for badges, new lineHeight values have been added
+const lineHeightBadge: Pick<ViewStyle, 'lineHeight'> = Browser.isSafari()
+  ? {lineHeight: variables.lineHeightXSmall}
+  : {lineHeight: variables.lineHeightNormal};
+
 const picker = (theme: ThemeColors) =>
   ({
     backgroundColor: theme.transparent,
@@ -173,6 +181,110 @@ const modalNavigatorContainer = (isSmallScreenWidth: boolean) =>
     height: '100%',
   }) satisfies ViewStyle;
 
+const webViewStyles = (theme: ThemeColors) =>
+  ({
+    // As of react-native-render-html v6, don't declare distinct styles for
+    // custom renderers, the API for custom renderers has changed. Declare the
+    // styles in the below "tagStyles" instead. If you need to reuse those
+    // styles from the renderer, just pass the "style" prop to the underlying
+    // component.
+    tagStyles: {
+      em: {
+        fontFamily: FontUtils.fontFamily.platform.EXP_NEUE,
+        fontStyle: 'italic',
+      },
+
+      del: {
+        textDecorationLine: 'line-through',
+        textDecorationStyle: 'solid',
+      },
+
+      strong: {
+        fontFamily: FontUtils.fontFamily.platform.EXP_NEUE,
+        fontWeight: 'bold',
+      },
+
+      a: link(theme),
+
+      ul: {
+        maxWidth: '100%',
+      },
+
+      ol: {
+        maxWidth: '100%',
+      },
+
+      li: {
+        flexShrink: 1,
+      },
+
+      blockquote: {
+        borderLeftColor: theme.border,
+        borderLeftWidth: 4,
+        paddingLeft: 12,
+        marginTop: 4,
+        marginBottom: 4,
+
+        // Overwrite default HTML margin for blockquotes
+        marginLeft: 0,
+      },
+
+      pre: {
+        ...baseCodeTagStyles(theme),
+        paddingTop: 12,
+        paddingBottom: 12,
+        paddingRight: 8,
+        paddingLeft: 8,
+        fontFamily: FontUtils.fontFamily.platform.MONOSPACE,
+        marginTop: 0,
+        marginBottom: 0,
+      },
+
+      code: {
+        ...baseCodeTagStyles(theme),
+        ...(codeStyles.codeTextStyle as MixedStyleDeclaration),
+        paddingLeft: 5,
+        paddingRight: 5,
+        fontFamily: FontUtils.fontFamily.platform.MONOSPACE,
+        // Font size is determined by getCodeFontSize function in `StyleUtils.js`
+      },
+
+      img: {
+        borderColor: theme.border,
+        borderRadius: variables.componentBorderRadiusNormal,
+        borderWidth: 1,
+        ...touchCalloutNone,
+      },
+
+      video: {
+        minWidth: CONST.VIDEO_PLAYER.MIN_WIDTH,
+        minHeight: CONST.VIDEO_PLAYER.MIN_HEIGHT,
+        borderRadius: variables.componentBorderRadiusNormal,
+        overflow: 'hidden',
+        backgroundColor: theme.highlightBG,
+        ...touchCalloutNone,
+      },
+
+      p: {
+        marginTop: 0,
+        marginBottom: 0,
+      },
+      h1: {
+        fontSize: variables.fontSizeLarge,
+        marginBottom: 8,
+      },
+    },
+
+    baseFontStyle: {
+      color: theme.text,
+      fontSize: variables.fontSizeNormal,
+      fontFamily: FontUtils.fontFamily.platform.EXP_NEUE,
+      flex: 1,
+      lineHeight: variables.fontSizeNormalHeight,
+      ...writingDirection.ltr,
+    },
+  }) satisfies WebViewStyle;
+
 const styles = (theme: ThemeColors) =>
   ({
     // Add all of our utility and helper styles
@@ -183,15 +295,65 @@ const styles = (theme: ThemeColors) =>
     ...display,
     ...overflow,
     ...positioning,
-    // ...wordBreak,
+    ...wordBreak,
     // ...whiteSpace,
-    // ...writingDirection,
-    // ...cursor,
-    // ...userSelect,
+    ...writingDirection,
+    ...cursor,
+    ...userSelect,
     // ...textUnderline,
     // ...objectFit,
     // ...textDecorationLine,
-    // editedLabelStyles,
+    editedLabelStyles,
+
+    activeComponentBG: {
+      backgroundColor: theme.activeComponentBG,
+    },
+
+    appContent: {
+      backgroundColor: theme.appBG,
+      overflow: 'hidden',
+    },
+
+    appContentHeader: {
+      height: variables.contentHeaderHeight,
+      justifyContent: 'center',
+      display: 'flex',
+      paddingRight: 20,
+    },
+
+    appContentHeaderTitle: {
+      alignItems: 'center',
+      flexDirection: 'row',
+    },
+
+    autoGrowHeightInputContainer: (
+      textInputHeight: number,
+      minHeight: number,
+      maxHeight: number,
+    ) =>
+      ({
+        height: lodashClamp(textInputHeight, minHeight, maxHeight),
+        minHeight,
+      }) satisfies ViewStyle,
+
+    autoGrowHeightHiddenInput: (maxWidth: number, maxHeight?: number) =>
+      ({
+        maxWidth,
+        maxHeight: maxHeight && maxHeight + 1,
+        overflow: 'hidden',
+      }) satisfies TextStyle,
+
+    bgTransparent: {
+      backgroundColor: 'transparent',
+    },
+
+    bgDark: {
+      backgroundColor: theme.inverse,
+    },
+
+    borderRadiusNormal: {
+      borderRadius: variables.buttonBorderRadius,
+    },
 
     borderTop: {
       borderTopWidth: variables.borderTopWidth,
@@ -237,8 +399,19 @@ const styles = (theme: ThemeColors) =>
       height: variables.bottomTabHeight,
       borderTopWidth: 1,
       borderTopColor: theme.border,
-      // backgroundColor: theme.appBG,
+      // backgroundColor: theme.appBG, // TODO
       backgroundColor: colors.white,
+    },
+
+    bottomTabBarItem: {
+      height: '100%',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+
+    boxShadowNone: {
+      boxShadow: 'none',
     },
 
     button: {
@@ -336,6 +509,19 @@ const styles = (theme: ThemeColors) =>
       borderWidth: 0,
     },
 
+    buttonConfirmText: {
+      paddingLeft: 20,
+      paddingRight: 20,
+    },
+
+    buttonSuccessText: {
+      color: theme.textLight,
+    },
+
+    buttonDangerText: {
+      color: theme.textLight,
+    },
+
     buttonDanger: {
       backgroundColor: theme.danger,
       borderWidth: 0,
@@ -367,6 +553,31 @@ const styles = (theme: ThemeColors) =>
       borderRightWidth: 1,
       borderRightColor: theme.dangerHover,
       ...sizing.h100,
+    },
+
+    centeredModalStyles: (
+      isSmallScreenWidth: boolean,
+      isFullScreenWhenSmall: boolean,
+    ) =>
+      ({
+        borderWidth: isSmallScreenWidth && !isFullScreenWhenSmall ? 1 : 0,
+        marginHorizontal: isSmallScreenWidth ? 0 : 20,
+      }) satisfies ViewStyle,
+
+    colorSchemeStyle: (colorScheme: ColorScheme) => ({colorScheme}),
+
+    contextMenuItemPopoverMaxWidth: {
+      maxWidth: 375,
+    },
+
+    defaultModalContainer: {
+      backgroundColor: theme.componentBG,
+      borderColor: theme.transparent,
+    },
+
+    draggableTopBar: {
+      height: 30,
+      width: '100%',
     },
 
     emptyAvatar: {
@@ -415,6 +626,11 @@ const styles = (theme: ThemeColors) =>
       marginRight: variables.avatarChatSpacing - 4,
     },
 
+    flipUpsideDown: {
+      // transform: `rotate(180deg)`,
+      transform: [{rotate: '180deg'}],
+    },
+
     formHelp: {
       color: theme.textSupporting,
       fontSize: variables.fontSizeLabel,
@@ -436,6 +652,10 @@ const styles = (theme: ThemeColors) =>
       marginBottom: 4,
     },
 
+    hoveredComponentBG: {
+      backgroundColor: theme.hoverComponentBG,
+    },
+
     noBorderRadius: {
       borderRadius: 0,
     },
@@ -450,28 +670,10 @@ const styles = (theme: ThemeColors) =>
       borderBottomLeftRadius: 0,
     },
 
-    buttonConfirmText: {
-      paddingLeft: 20,
-      paddingRight: 20,
+    noSelect: {
+      boxShadow: 'none',
+      outlineStyle: 'none',
     },
-
-    buttonSuccessText: {
-      color: theme.textLight,
-    },
-
-    buttonDangerText: {
-      color: theme.textLight,
-    },
-
-    hoveredComponentBG: {
-      backgroundColor: theme.hoverComponentBG,
-    },
-
-    activeComponentBG: {
-      backgroundColor: theme.activeComponentBG,
-    },
-
-    colorSchemeStyle: (colorScheme: ColorScheme) => ({colorScheme}),
 
     headerGap: {
       // height: CONST.DESKTOP_HEADER_PADDING,
@@ -483,16 +685,42 @@ const styles = (theme: ThemeColors) =>
       flex: 1,
     },
 
+    link: link(theme),
+
     navigationScreenCardStyle: {
       // backgroundColor: theme.appBG,
       backgroundColor: theme.white,
       height: '100%',
     },
 
-    // noSelect: {
-    //   boxShadow: 'none', // TODO check this
-    //   outlineStyle: 'none',
-    // },
+    offlineFeedback: {
+      deleted: {
+        textDecorationLine: 'line-through',
+        textDecorationStyle: 'solid',
+      },
+      pending: {
+        opacity: 0.5,
+      },
+      error: {
+        flexDirection: 'row',
+        alignItems: 'center',
+      },
+      container: {
+        ...spacing.pv2,
+      },
+      textContainer: {
+        flexDirection: 'column',
+        flex: 1,
+      },
+      text: {
+        color: theme.textSupporting,
+        verticalAlign: 'middle',
+        fontSize: variables.fontSizeLabel,
+      },
+      errorDot: {
+        marginRight: 12,
+      },
+    },
 
     opacity0: {
       opacity: 0,
@@ -506,11 +734,52 @@ const styles = (theme: ThemeColors) =>
       opacity: 1,
     },
 
+    overlayStyles: (current: OverlayStylesParams, isModalOnTheLeft: boolean) =>
+      ({
+        ...positioning.pFixed,
+        // We need to stretch the overlay to cover the sidebar and the translate animation distance.
+        left: isModalOnTheLeft ? 0 : -2 * variables.sideBarWidth,
+        top: 0,
+        bottom: 0,
+        right: isModalOnTheLeft ? -2 * variables.sideBarWidth : 0,
+        backgroundColor: theme.overlay,
+        opacity: current.progress.interpolate({
+          inputRange: [0, 1],
+          outputRange: [0, variables.overlayOpacity],
+          extrapolate: 'clamp',
+        }),
+      }) satisfies ViewStyle,
+
     pointerEventsNone,
 
     pointerEventsAuto,
 
     pointerEventsBoxNone,
+
+    popoverMenuItem: {
+      flexDirection: 'row',
+      borderRadius: 0,
+      paddingHorizontal: 20,
+      paddingVertical: 12,
+      justifyContent: 'space-between',
+      width: '100%',
+    },
+
+    popoverMenuIcon: {
+      width: variables.componentSizeNormal,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+
+    popoverMenuText: {
+      fontSize: variables.fontSizeNormal,
+      color: theme.heading,
+    },
+
+    rightLabelMenuItem: {
+      fontSize: variables.fontSizeLabel,
+      color: theme.textSupporting,
+    },
 
     rootNavigatorContainerStyles: (isSmallScreenWidth: boolean) =>
       ({
@@ -530,6 +799,10 @@ const styles = (theme: ThemeColors) =>
       backgroundColor: theme.splashBG,
       alignItems: 'center',
       justifyContent: 'center',
+    },
+
+    textDanger: {
+      color: theme.danger,
     },
 
     // Be extremely careful when editing the compose styles, as it is easy to introduce regressions.
@@ -558,6 +831,16 @@ const styles = (theme: ThemeColors) =>
       0,
     ),
 
+    textInputContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      height: '100%',
+      backgroundColor: 'transparent',
+      borderBottomWidth: 2,
+      borderColor: theme.border,
+      overflow: 'hidden',
+    },
+
     textInputFullCompose: {
       alignSelf: 'stretch',
       flex: 1,
@@ -582,6 +865,21 @@ const styles = (theme: ThemeColors) =>
       borderColor: theme.border,
     },
 
+    textInputMultiline: {
+      scrollPadding: '23px 0 0 0',
+    },
+
+    textInputMultilineContainer: {
+      paddingTop: 23,
+    },
+
+    textInputAndIconContainer: {
+      flex: 1,
+      height: '100%',
+      zIndex: -1,
+      flexDirection: 'row',
+    },
+
     textAlignCenter: {
       textAlign: 'center',
     },
@@ -594,9 +892,44 @@ const styles = (theme: ThemeColors) =>
       textAlign: 'left',
     },
 
+    timePickerInput: {
+      fontSize: 69,
+      minWidth: 56,
+      alignSelf: 'center',
+    },
+    timePickerWidth100: {
+      width: 100,
+    },
+    timePickerHeight100: {
+      height: 100,
+    },
+    timePickerSemiDot: {
+      fontSize: 69,
+      height: 84,
+      alignSelf: 'center',
+    },
+    timePickerSwitcherContainer: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      justifyContent: 'center',
+    },
+
     verticalAlignTop: {
       verticalAlign: 'top',
     },
+
+    visuallyHidden: {
+      ...visibility.hidden,
+      overflow: 'hidden',
+      width: 0,
+      height: 0,
+    },
+
+    visibilityHidden: {
+      ...visibility.hidden,
+    },
+
+    webViewStyles: webViewStyles(theme),
 
     label: {
       fontSize: variables.fontSizeLabel,

@@ -4,6 +4,9 @@ import AddUser from '@assets/icons/add-user.png';
 import AlcoholAssortment from '@assets/icons/alcohol-assortment.png';
 import ArrowBack from '@assets/icons/arrow-back.png';
 import ArrowDown from '@assets/icons/arrow-down.png';
+import ArrowRight from '@assets/icons/arrow-right.svg';
+import ArrowUp from '@assets/icons/arrow-up.svg';
+import ArrowUpDown from '@assets/icons/arrows-updown.svg';
 import BarMenu from '@assets/icons/bar-menu.png';
 import Beer from '@assets/icons/beer.png';
 import Bell from '@assets/icons/bell.png';
@@ -11,6 +14,7 @@ import Book from '@assets/icons/book.png';
 import Bug from '@assets/icons/bug.png';
 import Camera from '@assets/icons/camera.png';
 import Check from '@assets/icons/check.png';
+import Checkmark from '@assets/icons/checkmark.svg';
 import Close from '@assets/icons/close.png';
 import Cocktail from '@assets/icons/cocktail.png';
 import Copy from '@assets/icons/copy.png';
@@ -44,6 +48,9 @@ export {
   AlcoholAssortment,
   ArrowBack,
   ArrowDown,
+  ArrowRight,
+  ArrowUp,
+  ArrowUpDown,
   BarMenu,
   Beer,
   Bell,
@@ -51,6 +58,7 @@ export {
   Bug,
   Camera,
   Check,
+  Checkmark,
   Close,
   Cocktail,
   Copy,

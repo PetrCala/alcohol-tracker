@@ -225,4 +225,35 @@ export default {
       save: 'This session could not be saved. Try again.',
     },
   },
+  passwordForm: {
+    pleaseFillOutAllFields: 'Please fill out all fields',
+    pleaseFillPassword: 'Please enter your password',
+    pleaseFillTwoFactorAuth: 'Please enter your two-factor code',
+    enterYourTwoFactorAuthenticationCodeToContinue:
+      'Enter your two-factor authentication code to continue',
+    forgot: 'Forgot?',
+    requiredWhen2FAEnabled: 'Required when 2FA is enabled',
+    error: {
+      incorrectPassword: 'Incorrect password. Please try again.',
+      incorrectLoginOrPassword:
+        'Incorrect login or password. Please try again.',
+      incorrect2fa:
+        'Incorrect two-factor authentication code. Please try again.',
+      twoFactorAuthenticationEnabled:
+        'You have 2FA enabled on this account. Please sign in using your email or phone number.',
+      invalidLoginOrPassword:
+        'Invalid login or password. Please try again or reset your password.',
+      unableToResetPassword:
+        'We were unable to change your password. This is likely due to an expired password reset link in an old password reset email. We have emailed you a new link so you can try again. Check your Inbox and your Spam folder; it should arrive in just a few minutes.',
+      noAccess:
+        'You do not have access to this application. Please add your GitHub username for access.',
+      accountLocked:
+        'Your account has been locked after too many unsuccessful attempts. Please try again after 1 hour.',
+      fallback: 'Something went wrong. Please try again later.',
+    },
+  },
+  session: {
+    offlineMessageRetry:
+      "Looks like you're offline. Please check your connection and try again.",
+  },
 } satisfies TranslationBase;

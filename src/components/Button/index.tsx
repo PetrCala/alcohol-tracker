@@ -9,7 +9,7 @@ import type {
 } from 'react-native';
 import {ActivityIndicator, View} from 'react-native';
 import Icon from '@components/Icon';
-import * as Expensicons from '@components/Icon/Expensicons';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import PressableWithFeedback from '@components/Pressable/PressableWithFeedback';
 import Text from '@components/Text';
 import withNavigationFallback from '@components/withNavigationFallback';
@@ -188,7 +188,7 @@ function Button(
   {
     allowBubble = false,
 
-    iconRight = Expensicons.ArrowRight,
+    iconRight = KirokuIcons.ArrowRight,
     iconFill,
     icon = null,
     iconStyles = [],
@@ -356,7 +356,7 @@ function Button(
         onMouseDown={onMouseDown}
         disabled={isLoading || isDisabled}
         wrapperStyle={[
-          // isDisabled ? {...styles.cursorDisabled, ...styles.noSelect} : {}, // TODO enable this
+          isDisabled ? {...styles.cursorDisabled, ...styles.noSelect} : {}, // TODO enable this
           styles.buttonContainer,
           shouldRemoveRightBorderRadius
             ? styles.noRightBorderRadius

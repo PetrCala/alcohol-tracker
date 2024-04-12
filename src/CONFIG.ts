@@ -44,6 +44,7 @@ export default {
     DEFAULT_SECURE_API_ROOT: '',
     STAGING_SECURE_API_ROOT: '',
     STAGING_API_ROOT: '',
+    KIROKU_URL: '',
   },
   PUSHER: {
     APP_KEY: get(Config, 'PUSHER_APP_KEY', '268df511a204fbb60884'),

@@ -14,6 +14,7 @@ const ROUTES = {
   FORCE_UPDATE: 'force-update',
   LOGIN: 'login',
   SIGNUP: 'signup',
+  DESKTOP_SIGN_IN_REDIRECT: 'desktop-signin-redirect',
 
   ACHIEVEMENTS: 'achievements',
 
