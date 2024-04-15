@@ -1,12 +1,12 @@
-﻿import Config from './Config';
-import {FeedbackList} from './Feedback';
-import {NicknameToIdList} from './NicknameToId';
-import {PreferencesList} from './Preferences';
-import {UnconfirmedDaysList} from './UnconfirmedDays';
-import {UserPropsList} from './UserProps';
-import {UserDrinkingSessionsList} from './DrinkingSession';
-import {UserStatusList} from './UserStatus';
-import {SessionPlaceholderList} from './SessionPlaceholder';
+﻿import type Config from './Config';
+import type {FeedbackList} from './Feedback';
+import type {NicknameToIdList} from './NicknameToId';
+import type {PreferencesList} from './Preferences';
+import type {UnconfirmedDaysList} from './UnconfirmedDays';
+import type {UserPropsList} from './UserProps';
+import type {UserDrinkingSessionsList} from './DrinkingSession';
+import type {UserStatusList} from './UserStatus';
+import type {SessionPlaceholderList} from './SessionPlaceholder';
 
 /** Main database props object
  *

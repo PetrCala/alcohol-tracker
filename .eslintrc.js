@@ -24,7 +24,6 @@ const restrictedImportPatterns = [
 
 module.exports = {
   extends: [
-    'plugin:storybook/recommended',
     'plugin:react-hooks/recommended',
     'plugin:react-native-a11y/basic',
     'prettier',

@@ -19,8 +19,11 @@ declare type LogLine = {
 };
 export default class Logger {
   logLines: LogLine[];
+
   serverLoggingCallback: ServerLoggingCallback;
+
   clientLoggingCallback: ClientLoggingCallBack;
+
   isDebug: boolean;
   constructor({
     serverLoggingCallback,

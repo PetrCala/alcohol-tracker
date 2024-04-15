@@ -39,7 +39,7 @@ const ManageFriendPopup: React.FC<ManageFriendPopupProps> = ({
   ];
 
   const handleUnfriend = async () => {
-    if (!user) return;
+    if (!user) {return;}
     try {
       await unfriend(db, user.uid, friendId);
     } catch (error: any) {

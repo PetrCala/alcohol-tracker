@@ -1,5 +1,5 @@
 import CONST from '@src/CONST';
-import DateString from './DateString';
+import type DateString from './DateString';
 
 type DateObject = {
   dateString: DateString;

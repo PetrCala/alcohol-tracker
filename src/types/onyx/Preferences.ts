@@ -1,5 +1,5 @@
-import {UserId} from './DatabaseCommon';
-import {DrinkKey} from './Drinks';
+import type {UserId} from './DatabaseCommon';
+import type {DrinkKey} from './Drinks';
 
 type UnitsToColors = {
   yellow: number;

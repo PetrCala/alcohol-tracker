@@ -1,4 +1,5 @@
-﻿import {FirebaseStorage, getDownloadURL, ref} from 'firebase/storage';
+﻿import type {FirebaseStorage} from 'firebase/storage';
+import { getDownloadURL, ref} from 'firebase/storage';
 
 /**
  * Using the Firebase Storage object, the user UID, and the full name of the
@@ -20,10 +21,10 @@ export async function getProfilePictureURL(
   downloadPath: string,
 ): Promise<string | null> {
   if (!storage || !userId || !downloadPath)
-    throw new Error('Missing parameters');
+    {throw new Error('Missing parameters');}
 
   const httpsRef = ref(storage, downloadPath);
-  let downloadURL = await getDownloadURL(httpsRef);
+  const downloadURL = await getDownloadURL(httpsRef);
 
   return downloadURL;
 }

@@ -9,7 +9,7 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import type {ThemeStyles} from '@styles/index';
 import type {Screen} from '@src/SCREENS';
 import SCREENS from '@src/SCREENS';
-import {
+import type {
   AchievementsNavigatorParamList,
   DayOverviewNavigatorParamList,
   DrinkingSessionNavigatorParamList,

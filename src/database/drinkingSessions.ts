@@ -1,6 +1,7 @@
-﻿import {Database, ref, update} from 'firebase/database';
+﻿import type {Database} from 'firebase/database';
+import { ref, update} from 'firebase/database';
 import {removeZeroObjectsFromSession} from '@libs/DataHandling';
-import {DrinkingSession, DrinksList, UserId, UserStatus} from '@src/types/onyx';
+import type {DrinkingSession, DrinksList, UserId, UserStatus} from '@src/types/onyx';
 import DBPATHS from './DBPATHS';
 
 const drinkingSessionRef = DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID;
@@ -26,7 +27,7 @@ export async function saveDrinkingSessionData(
 ): Promise<void> {
   newSessionData = removeZeroObjectsFromSession(newSessionData); // Delete the initial log of zero drinks that was used as a placeholder
   newSessionData.drinks = newSessionData.drinks || {}; // Can not send undefined
-  var updates: {[key: string]: any} = {};
+  const updates: Record<string, any> = {};
   updates[drinkingSessionRef.getRoute(userId, sessionKey)] = newSessionData;
   if (updateStatus) {
     const userStatusData: UserStatus = {
@@ -48,7 +49,7 @@ export async function savePlaceholderSessionData(
 ): Promise<void> {
   newSessionData = removeZeroObjectsFromSession(newSessionData);
   newSessionData.drinks = newSessionData.drinks || {}; // Can not send undefined
-  var updates: {[key: string]: any} = {};
+  const updates: Record<string, any> = {};
   updates[placeholderSessionRef.getRoute(userId)] = newSessionData;
   await update(ref(db), updates);
 }
@@ -59,7 +60,7 @@ export async function removePlaceholderSessionData(
   db: Database,
   userId: UserId,
 ): Promise<void> {
-  var updates: {[key: string]: any} = {};
+  const updates: Record<string, any> = {};
   updates[placeholderSessionRef.getRoute(userId)] = null;
   await update(ref(db), updates);
 }
@@ -79,7 +80,7 @@ export async function startLiveDrinkingSession(
   sessionKey: string,
 ): Promise<void> {
   newSessionData.drinks = newSessionData.drinks || {}; // Can not send undefined
-  var updates: {[key: string]: any} = {};
+  const updates: Record<string, any> = {};
   const userStatusData: UserStatus = {
     last_online: new Date().getTime(),
     latest_session_id: sessionKey,
@@ -106,7 +107,7 @@ export async function endLiveDrinkingSession(
 ): Promise<void> {
   newSessionData = removeZeroObjectsFromSession(newSessionData);
   newSessionData.drinks = newSessionData.drinks || {}; // Can not send undefined
-  var updates: {[key: string]: any} = {};
+  const updates: Record<string, any> = {};
   const userStatusData: UserStatus = {
     // ETC - 1
     last_online: new Date().getTime(),
@@ -132,7 +133,7 @@ export async function removeDrinkingSessionData(
   userId: string,
   sessionKey: string,
 ): Promise<void> {
-  var updates: {[key: string]: any} = {};
+  const updates: Record<string, any> = {};
   updates[drinkingSessionRef.getRoute(userId, sessionKey)] = null;
   await update(ref(db), updates);
 }
@@ -150,7 +151,7 @@ export async function discardLiveDrinkingSession(
   userId: string,
   sessionKey: string,
 ): Promise<void> {
-  var updates: {[key: string]: any} = {};
+  const updates: Record<string, any> = {};
   const userStatusData: UserStatus = {last_online: new Date().getTime()}; // No session info
   updates[drinkingSessionRef.getRoute(userId, sessionKey)] = null;
   updates[userStatusRef.getRoute(userId)] = userStatusData;
@@ -172,7 +173,7 @@ export async function updateSessionDrinks(
   sessionKey: string,
   newDrinks: DrinksList | undefined,
 ): Promise<void> {
-  var updates: {[key: string]: DrinksList} = {};
+  const updates: Record<string, DrinksList> = {};
   updates[drinkingSessionDrinksRef.getRoute(userId, sessionKey)] =
     newDrinks || {}; // Can not send undefined
   await update(ref(db), updates);

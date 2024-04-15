@@ -1,7 +1,7 @@
 ﻿import {StyleSheet, Text, View} from 'react-native';
 import {useFirebase} from '../../context/global/FirebaseContext';
 import ProfileImage from '../ProfileImage';
-import {Profile} from '@src/types/onyx';
+import type {Profile} from '@src/types/onyx';
 
 type NoFriendUserOverviewProps = {
   userId: string; // Other user's ID
@@ -16,7 +16,7 @@ const NoFriendUserOverview: React.FC<NoFriendUserOverviewProps> = ({
 }) => {
   const {db, storage} = useFirebase();
 
-  if (!db || !profileData) return;
+  if (!db || !profileData) {return;}
 
   return (
     <View

@@ -38,7 +38,8 @@ import ScreenWrapper from '@components/ScreenWrapper';
 import LoadingData from '@components/LoadingData';
 import useLocalize from '@hooks/useLocalize';
 import ONYXKEYS from '@src/ONYXKEYS';
-import {OnyxEntry, withOnyx} from 'react-native-onyx';
+import type {OnyxEntry} from 'react-native-onyx';
+import { withOnyx} from 'react-native-onyx';
 import en from '@src/languages/en';
 
 type MainMenuButtonData = {

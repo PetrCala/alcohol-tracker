@@ -438,7 +438,7 @@ function FormProvider(
           });
 
           if (inputProps.shouldSaveDraft && !formID.includes('Draft')) {
-            FormActions.setDraftValues(formID as OnyxFormKey, {
+            FormActions.setDraftValues(formID, {
               [inputKey]: value,
             });
           }

@@ -77,7 +77,7 @@ const copyToClipboard = (text: string, alert?: boolean) => {
   }
 };
 
-function UCFirst(str: String) {
+function UCFirst(str: string) {
   return str.substr(0, 1).toUpperCase() + str.substr(1);
 }
 

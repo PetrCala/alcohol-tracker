@@ -11,7 +11,7 @@
   createMockMaintenance,
   createMockAppSettings,
 } from '../utils/mockDatabase';
-import {
+import type {
   DatabaseProps,
   Config,
   Feedback,
@@ -55,7 +55,7 @@ function isFeedback(obj: any): obj is Feedback {
  * @param FeedbackList Data to validate
  * @returns bool
  */
-function validateFeedback(FeedbackList: {[feedbackId: string]: any}): boolean {
+function validateFeedback(FeedbackList: Record<string, any>): boolean {
   for (const feedbackId in FeedbackList) {
     if (!isFeedback(FeedbackList[feedbackId])) {
       return false;
@@ -68,7 +68,7 @@ function isUserStatus(obj: any): obj is UserStatus {
   return typeof obj.last_online === 'number';
 }
 
-function validateUserStatus(userStatuses: {[userId: string]: any}): boolean {
+function validateUserStatus(userStatuses: Record<string, any>): boolean {
   for (const userId in userStatuses) {
     if (!isUserStatus(userStatuses[userId])) {
       return false;
@@ -126,9 +126,7 @@ function isDrinkingSessionList(obj: any): obj is DrinkingSessionList {
  * @param userSessions Data to validate
  * @returns bool
  */
-function validateUserDrinkingSessions(userSessions: {
-  [userId: string]: any;
-}): boolean {
+function validateUserDrinkingSessions(userSessions: Record<string, any>): boolean {
   for (const userId in userSessions) {
     if (!isDrinkingSessionList(userSessions[userId])) {
       return false;
@@ -181,9 +179,7 @@ function isUserPreferences(obj: any): obj is Preferences {
  * @param userPreferences Data to validate
  * @returns bool
  */
-function validateUserPreferences(userPreferences: {
-  [userId: string]: any;
-}): boolean {
+function validateUserPreferences(userPreferences: Record<string, any>): boolean {
   for (const userId in userPreferences) {
     if (!isUserPreferences(userPreferences[userId])) {
       return false;
@@ -215,9 +211,7 @@ function isUserUnconfirmedDays(obj: any): obj is UnconfirmedDays {
  * @param userUnconfirmedDays Data to validate
  * @returns bool
  */
-function validateUserUnconfirmedDays(userUnconfirmedDays: {
-  [userId: string]: any;
-}): boolean {
+function validateUserUnconfirmedDays(userUnconfirmedDays: Record<string, any>): boolean {
   for (const userId in userUnconfirmedDays) {
     if (!isUserUnconfirmedDays(userUnconfirmedDays[userId])) {
       return false;
@@ -320,7 +314,7 @@ describe('mockDatabase functions', () => {
 });
 
 describe('mockDatabase data structure', () => {
-  let db: DatabaseProps = initializeEmptyMockDatabase();
+  const db: DatabaseProps = initializeEmptyMockDatabase();
 
   it('should have config data', () => {
     expect(validateConfig(db.config)).toBe(true);

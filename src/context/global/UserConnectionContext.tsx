@@ -1,4 +1,5 @@
-﻿import {ReactNode, createContext, useContext, useEffect, useState} from 'react';
+﻿import type {ReactNode} from 'react';
+import { createContext, useContext, useEffect, useState} from 'react';
 import NetInfo from '@react-native-community/netinfo';
 
 type UserConnectionContextProps = {

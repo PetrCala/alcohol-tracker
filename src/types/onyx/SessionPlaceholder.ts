@@ -1,5 +1,5 @@
-import {UserId} from './DatabaseCommon';
-import DrinkingSession from './DrinkingSession';
+import type {UserId} from './DatabaseCommon';
+import type DrinkingSession from './DrinkingSession';
 
 type SessionPlaceholder = DrinkingSession;
 

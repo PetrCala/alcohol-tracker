@@ -1,4 +1,4 @@
-import {DrinkingSession, DrinkingSessionId} from '@src/types/onyx';
+import type {DrinkingSession, DrinkingSessionId} from '@src/types/onyx';
 
 type DrinkingSessionKeyValue = {
   sessionId: DrinkingSessionId;

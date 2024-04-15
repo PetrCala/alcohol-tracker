@@ -4,7 +4,7 @@ import ProfileImage from '@components/ProfileImage';
 import {getTimestampAge} from '@libs/TimeUtils';
 import commonStyles from '@src/styles/commonStyles';
 import {formatDateToTime, timestampToDate} from '@libs/DataHandling';
-import {Profile, UserStatus} from '@src/types/onyx';
+import type {Profile, UserStatus} from '@src/types/onyx';
 import {
   determineSessionMostCommonDrink,
   sessionIsExpired,

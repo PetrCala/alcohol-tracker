@@ -1,10 +1,10 @@
 import {StyleSheet, Text, View} from 'react-native';
 import StatItem from './StatItem';
 
-export type StatData = {
+export type StatData = Array<{
   header: string;
   content: string;
-}[];
+}>;
 
 type StatsOverviewProps = {
   statsData: StatData;

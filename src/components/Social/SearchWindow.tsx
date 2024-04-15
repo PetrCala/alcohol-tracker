@@ -8,9 +8,9 @@ import {
   View,
 } from 'react-native';
 import {useState, forwardRef, useEffect, useRef} from 'react';
-import {Database} from 'firebase/database';
+import type {Database} from 'firebase/database';
 import {useFirebase} from '@src/context/global/FirebaseContext';
-import {SearchWindowRef} from '@src/types/various/Search';
+import type {SearchWindowRef} from '@src/types/various/Search';
 import KeyboardFocusHandler from '@components/Keyboard/KeyboardFocusHandler';
 import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
@@ -65,7 +65,7 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
                 : styles.textContainer
             }>
             <KeyboardFocusHandler>
-              <TextInput
+              <TextInput accessibilityLabel="Text input field"
                 placeholder={windowText}
                 placeholderTextColor={'#a8a8a8'}
                 value={searchText}
@@ -77,7 +77,7 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
               />
             </KeyboardFocusHandler>
             {searchText !== '' || searchCount > 0 ? (
-              <TouchableOpacity
+              <TouchableOpacity accessibilityRole="button"
                 onPress={handleResetSearch}
                 style={styles.searchTextResetContainer}>
                 <Image
@@ -89,7 +89,7 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
           </View>
           {searchOnTextChange ? null : (
             <View style={styles.searchButtonContainer}>
-              <TouchableOpacity
+              <TouchableOpacity accessibilityRole="button"
                 style={styles.searchButton}
                 onPress={() => handleDoSearch(searchText, db)}>
                 <Text style={styles.searchButtonText}>Search</Text>

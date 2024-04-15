@@ -48,7 +48,7 @@ const FullScreenModal: React.FC<FullScreenModalProps> = props => {
   };
   return (
     <Modal animationType="fade" transparent={false} visible={modalVisible}>
-      <TouchableOpacity style={styles.modalButton} onPress={handleCloseModal}>
+      <TouchableOpacity accessibilityRole="button" style={styles.modalButton} onPress={handleCloseModal}>
         <Image source={KirokuIcons.ThinX} style={styles.modalButtonImage} />
       </TouchableOpacity>
       <View

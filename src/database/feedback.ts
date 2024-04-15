@@ -1,5 +1,6 @@
-﻿import {Database, child, push, ref, update} from 'firebase/database';
-import {FeedbackList, Feedback} from '../types/onyx';
+﻿import type {Database} from 'firebase/database';
+import { child, push, ref, update} from 'firebase/database';
+import type {FeedbackList, Feedback} from '../types/onyx';
 import {Alert} from 'react-native';
 import DBPATHS from './DBPATHS';
 
@@ -20,14 +21,14 @@ export async function submitFeedback(
   userId: string,
   text: string,
 ): Promise<void> {
-  let timestampNow = new Date().getTime();
-  let newFeedback: Feedback = {
+  const timestampNow = new Date().getTime();
+  const newFeedback: Feedback = {
     submit_time: timestampNow,
     text: text,
     user_id: userId,
   };
   // Create a new feedback id
-  let newFeedbackKey = push(child(ref(db), DBPATHS.FEEDBACK)).key;
+  const newFeedbackKey = push(child(ref(db), DBPATHS.FEEDBACK)).key;
   if (!newFeedbackKey) {
     Alert.alert(
       'Failed to submit feedback',
@@ -36,7 +37,7 @@ export async function submitFeedback(
     return;
   }
   // Create the updates object
-  var updates: FeedbackList = {};
+  const updates: FeedbackList = {};
   updates[feedbackItemRef.getRoute(newFeedbackKey)] = newFeedback;
 
   // Submit the feedback
@@ -53,7 +54,7 @@ export async function removeFeedback(
   db: Database,
   feedbackKey: string,
 ): Promise<void> {
-  var updates: {[key: string]: null} = {};
+  const updates: Record<string, null> = {};
   updates[feedbackItemRef.getRoute(feedbackKey)] = null;
-  return await update(ref(db), updates);
+  return update(ref(db), updates);
 }

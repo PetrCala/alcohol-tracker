@@ -1,7 +1,7 @@
-import {ValueOf} from 'type-fest';
-import {UserId} from './DatabaseCommon';
-import {DrinksList} from './Drinks';
-import CONST from '@src/CONST';
+import type {ValueOf} from 'type-fest';
+import type {UserId} from './DatabaseCommon';
+import type {DrinksList} from './Drinks';
+import type CONST from '@src/CONST';
 
 type DrinkingSessionId = string;
 
@@ -19,7 +19,7 @@ type DrinkingSession = {
 
 type DrinkingSessionList = Record<DrinkingSessionId, DrinkingSession>;
 
-type DrinkingSessionArray = Array<DrinkingSession>;
+type DrinkingSessionArray = DrinkingSession[];
 
 type UserDrinkingSessionsList = Record<UserId, DrinkingSessionList>;
 

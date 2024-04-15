@@ -1,7 +1,7 @@
 import React from 'react';
 import {Keyboard, TouchableWithoutFeedback} from 'react-native';
 
-interface DismissKeyboardProps {
+type DismissKeyboardProps = {
   children: any;
   disable?: boolean;
 }

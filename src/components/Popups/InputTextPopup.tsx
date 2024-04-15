@@ -1,12 +1,13 @@
 ﻿import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 import React, {useState} from 'react';
+import type {
+  KeyboardTypeOptions} from 'react-native';
 import {
   View,
   Text,
   Modal,
   TouchableOpacity,
   StyleSheet,
-  KeyboardTypeOptions,
   TextInput,
 } from 'react-native';
 
@@ -49,7 +50,7 @@ const InputTextPopup = (props: InputTextPopupProps) => {
           <View style={styles.modalView}>
             <Text style={styles.modalText}>{message}</Text>
             <View style={styles.textContainer}>
-              <TextInput
+              <TextInput accessibilityLabel="Text input field"
                 placeholder={placeholder}
                 placeholderTextColor={'#a8a8a8'}
                 value={text}
@@ -61,14 +62,14 @@ const InputTextPopup = (props: InputTextPopupProps) => {
               />
             </View>
             <View style={styles.buttonsContainer}>
-              <TouchableOpacity
+              <TouchableOpacity accessibilityRole="button"
                 style={styles.confirmButton}
                 onPress={() => onSubmit(text)}>
                 <Text style={styles.confirmButtonText}>
                   {confirmationMessage}
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity
+              <TouchableOpacity accessibilityRole="button"
                 style={styles.cancelButton}
                 onPress={onRequestClose}>
                 <Text style={styles.cancelButtonText}>Close</Text>

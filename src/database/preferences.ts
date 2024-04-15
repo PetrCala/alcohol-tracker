@@ -1,5 +1,6 @@
-﻿import {Database, ref, update} from 'firebase/database';
-import {Preferences} from '../types/onyx';
+﻿import type {Database} from 'firebase/database';
+import { ref, update} from 'firebase/database';
+import type {Preferences} from '../types/onyx';
 import DBPATHS from './DBPATHS';
 
 /** Save preferences data into the database.
@@ -16,7 +17,7 @@ export async function savePreferencesData(
   userId: string,
   preferencesData: Preferences,
 ): Promise<void> {
-  var updates: {[key: string]: Preferences} = {};
+  const updates: Record<string, Preferences> = {};
   const preferencesRoute = DBPATHS.USER_PREFERENCES_USER_ID.getRoute(userId);
   updates[preferencesRoute] = preferencesData;
   await update(ref(db), updates);

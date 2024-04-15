@@ -1,12 +1,15 @@
-﻿import {Database, ref, update} from 'firebase/database';
+﻿import type {Database} from 'firebase/database';
+import { ref, update} from 'firebase/database';
+import type {
+  FirebaseStorage} from 'firebase/storage';
 import {
-  FirebaseStorage,
   ref as StorageRef,
   getDownloadURL,
 } from 'firebase/storage';
-import {Auth, User, updateProfile} from 'firebase/auth';
+import type {Auth, User} from 'firebase/auth';
+import { updateProfile} from 'firebase/auth';
 import {fetchDisplayDataForUsers} from './baseFunctions';
-import {ProfileList, UserStatusList} from '@src/types/onyx';
+import type {ProfileList, UserStatusList} from '@src/types/onyx';
 import DBPATHS from './DBPATHS';
 
 /**
@@ -67,7 +70,7 @@ export async function setProfilePictureURL(
   userId: string,
   photoURL: string,
 ): Promise<void> {
-  var updates: {[key: string]: string} = {};
+  const updates: Record<string, string> = {};
   const photoUrlPath = DBPATHS.USERS_USER_ID_PROFILE_PHOTO_URL.getRoute(userId);
   updates[photoUrlPath] = photoURL;
   await update(ref(db), updates);
@@ -90,7 +93,7 @@ export async function updateProfileInfo(
   db: Database,
   storage: FirebaseStorage,
 ): Promise<void> {
-  if (!user || !auth.currentUser) return;
+  if (!user || !auth.currentUser) {return;}
   const downloadURL = await getDownloadURL(StorageRef(storage, pathToUpload));
   await setProfilePictureURL(db, user.uid, downloadURL);
   await updateProfile(auth.currentUser, {photoURL: downloadURL});

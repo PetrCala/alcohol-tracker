@@ -1,4 +1,4 @@
-import {UserId} from './DatabaseCommon';
+import type {UserId} from './DatabaseCommon';
 
 type Nickname = string;
 

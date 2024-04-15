@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as readline from 'readline';
 
-import {DatabaseProps} from '@src/types/onyx';
+import type {DatabaseProps} from '@src/types/onyx';
 
 /**
  * Loads JSON data from a file.
@@ -87,7 +87,7 @@ function findValuesByKey(node: any, keyToFind: string): any[] {
  * @throws Error if no value is found for the specified key or if more than one value is found.
  */
 function findSingleValueByKey(node: any, keyToFind: string): any {
-  let foundValues: any[] = [];
+  const foundValues: any[] = [];
 
   const searchNode = (currentNode: any) => {
     if (currentNode instanceof Array) {

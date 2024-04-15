@@ -2,24 +2,24 @@
 
 describe('validateAppVersion', () => {
   // Mock the current version of the application
-  let mockCurrentVersion = '5.6.7-0';
+  const mockCurrentVersion = '5.6.7-0';
   // Mock minimum required versions to test against
-  let olderMinorVersion = '5.6.6-0';
-  let newerMinorVersion = '5.6.8-0';
-  let olderMiddleVersion = '5.5.8-0';
-  let newerMiddleVersion = '5.7.8-0';
-  let olderMajorVersion = '4.6.8-0';
-  let newerMajorVersion = '6.6.8-0';
-  let olderBuildNumber = '5.6.7-1';
-  let newerBuildNumber = '5.6.7-2';
-  let newerVersionWithLowerBuildNumber = '5.6.8-0';
+  const olderMinorVersion = '5.6.6-0';
+  const newerMinorVersion = '5.6.8-0';
+  const olderMiddleVersion = '5.5.8-0';
+  const newerMiddleVersion = '5.7.8-0';
+  const olderMajorVersion = '4.6.8-0';
+  const newerMajorVersion = '6.6.8-0';
+  const olderBuildNumber = '5.6.7-1';
+  const newerBuildNumber = '5.6.7-2';
+  const newerVersionWithLowerBuildNumber = '5.6.8-0';
 
   it('validates minor version number correctly', () => {
-    let olderMinorVersionResult = validateAppVersion(
+    const olderMinorVersionResult = validateAppVersion(
       olderMinorVersion,
       mockCurrentVersion,
     );
-    let newerMinorVersionResult = validateAppVersion(
+    const newerMinorVersionResult = validateAppVersion(
       newerMinorVersion,
       mockCurrentVersion,
     );
@@ -29,11 +29,11 @@ describe('validateAppVersion', () => {
   });
 
   it('validates middle version number correctly', () => {
-    let olderMiddleVersionResult = validateAppVersion(
+    const olderMiddleVersionResult = validateAppVersion(
       olderMiddleVersion,
       mockCurrentVersion,
     );
-    let newerMiddleVersionResult = validateAppVersion(
+    const newerMiddleVersionResult = validateAppVersion(
       newerMiddleVersion,
       mockCurrentVersion,
     );
@@ -43,11 +43,11 @@ describe('validateAppVersion', () => {
   });
 
   it('validates major version number correctly', () => {
-    let olderMajorVersionResult = validateAppVersion(
+    const olderMajorVersionResult = validateAppVersion(
       olderMajorVersion,
       mockCurrentVersion,
     );
-    let newerMajorVersionResult = validateAppVersion(
+    const newerMajorVersionResult = validateAppVersion(
       newerMajorVersion,
       mockCurrentVersion,
     );
@@ -57,7 +57,7 @@ describe('validateAppVersion', () => {
   });
 
   it('validates build number correctly', () => {
-    let olderBuildNumberResult = validateAppVersion(
+    const olderBuildNumberResult = validateAppVersion(
       olderBuildNumber,
       newerBuildNumber,
     );
@@ -66,7 +66,7 @@ describe('validateAppVersion', () => {
   });
 
   it('validates version with lower build number correctly', () => {
-    let newerVersionWithLowerBuildNumberResult = validateAppVersion(
+    const newerVersionWithLowerBuildNumberResult = validateAppVersion(
       olderBuildNumber,
       newerVersionWithLowerBuildNumber,
     );

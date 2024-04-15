@@ -24,9 +24,9 @@ import StartupTimer from '@libs/StartupTimer';
 import Visibility from '@libs/Visibility';
 import {useFirebase} from '@context/global/FirebaseContext';
 import ONYXKEYS from '@src/ONYXKEYS';
-import {Route} from '@src/ROUTES';
+import type {Route} from '@src/ROUTES';
 import ForceUpdateModal from '@components/Modals/ForceUpdateModal';
-import {Session} from '@src/types/onyx';
+import type {Session} from '@src/types/onyx';
 
 Onyx.registerLogger(({level, message}) => {
   if (level === 'alert') {

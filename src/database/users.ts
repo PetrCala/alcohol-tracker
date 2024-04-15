@@ -1,5 +1,6 @@
-﻿import {Database, update, ref, get} from 'firebase/database';
-import {
+﻿import type {Database} from 'firebase/database';
+import { update, ref, get} from 'firebase/database';
+import type {
   DrinkingSessionList,
   FriendRequestList,
   Preferences,
@@ -8,10 +9,11 @@ import {
   UserProps,
   UserStatus,
 } from '@src/types/onyx';
+import type {
+  User,
+  UserCredential} from 'firebase/auth';
 import {
   EmailAuthProvider,
-  User,
-  UserCredential,
   reauthenticateWithCredential,
   updateProfile,
 } from 'firebase/auth';
@@ -46,7 +48,7 @@ const getDefaultPreferences = (): Preferences => {
 };
 
 const getDefaultUserData = (profileData: Profile): UserProps => {
-  let userRole = 'open_beta_user';
+  const userRole = 'open_beta_user';
   return {
     profile: profileData,
     role: userRole,
@@ -100,9 +102,7 @@ async function pushNewUserInfo(
   const userPreferencesRef = DBPATHS.USER_PREFERENCES_USER_ID;
   const userRef = DBPATHS.USERS_USER_ID;
 
-  let updates: {
-    [key: string]: UserProps | Preferences | string | number | any;
-  } = {};
+  const updates: Record<string, UserProps | Preferences | string | number | any> = {};
   updates[accountCreationsRef.getRoute(deviceId, userId)] = Date.now();
   updates[nicknameRef.getRoute(nicknameKey, userId)] = userNickname;
   updates[userStatusRef.getRoute(userId)] = getDefaultUserStatus();
@@ -139,7 +139,7 @@ async function deleteUserData(
   const friendsRef = DBPATHS.USERS_USER_ID_FRIENDS_FRIEND_ID;
   const friendRequestsRef = DBPATHS.USERS_USER_ID_FRIEND_REQUESTS_REQUEST_ID;
 
-  let updates: {[key: string]: null | false} = {};
+  const updates: Record<string, null | false> = {};
   updates[nicknameRef.getRoute(nicknameKey, userId)] = null;
   updates[userStatusRef.getRoute(userId)] = null;
   updates[userPreferencesRef.getRoute(userId)] = null;
@@ -166,7 +166,7 @@ async function synchronizeUserStatus(
   currentUserStatus: UserStatus | undefined,
   drinkingSessions: DrinkingSessionList | undefined,
 ): Promise<void> {
-  if (!currentUserStatus) return;
+  if (!currentUserStatus) {return;}
   const newUserStatus: UserStatus = currentUserStatus;
   newUserStatus.last_online = new Date().getTime();
   const latestSessionId = getLastStartedSessionId(drinkingSessions);
@@ -177,7 +177,7 @@ async function synchronizeUserStatus(
     newUserStatus.latest_session_id = latestSessionId;
   }
   const userStatusRef = DBPATHS.USER_STATUS_USER_ID;
-  let updates: {[key: string]: UserStatus} = {};
+  const updates: Record<string, UserStatus> = {};
   updates[userStatusRef.getRoute(userId)] = newUserStatus;
   await update(ref(db), updates);
 }
@@ -205,7 +205,7 @@ async function reauthentificateUser(
     return;
   }
   const credential = EmailAuthProvider.credential(email, password);
-  var result = await reauthenticateWithCredential(user, credential);
+  const result = await reauthenticateWithCredential(user, credential);
   return result;
 }
 
@@ -239,7 +239,7 @@ async function changeDisplayName(
     return;
   }
 
-  let updates: {[key: string]: string} = {};
+  const updates: Record<string, string> = {};
   updates[nicknameRef.getRoute(nicknameKey, userId)] = newDisplayName;
   updates[displayNameRef.getRoute(userId)] = newDisplayName;
   // TODO possibly rewrite these into a transaction

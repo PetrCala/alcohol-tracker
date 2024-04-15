@@ -32,7 +32,7 @@ const SuccessIndicator: React.FC<SuccessIndicatorProps> = ({
     }
   }, [visible, opacity]);
 
-  if (!visible) return null;
+  if (!visible) {return null;}
 
   return (
     <Animated.View style={[successStyle, {opacity}]}>

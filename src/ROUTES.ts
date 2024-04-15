@@ -1,10 +1,10 @@
 import type {IsEqual, ValueOf} from 'type-fest';
 import type CONST from './CONST';
-import {DrinkingSessionId, UserId} from './types/onyx';
+import type {DrinkingSessionId, UserId} from './types/onyx';
 import {timestampToDate, timestampToDateString} from '@libs/DataHandling';
 import DeepValueOf from './types/utils/DeepValueOf';
 import SCREENS from './SCREENS';
-import {DateString} from './types/time';
+import type {DateString} from './types/time';
 
 const ROUTES = {
   // If the user opens this route, we'll redirect them to the path saved in the last visited path or to the home page if the last visited path is empty.

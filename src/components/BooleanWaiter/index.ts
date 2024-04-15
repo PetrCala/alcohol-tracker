@@ -1,5 +1,6 @@
-import React, {useEffect} from 'react';
-import {BooleanWaiterProps} from './types';
+import type React from 'react';
+import {useEffect} from 'react';
+import type {BooleanWaiterProps} from './types';
 
 /**
  * A component that waits for a boolean value to become true, with a timeout.

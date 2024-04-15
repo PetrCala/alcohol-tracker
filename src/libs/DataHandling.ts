@@ -1,4 +1,4 @@
-﻿import {DateObject, DateString} from '@src/types/time';
+﻿import type {DateObject, DateString} from '@src/types/time';
 import {getRandomInt} from './Choice';
 import type {
   CalendarColors,
@@ -19,7 +19,7 @@ import type {
   Drinks,
 } from '@src/types/onyx';
 import CONST from '../CONST';
-import {MeasureType} from '@src/types/onyx/DatabaseCommon';
+import type {MeasureType} from '@src/types/onyx/DatabaseCommon';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import _, {get} from 'lodash';
 
@@ -99,7 +99,7 @@ export function dateStringToDate(dateString: DateString): Date {
  * @returns A new, modified Date type object
  */
 export function changeDateBySomeDays(date: Date, days: number): Date {
-  let newDate = new Date(date); // to avoid mutating original date
+  const newDate = new Date(date); // to avoid mutating original date
   newDate.setDate(newDate.getDate() + days);
   return newDate;
 }
@@ -111,12 +111,12 @@ export function changeDateBySomeDays(date: Date, days: number): Date {
  */
 export const getNextMonth = (currentDate: DateObject): DateObject => {
   // Setting it to the same day of the next month
-  let newDate = new Date(
+  const newDate = new Date(
     currentDate.year,
     currentDate.month - 1,
     currentDate.day,
   );
-  let originalMonth = newDate.getMonth();
+  const originalMonth = newDate.getMonth();
 
   newDate.setMonth(originalMonth + 1);
   // If the day got changed because the next month doesn't have that day (e.g. 31 Aug to 1 Sep)
@@ -134,12 +134,12 @@ export const getNextMonth = (currentDate: DateObject): DateObject => {
  */
 export const getPreviousMonth = (currentDate: DateObject): DateObject => {
   // Setting it to the same day of the previous month
-  let newDate = new Date(
+  const newDate = new Date(
     currentDate.year,
     currentDate.month - 1,
     currentDate.day,
   );
-  let originalMonth = newDate.getMonth();
+  const originalMonth = newDate.getMonth();
 
   newDate.setMonth(originalMonth - 1);
 
@@ -222,7 +222,7 @@ export function getYearMonth(dateObject: DateObject): string {
  */
 export function getYearMonthVerbose(
   dateObject: DateObject,
-  abbreviated: boolean = false,
+  abbreviated = false,
 ): string {
   const months = abbreviated ? CONST.MONTHS_ABBREVIATED : CONST.MONTHS;
   const monthName = months[dateObject.month - 1];
@@ -254,9 +254,9 @@ export function setDateToCurrentTime(inputDate: Date): Date {
 export function getSingleDayDrinkingSessions(
   date: Date,
   sessions: DrinkingSessionList | undefined,
-  returnArray: boolean = true,
+  returnArray = true,
 ): DrinkingSessionArray | DrinkingSessionList {
-  if (isEmptyObject(sessions)) return [];
+  if (isEmptyObject(sessions)) {return [];}
   // Define the time boundaries
   date.setHours(0, 0, 0, 0); // set to start of day
 
@@ -295,13 +295,13 @@ export function getSingleDayDrinkingSessions(
 export function getSingleMonthDrinkingSessions(
   date: Date,
   sessions: DrinkingSessionArray,
-  untilToday: boolean = false,
+  untilToday = false,
 ) {
-  if (!sessions) return [];
+  if (!sessions) {return [];}
   date.setHours(0, 0, 0, 0); // To midnight
   // Find the beginning date
-  let firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
-  let beginningDate = firstDayOfMonth;
+  const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+  const beginningDate = firstDayOfMonth;
   // Find the end date
   const firstDayOfNextMonth = new Date(
     date.getFullYear(),
@@ -310,8 +310,8 @@ export function getSingleMonthDrinkingSessions(
   );
   let endDate = firstDayOfNextMonth;
   if (untilToday) {
-    let today = new Date(); // automatically set to midnight
-    let tomorrowMidnight = changeDateBySomeDays(today, 1);
+    const today = new Date(); // automatically set to midnight
+    const tomorrowMidnight = changeDateBySomeDays(today, 1);
     if (endDate >= tomorrowMidnight) {
       endDate = tomorrowMidnight; // Filter until today only
     }
@@ -334,11 +334,11 @@ export function aggregateSessionsByDays(
 ): SessionsCalendarDatesType {
   return sessions.reduce(
     (acc: SessionsCalendarDatesType, item: DrinkingSession) => {
-      let dateString = formatDate(new Date(item.start_time)); // MM-DD-YYYY
+      const dateString = formatDate(new Date(item.start_time)); // MM-DD-YYYY
       let newDrinks: number;
       if (measureType === 'units') {
         if (!drinksToUnits)
-          throw new Error('You must specify the drink to unit conversion');
+          {throw new Error('You must specify the drink to unit conversion');}
         newDrinks = sumAllUnits(item.drinks, drinksToUnits);
       } else if (measureType === 'drinks') {
         newDrinks = sumAllDrinks(item.drinks);
@@ -368,21 +368,21 @@ export function monthEntriesToColors(
   preferences: Preferences,
 ) {
   // MarkedDates object, see official react-native-calendars docs
-  let markedDates: SessionsCalendarMarkedDates = _.entries(sessions).reduce(
+  const markedDates: SessionsCalendarMarkedDates = _.entries(sessions).reduce(
     (
       acc: SessionsCalendarMarkedDates,
       [key, {units: value, blackout: blackoutInfo}],
     ) => {
-      let unitsToColorsInfo = preferences.units_to_colors;
+      const unitsToColorsInfo = preferences.units_to_colors;
       let color: CalendarColors = unitsToColors(value, unitsToColorsInfo);
       if (blackoutInfo === true) {
         color = 'black';
       }
-      let textColor: string = 'black';
+      let textColor = 'black';
       if (color == 'red' ?? color == 'green' ?? color == 'black') {
         textColor = 'white';
       }
-      let markingObject: DayMarking = {
+      const markingObject: DayMarking = {
         units: value, // number of units
         color: color,
         textColor: textColor,
@@ -400,7 +400,7 @@ export function monthEntriesToColors(
  * @param all_drinks Drinks to sum up.
  */
 export function sumAllDrinks(drinks: DrinksList | undefined): number {
-  if (isEmptyObject(drinks)) return 0;
+  if (isEmptyObject(drinks)) {return 0;}
   return Object.values(drinks).reduce((total, drinkTypes) => {
     return (
       total +
@@ -421,7 +421,7 @@ export function sumDrinksOfSingleType(
   drinksObject: DrinksList | undefined,
   drinkType: DrinkKey,
 ): number {
-  if (!drinksObject) return 0;
+  if (!drinksObject) {return 0;}
   return _.reduce(
     drinksObject,
     (total, session) => total + (session[drinkType] ?? 0),
@@ -435,7 +435,7 @@ export function sumDrinksOfSingleType(
  * @returns The sum
  */
 export function sumDrinkTypes(drinkTypes: Drinks): number {
-  if (!drinkTypes) return 0;
+  if (!drinkTypes) {return 0;}
   return _.reduce(
     drinkTypes,
     (total, drinkCount) => total + (drinkCount ?? 0),
@@ -463,7 +463,7 @@ export function sumAllUnits(
   drinksObject: DrinksList | undefined,
   drinksToUnits: DrinksToUnits,
 ): number {
-  if (_.isEmpty(drinksObject)) return 0;
+  if (_.isEmpty(drinksObject)) {return 0;}
   let totalUnits = 0;
   // Iterate over each timestamp in drinksObject
   _.forEach(Object.values(drinksObject), drinkTypes => {
@@ -485,7 +485,7 @@ export function sumAllUnits(
  * @returnsTimestamp of the last drink consumed
  */
 export function getLastDrinkAddedTime(session: DrinkingSession): number | null {
-  if (_.isEmpty(session?.drinks)) return null;
+  if (_.isEmpty(session?.drinks)) {return null;}
   const timestamps = _.map(Object.keys(session.drinks), Number);
   // Return the maximum timestamp or null if there aren't any
   return timestamps.length ? Math.max(...timestamps) : null;
@@ -496,7 +496,7 @@ export function getLastDrinkAddedTime(session: DrinkingSession): number | null {
 export function findOngoingSession(
   sessions: DrinkingSessionList,
 ): DrinkingSession | null {
-  if (isEmptyObject(sessions)) return null;
+  if (isEmptyObject(sessions)) {return null;}
   const ongoingSession = Object.values(sessions).find(
     session => session.ongoing === true,
   );
@@ -541,7 +541,7 @@ export const calculateThisMonthUnits = (
   sessions: DrinkingSessionArray,
   drinksToUnits: DrinksToUnits,
 ): number => {
-  if (!sessions) return 0;
+  if (!sessions) {return 0;}
   // Subset to this month's sessions only
   const currentDate = timestampToDate(dateObject.timestamp);
   const sessionsThisMonth = getSingleMonthDrinkingSessions(
@@ -559,14 +559,14 @@ export const calculateThisMonthUnits = (
 export function getLastStartedSession(
   sessions: DrinkingSessionList | undefined,
 ): DrinkingSession | undefined {
-  if (!sessions) return undefined;
+  if (!sessions) {return undefined;}
   return _.maxBy(_.values(sessions), 'start_time');
 }
 
 export function getLastStartedSessionId(
   sessions: DrinkingSessionList | undefined,
 ): string | undefined {
-  if (!sessions) return undefined;
+  if (!sessions) {return undefined;}
 
   const latestSession = _.maxBy(
     _.entries(sessions),
@@ -585,8 +585,8 @@ export const addDrinks = (
   existingDrinks: DrinksList | undefined,
   drinks: Drinks,
 ): DrinksList | undefined => {
-  if (isEmptyObject(drinks)) return existingDrinks;
-  let newDrinks: DrinksList = {
+  if (isEmptyObject(drinks)) {return existingDrinks;}
+  const newDrinks: DrinksList = {
     ...existingDrinks,
     [Date.now()]: drinks,
   };
@@ -604,7 +604,7 @@ export const removeDrinks = (
   drinkType: DrinkKey,
   count: number,
 ): DrinksList | undefined => {
-  if (isEmptyObject(existingDrinks)) return existingDrinks;
+  if (isEmptyObject(existingDrinks)) {return existingDrinks;}
   let drinksToRemove = count;
   const updatedDrinks: DrinksList = JSON.parse(JSON.stringify(existingDrinks)); // Deep copy
   for (const timestamp of Object.keys(updatedDrinks).sort((a, b) => +b - +a)) {
@@ -679,7 +679,7 @@ export const removeZeroObjectsFromSession = (
  * each drink's value is set to a random integer.
  */
 
-export const getRandomDrinksList = (maxDrinkValue: number = 30): DrinksList => {
+export const getRandomDrinksList = (maxDrinkValue = 30): DrinksList => {
   const drinkWithRandomValues: Drinks = {};
 
   // Loop over each item in DrinkTypesKeys and set its value to a random number between 0 and maxDrinkValue
@@ -733,7 +733,7 @@ export const findDrinkName = (key: DrinkKey): DrinkName | undefined => {
   const drinkIdx = Object.values(CONST.DRINKS.KEYS).findIndex(
     type => type === key,
   );
-  if (drinkIdx === -1) return undefined;
+  if (drinkIdx === -1) {return undefined;}
   return Object.values(CONST.DRINKS.NAMES)[drinkIdx];
 };
 

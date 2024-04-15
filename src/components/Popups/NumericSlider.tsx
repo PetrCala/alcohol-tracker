@@ -32,7 +32,7 @@ const NumericSlider = (props: NumericSliderProps) => {
   }, [value]);
 
   const handleSliderChange = (value: number) => {
-    let newValue = parseFloat(value.toFixed(1));
+    const newValue = parseFloat(value.toFixed(1));
     setLocalValue(newValue);
   };
 

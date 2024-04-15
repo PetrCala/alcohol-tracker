@@ -1,5 +1,5 @@
-import {UserPriority, UserPriorityList} from '@src/types/various/Algorithms';
-import {UserStatus, UserStatusList} from '@src/types/onyx';
+import type {UserPriority, UserPriorityList} from '@src/types/various/Algorithms';
+import type {UserStatus, UserStatusList} from '@src/types/onyx';
 import {sumAllDrinks} from '@libs/DataHandling';
 import {sessionIsExpired} from '@libs/DrinkingSessionUtils';
 import _, {get} from 'lodash';
@@ -22,10 +22,10 @@ function calculateAllUsersPriority(
   userIds: string[],
   userStatusList: UserStatusList,
 ): UserPriorityList {
-  let usersPriority: UserPriorityList = {};
+  const usersPriority: UserPriorityList = {};
   userIds.forEach(userId => {
     let userPriority: UserPriority = 0;
-    let userStatusData: UserStatus = userStatusList[userId];
+    const userStatusData: UserStatus = userStatusList[userId];
     if (userStatusData) {
       userPriority = calculateUserPriority(userStatusData);
     }
@@ -43,7 +43,7 @@ function calculateUserPriority(userStatusData: UserStatus): number {
   const expired = sessionIsExpired(latestSession);
   // The older the last session, the lower the priority
   const timeCoefficient = Math.log(timeSinceLastSession) * 50 * -1;
-  if (expired) return timeCoefficient; // Do not account for session if expired
+  if (expired) {return timeCoefficient;} // Do not account for session if expired
 
   const sessionActive = latestSession?.ongoing ? 1 : 0;
   const sessionDrinks = latestSession?.drinks

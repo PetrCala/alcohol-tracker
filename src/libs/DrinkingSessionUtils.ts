@@ -1,5 +1,5 @@
 import CONST from '@src/CONST';
-import {
+import type {
   DrinkKey,
   DrinkingSession,
   DrinkingSessionId,
@@ -20,7 +20,7 @@ function getEmptySession(
   usePlaceholderDrinks?: boolean,
   ongoing?: boolean,
 ): DrinkingSession {
-  let emptySession: DrinkingSession = {
+  const emptySession: DrinkingSession = {
     start_time: Date.now(),
     end_time: Date.now(),
     drinks: usePlaceholderDrinks ? PlaceholderDrinks : {},
@@ -46,7 +46,7 @@ function isEmptySession(session: DrinkingSession): boolean {
 }
 
 function sessionIsExpired(session: DrinkingSession | undefined): boolean {
-  if (!session) return false;
+  if (!session) {return false;}
   const expirationBoundary = Date.now() - CONST.SESSION_EXPIRY;
   return session.start_time < expirationBoundary;
 }
@@ -56,7 +56,7 @@ function calculateSessionLength(
   session: DrinkingSession | undefined,
   returnString?: boolean,
 ): number | string {
-  if (!session) return returnString ? '0s' : 0;
+  if (!session) {return returnString ? '0s' : 0;}
   const length = session?.end_time ? session.end_time - session.start_time : 0;
   if (returnString) {
     return numberToVerboseString(length, false);
@@ -72,7 +72,7 @@ function extractSessionOrEmpty(
   sessionId: DrinkingSessionId,
   drinkingSessionData: DrinkingSessionList | undefined,
 ): DrinkingSession {
-  if (isEmptyObject(drinkingSessionData)) return getEmptySession();
+  if (isEmptyObject(drinkingSessionData)) {return getEmptySession();}
   if (
     drinkingSessionData &&
     Object.keys(drinkingSessionData).includes(sessionId)
@@ -90,9 +90,9 @@ function extractSessionOrEmpty(
 function determineSessionMostCommonDrink(
   session: DrinkingSession | undefined | null,
 ): DrinkKey | undefined | null {
-  if (!session) return null;
+  if (!session) {return null;}
   const drinks = session.drinks;
-  if (!drinks) return null;
+  if (!drinks) {return null;}
   const drinkCounts: Partial<Record<DrinkKey, number>> = {};
 
   Object.values(drinks).forEach(drinksAtTimestamp => {

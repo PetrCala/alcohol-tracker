@@ -22,10 +22,10 @@ const YesNoPopup = (props: YesNoPopupProps) => {
         <View style={styles.modalView}>
           <Text style={styles.modalText}>{message}</Text>
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.button} onPress={onRequestClose}>
+            <TouchableOpacity accessibilityRole="button" style={styles.button} onPress={onRequestClose}>
               <Text style={styles.buttonText}>No</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={onYes}>
+            <TouchableOpacity accessibilityRole="button" style={styles.button} onPress={onYes}>
               <Text style={styles.buttonText}>Yes</Text>
             </TouchableOpacity>
           </View>

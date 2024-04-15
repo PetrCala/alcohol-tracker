@@ -106,7 +106,7 @@ function PreferencesScreen({route}: PreferencesScreenProps) {
   };
 
   const handleSavePreferences = async () => {
-    if (!user) return;
+    if (!user) {return;}
     try {
       setSaving(true);
       await savePreferencesData(db, user.uid, currentPreferences);

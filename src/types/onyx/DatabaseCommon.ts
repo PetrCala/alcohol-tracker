@@ -1,10 +1,10 @@
-import {MaybePhraseKey} from '@libs/Localize';
+import type {MaybePhraseKey} from '@libs/Localize';
 
 type UserId = string;
 
 type UserList = Record<UserId, boolean>;
 
-type UserArray = Array<UserId>;
+type UserArray = UserId[];
 
 type MeasureType = 'drinks' | 'units';
 

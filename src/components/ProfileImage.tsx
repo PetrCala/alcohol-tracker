@@ -1,27 +1,28 @@
 ﻿import React, {useEffect, useMemo, useReducer, useRef, useState} from 'react';
+import type {
+  ImageSourcePropType,
+  LayoutChangeEvent} from 'react-native';
 import {
   ActivityIndicator,
   Alert,
   Image,
-  ImageSourcePropType,
-  LayoutChangeEvent,
   TouchableOpacity,
 } from 'react-native';
 import * as KirokuImages from '@components/Icon/KirokuImages';
-import {FirebaseStorage} from 'firebase/storage';
+import type {FirebaseStorage} from 'firebase/storage';
 import {getProfilePictureURL} from '@src/storage/storageProfile';
 import useProfileImageCache from '@hooks/useProfileImageCache';
 import CONST from '@src/CONST';
 import EnlargableImage from './Buttons/EnlargableImage';
-import ImageLayout from '@src/types/various/ImageLayout';
+import type ImageLayout from '@src/types/various/ImageLayout';
 
-interface State {
+type State = {
   imageUrl: string | null;
   loadingImage: boolean;
   warning: string;
 }
 
-interface Action {
+type Action = {
   type: string;
   payload: any;
 }
@@ -92,10 +93,10 @@ function ProfileImage(props: ProfileImageProps) {
 
   useEffect(() => {
     const fetchImage = async () => {
-      if (!isCacheChecked) return; // Only proceed if cache has been checked
+      if (!isCacheChecked) {return;} // Only proceed if cache has been checked
 
       const cacheUnchanged = await checkAvailableCache(cachedUrl);
-      if (cacheUnchanged) return; // Use cache if available and unchanged
+      if (cacheUnchanged) {return;} // Use cache if available and unchanged
 
       dispatch({type: 'SET_LOADING_IMAGE', payload: true});
       try {
@@ -129,7 +130,7 @@ function ProfileImage(props: ProfileImageProps) {
   }, [downloadPath, cachedUrl, isCacheChecked]); // add props.refreshTrigger if necessary
 
   if (state.loadingImage)
-    return <ActivityIndicator size="large" color="#0000ff" style={style} />;
+    {return <ActivityIndicator size="large" color="#0000ff" style={style} />;}
   if (!props.enlargable) {
     return <Image source={imageSource} style={style} />;
   }

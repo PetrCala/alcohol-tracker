@@ -1,4 +1,4 @@
-import {UserIdToNicknameMapping} from '@src/types/various/Search';
+import type {UserIdToNicknameMapping} from '@src/types/various/Search';
 
 /**
  * Input an object where the keys are userIds, and the first level
@@ -9,10 +9,8 @@ import {UserIdToNicknameMapping} from '@src/types/various/Search';
  * @returns A mapping of user ids to nicknames
  */
 function getNicknameMapping(
-  object: {
-    [userId: string]: {[displayNameKey: string]: string} & {[key: string]: any};
-  },
-  displayNameKey: string = 'display_name',
+  object: Record<string, Record<string, string> & Record<string, any>>,
+  displayNameKey = 'display_name',
 ): UserIdToNicknameMapping {
   const mapping: UserIdToNicknameMapping = {};
 

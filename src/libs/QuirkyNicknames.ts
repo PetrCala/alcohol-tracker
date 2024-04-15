@@ -1,6 +1,4 @@
-type QuirkyNicknames = {
-  [nickname: string]: string;
-};
+type QuirkyNicknames = Record<string, string>;
 
 /**
  * Quirky nicknames mapping.

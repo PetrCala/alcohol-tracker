@@ -1,11 +1,12 @@
 ﻿import React, {useEffect, useReducer} from 'react';
+import type {
+  ImageSourcePropType} from 'react-native';
 import {
   Image,
   View,
   Alert,
   TouchableOpacity,
-  StyleSheet,
-  ImageSourcePropType,
+  StyleSheet
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import {Image as CompressorImage} from 'react-native-compressor';
@@ -13,7 +14,7 @@ import {uploadImageToFirebase} from '../storage/storageUpload';
 import WarningMessage from './Info/WarningMessage';
 import SuccessMessage from './Info/SuccessMessage';
 import UploadImagePopup from './Popups/UploadImagePopup';
-import GeneralAction from '@src/types/various/GeneralAction';
+import type GeneralAction from '@src/types/various/GeneralAction';
 import checkPermission from '@libs/Permissions/checkPermission';
 import {requestPermission} from '@libs/Permissions/requestPermission';
 import {updateProfileInfo} from '@database/profile';
@@ -104,7 +105,7 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
       })
       .catch((error: any) => {
         // TODO add clever error handling
-        if ('User cancelled image selection' === error.message) return;
+        if ('User cancelled image selection' === error.message) {return;}
         Alert.alert('Error choosing image', error.message);
         // dispatch({type: 'SET_WARNING', payload: error.message});
       });
@@ -136,7 +137,7 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
 
   useEffect(() => {
     const handleUpload = async (sourceURI: string | null) => {
-      if (!sourceURI) return;
+      if (!sourceURI) {return;}
 
       try {
         dispatch({type: 'SET_UPLOAD_MODAL_VISIBLE', payload: true});
@@ -165,7 +166,7 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={handleChooseImagePress} style={styles.button}>
+      <TouchableOpacity accessibilityRole="button" onPress={handleChooseImagePress} style={styles.button}>
         <Image source={imageSource} style={imageStyle} />
       </TouchableOpacity>
 

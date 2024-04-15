@@ -1,9 +1,10 @@
-﻿import React, {
+﻿import type {
+  ReactNode} from 'react';
+import React, {
   useEffect,
   useState,
   useMemo,
-  useCallback,
-  ReactNode,
+  useCallback
 } from 'react';
 import {
   Dimensions,
@@ -13,7 +14,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Calendar, DateData} from 'react-native-calendars';
+import type { DateData} from 'react-native-calendars';
+import {Calendar} from 'react-native-calendars';
 import {
   getPreviousMonth,
   getNextMonth,
@@ -25,10 +27,10 @@ import {
   roundToTwoDecimalPlaces,
 } from '@libs/DataHandling';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
-import {DateObject} from '@src/types/time';
+import type {DateObject} from '@src/types/time';
 import LoadingData from './LoadingData';
 import CONST from '@src/CONST';
-import {
+import type {
   DrinkingSessionArray,
   DrinkingSessionList,
   Preferences,
@@ -53,16 +55,12 @@ type SessionsCalendarProps = {
   onDayPress: (day: DateData) => void;
 };
 
-type SessionsCalendarMarkedDates = {
-  [date: string]: DayMarking;
-};
+type SessionsCalendarMarkedDates = Record<string, DayMarking>;
 
-type SessionsCalendarDatesType = {
-  [key: string]: {
+type SessionsCalendarDatesType = Record<string, {
     units: number;
     blackout: boolean;
-  };
-};
+  }>;
 
 const colorToTextColorMap: Record<CalendarColors, string> = {
   yellow: 'black',
@@ -80,7 +78,7 @@ const DayComponent: React.FC<{
   theme: any;
   onPress: (day: DateData) => void;
 }> = ({date, state, marking, theme, onPress}) => {
-  if (!date) return null;
+  if (!date) {return null;}
   // Calculate the date information with memos to avoid recalculation
   const today = useMemo(() => new Date(), []);
   const tomorrow = useMemo(() => changeDateBySomeDays(today, 1), [today]);
@@ -107,7 +105,7 @@ const DayComponent: React.FC<{
   };
 
   const getMarkingContainerStyle = (date: DateData, marking: DayMarking) => {
-    let baseStyle = styles.daySessionsMarkingContainer;
+    const baseStyle = styles.daySessionsMarkingContainer;
 
     if (state === 'disabled') {
       return {...baseStyle, borderWidth: 0};
@@ -153,7 +151,7 @@ const DayComponent: React.FC<{
   };
 
   return (
-    <TouchableOpacity style={styles.dayContainer} onPress={() => onPress(date)}>
+    <TouchableOpacity accessibilityRole="button" style={styles.dayContainer} onPress={() => onPress(date)}>
       <Text style={getTextStyle(state)}>{date.day}</Text>
       <View style={getMarkingContainerStyle(date, marking)}>
         <Text style={getMarkingTextStyle(marking)}>
@@ -207,12 +205,12 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
     preferences: Preferences,
   ): SessionsCalendarMarkedDates => {
     // Use points to calculate the point sum (flagged as units)
-    var aggergatedSessions = aggregateSessionsByDays(
+    const aggergatedSessions = aggregateSessionsByDays(
       calendarData,
       'units',
       preferences.drinks_to_units,
     );
-    var newMarkedDates = monthEntriesToColors(aggergatedSessions, preferences);
+    const newMarkedDates = monthEntriesToColors(aggergatedSessions, preferences);
     return newMarkedDates;
   };
 
@@ -248,12 +246,12 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
 
   // Monitor marked days
   useEffect(() => {
-    let newMarkedDates = getMarkedDates(calendarData, preferences);
+    const newMarkedDates = getMarkedDates(calendarData, preferences);
     setMarkedDates(newMarkedDates);
     setLoadingMarkedDays(false);
   }, [calendarData, preferences]);
 
-  if (loadingMarkedDates) return <LoadingData />;
+  if (loadingMarkedDates) {return <LoadingData />;}
 
   return (
     <Calendar

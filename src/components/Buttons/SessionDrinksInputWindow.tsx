@@ -5,7 +5,7 @@ import {
   removeDrinks,
   sumDrinksOfSingleType,
 } from '@libs/DataHandling';
-import {DrinkKey, Drinks, DrinksList} from '@src/types/onyx';
+import type {DrinkKey, Drinks, DrinksList} from '@src/types/onyx';
 
 type SessionDrinksInputWindowProps = {
   drinkKey: DrinkKey;
@@ -32,7 +32,7 @@ const SessionDrinksInputWindow = ({
   const inputRef = useRef<TextInput>(null);
 
   const handleKeyPress = (event: {nativeEvent: {key: string}}): void => {
-    let updatedValue: string = '0';
+    let updatedValue = '0';
     const key = event.nativeEvent.key;
 
     if (key === 'Backspace') {
@@ -59,7 +59,7 @@ const SessionDrinksInputWindow = ({
         numericValue = 0;
       }
 
-      let inputValueNumeric = parseFloat(inputValue); // In case one digit is already input, adjust the availableDrinks for this digit
+      const inputValueNumeric = parseFloat(inputValue); // In case one digit is already input, adjust the availableDrinks for this digit
       if (numericValue > availableUnits + inputValueNumeric) {
         return; // If the new value is greater than available units, do nothing.
       }
@@ -68,7 +68,7 @@ const SessionDrinksInputWindow = ({
     }
 
     // Update drinks
-    let numericValue = parseFloat(updatedValue);
+    const numericValue = parseFloat(updatedValue);
     handleNewNumericValue(numericValue);
   };
 
@@ -83,17 +83,17 @@ const SessionDrinksInputWindow = ({
     }
     const typeSum = parseFloat(inputValue);
 
-    if (numericValue == typeSum) return; // Do nothing if the value is the same
+    if (numericValue == typeSum) {return;} // Do nothing if the value is the same
     // Determine whether the new value is higher or lower than the current one
     let newDrinks: DrinksList | undefined = {...currentDrinks};
     if (numericValue > typeSum) {
       // Add drinks
-      let numberToAdd: number = numericValue - typeSum;
-      let drinksToAdd: Drinks = {[drinkKey]: numberToAdd};
+      const numberToAdd: number = numericValue - typeSum;
+      const drinksToAdd: Drinks = {[drinkKey]: numberToAdd};
       newDrinks = addDrinks(newDrinks, drinksToAdd);
     } else {
       // Remove drinks
-      let numberToRemove: number = typeSum - numericValue;
+      const numberToRemove: number = typeSum - numericValue;
       newDrinks = removeDrinks(newDrinks, drinkKey, numberToRemove);
     }
     setCurrentDrinks(newDrinks);
@@ -116,11 +116,11 @@ const SessionDrinksInputWindow = ({
 
   return (
     <View style={styles.drinksInputContainer}>
-      <TouchableOpacity
+      <TouchableOpacity accessibilityRole="button"
         activeOpacity={1}
         onPress={handleContainerPress}
         style={styles.drinksInputButton}>
-        <TextInput
+        <TextInput accessibilityLabel="Text input field"
           ref={inputRef}
           style={styles.drinksInputText}
           value={inputValue}

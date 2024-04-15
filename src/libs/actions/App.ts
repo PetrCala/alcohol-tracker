@@ -23,7 +23,7 @@ import Navigation from '@libs/Navigation/Navigation';
 // import Performance from '@libs/Performance';
 // import * as ReportActionsUtils from '@libs/ReportActionsUtils';
 import * as SessionUtils from '@libs/SessionUtils';
-import CONST from '@src/CONST';
+import type CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
 import type {Route} from '@src/ROUTES';
 import ROUTES from '@src/ROUTES';
@@ -382,7 +382,7 @@ function endSignOnTransition() {
  */
 function setUpPoliciesAndNavigate(session: OnyxEntry<OnyxTypes.Session>) {
   const currentUrl = getCurrentUrl();
-  if (!session || !currentUrl || !currentUrl.includes('exitTo')) {
+  if (!session || !currentUrl?.includes('exitTo')) {
     return;
   }
 

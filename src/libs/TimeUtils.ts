@@ -14,8 +14,8 @@ function isRecent(timestamp: number): boolean {
  */
 function numberToVerboseString(
   number: number,
-  addAgo: boolean = true,
-  useAbbreviation: boolean = false,
+  addAgo = true,
+  useAbbreviation = false,
 ): string {
   // Format the number into human-readable form based on its age
   let count: number;
@@ -60,10 +60,10 @@ function numberToVerboseString(
 
 function getTimestampAge(
   timestamp: number | null | undefined,
-  addAgo: boolean = true,
-  useAbbreviation: boolean = false,
+  addAgo = true,
+  useAbbreviation = false,
 ): string | null | undefined {
-  if (!timestamp) return null;
+  if (!timestamp) {return null;}
   const now = Date.now();
   const difference = now - timestamp;
   return numberToVerboseString(difference, addAgo, useAbbreviation);
@@ -78,7 +78,7 @@ function getTimestampAge(
  */
 async function waitForBooleanToBeTrue(
   bool: boolean,
-  timeout: number = 30000,
+  timeout = 30000,
 ): Promise<boolean> {
   if (!bool) {
     return false; // No waiting was needed

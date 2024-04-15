@@ -1,5 +1,5 @@
-import CONST from '@src/CONST';
-import {ValueOf} from 'type-fest';
+import type CONST from '@src/CONST';
+import type {ValueOf} from 'type-fest';
 
 type DrinksTimestamp = number;
 

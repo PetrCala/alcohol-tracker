@@ -1,4 +1,4 @@
-import CONST from '@src/CONST';
+import type CONST from '@src/CONST';
 
 type DateString = typeof CONST.DATE.FNS_FORMAT_STRING;
 

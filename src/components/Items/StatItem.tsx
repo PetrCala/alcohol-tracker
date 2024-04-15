@@ -1,6 +1,6 @@
 import {StyleSheet, Text, View} from 'react-native';
 
-interface StatItemProps {
+type StatItemProps = {
   header: string;
   content: string;
 }

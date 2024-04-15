@@ -1,9 +1,10 @@
 import {useEffect, useReducer, useCallback, useState} from 'react';
 import {useFirebase} from '@src/context/global/FirebaseContext';
+import type {
+  ProfileList,
+  UserArray} from '@src/types/onyx';
 import {
   NicknameToIdList,
-  ProfileList,
-  UserArray,
   UserList,
   UserStatusList,
 } from '@src/types/onyx';
@@ -41,7 +42,7 @@ const useProfileList = (userArray: UserArray) => {
       // Filter out the users that are already in the profile list
       const newUsers = userArray.filter(userId => !profileList[userId]);
       if (isNonEmptyArray(newUsers)) {
-        let newProfileList: ProfileList = await fetchUserProfiles(db, newUsers);
+        const newProfileList: ProfileList = await fetchUserProfiles(db, newUsers);
         setProfileList({...profileList, ...newProfileList});
       }
     } catch (error: any) {

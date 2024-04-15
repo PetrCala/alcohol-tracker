@@ -1,6 +1,7 @@
+import type {
+  LayoutChangeEvent} from 'react-native';
 import {
   Dimensions,
-  LayoutChangeEvent,
   StyleSheet,
   Text,
   View,
@@ -12,8 +13,8 @@ import ProfileImage from '@components/ProfileImage';
 import UploadImageComponent from '@components/UploadImage';
 import CONST from '@src/CONST';
 import {useState} from 'react';
-import ImageLayout from '@src/types/various/ImageLayout';
-import {Profile} from '@src/types/onyx';
+import type ImageLayout from '@src/types/various/ImageLayout';
+import type {Profile} from '@src/types/onyx';
 
 type ProfileOverviewProps = {
   userId: string;
