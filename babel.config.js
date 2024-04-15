@@ -1,10 +1,35 @@
+require('dotenv').config();
+
+const defaultPresets = [
+  '@babel/preset-react',
+  '@babel/preset-env',
+  '@babel/preset-flow',
+  '@babel/preset-typescript',
+];
+const defaultPlugins = [
+  // Adding the commonjs: true option to react-native-web plugin can cause styling conflicts
+  ['react-native-web'],
+
+  '@babel/transform-runtime',
+  '@babel/plugin-proposal-class-properties',
+
+  // We use `transform-class-properties` for transforming ReactNative libraries and do not use it for our own
+  // source code transformation as we do not use class property assignment.
+  'transform-class-properties',
+
+  // Keep it last
+  'react-native-reanimated/plugin',
+];
+
 module.exports = {
-  presets: [
-    'module:metro-react-native-babel-preset',
-    ['@babel/preset-env', {targets: {node: 'current'}}],
-    '@babel/preset-typescript',
-  ],
+  // presets: [
+  //   'module:metro-react-native-babel-preset',
+  //   ['@babel/preset-env', {targets: {node: 'current'}}],
+  //   '@babel/preset-typescript',
+  // ],
+  presets: [require('@react-native/babel-preset')],
   plugins: [
+    ['@babel/plugin-proposal-class-properties', {loose: true}],
     [
       'module-resolver',
       {
@@ -46,4 +71,29 @@ module.exports = {
       },
     ],
   ],
+  // env: {
+  //   production: {
+  //     // Keep console logs for e2e tests
+  //     plugins: IS_E2E_TESTING
+  //       ? []
+  //       : [['transform-remove-console', {exclude: ['error', 'warn']}]],
+  //   },
+  // },
 };
+
+// module.exports = api => {
+//   console.debug('babel.config.js');
+//   console.debug('  - api.version:', api.version);
+//   console.debug('  - api.env:', api.env());
+//   console.debug('  - process.env.NODE_ENV:', process.env.NODE_ENV);
+//   console.debug('  - process.env.BABEL_ENV:', process.env.BABEL_ENV);
+
+//   // For `react-native` (iOS/Android) caller will be "metro"
+//   // For `webpack` (Web) caller will be "@babel-loader"
+//   // For jest, it will be babel-jest
+//   // For `storybook` there won't be any config at all so we must give default argument of an empty object
+//   const runningIn = api.caller((args = {}) => args.name);
+//   console.debug('  - running in: ', runningIn);
+
+//   return ['metro', 'babel-jest'].includes(runningIn) ? metro : webpack;
+// };

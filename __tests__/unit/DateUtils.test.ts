@@ -10,7 +10,7 @@ import {
   subMinutes,
   subSeconds,
 } from 'date-fns';
-import {format as tzFormat, utcToZonedTime} from 'date-fns-tz';
+import {format as tzFormat, toZonedTime} from 'date-fns-tz';
 import Onyx from 'react-native-onyx';
 import DateUtils from '@libs/DateUtils';
 import CONST from '@src/CONST';
@@ -51,11 +51,11 @@ describe('DateUtils', () => {
   });
 
   const datetime = '2022-11-07 00:00:00';
-  const timezone = 'America/Los_Angeles';
+  const timezone = 'Europe/Prague';
 
   it('getZoneAbbreviation should show zone abbreviation from the datetime', () => {
     const zoneAbbreviation = DateUtils.getZoneAbbreviation(datetime, timezone);
-    expect(zoneAbbreviation).toBe('PST');
+    expect(zoneAbbreviation).toBe('GMT+1');
   });
 
   it('formatToLongDateWithWeekday should return a long date with a weekday', () => {
@@ -230,9 +230,9 @@ describe('DateUtils', () => {
     const tomorrow = addDays(today, 1);
     const yesterday = subDays(today, 1);
 
-    const todayInTimezone = utcToZonedTime(today, timezone);
-    const tomorrowInTimezone = utcToZonedTime(tomorrow, timezone);
-    const yesterdayInTimezone = utcToZonedTime(yesterday, timezone);
+    const todayInTimezone = toZonedTime(today, timezone);
+    const tomorrowInTimezone = toZonedTime(tomorrow, timezone);
+    const yesterdayInTimezone = toZonedTime(yesterday, timezone);
 
     it('isToday should correctly identify today', () => {
       expect(DateUtils.isToday(todayInTimezone, timezone)).toBe(true);
