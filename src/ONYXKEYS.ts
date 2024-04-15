@@ -371,12 +371,12 @@ const ONYXKEYS = {
     //     POLICY_CREATE_DISTANCE_RATE_FORM_DRAFT: 'policyCreateDistanceRateFormDraft',
     //     POLICY_DISTANCE_RATE_EDIT_FORM: 'policyDistanceRateEditForm',
     //     POLICY_DISTANCE_RATE_EDIT_FORM_DRAFT: 'policyDistanceRateEditFormDraft',
-    //     CLOSE_ACCOUNT_FORM: 'closeAccount',
-    //     CLOSE_ACCOUNT_FORM_DRAFT: 'closeAccountDraft',
+    CLOSE_ACCOUNT_FORM: 'closeAccount',
+    CLOSE_ACCOUNT_FORM_DRAFT: 'closeAccountDraft',
     //     PROFILE_SETTINGS_FORM: 'profileSettingsForm',
     //     PROFILE_SETTINGS_FORM_DRAFT: 'profileSettingsFormDraft',
-    //     DISPLAY_NAME_FORM: 'displayNameForm',
-    //     DISPLAY_NAME_FORM_DRAFT: 'displayNameFormDraft',
+    DISPLAY_NAME_FORM: 'displayNameForm',
+    DISPLAY_NAME_FORM_DRAFT: 'displayNameFormDraft',
     //     ONBOARDING_PERSONAL_DETAILS_FORM: 'onboardingPersonalDetailsForm',
     //     ONBOARDING_PERSONAL_DETAILS_FORM_DRAFT:
     //       'onboardingPersonalDetailsFormDraft',
@@ -466,9 +466,9 @@ type OnyxFormValuesMapping = {
   //   [ONYXKEYS.FORMS
   //     .WORKSPACE_RATE_AND_UNIT_FORM]: FormTypes.WorkspaceRateAndUnitForm;
   //   [ONYXKEYS.FORMS.WORKSPACE_TAX_CUSTOM_NAME]: FormTypes.WorkspaceTaxCustomName;
-  //   [ONYXKEYS.FORMS.CLOSE_ACCOUNT_FORM]: FormTypes.CloseAccountForm;
+  [ONYXKEYS.FORMS.CLOSE_ACCOUNT_FORM]: FormTypes.CloseAccountForm;
   //   [ONYXKEYS.FORMS.PROFILE_SETTINGS_FORM]: FormTypes.ProfileSettingsForm;
-  //   [ONYXKEYS.FORMS.DISPLAY_NAME_FORM]: FormTypes.DisplayNameForm;
+  [ONYXKEYS.FORMS.DISPLAY_NAME_FORM]: FormTypes.DisplayNameForm;
   //   [ONYXKEYS.FORMS.ONBOARDING_PERSONAL_DETAILS_FORM]: FormTypes.DisplayNameForm;
   //   [ONYXKEYS.FORMS.ROOM_NAME_FORM]: FormTypes.RoomNameForm;
   //   [ONYXKEYS.FORMS.REPORT_DESCRIPTION_FORM]: FormTypes.ReportDescriptionForm;
