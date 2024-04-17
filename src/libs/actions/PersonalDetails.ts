@@ -184,9 +184,10 @@ function updateAddress(
  * selected timezone if set to automatically update.
  */
 function updateAutomaticTimezone(timezone: Timezone) {
-  if (Session.isAnonymousUser()) {
-    return;
-  }
+  // TODO enable this
+  // if (Session.isAnonymousUser()) {
+  //   return;
+  // }
 
   if (!currentUserAccountID) {
     return;
