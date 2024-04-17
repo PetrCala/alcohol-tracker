@@ -177,9 +177,9 @@ function AuthScreens({
     //   return;
     // }
 
-    NetworkConnection.listenForReconnect();
-    NetworkConnection.onReconnect(handleNetworkReconnect);
     // TODO enable this
+    // NetworkConnection.listenForReconnect();
+    // NetworkConnection.onReconnect(handleNetworkReconnect);
     // PusherConnectionManager.init();
     // Pusher.init({
     //   appKey: CONFIG.PUSHER.APP_KEY,

@@ -715,14 +715,15 @@ function resetHomeRouteParams() {
  * - Clears all current params of the Home route - the login page URL should not contain any parameter
  */
 function cleanupSession() {
-  Pusher.disconnect();
+  // TODO enable this
+  // Pusher.disconnect();
   Timers.clearAll();
   // PriorityMode.resetHasReadRequiredDataFromStorage();
   MainQueue.clear();
-  HttpUtils.cancelPendingRequests();
+  // HttpUtils.cancelPendingRequests();
   PersistedRequests.clear();
-  NetworkConnection.clearReconnectionCallbacks();
-  SessionUtils.resetDidUserLogInDuringSession();
+  // NetworkConnection.clearReconnectionCallbacks();
+  // SessionUtils.resetDidUserLogInDuringSession();
   resetHomeRouteParams();
   clearCache().then(() => {
     Log.info('Cleared all cache data', true, {}, true);
