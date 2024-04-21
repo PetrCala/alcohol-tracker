@@ -4,18 +4,21 @@ import {
   findFocusedRoute,
   NavigationContainer,
 } from '@react-navigation/native';
-import React, {useEffect, useMemo, useRef} from 'react';
+import React, {useContext, useEffect, useMemo, useRef} from 'react';
+// import {ScrollOffsetContext} from '@components/ScrollOffsetContextProvider';
+import useTheme from '@hooks/useTheme';
+import useWindowDimensions from '@hooks/useWindowDimensions';
+import Log from '@libs/Log';
+import {getPathFromURL} from '@libs/Url';
+import {updateLastVisitedPath} from '@userActions/App';
 import type {Route} from '@src/ROUTES';
 import SCREENS from '@src/SCREENS';
 import AppNavigator from './AppNavigator';
 import linkingConfig from './linkingConfig';
 import customGetPathFromState from './linkingConfig/customGetPathFromState';
-import Navigation, {navigationRef} from './Navigation';
-import useWindowDimensions from '@hooks/useWindowDimensions';
-import useTheme from '@hooks/useTheme';
-import {updateLastVisitedPath} from '@libs/actions/App';
 import getAdaptedStateFromPath from './linkingConfig/getAdaptedStateFromPath';
-import {getPathFromURL} from '@libs/Url';
+import Navigation, {navigationRef} from './Navigation';
+import type {RootStackParamList} from './types';
 
 type NavigationRootProps = {
   /** Whether the current user is logged in with an authToken */
@@ -44,7 +47,16 @@ function parseAndLogRoute(state: NavigationState) {
   const focusedRoute = findFocusedRoute(state);
 
   if (focusedRoute?.name !== SCREENS.NOT_FOUND) {
-    updateLastVisitedPath(currentPath); // TODO implement this
+    updateLastVisitedPath(currentPath);
+  }
+
+  // Don't log the route transitions from OldDot because they contain authTokens
+  if (currentPath.includes('/transition')) {
+    Log.info(
+      'Navigating from transition link from OldDot using short lived authToken',
+    );
+  } else {
+    Log.info('Navigating to route', false, {path: currentPath});
   }
 
   Navigation.setIsNavigationReady();
@@ -56,12 +68,11 @@ function NavigationRoot({
   initialUrl,
   onReady,
 }: NavigationRootProps) {
-  // useFlipper(navigationRef); // Uncomment this
   const firstRenderRef = useRef(true);
   const theme = useTheme();
+  // const {cleanStaleScrollOffsets} = useContext(ScrollOffsetContext);
 
   const {isSmallScreenWidth} = useWindowDimensions();
-  // const {setActiveWorkspaceID} = useActiveWorkspace();
 
   const initialState = useMemo(
     () => {
@@ -92,8 +103,7 @@ function NavigationRoot({
       ...DefaultTheme,
       colors: {
         ...DefaultTheme.colors,
-        // background: theme.appBG, // Here, change the safe area color
-        background: theme.white,
+        background: theme.appBG,
       },
     }),
     [theme],
@@ -117,13 +127,11 @@ function NavigationRoot({
     if (!state) {
       return;
     }
-    // const activeWorkspaceID = getPolicyIDFromState(state as NavigationState<RootStackParamList>);
-    // Performance optimization to avoid context consumers to delay first render
-    // setTimeout(() => {
-    //   currentReportIDValue?.updateCurrentReportID(state);
-    //   setActiveWorkspaceID(activeWorkspaceID);
-    // }, 0);
     parseAndLogRoute(state);
+
+    // We want to clean saved scroll offsets for screens that aren't anymore in the state.
+    // TODO enable this
+    // cleanStaleScrollOffsets(state);
   };
 
   return (

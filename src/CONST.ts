@@ -682,6 +682,10 @@ const CONST = {
     LIGHT: 'light',
     SYSTEM: 'system',
   },
+  TEST_TOOL: {
+    // Number of concurrent taps to open then the Test modal menu
+    NUMBER_OF_TAPS: 4,
+  },
   TIMING: {
     HOMEPAGE_INITIAL_RENDER: 'homepage_initial_render',
     SEARCH_RENDER: 'search_render',

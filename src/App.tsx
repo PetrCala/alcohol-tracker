@@ -1,4 +1,5 @@
 import React from 'react';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import type {Route} from './ROUTES';
 import InitialUrlContext from '@libs/InitialUrlContext';
 import ColorSchemeWrapper from './components/ColorSchemeWrapper';
@@ -35,34 +36,38 @@ LogBox.ignoreLogs([
   'Setting a timer for a long period of time',
 ]);
 
+const fill = {flex: 1};
+
 const App = ({url}: KirokuProps) => {
   OnyxUpdateManager();
   return (
     <InitialUrlContext.Provider value={url}>
-      <ComposeProviders
-        components={[
-          OnyxProvider,
-          ThemeProvider,
-          ThemeStylesProvider,
-          FirebaseProvider,
-          UserConnectionProvider,
-          ConfigProvider,
-          SafeAreaProvider,
-          SafeArea,
-          LocaleContextProvider,
-          WindowDimensionsProvider,
-          KeyboardStateProvider,
-          EnvironmentProvider,
-          CustomStatusBarAndBackgroundContextProvider,
-          ActiveElementRoleProvider,
-        ]}>
-        {/* <CustomStatusBarAndBackground /> */}
-        <ErrorBoundary errorMessage="Kiroku crash caught by error boundary">
-          <ColorSchemeWrapper>
-            <Kiroku />
-          </ColorSchemeWrapper>
-        </ErrorBoundary>
-      </ComposeProviders>
+      <GestureHandlerRootView style={fill}>
+        <ComposeProviders
+          components={[
+            OnyxProvider,
+            ThemeProvider,
+            ThemeStylesProvider,
+            FirebaseProvider,
+            UserConnectionProvider,
+            ConfigProvider,
+            SafeAreaProvider,
+            SafeArea,
+            LocaleContextProvider,
+            WindowDimensionsProvider,
+            KeyboardStateProvider,
+            EnvironmentProvider,
+            CustomStatusBarAndBackgroundContextProvider,
+            ActiveElementRoleProvider,
+          ]}>
+          {/* <CustomStatusBarAndBackground /> */}
+          <ErrorBoundary errorMessage="Kiroku crash caught by error boundary">
+            <ColorSchemeWrapper>
+              <Kiroku />
+            </ColorSchemeWrapper>
+          </ErrorBoundary>
+        </ComposeProviders>
+      </GestureHandlerRootView>
     </InitialUrlContext.Provider>
   );
 };

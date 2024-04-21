@@ -48,6 +48,8 @@ import ScreenWrapper from '@components/ScreenWrapper';
 import type {FetchDataKeys} from '@hooks/useFetchData/types';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Button from '@components/Button';
+import {withOnyx} from 'react-native-onyx';
+import compose from '@libs/compose';
 
 type State = {
   selfFriends: UserList | undefined;
@@ -99,10 +101,10 @@ const reducer = (state: State, action: Action): State => {
   }
 };
 
-type ProfileScreenProps = StackScreenProps<
-  ProfileNavigatorParamList,
-  typeof SCREENS.PROFILE.ROOT
->;
+type ProfileScreenOnyxProps = {};
+
+type ProfileScreenProps = ProfileScreenOnyxProps &
+  StackScreenProps<ProfileNavigatorParamList, typeof SCREENS.PROFILE.ROOT>;
 
 function ProfileScreen({route}: ProfileScreenProps) {
   const {auth, db} = useFirebase();
@@ -220,11 +222,13 @@ function ProfileScreen({route}: ProfileScreenProps) {
             <Button
               // success
               // medium
-              onPress={() => console.log('Pressed...')}
+              onPress={() =>
+                Navigation.navigate(ROUTES.PROFILE_EDIT.getRoute(userId))
+              }
               text={'some text'}
               style={styles.mt3}
             />
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={() =>
                 // Navigation.navigate(ROUTES.PROFILE_EDIT.getRoute(userId))
                 console.log('Pressed...')
@@ -234,7 +238,7 @@ function ProfileScreen({route}: ProfileScreenProps) {
                 source={KirokuIcons.Settings}
                 style={localStyles.editProfileIcon}
               />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         )}
         <ProfileOverview
@@ -424,4 +428,8 @@ const localStyles = StyleSheet.create({
 });
 
 ProfileScreen.displayName = 'Profile Screen';
-export default ProfileScreen;
+
+export default compose(
+  withOnyx<ProfileScreenProps, ProfileScreenOnyxProps>({}),
+)(ProfileScreen);
+// export default ProfileScreen;

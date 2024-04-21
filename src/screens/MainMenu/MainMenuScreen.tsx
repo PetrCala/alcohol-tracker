@@ -39,8 +39,7 @@ import LoadingData from '@components/LoadingData';
 import useLocalize from '@hooks/useLocalize';
 import ONYXKEYS from '@src/ONYXKEYS';
 import type {OnyxEntry} from 'react-native-onyx';
-import { withOnyx} from 'react-native-onyx';
-import en from '@src/languages/en';
+import {withOnyx} from 'react-native-onyx';
 
 type MainMenuButtonData = {
   label: string;
@@ -469,6 +468,8 @@ const styles = StyleSheet.create({
   },
 });
 
+// MainMenuScreen.propTypes = propTypes;
+// MainMenuScreen.defaultProps = defaultProps;
 MainMenuScreen.displayName = 'Main Menu Screen';
 
 export default withOnyx<MainMenuScreenProps, MainMenuScreenOnyxProps>({
