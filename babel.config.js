@@ -21,15 +21,26 @@ const defaultPlugins = [
   'react-native-reanimated/plugin',
 ];
 
-module.exports = {
-  // presets: [
+const webpack = {
+  presets: defaultPresets,
+  plugins: defaultPlugins,
+};
+
+const metro = {
+  presets: [require('@react-native/babel-preset')],
   //   'module:metro-react-native-babel-preset',
   //   ['@babel/preset-env', {targets: {node: 'current'}}],
   //   '@babel/preset-typescript',
-  // ],
-  presets: [require('@react-native/babel-preset')],
   plugins: [
+    // This is needed due to a react-native bug: https://github.com/facebook/react-native/issues/29084#issuecomment-1030732709
+    // It is included in metro-react-native-babel-preset but needs to be before plugin-proposal-class-properties or FlatList will break
+    '@babel/plugin-transform-flow-strip-types',
+
     ['@babel/plugin-proposal-class-properties', {loose: true}],
+    ['@babel/plugin-proposal-private-methods', {loose: true}],
+    ['@babel/plugin-proposal-private-property-in-object', {loose: true}],
+    // The reanimated babel plugin needs to be last, as stated here: https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/installation
+    'react-native-reanimated/plugin',
     [
       'module-resolver',
       {
@@ -81,19 +92,19 @@ module.exports = {
   // },
 };
 
-// module.exports = api => {
-//   console.debug('babel.config.js');
-//   console.debug('  - api.version:', api.version);
-//   console.debug('  - api.env:', api.env());
-//   console.debug('  - process.env.NODE_ENV:', process.env.NODE_ENV);
-//   console.debug('  - process.env.BABEL_ENV:', process.env.BABEL_ENV);
+module.exports = api => {
+  console.debug('babel.config.js');
+  console.debug('  - api.version:', api.version);
+  console.debug('  - api.env:', api.env());
+  console.debug('  - process.env.NODE_ENV:', process.env.NODE_ENV);
+  console.debug('  - process.env.BABEL_ENV:', process.env.BABEL_ENV);
 
-//   // For `react-native` (iOS/Android) caller will be "metro"
-//   // For `webpack` (Web) caller will be "@babel-loader"
-//   // For jest, it will be babel-jest
-//   // For `storybook` there won't be any config at all so we must give default argument of an empty object
-//   const runningIn = api.caller((args = {}) => args.name);
-//   console.debug('  - running in: ', runningIn);
+  // For `react-native` (iOS/Android) caller will be "metro"
+  // For `webpack` (Web) caller will be "@babel-loader"
+  // For jest, it will be babel-jest
+  // For `storybook` there won't be any config at all so we must give default argument of an empty object
+  const runningIn = api.caller((args = {}) => args.name);
+  console.debug('  - running in: ', runningIn);
 
-//   return ['metro', 'babel-jest'].includes(runningIn) ? metro : webpack;
-// };
+  return ['metro', 'babel-jest'].includes(runningIn) ? metro : webpack;
+};

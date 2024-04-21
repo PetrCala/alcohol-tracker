@@ -356,7 +356,7 @@ function Button(
         onMouseDown={onMouseDown}
         disabled={isLoading || isDisabled}
         wrapperStyle={[
-          isDisabled ? {...styles.cursorDisabled, ...styles.noSelect} : {}, // TODO enable this
+          isDisabled ? {...styles.cursorDisabled, ...styles.noSelect} : {},
           styles.buttonContainer,
           shouldRemoveRightBorderRadius
             ? styles.noRightBorderRadius
@@ -412,6 +412,7 @@ function Button(
 
 Button.displayName = 'Button';
 
-export default withNavigationFallback(React.forwardRef(Button));
+// export default withNavigationFallback(React.forwardRef(Button));
+export default React.forwardRef(Button);
 
 export type {ButtonProps};

@@ -94,11 +94,12 @@ const Log = new Logger({
     console.debug(message);
 
     if (shouldCollectLogs) {
-      addLog({
-        time: new Date(),
-        level: CONST.DEBUG_CONSOLE.LEVELS.DEBUG,
-        message,
-      });
+      // TODO: Uncomment this -- trying to figure out why this is causing an error
+      // addLog({
+      //   time: new Date(),
+      //   level: CONST.DEBUG_CONSOLE.LEVELS.DEBUG,
+      //   message,
+      // });
     }
   },
   isDebug: true,

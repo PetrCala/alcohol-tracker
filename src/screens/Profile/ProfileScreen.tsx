@@ -9,8 +9,8 @@
   TouchableOpacity,
   View,
 } from 'react-native';
-import commonStyles from '../../styles/commonStyles';
-import {useFirebase} from '../../context/global/FirebaseContext';
+import commonStyles from '@styles/commonStyles';
+import {useFirebase} from '@context/global/FirebaseContext';
 import type {StatData} from '@components/Items/StatOverview';
 import {StatsOverview} from '@components/Items/StatOverview';
 import ProfileOverview from '@components/Social/ProfileOverview';
@@ -43,12 +43,11 @@ import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import ROUTES from '@src/ROUTES';
 import type {DateData} from 'react-native-calendars';
 import useFetchData from '@hooks/useFetchData';
-import {sendFriendRequest} from '@database/friends';
 import {getPlural} from '@libs/StringUtilsKiroku';
 import ScreenWrapper from '@components/ScreenWrapper';
 import type {FetchDataKeys} from '@hooks/useFetchData/types';
-import {FetchData} from '@hooks/useFetchData/types';
-import useListenToData from '@hooks/useListenToData';
+import useThemeStyles from '@hooks/useThemeStyles';
+import Button from '@components/Button';
 
 type State = {
   selfFriends: UserList | undefined;
@@ -109,6 +108,8 @@ function ProfileScreen({route}: ProfileScreenProps) {
   const {auth, db} = useFirebase();
   const {userId} = route.params;
   const user = auth.currentUser;
+
+  const styles = useThemeStyles();
   const relevantDataKeys: FetchDataKeys = [
     'userData',
     'drinkingSessionData',
@@ -210,26 +211,39 @@ function ProfileScreen({route}: ProfileScreenProps) {
         onGoBack={() => Navigation.goBack()}
       />
       <ScrollView
-        style={styles.scrollView}
+        style={localStyles.scrollView}
         onScrollBeginDrag={Keyboard.dismiss}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}>
-        {/* {user?.uid === userId && (
-          <TouchableOpacity
-            onPress={() =>
-              Navigation.navigate(ROUTES.PROFILE_EDIT.getRoute(userId))
-            }
-            style={styles.editProfileButton}>
-            <Image source={KirokuIcons.Pencil} style={styles.editProfileIcon} />
-          </TouchableOpacity>
-        )} */}
+        {user?.uid === userId && (
+          <View style={[styles.flex1, styles.flexRow]}>
+            <Button
+              // success
+              // medium
+              onPress={() => console.log('Pressed...')}
+              text={'some text'}
+              style={styles.mt3}
+            />
+            <TouchableOpacity
+              onPress={() =>
+                // Navigation.navigate(ROUTES.PROFILE_EDIT.getRoute(userId))
+                console.log('Pressed...')
+              }
+              style={localStyles.editProfileButton}>
+              <Image
+                source={KirokuIcons.Settings}
+                style={localStyles.editProfileIcon}
+              />
+            </TouchableOpacity>
+          </View>
+        )}
         <ProfileOverview
           userId={userId}
           profileData={profileData} // For live propagation of current user
         />
-        <View style={styles.friendsInfoContainer}>
-          <View style={styles.leftContainer}>
-            <Text style={styles.friendsInfoHeading}>
+        <View style={localStyles.friendsInfoContainer}>
+          <View style={localStyles.leftContainer}>
+            <Text style={localStyles.friendsInfoHeading}>
               {`${
                 user?.uid !== userId && state.commonFriendCount > 0
                   ? 'Common f'
@@ -237,13 +251,16 @@ function ProfileScreen({route}: ProfileScreenProps) {
               }riends:`}
             </Text>
             <Text
-              style={[styles.friendsInfoText, commonStyles.smallMarginLeft]}>
+              style={[
+                localStyles.friendsInfoText,
+                commonStyles.smallMarginLeft,
+              ]}>
               {user?.uid !== userId && state.commonFriendCount > 0
                 ? state.commonFriendCount
                 : state.friendCount}
             </Text>
           </View>
-          <View style={styles.rightContainer}>
+          <View style={localStyles.rightContainer}>
             <TouchableOpacity
               accessibilityRole="button"
               onPress={() => {
@@ -253,15 +270,16 @@ function ProfileScreen({route}: ProfileScreenProps) {
                       ROUTES.PROFILE_FRIENDS_FRIENDS.getRoute(userId),
                     );
               }}
-              style={styles.seeFriendsButton}>
-              <Text style={[styles.friendsInfoText, commonStyles.linkText]}>
+              style={localStyles.seeFriendsButton}>
+              <Text
+                style={[localStyles.friendsInfoText, commonStyles.linkText]}>
                 See all friends
               </Text>
             </TouchableOpacity>
           </View>
         </View>
         <View style={commonStyles.horizontalLine} />
-        <View style={styles.statsOverviewHolder}>
+        <View style={localStyles.statsOverviewHolder}>
           <StatsOverview statsData={statsData} />
         </View>
         <SessionsCalendar
@@ -279,18 +297,18 @@ function ProfileScreen({route}: ProfileScreenProps) {
               : null;
           }}
         />
-        <View style={styles.bottomContainer}>
+        <View style={localStyles.bottomContainer}>
           {user?.uid !== userId ? (
             <TouchableOpacity
               accessibilityRole="button"
-              style={styles.manageFriendButton}
+              style={localStyles.manageFriendButton}
               onPress={() =>
                 dispatch({
                   type: 'SET_MANAGE_FRIEND_MODAL_VISIBLE',
                   payload: true,
                 })
               }>
-              <Text style={styles.manageFriendButtonText}>Manage</Text>
+              <Text style={localStyles.manageFriendButtonText}>Manage</Text>
             </TouchableOpacity>
           ) : null}
         </View>
@@ -311,7 +329,7 @@ function ProfileScreen({route}: ProfileScreenProps) {
 const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   sectionText: {
     fontSize: 20,
     color: 'black',
@@ -327,6 +345,8 @@ const styles = StyleSheet.create({
   },
   editProfileButton: {
     position: 'absolute',
+    justifyContent: 'center',
+    alignItems: 'center',
     top: 12,
     right: 12,
     width: 'auto',
@@ -335,8 +355,7 @@ const styles = StyleSheet.create({
   editProfileIcon: {
     width: 25,
     height: 25,
-    padding: 5,
-    tintColor: '#000',
+    tintColor: '#1A3D32',
   },
   friendsInfoContainer: {
     width: '90%',
