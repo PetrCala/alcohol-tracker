@@ -217,30 +217,6 @@ function ProfileScreen({route}: ProfileScreenProps) {
         onScrollBeginDrag={Keyboard.dismiss}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}>
-        {user?.uid !== userId && (
-          <View style={[styles.flex1, styles.justifyContentEnd]}>
-            {/* <Button
-              // success
-              // medium
-              onPress={() =>
-                Navigation.navigate(ROUTES.PROFILE_EDIT.getRoute(userId))
-              }
-              text={'some text'}
-              style={styles.mt3}
-            /> */}
-            <TouchableOpacity
-              onPress={() =>
-                // Navigation.navigate(ROUTES.PROFILE_EDIT.getRoute(userId))
-                console.log('hello!')
-              }
-              style={localStyles.editProfileButton}>
-              <Image
-                source={KirokuIcons.Settings}
-                style={localStyles.editProfileIcon}
-              />
-            </TouchableOpacity>
-          </View>
-        )}
         <ProfileOverview
           userId={userId}
           profileData={profileData} // For live propagation of current user
