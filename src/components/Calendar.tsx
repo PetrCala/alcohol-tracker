@@ -1,11 +1,5 @@
-﻿import type {
-  ReactNode} from 'react';
-import React, {
-  useEffect,
-  useState,
-  useMemo,
-  useCallback
-} from 'react';
+﻿import type {ReactNode} from 'react';
+import React, {useEffect, useState, useMemo, useCallback} from 'react';
 import {
   Dimensions,
   Image,
@@ -14,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import type { DateData} from 'react-native-calendars';
+import type {DateData} from 'react-native-calendars';
 import {Calendar} from 'react-native-calendars';
 import {
   getPreviousMonth,
@@ -57,10 +51,13 @@ type SessionsCalendarProps = {
 
 type SessionsCalendarMarkedDates = Record<string, DayMarking>;
 
-type SessionsCalendarDatesType = Record<string, {
+type SessionsCalendarDatesType = Record<
+  string,
+  {
     units: number;
     blackout: boolean;
-  }>;
+  }
+>;
 
 const colorToTextColorMap: Record<CalendarColors, string> = {
   yellow: 'black',
@@ -78,7 +75,9 @@ const DayComponent: React.FC<{
   theme: any;
   onPress: (day: DateData) => void;
 }> = ({date, state, marking, theme, onPress}) => {
-  if (!date) {return null;}
+  if (!date) {
+    return null;
+  }
   // Calculate the date information with memos to avoid recalculation
   const today = useMemo(() => new Date(), []);
   const tomorrow = useMemo(() => changeDateBySomeDays(today, 1), [today]);
@@ -151,7 +150,10 @@ const DayComponent: React.FC<{
   };
 
   return (
-    <TouchableOpacity accessibilityRole="button" style={styles.dayContainer} onPress={() => onPress(date)}>
+    <TouchableOpacity
+      accessibilityRole="button"
+      style={styles.dayContainer}
+      onPress={() => onPress(date)}>
       <Text style={getTextStyle(state)}>{date.day}</Text>
       <View style={getMarkingContainerStyle(date, marking)}>
         <Text style={getMarkingTextStyle(marking)}>
@@ -210,7 +212,10 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
       'units',
       preferences.drinks_to_units,
     );
-    const newMarkedDates = monthEntriesToColors(aggergatedSessions, preferences);
+    const newMarkedDates = monthEntriesToColors(
+      aggergatedSessions,
+      preferences,
+    );
     return newMarkedDates;
   };
 
@@ -251,7 +256,9 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
     setLoadingMarkedDays(false);
   }, [calendarData, preferences]);
 
-  if (loadingMarkedDates) {return <LoadingData />;}
+  if (loadingMarkedDates) {
+    return <LoadingData />;
+  }
 
   return (
     <Calendar
@@ -288,7 +295,7 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
               padding: 0,
               borderTopWidth: 1,
               borderBottomWidth: 1,
-              borderColor: 'grey',
+              borderColor: '#ddd',
             },
             monthText: {
               color: 'black',
@@ -381,9 +388,10 @@ const styles = StyleSheet.create({
   // Calendar styles
   mainScreenCalendarStyle: {
     width: '100%',
+    backgroundColor: 'white',
     borderTopWidth: 0,
     borderBottomWidth: 1,
-    borderColor: '#000',
+    borderColor: '#ddd',
     flexGrow: 1,
     flexShrink: 1,
   },

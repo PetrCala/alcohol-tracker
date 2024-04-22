@@ -361,7 +361,7 @@ function HomeScreen({route}: HomeScreenProps) {
             );
           }}
         />
-        <View style={{height: 200, backgroundColor: '#ffff99'}}></View>
+        <View style={{height: 200}}></View>
       </ScrollView>
       <View style={commonStyles.mainFooter}>
         <View
@@ -496,25 +496,10 @@ const localStyles = StyleSheet.create({
     marginLeft: -4,
     marginRight: 4,
   },
-  yearMonthContainer: {
-    width: '100%',
-    backgroundColor: '#ffff99',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderBottomColor: 'black',
-    borderBottomWidth: 1,
-    borderColor: 'grey',
-  },
-  yearMonthText: {
-    fontSize: 18,
-    color: 'black',
-    fontWeight: 'bold',
-    margin: 10,
-  },
   mainScreenContent: {
     flexGrow: 1,
     flexShrink: 1,
-    backgroundColor: '#FFFF99',
+    backgroundColor: '#ffff99',
   },
   ///
   userInSessionWarningContainer: {
@@ -547,14 +532,12 @@ const localStyles = StyleSheet.create({
   menuInfoContainer: {
     flexDirection: 'column',
     justifyContent: 'center',
-    backgroundColor: '#FFFF99',
     width: '100%',
     marginTop: 2,
   },
   menuInfoItemContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: '#FFFF99',
     width: '100%',
   },
   menuInfoHeadingText: {
@@ -609,7 +592,6 @@ const localStyles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
-    backgroundColor: '#ffff99',
     flexDirection: 'row',
   },
   navigationArrowButton: {
@@ -617,7 +599,7 @@ const localStyles = StyleSheet.create({
     height: 45,
     alignSelf: 'center',
     justifyContent: 'center',
-    borderColor: 'black',
+    borderColor: '#ddd',
     borderRadius: 3,
     borderWidth: 1,
     backgroundColor: 'white',

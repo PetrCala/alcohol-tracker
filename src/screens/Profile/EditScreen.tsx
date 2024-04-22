@@ -4,6 +4,10 @@ import LoadingData from '@components/LoadingData';
 import ScreenWrapper from '@components/ScreenWrapper';
 import ProfileOverview from '@components/Social/ProfileOverview';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
+import useLocalize from '@hooks/useLocalize';
+import useStyleUtils from '@hooks/useStyleUtils';
+import useTheme from '@hooks/useTheme';
+import useThemeStyles from '@hooks/useThemeStyles';
 import Navigation from '@libs/Navigation/Navigation';
 import type {ProfileNavigatorParamList} from '@libs/Navigation/types';
 import type {StackScreenProps} from '@react-navigation/stack';
@@ -18,18 +22,9 @@ import {
   View,
 } from 'react-native';
 
-type EditItem = {
-  title: string;
-  value: string;
-  setValue: (value: string) => void;
-  placeholder: string;
-  required: boolean;
-  keyboardType: 'default' | 'email-address' | 'numeric';
-  // maxLength: number;
-  // multiline: boolean;
+const propTypes = {
+  /* Onyx Props */
 };
-
-type EditDataArray = EditItem[];
 
 type EditScreenProps = StackScreenProps<
   ProfileNavigatorParamList,
@@ -37,6 +32,10 @@ type EditScreenProps = StackScreenProps<
 >;
 
 function EditScreen({route}: EditScreenProps) {
+  const theme = useTheme();
+  const styles = useThemeStyles();
+  const StyleUtils = useStyleUtils();
+  const {translate} = useLocalize();
   const userId = route.params.userId;
   const {userData, isLoading} = useDatabaseData();
   const profileData = userData?.profile;
@@ -48,26 +47,7 @@ function EditScreen({route}: EditScreenProps) {
   // const [name, setName] = useState(profileData?.name || '');
   const [name, setName] = useState('' || '');
 
-  const editData: EditDataArray = [
-    {
-      title: 'Display Name',
-      value: displayName,
-      setValue: setDisplayName,
-      placeholder: 'Enter your display name',
-      required: true,
-      keyboardType: 'default',
-    },
-    {
-      title: 'Name',
-      value: '',
-      setValue: () => {},
-      placeholder: 'Enter your name',
-      required: false,
-      keyboardType: 'default',
-    },
-  ];
-
-  const handleSaveChanges = async () => {
+  const onSaveChangesPress = async () => {
     Navigation.goBack();
   };
 
@@ -78,7 +58,7 @@ function EditScreen({route}: EditScreenProps) {
   return (
     <ScreenWrapper testID={EditScreen.displayName}>
       <MainHeader
-        headerText="Edit Your Profile"
+        headerText={translate('profileScreen.editProfile')}
         onGoBack={() => Navigation.goBack()}
       />
       {isLoading ? (
@@ -87,10 +67,10 @@ function EditScreen({route}: EditScreenProps) {
         <ScrollView
           keyboardShouldPersistTaps="handled"
           onScrollBeginDrag={Keyboard.dismiss}
-          style={styles.scrollView}>
+          style={localStyles.scrollView}>
           <TextInput
             accessibilityLabel="Text input field"
-            style={styles.feedbackWindowText}
+            style={localStyles.feedbackWindowText}
             onChangeText={() => {}}
             placeholder={'Write your feedback here'}
             placeholderTextColor={'#a8a8a8'}
@@ -100,23 +80,22 @@ function EditScreen({route}: EditScreenProps) {
           />
         </ScrollView>
       )}
-      <View style={styles.saveChangesContainer}>
+      <View style={localStyles.saveChangesContainer}>
         <BasicButton
           text="Save Changes"
-          buttonStyle={styles.saveChangesButton}
-          textStyle={styles.saveChangesButtonText}
-          onPress={handleSaveChanges}
+          buttonStyle={localStyles.saveChangesButton}
+          textStyle={localStyles.saveChangesButtonText}
+          onPress={onSaveChangesPress}
         />
       </View>
     </ScreenWrapper>
   );
 }
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   scrollView: {
     flexGrow: 1,
     flexShrink: 1,
-    backgroundColor: '#FFFF99',
   },
   saveChangesContainer: {
     width: '100%',

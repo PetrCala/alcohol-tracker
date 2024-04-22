@@ -213,6 +213,9 @@ export default {
     allowPermission: 'allow location permission in settings',
     tryAgain: 'and then try again.',
   },
+  profileScreen: {
+    editProfile: 'Edit Your Profile',
+  },
   mainMenuScreen: {
     deleteAccount: 'Delete account',
     deleteConfirmation: 'Are you sure that you want to delete this account?',

@@ -57,6 +57,7 @@ const lightTheme = {
   textError: colors.red,
   offline: colors.productLight700,
   modalBackground: colors.productLight100,
+  safeAreaBackground: colors.productLight100,
   cardBG: colors.productLight200,
   cardBorder: colors.productLight200,
   spinner: colors.productLight800,
