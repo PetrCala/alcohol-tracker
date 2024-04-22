@@ -1,6 +1,8 @@
 import BasicButton from '@components/Buttons/BasicButton';
+import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import MainHeader from '@components/Header/MainHeader';
 import LoadingData from '@components/LoadingData';
+import MenuItemGroup from '@components/MenuItemGroup';
 import ScreenWrapper from '@components/ScreenWrapper';
 import ProfileOverview from '@components/Social/ProfileOverview';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
@@ -61,25 +63,30 @@ function EditScreen({route}: EditScreenProps) {
         headerText={translate('profileScreen.editProfile')}
         onGoBack={() => Navigation.goBack()}
       />
-      {isLoading ? (
-        <LoadingData />
-      ) : (
-        <ScrollView
-          keyboardShouldPersistTaps="handled"
-          onScrollBeginDrag={Keyboard.dismiss}
-          style={localStyles.scrollView}>
-          <TextInput
-            accessibilityLabel="Text input field"
-            style={localStyles.feedbackWindowText}
-            onChangeText={() => {}}
-            placeholder={'Write your feedback here'}
-            placeholderTextColor={'#a8a8a8'}
-            keyboardType="default"
-            maxLength={1000}
-            multiline={true}
-          />
-        </ScrollView>
-      )}
+      <ScrollView
+        keyboardShouldPersistTaps="handled"
+        onScrollBeginDrag={Keyboard.dismiss}
+        style={[]}>
+        <MenuItemGroup>
+          {isLoading ? (
+            <FullScreenLoadingIndicator
+              style={[styles.flex1, styles.pRelative]}
+            />
+          ) : (
+            // Add Section (index.tsx)
+            <TextInput
+              accessibilityLabel="Text input field"
+              style={localStyles.feedbackWindowText}
+              onChangeText={() => {}}
+              placeholder={'Write your feedback here'}
+              placeholderTextColor={'#a8a8a8'}
+              keyboardType="default"
+              maxLength={1000}
+              multiline={true}
+            />
+          )}
+        </MenuItemGroup>
+      </ScrollView>
       <View style={localStyles.saveChangesContainer}>
         <BasicButton
           text="Save Changes"
@@ -93,10 +100,6 @@ function EditScreen({route}: EditScreenProps) {
 }
 
 const localStyles = StyleSheet.create({
-  scrollView: {
-    flexGrow: 1,
-    flexShrink: 1,
-  },
   saveChangesContainer: {
     width: '100%',
     height: 70,
