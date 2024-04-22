@@ -217,9 +217,9 @@ function ProfileScreen({route}: ProfileScreenProps) {
         onScrollBeginDrag={Keyboard.dismiss}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}>
-        {user?.uid === userId && (
-          <View style={[styles.flex1, styles.flexRow]}>
-            <Button
+        {user?.uid !== userId && (
+          <View style={[styles.flex1, styles.justifyContentEnd]}>
+            {/* <Button
               // success
               // medium
               onPress={() =>
@@ -227,18 +227,18 @@ function ProfileScreen({route}: ProfileScreenProps) {
               }
               text={'some text'}
               style={styles.mt3}
-            />
-            {/* <TouchableOpacity
+            /> */}
+            <TouchableOpacity
               onPress={() =>
                 // Navigation.navigate(ROUTES.PROFILE_EDIT.getRoute(userId))
-                console.log('Pressed...')
+                console.log('hello!')
               }
               style={localStyles.editProfileButton}>
               <Image
                 source={KirokuIcons.Settings}
                 style={localStyles.editProfileIcon}
               />
-            </TouchableOpacity> */}
+            </TouchableOpacity>
           </View>
         )}
         <ProfileOverview
@@ -349,17 +349,20 @@ const localStyles = StyleSheet.create({
   },
   editProfileButton: {
     position: 'absolute',
-    justifyContent: 'center',
-    alignItems: 'center',
-    top: 12,
-    right: 12,
+    top: 8,
+    right: 8,
+    padding: 8,
     width: 'auto',
     height: 'auto',
+    backgroundColor: 'pink',
+    zIndex: -2,
   },
   editProfileIcon: {
-    width: 25,
-    height: 25,
+    width: 24,
+    height: 24,
     tintColor: '#1A3D32',
+    backgroundColor: 'blue',
+    zIndex: -3,
   },
   friendsInfoContainer: {
     width: '90%',
