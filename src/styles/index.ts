@@ -298,6 +298,19 @@ const styles = (theme: ThemeColors) =>
     // ...textDecorationLine,
     editedLabelStyles,
 
+    accountSettingsSectionContainer: {
+      borderBottomWidth: 1,
+      borderBottomColor: theme.border,
+      ...spacing.mt0,
+      ...spacing.mb0,
+      ...spacing.pt0,
+    },
+
+    accountSettingsSectionTitle: {
+      fontFamily: FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
+      fontWeight: FontUtils.fontWeight.bold,
+    },
+
     activeComponentBG: {
       backgroundColor: theme.activeComponentBG,
     },
@@ -597,6 +610,26 @@ const styles = (theme: ThemeColors) =>
       ...sizing.h100,
     },
 
+    cardSectionContainer: {
+      backgroundColor: theme.cardBG,
+      borderRadius: variables.componentBorderRadiusCard,
+      width: 'auto',
+      textAlign: 'left',
+      overflow: 'hidden',
+      marginBottom: 20,
+      marginHorizontal: variables.sectionMargin,
+    },
+
+    cardSectionIllustration: {
+      width: 'auto',
+      height: variables.sectionIllustrationHeight,
+    },
+
+    cardSectionTitle: {
+      fontSize: variables.fontSizeLarge,
+      lineHeight: variables.lineHeightXLarge,
+    },
+
     centeredModalStyles: (
       isSmallScreenWidth: boolean,
       isFullScreenWhenSmall: boolean,
@@ -608,6 +641,14 @@ const styles = (theme: ThemeColors) =>
 
     colorSchemeStyle: (colorScheme: ColorScheme) => ({colorScheme}),
 
+    colorMutedReversed: {
+      color: theme.textMutedReversed,
+    },
+
+    colorMuted: {
+      color: theme.textSupporting,
+    },
+
     contextMenuItemPopoverMaxWidth: {
       maxWidth: 375,
     },
@@ -617,9 +658,32 @@ const styles = (theme: ThemeColors) =>
       borderColor: theme.transparent,
     },
 
+    displayNameTooltipEllipsis: {
+      position: 'absolute',
+      opacity: 0,
+      right: 0,
+      bottom: 0,
+    },
+
     draggableTopBar: {
       height: 30,
       width: '100%',
+    },
+
+    avatarInnerText: {
+      color: theme.text,
+      fontSize: variables.fontSizeSmall,
+      lineHeight: undefined,
+      marginLeft: -3,
+      textAlign: 'center',
+    },
+
+    avatarInnerTextSmall: {
+      color: theme.text,
+      fontSize: variables.fontSizeExtraSmall,
+      lineHeight: undefined,
+      marginLeft: -2,
+      textAlign: 'center',
     },
 
     emptyAvatar: {
@@ -767,6 +831,17 @@ const styles = (theme: ThemeColors) =>
       backgroundColor: theme.hoverComponentBG,
     },
 
+    menuItemError: {
+      position: 'absolute',
+      bottom: -4,
+      left: 20,
+      right: 20,
+    },
+
+    menuItemTextContainer: {
+      minHeight: variables.componentSizeNormal,
+    },
+
     nativeOverlayStyles: (current: OverlayStylesParams) =>
       ({
         position: 'absolute',
@@ -874,6 +949,12 @@ const styles = (theme: ThemeColors) =>
         }),
       }) satisfies ViewStyle,
 
+    pageWrapper: {
+      width: '100%',
+      alignItems: 'center',
+      padding: 20,
+    },
+
     pointerEventsNone,
 
     pointerEventsAuto,
@@ -919,16 +1000,205 @@ const styles = (theme: ThemeColors) =>
         flex: 1,
       }) satisfies ViewStyle,
 
+    sectionMenuItemTopDescription: {
+      ...spacing.ph8,
+      ...spacing.mhn8,
+      width: 'auto',
+    },
+
+    singleAvatar: {
+      height: 24,
+      width: 24,
+      backgroundColor: theme.icon,
+      borderRadius: 12,
+    },
+
+    singleAvatarSmall: {
+      height: 16,
+      width: 16,
+      backgroundColor: theme.icon,
+      borderRadius: 8,
+    },
+
+    singleAvatarMedium: {
+      height: 52,
+      width: 52,
+      backgroundColor: theme.icon,
+      borderRadius: 52,
+    },
+
+    secondAvatar: {
+      position: 'absolute',
+      right: -18,
+      bottom: -18,
+      borderWidth: 2,
+      borderRadius: 14,
+      borderColor: 'transparent',
+    },
+
+    secondAvatarSmall: {
+      position: 'absolute',
+      right: -14,
+      bottom: -14,
+      borderWidth: 2,
+      borderRadius: 10,
+      borderColor: 'transparent',
+    },
+
+    secondAvatarMedium: {
+      position: 'absolute',
+      right: -36,
+      bottom: -36,
+      borderWidth: 3,
+      borderRadius: 52,
+      borderColor: 'transparent',
+    },
+
+    secondAvatarSubscript: {
+      position: 'absolute',
+      right: -6,
+      bottom: -6,
+    },
+
+    secondAvatarSubscriptCompact: {
+      position: 'absolute',
+      bottom: -4,
+      right: -4,
+    },
+
+    secondAvatarSubscriptSmallNormal: {
+      position: 'absolute',
+      bottom: 0,
+      right: 0,
+    },
+
+    secondAvatarInline: {
+      bottom: -3,
+      right: -25,
+      borderWidth: 3,
+      borderRadius: 18,
+      borderColor: theme.cardBorder,
+      backgroundColor: theme.appBG,
+    },
+
+    selectCircle: {
+      width: variables.componentSizeSmall,
+      height: variables.componentSizeSmall,
+      borderColor: theme.border,
+      borderWidth: 1,
+      borderRadius: variables.componentSizeSmall / 2,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: theme.componentBG,
+      marginLeft: 8,
+    },
+
+    optionAlternateText: {
+      minHeight: variables.alternateTextHeight,
+      lineHeight: variables.lineHeightXLarge,
+    },
+
+    optionSelectCircle: {
+      borderRadius: variables.componentSizeSmall / 2 + 1,
+      padding: 1,
+    },
+
+    sidebarLink: {
+      textDecorationLine: 'none',
+    },
+
+    sidebarLinkLHN: {
+      textDecorationLine: 'none',
+      marginLeft: 12,
+      marginRight: 12,
+      borderRadius: 8,
+    },
+
+    sidebarLinkInner: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      paddingLeft: 20,
+      paddingRight: 20,
+    },
+
+    sidebarLinkInnerLHN: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      paddingLeft: 8,
+      paddingRight: 8,
+      marginHorizontal: 12,
+      borderRadius: variables.componentBorderRadiusNormal,
+    },
+
+    sidebarLinkText: {
+      color: theme.textSupporting,
+      fontSize: variables.fontSizeNormal,
+      textDecorationLine: 'none',
+      overflow: 'hidden',
+    },
+
+    sidebarLinkHover: {
+      backgroundColor: theme.sidebarHover,
+    },
+
+    sidebarLinkHoverLHN: {
+      backgroundColor: theme.highlightBG,
+    },
+
+    sidebarLinkActive: {
+      backgroundColor: theme.buttonHoveredBG,
+      textDecorationLine: 'none',
+    },
+
+    sidebarLinkActiveLHN: {
+      backgroundColor: theme.highlightBG,
+      textDecorationLine: 'none',
+    },
+
+    sidebarLinkTextBold: {
+      fontFamily: FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
+      fontWeight: FontUtils.fontWeight.bold,
+      color: theme.heading,
+    },
+
+    sidebarLinkActiveText: {
+      color: theme.textSupporting,
+      fontSize: variables.fontSizeNormal,
+      textDecorationLine: 'none',
+      overflow: 'hidden',
+    },
+
     splashScreenHider: {
       backgroundColor: theme.splashBG,
       alignItems: 'center',
       justifyContent: 'center',
     },
 
+    subscriptIcon: {
+      position: 'absolute',
+      bottom: -4,
+      right: -4,
+      width: 20,
+      height: 20,
+      backgroundColor: theme.buttonDefaultBG,
+    },
+
     textLabel: {
       color: theme.text,
       fontSize: variables.fontSizeLabel,
       lineHeight: variables.lineHeightLarge,
+    },
+
+    textLabelError: {
+      fontFamily: FontUtils.fontFamily.platform.EXP_NEUE,
+      fontSize: variables.fontSizeLabel,
+      color: theme.textError,
+    },
+
+    furtherDetailsText: {
+      fontFamily: FontUtils.fontFamily.platform.EXP_NEUE,
+      fontSize: variables.fontSizeSmall,
+      color: theme.textSupporting,
     },
 
     mutedTextLabel: {
@@ -1109,6 +1379,26 @@ const styles = (theme: ThemeColors) =>
       color: theme.heading,
       fontSize: variables.fontSizeXLarge,
       lineHeight: variables.lineHeightSizeh1,
+    },
+
+    textLabelSupporting: {
+      fontFamily: FontUtils.fontFamily.platform.EXP_NEUE,
+      fontSize: variables.fontSizeLabel,
+      color: theme.textSupporting,
+    },
+
+    textLabelSupportingEmptyValue: {
+      fontFamily: FontUtils.fontFamily.platform.EXP_NEUE,
+      fontSize: variables.fontSizeNormal,
+      fontWeight: FontUtils.fontWeight.normal,
+      color: theme.textSupporting,
+    },
+
+    textLabelSupportingNormal: {
+      fontFamily: FontUtils.fontFamily.platform.EXP_NEUE,
+      fontSize: variables.fontSizeLabel,
+      color: theme.textSupporting,
+      fontWeight: FontUtils.fontWeight.normal,
     },
 
     textWhite: {

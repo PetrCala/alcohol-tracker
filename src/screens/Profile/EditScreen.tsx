@@ -3,7 +3,9 @@ import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import MainHeader from '@components/Header/MainHeader';
 import LoadingData from '@components/LoadingData';
 import MenuItemGroup from '@components/MenuItemGroup';
+import MenuItemWithTopDescription from '@components/MenuItemWithTopDescription';
 import ScreenWrapper from '@components/ScreenWrapper';
+import Section from '@components/Section';
 import ProfileOverview from '@components/Social/ProfileOverview';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import useLocalize from '@hooks/useLocalize';
@@ -13,6 +15,7 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import Navigation from '@libs/Navigation/Navigation';
 import type {ProfileNavigatorParamList} from '@libs/Navigation/types';
 import type {StackScreenProps} from '@react-navigation/stack';
+import ROUTES from '@src/ROUTES';
 import type SCREENS from '@src/SCREENS';
 import {useState} from 'react';
 import {
@@ -42,6 +45,45 @@ function EditScreen({route}: EditScreenProps) {
   const {userData, isLoading} = useDatabaseData();
   const profileData = userData?.profile;
 
+  const publicOptions = [
+    {
+      description: 'test',
+      title: 'test',
+      pageRoute: ROUTES.HOME,
+    },
+    {
+      description: 'test2',
+      title: 'test2',
+      pageRoute: ROUTES.HOME,
+    },
+    // {
+    //     description: translate('displayNamePage.headerTitle'),
+    //     title: currentUserPersonalDetails?.displayName ?? '',
+    //     pageRoute: ROUTES.SETTINGS_DISPLAY_NAME,
+    // },
+    // {
+    //     description: translate('contacts.contactMethod'),
+    //     title: LocalePhoneNumber.formatPhoneNumber(currentUserPersonalDetails?.login ?? ''),
+    //     pageRoute: ROUTES.SETTINGS_CONTACT_METHODS.route,
+    //     brickRoadIndicator: contactMethodBrickRoadIndicator,
+    // },
+    // {
+    //     description: translate('statusPage.status'),
+    //     title: emojiCode ? `${emojiCode} ${currentUserPersonalDetails?.status?.text ?? ''}` : '',
+    //     pageRoute: ROUTES.SETTINGS_STATUS,
+    // },
+    // {
+    //     description: translate('pronounsPage.pronouns'),
+    //     title: getPronouns(),
+    //     pageRoute: ROUTES.SETTINGS_PRONOUNS,
+    // },
+    // {
+    //     description: translate('timezonePage.timezone'),
+    //     title: currentUserPersonalDetails?.timezone?.selected ?? '',
+    //     pageRoute: ROUTES.SETTINGS_TIMEZONE,
+    // },
+  ];
+
   // Hooks
   const [displayName, setDisplayName] = useState(
     profileData?.display_name || '',
@@ -66,25 +108,40 @@ function EditScreen({route}: EditScreenProps) {
       <ScrollView
         keyboardShouldPersistTaps="handled"
         onScrollBeginDrag={Keyboard.dismiss}
-        style={[]}>
+        style={styles.pt3}>
         <MenuItemGroup>
-          {isLoading ? (
-            <FullScreenLoadingIndicator
-              style={[styles.flex1, styles.pRelative]}
-            />
-          ) : (
-            // Add Section (index.tsx)
-            <TextInput
-              accessibilityLabel="Text input field"
-              style={localStyles.feedbackWindowText}
-              onChangeText={() => {}}
-              placeholder={'Write your feedback here'}
-              placeholderTextColor={'#a8a8a8'}
-              keyboardType="default"
-              maxLength={1000}
-              multiline={true}
-            />
-          )}
+          <Section
+            title={translate('profileScreen.publicSection.title')}
+            subtitle={translate('profileScreen.publicSection.subtitle')}
+            isCentralPane
+            subtitleMuted
+            childrenStyles={styles.pt5}
+            titleStyles={styles.accountSettingsSectionTitle}>
+            {isLoading ? (
+              <FullScreenLoadingIndicator
+                style={[
+                  styles.flex1,
+                  styles.pRelative,
+                  StyleUtils.getBackgroundColorStyle(theme.cardBG),
+                ]}
+              />
+            ) : (
+              <>
+                {publicOptions.map((detail, index) => (
+                  <MenuItemWithTopDescription
+                    // eslint-disable-next-line react/no-array-index-key
+                    key={`${detail.title}_${index}`}
+                    shouldShowRightIcon
+                    title={detail.title}
+                    description={detail.description}
+                    wrapperStyle={styles.sectionMenuItemTopDescription}
+                    onPress={() => Navigation.navigate(detail.pageRoute)}
+                    // brickRoadIndicator={detail.brickRoadIndicator}
+                  />
+                ))}
+              </>
+            )}
+          </Section>
         </MenuItemGroup>
       </ScrollView>
       <View style={localStyles.saveChangesContainer}>

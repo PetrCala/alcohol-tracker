@@ -274,20 +274,20 @@ import clearCache from './clearCache';
 //   }
 // }
 
-// /**
-//  * @param callback The callback to execute if the action is allowed
-//  * @param isAnonymousAction The action is allowed for anonymous or not
-//  * @returns same callback if the action is allowed, otherwise a function that signs out and redirects to sign in
-//  */
-// // eslint-disable-next-line @typescript-eslint/no-explicit-any
-// function checkIfActionIsAllowed<
-//   TCallback extends ((...args: any[]) => any) | void,
-// >(callback: TCallback, isAnonymousAction = false): TCallback | (() => void) {
-//   if (isAnonymousUser() && !isAnonymousAction) {
-//     return () => signOutAndRedirectToSignIn();
-//   }
-//   return callback;
-// }
+/**
+ * @param callback The callback to execute if the action is allowed
+ * @param isAnonymousAction The action is allowed for anonymous or not
+ * @returns same callback if the action is allowed, otherwise a function that signs out and redirects to sign in
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function checkIfActionIsAllowed<
+  TCallback extends ((...args: any[]) => any) | void,
+>(callback: TCallback, isAnonymousAction = false): TCallback | (() => void) {
+  // if (isAnonymousUser() && !isAnonymousAction) {
+  //   return () => signOutAndRedirectToSignIn();
+  // }
+  return callback;
+}
 
 // /**
 //  * Resend the validation link to the user that is validating their account
@@ -1108,7 +1108,7 @@ export {
   //   beginAppleSignIn,
   //   beginGoogleSignIn,
   //   setSupportAuthToken,
-  //   checkIfActionIsAllowed,
+  checkIfActionIsAllowed,
   //   signIn,
   //   signInWithValidateCode,
   //   handleExitToNavigation,

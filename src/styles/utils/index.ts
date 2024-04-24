@@ -42,6 +42,7 @@ import type {
   ButtonStateName,
   ParsableStyle,
   TextColorStyle,
+  SVGAvatarColorStyle,
   WorkspaceColorStyle,
 } from './types';
 

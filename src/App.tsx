@@ -38,7 +38,7 @@ LogBox.ignoreLogs([
 
 const fill = {flex: 1};
 
-const App = ({url}: KirokuProps) => {
+const App = ({url}: KirokuProps): React.JSX.Element => {
   OnyxUpdateManager();
   return (
     <InitialUrlContext.Provider value={url}>

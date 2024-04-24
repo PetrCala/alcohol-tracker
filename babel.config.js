@@ -27,7 +27,8 @@ const webpack = {
 };
 
 const metro = {
-  presets: [require('@react-native/babel-preset')],
+  // presets: [require('@react-native/babel-preset')],
+  presets: ['module:@react-native/babel-preset'],
   //   'module:metro-react-native-babel-preset',
   //   ['@babel/preset-env', {targets: {node: 'current'}}],
   //   '@babel/preset-typescript',

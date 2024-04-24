@@ -9,6 +9,8 @@ import type {
 } from '@src/types/onyx';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import {getTimestampAge, numberToVerboseString} from './TimeUtils';
+import {UserId} from '@src/types/onyx';
+import * as Localize from './Localize';
 
 const PlaceholderDrinks: DrinksList = {[Date.now()]: {other: 0}};
 
@@ -46,7 +48,9 @@ function isEmptySession(session: DrinkingSession): boolean {
 }
 
 function sessionIsExpired(session: DrinkingSession | undefined): boolean {
-  if (!session) {return false;}
+  if (!session) {
+    return false;
+  }
   const expirationBoundary = Date.now() - CONST.SESSION_EXPIRY;
   return session.start_time < expirationBoundary;
 }
@@ -56,7 +60,9 @@ function calculateSessionLength(
   session: DrinkingSession | undefined,
   returnString?: boolean,
 ): number | string {
-  if (!session) {return returnString ? '0s' : 0;}
+  if (!session) {
+    return returnString ? '0s' : 0;
+  }
   const length = session?.end_time ? session.end_time - session.start_time : 0;
   if (returnString) {
     return numberToVerboseString(length, false);
@@ -72,7 +78,9 @@ function extractSessionOrEmpty(
   sessionId: DrinkingSessionId,
   drinkingSessionData: DrinkingSessionList | undefined,
 ): DrinkingSession {
-  if (isEmptyObject(drinkingSessionData)) {return getEmptySession();}
+  if (isEmptyObject(drinkingSessionData)) {
+    return getEmptySession();
+  }
   if (
     drinkingSessionData &&
     Object.keys(drinkingSessionData).includes(sessionId)
@@ -90,9 +98,13 @@ function extractSessionOrEmpty(
 function determineSessionMostCommonDrink(
   session: DrinkingSession | undefined | null,
 ): DrinkKey | undefined | null {
-  if (!session) {return null;}
+  if (!session) {
+    return null;
+  }
   const drinks = session.drinks;
-  if (!drinks) {return null;}
+  if (!drinks) {
+    return null;
+  }
   const drinkCounts: Partial<Record<DrinkKey, number>> = {};
 
   Object.values(drinks).forEach(drinksAtTimestamp => {
@@ -129,6 +141,68 @@ function determineSessionMostCommonDrink(
   return mostCommonDrink;
 }
 
+/**
+ * Get the displayName for a single session participant.
+ */
+function getDisplayNameForParticipant(
+  userId?: UserId,
+  shouldUseShortForm = false,
+  shouldFallbackToHidden = true,
+  shouldAddCurrentUserPostfix = false,
+): string {
+  if (!userId) {
+    return '';
+  }
+  return 'not-yet-implemented'; // TODO implement this
+
+  // const personalDetails = getPersonalDetailsForUserId(userId);
+  // // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+  // const formattedLogin = LocalePhoneNumber.formatPhoneNumber(
+  //   personalDetails.login || '',
+  // );
+  // // This is to check if account is an invite/optimistically created one
+  // // and prevent from falling back to 'Hidden', so a correct value is shown
+  // // when searching for a new user
+  // if (personalDetails.isOptimisticPersonalDetail === true) {
+  //   return formattedLogin;
+  // }
+
+  // // For selfDM, we display the user's displayName followed by '(you)' as a postfix
+  // const shouldAddPostfix =
+  //   shouldAddCurrentUserPostfix && userId === currentUserUserId;
+
+  // const longName = PersonalDetailsUtils.getDisplayNameOrDefault(
+  //   personalDetails,
+  //   formattedLogin,
+  //   shouldFallbackToHidden,
+  //   shouldAddPostfix,
+  // );
+
+  // // If the user's personal details (first name) should be hidden, make sure we return "hidden" instead of the short name
+  // if (
+  //   shouldFallbackToHidden &&
+  //   longName === Localize.translateLocal('common.hidden')
+  // ) {
+  //   return longName;
+  // }
+
+  // const shortName = personalDetails.firstName
+  //   ? personalDetails.firstName
+  //   : longName;
+  // return shouldUseShortForm ? shortName : longName;
+}
+
+/**
+ * Returns the the display names of the given user userIds
+ */
+function getUserDetailTooltipText(
+  userId: UserId,
+  fallbackUserDisplayName = '',
+): string {
+  const displayNameForParticipant = getDisplayNameForParticipant(userId);
+  return displayNameForParticipant || fallbackUserDisplayName;
+}
+
 export {
   PlaceholderDrinks,
   determineSessionMostCommonDrink,
@@ -137,4 +211,6 @@ export {
   sessionIsExpired,
   getEmptySession,
   isEmptySession,
+  getDisplayNameForParticipant,
+  getUserDetailTooltipText,
 };

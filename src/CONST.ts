@@ -117,6 +117,10 @@ const CONST = {
     MENTION_ICON: 'mention-icon',
     SMALL_NORMAL: 'small-normal',
   },
+  AVATAR_ROW_SIZE: {
+    DEFAULT: 4,
+    LARGE_SCREEN: 8,
+  },
   BROWSER: {
     CHROME: 'chrome',
     FIREFOX: 'firefox',
@@ -544,6 +548,10 @@ const CONST = {
     PUSHER: 'pusher',
     AIRSHIP: 'airship',
   },
+  OPTION_MODE: {
+    COMPACT: 'compact',
+    DEFAULT: 'default',
+  },
   OS: {
     WINDOWS: 'Windows',
     MAC_OS: 'Mac OS',
@@ -734,6 +742,10 @@ const CONST = {
 
   // 8 alphanumeric characters
   RECOVERY_CODE_REGEX_STRING: /^[a-zA-Z0-9]{8}$/,
+
+  UNICODE: {
+    LTR: '\u2066',
+  },
 
   // The server has a WAF (Web Application Firewall) which will strip out HTML/XML tags using this regex pattern.
   // It's copied here so that the same regex pattern can be used in form validations to be consistent with the server.

@@ -20,6 +20,7 @@ import Cocktail from '@assets/icons/cocktail.png';
 import Copy from '@assets/icons/copy.png';
 import DeleteSession from '@assets/icons/delete-session.png';
 import Delete from '@assets/icons/delete.png';
+import DotIndicator from '@assets/icons/dot-indicator.svg';
 import Download from '@assets/icons/download.png';
 import Edit from '@assets/icons/edit.png';
 import Exit from '@assets/icons/exit.png';
@@ -66,6 +67,7 @@ export {
   DeleteSession,
   Delete,
   Download,
+  DotIndicator,
   Edit,
   Exit,
   FriendList,

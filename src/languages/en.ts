@@ -215,6 +215,10 @@ export default {
   },
   profileScreen: {
     editProfile: 'Edit Your Profile',
+    publicSection: {
+      title: 'Public Section',
+      subtitle: 'This information will be visible to other members.',
+    },
   },
   mainMenuScreen: {
     deleteAccount: 'Delete account',
