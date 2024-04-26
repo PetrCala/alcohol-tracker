@@ -72,7 +72,6 @@
     "firebase": "^10.7.1",
     "firebase-admin": "^12.0.0",
     "firebaseui": "^6.1.0",
-    "i": "^0.3.7",
     "identity-obj-proxy": "^3.0.0",
     "jest-expo": "^50.0.4",
     "jest-when": "^3.6.0",
