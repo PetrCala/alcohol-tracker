@@ -20,7 +20,7 @@ import migrateOnyx from '@libs/migrateOnyx';
 import SplashScreenHider from '@components/SplashScreenHider';
 import CONST from '@src/CONST';
 import * as ActiveClientManager from '@libs/ActiveClientManager';
-import StartupTimer from '@libs/StartupTimer';
+// import StartupTimer from '@libs/StartupTimer';
 import Visibility from '@libs/Visibility';
 import {useFirebase} from '@context/global/FirebaseContext';
 import ONYXKEYS from '@src/ONYXKEYS';
@@ -160,7 +160,7 @@ function Kiroku({
 
     // This timer is set in the native layer when launching the app and we stop it here so we can measure how long
     // it took for the main app itself to load.
-    StartupTimer.stop();
+    // StartupTimer.stop();
 
     // Run any Onyx schema migrations and then continue loading the main app
     migrateOnyx().then(() => {

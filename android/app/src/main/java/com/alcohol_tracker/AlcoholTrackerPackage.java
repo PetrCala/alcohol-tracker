@@ -21,7 +21,7 @@ public class AlcoholTrackerPackage implements ReactPackage {
             ReactApplicationContext reactContext) {
         List<NativeModule> modules = new ArrayList<>();
 
-        modules.add(new StartupTimer(reactContext));
+        // modules.add(new StartupTimer(reactContext));
 
         return modules;
     }

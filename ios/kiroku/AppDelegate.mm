@@ -7,7 +7,7 @@
 // #import <UserNotifications/UserNotifications.h>
 
 #import "RCTBootSplash.h"
-#import "RCTStartupTimer.h"
+// #import "RCTStartupTimer.h"
 #import <HardwareShortcuts.h>
 
 // Possibly define custom protocols here
@@ -45,7 +45,7 @@
   // Start the "js_load" custom performance tracing metric. This timer is
   // stopped by a native module in the JS so we can measure total time starting
   // in the native layer and ending in the JS layer.
-  [RCTStartupTimer start];
+  // [RCTStartupTimer start];
 
   if (![[NSUserDefaults standardUserDefaults] boolForKey:@"isFirstRunComplete"]) {
       [UIApplication sharedApplication].applicationIconBadgeNumber = 0;

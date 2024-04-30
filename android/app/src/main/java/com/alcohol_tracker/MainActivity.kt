@@ -7,8 +7,8 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
 import android.view.WindowInsets
-import com.expensify.chat.bootsplash.BootSplash
-// import com.expensify.reactnativekeycommand.KeyCommandModule
+import com.alcohol_tracker.bootsplash.BootSplash
+// import com.alcohol_tracker.reactnativekeycommand.KeyCommandModule
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
