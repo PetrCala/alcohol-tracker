@@ -113,3 +113,8 @@ mockDatabase.json
 *.ipa
 *.lnk
 *.env*
+
+# Expo
+.expo
+dist/
+web-build/
