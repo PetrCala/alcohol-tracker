@@ -14,10 +14,10 @@ import Navigation from '@navigation/Navigation';
 import NavigationRoot from '@navigation/NavigationRoot';
 import NetworkConnection from '@libs/NetworkConnection';
 // import PushNotification from '@libs/Notification/PushNotification';
-// import BootSplash from '@libs/BootSplash';
+import BootSplash from '@libs/BootSplash';
 import Log from '@libs/Log';
 import migrateOnyx from '@libs/migrateOnyx';
-// import SplashScreenHider from '@components/SplashScreenHider';
+import SplashScreenHider from '@components/SplashScreenHider';
 import CONST from '@src/CONST';
 import * as ActiveClientManager from '@libs/ActiveClientManager';
 import StartupTimer from '@libs/StartupTimer';
@@ -75,6 +75,7 @@ function Kiroku({
   const [isSplashHidden, setIsSplashHidden] = useState(false);
   const [initialUrl, setInitialUrl] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authenticationChecked, setAuthenticationChecked] = useState(false);
 
   // const isAuthenticated = useMemo(() => !!(auth.currentUser ?? null), [auth]);
   // const autoAuthState = useMemo(() => session?.autoAuthState ?? '', [session]);
@@ -89,13 +90,15 @@ function Kiroku({
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
       setIsAuthenticated(!!user);
+      setAuthenticationChecked(true);
     });
 
     return () => unsubscribe();
   }, [auth]);
 
   const shouldInit = isNavigationReady;
-  const shouldHideSplash = shouldInit && !isSplashHidden;
+  const shouldHideSplash =
+    shouldInit && !isSplashHidden && authenticationChecked;
 
   const initializeClient = () => {
     if (!Visibility.isVisible()) {
@@ -126,34 +129,34 @@ function Kiroku({
   }, []);
 
   useEffect(() => {
-    // setTimeout(() => {
-    //   BootSplash.getVisibilityStatus().then(status => {
-    //     const appState = AppState.currentState;
-    //     Log.info('[BootSplash] splash screen status', false, {
-    //       appState,
-    //       status,
-    //     });
+    setTimeout(() => {
+      BootSplash.getVisibilityStatus().then(status => {
+        const appState = AppState.currentState;
+        Log.info('[BootSplash] splash screen status', false, {
+          appState,
+          status,
+        });
 
-    //     if (status === 'visible') {
-    //       const propsToLog: Omit<
-    //         KirokuProps & {isAuthenticated: boolean},
-    //         'children' | 'session'
-    //       > = {
-    //         updateRequired,
-    //         updateAvailable,
-    //         isSidebarLoaded,
-    //         focusModeNotification,
-    //         isAuthenticated,
-    //         lastVisitedPath,
-    //       };
-    //       Log.alert(
-    //         '[BootSplash] splash screen is still visible',
-    //         {propsToLog},
-    //         false,
-    //       );
-    //     }
-    //   });
-    // }, 30 * 1000);
+        // if (status === 'visible') {
+        //   const propsToLog: Omit<
+        //     KirokuProps & {isAuthenticated: boolean},
+        //     'children' | 'session'
+        //   > = {
+        //     updateRequired,
+        //     updateAvailable,
+        //     isSidebarLoaded,
+        //     focusModeNotification,
+        //     isAuthenticated,
+        //     lastVisitedPath,
+        //   };
+        //   Log.alert(
+        //     '[BootSplash] splash screen is still visible',
+        //     {propsToLog},
+        //     false,
+        //   );
+        // }
+      });
+    }, 30 * 1000);
 
     // This timer is set in the native layer when launching the app and we stop it here so we can measure how long
     // it took for the main app itself to load.
@@ -229,7 +232,7 @@ function Kiroku({
         />
       </SplashScreenHiddenContext.Provider>
 
-      {/* {shouldHideSplash && <SplashScreenHider onHide={onSplashHide} />} */}
+      {shouldHideSplash && <SplashScreenHider onHide={onSplashHide} />}
     </>
   );
 }
