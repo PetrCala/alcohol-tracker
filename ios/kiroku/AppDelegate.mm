@@ -1,14 +1,19 @@
 #import "AppDelegate.h"
 
-#import <Firebase.h>
+// #import <Firebase.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTI18nUtil.h>
 #import <React/RCTLinkingManager.h>
-#import <UserNotifications/UserNotifications.h>
+// #import <UserNotifications/UserNotifications.h>
 
 #import "RCTBootSplash.h"
 // #import "RCTStartupTimer.h"
 #import <HardwareShortcuts.h>
+
+// Possibly define custom protocols here
+@interface AppDelegate ()
+
+@end
 
 @implementation AppDelegate
 
@@ -33,9 +38,9 @@
                            rootView:(RCTRootView *)self.window.rootViewController.view]; // <- initialization using the storyboard file name
 
   // Define UNUserNotificationCenter
-  UNUserNotificationCenter *center =
-      [UNUserNotificationCenter currentNotificationCenter];
-  center.delegate = self;
+  // UNUserNotificationCenter *center =
+  //     [UNUserNotificationCenter currentNotificationCenter];
+  // center.delegate = self;
 
   // Start the "js_load" custom performance tracing metric. This timer is
   // stopped by a native module in the JS so we can measure total time starting

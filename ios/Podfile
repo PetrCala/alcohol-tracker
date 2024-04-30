@@ -112,8 +112,8 @@ target 'kiroku' do
     #
     # Note that if you have use_frameworks! enabled, Flipper will not work and
     # you should disable the next line.
-    config[:reactNativePath],
-    :mac_catalyst_enabled => false
+    # config[:reactNativePath],
+    # :mac_catalyst_enabled => false
 
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."

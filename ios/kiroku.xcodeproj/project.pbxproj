@@ -10,20 +10,15 @@
 		00E356F31AD99517003FC87E /* kirokuTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* kirokuTests.m */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		36537EDAE8B7D868E742B8B7 /* libPods-kiroku-kirokuTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FFD0E50EA8AB8101615283B1 /* libPods-kiroku-kirokuTests.a */; };
+		20DCE95D4E3E213B71F6BFF0 /* libPods-kiroku-kirokuTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 77BAB5A2794248BD1C9B1FDB /* libPods-kiroku-kirokuTests.a */; };
 		6EB690539DFC242A5AEDCD65 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F181F1F78CECD2EE2A25A45D /* ExpoModulesProvider.swift */; };
 		8C84CE0B2BDB722F00C88D4E /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8C84CE0A2BDB722F00C88D4E /* BootSplash.storyboard */; };
-		8C84CE142BDB726F00C88D4E /* BootSplashLogoDev.imageset in Resources */ = {isa = PBXBuildFile; fileRef = 8C84CE0C2BDB726E00C88D4E /* BootSplashLogoDev.imageset */; };
-		8C84CE162BDB726F00C88D4E /* AppIconDev.appiconset in Resources */ = {isa = PBXBuildFile; fileRef = 8C84CE0E2BDB726F00C88D4E /* AppIconDev.appiconset */; };
-		8C84CE172BDB726F00C88D4E /* AppIconAdHoc.appiconset in Resources */ = {isa = PBXBuildFile; fileRef = 8C84CE0F2BDB726F00C88D4E /* AppIconAdHoc.appiconset */; };
-		8C84CE182BDB726F00C88D4E /* BootSplashLogo.imageset in Resources */ = {isa = PBXBuildFile; fileRef = 8C84CE102BDB726F00C88D4E /* BootSplashLogo.imageset */; };
 		8C84CE192BDB726F00C88D4E /* RCTBootSplash.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8C84CE122BDB726F00C88D4E /* RCTBootSplash.mm */; };
-		8C84CE1A2BDB726F00C88D4E /* BootSplashLogoAdHoc.imageset in Resources */ = {isa = PBXBuildFile; fileRef = 8C84CE132BDB726F00C88D4E /* BootSplashLogoAdHoc.imageset */; };
 		8C84CE1E2BDB72C800C88D4E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8C84CE1D2BDB72C800C88D4E /* Images.xcassets */; };
 		8C93A11A2BAE2C7200B5382C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 8CA9A3092BAD9A380036C58C /* PrivacyInfo.xcprivacy */; };
 		8CCCAE2F2B7188B4008DCF56 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB61A68108700A75B9A /* Info.plist */; };
 		929EAF1A3FD507F3FF2058BF /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B3D3536B8F71ACC793CEB96 /* ExpoModulesProvider.swift */; };
-		A5F61E4BB40614BEDAE6A3B1 /* libPods-kiroku.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A54B55DAFB81E6CB50E68F7 /* libPods-kiroku.a */; };
+		9EE260DD6C54174C7AC4FC0C /* libPods-kiroku.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E2B61282AE172D4236BA587 /* libPods-kiroku.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,43 +35,38 @@
 		00E356EE1AD99517003FC87E /* kirokuTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = kirokuTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* kirokuTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = kirokuTests.m; sourceTree = "<group>"; };
+		03617EB20993775A3F2C8BD8 /* Pods-kiroku-kirokuTests.releasedevelopment.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kiroku-kirokuTests.releasedevelopment.xcconfig"; path = "Target Support Files/Pods-kiroku-kirokuTests/Pods-kiroku-kirokuTests.releasedevelopment.xcconfig"; sourceTree = "<group>"; };
+		0F808370B94280AD2D95606E /* Pods-kiroku-kirokuTests.debugdevelopment.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kiroku-kirokuTests.debugdevelopment.xcconfig"; path = "Target Support Files/Pods-kiroku-kirokuTests/Pods-kiroku-kirokuTests.debugdevelopment.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* kiroku.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = kiroku.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = kiroku/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = kiroku/AppDelegate.mm; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = kiroku/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = kiroku/main.m; sourceTree = "<group>"; };
-		1FEDA620246272ED8BA0F7F3 /* Pods-kiroku-kirokuTests.releaseproduction.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kiroku-kirokuTests.releaseproduction.xcconfig"; path = "Target Support Files/Pods-kiroku-kirokuTests/Pods-kiroku-kirokuTests.releaseproduction.xcconfig"; sourceTree = "<group>"; };
-		25DAF97DF25BF2FF1561AE66 /* Pods-kiroku.debugstaging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kiroku.debugstaging.xcconfig"; path = "Target Support Files/Pods-kiroku/Pods-kiroku.debugstaging.xcconfig"; sourceTree = "<group>"; };
-		40D9BC52C72F8FA4F4FD7AF9 /* Pods-kiroku-kirokuTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kiroku-kirokuTests.release.xcconfig"; path = "Target Support Files/Pods-kiroku-kirokuTests/Pods-kiroku-kirokuTests.release.xcconfig"; sourceTree = "<group>"; };
-		4C133501772D464ACCED4EA0 /* Pods-kiroku.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kiroku.release.xcconfig"; path = "Target Support Files/Pods-kiroku/Pods-kiroku.release.xcconfig"; sourceTree = "<group>"; };
-		55015D6F1B0ED7D4B055957F /* Pods-kiroku.releasedevelopment.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kiroku.releasedevelopment.xcconfig"; path = "Target Support Files/Pods-kiroku/Pods-kiroku.releasedevelopment.xcconfig"; sourceTree = "<group>"; };
-		6A54B55DAFB81E6CB50E68F7 /* libPods-kiroku.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-kiroku.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		6BDBCD622516BF10050E16DE /* Pods-kiroku-kirokuTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kiroku-kirokuTests.debug.xcconfig"; path = "Target Support Files/Pods-kiroku-kirokuTests/Pods-kiroku-kirokuTests.debug.xcconfig"; sourceTree = "<group>"; };
-		7CE995E78F7C251E1FD7DE9D /* Pods-kiroku-kirokuTests.releasestaging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kiroku-kirokuTests.releasestaging.xcconfig"; path = "Target Support Files/Pods-kiroku-kirokuTests/Pods-kiroku-kirokuTests.releasestaging.xcconfig"; sourceTree = "<group>"; };
-		85287817BCCBA793F4733F49 /* Pods-kiroku-kirokuTests.releasedevelopment.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kiroku-kirokuTests.releasedevelopment.xcconfig"; path = "Target Support Files/Pods-kiroku-kirokuTests/Pods-kiroku-kirokuTests.releasedevelopment.xcconfig"; sourceTree = "<group>"; };
-		8534A16045354BA5AD70E9EC /* Pods-kiroku-kirokuTests.debugdevelopment.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kiroku-kirokuTests.debugdevelopment.xcconfig"; path = "Target Support Files/Pods-kiroku-kirokuTests/Pods-kiroku-kirokuTests.debugdevelopment.xcconfig"; sourceTree = "<group>"; };
+		268D27153B0A456097AA8485 /* Pods-kiroku.debugproduction.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kiroku.debugproduction.xcconfig"; path = "Target Support Files/Pods-kiroku/Pods-kiroku.debugproduction.xcconfig"; sourceTree = "<group>"; };
+		2A6AE99931F7F6D32EE3F828 /* Pods-kiroku-kirokuTests.releasestaging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kiroku-kirokuTests.releasestaging.xcconfig"; path = "Target Support Files/Pods-kiroku-kirokuTests/Pods-kiroku-kirokuTests.releasestaging.xcconfig"; sourceTree = "<group>"; };
+		430B3F7A3EC2818620A224A0 /* Pods-kiroku-kirokuTests.debugstaging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kiroku-kirokuTests.debugstaging.xcconfig"; path = "Target Support Files/Pods-kiroku-kirokuTests/Pods-kiroku-kirokuTests.debugstaging.xcconfig"; sourceTree = "<group>"; };
+		451B9AD9B1EA04FB533B19E0 /* Pods-kiroku.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kiroku.release.xcconfig"; path = "Target Support Files/Pods-kiroku/Pods-kiroku.release.xcconfig"; sourceTree = "<group>"; };
+		4881BDF330E24B3D45867268 /* Pods-kiroku.releasestaging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kiroku.releasestaging.xcconfig"; path = "Target Support Files/Pods-kiroku/Pods-kiroku.releasestaging.xcconfig"; sourceTree = "<group>"; };
+		5AD6846AB69EE5EF62675C16 /* Pods-kiroku-kirokuTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kiroku-kirokuTests.debug.xcconfig"; path = "Target Support Files/Pods-kiroku-kirokuTests/Pods-kiroku-kirokuTests.debug.xcconfig"; sourceTree = "<group>"; };
+		6112F6A29D5796729CFEC998 /* Pods-kiroku.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kiroku.debug.xcconfig"; path = "Target Support Files/Pods-kiroku/Pods-kiroku.debug.xcconfig"; sourceTree = "<group>"; };
+		613E9BCB4F34AF7A26E82D84 /* Pods-kiroku.debugdevelopment.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kiroku.debugdevelopment.xcconfig"; path = "Target Support Files/Pods-kiroku/Pods-kiroku.debugdevelopment.xcconfig"; sourceTree = "<group>"; };
+		6E2B61282AE172D4236BA587 /* libPods-kiroku.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-kiroku.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		77BAB5A2794248BD1C9B1FDB /* libPods-kiroku-kirokuTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-kiroku-kirokuTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7DF4C510524E5EEB73C7EA5C /* Pods-kiroku-kirokuTests.releaseproduction.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kiroku-kirokuTests.releaseproduction.xcconfig"; path = "Target Support Files/Pods-kiroku-kirokuTests/Pods-kiroku-kirokuTests.releaseproduction.xcconfig"; sourceTree = "<group>"; };
 		8C1479292B3430910014E28C /* kiroku.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = kiroku.entitlements; path = kiroku/kiroku.entitlements; sourceTree = "<group>"; };
 		8C84CE0A2BDB722F00C88D4E /* BootSplash.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = BootSplash.storyboard; path = kiroku/BootSplash.storyboard; sourceTree = "<group>"; };
-		8C84CE0C2BDB726E00C88D4E /* BootSplashLogoDev.imageset */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BootSplashLogoDev.imageset; path = kiroku/BootSplashLogoDev.imageset; sourceTree = "<group>"; };
-		8C84CE0E2BDB726F00C88D4E /* AppIconDev.appiconset */ = {isa = PBXFileReference; lastKnownFileType = folder; name = AppIconDev.appiconset; path = kiroku/AppIconDev.appiconset; sourceTree = "<group>"; };
-		8C84CE0F2BDB726F00C88D4E /* AppIconAdHoc.appiconset */ = {isa = PBXFileReference; lastKnownFileType = folder; name = AppIconAdHoc.appiconset; path = kiroku/AppIconAdHoc.appiconset; sourceTree = "<group>"; };
-		8C84CE102BDB726F00C88D4E /* BootSplashLogo.imageset */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BootSplashLogo.imageset; path = kiroku/BootSplashLogo.imageset; sourceTree = "<group>"; };
 		8C84CE112BDB726F00C88D4E /* RCTBootSplash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RCTBootSplash.h; path = kiroku/RCTBootSplash.h; sourceTree = "<group>"; };
 		8C84CE122BDB726F00C88D4E /* RCTBootSplash.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RCTBootSplash.mm; path = kiroku/RCTBootSplash.mm; sourceTree = "<group>"; };
-		8C84CE132BDB726F00C88D4E /* BootSplashLogoAdHoc.imageset */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BootSplashLogoAdHoc.imageset; path = kiroku/BootSplashLogoAdHoc.imageset; sourceTree = "<group>"; };
 		8C84CE1D2BDB72C800C88D4E /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = kiroku/Images.xcassets; sourceTree = "<group>"; };
 		8CA9A3092BAD9A380036C58C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = kiroku/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		8D977F14811552094A2E72D2 /* Pods-kiroku.debugdevelopment.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kiroku.debugdevelopment.xcconfig"; path = "Target Support Files/Pods-kiroku/Pods-kiroku.debugdevelopment.xcconfig"; sourceTree = "<group>"; };
+		8D374104DA0F46C53ABE8E01 /* Pods-kiroku-kirokuTests.debugproduction.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kiroku-kirokuTests.debugproduction.xcconfig"; path = "Target Support Files/Pods-kiroku-kirokuTests/Pods-kiroku-kirokuTests.debugproduction.xcconfig"; sourceTree = "<group>"; };
 		9B3D3536B8F71ACC793CEB96 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-kiroku/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		A656AB7359E38CC23A6579D0 /* Pods-kiroku.releaseproduction.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kiroku.releaseproduction.xcconfig"; path = "Target Support Files/Pods-kiroku/Pods-kiroku.releaseproduction.xcconfig"; sourceTree = "<group>"; };
-		BBDCA33DB29942C31906B183 /* Pods-kiroku-kirokuTests.debugproduction.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kiroku-kirokuTests.debugproduction.xcconfig"; path = "Target Support Files/Pods-kiroku-kirokuTests/Pods-kiroku-kirokuTests.debugproduction.xcconfig"; sourceTree = "<group>"; };
-		BE674B17FCD8A0AF59E77B16 /* Pods-kiroku.debugproduction.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kiroku.debugproduction.xcconfig"; path = "Target Support Files/Pods-kiroku/Pods-kiroku.debugproduction.xcconfig"; sourceTree = "<group>"; };
-		D0FB69562DA022BD8B7D9293 /* Pods-kiroku.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kiroku.debug.xcconfig"; path = "Target Support Files/Pods-kiroku/Pods-kiroku.debug.xcconfig"; sourceTree = "<group>"; };
-		D3113BA8FF853124866D7219 /* Pods-kiroku.releasestaging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kiroku.releasestaging.xcconfig"; path = "Target Support Files/Pods-kiroku/Pods-kiroku.releasestaging.xcconfig"; sourceTree = "<group>"; };
-		D8A1F4E9998271C4F19E544B /* Pods-kiroku-kirokuTests.debugstaging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kiroku-kirokuTests.debugstaging.xcconfig"; path = "Target Support Files/Pods-kiroku-kirokuTests/Pods-kiroku-kirokuTests.debugstaging.xcconfig"; sourceTree = "<group>"; };
+		9D6BFF6C91825A85A46E9CB9 /* Pods-kiroku.debugstaging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kiroku.debugstaging.xcconfig"; path = "Target Support Files/Pods-kiroku/Pods-kiroku.debugstaging.xcconfig"; sourceTree = "<group>"; };
+		E8BCFE26B29599C4CBA90A1D /* Pods-kiroku.releaseproduction.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kiroku.releaseproduction.xcconfig"; path = "Target Support Files/Pods-kiroku/Pods-kiroku.releaseproduction.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		EE215177FF5407D6947032A8 /* Pods-kiroku-kirokuTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kiroku-kirokuTests.release.xcconfig"; path = "Target Support Files/Pods-kiroku-kirokuTests/Pods-kiroku-kirokuTests.release.xcconfig"; sourceTree = "<group>"; };
+		EEBE501C7E748ABE34C30CBE /* Pods-kiroku.releasedevelopment.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kiroku.releasedevelopment.xcconfig"; path = "Target Support Files/Pods-kiroku/Pods-kiroku.releasedevelopment.xcconfig"; sourceTree = "<group>"; };
 		F181F1F78CECD2EE2A25A45D /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-kiroku-kirokuTests/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		FFD0E50EA8AB8101615283B1 /* libPods-kiroku-kirokuTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-kiroku-kirokuTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,7 +74,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				36537EDAE8B7D868E742B8B7 /* libPods-kiroku-kirokuTests.a in Frameworks */,
+				20DCE95D4E3E213B71F6BFF0 /* libPods-kiroku-kirokuTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -92,7 +82,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A5F61E4BB40614BEDAE6A3B1 /* libPods-kiroku.a in Frameworks */,
+				9EE260DD6C54174C7AC4FC0C /* libPods-kiroku.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -120,11 +110,6 @@
 			isa = PBXGroup;
 			children = (
 				8C84CE1D2BDB72C800C88D4E /* Images.xcassets */,
-				8C84CE0F2BDB726F00C88D4E /* AppIconAdHoc.appiconset */,
-				8C84CE0E2BDB726F00C88D4E /* AppIconDev.appiconset */,
-				8C84CE102BDB726F00C88D4E /* BootSplashLogo.imageset */,
-				8C84CE132BDB726F00C88D4E /* BootSplashLogoAdHoc.imageset */,
-				8C84CE0C2BDB726E00C88D4E /* BootSplashLogoDev.imageset */,
 				8C84CE112BDB726F00C88D4E /* RCTBootSplash.h */,
 				8C84CE122BDB726F00C88D4E /* RCTBootSplash.mm */,
 				8C84CE0A2BDB722F00C88D4E /* BootSplash.storyboard */,
@@ -141,8 +126,8 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				6A54B55DAFB81E6CB50E68F7 /* libPods-kiroku.a */,
-				FFD0E50EA8AB8101615283B1 /* libPods-kiroku-kirokuTests.a */,
+				6E2B61282AE172D4236BA587 /* libPods-kiroku.a */,
+				77BAB5A2794248BD1C9B1FDB /* libPods-kiroku-kirokuTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -199,22 +184,22 @@
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				D0FB69562DA022BD8B7D9293 /* Pods-kiroku.debug.xcconfig */,
-				25DAF97DF25BF2FF1561AE66 /* Pods-kiroku.debugstaging.xcconfig */,
-				BE674B17FCD8A0AF59E77B16 /* Pods-kiroku.debugproduction.xcconfig */,
-				8D977F14811552094A2E72D2 /* Pods-kiroku.debugdevelopment.xcconfig */,
-				4C133501772D464ACCED4EA0 /* Pods-kiroku.release.xcconfig */,
-				D3113BA8FF853124866D7219 /* Pods-kiroku.releasestaging.xcconfig */,
-				55015D6F1B0ED7D4B055957F /* Pods-kiroku.releasedevelopment.xcconfig */,
-				A656AB7359E38CC23A6579D0 /* Pods-kiroku.releaseproduction.xcconfig */,
-				6BDBCD622516BF10050E16DE /* Pods-kiroku-kirokuTests.debug.xcconfig */,
-				D8A1F4E9998271C4F19E544B /* Pods-kiroku-kirokuTests.debugstaging.xcconfig */,
-				BBDCA33DB29942C31906B183 /* Pods-kiroku-kirokuTests.debugproduction.xcconfig */,
-				8534A16045354BA5AD70E9EC /* Pods-kiroku-kirokuTests.debugdevelopment.xcconfig */,
-				40D9BC52C72F8FA4F4FD7AF9 /* Pods-kiroku-kirokuTests.release.xcconfig */,
-				7CE995E78F7C251E1FD7DE9D /* Pods-kiroku-kirokuTests.releasestaging.xcconfig */,
-				85287817BCCBA793F4733F49 /* Pods-kiroku-kirokuTests.releasedevelopment.xcconfig */,
-				1FEDA620246272ED8BA0F7F3 /* Pods-kiroku-kirokuTests.releaseproduction.xcconfig */,
+				6112F6A29D5796729CFEC998 /* Pods-kiroku.debug.xcconfig */,
+				9D6BFF6C91825A85A46E9CB9 /* Pods-kiroku.debugstaging.xcconfig */,
+				268D27153B0A456097AA8485 /* Pods-kiroku.debugproduction.xcconfig */,
+				613E9BCB4F34AF7A26E82D84 /* Pods-kiroku.debugdevelopment.xcconfig */,
+				451B9AD9B1EA04FB533B19E0 /* Pods-kiroku.release.xcconfig */,
+				4881BDF330E24B3D45867268 /* Pods-kiroku.releasestaging.xcconfig */,
+				EEBE501C7E748ABE34C30CBE /* Pods-kiroku.releasedevelopment.xcconfig */,
+				E8BCFE26B29599C4CBA90A1D /* Pods-kiroku.releaseproduction.xcconfig */,
+				5AD6846AB69EE5EF62675C16 /* Pods-kiroku-kirokuTests.debug.xcconfig */,
+				430B3F7A3EC2818620A224A0 /* Pods-kiroku-kirokuTests.debugstaging.xcconfig */,
+				8D374104DA0F46C53ABE8E01 /* Pods-kiroku-kirokuTests.debugproduction.xcconfig */,
+				0F808370B94280AD2D95606E /* Pods-kiroku-kirokuTests.debugdevelopment.xcconfig */,
+				EE215177FF5407D6947032A8 /* Pods-kiroku-kirokuTests.release.xcconfig */,
+				2A6AE99931F7F6D32EE3F828 /* Pods-kiroku-kirokuTests.releasestaging.xcconfig */,
+				03617EB20993775A3F2C8BD8 /* Pods-kiroku-kirokuTests.releasedevelopment.xcconfig */,
+				7DF4C510524E5EEB73C7EA5C /* Pods-kiroku-kirokuTests.releaseproduction.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -235,13 +220,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "kirokuTests" */;
 			buildPhases = (
-				EB0A342A0D7D6279C670AEEB /* [CP] Check Pods Manifest.lock */,
+				9144871AB5015A3C634E74F1 /* [CP] Check Pods Manifest.lock */,
 				DFECB64F3971494213FCA331 /* [Expo] Configure project */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
-				BB5CF3EED25FAD2B237FECC5 /* [CP] Embed Pods Frameworks */,
-				7C138EE0A7B485DC804078CE /* [CP] Copy Pods Resources */,
+				3F01678804EB5FC3CE669C34 /* [CP] Embed Pods Frameworks */,
+				C403B893CA690ED1153E0BC1 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -257,14 +242,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "kiroku" */;
 			buildPhases = (
-				286F7D5DE794C10D2DFA4142 /* [CP] Check Pods Manifest.lock */,
+				343240410F1710F05832A851 /* [CP] Check Pods Manifest.lock */,
 				C57CA4998D4534446617B54F /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				2F79F8203567B9DDED6AD215 /* [CP] Embed Pods Frameworks */,
-				FCEC516D7EF3F484DECF2F7F /* [CP] Copy Pods Resources */,
+				3812379CA2ED4A06A396FC30 /* [CP] Embed Pods Frameworks */,
+				9DFBB01509C1CC7073A9D0A7 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -327,12 +312,7 @@
 			files = (
 				8C84CE0B2BDB722F00C88D4E /* BootSplash.storyboard in Resources */,
 				8C84CE1E2BDB72C800C88D4E /* Images.xcassets in Resources */,
-				8C84CE1A2BDB726F00C88D4E /* BootSplashLogoAdHoc.imageset in Resources */,
-				8C84CE162BDB726F00C88D4E /* AppIconDev.appiconset in Resources */,
 				8C93A11A2BAE2C7200B5382C /* PrivacyInfo.xcprivacy in Resources */,
-				8C84CE182BDB726F00C88D4E /* BootSplashLogo.imageset in Resources */,
-				8C84CE142BDB726F00C88D4E /* BootSplashLogoDev.imageset in Resources */,
-				8C84CE172BDB726F00C88D4E /* AppIconAdHoc.appiconset in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -354,9 +334,9 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"../node_modules/react-native/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"../node_modules/react-native/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
+			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"../node_modules/react-native/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"../node_modules/react-native/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n\n# custom\nexport SOURCEMAP_FILE=\"$(pwd)/../main.jsbundle.map\"\n\nexport NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
-		286F7D5DE794C10D2DFA4142 /* [CP] Check Pods Manifest.lock */ = {
+		343240410F1710F05832A851 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -378,7 +358,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		2F79F8203567B9DDED6AD215 /* [CP] Embed Pods Frameworks */ = {
+		3812379CA2ED4A06A396FC30 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -395,24 +375,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-kiroku/Pods-kiroku-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		7C138EE0A7B485DC804078CE /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-kiroku-kirokuTests/Pods-kiroku-kirokuTests-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-kiroku-kirokuTests/Pods-kiroku-kirokuTests-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-kiroku-kirokuTests/Pods-kiroku-kirokuTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		BB5CF3EED25FAD2B237FECC5 /* [CP] Embed Pods Frameworks */ = {
+		3F01678804EB5FC3CE669C34 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -427,6 +390,62 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-kiroku-kirokuTests/Pods-kiroku-kirokuTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9144871AB5015A3C634E74F1 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-kiroku-kirokuTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9DFBB01509C1CC7073A9D0A7 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-kiroku/Pods-kiroku-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-kiroku/Pods-kiroku-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-kiroku/Pods-kiroku-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C403B893CA690ED1153E0BC1 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-kiroku-kirokuTests/Pods-kiroku-kirokuTests-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-kiroku-kirokuTests/Pods-kiroku-kirokuTests-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-kiroku-kirokuTests/Pods-kiroku-kirokuTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		C57CA4998D4534446617B54F /* [Expo] Configure project */ = {
@@ -467,45 +486,6 @@
 			shellPath = /bin/sh;
 			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-kiroku-kirokuTests/expo-configure-project.sh\"\n";
 		};
-		EB0A342A0D7D6279C670AEEB /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-kiroku-kirokuTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		FCEC516D7EF3F484DECF2F7F /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-kiroku/Pods-kiroku-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-kiroku/Pods-kiroku-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-kiroku/Pods-kiroku-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -542,7 +522,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6BDBCD622516BF10050E16DE /* Pods-kiroku-kirokuTests.debug.xcconfig */;
+			baseConfigurationReference = 5AD6846AB69EE5EF62675C16 /* Pods-kiroku-kirokuTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -572,7 +552,7 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 40D9BC52C72F8FA4F4FD7AF9 /* Pods-kiroku-kirokuTests.release.xcconfig */;
+			baseConfigurationReference = EE215177FF5407D6947032A8 /* Pods-kiroku-kirokuTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -599,7 +579,7 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D0FB69562DA022BD8B7D9293 /* Pods-kiroku.debug.xcconfig */;
+			baseConfigurationReference = 6112F6A29D5796729CFEC998 /* Pods-kiroku.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
@@ -634,7 +614,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4C133501772D464ACCED4EA0 /* Pods-kiroku.release.xcconfig */;
+			baseConfigurationReference = 451B9AD9B1EA04FB533B19E0 /* Pods-kiroku.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
@@ -742,8 +722,13 @@
 					"-DFOLLY_MOBILE=1",
 					"-DFOLLY_USE_LIBCPP=1",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
+				USE_HERMES = true;
 			};
 			name = Debug;
 		};
@@ -752,7 +737,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -817,9 +802,14 @@
 					"-DFOLLY_USE_LIBCPP=1",
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				USE_HERMES = true;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -902,14 +892,19 @@
 					"-DFOLLY_USE_LIBCPP=1",
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
+				USE_HERMES = true;
 			};
 			name = DebugDevelopment;
 		};
 		8C575B6A2BB5932C009EF0A5 /* DebugDevelopment */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8D977F14811552094A2E72D2 /* Pods-kiroku.debugdevelopment.xcconfig */;
+			baseConfigurationReference = 613E9BCB4F34AF7A26E82D84 /* Pods-kiroku.debugdevelopment.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
@@ -944,7 +939,7 @@
 		};
 		8C575B6B2BB5932C009EF0A5 /* DebugDevelopment */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8534A16045354BA5AD70E9EC /* Pods-kiroku-kirokuTests.debugdevelopment.xcconfig */;
+			baseConfigurationReference = 0F808370B94280AD2D95606E /* Pods-kiroku-kirokuTests.debugdevelopment.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -977,7 +972,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -1049,14 +1044,19 @@
 					"-DFOLLY_MOBILE=1",
 					"-DFOLLY_USE_LIBCPP=1",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
+				USE_HERMES = true;
 			};
 			name = DebugStaging;
 		};
 		8C575B6D2BB59470009EF0A5 /* DebugStaging */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 25DAF97DF25BF2FF1561AE66 /* Pods-kiroku.debugstaging.xcconfig */;
+			baseConfigurationReference = 9D6BFF6C91825A85A46E9CB9 /* Pods-kiroku.debugstaging.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
@@ -1091,7 +1091,7 @@
 		};
 		8C575B6E2BB59470009EF0A5 /* DebugStaging */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D8A1F4E9998271C4F19E544B /* Pods-kiroku-kirokuTests.debugstaging.xcconfig */;
+			baseConfigurationReference = 430B3F7A3EC2818620A224A0 /* Pods-kiroku-kirokuTests.debugstaging.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -1124,7 +1124,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -1188,16 +1188,21 @@
 					"-DFOLLY_MOBILE=1",
 					"-DFOLLY_USE_LIBCPP=1",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				USE_HERMES = true;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = ReleaseStaging;
 		};
 		8C575B732BB59497009EF0A5 /* ReleaseStaging */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D3113BA8FF853124866D7219 /* Pods-kiroku.releasestaging.xcconfig */;
+			baseConfigurationReference = 4881BDF330E24B3D45867268 /* Pods-kiroku.releasestaging.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
@@ -1230,7 +1235,7 @@
 		};
 		8C575B742BB59497009EF0A5 /* ReleaseStaging */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7CE995E78F7C251E1FD7DE9D /* Pods-kiroku-kirokuTests.releasestaging.xcconfig */;
+			baseConfigurationReference = 2A6AE99931F7F6D32EE3F828 /* Pods-kiroku-kirokuTests.releasestaging.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -1260,7 +1265,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -1326,16 +1331,21 @@
 					"-DFOLLY_MOBILE=1",
 					"-DFOLLY_USE_LIBCPP=1",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				USE_HERMES = true;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = ReleaseDevelopment;
 		};
 		8C575B762BB594A0009EF0A5 /* ReleaseDevelopment */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 55015D6F1B0ED7D4B055957F /* Pods-kiroku.releasedevelopment.xcconfig */;
+			baseConfigurationReference = EEBE501C7E748ABE34C30CBE /* Pods-kiroku.releasedevelopment.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
@@ -1368,7 +1378,7 @@
 		};
 		8C575B772BB594A0009EF0A5 /* ReleaseDevelopment */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 85287817BCCBA793F4733F49 /* Pods-kiroku-kirokuTests.releasedevelopment.xcconfig */;
+			baseConfigurationReference = 03617EB20993775A3F2C8BD8 /* Pods-kiroku-kirokuTests.releasedevelopment.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -1398,7 +1408,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -1462,16 +1472,21 @@
 					"-DFOLLY_MOBILE=1",
 					"-DFOLLY_USE_LIBCPP=1",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				USE_HERMES = true;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = ReleaseProduction;
 		};
 		8C575B792BB594A4009EF0A5 /* ReleaseProduction */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A656AB7359E38CC23A6579D0 /* Pods-kiroku.releaseproduction.xcconfig */;
+			baseConfigurationReference = E8BCFE26B29599C4CBA90A1D /* Pods-kiroku.releaseproduction.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
@@ -1504,7 +1519,7 @@
 		};
 		8C575B7A2BB594A4009EF0A5 /* ReleaseProduction */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1FEDA620246272ED8BA0F7F3 /* Pods-kiroku-kirokuTests.releaseproduction.xcconfig */;
+			baseConfigurationReference = 7DF4C510524E5EEB73C7EA5C /* Pods-kiroku-kirokuTests.releaseproduction.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -1534,7 +1549,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -1606,14 +1621,19 @@
 					"-DFOLLY_MOBILE=1",
 					"-DFOLLY_USE_LIBCPP=1",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
+				USE_HERMES = true;
 			};
 			name = DebugProduction;
 		};
 		8C575B7C2BB594B2009EF0A5 /* DebugProduction */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BE674B17FCD8A0AF59E77B16 /* Pods-kiroku.debugproduction.xcconfig */;
+			baseConfigurationReference = 268D27153B0A456097AA8485 /* Pods-kiroku.debugproduction.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
@@ -1648,7 +1668,7 @@
 		};
 		8C575B7D2BB594B2009EF0A5 /* DebugProduction */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BBDCA33DB29942C31906B183 /* Pods-kiroku-kirokuTests.debugproduction.xcconfig */;
+			baseConfigurationReference = 8D374104DA0F46C53ABE8E01 /* Pods-kiroku-kirokuTests.debugproduction.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";

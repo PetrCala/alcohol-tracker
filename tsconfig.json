@@ -1,5 +1,6 @@
 {
-  "extends": "@react-native/typescript-config/tsconfig.json",
+  // "extends": "@react-native/typescript-config/tsconfig.json",
+  "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
     "target": "esnext",
     "module": "commonjs",
@@ -20,7 +21,8 @@
       "es2022.array",
       "es2022.object",
       "es2022.string",
-      "ES2021.Intl"
+      "ES2021.Intl",
+      "ES2023.Array"
     ],
     "allowJs": true,
     "checkJs": false,
@@ -95,5 +97,6 @@
     "**/alcohol-tracker*.json",
     "react-native.config.js"
     // "workflow_tests"
-  ]
+  ],
+  "extends": "expo/tsconfig.base"
 }
