@@ -60,7 +60,7 @@ const App = ({url}: KirokuProps): React.JSX.Element => {
             CustomStatusBarAndBackgroundContextProvider,
             ActiveElementRoleProvider,
           ]}>
-          {/* <CustomStatusBarAndBackground /> */}
+          <CustomStatusBarAndBackground />
           <ErrorBoundary errorMessage="Kiroku crash caught by error boundary">
             <ColorSchemeWrapper>
               <Kiroku />

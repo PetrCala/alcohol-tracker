@@ -59,7 +59,7 @@ function CustomStatusBarAndBackground({
   const prevStatusBarBackgroundColor = useRef(theme.splashBG);
   const statusBarBackgroundColor = useRef(theme.splashBG);
   const statusBarAnimation = useSharedValue(0);
-  console.log('statusBarAnimation', statusBarAnimation);
+  // console.log('statusBarAnimation', statusBarAnimation);
 
   useAnimatedReaction(
     () => statusBarAnimation.value,
