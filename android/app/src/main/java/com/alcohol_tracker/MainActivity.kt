@@ -1,29 +1,27 @@
-package com.alcohol_tracker;
+package com.alcohol_tracker
 
 import expo.modules.ReactActivityDelegateWrapper
-
 
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
 import android.view.WindowInsets
-import com.alcohol_tracker.bootsplash.BootSplash
-import com.alcohol_tracker.reactnativekeycommand.KeyCommandModule
-import com.facebook.react.ReactActivity;
-import com.facebook.react.ReactActivityDelegate;
-import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled;
-import com.facebook.react.defaults.DefaultReactActivityDelegate;
+import com.expensify.chat.bootsplash.BootSplash
+// import com.expensify.reactnativekeycommand.KeyCommandModule
+import com.facebook.react.ReactActivity
+import com.facebook.react.ReactActivityDelegate
+import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
+import com.facebook.react.defaults.DefaultReactActivityDelegate
 
-import com.oblador.performance.RNPerformance
+// import com.oblador.performance.RNPerformance
 
 class MainActivity : ReactActivity() {
-
-  /**
-   * Returns the name of the main component registered from JavaScript. This is used to schedule
-   * rendering of the component.
-   */
-  override fun getMainComponentName(): String = "alcohol_tracker"
+    /**
+     * Returns the name of the main component registered from JavaScript. This is used to schedule
+     * rendering of the component.
+     */
+    override fun getMainComponentName(): String = "alcohol_tracker"
 
     /**
      * Returns the instance of the [ReactActivityDelegate]. Here we use a util class [ ] which allows you to easily enable Fabric and Concurrent React
@@ -34,7 +32,6 @@ class MainActivity : ReactActivity() {
         mainComponentName,  // If you opted-in for the New Architecture, we enable the Fabric Renderer.
         fabricEnabled
     ))
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         BootSplash.init(this)
@@ -61,35 +58,35 @@ class MainActivity : ReactActivity() {
      * This method is called when a key down event has occurred.
      * Forwards the event to the KeyCommandModule
      */
-    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-        // Disabling hardware ESCAPE support which is handled by Android
-        if (event.keyCode == KeyEvent.KEYCODE_ESCAPE) {
-            return false
-        }
-        KeyCommandModule.getInstance().onKeyDownEvent(keyCode, event)
-        return super.onKeyDown(keyCode, event)
-    }
+    // override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+    //     // Disabling hardware ESCAPE support which is handled by Android
+    //     if (event.keyCode == KeyEvent.KEYCODE_ESCAPE) {
+    //         return false
+    //     }
+    //     KeyCommandModule.getInstance().onKeyDownEvent(keyCode, event)
+    //     return super.onKeyDown(keyCode, event)
+    // }
 
-    override fun onKeyLongPress(keyCode: Int, event: KeyEvent): Boolean {
-        // Disabling hardware ESCAPE support which is handled by Android
-        if (event.keyCode == KeyEvent.KEYCODE_ESCAPE) {
-            return false
-        }
-        KeyCommandModule.getInstance().onKeyDownEvent(keyCode, event)
-        return super.onKeyLongPress(keyCode, event)
-    }
+    // override fun onKeyLongPress(keyCode: Int, event: KeyEvent): Boolean {
+    //     // Disabling hardware ESCAPE support which is handled by Android
+    //     if (event.keyCode == KeyEvent.KEYCODE_ESCAPE) {
+    //         return false
+    //     }
+    //     KeyCommandModule.getInstance().onKeyDownEvent(keyCode, event)
+    //     return super.onKeyLongPress(keyCode, event)
+    // }
 
-    override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
-        // Disabling hardware ESCAPE support which is handled by Android
-        if (event.keyCode == KeyEvent.KEYCODE_ESCAPE) {
-            return false
-        }
-        KeyCommandModule.getInstance().onKeyDownEvent(keyCode, event)
-        return super.onKeyUp(keyCode, event)
-    }
+    // override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
+    //     // Disabling hardware ESCAPE support which is handled by Android
+    //     if (event.keyCode == KeyEvent.KEYCODE_ESCAPE) {
+    //         return false
+    //     }
+    //     KeyCommandModule.getInstance().onKeyDownEvent(keyCode, event)
+    //     return super.onKeyUp(keyCode, event)
+    // }
 
     override fun onStart() {
         super.onStart()
-        // RNPerformance.getInstance().mark("appCreationEnd", false); // enable this perhaps
+        // RNPerformance.getInstance().mark("appCreationEnd", false);
     }
 }
