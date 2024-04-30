@@ -98,7 +98,6 @@
     "react-native-device-info": "^10.13.1",
     "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "^2.16.0",
-    "react-native-gradle-plugin": "^0.71.19",
     "react-native-haptic-feedback": "^2.2.0",
     "react-native-image-crop-picker": "^0.40.2",
     "react-native-key-command": "1.0.6",

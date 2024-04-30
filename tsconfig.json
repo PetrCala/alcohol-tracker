@@ -5,7 +5,7 @@
     "target": "esnext",
     "module": "commonjs",
     // "module": "esnext",
-    "types": ["react-native", "jest", "node"],
+    "types": ["react-native", "jest"],
     "lib": [
       "DOM",
       "es2019",

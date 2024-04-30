@@ -45,6 +45,7 @@
   bundle update
   bun i
   bun -g i firebase-tools
+  brew install cmake # For android compilation
   cd ios
   pod install
   ```
