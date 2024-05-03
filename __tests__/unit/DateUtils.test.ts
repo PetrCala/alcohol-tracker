@@ -296,15 +296,15 @@ describe('DateUtils', () => {
       const scenarios = [
         {
           dateFormat: CONST.DATE.FNS_FORMAT_STRING,
-          expectedResult: '2022-11-06',
+          expectedResult: '2022-11-07',
         },
         {
           dateFormat: CONST.DATE.FNS_TIMEZONE_FORMAT_STRING,
-          expectedResult: '2022-11-06T23:00:00+01:00',
+          expectedResult: '2022-11-07T00:00:00Z',
         },
         {
           dateFormat: CONST.DATE.FNS_DB_FORMAT_STRING,
-          expectedResult: '2022-11-06 23:00:00.000',
+          expectedResult: '2022-11-07 00:00:00.000',
         },
       ];
 

@@ -31,17 +31,14 @@ describe('translate', () => {
   it('Test present key in full locale', () => {
     expect(
       Localize.translate(CONST.LOCALES.CS_CZ, 'testKey1' as TranslationPaths),
-    ).toBe('Spanish ES');
+    ).toBe('Czech');
   });
 
-  //   it('Test when key is not found in full locale, but present in language', () => {
-  //     expect(
-  //       Localize.translate(CONST.LOCALES.ES_ES, 'testKey2' as TranslationPaths),
-  //     ).toBe('Spanish Word 2');
-  //     expect(
-  //       Localize.translate(CONST.LOCALES.ES, 'testKey2' as TranslationPaths),
-  //     ).toBe('Spanish Word 2');
-  //   });
+  it('Test when key is not found in full locale, but present in language', () => {
+    expect(
+      Localize.translate(CONST.LOCALES.CS_CZ, 'testKey2' as TranslationPaths),
+    ).toBe('Czech Word 2');
+  });
 
   it('Test when key is not found in full locale and language, but present in default', () => {
     expect(

@@ -92,7 +92,7 @@ export default class Logger {
      * @param {Boolean} includeStackTrace Must be disabled for testing
      */
     alert(message, parameters = {}, includeStackTrace = true) {
-        const msg = `[alrt] ${message}`;
+        const msg = `[alert] ${message}`;
         const params = parameters;
 
         if (includeStackTrace) {
