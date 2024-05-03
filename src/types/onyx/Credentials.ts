@@ -1,4 +1,4 @@
-import {UserID} from './OnyxCommon';
+import type {UserID} from './OnyxCommon';
 
 type Credentials = {
   /** The email/phone the user logged in with */

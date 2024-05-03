@@ -1,7 +1,7 @@
 import type {ValueOf} from 'type-fest';
 import type CONST from '@src/CONST';
 import type * as OnyxCommon from './OnyxCommon';
-import {UserID} from './OnyxCommon';
+import type {UserID} from './OnyxCommon';
 
 type AutoAuthState = ValueOf<typeof CONST.AUTO_AUTH_STATE>;
 

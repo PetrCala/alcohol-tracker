@@ -43,7 +43,7 @@ import type {SelectedTimezone, Timezone} from '@src/types/onyx/PersonalDetails';
 import * as CurrentDate from './actions/CurrentDate';
 import * as Localize from './Localize';
 import Log from './Log';
-import {UserID} from '@src/types/onyx/OnyxCommon';
+import type {UserID} from '@src/types/onyx/OnyxCommon';
 
 type CustomStatusTypes =
   (typeof CONST.CUSTOM_STATUS_TYPES)[keyof typeof CONST.CUSTOM_STATUS_TYPES];

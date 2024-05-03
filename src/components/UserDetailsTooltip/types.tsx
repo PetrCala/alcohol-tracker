@@ -1,5 +1,5 @@
 import type {AvatarSource} from '@libs/UserUtils';
-import {UserID} from '@src/types/onyx';
+import type {UserID} from '@src/types/onyx';
 import type {AvatarType} from '@src/types/onyx/OnyxCommon';
 import type ChildrenProps from '@src/types/utils/ChildrenProps';
 
