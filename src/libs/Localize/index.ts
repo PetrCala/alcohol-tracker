@@ -40,16 +40,6 @@ let CONJUNCTION_LIST_FORMATS_FOR_LOCALES: Record<string, Intl.ListFormat>;
 function init() {
   CONJUNCTION_LIST_FORMATS_FOR_LOCALES = Object.values(CONST.LOCALES).reduce(
     (memo: Record<string, Intl.ListFormat>, locale) => {
-      // This is not a supported locale, so we'll use ES_ES instead
-      //   if (locale === CONST.LOCALES.ES_ES_ONFIDO) {
-      //     // eslint-disable-next-line no-param-reassign
-      //     memo[locale] = new Intl.ListFormat(CONST.LOCALES.ES_ES, {
-      //       style: 'long',
-      //       type: 'conjunction',
-      //     });
-      //     return memo;
-      //   }
-
       // eslint-disable-next-line no-param-reassign
       memo[locale] = new Intl.ListFormat(locale, {
         style: 'long',
