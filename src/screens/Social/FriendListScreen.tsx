@@ -2,7 +2,7 @@
 import SearchWindow from '@components/Social/SearchWindow';
 import type {
   SearchWindowRef,
-  UserIdToNicknameMapping,
+  UserIDToNicknameMapping,
 } from '@src/types/various/Search';
 import type GeneralAction from '@src/types/various/GeneralAction';
 import React, {useMemo, useReducer, useRef} from 'react';
@@ -51,7 +51,7 @@ function FriendListScreen({}: FriendListScreenProps) {
   const localSearch = (searchText: string) => {
     try {
       dispatch({type: 'SET_SEARCHING', payload: true});
-      const searchMapping: UserIdToNicknameMapping = getNicknameMapping(
+      const searchMapping: UserIDToNicknameMapping = getNicknameMapping(
         profileList,
         'display_name',
       );

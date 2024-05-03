@@ -448,12 +448,12 @@ export default function API(network, args) {
          *
          * @param {Object} parameters
          * @param {String} validateCode
-         * @param {Number} accountID
+         * @param {String} userID
          * @returns {ExpensifyAPIDeferred}
          */
         validateEmail(parameters) {
             const commandName = 'ValidateEmail';
-            requireParameters(['validateCode', 'accountID'], parameters, commandName);
+            requireParameters(['validateCode', 'userID'], parameters, commandName);
             return performPOSTRequest(commandName, parameters);
         },
 

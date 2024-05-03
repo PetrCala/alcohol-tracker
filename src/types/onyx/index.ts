@@ -7,7 +7,6 @@ import type {AppSettings, Maintenance} from './Config';
 import type {CapturedLogs, Log} from './Console';
 import type Credentials from './Credentials';
 import type DatabaseProps from './DatabaseProps';
-import type {UserId, UserList, UserArray, MeasureType} from './DatabaseCommon';
 import type Download from './Download';
 import type DrinkingSession from './DrinkingSession';
 import type {
@@ -98,7 +97,6 @@ export type {
   Login,
   LoginList,
   Maintenance,
-  MeasureType,
   Modal,
   Network,
   Nickname,
@@ -125,12 +123,9 @@ export type {
   UnconfirmedDaysList,
   UnitsToColors,
   User,
-  UserArray,
   UserProps,
   UserDrinkingSessionsList,
-  UserId,
   UserIsTyping,
-  UserList,
   UserPropsList,
   UserStatus,
   UserStatusList,

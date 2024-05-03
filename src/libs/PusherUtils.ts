@@ -30,11 +30,11 @@ function triggerMultiEventHandler(
  */
 function subscribeToPrivateUserChannelEvent(
   eventName: string,
-  accountID: string,
+  userID: string,
   onEvent: (pushJSON: OnyxUpdatesFromServer) => void,
 ) {
   const pusherChannelName =
-    `${CONST.PUSHER.PRIVATE_USER_CHANNEL_PREFIX}${accountID}${CONFIG.PUSHER.SUFFIX}` as const;
+    `${CONST.PUSHER.PRIVATE_USER_CHANNEL_PREFIX}${userID}${CONFIG.PUSHER.SUFFIX}` as const;
 
   function logPusherEvent(pushJSON: OnyxUpdatesFromServer) {
     Log.info(

@@ -7,6 +7,7 @@ import type {
   PersonalDetails,
   PersonalDetailsList,
   PrivatePersonalDetails,
+  UserID,
 } from '@src/types/onyx';
 import type {OnyxData} from '@src/types/onyx/Request';
 // import * as LocalePhoneNumber from './LocalePhoneNumber';
@@ -76,26 +77,23 @@ function getDisplayNameOrDefault(
 }
 
 /**
- * Given a list of account IDs (as number) it will return an array of personal details objects.
- * @param accountIDs  - Array of accountIDs
- * @param currentUserAccountID
+ * Given a list of user IDs (as number) it will return an array of personal details objects.
+ * @param userIDs  - Array of userIDs
+ * @param currentUserID
  * @param shouldChangeUserDisplayName - It will replace the current user's personal detail object's displayName with 'You'.
  * @returns - Array of personal detail objects
  */
 function getPersonalDetailsByIDs(
-  accountIDs: number[],
-  currentUserAccountID: number,
+  userIDs: UserID[],
+  currentUserID: UserID,
   shouldChangeUserDisplayName = false,
 ): PersonalDetails[] {
-  const result: PersonalDetails[] = accountIDs
-    .filter(accountID => !!allPersonalDetails?.[accountID])
-    .map(accountID => {
-      const detail = (allPersonalDetails?.[accountID] ?? {}) as PersonalDetails;
+  const result: PersonalDetails[] = userIDs
+    .filter(userID => !!allPersonalDetails?.[userID])
+    .map(userID => {
+      const detail = (allPersonalDetails?.[userID] ?? {}) as PersonalDetails;
 
-      if (
-        shouldChangeUserDisplayName &&
-        currentUserAccountID === detail.accountID
-      ) {
+      if (shouldChangeUserDisplayName && currentUserID === detail.userID) {
         return {
           ...detail,
           displayName: Localize.translateLocal('common.you'),
@@ -113,37 +111,37 @@ function getPersonalDetailByEmail(email: string): PersonalDetails | undefined {
 }
 
 /**
- * Given a list of logins, find the associated personal detail and return related accountIDs.
+ * Given a list of logins, find the associated personal detail and return related userIDs.
  *
  * @param logins Array of user logins
- * @returns Array of accountIDs according to passed logins
+ * @returns Array of userIDs according to passed logins
  */
-function getAccountIDsByLogins(logins: string[]): number[] {
-  return logins.reduce<number[]>((foundAccountIDs, login) => {
+function getUserIDsByLogins(logins: string[]): number[] {
+  return logins.reduce<number[]>((foundUserIDs, login) => {
     const currentDetail = personalDetails.find(
       detail => detail?.login === login?.toLowerCase(),
     );
     if (!currentDetail) {
-      // generate an account ID because in this case the detail is probably new, so we don't have a real accountID yet
-      foundAccountIDs.push(UserUtils.generateAccountID(login));
+      // generate an user ID because in this case the detail is probably new, so we don't have a real userID yet
+      foundUserIDs.push(UserUtils.generateUserID(login));
     } else {
-      foundAccountIDs.push(Number(currentDetail.accountID));
+      foundUserIDs.push(Number(currentDetail.userID));
     }
-    return foundAccountIDs;
+    return foundUserIDs;
   }, []);
 }
 
 /**
- * Given a list of accountIDs, find the associated personal detail and return related logins.
+ * Given a list of userIDs, find the associated personal detail and return related logins.
  *
- * @param accountIDs Array of user accountIDs
- * @returns Array of logins according to passed accountIDs
+ * @param userIDs Array of user userIDs
+ * @returns Array of logins according to passed userIDs
  */
-function getLoginsByAccountIDs(accountIDs: number[]): string[] {
-  return accountIDs.reduce((foundLogins: string[], accountID) => {
+function getLoginsByUserIDs(userIDs: UserID[]): string[] {
+  return userIDs.reduce((foundLogins: string[], userID) => {
     const currentDetail: Partial<PersonalDetails> =
       personalDetails.find(
-        detail => Number(detail?.accountID) === Number(accountID),
+        detail => Number(detail?.userID) === Number(userID),
       ) ?? {};
     if (currentDetail.login) {
       foundLogins.push(currentDetail.login);
@@ -153,39 +151,39 @@ function getLoginsByAccountIDs(accountIDs: number[]): string[] {
 }
 
 /**
- * Given a list of logins and accountIDs, return Onyx data for users with no existing personal details stored
+ * Given a list of logins and userIDs, return Onyx data for users with no existing personal details stored
  *
  * @param logins Array of user logins
- * @param accountIDs Array of user accountIDs
+ * @param userIDs Array of user userIDs
  * @returns Object with optimisticData, successData and failureData (object of personal details objects)
  */
 function getNewPersonalDetailsOnyxData(
   logins: string[],
-  accountIDs: number[],
+  userIDs: UserID[],
 ): Required<Pick<OnyxData, 'optimisticData' | 'finallyData'>> {
   const personalDetailsNew: PersonalDetailsList = {};
   const personalDetailsCleanup: PersonalDetailsList = {};
 
   logins.forEach((login, index) => {
-    const accountID = accountIDs[index];
+    const userID = userIDs[index];
 
     if (
       allPersonalDetails &&
-      Object.keys(allPersonalDetails?.[accountID] ?? {}).length === 0
+      Object.keys(allPersonalDetails?.[userID] ?? {}).length === 0
     ) {
-      personalDetailsNew[accountID] = {
+      personalDetailsNew[userID] = {
         login,
-        accountID,
-        avatar: UserUtils.getDefaultAvatarURL(accountID),
+        userID,
+        avatar: UserUtils.getDefaultAvatarURL(userID),
         // displayName: LocalePhoneNumber.formatPhoneNumber(login),
         displayName: login, // TODO check this
       };
 
       /**
        * Cleanup the optimistic user to ensure it does not permanently persist.
-       * This is done to prevent duplicate entries (upon success) since the BE will return other personal details with the correct account IDs.
+       * This is done to prevent duplicate entries (upon success) since the BE will return other personal details with the correct user IDs.
        */
-      personalDetailsCleanup[accountID] = null;
+      personalDetailsCleanup[userID] = null;
     }
   });
 
@@ -356,8 +354,8 @@ export {
   getDisplayNameOrDefault,
   getPersonalDetailsByIDs,
   getPersonalDetailByEmail,
-  getAccountIDsByLogins,
-  getLoginsByAccountIDs,
+  getUserIDsByLogins,
+  getLoginsByUserIDs,
   getNewPersonalDetailsOnyxData,
   getFormattedAddress,
   getFormattedStreet,

@@ -1,10 +1,10 @@
-import type {UserId} from './DatabaseCommon';
+import type {UserID} from './OnyxCommon';
 
 type Nickname = string;
 
 type NicknameKey = string;
 
-type NicknameToId = Record<UserId, Nickname>;
+type NicknameToId = Record<UserID, Nickname>;
 
 type NicknameToIdList = Record<NicknameKey, NicknameToId>;
 

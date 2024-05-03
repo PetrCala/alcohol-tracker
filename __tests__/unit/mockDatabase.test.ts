@@ -69,8 +69,8 @@ function isUserStatus(obj: any): obj is UserStatus {
 }
 
 function validateUserStatus(userStatuses: Record<string, any>): boolean {
-  for (const userId in userStatuses) {
-    if (!isUserStatus(userStatuses[userId])) {
+  for (const userID in userStatuses) {
+    if (!isUserStatus(userStatuses[userID])) {
       return false;
     }
   }
@@ -126,9 +126,11 @@ function isDrinkingSessionList(obj: any): obj is DrinkingSessionList {
  * @param userSessions Data to validate
  * @returns bool
  */
-function validateUserDrinkingSessions(userSessions: Record<string, any>): boolean {
-  for (const userId in userSessions) {
-    if (!isDrinkingSessionList(userSessions[userId])) {
+function validateUserDrinkingSessions(
+  userSessions: Record<string, any>,
+): boolean {
+  for (const userID in userSessions) {
+    if (!isDrinkingSessionList(userSessions[userID])) {
       return false;
     }
   }
@@ -179,9 +181,11 @@ function isUserPreferences(obj: any): obj is Preferences {
  * @param userPreferences Data to validate
  * @returns bool
  */
-function validateUserPreferences(userPreferences: Record<string, any>): boolean {
-  for (const userId in userPreferences) {
-    if (!isUserPreferences(userPreferences[userId])) {
+function validateUserPreferences(
+  userPreferences: Record<string, any>,
+): boolean {
+  for (const userID in userPreferences) {
+    if (!isUserPreferences(userPreferences[userID])) {
       return false;
     }
   }
@@ -211,9 +215,11 @@ function isUserUnconfirmedDays(obj: any): obj is UnconfirmedDays {
  * @param userUnconfirmedDays Data to validate
  * @returns bool
  */
-function validateUserUnconfirmedDays(userUnconfirmedDays: Record<string, any>): boolean {
-  for (const userId in userUnconfirmedDays) {
-    if (!isUserUnconfirmedDays(userUnconfirmedDays[userId])) {
+function validateUserUnconfirmedDays(
+  userUnconfirmedDays: Record<string, any>,
+): boolean {
+  for (const userID in userUnconfirmedDays) {
+    if (!isUserUnconfirmedDays(userUnconfirmedDays[userID])) {
       return false;
     }
   }
@@ -235,8 +241,8 @@ function isUserData(obj: any): obj is UserProps {
  * @returns bool
  */
 function validateUserData(userData: UserPropsList): boolean {
-  for (const userId in userData) {
-    if (!isUserData(userData[userId])) {
+  for (const userID in userData) {
+    if (!isUserData(userData[userID])) {
       return false;
     }
   }

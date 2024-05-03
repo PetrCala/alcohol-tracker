@@ -6,6 +6,7 @@ import Text from '@components/Text';
 import UserDetailsTooltip from '@components/UserDetailsTooltip';
 import useThemeStyles from '@hooks/useThemeStyles';
 import type {AvatarSource} from '@libs/UserUtils';
+import {UserID} from '@src/types/onyx';
 
 type DisplayNamesTooltipItemProps = {
   index?: number;
@@ -13,8 +14,8 @@ type DisplayNamesTooltipItemProps = {
   /** The function to get a distance to shift the tooltip horizontally */
   getTooltipShiftX?: (index: number) => number;
 
-  /** The Account ID for the tooltip */
-  accountID?: number;
+  /** The UserID ID for the tooltip */
+  userID?: UserID;
 
   /** The name to display in bold */
   displayName?: string;
@@ -35,7 +36,7 @@ type DisplayNamesTooltipItemProps = {
 function DisplayNamesTooltipItem({
   index = 0,
   getTooltipShiftX = () => 0,
-  accountID = 0,
+  userID = '',
   avatar = '',
   login = '',
   displayName = '',
@@ -51,7 +52,7 @@ function DisplayNamesTooltipItem({
   return (
     <UserDetailsTooltip
       key={index}
-      accountID={accountID}
+      userID={userID}
       fallbackUserDetails={{
         avatar,
         login,

@@ -56,7 +56,7 @@ const ONYXKEYS = {
   //   // keep edit message focus state
   //   INPUT_FOCUSED: 'inputFocused',
 
-  /** Contains all the personalDetails the user has access to, keyed by accountID */
+  /** Contains all the personalDetails the user has access to, keyed by userID */
   PERSONAL_DETAILS_LIST: 'personalDetailsList',
 
   /** Contains all the private personal details of the user */
@@ -107,7 +107,7 @@ const ONYXKEYS = {
   //   /** Contains metadata (partner, login, validation date) for all of the user's logins */
   //   LOGIN_LIST: 'loginList',
 
-  //   /** Information about the current session (authToken, accountID, email, loading, error) */
+  //   /** Information about the current session (authToken, userID, email, loading, error) */
   SESSION: 'session',
   //   STASHED_SESSION: 'stashedSession',
   // BETAS: 'betas',
@@ -235,7 +235,7 @@ const ONYXKEYS = {
   //   /** Is app in profiling mode */
   //   APP_PROFILING_IN_PROGRESS: 'isProfilingInProgress',
 
-  //   /** Stores information about active wallet transfer amount, selectedAccountID, status, etc */
+  //   /** Stores information about active wallet transfer amount, selectedUserID, status, etc */
   //   WALLET_TRANSFER: 'walletTransfer',
 
   //   /** The policyID of the last workspace whose settings were accessed by the user */
@@ -542,7 +542,7 @@ type OnyxCollectionValuesMapping = {
   //     .POLICY_RECENTLY_USED_CATEGORIES]: OnyxTypes.RecentlyUsedCategories;
   //   [ONYXKEYS.COLLECTION.DEPRECATED_POLICY_MEMBER_LIST]: OnyxTypes.PolicyMembers;
   //   [ONYXKEYS.COLLECTION
-  //     .WORKSPACE_INVITE_MEMBERS_DRAFT]: OnyxTypes.InvitedEmailsToAccountIDs;
+  //     .WORKSPACE_INVITE_MEMBERS_DRAFT]: OnyxTypes.InvitedEmailsToUserIDs;
   //   [ONYXKEYS.COLLECTION.WORKSPACE_INVITE_MESSAGE_DRAFT]: string;
   //   [ONYXKEYS.COLLECTION.REPORT]: OnyxTypes.Report;
   //   [ONYXKEYS.COLLECTION.REPORT_METADATA]: OnyxTypes.ReportMetadata;

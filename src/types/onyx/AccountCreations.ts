@@ -1,8 +1,8 @@
-import type {UserId} from './DatabaseCommon';
+import type {UserID} from './OnyxCommon';
 
 type DeviceId = string;
 
-type AccountCreations = Record<UserId, number>; // timestamp
+type AccountCreations = Record<UserID, number>; // timestamp
 
 type AccountCreationsList = Record<DeviceId, AccountCreations>;
 

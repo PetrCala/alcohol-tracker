@@ -125,10 +125,7 @@ function MultipleAvatars({
     () =>
       shouldShowTooltip
         ? icons.map(icon =>
-            DrinkingSessionUtils.getUserDetailTooltipText(
-              icon.id as string, // TODO: Fix this type
-              icon.name,
-            ),
+            DrinkingSessionUtils.getUserDetailTooltipText(icon.id, icon.name),
           )
         : [''],
     [shouldShowTooltip, icons],
@@ -170,7 +167,7 @@ function MultipleAvatars({
   if (icons.length === 1 && !shouldStackHorizontally) {
     return (
       <UserDetailsTooltip
-        accountID={Number(icons[0].id)}
+        userID={icons[0].id}
         icon={icons[0]}
         fallbackUserDetails={{
           displayName: icons[0].name,
@@ -183,7 +180,7 @@ function MultipleAvatars({
             name={icons[0].name}
             type={icons[0].type}
             fallbackIcon={icons[0].fallbackIcon}
-            userId={icons[0].id as any}
+            userID={icons[0].id as any}
           />
         </View>
       </UserDetailsTooltip>
@@ -214,7 +211,7 @@ function MultipleAvatars({
         {[...avatars].splice(0, maxAvatarsInRow).map((icon, index) => (
           <UserDetailsTooltip
             key={`stackedAvatars-${icon.id}`}
-            accountID={Number(icon.id)}
+            userID={icon.id}
             icon={icon}
             fallbackUserDetails={{
               displayName: icon.name,
@@ -240,7 +237,7 @@ function MultipleAvatars({
                 name={icon.name}
                 type={icon.type}
                 fallbackIcon={icon.fallbackIcon}
-                userId={icon.id as any}
+                userID={icon.id as any}
               />
             </View>
           </UserDetailsTooltip>
@@ -302,7 +299,7 @@ function MultipleAvatars({
     <View style={avatarContainerStyles}>
       <View style={[singleAvatarStyle]}>
         <UserDetailsTooltip
-          accountID={Number(icons[0].id)}
+          userID={icons[0].id}
           icon={icons[0]}
           fallbackUserDetails={{
             displayName: icons[0].name,
@@ -322,7 +319,7 @@ function MultipleAvatars({
         <View style={[secondAvatarStyles, secondAvatarStyle]}>
           {icons.length === 2 ? (
             <UserDetailsTooltip
-              accountID={Number(icons[1].id)}
+              userID={icons[1].id}
               icon={icons[1]}
               fallbackUserDetails={{
                 displayName: icons[1].name,

@@ -56,20 +56,20 @@ type AuthScreensProps = {
 };
 
 let timezone: Timezone | null;
-let currentAccountID = -1;
+let currentUserID = -1;
 let isLoadingApp = false;
 let lastUpdateIDAppliedToClient: OnyxEntry<number>;
 
 Onyx.connect({
   key: ONYXKEYS.SESSION,
   callback: value => {
-    // When signed out, val hasn't accountID
-    if (!(value && 'accountID' in value)) {
+    // When signed out, val hasn't userID
+    if (!(value && 'userID' in value)) {
       timezone = null;
       return;
     }
 
-    currentAccountID = value.accountID ?? -1;
+    currentUserID = value.userID ?? -1;
 
     // TODO
     // if (Navigation.isActiveRoute(ROUTES.SIGN_IN_MODAL)) {
@@ -86,7 +86,7 @@ Onyx.connect({
       return;
     }
 
-    timezone = value?.[currentAccountID]?.timezone ?? {};
+    timezone = value?.[currentUserID]?.timezone ?? {};
     const currentTimezone = Intl.DateTimeFormat().resolvedOptions()
       .timeZone as SelectedTimezone;
 

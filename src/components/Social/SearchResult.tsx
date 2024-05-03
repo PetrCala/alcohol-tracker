@@ -126,7 +126,7 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
 };
 
 type SearchResultProps = {
-  userId: string;
+  userID: string;
   userDisplayData: Profile;
   db: Database;
   storage: FirebaseStorage;
@@ -137,7 +137,7 @@ type SearchResultProps = {
 };
 
 const SearchResult: React.FC<SearchResultProps> = ({
-  userId,
+  userID,
   userDisplayData,
   db,
   storage,
@@ -150,9 +150,9 @@ const SearchResult: React.FC<SearchResultProps> = ({
     <View style={styles.userOverviewContainer}>
       <View style={styles.userInfoContainer}>
         <ProfileImage
-          key={userId + '-profile-icon'}
+          key={userID + '-profile-icon'}
           storage={storage}
-          userId={userId}
+          userID={userID}
           downloadPath={userDisplayData?.photo_url}
           style={styles.userProfileImage}
         />
@@ -168,7 +168,7 @@ const SearchResult: React.FC<SearchResultProps> = ({
         <SendFriendRequestButton
           db={db}
           userFrom={userFrom}
-          userTo={userId}
+          userTo={userID}
           requestStatus={requestStatus}
           alreadyAFriend={alreadyAFriend}
         />

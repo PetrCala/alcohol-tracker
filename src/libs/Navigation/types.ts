@@ -15,7 +15,7 @@ import type CONST from '@src/CONST';
 import type NAVIGATORS from '@src/NAVIGATORS';
 import type SCREENS from '@src/SCREENS';
 import type {Route as Routes} from '@src/ROUTES';
-import type { DrinkingSessionId} from '@src/types/onyx';
+import type {DrinkingSessionId} from '@src/types/onyx';
 import {DrinkingSession, Profile} from '@src/types/onyx';
 import type DeepValueOf from '@src/types/utils/DeepValueOf';
 import type {DateString} from '@src/types/time';
@@ -121,13 +121,13 @@ type MainMenuNavigatorParamList = {
 
 type ProfileNavigatorParamList = {
   [SCREENS.PROFILE.ROOT]: {
-    userId: string;
+    userID: string;
   };
   [SCREENS.PROFILE.EDIT]: {
-    userId: string;
+    userID: string;
   };
   [SCREENS.PROFILE.FRIENDS_FRIENDS]: {
-    userId: string;
+    userID: string;
   };
 };
 

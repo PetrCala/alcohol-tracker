@@ -1,5 +1,5 @@
 ﻿import type {Database} from 'firebase/database';
-import { child, push, ref, update} from 'firebase/database';
+import {child, push, ref, update} from 'firebase/database';
 import type {FeedbackList, Feedback} from '../types/onyx';
 import {Alert} from 'react-native';
 import DBPATHS from './DBPATHS';
@@ -11,21 +11,21 @@ const feedbackItemRef = DBPATHS.FEEDBACK_FEEDBACK_ID;
  * @description Each feedback has its own unique ID that gets created upon pushing the data into the database. The function also automatically creates a timestamp corresponding to the time when the feedback was submitted.
  *
  * @param db The database object
- * @param userId The user ID
+ * @param userID The user ID
  * @param text The text to be submitted
  * @returns An empty promise
  *
  *  */
 export async function submitFeedback(
   db: Database,
-  userId: string,
+  userID: string,
   text: string,
 ): Promise<void> {
   const timestampNow = new Date().getTime();
   const newFeedback: Feedback = {
     submit_time: timestampNow,
     text: text,
-    user_id: userId,
+    user_id: userID,
   };
   // Create a new feedback id
   const newFeedbackKey = push(child(ref(db), DBPATHS.FEEDBACK)).key;

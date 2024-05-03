@@ -43,6 +43,7 @@ import type {SelectedTimezone, Timezone} from '@src/types/onyx/PersonalDetails';
 import * as CurrentDate from './actions/CurrentDate';
 import * as Localize from './Localize';
 import Log from './Log';
+import {UserID} from '@src/types/onyx/OnyxCommon';
 
 type CustomStatusTypes =
   (typeof CONST.CUSTOM_STATUS_TYPES)[keyof typeof CONST.CUSTOM_STATUS_TYPES];
@@ -50,7 +51,7 @@ type TimePeriod = 'AM' | 'PM';
 type Locale = ValueOf<typeof CONST.LOCALES>;
 type WeekDay = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
-let currentUserAccountID: number | undefined;
+let currentUserID: UserID | undefined;
 Onyx.connect({
   key: ONYXKEYS.SESSION,
   callback: val => {
@@ -59,7 +60,7 @@ Onyx.connect({
       return;
     }
 
-    currentUserAccountID = val.accountID;
+    currentUserID = val.userID;
   },
 });
 
@@ -67,11 +68,11 @@ let timezone: Required<Timezone> = CONST.DEFAULT_TIME_ZONE;
 Onyx.connect({
   key: ONYXKEYS.PERSONAL_DETAILS_LIST,
   callback: value => {
-    if (!currentUserAccountID) {
+    if (!currentUserID) {
       return;
     }
 
-    const personalDetailsTimezone = value?.[currentUserAccountID]?.timezone;
+    const personalDetailsTimezone = value?.[currentUserID]?.timezone;
 
     timezone = {
       selected:

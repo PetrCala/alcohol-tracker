@@ -20,14 +20,14 @@ type UseListenToDataReturn = {
  * Allows to listen to user's data only in the relevant database nodes. Does not attach
  * listeners for the unused keys.
  *
- * @param userId User to listen to the data for
+ * @param userID User to listen to the data for
  * @param dataTypes Database node keys to listen to data for
  * @returns An object with the data and a loading state
  * @example
- * const {data, isLoading, refetch} = useListenToData(userId, ['userStatusData', 'drinkingSessionData']);
+ * const {data, isLoading, refetch} = useListenToData(userID, ['userStatusData', 'drinkingSessionData']);
  */
 const useListenToData = (
-  userId: string,
+  userID: string,
   dataTypes: FetchDataKeys,
 ): UseListenToDataReturn => {
   const {db} = useFirebase();
@@ -35,14 +35,14 @@ const useListenToData = (
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    if (!userId || !db) {
+    if (!userID || !db) {
       setIsLoading(false);
       return;
     }
 
     setIsLoading(true);
     const unsubscribers = dataTypes.map(dataTypes => {
-      const path = fetchDataKeyToDbPath(dataTypes, userId);
+      const path = fetchDataKeyToDbPath(dataTypes, userID);
 
       if (path) {
         return listenForDataChanges(db, path, fetchedData => {
@@ -58,7 +58,7 @@ const useListenToData = (
     return () => {
       unsubscribers.forEach(unsubscribe => unsubscribe());
     };
-  }, [userId, ...dataTypes]); // Depend on dataTypes to allow dynamically changing what data to listen to
+  }, [userID, ...dataTypes]); // Depend on dataTypes to allow dynamically changing what data to listen to
 
   return {
     data: {

@@ -19,7 +19,7 @@ import type {
   Drinks,
 } from '@src/types/onyx';
 import CONST from '../CONST';
-import type {MeasureType} from '@src/types/onyx/DatabaseCommon';
+import type {MeasureType} from '@src/types/onyx/OnyxCommon';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import _, {get} from 'lodash';
 
@@ -256,7 +256,9 @@ export function getSingleDayDrinkingSessions(
   sessions: DrinkingSessionList | undefined,
   returnArray = true,
 ): DrinkingSessionArray | DrinkingSessionList {
-  if (isEmptyObject(sessions)) {return [];}
+  if (isEmptyObject(sessions)) {
+    return [];
+  }
   // Define the time boundaries
   date.setHours(0, 0, 0, 0); // set to start of day
 
@@ -297,7 +299,9 @@ export function getSingleMonthDrinkingSessions(
   sessions: DrinkingSessionArray,
   untilToday = false,
 ) {
-  if (!sessions) {return [];}
+  if (!sessions) {
+    return [];
+  }
   date.setHours(0, 0, 0, 0); // To midnight
   // Find the beginning date
   const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
@@ -337,8 +341,9 @@ export function aggregateSessionsByDays(
       const dateString = formatDate(new Date(item.start_time)); // MM-DD-YYYY
       let newDrinks: number;
       if (measureType === 'units') {
-        if (!drinksToUnits)
-          {throw new Error('You must specify the drink to unit conversion');}
+        if (!drinksToUnits) {
+          throw new Error('You must specify the drink to unit conversion');
+        }
         newDrinks = sumAllUnits(item.drinks, drinksToUnits);
       } else if (measureType === 'drinks') {
         newDrinks = sumAllDrinks(item.drinks);
@@ -400,7 +405,9 @@ export function monthEntriesToColors(
  * @param all_drinks Drinks to sum up.
  */
 export function sumAllDrinks(drinks: DrinksList | undefined): number {
-  if (isEmptyObject(drinks)) {return 0;}
+  if (isEmptyObject(drinks)) {
+    return 0;
+  }
   return Object.values(drinks).reduce((total, drinkTypes) => {
     return (
       total +
@@ -421,7 +428,9 @@ export function sumDrinksOfSingleType(
   drinksObject: DrinksList | undefined,
   drinkType: DrinkKey,
 ): number {
-  if (!drinksObject) {return 0;}
+  if (!drinksObject) {
+    return 0;
+  }
   return _.reduce(
     drinksObject,
     (total, session) => total + (session[drinkType] ?? 0),
@@ -435,7 +444,9 @@ export function sumDrinksOfSingleType(
  * @returns The sum
  */
 export function sumDrinkTypes(drinkTypes: Drinks): number {
-  if (!drinkTypes) {return 0;}
+  if (!drinkTypes) {
+    return 0;
+  }
   return _.reduce(
     drinkTypes,
     (total, drinkCount) => total + (drinkCount ?? 0),
@@ -463,7 +474,9 @@ export function sumAllUnits(
   drinksObject: DrinksList | undefined,
   drinksToUnits: DrinksToUnits,
 ): number {
-  if (_.isEmpty(drinksObject)) {return 0;}
+  if (_.isEmpty(drinksObject)) {
+    return 0;
+  }
   let totalUnits = 0;
   // Iterate over each timestamp in drinksObject
   _.forEach(Object.values(drinksObject), drinkTypes => {
@@ -485,7 +498,9 @@ export function sumAllUnits(
  * @returnsTimestamp of the last drink consumed
  */
 export function getLastDrinkAddedTime(session: DrinkingSession): number | null {
-  if (_.isEmpty(session?.drinks)) {return null;}
+  if (_.isEmpty(session?.drinks)) {
+    return null;
+  }
   const timestamps = _.map(Object.keys(session.drinks), Number);
   // Return the maximum timestamp or null if there aren't any
   return timestamps.length ? Math.max(...timestamps) : null;
@@ -496,7 +511,9 @@ export function getLastDrinkAddedTime(session: DrinkingSession): number | null {
 export function findOngoingSession(
   sessions: DrinkingSessionList,
 ): DrinkingSession | null {
-  if (isEmptyObject(sessions)) {return null;}
+  if (isEmptyObject(sessions)) {
+    return null;
+  }
   const ongoingSession = Object.values(sessions).find(
     session => session.ongoing === true,
   );
@@ -541,7 +558,9 @@ export const calculateThisMonthUnits = (
   sessions: DrinkingSessionArray,
   drinksToUnits: DrinksToUnits,
 ): number => {
-  if (!sessions) {return 0;}
+  if (!sessions) {
+    return 0;
+  }
   // Subset to this month's sessions only
   const currentDate = timestampToDate(dateObject.timestamp);
   const sessionsThisMonth = getSingleMonthDrinkingSessions(
@@ -559,14 +578,18 @@ export const calculateThisMonthUnits = (
 export function getLastStartedSession(
   sessions: DrinkingSessionList | undefined,
 ): DrinkingSession | undefined {
-  if (!sessions) {return undefined;}
+  if (!sessions) {
+    return undefined;
+  }
   return _.maxBy(_.values(sessions), 'start_time');
 }
 
 export function getLastStartedSessionId(
   sessions: DrinkingSessionList | undefined,
 ): string | undefined {
-  if (!sessions) {return undefined;}
+  if (!sessions) {
+    return undefined;
+  }
 
   const latestSession = _.maxBy(
     _.entries(sessions),
@@ -585,7 +608,9 @@ export const addDrinks = (
   existingDrinks: DrinksList | undefined,
   drinks: Drinks,
 ): DrinksList | undefined => {
-  if (isEmptyObject(drinks)) {return existingDrinks;}
+  if (isEmptyObject(drinks)) {
+    return existingDrinks;
+  }
   const newDrinks: DrinksList = {
     ...existingDrinks,
     [Date.now()]: drinks,
@@ -604,7 +629,9 @@ export const removeDrinks = (
   drinkType: DrinkKey,
   count: number,
 ): DrinksList | undefined => {
-  if (isEmptyObject(existingDrinks)) {return existingDrinks;}
+  if (isEmptyObject(existingDrinks)) {
+    return existingDrinks;
+  }
   let drinksToRemove = count;
   const updatedDrinks: DrinksList = JSON.parse(JSON.stringify(existingDrinks)); // Deep copy
   for (const timestamp of Object.keys(updatedDrinks).sort((a, b) => +b - +a)) {
@@ -733,7 +760,9 @@ export const findDrinkName = (key: DrinkKey): DrinkName | undefined => {
   const drinkIdx = Object.values(CONST.DRINKS.KEYS).findIndex(
     type => type === key,
   );
-  if (drinkIdx === -1) {return undefined;}
+  if (drinkIdx === -1) {
+    return undefined;
+  }
   return Object.values(CONST.DRINKS.NAMES)[drinkIdx];
 };
 

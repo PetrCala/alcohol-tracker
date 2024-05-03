@@ -1,3 +1,5 @@
+import {UserID} from './onyx';
+
 declare module '*.png' {
   import type {ImageSourcePropType} from 'react-native';
 
@@ -29,5 +31,5 @@ declare module '*.lottie' {
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface Window {
-  setSupportToken: (token: string, email: string, accountID: number) => void;
+  setSupportToken: (token: string, email: string, userID: UserID) => void;
 }

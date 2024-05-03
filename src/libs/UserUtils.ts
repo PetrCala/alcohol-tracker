@@ -4,7 +4,7 @@ import type {ValueOf} from 'type-fest';
 import * as defaultAvatars from '@components/Icon/DefaultAvatars';
 import {UserIcon} from '@components/Icon/KirokuImages';
 import CONST from '@src/CONST';
-import type {LoginList, UserId} from '@src/types/onyx';
+import type {LoginList, UserID} from '@src/types/onyx';
 import type Login from '@src/types/onyx/Login';
 import type IconAsset from '@src/types/utils/IconAsset';
 import hashCode from './hashCode';
@@ -103,30 +103,30 @@ function hashText(text: string, range: number): number {
 }
 
 /**
- * Generate a random userId base on searchValue.
+ * Generate a random userID base on searchValue.
  */
-function generateAccountID(searchValue: string): number {
+function generateUserID(searchValue: string): number {
   return hashText(searchValue, 2 ** 32);
 }
 
 /**
- * Helper method to return the default avatar associated with the given userId
- * @param [userId]
+ * Helper method to return the default avatar associated with the given userID
+ * @param [userID]
  * @returns
  */
 function getDefaultAvatar(
-  userId: UserId = '-1',
+  userID: UserID = '-1',
   avatarURL?: string,
 ): IconAsset {
   return UserIcon;
   // TODO enable this
-  // if (userId <= 0) {
+  // if (userID <= 0) {
   //   return UserIcon;
   // }
-  // if (Number(userId) === CONST.USER_ID.CONCIERGE) {
+  // if (Number(userID) === CONST.USER_ID.CONCIERGE) {
   //   return ConciergeAvatar;
   // }
-  // if (Number(userId) === CONST.USER_ID.NOTIFICATIONS) {
+  // if (Number(userID) === CONST.USER_ID.NOTIFICATIONS) {
   //   return NotificationsAvatar;
   // }
 
@@ -135,27 +135,27 @@ function getDefaultAvatar(
 
   // When creating a chat, we generate an avatar using an ID and the backend response will modify the ID to the actual user ID.
   // But the avatar link still corresponds to the original ID-generated link. So we extract the SVG image number from the backend's link instead of using the user ID directly
-  // let userIdHashBucket: AvatarRange;
+  // let userIDHashBucket: AvatarRange;
   // if (avatarURL) {
   //   const match = avatarURL.match(/(default-avatar_|avatar_)(\d+)(?=\.)/);
   //   const lastDigit = match && parseInt(match[2], 10);
-  //   userIdHashBucket = lastDigit as AvatarRange;
+  //   userIDHashBucket = lastDigit as AvatarRange;
   // } else {
-  //   userIdHashBucket = ((userId % CONST.DEFAULT_AVATAR_COUNT) +
+  //   userIDHashBucket = ((userID % CONST.DEFAULT_AVATAR_COUNT) +
   //     1) as AvatarRange;
   // }
-  // return defaultAvatars[`Avatar${userIdHashBucket}`];
+  // return defaultAvatars[`Avatar${userIDHashBucket}`];
 }
 
 /**
- * Helper method to return default avatar URL associated with the userId
+ * Helper method to return default avatar URL associated with the userID
  */
-function getDefaultAvatarURL(userId: string | number = ''): string {
+function getDefaultAvatarURL(userID: string | number = ''): string {
   // Note that Avatar count starts at 1 which is why 1 has to be added to the result (or else 0 would result in a broken avatar link)
-  const userIdHashBucket = (Number(userId) % CONST.DEFAULT_AVATAR_COUNT) + 1;
+  const userIDHashBucket = (Number(userID) % CONST.DEFAULT_AVATAR_COUNT) + 1;
   const avatarPrefix = `default-avatar`;
 
-  // return `${CONST.CLOUDFRONT_URL}/images/avatars/${avatarPrefix}_${userIdHashBucket}.png`; // TODO link this to the Firebase storage
+  // return `${CONST.CLOUDFRONT_URL}/images/avatars/${avatarPrefix}_${userIDHashBucket}.png`; // TODO link this to the Firebase storage
   return '';
 }
 
@@ -189,11 +189,11 @@ function isDefaultAvatar(
  * Otherwise, return the URL or SVG pointing to the user-uploaded avatar.
  *
  * @param avatarSource - the avatar source from user's personalDetails
- * @param userId - the userId of the user
+ * @param userID - the userID of the user
  */
-function getAvatar(avatarSource?: AvatarSource, userId?: UserId): AvatarSource {
+function getAvatar(avatarSource?: AvatarSource, userID?: UserID): AvatarSource {
   return isDefaultAvatar(avatarSource)
-    ? getDefaultAvatar(userId, avatarSource)
+    ? getDefaultAvatar(userID, avatarSource)
     : avatarSource;
 }
 
@@ -202,14 +202,14 @@ function getAvatar(avatarSource?: AvatarSource, userId?: UserId): AvatarSource {
  * Otherwise, return the URL pointing to a user-uploaded avatar.
  *
  * @param avatarURL - the avatar source from user's personalDetails
- * @param userId - the userId of the user
+ * @param userID - the userID of the user
  */
 function getAvatarUrl(
   avatarSource: AvatarSource | undefined,
-  userId: UserId,
+  userID: UserID,
 ): AvatarSource {
   return isDefaultAvatar(avatarSource)
-    ? getDefaultAvatarURL(userId)
+    ? getDefaultAvatarURL(userID)
     : avatarSource;
 }
 
@@ -219,9 +219,9 @@ function getAvatarUrl(
  */
 function getFullSizeAvatar(
   avatarSource: AvatarSource | undefined,
-  userId?: UserId,
+  userID?: UserID,
 ): AvatarSource {
-  const source = getAvatar(avatarSource, userId);
+  const source = getAvatar(avatarSource, userID);
   if (typeof source !== 'string') {
     return source;
   }
@@ -234,9 +234,9 @@ function getFullSizeAvatar(
  */
 function getSmallSizeAvatar(
   avatarSource: AvatarSource,
-  userId?: UserId,
+  userID?: UserID,
 ): AvatarSource {
-  const source = getAvatar(avatarSource, userId);
+  const source = getAvatar(avatarSource, userID);
   if (typeof source !== 'string') {
     return source;
   }
@@ -270,7 +270,7 @@ function getSmallSizeAvatar(
 // }
 
 export {
-  generateAccountID,
+  generateUserID,
   getAvatar,
   getAvatarUrl,
   getDefaultAvatar,

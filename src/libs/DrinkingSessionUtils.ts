@@ -9,7 +9,7 @@ import type {
 } from '@src/types/onyx';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import {getTimestampAge, numberToVerboseString} from './TimeUtils';
-import {UserId} from '@src/types/onyx';
+import {UserID} from '@src/types/onyx';
 import * as Localize from './Localize';
 
 const PlaceholderDrinks: DrinksList = {[Date.now()]: {other: 0}};
@@ -145,17 +145,17 @@ function determineSessionMostCommonDrink(
  * Get the displayName for a single session participant.
  */
 function getDisplayNameForParticipant(
-  userId?: UserId,
+  userID?: UserID,
   shouldUseShortForm = false,
   shouldFallbackToHidden = true,
   shouldAddCurrentUserPostfix = false,
 ): string {
-  if (!userId) {
+  if (!userID) {
     return '';
   }
   return 'not-yet-implemented'; // TODO implement this
 
-  // const personalDetails = getPersonalDetailsForUserId(userId);
+  // const personalDetails = getPersonalDetailsForUserID(userID);
   // // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   // const formattedLogin = LocalePhoneNumber.formatPhoneNumber(
   //   personalDetails.login || '',
@@ -169,7 +169,7 @@ function getDisplayNameForParticipant(
 
   // // For selfDM, we display the user's displayName followed by '(you)' as a postfix
   // const shouldAddPostfix =
-  //   shouldAddCurrentUserPostfix && userId === currentUserUserId;
+  //   shouldAddCurrentUserPostfix && userID === currentUserID;
 
   // const longName = PersonalDetailsUtils.getDisplayNameOrDefault(
   //   personalDetails,
@@ -193,13 +193,13 @@ function getDisplayNameForParticipant(
 }
 
 /**
- * Returns the the display names of the given user userIds
+ * Returns the the display names of the given user userIDs
  */
 function getUserDetailTooltipText(
-  userId: UserId,
+  userID: UserID,
   fallbackUserDisplayName = '',
 ): string {
-  const displayNameForParticipant = getDisplayNameForParticipant(userId);
+  const displayNameForParticipant = getDisplayNameForParticipant(userID);
   return displayNameForParticipant || fallbackUserDisplayName;
 }
 

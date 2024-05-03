@@ -1,4 +1,4 @@
-import type {UserId, UserList} from './DatabaseCommon';
+import type {UserID, UserList} from './OnyxCommon';
 import type FriendRequestList from './FriendRequestList';
 
 type Profile = {
@@ -14,9 +14,9 @@ type UserProps = {
   role: string;
 };
 
-type UserPropsList = Record<UserId, UserProps>;
+type UserPropsList = Record<UserID, UserProps>;
 
-type ProfileList = Record<UserId, Profile>;
+type ProfileList = Record<UserID, Profile>;
 
 export default UserProps;
 export type {Profile, UserPropsList, ProfileList};

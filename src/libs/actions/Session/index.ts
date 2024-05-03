@@ -7,6 +7,7 @@ import Onyx from 'react-native-onyx';
 import type {ValueOf} from 'type-fest';
 import * as PersistedRequests from '@libs/actions/PersistedRequests';
 import * as API from '@libs/API';
+import type {UserID} from '@src/types/onyx';
 // import type {
 //   AuthenticatePusherParams,
 //   BeginAppleSignInParams,
@@ -101,13 +102,13 @@ import clearCache from './clearCache';
 // function setSupportAuthToken(
 //   supportAuthToken: string,
 //   email: string,
-//   accountID: number,
+//   userID: UserID,
 // ) {
 //   Onyx.merge(ONYXKEYS.SESSION, {
 //     authTokenType: CONST.AUTH_TOKEN_TYPES.SUPPORT,
 //     authToken: supportAuthToken,
 //     email,
-//     accountID,
+//     userID,
 //   }).then(() => {
 //     Log.info('[Supportal] Authtoken set');
 //   });
@@ -566,7 +567,7 @@ function checkIfActionIsAllowed<
 // }
 
 // function signInWithValidateCode(
-//   accountID: number,
+//   userID: UserID,
 //   code: string,
 //   twoFactorAuthCode = '',
 // ) {
@@ -606,7 +607,7 @@ function checkIfActionIsAllowed<
 //       onyxMethod: Onyx.METHOD.MERGE,
 //       key: ONYXKEYS.CREDENTIALS,
 //       value: {
-//         accountID,
+//         userID,
 //         validateCode,
 //       },
 //     },
@@ -634,7 +635,7 @@ function checkIfActionIsAllowed<
 //   ];
 //   Device.getDeviceInfoWithID().then(deviceInfo => {
 //     const params: SignInUserWithLinkParams = {
-//       accountID,
+//       userID,
 //       validateCode,
 //       twoFactorAuthCode,
 //       preferredLocale,
@@ -879,7 +880,7 @@ function cleanupSession() {
 //   });
 // }
 
-// function unlinkLogin(accountID: number, validateCode: string) {
+// function unlinkLogin(userID: UserID, validateCode: string) {
 //   const optimisticData: OnyxUpdate[] = [
 //     {
 //       onyxMethod: Onyx.METHOD.MERGE,
@@ -918,7 +919,7 @@ function cleanupSession() {
 //   ];
 
 //   const params: UnlinkLoginParams = {
-//     accountID,
+//     userID,
 //     validateCode,
 //   };
 
@@ -1049,12 +1050,12 @@ function cleanupSession() {
 // }
 
 // function signInWithValidateCodeAndNavigate(
-//   accountID: number,
+//   userID: UserID,
 //   validateCode: string,
 //   twoFactorAuthCode = '',
 //   exitTo?: Route | HybridAppRoute,
 // ) {
-//   signInWithValidateCode(accountID, validateCode, twoFactorAuthCode);
+//   signInWithValidateCode(userID, validateCode, twoFactorAuthCode);
 //   if (exitTo) {
 //     handleExitToNavigation(exitTo);
 //   } else {

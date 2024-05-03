@@ -230,7 +230,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     setAvailableUnits(newAvailableUnits);
   }, [session?.drinks]);
 
-  async function saveSession(db: any, userId: string) {
+  async function saveSession(db: any, userID: string) {
     if (!session || !user) {
       return;
     }
@@ -252,17 +252,17 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
           await new Promise(resolve => setTimeout(resolve, 100));
         }
         if (sessionIsLive) {
-          await endLiveDrinkingSession(db, userId, newSessionData, sessionId);
+          await endLiveDrinkingSession(db, userID, newSessionData, sessionId);
         } else {
           await saveDrinkingSessionData(
             db,
-            userId,
+            userID,
             newSessionData,
             sessionId,
             false, // Do not update live status
           );
         }
-        await removePlaceholderSessionData(db, userId);
+        await removePlaceholderSessionData(db, userID);
       } catch (error: any) {
         Alert.alert(
           translate('LiveSessionScreen.error.saveTitle'),
@@ -284,7 +284,9 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   };
 
   const handleConfirmDiscard = async () => {
-    if (!user) {return;}
+    if (!user) {
+      return;
+    }
     try {
       setLoadingText(
         `${sessionIsLive ? 'Discarding' : 'Deleting'} this session...`,

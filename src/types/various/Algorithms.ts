@@ -1,7 +1,7 @@
-import type {UserId} from '../onyx';
+import type {UserID} from '../onyx';
 
 type UserPriority = number;
 
-type UserPriorityList = Record<UserId, UserPriority>;
+type UserPriorityList = Record<UserID, UserPriority>;
 
 export type {UserPriority, UserPriorityList};

@@ -1,6 +1,7 @@
 import type {AvatarSource} from '@libs/UserUtils';
 import type TIMEZONES from '@src/TIMEZONES';
 import type * as OnyxCommon from './OnyxCommon';
+import {UserID} from './OnyxCommon';
 
 type SelectedTimezone = (typeof TIMEZONES)[number];
 
@@ -25,7 +26,7 @@ type Status = {
 
 type PersonalDetails = OnyxCommon.OnyxValueWithOfflineFeedback<{
   /** ID of the current user from their personal details */
-  accountID: number;
+  userID: UserID;
 
   /** First name of the current user from their personal details */
   firstName?: string;

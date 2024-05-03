@@ -13,10 +13,10 @@
 // import CONST from '@src/CONST';
 
 // function BaseUserDetailsTooltip({
-//   accountID,
+//   userID,
 //   fallbackUserDetails,
 //   icon,
-//   delegateAccountID,
+//   delegateUserID,
 //   shiftHorizontal,
 //   children,
 // }: UserDetailsTooltipProps) {
@@ -24,9 +24,9 @@
 //   const {translate} = useLocalize();
 //   const personalDetails = usePersonalDetails();
 
-//   const userDetails = personalDetails?.[accountID] ?? fallbackUserDetails ?? {};
+//   const userDetails = personalDetails?.[userID] ?? fallbackUserDetails ?? {};
 //   let userDisplayName = ReportUtils.getUserDetailTooltipText(
-//     accountID,
+//     userID,
 //     userDetails.displayName ? userDetails.displayName.trim() : '',
 //   );
 //   let userLogin =
@@ -35,18 +35,18 @@
 //       : '';
 
 //   let userAvatar = userDetails.avatar;
-//   let userAccountID = accountID;
+//   let userUserID = userID;
 
 //   // We replace the actor's email, name, and avatar with the Copilot manually for now. This will be improved upon when
 //   // the Copilot feature is implemented.
-//   if (delegateAccountID) {
-//     const delegateUserDetails = personalDetails?.[delegateAccountID];
+//   if (delegateUserID) {
+//     const delegateUserDetails = personalDetails?.[delegateUserID];
 //     const delegateUserDisplayName =
-//       ReportUtils.getUserDetailTooltipText(delegateAccountID);
+//       ReportUtils.getUserDetailTooltipText(delegateUserID);
 //     userDisplayName = `${delegateUserDisplayName} (${translate('reportAction.asCopilot')} ${userDisplayName})`;
 //     userLogin = delegateUserDetails?.login ?? '';
 //     userAvatar = delegateUserDetails?.avatar;
-//     userAccountID = delegateAccountID;
+//     userUserID = delegateUserID;
 //   }
 
 //   let title = String(userDisplayName).trim() ? userDisplayName : '';
@@ -64,7 +64,7 @@
 //     }
 //   }
 //   if (
-//     CONST.RESTRICTED_ACCOUNT_IDS.includes(userAccountID) ||
+//     CONST.RESTRICTED_ACCOUNT_IDS.includes(userUserID) ||
 //     CONST.RESTRICTED_EMAILS.includes(userLogin.trim())
 //   ) {
 //     subtitle = '';
@@ -79,7 +79,7 @@
 //             type={icon?.type ?? CONST.ICON_TYPE_AVATAR}
 //             name={icon?.name ?? userLogin}
 //             fallbackIcon={icon?.fallbackIcon}
-//             accountID={userAccountID}
+//             userID={userUserID}
 //           />
 //         </View>
 //         <Text
@@ -118,7 +118,7 @@
 //       styles.breakWord,
 //       icon,
 //       userAvatar,
-//       userAccountID,
+//       userUserID,
 //       userLogin,
 //       title,
 //       subtitle,

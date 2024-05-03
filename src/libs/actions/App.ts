@@ -28,19 +28,20 @@ import ONYXKEYS from '@src/ONYXKEYS';
 import type {Route} from '@src/ROUTES';
 import ROUTES from '@src/ROUTES';
 import type * as OnyxTypes from '@src/types/onyx';
-import type {SelectedTimezone} from '@src/types/onyx/PersonalDetails';
+// import type {SelectedTimezone} from '@src/types/onyx/PersonalDetails';
 import type {OnyxData} from '@src/types/onyx/Request';
+import type {UserID} from '@src/types/onyx/OnyxCommon';
 // import * as Session from './Session';
 // import Timing from './Timing';
 
 type Locale = ValueOf<typeof CONST.LOCALES>;
 
-let currentUserAccountID: number | null;
+let currentUserID: UserID | null;
 let currentUserEmail: string;
 Onyx.connect({
   key: ONYXKEYS.SESSION,
   callback: val => {
-    currentUserAccountID = val?.accountID ?? null;
+    currentUserID = val?.userID ?? null;
     currentUserEmail = val?.email ?? '';
   },
 });
@@ -73,7 +74,7 @@ function setLocale(locale: Locale) {
   }
 
   // If user is not signed in, change just locally.
-  if (!currentUserAccountID) {
+  if (!currentUserID) {
     Onyx.merge(ONYXKEYS.NVP_PREFERRED_LOCALE, locale);
     return;
   }
@@ -462,15 +463,15 @@ function redirectThirdPartyDesktopSignIn() {
 //     timezone: JSON.stringify(newTimezoneData),
 //   };
 
-//   // We expect currentUserAccountID to be a number because it doesn't make sense to open profile if currentUserAccountID is not set
-//   if (typeof currentUserAccountID === 'number') {
+//   // We expect currentUserID to be a number because it doesn't make sense to open profile if currentUserID is not set
+//   if (typeof currentUserID === 'number') {
 //     API.write(WRITE_COMMANDS.OPEN_PROFILE, parameters, {
 //       optimisticData: [
 //         {
 //           onyxMethod: Onyx.METHOD.MERGE,
 //           key: ONYXKEYS.PERSONAL_DETAILS_LIST,
 //           value: {
-//             [currentUserAccountID]: {
+//             [currentUserID]: {
 //               timezone: newTimezoneData,
 //             },
 //           },
@@ -481,7 +482,7 @@ function redirectThirdPartyDesktopSignIn() {
 //           onyxMethod: Onyx.METHOD.MERGE,
 //           key: ONYXKEYS.PERSONAL_DETAILS_LIST,
 //           value: {
-//             [currentUserAccountID]: {
+//             [currentUserID]: {
 //               timezone: oldTimezoneData,
 //             },
 //           },
@@ -502,7 +503,7 @@ function redirectThirdPartyDesktopSignIn() {
 
 //   // If the route that is being handled is a magic link, email and shortLivedAuthToken should not be attached to the url
 //   // to prevent signing into the wrong account
-//   if (!currentUserAccountID || !shouldAuthenticateWithCurrentAccount) {
+//   if (!currentUserID || !shouldAuthenticateWithCurrentAccount) {
 //     Browser.openRouteInDesktopApp();
 //     return;
 //   }
@@ -518,7 +519,7 @@ function redirectThirdPartyDesktopSignIn() {
 //     if (!response) {
 //       Log.alert(
 //         'Trying to redirect via deep link, but the response is empty. User likely not authenticated.',
-//         {response, shouldAuthenticateWithCurrentAccount, currentUserAccountID},
+//         {response, shouldAuthenticateWithCurrentAccount, currentUserID},
 //         true,
 //       );
 //       return;

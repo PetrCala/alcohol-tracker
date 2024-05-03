@@ -1,10 +1,10 @@
-import type {UserId} from './DatabaseCommon';
+import type {UserID} from './OnyxCommon';
 
 type UnconfirmedDayKey = string;
 
 type UnconfirmedDays = Record<UnconfirmedDayKey, boolean>;
 
-type UnconfirmedDaysList = Record<UserId, UnconfirmedDays>;
+type UnconfirmedDaysList = Record<UserID, UnconfirmedDays>;
 
 export default UnconfirmedDays;
 export type {UnconfirmedDaysList, UnconfirmedDayKey};

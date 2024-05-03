@@ -8,14 +8,14 @@ type CurrentUserPersonalDetails = PersonalDetails | Record<string, never>;
 function useCurrentUserPersonalDetails() {
   const session = useSession();
   const personalDetails = usePersonalDetails() ?? CONST.EMPTY_OBJECT;
-  const accountID = session?.accountID ?? 0;
-  const accountPersonalDetails = personalDetails?.[accountID];
+  const userID = session?.userID ?? 0;
+  const accountPersonalDetails = personalDetails?.[userID];
   const currentUserPersonalDetails: CurrentUserPersonalDetails = useMemo(
     () =>
       (accountPersonalDetails
-        ? {...accountPersonalDetails, accountID}
+        ? {...accountPersonalDetails, userID}
         : {}) as CurrentUserPersonalDetails,
-    [accountPersonalDetails, accountID],
+    [accountPersonalDetails, userID],
   );
 
   return currentUserPersonalDetails;

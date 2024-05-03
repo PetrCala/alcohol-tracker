@@ -108,7 +108,7 @@ type ProfileScreenProps = ProfileScreenOnyxProps &
 
 function ProfileScreen({route}: ProfileScreenProps) {
   const {auth, db} = useFirebase();
-  const {userId} = route.params;
+  const {userID} = route.params;
   const user = auth.currentUser;
 
   const styles = useThemeStyles();
@@ -121,8 +121,8 @@ function ProfileScreen({route}: ProfileScreenProps) {
   let {userData, drinkingSessionData, preferences, isLoading} =
     useDatabaseData();
   let loading = isLoading;
-  if (userId !== user?.uid) {
-    const {data, isLoading} = useFetchData(userId, relevantDataKeys);
+  if (userID !== user?.uid) {
+    const {data, isLoading} = useFetchData(userID, relevantDataKeys);
     userData = data.userData;
     drinkingSessionData = data.drinkingSessionData;
     preferences = data.preferences;
@@ -151,7 +151,7 @@ function ProfileScreen({route}: ProfileScreenProps) {
         return;
       }
       let ownFriends = friends;
-      if (user?.uid !== userId) {
+      if (user?.uid !== userID) {
         ownFriends = await readDataOnce(
           db,
           DBPATHS.USERS_USER_ID_FRIENDS.getRoute(user.uid),
@@ -209,7 +209,7 @@ function ProfileScreen({route}: ProfileScreenProps) {
   return (
     <ScreenWrapper testID={ProfileScreen.displayName}>
       <MainHeader
-        headerText={user?.uid === userId ? 'Profile' : 'Friend Overview'}
+        headerText={user?.uid === userID ? 'Profile' : 'Friend Overview'}
         onGoBack={() => Navigation.goBack()}
       />
       <ScrollView
@@ -218,14 +218,14 @@ function ProfileScreen({route}: ProfileScreenProps) {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}>
         <ProfileOverview
-          userId={userId}
+          userID={userID}
           profileData={profileData} // For live propagation of current user
         />
         <View style={localStyles.friendsInfoContainer}>
           <View style={localStyles.leftContainer}>
             <Text style={localStyles.friendsInfoHeading}>
               {`${
-                user?.uid !== userId && state.commonFriendCount > 0
+                user?.uid !== userID && state.commonFriendCount > 0
                   ? 'Common f'
                   : 'F'
               }riends:`}
@@ -235,7 +235,7 @@ function ProfileScreen({route}: ProfileScreenProps) {
                 localStyles.friendsInfoText,
                 commonStyles.smallMarginLeft,
               ]}>
-              {user?.uid !== userId && state.commonFriendCount > 0
+              {user?.uid !== userID && state.commonFriendCount > 0
                 ? state.commonFriendCount
                 : state.friendCount}
             </Text>
@@ -244,10 +244,10 @@ function ProfileScreen({route}: ProfileScreenProps) {
             <TouchableOpacity
               accessibilityRole="button"
               onPress={() => {
-                user?.uid === userId
+                user?.uid === userID
                   ? Navigation.navigate(ROUTES.SOCIAL)
                   : Navigation.navigate(
-                      ROUTES.PROFILE_FRIENDS_FRIENDS.getRoute(userId),
+                      ROUTES.PROFILE_FRIENDS_FRIENDS.getRoute(userID),
                     );
               }}
               style={localStyles.seeFriendsButton}>
@@ -268,7 +268,7 @@ function ProfileScreen({route}: ProfileScreenProps) {
           visibleDateObject={state.visibleDateObject}
           dispatch={dispatch}
           onDayPress={(day: DateData) => {
-            user?.uid === userId
+            user?.uid === userID
               ? Navigation.navigate(
                   ROUTES.DAY_OVERVIEW.getRoute(
                     timestampToDateString(day.timestamp),
@@ -278,7 +278,7 @@ function ProfileScreen({route}: ProfileScreenProps) {
           }}
         />
         <View style={localStyles.bottomContainer}>
-          {user?.uid !== userId ? (
+          {user?.uid !== userID ? (
             <TouchableOpacity
               accessibilityRole="button"
               style={localStyles.manageFriendButton}
@@ -300,7 +300,7 @@ function ProfileScreen({route}: ProfileScreenProps) {
           dispatch({type: 'SET_MANAGE_FRIEND_MODAL_VISIBLE', payload: visible})
         }
         onGoBack={() => Navigation.goBack()}
-        friendId={userId}
+        friendId={userID}
       />
     </ScreenWrapper>
   );

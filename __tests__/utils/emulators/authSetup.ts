@@ -49,24 +49,24 @@ export async function createMockAuthUsers(emulatorAuth: Auth): Promise<void> {
   if (!isConnectedToAuthEmulator) {
     throw new Error('Not connected to the auth emulator');
   }
-  MOCK_USER_IDS.forEach(userId => async () => {
-    const email = `${userId}@gmail.com`;
+  MOCK_USER_IDS.forEach(userID => async () => {
+    const email = `${userID}@gmail.com`;
     const password = 'mock-password';
 
     try {
       await signUpUserWithEmailAndPassword(emulatorAuth, email, password);
     } catch (error) {
-      throw new Error(`Error creating mock user ${userId}: ${error}`);
+      throw new Error(`Error creating mock user ${userID}: ${error}`);
     }
 
     if (!emulatorAuth.currentUser) {
       throw new Error('Failed to create a new mock user');
     }
     try {
-      await updateProfile(emulatorAuth.currentUser, {displayName: userId});
+      await updateProfile(emulatorAuth.currentUser, {displayName: userID});
     } catch (error) {
       throw new Error(
-        `Error updating profile data for mock user ${userId}: ${error}`,
+        `Error updating profile data for mock user ${userID}: ${error}`,
       );
     }
   });

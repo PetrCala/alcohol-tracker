@@ -575,7 +575,7 @@ const CONST = {
   },
 
   PUSHER: {
-    PRIVATE_USER_CHANNEL_PREFIX: 'private-encrypted-user-accountID-',
+    PRIVATE_USER_CHANNEL_PREFIX: 'private-encrypted-user-userID-',
   },
   REGEX: {
     SPECIAL_CHARS_WITHOUT_NEWLINE: /((?!\n)[()-\s\t])/g,

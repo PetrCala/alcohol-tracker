@@ -1,10 +1,10 @@
 import type CONST from '@src/CONST';
 import type {ValueOf} from 'type-fest';
-import type {UserId} from './DatabaseCommon';
+import type {UserID} from './OnyxCommon';
 
 type FriendRequestStatus = ValueOf<(typeof CONST)['FRIEND_REQUEST_STATUS']>;
 
-type FriendRequestList = Record<UserId, FriendRequestStatus>;
+type FriendRequestList = Record<UserID, FriendRequestStatus>;
 
 type FriendRequestArray = FriendRequestStatus[];
 

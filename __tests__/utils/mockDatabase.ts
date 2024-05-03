@@ -128,9 +128,9 @@ export function createMockUserStatus(
  *
  * @returns The mock object.
  */
-export function createMockNicknameToId(userId: string): NicknameToId {
+export function createMockNicknameToId(userID: string): NicknameToId {
   const returnObject: NicknameToId = {
-    [userId]: 'mock nickname',
+    [userID]: 'mock nickname',
   };
   return returnObject;
 }
@@ -247,16 +247,16 @@ export function createMockUnconfirmedDays(): UnconfirmedDays {
 /** Create and return mock friend request data. Is created at random.
  *  (possibly improve in the future)
  *
- * @param userId ID of the mock user
+ * @param userID ID of the mock user
  * @returns Mock FriendRequest type data.
  */
-export function createMockFriendRequests(userId: string): FriendRequestList {
+export function createMockFriendRequests(userID: string): FriendRequestList {
   const mockRequestData: FriendRequestList = {};
   const statuses: FriendRequestStatus[] = Object.values(
     CONST.FRIEND_REQUEST_STATUS,
   );
   for (const mockId of MOCK_USER_IDS) {
-    if (mockId === userId) {
+    if (mockId === userID) {
       continue; // Skip self
     }
     const randomIndex = Math.floor(Math.random() * statuses.length);
@@ -267,13 +267,13 @@ export function createMockFriendRequests(userId: string): FriendRequestList {
 }
 
 /** Create and return a mock user data object
- * @param userId ID of the mock user
+ * @param userID ID of the mock user
  * @param index Index of the mock user
  * @param noFriends If set to true, no friends or friend requests will be created.
  * @returns Mock user data
  */
 export function createMockUserData(
-  userId: string,
+  userID: string,
   noFriends = false,
 ): UserProps {
   const mockProfile: Profile = {
@@ -286,7 +286,7 @@ export function createMockUserData(
   };
   if (!noFriends) {
     // mockUserData['friends'] = // TODO
-    mockUserData.friend_requests = createMockFriendRequests(userId);
+    mockUserData.friend_requests = createMockFriendRequests(userID);
   }
   return mockUserData;
 }
@@ -304,41 +304,41 @@ export function createMockDatabase(noFriends = false): DatabaseProps {
   db.config = createMockConfig();
 
   // Data that varies across users
-  MOCK_USER_IDS.forEach((userId, index) => {
+  MOCK_USER_IDS.forEach((userID, index) => {
     // Feedback
-    db.feedback[userId] = createMockFeedback();
+    db.feedback[userID] = createMockFeedback();
 
     // Drinking sessions
     const mockSessionData: DrinkingSessionList = {};
     let latestSessionId = '';
     MOCK_SESSION_IDS.forEach(sessionId => {
-      const fullSessionId: DrinkingSessionId = `${userId}-${sessionId}`;
+      const fullSessionId: DrinkingSessionId = `${userID}-${sessionId}`;
       const mockSession = createMockSession(new Date());
       mockSessionData[fullSessionId] = mockSession;
       latestSessionId = fullSessionId;
     });
     mockSessionData[latestSessionId].ongoing = true;
-    db.user_drinking_sessions[userId] = mockSessionData;
+    db.user_drinking_sessions[userID] = mockSessionData;
 
     // User status
-    db.user_status[userId] = createMockUserStatus(
+    db.user_status[userID] = createMockUserStatus(
       latestSessionId,
       mockSessionData[latestSessionId],
     );
 
     // User preferences
-    db.user_preferences[userId] = createMockPreferences();
+    db.user_preferences[userID] = createMockPreferences();
 
     // User unconfirmed data
-    db.user_unconfirmed_days[userId] = createMockUnconfirmedDays();
+    db.user_unconfirmed_days[userID] = createMockUnconfirmedDays();
 
     // User data
-    db.users[userId] = createMockUserData(userId, noFriends);
+    db.users[userID] = createMockUserData(userID, noFriends);
 
     // Nicknames to user ids
-    const nickname = db.users[userId].profile.display_name;
+    const nickname = db.users[userID].profile.display_name;
     const nickname_key = cleanStringForFirebaseKey(nickname);
-    db.nickname_to_id[nickname_key] = createMockNicknameToId(userId);
+    db.nickname_to_id[nickname_key] = createMockNicknameToId(userID);
   });
 
   return db;

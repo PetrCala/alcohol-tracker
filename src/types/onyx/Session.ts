@@ -1,6 +1,7 @@
 import type {ValueOf} from 'type-fest';
 import type CONST from '@src/CONST';
 import type * as OnyxCommon from './OnyxCommon';
+import {UserID} from './OnyxCommon';
 
 type AutoAuthState = ValueOf<typeof CONST.AUTO_AUTH_STATE>;
 
@@ -23,8 +24,8 @@ type Session = {
   /** Boolean that indicates whether it is loading or not */
   loading?: boolean;
 
-  /** Currently logged in user accountID */
-  accountID?: number;
+  /** Currently logged in user userID */
+  userID?: UserID;
 
   autoAuthState?: AutoAuthState;
 

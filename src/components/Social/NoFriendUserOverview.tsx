@@ -4,34 +4,36 @@ import ProfileImage from '../ProfileImage';
 import type {Profile} from '@src/types/onyx';
 
 type NoFriendUserOverviewProps = {
-  userId: string; // Other user's ID
+  userID: string; // Other user's ID
   profileData: Profile;
   RightSideComponent: React.ReactNode; // Render directly as a ReactNode without JSX syntax
 };
 
 const NoFriendUserOverview: React.FC<NoFriendUserOverviewProps> = ({
-  userId,
+  userID,
   profileData,
   RightSideComponent,
 }) => {
   const {db, storage} = useFirebase();
 
-  if (!db || !profileData) {return;}
+  if (!db || !profileData) {
+    return;
+  }
 
   return (
     <View
-      key={userId + '-container'}
+      key={userID + '-container'}
       style={styles.noFriendUserOverviewContainer}>
-      <View key={userId + 'profile'} style={styles.noFriendUserOverviewProfile}>
+      <View key={userID + 'profile'} style={styles.noFriendUserOverviewProfile}>
         <ProfileImage
-          key={userId + '-profile-icon'}
+          key={userID + '-profile-icon'}
           storage={storage}
           downloadPath={profileData.photo_url}
-          userId={userId}
+          userID={userID}
           style={styles.noFriendUserOverviewImage}
         />
         <Text
-          key={userId + '-nickname'}
+          key={userID + '-nickname'}
           style={styles.noFriendUserOverviewText}
           numberOfLines={1}
           ellipsizeMode="tail">

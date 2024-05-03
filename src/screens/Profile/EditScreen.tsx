@@ -41,7 +41,7 @@ function EditScreen({route}: EditScreenProps) {
   const styles = useThemeStyles();
   const StyleUtils = useStyleUtils();
   const {translate} = useLocalize();
-  const userId = route.params.userId;
+  const userID = route.params.userID;
   const {userData, isLoading} = useDatabaseData();
   const profileData = userData?.profile;
 

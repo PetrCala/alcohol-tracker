@@ -46,7 +46,7 @@ type Icon = {
   name?: string;
 
   /** Avatar id */
-  id?: number | string;
+  id: string;
 
   /** A fallback avatar icon to display when there is an error on loading avatar from remote URL. */
   fallbackIcon?: AvatarSource;
@@ -55,11 +55,23 @@ type Icon = {
   fill?: string;
 };
 
+type UserID = string;
+
+type UserList = Record<UserID, boolean>;
+
+type UserArray = UserID[];
+
+type MeasureType = 'drinks' | 'units';
+
 export type {
-  Icon,
-  PendingAction,
+  AvatarType,
   ErrorFields,
   Errors,
-  AvatarType,
+  Icon,
+  MeasureType,
   OnyxValueWithOfflineFeedback,
+  PendingAction,
+  UserArray,
+  UserID,
+  UserList,
 };

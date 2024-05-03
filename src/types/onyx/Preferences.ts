@@ -1,4 +1,4 @@
-import type {UserId} from './DatabaseCommon';
+import type {UserID} from './OnyxCommon';
 import type {DrinkKey} from './Drinks';
 
 type UnitsToColors = {
@@ -14,7 +14,7 @@ type Preferences = {
   drinks_to_units: DrinksToUnits;
 };
 
-type PreferencesList = Record<UserId, Preferences>;
+type PreferencesList = Record<UserID, Preferences>;
 
 export default Preferences;
 export type {UnitsToColors, DrinksToUnits, PreferencesList};

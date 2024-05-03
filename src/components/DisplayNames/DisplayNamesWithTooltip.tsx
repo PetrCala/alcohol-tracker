@@ -68,13 +68,13 @@ function DisplayNamesWithToolTip({
       {shouldUseFullTitle
         ? fullTitle
         : displayNamesWithTooltips?.map(
-            ({displayName, accountID, avatar, login}, index) => (
+            ({displayName, userID, avatar, login}, index) => (
               // eslint-disable-next-line react/no-array-index-key
               <Fragment key={index}>
                 <DisplayNamesTooltipItem
                   index={index}
                   getTooltipShiftX={getTooltipShiftX}
-                  accountID={accountID}
+                  userID={userID}
                   displayName={displayName}
                   login={login}
                   avatar={avatar}

@@ -19,7 +19,7 @@ import type {Profile} from '@src/types/onyx';
 import useThemeStyles from '@hooks/useThemeStyles';
 
 type ProfileOverviewProps = {
-  userId: string;
+  userID: string;
   profileData: Profile;
 };
 
@@ -28,7 +28,7 @@ const profileImageSize = 110;
 const topOffset = 20; // Profile image offset from main container top
 
 const ProfileOverview: React.FC<ProfileOverviewProps> = ({
-  userId,
+  userID,
   profileData,
 }) => {
   const {auth, storage} = useFirebase();
@@ -53,10 +53,10 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
 
   return (
     <View style={localStyles.profileOverviewContainer}>
-      {user?.uid === userId && (
+      {user?.uid === userID && (
         <TouchableOpacity
           onPress={() =>
-            Navigation.navigate(ROUTES.PROFILE_EDIT.getRoute(userId))
+            Navigation.navigate(ROUTES.PROFILE_EDIT.getRoute(userID))
           }
           style={localStyles.editProfileButton}>
           <Image
@@ -68,7 +68,7 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
         //     // success
         //     // medium
         //     onPress={() =>
-        //       Navigation.navigate(ROUTES.PROFILE_EDIT.getRoute(userId))
+        //       Navigation.navigate(ROUTES.PROFILE_EDIT.getRoute(userID))
         //     }
         //     text={'some text'}
         //     style={styles.mt3}
@@ -76,19 +76,19 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
       )}
       <View style={localStyles.profileImageContainer} />
       <ProfileImage
-        key={`${userId}-profile-image`}
+        key={`${userID}-profile-image`}
         storage={storage}
-        userId={userId}
+        userID={userID}
         downloadPath={profileData.photo_url}
         style={localStyles.profileOverviewImage}
         enlargable={true}
         layout={layout}
         onLayout={onLayout}
       />
-      {user?.uid === userId ? (
+      {user?.uid === userID ? (
         <View style={localStyles.editProfileIconButton}>
           <UploadImageComponent
-            pathToUpload={`users/${userId}/profile/profile_image.jpg`}
+            pathToUpload={`users/${userID}/profile/profile_image.jpg`}
             imageSource={KirokuIcons.Camera}
             imageStyle={localStyles.editProfileIconButtonImage}
             isProfilePicture={true}

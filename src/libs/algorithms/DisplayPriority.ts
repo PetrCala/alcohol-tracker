@@ -1,5 +1,8 @@
-import type {UserPriority, UserPriorityList} from '@src/types/various/Algorithms';
-import type {UserStatus, UserStatusList} from '@src/types/onyx';
+import type {
+  UserPriority,
+  UserPriorityList,
+} from '@src/types/various/Algorithms';
+import type {UserID, UserStatus, UserStatusList} from '@src/types/onyx';
 import {sumAllDrinks} from '@libs/DataHandling';
 import {sessionIsExpired} from '@libs/DrinkingSessionUtils';
 import _, {get} from 'lodash';
@@ -8,28 +11,28 @@ import _, {get} from 'lodash';
  * Based on the user status data, calculate the display priority of the users.
  * Return the user IDs in the order they should be displayed.
  *
- * @param userIds Array of user IDs to calculate the display priority for.
+ * @param userIDs Array of user IDs to calculate the display priority for.
  * @param usersPriority Object containing the display priority of each user.
  */
 function orderUsersByPriority(
-  userIds: string[],
+  userIDs: UserID[],
   usersPriority: UserPriorityList,
 ): string[] {
-  return userIds.sort((a, b) => usersPriority[b] - usersPriority[a]);
+  return userIDs.sort((a, b) => usersPriority[b] - usersPriority[a]);
 }
 
 function calculateAllUsersPriority(
-  userIds: string[],
+  userIDs: UserID[],
   userStatusList: UserStatusList,
 ): UserPriorityList {
   const usersPriority: UserPriorityList = {};
-  userIds.forEach(userId => {
+  userIDs.forEach(userID => {
     let userPriority: UserPriority = 0;
-    const userStatusData: UserStatus = userStatusList[userId];
+    const userStatusData: UserStatus = userStatusList[userID];
     if (userStatusData) {
       userPriority = calculateUserPriority(userStatusData);
     }
-    usersPriority[userId] = userPriority;
+    usersPriority[userID] = userPriority;
   });
   return usersPriority;
 }
@@ -43,7 +46,9 @@ function calculateUserPriority(userStatusData: UserStatus): number {
   const expired = sessionIsExpired(latestSession);
   // The older the last session, the lower the priority
   const timeCoefficient = Math.log(timeSinceLastSession) * 50 * -1;
-  if (expired) {return timeCoefficient;} // Do not account for session if expired
+  if (expired) {
+    return timeCoefficient;
+  } // Do not account for session if expired
 
   const sessionActive = latestSession?.ongoing ? 1 : 0;
   const sessionDrinks = latestSession?.drinks

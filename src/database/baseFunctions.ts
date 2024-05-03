@@ -1,6 +1,11 @@
 ﻿import type {Database} from 'firebase/database';
 import {get, ref, child, push, onValue, off} from 'firebase/database';
-import type {Profile, ProfileList, UserStatusList} from '@src/types/onyx';
+import type {
+  Profile,
+  ProfileList,
+  UserID,
+  UserStatusList,
+} from '@src/types/onyx';
 import DBPATHS from './DBPATHS';
 
 /** Read data once from the realtime database using get(). Return the data if it exists.
@@ -85,23 +90,23 @@ export function generateDatabaseKey(
  * Fetches profile data for multiple users from the database.
  *
  * @param db - The database instance.
- * @param userIds - An array of user IDs.
- * @param refTemplate - The reference template for fetching user data. Must contain the string '{userId}'.
+ * @param userIDs - An array of user IDs.
+ * @param refTemplate - The reference template for fetching user data. Must contain the string '{userID}'.
  * @returns A promise that resolves to an array of profile data.
  */
 export function fetchDataForUsers(
   db: Database,
-  userIds: string[],
+  userIDs: UserID[],
   refTemplate: string,
 ): Promise<Profile[]> {
-  if (!userIds || userIds.length === 0) {
+  if (!userIDs || userIDs.length === 0) {
     return Promise.resolve([]);
   }
-  if (!refTemplate.includes('{userId}')) {
+  if (!refTemplate.includes('{userID}')) {
     throw new Error('Invalid ref template');
   }
   return Promise.all(
-    userIds.map(id => readDataOnce(db, refTemplate.replace('{userId}', id))),
+    userIDs.map(id => readDataOnce(db, refTemplate.replace('{userID}', id))),
   );
 }
 
@@ -109,19 +114,19 @@ export function fetchDataForUsers(
  * Fetches display data for the given user IDs.
  *
  * @param db - The database instance.
- * @param userIds - An array of user IDs.
- * @param refTemplate - The reference template for fetching user data. Must contain the string '{userId}'.
+ * @param userIDs - An array of user IDs.
+ * @param refTemplate - The reference template for fetching user data. Must contain the string '{userID}'.
  * @returns A promise that resolves to an object containing the display data.
  */
 export async function fetchDisplayDataForUsers(
   db: Database | undefined,
-  userIds: string[],
+  userIDs: UserID[],
   refTemplate: string,
 ): Promise<ProfileList | UserStatusList> {
   const newDisplayData: ProfileList = {};
-  if (db && userIds) {
-    const data: any[] = await fetchDataForUsers(db, userIds, refTemplate);
-    userIds.forEach((id, index) => {
+  if (db && userIDs) {
+    const data: any[] = await fetchDataForUsers(db, userIDs, refTemplate);
+    userIDs.forEach((id, index) => {
       newDisplayData[id] = data[index];
     });
   }

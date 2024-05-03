@@ -1,6 +1,6 @@
 import type {IsEqual, ValueOf} from 'type-fest';
 import type CONST from './CONST';
-import type {DrinkingSessionId, UserId} from './types/onyx';
+import type {DrinkingSessionId, UserID} from './types/onyx';
 import {timestampToDate, timestampToDateString} from '@libs/DataHandling';
 import DeepValueOf from './types/utils/DeepValueOf';
 import SCREENS from './SCREENS';
@@ -49,16 +49,16 @@ const ROUTES = {
   MAIN_MENU_POLICIES_PRIVACY_POLICY: 'main-menu/policies/privacy-policy',
 
   PROFILE: {
-    route: 'profile/:userId',
-    getRoute: (userId: UserId) => `profile/${userId}` as const,
+    route: 'profile/:userID',
+    getRoute: (userID: UserID) => `profile/${userID}` as const,
   },
   PROFILE_EDIT: {
-    route: 'profile/:userId/edit',
-    getRoute: (userId: UserId) => `profile/${userId}/edit` as const,
+    route: 'profile/:userID/edit',
+    getRoute: (userID: UserID) => `profile/${userID}/edit` as const,
   },
   PROFILE_FRIENDS_FRIENDS: {
-    route: 'profile/:userId/friends',
-    getRoute: (userId: UserId) => `profile/${userId}/friends` as const,
+    route: 'profile/:userID/friends',
+    getRoute: (userID: UserID) => `profile/${userID}/friends` as const,
   },
 
   SETTINGS: 'settings',

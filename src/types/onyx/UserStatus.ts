@@ -1,4 +1,4 @@
-import type {UserId} from './DatabaseCommon';
+import type {UserID} from './OnyxCommon';
 import type DrinkingSession from './DrinkingSession';
 
 type UserStatus = {
@@ -7,7 +7,7 @@ type UserStatus = {
   latest_session?: DrinkingSession;
 };
 
-type UserStatusList = Record<UserId, UserStatus>;
+type UserStatusList = Record<UserID, UserStatus>;
 
 export default UserStatus;
 export type {UserStatusList};

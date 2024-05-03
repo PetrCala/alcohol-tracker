@@ -125,9 +125,9 @@ function FriendSearchScreen() {
     searchResultData: UserSearchResults = state.searchResultData,
   ): void => {
     const newRequestStatuses: Record<string, FriendRequestStatus> = {};
-    searchResultData.forEach(userId => {
-      if (state.friendRequests?.[userId]) {
-        newRequestStatuses[userId] = state.friendRequests[userId];
+    searchResultData.forEach(userID => {
+      if (state.friendRequests?.[userID]) {
+        newRequestStatuses[userID] = state.friendRequests[userID];
       }
     });
     dispatch({type: 'SET_REQUEST_STATUSES', payload: newRequestStatuses});
@@ -190,16 +190,16 @@ function FriendSearchScreen() {
             {state.searching ? (
               <LoadingData style={styles.loadingData} />
             ) : isNonEmptyArray(state.searchResultData) ? (
-              state.searchResultData.map(userId => (
+              state.searchResultData.map(userID => (
                 <SearchResult
-                  key={userId + '-container'}
-                  userId={userId}
-                  userDisplayData={state.displayData[userId]}
+                  key={userID + '-container'}
+                  userID={userID}
+                  userDisplayData={state.displayData[userID]}
                   db={db}
                   storage={storage}
                   userFrom={user.uid}
-                  requestStatus={state.requestStatuses[userId]}
-                  alreadyAFriend={state.friends ? state.friends[userId] : false}
+                  requestStatus={state.requestStatuses[userID]}
+                  alreadyAFriend={state.friends ? state.friends[userID] : false}
                 />
               ))
             ) : state.noUsersFound ? (

@@ -1,4 +1,5 @@
 import type {AvatarSource} from '@libs/UserUtils';
+import {UserID} from '@src/types/onyx';
 import type {AvatarType} from '@src/types/onyx/OnyxCommon';
 import type ChildrenProps from '@src/types/utils/ChildrenProps';
 
@@ -33,17 +34,17 @@ type Icon = {
 };
 
 type UserDetailsTooltipProps = ChildrenProps & {
-  /** User's Account ID */
-  accountID: number;
+  /** User's User ID */
+  userID: UserID;
 
-  /** Fallback User Details object used if no accountID */
+  /** Fallback User Details object used if no userID */
   fallbackUserDetails?: FallbackUserDetails;
 
   /** Optionally, pass in the icon instead of calculating it. If defined, will take precedence. */
   icon?: Icon;
 
-  /** The accountID of the copilot who took this action on behalf of the user */
-  delegateAccountID?: number;
+  /** The userID of the copilot who took this action on behalf of the user */
+  delegateUserID?: number;
 
   /** Any additional amount to manually adjust the horizontal position of the tooltip.
     A positive value shifts the tooltip to the right, and a negative value shifts it to the left. */

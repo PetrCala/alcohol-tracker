@@ -13,7 +13,7 @@ import type {AvatarType} from '@src/types/onyx/OnyxCommon';
 import Icon from './Icon';
 import * as KirokuImages from './Icon/KirokuImages';
 import Image from './Image';
-import {UserId} from '@src/types/onyx';
+import {UserID} from '@src/types/onyx';
 
 type AvatarProps = {
   /** Source for the avatar. Can be a URL or an icon. */
@@ -51,8 +51,8 @@ type AvatarProps = {
   /** Owner of the avatar. If user, displayName. If workspace, policy name */
   name?: string;
 
-  /** Optional account id if it's user avatar */
-  userId?: UserId;
+  /** Optional user id if it's user avatar */
+  userID?: UserID;
 };
 
 function Avatar({
@@ -66,7 +66,7 @@ function Avatar({
   fallbackIconTestID = '',
   type = CONST.ICON_TYPE_AVATAR,
   name = '',
-  userId,
+  userID,
 }: AvatarProps) {
   const theme = useTheme();
   const styles = useThemeStyles();
@@ -90,7 +90,7 @@ function Avatar({
     : undefined;
 
   // We pass the color styles down to the SVG for the workspace and fallback avatar.
-  const source = UserUtils.getAvatar(originalSource, userId);
+  const source = UserUtils.getAvatar(originalSource, userID);
   const useFallBackAvatar =
     imageError || !source || source === KirokuImages.UserIcon;
   const fallbackAvatar = fallbackIcon || KirokuImages.UserIcon;

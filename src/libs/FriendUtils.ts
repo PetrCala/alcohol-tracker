@@ -12,9 +12,9 @@ import DBPATHS from '@database/DBPATHS';
 
 export async function fetchUserFriends(
   db: Database,
-  userId: string,
+  userID: string,
 ): Promise<UserList | undefined> {
-  return readDataOnce(db, DBPATHS.USERS_USER_ID_FRIENDS.getRoute(userId));
+  return readDataOnce(db, DBPATHS.USERS_USER_ID_FRIENDS.getRoute(userID));
 }
 
 /**
@@ -58,10 +58,12 @@ export function getCommonFriendsCount(
  * @returns The count of friend requests with the specified status.
  */
 const getFriendRequestsCount = (
-  friendRequests: FriendRequestList   | undefined,
+  friendRequests: FriendRequestList | undefined,
   requestStatus: FriendRequestStatus,
 ): number => {
-  if (!friendRequests) {return 0;}
+  if (!friendRequests) {
+    return 0;
+  }
 
   return Object.keys(friendRequests).reduce((acc, requestId) => {
     return acc + (friendRequests[requestId] === requestStatus ? 1 : 0);
@@ -69,14 +71,14 @@ const getFriendRequestsCount = (
 };
 
 export const getReceivedRequestsCount = (
-  friendRequests: FriendRequestList   | undefined,
+  friendRequests: FriendRequestList | undefined,
 ): number => {
   const status: FriendRequestStatus = CONST.FRIEND_REQUEST_STATUS.RECEIVED;
   return getFriendRequestsCount(friendRequests, status);
 };
 
 export const getSentRequestsCount = (
-  friendRequests: FriendRequestList   | undefined,
+  friendRequests: FriendRequestList | undefined,
 ): number => {
   const status: FriendRequestStatus = CONST.FRIEND_REQUEST_STATUS.SENT;
   return getFriendRequestsCount(friendRequests, status);

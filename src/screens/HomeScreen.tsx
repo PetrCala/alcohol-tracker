@@ -309,7 +309,7 @@ function HomeScreen({route}: HomeScreenProps) {
               style={localStyles.profileButton}>
               <ProfileImage
                 storage={storage}
-                userId={user.uid}
+                userID={user.uid}
                 downloadPath={userData.profile.photo_url}
                 style={localStyles.profileImage}
                 // refreshTrigger={refreshCounter}

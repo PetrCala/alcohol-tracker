@@ -1,9 +1,9 @@
 ﻿import type {Database} from 'firebase/database';
-import { ref, get} from 'firebase/database';
+import {ref, get} from 'firebase/database';
 import {cleanStringForFirebaseKey} from '@libs/StringUtilsKiroku';
 import {QUIRKY_NICKNAMES} from '@libs/QuirkyNicknames';
 import type {
-  UserIdToNicknameMapping,
+  UserIDToNicknameMapping,
   UserSearchResults,
 } from '@src/types/various/Search';
 import type {NicknameToId} from '@src/types/onyx';
@@ -61,7 +61,7 @@ async function searchDatabaseForUsers(
 function searchItemIsRelevant(
   item: string,
   cleanedText: string,
-  mapping: UserIdToNicknameMapping,
+  mapping: UserIDToNicknameMapping,
 ): boolean {
   const mappingText = mapping[item];
   if (mappingText) {
@@ -74,9 +74,11 @@ function searchItemIsRelevant(
 function searchArrayByText(
   arr: string[],
   searchText: string,
-  mapping: UserIdToNicknameMapping,
+  mapping: UserIDToNicknameMapping,
 ): string[] {
-  if (!searchText) {return arr;}
+  if (!searchText) {
+    return arr;
+  }
   const cleanedSearchText = cleanStringForFirebaseKey(searchText);
   return arr.filter(item =>
     searchItemIsRelevant(item, cleanedSearchText, mapping),
@@ -86,9 +88,11 @@ function searchArrayByText(
 function searchObjectByText(
   obj: Record<string, any>,
   searchText: string,
-  mapping: UserIdToNicknameMapping,
+  mapping: UserIDToNicknameMapping,
 ): Record<string, any> {
-  if (!searchText) {return obj;}
+  if (!searchText) {
+    return obj;
+  }
   const cleanedSearchText = cleanStringForFirebaseKey(searchText);
   return Object.keys(obj)
     .filter(key => searchItemIsRelevant(key, cleanedSearchText, mapping))

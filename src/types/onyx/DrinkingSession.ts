@@ -1,5 +1,5 @@
 import type {ValueOf} from 'type-fest';
-import type {UserId} from './DatabaseCommon';
+import type {UserID} from './OnyxCommon';
 import type {DrinksList} from './Drinks';
 import type CONST from '@src/CONST';
 
@@ -21,7 +21,7 @@ type DrinkingSessionList = Record<DrinkingSessionId, DrinkingSession>;
 
 type DrinkingSessionArray = DrinkingSession[];
 
-type UserDrinkingSessionsList = Record<UserId, DrinkingSessionList>;
+type UserDrinkingSessionsList = Record<UserID, DrinkingSessionList>;
 
 export default DrinkingSession;
 export type {

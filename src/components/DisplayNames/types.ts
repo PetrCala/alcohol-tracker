@@ -1,12 +1,13 @@
 import type {StyleProp, TextStyle} from 'react-native';
 import type {AvatarSource} from '@libs/UserUtils';
+import {UserID} from '@src/types/onyx';
 
 type DisplayNameWithTooltip = {
   /** The name to display in bold */
   displayName?: string;
 
-  /** The Account ID for the tooltip */
-  accountID?: number;
+  /** The User ID for the tooltip */
+  userID?: UserID;
 
   /** The login for the tooltip fallback */
   login?: string;

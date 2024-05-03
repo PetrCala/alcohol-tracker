@@ -61,13 +61,13 @@ type ScreenProps = {
 
 const handleAcceptFriendRequest = async (
   db: Database,
-  userId: string,
+  userID: string,
   requestId: string,
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
 ): Promise<void> => {
   try {
     setIsLoading(true);
-    await acceptFriendRequest(db, userId, requestId);
+    await acceptFriendRequest(db, userID, requestId);
     setIsLoading(false);
   } catch (error: any) {
     Alert.alert(
@@ -79,13 +79,13 @@ const handleAcceptFriendRequest = async (
 
 const handleRejectFriendRequest = async (
   db: Database,
-  userId: string,
+  userID: string,
   requestId: string,
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
 ): Promise<void> => {
   try {
     setIsLoading(true);
-    await deleteFriendRequest(db, userId, requestId);
+    await deleteFriendRequest(db, userID, requestId);
     setIsLoading(false);
   } catch (error: any) {
     Alert.alert(
@@ -191,7 +191,7 @@ const FriendRequestItem: React.FC<FriendRequestItemProps> = ({
   return (
     <NoFriendUserOverview
       key={requestId + '-friend-request'}
-      userId={requestId}
+      userID={requestId}
       profileData={profileData}
       RightSideComponent={FriendRequestComponent({
         requestId,
