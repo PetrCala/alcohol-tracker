@@ -1,12 +1,8 @@
 ﻿import type {Database} from 'firebase/database';
 import {ref, update} from 'firebase/database';
 import {removeZeroObjectsFromSession} from '@libs/DataHandling';
-import type {
-  DrinkingSession,
-  DrinksList,
-  UserID,
-  UserStatus,
-} from '@src/types/onyx';
+import type {DrinkingSession, DrinksList, UserStatus} from '@src/types/onyx';
+import type {UserID} from '@src/types/onyx/OnyxCommon';
 import DBPATHS from './DBPATHS';
 
 const drinkingSessionRef = DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID;

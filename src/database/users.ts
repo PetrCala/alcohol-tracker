@@ -5,10 +5,10 @@ import type {
   FriendRequestList,
   Preferences,
   Profile,
-  UserList,
   UserProps,
   UserStatus,
 } from '@src/types/onyx';
+import type {UserList} from '@src/types/onyx/OnyxCommon';
 import type {User, UserCredential} from 'firebase/auth';
 import {
   EmailAuthProvider,

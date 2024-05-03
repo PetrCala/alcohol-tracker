@@ -5,7 +5,8 @@ import {ref as StorageRef, getDownloadURL} from 'firebase/storage';
 import type {Auth, User} from 'firebase/auth';
 import {updateProfile} from 'firebase/auth';
 import {fetchDisplayDataForUsers} from './baseFunctions';
-import type {ProfileList, UserID, UserStatusList} from '@src/types/onyx';
+import type {ProfileList, UserStatusList} from '@src/types/onyx';
+import type {UserID} from '@src/types/onyx/OnyxCommon';
 import DBPATHS from './DBPATHS';
 
 /**
