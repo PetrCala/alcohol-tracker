@@ -595,7 +595,9 @@ const CONST = {
     CARD_NUMBER: /^[0-9]{15,16}$/,
     CARD_SECURITY_CODE: /^[0-9]{3,4}$/,
     CARD_EXPIRATION_DATE: /^(0[1-9]|1[0-2])([^0-9])?([0-9]{4}|([0-9]{2}))$/,
-    // DATE_TIME_FORMAT: /^\d{2}-\d{2} \d{2}:\d{2} [AP]M$/,
+    TIME_FORMAT: /^\d{2}:\d{2} [AP]M$/,
+    DATE_TIME_FORMAT: /^\d{2}-\d{2} \d{2}:\d{2} [AP]M$/,
+    YEAR_DATE_TIME_FORMAT: /^\d{4}-\d{2}-\d{2} \d{2}:\d{2} [AP]M$/,
   },
 
   /**
