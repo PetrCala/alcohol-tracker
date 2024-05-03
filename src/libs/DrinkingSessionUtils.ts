@@ -9,7 +9,7 @@ import type {
 } from '@src/types/onyx';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import {getTimestampAge, numberToVerboseString} from './TimeUtils';
-import type {UserID} from '@src/types/onyx';
+import type {UserID} from '@src/types/onyx/onyxCommon';
 import * as Localize from './Localize';
 
 const PlaceholderDrinks: DrinksList = {[Date.now()]: {other: 0}};

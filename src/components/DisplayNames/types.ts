@@ -1,6 +1,6 @@
 import type {StyleProp, TextStyle} from 'react-native';
 import type {AvatarSource} from '@libs/UserUtils';
-import type {UserID} from '@src/types/onyx';
+import type {UserID} from '@src/types/onyx/onyxCommon';
 
 type DisplayNameWithTooltip = {
   /** The name to display in bold */

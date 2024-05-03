@@ -1,4 +1,4 @@
-import type {UserID} from '@src/types/onyx';
+import type {UserID} from '@src/types/onyx/onyxCommon';
 import type {FetchDataKey} from './types';
 import DBPATHS from '@database/DBPATHS';
 

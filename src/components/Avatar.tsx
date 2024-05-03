@@ -13,7 +13,7 @@ import type {AvatarType} from '@src/types/onyx/OnyxCommon';
 import Icon from './Icon';
 import * as KirokuImages from './Icon/KirokuImages';
 import Image from './Image';
-import type {UserID} from '@src/types/onyx';
+import type {UserID} from '@src/types/onyx/OnyxCommon';
 
 type AvatarProps = {
   /** Source for the avatar. Can be a URL or an icon. */
