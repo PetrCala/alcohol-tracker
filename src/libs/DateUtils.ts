@@ -211,14 +211,10 @@ function datetimeToCalendarTime(
     currentSelectedTimezone,
   );
   const tz = includeTimeZone ? ' [UTC]Z' : '';
-  //   let todayAt = Localize.translate(locale, 'common.todayAt');
-  //   let tomorrowAt = Localize.translate(locale, 'common.tomorrowAt');
-  //   let yesterdayAt = Localize.translate(locale, 'common.yesterdayAt');
-  //   const at = Localize.translate(locale, 'common.conjunctionAt');
-  let todayAt = 'today At';
-  let tomorrowAt = 'Tomorrow at';
-  let yesterdayAt = 'Yesterday at';
-  const at = 'at';
+  let todayAt = Localize.translate(locale, 'common.todayAt');
+  let tomorrowAt = Localize.translate(locale, 'common.tomorrowAt');
+  let yesterdayAt = Localize.translate(locale, 'common.yesterdayAt');
+  const at = Localize.translate(locale, 'common.conjunctionAt');
   const weekStartsOn = getWeekStartsOn();
 
   const startOfCurrentWeek = startOfWeek(new Date(), {weekStartsOn});
@@ -793,7 +789,7 @@ const getTimeValidationErrorKey = (inputTime: Date): string => {
 function formatWithUTCTimeZone(
   datetime: string,
   dateFormat: string = CONST.DATE.FNS_FORMAT_STRING,
-) {
+): string {
   const date = new Date(datetime);
 
   if (isValid(date)) {

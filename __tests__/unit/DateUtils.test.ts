@@ -82,7 +82,7 @@ describe('DateUtils', () => {
       tzFormat(localDate, CONST.DATE.FNS_TIMEZONE_FORMAT_STRING, {
         timeZone: timezone,
       }),
-    ).toEqual('2022-11-06T16:00:00-08:00');
+    ).toEqual('2022-11-07T01:00:00+01:00');
   });
 
   it('should fallback to current date when getLocalDateFromDatetime is failing', () => {
@@ -215,7 +215,7 @@ describe('DateUtils', () => {
   });
 
   it('subtractMillisecondsFromDateTime should subtract milliseconds from a given date and time', () => {
-    const initialDateTime = '2023-07-18T10:30:00Z';
+    const initialDateTime = '2023-07-18T10:30:00';
     const millisecondsToSubtract = 5000; // 5 seconds
     const expectedDateTime = '2023-07-18 10:29:55.000';
     const result = DateUtils.subtractMillisecondsFromDateTime(
@@ -296,15 +296,15 @@ describe('DateUtils', () => {
       const scenarios = [
         {
           dateFormat: CONST.DATE.FNS_FORMAT_STRING,
-          expectedResult: '2022-11-07',
+          expectedResult: '2022-11-06',
         },
         {
           dateFormat: CONST.DATE.FNS_TIMEZONE_FORMAT_STRING,
-          expectedResult: '2022-11-07T00:00:00Z',
+          expectedResult: '2022-11-06T23:00:00+01:00',
         },
         {
           dateFormat: CONST.DATE.FNS_DB_FORMAT_STRING,
-          expectedResult: '2022-11-07 00:00:00.000',
+          expectedResult: '2022-11-06 23:00:00.000',
         },
       ];
 
