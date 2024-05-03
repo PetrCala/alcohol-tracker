@@ -1,7 +1,7 @@
 import {useEffect, useReducer, useCallback, useState} from 'react';
 import {useFirebase} from '@src/context/global/FirebaseContext';
-import type {ProfileList, UserArray} from '@src/types/onyx';
-import {NicknameToIdList, UserList, UserStatusList} from '@src/types/onyx';
+import type {ProfileList} from '@src/types/onyx';
+import type {UserID, UserArray} from '@src/types/onyx/OnyxCommon';
 import {fetchUserProfiles, fetchUserStatuses} from '@database/profile';
 import {Alert} from 'react-native';
 import {isNonEmptyArray} from '@libs/Validation';
