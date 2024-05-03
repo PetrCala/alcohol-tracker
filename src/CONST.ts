@@ -578,6 +578,15 @@ const CONST = {
     PRIVATE_USER_CHANNEL_PREFIX: 'private-encrypted-user-accountID-',
   },
   REGEX: {
+    SPECIAL_CHARS_WITHOUT_NEWLINE: /((?!\n)[()-\s\t])/g,
+    DIGITS_AND_PLUS: /^\+?[0-9]*$/,
+    ALPHABETIC_AND_LATIN_CHARS: /^[\p{Script=Latin} ]*$/u,
+    NON_ALPHABETIC_AND_NON_LATIN_CHARS: /[^\p{Script=Latin}]/gu,
+    ACCENT_LATIN_CHARS: /[\u00C0-\u017F]/g,
+    INVISIBLE_CHARACTERS_GROUPS: /[\p{C}\p{Z}]/gu,
+
+    OTHER_INVISIBLE_CHARACTERS: /[\u3164]/g,
+    POSITIVE_INTEGER: /^\d+$/,
     ROUTES: {
       REDUNDANT_SLASHES: /(\/{2,})|(\/$)/g,
     },

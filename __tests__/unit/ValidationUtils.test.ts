@@ -116,41 +116,6 @@ describe('ValidationUtils', () => {
     });
   });
 
-  describe('isValidExpirationDate', () => {
-    test('Should return true for a valid formats expiration date in the future', () => {
-      const firstFutureExpirationDate = '12/25'; // MM/YY format, in the future
-      const secondFutureExpirationDate = '12/2025'; // MM/YYYY format, in the future
-      const thirdFutureExpirationDate = '1225'; // MMYY format, in the future
-      const fourthFutureExpirationDate = '122025'; // MMYYYY format, in the future
-      expect(
-        ValidationUtils.isValidExpirationDate(firstFutureExpirationDate),
-      ).toBe(true);
-      expect(
-        ValidationUtils.isValidExpirationDate(secondFutureExpirationDate),
-      ).toBe(true);
-      expect(
-        ValidationUtils.isValidExpirationDate(thirdFutureExpirationDate),
-      ).toBe(true);
-      expect(
-        ValidationUtils.isValidExpirationDate(fourthFutureExpirationDate),
-      ).toBe(true);
-    });
-
-    test('Should return false for a valid expiration date, but in the past', () => {
-      const pastExpirationDate = '06/20'; // MM/YY format, in the past
-      const isValid = ValidationUtils.isValidExpirationDate(pastExpirationDate);
-      expect(isValid).toBe(false);
-    });
-
-    test('Should return false for an invalid expiration date format', () => {
-      const invalidExpirationDate = '2006'; // Invalid format, missing YYMM
-      const isValid = ValidationUtils.isValidExpirationDate(
-        invalidExpirationDate,
-      );
-      expect(isValid).toBe(false);
-    });
-  });
-
   describe('meetsMinimumAgeRequirement', () => {
     test('Should return true for a date that meets the minimum age requirement', () => {
       const validDate = format(

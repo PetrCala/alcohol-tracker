@@ -146,25 +146,6 @@ function getFieldRequiredErrors<TFormID extends OnyxFormKey>(
   return errors;
 }
 
-// /**
-//  * Validates that this is a valid expiration date. Supports the following formats:
-//  * 1. MM/YY
-//  * 2. MM/YYYY
-//  * 3. MMYY
-//  * 4. MMYYYY
-//  */
-// function isValidExpirationDate(string: string): boolean {
-//   if (!CONST.REGEX.CARD_EXPIRATION_DATE.test(string)) {
-//     return false;
-//   }
-
-//   // Use the last of the month to check if the expiration date is in the future or not
-//   const expirationDate = `${CardUtils.getYearFromExpirationDateString(
-//     string,
-//   )}-${CardUtils.getMonthFromExpirationDateString(string)}-01`;
-//   return isAfter(new Date(expirationDate), endOfMonth(new Date()));
-// }
-
 /**
  * Validates that this is a valid security code
  * in the XXX or XXXX format.
