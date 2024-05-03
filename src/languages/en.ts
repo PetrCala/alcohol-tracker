@@ -1,6 +1,10 @@
 import CONST from '@src/CONST';
 import type {Country} from '@src/CONST';
-import type {CharacterLimitParams, TranslationBase} from './types';
+import type {
+  CharacterLimitParams,
+  TranslationBase,
+  UntilTimeParams,
+} from './types';
 import LiveSessionScreen from '@screens/DrinkingSession/LiveSessionScreen';
 
 type AllCountries = Record<Country, string>;
@@ -202,6 +206,16 @@ export default {
     member: 'Member',
     role: 'Role',
     currency: 'Currency',
+  },
+  timePeriods: {
+    never: 'Never',
+    thirtyMinutes: '30 minutes',
+    oneHour: '1 hour',
+    afterToday: 'Today',
+    afterWeek: 'A week',
+    custom: 'Custom',
+    untilTomorrow: 'Until tomorrow',
+    untilTime: ({time}: UntilTimeParams) => `Until ${time}`,
   },
   location: {
     useCurrent: 'Use current location',

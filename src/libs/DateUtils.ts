@@ -550,10 +550,10 @@ function getLocalizedTimePeriodDescription(data: string): string {
   const {translateLocal} = Localize;
   switch (data) {
     case getEndOfToday():
-      return translateLocal('statusPage.timePeriods.afterToday');
+      return translateLocal('timePeriods.afterToday');
     case CONST.CUSTOM_STATUS_TYPES.NEVER:
     case '':
-      return translateLocal('statusPage.timePeriods.never');
+      return translateLocal('timePeriods.never');
     default:
       return formatDateTimeTo12Hour(data);
   }
@@ -574,19 +574,19 @@ function getStatusUntilDate(inputDate: string): string {
 
   // If the date is equal to the end of today
   if (isSameDay(input, endOfToday)) {
-    return translateLocal('statusPage.untilTomorrow');
+    return translateLocal('timePeriods.untilTomorrow');
   }
 
   // If it's a time on the same date
   if (isSameDay(input, now)) {
-    return translateLocal('statusPage.untilTime', {
+    return translateLocal('timePeriods.untilTime', {
       time: format(input, CONST.DATE.LOCAL_TIME_FORMAT),
     });
   }
 
   // If it's further in the future than tomorrow but within the same year
   if (isAfter(input, now) && isSameYear(input, now)) {
-    return translateLocal('statusPage.untilTime', {
+    return translateLocal('timePeriods.untilTime', {
       time: format(
         input,
         `${CONST.DATE.SHORT_DATE_FORMAT} ${CONST.DATE.LOCAL_TIME_FORMAT}`,
@@ -595,7 +595,7 @@ function getStatusUntilDate(inputDate: string): string {
   }
 
   // If it's in another year
-  return translateLocal('statusPage.untilTime', {
+  return translateLocal('timePeriods.untilTime', {
     time: format(
       input,
       `${CONST.DATE.FNS_FORMAT_STRING} ${CONST.DATE.LOCAL_TIME_FORMAT}`,
