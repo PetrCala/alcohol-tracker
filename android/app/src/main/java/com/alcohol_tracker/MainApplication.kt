@@ -1,4 +1,4 @@
-package com.alcohol_tracker;
+package com.alcohol_tracker
 
 import android.app.ActivityManager
 import android.content.res.Configuration

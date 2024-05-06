@@ -28,10 +28,12 @@
         android:launchMode="singleTask"
         android:theme="@style/BootTheme"
         android:windowSoftInputMode="adjustResize">
+
         <intent-filter android:autoVerify="true">
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
+
       </activity>
 
       <meta-data
@@ -41,5 +43,6 @@
       <meta-data
           android:name="com.google.firebase.messaging.default_notification_color"
           android:resource="@color/bootsplash_background" />
+
     </application>
 </manifest>

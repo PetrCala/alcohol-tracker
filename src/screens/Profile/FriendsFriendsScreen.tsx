@@ -10,8 +10,8 @@ import type {
   FriendRequestStatus,
   ProfileList,
   FriendRequestList,
-  UserList,
 } from '@src/types/onyx';
+import type {UserList} from '@src/types/onyx/OnyxCommon';
 import {useEffect, useMemo, useReducer} from 'react';
 import {useFirebase} from '@context/global/FirebaseContext';
 
