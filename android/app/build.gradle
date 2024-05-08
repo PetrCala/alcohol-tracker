@@ -1,7 +1,7 @@
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
-// apply plugin: "com.google.firebase.firebase-perf"
+apply plugin: "com.google.firebase.firebase-perf"
 
 
 /**
@@ -218,6 +218,11 @@ dependencies {
         implementation jscFlavor
     }
 
+    // Firebase libraries (using the Firebase BoM for consistency - see https://firebase.google.com/docs/android/learn-more#bom)
+    implementation platform("com.google.firebase:firebase-bom:29.0.3")
+    implementation "com.google.firebase:firebase-perf"
+    implementation "com.google.firebase:firebase-crashlytics"
+
     // Multi Dex Support: https://developer.android.com/studio/build/multidex#mdex-gradle
     implementation 'com.android.support:multidex:1.0.3'
 
@@ -229,4 +234,4 @@ dependencies {
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
 apply plugin: 'com.google.gms.google-services'  // Google Play services Gradle plugin
-// apply plugin: 'com.google.firebase.crashlytics'
+apply plugin: 'com.google.firebase.crashlytics'
