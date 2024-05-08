@@ -64,5 +64,3 @@ allprojects {
 }
 
 apply plugin: "com.facebook.react.rootproject"
-apply plugin: 'com.google.gms.google-services'  // Google Play services Gradle plugin
-// apply plugin: 'com.google.firebase.crashlytics'
