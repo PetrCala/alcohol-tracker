@@ -22,9 +22,9 @@ buildscript {
     dependencies {
         classpath("com.android.tools.build:gradle")
         classpath("com.facebook.react:react-native-gradle-plugin:")
-        classpath("com.google.gms:google-services:4.3.4")
-        classpath("com.google.firebase:firebase-crashlytics-gradle:2.7.1")
-        classpath("com.google.firebase:perf-plugin:1.4.1")
+        classpath("com.google.gms:google-services:4.3.10")
+        // classpath("com.google.firebase:firebase-crashlytics-gradle:2.7.1")
+        // classpath("com.google.firebase:perf-plugin:1.4.1")
         // Fullstory integration
         // classpath ("com.fullstory:gradle-plugin-local:1.45.1")
 
@@ -64,3 +64,5 @@ allprojects {
 }
 
 apply plugin: "com.facebook.react.rootproject"
+apply plugin: 'com.google.gms.google-services'  // Google Play services Gradle plugin
+// apply plugin: 'com.google.firebase.crashlytics'
