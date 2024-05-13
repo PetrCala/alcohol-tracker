@@ -17,9 +17,8 @@ const useWebProxy = get(Config, 'USE_WEB_PROXY', 'true') === 'true';
 const ENVIRONMENT = get(Config, 'ENVIRONMENT', CONST.ENVIRONMENT.DEV);
 
 export default {
-  APP_NAME: 'Kiroku',
-  COMPONENT_NAME:
-    getPlatform() === CONST.PLATFORM.IOS ? 'kiroku' : 'alcohol_tracker',
+  APP_NAME: 'kiroku', // For bundling, MainActivity, workspaces, etc.
+  APP_NAME_VERBOSE: 'Kiroku',
   ENVIRONMENT,
   FIREBASE_CONFIG: {
     apiKey: get(Config, 'API_KEY', ''),
@@ -47,7 +46,7 @@ export default {
     KIROKU_URL: '',
   },
   PUSHER: {
-    APP_KEY: get(Config, 'PUSHER_APP_KEY', '268df511a204fbb60884'),
+    APP_KEY: get(Config, 'PUSHER_APP_KEY', ''),
     SUFFIX: get(Config, 'PUSHER_DEV_SUFFIX', ''),
     CLUSTER: 'mt1',
   },
