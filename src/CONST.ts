@@ -1,4 +1,3 @@
-// Taken and modified form the Expensify GitHub
 // Source: https://github.com/Expensify/App/blob/main/src/CONST.ts
 
 import Config from 'react-native-config';
@@ -688,8 +687,7 @@ const CONST = {
     DARK_CONTENT: 'dark-content',
   },
   STORE_LINKS: {
-    ANDROID:
-      'https://play.google.com/store/apps/details?id=com.alcohol_tracker',
+    ANDROID: `https://play.google.com/store/apps/details?id=${ANDROID_PACKAGE_NAME}`,
     IOS: 'https://testflight.apple.com/join/DgY9IieL',
     DESKTOP: '',
   },
