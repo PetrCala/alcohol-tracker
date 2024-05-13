@@ -17,7 +17,7 @@ const useWebProxy = get(Config, 'USE_WEB_PROXY', 'true') === 'true';
 const ENVIRONMENT = get(Config, 'ENVIRONMENT', CONST.ENVIRONMENT.DEV);
 
 export default {
-  APP_NAME: 'kiroku', // For bundling, MainActivity, workspaces, etc.
+  APP_NAME: 'kiroku',
   APP_NAME_VERBOSE: 'Kiroku',
   ENVIRONMENT,
   FIREBASE_CONFIG: {
