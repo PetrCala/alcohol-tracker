@@ -56,7 +56,7 @@ type AuthScreensProps = {
 };
 
 let timezone: Timezone | null;
-let currentUserID = -1;
+let currentUserID = '-1';
 let isLoadingApp = false;
 let lastUpdateIDAppliedToClient: OnyxEntry<number>;
 
@@ -69,7 +69,7 @@ Onyx.connect({
       return;
     }
 
-    currentUserID = value.userID ?? -1;
+    currentUserID = value.userID ?? '-1';
 
     // TODO
     // if (Navigation.isActiveRoute(ROUTES.SIGN_IN_MODAL)) {
@@ -275,11 +275,11 @@ function AuthScreens({
             options={screenOptions.bottomTab}
             component={BottomTabNavigator}
           />
-          {/* <RootStack.Screen
-          name={NAVIGATORS.CENTRAL_PANE_NAVIGATOR}
-          options={screenOptions.centralPaneNavigator}
-          component={CentralPaneNavigator}
-        /> */}
+          <RootStack.Screen
+            name={NAVIGATORS.CENTRAL_PANE_NAVIGATOR}
+            options={screenOptions.centralPaneNavigator}
+            component={CentralPaneNavigator}
+          />
           <RootStack.Screen
             name={SCREENS.NOT_FOUND}
             options={screenOptions.fullScreen}
