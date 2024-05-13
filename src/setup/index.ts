@@ -1,6 +1,5 @@
 import {I18nManager} from 'react-native';
 import Onyx from 'react-native-onyx';
-import intlPolyfill from '@libs/IntlPolyfill';
 import * as Device from '@userActions/Device';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
@@ -49,9 +48,6 @@ export default function () {
   // Force app layout to work left to right because our design does not currently support devices using this mode
   I18nManager.allowRTL(false);
   I18nManager.forceRTL(false);
-
-  // Polyfill the Intl API if locale data is not as expected
-  intlPolyfill();
 
   // Perform any other platform-specific setup
   platformSetup();
