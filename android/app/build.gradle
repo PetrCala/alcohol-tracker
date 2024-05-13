@@ -118,8 +118,8 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         multiDexEnabled rootProject.ext.multiDexEnabled
-        versionCode 1000030405
-        versionName "0.3.4-5"
+        versionCode 1000030406
+        versionName "0.3.4-6"
         vectorDrawables.useSupportLibrary = true
         // Supported language variants must be declared here to avoid from being removed during the compilation.
         // This also helps us to not include unnecessary language variants in the APK.
