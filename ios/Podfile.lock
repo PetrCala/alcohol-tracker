@@ -1146,6 +1146,25 @@ PODS:
   - react-native-plaid-link-sdk (11.5.0):
     - Plaid (~> 5.2.0)
     - React-Core
+  - react-native-quick-sqlite (8.0.6):
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2022.05.16.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - react-native-release-profiler (0.1.6):
     - glog
     - hermes-engine
@@ -1629,7 +1648,7 @@ PODS:
     - React-Codegen
     - React-Core
     - ReactCommon/turbomodule/core
-  - RNReanimated (3.9.0):
+  - RNReanimated (3.7.2):
     - glog
     - hermes-engine
     - RCT-Folly (= 2022.05.16.00)
@@ -1801,6 +1820,7 @@ DEPENDENCIES:
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-performance (from `../node_modules/react-native-performance`)
   - react-native-plaid-link-sdk (from `../node_modules/react-native-plaid-link-sdk`)
+  - react-native-quick-sqlite (from `../node_modules/react-native-quick-sqlite`)
   - react-native-release-profiler (from `../node_modules/react-native-release-profiler`)
   - react-native-render-html (from `../node_modules/react-native-render-html`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -1967,6 +1987,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-performance"
   react-native-plaid-link-sdk:
     :path: "../node_modules/react-native-plaid-link-sdk"
+  react-native-quick-sqlite:
+    :path: "../node_modules/react-native-quick-sqlite"
   react-native-release-profiler:
     :path: "../node_modules/react-native-release-profiler"
   react-native-render-html:
@@ -2132,6 +2154,7 @@ SPEC CHECKSUMS:
   react-native-netinfo: 48c5f79a84fbc3ba1d28a8b0d04adeda72885fa8
   react-native-performance: f9ee08c668a8745d3eb83964d550b9becbae466d
   react-native-plaid-link-sdk: 6c4d3d4f14288c546151d404aea812fa55edeea9
+  react-native-quick-sqlite: f7b9f578b8b3b608dc742240b0103faae5b61f63
   react-native-release-profiler: 42fc8e09b4f6f9b7d14cc5a15c72165e871c0918
   react-native-render-html: 984dfe2294163d04bf5fe25d7c9f122e60e05ebe
   react-native-safe-area-context: e8bdd57d9f8d34cc336f0ee6acb30712a8454446
@@ -2175,7 +2198,7 @@ SPEC CHECKSUMS:
   RNLocalize: 185a82430857d97c56d3221d1b45a991fdcc117e
   RNPermissions: 51bbdb62a2b14cf7b438c4e00a678b5767046be2
   RNReactNativeHapticFeedback: 616c35bdec7d20d4c524a7949ca9829c09e35f37
-  RNReanimated: 0858ec8b6857988d60fe3c041d97e3ca7ef67450
+  RNReanimated: 605409e0d0ced6f2e194ae585fedc2f8a1935bf2
   RNScreens: e5204ceff1851ebae11578a43071358d37057a30
   RNShare: f275ec51486779efb74e3a8f22246d38595940e1
   RNSound: 6c156f925295bdc83e8e422e7d8b38d33bc71852
