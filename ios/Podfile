@@ -12,7 +12,8 @@ end
 node_require('react-native/scripts/react_native_pods.rb')
 node_require('react-native-permissions/scripts/setup.rb')
 
-platform :ios, 14 # Latter is minimum supported verion
+platform :ios, 14 # Latter is minimum supported version
+
 prepare_react_native_project!
 
 # Setup permissions
@@ -88,6 +89,11 @@ target 'kiroku' do
     'ReleaseProduction' => :release
 
   config = use_native_modules!
+
+  # The following fix an issue induced by use_native_modules!, required by Firebase
+  # https://stackoverflow.com/questions/78442131/react-native-cant-build-ios-after-upgrading-to-0-74-1-redefinition-of-module
+  pod 'FirebaseCore', :modular_headers => true;
+  pod 'GoogleUtilities', :modular_headers => true;
 
   # Flags change depending on the env values.
   flags = get_default_flags()
