@@ -39,15 +39,16 @@ setup_permissions([
   # 'StoreKit',
 ])
 
-# flipper_config = ENV['NO_FLIPPER'] == "1" ? FlipperConfiguration.disabled : FlipperConfiguration.enabled
+# Flipper is not compatible with use_frameworks! (Firebase)
 flipper_config = FlipperConfiguration.disabled
 
-# Enable frameworks here
-linkage = ENV['USE_FRAMEWORKS']
-if linkage != nil
-  Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
-  use_frameworks! :linkage => linkage.to_sym
-end
+# linkage = ENV['USE_FRAMEWORKS']
+# if linkage != nil
+#   Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
+#   use_frameworks! :linkage => linkage.to_sym
+# end
+use_frameworks! :linkage => :static
+$RNFirebaseAsStaticFramework = true
 
 use_modular_headers!
 
@@ -99,7 +100,7 @@ target 'kiroku' do
   flags = get_default_flags()
 
   # ENV Variable enables/disables TurboModules
-  # ENV['RCT_NEW_ARCH_ENABLED'] = '1';
+  ENV['RCT_NEW_ARCH_ENABLED'] = '1';
 
   # Enable react-native-config for environment file management
   pod 'react-native-config/Extension', :path => '../node_modules/react-native-config'

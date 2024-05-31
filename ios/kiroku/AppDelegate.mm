@@ -25,7 +25,7 @@
   self.initialProps = @{};
 
   // Configure firebase
-  // [FIRApp configure];
+  [FIRApp configure];
 
   // Force the app to LTR mode.
   [[RCTI18nUtil sharedInstance] allowRTL:NO];
