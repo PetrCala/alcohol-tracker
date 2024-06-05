@@ -50,6 +50,7 @@ export default {
     SUFFIX: get(Config, 'PUSHER_DEV_SUFFIX', ''),
     CLUSTER: 'mt1',
   },
+  IS_USING_EMULATORS: get(Config, 'USE_EMULATORS', 'false') === 'true',
   TEST_PROJECT_ID: 'alcohol-tracker-db',
   TEST_HOST: 'localhost',
   TEST_AUTH_PORT: 9099,
