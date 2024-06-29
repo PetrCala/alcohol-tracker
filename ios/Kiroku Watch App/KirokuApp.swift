@@ -2,7 +2,7 @@
 //  KirokuApp.swift
 //  Kiroku Watch App
 //
-//  Created by JF41513 on 29.06.2024.
+//  Created by PetrCala on 29.06.2024.
 //
 
 import SwiftUI

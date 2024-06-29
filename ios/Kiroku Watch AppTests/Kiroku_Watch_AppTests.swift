@@ -2,7 +2,7 @@
 //  Kiroku_Watch_AppTests.swift
 //  Kiroku Watch AppTests
 //
-//  Created by JF41513 on 29.06.2024.
+//  Created by PetrCala on 29.06.2024.
 //
 
 import XCTest
