@@ -11,7 +11,6 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		6EB690539DFC242A5AEDCD65 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F181F1F78CECD2EE2A25A45D /* ExpoModulesProvider.swift */; };
-		8C3616992C0A433B0032A375 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8C3616982C0A433B0032A375 /* GoogleService-Info.plist */; };
 		8C389EF12C3031AB00A015D5 /* Kiroku Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 8C389EF02C3031AB00A015D5 /* Kiroku Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		8C389EF62C3031AB00A015D5 /* KirokuApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C389EF52C3031AB00A015D5 /* KirokuApp.swift */; };
 		8C389EF82C3031AC00A015D5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C389EF72C3031AC00A015D5 /* ContentView.swift */; };
@@ -20,6 +19,10 @@
 		8C389F072C3031AD00A015D5 /* Kiroku_Watch_AppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C389F062C3031AD00A015D5 /* Kiroku_Watch_AppTests.swift */; };
 		8C389F112C3031AE00A015D5 /* Kiroku_Watch_AppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C389F102C3031AE00A015D5 /* Kiroku_Watch_AppUITests.swift */; };
 		8C389F132C3031AE00A015D5 /* Kiroku_Watch_AppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C389F122C3031AE00A015D5 /* Kiroku_Watch_AppUITestsLaunchTests.swift */; };
+		8C389F3C2C30519B00A015D5 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8C389F3B2C30519B00A015D5 /* GoogleService-Info.plist */; };
+		8C389F3D2C30519B00A015D5 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8C389F3B2C30519B00A015D5 /* GoogleService-Info.plist */; };
+		8C389F3F2C3051D200A015D5 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8C389F3E2C3051D200A015D5 /* GoogleService-Info.plist */; };
+		8C389F402C3051D200A015D5 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8C389F3E2C3051D200A015D5 /* GoogleService-Info.plist */; };
 		8C84CE0B2BDB722F00C88D4E /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8C84CE0A2BDB722F00C88D4E /* BootSplash.storyboard */; };
 		8C84CE192BDB726F00C88D4E /* RCTBootSplash.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8C84CE122BDB726F00C88D4E /* RCTBootSplash.mm */; };
 		8C84CE1E2BDB72C800C88D4E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8C84CE1D2BDB72C800C88D4E /* Images.xcassets */; };
@@ -97,7 +100,6 @@
 		81B9675FF8691F5F6D602AEA /* Pods-kiroku.debugstaging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kiroku.debugstaging.xcconfig"; path = "Target Support Files/Pods-kiroku/Pods-kiroku.debugstaging.xcconfig"; sourceTree = "<group>"; };
 		8B6A9B1DF1453EDF7BF54C6D /* Pods-kiroku.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kiroku.debug.xcconfig"; path = "Target Support Files/Pods-kiroku/Pods-kiroku.debug.xcconfig"; sourceTree = "<group>"; };
 		8C1479292B3430910014E28C /* kiroku.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = kiroku.entitlements; path = kiroku/kiroku.entitlements; sourceTree = "<group>"; };
-		8C3616982C0A433B0032A375 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		8C389EEB2C3031AB00A015D5 /* Kiroku.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Kiroku.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8C389EF02C3031AB00A015D5 /* Kiroku Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kiroku Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8C389EF52C3031AB00A015D5 /* KirokuApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KirokuApp.swift; sourceTree = "<group>"; };
@@ -109,6 +111,8 @@
 		8C389F0C2C3031AD00A015D5 /* Kiroku Watch AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Kiroku Watch AppUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8C389F102C3031AE00A015D5 /* Kiroku_Watch_AppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Kiroku_Watch_AppUITests.swift; sourceTree = "<group>"; };
 		8C389F122C3031AE00A015D5 /* Kiroku_Watch_AppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Kiroku_Watch_AppUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		8C389F3B2C30519B00A015D5 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "kiroku/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		8C389F3E2C3051D200A015D5 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		8C84CE0A2BDB722F00C88D4E /* BootSplash.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = BootSplash.storyboard; path = kiroku/BootSplash.storyboard; sourceTree = "<group>"; };
 		8C84CE112BDB726F00C88D4E /* RCTBootSplash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RCTBootSplash.h; path = kiroku/RCTBootSplash.h; sourceTree = "<group>"; };
 		8C84CE122BDB726F00C88D4E /* RCTBootSplash.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RCTBootSplash.mm; path = kiroku/RCTBootSplash.mm; sourceTree = "<group>"; };
@@ -186,6 +190,7 @@
 		13B07FAE1A68108700A75B9A /* kiroku */ = {
 			isa = PBXGroup;
 			children = (
+				8C389F3B2C30519B00A015D5 /* GoogleService-Info.plist */,
 				8C84CE1D2BDB72C800C88D4E /* Images.xcassets */,
 				8C84CE112BDB726F00C88D4E /* RCTBootSplash.h */,
 				8C84CE122BDB726F00C88D4E /* RCTBootSplash.mm */,
@@ -235,7 +240,6 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				8C3616982C0A433B0032A375 /* GoogleService-Info.plist */,
 				8CA9A3092BAD9A380036C58C /* PrivacyInfo.xcprivacy */,
 				13B07FAE1A68108700A75B9A /* kiroku */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -269,6 +273,7 @@
 		8C389EF42C3031AB00A015D5 /* Kiroku Watch App */ = {
 			isa = PBXGroup;
 			children = (
+				8C389F3E2C3051D200A015D5 /* GoogleService-Info.plist */,
 				8C389EF52C3031AB00A015D5 /* KirokuApp.swift */,
 				8C389EF72C3031AC00A015D5 /* ContentView.swift */,
 				8C389EF92C3031AC00A015D5 /* Assets.xcassets */,
@@ -523,7 +528,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				8C84CE0B2BDB722F00C88D4E /* BootSplash.storyboard in Resources */,
-				8C3616992C0A433B0032A375 /* GoogleService-Info.plist in Resources */,
+				8C389F3C2C30519B00A015D5 /* GoogleService-Info.plist in Resources */,
+				8C389F3F2C3051D200A015D5 /* GoogleService-Info.plist in Resources */,
 				8C84CE1E2BDB72C800C88D4E /* Images.xcassets in Resources */,
 				8C93A11A2BAE2C7200B5382C /* PrivacyInfo.xcprivacy in Resources */,
 			);
@@ -541,7 +547,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				8C389EFD2C3031AC00A015D5 /* Preview Assets.xcassets in Resources */,
+				8C389F402C3051D200A015D5 /* GoogleService-Info.plist in Resources */,
 				8C389EFA2C3031AC00A015D5 /* Assets.xcassets in Resources */,
+				8C389F3D2C30519B00A015D5 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
