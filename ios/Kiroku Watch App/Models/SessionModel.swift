@@ -1,10 +1,11 @@
+import Combine
 import Foundation
 
-class SessionModel {
+class SessionModel: ObservableObject {
     static let shared = SessionModel()
 
-    private(set) var unitCount: Int = 0
-    private(set) var isActive: Bool = false
+    @Published private(set) var unitCount: Int = 0
+    @Published private(set) var isActive: Bool = false
 
     private init() { }
 
