@@ -33,7 +33,6 @@
 		8CACE1B42C3058C50051A44C /* MainScreenController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CACE19E2C3058C50051A44C /* MainScreenController.swift */; };
 		8CACE1B52C3058C50051A44C /* UnitSelectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CACE19F2C3058C50051A44C /* UnitSelectionController.swift */; };
 		8CACE1B62C3058C50051A44C /* StartSessionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CACE1A02C3058C50051A44C /* StartSessionController.swift */; };
-		8CACE1B72C3058C50051A44C /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8CACE1A22C3058C50051A44C /* Preview Assets.xcassets */; };
 		8CACE1B82C3058C50051A44C /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CACE1A42C3058C50051A44C /* Constants.swift */; };
 		8CACE1B92C3058C50051A44C /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CACE1A52C3058C50051A44C /* Helpers.swift */; };
 		8CACE1BA2C3058C50051A44C /* FirebaseConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CACE1A62C3058C50051A44C /* FirebaseConfig.swift */; };
@@ -137,7 +136,6 @@
 		8CACE19E2C3058C50051A44C /* MainScreenController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainScreenController.swift; sourceTree = "<group>"; };
 		8CACE19F2C3058C50051A44C /* UnitSelectionController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnitSelectionController.swift; sourceTree = "<group>"; };
 		8CACE1A02C3058C50051A44C /* StartSessionController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StartSessionController.swift; sourceTree = "<group>"; };
-		8CACE1A22C3058C50051A44C /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		8CACE1A42C3058C50051A44C /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		8CACE1A52C3058C50051A44C /* Helpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 		8CACE1A62C3058C50051A44C /* FirebaseConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirebaseConfig.swift; sourceTree = "<group>"; };
@@ -309,7 +307,6 @@
 				8CACE19B2C3058C50051A44C /* Controllers */,
 				8CACE1A82C3058C50051A44C /* Interface.swift */,
 				8CACE1982C3058C50051A44C /* Models */,
-				8CACE1A12C3058C50051A44C /* Preview Content */,
 				8CACE1A32C3058C50051A44C /* Utilities */,
 				8CACE1A92C3058C50051A44C /* Views */,
 				8C389EF52C3031AB00A015D5 /* KirokuApp.swift */,
@@ -356,14 +353,6 @@
 				8CACE1A02C3058C50051A44C /* StartSessionController.swift */,
 			);
 			path = Controllers;
-			sourceTree = "<group>";
-		};
-		8CACE1A12C3058C50051A44C /* Preview Content */ = {
-			isa = PBXGroup;
-			children = (
-				8CACE1A22C3058C50051A44C /* Preview Assets.xcassets */,
-			);
-			path = "Preview Content";
 			sourceTree = "<group>";
 		};
 		8CACE1A32C3058C50051A44C /* Utilities */ = {
@@ -628,7 +617,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8CACE1B72C3058C50051A44C /* Preview Assets.xcassets in Resources */,
 				8C389EFA2C3031AC00A015D5 /* Assets.xcassets in Resources */,
 				8CACE1C32C305A680051A44C /* Interface.storyboard in Resources */,
 				8C389F442C3057B000A015D5 /* GoogleService-Info.plist in Resources */,
@@ -1154,10 +1142,7 @@
 					"-DFOLLY_USE_LIBCPP=1",
 					"-DRN_FABRIC_ENABLED",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
@@ -1241,10 +1226,7 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DRN_FABRIC_ENABLED",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -2474,10 +2456,7 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DRN_FABRIC_ENABLED",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
@@ -2633,10 +2612,7 @@
 					"-DFOLLY_USE_LIBCPP=1",
 					"-DRN_FABRIC_ENABLED",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
@@ -2784,10 +2760,7 @@
 					"-DFOLLY_USE_LIBCPP=1",
 					"-DRN_FABRIC_ENABLED",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -2934,10 +2907,7 @@
 					"-DFOLLY_USE_LIBCPP=1",
 					"-DRN_FABRIC_ENABLED",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -3082,10 +3052,7 @@
 					"-DFOLLY_USE_LIBCPP=1",
 					"-DRN_FABRIC_ENABLED",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -3238,10 +3205,7 @@
 					"-DFOLLY_USE_LIBCPP=1",
 					"-DRN_FABRIC_ENABLED",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
