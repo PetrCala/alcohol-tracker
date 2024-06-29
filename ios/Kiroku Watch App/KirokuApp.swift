@@ -4,14 +4,24 @@
 //
 //  Created by PetrCala on 29.06.2024.
 //
-
 import SwiftUI
 
 @main
-struct Kiroku_Watch_AppApp: App {
+struct KirokuApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
         }
     }
 }
+
+// import SwiftUI
+
+// @main
+// struct Kiroku_Watch_AppApp: App {
+//     var body: some Scene {
+//         WindowGroup {
+//             ContentView()
+//         }
+//     }
+// }
