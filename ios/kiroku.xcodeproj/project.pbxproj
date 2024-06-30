@@ -22,6 +22,7 @@
 		8C389F132C3031AE00A015D5 /* Kiroku_Watch_AppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C389F122C3031AE00A015D5 /* Kiroku_Watch_AppUITestsLaunchTests.swift */; };
 		8C389F422C30578A00A015D5 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8C389F412C30578A00A015D5 /* GoogleService-Info.plist */; };
 		8C389F442C3057B000A015D5 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8C389F412C30578A00A015D5 /* GoogleService-Info.plist */; };
+		8C4345342C31BC6E00B871A8 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8C4345332C31BC6E00B871A8 /* Info.plist */; };
 		8C84CE0B2BDB722F00C88D4E /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8C84CE0A2BDB722F00C88D4E /* BootSplash.storyboard */; };
 		8C84CE192BDB726F00C88D4E /* RCTBootSplash.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8C84CE122BDB726F00C88D4E /* RCTBootSplash.mm */; };
 		8C84CE1E2BDB72C800C88D4E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8C84CE1D2BDB72C800C88D4E /* Images.xcassets */; };
@@ -125,6 +126,7 @@
 		8C389F122C3031AE00A015D5 /* Kiroku_Watch_AppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Kiroku_Watch_AppUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		8C389F412C30578A00A015D5 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		8C4345322C31BAD400B871A8 /* Kiroku-Watch-App-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Kiroku-Watch-App-Info.plist"; sourceTree = SOURCE_ROOT; };
+		8C4345332C31BC6E00B871A8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8C84CE0A2BDB722F00C88D4E /* BootSplash.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = BootSplash.storyboard; path = kiroku/BootSplash.storyboard; sourceTree = "<group>"; };
 		8C84CE112BDB726F00C88D4E /* RCTBootSplash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RCTBootSplash.h; path = kiroku/RCTBootSplash.h; sourceTree = "<group>"; };
 		8C84CE122BDB726F00C88D4E /* RCTBootSplash.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RCTBootSplash.mm; path = kiroku/RCTBootSplash.mm; sourceTree = "<group>"; };
@@ -315,6 +317,7 @@
 				8C389EF72C3031AC00A015D5 /* ContentView.swift */,
 				8C389EF92C3031AC00A015D5 /* Assets.xcassets */,
 				8CACE1C22C305A680051A44C /* Interface.storyboard */,
+				8C4345332C31BC6E00B871A8 /* Info.plist */,
 			);
 			path = "Kiroku Watch App";
 			sourceTree = "<group>";
@@ -619,6 +622,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8C4345342C31BC6E00B871A8 /* Info.plist in Resources */,
 				8C389EFA2C3031AC00A015D5 /* Assets.xcassets in Resources */,
 				8CACE1C32C305A680051A44C /* Interface.storyboard in Resources */,
 				8C389F442C3057B000A015D5 /* GoogleService-Info.plist in Resources */,
@@ -1276,7 +1280,7 @@
 					"@executable_path/Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.0.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
@@ -1326,7 +1330,7 @@
 					"@executable_path/Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.0.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
@@ -1376,7 +1380,7 @@
 					"@executable_path/Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.0.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
@@ -1426,7 +1430,7 @@
 					"@executable_path/Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.0.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
@@ -1477,7 +1481,7 @@
 					"@executable_path/Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.0.1;
 				MTL_FAST_MATH = YES;
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.alcohol-tracker";
@@ -1525,7 +1529,7 @@
 					"@executable_path/Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.0.1;
 				MTL_FAST_MATH = YES;
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.alcohol-tracker";
@@ -1573,7 +1577,7 @@
 					"@executable_path/Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.0.1;
 				MTL_FAST_MATH = YES;
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.alcohol-tracker";
@@ -1621,7 +1625,7 @@
 					"@executable_path/Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.0.1;
 				MTL_FAST_MATH = YES;
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.alcohol-tracker";
