@@ -6,20 +6,49 @@
     </dependencies>
     <scenes>
         <!--Interface Controller-->
+        <scene sceneID="ySt-Gb-b9U">
+            <objects>
+                <controller id="MainScreenController">
+                    <items>
+                        <textField width="1" height="133" alignment="left" text="This is a main screen controller" id="ItA-pL-6SE"/>
+                    </items>
+                </controller>
+            </objects>
+            <point key="canvasLocation" x="-153" y="-385"/>
+        </scene>
+        <!--BootSplashLogo-->
         <scene sceneID="fRD-1l-P1O">
             <objects>
-                <controller id="IGi-cB-aGO">
+                <controller backgroundImage="BootSplashLogo" id="IGi-cB-aGO">
                     <color key="backgroundColor" red="1" green="1" blue="0.59999999999999998" alpha="1" colorSpace="calibratedRGB"/>
+                    <connections>
+                        <segue destination="MainScreenController" kind="relationship" relationship="nextPage" id="aJn-TQ-bS9"/>
+                    </connections>
                 </controller>
             </objects>
             <point key="canvasLocation" x="48" y="-2"/>
         </scene>
         <!--Interface Controller-->
-        <scene sceneID="ySt-Gb-b9U">
+        <scene sceneID="7mz-Yj-jBy">
             <objects>
-                <controller id="xIS-IR-V1F"/>
+                <controller id="ON9-qk-iUi">
+                    <items>
+                        <button width="1" height="165" alignment="left" title="Start Session" id="Tlg-sY-gAb">
+                            <connections>
+                                <segue destination="MainScreenController" kind="push" id="CHW-9W-jTo"/>
+                            </connections>
+                        </button>
+                    </items>
+                </controller>
             </objects>
-            <point key="canvasLocation" x="-153" y="-385"/>
+            <point key="canvasLocation" x="-429" y="-152"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="aJn-TQ-bS9"/>
+    </inferredMetricsTieBreakers>
+    <color key="tintColor" red="1" green="1" blue="0.59999999999999998" alpha="1" colorSpace="calibratedRGB"/>
+    <resources>
+        <image name="BootSplashLogo" width="100" height="100"/>
+    </resources>
 </document>
