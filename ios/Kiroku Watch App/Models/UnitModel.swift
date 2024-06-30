@@ -1,6 +1,6 @@
 import Foundation
 
-struct UnitModel {
+struct UnitModel: Hashable {
     let unitName: String
     let unitValue: Int
 

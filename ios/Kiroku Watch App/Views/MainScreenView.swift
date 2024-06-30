@@ -5,7 +5,7 @@ struct MainScreenView: View {
 
     var body: some View {
         VStack {
-            Text("\(session.unitCount) Units")
+            Text("\(session.unitCount)")
                 .font(.largeTitle)
             HStack {
                 Button(action: {

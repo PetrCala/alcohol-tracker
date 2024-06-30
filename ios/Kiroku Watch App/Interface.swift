@@ -1,17 +1,32 @@
-import SwiftUI
+// Swift example for WatchKit
+import WatchKit
+import Foundation
 
-struct Interface: View {
-    var body: some View {
-        // Define your interface here if needed
-        VStack {
-            Text("This is an interface")
-                .font(.largeTitle)
-        }
+class InterfaceController: WKInterfaceController {
+
+    override func willActivate() {
+        super.willActivate()
+    }
+
+    @IBAction func goToMainScreenView() {
+        pushController(withName: "MainScreenController", context: nil)
     }
 }
 
-struct Interface_Previews: PreviewProvider {
-    static var previews: some View {
-        Interface()
-    }
-}
+// import SwiftUI
+
+// struct Interface: View {
+//     var body: some View {
+//         // Define your interface here if needed
+//         VStack {
+//             Text("This is an interface")
+//                 .font(.largeTitle)
+//         }
+//     }
+// }
+
+// struct Interface_Previews: PreviewProvider {
+//     static var previews: some View {
+//         Interface()
+//     }
+// }
