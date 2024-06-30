@@ -26,6 +26,7 @@ DerivedData
 *.xcuserstate
 ios/.xcode.env.local
 ios-fastlane-json-key.json
+**/*.mobileprovision
 
 # Android/IntelliJ
 #
