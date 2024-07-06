@@ -5,39 +5,37 @@
 //  Created by PetrCala on 30.06.2024.
 //
 
-// import WatchKit
+import WatchKit
 
-// class SceneDelegate: NSObject, WKSceneDelegate {
+class SceneDelegate: NSObject, WKApplicationDelegate {
     
-//     func scene(_ scene: WKScene, willConnectTo session: WKApplicationSession, options connectionOptions: [WKScene.ConnectionOptions]) {
-//         // Called when the scene is being created and connected to the session
-//         // Use this method to optionally configure and attach the interface controller to the provided WKScene `scene`.
-//     }
+    func applicationDidFinishLaunching() {
+        // Perform any final initialization of your application.
+    }
     
-//     func sceneDidDisconnect(_ scene: WKScene) {
-//         // Called as the scene is being released by the system.
-//         // This occurs shortly after the scene enters the background, or when its session is discarded.
-//     }
+    func applicationDidBecomeActive() {
+        // Restart any tasks that were paused (or not yet started) while the application was inactive.
+    }
 
-//     func sceneDidBecomeActive(_ scene: WKScene) {
-//         // Called when the scene has moved from an inactive state to an active state.
-//         // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
-//     }
+    func applicationWillResignActive() {
+        // Sent when the application is about to move from active to inactive state. 
+        // This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) 
+        // or when the user quits the application and it begins the transition to the background state.
+    }
 
-//     func sceneWillResignActive(_ scene: WKScene) {
-//         // Called when the scene will move from an active state to an inactive state.
-//         // This may occur due to temporary interruptions (ex. an incoming phone call).
-//     }
+    func applicationDidEnterBackground() {
+        // Use this method to release shared resources, save user data, invalidate timers, 
+        // and store enough application state information to restore your application to its current state in case it is terminated later.
+    }
     
-//     func sceneWillEnterForeground(_ scene: WKScene) {
-//         // Called as the scene transitions from the background to the foreground.
-//         // Use this method to undo the changes made on entering the background.
-//     }
+    func applicationWillEnterForeground() {
+        // Called as part of the transition from the background to the foreground; 
+        // here you can undo many of the changes made on entering the background.
+    }
+    
+    func applicationWillTerminate() {
+        // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    }
 
-//     func sceneDidEnterBackground(_ scene: WKScene) {
-//         // Called as the scene transitions from the foreground to the background.
-//         // Use this method to save data, release shared resources, and store enough scene-specific state information
-//         // to restore the scene back to its current state.
-//     }
+}
 
-// }
