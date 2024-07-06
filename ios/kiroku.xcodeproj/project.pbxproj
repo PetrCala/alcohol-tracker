@@ -1256,6 +1256,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "Apple Development: Petr Cala (8438795N2U)";
 				CODE_SIGN_STYLE = Manual;
+				COMPANION_IDENTIFIER = "org.reactjs.native.example.alcohol-tracker";
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_ASSET_PATHS = "";
@@ -1306,6 +1307,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "Apple Development: Petr Cala (8438795N2U)";
 				CODE_SIGN_STYLE = Manual;
+				COMPANION_IDENTIFIER = "org.reactjs.native.example.alcohol-tracker";
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_ASSET_PATHS = "";
@@ -1356,6 +1358,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "Apple Development: Petr Cala (8438795N2U)";
 				CODE_SIGN_STYLE = Manual;
+				COMPANION_IDENTIFIER = "org.reactjs.native.example.alcohol-tracker";
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_ASSET_PATHS = "";
@@ -1406,6 +1409,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "Apple Development: Petr Cala (8438795N2U)";
 				CODE_SIGN_STYLE = Manual;
+				COMPANION_IDENTIFIER = "org.reactjs.native.example.alcohol-tracker";
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_ASSET_PATHS = "";
@@ -1456,6 +1460,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "Apple Distribution: Petr Cala (L357YP9W28)";
 				CODE_SIGN_STYLE = Manual;
+				COMPANION_IDENTIFIER = "org.reactjs.native.example.alcohol-tracker";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -1504,6 +1509,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "Apple Distribution: Petr Cala (L357YP9W28)";
 				CODE_SIGN_STYLE = Manual;
+				COMPANION_IDENTIFIER = "org.reactjs.native.example.alcohol-tracker";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -1552,6 +1558,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "Apple Distribution: Petr Cala (L357YP9W28)";
 				CODE_SIGN_STYLE = Manual;
+				COMPANION_IDENTIFIER = "org.reactjs.native.example.alcohol-tracker";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -1600,6 +1607,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "Apple Distribution: Petr Cala (L357YP9W28)";
 				CODE_SIGN_STYLE = Manual;
+				COMPANION_IDENTIFIER = "org.reactjs.native.example.alcohol-tracker";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
