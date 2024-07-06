@@ -23,8 +23,12 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>0.3.4.7</string>
+	<string>0.3.4.8</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>ITSWatchOnlyContainer</key>
+	<false/>
+	<key>LSApplicationLaunchProhibited</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
@@ -85,10 +89,6 @@
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false/>
-	<key>LSApplicationLaunchProhibited</key>
-	<false/>
-	<key>ITSWatchOnlyContainer</key>
 	<false/>
 </dict>
 </plist>
