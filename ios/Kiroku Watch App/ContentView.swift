@@ -32,7 +32,3 @@ struct ContentView_Previews: PreviewProvider {
 //         .padding()
 //     }
 // }
-
-// #Preview {
-//     ContentView()
-// }
