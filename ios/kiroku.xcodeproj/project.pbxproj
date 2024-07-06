@@ -38,13 +38,11 @@
 		8CACE1B92C3058C50051A44C /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CACE1A52C3058C50051A44C /* Helpers.swift */; };
 		8CACE1BA2C3058C50051A44C /* FirebaseConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CACE1A62C3058C50051A44C /* FirebaseConfig.swift */; };
 		8CACE1BB2C3058C50051A44C /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CACE1A72C3058C50051A44C /* Extensions.swift */; };
-		8CACE1BC2C3058C50051A44C /* Interface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CACE1A82C3058C50051A44C /* Interface.swift */; };
 		8CACE1BD2C3058C50051A44C /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CACE1AA2C3058C50051A44C /* SettingsView.swift */; };
 		8CACE1BE2C3058C50051A44C /* StartSessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CACE1AB2C3058C50051A44C /* StartSessionView.swift */; };
 		8CACE1BF2C3058C50051A44C /* UnitSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CACE1AC2C3058C50051A44C /* UnitSelectionView.swift */; };
 		8CACE1C02C3058C50051A44C /* SessionControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CACE1AD2C3058C50051A44C /* SessionControlView.swift */; };
 		8CACE1C12C3058C50051A44C /* MainScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CACE1AE2C3058C50051A44C /* MainScreenView.swift */; };
-		8CACE1C32C305A680051A44C /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8CACE1C22C305A680051A44C /* Interface.storyboard */; };
 		8CCCAE2F2B7188B4008DCF56 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB61A68108700A75B9A /* Info.plist */; };
 		929EAF1A3FD507F3FF2058BF /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B3D3536B8F71ACC793CEB96 /* ExpoModulesProvider.swift */; };
 /* End PBXBuildFile section */
@@ -125,7 +123,6 @@
 		8C389F102C3031AE00A015D5 /* Kiroku_Watch_AppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Kiroku_Watch_AppUITests.swift; sourceTree = "<group>"; };
 		8C389F122C3031AE00A015D5 /* Kiroku_Watch_AppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Kiroku_Watch_AppUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		8C389F412C30578A00A015D5 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		8C4345332C31BC6E00B871A8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8C4345352C31BE5E00B871A8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		8C84CE0A2BDB722F00C88D4E /* BootSplash.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = BootSplash.storyboard; path = kiroku/BootSplash.storyboard; sourceTree = "<group>"; };
 		8C84CE112BDB726F00C88D4E /* RCTBootSplash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RCTBootSplash.h; path = kiroku/RCTBootSplash.h; sourceTree = "<group>"; };
@@ -143,13 +140,12 @@
 		8CACE1A52C3058C50051A44C /* Helpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 		8CACE1A62C3058C50051A44C /* FirebaseConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirebaseConfig.swift; sourceTree = "<group>"; };
 		8CACE1A72C3058C50051A44C /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
-		8CACE1A82C3058C50051A44C /* Interface.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Interface.swift; sourceTree = "<group>"; };
 		8CACE1AA2C3058C50051A44C /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		8CACE1AB2C3058C50051A44C /* StartSessionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StartSessionView.swift; sourceTree = "<group>"; };
 		8CACE1AC2C3058C50051A44C /* UnitSelectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnitSelectionView.swift; sourceTree = "<group>"; };
 		8CACE1AD2C3058C50051A44C /* SessionControlView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionControlView.swift; sourceTree = "<group>"; };
 		8CACE1AE2C3058C50051A44C /* MainScreenView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainScreenView.swift; sourceTree = "<group>"; };
-		8CACE1C22C305A680051A44C /* Interface.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Interface.storyboard; sourceTree = "<group>"; };
+		8CB29CD72C3974D100EF2A0E /* Kiroku-Watch-App-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Kiroku-Watch-App-Info.plist"; sourceTree = "<group>"; };
 		90AD5C6054F0E33DE7D27FC3 /* Pods-kiroku-kirokuTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kiroku-kirokuTests.debug.xcconfig"; path = "Target Support Files/Pods-kiroku-kirokuTests/Pods-kiroku-kirokuTests.debug.xcconfig"; sourceTree = "<group>"; };
 		9171CF9FA02C7A7CB936FFC7 /* Pods-kiroku.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kiroku.debug.xcconfig"; path = "Target Support Files/Pods-kiroku/Pods-kiroku.debug.xcconfig"; sourceTree = "<group>"; };
 		925B6B41B6575F4E2B75C25E /* Pods-kiroku-kirokuTests.debugproduction.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kiroku-kirokuTests.debugproduction.xcconfig"; path = "Target Support Files/Pods-kiroku-kirokuTests/Pods-kiroku-kirokuTests.debugproduction.xcconfig"; sourceTree = "<group>"; };
@@ -307,16 +303,14 @@
 		8C389EF42C3031AB00A015D5 /* Kiroku Watch App */ = {
 			isa = PBXGroup;
 			children = (
+				8CB29CD72C3974D100EF2A0E /* Kiroku-Watch-App-Info.plist */,
 				8CACE19B2C3058C50051A44C /* Controllers */,
-				8CACE1A82C3058C50051A44C /* Interface.swift */,
 				8CACE1982C3058C50051A44C /* Models */,
 				8CACE1A32C3058C50051A44C /* Utilities */,
 				8CACE1A92C3058C50051A44C /* Views */,
 				8C389EF52C3031AB00A015D5 /* KirokuApp.swift */,
 				8C389EF72C3031AC00A015D5 /* ContentView.swift */,
 				8C389EF92C3031AC00A015D5 /* Assets.xcassets */,
-				8CACE1C22C305A680051A44C /* Interface.storyboard */,
-				8C4345332C31BC6E00B871A8 /* Info.plist */,
 				8C4345352C31BE5E00B871A8 /* SceneDelegate.swift */,
 			);
 			path = "Kiroku Watch App";
@@ -623,7 +617,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8C389EFA2C3031AC00A015D5 /* Assets.xcassets in Resources */,
-				8CACE1C32C305A680051A44C /* Interface.storyboard in Resources */,
 				8C389F442C3057B000A015D5 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -871,7 +864,6 @@
 				8CACE1C12C3058C50051A44C /* MainScreenView.swift in Sources */,
 				8CACE1B62C3058C50051A44C /* StartSessionController.swift in Sources */,
 				8CACE1B22C3058C50051A44C /* SettingsController.swift in Sources */,
-				8CACE1BC2C3058C50051A44C /* Interface.swift in Sources */,
 				8CACE1B52C3058C50051A44C /* UnitSelectionController.swift in Sources */,
 				8CACE1B92C3058C50051A44C /* Helpers.swift in Sources */,
 				8CACE1B32C3058C50051A44C /* SessionControlController.swift in Sources */,
@@ -1270,8 +1262,8 @@
 				"DEVELOPMENT_TEAM[sdk=watchos*]" = L357YP9W28;
 				ENABLE_PREVIEWS = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Kiroku-Watch-App-Info.plist";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Kiroku Watch App/Kiroku-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Kiroku;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKWatchOnly = YES;
@@ -1320,8 +1312,8 @@
 				"DEVELOPMENT_TEAM[sdk=watchos*]" = L357YP9W28;
 				ENABLE_PREVIEWS = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Kiroku-Watch-App-Info.plist";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Kiroku Watch App/Kiroku-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Kiroku;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKWatchOnly = YES;
@@ -1370,8 +1362,8 @@
 				"DEVELOPMENT_TEAM[sdk=watchos*]" = L357YP9W28;
 				ENABLE_PREVIEWS = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Kiroku-Watch-App-Info.plist";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Kiroku Watch App/Kiroku-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Kiroku;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKWatchOnly = YES;
@@ -1420,8 +1412,8 @@
 				"DEVELOPMENT_TEAM[sdk=watchos*]" = L357YP9W28;
 				ENABLE_PREVIEWS = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Kiroku-Watch-App-Info.plist";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Kiroku Watch App/Kiroku-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Kiroku;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKWatchOnly = YES;
@@ -1471,8 +1463,8 @@
 				"DEVELOPMENT_TEAM[sdk=watchos*]" = L357YP9W28;
 				ENABLE_PREVIEWS = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Kiroku-Watch-App-Info.plist";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Kiroku Watch App/Kiroku-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Kiroku;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKWatchOnly = YES;
@@ -1519,8 +1511,8 @@
 				"DEVELOPMENT_TEAM[sdk=watchos*]" = L357YP9W28;
 				ENABLE_PREVIEWS = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Kiroku-Watch-App-Info.plist";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Kiroku Watch App/Kiroku-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Kiroku;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKWatchOnly = YES;
@@ -1567,8 +1559,8 @@
 				"DEVELOPMENT_TEAM[sdk=watchos*]" = L357YP9W28;
 				ENABLE_PREVIEWS = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Kiroku-Watch-App-Info.plist";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Kiroku Watch App/Kiroku-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Kiroku;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKWatchOnly = YES;
@@ -1615,8 +1607,8 @@
 				"DEVELOPMENT_TEAM[sdk=watchos*]" = L357YP9W28;
 				ENABLE_PREVIEWS = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Kiroku-Watch-App-Info.plist";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Kiroku Watch App/Kiroku-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Kiroku;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKWatchOnly = YES;
