@@ -23,7 +23,7 @@
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>WKApplication</key>
-	</true>
+	<true/>
 	<key>WKCompanionAppBundleIdentifier</key>
 	<string>$(COMPANION_IDENTIFIER)</string>
 </dict>
