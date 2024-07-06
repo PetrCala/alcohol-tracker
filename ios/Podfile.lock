@@ -1669,34 +1669,23 @@ PODS:
     - React-Codegen
     - React-Core
     - ReactCommon/turbomodule/core
-  - RNReanimated (3.5.4):
-    - DoubleConversion
-    - FBLazyVector
+  - RNReanimated (3.6.1):
     - glog
     - hermes-engine
-    - RCT-Folly
+    - RCT-Folly (= 2022.05.16.00)
     - RCTRequired
     - RCTTypeSafety
-    - React-callinvoker
     - React-Codegen
     - React-Core
-    - React-Core/DevSupport
-    - React-Core/RCTWebSocket
-    - React-CoreModules
-    - React-cxxreact
-    - React-hermes
-    - React-jsi
-    - React-jsiexecutor
-    - React-jsinspector
-    - React-RCTActionSheet
-    - React-RCTAnimation
-    - React-RCTBlob
+    - React-debug
+    - React-Fabric
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
     - React-RCTFabric
-    - React-RCTImage
-    - React-RCTLinking
-    - React-RCTNetwork
-    - React-RCTSettings
-    - React-RCTText
+    - React-rendererdebug
+    - React-utils
+    - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
   - RNScreens (3.31.1):
@@ -2230,7 +2219,7 @@ SPEC CHECKSUMS:
   RNLocalize: 93b958aef6b7f2cd46781c32c8e733abaae881ed
   RNPermissions: f4ad007d49c255ad11cfacf6707971f0fb472d2b
   RNReactNativeHapticFeedback: 616c35bdec7d20d4c524a7949ca9829c09e35f37
-  RNReanimated: 6d80917d429da88850dd835dac085775d0e22de5
+  RNReanimated: 90d9fe11f1ca27dc52551703f786384ad01797a2
   RNScreens: ad3fbaf0301c3229979d1accf901d06f8af3bbd9
   RNShare: 0463c31e8c1883bb80afed64066cff3dc7ed4e1a
   RNSound: 6c156f925295bdc83e8e422e7d8b38d33bc71852
