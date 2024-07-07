@@ -24,12 +24,17 @@ struct SessionTabView: View {
             SessionControlView(viewModel: viewModel)
                 .tag(0)
                 .tabItem {
-                    Text("Control")
+                    Text("Session Control")
                 }
             MainScreenView(viewModel: viewModel)
                 .tag(1)
                 .tabItem {
-                    Text("Main")
+                    Text("Main Screen")
+                }
+            UnitSelectionView()
+                .tag(2)
+                .tabItem {
+                    Text("Unit Selection")
                 }
         }
         .tabViewStyle(PageTabViewStyle())

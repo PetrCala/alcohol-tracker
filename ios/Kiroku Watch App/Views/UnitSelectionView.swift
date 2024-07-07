@@ -12,3 +12,9 @@ struct UnitSelectionView: View {
         }
     }
 }
+
+struct UnitSelectionView_Previews: PreviewProvider {
+    static var previews: some View {
+        UnitSelectionView()
+    }
+}
