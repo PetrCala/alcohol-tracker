@@ -37,11 +37,6 @@
 		8C93A11A2BAE2C7200B5382C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 8CA9A3092BAD9A380036C58C /* PrivacyInfo.xcprivacy */; };
 		8CACE1B02C3058C50051A44C /* UnitModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CACE1992C3058C50051A44C /* UnitModel.swift */; };
 		8CACE1B12C3058C50051A44C /* SessionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CACE19A2C3058C50051A44C /* SessionModel.swift */; };
-		8CACE1B22C3058C50051A44C /* SettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CACE19C2C3058C50051A44C /* SettingsController.swift */; };
-		8CACE1B32C3058C50051A44C /* SessionControlController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CACE19D2C3058C50051A44C /* SessionControlController.swift */; };
-		8CACE1B42C3058C50051A44C /* MainScreenController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CACE19E2C3058C50051A44C /* MainScreenController.swift */; };
-		8CACE1B52C3058C50051A44C /* UnitSelectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CACE19F2C3058C50051A44C /* UnitSelectionController.swift */; };
-		8CACE1B62C3058C50051A44C /* StartSessionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CACE1A02C3058C50051A44C /* StartSessionController.swift */; };
 		8CACE1B82C3058C50051A44C /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CACE1A42C3058C50051A44C /* Constants.swift */; };
 		8CACE1B92C3058C50051A44C /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CACE1A52C3058C50051A44C /* Helpers.swift */; };
 		8CACE1BA2C3058C50051A44C /* FirebaseConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CACE1A62C3058C50051A44C /* FirebaseConfig.swift */; };
@@ -145,11 +140,6 @@
 		8CA9A3092BAD9A380036C58C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = kiroku/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		8CACE1992C3058C50051A44C /* UnitModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnitModel.swift; sourceTree = "<group>"; };
 		8CACE19A2C3058C50051A44C /* SessionModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionModel.swift; sourceTree = "<group>"; };
-		8CACE19C2C3058C50051A44C /* SettingsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsController.swift; sourceTree = "<group>"; };
-		8CACE19D2C3058C50051A44C /* SessionControlController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionControlController.swift; sourceTree = "<group>"; };
-		8CACE19E2C3058C50051A44C /* MainScreenController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainScreenController.swift; sourceTree = "<group>"; };
-		8CACE19F2C3058C50051A44C /* UnitSelectionController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnitSelectionController.swift; sourceTree = "<group>"; };
-		8CACE1A02C3058C50051A44C /* StartSessionController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StartSessionController.swift; sourceTree = "<group>"; };
 		8CACE1A42C3058C50051A44C /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		8CACE1A52C3058C50051A44C /* Helpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 		8CACE1A62C3058C50051A44C /* FirebaseConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirebaseConfig.swift; sourceTree = "<group>"; };
@@ -319,7 +309,6 @@
 			children = (
 				8CB29CD72C3974D100EF2A0E /* Kiroku-Watch-App-Info.plist */,
 				8C6ACF7F2C3B02A6002BAD95 /* Translations */,
-				8CACE19B2C3058C50051A44C /* Controllers */,
 				8CACE1982C3058C50051A44C /* Models */,
 				8CACE1A32C3058C50051A44C /* Utilities */,
 				8C6ACF8B2C3B0CA9002BAD95 /* ViewModels */,
@@ -373,18 +362,6 @@
 				8CACE19A2C3058C50051A44C /* SessionModel.swift */,
 			);
 			path = Models;
-			sourceTree = "<group>";
-		};
-		8CACE19B2C3058C50051A44C /* Controllers */ = {
-			isa = PBXGroup;
-			children = (
-				8CACE19C2C3058C50051A44C /* SettingsController.swift */,
-				8CACE19D2C3058C50051A44C /* SessionControlController.swift */,
-				8CACE19E2C3058C50051A44C /* MainScreenController.swift */,
-				8CACE19F2C3058C50051A44C /* UnitSelectionController.swift */,
-				8CACE1A02C3058C50051A44C /* StartSessionController.swift */,
-			);
-			path = Controllers;
 			sourceTree = "<group>";
 		};
 		8CACE1A32C3058C50051A44C /* Utilities */ = {
@@ -900,11 +877,7 @@
 				8C6ACF8D2C3B0CB5002BAD95 /* InitialView.swift in Sources */,
 				8C389EF82C3031AC00A015D5 /* ContentView.swift in Sources */,
 				8CACE1C12C3058C50051A44C /* MainScreenView.swift in Sources */,
-				8CACE1B62C3058C50051A44C /* StartSessionController.swift in Sources */,
-				8CACE1B22C3058C50051A44C /* SettingsController.swift in Sources */,
-				8CACE1B52C3058C50051A44C /* UnitSelectionController.swift in Sources */,
 				8CACE1B92C3058C50051A44C /* Helpers.swift in Sources */,
-				8CACE1B32C3058C50051A44C /* SessionControlController.swift in Sources */,
 				8CACE1BA2C3058C50051A44C /* FirebaseConfig.swift in Sources */,
 				8CACE1B82C3058C50051A44C /* Constants.swift in Sources */,
 				8C6ACF892C3B03C3002BAD95 /* CzechTexts.swift in Sources */,
@@ -915,7 +888,6 @@
 				8C6ACF912C3B0D1D002BAD95 /* SessionViewModel.swift in Sources */,
 				8C6ACF782C3AF96C002BAD95 /* Colors.swift in Sources */,
 				8C6ACF8F2C3B0CE5002BAD95 /* StartSessionContent.swift in Sources */,
-				8CACE1B42C3058C50051A44C /* MainScreenController.swift in Sources */,
 				8CACE1B02C3058C50051A44C /* UnitModel.swift in Sources */,
 				8C6ACF932C3B17D5002BAD95 /* SessionTabView.swift in Sources */,
 				8C6ACF822C3B0304002BAD95 /* Translate.swift in Sources */,
