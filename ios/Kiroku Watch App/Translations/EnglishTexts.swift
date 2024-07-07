@@ -12,11 +12,6 @@ struct EnglishTexts {
         "welcomeMessage": "Welcome to WatchOS App",
         "startButton": "Start",
         "stopButton": "Stop",
-        "pauseButton": "Pause",
-        "resumeButton": "Resume",
-        "settings": "Settings",
-        "profile": "Profile",
-        "logout": "Logout",
         "errorMessage": "An error occurred. Please try again.",
         "tapToStartSession": "Tap to Start Session",
     ]
