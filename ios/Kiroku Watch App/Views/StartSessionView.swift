@@ -6,12 +6,7 @@ struct StartSessionView: View {
             Button(action: {
                 SessionModel.shared.startSession()
             }) {
-                Text("Start Session")
-            }
-            Button(action: {
-                // Navigate to settings
-            }) {
-                Text("Settings")
+                Text("Tap to Start Session")
             }
         }
     }

@@ -14,7 +14,8 @@ struct ContentView: View {
             AppColors.backgroundColor
                 .edgesIgnoringSafeArea(.all) // This ensures the color covers the entire screen
             
-            MainScreenView()
+            // MainScreenView()
+            StartSessionView()
         }
     }
 }
@@ -24,17 +25,3 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
-
-// import SwiftUI
-
-// struct ContentView: View {
-//     var body: some View {
-//         VStack {
-//             Image(systemName: "globe")
-//                 .imageScale(.large)
-//                 .foregroundStyle(.tint)
-//             Text("Hello, world!")
-//         }
-//         .padding()
-//     }
-// }

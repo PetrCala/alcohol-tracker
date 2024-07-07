@@ -7,7 +7,7 @@ class StartSessionController: WKInterfaceController {
         pushController(withName: "MainScreen", context: nil)
     }
 
-    @IBAction func navigateToSettings() {
-        pushController(withName: "SettingsScreen", context: nil)
-    }
+    // @IBAction func navigateToSettings() {
+    //     pushController(withName: "SettingsScreen", context: nil)
+    // }
 }
