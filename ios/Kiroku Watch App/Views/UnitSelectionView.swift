@@ -26,8 +26,8 @@ struct UnitSelectionView: View {
                             .frame(width: geometry.size.width - 32)
                             .padding()
                             .background(RoundedRectangle(cornerRadius: 10)
-                                            .stroke(selectedUnit == unit ? Color.blue : Color.gray)
-                                            .background(selectedUnit == unit ? Color.blue.opacity(0.1) : Color.clear)
+                                            .stroke(selectedUnit == unit ? AppColors.primaryColor : Color.gray)
+                                            .background(selectedUnit == unit ? AppColors.primaryColor.opacity(0.1) : Color.clear)
                             )
                             .id(unit.unitId) // Add ID for ScrollViewReader
                             .onTapGesture {
