@@ -311,8 +311,8 @@
 		8C389EF42C3031AB00A015D5 /* Kiroku Watch App */ = {
 			isa = PBXGroup;
 			children = (
-				8C6ACF7F2C3B02A6002BAD95 /* Translations */,
 				8CB29CD72C3974D100EF2A0E /* Kiroku-Watch-App-Info.plist */,
+				8C6ACF7F2C3B02A6002BAD95 /* Translations */,
 				8CACE19B2C3058C50051A44C /* Controllers */,
 				8CACE1982C3058C50051A44C /* Models */,
 				8CACE1A32C3058C50051A44C /* Utilities */,
