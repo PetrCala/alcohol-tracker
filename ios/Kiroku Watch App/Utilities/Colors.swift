@@ -3,7 +3,9 @@ import SwiftUI
 
 struct AppColors {
     static let appColor = Color(hex: "FFFF99")
+    static let primaryColor = Color(hex: "FFFF99")
     static let backgroundColor = Color(hex: "000000")
+    static let contrastColor = Color(hex: "FFFFFF")
 }
 
 extension Color {
