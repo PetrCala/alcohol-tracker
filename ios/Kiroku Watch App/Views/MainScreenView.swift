@@ -1,22 +1,22 @@
 import SwiftUI
 
 struct MainScreenView: View {
-    @ObservedObject var session = SessionModel.shared
+    @ObservedObject var viewModel: SessionViewModel
 
     var body: some View {
         VStack {
-            Text("\(session.unitCount)")
+          Text("\(viewModel.session.unitCount)")
                 .font(.largeTitle)
             HStack {
                 Button(action: {
-                    session.addUnit()
+                    viewModel.addUnit()
                 }) {
                     Text("+")
                         .font(.largeTitle)
                         .padding()
                 }
                 Button(action: {
-                    session.subtractUnit()
+                    viewModel.subtractUnit()
                 }) {
                     Text("-")
                         .font(.largeTitle)
@@ -24,12 +24,13 @@ struct MainScreenView: View {
                 }
             }
         }
+        // .navigationBarTitle("Main Screen")
     }
 }
 
 struct MainScreenView_Previews: PreviewProvider {
     static var previews: some View {
-        MainScreenView()
+        MainScreenView(viewModel: SessionViewModel())
     }
 }
 

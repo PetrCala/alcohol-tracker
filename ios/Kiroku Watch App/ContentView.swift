@@ -14,8 +14,7 @@ struct ContentView: View {
             AppColors.backgroundColor
                 .edgesIgnoringSafeArea(.all) // This ensures the color covers the entire screen
             
-            // MainScreenView()
-            StartSessionView()
+            InitialView()
         }
     }
 }

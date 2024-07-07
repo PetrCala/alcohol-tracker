@@ -1,12 +1,24 @@
+//
+//  StartSessionContent.swift
+//  Kiroku Watch App
+//
+//  Created by PetrCala on 07.07.2024.
+//
+
+import Foundation
 import SwiftUI
 
-struct StartSessionView: View {
+struct StartSessionContent: View {
+    @ObservedObject var viewModel: SessionViewModel
+    @Binding var navigateToMainScreen: Bool
+    
     var body: some View {
         VStack {
             Spacer()
             
             Button(action: {
-                SessionModel.shared.startSession()
+                viewModel.startSession()
+                navigateToMainScreen = true
             }) {
                 VStack {
                     Image(ImageAssets.AppImage)
@@ -27,6 +39,14 @@ struct StartSessionView: View {
             .buttonStyle(PlainButtonStyle()) // Make the button invisible
     
             Spacer()
+
         }
+    }
+}
+
+struct StartSessionContent_Previews: PreviewProvider {
+    @State static var navigateToMainScreen = false
+    static var previews: some View {
+        StartSessionContent(viewModel: SessionViewModel(), navigateToMainScreen: $navigateToMainScreen)
     }
 }

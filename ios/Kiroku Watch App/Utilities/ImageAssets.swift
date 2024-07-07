@@ -2,7 +2,7 @@
 //  ImageAssets.swift
 //  Kiroku Watch App
 //
-//  Created by JF41513 on 07.07.2024.
+//  Created by PetrCala on 07.07.2024.
 //
 
 import Foundation
