@@ -11,7 +11,7 @@ struct InitialView: View {
             }
             // .navigationTitle("Home")
             .navigationDestination(isPresented: $navigateToMainScreen) {
-                SessionTabView(viewModel: viewModel)
+                SessionTabView(viewModel: viewModel, initialTab: 1)
             }
         }
     }
