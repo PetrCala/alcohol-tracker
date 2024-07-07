@@ -25,6 +25,7 @@ struct MainScreenView: View {
             }
         }
         // .navigationBarTitle("Main Screen")
+        .navigationBarBackButtonHidden(true)
     }
 }
 

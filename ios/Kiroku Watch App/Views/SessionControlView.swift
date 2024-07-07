@@ -1,21 +1,32 @@
 import SwiftUI
 
 struct SessionControlView: View {
-    @ObservedObject var session = SessionModel.shared
-
+    @ObservedObject var viewModel: SessionViewModel
+    @Environment(\.dismiss) var dismiss
+    
     var body: some View {
         VStack {
+            // MainScreenView(viewModel: viewModel)
+            
             Button(action: {
-                session.endSession()
+                viewModel.endSession()
+                dismiss()
             }) {
                 Text("End Session")
+                    .foregroundColor(.white)
+                    .padding()
+                    // .background(Color.gray)
+                    .cornerRadius(8)
             }
-            Button(action: {
-                session.endSession()
-            }) {
-                Text("Cancel Session")
-            }
+            .padding()
         }
+        .navigationBarBackButtonHidden(true)
+    }
+}
+
+struct SessionControlView_Previews: PreviewProvider {
+    static var previews: some View {
+        SessionControlView(viewModel: SessionViewModel())
     }
 }
 
