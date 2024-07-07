@@ -6,10 +6,16 @@
 //
 
 import SwiftUI
+import Foundation
 
 struct ContentView: View {
     var body: some View {
-        MainScreenView()
+        ZStack {
+            AppColors.backgroundColor
+                .edgesIgnoringSafeArea(.all) // This ensures the color covers the entire screen
+            
+            MainScreenView()
+        }
     }
 }
 
