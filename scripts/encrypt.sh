@@ -26,11 +26,6 @@ if ! command -v gpg &>/dev/null; then
   exit 1
 fi
 
-if [[ $FILE != *.mobileprovision ]]; then
-  error "File must be a .mobileprovision file"
-  exit 1
-fi
-
 info "Encrypting $FILE..."
 
 gpg --output $FILE.gpg --encrypt --recipient cala.p@seznam.cz $FILE
