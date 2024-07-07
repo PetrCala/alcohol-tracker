@@ -1,14 +1,51 @@
 import SwiftUI
 
 struct UnitSelectionView: View {
-    @State private var selectedUnit: UnitModel?
+    @State private var selectedUnit: UnitModel? = UnitModel.getUnit(withName: "Other")
     let units = UnitModel.getUnits()
 
     var body: some View {
-        Picker("Select Unit", selection: $selectedUnit) {
-            ForEach(units, id: \.unitValue) { unit in
-                Text(unit.unitName).tag(unit as UnitModel?)
+        GeometryReader { geometry in
+            ScrollViewReader { proxy in
+                ScrollView {
+                    LazyVStack {
+                        ForEach(units, id: \.unitId) { unit in
+                            HStack {
+                                Text(unit.unitName)
+                                    .font(.body)
+                                    // .foregroundColor(.black)
+                                
+                                Spacer()
+                                
+                                // Image(systemName: unit.unitImageName)
+                                Image(systemName: "checkmark")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 30, height: 30)
+                            }
+                            .frame(width: geometry.size.width - 32)
+                            .padding()
+                            .background(RoundedRectangle(cornerRadius: 10)
+                                            .stroke(selectedUnit == unit ? Color.blue : Color.gray)
+                                            .background(selectedUnit == unit ? Color.blue.opacity(0.1) : Color.clear)
+                            )
+                            .id(unit.unitId) // Add ID for ScrollViewReader
+                            .onTapGesture {
+                                selectedUnit = unit
+                            }
+                        }
+                    }
+                    .padding()
+                }
+                .onAppear {
+                    // Scroll to the selected unit when the view appears
+                    if let selectedUnit = selectedUnit {
+                        proxy.scrollTo(selectedUnit.unitId, anchor: .center)
+                    }
+                }
             }
+            // .padding()
+            // .navigationBarTitle("", displayMode: .inline) // Hide the title text
         }
     }
 }
