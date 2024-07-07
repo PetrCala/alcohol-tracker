@@ -1,4 +1,4 @@
-ENVIRONMENT=development
+ENVIRONMENT=staging
 API_KEY=AIzaSyC4qhMM2q6JH7ggtYTOHaks8CquJi0YP5A
 AUTH_DOMAIN=dev-alcohol-tracker-db.firebaseapp.com
 DATABASE_URL=https:/$()/dev-alcohol-tracker-db-default-rtdb.europe-west1.firebasedatabase.app
