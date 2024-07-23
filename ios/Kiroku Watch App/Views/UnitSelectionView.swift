@@ -7,6 +7,10 @@ struct UnitView: View {
     let innerGeometry: GeometryProxy
     let frameHeight: CGFloat
     let updateSelectedUnit: (GeometryProxy, GeometryProxy, Int) -> Void
+
+    var imageSizeModifier: CGFloat {
+        return (unit.makeSmaller ?? false) ? 0.4 : 0.5
+    }
     
     var body: some View {
         HStack {
@@ -20,9 +24,7 @@ struct UnitView: View {
                 .renderingMode(.template)
                 .foregroundColor(.white)
                 .scaledToFit()
-                .frame(width: frameHeight / 2, height: frameHeight / 2)
-                // .renderingMode(.template)
-                // .foregroundColor(AppColors.contrastColor.opacity(0.1))
+                .frame(width: frameHeight * imageSizeModifier, height: frameHeight * imageSizeModifier)
         }
         .frame(width: outerGeometry.size.width - 32)
         .padding()
