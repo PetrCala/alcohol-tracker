@@ -31,6 +31,14 @@ const config = {
       // 'html'
     ],
   },
+  transformer: {
+    ...transformer,
+    getTransformOptions: async () => ({
+      transform: {
+        inlineRequires: true,
+      },
+    }),
+  },
 };
 
 module.exports = mergeConfig(defaultConfig, config);
