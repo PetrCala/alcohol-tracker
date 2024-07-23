@@ -26,8 +26,6 @@
 	<string>0.3.4.9</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
-	<key>ITSWatchOnlyContainer</key>
-	<false/>
 	<key>LSApplicationLaunchProhibited</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
