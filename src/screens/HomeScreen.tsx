@@ -475,8 +475,8 @@ const localStyles = StyleSheet.create({
     alignItems: 'center',
   },
   menuIcon: {
-    width: 28,
-    height: 28,
+    width: 48, // Was 28
+    height: 48, // Was 28
     padding: 10,
   },
   notificationsButton: {
