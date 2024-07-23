@@ -30,7 +30,8 @@ struct UnitSelectionView: View {
                                     
                                     Spacer()
                                     
-                                    Image(systemName: "checkmark")
+                                    // Image(systemName: "checkmark")
+                                    Image(unit.unitImageName)
                                         .resizable()
                                         .scaledToFit()
                                         .frame(width: 30, height: 30)

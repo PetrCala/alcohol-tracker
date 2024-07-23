@@ -1,14 +1,17 @@
 {
   "images" : [
     {
+      "filename" : "weak-shot.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "weak-shot@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "weak-shot@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
