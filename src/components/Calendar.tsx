@@ -150,6 +150,7 @@ const DayComponent: React.FC<{
   };
 
   return (
+    // <TouchableOpacity
     <TouchableOpacity
       accessibilityRole="button"
       style={styles.dayContainer}
