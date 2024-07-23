@@ -1145,6 +1145,25 @@ PODS:
     - Yoga
   - react-native-netinfo (9.5.0):
     - React-Core
+  - react-native-pager-view (6.2.3):
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2022.05.16.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - react-native-performance (5.1.2):
     - glog
     - hermes-engine
@@ -1841,6 +1860,7 @@ DEPENDENCIES:
   - react-native-config/Extension (from `../node_modules/react-native-config`)
   - react-native-key-command (from `../node_modules/react-native-key-command`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
+  - react-native-pager-view (from `../node_modules/react-native-pager-view`)
   - react-native-performance (from `../node_modules/react-native-performance`)
   - react-native-plaid-link-sdk (from `../node_modules/react-native-plaid-link-sdk`)
   - react-native-quick-sqlite (from `../node_modules/react-native-quick-sqlite`)
@@ -2005,6 +2025,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-key-command"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
+  react-native-pager-view:
+    :path: "../node_modules/react-native-pager-view"
   react-native-performance:
     :path: "../node_modules/react-native-performance"
   react-native-plaid-link-sdk:
@@ -2173,6 +2195,7 @@ SPEC CHECKSUMS:
   react-native-config: 86038147314e2e6d10ea9972022aa171e6b1d4d8
   react-native-key-command: 0751b016904a9b62175bfcf65c3d033edb83d37d
   react-native-netinfo: 48c5f79a84fbc3ba1d28a8b0d04adeda72885fa8
+  react-native-pager-view: 0d22f122f53d86f4484fafb2e389b1e47f34bfc5
   react-native-performance: 37c0278e48fdad964b3ac28f28a4da6c1ecfd457
   react-native-plaid-link-sdk: 6c4d3d4f14288c546151d404aea812fa55edeea9
   react-native-quick-sqlite: 842f759532dcb66c8b3b267ab81d281ee20769c6

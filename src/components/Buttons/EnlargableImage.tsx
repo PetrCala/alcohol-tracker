@@ -1,13 +1,11 @@
 import React, {useState, useRef} from 'react';
-import type {
-  ImageSourcePropType,
-  LayoutChangeEvent} from 'react-native';
+import type {ImageSourcePropType, LayoutChangeEvent} from 'react-native';
 import {
   Image,
   TouchableOpacity,
   Animated,
   StyleSheet,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import FullScreenModal from '@components/Modals/FullScreenModal';
 import type ImageLayout from '@src/types/various/ImageLayout';
@@ -76,7 +74,10 @@ const EnlargableImage: React.FC<EnlargableImageProps> = props => {
 
   return (
     <>
-      <TouchableOpacity accessibilityRole="button" style={imageStyle} onPress={handlePress}>
+      <TouchableOpacity
+        accessibilityRole="button"
+        style={imageStyle}
+        onPress={handlePress}>
         <Image
           onLayout={handleOnLayout}
           source={imageSource}
