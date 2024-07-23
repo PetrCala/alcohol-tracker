@@ -20,8 +20,9 @@ struct UnitView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: frameHeight / 2, height: frameHeight / 2)
-                .renderingMode(.template)
-                .foregroundColor(AppColors.contrastColor.opacity(0.1))
+                .colorMultiply(.white)
+                // .renderingMode(.template)
+                // .foregroundColor(AppColors.contrastColor.opacity(0.1))
         }
         .frame(width: outerGeometry.size.width - 32)
         .padding()
@@ -33,7 +34,7 @@ struct UnitView: View {
         .onAppear {
             updateSelectedUnit(innerGeometry, outerGeometry, unit.unitId)
         }
-        .onChange(of: innerGeometry.frame(in: .global).midY) { _ in
+        .onChange(of: innerGeometry.frame(in: .global).midY) { oldValue, newValue in
             updateSelectedUnit(innerGeometry, outerGeometry, unit.unitId)
         }
         .frame(height: frameHeight)
