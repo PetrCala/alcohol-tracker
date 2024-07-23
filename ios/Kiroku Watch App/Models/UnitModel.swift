@@ -17,7 +17,7 @@ struct UnitModel: Hashable {
             UnitModel(unitName: "Weak Shot", unitId: 4, unitImageName: "unit_shotglass_small"),
             UnitModel(unitName: "Strong Shot", unitId: 5, unitImageName: "unit_shotglass_large"),
             UnitModel(unitName: "Cocktail", unitId: 6, unitImageName: "unit_cocktail"),
-            UnitModel(unitName: "Other", unitId: 7, unitImageName: "units.unit_other"),
+            UnitModel(unitName: "Other", unitId: 7, unitImageName: "unit_other"),
         ]
     }
 }
