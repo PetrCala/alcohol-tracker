@@ -27,11 +27,7 @@ const webpack = {
 };
 
 const metro = {
-  // presets: [require('@react-native/babel-preset')],
-  presets: ['module:@react-native/babel-preset'],
-  //   'module:metro-react-native-babel-preset',
-  //   ['@babel/preset-env', {targets: {node: 'current'}}],
-  //   '@babel/preset-typescript',
+  presets: [require('@react-native/babel-preset')],
   plugins: [
     // This is needed due to a react-native bug: https://github.com/facebook/react-native/issues/29084#issuecomment-1030732709
     // It is included in metro-react-native-babel-preset but needs to be before plugin-proposal-class-properties or FlatList will break

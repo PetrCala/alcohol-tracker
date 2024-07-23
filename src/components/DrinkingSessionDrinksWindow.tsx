@@ -1,12 +1,5 @@
-﻿import type {
-  ImageSourcePropType} from 'react-native';
-import {
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+﻿import type {ImageSourcePropType} from 'react-native';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import SessionDrinksInputWindow from './Buttons/SessionDrinksInputWindow';
 import {
   addDrinks,
@@ -38,7 +31,10 @@ const DrinkingSessionDrinksWindow = ({
     const newDrinkCount = sumDrinkTypes(drinks); // Number of added drinks
     if (newDrinkCount > 0 && newDrinkCount <= availableUnits) {
       // TODO this could overflow
-      const newDrinks: DrinksList | undefined = addDrinks(currentDrinks, drinks);
+      const newDrinks: DrinksList | undefined = addDrinks(
+        currentDrinks,
+        drinks,
+      );
       setCurrentDrinks(newDrinks);
     }
   };
@@ -69,7 +65,8 @@ const DrinkingSessionDrinksWindow = ({
         />
       </View>
       <Text style={styles.drinkInfoText}>{drinkName}</Text>
-      <TouchableOpacity accessibilityRole="button"
+      <TouchableOpacity
+        accessibilityRole="button"
         style={styles.adjustDrinksButton}
         onPress={() => handleRemoveDrinks(drinkKey, 1)}>
         <Image source={KirokuIcons.Minus} style={styles.adjustDrinksIcon} />
@@ -81,7 +78,8 @@ const DrinkingSessionDrinksWindow = ({
         availableUnits={availableUnits}
         styles={styles}
       />
-      <TouchableOpacity accessibilityRole="button"
+      <TouchableOpacity
+        accessibilityRole="button"
         style={styles.adjustDrinksButton}
         onPress={() => handleAddDrinks({[drinkKey]: 1})}>
         <Image source={KirokuIcons.Plus} style={styles.adjustDrinksIcon} />
