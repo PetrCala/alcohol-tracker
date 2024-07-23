@@ -19,6 +19,7 @@ const e2eSourceExts = ['e2e.js', 'e2e.ts', 'e2e.tsx'];
  */
 const config = {
   resolver: {
+    ...resolver,
     assetExts: [...defaultAssetExts, 'lottie'],
     // When we run the e2e tests we want files that have the extension e2e.js to be resolved as source files
     sourceExts: [
