@@ -14,7 +14,13 @@ class SessionModel: ObservableObject {
         isActive = true
     }
 
-    func endSession() {
+    func saveSession() {
+        unitCount = Constants.Session.initialUnitCount
+        isActive = false
+    }
+
+    func discardSession() {
+        unitCount = Constants.Session.initialUnitCount
         isActive = false
     }
 

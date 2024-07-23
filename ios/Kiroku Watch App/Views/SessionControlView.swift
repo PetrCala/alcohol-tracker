@@ -7,12 +7,22 @@ struct SessionControlView: View {
     var body: some View {
         VStack {
             // MainScreenView(viewModel: viewModel)
-            
             Button(action: {
-                viewModel.endSession()
+                viewModel.saveSession()
                 dismiss()
             }) {
-                Text("End Session")
+                Text("Save Session")
+                    .foregroundColor(.white)
+                    .padding()
+                    .cornerRadius(8)
+            }
+            .padding()
+
+            Button(action: {
+                viewModel.discardSession()
+                dismiss()
+            }) {
+                Text("Discard Session")
                     .foregroundColor(.white)
                     .padding()
                     // .background(Color.gray)

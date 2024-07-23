@@ -16,9 +16,13 @@ class SessionViewModel: ObservableObject {
         // Trigger other functionality like communication with database here
         // For example: DatabaseManager.shared.startSession()
     }
+
+    func saveSession() {
+        session.saveSession()
+    }
     
-    func endSession() {
-        session.endSession()
+    func discardSession() {
+        session.discardSession()
     }
     
     func addUnit() {
