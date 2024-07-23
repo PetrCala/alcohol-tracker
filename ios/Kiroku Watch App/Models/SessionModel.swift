@@ -19,12 +19,12 @@ class SessionModel: ObservableObject {
     }
 
     func addUnit() {
-        guard isActive else { return }
+        // guard isActive else { return }
         unitCount += 1
     }
 
     func subtractUnit() {
-        guard isActive else { return }
+        // guard isActive else { return }
         if unitCount > 0 {
             unitCount -= 1
         }
