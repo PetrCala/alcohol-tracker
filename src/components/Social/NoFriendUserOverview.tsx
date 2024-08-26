@@ -65,7 +65,6 @@ const styles = StyleSheet.create({
   noFriendUserOverviewImage: {
     width: 70,
     height: 70,
-    padding: 10,
     borderRadius: 35,
   },
   noFriendUserOverviewText: {

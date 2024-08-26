@@ -176,9 +176,7 @@ const FriendRequestItem: React.FC<FriendRequestItemProps> = ({
   friendRequests,
   displayData,
 }) => {
-  if (!friendRequests || !displayData) {
-    return null;
-  }
+  if (!friendRequests || !displayData) return null;
   const profileData = displayData[requestId];
   const requestStatus = friendRequests[requestId];
 
@@ -280,9 +278,7 @@ function FriendRequestScreen() {
     const newRequestsReceived: string[] = [];
     if (!isEmptyObject(state.friendRequests)) {
       Object.keys(state.friendRequests).forEach(requestId => {
-        if (!state.friendRequests) {
-          return;
-        }
+        if (!state.friendRequests) return;
         if (
           state.friendRequests[requestId] === CONST.FRIEND_REQUEST_STATUS.SENT
         ) {
