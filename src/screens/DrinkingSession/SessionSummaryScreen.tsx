@@ -1,7 +1,6 @@
 ﻿import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import MenuIcon from '@components/Buttons/MenuIcon';
 import {
-  formatDate,
   formatDateToDay,
   formatDateToTime,
   getLastDrinkAddedTime,
@@ -243,7 +242,6 @@ const styles = StyleSheet.create({
   menuIcon: {
     width: 25,
     height: 25,
-    padding: 10,
   },
   scrollView: {
     flexGrow: 1,
