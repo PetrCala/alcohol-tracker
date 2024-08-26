@@ -3,7 +3,6 @@
   Alert,
   Image,
   Keyboard,
-  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -14,13 +13,12 @@ import type {
   FriendRequestList,
   FriendRequestStatus,
   ProfileList,
-  UserList,
 } from '@src/types/onyx';
+import type {UserList} from '@src/types/onyx/OnyxCommon';
 import {useEffect, useMemo, useReducer, useState} from 'react';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {acceptFriendRequest, deleteFriendRequest} from '@database/friends';
-
 import LoadingData from '@components/LoadingData';
 import type {Database} from 'firebase/database';
 import NoFriendUserOverview from '@components/Social/NoFriendUserOverview';
@@ -30,11 +28,8 @@ import GrayHeader from '@components/Header/GrayHeader';
 import {objKeys} from '@libs/DataHandling';
 import CONST from '@src/CONST';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
-import useFetchData from '@hooks/useFetchData';
-import useRefresh from '@hooks/useRefresh';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
-import {isNonEmptyArray} from '@libs/Validation';
 import NoFriendInfo from '@components/Social/NoFriendInfo';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import FillerView from '@components/FillerView';

@@ -10,9 +10,9 @@ import type {
   FriendRequestList,
   FriendRequestStatus,
   ProfileList,
-  UserList,
 } from '@src/types/onyx';
-import React, {useEffect, useMemo, useReducer, useRef} from 'react';
+import type {UserList} from '@src/types/onyx/OnyxCommon';
+import React, {useMemo, useReducer, useRef} from 'react';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 
 import {isNonEmptyArray} from '@libs/Validation';
@@ -27,11 +27,8 @@ import type {
   UserSearchResults,
 } from '@src/types/various/Search';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
-import useRefresh from '@hooks/useRefresh';
-import {useFocusEffect} from '@react-navigation/native';
 import MainHeader from '@components/Header/MainHeader';
 import Navigation from '@libs/Navigation/Navigation';
-import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 import ScreenWrapper from '@components/ScreenWrapper';
 
 type State = {

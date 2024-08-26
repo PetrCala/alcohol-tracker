@@ -15,7 +15,6 @@ import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import MainHeader from '@components/Header/MainHeader';
 import {getReceivedRequestsCount} from '@libs/FriendUtils';
 import type {UserProps} from '@src/types/onyx';
-import FriendSearchScreen from './FriendSearchScreen';
 import type {StackScreenProps} from '@react-navigation/stack';
 import type SCREENS from '@src/SCREENS';
 import type {SocialNavigatorParamList} from '@libs/Navigation/types';
