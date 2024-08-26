@@ -1,7 +1,10 @@
 import React from 'react';
 import {Text, View} from 'react-native';
-// import FullPageNotFoundView from '@components/BlockingViews/FullPageNotFoundView';
+import useThemeStyles from '@hooks/useThemeStyles';
+import useTheme from '@hooks/useTheme';
+import Navigation from '@libs/Navigation/Navigation';
 import ScreenWrapper from '@components/ScreenWrapper';
+import MainHeader from '@components/Header/MainHeader';
 
 type NotFoundScreenProps = {
   onBackButtonPress?: () => void;
@@ -9,11 +12,15 @@ type NotFoundScreenProps = {
 
 // eslint-disable-next-line rulesdir/no-negated-variables
 function NotFoundScreen({onBackButtonPress}: NotFoundScreenProps) {
+  const theme = useTheme();
   return (
-    <ScreenWrapper testID={NotFoundScreen.displayName}>
-      <View style={{flex: 1, backgroundColor: '#ffff99'}}>
-        <Text>Not Found</Text>
-      </View>
+    <ScreenWrapper
+      testID={NotFoundScreen.displayName}
+      style={{backgroundColor: theme.appBG}}>
+      <MainHeader
+        headerText={'Content Not Found'}
+        onGoBack={() => Navigation.goBack()}
+      />
       {/* //   <FullPageNotFoundView shouldShow onBackButtonPress={onBackButtonPress} /> */}
     </ScreenWrapper>
   );
