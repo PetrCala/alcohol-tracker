@@ -1,4 +1,4 @@
-import type {UserID} from '../onyx';
+import type {UserID} from '../onyx/OnyxCommon';
 
 type UserPriority = number;
 
