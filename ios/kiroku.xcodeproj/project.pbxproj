@@ -19,7 +19,6 @@
 		8C389F112C3031AE00A015D5 /* Kiroku_Watch_AppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C389F102C3031AE00A015D5 /* Kiroku_Watch_AppUITests.swift */; };
 		8C389F132C3031AE00A015D5 /* Kiroku_Watch_AppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C389F122C3031AE00A015D5 /* Kiroku_Watch_AppUITestsLaunchTests.swift */; };
 		8C389F422C30578A00A015D5 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8C389F412C30578A00A015D5 /* GoogleService-Info.plist */; };
-		8C389F442C3057B000A015D5 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8C389F412C30578A00A015D5 /* GoogleService-Info.plist */; };
 		8C6ACF782C3AF96C002BAD95 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C6ACF772C3AF96C002BAD95 /* Colors.swift */; };
 		8C6ACF7A2C3B01D3002BAD95 /* ImageAssets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C6ACF792C3B01D3002BAD95 /* ImageAssets.swift */; };
 		8C6ACF822C3B0304002BAD95 /* Translate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C6ACF812C3B0304002BAD95 /* Translate.swift */; };
