@@ -3,11 +3,12 @@ import React, {useEffect, useState, useMemo, useCallback} from 'react';
 import {
   Dimensions,
   Image,
+  StyleProp,
   StyleSheet,
   Text,
+  TextStyle,
   TouchableOpacity,
   View,
-  ViewStyle,
 } from 'react-native';
 import type {DateData} from 'react-native-calendars';
 import {Calendar} from 'react-native-calendars';
@@ -94,7 +95,7 @@ const DayComponent: React.FC<{
     [tomorrowMidnight],
   );
 
-  const getTextStyle = (state: DayState): ViewStyle => {
+  const getTextStyle = (state: DayState): StyleProp<TextStyle> => {
     let textStyle = localStyles.dayText;
     if (state === 'disabled') {
       textStyle = {...textStyle, ...localStyles.dayTextDisabled};
