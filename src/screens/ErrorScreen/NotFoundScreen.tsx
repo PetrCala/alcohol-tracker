@@ -12,11 +12,11 @@ type NotFoundScreenProps = {
 
 // eslint-disable-next-line rulesdir/no-negated-variables
 function NotFoundScreen({onBackButtonPress}: NotFoundScreenProps) {
-  const theme = useTheme();
+  const styles = useThemeStyles();
   return (
     <ScreenWrapper
       testID={NotFoundScreen.displayName}
-      style={{backgroundColor: theme.appBG}}>
+      style={styles.appContent}>
       <MainHeader
         headerText={'Content Not Found'}
         onGoBack={() => Navigation.goBack()}

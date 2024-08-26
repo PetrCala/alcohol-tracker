@@ -7,6 +7,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  ViewStyle,
 } from 'react-native';
 import type {DateData} from 'react-native-calendars';
 import {Calendar} from 'react-native-calendars';
@@ -93,18 +94,20 @@ const DayComponent: React.FC<{
     [tomorrowMidnight],
   );
 
-  const getTextStyle = (state: DayState) => {
-    let textStyle = styles.dayText;
+  const getTextStyle = (state: DayState): ViewStyle => {
+    let textStyle = localStyles.dayText;
     if (state === 'disabled') {
-      textStyle = {...textStyle, ...styles.dayTextDisabled};
+      textStyle = {...textStyle, ...localStyles.dayTextDisabled};
     } else if (state === 'today') {
-      textStyle = {...textStyle, ...styles.dayTextToday};
+      textStyle = {...textStyle, ...localStyles.dayTextToday};
+    } else {
+      textStyle = {...textStyle, ...{color: theme.textDayColor}};
     }
     return textStyle;
   };
 
   const getMarkingContainerStyle = (date: DateData, marking: DayMarking) => {
-    const baseStyle = styles.daySessionsMarkingContainer;
+    const baseStyle = localStyles.daySessionsMarkingContainer;
 
     if (state === 'disabled') {
       return {...baseStyle, borderWidth: 0};
@@ -123,7 +126,7 @@ const DayComponent: React.FC<{
   };
 
   const getMarkingTextStyle = (marking: DayMarking) => {
-    let baseStyle = styles.daySessionMarkingText;
+    let baseStyle = localStyles.daySessionMarkingText;
 
     // Ensure no funky numbers
     if (marking?.units) {
@@ -153,7 +156,7 @@ const DayComponent: React.FC<{
     // <TouchableOpacity
     <TouchableOpacity
       accessibilityRole="button"
-      style={styles.dayContainer}
+      style={localStyles.dayContainer}
       onPress={() => onPress(date)}>
       <Text style={getTextStyle(state)}>{date.day}</Text>
       <View style={getMarkingContainerStyle(date, marking)}>
@@ -282,7 +285,7 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
       enableSwipeMonths={false}
       disableAllTouchEventsForDisabledDays={true}
       renderArrow={CustomArrow}
-      style={styles.mainScreenCalendarStyle}
+      style={localStyles.mainScreenCalendarStyle}
       theme={
         {
           textDayHeaderFontWeight: 'bold',
@@ -346,7 +349,7 @@ const arrowStyles = StyleSheet.create({
   },
 });
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   // Day component styles
   dayContainer: {
     // flex: 1,
@@ -362,8 +365,8 @@ const styles = StyleSheet.create({
     marginTop: 1,
     marginLeft: 2,
     fontSize: 10,
-    color: 'black',
     alignSelf: 'flex-start',
+    // color: 'black',
   },
   dayTextDisabled: {
     color: '#D3D3D3',

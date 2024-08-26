@@ -1,5 +1,4 @@
-﻿import useThemeStyles from '@hooks/useThemeStyles';
-import {Dimensions, StyleSheet} from 'react-native';
+﻿import {Dimensions, StyleSheet} from 'react-native';
 import colors from './theme/colors';
 
 const screenWidth = Dimensions.get('window').width;
