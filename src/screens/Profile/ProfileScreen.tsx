@@ -1,7 +1,5 @@
 ﻿import {
-  Alert,
   Dimensions,
-  Image,
   Keyboard,
   ScrollView,
   StyleSheet,
@@ -25,11 +23,10 @@ import {
   timestampToDate,
   timestampToDateString,
 } from '@libs/DataHandling';
-import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import type {DateObject} from '@src/types/time';
 import SessionsCalendar from '@components/Calendar';
 import LoadingData from '@components/LoadingData';
-import {fetchUserFriends, getCommonFriendsCount} from '@libs/FriendUtils';
+import {getCommonFriendsCount} from '@libs/FriendUtils';
 import MainHeader from '@components/Header/MainHeader';
 import ManageFriendPopup from '@components/Popups/Profile/ManageFriendPopup';
 import type {DrinkingSessionArray} from '@src/types/onyx';
@@ -47,7 +44,6 @@ import {getPlural} from '@libs/StringUtilsKiroku';
 import ScreenWrapper from '@components/ScreenWrapper';
 import type {FetchDataKeys} from '@hooks/useFetchData/types';
 import useThemeStyles from '@hooks/useThemeStyles';
-import Button from '@components/Button';
 import {withOnyx} from 'react-native-onyx';
 import compose from '@libs/compose';
 
