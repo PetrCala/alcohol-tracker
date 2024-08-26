@@ -118,9 +118,8 @@ function MainMenuScreen({
   };
 
   const handleDeleteUser = async (password: string) => {
-    if (!db || !userData || !user) {
-      return;
-    }
+    if (!db || !userData || !user) return;
+
     // Reauthentificate the user
     let authentificationResult: void | UserCredential;
     try {
@@ -335,15 +334,11 @@ function MainMenuScreen({
     modalData = [...modalData, ...adminData]; // Add admin settings
   }
 
-  if (!isOnline) {
-    return <UserOffline />;
-  }
+  if (!isOnline) return <UserOffline />;
   if (deletingUser) {
     return <LoadingData loadingText="Deleting your account..." />;
   }
-  if (!preferences || !userData || !user) {
-    return null;
-  } // Should never be null
+  if (!preferences || !userData || !user) return null;
 
   return (
     <ScreenWrapper testID={MainMenuScreen.displayName}>
@@ -445,9 +440,8 @@ const styles = StyleSheet.create({
     margin: 2,
   },
   icon: {
-    width: 15,
-    height: 15,
-    padding: 10,
+    width: 20,
+    height: 20,
   },
   buttonText: {
     marginLeft: 10,
