@@ -356,7 +356,6 @@ const styles = StyleSheet.create({
   menuIcon: {
     width: 25,
     height: 25,
-    padding: 10,
   },
   dayOverviewContainer: {
     flex: 1,
