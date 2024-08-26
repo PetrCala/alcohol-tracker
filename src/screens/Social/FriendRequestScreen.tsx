@@ -133,9 +133,8 @@ const FriendRequestPending: React.FC<RequestIdProps> = ({requestId}) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const user = auth.currentUser;
 
-  if (!user) {
-    return;
-  }
+  if (!user) return;
+
   return (
     <View style={styles.friendRequestPendingContainer}>
       <TouchableOpacity
