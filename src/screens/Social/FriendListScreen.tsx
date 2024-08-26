@@ -10,7 +10,7 @@ import {objKeys} from '@libs/DataHandling';
 import {getNicknameMapping} from '@libs/SearchUtils';
 import {searchArrayByText} from '@libs/Search';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
-import type {UserArray} from '@src/types/onyx';
+import type {UserArray} from '@src/types/onyx/OnyxCommon';
 import UserListComponent from '@components/Social/UserListComponent';
 import useProfileList from '@hooks/useProfileList';
 import NoFriendInfo from '@components/Social/NoFriendInfo';
