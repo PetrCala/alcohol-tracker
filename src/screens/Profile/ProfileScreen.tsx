@@ -171,9 +171,7 @@ function ProfileScreen({route}: ProfileScreenProps) {
 
   // Monitor stats
   useMemo(() => {
-    if (!drinkingSessionData || !preferences) {
-      return;
-    }
+    if (!drinkingSessionData || !preferences) return;
     const drinkingSessionArray: DrinkingSessionArray =
       Object.values(drinkingSessionData);
 
@@ -195,12 +193,8 @@ function ProfileScreen({route}: ProfileScreenProps) {
     dispatch({type: 'SET_UNITS_CONSUMED', payload: thisMonthUnits});
   }, [drinkingSessionData, preferences, state.visibleDateObject]);
 
-  if (isLoading) {
-    return <LoadingData />;
-  }
-  if (!profileData || !preferences || !userData) {
-    return;
-  }
+  if (isLoading) return <LoadingData />;
+  if (!profileData || !preferences || !userData) return;
 
   return (
     <ScreenWrapper testID={ProfileScreen.displayName}>
