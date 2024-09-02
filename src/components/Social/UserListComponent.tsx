@@ -72,7 +72,9 @@ const UserListComponent: React.FC<UserListProps> = ({
       currentLoadSize + additionalCount,
       arrayToSlice.length,
     );
-    if (newLoadSize <= currentLoadSize) return; // No more users to load
+    if (newLoadSize <= currentLoadSize) {
+      return;
+    } // No more users to load
     setLoadingMoreUsers(true);
     const additionalUsers = arrayToSlice.slice(currentLoadSize, newLoadSize);
     setDisplayUserArray([
@@ -166,8 +168,12 @@ const UserListComponent: React.FC<UserListProps> = ({
                 const userStatusData = userStatusList[userID] ?? {};
 
                 // Catch the initial load of the user list (profileList and userStatusList are empty objects at first)
-                if (isEmptyObject(profileData) || isEmptyObject(userStatusData))
+                if (
+                  isEmptyObject(profileData) ||
+                  isEmptyObject(userStatusData)
+                ) {
                   return null;
+                }
                 return (
                   <PressableWithAnimation
                     key={userID + '-button'}

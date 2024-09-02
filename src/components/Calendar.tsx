@@ -1,12 +1,13 @@
 ﻿import type {ReactNode} from 'react';
 import React, {useEffect, useState, useMemo, useCallback} from 'react';
+import type {
+  StyleProp,
+  TextStyle} from 'react-native';
 import {
   Dimensions,
   Image,
-  StyleProp,
   StyleSheet,
   Text,
-  TextStyle,
   TouchableOpacity,
   View,
 } from 'react-native';

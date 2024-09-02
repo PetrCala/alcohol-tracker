@@ -133,7 +133,7 @@ const FriendRequestPending: React.FC<RequestIdProps> = ({requestId}) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const user = auth.currentUser;
 
-  if (!user) return;
+  if (!user) {return;}
 
   return (
     <View style={styles.friendRequestPendingContainer}>
@@ -176,7 +176,7 @@ const FriendRequestItem: React.FC<FriendRequestItemProps> = ({
   friendRequests,
   displayData,
 }) => {
-  if (!friendRequests || !displayData) return null;
+  if (!friendRequests || !displayData) {return null;}
   const profileData = displayData[requestId];
   const requestStatus = friendRequests[requestId];
 
@@ -278,7 +278,7 @@ function FriendRequestScreen() {
     const newRequestsReceived: string[] = [];
     if (!isEmptyObject(state.friendRequests)) {
       Object.keys(state.friendRequests).forEach(requestId => {
-        if (!state.friendRequests) return;
+        if (!state.friendRequests) {return;}
         if (
           state.friendRequests[requestId] === CONST.FRIEND_REQUEST_STATUS.SENT
         ) {
