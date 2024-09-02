@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {ErrorBoundary} from 'react-error-boundary';
-// import BootSplash from '@libs/BootSplash';
+import BootSplash from '@libs/BootSplash';
 // import GenericErrorScreen from '@screens/ErrorScreen/GenericErrorScreen';
 // import UpdateRequiredView from '@pages/ErrorPage/UpdateRequiredView';
 import ForceUpdateModal from '@components/Modals/ForceUpdateModal';
@@ -23,14 +23,14 @@ function BaseErrorBoundary({
   const catchError = (errorObject: Error, errorInfo: React.ErrorInfo) => {
     logError(errorMessage, errorObject, JSON.stringify(errorInfo));
     // We hide the splash screen since the error might happened during app init
-    // TODO uncomment this
-    // BootSplash.hide();
+    BootSplash.hide();
     setErrorContent(errorObject.message);
   };
   const updateRequired = errorContent === CONST.ERROR.UPDATE_REQUIRED;
 
   return (
     <ErrorBoundary
+      // TODO check that these error screens are correct
       //   fallback={updateRequired ? <UpdateRequiredView /> : <GenericErrorPage />}
       fallback={updateRequired ? <ForceUpdateModal /> : <NotFoundScreen />}
       onError={catchError}>
