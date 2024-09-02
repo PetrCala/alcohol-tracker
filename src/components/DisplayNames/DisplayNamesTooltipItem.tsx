@@ -6,7 +6,7 @@ import Text from '@components/Text';
 import UserDetailsTooltip from '@components/UserDetailsTooltip';
 import useThemeStyles from '@hooks/useThemeStyles';
 import type {AvatarSource} from '@libs/UserUtils';
-import type {UserID} from '@src/types/onyx/onyxCommon';
+import type {UserID} from '@src/types/onyx/OnyxCommon';
 
 type DisplayNamesTooltipItemProps = {
   index?: number;

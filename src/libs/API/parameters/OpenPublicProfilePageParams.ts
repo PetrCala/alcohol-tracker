@@ -1,4 +1,4 @@
-import type {UserID} from '@src/types/onyx/onyxCommon';
+import type {UserID} from '@src/types/onyx/OnyxCommon';
 
 type OpenPublicProfilePageParams = {
   userID: UserID;

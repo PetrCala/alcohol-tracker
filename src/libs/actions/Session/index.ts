@@ -7,7 +7,7 @@ import Onyx from 'react-native-onyx';
 import type {ValueOf} from 'type-fest';
 import * as PersistedRequests from '@libs/actions/PersistedRequests';
 import * as API from '@libs/API';
-import type {UserID} from '@src/types/onyx/onyxCommon';
+import type {UserID} from '@src/types/onyx/OnyxCommon';
 // import type {
 //   AuthenticatePusherParams,
 //   BeginAppleSignInParams,
