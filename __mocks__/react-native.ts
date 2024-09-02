@@ -5,7 +5,7 @@ import type StartupTimer from '@libs/StartupTimer/types';
 const {BootSplash} = ReactNative.NativeModules;
 
 jest.doMock('react-native', () => {
-  let url = 'https://new.expensify.com/';
+  let url = 'https://petrcala.github.com/Kiroku';
   const getInitialURL = () => Promise.resolve(url);
 
   let appState: ReactNative.AppStateStatus = 'active';
