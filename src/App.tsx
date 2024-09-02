@@ -39,7 +39,7 @@ LogBox.ignoreLogs([
 const fill = {flex: 1};
 
 const App = ({url}: KirokuProps): React.JSX.Element => {
-  OnyxUpdateManager();
+  // OnyxUpdateManager(); // Fix the API first before enabling this
   return (
     <InitialUrlContext.Provider value={url}>
       <GestureHandlerRootView style={fill}>
