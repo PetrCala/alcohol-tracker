@@ -153,7 +153,7 @@
     "@octokit/plugin-paginate-rest": "3.1.0",
     "@octokit/plugin-throttling": "4.1.0",
     "@react-native-community/eslint-config": "3.0.0",
-    "@react-native/eabel-preset": "0.75.2",
+    "@react-native/babel-preset": "0.75.2",
     "@react-native/eslint-config": "0.75.2",
     "@react-native/metro-config": "0.75.2",
     "@react-native/typescript-config": "0.75.2",
