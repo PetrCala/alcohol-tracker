@@ -62,9 +62,6 @@ jobs:
           ruby-version: '3.2.2'
           bundler-cache: true
 
-      - name: Run npx expo install --fix
-        run: npx expo install --fix
-
       - name: Decrypt keystore
         run: cd android/app && gpg --quiet --batch --yes --decrypt --passphrase="$LARGE_SECRET_PASSPHRASE" --output kiroku-play-key.keystore kiroku-play-key.keystore.gpg
         env:

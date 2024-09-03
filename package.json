@@ -51,14 +51,14 @@
   "dependencies": {
     "@babel/plugin-proposal-private-methods": "^7.18.6",
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "@expo/metro-runtime": "~3.2.3",
+    "@expo/metro-runtime": "~3.1.1",
     "@firebase/rules-unit-testing": "^3.0.1",
     "@kie/act-js": "^2.6.0",
     "@kie/mock-github": "^2.0.1",
     "@react-native-async-storage/async-storage": "^1.23.1",
     "@react-native-clipboard/clipboard": "^1.13.2",
     "@react-native-community/netinfo": "11.3.1",
-    "@react-native-community/slider": "^4.4.3",
+    "@react-native-community/slider": "^4.5.2",
     "@react-native-firebase/analytics": "^12.3.0",
     "@react-native-firebase/app": "^12.3.0",
     "@react-native-firebase/crashlytics": "^12.3.0",
@@ -96,7 +96,6 @@
     "react-native": "0.75.2",
     "react-native-animatable": "^1.4.0",
     "react-native-calendars": "^1.1300.0",
-    "react-native-codegen": "0.71.5",
     "react-native-compressor": "^1.8.24",
     "react-native-config": "^1.5.1",
     "react-native-device-info": "^10.13.1",
@@ -168,7 +167,7 @@
     "@types/react-dom": "~18.2.25",
     "@types/react-native": "^0.73.0",
     "@types/react-native-sqlite-storage": "^6.0.0",
-    "@types/react-test-renderer": "18.3.1",
+    "@types/react-test-renderer": "18.3.0",
     "@types/seedrandom": "^3.0.8",
     "@types/semver": "^7.5.8",
     "@types/underscore": "^1.11.15",
@@ -214,7 +213,7 @@
   },
   "overrides": {
     "react-native-key-command": {
-      "react-native": "0.73.4"
+      "react-native": "0.75.2"
     }
   },
   "expo": {
