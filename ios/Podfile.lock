@@ -1528,27 +1528,6 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-quick-sqlite (8.0.6):
-    - DoubleConversion
-    - glog
-    - hermes-engine
-    - RCT-Folly (= 2024.01.01.00)
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Core
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-ImageManager
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - Yoga
   - react-native-release-profiler (0.1.6):
     - DoubleConversion
     - glog
@@ -2298,7 +2277,6 @@ DEPENDENCIES:
   - react-native-key-command (from `../node_modules/react-native-key-command`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-performance (from `../node_modules/react-native-performance`)
-  - react-native-quick-sqlite (from `../node_modules/react-native-quick-sqlite`)
   - react-native-release-profiler (from `../node_modules/react-native-release-profiler`)
   - react-native-render-html (from `../node_modules/react-native-render-html`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -2481,8 +2459,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/netinfo"
   react-native-performance:
     :path: "../node_modules/react-native-performance"
-  react-native-quick-sqlite:
-    :path: "../node_modules/react-native-quick-sqlite"
   react-native-release-profiler:
     :path: "../node_modules/react-native-release-profiler"
   react-native-render-html:
@@ -2659,7 +2635,6 @@ SPEC CHECKSUMS:
   react-native-key-command: c7b6c99216ed3f2b5fe3090069354db6b87bd5eb
   react-native-netinfo: bdb108d340cdb41875c9ced535977cac6d2ff321
   react-native-performance: fd73ac82dfd6eae0ebe1e02b50415216538975d1
-  react-native-quick-sqlite: 196813259ff2a4aaf723c23bc364f924d85fec57
   react-native-release-profiler: df9b4c388f1aa96bae67a527b855abf54a87c931
   react-native-render-html: 984dfe2294163d04bf5fe25d7c9f122e60e05ebe
   react-native-safe-area-context: 53dcfa0302febb93301442428167eb448587cb68
