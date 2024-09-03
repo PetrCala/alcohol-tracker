@@ -226,7 +226,6 @@ PODS:
     - nanopb/encode (= 2.30908.0)
   - nanopb/decode (2.30908.0)
   - nanopb/encode (2.30908.0)
-  - Plaid (5.2.1)
   - PromisesObjC (2.4.0)
   - RCT-Folly (2024.01.01.00):
     - boost
@@ -2397,7 +2396,6 @@ SPEC REPOS:
     - libdav1d
     - libwebp
     - nanopb
-    - Plaid
     - PromisesObjC
     - React-Codegen
     - SDWebImage
@@ -2649,7 +2647,6 @@ SPEC CHECKSUMS:
   libdav1d: 23581a4d8ec811ff171ed5e2e05cd27bad64c39f
   libwebp: 1786c9f4ff8a279e4dac1e8f385004d5fc253009
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
-  Plaid: 7829e84db6d766a751c91a402702946d2977ddcb
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   RCT-Folly: 4464f4d875961fce86008d45f4ecf6cef6de0740
   RCTDeprecation: 34cbf122b623037ea9facad2e92e53434c5c7422
