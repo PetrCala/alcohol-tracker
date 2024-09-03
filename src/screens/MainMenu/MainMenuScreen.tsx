@@ -54,7 +54,7 @@ type MainMenuItemProps = {
 };
 
 const MenuItem: React.FC<MainMenuItemProps> = ({heading, data, index}) => (
-  <View key={index}>
+  <View key={index} style={{backgroundColor: '#FFFF99'}}>
     <GrayHeader headerText={heading} />
     {data.map((button, bIndex) => (
       <TouchableOpacity
@@ -118,7 +118,9 @@ function MainMenuScreen({
   };
 
   const handleDeleteUser = async (password: string) => {
-    if (!db || !userData || !user) {return;}
+    if (!db || !userData || !user) {
+      return;
+    }
 
     // Reauthentificate the user
     let authentificationResult: void | UserCredential;
@@ -334,11 +336,15 @@ function MainMenuScreen({
     modalData = [...modalData, ...adminData]; // Add admin settings
   }
 
-  if (!isOnline) {return <UserOffline />;}
+  if (!isOnline) {
+    return <UserOffline />;
+  }
   if (deletingUser) {
     return <LoadingData loadingText="Deleting your account..." />;
   }
-  if (!preferences || !userData || !user) {return null;}
+  if (!preferences || !userData || !user) {
+    return null;
+  }
 
   return (
     <ScreenWrapper testID={MainMenuScreen.displayName}>
