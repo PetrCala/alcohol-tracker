@@ -23,11 +23,11 @@ runs:
         path: node_modules
         key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json', 'patches/**') }}
 
-    - id: cache-desktop-node-modules
-      uses: actions/cache@v4
-      with:
-        path: desktop/node_modules
-        key: ${{ runner.os }}-desktop-node-modules-${{ hashFiles('desktop/package-lock.json', 'desktop/patches/**') }}
+    # - id: cache-desktop-node-modules
+    #   uses: actions/cache@v4
+    #   with:
+    #     path: desktop/node_modules
+    #     key: ${{ runner.os }}-desktop-node-modules-${{ hashFiles('desktop/package-lock.json', 'desktop/patches/**') }}
 
     - name: Install root project node packages
       if: steps.cache-node-modules.outputs.cache-hit != 'true'
@@ -37,10 +37,10 @@ runs:
         max_attempts: 3
         command: npm ci
 
-    - name: Install node packages for desktop submodule
-      if: steps.cache-desktop-node-modules.outputs.cache-hit != 'true'
-      uses: nick-fields/retry@3f757583fb1b1f940bc8ef4bf4734c8dc02a5847
-      with:
-        timeout_minutes: 30
-        max_attempts: 3
-        command: cd desktop && npm ci
+    # - name: Install node packages for desktop submodule
+    #   if: steps.cache-desktop-node-modules.outputs.cache-hit != 'true'
+    #   uses: nick-fields/retry@3f757583fb1b1f940bc8ef4bf4734c8dc02a5847
+    #   with:
+    #     timeout_minutes: 30
+    #     max_attempts: 3
+    #     command: cd desktop && npm ci

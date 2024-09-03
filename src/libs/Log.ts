@@ -67,6 +67,7 @@ function serverLoggingCallback(
   logger: Logger,
   params: ServerLoggingCallbackOptions,
 ): Promise<{requestID: string}> {
+  return Promise.resolve({requestID: ''}); // TODO remove this line in order to enable server loging
   const requestParams = params as RequestParams;
   requestParams.shouldProcessImmediately = false;
   requestParams.shouldRetry = false;

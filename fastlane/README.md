@@ -39,6 +39,14 @@ Generate a new local APK for staging
 
 Generate a new local APK for testing
 
+### android build_internal
+
+```sh
+[bundle exec] fastlane android build_internal
+```
+
+Build app for testing
+
 ### android beta
 
 ```sh
@@ -83,6 +91,14 @@ Generate a local iOS staging build
 ```
 
 Generate a local iOS build for testing
+
+### ios build_internal
+
+```sh
+[bundle exec] fastlane ios build_internal
+```
+
+Build app for testing
 
 ### ios beta
 
