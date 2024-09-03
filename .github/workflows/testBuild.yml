@@ -42,12 +42,10 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha || needs.getBranchRef.outputs.REF }}
 
-      # TODO create the .env.development file here
-      # - name: Create .env.development file based on staging and add PULL_REQUEST_NUMBER env to it
-      #   run: |
-      #     cp .env.staging .env.adhoc
-      #     sed -i 's/ENVIRONMENT=staging/ENVIRONMENT=adhoc/' .env.adhoc
-      #     echo "PULL_REQUEST_NUMBER=$PULL_REQUEST_NUMBER" >> .env.adhoc
+      - name: Create .env.development file based on staging and add PULL_REQUEST_NUMBER env to it
+        run: |
+          echo "${{ secrets.DEV_ENV_FILE }}" > .env.development
+          echo "PULL_REQUEST_NUMBER=$PULL_REQUEST_NUMBER" >> .env.development
 
       - name: Setup Node
         uses: ./.github/actions/composite/setupNode
@@ -73,3 +71,16 @@ jobs:
         run: cd android/app && gpg --quiet --batch --yes --decrypt --passphrase="$LARGE_SECRET_PASSPHRASE" --output android-fastlane-json-key.json android-fastlane-json-key.json.gpg
         env:
           LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PASSPHRASE }}
+
+      - name: Run Fastlane beta test
+        id: runFastlaneBetaTest
+        run: bundle exec fastlane android build_internal
+        env:
+          KIROKU_UPLOAD_STORE_PASSWORD: ${{ secrets.KIROKU_UPLOAD_STORE_PASSWORD }}
+          KIROKU_UPLOAD_KEY_PASSWORD: ${{ secrets.KIROKU_UPLOAD_KEY_PASSWORD }}
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: android
+          path: ./android_paths.json
