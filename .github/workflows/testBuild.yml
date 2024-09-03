@@ -47,8 +47,10 @@ jobs:
           echo "${{ secrets.DEV_ENV_FILE }}" > .env.development
           echo "PULL_REQUEST_NUMBER=$PULL_REQUEST_NUMBER" >> .env.development
 
-      - name: Setup Node
-        uses: ./.github/actions/composite/setupNode
+      # - name: Setup Node
+      #   uses: ./.github/actions/composite/setupNode
+      - name: Setup Bun
+        uses: ./.github/actions/composite/setupBun
 
       - name: Setup Java
         uses: actions/setup-java@v3
