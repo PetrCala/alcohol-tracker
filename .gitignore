@@ -98,12 +98,9 @@ __snapshots__/
 
 # Other
 *admin*sdk*.json
-_dev/beta/beta_keys.tsx
-_dev/utils/admin.js
-_dev/migrations/
-docs-old/
 local/
 mockDatabase.json
+!**/*.gpg
 
 # Custom
 .bundle
