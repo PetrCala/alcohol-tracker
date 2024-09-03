@@ -136,7 +136,7 @@ jobs:
           command: cd ios && bundle exec pod install
 
       - name: Decrypt Development profile
-        run: cd ios && gpg --quiet --batch --yes --decrypt --passphrase="$LARGE_SECRET_PASSPHRASE" --output Kiroku_Development.mobileprovision Kiroku_Development.mobileprovision.gpg
+        run: cd ios && gpg --quiet --batch --yes --decrypt --passphrase="$LARGE_SECRET_PASSPHRASE" --output Kiroku.mobileprovision Kiroku.mobileprovision.gpg
         env:
           LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PASSPHRASE }}
 
