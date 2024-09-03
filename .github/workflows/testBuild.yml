@@ -32,7 +32,7 @@ jobs:
 
   android:
     name: Build and deploy Android for testing
-    runs-on: ubuntu-latest-xl
+    runs-on: ubuntu-latest
     needs: [getBranchRef]
     env:
       PULL_REQUEST_NUMBER: ${{ github.event.number || github.event.inputs.PULL_REQUEST_NUMBER }}
@@ -76,8 +76,8 @@ jobs:
         id: runFastlaneBetaTest
         run: bundle exec fastlane android build_internal
         env:
-          KIROKU_UPLOAD_STORE_PASSWORD: ${{ secrets.KIROKU_UPLOAD_STORE_PASSWORD }}
-          KIROKU_UPLOAD_KEY_PASSWORD: ${{ secrets.KIROKU_UPLOAD_KEY_PASSWORD }}
+          MYAPP_UPLOAD_STORE_PASSWORD: ${{ secrets.MYAPP_UPLOAD_STORE_PASSWORD }}
+          MYAPP_UPLOAD_KEY_PASSWORD: ${{ secrets.MYAPP_UPLOAD_KEY_PASSWORD }}
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
