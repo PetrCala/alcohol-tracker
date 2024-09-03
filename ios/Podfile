@@ -40,7 +40,7 @@ setup_permissions([
 ])
 
 # Flipper is not compatible with use_frameworks! (Firebase)
-flipper_config = FlipperConfiguration.disabled
+# flipper_config = FlipperConfiguration.disabled
 
 # linkage = ENV['USE_FRAMEWORKS']
 # if linkage != nil

@@ -10,7 +10,7 @@ buildscript {
 
         androidXCore = "1.0.2"
         multiDexEnabled = true
-        kotlinVersion = "1.9.20"
+        kotlinVersion = "1.9.24"
     }
     repositories {
         google()
