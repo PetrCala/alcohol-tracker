@@ -1,6 +1,6 @@
 <div align="center">
     <a href="https://petrcala.github.io/Kiroku/assets/html/qr-link.html">
-        <img src="https://raw.githubusercontent.com/PetrCala/Kiroku/petr/assets/images/app-logo.png" 
+        <img src="https://raw.githubusercontent.com/PetrCala/Kiroku/master/assets/images/app-logo.png" 
         width="64" height="64" alt="Kiroku Icon" style="border-radius: 15%!important;">
     </a>
     <h1>
