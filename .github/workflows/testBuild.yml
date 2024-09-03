@@ -1,0 +1,75 @@
+name: Build and deploy apps for testing
+
+on:
+  workflow_dispatch:
+    inputs:
+      PULL_REQUEST_NUMBER:
+        description: Pull Request number for correct placement of apps
+        required: true
+  pull_request_target:
+    types: [opened, synchronize, labeled]
+    branches: ['dev']
+
+jobs:
+  getBranchRef:
+    runs-on: ubuntu-latest
+    outputs:
+      REF: ${{steps.getHeadRef.outputs.REF}}
+    steps:
+      - name: Checkout
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        uses: actions/checkout@v4
+
+      - name: Check if pull request number is correct
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        id: getHeadRef
+        run: |
+          set -e
+          gh pr checkout ${{ github.event.inputs.PULL_REQUEST_NUMBER }}
+          echo "REF=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  android:
+    name: Build and deploy Android for testing
+    runs-on: ubuntu-latest-xl
+    needs: [getBranchRef]
+    env:
+      PULL_REQUEST_NUMBER: ${{ github.event.number || github.event.inputs.PULL_REQUEST_NUMBER }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || needs.getBranchRef.outputs.REF }}
+
+      # TODO create the .env.development file here
+      # - name: Create .env.development file based on staging and add PULL_REQUEST_NUMBER env to it
+      #   run: |
+      #     cp .env.staging .env.adhoc
+      #     sed -i 's/ENVIRONMENT=staging/ENVIRONMENT=adhoc/' .env.adhoc
+      #     echo "PULL_REQUEST_NUMBER=$PULL_REQUEST_NUMBER" >> .env.adhoc
+
+      - name: Setup Node
+        uses: ./.github/actions/composite/setupNode
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'oracle'
+          java-version: '17'
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@a05e47355e80e57b9a67566a813648fa67d92011
+        with:
+          ruby-version: '2.7'
+          bundler-cache: true
+
+      - name: Decrypt keystore
+        run: cd android/app && gpg --quiet --batch --yes --decrypt --passphrase="$LARGE_SECRET_PASSPHRASE" --output kiroku-play-key.keystore kiroku-play-key.keystore.gpg
+        env:
+          LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PASSPHRASE }}
+
+      - name: Decrypt json key
+        run: cd android/app && gpg --quiet --batch --yes --decrypt --passphrase="$LARGE_SECRET_PASSPHRASE" --output android-fastlane-json-key.json android-fastlane-json-key.json.gpg
+        env:
+          LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PASSPHRASE }}
