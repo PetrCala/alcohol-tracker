@@ -15,7 +15,7 @@ const BasicButton = (props: Props) => {
   const {text, buttonStyle, textStyle, onPress} = props;
 
   return (
-    <TouchableOpacity
+    <TouchableOpacity accessibilityRole="button"
       id={text}
       testID={text}
       style={buttonStyle}

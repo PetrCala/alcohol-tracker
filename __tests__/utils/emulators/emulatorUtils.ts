@@ -2,13 +2,13 @@ require('dotenv').config(); // for the process.env variables to read the .env fi
 import CONST from '../../../src/CONST';
 import CONFIG from '../../../src/CONFIG';
 
-// Perhaps if this grows too largs, rewrite into a module export
-const shouldRunTests = process.env.ENVIRONMENT === CONST.ENVIRONMENT.TEST;
-const describeWithEmulator = shouldRunTests ? describe : describe.skip;
+const describeWithEmulator = CONFIG.IS_USING_EMULATORS
+  ? describe
+  : describe.skip;
 
-async function makeFriends(authDb: any, userId1: string, userId2: string) {
-  const friendRef = authDb.ref(`users/${userId1}/friends/${userId2}`);
-  const friendRef2 = authDb.ref(`users/${userId2}/friends/${userId1}`);
+async function makeFriends(authDb: any, userID1: string, userID2: string) {
+  const friendRef = authDb.ref(`users/${userID1}/friends/${userID2}`);
+  const friendRef2 = authDb.ref(`users/${userID2}/friends/${userID1}`);
   await friendRef.set(true);
   await friendRef2.set(true);
 }
@@ -30,6 +30,5 @@ export {
   getTestDatabaseURL,
   getTestStorageBucket,
   makeFriends,
-  shouldRunTests,
   describeWithEmulator,
 };

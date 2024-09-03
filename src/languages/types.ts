@@ -1,5 +1,16 @@
 import type en from './en';
 
+type CharacterLimitParams = {
+  limit: number;
+};
+
+type LocalTimeParams = {
+  user: string;
+  time: string;
+};
+
+type UntilTimeParams = {time: string};
+
 /* Translation Object types */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type TranslationBaseValue = string | string[] | ((...args: any[]) => string);
@@ -34,10 +45,18 @@ type EnglishTranslation = typeof en;
 
 type TranslationPaths = FlattenObject<EnglishTranslation>;
 
+type TranslationFlatObject = {
+  [TKey in TranslationPaths]: TranslateType<EnglishTranslation, TKey>;
+};
+
 export type {
+  CharacterLimitParams,
   EnglishTranslation,
+  LocalTimeParams,
   FlattenObject,
   TranslationBase,
   TranslationPaths,
   TranslateType,
+  TranslationFlatObject,
+  UntilTimeParams,
 };

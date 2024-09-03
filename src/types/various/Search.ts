@@ -6,13 +6,11 @@ type SearchWindowRef = {
   focus: () => void;
 };
 
-type UserIdToNicknameMapping = {
-  [userId: string]: string;
-};
+type UserIDToNicknameMapping = Record<string, string>;
 
 export type {
   UserSearchResults,
   UserSearchResult,
   SearchWindowRef,
-  UserIdToNicknameMapping,
+  UserIDToNicknameMapping,
 };

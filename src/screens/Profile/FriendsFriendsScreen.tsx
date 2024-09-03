@@ -10,8 +10,8 @@ import type {
   FriendRequestStatus,
   ProfileList,
   FriendRequestList,
-  UserList,
-} from '@src/types/database';
+} from '@src/types/onyx';
+import type {UserList} from '@src/types/onyx/OnyxCommon';
 import {useEffect, useMemo, useReducer} from 'react';
 import {useFirebase} from '@context/global/FirebaseContext';
 
@@ -25,7 +25,7 @@ import MainHeader from '@components/Header/MainHeader';
 import GrayHeader from '@components/Header/GrayHeader';
 import {getCommonFriends, getCommonFriendsCount} from '@libs/FriendUtils';
 import type {
-  UserIdToNicknameMapping,
+  UserIDToNicknameMapping,
   UserSearchResults,
 } from '@src/types/various/Search';
 import {objKeys} from '@libs/DataHandling';
@@ -99,7 +99,7 @@ type FriendsFriendsScreenProps = StackScreenProps<
 >;
 
 function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
-  const {userId} = route.params;
+  const {userID} = route.params;
   const {auth, db, storage} = useFirebase();
   const {userData} = useDatabaseData();
   const user = auth.currentUser;
@@ -107,7 +107,7 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
 
   const localSearch = async (searchText: string): Promise<void> => {
     try {
-      const searchMapping: UserIdToNicknameMapping = getNicknameMapping(
+      const searchMapping: UserIDToNicknameMapping = getNicknameMapping(
         state.displayData,
         'display_name',
       );
@@ -142,8 +142,8 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
     ): void => {
       const newRequestStatuses: Record<string, FriendRequestStatus> = {};
       if (friendRequests) {
-        Object.keys(friendRequests).forEach(userId => {
-          newRequestStatuses[userId] = friendRequests[userId];
+        Object.keys(friendRequests).forEach(userID => {
+          newRequestStatuses[userID] = friendRequests[userID];
         });
       }
       dispatch({type: 'SET_REQUEST_STATUSES', payload: newRequestStatuses});
@@ -163,25 +163,25 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
   const renderSearchResults = (renderCommonFriends: boolean): JSX.Element[] => {
     return state.displayedFriends
       .filter(
-        userId => state.commonFriends.includes(userId) === renderCommonFriends,
+        userID => state.commonFriends.includes(userID) === renderCommonFriends,
       )
-      .map(userId => (
+      .map(userID => (
         <SearchResult
-          key={userId + '-container'}
-          userId={userId}
-          userDisplayData={state.displayData[userId]}
+          key={userID + '-container'}
+          userID={userID}
+          userDisplayData={state.displayData[userID]}
           db={db}
           storage={storage}
           //@ts-ignore
           userFrom={user.uid}
-          requestStatus={state.requestStatuses[userId]}
-          alreadyAFriend={userData?.friends ? userData?.friends[userId] : false}
+          requestStatus={state.requestStatuses[userID]}
+          alreadyAFriend={userData?.friends ? userData?.friends[userID] : false}
           customButton={
             renderCommonFriends ? (
               <SeeProfileButton
-                key={userId + '-button'}
+                key={userID + '-button'}
                 onPress={() =>
-                  Navigation.navigate(ROUTES.PROFILE.getRoute(userId))
+                  Navigation.navigate(ROUTES.PROFILE.getRoute(userID))
                 }
               />
             ) : null
@@ -195,7 +195,7 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
       dispatch({type: 'SET_IS_LOADING', payload: true});
       const userFriends: UserList | undefined = await readDataOnce(
         db,
-        DBPATHS.USERS_USER_ID_FRIENDS.getRoute(userId),
+        DBPATHS.USERS_USER_ID_FRIENDS.getRoute(userID),
       );
       dispatch({type: 'SET_FRIENDS', payload: userFriends});
     } finally {
@@ -206,7 +206,7 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
   // Database data hooks
   useEffect(() => {
     fetchData();
-  }, [userId]);
+  }, [userID]);
 
   // Monitor friend groups
   useMemo(() => {

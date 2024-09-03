@@ -4,7 +4,7 @@ name: Process new code merged to master
 on:
   push:
     # branches: [master]
-    branches: [] # Do not run for now
+    branches: [non-existing-branch] # Do not run for now
     paths-ignore:
       [docs/**, contributingGuides/**, jest/**, tests/**, workflow_tests/**]
 

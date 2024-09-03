@@ -12,6 +12,15 @@ function isDevelopment(): boolean {
 }
 
 /**
+ * Are we running the app in production?
+ */
+function isProduction(): Promise<boolean> {
+  return getEnvironment().then(
+    environment => environment === CONST.ENVIRONMENT.PROD,
+  );
+}
+
+/**
  * Are we running an internal test build?
  */
 function isInternalTestBuild(): boolean {
@@ -21,4 +30,4 @@ function isInternalTestBuild(): boolean {
   );
 }
 
-export {getEnvironment, isInternalTestBuild, isDevelopment};
+export {getEnvironment, isInternalTestBuild, isDevelopment, isProduction};

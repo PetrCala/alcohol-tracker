@@ -1,10 +1,11 @@
 {
-  "extends": "@tsconfig/react-native/tsconfig.json",
+  // "extends": "@react-native/typescript-config/tsconfig.json",
+  "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
     "target": "esnext",
     "module": "commonjs",
     // "module": "esnext",
-    "types": ["react-native", "jest", "node"],
+    "types": ["react-native", "jest"],
     "lib": [
       "DOM",
       "es2019",
@@ -20,7 +21,8 @@
       "es2022.array",
       "es2022.object",
       "es2022.string",
-      "ES2021.Intl"
+      "ES2021.Intl",
+      "ES2023.Array"
     ],
     "allowJs": true,
     "checkJs": false,
@@ -45,6 +47,7 @@
       "@components/*": ["./src/components/*"],
       "@context/*": ["./src/context/*"],
       "@database/*": ["./src/database/*"],
+      "@desktop/*": ["./desktop/*"],
       "@firebase/auth": ["./node_modules/@firebase/auth/dist/index.rn.d.ts"],
       "@hooks/*": ["./src/hooks/*"],
       "@libs/*": ["./src/libs/*"],
@@ -53,8 +56,8 @@
       "@src/*": ["./src/*"],
       "@storage/*": ["./src/storage/*"],
       "@styles/*": ["./src/styles/*"],
-      "@utils/*": ["src/libs/*"]
-      // "@userActions/*": ["./src/libs/actions/*"]
+      "@utils/*": ["src/utils/*"],
+      "@userActions/*": ["./src/libs/actions/*"]
     }
   },
   "ts-node": {
@@ -94,5 +97,6 @@
     "**/alcohol-tracker*.json",
     "react-native.config.js"
     // "workflow_tests"
-  ]
+  ],
+  "extends": "expo/tsconfig.base"
 }

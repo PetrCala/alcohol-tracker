@@ -1,11 +1,5 @@
-﻿import {
-  Image,
-  ImageSourcePropType,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+﻿import type {ImageSourcePropType} from 'react-native';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import SessionDrinksInputWindow from './Buttons/SessionDrinksInputWindow';
 import {
   addDrinks,
@@ -16,7 +10,7 @@ import {
 } from '../libs/DataHandling';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import CONST from '@src/CONST';
-import {DrinkKey, Drinks, DrinksList} from '@src/types/database';
+import type {DrinkKey, Drinks, DrinksList} from '@src/types/onyx';
 
 type DrinkingSessionDrinksWindowProps = {
   drinkKey: DrinkKey;
@@ -34,17 +28,20 @@ const DrinkingSessionDrinksWindow = ({
   availableUnits,
 }: DrinkingSessionDrinksWindowProps) => {
   const handleAddDrinks = (drinks: Drinks) => {
-    let newDrinkCount = sumDrinkTypes(drinks); // Number of added drinks
+    const newDrinkCount = sumDrinkTypes(drinks); // Number of added drinks
     if (newDrinkCount > 0 && newDrinkCount <= availableUnits) {
       // TODO this could overflow
-      let newDrinks: DrinksList | undefined = addDrinks(currentDrinks, drinks);
+      const newDrinks: DrinksList | undefined = addDrinks(
+        currentDrinks,
+        drinks,
+      );
       setCurrentDrinks(newDrinks);
     }
   };
 
   const handleRemoveDrinks = (drinkType: DrinkKey, count: number) => {
     if (sumDrinksOfSingleType(currentDrinks, drinkKey) > 0) {
-      let newDrinks: DrinksList | undefined = removeDrinks(
+      const newDrinks: DrinksList | undefined = removeDrinks(
         currentDrinks,
         drinkType,
         count,
@@ -69,6 +66,7 @@ const DrinkingSessionDrinksWindow = ({
       </View>
       <Text style={styles.drinkInfoText}>{drinkName}</Text>
       <TouchableOpacity
+        accessibilityRole="button"
         style={styles.adjustDrinksButton}
         onPress={() => handleRemoveDrinks(drinkKey, 1)}>
         <Image source={KirokuIcons.Minus} style={styles.adjustDrinksIcon} />
@@ -81,6 +79,7 @@ const DrinkingSessionDrinksWindow = ({
         styles={styles}
       />
       <TouchableOpacity
+        accessibilityRole="button"
         style={styles.adjustDrinksButton}
         onPress={() => handleAddDrinks({[drinkKey]: 1})}>
         <Image source={KirokuIcons.Plus} style={styles.adjustDrinksIcon} />

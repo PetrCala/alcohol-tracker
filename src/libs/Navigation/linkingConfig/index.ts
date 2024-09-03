@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import {LinkingOptions} from '@react-navigation/native';
+import type {LinkingOptions} from '@react-navigation/native';
 import type {RootStackParamList} from '@navigation/types';
 import config from './config';
 import customGetPathFromState from './customGetPathFromState';

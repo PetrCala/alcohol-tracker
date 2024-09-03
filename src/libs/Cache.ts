@@ -3,11 +3,11 @@ import CONST from '@src/CONST';
 
 /**
  * Caches the profile image URL for a user.
- * @param userId - The ID of the user.
+ * @param userID - The ID of the user.
  * @param url - The URL of the profile image. Can be null.
  */
-export const cacheProfileImage = async (userId: string, url: string | null) => {
-  const key = CONST.CACHE.PROFILE_PICTURE_KEY + userId;
+export const cacheProfileImage = async (userID: string, url: string | null) => {
+  const key = CONST.CACHE.PROFILE_PICTURE_KEY + userID;
   const now = new Date().getTime();
   const item = {
     url: url === null ? CONST.NO_IMAGE : url,

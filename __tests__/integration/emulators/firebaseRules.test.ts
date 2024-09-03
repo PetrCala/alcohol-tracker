@@ -11,7 +11,7 @@ import {
   setupFirebaseRulesTestEnv,
   teardownFirebaseRulesTestEnv,
 } from '../../utils/emulators/firebaseRulesSetup';
-import type {Feedback} from '@src/types/database';
+import type {Feedback} from '@src/types/onyx';
 import {setupGlobalMocks} from '../../utils/testUtils';
 import {
   createMockSession,
@@ -32,10 +32,10 @@ const testFeedback: Feedback = {
   text: 'test',
   user_id: 'testId',
 };
-const authUserId = 'authUserId';
-const otherUserId = 'otherUserId';
+const authUserID = 'authUserID';
+const otherUserID = 'otherUserID';
 const testDeviceId = 'testDeviceId';
-const mockSessionKey = `${authUserId}-mock-session-999`;
+const mockSessionKey = `${authUserID}-mock-session-999`;
 const mockDrinkingSession = createMockSession(new Date());
 const mockUserStatus = createMockUserStatus(
   mockSessionKey,
@@ -51,7 +51,7 @@ describeWithEmulator('Test account creations rules', () => {
   const deviceRef = DBPATHS.ACCOUNT_CREATIONS_DEVICE_ID.getRoute(testDeviceId);
   const authUserRef = DBPATHS.ACCOUNT_CREATIONS_DEVICE_ID_USER_ID.getRoute(
     testDeviceId,
-    authUserId,
+    authUserID,
   );
   setupGlobalMocks(); // Silence permission denied warnings
 
@@ -74,7 +74,7 @@ describeWithEmulator('Test account creations rules', () => {
 
   it('should not allow an authenticated user to write into other user account creations device node', async () => {
     const authRef = authDb.ref(deviceRef);
-    await assertFails(authRef.set({otherUserId: Date.now()}));
+    await assertFails(authRef.set({otherUserID: Date.now()}));
   });
 
   it('should allow an authenticated user to read from the device ID node', async () => {
@@ -91,9 +91,9 @@ describeWithEmulator('Test drinking session rules', () => {
   const user1DrinkingsessionsRef =
     DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(testFeedbackId);
   const authUserDrinkingsessionsRef =
-    DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(authUserId);
+    DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(authUserID);
   const otherUserDrinkingsessionsRef =
-    DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(otherUserId);
+    DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(otherUserID);
   setupGlobalMocks(); // Silence permission denied warnings
 
   beforeAll(async () => {
@@ -156,7 +156,7 @@ describeWithEmulator('Test drinking session rules', () => {
   });
 
   it("should allow a user to read friend's drinking session data", async () => {
-    await makeFriends(authDb, authUserId, otherUserId); // Set the friend connection first
+    await makeFriends(authDb, authUserID, otherUserID); // Set the friend connection first
     const authRef = authDb.ref(otherUserDrinkingsessionsRef);
     await assertSucceeds(authRef.get());
   });
@@ -173,15 +173,15 @@ describeWithEmulator('Test user preferences rules', () => {
   let unauthDb: any; // firebase.database.Database
   let adminDb: any;
   const authPreferencesRef =
-    DBPATHS.USER_PREFERENCES_USER_ID.getRoute(authUserId);
+    DBPATHS.USER_PREFERENCES_USER_ID.getRoute(authUserID);
   const otherPreferencesRef =
-    DBPATHS.USER_PREFERENCES_USER_ID.getRoute(otherUserId);
+    DBPATHS.USER_PREFERENCES_USER_ID.getRoute(otherUserID);
   const authFirstDayOfWeekRef =
-    DBPATHS.USER_PREFERENCES_USER_ID_FIRST_DAY_OF_WEEK.getRoute(authUserId);
+    DBPATHS.USER_PREFERENCES_USER_ID_FIRST_DAY_OF_WEEK.getRoute(authUserID);
   const authUnitsToColorsRef =
-    DBPATHS.USER_PREFERENCES_USER_ID_UNITS_TO_COLORS.getRoute(authUserId);
+    DBPATHS.USER_PREFERENCES_USER_ID_UNITS_TO_COLORS.getRoute(authUserID);
   const authDrinksToUnitsRef =
-    DBPATHS.USER_PREFERENCES_USER_ID_DRINKS_TO_UNITS.getRoute(authUserId);
+    DBPATHS.USER_PREFERENCES_USER_ID_DRINKS_TO_UNITS.getRoute(authUserID);
   setupGlobalMocks(); // Silence permission denied warnings
 
   beforeAll(async () => {
@@ -213,7 +213,7 @@ describeWithEmulator('Test user preferences rules', () => {
   });
 
   it("should allow authenticated friend users to read other user's preferences", async () => {
-    await makeFriends(authDb, authUserId, otherUserId);
+    await makeFriends(authDb, authUserID, otherUserID);
     const authRef = authDb.ref(otherPreferencesRef);
     await assertSucceeds(authRef.get());
   });
@@ -289,9 +289,9 @@ describeWithEmulator('Test user session placeholder rules', () => {
   let adminDb: any;
   const userSessionPlaceholderRef = DBPATHS.USER_SESSION_PLACEHOLDER;
   const placeholderRef =
-    DBPATHS.USER_SESSION_PLACEHOLDER_USER_ID.getRoute(authUserId);
+    DBPATHS.USER_SESSION_PLACEHOLDER_USER_ID.getRoute(authUserID);
   const otherUserPlaceholderRef =
-    DBPATHS.USER_SESSION_PLACEHOLDER_USER_ID.getRoute(otherUserId);
+    DBPATHS.USER_SESSION_PLACEHOLDER_USER_ID.getRoute(otherUserID);
   setupGlobalMocks(); // Silence permission denied warnings
 
   beforeAll(async () => {
@@ -357,8 +357,8 @@ describeWithEmulator('Test user status rules', () => {
   let unauthDb: any;
   let adminDb: any;
   const userStatusRef = DBPATHS.USER_STATUS;
-  const authUserStatusRef = DBPATHS.USER_STATUS_USER_ID.getRoute(authUserId);
-  const otherUserStatusRef = DBPATHS.USER_STATUS_USER_ID.getRoute(otherUserId);
+  const authUserStatusRef = DBPATHS.USER_STATUS_USER_ID.getRoute(authUserID);
+  const otherUserStatusRef = DBPATHS.USER_STATUS_USER_ID.getRoute(otherUserID);
   setupGlobalMocks(); // Silence permission denied warnings
 
   beforeAll(async () => {
@@ -428,7 +428,7 @@ describeWithEmulator('Test user status rules', () => {
   });
 
   it("should allow an authenticated user to read their friends' user status node", async () => {
-    await makeFriends(authDb, authUserId, otherUserId); // Set the friend connection first
+    await makeFriends(authDb, authUserID, otherUserID); // Set the friend connection first
     const authRef = authDb.ref(otherUserStatusRef);
     await assertSucceeds(authRef.get());
   });
@@ -445,9 +445,9 @@ describeWithEmulator('Test user last online rules', () => {
   let unauthDb: any;
   let adminDb: any;
   const authUserLastOnlineRef =
-    DBPATHS.USER_STATUS_USER_ID_LAST_ONLINE.getRoute(authUserId);
+    DBPATHS.USER_STATUS_USER_ID_LAST_ONLINE.getRoute(authUserID);
   const otherUserLastOnlineRef =
-    DBPATHS.USER_STATUS_USER_ID_LAST_ONLINE.getRoute(otherUserId);
+    DBPATHS.USER_STATUS_USER_ID_LAST_ONLINE.getRoute(otherUserID);
   setupGlobalMocks(); // Silence permission denied warnings
 
   beforeAll(async () => {
@@ -493,7 +493,7 @@ describeWithEmulator('Test user last online rules', () => {
   });
 
   it("should allow an authenticated user to read their friends' user last online node", async () => {
-    await makeFriends(authDb, authUserId, otherUserId); // Set the friend connection first
+    await makeFriends(authDb, authUserID, otherUserID); // Set the friend connection first
     const authRef = authDb.ref(otherUserLastOnlineRef);
     await assertSucceeds(authRef.get());
   });
@@ -510,14 +510,14 @@ describeWithEmulator('Test friend rules', () => {
   let unauthDb: any;
   let adminDb: any;
   const fromAuthToOtherRef = DBPATHS.USERS_USER_ID_FRIENDS_FRIEND_ID.getRoute(
-    authUserId,
-    otherUserId,
+    authUserID,
+    otherUserID,
   );
   const fromOtherToAuthRef = DBPATHS.USERS_USER_ID_FRIENDS_FRIEND_ID.getRoute(
-    otherUserId,
-    authUserId,
+    otherUserID,
+    authUserID,
   );
-  const authFriendsRef = DBPATHS.USERS_USER_ID_FRIENDS.getRoute(authUserId);
+  const authFriendsRef = DBPATHS.USERS_USER_ID_FRIENDS.getRoute(authUserID);
   setupGlobalMocks(); // Silence permission denied warnings
 
   beforeAll(async () => {
@@ -579,14 +579,14 @@ describeWithEmulator('Test friend request rules', () => {
   const receivedFriendRequest: string = CONST.FRIEND_REQUEST_STATUS.RECEIVED;
   const friendRequestRef = DBPATHS.USERS_USER_ID_FRIEND_REQUESTS_REQUEST_ID;
   const friendRequestNodeRef = DBPATHS.USERS_USER_ID_FRIEND_REQUESTS;
-  const fromAuthToOtherRef = friendRequestRef.getRoute(authUserId, otherUserId);
-  const fromOtherToAuthRef = friendRequestRef.getRoute(otherUserId, authUserId);
+  const fromAuthToOtherRef = friendRequestRef.getRoute(authUserID, otherUserID);
+  const fromOtherToAuthRef = friendRequestRef.getRoute(otherUserID, authUserID);
   const fromOtherToOtherRef = friendRequestRef.getRoute(
-    otherUserId,
-    otherUserId,
+    otherUserID,
+    otherUserID,
   );
-  const authFriendRequestRef = friendRequestNodeRef.getRoute(authUserId);
-  const otherFriendRequestRef = friendRequestNodeRef.getRoute(otherUserId);
+  const authFriendRequestRef = friendRequestNodeRef.getRoute(authUserID);
+  const otherFriendRequestRef = friendRequestNodeRef.getRoute(otherUserID);
 
   const fromAuthToAuthRef = setupGlobalMocks(); // Silence permission denied warnings
 
@@ -655,13 +655,13 @@ describeWithEmulator('Test friend request rules', () => {
   });
 
   it('should not allow a user to send a friend request to a user they are already friends with', async () => {
-    await makeFriends(authDb, authUserId, otherUserId); // Set the friend connection first
+    await makeFriends(authDb, authUserID, otherUserID); // Set the friend connection first
     const authRef = authDb.ref(fromOtherToAuthRef);
     await assertFails(authRef.set(receivedFriendRequest));
   });
 
   it('should not allow a user to write into their own friend request an id of a user they are already friends with', async () => {
-    await makeFriends(authDb, authUserId, otherUserId); // Set the friend connection first
+    await makeFriends(authDb, authUserID, otherUserID); // Set the friend connection first
     const authRef = authDb.ref(fromAuthToOtherRef);
     await assertFails(authRef.set(sentFriendRequest));
   });
@@ -677,7 +677,7 @@ describeWithEmulator('Test friend request rules', () => {
   });
 
   it("should not allow reading other people's friend requests", async () => {
-    const authDb = testEnv.authenticatedContext(authUserId).database();
+    const authDb = testEnv.authenticatedContext(authUserID).database();
     const authRef = authDb.ref(otherFriendRequestRef);
     await assertFails(authRef.get());
   });

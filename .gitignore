@@ -26,6 +26,7 @@ DerivedData
 *.xcuserstate
 ios/.xcode.env.local
 ios-fastlane-json-key.json
+**/*.mobileprovision
 
 # Android/IntelliJ
 #
@@ -96,13 +97,10 @@ bun.lockb
 __snapshots__/
 
 # Other
-*-admin-sdk-*.json
-_dev/beta/beta_keys.tsx
-_dev/utils/admin.js
-_dev/migrations/
-docs-old/
+*admin*sdk*.json
 local/
 mockDatabase.json
+!**/*.gpg
 
 # Custom
 .bundle
@@ -112,4 +110,9 @@ mockDatabase.json
 *.apk
 *.ipa
 *.lnk
-*.env.*
+*.env*
+
+# Expo
+.expo
+dist/
+web-build/

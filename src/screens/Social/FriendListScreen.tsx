@@ -2,7 +2,7 @@
 import SearchWindow from '@components/Social/SearchWindow';
 import type {
   SearchWindowRef,
-  UserIdToNicknameMapping,
+  UserIDToNicknameMapping,
 } from '@src/types/various/Search';
 import type GeneralAction from '@src/types/various/GeneralAction';
 import React, {useMemo, useReducer, useRef} from 'react';
@@ -10,7 +10,7 @@ import {objKeys} from '@libs/DataHandling';
 import {getNicknameMapping} from '@libs/SearchUtils';
 import {searchArrayByText} from '@libs/Search';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
-import type {UserArray} from '@src/types/database';
+import type {UserArray} from '@src/types/onyx/OnyxCommon';
 import UserListComponent from '@components/Social/UserListComponent';
 import useProfileList from '@hooks/useProfileList';
 import NoFriendInfo from '@components/Social/NoFriendInfo';
@@ -51,7 +51,7 @@ function FriendListScreen({}: FriendListScreenProps) {
   const localSearch = (searchText: string) => {
     try {
       dispatch({type: 'SET_SEARCHING', payload: true});
-      const searchMapping: UserIdToNicknameMapping = getNicknameMapping(
+      const searchMapping: UserIDToNicknameMapping = getNicknameMapping(
         profileList,
         'display_name',
       );

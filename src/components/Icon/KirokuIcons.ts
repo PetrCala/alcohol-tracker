@@ -4,6 +4,9 @@ import AddUser from '@assets/icons/add-user.png';
 import AlcoholAssortment from '@assets/icons/alcohol-assortment.png';
 import ArrowBack from '@assets/icons/arrow-back.png';
 import ArrowDown from '@assets/icons/arrow-down.png';
+import ArrowRight from '@assets/icons/arrow-right.svg';
+import ArrowUp from '@assets/icons/arrow-up.svg';
+import ArrowUpDown from '@assets/icons/arrows-updown.svg';
 import BarMenu from '@assets/icons/bar-menu.png';
 import Beer from '@assets/icons/beer.png';
 import Bell from '@assets/icons/bell.png';
@@ -11,11 +14,13 @@ import Book from '@assets/icons/book.png';
 import Bug from '@assets/icons/bug.png';
 import Camera from '@assets/icons/camera.png';
 import Check from '@assets/icons/check.png';
+import Checkmark from '@assets/icons/checkmark.svg';
 import Close from '@assets/icons/close.png';
 import Cocktail from '@assets/icons/cocktail.png';
 import Copy from '@assets/icons/copy.png';
 import DeleteSession from '@assets/icons/delete-session.png';
 import Delete from '@assets/icons/delete.png';
+import DotIndicator from '@assets/icons/dot-indicator.svg';
 import Download from '@assets/icons/download.png';
 import Edit from '@assets/icons/edit.png';
 import Exit from '@assets/icons/exit.png';
@@ -34,6 +39,7 @@ import Social from '@assets/icons/social.png';
 import Statistics from '@assets/icons/statistics.png';
 import StrongShot from '@assets/icons/strong-shot.png';
 import ThinX from '@assets/icons/thin-x.png';
+import ThreeDots from '@assets/icons/three-dots.svg';
 import WeakShot from '@assets/icons/weak-shot.png';
 import Wine from '@assets/icons/wine.png';
 
@@ -44,6 +50,9 @@ export {
   AlcoholAssortment,
   ArrowBack,
   ArrowDown,
+  ArrowRight,
+  ArrowUp,
+  ArrowUpDown,
   BarMenu,
   Beer,
   Bell,
@@ -51,12 +60,14 @@ export {
   Bug,
   Camera,
   Check,
+  Checkmark,
   Close,
   Cocktail,
   Copy,
   DeleteSession,
   Delete,
   Download,
+  DotIndicator,
   Edit,
   Exit,
   FriendList,
@@ -74,6 +85,7 @@ export {
   Statistics,
   StrongShot,
   ThinX,
+  ThreeDots,
   WeakShot,
   Wine,
 };

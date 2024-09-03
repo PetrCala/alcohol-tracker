@@ -1,29 +1,25 @@
 import {Image, StyleSheet, Text, View} from 'react-native';
 import {useFirebase} from '../../context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
-import {getTimestampAge, isRecent} from '@libs/TimeUtils';
+import {getTimestampAge} from '@libs/TimeUtils';
 import commonStyles from '@src/styles/commonStyles';
-import {
-  formatDateToTime,
-  sumAllDrinks,
-  timestampToDate,
-} from '@libs/DataHandling';
-import {Profile, UserStatus} from '@src/types/database';
+import {formatDateToTime, timestampToDate} from '@libs/DataHandling';
+import type {Profile, UserStatus} from '@src/types/onyx';
 import {
   determineSessionMostCommonDrink,
   sessionIsExpired,
-} from '@libs/SessionUtils';
+} from '@libs/DrinkingSessionUtils';
 import DrinkData from '@libs/DrinkData';
 import _, {get} from 'lodash';
 
 type UserOverviewProps = {
-  userId: string;
+  userID: string;
   profileData: Profile;
   userStatusData: UserStatus;
 };
 
 const UserOverview: React.FC<UserOverviewProps> = ({
-  userId,
+  userID,
   profileData,
   userStatusData,
 }) => {
@@ -49,27 +45,27 @@ const UserOverview: React.FC<UserOverviewProps> = ({
   )?.icon;
 
   return (
-    <View key={userId + '-container'} style={styles.userOverviewContainer}>
-      <View key={userId + '-left-container'} style={styles.leftContainer}>
-        <View key={userId + '-profile'} style={styles.userOverviewProfile}>
+    <View key={userID + '-container'} style={styles.userOverviewContainer}>
+      <View key={userID + '-left-container'} style={styles.leftContainer}>
+        <View key={userID + '-profile'} style={styles.userOverviewProfile}>
           <View style={styles.imageContainer}>
             <ProfileImage
-              key={userId + '-profile-icon'}
+              key={userID + '-profile-icon'}
               storage={storage}
-              userId={userId}
+              userID={userID}
               downloadPath={profileData.photo_url}
               style={styles.userOverviewImage}
             />
           </View>
           <View
-            key={userId + 'info'}
+            key={userID + 'info'}
             style={
               // shouldDisplaySessionInfo ?
               // : [styles.userInfoContainer, styles.centerUserInfo]
               [styles.userInfoContainer, styles.centerUserInfo]
             }>
             <Text
-              key={userId + '-nickname'}
+              key={userID + '-nickname'}
               style={[styles.userOverviewText, {flexShrink: 1}]}
               numberOfLines={1}
               ellipsizeMode="tail">
@@ -78,13 +74,13 @@ const UserOverview: React.FC<UserOverviewProps> = ({
           </View>
         </View>
       </View>
-      <View key={userId + '-right-container'} style={styles.rightContainer}>
+      <View key={userID + '-right-container'} style={styles.rightContainer}>
         {/* ? `In session:\n${drinksThisSession} ${mostCommonDrink}` */}
         {inSession && shouldDisplaySessionInfo ? (
           <>
             <View style={commonStyles.flexRow}>
               <Text
-                key={userId + '-status-info'}
+                key={userID + '-status-info'}
                 style={[styles.userDetailsText, styles.rightContainerText]}>
                 {`In session${mostCommonDrinkIcon ? ':' : ''}`}
               </Text>
@@ -96,14 +92,14 @@ const UserOverview: React.FC<UserOverviewProps> = ({
               )}
             </View>
             <Text
-              key={userId + '-status-time'}
+              key={userID + '-status-time'}
               style={[styles.userDetailsText, styles.rightContainerText]}>
               {`From: ${sessionStartTime}`}
             </Text>
           </>
         ) : (
           <Text
-            key={userId + '-status'}
+            key={userID + '-status'}
             style={[styles.userDetailsText, styles.rightContainerText]}>
             {!_.isEmpty(sessionEndTimeVerbose)
               ? `${sessionEndTimeVerbose}\nsober`
@@ -155,7 +151,6 @@ const styles = StyleSheet.create({
   userOverviewImage: {
     width: 70,
     height: 70,
-    padding: 10,
     borderRadius: 35,
   },
   userInfoContainer: {

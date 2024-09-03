@@ -5,6 +5,7 @@ import {
   initializeAuth,
   getReactNativePersistence,
   connectAuthEmulator,
+  getAuth,
 } from 'firebase/auth';
 import type {Database} from 'firebase/database';
 import {connectDatabaseEmulator, getDatabase} from 'firebase/database';
@@ -12,7 +13,7 @@ import type {FirebaseStorage} from 'firebase/storage';
 import {getStorage, connectStorageEmulator} from 'firebase/storage';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 import {isConnectedToAuthEmulator} from '@src/libs/Firebase/FirebaseUtils';
-import {FirebaseApp} from '@libs/Firebase/FirebaseApp';
+import {FirebaseApp, auth} from '@libs/Firebase/FirebaseApp';
 import FirebaseConfig from '@libs/Firebase/FirebaseConfig';
 import {
   isConnectedToDatabaseEmulator,
@@ -53,9 +54,6 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
   children,
 }) => {
   // Initialize Auth with React Native persistence
-  const auth: Auth = initializeAuth(FirebaseApp, {
-    persistence: getReactNativePersistence(ReactNativeAsyncStorage),
-  });
   const db = getDatabase(FirebaseApp);
   const storage = getStorage(FirebaseApp);
 

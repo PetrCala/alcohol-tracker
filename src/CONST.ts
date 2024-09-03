@@ -1,18 +1,72 @@
-// Taken and modified form the Expensify GitHub
 // Source: https://github.com/Expensify/App/blob/main/src/CONST.ts
 
-// import Config from 'react-native-config';
+import Config from 'react-native-config';
+import * as KeyCommand from 'react-native-key-command';
 
 // Creating a default array and object this way because objects ({}) and arrays ([]) are not stable types.
 // Freezing the array ensures that it cannot be unintentionally modified.
 const EMPTY_ARRAY = Object.freeze([]);
 const EMPTY_OBJECT = Object.freeze({});
 
+const PLATFORM_OS_MACOS = 'Mac OS';
+const PLATFORM_IOS = 'iOS';
+
 const ANDROID_PACKAGE_NAME = 'com.alcohol_tracker';
 const GH_PAGES_URL = 'https://petrcala.github.io/Kiroku';
 
+const keyModifierControl =
+  KeyCommand?.constants?.keyModifierControl ?? 'keyModifierControl';
+const keyModifierCommand =
+  KeyCommand?.constants?.keyModifierCommand ?? 'keyModifierCommand';
+const keyModifierShiftControl =
+  KeyCommand?.constants?.keyModifierShiftControl ?? 'keyModifierShiftControl';
+const keyModifierShiftCommand =
+  KeyCommand?.constants?.keyModifierShiftCommand ?? 'keyModifierShiftCommand';
+const keyInputEscape =
+  KeyCommand?.constants?.keyInputEscape ?? 'keyInputEscape';
+const keyInputEnter = KeyCommand?.constants?.keyInputEnter ?? 'keyInputEnter';
+const keyInputUpArrow =
+  KeyCommand?.constants?.keyInputUpArrow ?? 'keyInputUpArrow';
+const keyInputDownArrow =
+  KeyCommand?.constants?.keyInputDownArrow ?? 'keyInputDownArrow';
+const keyInputLeftArrow =
+  KeyCommand?.constants?.keyInputLeftArrow ?? 'keyInputLeftArrow';
+const keyInputRightArrow =
+  KeyCommand?.constants?.keyInputRightArrow ?? 'keyInputRightArrow';
+
+// describes if a shortcut key can cause navigation
+const KEYBOARD_SHORTCUT_NAVIGATION_TYPE = 'NAVIGATION_SHORTCUT';
+
 const CONST = {
   ACCOUNT_CREATION_LIMIT: 3,
+
+  ACCOUNT_ID: {
+    ACCOUNTING: Number(Config?.EXPENSIFY_ACCOUNT_ID_ACCOUNTING ?? 9645353),
+    ADMIN: Number(Config?.EXPENSIFY_ACCOUNT_ID_ADMIN ?? -1),
+    BILLS: Number(Config?.EXPENSIFY_ACCOUNT_ID_BILLS ?? 1371),
+    CHRONOS: Number(Config?.EXPENSIFY_ACCOUNT_ID_CHRONOS ?? 10027416),
+    CONCIERGE: Number(Config?.EXPENSIFY_ACCOUNT_ID_CONCIERGE ?? 8392101),
+    CONTRIBUTORS: Number(Config?.EXPENSIFY_ACCOUNT_ID_CONTRIBUTORS ?? 9675014),
+    FIRST_RESPONDER: Number(
+      Config?.EXPENSIFY_ACCOUNT_ID_FIRST_RESPONDER ?? 9375152,
+    ),
+    HELP: Number(Config?.EXPENSIFY_ACCOUNT_ID_HELP ?? -1),
+    INTEGRATION_TESTING_CREDS: Number(
+      Config?.EXPENSIFY_ACCOUNT_ID_INTEGRATION_TESTING_CREDS ?? -1,
+    ),
+    NOTIFICATIONS: Number(
+      Config?.EXPENSIFY_ACCOUNT_ID_NOTIFICATIONS ?? 11665625,
+    ),
+    PAYROLL: Number(Config?.EXPENSIFY_ACCOUNT_ID_PAYROLL ?? 9679724),
+    QA: Number(Config?.EXPENSIFY_ACCOUNT_ID_QA ?? 3126513),
+    QA_TRAVIS: Number(Config?.EXPENSIFY_ACCOUNT_ID_QA_TRAVIS ?? 8595733),
+    RECEIPTS: Number(Config?.EXPENSIFY_ACCOUNT_ID_RECEIPTS ?? -1),
+    REWARDS: Number(Config?.EXPENSIFY_ACCOUNT_ID_REWARDS ?? 11023767), // rewards@expensify.com
+    STUDENT_AMBASSADOR: Number(
+      Config?.EXPENSIFY_ACCOUNT_ID_STUDENT_AMBASSADOR ?? 10476956,
+    ),
+    SVFG: Number(Config?.EXPENSIFY_ACCOUNT_ID_SVFG ?? 2012843),
+  },
   ANDROID_PACKAGE_NAME,
   ANIMATED_TRANSITION: 300,
   ANIMATED_TRANSITION_FROM_VALUE: 100,
@@ -25,7 +79,27 @@ const CONST = {
   APP_QR_CODE_LINK: `${GH_PAGES_URL}/assets/images/kiroku-qr-code-with-logo.png`,
   PRIVACY_POLICY_URL: `${GH_PAGES_URL}/assets/html/privacy-policy.html`,
   TERMS_OF_SERVICE_URL: `${GH_PAGES_URL}/assets/html/terms-of-service.html`,
+  API_REQUEST_TYPE: {
+    READ: 'read',
+    WRITE: 'write',
+    MAKE_REQUEST_WITH_SIDE_EFFECTS: 'makeRequestWithSideEffects',
+  },
+  AUTO_AUTH_STATE: {
+    NOT_STARTED: 'not-started',
+    SIGNING_IN: 'signing-in',
+    JUST_SIGNED_IN: 'just-signed-in',
+    FAILED: 'failed',
+  },
+  APP_STATE: {
+    ACTIVE: 'active',
+    BACKGROUND: 'background',
+    INACTIVE: 'inactive',
+  },
   APP_IN_BETA: true,
+  AUTH_TOKEN_TYPES: {
+    ANONYMOUS: 'anonymousAccount',
+    SUPPORT: 'support',
+  },
   AVAILABLE_PLATFORMS: ['ios', 'android'],
   AVATAR_SIZE: {
     XLARGE: 'xlarge',
@@ -41,6 +115,10 @@ const CONST = {
     HEADER: 'header',
     MENTION_ICON: 'mention-icon',
     SMALL_NORMAL: 'small-normal',
+  },
+  AVATAR_ROW_SIZE: {
+    DEFAULT: 4,
+    LARGE_SCREEN: 8,
   },
   BROWSER: {
     CHROME: 'chrome',
@@ -69,6 +147,14 @@ const CONST = {
     US: 'US',
     CZ: 'CZ',
   },
+  CUSTOM_STATUS_TYPES: {
+    NEVER: 'never',
+    THIRTY_MINUTES: 'thirtyMinutes',
+    ONE_HOUR: 'oneHour',
+    AFTER_TODAY: 'afterToday',
+    AFTER_WEEK: 'afterWeek',
+    CUSTOM: 'custom',
+  },
   DATE: {
     SQL_DATE_TIME: 'YYYY-MM-DD HH:mm:ss',
     FNS_FORMAT_STRING: 'yyyy-MM-dd',
@@ -88,9 +174,29 @@ const CONST = {
     MIN_DATE: '0001-01-01',
     ORDINAL_DAY_OF_MONTH: 'do',
   },
+
+  DATE_BIRTH: {
+    MIN_AGE: 18,
+    MAX_AGE: 150,
+  },
+
+  DEBUG_CONSOLE: {
+    LEVELS: {
+      INFO: 'INFO',
+      ERROR: 'ERROR',
+      RESULT: 'RESULT',
+      DEBUG: 'DEBUG',
+    },
+  },
+  DEEPLINK_BASE_URL: 'kiroku://',
+  DEFAULT_AVATAR_COUNT: 24,
   DIRECTION: {
     LEFT: 'left',
     RIGHT: 'right',
+  },
+  DISPLAY_NAME: {
+    MAX_LENGTH: 50,
+    RESERVED_NAMES: ['Kiroku'],
   },
   DROPDOWN_BUTTON_SIZE: {
     LARGE: 'large',
@@ -102,8 +208,38 @@ const CONST = {
     PROD: 'production',
     TEST: 'test',
   },
+  EMAIL: {
+    KIROKU: 'kiroku.alcohol.tracker@gmail.com',
+  },
   EMPTY_ARRAY,
   EMPTY_OBJECT,
+  ERROR: {
+    XHR_FAILED: 'xhrFailed',
+    THROTTLED: 'throttled',
+    UNKNOWN_ERROR: 'Unknown error',
+    REQUEST_CANCELLED: 'AbortError',
+    FAILED_TO_FETCH: 'Failed to fetch',
+    ENSURE_BUGBOT: 'ENSURE_BUGBOT',
+    PUSHER_ERROR: 'PusherError',
+    WEB_SOCKET_ERROR: 'WebSocketError',
+    NETWORK_REQUEST_FAILED: 'Network request failed',
+    SAFARI_DOCUMENT_LOAD_ABORTED: 'cancelled',
+    FIREFOX_DOCUMENT_LOAD_ABORTED:
+      'NetworkError when attempting to fetch resource.',
+    IOS_NETWORK_CONNECTION_LOST: 'The network connection was lost.',
+    IOS_NETWORK_CONNECTION_LOST_CZECH: 'Spojení bylo ztraceno.',
+    IOS_LOAD_FAILED: 'Load failed',
+    SAFARI_CANNOT_PARSE_RESPONSE: 'cannot parse response',
+    GATEWAY_TIMEOUT: 'Gateway Timeout',
+    EXPENSIFY_SERVICE_INTERRUPTED: 'Expensify service interrupted',
+    DUPLICATE_RECORD: 'A record already exists with this ID',
+
+    // The "Upgrade" is intentional as the 426 HTTP code means "Upgrade Required" and sent by the API. We use the "Update" language everywhere else in the front end when this gets returned.
+    UPDATE_REQUIRED: 'Upgrade Required',
+  },
+  EVENTS: {
+    SCROLLING: 'scrolling',
+  },
   FIREBASE_STORAGE_URL: 'https://firebasestorage.googleapis.com',
   FRIEND_REQUEST_STATUS: {
     SELF: 'self',
@@ -112,7 +248,173 @@ const CONST = {
     FRIEND: 'friend',
     UNDEFINED: 'undefined',
   },
+  HTTP_STATUS: {
+    // When Cloudflare throttles
+    TOO_MANY_REQUESTS: 429,
+    INTERNAL_SERVER_ERROR: 500,
+    BAD_GATEWAY: 502,
+    GATEWAY_TIMEOUT: 504,
+    UNKNOWN_ERROR: 520,
+  },
+  ICON_TYPE_ICON: 'icon',
+  ICON_TYPE_AVATAR: 'avatar',
   INVALID_CHARS: ['.', '#', '$', '[', ']'],
+  JSON_CODE: {
+    SUCCESS: 200,
+    BAD_REQUEST: 400,
+    NOT_AUTHENTICATED: 407,
+    EXP_ERROR: 666,
+    MANY_WRITES_ERROR: 665,
+    UNABLE_TO_RETRY: 'unableToRetry',
+    UPDATE_REQUIRED: 426,
+  },
+  PLATFORM_SPECIFIC_KEYS: {
+    CTRL: {
+      DEFAULT: 'control',
+      [PLATFORM_OS_MACOS]: 'meta',
+      [PLATFORM_IOS]: 'meta',
+    },
+    SHIFT: {
+      DEFAULT: 'shift',
+    },
+  },
+  KEYBOARD_SHORTCUTS: {
+    SEARCH: {
+      descriptionKey: 'search',
+      shortcutKey: 'K',
+      modifiers: ['CTRL'],
+      trigger: {
+        DEFAULT: {input: 'k', modifierFlags: keyModifierControl},
+        [PLATFORM_OS_MACOS]: {input: 'k', modifierFlags: keyModifierCommand},
+        [PLATFORM_IOS]: {input: 'k', modifierFlags: keyModifierCommand},
+      },
+      type: KEYBOARD_SHORTCUT_NAVIGATION_TYPE,
+    },
+    NEW_CHAT: {
+      descriptionKey: 'newChat',
+      shortcutKey: 'K',
+      modifiers: ['CTRL', 'SHIFT'],
+      trigger: {
+        DEFAULT: {input: 'k', modifierFlags: keyModifierShiftControl},
+        [PLATFORM_OS_MACOS]: {
+          input: 'k',
+          modifierFlags: keyModifierShiftCommand,
+        },
+        [PLATFORM_IOS]: {input: 'k', modifierFlags: keyModifierShiftCommand},
+      },
+      type: KEYBOARD_SHORTCUT_NAVIGATION_TYPE,
+    },
+    SHORTCUTS: {
+      descriptionKey: 'openShortcutDialog',
+      shortcutKey: 'J',
+      modifiers: ['CTRL'],
+      trigger: {
+        DEFAULT: {input: 'j', modifierFlags: keyModifierControl},
+        [PLATFORM_OS_MACOS]: {input: 'j', modifierFlags: keyModifierCommand},
+        [PLATFORM_IOS]: {input: 'j', modifierFlags: keyModifierCommand},
+      },
+    },
+    ESCAPE: {
+      descriptionKey: 'escape',
+      shortcutKey: 'Escape',
+      modifiers: [],
+      trigger: {
+        DEFAULT: {input: keyInputEscape},
+        [PLATFORM_OS_MACOS]: {input: keyInputEscape},
+        [PLATFORM_IOS]: {input: keyInputEscape},
+      },
+    },
+    ENTER: {
+      descriptionKey: null,
+      shortcutKey: 'Enter',
+      modifiers: [],
+      trigger: {
+        DEFAULT: {input: keyInputEnter},
+        [PLATFORM_OS_MACOS]: {input: keyInputEnter},
+        [PLATFORM_IOS]: {input: keyInputEnter},
+      },
+    },
+    CTRL_ENTER: {
+      descriptionKey: null,
+      shortcutKey: 'Enter',
+      modifiers: ['CTRL'],
+      trigger: {
+        DEFAULT: {input: keyInputEnter, modifierFlags: keyModifierControl},
+        [PLATFORM_OS_MACOS]: {
+          input: keyInputEnter,
+          modifierFlags: keyModifierCommand,
+        },
+        [PLATFORM_IOS]: {
+          input: keyInputEnter,
+          modifierFlags: keyModifierCommand,
+        },
+      },
+    },
+    COPY: {
+      descriptionKey: 'copy',
+      shortcutKey: 'C',
+      modifiers: ['CTRL'],
+      trigger: {
+        DEFAULT: {input: 'c', modifierFlags: keyModifierControl},
+        [PLATFORM_OS_MACOS]: {input: 'c', modifierFlags: keyModifierCommand},
+        [PLATFORM_IOS]: {input: 'c', modifierFlags: keyModifierCommand},
+      },
+    },
+    ARROW_UP: {
+      descriptionKey: null,
+      shortcutKey: 'ArrowUp',
+      modifiers: [],
+      trigger: {
+        DEFAULT: {input: keyInputUpArrow},
+        [PLATFORM_OS_MACOS]: {input: keyInputUpArrow},
+        [PLATFORM_IOS]: {input: keyInputUpArrow},
+      },
+    },
+    ARROW_DOWN: {
+      descriptionKey: null,
+      shortcutKey: 'ArrowDown',
+      modifiers: [],
+      trigger: {
+        DEFAULT: {input: keyInputDownArrow},
+        [PLATFORM_OS_MACOS]: {input: keyInputDownArrow},
+        [PLATFORM_IOS]: {input: keyInputDownArrow},
+      },
+    },
+    ARROW_LEFT: {
+      descriptionKey: null,
+      shortcutKey: 'ArrowLeft',
+      modifiers: [],
+      trigger: {
+        DEFAULT: {input: keyInputLeftArrow},
+        [PLATFORM_OS_MACOS]: {input: keyInputLeftArrow},
+        [PLATFORM_IOS]: {input: keyInputLeftArrow},
+      },
+    },
+    ARROW_RIGHT: {
+      descriptionKey: null,
+      shortcutKey: 'ArrowRight',
+      modifiers: [],
+      trigger: {
+        DEFAULT: {input: keyInputRightArrow},
+        [PLATFORM_OS_MACOS]: {input: keyInputRightArrow},
+        [PLATFORM_IOS]: {input: keyInputRightArrow},
+      },
+    },
+    TAB: {
+      descriptionKey: null,
+      shortcutKey: 'Tab',
+      modifiers: [],
+    },
+  },
+  KEYBOARD_SHORTCUTS_TYPES: {
+    NAVIGATION_SHORTCUT: KEYBOARD_SHORTCUT_NAVIGATION_TYPE,
+  },
+  KEYBOARD_SHORTCUT_KEY_DISPLAY_NAME: {
+    CONTROL: 'CTRL',
+    ESCAPE: 'ESC',
+    META: 'CMD',
+    SHIFT: 'Shift',
+  },
   LOCAL_IMAGE_PREFIX: 'file://',
   LOCALES: {
     EN: 'en',
@@ -121,6 +423,38 @@ const CONST = {
     DEFAULT: 'en',
   },
   MAX_ALLOWED_UNITS: 100,
+
+  // These split the maximum decimal value of a signed 64-bit number (9,223,372,036,854,775,807) into parts where none of them are too big to fit into a 32-bit number, so that we can
+  // generate them each with a random number generator with only 32-bits of precision.
+  MAX_64BIT_LEFT_PART: 92233,
+  MAX_64BIT_MIDDLE_PART: 7203685,
+  MAX_64BIT_RIGHT_PART: 4775807,
+
+  // When generating a random value to fit in 7 digits (for the `middle` or `right` parts above), this is the maximum value to multiply by Math.random().
+  MAX_INT_FOR_RANDOM_7_DIGIT_VALUE: 10000000,
+  MERGED_ACCOUNT_PREFIX: 'MERGED_',
+  MODAL: {
+    MODAL_TYPE: {
+      CONFIRM: 'confirm',
+      CENTERED: 'centered',
+      CENTERED_UNSWIPEABLE: 'centered_unswipeable',
+      CENTERED_SMALL: 'centered_small',
+      BOTTOM_DOCKED: 'bottom_docked',
+      POPOVER: 'popover',
+      RIGHT_DOCKED: 'right_docked',
+    },
+    ANCHOR_ORIGIN_VERTICAL: {
+      TOP: 'top',
+      CENTER: 'center',
+      BOTTOM: 'bottom',
+    },
+    ANCHOR_ORIGIN_HORIZONTAL: {
+      LEFT: 'left',
+      CENTER: 'center',
+      RIGHT: 'right',
+    },
+    POPOVER_MENU_PADDING: 8,
+  },
   MONTHS: [
     'January',
     'February',
@@ -164,7 +498,59 @@ const CONST = {
       DISCARD: 'DISCARD',
     },
   },
+
+  ERROR_TYPE: {
+    SOCKET: 'Kiroku\\Auth\\Error\\Socket',
+  },
+  ERROR_TITLE: {
+    SOCKET: 'Issue connecting to database',
+    DUPLICATE_RECORD: '400 Unique Constraints Violation',
+  },
+  FORMS: {
+    // Forms to load upon onyx initialization
+    LOGIN_FORM: 'LoginForm',
+    // VALIDATE_CODE_FORM: 'ValidateCodeForm',
+    // VALIDATE_TFA_CODE_FORM: 'ValidateTfaCodeForm',
+    // RESEND_VALIDATION_FORM: 'ResendValidationForm',
+    // UNLINK_LOGIN_FORM: 'UnlinkLoginForm',
+    // RESEND_VALIDATE_CODE_FORM: 'ResendValidateCodeForm',
+  },
+  NETWORK: {
+    METHOD: {
+      POST: 'post',
+    },
+    MIN_RETRY_WAIT_TIME_MS: 10,
+    MAX_RANDOM_RETRY_WAIT_TIME_MS: 100,
+    MAX_RETRY_WAIT_TIME_MS: 10 * 1000,
+    PROCESS_REQUEST_DELAY_MS: 1000,
+    MAX_PENDING_TIME_MS: 10 * 1000,
+    MAX_REQUEST_RETRIES: 10,
+  },
+  DEFAULT_TIME_ZONE: {automatic: true, selected: 'Europe/Prague'},
+  DEFAULT_ACCOUNT_DATA: {errors: null, success: '', isLoading: false},
+  DEFAULT_CLOSE_ACCOUNT_DATA: {errors: null, success: '', isLoading: false},
+  DEFAULT_NETWORK_DATA: {isOffline: false},
+
+  MICROSECONDS_PER_MS: 1000,
+  RED_BRICK_ROAD_PENDING_ACTION: {
+    ADD: 'add',
+    DELETE: 'delete',
+    UPDATE: 'update',
+  },
+  BRICK_ROAD_INDICATOR_STATUS: {
+    ERROR: 'error',
+    INFO: 'info',
+  },
   NO_IMAGE: 'NO_IMAGE', // Used for the profile avatar when there is no image
+  ONYX_UPDATE_TYPES: {
+    HTTPS: 'https',
+    PUSHER: 'pusher',
+    AIRSHIP: 'airship',
+  },
+  OPTION_MODE: {
+    COMPACT: 'compact',
+    DEFAULT: 'default',
+  },
   OS: {
     WINDOWS: 'Windows',
     MAC_OS: 'Mac OS',
@@ -178,12 +564,112 @@ const CONST = {
     ANDROID: 'Android',
     WEB: 'Web',
   },
+  // Values for checking if polyfill is required on a platform
+  POLYFILL_TEST: {
+    STYLE: 'currency',
+    CURRENCY: 'XAF',
+    FORMAT: 'symbol',
+    SAMPLE_INPUT: '123456.789',
+    EXPECTED_OUTPUT: 'FCFA 123,457',
+  },
+
+  PUSHER: {
+    PRIVATE_USER_CHANNEL_PREFIX: 'private-encrypted-user-userID-',
+  },
   REGEX: {
+    SPECIAL_CHARS_WITHOUT_NEWLINE: /((?!\n)[()-\s\t])/g,
+    DIGITS_AND_PLUS: /^\+?[0-9]*$/,
+    ALPHABETIC_AND_LATIN_CHARS: /^[\p{Script=Latin} ]*$/u,
+    NON_ALPHABETIC_AND_NON_LATIN_CHARS: /[^\p{Script=Latin}]/gu,
+    ACCENT_LATIN_CHARS: /[\u00C0-\u017F]/g,
+    INVISIBLE_CHARACTERS_GROUPS: /[\p{C}\p{Z}]/gu,
+
+    OTHER_INVISIBLE_CHARACTERS: /[\u3164]/g,
+    POSITIVE_INTEGER: /^\d+$/,
     ROUTES: {
       REDUNDANT_SLASHES: /(\/{2,})|(\/$)/g,
     },
-    // DATE_TIME_FORMAT: /^\d{2}-\d{2} \d{2}:\d{2} [AP]M$/,
+    CODE_2FA: /^\d{6}$/,
+    NUMBER: /^[0-9]+$/,
+    CARD_NUMBER: /^[0-9]{15,16}$/,
+    CARD_SECURITY_CODE: /^[0-9]{3,4}$/,
+    CARD_EXPIRATION_DATE: /^(0[1-9]|1[0-2])([^0-9])?([0-9]{4}|([0-9]{2}))$/,
+    TIME_FORMAT: /^\d{2}:\d{2} [AP]M$/,
+    DATE_TIME_FORMAT: /^\d{2}-\d{2} \d{2}:\d{2} [AP]M$/,
+    YEAR_DATE_TIME_FORMAT: /^\d{4}-\d{2}-\d{2} \d{2}:\d{2} [AP]M$/,
   },
+
+  /**
+   * Acceptable values for the `role` attribute on react native components.
+   *
+   * **IMPORTANT:** Not for use with the `accessibilityRole` prop, as it accepts different values, and new components
+   * should use the `role` prop instead.
+   */
+  ROLE: {
+    /** Use for elements with important, time-sensitive information. */
+    ALERT: 'alert',
+    /** Use for elements that act as buttons. */
+    BUTTON: 'button',
+    /** Use for elements representing checkboxes. */
+    CHECKBOX: 'checkbox',
+    /** Use for elements that allow a choice from multiple options. */
+    COMBOBOX: 'combobox',
+    /** Use with scrollable lists to represent a grid layout. */
+    GRID: 'grid',
+    /** Use for section headers or titles. */
+    HEADING: 'heading',
+    /** Use for image elements. */
+    IMG: 'img',
+    /** Use for elements that navigate to other pages or content. */
+    LINK: 'link',
+    /** Use to identify a list of items. */
+    LIST: 'list',
+    /** Use for a list of choices or options. */
+    MENU: 'menu',
+    /** Use for a container of multiple menus. */
+    MENUBAR: 'menubar',
+    /** Use for items within a menu. */
+    MENUITEM: 'menuitem',
+    /** Use when no specific role is needed. */
+    NONE: 'none',
+    /** Use for elements that don't require a specific role. */
+    PRESENTATION: 'presentation',
+    /** Use for elements showing progress of a task. */
+    PROGRESSBAR: 'progressbar',
+    /** Use for radio buttons. */
+    RADIO: 'radio',
+    /** Use for groups of radio buttons. */
+    RADIOGROUP: 'radiogroup',
+    /** Use for scrollbar elements. */
+    SCROLLBAR: 'scrollbar',
+    /** Use for text fields that are used for searching. */
+    SEARCHBOX: 'searchbox',
+    /** Use for adjustable elements like sliders. */
+    SLIDER: 'slider',
+    /** Use for a button that opens a list of choices. */
+    SPINBUTTON: 'spinbutton',
+    /** Use for elements providing a summary of app conditions. */
+    SUMMARY: 'summary',
+    /** Use for on/off switch elements. */
+    SWITCH: 'switch',
+    /** Use for tab elements in a tab list. */
+    TAB: 'tab',
+    /** Use for a list of tabs. */
+    TABLIST: 'tablist',
+    /** Use for text elements */
+    TEXT: 'text',
+    /** Use for timer elements. */
+    TIMER: 'timer',
+    /** Use for toolbars containing action buttons or components. */
+    TOOLBAR: 'toolbar',
+  },
+
+  SCREEN_READER_STATES: {
+    ALL: 'all',
+    ACTIVE: 'active',
+    DISABLED: 'disabled',
+  },
+  SELECTION_SCRAPER_HIDDEN_ELEMENT: 'selection-scrapper-hidden-element',
   SESSION_EXPIRY: 60 * 60 * 1000 * 12, // 12 hours
   SESSION_TYPES: {
     LIVE: 'live',
@@ -195,15 +681,17 @@ const CONST = {
     FACEBOOK: '',
     LINKEDIN: '',
   },
+  SPACE_CHARACTER_WIDTH: 4,
   STATUS_BAR_STYLE: {
     LIGHT_CONTENT: 'light-content',
     DARK_CONTENT: 'dark-content',
   },
   STORE_LINKS: {
-    ANDROID:
-      'https://play.google.com/store/apps/details?id=com.alcohol_tracker',
+    ANDROID: `https://play.google.com/store/apps/details?id=${ANDROID_PACKAGE_NAME}`,
     IOS: 'https://testflight.apple.com/join/DgY9IieL',
+    DESKTOP: '',
   },
+  TOOLTIP_MAX_LINES: 3,
   THEME: {
     DEFAULT: 'system',
     FALLBACK: 'dark',
@@ -211,18 +699,30 @@ const CONST = {
     LIGHT: 'light',
     SYSTEM: 'system',
   },
+  TEST_TOOL: {
+    // Number of concurrent taps to open then the Test modal menu
+    NUMBER_OF_TAPS: 4,
+  },
   TIMING: {
     HOMEPAGE_INITIAL_RENDER: 'homepage_initial_render',
     SEARCH_RENDER: 'search_render',
     COLD: 'cold',
     WARM: 'warm',
     COMMENT_LENGTH_DEBOUNCE_TIME: 500,
-    SEARCH_OPTION_LIST_DEBOUNCE_TIME: 300,
     RESIZE_DEBOUNCE_TIME: 100,
+    SEARCH_OPTION_LIST_DEBOUNCE_TIME: 300,
+    TOOLTIP_SENSE: 1000,
   },
   TIME_PERIOD: {
     AM: 'AM',
     PM: 'PM',
+  },
+  TWO_FACTOR_AUTH_STEPS: {
+    CODES: 'CODES',
+    VERIFY: 'VERIFY',
+    SUCCESS: 'SUCCESS',
+    ENABLED: 'ENABLED',
+    DISABLED: 'DISABLED',
   },
   DRINKS: {
     // Perhaps move to types?
@@ -245,6 +745,49 @@ const CONST = {
       WINE: 'Wine',
     },
   },
+
+  // 6 numeric digits
+  VALIDATE_CODE_REGEX_STRING: /^\d{6}$/,
+
+  // 8 alphanumeric characters
+  RECOVERY_CODE_REGEX_STRING: /^[a-zA-Z0-9]{8}$/,
+
+  UNICODE: {
+    LTR: '\u2066',
+  },
+
+  // The server has a WAF (Web Application Firewall) which will strip out HTML/XML tags using this regex pattern.
+  // It's copied here so that the same regex pattern can be used in form validations to be consistent with the server.
+  VALIDATE_FOR_HTML_TAG_REGEX: /<([^>\s]+)(?:[^>]*?)>/g,
+
+  VALIDATE_FOR_LEADINGSPACES_HTML_TAG_REGEX: /<([\s]+.+[\s]*)>/g,
+
+  VIDEO_PLAYER: {
+    POPOVER_Y_OFFSET: -30,
+    PLAYBACK_SPEEDS: [0.25, 0.5, 1, 1.5, 2],
+    HIDE_TIME_TEXT_WIDTH: 250,
+    MIN_WIDTH: 170,
+    MIN_HEIGHT: 120,
+    CONTROLS_POSITION: {
+      NATIVE: 32,
+      NORMAL: 8,
+    },
+    DEFAULT_VIDEO_DIMENSIONS: {width: 1900, height: 1400},
+  },
+
+  WHITELISTED_TAGS: [/<>/, /< >/, /<->/, /<-->/, /<br>/, /<br\/>/],
+
+  /**
+   * native IDs for close buttons in Overlay component
+   */
+  OVERLAY: {
+    TOP_BUTTON_NATIVE_ID: 'overLayTopButton',
+    BOTTOM_BUTTON_NATIVE_ID: 'overLayBottomButton',
+  },
+
+  BACK_BUTTON_NATIVE_ID: 'backButton',
+
+  WEEK_STARTS_ON: 1, // Monday
 
   ALL_COUNTRIES: {
     AF: 'Afghanistan',

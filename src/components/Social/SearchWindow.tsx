@@ -8,9 +8,9 @@ import {
   View,
 } from 'react-native';
 import {useState, forwardRef, useEffect, useRef} from 'react';
-import {Database} from 'firebase/database';
+import type {Database} from 'firebase/database';
 import {useFirebase} from '@src/context/global/FirebaseContext';
-import {SearchWindowRef} from '@src/types/various/Search';
+import type {SearchWindowRef} from '@src/types/various/Search';
 import KeyboardFocusHandler from '@components/Keyboard/KeyboardFocusHandler';
 import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
@@ -56,48 +56,49 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
     // }));
 
     return (
-      <DismissKeyboard>
-        <View style={styles.mainContainer}>
-          <View
-            style={
-              searchOnTextChange
-                ? [styles.textContainer, styles.responsiveTextContainer]
-                : styles.textContainer
-            }>
-            <KeyboardFocusHandler>
-              <TextInput
-                placeholder={windowText}
-                placeholderTextColor={'#a8a8a8'}
-                value={searchText}
-                onChangeText={text => setSearchText(text)}
-                style={styles.searchText}
-                keyboardType="default"
-                textContentType="nickname"
-                ref={textInputRef}
+      <View style={styles.mainContainer}>
+        <View
+          style={
+            searchOnTextChange
+              ? [styles.textContainer, styles.responsiveTextContainer]
+              : styles.textContainer
+          }>
+          <KeyboardFocusHandler>
+            <TextInput
+              accessibilityLabel="Text input field"
+              placeholder={windowText}
+              placeholderTextColor={'#a8a8a8'}
+              value={searchText}
+              onChangeText={text => setSearchText(text)}
+              style={styles.searchText}
+              keyboardType="default"
+              textContentType="nickname"
+              ref={textInputRef}
+            />
+          </KeyboardFocusHandler>
+          {searchText !== '' || searchCount > 0 ? (
+            <TouchableOpacity
+              accessibilityRole="button"
+              onPress={handleResetSearch}
+              style={styles.searchTextResetContainer}>
+              <Image
+                style={styles.searchTextResetImage}
+                source={KirokuIcons.ThinX}
               />
-            </KeyboardFocusHandler>
-            {searchText !== '' || searchCount > 0 ? (
-              <TouchableOpacity
-                onPress={handleResetSearch}
-                style={styles.searchTextResetContainer}>
-                <Image
-                  style={styles.searchTextResetImage}
-                  source={KirokuIcons.ThinX}
-                />
-              </TouchableOpacity>
-            ) : null}
-          </View>
-          {searchOnTextChange ? null : (
-            <View style={styles.searchButtonContainer}>
-              <TouchableOpacity
-                style={styles.searchButton}
-                onPress={() => handleDoSearch(searchText, db)}>
-                <Text style={styles.searchButtonText}>Search</Text>
-              </TouchableOpacity>
-            </View>
-          )}
+            </TouchableOpacity>
+          ) : null}
         </View>
-      </DismissKeyboard>
+        {searchOnTextChange ? null : (
+          <View style={styles.searchButtonContainer}>
+            <TouchableOpacity
+              accessibilityRole="button"
+              style={styles.searchButton}
+              onPress={() => handleDoSearch(searchText, db)}>
+              <Text style={styles.searchButtonText}>Search</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
     );
   },
 );

@@ -1,7 +1,6 @@
 ﻿import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import MenuIcon from '@components/Buttons/MenuIcon';
 import {
-  formatDate,
   formatDateToDay,
   formatDateToTime,
   getLastDrinkAddedTime,
@@ -14,7 +13,7 @@ import {
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import BasicButton from '@components/Buttons/BasicButton';
 import MainHeader from '@components/Header/MainHeader';
-import type {DrinkingSession} from '@src/types/database';
+import type {DrinkingSession} from '@src/types/onyx';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import type {StackScreenProps} from '@react-navigation/stack';
 import SCREENS from '@src/SCREENS';
@@ -23,7 +22,7 @@ import {useEffect, useState} from 'react';
 import {
   calculateSessionLength,
   extractSessionOrEmpty,
-} from '@libs/SessionUtils';
+} from '@libs/DrinkingSessionUtils';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import ScreenWrapper from '@components/ScreenWrapper';
@@ -243,7 +242,6 @@ const styles = StyleSheet.create({
   menuIcon: {
     width: 25,
     height: 25,
-    padding: 10,
   },
   scrollView: {
     flexGrow: 1,

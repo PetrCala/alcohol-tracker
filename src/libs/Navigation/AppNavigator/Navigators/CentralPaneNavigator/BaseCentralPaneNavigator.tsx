@@ -1,18 +1,15 @@
-// import {createStackNavigator} from '@react-navigation/stack';
-// import React from 'react';
-// import useThemeStyles from '@hooks/useThemeStyles';
+import {createStackNavigator} from '@react-navigation/stack';
+import React from 'react';
+import useThemeStyles from '@hooks/useThemeStyles';
 // import ReportScreenWrapper from '@navigation/AppNavigator/ReportScreenWrapper';
-// import getCurrentUrl from '@navigation/currentUrl';
-// import type {CentralPaneNavigatorParamList} from '@navigation/types';
-// import SCREENS from '@src/SCREENS';
-// import CONFIG from '@src/CONFIG';
+import getCurrentUrl from '@navigation/currentUrl';
+import type {CentralPaneNavigatorParamList} from '@navigation/types';
+import SCREENS from '@src/SCREENS';
+import CONFIG from '@src/CONFIG';
 
-// const Stack = createStackNavigator<CentralPaneNavigatorParamList>();
+const Stack = createStackNavigator<CentralPaneNavigatorParamList>();
 
-// const url = getCurrentUrl();
-// const openOnAdminRoom = url
-//   ? new URL(url).searchParams.get('openOnAdminRoom')
-//   : undefined;
+const url = getCurrentUrl();
 
 // type Screens = Partial<
 //   Record<keyof CentralPaneNavigatorParamList, () => React.ComponentType>
@@ -45,37 +42,44 @@
 //       .default as React.ComponentType,
 // } satisfies Screens;
 
-// function BaseCentralPaneNavigator() {
-//   const styles = useThemeStyles();
-//   const options = {
-//     headerShown: false,
-//     title: CONFIG.SITE_TITLE,
+function BaseCentralPaneNavigator() {
+  const styles = useThemeStyles();
+  const options = {
+    headerShown: false,
+    title: CONFIG.SITE_TITLE,
 
-//     // Prevent unnecessary scrolling
-//     cardStyle: styles.cardStyleNavigator,
-//   };
-//   return (
-//     <Stack.Navigator screenOptions={options}>
-//       <Stack.Screen
-//         name={SCREENS.REPORT}
-//         // We do it this way to avoid adding the url params to url
-//         initialParams={{
-//           openOnAdminRoom: openOnAdminRoom === 'true' || undefined,
-//         }}
-//         component={ReportScreenWrapper}
-//       />
+    // Prevent unnecessary scrolling
+    // cardStyle: styles.cardStyleNavigator, // TODO
+  };
+  return (
+    <Stack.Navigator screenOptions={options}>
+      <Stack.Screen
+        name={SCREENS.HOME}
+        component={
+          require('../../../../../screens/HomeScreen')
+            .default as React.ComponentType
+        }
+      />
+      {/* <Stack.Screen
+        name={SCREENS.HOME}
+        // We do it this way to avoid adding the url params to url
+        // initialParams={{
+        //   openOnAdminRoom: openOnAdminRoom === 'true' || undefined,
+        // }}
+        component={ReportScreenWrapper}
+      /> */}
 
-//       {Object.entries(workspaceSettingsScreens).map(
-//         ([screenName, componentGetter]) => (
-//           <Stack.Screen
-//             key={screenName}
-//             name={screenName as keyof Screens}
-//             getComponent={componentGetter}
-//           />
-//         ),
-//       )}
-//     </Stack.Navigator>
-//   );
-// }
+      {/* {Object.entries(workspaceSettingsScreens).map(
+        ([screenName, componentGetter]) => (
+          <Stack.Screen
+            key={screenName}
+            name={screenName as keyof Screens}
+            getComponent={componentGetter}
+          />
+        ),
+      )} */}
+    </Stack.Navigator>
+  );
+}
 
-// export default BaseCentralPaneNavigator;
+export default BaseCentralPaneNavigator;

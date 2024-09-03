@@ -1,23 +1,23 @@
-﻿import {Database, update, ref, get} from 'firebase/database';
-import {
+﻿import type {Database} from 'firebase/database';
+import {update, ref, get} from 'firebase/database';
+import type {
   DrinkingSessionList,
   FriendRequestList,
   Preferences,
   Profile,
-  UserList,
   UserProps,
   UserStatus,
-} from '@src/types/database';
+} from '@src/types/onyx';
+import type {UserList} from '@src/types/onyx/OnyxCommon';
+import type {User, UserCredential} from 'firebase/auth';
 import {
   EmailAuthProvider,
-  User,
-  UserCredential,
   reauthenticateWithCredential,
   updateProfile,
 } from 'firebase/auth';
 import {getUniqueId} from 'react-native-device-info';
 import {Alert} from 'react-native';
-import {cleanStringForFirebaseKey} from '../libs/StringUtils';
+import {cleanStringForFirebaseKey} from '../libs/StringUtilsKiroku';
 import DBPATHS from './DBPATHS';
 import {readDataOnce} from './baseFunctions';
 import {
@@ -46,7 +46,7 @@ const getDefaultPreferences = (): Preferences => {
 };
 
 const getDefaultUserData = (profileData: Profile): UserProps => {
-  let userRole = 'open_beta_user';
+  const userRole = 'open_beta_user';
   return {
     profile: profileData,
     role: userRole,
@@ -63,14 +63,14 @@ const getDefaultUserStatus = (): {last_online: number} => {
  * Check if a user exists in the realtime database.
  *
  * @param db - The database object against which to validate this conditio
- * @param userId - User ID of the user to check.
+ * @param userID - User ID of the user to check.
  * @returns {Promise<boolean>} - Returns true if the user exists, false otherwise.
  */
 async function userExistsInDatabase(
   db: Database,
-  userId: string,
+  userID: string,
 ): Promise<boolean> {
-  const profilePath = DBPATHS.USERS_USER_ID_PROFILE.getRoute(userId);
+  const profilePath = DBPATHS.USERS_USER_ID_PROFILE.getRoute(userID);
   const dbRef = ref(db, profilePath);
   const snapshot = await get(dbRef);
   return snapshot.exists();
@@ -80,13 +80,13 @@ async function userExistsInDatabase(
  * be stored under the "users" object in the database.
  *
  * @param db The firebase realtime database object
- * @param userId The user ID
+ * @param userID The user ID
  * @param profileData Profile data of the user to create
  * @returns {Promise<void>}
  */
 async function pushNewUserInfo(
   db: Database,
-  userId: string,
+  userID: string,
   profileData: Profile,
 ): Promise<void> {
   const userNickname = profileData.display_name;
@@ -100,14 +100,15 @@ async function pushNewUserInfo(
   const userPreferencesRef = DBPATHS.USER_PREFERENCES_USER_ID;
   const userRef = DBPATHS.USERS_USER_ID;
 
-  let updates: {
-    [key: string]: UserProps | Preferences | string | number | any;
-  } = {};
-  updates[accountCreationsRef.getRoute(deviceId, userId)] = Date.now();
-  updates[nicknameRef.getRoute(nicknameKey, userId)] = userNickname;
-  updates[userStatusRef.getRoute(userId)] = getDefaultUserStatus();
-  updates[userPreferencesRef.getRoute(userId)] = getDefaultPreferences();
-  updates[userRef.getRoute(userId)] = getDefaultUserData(profileData);
+  const updates: Record<
+    string,
+    UserProps | Preferences | string | number | any
+  > = {};
+  updates[accountCreationsRef.getRoute(deviceId, userID)] = Date.now();
+  updates[nicknameRef.getRoute(nicknameKey, userID)] = userNickname;
+  updates[userStatusRef.getRoute(userID)] = getDefaultUserStatus();
+  updates[userPreferencesRef.getRoute(userID)] = getDefaultPreferences();
+  updates[userRef.getRoute(userID)] = getDefaultUserData(profileData);
 
   await update(ref(db), updates);
 }
@@ -117,13 +118,13 @@ async function pushNewUserInfo(
  *
  *
  * @param db The firebase database object;
- * @param userId The user ID
+ * @param userID The user ID
  * @param userNickname The user nickname
  * @returns {Promise<void>}
  */
 async function deleteUserData(
   db: Database,
-  userId: string,
+  userID: string,
   userNickname: string,
   friends: UserList | undefined,
   friendRequests: FriendRequestList | undefined,
@@ -139,22 +140,22 @@ async function deleteUserData(
   const friendsRef = DBPATHS.USERS_USER_ID_FRIENDS_FRIEND_ID;
   const friendRequestsRef = DBPATHS.USERS_USER_ID_FRIEND_REQUESTS_REQUEST_ID;
 
-  let updates: {[key: string]: null | false} = {};
-  updates[nicknameRef.getRoute(nicknameKey, userId)] = null;
-  updates[userStatusRef.getRoute(userId)] = null;
-  updates[userPreferencesRef.getRoute(userId)] = null;
-  updates[userRef.getRoute(userId)] = null;
-  updates[drinkingSessionsRef.getRoute(userId)] = null;
-  updates[unconfirmedDaysRef.getRoute(userId)] = null;
+  const updates: Record<string, null | false> = {};
+  updates[nicknameRef.getRoute(nicknameKey, userID)] = null;
+  updates[userStatusRef.getRoute(userID)] = null;
+  updates[userPreferencesRef.getRoute(userID)] = null;
+  updates[userRef.getRoute(userID)] = null;
+  updates[drinkingSessionsRef.getRoute(userID)] = null;
+  updates[unconfirmedDaysRef.getRoute(userID)] = null;
   // Data stored in other users' nodes
   if (friends) {
     Object.keys(friends).forEach(friendId => {
-      updates[friendsRef.getRoute(friendId, userId)] = null;
+      updates[friendsRef.getRoute(friendId, userID)] = null;
     });
   }
   if (friendRequests) {
     Object.keys(friendRequests).forEach(friendRequestId => {
-      updates[friendRequestsRef.getRoute(friendRequestId, userId)] = null;
+      updates[friendRequestsRef.getRoute(friendRequestId, userID)] = null;
     });
   }
   await update(ref(db), updates);
@@ -162,11 +163,13 @@ async function deleteUserData(
 
 async function synchronizeUserStatus(
   db: Database,
-  userId: string,
+  userID: string,
   currentUserStatus: UserStatus | undefined,
   drinkingSessions: DrinkingSessionList | undefined,
 ): Promise<void> {
-  if (!currentUserStatus) return;
+  if (!currentUserStatus) {
+    return;
+  }
   const newUserStatus: UserStatus = currentUserStatus;
   newUserStatus.last_online = new Date().getTime();
   const latestSessionId = getLastStartedSessionId(drinkingSessions);
@@ -177,8 +180,8 @@ async function synchronizeUserStatus(
     newUserStatus.latest_session_id = latestSessionId;
   }
   const userStatusRef = DBPATHS.USER_STATUS_USER_ID;
-  let updates: {[key: string]: UserStatus} = {};
-  updates[userStatusRef.getRoute(userId)] = newUserStatus;
+  const updates: Record<string, UserStatus> = {};
+  updates[userStatusRef.getRoute(userID)] = newUserStatus;
   await update(ref(db), updates);
 }
 
@@ -205,7 +208,7 @@ async function reauthentificateUser(
     return;
   }
   const credential = EmailAuthProvider.credential(email, password);
-  var result = await reauthenticateWithCredential(user, credential);
+  const result = await reauthenticateWithCredential(user, credential);
   return result;
 }
 
@@ -226,22 +229,22 @@ async function changeDisplayName(
   if (!user) {
     throw new Error('User is null');
   }
-  const userId = user.uid;
+  const userID = user.uid;
   const nicknameKey = cleanStringForFirebaseKey(newDisplayName);
   const nicknameRef = DBPATHS.NICKNAME_TO_ID_NICKNAME_KEY_USER_ID;
   const displayNameRef = DBPATHS.USERS_USER_ID_PROFILE_DISPLAY_NAME;
 
   const currentDisplayName = await readDataOnce(
     db,
-    displayNameRef.getRoute(userId),
+    displayNameRef.getRoute(userID),
   );
   if (currentDisplayName === newDisplayName) {
     return;
   }
 
-  let updates: {[key: string]: string} = {};
-  updates[nicknameRef.getRoute(nicknameKey, userId)] = newDisplayName;
-  updates[displayNameRef.getRoute(userId)] = newDisplayName;
+  const updates: Record<string, string> = {};
+  updates[nicknameRef.getRoute(nicknameKey, userID)] = newDisplayName;
+  updates[displayNameRef.getRoute(userID)] = newDisplayName;
   // TODO possibly rewrite these into a transaction
   await update(ref(db), updates);
   await updateProfile(user, {displayName: newDisplayName});

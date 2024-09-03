@@ -1,7 +1,5 @@
 ﻿import {
-  Alert,
   Dimensions,
-  Image,
   Keyboard,
   ScrollView,
   StyleSheet,
@@ -9,8 +7,8 @@
   TouchableOpacity,
   View,
 } from 'react-native';
-import commonStyles from '../../styles/commonStyles';
-import {useFirebase} from '../../context/global/FirebaseContext';
+import commonStyles from '@styles/commonStyles';
+import {useFirebase} from '@context/global/FirebaseContext';
 import type {StatData} from '@components/Items/StatOverview';
 import {StatsOverview} from '@components/Items/StatOverview';
 import ProfileOverview from '@components/Social/ProfileOverview';
@@ -25,15 +23,14 @@ import {
   timestampToDate,
   timestampToDateString,
 } from '@libs/DataHandling';
-import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import type {DateObject} from '@src/types/time';
 import SessionsCalendar from '@components/Calendar';
 import LoadingData from '@components/LoadingData';
-import {fetchUserFriends, getCommonFriendsCount} from '@libs/FriendUtils';
+import {getCommonFriendsCount} from '@libs/FriendUtils';
 import MainHeader from '@components/Header/MainHeader';
 import ManageFriendPopup from '@components/Popups/Profile/ManageFriendPopup';
-import type {DrinkingSessionArray, UserList} from '@src/types/database';
-import {UserProps} from '@src/types/database';
+import type {DrinkingSessionArray} from '@src/types/onyx';
+import type {UserList} from '@src/types/onyx/OnyxCommon';
 import type {StackScreenProps} from '@react-navigation/stack';
 import type {ProfileNavigatorParamList} from '@libs/Navigation/types';
 import type SCREENS from '@src/SCREENS';
@@ -43,12 +40,12 @@ import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import ROUTES from '@src/ROUTES';
 import type {DateData} from 'react-native-calendars';
 import useFetchData from '@hooks/useFetchData';
-import {sendFriendRequest} from '@database/friends';
-import {getPlural} from '@libs/StringUtils';
+import {getPlural} from '@libs/StringUtilsKiroku';
 import ScreenWrapper from '@components/ScreenWrapper';
 import type {FetchDataKeys} from '@hooks/useFetchData/types';
-import {FetchData} from '@hooks/useFetchData/types';
-import useListenToData from '@hooks/useListenToData';
+import useThemeStyles from '@hooks/useThemeStyles';
+import {withOnyx} from 'react-native-onyx';
+import compose from '@libs/compose';
 
 type State = {
   selfFriends: UserList | undefined;
@@ -100,15 +97,17 @@ const reducer = (state: State, action: Action): State => {
   }
 };
 
-type ProfileScreenProps = StackScreenProps<
-  ProfileNavigatorParamList,
-  typeof SCREENS.PROFILE.ROOT
->;
+type ProfileScreenOnyxProps = {};
+
+type ProfileScreenProps = ProfileScreenOnyxProps &
+  StackScreenProps<ProfileNavigatorParamList, typeof SCREENS.PROFILE.ROOT>;
 
 function ProfileScreen({route}: ProfileScreenProps) {
   const {auth, db} = useFirebase();
-  const {userId} = route.params;
+  const {userID} = route.params;
   const user = auth.currentUser;
+
+  const styles = useThemeStyles();
   const relevantDataKeys: FetchDataKeys = [
     'userData',
     'drinkingSessionData',
@@ -118,8 +117,8 @@ function ProfileScreen({route}: ProfileScreenProps) {
   let {userData, drinkingSessionData, preferences, isLoading} =
     useDatabaseData();
   let loading = isLoading;
-  if (userId !== user?.uid) {
-    const {data, isLoading} = useFetchData(userId, relevantDataKeys);
+  if (userID !== user?.uid) {
+    const {data, isLoading} = useFetchData(userID, relevantDataKeys);
     userData = data.userData;
     drinkingSessionData = data.drinkingSessionData;
     preferences = data.preferences;
@@ -148,7 +147,7 @@ function ProfileScreen({route}: ProfileScreenProps) {
         return;
       }
       let ownFriends = friends;
-      if (user?.uid !== userId) {
+      if (user?.uid !== userID) {
         ownFriends = await readDataOnce(
           db,
           DBPATHS.USERS_USER_ID_FRIENDS.getRoute(user.uid),
@@ -172,9 +171,7 @@ function ProfileScreen({route}: ProfileScreenProps) {
 
   // Monitor stats
   useMemo(() => {
-    if (!drinkingSessionData || !preferences) {
-      return;
-    }
+    if (!drinkingSessionData || !preferences) {return;}
     const drinkingSessionArray: DrinkingSessionArray =
       Object.values(drinkingSessionData);
 
@@ -196,72 +193,63 @@ function ProfileScreen({route}: ProfileScreenProps) {
     dispatch({type: 'SET_UNITS_CONSUMED', payload: thisMonthUnits});
   }, [drinkingSessionData, preferences, state.visibleDateObject]);
 
-  if (isLoading) {
-    return <LoadingData />;
-  }
-  if (!profileData || !preferences || !userData) {
-    return;
-  }
+  if (isLoading) {return <LoadingData />;}
+  if (!profileData || !preferences || !userData) {return;}
 
   return (
     <ScreenWrapper testID={ProfileScreen.displayName}>
       <MainHeader
-        headerText={user?.uid === userId ? 'Profile' : 'Friend Overview'}
+        headerText={user?.uid === userID ? 'Profile' : 'Friend Overview'}
         onGoBack={() => Navigation.goBack()}
       />
       <ScrollView
-        style={styles.scrollView}
+        style={localStyles.scrollView}
         onScrollBeginDrag={Keyboard.dismiss}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}>
-        {/* {user?.uid === userId && (
-          <TouchableOpacity
-            onPress={() =>
-              Navigation.navigate(ROUTES.PROFILE_EDIT.getRoute(userId))
-            }
-            style={styles.editProfileButton}>
-            <Image source={KirokuIcons.Pencil} style={styles.editProfileIcon} />
-          </TouchableOpacity>
-        )} */}
         <ProfileOverview
-          userId={userId}
+          userID={userID}
           profileData={profileData} // For live propagation of current user
         />
-        <View style={styles.friendsInfoContainer}>
-          <View style={styles.leftContainer}>
-            <Text style={styles.friendsInfoHeading}>
+        <View style={localStyles.friendsInfoContainer}>
+          <View style={localStyles.leftContainer}>
+            <Text style={localStyles.friendsInfoHeading}>
               {`${
-                user?.uid !== userId && state.commonFriendCount > 0
+                user?.uid !== userID && state.commonFriendCount > 0
                   ? 'Common f'
                   : 'F'
               }riends:`}
             </Text>
             <Text
-              style={[styles.friendsInfoText, commonStyles.smallMarginLeft]}>
-              {user?.uid !== userId && state.commonFriendCount > 0
+              style={[
+                localStyles.friendsInfoText,
+                commonStyles.smallMarginLeft,
+              ]}>
+              {user?.uid !== userID && state.commonFriendCount > 0
                 ? state.commonFriendCount
                 : state.friendCount}
             </Text>
           </View>
-          <View style={styles.rightContainer}>
+          <View style={localStyles.rightContainer}>
             <TouchableOpacity
               accessibilityRole="button"
               onPress={() => {
-                user?.uid === userId
+                user?.uid === userID
                   ? Navigation.navigate(ROUTES.SOCIAL)
                   : Navigation.navigate(
-                      ROUTES.PROFILE_FRIENDS_FRIENDS.getRoute(userId),
+                      ROUTES.PROFILE_FRIENDS_FRIENDS.getRoute(userID),
                     );
               }}
-              style={styles.seeFriendsButton}>
-              <Text style={[styles.friendsInfoText, commonStyles.linkText]}>
+              style={localStyles.seeFriendsButton}>
+              <Text
+                style={[localStyles.friendsInfoText, commonStyles.linkText]}>
                 See all friends
               </Text>
             </TouchableOpacity>
           </View>
         </View>
         <View style={commonStyles.horizontalLine} />
-        <View style={styles.statsOverviewHolder}>
+        <View style={localStyles.statsOverviewHolder}>
           <StatsOverview statsData={statsData} />
         </View>
         <SessionsCalendar
@@ -270,7 +258,7 @@ function ProfileScreen({route}: ProfileScreenProps) {
           visibleDateObject={state.visibleDateObject}
           dispatch={dispatch}
           onDayPress={(day: DateData) => {
-            user?.uid === userId
+            user?.uid === userID
               ? Navigation.navigate(
                   ROUTES.DAY_OVERVIEW.getRoute(
                     timestampToDateString(day.timestamp),
@@ -279,18 +267,18 @@ function ProfileScreen({route}: ProfileScreenProps) {
               : null;
           }}
         />
-        <View style={styles.bottomContainer}>
-          {user?.uid !== userId ? (
+        <View style={localStyles.bottomContainer}>
+          {user?.uid !== userID ? (
             <TouchableOpacity
               accessibilityRole="button"
-              style={styles.manageFriendButton}
+              style={localStyles.manageFriendButton}
               onPress={() =>
                 dispatch({
                   type: 'SET_MANAGE_FRIEND_MODAL_VISIBLE',
                   payload: true,
                 })
               }>
-              <Text style={styles.manageFriendButtonText}>Manage</Text>
+              <Text style={localStyles.manageFriendButtonText}>Manage</Text>
             </TouchableOpacity>
           ) : null}
         </View>
@@ -302,7 +290,7 @@ function ProfileScreen({route}: ProfileScreenProps) {
           dispatch({type: 'SET_MANAGE_FRIEND_MODAL_VISIBLE', payload: visible})
         }
         onGoBack={() => Navigation.goBack()}
-        friendId={userId}
+        friendId={userID}
       />
     </ScreenWrapper>
   );
@@ -311,7 +299,7 @@ function ProfileScreen({route}: ProfileScreenProps) {
 const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   sectionText: {
     fontSize: 20,
     color: 'black',
@@ -327,16 +315,20 @@ const styles = StyleSheet.create({
   },
   editProfileButton: {
     position: 'absolute',
-    top: 12,
-    right: 12,
+    top: 8,
+    right: 8,
+    padding: 8,
     width: 'auto',
     height: 'auto',
+    backgroundColor: 'pink',
+    zIndex: -2,
   },
   editProfileIcon: {
-    width: 25,
-    height: 25,
-    padding: 5,
-    tintColor: '#000',
+    width: 24,
+    height: 24,
+    tintColor: '#1A3D32',
+    backgroundColor: 'blue',
+    zIndex: -3,
   },
   friendsInfoContainer: {
     width: '90%',
@@ -405,4 +397,8 @@ const styles = StyleSheet.create({
 });
 
 ProfileScreen.displayName = 'Profile Screen';
-export default ProfileScreen;
+
+export default compose(
+  withOnyx<ProfileScreenProps, ProfileScreenOnyxProps>({}),
+)(ProfileScreen);
+// export default ProfileScreen;

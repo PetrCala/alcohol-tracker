@@ -45,6 +45,7 @@
   bundle update
   bun i
   bun -g i firebase-tools
+  brew install cmake # For android compilation
   cd ios
   pod install
   ```
@@ -95,6 +96,10 @@
   ```
 
   to make the file readable.
+
+### Fixing dependencies
+
+To fix expo invalid dependencies, try running `npx expo install --fix`.
 
 ### Formatting
 

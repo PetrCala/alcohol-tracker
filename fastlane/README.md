@@ -76,6 +76,14 @@ Generate a local iOS production build
 
 Generate a local iOS staging build
 
+### ios build_debug
+
+```sh
+[bundle exec] fastlane ios build_debug
+```
+
+Generate a local iOS build for testing
+
 ### ios beta
 
 ```sh

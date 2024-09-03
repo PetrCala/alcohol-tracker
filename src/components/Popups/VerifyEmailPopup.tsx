@@ -1,7 +1,7 @@
 import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {useFirebase} from '@context/global/FirebaseContext';
-import {UserId} from '@src/types/database';
+import {UserID} from '@src/types/onyx';
 import {User, sendEmailVerification} from 'firebase/auth';
 import React, {useEffect, useState} from 'react';
 import {

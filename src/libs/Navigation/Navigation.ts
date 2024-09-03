@@ -14,7 +14,8 @@ import CONST from '@src/CONST';
 import NAVIGATORS from '@src/NAVIGATORS';
 import type {Route} from '@src/ROUTES';
 import ROUTES from '@src/ROUTES';
-import SCREENS, {PROTECTED_SCREENS, Screen} from '@src/SCREENS';
+import type { Screen} from '@src/SCREENS';
+import SCREENS, {PROTECTED_SCREENS} from '@src/SCREENS';
 import type {EmptyObject} from '@src/types/utils/EmptyObject';
 import originalDismissModal from './dismissModal';
 import linkingConfig from './linkingConfig';
@@ -51,6 +52,12 @@ function canNavigate(
   );
   return false;
 }
+
+// Re-exporting the dismissModal here to fill in default value for navigationRef. The dismissModal isn't defined in this file to avoid cyclic dependencies.
+const dismissModal = (ref = navigationRef) => {
+  originalDismissModal(ref);
+  return;
+};
 
 /** Method for finding on which index in stack we are. */
 function getActiveRouteIndex(
@@ -324,7 +331,7 @@ function getLastRouteName(): string | undefined {
  *
  * @returns The name of the last screen in the navigation stack.
  */
-function getLastScreenName(getOneDeepInstead: boolean = false): Screen {
+function getLastScreenName(getOneDeepInstead = false): Screen {
   const rootState = navigationRef.getRootState();
   const route = rootState.routes.at(-1);
   // eslint-disable-next-line @typescript-eslint/ban-types
@@ -386,6 +393,7 @@ export default {
   setShouldPopAllStateOnUP,
   navigate,
   setParams,
+  dismissModal,
   isActiveRoute,
   getActiveRoute,
   getActiveRouteWithoutParams,

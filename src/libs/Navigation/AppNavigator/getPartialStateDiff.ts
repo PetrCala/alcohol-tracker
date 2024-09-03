@@ -6,7 +6,7 @@ import type {
   State,
 } from '@navigation/types';
 import NAVIGATORS from '@src/NAVIGATORS';
-import {Metainfo} from '@navigation/linkingConfig/getAdaptedStateFromPath';
+import type {Metainfo} from '@navigation/linkingConfig/getAdaptedStateFromPath';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 const shallowCompare = (obj1?: object, obj2?: object) => {

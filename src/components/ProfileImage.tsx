@@ -1,31 +1,24 @@
 ﻿import React, {useEffect, useMemo, useReducer, useRef, useState} from 'react';
-import {
-  ActivityIndicator,
-  Alert,
-  Image,
-  ImageSourcePropType,
-  LayoutChangeEvent,
-  TouchableOpacity,
-} from 'react-native';
-import * as KirokuIcons from '@components/Icon/KirokuIcons';
+import type {ImageSourcePropType, LayoutChangeEvent} from 'react-native';
+import {ActivityIndicator, Alert, Image, TouchableOpacity} from 'react-native';
 import * as KirokuImages from '@components/Icon/KirokuImages';
-import {FirebaseStorage} from 'firebase/storage';
+import type {FirebaseStorage} from 'firebase/storage';
 import {getProfilePictureURL} from '@src/storage/storageProfile';
 import useProfileImageCache from '@hooks/useProfileImageCache';
 import CONST from '@src/CONST';
 import EnlargableImage from './Buttons/EnlargableImage';
-import ImageLayout from '@src/types/various/ImageLayout';
+import type ImageLayout from '@src/types/various/ImageLayout';
 
-interface State {
+type State = {
   imageUrl: string | null;
   loadingImage: boolean;
   warning: string;
-}
+};
 
-interface Action {
+type Action = {
   type: string;
   payload: any;
-}
+};
 
 const initialState: State = {
   imageUrl: null,
@@ -48,7 +41,7 @@ const reducer = (state: State, action: Action) => {
 
 type ProfileImageProps = {
   storage: FirebaseStorage;
-  userId: string;
+  userID: string;
   downloadPath: string | null | undefined;
   style: any;
   refreshTrigger?: number; // Likely a number, used to force a refresh
@@ -58,9 +51,9 @@ type ProfileImageProps = {
 };
 
 function ProfileImage(props: ProfileImageProps) {
-  const {storage, userId, downloadPath, style} = props;
+  const {storage, userID, downloadPath, style} = props;
   const [state, dispatch] = useReducer(reducer, initialState);
-  const {cachedUrl, cacheImage, isCacheChecked} = useProfileImageCache(userId);
+  const {cachedUrl, cacheImage, isCacheChecked} = useProfileImageCache(userID);
   const prevCachedUrl = useRef(cachedUrl); // Crucial
   const initialDownloadPath = useRef(downloadPath); //
 
@@ -93,10 +86,14 @@ function ProfileImage(props: ProfileImageProps) {
 
   useEffect(() => {
     const fetchImage = async () => {
-      if (!isCacheChecked) return; // Only proceed if cache has been checked
+      if (!isCacheChecked) {
+        return;
+      } // Only proceed if cache has been checked
 
       const cacheUnchanged = await checkAvailableCache(cachedUrl);
-      if (cacheUnchanged) return; // Use cache if available and unchanged
+      if (cacheUnchanged) {
+        return;
+      } // Use cache if available and unchanged
 
       dispatch({type: 'SET_LOADING_IMAGE', payload: true});
       try {
@@ -105,7 +102,7 @@ function ProfileImage(props: ProfileImageProps) {
           // if (downloadPath === initialDownloadPath.current) // If the input download path has not changed
           downloadUrl = await getProfilePictureURL(
             storage,
-            userId,
+            userID,
             downloadPath,
           );
           await cacheImage(downloadUrl);
@@ -129,8 +126,9 @@ function ProfileImage(props: ProfileImageProps) {
     prevCachedUrl.current = cachedUrl;
   }, [downloadPath, cachedUrl, isCacheChecked]); // add props.refreshTrigger if necessary
 
-  if (state.loadingImage)
+  if (state.loadingImage) {
     return <ActivityIndicator size="large" color="#0000ff" style={style} />;
+  }
   if (!props.enlargable) {
     return <Image source={imageSource} style={style} />;
   }

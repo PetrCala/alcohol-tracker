@@ -17,7 +17,7 @@ import {
   View,
 } from 'react-native';
 import CONST from '@src/CONST';
-import {copyToClipboard} from '@libs/StringUtils';
+import {copyToClipboard} from '@libs/StringUtilsKiroku';
 
 type AppShareScreenProps = StackScreenProps<
   MainMenuNavigatorParamList,

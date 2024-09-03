@@ -1,10 +1,10 @@
 import {StyleSheet, Text, View} from 'react-native';
 import StatItem from './StatItem';
 
-export type StatData = {
+export type StatData = Array<{
   header: string;
   content: string;
-}[];
+}>;
 
 type StatsOverviewProps = {
   statsData: StatData;
@@ -24,5 +24,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     justifyContent: 'space-evenly',
+    backgroundColor: '#FFFF99',
   },
 });

@@ -1,11 +1,12 @@
-﻿import {Database, ref, get} from 'firebase/database';
-import {cleanStringForFirebaseKey} from '@libs/StringUtils';
+﻿import type {Database} from 'firebase/database';
+import {ref, get} from 'firebase/database';
+import {cleanStringForFirebaseKey} from '@libs/StringUtilsKiroku';
 import {QUIRKY_NICKNAMES} from '@libs/QuirkyNicknames';
-import {
-  UserIdToNicknameMapping,
+import type {
+  UserIDToNicknameMapping,
   UserSearchResults,
 } from '@src/types/various/Search';
-import {NicknameToId} from '@src/types/database';
+import type {NicknameToId} from '@src/types/onyx';
 
 /**
  * Using a database object and a nickname to search,
@@ -41,7 +42,7 @@ async function searchDbByNickname(
 async function searchDatabaseForUsers(
   db: Database | undefined,
   searchText: string,
-  useQuirkyNicknames: boolean = true,
+  useQuirkyNicknames = true,
 ): Promise<UserSearchResults> {
   if (!searchText || !db) {
     return [];
@@ -60,7 +61,7 @@ async function searchDatabaseForUsers(
 function searchItemIsRelevant(
   item: string,
   cleanedText: string,
-  mapping: UserIdToNicknameMapping,
+  mapping: UserIDToNicknameMapping,
 ): boolean {
   const mappingText = mapping[item];
   if (mappingText) {
@@ -73,9 +74,11 @@ function searchItemIsRelevant(
 function searchArrayByText(
   arr: string[],
   searchText: string,
-  mapping: UserIdToNicknameMapping,
+  mapping: UserIDToNicknameMapping,
 ): string[] {
-  if (!searchText) return arr;
+  if (!searchText) {
+    return arr;
+  }
   const cleanedSearchText = cleanStringForFirebaseKey(searchText);
   return arr.filter(item =>
     searchItemIsRelevant(item, cleanedSearchText, mapping),
@@ -85,9 +88,11 @@ function searchArrayByText(
 function searchObjectByText(
   obj: Record<string, any>,
   searchText: string,
-  mapping: UserIdToNicknameMapping,
+  mapping: UserIDToNicknameMapping,
 ): Record<string, any> {
-  if (!searchText) return obj;
+  if (!searchText) {
+    return obj;
+  }
   const cleanedSearchText = cleanStringForFirebaseKey(searchText);
   return Object.keys(obj)
     .filter(key => searchItemIsRelevant(key, cleanedSearchText, mapping))

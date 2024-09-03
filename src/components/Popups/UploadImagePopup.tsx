@@ -1,8 +1,8 @@
-import {UploadImageState} from '@components/UploadImage';
+import type {UploadImageState} from '@components/UploadImage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CONST from '@src/CONST';
 
-import GeneralAction from '@src/types/various/GeneralAction';
+import type GeneralAction from '@src/types/various/GeneralAction';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {useEffect, useState} from 'react';
 import {
@@ -57,7 +57,7 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
           />
         </View>
         <View style={styles.buttonContainer}>
-          <TouchableOpacity
+          <TouchableOpacity accessibilityRole="button"
             style={styles.button}
             onPress={handleUploadFinishConfirm}>
             <Text style={styles.buttonText}>Great!</Text>

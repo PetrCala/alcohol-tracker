@@ -1,6 +1,6 @@
 import type {ViewStyle} from 'react-native';
-// import overflowAuto from './overflowAuto';
-// import overscrollBehaviorContain from './overscrollBehaviorContain';
+import overflowAuto from './overflowAuto';
+import overscrollBehaviorContain from './overscrollBehaviorContain';
 
 /**
  * Overflow utility styles with Bootstrap inspired naming.
@@ -20,7 +20,7 @@ export default {
     overflow: 'scroll',
   },
 
-  //   overscrollBehaviorContain,
+  overscrollBehaviorContain,
 
-  //   overflowAuto,
+  overflowAuto,
 } satisfies Record<string, ViewStyle>;

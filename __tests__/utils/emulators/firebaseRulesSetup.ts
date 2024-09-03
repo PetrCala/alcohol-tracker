@@ -27,10 +27,10 @@ export async function setupFirebaseRulesTestEnv(): Promise<TestEnvironmentResult
     database: emulatorConfig,
   });
 
-  const authDb: any = testEnv.authenticatedContext('authUserId').database();
+  const authDb: any = testEnv.authenticatedContext('authUserID').database();
   const unauthDb: any = testEnv.unauthenticatedContext().database();
   const adminDb: any = testEnv
-    .authenticatedContext('authUserId', {admin: true})
+    .authenticatedContext('authUserID', {admin: true})
     .database();
 
   return {testEnv, authDb, unauthDb, adminDb};

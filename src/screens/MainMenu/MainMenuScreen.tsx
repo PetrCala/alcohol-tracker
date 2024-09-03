@@ -27,9 +27,7 @@ import ItemListPopup from '@components/Popups/ItemListPopup';
 import {useFirebase} from '@context/global/FirebaseContext';
 import MainHeader from '@components/Header/MainHeader';
 import GrayHeader from '@components/Header/GrayHeader';
-import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
-import CONST from '@src/CONST';
-import type {FeedbackList} from '@src/types/database';
+import type {FeedbackList} from '@src/types/onyx';
 import type {StackScreenProps} from '@react-navigation/stack';
 import type {MainMenuNavigatorParamList} from '@navigation/types';
 import type SCREENS from '@src/SCREENS';
@@ -38,6 +36,10 @@ import ROUTES from '@src/ROUTES';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import ScreenWrapper from '@components/ScreenWrapper';
 import LoadingData from '@components/LoadingData';
+import useLocalize from '@hooks/useLocalize';
+import ONYXKEYS from '@src/ONYXKEYS';
+import type {OnyxEntry} from 'react-native-onyx';
+import {withOnyx} from 'react-native-onyx';
 
 type MainMenuButtonData = {
   label: string;
@@ -52,7 +54,7 @@ type MainMenuItemProps = {
 };
 
 const MenuItem: React.FC<MainMenuItemProps> = ({heading, data, index}) => (
-  <View key={index}>
+  <View key={index} style={{backgroundColor: '#FFFF99'}}>
     <GrayHeader headerText={heading} />
     {data.map((button, bIndex) => (
       <TouchableOpacity
@@ -67,17 +69,24 @@ const MenuItem: React.FC<MainMenuItemProps> = ({heading, data, index}) => (
   </View>
 );
 
-type MainMenuScreenProps = StackScreenProps<
-  MainMenuNavigatorParamList,
-  typeof SCREENS.MAIN_MENU.ROOT
->;
+type MainMenuScreenOnyxProps = {
+  pushNotificationsEnabled: OnyxEntry<boolean>;
+};
 
-function MainMenuScreen({route}: MainMenuScreenProps) {
+type MainMenuScreenProps = MainMenuScreenOnyxProps &
+  StackScreenProps<MainMenuNavigatorParamList, typeof SCREENS.MAIN_MENU.ROOT>;
+
+function MainMenuScreen({
+  route,
+  pushNotificationsEnabled,
+}: MainMenuScreenProps) {
   const {userData, preferences} = useDatabaseData();
   // Context, database, and authentification
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
+  const {translate} = useLocalize();
+
   // Hooks
   const [FeedbackList, setFeedbackList] = useState<FeedbackList>({});
   // Modals
@@ -112,6 +121,7 @@ function MainMenuScreen({route}: MainMenuScreenProps) {
     if (!db || !userData || !user) {
       return;
     }
+
     // Reauthentificate the user
     let authentificationResult: void | UserCredential;
     try {
@@ -334,7 +344,7 @@ function MainMenuScreen({route}: MainMenuScreenProps) {
   }
   if (!preferences || !userData || !user) {
     return null;
-  } // Should never be null
+  }
 
   return (
     <ScreenWrapper testID={MainMenuScreen.displayName}>
@@ -362,7 +372,7 @@ function MainMenuScreen({route}: MainMenuScreenProps) {
           <FeedbackPopup
             visible={feedbackModalVisible}
             transparent={true}
-            message={'What would you like us to improve?'}
+            message={translate('mainMenuScreen.improvementThoughts')}
             onRequestClose={() => setFeedbackModalVisible(false)}
             onSubmit={feedback => handleSubmitFeedback(feedback)}
           />
@@ -386,8 +396,8 @@ function MainMenuScreen({route}: MainMenuScreenProps) {
             visible={reauthentificateModalVisible}
             transparent={true}
             message={'Please retype your password\nin order to proceed'}
-            confirmationMessage={'Delete user'}
-            placeholder={'Password'}
+            confirmationMessage={translate('mainMenuScreen.deleteConfirmation')}
+            placeholder={translate('common.password')}
             onRequestClose={() => setReauthentificateModalVisible(false)}
             onSubmit={password => handleDeleteUser(password)}
             textContentType="password"
@@ -436,9 +446,8 @@ const styles = StyleSheet.create({
     margin: 2,
   },
   icon: {
-    width: 15,
-    height: 15,
-    padding: 10,
+    width: 20,
+    height: 20,
   },
   buttonText: {
     marginLeft: 10,
@@ -459,5 +468,10 @@ const styles = StyleSheet.create({
   },
 });
 
+// MainMenuScreen.propTypes = propTypes;
+// MainMenuScreen.defaultProps = defaultProps;
 MainMenuScreen.displayName = 'Main Menu Screen';
-export default MainMenuScreen;
+
+export default withOnyx<MainMenuScreenProps, MainMenuScreenOnyxProps>({
+  pushNotificationsEnabled: {key: ONYXKEYS.PUSH_NOTIFICATIONS_ENABLED},
+})(MainMenuScreen);

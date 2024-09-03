@@ -3,7 +3,7 @@ import {Keyboard} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 
 // Define props type to include children of type ReactNode
-interface KeyboardFocusHandlerProps {
+type KeyboardFocusHandlerProps = {
   children?: React.ReactNode;
 }
 

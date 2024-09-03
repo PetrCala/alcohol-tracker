@@ -18,7 +18,7 @@ import {removeFeedback} from '@database/feedback';
 import {fetchNicknameByUID} from '@database/baseFunctions';
 import {useFirebase} from '@context/global/FirebaseContext';
 import CONST from '@src/CONST';
-import {FeedbackList, Feedback} from '@src/types/database';
+import type {FeedbackList, Feedback} from '@src/types/onyx';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 
 // AdminFeedbackModal props
@@ -31,9 +31,9 @@ type AdminFeedbackPopupProps = {
 
 const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
   const {visible, transparent, onRequestClose, FeedbackList} = props;
-  const [nicknames, setNicknames] = useState<{[key: string]: string}>({});
+  const [nicknames, setNicknames] = useState<Record<string, string>>({});
   const {db} = useFirebase();
-  if (!db) return null;
+  if (!db) {return null;}
 
   const FeedbackListArray = Object.entries(FeedbackList).map(
     ([feedback_id, Feedback]) => ({
@@ -55,11 +55,11 @@ const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
 
   useEffect(() => {
     const fetchNicknames = async () => {
-      let newNicknames = {...nicknames};
+      const newNicknames = {...nicknames};
 
-      for (let item of FeedbackListArray) {
+      for (const item of FeedbackListArray) {
         try {
-          let data = await fetchNicknameByUID(db, item.user_id);
+          const data = await fetchNicknameByUID(db, item.user_id);
           if (data) {
             newNicknames[item.user_id] = data; // Set if not null
           }
@@ -79,10 +79,10 @@ const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
   }, [FeedbackList, db]);
 
   const renderFeedback = ({item}: {item: Feedback & {feedback_id: string}}) => {
-    let dateSubmitted = timestampToDate(item.submit_time);
-    let daySubmitted = formatDateToDay(dateSubmitted);
-    let timeSubmitted = formatDateToTime(dateSubmitted);
-    let nickname = nicknames[item.user_id] || 'Loading...'; // Default to "Loading..." if the nickname isn't fetched yet
+    const dateSubmitted = timestampToDate(item.submit_time);
+    const daySubmitted = formatDateToDay(dateSubmitted);
+    const timeSubmitted = formatDateToTime(dateSubmitted);
+    const nickname = nicknames[item.user_id] || 'Loading...'; // Default to "Loading..." if the nickname isn't fetched yet
 
     return (
       <View style={styles.feedbackContainer}>
@@ -91,7 +91,7 @@ const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
             {daySubmitted} {timeSubmitted}
           </Text>
           <Text style={styles.feedbackTimeText}> - {nickname}</Text>
-          <TouchableOpacity
+          <TouchableOpacity accessibilityRole="button"
             onPress={() => handleDeleteFeedback(db, item.feedback_id)}
             style={styles.deleteFeedbackButton}>
             <Image
@@ -126,7 +126,7 @@ const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
             // keyExtractor={(item) => item.feedback_id}
           />
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.button} onPress={onRequestClose}>
+            <TouchableOpacity accessibilityRole="button" style={styles.button} onPress={onRequestClose}>
               <Text style={styles.buttonText}>Close</Text>
             </TouchableOpacity>
           </View>

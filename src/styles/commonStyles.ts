@@ -1,4 +1,5 @@
 ﻿import {Dimensions, StyleSheet} from 'react-native';
+import useTheme from '@hooks/useTheme';
 
 const screenWidth = Dimensions.get('window').width;
 const backArrowWidth = 60;
@@ -10,12 +11,14 @@ const commonStyles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: 'white',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 8},
-    shadowOpacity: 0.07,
-    shadowRadius: 6,
-    elevation: 5,
+    backgroundColor: 'white', // TODO move to styles
+    borderBottomWidth: 1,
+    borderColor: '#ddd',
+    // shadowColor: '#000',
+    // shadowOffset: {width: 0, height: 8},
+    // shadowOpacity: 0.07,
+    // shadowRadius: 6,
+    // elevation: 5,
     zIndex: 1,
   },
   backArrowContainer: {
@@ -55,7 +58,8 @@ const commonStyles = StyleSheet.create({
       width: 0,
       height: -5,
     },
-    shadowOpacity: 0.08,
+    // shadowOpacity: 0.08,
+    shadowOpacity: 0.05,
     shadowRadius: 3,
     borderTopWidth: 1,
     borderColor: '#ddd',

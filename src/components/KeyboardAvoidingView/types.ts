@@ -1,3 +1,3 @@
-import {KeyboardAvoidingViewProps} from 'react-native';
+import type {KeyboardAvoidingViewProps} from 'react-native';
 
 export type {KeyboardAvoidingViewProps};

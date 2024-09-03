@@ -28,7 +28,7 @@ const TextSwitch: React.FC<TextSwitchProps> = ({
   };
 
   return (
-    <TouchableOpacity
+    <TouchableOpacity accessibilityRole="button"
       style={[styles.container, {backgroundColor}]}
       onPress={handlePress}>
       <Animated.View style={[styles.slider, {transform: [{translateX}]}]}>
