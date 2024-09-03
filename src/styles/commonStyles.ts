@@ -1,5 +1,5 @@
 ﻿import {Dimensions, StyleSheet} from 'react-native';
-import colors from './theme/colors';
+import useTheme from '@hooks/useTheme';
 
 const screenWidth = Dimensions.get('window').width;
 const backArrowWidth = 60;
@@ -11,7 +11,7 @@ const commonStyles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: colors.appBG,
+    backgroundColor: 'white', // TODO move to styles
     borderBottomWidth: 1,
     borderColor: '#ddd',
     // shadowColor: '#000',
