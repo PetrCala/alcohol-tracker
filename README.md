@@ -97,6 +97,10 @@
 
   to make the file readable.
 
+### Fixing dependencies
+
+To fix expo invalid dependencies, try running `npx expo install --fix`.
+
 ### Formatting
 
 - For typescript and javascript files, we use `Prettier`
