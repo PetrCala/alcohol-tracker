@@ -4,7 +4,6 @@ import {
   Dimensions,
   Image,
   Keyboard,
-  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -23,7 +22,6 @@ import {
   calculateThisMonthUnits,
   getSingleMonthDrinkingSessions,
   timestampToDate,
-  formatDate,
   timestampToDateString,
   roundToTwoDecimalPlaces,
 } from '@libs/DataHandling';
@@ -62,7 +60,7 @@ import VerifyEmailPopup from '@components/Popups/VerifyEmailPopup';
 import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
 import ONYXKEYS from '@src/ONYXKEYS';
-import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
+import getPlatform from '@libs/getPlatform';
 
 type State = {
   visibleDateObject: DateObject;
@@ -434,9 +432,10 @@ function HomeScreen({route}: HomeScreenProps) {
     </ScreenWrapper>
   );
 }
-// infoNumberValue: getReceivedRequestsCount(userData?.friend_requests),
 
 const screenWidth = Dimensions.get('window').width;
+const currentPlatform = getPlatform();
+const iconSize = currentPlatform === CONST.PLATFORM.IOS ? 48 : 28;
 
 const localStyles = StyleSheet.create({
   profileContainer: {
@@ -475,8 +474,8 @@ const localStyles = StyleSheet.create({
     alignItems: 'center',
   },
   menuIcon: {
-    width: 48, // Was 28
-    height: 48, // Was 28
+    width: iconSize,
+    height: iconSize,
     padding: 10,
   },
   notificationsButton: {
