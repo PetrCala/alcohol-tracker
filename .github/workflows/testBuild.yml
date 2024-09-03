@@ -47,8 +47,6 @@ jobs:
           echo "${{ secrets.DEV_ENV_FILE }}" > .env.development
           echo "PULL_REQUEST_NUMBER=$PULL_REQUEST_NUMBER" >> .env.development
 
-      # - name: Setup Node
-      #   uses: ./.github/actions/composite/setupNode
       - name: Setup Bun
         uses: ./.github/actions/composite/setupBun
 
@@ -63,6 +61,9 @@ jobs:
         with:
           ruby-version: '3.2.5'
           bundler-cache: true
+
+      - name: Run npx expo install --fix
+        run: npx expo install --fix
 
       - name: Decrypt keystore
         run: cd android/app && gpg --quiet --batch --yes --decrypt --passphrase="$LARGE_SECRET_PASSPHRASE" --output kiroku-play-key.keystore kiroku-play-key.keystore.gpg
