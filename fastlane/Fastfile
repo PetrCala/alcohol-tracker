@@ -63,6 +63,8 @@ platform :android do
       flavor: 'Development',
       build_type: 'Release',
     )
+
+    sh("echo '{\"apk_path\": \"./android/app/build/outputs/apk/development/release/app-development-release.apk\"}' > ../android_paths.json")
   end
 
   desc "Build and upload app to Google Play"
@@ -145,40 +147,84 @@ platform :ios do
 
     build_app(
         workspace: "./ios/kiroku.xcworkspace",
-        scheme: "Kiroku (development)"
+        scheme: "Kiroku (development)",
     )
   end
+
+  desc "Build app for testing"
+    lane :build_internal do
+      output_path = "./ios/build/"
+      ipa_output_path = File.join(output_path, "kiroku.ipa")
+
+      require 'securerandom'
+      ENV["ENVFILE"]=".env.development"
+
+      keychain_password = SecureRandom.uuid
+
+      create_keychain(
+          name: "ios-build.keychain",
+          password: keychain_password,
+          default_keychain: "true",
+          unlock: "true",
+          timeout: "3600",
+          add_to_search_list: "true"
+      )
+
+      import_certificate(
+          certificate_path: "./ios/devCertificates.p12",
+          keychain_name: "ios-build.keychain",
+          keychain_password: keychain_password,
+          certificate_password: ENV["IOS_CERTIFICATE_PASSWORD"],
+      )
+
+      install_provisioning_profile(
+          path: "./ios/Kiroku_Development.mobileprovision"
+      )
+
+      build_app(
+          workspace: "./ios/kiroku.xcworkspace",
+          skip_profile_detection: true,
+          scheme: "Kiroku (development)",
+          export_method: "development",
+          export_options: {
+              method: "development",
+              provisioningProfiles: {
+                "org.reactjs.native.example.alcohol-tracker" => "Kiroku_Development",
+              },
+              manageAppVersionAndBuildNumber: false
+          }
+      )
+
+    sh("echo '{\"ipa_path\": \"#{ipa_output_path}\"}' > ../ios_paths.json")
+    end
 
 
   desc "Build and upload app to TestFlight"
   lane :beta do
-    # require 'securerandom'
+    require 'securerandom'
     ENV["ENVFILE"]=".env.production"
 
-    # keychain_password = SecureRandom.uuid
+    keychain_password = SecureRandom.uuid
 
-    # create_keychain(
-    #     name: "ios-build.keychain",
-    #     password: keychain_password,
-    #     default_keychain: "true",
-    #     unlock: "true",
-    #     timeout: "3600",
-    #     add_to_search_list: "true"
-    # )
+    create_keychain(
+        name: "ios-build.keychain",
+        password: keychain_password,
+        default_keychain: "true",
+        unlock: "true",
+        timeout: "3600",
+        add_to_search_list: "true"
+    )
 
-    # import_certificate(
-    #     certificate_path: "./ios/Certificates.p12",
-    #     keychain_name: "ios-build.keychain",
-    #     keychain_password: keychain_password
-    # )
+    import_certificate(
+        certificate_path: "./ios/Certificates.p12",
+        keychain_name: "ios-build.keychain",
+        keychain_password: keychain_password,
+        certificate_password: ENV["IOS_CERTIFICATE_PASSWORD"],
+    )
 
-    # install_provisioning_profile(
-    #     path: "./ios/Kiroku_AppStore.mobileprovision"
-    # )
-
-    # install_provisioning_profile(
-    #     path: "./ios/Kiroku_AppStore_Notification_Service.mobileprovision"
-    # )
+    install_provisioning_profile(
+        path: "./ios/Kiroku.mobileprovision"
+    )
 
     build_app(
         workspace: "./ios/kiroku.xcworkspace",
@@ -186,10 +232,9 @@ platform :ios do
         output_name: "kiroku.ipa",
         output_directory: "./ios/build",
         export_options: {
-            # provisioningProfiles: {
-            #   "com.alcohol_tracker" => "(Kiroku) AppStore",
-            #   "com.alcohol_tracker.NotificationServiceExtension" => "(Kiroku) AppStore: Notification Service",
-            # },
+            provisioningProfiles: {
+              "org.reactjs.native.example.alcohol-tracker" => "Kiroku",
+            },
             manageAppVersionAndBuildNumber: false
         }
     )
