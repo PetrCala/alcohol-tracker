@@ -75,6 +75,7 @@ const metro = {
           '@styles': './src/styles',
           '@utils': './src/utils',
           '@userActions': './src/libs/actions',
+          '@github': './.github',
         },
       },
     ],
