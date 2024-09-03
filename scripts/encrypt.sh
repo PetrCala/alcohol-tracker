@@ -26,8 +26,13 @@ if ! command -v gpg &>/dev/null; then
   exit 1
 fi
 
-info "Encrypting $FILE..."
+# Prompt the user for a passphrase
+read -s -p "Enter passphrase: " PASSPHRASE
+echo
 
-gpg --output $FILE.gpg --encrypt --recipient cala.p@seznam.cz $FILE
+info "Encrypting $FILE with a passphrase..."
+
+# Encrypt the file using the provided passphrase
+gpg --batch --yes --passphrase "$PASSPHRASE" --symmetric --cipher-algo AES256 --output "$FILE.gpg" "$FILE"
 
 success "Encrypted file: $FILE.gpg"
