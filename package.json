@@ -11,6 +11,7 @@
     "ios:pod:reset": "./scripts/podReset.sh",
     "ios:build": "bundle exec fastlane ios build",
     "ios:build-staging": "bundle exec fastlane ios build_staging",
+    "ios:build-debug": "bundle exec fastlane ios build_debug",
     "android:build": "bundle exec fastlane android build",
     "android:build-staging": "bundle exec fastlane android build_staging",
     "android:build-debug": "bundle exec fastlane android build_debug",

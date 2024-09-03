@@ -126,6 +126,18 @@ platform :ios do
     )
   end
 
+
+  desc "Generate a local iOS build for testing"
+  lane :build_debug do
+    ENV["ENVFILE"]=".env.development"
+
+    build_app(
+        workspace: "./ios/kiroku.xcworkspace",
+        scheme: "Kiroku (development)"
+    )
+  end
+
+
   desc "Build and upload app to TestFlight"
   lane :beta do
     # require 'securerandom'
