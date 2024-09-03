@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
 # You may use http://rbenv.org/ or https://rvm.io/ to install and use this version
-ruby ">= 3.2.5"
+ruby ">= 3.2.2"
 
 # Cocoapods 1.15 introduced a bug which break the build. We will remove the upper
 # bound in the template on Cocoapods with next React Native release.

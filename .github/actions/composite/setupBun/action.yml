@@ -10,10 +10,6 @@ runs:
   using: composite
   steps:
     - uses: oven-sh/setup-bun@v2
-      with:
-        cache: bun
-        cache-dependency-path: |
-          package-lock.json
 
     - id: cache-node-modules
       uses: actions/cache@v4
