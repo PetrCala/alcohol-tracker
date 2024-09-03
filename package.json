@@ -76,7 +76,7 @@
     "dotenv": "^16.3.1",
     "expo": "^50.0.3",
     "expo-av": "~13.10.4",
-    "expo-image": "^1.10.0",
+    "expo-image": "^1.12.5",
     "expo-image-manipulator": "11.8.0",
     "firebase": "^10.7.1",
     "firebase-admin": "^12.0.0",

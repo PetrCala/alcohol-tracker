@@ -17,12 +17,13 @@ PODS:
     - React-Core
   - Expo (50.0.20):
     - ExpoModulesCore
-  - ExpoImage (1.10.6):
+  - ExpoImage (1.12.15):
     - ExpoModulesCore
-    - SDWebImage (~> 5.17.0)
-    - SDWebImageAVIFCoder (~> 0.10.1)
+    - libavif/libdav1d
+    - SDWebImage (~> 5.19.1)
+    - SDWebImageAVIFCoder (~> 0.11.0)
     - SDWebImageSVGCoder (~> 1.7.0)
-    - SDWebImageWebPCoder (~> 0.13.0)
+    - SDWebImageWebPCoder (~> 0.14.6)
   - ExpoImageManipulator (11.8.0):
     - EXImageLoader
     - ExpoModulesCore
@@ -193,20 +194,16 @@ PODS:
   - GTMAppAuth (2.0.0):
     - AppAuth/Core (~> 1.6)
     - GTMSessionFetcher/Core (< 4.0, >= 1.5)
-  - GTMSessionFetcher/Core (3.4.1)
+  - GTMSessionFetcher/Core (3.5.0)
   - hermes-engine (0.73.4):
     - hermes-engine/Pre-built (= 0.73.4)
   - hermes-engine/Pre-built (0.73.4)
-  - libaom (3.0.0):
-    - libvmaf (>= 2.2.0)
-  - libavif (0.11.1):
-    - libavif/libaom (= 0.11.1)
   - libavif/core (0.11.1)
-  - libavif/libaom (0.11.1):
-    - libaom (>= 2.0.0)
+  - libavif/libdav1d (0.11.1):
     - libavif/core
+    - libdav1d (>= 0.6.0)
+  - libdav1d (1.2.0)
   - libevent (2.1.12)
-  - libvmaf (2.3.1)
   - libwebp (1.3.2):
     - libwebp/demux (= 1.3.2)
     - libwebp/mux (= 1.3.2)
@@ -1820,15 +1817,15 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - SDWebImage (5.17.0):
-    - SDWebImage/Core (= 5.17.0)
-  - SDWebImage/Core (5.17.0)
-  - SDWebImageAVIFCoder (0.10.1):
-    - libavif (>= 0.11.0)
+  - SDWebImage (5.19.7):
+    - SDWebImage/Core (= 5.19.7)
+  - SDWebImage/Core (5.19.7)
+  - SDWebImageAVIFCoder (0.11.0):
+    - libavif/core (>= 0.11.0)
     - SDWebImage (~> 5.10)
   - SDWebImageSVGCoder (1.7.0):
     - SDWebImage/Core (~> 5.6)
-  - SDWebImageWebPCoder (0.13.0):
+  - SDWebImageWebPCoder (0.14.6):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.17)
   - SocketRocket (0.6.1)
@@ -1953,10 +1950,9 @@ SPEC REPOS:
     - GoogleUtilities
     - GTMAppAuth
     - GTMSessionFetcher
-    - libaom
     - libavif
+    - libdav1d
     - libevent
-    - libvmaf
     - libwebp
     - nanopb
     - Plaid
@@ -2161,7 +2157,7 @@ SPEC CHECKSUMS:
   EXAV: e4f6137431ddc4cb025895046bfefa9612025c35
   EXImageLoader: 55080616b2fe9da19ef8c7f706afd9814e279b6b
   Expo: d86f597bbab83615207499c5b3bfd80992e2bbd3
-  ExpoImage: 8cf2d51de3d03b7e984e9b0ba8f19c0c22057001
+  ExpoImage: f77df382153d716f332f974438a803c4527f60b0
   ExpoImageManipulator: c1d7cb865eacd620a35659f3da34c70531f10b59
   ExpoModulesCore: 44b307af51efed012dced6f67851b120cc06ebb2
   FBLazyVector: 84f6edbe225f38aebd9deaf1540a4160b1f087d7
@@ -2181,12 +2177,11 @@ SPEC CHECKSUMS:
   GoogleSignIn: b232380cf495a429b8095d3178a8d5855b42e842
   GoogleUtilities: ea963c370a38a8069cc5f7ba4ca849a60b6d7d15
   GTMAppAuth: 99fb010047ba3973b7026e45393f51f27ab965ae
-  GTMSessionFetcher: 8000756fc1c19d2e5697b90311f7832d2e33f6cd
+  GTMSessionFetcher: 5aea5ba6bd522a239e236100971f10cb71b96ab6
   hermes-engine: b2669ce35fc4ac14f523b307aff8896799829fe2
-  libaom: 144606b1da4b5915a1054383c3a4459ccdb3c661
   libavif: 84bbb62fb232c3018d6f1bab79beea87e35de7b7
+  libdav1d: 23581a4d8ec811ff171ed5e2e05cd27bad64c39f
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
-  libvmaf: 27f523f1e63c694d14d534cd0fddd2fab0ae8711
   libwebp: 1786c9f4ff8a279e4dac1e8f385004d5fc253009
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   Plaid: 7829e84db6d766a751c91a402702946d2977ddcb
@@ -2269,10 +2264,10 @@ SPEC CHECKSUMS:
   RNShare: 0463c31e8c1883bb80afed64066cff3dc7ed4e1a
   RNSound: 6c156f925295bdc83e8e422e7d8b38d33bc71852
   RNSVG: 4bf00771df38db39806e0ed32834a3f7f70742be
-  SDWebImage: 750adf017a315a280c60fde706ab1e552a3ae4e9
-  SDWebImageAVIFCoder: 8348fef6d0ec69e129c66c9fe4d74fbfbf366112
+  SDWebImage: 8a6b7b160b4d710e2a22b6900e25301075c34cb3
+  SDWebImageAVIFCoder: 00310d246aab3232ce77f1d8f0076f8c4b021d90
   SDWebImageSVGCoder: 15a300a97ec1c8ac958f009c02220ac0402e936c
-  SDWebImageWebPCoder: af09429398d99d524cae2fe00f6f0f6e491ed102
+  SDWebImageWebPCoder: e38c0a70396191361d60c092933e22c20d5b1380
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   TOCropViewController: 80b8985ad794298fb69d3341de183f33d1853654
   Yoga: 1b901a6d6eeba4e8a2e8f308f708691cdb5db312
