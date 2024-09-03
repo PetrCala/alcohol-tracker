@@ -178,18 +178,18 @@ platform :ios do
       )
 
       install_provisioning_profile(
-          path: "./ios/Kiroku_Development.mobileprovision"
+          path: "./ios/Kiroku.mobileprovision"
       )
 
       build_app(
           workspace: "./ios/kiroku.xcworkspace",
           skip_profile_detection: true,
           scheme: "Kiroku (development)",
-          export_method: "development",
+          export_method: "ad-hoc",
           export_options: {
-              method: "development",
+              method: "ad-hoc",
               provisioningProfiles: {
-                "org.reactjs.native.example.alcohol-tracker" => "Kiroku_Development",
+                "org.reactjs.native.example.alcohol-tracker" => "Kiroku",
               },
               manageAppVersionAndBuildNumber: false
           }
