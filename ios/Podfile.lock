@@ -226,7 +226,6 @@ PODS:
     - nanopb/encode (= 2.30908.0)
   - nanopb/decode (2.30908.0)
   - nanopb/encode (2.30908.0)
-  - Plaid (5.2.1)
   - PromisesObjC (2.4.0)
   - RCT-Folly (2024.01.01.00):
     - boost
@@ -1550,9 +1549,6 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-plaid-link-sdk (11.5.0):
-    - Plaid (~> 5.2.0)
-    - React-Core
   - react-native-quick-sqlite (8.0.6):
     - DoubleConversion
     - glog
@@ -2324,7 +2320,6 @@ DEPENDENCIES:
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-pager-view (from `../node_modules/react-native-pager-view`)
   - react-native-performance (from `../node_modules/react-native-performance`)
-  - react-native-plaid-link-sdk (from `../node_modules/react-native-plaid-link-sdk`)
   - react-native-quick-sqlite (from `../node_modules/react-native-quick-sqlite`)
   - react-native-release-profiler (from `../node_modules/react-native-release-profiler`)
   - react-native-render-html (from `../node_modules/react-native-render-html`)
@@ -2401,7 +2396,6 @@ SPEC REPOS:
     - libdav1d
     - libwebp
     - nanopb
-    - Plaid
     - PromisesObjC
     - React-Codegen
     - SDWebImage
@@ -2511,8 +2505,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-pager-view"
   react-native-performance:
     :path: "../node_modules/react-native-performance"
-  react-native-plaid-link-sdk:
-    :path: "../node_modules/react-native-plaid-link-sdk"
   react-native-quick-sqlite:
     :path: "../node_modules/react-native-quick-sqlite"
   react-native-release-profiler:
@@ -2655,7 +2647,6 @@ SPEC CHECKSUMS:
   libdav1d: 23581a4d8ec811ff171ed5e2e05cd27bad64c39f
   libwebp: 1786c9f4ff8a279e4dac1e8f385004d5fc253009
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
-  Plaid: 7829e84db6d766a751c91a402702946d2977ddcb
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   RCT-Folly: 4464f4d875961fce86008d45f4ecf6cef6de0740
   RCTDeprecation: 34cbf122b623037ea9facad2e92e53434c5c7422
@@ -2693,7 +2684,6 @@ SPEC CHECKSUMS:
   react-native-netinfo: bdb108d340cdb41875c9ced535977cac6d2ff321
   react-native-pager-view: 42314325f833cb21674f3b99def6beb521394ca6
   react-native-performance: fd73ac82dfd6eae0ebe1e02b50415216538975d1
-  react-native-plaid-link-sdk: 6c4d3d4f14288c546151d404aea812fa55edeea9
   react-native-quick-sqlite: 196813259ff2a4aaf723c23bc364f924d85fec57
   react-native-release-profiler: df9b4c388f1aa96bae67a527b855abf54a87c931
   react-native-render-html: 984dfe2294163d04bf5fe25d7c9f122e60e05ebe

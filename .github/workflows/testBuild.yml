@@ -72,10 +72,20 @@ jobs:
         env:
           LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PASSPHRASE }}
 
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/KirokuS3Upload
+          aws-region: ${{ secrets.AWS_REGION }}
+
       - name: Run Fastlane beta test
         id: runFastlaneBetaTest
         run: bundle exec fastlane android build_internal
         env:
+          S3_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          S3_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          S3_BUCKET: ${{ secrets.AWS_DEV_ARTIFACTS_BUCKET }}
+          S3_REGION: ${{ secrets.AWS_REGION }}
           MYAPP_UPLOAD_STORE_PASSWORD: ${{ secrets.MYAPP_UPLOAD_STORE_PASSWORD }}
           MYAPP_UPLOAD_KEY_PASSWORD: ${{ secrets.MYAPP_UPLOAD_KEY_PASSWORD }}
 
@@ -136,7 +146,7 @@ jobs:
           command: cd ios && bundle exec pod install
 
       - name: Decrypt Development profile
-        run: cd ios && gpg --quiet --batch --yes --decrypt --passphrase="$LARGE_SECRET_PASSPHRASE" --output Kiroku_Development.mobileprovision Kiroku_Development.mobileprovision.gpg
+        run: cd ios && gpg --quiet --batch --yes --decrypt --passphrase="$LARGE_SECRET_PASSPHRASE" --output Kiroku.mobileprovision Kiroku.mobileprovision.gpg
         env:
           LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PASSPHRASE }}
 
@@ -145,13 +155,71 @@ jobs:
         env:
           LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PASSPHRASE }}
 
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/KirokuS3Upload
+          aws-region: ${{ secrets.AWS_REGION }}
+
       - name: Run Fastlane
         run: bundle exec fastlane ios build_internal
         env:
-          IOS_CERTIFICATE_PASSWORD: ${{ secrets.IOS_CERTIFICATE_PASSWORD }}
+          S3_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          S3_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          S3_BUCKET: ${{ secrets.AWS_DEV_ARTIFACTS_BUCKET }}
+          S3_REGION: ${{ secrets.AWS_REGION }}
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
           name: ios
           path: ./ios_paths.json
+
+  postGithubComment:
+    runs-on: ubuntu-latest
+    name: Post a GitHub comment with app download links for testing
+    needs: [getBranchRef, android, iOS]
+    if: ${{ always() }}
+    env:
+      PULL_REQUEST_NUMBER: ${{ github.event.number || github.event.inputs.PULL_REQUEST_NUMBER }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || needs.getBranchRef.outputs.REF }}
+
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+
+      - name: Read JSONs with android paths
+        id: get_android_path
+        if: ${{ needs.android.result == 'success' }}
+        run: |
+          content_android="$(cat ./android/android_paths.json)"
+          content_android="${content_android//'%'/'%25'}"
+          content_android="${content_android//$'\n'/'%0A'}"
+          content_android="${content_android//$'\r'/'%0D'}"
+          android_path=$(echo "$content_android" | jq -r '.html_path')
+          echo "android_path=$android_path" >> "$GITHUB_OUTPUT"
+
+      - name: Read JSONs with iOS paths
+        id: get_ios_path
+        if: ${{ needs.iOS.result == 'success' }}
+        run: |
+          content_ios="$(cat ./ios/ios_paths.json)"
+          content_ios="${content_ios//'%'/'%25'}"
+          content_ios="${content_ios//$'\n'/'%0A'}"
+          content_ios="${content_ios//$'\r'/'%0D'}"
+          ios_path=$(echo "$content_ios" | jq -r '.html_path')
+          echo "ios_path=$ios_path" >> "$GITHUB_OUTPUT"
+
+      # TODO enable this
+      # - name: Publish links to apps for download
+      #   uses: ./.github/actions/javascript/postTestBuildComment
+      #   with:
+      #     PR_NUMBER: ${{ env.PULL_REQUEST_NUMBER }}
+      #     GITHUB_TOKEN: ${{ github.token }}
+      #     ANDROID: ${{ needs.android.result }}
+      #     IOS: ${{ needs.iOS.result }}
+      #     ANDROID_LINK: ${{steps.get_android_path.outputs.android_path}}
+      #     IOS_LINK: ${{steps.get_ios_path.outputs.ios_path}}
