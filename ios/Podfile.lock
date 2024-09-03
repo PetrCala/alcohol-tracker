@@ -15,15 +15,14 @@ PODS:
   - EXImageLoader (4.6.0):
     - ExpoModulesCore
     - React-Core
-  - Expo (50.0.19):
+  - Expo (50.0.20):
     - ExpoModulesCore
-  - ExpoImage (1.12.12):
+  - ExpoImage (1.10.6):
     - ExpoModulesCore
-    - libavif/libdav1d
-    - SDWebImage (~> 5.19.1)
-    - SDWebImageAVIFCoder (~> 0.11.0)
+    - SDWebImage (~> 5.17.0)
+    - SDWebImageAVIFCoder (~> 0.10.1)
     - SDWebImageSVGCoder (~> 1.7.0)
-    - SDWebImageWebPCoder (~> 0.14.6)
+    - SDWebImageWebPCoder (~> 0.13.0)
   - ExpoImageManipulator (11.8.0):
     - EXImageLoader
     - ExpoModulesCore
@@ -198,12 +197,16 @@ PODS:
   - hermes-engine (0.73.4):
     - hermes-engine/Pre-built (= 0.73.4)
   - hermes-engine/Pre-built (0.73.4)
+  - libaom (3.0.0):
+    - libvmaf (>= 2.2.0)
+  - libavif (0.11.1):
+    - libavif/libaom (= 0.11.1)
   - libavif/core (0.11.1)
-  - libavif/libdav1d (0.11.1):
+  - libavif/libaom (0.11.1):
+    - libaom (>= 2.0.0)
     - libavif/core
-    - libdav1d (>= 0.6.0)
-  - libdav1d (1.2.0)
   - libevent (2.1.12)
+  - libvmaf (2.3.1)
   - libwebp (1.3.2):
     - libwebp/demux (= 1.3.2)
     - libwebp/mux (= 1.3.2)
@@ -1608,11 +1611,28 @@ PODS:
     - Firebase/Performance (= 8.8.0)
     - React-Core
     - RNFBApp
-  - RNFlashList (1.6.4):
+  - RNFlashList (1.7.1):
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2022.05.16.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
     - React-Core
+    - React-debug
+    - React-Fabric
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - RNFS (2.20.0):
     - React-Core
-  - RNGestureHandler (2.16.1):
+  - RNGestureHandler (2.16.0):
     - glog
     - hermes-engine
     - RCT-Folly (= 2022.05.16.00)
@@ -1800,15 +1820,15 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - SDWebImage (5.19.2):
-    - SDWebImage/Core (= 5.19.2)
-  - SDWebImage/Core (5.19.2)
-  - SDWebImageAVIFCoder (0.11.0):
-    - libavif/core (>= 0.11.0)
+  - SDWebImage (5.17.0):
+    - SDWebImage/Core (= 5.17.0)
+  - SDWebImage/Core (5.17.0)
+  - SDWebImageAVIFCoder (0.10.1):
+    - libavif (>= 0.11.0)
     - SDWebImage (~> 5.10)
   - SDWebImageSVGCoder (1.7.0):
     - SDWebImage/Core (~> 5.6)
-  - SDWebImageWebPCoder (0.14.6):
+  - SDWebImageWebPCoder (0.13.0):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.17)
   - SocketRocket (0.6.1)
@@ -1933,9 +1953,10 @@ SPEC REPOS:
     - GoogleUtilities
     - GTMAppAuth
     - GTMSessionFetcher
+    - libaom
     - libavif
-    - libdav1d
     - libevent
+    - libvmaf
     - libwebp
     - nanopb
     - Plaid
@@ -2139,8 +2160,8 @@ SPEC CHECKSUMS:
   DoubleConversion: fea03f2699887d960129cc54bba7e52542b6f953
   EXAV: e4f6137431ddc4cb025895046bfefa9612025c35
   EXImageLoader: 55080616b2fe9da19ef8c7f706afd9814e279b6b
-  Expo: ad8bce0c0fc557cae703cc8dbce73d61a90ab5c5
-  ExpoImage: 2ccccff1219ebc765e344f3338f2430af2df4824
+  Expo: d86f597bbab83615207499c5b3bfd80992e2bbd3
+  ExpoImage: 8cf2d51de3d03b7e984e9b0ba8f19c0c22057001
   ExpoImageManipulator: c1d7cb865eacd620a35659f3da34c70531f10b59
   ExpoModulesCore: 44b307af51efed012dced6f67851b120cc06ebb2
   FBLazyVector: 84f6edbe225f38aebd9deaf1540a4160b1f087d7
@@ -2162,9 +2183,10 @@ SPEC CHECKSUMS:
   GTMAppAuth: 99fb010047ba3973b7026e45393f51f27ab965ae
   GTMSessionFetcher: 8000756fc1c19d2e5697b90311f7832d2e33f6cd
   hermes-engine: b2669ce35fc4ac14f523b307aff8896799829fe2
+  libaom: 144606b1da4b5915a1054383c3a4459ccdb3c661
   libavif: 84bbb62fb232c3018d6f1bab79beea87e35de7b7
-  libdav1d: 23581a4d8ec811ff171ed5e2e05cd27bad64c39f
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
+  libvmaf: 27f523f1e63c694d14d534cd0fddd2fab0ae8711
   libwebp: 1786c9f4ff8a279e4dac1e8f385004d5fc253009
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   Plaid: 7829e84db6d766a751c91a402702946d2977ddcb
@@ -2234,9 +2256,9 @@ SPEC CHECKSUMS:
   RNFBApp: aa6a864798daa054bda002bb3d6905800d6d4156
   RNFBCrashlytics: 295c74fb438878398eae6f3a5f3d1cb0656da75f
   RNFBPerf: b6dd5f8a489aaf0f3a184cb12ae5439592d706e3
-  RNFlashList: b521ebdd7f9352673817f1d98e8bdc0c8cf8545b
+  RNFlashList: f463910a9ee6a7c0ed00b3ff14532551d3af5632
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
-  RNGestureHandler: 0d3df3aa878d9f1bc5be8942f4b9456552f34edc
+  RNGestureHandler: 4d9ef11e54b9bd4b4081a98e1a220e53c0b3d36f
   RNGoogleSignin: 24d3b3261f78b0fae0aa013f8ab6f8d25e369b0c
   RNImageCropPicker: e7ab6fb43d2fc3e84651e786ef4a080d63b0ed3d
   RNLocalize: 93b958aef6b7f2cd46781c32c8e733abaae881ed
@@ -2247,14 +2269,14 @@ SPEC CHECKSUMS:
   RNShare: 0463c31e8c1883bb80afed64066cff3dc7ed4e1a
   RNSound: 6c156f925295bdc83e8e422e7d8b38d33bc71852
   RNSVG: 4bf00771df38db39806e0ed32834a3f7f70742be
-  SDWebImage: dfe95b2466a9823cf9f0c6d01217c06550d7b29a
-  SDWebImageAVIFCoder: 00310d246aab3232ce77f1d8f0076f8c4b021d90
+  SDWebImage: 750adf017a315a280c60fde706ab1e552a3ae4e9
+  SDWebImageAVIFCoder: 8348fef6d0ec69e129c66c9fe4d74fbfbf366112
   SDWebImageSVGCoder: 15a300a97ec1c8ac958f009c02220ac0402e936c
-  SDWebImageWebPCoder: e38c0a70396191361d60c092933e22c20d5b1380
+  SDWebImageWebPCoder: af09429398d99d524cae2fe00f6f0f6e491ed102
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   TOCropViewController: 80b8985ad794298fb69d3341de183f33d1853654
-  Yoga: 64cd2a583ead952b0315d5135bf39e053ae9be70
+  Yoga: 1b901a6d6eeba4e8a2e8f308f708691cdb5db312
 
 PODFILE CHECKSUM: 1e7dbe4499d6438111acc1178273aa643123ec92
 
-COCOAPODS: 1.14.3
+COCOAPODS: 1.15.2
