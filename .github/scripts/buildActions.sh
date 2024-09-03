@@ -19,7 +19,7 @@ declare -r GITHUB_ACTIONS=(
     # "$ACTIONS_DIR/getReleaseBody/getReleaseBody.js"
     # "$ACTIONS_DIR/isStagingDeployLocked/isStagingDeployLocked.js"
     # "$ACTIONS_DIR/markPullRequestsAsDeployed/markPullRequestsAsDeployed.js"
-    # "$ACTIONS_DIR/postTestBuildComment/postTestBuildComment.js"
+    "$ACTIONS_DIR/postTestBuildComment/postTestBuildComment.js"
     # "$ACTIONS_DIR/reopenIssueWithComment/reopenIssueWithComment.js"
     # "$ACTIONS_DIR/verifySignedCommits/verifySignedCommits.js"
     "$ACTIONS_DIR/authorChecklist/authorChecklist.ts"
