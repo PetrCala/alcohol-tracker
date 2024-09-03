@@ -56,48 +56,49 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
     // }));
 
     return (
-      <DismissKeyboard>
-        <View style={styles.mainContainer}>
-          <View
-            style={
-              searchOnTextChange
-                ? [styles.textContainer, styles.responsiveTextContainer]
-                : styles.textContainer
-            }>
-            <KeyboardFocusHandler>
-              <TextInput accessibilityLabel="Text input field"
-                placeholder={windowText}
-                placeholderTextColor={'#a8a8a8'}
-                value={searchText}
-                onChangeText={text => setSearchText(text)}
-                style={styles.searchText}
-                keyboardType="default"
-                textContentType="nickname"
-                ref={textInputRef}
+      <View style={styles.mainContainer}>
+        <View
+          style={
+            searchOnTextChange
+              ? [styles.textContainer, styles.responsiveTextContainer]
+              : styles.textContainer
+          }>
+          <KeyboardFocusHandler>
+            <TextInput
+              accessibilityLabel="Text input field"
+              placeholder={windowText}
+              placeholderTextColor={'#a8a8a8'}
+              value={searchText}
+              onChangeText={text => setSearchText(text)}
+              style={styles.searchText}
+              keyboardType="default"
+              textContentType="nickname"
+              ref={textInputRef}
+            />
+          </KeyboardFocusHandler>
+          {searchText !== '' || searchCount > 0 ? (
+            <TouchableOpacity
+              accessibilityRole="button"
+              onPress={handleResetSearch}
+              style={styles.searchTextResetContainer}>
+              <Image
+                style={styles.searchTextResetImage}
+                source={KirokuIcons.ThinX}
               />
-            </KeyboardFocusHandler>
-            {searchText !== '' || searchCount > 0 ? (
-              <TouchableOpacity accessibilityRole="button"
-                onPress={handleResetSearch}
-                style={styles.searchTextResetContainer}>
-                <Image
-                  style={styles.searchTextResetImage}
-                  source={KirokuIcons.ThinX}
-                />
-              </TouchableOpacity>
-            ) : null}
-          </View>
-          {searchOnTextChange ? null : (
-            <View style={styles.searchButtonContainer}>
-              <TouchableOpacity accessibilityRole="button"
-                style={styles.searchButton}
-                onPress={() => handleDoSearch(searchText, db)}>
-                <Text style={styles.searchButtonText}>Search</Text>
-              </TouchableOpacity>
-            </View>
-          )}
+            </TouchableOpacity>
+          ) : null}
         </View>
-      </DismissKeyboard>
+        {searchOnTextChange ? null : (
+          <View style={styles.searchButtonContainer}>
+            <TouchableOpacity
+              accessibilityRole="button"
+              style={styles.searchButton}
+              onPress={() => handleDoSearch(searchText, db)}>
+              <Text style={styles.searchButtonText}>Search</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
     );
   },
 );
