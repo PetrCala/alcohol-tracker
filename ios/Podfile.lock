@@ -1550,9 +1550,6 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-plaid-link-sdk (11.5.0):
-    - Plaid (~> 5.2.0)
-    - React-Core
   - react-native-quick-sqlite (8.0.6):
     - DoubleConversion
     - glog
@@ -2324,7 +2321,6 @@ DEPENDENCIES:
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-pager-view (from `../node_modules/react-native-pager-view`)
   - react-native-performance (from `../node_modules/react-native-performance`)
-  - react-native-plaid-link-sdk (from `../node_modules/react-native-plaid-link-sdk`)
   - react-native-quick-sqlite (from `../node_modules/react-native-quick-sqlite`)
   - react-native-release-profiler (from `../node_modules/react-native-release-profiler`)
   - react-native-render-html (from `../node_modules/react-native-render-html`)
@@ -2511,8 +2507,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-pager-view"
   react-native-performance:
     :path: "../node_modules/react-native-performance"
-  react-native-plaid-link-sdk:
-    :path: "../node_modules/react-native-plaid-link-sdk"
   react-native-quick-sqlite:
     :path: "../node_modules/react-native-quick-sqlite"
   react-native-release-profiler:
@@ -2693,7 +2687,6 @@ SPEC CHECKSUMS:
   react-native-netinfo: bdb108d340cdb41875c9ced535977cac6d2ff321
   react-native-pager-view: 42314325f833cb21674f3b99def6beb521394ca6
   react-native-performance: fd73ac82dfd6eae0ebe1e02b50415216538975d1
-  react-native-plaid-link-sdk: 6c4d3d4f14288c546151d404aea812fa55edeea9
   react-native-quick-sqlite: 196813259ff2a4aaf723c23bc364f924d85fec57
   react-native-release-profiler: df9b4c388f1aa96bae67a527b855abf54a87c931
   react-native-render-html: 984dfe2294163d04bf5fe25d7c9f122e60e05ebe

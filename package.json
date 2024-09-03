@@ -112,7 +112,6 @@
     "react-native-performance": "^5.1.2",
     "react-native-permissions": "^3.9.3",
     "react-native-picker-select": "^9.1.3",
-    "react-native-plaid-link-sdk": "11.5.0",
     "react-native-quick-sqlite": "git+https://github.com/margelo/react-native-quick-sqlite#abc91857d4b3efb2020ec43abd2a508563b64316",
     "react-native-reanimated": "3.10.1",
     "react-native-release-profiler": "^0.1.6",
