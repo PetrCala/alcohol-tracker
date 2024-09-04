@@ -33,6 +33,7 @@ export default {
   IS_IN_PRODUCTION:
     // Platform.OS === 'web' ? process.env.NODE_ENV === 'production' : !__DEV__,
     process.env.NODE_ENV === 'production' && !__DEV__,
+  IS_IN_ADHOC: ENVIRONMENT === CONST.ENVIRONMENT.ADHOC,
   IS_IN_STAGING: ENVIRONMENT === CONST.ENVIRONMENT.STAGING,
   IS_IN_DEVELOPMENT: ENVIRONMENT === CONST.ENVIRONMENT.DEV,
   IS_IN_TEST:

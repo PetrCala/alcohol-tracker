@@ -46,10 +46,10 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha || needs.getBranchRef.outputs.REF }}
 
-      - name: Create .env.development file based on staging and add PULL_REQUEST_NUMBER env to it
+      - name: Create .env.adhoc file based on staging and add PULL_REQUEST_NUMBER env to it
         run: |
-          echo "${{ secrets.DEV_ENV_FILE }}" > .env.development
-          echo "PULL_REQUEST_NUMBER=$PULL_REQUEST_NUMBER" >> .env.development
+          echo "${{ secrets.ADHOC_ENV_FILE }}" > .env.adhoc
+          echo "PULL_REQUEST_NUMBER=$PULL_REQUEST_NUMBER" >> .env.adhoc
 
       - name: Setup Node
         uses: ./.github/actions/composite/setupNode
@@ -112,10 +112,10 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha || needs.getBranchRef.outputs.REF }}
 
-      - name: Create .env.development file based on staging and add PULL_REQUEST_NUMBER env to it
+      - name: Create .env.adhoc file based on staging and add PULL_REQUEST_NUMBER env to it
         run: |
-          echo "${{ secrets.DEV_ENV_FILE }}" > .env.development
-          echo "PULL_REQUEST_NUMBER=$PULL_REQUEST_NUMBER" >> .env.development
+          echo "${{ secrets.ADHOC_ENV_FILE }}" > .env.adhoc
+          echo "PULL_REQUEST_NUMBER=$PULL_REQUEST_NUMBER" >> .env.adhoc
 
       - name: Setup Node
         uses: ./.github/actions/composite/setupNode
