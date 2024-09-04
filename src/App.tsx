@@ -6,8 +6,6 @@ import ColorSchemeWrapper from './components/ColorSchemeWrapper';
 import Kiroku from './Kiroku';
 import ActiveElementRoleProvider from './components/ActiveElementRoleProvider';
 import ComposeProviders from '@components/ComposeProviders';
-import CustomStatusBarAndBackground from './components/CustomStatusBarAndBackground';
-import CustomStatusBarAndBackgroundContextProvider from './components/CustomStatusBarAndBackground/CustomStatusBarAndBackgroundContextProvider';
 import ErrorBoundary from './components/ErrorBoundary';
 import {LocaleContextProvider} from './components/LocaleContextProvider';
 import OnyxProvider from './components/OnyxProvider';
@@ -20,9 +18,11 @@ import {KeyboardStateProvider} from '@components/withKeyboardState';
 import {EnvironmentProvider} from './components/withEnvironment';
 import ThemeProvider from './components/ThemeProvider';
 import ThemeStylesProvider from './components/ThemeStylesProvider';
-import OnyxUpdateManager from './libs/actions/OnyxUpdateManager';
 import SafeArea from '@components/SafeArea';
 import {LogBox} from 'react-native';
+// import OnyxUpdateManager from './libs/actions/OnyxUpdateManager';
+// import CustomStatusBarAndBackground from './components/CustomStatusBarAndBackground';
+// import CustomStatusBarAndBackgroundContextProvider from './components/CustomStatusBarAndBackground/CustomStatusBarAndBackgroundContextProvider';
 
 type KirokuProps = {
   /** true if there is an authToken */
@@ -57,10 +57,10 @@ const App = ({url}: KirokuProps): React.JSX.Element => {
             WindowDimensionsProvider,
             KeyboardStateProvider,
             EnvironmentProvider,
-            CustomStatusBarAndBackgroundContextProvider,
+            // CustomStatusBarAndBackgroundContextProvider,
             ActiveElementRoleProvider,
           ]}>
-          <CustomStatusBarAndBackground />
+          {/* <CustomStatusBarAndBackground /> */} {/* WIP */}
           <ErrorBoundary errorMessage="Kiroku crash caught by error boundary">
             <ColorSchemeWrapper>
               <Kiroku />
