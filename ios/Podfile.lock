@@ -2064,27 +2064,13 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNReactNativeHapticFeedback (2.3.1):
-    - DoubleConversion
-    - glog
-    - hermes-engine
-    - RCT-Folly (= 2024.01.01.00)
+  - RNReactNativeHapticFeedback (2.2.0):
+    - RCT-Folly
     - RCTRequired
     - RCTTypeSafety
+    - React-Codegen
     - React-Core
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-ImageManager
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - Yoga
   - RNReanimated (3.15.1):
     - DoubleConversion
     - glog
@@ -2720,7 +2706,7 @@ SPEC CHECKSUMS:
   RNImageCropPicker: e7ab6fb43d2fc3e84651e786ef4a080d63b0ed3d
   RNLocalize: 457eaf7dcbabdbf9e80a6f895003459c22a460d8
   RNPermissions: 0fbce169f4b9e96d8b4dc7cb9acf959c7bcb7c90
-  RNReactNativeHapticFeedback: 31833c3ef341d716dbbd9d64e940f0c230db46f6
+  RNReactNativeHapticFeedback: 616c35bdec7d20d4c524a7949ca9829c09e35f37
   RNReanimated: 76901886830e1032f16bbf820153f7dc3f02d51d
   RNScreens: de6e57426ba0e6cbc3fb5b4f496e7f08cb2773c2
   RNShare: 0463c31e8c1883bb80afed64066cff3dc7ed4e1a
