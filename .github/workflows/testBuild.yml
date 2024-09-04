@@ -51,8 +51,8 @@ jobs:
           echo "${{ secrets.DEV_ENV_FILE }}" > .env.development
           echo "PULL_REQUEST_NUMBER=$PULL_REQUEST_NUMBER" >> .env.development
 
-      - name: Setup Bun
-        uses: ./.github/actions/composite/setupBun
+      - name: Setup Node
+        uses: ./.github/actions/composite/setupNode
 
       - name: Setup Java
         uses: actions/setup-java@v3
@@ -117,8 +117,8 @@ jobs:
           echo "${{ secrets.DEV_ENV_FILE }}" > .env.development
           echo "PULL_REQUEST_NUMBER=$PULL_REQUEST_NUMBER" >> .env.development
 
-      - name: Setup Bun
-        uses: ./.github/actions/composite/setupBun
+      - name: Setup Node
+        uses: ./.github/actions/composite/setupNode
 
       - name: Setup XCode
         run: sudo xcode-select -switch /Applications/Xcode_15.0.1.app
@@ -149,8 +149,13 @@ jobs:
           max_attempts: 5
           command: cd ios && bundle exec pod install
 
+      - name: Set up environment for Xcode
+        run: |
+          echo "export NODE_BINARY=$(which node)" >> ~/.bash_profile
+          source ~/.bash_profile
+
       - name: Decrypt provisioning profile
-        run: cd ios && gpg --quiet --batch --yes --decrypt --passphrase="$LARGE_SECRET_PASSPHRASE" --output Kiroku.mobileprovision Kiroku.mobileprovision.gpg
+        run: cd ios && gpg --quiet --batch --yes --decrypt --passphrase="$LARGE_SECRET_PASSPHRASE" --output Kiroku_AdHoc.mobileprovision Kiroku_AdHoc.mobileprovision.gpg
         env:
           LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PASSPHRASE }}
 
@@ -164,6 +169,9 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/KirokuS3Upload
           aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Bundle install
+        run: npm run jsbundle
 
       - name: Run Fastlane
         run: bundle exec fastlane ios build_internal

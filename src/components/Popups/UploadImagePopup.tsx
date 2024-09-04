@@ -15,7 +15,6 @@ import {
   View,
 } from 'react-native';
 import {useFirebase} from '@context/global/FirebaseContext';
-import {useDatabaseData} from '@context/global/DatabaseDataContext';
 
 type UploadImagePopupProps = {
   visible: boolean;
@@ -57,7 +56,8 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
           />
         </View>
         <View style={styles.buttonContainer}>
-          <TouchableOpacity accessibilityRole="button"
+          <TouchableOpacity
+            accessibilityRole="button"
             style={styles.button}
             onPress={handleUploadFinishConfirm}>
             <Text style={styles.buttonText}>Great!</Text>

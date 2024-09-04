@@ -53,7 +53,7 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
 
   return (
     <View style={localStyles.profileOverviewContainer}>
-      {user?.uid === userID && (
+      {/* {user?.uid === userID && (
         <TouchableOpacity accessibilityRole="button"
           onPress={() =>
             Navigation.navigate(ROUTES.PROFILE_EDIT.getRoute(userID))
@@ -73,7 +73,7 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
         //     text={'some text'}
         //     style={styles.mt3}
         //   />
-      )}
+      )} */}
       <View style={localStyles.profileImageContainer} />
       <ProfileImage
         key={`${userID}-profile-image`}

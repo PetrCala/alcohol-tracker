@@ -11,7 +11,7 @@ const commonStyles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: 'white', // TODO move to styles
+    backgroundColor: '#FCFBF9', // TODO: Should be theme.appBG
     borderBottomWidth: 1,
     borderColor: '#ddd',
     // shadowColor: '#000',
@@ -52,7 +52,7 @@ const commonStyles = StyleSheet.create({
     width: screenWidth,
     flexDirection: 'row',
     justifyContent: 'center',
-    backgroundColor: 'white',
+    backgroundColor: '#FCFBF9', // TODO: Should be theme.appBG
     shadowColor: '#000',
     shadowOffset: {
       width: 0,

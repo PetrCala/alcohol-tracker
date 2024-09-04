@@ -27,6 +27,7 @@ DerivedData
 ios/.xcode.env.local
 ios/assets/
 ios-fastlane-json-key.json
+ios/tmp.xcconfig
 **/*.mobileprovision
 **/*.p12
 

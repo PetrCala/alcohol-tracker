@@ -33,19 +33,15 @@ import type {DrinkingSessionArray} from '@src/types/onyx';
 import type {UserList} from '@src/types/onyx/OnyxCommon';
 import type {StackScreenProps} from '@react-navigation/stack';
 import type {ProfileNavigatorParamList} from '@libs/Navigation/types';
-import type SCREENS from '@src/SCREENS';
+import SCREENS from '@src/SCREENS';
 import Navigation from '@libs/Navigation/Navigation';
 import DBPATHS from '@database/DBPATHS';
-import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import ROUTES from '@src/ROUTES';
 import type {DateData} from 'react-native-calendars';
 import useFetchData from '@hooks/useFetchData';
 import {getPlural} from '@libs/StringUtilsKiroku';
 import ScreenWrapper from '@components/ScreenWrapper';
 import type {FetchDataKeys} from '@hooks/useFetchData/types';
-import useThemeStyles from '@hooks/useThemeStyles';
-import {withOnyx} from 'react-native-onyx';
-import compose from '@libs/compose';
 
 type State = {
   selfFriends: UserList | undefined;
@@ -106,29 +102,19 @@ function ProfileScreen({route}: ProfileScreenProps) {
   const {auth, db} = useFirebase();
   const {userID} = route.params;
   const user = auth.currentUser;
-
-  const styles = useThemeStyles();
   const relevantDataKeys: FetchDataKeys = [
     'userData',
     'drinkingSessionData',
     'preferences',
-  ];
-  // Use the user's data at first (cost-free). If this is not self profile, fetch the data.
-  let {userData, drinkingSessionData, preferences, isLoading} =
-    useDatabaseData();
-  let loading = isLoading;
-  if (userID !== user?.uid) {
-    const {data, isLoading} = useFetchData(userID, relevantDataKeys);
-    userData = data.userData;
-    drinkingSessionData = data.drinkingSessionData;
-    preferences = data.preferences;
-    loading = isLoading;
-  }
+  ]; //
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const {data: fetchedData, isLoading} = useFetchData(userID, relevantDataKeys);
+  let userData = fetchedData?.userData;
+  let drinkingSessionData = fetchedData?.drinkingSessionData;
+  let preferences = fetchedData?.preferences;
   const profileData = userData?.profile;
   const friends = userData?.friends;
-  const [state, dispatch] = useReducer(reducer, initialState);
 
-  // Define your stats data
   const statsData: StatData = [
     {
       header: `Drinking Session${getPlural(state.drinkingSessionsCount)}`,
@@ -171,7 +157,9 @@ function ProfileScreen({route}: ProfileScreenProps) {
 
   // Monitor stats
   useMemo(() => {
-    if (!drinkingSessionData || !preferences) {return;}
+    if (!drinkingSessionData || !preferences) {
+      return;
+    }
     const drinkingSessionArray: DrinkingSessionArray =
       Object.values(drinkingSessionData);
 
@@ -193,8 +181,12 @@ function ProfileScreen({route}: ProfileScreenProps) {
     dispatch({type: 'SET_UNITS_CONSUMED', payload: thisMonthUnits});
   }, [drinkingSessionData, preferences, state.visibleDateObject]);
 
-  if (isLoading) {return <LoadingData />;}
-  if (!profileData || !preferences || !userData) {return;}
+  if (isLoading) {
+    return <LoadingData />;
+  }
+  if (!profileData || !preferences || !userData) {
+    return;
+  }
 
   return (
     <ScreenWrapper testID={ProfileScreen.displayName}>
@@ -398,7 +390,4 @@ const localStyles = StyleSheet.create({
 
 ProfileScreen.displayName = 'Profile Screen';
 
-export default compose(
-  withOnyx<ProfileScreenProps, ProfileScreenOnyxProps>({}),
-)(ProfileScreen);
-// export default ProfileScreen;
+export default ProfileScreen;

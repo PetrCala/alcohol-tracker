@@ -1,4 +1,4 @@
-﻿import React, {useRef, useState, useContext, useEffect, useMemo} from 'react';
+﻿import React, {useRef, useState, useEffect, useMemo} from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -10,7 +10,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import BasicButton from '@components/Buttons/BasicButton';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {
