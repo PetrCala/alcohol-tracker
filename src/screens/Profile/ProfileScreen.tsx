@@ -106,29 +106,19 @@ function ProfileScreen({route}: ProfileScreenProps) {
   const {auth, db} = useFirebase();
   const {userID} = route.params;
   const user = auth.currentUser;
-
-  const styles = useThemeStyles();
   const relevantDataKeys: FetchDataKeys = [
     'userData',
     'drinkingSessionData',
     'preferences',
-  ];
-  // Use the user's data at first (cost-free). If this is not self profile, fetch the data.
-  let {userData, drinkingSessionData, preferences, isLoading} =
-    useDatabaseData();
-  let loading = isLoading;
-  if (userID !== user?.uid) {
-    const {data, isLoading} = useFetchData(userID, relevantDataKeys);
-    userData = data.userData;
-    drinkingSessionData = data.drinkingSessionData;
-    preferences = data.preferences;
-    loading = isLoading;
-  }
+  ]; //
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const {data: fetchedData, isLoading} = useFetchData(userID, relevantDataKeys);
+  let userData = fetchedData?.userData;
+  let drinkingSessionData = fetchedData?.drinkingSessionData;
+  let preferences = fetchedData?.preferences;
   const profileData = userData?.profile;
   const friends = userData?.friends;
-  const [state, dispatch] = useReducer(reducer, initialState);
 
-  // Define your stats data
   const statsData: StatData = [
     {
       header: `Drinking Session${getPlural(state.drinkingSessionsCount)}`,
@@ -171,7 +161,9 @@ function ProfileScreen({route}: ProfileScreenProps) {
 
   // Monitor stats
   useMemo(() => {
-    if (!drinkingSessionData || !preferences) {return;}
+    if (!drinkingSessionData || !preferences) {
+      return;
+    }
     const drinkingSessionArray: DrinkingSessionArray =
       Object.values(drinkingSessionData);
 
@@ -193,8 +185,12 @@ function ProfileScreen({route}: ProfileScreenProps) {
     dispatch({type: 'SET_UNITS_CONSUMED', payload: thisMonthUnits});
   }, [drinkingSessionData, preferences, state.visibleDateObject]);
 
-  if (isLoading) {return <LoadingData />;}
-  if (!profileData || !preferences || !userData) {return;}
+  if (isLoading) {
+    return <LoadingData />;
+  }
+  if (!profileData || !preferences || !userData) {
+    return;
+  }
 
   return (
     <ScreenWrapper testID={ProfileScreen.displayName}>
