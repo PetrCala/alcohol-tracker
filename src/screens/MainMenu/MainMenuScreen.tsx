@@ -1,4 +1,4 @@
-﻿import React, {useContext, useEffect, useState} from 'react';
+﻿import React, {useEffect, useState} from 'react';
 import type {ImageSourcePropType} from 'react-native';
 import {
   View,
@@ -19,7 +19,7 @@ import {deleteUserData, reauthentificateUser} from '@database/users';
 import FeedbackPopup from '@components/Popups/FeedbackPopup';
 import {submitFeedback} from '@database/feedback';
 import AdminFeedbackPopup from '@components/Popups/AdminFeedbackPopup';
-import {listenForDataChanges, readDataOnce} from '@database/baseFunctions';
+import {listenForDataChanges} from '@database/baseFunctions';
 import InputTextPopup from '@components/Popups/InputTextPopup';
 import UserOffline from '@components/UserOffline';
 import {useUserConnection} from '@context/global/UserConnectionContext';
@@ -39,7 +39,7 @@ import LoadingData from '@components/LoadingData';
 import useLocalize from '@hooks/useLocalize';
 import ONYXKEYS from '@src/ONYXKEYS';
 import type {OnyxEntry} from 'react-native-onyx';
-import {withOnyx} from 'react-native-onyx';
+import {useOnyx} from 'react-native-onyx';
 
 type MainMenuButtonData = {
   label: string;
@@ -76,12 +76,12 @@ type MainMenuScreenOnyxProps = {
 type MainMenuScreenProps = MainMenuScreenOnyxProps &
   StackScreenProps<MainMenuNavigatorParamList, typeof SCREENS.MAIN_MENU.ROOT>;
 
-function MainMenuScreen({
-  route,
-  pushNotificationsEnabled,
-}: MainMenuScreenProps) {
+function MainMenuScreen({route}: MainMenuScreenProps) {
   const {userData, preferences} = useDatabaseData();
   // Context, database, and authentification
+  const [pushNotificationsEnabled] = useOnyx(
+    ONYXKEYS.PUSH_NOTIFICATIONS_ENABLED,
+  );
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
@@ -472,6 +472,4 @@ const styles = StyleSheet.create({
 // MainMenuScreen.defaultProps = defaultProps;
 MainMenuScreen.displayName = 'Main Menu Screen';
 
-export default withOnyx<MainMenuScreenProps, MainMenuScreenOnyxProps>({
-  pushNotificationsEnabled: {key: ONYXKEYS.PUSH_NOTIFICATIONS_ENABLED},
-})(MainMenuScreen);
+export default MainMenuScreen;

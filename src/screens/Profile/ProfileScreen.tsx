@@ -36,16 +36,12 @@ import type {ProfileNavigatorParamList} from '@libs/Navigation/types';
 import type SCREENS from '@src/SCREENS';
 import Navigation from '@libs/Navigation/Navigation';
 import DBPATHS from '@database/DBPATHS';
-import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import ROUTES from '@src/ROUTES';
 import type {DateData} from 'react-native-calendars';
 import useFetchData from '@hooks/useFetchData';
 import {getPlural} from '@libs/StringUtilsKiroku';
 import ScreenWrapper from '@components/ScreenWrapper';
 import type {FetchDataKeys} from '@hooks/useFetchData/types';
-import useThemeStyles from '@hooks/useThemeStyles';
-import {withOnyx} from 'react-native-onyx';
-import compose from '@libs/compose';
 
 type State = {
   selfFriends: UserList | undefined;
@@ -394,7 +390,4 @@ const localStyles = StyleSheet.create({
 
 ProfileScreen.displayName = 'Profile Screen';
 
-export default compose(
-  withOnyx<ProfileScreenProps, ProfileScreenOnyxProps>({}),
-)(ProfileScreen);
-// export default ProfileScreen;
+export default ProfileScreen;

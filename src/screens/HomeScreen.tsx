@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {useOnyx, withOnyx} from 'react-native-onyx';
+import {useOnyx} from 'react-native-onyx';
 import MenuIcon from '@components/Buttons/MenuIcon';
 import SessionsCalendar from '@components/Calendar';
 import LoadingData from '@components/LoadingData';
@@ -626,4 +626,4 @@ const localStyles = StyleSheet.create({
 
 HomeScreen.displayName = 'Home Screen';
 
-export default withOnyx<HomeScreenProps, HomeScreenOnyxProps>({})(HomeScreen);
+export default HomeScreen;
