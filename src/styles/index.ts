@@ -887,8 +887,7 @@ const styles = (theme: ThemeColors) =>
     link: link(theme),
 
     navigationScreenCardStyle: {
-      // backgroundColor: theme.appBG,
-      backgroundColor: theme.white,
+      backgroundColor: theme.appBG,
       height: '100%',
     },
 
