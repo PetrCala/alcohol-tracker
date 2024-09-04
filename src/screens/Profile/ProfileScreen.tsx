@@ -33,7 +33,7 @@ import type {DrinkingSessionArray} from '@src/types/onyx';
 import type {UserList} from '@src/types/onyx/OnyxCommon';
 import type {StackScreenProps} from '@react-navigation/stack';
 import type {ProfileNavigatorParamList} from '@libs/Navigation/types';
-import type SCREENS from '@src/SCREENS';
+import SCREENS from '@src/SCREENS';
 import Navigation from '@libs/Navigation/Navigation';
 import DBPATHS from '@database/DBPATHS';
 import ROUTES from '@src/ROUTES';
