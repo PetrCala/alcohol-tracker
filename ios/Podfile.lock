@@ -2272,7 +2272,7 @@ PODS:
     - RNSound/Core (= 0.11.2)
   - RNSound/Core (0.11.2):
     - React-Core
-  - RNSVG (15.4.0):
+  - RNSVG (15.6.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2292,9 +2292,9 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNSVG/common (= 15.4.0)
+    - RNSVG/common (= 15.6.0)
     - Yoga
-  - RNSVG/common (15.4.0):
+  - RNSVG/common (15.6.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2797,7 +2797,7 @@ SPEC CHECKSUMS:
   RNScreens: de6e57426ba0e6cbc3fb5b4f496e7f08cb2773c2
   RNShare: 0463c31e8c1883bb80afed64066cff3dc7ed4e1a
   RNSound: 6c156f925295bdc83e8e422e7d8b38d33bc71852
-  RNSVG: 6b65086b51556fd9723d5570a3455e865e1304a3
+  RNSVG: 1079f96b39a35753d481a20e30603fd6fc4f6fa9
   SDWebImage: 8a6b7b160b4d710e2a22b6900e25301075c34cb3
   SDWebImageAVIFCoder: 00310d246aab3232ce77f1d8f0076f8c4b021d90
   SDWebImageSVGCoder: 15a300a97ec1c8ac958f009c02220ac0402e936c
