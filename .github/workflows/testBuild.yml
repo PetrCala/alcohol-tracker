@@ -180,6 +180,9 @@ jobs:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/KirokuS3Upload
           aws-region: ${{ secrets.AWS_REGION }}
 
+      - name: Bundle install
+        run: bun run jsbundle
+
       - name: Run Fastlane
         run: bundle exec fastlane ios build_internal
         env:
