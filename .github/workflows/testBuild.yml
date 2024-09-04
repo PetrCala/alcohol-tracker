@@ -51,13 +51,8 @@ jobs:
           echo "${{ secrets.DEV_ENV_FILE }}" > .env.development
           echo "PULL_REQUEST_NUMBER=$PULL_REQUEST_NUMBER" >> .env.development
 
-      - name: Setup Bun
-        uses: ./.github/actions/composite/setupBun
-
-      - name: Setup Node (required by the React Native bundler)
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: '.nvmrc'
+      - name: Setup Node
+        uses: ./.github/actions/composite/setupNode
 
       - name: Setup Java
         uses: actions/setup-java@v3
@@ -122,13 +117,8 @@ jobs:
           echo "${{ secrets.DEV_ENV_FILE }}" > .env.development
           echo "PULL_REQUEST_NUMBER=$PULL_REQUEST_NUMBER" >> .env.development
 
-      - name: Setup Bun
-        uses: ./.github/actions/composite/setupBun
-
-      - name: Setup Node (required by the React Native bundler)
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: '.nvmrc'
+      - name: Setup Node
+        uses: ./.github/actions/composite/setupNode
 
       - name: Setup XCode
         run: sudo xcode-select -switch /Applications/Xcode_15.0.1.app
@@ -181,7 +171,7 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Bundle install
-        run: bun run jsbundle
+        run: npm run jsbundle
 
       - name: Run Fastlane
         run: bundle exec fastlane ios build_internal
