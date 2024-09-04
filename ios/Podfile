@@ -42,15 +42,14 @@ setup_permissions([
 # Flipper is not compatible with use_frameworks! (Firebase)
 # flipper_config = FlipperConfiguration.disabled
 
-# linkage = ENV['USE_FRAMEWORKS']
-# if linkage != nil
-#   Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
-#   use_frameworks! :linkage => linkage.to_sym
-# end
-use_frameworks! :linkage => :static
-$RNFirebaseAsStaticFramework = true
-
-use_modular_headers!
+linkage = ENV['USE_FRAMEWORKS']
+if linkage != nil
+  Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
+  use_frameworks! :linkage => linkage.to_sym
+end
+# use_frameworks! :linkage => :static
+# $RNFirebaseAsStaticFramework = true
+# use_modular_headers!
 
 # Force pods to match minimum iOS version for React Native
 # Fixes build issue on Xcode Cloud where some pods
@@ -66,9 +65,6 @@ def __apply_Xcode_14_3_RC_post_install_workaround(installer)
     end
   end
 end
-
-# Pods to install
-# pod 'FirebaseAuth'
 
 target 'kiroku' do
   use_expo_modules!
@@ -91,11 +87,6 @@ target 'kiroku' do
 
   config = use_native_modules!
 
-  # The following fix an issue induced by use_native_modules!, required by Firebase
-  # https://stackoverflow.com/questions/78442131/react-native-cant-build-ios-after-upgrading-to-0-74-1-redefinition-of-module
-  pod 'FirebaseCore', :modular_headers => true;
-  pod 'GoogleUtilities', :modular_headers => true;
-
   # Flags change depending on the env values.
   flags = get_default_flags()
 
@@ -103,17 +94,10 @@ target 'kiroku' do
   ENV['RCT_NEW_ARCH_ENABLED'] = '1';
 
   # Enable react-native-config for environment file management
-  pod 'react-native-config/Extension', :path => '../node_modules/react-native-config'
-
+  # pod 'react-native-config/Extension', :path => '../node_modules/react-native-config'
+# 
   use_react_native!(
     :path => config[:reactNativePath],
-
-    # Enables Flipper.
-    #
-    # Note that if you have use_frameworks! enabled, Flipper will not work and
-    # you should disable the next line.
-    # config[:reactNativePath],
-    # :mac_catalyst_enabled => false
 
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/..",
