@@ -165,8 +165,6 @@ platform :ios do
 
   desc "Build app for testing"
     lane :build_internal do
-      output_path = "./ios/build/"
-      ipa_output_path = File.join(output_path, "kiroku.ipa")
 
       require 'securerandom'
       ENV["ENVFILE"]=".env.development"
@@ -183,7 +181,7 @@ platform :ios do
       )
 
       import_certificate(
-          certificate_path: "./ios/devCertificates.p12",
+          certificate_path: "./ios/Certificates.p12",
           keychain_name: "ios-build.keychain",
           keychain_password: keychain_password,
           certificate_password: ENV["IOS_CERTIFICATE_PASSWORD"],

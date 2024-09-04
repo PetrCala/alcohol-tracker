@@ -8,7 +8,7 @@ on:
         required: true
   pull_request:
     types: [opened, synchronize, labeled]
-    branches: ['dev']
+    branches: ['dev', '*ci-test/**']
 
 permissions:
   id-token: write
@@ -149,13 +149,13 @@ jobs:
           max_attempts: 5
           command: cd ios && bundle exec pod install
 
-      - name: Decrypt Development profile
+      - name: Decrypt provisioning profile
         run: cd ios && gpg --quiet --batch --yes --decrypt --passphrase="$LARGE_SECRET_PASSPHRASE" --output Kiroku.mobileprovision Kiroku.mobileprovision.gpg
         env:
           LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PASSPHRASE }}
 
       - name: Decrypt certificate
-        run: cd ios && gpg --quiet --batch --yes --decrypt --passphrase="$LARGE_SECRET_PASSPHRASE" --output devCertificates.p12 devCertificates.p12.gpg
+        run: cd ios && gpg --quiet --batch --yes --decrypt --passphrase="$LARGE_SECRET_PASSPHRASE" --output Certificates.p12 Certificates.p12.gpg
         env:
           LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PASSPHRASE }}
 
@@ -172,6 +172,7 @@ jobs:
           S3_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           S3_BUCKET: ${{ secrets.AWS_DEV_ARTIFACTS_BUCKET }}
           S3_REGION: ${{ secrets.AWS_REGION }}
+          IOS_CERTIFICATE_PASSWORD: ${{ secrets.IOS_CERTIFICATE_PASSWORD }}
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
