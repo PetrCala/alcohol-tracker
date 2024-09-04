@@ -76,10 +76,10 @@
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
-  return [self getBundleURL];
+  return [self bundleURL];
 }
 
-- (NSURL *)getBundleURL
+- (NSURL *)bundleURL
 {
 #if DEBUG
   return
@@ -90,6 +90,11 @@
 #endif
 }
 
+- (BOOL)bridgelessEnabled
+{
+  return NO;
+}
+
 // This methods is needed to support the hardware keyboard shortcuts
 - (NSArray *)keyCommands {
   return [HardwareShortcuts sharedInstance].keyCommands;
@@ -97,16 +102,6 @@
 
 - (void)handleKeyCommand:(UIKeyCommand *)keyCommand {
   [[HardwareShortcuts sharedInstance] handleKeyCommand:keyCommand];
-}
-
-/// This method controls whether the `concurrentRoot`feature of React18 is turned on or off.
-///
-/// @see: https://reactjs.org/blog/2022/03/29/react-v18.html
-/// @note: This requires to be rendering on Fabric (i.e. on the New Architecture).
-/// @return: `true` if the `concurrentRoot` feature is enabled. Otherwise, it returns `false`.
-- (BOOL)concurrentRootEnabled
-{
-  return true;
 }
 
 @end
