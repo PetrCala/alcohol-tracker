@@ -159,6 +159,11 @@ jobs:
           max_attempts: 5
           command: cd ios && bundle exec pod install
 
+      - name: Set up environment for Xcode
+        run: |
+          echo "export NODE_BINARY=$(which node)" >> ~/.bash_profile
+          source ~/.bash_profile
+
       - name: Decrypt provisioning profile
         run: cd ios && gpg --quiet --batch --yes --decrypt --passphrase="$LARGE_SECRET_PASSPHRASE" --output Kiroku.mobileprovision Kiroku.mobileprovision.gpg
         env:
