@@ -10,7 +10,7 @@
             ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
             <ActionContent
                title = "Run Script"
-               scriptText = "# Create the local .env file.&#10;echo &quot;${PROJECT_DIR}/../.env.staging&quot; &gt; /tmp/envfile&#10;">
+               scriptText = "# Create the local .env file.&#10;echo &quot;${PROJECT_DIR}/../.env.adhoc&quot; &gt; /tmp/envfile&#10;">
                <EnvironmentBuildable>
                   <BuildableReference
                      BuildableIdentifier = "primary"
