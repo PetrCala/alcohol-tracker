@@ -188,7 +188,7 @@ platform :ios do
       )
 
       install_provisioning_profile(
-          path: "./ios/Kiroku.mobileprovision"
+          path: "./ios/Kiroku_AdHoc.mobileprovision"
       )
 
       build_app(
@@ -199,7 +199,7 @@ platform :ios do
           export_options: {
               method: "ad-hoc",
               provisioningProfiles: {
-                "org.reactjs.native.example.alcohol-tracker" => "Kiroku",
+                "org.reactjs.native.example.alcohol-tracker" => "Kiroku_AdHoc",
               },
               manageAppVersionAndBuildNumber: false
           }
