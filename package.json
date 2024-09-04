@@ -209,9 +209,11 @@
     "typescript": "~5.3.3"
   },
   "overrides": {
-    "react-native-key-command": {
-      "react-native": "0.75.2"
-    }
+    "expo": "51.0.17",
+    "react-native": "0.75.2",
+    "react-native-svg": "15.4.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
   },
   "expo": {
     "autolinking": {
