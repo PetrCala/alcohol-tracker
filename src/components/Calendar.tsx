@@ -1,8 +1,6 @@
 ﻿import type {ReactNode} from 'react';
 import React, {useEffect, useState, useMemo, useCallback} from 'react';
-import type {
-  StyleProp,
-  TextStyle} from 'react-native';
+import type {StyleProp, TextStyle} from 'react-native';
 import {
   Dimensions,
   Image,
@@ -301,7 +299,7 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
               padding: 0,
               borderTopWidth: 1,
               borderBottomWidth: 1,
-              borderColor: '#ddd',
+              borderColor: 'grey',
             },
             monthText: {
               color: 'black',
@@ -368,7 +366,7 @@ const localStyles = StyleSheet.create({
     marginLeft: 2,
     fontSize: 10,
     alignSelf: 'flex-start',
-    // color: 'black',
+    color: 'black',
   },
   dayTextDisabled: {
     color: '#D3D3D3',
@@ -397,7 +395,7 @@ const localStyles = StyleSheet.create({
     backgroundColor: 'white',
     borderTopWidth: 0,
     borderBottomWidth: 1,
-    borderColor: '#ddd',
+    borderColor: 'grey',
     flexGrow: 1,
     flexShrink: 1,
   },
