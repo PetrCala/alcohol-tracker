@@ -13,8 +13,6 @@ import type {FirebaseStorage} from 'firebase/storage';
 import React from 'react';
 import type {FriendRequestStatus, Profile} from '@src/types/onyx';
 import CONST from '@src/CONST';
-import {useDatabaseData} from '@context/global/DatabaseDataContext';
-import LoadingData from '@components/LoadingData';
 
 const statusToTextMap: {[key in FriendRequestStatus]: string} = {
   self: 'You',
