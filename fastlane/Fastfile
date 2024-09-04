@@ -165,8 +165,6 @@ platform :ios do
 
   desc "Build app for testing"
     lane :build_internal do
-      output_path = "./ios/build/"
-      ipa_output_path = File.join(output_path, "kiroku.ipa")
 
       require 'securerandom'
       ENV["ENVFILE"]=".env.development"

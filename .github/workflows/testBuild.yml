@@ -172,6 +172,7 @@ jobs:
           S3_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           S3_BUCKET: ${{ secrets.AWS_DEV_ARTIFACTS_BUCKET }}
           S3_REGION: ${{ secrets.AWS_REGION }}
+          IOS_CERTIFICATE_PASSWORD: ${{ secrets.IOS_CERTIFICATE_PASSWORD }}
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
