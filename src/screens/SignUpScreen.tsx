@@ -198,7 +198,6 @@ function SignUpScreen() {
     }
 
     // Validate that the user is not spamming account creation
-    console.log('done');
     try {
       await checkAccountCreationLimit(db);
     } catch (error: any) {
@@ -450,6 +449,7 @@ const styles = StyleSheet.create({
   inputItemText: {
     fontSize: 14,
     width: '90%',
+    color: 'black', // Text color
   },
   passwordCheckContainer: {
     backgroundColor: 'purple',
