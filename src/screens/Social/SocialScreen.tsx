@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
   footerImage: {
     width: 25,
     height: 25,
-    padding: 5,
+    // padding: 5,
     // tintColor: '#ebeb02',
     // tintColor: '#000',
     tintColor: 'gray',
