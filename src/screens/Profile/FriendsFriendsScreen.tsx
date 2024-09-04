@@ -14,7 +14,6 @@ import type {
 import type {UserList} from '@src/types/onyx/OnyxCommon';
 import {useEffect, useMemo, useReducer} from 'react';
 import {useFirebase} from '@context/global/FirebaseContext';
-
 import {isNonEmptyArray} from '@libs/Validation';
 import LoadingData from '@components/LoadingData';
 import {searchArrayByText} from '@libs/Search';

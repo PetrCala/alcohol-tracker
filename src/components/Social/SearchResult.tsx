@@ -201,7 +201,6 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     borderRadius: 35,
-    padding: 5,
   },
   sendFriendRequestContainer: {
     width: '35%',
