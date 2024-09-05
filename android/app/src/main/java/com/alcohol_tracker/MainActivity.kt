@@ -1,4 +1,4 @@
-package com.alcohol_tracker;
+package com.alcohol_tracker
 
 import expo.modules.ReactActivityDelegateWrapper
 
