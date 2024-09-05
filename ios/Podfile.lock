@@ -1492,7 +1492,7 @@ PODS:
     - Yoga
   - react-native-netinfo (11.3.1):
     - React-Core
-  - react-native-pager-view (6.3.4):
+  - react-native-pager-view (6.4.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1505,7 +1505,7 @@ PODS:
     - React-featureflags
     - React-graphics
     - React-ImageManager
-    - react-native-pager-view/common (= 6.3.4)
+    - react-native-pager-view/common (= 6.4.1)
     - React-NativeModulesApple
     - React-RCTFabric
     - React-rendererdebug
@@ -1514,7 +1514,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-pager-view/common (6.3.4):
+  - react-native-pager-view/common (6.4.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2744,7 +2744,7 @@ SPEC CHECKSUMS:
   react-native-config: 86038147314e2e6d10ea9972022aa171e6b1d4d8
   react-native-key-command: aae312752fcdfaa2240be9a015fc41ce54087546
   react-native-netinfo: bdb108d340cdb41875c9ced535977cac6d2ff321
-  react-native-pager-view: 6bff9b0883b902571530ddd1b2ea9dc570f321f6
+  react-native-pager-view: 94195f1bf32e7f78359fa20057c97e632364a08b
   react-native-performance: f9115bad83b2119356b7af8025e9f17c92b85c52
   react-native-quick-sqlite: 7c793c9f5834e756b336257a8d8b8239b7ceb451
   react-native-release-profiler: 483d46adcf19bec1b8d5a9a07dbc4bb000d1433e
@@ -2806,6 +2806,6 @@ SPEC CHECKSUMS:
   TOCropViewController: 80b8985ad794298fb69d3341de183f33d1853654
   Yoga: a1d7895431387402a674fd0d1c04ec85e87909b8
 
-PODFILE CHECKSUM: cabc5f26f87e99fe25f4759f63e0861066ba10ba
+PODFILE CHECKSUM: a88ea6939d980da9703c69a01af973b5d6d1e137
 
 COCOAPODS: 1.15.2

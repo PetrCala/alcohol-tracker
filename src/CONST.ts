@@ -204,8 +204,9 @@ const CONST = {
   },
   ENVIRONMENT: {
     DEV: 'development',
-    STAGING: 'staging',
+    ADHOC: 'adhoc',
     PROD: 'production',
+    STAGING: 'staging',
     TEST: 'test',
   },
   EMAIL: {
@@ -277,6 +278,10 @@ const CONST = {
     SHIFT: {
       DEFAULT: 'shift',
     },
+  },
+  ENVIRONMENT_SUFFIX: {
+    DEV: ' Dev',
+    ADHOC: ' AdHoc',
   },
   KEYBOARD_SHORTCUTS: {
     SEARCH: {

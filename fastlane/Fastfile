@@ -29,45 +29,19 @@ platform :android do
   end
 
 
-  desc "Generate a new local APK for staging"
-  lane :build_staging do
-    ENV["ENVFILE"]=".env.staging"
-
-    gradle(
-      project_dir: './android',
-      task: 'assemble',
-      flavor: 'Staging',
-      build_type: 'Release',
-    )
-  end
-
-  desc "Generate a new local APK for testing"
-  lane :build_debug do
-    ENV["ENVFILE"]=".env.development"
-
-    gradle(
-      project_dir: './android',
-      task: 'assemble',
-      flavor: 'Development',
-      build_type: 'Debug',
-    )
-  end
-
   desc "Build app for testing"
   lane :build_internal do
-    ENV["ENVFILE"]=".env.development"
+    ENV["ENVFILE"]=".env.adhoc"
 
     gradle(
       project_dir: './android',
       task: 'assemble',
-      flavor: 'Development',
+      flavor: 'Adhoc',
       build_type: 'Release',
     )
 
-
+    # A role should have been assumed before this step
     aws_s3(
-      access_key: ENV['S3_ACCESS_KEY'],
-      secret_access_key: ENV['S3_SECRET_ACCESS_KEY'],
       bucket: ENV['S3_BUCKET'],
       region: ENV['S3_REGION'],
 
@@ -142,32 +116,11 @@ platform :ios do
     )
   end
 
-  desc "Generate a local iOS staging build"
-  lane :build_staging do
-    ENV["ENVFILE"]=".env.staging"
-
-    build_app(
-        workspace: "./ios/kiroku.xcworkspace",
-        scheme: "Kiroku (staging)"
-    )
-  end
-
-
-  desc "Generate a local iOS build for testing"
-  lane :build_debug do
-    ENV["ENVFILE"]=".env.development"
-
-    build_app(
-        workspace: "./ios/kiroku.xcworkspace",
-        scheme: "Kiroku (development)",
-    )
-  end
-
   desc "Build app for testing"
     lane :build_internal do
 
       require 'securerandom'
-      ENV["ENVFILE"]=".env.development"
+      ENV["ENVFILE"]=".env.adhoc"
 
       keychain_password = SecureRandom.uuid
 
@@ -194,7 +147,7 @@ platform :ios do
       build_app(
           workspace: "./ios/kiroku.xcworkspace",
           skip_profile_detection: true,
-          scheme: "Kiroku (development)",
+          scheme: "Kiroku (AdHoc)",
           export_method: "ad-hoc",
           export_options: {
               method: "ad-hoc",
@@ -205,9 +158,8 @@ platform :ios do
           }
       )
 
+    # A role should have been assumed before this step
     aws_s3(
-      access_key: ENV['S3_ACCESS_KEY'],
-      secret_access_key: ENV['S3_SECRET_ACCESS_KEY'],
       bucket: ENV['S3_BUCKET'],
       region: ENV['S3_REGION'],
 

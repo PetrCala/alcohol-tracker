@@ -23,8 +23,7 @@ react {
     //   The list of variants to that are debuggable. For those we're going to
     //   skip the bundling of the JS bundle and the assets. By default is just 'debug'.
     //   If you add flavors like lite, prod, etc. you'll have to list your debuggableVariants.
-    debuggableVariants = ["developmentDebug", "stagingDebug", "productionDebug"]
-
+    debuggableVariants = ["developmentDebug",  "adhocDebug", "productionDebug"]
     /* Bundling */
     //   A list containing the node command and its flags. Default is just 'node'.
     // nodeExecutableAndArgs = ["node"]
@@ -65,8 +64,8 @@ react {
 project.ext.envConfigFiles = [
     productionDebug: ".env.production",
     productionRelease: ".env.production",
-    stagingDebug: ".env.staging",
-    stagingRelease: ".env.staging",
+    adhocDebug: ".env.adhoc",
+    adhocRelease: ".env.adhoc",
     developmentDebug: ".env.development",
     developmentRelease: ".env.development",
 ]
@@ -133,10 +132,10 @@ android {
     productFlavors {
         // we need to define a production flavor but since it has default config, we can leave it empty
         production
-        staging {
+        adhoc {
             // If  are building a version that won't be uploaded to the play store, we don't have to use production keys
             // applies all non-production flavors
-            applicationIdSuffix ".staging"
+            applicationIdSuffix ".adhoc"
             signingConfig signingConfigs.debug
             resValue "string", "build_config_package", "com.alcohol_tracker"
         }
@@ -226,11 +225,16 @@ dependencies {
     implementation "com.google.firebase:firebase-perf"
     implementation "com.google.firebase:firebase-crashlytics"
 
+    // Android support library
+    implementation 'com.android.support:support-core-utils:28.0.0'
+
     // Multi Dex Support: https://developer.android.com/studio/build/multidex#mdex-gradle
-    implementation 'com.android.support:multidex:1.0.3'
+    implementation 'com.android.support:multidex:2.0.1'
 
     // This okhttp3 dependency prevents the app from crashing - See https://github.com/plaid/react-native-plaid-link-sdk/issues/74#issuecomment-648435002
     implementation "com.squareup.okhttp3:okhttp-urlconnection:4.+"
+
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0")
 }
 
 // This has to be at the end of the script to apply env config

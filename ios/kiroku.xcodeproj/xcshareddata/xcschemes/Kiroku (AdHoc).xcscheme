@@ -10,7 +10,7 @@
             ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
             <ActionContent
                title = "Run Script"
-               scriptText = "# Create the local .env file.&#10;echo &quot;${PROJECT_DIR}/../.env.staging&quot; &gt; /tmp/envfile&#10;">
+               scriptText = "# Create the local .env file.&#10;echo &quot;${PROJECT_DIR}/../.env.adhoc&quot; &gt; /tmp/envfile&#10;">
                <EnvironmentBuildable>
                   <BuildableReference
                      BuildableIdentifier = "primary"
@@ -57,7 +57,7 @@
       </BuildActionEntries>
    </BuildAction>
    <TestAction
-      buildConfiguration = "DebugStaging"
+      buildConfiguration = "DebugAdHoc"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
@@ -75,7 +75,7 @@
       </Testables>
    </TestAction>
    <LaunchAction
-      buildConfiguration = "DebugStaging"
+      buildConfiguration = "DebugAdHoc"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
@@ -94,9 +94,16 @@
             ReferencedContainer = "container:kiroku.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <AdditionalOptions>
+         <AdditionalOption
+            key = "APP_DISTRIBUTOR_ID_OVERRIDE"
+            value = "com.apple.AppStore"
+            isEnabled = "YES">
+         </AdditionalOption>
+      </AdditionalOptions>
    </LaunchAction>
    <ProfileAction
-      buildConfiguration = "ReleaseStaging"
+      buildConfiguration = "ReleaseAdHoc"
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
@@ -113,10 +120,10 @@
       </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
-      buildConfiguration = "DebugStaging">
+      buildConfiguration = "DebugAdHoc">
    </AnalyzeAction>
    <ArchiveAction
-      buildConfiguration = "ReleaseStaging"
+      buildConfiguration = "ReleaseAdHoc"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>
