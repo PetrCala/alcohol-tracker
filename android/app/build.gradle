@@ -120,8 +120,8 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         multiDexEnabled rootProject.ext.multiDexEnabled
-        versionCode 1000030500
-        versionName "0.3.5-0"
+        versionCode 1000030501
+        versionName "0.3.5-1"
         vectorDrawables.useSupportLibrary = true
         // Supported language variants must be declared here to avoid from being removed during the compilation.
         // This also helps us to not include unnecessary language variants in the APK.
@@ -229,7 +229,7 @@ dependencies {
     implementation 'com.android.support:support-core-utils:28.0.0'
 
     // Multi Dex Support: https://developer.android.com/studio/build/multidex#mdex-gradle
-    implementation 'com.android.support:multidex:2.0.1'
+    implementation 'androidx.multidex:multidex:2.0.1'
 
     // This okhttp3 dependency prevents the app from crashing - See https://github.com/plaid/react-native-plaid-link-sdk/issues/74#issuecomment-648435002
     implementation "com.squareup.okhttp3:okhttp-urlconnection:4.+"

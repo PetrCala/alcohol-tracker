@@ -1,4 +1,4 @@
-package com.alcohol_tracker;
+package com.alcohol_tracker
 
 import expo.modules.ReactActivityDelegateWrapper
 
@@ -35,7 +35,7 @@ class MainActivity : ReactActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         BootSplash.init(this)
-        super.onCreate(null)
+        super.onCreate(savedInstanceState)
         if (resources.getBoolean(R.bool.portrait_only)) {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
