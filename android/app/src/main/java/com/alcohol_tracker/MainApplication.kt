@@ -6,14 +6,12 @@ import android.database.CursorWindow
 import android.os.Process
 import androidx.multidex.MultiDexApplication
 import com.alcohol_tracker.bootsplash.BootSplashPackage
-import com.facebook.react.PackageList;
-import com.facebook.react.ReactApplication;
-import com.facebook.react.ReactHost;
-import com.facebook.react.ReactNativeHost;
-import com.facebook.react.ReactPackage;
-import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.load;
-import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost;
-import com.facebook.react.defaults.DefaultReactNativeHost;
+import com.facebook.react.PackageList
+import com.facebook.react.ReactApplication
+import com.facebook.react.ReactNativeHost
+import com.facebook.react.ReactPackage
+import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.load
+import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.react.modules.i18nmanager.I18nUtil
 import com.facebook.soloader.SoLoader
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -34,8 +32,7 @@ class MainApplication : MultiDexApplication(), ReactApplication {
             add(RNTextInputResetPackage())
         }
 
-        // override fun getJSMainModuleName() = ".expo/.virtual-metro-entry"
-        override fun getJSMainModuleName() = "index"
+        override fun getJSMainModuleName() = ".expo/.virtual-metro-entry"
 
         override val isNewArchEnabled: Boolean
             get() = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED

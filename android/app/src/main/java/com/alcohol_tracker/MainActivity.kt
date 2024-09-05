@@ -37,23 +37,22 @@ class MainActivity : ReactActivity() {
         BootSplash.init(this)
         super.onCreate(null)
 
-        // Try to disable this (might cause a null pointer exception)
-        // if (resources.getBoolean(R.bool.portrait_only)) {
-        //     requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        // }
+        if (resources.getBoolean(R.bool.portrait_only)) {
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        }
 
         // Sets translucent status bar. This code is based on what the react-native StatusBar
         // module does, but we need to do it here to avoid the splash screen jumping on app start.
-        // val decorView = window.decorView
-        // decorView.setOnApplyWindowInsetsListener { v: View, insets: WindowInsets? ->
-        //     val defaultInsets = v.onApplyWindowInsets(insets)
-        //     defaultInsets.replaceSystemWindowInsets(
-        //         defaultInsets.systemWindowInsetLeft,
-        //         0,
-        //         defaultInsets.systemWindowInsetRight,
-        //         defaultInsets.systemWindowInsetBottom
-        //     )
-        // }
+        val decorView = window.decorView
+        decorView.setOnApplyWindowInsetsListener { v: View, insets: WindowInsets? ->
+            val defaultInsets = v.onApplyWindowInsets(insets)
+            defaultInsets.replaceSystemWindowInsets(
+                defaultInsets.systemWindowInsetLeft,
+                0,
+                defaultInsets.systemWindowInsetRight,
+                defaultInsets.systemWindowInsetBottom
+            )
+        }
     }
 
     /**
