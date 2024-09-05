@@ -226,7 +226,7 @@ dependencies {
     implementation "com.google.firebase:firebase-crashlytics"
 
     // Android support library
-    implementation 'com.android.support:support-core-utils:28.0.0'
+    // implementation 'com.android.support:support-core-utils:28.0.0'
 
     // Multi Dex Support: https://developer.android.com/studio/build/multidex#mdex-gradle
     implementation 'com.android.support:multidex:1.0.3'
