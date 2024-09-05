@@ -40,10 +40,8 @@ platform :android do
       build_type: 'Release',
     )
 
-
+    # A role should have been assumed before this step
     aws_s3(
-      access_key: ENV['S3_ACCESS_KEY'],
-      secret_access_key: ENV['S3_SECRET_ACCESS_KEY'],
       bucket: ENV['S3_BUCKET'],
       region: ENV['S3_REGION'],
 
@@ -160,9 +158,8 @@ platform :ios do
           }
       )
 
+    # A role should have been assumed before this step
     aws_s3(
-      access_key: ENV['S3_ACCESS_KEY'],
-      secret_access_key: ENV['S3_SECRET_ACCESS_KEY'],
       bucket: ENV['S3_BUCKET'],
       region: ENV['S3_REGION'],
 
