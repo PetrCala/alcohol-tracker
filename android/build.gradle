@@ -11,8 +11,7 @@ buildscript {
         androidXCore = "1.0.2"
         multiDexEnabled = true
         googlePlayServicesVersion = "17.0.0"
-        // kotlinVersion = "1.9.24"
-        kotlinVersion = "1.8.22"
+        kotlinVersion = "1.9.24"
     }
     repositories {
         google()
