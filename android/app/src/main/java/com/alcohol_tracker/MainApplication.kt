@@ -34,7 +34,8 @@ class MainApplication : MultiDexApplication(), ReactApplication {
             add(RNTextInputResetPackage())
         }
 
-        override fun getJSMainModuleName() = ".expo/.virtual-metro-entry" // default "index"
+        // override fun getJSMainModuleName() = ".expo/.virtual-metro-entry"
+        override fun getJSMainModuleName() = "index"
 
         override val isNewArchEnabled: Boolean
             get() = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
