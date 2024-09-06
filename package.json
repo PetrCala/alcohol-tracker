@@ -41,7 +41,6 @@
     "transpile": "npx tsc --build functions",
     "test-ts": "ts-node ./__tests__/e2e/SignUpRoutine.tsx",
     "deploy-functions": "firebase deploy --only functions --debug",
-    "setup-https": "mkcert -install && mkcert -cert-file config/webpack/certificate.pem -key-file config/webpack/key.pem dev.new.expensify.com localhost 127.0.0.1",
     "workflow-test": "./workflow_tests/scripts/runWorkflowTests.sh"
   },
   "dependencies": {
