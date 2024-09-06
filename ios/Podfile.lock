@@ -2011,7 +2011,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNCClipboard (1.14.0):
+  - RNCClipboard (1.14.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2779,7 +2779,7 @@ SPEC CHECKSUMS:
   ReactCodegen: 60973d382704c793c605b9be0fc7f31cb279442f
   ReactCommon: 6ef348087d250257c44c0204461c03f036650e9b
   RNCAsyncStorage: a927b768986f83467b635cf6d7559e6edb46db7a
-  RNCClipboard: c84275d07e3f73ff296b17e6c27e9ccdc194a0bb
+  RNCClipboard: 71edae0b18baef15ce101087697f318c42efb7e7
   RNDeviceInfo: 42aadf1282ffa0a88dc38a504a7be145eb010dfa
   RNFBAnalytics: f76bfa164ac235b00505deb9fc1776634056898c
   RNFBApp: 729c0666395b1953198dc4a1ec6deb8fbe1c302e
