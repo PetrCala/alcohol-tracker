@@ -26,17 +26,21 @@ jobs:
 
       - name: Validate actor is deployer
         id: isDeployer
-        # TODO: Use the KirokuAdmin API to check if the actor is a deployer
         run: |
-          echo "IS_DEPLOYER=true" >> "$GITHUB_OUTPUT" 
+          PERMISSION=$(gh api /repos/${{ github.repository }}/collaborators/${{ github.actor }}/permission | jq -r '.permission')
+          if [[ "$PERMISSION" == "write" || "$PERMISSION" == "admin" ]]; then
+            echo "IS_DEPLOYER=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "IS_DEPLOYER=false" >> "$GITHUB_OUTPUT"
+          fi
         env:
-          GITHUB_TOKEN: ${{ steps.setGitForKirokuAdmin.outputs.KIROKU_ADMIN_API_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.KIROKU_ADMIN_TOKEN }}
 
       - name: Reopen and comment on issue (not a team member)
         if: ${{ !fromJSON(steps.isDeployer.outputs.IS_DEPLOYER) }}
         uses: ./.github/actions/javascript/reopenIssueWithComment
         with:
-          GITHUB_TOKEN: ${{ steps.setGitForKirokuAdmin.outputs.KIROKU_ADMIN_API_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.KIROKU_ADMIN_TOKEN }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           COMMENT: |
             Sorry, only Kiroku deployers of can close deploy checklists.
@@ -47,14 +51,14 @@ jobs:
         id: checkDeployBlockers
         uses: ./.github/actions/javascript/checkDeployBlockers
         with:
-          GITHUB_TOKEN: ${{ steps.setGitForKirokuAdmin.outputs.KIROKU_ADMIN_API_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.KIROKU_ADMIN_TOKEN }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
 
       - name: Reopen and comment on issue (has blockers)
         if: ${{ fromJSON(steps.isDeployer.outputs.IS_DEPLOYER) && fromJSON(steps.checkDeployBlockers.outputs.HAS_DEPLOY_BLOCKERS || 'false') }}
         uses: ./.github/actions/javascript/reopenIssueWithComment
         with:
-          GITHUB_TOKEN: ${{ steps.setGitForKirokuAdmin.outputs.KIROKU_ADMIN_API_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.KIROKU_ADMIN_TOKEN }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           COMMENT: |
             This issue either has unchecked items or has not yet been marked with the `:shipit:` emoji of approval.
