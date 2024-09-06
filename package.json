@@ -50,7 +50,7 @@
     "@firebase/rules-unit-testing": "^3.0.1",
     "@kie/act-js": "^2.6.0",
     "@kie/mock-github": "^2.0.1",
-    "@react-native-async-storage/async-storage": "^1.23.1",
+    "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-clipboard/clipboard": "1.14.0",
     "@react-native-community/netinfo": "11.3.1",
     "@react-native-community/slider": "^4.5.2",
