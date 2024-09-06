@@ -1,45 +1,14 @@
 {
-  // "extends": "@react-native/typescript-config/tsconfig.json",
   "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "target": "esnext",
     "module": "commonjs",
-    // "module": "esnext",
-    "types": ["react-native", "jest"],
-    "lib": [
-      "DOM",
-      "es2019",
-      "es2020.bigint",
-      "es2020.date",
-      "es2020.number",
-      "es2020.promise",
-      "es2020.string",
-      "es2020.symbol.wellknown",
-      "es2021.promise",
-      "es2021.string",
-      "es2021.weakref",
-      "es2022.array",
-      "es2022.object",
-      "es2022.string",
-      "ES2021.Intl",
-      "ES2023.Array"
-    ],
-    "allowJs": true,
-    "checkJs": false,
-    "jsx": "react-native",
-    "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "incremental": true,
+    "types": ["react-native", "jest", "node"],
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "isolatedModules": true,
-    "moduleResolution": "node",
     "strict": true,
-    "noEmit": true,
-    "forceConsistentCasingInFileNames": true,
-    "composite": true,
-    "declaration": true,
-    "declarationMap": true,
+    "allowSyntheticDefaultImports": true,
+    "incremental": true,
     "baseUrl": ".",
     "paths": {
       "@assets/*": ["./assets/*"],
@@ -97,7 +66,5 @@
     "firebase.json",
     "**/alcohol-tracker*.json",
     "react-native.config.js"
-    // "workflow_tests"
-  ],
-  "extends": "expo/tsconfig.base"
+  ]
 }
