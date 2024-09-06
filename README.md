@@ -50,25 +50,6 @@
   pod install
   ```
 
-### Updating the application version
-
-- In the future, the application versioning will be rewritten into a github action. As of now, you can update the version (local, and for all platforms) using
-
-  ```bash
-  bun run bump:<SEMVER_LEVEL>
-  ```
-
-  where `<SEMVER_LEVEL>` can be one of the following:
-
-  - **BUILD**: Increments the build version.
-  - **PATCH**: Increments the patch version, where only small changes are introduced.
-  - **MINOR**: Increments the minor version, where no API breakiing changes are introduced.
-  - **MAJOR**: Increments the major version, where major, API breaking changes are introduced.
-
-- The command creates a new commit in the current branch with the updated version. You can then push to origin these changes as you see fit.
-- The command should always be ran **on the staging branch** and from the project root. No version updates should happen on the master branch, nor in smaller branches. This should help keep one source of truth. When merging to the staging branch, never accept changes from the incoming branch.
-- We use semantic versioning.
-
 ### Building for Android
 
 - Create a `local.properties` file in the `android` folder and put the following inside:
