@@ -1465,16 +1465,10 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-config (1.5.0):
-    - react-native-config/App (= 1.5.0)
-  - react-native-config/App (1.5.0):
-    - RCT-Folly
-    - RCTRequired
-    - RCTTypeSafety
-    - React
-    - React-Codegen
-    - React-RCTFabric
-    - ReactCommon/turbomodule/core
+  - react-native-config (1.5.1):
+    - react-native-config/App (= 1.5.1)
+  - react-native-config/App (1.5.1):
+    - React-Core
   - react-native-key-command (1.0.8):
     - DoubleConversion
     - glog
@@ -1996,7 +1990,7 @@ PODS:
     - React-logger (= 0.75.2)
     - React-perflogger (= 0.75.2)
     - React-utils (= 0.75.2)
-  - RNCAsyncStorage (1.24.0):
+  - RNCAsyncStorage (1.23.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2017,7 +2011,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNCClipboard (1.14.0):
+  - RNCClipboard (1.14.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2747,7 +2741,7 @@ SPEC CHECKSUMS:
   React-Mapbuffer: 1c08607305558666fd16678b85ef135e455d5c96
   React-microtasksnativemodule: f13f03163b6a5ec66665dfe80a0df4468bb766a6
   react-native-compressor: d86e6fb0c3f9e89ef4274083ba4f1666d529fe3d
-  react-native-config: 5ce986133b07fc258828b20b9506de0e683efc1c
+  react-native-config: 86038147314e2e6d10ea9972022aa171e6b1d4d8
   react-native-key-command: aae312752fcdfaa2240be9a015fc41ce54087546
   react-native-netinfo: bdb108d340cdb41875c9ced535977cac6d2ff321
   react-native-pager-view: 94195f1bf32e7f78359fa20057c97e632364a08b
@@ -2784,8 +2778,8 @@ SPEC CHECKSUMS:
   React-utils: 81a715d9c0a2a49047e77a86f3a2247408540deb
   ReactCodegen: 60973d382704c793c605b9be0fc7f31cb279442f
   ReactCommon: 6ef348087d250257c44c0204461c03f036650e9b
-  RNCAsyncStorage: 3ad840f7b17b45ca7ebbbb0e80948564a9513315
-  RNCClipboard: c84275d07e3f73ff296b17e6c27e9ccdc194a0bb
+  RNCAsyncStorage: a927b768986f83467b635cf6d7559e6edb46db7a
+  RNCClipboard: 71edae0b18baef15ce101087697f318c42efb7e7
   RNDeviceInfo: 42aadf1282ffa0a88dc38a504a7be145eb010dfa
   RNFBAnalytics: f76bfa164ac235b00505deb9fc1776634056898c
   RNFBApp: 729c0666395b1953198dc4a1ec6deb8fbe1c302e
