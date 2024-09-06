@@ -16,8 +16,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Enable after action comilation has been fixed
-      # - name: authorChecklist.js
-      #   uses: ./.github/actions/javascript/authorChecklist
-      #   with:
-      #     GITHUB_TOKEN: ${{ github.token }}
+      - name: authorChecklist.ts
+        uses: ./.github/actions/javascript/authorChecklist
+        with:
+          GITHUB_TOKEN: ${{ github.token }}
