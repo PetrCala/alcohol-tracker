@@ -1,66 +1,102 @@
-name: Create New Version
+name: Create new version
 
 on:
-  pull_request:
-    branches:
-      - None
-    types: [closed]
+  workflow_dispatch:
+    inputs:
+      SEMVER_LEVEL:
+        description: One of {BUILD, PATCH, MINOR, MAJOR}
+        required: true
+        default: BUILD
+        type: string
+
+  workflow_call:
+    inputs:
+      SEMVER_LEVEL:
+        description: One of {BUILD, PATCH, MINOR, MAJOR}
+        required: false
+        default: BUILD
+        type: string
+
+    outputs:
+      NEW_VERSION:
+        description: The new version string
+        value: ${{ jobs.createNewVersion.outputs.NEW_VERSION }}
+
+    secrets:
+      LARGE_SECRET_PASSPHRASE:
+        description: Passphrase used to decrypt GPG key
+        required: true
+      # SLACK_WEBHOOK:
+      #   description: Webhook used to comment in slack
+      #   required: true
+      KIROKU_ADMIN_COMMIT_TOKEN:
+        description: KirokuAdmin personal access token, used to workaround committing to protected branch
+        required: true
 
 jobs:
-  generate-new-version:
-    runs-on: macos-latest
-    # Run only if the PR is merged
-    if: github.event.pull_request.merged == true
+  validateActor:
+    runs-on: ubuntu-latest
     outputs:
-      NEW_VERSION: ${{ steps.bump-version.outputs.NEW_VERSION }}
+      HAS_WRITE_ACCESS: ${{ contains(fromJSON('["write", "admin"]'), steps.getUserPermissions.outputs.PERMISSION) }}
+    steps:
+      - name: Get user permissions
+        id: getUserPermissions
+        run: echo "PERMISSION=$(gh api /repos/${{ github.repository }}/collaborators/${{ github.actor }}/permission | jq -r '.permission')" >> "$GITHUB_OUTPUT"
+        env:
+          GITHUB_TOKEN: ${{ secrets.KIROKU_ADMIN_COMMIT_TOKEN }}
+
+  createNewVersion:
+    runs-on: macos-latest
+    needs: validateActor
+    if: ${{ fromJSON(needs.validateActor.outputs.HAS_WRITE_ACCESS) }}
+
+    outputs:
+      NEW_VERSION: ${{ steps.bumpVersion.outputs.NEW_VERSION }}
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Run turnstyle
+        uses: softprops/turnstyle@49108bdfa571e62371bd2c3094893c547ab3fc03
         with:
-          node-version: 20
-
-      - name: Determine Input Based on PR labels
-        id: pr-label-analysis
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const pr = context.payload.pull_request;
-            const labelMap = {
-                'v-build': 'BUILD',
-                'v-patch': 'PATCH',
-                'v-minor': 'MINOR',
-                'v-major': 'MAJOR'
-            };
-            // Find the first label that matches the keys in labelMap
-            const matchedLabel = pr.labels.find(label => labelMap[label.name]);
-            const inputValue = matchedLabel ? labelMap[matchedLabel.name] : 'BUILD';
-            return inputValue;
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Bump version
-        id: bump-version
-        if: steps.pr-label-analysis.outputs.result != ''
+          poll-interval-seconds: 10
         env:
-          SEMVER_LEVEL: ${{ steps.pr-label-analysis.outputs.result }}
-        run: node .github/actions/javascript/bumpVersion/bumpVersion.js
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Check out
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          # The KIROKU_ADMIN_COMMIT_TOKEN is a personal access token tied to KirokuAdmin
+          # This is a workaround to allow pushes to a protected branch
+          token: ${{ secrets.KIROKU_ADMIN_COMMIT_TOKEN }}
+
+      - name: Setup git for KirokuAdmin
+        uses: ./.github/actions/composite/setupGitForKirokuAdmin
+        id: setupGitForKirokuAdmin
+        with:
+          GPG_PASSPHRASE: ${{ secrets.LARGE_SECRET_PASSPHRASE }}
+
+      - name: Generate version
+        id: bumpVersion
+        uses: ./.github/actions/javascript/bumpVersion
+        with:
+          GITHUB_TOKEN: ${{ secrets.KIROKU_ADMIN_COMMIT_TOKEN }}
+          SEMVER_LEVEL: ${{ inputs.SEMVER_LEVEL }}
 
       - name: Commit new version
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "Version-O-Bot"
           git add \
             ./package.json \
             ./package-lock.json \
             ./android/app/build.gradle \
-            ./ios/kiroku/Info.plist \
-            ./ios/kirokuTests/Info.plist
-          git commit -m "Update version to ${{ steps.bump-version.outputs.NEW_VERSION }}"
+            ./ios/kioku/Info.plist \
+            ./ios/kiroku/Info.plist
+          git commit -m "Update version to ${{ steps.bumpVersion.outputs.NEW_VERSION }}"
 
-      - name: Update the branch
-        run: git push origin workflow-tests-2
+      - name: Update main branch
+        run: git push origin main
+
+      # - name: Announce failed workflow in Slack
+      #   if: ${{ failure() }}
+      #   uses: ./.github/actions/composite/announceFailedWorkflowInSlack
+      #   with:
+      #     SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
