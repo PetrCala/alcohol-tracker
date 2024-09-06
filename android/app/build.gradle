@@ -23,7 +23,7 @@ react {
     //   The list of variants to that are debuggable. For those we're going to
     //   skip the bundling of the JS bundle and the assets. By default is just 'debug'.
     //   If you add flavors like lite, prod, etc. you'll have to list your debuggableVariants.
-    debuggableVariants = ["developmentDebug",  "adhocDebug", "productionDebug"]
+    debuggableVariants = ["developmentDebug",  "productionDebug"]
     /* Bundling */
     //   A list containing the node command and its flags. Default is just 'node'.
     // nodeExecutableAndArgs = ["node"]
@@ -64,20 +64,11 @@ react {
 project.ext.envConfigFiles = [
     productionDebug: ".env.production",
     productionRelease: ".env.production",
-    adhocDebug: ".env.adhoc",
     adhocRelease: ".env.adhoc",
     developmentDebug: ".env.development",
     developmentRelease: ".env.development",
 ]
 
-
-/**
- * Set this to true to create four separate APKs instead of one,
- * one for each native architecture. This is useful if you don't
- * use App Bundles (https://developer.android.com/guide/app-bundle/)
- * and want to have separate APKs to upload to the Play Store.
- */
-def enableSeparateBuildPerCPUArchitecture = true
 
 /**
  * Set this to true to Run Proguard on Release builds to minify the Java bytecode.
@@ -97,17 +88,6 @@ def enableProguardInReleaseBuilds = true
  */
 def jscFlavor = 'org.webkit:android-jsc:+'
 
-/**
- * Private function to get the list of Native Architectures you want to build.
- * This reads the value from reactNativeArchitectures in your gradle.properties
- * file and works together with the --active-arch-only flag of react-native run-android.
- */
-def reactNativeArchitectures() {
-    def value = project.getProperties().get("reactNativeArchitectures")
-    return value ? value.split(",") : ["armeabi-v7a", "x86", "x86_64", "arm64-v8a"]
-}
-
-
 android {
     ndkVersion rootProject.ext.ndkVersion
 
@@ -122,7 +102,6 @@ android {
         multiDexEnabled rootProject.ext.multiDexEnabled
         versionCode 1000030501
         versionName "0.3.5-1"
-        vectorDrawables.useSupportLibrary = true
         // Supported language variants must be declared here to avoid from being removed during the compilation.
         // This also helps us to not include unnecessary language variants in the APK.
         resConfigs "en", "cs"
@@ -148,14 +127,6 @@ android {
         }
     }
 
-    splits {
-        abi {
-            reset()
-            enable enableSeparateBuildPerCPUArchitecture
-            universalApk false  // If true, also generate a universal APK
-            include (*reactNativeArchitectures())
-        }
-    }
     signingConfigs {
         release {
             storeFile file(MYAPP_UPLOAD_STORE_FILE)
@@ -194,21 +165,32 @@ android {
         }
     }
 
-   // Dynamically select the correct .env file
-    // applicationVariants.all { variant ->
-    //     def buildType = variant.buildType.name
-    //     def flavorName = variant.flavorName
-    //     // Construct the key for the env file based on the variant
-    //     def envFileKey = "${flavorName}${buildType.capitalize()}"
-    //     def envFile = project.ext.envConfigFiles[envFileKey]
-    //     if (envFile == null) {
-    //         throw GradleException("No .env configuration found for ${envFileKey}")
-    //     }
-    //     println("Using env file: $envFile")
-    //     // Here you set the path for the dotenv.gradle to find
-    //     project.ext.set("ENVFILE", envFile)
-    // }
+    // since we don't need variants adhocDebug and e2eDebug, we can force gradle to ignore them
+    variantFilter { variant ->
+        if (variant.name == "adhocDebug" || variant.name == "e2eDebug" || variant.name == "e2edeltaDebug") {
+            setIgnore(true)
+        }
+    }
 }
+
+
+afterEvaluate {
+    // As the App is building from source, we need to make sure hermesc is built before the JS bundle is created.
+    // Otherwise the release version of the app will fail to build due to missing hermesc.
+    def hermesCTask = gradle.includedBuild("react-native").task(":packages:react-native:ReactAndroid:hermes-engine:buildHermesC")
+
+    android.applicationVariants.configureEach { variant ->
+        if (variant.buildType.name == "release") {
+            def variantName = variant.name.capitalize()
+            def bundleTask = tasks.named("createBundle${variantName}JsAndAssets").getOrNull()
+
+            if (bundleTask != null) {
+                bundleTask.dependsOn(hermesCTask)
+            }
+        }
+    }
+}
+
 
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
