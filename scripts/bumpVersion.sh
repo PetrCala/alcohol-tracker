@@ -30,7 +30,7 @@ if [[ "$SEMVER_LEVEL" != "BUILD" && "$SEMVER_LEVEL" != "PATCH" && "$SEMVER_LEVEL
 fi
 
 # Execute the version bump command
-NEW_VERSION=$(node ./.github/libs/bumpVersion.js --semver $SEMVER_LEVEL)
+NEW_VERSION=$(ts-node ./.github/actions/javascript/bumpVersion.ts --semver $SEMVER_LEVEL)
 
 # Use the NEW_VERSION variable in subsequent commands
 info "The new version is $NEW_VERSION"
