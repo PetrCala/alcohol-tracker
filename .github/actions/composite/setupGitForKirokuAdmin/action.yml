@@ -6,6 +6,13 @@ inputs:
     description: 'Passphrase used to decrypt GPG key'
     required: true
 
+outputs:
+  # Do not try to use this for committing code. Use `secrets.KIROKU_ADMIN_COMMIT_TOKEN` instead
+  KIROKU_ADMIN_API_TOKEN:
+    description: Token to use for GitHub API interactions.
+    value: ${{ steps.generateToken.outputs.token }}
+
+
 runs:
   using: composite
   steps:

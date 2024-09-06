@@ -20,6 +20,7 @@ jobs:
 
       - name: Setup git for KirokuAdmin
         uses: ./.github/actions/composite/setupGitForKirokuAdmin
+        id: setupGitForKirokuAdmin
         with:
           GPG_PASSPHRASE: ${{ secrets.LARGE_SECRET_PASSPHRASE }}
 
