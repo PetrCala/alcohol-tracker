@@ -93,6 +93,10 @@ bun.lockb
 /ios/Pods/
 /vendor/bundle/
 
+# GitHub GPG Keys
+.github/workflows/KirokuAdmin-private-key.asc
+*.asc
+
 # Temporary files created by Metro to check the health of the file watcher
 .metro-health-check*
 

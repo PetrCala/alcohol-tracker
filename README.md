@@ -9,6 +9,11 @@
         </a>
     </h1>
 </div>
+<div align="center">
+    <h3>
+      Track your alcohol adventures using a React Native app.
+    </h3>
+</div>
 
 ### Download the app
 
@@ -18,11 +23,87 @@
     <img src="https://petrcala.github.io/Kiroku/assets/images/kiroku-qr-code-with-logo.png" width="128" height="128" alt="image">
 </div>
 
-#### Table of Contents
-
+- [Deploying](#deploying)
+  - [QA and deploy cycles](#qa-and-deploy-cycles)
+  - [Key GitHub workflows](#key-github-workflows)
+    - [preDeploy](#predeploy)
+    - [deploy](#deploy)
+    - [platformDeploy](#platformdeploy)
+    - [lockDeploys](#lockdeploys)
+    - [finishReleaseCycle](#finishreleasecycle)
+  - [Local production builds](#local-production-builds)
+      - [Local production build the iOS app](#local-production-build-the-ios-app)
+      - [Local production build the Android app](#local-production-build-the-android-app)
 - [For developers](#for-developers)
+    - [On the platform choice](#on-the-platform-choice)
+    - [Setting up the local environment](#setting-up-the-local-environment)
+    - [Building for Android](#building-for-android)
+    - [Fixing dependencies](#fixing-dependencies)
+    - [Formatting](#formatting)
+    - [Managing ruby versions](#managing-ruby-versions)
+  - [Platform-Specific File Extensions](#platform-specific-file-extensions)
+    - [Working with Firebase](#working-with-firebase)
+    - [Writing Firebase rules](#writing-firebase-rules)
+      - [Overview](#overview)
+      - [Strategy](#strategy)
+    - [Migrating the database](#migrating-the-database)
+    - [Database maintenance](#database-maintenance)
+      - [Scheduling maintenance](#scheduling-maintenance)
+      - [Cancelling maintenance](#cancelling-maintenance)
+      - [Understanding the maintenance mechanism](#understanding-the-maintenance-mechanism)
 
-## For developers
+
+----
+
+# Deploying
+## QA and deploy cycles
+We utilize a CI/CD deployment system built using [GitHub Actions](https://github.com/features/actions) to ensure that new code is automatically deployed to our users as fast as possible. As part of this process, all code is first deployed to our staging environments, where it undergoes quality assurance (QA) testing before it is deployed to production. Typically, pull requests are deployed to staging immediately after they are merged.
+
+Every time a PR is deployed to staging, it is added to a [special tracking issue](https://github.com/PetrCala/Kiroku/issues?q=is%3Aopen+is%3Aissue+label%3AStagingDeployCash) with the label `StagingDeployCash` (there will only ever be one open at a time). This tracking issue contains information about the new application version, a list of recently deployed pull requests, and any issues found on staging that are not present on production. Every weekday at 9am PST, our QA team adds the `🔐LockCashDeploys🔐` label to that tracking issue, and that signifies that they are starting their daily QA cycle. They will perform both regular regression testing and the QA steps listed for every pull request on the `StagingDeployCash` checklist.
+
+Once the `StagingDeployCash` is locked, we won't run any staging deploys until it is either unlocked, or we run a production deploy. If severe issues are found on staging that are not present on production, a new issue (or the PR that caused the issue) will be labeled with `DeployBlockerCash`, and added to the `StagingDeployCash` deploy checklist. If we want to resolve a deploy blocker by reverting a pull request or deploying a hotfix directly to the staging environment, we can merge a pull request with the `CP Staging` label.
+
+Once we have confirmed to the best of our ability that there are no deploy-blocking issues and that all our new features are working as expected on staging, we'll close the `StagingDeployCash`. That will automatically trigger a production deployment, open a new `StagingDeployCash` checklist, and deploy to staging any pull requests that were merged while the previous checklist was locked.
+
+##  Key GitHub workflows
+These are some of the most central [GitHub Workflows](https://github.com/PetrCala/Kiroku/tree/main/.github/workflows). There is more detailed information in the README [here](https://github.com/PetrCala/Kiroku/blob/main/.github/workflows/README.md).
+
+### preDeploy
+The [preDeploy workflow](https://github.com/PetrCala/Kiroku/blob/main/.github/workflows/preDeploy.yml) executes whenever a pull request is merged to `main`, and at a high level does the following:
+
+- If the `StagingDeployCash` is locked, comment on the merged PR that it will be deployed later.
+- Otherwise:
+  - Create a new version by triggering the [`createNewVersion` workflow](https://github.com/PetrCala/Kiroku/blob/main/.github/workflows/createNewVersion.yml)
+  - Update the `staging` branch from main.
+- Also, if the pull request has the `CP Staging` label, it will execute the [`cherryPick` workflow](https://github.com/PetrCala/Kiroku/blob/main/.github/workflows/cherryPick.yml) to deploy the pull request directly to staging, even if the `StagingDeployCash` is locked.
+
+### deploy
+The [`deploy` workflow](https://github.com/PetrCala/Kiroku/blob/main/.github/workflows/deploy.yml) is really quite simple. It runs when code is pushed to the `staging` or `production` branches, and:
+
+- If `staging` was updated, it creates a tag matching the new version, and pushes tags.
+- If `production` was updated, it creates a GitHub Release for the new version.
+
+### platformDeploy
+The [`platformDeploy` workflow](https://github.com/PetrCala/Kiroku/blob/main/.github/workflows/platformDeploy.yml) is what actually runs the deployment on both platforms (iOS, Android). It runs a staging deploy whenever a new tag is pushed to GitHub, and runs a production deploy whenever a new release is created.
+
+### lockDeploys
+The [`lockDeploys` workflow](https://github.com/PetrCala/Kiroku/blob/main/.github/workflows/lockDeploys.yml) executes when the `StagingDeployCash` is locked, and it waits for any currently running staging deploys to finish, then gives Applause the :green_circle: to begin QA by commenting in the `StagingDeployCash` checklist.
+
+### finishReleaseCycle
+The [`finishReleaseCycle` workflow](https://github.com/PetrCala/Kiroku/blob/main/.github/workflows/finishReleaseCycle.yml) executes when the `StagingDeployCash` is closed. It updates the `production` branch from `staging` (triggering a production deploy), deploys `main` to staging (with a new `PATCH` version), and creates a new `StagingDeployCash` deploy checklist.
+
+## Local production builds
+Sometimes it might be beneficial to generate a local production version instead of testing on production. Follow the steps below for each client:
+
+#### Local production build the iOS app
+In order to compile a production iOS build, run `npm run ios-build`, this will generate a `kiroku.ipa` in the root directory of this project.
+
+#### Local production build the Android app
+To build an APK to share run (e.g. via Slack), run `npm run android-build`, this will generate a new APK in the `android/app` folder.
+
+----
+
+# For developers
 
 - This section is intended for developers only and will later be moved into the Jekyll documentation.
 
@@ -49,25 +130,6 @@
   cd ios
   pod install
   ```
-
-### Updating the application version
-
-- In the future, the application versioning will be rewritten into a github action. As of now, you can update the version (local, and for all platforms) using
-
-  ```bash
-  bun run bump:<SEMVER_LEVEL>
-  ```
-
-  where `<SEMVER_LEVEL>` can be one of the following:
-
-  - **BUILD**: Increments the build version.
-  - **PATCH**: Increments the patch version, where only small changes are introduced.
-  - **MINOR**: Increments the minor version, where no API breakiing changes are introduced.
-  - **MAJOR**: Increments the major version, where major, API breaking changes are introduced.
-
-- The command creates a new commit in the current branch with the updated version. You can then push to origin these changes as you see fit.
-- The command should always be ran **on the staging branch** and from the project root. No version updates should happen on the master branch, nor in smaller branches. This should help keep one source of truth. When merging to the staging branch, never accept changes from the incoming branch.
-- We use semantic versioning.
 
 ### Building for Android
 
