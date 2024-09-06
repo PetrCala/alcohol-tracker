@@ -64,7 +64,7 @@ jobs:
       - name: Check out
         uses: actions/checkout@v4
         with:
-          ref: main
+          ref: master
           # The KIROKU_ADMIN_COMMIT_TOKEN is a personal access token tied to KirokuAdmin
           # This is a workaround to allow pushes to a protected branch
           token: ${{ secrets.KIROKU_ADMIN_COMMIT_TOKEN }}
@@ -92,8 +92,8 @@ jobs:
             ./ios/kiroku/Info.plist
           git commit -m "Update version to ${{ steps.bumpVersion.outputs.NEW_VERSION }}"
 
-      - name: Update main branch
-        run: git push origin main
+      - name: Update master branch
+        run: git push origin master
 
       # - name: Announce failed workflow in Slack
       #   if: ${{ failure() }}

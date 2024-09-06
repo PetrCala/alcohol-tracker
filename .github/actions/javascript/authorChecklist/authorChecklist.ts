@@ -5,7 +5,7 @@ import CONST from '../../../libs/CONST';
 import GithubUtils from '../../../libs/GithubUtils';
 import newComponentCategory from './categories/newComponentCategory';
 
-const pathToAuthorChecklist = `https://raw.githubusercontent.com/${CONST.GITHUB_OWNER}/${CONST.APP_REPO}/main/.github/PULL_REQUEST_TEMPLATE.md`;
+const pathToAuthorChecklist = `https://raw.githubusercontent.com/${CONST.GITHUB_OWNER}/${CONST.APP_REPO}/master/.github/PULL_REQUEST_TEMPLATE.md`;
 const checklistStartsWith = '### PR Author Checklist';
 const checklistEndsWith = '\r\n### Screenshots/Videos';
 

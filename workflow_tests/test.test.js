@@ -18,7 +18,7 @@ const FILES_TO_COPY_INTO_TEST_REPO = [
 xdescribe('test workflow test', () => {
   const githubToken = 'dummy_github_token';
   const actor = 'Dummy Actor';
-  const osbotifyActor = 'OSBotify';
+  const osbotifyActor = 'KirokuAdmin';
 
   beforeAll(async () => {
     // in case of the tests being interrupted without cleanup the mock repo directory may be left behind
@@ -75,7 +75,7 @@ xdescribe('test workflow test', () => {
       assertions.assertJestJobExecuted(result);
       assertions.assertShellTestsJobExecuted(result);
     });
-    describe('actor is OSBotify', () => {
+    describe('actor is KirokuAdmin', () => {
       it('does not run tests', async () => {
         const repoPath = mockGithub.repo.getPath('testTestWorkflowRepo') || '';
         const workflowPath = path.join(
@@ -138,7 +138,7 @@ xdescribe('test workflow test', () => {
       assertions.assertJestJobExecuted(result);
       assertions.assertShellTestsJobExecuted(result);
     });
-    describe('actor is OSBotify', () => {
+    describe('actor is KirokuAdmin', () => {
       it('does not run tests', async () => {
         const repoPath = mockGithub.repo.getPath('testTestWorkflowRepo') || '';
         const workflowPath = path.join(
@@ -199,7 +199,7 @@ xdescribe('test workflow test', () => {
       assertions.assertJestJobExecuted(result);
       assertions.assertShellTestsJobExecuted(result);
     });
-    describe('actor is OSBotify', () => {
+    describe('actor is KirokuAdmin', () => {
       it('runs all tests normally', async () => {
         const repoPath = mockGithub.repo.getPath('testTestWorkflowRepo') || '';
         const workflowPath = path.join(

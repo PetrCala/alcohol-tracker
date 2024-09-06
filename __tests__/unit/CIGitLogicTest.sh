@@ -25,10 +25,10 @@ source "$SCRIPTS_DIR/shellUtils.sh"
 #     git config --local user.email test@test.com
 # }
 
-# function setup_git_as_osbotify {
-#     info "Switching to OSBotify git user"
-#     git config --local user.name OSBotify
-#     git config --local user.email infra+osbotify@expensify.com
+# function setup_git_as_kirokuadmin {
+#     info "Switching to KirokuAdmin git user"
+#     git config --local user.name KirokuAdmin
+#     git config --local user.email infra+kirokuadmin@expensify.com
 # }
 
 # function print_version {
@@ -77,7 +77,7 @@ source "$SCRIPTS_DIR/shellUtils.sh"
 
 # function bump_version {
 #     info "Bumping version..."
-#     setup_git_as_osbotify
+#     setup_git_as_kirokuadmin
 #     git switch main
 #     npm --no-git-tag-version version "$(node "$bumpVersion" "$(print_version)" "$1")"
 #     git add package.json package-lock.json
@@ -144,7 +144,7 @@ source "$SCRIPTS_DIR/shellUtils.sh"
 #     VERSION_BUMP_COMMIT="$(git rev-parse HEAD)"
 
 #     checkout_repo
-#     setup_git_as_osbotify
+#     setup_git_as_kirokuadmin
 #     PREVIOUS_PATCH_VERSION="$(node "$getPreviousVersion" "$(print_version)" "$SEMVER_LEVEL_PATCH")"
 #     git fetch origin main staging --no-tags --shallow-exclude="$PREVIOUS_PATCH_VERSION"
 
@@ -153,7 +153,7 @@ source "$SCRIPTS_DIR/shellUtils.sh"
 #     git cherry-pick -x --mainline 1 "$VERSION_BUMP_COMMIT"
 #     setup_git_as_human
 #     git cherry-pick -x --mainline 1 --strategy=recursive -Xtheirs "$PR_MERGE_COMMIT"
-#     setup_git_as_osbotify
+#     setup_git_as_kirokuadmin
 
 #     git switch staging
 #     git merge cherry-pick-staging --no-ff -m "Merge pull request #$(($1 + 1)) from Expensify/cherry-pick-staging"
@@ -169,7 +169,7 @@ source "$SCRIPTS_DIR/shellUtils.sh"
 # function tag_staging {
 #     info "Tagging new version from the staging branch..."
 #     checkout_repo
-#     setup_git_as_osbotify
+#     setup_git_as_kirokuadmin
 #     if ! git rev-parse --verify staging 2>/dev/null; then
 #         git fetch origin staging --depth=1
 #     fi

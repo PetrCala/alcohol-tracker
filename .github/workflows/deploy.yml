@@ -1,0 +1,94 @@
+
+name: Deploy code to staging or production
+
+on:
+  push:
+    branches: [staging, production]
+
+jobs:
+  deployStaging:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/staging'
+    steps:
+      - name: Checkout staging branch
+        uses: actions/checkout@v4
+        with:
+          ref: staging
+          token: ${{ secrets.KIROKU_ADMIN_TOKEN }}
+
+      - name: Setup git for KirokuAdmin
+        uses: ./.github/actions/composite/setupGitForKirokuAdmin
+        id: setupGitForKirokuAdmin
+        with:
+          GPG_PASSPHRASE: ${{ secrets.LARGE_SECRET_PASSPHRASE }}
+
+      - name: Get current app version
+        run: echo "STAGING_VERSION=$(npm run print-version --silent)" >> "$GITHUB_ENV"
+
+      - name: 🚀 Create prerelease to trigger staging deploy 🚀
+        run: gh release create ${{ env.STAGING_VERSION }} --title ${{ env.STAGING_VERSION }} --generate-notes --prerelease --target staging
+        env:
+          GITHUB_TOKEN: ${{ steps.setupGitForKirokuAdmin.outputs.KIROKU_ADMIN_API_TOKEN }}
+
+      - name: Warn deployers if staging deploy failed
+        if: ${{ failure() }}
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          custom_payload: |
+            {
+              channel: '#deployer',
+              attachments: [{
+                color: "#DB4545",
+                pretext: `<!subteam^S4TJJ3PSL>`,
+                text: `💥 NewDot staging deploy failed. 💥`,
+              }]
+            }
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+
+  deployProduction:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/production'
+    steps:
+      - uses: actions/checkout@v4
+        name: Checkout
+        with:
+          ref: production
+          token: ${{ secrets.KIROKU_ADMIN_TOKEN }}
+
+      - name: Setup git for KirokuAdmin
+        uses: ./.github/actions/composite/setupGitForKirokuAdmin
+        id: setupGitForKirokuAdmin
+        with:
+          GPG_PASSPHRASE: ${{ secrets.LARGE_SECRET_PASSPHRASE }}
+
+      - name: Get current app version
+        run: echo "PRODUCTION_VERSION=$(npm run print-version --silent)" >> "$GITHUB_ENV"
+
+      - name: 🚀 Edit the release to be no longer a prerelease to deploy production 🚀
+        run: |
+          LATEST_RELEASE="$(gh release list --exclude-pre-releases --json tagName,isLatest --jq '.[] | select(.isLatest) | .tagName')"
+          gh api --method POST /repos/Expensify/App/releases/generate-notes -f "tag_name=${{ env.PRODUCTION_VERSION }}" -f "previous_tag_name=$LATEST_RELEASE" >> releaseNotes.md
+          gh release edit ${{ env.PRODUCTION_VERSION }} --prerelease=false --latest --notes-file releaseNotes.md
+        env:
+          GITHUB_TOKEN: ${{ steps.setupGitForKirokuAdmin.outputs.KIROKU_ADMIN_API_TOKEN }}
+
+      - name: Warn deployers if production deploy failed
+        if: ${{ failure() }}
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          custom_payload: |
+            {
+              channel: '#deployer',
+              attachments: [{
+                color: "#DB4545",
+                pretext: `<!subteam^S4TJJ3PSL>`,
+                text: `💥 NewDot production deploy failed. 💥`,
+              }]
+            }
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}

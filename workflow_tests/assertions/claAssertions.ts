@@ -66,7 +66,7 @@ function assertCLAJobExecuted(
         {key: 'remote-organization-name', value: 'PetrCala'},
         {key: 'remote-repository-name', value: 'Kiroku-CLA'},
         {key: 'lock-pullrequest-aftermerge', value: false},
-        {key: 'allowlist', value: 'OSBotify,bot*'},
+        {key: 'allowlist', value: 'KirokuAdmin,bot*'},
       ],
       [
         {key: 'GITHUB_TOKEN', value: '***'},
