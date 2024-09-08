@@ -30,6 +30,7 @@ import getNavigationModalCardStyle from './getNavigationModalCardStyles';
 import getSignInBgStyles from './getSignInBgStyles';
 import {compactContentContainerStyles} from './optionRowStyles';
 import getCardStyles from './cardStyles';
+import createTooltipStyleUtils from './generators/TooltipStyleUtils';
 import positioning from './positioning';
 import type {
   AllStyles,
@@ -1083,6 +1084,7 @@ const staticStyleUtils = {
 const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
   ...staticStyleUtils,
   ...createModalStyleUtils({theme, styles}),
+  ...createTooltipStyleUtils({theme, styles}),
   // ...createReportActionConextMenuStyleUtils({theme, styles}),
 
   getCompactContentContainerStyles: () => compactContentContainerStyles(styles),
