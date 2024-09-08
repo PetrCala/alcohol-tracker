@@ -65,7 +65,7 @@ export default <TOnyxKey extends OnyxKey>(
   onyxKeyName: TOnyxKey,
 ): CreateOnyxContext<TOnyxKey> => {
   const Context = createContext<OnyxValue<TOnyxKey>>(
-    null as OnyxValue<TOnyxKey>,
+    null as unknown as OnyxValue<TOnyxKey>,
   );
   function Provider(props: ProviderPropsWithOnyx<TOnyxKey>): ReactNode {
     return (
