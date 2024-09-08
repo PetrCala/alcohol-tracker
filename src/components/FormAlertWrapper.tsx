@@ -10,7 +10,7 @@ import FormHelpMessage from './FormHelpMessage';
 import {withNetwork} from './OnyxProvider';
 import RenderHTML from './RenderHTML';
 import Text from './Text';
-import TextLink from './TextLink';
+// import TextLink from './TextLink';
 
 type FormAlertWrapperProps = {
   /** Wrapped child components */
@@ -60,9 +60,9 @@ function FormAlertWrapper({
     content = (
       <Text style={[styles.formError, styles.mb0]}>
         {`${translate('common.please')} `}
-        <TextLink style={styles.label} onPress={onFixTheErrorsLinkPressed}>
-          {translate('common.fixTheErrors')}
-        </TextLink>
+        {/* <TextLink style={styles.label} onPress={onFixTheErrorsLinkPressed}> */}
+        {translate('common.fixTheErrors')}
+        {/* </TextLink> */}
         {` ${translate('common.inTheFormBeforeContinuing')}.`}
       </Text>
     );
