@@ -19,7 +19,7 @@ import type {ValueOf} from 'type-fest';
 // import type AddressSearch from '@components/AddressSearch';
 // import type AmountForm from '@components/AmountForm';
 // import type AmountPicker from '@components/AmountPicker';
-import type AmountTextInput from '@components/AmountTextInput';
+// import type AmountTextInput from '@components/AmountTextInput';
 // import type CheckboxWithLabel from '@components/CheckboxWithLabel';
 // import type CountrySelector from '@components/CountrySelector';
 // import type DatePicker from '@components/DatePicker';
@@ -44,9 +44,9 @@ import type {BaseForm} from '@src/types/form/Form';
  * TODO: Add remaining inputs here once these components are migrated to Typescript:
  * EmojiPickerButtonDropdown
  */
-type ValidInputs =
-  //   | typeof TextInput
-  typeof AmountTextInput;
+type ValidInputs = null;
+//   | typeof TextInput
+// typeof AmountTextInput;
 //   | typeof SingleChoiceQuestion
 //   | typeof CheckboxWithLabel
 //   | typeof Picker
