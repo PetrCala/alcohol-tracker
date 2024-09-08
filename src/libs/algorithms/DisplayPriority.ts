@@ -2,7 +2,8 @@ import type {
   UserPriority,
   UserPriorityList,
 } from '@src/types/various/Algorithms';
-import type {UserID, UserStatus, UserStatusList} from '@src/types/onyx';
+import type {UserStatus, UserStatusList} from '@src/types/onyx';
+import type {UserID} from '@src/types/onyx/OnyxCommon';
 import {sumAllDrinks} from '@libs/DataHandling';
 import {sessionIsExpired} from '@libs/DrinkingSessionUtils';
 import _, {get} from 'lodash';
