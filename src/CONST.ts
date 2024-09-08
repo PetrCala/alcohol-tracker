@@ -520,6 +520,18 @@ const CONST = {
     // UNLINK_LOGIN_FORM: 'UnlinkLoginForm',
     // RESEND_VALIDATE_CODE_FORM: 'ResendValidateCodeForm',
   },
+
+  INPUT_MODE: {
+    NONE: 'none',
+    TEXT: 'text',
+    DECIMAL: 'decimal',
+    NUMERIC: 'numeric',
+    TEL: 'tel',
+    SEARCH: 'search',
+    EMAIL: 'email',
+    URL: 'url',
+  },
+
   NETWORK: {
     METHOD: {
       POST: 'post',
