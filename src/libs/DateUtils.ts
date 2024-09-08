@@ -29,8 +29,8 @@ import {
 import {
   formatInTimeZone,
   format as tzFormat,
-  toZonedTime,
-  fromZonedTime,
+  utcToZonedTime,
+  zonedTimeToUtc,
 } from 'date-fns-tz';
 import {cs, enUS} from 'date-fns/locale';
 import throttle from 'lodash/throttle';
@@ -132,10 +132,10 @@ function getLocalDateFromDatetime(
 ): Date {
   setLocale(locale);
   if (!datetime) {
-    const res = toZonedTime(new Date(), currentSelectedTimezone);
+    const res = utcToZonedTime(new Date(), currentSelectedTimezone);
     if (Number.isNaN(res.getTime())) {
       Log.warn(
-        'DateUtils.getLocalDateFromDatetime: toZonedTime returned an invalid date. Returning current date.',
+        'DateUtils.getLocalDateFromDatetime: utcToZonedTime returned an invalid date. Returning current date.',
         {
           locale,
           datetime,
@@ -147,7 +147,7 @@ function getLocalDateFromDatetime(
     return res;
   }
   const parsedDatetime = new Date(`${datetime}Z`);
-  return toZonedTime(parsedDatetime, currentSelectedTimezone);
+  return utcToZonedTime(parsedDatetime, currentSelectedTimezone);
 }
 
 /**
@@ -159,7 +159,7 @@ function getLocalDateFromDatetime(
  */
 function isToday(date: Date, timeZone: SelectedTimezone): boolean {
   const currentDate = new Date();
-  const currentDateInTimeZone = toZonedTime(currentDate, timeZone);
+  const currentDateInTimeZone = utcToZonedTime(currentDate, timeZone);
   return isSameDay(date, currentDateInTimeZone);
 }
 
@@ -173,7 +173,7 @@ function isToday(date: Date, timeZone: SelectedTimezone): boolean {
 function isTomorrow(date: Date, timeZone: SelectedTimezone): boolean {
   const currentDate = new Date();
   const tomorrow = addDays(currentDate, 1); // Get the date for tomorrow in the current time zone
-  const tomorrowInTimeZone = toZonedTime(tomorrow, timeZone);
+  const tomorrowInTimeZone = utcToZonedTime(tomorrow, timeZone);
   return isSameDay(date, tomorrowInTimeZone);
 }
 
@@ -187,7 +187,7 @@ function isTomorrow(date: Date, timeZone: SelectedTimezone): boolean {
 function isYesterday(date: Date, timeZone: SelectedTimezone): boolean {
   const currentDate = new Date();
   const yesterday = subDays(currentDate, 1); // Get the date for yesterday in the current time zone
-  const yesterdayInTimeZone = toZonedTime(yesterday, timeZone);
+  const yesterdayInTimeZone = utcToZonedTime(yesterday, timeZone);
   return isSameDay(date, yesterdayInTimeZone);
 }
 
@@ -428,7 +428,7 @@ function subtractMillisecondsFromDateTime(
   dateTime: string,
   milliseconds: number,
 ): string {
-  const date = fromZonedTime(dateTime, 'UTC');
+  const date = zonedTimeToUtc(dateTime, 'UTC');
   const newTimestamp = subMilliseconds(date, milliseconds).valueOf();
 
   return getDBTime(newTimestamp);
@@ -794,7 +794,7 @@ function formatWithUTCTimeZone(
   const date = new Date(datetime);
 
   if (isValid(date)) {
-    return tzFormat(toZonedTime(date, 'UTC'), dateFormat);
+    return tzFormat(utcToZonedTime(date, 'UTC'), dateFormat);
   }
 
   return '';

@@ -1,8 +1,7 @@
 ﻿import type {FirebaseApp as FirebaseAppProps} from 'firebase/app';
 import {initializeApp, getApp, getApps} from 'firebase/app';
 import FirebaseConfig from './FirebaseConfig';
-import type {
-  Auth} from 'firebase/auth';
+import type {Auth} from 'firebase/auth';
 import {
   getAuth,
   getReactNativePersistence,

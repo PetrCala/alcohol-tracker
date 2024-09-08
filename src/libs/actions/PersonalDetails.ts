@@ -23,13 +23,9 @@ import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
 import ROUTES from '@src/ROUTES';
 import type {DateOfBirthForm} from '@src/types/form';
-import type {
-  PersonalDetails,
-  PersonalDetailsList,
-  UserID,
-} from '@src/types/onyx';
+import type {PersonalDetails, PersonalDetailsList} from '@src/types/onyx';
+import type {UserID} from '@src/types/onyx/OnyxCommon';
 import type {SelectedTimezone, Timezone} from '@src/types/onyx/PersonalDetails';
-import * as Session from './Session';
 
 let currentUserEmail = '';
 let currentUserID = '';
@@ -41,7 +37,7 @@ Onyx.connect({
   },
 });
 
-let allPersonalDetails: OnyxEntry<PersonalDetailsList> = null;
+let allPersonalDetails: OnyxEntry<PersonalDetailsList>;
 Onyx.connect({
   key: ONYXKEYS.PERSONAL_DETAILS_LIST,
   callback: val => (allPersonalDetails = val),

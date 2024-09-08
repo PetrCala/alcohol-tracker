@@ -14,7 +14,7 @@ import Navigation from '@libs/Navigation/Navigation';
 import type {AuthScreensParamList} from '@libs/Navigation/types';
 import NetworkConnection from '@libs/NetworkConnection';
 import * as Pusher from '@libs/Pusher/pusher';
-import PusherConnectionManager from '@libs/PusherConnectionManager';
+// import PusherConnectionManager from '@libs/PusherConnectionManager';
 import * as SessionUtils from '@libs/SessionUtils';
 // import NotFoundPage from '@pages/ErrorPage/NotFoundPage';
 import NotFoundScreen from '@screens/ErrorScreen/NotFoundScreen';

@@ -76,7 +76,7 @@ function SubscriptAvatar({
     <View style={[containerStyle, noMargin ? styles.mr0 : {}]}>
       <UserDetailsTooltip
         shouldRender={showTooltip}
-        userID={Number(mainAvatar?.id ?? -1)}
+        userID={mainAvatar?.id ?? ''}
         icon={mainAvatar}>
         <View>
           <Avatar
@@ -94,7 +94,7 @@ function SubscriptAvatar({
       {secondaryAvatar && (
         <UserDetailsTooltip
           shouldRender={showTooltip}
-          userID={Number(secondaryAvatar.id ?? -1)}
+          userID={secondaryAvatar.id ?? ''}
           icon={secondaryAvatar}>
           <View
             style={[

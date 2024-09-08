@@ -25,12 +25,12 @@ import type {ThemeStyles} from '..';
 import containerComposeStyles from './containerComposeStyles';
 import FontUtils from './FontUtils';
 import createModalStyleUtils from './generators/ModalStyleUtils';
-import createTooltipStyleUtils from './generators/TooltipStyleUtils';
 import getContextMenuItemStyles from './getContextMenuItemStyles';
 import getNavigationModalCardStyle from './getNavigationModalCardStyles';
 import getSignInBgStyles from './getSignInBgStyles';
 import {compactContentContainerStyles} from './optionRowStyles';
 import getCardStyles from './cardStyles';
+import createTooltipStyleUtils from './generators/TooltipStyleUtils';
 import positioning from './positioning';
 import type {
   AllStyles,
@@ -626,22 +626,6 @@ function getButtonStyleWithIcon(
 }
 
 /**
- * Takes fontStyle and fontWeight and returns the correct fontFamily
- */
-function getFontFamilyMonospace({fontStyle, fontWeight}: TextStyle): string {
-  const italic =
-    fontStyle === 'italic' && FontUtils.fontFamily.platform.MONOSPACE_ITALIC;
-  const bold =
-    fontWeight === 'bold' && FontUtils.fontFamily.platform.MONOSPACE_BOLD;
-  const italicBold =
-    italic && bold && FontUtils.fontFamily.platform.MONOSPACE_BOLD_ITALIC;
-
-  return (
-    italicBold || bold || italic || FontUtils.fontFamily.platform.MONOSPACE
-  );
-}
-
-/**
  * Returns the font size for the HTML code tag renderer.
  */
 function getCodeFontSize(isInsideH1: boolean) {
@@ -1069,7 +1053,6 @@ const staticStyleUtils = {
   getColorStyle,
   getDirectionStyle,
   getDropDownButtonHeight,
-  getFontFamilyMonospace,
   getCodeFontSize,
   getFontSizeStyle,
   getLineHeightStyle,

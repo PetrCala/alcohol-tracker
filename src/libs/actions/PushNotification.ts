@@ -8,7 +8,7 @@ let isUserOptedInToPushNotifications = false;
 Onyx.connect({
   key: ONYXKEYS.PUSH_NOTIFICATIONS_ENABLED,
   callback: value => {
-    if (value === null) {
+    if (value === undefined) {
       return;
     }
     isUserOptedInToPushNotifications = value;
@@ -37,7 +37,11 @@ function setPushNotificationOptInStatus(isOptingIn: boolean) {
         value: isUserOptedInToPushNotifications,
       },
     ];
-    API.write(commandName, {deviceID}, {optimisticData, failureData});
+    API.write(
+      commandName,
+      {deviceID: deviceID ?? null},
+      {optimisticData, failureData},
+    );
   });
 }
 

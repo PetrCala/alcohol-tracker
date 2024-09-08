@@ -36,24 +36,24 @@ import type {UserID} from '@src/types/onyx/OnyxCommon';
 
 type Locale = ValueOf<typeof CONST.LOCALES>;
 
-let currentUserID: UserID | null;
+let currentUserID: UserID | undefined;
 let currentUserEmail: string;
 Onyx.connect({
   key: ONYXKEYS.SESSION,
   callback: val => {
-    currentUserID = val?.userID ?? null;
+    currentUserID = val?.userID ?? undefined;
     currentUserEmail = val?.email ?? '';
   },
 });
 
-let isSidebarLoaded: boolean | null;
+let isSidebarLoaded: boolean | undefined;
 Onyx.connect({
   key: ONYXKEYS.IS_SIDEBAR_LOADED,
   callback: val => (isSidebarLoaded = val),
   initWithStoredValues: false,
 });
 
-let preferredLocale: string | null;
+let preferredLocale: string | undefined;
 Onyx.connect({
   key: ONYXKEYS.NVP_PREFERRED_LOCALE,
   callback: val => (preferredLocale = val),

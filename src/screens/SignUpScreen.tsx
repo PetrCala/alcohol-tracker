@@ -10,7 +10,7 @@ import {
   TextInput,
   Keyboard,
 } from 'react-native';
-import * as KirokuImages from '@components/Icon/KirokuImages';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {getAuth, updateProfile} from 'firebase/auth';
 import {signUpUserWithEmailAndPassword} from '@libs/auth/auth';
 import {useFirebase} from '@context/global/FirebaseContext';
@@ -300,7 +300,7 @@ function SignUpScreen() {
       <View style={styles.mainContainer}>
         <WarningMessage warningText={state.warning} dispatch={dispatch} />
         <View style={styles.logoContainer}>
-          <Image source={KirokuImages.Logo} style={styles.logo} />
+          <Image source={KirokuIcons.Logo} style={styles.logo} />
         </View>
         <View style={styles.inputContainer}>
           <View style={styles.inputItemContainer}>

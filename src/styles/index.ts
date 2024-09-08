@@ -26,7 +26,7 @@ import cursor from './utils/cursor';
 import display from './utils/display';
 import editedLabelStyles from './utils/editedLabelStyles';
 import flex from './utils/flex';
-// import FontUtils from './utils/FontUtils';
+import FontUtils from './utils/FontUtils';
 // import getPopOverVerticalOffset from './utils/getPopOverVerticalOffset';
 // import objectFit from './utils/objectFit';
 // import optionAlternateTextPlatformStyles from './utils/optionAlternateTextPlatformStyles';
@@ -38,7 +38,6 @@ import positioning from './utils/positioning';
 import sizing from './utils/sizing';
 import spacing from './utils/spacing';
 import addOutlineWidth from './utils/addOutlineWidth';
-import FontUtils from './utils/FontUtils';
 // import textDecorationLine from './utils/textDecorationLine';
 // import textUnderline from './utils/textUnderline';
 import userSelect from './utils/userSelect';
@@ -135,7 +134,7 @@ const picker = (theme: ThemeColors) =>
   ({
     backgroundColor: theme.transparent,
     color: theme.text,
-    fontFamily: FontUtils.fontFamily.platform.EXP_NEUE,
+    ...FontUtils.fontFamily.platform.EXP_NEUE,
     fontSize: variables.fontSizeNormal,
     lineHeight: variables.fontSizeNormalHeight,
     paddingBottom: 8,
@@ -151,7 +150,7 @@ const link = (theme: ThemeColors) =>
   ({
     color: theme.link,
     textDecorationColor: theme.link,
-    fontFamily: FontUtils.fontFamily.platform.EXP_NEUE,
+    ...FontUtils.fontFamily.platform.EXP_NEUE,
   }) satisfies ViewStyle & MixedStyleDeclaration;
 
 const baseCodeTagStyles = (theme: ThemeColors) =>
@@ -163,7 +162,7 @@ const baseCodeTagStyles = (theme: ThemeColors) =>
   }) satisfies ViewStyle & MixedStyleDeclaration;
 
 const headlineFont = {
-  fontFamily: FontUtils.fontFamily.platform.EXP_NEW_KANSAS_MEDIUM,
+  ...FontUtils.fontFamily.platform.EXP_NEW_KANSAS_MEDIUM,
   fontWeight: '500',
 } satisfies TextStyle;
 
@@ -183,7 +182,7 @@ const webViewStyles = (theme: ThemeColors) =>
     // component.
     tagStyles: {
       em: {
-        fontFamily: FontUtils.fontFamily.platform.EXP_NEUE,
+        ...FontUtils.fontFamily.platform.EXP_NEUE,
         fontStyle: 'italic',
       },
 
@@ -193,7 +192,7 @@ const webViewStyles = (theme: ThemeColors) =>
       },
 
       strong: {
-        fontFamily: FontUtils.fontFamily.platform.EXP_NEUE,
+        ...FontUtils.fontFamily.platform.EXP_NEUE,
         fontWeight: 'bold',
       },
 
@@ -228,7 +227,7 @@ const webViewStyles = (theme: ThemeColors) =>
         paddingBottom: 12,
         paddingRight: 8,
         paddingLeft: 8,
-        fontFamily: FontUtils.fontFamily.platform.MONOSPACE,
+        ...FontUtils.fontFamily.platform.MONOSPACE,
         marginTop: 0,
         marginBottom: 0,
       },
@@ -238,7 +237,7 @@ const webViewStyles = (theme: ThemeColors) =>
         ...(codeStyles.codeTextStyle as MixedStyleDeclaration),
         paddingLeft: 5,
         paddingRight: 5,
-        fontFamily: FontUtils.fontFamily.platform.MONOSPACE,
+        ...FontUtils.fontFamily.platform.MONOSPACE,
         // Font size is determined by getCodeFontSize function in `StyleUtils.js`
       },
 
@@ -271,7 +270,7 @@ const webViewStyles = (theme: ThemeColors) =>
     baseFontStyle: {
       color: theme.text,
       fontSize: variables.fontSizeNormal,
-      fontFamily: FontUtils.fontFamily.platform.EXP_NEUE,
+      ...FontUtils.fontFamily.platform.EXP_NEUE,
       flex: 1,
       lineHeight: variables.fontSizeNormalHeight,
       ...writingDirection.ltr,
@@ -307,8 +306,7 @@ const styles = (theme: ThemeColors) =>
     },
 
     accountSettingsSectionTitle: {
-      fontFamily: FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
-      fontWeight: FontUtils.fontWeight.bold,
+      ...FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
     },
 
     activeComponentBG: {
@@ -486,9 +484,8 @@ const styles = (theme: ThemeColors) =>
 
     buttonText: {
       color: theme.text,
-      fontFamily: FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
+      ...FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
       fontSize: variables.fontSizeNormal,
-      fontWeight: FontUtils.fontWeight.bold,
       textAlign: 'center',
       flexShrink: 1,
 
@@ -526,22 +523,19 @@ const styles = (theme: ThemeColors) =>
 
     buttonSmallText: {
       fontSize: variables.fontSizeSmall,
-      fontFamily: FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
-      fontWeight: FontUtils.fontWeight.bold,
+      ...FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
       textAlign: 'center',
     },
 
     buttonMediumText: {
       fontSize: variables.fontSizeLabel,
-      fontFamily: FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
-      fontWeight: FontUtils.fontWeight.bold,
+      ...FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
       textAlign: 'center',
     },
 
     buttonLargeText: {
       fontSize: variables.fontSizeNormal,
-      fontFamily: FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
-      fontWeight: FontUtils.fontWeight.bold,
+      ...FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
       textAlign: 'center',
     },
 
@@ -653,6 +647,17 @@ const styles = (theme: ThemeColors) =>
       maxWidth: 375,
     },
 
+    createMenuContainer: {
+      width: variables.sideBarWidth - 40,
+      paddingVertical: variables.componentBorderRadiusLarge,
+    },
+
+    createMenuHeaderText: {
+      ...FontUtils.fontFamily.platform.EXP_NEUE,
+      fontSize: variables.fontSizeLabel,
+      color: theme.textSupporting,
+    },
+
     defaultModalContainer: {
       backgroundColor: theme.componentBG,
       borderColor: theme.transparent,
@@ -762,6 +767,14 @@ const styles = (theme: ThemeColors) =>
       marginBottom: 4,
     },
 
+    fullScreen: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+    },
+
     fullScreenLoading: {
       backgroundColor: theme.componentBG,
       opacity: 0.8,
@@ -820,11 +833,16 @@ const styles = (theme: ThemeColors) =>
       backgroundColor: theme.success,
     },
 
+    invisiblePopover: {
+      position: 'absolute',
+      opacity: 0,
+      left: -9999,
+    },
+
     headerText: {
       color: theme.heading,
-      fontFamily: FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
+      ...FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
       fontSize: variables.fontSizeNormal,
-      fontWeight: FontUtils.fontWeight.bold,
     },
 
     hoveredComponentBG: {
@@ -1155,8 +1173,7 @@ const styles = (theme: ThemeColors) =>
     },
 
     sidebarLinkTextBold: {
-      fontFamily: FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
-      fontWeight: FontUtils.fontWeight.bold,
+      ...FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
       color: theme.heading,
     },
 
@@ -1189,13 +1206,13 @@ const styles = (theme: ThemeColors) =>
     },
 
     textLabelError: {
-      fontFamily: FontUtils.fontFamily.platform.EXP_NEUE,
+      ...FontUtils.fontFamily.platform.EXP_NEUE,
       fontSize: variables.fontSizeLabel,
       color: theme.textError,
     },
 
     furtherDetailsText: {
-      fontFamily: FontUtils.fontFamily.platform.EXP_NEUE,
+      ...FontUtils.fontFamily.platform.EXP_NEUE,
       fontSize: variables.fontSizeSmall,
       color: theme.textSupporting,
     },
@@ -1207,29 +1224,28 @@ const styles = (theme: ThemeColors) =>
     },
 
     textMicro: {
-      fontFamily: FontUtils.fontFamily.platform.EXP_NEUE,
+      ...FontUtils.fontFamily.platform.EXP_NEUE,
       fontSize: variables.fontSizeSmall,
       lineHeight: variables.lineHeightSmall,
     },
 
     textMicroBold: {
       color: theme.text,
-      fontWeight: FontUtils.fontWeight.bold,
-      fontFamily: FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
+      ...FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
       fontSize: variables.fontSizeSmall,
       lineHeight: variables.lineHeightSmall,
     },
 
     textMicroSupporting: {
       color: theme.textSupporting,
-      fontFamily: FontUtils.fontFamily.platform.EXP_NEUE,
+      ...FontUtils.fontFamily.platform.EXP_NEUE,
       fontSize: variables.fontSizeSmall,
       lineHeight: variables.lineHeightSmall,
     },
 
     textExtraSmallSupporting: {
       color: theme.textSupporting,
-      fontFamily: FontUtils.fontFamily.platform.EXP_NEUE,
+      ...FontUtils.fontFamily.platform.EXP_NEUE,
       fontSize: variables.fontSizeExtraSmall,
     },
 
@@ -1256,18 +1272,30 @@ const styles = (theme: ThemeColors) =>
 
     textHero: {
       fontSize: variables.fontSizeHero,
-      fontFamily: FontUtils.fontFamily.platform.EXP_NEW_KANSAS_MEDIUM,
+      ...FontUtils.fontFamily.platform.EXP_NEW_KANSAS_MEDIUM,
       lineHeight: variables.lineHeightHero,
     },
 
     textStrong: {
-      fontFamily: FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
-      fontWeight: FontUtils.fontWeight.bold,
+      ...FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
     },
 
     textDanger: {
       color: theme.danger,
     },
+
+    baseTextInput: {
+      ...FontUtils.fontFamily.platform.EXP_NEUE,
+      fontSize: variables.fontSizeNormal,
+      lineHeight: variables.lineHeightXLarge,
+      color: theme.text,
+      paddingTop: 23,
+      paddingBottom: 8,
+      paddingLeft: 0,
+      borderWidth: 0,
+    },
+
+    textInputDesktop: addOutlineWidth(theme, {}, 0),
 
     // Be extremely careful when editing the compose styles, as it is easy to introduce regressions.
     textInputCompose: addOutlineWidth(
@@ -1276,7 +1304,7 @@ const styles = (theme: ThemeColors) =>
         backgroundColor: theme.componentBG,
         borderColor: theme.border,
         color: theme.text,
-        fontFamily: FontUtils.fontFamily.platform.SYSTEM,
+        ...FontUtils.fontFamily.platform.SYSTEM,
         fontSize: variables.fontSizeNormal,
         borderWidth: 0,
         height: 'auto',
@@ -1381,23 +1409,21 @@ const styles = (theme: ThemeColors) =>
     },
 
     textLabelSupporting: {
-      fontFamily: FontUtils.fontFamily.platform.EXP_NEUE,
+      ...FontUtils.fontFamily.platform.EXP_NEUE,
       fontSize: variables.fontSizeLabel,
       color: theme.textSupporting,
     },
 
     textLabelSupportingEmptyValue: {
-      fontFamily: FontUtils.fontFamily.platform.EXP_NEUE,
+      ...FontUtils.fontFamily.platform.EXP_NEUE,
       fontSize: variables.fontSizeNormal,
-      fontWeight: FontUtils.fontWeight.normal,
       color: theme.textSupporting,
     },
 
     textLabelSupportingNormal: {
-      fontFamily: FontUtils.fontFamily.platform.EXP_NEUE,
+      ...FontUtils.fontFamily.platform.EXP_NEUE,
       fontSize: variables.fontSizeLabel,
       color: theme.textSupporting,
-      fontWeight: FontUtils.fontWeight.normal,
     },
 
     textWhite: {

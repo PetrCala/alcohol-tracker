@@ -45,7 +45,7 @@ function Text(
     color: color ?? theme.text,
     fontSize,
     textAlign,
-    fontFamily: FontUtils.fontFamily.platform[family],
+    ...FontUtils.fontFamily.platform[family],
     ...StyleSheet.flatten(style),
   };
 

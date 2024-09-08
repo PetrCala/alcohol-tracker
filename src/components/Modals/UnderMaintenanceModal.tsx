@@ -1,5 +1,5 @@
 import type {Config, Maintenance} from '@src/types/onyx';
-import * as KirokuImages from '@components/Icon/KirokuImages';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {View, StyleSheet, Text, Image, Dimensions} from 'react-native';
 
 type UnderMaintenanceProps = {
@@ -26,10 +26,7 @@ const UnderMaintenanceModal = ({config}: UnderMaintenanceProps) => {
 
   return (
     <View style={styles.container}>
-      <Image
-        style={styles.beaverImage}
-        source={KirokuImages.UnderMaintenance}
-      />
+      <Image style={styles.beaverImage} source={KirokuIcons.UnderMaintenance} />
       <Text style={styles.heading}>Under maintenance</Text>
       <Text style={[styles.text, styles.messageText]}>
         We are currently under maintenance for the following time frame:
