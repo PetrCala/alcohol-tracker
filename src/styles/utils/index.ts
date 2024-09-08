@@ -625,22 +625,6 @@ function getButtonStyleWithIcon(
 }
 
 /**
- * Takes fontStyle and fontWeight and returns the correct fontFamily
- */
-function getFontFamilyMonospace({fontStyle, fontWeight}: TextStyle): string {
-  const italic =
-    fontStyle === 'italic' && FontUtils.fontFamily.platform.MONOSPACE_ITALIC;
-  const bold =
-    fontWeight === 'bold' && FontUtils.fontFamily.platform.MONOSPACE_BOLD;
-  const italicBold =
-    italic && bold && FontUtils.fontFamily.platform.MONOSPACE_BOLD_ITALIC;
-
-  return (
-    italicBold || bold || italic || FontUtils.fontFamily.platform.MONOSPACE
-  );
-}
-
-/**
  * Returns the font size for the HTML code tag renderer.
  */
 function getCodeFontSize(isInsideH1: boolean) {
@@ -1068,7 +1052,6 @@ const staticStyleUtils = {
   getColorStyle,
   getDirectionStyle,
   getDropDownButtonHeight,
-  getFontFamilyMonospace,
   getCodeFontSize,
   getFontSizeStyle,
   getLineHeightStyle,
