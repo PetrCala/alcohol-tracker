@@ -33,7 +33,6 @@ import FormHelpMessage from './FormHelpMessage';
 import Hoverable from './Hoverable';
 import Icon from './Icon';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
-import * as KirokuImages from '@components/Icon/KirokuImages';
 import {MenuItemGroupContext} from './MenuItemGroup';
 import MultipleAvatars from './MultipleAvatars';
 import type {PressableRef} from './Pressable/GenericPressable/types';
@@ -287,7 +286,7 @@ function MenuItem(
     iconWidth,
     iconHeight,
     iconStyles,
-    fallbackIcon = KirokuImages.UserIcon,
+    fallbackIcon = KirokuIcons.UserIcon,
     shouldShowTitleIcon = false,
     titleIcon,
     shouldShowRightIcon = false,
@@ -774,7 +773,7 @@ function MenuItem(
                           isPressed={pressed}
                           icons={floatRightAvatars}
                           size={floatRightAvatarSize ?? fallbackAvatarSize}
-                          fallbackIcon={KirokuImages.UserIcon}
+                          fallbackIcon={KirokuIcons.UserIcon}
                           shouldStackHorizontally={shouldStackHorizontally}
                           isFocusMode
                         />

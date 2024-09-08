@@ -11,7 +11,7 @@ import type {AvatarSizeName} from '@styles/utils';
 import CONST from '@src/CONST';
 import type {AvatarType} from '@src/types/onyx/OnyxCommon';
 import Icon from './Icon';
-import * as KirokuImages from './Icon/KirokuImages';
+import * as KirokuIcons from './Icon/KirokuIcons';
 import Image from './Image';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
 
@@ -62,7 +62,7 @@ function Avatar({
   containerStyles,
   size = CONST.AVATAR_SIZE.DEFAULT,
   fill,
-  fallbackIcon = KirokuImages.UserIcon,
+  fallbackIcon = KirokuIcons.UserIcon,
   fallbackIconTestID = '',
   type = CONST.ICON_TYPE_AVATAR,
   name = '',
@@ -92,8 +92,8 @@ function Avatar({
   // We pass the color styles down to the SVG for the workspace and fallback avatar.
   const source = UserUtils.getAvatar(originalSource, userID);
   const useFallBackAvatar =
-    imageError || !source || source === KirokuImages.UserIcon;
-  const fallbackAvatar = fallbackIcon || KirokuImages.UserIcon;
+    imageError || !source || source === KirokuIcons.UserIcon;
+  const fallbackAvatar = fallbackIcon || KirokuIcons.UserIcon;
   const fallbackAvatarTestID = fallbackIconTestID || 'SvgFallbackAvatar Icon';
   const avatarSource = useFallBackAvatar ? fallbackAvatar : source;
 
