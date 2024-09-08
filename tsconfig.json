@@ -47,7 +47,8 @@
     "**/node_modules/*",
     "**/dist/*",
     ".github/actions/**/index.js",
-    "**/docs/*"
+    "**/docs/*",
+    "**/local/*"
   ],
   "include": [
     "__mocks__",
