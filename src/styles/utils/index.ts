@@ -25,7 +25,6 @@ import type {ThemeStyles} from '..';
 import containerComposeStyles from './containerComposeStyles';
 import FontUtils from './FontUtils';
 import createModalStyleUtils from './generators/ModalStyleUtils';
-import createTooltipStyleUtils from './generators/TooltipStyleUtils';
 import getContextMenuItemStyles from './getContextMenuItemStyles';
 import getNavigationModalCardStyle from './getNavigationModalCardStyles';
 import getSignInBgStyles from './getSignInBgStyles';
@@ -1101,7 +1100,6 @@ const staticStyleUtils = {
 const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
   ...staticStyleUtils,
   ...createModalStyleUtils({theme, styles}),
-  ...createTooltipStyleUtils({theme, styles}),
   // ...createReportActionConextMenuStyleUtils({theme, styles}),
 
   getCompactContentContainerStyles: () => compactContentContainerStyles(styles),
