@@ -69,7 +69,7 @@ const colorToTextColorMap: Record<CalendarColors, string> = {
 };
 
 type DayComponentProps = {
-  date: DateData;
+  date?: DateData;
   state: DayState;
   marking: DayMarking;
   theme: any;
