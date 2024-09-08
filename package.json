@@ -48,7 +48,6 @@
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@expo/metro-runtime": "~3.1.1",
     "@firebase/rules-unit-testing": "^3.0.1",
-    "@gorhom/portal": "^1.0.14",
     "@kie/act-js": "^2.6.0",
     "@kie/mock-github": "^2.0.1",
     "@react-native-async-storage/async-storage": "1.23.1",
