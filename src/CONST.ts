@@ -1,5 +1,7 @@
 // Source: https://github.com/Expensify/App/blob/main/src/CONST.ts
 
+import dateAdd from 'date-fns/add';
+import dateSubtract from 'date-fns/sub';
 import Config from 'react-native-config';
 import * as KeyCommand from 'react-native-key-command';
 
@@ -7,12 +9,13 @@ import * as KeyCommand from 'react-native-key-command';
 // Freezing the array ensures that it cannot be unintentionally modified.
 const EMPTY_ARRAY = Object.freeze([]);
 const EMPTY_OBJECT = Object.freeze({});
-
+const CURRENT_YEAR = new Date().getFullYear();
 const PLATFORM_OS_MACOS = 'Mac OS';
 const PLATFORM_IOS = 'iOS';
-
 const ANDROID_PACKAGE_NAME = 'com.alcohol_tracker';
 const GH_PAGES_URL = 'https://petrcala.github.io/Kiroku';
+const MAX_DATE = dateAdd(new Date(), {years: 1});
+const MIN_DATE = dateSubtract(new Date(), {years: 20});
 
 const keyModifierControl =
   KeyCommand?.constants?.keyModifierControl ?? 'keyModifierControl';
@@ -139,6 +142,15 @@ const CONST = {
   CACHE: {
     PROFILE_PICTURE_KEY: 'profilePicture',
   },
+
+  CALENDAR_PICKER: {
+    // Numbers were arbitrarily picked.
+    MIN_YEAR: CURRENT_YEAR - 100,
+    MAX_YEAR: CURRENT_YEAR + 100,
+    MAX_DATE,
+    MIN_DATE,
+  },
+
   COLOR_SCHEME: {
     LIGHT: 'light',
     DARK: 'dark',

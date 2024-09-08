@@ -278,9 +278,9 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
       dayComponent={({date, state, marking, theme}: DayComponentProps) => (
         <DayComponent
           date={date}
-          state={state as DayState}
-          marking={marking as any}
-          theme={theme as any}
+          state={state}
+          marking={marking}
+          theme={theme}
           onPress={onDayPress}
         />
       )}
