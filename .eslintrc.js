@@ -285,6 +285,9 @@ module.exports = {
           '@assets': './assets',
           '@components': './src/components',
           '@hooks': './src/hooks',
+          '@firebase/auth': [
+            './node_modules/@firebase/auth/dist/index.rn.d.ts',
+          ],
           // This is needed up here, if not @libs/actions would take the priority
           '@userActions': './src/libs/actions',
           '@libs': './src/libs',
