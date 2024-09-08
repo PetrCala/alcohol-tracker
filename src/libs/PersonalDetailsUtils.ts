@@ -7,8 +7,8 @@ import type {
   PersonalDetails,
   PersonalDetailsList,
   PrivatePersonalDetails,
-  UserID,
 } from '@src/types/onyx';
+import type {UserID} from '@src/types/onyx/OnyxCommon';
 import type {OnyxData} from '@src/types/onyx/Request';
 // import * as LocalePhoneNumber from './LocalePhoneNumber';
 import * as Localize from './Localize';
