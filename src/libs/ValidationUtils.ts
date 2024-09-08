@@ -16,15 +16,7 @@ import {URL_REGEX_WITH_REQUIRED_PROTOCOL} from '@libs/common/Url';
 import isDate from 'lodash/isDate';
 import isEmpty from 'lodash/isEmpty';
 import isObject from 'lodash/isObject';
-import type {OnyxCollection} from 'react-native-onyx';
-import type {
-  FormInputErrors,
-  FormOnyxKeys,
-  FormOnyxValues,
-  FormValue,
-} from '@components/Form/types';
 import CONST from '@src/CONST';
-import type {OnyxFormKey} from '@src/ONYXKEYS';
 // import * as CardUtils from './CardUtils';
 import DateUtils from './DateUtils';
 import type {MaybePhraseKey} from './Localize';
@@ -106,7 +98,8 @@ function isValidPastDate(date: string | Date): boolean {
  * @param value - field value
  */
 function isRequiredFulfilled(
-  value?: FormValue | number[] | string[] | Record<string, string>,
+  // value?: FormValue | number[] | string[] | Record<string, string>, // Should be this
+  value?: number[] | string[] | Record<string, string>,
 ): boolean {
   if (!value) {
     return false;
@@ -129,22 +122,23 @@ function isRequiredFulfilled(
  * @param values - all form values
  * @param requiredFields - required fields for particular form
  */
-function getFieldRequiredErrors<TFormID extends OnyxFormKey>(
-  values: FormOnyxValues<TFormID>,
-  requiredFields: Array<FormOnyxKeys<TFormID>>,
-): FormInputErrors<TFormID> {
-  const errors: FormInputErrors<TFormID> = {};
+// TODO re-enable this
+// function getFieldRequiredErrors<TFormID extends OnyxFormKey>(
+//   values: FormOnyxValues<TFormID>,
+//   requiredFields: Array<FormOnyxKeys<TFormID>>,
+// ): FormInputErrors<TFormID> {
+//   const errors: FormInputErrors<TFormID> = {};
 
-  requiredFields.forEach(fieldKey => {
-    if (isRequiredFulfilled(values[fieldKey] as FormValue)) {
-      return;
-    }
+//   requiredFields.forEach(fieldKey => {
+//     if (isRequiredFulfilled(values[fieldKey] as FormValue)) {
+//       return;
+//     }
 
-    errors[fieldKey] = 'common.error.fieldRequired';
-  });
+//     errors[fieldKey] = 'common.error.fieldRequired';
+//   });
 
-  return errors;
-}
+//   return errors;
+// }
 
 /**
  * Validates that this is a valid security code
@@ -256,51 +250,6 @@ function isValidWebsite(url: string): boolean {
     new RegExp(`^${URL_REGEX_WITH_REQUIRED_PROTOCOL}$`, 'i').test(url) &&
     isLowerCase
   );
-}
-
-function validateIdentity(
-  identity: Record<string, string>,
-): Record<string, boolean> {
-  const requiredFields = [
-    'firstName',
-    'lastName',
-    'street',
-    'city',
-    'zipCode',
-    'state',
-    'ssnLast4',
-    'dob',
-  ];
-  const errors: Record<string, boolean> = {};
-
-  // Check that all required fields are filled
-  requiredFields.forEach(fieldName => {
-    if (isRequiredFulfilled(identity[fieldName])) {
-      return;
-    }
-    errors[fieldName] = true;
-  });
-
-  //   if (!isValidAddress(identity.street)) {
-  //     errors.street = true;
-  //   }
-
-  //   if (!isValidZipCode(identity.zipCode)) {
-  //     errors.zipCode = true;
-  //   }
-
-  // dob field has multiple validations/errors, we are handling it temporarily like this.
-  if (!isValidDate(identity.dob) || !meetsMaximumAgeRequirement(identity.dob)) {
-    errors.dob = true;
-  } else if (!meetsMinimumAgeRequirement(identity.dob)) {
-    errors.dobAge = true;
-  }
-
-  //   if (!isValidSSNLastFour(identity.ssnLast4)) {
-  //     errors.ssnLast4 = true;
-  //   }
-
-  return errors;
 }
 
 // function isValidUSPhone(
@@ -496,9 +445,8 @@ export {
   //   isValidExpirationDate,
   isValidDebitCard,
   isRequiredFulfilled,
-  getFieldRequiredErrors,
+  // getFieldRequiredErrors,
   isValidWebsite,
-  validateIdentity,
   isValidTwoFactorCode,
   //   isNumericWithSpecialChars,
   isValidRoutingNumber,
