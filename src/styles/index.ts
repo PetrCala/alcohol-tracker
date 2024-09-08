@@ -647,6 +647,17 @@ const styles = (theme: ThemeColors) =>
       maxWidth: 375,
     },
 
+    createMenuContainer: {
+      width: variables.sideBarWidth - 40,
+      paddingVertical: variables.componentBorderRadiusLarge,
+    },
+
+    createMenuHeaderText: {
+      ...FontUtils.fontFamily.platform.EXP_NEUE,
+      fontSize: variables.fontSizeLabel,
+      color: theme.textSupporting,
+    },
+
     defaultModalContainer: {
       backgroundColor: theme.componentBG,
       borderColor: theme.transparent,
@@ -812,6 +823,12 @@ const styles = (theme: ThemeColors) =>
       borderRadius: variables.componentBorderRadiusRounded,
       height: '100%',
       backgroundColor: theme.success,
+    },
+
+    invisiblePopover: {
+      position: 'absolute',
+      opacity: 0,
+      left: -9999,
     },
 
     headerText: {

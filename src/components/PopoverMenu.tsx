@@ -9,7 +9,7 @@ import useWindowDimensions from '@hooks/useWindowDimensions';
 import CONST from '@src/CONST';
 import type {AnchorPosition} from '@src/styles';
 import type AnchorAlignment from '@src/types/utils/AnchorAlignment';
-import * as Expensicons from './Icon/Expensicons';
+import * as KirokuIcons from './Icon/KirokuIcons';
 import type {MenuItemProps} from './MenuItem';
 import MenuItem from './MenuItem';
 import PopoverWithMeasuredContent from './PopoverWithMeasuredContent';
@@ -140,7 +140,7 @@ function PopoverMenu({
     return (
       <MenuItem
         key={previouslySelectedItem.text}
-        icon={Expensicons.BackArrow}
+        icon={KirokuIcons.ArrowBack}
         iconFill="gray"
         title={previouslySelectedItem.text}
         shouldCheckActionAllowedOnPress={false}
