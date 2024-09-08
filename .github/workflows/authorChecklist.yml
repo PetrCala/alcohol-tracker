@@ -1,10 +1,14 @@
 name: PR Author Checklist
 
 on:
+  push:
+    branches:
+      - non-existent-branch
   # We use pull_request_target here so that the GitHub token will have read/write access and be able to modify the PR description if needed.
   # Warning: – when using the pull_request_target event, DO NOT checkout code from an untrusted branch: https://securitylab.github.com/research/github-actions-preventing-pwn-requests/
-  pull_request_target:
-    types: [opened, edited, reopened, synchronize]
+  # Re-enable this later
+  # pull_request_target:
+  #   types: [opened, edited, reopened, synchronize]
 
 jobs:
   # Note: PHP specifically looks for the name of this job, "checklist", so if the name of the job is changed,

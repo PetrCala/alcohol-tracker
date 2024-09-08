@@ -1,10 +1,14 @@
 name: CLA Assistant
 
 on:
-  issue_comment:
-    types: [created, edited]
-  pull_request_target:
-    types: [opened, closed, synchronize]
+  push:
+    branches:
+      - non-existent-branch
+  # Re-enable this later
+  # issue_comment:
+  #   types: [created, edited]
+  # pull_request_target:
+  #   types: [opened, closed, synchronize]
 
 # explicitly configure permissions - could be moved to the GITHUB_TOKEN configuration
 permissions:
