@@ -1,5 +1,3 @@
-import type {UserID} from './onyx/OnyxCommon';
-
 declare module '*.png' {
   import type {ImageSourcePropType} from 'react-native';
 
