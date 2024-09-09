@@ -558,10 +558,10 @@ class GithubUtils {
   }
 
   /**
-   * Get the most recent workflow run for the given New Expensify workflow.
+   * Get the most recent workflow run for the given Kiroku workflow.
    */
   static getLatestWorkflowRunID(workflow: string | number): Promise<number> {
-    console.log(`Fetching New Expensify workflow runs for ${workflow}...`);
+    console.log(`Fetching Kiroku workflow runs for ${workflow}...`);
     return this.octokit.actions
       .listWorkflowRuns({
         owner: CONST.GITHUB_OWNER,
@@ -572,7 +572,7 @@ class GithubUtils {
   }
 
   /**
-   * Generate the URL of an New Expensify pull request given the PR number.
+   * Generate the URL of an Kiroku pull request given the PR number.
    */
   static getPullRequestURLFromNumber(value: number): string {
     return `${CONST.APP_REPO_URL}/pull/${value}`;
