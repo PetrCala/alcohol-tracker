@@ -654,6 +654,11 @@ const styles = (theme: ThemeColors) =>
       height: variables.sectionIllustrationHeight,
     },
 
+    cardStyleNavigator: {
+      overflow: 'hidden',
+      height: '100%',
+    },
+
     cardSectionTitle: {
       fontSize: variables.fontSizeLarge,
       lineHeight: variables.lineHeightXLarge,

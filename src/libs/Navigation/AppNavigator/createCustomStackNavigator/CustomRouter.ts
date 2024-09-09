@@ -1,5 +1,7 @@
 import type {
+  CommonActions,
   RouterConfigOptions,
+  StackActionType,
   StackNavigationState,
 } from '@react-navigation/native';
 import {getPathFromState, StackRouter} from '@react-navigation/native';
@@ -14,6 +16,7 @@ import type {
   RootStackParamList,
   State,
 } from '@navigation/types';
+import {isCentralPaneName} from '@libs/NavigationUtils';
 import NAVIGATORS from '@src/NAVIGATORS';
 import SCREENS from '@src/SCREENS';
 import type {ResponsiveStackNavigatorRouterOptions} from './types';
@@ -60,14 +63,14 @@ function compareAndAdaptState(state: StackNavigationState<RootStackParamList>) {
 
   // This solutions is heuristics and will work for our cases. We may need to improve it in the future if we will have more cases to handle.
   if (topmostBottomTabRoute && !isNarrowLayout) {
-    const fullScreenRoute = state.routes.find(
-      route => route.name === NAVIGATORS.FULL_SCREEN_NAVIGATOR,
-    );
+    // const fullScreenRoute = state.routes.find(
+    //   route => route.name === NAVIGATORS.FULL_SCREEN_NAVIGATOR,
+    // );
 
-    // If there is fullScreenRoute we don't need to add anything.
-    if (fullScreenRoute) {
-      return;
-    }
+    // // If there is fullScreenRoute we don't need to add anything.
+    // if (fullScreenRoute) {
+    //   return;
+    // }
 
     // We will generate a template state and compare the current state with it.
     // If there is a difference in the screens that should be visible under the overlay, we will add the screen from templateState to the current state.
@@ -92,10 +95,10 @@ function compareAndAdaptState(state: StackNavigationState<RootStackParamList>) {
     }
 
     const topmostCentralPaneRoute = state.routes
-      .filter(route => route.name === NAVIGATORS.CENTRAL_PANE_NAVIGATOR)
+      .filter(route => isCentralPaneName(route.name))
       .at(-1);
-    const templateCentralPaneRoute = templateState.routes.find(
-      route => route.name === NAVIGATORS.CENTRAL_PANE_NAVIGATOR,
+    const templateCentralPaneRoute = templateState.routes.find(route =>
+      isCentralPaneName(route.name),
     );
 
     const topmostCentralPaneRouteExtracted = getTopmostCentralPaneRoute(state);
@@ -133,6 +136,31 @@ function compareAndAdaptState(state: StackNavigationState<RootStackParamList>) {
   }
 }
 
+// function shouldPreventReset(
+//   state: StackNavigationState<ParamListBase>,
+//   action: CommonActions.Action | StackActionType,
+// ) {
+//   if (action.type !== CONST.NAVIGATION_ACTIONS.RESET || !action?.payload) {
+//     return false;
+//   }
+//   const currentFocusedRoute = findFocusedRoute(state);
+//   const targetFocusedRoute = findFocusedRoute(action?.payload);
+
+//   // We want to prevent the user from navigating back to a non-onboarding screen if they are currently on an onboarding screen
+//   if (
+//     isOnboardingFlowName(currentFocusedRoute?.name) &&
+//     !isOnboardingFlowName(targetFocusedRoute?.name)
+//   ) {
+//     Welcome.setOnboardingErrorMessage(
+//       Localize.translateLocal('onboarding.purpose.errorBackButton'),
+//     );
+//     // We reset the URL as the browser sets it in a way that doesn't match the navigation state
+//     // eslint-disable-next-line no-restricted-globals
+//     history.replaceState({}, '', getPathFromState(state, linkingConfig.config));
+//     return true;
+//   }
+// }
+
 function CustomRouter(options: ResponsiveStackNavigatorRouterOptions) {
   const stackRouter = StackRouter(options);
 
@@ -149,6 +177,16 @@ function CustomRouter(options: ResponsiveStackNavigatorRouterOptions) {
         routeGetIdList,
       });
       return state;
+    },
+    getStateForAction(
+      state: StackNavigationState<ParamListBase>,
+      action: CommonActions.Action | StackActionType,
+      configOptions: RouterConfigOptions,
+    ) {
+      // if (shouldPreventReset(state, action)) {
+      //   return state;
+      // }
+      return stackRouter.getStateForAction(state, action, configOptions);
     },
   };
 }

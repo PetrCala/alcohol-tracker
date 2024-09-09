@@ -4,6 +4,7 @@ import type {RootStackParamList} from '@navigation/types';
 import config from './config';
 import customGetPathFromState from './customGetPathFromState';
 import getAdaptedStateFromPath from './getAdaptedStateFromPath';
+import subscribe from './subscribe';
 
 const linkingConfig: LinkingOptions<RootStackParamList> = {
   getStateFromPath: (...args) => {
@@ -13,6 +14,7 @@ const linkingConfig: LinkingOptions<RootStackParamList> = {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return adaptedState;
   },
+  subscribe,
   getPathFromState: customGetPathFromState,
   prefixes: ['app://-/'],
   config,

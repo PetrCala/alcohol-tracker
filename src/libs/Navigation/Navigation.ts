@@ -2,8 +2,6 @@ import {findFocusedRoute} from '@react-navigation/core';
 import type {
   EventArg,
   NavigationContainerEventMap,
-  ParamListBase,
-  RouteProp,
 } from '@react-navigation/native';
 import {
   CommonActions,
@@ -14,14 +12,21 @@ import CONST from '@src/CONST';
 import NAVIGATORS from '@src/NAVIGATORS';
 import type {Route} from '@src/ROUTES';
 import ROUTES from '@src/ROUTES';
-import type { Screen} from '@src/SCREENS';
-import SCREENS, {PROTECTED_SCREENS} from '@src/SCREENS';
-import type {EmptyObject} from '@src/types/utils/EmptyObject';
 import originalDismissModal from './dismissModal';
 import linkingConfig from './linkingConfig';
 import linkTo from './linkTo';
 import navigationRef from './navigationRef';
-import type {State, StateOrRoute, SwitchPolicyIDParams} from './types';
+import type {
+  NavigationStateRoute,
+  RootStackParamList,
+  State,
+  StateOrRoute,
+} from './types';
+import Log from '@libs/common/Log';
+import {isCentralPaneName} from '@libs/NavigationUtils';
+import getTopmostCentralPaneRoute from './getTopmostCentralPaneRoute';
+import getTopmostBottomTabRoute from './getTopmostBottomTabRoute';
+import getMatchingBottomTabRouteForState from './linkingConfig/getMatchingBottomTabRouteForState';
 
 let resolveNavigationIsReadyPromise: () => void;
 const navigationIsReadyPromise = new Promise<void>(resolve => {
@@ -35,8 +40,8 @@ let shouldPopAllStateOnUP = false;
 /**
  * Inform the navigation that next time user presses UP we should pop all the state back to LHN.
  */
-function setShouldPopAllStateOnUP() {
-  shouldPopAllStateOnUP = true;
+function setShouldPopAllStateOnUP(shouldPopAllStateFlag: boolean) {
+  shouldPopAllStateOnUP = shouldPopAllStateFlag;
 }
 
 function canNavigate(
@@ -172,6 +177,9 @@ function navigate(route: Route = ROUTES.HOME, type?: string) {
   if (!canNavigate('navigate', {route})) {
     // Store intended route if the navigator is not yet available,
     // we will try again after the NavigationContainer is ready
+    Log.hmmm(
+      `[Navigation] Container not yet ready, storing route as pending: ${route}`,
+    );
     pendingRoute = route;
     return;
   }
@@ -201,6 +209,7 @@ function goBack(
   }
 
   if (!navigationRef.current?.canGoBack()) {
+    Log.hmmm('[Navigation] Unable to go back');
     return;
   }
 
@@ -226,50 +235,114 @@ function goBack(
     return;
   }
 
-  const isCentralPaneFocused =
-    findFocusedRoute(navigationRef.current.getState())?.name ===
-    NAVIGATORS.CENTRAL_PANE_NAVIGATOR;
+  const isCentralPaneFocused = isCentralPaneName(
+    findFocusedRoute(navigationRef.current.getState())?.name,
+  );
   const distanceFromPathInRootNavigator = getDistanceFromPathInRootNavigator(
     fallbackRoute ?? '',
   );
 
-  // Allow CentralPane to use UP with fallback route if the path is not found in root navigator.
-  if (
-    isCentralPaneFocused &&
-    fallbackRoute &&
-    distanceFromPathInRootNavigator === -1
-  ) {
-    navigate(fallbackRoute, CONST.NAVIGATION.TYPE.FORCED_UP);
-    return;
+  if (isCentralPaneFocused && fallbackRoute) {
+    // Allow CentralPane to use UP with fallback route if the path is not found in root navigator.
+    if (distanceFromPathInRootNavigator === -1) {
+      navigate(fallbackRoute, CONST.NAVIGATION.TYPE.UP);
+      return;
+    }
+
+    // Add possibility to go back more than one screen in root navigator if that screen is on the stack.
+    if (distanceFromPathInRootNavigator > 0) {
+      navigationRef.current.dispatch(
+        StackActions.pop(distanceFromPathInRootNavigator),
+      );
+      return;
+    }
   }
 
-  // Add possibility to go back more than one screen in root navigator if that screen is on the stack.
-  if (
-    isCentralPaneFocused &&
-    fallbackRoute &&
-    distanceFromPathInRootNavigator > 0
-  ) {
-    navigationRef.current.dispatch(
-      StackActions.pop(distanceFromPathInRootNavigator),
+  // If the central pane is focused, it's possible that we navigated from other central pane with different matching bottom tab.
+  if (isCentralPaneFocused) {
+    const rootState = navigationRef.getRootState();
+    const stateAfterPop = {
+      routes: rootState.routes.slice(0, -1),
+    } as State<RootStackParamList>;
+    const topmostCentralPaneRouteAfterPop =
+      getTopmostCentralPaneRoute(stateAfterPop);
+
+    const topmostBottomTabRoute = getTopmostBottomTabRoute(
+      rootState as State<RootStackParamList>,
     );
-    return;
+    const matchingBottomTabRoute =
+      getMatchingBottomTabRouteForState(stateAfterPop);
+
+    // If the central pane is defined after the pop action, we need to check if it's synced with the bottom tab screen.
+    // If not, we need to pop to the bottom tab screen/screens to sync it with the new central pane.
+    if (
+      topmostCentralPaneRouteAfterPop &&
+      topmostBottomTabRoute?.name !== matchingBottomTabRoute.name
+    ) {
+      const bottomTabNavigator = rootState.routes.find(
+        (item: NavigationStateRoute) =>
+          item.name === NAVIGATORS.BOTTOM_TAB_NAVIGATOR,
+      )?.state;
+
+      if (bottomTabNavigator && bottomTabNavigator.index) {
+        const matchingIndex = bottomTabNavigator.routes.findLastIndex(
+          item => item.name === matchingBottomTabRoute.name,
+        );
+        const indexToPop =
+          matchingIndex !== -1
+            ? bottomTabNavigator.index - matchingIndex
+            : undefined;
+        navigationRef.current.dispatch({
+          ...StackActions.pop(indexToPop),
+          target: bottomTabNavigator?.key,
+        });
+      }
+    }
   }
 
   navigationRef.current.goBack();
 }
 
 /**
- * Close the full screen modal.
+ * Close the current screen and navigate to the route.
+ * If the current screen is the first screen in the navigator, we force using the fallback route to replace the current screen.
+ * It's useful in a case where we want to close an RHP and navigate to another RHP to prevent any blink effect.
  */
-function closeFullScreen() {
+function closeAndNavigate(route: Route) {
+  if (!navigationRef.current) {
+    return;
+  }
+
+  const isFirstRouteInNavigator = !getActiveRouteIndex(
+    navigationRef.current.getState(),
+  );
+  if (isFirstRouteInNavigator) {
+    goBack(route, true);
+    return;
+  }
+  goBack();
+  navigate(route);
+}
+
+/**
+ * Reset the navigation state to Home page
+ */
+function resetToHome() {
   const rootState = navigationRef.getRootState();
+  const bottomTabKey = rootState.routes.find(
+    (item: NavigationStateRoute) =>
+      item.name === NAVIGATORS.BOTTOM_TAB_NAVIGATOR,
+  )?.state?.key;
+  if (bottomTabKey) {
+    navigationRef.dispatch({...StackActions.popToTop(), target: bottomTabKey});
+  }
   navigationRef.dispatch({...StackActions.popToTop(), target: rootState.key});
 }
 
 /**
  * Update route params for the specified route.
  */
-function setParams(params: Record<string, unknown>, routeKey: string) {
+function setParams(params: Record<string, unknown>, routeKey = '') {
   navigationRef.current?.dispatch({
     ...CommonActions.setParams(params),
     source: routeKey,
@@ -306,6 +379,9 @@ function goToPendingRoute() {
   if (pendingRoute === null) {
     return;
   }
+  Log.hmmm(
+    `[Navigation] Container now ready, going to pending route: ${pendingRoute}`,
+  );
   navigate(pendingRoute);
   pendingRoute = null;
 }
@@ -319,27 +395,6 @@ function setIsNavigationReady() {
   resolveNavigationIsReadyPromise();
 }
 
-function getLastRouteName(): string | undefined {
-  const rootState = navigationRef.getRootState();
-  return rootState.routes.at(-1)?.path;
-}
-
-/**
- * Attempts to get the name of the last screen in the navigation stack.
- * If the last screen is a modal, it will attempt to get the name of the last screen in the modal stack.
- * If the last screen is a modal and the modal stack is empty, it will attempt to get the name of the screen before the modal.
- *
- * @returns The name of the last screen in the navigation stack.
- */
-function getLastScreenName(getOneDeepInstead = false): Screen {
-  const rootState = navigationRef.getRootState();
-  const route = rootState.routes.at(-1);
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  const idx = getOneDeepInstead ? -2 : -1;
-  const screenParams = route?.state?.routes.at(idx)?.params as EmptyObject;
-  return (screenParams?.screen as Screen) ?? SCREENS.HOME;
-}
-
 /**
  * Checks if the navigation state contains routes that are protected (over the auth wall).
  *
@@ -351,7 +406,8 @@ function navContainsProtectedRoutes(state: State | undefined): boolean {
   }
 
   // If one protected screen is in the routeNames then other screens are there as well.
-  return state?.routeNames.includes(PROTECTED_SCREENS.HOME);
+  return false;
+  // return state?.routeNames.includes(PROTECTED_SCREENS.CONCIERGE);
 }
 
 /**
@@ -376,8 +432,7 @@ function waitForProtectedRoutes() {
 
       const unsubscribe = navigationRef.current?.addListener(
         'state',
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ({data}: any) => {
+        ({data}) => {
           const state = data?.state;
           if (navContainsProtectedRoutes(state)) {
             unsubscribe?.();
@@ -389,6 +444,12 @@ function waitForProtectedRoutes() {
   });
 }
 
+function getTopMostCentralPaneRouteFromRootState() {
+  return getTopmostCentralPaneRoute(
+    navigationRef.getRootState() as State<RootStackParamList>,
+  );
+}
+
 export default {
   setShouldPopAllStateOnUP,
   navigate,
@@ -397,14 +458,14 @@ export default {
   isActiveRoute,
   getActiveRoute,
   getActiveRouteWithoutParams,
+  closeAndNavigate,
   goBack,
   isNavigationReady,
   setIsNavigationReady,
-  getLastRouteName,
-  getLastScreenName,
   getRouteNameFromStateEvent,
   waitForProtectedRoutes,
-  closeFullScreen,
+  resetToHome,
+  getTopMostCentralPaneRouteFromRootState,
 };
 
 export {navigationRef};
