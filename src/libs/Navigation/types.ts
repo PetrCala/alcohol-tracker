@@ -62,6 +62,7 @@ type State<TParamList extends ParamListBase = ParamListBase> =
   | PartialState<NavigationState<TParamList>>;
 
 type CentralPaneNavigatorParamList = {
+  [SCREENS.HOME]: undefined;
   //   [SCREENS.REPORT]: {
   //     reportActionID: string;
   //     reportID: string;
