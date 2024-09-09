@@ -363,7 +363,8 @@ function getRouteNameFromStateEvent(
   if (!event.data.state) {
     return;
   }
-  const currentRouteName = event.data.state.routes.at(-1)?.name;
+  const currentRouteName =
+    event.data.state.routes[event.data.state.routes.length - 1]?.name;
 
   // Check to make sure we have a route name
   if (currentRouteName) {

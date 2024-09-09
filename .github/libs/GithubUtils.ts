@@ -630,7 +630,10 @@ class GithubUtils {
       per_page: 100,
     })
       .then(events => events.filter(event => event.event === 'closed'))
-      .then(closedEvents => closedEvents.at(-1)?.actor?.login ?? '');
+      .then(
+        closedEvents =>
+          closedEvents[closedEvents.length - 1]?.actor?.login ?? '',
+      );
   }
 
   /**

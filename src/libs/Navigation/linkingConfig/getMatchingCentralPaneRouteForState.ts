@@ -18,15 +18,16 @@ const getTopMostReportIDFromRHP = (state: State): string => {
     return '';
   }
 
-  const topmostRightPane = state.routes
-    .filter(route => route.name === NAVIGATORS.RIGHT_MODAL_NAVIGATOR)
-    .at(-1);
+  const filteredRightPanes = state.routes.filter(
+    route => route.name === NAVIGATORS.RIGHT_MODAL_NAVIGATOR,
+  );
+  const topmostRightPane = filteredRightPanes[filteredRightPanes.length - 1];
 
   if (topmostRightPane?.state) {
     return getTopMostReportIDFromRHP(topmostRightPane.state);
   }
 
-  const topmostRoute = state.routes.at(-1);
+  const topmostRoute = state.routes[state.routes.length - 1];
 
   if (topmostRoute?.state) {
     return getTopMostReportIDFromRHP(topmostRoute.state);
