@@ -94,9 +94,10 @@ function compareAndAdaptState(state: StackNavigationState<RootStackParamList>) {
       return;
     }
 
-    const topmostCentralPaneRoute = state.routes
-      .filter(route => isCentralPaneName(route.name))
-      .at(-1);
+    const filteredRoutes = state.routes.filter(route =>
+      isCentralPaneName(route.name),
+    );
+    const topmostCentralPaneRoute = filteredRoutes[filteredRoutes.length - 1];
     const templateCentralPaneRoute = templateState.routes.find(route =>
       isCentralPaneName(route.name),
     );
