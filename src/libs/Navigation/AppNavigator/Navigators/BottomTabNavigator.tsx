@@ -3,10 +3,16 @@ import type {StackNavigationOptions} from '@react-navigation/stack';
 import React from 'react';
 import createCustomBottomTabNavigator from '@navigation/AppNavigator/createCustomBottomTabNavigator';
 import getTopmostCentralPaneRoute from '@navigation/getTopmostCentralPaneRoute';
-import type {BottomTabNavigatorParamList} from '@navigation/types';
+import type {
+  BottomTabNavigatorParamList,
+  CentralPaneName,
+  NavigationPartialRoute,
+  RootStackParamList,
+} from '@navigation/types';
 import SCREENS from '@src/SCREENS';
 import ActiveRouteContext from './ActiveRouteContext';
 import HomeScreen from '@screens/HomeScreen';
+import ActiveCentralPaneRouteContext from './ActiveRouteContext';
 
 // const loadWorkspaceInitialPage = () =>
 //   require('../../../../pages/workspace/WorkspaceInitialPage')
@@ -20,16 +26,18 @@ const screenOptions: StackNavigationOptions = {
 };
 
 function BottomTabNavigator() {
-  const activeRoute = useNavigationState(getTopmostCentralPaneRoute);
+  const activeRoute = useNavigationState<
+    RootStackParamList,
+    NavigationPartialRoute<CentralPaneName> | undefined
+  >(getTopmostCentralPaneRoute);
   return (
-    <ActiveRouteContext.Provider value={activeRoute?.name ?? ''}>
+    <ActiveCentralPaneRouteContext.Provider value={activeRoute}>
       <Tab.Navigator screenOptions={screenOptions}>
         <Tab.Screen name={SCREENS.HOME} component={HomeScreen} />
       </Tab.Navigator>
-    </ActiveRouteContext.Provider>
+    </ActiveCentralPaneRouteContext.Provider>
   );
 }
-
 BottomTabNavigator.displayName = 'BottomTabNavigator';
 
 export default BottomTabNavigator;

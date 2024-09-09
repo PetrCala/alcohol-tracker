@@ -15,6 +15,7 @@ import type {
   DrinkingSessionNavigatorParamList,
   MainMenuNavigatorParamList,
 } from '@navigation/types';
+import useModalScreenOptions from './useModalScreenOptions';
 
 type Screens = Partial<Record<Screen, () => React.ComponentType>>;
 
@@ -31,20 +32,10 @@ function createModalStackNavigator<TStackParams extends ParamListBase>(
   const ModalStackNavigator = createStackNavigator<TStackParams>();
 
   function ModalStack() {
-    const styles = useThemeStyles();
-
-    const defaultSubRouteOptions = useMemo(
-      (): StackNavigationOptions => ({
-        cardStyle: styles.navigationScreenCardStyle,
-        headerShown: false,
-        cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-      }),
-      [styles],
-    );
+    const screenOptions = useModalScreenOptions(getScreenOptions);
 
     return (
-      <ModalStackNavigator.Navigator
-        screenOptions={getScreenOptions?.(styles) ?? defaultSubRouteOptions}>
+      <ModalStackNavigator.Navigator screenOptions={screenOptions}>
         {Object.keys(screens as Required<Screens>).map(name => (
           <ModalStackNavigator.Screen
             key={name}

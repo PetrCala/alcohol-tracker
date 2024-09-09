@@ -4,6 +4,7 @@ import dateAdd from 'date-fns/add';
 import dateSubtract from 'date-fns/sub';
 import Config from 'react-native-config';
 import * as KeyCommand from 'react-native-key-command';
+import SCREENS from './SCREENS';
 
 // Creating a default array and object this way because objects ({}) and arrays ([]) are not stable types.
 // Freezing the array ensures that it cannot be unintentionally modified.
@@ -253,6 +254,13 @@ const CONST = {
   EVENTS: {
     SCROLLING: 'scrolling',
   },
+
+  EXCLUDE_FROM_LAST_VISITED_PATH: [
+    SCREENS.NOT_FOUND,
+    // SCREENS.SAML_SIGN_IN,
+    // SCREENS.VALIDATE_LOGIN,
+  ] as string[],
+
   FIREBASE_STORAGE_URL: 'https://firebasestorage.googleapis.com',
   FRIEND_REQUEST_STATUS: {
     SELF: 'self',
@@ -542,6 +550,12 @@ const CONST = {
     SEARCH: 'search',
     EMAIL: 'email',
     URL: 'url',
+  },
+
+  SESSION_STORAGE_KEYS: {
+    INITIAL_URL: 'INITIAL_URL',
+    ACTIVE_WORKSPACE_ID: 'ACTIVE_WORKSPACE_ID',
+    RETRY_LAZY_REFRESHED: 'RETRY_LAZY_REFRESHED',
   },
 
   NETWORK: {

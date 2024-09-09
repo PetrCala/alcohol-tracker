@@ -24,6 +24,7 @@ function dismissModal(
     case NAVIGATORS.FULL_SCREEN_NAVIGATOR:
     case NAVIGATORS.LEFT_MODAL_NAVIGATOR:
     case NAVIGATORS.RIGHT_MODAL_NAVIGATOR:
+    // case NAVIGATORS.ONBOARDING_MODAL_NAVIGATOR:
     case SCREENS.NOT_FOUND:
     default: {
       console.log(
