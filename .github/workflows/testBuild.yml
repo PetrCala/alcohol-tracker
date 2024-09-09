@@ -122,7 +122,7 @@ jobs:
     if: ${{ fromJSON(needs.validateActor.outputs.READY_TO_BUILD) }}
     env:
       PULL_REQUEST_NUMBER: ${{ github.event.number || github.event.inputs.PULL_REQUEST_NUMBER }}
-      DEVELOPER_DIR: /Applications/Xcode_15.0.1.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_15.2.0.app/Contents/Developer
     runs-on: macos-13
     steps:
       - name: Checkout
@@ -139,7 +139,7 @@ jobs:
         uses: ./.github/actions/composite/setupNode
 
       - name: Setup XCode
-        run: sudo xcode-select -switch /Applications/Xcode_15.0.1.app
+        run: sudo xcode-select -switch /Applications/Xcode_15.2.0.app
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@a05e47355e80e57b9a67566a813648fa67d92011
@@ -171,6 +171,9 @@ jobs:
         run: |
           echo "export NODE_BINARY=$(which node)" >> "$HOME/.bash_profile"
           source "$HOME/.bash_profile"
+
+      # - name: Reset iOS environment
+      #   run: npm run ios:pod:reset
 
       - name: Decrypt provisioning profile
         run: cd ios && gpg --quiet --batch --yes --decrypt --passphrase="$LARGE_SECRET_PASSPHRASE" --output Kiroku_AdHoc.mobileprovision Kiroku_AdHoc.mobileprovision.gpg
