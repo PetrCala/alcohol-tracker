@@ -726,9 +726,10 @@ function cleanupSession() {
   // NetworkConnection.clearReconnectionCallbacks();
   // SessionUtils.resetDidUserLogInDuringSession();
   resetHomeRouteParams();
-  clearCache().then(() => {
-    Log.info('Cleared all cache data', true, {}, true);
-  });
+  // TODO enable this
+  // clearCache().then(() => {
+  //   Log.info('Cleared all cache data', true, {}, true);
+  // });
   Timing.clearData();
 }
 
