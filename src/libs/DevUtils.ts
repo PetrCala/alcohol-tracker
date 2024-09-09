@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as readline from 'readline';
 
-import {DatabaseProps} from '@src/types/database';
+import type {DatabaseProps} from '@src/types/onyx';
 
 /**
  * Loads JSON data from a file.
@@ -87,7 +87,7 @@ function findValuesByKey(node: any, keyToFind: string): any[] {
  * @throws Error if no value is found for the specified key or if more than one value is found.
  */
 function findSingleValueByKey(node: any, keyToFind: string): any {
-  let foundValues: any[] = [];
+  const foundValues: any[] = [];
 
   const searchNode = (currentNode: any) => {
     if (currentNode instanceof Array) {
@@ -151,35 +151,12 @@ async function askForValue(question: string): Promise<string> {
     });
   });
 }
-/**
- * Validates and parses the input string to a timestamp.
- *
- * @param input - The input string representing a date and time in the format "YYYY-MM-DD HH:MM".
- * @returns The timestamp value of the input string.
- * @throws Error if the input string is not in the correct format or if it represents an invalid date.
- */
-function validateAndParseInputToTimestamp(input: string): number {
-  const regex = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/;
-  if (!regex.test(input)) {
-    throw new Error(
-      'Invalid date format. Please use the format YYYY-MM-DD HH:MM.',
-    );
-  }
-
-  const date = new Date(input);
-  if (isNaN(date.getTime())) {
-    throw new Error('Invalid date. Please provide a valid date and time.');
-  }
-
-  return date.getTime();
-}
 
 export {
   loadJsonData,
   saveJsonData,
   findValuesByKey,
   findSingleValueByKey,
-  validateAndParseInputToTimestamp,
   confirmExecution,
   askForValue,
 };

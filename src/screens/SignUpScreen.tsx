@@ -10,7 +10,7 @@ import {
   TextInput,
   Keyboard,
 } from 'react-native';
-import * as KirokuImages from '@components/Icon/KirokuImages';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {getAuth, updateProfile} from 'firebase/auth';
 import {signUpUserWithEmailAndPassword} from '@libs/auth/auth';
 import {useFirebase} from '@context/global/FirebaseContext';
@@ -26,7 +26,7 @@ import {
 import {deleteUserData, pushNewUserInfo} from '@database/users';
 import {handleErrors} from '@libs/ErrorHandling';
 import WarningMessage from '@components/Info/WarningMessage';
-import type {Profile} from '@src/types/database';
+import type {Profile} from '@src/types/onyx';
 import DBPATHS from '@database/DBPATHS';
 import ValidityIndicatorIcon from '@components/ValidityIndicatorIcon';
 import Navigation from '@navigation/Navigation';
@@ -117,11 +117,11 @@ function SignUpScreen() {
   // const theme = useTheme();
 
   async function rollbackChanges(
-    newUserId: string,
+    newUserID: string,
     userNickname: string,
   ): Promise<void> {
     // Delete the user data from the Realtime Database
-    await deleteUserData(db, newUserId, userNickname, undefined, undefined);
+    await deleteUserData(db, newUserID, userNickname, undefined, undefined);
 
     // Delete the user from Firebase authentication
     const auth = getAuth();
@@ -159,7 +159,7 @@ function SignUpScreen() {
       return;
     }
 
-    let newUserId: string | undefined;
+    let newUserID: string | undefined;
     let minSupportedVersion: string | null;
     const minUserCreationPath =
       DBPATHS.CONFIG_APP_SETTINGS_MIN_USER_CREATION_POSSIBLE_VERSION;
@@ -198,7 +198,6 @@ function SignUpScreen() {
     }
 
     // Validate that the user is not spamming account creation
-    console.log('done');
     try {
       await checkAccountCreationLimit(db);
     } catch (error: any) {
@@ -234,11 +233,11 @@ function SignUpScreen() {
       dispatch({type: 'SET_LOADING', payload: false});
       throw new Error('User creation failed');
     }
-    newUserId = auth.currentUser.uid;
+    newUserID = auth.currentUser.uid;
 
     try {
       // Realtime Database updates
-      await pushNewUserInfo(db, newUserId, newProfileData);
+      await pushNewUserInfo(db, newUserID, newProfileData);
     } catch (error: any) {
       const errorHeading = 'Sign-up failed';
       const errorMessage = 'There was an error during sign-up: ';
@@ -246,7 +245,7 @@ function SignUpScreen() {
 
       // Attempt to rollback any changes made
       try {
-        await rollbackChanges(newUserId, newProfileData.display_name);
+        await rollbackChanges(newUserID, newProfileData.display_name);
       } catch (rollbackError: any) {
         const errorHeading = 'Rollback error';
         const errorMessage = 'Error during sign-up rollback:';
@@ -301,7 +300,7 @@ function SignUpScreen() {
       <View style={styles.mainContainer}>
         <WarningMessage warningText={state.warning} dispatch={dispatch} />
         <View style={styles.logoContainer}>
-          <Image source={KirokuImages.Logo} style={styles.logo} />
+          <Image source={KirokuIcons.Logo} style={styles.logo} />
         </View>
         <View style={styles.inputContainer}>
           <View style={styles.inputItemContainer}>
@@ -450,6 +449,7 @@ const styles = StyleSheet.create({
   inputItemText: {
     fontSize: 14,
     width: '90%',
+    color: 'black', // Text color
   },
   passwordCheckContainer: {
     backgroundColor: 'purple',

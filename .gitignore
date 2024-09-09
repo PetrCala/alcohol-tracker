@@ -25,7 +25,11 @@ DerivedData
 *.ipa
 *.xcuserstate
 ios/.xcode.env.local
+ios/assets/
 ios-fastlane-json-key.json
+ios/tmp.xcconfig
+**/*.mobileprovision
+**/*.p12
 
 # Android/IntelliJ
 #
@@ -89,6 +93,10 @@ bun.lockb
 /ios/Pods/
 /vendor/bundle/
 
+# GitHub GPG Keys
+.github/workflows/KirokuAdmin-private-key.asc
+*.asc
+
 # Temporary files created by Metro to check the health of the file watcher
 .metro-health-check*
 
@@ -96,13 +104,10 @@ bun.lockb
 __snapshots__/
 
 # Other
-*-admin-sdk-*.json
-_dev/beta/beta_keys.tsx
-_dev/utils/admin.js
-_dev/migrations/
-docs-old/
+*admin*sdk*.json
 local/
 mockDatabase.json
+!**/*.gpg
 
 # Custom
 .bundle
@@ -112,4 +117,9 @@ mockDatabase.json
 *.apk
 *.ipa
 *.lnk
-*.env.*
+*.env*
+
+# Expo
+.expo
+dist/
+web-build/

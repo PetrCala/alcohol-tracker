@@ -5,7 +5,6 @@ import type {MainMenuNavigatorParamList} from '@libs/Navigation/types';
 import type {StackScreenProps} from '@react-navigation/stack';
 import type SCREENS from '@src/SCREENS';
 import commonStyles from '@src/styles/commonStyles';
-import * as KirokuImages from '@components/Icon/KirokuImages';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {
   Alert,
@@ -17,7 +16,7 @@ import {
   View,
 } from 'react-native';
 import CONST from '@src/CONST';
-import {copyToClipboard} from '@libs/StringUtils';
+import {copyToClipboard} from '@libs/StringUtilsKiroku';
 
 type AppShareScreenProps = StackScreenProps<
   MainMenuNavigatorParamList,
@@ -72,7 +71,7 @@ function AppShareScreen({route}: AppShareScreenProps) {
             accessibilityRole="button"
             onPress={() => Linking.openURL(CONST.APP_QR_CODE_LINK)}
             style={[styles.centeringContainer, {height: 'auto'}]}>
-            <Image source={KirokuImages.QrCodeWithLogo} style={styles.qrCode} />
+            <Image source={KirokuIcons.QrCodeWithLogo} style={styles.qrCode} />
           </TouchableOpacity>
         </View>
       </View>

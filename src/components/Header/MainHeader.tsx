@@ -42,8 +42,6 @@ const MainHeader: React.FC<HeaderProps> = ({
   );
 };
 
-const screenWidth = Dimensions.get('window').width;
-
 const styles = StyleSheet.create({
   sectionText: {
     fontSize: 20,

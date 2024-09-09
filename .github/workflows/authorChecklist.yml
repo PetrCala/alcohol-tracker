@@ -11,13 +11,12 @@ jobs:
   # then you also need to go into PHP and update the name of this job in the GH_JOB_NAME_CHECKLIST constant
   checklist:
     runs-on: ubuntu-latest
-    if: github.actor != 'OSBotify' && github.actor != 'imgbot[bot]'
+    if: github.actor != 'KirokuAdmin' && github.actor != 'imgbot[bot]'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Enable after action comilation has been fixed
-      # - name: authorChecklist.js
-      #   uses: ./.github/actions/javascript/authorChecklist
-      #   with:
-      #     GITHUB_TOKEN: ${{ github.token }}
+      - name: authorChecklist.ts
+        uses: ./.github/actions/javascript/authorChecklist
+        with:
+          GITHUB_TOKEN: ${{ github.token }}

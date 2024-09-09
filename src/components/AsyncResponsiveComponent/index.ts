@@ -1,5 +1,6 @@
-import React, {useState, useEffect, useRef, useCallback} from 'react';
-import {AsyncResponsiveComponentProps} from './types';
+import type React from 'react';
+import {useState, useEffect, useRef, useCallback} from 'react';
+import type {AsyncResponsiveComponentProps} from './types';
 
 // const asyncOperation = async (
 //   triggerRef: React.MutableRefObject<any>,

@@ -11,13 +11,14 @@ import getPlatform from '@libs/getPlatform';
 const get = (config: NativeConfig, key: string, defaultValue: string): string =>
   (config?.[key] ?? defaultValue).trim();
 
+const useWebProxy = get(Config, 'USE_WEB_PROXY', 'true') === 'true';
+
 // Set default values to contributor friendly values to make development work out of the box without an .env file
 const ENVIRONMENT = get(Config, 'ENVIRONMENT', CONST.ENVIRONMENT.DEV);
 
 export default {
-  APP_NAME: 'Kiroku',
-  COMPONENT_NAME:
-    getPlatform() === CONST.PLATFORM.IOS ? 'kiroku' : 'alcohol_tracker',
+  APP_NAME: 'kiroku',
+  APP_NAME_VERBOSE: 'Kiroku',
   ENVIRONMENT,
   FIREBASE_CONFIG: {
     apiKey: get(Config, 'API_KEY', ''),
@@ -32,10 +33,25 @@ export default {
   IS_IN_PRODUCTION:
     // Platform.OS === 'web' ? process.env.NODE_ENV === 'production' : !__DEV__,
     process.env.NODE_ENV === 'production' && !__DEV__,
+  IS_IN_ADHOC: ENVIRONMENT === CONST.ENVIRONMENT.ADHOC,
   IS_IN_STAGING: ENVIRONMENT === CONST.ENVIRONMENT.STAGING,
   IS_IN_DEVELOPMENT: ENVIRONMENT === CONST.ENVIRONMENT.DEV,
   IS_IN_TEST:
     process.env.NODE_ENV === 'test' || ENVIRONMENT === CONST.ENVIRONMENT.TEST,
+  IS_USING_WEB_PROXY: getPlatform() === CONST.PLATFORM.WEB && useWebProxy,
+  KIROKU: {
+    DEFAULT_API_ROOT: '',
+    DEFAULT_SECURE_API_ROOT: '',
+    STAGING_SECURE_API_ROOT: '',
+    STAGING_API_ROOT: '',
+    KIROKU_URL: '',
+  },
+  PUSHER: {
+    APP_KEY: get(Config, 'PUSHER_APP_KEY', ''),
+    SUFFIX: get(Config, 'PUSHER_DEV_SUFFIX', ''),
+    CLUSTER: 'mt1',
+  },
+  IS_USING_EMULATORS: get(Config, 'USE_EMULATORS', 'false') === 'true',
   TEST_PROJECT_ID: 'alcohol-tracker-db',
   TEST_HOST: 'localhost',
   TEST_AUTH_PORT: 9099,

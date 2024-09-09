@@ -1,4 +1,7 @@
 ﻿import React, {useState} from 'react';
+import type {
+  ScrollView,
+  LayoutChangeEvent} from 'react-native';
 import {
   Text,
   TouchableOpacity,
@@ -6,14 +9,12 @@ import {
   Animated,
   StyleSheet,
   Image,
-  ScrollView,
-  LayoutChangeEvent,
   Switch,
   TextInput,
 } from 'react-native';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 
-interface SessionSliderProps {
+type SessionSliderProps = {
   scrollViewRef: React.RefObject<ScrollView>;
   isBlackout: boolean;
   onBlackoutChange: (value: boolean) => void;
@@ -96,7 +97,7 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
         <View style={[styles.tileContainerBase, styles.tileContainerVertical]}>
           <Text style={styles.tileHeading}>Session note:</Text>
           <View style={styles.noteWindowContainer}>
-            <TextInput
+            <TextInput accessibilityLabel="Text input field"
               defaultValue={note}
               style={styles.noteTextInput}
               onChangeText={value => onNoteChange(value)}

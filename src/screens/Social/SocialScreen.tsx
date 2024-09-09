@@ -14,8 +14,7 @@ import FriendRequestScreen from './FriendRequestScreen';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import MainHeader from '@components/Header/MainHeader';
 import {getReceivedRequestsCount} from '@libs/FriendUtils';
-import type {UserProps} from '@src/types/database';
-import FriendSearchScreen from './FriendSearchScreen';
+import type {UserProps} from '@src/types/onyx';
 import type {StackScreenProps} from '@react-navigation/stack';
 import type SCREENS from '@src/SCREENS';
 import type {SocialNavigatorParamList} from '@libs/Navigation/types';
@@ -233,7 +232,7 @@ const styles = StyleSheet.create({
   footerImage: {
     width: 25,
     height: 25,
-    padding: 5,
+    // padding: 5,
     // tintColor: '#ebeb02',
     // tintColor: '#000',
     tintColor: 'gray',

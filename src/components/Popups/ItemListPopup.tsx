@@ -40,7 +40,7 @@ const ItemListPopup: React.FC<ItemListPopupProps> = ({
         <View style={styles.modalView}>
           <Text style={styles.modalHeading}>{heading}</Text>
           {actions.map((item, index) => (
-            <TouchableOpacity
+            <TouchableOpacity accessibilityRole="button"
               key={index}
               style={styles.actionButton}
               onPress={item.action}>
@@ -48,7 +48,7 @@ const ItemListPopup: React.FC<ItemListPopupProps> = ({
               <Text style={styles.actionText}>{item.label}</Text>
             </TouchableOpacity>
           ))}
-          <TouchableOpacity style={styles.closeButton} onPress={onRequestClose}>
+          <TouchableOpacity accessibilityRole="button" style={styles.closeButton} onPress={onRequestClose}>
             <Text style={styles.closeButtonText}>Close</Text>
           </TouchableOpacity>
         </View>

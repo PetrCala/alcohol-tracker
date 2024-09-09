@@ -1,29 +1,29 @@
-﻿import {Database, ref, update} from 'firebase/database';
-import {
-  FirebaseStorage,
-  ref as StorageRef,
-  getDownloadURL,
-} from 'firebase/storage';
-import {Auth, User, updateProfile} from 'firebase/auth';
+﻿import type {Database} from 'firebase/database';
+import {ref, update} from 'firebase/database';
+import type {FirebaseStorage} from 'firebase/storage';
+import {ref as StorageRef, getDownloadURL} from 'firebase/storage';
+import type {Auth, User} from 'firebase/auth';
+import {updateProfile} from 'firebase/auth';
 import {fetchDisplayDataForUsers} from './baseFunctions';
-import {ProfileList, UserStatusList} from '@src/types/database';
+import type {ProfileList, UserStatusList} from '@src/types/onyx';
+import type {UserID} from '@src/types/onyx/OnyxCommon';
 import DBPATHS from './DBPATHS';
 
 /**
  * Fetches user profiles from the database.
  *
  * @param db The database instance.
- * @param userIds An array of user IDs.
+ * @param userIDs An array of user IDs.
  * @returns A promise that resolves to a list of user profiles.
  */
 export async function fetchUserProfiles(
   db: Database,
-  userIds: string[],
+  userIDs: UserID[],
 ): Promise<ProfileList> {
-  const profileRef = 'users/{userId}/profile'; // TODO clear this up
+  const profileRef = 'users/{userID}/profile'; // TODO clear this up
   return (await fetchDisplayDataForUsers(
     db,
-    userIds,
+    userIDs,
     profileRef,
   )) as ProfileList;
 }
@@ -32,17 +32,17 @@ export async function fetchUserProfiles(
  * Fetches the statuses of multiple users from the database.
  *
  * @param db The database instance.
- * @param userIds An array of user IDs.
+ * @param userIDs An array of user IDs.
  * @returns A promise that resolves to a UserStatusList object.
  */
 export async function fetchUserStatuses(
   db: Database,
-  userIds: string[],
+  userIDs: UserID[],
 ): Promise<UserStatusList> {
-  const profileRef = 'user_status/{userId}';
+  const profileRef = 'user_status/{userID}';
   return (await fetchDisplayDataForUsers(
     db,
-    userIds,
+    userIDs,
     profileRef,
   )) as UserStatusList;
 }
@@ -55,7 +55,7 @@ export async function fetchUserStatuses(
  * Should be called together with uploading of the picture to the storage.
  *
  * @param db The Firebase realtime database instance.
- * @param userId User UID.
+ * @param userID User UID.
  * @param photoURL Name of the new file, including the suffix (e.g., profile_picture.jpg)
  * @returns Promise with the full path to the image
  *
@@ -64,11 +64,11 @@ export async function fetchUserStatuses(
  */
 export async function setProfilePictureURL(
   db: Database,
-  userId: string,
+  userID: string,
   photoURL: string,
 ): Promise<void> {
-  var updates: {[key: string]: string} = {};
-  const photoUrlPath = DBPATHS.USERS_USER_ID_PROFILE_PHOTO_URL.getRoute(userId);
+  const updates: Record<string, string> = {};
+  const photoUrlPath = DBPATHS.USERS_USER_ID_PROFILE_PHOTO_URL.getRoute(userID);
   updates[photoUrlPath] = photoURL;
   await update(ref(db), updates);
 }
@@ -90,7 +90,9 @@ export async function updateProfileInfo(
   db: Database,
   storage: FirebaseStorage,
 ): Promise<void> {
-  if (!user || !auth.currentUser) return;
+  if (!user || !auth.currentUser) {
+    return;
+  }
   const downloadURL = await getDownloadURL(StorageRef(storage, pathToUpload));
   await setProfilePictureURL(db, user.uid, downloadURL);
   await updateProfile(auth.currentUser, {photoURL: downloadURL});

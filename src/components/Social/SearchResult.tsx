@@ -11,10 +11,8 @@ import type {Database} from 'firebase/database';
 import ProfileImage from '@components/ProfileImage';
 import type {FirebaseStorage} from 'firebase/storage';
 import React from 'react';
-import type {FriendRequestStatus, Profile} from '@src/types/database';
+import type {FriendRequestStatus, Profile} from '@src/types/onyx';
 import CONST from '@src/CONST';
-import {useDatabaseData} from '@context/global/DatabaseDataContext';
-import LoadingData from '@components/LoadingData';
 
 const statusToTextMap: {[key in FriendRequestStatus]: string} = {
   self: 'You',
@@ -126,7 +124,7 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
 };
 
 type SearchResultProps = {
-  userId: string;
+  userID: string;
   userDisplayData: Profile;
   db: Database;
   storage: FirebaseStorage;
@@ -137,7 +135,7 @@ type SearchResultProps = {
 };
 
 const SearchResult: React.FC<SearchResultProps> = ({
-  userId,
+  userID,
   userDisplayData,
   db,
   storage,
@@ -150,9 +148,9 @@ const SearchResult: React.FC<SearchResultProps> = ({
     <View style={styles.userOverviewContainer}>
       <View style={styles.userInfoContainer}>
         <ProfileImage
-          key={userId + '-profile-icon'}
+          key={userID + '-profile-icon'}
           storage={storage}
-          userId={userId}
+          userID={userID}
           downloadPath={userDisplayData?.photo_url}
           style={styles.userProfileImage}
         />
@@ -168,7 +166,7 @@ const SearchResult: React.FC<SearchResultProps> = ({
         <SendFriendRequestButton
           db={db}
           userFrom={userFrom}
-          userTo={userId}
+          userTo={userID}
           requestStatus={requestStatus}
           alreadyAFriend={alreadyAFriend}
         />
@@ -203,7 +201,6 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     borderRadius: 35,
-    padding: 5,
   },
   sendFriendRequestContainer: {
     width: '35%',

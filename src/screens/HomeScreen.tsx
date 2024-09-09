@@ -4,13 +4,13 @@ import {
   Dimensions,
   Image,
   Keyboard,
-  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
+import {useOnyx} from 'react-native-onyx';
 import MenuIcon from '@components/Buttons/MenuIcon';
 import SessionsCalendar from '@components/Calendar';
 import LoadingData from '@components/LoadingData';
@@ -22,7 +22,6 @@ import {
   calculateThisMonthUnits,
   getSingleMonthDrinkingSessions,
   timestampToDate,
-  formatDate,
   timestampToDateString,
   roundToTwoDecimalPlaces,
 } from '@libs/DataHandling';
@@ -39,7 +38,7 @@ import type {
   DrinkingSession,
   DrinkingSessionArray,
   DrinkingSessionId,
-} from '@src/types/database';
+} from '@src/types/onyx';
 import ROUTES from '@src/ROUTES';
 import Navigation, {navigationRef} from '@navigation/Navigation';
 import type {StackScreenProps} from '@react-navigation/stack';
@@ -48,16 +47,20 @@ import type {BottomTabNavigatorParamList} from '@libs/Navigation/types';
 import type SCREENS from '@src/SCREENS';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import type {DateData} from 'react-native-calendars';
-import {getEmptySession} from '@libs/SessionUtils';
+import {getEmptySession} from '@libs/DrinkingSessionUtils';
 import DBPATHS from '@database/DBPATHS';
 import type {StatData} from '@components/Items/StatOverview';
 import {StatsOverview} from '@components/Items/StatOverview';
-import {getPlural} from '@libs/StringUtils';
+import {getPlural} from '@libs/StringUtilsKiroku';
 import {getReceivedRequestsCount} from '@libs/FriendUtils';
 import FriendRequestCounter from '@components/Social/FriendRequestCounter';
 import ScreenWrapper from '@components/ScreenWrapper';
 import MessageBanner from '@components/Info/MessageBanner';
 import VerifyEmailPopup from '@components/Popups/VerifyEmailPopup';
+import useLocalize from '@hooks/useLocalize';
+import useThemeStyles from '@hooks/useThemeStyles';
+import ONYXKEYS from '@src/ONYXKEYS';
+import getPlatform from '@libs/getPlatform';
 
 type State = {
   visibleDateObject: DateObject;
@@ -105,12 +108,13 @@ const reducer = (state: State, action: Action): State => {
   }
 };
 
-type HomeScreenProps = StackScreenProps<
-  BottomTabNavigatorParamList,
-  typeof SCREENS.HOME
->;
+type HomeScreenOnyxProps = {};
 
-function HomeScreen({}: HomeScreenProps) {
+type HomeScreenProps = HomeScreenOnyxProps &
+  StackScreenProps<BottomTabNavigatorParamList, typeof SCREENS.HOME>;
+
+function HomeScreen({route}: HomeScreenProps) {
+  const styles = useThemeStyles();
   const {auth, db, storage} = useFirebase();
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
@@ -122,6 +126,8 @@ function HomeScreen({}: HomeScreenProps) {
     isLoading,
   } = useDatabaseData();
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [preferredTheme] = useOnyx(ONYXKEYS.PREFERRED_THEME);
+  const {translate} = useLocalize();
 
   const statsData: StatData = [
     {
@@ -292,34 +298,34 @@ function HomeScreen({}: HomeScreenProps) {
     <ScreenWrapper testID={HomeScreen.displayName}>
       <View style={commonStyles.headerContainer}>
         {userData && (
-          <View style={styles.profileContainer}>
+          <View style={localStyles.profileContainer}>
             <TouchableOpacity
               accessibilityRole="button"
               onPress={() =>
                 Navigation.navigate(ROUTES.PROFILE.getRoute(user.uid))
               }
-              style={styles.profileButton}>
+              style={localStyles.profileButton}>
               <ProfileImage
                 storage={storage}
-                userId={user.uid}
+                userID={user.uid}
                 downloadPath={userData.profile.photo_url}
-                style={styles.profileImage}
+                style={localStyles.profileImage}
                 // refreshTrigger={refreshCounter}
                 refreshTrigger={0}
               />
-              <Text style={styles.headerUsername}>{user.displayName}</Text>
+              <Text style={localStyles.headerUsername}>{user.displayName}</Text>
             </TouchableOpacity>
           </View>
         )}
         {/* Enable later on */}
-        {/* <View style={styles.menuContainer}>
-          <TouchableOpacity style={styles.notificationsButton}>
-            <Image source={KirokuIcons.Bell} style={styles.notificationsIcon} />
+        {/* <View style={localStyles.menuContainer}>
+          <TouchableOpacity style={localStyles.notificationsButton}>
+            <Image source={KirokuIcons.Bell} style={localStyles.notificationsIcon} />
           </TouchableOpacity>
         </View> */}
       </View>
       <ScrollView
-        style={styles.mainScreenContent}
+        style={localStyles.mainScreenContent}
         keyboardShouldPersistTaps="handled"
         onScrollBeginDrag={Keyboard.dismiss}>
         {state.ongoingSessionId ? (
@@ -337,7 +343,7 @@ function HomeScreen({}: HomeScreenProps) {
             }
           />
         )} */}
-        <View style={styles.statsOverviewHolder}>
+        <View style={localStyles.statsOverviewHolder}>
           <StatsOverview statsData={statsData} />
         </View>
         <SessionsCalendar
@@ -353,52 +359,52 @@ function HomeScreen({}: HomeScreenProps) {
             );
           }}
         />
-        <View style={{height: 200, backgroundColor: '#ffff99'}}></View>
+        <View style={{height: 200}}></View>
       </ScrollView>
       <View style={commonStyles.mainFooter}>
         <View
           style={[
-            styles.mainScreenFooterHalfContainer,
-            styles.mainScreenFooterLeftContainer,
+            localStyles.mainScreenFooterHalfContainer,
+            localStyles.mainScreenFooterLeftContainer,
           ]}>
-          <View style={styles.socialContainer}>
+          <View style={localStyles.socialContainer}>
             <MenuIcon
               iconId="social-icon"
               iconSource={KirokuIcons.Social}
-              containerStyle={styles.menuIconContainer}
-              iconStyle={styles.menuIcon}
+              containerStyle={localStyles.menuIconContainer}
+              iconStyle={localStyles.menuIcon}
               onPress={() => Navigation.navigate(ROUTES.SOCIAL)}
             />
             <FriendRequestCounter
               count={getReceivedRequestsCount(userData?.friend_requests)}
-              style={styles.friendRequestCounter}
+              style={localStyles.friendRequestCounter}
             />
           </View>
           <MenuIcon
             iconId="achievement-icon"
             iconSource={KirokuIcons.Achievements}
-            containerStyle={styles.menuIconContainer}
-            iconStyle={styles.menuIcon}
+            containerStyle={localStyles.menuIconContainer}
+            iconStyle={localStyles.menuIcon}
             onPress={() => Navigation.navigate(ROUTES.ACHIEVEMENTS)}
           />
         </View>
         <View
           style={[
-            styles.mainScreenFooterHalfContainer,
-            styles.mainScreenFooterRightContainer,
+            localStyles.mainScreenFooterHalfContainer,
+            localStyles.mainScreenFooterRightContainer,
           ]}>
           <MenuIcon
             iconId="main-menu-popup-icon"
             iconSource={KirokuIcons.Statistics}
-            containerStyle={styles.menuIconContainer}
-            iconStyle={styles.menuIcon}
+            containerStyle={localStyles.menuIconContainer}
+            iconStyle={localStyles.menuIcon}
             onPress={() => Navigation.navigate(ROUTES.STATISTICS)}
           />
           <MenuIcon
             iconId="main-menu-popup-icon"
             iconSource={KirokuIcons.BarMenu}
-            containerStyle={styles.menuIconContainer}
-            iconStyle={styles.menuIcon}
+            containerStyle={localStyles.menuIconContainer}
+            iconStyle={localStyles.menuIcon}
             onPress={() => Navigation.navigate(ROUTES.MAIN_MENU)}
           />
         </View>
@@ -406,9 +412,12 @@ function HomeScreen({}: HomeScreenProps) {
       {state.ongoingSessionId ? null : (
         <TouchableOpacity
           accessibilityRole="button"
-          style={styles.startSessionButton}
+          style={localStyles.startSessionButton}
           onPress={startDrinkingSession}>
-          <Image source={KirokuIcons.Plus} style={styles.startSessionImage} />
+          <Image
+            source={KirokuIcons.Plus}
+            style={localStyles.startSessionImage}
+          />
         </TouchableOpacity>
       )}
       <VerifyEmailPopup
@@ -423,11 +432,12 @@ function HomeScreen({}: HomeScreenProps) {
     </ScreenWrapper>
   );
 }
-// infoNumberValue: getReceivedRequestsCount(userData?.friend_requests),
 
 const screenWidth = Dimensions.get('window').width;
+const currentPlatform = getPlatform();
+const iconSize = currentPlatform === CONST.PLATFORM.IOS ? 48 : 28;
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   profileContainer: {
     //Ensure the container fills all space between, no more, no less
     padding: 10,
@@ -464,8 +474,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   menuIcon: {
-    width: 28,
-    height: 28,
+    width: iconSize,
+    height: iconSize,
     padding: 10,
   },
   notificationsButton: {
@@ -485,25 +495,10 @@ const styles = StyleSheet.create({
     marginLeft: -4,
     marginRight: 4,
   },
-  yearMonthContainer: {
-    width: '100%',
-    backgroundColor: '#ffff99',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderBottomColor: 'black',
-    borderBottomWidth: 1,
-    borderColor: 'grey',
-  },
-  yearMonthText: {
-    fontSize: 18,
-    color: 'black',
-    fontWeight: 'bold',
-    margin: 10,
-  },
   mainScreenContent: {
     flexGrow: 1,
     flexShrink: 1,
-    backgroundColor: '#FFFF99',
+    backgroundColor: '#ffff99',
   },
   ///
   userInSessionWarningContainer: {
@@ -536,14 +531,12 @@ const styles = StyleSheet.create({
   menuInfoContainer: {
     flexDirection: 'column',
     justifyContent: 'center',
-    backgroundColor: '#FFFF99',
     width: '100%',
     marginTop: 2,
   },
   menuInfoItemContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: '#FFFF99',
     width: '100%',
   },
   menuInfoHeadingText: {
@@ -598,7 +591,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
-    backgroundColor: '#ffff99',
     flexDirection: 'row',
   },
   navigationArrowButton: {
@@ -606,7 +598,7 @@ const styles = StyleSheet.create({
     height: 45,
     alignSelf: 'center',
     justifyContent: 'center',
-    borderColor: 'black',
+    borderColor: '#ddd',
     borderRadius: 3,
     borderWidth: 1,
     backgroundColor: 'white',
@@ -633,4 +625,5 @@ const styles = StyleSheet.create({
 });
 
 HomeScreen.displayName = 'Home Screen';
+
 export default HomeScreen;

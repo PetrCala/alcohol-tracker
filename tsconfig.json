@@ -1,43 +1,14 @@
 {
-  "extends": "@tsconfig/react-native/tsconfig.json",
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "target": "esnext",
     "module": "commonjs",
-    // "module": "esnext",
     "types": ["react-native", "jest", "node"],
-    "lib": [
-      "DOM",
-      "es2019",
-      "es2020.bigint",
-      "es2020.date",
-      "es2020.number",
-      "es2020.promise",
-      "es2020.string",
-      "es2020.symbol.wellknown",
-      "es2021.promise",
-      "es2021.string",
-      "es2021.weakref",
-      "es2022.array",
-      "es2022.object",
-      "es2022.string",
-      "ES2021.Intl"
-    ],
-    "allowJs": true,
-    "checkJs": false,
-    "jsx": "react-native",
-    "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "incremental": true,
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "isolatedModules": true,
-    "moduleResolution": "node",
     "strict": true,
-    "noEmit": true,
-    "forceConsistentCasingInFileNames": true,
-    "composite": true,
-    "declaration": true,
-    "declarationMap": true,
+    "allowSyntheticDefaultImports": true,
+    "incremental": true,
     "baseUrl": ".",
     "paths": {
       "@assets/*": ["./assets/*"],
@@ -45,7 +16,9 @@
       "@components/*": ["./src/components/*"],
       "@context/*": ["./src/context/*"],
       "@database/*": ["./src/database/*"],
+      "@desktop/*": ["./desktop/*"],
       "@firebase/auth": ["./node_modules/@firebase/auth/dist/index.rn.d.ts"],
+      "@github/*": ["./.github/*"],
       "@hooks/*": ["./src/hooks/*"],
       "@libs/*": ["./src/libs/*"],
       "@navigation/*": ["./src/libs/Navigation/*"],
@@ -53,8 +26,8 @@
       "@src/*": ["./src/*"],
       "@storage/*": ["./src/storage/*"],
       "@styles/*": ["./src/styles/*"],
-      "@utils/*": ["src/libs/*"]
-      // "@userActions/*": ["./src/libs/actions/*"]
+      "@utils/*": ["src/utils/*"],
+      "@userActions/*": ["./src/libs/actions/*"]
     }
   },
   "ts-node": {
@@ -74,7 +47,8 @@
     "**/node_modules/*",
     "**/dist/*",
     ".github/actions/**/index.js",
-    "**/docs/*"
+    "**/docs/*",
+    "**/local/*"
   ],
   "include": [
     "__mocks__",
@@ -92,7 +66,7 @@
     "package.json", // Application version import
     "firebase.json",
     "**/alcohol-tracker*.json",
-    "react-native.config.js"
-    // "workflow_tests"
+    "react-native.config.js",
+    "local/toImplement/Form"
   ]
 }

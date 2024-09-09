@@ -63,6 +63,7 @@ type ThemeColors = {
   textError: Color;
   offline: Color;
   modalBackground: Color;
+  safeAreaBackground: Color;
   cardBG: Color;
   cardBorder: Color;
   spinner: Color;

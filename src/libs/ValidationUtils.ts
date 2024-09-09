@@ -1,0 +1,468 @@
+import {
+  addYears,
+  endOfMonth,
+  format,
+  isAfter,
+  isBefore,
+  isSameDay,
+  isValid,
+  isWithinInterval,
+  parse,
+  parseISO,
+  startOfDay,
+  subYears,
+} from 'date-fns';
+import {URL_REGEX_WITH_REQUIRED_PROTOCOL} from '@libs/common/Url';
+import isDate from 'lodash/isDate';
+import isEmpty from 'lodash/isEmpty';
+import isObject from 'lodash/isObject';
+import type {
+  FormInputErrors,
+  FormOnyxKeys,
+  FormOnyxValues,
+  FormValue,
+} from '@components/Form/types';
+import CONST from '@src/CONST';
+// import * as CardUtils from './CardUtils';
+import DateUtils from './DateUtils';
+import type {MaybePhraseKey} from './Localize';
+// import * as LoginUtils from './LoginUtils';
+import StringUtils from './StringUtils';
+
+/**
+ * Implements the Luhn Algorithm, a checksum formula used to validate credit card
+ * numbers.
+ */
+function validateCardNumber(value: string): boolean {
+  let sum = 0;
+  for (let i = 0; i < value.length; i++) {
+    let intVal = parseInt(value.substr(i, 1), 10);
+    if (i % 2 === 0) {
+      intVal *= 2;
+      if (intVal > 9) {
+        intVal = 1 + (intVal % 10);
+      }
+    }
+    sum += intVal;
+  }
+  return sum % 10 === 0;
+}
+
+// /**
+//  * Validating that this is a valid address (PO boxes are not allowed)
+//  */
+// function isValidAddress(value: FormValue): boolean {
+//   if (typeof value !== 'string') {
+//     return false;
+//   }
+
+//   if (!CONST.REGEX.ANY_VALUE.test(value) || value.match(CONST.REGEX.EMOJIS)) {
+//     return false;
+//   }
+
+//   return !CONST.REGEX.PO_BOX.test(value);
+// }
+
+/**
+ * Validate date fields
+ */
+function isValidDate(date: string | Date): boolean {
+  if (!date) {
+    return false;
+  }
+
+  const pastDate = subYears(new Date(), 1000);
+  const futureDate = addYears(new Date(), 1000);
+  const testDate = new Date(date);
+  return (
+    isValid(testDate) &&
+    isAfter(testDate, pastDate) &&
+    isBefore(testDate, futureDate)
+  );
+}
+
+/**
+ * Validate that date entered isn't a future date.
+ */
+function isValidPastDate(date: string | Date): boolean {
+  if (!date) {
+    return false;
+  }
+
+  const pastDate = subYears(new Date(), 1000);
+  const currentDate = new Date();
+  const testDate = startOfDay(new Date(date));
+  return (
+    isValid(testDate) &&
+    isAfter(testDate, pastDate) &&
+    isBefore(testDate, currentDate)
+  );
+}
+
+/**
+ * Used to validate a value that is "required".
+ * @param value - field value
+ */
+function isRequiredFulfilled(
+  value?: FormValue | number[] | string[] | Record<string, string>, // Should be this
+): boolean {
+  if (!value) {
+    return false;
+  }
+  if (typeof value === 'string') {
+    return !StringUtils.isEmptyString(value);
+  }
+
+  if (isDate(value)) {
+    return isValidDate(value);
+  }
+  if (Array.isArray(value) || isObject(value)) {
+    return !isEmpty(value);
+  }
+  return Boolean(value);
+}
+
+/**
+ * Used to add requiredField error to the fields passed.
+ * @param values - all form values
+ * @param requiredFields - required fields for particular form
+ */
+// TODO re-enable this
+// function getFieldRequiredErrors<TFormID extends OnyxFormKey>(
+//   values: FormOnyxValues<TFormID>,
+//   requiredFields: Array<FormOnyxKeys<TFormID>>,
+// ): FormInputErrors<TFormID> {
+//   const errors: FormInputErrors<TFormID> = {};
+
+//   requiredFields.forEach(fieldKey => {
+//     if (isRequiredFulfilled(values[fieldKey] as FormValue)) {
+//       return;
+//     }
+
+//     errors[fieldKey] = 'common.error.fieldRequired';
+//   });
+
+//   return errors;
+// }
+
+/**
+ * Validates that this is a valid security code
+ * in the XXX or XXXX format.
+ */
+function isValidSecurityCode(string: string): boolean {
+  return CONST.REGEX.CARD_SECURITY_CODE.test(string);
+}
+
+/**
+ * Validates a debit card number (15 or 16 digits).
+ */
+function isValidDebitCard(string: string): boolean {
+  if (!CONST.REGEX.CARD_NUMBER.test(string)) {
+    return false;
+  }
+
+  return validateCardNumber(string);
+}
+
+/**
+ * Validate that a date meets the minimum age requirement.
+ */
+function meetsMinimumAgeRequirement(date: string): boolean {
+  const testDate = new Date(date);
+  const minDate = subYears(new Date(), CONST.DATE_BIRTH.MIN_AGE);
+  return (
+    isValid(testDate) &&
+    (isSameDay(testDate, minDate) || isBefore(testDate, minDate))
+  );
+}
+
+/**
+ * Validate that a date meets the maximum age requirement.
+ */
+function meetsMaximumAgeRequirement(date: string): boolean {
+  const testDate = new Date(date);
+  const maxDate = subYears(new Date(), CONST.DATE_BIRTH.MAX_AGE);
+  return (
+    isValid(testDate) &&
+    (isSameDay(testDate, maxDate) || isAfter(testDate, maxDate))
+  );
+}
+
+/**
+ * Validate that given date is in a specified range of years before now.
+ */
+function getAgeRequirementError(
+  date: string,
+  minimumAge: number,
+  maximumAge: number,
+): MaybePhraseKey {
+  const currentDate = startOfDay(new Date());
+  const testDate = parse(date, CONST.DATE.FNS_FORMAT_STRING, currentDate);
+
+  if (!isValid(testDate)) {
+    return 'common.error.dateInvalid';
+  }
+
+  const maximalDate = subYears(currentDate, minimumAge);
+  const minimalDate = subYears(currentDate, maximumAge);
+
+  if (isWithinInterval(testDate, {start: minimalDate, end: maximalDate})) {
+    return '';
+  }
+
+  if (isSameDay(testDate, maximalDate) || isAfter(testDate, maximalDate)) {
+    return [
+      'privatePersonalDetails.error.dateShouldBeBefore',
+      {dateString: format(maximalDate, CONST.DATE.FNS_FORMAT_STRING)},
+    ];
+  }
+
+  return [
+    'privatePersonalDetails.error.dateShouldBeAfter',
+    {dateString: format(minimalDate, CONST.DATE.FNS_FORMAT_STRING)},
+  ];
+}
+
+/**
+ * Validate that given date is not in the past.
+ */
+function getDatePassedError(inputDate: string): string {
+  const currentDate = new Date();
+  const parsedDate = new Date(`${inputDate}T00:00:00`); // set time to 00:00:00 for accurate comparison
+
+  // If input date is not valid, return an error
+  if (!isValid(parsedDate)) {
+    return 'common.error.dateInvalid';
+  }
+
+  // Clear time for currentDate so comparison is based solely on the date
+  currentDate.setHours(0, 0, 0, 0);
+
+  if (parsedDate < currentDate) {
+    return 'common.error.dateInvalid';
+  }
+
+  return '';
+}
+
+/**
+ * Similar to backend, checks whether a website has a valid URL or not.
+ * http/https/ftp URL scheme required.
+ */
+function isValidWebsite(url: string): boolean {
+  const isLowerCase = url === url.toLowerCase();
+  return (
+    new RegExp(`^${URL_REGEX_WITH_REQUIRED_PROTOCOL}$`, 'i').test(url) &&
+    isLowerCase
+  );
+}
+
+// function isValidUSPhone(
+//   phoneNumber = '',
+//   isCountryCodeOptional?: boolean,
+// ): boolean {
+//   const phone = phoneNumber || '';
+//   const regionCode = isCountryCodeOptional ? CONST.COUNTRY.US : undefined;
+
+//   // When we pass regionCode as an option to parsePhoneNumber it wrongly assumes inputs like '=15123456789' as valid
+//   // so we need to check if it is a valid phone.
+//   if (regionCode && !Str.isValidPhoneFormat(phone)) {
+//     return false;
+//   }
+
+//   const parsedPhoneNumber = parsePhoneNumber(phone, {regionCode});
+//   return (
+//     parsedPhoneNumber.possible &&
+//     parsedPhoneNumber.regionCode === CONST.COUNTRY.US
+//   );
+// }
+
+function isValidValidateCode(validateCode: string): boolean {
+  return Boolean(validateCode.match(CONST.VALIDATE_CODE_REGEX_STRING));
+}
+
+function isValidRecoveryCode(recoveryCode: string): boolean {
+  return Boolean(recoveryCode.match(CONST.RECOVERY_CODE_REGEX_STRING));
+}
+
+function isValidTwoFactorCode(code: string): boolean {
+  return Boolean(code.match(CONST.REGEX.CODE_2FA));
+}
+
+// /**
+//  * Checks whether a value is a numeric string including `(`, `)`, `-` and optional leading `+`
+//  */
+// function isNumericWithSpecialChars(input: string): boolean {
+//   return /^\+?[\d\\+]*$/.test(
+//     LoginUtils.getPhoneNumberWithoutSpecialChars(input),
+//   );
+// }
+
+/**
+ * Checks the given number is a valid US Routing Number
+ * using ABA routingNumber checksum algorithm: http://www.brainjar.com/js/validation/
+ */
+function isValidRoutingNumber(routingNumber: string): boolean {
+  let n = 0;
+  for (let i = 0; i < routingNumber.length; i += 3) {
+    n +=
+      parseInt(routingNumber.charAt(i), 10) * 3 +
+      parseInt(routingNumber.charAt(i + 1), 10) * 7 +
+      parseInt(routingNumber.charAt(i + 2), 10);
+  }
+
+  // If the resulting sum is an even multiple of ten (but not zero),
+  // the ABA routing number is valid.
+  if (n !== 0 && n % 10 === 0) {
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Checks that the provided name doesn't contain any commas or semicolons
+ */
+function isValidDisplayName(name: string): boolean {
+  return !name.includes(',') && !name.includes(';');
+}
+
+// /**
+//  * Checks that the provided legal name doesn't contain special characters
+//  */
+// function isValidLegalName(name: string): boolean {
+//   const hasAccentedChars = Boolean(name.match(CONST.REGEX.ACCENT_LATIN_CHARS));
+//   return CONST.REGEX.ALPHABETIC_AND_LATIN_CHARS.test(name) && !hasAccentedChars;
+// }
+
+/**
+ * Checks that the provided name doesn't contain special characters or numbers
+ */
+function isValidPersonName(value: string) {
+  return /^[^\d^!#$%*=<>;{}"]+$/.test(value);
+}
+
+/**
+ * Checks if the provided string includes any of the provided reserved words
+ */
+function doesContainReservedWord(
+  value: string,
+  reservedWords: typeof CONST.DISPLAY_NAME.RESERVED_NAMES,
+): boolean {
+  const valueToCheck = value.trim().toLowerCase();
+  return reservedWords.some(reservedWord =>
+    valueToCheck.includes(reservedWord.toLowerCase()),
+  );
+}
+
+// /**
+//  * Checks if tax ID consists of 9 digits
+//  */
+// function isValidTaxID(taxID: string): boolean {
+//   return CONST.REGEX.TAX_ID.test(taxID);
+// }
+
+/**
+ * Checks if a string value is a number.
+ */
+function isNumeric(value: string): boolean {
+  if (typeof value !== 'string') {
+    return false;
+  }
+  return /^\d*$/.test(value);
+}
+
+type DateTimeValidationErrorKeys = {
+  dateValidationErrorKey: string;
+  timeValidationErrorKey: string;
+};
+/**
+ * Validates that the date and time are at least one minute in the future.
+ * data - A date and time string in 'YYYY-MM-DD HH:mm:ss.sssZ' format
+ * returns an object containing the error messages for the date and time
+ */
+const validateDateTimeIsAtLeastOneMinuteInFuture = (
+  data: string,
+): DateTimeValidationErrorKeys => {
+  if (!data) {
+    return {
+      dateValidationErrorKey: '',
+      timeValidationErrorKey: '',
+    };
+  }
+  const parsedInputData = parseISO(data);
+
+  const dateValidationErrorKey =
+    DateUtils.getDayValidationErrorKey(parsedInputData);
+  const timeValidationErrorKey =
+    DateUtils.getTimeValidationErrorKey(parsedInputData);
+  return {
+    dateValidationErrorKey,
+    timeValidationErrorKey,
+  };
+};
+
+type ValuesType = Record<string, unknown>;
+
+/**
+ * This function is used to remove invisible characters from strings before validation and submission.
+ */
+function prepareValues(values: ValuesType): ValuesType {
+  const trimmedStringValues: ValuesType = {};
+
+  for (const [inputID, inputValue] of Object.entries(values)) {
+    if (typeof inputValue === 'string') {
+      trimmedStringValues[inputID] =
+        StringUtils.removeInvisibleCharacters(inputValue);
+    } else {
+      trimmedStringValues[inputID] = inputValue;
+    }
+  }
+
+  return trimmedStringValues;
+}
+
+/**
+ * Validates the given value if it is correct percentage value.
+ */
+function isValidPercentage(value: string): boolean {
+  const parsedValue = Number(value);
+  return !Number.isNaN(parsedValue) && parsedValue >= 0 && parsedValue <= 100;
+}
+
+/**
+//  * Validates the given value if it is correct tax name.
+//  */
+// function isExistingTaxName(taxName: string, taxRates: TaxRates): boolean {
+//   const trimmedTaxName = taxName.trim();
+//   return !!Object.values(taxRates).find(
+//     taxRate => taxRate.name === trimmedTaxName,
+//   );
+// }
+
+export {
+  meetsMinimumAgeRequirement,
+  meetsMaximumAgeRequirement,
+  getAgeRequirementError,
+  //   isValidAddress,
+  isValidDate,
+  isValidPastDate,
+  isValidSecurityCode,
+  //   isValidExpirationDate,
+  isValidDebitCard,
+  isRequiredFulfilled,
+  // getFieldRequiredErrors,
+  isValidWebsite,
+  isValidTwoFactorCode,
+  //   isNumericWithSpecialChars,
+  isValidRoutingNumber,
+  isValidValidateCode,
+  isValidDisplayName,
+  doesContainReservedWord,
+  isNumeric,
+  getDatePassedError,
+  isValidRecoveryCode,
+  validateDateTimeIsAtLeastOneMinuteInFuture,
+  prepareValues,
+  isValidPersonName,
+  isValidPercentage,
+};

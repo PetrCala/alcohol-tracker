@@ -1,6 +1,7 @@
 ﻿import CONST from '@src/CONST';
-import {FriendRequestStatus} from '@src/types/database';
-import {Database, ref, get, update} from 'firebase/database';
+import type {FriendRequestStatus} from '@src/types/onyx';
+import type {Database} from 'firebase/database';
+import { ref, get, update} from 'firebase/database';
 import DBPATHS from './DBPATHS';
 
 const friendRef = DBPATHS.USERS_USER_ID_FRIENDS_FRIEND_ID;
@@ -42,7 +43,7 @@ export async function sendFriendRequest(
   userFrom: string,
   userTo: string,
 ): Promise<void> {
-  var updates: {[requestId: string]: FriendRequestStatus} = {};
+  const updates: Record<string, FriendRequestStatus> = {};
   updates[friendRequestRef.getRoute(userFrom, userTo)] =
     CONST.FRIEND_REQUEST_STATUS.SENT;
   updates[friendRequestRef.getRoute(userTo, userFrom)] =
@@ -65,7 +66,7 @@ export async function deleteFriendRequest(
   userFrom: string,
   userTo: string,
 ): Promise<void> {
-  var updates: {[requestId: string]: null} = {};
+  const updates: Record<string, null> = {};
   updates[friendRequestRef.getRoute(userFrom, userTo)] = null;
   updates[friendRequestRef.getRoute(userTo, userFrom)] = null;
   await update(ref(db), updates);
@@ -86,7 +87,7 @@ export async function acceptFriendRequest(
   userFrom: string,
   userTo: string,
 ): Promise<void> {
-  var updates: {[requestId: string]: boolean | null} = {};
+  const updates: Record<string, boolean | null> = {};
   updates[friendRequestRef.getRoute(userFrom, userTo)] = null;
   updates[friendRequestRef.getRoute(userTo, userFrom)] = null;
   updates[friendRef.getRoute(userFrom, userTo)] = true;
@@ -108,7 +109,7 @@ export async function unfriend(
   userFrom: string,
   userTo: string,
 ): Promise<void> {
-  var updates: {[userId: string]: null} = {};
+  const updates: Record<string, null> = {};
   updates[friendRef.getRoute(userFrom, userTo)] = null;
   updates[friendRef.getRoute(userTo, userFrom)] = null;
   await update(ref(db), updates);

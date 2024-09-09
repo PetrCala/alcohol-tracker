@@ -3,7 +3,6 @@
   Alert,
   Image,
   Keyboard,
-  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -14,13 +13,12 @@ import type {
   FriendRequestList,
   FriendRequestStatus,
   ProfileList,
-  UserList,
-} from '@src/types/database';
+} from '@src/types/onyx';
+import type {UserList} from '@src/types/onyx/OnyxCommon';
 import {useEffect, useMemo, useReducer, useState} from 'react';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {acceptFriendRequest, deleteFriendRequest} from '@database/friends';
-
 import LoadingData from '@components/LoadingData';
 import type {Database} from 'firebase/database';
 import NoFriendUserOverview from '@components/Social/NoFriendUserOverview';
@@ -30,11 +28,8 @@ import GrayHeader from '@components/Header/GrayHeader';
 import {objKeys} from '@libs/DataHandling';
 import CONST from '@src/CONST';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
-import useFetchData from '@hooks/useFetchData';
-import useRefresh from '@hooks/useRefresh';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
-import {isNonEmptyArray} from '@libs/Validation';
 import NoFriendInfo from '@components/Social/NoFriendInfo';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import FillerView from '@components/FillerView';
@@ -61,13 +56,13 @@ type ScreenProps = {
 
 const handleAcceptFriendRequest = async (
   db: Database,
-  userId: string,
+  userID: string,
   requestId: string,
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
 ): Promise<void> => {
   try {
     setIsLoading(true);
-    await acceptFriendRequest(db, userId, requestId);
+    await acceptFriendRequest(db, userID, requestId);
     setIsLoading(false);
   } catch (error: any) {
     Alert.alert(
@@ -79,13 +74,13 @@ const handleAcceptFriendRequest = async (
 
 const handleRejectFriendRequest = async (
   db: Database,
-  userId: string,
+  userID: string,
   requestId: string,
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
 ): Promise<void> => {
   try {
     setIsLoading(true);
-    await deleteFriendRequest(db, userId, requestId);
+    await deleteFriendRequest(db, userID, requestId);
     setIsLoading(false);
   } catch (error: any) {
     Alert.alert(
@@ -138,9 +133,8 @@ const FriendRequestPending: React.FC<RequestIdProps> = ({requestId}) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const user = auth.currentUser;
 
-  if (!user) {
-    return;
-  }
+  if (!user) {return;}
+
   return (
     <View style={styles.friendRequestPendingContainer}>
       <TouchableOpacity
@@ -182,16 +176,14 @@ const FriendRequestItem: React.FC<FriendRequestItemProps> = ({
   friendRequests,
   displayData,
 }) => {
-  if (!friendRequests || !displayData) {
-    return null;
-  }
+  if (!friendRequests || !displayData) {return null;}
   const profileData = displayData[requestId];
   const requestStatus = friendRequests[requestId];
 
   return (
     <NoFriendUserOverview
       key={requestId + '-friend-request'}
-      userId={requestId}
+      userID={requestId}
       profileData={profileData}
       RightSideComponent={FriendRequestComponent({
         requestId,
@@ -286,9 +278,7 @@ function FriendRequestScreen() {
     const newRequestsReceived: string[] = [];
     if (!isEmptyObject(state.friendRequests)) {
       Object.keys(state.friendRequests).forEach(requestId => {
-        if (!state.friendRequests) {
-          return;
-        }
+        if (!state.friendRequests) {return;}
         if (
           state.friendRequests[requestId] === CONST.FRIEND_REQUEST_STATUS.SENT
         ) {

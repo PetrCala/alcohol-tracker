@@ -21,8 +21,8 @@ import {View} from 'react-native';
 import useThemeStyles from '@hooks/useThemeStyles';
 import type {NavigationStateRoute} from '@navigation/types';
 import SCREENS from '@src/SCREENS';
-import BottomTabBar from './BottomTabBar';
-import TopBar from './TopBar';
+// import BottomTabBar from './BottomTabBar';
+// import TopBar from './TopBar';
 
 type CustomNavigatorProps = DefaultNavigatorOptions<
   ParamListBase,

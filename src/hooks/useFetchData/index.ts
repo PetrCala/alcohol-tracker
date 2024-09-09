@@ -1,6 +1,5 @@
 import {useEffect, useState} from 'react';
 import {readDataOnce} from '@database/baseFunctions'; // Ensure this import is added
-import DBPATHS from '@database/DBPATHS';
 import {useFirebase} from '@context/global/FirebaseContext';
 import type {RefetchDatabaseData} from '@src/types/utils/RefetchDatabaseData';
 import type {FetchData, FetchDataKey, FetchDataKeys} from './types';
@@ -20,14 +19,14 @@ type UseFetchDataReturn = {
  * the data for the unused keys. The refetch function can refetch the data, and it
  * does so only for the specified keys.
  *
- * @param userId User to fetch the data for
+ * @param userID User to fetch the data for
  * @param dataTypes Database node keys to fetch data for
  * @returns An object with the fetched data and a refetch function
  * @example
- * const {data, isLoading, refetch} = useFetchData(userId, ['userStatusData', 'drinkingSessionData']);
+ * const {data, isLoading, refetch} = useFetchData(userID, ['userStatusData', 'drinkingSessionData']);
  */
 const useFetchData = (
-  userId: string,
+  userID: string,
   dataTypes: FetchDataKeys,
 ): UseFetchDataReturn => {
   const {db} = useFirebase();
@@ -52,7 +51,7 @@ const useFetchData = (
   };
 
   useEffect(() => {
-    if (!userId || !db) {
+    if (!userID || !db) {
       setIsLoading(false);
       return;
     }
@@ -60,7 +59,7 @@ const useFetchData = (
     const fetchData = async () => {
       setIsLoading(true);
       const promises = keysToFetch.map(async dataType => {
-        const path = fetchDataKeyToDbPath(dataType, userId);
+        const path = fetchDataKeyToDbPath(dataType, userID);
         if (path) {
           const fetchedData = await readDataOnce(db, path);
           return {[dataType]: fetchedData};
@@ -95,7 +94,7 @@ const useFetchData = (
     };
 
     fetchData();
-  }, [userId, refetchIndex]); // No dataTypes, as that would duplicate the refetch
+  }, [userID, refetchIndex]); // No dataTypes, as that would duplicate the refetch
 
   return {
     data: {

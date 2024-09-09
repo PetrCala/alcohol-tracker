@@ -8,8 +8,8 @@ import {
   calculateAllUsersPriority,
   orderUsersByPriority,
 } from '@libs/algorithms/DisplayPriority';
-import type {UserStatusList} from '@src/types/database';
-import type {UserArray} from '@src/types/database/DatabaseCommon';
+import type {UserStatusList} from '@src/types/onyx';
+import type {UserArray} from '@src/types/onyx/OnyxCommon';
 import React, {useState, useEffect} from 'react';
 import type {NativeScrollEvent, NativeSyntheticEvent} from 'react-native';
 import {
@@ -73,8 +73,8 @@ const UserListComponent: React.FC<UserListProps> = ({
       arrayToSlice.length,
     );
     if (newLoadSize <= currentLoadSize) {
-      return; // No more users to load
-    }
+      return;
+    } // No more users to load
     setLoadingMoreUsers(true);
     const additionalUsers = arrayToSlice.slice(currentLoadSize, newLoadSize);
     setDisplayUserArray([
@@ -98,8 +98,8 @@ const UserListComponent: React.FC<UserListProps> = ({
     }
   };
 
-  const navigateToProfile = (userId: string): void => {
-    Navigation.navigate(ROUTES.PROFILE.getRoute(userId));
+  const navigateToProfile = (userID: string): void => {
+    Navigation.navigate(ROUTES.PROFILE.getRoute(userID));
   };
 
   // Monitor the user status list
@@ -109,7 +109,7 @@ const UserListComponent: React.FC<UserListProps> = ({
         setUserStatusList({});
         return;
       }
-      const newUsers = fullUserArray.filter(userId => !userStatusList[userId]);
+      const newUsers = fullUserArray.filter(userID => !userStatusList[userID]);
       if (isNonEmptyArray(newUsers)) {
         const newUserStatusList: UserStatusList = await fetchUserStatuses(
           db,
@@ -163,9 +163,9 @@ const UserListComponent: React.FC<UserListProps> = ({
         <>
           <View style={styles.userList}>
             {isNonEmptyArray(displayUserArray) ? (
-              _.map(displayUserArray, (userId: string) => {
-                const profileData = profileList[userId] ?? {};
-                const userStatusData = userStatusList[userId] ?? {};
+              _.map(displayUserArray, (userID: string) => {
+                const profileData = profileList[userID] ?? {};
+                const userStatusData = userStatusList[userID] ?? {};
 
                 // Catch the initial load of the user list (profileList and userStatusList are empty objects at first)
                 if (
@@ -176,12 +176,12 @@ const UserListComponent: React.FC<UserListProps> = ({
                 }
                 return (
                   <PressableWithAnimation
-                    key={userId + '-button'}
+                    key={userID + '-button'}
                     style={styles.friendOverviewButton}
-                    onPress={() => navigateToProfile(userId)}>
+                    onPress={() => navigateToProfile(userID)}>
                     <UserOverview
-                      key={userId + '-user-overview'}
-                      userId={userId}
+                      key={userID + '-user-overview'}
+                      userID={userID}
                       profileData={profileData}
                       userStatusData={userStatusData}
                     />

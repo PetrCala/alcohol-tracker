@@ -2,22 +2,66 @@
 
 buildscript {
     ext {
-        buildToolsVersion = "33.0.0"
-        minSdkVersion = 21
-        compileSdkVersion = 33
-        targetSdkVersion = 33
+        buildToolsVersion = "34.0.0"
+        minSdkVersion = 23
+        compileSdkVersion = 34
+        targetSdkVersion = 34
+        ndkVersion = "26.1.10909125"
 
-        // We use NDK 23 which has both M1 support and is the side-by-side NDK version from AGP.
-        ndkVersion = "23.1.7779620"
+        androidXCore = "1.0.2"
+        multiDexEnabled = true
+        googlePlayServicesVersion = "17.0.0"
+        kotlinVersion = "1.9.24"
     }
     repositories {
         google()
         mavenCentral()
         maven { url 'https://maven.google.com' } // For image picker
         maven { url "https://www.jitpack.io" } // For image picker
+        maven { url "https://maven.fullstory.com" }
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:7.3.1")
-        classpath("com.facebook.react:react-native-gradle-plugin")
+        classpath("com.android.tools.build:gradle")
+        classpath("com.facebook.react:react-native-gradle-plugin:")
+        classpath("com.google.gms:google-services:4.3.4")
+        classpath("com.google.firebase:firebase-crashlytics-gradle:2.7.1")
+        classpath("com.google.firebase:perf-plugin:1.4.1")
+        // Fullstory integration
+        // classpath ("com.fullstory:gradle-plugin-local:1.45.1")
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     }
 }
+
+allprojects {
+    configurations.all {
+        resolutionStrategy {
+            force 'org.xerial:sqlite-jdbc:3.34.0'
+
+            // Manually set the react-native version to resolve this upstream issue: https://github.com/facebook/react-native/issues/35210
+            def REACT_NATIVE_VERSION = new File(['node', '--print',"JSON.parse(require('fs').readFileSync(require.resolve('react-native/package.json'), 'utf-8')).version"].execute(null, rootDir).text.trim())
+            force "com.facebook.react:react-native:" + REACT_NATIVE_VERSION
+            force "com.facebook.react:hermes-engine:" + REACT_NATIVE_VERSION
+
+            //Fix Investigate App Crash MainActivity.onCreate #35655
+            force "com.facebook.soloader:soloader:0.10.4+"
+
+            eachDependency { dependency ->
+                if (dependency.requested.group == 'org.bouncycastle') {
+                    println dependency.requested.module
+                    dependency.useTarget 'org.bouncycastle:bcprov-jdk15to18:1.71'
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+            url("$rootDir/../node_modules/react-native/android")
+        }
+    }
+}
+
+apply plugin: "com.facebook.react.rootproject"

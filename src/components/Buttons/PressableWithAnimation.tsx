@@ -45,7 +45,7 @@ const PressableWithAnimation = memo((props: PressableWithAnimationProps) => {
   }, [animatedOpacity]);
 
   return (
-    <Pressable onPress={handlePress}>
+    <Pressable accessibilityRole="button" onPress={handlePress}>
       <Animated.View style={[props.style, {opacity: animatedOpacity}]}>
         {props.children}
       </Animated.View>

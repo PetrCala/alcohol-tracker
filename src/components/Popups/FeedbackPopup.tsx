@@ -33,6 +33,7 @@ const FeedbackPopup = (props: FeedbackPopupProps) => {
             <Text style={styles.modalText}>{message}</Text>
             <View style={styles.feedbackWindowContainer}>
               <TextInput
+                accessibilityLabel="Text input field"
                 style={styles.feedbackWindowText}
                 onChangeText={setFeedbackText}
                 placeholder={'Write your feedback here'}
@@ -44,11 +45,13 @@ const FeedbackPopup = (props: FeedbackPopupProps) => {
             </View>
             <View style={styles.buttonContainer}>
               <TouchableOpacity
+                accessibilityRole="button"
                 style={styles.confirmButton}
                 onPress={() => onSubmit(feedbackText)}>
                 <Text style={styles.confirmButtonText}>Submit</Text>
               </TouchableOpacity>
               <TouchableOpacity
+                accessibilityRole="button"
                 style={styles.cancelButton}
                 onPress={onRequestClose}>
                 <Text style={styles.cancelButtonText}>Close</Text>

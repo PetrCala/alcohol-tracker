@@ -3,7 +3,7 @@ import React, {useState, useEffect, useRef} from 'react';
 // Assuming this function is now part of a component or receives the state variable directly
 const useWaitForBooleanToBeTrue = (
   bool: boolean,
-  timeout: number = 30000,
+  timeout = 30000,
 ): Promise<boolean> => {
   // Using a ref to store the current value of the boolean
   const boolRef = useRef(bool);

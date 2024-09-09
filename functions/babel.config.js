@@ -1,17 +1,17 @@
 ﻿module.exports = {
   presets: [
-    ['@babel/preset-env', {targets: {node: 'current'}}],
-    '@babel/preset-typescript',
+    ["@babel/preset-env", {targets: {node: "current"}}],
+    "@babel/preset-typescript",
   ],
   plugins: [
-    '@babel/plugin-transform-runtime',
+    "@babel/plugin-transform-runtime",
     [
-      'module-resolver',
+      "module-resolver",
       {
-        root: ['./'],
+        root: ["./"],
         alias: {
-          '@database': './lib/src/database',
-          '@utils': './lib/src/utils',
+          "@database": "./lib/src/database",
+          "@utils": "./lib/src/utils",
         },
       },
     ],

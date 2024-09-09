@@ -1,22 +1,25 @@
+import type {LayoutChangeEvent} from 'react-native';
 import {
   Dimensions,
-  LayoutChangeEvent,
+  Image,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {useFirebase} from '../../context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
-
+import Navigation from '@libs/Navigation/Navigation';
 import UploadImageComponent from '@components/UploadImage';
-import CONST from '@src/CONST';
+import ROUTES from '@src/ROUTES';
 import {useState} from 'react';
-import ImageLayout from '@src/types/various/ImageLayout';
-import {Profile} from '@src/types/database';
+import type ImageLayout from '@src/types/various/ImageLayout';
+import type {Profile} from '@src/types/onyx';
+import useThemeStyles from '@hooks/useThemeStyles';
 
 type ProfileOverviewProps = {
-  userId: string;
+  userID: string;
   profileData: Profile;
 };
 
@@ -25,10 +28,11 @@ const profileImageSize = 110;
 const topOffset = 20; // Profile image offset from main container top
 
 const ProfileOverview: React.FC<ProfileOverviewProps> = ({
-  userId,
+  userID,
   profileData,
 }) => {
   const {auth, storage} = useFirebase();
+  const styles = useThemeStyles();
   const user = auth.currentUser;
   const [layout, setLayout] = useState<ImageLayout>({
     x: 0,
@@ -48,32 +52,53 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
   };
 
   return (
-    <View style={styles.profileOverviewContainer}>
-      <View style={styles.profileImageContainer} />
+    <View style={localStyles.profileOverviewContainer}>
+      {/* {user?.uid === userID && (
+        <TouchableOpacity accessibilityRole="button"
+          onPress={() =>
+            Navigation.navigate(ROUTES.PROFILE_EDIT.getRoute(userID))
+          }
+          style={localStyles.editProfileButton}>
+          <Image
+            source={KirokuIcons.Settings}
+            style={localStyles.editProfileIcon}
+          />
+        </TouchableOpacity>
+        // <Button
+        //     // success
+        //     // medium
+        //     onPress={() =>
+        //       Navigation.navigate(ROUTES.PROFILE_EDIT.getRoute(userID))
+        //     }
+        //     text={'some text'}
+        //     style={styles.mt3}
+        //   />
+      )} */}
+      <View style={localStyles.profileImageContainer} />
       <ProfileImage
-        key={`${userId}-profile-image`}
+        key={`${userID}-profile-image`}
         storage={storage}
-        userId={userId}
+        userID={userID}
         downloadPath={profileData.photo_url}
-        style={styles.profileOverviewImage}
+        style={localStyles.profileOverviewImage}
         enlargable={true}
         layout={layout}
         onLayout={onLayout}
       />
-      {user?.uid === userId ? (
-        <View style={styles.editProfileButton}>
+      {user?.uid === userID ? (
+        <View style={localStyles.editProfileIconButton}>
           <UploadImageComponent
-            pathToUpload={`users/${userId}/profile/profile_image.jpg`}
+            pathToUpload={`users/${userID}/profile/profile_image.jpg`}
             imageSource={KirokuIcons.Camera}
-            imageStyle={styles.editProfileButtonImage}
+            imageStyle={localStyles.editProfileIconButtonImage}
             isProfilePicture={true}
           />
         </View>
       ) : null}
       <View />
-      <View style={styles.userInfoContainer}>
+      <View style={localStyles.userInfoContainer}>
         <Text
-          style={styles.profileNameText}
+          style={localStyles.profileNameText}
           numberOfLines={1}
           ellipsizeMode="tail">
           {profileData.display_name}
@@ -83,7 +108,7 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   profileOverviewContainer: {
     width: screenWidth,
     flexDirection: 'column',
@@ -91,6 +116,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 5,
     marginTop: topOffset,
+  },
+  editProfileButton: {
+    position: 'absolute',
+    top: -topOffset + 8,
+    right: 8,
+    padding: 8,
+    width: 'auto',
+    height: 'auto',
+  },
+  editProfileIcon: {
+    width: 24,
+    height: 24,
+    tintColor: '#1A3D32',
   },
   profileImageContainer: {
     height: profileImageSize,
@@ -109,7 +147,7 @@ const styles = StyleSheet.create({
     top: 0, // Makes layout recognize the position
     zIndex: 1, // Ensure that the profile image is below the edit button
   },
-  editProfileButton: {
+  editProfileIconButton: {
     height: profileImageSize / 3,
     width: profileImageSize / 3,
     position: 'absolute',
@@ -123,7 +161,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     zIndex: 2,
   },
-  editProfileButtonImage: {
+  editProfileIconButtonImage: {
     height: profileImageSize / 6,
     width: profileImageSize / 6,
     tintColor: 'gray',

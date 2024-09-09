@@ -8,7 +8,7 @@ import type {
   UnconfirmedDays,
   UserProps,
   UserStatus,
-} from '@src/types/database';
+} from '@src/types/onyx';
 import type {FetchDataKeys} from '@hooks/useFetchData/types';
 import useListenToData from '@hooks/useListenToData';
 
@@ -44,7 +44,7 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
 }) => {
   const {auth} = useFirebase();
   const user = auth.currentUser;
-  const userId = user ? user.uid : '';
+  const userID = user ? user.uid : '';
 
   const dataTypes: FetchDataKeys = [
     'userStatusData',
@@ -54,7 +54,7 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
     'userData',
   ];
 
-  const {data, isLoading} = useListenToData(userId, dataTypes);
+  const {data, isLoading} = useListenToData(userID, dataTypes);
 
   const value = useMemo(
     () => ({

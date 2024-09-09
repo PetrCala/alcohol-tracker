@@ -1,0 +1,38 @@
+name: 'Setup Git for KirokuAdmin'
+description: 'Setup Git for KirokuAdmin'
+
+inputs:
+  GPG_PASSPHRASE:
+    description: 'Passphrase used to decrypt GPG key'
+    required: true
+
+outputs:
+  # Do not try to use this for committing code. Use `secrets.KIROKU_ADMIN_COMMIT_TOKEN` instead
+  KIROKU_ADMIN_API_TOKEN:
+    description: Token to use for GitHub API interactions.
+    value: ${{ steps.generateToken.outputs.token }}
+
+
+runs:
+  using: composite
+  steps:
+    - name: Decrypt KirokuAdmin GPG key
+      run: cd .github/workflows && gpg --quiet --batch --yes --decrypt --passphrase=${{ inputs.GPG_PASSPHRASE }} --output KirokuAdmin-private-key.asc KirokuAdmin-private-key.asc.gpg
+      shell: bash
+
+    - name: Import KirokuAdmin GPG Key
+      shell: bash
+      run: cd .github/workflows && gpg --import KirokuAdmin-private-key.asc
+
+    - name: Set up git for KirokuAdmin
+      shell: bash
+      run: |
+        git config user.signingkey 310CF3A451D9BC83
+        git config commit.gpgsign true
+        git config user.name KirokuAdmin
+        git config user.email kiroku.alcohol.tracker@gmail.com
+
+    - name: Enable debug logs for git
+      shell: bash
+      if: runner.debug == '1'
+      run: echo "GIT_TRACE=true" >> "$GITHUB_ENV"

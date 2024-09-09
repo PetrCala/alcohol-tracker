@@ -1,10 +1,6 @@
-﻿import React, {
-  useEffect,
-  useState,
-  useMemo,
-  useCallback,
-  ReactNode,
-} from 'react';
+﻿import type {ReactNode} from 'react';
+import React, {useEffect, useState, useMemo, useCallback} from 'react';
+import type {StyleProp, TextStyle} from 'react-native';
 import {
   Dimensions,
   Image,
@@ -13,7 +9,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Calendar, DateData} from 'react-native-calendars';
+import type {DateData} from 'react-native-calendars';
+import {Calendar} from 'react-native-calendars';
 import {
   getPreviousMonth,
   getNextMonth,
@@ -25,14 +22,14 @@ import {
   roundToTwoDecimalPlaces,
 } from '@libs/DataHandling';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
-import {DateObject} from '@src/types/time';
+import type {DateObject} from '@src/types/time';
 import LoadingData from './LoadingData';
 import CONST from '@src/CONST';
-import {
+import type {
   DrinkingSessionArray,
   DrinkingSessionList,
   Preferences,
-} from '@src/types/database';
+} from '@src/types/onyx';
 
 type DayMarking = {
   units?: number;
@@ -53,16 +50,15 @@ type SessionsCalendarProps = {
   onDayPress: (day: DateData) => void;
 };
 
-type SessionsCalendarMarkedDates = {
-  [date: string]: DayMarking;
-};
+type SessionsCalendarMarkedDates = Record<string, DayMarking>;
 
-type SessionsCalendarDatesType = {
-  [key: string]: {
+type SessionsCalendarDatesType = Record<
+  string,
+  {
     units: number;
     blackout: boolean;
-  };
-};
+  }
+>;
 
 const colorToTextColorMap: Record<CalendarColors, string> = {
   yellow: 'black',
@@ -72,15 +68,25 @@ const colorToTextColorMap: Record<CalendarColors, string> = {
   green: 'white',
 };
 
-// Custom Day Component
-const DayComponent: React.FC<{
-  date: (string & DateData) | undefined;
+type DayComponentProps = {
+  date?: DateData;
   state: DayState;
   marking: DayMarking;
   theme: any;
   onPress: (day: DateData) => void;
-}> = ({date, state, marking, theme, onPress}) => {
-  if (!date) return null;
+};
+
+// Custom Day Component
+const DayComponent: React.FC<DayComponentProps> = ({
+  date,
+  state,
+  marking,
+  theme,
+  onPress,
+}) => {
+  if (!date) {
+    return null;
+  }
   // Calculate the date information with memos to avoid recalculation
   const today = useMemo(() => new Date(), []);
   const tomorrow = useMemo(() => changeDateBySomeDays(today, 1), [today]);
@@ -96,18 +102,20 @@ const DayComponent: React.FC<{
     [tomorrowMidnight],
   );
 
-  const getTextStyle = (state: DayState) => {
-    let textStyle = styles.dayText;
+  const getTextStyle = (state: DayState): StyleProp<TextStyle> => {
+    let textStyle = localStyles.dayText;
     if (state === 'disabled') {
-      textStyle = {...textStyle, ...styles.dayTextDisabled};
+      textStyle = {...textStyle, ...localStyles.dayTextDisabled};
     } else if (state === 'today') {
-      textStyle = {...textStyle, ...styles.dayTextToday};
+      textStyle = {...textStyle, ...localStyles.dayTextToday};
+    } else {
+      textStyle = {...textStyle, ...{color: theme.textDayColor}};
     }
     return textStyle;
   };
 
   const getMarkingContainerStyle = (date: DateData, marking: DayMarking) => {
-    let baseStyle = styles.daySessionsMarkingContainer;
+    const baseStyle = localStyles.daySessionsMarkingContainer;
 
     if (state === 'disabled') {
       return {...baseStyle, borderWidth: 0};
@@ -126,7 +134,7 @@ const DayComponent: React.FC<{
   };
 
   const getMarkingTextStyle = (marking: DayMarking) => {
-    let baseStyle = styles.daySessionMarkingText;
+    let baseStyle = localStyles.daySessionMarkingText;
 
     // Ensure no funky numbers
     if (marking?.units) {
@@ -153,7 +161,11 @@ const DayComponent: React.FC<{
   };
 
   return (
-    <TouchableOpacity style={styles.dayContainer} onPress={() => onPress(date)}>
+    // <TouchableOpacity
+    <TouchableOpacity
+      accessibilityRole="button"
+      style={localStyles.dayContainer}
+      onPress={() => onPress(date)}>
       <Text style={getTextStyle(state)}>{date.day}</Text>
       <View style={getMarkingContainerStyle(date, marking)}>
         <Text style={getMarkingTextStyle(marking)}>
@@ -207,12 +219,15 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
     preferences: Preferences,
   ): SessionsCalendarMarkedDates => {
     // Use points to calculate the point sum (flagged as units)
-    var aggergatedSessions = aggregateSessionsByDays(
+    const aggergatedSessions = aggregateSessionsByDays(
       calendarData,
       'units',
       preferences.drinks_to_units,
     );
-    var newMarkedDates = monthEntriesToColors(aggergatedSessions, preferences);
+    const newMarkedDates = monthEntriesToColors(
+      aggergatedSessions,
+      preferences,
+    );
     return newMarkedDates;
   };
 
@@ -248,35 +263,41 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
 
   // Monitor marked days
   useEffect(() => {
-    let newMarkedDates = getMarkedDates(calendarData, preferences);
+    const newMarkedDates = getMarkedDates(calendarData, preferences);
     setMarkedDates(newMarkedDates);
     setLoadingMarkedDays(false);
   }, [calendarData, preferences]);
 
-  if (loadingMarkedDates) return <LoadingData />;
+  if (loadingMarkedDates) {
+    return <LoadingData />;
+  }
 
   return (
     <Calendar
       current={visibleDateObject.dateString}
-      dayComponent={({date, state, marking, theme}) => (
+      dayComponent={({date, state, marking, theme}: DayComponentProps) => (
         <DayComponent
           date={date}
-          state={state as DayState}
-          marking={marking as any}
-          theme={theme as any}
+          state={state}
+          marking={marking}
+          theme={theme}
           onPress={onDayPress}
         />
       )}
       monthFormat="MMM yyyy"
-      onPressArrowLeft={subtractMonth => handleLeftArrowPress(subtractMonth)}
-      onPressArrowRight={addMonth => handleRightArrowPress(addMonth)}
+      onPressArrowLeft={(subtractMonth: () => void) =>
+        handleLeftArrowPress(subtractMonth)
+      }
+      onPressArrowRight={(addMonth: () => void) =>
+        handleRightArrowPress(addMonth)
+      }
       markedDates={markedDates}
       markingType={'period'}
       firstDay={preferences.first_day_of_week === 'Monday' ? 1 : 0}
       enableSwipeMonths={false}
       disableAllTouchEventsForDisabledDays={true}
       renderArrow={CustomArrow}
-      style={styles.mainScreenCalendarStyle}
+      style={localStyles.mainScreenCalendarStyle}
       theme={
         {
           textDayHeaderFontWeight: 'bold',
@@ -340,7 +361,7 @@ const arrowStyles = StyleSheet.create({
   },
 });
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   // Day component styles
   dayContainer: {
     // flex: 1,
@@ -356,8 +377,8 @@ const styles = StyleSheet.create({
     marginTop: 1,
     marginLeft: 2,
     fontSize: 10,
-    color: 'black',
     alignSelf: 'flex-start',
+    color: 'black' as string, // allow overrides
   },
   dayTextDisabled: {
     color: '#D3D3D3',
@@ -383,9 +404,10 @@ const styles = StyleSheet.create({
   // Calendar styles
   mainScreenCalendarStyle: {
     width: '100%',
+    backgroundColor: 'white',
     borderTopWidth: 0,
     borderBottomWidth: 1,
-    borderColor: '#000',
+    borderColor: 'grey',
     flexGrow: 1,
     flexShrink: 1,
   },

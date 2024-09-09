@@ -7,7 +7,7 @@ type SeeProfileButtonProps = {
 const SeeProfileButton: React.FC<SeeProfileButtonProps> = ({onPress}) => {
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.button} onPress={onPress}>
+      <TouchableOpacity accessibilityRole="button" style={styles.button} onPress={onPress}>
         <Text style={styles.text}>See profile</Text>
       </TouchableOpacity>
     </View>

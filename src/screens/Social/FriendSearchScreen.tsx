@@ -10,9 +10,9 @@ import type {
   FriendRequestList,
   FriendRequestStatus,
   ProfileList,
-  UserList,
-} from '@src/types/database';
-import React, {useEffect, useMemo, useReducer, useRef} from 'react';
+} from '@src/types/onyx';
+import type {UserList} from '@src/types/onyx/OnyxCommon';
+import React, {useMemo, useReducer, useRef} from 'react';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 
 import {isNonEmptyArray} from '@libs/Validation';
@@ -27,11 +27,8 @@ import type {
   UserSearchResults,
 } from '@src/types/various/Search';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
-import useRefresh from '@hooks/useRefresh';
-import {useFocusEffect} from '@react-navigation/native';
 import MainHeader from '@components/Header/MainHeader';
 import Navigation from '@libs/Navigation/Navigation';
-import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 import ScreenWrapper from '@components/ScreenWrapper';
 
 type State = {
@@ -125,9 +122,9 @@ function FriendSearchScreen() {
     searchResultData: UserSearchResults = state.searchResultData,
   ): void => {
     const newRequestStatuses: Record<string, FriendRequestStatus> = {};
-    searchResultData.forEach(userId => {
-      if (state.friendRequests?.[userId]) {
-        newRequestStatuses[userId] = state.friendRequests[userId];
+    searchResultData.forEach(userID => {
+      if (state.friendRequests?.[userID]) {
+        newRequestStatuses[userID] = state.friendRequests[userID];
       }
     });
     dispatch({type: 'SET_REQUEST_STATUSES', payload: newRequestStatuses});
@@ -190,16 +187,16 @@ function FriendSearchScreen() {
             {state.searching ? (
               <LoadingData style={styles.loadingData} />
             ) : isNonEmptyArray(state.searchResultData) ? (
-              state.searchResultData.map(userId => (
+              state.searchResultData.map(userID => (
                 <SearchResult
-                  key={userId + '-container'}
-                  userId={userId}
-                  userDisplayData={state.displayData[userId]}
+                  key={userID + '-container'}
+                  userID={userID}
+                  userDisplayData={state.displayData[userID]}
                   db={db}
                   storage={storage}
                   userFrom={user.uid}
-                  requestStatus={state.requestStatuses[userId]}
-                  alreadyAFriend={state.friends ? state.friends[userId] : false}
+                  requestStatus={state.requestStatuses[userID]}
+                  alreadyAFriend={state.friends ? state.friends[userID] : false}
                 />
               ))
             ) : state.noUsersFound ? (

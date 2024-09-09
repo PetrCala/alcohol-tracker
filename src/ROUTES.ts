@@ -1,10 +1,11 @@
 import type {IsEqual, ValueOf} from 'type-fest';
 import type CONST from './CONST';
-import {DrinkingSessionId, UserId} from './types/database';
+import type {DrinkingSessionId} from './types/onyx';
+import type {UserID} from './types/onyx/OnyxCommon';
 import {timestampToDate, timestampToDateString} from '@libs/DataHandling';
 import DeepValueOf from './types/utils/DeepValueOf';
 import SCREENS from './SCREENS';
-import {DateString} from './types/time';
+import type {DateString} from './types/time';
 
 const ROUTES = {
   // If the user opens this route, we'll redirect them to the path saved in the last visited path or to the home page if the last visited path is empty.
@@ -14,6 +15,10 @@ const ROUTES = {
   FORCE_UPDATE: 'force-update',
   LOGIN: 'login',
   SIGNUP: 'signup',
+  DESKTOP_SIGN_IN_REDIRECT: 'desktop-signin-redirect',
+  APPLE_SIGN_IN: 'sign-in-with-apple',
+  GOOGLE_SIGN_IN: 'sign-in-with-google',
+  TRANSITION_BETWEEN_APPS: 'transition',
 
   ACHIEVEMENTS: 'achievements',
 
@@ -45,16 +50,16 @@ const ROUTES = {
   MAIN_MENU_POLICIES_PRIVACY_POLICY: 'main-menu/policies/privacy-policy',
 
   PROFILE: {
-    route: 'profile/:userId',
-    getRoute: (userId: UserId) => `profile/${userId}` as const,
+    route: 'profile/:userID',
+    getRoute: (userID: UserID) => `profile/${userID}` as const,
   },
   PROFILE_EDIT: {
-    route: 'profile/:userId/edit',
-    getRoute: (userId: UserId) => `profile/${userId}/edit` as const,
+    route: 'profile/:userID/edit',
+    getRoute: (userID: UserID) => `profile/${userID}/edit` as const,
   },
   PROFILE_FRIENDS_FRIENDS: {
-    route: 'profile/:userId/friends',
-    getRoute: (userId: UserId) => `profile/${userId}/friends` as const,
+    route: 'profile/:userID/friends',
+    getRoute: (userID: UserID) => `profile/${userID}/friends` as const,
   },
 
   SETTINGS: 'settings',

@@ -25,7 +25,7 @@ import LoadingData from '@components/LoadingData';
 // import { PreferencesData} from '../types/database';
 import UserOffline from '@components/UserOffline';
 import {useUserConnection} from '@context/global/UserConnectionContext';
-import type {DrinkingSession, DrinkingSessionList} from '@src/types/database';
+import type {DrinkingSession, DrinkingSessionList} from '@src/types/onyx';
 import {generateDatabaseKey} from '@database/baseFunctions';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import MainHeader from '@components/Header/MainHeader';
@@ -38,11 +38,11 @@ import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import DBPATHS from '@database/DBPATHS';
-import {getEmptySession} from '@libs/SessionUtils';
+import {getEmptySession} from '@libs/DrinkingSessionUtils';
 import CONST from '@src/CONST';
 import {savePlaceholderSessionData} from '@database/drinkingSessions';
 import ScreenWrapper from '@components/ScreenWrapper';
-import {nonMidnightString} from '@libs/StringUtils';
+import {nonMidnightString} from '@libs/StringUtilsKiroku';
 
 type DayOverviewScreenProps = StackScreenProps<
   DayOverviewNavigatorParamList,
@@ -356,7 +356,6 @@ const styles = StyleSheet.create({
   menuIcon: {
     width: 25,
     height: 25,
-    padding: 10,
   },
   dayOverviewContainer: {
     flex: 1,

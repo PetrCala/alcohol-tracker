@@ -1,12 +1,7 @@
 import {useEffect, useReducer, useCallback, useState} from 'react';
 import {useFirebase} from '@src/context/global/FirebaseContext';
-import {
-  NicknameToIdList,
-  ProfileList,
-  UserArray,
-  UserList,
-  UserStatusList,
-} from '@src/types/database';
+import type {ProfileList} from '@src/types/onyx';
+import type {UserID, UserArray} from '@src/types/onyx/OnyxCommon';
 import {fetchUserProfiles, fetchUserStatuses} from '@database/profile';
 import {Alert} from 'react-native';
 import {isNonEmptyArray} from '@libs/Validation';
@@ -39,9 +34,12 @@ const useProfileList = (userArray: UserArray) => {
     setLoadingDisplayData(true);
     try {
       // Filter out the users that are already in the profile list
-      const newUsers = userArray.filter(userId => !profileList[userId]);
+      const newUsers = userArray.filter(userID => !profileList[userID]);
       if (isNonEmptyArray(newUsers)) {
-        let newProfileList: ProfileList = await fetchUserProfiles(db, newUsers);
+        const newProfileList: ProfileList = await fetchUserProfiles(
+          db,
+          newUsers,
+        );
         setProfileList({...profileList, ...newProfileList});
       }
     } catch (error: any) {

@@ -1,4 +1,4 @@
-﻿import React, {useRef, useState, useContext, useEffect, useMemo} from 'react';
+﻿import React, {useRef, useState, useEffect, useMemo} from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -10,7 +10,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import BasicButton from '@components/Buttons/BasicButton';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {
@@ -34,8 +33,8 @@ import {
   timestampToDateString,
   unitsToColors,
 } from '@libs/DataHandling';
-import type {DrinkingSession, DrinksList, Drinks} from '@src/types/database';
-import {DrinkKey} from '@src/types/database';
+import type {DrinkingSession, DrinksList, Drinks} from '@src/types/onyx';
+import {DrinkKey} from '@src/types/onyx';
 import YesNoPopup from '@components/Popups/YesNoPopup';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import UserOffline from '@components/UserOffline';
@@ -61,6 +60,7 @@ import useAsyncQueue from '@hooks/useAsyncQueue';
 import type DeepValueOf from '@src/types/utils/DeepValueOf';
 import ScreenWrapper from '@components/ScreenWrapper';
 import DrinkData from '@libs/DrinkData';
+import useLocalize from '@hooks/useLocalize';
 
 type LiveSessionScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -72,6 +72,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   // Context, database, and authentification
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
+  const {translate} = useLocalize();
   const {isOnline} = useUserConnection();
   const {preferences} = useDatabaseData();
   const [session, setSession] = useState<DrinkingSession | null>(null);
@@ -97,7 +98,11 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   const [isPlaceholderSession, setIsPlaceholderSession] =
     useState<boolean>(false);
   const sessionIsLive = session?.ongoing ? true : false;
-  const deleteSessionWording = session?.ongoing ? 'Discard' : 'Delete';
+  const deleteSessionWording = session?.ongoing
+    ? // ? translate('common.discard')
+      // : translate('common.delete');
+      'Discard'
+    : 'Delete';
   const scrollViewRef = useRef<ScrollView>(null); // To navigate the view
 
   const {isPending, enqueueUpdate} = useAsyncQueue(
@@ -119,8 +124,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       );
       setDbSyncSuccessful(true);
     } catch (error: any) {
-      console.log('Could not save the drinking session data', error.message);
-      throw new Error('Could not save the drinking session data');
+      throw new Error(translate('LiveSessionScreen.error.save'));
     }
   };
 
@@ -225,17 +229,17 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     setAvailableUnits(newAvailableUnits);
   }, [session?.drinks]);
 
-  async function saveSession(db: any, userId: string) {
+  async function saveSession(db: any, userID: string) {
     if (!session || !user) {
       return;
     }
     if (totalUnits > CONST.MAX_ALLOWED_UNITS) {
-      console.log('Cannot save this session');
+      console.log(translate('LiveSessionScreen.error.save'));
       return null;
     }
     if (totalUnits > 0) {
       try {
-        setLoadingText('Saving your session...');
+        setLoadingText(translate('LiveSessionScreen.saving'));
         setSessionFinished(true); // No more db syncs
         const newSessionData: DrinkingSession = {
           ...session,
@@ -247,21 +251,21 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
           await new Promise(resolve => setTimeout(resolve, 100));
         }
         if (sessionIsLive) {
-          await endLiveDrinkingSession(db, userId, newSessionData, sessionId);
+          await endLiveDrinkingSession(db, userID, newSessionData, sessionId);
         } else {
           await saveDrinkingSessionData(
             db,
-            userId,
+            userID,
             newSessionData,
             sessionId,
             false, // Do not update live status
           );
         }
-        await removePlaceholderSessionData(db, userId);
+        await removePlaceholderSessionData(db, userID);
       } catch (error: any) {
         Alert.alert(
-          'Session save failed',
-          'Failed to save drinking session data: ' + error.message,
+          translate('LiveSessionScreen.error.saveTitle'),
+          translate('LiveSessionScreen.error.save'),
         );
       } finally {
         // Reroute to session summary, do not allow user to return
@@ -279,7 +283,9 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   };
 
   const handleConfirmDiscard = async () => {
-    if (!user) return;
+    if (!user) {
+      return;
+    }
     try {
       setLoadingText(
         `${sessionIsLive ? 'Discarding' : 'Deleting'} this session...`,

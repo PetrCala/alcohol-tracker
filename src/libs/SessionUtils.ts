@@ -1,140 +1,63 @@
-import CONST from '@src/CONST';
-import {
-  DrinkKey,
-  DrinkingSession,
-  DrinkingSessionId,
-  DrinkingSessionList,
-  DrinkingSessionType,
-  DrinksList,
-} from '@src/types/database';
-import {isEmptyObject} from '@src/types/utils/EmptyObject';
-import {getTimestampAge, numberToVerboseString} from './TimeUtils';
-
-const PlaceholderDrinks: DrinksList = {[Date.now()]: {other: 0}};
+import Onyx from 'react-native-onyx';
+import ONYXKEYS from '@src/ONYXKEYS';
 
 /**
- * @returns An empty drinking session object.
+ * Determine if the transitioning user is logging in as a new user.
  */
-function getEmptySession(
-  type?: DrinkingSessionType,
-  usePlaceholderDrinks?: boolean,
-  ongoing?: boolean,
-): DrinkingSession {
-  let emptySession: DrinkingSession = {
-    start_time: Date.now(),
-    end_time: Date.now(),
-    drinks: usePlaceholderDrinks ? PlaceholderDrinks : {},
-    blackout: false,
-    note: '',
-    type: type ?? CONST.SESSION_TYPES.EDIT,
-    ...(ongoing && {ongoing: true}),
-  };
-  return emptySession;
-}
+function isLoggingInAsNewUser(
+  transitionURL?: string,
+  sessionEmail?: string,
+): boolean {
+  // The OldDot mobile app does not URL encode the parameters, but OldDot web
+  // does. We don't want to deploy OldDot mobile again, so as a work around we
+  // compare the session email to both the decoded and raw email from the transition link.
+  const params = new URLSearchParams(transitionURL);
+  const paramsEmail = params.get('email');
 
-/**
- * Check whether a drinking session is empty.
- */
-function isEmptySession(session: DrinkingSession): boolean {
-  return (
-    session.start_time === 0 &&
-    session.end_time === 0 &&
-    isEmptyObject(session?.drinks) &&
-    session.blackout === false &&
-    session.note === ''
-  );
-}
-
-function sessionIsExpired(session: DrinkingSession | undefined): boolean {
-  if (!session) return false;
-  const expirationBoundary = Date.now() - CONST.SESSION_EXPIRY;
-  return session.start_time < expirationBoundary;
-}
-
-/** Calculate a length of a sesison either as a number, or as a string */
-function calculateSessionLength(
-  session: DrinkingSession | undefined,
-  returnString?: boolean,
-): number | string {
-  if (!session) return returnString ? '0s' : 0;
-  const length = session?.end_time ? session.end_time - session.start_time : 0;
-  if (returnString) {
-    return numberToVerboseString(length, false);
+  // If the email param matches what is stored in the session then we are
+  // definitely not logging in as a new user
+  if (paramsEmail === sessionEmail) {
+    return false;
   }
-  return length;
+
+  // If they do not match it might be due to encoding, so check the raw value
+  // Capture the un-encoded text in the email param
+  const emailParamRegex = /[?&]email=([^&]*)/g;
+  const matches = emailParamRegex.exec(transitionURL ?? '');
+  const linkedEmail = matches?.[1] ?? null;
+  return linkedEmail !== sessionEmail;
 }
 
-/**
- * From a list of drinking sessions, extract a single session object.
- * If the list does not contain the session, return an empty session.
- */
-function extractSessionOrEmpty(
-  sessionId: DrinkingSessionId,
-  drinkingSessionData: DrinkingSessionList | undefined,
-): DrinkingSession {
-  if (isEmptyObject(drinkingSessionData)) return getEmptySession();
-  if (
-    drinkingSessionData &&
-    Object.keys(drinkingSessionData).includes(sessionId)
-  ) {
-    return drinkingSessionData[sessionId];
-  }
-  return getEmptySession();
-}
+let loggedInDuringSession: boolean | undefined;
 
-/** Given a DrinkingSession object, determine its type (i.e.,
- *  the most number of units the user has in this session).
- *
- * If there are no drinks in the session, return null.
- * */
-function determineSessionMostCommonDrink(
-  session: DrinkingSession | undefined | null,
-): DrinkKey | undefined | null {
-  if (!session) return null;
-  const drinks = session.drinks;
-  if (!drinks) return null;
-  const drinkCounts: Partial<Record<DrinkKey, number>> = {};
-
-  Object.values(drinks).forEach(drinksAtTimestamp => {
-    Object.entries(drinksAtTimestamp).forEach(([drinkKey, count]) => {
-      if (count) {
-        const key = drinkKey as DrinkKey; // Initialize safely
-        // Increment the count, initializing to 0 if necessary
-        drinkCounts[key] = (drinkCounts[key] || 0) + count;
-      }
-    });
-  });
-
-  // Find the drink with the highest count
-  let mostCommonDrink: DrinkKey | null = null;
-  let highestCount = 0;
-  let isTie = false;
-  Object.entries(drinkCounts).forEach(([drinkKey, count]) => {
-    if (count) {
-      if (count > highestCount) {
-        highestCount = count;
-        mostCommonDrink = drinkKey as DrinkKey;
-        isTie = false; // Reset the tie flag as we have a new leader
-      } else if (count === highestCount) {
-        isTie = true; // A tie has occurred
-      }
+// To tell if the user logged in during this session we will check the value of session.authToken once when the app's JS inits. When the user logs out
+// we can reset this flag so that it can be updated again.
+Onyx.connect({
+  key: ONYXKEYS.SESSION,
+  callback: session => {
+    if (loggedInDuringSession) {
+      return;
     }
-  });
+    // We are incorporating a check for 'signedInWithShortLivedAuthToken' to handle cases where login is performed using a ShortLivedAuthToken
+    // This check is necessary because, with ShortLivedAuthToken, 'authToken' gets populated, leading to 'loggedInDuringSession' being assigned a false value
+    if (session?.authToken && !session?.signedInWithShortLivedAuthToken) {
+      loggedInDuringSession = false;
+    } else {
+      loggedInDuringSession = true;
+    }
+  },
+});
 
-  // In case of no single winner, return 'other'
-  if (isTie && highestCount > 0) {
-    return CONST.DRINKS.KEYS.OTHER;
-  }
+function resetDidUserLogInDuringSession() {
+  loggedInDuringSession = true;
+}
 
-  return mostCommonDrink;
+function didUserLogInDuringSession() {
+  return Boolean(loggedInDuringSession);
 }
 
 export {
-  PlaceholderDrinks,
-  determineSessionMostCommonDrink,
-  calculateSessionLength,
-  extractSessionOrEmpty,
-  sessionIsExpired,
-  getEmptySession,
-  isEmptySession,
+  isLoggingInAsNewUser,
+  didUserLogInDuringSession,
+  resetDidUserLogInDuringSession,
 };

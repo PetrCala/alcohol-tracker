@@ -4,7 +4,7 @@ import type {
   UnconfirmedDays,
   UserProps,
   UserStatus,
-} from '@src/types/database';
+} from '@src/types/onyx';
 import type {StringKeyOf, ValueOf} from 'type-fest';
 
 /** Main nodes of the database are meant to be fetched from the database
