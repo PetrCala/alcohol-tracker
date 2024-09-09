@@ -43,7 +43,6 @@ const url = getCurrentUrl();
 // } satisfies Screens;
 
 function BaseCentralPaneNavigator() {
-  const styles = useThemeStyles();
   const options = {
     headerShown: false,
     title: CONFIG.SITE_TITLE,
