@@ -22,7 +22,7 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import useWindowDimensions from '@hooks/useWindowDimensions';
 import * as Browser from '@libs/Browser';
 import type {
-  CentralPaneNavigatorParamList,
+  AuthScreensParamList,
   RootStackParamList,
 } from '@libs/Navigation/types';
 // import toggleTestToolsModal from '@userActions/TestTool';
@@ -105,7 +105,7 @@ type ScreenWrapperProps = {
    */
   navigation?:
     | StackNavigationProp<RootStackParamList>
-    | StackNavigationProp<CentralPaneNavigatorParamList>;
+    | StackNavigationProp<AuthScreensParamList>;
 
   /** Whether to show offline indicator on wide screens */
   shouldShowOfflineIndicatorInWideScreen?: boolean;
