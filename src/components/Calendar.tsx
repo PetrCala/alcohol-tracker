@@ -68,14 +68,22 @@ const colorToTextColorMap: Record<CalendarColors, string> = {
   green: 'white',
 };
 
-// Custom Day Component
-const DayComponent: React.FC<{
-  date: (string & DateData) | undefined;
+type DayComponentProps = {
+  date?: DateData;
   state: DayState;
   marking: DayMarking;
   theme: any;
   onPress: (day: DateData) => void;
-}> = ({date, state, marking, theme, onPress}) => {
+};
+
+// Custom Day Component
+const DayComponent: React.FC<DayComponentProps> = ({
+  date,
+  state,
+  marking,
+  theme,
+  onPress,
+}) => {
   if (!date) {
     return null;
   }
@@ -267,18 +275,22 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
   return (
     <Calendar
       current={visibleDateObject.dateString}
-      dayComponent={({date, state, marking, theme}) => (
+      dayComponent={({date, state, marking, theme}: DayComponentProps) => (
         <DayComponent
           date={date}
-          state={state as DayState}
-          marking={marking as any}
-          theme={theme as any}
+          state={state}
+          marking={marking}
+          theme={theme}
           onPress={onDayPress}
         />
       )}
       monthFormat="MMM yyyy"
-      onPressArrowLeft={subtractMonth => handleLeftArrowPress(subtractMonth)}
-      onPressArrowRight={addMonth => handleRightArrowPress(addMonth)}
+      onPressArrowLeft={(subtractMonth: () => void) =>
+        handleLeftArrowPress(subtractMonth)
+      }
+      onPressArrowRight={(addMonth: () => void) =>
+        handleRightArrowPress(addMonth)
+      }
       markedDates={markedDates}
       markingType={'period'}
       firstDay={preferences.first_day_of_week === 'Monday' ? 1 : 0}
@@ -366,7 +378,7 @@ const localStyles = StyleSheet.create({
     marginLeft: 2,
     fontSize: 10,
     alignSelf: 'flex-start',
-    color: 'black',
+    color: 'black' as string, // allow overrides
   },
   dayTextDisabled: {
     color: '#D3D3D3',

@@ -16,6 +16,12 @@ import {URL_REGEX_WITH_REQUIRED_PROTOCOL} from '@libs/common/Url';
 import isDate from 'lodash/isDate';
 import isEmpty from 'lodash/isEmpty';
 import isObject from 'lodash/isObject';
+import type {
+  FormInputErrors,
+  FormOnyxKeys,
+  FormOnyxValues,
+  FormValue,
+} from '@components/Form/types';
 import CONST from '@src/CONST';
 // import * as CardUtils from './CardUtils';
 import DateUtils from './DateUtils';
@@ -98,8 +104,7 @@ function isValidPastDate(date: string | Date): boolean {
  * @param value - field value
  */
 function isRequiredFulfilled(
-  // value?: FormValue | number[] | string[] | Record<string, string>, // Should be this
-  value?: number[] | string[] | Record<string, string>,
+  value?: FormValue | number[] | string[] | Record<string, string>, // Should be this
 ): boolean {
   if (!value) {
     return false;

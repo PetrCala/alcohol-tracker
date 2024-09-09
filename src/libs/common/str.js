@@ -57,6 +57,31 @@ const Str = {
     }
     return singular;
   },
+
+  /**
+   * Modifies the string so the first letter of each word is capitalized and the
+   * rest lowercased.
+   *
+   * @param val The string to modify
+   */
+  recapitalize(val) {
+    // First replace every letter with its lowercase equivalent
+    // Cast to string.
+    let str = String(val);
+    if (str.length <= 0) {
+      return str;
+    }
+    str = str.substr(0, 1).toUpperCase() + str.substr(1).toLowerCase();
+
+    function recap_callback(t, a, b) {
+      return a + b.toUpperCase();
+    }
+    return str.replace(
+      // **NOTE: Match to _libfop.php
+      /([^A-Za-z'.0-9])([a-z])/g,
+      recap_callback,
+    );
+  },
 };
 
 export default Str;

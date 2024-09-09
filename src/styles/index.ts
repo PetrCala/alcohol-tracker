@@ -539,6 +539,14 @@ const styles = (theme: ThemeColors) =>
       textAlign: 'center',
     },
 
+    buttonDefaultBG: {
+      backgroundColor: theme.buttonDefaultBG,
+    },
+
+    buttonHoveredBG: {
+      backgroundColor: theme.buttonHoveredBG,
+    },
+
     buttonDefaultHovered: {
       backgroundColor: theme.buttonHoveredBG,
       borderWidth: 0,
@@ -602,6 +610,33 @@ const styles = (theme: ThemeColors) =>
       borderRightWidth: 1,
       borderRightColor: theme.dangerHover,
       ...sizing.h100,
+    },
+
+    calendarHeader: {
+      height: 50,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingHorizontal: 15,
+      paddingRight: 5,
+      ...userSelect.userSelectNone,
+    },
+
+    calendarDayRoot: {
+      flex: 1,
+      height: 45,
+      justifyContent: 'center',
+      alignItems: 'center',
+      ...userSelect.userSelectNone,
+    },
+
+    calendarDayContainer: {
+      width: 30,
+      height: 30,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 15,
+      overflow: 'hidden',
     },
 
     cardSectionContainer: {
