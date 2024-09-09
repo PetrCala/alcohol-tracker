@@ -27,6 +27,8 @@ import {isCentralPaneName} from '@libs/NavigationUtils';
 import getTopmostCentralPaneRoute from './getTopmostCentralPaneRoute';
 import getTopmostBottomTabRoute from './getTopmostBottomTabRoute';
 import getMatchingBottomTabRouteForState from './linkingConfig/getMatchingBottomTabRouteForState';
+import SCREENS from '@src/SCREENS';
+import {EmptyObject} from '@src/types/utils/EmptyObject';
 
 let resolveNavigationIsReadyPromise: () => void;
 const navigationIsReadyPromise = new Promise<void>(resolve => {
@@ -324,6 +326,36 @@ function closeAndNavigate(route: Route) {
   navigate(route);
 }
 
+function getLastRouteName(): string | undefined {
+  const rootState = navigationRef.getRootState();
+
+  if (rootState && rootState.routes && rootState.routes.length > 0) {
+    return rootState.routes[rootState.routes.length - 1]?.path;
+  }
+
+  return undefined;
+}
+
+/**
+ * Attempts to get the name of the last screen in the navigation stack.
+ * If the last screen is a modal, it will attempt to get the name of the last screen in the modal stack.
+ * If the last screen is a modal and the modal stack is empty, it will attempt to get the name of the screen before the modal.
+ *
+ * @returns The name of the last screen in the navigation stack.
+ */
+function getLastScreenName(
+  getOneDeepInstead = false,
+): keyof typeof Screen | string {
+  const rootState = navigationRef.getRootState();
+  const route = rootState.routes[rootState.routes.length - 1];
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  const idx = getOneDeepInstead ? -2 : -1;
+  const screenParams = route?.state?.routes?.[
+    route?.state?.routes?.length + idx
+  ]?.params as EmptyObject;
+  return (screenParams?.screen as keyof typeof SCREENS) ?? SCREENS.HOME;
+}
+
 /**
  * Reset the navigation state to Home page
  */
@@ -452,21 +484,23 @@ function getTopMostCentralPaneRouteFromRootState() {
 }
 
 export default {
-  setShouldPopAllStateOnUP,
-  navigate,
-  setParams,
+  closeAndNavigate,
   dismissModal,
-  isActiveRoute,
   getActiveRoute,
   getActiveRouteWithoutParams,
-  closeAndNavigate,
-  goBack,
-  isNavigationReady,
-  setIsNavigationReady,
+  getLastRouteName,
+  getLastScreenName,
   getRouteNameFromStateEvent,
-  waitForProtectedRoutes,
-  resetToHome,
   getTopMostCentralPaneRouteFromRootState,
+  goBack,
+  isActiveRoute,
+  isNavigationReady,
+  navigate,
+  resetToHome,
+  setIsNavigationReady,
+  setParams,
+  setShouldPopAllStateOnUP,
+  waitForProtectedRoutes,
 };
 
 export {navigationRef};
