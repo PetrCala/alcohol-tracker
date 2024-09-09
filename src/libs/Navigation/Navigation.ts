@@ -218,7 +218,7 @@ function goBack(
   );
   if (isFirstRouteInNavigator) {
     const rootState = navigationRef.getRootState();
-    const lastRoute = rootState.routes.at(-1);
+    const lastRoute = rootState.routes[rootState.routes.length - 1];
     // If the user comes from a different flow (there is more than one route in ModalNavigator) we should go back to the previous flow on UP button press instead of using the fallbackRoute.
     if (
       (lastRoute?.name === NAVIGATORS.RIGHT_MODAL_NAVIGATOR ||

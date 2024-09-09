@@ -87,13 +87,13 @@ function createBottomTabNavigator(
   };
 }
 
-function getParamsFromRoute(screenName: string): string[] {
-  const routeConfig = normalizedConfigs[screenName as Screen];
+// function getParamsFromRoute(screenName: string): string[] {
+//   const routeConfig = normalizedConfigs[screenName as Screen];
 
-  const route = routeConfig.pattern;
+//   const route = routeConfig.pattern;
 
-  return route.match(/(?<=[:?&])(\w+)(?=[/=?&]|$)/g) ?? [];
-}
+//   return route.match(/(?<=[:?&])(\w+)(?=[/=?&]|$)/g) ?? [];
+// }
 
 // This function will return CentralPaneNavigator route or FullScreenNavigator route.
 function getMatchingRootRouteForRHPRoute(
@@ -143,18 +143,18 @@ function getMatchingRootRouteForRHPRoute(
   }
 
   // Check for CentralPaneNavigator
-  for (const [centralPaneName, RHPNames] of Object.entries(
-    CENTRAL_PANE_TO_RHP_MAPPING,
-  )) {
-    if (RHPNames.includes(route.name)) {
-      const paramsFromRoute = getParamsFromRoute(centralPaneName);
+  // for (const [centralPaneName, RHPNames] of Object.entries(
+  //   CENTRAL_PANE_TO_RHP_MAPPING,
+  // )) {
+  //   if (RHPNames.includes(route.name)) {
+  //     const paramsFromRoute = getParamsFromRoute(centralPaneName);
 
-      return {
-        name: centralPaneName as CentralPaneName,
-        params: pick(route.params, paramsFromRoute),
-      };
-    }
-  }
+  //     return {
+  //       name: centralPaneName as CentralPaneName,
+  //       params: pick(route.params, paramsFromRoute),
+  //     };
+  //   }
+  // }
 }
 
 function getAdaptedState(
