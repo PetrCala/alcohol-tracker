@@ -295,7 +295,7 @@ function HomeScreen({route}: HomeScreenProps) {
   }
 
   return (
-    <ScreenWrapper testID={HomeScreen.displayName}>
+    <ScreenWrapper testID={HomeScreen.displayName} includePaddingTop={false}>
       <View style={commonStyles.headerContainer}>
         {userData && (
           <View style={localStyles.profileContainer}>
