@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import type {DateData} from 'react-native-calendars';
+import type {DayState, DateData} from 'react-native-calendars/src/types';
 import {Calendar} from 'react-native-calendars';
 import {
   getPreviousMonth,
@@ -33,13 +33,13 @@ import type {
 
 type DayMarking = {
   units?: number;
-  color?: CalendarColors;
+  color?: string;
   textColor?: string;
 };
 
 type CalendarColors = 'yellow' | 'red' | 'orange' | 'black' | 'green';
 
-type DayState = 'selected' | 'disabled' | 'today' | '';
+// type DayState = 'selected' | 'disabled' | 'today' | ''; // Old day state
 
 type SessionsCalendarProps = {
   drinkingSessionData: DrinkingSessionList | undefined;
@@ -48,6 +48,14 @@ type SessionsCalendarProps = {
   dispatch: React.Dispatch<any>;
   // setVisibleDateObject: React.Dispatch<React.SetStateAction<DateObject>>;
   onDayPress: (day: DateData) => void;
+};
+
+type MarkingProps = {
+  selected?: boolean;
+  marked?: boolean;
+  dotColor?: string;
+  disabled?: boolean;
+  color?: string; // This is the field causing the issue in your case
 };
 
 type SessionsCalendarMarkedDates = Record<string, DayMarking>;
@@ -70,10 +78,10 @@ const colorToTextColorMap: Record<CalendarColors, string> = {
 
 type DayComponentProps = {
   date?: DateData;
-  state: DayState;
-  marking: DayMarking;
-  theme: any;
-  onPress: (day: DateData) => void;
+  state?: DayState;
+  marking?: DayMarking;
+  theme?: any;
+  onPress?: (day: DateData) => void;
 };
 
 // Custom Day Component
@@ -102,38 +110,47 @@ const DayComponent: React.FC<DayComponentProps> = ({
     [tomorrowMidnight],
   );
 
-  const getTextStyle = (state: DayState): StyleProp<TextStyle> => {
+  const getTextStyle = (state: DayState | undefined): StyleProp<TextStyle> => {
     let textStyle = localStyles.dayText;
     if (state === 'disabled') {
       textStyle = {...textStyle, ...localStyles.dayTextDisabled};
     } else if (state === 'today') {
       textStyle = {...textStyle, ...localStyles.dayTextToday};
     } else {
-      textStyle = {...textStyle, ...{color: theme.textDayColor}};
+      textStyle = {...textStyle, ...{color: theme?.textDayColor || 'black'}};
     }
     return textStyle;
   };
 
-  const getMarkingContainerStyle = (date: DateData, marking: DayMarking) => {
+  const getMarkingContainerStyle = (
+    date: DateData,
+    marking?: DayMarking | MarkingProps,
+  ) => {
     const baseStyle = localStyles.daySessionsMarkingContainer;
+    const validColors: CalendarColors[] = [
+      'black',
+      'yellow',
+      'red',
+      'orange',
+      'green',
+    ];
 
     if (state === 'disabled') {
       return {...baseStyle, borderWidth: 0};
     }
 
-    const colors = ['black', 'yellow', 'red', 'orange'];
     if (!dateNoLaterThanToday(date)) {
       return {...baseStyle, borderWidth: 0};
-    } else if (!marking?.color) {
-      return {...baseStyle, backgroundColor: 'green'};
-    } else if (colors.includes(marking?.color)) {
-      return {...baseStyle, backgroundColor: marking?.color};
-    } else {
-      return {...baseStyle, backgroundColor: 'green'};
     }
+
+    const color = validColors.includes(marking?.color as CalendarColors)
+      ? marking?.color
+      : 'green'; // Default to 'green' if color is not in validColors
+
+    return {...baseStyle, backgroundColor: color};
   };
 
-  const getMarkingTextStyle = (marking: DayMarking) => {
+  const getMarkingTextStyle = (marking?: DayMarking) => {
     let baseStyle = localStyles.daySessionMarkingText;
 
     // Ensure no funky numbers
@@ -151,22 +168,25 @@ const DayComponent: React.FC<DayComponentProps> = ({
 
     if (
       marking?.color &&
-      colorToTextColorMap[marking?.color] &&
-      marking?.units != 0
+      (marking.color as CalendarColors) in colorToTextColorMap &&
+      marking.units != 0
     ) {
-      return {...baseStyle, color: colorToTextColorMap[marking?.color]};
+      return {
+        ...baseStyle,
+        color: colorToTextColorMap[marking.color as CalendarColors],
+      };
     }
 
     return {...baseStyle, fontSize: 0, color: 'transparent'}; // Default case
   };
 
   return (
-    // <TouchableOpacity
     <TouchableOpacity
       accessibilityRole="button"
       style={localStyles.dayContainer}
-      onPress={() => onPress(date)}>
-      <Text style={getTextStyle(state)}>{date.day}</Text>
+      onPress={() => onPress && date && onPress(date)} // Guard against undefined onPress
+    >
+      <Text style={getTextStyle(state)}>{date?.day}</Text>
       <View style={getMarkingContainerStyle(date, marking)}>
         <Text style={getMarkingTextStyle(marking)}>
           {state === 'disabled' ? '' : marking?.units}
