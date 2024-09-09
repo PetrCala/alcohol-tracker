@@ -3,7 +3,10 @@ import type {LinkingOptions} from '@react-navigation/native';
 import type {RootStackParamList} from '@navigation/types';
 import NAVIGATORS from '@src/NAVIGATORS';
 import ROUTES from '@src/ROUTES';
+import type {Screen} from '@src/SCREENS';
 import SCREENS from '@src/SCREENS';
+import type {RouteConfig} from './createNormalizedConfigs';
+import createNormalizedConfigs from './createNormalizedConfigs';
 
 // Moved to a separate file to avoid cyclic dependencies.
 const config: LinkingOptions<RootStackParamList>['config'] = {
@@ -28,15 +31,6 @@ const config: LinkingOptions<RootStackParamList>['config'] = {
       },
     },
 
-    [NAVIGATORS.CENTRAL_PANE_NAVIGATOR]: {
-      screens: {
-        // [SCREENS.SETTINGS.WORKSPACES]: ROUTES.SETTINGS_WORKSPACES,
-        // [SCREENS.WORKSPACE.PROFILE]: ROUTES.WORKSPACE_PROFILE.route,
-        // [SCREENS.WORKSPACE.CARD]: {
-        //   path: ROUTES.WORKSPACE_CARD.route,
-        // },
-      },
-    },
     [SCREENS.NOT_FOUND]: '*',
     [NAVIGATORS.LEFT_MODAL_NAVIGATOR]: {
       screens: {
@@ -119,36 +113,34 @@ const config: LinkingOptions<RootStackParamList>['config'] = {
         },
       },
     },
-
-    [NAVIGATORS.FULL_SCREEN_NAVIGATOR]: {
-      screens: {
-        // [SCREENS.SETTINGS.ROOT]: {
-        //   path: ROUTES.SETTINGS,
-        // },
-        // [SCREENS.SETTINGS_CENTRAL_PANE]: {
-        //   screens: {
-        //     [SCREENS.SETTINGS.SHARE_CODE]: {
-        //       path: ROUTES.SETTINGS_SHARE_CODE,
-        //       exact: true,
-        //     },
-        //     [SCREENS.SETTINGS.PROFILE.ROOT]: {
-        //       path: ROUTES.SETTINGS_PROFILE,
-        //       exact: true,
-        //     },
-        //     [SCREENS.SETTINGS.PREFERENCES.ROOT]: {
-        //       path: ROUTES.SETTINGS_PREFERENCES,
-        //       exact: true,
-        //     },
-        // [SCREENS.SETTINGS.ABOUT]: {
-        //   path: ROUTES.SETTINGS_ABOUT,
-        //   exact: true,
-        // },
-        //       },
-        //     },
-        //   },
-      },
-    },
   },
 };
 
+const normalizedConfigs = Object.keys(config.screens)
+  .map(key =>
+    createNormalizedConfigs(
+      key,
+      config.screens,
+      [],
+      config.initialRouteName
+        ? [
+            {
+              initialRouteName: config.initialRouteName,
+              parentScreens: [],
+            },
+          ]
+        : [],
+      [],
+    ),
+  )
+  .flat()
+  .reduce(
+    (acc, route) => {
+      acc[route.screen as Screen] = route;
+      return acc;
+    },
+    {} as Record<Screen, RouteConfig>,
+  );
+
+export {normalizedConfigs};
 export default config;

@@ -61,7 +61,7 @@ type State<TParamList extends ParamListBase = ParamListBase> =
   | NavigationState<TParamList>
   | PartialState<NavigationState<TParamList>>;
 
-type CentralPaneNavigatorParamList = {
+type CentralPaneScreensParamList = {
   [SCREENS.HOME]: undefined;
   //   [SCREENS.REPORT]: {
   //     reportActionID: string;
@@ -179,10 +179,10 @@ type SettingsCentralPaneNavigatorParamList = {
   // [SCREENS.SETTINGS.ABOUT]: undefined;
 };
 
-type FullScreenNavigatorParamList = {
-  //   [SCREENS.SETTINGS.ROOT]: undefined;
-  //   [SCREENS.SETTINGS_CENTRAL_PANE]: NavigatorScreenParams<SettingsCentralPaneNavigatorParamList>;
-};
+// type FullScreenNavigatorParamList = {
+//   [SCREENS.SETTINGS.ROOT]: undefined;
+//   [SCREENS.SETTINGS_CENTRAL_PANE]: NavigatorScreenParams<SettingsCentralPaneNavigatorParamList>;
+// };
 
 type BottomTabNavigatorParamList = {
   [SCREENS.HOME]: undefined;
@@ -190,47 +190,69 @@ type BottomTabNavigatorParamList = {
   // [SCREENS.WORKSPACE.INITIAL]: undefined;
 };
 
-type PublicScreensParamList = {
+type SharedScreensParamList = {
   [NAVIGATORS.BOTTOM_TAB_NAVIGATOR]: NavigatorScreenParams<BottomTabNavigatorParamList>;
+  // [SCREENS.TRANSITION_BETWEEN_APPS]: {
+  //     email?: string;
+  //     accountID?: number;
+  //     error?: string;
+  //     shortLivedAuthToken?: string;
+  //     shortLivedToken?: string;
+  //     authTokenType?: ValueOf<typeof CONST.AUTH_TOKEN_TYPES>;
+  //     exitTo?: Routes | HybridAppRoute;
+  //     shouldForceLogin: string;
+  //     domain?: Routes;
+  // };
+  // [SCREENS.VALIDATE_LOGIN]: {
+  //     accountID: string;
+  //     validateCode: string;
+  //     exitTo?: Routes | HybridAppRoute;
+  // };
+};
+
+type PublicScreensParamList = SharedScreensParamList & {
+  // [SCREENS.UNLINK_LOGIN]: {
+  //     accountID?: string;
+  //     validateCode?: string;
+  // };
+  // [SCREENS.SIGN_IN_WITH_APPLE_DESKTOP]: undefined;
+  // [SCREENS.SIGN_IN_WITH_GOOGLE_DESKTOP]: undefined;
+  // [SCREENS.SAML_SIGN_IN]: undefined;
+  // [SCREENS.CONNECTION_COMPLETE]: undefined;
   [SCREENS.FORCE_UPDATE]: undefined;
   [SCREENS.SIGNUP]: undefined;
   [SCREENS.LOGIN]: undefined;
 };
 
-type AuthScreensParamList = {
-  [NAVIGATORS.BOTTOM_TAB_NAVIGATOR]: NavigatorScreenParams<BottomTabNavigatorParamList>;
-  [NAVIGATORS.CENTRAL_PANE_NAVIGATOR]: NavigatorScreenParams<CentralPaneNavigatorParamList>;
-  [SCREENS.NOT_FOUND]: undefined;
-  [NAVIGATORS.LEFT_MODAL_NAVIGATOR]: NavigatorScreenParams<LeftModalNavigatorParamList>;
-  [NAVIGATORS.RIGHT_MODAL_NAVIGATOR]: NavigatorScreenParams<RightModalNavigatorParamList>;
-  [NAVIGATORS.FULL_SCREEN_NAVIGATOR]: NavigatorScreenParams<FullScreenNavigatorParamList>;
-};
+type AuthScreensParamList = CentralPaneScreensParamList &
+  SharedScreensParamList & {
+    [SCREENS.NOT_FOUND]: undefined;
+    [NAVIGATORS.LEFT_MODAL_NAVIGATOR]: NavigatorScreenParams<LeftModalNavigatorParamList>;
+    [NAVIGATORS.RIGHT_MODAL_NAVIGATOR]: NavigatorScreenParams<RightModalNavigatorParamList>;
+    // [NAVIGATORS.FULL_SCREEN_NAVIGATOR]: NavigatorScreenParams<FullScreenNavigatorParamList>;
+  };
 
-type RootStackParamList = PublicScreensParamList & AuthScreensParamList;
+type RootStackParamList = PublicScreensParamList &
+  AuthScreensParamList &
+  LeftModalNavigatorParamList;
 
 type BottomTabName = keyof BottomTabNavigatorParamList;
 
-type CentralPaneName = keyof CentralPaneNavigatorParamList;
+// type FullScreenName = keyof FullScreenNavigatorParamList;
 
-type FullScreenName = keyof SettingsCentralPaneNavigatorParamList;
-
-type SwitchPolicyIDParams = {
-  policyID?: string;
-  route?: Routes;
-  isPolicyAdmin?: boolean;
-};
+type CentralPaneName = keyof CentralPaneScreensParamList;
 
 export type {
   AchievementsNavigatorParamList,
   AuthScreensParamList,
   BottomTabName,
   BottomTabNavigatorParamList,
+  CentralPaneScreensParamList,
   CentralPaneName,
-  CentralPaneNavigatorParamList,
   DayOverviewNavigatorParamList,
   DrinkingSessionNavigatorParamList,
-  FullScreenName,
-  FullScreenNavigatorParamList,
+  // FullScreenName,
+  // FullScreenNavigatorParamList,
   LeftModalNavigatorParamList,
   MainMenuNavigatorParamList,
   NavigationStateRoute,
@@ -247,5 +269,4 @@ export type {
   State,
   StateOrRoute,
   StatisticsNavigatorParamList,
-  SwitchPolicyIDParams,
 };

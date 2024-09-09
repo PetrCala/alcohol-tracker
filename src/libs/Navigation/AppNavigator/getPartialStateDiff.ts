@@ -90,20 +90,6 @@ function getPartialStateDiff(
     }
   }
 
-  // This one is heuristic and may need to be improved if we will be able to navigate from modal screen with full screen in background to another modal screen with full screen in background.
-  // For now this simple check is enough.
-  if (metainfo.isFullScreenNavigatorMandatory) {
-    const stateTopmostFullScreen = state.routes
-      .filter(route => route.name === NAVIGATORS.FULL_SCREEN_NAVIGATOR)
-      .at(-1);
-    const templateStateTopmostFullScreen = templateState.routes
-      .filter(route => route.name === NAVIGATORS.FULL_SCREEN_NAVIGATOR)
-      .at(-1) as NavigationPartialRoute;
-    if (!stateTopmostFullScreen && templateStateTopmostFullScreen) {
-      diff[NAVIGATORS.FULL_SCREEN_NAVIGATOR] = templateStateTopmostFullScreen;
-    }
-  }
-
   return diff;
 }
 

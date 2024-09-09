@@ -1,4 +1,4 @@
-import NAVIGATORS from '@src/NAVIGATORS';
+import {isCentralPaneName} from '@libs/NavigationUtils';
 import type {
   CentralPaneName,
   NavigationPartialRoute,
@@ -14,31 +14,17 @@ function getTopmostCentralPaneRoute(
     return;
   }
 
-  const topmostCentralPane = state.routes
-    .filter(route => route.name === NAVIGATORS.CENTRAL_PANE_NAVIGATOR)
-    .at(-1);
+  const centralPaneRoutes = state.routes.filter(route =>
+    isCentralPaneName(route.name),
+  );
 
-  if (!topmostCentralPane) {
+  if (centralPaneRoutes.length === 0) {
     return;
   }
 
-  if (!!topmostCentralPane.params && 'screen' in topmostCentralPane.params) {
-    return {
-      name: topmostCentralPane.params.screen as CentralPaneName,
-      params: topmostCentralPane.params.params,
-    };
-  }
-
-  if (!topmostCentralPane.state) {
-    return;
-  }
-
-  // There will be at least one route in the central pane navigator.
-  const {name, params} = topmostCentralPane.state.routes.at(
-    -1,
-  ) as NavigationPartialRoute<CentralPaneName>;
-
-  return {name, params};
+  return centralPaneRoutes[
+    centralPaneRoutes.length - 1
+  ] as NavigationPartialRoute<CentralPaneName>;
 }
 
 export default getTopmostCentralPaneRoute;

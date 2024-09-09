@@ -40,7 +40,7 @@ import createCustomStackNavigator from './createCustomStackNavigator';
 import defaultScreenOptions from './defaultScreenOptions';
 import getRootNavigatorScreenOptions from './getRootNavigatorScreenOptions';
 import BottomTabNavigator from './Navigators/BottomTabNavigator';
-import CentralPaneNavigator from './Navigators/CentralPaneNavigator';
+// import CentralPaneNavigator from './Navigators/CentralPaneNavigator';
 // import FullScreenNavigator from './Navigators/FullScreenNavigator';
 // import LeftModalNavigator from './Navigators/LeftModalNavigator';
 // import OnboardingModalNavigator from './Navigators/OnboardingModalNavigator';
@@ -134,7 +134,12 @@ const modalScreenListeners = {
   focus: () => {
     Modal.setModalVisibility(true);
   },
+  blur: () => {
+    Modal.setModalVisibility(false);
+  },
   beforeRemove: () => {
+    // Clear search input (WorkspaceInvitePage) when modal is closed
+    // SearchInputManager.searchInput = '';
     Modal.setModalVisibility(false);
     Modal.willAlertModalBecomeVisible(false);
   },
@@ -265,20 +270,25 @@ function AuthScreens({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // const CentralPaneScreenOptions = {
+  //   headerShown: false,
+  //   title: 'Kiroku',
+
+  //   // Prevent unnecessary scrolling
+  //   cardStyle: styles.cardStyleNavigator,
+  // };
+
   return (
-    // <OptionsListContextProvider></OptionsListContextProvider>
+    // <ComposeProviders components={[OptionsListContextProvider, SearchContextProvider]}>
     <DatabaseDataProvider>
       <View style={styles.rootNavigatorContainerStyles(isSmallScreenWidth)}>
-        <RootStack.Navigator isSmallScreenWidth={isSmallScreenWidth}>
+        <RootStack.Navigator
+          screenOptions={screenOptions.centralPaneNavigator}
+          isSmallScreenWidth={isSmallScreenWidth}>
           <RootStack.Screen
             name={NAVIGATORS.BOTTOM_TAB_NAVIGATOR}
             options={screenOptions.bottomTab}
             component={BottomTabNavigator}
-          />
-          <RootStack.Screen
-            name={NAVIGATORS.CENTRAL_PANE_NAVIGATOR}
-            options={screenOptions.centralPaneNavigator}
-            component={CentralPaneNavigator}
           />
           <RootStack.Screen
             name={SCREENS.NOT_FOUND}
@@ -307,9 +317,27 @@ function AuthScreens({
           options={screenOptions.fullScreen}
           component={DesktopSignInRedirectPage}
         /> */}
+          {/* {Object.entries(CENTRAL_PANE_SCREENS).map(
+            ([screenName, componentGetter]) => {
+              const centralPaneName = screenName as CentralPaneName;
+              return (
+                <RootStack.Screen
+                  key={centralPaneName}
+                  name={centralPaneName}
+                  initialParams={getCentralPaneScreenInitialParams(
+                    centralPaneName,
+                    initialReportID,
+                  )}
+                  getComponent={componentGetter}
+                  options={CentralPaneScreenOptions}
+                />
+              );
+            },
+          )} */}
         </RootStack.Navigator>
       </View>
     </DatabaseDataProvider>
+    // </ComposeProviders>
   );
 }
 

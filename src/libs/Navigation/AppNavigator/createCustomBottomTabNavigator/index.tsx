@@ -21,6 +21,7 @@ import {View} from 'react-native';
 import useThemeStyles from '@hooks/useThemeStyles';
 import type {NavigationStateRoute} from '@navigation/types';
 import SCREENS from '@src/SCREENS';
+import ScreenWrapper from '@components/ScreenWrapper';
 // import BottomTabBar from './BottomTabBar';
 // import TopBar from './TopBar';
 
@@ -36,7 +37,9 @@ type CustomNavigatorProps = DefaultNavigatorOptions<
 function getStateToRender(
   state: StackNavigationState<ParamListBase>,
 ): StackNavigationState<ParamListBase> {
-  const routesToRender = [state.routes.at(-1)] as NavigationStateRoute[];
+  const routesToRender = [
+    state.routes[state.routes.length - 1],
+  ] as NavigationStateRoute[];
 
   // We need to render at least one HOME screen to make sure everything load properly. This may be not necessary after changing how IS_SIDEBAR_LOADED is handled.
   // Currently this value will be switched only after the first HOME screen is rendered.
@@ -73,25 +76,28 @@ function CustomBottomTabNavigator({
 
   const styles = useThemeStyles();
   const stateToRender = getStateToRender(state);
+  // const selectedTab = stateToRender.routes.at(-1)?.name;
 
   return (
-    // <ScreenWrapper
-    //   testID={CustomBottomTabNavigator.displayName}
-    //   shouldShowOfflineIndicator={false}>
-    <View style={styles.flex1}>
-      {/* <TopBar /> */}
-      <NavigationContent>
-        <StackView
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          {...props}
-          state={stateToRender}
-          descriptors={descriptors}
-          navigation={navigation}
-        />
-      </NavigationContent>
-      {/* <BottomTabBar /> */}
-    </View>
-    // </ScreenWrapper>
+    <ScreenWrapper
+      testID={CustomBottomTabNavigator.displayName}
+      shouldShowOfflineIndicator={false}
+      shouldEnableKeyboardAvoidingView={false}
+      shouldEnablePickerAvoiding={false}>
+      <View style={styles.flex1}>
+        {/* <TopBar /> */}
+        <NavigationContent>
+          <StackView
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...props}
+            state={stateToRender}
+            descriptors={descriptors}
+            navigation={navigation}
+          />
+        </NavigationContent>
+        {/* <BottomTabBar selectedTab={selectedTab} /> */}
+      </View>
+    </ScreenWrapper>
   );
 }
 
