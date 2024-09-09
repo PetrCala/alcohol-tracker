@@ -7,7 +7,7 @@ import _ from 'underscore';
 
 // Use this deferred lib so we don't have a dependency on jQuery (so we can use this module in mobile)
 import {Deferred} from 'simply-deferred';
-import ExpensifyAPIDeferred from './APIDeferred';
+import KirokuAPIDeferred from './APIDeferred';
 
 /**
  * @param {Network} network
@@ -120,7 +120,7 @@ export default function API(network, args) {
         const networkRequestPromise = new Deferred();
 
         // This is the final APIDeferred which gets returned from the API lib.
-        const finalApiDeferred = new ExpensifyAPIDeferred(networkRequestPromise, returnedPropertyName);
+        const finalApiDeferred = new KirokuAPIDeferred(networkRequestPromise, returnedPropertyName);
 
         // Check that our code is running the latest version
         codeRevisionPromise().done(() => {
@@ -246,7 +246,7 @@ export default function API(network, args) {
 
         /**
          * @param  {Object} parameters
-         * @return {ExpensifyAPIDeferred}
+         * @return {KirokuAPIDeferred}
          */
         logToServer(parameters) {
             const commandName = 'Log';
@@ -256,7 +256,7 @@ export default function API(network, args) {
         /**
          * @param  {Object} parameters
          * @param  {String} parameters.email
-         * @return {ExpensifyAPIDeferred}
+         * @return {KirokuAPIDeferred}
          */
         getAccountStatus(parameters) {
             const commandName = 'GetAccountStatus';
@@ -271,7 +271,7 @@ export default function API(network, args) {
         /**
          * @param  {Object} parameters
          * @param  {String} parameters.email
-         * @return {ExpensifyAPIDeferred}
+         * @return {KirokuAPIDeferred}
          */
         Domain_RequestAccess(parameters) {
             const commandName = 'Domain_RequestAccess';
@@ -283,7 +283,7 @@ export default function API(network, args) {
          * @param {Object} parameters
          * @param {String[]} parameters.emailList
          *
-         * @returns {ExpensifyAPIDeferred}
+         * @returns {KirokuAPIDeferred}
          */
         personalDetails_GetForEmails(parameters) {
             const commandName = 'PersonalDetails_GetForEmails';
@@ -295,7 +295,7 @@ export default function API(network, args) {
          * @param {Object} parameters
          * @param {String[]} parameters.emailList
          *
-         * @returns {ExpensifyAPIDeferred}
+         * @returns {KirokuAPIDeferred}
          */
         getKnownPersonalDetailsForEmails(parameters) {
             const commandName = 'GetKnownPersonalDetailsForEmails';
@@ -307,7 +307,7 @@ export default function API(network, args) {
          * @param {Object} parameters
          * @param {String[]} parameters.emailList
          *
-         * @returns {ExpensifyAPIDeferred}
+         * @returns {KirokuAPIDeferred}
          */
         getAvatarsForEmail(parameters) {
             const commandName = 'GetAvatarsForEmail';
@@ -390,7 +390,7 @@ export default function API(network, args) {
          * @param {Object} parameters
          * @param {String} [parameters.email]
          *
-         * @return {ExpensifyAPIDeferred}
+         * @return {KirokuAPIDeferred}
          */
         resendValidateCode(parameters = {}) {
             const commandName = 'ResendValidateCode';
@@ -406,7 +406,7 @@ export default function API(network, args) {
          * @param {Object} parameters
          * @param {String} parameters.email
          *
-         * @return {ExpensifyAPIDeferred}
+         * @return {KirokuAPIDeferred}
          */
         reopenAccount(parameters) {
             const commandName = 'User_ReopenAccount';
@@ -418,7 +418,7 @@ export default function API(network, args) {
          * Resets the password for an account
          * @param {Object} parameters
          * @param {String} parameters.email
-         * @returns {ExpensifyAPIDeferred}
+         * @returns {KirokuAPIDeferred}
          */
         resetPassword(parameters) {
             const commandName = 'ResetPassword';
@@ -435,7 +435,7 @@ export default function API(network, args) {
          * @param {String} parameters.email
          * @param {String} parameters.password
          * @param {String} parameters.validateCode
-         * @returns {ExpensifyAPIDeferred}
+         * @returns {KirokuAPIDeferred}
          */
         setPassword(parameters) {
             const commandName = 'SetPassword';
@@ -449,7 +449,7 @@ export default function API(network, args) {
          * @param {Object} parameters
          * @param {String} validateCode
          * @param {String} userID
-         * @returns {ExpensifyAPIDeferred}
+         * @returns {KirokuAPIDeferred}
          */
         validateEmail(parameters) {
             const commandName = 'ValidateEmail';
@@ -794,7 +794,7 @@ export default function API(network, args) {
 
         card: {
             /**
-             * Set the limit of an expensify card.
+             * Set the limit of a card.
              *
              * @param {Object} parameters
              * @param {String} parameters.cardUserEmail who the card is assigned to
