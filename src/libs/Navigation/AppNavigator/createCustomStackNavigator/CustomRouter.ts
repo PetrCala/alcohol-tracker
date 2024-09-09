@@ -53,7 +53,7 @@ function insertRootRoute(
 
 function compareAndAdaptState(state: StackNavigationState<RootStackParamList>) {
   // If the state of the last path is not defined the getPathFromState won't work correctly.
-  if (!state?.routes.at(-1)?.state) {
+  if (!state?.routes[state.routes.length - 1]?.state) {
     return;
   }
 

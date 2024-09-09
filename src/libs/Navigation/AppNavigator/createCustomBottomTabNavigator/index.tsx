@@ -37,7 +37,9 @@ type CustomNavigatorProps = DefaultNavigatorOptions<
 function getStateToRender(
   state: StackNavigationState<ParamListBase>,
 ): StackNavigationState<ParamListBase> {
-  const routesToRender = [state.routes.at(-1)] as NavigationStateRoute[];
+  const routesToRender = [
+    state.routes[state.routes.length - 1],
+  ] as NavigationStateRoute[];
 
   // We need to render at least one HOME screen to make sure everything load properly. This may be not necessary after changing how IS_SIDEBAR_LOADED is handled.
   // Currently this value will be switched only after the first HOME screen is rendered.
@@ -74,7 +76,7 @@ function CustomBottomTabNavigator({
 
   const styles = useThemeStyles();
   const stateToRender = getStateToRender(state);
-  const selectedTab = stateToRender.routes.at(-1)?.name;
+  // const selectedTab = stateToRender.routes.at(-1)?.name;
 
   return (
     <ScreenWrapper

@@ -95,7 +95,7 @@ function NavigationRoot({
   const initialState = useMemo(
     () => {
       if (!user || user.isFromPublicDomain) {
-        console.debug('User is not logged in, not setting initial state'); // TODO remove this later
+        Log.info('User is not authenticated, skipping initial state setup');
         return;
       }
 

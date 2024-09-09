@@ -14,15 +14,17 @@ function getTopmostCentralPaneRoute(
     return;
   }
 
-  const topmostCentralPane = state.routes
-    .filter(route => isCentralPaneName(route.name))
-    .at(-1);
+  const centralPaneRoutes = state.routes.filter(route =>
+    isCentralPaneName(route.name),
+  );
 
-  if (!topmostCentralPane) {
+  if (centralPaneRoutes.length === 0) {
     return;
   }
 
-  return topmostCentralPane as NavigationPartialRoute<CentralPaneName>;
+  return centralPaneRoutes[
+    centralPaneRoutes.length - 1
+  ] as NavigationPartialRoute<CentralPaneName>;
 }
 
 export default getTopmostCentralPaneRoute;

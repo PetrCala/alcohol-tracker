@@ -9,9 +9,10 @@ import type {
 function getTopmostBottomTabRoute(
   state: State<RootStackParamList> | undefined,
 ): NavigationPartialRoute<BottomTabName> | undefined {
-  const bottomTabNavigatorRoute = state?.routes.findLast(
-    route => route.name === NAVIGATORS.BOTTOM_TAB_NAVIGATOR,
-  );
+  const bottomTabNavigatorRoute = state?.routes
+    .slice()
+    .reverse()
+    .find(route => route.name === NAVIGATORS.BOTTOM_TAB_NAVIGATOR); // findLast
 
   // The bottomTabNavigatorRoute state may be empty if we just logged in.
   if (
@@ -22,7 +23,10 @@ function getTopmostBottomTabRoute(
     return undefined;
   }
 
-  const topmostBottomTabRoute = bottomTabNavigatorRoute.state.routes.at(-1);
+  const topmostBottomTabRoute =
+    bottomTabNavigatorRoute.state.routes[
+      bottomTabNavigatorRoute.state.routes.length - 1
+    ];
 
   if (!topmostBottomTabRoute) {
     throw new Error('BottomTabNavigator route have no routes.');
