@@ -179,13 +179,14 @@ function HomeScreen({route}: HomeScreenProps) {
       );
       Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(newSessionId));
       dispatch({type: 'SET_ONGOING_SESSION_ID', payload: newSessionId});
-      dispatch({type: 'SET_INITIALIZING_SESSION', payload: false});
     } catch (error: any) {
       Alert.alert(
         'New session initialization failed',
         'Could not start a new session: ' + error.message,
       );
       return;
+    } finally {
+      dispatch({type: 'SET_INITIALIZING_SESSION', payload: false});
     }
   };
 
