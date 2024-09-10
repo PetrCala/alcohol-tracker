@@ -63,7 +63,6 @@
     "@react-native-firebase/analytics": "^12.3.0",
     "@react-native-firebase/app": "^12.3.0",
     "@react-native-firebase/crashlytics": "^12.3.0",
-    "@react-native-firebase/database": "^12.3.0",
     "@react-native-firebase/perf": "^12.3.0",
     "@react-native-google-signin/google-signin": "^11.0.1",
     "@react-navigation/native": "^6.1.7",
