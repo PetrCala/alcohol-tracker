@@ -299,7 +299,7 @@ function HomeScreen({route}: HomeScreenProps) {
     <ScreenWrapper
       testID={HomeScreen.displayName}
       includePaddingTop={false}
-      includeSafeAreaPaddingBottom={true}>
+      includeSafeAreaPaddingBottom={getPlatform() !== CONST.PLATFORM.IOS}>
       <View style={commonStyles.headerContainer}>
         {userData && (
           <View style={localStyles.profileContainer}>
