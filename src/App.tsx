@@ -20,9 +20,9 @@ import ThemeProvider from './components/ThemeProvider';
 import ThemeStylesProvider from './components/ThemeStylesProvider';
 import SafeArea from '@components/SafeArea';
 import {LogBox} from 'react-native';
+import CustomStatusBarAndBackground from './components/CustomStatusBarAndBackground';
+import CustomStatusBarAndBackgroundContextProvider from './components/CustomStatusBarAndBackground/CustomStatusBarAndBackgroundContextProvider';
 // import OnyxUpdateManager from './libs/actions/OnyxUpdateManager';
-// import CustomStatusBarAndBackground from './components/CustomStatusBarAndBackground';
-// import CustomStatusBarAndBackgroundContextProvider from './components/CustomStatusBarAndBackground/CustomStatusBarAndBackgroundContextProvider';
 
 type KirokuProps = {
   /** true if there is an authToken */
@@ -57,10 +57,10 @@ const App = ({url}: KirokuProps): React.JSX.Element => {
             WindowDimensionsProvider,
             KeyboardStateProvider,
             EnvironmentProvider,
-            // CustomStatusBarAndBackgroundContextProvider,
+            CustomStatusBarAndBackgroundContextProvider,
             ActiveElementRoleProvider,
           ]}>
-          {/* <CustomStatusBarAndBackground /> WIP */}
+          <CustomStatusBarAndBackground />
           <ErrorBoundary errorMessage="Kiroku crash caught by error boundary">
             <ColorSchemeWrapper>
               <Kiroku />
