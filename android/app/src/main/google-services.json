@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "665512857657",
+    "firebase_url": "https://alcohol-tracker-db-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "alcohol-tracker-db",
+    "storage_bucket": "alcohol-tracker-db.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:665512857657:android:0f510762ec06c3d6b4fde8",
+        "android_client_info": {
+          "package_name": "com.alcohol_tracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "665512857657-pp6imlbd7qh7kmh6ojca1nc3li7mdgqc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDehHPpWpwwMZWLGwaT6GcOmTsopZ4SsGI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "665512857657-pp6imlbd7qh7kmh6ojca1nc3li7mdgqc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
