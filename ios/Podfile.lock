@@ -64,6 +64,9 @@ PODS:
   - Firebase/Crashlytics (8.8.0):
     - Firebase/CoreOnly
     - FirebaseCrashlytics (~> 8.8.0)
+  - Firebase/Database (8.8.0):
+    - Firebase/CoreOnly
+    - FirebaseDatabase (~> 8.8.0)
   - Firebase/Performance (8.8.0):
     - Firebase/CoreOnly
     - FirebasePerformance (~> 8.8.0)
@@ -103,6 +106,9 @@ PODS:
     - GoogleUtilities/Environment (~> 7.4)
     - nanopb (~> 2.30908.0)
     - PromisesObjC (< 3.0, >= 1.2)
+  - FirebaseDatabase (8.8.0):
+    - FirebaseCore (~> 8.0)
+    - leveldb-library (~> 1.22)
   - FirebaseInstallations (8.15.0):
     - FirebaseCore (~> 8.0)
     - GoogleUtilities/Environment (~> 7.7)
@@ -190,6 +196,7 @@ PODS:
   - hermes-engine (0.75.2):
     - hermes-engine/Pre-built (= 0.75.2)
   - hermes-engine/Pre-built (0.75.2)
+  - leveldb-library (1.22.5)
   - libavif/core (0.11.1)
   - libavif/libdav1d (0.11.1):
     - libavif/core
@@ -2045,6 +2052,10 @@ PODS:
     - Firebase/Crashlytics (= 8.8.0)
     - React-Core
     - RNFBApp
+  - RNFBDatabase (12.9.3):
+    - Firebase/Database (= 8.8.0)
+    - React-Core
+    - RNFBApp
   - RNFBPerf (12.9.3):
     - Firebase/Performance (= 8.8.0)
     - React-Core
@@ -2420,6 +2431,7 @@ DEPENDENCIES:
   - "RNFBAnalytics (from `../node_modules/@react-native-firebase/analytics`)"
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBCrashlytics (from `../node_modules/@react-native-firebase/crashlytics`)"
+  - "RNFBDatabase (from `../node_modules/@react-native-firebase/database`)"
   - "RNFBPerf (from `../node_modules/@react-native-firebase/perf`)"
   - "RNFlashList (from `../node_modules/@shopify/flash-list`)"
   - RNFS (from `../node_modules/react-native-fs`)
@@ -2445,6 +2457,7 @@ SPEC REPOS:
     - FirebaseCore
     - FirebaseCoreDiagnostics
     - FirebaseCrashlytics
+    - FirebaseDatabase
     - FirebaseInstallations
     - FirebasePerformance
     - FirebaseRemoteConfig
@@ -2454,6 +2467,7 @@ SPEC REPOS:
     - GoogleUtilities
     - GTMAppAuth
     - GTMSessionFetcher
+    - leveldb-library
     - libavif
     - libdav1d
     - libwebp
@@ -2643,6 +2657,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/app"
   RNFBCrashlytics:
     :path: "../node_modules/@react-native-firebase/crashlytics"
+  RNFBDatabase:
+    :path: "../node_modules/@react-native-firebase/database"
   RNFBPerf:
     :path: "../node_modules/@react-native-firebase/perf"
   RNFlashList:
@@ -2693,6 +2709,7 @@ SPEC CHECKSUMS:
   FirebaseCore: 98b29e3828f0a53651c363937a7f7d92a19f1ba2
   FirebaseCoreDiagnostics: 92e07a649aeb66352b319d43bdd2ee3942af84cb
   FirebaseCrashlytics: 3660c045c8e45cc4276110562a0ef44cf43c8157
+  FirebaseDatabase: bc4610ff3a816dcc680c1dbccf7f9f4bd94ac07d
   FirebaseInstallations: 40bd9054049b2eae9a2c38ef1c3dd213df3605cd
   FirebasePerformance: 0c01a7a496657d7cea86d40c0b1725259d164c6c
   FirebaseRemoteConfig: 2d6e2cfdb49af79535c8af8a80a4a5009038ec2b
@@ -2705,6 +2722,7 @@ SPEC CHECKSUMS:
   GTMAppAuth: 99fb010047ba3973b7026e45393f51f27ab965ae
   GTMSessionFetcher: 5aea5ba6bd522a239e236100971f10cb71b96ab6
   hermes-engine: 3b6e0717ca847e2fc90a201e59db36caf04dee88
+  leveldb-library: e8eadf9008a61f9e1dde3978c086d2b6d9b9dc28
   libavif: 84bbb62fb232c3018d6f1bab79beea87e35de7b7
   libdav1d: 23581a4d8ec811ff171ed5e2e05cd27bad64c39f
   libwebp: 1786c9f4ff8a279e4dac1e8f385004d5fc253009
@@ -2784,6 +2802,7 @@ SPEC CHECKSUMS:
   RNFBAnalytics: f76bfa164ac235b00505deb9fc1776634056898c
   RNFBApp: 729c0666395b1953198dc4a1ec6deb8fbe1c302e
   RNFBCrashlytics: 2061ca863e8e2fa1aae9b12477d7dfa8e88ca0f9
+  RNFBDatabase: 1e8e42f296c43f812ac91fe078ceedbf02c77a23
   RNFBPerf: 389914cda4000fe0d996a752532a591132cbf3f9
   RNFlashList: b521ebdd7f9352673817f1d98e8bdc0c8cf8545b
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
