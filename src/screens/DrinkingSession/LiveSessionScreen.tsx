@@ -22,8 +22,6 @@ import {
 } from '@database/drinkingSessions';
 import {
   addDrinks,
-  dateToDateObject,
-  formatDate,
   formatDateToDay,
   formatDateToTime,
   removeDrinks,
@@ -34,7 +32,6 @@ import {
   unitsToColors,
 } from '@libs/DataHandling';
 import type {DrinkingSession, DrinksList, Drinks} from '@src/types/onyx';
-import {DrinkKey} from '@src/types/onyx';
 import YesNoPopup from '@components/Popups/YesNoPopup';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import UserOffline from '@components/UserOffline';
@@ -51,7 +48,7 @@ import Navigation from '@navigation/Navigation';
 import type {StackScreenProps} from '@react-navigation/stack';
 import type {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
-import ROUTES, {Route} from '@src/ROUTES';
+import ROUTES from '@src/ROUTES';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {isEqual} from 'lodash';
 import {readDataOnce} from '@database/baseFunctions';
