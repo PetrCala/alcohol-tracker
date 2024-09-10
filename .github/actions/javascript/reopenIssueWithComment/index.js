@@ -34160,10 +34160,10 @@ class GithubUtils {
         });
     }
     /**
-     * Get the most recent workflow run for the given New Expensify workflow.
+     * Get the most recent workflow run for the given Kiroku workflow.
      */
     static getLatestWorkflowRunID(workflow) {
-        console.log(`Fetching New Expensify workflow runs for ${workflow}...`);
+        console.log(`Fetching Kiroku workflow runs for ${workflow}...`);
         return this.octokit.actions
             .listWorkflowRuns({
             owner: CONST_1.default.GITHUB_OWNER,
@@ -34173,7 +34173,7 @@ class GithubUtils {
             .then(response => response.data.workflow_runs[0]?.id);
     }
     /**
-     * Generate the URL of an New Expensify pull request given the PR number.
+     * Generate the URL of an Kiroku pull request given the PR number.
      */
     static getPullRequestURLFromNumber(value) {
         return `${CONST_1.default.APP_REPO_URL}/pull/${value}`;
@@ -34225,7 +34225,7 @@ class GithubUtils {
             per_page: 100,
         })
             .then(events => events.filter(event => event.event === 'closed'))
-            .then(closedEvents => closedEvents.at(-1)?.actor?.login ?? '');
+            .then(closedEvents => closedEvents[closedEvents.length - 1]?.actor?.login ?? '');
     }
     /**
      * Returns a single artifact by name. If none is found, it returns undefined.
