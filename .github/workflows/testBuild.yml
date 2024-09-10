@@ -242,13 +242,12 @@ jobs:
           ios_path=$(echo "$content_ios" | jq -r '.html_path')
           echo "ios_path=$ios_path" >> "$GITHUB_OUTPUT"
 
-      # TODO enable this
-      # - name: Publish links to apps for download
-      #   uses: ./.github/actions/javascript/postTestBuildComment
-      #   with:
-      #     PR_NUMBER: ${{ env.PULL_REQUEST_NUMBER }}
-      #     GITHUB_TOKEN: ${{ github.token }}
-      #     ANDROID: ${{ needs.android.result }}
-      #     IOS: ${{ needs.iOS.result }}
-      #     ANDROID_LINK: ${{steps.get_android_path.outputs.android_path}}
-      #     IOS_LINK: ${{steps.get_ios_path.outputs.ios_path}}
+      - name: Publish links to apps for download
+        uses: ./.github/actions/javascript/postTestBuildComment
+        with:
+          PR_NUMBER: ${{ env.PULL_REQUEST_NUMBER }}
+          GITHUB_TOKEN: ${{ github.token }}
+          ANDROID: ${{ needs.android.result }}
+          IOS: ${{ needs.iOS.result }}
+          ANDROID_LINK: ${{steps.get_android_path.outputs.android_path}}
+          IOS_LINK: ${{steps.get_ios_path.outputs.ios_path}}
