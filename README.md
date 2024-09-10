@@ -34,29 +34,28 @@
   - [Local production builds](#local-production-builds)
       - [Local production build the iOS app](#local-production-build-the-ios-app)
       - [Local production build the Android app](#local-production-build-the-android-app)
-- [For developers](#for-developers)
-    - [On the platform choice](#on-the-platform-choice)
-    - [Setting up the local environment](#setting-up-the-local-environment)
-    - [Building for Android](#building-for-android)
-    - [Fixing dependencies](#fixing-dependencies)
-    - [Formatting](#formatting)
-    - [Managing ruby versions](#managing-ruby-versions)
-  - [Platform-Specific File Extensions](#platform-specific-file-extensions)
-    - [Working with Firebase](#working-with-firebase)
-    - [Writing Firebase rules](#writing-firebase-rules)
-      - [Overview](#overview)
-      - [Strategy](#strategy)
-    - [Migrating the database](#migrating-the-database)
-    - [Database maintenance](#database-maintenance)
-      - [Scheduling maintenance](#scheduling-maintenance)
-      - [Cancelling maintenance](#cancelling-maintenance)
-      - [Understanding the maintenance mechanism](#understanding-the-maintenance-mechanism)
+- [On the platform choice](#on-the-platform-choice)
+- [Setting up the local environment](#setting-up-the-local-environment)
+- [Building for Android](#building-for-android)
+- [Fixing dependencies](#fixing-dependencies)
+- [Formatting](#formatting)
+- [Platform-Specific File Extensions](#platform-specific-file-extensions)
+- [Working with Firebase](#working-with-firebase)
+  - [Writing Firebase rules](#writing-firebase-rules)
+    - [Overview](#overview)
+    - [Strategy](#strategy)
+  - [Migrating the database](#migrating-the-database)
+  - [Database maintenance](#database-maintenance)
+    - [Scheduling maintenance](#scheduling-maintenance)
+    - [Cancelling maintenance](#cancelling-maintenance)
+    - [Understanding the maintenance mechanism](#understanding-the-maintenance-mechanism)
 
-
-----
+---
 
 # Deploying
+
 ## QA and deploy cycles
+
 We utilize a CI/CD deployment system built using [GitHub Actions](https://github.com/features/actions) to ensure that new code is automatically deployed to our users as fast as possible. As part of this process, all code is first deployed to our staging environments, where it undergoes quality assurance (QA) testing before it is deployed to production. Typically, pull requests are deployed to staging immediately after they are merged.
 
 Every time a PR is deployed to staging, it is added to a [special tracking issue](https://github.com/PetrCala/Kiroku/issues?q=is%3Aopen+is%3Aissue+label%3AStagingDeployCash) with the label `StagingDeployCash` (there will only ever be one open at a time). This tracking issue contains information about the new application version, a list of recently deployed pull requests, and any issues found on staging that are not present on production. Every weekday at 9am PST, our QA team adds the `🔐LockCashDeploys🔐` label to that tracking issue, and that signifies that they are starting their daily QA cycle. They will perform both regular regression testing and the QA steps listed for every pull request on the `StagingDeployCash` checklist.
@@ -65,10 +64,12 @@ Once the `StagingDeployCash` is locked, we won't run any staging deploys until i
 
 Once we have confirmed to the best of our ability that there are no deploy-blocking issues and that all our new features are working as expected on staging, we'll close the `StagingDeployCash`. That will automatically trigger a production deployment, open a new `StagingDeployCash` checklist, and deploy to staging any pull requests that were merged while the previous checklist was locked.
 
-##  Key GitHub workflows
+## Key GitHub workflows
+
 These are some of the most central [GitHub Workflows](https://github.com/PetrCala/Kiroku/tree/main/.github/workflows). There is more detailed information in the README [here](https://github.com/PetrCala/Kiroku/blob/main/.github/workflows/README.md).
 
 ### preDeploy
+
 The [preDeploy workflow](https://github.com/PetrCala/Kiroku/blob/main/.github/workflows/preDeploy.yml) executes whenever a pull request is merged to `main`, and at a high level does the following:
 
 - If the `StagingDeployCash` is locked, comment on the merged PR that it will be deployed later.
@@ -78,47 +79,50 @@ The [preDeploy workflow](https://github.com/PetrCala/Kiroku/blob/main/.github/wo
 - Also, if the pull request has the `CP Staging` label, it will execute the [`cherryPick` workflow](https://github.com/PetrCala/Kiroku/blob/main/.github/workflows/cherryPick.yml) to deploy the pull request directly to staging, even if the `StagingDeployCash` is locked.
 
 ### deploy
+
 The [`deploy` workflow](https://github.com/PetrCala/Kiroku/blob/main/.github/workflows/deploy.yml) is really quite simple. It runs when code is pushed to the `staging` or `production` branches, and:
 
 - If `staging` was updated, it creates a tag matching the new version, and pushes tags.
 - If `production` was updated, it creates a GitHub Release for the new version.
 
 ### platformDeploy
+
 The [`platformDeploy` workflow](https://github.com/PetrCala/Kiroku/blob/main/.github/workflows/platformDeploy.yml) is what actually runs the deployment on both platforms (iOS, Android). It runs a staging deploy whenever a new tag is pushed to GitHub, and runs a production deploy whenever a new release is created.
 
 ### lockDeploys
+
 The [`lockDeploys` workflow](https://github.com/PetrCala/Kiroku/blob/main/.github/workflows/lockDeploys.yml) executes when the `StagingDeployCash` is locked, and it waits for any currently running staging deploys to finish, then gives Applause the :green_circle: to begin QA by commenting in the `StagingDeployCash` checklist.
 
 ### finishReleaseCycle
+
 The [`finishReleaseCycle` workflow](https://github.com/PetrCala/Kiroku/blob/main/.github/workflows/finishReleaseCycle.yml) executes when the `StagingDeployCash` is closed. It updates the `production` branch from `staging` (triggering a production deploy), deploys `main` to staging (with a new `PATCH` version), and creates a new `StagingDeployCash` deploy checklist.
 
 ## Local production builds
+
 Sometimes it might be beneficial to generate a local production version instead of testing on production. Follow the steps below for each client:
 
 #### Local production build the iOS app
+
 In order to compile a production iOS build, run `npm run ios-build`, this will generate a `kiroku.ipa` in the root directory of this project.
 
 #### Local production build the Android app
+
 To build an APK to share run (e.g. via Slack), run `npm run android-build`, this will generate a new APK in the `android/app` folder.
 
-----
+---
 
-# For developers
-
-- This section is intended for developers only and will later be moved into the Jekyll documentation.
-
-### On the platform choice
+# On the platform choice
 
 - We highly recommend you use Mac for working on this project. Given its compatibility with both Android and iOS, it is an ideal platform for developing a unified and efficient working environment. Fastlane, Bun, and other tools are readily available for Mac, allowing you to ease up your workflow significantly.
 - If you can not, or do not want to develop on MacOS, you may need to substitute Bun with other package managers, such as `npm`, and some features of the application may be unavailable to you.
 
-### Setting up the local environment
+# Setting up the local environment
 
-- We use [Bun](https://bun.sh) for package managing. This experimental approach should come at the added benefit of allowing you to spend less time worrying about packages, and more time coding. Install Bun using
+We use [Bun](https://bun.sh) for package managing. This experimental approach should come at the added benefit of allowing you to spend less time worrying about packages, and more time coding. Install Bun using
 
-  ```bash
-  curl -fsSL https://bun.sh/install | bash
-  ```
+```bash
+curl -fsSL https://bun.sh/install | bash
+```
 
 - Most of the local environment setup right after cloning the repository can be handled with the following commands.
 
@@ -131,7 +135,7 @@ To build an APK to share run (e.g. via Slack), run `npm run android-build`, this
   pod install
   ```
 
-### Building for Android
+# Building for Android
 
 - Create a `local.properties` file in the `android` folder and put the following inside:
 
@@ -159,20 +163,16 @@ To build an APK to share run (e.g. via Slack), run `npm run android-build`, this
 
   to make the file readable.
 
-### Fixing dependencies
+# Fixing dependencies
 
 To fix expo invalid dependencies, try running `npx expo install --fix`.
 
-### Formatting
+# Formatting
 
 - For typescript and javascript files, we use `Prettier`
 - For bash scripts, we use `shell-format`
 
-### Managing ruby versions
-
-- We officially use Ruby version 2.6.10. To read about ruby version configuration see [this link](https://rbenv.org/man/rbenv.1).
-
-## Platform-Specific File Extensions
+# Platform-Specific File Extensions
 
 In most cases, the code written for this repo should be platform-independent. In such cases, each module should have a single file, `index.js`, which defines the module's exports. There are, however, some cases in which a feature is intrinsically tied to the underlying platform. In such cases, the following file extensions can be used to export platform-specific code from a module:
 
@@ -185,7 +185,7 @@ Note that `index.js` should be the default and only platform-specific implementa
 
 `index.ios.js` and `index.android.js` are used when the app is running natively on respective platforms. These files are not used when users access the app through mobile browsers, but `index.website.js` is used instead. `index.native.js` are for both iOS and Android native apps. `index.native.js` should not be included in the same module as `index.ios.js` or `index.android.js`.
 
-### Working with Firebase
+# Working with Firebase
 
 - Firebase CLI is necessary for any Firebase tests/emulators to run correctly. In order to set up your local environment, run these commands first
 
@@ -195,9 +195,9 @@ Note that `index.js` should be the default and only platform-specific implementa
   firebase init
   ```
 
-### Writing Firebase rules
+## Writing Firebase rules
 
-#### Overview
+### Overview
 
 - When setting the Firebase rules, here are a several useful behavior patterns to keep in mind:
 
@@ -240,7 +240,7 @@ Note that `index.js` should be the default and only platform-specific implementa
 
 - When dealing with `.validate`, the behavior is a little different. The **validation rules apply only to the node for which they are written**. In other words, they do not cascade. If you, for example, want all members of a node to be either null, or a certain string, you must set this value for all nodes for which this should be relevant. Simply setting this to a higher order node will not suffice.
 
-#### Strategy
+### Strategy
 
 - For read/write, define restrictive rules at higher nodes, and allow broader access at concrete nodes. For example:
 
@@ -282,7 +282,7 @@ Note that `index.js` should be the default and only platform-specific implementa
 
 - It might seem tricky to figure out whether to write a rule into `.validate` or `.read`/`.write`. As a rule of thumb, if the rule targets **who** is requesting the operation, `.read`/`.write` might be suitable. If specifying the type of data is what you are after, `.validate` should do the trick. More than anything, however, keep the cascading nature of each of these rule types in mind, and use it to your advantage to avoid redundancy, while keeping the rules clear and intuitive.
 
-### Migrating the database
+## Migrating the database
 
 The database migration process is handled in a rather manual fashion. As of now, the procedure is as follows:
 
@@ -291,11 +291,11 @@ The database migration process is handled in a rather manual fashion. As of now,
 3. Call the relevant migration script (located inside the `_dev/database/migration-scripts` folder) from the `_dev/main.tsx` file. You can run this file using either **bun**, or **ts-node**.
 4. The output will be located in the `_dev/migrations/output` folder. From there, you can update the relevant database.
 
-### Database maintenance
+## Database maintenance
 
 You can schedule database maintenance directly from the command line using `bun run maintenance:schedule`, provided you have the corresponding admin SDK. After the maintenance is over, you will have to cancel it through running `bun run maintenance:cancel`. For more detail, see the following sections.
 
-#### Scheduling maintenance
+### Scheduling maintenance
 
 1. In `.env`, set the environment of the database you want to schedule the maintenance for.
 2. Place the admin SDK file of this database into the project root, and make sure the admin SDK paths in the `.env` file are configured correctly to point to this file.
@@ -307,7 +307,7 @@ You can schedule database maintenance directly from the command line using `bun 
 
    From there, follow the on-screen instructions.
 
-#### Cancelling maintenance
+### Cancelling maintenance
 
 1. Follow steps 1-2 from the previous section.
 2. From the project root, run
@@ -318,7 +318,7 @@ You can schedule database maintenance directly from the command line using `bun 
 
    and follow the on-screen instructions.
 
-#### Understanding the maintenance mechanism
+### Understanding the maintenance mechanism
 
 - Scheduling a maintenance will update the `config/maintenance` node of the database. Namely, the `maintenance_mode` will be set to `true`, while the start and end time will be set to your desired values. As long as the `maintenance_mode` flag is on, all users will be shown a maintenance screen upon opening the application.
 - There is no in-built check to make sure the maintenance time is over. As such, the start/end times are purely of informational character. This is to allow the developers more flexibility. Consequently, after the actual maintenance is over and the app is ready to be made available to users, simply cancel the maintenance using the instructions in the [Cancelling maintenance](#cancelling-maintenance) section. This will set the `maintenance_mode` to false, allowing application access to users.
