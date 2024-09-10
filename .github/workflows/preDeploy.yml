@@ -60,7 +60,7 @@ jobs:
 
       - name: Check if merged pull request should trigger a deploy
         id: shouldDeploy
-        run: echo "SHOULD_DEPLOY=${{ (!fromJSON(steps.isStagingDeployLocked.outputs.IS_LOCKED) && github.actor != 'KirokuAdmin') }}" >> "$GITHUB_OUTPUT"
+        run: echo "SHOULD_DEPLOY=${{ (!fromJSON(steps.isStagingDeployLocked.outputs.IS_LOCKED || 'true') && github.actor != 'KirokuAdmin') }}" >> "$GITHUB_OUTPUT"
 
   skipDeploy:
     runs-on: ubuntu-latest
