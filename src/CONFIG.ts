@@ -30,9 +30,7 @@ export default {
     appId: get(Config, 'APP_ID', ''),
     measurementId: get(Config, 'MEASUREMENT_ID', ''),
   },
-  IS_IN_PRODUCTION:
-    // Platform.OS === 'web' ? process.env.NODE_ENV === 'production' : !__DEV__,
-    process.env.NODE_ENV === 'production' && !__DEV__,
+  IS_IN_PRODUCTION: process.env.NODE_ENV === 'production' && !__DEV__,
   IS_IN_ADHOC: ENVIRONMENT === CONST.ENVIRONMENT.ADHOC,
   IS_IN_STAGING: ENVIRONMENT === CONST.ENVIRONMENT.STAGING,
   IS_IN_DEVELOPMENT: ENVIRONMENT === CONST.ENVIRONMENT.DEV,
@@ -51,6 +49,7 @@ export default {
     SUFFIX: get(Config, 'PUSHER_DEV_SUFFIX', ''),
     CLUSTER: 'mt1',
   },
+  SEND_CRASH_REPORTS: get(Config, 'SEND_CRASH_REPORTS', 'false') === 'true',
   IS_USING_EMULATORS: get(Config, 'USE_EMULATORS', 'false') === 'true',
   TEST_PROJECT_ID: 'alcohol-tracker-db',
   TEST_HOST: 'localhost',
