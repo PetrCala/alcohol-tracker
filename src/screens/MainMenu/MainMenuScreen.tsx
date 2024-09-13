@@ -215,6 +215,13 @@ function MainMenuScreen({route}: MainMenuScreenProps) {
     setReauthentificateModalVisible(true);
   };
 
+  const onProfileButtonPress = () => {
+    if (!user) {
+      return;
+    }
+    Navigation.navigate(ROUTES.PROFILE_EDIT.getRoute(user.uid));
+  };
+
   // Monitor feedback data
   if (userData?.role == 'admin') {
     useEffect(() => {
@@ -242,7 +249,7 @@ function MainMenuScreen({route}: MainMenuScreenProps) {
 
   let modalData = [
     {
-      heading: 'General',
+      heading: 'Your account',
       data: [
         // {
         //     label: 'Settings',
@@ -250,26 +257,25 @@ function MainMenuScreen({route}: MainMenuScreenProps) {
         //     action: () => navigation.navigate("Settings Screen")
         // },
         {
+          label: 'Profile',
+          icon: KirokuIcons.UserIcon,
+          action: () => onProfileButtonPress(),
+        },
+        {
           label: 'Preferences',
           icon: KirokuIcons.Settings,
           action: () => Navigation.navigate(ROUTES.MAIN_MENU_PREFERENCES),
         },
+      ],
+    },
+    {
+      heading: 'General',
+      data: [
         {
           label: 'Legal and Policies',
           icon: KirokuIcons.Book,
           action: () => setPoliciesModalVisible(true),
         },
-        {
-          label: 'Share the app',
-          icon: KirokuIcons.Share,
-          action: () => Navigation.navigate(ROUTES.MAIN_MENU_APP_SHARE),
-        },
-      ],
-    },
-    {
-      heading: 'Feedback',
-      data: [
-        // {
         //   label: 'Report a bug',
         //   icon: KirokuIcons.Bug,
         //   action: () => console.log('Bug reporting'),
@@ -278,6 +284,11 @@ function MainMenuScreen({route}: MainMenuScreenProps) {
           label: 'Give us a feedback',
           icon: KirokuIcons.Idea,
           action: () => setFeedbackModalVisible(true),
+        },
+        {
+          label: 'Share the app',
+          icon: KirokuIcons.Share,
+          action: () => Navigation.navigate(ROUTES.MAIN_MENU_APP_SHARE),
         },
       ],
     },
