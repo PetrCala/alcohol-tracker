@@ -45,7 +45,7 @@ function EditScreen({route}: EditScreenProps) {
   const generalOptions = [
     {
       description: 'Name',
-      title: 'test',
+      title: userData?.profile?.name ?? '',
       pageRoute: ROUTES.HOME,
     },
     {
@@ -68,37 +68,25 @@ function EditScreen({route}: EditScreenProps) {
       title: userData?.private_data?.timezone ?? '',
       pageRoute: ROUTES.HOME,
     },
-    // {
-    //     description: translate('timezonePage.timezone'),
-    //     title: currentUserPersonalDetails?.timezone?.selected ?? '',
-    //     pageRoute: ROUTES.SETTINGS_TIMEZONE,
-    // },
   ];
 
   const personalDetails = [
     {
       description: 'Date of birth',
-      title: 'test',
+      title: userData?.private_data?.birthdate.toString() ?? '',
       pageRoute: ROUTES.HOME,
     },
     {
       description: 'Gender',
-      title: 'test',
+      title: userData?.private_data?.gender ?? '',
       pageRoute: ROUTES.HOME,
     },
     {
       description: 'Weight',
-      title: 'test',
+      title: userData?.private_data?.weight.toString() ?? '',
       pageRoute: ROUTES.HOME,
     },
   ];
-
-  // Hooks
-  const [displayName, setDisplayName] = useState(
-    profileData?.display_name || '',
-  );
-  // const [name, setName] = useState(profileData?.name || '');
-  const [name, setName] = useState('' || '');
 
   return (
     <ScreenWrapper
