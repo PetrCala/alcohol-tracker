@@ -1,10 +1,11 @@
 import React from 'react';
-import {Text, View} from 'react-native';
+import {View} from 'react-native';
 import useThemeStyles from '@hooks/useThemeStyles';
 import useTheme from '@hooks/useTheme';
 import Navigation from '@libs/Navigation/Navigation';
 import ScreenWrapper from '@components/ScreenWrapper';
 import MainHeader from '@components/Header/MainHeader';
+import ROUTES from '@src/ROUTES';
 
 type NotFoundScreenProps = {
   onBackButtonPress?: () => void;
@@ -20,7 +21,7 @@ function NotFoundScreen({onBackButtonPress}: NotFoundScreenProps) {
       style={styles.appContent}>
       <MainHeader
         headerText={'Content Not Found'}
-        onGoBack={() => Navigation.goBack()}
+        onGoBack={() => Navigation.navigate(ROUTES.HOME)}
       />
       <View style={{backgroundColor: theme.appBG}}></View>
       {/* //   <FullPageNotFoundView shouldShow onBackButtonPress={onBackButtonPress} /> */}

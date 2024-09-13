@@ -111,8 +111,8 @@ function EditScreen({route}: EditScreenProps) {
         style={styles.pt3}>
         <MenuItemGroup>
           <Section
-            title={translate('profileScreen.publicSection.title')}
-            subtitle={translate('profileScreen.publicSection.subtitle')}
+            title={translate('profileScreen.generalSection.title')}
+            subtitle={translate('profileScreen.generalSection.subtitle')}
             isCentralPane
             subtitleMuted
             childrenStyles={styles.pt5}

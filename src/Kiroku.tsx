@@ -137,24 +137,24 @@ function Kiroku({
           status,
         });
 
-        // if (status === 'visible') {
-        //   const propsToLog: Omit<
-        //     KirokuProps & {isAuthenticated: boolean},
-        //     'children' | 'session'
-        //   > = {
-        //     updateRequired,
-        //     updateAvailable,
-        //     isSidebarLoaded,
-        //     focusModeNotification,
-        //     isAuthenticated,
-        //     lastVisitedPath,
-        //   };
-        //   Log.alert(
-        //     '[BootSplash] splash screen is still visible',
-        //     {propsToLog},
-        //     false,
-        //   );
-        // }
+        if (status === 'visible') {
+          const propsToLog: Omit<
+            KirokuProps & {isAuthenticated: boolean},
+            'children' | 'session'
+          > = {
+            updateRequired,
+            updateAvailable,
+            isSidebarLoaded,
+            focusModeNotification,
+            isAuthenticated,
+            lastVisitedPath,
+          };
+          Log.alert(
+            '[BootSplash] splash screen is still visible',
+            {propsToLog},
+            false,
+          );
+        }
       });
     }, 30 * 1000);
 
