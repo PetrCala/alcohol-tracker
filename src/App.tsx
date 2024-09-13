@@ -19,22 +19,22 @@ import {EnvironmentProvider} from './components/withEnvironment';
 import ThemeProvider from './components/ThemeProvider';
 import ThemeStylesProvider from './components/ThemeStylesProvider';
 import SafeArea from '@components/SafeArea';
-import {LogBox} from 'react-native';
 import CustomStatusBarAndBackground from './components/CustomStatusBarAndBackground';
 import CustomStatusBarAndBackgroundContextProvider from './components/CustomStatusBarAndBackground/CustomStatusBarAndBackgroundContextProvider';
 // import OnyxUpdateManager from './libs/actions/OnyxUpdateManager';
+// import {LogBox} from 'react-native';
 
 type KirokuProps = {
   /** true if there is an authToken */
   url?: Route;
 };
 
-LogBox.ignoreLogs([
-  // Basically it means that if the app goes in the background and back to foreground on Android,
-  // the timer is lost. Currently we are using a 30 minutes interval to refresh personal details.
-  // More details here: https://git.io/JJYeb
-  'Setting a timer for a long period of time',
-]);
+// LogBox.ignoreLogs([
+// Basically it means that if the app goes in the background and back to foreground on Android,
+// the timer is lost. Currently we are using a 30 minutes interval to refresh personal details.
+// More details here: https://git.io/JJYeb
+//   'Setting a timer for a long period of time',
+// ]);
 
 const fill = {flex: 1};
 
