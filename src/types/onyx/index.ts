@@ -59,7 +59,13 @@ import type User from './User';
 import type {DrinkKey, DrinkName, DrinksList, DrinksTimestamp} from './Drinks';
 import type UserIsTyping from './UserIsTyping';
 import type UserProps from './UserProps';
-import type {UserPropsList, Profile, ProfileList} from './UserProps';
+import type {
+  UserPropsList,
+  UserPrivateData,
+  UserPublicData,
+  Profile,
+  ProfileList,
+} from './UserProps';
 import type UserStatus from './UserStatus';
 import type {UserStatusList} from './UserStatus';
 
@@ -123,6 +129,8 @@ export type {
   UnconfirmedDaysList,
   UnitsToColors,
   User,
+  UserPublicData,
+  UserPrivateData,
   UserProps,
   UserDrinkingSessionsList,
   UserIsTyping,
