@@ -9,6 +9,8 @@ type Profile = {
 type UserProps = {
   email_verified?: boolean;
   profile: Profile;
+  private_data?: any; // TODO: Define this type
+  personal_data?: any; // TODO: Define this type
   friends?: UserList;
   friend_requests?: FriendRequestList;
   role: string;

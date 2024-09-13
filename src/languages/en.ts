@@ -243,6 +243,11 @@ export default {
     deleteConfirmation: 'Are you sure that you want to delete this account?',
     improvementThoughts: 'What would you like us to improve?',
   },
+  timezoneScreen: {
+    timezone: 'Timezone',
+    isShownOnProfile: 'Your timezone is shown on your profile.',
+    getLocationAutomatically: 'Automatically determine your location',
+  },
   LiveSessionScreen: {
     saving: 'Saving your session...',
     error: {

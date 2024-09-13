@@ -6,13 +6,12 @@ import MenuItemGroup from '@components/MenuItemGroup';
 import MenuItemWithTopDescription from '@components/MenuItemWithTopDescription';
 import ScreenWrapper from '@components/ScreenWrapper';
 import Section from '@components/Section';
-import ProfileOverview from '@components/Social/ProfileOverview';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
+import {useFirebase} from '@context/global/FirebaseContext';
 import useLocalize from '@hooks/useLocalize';
 import useStyleUtils from '@hooks/useStyleUtils';
 import useTheme from '@hooks/useTheme';
 import useThemeStyles from '@hooks/useThemeStyles';
-import Log from '@libs/common/Log';
 import Navigation from '@libs/Navigation/Navigation';
 import type {ProfileNavigatorParamList} from '@libs/Navigation/types';
 import type {StackScreenProps} from '@react-navigation/stack';
@@ -38,7 +37,8 @@ function EditScreen({route}: EditScreenProps) {
   const styles = useThemeStyles();
   const StyleUtils = useStyleUtils();
   const {translate} = useLocalize();
-  const userID = route.params.userID;
+  const {auth} = useFirebase();
+  const user = auth.currentUser;
   const {userData, isLoading} = useDatabaseData();
   const profileData = userData?.profile;
 
@@ -50,45 +50,24 @@ function EditScreen({route}: EditScreenProps) {
     },
     {
       description: 'Display name',
-      title: 'test',
+      title: profileData?.display_name ?? '',
       pageRoute: ROUTES.HOME,
     },
     {
       description: 'Email',
-      title: 'test',
+      title: user?.email ?? '',
       pageRoute: ROUTES.HOME,
     },
     {
       description: 'Password',
-      title: 'test',
+      title: '********',
       pageRoute: ROUTES.HOME,
     },
     {
-      description: 'Timezone',
-      title: 'test2',
+      description: translate('timezoneScreen.timezone'),
+      title: userData?.private_data?.timezone ?? '',
       pageRoute: ROUTES.HOME,
     },
-    // {
-    //     description: translate('displayNamePage.headerTitle'),
-    //     title: currentUserPersonalDetails?.displayName ?? '',
-    //     pageRoute: ROUTES.SETTINGS_DISPLAY_NAME,
-    // },
-    // {
-    //     description: translate('contacts.contactMethod'),
-    //     title: LocalePhoneNumber.formatPhoneNumber(currentUserPersonalDetails?.login ?? ''),
-    //     pageRoute: ROUTES.SETTINGS_CONTACT_METHODS.route,
-    //     brickRoadIndicator: contactMethodBrickRoadIndicator,
-    // },
-    // {
-    //     description: translate('statusPage.status'),
-    //     title: emojiCode ? `${emojiCode} ${currentUserPersonalDetails?.status?.text ?? ''}` : '',
-    //     pageRoute: ROUTES.SETTINGS_STATUS,
-    // },
-    // {
-    //     description: translate('pronounsPage.pronouns'),
-    //     title: getPronouns(),
-    //     pageRoute: ROUTES.SETTINGS_PRONOUNS,
-    // },
     // {
     //     description: translate('timezonePage.timezone'),
     //     title: currentUserPersonalDetails?.timezone?.selected ?? '',
