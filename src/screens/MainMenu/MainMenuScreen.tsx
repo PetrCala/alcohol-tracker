@@ -247,6 +247,7 @@ function MainMenuScreen({route}: MainMenuScreenProps) {
     }, [db, user]);
   }
 
+  // TODO change this to a section with icons
   let modalData = [
     {
       heading: 'Your account',
