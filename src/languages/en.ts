@@ -227,11 +227,15 @@ export default {
     allowPermission: 'allow location permission in settings',
     tryAgain: 'and then try again.',
   },
-  profileScreen: {
-    editProfile: 'Edit Your Profile',
-    generalSection: {
+  editProfileScreen: {
+    title: 'Edit Your Profile',
+    generalOptions: {
       title: 'General',
-      subtitle: '',
+    },
+    personalDetails: {
+      title: 'Personal Details',
+      subtitle:
+        'These details help us provide you with the best user experience.',
     },
   },
   mainMenuScreen: {

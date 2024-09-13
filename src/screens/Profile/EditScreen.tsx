@@ -12,6 +12,7 @@ import useLocalize from '@hooks/useLocalize';
 import useStyleUtils from '@hooks/useStyleUtils';
 import useTheme from '@hooks/useTheme';
 import useThemeStyles from '@hooks/useThemeStyles';
+import Log from '@libs/common/Log';
 import Navigation from '@libs/Navigation/Navigation';
 import type {ProfileNavigatorParamList} from '@libs/Navigation/types';
 import type {StackScreenProps} from '@react-navigation/stack';
@@ -27,10 +28,6 @@ import {
   View,
 } from 'react-native';
 
-const propTypes = {
-  /* Onyx Props */
-};
-
 type EditScreenProps = StackScreenProps<
   ProfileNavigatorParamList,
   typeof SCREENS.PROFILE.EDIT
@@ -45,14 +42,29 @@ function EditScreen({route}: EditScreenProps) {
   const {userData, isLoading} = useDatabaseData();
   const profileData = userData?.profile;
 
-  const publicOptions = [
+  const generalOptions = [
     {
-      description: 'test',
+      description: 'Name',
       title: 'test',
       pageRoute: ROUTES.HOME,
     },
     {
-      description: 'test2',
+      description: 'Display name',
+      title: 'test',
+      pageRoute: ROUTES.HOME,
+    },
+    {
+      description: 'Email',
+      title: 'test',
+      pageRoute: ROUTES.HOME,
+    },
+    {
+      description: 'Password',
+      title: 'test',
+      pageRoute: ROUTES.HOME,
+    },
+    {
+      description: 'Timezone',
       title: 'test2',
       pageRoute: ROUTES.HOME,
     },
@@ -84,6 +96,24 @@ function EditScreen({route}: EditScreenProps) {
     // },
   ];
 
+  const personalDetails = [
+    {
+      description: 'Date of birth',
+      title: 'test',
+      pageRoute: ROUTES.HOME,
+    },
+    {
+      description: 'Gender',
+      title: 'test',
+      pageRoute: ROUTES.HOME,
+    },
+    {
+      description: 'Weight',
+      title: 'test',
+      pageRoute: ROUTES.HOME,
+    },
+  ];
+
   // Hooks
   const [displayName, setDisplayName] = useState(
     profileData?.display_name || '',
@@ -91,18 +121,13 @@ function EditScreen({route}: EditScreenProps) {
   // const [name, setName] = useState(profileData?.name || '');
   const [name, setName] = useState('' || '');
 
-  const onSaveChangesPress = async () => {
-    Navigation.goBack();
-  };
-
-  if (!profileData) {
-    return;
-  }
-
   return (
-    <ScreenWrapper testID={EditScreen.displayName}>
+    <ScreenWrapper
+      testID={EditScreen.displayName}
+      includeSafeAreaPaddingBottom={false}
+      shouldShowOfflineIndicatorInWideScreen>
       <MainHeader
-        headerText={translate('profileScreen.editProfile')}
+        headerText={translate('editProfileScreen.title')}
         onGoBack={() => Navigation.goBack()}
       />
       <ScrollView
@@ -111,10 +136,8 @@ function EditScreen({route}: EditScreenProps) {
         style={styles.pt3}>
         <MenuItemGroup>
           <Section
-            title={translate('profileScreen.generalSection.title')}
-            subtitle={translate('profileScreen.generalSection.subtitle')}
+            title={translate('editProfileScreen.generalOptions.title')}
             isCentralPane
-            subtitleMuted
             childrenStyles={styles.pt5}
             titleStyles={styles.accountSettingsSectionTitle}>
             {isLoading ? (
@@ -127,7 +150,7 @@ function EditScreen({route}: EditScreenProps) {
               />
             ) : (
               <>
-                {publicOptions.map((detail, index) => (
+                {generalOptions.map((detail, index) => (
                   <MenuItemWithTopDescription
                     // eslint-disable-next-line react/no-array-index-key
                     key={`${detail.title}_${index}`}
@@ -142,59 +165,42 @@ function EditScreen({route}: EditScreenProps) {
               </>
             )}
           </Section>
+          <Section
+            title={translate('editProfileScreen.personalDetails.title')}
+            subtitle={translate('editProfileScreen.personalDetails.subtitle')}
+            isCentralPane
+            subtitleMuted
+            childrenStyles={styles.pt3}
+            titleStyles={styles.accountSettingsSectionTitle}>
+            {isLoading ? (
+              <FullScreenLoadingIndicator
+                style={[
+                  styles.flex1,
+                  styles.pRelative,
+                  StyleUtils.getBackgroundColorStyle(theme.cardBG),
+                ]}
+              />
+            ) : (
+              <>
+                {personalDetails.map((detail, index) => (
+                  <MenuItemWithTopDescription
+                    // eslint-disable-next-line react/no-array-index-key
+                    key={`${detail.title}_${index}`}
+                    shouldShowRightIcon
+                    title={detail.title}
+                    description={detail.description}
+                    wrapperStyle={styles.sectionMenuItemTopDescription}
+                    onPress={() => Navigation.navigate(detail.pageRoute)}
+                  />
+                ))}
+              </>
+            )}
+          </Section>
         </MenuItemGroup>
       </ScrollView>
-      <View style={localStyles.saveChangesContainer}>
-        <BasicButton
-          text="Save Changes"
-          buttonStyle={localStyles.saveChangesButton}
-          textStyle={localStyles.saveChangesButtonText}
-          onPress={onSaveChangesPress}
-        />
-      </View>
     </ScreenWrapper>
   );
 }
-
-const localStyles = StyleSheet.create({
-  saveChangesContainer: {
-    width: '100%',
-    height: 70,
-    flexShrink: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-    backgroundColor: '#FFFF99',
-    padding: 5,
-    paddingBottom: 10,
-  },
-  saveChangesButton: {
-    width: '50%',
-    height: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 10,
-    backgroundColor: '#fcf50f',
-    // backgroundColor: 'white',
-    borderWidth: 2,
-    borderColor: 'black',
-    borderRadius: 8,
-  },
-  saveChangesButtonText: {
-    color: 'black',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  feedbackWindowText: {
-    height: '100%',
-    width: '100%',
-    flexGrow: 1,
-    flexShrink: 1,
-    textAlignVertical: 'top',
-    margin: 12,
-    color: 'black',
-  },
-});
 
 EditScreen.displayName = 'Profile Edit Screen';
 export default EditScreen;
