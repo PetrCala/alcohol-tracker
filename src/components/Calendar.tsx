@@ -332,6 +332,7 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
               borderTopWidth: 1,
               borderBottomWidth: 1,
               borderColor: 'grey',
+              backgroundColor: '#f2be1c',
             },
             monthText: {
               color: 'black',
@@ -354,7 +355,7 @@ const arrowStyles = StyleSheet.create({
     height: 45,
     alignSelf: 'center',
     justifyContent: 'center',
-    backgroundColor: 'white',
+    backgroundColor: '#f2be1c',
     alignItems: 'center',
     width: screenWidth / 3,
     marginVertical: -10,
