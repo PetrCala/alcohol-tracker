@@ -502,9 +502,8 @@ const localStyles = StyleSheet.create({
   mainScreenContent: {
     flexGrow: 1,
     flexShrink: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#ffff99',
   },
-  ///
   userInSessionWarningContainer: {
     backgroundColor: '#ff5d54',
     padding: 16,

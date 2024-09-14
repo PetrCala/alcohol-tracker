@@ -30,9 +30,11 @@ const styles = StyleSheet.create({
   },
   overviewStatsContents: {
     textAlign: 'center',
-    fontSize: 25,
-    fontWeight: '800',
-    color: '#f2be1c',
+    fontSize: 28,
+    color: 'black',
+    // fontSize: 25,
+    // fontWeight: '800',
+    // color: '#f2be1c',
   },
   overviewStatsHeader: {
     textAlign: 'center',
