@@ -330,7 +330,7 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
               margin: 0,
               padding: 0,
               borderTopWidth: 1,
-              borderBottomWidth: 1,
+              borderBottomWidth: 0,
               borderColor: 'grey',
               backgroundColor: '#f2be1c',
             },
