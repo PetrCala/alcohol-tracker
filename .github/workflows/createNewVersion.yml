@@ -89,7 +89,7 @@ jobs:
             ./package-lock.json \
             ./android/app/build.gradle \
             ./ios/kiroku/Info.plist \
-            ./ios/kiroku/Info.plist
+            ./ios/kirokuTests/Info.plist
           git commit -m "Update version to ${{ steps.bumpVersion.outputs.NEW_VERSION }}"
 
       - name: Update master branch
