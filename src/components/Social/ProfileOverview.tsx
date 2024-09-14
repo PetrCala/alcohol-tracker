@@ -53,27 +53,17 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
 
   return (
     <View style={localStyles.profileOverviewContainer}>
-      {/* {user?.uid === userID && (
-        <TouchableOpacity accessibilityRole="button"
-          onPress={() =>
-            Navigation.navigate(ROUTES.SETTINGS_ACCOUNT.getRoute(userID))
-          }
+      {user?.uid === userID && (
+        <TouchableOpacity
+          accessibilityRole="button"
+          onPress={() => Navigation.navigate(ROUTES.SETTINGS_ACCOUNT)}
           style={localStyles.editProfileButton}>
           <Image
             source={KirokuIcons.Settings}
             style={localStyles.editProfileIcon}
           />
         </TouchableOpacity>
-        // <Button
-        //     // success
-        //     // medium
-        //     onPress={() =>
-        //       Navigation.navigate(ROUTES.PROFILE_EDIT.getRoute(userID))
-        //     }
-        //     text={'some text'}
-        //     style={styles.mt3}
-        //   />
-      )} */}
+      )}
       <View style={localStyles.profileImageContainer} />
       <ProfileImage
         key={`${userID}-profile-image`}
