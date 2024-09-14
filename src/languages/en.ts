@@ -233,7 +233,7 @@ export default {
     improvementThoughts: 'What would you like us to improve?',
   },
   accountScreen: {
-    title: 'Edit Your Profile',
+    title: 'Account Details',
     generalOptions: {
       title: 'General',
     },
