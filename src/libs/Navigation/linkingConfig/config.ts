@@ -69,15 +69,16 @@ const config: LinkingOptions<RootStackParamList>['config'] = {
             },
           },
         },
-        [SCREENS.RIGHT_MODAL.MAIN_MENU]: {
+        [SCREENS.RIGHT_MODAL.SETTINGS]: {
           screens: {
-            [SCREENS.MAIN_MENU.ROOT]: ROUTES.MAIN_MENU,
-            [SCREENS.MAIN_MENU.APP_SHARE]: ROUTES.MAIN_MENU_APP_SHARE,
-            [SCREENS.MAIN_MENU.PREFERENCES]: ROUTES.MAIN_MENU_PREFERENCES,
-            [SCREENS.MAIN_MENU.POLICIES.PRIVACY_POLICY]:
-              ROUTES.MAIN_MENU_POLICIES_PRIVACY_POLICY,
-            [SCREENS.MAIN_MENU.POLICIES.TERMS_OF_SERVICE]:
-              ROUTES.MAIN_MENU_POLICIES_TERMS_OF_SERVICE,
+            [SCREENS.SETTINGS.ROOT]: ROUTES.SETTINGS,
+            [SCREENS.SETTINGS.APP_SHARE]: ROUTES.SETTINGS_APP_SHARE,
+            [SCREENS.SETTINGS.ACCOUNT]: ROUTES.SETTINGS_ACCOUNT,
+            [SCREENS.SETTINGS.PREFERENCES]: ROUTES.SETTINGS_PREFERENCES,
+            [SCREENS.SETTINGS.POLICIES.PRIVACY_POLICY]:
+              ROUTES.SETTINGS_POLICIES_PRIVACY_POLICY,
+            [SCREENS.SETTINGS.POLICIES.TERMS_OF_SERVICE]:
+              ROUTES.SETTINGS_POLICIES_TERMS_OF_SERVICE,
           },
         },
         [SCREENS.RIGHT_MODAL.PROFILE]: {
@@ -85,17 +86,9 @@ const config: LinkingOptions<RootStackParamList>['config'] = {
             [SCREENS.PROFILE.ROOT]: {
               path: ROUTES.PROFILE.route,
             },
-            [SCREENS.PROFILE.EDIT]: {
-              path: ROUTES.PROFILE_EDIT.route,
-            },
             [SCREENS.PROFILE.FRIENDS_FRIENDS]: {
               path: ROUTES.PROFILE_FRIENDS_FRIENDS.route,
             },
-          },
-        },
-        [SCREENS.RIGHT_MODAL.SETTINGS]: {
-          screens: {
-            [SCREENS.SETTINGS.ROOT]: ROUTES.SETTINGS,
           },
         },
         [SCREENS.RIGHT_MODAL.SOCIAL]: {

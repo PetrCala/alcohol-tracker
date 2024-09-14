@@ -23,7 +23,7 @@ import type {Preferences} from '@src/types/onyx';
 import CONST from '@src/CONST';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import type {StackScreenProps} from '@react-navigation/stack';
-import type {MainMenuNavigatorParamList} from '@libs/Navigation/types';
+import type {SettingsNavigatorParamList} from '@libs/Navigation/types';
 import type SCREENS from '@src/SCREENS';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
@@ -68,8 +68,8 @@ const PreferencesList: React.FC<PreferencesListProps> = ({
 };
 
 type PreferencesScreenProps = StackScreenProps<
-  MainMenuNavigatorParamList,
-  typeof SCREENS.MAIN_MENU.PREFERENCES
+  SettingsNavigatorParamList,
+  typeof SCREENS.SETTINGS.PREFERENCES
 >;
 
 function PreferencesScreen({route}: PreferencesScreenProps) {
@@ -106,11 +106,13 @@ function PreferencesScreen({route}: PreferencesScreenProps) {
   };
 
   const handleSavePreferences = async () => {
-    if (!user) {return;}
+    if (!user) {
+      return;
+    }
     try {
       setSaving(true);
       await savePreferencesData(db, user.uid, currentPreferences);
-      Navigation.navigate(ROUTES.MAIN_MENU);
+      Navigation.navigate(ROUTES.SETTINGS);
       setSaving(false);
     } catch (error: any) {
       Alert.alert('Preferences saving failed', error.message);

@@ -112,28 +112,22 @@ type DrinkingSessionNavigatorParamList = {
   };
 };
 
-type MainMenuNavigatorParamList = {
-  [SCREENS.MAIN_MENU.ROOT]: undefined;
-  [SCREENS.MAIN_MENU.APP_SHARE]: undefined;
-  [SCREENS.MAIN_MENU.PREFERENCES]: undefined;
-  [SCREENS.MAIN_MENU.POLICIES.TERMS_OF_SERVICE]: undefined;
-  [SCREENS.MAIN_MENU.POLICIES.PRIVACY_POLICY]: undefined;
+type SettingsNavigatorParamList = {
+  [SCREENS.SETTINGS.ROOT]: undefined;
+  [SCREENS.SETTINGS.APP_SHARE]: undefined;
+  [SCREENS.SETTINGS.ACCOUNT]: undefined;
+  [SCREENS.SETTINGS.PREFERENCES]: undefined;
+  [SCREENS.SETTINGS.POLICIES.TERMS_OF_SERVICE]: undefined;
+  [SCREENS.SETTINGS.POLICIES.PRIVACY_POLICY]: undefined;
 };
 
 type ProfileNavigatorParamList = {
   [SCREENS.PROFILE.ROOT]: {
     userID: string;
   };
-  [SCREENS.PROFILE.EDIT]: {
-    userID: string;
-  };
   [SCREENS.PROFILE.FRIENDS_FRIENDS]: {
     userID: string;
   };
-};
-
-type SettingsNavigatorParamList = {
-  [SCREENS.SETTINGS.ROOT]: undefined;
 };
 
 type SocialNavigatorParamList = {
@@ -156,8 +150,6 @@ type RightModalNavigatorParamList = {
     .DAY_OVERVIEW]: NavigatorScreenParams<DayOverviewNavigatorParamList>;
   [SCREENS.RIGHT_MODAL
     .DRINKING_SESSION]: NavigatorScreenParams<DrinkingSessionNavigatorParamList>;
-  [SCREENS.RIGHT_MODAL
-    .MAIN_MENU]: NavigatorScreenParams<MainMenuNavigatorParamList>;
   [SCREENS.RIGHT_MODAL
     .PROFILE]: NavigatorScreenParams<ProfileNavigatorParamList>;
   [SCREENS.RIGHT_MODAL.SOCIAL]: NavigatorScreenParams<SocialNavigatorParamList>;
@@ -254,7 +246,6 @@ export type {
   // FullScreenName,
   // FullScreenNavigatorParamList,
   LeftModalNavigatorParamList,
-  MainMenuNavigatorParamList,
   NavigationStateRoute,
   NavigationPartialRoute,
   NavigationRef,

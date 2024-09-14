@@ -1,169 +1,476 @@
-﻿import React, {useContext, useState} from 'react';
+﻿import React, {useEffect, useState} from 'react';
+import type {ImageSourcePropType} from 'react-native';
 import {
-  Keyboard,
-  ScrollView,
-  StyleSheet,
+  View,
   Text,
   TouchableOpacity,
-  View,
+  StyleSheet,
+  ScrollView,
+  Image,
+  Alert,
+  Keyboard,
 } from 'react-native';
-import MenuIcon from '../../components/Buttons/MenuIcon';
-import {useUserConnection} from '../../context/global/UserConnectionContext';
-import UserOffline from '../../components/UserOffline';
-import BasicButton from '../../components/Buttons/BasicButton';
-import commonStyles from '../../styles/commonStyles';
-import MainHeader from '@components/Header/MainHeader';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
+import YesNoPopup from '@components/Popups/YesNoPopup';
+import type {UserCredential} from 'firebase/auth';
+import {deleteUser, signOut} from 'firebase/auth';
+import {version as _version} from '../../../package.json';
+import {deleteUserData, reauthentificateUser} from '@database/users';
+import FeedbackPopup from '@components/Popups/FeedbackPopup';
+import {submitFeedback} from '@database/feedback';
+import AdminFeedbackPopup from '@components/Popups/AdminFeedbackPopup';
+import {listenForDataChanges} from '@database/baseFunctions';
+import InputTextPopup from '@components/Popups/InputTextPopup';
+import UserOffline from '@components/UserOffline';
+import {useUserConnection} from '@context/global/UserConnectionContext';
+import ItemListPopup from '@components/Popups/ItemListPopup';
 import {useFirebase} from '@context/global/FirebaseContext';
-import {useDatabaseData} from '@context/global/DatabaseDataContext';
-import Navigation from '@libs/Navigation/Navigation';
+import MainHeader from '@components/Header/MainHeader';
+import GrayHeader from '@components/Header/GrayHeader';
+import type {FeedbackList} from '@src/types/onyx';
+import type {StackScreenProps} from '@react-navigation/stack';
+import type {SettingsNavigatorParamList} from '@navigation/types';
+import type SCREENS from '@src/SCREENS';
+import Navigation from '@navigation/Navigation';
 import ROUTES from '@src/ROUTES';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
+import ScreenWrapper from '@components/ScreenWrapper';
+import LoadingData from '@components/LoadingData';
+import useLocalize from '@hooks/useLocalize';
+import ONYXKEYS from '@src/ONYXKEYS';
+import type {OnyxEntry} from 'react-native-onyx';
+import {useOnyx} from 'react-native-onyx';
 
-const SettingsItem: React.FC<{item: any}> = ({item}) => (
-  <View style={styles.settingContainer}>
-    <Text style={styles.settingLabel}>{item.label}</Text>
-    <View style={styles.buttonsContainer}>
-      {item.buttons.map((button: any, index: any) => (
-        <TouchableOpacity
-          accessibilityRole="button"
-          key={index}
-          style={[styles.button, {backgroundColor: button.color}]}
-          onPress={button.action}>
-          <Text style={styles.buttonText}>{button.text}</Text>
-        </TouchableOpacity>
-      ))}
-    </View>
+type SettingsButtonData = {
+  label: string;
+  icon: ImageSourcePropType;
+  action: () => void;
+};
+
+type SettingsItemProps = {
+  heading: string;
+  data: SettingsButtonData[];
+  index: number;
+};
+
+const MenuItem: React.FC<SettingsItemProps> = ({heading, data, index}) => (
+  <View key={index} style={{backgroundColor: '#FFFF99'}}>
+    <GrayHeader headerText={heading} />
+    {data.map((button, bIndex) => (
+      <TouchableOpacity
+        accessibilityRole="button"
+        key={bIndex}
+        style={styles.button}
+        onPress={button.action}>
+        <Image source={button.icon} style={styles.icon} />
+        <Text style={styles.buttonText}>{button.label}</Text>
+      </TouchableOpacity>
+    ))}
   </View>
 );
 
-function SettingsScreen() {
-  const {auth} = useFirebase();
+type SettingsScreenOnyxProps = {
+  pushNotificationsEnabled: OnyxEntry<boolean>;
+};
+
+type SettingsScreenProps = SettingsScreenOnyxProps &
+  StackScreenProps<SettingsNavigatorParamList, typeof SCREENS.SETTINGS.ROOT>;
+
+function SettingsScreen({route}: SettingsScreenProps) {
+  const {userData, preferences} = useDatabaseData();
+  // Context, database, and authentification
+  const [pushNotificationsEnabled] = useOnyx(
+    ONYXKEYS.PUSH_NOTIFICATIONS_ENABLED,
+  );
+  const {auth, db} = useFirebase();
   const user = auth.currentUser;
-  const {preferences} = useDatabaseData();
   const {isOnline} = useUserConnection();
+  const {translate} = useLocalize();
 
-  // Automatically navigate to login screen if login expires
-  if (!user || !preferences) {
-    Navigation.navigate(ROUTES.LOGIN);
-    return null;
-  }
+  // Hooks
+  const [FeedbackList, setFeedbackList] = useState<FeedbackList>({});
+  // Modals
+  const [policiesModalVisible, setPoliciesModalVisible] =
+    useState<boolean>(false);
+  const [reportBugModalVisible, setReportBugModalVisible] =
+    useState<boolean>(false);
+  const [feedbackModalVisible, setFeedbackModalVisible] =
+    useState<boolean>(false);
+  const [signoutModalVisible, setSignoutModalVisible] =
+    useState<boolean>(false);
+  const [deleteUserModalVisible, setDeleteUserModalVisible] =
+    useState<boolean>(false);
+  const [reauthentificateModalVisible, setReauthentificateModalVisible] =
+    useState<boolean>(false);
+  const [adminFeedbackModalVisible, setAdminFeedbackModalVisible] =
+    useState<boolean>(false);
+  const [deletingUser, setDeletingUser] = useState<boolean>(false);
 
-  const handleSaveSettings = () => {
-    Navigation.goBack();
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+    } catch (error: any) {
+      Alert.alert(
+        'User sign out error',
+        'There was an error signing out: ' + error.message,
+      );
+    }
   };
 
-  const settingsData = [
+  const handleDeleteUser = async (password: string) => {
+    if (!db || !userData || !user) {
+      return;
+    }
+
+    // Reauthentificate the user
+    let authentificationResult: void | UserCredential;
+    try {
+      authentificationResult = await reauthentificateUser(user, password);
+    } catch (error: any) {
+      Alert.alert(
+        'Reauthentification failed',
+        'Failed to reauthentificate this user',
+      );
+      return null;
+    }
+    if (!authentificationResult) {
+      return null; // Cancel user deletion
+    }
+    // Delete the user's information from the realtime database
+    try {
+      setDeletingUser(true);
+      const userNickname = userData.profile.display_name;
+      await deleteUserData(
+        db,
+        user.uid,
+        userNickname,
+        userData.friends,
+        userData.friend_requests,
+      );
+    } catch (error: any) {
+      handleInvalidDeleteUser(error);
+      setDeletingUser(false);
+      return;
+    }
+    // Delete user from authentification database
+    try {
+      await deleteUser(user);
+    } catch (error: any) {
+      handleInvalidDeleteUser(error);
+      return;
+    } finally {
+      setDeletingUser(false);
+    }
+    // Updating the loading state here might cause some issues
+    handleSignOut();
+    // Add an alert here informing about the user deletion
+    Navigation.navigate(ROUTES.SIGNUP);
+  };
+
+  /** Handle cases when deleting a user fails */
+  const handleInvalidDeleteUser = (error: any) => {
+    if (!user) {
+      return null;
+    }
+    const err = error.message;
+    if (err.includes('auth/requires-recent-login')) {
+      // Should never happen
+      Alert.alert(
+        'User deletion failed',
+        'Recent user authentification was not done, yet the application attempted to delete the user:' +
+          error.message,
+      );
+    } else {
+      Alert.alert(
+        'Error deleting user',
+        'Could not delete user ' + user.uid + error.message,
+      );
+    }
+    return null;
+  };
+
+  const handleSubmitReportBug = () => {
+    // Popup an information button at the top (your feedback has been submitted)
+    setReportBugModalVisible(false);
+  };
+
+  const handleSubmitFeedback = (feedback: string) => {
+    if (!db || !user) {
+      return;
+    }
+    if (feedback !== '') {
+      submitFeedback(db, user.uid, feedback);
+      // Popup an information button at the top (your feedback has been submitted)
+      setFeedbackModalVisible(false);
+    } // Perhaps alert the user that they must fill out the feedback first
+  };
+
+  const handleConfirmSignout = () => {
+    handleSignOut(); // Automatically sets the navigation to public screens
+    setSignoutModalVisible(false);
+  };
+
+  const handleConfirmDeleteUser = () => {
+    setDeleteUserModalVisible(false);
+    setReauthentificateModalVisible(true);
+  };
+
+  // Monitor feedback data
+  if (userData?.role == 'admin') {
+    useEffect(() => {
+      if (!db) {
+        return;
+      }
+      // Start listening for changes when the component mounts
+      const dbRef = `feedback/`;
+      const stopListening = listenForDataChanges(
+        db,
+        dbRef,
+        (data: FeedbackList) => {
+          if (data != null) {
+            setFeedbackList(data);
+          }
+        },
+      );
+
+      // Stop listening for changes when the component unmounts
+      return () => {
+        stopListening();
+      };
+    }, [db, user]);
+  }
+
+  // TODO change this to a section with icons
+  let modalData = [
     {
-      label: 'Unit Colors',
-      buttons: [
+      heading: 'Your account',
+      data: [
         {
-          color: 'green',
-          text: '9',
-          action: () => console.log('Green 9 pressed'),
+          label: 'Account',
+          icon: KirokuIcons.UserIcon,
+          action: () => Navigation.navigate(ROUTES.SETTINGS_ACCOUNT),
         },
         {
-          color: 'yellow',
-          text: '10',
-          action: () => console.log('Yellow 10 pressed'),
+          label: 'Preferences',
+          icon: KirokuIcons.Settings,
+          action: () => Navigation.navigate(ROUTES.SETTINGS_PREFERENCES),
         },
       ],
     },
     {
-      label: 'Drink to Unit Conversion',
-      buttons: [
-        {color: 'blue', text: '5', action: () => console.log('Blue 5 pressed')},
+      heading: 'General',
+      data: [
+        {
+          label: 'Legal and Policies',
+          icon: KirokuIcons.Book,
+          action: () => setPoliciesModalVisible(true),
+        },
+        //   label: 'Report a bug',
+        //   icon: KirokuIcons.Bug,
+        //   action: () => console.log('Bug reporting'),
+        // },
+        {
+          label: 'Give us a feedback',
+          icon: KirokuIcons.Idea,
+          action: () => setFeedbackModalVisible(true),
+        },
+        {
+          label: 'Share the app',
+          icon: KirokuIcons.Share,
+          action: () => Navigation.navigate(ROUTES.SETTINGS_APP_SHARE),
+        },
       ],
     },
-    // Add more settings items as needed
+    {
+      heading: 'Authentification',
+      data: [
+        {
+          label: 'Sign out',
+          icon: KirokuIcons.Exit,
+          action: () => setSignoutModalVisible(true),
+        },
+        {
+          label: 'Delete user',
+          icon: KirokuIcons.Delete,
+          action: () => setDeleteUserModalVisible(true),
+        },
+      ],
+    },
   ];
+
+  const adminData = [
+    {
+      heading: 'Admin settings',
+      data: [
+        {
+          label: 'See feedback',
+          icon: KirokuIcons.Book,
+          action: () => {
+            setAdminFeedbackModalVisible(true);
+          },
+        },
+      ],
+    },
+  ];
+
+  const policiesData = [
+    {
+      label: 'Terms of service',
+      icon: KirokuIcons.Book,
+      action: () => {
+        Navigation.navigate(ROUTES.SETTINGS_POLICIES_TERMS_OF_SERVICE);
+        setPoliciesModalVisible(false);
+      },
+    },
+    {
+      label: 'Privacy Policy',
+      icon: KirokuIcons.Book,
+      action: () => {
+        Navigation.navigate(ROUTES.SETTINGS_POLICIES_PRIVACY_POLICY);
+        setPoliciesModalVisible(false);
+      },
+    },
+  ];
+
+  if (userData?.role == 'admin') {
+    modalData = [...modalData, ...adminData]; // Add admin settings
+  }
 
   if (!isOnline) {
     return <UserOffline />;
   }
+  if (deletingUser) {
+    return <LoadingData loadingText="Deleting your account..." />;
+  }
+  if (!preferences || !userData || !user) {
+    return null;
+  }
 
   return (
-    <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
-      <MainHeader headerText="" onGoBack={() => Navigation.goBack()} />
-      <ScrollView
-        style={styles.scrollView}
-        onScrollBeginDrag={Keyboard.dismiss}
-        keyboardShouldPersistTaps="handled">
-        {settingsData.map((item, index) => (
-          <SettingsItem key={index} item={item} />
-        ))}
-      </ScrollView>
-      <View style={styles.saveSettingsButtonContainer}>
-        <BasicButton
-          text="Save Settings"
-          buttonStyle={styles.saveSettingsButton}
-          textStyle={styles.saveSettingsButtonText}
-          onPress={handleSaveSettings}
+    <ScreenWrapper testID={SettingsScreen.displayName}>
+      <View style={styles.mainContainer}>
+        <MainHeader
+          headerText="Settings"
+          onGoBack={() => Navigation.goBack()}
         />
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          onScrollBeginDrag={Keyboard.dismiss}
+          style={styles.scrollView}>
+          {modalData.map((group, index) => (
+            <MenuItem
+              key={index}
+              heading={group.heading}
+              data={group.data}
+              index={index}
+            />
+          ))}
+          <ItemListPopup
+            visible={policiesModalVisible}
+            transparent={true}
+            heading={'Our Policies'}
+            actions={policiesData}
+            onRequestClose={() => setPoliciesModalVisible(false)}
+          />
+          <FeedbackPopup
+            visible={feedbackModalVisible}
+            transparent={true}
+            message={translate('settingsScreen.improvementThoughts')}
+            onRequestClose={() => setFeedbackModalVisible(false)}
+            onSubmit={feedback => handleSubmitFeedback(feedback)}
+          />
+          <YesNoPopup
+            visible={signoutModalVisible}
+            transparent={true}
+            message={'Do you really want to\nsign out?'}
+            onRequestClose={() => setSignoutModalVisible(false)}
+            onYes={handleConfirmSignout}
+          />
+          <YesNoPopup
+            visible={deleteUserModalVisible}
+            transparent={true}
+            message={
+              'WARNING: Destructive action\n\nDo you really want to\ndelete this user?'
+            }
+            onRequestClose={() => setDeleteUserModalVisible(false)}
+            onYes={handleConfirmDeleteUser}
+          />
+          <InputTextPopup
+            visible={reauthentificateModalVisible}
+            transparent={true}
+            message={'Please retype your password\nin order to proceed'}
+            confirmationMessage={translate('settingsScreen.deleteConfirmation')}
+            placeholder={translate('common.password')}
+            onRequestClose={() => setReauthentificateModalVisible(false)}
+            onSubmit={password => handleDeleteUser(password)}
+            textContentType="password"
+            secureTextEntry
+          />
+          <AdminFeedbackPopup
+            visible={adminFeedbackModalVisible}
+            transparent={true}
+            onRequestClose={() => setAdminFeedbackModalVisible(false)}
+            FeedbackList={FeedbackList}
+          />
+        </ScrollView>
       </View>
-    </View>
+      <View style={styles.versionContainer}>
+        <Text style={styles.versionText}>{_version}</Text>
+      </View>
+    </ScreenWrapper>
   );
 }
 
-export default SettingsScreen;
-
 const styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+    justifyContent: 'center',
+  },
   scrollView: {
     width: '100%',
     flexGrow: 1,
     flexShrink: 1,
     backgroundColor: '#FFFF99',
   },
-  settingContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 10,
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: 'gray',
-  },
-  settingLabel: {
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
     fontSize: 16,
-    fontWeight: 'bold',
-  },
-  buttonsContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    color: 'black',
   },
   button: {
-    borderRadius: 5,
-    padding: 5,
-    margin: 2,
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: 'white',
+    padding: 10,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: 'black',
+    margin: 2,
+  },
+  icon: {
+    width: 20,
+    height: 20,
   },
   buttonText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  saveSettingsButtonContainer: {
-    width: '100%',
-    height: '10%',
-    flexShrink: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-    backgroundColor: '#FFFF99',
-    marginBottom: 5,
-    padding: 5,
-  },
-  saveSettingsButton: {
-    width: '50%',
-    height: '90%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 10,
-    backgroundColor: '#fcf50f',
-    borderWidth: 1,
-    borderColor: '#000',
-    borderRadius: 8,
-  },
-  saveSettingsButtonText: {
+    marginLeft: 10,
     color: 'black',
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 15,
+    fontWeight: '500',
+  },
+  versionContainer: {
+    position: 'absolute',
+    bottom: 10,
+    right: 10,
+    width: 'auto',
+    height: 'auto',
+  },
+  versionText: {
+    color: 'gray',
+    fontSize: 13,
   },
 });
+
+SettingsScreen.displayName = 'Settings Screen';
+
+export default SettingsScreen;

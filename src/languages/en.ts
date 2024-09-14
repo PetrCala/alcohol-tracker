@@ -227,7 +227,12 @@ export default {
     allowPermission: 'allow location permission in settings',
     tryAgain: 'and then try again.',
   },
-  profileEditScreen: {
+  settingsScreen: {
+    deleteAccount: 'Delete account',
+    deleteConfirmation: 'Are you sure that you want to delete this account?',
+    improvementThoughts: 'What would you like us to improve?',
+  },
+  accountScreen: {
     title: 'Edit Your Profile',
     generalOptions: {
       title: 'General',
@@ -237,11 +242,6 @@ export default {
       subtitle:
         'These details help us provide you with the best user experience.',
     },
-  },
-  mainMenuScreen: {
-    deleteAccount: 'Delete account',
-    deleteConfirmation: 'Are you sure that you want to delete this account?',
-    improvementThoughts: 'What would you like us to improve?',
   },
   timezoneScreen: {
     timezone: 'Timezone',

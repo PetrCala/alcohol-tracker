@@ -56,7 +56,7 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
       {/* {user?.uid === userID && (
         <TouchableOpacity accessibilityRole="button"
           onPress={() =>
-            Navigation.navigate(ROUTES.PROFILE_EDIT.getRoute(userID))
+            Navigation.navigate(ROUTES.SETTINGS_ACCOUNT.getRoute(userID))
           }
           style={localStyles.editProfileButton}>
           <Image

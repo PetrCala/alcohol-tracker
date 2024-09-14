@@ -19,9 +19,8 @@ const SCREENS = {
     ACHIEVEMENTS: 'Achievements',
     DAY_OVERVIEW: 'DayOverview',
     DRINKING_SESSION: 'DrinkingSession',
-    MAIN_MENU: 'MainMenu',
-    PROFILE: 'Profile',
     SETTINGS: 'Settings',
+    PROFILE: 'Profile',
     SOCIAL: 'Social',
     STATISTICS: 'Statistics',
   },
@@ -40,24 +39,20 @@ const SCREENS = {
     SUMMARY: 'DrinkingSession_Summary',
   },
 
-  MAIN_MENU: {
-    ROOT: 'MainMenu_Root',
-    APP_SHARE: 'MainMenu_AppShare',
-    PREFERENCES: 'MainMenu_Preferences',
+  SETTINGS: {
+    ROOT: 'Settings_Root',
+    APP_SHARE: 'Settings_AppShare',
+    ACCOUNT: 'Settings_Account',
+    PREFERENCES: 'Settings_Preferences',
     POLICIES: {
-      TERMS_OF_SERVICE: 'MainMenu_Policies_TermsOfService',
-      PRIVACY_POLICY: 'MainMenu_Policies_PrivacyPolicy',
+      TERMS_OF_SERVICE: 'Settings_Policies_TermsOfService',
+      PRIVACY_POLICY: 'Settings_Policies_PrivacyPolicy',
     },
   },
 
   PROFILE: {
     ROOT: 'Profile_Root',
-    EDIT: 'Profile_Edit',
     FRIENDS_FRIENDS: 'Profile_FriendsFriends',
-  },
-
-  SETTINGS: {
-    ROOT: 'Settings_Root',
   },
 
   SOCIAL: {

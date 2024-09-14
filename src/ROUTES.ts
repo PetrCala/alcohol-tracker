@@ -43,26 +43,21 @@ const ROUTES = {
       `drinking-session/${sessionId}/summary` as const,
   },
 
-  MAIN_MENU: 'main-menu',
-  MAIN_MENU_APP_SHARE: 'main-menu/app-share',
-  MAIN_MENU_PREFERENCES: 'main-menu/preferences',
-  MAIN_MENU_POLICIES_TERMS_OF_SERVICE: 'main-menu/policies/terms-of-service',
-  MAIN_MENU_POLICIES_PRIVACY_POLICY: 'main-menu/policies/privacy-policy',
+  SETTINGS: 'settings',
+  SETTINGS_APP_SHARE: 'settings/app-share',
+  SETTINGS_ACCOUNT: 'settings/account',
+  SETTINGS_PREFERENCES: 'settings/preferences',
+  SETTINGS_POLICIES_TERMS_OF_SERVICE: 'settings/policies/terms-of-service',
+  SETTINGS_POLICIES_PRIVACY_POLICY: 'settings/policies/privacy-policy',
 
   PROFILE: {
     route: 'profile/:userID',
     getRoute: (userID: UserID) => `profile/${userID}` as const,
   },
-  PROFILE_EDIT: {
-    route: 'profile/:userID/edit',
-    getRoute: (userID: UserID) => `profile/${userID}/edit` as const,
-  },
   PROFILE_FRIENDS_FRIENDS: {
     route: 'profile/:userID/friends',
     getRoute: (userID: UserID) => `profile/${userID}/friends` as const,
   },
-
-  SETTINGS: 'settings',
 
   SOCIAL: 'social',
 

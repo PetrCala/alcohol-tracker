@@ -1,4 +1,4 @@
-﻿import {Linking, Platform, StyleSheet, View} from 'react-native';
+﻿import {Linking, StyleSheet, View} from 'react-native';
 import {WebView} from 'react-native-webview';
 import MainHeader from '@components/Header/MainHeader';
 import Navigation from '@libs/Navigation/Navigation';

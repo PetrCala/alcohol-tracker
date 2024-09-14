@@ -398,18 +398,18 @@ function HomeScreen({route}: HomeScreenProps) {
             localStyles.mainScreenFooterRightContainer,
           ]}>
           <MenuIcon
-            iconId="main-menu-popup-icon"
+            iconId="settings-popup-icon"
             iconSource={KirokuIcons.Statistics}
             containerStyle={localStyles.menuIconContainer}
             iconStyle={localStyles.menuIcon}
             onPress={() => Navigation.navigate(ROUTES.STATISTICS)}
           />
           <MenuIcon
-            iconId="main-menu-popup-icon"
+            iconId="settings-popup-icon"
             iconSource={KirokuIcons.BarMenu}
             containerStyle={localStyles.menuIconContainer}
             iconStyle={localStyles.menuIcon}
-            onPress={() => Navigation.navigate(ROUTES.MAIN_MENU)}
+            onPress={() => Navigation.navigate(ROUTES.SETTINGS)}
           />
         </View>
       </View>

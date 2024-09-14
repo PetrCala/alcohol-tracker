@@ -1,7 +1,5 @@
-import BasicButton from '@components/Buttons/BasicButton';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import MainHeader from '@components/Header/MainHeader';
-import LoadingData from '@components/LoadingData';
 import MenuItemGroup from '@components/MenuItemGroup';
 import MenuItemWithTopDescription from '@components/MenuItemWithTopDescription';
 import ScreenWrapper from '@components/ScreenWrapper';
@@ -13,26 +11,18 @@ import useStyleUtils from '@hooks/useStyleUtils';
 import useTheme from '@hooks/useTheme';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Navigation from '@libs/Navigation/Navigation';
-import type {ProfileNavigatorParamList} from '@libs/Navigation/types';
+import type {SettingsNavigatorParamList} from '@libs/Navigation/types';
 import type {StackScreenProps} from '@react-navigation/stack';
 import ROUTES from '@src/ROUTES';
 import type SCREENS from '@src/SCREENS';
-import {useState} from 'react';
-import {
-  Keyboard,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import {Keyboard, ScrollView} from 'react-native';
 
-type ProfileEditScreenProps = StackScreenProps<
-  ProfileNavigatorParamList,
-  typeof SCREENS.PROFILE.EDIT
+type AccountScreenProps = StackScreenProps<
+  SettingsNavigatorParamList,
+  typeof SCREENS.SETTINGS.ACCOUNT
 >;
 
-function ProfileEditScreen({route}: ProfileEditScreenProps) {
+function AccountScreen({route}: AccountScreenProps) {
   const theme = useTheme();
   const styles = useThemeStyles();
   const StyleUtils = useStyleUtils();
@@ -90,11 +80,11 @@ function ProfileEditScreen({route}: ProfileEditScreenProps) {
 
   return (
     <ScreenWrapper
-      testID={ProfileEditScreen.displayName}
+      testID={AccountScreen.displayName}
       includeSafeAreaPaddingBottom={false}
       shouldShowOfflineIndicatorInWideScreen>
       <MainHeader
-        headerText={translate('profileEditScreen.title')}
+        headerText={translate('accountScreen.title')}
         onGoBack={() => Navigation.goBack()}
       />
       <ScrollView
@@ -103,7 +93,7 @@ function ProfileEditScreen({route}: ProfileEditScreenProps) {
         style={styles.pt3}>
         <MenuItemGroup>
           <Section
-            title={translate('profileEditScreen.generalOptions.title')}
+            title={translate('accountScreen.generalOptions.title')}
             isCentralPane
             childrenStyles={styles.pt5}
             titleStyles={styles.accountSettingsSectionTitle}>
@@ -133,8 +123,8 @@ function ProfileEditScreen({route}: ProfileEditScreenProps) {
             )}
           </Section>
           <Section
-            title={translate('profileEditScreen.personalDetails.title')}
-            subtitle={translate('profileEditScreen.personalDetails.subtitle')}
+            title={translate('accountScreen.personalDetails.title')}
+            subtitle={translate('accountScreen.personalDetails.subtitle')}
             isCentralPane
             subtitleMuted
             childrenStyles={styles.pt3}
@@ -169,5 +159,5 @@ function ProfileEditScreen({route}: ProfileEditScreenProps) {
   );
 }
 
-ProfileEditScreen.displayName = 'Profile Edit Screen';
-export default ProfileEditScreen;
+AccountScreen.displayName = 'Account Screen';
+export default AccountScreen;

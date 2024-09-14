@@ -1,11 +1,7 @@
 import type {ParamListBase} from '@react-navigation/routers';
 import type {StackNavigationOptions} from '@react-navigation/stack';
-import {
-  CardStyleInterpolators,
-  createStackNavigator,
-} from '@react-navigation/stack';
-import React, {useMemo} from 'react';
-import useThemeStyles from '@hooks/useThemeStyles';
+import {createStackNavigator} from '@react-navigation/stack';
+import React from 'react';
 import type {ThemeStyles} from '@styles/index';
 import type {Screen} from '@src/SCREENS';
 import SCREENS from '@src/SCREENS';
@@ -13,7 +9,10 @@ import type {
   AchievementsNavigatorParamList,
   DayOverviewNavigatorParamList,
   DrinkingSessionNavigatorParamList,
-  MainMenuNavigatorParamList,
+  ProfileNavigatorParamList,
+  SettingsNavigatorParamList,
+  SocialNavigatorParamList,
+  StatisticsNavigatorParamList,
 } from '@navigation/types';
 import useModalScreenOptions from './useModalScreenOptions';
 
@@ -79,46 +78,38 @@ const DrinkingSessionModalStackNavigator =
         .default as React.ComponentType,
   });
 
-const MainMenuModalStackNavigator =
-  createModalStackNavigator<MainMenuNavigatorParamList>({
-    [SCREENS.MAIN_MENU.ROOT]: () =>
-      require('@screens/MainMenu/MainMenuScreen')
+const SettingsModalStackNavigator =
+  createModalStackNavigator<SettingsNavigatorParamList>({
+    [SCREENS.SETTINGS.ROOT]: () =>
+      require('@screens/Settings/SettingsScreen')
         .default as React.ComponentType,
-    [SCREENS.MAIN_MENU.APP_SHARE]: () =>
-      require('@screens/MainMenu/AppShareScreen')
+    [SCREENS.SETTINGS.APP_SHARE]: () =>
+      require('@screens/Settings/AppShareScreen')
         .default as React.ComponentType,
-    [SCREENS.MAIN_MENU.PREFERENCES]: () =>
-      require('@screens/MainMenu/PreferencesScreen')
+    [SCREENS.SETTINGS.ACCOUNT]: () =>
+      require('@screens/Settings/AccountScreen').default as React.ComponentType,
+    [SCREENS.SETTINGS.PREFERENCES]: () =>
+      require('@screens/Settings/PreferencesScreen')
         .default as React.ComponentType,
-    [SCREENS.MAIN_MENU.POLICIES.TERMS_OF_SERVICE]: () =>
-      require('@screens/MainMenu/Policies/TermsOfServiceScreen')
+    [SCREENS.SETTINGS.POLICIES.TERMS_OF_SERVICE]: () =>
+      require('@screens/Settings/Policies/TermsOfServiceScreen')
         .default as React.ComponentType,
-    [SCREENS.MAIN_MENU.POLICIES.PRIVACY_POLICY]: () =>
-      require('@screens/MainMenu/Policies/PrivacyPolicyScreen')
+    [SCREENS.SETTINGS.POLICIES.PRIVACY_POLICY]: () =>
+      require('@screens/Settings/Policies/PrivacyPolicyScreen')
         .default as React.ComponentType,
   });
 
 const ProfileModalStackNavigator =
-  createModalStackNavigator<MainMenuNavigatorParamList>({
+  createModalStackNavigator<ProfileNavigatorParamList>({
     [SCREENS.PROFILE.ROOT]: () =>
       require('@screens/Profile/ProfileScreen').default as React.ComponentType,
-    [SCREENS.PROFILE.EDIT]: () =>
-      require('@screens/Profile/ProfileEditScreen')
-        .default as React.ComponentType,
     [SCREENS.PROFILE.FRIENDS_FRIENDS]: () =>
       require('@screens/Profile/FriendsFriendsScreen')
         .default as React.ComponentType,
   });
 
-const SettingsModalStackNavigator =
-  createModalStackNavigator<MainMenuNavigatorParamList>({
-    [SCREENS.SETTINGS.ROOT]: () =>
-      require('@screens/Settings/SettingsScreen')
-        .default as React.ComponentType,
-  });
-
 const SocialModalStackNavigator =
-  createModalStackNavigator<MainMenuNavigatorParamList>({
+  createModalStackNavigator<SocialNavigatorParamList>({
     [SCREENS.SOCIAL.ROOT]: () =>
       require('@screens/Social/SocialScreen').default as React.ComponentType,
     [SCREENS.SOCIAL.FRIEND_LIST]: () =>
@@ -133,7 +124,7 @@ const SocialModalStackNavigator =
   });
 
 const StatisticsModalStackNavigator =
-  createModalStackNavigator<MainMenuNavigatorParamList>({
+  createModalStackNavigator<StatisticsNavigatorParamList>({
     [SCREENS.STATISTICS.ROOT]: () =>
       require('@screens/Statistics/StatisticsScreen')
         .default as React.ComponentType,
@@ -143,7 +134,6 @@ export {
   AchievementsModalStackNavigator,
   DayOverviewModalStackNavigator,
   DrinkingSessionModalStackNavigator,
-  MainMenuModalStackNavigator,
   ProfileModalStackNavigator,
   SettingsModalStackNavigator,
   SocialModalStackNavigator,

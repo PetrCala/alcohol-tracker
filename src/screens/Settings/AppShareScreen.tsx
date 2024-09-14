@@ -1,7 +1,7 @@
 import MainHeader from '@components/Header/MainHeader';
 import ScreenWrapper from '@components/ScreenWrapper';
 import Navigation from '@libs/Navigation/Navigation';
-import type {MainMenuNavigatorParamList} from '@libs/Navigation/types';
+import type {SettingsNavigatorParamList} from '@libs/Navigation/types';
 import type {StackScreenProps} from '@react-navigation/stack';
 import type SCREENS from '@src/SCREENS';
 import commonStyles from '@src/styles/commonStyles';
@@ -19,8 +19,8 @@ import CONST from '@src/CONST';
 import {copyToClipboard} from '@libs/StringUtilsKiroku';
 
 type AppShareScreenProps = StackScreenProps<
-  MainMenuNavigatorParamList,
-  typeof SCREENS.MAIN_MENU.APP_SHARE
+  SettingsNavigatorParamList,
+  typeof SCREENS.SETTINGS.APP_SHARE
 >;
 
 function AppShareScreen({route}: AppShareScreenProps) {
