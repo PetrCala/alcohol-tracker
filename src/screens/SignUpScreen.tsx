@@ -308,6 +308,7 @@ function SignUpScreen() {
               accessibilityLabel="Text input field"
               placeholder="Email"
               placeholderTextColor={'#a8a8a8'}
+              selectionColor={'gray'}
               keyboardType="email-address"
               textContentType="emailAddress"
               value={state.email}
@@ -322,6 +323,7 @@ function SignUpScreen() {
               accessibilityLabel="Text input field"
               placeholder="Username"
               placeholderTextColor={'#a8a8a8'}
+              selectionColor={'gray'}
               textContentType="username"
               value={state.username}
               onChangeText={text =>
@@ -335,6 +337,7 @@ function SignUpScreen() {
               accessibilityLabel="Text input field"
               placeholder="Password"
               placeholderTextColor={'#a8a8a8'}
+              selectionColor={'gray'}
               textContentType="password"
               value={state.password}
               onChangeText={text =>
@@ -352,6 +355,7 @@ function SignUpScreen() {
               accessibilityLabel="Text input field"
               placeholder="Confirm your password"
               placeholderTextColor={'#a8a8a8'}
+              selectionColor={'grey'}
               textContentType="password"
               value={state.passwordConfirm}
               onChangeText={text =>
