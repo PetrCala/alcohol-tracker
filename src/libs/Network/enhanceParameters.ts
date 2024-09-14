@@ -31,9 +31,9 @@ export default function enhanceParameters(
   // is sending the request.
   finalParameters.platform = getPlatform();
 
-  // This application does not save its authToken in cookies like the classic Expensify app.
-  // Setting api_setCookie to false will ensure that the Expensify API doesn't set any cookies
-  // and prevents interfering with the cookie authToken that Expensify classic uses.
+  // This application does not save its authToken in cookies.
+  // Setting api_setCookie to false will ensure that the Kiroku API doesn't set any cookies
+  // and prevents interfering with the cookie authToken.
   finalParameters.api_setCookie = false;
 
   // Include current user's email in every request and the server logs

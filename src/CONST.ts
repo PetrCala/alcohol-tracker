@@ -1,5 +1,3 @@
-// Source: https://github.com/Expensify/App/blob/main/src/CONST.ts
-
 import dateAdd from 'date-fns/add';
 import dateSubtract from 'date-fns/sub';
 import Config from 'react-native-config';
@@ -43,34 +41,6 @@ const KEYBOARD_SHORTCUT_NAVIGATION_TYPE = 'NAVIGATION_SHORTCUT';
 
 const CONST = {
   ACCOUNT_CREATION_LIMIT: 3,
-
-  ACCOUNT_ID: {
-    ACCOUNTING: Number(Config?.EXPENSIFY_ACCOUNT_ID_ACCOUNTING ?? 9645353),
-    ADMIN: Number(Config?.EXPENSIFY_ACCOUNT_ID_ADMIN ?? -1),
-    BILLS: Number(Config?.EXPENSIFY_ACCOUNT_ID_BILLS ?? 1371),
-    CHRONOS: Number(Config?.EXPENSIFY_ACCOUNT_ID_CHRONOS ?? 10027416),
-    CONCIERGE: Number(Config?.EXPENSIFY_ACCOUNT_ID_CONCIERGE ?? 8392101),
-    CONTRIBUTORS: Number(Config?.EXPENSIFY_ACCOUNT_ID_CONTRIBUTORS ?? 9675014),
-    FIRST_RESPONDER: Number(
-      Config?.EXPENSIFY_ACCOUNT_ID_FIRST_RESPONDER ?? 9375152,
-    ),
-    HELP: Number(Config?.EXPENSIFY_ACCOUNT_ID_HELP ?? -1),
-    INTEGRATION_TESTING_CREDS: Number(
-      Config?.EXPENSIFY_ACCOUNT_ID_INTEGRATION_TESTING_CREDS ?? -1,
-    ),
-    NOTIFICATIONS: Number(
-      Config?.EXPENSIFY_ACCOUNT_ID_NOTIFICATIONS ?? 11665625,
-    ),
-    PAYROLL: Number(Config?.EXPENSIFY_ACCOUNT_ID_PAYROLL ?? 9679724),
-    QA: Number(Config?.EXPENSIFY_ACCOUNT_ID_QA ?? 3126513),
-    QA_TRAVIS: Number(Config?.EXPENSIFY_ACCOUNT_ID_QA_TRAVIS ?? 8595733),
-    RECEIPTS: Number(Config?.EXPENSIFY_ACCOUNT_ID_RECEIPTS ?? -1),
-    REWARDS: Number(Config?.EXPENSIFY_ACCOUNT_ID_REWARDS ?? 11023767), // rewards@expensify.com
-    STUDENT_AMBASSADOR: Number(
-      Config?.EXPENSIFY_ACCOUNT_ID_STUDENT_AMBASSADOR ?? 10476956,
-    ),
-    SVFG: Number(Config?.EXPENSIFY_ACCOUNT_ID_SVFG ?? 2012843),
-  },
   ANDROID_PACKAGE_NAME,
   ANIMATED_TRANSITION: 300,
   ANIMATED_TRANSITION_FROM_VALUE: 100,
@@ -245,7 +215,7 @@ const CONST = {
     IOS_LOAD_FAILED: 'Load failed',
     SAFARI_CANNOT_PARSE_RESPONSE: 'cannot parse response',
     GATEWAY_TIMEOUT: 'Gateway Timeout',
-    EXPENSIFY_SERVICE_INTERRUPTED: 'Expensify service interrupted',
+    KIROKU_SERVICE_INTERRUPTED: 'Kiroku service interrupted',
     DUPLICATE_RECORD: 'A record already exists with this ID',
 
     // The "Upgrade" is intentional as the 426 HTTP code means "Upgrade Required" and sent by the API. We use the "Update" language everywhere else in the front end when this gets returned.

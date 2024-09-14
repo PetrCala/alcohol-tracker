@@ -1,6 +1,3 @@
-// Taken and modified form the Expensify GitHub
-// Source: https://github.com/Expensify/App/blob/main/src/CONFIG.ts
-
 import type {NativeConfig} from 'react-native-config';
 import Config from 'react-native-config';
 import CONST from './CONST';

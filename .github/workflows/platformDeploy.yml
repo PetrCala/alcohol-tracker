@@ -206,7 +206,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
 
       - name: Upload iOS build to GitHub Release
-        if:  ${{ !fromJSON(env.SHOULD_DEPLOY_PRODUCTION) }}
+        if: ${{ !fromJSON(env.SHOULD_DEPLOY_PRODUCTION) }}
         run: gh release upload ${{ github.event.release.tag_name }} /Users/runner/work/App/App/kiroku.ipa
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -280,24 +280,24 @@ jobs:
   #             channel: '#deployer',
   #             attachments: [{
   #               color: 'good',
-  #               text: `🎉️ Successfully deployed ${process.env.AS_REPO} <https://github.com/Expensify/App/releases/tag/${{ env.VERSION }}|${{ env.VERSION }}> to ${{ fromJSON(env.SHOULD_DEPLOY_PRODUCTION) && 'production' || 'staging' }} 🎉️`,
+  #               text: `🎉️ Successfully deployed ${process.env.AS_REPO} <https://github.com/PetrCala/Kiroku/releases/tag/${{ env.VERSION }}|${{ env.VERSION }}> to ${{ fromJSON(env.SHOULD_DEPLOY_PRODUCTION) && 'production' || 'staging' }} 🎉️`,
   #             }]
   #           }
   #       env:
   #         GITHUB_TOKEN: ${{ github.token }}
   #         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
 
-  #     - name: 'Announces a production deploy in the #expensify-open-source Slack room'
+  #     - name: 'Announces a production deploy in the #kiroku-open-source Slack room'
   #       uses: 8398a7/action-slack@v3
   #       if: ${{ fromJSON(env.SHOULD_DEPLOY_PRODUCTION) }}
   #       with:
   #         status: custom
   #         custom_payload: |
   #           {
-  #             channel: '#expensify-open-source',
+  #             channel: '#kiroku-open-source',
   #             attachments: [{
   #               color: 'good',
-  #               text: `🎉️ Successfully deployed ${process.env.AS_REPO} <https://github.com/Expensify/App/releases/tag/${{ env.VERSION }}|${{ env.VERSION }}> to production 🎉️`,
+  #               text: `🎉️ Successfully deployed ${process.env.AS_REPO} <https://github.com/PetrCala/Kiroku/releases/tag/${{ env.VERSION }}|${{ env.VERSION }}> to production 🎉️`,
   #             }]
   #           }
   #       env:
