@@ -103,7 +103,8 @@ const ProfileModalStackNavigator =
     [SCREENS.PROFILE.ROOT]: () =>
       require('@screens/Profile/ProfileScreen').default as React.ComponentType,
     [SCREENS.PROFILE.EDIT]: () =>
-      require('@screens/Profile/EditScreen').default as React.ComponentType,
+      require('@screens/Profile/ProfileEditScreen')
+        .default as React.ComponentType,
     [SCREENS.PROFILE.FRIENDS_FRIENDS]: () =>
       require('@screens/Profile/FriendsFriendsScreen')
         .default as React.ComponentType,

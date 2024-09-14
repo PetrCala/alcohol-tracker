@@ -27,12 +27,12 @@ import {
   View,
 } from 'react-native';
 
-type EditScreenProps = StackScreenProps<
+type ProfileEditScreenProps = StackScreenProps<
   ProfileNavigatorParamList,
   typeof SCREENS.PROFILE.EDIT
 >;
 
-function EditScreen({route}: EditScreenProps) {
+function ProfileEditScreen({route}: ProfileEditScreenProps) {
   const theme = useTheme();
   const styles = useThemeStyles();
   const StyleUtils = useStyleUtils();
@@ -90,11 +90,11 @@ function EditScreen({route}: EditScreenProps) {
 
   return (
     <ScreenWrapper
-      testID={EditScreen.displayName}
+      testID={ProfileEditScreen.displayName}
       includeSafeAreaPaddingBottom={false}
       shouldShowOfflineIndicatorInWideScreen>
       <MainHeader
-        headerText={translate('editProfileScreen.title')}
+        headerText={translate('profileEditScreen.title')}
         onGoBack={() => Navigation.goBack()}
       />
       <ScrollView
@@ -103,7 +103,7 @@ function EditScreen({route}: EditScreenProps) {
         style={styles.pt3}>
         <MenuItemGroup>
           <Section
-            title={translate('editProfileScreen.generalOptions.title')}
+            title={translate('profileEditScreen.generalOptions.title')}
             isCentralPane
             childrenStyles={styles.pt5}
             titleStyles={styles.accountSettingsSectionTitle}>
@@ -133,8 +133,8 @@ function EditScreen({route}: EditScreenProps) {
             )}
           </Section>
           <Section
-            title={translate('editProfileScreen.personalDetails.title')}
-            subtitle={translate('editProfileScreen.personalDetails.subtitle')}
+            title={translate('profileEditScreen.personalDetails.title')}
+            subtitle={translate('profileEditScreen.personalDetails.subtitle')}
             isCentralPane
             subtitleMuted
             childrenStyles={styles.pt3}
@@ -169,5 +169,5 @@ function EditScreen({route}: EditScreenProps) {
   );
 }
 
-EditScreen.displayName = 'Profile Edit Screen';
-export default EditScreen;
+ProfileEditScreen.displayName = 'Profile Edit Screen';
+export default ProfileEditScreen;

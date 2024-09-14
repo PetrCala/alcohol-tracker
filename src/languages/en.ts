@@ -227,7 +227,7 @@ export default {
     allowPermission: 'allow location permission in settings',
     tryAgain: 'and then try again.',
   },
-  editProfileScreen: {
+  profileEditScreen: {
     title: 'Edit Your Profile',
     generalOptions: {
       title: 'General',
