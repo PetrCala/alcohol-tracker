@@ -10,8 +10,6 @@ import type DeepValueOf from './types/utils/DeepValueOf';
  * This is a file containing constants for all the top level keys in the onyx store
  */
 const ONYXKEYS = {
-  /** Keeps track if there is modal currently visible or not */
-  MODAL: 'modal',
   //   /** Holds information about the users account that is logging in */
   ACCOUNT: 'account',
 
@@ -44,8 +42,8 @@ const ONYXKEYS = {
   //   // Contains loading data for the IOU feature (MoneyRequestModal, IOUDetail, & MoneyRequestPreview Components)
   //   IOU: 'iou',
 
-  //   /** Keeps track if there is modal currently visible or not */
-  //   MODAL: 'modal',
+  /** Keeps track if there is modal currently visible or not */
+  MODAL: 'modal',
 
   //   /** Has information about the network status (offline/online) */
   NETWORK: 'network',
@@ -570,7 +568,6 @@ type OnyxCollectionValuesMapping = {
 };
 
 type OnyxValuesMapping = {
-  [ONYXKEYS.MODAL]: OnyxTypes.Modal;
   [ONYXKEYS.ACCOUNT]: OnyxTypes.Account;
   //   [ONYXKEYS.ACCOUNT_MANAGER_REPORT_ID]: string;
   //   [ONYXKEYS.NVP_IS_FIRST_TIME_NEW_EXPENSIFY_USER]: boolean;
@@ -582,7 +579,7 @@ type OnyxValuesMapping = {
   [ONYXKEYS.CREDENTIALS]: OnyxTypes.Credentials;
   [ONYXKEYS.STASHED_CREDENTIALS]: OnyxTypes.Credentials;
   //   [ONYXKEYS.IOU]: OnyxTypes.IOU;
-  //   [ONYXKEYS.MODAL]: OnyxTypes.Modal;
+  [ONYXKEYS.MODAL]: OnyxTypes.Modal;
   [ONYXKEYS.NETWORK]: OnyxTypes.Network;
   //   [ONYXKEYS.NEW_GROUP_CHAT_DRAFT]: OnyxTypes.NewGroupChatDraft;
   //   [ONYXKEYS.CUSTOM_STATUS_DRAFT]: OnyxTypes.CustomStatusDraft;
