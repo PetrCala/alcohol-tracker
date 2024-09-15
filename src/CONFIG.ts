@@ -34,6 +34,7 @@ export default {
   IS_IN_TEST:
     process.env.NODE_ENV === 'test' || ENVIRONMENT === CONST.ENVIRONMENT.TEST,
   IS_USING_WEB_PROXY: getPlatform() === CONST.PLATFORM.WEB && useWebProxy,
+  IS_USING_LOCAL_WEB: false, // Disabled for now
   KIROKU: {
     DEFAULT_API_ROOT: '',
     DEFAULT_SECURE_API_ROOT: '',
