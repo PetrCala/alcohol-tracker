@@ -437,6 +437,7 @@ const CONST = {
       BOTTOM_DOCKED: 'bottom_docked',
       POPOVER: 'popover',
       RIGHT_DOCKED: 'right_docked',
+      ONBOARDING: 'onboarding',
     },
     ANCHOR_ORIGIN_VERTICAL: {
       TOP: 'top',
@@ -449,6 +450,11 @@ const CONST = {
       RIGHT: 'right',
     },
     POPOVER_MENU_PADDING: 8,
+    RESTORE_FOCUS_TYPE: {
+      DEFAULT: 'default',
+      DELETE: 'delete',
+      PRESERVE: 'preserve',
+    },
   },
   MONTHS: [
     'January',
