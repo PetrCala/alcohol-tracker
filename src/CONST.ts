@@ -121,10 +121,13 @@ const CONST = {
     MAX_DATE,
     MIN_DATE,
   },
-
   COLOR_SCHEME: {
     LIGHT: 'light',
     DARK: 'dark',
+  },
+  CONFIRM_CONTENT_SVG_SIZE: {
+    HEIGHT: 220,
+    WIDTH: 130,
   },
   COUNTRY: {
     US: 'US',
@@ -543,7 +546,13 @@ const CONST = {
     MAX_RETRY_WAIT_TIME_MS: 10 * 1000,
     PROCESS_REQUEST_DELAY_MS: 1000,
     MAX_PENDING_TIME_MS: 10 * 1000,
+    RECHECK_INTERVAL_MS: 60 * 1000,
     MAX_REQUEST_RETRIES: 10,
+    NETWORK_STATUS: {
+      ONLINE: 'online',
+      OFFLINE: 'offline',
+      UNKNOWN: 'unknown',
+    },
   },
   DEFAULT_TIME_ZONE: {automatic: true, selected: 'Europe/Prague'},
   DEFAULT_ACCOUNT_DATA: {errors: null, success: '', isLoading: false},
