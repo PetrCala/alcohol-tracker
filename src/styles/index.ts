@@ -1063,6 +1063,24 @@ const styles = (theme: ThemeColors) =>
       width: 'auto',
     },
 
+    sectionTitle: {
+      ...spacing.pt2,
+      ...spacing.pr3,
+      ...spacing.pb4,
+      paddingLeft: 13,
+      fontSize: 13,
+      ...FontUtils.fontFamily.platform.EXP_NEUE,
+      lineHeight: 16,
+      color: theme.textSupporting,
+    },
+
+    sectionMenuItem: {
+      borderRadius: 8,
+      paddingHorizontal: 8,
+      height: 56,
+      alignItems: 'center',
+    },
+
     singleAvatar: {
       height: 24,
       width: 24,

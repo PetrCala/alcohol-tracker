@@ -232,6 +232,9 @@ export default {
     deleteAccount: 'Delete account',
     deleteConfirmation: 'Are you sure that you want to delete this account?',
     improvementThoughts: 'What would you like us to improve?',
+    signOut: 'Sign out',
+    // signOutConfirmationText: "You'll lose any offline changes if you sign out.",
+    signOutConfirmationText: 'Do you really want to sign out?',
   },
   accountScreen: {
     title: 'Account Details',
