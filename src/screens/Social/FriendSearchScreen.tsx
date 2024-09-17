@@ -14,7 +14,6 @@ import type {
 import type {UserList} from '@src/types/onyx/OnyxCommon';
 import React, {useMemo, useReducer, useRef} from 'react';
 import {useFirebase} from '@src/context/global/FirebaseContext';
-
 import {isNonEmptyArray} from '@libs/Validation';
 import LoadingData from '@components/LoadingData';
 import type {Database} from 'firebase/database';
@@ -27,9 +26,10 @@ import type {
   UserSearchResults,
 } from '@src/types/various/Search';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
-import MainHeader from '@components/Header/MainHeader';
 import Navigation from '@libs/Navigation/Navigation';
 import ScreenWrapper from '@components/ScreenWrapper';
+import HeaderWithBackButton from '@components/HeaderWithBackButton';
+import useLocalize from '@hooks/useLocalize';
 
 type State = {
   searchResultData: UserSearchResults;
@@ -82,6 +82,7 @@ function FriendSearchScreen() {
   const {userData} = useDatabaseData();
   const searchInputRef = useRef<SearchWindowRef>(null);
   const user = auth.currentUser;
+  const {translate} = useLocalize();
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const dbSearch = async (searchText: string, db?: Database): Promise<void> => {
@@ -168,17 +169,17 @@ function FriendSearchScreen() {
 
   return (
     <ScreenWrapper testID={FriendSearchScreen.displayName}>
+      <HeaderWithBackButton
+        title={translate('friendSearchScreen.title')}
+        onBackButtonPress={Navigation.goBack}
+      />
+      <SearchWindow
+        ref={searchInputRef}
+        windowText="Search for new friends"
+        onSearch={dbSearch}
+        onResetSearch={resetSearch}
+      />
       <View style={styles.mainContainer}>
-        <MainHeader
-          headerText="Search For New Friends"
-          onGoBack={Navigation.goBack}
-        />
-        <SearchWindow
-          ref={searchInputRef}
-          windowText="Search for new friends"
-          onSearch={dbSearch}
-          onResetSearch={resetSearch}
-        />
         <ScrollView
           style={styles.scrollViewContainer}
           onScrollBeginDrag={Keyboard.dismiss}

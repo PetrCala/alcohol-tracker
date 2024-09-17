@@ -259,17 +259,17 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
         title={translate('friendsFriendsScreen.title')}
         onBackButtonPress={Navigation.goBack}
       />
+      <SearchWindow
+        windowText="Search this user's friends"
+        onSearch={localSearch}
+        onResetSearch={resetSearch}
+        searchOnTextChange={true}
+      />
       <ScrollView
         style={styles.scrollViewContainer}
         onScrollBeginDrag={Keyboard.dismiss}
         keyboardShouldPersistTaps="handled">
         <View style={styles.searchResultsContainer}>
-          <SearchWindow
-            windowText="Search this user's friends"
-            onSearch={localSearch}
-            onResetSearch={resetSearch}
-            searchOnTextChange={true}
-          />
           {state.searching ? (
             <LoadingData style={styles.loadingData} />
           ) : isNonEmptyArray(state.displayedFriends) ? (

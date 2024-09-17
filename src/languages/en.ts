@@ -6,6 +6,7 @@ import type {
   UntilTimeParams,
 } from './types';
 import LiveSessionScreen from '@screens/DrinkingSession/LiveSessionScreen';
+import FriendSearchScreen from '@screens/Social/FriendSearchScreen';
 
 type AllCountries = Record<Country, string>;
 
@@ -232,6 +233,9 @@ export default {
   },
   friendsFriendsScreen: {
     title: 'Find Friends of Friends',
+  },
+  friendSearchScreen: {
+    title: 'Search For New Friends',
   },
   settingsScreen: {
     title: 'Settings',
