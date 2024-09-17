@@ -28,7 +28,6 @@ import {useUserConnection} from '@context/global/UserConnectionContext';
 import type {DrinkingSession, DrinkingSessionList} from '@src/types/onyx';
 import {generateDatabaseKey} from '@database/baseFunctions';
 import {useFirebase} from '@src/context/global/FirebaseContext';
-import MainHeader from '@components/Header/MainHeader';
 import MainHeaderButton from '@components/Header/MainHeaderButton';
 import type {DrinkingSessionKeyValue} from '@src/types/utils/databaseUtils';
 import type {StackScreenProps} from '@react-navigation/stack';
@@ -43,6 +42,8 @@ import CONST from '@src/CONST';
 import {savePlaceholderSessionData} from '@database/drinkingSessions';
 import ScreenWrapper from '@components/ScreenWrapper';
 import {nonMidnightString} from '@libs/StringUtilsKiroku';
+import useLocalize from '@hooks/useLocalize';
+import HeaderWithBackButton from '@components/HeaderWithBackButton';
 
 type DayOverviewScreenProps = StackScreenProps<
   DayOverviewNavigatorParamList,
@@ -53,6 +54,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
   const {date} = route.params;
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
+  const {translate} = useLocalize();
   const {isOnline} = useUserConnection();
   const {drinkingSessionData, preferences} = useDatabaseData();
   const [currentDate, setCurrentDate] = useState<Date>(
@@ -269,10 +271,9 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
 
   return (
     <ScreenWrapper testID={DayOverviewScreen.displayName}>
-      <MainHeader
-        headerText=""
-        onGoBack={() => Navigation.goBack()}
-        rightSideComponent={
+      <HeaderWithBackButton
+        onBackButtonPress={Navigation.goBack}
+        customRightButton={
           <MainHeaderButton
             buttonOn={editMode}
             textOn="Exit Edit Mode"

@@ -238,6 +238,9 @@ export default {
   friendSearchScreen: {
     title: 'Search For New Friends',
   },
+  notFoundScreen: {
+    title: 'Not Found',
+  },
   preferencesScreen: {
     title: 'Preferences',
   },

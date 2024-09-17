@@ -1,5 +1,4 @@
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
-import MainHeader from '@components/Header/MainHeader';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import MenuItemGroup from '@components/MenuItemGroup';
 import MenuItemWithTopDescription from '@components/MenuItemWithTopDescription';

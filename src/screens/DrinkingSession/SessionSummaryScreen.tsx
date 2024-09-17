@@ -12,7 +12,6 @@ import {
 } from '@libs/DataHandling';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import BasicButton from '@components/Buttons/BasicButton';
-import MainHeader from '@components/Header/MainHeader';
 import type {DrinkingSession} from '@src/types/onyx';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import type {StackScreenProps} from '@react-navigation/stack';
@@ -26,6 +25,7 @@ import {
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import ScreenWrapper from '@components/ScreenWrapper';
+import HeaderWithBackButton from '@components/HeaderWithBackButton';
 
 const SessionDataItem = ({
   heading,
@@ -153,10 +153,9 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
 
   return (
     <ScreenWrapper testID={SessionSummaryScreen.displayName}>
-      <MainHeader
-        headerText=""
-        onGoBack={handleBackPress}
-        rightSideComponent={
+      <HeaderWithBackButton
+        onBackButtonPress={handleBackPress}
+        customRightButton={
           session.ongoing ? null : (
             <MenuIcon
               iconId="edit-session-icon"
@@ -237,7 +236,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 10,
   },
   menuIcon: {
     width: 25,

@@ -395,7 +395,6 @@ export default withCurrentUserPersonalDetails(
 // import {useUserConnection} from '@context/global/UserConnectionContext';
 // import ItemListPopup from '@components/Popups/ItemListPopup';
 // import {useFirebase} from '@context/global/FirebaseContext';
-// import MainHeader from '@components/Header/MainHeader';
 // import GrayHeader from '@components/Header/GrayHeader';
 // import type {FeedbackList} from '@src/types/onyx';
 // import type {StackScreenProps} from '@react-navigation/stack';
@@ -719,7 +718,7 @@ export default withCurrentUserPersonalDetails(
 //   return (
 //     <ScreenWrapper testID={SettingsScreen.displayName}>
 //       <View style={styles.mainContainer}>
-//         <MainHeader headerText="Settings" onGoBack={Navigation.goBack} />
+//         <HeaderWithBackButton title="Settings" onBackButtonPress={Navigation.goBack} />
 //         <ScrollView
 //           keyboardShouldPersistTaps="handled"
 //           onScrollBeginDrag={Keyboard.dismiss}

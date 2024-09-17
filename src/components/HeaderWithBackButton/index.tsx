@@ -48,6 +48,7 @@ function HeaderWithBackButton({
   threeDotsMenuItems = [],
   shouldEnableDetailPageNavigation = false,
   children = null,
+  customRightButton = null,
   shouldOverlayDots = false,
   shouldOverlay = false,
   shouldNavigateToTopMostReport = false,
@@ -258,6 +259,7 @@ function HeaderWithBackButton({
               </PressableWithoutFeedback>
             </Tooltip>
           )}
+          {customRightButton && customRightButton}
         </View>
       </View>
     </View>
