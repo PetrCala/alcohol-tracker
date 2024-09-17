@@ -1320,6 +1320,10 @@ const styles = (theme: ThemeColors) =>
       fontSize: variables.fontSizeLarge,
     },
 
+    textXLarge: {
+      fontSize: variables.fontSizeXLarge,
+    },
+
     textXXLarge: {
       fontSize: variables.fontSizeXXLarge,
     },
