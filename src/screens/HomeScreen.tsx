@@ -317,7 +317,9 @@ function HomeScreen({route}: HomeScreenProps) {
                 // refreshTrigger={refreshCounter}
                 refreshTrigger={0}
               />
-              <Text style={localStyles.headerUsername}>{user.displayName}</Text>
+              <Text style={[styles.headerText, styles.textLarge, styles.ml3]}>
+                {user.displayName}
+              </Text>
             </TouchableOpacity>
           </View>
         )}
@@ -451,6 +453,7 @@ const localStyles = StyleSheet.create({
   profileButton: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
+    alignItems: 'center',
   },
   profileImage: {
     width: 50,
