@@ -42,6 +42,8 @@ import useFetchData from '@hooks/useFetchData';
 import {getPlural} from '@libs/StringUtilsKiroku';
 import ScreenWrapper from '@components/ScreenWrapper';
 import type {FetchDataKeys} from '@hooks/useFetchData/types';
+import HeaderWithBackButton from '@components/HeaderWithBackButton';
+import useLocalize from '@hooks/useLocalize';
 
 type State = {
   selfFriends: UserList | undefined;
@@ -108,6 +110,7 @@ function ProfileScreen({route}: ProfileScreenProps) {
     'preferences',
   ]; //
   const [state, dispatch] = useReducer(reducer, initialState);
+  const {translate} = useLocalize();
   const {data: fetchedData, isLoading} = useFetchData(userID, relevantDataKeys);
   let userData = fetchedData?.userData;
   let drinkingSessionData = fetchedData?.drinkingSessionData;
@@ -190,9 +193,13 @@ function ProfileScreen({route}: ProfileScreenProps) {
 
   return (
     <ScreenWrapper testID={ProfileScreen.displayName}>
-      <MainHeader
-        headerText={user?.uid === userID ? 'Profile' : 'Friend Overview'}
-        onGoBack={() => Navigation.goBack()}
+      <HeaderWithBackButton
+        title={
+          user?.uid === userID
+            ? translate('profileScreen.title')
+            : translate('profileScreen.titleNotSelf')
+        }
+        onBackButtonPress={Navigation.goBack}
       />
       <ScrollView
         style={localStyles.scrollView}

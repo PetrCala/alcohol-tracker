@@ -253,6 +253,10 @@ export default {
     isShownOnProfile: 'Your timezone is shown on your profile.',
     getLocationAutomatically: 'Automatically determine your location',
   },
+  profileScreen: {
+    title: 'Profile',
+    titleNotSelf: 'Friend Overview',
+  },
   statisticsScreen: {
     title: 'Statistics',
   },

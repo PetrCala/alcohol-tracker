@@ -7,6 +7,7 @@ import ArrowDown from '@assets/images/arrow-down.png';
 import ArrowRight from '@assets/images/arrow-right.svg';
 import ArrowUp from '@assets/images/arrow-up.svg';
 import ArrowUpDown from '@assets/images/arrows-updown.svg';
+import BackArrow from '@assets/images/back-left.svg';
 import BarMenu from '@assets/images/bar-menu.png';
 import Beer from '@assets/images/beer.png';
 import Bell from '@assets/images/bell.png';
@@ -59,6 +60,7 @@ export {
   ArrowRight,
   ArrowUp,
   ArrowUpDown,
+  BackArrow,
   BarMenu,
   Beer,
   Bell,
