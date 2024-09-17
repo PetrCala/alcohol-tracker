@@ -253,6 +253,12 @@ export default {
     isShownOnProfile: 'Your timezone is shown on your profile.',
     getLocationAutomatically: 'Automatically determine your location',
   },
+  statisticsScreen: {
+    title: 'Statistics',
+  },
+  achievementsScreen: {
+    title: 'Achievements',
+  },
   LiveSessionScreen: {
     saving: 'Saving your session...',
     error: {
