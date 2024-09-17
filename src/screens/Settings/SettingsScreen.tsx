@@ -47,6 +47,7 @@ import ROUTES from '@src/ROUTES';
 import type {Icon as TIcon} from '@src/types/onyx/OnyxCommon';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import type IconAsset from '@src/types/utils/IconAsset';
+import HeaderWithBackButton from '@components/HeaderWithBackButton';
 
 type SettingsScreenOnyxProps = {};
 
@@ -330,15 +331,18 @@ function SettingsScreen({}: SettingsScreenProps) {
   return (
     <ScreenWrapper
       style={[styles.w100, styles.pb0]}
-      includePaddingTop={false}
+      includePaddingTop={true}
       includeSafeAreaPaddingBottom={false}
       testID={SettingsScreen.displayName}>
+      <HeaderWithBackButton
+        title={translate('settingsScreen.title')}
+        onBackButtonPress={Navigation.goBack}
+      />
       <ScrollView
         ref={scrollViewRef}
         onScroll={onScroll}
         scrollEventThrottle={16}
         contentContainerStyle={[styles.w100, styles.pt4]}>
-        {/* {headerContent} // Currently unnecessary */}
         {accountMenuItems}
         {/* {generalMenuItems} */}
         <ConfirmModal

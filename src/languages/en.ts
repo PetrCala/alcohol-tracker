@@ -228,6 +228,7 @@ export default {
     tryAgain: 'and then try again.',
   },
   settingsScreen: {
+    title: 'Settings',
     account: 'Account',
     deleteAccount: 'Delete account',
     deleteConfirmation: 'Are you sure that you want to delete this account?',
