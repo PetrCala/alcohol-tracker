@@ -18,7 +18,6 @@ import YesNoPopup from '@components/Popups/YesNoPopup';
 import TextSwitch from '@components/TextSwitch';
 import NumericSlider from '@components/Popups/NumericSlider';
 import {getDefaultPreferences} from '@database/users';
-import MainHeader from '@components/Header/MainHeader';
 import type {Preferences} from '@src/types/onyx';
 import CONST from '@src/CONST';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
@@ -30,6 +29,8 @@ import ROUTES from '@src/ROUTES';
 import LoadingData from '@components/LoadingData';
 import {isEqual} from 'lodash';
 import ScreenWrapper from '@components/ScreenWrapper';
+import HeaderWithBackButton from '@components/HeaderWithBackButton';
+import useLocalize from '@hooks/useLocalize';
 
 type PreferencesListProps = {
   id: string;
@@ -75,6 +76,7 @@ type PreferencesScreenProps = StackScreenProps<
 function PreferencesScreen({route}: PreferencesScreenProps) {
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
+  const {translate} = useLocalize();
   const {isOnline} = useUserConnection();
   const {preferences} = useDatabaseData();
   const initialPreferences = useRef(preferences);
@@ -187,7 +189,10 @@ function PreferencesScreen({route}: PreferencesScreenProps) {
 
   return (
     <ScreenWrapper testID={PreferencesScreen.displayName}>
-      <MainHeader headerText="Preferences" onGoBack={handleGoBack} />
+      <HeaderWithBackButton
+        title={translate('preferencesScreen.title')}
+        onBackButtonPress={handleGoBack}
+      />
       <ScrollView
         style={styles.scrollView}
         onScrollBeginDrag={Keyboard.dismiss}

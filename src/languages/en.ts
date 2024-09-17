@@ -7,6 +7,7 @@ import type {
 } from './types';
 import LiveSessionScreen from '@screens/DrinkingSession/LiveSessionScreen';
 import FriendSearchScreen from '@screens/Social/FriendSearchScreen';
+import {title} from 'process';
 
 type AllCountries = Record<Country, string>;
 
@@ -236,6 +237,12 @@ export default {
   },
   friendSearchScreen: {
     title: 'Search For New Friends',
+  },
+  preferencesScreen: {
+    title: 'Preferences',
+  },
+  appShareScreen: {
+    title: 'Share the App',
   },
   settingsScreen: {
     title: 'Settings',

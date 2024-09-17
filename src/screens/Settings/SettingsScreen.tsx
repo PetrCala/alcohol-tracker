@@ -719,10 +719,7 @@ export default withCurrentUserPersonalDetails(
 //   return (
 //     <ScreenWrapper testID={SettingsScreen.displayName}>
 //       <View style={styles.mainContainer}>
-//         <MainHeader
-//           headerText="Settings"
-//           onGoBack={Navigation.goBack}
-//         />
+//         <MainHeader headerText="Settings" onGoBack={Navigation.goBack} />
 //         <ScrollView
 //           keyboardShouldPersistTaps="handled"
 //           onScrollBeginDrag={Keyboard.dismiss}

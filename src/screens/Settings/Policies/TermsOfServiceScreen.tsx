@@ -1,10 +1,10 @@
 ﻿import {Linking, StyleSheet, View} from 'react-native';
 import {WebView} from 'react-native-webview';
-import MainHeader from '@components/Header/MainHeader';
 import Navigation from '@libs/Navigation/Navigation';
 import ScreenWrapper from '@components/ScreenWrapper';
 import getPlatform from '@libs/getPlatform';
 import CONST from '@src/CONST';
+import HeaderWithBackButton from '@components/HeaderWithBackButton';
 
 function TermsOfServiceScreen() {
   const termsHtml =
@@ -24,7 +24,7 @@ function TermsOfServiceScreen() {
 
   return (
     <ScreenWrapper testID={TermsOfServiceScreen.displayName}>
-      <MainHeader headerText="" onGoBack={() => Navigation.goBack()} />
+      <HeaderWithBackButton onBackButtonPress={Navigation.goBack} />
       <View style={styles.mainContainer}>
         <WebView
           originWhitelist={['*']}

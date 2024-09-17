@@ -1,4 +1,3 @@
-import MainHeader from '@components/Header/MainHeader';
 import ScreenWrapper from '@components/ScreenWrapper';
 import Navigation from '@libs/Navigation/Navigation';
 import type {SettingsNavigatorParamList} from '@libs/Navigation/types';
@@ -17,6 +16,8 @@ import {
 } from 'react-native';
 import CONST from '@src/CONST';
 import {copyToClipboard} from '@libs/StringUtilsKiroku';
+import HeaderWithBackButton from '@components/HeaderWithBackButton';
+import useLocalize from '@hooks/useLocalize';
 
 type AppShareScreenProps = StackScreenProps<
   SettingsNavigatorParamList,
@@ -24,6 +25,7 @@ type AppShareScreenProps = StackScreenProps<
 >;
 
 function AppShareScreen({route}: AppShareScreenProps) {
+  const {translate} = useLocalize();
   const handleCopyLinkPress = () => {
     try {
       copyToClipboard(CONST.APP_DOWNLOAD_LINK, true);
@@ -34,9 +36,9 @@ function AppShareScreen({route}: AppShareScreenProps) {
 
   return (
     <ScreenWrapper testID={AppShareScreen.displayName}>
-      <MainHeader
-        headerText="Share the app"
-        onGoBack={() => Navigation.goBack()}
+      <HeaderWithBackButton
+        title={translate('appShareScreen.title')}
+        onBackButtonPress={Navigation.goBack}
       />
       <View style={styles.mainContainer}>
         <View style={[styles.centeringContainer, styles.headingContainer]}>
