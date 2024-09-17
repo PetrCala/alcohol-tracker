@@ -227,6 +227,12 @@ export default {
     allowPermission: 'allow location permission in settings',
     tryAgain: 'and then try again.',
   },
+  socialScreen: {
+    title: 'Friends',
+  },
+  friendsFriendsScreen: {
+    title: 'Find Friends of Friends',
+  },
   settingsScreen: {
     title: 'Settings',
     account: 'Account',

@@ -171,7 +171,7 @@ function FriendSearchScreen() {
       <View style={styles.mainContainer}>
         <MainHeader
           headerText="Search For New Friends"
-          onGoBack={() => Navigation.goBack()}
+          onGoBack={Navigation.goBack}
         />
         <SearchWindow
           ref={searchInputRef}

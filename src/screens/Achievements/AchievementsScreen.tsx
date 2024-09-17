@@ -1,6 +1,5 @@
-﻿import React, {useState} from 'react';
+﻿import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import MainHeader from '@components/Header/MainHeader';
 import Navigation from '@libs/Navigation/Navigation';
 import ScreenWrapper from '@components/ScreenWrapper';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';

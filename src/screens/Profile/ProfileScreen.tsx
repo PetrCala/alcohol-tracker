@@ -27,7 +27,6 @@ import type {DateObject} from '@src/types/time';
 import SessionsCalendar from '@components/Calendar';
 import LoadingData from '@components/LoadingData';
 import {getCommonFriendsCount} from '@libs/FriendUtils';
-import MainHeader from '@components/Header/MainHeader';
 import ManageFriendPopup from '@components/Popups/Profile/ManageFriendPopup';
 import type {DrinkingSessionArray} from '@src/types/onyx';
 import type {UserList} from '@src/types/onyx/OnyxCommon';

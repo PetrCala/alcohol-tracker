@@ -721,7 +721,7 @@ export default withCurrentUserPersonalDetails(
 //       <View style={styles.mainContainer}>
 //         <MainHeader
 //           headerText="Settings"
-//           onGoBack={() => Navigation.goBack()}
+//           onGoBack={Navigation.goBack}
 //         />
 //         <ScrollView
 //           keyboardShouldPersistTaps="handled"

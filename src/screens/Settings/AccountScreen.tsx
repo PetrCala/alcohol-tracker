@@ -1,5 +1,6 @@
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import MainHeader from '@components/Header/MainHeader';
+import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import MenuItemGroup from '@components/MenuItemGroup';
 import MenuItemWithTopDescription from '@components/MenuItemWithTopDescription';
 import ScreenWrapper from '@components/ScreenWrapper';
@@ -83,9 +84,9 @@ function AccountScreen({route}: AccountScreenProps) {
       testID={AccountScreen.displayName}
       includeSafeAreaPaddingBottom={false}
       shouldShowOfflineIndicatorInWideScreen>
-      <MainHeader
-        headerText={translate('accountScreen.title')}
-        onGoBack={() => Navigation.goBack()}
+      <HeaderWithBackButton
+        title={translate('accountScreen.title')}
+        onBackButtonPress={Navigation.goBack}
       />
       <ScrollView
         keyboardShouldPersistTaps="handled"
