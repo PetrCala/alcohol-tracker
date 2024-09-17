@@ -3,7 +3,7 @@ import React, {useEffect, useState, useMemo, useCallback} from 'react';
 import type {StyleProp, TextStyle} from 'react-native';
 import {
   Dimensions,
-  Image,
+  // Image,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -22,14 +22,15 @@ import {
   roundToTwoDecimalPlaces,
 } from '@libs/DataHandling';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
+import Icon from '@components/Icon';
 import type {DateObject} from '@src/types/time';
 import LoadingData from './LoadingData';
-import CONST from '@src/CONST';
 import type {
   DrinkingSessionArray,
   DrinkingSessionList,
   Preferences,
 } from '@src/types/onyx';
+import useTheme from '@hooks/useTheme';
 
 type DayMarking = {
   units?: number;
@@ -197,6 +198,7 @@ const DayComponent: React.FC<DayComponentProps> = ({
 };
 
 function CustomArrow(direction: string): ReactNode {
+  const theme = useTheme();
   return (
     <View
       style={[
@@ -205,10 +207,11 @@ function CustomArrow(direction: string): ReactNode {
           ? arrowStyles.leftContainer
           : arrowStyles.rightContainer,
       ]}>
-      <Image
-        source={KirokuIcons.ArrowBack}
-        style={[
-          arrowStyles.customArrowIcon,
+      <Icon
+        src={KirokuIcons.BackArrow}
+        fill={theme.inverse}
+        additionalStyles={[
+          // arrowStyles.customArrowIcon,
           direction === 'left'
             ? arrowStyles.customArrowLeft
             : arrowStyles.customArrowRight,
