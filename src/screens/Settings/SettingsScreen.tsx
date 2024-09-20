@@ -162,11 +162,13 @@ function SettingsScreen({}: SettingsScreenProps) {
         //   icon: KirokuIcons.Bug,
         //   action: () => console.log('Bug reporting'),
         // },
-        // {
-        //   label: 'Give us a feedback',
-        //   icon: KirokuIcons.Idea,
-        //   action: () => setFeedbackModalVisible(true),
-        // },
+        {
+          translationKey: 'settingsScreen.giveFeedback',
+          icon: KirokuIcons.Idea,
+          action: () => {
+            return;
+          },
+        },
         {
           translationKey: 'settingsScreen.shareTheApp',
           icon: KirokuIcons.Share,

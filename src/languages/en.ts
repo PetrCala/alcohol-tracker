@@ -256,6 +256,7 @@ export default {
     deleteConfirmation: 'Are you sure that you want to delete this account?',
     improvementThoughts: 'What would you like us to improve?',
     general: 'General',
+    giveFeedback: 'Give use a feedback',
     signOut: 'Sign out',
     shareTheApp: 'Share the app',
     // signOutConfirmationText: "You'll lose any offline changes if you sign out.",
