@@ -12,11 +12,13 @@ import {useFirebase} from '../../context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
 import Navigation from '@libs/Navigation/Navigation';
 import UploadImageComponent from '@components/UploadImage';
+import useStyleUtils from '@hooks/useStyleUtils';
 import ROUTES from '@src/ROUTES';
 import {useState} from 'react';
 import type ImageLayout from '@src/types/various/ImageLayout';
 import type {Profile} from '@src/types/onyx';
 import useThemeStyles from '@hooks/useThemeStyles';
+import Icon from '@components/Icon';
 
 type ProfileOverviewProps = {
   userID: string;
@@ -32,6 +34,7 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
   profileData,
 }) => {
   const {auth, storage} = useFirebase();
+  const StyleUtils = useStyleUtils();
   const styles = useThemeStyles();
   const user = auth.currentUser;
   const [layout, setLayout] = useState<ImageLayout>({
@@ -58,10 +61,7 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
           accessibilityRole="button"
           onPress={() => Navigation.navigate(ROUTES.SETTINGS_ACCOUNT)}
           style={localStyles.editProfileButton}>
-          <Image
-            source={KirokuIcons.Settings}
-            style={localStyles.editProfileIcon}
-          />
+          <Icon src={KirokuIcons.Gear} fill={StyleUtils.getIconFillColor()} />
         </TouchableOpacity>
       )}
       <View style={localStyles.profileImageContainer} />
@@ -114,11 +114,6 @@ const localStyles = StyleSheet.create({
     padding: 8,
     width: 'auto',
     height: 'auto',
-  },
-  editProfileIcon: {
-    width: 24,
-    height: 24,
-    tintColor: '#1A3D32',
   },
   profileImageContainer: {
     height: profileImageSize,
