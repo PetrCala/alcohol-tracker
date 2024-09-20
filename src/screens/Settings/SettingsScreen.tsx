@@ -17,10 +17,12 @@ import type {
 } from 'react-native';
 import {View} from 'react-native';
 import {withOnyx} from 'react-native-onyx';
+import {deleteUser} from 'firebase/auth';
 import type {ValueOf} from 'type-fest';
 import ConfirmModal from '@components/ConfirmModal';
 import Icon from '@components/Icon';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
+import * as Session from '@userActions/Session';
 import MenuItem from '@components/MenuItem';
 import {PressableWithFeedback} from '@components/Pressable';
 import ScreenWrapper from '@components/ScreenWrapper';
@@ -48,6 +50,7 @@ import type {Icon as TIcon} from '@src/types/onyx/OnyxCommon';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import type IconAsset from '@src/types/utils/IconAsset';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
+import {useFirebase} from '@context/global/FirebaseContext';
 
 type SettingsScreenOnyxProps = {};
 
@@ -82,6 +85,7 @@ type Menu = {
 
 function SettingsScreen({}: SettingsScreenProps) {
   const network = useNetwork();
+  const {auth} = useFirebase();
   const theme = useTheme();
   const styles = useThemeStyles();
   const {isExecuting, singleExecution} = useSingleExecution();
@@ -97,19 +101,14 @@ function SettingsScreen({}: SettingsScreenProps) {
     setShouldShowSignoutConfirmModal(value);
   };
 
-  const signOut = useCallback(
-    (shouldForceSignout = false) => {
-      // if (!network.isOffline || shouldForceSignout) {
-      //     Session.signOutAndRedirectToSignIn();
-      //     return;
-      // }
-
-      // When offline, warn the user that any actions they took while offline will be lost if they sign out
+  const signOut = async (auth: any) => {
+    if (!shouldShowSignoutConfirmModal) {
       toggleSignoutConfirmModal(true);
-    },
-    // [network.isOffline],
-    [],
-  );
+      return;
+    }
+
+    await Session.signOut(auth);
+  };
 
   /**
    * Retuns a list of menu items data for account section
@@ -210,18 +209,20 @@ function SettingsScreen({}: SettingsScreenProps) {
         {
           translationKey: 'settingsScreen.signOut',
           icon: KirokuIcons.Exit,
-          routeName: ROUTES.SETTINGS,
+          action: () => {
+            signOut(auth);
+          },
         },
         {
           translationKey: 'settingsScreen.deleteAccount',
           icon: KirokuIcons.Delete,
           action: () => {
-            signOut(false);
+            // onSignOut(false);
           },
         },
       ],
     };
-  }, [styles.pt4, translate, signOut]);
+  }, [styles.pt4, translate]); // signOut
 
   /**
    * Retuns JSX.Element with menu items
@@ -365,7 +366,7 @@ function SettingsScreen({}: SettingsScreenProps) {
           confirmText={translate('settingsScreen.signOut')}
           cancelText={translate('common.cancel')}
           isVisible={shouldShowSignoutConfirmModal}
-          onConfirm={() => signOut(true)}
+          onConfirm={() => signOut(auth)}
           onCancel={() => toggleSignoutConfirmModal(false)}
         />
       </ScrollView>
