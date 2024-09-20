@@ -354,7 +354,8 @@ function SettingsScreen({}: SettingsScreenProps) {
         ref={scrollViewRef}
         onScroll={onScroll}
         scrollEventThrottle={16}
-        contentContainerStyle={[styles.w100, styles.pt4]}>
+        // contentContainerStyle={[styles.w100, styles.pt4]}>
+        contentContainerStyle={[styles.w100]}>
         {accountMenuItems}
         {generalMenuItems}
         {authenticationMenuItems}
