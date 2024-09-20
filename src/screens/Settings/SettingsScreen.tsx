@@ -123,7 +123,7 @@ function SettingsScreen({}: SettingsScreenProps) {
       sectionTranslationKey: 'common.account',
       items: [
         {
-          translationKey: 'common.account',
+          translationKey: 'common.profile',
           icon: KirokuIcons.Profile,
           routeName: ROUTES.SETTINGS_ACCOUNT,
         },
@@ -354,7 +354,6 @@ function SettingsScreen({}: SettingsScreenProps) {
         ref={scrollViewRef}
         onScroll={onScroll}
         scrollEventThrottle={16}
-        // contentContainerStyle={[styles.w100, styles.pt4]}>
         contentContainerStyle={[styles.w100]}>
         {accountMenuItems}
         {generalMenuItems}

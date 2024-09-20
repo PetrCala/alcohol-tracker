@@ -263,7 +263,7 @@ export default {
     signOutConfirmationText: 'Do you really want to sign out?',
   },
   accountScreen: {
-    title: 'Account Details',
+    title: 'Profile Details',
     generalOptions: {
       title: 'General',
     },
