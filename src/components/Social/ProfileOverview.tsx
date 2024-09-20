@@ -88,7 +88,7 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
       <View />
       <View style={localStyles.userInfoContainer}>
         <Text
-          style={localStyles.profileNameText}
+          style={[localStyles.profileNameText, styles.textStrong]}
           numberOfLines={1}
           ellipsizeMode="tail">
           {profileData.display_name}
@@ -169,7 +169,6 @@ const localStyles = StyleSheet.create({
   profileNameText: {
     color: 'black',
     fontSize: 20,
-    fontWeight: 'bold',
     marginLeft: 10,
     flexShrink: 1,
   },
