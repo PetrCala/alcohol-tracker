@@ -153,7 +153,7 @@ function ConfirmModal({
       <ConfirmContent
         title={title}
         /* Disable onConfirm function if the modal is being dismissed, otherwise the confirmation
-            function can be triggered multiple times if the user clicks on the button multiple times. */
+      function can be triggered multiple times if the user clicks on the button multiple times. */
         onConfirm={() => (isVisible ? onConfirm() : null)}
         onCancel={onCancel}
         confirmText={confirmText}

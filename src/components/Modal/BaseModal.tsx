@@ -294,7 +294,7 @@ function BaseModal(
           <ModalContent
             onModalWillShow={saveFocusState}
             onDismiss={handleDismissModal}>
-            <PortalHost name="modal" />
+            {/* <PortalHost name="modal" /> */}
             <FocusTrapForModal active={isVisible} initialFocus={initialFocus}>
               <View
                 style={[
