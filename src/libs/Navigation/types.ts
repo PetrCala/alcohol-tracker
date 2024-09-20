@@ -117,8 +117,8 @@ type SettingsNavigatorParamList = {
   [SCREENS.SETTINGS.APP_SHARE]: undefined;
   [SCREENS.SETTINGS.ACCOUNT]: undefined;
   [SCREENS.SETTINGS.PREFERENCES]: undefined;
-  [SCREENS.SETTINGS.POLICIES.TERMS_OF_SERVICE]: undefined;
-  [SCREENS.SETTINGS.POLICIES.PRIVACY_POLICY]: undefined;
+  [SCREENS.SETTINGS.TERMS_OF_SERVICE]: undefined;
+  [SCREENS.SETTINGS.PRIVACY_POLICY]: undefined;
 };
 
 type ProfileNavigatorParamList = {

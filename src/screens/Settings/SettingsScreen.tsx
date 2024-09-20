@@ -116,59 +116,22 @@ function SettingsScreen({}: SettingsScreenProps) {
    * @returns object with translationKey, style and items for the account section
    */
   const accountMenuItemsData: Menu = useMemo(() => {
-    // TODO enable this
     // const profileBrickRoadIndicator =
     // UserUtils.getLoginListBrickRoadIndicator(loginList);
     const defaultMenu: Menu = {
       sectionStyle: styles.accountSettingsSectionContainer,
-      sectionTranslationKey: 'settingsScreen.account',
+      sectionTranslationKey: 'common.account',
       items: [
-        // {
-        //   translationKey: 'exitSurvey.goToExpensifyClassic',
-        //   icon: Expensicons.ExpensifyLogoNew,
-        //   ...(NativeModules.HybridAppModule
-        //     ? {
-        //         action: () => {
-        //           NativeModules.HybridAppModule.closeReactNativeApp(
-        //             false,
-        //             true,
-        //           );
-        //         },
-        //       }
-        //     : {
-        //         routeName: ROUTES.SETTINGS_EXIT_SURVEY_REASON,
-        //       }),
-        // },
-        // {
-        //   translationKey: 'common.profile',
-        //   icon: Expensicons.Profile,
-        //   routeName: ROUTES.SETTINGS_PROFILE,
-        //   brickRoadIndicator: profileBrickRoadIndicator,
-        // },
-        // {
-        //   translationKey: 'common.wallet',
-        //   icon: Expensicons.Wallet,
-        //   routeName: ROUTES.SETTINGS_WALLET,
-        //   brickRoadIndicator:
-        //     PaymentMethods.hasPaymentMethodError(
-        //       bankAccountList,
-        //       paymentCardList,
-        //     ) ||
-        //     !isEmptyObject(userWallet?.errors) ||
-        //     !isEmptyObject(walletTerms?.errors)
-        //       ? 'error'
-        //       : undefined,
-        // },
-        // {
-        //   translationKey: 'common.preferences',
-        //   icon: Expensicons.Gear,
-        //   routeName: ROUTES.SETTINGS_PREFERENCES,
-        // },
-        // {
-        //   translationKey: 'initialSettingsPage.security',
-        //   icon: Expensicons.Lock,
-        //   routeName: ROUTES.SETTINGS_SECURITY,
-        // },
+        {
+          translationKey: 'common.account',
+          icon: KirokuIcons.Profile,
+          routeName: ROUTES.SETTINGS_ACCOUNT,
+        },
+        {
+          translationKey: 'common.preferences',
+          icon: KirokuIcons.Gear,
+          routeName: ROUTES.SETTINGS_PREFERENCES,
+        },
       ],
     };
 
@@ -176,44 +139,87 @@ function SettingsScreen({}: SettingsScreenProps) {
   }, [styles.accountSettingsSectionContainer]);
 
   /**
-   * Retuns a list of menu items data for workspace section
-   * @returns object with translationKey, style and items for the workspace section
-   */
-  // const otherItemsData: Menu = useMemo(() => {
-  //   const items: MenuData[] = [];
-  // }, [styles.badgeSuccess, translate]);
-
-  /**
    * Retuns a list of menu items data for general section
    * @returns object with translationKey, style and items for the general section
    */
-  // const generalMenuItemsData: Menu = useMemo(() => {
-  //   return {
-  //     sectionStyle: {
-  //       ...styles.pt4,
-  //     },
-  //     sectionTranslationKey: 'initialSettingsPage.general',
-  //     items: [],
-  //     // {
-  //     //   translationKey: 'settingsScreen.account',
-  //     //   icon: KirokuIcons.AddImage,
-  //     //   routeName: ROUTES.HOME,
-  //     // },
-  //     // {
-  //     //   translationKey: 'initialSettingsPage.about',
-  //     //   icon: Expensicons.Info,
-  //     //   routeName: ROUTES.SETTINGS_ABOUT,
-  //     // },
-  //     // {
-  //     //   translationKey: signOutTranslationKey,
-  //     //   icon: Expensicons.Exit,
-  //     //   action: () => {
-  //     //     signOut(false);
-  //     //   },
-  //     // },
-  //     // ],
-  //   };
-  // }, [styles.pt4, signOut]);
+  const generalMenuItemsData: Menu = useMemo(() => {
+    return {
+      sectionStyle: styles.generalSettingsSectionContainer,
+      sectionTranslationKey: 'settingsScreen.general',
+      items: [
+        {
+          // translationKey: translate('common.termsOfService'),
+          translationKey: 'common.termsOfService',
+          icon: KirokuIcons.FileDocument,
+          routeName: ROUTES.SETTINGS_TERMS_OF_SERVICE,
+        },
+        {
+          translationKey: 'common.privacyPolicy',
+          icon: KirokuIcons.FileDocument,
+          routeName: ROUTES.SETTINGS_PRIVACY_POLICY,
+        },
+        //   label: 'Report a bug',
+        //   icon: KirokuIcons.Bug,
+        //   action: () => console.log('Bug reporting'),
+        // },
+        // {
+        //   label: 'Give us a feedback',
+        //   icon: KirokuIcons.Idea,
+        //   action: () => setFeedbackModalVisible(true),
+        // },
+        {
+          translationKey: 'settingsScreen.shareTheApp',
+          icon: KirokuIcons.Share,
+          routeName: ROUTES.SETTINGS_APP_SHARE,
+        },
+      ],
+      // {
+      //   translationKey: 'settingsScreen.account',
+      //   icon: KirokuIcons.AddImage,
+      //   routeName: ROUTES.HOME,
+      // },
+      // {
+      //   translationKey: 'initialSettingsPage.about',
+      //   icon: Expensicons.Info,
+      //   routeName: ROUTES.SETTINGS_ABOUT,
+      // },
+      // {
+      //   translationKey: signOutTranslationKey,
+      //   icon: Expensicons.Exit,
+      //   action: () => {
+      //     signOut(false);
+      //   },
+      // },
+      // ],
+    };
+  }, [styles.generalSettingsSectionContainer]);
+
+  /**
+   * Retuns a list of menu items data for authentication section
+   * @returns object with translationKey, style and items for the authentication section
+   */
+  const authenticationMenuItemsData: Menu = useMemo(() => {
+    return {
+      sectionStyle: {
+        ...styles.pt4,
+      },
+      sectionTranslationKey: 'common.authentication',
+      items: [
+        {
+          translationKey: 'settingsScreen.signOut',
+          icon: KirokuIcons.Exit,
+          routeName: ROUTES.SETTINGS,
+        },
+        {
+          translationKey: 'settingsScreen.deleteAccount',
+          icon: KirokuIcons.Delete,
+          action: () => {
+            signOut(false);
+          },
+        },
+      ],
+    };
+  }, [styles.pt4, translate, signOut]);
 
   /**
    * Retuns JSX.Element with menu items
@@ -231,7 +237,6 @@ function SettingsScreen({}: SettingsScreenProps) {
             const keyTitle = item.translationKey
               ? translate(item.translationKey)
               : item.title;
-            const isPaymentItem = item.translationKey === 'common.wallet';
 
             return (
               <MenuItem
@@ -299,10 +304,15 @@ function SettingsScreen({}: SettingsScreenProps) {
     () => getMenuItemsSection(accountMenuItemsData),
     [accountMenuItemsData, getMenuItemsSection],
   );
-  // const generalMenuItems = useMemo(
-  //   () => getMenuItemsSection(generalMenuItemsData),
-  //   [generalMenuItemsData, getMenuItemsSection],
-  // );
+  const generalMenuItems = useMemo(
+    () => getMenuItemsSection(generalMenuItemsData),
+    [generalMenuItemsData, getMenuItemsSection],
+  );
+
+  const authenticationMenuItems = useMemo(
+    () => getMenuItemsSection(authenticationMenuItemsData),
+    [authenticationMenuItemsData, getMenuItemsSection],
+  );
 
   const {saveScrollOffset, getScrollOffset} = useContext(ScrollOffsetContext);
   const route = useRoute();
@@ -344,7 +354,8 @@ function SettingsScreen({}: SettingsScreenProps) {
         scrollEventThrottle={16}
         contentContainerStyle={[styles.w100, styles.pt4]}>
         {accountMenuItems}
-        {/* {generalMenuItems} */}
+        {generalMenuItems}
+        {authenticationMenuItems}
         <ConfirmModal
           danger
           title={translate('common.areYouSure')}
@@ -687,7 +698,7 @@ export default withCurrentUserPersonalDetails(
 //       label: 'Terms of service',
 //       icon: KirokuIcons.Book,
 //       action: () => {
-//         Navigation.navigate(ROUTES.SETTINGS_POLICIES_TERMS_OF_SERVICE);
+//         Navigation.navigate(ROUTES.SETTINGS_TERMS_OF_SERVICE);
 //         setPoliciesModalVisible(false);
 //       },
 //     },
@@ -695,7 +706,7 @@ export default withCurrentUserPersonalDetails(
 //       label: 'Privacy Policy',
 //       icon: KirokuIcons.Book,
 //       action: () => {
-//         Navigation.navigate(ROUTES.SETTINGS_POLICIES_PRIVACY_POLICY);
+//         Navigation.navigate(ROUTES.SETTINGS_PRIVACY_POLICY);
 //         setPoliciesModalVisible(false);
 //       },
 //     },

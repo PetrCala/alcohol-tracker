@@ -91,11 +91,11 @@ const SettingsModalStackNavigator =
     [SCREENS.SETTINGS.PREFERENCES]: () =>
       require('@screens/Settings/PreferencesScreen')
         .default as React.ComponentType,
-    [SCREENS.SETTINGS.POLICIES.TERMS_OF_SERVICE]: () =>
-      require('@screens/Settings/Policies/TermsOfServiceScreen')
+    [SCREENS.SETTINGS.TERMS_OF_SERVICE]: () =>
+      require('@screens/Settings/TermsOfServiceScreen')
         .default as React.ComponentType,
-    [SCREENS.SETTINGS.POLICIES.PRIVACY_POLICY]: () =>
-      require('@screens/Settings/Policies/PrivacyPolicyScreen')
+    [SCREENS.SETTINGS.PRIVACY_POLICY]: () =>
+      require('@screens/Settings/PrivacyPolicyScreen')
         .default as React.ComponentType,
   });
 

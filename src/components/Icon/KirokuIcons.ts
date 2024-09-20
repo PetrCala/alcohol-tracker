@@ -21,10 +21,12 @@ import Cocktail from '@assets/images/cocktail.png';
 import Copy from '@assets/images/copy.png';
 import Delete from '@assets/images/delete.png';
 import DeleteSession from '@assets/images/delete-session.png';
+import Document from '@assets/images/document.svg';
 import DotIndicator from '@assets/images/dot-indicator.svg';
 import Download from '@assets/images/download.png';
 import Edit from '@assets/images/edit.png';
-import Exit from '@assets/images/exit.png';
+import Exit from '@assets/images/exit.svg';
+import FileDocument from '@assets/images/file-document.svg';
 import FriendList from '@assets/images/friend-list.png';
 import Idea from '@assets/images/idea.png';
 import Logo from '@assets/images/app-logo.png';
@@ -32,9 +34,11 @@ import Menu from '@assets/images/menu.png';
 import Minus from '@assets/images/minus.png';
 import Pencil from '@assets/images/pencil.png';
 import Plus from '@assets/images/plus.png';
+import Gear from '@assets/images/gear.svg';
 import QrCodeFullColor from '@assets/images/kiroku-qr-code-full-color.png';
 import QrCodePlain from '@assets/images/kiroku-qr-code-plain.png';
 import QrCodeWithLogo from '@assets/images/kiroku-qr-code-with-logo.png';
+import Profile from '@assets/images/profile.svg';
 import Remove from '@assets/images/remove.png';
 import RemoveUser from '@assets/images/remove-user.png';
 import Search from '@assets/images/search.png';
@@ -74,17 +78,21 @@ export {
   Copy,
   Delete,
   DeleteSession,
+  Document,
   DotIndicator,
   Download,
   Edit,
   Exit,
+  FileDocument,
   FriendList,
+  Gear,
   Idea,
   Logo,
   Menu,
   Minus,
   Pencil,
   Plus,
+  Profile,
   QrCodeFullColor,
   QrCodePlain,
   QrCodeWithLogo,

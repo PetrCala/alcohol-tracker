@@ -297,6 +297,10 @@ const styles = (theme: ThemeColors) =>
     // ...textDecorationLine,
     editedLabelStyles,
 
+    accountSettingsSectionTitle: {
+      ...FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
+    },
+
     accountSettingsSectionContainer: {
       borderBottomWidth: 1,
       borderBottomColor: theme.border,
@@ -305,8 +309,10 @@ const styles = (theme: ThemeColors) =>
       ...spacing.pt0,
     },
 
-    accountSettingsSectionTitle: {
-      ...FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
+    generalSettingsSectionContainer: {
+      borderBottomWidth: 1,
+      borderBottomColor: theme.border,
+      ...spacing.pt4,
     },
 
     activeComponentBG: {

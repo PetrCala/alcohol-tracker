@@ -44,10 +44,8 @@ const SCREENS = {
     APP_SHARE: 'Settings_AppShare',
     ACCOUNT: 'Settings_Account',
     PREFERENCES: 'Settings_Preferences',
-    POLICIES: {
-      TERMS_OF_SERVICE: 'Settings_Policies_TermsOfService',
-      PRIVACY_POLICY: 'Settings_Policies_PrivacyPolicy',
-    },
+    TERMS_OF_SERVICE: 'Settings_TermsOfService',
+    PRIVACY_POLICY: 'Settings_PrivacyPolicy',
   },
 
   PROFILE: {

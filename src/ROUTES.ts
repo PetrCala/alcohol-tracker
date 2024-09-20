@@ -47,8 +47,8 @@ const ROUTES = {
   SETTINGS_APP_SHARE: 'settings/app-share',
   SETTINGS_ACCOUNT: 'settings/account',
   SETTINGS_PREFERENCES: 'settings/preferences',
-  SETTINGS_POLICIES_TERMS_OF_SERVICE: 'settings/policies/terms-of-service',
-  SETTINGS_POLICIES_PRIVACY_POLICY: 'settings/policies/privacy-policy',
+  SETTINGS_TERMS_OF_SERVICE: 'settings/terms-of-service',
+  SETTINGS_PRIVACY_POLICY: 'settings/privacy-policy',
 
   PROFILE: {
     route: 'profile/:userID',
