@@ -1,4 +1,5 @@
 import React from 'react';
+import {PortalProvider} from '@gorhom/portal';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import type {Route} from './ROUTES';
 import InitialUrlContext from '@libs/InitialUrlContext';
@@ -52,6 +53,7 @@ const App = ({url}: KirokuProps): React.JSX.Element => {
             UserConnectionProvider,
             ConfigProvider,
             SafeAreaProvider,
+            PortalProvider,
             SafeArea,
             LocaleContextProvider,
             WindowDimensionsProvider,
