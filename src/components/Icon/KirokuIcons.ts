@@ -16,6 +16,7 @@ import Bug from '@assets/images/bug.png';
 import Camera from '@assets/images/camera.png';
 import Check from '@assets/images/check.png';
 import Checkmark from '@assets/images/checkmark.svg';
+import Clear from '@assets/images/x-circle.svg';
 import Close from '@assets/images/close.png';
 import Cocktail from '@assets/images/cocktail.png';
 import Copy from '@assets/images/copy.png';
@@ -73,6 +74,7 @@ export {
   Camera,
   Check,
   Checkmark,
+  Clear,
   Close,
   Cocktail,
   Copy,
