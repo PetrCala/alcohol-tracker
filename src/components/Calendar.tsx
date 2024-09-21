@@ -24,13 +24,13 @@ import {
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import Icon from '@components/Icon';
 import type {DateObject} from '@src/types/time';
-import LoadingData from './LoadingData';
 import type {
   DrinkingSessionArray,
   DrinkingSessionList,
   Preferences,
 } from '@src/types/onyx';
 import useTheme from '@hooks/useTheme';
+import FullScreenLoadingIndicator from './FullscreenLoadingIndicator';
 
 type DayMarking = {
   units?: number;
@@ -292,7 +292,7 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
   }, [calendarData, preferences]);
 
   if (loadingMarkedDates) {
-    return <LoadingData />;
+    return <FullScreenLoadingIndicator />;
   }
 
   return (

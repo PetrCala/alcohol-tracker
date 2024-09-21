@@ -33,8 +33,8 @@ import Navigation from '@navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import useTheme from '@hooks/useTheme';
 import {checkAccountCreationLimit} from '@database/protection';
-import LoadingData from '@components/LoadingData';
 import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
+import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 
 type State = {
   email: string;
@@ -292,7 +292,9 @@ function SignUpScreen() {
   }, [state.password, state.passwordConfirm]);
 
   if (state.isLoading) {
-    return <LoadingData loadingText="Creating your account..." />;
+    return (
+      <FullScreenLoadingIndicator loadingText="Creating your account..." />
+    );
   }
 
   return (

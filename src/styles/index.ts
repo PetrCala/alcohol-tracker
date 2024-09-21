@@ -1501,6 +1501,12 @@ const styles = (theme: ThemeColors) =>
       color: theme.textSupporting,
     },
 
+    textLoading: {
+      ...FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
+      fontSize: variables.fontSizeXLarge,
+      color: theme.text,
+    },
+
     textWhite: {
       color: theme.textLight,
     },

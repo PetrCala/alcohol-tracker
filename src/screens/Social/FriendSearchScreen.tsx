@@ -15,7 +15,6 @@ import type {UserList} from '@src/types/onyx/OnyxCommon';
 import React, {useMemo, useReducer, useRef} from 'react';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import {isNonEmptyArray} from '@libs/Validation';
-import LoadingData from '@components/LoadingData';
 import type {Database} from 'firebase/database';
 import {searchDatabaseForUsers} from '@libs/Search';
 import {fetchUserProfiles} from '@database/profile';
@@ -30,6 +29,7 @@ import Navigation from '@libs/Navigation/Navigation';
 import ScreenWrapper from '@components/ScreenWrapper';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import useLocalize from '@hooks/useLocalize';
+import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
 
 type State = {
   searchResultData: UserSearchResults;
@@ -186,7 +186,7 @@ function FriendSearchScreen() {
           keyboardShouldPersistTaps="handled">
           <View style={styles.searchResultsContainer}>
             {state.searching ? (
-              <LoadingData style={styles.loadingData} />
+              <FlexibleLoadingIndicator style={styles.loadingData} />
             ) : isNonEmptyArray(state.searchResultData) ? (
               state.searchResultData.map(userID => (
                 <SearchResult
@@ -220,6 +220,9 @@ const styles = StyleSheet.create({
   scrollViewContainer: {
     flex: 1,
     backgroundColor: '#ffff99',
+  },
+  loadingData: {
+    marginTop: 20,
   },
   textContainer: {
     width: '95%',
@@ -277,11 +280,6 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 16,
     fontWeight: '500',
-  },
-  loadingData: {
-    width: '100%',
-    height: 50,
-    margin: 5,
   },
   noUsersFoundText: {
     color: 'black',

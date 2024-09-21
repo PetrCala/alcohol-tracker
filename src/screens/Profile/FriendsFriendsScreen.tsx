@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Alert,
   Keyboard,
   ScrollView,
@@ -15,7 +16,6 @@ import type {UserList} from '@src/types/onyx/OnyxCommon';
 import {useEffect, useMemo, useReducer} from 'react';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {isNonEmptyArray} from '@libs/Validation';
-import LoadingData from '@components/LoadingData';
 import {searchArrayByText} from '@libs/Search';
 import {fetchUserProfiles} from '@database/profile';
 import SearchResult from '@components/Social/SearchResult';
@@ -43,6 +43,10 @@ import {readDataOnce} from '@database/baseFunctions';
 import ScreenWrapper from '@components/ScreenWrapper';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import useLocalize from '@hooks/useLocalize';
+import CONST from '@src/CONST';
+import useTheme from '@hooks/useTheme';
+import useThemeStyles from '@hooks/useThemeStyles';
+import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
 
 type State = {
   searching: boolean;
@@ -99,6 +103,8 @@ type FriendsFriendsScreenProps = StackScreenProps<
 >;
 
 function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
+  const theme = useTheme();
+  const styles = useThemeStyles();
   const {userID} = route.params;
   const {auth, db, storage} = useFirebase();
   const {userData} = useDatabaseData();
@@ -266,12 +272,12 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
         searchOnTextChange={true}
       />
       <ScrollView
-        style={styles.scrollViewContainer}
+        style={localStyles.scrollViewContainer}
         onScrollBeginDrag={Keyboard.dismiss}
         keyboardShouldPersistTaps="handled">
-        <View style={styles.searchResultsContainer}>
+        <View style={localStyles.searchResultsContainer}>
           {state.searching ? (
-            <LoadingData style={styles.loadingData} />
+            <FlexibleLoadingIndicator />
           ) : isNonEmptyArray(state.displayedFriends) ? (
             <>
               <GrayHeader
@@ -303,7 +309,7 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   scrollViewContainer: {
     flex: 1,
     backgroundColor: '#ffff99',
@@ -350,11 +356,6 @@ const styles = StyleSheet.create({
   searchResultsContainer: {
     width: '100%',
     flexDirection: 'column',
-  },
-  loadingData: {
-    width: '100%',
-    height: 50,
-    margin: 5,
   },
 });
 

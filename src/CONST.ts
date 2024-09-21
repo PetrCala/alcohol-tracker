@@ -75,6 +75,10 @@ const CONST = {
     SUPPORT: 'support',
   },
   AVAILABLE_PLATFORMS: ['ios', 'android'],
+  ACTIVITY_INDICATOR_SIZE: {
+    SMALL: 'small',
+    LARGE: 'large',
+  },
   AVATAR_SIZE: {
     XLARGE: 'xlarge',
     LARGE: 'large',

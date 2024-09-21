@@ -25,7 +25,6 @@ import {
 } from '@libs/DataHandling';
 import type {DateObject} from '@src/types/time';
 import SessionsCalendar from '@components/Calendar';
-import LoadingData from '@components/LoadingData';
 import {getCommonFriendsCount} from '@libs/FriendUtils';
 import ManageFriendPopup from '@components/Popups/Profile/ManageFriendPopup';
 import type {DrinkingSessionArray} from '@src/types/onyx';
@@ -43,6 +42,7 @@ import ScreenWrapper from '@components/ScreenWrapper';
 import type {FetchDataKeys} from '@hooks/useFetchData/types';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import useLocalize from '@hooks/useLocalize';
+import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 
 type State = {
   selfFriends: UserList | undefined;
@@ -184,7 +184,7 @@ function ProfileScreen({route}: ProfileScreenProps) {
   }, [drinkingSessionData, preferences, state.visibleDateObject]);
 
   if (isLoading) {
-    return <LoadingData />;
+    return <FullScreenLoadingIndicator />;
   }
   if (!profileData || !preferences || !userData) {
     return;

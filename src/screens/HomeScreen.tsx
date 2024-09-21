@@ -14,7 +14,6 @@ import {
 import {useOnyx} from 'react-native-onyx';
 import MenuIcon from '@components/Buttons/MenuIcon';
 import SessionsCalendar from '@components/Calendar';
-import LoadingData from '@components/LoadingData';
 import type {DateObject} from '@src/types/time';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {
@@ -63,6 +62,7 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import ONYXKEYS from '@src/ONYXKEYS';
 import getPlatform from '@libs/getPlatform';
 import ConfirmModal from '@components/ConfirmModal';
+import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 
 type State = {
   visibleDateObject: DateObject;
@@ -289,9 +289,9 @@ function HomeScreen({route}: HomeScreenProps) {
     !userStatusData
   ) {
     return (
-      <LoadingData
+      <FullScreenLoadingIndicator
         loadingText={
-          state.initializingSession ? 'Starting a new session...' : ''
+          (state.initializingSession && 'Starting a new session...') || ''
         }
       />
     );

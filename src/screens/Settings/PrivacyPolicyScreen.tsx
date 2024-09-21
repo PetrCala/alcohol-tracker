@@ -6,8 +6,8 @@ import getPlatform from '@libs/getPlatform';
 import CONST from '@src/CONST';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import {useState} from 'react';
-import LoadingData from '@components/LoadingData';
 import useThemeStyles from '@hooks/useThemeStyles';
+import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 
 function PrivacyPolicyScreen() {
   const styles = useThemeStyles();
@@ -31,10 +31,10 @@ function PrivacyPolicyScreen() {
   return (
     <ScreenWrapper testID={PrivacyPolicyScreen.displayName}>
       <HeaderWithBackButton onBackButtonPress={Navigation.goBack} />
-      <View style={[styles.flex1, styles.appContent]}>
-        {isLoading ? (
-          <LoadingData />
-        ) : (
+      {isLoading ? (
+        <FullScreenLoadingIndicator />
+      ) : (
+        <View style={[styles.flex1, styles.appContent]}>
           <WebView
             originWhitelist={['*']}
             source={policyHtml}
@@ -43,8 +43,8 @@ function PrivacyPolicyScreen() {
             onLoadEnd={() => setIsLoading(false)}
             javaScriptEnabled
           />
-        )}
-      </View>
+        </View>
+      )}
     </ScreenWrapper>
   );
 }

@@ -37,7 +37,6 @@ import {useUserConnection} from '@context/global/UserConnectionContext';
 import UserOffline from '@components/UserOffline';
 import DrinkTypesView from '@components/DrinkTypesView';
 import SessionDetailsSlider from '@components/SessionDetailsSlider';
-import LoadingData from '@components/LoadingData';
 import SuccessIndicator from '@components/SuccessIndicator';
 import commonStyles from '@styles/commonStyles';
 import FillerView from '@components/FillerView';
@@ -58,6 +57,7 @@ import ScreenWrapper from '@components/ScreenWrapper';
 import DrinkData from '@libs/DrinkData';
 import useLocalize from '@hooks/useLocalize';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
+import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 
 type LiveSessionScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -419,7 +419,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     return <UserOffline />;
   }
   if (openingSession || loadingText) {
-    return <LoadingData loadingText={loadingText} />;
+    return <FullScreenLoadingIndicator loadingText={loadingText} />;
   }
   if (!user) {
     Navigation.navigate(ROUTES.LOGIN);

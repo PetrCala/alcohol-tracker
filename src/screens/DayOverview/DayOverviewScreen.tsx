@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Alert,
   Dimensions,
+  ActivityIndicator,
 } from 'react-native';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import MenuIcon from '../../components/Buttons/MenuIcon';
@@ -21,7 +22,6 @@ import {
   sumAllUnits,
   dateStringToDate,
 } from '@libs/DataHandling';
-import LoadingData from '@components/LoadingData';
 // import { PreferencesData} from '../types/database';
 import UserOffline from '@components/UserOffline';
 import {useUserConnection} from '@context/global/UserConnectionContext';
@@ -44,6 +44,10 @@ import ScreenWrapper from '@components/ScreenWrapper';
 import {nonMidnightString} from '@libs/StringUtilsKiroku';
 import useLocalize from '@hooks/useLocalize';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
+import useTheme from '@hooks/useTheme';
+import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
+import useThemeStyles from '@hooks/useThemeStyles';
+import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
 
 type DayOverviewScreenProps = StackScreenProps<
   DayOverviewNavigatorParamList,
@@ -51,10 +55,12 @@ type DayOverviewScreenProps = StackScreenProps<
 >;
 
 function DayOverviewScreen({route}: DayOverviewScreenProps) {
+  const {translate} = useLocalize();
+  const theme = useTheme();
+  const styles = useThemeStyles();
   const {date} = route.params;
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
-  const {translate} = useLocalize();
   const {isOnline} = useUserConnection();
   const {drinkingSessionData, preferences} = useDatabaseData();
   const [currentDate, setCurrentDate] = useState<Date>(
@@ -118,7 +124,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
     const timeString = nonMidnightString(formatDateToTime(date));
     const shouldDisplayTime = session.type === CONST.SESSION_TYPES.LIVE;
     const viewStyle = {
-      ...styles.menuDrinkingSessionContainer,
+      ...localStyles.menuDrinkingSessionContainer,
       backgroundColor: sessionColor,
     };
 
@@ -128,11 +134,11 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
           <View style={{flex: 1}}>
             <TouchableOpacity
               accessibilityRole="button"
-              style={styles.menuDrinkingSessionButton}
+              style={localStyles.menuDrinkingSessionButton}
               onPress={() => onSessionButtonPress(sessionId, session)}>
               <Text
                 style={[
-                  styles.menuDrinkingSessionText,
+                  localStyles.menuDrinkingSessionText,
                   session.blackout === true ? {color: 'white'} : {},
                 ]}>
                 Units: {totalUnits}
@@ -140,7 +146,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
               {shouldDisplayTime && (
                 <Text
                   style={[
-                    styles.menuDrinkingSessionText,
+                    localStyles.menuDrinkingSessionText,
                     session.blackout === true ? {color: 'white'} : {},
                   ]}>
                   Time: {nonMidnightString(timeString)}
@@ -149,12 +155,12 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
             </TouchableOpacity>
           </View>
           {session?.ongoing ? (
-            <View style={styles.ongoingSessionContainer}>
+            <View style={localStyles.ongoingSessionContainer}>
               <TouchableOpacity
                 accessibilityRole="button"
-                style={styles.ongoingSessionButton}
+                style={localStyles.ongoingSessionButton}
                 onPress={() => onSessionButtonPress(sessionId, session)}>
-                <Text style={styles.ongoingSessionText}>In Session</Text>
+                <Text style={localStyles.ongoingSessionText}>In Session</Text>
               </TouchableOpacity>
             </View>
           ) : editMode ? (
@@ -162,10 +168,10 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
               iconId="edit-session-icon"
               iconSource={KirokuIcons.Edit}
               containerStyle={[
-                styles.menuIconContainer,
+                localStyles.menuIconContainer,
                 session.blackout === true ? {backgroundColor: 'white'} : {},
               ]}
-              iconStyle={styles.menuIcon}
+              iconStyle={localStyles.menuIcon}
               onPress={() => onEditSessionPress(sessionId)} // Use keyextractor to load id here
             />
           ) : null}
@@ -182,7 +188,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
 
   const noDrinkingSessionsComponent = () => {
     return (
-      <Text style={styles.menuDrinkingSessionInfoText}>
+      <Text style={localStyles.menuDrinkingSessionInfoText}>
         No drinking sessions
       </Text>
     );
@@ -190,7 +196,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
 
   const addSessionButton = () => {
     if (date == null) {
-      return <LoadingData loadingText="" />;
+      return <FlexibleLoadingIndicator />;
     }
     if (!editMode || !user) {
       return null;
@@ -240,9 +246,9 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
     return (
       <TouchableOpacity
         accessibilityRole="button"
-        style={styles.addSessionButton}
+        style={localStyles.addSessionButton}
         onPress={onAddSessionButtonPress}>
-        <Image source={KirokuIcons.Plus} style={styles.addSessionImage} />
+        <Image source={KirokuIcons.Plus} style={localStyles.addSessionImage} />
       </TouchableOpacity>
     );
   };
@@ -262,7 +268,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
     return <UserOffline />;
   }
   if (!date) {
-    return <LoadingData />;
+    return <FullScreenLoadingIndicator />;
   }
   if (!user) {
     Navigation.navigate(ROUTES.LOGIN);
@@ -282,8 +288,8 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
           />
         }
       />
-      <View style={styles.dayOverviewContainer}>
-        <Text style={styles.menuDrinkingSessionInfoText}>
+      <View style={localStyles.dayOverviewContainer}>
+        <Text style={localStyles.menuDrinkingSessionInfoText}>
           {date ? formatDateToDay(currentDate) : 'Loading date...'}
         </Text>
         <FlatList
@@ -292,15 +298,15 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
           keyExtractor={item => String(item.sessionId)} // Use start time as id
           ListEmptyComponent={noDrinkingSessionsComponent}
           ListFooterComponent={addSessionButton}
-          ListFooterComponentStyle={styles.addSessionButtonContainer}
+          ListFooterComponentStyle={localStyles.addSessionButtonContainer}
         />
       </View>
-      <View style={styles.dayOverviewFooter}>
+      <View style={localStyles.dayOverviewFooter}>
         <MenuIcon
           iconId="navigate-day-back"
           iconSource={KirokuIcons.ArrowBack}
-          containerStyle={styles.footerArrowContainer}
-          iconStyle={[styles.dayArrowIcon, styles.previousDayArrow]}
+          containerStyle={localStyles.footerArrowContainer}
+          iconStyle={[localStyles.dayArrowIcon, localStyles.previousDayArrow]}
           onPress={() => {
             changeDay(-1);
           }}
@@ -308,8 +314,8 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
         <MenuIcon
           iconId="navigate-day-forward"
           iconSource={KirokuIcons.ArrowBack}
-          containerStyle={styles.footerArrowContainer}
-          iconStyle={[styles.dayArrowIcon, styles.nextDayArrow]}
+          containerStyle={localStyles.footerArrowContainer}
+          iconStyle={[localStyles.dayArrowIcon, localStyles.nextDayArrow]}
           onPress={() => {
             changeDay(1);
           }}
@@ -321,7 +327,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
 
 const screenWidth = Dimensions.get('window').width;
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   menuDrinkingSessionContainer: {
     backgroundColor: 'white',
     height: 85,

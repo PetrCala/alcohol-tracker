@@ -13,7 +13,6 @@ import {useFocusEffect} from '@react-navigation/native';
 import {sendPasswordResetEmail, signOut} from 'firebase/auth';
 import {signInUserWithEmailAndPassword} from '@libs/auth/auth';
 import commonStyles from '@styles/commonStyles';
-import LoadingData from '@components/LoadingData';
 import InputTextPopup from '@components/Popups/InputTextPopup';
 import {handleErrors} from '@libs/ErrorHandling';
 import WarningMessage from '@components/Info/WarningMessage';
@@ -24,6 +23,7 @@ import Navigation from '@navigation/Navigation';
 import {useFirebase} from '@context/global/FirebaseContext';
 import ScreenWrapper from '@components/ScreenWrapper';
 import useTheme from '@hooks/useTheme';
+import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 
 type State = {
   email: string;
@@ -142,7 +142,7 @@ function LoginScreen() {
   // Wait to see whether there already is an authentificated user
   // Possibly here display the app logo instead of the loading screen
   if (state.loadingUser) {
-    return <LoadingData loadingText="Signing in..." />;
+    return <FullScreenLoadingIndicator loadingText="Signing in..." />;
   }
 
   return (

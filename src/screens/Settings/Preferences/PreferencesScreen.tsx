@@ -26,11 +26,11 @@ import type {SettingsNavigatorParamList} from '@libs/Navigation/types';
 import type SCREENS from '@src/SCREENS';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
-import LoadingData from '@components/LoadingData';
 import {isEqual} from 'lodash';
 import ScreenWrapper from '@components/ScreenWrapper';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import useLocalize from '@hooks/useLocalize';
+import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 
 type PreferencesListProps = {
   id: string;
@@ -184,7 +184,9 @@ function PreferencesScreen({route}: PreferencesScreenProps) {
     return null;
   }
   if (saving) {
-    return <LoadingData loadingText="Saving your preferences..." />;
+    return (
+      <FullScreenLoadingIndicator loadingText="Saving your preferences..." />
+    );
   }
 
   return (

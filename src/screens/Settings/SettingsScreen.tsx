@@ -447,7 +447,6 @@ export default withCurrentUserPersonalDetails(
 // import ROUTES from '@src/ROUTES';
 // import {useDatabaseData} from '@context/global/DatabaseDataContext';
 // import ScreenWrapper from '@components/ScreenWrapper';
-// import LoadingData from '@components/LoadingData';
 // import useLocalize from '@hooks/useLocalize';
 // import ONYXKEYS from '@src/ONYXKEYS';
 // import type {OnyxEntry} from 'react-native-onyx';
