@@ -51,6 +51,7 @@ import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import type IconAsset from '@src/types/utils/IconAsset';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import {useFirebase} from '@context/global/FirebaseContext';
+import UserOffline from '@components/UserOffline';
 
 type SettingsScreenOnyxProps = {};
 
@@ -348,6 +349,10 @@ function SettingsScreen({}: SettingsScreenProps) {
     scrollViewRef.current.scrollTo({y: scrollOffset, animated: false});
   }, [getScrollOffset, route]);
 
+  if (network.isOffline) {
+    return <UserOffline />;
+  }
+
   return (
     <ScreenWrapper
       style={[styles.w100, styles.pb0]}
@@ -460,29 +465,6 @@ export default withCurrentUserPersonalDetails(
 //   index: number;
 // };
 
-// const MenuItem: React.FC<SettingsItemProps> = ({heading, data, index}) => (
-//   <View key={index} style={{backgroundColor: '#FFFF99'}}>
-//     <GrayHeader headerText={heading} />
-//     {data.map((button, bIndex) => (
-//       <TouchableOpacity
-//         accessibilityRole="button"
-//         key={bIndex}
-//         style={styles.button}
-//         onPress={button.action}>
-//         <Image source={button.icon} style={styles.icon} />
-//         <Text style={styles.buttonText}>{button.label}</Text>
-//       </TouchableOpacity>
-//     ))}
-//   </View>
-// );
-
-// type SettingsScreenOnyxProps = {
-//   pushNotificationsEnabled: OnyxEntry<boolean>;
-// };
-
-// type SettingsScreenProps = SettingsScreenOnyxProps &
-//   StackScreenProps<SettingsNavigatorParamList, typeof SCREENS.SETTINGS.ROOT>;
-
 // function SettingsScreen({route}: SettingsScreenProps) {
 //   const {userData, preferences} = useDatabaseData();
 //   // Context, database, and authentification
@@ -497,8 +479,6 @@ export default withCurrentUserPersonalDetails(
 //   // Hooks
 //   const [FeedbackList, setFeedbackList] = useState<FeedbackList>({});
 //   // Modals
-//   const [policiesModalVisible, setPoliciesModalVisible] =
-//     useState<boolean>(false);
 //   const [reportBugModalVisible, setReportBugModalVisible] =
 //     useState<boolean>(false);
 //   const [feedbackModalVisible, setFeedbackModalVisible] =
@@ -647,64 +627,6 @@ export default withCurrentUserPersonalDetails(
 //     }, [db, user]);
 //   }
 
-//   // TODO change this to a section with icons
-//   let modalData = [
-//     {
-//       heading: 'Your account',
-//       data: [
-//         {
-//           label: 'Account',
-//           icon: KirokuIcons.UserIcon,
-//           action: () => Navigation.navigate(ROUTES.SETTINGS_ACCOUNT),
-//         },
-//         {
-//           label: 'Preferences',
-//           icon: KirokuIcons.Settings,
-//           action: () => Navigation.navigate(ROUTES.SETTINGS_PREFERENCES),
-//         },
-//       ],
-//     },
-//     {
-//       heading: 'General',
-//       data: [
-//         {
-//           label: 'Legal and Policies',
-//           icon: KirokuIcons.Book,
-//           action: () => setPoliciesModalVisible(true),
-//         },
-//         //   label: 'Report a bug',
-//         //   icon: KirokuIcons.Bug,
-//         //   action: () => console.log('Bug reporting'),
-//         // },
-//         {
-//           label: 'Give us a feedback',
-//           icon: KirokuIcons.Idea,
-//           action: () => setFeedbackModalVisible(true),
-//         },
-//         {
-//           label: 'Share the app',
-//           icon: KirokuIcons.Share,
-//           action: () => Navigation.navigate(ROUTES.SETTINGS_APP_SHARE),
-//         },
-//       ],
-//     },
-//     {
-//       heading: 'Authentification',
-//       data: [
-//         {
-//           label: 'Sign out',
-//           icon: KirokuIcons.Exit,
-//           action: () => setSignoutModalVisible(true),
-//         },
-//         {
-//           label: 'Delete user',
-//           icon: KirokuIcons.Delete,
-//           action: () => setDeleteUserModalVisible(true),
-//         },
-//       ],
-//     },
-//   ];
-
 //   const adminData = [
 //     {
 //       heading: 'Admin settings',
@@ -717,25 +639,6 @@ export default withCurrentUserPersonalDetails(
 //           },
 //         },
 //       ],
-//     },
-//   ];
-
-//   const policiesData = [
-//     {
-//       label: 'Terms of service',
-//       icon: KirokuIcons.Book,
-//       action: () => {
-//         Navigation.navigate(ROUTES.SETTINGS_TERMS_OF_SERVICE);
-//         setPoliciesModalVisible(false);
-//       },
-//     },
-//     {
-//       label: 'Privacy Policy',
-//       icon: KirokuIcons.Book,
-//       action: () => {
-//         Navigation.navigate(ROUTES.SETTINGS_PRIVACY_POLICY);
-//         setPoliciesModalVisible(false);
-//       },
 //     },
 //   ];
 
@@ -769,13 +672,6 @@ export default withCurrentUserPersonalDetails(
 //               index={index}
 //             />
 //           ))}
-//           <ItemListPopup
-//             visible={policiesModalVisible}
-//             transparent={true}
-//             heading={'Our Policies'}
-//             actions={policiesData}
-//             onRequestClose={() => setPoliciesModalVisible(false)}
-//           />
 //           <FeedbackPopup
 //             visible={feedbackModalVisible}
 //             transparent={true}
