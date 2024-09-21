@@ -51,6 +51,14 @@ const CONST = {
   },
   APP_DOWNLOAD_LINK: `${GH_PAGES_URL}/assets/html/qr-link.html`,
   APP_QR_CODE_LINK: `${GH_PAGES_URL}/assets/images/kiroku-qr-code-with-logo.png`,
+  APP_URLS: {
+    DEV: 'https://dev.kiroku.com',
+    STAGING: 'https://staging.kiroku.com',
+    PROD: 'https://kiroku.com',
+    ADHOC: 'https://adhoc.kiroku.com',
+    TEST: 'https://test.kiroku.com',
+  },
+  KIROKU_URL: 'https://kiroku.com',
   PRIVACY_POLICY_URL: `${GH_PAGES_URL}/assets/html/privacy-policy.html`,
   TERMS_OF_SERVICE_URL: `${GH_PAGES_URL}/assets/html/terms-of-service.html`,
   API_REQUEST_TYPE: {

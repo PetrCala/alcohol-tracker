@@ -1,4 +1,5 @@
 import mapValues from 'lodash/mapValues';
+import type {OnyxEntry} from 'react-native-onyx';
 import CONST from '@src/CONST';
 import type {
   TranslationFlatObject,
@@ -9,49 +10,28 @@ import type Response from '@src/types/onyx/Response';
 import DateUtils from './DateUtils';
 import * as Localize from './Localize';
 
-function getAuthenticateErrorMessage(
-  response: Response,
-): keyof TranslationFlatObject {
-  switch (response.jsonCode) {
-    case CONST.JSON_CODE.UNABLE_TO_RETRY:
-      return 'session.offlineMessageRetry';
-    case 401:
-      return 'passwordForm.error.incorrectLoginOrPassword';
-    case 402:
-      // If too few characters are passed as the password, the WAF will pass it to the API as an empty
-      // string, which results in a 402 error from Auth.
-      if (response.message === '402 Missing partnerUserSecret') {
-        return 'passwordForm.error.incorrectLoginOrPassword';
-      }
-      return 'passwordForm.error.twoFactorAuthenticationEnabled';
-    case 403:
-      if (response.message === 'Invalid code') {
-        return 'passwordForm.error.incorrect2fa';
-      }
-      return 'passwordForm.error.invalidLoginOrPassword';
-    case 404:
-      return 'passwordForm.error.unableToResetPassword';
-    case 405:
-      return 'passwordForm.error.noAccess';
-    case 413:
-      return 'passwordForm.error.accountLocked';
-    default:
-      return 'passwordForm.error.fallback';
-  }
-}
-
 /**
- * Method used to get an error object with microsecond as the key.
- * @param error - error key or message to be saved
+ * Creates an error object with a timestamp (in microseconds) as the key and the translated error message as the value.
+ * @param error - The translation key for the error message.
  */
-function getMicroSecondOnyxError(
-  error: string,
-  isTranslated = false,
+function getMicroSecondOnyxErrorWithTranslationKey(
+  error: TranslationPaths,
   errorKey?: number,
 ): Errors {
   return {
-    [errorKey ?? DateUtils.getMicroseconds()]: error && [error, {isTranslated}],
+    [errorKey ?? DateUtils.getMicroseconds()]: Localize.translateLocal(error),
   };
+}
+
+/**
+ * Creates an error object with a timestamp (in microseconds) as the key and the error message as the value.
+ * @param error - The error message.
+ */
+function getMicroSecondOnyxErrorWithMessage(
+  error: string,
+  errorKey?: number,
+): Errors {
+  return {[errorKey ?? DateUtils.getMicroseconds()]: error};
 }
 
 /**
@@ -66,10 +46,8 @@ function getMicroSecondOnyxErrorObject(
 }
 
 // We can assume that if error is a string, it has already been translated because it is server error
-function getErrorMessageWithTranslationData(
-  error: Localize.MaybePhraseKey,
-): Localize.MaybePhraseKey {
-  return typeof error === 'string' ? [error, {isTranslated: true}] : error;
+function getErrorMessageWithTranslationData(error: string | null): string {
+  return error ?? '';
 }
 
 type OnyxDataWithErrors = {
@@ -77,8 +55,8 @@ type OnyxDataWithErrors = {
 };
 
 function getLatestErrorMessage<TOnyxData extends OnyxDataWithErrors>(
-  onyxData: TOnyxData | null,
-): Localize.MaybePhraseKey {
+  onyxData: OnyxEntry<TOnyxData> | null,
+): string {
   const errors = onyxData?.errors ?? {};
 
   if (Object.keys(errors).length === 0) {
@@ -86,13 +64,13 @@ function getLatestErrorMessage<TOnyxData extends OnyxDataWithErrors>(
   }
 
   const key = Object.keys(errors).sort().reverse()[0];
-  return getErrorMessageWithTranslationData(errors[key]);
+  return getErrorMessageWithTranslationData(errors[key] ?? '');
 }
 
 function getLatestErrorMessageField<TOnyxData extends OnyxDataWithErrors>(
-  onyxData: TOnyxData,
+  onyxData: OnyxEntry<TOnyxData>,
 ): Errors {
-  const errors = onyxData.errors ?? {};
+  const errors = onyxData?.errors ?? {};
 
   if (Object.keys(errors).length === 0) {
     return {};
@@ -108,10 +86,10 @@ type OnyxDataWithErrorFields = {
 };
 
 function getLatestErrorField<TOnyxData extends OnyxDataWithErrorFields>(
-  onyxData: TOnyxData,
+  onyxData: OnyxEntry<TOnyxData>,
   fieldName: string,
 ): Errors {
-  const errorsForField = onyxData.errorFields?.[fieldName] ?? {};
+  const errorsForField = onyxData?.errorFields?.[fieldName] ?? {};
 
   if (Object.keys(errorsForField).length === 0) {
     return {};
@@ -122,10 +100,10 @@ function getLatestErrorField<TOnyxData extends OnyxDataWithErrorFields>(
 }
 
 function getEarliestErrorField<TOnyxData extends OnyxDataWithErrorFields>(
-  onyxData: TOnyxData,
+  onyxData: OnyxEntry<TOnyxData>,
   fieldName: string,
 ): Errors {
-  const errorsForField = onyxData.errorFields?.[fieldName] ?? {};
+  const errorsForField = onyxData?.errorFields?.[fieldName] ?? {};
 
   if (Object.keys(errorsForField).length === 0) {
     return {};
@@ -140,8 +118,8 @@ function getEarliestErrorField<TOnyxData extends OnyxDataWithErrorFields>(
  */
 function getLatestErrorFieldForAnyField<
   TOnyxData extends OnyxDataWithErrorFields,
->(onyxData: TOnyxData): Errors {
-  const errorFields = onyxData.errorFields ?? {};
+>(onyxData: OnyxEntry<TOnyxData>): Errors {
+  const errorFields = onyxData?.errorFields ?? {};
 
   if (Object.keys(errorFields).length === 0) {
     return {};
@@ -151,22 +129,23 @@ function getLatestErrorFieldForAnyField<
   const latestErrorFields = fieldNames.map(fieldName =>
     getLatestErrorField(onyxData, fieldName),
   );
-  return latestErrorFields.reduce((acc, error) => ({...acc, ...error}), {});
+  return latestErrorFields.reduce(
+    (acc, error) => Object.assign(acc, error),
+    {},
+  );
 }
 
 /**
- * Method used to attach already translated message with isTranslated property
+ * Method used to attach already translated message
  * @param errors - An object containing current errors in the form
- * @returns Errors in the form of {timestamp: [message, {isTranslated}]}
+ * @returns Errors in the form of {timestamp: message}
  */
-function getErrorsWithTranslationData(
-  errors: Localize.MaybePhraseKey | Errors,
-): Errors {
-  if (!errors || (Array.isArray(errors) && errors.length === 0)) {
+function getErrorsWithTranslationData(errors: Errors): Errors {
+  if (!errors) {
     return {};
   }
 
-  if (typeof errors === 'string' || Array.isArray(errors)) {
+  if (typeof errors === 'string') {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     return {'0': getErrorMessageWithTranslationData(errors)};
   }
@@ -179,10 +158,10 @@ function getErrorsWithTranslationData(
  * @param errors - An object containing current errors in the form
  * @param message - Message to assign to the inputID errors
  */
-function addErrorMessage<TKey extends TranslationPaths>(
+function addErrorMessage(
   errors: Errors,
   inputID?: string | null,
-  message?: TKey | Localize.MaybePhraseKey,
+  message?: string | null,
 ) {
   if (!message || !inputID) {
     return;
@@ -190,31 +169,25 @@ function addErrorMessage<TKey extends TranslationPaths>(
 
   const errorList = errors;
   const error = errorList[inputID];
-  const translatedMessage = Localize.translateIfPhraseKey(message);
 
   if (!error) {
-    errorList[inputID] = [translatedMessage, {isTranslated: true}];
+    errorList[inputID] = message;
   } else if (typeof error === 'string') {
-    errorList[inputID] = [
-      `${error}\n${translatedMessage}`,
-      {isTranslated: true},
-    ];
-  } else if (Array.isArray(error)) {
-    error[0] = `${error[0]}\n${translatedMessage}`;
+    errorList[inputID] = `${error}\n${message}`;
   }
 }
 
 export {
   addErrorMessage,
-  getAuthenticateErrorMessage,
   getEarliestErrorField,
   getErrorMessageWithTranslationData,
   getErrorsWithTranslationData,
   getLatestErrorField,
+  getLatestErrorFieldForAnyField,
   getLatestErrorMessage,
   getLatestErrorMessageField,
-  getLatestErrorFieldForAnyField,
-  getMicroSecondOnyxError,
+  getMicroSecondOnyxErrorWithTranslationKey,
+  getMicroSecondOnyxErrorWithMessage,
   getMicroSecondOnyxErrorObject,
 };
 
