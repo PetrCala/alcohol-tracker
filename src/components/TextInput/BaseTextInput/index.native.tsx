@@ -1,32 +1,46 @@
-// import {Str} from 'expensify-common';
-// import type {ForwardedRef} from 'react';
-// import React, {forwardRef, useCallback, useEffect, useRef, useState} from 'react';
-// import type {GestureResponderEvent, LayoutChangeEvent, NativeSyntheticEvent, StyleProp, TextInput, TextInputFocusEventData, ViewStyle} from 'react-native';
-// import {ActivityIndicator, Animated, StyleSheet, View} from 'react-native';
-// import Checkbox from '@components/Checkbox';
-// import FormHelpMessage from '@components/FormHelpMessage';
-// import Icon from '@components/Icon';
-// import * as Expensicons from '@components/Icon/Expensicons';
-// import PressableWithoutFeedback from '@components/Pressable/PressableWithoutFeedback';
-// import type {AnimatedMarkdownTextInputRef} from '@components/RNMarkdownTextInput';
-// import RNMarkdownTextInput from '@components/RNMarkdownTextInput';
-// import type {AnimatedTextInputRef} from '@components/RNTextInput';
-// import RNTextInput from '@components/RNTextInput';
-// import Text from '@components/Text';
-// import * as styleConst from '@components/TextInput/styleConst';
-// import TextInputClearButton from '@components/TextInput/TextInputClearButton';
-// import TextInputLabel from '@components/TextInput/TextInputLabel';
-// import useLocalize from '@hooks/useLocalize';
-// import useMarkdownStyle from '@hooks/useMarkdownStyle';
-// import useStyleUtils from '@hooks/useStyleUtils';
-// import useTheme from '@hooks/useTheme';
-// import useThemeStyles from '@hooks/useThemeStyles';
-// import getSecureEntryKeyboardType from '@libs/getSecureEntryKeyboardType';
-// import isInputAutoFilled from '@libs/isInputAutoFilled';
-// import useNativeDriver from '@libs/useNativeDriver';
-// import variables from '@styles/variables';
-// import CONST from '@src/CONST';
-// import type {BaseTextInputProps, BaseTextInputRef} from './types';
+import Str from '@libs/common/str';
+import type {ForwardedRef} from 'react';
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+import type {
+  GestureResponderEvent,
+  LayoutChangeEvent,
+  NativeSyntheticEvent,
+  StyleProp,
+  TextInput,
+  TextInputFocusEventData,
+  ViewStyle,
+} from 'react-native';
+import {ActivityIndicator, Animated, StyleSheet, View} from 'react-native';
+import Checkbox from '@components/Checkbox';
+import FormHelpMessage from '@components/FormHelpMessage';
+import Icon from '@components/Icon';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
+import PressableWithoutFeedback from '@components/Pressable/PressableWithoutFeedback';
+import type {AnimatedMarkdownTextInputRef} from '@components/RNMarkdownTextInput';
+import RNMarkdownTextInput from '@components/RNMarkdownTextInput';
+import type {AnimatedTextInputRef} from '@components/RNTextInput';
+import RNTextInput from '@components/RNTextInput';
+import Text from '@components/Text';
+import * as styleConst from '@components/TextInput/styleConst';
+import TextInputClearButton from '@components/TextInput/TextInputClearButton';
+import TextInputLabel from '@components/TextInput/TextInputLabel';
+import useLocalize from '@hooks/useLocalize';
+import useMarkdownStyle from '@hooks/useMarkdownStyle';
+import useStyleUtils from '@hooks/useStyleUtils';
+import useTheme from '@hooks/useTheme';
+import useThemeStyles from '@hooks/useThemeStyles';
+import getSecureEntryKeyboardType from '@libs/getSecureEntryKeyboardType';
+import isInputAutoFilled from '@libs/isInputAutoFilled';
+import useNativeDriver from '@libs/useNativeDriver';
+import variables from '@styles/variables';
+import CONST from '@src/CONST';
+import type {BaseTextInputProps, BaseTextInputRef} from './types';
 
 // function BaseTextInput(
 //     {
@@ -392,7 +406,7 @@
 //                                     accessibilityLabel={translate('common.visible')}
 //                                 >
 //                                     <Icon
-//                                         src={passwordHidden ? Expensicons.Eye : Expensicons.EyeDisabled}
+//                                         src={passwordHidden ? KirokuIcons.Eye : KirokuIcons.EyeDisabled}
 //                                         fill={theme.icon}
 //                                     />
 //                                 </Checkbox>
