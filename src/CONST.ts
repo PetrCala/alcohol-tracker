@@ -524,6 +524,13 @@ const CONST = {
     // RESEND_VALIDATE_CODE_FORM: 'ResendValidateCodeForm',
   },
 
+  KEYBOARD_TYPE: {
+    VISIBLE_PASSWORD: 'visible-password',
+    ASCII_CAPABLE: 'ascii-capable',
+    NUMBER_PAD: 'number-pad',
+    DECIMAL_PAD: 'decimal-pad',
+  },
+
   INPUT_MODE: {
     NONE: 'none',
     TEXT: 'text',
