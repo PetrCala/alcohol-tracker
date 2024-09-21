@@ -18,6 +18,7 @@ import CONST from '@src/CONST';
 import {copyToClipboard} from '@libs/StringUtilsKiroku';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import useLocalize from '@hooks/useLocalize';
+import useThemeStyles from '@hooks/useThemeStyles';
 
 type AppShareScreenProps = StackScreenProps<
   SettingsNavigatorParamList,
@@ -25,7 +26,9 @@ type AppShareScreenProps = StackScreenProps<
 >;
 
 function AppShareScreen({route}: AppShareScreenProps) {
+  const styles = useThemeStyles();
   const {translate} = useLocalize();
+
   const handleCopyLinkPress = () => {
     try {
       copyToClipboard(CONST.APP_DOWNLOAD_LINK, true);
@@ -40,40 +43,50 @@ function AppShareScreen({route}: AppShareScreenProps) {
         title={translate('appShareScreen.title')}
         onBackButtonPress={Navigation.goBack}
       />
-      <View style={styles.mainContainer}>
-        <View style={[styles.centeringContainer, styles.headingContainer]}>
-          <Text style={styles.mainText}>Help us by sharing the app</Text>
+      <View style={[styles.appContent]}>
+        <View
+          style={[
+            localStyles.centeringContainer,
+            localStyles.headingContainer,
+          ]}>
+          <Text style={localStyles.mainText}>Help us by sharing the app</Text>
         </View>
-        <View style={[styles.centeringContainer, {height: '15%'}]}>
+        <View style={[localStyles.centeringContainer, {height: '15%'}]}>
           <View
             style={[
-              styles.centeringContainer,
+              localStyles.centeringContainer,
               {height: '20%', flexDirection: 'row'},
             ]}>
-            <Text style={styles.mainText}>either through a link</Text>
+            <Text style={localStyles.mainText}>either through a link</Text>
           </View>
-          <View style={[styles.centeringContainer, {height: '80%'}]}>
+          <View style={[localStyles.centeringContainer, {height: '80%'}]}>
             <TouchableOpacity
               accessibilityRole="button"
-              style={styles.linkCopyButton}
+              style={localStyles.linkCopyButton}
               onPress={handleCopyLinkPress}>
-              <Text style={styles.shareLinkText}>
+              <Text style={localStyles.shareLinkText}>
                 Copy share link to clipboard
               </Text>
-              <Image source={KirokuIcons.Copy} style={styles.linkCopyImage} />
+              <Image
+                source={KirokuIcons.Copy}
+                style={localStyles.linkCopyImage}
+              />
             </TouchableOpacity>
           </View>
         </View>
         <View style={commonStyles.horizontalLine} />
-        <View style={styles.qrCodeItemsContainer}>
-          <View style={[styles.centeringContainer, {height: '15%'}]}>
-            <Text style={styles.mainText}>or through a QR code</Text>
+        <View style={localStyles.qrCodeItemsContainer}>
+          <View style={[localStyles.centeringContainer, {height: '15%'}]}>
+            <Text style={localStyles.mainText}>or through a QR code</Text>
           </View>
           <TouchableOpacity
             accessibilityRole="button"
             onPress={() => Linking.openURL(CONST.APP_QR_CODE_LINK)}
-            style={[styles.centeringContainer, {height: 'auto'}]}>
-            <Image source={KirokuIcons.QrCodeWithLogo} style={styles.qrCode} />
+            style={[localStyles.centeringContainer, {height: 'auto'}]}>
+            <Image
+              source={KirokuIcons.QrCodeWithLogo}
+              style={localStyles.qrCode}
+            />
           </TouchableOpacity>
         </View>
       </View>
@@ -81,11 +94,7 @@ function AppShareScreen({route}: AppShareScreenProps) {
   );
 }
 
-const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-    backgroundColor: '#ffff99',
-  },
+const localStyles = StyleSheet.create({
   centeringContainer: {
     width: '100%',
     height: '100%',
