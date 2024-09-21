@@ -27,6 +27,8 @@ import DotIndicator from '@assets/images/dot-indicator.svg';
 import Download from '@assets/images/download.png';
 import Edit from '@assets/images/edit.png';
 import Exit from '@assets/images/exit.svg';
+import Eye from '@assets/images/eye.svg';
+import EyeDisabled from '@assets/images/eye-disabled.svg';
 import FileDocument from '@assets/images/file-document.svg';
 import FriendList from '@assets/images/friend-list.png';
 import Idea from '@assets/images/idea.png';
@@ -85,6 +87,8 @@ export {
   Download,
   Edit,
   Exit,
+  Eye,
+  EyeDisabled,
   FileDocument,
   FriendList,
   Gear,
