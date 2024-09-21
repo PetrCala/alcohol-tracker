@@ -484,7 +484,6 @@ const styles = (theme: ThemeColors) =>
     },
 
     buttonContainer: {
-      padding: 1,
       borderRadius: variables.buttonBorderRadius,
     },
 
@@ -786,6 +785,10 @@ const styles = (theme: ThemeColors) =>
     flipUpsideDown: {
       // transform: `rotate(180deg)`,
       transform: [{rotate: '180deg'}],
+    },
+
+    fontSizeLabel: {
+      fontSize: variables.fontSizeLabel,
     },
 
     fontWeightNormal: {

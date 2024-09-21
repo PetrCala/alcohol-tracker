@@ -467,6 +467,12 @@ function getWidthAndHeightStyle(width: number, height?: number): ViewStyle {
   };
 }
 
+type MarginPaddingValue = ViewStyle[
+  | 'marginTop'
+  | 'marginBottom'
+  | 'paddingTop'
+  | 'paddingBottom'];
+
 /**
  * Combine margin/padding with safe area inset
  *
@@ -475,15 +481,17 @@ function getWidthAndHeightStyle(width: number, height?: number): ViewStyle {
  * @param shouldAddSafeAreaValue - indicator whether safe area inset should be applied
  */
 function getCombinedSpacing(
-  modalContainerValue: DimensionValue | undefined,
+  modalContainerValue: MarginPaddingValue,
   safeAreaValue: number,
   shouldAddSafeAreaValue: boolean,
-): number | DimensionValue | undefined {
+): MarginPaddingValue {
   // modalContainerValue can only be added to safe area inset if it's a number, otherwise it's returned as is
-  if (typeof modalContainerValue === 'number' || !modalContainerValue) {
-    return (
-      (modalContainerValue ?? 0) + (shouldAddSafeAreaValue ? safeAreaValue : 0)
-    );
+  if (typeof modalContainerValue === 'number') {
+    return modalContainerValue + (shouldAddSafeAreaValue ? safeAreaValue : 0);
+  }
+
+  if (!modalContainerValue) {
+    return shouldAddSafeAreaValue ? safeAreaValue : 0;
   }
 
   return modalContainerValue;

@@ -32,13 +32,7 @@ function Header({
 }: HeaderProps) {
   const styles = useThemeStyles();
   return (
-    <View
-      style={[
-        styles.flex1,
-        styles.flexRow,
-        styles.justifyContentEnd,
-        containerStyles,
-      ]}>
+    <View style={[styles.flex1, styles.flexRow, containerStyles]}>
       <View style={styles.mw100}>
         {typeof title === 'string'
           ? Boolean(title) && (

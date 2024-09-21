@@ -96,6 +96,7 @@ function HeaderWithBackButton({
           titleColor ? StyleUtils.getTextColorStyle(titleColor) : {},
           isCentralPaneSettings && styles.textHeadlineH2,
         ]}
+        containerStyles={styles.justifyContentEnd}
       />
     );
   }, [

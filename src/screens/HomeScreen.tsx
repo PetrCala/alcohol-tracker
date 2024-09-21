@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  useWindowDimensions,
   View,
 } from 'react-native';
 import {useOnyx} from 'react-native-onyx';
@@ -61,6 +62,7 @@ import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
 import ONYXKEYS from '@src/ONYXKEYS';
 import getPlatform from '@libs/getPlatform';
+import ConfirmModal from '@components/ConfirmModal';
 
 type State = {
   visibleDateObject: DateObject;
