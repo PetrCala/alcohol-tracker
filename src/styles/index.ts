@@ -1316,6 +1316,10 @@ const styles = (theme: ThemeColors) =>
       fontSize: variables.fontSizeExtraSmall,
     },
 
+    textPlainColor: {
+      color: theme.text,
+    },
+
     textNormal: {
       fontSize: variables.fontSizeNormal,
     },

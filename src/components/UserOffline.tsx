@@ -18,10 +18,21 @@ const UserOffline = () => {
           styles.appContent,
           styles.mb10,
         ]}>
-        <Text style={[styles.textAlignCenter, styles.textXXXLarge]}>
+        <Text
+          style={[
+            styles.textAlignCenter,
+            styles.textXXXLarge,
+            styles.textPlainColor,
+          ]}>
           You are offline
         </Text>
-        <Text style={[styles.textAlignCenter, styles.textLarge, styles.p5]}>
+        <Text
+          style={[
+            styles.textAlignCenter,
+            styles.textLarge,
+            styles.p5,
+            styles.textPlainColor,
+          ]}>
           Unfortunately, Kiroku does not support offline mode yet. We appreciate
           your patience while we work on this feature.
         </Text>

@@ -19,6 +19,7 @@ import {copyToClipboard} from '@libs/StringUtilsKiroku';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
+import useTheme from '@hooks/useTheme';
 
 type AppShareScreenProps = StackScreenProps<
   SettingsNavigatorParamList,
@@ -27,6 +28,7 @@ type AppShareScreenProps = StackScreenProps<
 
 function AppShareScreen({route}: AppShareScreenProps) {
   const styles = useThemeStyles();
+  const theme = useTheme();
   const {translate} = useLocalize();
 
   const handleCopyLinkPress = () => {
@@ -49,7 +51,9 @@ function AppShareScreen({route}: AppShareScreenProps) {
             localStyles.centeringContainer,
             localStyles.headingContainer,
           ]}>
-          <Text style={localStyles.mainText}>Help us by sharing the app</Text>
+          <Text style={[localStyles.mainText, styles.textPlainColor]}>
+            Help us by sharing the app
+          </Text>
         </View>
         <View style={[localStyles.centeringContainer, {height: '15%'}]}>
           <View
@@ -57,7 +61,9 @@ function AppShareScreen({route}: AppShareScreenProps) {
               localStyles.centeringContainer,
               {height: '20%', flexDirection: 'row'},
             ]}>
-            <Text style={localStyles.mainText}>either through a link</Text>
+            <Text style={[localStyles.mainText, styles.textPlainColor]}>
+              either through a link
+            </Text>
           </View>
           <View style={[localStyles.centeringContainer, {height: '80%'}]}>
             <TouchableOpacity
@@ -69,7 +75,7 @@ function AppShareScreen({route}: AppShareScreenProps) {
               </Text>
               <Image
                 source={KirokuIcons.Copy}
-                style={localStyles.linkCopyImage}
+                style={[localStyles.linkCopyImage, {tintColor: theme.icon}]}
               />
             </TouchableOpacity>
           </View>
@@ -77,7 +83,9 @@ function AppShareScreen({route}: AppShareScreenProps) {
         <View style={commonStyles.horizontalLine} />
         <View style={localStyles.qrCodeItemsContainer}>
           <View style={[localStyles.centeringContainer, {height: '15%'}]}>
-            <Text style={localStyles.mainText}>or through a QR code</Text>
+            <Text style={[localStyles.mainText, styles.textPlainColor]}>
+              or through a QR code
+            </Text>
           </View>
           <TouchableOpacity
             accessibilityRole="button"
@@ -122,7 +130,6 @@ const localStyles = StyleSheet.create({
   },
   mainText: {
     fontSize: 17,
-    color: 'black',
   },
   linkCopyButton: {
     width: 'auto',
