@@ -115,6 +115,7 @@ function SettingsScreen({}: SettingsScreenProps) {
       return;
     }
 
+    toggleSignoutConfirmModal(false);
     await Session.signOut(auth);
   };
 
