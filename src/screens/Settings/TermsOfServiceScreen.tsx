@@ -5,8 +5,14 @@ import ScreenWrapper from '@components/ScreenWrapper';
 import getPlatform from '@libs/getPlatform';
 import CONST from '@src/CONST';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
+import {useState} from 'react';
+import LoadingData from '@components/LoadingData';
+import useThemeStyles from '@hooks/useThemeStyles';
 
 function TermsOfServiceScreen() {
+  const styles = useThemeStyles();
+  const [isLoading, setIsLoading] = useState(false);
+
   const termsHtml =
     getPlatform() === CONST.PLATFORM.ANDROID
       ? {uri: 'file:///android_asset/html/terms-of-service.html'}
@@ -25,25 +31,23 @@ function TermsOfServiceScreen() {
   return (
     <ScreenWrapper testID={TermsOfServiceScreen.displayName}>
       <HeaderWithBackButton onBackButtonPress={Navigation.goBack} />
-      <View style={styles.mainContainer}>
-        <WebView
-          originWhitelist={['*']}
-          source={termsHtml}
-          onShouldStartLoadWithRequest={handleStartLoadWithRequest}
-          style={{flex: 1}}
-          javaScriptEnabled
-        />
+      <View style={[styles.flex1, styles.appContent]}>
+        {isLoading ? (
+          <LoadingData />
+        ) : (
+          <WebView
+            originWhitelist={['*']}
+            source={termsHtml}
+            onShouldStartLoadWithRequest={handleStartLoadWithRequest}
+            style={{flex: 1}}
+            onLoadEnd={() => setIsLoading(false)}
+            javaScriptEnabled
+          />
+        )}
       </View>
     </ScreenWrapper>
   );
 }
-
-const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-    backgroundColor: '#FFFF99',
-  },
-});
 
 TermsOfServiceScreen.displayName = 'Terms Of Service Screen';
 export default TermsOfServiceScreen;
