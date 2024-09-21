@@ -45,7 +45,7 @@ import BottomTabNavigator from './Navigators/BottomTabNavigator';
 // import LeftModalNavigator from './Navigators/LeftModalNavigator';
 // import OnboardingModalNavigator from './Navigators/OnboardingModalNavigator';
 import RightModalNavigator from './Navigators/RightModalNavigator';
-import ReEnterPasswordScreen from '@screens/Settings/ReEnterPasswordScreen';
+import ReEnterPasswordScreen from '@screens/ReEnterPasswordScreen';
 // import WelcomeVideoModalNavigator from './Navigators/WelcomeVideoModalNavigator';
 
 type AuthScreensProps = {
