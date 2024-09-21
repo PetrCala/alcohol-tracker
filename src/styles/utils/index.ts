@@ -696,6 +696,15 @@ function getPaddingLeft(paddingLeft: number): ViewStyle {
 }
 
 /**
+ * Get variable padding-right as style
+ */
+function getPaddingRight(paddingRight: number): ViewStyle {
+  return {
+    paddingRight,
+  };
+}
+
+/**
  * Checks to see if the iOS device has safe areas or not
  */
 function hasSafeAreas(windowWidth: number, windowHeight: number): boolean {
@@ -1091,6 +1100,7 @@ const staticStyleUtils = {
   getBackgroundColorStyle,
   getBackgroundColorWithOpacityStyle,
   getPaddingLeft,
+  getPaddingRight,
   hasSafeAreas,
   getHeight,
   getMinimumHeight,
