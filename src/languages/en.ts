@@ -50,6 +50,7 @@ export default {
     referral: 'Referral',
     payments: 'Payments',
     wallet: 'Wallet',
+    clear: 'Clear',
     preferences: 'Preferences',
     view: 'View',
     not: 'Not',

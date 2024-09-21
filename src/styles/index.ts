@@ -1447,6 +1447,38 @@ const styles = (theme: ThemeColors) =>
       flexDirection: 'row',
     },
 
+    textInputLabel: {
+      position: 'absolute',
+      left: 0,
+      top: 0,
+      fontSize: variables.fontSizeNormal,
+      color: theme.textSupporting,
+      ...FontUtils.fontFamily.platform.EXP_NEUE,
+      width: '100%',
+      zIndex: 1,
+    },
+
+    textInputLabelBackground: {
+      position: 'absolute',
+      top: 0,
+      width: '100%',
+      height: 23,
+      backgroundColor: theme.componentBG,
+    },
+
+    textInputLabelDesktop: {
+      transformOrigin: 'left center',
+    },
+
+    textInputLabelTransformation: (
+      translateY: AnimatableNumericValue,
+      translateX: AnimatableNumericValue,
+      scale: AnimatableNumericValue,
+    ) =>
+      ({
+        transform: [{translateY}, {translateX}, {scale}],
+      }) satisfies TextStyle,
+
     textAlignCenter: {
       textAlign: 'center',
     },
