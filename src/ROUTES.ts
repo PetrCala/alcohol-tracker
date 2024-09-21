@@ -44,9 +44,17 @@ const ROUTES = {
   },
 
   SETTINGS: 'settings',
-  SETTINGS_APP_SHARE: 'settings/app-share',
+
   SETTINGS_ACCOUNT: 'settings/account',
+  SETTINGS_DISPLAY_NAME: 'settings/display-name',
+  SETTINGS_TIMEZONE: 'settings/timezone',
+  SETTINGS_TIMEZONE_SELECT: 'settings/timezone-select',
+
+  SETTINGS_APP_SHARE: 'settings/app-share',
   SETTINGS_PREFERENCES: 'settings/preferences',
+  SETTINGS_LANGUAGE: 'settings/preferences/language',
+  SETTINGS_THEME: 'settings/preferences/theme',
+
   SETTINGS_TERMS_OF_SERVICE: 'settings/terms-of-service',
   SETTINGS_PRIVACY_POLICY: 'settings/privacy-policy',
 

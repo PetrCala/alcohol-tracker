@@ -71,10 +71,39 @@ const config: LinkingOptions<RootStackParamList>['config'] = {
         },
         [SCREENS.RIGHT_MODAL.SETTINGS]: {
           screens: {
-            [SCREENS.SETTINGS.ROOT]: ROUTES.SETTINGS,
+            [SCREENS.SETTINGS.ROOT]: {
+              path: ROUTES.SETTINGS,
+              exact: true,
+            },
+            [SCREENS.SETTINGS.ACCOUNT.ROOT]: {
+              path: ROUTES.SETTINGS_ACCOUNT,
+              exact: true,
+            },
+            [SCREENS.SETTINGS.PREFERENCES.ROOT]: {
+              path: ROUTES.SETTINGS_PREFERENCES,
+              exact: true,
+            },
+            [SCREENS.SETTINGS.PREFERENCES.LANGUAGE]: {
+              path: ROUTES.SETTINGS_LANGUAGE,
+              exact: true,
+            },
+            [SCREENS.SETTINGS.PREFERENCES.THEME]: {
+              path: ROUTES.SETTINGS_THEME,
+              exact: true,
+            },
+            [SCREENS.SETTINGS.ACCOUNT.DISPLAY_NAME]: {
+              path: ROUTES.SETTINGS_DISPLAY_NAME,
+              exact: true,
+            },
+            [SCREENS.SETTINGS.ACCOUNT.TIMEZONE]: {
+              path: ROUTES.SETTINGS_TIMEZONE,
+              exact: true,
+            },
+            [SCREENS.SETTINGS.ACCOUNT.TIMEZONE_SELECT]: {
+              path: ROUTES.SETTINGS_TIMEZONE_SELECT,
+              exact: true,
+            },
             [SCREENS.SETTINGS.APP_SHARE]: ROUTES.SETTINGS_APP_SHARE,
-            [SCREENS.SETTINGS.ACCOUNT]: ROUTES.SETTINGS_ACCOUNT,
-            [SCREENS.SETTINGS.PREFERENCES]: ROUTES.SETTINGS_PREFERENCES,
             [SCREENS.SETTINGS.PRIVACY_POLICY]: ROUTES.SETTINGS_PRIVACY_POLICY,
             [SCREENS.SETTINGS.TERMS_OF_SERVICE]:
               ROUTES.SETTINGS_TERMS_OF_SERVICE,

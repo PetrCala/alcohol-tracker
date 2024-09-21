@@ -42,8 +42,21 @@ const SCREENS = {
   SETTINGS: {
     ROOT: 'Settings_Root',
     APP_SHARE: 'Settings_AppShare',
-    ACCOUNT: 'Settings_Account',
-    PREFERENCES: 'Settings_Preferences',
+
+    ACCOUNT: {
+      ROOT: 'Settings_Account',
+      DISPLAY_NAME: 'Settings_DisplayName',
+      TIMEZONE: 'Settings_Timezone',
+      TIMEZONE_SELECT: 'Settings_Timezone_Select',
+      //...
+    },
+
+    PREFERENCES: {
+      ROOT: 'Settings_Preferences',
+      LANGUAGE: 'Settings_Preferences_Language',
+      THEME: 'Settings_Preferences_Theme',
+    },
+
     TERMS_OF_SERVICE: 'Settings_TermsOfService',
     PRIVACY_POLICY: 'Settings_PrivacyPolicy',
   },

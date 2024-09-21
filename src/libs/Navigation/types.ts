@@ -63,33 +63,8 @@ type State<TParamList extends ParamListBase = ParamListBase> =
 
 type CentralPaneScreensParamList = {
   [SCREENS.HOME]: undefined;
-  //   [SCREENS.REPORT]: {
-  //     reportActionID: string;
-  //     reportID: string;
-  //     openOnAdminRoom?: boolean;
-  //   };
-  //   [SCREENS.SETTINGS.WORKSPACES]: undefined;
-  //   [SCREENS.WORKSPACE.PROFILE]: {
-  //     policyID: string;
-  //   };
-  //   [SCREENS.WORKSPACE.CARD]: {
-  //     policyID: string;
-  //   };
-  //   [SCREENS.WORKSPACE.REIMBURSE]: {
-  //     policyID: string;
-  //   };
-  //   [SCREENS.WORKSPACE.BILLS]: {
-  //     policyID: string;
-  //   };
-  //   [SCREENS.WORKSPACE.INVOICES]: {
-  //     policyID: string;
-  //   };
-  //   [SCREENS.WORKSPACE.TRAVEL]: {
-  //     policyID: string;
-  //   };
-  //   [SCREENS.WORKSPACE.MEMBERS]: {
-  //     policyID: string;
-  //   };
+  [SCREENS.SETTINGS.ACCOUNT.ROOT]: undefined;
+  [SCREENS.SETTINGS.PREFERENCES.ROOT]: undefined;
 };
 
 type AchievementsNavigatorParamList = {
@@ -114,9 +89,14 @@ type DrinkingSessionNavigatorParamList = {
 
 type SettingsNavigatorParamList = {
   [SCREENS.SETTINGS.ROOT]: undefined;
+  [SCREENS.SETTINGS.ACCOUNT.ROOT]: undefined;
+  [SCREENS.SETTINGS.ACCOUNT.DISPLAY_NAME]: undefined;
+  [SCREENS.SETTINGS.ACCOUNT.TIMEZONE]: undefined;
+  [SCREENS.SETTINGS.ACCOUNT.TIMEZONE_SELECT]: undefined;
+  [SCREENS.SETTINGS.PREFERENCES.ROOT]: undefined;
+  [SCREENS.SETTINGS.PREFERENCES.LANGUAGE]: undefined;
+  [SCREENS.SETTINGS.PREFERENCES.THEME]: undefined;
   [SCREENS.SETTINGS.APP_SHARE]: undefined;
-  [SCREENS.SETTINGS.ACCOUNT]: undefined;
-  [SCREENS.SETTINGS.PREFERENCES]: undefined;
   [SCREENS.SETTINGS.TERMS_OF_SERVICE]: undefined;
   [SCREENS.SETTINGS.PRIVACY_POLICY]: undefined;
 };
@@ -162,13 +142,6 @@ type RightModalNavigatorParamList = {
 type LeftModalNavigatorParamList = {
   // [SCREENS.LEFT_MODAL.SEARCH]: NavigatorScreenParams<SearchNavigatorParamList>;
   // [SCREENS.LEFT_MODAL.WORKSPACE_SWITCHER]: NavigatorScreenParams<WorkspaceSwitcherNavigatorParamList>;
-};
-
-type SettingsCentralPaneNavigatorParamList = {
-  // [SCREENS.SETTINGS.SHARE_CODE]: undefined;
-  // [SCREENS.SETTINGS.PROFILE.ROOT]: undefined;
-  // [SCREENS.SETTINGS.PREFERENCES.ROOT]: undefined;
-  // [SCREENS.SETTINGS.ABOUT]: undefined;
 };
 
 // type FullScreenNavigatorParamList = {
