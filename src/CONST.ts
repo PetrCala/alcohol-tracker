@@ -721,8 +721,8 @@ const CONST = {
   },
   TOOLTIP_MAX_LINES: 3,
   THEME: {
-    DEFAULT: 'system',
-    FALLBACK: 'dark',
+    DEFAULT: 'light', // was 'system'
+    FALLBACK: 'light', // was 'dark
     DARK: 'dark',
     LIGHT: 'light',
     SYSTEM: 'system',
