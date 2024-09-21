@@ -262,6 +262,9 @@ export default {
     shareTheApp: 'Share the app',
     // signOutConfirmationText: "You'll lose any offline changes if you sign out.",
     signOutConfirmationText: 'Do you really want to sign out?',
+    signingOut: 'Signing out...',
+    deletingAccount: 'Deleting account...',
+    error: {},
   },
   accountScreen: {
     title: 'Profile Details',

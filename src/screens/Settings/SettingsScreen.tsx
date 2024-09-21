@@ -52,6 +52,7 @@ import type IconAsset from '@src/types/utils/IconAsset';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import {useFirebase} from '@context/global/FirebaseContext';
 import UserOffline from '@components/UserOffline';
+import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 
 type SettingsScreenOnyxProps = {};
 
@@ -94,6 +95,8 @@ function SettingsScreen({}: SettingsScreenProps) {
   const popoverAnchor = useRef(null);
   const {translate} = useLocalize();
   const activeCentralPaneRoute = useActiveCentralPaneRoute();
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingText, setLoadingText] = useState('');
 
   const [shouldShowSignoutConfirmModal, setShouldShowSignoutConfirmModal] =
     useState(false);
@@ -115,8 +118,24 @@ function SettingsScreen({}: SettingsScreenProps) {
       return;
     }
 
+    setLoadingText(translate('settingsScreen.signingOut'));
+    setIsLoading(true);
     toggleSignoutConfirmModal(false);
     await Session.signOut(auth);
+    setIsLoading(false);
+  };
+
+  const deleteAccount = async (auth: any) => {
+    if (!shouldShowDeleteAccountConfirmModal) {
+      toggleDeleteAccountConfirmModal(true);
+      return;
+    }
+
+    setLoadingText(translate('settingsScreen.deletingAccount'));
+    setIsLoading(true);
+    toggleDeleteAccountConfirmModal(false);
+    // await deleteUser(auth.currentUser);
+    setIsLoading(false);
   };
 
   /**
@@ -353,6 +372,9 @@ function SettingsScreen({}: SettingsScreenProps) {
   if (network.isOffline) {
     return <UserOffline />;
   }
+  if (isLoading) {
+    return <FullScreenLoadingIndicator loadingText={loadingText} />;
+  }
 
   return (
     <ScreenWrapper
@@ -386,12 +408,7 @@ function SettingsScreen({}: SettingsScreenProps) {
           danger
           title={translate('settingsScreen.deleteAccount')}
           onConfirm={() => {
-            toggleDeleteAccountConfirmModal(false);
-            // if (!policyID) {
-            //     return;
-            // }
-            // setIsIntegrateWarningModalOpen(false);
-            // Navigation.navigate(ROUTES.POLICY_ACCOUNTING.getRoute(policyID));
+            deleteAccount(auth);
           }}
           onCancel={() => toggleDeleteAccountConfirmModal(false)}
           isVisible={shouldShowDeleteAccountConfirmModal}
