@@ -912,6 +912,13 @@ const styles = (theme: ThemeColors) =>
       fontSize: variables.fontSizeNormal,
     },
 
+    hiddenElementOutsideOfWindow: {
+      position: 'absolute',
+      top: -10000,
+      left: 0,
+      opacity: 0,
+    },
+
     hoveredComponentBG: {
       backgroundColor: theme.hoverComponentBG,
     },
@@ -974,6 +981,10 @@ const styles = (theme: ThemeColors) =>
     navigationScreenCardStyle: {
       backgroundColor: theme.appBG,
       height: '100%',
+    },
+
+    componentHeightLarge: {
+      height: variables.inputHeight,
     },
 
     offlineFeedback: {
@@ -1390,6 +1401,76 @@ const styles = (theme: ThemeColors) =>
 
     textInputDesktop: addOutlineWidth(theme, {}, 0),
 
+    textInputIconContainer: {
+      paddingHorizontal: 11,
+      justifyContent: 'center',
+      margin: 1,
+    },
+
+    textInputLeftIconContainer: {
+      justifyContent: 'center',
+      paddingRight: 8,
+    },
+
+    secureInput: {
+      borderTopRightRadius: 0,
+      borderBottomRightRadius: 0,
+    },
+
+    textInput: {
+      backgroundColor: 'transparent',
+      borderRadius: variables.componentBorderRadiusNormal,
+      height: variables.inputComponentSizeNormal,
+      borderColor: theme.border,
+      borderWidth: 1,
+      color: theme.text,
+      ...FontUtils.fontFamily.platform.EXP_NEUE,
+      fontSize: variables.fontSizeNormal,
+      paddingLeft: 12,
+      paddingRight: 12,
+      paddingTop: 10,
+      paddingBottom: 10,
+      verticalAlign: 'middle',
+    },
+
+    textInputPrefixWrapper: {
+      position: 'absolute',
+      left: 0,
+      top: 0,
+      height: variables.inputHeight,
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingTop: 23,
+      paddingBottom: 8,
+    },
+
+    textInputSuffixWrapper: {
+      position: 'absolute',
+      right: 0,
+      top: 0,
+      height: variables.inputHeight,
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingTop: 23,
+      paddingBottom: 8,
+    },
+
+    textInputPrefix: {
+      color: theme.text,
+      ...FontUtils.fontFamily.platform.EXP_NEUE,
+      fontSize: variables.fontSizeNormal,
+      verticalAlign: 'middle',
+    },
+
+    textInputSuffix: {
+      color: theme.text,
+      ...FontUtils.fontFamily.platform.EXP_NEUE,
+      fontSize: variables.fontSizeNormal,
+      verticalAlign: 'middle',
+    },
+
     // Be extremely careful when editing the compose styles, as it is easy to introduce regressions.
     textInputCompose: addOutlineWidth(
       theme,
@@ -1499,6 +1580,22 @@ const styles = (theme: ThemeColors) =>
 
     textAlignCenter: {
       textAlign: 'center',
+    },
+
+    textInputDisabled: {
+      // Adding disabled color theme to indicate user that the field is not editable.
+      backgroundColor: theme.highlightBG,
+      borderBottomWidth: 2,
+      borderColor: theme.borderLighter,
+      // Adding browser specefic style to bring consistency between Safari and other platforms.
+      // Applying the Webkit styles only to browsers as it is not available in native.
+      ...(Browser.getBrowser()
+        ? {
+            WebkitTextFillColor: theme.textSupporting,
+            WebkitOpacity: 1,
+          }
+        : {}),
+      color: theme.textSupporting,
     },
 
     textAlignRight: {
