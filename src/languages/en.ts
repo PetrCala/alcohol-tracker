@@ -253,7 +253,8 @@ export default {
   settingsScreen: {
     title: 'Settings',
     deleteAccount: 'Delete account',
-    deleteConfirmation: 'Are you sure that you want to delete this account?',
+    deleteConfirmationText:
+      'Are you sure that you want to delete this account?\n\nThis action cannot be undone.',
     improvementThoughts: 'What would you like us to improve?',
     general: 'General',
     giveFeedback: 'Give use a feedback',

@@ -96,9 +96,16 @@ function SettingsScreen({}: SettingsScreenProps) {
 
   const [shouldShowSignoutConfirmModal, setShouldShowSignoutConfirmModal] =
     useState(false);
+  const [
+    shouldShowDeleteAccountConfirmModal,
+    setShouldShowDeleteAccountConfirmModal,
+  ] = useState(false);
 
   const toggleSignoutConfirmModal = (value: boolean) => {
     setShouldShowSignoutConfirmModal(value);
+  };
+  const toggleDeleteAccountConfirmModal = (value: boolean) => {
+    setShouldShowDeleteAccountConfirmModal(value);
   };
 
   const signOut = async (auth: any) => {
@@ -217,7 +224,7 @@ function SettingsScreen({}: SettingsScreenProps) {
           translationKey: 'settingsScreen.deleteAccount',
           icon: KirokuIcons.Delete,
           action: () => {
-            // onSignOut(false);
+            toggleDeleteAccountConfirmModal(true);
           },
         },
       ],
@@ -368,6 +375,23 @@ function SettingsScreen({}: SettingsScreenProps) {
           isVisible={shouldShowSignoutConfirmModal}
           onConfirm={() => signOut(auth)}
           onCancel={() => toggleSignoutConfirmModal(false)}
+        />
+        <ConfirmModal
+          danger
+          title={translate('settingsScreen.deleteAccount')}
+          onConfirm={() => {
+            toggleDeleteAccountConfirmModal(false);
+            // if (!policyID) {
+            //     return;
+            // }
+            // setIsIntegrateWarningModalOpen(false);
+            // Navigation.navigate(ROUTES.POLICY_ACCOUNTING.getRoute(policyID));
+          }}
+          onCancel={() => toggleDeleteAccountConfirmModal(false)}
+          isVisible={shouldShowDeleteAccountConfirmModal}
+          prompt={translate('settingsScreen.deleteConfirmationText')}
+          confirmText={translate('settingsScreen.deleteAccount')}
+          cancelText={translate('common.cancel')}
         />
       </ScrollView>
     </ScreenWrapper>
