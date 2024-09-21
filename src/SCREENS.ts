@@ -15,6 +15,8 @@ const SCREENS = {
   SIGNUP: 'SignUp',
   LOGIN: 'Login',
   FORCE_UPDATE: 'ForceUpdate',
+  RE_ENTER_PASSWORD: 'ReEnterPassword',
+
   RIGHT_MODAL: {
     ACHIEVEMENTS: 'Achievements',
     DAY_OVERVIEW: 'DayOverview',

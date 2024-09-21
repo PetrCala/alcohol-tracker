@@ -195,6 +195,7 @@ type AuthScreensParamList = CentralPaneScreensParamList &
     [NAVIGATORS.LEFT_MODAL_NAVIGATOR]: NavigatorScreenParams<LeftModalNavigatorParamList>;
     [NAVIGATORS.RIGHT_MODAL_NAVIGATOR]: NavigatorScreenParams<RightModalNavigatorParamList>;
     // [NAVIGATORS.FULL_SCREEN_NAVIGATOR]: NavigatorScreenParams<FullScreenNavigatorParamList>;
+    [SCREENS.RE_ENTER_PASSWORD]: undefined;
   };
 
 type RootStackParamList = PublicScreensParamList &

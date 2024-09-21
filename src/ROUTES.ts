@@ -19,6 +19,7 @@ const ROUTES = {
   APPLE_SIGN_IN: 'sign-in-with-apple',
   GOOGLE_SIGN_IN: 'sign-in-with-google',
   TRANSITION_BETWEEN_APPS: 'transition',
+  RE_ENTER_PASSWORD: 're-enter-password',
 
   ACHIEVEMENTS: 'achievements',
 

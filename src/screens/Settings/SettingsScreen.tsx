@@ -125,7 +125,7 @@ function SettingsScreen({}: SettingsScreenProps) {
     setIsLoading(false);
   };
 
-  const deleteAccount = async (auth: any) => {
+  const deleteAccount = () => {
     if (!shouldShowDeleteAccountConfirmModal) {
       toggleDeleteAccountConfirmModal(true);
       return;
@@ -134,7 +134,7 @@ function SettingsScreen({}: SettingsScreenProps) {
     setLoadingText(translate('settingsScreen.deletingAccount'));
     setIsLoading(true);
     toggleDeleteAccountConfirmModal(false);
-    // await deleteUser(auth.currentUser);
+    Navigation.navigate(ROUTES.RE_ENTER_PASSWORD);
     setIsLoading(false);
   };
 
@@ -407,9 +407,7 @@ function SettingsScreen({}: SettingsScreenProps) {
         <ConfirmModal
           danger
           title={translate('settingsScreen.deleteAccount')}
-          onConfirm={() => {
-            deleteAccount(auth);
-          }}
+          onConfirm={deleteAccount}
           onCancel={() => toggleDeleteAccountConfirmModal(false)}
           isVisible={shouldShowDeleteAccountConfirmModal}
           prompt={translate('settingsScreen.deleteConfirmationText')}
