@@ -150,10 +150,6 @@ function ReEnterPasswordScreen({}: ReEnterPasswordScreenProps) {
             autoGrowHeight
             maxAutoGrowHeight={variables.textInputAutoGrowMaxHeight}
             shouldSubmitForm
-            isMarkdownEnabled
-            excludedMarkdownStyles={
-              !isReportInGroupPolicy ? ['mentionReport'] : []
-            }
           />
         </View>
       </FormProvider> */}

@@ -22,8 +22,6 @@ import FormHelpMessage from '@components/FormHelpMessage';
 import Icon from '@components/Icon';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import PressableWithoutFeedback from '@components/Pressable/PressableWithoutFeedback';
-import type {AnimatedMarkdownTextInputRef} from '@components/RNMarkdownTextInput';
-import RNMarkdownTextInput from '@components/RNMarkdownTextInput';
 import type {AnimatedTextInputRef} from '@components/RNTextInput';
 import RNTextInput from '@components/RNTextInput';
 import Text from '@components/Text';
@@ -31,7 +29,6 @@ import * as styleConst from '@components/TextInput/styleConst';
 import TextInputClearButton from '@components/TextInput/TextInputClearButton';
 import TextInputLabel from '@components/TextInput/TextInputLabel';
 import useLocalize from '@hooks/useLocalize';
-import useMarkdownStyle from '@hooks/useMarkdownStyle';
 import useStyleUtils from '@hooks/useStyleUtils';
 import useTheme from '@hooks/useTheme';
 import useThemeStyles from '@hooks/useThemeStyles';
@@ -74,8 +71,6 @@ function BaseTextInput(
     autoCorrect = true,
     prefixCharacter = '',
     inputID,
-    isMarkdownEnabled = false,
-    excludedMarkdownStyles = [],
     shouldShowClearButton = false,
     prefixContainerStyle = [],
     prefixStyle = [],
@@ -84,7 +79,7 @@ function BaseTextInput(
   }: BaseTextInputProps,
   ref: ForwardedRef<BaseTextInputRef>,
 ) {
-  const InputComponent = isMarkdownEnabled ? RNMarkdownTextInput : RNTextInput;
+  const InputComponent = RNTextInput;
 
   const inputProps = {
     shouldSaveDraft: false,
@@ -93,7 +88,6 @@ function BaseTextInput(
   };
   const theme = useTheme();
   const styles = useThemeStyles();
-  const markdownStyle = useMarkdownStyle(undefined, excludedMarkdownStyles);
   const StyleUtils = useStyleUtils();
   const {translate} = useLocalize();
 
@@ -406,12 +400,7 @@ function BaseTextInput(
                 </View>
               )}
               <InputComponent
-                ref={(
-                  element:
-                    | AnimatedTextInputRef
-                    | AnimatedMarkdownTextInputRef
-                    | null,
-                ): void => {
+                ref={(element: AnimatedTextInputRef | null): void => {
                   const baseTextInputRef = element as BaseTextInputRef | null;
                   if (typeof ref === 'function') {
                     ref(baseTextInputRef);
@@ -476,7 +465,6 @@ function BaseTextInput(
                 selection={inputProps.selection}
                 readOnly={isReadOnly}
                 defaultValue={defaultValue}
-                markdownStyle={markdownStyle}
               />
               {isFocused && !isReadOnly && shouldShowClearButton && value && (
                 <TextInputClearButton onPressButton={() => setValue('')} />
