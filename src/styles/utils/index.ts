@@ -379,6 +379,15 @@ function getWidthStyle(width: number): ViewStyle & ImageStyle {
 }
 
 /**
+ * Returns a style with border radius set to the specified number
+ */
+function getBorderRadiusStyle(borderRadius: number): ViewStyle & ImageStyle {
+  return {
+    borderRadius,
+  };
+}
+
+/**
  * Returns a style with backgroundColor and borderColor set to the same color
  */
 function getBackgroundAndBorderStyle(
@@ -1029,6 +1038,44 @@ function getMultiGestureCanvasContainerStyle(canvasWidth: number): ViewStyle {
   };
 }
 
+function percentage(percentageValue: number, totalValue: number) {
+  return (totalValue / 100) * percentageValue;
+}
+
+/**
+ * Calculates the width in px of characters from 0 to 9 and '.'
+ */
+function getCharacterWidth(character: string) {
+  const defaultWidth = 8;
+  if (character === '.') {
+    return percentage(25, defaultWidth);
+  }
+  const number = +character;
+
+  // The digit '1' is 62.5% smaller than the default width
+  if (number === 1) {
+    return percentage(62.5, defaultWidth);
+  }
+  if (number >= 2 && number <= 5) {
+    return defaultWidth;
+  }
+  if (number === 7) {
+    return percentage(87.5, defaultWidth);
+  }
+  if ((number >= 6 && number <= 9) || number === 0) {
+    return percentage(112.5, defaultWidth);
+  }
+  return defaultWidth;
+}
+
+function getAmountWidth(amount: string): number {
+  let width = 0;
+  for (let i = 0; i < amount.length; i++) {
+    width += getCharacterWidth(amount.charAt(i));
+  }
+  return width;
+}
+
 const staticStyleUtils = {
   positioning,
   combineStyles,
@@ -1087,13 +1134,15 @@ const staticStyleUtils = {
   getSignInBgStyles,
   getIconWidthAndHeightStyle,
   getButtonStyleWithIcon,
+  getCharacterWidth,
+  getBorderRadiusStyle,
+  getAmountWidth,
 };
 
 const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
   ...staticStyleUtils,
   ...createModalStyleUtils({theme, styles}),
   ...createTooltipStyleUtils({theme, styles}),
-  // ...createReportActionConextMenuStyleUtils({theme, styles}),
 
   getCompactContentContainerStyles: () => compactContentContainerStyles(styles),
   getContextMenuItemStyles: (windowWidth?: number) =>
@@ -1138,16 +1187,12 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
     maxHeight: number,
   ): ViewStyle => {
     if (textInputHeight > maxHeight) {
-      // TODO: Remove this "eslint-disable-next" once the theme switching migration is done and styles are fully typed (GH Issue: https://github.com/Expensify/App/issues/27337)
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return {
         ...styles.pr0,
         ...styles.overflowAuto,
       };
     }
 
-    // TODO: Remove this "eslint-disable-next" once the theme switching migration is done and styles are fully typed (GH Issue: https://github.com/Expensify/App/issues/27337)
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return {
       ...styles.pr0,
       ...styles.overflowHidden,
@@ -1184,19 +1229,13 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
   ): ViewStyle => {
     if (isSuccess) {
       if (isAdHoc) {
-        // TODO: Remove this "eslint-disable-next" once the theme switching migration is done and styles are fully typed (GH Issue: https://github.com/Expensify/App/issues/27337)
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return isPressed
           ? styles.badgeAdHocSuccessPressed
           : styles.badgeAdHocSuccess;
       }
-      // TODO: Remove this "eslint-disable-next" once the theme switching migration is done and styles are fully typed (GH Issue: https://github.com/Expensify/App/issues/27337)
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return isPressed ? styles.badgeSuccessPressed : styles.badgeSuccess;
     }
     if (isError) {
-      // TODO: Remove this "eslint-disable-next" once the theme switching migration is done and styles are fully typed (GH Issue: https://github.com/Expensify/App/issues/27337)
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return isPressed ? styles.badgeDangerPressed : styles.badgeDanger;
     }
     return {};
@@ -1251,14 +1290,12 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
   /**
    * Returns link styles based on whether the link is disabled or not
    */
-  getDisabledLinkStyles: (isDisabled = false): ViewStyle => {
+  getDisabledLinkStyles: (isDisabled = false): TextStyle => {
     const disabledLinkStyles = {
       color: theme.textSupporting,
       ...styles.cursorDisabled,
     };
 
-    // TODO: Remove this "eslint-disable-next" once the theme switching migration is done and styles are fully typed (GH Issue: https://github.com/Expensify/App/issues/27337)
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return {
       ...styles.link,
       ...(isDisabled ? disabledLinkStyles : {}),
@@ -1270,7 +1307,7 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
    */
   getStatusAMandPMButtonStyle: (
     amPmValue: string,
-  ): {styleForAM: ViewStyle; styleForPM: ViewStyle} => {
+  ): {styleForAM: StyleProp<ViewStyle>; styleForPM: StyleProp<ViewStyle>} => {
     const computedStyleForAM: ViewStyle =
       amPmValue !== CONST.TIME_PERIOD.AM
         ? {backgroundColor: theme.componentBG}
@@ -1281,14 +1318,8 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
         : {};
 
     return {
-      styleForAM: [
-        styles.timePickerWidth100,
-        computedStyleForAM,
-      ] as unknown as ViewStyle,
-      styleForPM: [
-        styles.timePickerWidth100,
-        computedStyleForPM,
-      ] as unknown as ViewStyle,
+      styleForAM: [styles.timePickerWidth100, computedStyleForAM],
+      styleForPM: [styles.timePickerWidth100, computedStyleForPM],
     };
   },
 
@@ -1343,32 +1374,6 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
     paddingBottom: 40 + safeAreaPaddingBottom,
   }),
 
-  // getGoogleListViewStyle: (shouldDisplayBorder: boolean): ViewStyle => {
-  //   if (shouldDisplayBorder) {
-  //     // TODO: Remove this "eslint-disable-next" once the theme switching migration is done and styles are fully typed (GH Issue: https://github.com/Expensify/App/issues/27337)
-  //     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  //     return {
-  //       ...styles.borderTopRounded,
-  //       ...styles.borderBottomRounded,
-  //       marginTop: 4,
-  //       paddingVertical: 6,
-  //     };
-  //   }
-
-  //   return {
-  //     transform: 'scale(0)',
-  //   };
-  // },
-
-  /**
-   * Return the height of magic code input container
-   */
-  // getHeightOfMagicCodeInput: (): ViewStyle => ({
-  //   height:
-  //     styles.magicCodeInputContainer.minHeight -
-  //     styles.textInputContainer.borderBottomWidth,
-  // }),
-
   /**
    * Generate fill color of an icon based on its state.
    *
@@ -1419,40 +1424,6 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
     isOurMention ? theme.ourMentionText : theme.mentionText,
 
   /**
-   * Generate the wrapper styles for the mini ReportActionContextMenu.
-   */
-  getMiniReportActionContextMenuWrapperStyle: (
-    isReportActionItemGrouped: boolean,
-  ): ViewStyle =>
-    // TODO: Remove this "eslint-disable-next" once the theme switching migration is done and styles are fully typed (GH Issue: https://github.com/Expensify/App/issues/27337)
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    ({
-      ...(isReportActionItemGrouped ? positioning.tn8 : positioning.tn4),
-      ...positioning.r4,
-      ...styles.cursorDefault,
-      ...styles.userSelectNone,
-      position: 'absolute',
-      zIndex: 8,
-    }),
-
-  /**
-   * Generate the styles for the ReportActionItem wrapper view.
-   */
-  getReportActionItemStyle: (isHovered = false): ViewStyle =>
-    // TODO: Remove this "eslint-disable-next" once the theme switching migration is done and styles are fully typed (GH Issue: https://github.com/Expensify/App/issues/27337)
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    ({
-      display: 'flex',
-      justifyContent: 'space-between',
-      backgroundColor: isHovered
-        ? theme.hoverComponentBG
-        : // Warning: Setting this to a non-transparent color will cause unread indicator to break on Android
-          theme.transparent,
-      opacity: 1,
-      ...styles.cursorInitial,
-    }),
-
-  /**
    * Determines the theme color for a modal based on the app's background color,
    * the modal's backdrop, and the backdrop's opacity.
    *
@@ -1488,12 +1459,9 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
 
   getZoomCursorStyle: (isZoomed: boolean, isDragging: boolean): ViewStyle => {
     if (!isZoomed) {
-      // TODO: Remove this "eslint-disable-next" once the theme switching migration is done and styles are fully typed (GH Issue: https://github.com/Expensify/App/issues/27337)
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return styles.cursorZoomIn;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return isDragging ? styles.cursorGrabbing : styles.cursorZoomOut;
   },
 
@@ -1565,6 +1533,27 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
     styles.justifyContentCenter,
     styles.alignItemsCenter,
   ],
+
+  /**
+   * When adding a new prefix character, adjust this method to add expected character width.
+   * This is because character width isn't known before it's rendered to the screen, and once it's rendered,
+   * it's too late to calculate it's width because the change in padding would cause a visible jump.
+   * Some characters are wider than the others when rendered, e.g. '@' vs '#'. Chosen font-family and font-size
+   * also have an impact on the width of the character, but as long as there's only one font-family and one font-size,
+   * this method will produce reliable results.
+   */
+  getCharacterPadding: (prefix: string): number => {
+    let padding = 0;
+    prefix.split('').forEach(char => {
+      if (char.match(/[a-z]/i) && char === char.toUpperCase()) {
+        padding += 11;
+      } else {
+        padding += 8;
+      }
+    });
+
+    return padding;
+  },
 });
 
 type StyleUtilsType = ReturnType<typeof createStyleUtils>;
