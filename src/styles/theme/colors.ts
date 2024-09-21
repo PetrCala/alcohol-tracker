@@ -40,16 +40,6 @@ const colors: Record<string, Color> = {
   productLight800: '#84847E',
   productLight900: '#2C2E22',
 
-  // productLight100: '#FFFDE7',
-  // productLight200: '#FFF9C4',
-  // productLight300: '#FFF59D',
-  // productLight400: '#FFF176',
-  // productLight500: '#FFEE58',
-  // productLight600: '#FFEB3B',
-  // productLight700: '#FDD835',
-  // productLight800: '#FBC02D',
-  // productLight900: '#F9A825',
-
   // Brand Colors from Figma
   blue100: '#B0D9FF',
   blue200: '#8DC8FF',
