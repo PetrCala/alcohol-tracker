@@ -410,6 +410,20 @@ const styles = (theme: ThemeColors) =>
       backgroundColor: theme.inverse,
     },
 
+    border: {
+      borderWidth: 1,
+      borderRadius: variables.componentBorderRadius,
+      borderColor: theme.border,
+    },
+
+    borderColorFocus: {
+      borderColor: theme.borderFocus,
+    },
+
+    borderColorDanger: {
+      borderColor: theme.danger,
+    },
+
     borderRadiusNormal: {
       borderRadius: variables.buttonBorderRadius,
     },
@@ -679,6 +693,10 @@ const styles = (theme: ThemeColors) =>
       }) satisfies ViewStyle,
 
     colorSchemeStyle: (colorScheme: ColorScheme) => ({colorScheme}),
+
+    checkedContainer: {
+      backgroundColor: theme.checkBox,
+    },
 
     colorMutedReversed: {
       color: theme.textMutedReversed,
