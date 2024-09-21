@@ -70,7 +70,7 @@ const PreferencesList: React.FC<PreferencesListProps> = ({
 
 type PreferencesScreenProps = StackScreenProps<
   SettingsNavigatorParamList,
-  typeof SCREENS.SETTINGS.PREFERENCES
+  typeof SCREENS.SETTINGS.PREFERENCES.ROOT
 >;
 
 function PreferencesScreen({route}: PreferencesScreenProps) {
