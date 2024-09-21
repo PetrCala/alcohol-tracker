@@ -28,7 +28,7 @@ import type {ValueOf} from 'type-fest';
 // import type RoomNameInput from '@components/RoomNameInput';
 // import type SingleChoiceQuestion from '@components/SingleChoiceQuestion';
 // import type StateSelector from '@components/StateSelector';
-// import type TextInput from '@components/TextInput';
+import type TextInput from '@components/TextInput';
 // import type TextPicker from '@components/TextPicker';
 // import type ValuePicker from '@components/ValuePicker';
 import type {MaybePhraseKey} from '@libs/Localize';
@@ -42,9 +42,8 @@ import type {BaseForm} from '@src/types/form/Form';
  * when adding new inputs or removing old ones.
  *
  */
-type ValidInputs = null;
-// | typeof TextInput
-// typeof AmountTextInput;
+type ValidInputs = typeof TextInput;
+//   | typeof AmountTextInput;
 //   | typeof SingleChoiceQuestion
 //   | typeof CheckboxWithLabel
 //   | typeof Picker
