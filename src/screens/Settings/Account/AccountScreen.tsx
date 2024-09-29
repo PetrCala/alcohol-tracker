@@ -50,7 +50,7 @@ function AccountScreen({route}: AccountScreenProps) {
     },
     {
       description: 'Password',
-      title: '********',
+      title: '••••••••',
       pageRoute: ROUTES.HOME,
     },
     {
