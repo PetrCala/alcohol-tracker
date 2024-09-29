@@ -104,7 +104,7 @@ function DeleteAccountScreen({}: DeleteAccountScreenProps) {
         isSubmitActionDangerous>
         <View style={[styles.flexGrow1]}>
           <Text>{translate('deleteAccountScreen.reasonForLeavingPrompt')}</Text>
-          {/* <InputWrapper
+          <InputWrapper
             InputComponent={TextInput}
             inputID={INPUT_IDS.REASON_FOR_LEAVING}
             autoGrowHeight
@@ -113,7 +113,7 @@ function DeleteAccountScreen({}: DeleteAccountScreenProps) {
             aria-label={translate('deleteAccountScreen.enterMessageHere')}
             role={CONST.ROLE.PRESENTATION}
             containerStyles={[styles.mt5]}
-          /> */}
+          />
           <Text style={[styles.mt5]}>
             {translate('deleteAccountScreen.enterDefaultContactToConfirm')}{' '}
             <Text style={[styles.textStrong]}>{userEmail}</Text>
