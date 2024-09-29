@@ -175,7 +175,6 @@ function SettingsScreen({}: SettingsScreenProps) {
       sectionTranslationKey: 'settingsScreen.general',
       items: [
         {
-          // translationKey: translate('common.termsOfService'),
           translationKey: 'common.termsOfService',
           icon: KirokuIcons.FileDocument,
           routeName: ROUTES.SETTINGS_TERMS_OF_SERVICE,
@@ -203,21 +202,9 @@ function SettingsScreen({}: SettingsScreenProps) {
         },
       ],
       // {
-      //   translationKey: 'settingsScreen.account',
-      //   icon: KirokuIcons.AddImage,
-      //   routeName: ROUTES.HOME,
-      // },
-      // {
       //   translationKey: 'initialSettingsPage.about',
       //   icon: Expensicons.Info,
       //   routeName: ROUTES.SETTINGS_ABOUT,
-      // },
-      // {
-      //   translationKey: signOutTranslationKey,
-      //   icon: Expensicons.Exit,
-      //   action: () => {
-      //     signOut(false);
-      //   },
       // },
       // ],
     };
