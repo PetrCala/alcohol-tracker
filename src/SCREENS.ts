@@ -15,7 +15,6 @@ const SCREENS = {
   SIGNUP: 'SignUp',
   LOGIN: 'Login',
   FORCE_UPDATE: 'ForceUpdate',
-  RE_ENTER_PASSWORD: 'ReEnterPassword',
 
   RIGHT_MODAL: {
     ACHIEVEMENTS: 'Achievements',
@@ -59,6 +58,7 @@ const SCREENS = {
       THEME: 'Settings_Preferences_Theme',
     },
 
+    DELETE: 'Settings_Delete',
     TERMS_OF_SERVICE: 'Settings_TermsOfService',
     PRIVACY_POLICY: 'Settings_PrivacyPolicy',
   },

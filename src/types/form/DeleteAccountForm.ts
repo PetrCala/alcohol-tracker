@@ -9,7 +9,7 @@ const INPUT_IDS = {
 
 type InputID = ValueOf<typeof INPUT_IDS>;
 
-type CloseAccountForm = Form<
+type DeleteAccountForm = Form<
   InputID,
   {
     [INPUT_IDS.REASON_FOR_LEAVING]: string;
@@ -18,5 +18,5 @@ type CloseAccountForm = Form<
   }
 >;
 
-export type {CloseAccountForm};
+export type {DeleteAccountForm};
 export default INPUT_IDS;

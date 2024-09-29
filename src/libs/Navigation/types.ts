@@ -96,6 +96,7 @@ type SettingsNavigatorParamList = {
   [SCREENS.SETTINGS.PREFERENCES.ROOT]: undefined;
   [SCREENS.SETTINGS.PREFERENCES.LANGUAGE]: undefined;
   [SCREENS.SETTINGS.PREFERENCES.THEME]: undefined;
+  [SCREENS.SETTINGS.DELETE]: undefined;
   [SCREENS.SETTINGS.APP_SHARE]: undefined;
   [SCREENS.SETTINGS.TERMS_OF_SERVICE]: undefined;
   [SCREENS.SETTINGS.PRIVACY_POLICY]: undefined;
@@ -195,7 +196,6 @@ type AuthScreensParamList = CentralPaneScreensParamList &
     [NAVIGATORS.LEFT_MODAL_NAVIGATOR]: NavigatorScreenParams<LeftModalNavigatorParamList>;
     [NAVIGATORS.RIGHT_MODAL_NAVIGATOR]: NavigatorScreenParams<RightModalNavigatorParamList>;
     // [NAVIGATORS.FULL_SCREEN_NAVIGATOR]: NavigatorScreenParams<FullScreenNavigatorParamList>;
-    [SCREENS.RE_ENTER_PASSWORD]: undefined;
   };
 
 type RootStackParamList = PublicScreensParamList &

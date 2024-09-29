@@ -45,7 +45,6 @@ import BottomTabNavigator from './Navigators/BottomTabNavigator';
 // import LeftModalNavigator from './Navigators/LeftModalNavigator';
 // import OnboardingModalNavigator from './Navigators/OnboardingModalNavigator';
 import RightModalNavigator from './Navigators/RightModalNavigator';
-import ReEnterPasswordScreen from '@screens/ReEnterPasswordScreen';
 // import WelcomeVideoModalNavigator from './Navigators/WelcomeVideoModalNavigator';
 
 type AuthScreensProps = {
@@ -301,11 +300,6 @@ function AuthScreens({
             options={screenOptions.rightModalNavigator}
             component={RightModalNavigator}
             listeners={modalScreenListeners}
-          />
-          <RootStack.Screen
-            name={SCREENS.RE_ENTER_PASSWORD}
-            options={defaultScreenOptions}
-            component={ReEnterPasswordScreen}
           />
           {/* <RootStack.Screen
           name={NAVIGATORS.FULL_SCREEN_NAVIGATOR}

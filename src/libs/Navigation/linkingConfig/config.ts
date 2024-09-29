@@ -7,6 +7,7 @@ import type {Screen} from '@src/SCREENS';
 import SCREENS from '@src/SCREENS';
 import type {RouteConfig} from './createNormalizedConfigs';
 import createNormalizedConfigs from './createNormalizedConfigs';
+import {exact} from 'prop-types';
 
 // Moved to a separate file to avoid cyclic dependencies.
 const config: LinkingOptions<RootStackParamList>['config'] = {
@@ -16,7 +17,6 @@ const config: LinkingOptions<RootStackParamList>['config'] = {
     [SCREENS.FORCE_UPDATE]: ROUTES.FORCE_UPDATE,
     [SCREENS.LOGIN]: ROUTES.LOGIN,
     [SCREENS.SIGNUP]: ROUTES.SIGNUP,
-    [SCREENS.RE_ENTER_PASSWORD]: ROUTES.RE_ENTER_PASSWORD,
 
     // Sidebar
     [NAVIGATORS.BOTTOM_TAB_NAVIGATOR]: {
@@ -102,6 +102,10 @@ const config: LinkingOptions<RootStackParamList>['config'] = {
             },
             [SCREENS.SETTINGS.ACCOUNT.TIMEZONE_SELECT]: {
               path: ROUTES.SETTINGS_TIMEZONE_SELECT,
+              exact: true,
+            },
+            [SCREENS.SETTINGS.DELETE]: {
+              path: ROUTES.SETTINGS_DELETE,
               exact: true,
             },
             [SCREENS.SETTINGS.APP_SHARE]: ROUTES.SETTINGS_APP_SHARE,

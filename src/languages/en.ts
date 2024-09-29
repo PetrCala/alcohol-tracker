@@ -283,6 +283,21 @@ export default {
     isShownOnProfile: 'Your timezone is shown on your profile.',
     getLocationAutomatically: 'Automatically determine your location',
   },
+  deleteAccountScreen: {
+    deleteAccount: 'Delete account',
+    reasonForLeavingPrompt:
+      'We’d hate to see you go! Would you kindly tell us why, so we can improve?',
+    enterMessageHere: 'Enter message here',
+    deleteAccountWarning: 'Deleting your account cannot be undone.',
+    deleteAccountPermanentlyDeleteData:
+      'Are you sure you want to delete your account? This will permanently delete all of your data.',
+    enterDefaultContactToConfirm:
+      'Please enter your default contact method to confirm you wish to delete your account. Your default contact method is:',
+    enterDefaultContact: 'Enter your default contact method',
+    defaultContact: 'Default contact method:',
+    enterYourDefaultContactMethod:
+      'Please enter your default contact method to delete your account.',
+  },
   profileScreen: {
     title: 'Profile',
     titleNotSelf: 'Friend Overview',

@@ -134,7 +134,7 @@ function SettingsScreen({}: SettingsScreenProps) {
     setLoadingText(translate('settingsScreen.deletingAccount'));
     setIsLoading(true);
     toggleDeleteAccountConfirmModal(false);
-    Navigation.navigate(ROUTES.RE_ENTER_PASSWORD);
+    Navigation.navigate(ROUTES.SETTINGS_DELETE);
     setIsLoading(false);
   };
 

@@ -224,4 +224,23 @@ export default {
   updateTextViewContainerWidth: 310,
   updateViewHeaderHeight: 70,
   workspaceProfileName: 20,
+
+  textInputAutoGrowMaxHeight: 115,
+
+  h20: 20,
+  h28: 28,
+  h36: 36,
+  h112: 112,
+  h172: 172,
+  w20: 20,
+  w28: 28,
+  w36: 36,
+  w40: 40,
+  w44: 44,
+  w52: 52,
+  w80: 80,
+  w92: 92,
+  w96: 96,
+  w184: 184,
+  w191: 191,
 } as const;

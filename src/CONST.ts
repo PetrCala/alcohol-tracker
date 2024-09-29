@@ -575,7 +575,7 @@ const CONST = {
   },
   DEFAULT_TIME_ZONE: {automatic: true, selected: 'Europe/Prague'},
   DEFAULT_ACCOUNT_DATA: {errors: null, success: '', isLoading: false},
-  DEFAULT_CLOSE_ACCOUNT_DATA: {errors: null, success: '', isLoading: false},
+  DEFAULT_DELETE_ACCOUNT_DATA: {errors: null, success: '', isLoading: false},
   DEFAULT_NETWORK_DATA: {isOffline: false},
 
   MICROSECONDS_PER_MS: 1000,

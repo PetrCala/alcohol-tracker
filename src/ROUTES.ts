@@ -19,7 +19,6 @@ const ROUTES = {
   APPLE_SIGN_IN: 'sign-in-with-apple',
   GOOGLE_SIGN_IN: 'sign-in-with-google',
   TRANSITION_BETWEEN_APPS: 'transition',
-  RE_ENTER_PASSWORD: 're-enter-password',
 
   ACHIEVEMENTS: 'achievements',
 
@@ -56,6 +55,7 @@ const ROUTES = {
   SETTINGS_LANGUAGE: 'settings/preferences/language',
   SETTINGS_THEME: 'settings/preferences/theme',
 
+  SETTINGS_DELETE: 'settings/delete',
   SETTINGS_TERMS_OF_SERVICE: 'settings/terms-of-service',
   SETTINGS_PRIVACY_POLICY: 'settings/privacy-policy',
 
