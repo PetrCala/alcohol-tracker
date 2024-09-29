@@ -100,18 +100,10 @@ function SettingsScreen({}: SettingsScreenProps) {
 
   const [shouldShowSignoutConfirmModal, setShouldShowSignoutConfirmModal] =
     useState(false);
-  const [
-    shouldShowDeleteAccountConfirmModal,
-    setShouldShowDeleteAccountConfirmModal,
-  ] = useState(false);
 
   const toggleSignoutConfirmModal = (value: boolean) => {
     setShouldShowSignoutConfirmModal(value);
   };
-  const toggleDeleteAccountConfirmModal = (value: boolean) => {
-    setShouldShowDeleteAccountConfirmModal(value);
-  };
-
   const signOut = async (auth: any) => {
     if (!shouldShowSignoutConfirmModal) {
       toggleSignoutConfirmModal(true);
@@ -122,19 +114,6 @@ function SettingsScreen({}: SettingsScreenProps) {
     setIsLoading(true);
     toggleSignoutConfirmModal(false);
     await Session.signOut(auth);
-    setIsLoading(false);
-  };
-
-  const deleteAccount = () => {
-    if (!shouldShowDeleteAccountConfirmModal) {
-      toggleDeleteAccountConfirmModal(true);
-      return;
-    }
-
-    setLoadingText(translate('settingsScreen.deletingAccount'));
-    setIsLoading(true);
-    toggleDeleteAccountConfirmModal(false);
-    Navigation.navigate(ROUTES.SETTINGS_DELETE);
     setIsLoading(false);
   };
 
@@ -232,7 +211,7 @@ function SettingsScreen({}: SettingsScreenProps) {
           translationKey: 'settingsScreen.deleteAccount',
           icon: KirokuIcons.Delete,
           action: () => {
-            toggleDeleteAccountConfirmModal(true);
+            Navigation.navigate(ROUTES.SETTINGS_DELETE);
           },
         },
       ],
@@ -390,16 +369,6 @@ function SettingsScreen({}: SettingsScreenProps) {
           isVisible={shouldShowSignoutConfirmModal}
           onConfirm={() => signOut(auth)}
           onCancel={() => toggleSignoutConfirmModal(false)}
-        />
-        <ConfirmModal
-          danger
-          title={translate('settingsScreen.deleteAccount')}
-          onConfirm={deleteAccount}
-          onCancel={() => toggleDeleteAccountConfirmModal(false)}
-          isVisible={shouldShowDeleteAccountConfirmModal}
-          prompt={translate('settingsScreen.deleteConfirmationText')}
-          confirmText={translate('settingsScreen.deleteAccount')}
-          cancelText={translate('common.cancel')}
         />
       </ScrollView>
     </ScreenWrapper>
