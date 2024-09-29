@@ -58,7 +58,6 @@ function DisplayNameScreen({}: DisplayNameScreenProps) {
     try {
       setLoadingText(translate('displayNameScreen.updatingDisplayName'));
       setIsLoadingName(true);
-
       await changeDisplayName(
         db,
         auth.currentUser,
