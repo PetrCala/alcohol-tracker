@@ -65,7 +65,7 @@ function FeedbackScreen({}: FeedbackScreenProps) {
       <HeaderWithBackButton
         title={translate('feedbackScreen.title')}
         shouldShowBackButton
-        onBackButtonPress={() => Navigation.goBack()}
+        onBackButtonPress={Navigation.goBack}
       />
       {isLoading ? (
         <FullscreenLoadingIndicator
