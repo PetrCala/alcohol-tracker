@@ -289,6 +289,8 @@ export default {
     deleteAccountWarning: 'Deleting your account cannot be undone.',
     deleteAccountPermanentlyDeleteData:
       'Are you sure you want to delete your account? This will permanently delete all of your data.',
+    enterPasswordToConfirm: 'Please enter your password to confirm deletion.',
+    enterPassword: 'Enter your password',
   },
   profileScreen: {
     title: 'Profile',

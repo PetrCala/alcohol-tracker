@@ -18,9 +18,10 @@ function setDefaultData() {
   });
 }
 
-async function deleteAccount(reasonForLeaving: string) {
+async function deleteAccount(reasonForLeaving: string, password: string) {
   console.debug('Deleting the account...');
   console.debug('Reason for leaving:', reasonForLeaving);
+  console.debug('Password:', password);
 }
 
 export {

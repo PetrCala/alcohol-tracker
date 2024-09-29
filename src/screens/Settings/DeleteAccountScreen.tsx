@@ -32,6 +32,7 @@ function DeleteAccountScreen({}: DeleteAccountScreenProps) {
 
   const [isConfirmModalVisible, setConfirmModalVisibility] = useState(false);
   const [reasonForLeaving, setReasonForLeaving] = useState('');
+  const [password, setPassword] = useState('');
 
   // If you are new to hooks this might look weird but basically it is something that only runs when the component unmounts
   // nothing runs on mount and we pass empty dependencies to prevent this from running on every re-render.
@@ -44,7 +45,7 @@ function DeleteAccountScreen({}: DeleteAccountScreenProps) {
   };
 
   const onConfirm = async () => {
-    await DeleteAccount.deleteAccount(reasonForLeaving);
+    await DeleteAccount.deleteAccount(reasonForLeaving, password);
     hideConfirmModal();
   };
 
@@ -53,6 +54,7 @@ function DeleteAccountScreen({}: DeleteAccountScreenProps) {
   ) => {
     setConfirmModalVisibility(true);
     setReasonForLeaving(values.reasonForLeaving);
+    setPassword(values.password);
   };
 
   const validate = (
@@ -88,6 +90,21 @@ function DeleteAccountScreen({}: DeleteAccountScreenProps) {
             aria-label={translate('deleteAccountScreen.enterMessageHere')}
             role={CONST.ROLE.PRESENTATION}
             containerStyles={[styles.mt5]}
+          />
+          <Text style={[styles.mt5]}>
+            {translate('deleteAccountScreen.enterPasswordToConfirm')}
+          </Text>
+          <InputWrapper
+            InputComponent={TextInput}
+            inputID={INPUT_IDS.PASSWORD}
+            autoCapitalize="none"
+            label={translate('deleteAccountScreen.enterPassword')}
+            aria-label={translate('deleteAccountScreen.enterPassword')}
+            role={CONST.ROLE.PRESENTATION}
+            containerStyles={[styles.mt5]}
+            autoCorrect={false}
+            inputMode={CONST.INPUT_MODE.TEXT}
+            secureTextEntry
           />
           <ConfirmModal
             danger
