@@ -1,7 +1,7 @@
 ﻿import {toPercentageVerbose} from '@libs/DataHandling';
-import {handleErrors} from '@libs/ErrorHandling';
+import {getErrorMessage} from '@libs/ErrorHandling';
 import type {FirebaseStorage} from 'firebase/storage';
-import {StorageReference, ref, uploadBytesResumable} from 'firebase/storage';
+import {ref, uploadBytesResumable} from 'firebase/storage';
 import {Alert} from 'react-native';
 
 /**
@@ -48,8 +48,8 @@ export async function uploadImageToFirebase(
           }
         },
         (error: any) => {
-          handleErrors(error, dispatch);
-          Alert.alert('Error uploading image', error.message);
+          const errorMessage = getErrorMessage(error);
+          Alert.alert('Error uploading image', errorMessage);
           reject(error);
         },
         () => {

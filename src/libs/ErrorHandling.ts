@@ -1,4 +1,6 @@
-﻿function getErrorMessage(error: any): string {
+﻿import {Alert} from 'react-native';
+
+function getErrorMessage(error: any): string {
   const err = error.message;
   switch (true) {
     case err.includes('storage/object-not-found'):
@@ -30,13 +32,18 @@
     case err.includes('PERMISSION_DENIED: Permission denied'):
       return 'Permission denied. Please contact the administrator for assistance.';
     default:
-      return error.message;
+      return err;
   }
 }
 
-function handleErrors(error: any, dispatch: React.Dispatch<any>): void {
-  const payload = getErrorMessage(error.message);
-  dispatch({type: 'SET_WARNING', payload: payload});
+function raiseAlert(
+  error: any,
+  heading: string = '',
+  message: string = '',
+): void {
+  const payload = getErrorMessage(error);
+  console.log('payload', payload);
+  Alert.alert(heading ?? 'Unknown error', `${message || ''}` + payload);
 }
 
-export {getErrorMessage, handleErrors};
+export {getErrorMessage, raiseAlert};
