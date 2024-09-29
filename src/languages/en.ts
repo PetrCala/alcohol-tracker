@@ -254,8 +254,6 @@ export default {
   settingsScreen: {
     title: 'Settings',
     deleteAccount: 'Delete account',
-    deleteConfirmationText:
-      'Are you sure that you want to delete this account?\n\nThis action cannot be undone.',
     improvementThoughts: 'What would you like us to improve?',
     general: 'General',
     giveFeedback: 'Give use a feedback',
@@ -291,12 +289,6 @@ export default {
     deleteAccountWarning: 'Deleting your account cannot be undone.',
     deleteAccountPermanentlyDeleteData:
       'Are you sure you want to delete your account? This will permanently delete all of your data.',
-    enterDefaultContactToConfirm:
-      'Please enter your default contact method to confirm you wish to delete your account. Your default contact method is:',
-    enterDefaultContact: 'Enter your default contact method',
-    defaultContact: 'Default contact method:',
-    enterYourDefaultContactMethod:
-      'Please enter your default contact method to delete your account.',
   },
   profileScreen: {
     title: 'Profile',

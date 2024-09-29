@@ -55,37 +55,12 @@ function DeleteAccountScreen({}: DeleteAccountScreenProps) {
     setReasonForLeaving(values.reasonForLeaving);
   };
 
-  /**
-   * Removes spaces and transform the input string to lowercase.
-   * @param phoneOrEmail - The input string to be sanitized.
-   * @returns The sanitized string
-   */
-  const sanitizePhoneOrEmail = (phoneOrEmail: string): string =>
-    phoneOrEmail.replace(/\s+/g, '').toLowerCase();
-
   const validate = (
     values: FormOnyxValues<typeof ONYXKEYS.FORMS.DELETE_ACCOUNT_FORM>,
   ): FormInputErrors<typeof ONYXKEYS.FORMS.DELETE_ACCOUNT_FORM> => {
-    const userEmail = ''; // TODO: Get user email from session
-    const errors = {};
-    // const errors = ValidationUtils.getFieldRequiredErrors(values, [
-    //   'phoneOrEmail',
-    // ]);
-
-    //   if (
-    //     values.phoneOrEmail &&
-    //     userEmailOrPhone &&
-    //     sanitizePhoneOrEmail(userEmailOrPhone) !==
-    //       sanitizePhoneOrEmail(values.phoneOrEmail)
-    //   ) {
-    //     errors.phoneOrEmail = translate(
-    //       'deleteAccountScreen.enterYourDefaultContactMethod',
-    //     );
-    //   }
+    const errors = ValidationUtils.getFieldRequiredErrors(values, []);
     return errors;
   };
-
-  const userEmail = ''; // TODO: Get user email from session
 
   return (
     <ScreenWrapper
@@ -113,21 +88,6 @@ function DeleteAccountScreen({}: DeleteAccountScreenProps) {
             aria-label={translate('deleteAccountScreen.enterMessageHere')}
             role={CONST.ROLE.PRESENTATION}
             containerStyles={[styles.mt5]}
-          />
-          <Text style={[styles.mt5]}>
-            {translate('deleteAccountScreen.enterDefaultContactToConfirm')}{' '}
-            <Text style={[styles.textStrong]}>{userEmail}</Text>
-          </Text>
-          <InputWrapper
-            InputComponent={TextInput}
-            inputID={INPUT_IDS.PHONE_OR_EMAIL}
-            autoCapitalize="none"
-            label={translate('deleteAccountScreen.enterDefaultContact')}
-            aria-label={translate('deleteAccountScreen.enterDefaultContact')}
-            role={CONST.ROLE.PRESENTATION}
-            containerStyles={[styles.mt5]}
-            autoCorrect={false}
-            inputMode={CONST.INPUT_MODE.EMAIL}
           />
           <ConfirmModal
             danger
