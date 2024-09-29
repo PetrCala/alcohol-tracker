@@ -19,7 +19,7 @@ import {Keyboard, ScrollView} from 'react-native';
 
 type AccountScreenProps = StackScreenProps<
   SettingsNavigatorParamList,
-  typeof SCREENS.SETTINGS.ACCOUNT
+  typeof SCREENS.SETTINGS.ACCOUNT.ROOT
 >;
 
 function AccountScreen({route}: AccountScreenProps) {
