@@ -24,7 +24,6 @@ import {
   validateSignInInput,
 } from '@libs/Validation';
 import {deleteUserData, pushNewUserInfo} from '@database/users';
-import {handleErrors} from '@libs/ErrorHandling';
 import WarningMessage from '@components/Info/WarningMessage';
 import type {Profile} from '@src/types/onyx';
 import DBPATHS from '@database/DBPATHS';
@@ -241,7 +240,7 @@ function SignUpScreen() {
     } catch (error: any) {
       const errorHeading = 'Sign-up failed';
       const errorMessage = 'There was an error during sign-up: ';
-      handleErrors(error, errorHeading, errorMessage, dispatch);
+      Alert.alert(errorHeading, errorMessage + error.message);
 
       // Attempt to rollback any changes made
       try {
@@ -249,7 +248,7 @@ function SignUpScreen() {
       } catch (rollbackError: any) {
         const errorHeading = 'Rollback error';
         const errorMessage = 'Error during sign-up rollback:';
-        handleErrors(rollbackError, errorHeading, errorMessage, dispatch);
+        Alert.alert(errorHeading, errorMessage + rollbackError.message);
       }
       return;
     } finally {
@@ -262,7 +261,7 @@ function SignUpScreen() {
       } catch (error: any) {
         const errorHeading = 'User profile update failed';
         const errorMessage = 'There was an error during sign-up: ';
-        handleErrors(error, errorHeading, errorMessage, dispatch);
+        Alert.alert(errorHeading, errorMessage + error.message);
         return;
       } finally {
         dispatch({type: 'SET_LOADING', payload: false});

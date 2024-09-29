@@ -1,6 +1,14 @@
 import Onyx from 'react-native-onyx';
+import {Alert} from 'react-native';
+import {Auth, deleteUser, signOut, type UserCredential} from 'firebase/auth';
+import {Database} from 'firebase/database';
+import {deleteUserData, reauthentificateUser} from '@database/users';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
+import Navigation from '@libs/Navigation/Navigation';
+import ROUTES from '@src/ROUTES';
+import {UserProps} from '@src/types/onyx';
+import {getErrorMessage} from '@libs/ErrorHandling';
 
 /**
  * Clear CloseAccount error message to hide modal
@@ -18,10 +26,47 @@ function setDefaultData() {
   });
 }
 
-async function deleteAccount(reasonForLeaving: string, password: string) {
-  console.debug('Deleting the account...');
-  console.debug('Reason for leaving:', reasonForLeaving);
-  console.debug('Password:', password);
+async function deleteAccount(
+  db: Database | null,
+  auth: Auth | null,
+  userData: UserProps | undefined,
+  reasonForLeaving: string,
+  password: string,
+) {
+  try {
+    const user = auth?.currentUser;
+
+    if (!db || !userData || !user) {
+      throw new Error('Missing data. Try reloading the page');
+    }
+
+    // Reauthentificate the user
+    let authentificationResult: void | UserCredential;
+    authentificationResult = await reauthentificateUser(user, password);
+
+    if (!authentificationResult) {
+      throw new Error('Reauthentification failed');
+    }
+
+    const userNickname = userData.profile.display_name;
+    await deleteUserData(
+      db,
+      user.uid,
+      userNickname,
+      userData.friends,
+      userData.friend_requests,
+    );
+    await deleteUser(user);
+
+    // Updating the loading state here might cause some issues
+    await signOut(auth);
+
+    // Add an alert here informing about the user deletion
+    Navigation.navigate(ROUTES.LOGIN);
+  } catch (error: any) {
+    const message = getErrorMessage(error);
+    Alert.alert('Error deleting your account', message);
+  }
 }
 
 export {

@@ -20,6 +20,9 @@ import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
 import type SCREENS from '@src/SCREENS';
 import INPUT_IDS from '@src/types/form/DeleteAccountForm';
+import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
+import {useFirebase} from '@context/global/FirebaseContext';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
 
 type DeleteAccountScreenOnyxProps = {};
 
@@ -29,7 +32,12 @@ type DeleteAccountScreenProps = DeleteAccountScreenOnyxProps &
 function DeleteAccountScreen({}: DeleteAccountScreenProps) {
   const styles = useThemeStyles();
   const {translate} = useLocalize();
+  const {db, auth} = useFirebase();
+  const user = auth.currentUser;
+  const {userData} = useDatabaseData();
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingText, setLoadingText] = useState('');
   const [isConfirmModalVisible, setConfirmModalVisibility] = useState(false);
   const [reasonForLeaving, setReasonForLeaving] = useState('');
   const [password, setPassword] = useState('');
@@ -45,8 +53,18 @@ function DeleteAccountScreen({}: DeleteAccountScreenProps) {
   };
 
   const onConfirm = async () => {
-    await DeleteAccount.deleteAccount(reasonForLeaving, password);
+    setLoadingText(translate('deleteAccountScreen.deletingAccount'));
+    setIsLoading(true);
+    await DeleteAccount.deleteAccount(
+      db,
+      auth,
+      userData,
+      reasonForLeaving,
+      password,
+    );
     hideConfirmModal();
+    setLoadingText('');
+    setIsLoading(false);
   };
 
   const showConfirmModal = (
@@ -60,9 +78,13 @@ function DeleteAccountScreen({}: DeleteAccountScreenProps) {
   const validate = (
     values: FormOnyxValues<typeof ONYXKEYS.FORMS.DELETE_ACCOUNT_FORM>,
   ): FormInputErrors<typeof ONYXKEYS.FORMS.DELETE_ACCOUNT_FORM> => {
-    const errors = ValidationUtils.getFieldRequiredErrors(values, []);
+    const errors = ValidationUtils.getFieldRequiredErrors(values, ['password']);
     return errors;
   };
+
+  if (isLoading) {
+    return <FullScreenLoadingIndicator loadingText={loadingText} />;
+  }
 
   return (
     <ScreenWrapper

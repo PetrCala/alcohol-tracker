@@ -262,7 +262,6 @@ export default {
     // signOutConfirmationText: "You'll lose any offline changes if you sign out.",
     signOutConfirmationText: 'Do you really want to sign out?',
     signingOut: 'Signing out...',
-    deletingAccount: 'Deleting account...',
     error: {},
   },
   accountScreen: {
@@ -291,6 +290,7 @@ export default {
       'Are you sure you want to delete your account? This will permanently delete all of your data.',
     enterPasswordToConfirm: 'Please enter your password to confirm deletion.',
     enterPassword: 'Enter your password',
+    deletingAccount: 'Deleting account...',
   },
   profileScreen: {
     title: 'Profile',
