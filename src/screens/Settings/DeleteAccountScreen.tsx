@@ -33,7 +33,6 @@ function DeleteAccountScreen({}: DeleteAccountScreenProps) {
   const styles = useThemeStyles();
   const {translate} = useLocalize();
   const {db, auth} = useFirebase();
-  const user = auth.currentUser;
   const {userData} = useDatabaseData();
 
   const [isLoading, setIsLoading] = useState(false);

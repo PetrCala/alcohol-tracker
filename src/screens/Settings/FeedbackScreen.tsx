@@ -89,7 +89,7 @@ function FeedbackScreen({}: FeedbackScreenProps) {
               label={translate('feedbackScreen.enterFeedback')}
               aria-label={translate('feedbackScreen.enterFeedback')}
               role={CONST.ROLE.PRESENTATION}
-              maxLength={CONST.LONG_FORM_CHARACTER_LIMIT}
+              maxLength={CONST.DESCRIPTION_LIMIT}
               spellCheck={false}
               containerStyles={[styles.mt5]}
             />

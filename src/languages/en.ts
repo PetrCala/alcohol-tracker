@@ -62,6 +62,7 @@ export default {
     continue: 'Continue',
     firstName: 'First name',
     lastName: 'Last name',
+    displayName: 'Display name',
     phone: 'Phone',
     phoneNumber: 'Phone number',
     phoneNumberPlaceholder: '(xxx) xxx-xxx-xxx',
@@ -273,6 +274,20 @@ export default {
       title: 'Personal Details',
       subtitle:
         'These details help us provide you with the best user experience.',
+    },
+  },
+  displayNameScreen: {
+    headerTitle: 'Display name',
+    isShownOnProfile: 'Your display name is shown on your profile.',
+    updatingDisplayName: 'Updating your display name...',
+    error: {
+      hasInvalidCharacter: 'Invalid character',
+      containsReservedWord: 'Display name contains a reserved word.',
+      characterLimitExceedCounter: ({length, limit}) =>
+        `Character limit exceeded (${length}/${limit})`,
+      characterLimit: ({limit}: CharacterLimitParams) =>
+        `Exceeds the maximum length of ${limit} characters`,
+      requiredDisplayName: 'Display name is required',
     },
   },
   timezoneScreen: {

@@ -218,18 +218,26 @@ async function reauthentificateUser(
  *
  * @param db Database to change the display name in
  * @param user User to change the display name for
+ * @param oldDisplayName The old display name
  * @param newDisplayName The new display name
  * @returns An empty promise
  */
 async function changeDisplayName(
   db: Database,
   user: User | null,
+  oldDisplayName: string | undefined,
   newDisplayName: string,
 ): Promise<void> {
   if (!user) {
     throw new Error('User is null');
   }
+  if (!oldDisplayName) {
+    throw new Error(
+      'Could not identify the old display name. Try reloading the app.',
+    );
+  }
   const userID = user.uid;
+  const oldNicknameKey = cleanStringForFirebaseKey(oldDisplayName);
   const nicknameKey = cleanStringForFirebaseKey(newDisplayName);
   const nicknameRef = DBPATHS.NICKNAME_TO_ID_NICKNAME_KEY_USER_ID;
   const displayNameRef = DBPATHS.USERS_USER_ID_PROFILE_DISPLAY_NAME;
@@ -242,13 +250,14 @@ async function changeDisplayName(
     return;
   }
 
-  const updates: Record<string, string> = {};
+  const updates: Record<string, string | null> = {};
+  updates[nicknameRef.getRoute(oldNicknameKey, userID)] = null;
   updates[nicknameRef.getRoute(nicknameKey, userID)] = newDisplayName;
   updates[displayNameRef.getRoute(userID)] = newDisplayName;
+
   // TODO possibly rewrite these into a transaction
   await update(ref(db), updates);
   await updateProfile(user, {displayName: newDisplayName});
-  return;
 }
 
 export {

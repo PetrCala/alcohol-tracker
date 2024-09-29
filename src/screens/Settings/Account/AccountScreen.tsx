@@ -41,7 +41,7 @@ function AccountScreen({route}: AccountScreenProps) {
     {
       description: 'Display name',
       title: profileData?.display_name ?? '',
-      pageRoute: ROUTES.HOME,
+      pageRoute: ROUTES.SETTINGS_DISPLAY_NAME,
     },
     {
       description: 'Email',
