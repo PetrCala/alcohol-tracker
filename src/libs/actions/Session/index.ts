@@ -193,8 +193,7 @@ import clearCache from './clearCache';
  */
 const signOut = async (auth: Auth) => {
   try {
-    throw new Error('Custom sign out error');
-    // await fbSignOut(auth);
+    await fbSignOut(auth);
   } catch (error: any) {
     Alert.alert(
       'User sign out error',
