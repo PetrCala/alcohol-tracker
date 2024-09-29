@@ -55,9 +55,10 @@ const ROUTES = {
   SETTINGS_LANGUAGE: 'settings/preferences/language',
   SETTINGS_THEME: 'settings/preferences/theme',
 
-  SETTINGS_DELETE: 'settings/delete',
   SETTINGS_TERMS_OF_SERVICE: 'settings/terms-of-service',
   SETTINGS_PRIVACY_POLICY: 'settings/privacy-policy',
+  SETTINGS_FEEDBACK: 'settings/feedback',
+  SETTINGS_DELETE: 'settings/delete',
 
   PROFILE: {
     route: 'profile/:userID',

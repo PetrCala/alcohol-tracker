@@ -1,6 +1,5 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {View} from 'react-native';
-import type {OnyxEntry} from 'react-native-onyx';
+import React, {useCallback} from 'react';
+import {Alert, View} from 'react-native';
 import FullscreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import ScreenWrapper from '@components/ScreenWrapper';
@@ -8,12 +7,10 @@ import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Navigation from '@libs/Navigation/Navigation';
 import * as ValidationUtils from '@libs/ValidationUtils';
-import type {BackToParams} from '@libs/Navigation/types';
+import type {SettingsNavigatorParamList} from '@libs/Navigation/types';
 import type {FormOnyxValues} from '@src/components/Form/types';
-import type {Country} from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
 import INPUT_IDS from '@src/types/form/FeedbackForm';
-import type {Address} from '@src/types/onyx/PrivatePersonalDetails';
 import FormProvider from '@components/Form/FormProvider';
 import Text from '@components/Text';
 import {Errors} from '@src/types/onyx/OnyxCommon';
@@ -21,32 +18,37 @@ import InputWrapper from '@components/Form/InputWrapper';
 import variables from '@src/styles/variables';
 import CONST from '@src/CONST';
 import TextInput from '@components/TextInput';
+import {StackScreenProps} from '@react-navigation/stack';
+import SCREENS from '@src/SCREENS';
+import {submitFeedback} from '@database/feedback';
+import {useFirebase} from '@context/global/FirebaseContext';
 
-type FeedbackScreenProps = {
-  /** User's feedback */
-  note?: string;
+type FeedbackScreenOnyxProps = {};
 
-  /** Whether app is loading */
-  isLoadingApp: OnyxEntry<boolean>;
+type FeedbackScreenProps = FeedbackScreenOnyxProps &
+  StackScreenProps<SettingsNavigatorParamList, typeof SCREENS.SETTINGS.DELETE>;
 
-  /** Function to call when feedback form is submitted */
-  submitFeedback: (
-    values: FormOnyxValues<typeof ONYXKEYS.FORMS.FEEDBACK_FORM>,
-  ) => void;
-
-  /** Title of feedback screen */
-  title: string;
-} & BackToParams;
-
-function FeedbackScreen({
-  title,
-  note,
-  submitFeedback,
-  isLoadingApp = true,
-  backTo,
-}: FeedbackScreenProps) {
+function FeedbackScreen({}: FeedbackScreenProps) {
   const styles = useThemeStyles();
   const {translate} = useLocalize();
+  const {db, auth} = useFirebase();
+  const userID = auth.currentUser?.uid;
+
+  const [isLoading, setIsLoading] = React.useState(false);
+
+  const onSubmit = async (
+    values: FormOnyxValues<typeof ONYXKEYS.FORMS.FEEDBACK_FORM>,
+  ) => {
+    try {
+      setIsLoading(true);
+      await submitFeedback(db, userID, values);
+      Navigation.goBack();
+    } catch (error: any) {
+      Alert.alert('Failed to submit feedback', error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const validate = useCallback(
     (values: FormOnyxValues<typeof ONYXKEYS.FORMS.FEEDBACK_FORM>): Errors => {
@@ -61,30 +63,31 @@ function FeedbackScreen({
       includeSafeAreaPaddingBottom={false}
       testID={FeedbackScreen.displayName}>
       <HeaderWithBackButton
-        title={title}
+        title={translate('feedbackScreen.title')}
         shouldShowBackButton
-        onBackButtonPress={() => Navigation.goBack(backTo)}
+        onBackButtonPress={() => Navigation.goBack()}
       />
-      {isLoadingApp ? (
-        <FullscreenLoadingIndicator style={[styles.flex1, styles.pRelative]} />
+      {isLoading ? (
+        <FullscreenLoadingIndicator
+          style={[styles.flex1]}
+          loadingText={translate('feedbackScreen.sending')}
+        />
       ) : (
         <FormProvider
           formID={ONYXKEYS.FORMS.FEEDBACK_FORM}
           validate={validate}
-          onSubmit={submitFeedback}
-          submitButtonText={translate('deleteAccountScreen.deleteAccount')}
+          onSubmit={onSubmit}
+          submitButtonText={translate('feedbackScreen.submit')}
           style={[styles.flexGrow1, styles.mh5]}>
           <View style={[styles.flexGrow1]}>
-            <Text>
-              {translate('deleteAccountScreen.reasonForLeavingPrompt')}
-            </Text>
+            <Text>{translate('feedbackScreen.prompt')}</Text>
             <InputWrapper
               InputComponent={TextInput}
               inputID={INPUT_IDS.TEXT}
-              autoGrowHeight // ?
-              maxAutoGrowHeight={variables.textInputAutoGrowMaxHeight} // ?
-              label={translate('deleteAccountScreen.enterMessageHere')}
-              aria-label={translate('deleteAccountScreen.enterMessageHere')}
+              autoGrowHeight
+              maxAutoGrowHeight={variables.textInputAutoGrowMaxHeight}
+              label={translate('feedbackScreen.enterFeedback')}
+              aria-label={translate('feedbackScreen.enterFeedback')}
               role={CONST.ROLE.PRESENTATION}
               maxLength={CONST.LONG_FORM_CHARACTER_LIMIT}
               spellCheck={false}

@@ -1,7 +1,6 @@
 ﻿import type {Database} from 'firebase/database';
 import {child, push, ref, update} from 'firebase/database';
 import type {FeedbackList, Feedback} from '../types/onyx';
-import {Alert} from 'react-native';
 import DBPATHS from './DBPATHS';
 import {FormOnyxValues} from '@components/Form/types';
 import ONYXKEYS from '@src/ONYXKEYS';
@@ -20,24 +19,30 @@ const feedbackItemRef = DBPATHS.FEEDBACK_FEEDBACK_ID;
  *  */
 async function submitFeedback(
   db: Database,
-  userID: string,
+  userID: string | undefined,
   values: FormOnyxValues<typeof ONYXKEYS.FORMS.FEEDBACK_FORM>,
 ): Promise<void> {
+  if (!userID) {
+    throw new Error(
+      'The application failed to retrieve the user ID from the authentication context',
+    );
+  }
+
   const timestampNow = new Date().getTime();
   const newFeedback: Feedback = {
     submit_time: timestampNow,
     text: values.text,
     user_id: userID,
   };
+
   // Create a new feedback id
   const newFeedbackKey = push(child(ref(db), DBPATHS.FEEDBACK)).key;
   if (!newFeedbackKey) {
-    Alert.alert(
-      'Failed to submit feedback',
+    throw new Error(
       'The application failed to create a new feedback object in the database',
     );
-    return;
   }
+
   // Create the updates object
   const updates: FeedbackList = {};
   updates[feedbackItemRef.getRoute(newFeedbackKey)] = newFeedback;
@@ -58,7 +63,7 @@ async function removeFeedback(
 ): Promise<void> {
   const updates: Record<string, null> = {};
   updates[feedbackItemRef.getRoute(feedbackKey)] = null;
-  return update(ref(db), updates);
+  await update(ref(db), updates);
 }
 
 export {submitFeedback, removeFeedback};

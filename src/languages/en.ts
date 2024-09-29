@@ -280,6 +280,15 @@ export default {
     isShownOnProfile: 'Your timezone is shown on your profile.',
     getLocationAutomatically: 'Automatically determine your location',
   },
+  feedbackScreen: {
+    title: 'Feedback',
+    prompt: 'What would you like us to improve?',
+    enterFeedback: 'Enter your feedback here',
+    submit: 'Submit feedback',
+    sent: 'Feedback sent!',
+    sending: 'Sending feedback...',
+    error: 'There was an error sending your feedback. Please try again.',
+  },
   deleteAccountScreen: {
     deleteAccount: 'Delete account',
     reasonForLeavingPrompt:

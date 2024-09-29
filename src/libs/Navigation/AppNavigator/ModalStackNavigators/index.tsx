@@ -104,9 +104,6 @@ const SettingsModalStackNavigator =
     [SCREENS.SETTINGS.PREFERENCES.THEME]: () =>
       require<ReactComponentModule>('@screens/Settings/Preferences/ThemeScreen')
         .default,
-    [SCREENS.SETTINGS.DELETE]: () =>
-      require<ReactComponentModule>('@screens/Settings/DeleteAccountScreen')
-        .default,
     [SCREENS.SETTINGS.APP_SHARE]: () =>
       require<ReactComponentModule>('@screens/Settings/AppShareScreen').default,
     [SCREENS.SETTINGS.TERMS_OF_SERVICE]: () =>
@@ -114,6 +111,11 @@ const SettingsModalStackNavigator =
         .default,
     [SCREENS.SETTINGS.PRIVACY_POLICY]: () =>
       require<ReactComponentModule>('@screens/Settings/PrivacyPolicyScreen')
+        .default,
+    [SCREENS.SETTINGS.FEEDBACK]: () =>
+      require<ReactComponentModule>('@screens/Settings/FeedbackScreen').default,
+    [SCREENS.SETTINGS.DELETE]: () =>
+      require<ReactComponentModule>('@screens/Settings/DeleteAccountScreen')
         .default,
   });
 

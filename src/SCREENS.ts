@@ -58,9 +58,10 @@ const SCREENS = {
       THEME: 'Settings_Preferences_Theme',
     },
 
-    DELETE: 'Settings_Delete',
     TERMS_OF_SERVICE: 'Settings_TermsOfService',
     PRIVACY_POLICY: 'Settings_PrivacyPolicy',
+    FEEDBACK: 'Settings_Feedback',
+    DELETE: 'Settings_Delete',
   },
 
   PROFILE: {

@@ -104,14 +104,15 @@ const config: LinkingOptions<RootStackParamList>['config'] = {
               path: ROUTES.SETTINGS_TIMEZONE_SELECT,
               exact: true,
             },
-            [SCREENS.SETTINGS.DELETE]: {
-              path: ROUTES.SETTINGS_DELETE,
-              exact: true,
-            },
             [SCREENS.SETTINGS.APP_SHARE]: ROUTES.SETTINGS_APP_SHARE,
             [SCREENS.SETTINGS.PRIVACY_POLICY]: ROUTES.SETTINGS_PRIVACY_POLICY,
             [SCREENS.SETTINGS.TERMS_OF_SERVICE]:
               ROUTES.SETTINGS_TERMS_OF_SERVICE,
+            [SCREENS.SETTINGS.FEEDBACK]: ROUTES.SETTINGS_FEEDBACK,
+            [SCREENS.SETTINGS.DELETE]: {
+              path: ROUTES.SETTINGS_DELETE,
+              exact: true,
+            },
           },
         },
         [SCREENS.RIGHT_MODAL.PROFILE]: {

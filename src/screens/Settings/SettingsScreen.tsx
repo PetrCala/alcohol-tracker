@@ -171,7 +171,7 @@ function SettingsScreen({}: SettingsScreenProps) {
           translationKey: 'settingsScreen.giveFeedback',
           icon: KirokuIcons.Idea,
           action: () => {
-            return;
+            Navigation.navigate(ROUTES.SETTINGS_FEEDBACK);
           },
         },
         {

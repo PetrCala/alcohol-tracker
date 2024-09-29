@@ -100,10 +100,11 @@ type SettingsNavigatorParamList = {
   [SCREENS.SETTINGS.PREFERENCES.ROOT]: undefined;
   [SCREENS.SETTINGS.PREFERENCES.LANGUAGE]: undefined;
   [SCREENS.SETTINGS.PREFERENCES.THEME]: undefined;
-  [SCREENS.SETTINGS.DELETE]: undefined;
   [SCREENS.SETTINGS.APP_SHARE]: undefined;
   [SCREENS.SETTINGS.TERMS_OF_SERVICE]: undefined;
   [SCREENS.SETTINGS.PRIVACY_POLICY]: undefined;
+  [SCREENS.SETTINGS.FEEDBACK]: undefined;
+  [SCREENS.SETTINGS.DELETE]: undefined;
 };
 
 type ProfileNavigatorParamList = {
