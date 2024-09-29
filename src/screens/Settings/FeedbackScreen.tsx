@@ -17,6 +17,10 @@ import type {Address} from '@src/types/onyx/PrivatePersonalDetails';
 import FormProvider from '@components/Form/FormProvider';
 import Text from '@components/Text';
 import {Errors} from '@src/types/onyx/OnyxCommon';
+import InputWrapper from '@components/Form/InputWrapper';
+import variables from '@src/styles/variables';
+import CONST from '@src/CONST';
+import TextInput from '@components/TextInput';
 
 type FeedbackScreenProps = {
   /** User's feedback */
@@ -65,54 +69,26 @@ function FeedbackScreen({
         <FullscreenLoadingIndicator style={[styles.flex1, styles.pRelative]} />
       ) : (
         <FormProvider
-          formID={ONYXKEYS.FORMS.DELETE_ACCOUNT_FORM}
+          formID={ONYXKEYS.FORMS.FEEDBACK_FORM}
           validate={validate}
           onSubmit={submitFeedback}
           submitButtonText={translate('deleteAccountScreen.deleteAccount')}
-          style={[styles.flexGrow1, styles.mh5]}
-          isSubmitActionDangerous>
+          style={[styles.flexGrow1, styles.mh5]}>
           <View style={[styles.flexGrow1]}>
             <Text>
               {translate('deleteAccountScreen.reasonForLeavingPrompt')}
             </Text>
             <InputWrapper
               InputComponent={TextInput}
-              inputID={INPUT_IDS.REASON_FOR_LEAVING}
-              autoGrowHeight
-              maxAutoGrowHeight={variables.textInputAutoGrowMaxHeight}
+              inputID={INPUT_IDS.TEXT}
+              autoGrowHeight // ?
+              maxAutoGrowHeight={variables.textInputAutoGrowMaxHeight} // ?
               label={translate('deleteAccountScreen.enterMessageHere')}
               aria-label={translate('deleteAccountScreen.enterMessageHere')}
               role={CONST.ROLE.PRESENTATION}
+              maxLength={CONST.LONG_FORM_CHARACTER_LIMIT}
+              spellCheck={false}
               containerStyles={[styles.mt5]}
-            />
-            <Text style={[styles.mt5]}>
-              {translate('deleteAccountScreen.enterPasswordToConfirm')}
-            </Text>
-            <InputWrapper
-              InputComponent={TextInput}
-              inputID={INPUT_IDS.PASSWORD}
-              autoCapitalize="none"
-              label={translate('deleteAccountScreen.enterPassword')}
-              aria-label={translate('deleteAccountScreen.enterPassword')}
-              role={CONST.ROLE.PRESENTATION}
-              containerStyles={[styles.mt5]}
-              autoCorrect={false}
-              inputMode={CONST.INPUT_MODE.TEXT}
-              secureTextEntry
-            />
-            <ConfirmModal
-              danger
-              title={translate('deleteAccountScreen.deleteAccountWarning')}
-              onConfirm={onConfirm}
-              onCancel={hideConfirmModal}
-              isVisible={isConfirmModalVisible}
-              prompt={translate(
-                'deleteAccountScreen.deleteAccountPermanentlyDeleteData',
-              )}
-              confirmText={translate('common.yesContinue')}
-              cancelText={translate('common.cancel')}
-              shouldDisableConfirmButtonWhenOffline
-              shouldShowCancelButton
             />
           </View>
         </FormProvider>

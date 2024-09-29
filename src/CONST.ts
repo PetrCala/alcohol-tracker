@@ -246,6 +246,8 @@ const CONST = {
     // SCREENS.VALIDATE_LOGIN,
   ] as string[],
 
+  FORM_CHARACTER_LIMIT: 50,
+  LONG_FORM_CHARACTER_LIMIT: 500,
   FIREBASE_STORAGE_URL: 'https://firebasestorage.googleapis.com',
   FRIEND_REQUEST_STATUS: {
     SELF: 'self',
