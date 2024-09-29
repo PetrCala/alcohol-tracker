@@ -67,6 +67,10 @@ type CentralPaneScreensParamList = {
   [SCREENS.SETTINGS.PREFERENCES.ROOT]: undefined;
 };
 
+type BackToParams = {
+  backTo?: Routes;
+};
+
 type AchievementsNavigatorParamList = {
   [SCREENS.ACHIEVEMENTS.ROOT]: undefined;
 };
@@ -213,6 +217,7 @@ export type {
   AuthScreensParamList,
   BottomTabName,
   BottomTabNavigatorParamList,
+  BackToParams,
   CentralPaneScreensParamList,
   CentralPaneName,
   DayOverviewNavigatorParamList,
