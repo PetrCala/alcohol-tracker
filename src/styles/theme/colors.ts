@@ -13,6 +13,7 @@ const colors: Record<string, Color> = {
   yellow: '#FFFF99',
   yellowHover: '#FFFF66',
   yellowPressed: '#FFFFB2',
+  yellowStrong: '#FCF50F',
   red: '#FF4949',
   redHover: '#DB2A2A',
   redPressed: '#FF9999',

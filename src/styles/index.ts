@@ -591,7 +591,7 @@ const styles = (theme: ThemeColors) =>
     },
 
     buttonSuccessText: {
-      color: theme.textLight,
+      color: theme.textDark,
     },
 
     buttonDangerText: {
