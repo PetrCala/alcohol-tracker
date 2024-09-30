@@ -46,6 +46,7 @@ const ROUTES = {
   SETTINGS: 'settings',
 
   SETTINGS_ACCOUNT: 'settings/account',
+  SETTINGS_USER_NAME: 'settings/user-name',
   SETTINGS_DISPLAY_NAME: 'settings/display-name',
   SETTINGS_TIMEZONE: 'settings/timezone',
   SETTINGS_TIMEZONE_SELECT: 'settings/timezone-select',

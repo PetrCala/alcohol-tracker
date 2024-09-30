@@ -136,6 +136,16 @@ const DBPATHS = {
     getRoute: (user_id: UserID) =>
       `users/${user_id}/profile/photo_url` as const,
   },
+  USERS_USER_ID_PROFILE_FIRST_NAME: {
+    route: '/users/:user_id/profile/first_name',
+    getRoute: (user_id: UserID) =>
+      `users/${user_id}/profile/first_name` as const,
+  },
+  USERS_USER_ID_PROFILE_LAST_NAME: {
+    route: '/users/:user_id/profile/last_name',
+    getRoute: (user_id: UserID) =>
+      `users/${user_id}/profile/last_name` as const,
+  },
   USERS_USER_ID_PROFILE_DISPLAY_NAME: {
     route: '/users/:user_id/profile/display_name',
     getRoute: (user_id: UserID) =>

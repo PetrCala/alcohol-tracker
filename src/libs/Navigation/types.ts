@@ -94,6 +94,7 @@ type DrinkingSessionNavigatorParamList = {
 type SettingsNavigatorParamList = {
   [SCREENS.SETTINGS.ROOT]: undefined;
   [SCREENS.SETTINGS.ACCOUNT.ROOT]: undefined;
+  [SCREENS.SETTINGS.ACCOUNT.USER_NAME]: undefined;
   [SCREENS.SETTINGS.ACCOUNT.DISPLAY_NAME]: undefined;
   [SCREENS.SETTINGS.ACCOUNT.TIMEZONE]: undefined;
   [SCREENS.SETTINGS.ACCOUNT.TIMEZONE_SELECT]: undefined;

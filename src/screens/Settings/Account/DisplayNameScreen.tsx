@@ -12,8 +12,8 @@ import TextInput from '@components/TextInput';
 import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
 import * as ErrorUtils from '@libs/ErrorUtils';
-import Navigation from '@libs/Navigation/Navigation';
 import * as ValidationUtils from '@libs/ValidationUtils';
+import Navigation from '@libs/Navigation/Navigation';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
 import INPUT_IDS from '@src/types/form/DisplayNameForm';
@@ -67,7 +67,7 @@ function DisplayNameScreen({}: DisplayNameScreenProps) {
       Navigation.goBack();
     } catch (error: any) {
       const message = getErrorMessage(error);
-      Alert.alert('Error updating display name', message);
+      Alert.alert(translate('displayNameScreen.error.generic'), message);
     } finally {
       setLoadingText('');
       setIsLoadingName(false);
@@ -83,7 +83,7 @@ function DisplayNameScreen({}: DisplayNameScreenProps) {
       ErrorUtils.addErrorMessage(
         errors,
         'displayName',
-        translate('displayNameScreen.error.hasInvalidCharacter'),
+        translate('personalDetails.error.hasInvalidCharacter'),
       );
     } else if (values.displayName.length > CONST.TITLE_CHARACTER_LIMIT) {
       ErrorUtils.addErrorMessage(
@@ -98,7 +98,7 @@ function DisplayNameScreen({}: DisplayNameScreenProps) {
       ErrorUtils.addErrorMessage(
         errors,
         'displayName',
-        translate('displayNameScreen.error.requiredDisplayName'),
+        translate('personalDetails.error.requiredDisplayName'),
       );
     }
     if (
@@ -110,7 +110,7 @@ function DisplayNameScreen({}: DisplayNameScreenProps) {
       ErrorUtils.addErrorMessage(
         errors,
         'displayName',
-        translate('displayNameScreen.error.containsReservedWord'),
+        translate('personalDetails.error.containsReservedWord'),
       );
     }
 

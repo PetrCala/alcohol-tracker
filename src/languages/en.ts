@@ -234,6 +234,19 @@ export default {
     allowPermission: 'allow location permission in settings',
     tryAgain: 'and then try again.',
   },
+  personalDetails: {
+    error: {
+      hasInvalidCharacter: 'Invalid character',
+      containsReservedWord: 'Display name contains a reserved word.',
+      characterLimitExceedCounter: ({length, limit}) =>
+        `Character limit exceeded (${length}/${limit})`,
+      characterLimit: ({limit}: CharacterLimitParams) =>
+        `Exceeds the maximum length of ${limit} characters`,
+      requiredFirstName: 'First name cannot be empty',
+      requiredLastName: 'Last name cannot be empty',
+      requiredDisplayName: 'Display name cannot be empty',
+    },
+  },
   socialScreen: {
     title: 'Friends',
   },
@@ -276,18 +289,20 @@ export default {
         'These details help us provide you with the best user experience.',
     },
   },
+  userNameScreen: {
+    headerTitle: 'User name',
+    isShownOnProfile: 'Your user name is shown on your profile.',
+    updatingUserName: 'Updating your user name...',
+    error: {
+      generic: 'Error updating user name',
+    },
+  },
   displayNameScreen: {
     headerTitle: 'Display name',
     isShownOnProfile: 'Your display name is shown on your profile.',
     updatingDisplayName: 'Updating your display name...',
     error: {
-      hasInvalidCharacter: 'Invalid character',
-      containsReservedWord: 'Display name contains a reserved word.',
-      characterLimitExceedCounter: ({length, limit}) =>
-        `Character limit exceeded (${length}/${limit})`,
-      characterLimit: ({limit}: CharacterLimitParams) =>
-        `Exceeds the maximum length of ${limit} characters`,
-      requiredDisplayName: 'Display name is required',
+      generic: 'Error updating display name',
     },
   },
   timezoneScreen: {

@@ -46,6 +46,7 @@ const SCREENS = {
 
     ACCOUNT: {
       ROOT: 'Settings_Account',
+      USER_NAME: 'Settings_UserName',
       DISPLAY_NAME: 'Settings_DisplayName',
       TIMEZONE: 'Settings_Timezone',
       TIMEZONE_SELECT: 'Settings_Timezone_Select',

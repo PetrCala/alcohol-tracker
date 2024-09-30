@@ -86,6 +86,9 @@ const SettingsModalStackNavigator =
     [SCREENS.SETTINGS.ACCOUNT.ROOT]: () =>
       require<ReactComponentModule>('@screens/Settings/Account/AccountScreen')
         .default,
+    [SCREENS.SETTINGS.ACCOUNT.USER_NAME]: () =>
+      require<ReactComponentModule>('@screens/Settings/Account/UserNameScreen')
+        .default,
     [SCREENS.SETTINGS.ACCOUNT.DISPLAY_NAME]: () =>
       require<ReactComponentModule>('@screens/Settings/Account/DisplayNameScreen')
         .default,

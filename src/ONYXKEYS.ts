@@ -375,6 +375,8 @@ const ONYXKEYS = {
     //     PROFILE_SETTINGS_FORM_DRAFT: 'profileSettingsFormDraft',
     DISPLAY_NAME_FORM: 'displayNameForm',
     DISPLAY_NAME_FORM_DRAFT: 'displayNameFormDraft',
+    USER_NAME_FORM: 'userNameForm',
+    USER_NAME_FORM_DRAFT: 'userNameFormDraft',
     //     ONBOARDING_PERSONAL_DETAILS_FORM: 'onboardingPersonalDetailsForm',
     //     ONBOARDING_PERSONAL_DETAILS_FORM_DRAFT:
     //       'onboardingPersonalDetailsFormDraft',
@@ -399,6 +401,7 @@ type OnyxFormValuesMapping = {
   [ONYXKEYS.FORMS.DELETE_ACCOUNT_FORM]: FormTypes.DeleteAccountForm;
   //   [ONYXKEYS.FORMS.PROFILE_SETTINGS_FORM]: FormTypes.ProfileSettingsForm;
   [ONYXKEYS.FORMS.DISPLAY_NAME_FORM]: FormTypes.DisplayNameForm;
+  [ONYXKEYS.FORMS.USER_NAME_FORM]: FormTypes.UserNameForm;
   [ONYXKEYS.FORMS.LEGAL_NAME_FORM]: FormTypes.LegalNameForm;
   [ONYXKEYS.FORMS.DATE_OF_BIRTH_FORM]: FormTypes.DateOfBirthForm;
   // [ONYXKEYS.FORMS.HOME_ADDRESS_FORM]: FormTypes.HomeAddressForm;

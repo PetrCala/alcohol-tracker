@@ -92,6 +92,10 @@ const config: LinkingOptions<RootStackParamList>['config'] = {
               path: ROUTES.SETTINGS_THEME,
               exact: true,
             },
+            [SCREENS.SETTINGS.ACCOUNT.USER_NAME]: {
+              path: ROUTES.SETTINGS_USER_NAME,
+              exact: true,
+            },
             [SCREENS.SETTINGS.ACCOUNT.DISPLAY_NAME]: {
               path: ROUTES.SETTINGS_DISPLAY_NAME,
               exact: true,

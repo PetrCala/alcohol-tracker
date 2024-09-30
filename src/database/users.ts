@@ -260,6 +260,36 @@ async function changeDisplayName(
   await updateProfile(user, {displayName: newDisplayName});
 }
 
+/**
+ * Change a user name for a user.
+ *
+ * @param db Database to change the display name in
+ * @param user User to change the display name for
+ * @param firstName The new first name
+ * @param lastName The new last name
+ * @returns An empty promise
+ */
+async function changeUserName(
+  db: Database,
+  user: User | null,
+  firstName: string,
+  lastName: string,
+): Promise<void> {
+  if (!user) {
+    throw new Error('User is null');
+  }
+
+  const userID = user.uid;
+  const firstNameRef = DBPATHS.USERS_USER_ID_PROFILE_FIRST_NAME;
+  const lastNameRef = DBPATHS.USERS_USER_ID_PROFILE_LAST_NAME;
+
+  const updates: Record<string, string> = {};
+  updates[firstNameRef.getRoute(userID)] = firstName;
+  updates[lastNameRef.getRoute(userID)] = lastName;
+
+  await update(ref(db), updates);
+}
+
 export {
   getDefaultPreferences,
   getDefaultUserData,
@@ -269,5 +299,6 @@ export {
   deleteUserData,
   synchronizeUserStatus,
   reauthentificateUser,
+  changeUserName,
   changeDisplayName,
 };

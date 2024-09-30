@@ -2,7 +2,8 @@ import type {UserID, UserList} from './OnyxCommon';
 import type FriendRequestList from './FriendRequestList';
 
 type Profile = {
-  name?: string; // TODO: make required from 0.4.x
+  first_name?: string; // TODO: make required from 0.4.x
+  last_name?: string; // TODO: make required from 0.4.x
   display_name: string;
   photo_url: string;
 };
