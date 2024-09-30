@@ -773,6 +773,7 @@ const CONST = {
     AM: 'AM',
     PM: 'PM',
   },
+  INDENTS: '    ',
   TWO_FACTOR_AUTH_STEPS: {
     CODES: 'CODES',
     VERIFY: 'VERIFY',

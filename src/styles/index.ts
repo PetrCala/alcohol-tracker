@@ -1050,6 +1050,20 @@ const styles = (theme: ThemeColors) =>
       padding: 20,
     },
 
+    peopleRow: {
+      width: '100%',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      ...spacing.ph5,
+    },
+
+    peopleRowBorderBottom: {
+      borderColor: theme.border,
+      borderBottomWidth: 1,
+      ...spacing.pb2,
+    },
+
     pointerEventsNone,
 
     pointerEventsAuto,
@@ -1206,6 +1220,20 @@ const styles = (theme: ThemeColors) =>
       marginLeft: 8,
     },
 
+    selectionListPressableItemWrapper: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      paddingHorizontal: 16,
+      paddingVertical: 16,
+      marginHorizontal: 20,
+      backgroundColor: theme.highlightBG,
+      borderRadius: 8,
+    },
+
+    selectionListStickyHeader: {
+      backgroundColor: theme.appBG,
+    },
+
     optionAlternateText: {
       minHeight: variables.alternateTextHeight,
       lineHeight: variables.lineHeightXLarge,
@@ -1214,6 +1242,40 @@ const styles = (theme: ThemeColors) =>
     optionSelectCircle: {
       borderRadius: variables.componentSizeSmall / 2 + 1,
       padding: 1,
+    },
+
+    optionRow: {
+      minHeight: variables.optionRowHeight,
+      paddingTop: 12,
+      paddingBottom: 12,
+    },
+
+    optionRowSelected: {
+      backgroundColor: theme.activeComponentBG,
+    },
+
+    optionRowDisabled: {
+      color: theme.textSupporting,
+    },
+
+    optionRowCompact: {
+      height: variables.optionRowHeightCompact,
+      paddingTop: 12,
+      paddingBottom: 12,
+    },
+
+    optionDisplayName: {
+      ...FontUtils.fontFamily.platform.EXP_NEUE,
+      minHeight: variables.alternateTextHeight,
+      lineHeight: variables.lineHeightXLarge,
+      ...whiteSpace.noWrap,
+    },
+
+    optionDisplayNameCompact: {
+      minWidth: 'auto',
+      flexBasis: 'auto',
+      flexGrow: 0,
+      flexShrink: 1,
     },
 
     sidebarLink: {
@@ -1311,6 +1373,18 @@ const styles = (theme: ThemeColors) =>
       ...FontUtils.fontFamily.platform.EXP_NEUE,
       fontSize: variables.fontSizeSmall,
       color: theme.textSupporting,
+    },
+
+    lh14: {
+      lineHeight: variables.lineHeightSmall,
+    },
+
+    lh16: {
+      lineHeight: 16,
+    },
+
+    lh20: {
+      lineHeight: 20,
     },
 
     mutedTextLabel: {
