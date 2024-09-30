@@ -291,10 +291,11 @@ export default {
   },
   userNameScreen: {
     headerTitle: 'User name',
-    isShownOnProfile: 'Your user name is shown on your profile.',
-    updatingUserName: 'Updating your user name...',
+    explanation:
+      'Displaying your name helps your friends easily find and recognize you on your profile.',
+    updatingUserName: 'Updating your name...',
     error: {
-      generic: 'Error updating user name',
+      generic: 'Error updating your name',
     },
   },
   displayNameScreen: {

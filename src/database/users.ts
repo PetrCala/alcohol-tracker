@@ -20,10 +20,7 @@ import {Alert} from 'react-native';
 import {cleanStringForFirebaseKey} from '../libs/StringUtilsKiroku';
 import DBPATHS from './DBPATHS';
 import {readDataOnce} from './baseFunctions';
-import {
-  getLastStartedSession,
-  getLastStartedSessionId,
-} from '@libs/DataHandling';
+import {getLastStartedSessionId} from '@libs/DataHandling';
 import _ from 'lodash';
 
 const getDefaultPreferences = (): Preferences => {

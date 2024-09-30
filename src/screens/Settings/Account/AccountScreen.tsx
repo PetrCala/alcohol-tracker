@@ -35,8 +35,8 @@ function AccountScreen({route}: AccountScreenProps) {
   const generalOptions = [
     {
       description: 'Name',
-      title: userData?.profile?.name ?? '',
-      pageRoute: ROUTES.HOME,
+      title: `${profileData?.first_name ?? ''} ${profileData?.last_name ?? ''}`,
+      pageRoute: ROUTES.SETTINGS_USER_NAME,
     },
     {
       description: 'Display name',

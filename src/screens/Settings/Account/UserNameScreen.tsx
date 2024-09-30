@@ -167,7 +167,7 @@ function UserNameScreen({}: UserNameScreenProps) {
           shouldValidateOnBlur
           shouldValidateOnChange>
           <Text style={[styles.mb6]}>
-            {translate('userNameScreen.isShownOnProfile')}
+            {translate('userNameScreen.explanation')}
           </Text>
           <View style={styles.mb4}>
             <InputWrapper
