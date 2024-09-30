@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "android": "npx react-native run-android --mode=developmentDebug --appId=com.alcohol_tracker.dev --active-arch-only",
-    "ios": "npx react-native run-ios --simulator=\"iPhone 16 Pro\" --scheme \"Kiroku (development)\" --mode=\"DebugDevelopment\"",
+    "ios": "npx react-native run-ios --simulator=\"iPhone 15 Pro\" --scheme \"Kiroku (development)\" --mode=\"DebugDevelopment\"",
     "ios:pod:install": "cd ios && pod install && cd ..",
     "ios:pod:reset": "./scripts/podReset.sh",
     "ios-build": "fastlane ios build",
