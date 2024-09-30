@@ -34,18 +34,11 @@ const argv = yargs(hideBin(process.argv))
  * @param version - The new version string.
  */
 function updateNativeVersions(version: string): void {
-  console.log(`Updating native versions to ${version}`);
-
   // Update Android
   const androidVersionCode = generateAndroidVersionCode(version);
-  updateAndroidVersion(version, androidVersionCode)
-    .then(() => {
-      console.log('Successfully updated Android!');
-    })
-    .catch((err: any) => {
-      console.error('Error updating Android');
-      core.setFailed(err);
-    });
+  updateAndroidVersion(version, androidVersionCode).catch((err: any) => {
+    core.setFailed(err);
+  });
 
   // Update iOS
   try {
@@ -55,14 +48,12 @@ function updateNativeVersions(version: string): void {
       cfBundleVersion.split('.').length === 4
     ) {
       core.setOutput('NEW_IOS_VERSION', cfBundleVersion);
-      console.log('Successfully updated iOS!');
     } else {
       core.setFailed(
         `Failed to set NEW_IOS_VERSION. CFBundleVersion: ${cfBundleVersion}`,
       );
     }
   } catch (err: any) {
-    console.error('Error updating iOS');
     core.setFailed(err);
   }
 }
@@ -78,9 +69,7 @@ if (
   !semanticVersionLevel ||
   !Object.values(SEMANTIC_VERSION_LEVELS).includes(semanticVersionLevel)
 ) {
-  console.log(`Invalid input for 'SEMVER_LEVEL': ${semanticVersionLevel}`);
   semanticVersionLevel = SEMANTIC_VERSION_LEVELS.BUILD;
-  console.log(`Defaulting to: ${semanticVersionLevel}`);
 }
 
 interface PackageJson {
@@ -93,25 +82,17 @@ const packageJson: PackageJson = JSON.parse(packageJsonContent);
 const previousVersion: string = packageJson.version;
 
 const newVersion = incrementVersion(previousVersion, semanticVersionLevel);
-console.log(
-  `Previous version: ${previousVersion}`,
-  `New version: ${newVersion}`,
-);
 
 updateNativeVersions(newVersion);
 
-console.log(`Setting npm version to ${newVersion}`);
 exec(
   `npm --no-git-tag-version version ${newVersion} -m "Update version to ${newVersion}"`,
 )
-  .then(({stdout}) => {
-    // NPM and native versions successfully updated, output new version
-    console.log(stdout);
+  .then(() => {
+    // Output only the new version
+    console.log(newVersion);
     core.setOutput('NEW_VERSION', newVersion);
   })
   .catch((error: any) => {
-    // Log errors and retry
-    console.log(error.stdout);
-    console.error(error.stderr);
     core.setFailed('An error occurred in the `npm version` command');
   });
