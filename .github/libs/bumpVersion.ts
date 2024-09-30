@@ -1,7 +1,6 @@
 import {promisify} from 'util';
 import * as fs from 'fs';
 import {exec as execCallback} from 'child_process';
-import * as core from '@actions/core';
 import yargs from 'yargs/yargs';
 import {hideBin} from 'yargs/helpers';
 import {SEMANTIC_VERSION_LEVELS, incrementVersion} from './versionUpdater';
@@ -33,28 +32,31 @@ const argv = yargs(hideBin(process.argv))
  *
  * @param version - The new version string.
  */
-function updateNativeVersions(version: string): void {
+async function updateNativeVersions(version: string): Promise<void> {
   // Update Android
-  const androidVersionCode = generateAndroidVersionCode(version);
-  updateAndroidVersion(version, androidVersionCode).catch((err: any) => {
-    core.setFailed(err);
-  });
+  try {
+    const androidVersionCode = generateAndroidVersionCode(version);
+    await updateAndroidVersion(version, androidVersionCode);
+  } catch (err: any) {
+    console.error('Error updating Android:', err);
+    process.exit(1);
+  }
 
   // Update iOS
   try {
     const cfBundleVersion = updateiOSVersion(version);
     if (
-      typeof cfBundleVersion === 'string' &&
-      cfBundleVersion.split('.').length === 4
+      typeof cfBundleVersion !== 'string' ||
+      cfBundleVersion.split('.').length !== 4
     ) {
-      core.setOutput('NEW_IOS_VERSION', cfBundleVersion);
-    } else {
-      core.setFailed(
-        `Failed to set NEW_IOS_VERSION. CFBundleVersion: ${cfBundleVersion}`,
+      console.error(
+        `Failed to update iOS version. CFBundleVersion: ${cfBundleVersion}`,
       );
+      process.exit(1);
     }
   } catch (err: any) {
-    core.setFailed(err);
+    console.error('Error updating iOS:', err);
+    process.exit(1);
   }
 }
 
@@ -62,14 +64,14 @@ function updateNativeVersions(version: string): void {
 type SemanticVersionLevel =
   (typeof SEMANTIC_VERSION_LEVELS)[keyof typeof SEMANTIC_VERSION_LEVELS];
 
-// let semanticVersionLevel = core.getInput('SEMVER_LEVEL', {require: true}); // Use when running as GH action
-let semanticVersionLevel = argv.SEMVER_LEVEL as SemanticVersionLevel; // Running the script using node.js
+let semanticVersionLevel = argv.SEMVER_LEVEL as SemanticVersionLevel;
 
 if (
   !semanticVersionLevel ||
   !Object.values(SEMANTIC_VERSION_LEVELS).includes(semanticVersionLevel)
 ) {
-  semanticVersionLevel = SEMANTIC_VERSION_LEVELS.BUILD;
+  console.error(`Invalid input for 'SEMVER_LEVEL': ${semanticVersionLevel}`);
+  process.exit(1);
 }
 
 interface PackageJson {
@@ -77,22 +79,22 @@ interface PackageJson {
   [key: string]: any;
 }
 
-const packageJsonContent = fs.readFileSync('./package.json', 'utf8');
-const packageJson: PackageJson = JSON.parse(packageJsonContent);
-const previousVersion: string = packageJson.version;
+try {
+  const packageJsonContent = fs.readFileSync('./package.json', 'utf8');
+  const packageJson: PackageJson = JSON.parse(packageJsonContent);
+  const previousVersion: string = packageJson.version;
 
-const newVersion = incrementVersion(previousVersion, semanticVersionLevel);
+  const newVersion = incrementVersion(previousVersion, semanticVersionLevel);
 
-updateNativeVersions(newVersion);
+  updateNativeVersions(newVersion);
 
-exec(
-  `npm --no-git-tag-version version ${newVersion} -m "Update version to ${newVersion}"`,
-)
-  .then(() => {
-    // Output only the new version
-    console.log(newVersion);
-    core.setOutput('NEW_VERSION', newVersion);
-  })
-  .catch((error: any) => {
-    core.setFailed('An error occurred in the `npm version` command');
-  });
+  exec(
+    `npm --no-git-tag-version version ${newVersion} -m "Update version to ${newVersion}"`,
+  );
+
+  // Output only the new version
+  console.log(newVersion);
+} catch (error: any) {
+  console.error('An error occurred:', error);
+  process.exit(1);
+}
