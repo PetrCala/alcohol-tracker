@@ -41,7 +41,8 @@
     "transpile": "npx tsc --build functions",
     "test-ts": "ts-node ./__tests__/e2e/SignUpRoutine.tsx",
     "deploy-functions": "firebase deploy --only functions --debug",
-    "workflow-test": "./workflow_tests/scripts/runWorkflowTests.sh"
+    "workflow-test": "./workflow_tests/scripts/runWorkflowTests.sh",
+    "bump": "./scripts/bumpVersion.sh"
   },
   "dependencies": {
     "@babel/plugin-proposal-private-methods": "^7.18.6",
