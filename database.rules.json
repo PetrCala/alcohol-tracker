@@ -125,7 +125,7 @@
             ".validate": "newData.val() === null || (newData.isString() && newData.val().length > 0)"
           },
           "last_name": {
-            ".validate": "newData.val() === null || (newData.isString() && newData.val().length > 0)"
+            ".validate": "newData.val() === null || newData.isString()"
           }
         }
       }
