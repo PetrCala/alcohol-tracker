@@ -1369,10 +1369,44 @@ const styles = (theme: ThemeColors) =>
       color: theme.textError,
     },
 
+    switchTrack: {
+      width: 50,
+      height: 28,
+      justifyContent: 'center',
+      borderRadius: 20,
+      padding: 15,
+      backgroundColor: theme.success,
+    },
+
+    switchInactive: {
+      backgroundColor: theme.icon,
+    },
+
+    switchThumb: {
+      width: 22,
+      height: 22,
+      borderRadius: 11,
+      position: 'absolute',
+      left: 4,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: theme.appBG,
+    },
+
+    switchThumbTransformation: (translateX: AnimatableNumericValue) =>
+      ({
+        transform: [{translateX}],
+      }) satisfies ViewStyle,
+
     furtherDetailsText: {
       ...FontUtils.fontFamily.platform.EXP_NEUE,
       fontSize: variables.fontSizeSmall,
       color: theme.textSupporting,
+    },
+
+    toggleSwitchLockIcon: {
+      width: variables.iconSizeExtraSmall,
+      height: variables.iconSizeExtraSmall,
     },
 
     lh14: {
