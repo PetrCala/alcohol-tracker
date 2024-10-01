@@ -58,7 +58,7 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
   const storage = getStorage(FirebaseApp);
 
   // Check if emulators should be used
-  if (CONFIG.IS_IN_TEST) {
+  if (CONFIG.IS_IN_DEVELOPMENT) {
     if (!FirebaseConfig.authDomain) {
       throw new Error('Auth URL not defined in FirebaseConfig');
     }
