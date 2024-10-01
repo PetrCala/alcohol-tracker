@@ -13,6 +13,8 @@ import type {SelectedTimezone} from '@src/types/onyx/PersonalDetails';
 import {StackScreenProps} from '@react-navigation/stack';
 import {SettingsNavigatorParamList} from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
+import {UserProps} from '@src/types/onyx';
 
 type TimezoneSelectScreenProps = StackScreenProps<
   SettingsNavigatorParamList,
@@ -34,12 +36,13 @@ const getKey = (text: string): string => `${text}-${new Date().getTime()}`;
 //     'currentUserPersonalDetails'
 //   >,
 // ) => currentUserPersonalDetails?.timezone ?? CONST.DEFAULT_TIME_ZONE;
-// const getUserTimezone = CONST.DEFAULT_TIME_ZONE;
+const getUserTimezone = (userData: UserProps | undefined) =>
+  userData?.private_data?.timezone ?? CONST.DEFAULT_TIME_ZONE;
 
 function TimezoneSelectScreen({}: TimezoneSelectScreenProps) {
   const {translate} = useLocalize();
-  // const timezone = getUserTimezone(currentUserPersonalDetails);
-  const timezone = CONST.DEFAULT_TIME_ZONE;
+  const {userData} = useDatabaseData();
+  const timezone = getUserTimezone(userData);
   const allTimezones = useInitialValue(() =>
     TIMEZONES.filter((tz: string) => !tz.startsWith('Etc/GMT')).map(
       (text: string) => ({
@@ -54,7 +57,7 @@ function TimezoneSelectScreen({}: TimezoneSelectScreenProps) {
 
   const saveSelectedTimezone = ({text}: {text: string}) => {
     // TODO
-    console.debug('Saving the selected timezone...');
+    console.debug('Changing timezone to ', text as SelectedTimezone);
     // PersonalDetails.updateSelectedTimezone(text as SelectedTimezone);
   };
 

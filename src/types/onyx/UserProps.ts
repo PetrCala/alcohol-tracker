@@ -1,5 +1,6 @@
 import type {UserID, UserList} from './OnyxCommon';
 import type FriendRequestList from './FriendRequestList';
+import type {Timezone} from '@src/types/onyx/PersonalDetails';
 
 type Profile = {
   first_name?: string; // TODO: make required from 0.4.x
@@ -12,7 +13,7 @@ type UserPrivateData = {
   birthdate: number;
   weight: number;
   gender: string;
-  timezone: string;
+  timezone: Timezone;
 };
 
 type UserPublicData = {

@@ -14,6 +14,7 @@ import type {SelectedTimezone, Timezone} from '@src/types/onyx/PersonalDetails';
 import {StackScreenProps} from '@react-navigation/stack';
 import {SettingsNavigatorParamList} from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
 
 type TimezoneInitialScreenProps = StackScreenProps<
   SettingsNavigatorParamList,
@@ -23,8 +24,9 @@ type TimezoneInitialScreenProps = StackScreenProps<
 
 function TimezoneInitialScreen({}: TimezoneInitialScreenProps) {
   const styles = useThemeStyles();
-  const timezone: Timezone = CONST.DEFAULT_TIME_ZONE;
-  // currentUserPersonalDetails?.timezone ?? CONST.DEFAULT_TIME_ZONE;
+  const {userData} = useDatabaseData();
+  const timezone: Timezone =
+    userData?.private_data?.timezone ?? CONST.DEFAULT_TIME_ZONE;
 
   const {translate} = useLocalize();
 
