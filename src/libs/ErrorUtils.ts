@@ -44,6 +44,8 @@ function getErrorMessage(error: any): string {
       return 'Incorrect password';
     case err.includes('auth/network-request-failed'):
       return 'You are offline';
+    case err.includes('auth/requires-recent-login'):
+      return 'Please login again';
     case err.includes('auth/api-key-not-valid'):
       return 'The app is not configured correctly. Please contact the developer.';
     case err.includes('auth/too-many-requests'):

@@ -24,6 +24,7 @@ import {StackScreenProps} from '@react-navigation/stack';
 import SCREENS from '@src/SCREENS';
 // import {submitEmail} from '@database/feedback';
 import {useFirebase} from '@context/global/FirebaseContext';
+import {applyActionCode, verifyBeforeUpdateEmail} from 'firebase/auth';
 
 type EmailScreenOnyxProps = {};
 
@@ -44,14 +45,15 @@ function EmailScreen({}: EmailScreenProps) {
   const onSubmit = async (
     values: FormOnyxValues<typeof ONYXKEYS.FORMS.EMAIL_FORM>,
   ) => {
+    // applyActionCode
     try {
-      setIsLoading(true);
-      await User.updateEmail(auth.currentUser, values.email);
+      console.log('Submitting email...');
+      // await User.sendUpdateEmailLink(auth.currentUser, values.email);
     } catch (error: any) {
       ErrorUtils.raiseAlert(error, translate('emailScreen.error.generic'));
     } finally {
-      Navigation.goBack();
-      setIsLoading(false);
+      console.debug('Navigating to email verification screen...');
+      // Navigation.navigate(ROUTES.SETTINGS.ACCOUNT.EMAIL_VERIFICATION);
     }
   };
 

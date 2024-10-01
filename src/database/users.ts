@@ -15,6 +15,7 @@ import {
   reauthenticateWithCredential,
   updateProfile,
   updateEmail as fbUpdateEmail,
+  verifyBeforeUpdateEmail,
 } from 'firebase/auth';
 import {getUniqueId} from 'react-native-device-info';
 import {Alert} from 'react-native';
@@ -182,6 +183,22 @@ async function synchronizeUserStatus(
   const updates: Record<string, UserStatus> = {};
   updates[userStatusRef.getRoute(userID)] = newUserStatus;
   await update(ref(db), updates);
+}
+
+/**
+ * Send an email to the user with a link to update their email.
+ *
+ * @param user The user to send the email to
+ * @param newEmail The new email
+ */
+async function sendUpdateEmailLink(
+  user: User | null,
+  newEmail: string,
+): Promise<void> {
+  if (!user) {
+    throw new Error('User is null');
+  }
+  await verifyBeforeUpdateEmail(user, newEmail);
 }
 
 /**
@@ -371,6 +388,7 @@ export {
   pushNewUserInfo,
   reauthentificateUser,
   saveSelectedTimezone,
+  sendUpdateEmailLink,
   synchronizeUserStatus,
   updateAutomaticTimezone,
   updateEmail,
