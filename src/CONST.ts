@@ -502,6 +502,21 @@ const CONST = {
   },
   MAX_ALLOWED_UNITS: 100,
 
+  /**
+   * Constants for maxToRenderPerBatch parameter that is used for FlatList or SectionList. This controls the amount of items rendered per batch, which is the next chunk of items
+   * rendered on every scroll.
+   */
+  MAX_TO_RENDER_PER_BATCH: {
+    DEFAULT: 5,
+    CAROUSEL: 3,
+  },
+
+  /**
+   * The maximum count of items per page for SelectionList.
+   * When paginate, it multiplies by page number.
+   */
+  MAX_SELECTION_LIST_PAGE_LENGTH: 500,
+
   // These split the maximum decimal value of a signed 64-bit number (9,223,372,036,854,775,807) into parts where none of them are too big to fit into a 32-bit number, so that we can
   // generate them each with a random number generator with only 32-bits of precision.
   MAX_64BIT_LEFT_PART: 92233,

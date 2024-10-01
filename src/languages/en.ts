@@ -224,6 +224,13 @@ export default {
     untilTomorrow: 'Until tomorrow',
     untilTime: ({time}: UntilTimeParams) => `Until ${time}`,
   },
+  session: {
+    people: {
+      selectAll: 'Select all',
+    },
+    offlineMessageRetry:
+      "Looks like you're offline. Please check your connection and try again.",
+  },
   location: {
     useCurrent: 'Use current location',
     notFound:
@@ -375,10 +382,6 @@ export default {
         'Your account has been locked after too many unsuccessful attempts. Please try again after 1 hour.',
       fallback: 'Something went wrong. Please try again later.',
     },
-  },
-  session: {
-    offlineMessageRetry:
-      "Looks like you're offline. Please check your connection and try again.",
   },
 } satisfies TranslationBase;
 

@@ -1265,6 +1265,11 @@ const styles = (theme: ThemeColors) =>
       lineHeight: variables.lineHeightXLarge,
     },
 
+    optionsListSectionHeader: {
+      marginTop: 8,
+      marginBottom: 4,
+    },
+
     optionSelectCircle: {
       borderRadius: variables.componentSizeSmall / 2 + 1,
       padding: 1,
