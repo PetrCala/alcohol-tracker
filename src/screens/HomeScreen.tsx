@@ -1,4 +1,4 @@
-﻿import React, {useEffect, useMemo, useReducer} from 'react';
+﻿import React, {useEffect, useMemo, useReducer, useState} from 'react';
 import {
   Alert,
   Dimensions,
@@ -63,6 +63,7 @@ import ONYXKEYS from '@src/ONYXKEYS';
 import getPlatform from '@libs/getPlatform';
 import ConfirmModal from '@components/ConfirmModal';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
+import Switch from '@components/Switch';
 
 type State = {
   visibleDateObject: DateObject;
@@ -354,6 +355,7 @@ function HomeScreen({route}: HomeScreenProps) {
         <View style={localStyles.statsOverviewHolder}>
           <StatsOverview statsData={statsData} />
         </View>
+
         <SessionsCalendar
           drinkingSessionData={drinkingSessionData}
           preferences={preferences}

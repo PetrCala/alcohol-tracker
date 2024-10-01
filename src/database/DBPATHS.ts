@@ -161,23 +161,22 @@ const DBPATHS = {
   USERS_USER_ID_PRIVATE_DATA_TIMEZONE: {
     route: '/users/:user_id/private_data/timezone',
     getRoute: (user_id: UserID) =>
-      `users/${user_id}/profile/private_data/timezone` as const,
+      `users/${user_id}/private_data/timezone` as const,
   },
   USERS_USER_ID_PRIVATE_DATA_TIMEZONE_SELECTED: {
     route: '/users/:user_id/private_data/timezone/selected',
     getRoute: (user_id: UserID) =>
-      `users/${user_id}/profile/private_data/timezone/selected` as const,
+      `users/${user_id}/private_data/timezone/selected` as const,
   },
   USERS_USER_ID_PRIVATE_DATA_TIMEZONE_AUTOMATIC: {
     route: '/users/:user_id/private_data/timezone/automatic',
     getRoute: (user_id: UserID) =>
-      `users/${user_id}/profile/private_data/timezone/automatic` as const,
+      `users/${user_id}/private_data/timezone/automatic` as const,
   },
 
   USERS_USER_ID_PUBLIC_DATA: {
     route: '/users/:user_id/public_data',
-    getRoute: (user_id: UserID) =>
-      `users/${user_id}/profile/public_data` as const,
+    getRoute: (user_id: UserID) => `users/${user_id}/public_data` as const,
   },
 } as const;
 

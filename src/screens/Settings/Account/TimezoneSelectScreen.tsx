@@ -19,6 +19,7 @@ import * as User from '@database/users';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {Alert} from 'react-native';
 import {getErrorMessage} from '@libs/ErrorHandling';
+import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 
 type TimezoneSelectScreenProps = StackScreenProps<
   SettingsNavigatorParamList,
@@ -59,17 +60,22 @@ function TimezoneSelectScreen({}: TimezoneSelectScreenProps) {
   );
   const [timezoneInputText, setTimezoneInputText] = useState('');
   const [timezoneOptions, setTimezoneOptions] = useState(allTimezones);
+  const [isLoading, setIsLoading] = useState(false);
 
   const saveSelectedTimezone = async ({text}: {text: string}) => {
     try {
+      setIsLoading(true);
       await User.saveSelectedTimezone(
         db,
         auth.currentUser,
         text as SelectedTimezone,
       );
+      Navigation.goBack(ROUTES.SETTINGS_TIMEZONE);
     } catch (error: any) {
       const message = getErrorMessage(error);
       Alert.alert(translate('timezoneScreen.error.generic'), message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -87,6 +93,14 @@ function TimezoneSelectScreen({}: TimezoneSelectScreenProps) {
       ),
     );
   };
+
+  if (isLoading) {
+    return (
+      <FullScreenLoadingIndicator
+        loadingText={translate('timezoneScreen.saving')}
+      />
+    );
+  }
 
   return (
     <ScreenWrapper

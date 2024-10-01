@@ -339,7 +339,7 @@ async function saveSelectedTimezone(
   }
 
   const userID = user.uid;
-  const timezoneRef = DBPATHS.USERS_USER_ID_PRIVATE_DATA_TIMEZONE;
+  const timezoneRef = DBPATHS.USERS_USER_ID_PRIVATE_DATA_TIMEZONE_SELECTED;
 
   const updates: Record<string, SelectedTimezone> = {};
   updates[timezoneRef.getRoute(userID)] = selectedTimezone;

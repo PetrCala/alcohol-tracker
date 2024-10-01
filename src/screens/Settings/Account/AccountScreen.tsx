@@ -55,7 +55,7 @@ function AccountScreen({route}: AccountScreenProps) {
     },
     {
       description: translate('timezoneScreen.timezone'),
-      title: userData?.private_data?.timezone ?? '',
+      title: userData?.private_data?.timezone?.selected ?? '',
       pageRoute: ROUTES.SETTINGS_TIMEZONE,
     },
   ];
@@ -63,7 +63,7 @@ function AccountScreen({route}: AccountScreenProps) {
   const personalDetails = [
     {
       description: 'Date of birth',
-      title: userData?.private_data?.birthdate.toString() ?? '',
+      title: (userData?.private_data?.birthdate || '').toString(),
       pageRoute: ROUTES.HOME,
     },
     {
@@ -73,7 +73,7 @@ function AccountScreen({route}: AccountScreenProps) {
     },
     {
       description: 'Weight',
-      title: userData?.private_data?.weight.toString() ?? '',
+      title: (userData?.private_data?.weight || '').toString(),
       pageRoute: ROUTES.HOME,
     },
   ];
