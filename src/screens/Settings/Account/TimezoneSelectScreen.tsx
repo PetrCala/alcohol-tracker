@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import ScreenWrapper from '@components/ScreenWrapper';
-// import SelectionList from '@components/SelectionList';
-// import RadioListItem from '@components/SelectionList/RadioListItem';
+import SelectionList from '@components/SelectionList';
+import RadioListItem from '@components/SelectionList/RadioListItem';
 import useInitialValue from '@hooks/useInitialValue';
 import useLocalize from '@hooks/useLocalize';
 import Navigation from '@libs/Navigation/Navigation';
@@ -81,8 +81,7 @@ function TimezoneSelectScreen({}: TimezoneSelectScreenProps) {
         title={translate('timezoneScreen.timezone')}
         onBackButtonPress={() => Navigation.goBack(ROUTES.SETTINGS_TIMEZONE)}
       />
-      {/* TODO enable this */}
-      {/* <SelectionList
+      <SelectionList
         headerMessage={
           timezoneInputText.trim() && !timezoneOptions.length
             ? translate('common.noResultsFound')
@@ -100,7 +99,7 @@ function TimezoneSelectScreen({}: TimezoneSelectScreenProps) {
         showScrollIndicator
         shouldShowTooltips={false}
         ListItem={RadioListItem}
-      /> */}
+      />
     </ScreenWrapper>
   );
 }
