@@ -139,7 +139,9 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
               <Text
                 style={[
                   localStyles.menuDrinkingSessionText,
-                  session.blackout === true ? {color: 'white'} : {},
+                  session.blackout === true || sessionColor === 'red'
+                    ? {color: 'white', fontWeight: '500'}
+                    : {},
                 ]}>
                 Units: {totalUnits}
               </Text>
@@ -147,7 +149,9 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
                 <Text
                   style={[
                     localStyles.menuDrinkingSessionText,
-                    session.blackout === true ? {color: 'white'} : {},
+                    session.blackout === true || sessionColor === 'red'
+                      ? {color: 'white', fontWeight: '500'}
+                      : {},
                   ]}>
                   Time: {nonMidnightString(timeString)}
                 </Text>
@@ -167,11 +171,13 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
             <MenuIcon
               iconId="edit-session-icon"
               iconSource={KirokuIcons.Edit}
-              containerStyle={[
-                localStyles.menuIconContainer,
-                session.blackout === true ? {backgroundColor: 'white'} : {},
+              containerStyle={[localStyles.menuIconContainer]}
+              iconStyle={[
+                localStyles.menuIcon,
+                session.blackout === true || sessionColor === 'red'
+                  ? {tintColor: 'white'}
+                  : {},
               ]}
-              iconStyle={localStyles.menuIcon}
               onPress={() => onEditSessionPress(sessionId)} // Use keyextractor to load id here
             />
           ) : null}
