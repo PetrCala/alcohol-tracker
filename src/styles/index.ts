@@ -1176,6 +1176,10 @@ const styles = (theme: ThemeColors) =>
       borderRadius: 52,
     },
 
+    searchTableHeaderActive: {
+      fontWeight: FontUtils.fontWeight.bold,
+    },
+
     secondAvatar: {
       position: 'absolute',
       right: -18,
@@ -1539,6 +1543,10 @@ const styles = (theme: ThemeColors) =>
 
     textDanger: {
       color: theme.danger,
+    },
+
+    textSupporting: {
+      color: theme.textSupporting,
     },
 
     baseTextInput: {

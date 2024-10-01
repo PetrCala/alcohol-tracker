@@ -5,6 +5,9 @@ import AlcoholAssortment from '@assets/images/alcohol-assortment.png';
 import ArrowBack from '@assets/images/arrow-back.png';
 import ArrowDown from '@assets/images/arrow-down.png';
 import ArrowRight from '@assets/images/arrow-right.svg';
+import ArrowDownLong from '@assets/images/arrow-down-long.svg';
+import ArrowRightLong from '@assets/images/arrow-right-long.svg';
+import ArrowUpLong from '@assets/images/arrow-up-long.svg';
 import ArrowUp from '@assets/images/arrow-up.svg';
 import ArrowUpDown from '@assets/images/arrows-updown.svg';
 import BackArrow from '@assets/images/back-left.svg';
@@ -66,7 +69,10 @@ export {
   AlcoholAssortment,
   ArrowBack,
   ArrowDown,
+  ArrowDownLong,
+  ArrowRightLong,
   ArrowRight,
+  ArrowUpLong,
   ArrowUp,
   ArrowUpDown,
   BackArrow,

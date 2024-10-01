@@ -273,6 +273,63 @@ const CONST = {
     GATEWAY_TIMEOUT: 504,
     UNKNOWN_ERROR: 520,
   },
+
+  SEARCH: {
+    RESULTS_PAGE_SIZE: 50,
+    DATA_TYPES: {
+      SESSION: 'session',
+    },
+    ACTION_TYPES: {
+      VIEW: 'view',
+    },
+    SORT_ORDER: {
+      ASC: 'asc',
+      DESC: 'desc',
+    },
+    STATUS: {
+      SESSION: {
+        ALL: 'all',
+        FINISHED: 'finished',
+      },
+    },
+    TABLE_COLUMNS: {
+      DATE: 'date',
+      DESCRIPTION: 'description',
+      FROM: 'from',
+      TO: 'to',
+      CATEGORY: 'category',
+      TAG: 'tag',
+      TYPE: 'type',
+      ACTION: 'action',
+    },
+    SYNTAX_OPERATORS: {
+      AND: 'and',
+      OR: 'or',
+      EQUAL_TO: 'eq',
+      NOT_EQUAL_TO: 'neq',
+      GREATER_THAN: 'gt',
+      GREATER_THAN_OR_EQUAL_TO: 'gte',
+      LOWER_THAN: 'lt',
+      LOWER_THAN_OR_EQUAL_TO: 'lte',
+    },
+    SYNTAX_ROOT_KEYS: {
+      TYPE: 'type',
+      STATUS: 'status',
+      SORT_BY: 'sortBy',
+      SORT_ORDER: 'sortOrder',
+    },
+    SYNTAX_FILTER_KEYS: {
+      DATE: 'date',
+      AMOUNT: 'amount',
+      FROM: 'from',
+      TO: 'to',
+      CATEGORY: 'category',
+      TAG: 'tag',
+      KEYWORD: 'keyword',
+      IN: 'in',
+    },
+  },
+
   ICON_TYPE_ICON: 'icon',
   ICON_TYPE_AVATAR: 'avatar',
   INVALID_CHARS: ['.', '#', '$', '[', ']'],
