@@ -24,6 +24,7 @@ import Delete from '@assets/images/delete.png';
 import DeleteSession from '@assets/images/delete-session.png';
 import Document from '@assets/images/document.svg';
 import DotIndicator from '@assets/images/dot-indicator.svg';
+import DownArrow from '@assets/images/down.svg';
 import Download from '@assets/images/download.png';
 import Edit from '@assets/images/edit.png';
 import Exit from '@assets/images/exit.svg';
@@ -85,6 +86,7 @@ export {
   DeleteSession,
   Document,
   DotIndicator,
+  DownArrow,
   Download,
   Edit,
   Exit,

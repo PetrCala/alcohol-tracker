@@ -1286,6 +1286,29 @@ const styles = (theme: ThemeColors) =>
       flexShrink: 1,
     },
 
+    shortTermsBorder: {
+      borderWidth: 1,
+      borderColor: theme.border,
+      borderRadius: variables.componentBorderRadius,
+    },
+
+    shortTermsHorizontalRule: {
+      borderBottomWidth: 1,
+      borderColor: theme.border,
+      ...spacing.mh3,
+    },
+
+    shortTermsLargeHorizontalRule: {
+      borderWidth: 1,
+      borderColor: theme.border,
+      ...spacing.mh3,
+    },
+
+    shortTermsRow: {
+      flexDirection: 'row',
+      padding: 12,
+    },
+
     sidebarLink: {
       textDecorationLine: 'none',
     },
