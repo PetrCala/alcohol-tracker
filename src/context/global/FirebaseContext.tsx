@@ -51,8 +51,8 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
   const storage = getStorage(FirebaseApp);
 
   // Check if emulators should be used
-  if (CONFIG.IS_IN_DEVELOPMENT) {
-    console.debug('The app is running in development mode.');
+  if (CONFIG.IS_IN_TEST) {
+    console.debug('The app is running in testing mode.');
 
     console.debug('Connecting to Firebase Emulators...');
 
