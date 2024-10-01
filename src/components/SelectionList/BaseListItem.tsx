@@ -1,7 +1,7 @@
 import React, {useRef} from 'react';
 import {View} from 'react-native';
 import Icon from '@components/Icon';
-import * as Expensicons from '@components/Icon/Expensicons';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import OfflineWithFeedback from '@components/OfflineWithFeedback';
 import PressableWithFeedback from '@components/Pressable/PressableWithFeedback';
 import useHover from '@hooks/useHover';
@@ -110,7 +110,7 @@ function BaseListItem<TItem extends ListItem>({
               style={[styles.flexRow, styles.alignItemsCenter, styles.ml3]}
               accessible={false}>
               <View>
-                <Icon src={Expensicons.Checkmark} fill={theme.success} />
+                <Icon src={KirokuIcons.Checkmark} fill={theme.success} />
               </View>
             </View>
           )}
@@ -118,7 +118,7 @@ function BaseListItem<TItem extends ListItem>({
             <View
               style={[styles.alignItemsCenter, styles.justifyContentCenter]}>
               <Icon
-                src={Expensicons.DotIndicator}
+                src={KirokuIcons.DotIndicator}
                 fill={
                   item.brickRoadIndicator ===
                   CONST.BRICK_ROAD_INDICATOR_STATUS.INFO
