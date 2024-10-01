@@ -10,14 +10,14 @@ type Profile = {
 };
 
 type UserPrivateData = {
-  birthdate: number;
-  weight: number;
-  gender: string;
-  timezone: Timezone;
+  birthdate?: number;
+  weight?: number;
+  gender?: string;
+  timezone?: Timezone;
 };
 
 type UserPublicData = {
-  last_active: number;
+  last_active?: number;
 };
 
 type UserProps = {
