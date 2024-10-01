@@ -56,7 +56,7 @@ function AccountScreen({route}: AccountScreenProps) {
     {
       description: translate('timezoneScreen.timezone'),
       title: userData?.private_data?.timezone ?? '',
-      pageRoute: ROUTES.HOME,
+      pageRoute: ROUTES.SETTINGS_TIMEZONE,
     },
   ];
 
