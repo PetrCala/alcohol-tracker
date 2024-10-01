@@ -140,7 +140,7 @@
               ".validate": "newData.val() === null || newData.isString()"
             },
             "automatic": {
-              ".validate": "newData.val() === null | newData.isBoolean()"
+              ".validate": "newData.val() === null || newData.isBoolean()"
             }
           }
         }
