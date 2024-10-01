@@ -1,6 +1,5 @@
 ﻿import type {ReactNode} from 'react';
 import {useEffect, useReducer} from 'react';
-
 import {useUserConnection} from './UserConnectionContext';
 import UserOffline from '@components/UserOffline';
 import {listenForDataChanges} from '@database/baseFunctions';
