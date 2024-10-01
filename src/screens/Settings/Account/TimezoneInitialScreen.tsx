@@ -1,5 +1,5 @@
 import React from 'react';
-import {View} from 'react-native';
+import {Alert, View} from 'react-native';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import MenuItemWithTopDescription from '@components/MenuItemWithTopDescription';
 import ScreenWrapper from '@components/ScreenWrapper';
@@ -15,6 +15,10 @@ import {StackScreenProps} from '@react-navigation/stack';
 import {SettingsNavigatorParamList} from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
+import {useFirebase} from '@context/global/FirebaseContext';
+import * as User from '@database/users';
+import {isEmptyObject} from '@src/types/utils/EmptyObject';
+import {getErrorMessage} from '@libs/ErrorHandling';
 
 type TimezoneInitialScreenProps = StackScreenProps<
   SettingsNavigatorParamList,
@@ -24,6 +28,7 @@ type TimezoneInitialScreenProps = StackScreenProps<
 
 function TimezoneInitialScreen({}: TimezoneInitialScreenProps) {
   const styles = useThemeStyles();
+  const {db, auth} = useFirebase();
   const {userData} = useDatabaseData();
   const timezone: Timezone =
     userData?.private_data?.timezone ?? CONST.DEFAULT_TIME_ZONE;
@@ -37,16 +42,20 @@ function TimezoneInitialScreen({}: TimezoneInitialScreenProps) {
    * Updates setting for automatic timezone selection.
    * Note: If we are updating automatically, we'll immediately calculate the user's timezone.
    */
-  const updateAutomaticTimezone = (isAutomatic: boolean) => {
-    // TODO
-    console.debug('Updating the automatic timezone...');
-    // PersonalDetails.updateAutomaticTimezone({
-    //   automatic: isAutomatic,
-    //   selected:
-    //     isAutomatic && !isEmptyObject(currentTimezone)
-    //       ? currentTimezone
-    //       : timezone.selected,
-    // });
+  const updateAutomaticTimezone = async (isAutomatic: boolean) => {
+    try {
+      await User.updateAutomaticTimezone(
+        db,
+        auth.currentUser,
+        isAutomatic,
+        isAutomatic && !isEmptyObject(currentTimezone)
+          ? currentTimezone
+          : (timezone.selected as SelectedTimezone),
+      );
+    } catch (error: any) {
+      const message = getErrorMessage(error);
+      Alert.alert(translate('timezoneScreen.error.generic'), message);
+    }
   };
 
   return (

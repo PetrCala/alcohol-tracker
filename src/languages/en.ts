@@ -317,6 +317,9 @@ export default {
     timezone: 'Timezone',
     isShownOnProfile: 'Your timezone is shown on your profile.',
     getLocationAutomatically: 'Automatically determine your location',
+    error: {
+      generic: 'Error updating your timezone',
+    },
   },
   feedbackScreen: {
     title: 'Feedback',

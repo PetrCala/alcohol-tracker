@@ -15,6 +15,10 @@ import {SettingsNavigatorParamList} from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {UserProps} from '@src/types/onyx';
+import * as User from '@database/users';
+import {useFirebase} from '@context/global/FirebaseContext';
+import {Alert} from 'react-native';
+import {getErrorMessage} from '@libs/ErrorHandling';
 
 type TimezoneSelectScreenProps = StackScreenProps<
   SettingsNavigatorParamList,
@@ -41,6 +45,7 @@ const getUserTimezone = (userData: UserProps | undefined) =>
 
 function TimezoneSelectScreen({}: TimezoneSelectScreenProps) {
   const {translate} = useLocalize();
+  const {db, auth} = useFirebase();
   const {userData} = useDatabaseData();
   const timezone = getUserTimezone(userData);
   const allTimezones = useInitialValue(() =>
@@ -55,10 +60,17 @@ function TimezoneSelectScreen({}: TimezoneSelectScreenProps) {
   const [timezoneInputText, setTimezoneInputText] = useState('');
   const [timezoneOptions, setTimezoneOptions] = useState(allTimezones);
 
-  const saveSelectedTimezone = ({text}: {text: string}) => {
-    // TODO
-    console.debug('Changing timezone to ', text as SelectedTimezone);
-    // PersonalDetails.updateSelectedTimezone(text as SelectedTimezone);
+  const saveSelectedTimezone = async ({text}: {text: string}) => {
+    try {
+      await User.saveSelectedTimezone(
+        db,
+        auth.currentUser,
+        text as SelectedTimezone,
+      );
+    } catch (error: any) {
+      const message = getErrorMessage(error);
+      Alert.alert(translate('timezoneScreen.error.generic'), message);
+    }
   };
 
   const filterShownTimezones = (searchText: string) => {
