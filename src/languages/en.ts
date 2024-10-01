@@ -62,7 +62,7 @@ export default {
     continue: 'Continue',
     firstName: 'First name',
     lastName: 'Last name',
-    displayName: 'Display name',
+    displayName: 'Nickname',
     phone: 'Phone',
     phoneNumber: 'Phone number',
     phoneNumberPlaceholder: '(xxx) xxx-xxx-xxx',
@@ -237,14 +237,14 @@ export default {
   personalDetails: {
     error: {
       hasInvalidCharacter: 'Invalid character',
-      containsReservedWord: 'Display name contains a reserved word.',
+      containsReservedWord: 'This name contains a reserved word.',
       characterLimitExceedCounter: ({length, limit}) =>
         `Character limit exceeded (${length}/${limit})`,
       characterLimit: ({limit}: CharacterLimitParams) =>
         `Exceeds the maximum length of ${limit} characters`,
       requiredFirstName: 'First name cannot be empty',
       requiredLastName: 'Last name cannot be empty',
-      requiredDisplayName: 'Display name cannot be empty',
+      requiredDisplayName: 'Nickname cannot be empty',
     },
   },
   socialScreen: {
@@ -299,11 +299,11 @@ export default {
     },
   },
   displayNameScreen: {
-    headerTitle: 'Display name',
-    isShownOnProfile: 'Your display name is shown on your profile.',
-    updatingDisplayName: 'Updating your display name...',
+    headerTitle: 'Nickname',
+    isShownOnProfile: 'Your nickname is shown on your profile.',
+    updatingDisplayName: 'Updating your nickname...',
     error: {
-      generic: 'Error updating display name',
+      generic: 'Error updating nickname',
     },
   },
   timezoneScreen: {
