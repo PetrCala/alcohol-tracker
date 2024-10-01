@@ -47,6 +47,7 @@ function EmailScreen({}: EmailScreenProps) {
   ) => {
     // applyActionCode
     try {
+      // TODO finish this
       console.log('Submitting email...');
       // await User.sendUpdateEmailLink(auth.currentUser, values.email);
     } catch (error: any) {
