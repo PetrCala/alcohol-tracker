@@ -206,6 +206,8 @@ const CONST = {
     STAGING: 'staging',
     TEST: 'test',
   },
+  LHN_SKELETON_VIEW_ITEM_HEIGHT: 64,
+  SEARCH_SKELETON_VIEW_ITEM_HEIGHT: 108,
   EMAIL: {
     KIROKU: 'kiroku.alcohol.tracker@gmail.com',
   },

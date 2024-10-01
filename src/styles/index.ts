@@ -805,6 +805,14 @@ const styles = (theme: ThemeColors) =>
       transform: [{rotate: '180deg'}],
     },
 
+    highlightBG: {
+      backgroundColor: theme.highlightBG,
+    },
+
+    appBG: {
+      backgroundColor: theme.appBG,
+    },
+
     fontSizeLabel: {
       fontSize: variables.fontSizeLabel,
     },
