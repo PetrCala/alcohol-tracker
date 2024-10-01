@@ -92,6 +92,12 @@ const SettingsModalStackNavigator =
     [SCREENS.SETTINGS.ACCOUNT.DISPLAY_NAME]: () =>
       require<ReactComponentModule>('@screens/Settings/Account/DisplayNameScreen')
         .default,
+    [SCREENS.SETTINGS.ACCOUNT.EMAIL]: () =>
+      require<ReactComponentModule>('@screens/Settings/Account/EmailScreen')
+        .default,
+    [SCREENS.SETTINGS.ACCOUNT.PASSWORD]: () =>
+      require<ReactComponentModule>('@screens/Settings/Account/PasswordScreen')
+        .default,
     [SCREENS.SETTINGS.ACCOUNT.TIMEZONE]: () =>
       require<ReactComponentModule>('@screens/Settings/Account/TimezoneInitialScreen')
         .default,

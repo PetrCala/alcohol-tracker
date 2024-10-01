@@ -65,6 +65,10 @@ function validateCardNumber(value: string): boolean {
 //   return !CONST.REGEX.PO_BOX.test(value);
 // }
 
+function isValidEmail(email: string): boolean {
+  return CONST.REGEX.EMAIL.test(email);
+}
+
 /**
  * Validate date fields
  */
@@ -444,6 +448,7 @@ export {
   meetsMinimumAgeRequirement,
   meetsMaximumAgeRequirement,
   getAgeRequirementError,
+  isValidEmail,
   //   isValidAddress,
   isValidDate,
   isValidPastDate,

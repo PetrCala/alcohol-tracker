@@ -8,7 +8,8 @@ import ONYXKEYS from '@src/ONYXKEYS';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import {UserProps} from '@src/types/onyx';
-import {getErrorMessage} from '@libs/ErrorHandling';
+import * as ErrorUtils from '@libs/ErrorUtils';
+import useLocalize from '@hooks/useLocalize';
 
 /**
  * Clear CloseAccount error message to hide modal
@@ -64,8 +65,10 @@ async function deleteAccount(
     // Add an alert here informing about the user deletion
     Navigation.navigate(ROUTES.LOGIN);
   } catch (error: any) {
-    const message = getErrorMessage(error);
-    Alert.alert('Error deleting your account', message);
+    ErrorUtils.raiseAlert(
+      error,
+      'Error deleting the account. Please try again later',
+    );
   }
 }
 

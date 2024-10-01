@@ -34,24 +34,24 @@ function AccountScreen({route}: AccountScreenProps) {
 
   const generalOptions = [
     {
-      description: 'Name',
+      description: translate('common.name'),
       title: `${profileData?.first_name ?? ''} ${profileData?.last_name ?? ''}`,
       pageRoute: ROUTES.SETTINGS_USER_NAME,
     },
     {
-      description: 'Display name',
+      description: translate('common.nickname'),
       title: profileData?.display_name ?? '',
       pageRoute: ROUTES.SETTINGS_DISPLAY_NAME,
     },
     {
-      description: 'Email',
+      description: translate('common.email'),
       title: user?.email ?? '',
-      pageRoute: ROUTES.HOME,
+      pageRoute: ROUTES.SETTINGS_EMAIL,
     },
     {
-      description: 'Password',
+      description: translate('common.password'),
       title: '••••••••',
-      pageRoute: ROUTES.HOME,
+      pageRoute: ROUTES.SETTINGS_PASSWORD,
     },
     {
       description: translate('timezoneScreen.timezone'),
@@ -62,17 +62,17 @@ function AccountScreen({route}: AccountScreenProps) {
 
   const personalDetails = [
     {
-      description: 'Date of birth',
+      description: translate('common.dob'),
       title: (userData?.private_data?.birthdate || '').toString(),
       pageRoute: ROUTES.HOME,
     },
     {
-      description: 'Gender',
+      description: translate('common.gender'),
       title: userData?.private_data?.gender ?? '',
       pageRoute: ROUTES.HOME,
     },
     {
-      description: 'Weight',
+      description: translate('common.weight'),
       title: (userData?.private_data?.weight || '').toString(),
       pageRoute: ROUTES.HOME,
     },
@@ -122,7 +122,8 @@ function AccountScreen({route}: AccountScreenProps) {
               </>
             )}
           </Section>
-          <Section
+          {/* Unhide the personal details in a later patch - visually, they are ready */}
+          {/* <Section
             title={translate('accountScreen.personalDetails.title')}
             subtitle={translate('accountScreen.personalDetails.subtitle')}
             isCentralPane
@@ -152,7 +153,7 @@ function AccountScreen({route}: AccountScreenProps) {
                 ))}
               </>
             )}
-          </Section>
+          </Section> */}
         </MenuItemGroup>
       </ScrollView>
     </ScreenWrapper>

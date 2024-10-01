@@ -9,6 +9,60 @@ import type {ErrorFields, Errors} from '@src/types/onyx/OnyxCommon';
 import type Response from '@src/types/onyx/Response';
 import DateUtils from './DateUtils';
 import * as Localize from './Localize';
+import {Alert} from 'react-native';
+
+/**
+ * Parses the error object and returns the appropriate error message.
+ *
+ * @param error - The error object to be translated.
+ * @returns
+ */
+function getErrorMessage(error: any): string {
+  const err = error.message;
+  switch (true) {
+    case err.includes('storage/object-not-found'):
+      return 'Object not found';
+    case err.includes('storage/unauthorized'):
+      return 'Unauthorized access';
+    case err.includes('auth/missing-email'):
+      return 'Missing email';
+    case err.includes('auth/invalid-email'):
+      return 'Invalid email';
+    case err.includes('verify the new email'):
+      return 'Please verify your email first before changing it.';
+    case err.includes('auth/missing-password'):
+      return 'Missing password';
+    case err.includes('auth/invalid-credential'):
+      return 'Invalid credentials';
+    case err.includes('auth/weak-password'):
+      return 'Your password is too weak - password should be at least 6 characters';
+    case err.includes('auth/email-already-in-use'):
+      return 'This email is already in use';
+    case err.includes('auth/user-not-found'):
+      return 'User not found';
+    case err.includes('auth/wrong-password'):
+      return 'Incorrect password';
+    case err.includes('auth/network-request-failed'):
+      return 'You are offline';
+    case err.includes('auth/api-key-not-valid'):
+      return 'The app is not configured correctly. Please contact the developer.';
+    case err.includes('auth/too-many-requests'):
+      return 'Too many requests. Please wait a moment and try again later.';
+    case err.includes('PERMISSION_DENIED: Permission denied'):
+      return 'Permission denied. Please contact the administrator for assistance.';
+    default:
+      return err;
+  }
+}
+
+function raiseAlert(
+  error: any,
+  heading: string = '',
+  message: string = '',
+): void {
+  const payload = getErrorMessage(error);
+  Alert.alert(heading ?? 'Unknown error', `${message || ''}` + payload);
+}
 
 /**
  * Creates an error object with a timestamp (in microseconds) as the key and the translated error message as the value.
@@ -178,6 +232,7 @@ function addErrorMessage(
 }
 
 export {
+  getErrorMessage,
   addErrorMessage,
   getEarliestErrorField,
   getErrorMessageWithTranslationData,
@@ -189,6 +244,7 @@ export {
   getMicroSecondOnyxErrorWithTranslationKey,
   getMicroSecondOnyxErrorWithMessage,
   getMicroSecondOnyxErrorObject,
+  raiseAlert,
 };
 
 export type {OnyxDataWithErrors};

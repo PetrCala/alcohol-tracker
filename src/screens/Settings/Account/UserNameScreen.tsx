@@ -23,7 +23,6 @@ import SCREENS from '@src/SCREENS';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {changeUserName} from '@database/users';
-import {getErrorMessage} from '@libs/ErrorHandling';
 
 type UserNameScreenOnyxProps = {};
 
@@ -61,8 +60,7 @@ function UserNameScreen({}: UserNameScreenProps) {
       await changeUserName(db, auth.currentUser, newFirstName, newLastName);
       Navigation.goBack();
     } catch (error: any) {
-      const message = getErrorMessage(error);
-      Alert.alert(translate('userNameScreen.error.generic'), message);
+      ErrorUtils.raiseAlert(error, translate('userNameScreen.error.generic'));
     } finally {
       setLoadingText('');
       setIsLoadingName(false);
@@ -142,6 +140,7 @@ function UserNameScreen({}: UserNameScreenProps) {
     }
     return errors;
   };
+
   return (
     <ScreenWrapper
       includeSafeAreaPaddingBottom={false}

@@ -100,6 +100,14 @@ const config: LinkingOptions<RootStackParamList>['config'] = {
               path: ROUTES.SETTINGS_DISPLAY_NAME,
               exact: true,
             },
+            [SCREENS.SETTINGS.ACCOUNT.EMAIL]: {
+              path: ROUTES.SETTINGS_EMAIL,
+              exact: true,
+            },
+            [SCREENS.SETTINGS.ACCOUNT.PASSWORD]: {
+              path: ROUTES.SETTINGS_PASSWORD,
+              exact: true,
+            },
             [SCREENS.SETTINGS.ACCOUNT.TIMEZONE]: {
               path: ROUTES.SETTINGS_TIMEZONE,
               exact: true,

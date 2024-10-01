@@ -48,6 +48,8 @@ const SCREENS = {
       ROOT: 'Settings_Account',
       USER_NAME: 'Settings_UserName',
       DISPLAY_NAME: 'Settings_DisplayName',
+      EMAIL: 'Settings_Email',
+      PASSWORD: 'Settings_Password',
       TIMEZONE: 'Settings_Timezone',
       TIMEZONE_SELECT: 'Settings_Timezone_Select',
       //...

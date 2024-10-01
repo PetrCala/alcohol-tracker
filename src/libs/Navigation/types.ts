@@ -16,7 +16,6 @@ import type NAVIGATORS from '@src/NAVIGATORS';
 import type SCREENS from '@src/SCREENS';
 import type {Route as Routes} from '@src/ROUTES';
 import type {DrinkingSessionId} from '@src/types/onyx';
-import {DrinkingSession, Profile} from '@src/types/onyx';
 import type DeepValueOf from '@src/types/utils/DeepValueOf';
 import type {DateString} from '@src/types/time';
 
@@ -96,6 +95,8 @@ type SettingsNavigatorParamList = {
   [SCREENS.SETTINGS.ACCOUNT.ROOT]: undefined;
   [SCREENS.SETTINGS.ACCOUNT.USER_NAME]: undefined;
   [SCREENS.SETTINGS.ACCOUNT.DISPLAY_NAME]: undefined;
+  [SCREENS.SETTINGS.ACCOUNT.EMAIL]: undefined;
+  [SCREENS.SETTINGS.ACCOUNT.PASSWORD]: undefined;
   [SCREENS.SETTINGS.ACCOUNT.TIMEZONE]: undefined;
   [SCREENS.SETTINGS.ACCOUNT.TIMEZONE_SELECT]: undefined;
   [SCREENS.SETTINGS.PREFERENCES.ROOT]: undefined;

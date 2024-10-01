@@ -23,7 +23,6 @@ import SCREENS from '@src/SCREENS';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {changeDisplayName} from '@database/users';
-import {getErrorMessage} from '@libs/ErrorHandling';
 
 type DisplayNameScreenOnyxProps = {};
 
@@ -64,11 +63,13 @@ function DisplayNameScreen({}: DisplayNameScreenProps) {
         profileData?.display_name,
         newDisplayName,
       );
-      Navigation.goBack();
     } catch (error: any) {
-      const message = getErrorMessage(error);
-      Alert.alert(translate('displayNameScreen.error.generic'), message);
+      ErrorUtils.raiseAlert(
+        error,
+        translate('displayNameScreen.error.generic'),
+      );
     } finally {
+      Navigation.goBack();
       setLoadingText('');
       setIsLoadingName(false);
     }

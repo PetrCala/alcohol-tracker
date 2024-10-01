@@ -18,7 +18,7 @@ import {UserProps} from '@src/types/onyx';
 import * as User from '@database/users';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {Alert} from 'react-native';
-import {getErrorMessage} from '@libs/ErrorHandling';
+import * as ErrorUtils from '@libs/ErrorUtils';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 
 type TimezoneSelectScreenProps = StackScreenProps<
@@ -70,11 +70,10 @@ function TimezoneSelectScreen({}: TimezoneSelectScreenProps) {
         auth.currentUser,
         text as SelectedTimezone,
       );
-      Navigation.goBack(ROUTES.SETTINGS_TIMEZONE);
     } catch (error: any) {
-      const message = getErrorMessage(error);
-      Alert.alert(translate('timezoneScreen.error.generic'), message);
+      ErrorUtils.raiseAlert(error, translate('timezoneScreen.error.generic'));
     } finally {
+      Navigation.goBack(ROUTES.SETTINGS_TIMEZONE);
       setIsLoading(false);
     }
   };

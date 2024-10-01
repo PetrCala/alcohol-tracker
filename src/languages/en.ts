@@ -62,7 +62,8 @@ export default {
     continue: 'Continue',
     firstName: 'First name',
     lastName: 'Last name',
-    displayName: 'Nickname',
+    displayName: 'Display name',
+    nickname: 'Nickname',
     phone: 'Phone',
     phoneNumber: 'Phone number',
     phoneNumberPlaceholder: '(xxx) xxx-xxx-xxx',
@@ -93,6 +94,8 @@ export default {
     here: 'here',
     date: 'Date',
     dob: 'Date of birth',
+    gender: 'Gender',
+    weight: 'Weight',
     currentYear: 'Current year',
     currentMonth: 'Current month',
     city: 'City',
@@ -322,6 +325,29 @@ export default {
       generic: 'Error updating your timezone',
     },
   },
+  emailScreen: {
+    title: 'Update Email',
+    prompt: 'Your email is used to log in and receive important notifications.',
+    enterEmail: 'Enter your email here',
+    submit: 'Submit email',
+    sent: 'Email updated successfully!',
+    sending: 'Updating email...',
+    error: {
+      invalidEmail: 'Invalid email',
+      sameEmail: 'This is the same email as your current one',
+      emailTooLong: 'Email is too long',
+      emailRequired: 'Email is required',
+      generic: 'There was an error updating your email.',
+    },
+  },
+  passwordScreen: {
+    changePassword: 'Change password',
+    changingYourPasswordPrompt: 'Do not use this',
+    currentPassword: 'Current password',
+    newPassword: 'New password',
+    newPasswordPrompt:
+      'Your new password must be different from your old password and contain at least 8 characters, 1 capital letter, 1 lowercase letter, and 1 number.',
+  },
   feedbackScreen: {
     title: 'Feedback',
     prompt: 'What would you like us to improve?',
@@ -342,6 +368,9 @@ export default {
     enterPasswordToConfirm: 'Please enter your password to confirm deletion.',
     enterPassword: 'Enter your password',
     deletingAccount: 'Deleting account...',
+    error: {
+      generic: 'Error deleting your account',
+    },
   },
   profileScreen: {
     title: 'Profile',

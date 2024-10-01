@@ -10,6 +10,7 @@ import {
   View,
 } from 'react-native';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
+import * as ErrorUtils from '@libs/ErrorUtils';
 import {useFocusEffect} from '@react-navigation/native';
 import {sendPasswordResetEmail, signOut} from 'firebase/auth';
 import {signInUserWithEmailAndPassword} from '@libs/auth/auth';
@@ -24,7 +25,6 @@ import {useFirebase} from '@context/global/FirebaseContext';
 import ScreenWrapper from '@components/ScreenWrapper';
 import useTheme from '@hooks/useTheme';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
-import {getErrorMessage, raiseAlert} from '@libs/ErrorHandling';
 
 type State = {
   email: string;
@@ -117,7 +117,7 @@ function LoginScreen() {
       dispatch({type: 'SET_LOADING_USER', payload: true});
       await signInUserWithEmailAndPassword(auth, state.email, state.password);
     } catch (error: any) {
-      const errorMessage = getErrorMessage(error);
+      const errorMessage = ErrorUtils.getErrorMessage(error);
       dispatch({type: 'SET_WARNING', payload: errorMessage});
     } finally {
       dispatch({type: 'SET_LOADING_USER', payload: false});
@@ -130,7 +130,8 @@ function LoginScreen() {
       await sendPasswordResetEmail(auth, mail);
       dispatch({type: 'SET_SUCCESS', payload: 'Password reset link sent'});
     } catch (error: any) {
-      dispatch({type: 'SET_WARNING', payload: getErrorMessage(error)});
+      const errorMessage = ErrorUtils.getErrorMessage(error);
+      dispatch({type: 'SET_WARNING', payload: errorMessage});
     } finally {
       dispatch({type: 'SET_RESET_PASSWORD_MODAL_VISIBLE', payload: false});
     }

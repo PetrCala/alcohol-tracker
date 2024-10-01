@@ -523,6 +523,9 @@ const CONST = {
   MAX_64BIT_MIDDLE_PART: 7203685,
   MAX_64BIT_RIGHT_PART: 4775807,
 
+  // Max email length
+  EMAIL_MAX_LENGTH: 254,
+
   // When generating a random value to fit in 7 digits (for the `middle` or `right` parts above), this is the maximum value to multiply by Math.random().
   MAX_INT_FOR_RANDOM_7_DIGIT_VALUE: 10000000,
   MERGED_ACCOUNT_PREFIX: 'MERGED_',
@@ -614,6 +617,9 @@ const CONST = {
     // UNLINK_LOGIN_FORM: 'UnlinkLoginForm',
     // RESEND_VALIDATE_CODE_FORM: 'ResendValidateCodeForm',
   },
+
+  // at least 8 characters, 1 capital letter, 1 lowercase number, 1 number
+  PASSWORD_COMPLEXITY_REGEX_STRING: '^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{8,}$',
 
   KEYBOARD_TYPE: {
     VISIBLE_PASSWORD: 'visible-password',
@@ -713,7 +719,8 @@ const CONST = {
     NON_ALPHABETIC_AND_NON_LATIN_CHARS: /[^\p{Script=Latin}]/gu,
     ACCENT_LATIN_CHARS: /[\u00C0-\u017F]/g,
     INVISIBLE_CHARACTERS_GROUPS: /[\p{C}\p{Z}]/gu,
-
+    EMAIL:
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
     OTHER_INVISIBLE_CHARACTERS: /[\u3164]/g,
     POSITIVE_INTEGER: /^\d+$/,
     ROUTES: {

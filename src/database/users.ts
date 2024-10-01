@@ -14,6 +14,7 @@ import {
   EmailAuthProvider,
   reauthenticateWithCredential,
   updateProfile,
+  updateEmail as fbUpdateEmail,
 } from 'firebase/auth';
 import {getUniqueId} from 'react-native-device-info';
 import {Alert} from 'react-native';
@@ -183,6 +184,19 @@ async function synchronizeUserStatus(
   await update(ref(db), updates);
 }
 
+/**
+ * Update the email for a user.
+ *
+ * @param user The user to update the email for
+ * @param newEmail The new email
+ */
+async function updateEmail(user: User | null, newEmail: string): Promise<void> {
+  if (!user) {
+    throw new Error('User is null');
+  }
+  await fbUpdateEmail(user, newEmail);
+}
+
 /** Reauthentificate a user using the User object and a password
  * Necessary before important operations such as deleting a user
  * or changing a password.
@@ -348,16 +362,17 @@ async function saveSelectedTimezone(
 }
 
 export {
+  changeDisplayName,
+  changeUserName,
+  deleteUserData,
   getDefaultPreferences,
   getDefaultUserData,
   getDefaultUserStatus,
-  userExistsInDatabase,
   pushNewUserInfo,
-  deleteUserData,
-  synchronizeUserStatus,
   reauthentificateUser,
-  changeUserName,
-  changeDisplayName,
-  updateAutomaticTimezone,
   saveSelectedTimezone,
+  synchronizeUserStatus,
+  updateAutomaticTimezone,
+  updateEmail,
+  userExistsInDatabase,
 };

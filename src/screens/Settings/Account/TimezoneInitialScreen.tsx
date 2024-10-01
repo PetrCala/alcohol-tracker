@@ -18,7 +18,7 @@ import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {useFirebase} from '@context/global/FirebaseContext';
 import * as User from '@database/users';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
-import {getErrorMessage} from '@libs/ErrorHandling';
+import * as ErrorUtils from '@libs/ErrorUtils';
 
 type TimezoneInitialScreenProps = StackScreenProps<
   SettingsNavigatorParamList,
@@ -53,8 +53,7 @@ function TimezoneInitialScreen({}: TimezoneInitialScreenProps) {
           : (timezone.selected as SelectedTimezone),
       );
     } catch (error: any) {
-      const message = getErrorMessage(error);
-      Alert.alert(translate('timezoneScreen.error.generic'), message);
+      ErrorUtils.raiseAlert(error, translate('timezoneScreen.error.generic'));
     }
   };
 
@@ -62,7 +61,7 @@ function TimezoneInitialScreen({}: TimezoneInitialScreenProps) {
     <ScreenWrapper testID={TimezoneInitialScreen.displayName}>
       <HeaderWithBackButton
         title={translate('timezoneScreen.timezone')}
-        onBackButtonPress={() => Navigation.goBack()}
+        onBackButtonPress={Navigation.goBack}
       />
       <View style={styles.flex1}>
         <View style={[styles.ph5]}>
