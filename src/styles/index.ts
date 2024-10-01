@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import lodashClamp from 'lodash/clamp';
 import type {LineLayer} from 'react-map-gl';
-import type {
-  AnimatableNumericValue,
-  Animated,
-  ImageStyle,
-  TextStyle,
-  ViewStyle,
+import {
+  Platform,
+  type AnimatableNumericValue,
+  type Animated,
+  type ImageStyle,
+  type TextStyle,
+  type ViewStyle,
 } from 'react-native';
 import type {PickerStyle} from 'react-native-picker-select';
 import type {CustomAnimation} from 'react-native-animatable';
@@ -95,6 +96,7 @@ type Translation =
 type OfflineFeedbackStyle = Record<
   | 'deleted'
   | 'pending'
+  | 'default'
   | 'error'
   | 'container'
   | 'textContainer'
@@ -733,6 +735,12 @@ const styles = (theme: ThemeColors) =>
       bottom: 0,
     },
 
+    dotIndicatorMessage: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+
     draggableTopBar: {
       height: 30,
       width: '100%',
@@ -1002,6 +1010,12 @@ const styles = (theme: ThemeColors) =>
       },
       pending: {
         opacity: 0.5,
+      },
+      default: {
+        // fixes a crash on iOS when we attempt to remove already unmounted children
+        // see https://github.com/Expensify/App/issues/48197 for more details
+        // it's a temporary solution while we are working on a permanent fix
+        opacity: Platform.OS === 'ios' ? 0.99 : undefined,
       },
       error: {
         flexDirection: 'row',
