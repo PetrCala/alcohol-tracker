@@ -57,7 +57,7 @@ const ROUTES = {
   TZ_FIX_INTRODUCTION: 'tz-fix/introduction',
   TZ_FIX_DETECTION: 'tz-fix/detection',
   TZ_FIX_CONFIRMATION: 'tz-fix/confirmation',
-  TZ_FIX_SELECT: 'tz-fix/select',
+  TZ_FIX_SELECTION: 'tz-fix/selection',
   TZ_FIX_SUCCESS: 'tz-fix/success',
 
   SETTINGS: 'settings',

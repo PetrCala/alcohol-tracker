@@ -20,6 +20,7 @@ const SCREENS = {
     ROOT: 'TZFix_Root',
     INTRODUCTION: 'TZFix_Introduction',
     DETECTION: 'TZFix_Detection',
+    SELECTION: 'TZFix_Selection',
     CONFIRMATION: 'TZFix_Confirmation',
     SUCCESS: 'TZFix_Success',
   },

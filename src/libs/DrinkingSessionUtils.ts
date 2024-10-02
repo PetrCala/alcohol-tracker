@@ -7,6 +7,7 @@ import type {
   DrinkingSessionType,
   DrinksList,
 } from '@src/types/onyx';
+import type {Database} from 'firebase/database';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import {getTimestampAge, numberToVerboseString} from './TimeUtils';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
@@ -221,6 +222,7 @@ function allSessionsContainTimezone(sessions?: DrinkingSessionList): boolean {
   );
 }
 
+// A temporary function to convert all sessions to UTC
 function convertSessionsToUtc(
   sessions: DrinkingSessionList,
   timezone: SelectedTimezone,
@@ -265,11 +267,27 @@ function convertSessionsToUtc(
   return convertedSessions;
 }
 
+// A temporary function to change the edited session to noon
+function changeEditedSessionToNoon() {}
+
+async function fixTimezoneSessions(
+  db: Database,
+  userID: UserID | undefined,
+  sessions: DrinkingSessionList | undefined,
+  timezone: string,
+) {
+  if (!userID) {
+    throw new Error('Invalid user. Try reloading the app.');
+  }
+  if (isEmptyObject(sessions)) {
+    return;
+  }
+}
+
 export {
   PlaceholderDrinks,
   allSessionsContainTimezone,
   calculateSessionLength,
-  convertSessionsToUtc,
   determineSessionMostCommonDrink,
   extractSessionOrEmpty,
   getDisplayNameForParticipant,
@@ -277,4 +295,5 @@ export {
   getUserDetailTooltipText,
   isEmptySession,
   sessionIsExpired,
+  fixTimezoneSessions,
 };

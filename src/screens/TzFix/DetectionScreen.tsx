@@ -11,6 +11,7 @@ import ONYXKEYS from '@src/ONYXKEYS';
 import ROUTES from '@src/ROUTES';
 import SCREENS from '@src/SCREENS';
 import {SelectedTimezone} from '@src/types/onyx/PersonalDetails';
+import {useEffect} from 'react';
 import {View} from 'react-native';
 
 type DetectionScreenProps = StackScreenProps<
@@ -21,24 +22,18 @@ type DetectionScreenProps = StackScreenProps<
 function DetectionScreen({}: DetectionScreenProps) {
   const styles = useThemeStyles();
   const {translate} = useLocalize();
+
   const currentTimezone = Intl.DateTimeFormat().resolvedOptions();
 
-  const onCorrect = () => {
-    Navigation.navigate(ROUTES.TZ_FIX_CONFIRMATION);
-  };
-
-  const onIncorrect = () => {
-    Navigation.navigate(ROUTES.SETTINGS_TIMEZONE_SELECT);
-    // ROUTES.SETTINGS_TIMEZONE_SELECT.getRoute(
-    //   currentTimezone.timeZone as SelectedTimezone,
-    //   Navigation.getActiveRouteWithoutParams(),
-    // ),
-    // );
-  };
+  const onCorrect = () => Navigation.navigate(ROUTES.TZ_FIX_CONFIRMATION);
+  const onIncorrect = () => Navigation.navigate(ROUTES.TZ_FIX_SELECTION);
 
   return (
     <ScreenWrapper testID={DetectionScreen.displayName}>
-      <HeaderWithBackButton progressBarPercentage={33} />
+      <HeaderWithBackButton
+        onBackButtonPress={() => Navigation.goBack(ROUTES.TZ_FIX_INTRODUCTION)}
+        progressBarPercentage={33}
+      />
       <View style={[styles.m5, styles.flexGrow1, styles.justifyContentBetween]}>
         <View>
           <Text style={[styles.textHeadline, styles.textAlignCenter]}>

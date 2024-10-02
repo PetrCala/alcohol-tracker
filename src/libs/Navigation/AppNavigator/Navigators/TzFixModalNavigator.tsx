@@ -22,6 +22,7 @@ import ROUTES from '@src/ROUTES';
 import SCREENS from '@src/SCREENS';
 import Overlay from '@libs/Navigation/AppNavigator/Navigators/Overlay';
 import useStyleUtils from '@hooks/useStyleUtils';
+import SelectionScreen from '@screens/TzFix/SelectionScreen';
 
 const Stack = createStackNavigator<TzFixModalNavigatorParamList>();
 
@@ -90,6 +91,10 @@ function TzFixModalNavigator() {
               <Stack.Screen
                 name={SCREENS.TZ_FIX.DETECTION}
                 component={DetectionScreen}
+              />
+              <Stack.Screen
+                name={SCREENS.TZ_FIX.SELECTION}
+                component={SelectionScreen}
               />
               <Stack.Screen
                 name={SCREENS.TZ_FIX.CONFIRMATION}

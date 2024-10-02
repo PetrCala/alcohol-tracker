@@ -339,10 +339,23 @@ export default {
     confirmation: {
       title: 'Ready to sync?',
       text: 'Do you wish to proceed with syncing all your existing data to UTC using your selected timezone?',
+      cancelPrompt:
+        'Failing to synchronize your data may result in inaccurate timestamps.',
+      cancel: "I'll do this later",
+      resume: 'I changed my mind, let’s do this!',
       syncNow: "Yeah, let's do it!",
       syncLater: 'No, not now',
+      syncing: 'Syncing your data...',
+      error: {
+        generic: 'Error synchronizing your data',
+      },
     },
-    success: {},
+    success: {
+      title: 'Success!',
+      text1:
+        "Your data has been successfully synchronized to Coordinated Universal Time (UTC). You're all set!",
+      finishButton: 'Awesome!',
+    },
   },
   timezoneScreen: {
     timezone: 'Timezone',
