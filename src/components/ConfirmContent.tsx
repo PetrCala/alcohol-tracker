@@ -198,7 +198,7 @@ function ConfirmContent({
           <>
             {shouldShowCancelButton && shouldReverseStackedButtons && (
               <Button
-                style={[styles.mt1, styles.noSelect]}
+                style={[styles.mt4, styles.noSelect]}
                 onPress={onCancel}
                 large
                 text={cancelText || translate('common.no')}
