@@ -68,6 +68,7 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import ONYXKEYS from '@src/ONYXKEYS';
 import getPlatform from '@libs/getPlatform';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
+import * as DSUtils from '@libs/DrinkingSessionUtils';
 
 type State = {
   visibleDateObject: DateObject;
@@ -77,6 +78,7 @@ type State = {
   initializingSession: boolean;
   ongoingSessionId: DrinkingSessionId | undefined;
   verifyEmailModalVisible: boolean;
+  shouldNavigateToTzFix: boolean;
 };
 
 type Action = {
@@ -92,6 +94,7 @@ const initialState: State = {
   initializingSession: false,
   ongoingSessionId: undefined,
   verifyEmailModalVisible: false,
+  shouldNavigateToTzFix: false,
 };
 
 const reducer = (state: State, action: Action): State => {
@@ -110,6 +113,8 @@ const reducer = (state: State, action: Action): State => {
       return {...state, ongoingSessionId: action.payload};
     case 'SET_VERIFY_EMAIL_MODAL_VISIBLE':
       return {...state, verifyEmailModalVisible: action.payload};
+    case 'SET_SHOULD_NAVIGATE_TO_TZ_FIX':
+      return {...state, shouldNavigateToTzFix: action.payload};
     default:
       return state;
   }
@@ -241,6 +246,17 @@ function HomeScreen({route}: HomeScreenProps) {
     dispatch({type: 'SET_UNITS_CONSUMED', payload: thisMonthUnits});
   }, [drinkingSessionData, state.visibleDateObject, preferences]);
 
+  useMemo(() => {
+    const sessionsAreMissingTz =
+      !!DSUtils.allSessionsContainTimezone(drinkingSessionData);
+
+    const shouldNavigateToTzFix = sessionsAreMissingTz;
+    dispatch({
+      type: 'SET_SHOULD_NAVIGATE_TO_TZ_FIX',
+      payload: shouldNavigateToTzFix,
+    });
+  }, [drinkingSessionData]);
+
   useEffect(() => {
     if (!userStatusData) {
       return;
@@ -276,21 +292,12 @@ function HomeScreen({route}: HomeScreenProps) {
           'Could not update user online status:' + error.message,
         );
       }
+      // TZFIX (09-2024) - Redirect to TZ_FIX_INTRODUCTION if user has not set timezone
+      if (state.shouldNavigateToTzFix) {
+        Navigation.navigate(ROUTES.TZ_FIX_INTRODUCTION);
+      }
     }, [userData, preferences, drinkingSessionData]),
   );
-
-  // const onTzFixed = useCallback(() => {
-  //   // We need to check if standard NewDot onboarding is completed.
-  //   Welcome.isOnboardingFlowCompleted({
-  //     onNotCompleted: () => {
-  //       setTimeout(() => {
-  //         Navigation.isNavigationReady().then(() => {
-  //           Navigation.navigate(ROUTES.TZ_FIX_INTRODUCTION);
-  //         });
-  //       }, 10);
-  //     },
-  //   });
-  // }, []);
 
   if (!user) {
     Navigation.navigate(ROUTES.SIGNUP);
@@ -314,11 +321,6 @@ function HomeScreen({route}: HomeScreenProps) {
       />
     );
   }
-
-  // if (userData?.private_data?.timezone) {
-  //   Navigation.navigate(ROUTES.TZ_FIX_INTRODUCTION);
-  // }
-  // console.log(kk)
 
   return (
     <ScreenWrapper

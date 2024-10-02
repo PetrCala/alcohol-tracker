@@ -205,7 +205,17 @@ function getUserDetailTooltipText(
   return displayNameForParticipant || fallbackUserDisplayName;
 }
 
-function allSessionsContainTimezone(sessions: DrinkingSessionList): boolean {
+/**
+ * Check if all sessions contain a timezone.
+ *
+ * @param sessions The list of drinking sessions to check
+ * @returns Whether all sessions contain a timezone
+ */
+function allSessionsContainTimezone(sessions?: DrinkingSessionList): boolean {
+  if (isEmptyObject(sessions)) {
+    return true; // No session to fix
+  }
+
   return Object.values(sessions).every(
     session => 'timezone' in session && session.timezone,
   );
