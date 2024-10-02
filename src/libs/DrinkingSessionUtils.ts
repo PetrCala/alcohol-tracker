@@ -11,6 +11,8 @@ import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import {getTimestampAge, numberToVerboseString} from './TimeUtils';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
 import * as Localize from './Localize';
+import {SelectedTimezone} from '@src/types/onyx/PersonalDetails';
+import {zonedTimeToUtc} from 'date-fns-tz';
 
 const PlaceholderDrinks: DrinksList = {[Date.now()]: {other: 0}};
 
@@ -203,14 +205,66 @@ function getUserDetailTooltipText(
   return displayNameForParticipant || fallbackUserDisplayName;
 }
 
+function allSessionsContainTimezone(sessions: DrinkingSessionList): boolean {
+  return Object.values(sessions).every(
+    session => 'timezone' in session && session.timezone,
+  );
+}
+
+function convertSessionsToUtc(
+  sessions: DrinkingSessionList,
+  timezone: SelectedTimezone,
+): DrinkingSessionList {
+  const convertedSessions: DrinkingSessionList = {};
+  Object.entries(sessions).forEach(([sessionId, session]) => {
+    const convertedSession = {...session};
+    if (convertedSession.timezone) {
+      convertedSession.timezone = timezone;
+    }
+    const convertedDrinks: DrinksList = {};
+    const existingTimestamps = new Set<number>();
+
+    if (!isEmptyObject(session.drinks)) {
+      Object.entries(session.drinks).forEach(
+        ([timestamp, drinksAtTimestamp]) => {
+          let newTimestamp = zonedTimeToUtc(
+            Number(timestamp),
+            timezone,
+          ).getTime();
+
+          // Ensure the new timestamp is unique by checking for collisions
+          while (existingTimestamps.has(newTimestamp)) {
+            newTimestamp += 1; // Increment timestamp slightly to avoid collision
+          }
+
+          existingTimestamps.add(newTimestamp);
+          convertedDrinks[newTimestamp] = drinksAtTimestamp;
+        },
+      );
+
+      convertedSession.drinks = convertedDrinks;
+    }
+
+    const newStartTime = zonedTimeToUtc(session.start_time, timezone).getTime();
+    const newEndTime = zonedTimeToUtc(session.end_time, timezone).getTime();
+    convertedSession.start_time = newStartTime;
+    convertedSession.end_time = newEndTime;
+
+    convertedSessions[sessionId] = convertedSession;
+  });
+  return convertedSessions;
+}
+
 export {
   PlaceholderDrinks,
-  determineSessionMostCommonDrink,
+  allSessionsContainTimezone,
   calculateSessionLength,
+  convertSessionsToUtc,
+  determineSessionMostCommonDrink,
   extractSessionOrEmpty,
-  sessionIsExpired,
-  getEmptySession,
-  isEmptySession,
   getDisplayNameForParticipant,
+  getEmptySession,
   getUserDetailTooltipText,
+  isEmptySession,
+  sessionIsExpired,
 };

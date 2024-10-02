@@ -108,14 +108,14 @@ function NavigationRoot({
         return;
       }
 
-      // TZFIX (09-2024) - Redirect to TZ_FIX_INTRODUCTION if user has not set timezone
-      if (!hasCompletedTzFixFlow && authenticated) {
-        const {adaptedState} = getAdaptedStateFromPath(
-          ROUTES.TZ_FIX_INTRODUCTION,
-          linkingConfig.config,
-        );
-        return adaptedState;
-      }
+      // // TZFIX (09-2024) - Redirect to TZ_FIX_INTRODUCTION if user has not set timezone
+      // if (!hasCompletedTzFixFlow && authenticated) {
+      //   const {adaptedState} = getAdaptedStateFromPath(
+      //     ROUTES.TZ_FIX_INTRODUCTION,
+      //     linkingConfig.config,
+      //   );
+      //   return adaptedState;
+      // }
 
       // TODO enable this
       // // If the user haven't completed the flow, we want to always redirect them to the onboarding flow.
