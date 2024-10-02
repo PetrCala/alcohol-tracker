@@ -159,6 +159,7 @@ type LeftModalNavigatorParamList = {
 
 type TzFixModalNavigatorParamList = {
   [SCREENS.TZ_FIX.INTRODUCTION]: undefined;
+  [SCREENS.TZ_FIX.DETECTION]: undefined;
   [SCREENS.TZ_FIX.CONFIRMATION]: undefined;
   [SCREENS.TZ_FIX.SUCCESS]: undefined;
 };

@@ -10,42 +10,50 @@ import {StackScreenProps} from '@react-navigation/stack';
 import ONYXKEYS from '@src/ONYXKEYS';
 import ROUTES from '@src/ROUTES';
 import SCREENS from '@src/SCREENS';
+import {SelectedTimezone} from '@src/types/onyx/PersonalDetails';
 import {View} from 'react-native';
-import Onyx from 'react-native-onyx';
 
-type ConfirmationScreenProps = StackScreenProps<
+type DetectionScreenProps = StackScreenProps<
   TzFixModalNavigatorParamList,
-  typeof SCREENS.TZ_FIX.CONFIRMATION
+  typeof SCREENS.TZ_FIX.DETECTION
 >;
 
-function ConfirmationScreen({}: ConfirmationScreenProps) {
+function DetectionScreen({}: DetectionScreenProps) {
   const styles = useThemeStyles();
   const {translate} = useLocalize();
   const currentTimezone = Intl.DateTimeFormat().resolvedOptions();
 
   const onCorrect = () => {
-    Navigation.navigate(ROUTES.TZ_FIX_SUCCESS);
+    Navigation.navigate(ROUTES.TZ_FIX_CONFIRMATION);
   };
 
   const onIncorrect = () => {
-    // Navigation.navigate(ROUTES.SELEC);
+    Navigation.navigate(ROUTES.SETTINGS_TIMEZONE_SELECT);
+    // ROUTES.SETTINGS_TIMEZONE_SELECT.getRoute(
+    //   currentTimezone.timeZone as SelectedTimezone,
+    //   Navigation.getActiveRouteWithoutParams(),
+    // ),
+    // );
   };
 
   return (
-    <ScreenWrapper testID={ConfirmationScreen.displayName}>
-      <HeaderWithBackButton
-        onBackButtonPress={Navigation.goBack}
-        progressBarPercentage={66}
-      />
+    <ScreenWrapper testID={DetectionScreen.displayName}>
+      <HeaderWithBackButton progressBarPercentage={33} />
       <View style={[styles.m5, styles.flexGrow1, styles.justifyContentBetween]}>
         <View>
           <Text style={[styles.textHeadline, styles.textAlignCenter]}>
-            {translate('tzFix.confirmation.title')}
+            {translate('tzFix.detection.title')}
           </Text>
           <Text style={[styles.mt6, styles.textAlignCenter]}>
-            {translate('tzFix.confirmation.text')}
+            {translate('tzFix.detection.isTimezoneCorrect')}
           </Text>
-          <Text style={[styles.mt2, styles.textLarge, styles.textAlignCenter]}>
+          <Text
+            style={[
+              styles.mt8,
+              styles.textHeadlineH1,
+              styles.textXLarge,
+              styles.textAlignCenter,
+            ]}>
             {currentTimezone.timeZone}
           </Text>
         </View>
@@ -56,14 +64,14 @@ function ConfirmationScreen({}: ConfirmationScreenProps) {
             onPress={onCorrect}
             pressOnEnter
             large
-            text={translate('tzFix.confirmation.syncNow')}
+            text={translate('tzFix.detection.correct')}
           />
           <Button
             danger
             style={[styles.mt2, styles.mb1]}
             onPress={onIncorrect}
             large
-            text={translate('tzFix.confirmation.syncLater')}
+            text={translate('tzFix.detection.incorrect')}
           />
         </View>
       </View>
@@ -71,6 +79,6 @@ function ConfirmationScreen({}: ConfirmationScreenProps) {
   );
 }
 
-ConfirmationScreen.displayName = 'ConfirmationScreen';
+DetectionScreen.displayName = 'DetectionScreen';
 
-export default ConfirmationScreen;
+export default DetectionScreen;

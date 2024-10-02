@@ -316,6 +316,34 @@ export default {
       generic: 'Error updating nickname',
     },
   },
+  tzFix: {
+    introduction: {
+      title: 'Important!',
+      text1:
+        'Hello! We want to inform you about an important update regarding how your data is handled in our app.',
+      troubleWithTimezones: 'Trouble with timezones',
+      text2:
+        "Until now, the data we've collected hasn't included timezone information, which can affect the accuracy and consistency of your data across different regions.",
+      whatDoesThisMean: 'What does this mean?',
+      text3:
+        "To enhance your experience and ensure all your data is accurately timestamped, we need to synchronize your existing data to Coordinated Universal Time (UTC). In the following steps, we'll determine your current timezone and ask for your permission to proceed with the synchronization.",
+      confirmButtonText: 'Okay, got it!',
+    },
+    detection: {
+      title: "Let's get started!",
+      isTimezoneCorrect:
+        'We have automatically detected your timezone as the following. Is this correct?',
+      correct: 'Yes, this is correct',
+      incorrect: 'No, my timezone is different',
+    },
+    confirmation: {
+      title: 'Ready to sync?',
+      text: 'Do you wish to proceed with syncing all your existing data to UTC using your selected timezone?',
+      syncNow: "Yeah, let's do it!",
+      syncLater: 'No, not now',
+    },
+    success: {},
+  },
   timezoneScreen: {
     timezone: 'Timezone',
     isShownOnProfile: 'Your timezone is shown on your profile.',

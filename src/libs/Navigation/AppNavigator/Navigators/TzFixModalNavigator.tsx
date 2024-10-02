@@ -13,6 +13,7 @@ import Navigation from '@libs/Navigation/Navigation';
 import type {TzFixModalNavigatorParamList} from '@libs/Navigation/types';
 import OnboardingRefManager from '@libs/OnboardingRefManager';
 import IntroductionScreen from '@screens/TzFix/IntroductionScreen';
+import DetectionScreen from '@screens/TzFix/DetectionScreen';
 import ConfirmationScreen from '@screens/TzFix/ConfirmationScreen';
 import SuccessScreen from '@screens/TzFix/SuccessScreen';
 import CONST from '@src/CONST';
@@ -85,6 +86,10 @@ function TzFixModalNavigator() {
               <Stack.Screen
                 name={SCREENS.TZ_FIX.INTRODUCTION}
                 component={IntroductionScreen}
+              />
+              <Stack.Screen
+                name={SCREENS.TZ_FIX.DETECTION}
+                component={DetectionScreen}
               />
               <Stack.Screen
                 name={SCREENS.TZ_FIX.CONFIRMATION}

@@ -19,6 +19,7 @@ const SCREENS = {
   TZ_FIX: {
     ROOT: 'TZFix_Root',
     INTRODUCTION: 'TZFix_Introduction',
+    DETECTION: 'TZFix_Detection',
     CONFIRMATION: 'TZFix_Confirmation',
     SUCCESS: 'TZFix_Success',
   },

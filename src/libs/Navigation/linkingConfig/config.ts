@@ -52,6 +52,10 @@ const config: LinkingOptions<RootStackParamList>['config'] = {
           path: ROUTES.TZ_FIX_INTRODUCTION,
           exact: true,
         },
+        [SCREENS.TZ_FIX.DETECTION]: {
+          path: ROUTES.TZ_FIX_DETECTION,
+          exact: true,
+        },
         [SCREENS.TZ_FIX.CONFIRMATION]: {
           path: ROUTES.TZ_FIX_CONFIRMATION,
           exact: true,
