@@ -17,7 +17,7 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import {useOnyx} from 'react-native-onyx';
+import Onyx, {useOnyx} from 'react-native-onyx';
 import MenuIcon from '@components/Buttons/MenuIcon';
 import SessionsCalendar from '@components/Calendar';
 import type {DateObject} from '@src/types/time';

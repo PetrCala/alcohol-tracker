@@ -286,6 +286,9 @@ const ONYXKEYS = {
   // Stores last visited path
   LAST_VISITED_PATH: 'lastVisitedPath',
 
+  /** Stores the route to open after changing app permission from settings */
+  LAST_ROUTE: 'lastRoute',
+
   //   // Stores the recently used report fields
   //   RECENTLY_USED_REPORT_FIELDS: 'recentlyUsedReportFields',
 
@@ -560,6 +563,7 @@ type OnyxValuesMapping = {
   //   [ONYXKEYS.ONBOARDING_PURPOSE_SELECTED]: string;
   //   [ONYXKEYS.IS_SEARCHING_FOR_REPORTS]: boolean;
   [ONYXKEYS.LAST_VISITED_PATH]: string | undefined;
+  [ONYXKEYS.LAST_ROUTE]: string;
   //   [ONYXKEYS.RECENTLY_USED_REPORT_FIELDS]: OnyxTypes.RecentlyUsedReportFields;
   [ONYXKEYS.UPDATE_REQUIRED]: boolean;
   //   [ONYXKEYS.PLAID_CURRENT_EVENT]: string;
