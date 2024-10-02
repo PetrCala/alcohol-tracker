@@ -248,9 +248,12 @@ function HomeScreen({route}: HomeScreenProps) {
 
   useMemo(() => {
     const sessionsAreMissingTz =
-      !!DSUtils.allSessionsContainTimezone(drinkingSessionData);
+      !DSUtils.allSessionsContainTimezone(drinkingSessionData);
 
-    const shouldNavigateToTzFix = sessionsAreMissingTz;
+    // Only navigate in case the user is setting up TZ for the first time
+    const shouldNavigateToTzFix =
+      sessionsAreMissingTz && !!!userData?.private_data?.timezone;
+
     dispatch({
       type: 'SET_SHOULD_NAVIGATE_TO_TZ_FIX',
       payload: shouldNavigateToTzFix,

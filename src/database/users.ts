@@ -5,6 +5,7 @@ import type {
   FriendRequestList,
   Preferences,
   Profile,
+  UserPrivateData,
   UserProps,
   UserStatus,
 } from '@src/types/onyx';
@@ -47,9 +48,18 @@ const getDefaultPreferences = (): Preferences => {
 
 const getDefaultUserData = (profileData: Profile): UserProps => {
   const userRole = 'open_beta_user';
+  const timezone: Timezone = {
+    selected: Intl.DateTimeFormat().resolvedOptions()
+      .timeZone as SelectedTimezone,
+    automatic: true,
+  };
+  const defaultPrivateData: UserPrivateData = {
+    timezone: timezone,
+  };
   return {
     profile: profileData,
     role: userRole,
+    private_data: defaultPrivateData,
   };
 };
 
