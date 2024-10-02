@@ -922,6 +922,16 @@ const styles = (theme: ThemeColors) =>
       left: -9999,
     },
 
+    makeSlideInTranslation: (translationType: Translation, fromValue: number) =>
+      ({
+        from: {
+          [translationType]: fromValue,
+        },
+        to: {
+          [translationType]: 0,
+        },
+      }) satisfies CustomAnimation,
+
     headerText: {
       color: theme.heading,
       ...FontUtils.fontFamily.platform.EXP_NEUE_BOLD,

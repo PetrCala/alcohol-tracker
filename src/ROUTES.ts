@@ -112,6 +112,7 @@ const ROUTES = {
   STATISTICS: 'statistics',
 } as const;
 
+export {getUrlWithBackToParam};
 export default ROUTES;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -121,18 +122,11 @@ type ExtractRouteName<TRoute> = TRoute extends {
   ? TRouteName
   : TRoute;
 
-type AllRoutes = {
-  [K in keyof typeof ROUTES]: ExtractRouteName<(typeof ROUTES)[K]>;
-}[keyof typeof ROUTES];
-
-type RouteIsPlainString = IsEqual<AllRoutes, string>;
-
 /**
  * Represents all routes in the app as a union of literal strings.
- *
- * If this type resolves to `never`, it implies that one or more routes defined within `ROUTES` have not correctly used
- * `as const` in their `getRoute` function return value.
  */
-type Route = RouteIsPlainString extends true ? never : AllRoutes;
+type Route = {
+  [K in keyof typeof ROUTES]: ExtractRouteName<(typeof ROUTES)[K]>;
+}[keyof typeof ROUTES];
 
 export type {Route};
