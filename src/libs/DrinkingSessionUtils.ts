@@ -7,13 +7,14 @@ import type {
   DrinkingSessionType,
   DrinksList,
 } from '@src/types/onyx';
-import type {Database} from 'firebase/database';
+import {ref, update, type Database} from 'firebase/database';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import {getTimestampAge, numberToVerboseString} from './TimeUtils';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
 import * as Localize from './Localize';
 import {SelectedTimezone} from '@src/types/onyx/PersonalDetails';
 import {zonedTimeToUtc} from 'date-fns-tz';
+import DBPATHS from '@database/DBPATHS';
 
 const PlaceholderDrinks: DrinksList = {[Date.now()]: {other: 0}};
 
@@ -267,14 +268,11 @@ function convertSessionsToUtc(
   return convertedSessions;
 }
 
-// A temporary function to change the edited session to noon
-function changeEditedSessionToNoon() {}
-
 async function fixTimezoneSessions(
   db: Database,
   userID: UserID | undefined,
   sessions: DrinkingSessionList | undefined,
-  timezone: string,
+  timezone: SelectedTimezone,
 ) {
   if (!userID) {
     throw new Error('Invalid user. Try reloading the app.');
@@ -282,6 +280,14 @@ async function fixTimezoneSessions(
   if (isEmptyObject(sessions)) {
     return;
   }
+  const convertedSessions = convertSessionsToUtc(sessions, timezone);
+
+  const sessionsRef = DBPATHS.USER_DRINKING_SESSIONS_USER_ID;
+
+  const updates: Record<string, DrinkingSessionList> = {};
+  updates[sessionsRef.getRoute(userID)] = convertedSessions;
+
+  await update(ref(db), updates);
 }
 
 export {
