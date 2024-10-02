@@ -1,4 +1,10 @@
-﻿import React, {useEffect, useMemo, useReducer, useState} from 'react';
+﻿import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useState,
+} from 'react';
 import {
   Alert,
   Dimensions,
@@ -61,9 +67,7 @@ import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
 import ONYXKEYS from '@src/ONYXKEYS';
 import getPlatform from '@libs/getPlatform';
-import ConfirmModal from '@components/ConfirmModal';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
-import Switch from '@components/Switch';
 
 type State = {
   visibleDateObject: DateObject;
@@ -275,6 +279,19 @@ function HomeScreen({route}: HomeScreenProps) {
     }, [userData, preferences, drinkingSessionData]),
   );
 
+  // const onTzFixed = useCallback(() => {
+  //   // We need to check if standard NewDot onboarding is completed.
+  //   Welcome.isOnboardingFlowCompleted({
+  //     onNotCompleted: () => {
+  //       setTimeout(() => {
+  //         Navigation.isNavigationReady().then(() => {
+  //           Navigation.navigate(ROUTES.TZ_FIX_INTRODUCTION);
+  //         });
+  //       }, 10);
+  //     },
+  //   });
+  // }, []);
+
   if (!user) {
     Navigation.navigate(ROUTES.SIGNUP);
     return;
@@ -297,6 +314,11 @@ function HomeScreen({route}: HomeScreenProps) {
       />
     );
   }
+
+  // if (userData?.private_data?.timezone) {
+  //   Navigation.navigate(ROUTES.TZ_FIX_INTRODUCTION);
+  // }
+  // console.log(kk)
 
   return (
     <ScreenWrapper

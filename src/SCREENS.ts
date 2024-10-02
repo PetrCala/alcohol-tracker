@@ -16,6 +16,13 @@ const SCREENS = {
   LOGIN: 'Login',
   FORCE_UPDATE: 'ForceUpdate',
 
+  TZ_FIX: {
+    ROOT: 'TZFix_Root',
+    INTRODUCTION: 'TZFix_Introduction',
+    CONFIRMATION: 'TZFix_Confirmation',
+    SUCCESS: 'TZFix_Success',
+  },
+
   RIGHT_MODAL: {
     ACHIEVEMENTS: 'Achievements',
     DAY_OVERVIEW: 'DayOverview',

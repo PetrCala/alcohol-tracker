@@ -157,6 +157,12 @@ type LeftModalNavigatorParamList = {
 //   [SCREENS.SETTINGS_CENTRAL_PANE]: NavigatorScreenParams<SettingsCentralPaneNavigatorParamList>;
 // };
 
+type TzFixModalNavigatorParamList = {
+  [SCREENS.TZ_FIX.INTRODUCTION]: undefined;
+  [SCREENS.TZ_FIX.CONFIRMATION]: undefined;
+  [SCREENS.TZ_FIX.SUCCESS]: undefined;
+};
+
 type BottomTabNavigatorParamList = {
   [SCREENS.HOME]: undefined;
   // [SCREENS.ALL_SETTINGS]: undefined;
@@ -202,6 +208,7 @@ type AuthScreensParamList = CentralPaneScreensParamList &
     [SCREENS.NOT_FOUND]: undefined;
     [NAVIGATORS.LEFT_MODAL_NAVIGATOR]: NavigatorScreenParams<LeftModalNavigatorParamList>;
     [NAVIGATORS.RIGHT_MODAL_NAVIGATOR]: NavigatorScreenParams<RightModalNavigatorParamList>;
+    [NAVIGATORS.TZ_FIX_NAVIGATOR]: NavigatorScreenParams<TzFixModalNavigatorParamList>;
     // [NAVIGATORS.FULL_SCREEN_NAVIGATOR]: NavigatorScreenParams<FullScreenNavigatorParamList>;
   };
 
@@ -242,4 +249,5 @@ export type {
   State,
   StateOrRoute,
   StatisticsNavigatorParamList,
+  TzFixModalNavigatorParamList,
 };

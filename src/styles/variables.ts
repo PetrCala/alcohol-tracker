@@ -128,6 +128,7 @@ export default {
   avatarChatSpacing: 12,
   chatInputSpacing: 52, // 40 + avatarChatSpacing
   borderTopWidth: 1,
+  onboardingModalWidth: 500,
   emptyWorkspaceIconWidth: 84,
   emptyWorkspaceIconHeight: 84,
   modalTopIconWidth: 200,

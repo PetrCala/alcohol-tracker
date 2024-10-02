@@ -29,6 +29,9 @@ const ONYXKEYS = {
   //   /** Boolean flag set whenever we are searching for reports in the server */
   //   IS_SEARCHING_FOR_REPORTS: 'isSearchingForReports',
 
+  /** This NVP contains information about whether the timezone fix was completed or not */
+  NVP_TZ_FIX: 'nvp_tz_fix',
+
   /** Note: These are Persisted Requests - not all requests in the main queue as the key name might lead one to believe */
   PERSISTED_REQUESTS: 'networkRequestQueue',
 
@@ -467,6 +470,7 @@ type OnyxCollectionValuesMapping = {
 
 type OnyxValuesMapping = {
   [ONYXKEYS.ACCOUNT]: OnyxTypes.Account;
+  [ONYXKEYS.NVP_TZ_FIX]: OnyxTypes.TzFix | [];
   //   [ONYXKEYS.ACCOUNT_MANAGER_REPORT_ID]: string;
   //   [ONYXKEYS.NVP_IS_FIRST_TIME_NEW_EXPENSIFY_USER]: boolean;
   //   [ONYXKEYS.ACTIVE_CLIENTS]: string[];

@@ -5,7 +5,6 @@ import {
   NavigationContainer,
 } from '@react-navigation/native';
 import React, {useContext, useEffect, useMemo, useRef} from 'react';
-// import {ScrollOffsetContext} from '@components/ScrollOffsetContextProvider';
 import useTheme from '@hooks/useTheme';
 import useWindowDimensions from '@hooks/useWindowDimensions';
 import Log from '@libs/Log';
@@ -18,12 +17,15 @@ import linkingConfig from './linkingConfig';
 import customGetPathFromState from './linkingConfig/customGetPathFromState';
 import getAdaptedStateFromPath from './linkingConfig/getAdaptedStateFromPath';
 import Navigation, {navigationRef} from './Navigation';
-import type {RootStackParamList} from './types';
 import CONST from '@src/CONST';
 import {ScrollOffsetContext} from '@components/ScrollOffsetContextProvider';
 import {useOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 import setupCustomAndroidBackHandler from './setupCustomAndroidBackHandler';
+import hasCompletedGuidedSetupFlowSelector from '@libs/hasCompletedGuidedSetupFlowSelector';
+import ROUTES from '@src/ROUTES';
+import {useFirebase} from '@context/global/FirebaseContext';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
 
 type NavigationRootProps = {
   /** Whether the current user is logged in with an authToken */
@@ -86,7 +88,14 @@ function NavigationRoot({
   const theme = useTheme();
   const {cleanStaleScrollOffsets} = useContext(ScrollOffsetContext);
   const {isSmallScreenWidth} = useWindowDimensions();
-  const [user] = useOnyx(ONYXKEYS.USER);
+  const {auth} = useFirebase();
+  const user = auth.currentUser;
+  // const [user] = useOnyx(ONYXKEYS.USER);
+
+  // TZFIX (09-2024) - Redirect to TZ_FIX_INTRODUCTION if user has not set timezone
+  const [hasCompletedTzFixFlow] = useOnyx(ONYXKEYS.NVP_TZ_FIX, {
+    selector: hasCompletedGuidedSetupFlowSelector,
+  });
 
   // const [hasCompletedGuidedSetupFlow] = useOnyx(ONYXKEYS.NVP_ONBOARDING, {
   //     selector: hasCompletedGuidedSetupFlowSelector,
@@ -94,9 +103,18 @@ function NavigationRoot({
 
   const initialState = useMemo(
     () => {
-      if (!user || user.isFromPublicDomain) {
+      if (!user) {
         Log.info('User is not authenticated, skipping initial state setup');
         return;
+      }
+
+      // TZFIX (09-2024) - Redirect to TZ_FIX_INTRODUCTION if user has not set timezone
+      if (!hasCompletedTzFixFlow && authenticated) {
+        const {adaptedState} = getAdaptedStateFromPath(
+          ROUTES.TZ_FIX_INTRODUCTION,
+          linkingConfig.config,
+        );
+        return adaptedState;
       }
 
       // TODO enable this

@@ -68,6 +68,7 @@ import type {
 } from './UserProps';
 import type UserStatus from './UserStatus';
 import type {UserStatusList} from './UserStatus';
+import TzFix from './TzFix';
 
 export type {
   Account,
@@ -124,6 +125,7 @@ export type {
   Session,
   SessionPlaceholder,
   SessionPlaceholderList,
+  TzFix,
   UnconfirmedDayKey,
   UnconfirmedDays,
   UnconfirmedDaysList,

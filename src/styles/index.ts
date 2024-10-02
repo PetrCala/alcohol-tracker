@@ -1131,6 +1131,21 @@ const styles = (theme: ThemeColors) =>
         flex: 1,
       }) satisfies ViewStyle,
 
+    onboardingNavigatorOuterView: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+
+    OnboardingNavigatorInnerView: (shouldUseNarrowLayout: boolean) =>
+      ({
+        width: shouldUseNarrowLayout ? variables.onboardingModalWidth : '100%',
+        height: shouldUseNarrowLayout ? 732 : '100%',
+        maxHeight: '100%',
+        borderRadius: shouldUseNarrowLayout ? 16 : 0,
+        overflow: 'hidden',
+      }) satisfies ViewStyle,
+
     sectionMenuItemTopDescription: {
       ...spacing.ph8,
       ...spacing.mhn8,

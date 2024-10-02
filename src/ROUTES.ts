@@ -43,6 +43,11 @@ const ROUTES = {
       `drinking-session/${sessionId}/summary` as const,
   },
 
+  TZ_FIX_ROOT: 'tz-fix',
+  TZ_FIX_INTRODUCTION: 'tz-fix/introduction',
+  TZ_FIX_CONFIRMATION: 'tz-fix/confirmation',
+  TZ_FIX_SUCCESS: 'tz-fix/success',
+
   SETTINGS: 'settings',
 
   SETTINGS_ACCOUNT: 'settings/account',
