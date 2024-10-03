@@ -170,7 +170,7 @@ jobs:
 
       - name: Reset pods
         run: |
-          bun run ios:pod:reset
+          npm run ios:pod:reset
 
       - name: Set up environment for Xcode
         run: |
