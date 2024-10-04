@@ -1,13 +1,13 @@
 require('dotenv').config(); // Use .env variables in this file - CONFIG does not work here
 import type {FirebaseApp} from 'firebase/app';
 import {initializeApp, deleteApp} from 'firebase/app';
-import * as firebaseJson from '../../../firebase.json';
+import * as firebaseJson from '../../firebase.json';
 import type {FirebaseStorage} from 'firebase/storage';
 import {connectStorageEmulator, getStorage} from 'firebase/storage';
-import CONFIG from '../../../src/CONFIG';
-import {getTestStorageBucket} from './emulatorUtils';
+import CONFIG from '../../src/CONFIG';
+import {getTestStorageBucket} from './utils';
 
-export function setupStorageTestEnv(): {
+function setup(): {
   testApp: FirebaseApp;
   storage: FirebaseStorage;
 } {
@@ -26,14 +26,14 @@ export function setupStorageTestEnv(): {
   return {testApp, storage};
 }
 
-export async function teardownStorageTestEnv(
-  testApp: FirebaseApp,
-): Promise<void> {
+async function teardown(testApp: FirebaseApp): Promise<void> {
   await deleteApp(testApp); // Delete the app
 }
 
-export async function fillStorageWithMocks(
-  storage: FirebaseStorage,
-): Promise<void> {
+async function fillWithMockData(storage: FirebaseStorage): Promise<void> {
   // TBA
 }
+
+const StorageEmulator = {setup, teardown, fillWithMockData};
+
+export default StorageEmulator;

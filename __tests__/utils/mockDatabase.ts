@@ -30,6 +30,7 @@ import {
 } from '../../src/libs/DataHandling';
 import {cleanStringForFirebaseKey} from '../../src/libs/StringUtilsKiroku';
 import {MOCK_SESSION_IDS, MOCK_USER_IDS} from './testsStatic';
+import * as DateUtils from '@src/libs/DateUtils';
 import CONST from '@src/CONST';
 
 /**
@@ -187,6 +188,7 @@ export function createMockSession(
     note: '',
     drinks: drinks,
     type: getRandomChoice(Object.values(CONST.SESSION_TYPES)),
+    // timezone: DateUtils.getCurrentTimezone(),
   };
   if (ongoing) {
     newSession.ongoing = true;

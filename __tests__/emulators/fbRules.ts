@@ -1,8 +1,8 @@
 import fs from 'fs';
 import type {RulesTestEnvironment} from '@firebase/rules-unit-testing';
 import {initializeTestEnvironment} from '@firebase/rules-unit-testing';
-import CONFIG from '../../../src/CONFIG';
-import * as firebaseJson from '../../../firebase.json';
+import CONFIG from '../../src/CONFIG';
+import * as firebaseJson from '../../firebase.json';
 
 type TestEnvironmentResult = {
   testEnv: RulesTestEnvironment;
@@ -11,7 +11,7 @@ type TestEnvironmentResult = {
   adminDb: any;
 };
 
-export async function setupFirebaseRulesTestEnv(): Promise<TestEnvironmentResult> {
+async function setup(): Promise<TestEnvironmentResult> {
   const projectId = CONFIG.TEST_PROJECT_ID;
   if (!projectId) {
     throw new Error('Missing environment variable TEST_PROJECT_ID.');
@@ -36,9 +36,11 @@ export async function setupFirebaseRulesTestEnv(): Promise<TestEnvironmentResult
   return {testEnv, authDb, unauthDb, adminDb};
 }
 
-export async function teardownFirebaseRulesTestEnv(
-  testEnv: RulesTestEnvironment,
-): Promise<void> {
+export async function teardown(testEnv: RulesTestEnvironment): Promise<void> {
   await testEnv.clearDatabase();
   await testEnv.cleanup();
 }
+
+const FBRules = {setup, teardown};
+
+export default FBRules;

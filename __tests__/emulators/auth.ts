@@ -1,6 +1,4 @@
 require('dotenv').config(); // for the process.env variables to read the .env file
-import {MOCK_USER_IDS} from '../testsStatic';
-import {signUpUserWithEmailAndPassword} from '../../../src/libs/auth/auth';
 import type {Auth} from 'firebase/auth';
 import {
   initializeAuth,
@@ -10,12 +8,14 @@ import {
 } from 'firebase/auth';
 import type {FirebaseApp} from 'firebase/app';
 import {initializeApp, deleteApp} from 'firebase/app';
-import {isConnectedToAuthEmulator} from '../../../src/libs/Firebase/FirebaseUtils';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
-import CONFIG from '../../../src/CONFIG';
-import {getTestAuthDomain} from './emulatorUtils';
+import {isConnectedToAuthEmulator} from '@src/libs/Firebase/FirebaseUtils';
+import {signUpUserWithEmailAndPassword} from '@src/libs/auth/auth';
+import CONFIG from '@src/CONFIG';
+import {MOCK_USER_IDS} from '../utils/testsStatic';
+import {getTestAuthDomain} from './utils';
 
-export function setupAuthTestEnv(): {
+function setup(): {
   testApp: FirebaseApp;
   auth: Auth;
 } {
@@ -35,7 +35,7 @@ export function setupAuthTestEnv(): {
   return {testApp, auth};
 }
 
-export async function teardownAuthTestEnv(testApp: FirebaseApp): Promise<void> {
+async function teardown(testApp: FirebaseApp): Promise<void> {
   await deleteApp(testApp); // Delete the app
 }
 
@@ -45,7 +45,7 @@ export async function teardownAuthTestEnv(testApp: FirebaseApp): Promise<void> {
  * @param emulatorAuth Auth object from the emulator.
  * @returns Promise<void>
  */
-export async function createMockAuthUsers(emulatorAuth: Auth): Promise<void> {
+async function createMockUsers(emulatorAuth: Auth): Promise<void> {
   if (!isConnectedToAuthEmulator) {
     throw new Error('Not connected to the auth emulator');
   }
@@ -71,3 +71,7 @@ export async function createMockAuthUsers(emulatorAuth: Auth): Promise<void> {
     }
   });
 }
+
+const AuthEmulator = {setup, teardown, createMockUsers};
+
+export default AuthEmulator;

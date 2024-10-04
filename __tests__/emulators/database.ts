@@ -7,13 +7,13 @@ import {
 import type {FirebaseApp} from 'firebase/app';
 import {initializeApp, deleteApp} from 'firebase/app';
 import type {Database} from 'firebase/database';
-import * as firebaseJson from '../../../firebase.json';
-import {createMockDatabase} from '../mockDatabase';
+import * as firebaseJson from '../../firebase.json';
+import {createMockDatabase} from '../utils/mockDatabase';
 import {ref, set} from 'firebase/database';
-import CONFIG from '../../../src/CONFIG';
-import {getTestDatabaseURL} from './emulatorUtils';
+import CONFIG from '../../src/CONFIG';
+import {getTestDatabaseURL} from './utils';
 
-export function setupRealtimeDatabaseTestEnv(): {
+export function setup(): {
   testApp: FirebaseApp;
   db: Database;
 } {
@@ -33,10 +33,7 @@ export function setupRealtimeDatabaseTestEnv(): {
   return {testApp, db};
 }
 
-export async function teardownRealtimeDatabaseTestEnv(
-  testApp: FirebaseApp,
-  db: Database,
-): Promise<void> {
+async function teardown(testApp: FirebaseApp, db: Database): Promise<void> {
   goOffline(db); // Close database connection
   await deleteApp(testApp); // Delete the app
 }
@@ -47,11 +44,12 @@ export async function teardownRealtimeDatabaseTestEnv(
  * @param noFriends If set to true, no friends or friend requests will be created.
  * @returns The updated Database object.
  */
-export async function fillDatabaseWithMockData(
-  db: any,
-  noFriends = false,
-): Promise<void> {
+async function fillWithMockData(db: any, noFriends = false): Promise<void> {
   const mockDatabase = createMockDatabase(noFriends);
   await set(ref(db), mockDatabase);
   return db;
 }
+
+const DatabaseEmulator = {setup, teardown, fillWithMockData};
+
+export default DatabaseEmulator;
