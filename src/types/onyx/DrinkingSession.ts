@@ -17,6 +17,7 @@ type DrinkingSession = {
   note: string;
   ongoing?: boolean;
   type: DrinkingSessionType;
+  session_type?: string; // TODO: remove in 0.4.x
 };
 
 type DrinkingSessionList = Record<DrinkingSessionId, DrinkingSession>;

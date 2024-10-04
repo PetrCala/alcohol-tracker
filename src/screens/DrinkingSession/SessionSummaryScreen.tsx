@@ -18,10 +18,7 @@ import type {StackScreenProps} from '@react-navigation/stack';
 import SCREENS from '@src/SCREENS';
 import type {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
 import {useEffect, useState} from 'react';
-import {
-  calculateSessionLength,
-  extractSessionOrEmpty,
-} from '@libs/DrinkingSessionUtils';
+import DSUtils from '@libs/DrinkingSessionUtils';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import ScreenWrapper from '@components/ScreenWrapper';
@@ -68,7 +65,7 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
     return null;
   } // Careful when writing hooks after this line
   const [session, setSession] = useState<DrinkingSession>(
-    extractSessionOrEmpty(sessionId, drinkingSessionData),
+    DSUtils.extractSessionOrEmpty(sessionId, drinkingSessionData),
   );
   // Drinks info
   const totalDrinks = sumAllDrinks(session.drinks);
@@ -88,7 +85,7 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
   const sessionDay = formatDateToDay(sessionStartDate);
   const sessionStartTime = formatDateToTime(sessionStartDate);
   const sessionEndTime = formatDateToTime(sessionEndDate);
-  const sessionLength = calculateSessionLength(session, false);
+  const sessionLength = DSUtils.calculateSessionLength(session, false);
   // Figure out last drink added
   let lastDrinkAdded: string;
   const lastDrinkEditTimestamp = getLastDrinkAddedTime(session);
@@ -147,7 +144,10 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
     : unitsToColors(totalUnits, preferences.units_to_colors);
 
   useEffect(() => {
-    const newSession = extractSessionOrEmpty(sessionId, drinkingSessionData);
+    const newSession = DSUtils.extractSessionOrEmpty(
+      sessionId,
+      drinkingSessionData,
+    );
     setSession(newSession);
   }, [drinkingSessionData]);
 

@@ -37,7 +37,7 @@ import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import DBPATHS from '@database/DBPATHS';
-import {getEmptySession} from '@libs/DrinkingSessionUtils';
+import DSUtils from '@libs/DrinkingSessionUtils';
 import CONST from '@src/CONST';
 import {savePlaceholderSessionData} from '@database/drinkingSessions';
 import ScreenWrapper from '@components/ScreenWrapper';
@@ -218,7 +218,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
     /** Generate a placeholder session that corresponds to the current day */
     const getPlaceholderSession = (): DrinkingSession => {
       const timestamp = currentDate.getTime();
-      const session: DrinkingSession = getEmptySession(
+      const session: DrinkingSession = DSUtils.getEmptySession(
         CONST.SESSION_TYPES.EDIT,
         true,
         false,

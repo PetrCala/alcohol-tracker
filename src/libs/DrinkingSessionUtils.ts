@@ -13,7 +13,7 @@ import {getTimestampAge, numberToVerboseString} from './TimeUtils';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
 import * as Localize from './Localize';
 import {SelectedTimezone} from '@src/types/onyx/PersonalDetails';
-import {zonedTimeToUtc} from 'date-fns-tz';
+import {utcToZonedTime, zonedTimeToUtc} from 'date-fns-tz';
 import DBPATHS from '@database/DBPATHS';
 
 const PlaceholderDrinks: DrinksList = {[Date.now()]: {other: 0}};
@@ -223,6 +223,28 @@ function allSessionsContainTimezone(sessions?: DrinkingSessionList): boolean {
   );
 }
 
+/** Modify a timestamp so that it points to the same day in UTC midday.
+ */
+function fixEditSessionTimestamp(
+  timestamp: number,
+  timezone: SelectedTimezone,
+): number {
+  const utcTimestamp = zonedTimeToUtc(timestamp, timezone).getTime();
+  const utcDate = new Date(utcTimestamp);
+
+  const localizedDate = utcToZonedTime(utcDate, timezone);
+
+  return Date.UTC(
+    localizedDate.getFullYear(),
+    localizedDate.getMonth(),
+    localizedDate.getDay(),
+    12,
+    0,
+    0,
+    0,
+  );
+}
+
 // A temporary function to convert all sessions to UTC
 function convertSessionsToUtc(
   sessions: DrinkingSessionList,
@@ -231,7 +253,7 @@ function convertSessionsToUtc(
   const convertedSessions: DrinkingSessionList = {};
   Object.entries(sessions).forEach(([sessionId, session]) => {
     const convertedSession = {...session};
-    if (convertedSession.timezone) {
+    if (!convertedSession.timezone) {
       convertedSession.timezone = timezone;
     }
     const convertedDrinks: DrinksList = {};
@@ -258,8 +280,21 @@ function convertSessionsToUtc(
       convertedSession.drinks = convertedDrinks;
     }
 
-    const newStartTime = zonedTimeToUtc(session.start_time, timezone).getTime();
-    const newEndTime = zonedTimeToUtc(session.end_time, timezone).getTime();
+    if ('session_type' in session) {
+      convertedSession.type = session.session_type as DrinkingSessionType;
+      delete convertedSession.session_type;
+    }
+
+    const shouldFixTimestamp =
+      session.type === 'edit' || session?.session_type === 'edit'; // @ts-ignore
+
+    const newStartTime = shouldFixTimestamp
+      ? fixEditSessionTimestamp(session.start_time, timezone)
+      : zonedTimeToUtc(session.start_time, timezone).getTime();
+    const newEndTime = shouldFixTimestamp
+      ? fixEditSessionTimestamp(session.end_time, timezone)
+      : zonedTimeToUtc(session.end_time, timezone).getTime();
+
     convertedSession.start_time = newStartTime;
     convertedSession.end_time = newEndTime;
 
@@ -290,12 +325,13 @@ async function fixTimezoneSessions(
   await update(ref(db), updates);
 }
 
-export {
+const DSUtils = {
   PlaceholderDrinks,
   allSessionsContainTimezone,
   calculateSessionLength,
   determineSessionMostCommonDrink,
   extractSessionOrEmpty,
+  fixEditSessionTimestamp,
   getDisplayNameForParticipant,
   getEmptySession,
   getUserDetailTooltipText,
@@ -303,3 +339,5 @@ export {
   sessionIsExpired,
   fixTimezoneSessions,
 };
+
+export default DSUtils;

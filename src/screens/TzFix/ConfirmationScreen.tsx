@@ -11,13 +11,11 @@ import Navigation from '@libs/Navigation/Navigation';
 import {TzFixModalNavigatorParamList} from '@libs/Navigation/types';
 import {StackScreenProps} from '@react-navigation/stack';
 import * as ErrorUtils from '@libs/ErrorUtils';
-import * as DSUtils from '@libs/DrinkingSessionUtils';
-import ONYXKEYS from '@src/ONYXKEYS';
+import DSUtils from '@libs/DrinkingSessionUtils';
 import ROUTES from '@src/ROUTES';
 import SCREENS from '@src/SCREENS';
 import {useState} from 'react';
 import {View} from 'react-native';
-import Onyx from 'react-native-onyx';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {SelectedTimezone} from '@src/types/onyx/PersonalDetails';
 
@@ -47,13 +45,12 @@ function ConfirmationScreen({}: ConfirmationScreenProps) {
   const onCorrect = async () => {
     try {
       setIsSynchronizing(true);
-      // Enable after the function is ready
-      // await DSUtils.fixTimezoneSessions(
-      //   db,
-      //   auth.currentUser?.uid,
-      //   drinkingSessionData,
-      //   selectedTimezone as SelectedTimezone,
-      // );
+      await DSUtils.fixTimezoneSessions(
+        db,
+        auth.currentUser?.uid,
+        drinkingSessionData,
+        selectedTimezone as SelectedTimezone,
+      );
       Navigation.navigate(ROUTES.TZ_FIX_SUCCESS);
     } catch (error) {
       ErrorUtils.raiseAlert(

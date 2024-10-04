@@ -53,7 +53,6 @@ import type {BottomTabNavigatorParamList} from '@libs/Navigation/types';
 import type SCREENS from '@src/SCREENS';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import type {DateData} from 'react-native-calendars';
-import {getEmptySession} from '@libs/DrinkingSessionUtils';
 import DBPATHS from '@database/DBPATHS';
 import type {StatData} from '@components/Items/StatOverview';
 import {StatsOverview} from '@components/Items/StatOverview';
@@ -68,7 +67,7 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import ONYXKEYS from '@src/ONYXKEYS';
 import getPlatform from '@libs/getPlatform';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
-import * as DSUtils from '@libs/DrinkingSessionUtils';
+import DSUtils from '@libs/DrinkingSessionUtils';
 
 type State = {
   visibleDateObject: DateObject;
@@ -166,7 +165,7 @@ function HomeScreen({route}: HomeScreenProps) {
     }
     dispatch({type: 'SET_INITIALIZING_SESSION', payload: true});
     // The user is not in an active session
-    const newSessionData: DrinkingSession = getEmptySession(
+    const newSessionData: DrinkingSession = DSUtils.getEmptySession(
       CONST.SESSION_TYPES.LIVE,
       true,
       true,
@@ -296,7 +295,7 @@ function HomeScreen({route}: HomeScreenProps) {
         );
       }
       // TZFIX (09-2024) - Redirect to TZ_FIX_INTRODUCTION if user has not set timezone
-      if (state.shouldNavigateToTzFix) {
+      if (!state.shouldNavigateToTzFix) {
         Navigation.navigate(ROUTES.TZ_FIX_INTRODUCTION);
       }
     }, [userData, preferences, drinkingSessionData]),

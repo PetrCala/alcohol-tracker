@@ -43,7 +43,7 @@ import {
 } from '@database/friends';
 import DBPATHS from '@database/DBPATHS';
 import CONST from '@src/CONST';
-import {getEmptySession} from '@libs/DrinkingSessionUtils';
+import DSUtils from '@libs/DrinkingSessionUtils';
 import {describeWithEmulator} from '../../emulators/utils';
 
 const testUserID: string = MOCK_USER_IDS[0];
@@ -209,7 +209,7 @@ describeWithEmulator('Test drinking session functionality', () => {
   });
 
   it('should save a placeholder session', async () => {
-    const mockPlaceholderSession: DrinkingSession = getEmptySession(
+    const mockPlaceholderSession: DrinkingSession = DSUtils.getEmptySession(
       CONST.SESSION_TYPES.EDIT,
       true,
       false,
