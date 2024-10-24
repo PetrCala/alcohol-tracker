@@ -11,6 +11,6 @@ cd "$PROJECT_ROOT"
 
 info "Creating a mock database..."
 
-ts-node -e "import { createMockDatabase } from './src/database/MockDatabase.ts'; createMockDatabase();"
+ts-node --esm -e "import { createMockDatabase } from '@src/database/MockDatabase'; createMockDatabase();" # ts-node \
 
 success "Done."

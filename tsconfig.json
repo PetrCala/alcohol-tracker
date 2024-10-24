@@ -33,21 +33,33 @@
   "ts-node": {
     // these options are overrides used only by ts-node
     // same as the --compilerOptions flag and the TS_NODE_COMPILER_OPTIONS environment variable
+    "require": ["tsconfig-paths/register"], // Register tsconfig paths for ts-node
     "compilerOptions": {
-      "module": "commonjs",
+      "module": "CommonJS",
       "moduleResolution": "node",
+      "target": "ESNext",
       "types": ["react-native", "jest", "node"],
       "lib": ["DOM", "DOM.Iterable", "ESNext"],
+      "allowJs": true,
+      "checkJs": false,
+      "jsx": "react-native",
+      "resolveJsonModule": true,
+      "allowSyntheticDefaultImports": true,
+      "esModuleInterop": true,
+      "skipLibCheck": true,
       "isolatedModules": true,
       "strict": true,
-      "allowSyntheticDefaultImports": true,
-      "allowImportingTsExtensions": true,
+      "forceConsistentCasingInFileNames": true,
+      "composite": true,
+      "noEmit": true,
+      "declaration": true,
+      "declarationMap": true,
       "baseUrl": ".",
       "typeRoots": ["./node_modules/@types", "./src/types/modules"],
       "paths": {
         "@local/*": ["./local/*"],
         "@assets/*": ["./assets/*"],
-        "@auth/*": ["src/libs/auth/*"],
+        "@auth/*": ["./src/libs/auth/*"],
         "@components/*": ["./src/components/*"],
         "@context/*": ["./src/context/*"],
         "@database/*": ["./src/database/*"],
@@ -61,7 +73,7 @@
         "@src/*": ["./src/*"],
         "@storage/*": ["./src/storage/*"],
         "@styles/*": ["./src/styles/*"],
-        "@utils/*": ["src/utils/*"],
+        "@utils/*": ["./src/utils/*"],
         "@userActions/*": ["./src/libs/actions/*"]
       }
     }
