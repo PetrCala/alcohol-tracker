@@ -1,6 +1,6 @@
 import DSUtils from '@libs/DrinkingSessionUtils';
 import type {DrinkingSession} from '@src/types/onyx';
-import {createMockSession} from '../../utils/mockDatabase';
+import {createMockSession} from '../../../src/database/MockDatabase';
 import CONST from '@src/CONST';
 import {getZeroDrinksList} from '@libs/DataHandling';
 

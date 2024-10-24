@@ -11,7 +11,7 @@ import {
   createMockSession,
   createMockUserData,
   createMockUserStatus,
-} from '../../utils/mockDatabase';
+} from '../../../src/database/MockDatabase';
 import {getDefaultPreferences} from '@database/users';
 import {
   SAMPLE_UNITS_TO_COLORS,

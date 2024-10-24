@@ -48,12 +48,12 @@
     "@babel/plugin-proposal-private-methods": "^7.18.6",
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@expo/metro-runtime": "~3.1.1",
+    "@firebase/rules-unit-testing": "^3.0.1",
     "@formatjs/intl-datetimeformat": "^6.12.5",
     "@formatjs/intl-listformat": "^7.5.7",
     "@formatjs/intl-locale": "^4.0.0",
     "@formatjs/intl-numberformat": "^8.10.3",
     "@formatjs/intl-pluralrules": "^5.2.14",
-    "@firebase/rules-unit-testing": "^3.0.1",
     "@gorhom/portal": "^1.0.14",
     "@kie/act-js": "^2.6.0",
     "@kie/mock-github": "^2.0.1",
@@ -214,6 +214,7 @@
     "react-native-typescript-transformer": "^1.2.13",
     "react-test-renderer": "18.3.1",
     "ts-jest": "^29.1.1",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "~5.3.3"
   },
   "overrides": {

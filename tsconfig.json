@@ -35,11 +35,34 @@
     // same as the --compilerOptions flag and the TS_NODE_COMPILER_OPTIONS environment variable
     "compilerOptions": {
       "module": "commonjs",
+      "moduleResolution": "node",
+      "types": ["react-native", "jest", "node"],
+      "lib": ["DOM", "DOM.Iterable", "ESNext"],
+      "isolatedModules": true,
+      "strict": true,
+      "allowSyntheticDefaultImports": true,
+      "allowImportingTsExtensions": true,
+      "baseUrl": ".",
+      "typeRoots": ["./node_modules/@types", "./src/types/modules"],
       "paths": {
         "@local/*": ["./local/*"],
-        "@firebase/auth": ["./node_modules/@firebase/auth/dist/index.rn.d.ts"],
+        "@assets/*": ["./assets/*"],
+        "@auth/*": ["src/libs/auth/*"],
         "@components/*": ["./src/components/*"],
-        "@src/*": ["./src/*"]
+        "@context/*": ["./src/context/*"],
+        "@database/*": ["./src/database/*"],
+        "@desktop/*": ["./desktop/*"],
+        "@firebase/auth": ["./node_modules/@firebase/auth/dist/index.rn.d.ts"],
+        "@github/*": ["./.github/*"],
+        "@hooks/*": ["./src/hooks/*"],
+        "@libs/*": ["./src/libs/*"],
+        "@navigation/*": ["./src/libs/Navigation/*"],
+        "@screens/*": ["./src/screens/*"],
+        "@src/*": ["./src/*"],
+        "@storage/*": ["./src/storage/*"],
+        "@styles/*": ["./src/styles/*"],
+        "@utils/*": ["src/utils/*"],
+        "@userActions/*": ["./src/libs/actions/*"]
       }
     }
   },

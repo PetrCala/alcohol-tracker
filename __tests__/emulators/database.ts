@@ -8,7 +8,7 @@ import type {FirebaseApp} from 'firebase/app';
 import {initializeApp, deleteApp} from 'firebase/app';
 import type {Database} from 'firebase/database';
 import * as firebaseJson from '../../firebase.json';
-import {createMockDatabase} from '../utils/mockDatabase';
+import {createMockDatabase} from '../../src/database/MockDatabase';
 import {ref, set} from 'firebase/database';
 import CONFIG from '../../src/CONFIG';
 import {getTestDatabaseURL} from './utils';

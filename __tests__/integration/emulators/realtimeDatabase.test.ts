@@ -7,7 +7,7 @@ import {
   createMockConfig,
   createMockSession,
   createMockUserStatus,
-} from '../../utils/mockDatabase';
+} from '../../../src/database/MockDatabase';
 import {isConnectedToDatabaseEmulator} from '@src/libs/Firebase/FirebaseUtils';
 import type {
   FriendRequestList,
