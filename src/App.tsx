@@ -21,6 +21,7 @@ import ThemeStylesProvider from './components/ThemeStylesProvider';
 import SafeArea from '@components/SafeArea';
 import CustomStatusBarAndBackground from './components/CustomStatusBarAndBackground';
 import CustomStatusBarAndBackgroundContextProvider from './components/CustomStatusBarAndBackground/CustomStatusBarAndBackgroundContextProvider';
+import {SplashScreenStateContextProvider} from './SplashScreenStateContext';
 // import OnyxUpdateManager from './libs/actions/OnyxUpdateManager';
 // import {LogBox} from 'react-native';
 
@@ -40,35 +41,38 @@ const fill = {flex: 1};
 
 const App = ({url}: KirokuProps): React.JSX.Element => {
   // OnyxUpdateManager(); // Fix the API first before enabling this
+
   return (
-    <InitialUrlContext.Provider value={url}>
-      <GestureHandlerRootView style={fill}>
-        <ComposeProviders
-          components={[
-            OnyxProvider,
-            ThemeProvider,
-            ThemeStylesProvider,
-            FirebaseProvider,
-            UserConnectionProvider,
-            SafeAreaProvider,
-            PortalProvider,
-            SafeArea,
-            LocaleContextProvider,
-            WindowDimensionsProvider,
-            KeyboardStateProvider,
-            EnvironmentProvider,
-            CustomStatusBarAndBackgroundContextProvider,
-            ActiveElementRoleProvider,
-          ]}>
-          <CustomStatusBarAndBackground />
-          <ErrorBoundary errorMessage="Kiroku crash caught by error boundary">
-            <ColorSchemeWrapper>
-              <Kiroku />
-            </ColorSchemeWrapper>
-          </ErrorBoundary>
-        </ComposeProviders>
-      </GestureHandlerRootView>
-    </InitialUrlContext.Provider>
+    <SplashScreenStateContextProvider>
+      <InitialUrlContext.Provider value={url}>
+        <GestureHandlerRootView style={fill}>
+          <ComposeProviders
+            components={[
+              OnyxProvider,
+              ThemeProvider,
+              ThemeStylesProvider,
+              FirebaseProvider,
+              UserConnectionProvider,
+              SafeAreaProvider,
+              PortalProvider,
+              SafeArea,
+              LocaleContextProvider,
+              WindowDimensionsProvider,
+              KeyboardStateProvider,
+              EnvironmentProvider,
+              CustomStatusBarAndBackgroundContextProvider,
+              ActiveElementRoleProvider,
+            ]}>
+            <CustomStatusBarAndBackground />
+            <ErrorBoundary errorMessage="Kiroku crash caught by error boundary">
+              <ColorSchemeWrapper>
+                <Kiroku />
+              </ColorSchemeWrapper>
+            </ErrorBoundary>
+          </ComposeProviders>
+        </GestureHandlerRootView>
+      </InitialUrlContext.Provider>
+    </SplashScreenStateContextProvider>
   );
 };
 

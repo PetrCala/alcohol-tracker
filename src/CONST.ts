@@ -624,6 +624,12 @@ const CONST = {
   // at least 8 characters, 1 capital letter, 1 lowercase number, 1 number
   PASSWORD_COMPLEXITY_REGEX_STRING: '^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{8,}$',
 
+  BOOT_SPLASH_STATE: {
+    VISIBLE: 'visible',
+    READY_TO_BE_HIDDEN: 'readyToBeHidden',
+    HIDDEN: `hidden`,
+  },
+
   KEYBOARD_TYPE: {
     VISIBLE_PASSWORD: 'visible-password',
     ASCII_CAPABLE: 'ascii-capable',

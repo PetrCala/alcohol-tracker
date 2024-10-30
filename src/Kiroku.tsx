@@ -1,5 +1,6 @@
 import React, {
   useCallback,
+  useContext,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -39,6 +40,7 @@ import Modal from '@components/Modal';
 import CONST from './CONST';
 import UserOfflineModal from '@components/UserOfflineModal';
 import {isConnectedToDatabaseEmulator} from '@libs/Firebase/FirebaseUtils';
+import SplashScreenStateContext from './SplashScreenStateContext';
 
 Onyx.registerLogger(({level, message}) => {
   if (level === 'alert') {
@@ -85,7 +87,9 @@ function Kiroku({
   const appStateChangeListener = useRef<NativeEventSubscription | null>(null);
   const [isNavigationReady, setIsNavigationReady] = useState(false);
   const [isOnyxMigrated, setIsOnyxMigrated] = useState(false);
-  const [isSplashHidden, setIsSplashHidden] = useState(false);
+  const {splashScreenState, setSplashScreenState} = useContext(
+    SplashScreenStateContext,
+  );
   const [initialUrl, setInitialUrl] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authenticationChecked, setAuthenticationChecked] = useState(false);
@@ -101,12 +105,6 @@ function Kiroku({
   // const isAuthenticated = useMemo(() => !!(auth.currentUser ?? null), [auth]);
   // const autoAuthState = useMemo(() => session?.autoAuthState ?? '', [session]);
 
-  const contextValue = useMemo(
-    () => ({
-      isSplashHidden,
-    }),
-    [isSplashHidden],
-  );
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
       setIsAuthenticated(!!user);
@@ -148,8 +146,13 @@ function Kiroku({
   }, [config]);
 
   const shouldInit = isNavigationReady;
+  // const shouldHideSplash =
+  //   shouldInit && !isSplashHidden && authenticationChecked;
+
   const shouldHideSplash =
-    shouldInit && !isSplashHidden && authenticationChecked;
+    shouldInit &&
+    authenticationChecked &&
+    splashScreenState === CONST.BOOT_SPLASH_STATE.VISIBLE;
 
   const initializeClient = () => {
     if (!Visibility.isVisible()) {
@@ -167,9 +170,9 @@ function Kiroku({
   }, []);
 
   const onSplashHide = useCallback(() => {
-    setIsSplashHidden(true);
+    setSplashScreenState(CONST.BOOT_SPLASH_STATE.HIDDEN);
     // Performance.markEnd(CONST.TIMING.SIDEBAR_LOADED);
-  }, []);
+  }, [setSplashScreenState]);
 
   useLayoutEffect(() => {
     // Initialize this client as being an active client
@@ -186,32 +189,30 @@ function Kiroku({
 
   useEffect(() => {
     setTimeout(() => {
-      BootSplash.getVisibilityStatus().then(status => {
-        const appState = AppState.currentState;
-        Log.info('[BootSplash] splash screen status', false, {
-          appState,
-          status,
-        });
-
-        if (status === 'visible') {
-          const propsToLog: Omit<
-            KirokuProps & {isAuthenticated: boolean},
-            'children' | 'session'
-          > = {
-            updateRequired,
-            updateAvailable,
-            isSidebarLoaded,
-            focusModeNotification,
-            isAuthenticated,
-            lastVisitedPath,
-          };
-          Log.alert(
-            '[BootSplash] splash screen is still visible',
-            {propsToLog},
-            false,
-          );
-        }
+      const appState = AppState.currentState;
+      Log.info('[BootSplash] splash screen status', false, {
+        appState,
+        splashScreenState,
       });
+
+      if (splashScreenState === CONST.BOOT_SPLASH_STATE.VISIBLE) {
+        const propsToLog: Omit<
+          KirokuProps & {isAuthenticated: boolean},
+          'children' | 'session'
+        > = {
+          updateRequired,
+          updateAvailable,
+          isSidebarLoaded,
+          focusModeNotification,
+          isAuthenticated,
+          lastVisitedPath,
+        };
+        Log.alert(
+          '[BootSplash] splash screen is still visible',
+          {propsToLog},
+          false,
+        );
+      }
     }, 30 * 1000);
 
     // This timer is set in the native layer when launching the app and we stop it here so we can measure how long
@@ -297,15 +298,12 @@ function Kiroku({
         </>
       )}
 
-      {/* TODO rewrite this to the splash screen context via Expensify.tsx*/}
-      <SplashScreenHiddenContext.Provider value={contextValue}>
-        <NavigationRoot
-          onReady={setNavigationReady}
-          authenticated={isAuthenticated}
-          lastVisitedPath={lastVisitedPath as Route}
-          initialUrl={initialUrl}
-        />
-      </SplashScreenHiddenContext.Provider>
+      <NavigationRoot
+        onReady={setNavigationReady}
+        authenticated={isAuthenticated}
+        lastVisitedPath={lastVisitedPath as Route}
+        initialUrl={initialUrl}
+      />
       {shouldHideSplash && <SplashScreenHider onHide={onSplashHide} />}
     </>
   );
