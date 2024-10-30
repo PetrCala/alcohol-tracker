@@ -290,9 +290,7 @@ function Kiroku({
     <>
       {!isFetchingConfig && (
         <>
-          {!isOnline && !isConnectedToDatabaseEmulator(db) && (
-            <UserOfflineModal />
-          )}
+          {!isOnline && <UserOfflineModal />}
           {isUnderMaintenance && <UnderMaintenanceModal config={config} />}
           {!isVersionValid && <ForceUpdateModal />}
         </>
