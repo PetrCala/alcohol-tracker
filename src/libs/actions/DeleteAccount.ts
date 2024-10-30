@@ -63,7 +63,7 @@ async function deleteAccount(
     await signOut(auth);
 
     // Add an alert here informing about the user deletion
-    Navigation.navigate(ROUTES.LOGIN);
+    // Navigation.navigate(ROUTES.LOGIN); // This is has been disabled as the redirect happens automatically upon Auth state change
   } catch (error: any) {
     ErrorUtils.raiseAlert(
       error,
