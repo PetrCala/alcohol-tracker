@@ -103,3 +103,37 @@ get_abs_path() {
 
   echo "$abs_path"
 }
+
+# Function to load .env file variables into the current shell environment
+# Example usage:
+# load_env /path/to/your/.env
+load_env() {
+  local env_file="$1"
+
+  # Check if the file path is provided
+  if [[ -z "$env_file" ]]; then
+    error "Usage: load_env path/to/.env"
+    return 1
+  fi
+
+  # Check if the file exists and is readable
+  if [[ ! -f "$env_file" ]]; then
+    error "Error: File not found: $env_file" >&2
+    return 1
+  fi
+
+  if [[ ! -r "$env_file" ]]; then
+    error "Error: File is not readable: $env_file" >&2
+    return 1
+  fi
+
+  # Export all variables defined in the .env file
+  # - 'set -a' marks all variables which are modified or created for export
+  # - 'source' reads and executes commands from the .env file in the current shell
+  set -a
+  # shellcheck source=/dev/null
+  source "$env_file"
+  set +a
+
+  info "Environment variables loaded from $env_file"
+}
