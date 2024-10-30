@@ -54,6 +54,7 @@
     "firebase.json",
     "**/alcohol-tracker*.json",
     "react-native.config.js",
-    "local/toImplement/Form"
+    "local/toImplement/Form",
+    "../Kiroku-dev/admin"
   ]
 }

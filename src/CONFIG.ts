@@ -12,6 +12,10 @@ const useWebProxy = get(Config, 'USE_WEB_PROXY', 'true') === 'true';
 
 // Set default values to contributor friendly values to make development work out of the box without an .env file
 const ENVIRONMENT = get(Config, 'ENVIRONMENT', CONST.ENVIRONMENT.DEV);
+const TEST_HOST = 'localhost';
+const TEST_AUTH_PORT = 9099;
+const TEST_REALTIME_DATABASE_PORT = 9001;
+const TEST_STORAGE_BUCKET_PORT = 9199;
 
 export default {
   APP_NAME: 'kiroku',
@@ -51,9 +55,12 @@ export default {
   SEND_CRASH_REPORTS: get(Config, 'SEND_CRASH_REPORTS', 'false') === 'true',
   IS_USING_EMULATORS: get(Config, 'USE_EMULATORS', 'false') === 'true',
   TEST_PROJECT_ID: 'alcohol-tracker-db',
-  TEST_HOST: 'localhost',
-  TEST_AUTH_PORT: 9099,
-  TEST_REALTIME_DATABASE_PORT: 9001,
-  TEST_STORAGE_BUCKET_PORT: 9199,
   SITE_TITLE: 'Kiroku',
+  EMULATORS: {
+    HOST: TEST_HOST,
+    AUTH_URL: `http://${TEST_HOST}:${TEST_AUTH_PORT}`,
+    AUTH_PORT: TEST_AUTH_PORT,
+    DATABASE_PORT: TEST_REALTIME_DATABASE_PORT,
+    STORAGE_BUCKET_PORT: TEST_STORAGE_BUCKET_PORT,
+  },
 } as const;

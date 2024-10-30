@@ -67,24 +67,23 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
     }
 
     if (!isConnectedToAuthEmulator(auth)) {
-      const authUrl = `http://${CONFIG.TEST_HOST}:${CONFIG.TEST_AUTH_PORT}`;
-      connectAuthEmulator(auth, authUrl);
+      connectAuthEmulator(auth, CONFIG.EMULATORS.AUTH_URL);
     }
 
     // Safety check to connect to emulators only if they are not already running
     if (!isConnectedToDatabaseEmulator(db)) {
       connectDatabaseEmulator(
         db,
-        CONFIG.TEST_HOST,
-        CONFIG.TEST_REALTIME_DATABASE_PORT,
+        CONFIG.EMULATORS.HOST,
+        CONFIG.EMULATORS.DATABASE_PORT,
       );
     }
 
     if (!isConnectedToStorageEmulator(storage)) {
       connectStorageEmulator(
         storage,
-        CONFIG.TEST_HOST,
-        CONFIG.TEST_STORAGE_BUCKET_PORT,
+        CONFIG.EMULATORS.HOST,
+        CONFIG.EMULATORS.STORAGE_BUCKET_PORT,
       );
     }
   }

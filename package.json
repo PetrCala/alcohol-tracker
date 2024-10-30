@@ -36,7 +36,6 @@
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
     "test:emulators": "USE_EMULATORS=true firebase emulators:exec --only auth,database,storage 'npm test __tests__/integration/emulators'",
     "emulators": "firebase emulators:start",
-    "setup-mock-db": "./scripts/setupMockDb.sh",
     "transpile": "npx tsc --build functions",
     "deploy-functions": "firebase deploy --only functions --debug",
     "workflow-test": "./workflow_tests/scripts/runWorkflowTests.sh",
