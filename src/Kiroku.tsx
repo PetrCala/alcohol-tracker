@@ -38,6 +38,7 @@ import UnderMaintenanceModal from '@components/Modals/UnderMaintenanceModal';
 import Modal from '@components/Modal';
 import CONST from './CONST';
 import UserOfflineModal from '@components/UserOfflineModal';
+import {isConnectedToDatabaseEmulator} from '@libs/Firebase/FirebaseUtils';
 
 Onyx.registerLogger(({level, message}) => {
   if (level === 'alert') {
@@ -288,7 +289,9 @@ function Kiroku({
     <>
       {!isFetchingConfig && (
         <>
-          {!isOnline && <UserOfflineModal />}
+          {!isOnline && !isConnectedToDatabaseEmulator(db) && (
+            <UserOfflineModal />
+          )}
           {isUnderMaintenance && <UnderMaintenanceModal config={config} />}
           {!isVersionValid && <ForceUpdateModal />}
         </>

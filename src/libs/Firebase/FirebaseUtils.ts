@@ -1,4 +1,3 @@
-import Config from 'react-native-config';
 import type {FirebaseStorage} from 'firebase/storage';
 import type {Database} from 'firebase/database';
 import type {Auth} from 'firebase/auth';
