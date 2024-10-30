@@ -24,7 +24,7 @@ if (!sdkFileName) {
   throw new Error('Invalid environment');
 }
 
-const sdkFilePath = path.resolve(PROJECT_ROOT, `${sdkFileName}.json`);
+const sdkFilePath = path.resolve(CONST.PROJECT_ROOT, `${sdkFileName}.json`);
 const serviceAccount = require(sdkFilePath); // Automatically fails if the .env variables are not specified
 
 // Initialize the app with a service account and the database URL
