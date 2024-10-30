@@ -295,9 +295,10 @@ function HomeScreen({route}: HomeScreenProps) {
         );
       }
       // TZFIX (09-2024) - Redirect to TZ_FIX_INTRODUCTION if user has not set timezone
-      if (!state.shouldNavigateToTzFix) {
-        Navigation.navigate(ROUTES.TZ_FIX_INTRODUCTION);
-      }
+      // ENABLE THIS TO ENABLE THE TZ FIX
+      // if (!state.shouldNavigateToTzFix) {
+      //   Navigation.navigate(ROUTES.TZ_FIX_INTRODUCTION);
+      // }
     }, [userData, preferences, drinkingSessionData]),
   );
 
