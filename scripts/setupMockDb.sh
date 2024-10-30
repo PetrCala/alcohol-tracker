@@ -26,6 +26,10 @@ if [ ! -f "$DB_PATH" ]; then
   exit 1
 fi
 
+# Use project
+# firebase projects:list
+# firebase use "$FIREBASE_PROJECT_ID"
+
 # Check emulator connection
 
 # Reset the state of all emulators to default
@@ -33,5 +37,8 @@ fi
 # Create the realtime database
 
 # Create authentication users
+
+# get users
+# firebase auth:export users.json --format=JSON
 
 # Create storage buckets

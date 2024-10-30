@@ -29,6 +29,14 @@ function isProduction(): Promise<boolean> {
   );
 }
 
+/**Are we running the app in a test environment?
+ */
+function isTest(): Promise<boolean> {
+  return getEnvironment().then(
+    environment => environment === CONST.ENVIRONMENT.TEST,
+  );
+}
+
 /**
  * Are we running an internal test build?
  */
@@ -56,5 +64,6 @@ export {
   isInternalTestBuild,
   isDevelopment,
   isProduction,
+  isTest,
   getEnvironmentURL,
 };
