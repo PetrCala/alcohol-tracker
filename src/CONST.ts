@@ -1,7 +1,6 @@
 import dateAdd from 'date-fns/add';
 import dateSubtract from 'date-fns/sub';
 import * as KeyCommand from 'react-native-key-command';
-import * as path from 'path';
 import SCREENS from './SCREENS';
 
 // Creating a default array and object this way because objects ({}) and arrays ([]) are not stable types.
@@ -670,8 +669,6 @@ const CONST = {
   DEFAULT_ACCOUNT_DATA: {errors: null, success: '', isLoading: false},
   DEFAULT_DELETE_ACCOUNT_DATA: {errors: null, success: '', isLoading: false},
   DEFAULT_NETWORK_DATA: {isOffline: false},
-
-  PROJECT_ROOT: path.resolve(__dirname, '..'),
 
   MICROSECONDS_PER_MS: 1000,
   RED_BRICK_ROAD_PENDING_ACTION: {
