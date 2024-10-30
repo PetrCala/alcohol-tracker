@@ -12,7 +12,6 @@ import {LocaleContextProvider} from './components/LocaleContextProvider';
 import OnyxProvider from './components/OnyxProvider';
 import {FirebaseProvider} from '@context/global/FirebaseContext';
 import {UserConnectionProvider} from '@context/global/UserConnectionContext';
-import {ConfigProvider} from '@context/global/ConfigContext';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {WindowDimensionsProvider} from '@components/withWindowDimensions';
 import {KeyboardStateProvider} from '@components/withKeyboardState';
@@ -51,7 +50,6 @@ const App = ({url}: KirokuProps): React.JSX.Element => {
             ThemeStylesProvider,
             FirebaseProvider,
             UserConnectionProvider,
-            ConfigProvider,
             SafeAreaProvider,
             PortalProvider,
             SafeArea,

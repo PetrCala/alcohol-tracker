@@ -1,7 +1,7 @@
 import type {Maintenance} from '@src/types/onyx';
 
 /** Determine whether the app is under maintenance. */
-function isUnderMaintenance(
+function checkIfUnderMaintenance(
   maintenance: Maintenance | null | undefined,
 ): boolean {
   if (!maintenance || maintenance.maintenance_mode) {
@@ -13,4 +13,4 @@ function isUnderMaintenance(
   );
 }
 
-export {isUnderMaintenance};
+export {checkIfUnderMaintenance};

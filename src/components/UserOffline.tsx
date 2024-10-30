@@ -10,22 +10,8 @@ const UserOffline = () => {
       includePaddingTop={false}
       includeSafeAreaPaddingBottom={false}
       testID={'UserOffline'}>
-      <View
-        style={[
-          styles.flex1,
-          styles.justifyContentCenter,
-          styles.alignItemsCenter,
-          styles.appContent,
-          styles.p2,
-        ]}>
-        <Text
-          style={[
-            styles.textAlignCenter,
-            styles.textXXXLarge,
-            styles.textPlainColor,
-          ]}>
-          You are offline
-        </Text>
+      <View style={[styles.fullScreenCenteredContent, styles.p2]}>
+        <Text style={styles.textHeadlineXXXLarge}>You are offline</Text>
         <Text
           style={[
             styles.textAlignCenter,

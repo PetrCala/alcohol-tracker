@@ -430,6 +430,10 @@ export default {
       save: 'This session could not be saved. Try again.',
     },
   },
+  maintenance: {
+    heading: 'Under Maintenance',
+    text: 'We are currently under maintenance for the following time frame:',
+  },
   passwordForm: {
     pleaseFillOutAllFields: 'Please fill out all fields',
     pleaseFillPassword: 'Please enter your password',

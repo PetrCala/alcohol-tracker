@@ -866,6 +866,14 @@ const styles = (theme: ThemeColors) =>
       zIndex: 10,
     },
 
+    fullScreenCenteredContent: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: theme.appBG,
+      overflow: 'hidden',
+    },
+
     headerBar: {
       overflow: 'hidden',
       justifyContent: 'center',
@@ -1012,6 +1020,13 @@ const styles = (theme: ThemeColors) =>
     componentHeightLarge: {
       height: variables.inputHeight,
     },
+
+    maintenanceBeaverImage: (smallerScreenSize: number) =>
+      ({
+        width: smallerScreenSize * 0.75,
+        height: smallerScreenSize * 0.75,
+        borderRadius: 12,
+      }) satisfies ViewStyle,
 
     offlineFeedback: {
       deleted: {
@@ -1819,6 +1834,13 @@ const styles = (theme: ThemeColors) =>
       color: theme.heading,
       fontSize: variables.fontSizeXLarge,
       lineHeight: variables.lineHeightSizeh1,
+    },
+
+    textHeadlineXXXLarge: {
+      ...headlineFont,
+      ...whiteSpace.preWrap,
+      color: theme.heading,
+      fontSize: variables.fontSizeXXXLarge,
     },
 
     textLabelSupporting: {

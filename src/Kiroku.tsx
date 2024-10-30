@@ -12,13 +12,11 @@ import type {OnyxEntry} from 'react-native-onyx';
 import Onyx, {useOnyx, withOnyx} from 'react-native-onyx';
 import Navigation from '@navigation/Navigation';
 import NavigationRoot from '@navigation/NavigationRoot';
-import NetworkConnection from '@libs/NetworkConnection';
 // import PushNotification from '@libs/Notification/PushNotification';
 import BootSplash from '@libs/BootSplash';
 import Log from '@libs/Log';
 import migrateOnyx from '@libs/migrateOnyx';
 import SplashScreenHider from '@components/SplashScreenHider';
-import CONST from '@src/CONST';
 import * as ActiveClientManager from '@libs/ActiveClientManager';
 // import StartupTimer from '@libs/StartupTimer';
 import Visibility from '@libs/Visibility';
@@ -27,9 +25,17 @@ import ONYXKEYS from '@src/ONYXKEYS';
 import type {Route} from '@src/ROUTES';
 import ForceUpdateModal from '@components/Modals/ForceUpdateModal';
 import type {Session} from '@src/types/onyx';
-import CONFIG from './CONFIG';
+import type {Config} from '@src/types/onyx';
 import {updateLastRoute} from '@libs/actions/App';
 import setCrashlyticsUserId from '@libs/setCrashlyticsUserId';
+import {useUserConnection} from '@context/global/UserConnectionContext';
+import UserOffline from '@components/UserOffline';
+import DBPATHS from '@database/DBPATHS';
+import {listenForDataChanges} from '@database/baseFunctions';
+import {checkIfUnderMaintenance} from '@libs/Maintenance';
+import {validateAppVersion} from '@libs/Validation';
+import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
+import UnderMaintenanceModal from '@components/Modals/UnderMaintenanceModal';
 
 Onyx.registerLogger(({level, message}) => {
   if (level === 'alert') {
@@ -71,7 +77,8 @@ function Kiroku({
   focusModeNotification = false,
   lastVisitedPath,
 }: KirokuProps) {
-  const {auth} = useFirebase();
+  const {db, auth} = useFirebase();
+  const {isOnline} = useUserConnection();
   const appStateChangeListener = useRef<NativeEventSubscription | null>(null);
   const [isNavigationReady, setIsNavigationReady] = useState(false);
   const [isOnyxMigrated, setIsOnyxMigrated] = useState(false);
@@ -80,6 +87,11 @@ function Kiroku({
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authenticationChecked, setAuthenticationChecked] = useState(false);
   const [lastRoute] = useOnyx(ONYXKEYS.LAST_ROUTE);
+  const [isFetchingConfig, setIsFetchingConfig] = useState<boolean>(true);
+  const [config, setConfig] = useState<Config | null>(null);
+  const [isVersionValid, setIsVersionValid] = useState<boolean>(false);
+  const [isUnderMaintenance, setIsUnderMaintenance] = useState<boolean>(false);
+
   // const [session] = useOnyx(ONYXKEYS.SESSION);
   // const [account] = useOnyx(ONYXKEYS.ACCOUNT);
 
@@ -92,7 +104,6 @@ function Kiroku({
     }),
     [isSplashHidden],
   );
-
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
       setIsAuthenticated(!!user);
@@ -101,6 +112,32 @@ function Kiroku({
 
     return () => unsubscribe();
   }, [auth]);
+
+  useEffect(() => {
+    const configPath = DBPATHS.CONFIG;
+    const stopListening = listenForDataChanges(
+      db,
+      configPath,
+      (data: Config) => {
+        setConfig(data);
+        setIsFetchingConfig(false);
+      },
+    );
+
+    return () => stopListening();
+  }, []);
+
+  useMemo(() => {
+    const underMaintenance: boolean = checkIfUnderMaintenance(
+      config?.maintenance,
+    );
+    const versionValidationResult = validateAppVersion(
+      config?.app_settings.min_supported_version,
+    );
+
+    setIsUnderMaintenance(underMaintenance);
+    setIsVersionValid(versionValidationResult.success);
+  }, [config]);
 
   const shouldInit = isNavigationReady;
   const shouldHideSplash =
@@ -230,9 +267,15 @@ function Kiroku({
     return null;
   }
 
-  if (updateRequired) {
-    throw new Error(CONST.ERROR.UPDATE_REQUIRED);
-  }
+  // TODO enable this
+  // if (updateRequired) {
+  //   throw new Error(CONST.ERROR.UPDATE_REQUIRED);
+  // }
+
+  if (!isOnline) return <UserOffline />;
+  if (isFetchingConfig) return <FullScreenLoadingIndicator />;
+  if (isUnderMaintenance) return <UnderMaintenanceModal config={config} />;
+  if (!isVersionValid) return <ForceUpdateModal />;
 
   return (
     // TODO
@@ -241,16 +284,7 @@ function Kiroku({
     //     autoAuthState={autoAuthState}
     // >
     <>
-      {shouldInit && (
-        <>
-          {/* {updateAvailable && !updateRequired ? <UpdateAppModal /> : null} */}
-          {updateAvailable && !updateRequired ? <ForceUpdateModal /> : null}
-          {/* {focusModeNotification ? <FocusModeNotification /> : null} */}
-        </>
-      )}
-      {/* <AppleAuthWrapper /> */}
-
-      {/* Possibly conditional display for the next block */}
+      {/* TODO rewrite this to the splash screen context via Expensify.tsx*/}
       <SplashScreenHiddenContext.Provider value={contextValue}>
         <NavigationRoot
           onReady={setNavigationReady}
