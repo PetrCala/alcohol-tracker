@@ -8,6 +8,7 @@ import type {
 import LiveSessionScreen from '@screens/DrinkingSession/LiveSessionScreen';
 import FriendSearchScreen from '@screens/Social/FriendSearchScreen';
 import {title} from 'process';
+import Platform from '@libs/getPlatform/types';
 
 type AllCountries = Record<Country, string>;
 
@@ -433,6 +434,16 @@ export default {
   maintenance: {
     heading: 'Under Maintenance',
     text: 'We are currently under maintenance for the following time frame:',
+  },
+  userOffline: {
+    heading: 'You are offline',
+    text: 'Unfortunately, Kiroku does not support offline mode yet. We appreciate your patience while we work on this feature.',
+  },
+  forceUpdate: {
+    heading: 'App Update Required',
+    text: (platform: Platform) =>
+      `This version of the app is now discontinued. Please update to the latest version using the link below${platform === CONST.PLATFORM.IOS ? ' or from within the TestFlight app' : ''}.`,
+    link: 'Update Now',
   },
   passwordForm: {
     pleaseFillOutAllFields: 'Please fill out all fields',

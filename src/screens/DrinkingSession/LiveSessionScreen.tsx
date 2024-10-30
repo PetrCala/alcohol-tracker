@@ -34,7 +34,7 @@ import {
 import type {DrinkingSession, DrinksList, Drinks} from '@src/types/onyx';
 import YesNoPopup from '@components/Popups/YesNoPopup';
 import {useUserConnection} from '@context/global/UserConnectionContext';
-import UserOffline from '@components/UserOffline';
+import UserOffline from '@components/UserOfflineModal';
 import DrinkTypesView from '@components/DrinkTypesView';
 import SessionDetailsSlider from '@components/SessionDetailsSlider';
 import SuccessIndicator from '@components/SuccessIndicator';

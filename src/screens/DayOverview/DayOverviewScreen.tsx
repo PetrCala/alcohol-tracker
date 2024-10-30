@@ -23,7 +23,7 @@ import {
   dateStringToDate,
 } from '@libs/DataHandling';
 // import { PreferencesData} from '../types/database';
-import UserOffline from '@components/UserOffline';
+import UserOffline from '@components/UserOfflineModal';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import type {DrinkingSession, DrinkingSessionList} from '@src/types/onyx';
 import {generateDatabaseKey} from '@database/baseFunctions';

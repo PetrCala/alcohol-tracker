@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import {useFirebase} from '@context/global/FirebaseContext';
-import UserOffline from '@components/UserOffline';
+import UserOffline from '@components/UserOfflineModal';
 import BasicButton from '@components/Buttons/BasicButton';
 import {savePreferencesData} from '@database/preferences';
 import YesNoPopup from '@components/Popups/YesNoPopup';

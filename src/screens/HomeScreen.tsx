@@ -32,7 +32,7 @@ import {
   roundToTwoDecimalPlaces,
 } from '@libs/DataHandling';
 import {useUserConnection} from '@context/global/UserConnectionContext';
-import UserOffline from '@components/UserOffline';
+import UserOffline from '@components/UserOfflineModal';
 import {synchronizeUserStatus} from '@database/users';
 import {startLiveDrinkingSession} from '@database/drinkingSessions';
 import commonStyles from '@src/styles/commonStyles';

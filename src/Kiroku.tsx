@@ -29,13 +29,15 @@ import type {Config} from '@src/types/onyx';
 import {updateLastRoute} from '@libs/actions/App';
 import setCrashlyticsUserId from '@libs/setCrashlyticsUserId';
 import {useUserConnection} from '@context/global/UserConnectionContext';
-import UserOffline from '@components/UserOffline';
 import DBPATHS from '@database/DBPATHS';
-import {listenForDataChanges} from '@database/baseFunctions';
+import {listenForDataChanges, readDataOnce} from '@database/baseFunctions';
 import {checkIfUnderMaintenance} from '@libs/Maintenance';
 import {validateAppVersion} from '@libs/Validation';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import UnderMaintenanceModal from '@components/Modals/UnderMaintenanceModal';
+import Modal from '@components/Modal';
+import CONST from './CONST';
+import UserOfflineModal from '@components/UserOfflineModal';
 
 Onyx.registerLogger(({level, message}) => {
   if (level === 'alert') {
@@ -89,7 +91,7 @@ function Kiroku({
   const [lastRoute] = useOnyx(ONYXKEYS.LAST_ROUTE);
   const [isFetchingConfig, setIsFetchingConfig] = useState<boolean>(true);
   const [config, setConfig] = useState<Config | null>(null);
-  const [isVersionValid, setIsVersionValid] = useState<boolean>(false);
+  const [isVersionValid, setIsVersionValid] = useState<boolean>(true);
   const [isUnderMaintenance, setIsUnderMaintenance] = useState<boolean>(false);
 
   // const [session] = useOnyx(ONYXKEYS.SESSION);
@@ -121,6 +123,11 @@ function Kiroku({
       (data: Config) => {
         setConfig(data);
         setIsFetchingConfig(false);
+        if (!data) {
+          console.debug(
+            'Could not fetch the application configuration data from the database.',
+          );
+        }
       },
     );
 
@@ -272,11 +279,6 @@ function Kiroku({
   //   throw new Error(CONST.ERROR.UPDATE_REQUIRED);
   // }
 
-  if (!isOnline) return <UserOffline />;
-  if (isFetchingConfig) return <FullScreenLoadingIndicator />;
-  if (isUnderMaintenance) return <UnderMaintenanceModal config={config} />;
-  if (!isVersionValid) return <ForceUpdateModal />;
-
   return (
     // TODO
     // <DeeplinkWrapper
@@ -284,6 +286,14 @@ function Kiroku({
     //     autoAuthState={autoAuthState}
     // >
     <>
+      {!isFetchingConfig && (
+        <>
+          {!isOnline && <UserOfflineModal />}
+          {isUnderMaintenance && <UnderMaintenanceModal config={config} />}
+          {!isVersionValid && <ForceUpdateModal />}
+        </>
+      )}
+
       {/* TODO rewrite this to the splash screen context via Expensify.tsx*/}
       <SplashScreenHiddenContext.Provider value={contextValue}>
         <NavigationRoot
@@ -293,7 +303,6 @@ function Kiroku({
           initialUrl={initialUrl}
         />
       </SplashScreenHiddenContext.Provider>
-
       {shouldHideSplash && <SplashScreenHider onHide={onSplashHide} />}
     </>
   );

@@ -1,12 +1,15 @@
 import type {Config, Maintenance} from '@src/types/onyx';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {View, Text, Image} from 'react-native';
-import ScreenWrapper from '@components/ScreenWrapper';
 import useThemeStyles from '@hooks/useThemeStyles';
 import useWindowDimensions from '@hooks/useWindowDimensions';
 import useLocalize from '@hooks/useLocalize';
+import Modal from '@components/Modal';
+import SafeAreaConsumer from '@components/SafeAreaConsumer';
+import CONST from '@src/CONST';
 
 type UnderMaintenanceProps = {
+  /** Configuration database object */
   config: Config | null;
 };
 
@@ -33,26 +36,32 @@ function UnderMaintenanceModal({config}: UnderMaintenanceProps) {
   const endTime = getHourMinute(new Date(maintenance.end_time));
 
   return (
-    <ScreenWrapper
-      includePaddingTop={false}
-      includeSafeAreaPaddingBottom={false}
-      testID={'UnderMaintenanceModal'}>
-      <View style={[styles.fullScreenCenteredContent, styles.p2, styles.pb8]}>
-        <Text style={[styles.textHeadlineXXXLarge, styles.mb3]}>
-          {translate('maintenance.heading')}
-        </Text>
-        <Text style={[styles.textLarge, styles.textAlignCenter, styles.mb3]}>
-          {translate('maintenance.text')}
-        </Text>
-        <Text style={[styles.textLarge, styles.textStrong, styles.pb5]}>
-          {startTime} - {endTime}
-        </Text>
-        <Image
-          style={styles.maintenanceBeaverImage(smallerScreenSize)}
-          source={KirokuIcons.UnderMaintenance}
-        />
-      </View>
-    </ScreenWrapper>
+    <SafeAreaConsumer>
+      {() => (
+        <Modal
+          onClose={() => {}}
+          isVisible={true}
+          type={CONST.MODAL.MODAL_TYPE.CENTERED}>
+          <View
+            style={[styles.fullScreenCenteredContent, styles.p2, styles.pb8]}>
+            <Text style={[styles.textHeadlineXXXLarge, styles.mb3]}>
+              {translate('maintenance.heading')}
+            </Text>
+            <Text
+              style={[styles.textLarge, styles.textAlignCenter, styles.mb3]}>
+              {translate('maintenance.text')}
+            </Text>
+            <Text style={[styles.textLarge, styles.textStrong, styles.pb5]}>
+              {startTime} - {endTime}
+            </Text>
+            <Image
+              style={styles.maintenanceBeaverImage(smallerScreenSize)}
+              source={KirokuIcons.UnderMaintenance}
+            />
+          </View>
+        </Modal>
+      )}
+    </SafeAreaConsumer>
   );
 }
 

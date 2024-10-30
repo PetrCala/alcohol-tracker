@@ -51,7 +51,7 @@ import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import type IconAsset from '@src/types/utils/IconAsset';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import {useFirebase} from '@context/global/FirebaseContext';
-import UserOffline from '@components/UserOffline';
+import UserOffline from '@components/UserOfflineModal';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 
 type SettingsScreenOnyxProps = {};
