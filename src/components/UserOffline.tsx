@@ -4,19 +4,19 @@ import ScreenWrapper from './ScreenWrapper';
 
 const UserOffline = () => {
   const styles = useThemeStyles();
+
   return (
     <ScreenWrapper
-      style={[styles.w100, styles.pb0]}
-      includePaddingTop={true}
+      includePaddingTop={false}
       includeSafeAreaPaddingBottom={false}
-      testID={'UserOfferline'}>
+      testID={'UserOffline'}>
       <View
         style={[
           styles.flex1,
           styles.justifyContentCenter,
           styles.alignItemsCenter,
           styles.appContent,
-          styles.mb10,
+          styles.p2,
         ]}>
         <Text
           style={[
