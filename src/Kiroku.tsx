@@ -40,7 +40,7 @@ import Modal from '@components/Modal';
 import CONST from './CONST';
 import UserOfflineModal from '@components/UserOfflineModal';
 import {isConnectedToDatabaseEmulator} from '@libs/Firebase/FirebaseUtils';
-import SplashScreenStateContext from './SplashScreenStateContext';
+import SplashScreenStateContext from '@context/global/SplashScreenStateContext';
 
 Onyx.registerLogger(({level, message}) => {
   if (level === 'alert') {
