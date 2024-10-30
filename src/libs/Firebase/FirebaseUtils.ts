@@ -51,13 +51,7 @@ function isConnectedToAuthEmulator(auth: Auth): boolean {
  * @returns True if connected to the emulator, false otherwise.
  */
 function isConnectedToDatabaseEmulator(database: Database): boolean {
-  const dbConfig = database.app.options.databaseURL;
-  if (!dbConfig) {
-    return false;
-  }
-  return dbConfig.includes(
-    `${CONFIG.EMULATORS.HOST}:${CONFIG.EMULATORS.DATABASE_PORT}`,
-  );
+  return (database as any)._repoInternal.repoInfo_.isUsingEmulator;
 }
 
 export {
