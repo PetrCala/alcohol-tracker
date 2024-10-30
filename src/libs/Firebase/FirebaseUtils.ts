@@ -20,7 +20,7 @@ function isConnectedToStorageEmulator(storage: FirebaseStorage): boolean {
     return false;
   }
   return storageConfig.includes(
-    `${CONFIG.TEST_HOST}:${CONFIG.TEST_STORAGE_BUCKET_PORT}`,
+    `${CONFIG.EMULATORS.HOST}:${CONFIG.EMULATORS.STORAGE_BUCKET_PORT}`,
   );
 }
 
@@ -39,7 +39,9 @@ function isConnectedToAuthEmulator(auth: Auth): boolean {
   if (!authConfig) {
     return false;
   }
-  return authConfig.includes(`${CONFIG.TEST_HOST}:${CONFIG.TEST_AUTH_PORT}`);
+  return authConfig.includes(
+    `${CONFIG.EMULATORS.HOST}:${CONFIG.EMULATORS.AUTH_PORT}`,
+  );
 }
 
 /**
@@ -53,7 +55,9 @@ function isConnectedToDatabaseEmulator(database: Database): boolean {
   if (!dbConfig) {
     return false;
   }
-  return dbConfig.includes(`${CONFIG.TEST_HOST}:${CONFIG.TEST_AUTH_PORT}`);
+  return dbConfig.includes(
+    `${CONFIG.EMULATORS.HOST}:${CONFIG.EMULATORS.DATABASE_PORT}`,
+  );
 }
 
 export {
