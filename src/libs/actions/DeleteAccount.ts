@@ -9,7 +9,6 @@ import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import {UserProps} from '@src/types/onyx';
 import * as ErrorUtils from '@libs/ErrorUtils';
-import useLocalize from '@hooks/useLocalize';
 
 /**
  * Clear CloseAccount error message to hide modal
@@ -65,10 +64,7 @@ async function deleteAccount(
     // Add an alert here informing about the user deletion
     // Navigation.navigate(ROUTES.LOGIN); // This is has been disabled as the redirect happens automatically upon Auth state change
   } catch (error: any) {
-    ErrorUtils.raiseAlert(
-      error,
-      'Error deleting the account. Please try again later',
-    );
+    ErrorUtils.raiseAlert(error, 'Error deleting your account');
   }
 }
 
