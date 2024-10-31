@@ -21,8 +21,7 @@
       "port": "4000"
     },
     "database": {
-      "port": "9001",
-      "import": "./local/emulators/mockDatabase.json"
+      "port": "9001"
     },
     "storage": {
       "port": "9199"
