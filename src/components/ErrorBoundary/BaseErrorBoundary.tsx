@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import {ErrorBoundary} from 'react-error-boundary';
 import BootSplash from '@libs/BootSplash';
 // import GenericErrorScreen from '@screens/ErrorScreen/GenericErrorScreen';
-// import UpdateRequiredView from '@pages/ErrorPage/UpdateRequiredView';
 import ForceUpdateModal from '@components/Modals/ForceUpdateModal';
 import CONST from '@src/CONST';
 import type {BaseErrorBoundaryProps, LogError} from './types';
