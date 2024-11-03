@@ -472,6 +472,16 @@ export default {
       fallback: 'Something went wrong. Please try again later.',
     },
   },
+  genericErrorScreen: {
+    title: 'Oops, something went wrong!',
+    body: {
+      helpTextMobile: 'Please close and reopen the app.',
+      // helpTextMobile: 'Please close and reopen the app, or switch to',
+      // helpTextWeb: 'web.',
+      helpTextEmail: 'If the problem persists, reach out to',
+    },
+    refresh: 'Refresh',
+  },
 } satisfies TranslationBase;
 
 // Example of how to pluralize strings

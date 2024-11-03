@@ -1379,7 +1379,7 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
     return {color: theme.text};
   },
 
-  getErrorPageContainerStyle: (safeAreaPaddingBottom = 0): ViewStyle => ({
+  getErrorScreenContainerStyle: (safeAreaPaddingBottom = 0): ViewStyle => ({
     backgroundColor: theme.componentBG,
     paddingBottom: 40 + safeAreaPaddingBottom,
   }),
