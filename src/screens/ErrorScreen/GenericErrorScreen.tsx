@@ -61,12 +61,14 @@ function GenericErrorScreen() {
               <View style={styles.mb5}>
                 <ErrorBodyText />
                 <Text>
-                  {`${translate('genericErrorScreen.body.helpTextEmail')} `}
+                  {`${translate('genericErrorScreen.body.helpTextEmail')} ${CONST.EMAIL.KIROKU}`}
+                  {/* TODO uncomment the code after the TextLink component is fixed. */}
+                  {/* {`${translate('genericErrorScreen.body.helpTextEmail')} `}
                   <TextLink
                     href={`mailto:${CONST.EMAIL.KIROKU}`}
                     style={[styles.link]}>
                     {CONST.EMAIL.KIROKU}
-                  </TextLink>
+                  </TextLink> */}
                 </Text>
               </View>
               <View style={[styles.flexRow]}>
