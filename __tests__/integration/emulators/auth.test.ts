@@ -1,5 +1,3 @@
-// !! Run using npm test - to run using bun test, resolve first issue with Config -> mock react-native-config
-
 // TODO - remaining an error where 'getReactNativePersistence' is not a function
 jest.mock('@react-native-async-storage/async-storage', () => ({}));
 
