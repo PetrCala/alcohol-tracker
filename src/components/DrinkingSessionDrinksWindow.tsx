@@ -7,7 +7,7 @@ import {
   removeDrinks,
   sumDrinkTypes,
   sumDrinksOfSingleType,
-} from '../libs/DataHandling';
+} from '@libs/DataHandling';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import CONST from '@src/CONST';
 import type {DrinkKey, Drinks, DrinksList} from '@src/types/onyx';
@@ -90,19 +90,21 @@ const DrinkingSessionDrinksWindow = ({
 
 const styles = StyleSheet.create({
   sessionDrinkContainer: {
-    borderWidth: 1,
-    borderColor: 'black',
-    backgroundColor: '#fcf50f',
+    borderBottomWidth: 0,
+    paddingTop: 4,
+    paddingBottom: 4,
+    marginLeft: 12,
+    marginRight: 12,
+    borderColor: 'gray',
     flexDirection: 'row',
-    padding: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
   iconContainer: {
-    width: 30,
-    height: 30,
-    marginLeft: 5,
-    marginRight: 5,
+    width: 32,
+    height: 32,
+    marginLeft: 4,
+    marginRight: 4,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -125,17 +127,15 @@ const styles = StyleSheet.create({
   drinksInputContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 4,
-    marginBottom: 4,
   },
   drinksInputButton: {
     width: 43,
     height: 43,
     borderRadius: 5,
-    borderWidth: 2,
+    borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    borderColor: '#212421',
+    borderColor: 'gray',
     backgroundColor: 'white',
   },
   drinksInputText: {

@@ -21,16 +21,18 @@ const DrinkTypesView = ({
       <View style={styles.tab}>
         <Text style={styles.tabText}>Drinks consumed</Text>
       </View>
-      {drinkData.map(drink => (
-        <DrinkingSessionDrinksWindow
-          key={drink.key} // JS unique key property - no need to list
-          drinkKey={drink.key}
-          iconSource={drink.icon}
-          currentDrinks={currentDrinks}
-          setCurrentDrinks={setCurrentDrinks}
-          availableUnits={availableUnits}
-        />
-      ))}
+      <View>
+        {drinkData.map(drink => (
+          <DrinkingSessionDrinksWindow
+            key={drink.key} // JS unique key property - no need to list
+            drinkKey={drink.key}
+            iconSource={drink.icon}
+            currentDrinks={currentDrinks}
+            setCurrentDrinks={setCurrentDrinks}
+            availableUnits={availableUnits}
+          />
+        ))}
+      </View>
     </View>
   );
 };
@@ -40,18 +42,17 @@ export default DrinkTypesView;
 const styles = StyleSheet.create({
   mainContainer: {
     width: '100%',
-    backgroundColor: 'white',
+    paddingBottom: 4,
   },
   tab: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     height: 50,
-    width: '100%',
-    borderColor: '#212421',
-    borderWidth: 1,
-    backgroundColor: 'white',
-    paddingHorizontal: 10,
+    borderColor: 'gray',
+    borderTopWidth: 1,
+    marginLeft: 12,
+    marginRight: 12,
   },
   tabText: {
     fontWeight: 'bold',

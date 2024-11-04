@@ -59,11 +59,9 @@ import useLocalize from '@hooks/useLocalize';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import {format} from 'date-fns';
-import Icon from '@components/Icon';
 import useTheme from '@hooks/useTheme';
-import variables from '@src/styles/variables';
-import Button from '@components/Button';
 import useThemeStyles from '@hooks/useThemeStyles';
+import Button from '@components/Button';
 
 type LiveSessionScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -95,6 +93,10 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     : 'green';
   // Other
   const [monkeMode, setMonkeMode] = useState<boolean>(false);
+  const [monkeButtonText, setMonkeButtonText] = useState<string>('Monke Mode');
+  const [monkeButtonColor, setMonkeButtonColor] = useState<string>(
+    theme.buttonDefaultBG,
+  );
   const [discardModalVisible, setDiscardModalVisible] =
     useState<boolean>(false);
   const [openingSession, setOpeningSession] = useState<boolean>(true);
@@ -392,6 +394,13 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     openSession();
   }, []);
 
+  useEffect(() => {
+    const newText = monkeMode ? 'Exit Monke Mode' : 'Monke Mode';
+    const newColor = monkeMode ? theme.danger : theme.success;
+    setMonkeButtonText(newText);
+    setMonkeButtonColor(newColor);
+  }, [monkeMode]);
+
   // Synchronize the session with database
   useEffect(() => {
     // Only schedule a database update if any hooks changed
@@ -446,12 +455,17 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       <HeaderWithBackButton
         onBackButtonPress={handleBackPress}
         customRightButton={
-          <MainHeaderButton
-            buttonOn={monkeMode}
-            textOn="Exit Monke Mode"
-            textOff="Monke Mode"
+          <Button
             onPress={() => setMonkeMode(!monkeMode)}
+            text={monkeButtonText}
+            style={[styles.buttonMedium, {backgroundColor: monkeButtonColor}]}
+            textStyles={styles.buttonLargeText}
           />
+          // <MainHeaderButton
+          //   buttonOn={monkeMode}
+          //   textOn="Exit Monke Mode"
+          //   textOff="Monke Mode"
+          // />
         }
       />
       <ScrollView
@@ -524,51 +538,42 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
             />
           </>
         )}
-        <FillerView />
+        <FillerView styles={{backgroundColor: theme.appBG}} />
       </ScrollView>
-      <View style={localStyles.saveSessionDelimiter} />
       <View style={localStyles.saveSessionContainer}>
-        <BasicButton
+        <Button
           text={`${deleteSessionWording} Session`}
-          buttonStyle={[
+          textStyles={localStyles.saveSessionButtonText}
+          style={[
             localStyles.saveSessionButton,
-            isPending
-              ? localStyles.disabledSaveSessionButton
-              : localStyles.enabledSaveSessionButton,
+            {backgroundColor: theme.success},
           ]}
-          textStyle={localStyles.saveSessionButtonText}
           onPress={handleDiscardSession}
         />
-        <YesNoPopup
-          visible={discardModalVisible}
-          transparent={true}
-          onRequestClose={() => setDiscardModalVisible(false)}
-          message={`Do you really want to\n${deleteSessionWording.toLowerCase()} this session?`}
-          onYes={handleConfirmDiscard}
-        />
-        <BasicButton
+        <Button
           text="Save Session"
-          buttonStyle={[
+          style={[
             localStyles.saveSessionButton,
-            isPending
-              ? localStyles.disabledSaveSessionButton
-              : localStyles.enabledSaveSessionButton,
+            {backgroundColor: theme.success},
           ]}
-          textStyle={localStyles.saveSessionButtonText}
+          textStyles={styles.buttonLargeText}
           onPress={() => saveSession(db, user.uid)}
         />
-        <YesNoPopup
-          visible={showLeaveConfirmation}
-          transparent={true}
-          onRequestClose={() => setShowLeaveConfirmation(false)}
-          message="You have unsaved changes. Are you sure you want to go back?"
-          onYes={() => confirmGoBack()} // No changes to the session object
-        />
-        {/* <AsyncResponsiveComponent
-          trigger={isPending}
-          asyncOperation={asyncOperation}
-        /> */}
       </View>
+      <YesNoPopup
+        visible={discardModalVisible}
+        transparent={true}
+        onRequestClose={() => setDiscardModalVisible(false)}
+        message={`Do you really want to\n${deleteSessionWording.toLowerCase()} this session?`}
+        onYes={handleConfirmDiscard}
+      />
+      <YesNoPopup
+        visible={showLeaveConfirmation}
+        transparent={true}
+        onRequestClose={() => setShowLeaveConfirmation(false)}
+        message="You have unsaved changes. Are you sure you want to go back?"
+        onYes={() => confirmGoBack()} // No changes to the session object
+      />
     </ScreenWrapper>
   );
 }
@@ -584,7 +589,6 @@ const localStyles = StyleSheet.create({
     height: 25,
   },
   sessionInfoContainer: {
-    backgroundColor: '#FFFF99',
     flexDirection: 'row',
     justifyContent: 'center',
   },
@@ -596,7 +600,7 @@ const localStyles = StyleSheet.create({
     paddingTop: 10,
   },
   sessionInfoText: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
     color: 'black',
     alignSelf: 'center',
@@ -613,9 +617,7 @@ const localStyles = StyleSheet.create({
     position: 'absolute',
     right: 0,
   },
-  unitCountContainer: {
-    backgroundColor: '#FFFF99',
-  },
+  unitCountContainer: {},
   unitCountText: {
     fontSize: 90,
     fontWeight: 'bold',
@@ -632,7 +634,6 @@ const localStyles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
-    backgroundColor: '#FFFF99',
   },
   drinkTypesContainer: {
     alignItems: 'center',
@@ -687,21 +688,12 @@ const localStyles = StyleSheet.create({
     width: '100%',
     marginTop: 20,
   },
-  saveSessionDelimiter: {
-    width: 0,
-    // height: 5,
-    // width: '100%',
-    // backgroundColor: 'white',
-    // borderTopWidth: 1,
-    // borderColor: '#000',
-  },
   saveSessionContainer: {
     height: '8%',
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
-    backgroundColor: '#FFFF99',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -718,22 +710,14 @@ const localStyles = StyleSheet.create({
     height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 10,
-    marginBottom: 10,
-    marginTop: 10,
-    borderWidth: 1,
-    borderColor: '#000',
-  },
-  enabledSaveSessionButton: {
-    backgroundColor: '#fcf50f',
-  },
-  disabledSaveSessionButton: {
-    // backgroundColor: '#fffb82', // No longer used
-    backgroundColor: '#fcf50f',
+    borderRadius: 0,
+    borderRightWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: 'lightgray',
   },
   saveSessionButtonText: {
     color: 'black',
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
   },
 });

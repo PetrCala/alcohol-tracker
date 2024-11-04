@@ -17,7 +17,7 @@ const MainHeaderButton: React.FC<MainHeaderButtonProps> = ({
 }) => {
   return (
     <View style={commonStyles.headerRightContainer}>
-      <BasicButton
+      {/* <BasicButton
         text={buttonOn ? textOn : textOff}
         buttonStyle={[
           styles.headerButton,
@@ -25,7 +25,7 @@ const MainHeaderButton: React.FC<MainHeaderButtonProps> = ({
         ]}
         textStyle={styles.headerButtonText}
         onPress={() => onPress()}
-      />
+      /> */}
     </View>
   );
 };
@@ -37,9 +37,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 10,
     borderRadius: 10,
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: '#000',
-    backgroundColor: '#fcf50f',
     marginRight: 10,
   },
   headerButtonEnabled: {

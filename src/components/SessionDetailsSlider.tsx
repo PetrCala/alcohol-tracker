@@ -1,14 +1,6 @@
-﻿import React, {useState} from 'react';
-import type {ScrollView, LayoutChangeEvent} from 'react-native';
-import {
-  Text,
-  View,
-  Animated,
-  StyleSheet,
-  Image,
-  Switch,
-  TextInput,
-} from 'react-native';
+﻿import React from 'react';
+import type {ScrollView} from 'react-native';
+import {Text, View, StyleSheet, Switch, TextInput} from 'react-native';
 
 type SessionSliderProps = {
   scrollViewRef: React.RefObject<ScrollView>;
@@ -71,7 +63,6 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center',
     width: '100%',
   },
   tab: {
@@ -79,11 +70,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     height: 50,
-    width: '100%',
-    borderColor: '#212421',
-    borderWidth: 1,
-    backgroundColor: 'white',
-    paddingHorizontal: 10,
+    borderColor: 'gray',
+    borderTopWidth: 1,
+    marginLeft: 12,
+    marginRight: 12,
   },
   tabText: {
     fontWeight: 'bold',
@@ -99,28 +89,16 @@ const styles = StyleSheet.create({
     transform: [{rotate: '180deg'}],
   },
   tabArrowDefault: {},
-  content: {
-    width: '100%',
-    flex: 1,
-    flexDirection: 'column',
-    backgroundColor: 'white',
-    borderColor: '#212421',
-    borderWidth: 1,
-    padding: 5,
-    overflow: 'hidden', // Hide when not expanded
-  },
   sessionDetailsContainer: {
     width: '100%',
-    backgroundColor: '#ffff99',
   },
   tileContainerBase: {
     padding: 10,
-    backgroundColor: '#ffff99',
     borderColor: 'gray',
-    borderBottomWidth: 1,
+    borderBottomWidth: 0,
     borderRadius: 5,
-    marginLeft: 5,
-    marginRight: 5,
+    marginLeft: 12,
+    marginRight: 12,
   },
   tileContainerHorizontal: {
     justifyContent: 'space-between',
