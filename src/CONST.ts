@@ -736,6 +736,7 @@ const CONST = {
     ROUTES: {
       REDUNDANT_SLASHES: /(\/{2,})|(\/$)/g,
     },
+    NON_NUMERIC: /\D/g,
     CODE_2FA: /^\d{6}$/,
     NUMBER: /^[0-9]+$/,
     CARD_NUMBER: /^[0-9]{15,16}$/,

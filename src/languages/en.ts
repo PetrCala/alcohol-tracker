@@ -439,6 +439,10 @@ export default {
     heading: 'You are offline',
     text: 'Unfortunately, Kiroku does not support offline mode yet. We appreciate your patience while we work on this feature.',
   },
+  yearPickerScreen: {
+    year: 'Year',
+    selectYear: 'Please select a year',
+  },
   forceUpdate: {
     heading: 'App Update Required',
     text: (platform: Platform) =>
