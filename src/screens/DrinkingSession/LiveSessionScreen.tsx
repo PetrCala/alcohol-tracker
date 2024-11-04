@@ -30,6 +30,7 @@ import {
   timestampToDateString,
   unitsToColors,
 } from '@libs/DataHandling';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import type {DrinkingSession, DrinksList, Drinks} from '@src/types/onyx';
 import YesNoPopup from '@components/Popups/YesNoPopup';
 import {useUserConnection} from '@context/global/UserConnectionContext';
@@ -58,6 +59,11 @@ import useLocalize from '@hooks/useLocalize';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import {format} from 'date-fns';
+import Icon from '@components/Icon';
+import useTheme from '@hooks/useTheme';
+import variables from '@src/styles/variables';
+import Button from '@components/Button';
+import useThemeStyles from '@hooks/useThemeStyles';
 
 type LiveSessionScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -69,6 +75,8 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   // Context, database, and authentification
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
+  const theme = useTheme();
+  const styles = useThemeStyles();
   const {translate} = useLocalize();
   const {isOnline} = useUserConnection();
   const {preferences} = useDatabaseData();
@@ -447,13 +455,13 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
         }
       />
       <ScrollView
-        style={styles.scrollView}
+        style={localStyles.scrollView}
         ref={scrollViewRef}
         onScrollBeginDrag={Keyboard.dismiss}
         keyboardShouldPersistTaps="handled">
-        <View style={styles.sessionInfoContainer}>
-          <View style={styles.sessionTextContainer}>
-            <Text style={styles.sessionInfoText}>
+        <View style={localStyles.sessionInfoContainer}>
+          <View style={localStyles.sessionTextContainer}>
+            <Text style={localStyles.sessionInfoText}>
               {session?.ongoing
                 ? `Session from ${sessionStartTime}`
                 : `Session on ${format(sessionDate, CONST.DATE.SHORT_DATE_FORMAT)}`}
@@ -463,37 +471,43 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
             <ActivityIndicator
               size="small"
               color="#0000ff"
-              style={styles.isPendingIndicator}
+              style={localStyles.isPendingIndicator}
             />
           )}
           <SuccessIndicator
             visible={dbSyncSuccessful}
-            successStyle={[styles.successStyle, commonStyles.successIndicator]}
+            successStyle={[
+              localStyles.successStyle,
+              commonStyles.successIndicator,
+            ]}
           />
         </View>
-        <View style={styles.unitCountContainer}>
-          <Text style={[styles.unitCountText, {color: sessionColor}]}>
+        <View style={localStyles.unitCountContainer}>
+          <Text style={[localStyles.unitCountText, {color: sessionColor}]}>
             {totalUnits}
           </Text>
         </View>
         {monkeMode ? (
-          <View style={styles.modifyUnitsContainer}>
+          <View style={localStyles.modifyUnitsContainer}>
             <TouchableOpacity
               accessibilityRole="button"
-              style={[styles.modifyUnitsButton, {backgroundColor: 'red'}]}
+              style={[localStyles.modifyUnitsButton, {backgroundColor: 'red'}]}
               onPress={() => handleMonkeMinus()}>
-              <Text style={styles.modifyUnitsText}>-</Text>
+              <Text style={localStyles.modifyUnitsText}>-</Text>
             </TouchableOpacity>
             <TouchableOpacity
               accessibilityRole="button"
-              style={[styles.modifyUnitsButton, {backgroundColor: 'green'}]}
+              style={[
+                localStyles.modifyUnitsButton,
+                {backgroundColor: 'green'},
+              ]}
               onPress={() => handleMonkePlus()}>
-              <Text style={styles.modifyUnitsText}>+</Text>
+              <Text style={localStyles.modifyUnitsText}>+</Text>
             </TouchableOpacity>
           </View>
         ) : (
           <>
-            <View style={styles.drinkTypesContainer}>
+            <View style={localStyles.drinkTypesContainer}>
               <DrinkTypesView
                 drinkData={DrinkData}
                 currentDrinks={session.drinks}
@@ -512,17 +526,17 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
         )}
         <FillerView />
       </ScrollView>
-      <View style={styles.saveSessionDelimiter} />
-      <View style={styles.saveSessionContainer}>
+      <View style={localStyles.saveSessionDelimiter} />
+      <View style={localStyles.saveSessionContainer}>
         <BasicButton
           text={`${deleteSessionWording} Session`}
           buttonStyle={[
-            styles.saveSessionButton,
+            localStyles.saveSessionButton,
             isPending
-              ? styles.disabledSaveSessionButton
-              : styles.enabledSaveSessionButton,
+              ? localStyles.disabledSaveSessionButton
+              : localStyles.enabledSaveSessionButton,
           ]}
-          textStyle={styles.saveSessionButtonText}
+          textStyle={localStyles.saveSessionButtonText}
           onPress={handleDiscardSession}
         />
         <YesNoPopup
@@ -535,12 +549,12 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
         <BasicButton
           text="Save Session"
           buttonStyle={[
-            styles.saveSessionButton,
+            localStyles.saveSessionButton,
             isPending
-              ? styles.disabledSaveSessionButton
-              : styles.enabledSaveSessionButton,
+              ? localStyles.disabledSaveSessionButton
+              : localStyles.enabledSaveSessionButton,
           ]}
-          textStyle={styles.saveSessionButtonText}
+          textStyle={localStyles.saveSessionButtonText}
           onPress={() => saveSession(db, user.uid)}
         />
         <YesNoPopup
@@ -559,7 +573,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   backArrowContainer: {
     justifyContent: 'center',
     alignSelf: 'center',
@@ -576,15 +590,17 @@ const styles = StyleSheet.create({
   },
   sessionTextContainer: {
     alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    padding: 5,
+    paddingTop: 10,
   },
   sessionInfoText: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginTop: 5,
     color: 'black',
     alignSelf: 'center',
     alignContent: 'center',
-    padding: 5,
   },
   isPendingIndicator: {
     width: 25,

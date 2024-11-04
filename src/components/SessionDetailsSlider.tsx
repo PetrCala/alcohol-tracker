@@ -42,7 +42,12 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
             thumbColor={isBlackout ? '#f5dd4b' : '#f4f3f4'}
           />
         </View>
-        <View style={[styles.tileContainerBase, styles.tileContainerVertical]}>
+        <View
+          style={[
+            styles.tileContainerBase,
+            styles.tileContainerVertical,
+            {borderBottomWidth: 0},
+          ]}>
           <Text style={styles.tileHeading}>Session note:</Text>
           <View style={styles.noteWindowContainer}>
             <TextInput
@@ -105,17 +110,16 @@ const styles = StyleSheet.create({
   },
   sessionDetailsContainer: {
     width: '100%',
-    backgroundColor: '#fcf50f',
-    borderBottomColor: 'black',
-    borderBottomWidth: 1,
+    backgroundColor: '#ffff99',
   },
   tileContainerBase: {
     padding: 10,
     backgroundColor: '#ffff99',
-    borderColor: '#000',
+    borderColor: 'gray',
+    borderBottomWidth: 1,
     borderRadius: 5,
-    borderWidth: 1,
-    margin: 5,
+    marginLeft: 5,
+    marginRight: 5,
   },
   tileContainerHorizontal: {
     justifyContent: 'space-between',
@@ -135,7 +139,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#000',
+    borderColor: 'gray',
     borderRadius: 5,
     backgroundColor: 'white',
     marginTop: 5,
