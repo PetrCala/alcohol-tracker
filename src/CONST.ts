@@ -170,6 +170,7 @@ const CONST = {
     FNS_TIMEZONE_FORMAT_STRING: "yyyy-MM-dd'T'HH:mm:ssXXX",
     FNS_DB_FORMAT_STRING: 'yyyy-MM-dd HH:mm:ss.SSS',
     LONG_DATE_FORMAT_WITH_WEEKDAY: 'eeee, MMMM d, yyyy',
+    CALENDAR_FORMAT: 'yyyy-MM-dd',
     UNIX_EPOCH: '1970-01-01 00:00:00.000',
     MAX_DATE: '9999-12-31',
     MIN_DATE: '0001-01-01',

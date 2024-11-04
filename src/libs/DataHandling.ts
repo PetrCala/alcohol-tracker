@@ -18,10 +18,14 @@ import type {
   DrinkName,
   Drinks,
 } from '@src/types/onyx';
+import {formatInTimeZone} from 'date-fns-tz';
 import CONST from '../CONST';
 import type {MeasureType} from '@src/types/onyx/OnyxCommon';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
-import _, {get} from 'lodash';
+import type {SelectedTimezone, Timezone} from '@src/types/onyx/PersonalDetails';
+import _ from 'lodash';
+
+let defaultTimezone: Required<Timezone> = CONST.DEFAULT_TIME_ZONE;
 
 export function formatDate(date: Date): DateString {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
@@ -338,7 +342,11 @@ export function aggregateSessionsByDays(
 ): SessionsCalendarDatesType {
   return sessions.reduce(
     (acc: SessionsCalendarDatesType, item: DrinkingSession) => {
-      const dateString = formatDate(new Date(item.start_time)); // MM-DD-YYYY
+      const dateString = formatInTimeZone(
+        item.start_time,
+        item.timezone ?? defaultTimezone.selected,
+        CONST.DATE.CALENDAR_FORMAT,
+      );
       let newDrinks: number;
       if (measureType === 'units') {
         if (!drinksToUnits) {
