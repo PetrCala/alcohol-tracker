@@ -101,13 +101,13 @@ function ConfirmationScreen({}: ConfirmationScreenProps) {
             large
             text={translate('tzFix.confirmation.syncNow')}
           />
-          <Button
+          {/* <Button
             danger
             style={[styles.mt2, styles.mb1]}
             onPress={onIncorrect}
             large
             text={translate('tzFix.confirmation.syncLater')}
-          />
+          /> */}
         </View>
         <ConfirmModal
           danger

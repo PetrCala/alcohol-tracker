@@ -327,7 +327,7 @@ export default {
         "Until now, the data we've collected hasn't included timezone information, which can affect the accuracy and consistency of your data across different regions.",
       whatDoesThisMean: 'What does this mean?',
       text3:
-        "To enhance your experience and ensure all your data is accurately timestamped, we need to synchronize your existing data to Coordinated Universal Time (UTC). In the following steps, we'll determine your current timezone and ask for your permission to proceed with the synchronization.",
+        "To enhance your experience and ensure all your data is accurately timestamped, we need to add a timezone to all of your existing sessions. In the following steps, we'll determine your current timezone and ask for your permission to proceed with the synchronization.",
       confirmButtonText: 'Okay, got it!',
     },
     detection: {
@@ -335,7 +335,7 @@ export default {
       isTimezoneCorrect:
         'We have automatically detected your timezone as the following. Is this correct?',
       correct: 'Yes, this is correct',
-      incorrect: 'No, my timezone is different',
+      incorrect: 'No, my usual timezone is different',
     },
     confirmation: {
       title: 'Ready to sync?',

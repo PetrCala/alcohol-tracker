@@ -257,7 +257,7 @@ function HomeScreen({route}: HomeScreenProps) {
       type: 'SET_SHOULD_NAVIGATE_TO_TZ_FIX',
       payload: shouldNavigateToTzFix,
     });
-  }, [drinkingSessionData]);
+  }, [drinkingSessionData, userData]);
 
   useEffect(() => {
     if (!userStatusData) {
@@ -278,7 +278,7 @@ function HomeScreen({route}: HomeScreenProps) {
   useFocusEffect(
     React.useCallback(() => {
       // Update user status on home screen focus
-      if (!user || !userData || !preferences) {
+      if (!user || !userData || !preferences || !drinkingSessionData) {
         return;
       }
       try {
@@ -295,11 +295,15 @@ function HomeScreen({route}: HomeScreenProps) {
         );
       }
       // TZFIX (09-2024) - Redirect to TZ_FIX_INTRODUCTION if user has not set timezone
-      // ENABLE THIS TO ENABLE THE TZ FIX
-      // if (!state.shouldNavigateToTzFix) {
-      //   Navigation.navigate(ROUTES.TZ_FIX_INTRODUCTION);
-      // }
-    }, [userData, preferences, drinkingSessionData]),
+      if (state.shouldNavigateToTzFix) {
+        Navigation.navigate(ROUTES.TZ_FIX_INTRODUCTION);
+      }
+    }, [
+      userData,
+      preferences,
+      drinkingSessionData,
+      state.shouldNavigateToTzFix,
+    ]),
   );
 
   if (!user) {

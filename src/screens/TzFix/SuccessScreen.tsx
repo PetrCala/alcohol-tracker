@@ -40,20 +40,6 @@ function SuccessScreen({}: SuccessScreenProps) {
           <Text style={[styles.mt6, styles.textAlignCenter]}>
             {translate('tzFix.success.text1')}
           </Text>
-          {/* <Text
-            style={[styles.textHeadlineH2, styles.textAlignCenter, styles.mt6]}>
-            {translate('tzFix.success.troubleWithTimezones')}
-          </Text>
-          <Text style={[styles.mt6, styles.textAlignCenter]}>
-            {translate('tzFix.success.text2')}
-          </Text>
-          <Text
-            style={[styles.textHeadlineH2, styles.textAlignCenter, styles.mt6]}>
-            {translate('tzFix.success.whatDoesThisMean')}
-          </Text>
-          <Text style={[styles.mt6, styles.textAlignCenter]}>
-            {translate('tzFix.success.text3')}
-          </Text> */}
         </View>
         <Button
           success

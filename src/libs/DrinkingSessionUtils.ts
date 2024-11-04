@@ -12,7 +12,7 @@ import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import {getTimestampAge, numberToVerboseString} from './TimeUtils';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
 import * as Localize from './Localize';
-import {SelectedTimezone} from '@src/types/onyx/PersonalDetails';
+import {SelectedTimezone, Timezone} from '@src/types/onyx/PersonalDetails';
 import {utcToZonedTime, zonedTimeToUtc} from 'date-fns-tz';
 import DBPATHS from '@database/DBPATHS';
 
@@ -32,6 +32,8 @@ function getEmptySession(
     drinks: usePlaceholderDrinks ? PlaceholderDrinks : {},
     blackout: false,
     note: '',
+    timezone: Intl.DateTimeFormat().resolvedOptions()
+      .timeZone as SelectedTimezone,
     type: type ?? CONST.SESSION_TYPES.EDIT,
     ...(ongoing && {ongoing: true}),
   };
@@ -250,10 +252,19 @@ async function fixTimezoneSessions(
     convertedSessions[sessionId] = convertedSession;
   });
 
-  const sessionsRef = DBPATHS.USER_DRINKING_SESSIONS_USER_ID;
+  // We flag the sessions with the TZ the user chose, but for the app, we automatically assign the automatic timezone
+  const userTimezone: Timezone = {
+    selected: Intl.DateTimeFormat().resolvedOptions()
+      .timeZone as SelectedTimezone,
+    automatic: true,
+  };
 
-  const updates: Record<string, DrinkingSessionList> = {};
+  const sessionsRef = DBPATHS.USER_DRINKING_SESSIONS_USER_ID;
+  const timezoneRef = DBPATHS.USERS_USER_ID_PRIVATE_DATA_TIMEZONE;
+
+  const updates: Record<string, DrinkingSessionList | Timezone> = {};
   updates[sessionsRef.getRoute(userID)] = convertedSessions;
+  updates[timezoneRef.getRoute(userID)] = userTimezone;
 
   await update(ref(db), updates);
 }
