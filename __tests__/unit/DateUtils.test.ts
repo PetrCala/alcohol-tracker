@@ -357,17 +357,3 @@ describe('DateUtils', () => {
     );
   });
 });
-
-// describe('DrinkingSessionUtils', () => {
-//   // TZFIX - remove this later
-//   describe('fixEditSessionTimestamp', () => {
-//     it('Should leave a UTC time as is', () => {
-//       const utcTimestamp = 1728038964;
-//       const fixedTimestamp = DSUtils.fixEditSessionTimestamp(
-//         utcTimestamp,
-//         'Europe/London',
-//       );
-//       expect(fixedTimestamp).toBe(utcTimestamp);
-//     });
-//   });
-// });
