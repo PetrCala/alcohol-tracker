@@ -278,7 +278,7 @@ function HomeScreen({route}: HomeScreenProps) {
   useFocusEffect(
     React.useCallback(() => {
       // Update user status on home screen focus
-      if (!user || !userData || !preferences || !drinkingSessionData) {
+      if (!user || !userData || !preferences) {
         return;
       }
       try {
