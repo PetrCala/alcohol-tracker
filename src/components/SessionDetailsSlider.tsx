@@ -1,10 +1,7 @@
 ﻿import React, {useState} from 'react';
-import type {
-  ScrollView,
-  LayoutChangeEvent} from 'react-native';
+import type {ScrollView, LayoutChangeEvent} from 'react-native';
 import {
   Text,
-  TouchableOpacity,
   View,
   Animated,
   StyleSheet,
@@ -12,7 +9,6 @@ import {
   Switch,
   TextInput,
 } from 'react-native';
-import * as KirokuIcons from '@components/Icon/KirokuIcons';
 
 type SessionSliderProps = {
   scrollViewRef: React.RefObject<ScrollView>;
@@ -20,7 +16,7 @@ type SessionSliderProps = {
   onBlackoutChange: (value: boolean) => void;
   note: string;
   onNoteChange: (value: string) => void;
-}
+};
 
 const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
   scrollViewRef,
@@ -29,60 +25,12 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
   note,
   onNoteChange,
 }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [heightAnim] = useState(new Animated.Value(0)); // Initial value for opacity
-  const [featureY, setFeatureY] = useState(0);
-
-  const onFeatureLayout = (event: LayoutChangeEvent) => {
-    setFeatureY(250);
-  };
-
-  const toggleVisibility = () => {
-    // if (isExpanded) {
-    //     Animated.timing(heightAnim, {
-    //         toValue: 0,
-    //         duration: 200,
-    //         useNativeDriver: false,
-    //     }).start( () => {
-    //         scrollViewRef.current?.scrollTo({ y: 0, animated: true });
-    //     });
-    // } else {
-    //     Animated.timing(heightAnim, {
-    //         toValue: featureY, // Expand the container to this much
-    //         duration: 200,
-    //         useNativeDriver: false,
-    //     })
-    //     .start(() => {
-    //         scrollViewRef.current?.scrollTo({ y: featureY, animated: true });
-    //     });
-    // }
-    setIsExpanded(!isExpanded);
-  };
-
   return (
     // <View style={styles.container} onLayout={onFeatureLayout}>
     <View style={styles.container}>
       <View style={styles.tab}>
         <Text style={styles.tabText}>Session details</Text>
       </View>
-      {/* <TouchableOpacity style={styles.tab} onPress={toggleVisibility}>
-                <Image 
-                style={[
-                    styles.tabArrow,
-                    isExpanded ? styles.tabArrowExpanded : styles.tabArrowDefault
-                ]}
-                source={KirokuIcons.ArrowDown}
-                />
-            </TouchableOpacity> */}
-      {/* {isExpanded ?
-            <Animated.View 
-            style={[
-                styles.content,
-                { height: heightAnim }
-            ]}
-            onLayout={!isExpanded ? onFeatureLayout : undefined}
-            >
-            */}
       <View style={styles.sessionDetailsContainer}>
         <View
           style={[styles.tileContainerBase, styles.tileContainerHorizontal]}>
@@ -97,7 +45,8 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
         <View style={[styles.tileContainerBase, styles.tileContainerVertical]}>
           <Text style={styles.tileHeading}>Session note:</Text>
           <View style={styles.noteWindowContainer}>
-            <TextInput accessibilityLabel="Text input field"
+            <TextInput
+              accessibilityLabel="Text input field"
               defaultValue={note}
               style={styles.noteTextInput}
               onChangeText={value => onNoteChange(value)}
@@ -110,11 +59,6 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
           </View>
         </View>
       </View>
-      {/*
-            </Animated.View>
-            :
-            null
-            } */}
     </View>
   );
 };
