@@ -24,6 +24,13 @@ import type {MeasureType} from '@src/types/onyx/OnyxCommon';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import type {SelectedTimezone, Timezone} from '@src/types/onyx/PersonalDetails';
 import _ from 'lodash';
+import {
+  endOfDay,
+  endOfMonth,
+  endOfToday,
+  startOfDay,
+  startOfMonth,
+} from 'date-fns';
 
 let defaultTimezone: Required<Timezone> = CONST.DEFAULT_TIME_ZONE;
 
@@ -32,12 +39,6 @@ export function formatDate(date: Date): DateString {
     2,
     '0',
   )}-${String(date.getDate()).padStart(2, '0')}` as DateString;
-}
-
-export function formatDateToDay(date: Date): string {
-  return `${String(date.getMonth() + 1).padStart(2, '0')}-${String(
-    date.getDate(),
-  ).padStart(2, '0')}`;
 }
 
 export function formatDateToTime(date: Date): string {
@@ -263,28 +264,17 @@ export function getSingleDayDrinkingSessions(
   if (isEmptyObject(sessions)) {
     return [];
   }
-  // Define the time boundaries
-  date.setHours(0, 0, 0, 0); // set to start of day
 
-  const tomorrow = new Date(date);
-  tomorrow.setDate(date.getDate() + 1); // set to start of next day
+  const sessionBelongsToDate = (session: DrinkingSession) => {
+    const sessionDate = new Date(session.start_time);
+    return sessionDate >= startOfDay(date) && sessionDate <= endOfDay(date);
+  };
 
-  // Convert to UNIX timestamp
-  const todayUnix = Math.floor(date.getTime());
-  const tomorrowUnix = Math.floor(tomorrow.getTime());
   if (returnArray) {
-    return _.filter(
-      sessions,
-      session =>
-        session.start_time >= todayUnix && session.start_time < tomorrowUnix,
-    );
+    return _.filter(sessions, session => sessionBelongsToDate(session));
   }
   return _.entries(sessions)
-    .filter(([sessionId, session]) => {
-      return (
-        session.start_time >= todayUnix && session.start_time < tomorrowUnix
-      );
-    })
+    .filter(([sessionId, session]) => sessionBelongsToDate(session))
     .reduce((acc, [sessionId, session]) => {
       acc[sessionId] = session;
       return acc;
@@ -303,35 +293,14 @@ export function getSingleMonthDrinkingSessions(
   sessions: DrinkingSessionArray,
   untilToday = false,
 ) {
-  if (!sessions) {
-    return [];
-  }
-  date.setHours(0, 0, 0, 0); // To midnight
-  // Find the beginning date
-  const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
-  const beginningDate = firstDayOfMonth;
-  // Find the end date
-  const firstDayOfNextMonth = new Date(
-    date.getFullYear(),
-    date.getMonth() + 1,
-    1,
-  );
-  let endDate = firstDayOfNextMonth;
-  if (untilToday) {
-    const today = new Date(); // automatically set to midnight
-    const tomorrowMidnight = changeDateBySomeDays(today, 1);
-    if (endDate >= tomorrowMidnight) {
-      endDate = tomorrowMidnight; // Filter until today only
-    }
-  }
-  // Find the timestamps
-  const beginningUnix = Math.floor(beginningDate.getTime());
-  const endUnix = Math.floor(endDate.getTime());
-  // Filter to current month only
-  const monthDrinkingSessions = sessions.filter(
-    session =>
-      session.start_time >= beginningUnix && session.start_time < endUnix,
-  );
+  const startDate = startOfMonth(date);
+  const endDate = untilToday ? endOfToday() : endOfMonth(date);
+
+  const monthDrinkingSessions = sessions.filter(session => {
+    const sessionDate = new Date(session.start_time);
+    return sessionDate >= startDate && sessionDate <= endDate;
+  });
+
   return monthDrinkingSessions;
 }
 

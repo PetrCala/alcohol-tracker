@@ -1,7 +1,6 @@
 ﻿import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import MenuIcon from '@components/Buttons/MenuIcon';
 import {
-  formatDateToDay,
   formatDateToTime,
   getLastDrinkAddedTime,
   sumAllUnits,
@@ -15,6 +14,7 @@ import BasicButton from '@components/Buttons/BasicButton';
 import type {DrinkingSession} from '@src/types/onyx';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import type {StackScreenProps} from '@react-navigation/stack';
+import CONST from '@src/CONST';
 import SCREENS from '@src/SCREENS';
 import type {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
 import {useEffect, useState} from 'react';
@@ -23,6 +23,7 @@ import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import ScreenWrapper from '@components/ScreenWrapper';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
+import {format} from 'date-fns';
 
 const SessionDataItem = ({
   heading,
@@ -82,7 +83,7 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
   // Time info
   const sessionStartDate = timestampToDate(session.start_time);
   const sessionEndDate = timestampToDate(session.end_time);
-  const sessionDay = formatDateToDay(sessionStartDate);
+  const sessionDay = format(sessionStartDate, CONST.DATE.SHORT_DATE_FORMAT);
   const sessionStartTime = formatDateToTime(sessionStartDate);
   const sessionEndTime = formatDateToTime(sessionEndDate);
   const sessionLength = DSUtils.calculateSessionLength(session, false);

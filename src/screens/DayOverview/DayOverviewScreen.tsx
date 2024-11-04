@@ -14,7 +14,6 @@ import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import MenuIcon from '../../components/Buttons/MenuIcon';
 import {
   timestampToDate,
-  formatDateToDay,
   formatDateToTime,
   changeDateBySomeDays,
   unitsToColors,
@@ -48,6 +47,7 @@ import useTheme from '@hooks/useTheme';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import useThemeStyles from '@hooks/useThemeStyles';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
+import {format} from 'date-fns';
 
 type DayOverviewScreenProps = StackScreenProps<
   DayOverviewNavigatorParamList,
@@ -55,9 +55,6 @@ type DayOverviewScreenProps = StackScreenProps<
 >;
 
 function DayOverviewScreen({route}: DayOverviewScreenProps) {
-  const {translate} = useLocalize();
-  const theme = useTheme();
-  const styles = useThemeStyles();
   const {date} = route.params;
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
@@ -296,7 +293,9 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
       />
       <View style={localStyles.dayOverviewContainer}>
         <Text style={localStyles.menuDrinkingSessionInfoText}>
-          {date ? formatDateToDay(currentDate) : 'Loading date...'}
+          {date
+            ? format(currentDate, CONST.DATE.SHORT_DATE_FORMAT)
+            : 'Loading date...'}
         </Text>
         <FlatList
           data={dailyData}

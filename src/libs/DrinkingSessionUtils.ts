@@ -9,11 +9,9 @@ import type {
 } from '@src/types/onyx';
 import {ref, update, type Database} from 'firebase/database';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
-import {getTimestampAge, numberToVerboseString} from './TimeUtils';
+import {numberToVerboseString} from './TimeUtils';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
-import * as Localize from './Localize';
 import {SelectedTimezone, Timezone} from '@src/types/onyx/PersonalDetails';
-import {utcToZonedTime, zonedTimeToUtc} from 'date-fns-tz';
 import DBPATHS from '@database/DBPATHS';
 
 const PlaceholderDrinks: DrinksList = {[Date.now()]: {other: 0}};

@@ -47,7 +47,6 @@ type SessionsCalendarProps = {
   preferences: Preferences;
   visibleDateObject: DateObject;
   dispatch: React.Dispatch<any>;
-  // setVisibleDateObject: React.Dispatch<React.SetStateAction<DateObject>>;
   onDayPress: (day: DateData) => void;
 };
 

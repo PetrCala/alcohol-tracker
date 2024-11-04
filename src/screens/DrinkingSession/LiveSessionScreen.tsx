@@ -22,7 +22,6 @@ import {
 } from '@database/drinkingSessions';
 import {
   addDrinks,
-  formatDateToDay,
   formatDateToTime,
   removeDrinks,
   sumAllUnits,
@@ -58,6 +57,7 @@ import DrinkData from '@libs/DrinkData';
 import useLocalize from '@hooks/useLocalize';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
+import {format} from 'date-fns';
 
 type LiveSessionScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -456,7 +456,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
             <Text style={styles.sessionInfoText}>
               {session?.ongoing
                 ? `Session from ${sessionStartTime}`
-                : `Session on ${formatDateToDay(sessionDate)}`}
+                : `Session on ${format(sessionDate, CONST.DATE.SHORT_DATE_FORMAT)}`}
             </Text>
           </View>
           {isPending && (
