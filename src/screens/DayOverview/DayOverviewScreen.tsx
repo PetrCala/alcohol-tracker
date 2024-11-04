@@ -41,11 +41,8 @@ import CONST from '@src/CONST';
 import {savePlaceholderSessionData} from '@database/drinkingSessions';
 import ScreenWrapper from '@components/ScreenWrapper';
 import {nonMidnightString} from '@libs/StringUtilsKiroku';
-import useLocalize from '@hooks/useLocalize';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
-import useTheme from '@hooks/useTheme';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
-import useThemeStyles from '@hooks/useThemeStyles';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
 import {format} from 'date-fns';
 

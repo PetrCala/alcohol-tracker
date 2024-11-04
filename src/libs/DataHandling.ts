@@ -261,10 +261,6 @@ export function getSingleDayDrinkingSessions(
   sessions: DrinkingSessionList | undefined,
   returnArray = true,
 ): DrinkingSessionArray | DrinkingSessionList {
-  if (isEmptyObject(sessions)) {
-    return [];
-  }
-
   const sessionBelongsToDate = (session: DrinkingSession) => {
     const sessionDate = new Date(session.start_time);
     return sessionDate >= startOfDay(date) && sessionDate <= endOfDay(date);
@@ -273,6 +269,7 @@ export function getSingleDayDrinkingSessions(
   if (returnArray) {
     return _.filter(sessions, session => sessionBelongsToDate(session));
   }
+
   return _.entries(sessions)
     .filter(([sessionId, session]) => sessionBelongsToDate(session))
     .reduce((acc, [sessionId, session]) => {
