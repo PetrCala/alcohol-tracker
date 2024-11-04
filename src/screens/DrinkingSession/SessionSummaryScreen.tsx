@@ -121,6 +121,7 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
       data: sessionLength === 0 ? '-' : lastDrinkAdded,
     },
     {heading: 'End time:', data: sessionLength === 0 ? '-' : sessionEndTime},
+    // {heading: 'Timezone:', data: session.timezone ?? ''},
   ];
 
   const drinkData = [
@@ -136,7 +137,7 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
 
   const otherData = [
     {heading: 'Blackout:', data: session.blackout ? 'Yes' : 'No'},
-    {heading: 'Note:', data: session.note},
+    {heading: 'Note:', data: session.note ?? ''},
   ];
 
   const sessionColor = session.blackout
