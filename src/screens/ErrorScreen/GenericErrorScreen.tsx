@@ -1,7 +1,6 @@
 import React from 'react';
 import {useErrorBoundary} from 'react-error-boundary';
 import {View} from 'react-native';
-import LogoWordmark from '@assets/images/expensify-wordmark.svg';
 import Button from '@components/Button';
 import Icon from '@components/Icon';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
@@ -92,7 +91,7 @@ function GenericErrorScreen() {
               </View>
             </View>
           </View>
-          <View>
+          {/* <View>
             <View
               style={[
                 styles.flex1,
@@ -107,7 +106,7 @@ function GenericErrorScreen() {
                 fill={theme.text}
               />
             </View>
-          </View>
+          </View> */}
         </View>
       )}
     </SafeAreaConsumer>
