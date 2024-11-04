@@ -62,6 +62,7 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
               multiline={true}
             />
           </View>
+          {/* TODO add the date changer here! */}
         </View>
       </View>
     </View>
