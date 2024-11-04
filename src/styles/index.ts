@@ -723,6 +723,19 @@ const styles = (theme: ThemeColors) =>
       color: theme.textSupporting,
     },
 
+    datePickerRoot: {
+      position: 'relative',
+      zIndex: 99,
+    },
+
+    datePickerPopover: {
+      backgroundColor: theme.appBG,
+      width: '100%',
+      alignSelf: 'center',
+      zIndex: 100,
+      marginTop: 8,
+    },
+
     defaultModalContainer: {
       backgroundColor: theme.componentBG,
       borderColor: theme.transparent,

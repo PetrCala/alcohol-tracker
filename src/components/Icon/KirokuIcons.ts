@@ -16,6 +16,7 @@ import Beer from '@assets/images/beer.png';
 import Bell from '@assets/images/bell.png';
 import Book from '@assets/images/book.png';
 import Bug from '@assets/images/bug.png';
+import Calendar from '@assets/images/calendar.svg';
 import Camera from '@assets/images/camera.png';
 import Check from '@assets/images/check.png';
 import Checkmark from '@assets/images/checkmark.svg';
@@ -81,6 +82,7 @@ export {
   Bell,
   Book,
   Bug,
+  Calendar,
   Camera,
   Check,
   Checkmark,
