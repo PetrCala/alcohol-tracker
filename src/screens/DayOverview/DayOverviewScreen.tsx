@@ -48,6 +48,9 @@ import {format} from 'date-fns';
 import Button from '@components/Button';
 import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
+import useStyleUtils from '@hooks/useStyleUtils';
+import variables from '@src/styles/variables';
+import Icon from '@components/Icon';
 
 type DayOverviewScreenProps = StackScreenProps<
   DayOverviewNavigatorParamList,
@@ -111,6 +114,8 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
     if (!preferences) {
       return;
     }
+    const theme = useThemeStyles();
+
     // Calculate the session color
     const totalUnits = sumAllUnits(session.drinks, preferences.drinks_to_units);
     const unitsToColorsInfo = preferences.units_to_colors;
@@ -122,13 +127,9 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
     const date = timestampToDate(session.start_time);
     const timeString = nonMidnightString(formatDateToTime(date));
     const shouldDisplayTime = session.type === CONST.SESSION_TYPES.LIVE;
-    const viewStyle = {
-      ...localStyles.menuDrinkingSessionContainer,
-      backgroundColor: sessionColor,
-    };
 
     return (
-      <View style={viewStyle}>
+      <View style={[styles.dayOverviewTab(sessionColor), styles.border]}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <View style={{flex: 1}}>
             <TouchableOpacity
@@ -137,7 +138,8 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
               onPress={() => onSessionButtonPress(sessionId, session)}>
               <Text
                 style={[
-                  localStyles.menuDrinkingSessionText,
+                  styles.textNormalThemeText,
+                  styles.p1,
                   session.blackout === true || sessionColor === 'red'
                     ? {color: 'white', fontWeight: '500'}
                     : {},
@@ -147,7 +149,8 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
               {shouldDisplayTime && (
                 <Text
                   style={[
-                    localStyles.menuDrinkingSessionText,
+                    styles.textNormalThemeText,
+                    styles.p1,
                     session.blackout === true || sessionColor === 'red'
                       ? {color: 'white', fontWeight: '500'}
                       : {},
@@ -292,7 +295,10 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
                 ? 'dayOverviewScreen.enterEditMode'
                 : 'dayOverviewScreen.exitEditMode',
             )}
-            style={[styles.buttonMedium, styles.buttonSuccess]}
+            style={[
+              styles.buttonMedium,
+              !editMode ? styles.buttonSuccess : styles.buttonSuccessPressed,
+            ]}
             textStyles={styles.buttonLargeText}
           />
         }
@@ -340,21 +346,10 @@ const screenWidth = Dimensions.get('window').width;
 
 const localStyles = StyleSheet.create({
   menuDrinkingSessionContainer: {
-    backgroundColor: 'white',
     height: 85,
     padding: 8,
-    borderRadius: 8,
-    marginVertical: 4,
-    borderColor: '#ddd',
-    borderWidth: 1,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 5,
+    borderRadius: 12,
+    marginVertical: 2,
   },
   backArrowContainer: {
     justifyContent: 'center',
@@ -367,7 +362,6 @@ const localStyles = StyleSheet.create({
   menuIconContainer: {
     width: 40,
     height: 40,
-    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -378,7 +372,8 @@ const localStyles = StyleSheet.create({
   dayOverviewContainer: {
     flex: 1,
     overflow: 'hidden',
-    backgroundColor: '#FFFF99',
+    marginHorizontal: 10,
+    borderRadius: 10,
   },
   menuDrinkingSessionButton: {
     width: '100%',
@@ -387,11 +382,6 @@ const localStyles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'flex-start',
     padding: 5,
-  },
-  menuDrinkingSessionText: {
-    padding: 4,
-    fontSize: 16,
-    color: 'black',
   },
   menuDrinkingSessionInfoText: {
     fontSize: 20,
@@ -414,7 +404,7 @@ const localStyles = StyleSheet.create({
     borderWidth: 1,
     shadowOffset: {
       width: 0,
-      height: -9,
+      height: -2,
     },
     shadowOpacity: 0.1,
     shadowRadius: 3,

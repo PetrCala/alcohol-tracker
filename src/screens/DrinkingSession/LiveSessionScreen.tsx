@@ -96,10 +96,6 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     : 'green';
   // Other
   const [monkeMode, setMonkeMode] = useState<boolean>(false);
-  const [monkeButtonText, setMonkeButtonText] = useState<string>('Monke Mode');
-  const [monkeButtonColor, setMonkeButtonColor] = useState<string>(
-    theme.buttonDefaultBG,
-  );
   const [discardModalVisible, setDiscardModalVisible] =
     useState<boolean>(false);
   const [openingSession, setOpeningSession] = useState<boolean>(true);
@@ -393,15 +389,6 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     }, []),
   );
 
-  useEffect(() => {
-    const newText = monkeMode
-      ? translate('liveSessionScreen.exitMonkeMode')
-      : translate('liveSessionScreen.enterMonkeMode');
-    const newColor = monkeMode ? theme.danger : theme.success;
-    setMonkeButtonText(newText);
-    setMonkeButtonColor(newColor);
-  }, [monkeMode]);
-
   // Monitor various dynamic attributes stemming from the session
   useEffect(() => {
     setSessionIsLive(!!session?.ongoing);
@@ -463,8 +450,15 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
         customRightButton={
           <Button
             onPress={() => setMonkeMode(!monkeMode)}
-            text={monkeButtonText}
-            style={[styles.buttonMedium, {backgroundColor: monkeButtonColor}]}
+            text={translate(
+              monkeMode
+                ? 'liveSessionScreen.exitMonkeMode'
+                : 'liveSessionScreen.enterMonkeMode',
+            )}
+            style={[
+              styles.buttonMedium,
+              monkeMode ? styles.buttonSuccessPressed : styles.buttonSuccess,
+            ]}
             textStyles={styles.buttonLargeText}
           />
         }

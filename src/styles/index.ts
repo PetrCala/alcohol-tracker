@@ -47,6 +47,7 @@ import whiteSpace from './utils/whiteSpace';
 import wordBreak from './utils/wordBreak';
 import writingDirection from './utils/writingDirection';
 import variables from './variables';
+import {CalendarColors} from '@components/Calendar';
 
 type ColorScheme = (typeof CONST.COLOR_SCHEME)[keyof typeof CONST.COLOR_SCHEME];
 type StatusBarStyle =
@@ -596,6 +597,11 @@ const styles = (theme: ThemeColors) =>
       borderWidth: 0,
     },
 
+    buttonSuccessPressed: {
+      backgroundColor: theme.successPressed,
+      borderWidth: 0,
+    },
+
     buttonConfirmText: {
       paddingLeft: 20,
       paddingRight: 20,
@@ -744,6 +750,16 @@ const styles = (theme: ThemeColors) =>
       zIndex: 100,
       marginTop: 8,
     },
+
+    dayOverviewTab: (sessionColor: CalendarColors) =>
+      ({
+        ...spacing.p2,
+        ...spacing.mb1,
+        borderRadius: 12,
+        height: variables.sessionOverviewTabHeight,
+        backgroundColor: sessionColor,
+        // backgroundColor: theme.cardBG,
+      }) satisfies ViewStyle,
 
     defaultModalContainer: {
       backgroundColor: theme.componentBG,
