@@ -193,7 +193,6 @@ function ProfileScreen({route}: ProfileScreenProps) {
   if (!profileData || !preferences || !userData) {
     return;
   }
-  console.log(state.manageFriendModalVisible);
 
   return (
     <ScreenWrapper testID={ProfileScreen.displayName}>
@@ -320,7 +319,6 @@ const localStyles = StyleSheet.create({
     padding: 8,
     width: 'auto',
     height: 'auto',
-    backgroundColor: 'pink',
     zIndex: -2,
   },
   editProfileIcon: {

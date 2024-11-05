@@ -17,6 +17,8 @@ import KeyboardFocusHandler from '@components/Keyboard/KeyboardFocusHandler';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import Button from '@components/Button';
 import useThemeStyles from '@hooks/useThemeStyles';
+import Icon from '@components/Icon';
+import useStyleUtils from '@hooks/useStyleUtils';
 
 type SearchWindowProps = {
   windowText: string;
@@ -33,6 +35,7 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
   ) => {
     const themeStyles = useThemeStyles();
     const db = useFirebase().db;
+    const StyleUtils = useStyleUtils();
     const [searchText, setSearchText] = useState<string>('');
     const [searchCount, setSearchCount] = useState<number>(0);
     const textInputRef = useRef<TextInput>(null); // Input field ref for focus handling
@@ -89,9 +92,10 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
               accessibilityRole="button"
               onPress={handleResetSearch}
               style={localStyles.searchTextResetContainer}>
-              <Image
-                style={localStyles.searchTextResetImage}
-                source={KirokuIcons.ThinX}
+              <Icon
+                src={KirokuIcons.ThinX}
+                small
+                fill={StyleUtils.getIconFillColor()}
               />
             </TouchableOpacity>
           ) : null}
@@ -149,11 +153,6 @@ const localStyles = StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  searchTextResetImage: {
-    width: 15,
-    height: 15,
-    tintColor: 'gray',
   },
   searchButtonContainer: {
     width: '20%',

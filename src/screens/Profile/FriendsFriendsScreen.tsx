@@ -184,14 +184,14 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
           requestStatus={state.requestStatuses[userID]}
           alreadyAFriend={userData?.friends ? userData?.friends[userID] : false}
           customButton={
-            renderCommonFriends ? (
+            renderCommonFriends && (
               <SeeProfileButton
                 key={userID + '-button'}
                 onPress={() =>
                   Navigation.navigate(ROUTES.PROFILE.getRoute(userID))
                 }
               />
-            ) : null
+            )
           }
         />
       ));
@@ -279,7 +279,7 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
           {state.searching ? (
             <FlexibleLoadingIndicator />
           ) : isNonEmptyArray(state.displayedFriends) ? (
-            <>
+            <View style={styles.appBG}>
               <GrayHeader
                 headerText={`Common Friends (${getCommonFriendsCount(
                   state.commonFriends,
@@ -294,9 +294,10 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
                 )})`}
               />
               {renderSearchResults(false)}
-            </>
+            </View>
           ) : state.noUsersFound ? (
-            <Text style={commonStyles.noUsersFoundText}>
+            <Text
+              style={[styles.textNormal, styles.textAlignCenter, styles.mt2]}>
               {objKeys(state.friends).length > 0
                 ? 'No friends found.\n\nTry searching for other users.'
                 : 'This user has not added any friends yet.'}
@@ -312,7 +313,6 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
 const localStyles = StyleSheet.create({
   scrollViewContainer: {
     flex: 1,
-    backgroundColor: '#ffff99',
   },
   textContainer: {
     width: '95%',
@@ -323,35 +323,9 @@ const localStyles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#000',
     borderRadius: 10,
-    backgroundColor: 'white',
     marginTop: 10,
     marginBottom: 5,
     alignSelf: 'center',
-  },
-  searchText: {
-    height: '100%',
-    width: '90%',
-    padding: 10,
-    marginTop: 5,
-    marginBottom: 5,
-  },
-  searchTextResetContainer: {
-    width: '10%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  searchTextResetImage: {
-    width: 15,
-    height: 15,
-    tintColor: 'gray',
-  },
-  searchButtonContainer: {
-    width: '95%',
-    flexDirection: 'column',
-    alignItems: 'center',
-    alignSelf: 'center',
-    marginBottom: 5,
   },
   searchResultsContainer: {
     width: '100%',

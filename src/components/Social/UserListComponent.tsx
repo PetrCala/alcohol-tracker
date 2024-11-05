@@ -60,8 +60,6 @@ const UserListComponent: React.FC<UserListProps> = ({
 }) => {
   const {auth, db} = useFirebase();
   const styles = useThemeStyles();
-  const theme = useTheme();
-  const user = auth.currentUser;
   // Partial list of users for initial display and dynamic updates
   const [displayUserArray, setDisplayUserArray] = useState<UserArray>([]);
   const [userStatusList, setUserStatusList] = useState<UserStatusList>({});
@@ -194,7 +192,8 @@ const UserListComponent: React.FC<UserListProps> = ({
                 );
               })
             ) : (
-              <Text style={commonStyles.noUsersFoundText}>
+              <Text
+                style={[styles.textNormal, styles.textAlignCenter, styles.mt2]}>
                 {`No friends found.\n\nTry modifying the search text.`}
               </Text>
             )}
