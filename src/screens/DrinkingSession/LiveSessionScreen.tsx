@@ -108,7 +108,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     useState(false);
   const [isPlaceholderSession, setIsPlaceholderSession] =
     useState<boolean>(false);
-  const sessionIsLive = session?.ongoing ? true : false;
+  const [sessionIsLive, setSessionIsLive] = useState<boolean | null>(null);
   const deleteSessionWording = session?.ongoing
     ? translate('common.discard')
     : translate('common.delete');
@@ -402,6 +402,11 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     setMonkeButtonColor(newColor);
   }, [monkeMode]);
 
+  // Monitor various dynamic attributes stemming from the session
+  useEffect(() => {
+    setSessionIsLive(!!session?.ongoing);
+  }, [session?.ongoing]);
+
   // Synchronize the session with database
   useEffect(() => {
     // Only schedule a database update if any hooks changed
@@ -528,6 +533,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
             <SessionDetailsSlider
               scrollViewRef={scrollViewRef}
               sessionId={sessionId}
+              sessionIsLive={sessionIsLive}
               isBlackout={session.blackout}
               onBlackoutChange={handleBlackoutChange}
               note={session.note}

@@ -9,11 +9,8 @@ import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Navigation from '@libs/Navigation/Navigation';
 import CONST from '@src/CONST';
-import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import type {TranslationPaths} from '@src/languages/types';
 import type {Route} from '@src/ROUTES';
-import type {Icon as TIcon} from '@src/types/onyx/OnyxCommon';
-import type IconAsset from '@src/types/utils/IconAsset';
 import ROUTES from '@src/ROUTES';
 import useSingleExecution from '@hooks/useSingleExecution';
 import useWaitForNavigation from '@hooks/useWaitForNavigation';
@@ -39,6 +36,7 @@ type MenuData = {
 type SessionSliderProps = {
   scrollViewRef: React.RefObject<ScrollView>;
   sessionId: DrinkingSessionId;
+  sessionIsLive: boolean | null;
   isBlackout: boolean;
   onBlackoutChange: (value: boolean) => void;
   note: string;
@@ -48,6 +46,7 @@ type SessionSliderProps = {
 const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
   scrollViewRef,
   sessionId,
+  sessionIsLive,
   isBlackout,
   onBlackoutChange,
   note,
@@ -82,14 +81,17 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
       routeName:
         ROUTES.DRINKING_SESSION_SESSION_NOTE_SCREEN.getRoute(sessionId),
     },
-    {
+  ];
+
+  if (!sessionIsLive) {
+    sliderData.push({
       translationKey: 'common.date',
       shouldShowRightIcon: true,
       description: dateString,
       routeName:
         ROUTES.DRINKING_SESSION_SESSION_DATE_SCREEN.getRoute(sessionId),
-    },
-  ];
+    });
+  }
 
   return (
     <View style={localStyles.container}>
