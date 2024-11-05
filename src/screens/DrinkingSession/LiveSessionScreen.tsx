@@ -642,7 +642,7 @@ const localStyles = StyleSheet.create({
     padding: 2,
     textShadowColor: '#000',
     textShadowOffset: {width: 1, height: 1},
-    textShadowRadius: 8,
+    textShadowRadius: 4,
     elevation: 5,
     zIndex: 1,
   },
