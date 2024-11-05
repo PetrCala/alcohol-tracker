@@ -1,7 +1,5 @@
-import {subYears} from 'date-fns';
-import React, {useCallback, useState} from 'react';
-import type {OnyxEntry} from 'react-native-onyx';
-import {withOnyx} from 'react-native-onyx';
+import {format, subYears} from 'date-fns';
+import React, {useCallback, useEffect, useState} from 'react';
 import DatePicker from '@components/DatePicker';
 import FormProvider from '@components/Form/FormProvider';
 import InputWrapper from '@components/Form/InputWrapper';
@@ -17,29 +15,37 @@ import * as PersonalDetails from '@userActions/PersonalDetails';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
 import INPUT_IDS from '@src/types/form/SessionDateForm';
-import type {PrivatePersonalDetails} from '@src/types/onyx';
+import type {DrinkingSession, PrivatePersonalDetails} from '@src/types/onyx';
 import {Alert} from 'react-native';
+import {StackScreenProps} from '@react-navigation/stack';
+import {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
+import SCREENS from '@src/SCREENS';
+import {useFirebase} from '@context/global/FirebaseContext';
+import {readDataOnce} from '@database/baseFunctions';
+import DBPATHS from '@database/DBPATHS';
 
-// type SesssionDateScreenOnyxProps = {
-//   /** User's private personal details */
-//   privatePersonalDetails: OnyxEntry<PrivatePersonalDetails>;
-//   /** Whether app is loading */
-//   isLoadingApp: OnyxEntry<boolean>;
-// };
-// type SesssionDateScreenProps = SesssionDateScreenOnyxProps;
+type SessionDateScreenProps = StackScreenProps<
+  DrinkingSessionNavigatorParamList,
+  typeof SCREENS.DRINKING_SESSION.SESSION_DATE_SCREEN
+>;
 
-// function SesssionDateScreen({}: SesssionDateScreenProps) {
-function SesssionDateScreen() {
+function SesssionDateScreen({route}: SessionDateScreenProps) {
+  const {sessionId} = route.params;
+  const {auth, db} = useFirebase();
+  const user = auth.currentUser;
   const {translate} = useLocalize();
   const styles = useThemeStyles();
+  const [session, setSession] = useState<DrinkingSession | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit = async (
     values: FormOnyxValues<typeof ONYXKEYS.FORMS.SESSION_DATE_FORM>,
   ) => {
+    const newDate = values.date;
+
     try {
       setIsLoading(true);
-      console.log('Updating the session date');
+      console.log('Updating the session date to', newDate);
       Navigation.goBack();
     } catch (error: any) {
       Alert.alert(translate('sessionDateScreen.error.generic'), error.message);
@@ -64,6 +70,27 @@ function SesssionDateScreen() {
     [],
   );
 
+  const fetchSession = async () => {
+    if (!user) {
+      throw new Error(translate('sessionDateScreen.error.load'));
+    }
+    setIsLoading(true);
+    let session: DrinkingSession | null = await readDataOnce(
+      db,
+      DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID.getRoute(
+        user.uid,
+        sessionId,
+      ),
+    );
+    setSession(session);
+    setIsLoading(false);
+  };
+
+  // Prepare the session for the user upon component mount
+  useEffect(() => {
+    fetchSession();
+  }, []);
+
   return (
     <ScreenWrapper
       includeSafeAreaPaddingBottom={false}
@@ -86,7 +113,10 @@ function SesssionDateScreen() {
             InputComponent={DatePicker}
             inputID={INPUT_IDS.DATE}
             label={translate('common.date')}
-            defaultValue={''}
+            defaultValue={format(
+              session?.start_time ?? new Date(), // TODO modify this
+              CONST.DATE.SHORT_DATE_FORMAT,
+            )}
             // defaultValue={privatePersonalDetails?.dob ?? ''}
             // minDate={subYears(new Date(), CONST.DATE_BIRTH.MAX_AGE)}
             // maxDate={subYears(new Date(), CONST.DATE_BIRTH.MIN_AGE)}

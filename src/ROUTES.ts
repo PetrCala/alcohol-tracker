@@ -47,6 +47,11 @@ const ROUTES = {
     getRoute: (sessionId: DrinkingSessionId) =>
       `drinking-session/${sessionId}/live` as const,
   },
+  DRINKING_SESSION_SESSION_DATE_SCREEN: {
+    route: 'drinking-session/:sessionId/live',
+    getRoute: (sessionId: DrinkingSessionId) =>
+      `drinking-session/${sessionId}/session-date-screen` as const,
+  },
   DRINKING_SESSION_SUMMARY: {
     route: 'drinking-session/:sessionId/summary',
     getRoute: (sessionId: DrinkingSessionId) =>

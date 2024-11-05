@@ -439,7 +439,8 @@ export default {
   },
   sessionDateScreen: {
     error: {
-      generic: 'Failed to modify the session date',
+      load: 'Failed to fetch details of this session.',
+      generic: 'Failed to modify the session date.',
     },
   },
   maintenance: {
