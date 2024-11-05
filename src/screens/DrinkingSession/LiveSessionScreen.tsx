@@ -538,6 +538,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
             </View>
             <SessionDetailsSlider
               scrollViewRef={scrollViewRef}
+              sessionId={sessionId}
               isBlackout={session.blackout}
               onBlackoutChange={handleBlackoutChange}
               note={session.note}

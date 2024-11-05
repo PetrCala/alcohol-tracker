@@ -19,6 +19,7 @@ import useSingleExecution from '@hooks/useSingleExecution';
 import useWaitForNavigation from '@hooks/useWaitForNavigation';
 import useActiveCentralPaneRoute from '@hooks/useActiveCentralPaneRoute';
 import Switch from './Switch';
+import {DrinkingSessionId} from '@src/types/onyx';
 
 type MenuData = {
   translationKey: TranslationPaths;
@@ -37,6 +38,7 @@ type MenuData = {
 
 type SessionSliderProps = {
   scrollViewRef: React.RefObject<ScrollView>;
+  sessionId: DrinkingSessionId;
   isBlackout: boolean;
   onBlackoutChange: (value: boolean) => void;
   note: string;
@@ -46,6 +48,7 @@ type SessionSliderProps = {
 
 const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
   scrollViewRef,
+  sessionId,
   isBlackout,
   onBlackoutChange,
   note,
@@ -84,6 +87,8 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
       translationKey: 'common.date',
       shouldShowRightIcon: true,
       description: dateString,
+      routeName:
+        ROUTES.DRINKING_SESSION_SESSION_DATE_SCREEN.getRoute(sessionId),
     },
   ];
 
