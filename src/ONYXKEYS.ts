@@ -402,6 +402,8 @@ const ONYXKEYS = {
     PASSWORD_FORM_DRAFT: 'passwordFormDraft',
     FEEDBACK_FORM: 'feedbackForm',
     FEEDBACK_FORM_DRAFT: 'feedbackFormDraft',
+    SESSION_DATE_FORM: 'sessionDateForm',
+    SESSION_DATE_FORM_DRAFT: 'sessionDateFormDraft',
   },
 } as const;
 
@@ -425,6 +427,7 @@ type OnyxFormValuesMapping = {
   [ONYXKEYS.FORMS.EMAIL_FORM]: FormTypes.EmailForm;
   [ONYXKEYS.FORMS.PASSWORD_FORM]: FormTypes.PasswordForm;
   [ONYXKEYS.FORMS.FEEDBACK_FORM]: FormTypes.FeedbackForm;
+  [ONYXKEYS.FORMS.SESSION_DATE_FORM]: FormTypes.SessionDateForm;
 };
 
 type OnyxFormDraftValuesMapping = {

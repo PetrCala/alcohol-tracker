@@ -6,5 +6,6 @@ export type {FeedbackForm} from './FeedbackForm';
 export type {LegalNameForm} from './LegalNameForm';
 export type {PasswordForm} from './PasswordForm';
 export type {ProfileSettingsForm} from './ProfileSettingsForm';
+export type {SessionDateForm} from './SessionDateForm';
 export type {UserNameForm} from './UserNameForm';
 export type {default as Form} from './Form';

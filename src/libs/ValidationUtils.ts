@@ -10,6 +10,7 @@ import {
   parse,
   parseISO,
   startOfDay,
+  startOfTomorrow,
   subYears,
 } from 'date-fns';
 import {URL_REGEX_WITH_REQUIRED_PROTOCOL} from '@libs/common/Url';
@@ -23,11 +24,9 @@ import type {
   FormValue,
 } from '@components/Form/types';
 import CONST from '@src/CONST';
-// import * as CardUtils from './CardUtils';
 import DateUtils from './DateUtils';
 import type {MaybePhraseKey} from './Localize';
 import * as Localize from './Localize';
-// import * as LoginUtils from './LoginUtils';
 import StringUtils from './StringUtils';
 import {OnyxFormKey} from '@src/ONYXKEYS';
 
@@ -49,21 +48,6 @@ function validateCardNumber(value: string): boolean {
   }
   return sum % 10 === 0;
 }
-
-// /**
-//  * Validating that this is a valid address (PO boxes are not allowed)
-//  */
-// function isValidAddress(value: FormValue): boolean {
-//   if (typeof value !== 'string') {
-//     return false;
-//   }
-
-//   if (!CONST.REGEX.ANY_VALUE.test(value) || value.match(CONST.REGEX.EMOJIS)) {
-//     return false;
-//   }
-
-//   return !CONST.REGEX.PO_BOX.test(value);
-// }
 
 function isValidEmail(email: string): boolean {
   return CONST.REGEX.EMAIL.test(email);
@@ -251,6 +235,24 @@ function getDatePassedError(inputDate: string): string {
 }
 
 /**
+ * Validate that given date is not in the future.
+ */
+function getFutureDateError(inputDate: string): string {
+  const parsedDate = new Date(`${inputDate}T00:00:00`); // set time to 00:00:00 for accurate comparison
+
+  // If input date is not valid, return an error
+  if (!isValid(parsedDate)) {
+    return 'common.error.dateInvalid';
+  }
+
+  if (parsedDate > startOfTomorrow()) {
+    return 'common.error.dateInvalid';
+  }
+
+  return '';
+}
+
+/**
  * Similar to backend, checks whether a website has a valid URL or not.
  * http/https/ftp URL scheme required.
  */
@@ -261,26 +263,6 @@ function isValidWebsite(url: string): boolean {
     isLowerCase
   );
 }
-
-// function isValidUSPhone(
-//   phoneNumber = '',
-//   isCountryCodeOptional?: boolean,
-// ): boolean {
-//   const phone = phoneNumber || '';
-//   const regionCode = isCountryCodeOptional ? CONST.COUNTRY.US : undefined;
-
-//   // When we pass regionCode as an option to parsePhoneNumber it wrongly assumes inputs like '=15123456789' as valid
-//   // so we need to check if it is a valid phone.
-//   if (regionCode && !Str.isValidPhoneFormat(phone)) {
-//     return false;
-//   }
-
-//   const parsedPhoneNumber = parsePhoneNumber(phone, {regionCode});
-//   return (
-//     parsedPhoneNumber.possible &&
-//     parsedPhoneNumber.regionCode === CONST.COUNTRY.US
-//   );
-// }
 
 function isValidValidateCode(validateCode: string): boolean {
   return Boolean(validateCode.match(CONST.VALIDATE_CODE_REGEX_STRING));
@@ -293,15 +275,6 @@ function isValidRecoveryCode(recoveryCode: string): boolean {
 function isValidTwoFactorCode(code: string): boolean {
   return Boolean(code.match(CONST.REGEX.CODE_2FA));
 }
-
-// /**
-//  * Checks whether a value is a numeric string including `(`, `)`, `-` and optional leading `+`
-//  */
-// function isNumericWithSpecialChars(input: string): boolean {
-//   return /^\+?[\d\\+]*$/.test(
-//     LoginUtils.getPhoneNumberWithoutSpecialChars(input),
-//   );
-// }
 
 /**
  * Checks the given number is a valid US Routing Number
