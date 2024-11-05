@@ -42,7 +42,6 @@ type SessionSliderProps = {
   isBlackout: boolean;
   onBlackoutChange: (value: boolean) => void;
   note: string;
-  onNoteChange: (value: string) => void;
   dateString: string;
 };
 
@@ -52,7 +51,6 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
   isBlackout,
   onBlackoutChange,
   note,
-  onNoteChange,
   dateString,
 }) => {
   const {translate} = useLocalize();
@@ -79,9 +77,10 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
     },
     {
       translationKey: 'liveSessionScreen.note',
-      description: 'laksdf laksdjflak jsdladksf',
+      description: note,
       shouldShowRightIcon: true,
-      routeName: ROUTES.HOME,
+      routeName:
+        ROUTES.DRINKING_SESSION_SESSION_NOTE_SCREEN.getRoute(sessionId),
     },
     {
       translationKey: 'common.date',
@@ -142,35 +141,6 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
             />
           );
         })}
-        {/* <View
-          style={[
-            localStyles.tileContainerBase,
-            localStyles.tileContainerHorizontal,
-          ]}>
-          <Text style={localStyles.tileHeading}>Blackout: </Text>
-        </View>
-        <View
-          style={[
-            localStyles.tileContainerBase,
-            localStyles.tileContainerVertical,
-            {borderBottomWidth: 0},
-          ]}>
-          <Text style={localStyles.tileHeading}>Session note:</Text>
-          <View style={localStyles.noteWindowContainer}>
-            <TextInput
-              accessibilityLabel="Text input field"
-              defaultValue={note}
-              style={localStyles.noteTextInput}
-              onChangeText={value => onNoteChange(value)}
-              placeholder={'Write your note here'}
-              placeholderTextColor={'#a8a8a8'}
-              keyboardType="default"
-              maxLength={1000}
-              multiline={true}
-            />
-          </View> */}
-        {/* TODO add the date changer here! */}
-        {/* </View> */}
       </View>
     </View>
   );

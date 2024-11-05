@@ -1,4 +1,3 @@
-import {endOfToday, format} from 'date-fns';
 import React, {useCallback, useEffect, useState} from 'react';
 import FormProvider from '@components/Form/FormProvider';
 import InputWrapper from '@components/Form/InputWrapper';
@@ -22,6 +21,7 @@ import {useFirebase} from '@context/global/FirebaseContext';
 import {readDataOnce} from '@database/baseFunctions';
 import DBPATHS from '@database/DBPATHS';
 import TextInput from '@components/TextInput';
+import {saveDrinkingSessionData} from '@database/drinkingSessions';
 
 type SessionNoteScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -40,11 +40,20 @@ function SesssionNoteScreen({route}: SessionNoteScreenProps) {
   const onSubmit = async (
     values: FormOnyxValues<typeof ONYXKEYS.FORMS.SESSION_NOTE_FORM>,
   ) => {
-    const newNote = values.note;
+    if (!user || !session) {
+      throw new Error(translate('sessionNoteScreen.error.generic'));
+    }
+    const newSession = {...session, note: values.note};
 
     try {
       setIsLoading(true);
-      console.log('Updating the session note to', newNote);
+      await saveDrinkingSessionData(
+        db,
+        user.uid,
+        newSession,
+        sessionId,
+        false, // Do not update live status
+      );
       Navigation.goBack();
     } catch (error: any) {
       Alert.alert(translate('sessionNoteScreen.error.generic'), error.message);

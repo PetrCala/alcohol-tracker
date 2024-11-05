@@ -10,7 +10,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import BasicButton from '@components/Buttons/BasicButton';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {
   discardLiveDrinkingSession,
@@ -30,9 +29,7 @@ import {
   timestampToDateString,
   unitsToColors,
 } from '@libs/DataHandling';
-import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import type {DrinkingSession, DrinksList, Drinks} from '@src/types/onyx';
-import YesNoPopup from '@components/Popups/YesNoPopup';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import UserOffline from '@components/UserOfflineModal';
 import DrinkTypesView from '@components/DrinkTypesView';
@@ -41,7 +38,6 @@ import SuccessIndicator from '@components/SuccessIndicator';
 import commonStyles from '@styles/commonStyles';
 import FillerView from '@components/FillerView';
 import CONST from '@src/CONST';
-import MainHeaderButton from '@components/Header/MainHeaderButton';
 import Navigation from '@navigation/Navigation';
 import type {StackScreenProps} from '@react-navigation/stack';
 import type {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
@@ -111,10 +107,8 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     useState<boolean>(false);
   const sessionIsLive = session?.ongoing ? true : false;
   const deleteSessionWording = session?.ongoing
-    ? // ? translate('common.discard')
-      // : translate('common.delete');
-      'Discard'
-    : 'Delete';
+    ? translate('common.discard')
+    : translate('common.delete');
   const scrollViewRef = useRef<ScrollView>(null); // To navigate the view
 
   const {isPending, enqueueUpdate} = useAsyncQueue(
@@ -179,13 +173,6 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       return;
     }
     setSession({...session, blackout: value});
-  };
-
-  const handleNoteChange = (value: string) => {
-    if (!session) {
-      return;
-    }
-    setSession({...session, note: value});
   };
 
   const setCurrentDrinks = (newDrinks: DrinksList | undefined) => {
@@ -537,7 +524,6 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
               isBlackout={session.blackout}
               onBlackoutChange={handleBlackoutChange}
               note={session.note}
-              onNoteChange={handleNoteChange}
               dateString={sessionDateString}
             />
           </>
