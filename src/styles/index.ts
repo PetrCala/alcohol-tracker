@@ -1628,6 +1628,10 @@ const styles = (theme: ThemeColors) =>
       fontSize: variables.fontSizeXXXLarge,
     },
 
+    textXXXXLarge: {
+      fontSize: variables.fontSizeXXXXLarge,
+    },
+
     textHero: {
       fontSize: variables.fontSizeHero,
       ...FontUtils.fontFamily.platform.EXP_NEW_KANSAS_MEDIUM,

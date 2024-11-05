@@ -15,7 +15,8 @@ const StatItem: React.FC<StatItemProps> = ({header, content}) => {
       <View style={styles.statItemContainer}>
         <Text
           style={[
-            styles.textHeadlineXXXLarge,
+            styles.textXXXXLarge,
+            styles.textStrong,
             styles.textAlignCenter,
             styles.appColor,
           ]}>
