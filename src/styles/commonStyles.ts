@@ -43,19 +43,16 @@ const commonStyles = StyleSheet.create({
     width: screenWidth,
     flexDirection: 'row',
     justifyContent: 'center',
-    backgroundColor: '#FCFBF9', // TODO: Should be theme.appBG
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: -5,
     },
-    // shadowOpacity: 0.08,
     shadowOpacity: 0.05,
     shadowRadius: 3,
     borderTopWidth: 1,
     borderColor: '#ddd',
     elevation: 10, // for Android shadow
-    // padding: 10,
   },
   horizontalLine: {
     width: screenWidth * 0.9,

@@ -24,6 +24,9 @@ import ScreenWrapper from '@components/ScreenWrapper';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import useLocalize from '@hooks/useLocalize';
 import useTheme from '@hooks/useTheme';
+import Icon from '@components/Icon';
+import useThemeStyles from '@hooks/useThemeStyles';
+import styles from '@src/styles';
 
 type SocialFooterButtonProps = {
   index: number;
@@ -43,25 +46,40 @@ const SocialFooterButton: React.FC<SocialFooterButtonProps> = ({
   infoNumberValue,
 }) => {
   const theme = useTheme();
+  const styles = useThemeStyles();
   return (
-    <View style={styles.footerPartContainer}>
+    <View style={localStyles.footerPartContainer}>
       <TouchableOpacity
         accessibilityRole="button"
         style={[
-          styles.footerButton,
-          currentIndex === index ? {backgroundColor: theme.successPressed} : {},
+          // styles.borderRight,
+          styles.noBorderRadius,
+          localStyles.footerButton,
         ]}
         onPress={() => setImageIndex(index)}>
         <View
           style={
             infoNumberValue && infoNumberValue > 0
-              ? [styles.imageContainer, styles.extraSpacing]
-              : styles.imageContainer
+              ? [localStyles.imageContainer, localStyles.extraSpacing]
+              : localStyles.imageContainer
           }>
-          <Image source={source} style={styles.footerImage} />
+          <Icon
+            src={source}
+            height={25}
+            width={25}
+            fill={
+              currentIndex === index ? theme.appColor : theme.textSupporting
+            }
+          />
           <FriendRequestCounter count={infoNumberValue} />
         </View>
-        <Text style={styles.footerText}>{label}</Text>
+        <Text
+          style={[
+            styles.mutedTextLabel,
+            currentIndex === index && {color: theme.appColor},
+          ]}>
+          {label}
+        </Text>
       </TouchableOpacity>
     </View>
   );
@@ -158,7 +176,7 @@ function SocialScreen({route}: SocialScreenProps) {
 
 const screenWidth = Dimensions.get('window').width;
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   sectionText: {
     fontSize: 20,
     color: 'black',
@@ -240,10 +258,6 @@ const styles = StyleSheet.create({
     width: 25,
     height: 25,
     tintColor: 'gray',
-  },
-  footerText: {
-    fontSize: 12,
-    color: 'gray',
   },
 });
 
