@@ -542,7 +542,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
             />
           </>
         )}
-        <FillerView styles={{backgroundColor: theme.appBG}} />
+        <FillerView />
       </ScrollView>
       <View style={styles.bottomTabBarContainer}>
         <Button
