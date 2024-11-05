@@ -1,13 +1,10 @@
 import CONST from '@src/CONST';
-import type {Country} from '@src/CONST';
 import type {
   CharacterLimitParams,
   TranslationBase,
   UntilTimeParams,
 } from './types';
 import Platform from '@libs/getPlatform/types';
-
-type AllCountries = Record<Country, string>;
 
 /* eslint-disable max-len */
 export default {
@@ -425,6 +422,10 @@ export default {
   },
   liveSessionScreen: {
     saving: 'Saving your session...',
+    synchronizing: 'Synchronizing data...',
+    loading: 'Loading your session...',
+    enterMonkeMode: 'Monke Mode',
+    exitMonkeMode: 'Exit Monke Mode',
     blackout: 'Blackout',
     blackoutSwitchLabel:
       'This indicates whether your session ended in a blackout.',

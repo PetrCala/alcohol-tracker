@@ -4,7 +4,7 @@ import {
   Alert,
   BackHandler,
   Keyboard,
-  ScrollView,
+  ScrollView as ScrollViewRN,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -61,6 +61,7 @@ import Button from '@components/Button';
 import ConfirmModal from '@components/ConfirmModal';
 import useWindowDimensions from '@hooks/useWindowDimensions';
 import {useFocusEffect} from '@react-navigation/native';
+import ScrollView from '@components/ScrollView';
 
 type LiveSessionScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -110,7 +111,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   const deleteSessionWording = session?.ongoing
     ? translate('common.discard')
     : translate('common.delete');
-  const scrollViewRef = useRef<ScrollView>(null); // To navigate the view
+  const scrollViewRef = useRef<ScrollViewRN>(null); // To navigate the view
 
   const {isPending, enqueueUpdate} = useAsyncQueue(
     async (newSession: DrinkingSession) => syncWithDb(newSession),
@@ -322,7 +323,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     }
     if (sessionIsLive) {
       try {
-        setLoadingText('Synchronizing data...');
+        setLoadingText(translate('liveSessionScreen.synchronizing'));
         await waitForNoPendingUpdate();
         await updateSessionDrinks(db, user.uid, sessionId, session?.drinks);
       } catch (error: any) {
@@ -355,7 +356,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       throw new Error(translate('liveSessionScreen.error.load'));
     }
     // Fetch the latest database data and use it to open the session
-    setLoadingText('Loading your session...');
+    setLoadingText(translate('liveSessionScreen.loading'));
     let sessionToOpen: DrinkingSession | null = await readDataOnce(
       db,
       DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID.getRoute(
@@ -392,7 +393,9 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   );
 
   useEffect(() => {
-    const newText = monkeMode ? 'Exit Monke Mode' : 'Monke Mode';
+    const newText = monkeMode
+      ? translate('liveSessionScreen.exitMonkeMode')
+      : translate('liveSessionScreen.enterMonkeMode');
     const newColor = monkeMode ? theme.danger : theme.success;
     setMonkeButtonText(newText);
     setMonkeButtonColor(newColor);
