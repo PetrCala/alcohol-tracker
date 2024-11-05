@@ -296,8 +296,6 @@ function ProfileScreen({route}: ProfileScreenProps) {
   );
 }
 
-const screenWidth = Dimensions.get('window').width;
-
 const localStyles = StyleSheet.create({
   sectionText: {
     fontSize: 20,
