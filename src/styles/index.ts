@@ -474,8 +474,7 @@ const styles = (theme: ThemeColors) =>
       height: variables.bottomTabHeight,
       borderTopWidth: 1,
       borderTopColor: theme.border,
-      // backgroundColor: theme.appBG, // TODO
-      backgroundColor: colors.white,
+      backgroundColor: theme.appBG,
     },
 
     bottomTabBarItem: {

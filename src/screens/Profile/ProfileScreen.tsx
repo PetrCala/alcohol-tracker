@@ -294,7 +294,6 @@ function ProfileScreen({route}: ProfileScreenProps) {
   );
 }
 
-const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;
 
 const localStyles = StyleSheet.create({
