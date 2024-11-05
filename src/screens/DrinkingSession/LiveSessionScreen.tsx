@@ -533,11 +533,11 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
             <SessionDetailsSlider
               scrollViewRef={scrollViewRef}
               sessionId={sessionId}
-              sessionIsLive={sessionIsLive}
               isBlackout={session.blackout}
               onBlackoutChange={handleBlackoutChange}
               note={session.note}
               dateString={sessionDateString}
+              shouldAllowDateChange={session.type !== CONST.SESSION_TYPES.LIVE}
             />
           </>
         )}

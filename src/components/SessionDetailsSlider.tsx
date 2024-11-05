@@ -36,21 +36,21 @@ type MenuData = {
 type SessionSliderProps = {
   scrollViewRef: React.RefObject<ScrollView>;
   sessionId: DrinkingSessionId;
-  sessionIsLive: boolean | null;
   isBlackout: boolean;
   onBlackoutChange: (value: boolean) => void;
   note: string;
   dateString: string;
+  shouldAllowDateChange?: boolean;
 };
 
 const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
   scrollViewRef,
   sessionId,
-  sessionIsLive,
   isBlackout,
   onBlackoutChange,
   note,
   dateString,
+  shouldAllowDateChange,
 }) => {
   const {translate} = useLocalize();
   const {isExecuting, singleExecution} = useSingleExecution();
@@ -83,7 +83,7 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
     },
   ];
 
-  if (!sessionIsLive) {
+  if (shouldAllowDateChange) {
     sliderData.push({
       translationKey: 'common.date',
       shouldShowRightIcon: true,

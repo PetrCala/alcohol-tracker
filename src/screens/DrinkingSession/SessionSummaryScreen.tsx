@@ -86,7 +86,7 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
   const sessionDay = format(sessionStartDate, CONST.DATE.SHORT_DATE_FORMAT);
   const sessionStartTime = formatDateToTime(sessionStartDate);
   const sessionEndTime = formatDateToTime(sessionEndDate);
-  const sessionLength = DSUtils.calculateSessionLength(session, false);
+  const wasLiveSession = session?.type == CONST.SESSION_TYPES.LIVE;
   // Figure out last drink added
   let lastDrinkAdded: string;
   const lastDrinkEditTimestamp = getLastDrinkAddedTime(session);
@@ -115,13 +115,13 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
     {heading: 'Date:', data: sessionDay},
     {
       heading: 'Start time:',
-      data: sessionLength === 0 ? '-' : sessionStartTime,
+      data: !wasLiveSession ? '-' : sessionStartTime,
     },
     {
       heading: 'Last drink added:',
-      data: sessionLength === 0 ? '-' : lastDrinkAdded,
+      data: !wasLiveSession ? '-' : lastDrinkAdded,
     },
-    {heading: 'End time:', data: sessionLength === 0 ? '-' : sessionEndTime},
+    {heading: 'End time:', data: !wasLiveSession ? '-' : sessionEndTime},
     // {heading: 'Timezone:', data: session.timezone ?? ''},
   ];
 

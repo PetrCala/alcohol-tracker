@@ -420,6 +420,10 @@ export default {
   achievementsScreen: {
     title: 'Achievements',
   },
+  dayOverviewScreen: {
+    enterEditMode: 'Edit Mode',
+    exitEditMode: 'Exit Edit Mode',
+  },
   liveSessionScreen: {
     saving: 'Saving your session...',
     synchronizing: 'Synchronizing data...',

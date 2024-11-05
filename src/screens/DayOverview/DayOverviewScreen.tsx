@@ -45,6 +45,9 @@ import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
 import {format} from 'date-fns';
+import Button from '@components/Button';
+import useLocalize from '@hooks/useLocalize';
+import useThemeStyles from '@hooks/useThemeStyles';
 
 type DayOverviewScreenProps = StackScreenProps<
   DayOverviewNavigatorParamList,
@@ -56,6 +59,8 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
+  const {translate} = useLocalize();
+  const styles = useThemeStyles();
   const {drinkingSessionData, preferences} = useDatabaseData();
   const [currentDate, setCurrentDate] = useState<Date>(
     date ? dateStringToDate(date) : new Date(),
@@ -280,11 +285,15 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
       <HeaderWithBackButton
         onBackButtonPress={Navigation.goBack}
         customRightButton={
-          <MainHeaderButton
-            buttonOn={editMode}
-            textOn="Exit Edit Mode"
-            textOff="Edit Mode"
+          <Button
             onPress={() => setEditMode(!editMode)}
+            text={translate(
+              !editMode
+                ? 'dayOverviewScreen.enterEditMode'
+                : 'dayOverviewScreen.exitEditMode',
+            )}
+            style={[styles.buttonMedium, styles.buttonSuccess]}
+            textStyles={styles.buttonLargeText}
           />
         }
       />

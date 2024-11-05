@@ -272,6 +272,8 @@ function shiftSessionTimestamps(
 /**
  * Change all timestamps in a session so that its start time corresponds to a new date.
  *
+ * Shift the timestamps by whole days, keeping the hour:minute times as they are.
+ *
  * @param session The session to modify
  * @param newDate The new date to modify the session's timestamps to
  * @returns The modified session
