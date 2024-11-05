@@ -468,11 +468,6 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
             style={[styles.buttonMedium, {backgroundColor: monkeButtonColor}]}
             textStyles={styles.buttonLargeText}
           />
-          // <MainHeaderButton
-          //   buttonOn={monkeMode}
-          //   textOn="Exit Monke Mode"
-          //   textOff="Monke Mode"
-          // />
         }
       />
       <ScrollView
