@@ -48,9 +48,8 @@ import {format} from 'date-fns';
 import Button from '@components/Button';
 import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
-import useStyleUtils from '@hooks/useStyleUtils';
-import variables from '@src/styles/variables';
 import Icon from '@components/Icon';
+import useTheme from '@hooks/useTheme';
 
 type DayOverviewScreenProps = StackScreenProps<
   DayOverviewNavigatorParamList,
@@ -64,6 +63,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
   const {isOnline} = useUserConnection();
   const {translate} = useLocalize();
   const styles = useThemeStyles();
+  const theme = useTheme();
   const {drinkingSessionData, preferences} = useDatabaseData();
   const [currentDate, setCurrentDate] = useState<Date>(
     date ? dateStringToDate(date) : new Date(),
@@ -256,9 +256,14 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
     return (
       <TouchableOpacity
         accessibilityRole="button"
-        style={localStyles.addSessionButton}
+        style={[localStyles.addSessionButton, styles.buttonSuccess]}
         onPress={onAddSessionButtonPress}>
-        <Image source={KirokuIcons.Plus} style={localStyles.addSessionImage} />
+        <Icon
+          src={KirokuIcons.Plus}
+          height={36}
+          width={36}
+          fill={theme.textLight}
+        />
       </TouchableOpacity>
     );
   };
@@ -421,7 +426,6 @@ const localStyles = StyleSheet.create({
     borderRadius: 50,
     width: 70,
     height: 70,
-    backgroundColor: 'green',
     alignItems: 'center',
     justifyContent: 'center', // Center the text within the button
   },

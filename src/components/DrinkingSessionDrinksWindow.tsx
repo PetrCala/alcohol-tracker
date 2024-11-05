@@ -11,6 +11,7 @@ import {
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import CONST from '@src/CONST';
 import type {DrinkKey, Drinks, DrinksList} from '@src/types/onyx';
+import Icon from './Icon';
 
 type DrinkingSessionDrinksWindowProps = {
   drinkKey: DrinkKey;
@@ -82,7 +83,7 @@ const DrinkingSessionDrinksWindow = ({
         accessibilityRole="button"
         style={styles.adjustDrinksButton}
         onPress={() => handleAddDrinks({[drinkKey]: 1})}>
-        <Image source={KirokuIcons.Plus} style={styles.adjustDrinksIcon} />
+        <Icon src={KirokuIcons.Plus} additionalStyles={{alignSelf: 'center'}} />
       </TouchableOpacity>
     </View>
   );

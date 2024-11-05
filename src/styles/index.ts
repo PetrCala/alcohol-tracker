@@ -485,9 +485,12 @@ const styles = (theme: ThemeColors) =>
     bottomTabBarContainer: {
       flexDirection: 'row',
       height: variables.bottomTabHeight,
+      alignItems: 'center',
+      justifyContent: 'center',
       borderTopWidth: 1,
       borderTopColor: theme.border,
       backgroundColor: theme.appBG,
+      ...sizing.mw100,
     },
 
     bottomTabBarItem: {

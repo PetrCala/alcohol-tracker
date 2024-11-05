@@ -23,6 +23,7 @@ import FriendRequestCounter from '@components/Social/FriendRequestCounter';
 import ScreenWrapper from '@components/ScreenWrapper';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import useLocalize from '@hooks/useLocalize';
+import useTheme from '@hooks/useTheme';
 
 type SocialFooterButtonProps = {
   index: number;
@@ -41,13 +42,14 @@ const SocialFooterButton: React.FC<SocialFooterButtonProps> = ({
   label,
   infoNumberValue,
 }) => {
+  const theme = useTheme();
   return (
     <View style={styles.footerPartContainer}>
       <TouchableOpacity
         accessibilityRole="button"
         style={[
           styles.footerButton,
-          currentIndex === index ? {backgroundColor: '#ebeb02'} : {},
+          currentIndex === index ? {backgroundColor: theme.successPressed} : {},
         ]}
         onPress={() => setImageIndex(index)}>
         <View
@@ -237,9 +239,6 @@ const styles = StyleSheet.create({
   footerImage: {
     width: 25,
     height: 25,
-    // padding: 5,
-    // tintColor: '#ebeb02',
-    // tintColor: '#000',
     tintColor: 'gray',
   },
   footerText: {

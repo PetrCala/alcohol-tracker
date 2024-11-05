@@ -33,6 +33,8 @@ import NoFriendInfo from '@components/Social/NoFriendInfo';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import FillerView from '@components/FillerView';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
+import Icon from '@components/Icon';
+import useTheme from '@hooks/useTheme';
 
 type RequestIdProps = {
   requestId: string;
@@ -248,6 +250,7 @@ const reducer = (state: State, action: Action): State => {
 function FriendRequestScreen() {
   const {db} = useFirebase();
   const {userData, isLoading} = useDatabaseData();
+  const theme = useTheme();
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useMemo(() => {
@@ -360,9 +363,19 @@ function FriendRequestScreen() {
       </ScrollView>
       <TouchableOpacity
         accessibilityRole="button"
-        style={styles.searchScreenButton}
+        style={[
+          styles.searchScreenButton,
+          {
+            backgroundColor: theme.appColor,
+          },
+        ]}
         onPress={() => Navigation.navigate(ROUTES.SOCIAL_FRIEND_SEARCH)}>
-        <Image source={KirokuIcons.Search} style={styles.searchScreenImage} />
+        <Icon
+          src={KirokuIcons.Search}
+          width={28}
+          height={28}
+          fill={theme.textLight}
+        />
       </TouchableOpacity>
     </View>
   );
@@ -483,19 +496,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 20,
     right: 20,
-    borderWidth: 1,
-    borderColor: 'black',
     borderRadius: 50,
-    width: 70,
-    height: 70,
+    width: 60,
+    height: 60,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: 'black',
-  },
-  searchScreenImage: {
-    width: 30,
-    height: 30,
-    tintColor: 'black',
-    alignItems: 'center',
   },
 });

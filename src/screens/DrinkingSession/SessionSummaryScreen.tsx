@@ -9,8 +9,8 @@ import {
   timestampToDate,
   unitsToColors,
 } from '@libs/DataHandling';
+import useLocalize from '@hooks/useLocalize';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
-import BasicButton from '@components/Buttons/BasicButton';
 import type {DrinkingSession} from '@src/types/onyx';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import type {StackScreenProps} from '@react-navigation/stack';
@@ -24,6 +24,8 @@ import ROUTES from '@src/ROUTES';
 import ScreenWrapper from '@components/ScreenWrapper';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import {format} from 'date-fns';
+import Button from '@components/Button';
+import useThemeStyles from '@hooks/useThemeStyles';
 
 const SessionDataItem = ({
   heading,
@@ -38,18 +40,21 @@ const SessionDataItem = ({
 }) => (
   <View
     style={[
-      styles.sessionDataContainer,
+      localStyles.sessionDataContainer,
       {backgroundColor: index % 2 === 0 ? '#FFFFbd' : 'white'},
     ]}>
-    <Text style={styles.sessionDataHeading}>{heading}</Text>
+    <Text style={localStyles.sessionDataHeading}>{heading}</Text>
     {sessionColor ? (
       // Render the colored rectangle when sessionColor is present
       <View
-        style={[styles.sessionColorMarker, {backgroundColor: sessionColor}]}
+        style={[
+          localStyles.sessionColorMarker,
+          {backgroundColor: sessionColor},
+        ]}
       />
     ) : (
       // Else render the text
-      <Text style={styles.sessionDataText}>{data}</Text>
+      <Text style={localStyles.sessionDataText}>{data}</Text>
     )}
   </View>
 );
@@ -62,6 +67,8 @@ type SessionSummaryScreenProps = StackScreenProps<
 function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
   const {sessionId} = route.params;
   const {preferences, drinkingSessionData} = useDatabaseData();
+  const {translate} = useLocalize();
+  const styles = useThemeStyles();
   if (!preferences) {
     return null;
   } // Careful when writing hooks after this line
@@ -162,20 +169,20 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
             <MenuIcon
               iconId="edit-session-icon"
               iconSource={KirokuIcons.Edit}
-              containerStyle={styles.menuIconContainer}
-              iconStyle={styles.menuIcon}
+              containerStyle={localStyles.menuIconContainer}
+              iconStyle={localStyles.menuIcon}
               onPress={() => onEditSessionPress(sessionId)} // Use keyextractor to load id here
             />
           )
         }
       />
-      <ScrollView style={styles.scrollView}>
-        <View style={styles.sessionInfoContainer}>
-          <Text style={styles.sessionInfoText}>Session Summary</Text>
+      <ScrollView style={localStyles.scrollView}>
+        <View style={localStyles.sessionInfoContainer}>
+          <Text style={localStyles.sessionInfoText}>Session Summary</Text>
         </View>
 
-        <View style={styles.sessionSectionContainer}>
-          <Text style={styles.sessionDataContainerHeading}>General</Text>
+        <View style={localStyles.sessionSectionContainer}>
+          <Text style={localStyles.sessionDataContainerHeading}>General</Text>
           <SessionDataItem
             key="sessionColor"
             heading="Session Color"
@@ -193,8 +200,8 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
           ))}
         </View>
 
-        <View style={styles.sessionSectionContainer}>
-          <Text style={styles.sessionDataContainerHeading}>
+        <View style={localStyles.sessionSectionContainer}>
+          <Text style={localStyles.sessionDataContainerHeading}>
             Drinks consumed
           </Text>
           {drinkData.map((item, index) => (
@@ -207,8 +214,8 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
           ))}
         </View>
 
-        <View style={styles.sessionSectionContainer}>
-          <Text style={styles.sessionDataContainerHeading}>Other</Text>
+        <View style={localStyles.sessionSectionContainer}>
+          <Text style={localStyles.sessionDataContainerHeading}>Other</Text>
           {otherData.map((item, index) => (
             <SessionDataItem
               key={index}
@@ -219,19 +226,19 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
           ))}
         </View>
       </ScrollView>
-      <View style={styles.confirmButtonContainer}>
-        <BasicButton
-          text="Confirm"
-          buttonStyle={styles.confirmButton}
-          textStyle={styles.confirmButtonText}
+      <View style={[styles.bottomTabBarContainer, styles.p2]}>
+        <Button
+          text={translate('common.confirm')}
           onPress={handleBackPress}
+          style={[styles.bottomTabBarItem, styles.ph10]}
+          success
         />
       </View>
     </ScreenWrapper>
   );
 }
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   menuIconContainer: {
     width: 40,
     height: 40,
@@ -246,12 +253,12 @@ const styles = StyleSheet.create({
   scrollView: {
     flexGrow: 1,
     flexShrink: 1,
-    backgroundColor: '#FFFF99',
   },
   sessionInfoContainer: {
     flex: 1,
     borderBottomWidth: 1,
-    borderColor: '#000',
+    borderColor: 'gray',
+    marginHorizontal: 8,
   },
   sessionInfoText: {
     fontSize: 20,
@@ -265,7 +272,8 @@ const styles = StyleSheet.create({
   sessionSectionContainer: {
     backgroundColor: 'white',
     borderBottomWidth: 1,
-    borderColor: '#000',
+    borderColor: 'gray',
+    marginHorizontal: 8,
   },
   sessionDataContainerHeading: {
     fontSize: 15,
@@ -308,24 +316,10 @@ const styles = StyleSheet.create({
   },
   confirmButtonContainer: {
     width: '100%',
-    height: '10%',
+    height: '8%',
     flexShrink: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    flexDirection: 'row',
-    backgroundColor: '#FFFF99',
-    padding: 5,
-  },
-  confirmButton: {
-    width: '50%',
-    height: '90%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 10,
-    backgroundColor: '#fcf50f',
-    borderWidth: 1,
-    borderColor: '#000',
-    borderRadius: 8,
   },
   confirmButtonText: {
     color: 'black',
