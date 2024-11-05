@@ -127,6 +127,10 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
     const date = timestampToDate(session.start_time);
     const timeString = nonMidnightString(formatDateToTime(date));
     const shouldDisplayTime = session.type === CONST.SESSION_TYPES.LIVE;
+    const shouldInverseTextColor =
+      session.blackout === true ||
+      sessionColor === 'red' ||
+      sessionColor === 'green';
 
     return (
       <View style={[styles.dayOverviewTab(sessionColor), styles.border]}>
@@ -140,7 +144,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
                 style={[
                   styles.textNormalThemeText,
                   styles.p1,
-                  session.blackout === true || sessionColor === 'red'
+                  shouldInverseTextColor
                     ? {color: 'white', fontWeight: '500'}
                     : {},
                 ]}>
@@ -151,7 +155,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
                   style={[
                     styles.textNormalThemeText,
                     styles.p1,
-                    session.blackout === true || sessionColor === 'red'
+                    shouldInverseTextColor
                       ? {color: 'white', fontWeight: '500'}
                       : {},
                   ]}>
@@ -164,9 +168,9 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
             <View style={localStyles.ongoingSessionContainer}>
               <TouchableOpacity
                 accessibilityRole="button"
-                style={localStyles.ongoingSessionButton}
+                style={[localStyles.ongoingSessionButton, styles.border]}
                 onPress={() => onSessionButtonPress(sessionId, session)}>
-                <Text style={localStyles.ongoingSessionText}>In Session</Text>
+                <Text style={[styles.buttonLargeText]}>In Session</Text>
               </TouchableOpacity>
             </View>
           ) : editMode ? (
@@ -176,9 +180,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
               containerStyle={[localStyles.menuIconContainer]}
               iconStyle={[
                 localStyles.menuIcon,
-                session.blackout === true || sessionColor === 'red'
-                  ? {tintColor: 'white'}
-                  : {},
+                shouldInverseTextColor ? {tintColor: 'white'} : {},
               ]}
               onPress={() => onEditSessionPress(sessionId)} // Use keyextractor to load id here
             />
@@ -458,25 +460,17 @@ const localStyles = StyleSheet.create({
     marginRight: 15,
   },
   ongoingSessionContainer: {
-    width: 120,
-    height: 40,
+    width: 100,
+    height: 35,
     borderRadius: 10,
     margin: 5,
     backgroundColor: 'white',
-    borderWidth: 2,
-    borderColor: 'black',
   },
   ongoingSessionButton: {
     width: '100%',
     height: '100%',
-    borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  ongoingSessionText: {
-    color: 'black',
-    fontWeight: '500',
-    fontSize: 20,
   },
 });
 
