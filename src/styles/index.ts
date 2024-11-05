@@ -727,6 +727,10 @@ const styles = (theme: ThemeColors) =>
       color: theme.textSupporting,
     },
 
+    colorReversed: {
+      color: theme.textReversed,
+    },
+
     contextMenuItemPopoverMaxWidth: {
       maxWidth: 375,
     },
@@ -1008,6 +1012,14 @@ const styles = (theme: ThemeColors) =>
 
     menuItemTextContainer: {
       minHeight: variables.componentSizeNormal,
+    },
+
+    messageBanner: {
+      color: theme.danger,
+      alignItems: 'center',
+      borderRadius: 8,
+      ...spacing.p4,
+      ...spacing.m2,
     },
 
     nativeOverlayStyles: (current: OverlayStylesParams) =>

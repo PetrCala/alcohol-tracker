@@ -12,7 +12,7 @@ const useWebProxy = get(Config, 'USE_WEB_PROXY', 'true') === 'true';
 
 // Set default values to contributor friendly values to make development work out of the box without an .env file
 const ENVIRONMENT = get(Config, 'ENVIRONMENT', CONST.ENVIRONMENT.DEV);
-const TEST_HOST = 'localhost';
+const TEST_HOST = '127.0.0.1';
 const TEST_AUTH_PORT = 9099;
 const TEST_REALTIME_DATABASE_PORT = 9001;
 const TEST_STORAGE_BUCKET_PORT = 9199;

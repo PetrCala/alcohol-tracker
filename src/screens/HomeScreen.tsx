@@ -372,6 +372,7 @@ function HomeScreen({route}: HomeScreenProps) {
           <MessageBanner
             text="You are currently in session!"
             onPress={openSessionInProgress}
+            danger
           />
         ) : null}
         {/* User verification modal -- Enable later on
