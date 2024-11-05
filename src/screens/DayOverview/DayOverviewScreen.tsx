@@ -400,27 +400,6 @@ const localStyles = StyleSheet.create({
     alignContent: 'center',
     padding: 10,
   },
-  dayOverviewFooter: {
-    flexShrink: 1, // Only as large as necessary
-    marginHorizontal: -1,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: '#FFFF99',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: -2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    borderRadius: 2,
-    marginVertical: 0,
-    borderColor: '#ddd',
-    elevation: 8, // for Android shadow
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
   addSessionButton: {
     borderRadius: 50,
     width: 70,
