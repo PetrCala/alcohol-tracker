@@ -68,6 +68,8 @@ import ONYXKEYS from '@src/ONYXKEYS';
 import getPlatform from '@libs/getPlatform';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import DSUtils from '@libs/DrinkingSessionUtils';
+import useTheme from '@hooks/useTheme';
+import Icon from '@components/Icon';
 
 type State = {
   visibleDateObject: DateObject;
@@ -126,6 +128,7 @@ type HomeScreenProps = HomeScreenOnyxProps &
 
 function HomeScreen({route}: HomeScreenProps) {
   const styles = useThemeStyles();
+  const theme = useTheme();
   const {auth, db, storage} = useFirebase();
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
@@ -334,7 +337,7 @@ function HomeScreen({route}: HomeScreenProps) {
       testID={HomeScreen.displayName}
       includePaddingTop={false}
       includeSafeAreaPaddingBottom={getPlatform() !== CONST.PLATFORM.IOS}>
-      <View style={commonStyles.headerContainer}>
+      <View style={[commonStyles.headerContainer, styles.borderBottom]}>
         {userData && (
           <View style={localStyles.profileContainer}>
             <TouchableOpacity
@@ -454,11 +457,13 @@ function HomeScreen({route}: HomeScreenProps) {
       {state.ongoingSessionId ? null : (
         <TouchableOpacity
           accessibilityRole="button"
-          style={localStyles.startSessionButton}
+          style={[localStyles.startSessionButton, styles.buttonSuccess]}
           onPress={startDrinkingSession}>
-          <Image
-            source={KirokuIcons.Plus}
-            style={localStyles.startSessionImage}
+          <Icon
+            src={KirokuIcons.Plus}
+            height={36}
+            width={36}
+            fill={theme.textLight}
           />
         </TouchableOpacity>
       )}
@@ -595,7 +600,6 @@ const localStyles = StyleSheet.create({
     borderRadius: 50,
     width: 70,
     height: 70,
-    backgroundColor: 'green',
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: 'black',

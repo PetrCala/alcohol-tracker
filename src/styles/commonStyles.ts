@@ -11,15 +11,6 @@ const commonStyles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#FCFBF9', // TODO: Should be theme.appBG
-    borderBottomWidth: 1,
-    borderColor: '#ddd',
-    // shadowColor: '#000',
-    // shadowOffset: {width: 0, height: 8},
-    // shadowOpacity: 0.07,
-    // shadowRadius: 6,
-    // elevation: 5,
-    zIndex: 1,
   },
   backArrowContainer: {
     justifyContent: 'center',

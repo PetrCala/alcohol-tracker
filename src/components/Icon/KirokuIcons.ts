@@ -42,7 +42,7 @@ import Logo from '@assets/images/app-logo.png';
 import Menu from '@assets/images/menu.png';
 import Minus from '@assets/images/minus.png';
 import Pencil from '@assets/images/pencil.png';
-import Plus from '@assets/images/plus.png';
+import Plus from '@assets/images/plus.svg';
 import Gear from '@assets/images/gear.svg';
 import QrCodeFullColor from '@assets/images/kiroku-qr-code-full-color.png';
 import QrCodePlain from '@assets/images/kiroku-qr-code-plain.png';

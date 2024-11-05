@@ -31,6 +31,7 @@ import type {
 } from '@src/types/onyx';
 import useTheme from '@hooks/useTheme';
 import FullScreenLoadingIndicator from './FullscreenLoadingIndicator';
+import useThemeStyles from '@hooks/useThemeStyles';
 
 type DayMarking = {
   units?: number;
@@ -228,6 +229,8 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
   dispatch,
   onDayPress,
 }) => {
+  const theme = useTheme();
+  const styles = useThemeStyles();
   const [calendarData, setCalendarData] = useState<DrinkingSessionArray>(
     drinkingSessionData ? Object.values(drinkingSessionData) : [],
   );
@@ -319,7 +322,12 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
       enableSwipeMonths={false}
       disableAllTouchEventsForDisabledDays={true}
       renderArrow={CustomArrow}
-      style={localStyles.mainScreenCalendarStyle}
+      style={[
+        localStyles.mainScreenCalendarStyle,
+        {
+          borderColor: theme.border,
+        },
+      ]}
       theme={
         {
           textDayHeaderFontWeight: 'bold',
@@ -329,16 +337,11 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
               marginLeft: -5,
               flexDirection: 'row',
               alignItems: 'center',
-              margin: 0,
-              padding: 0,
               borderTopWidth: 1,
-              borderBottomWidth: 0,
-              borderColor: 'grey',
-              // backgroundColor: '#f2be1c',
-              backgroundColor: 'white',
+              borderColor: theme.border,
             },
             monthText: {
-              color: 'black',
+              color: theme.text,
               fontSize: 20,
               fontWeight: '500',
               width: screenWidth / 3,
@@ -359,7 +362,6 @@ const arrowStyles = StyleSheet.create({
     alignSelf: 'center',
     justifyContent: 'center',
     // backgroundColor: '#f2be1c',
-    backgroundColor: 'white',
     alignItems: 'center',
     width: screenWidth / 3,
     marginVertical: -10,
@@ -429,10 +431,8 @@ const localStyles = StyleSheet.create({
   // Calendar styles
   mainScreenCalendarStyle: {
     width: '100%',
-    backgroundColor: 'white',
     borderTopWidth: 0,
     borderBottomWidth: 1,
-    borderColor: 'grey',
     flexGrow: 1,
     flexShrink: 1,
   },
