@@ -124,12 +124,12 @@ function DatePicker(
       <View
         style={[styles.datePickerPopover, styles.border]}
         collapsable={false}>
-        {/* <CalendarPicker
+        <CalendarPicker
           minDate={minDate}
           maxDate={maxDate}
           value={selectedDate}
           onSelected={onSelected}
-        /> */}
+        />
       </View>
     </View>
   );

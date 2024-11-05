@@ -111,10 +111,14 @@ function SesssionDateScreen({route}: SessionDateScreenProps) {
             InputComponent={DatePicker}
             inputID={INPUT_IDS.DATE}
             label={translate('common.date')}
-            defaultValue={format(
-              session?.start_time ?? new Date(), // TODO modify this
-              CONST.DATE.SHORT_DATE_FORMAT,
-            )}
+            defaultValue={
+              session?.start_time
+                ? format(
+                    new Date(session?.start_time),
+                    CONST.DATE.FNS_FORMAT_STRING,
+                  )
+                : ''
+            }
             maxDate={endOfToday()}
           />
         </FormProvider>
