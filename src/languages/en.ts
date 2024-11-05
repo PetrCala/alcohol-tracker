@@ -424,8 +424,10 @@ export default {
   },
   liveSessionScreen: {
     saving: 'Saving your session...',
+    blackout: 'Blackout',
     blackoutSwitchLabel:
       'This indicates whether your session ended in a blackout.',
+    note: 'Note',
     discardSessionWarning: (discardWord: string) =>
       `Do you really want to ${discardWord} this session?`,
     unsavedChangesWarning:

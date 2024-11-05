@@ -90,6 +90,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   // Time info
   const [dbSyncSuccessful, setDbSyncSuccessful] = useState(false);
   const sessionDate = timestampToDate(session?.start_time ?? Date.now());
+  const sessionDateString = format(sessionDate, CONST.DATE.SHORT_DATE_FORMAT);
   const sessionStartTime = formatDateToTime(sessionDate);
   const sessionColor = preferences
     ? unitsToColors(totalUnits, preferences.units_to_colors)
@@ -484,7 +485,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
             <Text style={localStyles.sessionInfoText}>
               {session?.ongoing
                 ? `Session from ${sessionStartTime}`
-                : `Session on ${format(sessionDate, CONST.DATE.SHORT_DATE_FORMAT)}`}
+                : `Session on ${sessionDateString}`}
             </Text>
           </View>
           {isPending && (
@@ -541,6 +542,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
               onBlackoutChange={handleBlackoutChange}
               note={session.note}
               onNoteChange={handleNoteChange}
+              dateString={sessionDateString}
             />
           </>
         )}

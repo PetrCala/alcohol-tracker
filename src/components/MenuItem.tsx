@@ -805,6 +805,7 @@ function MenuItem(
                       </Text>
                     </View>
                   )}
+                  {shouldShowRightComponent && rightComponent}
                   {shouldShowRightIcon && (
                     <View
                       style={[
@@ -828,7 +829,6 @@ function MenuItem(
                       />
                     </View>
                   )}
-                  {shouldShowRightComponent && rightComponent}
                   {shouldShowSelectedState && (
                     <SelectCircle isChecked={isSelected} />
                   )}

@@ -1,9 +1,39 @@
-﻿import React from 'react';
-import type {ScrollView} from 'react-native';
-import {Text, View, StyleSheet, TextInput} from 'react-native';
-import Switch from './Switch';
+﻿import React, {ReactNode, useRef} from 'react';
+// eslint-disable-next-line no-restricted-imports
+import {StyleSheet, ScrollView} from 'react-native';
+import {View} from 'react-native';
+import type {ValueOf} from 'type-fest';
+import MenuItem from '@components/MenuItem';
+import Text from '@components/Text';
 import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
+import Navigation from '@libs/Navigation/Navigation';
+import CONST from '@src/CONST';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
+import type {TranslationPaths} from '@src/languages/types';
+import type {Route} from '@src/ROUTES';
+import type {Icon as TIcon} from '@src/types/onyx/OnyxCommon';
+import type IconAsset from '@src/types/utils/IconAsset';
+import ROUTES from '@src/ROUTES';
+import useSingleExecution from '@hooks/useSingleExecution';
+import useWaitForNavigation from '@hooks/useWaitForNavigation';
+import useActiveCentralPaneRoute from '@hooks/useActiveCentralPaneRoute';
+import Switch from './Switch';
+
+type MenuData = {
+  translationKey: TranslationPaths;
+  routeName?: Route;
+  brickRoadIndicator?: ValueOf<typeof CONST.BRICK_ROAD_INDICATOR_STATUS>;
+  interactive?: boolean;
+  action?: () => void;
+  link?: string | (() => Promise<string>);
+  shouldStackHorizontally?: boolean;
+  title?: string;
+  description?: string;
+  shouldShowRightComponent?: boolean;
+  shouldShowRightIcon?: boolean;
+  rightComponent?: ReactNode;
+};
 
 type SessionSliderProps = {
   scrollViewRef: React.RefObject<ScrollView>;
@@ -11,6 +41,7 @@ type SessionSliderProps = {
   onBlackoutChange: (value: boolean) => void;
   note: string;
   onNoteChange: (value: string) => void;
+  dateString: string;
 };
 
 const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
@@ -19,30 +50,99 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
   onBlackoutChange,
   note,
   onNoteChange,
+  dateString,
 }) => {
   const {translate} = useLocalize();
+  const {isExecuting, singleExecution} = useSingleExecution();
+  const waitForNavigate = useWaitForNavigation();
+  const popoverAnchor = useRef(null);
+  const activeCentralPaneRoute = useActiveCentralPaneRoute();
   const styles = useThemeStyles();
 
+  const blackoutSwitch: ReactNode = (
+    <Switch
+      accessibilityLabel={translate('liveSessionScreen.blackoutSwitchLabel')}
+      isOn={isBlackout}
+      onToggle={value => onBlackoutChange(value)}
+    />
+  );
+
+  const sliderData: MenuData[] = [
+    {
+      translationKey: 'liveSessionScreen.blackout',
+      shouldShowRightComponent: true,
+      rightComponent: blackoutSwitch,
+      interactive: false,
+    },
+    {
+      translationKey: 'liveSessionScreen.note',
+      description: 'laksdf laksdjflak jsdladksf',
+      shouldShowRightIcon: true,
+      routeName: ROUTES.HOME,
+    },
+    {
+      translationKey: 'common.date',
+      shouldShowRightIcon: true,
+      description: dateString,
+    },
+  ];
+
   return (
-    // <View style={localStyles.container} onLayout={onFeatureLayout}>
     <View style={localStyles.container}>
       <View style={[localStyles.tab, styles.borderColorTheme]}>
         <Text style={localStyles.tabText}>Session details</Text>
       </View>
       <View style={localStyles.sessionDetailsContainer}>
-        <View
+        {sliderData.map(item => {
+          const keyTitle = item.translationKey
+            ? translate(item.translationKey)
+            : item.title;
+
+          return (
+            <MenuItem
+              key={keyTitle}
+              wrapperStyle={styles.sectionMenuItem}
+              title={keyTitle}
+              description={item.description}
+              disabled={isExecuting}
+              onPress={singleExecution(() => {
+                if (item.action) {
+                  item.action();
+                } else {
+                  waitForNavigate(() => {
+                    Navigation.navigate(item.routeName);
+                  })();
+                }
+              })}
+              interactive={item.interactive}
+              brickRoadIndicator={item.brickRoadIndicator}
+              shouldStackHorizontally={item.shouldStackHorizontally}
+              shouldShowRightIcon={item.shouldShowRightIcon}
+              ref={popoverAnchor}
+              hoverAndPressStyle={styles.hoveredComponentBG}
+              shouldBlockSelection={!!item.link}
+              focused={
+                !!activeCentralPaneRoute &&
+                !!item.routeName &&
+                !!(
+                  activeCentralPaneRoute.name
+                    .toLowerCase()
+                    .replaceAll('_', '') ===
+                  item.routeName.toLowerCase().replaceAll('/', '')
+                )
+              }
+              isPaneMenu
+              shouldShowRightComponent={item.shouldShowRightComponent}
+              rightComponent={item.rightComponent}
+            />
+          );
+        })}
+        {/* <View
           style={[
             localStyles.tileContainerBase,
             localStyles.tileContainerHorizontal,
           ]}>
           <Text style={localStyles.tileHeading}>Blackout: </Text>
-          <Switch
-            accessibilityLabel={translate(
-              'liveSessionScreen.blackoutSwitchLabel',
-            )}
-            isOn={isBlackout}
-            onToggle={value => onBlackoutChange(value)}
-          />
         </View>
         <View
           style={[
@@ -63,9 +163,9 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
               maxLength={1000}
               multiline={true}
             />
-          </View>
-          {/* TODO add the date changer here! */}
-        </View>
+          </View> */}
+        {/* TODO add the date changer here! */}
+        {/* </View> */}
       </View>
     </View>
   );
@@ -73,7 +173,8 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
 
 const localStyles = StyleSheet.create({
   container: {
-    width: '100%',
+    marginLeft: 8,
+    marginRight: 8,
   },
   tab: {
     flexDirection: 'row',
@@ -81,8 +182,6 @@ const localStyles = StyleSheet.create({
     alignItems: 'center',
     height: 50,
     borderTopWidth: 1,
-    marginLeft: 12,
-    marginRight: 12,
   },
   tabText: {
     fontWeight: 'bold',
