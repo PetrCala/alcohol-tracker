@@ -62,6 +62,7 @@ import ConfirmModal from '@components/ConfirmModal';
 import useWindowDimensions from '@hooks/useWindowDimensions';
 import {useFocusEffect} from '@react-navigation/native';
 import ScrollView from '@components/ScrollView';
+import Log from '@libs/Log';
 
 type LiveSessionScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -235,7 +236,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       return;
     }
     if (totalUnits > CONST.MAX_ALLOWED_UNITS) {
-      console.log(translate('liveSessionScreen.error.save'));
+      Log.warn(translate('liveSessionScreen.error.save'));
       return null;
     }
     if (totalUnits <= 0) {
@@ -344,7 +345,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
         await removePlaceholderSessionData(db, user.uid);
       }
     } catch (error: any) {
-      console.log('Could not remove placeholder session data', error.message); // Unimportant
+      Log.warn('Could not remove placeholder session data', error.message); // Unimportant
     } finally {
       setShouldShowLeaveConfirmation(false);
       Navigation.goBack();
