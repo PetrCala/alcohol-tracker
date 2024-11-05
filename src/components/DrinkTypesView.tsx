@@ -2,6 +2,8 @@
 import DrinkingSessionDrinksWindow from './DrinkingSessionDrinksWindow';
 import type {DrinksList} from '@src/types/onyx';
 import type DrinkDataProps from '@libs/DrinkData/types';
+import useTheme from '@hooks/useTheme';
+import useThemeStyles from '@hooks/useThemeStyles';
 
 export type DrinkTypesViewProps = {
   drinkData: DrinkDataProps;
@@ -16,10 +18,12 @@ const DrinkTypesView = ({
   setCurrentDrinks,
   availableUnits,
 }: DrinkTypesViewProps) => {
+  const styles = useThemeStyles();
+
   return (
-    <View style={styles.mainContainer}>
-      <View style={styles.tab}>
-        <Text style={styles.tabText}>Drinks consumed</Text>
+    <View style={localStyles.mainContainer}>
+      <View style={[localStyles.tab, styles.borderColorTheme]}>
+        <Text style={localStyles.tabText}>Drinks consumed</Text>
       </View>
       <View>
         {drinkData.map(drink => (
@@ -39,7 +43,7 @@ const DrinkTypesView = ({
 
 export default DrinkTypesView;
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   mainContainer: {
     width: '100%',
     paddingBottom: 4,
@@ -49,7 +53,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     height: 50,
-    borderColor: 'gray',
     borderTopWidth: 1,
     marginLeft: 12,
     marginRight: 12,

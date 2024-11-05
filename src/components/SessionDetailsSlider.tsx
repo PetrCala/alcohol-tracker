@@ -3,6 +3,7 @@ import type {ScrollView} from 'react-native';
 import {Text, View, StyleSheet, TextInput} from 'react-native';
 import Switch from './Switch';
 import useLocalize from '@hooks/useLocalize';
+import useThemeStyles from '@hooks/useThemeStyles';
 
 type SessionSliderProps = {
   scrollViewRef: React.RefObject<ScrollView>;
@@ -20,17 +21,21 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
   onNoteChange,
 }) => {
   const {translate} = useLocalize();
+  const styles = useThemeStyles();
 
   return (
-    // <View style={styles.container} onLayout={onFeatureLayout}>
-    <View style={styles.container}>
-      <View style={styles.tab}>
-        <Text style={styles.tabText}>Session details</Text>
+    // <View style={localStyles.container} onLayout={onFeatureLayout}>
+    <View style={localStyles.container}>
+      <View style={[localStyles.tab, styles.borderColorTheme]}>
+        <Text style={localStyles.tabText}>Session details</Text>
       </View>
-      <View style={styles.sessionDetailsContainer}>
+      <View style={localStyles.sessionDetailsContainer}>
         <View
-          style={[styles.tileContainerBase, styles.tileContainerHorizontal]}>
-          <Text style={styles.tileHeading}>Blackout: </Text>
+          style={[
+            localStyles.tileContainerBase,
+            localStyles.tileContainerHorizontal,
+          ]}>
+          <Text style={localStyles.tileHeading}>Blackout: </Text>
           <Switch
             accessibilityLabel={translate(
               'liveSessionScreen.blackoutSwitchLabel',
@@ -41,16 +46,16 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
         </View>
         <View
           style={[
-            styles.tileContainerBase,
-            styles.tileContainerVertical,
+            localStyles.tileContainerBase,
+            localStyles.tileContainerVertical,
             {borderBottomWidth: 0},
           ]}>
-          <Text style={styles.tileHeading}>Session note:</Text>
-          <View style={styles.noteWindowContainer}>
+          <Text style={localStyles.tileHeading}>Session note:</Text>
+          <View style={localStyles.noteWindowContainer}>
             <TextInput
               accessibilityLabel="Text input field"
               defaultValue={note}
-              style={styles.noteTextInput}
+              style={localStyles.noteTextInput}
               onChangeText={value => onNoteChange(value)}
               placeholder={'Write your note here'}
               placeholderTextColor={'#a8a8a8'}
@@ -66,7 +71,7 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   container: {
     width: '100%',
   },
@@ -75,7 +80,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     height: 50,
-    borderColor: 'gray',
     borderTopWidth: 1,
     marginLeft: 12,
     marginRight: 12,

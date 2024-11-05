@@ -9,7 +9,6 @@ import React, {
 } from 'react';
 // eslint-disable-next-line no-restricted-imports
 import type {
-  GestureResponderEvent,
   ScrollView as RNScrollView,
   ScrollViewProps,
   StyleProp,
@@ -17,19 +16,15 @@ import type {
 } from 'react-native';
 import {View} from 'react-native';
 import {withOnyx} from 'react-native-onyx';
-import {deleteUser} from 'firebase/auth';
 import type {ValueOf} from 'type-fest';
 import ConfirmModal from '@components/ConfirmModal';
-import Icon from '@components/Icon';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import * as Session from '@userActions/Session';
 import MenuItem from '@components/MenuItem';
-import {PressableWithFeedback} from '@components/Pressable';
 import ScreenWrapper from '@components/ScreenWrapper';
 import {ScrollOffsetContext} from '@components/ScrollOffsetContextProvider';
 import ScrollView from '@components/ScrollView';
 import Text from '@components/Text';
-import Tooltip from '@components/Tooltip';
 import type {WithCurrentUserPersonalDetailsProps} from '@components/withCurrentUserPersonalDetails';
 import withCurrentUserPersonalDetails from '@components/withCurrentUserPersonalDetails';
 import useActiveCentralPaneRoute from '@hooks/useActiveCentralPaneRoute';
@@ -40,14 +35,11 @@ import useTheme from '@hooks/useTheme';
 import useThemeStyles from '@hooks/useThemeStyles';
 import useWaitForNavigation from '@hooks/useWaitForNavigation';
 import Navigation from '@libs/Navigation/Navigation';
-import variables from '@styles/variables';
 import CONST from '@src/CONST';
 import type {TranslationPaths} from '@src/languages/types';
-import ONYXKEYS from '@src/ONYXKEYS';
 import type {Route} from '@src/ROUTES';
 import ROUTES from '@src/ROUTES';
 import type {Icon as TIcon} from '@src/types/onyx/OnyxCommon';
-import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import type IconAsset from '@src/types/utils/IconAsset';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import {useFirebase} from '@context/global/FirebaseContext';

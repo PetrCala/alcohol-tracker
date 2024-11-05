@@ -710,33 +710,6 @@ const localStyles = StyleSheet.create({
     width: '100%',
     marginTop: 20,
   },
-  saveSessionContainer: {
-    height: '8%',
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: -2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 10,
-    borderTopWidth: 1,
-    borderColor: '#ddd',
-    elevation: 10, // for Android shadow
-  },
-  saveSessionButton: {
-    width: '50%',
-    height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 0,
-    borderRightWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: 'lightgray',
-  },
 });
 
 LiveSessionScreen.displayName = 'Live Session Screen';

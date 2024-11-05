@@ -418,6 +418,10 @@ const styles = (theme: ThemeColors) =>
       borderColor: theme.border,
     },
 
+    borderColorTheme: {
+      borderColor: theme.border,
+    },
+
     borderColorFocus: {
       borderColor: theme.borderFocus,
     },
