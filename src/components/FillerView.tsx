@@ -1,4 +1,5 @@
-﻿import {StyleProp, View, ViewStyle} from 'react-native';
+﻿import useTheme from '@hooks/useTheme';
+import {StyleProp, View, ViewStyle} from 'react-native';
 
 type FillerViewProps = {
   styles?: StyleProp<ViewStyle>;
@@ -6,12 +7,13 @@ type FillerViewProps = {
 };
 const FillerView = ({height, styles}: FillerViewProps) => {
   const fillerHeight = height ? height : 200;
+  const theme = useTheme();
   return (
     <View
       style={[
         {
           height: fillerHeight,
-          backgroundColor: '#ffff99',
+          backgroundColor: theme.appBG,
         },
         styles,
       ]}
