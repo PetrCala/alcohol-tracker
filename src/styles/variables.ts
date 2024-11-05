@@ -231,6 +231,7 @@ export default {
   textInputAutoGrowMaxHeight: 115,
 
   sessionOverviewTabHeight: 85,
+  statItemTextWidth: 100,
 
   h20: 20,
   h28: 28,

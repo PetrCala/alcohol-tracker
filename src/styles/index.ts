@@ -322,6 +322,10 @@ const styles = (theme: ThemeColors) =>
       backgroundColor: theme.activeComponentBG,
     },
 
+    appColor: {
+      color: theme.appColor,
+    },
+
     appContent: {
       backgroundColor: theme.appBG,
       overflow: 'hidden',
@@ -1483,6 +1487,11 @@ const styles = (theme: ThemeColors) =>
       backgroundColor: theme.splashBG,
       alignItems: 'center',
       justifyContent: 'center',
+    },
+
+    statItemContainer: {
+      justifyContent: 'center',
+      width: variables.statItemTextWidth,
     },
 
     subscriptIcon: {

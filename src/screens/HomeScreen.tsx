@@ -540,24 +540,6 @@ const localStyles = StyleSheet.create({
   mainScreenContent: {
     flexGrow: 1,
     flexShrink: 1,
-    backgroundColor: '#ffff99',
-  },
-  userInSessionWarningContainer: {
-    backgroundColor: '#ff5d54',
-    padding: 16,
-    borderRadius: 8,
-    marginVertical: 4,
-    borderColor: '#ddd',
-    borderWidth: 1,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    alignItems: 'center',
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
   },
   userInSessionWarningText: {
     fontSize: 22,

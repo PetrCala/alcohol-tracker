@@ -12,8 +12,6 @@ type StatsOverviewProps = {
 };
 
 export const StatsOverview: React.FC<StatsOverviewProps> = ({statsData}) => {
-  const theme = useTheme();
-
   return (
     <View
       style={{
@@ -21,7 +19,6 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({statsData}) => {
         width: '100%',
         height: '100%',
         justifyContent: 'space-evenly',
-        backgroundColor: theme.splashBG,
       }}>
       {statsData.map((stat, index) => (
         <StatItem key={index} header={stat.header} content={stat.content} />
