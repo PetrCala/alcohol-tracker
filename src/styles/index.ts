@@ -1047,6 +1047,11 @@ const styles = (theme: ThemeColors) =>
         borderRadius: 12,
       }) satisfies ViewStyle,
 
+    halfScreenWidth: (screenWidth: number) =>
+      ({
+        width: screenWidth * 0.5,
+      }) satisfies ViewStyle,
+
     offlineFeedback: {
       deleted: {
         textDecorationLine: 'line-through',

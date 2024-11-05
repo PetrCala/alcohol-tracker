@@ -63,6 +63,7 @@ import useTheme from '@hooks/useTheme';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Button from '@components/Button';
 import ConfirmModal from '@components/ConfirmModal';
+import useWindowDimensions from '@hooks/useWindowDimensions';
 
 type LiveSessionScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -79,6 +80,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   const {translate} = useLocalize();
   const {isOnline} = useUserConnection();
   const {preferences} = useDatabaseData();
+  const {windowWidth} = useWindowDimensions();
   const [session, setSession] = useState<DrinkingSession | null>(null);
   const initialSession = useRef<DrinkingSession | null>(null);
   // Session details
@@ -544,23 +546,29 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
         )}
         <FillerView styles={{backgroundColor: theme.appBG}} />
       </ScrollView>
-      <View style={localStyles.saveSessionContainer}>
+      <View style={styles.bottomTabBarContainer}>
         <Button
+          success
           text={`${deleteSessionWording} Session`}
-          textStyles={localStyles.saveSessionButtonText}
-          style={[
-            localStyles.saveSessionButton,
-            {backgroundColor: theme.success},
+          textStyles={styles.buttonText}
+          innerStyles={[
+            styles.bottomTabBarItem,
+            styles.noBorderRadius,
+            styles.halfScreenWidth(windowWidth),
+            styles.borderRight,
           ]}
+          shouldRemoveRightBorderRadius
           onPress={handleDiscardSession}
         />
         <Button
+          success
           text="Save Session"
-          style={[
-            localStyles.saveSessionButton,
-            {backgroundColor: theme.success},
+          textStyles={styles.buttonText}
+          innerStyles={[
+            styles.bottomTabBarItem,
+            styles.noBorderRadius,
+            styles.halfScreenWidth(windowWidth),
           ]}
-          textStyles={styles.buttonLargeText}
           onPress={() => saveSession(db, user.uid)}
         />
       </View>
@@ -728,11 +736,6 @@ const localStyles = StyleSheet.create({
     borderRightWidth: 1,
     borderBottomWidth: 1,
     borderColor: 'lightgray',
-  },
-  saveSessionButtonText: {
-    color: 'black',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
 });
 
