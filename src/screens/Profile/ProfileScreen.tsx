@@ -43,6 +43,8 @@ import type {FetchDataKeys} from '@hooks/useFetchData/types';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import useLocalize from '@hooks/useLocalize';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
+import useThemeStyles from '@hooks/useThemeStyles';
+import FillerView from '@components/FillerView';
 
 type State = {
   selfFriends: UserList | undefined;
@@ -110,6 +112,7 @@ function ProfileScreen({route}: ProfileScreenProps) {
   ]; //
   const [state, dispatch] = useReducer(reducer, initialState);
   const {translate} = useLocalize();
+  const styles = useThemeStyles();
   const {data: fetchedData, isLoading} = useFetchData(userID, relevantDataKeys);
   let userData = fetchedData?.userData;
   let drinkingSessionData = fetchedData?.drinkingSessionData;
@@ -246,8 +249,7 @@ function ProfileScreen({route}: ProfileScreenProps) {
             </TouchableOpacity>
           </View>
         </View>
-        <View style={commonStyles.horizontalLine} />
-        <View style={localStyles.statsOverviewHolder}>
+        <View style={[styles.borderTop, styles.profileStatOverview]}>
           <StatsOverview statsData={statsData} />
         </View>
         <SessionsCalendar
@@ -280,7 +282,7 @@ function ProfileScreen({route}: ProfileScreenProps) {
             </TouchableOpacity>
           ) : null}
         </View>
-        <View style={{height: 200, backgroundColor: '#ffff99'}}></View>
+        <FillerView />
       </ScrollView>
       <ManageFriendPopup
         visible={state.manageFriendModalVisible}
@@ -305,7 +307,6 @@ const localStyles = StyleSheet.create({
     textAlign: 'center',
   },
   scrollView: {
-    backgroundColor: '#ffff99',
     width: '100%',
     flexGrow: 1,
     flexShrink: 1,
@@ -364,11 +365,6 @@ const localStyles = StyleSheet.create({
     paddingLeft: 10,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  statsOverviewHolder: {
-    height: 120,
-    flexDirection: 'row',
-    width: screenWidth,
   },
   bottomContainer: {
     width: '100%',

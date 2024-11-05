@@ -1196,6 +1196,11 @@ const styles = (theme: ThemeColors) =>
       color: theme.heading,
     },
 
+    profileStatOverview: {
+      height: variables.profileStatOverviewHeight,
+      ...spacing.mh4,
+    },
+
     rightLabelMenuItem: {
       fontSize: variables.fontSizeLabel,
       color: theme.textSupporting,
