@@ -424,7 +424,8 @@ export default {
   },
   liveSessionScreen: {
     saving: 'Saving your session...',
-    // `Exceeds the maximum length of ${limit} characters`,
+    blackoutSwitchLabel:
+      'This indicates whether your session ended in a blackout.',
     discardSessionWarning: (discardWord: string) =>
       `Do you really want to ${discardWord} this session?`,
     unsavedChangesWarning:

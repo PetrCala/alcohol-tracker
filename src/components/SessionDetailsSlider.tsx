@@ -1,6 +1,8 @@
 ﻿import React from 'react';
 import type {ScrollView} from 'react-native';
-import {Text, View, StyleSheet, Switch, TextInput} from 'react-native';
+import {Text, View, StyleSheet, TextInput} from 'react-native';
+import Switch from './Switch';
+import useLocalize from '@hooks/useLocalize';
 
 type SessionSliderProps = {
   scrollViewRef: React.RefObject<ScrollView>;
@@ -17,6 +19,8 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
   note,
   onNoteChange,
 }) => {
+  const {translate} = useLocalize();
+
   return (
     // <View style={styles.container} onLayout={onFeatureLayout}>
     <View style={styles.container}>
@@ -28,10 +32,11 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
           style={[styles.tileContainerBase, styles.tileContainerHorizontal]}>
           <Text style={styles.tileHeading}>Blackout: </Text>
           <Switch
-            value={isBlackout}
-            onValueChange={value => onBlackoutChange(value)}
-            trackColor={{false: '#767577', true: '#fcf50f'}}
-            thumbColor={isBlackout ? '#f5dd4b' : '#f4f3f4'}
+            accessibilityLabel={translate(
+              'liveSessionScreen.blackoutSwitchLabel',
+            )}
+            isOn={isBlackout}
+            onToggle={value => onBlackoutChange(value)}
           />
         </View>
         <View
