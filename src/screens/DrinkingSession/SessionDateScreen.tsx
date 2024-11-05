@@ -1,4 +1,4 @@
-import {endOfToday, format} from 'date-fns';
+import {endOfToday, format, startOfDay} from 'date-fns';
 import React, {useCallback, useEffect, useState} from 'react';
 import DatePicker from '@components/DatePicker';
 import FormProvider from '@components/Form/FormProvider';
@@ -11,6 +11,7 @@ import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Navigation from '@libs/Navigation/Navigation';
 import * as ValidationUtils from '@libs/ValidationUtils';
+import DSUtils from '@libs/DrinkingSessionUtils';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
 import INPUT_IDS from '@src/types/form/SessionDateForm';
@@ -22,6 +23,7 @@ import SCREENS from '@src/SCREENS';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {readDataOnce} from '@database/baseFunctions';
 import DBPATHS from '@database/DBPATHS';
+import {saveDrinkingSessionData} from '@database/drinkingSessions';
 
 type SessionDateScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -40,11 +42,22 @@ function SesssionDateScreen({route}: SessionDateScreenProps) {
   const onSubmit = async (
     values: FormOnyxValues<typeof ONYXKEYS.FORMS.SESSION_DATE_FORM>,
   ) => {
-    const newDate = values.date;
+    if (!user || !session) {
+      throw new Error(translate('sessionDateScreen.error.load'));
+    }
+
+    const newDate = startOfDay(new Date(values.date));
 
     try {
       setIsLoading(true);
-      console.log('Updating the session date to', newDate);
+      const newSession = DSUtils.shiftSessionDate(session, newDate);
+      await saveDrinkingSessionData(
+        db,
+        user.uid,
+        newSession,
+        sessionId,
+        false, // Do not update live status
+      );
       Navigation.goBack();
     } catch (error: any) {
       Alert.alert(translate('sessionDateScreen.error.generic'), error.message);

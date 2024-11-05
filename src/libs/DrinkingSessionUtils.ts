@@ -13,6 +13,7 @@ import {numberToVerboseString} from './TimeUtils';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
 import {SelectedTimezone, Timezone} from '@src/types/onyx/PersonalDetails';
 import DBPATHS from '@database/DBPATHS';
+import {differenceInDays, subDays, subMilliseconds} from 'date-fns';
 
 const PlaceholderDrinks: DrinksList = {[Date.now()]: {other: 0}};
 
@@ -223,6 +224,69 @@ function allSessionsContainTimezone(sessions?: DrinkingSessionList): boolean {
   );
 }
 
+/**
+ * Modify all timestamps of a drinking session and return the updated session
+ *
+ * @param session The session to update
+ * @param millisecondsToSub How many milliseconds to subtract the timestamps by
+ */
+function shiftSessionTimestamps(
+  session: DrinkingSession,
+  millisecondsToSub: number,
+): DrinkingSession {
+  const convertedSession = {...session};
+  convertedSession.start_time = subMilliseconds(
+    session.start_time,
+    millisecondsToSub,
+  ).getTime();
+  convertedSession.end_time = subMilliseconds(
+    session.end_time,
+    millisecondsToSub,
+  ).getTime();
+
+  const convertedDrinks: DrinksList = {};
+  const existingTimestamps = new Set<number>();
+
+  if (!isEmptyObject(session.drinks)) {
+    Object.entries(session.drinks).forEach(([timestamp, drinksAtTimestamp]) => {
+      let newTimestamp = subMilliseconds(
+        Number(timestamp),
+        millisecondsToSub,
+      ).getTime();
+
+      // Ensure the new timestamp is unique by checking for collisions
+      while (existingTimestamps.has(newTimestamp)) {
+        newTimestamp += 1; // Increment timestamp slightly to avoid collision
+      }
+
+      existingTimestamps.add(newTimestamp);
+      convertedDrinks[newTimestamp] = drinksAtTimestamp;
+    });
+
+    convertedSession.drinks = convertedDrinks;
+  }
+
+  return convertedSession;
+}
+
+/**
+ * Change all timestamps in a session so that its start time corresponds to a new date.
+ *
+ * @param session The session to modify
+ * @param newDate The new date to modify the session's timestamps to
+ * @returns The modified session
+ */
+function shiftSessionDate(
+  session: DrinkingSession,
+  newDate: Date,
+): DrinkingSession {
+  const currentDate = new Date(session.start_time);
+  const daysDelta = differenceInDays(currentDate, newDate);
+  const millisecondsToSub = daysDelta * 24 * 60 * 60 * 1000;
+  const modifiedSession = shiftSessionTimestamps(session, millisecondsToSub);
+  return modifiedSession;
+}
+
 async function fixTimezoneSessions(
   db: Database,
   userID: UserID | undefined,
@@ -279,6 +343,8 @@ const DSUtils = {
   isEmptySession,
   sessionIsExpired,
   fixTimezoneSessions,
+  shiftSessionTimestamps,
+  shiftSessionDate,
 };
 
 export default DSUtils;
