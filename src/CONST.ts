@@ -255,6 +255,7 @@ const CONST = {
   FORM_CHARACTER_LIMIT: 50,
   LEGAL_NAMES_CHARACTER_LIMIT: 150,
   LOGIN_CHARACTER_LIMIT: 254,
+  SESSION_NOTE_CHARACTER_LIMIT: 256,
   CATEGORY_NAME_LIMIT: 256,
   TAG_NAME_LIMIT: 256,
   TITLE_CHARACTER_LIMIT: 100,
@@ -527,7 +528,6 @@ const CONST = {
   MAX_64BIT_MIDDLE_PART: 7203685,
   MAX_64BIT_RIGHT_PART: 4775807,
 
-  // Max email length
   EMAIL_MAX_LENGTH: 254,
 
   // When generating a random value to fit in 7 digits (for the `middle` or `right` parts above), this is the maximum value to multiply by Math.random().

@@ -443,6 +443,13 @@ export default {
       generic: 'Failed to modify the session date.',
     },
   },
+  sessionNoteScreen: {
+    error: {
+      load: 'Failed to fetch details of this session.',
+      generic: 'Failed to modify the session note.',
+      noteTooLongError: 'Your note is too long.',
+    },
+  },
   maintenance: {
     heading: 'Under Maintenance',
     text: 'We are currently under maintenance for the following time frame:',

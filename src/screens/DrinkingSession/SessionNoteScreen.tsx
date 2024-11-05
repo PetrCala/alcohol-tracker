@@ -1,6 +1,5 @@
 import {endOfToday, format} from 'date-fns';
 import React, {useCallback, useEffect, useState} from 'react';
-import DatePicker from '@components/DatePicker';
 import FormProvider from '@components/Form/FormProvider';
 import InputWrapper from '@components/Form/InputWrapper';
 import type {FormOnyxValues} from '@components/Form/types';
@@ -11,9 +10,9 @@ import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Navigation from '@libs/Navigation/Navigation';
 import * as ValidationUtils from '@libs/ValidationUtils';
-import CONST from '@src/CONST';
+import * as ErrorUtils from '@libs/ErrorUtils';
 import ONYXKEYS from '@src/ONYXKEYS';
-import INPUT_IDS from '@src/types/form/SessionDateForm';
+import INPUT_IDS from '@src/types/form/SessionNoteForm';
 import type {DrinkingSession} from '@src/types/onyx';
 import {Alert} from 'react-native';
 import {StackScreenProps} from '@react-navigation/stack';
@@ -22,13 +21,14 @@ import SCREENS from '@src/SCREENS';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {readDataOnce} from '@database/baseFunctions';
 import DBPATHS from '@database/DBPATHS';
+import TextInput from '@components/TextInput';
 
-type SessionDateScreenProps = StackScreenProps<
+type SessionNoteScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
-  typeof SCREENS.DRINKING_SESSION.SESSION_DATE_SCREEN
+  typeof SCREENS.DRINKING_SESSION.SESSION_NOTE_SCREEN
 >;
 
-function SesssionDateScreen({route}: SessionDateScreenProps) {
+function SesssionNoteScreen({route}: SessionNoteScreenProps) {
   const {sessionId} = route.params;
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
@@ -38,16 +38,16 @@ function SesssionDateScreen({route}: SessionDateScreenProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit = async (
-    values: FormOnyxValues<typeof ONYXKEYS.FORMS.SESSION_DATE_FORM>,
+    values: FormOnyxValues<typeof ONYXKEYS.FORMS.SESSION_NOTE_FORM>,
   ) => {
-    const newDate = values.date;
+    const newNote = values.note;
 
     try {
       setIsLoading(true);
-      console.log('Updating the session date to', newDate);
+      console.log('Updating the session note to', newNote);
       Navigation.goBack();
     } catch (error: any) {
-      Alert.alert(translate('sessionDateScreen.error.generic'), error.message);
+      Alert.alert(translate('sessionNoteScreen.error.generic'), error.message);
     } finally {
       setIsLoading(false);
     }
@@ -57,12 +57,16 @@ function SesssionDateScreen({route}: SessionDateScreenProps) {
    * @returns An object containing the errors for each inputID
    */
   const validate = useCallback(
-    (values: FormOnyxValues<typeof ONYXKEYS.FORMS.SESSION_DATE_FORM>) => {
-      const requiredFields = ['date' as const];
-      const errors = ValidationUtils.getFieldRequiredErrors(
-        values,
-        requiredFields,
-      );
+    (values: FormOnyxValues<typeof ONYXKEYS.FORMS.SESSION_NOTE_FORM>) => {
+      const errors = {};
+
+      if (!ValidationUtils.isValidSessionNote(values.note)) {
+        ErrorUtils.addErrorMessage(
+          errors,
+          'sessionNoteScreen',
+          translate('sessionNoteScreen.error.noteTooLongError'),
+        );
+      }
 
       return errors;
     },
@@ -71,7 +75,7 @@ function SesssionDateScreen({route}: SessionDateScreenProps) {
 
   const fetchSession = async () => {
     if (!user) {
-      throw new Error(translate('sessionDateScreen.error.load'));
+      throw new Error(translate('sessionNoteScreen.error.load'));
     }
     setIsLoading(true);
     let session: DrinkingSession | null = await readDataOnce(
@@ -93,7 +97,7 @@ function SesssionDateScreen({route}: SessionDateScreenProps) {
   return (
     <ScreenWrapper
       includeSafeAreaPaddingBottom={false}
-      testID={SesssionDateScreen.displayName}>
+      testID={SesssionNoteScreen.displayName}>
       <HeaderWithBackButton
         title={translate('common.dob')}
         onBackButtonPress={() => Navigation.goBack()}
@@ -103,19 +107,15 @@ function SesssionDateScreen({route}: SessionDateScreenProps) {
       ) : (
         <FormProvider
           style={[styles.flexGrow1, styles.ph5]}
-          formID={ONYXKEYS.FORMS.SESSION_DATE_FORM}
+          formID={ONYXKEYS.FORMS.SESSION_NOTE_FORM}
           validate={validate}
           onSubmit={onSubmit}
           submitButtonText={translate('common.save')}>
           <InputWrapper
-            InputComponent={DatePicker}
-            inputID={INPUT_IDS.DATE}
-            label={translate('common.date')}
-            defaultValue={format(
-              session?.start_time ?? new Date(), // TODO modify this
-              CONST.DATE.SHORT_DATE_FORMAT,
-            )}
-            maxDate={endOfToday()}
+            InputComponent={TextInput}
+            inputID={INPUT_IDS.NOTE}
+            label={translate('liveSessionScreen.note')}
+            defaultValue={session?.note ?? ''}
           />
         </FormProvider>
       )}
@@ -123,5 +123,5 @@ function SesssionDateScreen({route}: SessionDateScreenProps) {
   );
 }
 
-SesssionDateScreen.displayName = 'SesssionDateScreen';
-export default SesssionDateScreen;
+SesssionNoteScreen.displayName = 'SesssionNoteScreen';
+export default SesssionNoteScreen;

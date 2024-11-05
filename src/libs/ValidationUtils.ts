@@ -246,6 +246,10 @@ function isValidWebsite(url: string): boolean {
   );
 }
 
+function isValidSessionNote(note: string): boolean {
+  return note.length <= CONST.SESSION_NAME_CHARACTER_LIMIT;
+}
+
 function isValidValidateCode(validateCode: string): boolean {
   return Boolean(validateCode.match(CONST.VALIDATE_CODE_REGEX_STRING));
 }
@@ -415,6 +419,7 @@ export {
   isValidWebsite,
   isValidTwoFactorCode,
   //   isNumericWithSpecialChars,
+  isValidSessionNote,
   isValidRoutingNumber,
   isValidValidateCode,
   isValidDisplayName,
