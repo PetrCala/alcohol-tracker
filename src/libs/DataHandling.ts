@@ -428,6 +428,28 @@ export function sumDrinkTypes(drinkTypes: Drinks): number {
   );
 }
 
+/** Get an array of unique keys that appear in a session */
+export function getUniqueDrinkTypesInSession(
+  session: DrinkingSession,
+): Array<DrinkKey> | undefined {
+  const sessionDrinks = session?.drinks;
+  if (!sessionDrinks) {
+    return undefined;
+  }
+  const uniqueKeys = new Set<DrinkKey>();
+
+  // Iterate over each Drinks entry in the DrinksList
+  for (const drinks of Object.values(sessionDrinks)) {
+    // Iterate over each DrinkKey in the current Drinks object
+    for (const key of Object.keys(drinks) as DrinkKey[]) {
+      uniqueKeys.add(key);
+    }
+  }
+
+  // Convert the Set to an array before returning
+  return Array.from(uniqueKeys);
+}
+
 /** Type guard to check if a given key is a valid DrinkType key */
 export function isDrinkTypeKey(key: string): key is keyof Drinks {
   return _.includes(Object.values(CONST.DRINKS.KEYS), key);

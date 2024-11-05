@@ -1,22 +1,25 @@
 ﻿import React, {useState, useRef, useMemo} from 'react';
-import {Keyboard, TextInput, TouchableOpacity, View} from 'react-native';
+import {
+  Keyboard,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {
   addDrinks,
   removeDrinks,
   sumDrinksOfSingleType,
 } from '@libs/DataHandling';
 import type {DrinkKey, Drinks, DrinksList} from '@src/types/onyx';
+import useThemeStyles from '@hooks/useThemeStyles';
+import useTheme from '@hooks/useTheme';
 
 type SessionDrinksInputWindowProps = {
   drinkKey: DrinkKey;
   currentDrinks: DrinksList | undefined;
   setCurrentDrinks: (newDrinks: DrinksList | undefined) => void;
   availableUnits: number;
-  styles: {
-    drinksInputContainer: {};
-    drinksInputButton: {};
-    drinksInputText: {};
-  };
 };
 
 const SessionDrinksInputWindow = ({
@@ -24,8 +27,9 @@ const SessionDrinksInputWindow = ({
   currentDrinks,
   setCurrentDrinks,
   availableUnits,
-  styles,
 }: SessionDrinksInputWindowProps) => {
+  const styles = useThemeStyles();
+  const theme = useTheme();
   const [inputValue, setInputValue] = useState<string>(
     sumDrinksOfSingleType(currentDrinks, drinkKey).toString(),
   );
@@ -83,7 +87,9 @@ const SessionDrinksInputWindow = ({
     }
     const typeSum = parseFloat(inputValue);
 
-    if (numericValue == typeSum) {return;} // Do nothing if the value is the same
+    if (numericValue == typeSum) {
+      return;
+    } // Do nothing if the value is the same
     // Determine whether the new value is higher or lower than the current one
     let newDrinks: DrinksList | undefined = {...currentDrinks};
     if (numericValue > typeSum) {
@@ -115,14 +121,24 @@ const SessionDrinksInputWindow = ({
   }, [currentDrinks, drinkKey]);
 
   return (
-    <View style={styles.drinksInputContainer}>
-      <TouchableOpacity accessibilityRole="button"
+    <View style={localStyles.drinksInputContainer}>
+      <TouchableOpacity
+        accessibilityRole="button"
         activeOpacity={1}
         onPress={handleContainerPress}
-        style={styles.drinksInputButton}>
-        <TextInput accessibilityLabel="Text input field"
+        style={[
+          localStyles.drinksInputButton,
+          {
+            backgroundColor:
+              sumDrinksOfSingleType(currentDrinks, drinkKey) > 0
+                ? theme.appColor
+                : theme.cardBG,
+          },
+        ]}>
+        <TextInput
+          accessibilityLabel="Text input field"
           ref={inputRef}
-          style={styles.drinksInputText}
+          style={[styles.textLarge, styles.textStrong]}
           value={inputValue}
           onKeyPress={handleKeyPress}
           keyboardType="numeric"
@@ -137,3 +153,17 @@ const SessionDrinksInputWindow = ({
 };
 
 export default SessionDrinksInputWindow;
+
+const localStyles = StyleSheet.create({
+  drinksInputContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  drinksInputButton: {
+    width: 43,
+    height: 43,
+    borderRadius: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});

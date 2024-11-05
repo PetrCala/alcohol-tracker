@@ -8,7 +8,6 @@ import {
   StyleSheet,
   Alert,
   Dimensions,
-  ActivityIndicator,
 } from 'react-native';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import MenuIcon from '../../components/Buttons/MenuIcon';
@@ -50,6 +49,7 @@ import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Icon from '@components/Icon';
 import useTheme from '@hooks/useTheme';
+import commonStyles from '@src/styles/commonStyles';
 
 type DayOverviewScreenProps = StackScreenProps<
   DayOverviewNavigatorParamList,
@@ -325,7 +325,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
           ListFooterComponentStyle={localStyles.addSessionButtonContainer}
         />
       </View>
-      <View style={localStyles.dayOverviewFooter}>
+      <View style={commonStyles.mainFooter}>
         <MenuIcon
           iconId="navigate-day-back"
           iconSource={KirokuIcons.ArrowBack}
@@ -408,7 +408,6 @@ const localStyles = StyleSheet.create({
     bottom: 0,
     backgroundColor: '#FFFF99',
     shadowColor: '#000',
-    borderWidth: 1,
     shadowOffset: {
       width: 0,
       height: -2,
@@ -443,25 +442,20 @@ const localStyles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: screenWidth / 2,
-    backgroundColor: 'white',
-    borderLeftWidth: 1,
-    borderRightWidth: 1,
-    borderColor: 'grey',
     height: 50,
   },
   dayArrowIcon: {
     width: 25,
     height: 25,
     tintColor: 'black',
+    marginHorizontal: 20,
   },
   previousDayArrow: {
     alignSelf: 'flex-start',
-    marginLeft: 15,
   },
   nextDayArrow: {
     transform: [{rotate: '180deg'}],
     alignSelf: 'flex-end',
-    marginRight: 15,
   },
   ongoingSessionContainer: {
     width: 100,

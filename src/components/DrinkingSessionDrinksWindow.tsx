@@ -9,9 +9,9 @@ import {
   sumDrinksOfSingleType,
 } from '@libs/DataHandling';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
-import CONST from '@src/CONST';
 import type {DrinkKey, Drinks, DrinksList} from '@src/types/onyx';
 import Icon from './Icon';
+import CONST from '@src/CONST';
 
 type DrinkingSessionDrinksWindowProps = {
   drinkKey: DrinkKey;
@@ -52,18 +52,12 @@ const DrinkingSessionDrinksWindow = ({
   };
 
   const drinkName = findDrinkName(drinkKey);
+  const iconSize = drinkKey === CONST.DRINKS.KEYS.SMALL_BEER ? 22 : 28;
 
   return (
     <View style={styles.sessionDrinkContainer}>
       <View style={styles.iconContainer}>
-        <Image
-          source={iconSource}
-          style={
-            drinkKey === CONST.DRINKS.KEYS.SMALL_BEER
-              ? styles.smallIconStyle
-              : styles.normalIconStyle
-          }
-        />
+        <Icon src={iconSource} height={iconSize} width={iconSize} />
       </View>
       <Text style={styles.drinkInfoText}>{drinkName}</Text>
       <TouchableOpacity
@@ -77,7 +71,6 @@ const DrinkingSessionDrinksWindow = ({
         currentDrinks={currentDrinks}
         setCurrentDrinks={setCurrentDrinks}
         availableUnits={availableUnits}
-        styles={styles}
       />
       <TouchableOpacity
         accessibilityRole="button"
@@ -91,12 +84,10 @@ const DrinkingSessionDrinksWindow = ({
 
 const styles = StyleSheet.create({
   sessionDrinkContainer: {
-    borderBottomWidth: 0,
     paddingTop: 4,
     paddingBottom: 4,
     marginLeft: 12,
     marginRight: 12,
-    borderColor: 'gray',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
@@ -109,14 +100,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  normalIconStyle: {
-    width: '100%',
-    height: '100%',
-  },
-  smallIconStyle: {
-    width: '75%',
-    height: '75%',
-  },
   drinkInfoText: {
     flexGrow: 1,
     fontSize: 14,
@@ -124,28 +107,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     alignSelf: 'center',
     marginLeft: 5,
-  },
-  drinksInputContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  drinksInputButton: {
-    width: 43,
-    height: 43,
-    borderRadius: 5,
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderColor: 'gray',
-    backgroundColor: 'white',
-  },
-  drinksInputText: {
-    width: 43,
-    height: 43,
-    fontSize: 17,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: '#212421',
   },
   adjustDrinksButton: {
     width: 50,

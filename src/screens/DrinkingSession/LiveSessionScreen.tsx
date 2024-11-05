@@ -22,14 +22,21 @@ import {
 import {
   addDrinks,
   formatDateToTime,
+  getUniqueDrinkTypesInSession,
   removeDrinks,
+  sumAllDrinks,
   sumAllUnits,
   sumDrinksOfSingleType,
   timestampToDate,
   timestampToDateString,
   unitsToColors,
 } from '@libs/DataHandling';
-import type {DrinkingSession, DrinksList, Drinks} from '@src/types/onyx';
+import type {
+  DrinkingSession,
+  DrinksList,
+  Drinks,
+  DrinkKey,
+} from '@src/types/onyx';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import UserOffline from '@components/UserOfflineModal';
 import DrinkTypesView from '@components/DrinkTypesView';
@@ -61,8 +68,10 @@ import Button from '@components/Button';
 import ConfirmModal from '@components/ConfirmModal';
 import useWindowDimensions from '@hooks/useWindowDimensions';
 import {useFocusEffect} from '@react-navigation/native';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import ScrollView from '@components/ScrollView';
 import Log from '@libs/Log';
+import Icon from '@components/Icon';
 
 type LiveSessionScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -155,16 +164,31 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     if (!session) {
       return;
     }
-    if (sumDrinksOfSingleType(session.drinks, CONST.DRINKS.KEYS.OTHER) > 0) {
+    const otherUnitsLeft = sumDrinksOfSingleType(
+      session.drinks,
+      CONST.DRINKS.KEYS.OTHER,
+    );
+    let keyToRemove: DrinkKey | null = null;
+    if (otherUnitsLeft > 0) {
+      // Try to remove a drink from 'others' first
+      keyToRemove = CONST.DRINKS.KEYS.OTHER;
+    } else if (sumAllDrinks(session.drinks) > 0) {
+      // In case there are no other drinks, remove one at random
+      const drinkKeysLeft = getUniqueDrinkTypesInSession(session);
+      if (!drinkKeysLeft) {
+        return;
+      }
+      keyToRemove =
+        drinkKeysLeft[Math.floor(Math.random() * drinkKeysLeft.length)];
+    }
+    if (keyToRemove) {
       const newDrinks: DrinksList | undefined = removeDrinks(
         session.drinks,
-        'other',
+        keyToRemove,
         1,
       );
       setSession({...session, drinks: newDrinks});
     }
-    // Here, as else, maybe send an alert that there are other types of
-    // drinks logged
   };
 
   const handleBlackoutChange = (value: boolean) => {
@@ -502,7 +526,12 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
               accessibilityRole="button"
               style={[localStyles.modifyUnitsButton, {backgroundColor: 'red'}]}
               onPress={() => handleMonkeMinus()}>
-              <Text style={localStyles.modifyUnitsText}>-</Text>
+              <Icon
+                src={KirokuIcons.Minus}
+                height={60}
+                width={40}
+                fill={theme.textLight}
+              />
             </TouchableOpacity>
             <TouchableOpacity
               accessibilityRole="button"
@@ -511,7 +540,12 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
                 {backgroundColor: 'green'},
               ]}
               onPress={() => handleMonkePlus()}>
-              <Text style={localStyles.modifyUnitsText}>+</Text>
+              <Icon
+                src={KirokuIcons.Plus}
+                height={40}
+                width={40}
+                fill={theme.textLight}
+              />
             </TouchableOpacity>
           </View>
         ) : (
@@ -688,12 +722,6 @@ const localStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 50,
-  },
-  modifyUnitsText: {
-    fontSize: 60,
-    fontWeight: 'bold',
-    color: 'white',
-    textAlign: 'center',
   },
   sessionDetailsContainer: {
     alignItems: 'center',
