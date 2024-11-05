@@ -62,6 +62,7 @@ import {format} from 'date-fns';
 import useTheme from '@hooks/useTheme';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Button from '@components/Button';
+import ConfirmModal from '@components/ConfirmModal';
 
 type LiveSessionScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -131,7 +132,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       );
       setDbSyncSuccessful(true);
     } catch (error: any) {
-      throw new Error(translate('LiveSessionScreen.error.save'));
+      throw new Error(translate('liveSessionScreen.error.save'));
     }
   };
 
@@ -241,44 +242,46 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       return;
     }
     if (totalUnits > CONST.MAX_ALLOWED_UNITS) {
-      console.log(translate('LiveSessionScreen.error.save'));
+      console.log(translate('liveSessionScreen.error.save'));
       return null;
     }
-    if (totalUnits > 0) {
-      try {
-        setLoadingText(translate('LiveSessionScreen.saving'));
-        setSessionFinished(true); // No more db syncs
-        const newSessionData: DrinkingSession = {
-          ...session,
-          end_time: sessionIsLive ? Date.now() : session.start_time,
-        };
-        delete newSessionData.ongoing;
-        // Wait for any pending updates to resolve first
-        while (isPending) {
-          await new Promise(resolve => setTimeout(resolve, 100));
-        }
-        if (sessionIsLive) {
-          await endLiveDrinkingSession(db, userID, newSessionData, sessionId);
-        } else {
-          await saveDrinkingSessionData(
-            db,
-            userID,
-            newSessionData,
-            sessionId,
-            false, // Do not update live status
-          );
-        }
-        await removePlaceholderSessionData(db, userID);
-      } catch (error: any) {
-        Alert.alert(
-          translate('LiveSessionScreen.error.saveTitle'),
-          translate('LiveSessionScreen.error.save'),
-        );
-      } finally {
-        // Reroute to session summary, do not allow user to return
-        navigateBackDynamically(CONST.NAVIGATION.SESSION_ACTION.SAVE);
-        setLoadingText('');
+    if (totalUnits <= 0) {
+      // TODO inform the user why the they can not save their session - 0 units
+      return;
+    }
+    try {
+      setLoadingText(translate('liveSessionScreen.saving'));
+      setSessionFinished(true); // No more db syncs
+      const newSessionData: DrinkingSession = {
+        ...session,
+        end_time: sessionIsLive ? Date.now() : session.start_time,
+      };
+      delete newSessionData.ongoing;
+      // Wait for any pending updates to resolve first
+      while (isPending) {
+        await new Promise(resolve => setTimeout(resolve, 100));
       }
+      if (sessionIsLive) {
+        await endLiveDrinkingSession(db, userID, newSessionData, sessionId);
+      } else {
+        await saveDrinkingSessionData(
+          db,
+          userID,
+          newSessionData,
+          sessionId,
+          false, // Do not update live status
+        );
+      }
+      await removePlaceholderSessionData(db, userID);
+    } catch (error: any) {
+      Alert.alert(
+        translate('liveSessionScreen.error.saveTitle'),
+        translate('liveSessionScreen.error.save'),
+      );
+    } finally {
+      // Reroute to session summary, do not allow user to return
+      navigateBackDynamically(CONST.NAVIGATION.SESSION_ACTION.SAVE);
+      setLoadingText('');
     }
   }
 
@@ -560,20 +563,27 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
           onPress={() => saveSession(db, user.uid)}
         />
       </View>
-      <YesNoPopup
-        visible={discardModalVisible}
-        transparent={true}
-        onRequestClose={() => setDiscardModalVisible(false)}
-        message={`Do you really want to\n${deleteSessionWording.toLowerCase()} this session?`}
-        onYes={handleConfirmDiscard}
+      <ConfirmModal
+        title={translate('common.warning')}
+        onConfirm={handleConfirmDiscard}
+        onCancel={() => setDiscardModalVisible(false)}
+        isVisible={discardModalVisible}
+        prompt={translate(
+          'liveSessionScreen.discardSessionWarning',
+          deleteSessionWording.toLowerCase(),
+        )}
+        confirmText={translate('common.yes')}
+        cancelText={translate('common.no')}
+        shouldDisableConfirmButtonWhenOffline
+        shouldShowCancelButton
       />
-      <YesNoPopup
+      {/* <YesNoPopup
         visible={showLeaveConfirmation}
         transparent={true}
         onRequestClose={() => setShowLeaveConfirmation(false)}
         message="You have unsaved changes. Are you sure you want to go back?"
         onYes={() => confirmGoBack()} // No changes to the session object
-      />
+      /> */}
     </ScreenWrapper>
   );
 }

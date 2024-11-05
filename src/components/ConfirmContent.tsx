@@ -207,7 +207,7 @@ function ConfirmContent({
             <Button
               success={success}
               danger={danger}
-              style={shouldReverseStackedButtons ? styles.mt3 : styles.mt4}
+              style={shouldReverseStackedButtons ? styles.mt1 : styles.mt2}
               onPress={onConfirm}
               pressOnEnter
               large

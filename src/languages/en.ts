@@ -5,9 +5,6 @@ import type {
   TranslationBase,
   UntilTimeParams,
 } from './types';
-import LiveSessionScreen from '@screens/DrinkingSession/LiveSessionScreen';
-import FriendSearchScreen from '@screens/Social/FriendSearchScreen';
-import {title} from 'process';
 import Platform from '@libs/getPlatform/types';
 
 type AllCountries = Record<Country, string>;
@@ -82,6 +79,7 @@ export default {
     close: 'Close',
     download: 'Download',
     downloading: 'Downloading',
+    warning: 'Warning',
     pin: 'Pin',
     unPin: 'Unpin',
     back: 'Back',
@@ -424,8 +422,13 @@ export default {
   achievementsScreen: {
     title: 'Achievements',
   },
-  LiveSessionScreen: {
+  liveSessionScreen: {
     saving: 'Saving your session...',
+    // discardSessionWarning: {`Do you really want to\n${deleteSessionWording.toLowerCase()} this session?`}
+    // characterLimit: ({limit}: CharacterLimitParams) =>
+    // `Exceeds the maximum length of ${limit} characters`,
+    discardSessionWarning: (discardWord: string) =>
+      `Do you really want to ${discardWord} this session?`,
     error: {
       saveTitle: 'Session save failed',
       save: 'This session could not be saved. Try again.',
