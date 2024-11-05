@@ -235,24 +235,6 @@ function getDatePassedError(inputDate: string): string {
 }
 
 /**
- * Validate that given date is not in the future.
- */
-function getFutureDateError(inputDate: string): string {
-  const parsedDate = new Date(`${inputDate}T00:00:00`); // set time to 00:00:00 for accurate comparison
-
-  // If input date is not valid, return an error
-  if (!isValid(parsedDate)) {
-    return 'common.error.dateInvalid';
-  }
-
-  if (parsedDate > startOfTomorrow()) {
-    return 'common.error.dateInvalid';
-  }
-
-  return '';
-}
-
-/**
  * Similar to backend, checks whether a website has a valid URL or not.
  * http/https/ftp URL scheme required.
  */
