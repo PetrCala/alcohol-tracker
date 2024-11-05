@@ -102,7 +102,8 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     useState<boolean>(false);
   const [openingSession, setOpeningSession] = useState<boolean>(true);
   const [loadingText, setLoadingText] = useState<string>('');
-  const [showLeaveConfirmation, setShowLeaveConfirmation] = useState(false);
+  const [shouldShowLeaveConfirmation, setShouldShowLeaveConfirmation] =
+    useState(false);
   const [isPlaceholderSession, setIsPlaceholderSession] =
     useState<boolean>(false);
   const sessionIsLive = session?.ongoing ? true : false;
@@ -325,7 +326,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       return;
     }
     if (!sessionIsLive && hasSessionChanged()) {
-      setShowLeaveConfirmation(true); // Unsaved changes
+      setShouldShowLeaveConfirmation(true); // Unsaved changes
       return;
     }
     if (sessionIsLive) {
@@ -353,7 +354,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     } catch (error: any) {
       console.log('Could not remove placeholder session data', error.message); // Unimportant
     } finally {
-      setShowLeaveConfirmation(false);
+      setShouldShowLeaveConfirmation(false);
       Navigation.goBack();
     }
   };
@@ -577,13 +578,16 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
         shouldDisableConfirmButtonWhenOffline
         shouldShowCancelButton
       />
-      {/* <YesNoPopup
-        visible={showLeaveConfirmation}
-        transparent={true}
-        onRequestClose={() => setShowLeaveConfirmation(false)}
-        message="You have unsaved changes. Are you sure you want to go back?"
-        onYes={() => confirmGoBack()} // No changes to the session object
-      /> */}
+      <ConfirmModal
+        title={translate('common.warning')}
+        onConfirm={() => confirmGoBack()} // No changes to the session object
+        onCancel={() => setShouldShowLeaveConfirmation(false)}
+        isVisible={shouldShowLeaveConfirmation}
+        prompt={translate('liveSessionScreen.unsavedChangesWarning')}
+        confirmText={translate('common.yes')}
+        cancelText={translate('common.no')}
+        shouldShowCancelButton
+      />
     </ScreenWrapper>
   );
 }

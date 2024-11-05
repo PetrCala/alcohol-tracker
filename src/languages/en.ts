@@ -424,11 +424,11 @@ export default {
   },
   liveSessionScreen: {
     saving: 'Saving your session...',
-    // discardSessionWarning: {`Do you really want to\n${deleteSessionWording.toLowerCase()} this session?`}
-    // characterLimit: ({limit}: CharacterLimitParams) =>
     // `Exceeds the maximum length of ${limit} characters`,
     discardSessionWarning: (discardWord: string) =>
       `Do you really want to ${discardWord} this session?`,
+    unsavedChangesWarning:
+      'You have unsaved changes. Are you sure you want to go back?',
     error: {
       saveTitle: 'Session save failed',
       save: 'This session could not be saved. Try again.',
