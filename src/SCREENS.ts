@@ -46,6 +46,7 @@ const SCREENS = {
   DRINKING_SESSION: {
     ROOT: 'DrinkingSession_Root',
     LIVE: 'DrinkingSession_Live',
+    SESSION_DATE_SCREEN: 'DrinkingSession_SessionDateScreen',
     SUMMARY: 'DrinkingSession_Summary',
   },
 
