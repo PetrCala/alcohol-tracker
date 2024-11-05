@@ -77,6 +77,7 @@ export default {
     download: 'Download',
     downloading: 'Downloading',
     warning: 'Warning',
+    manage: 'Manage',
     pin: 'Pin',
     unPin: 'Unpin',
     back: 'Back',

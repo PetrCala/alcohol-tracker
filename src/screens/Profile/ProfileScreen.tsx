@@ -45,6 +45,7 @@ import useLocalize from '@hooks/useLocalize';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import useThemeStyles from '@hooks/useThemeStyles';
 import FillerView from '@components/FillerView';
+import Button from '@components/Button';
 
 type State = {
   selfFriends: UserList | undefined;
@@ -192,6 +193,7 @@ function ProfileScreen({route}: ProfileScreenProps) {
   if (!profileData || !preferences || !userData) {
     return;
   }
+  console.log(state.manageFriendModalVisible);
 
   return (
     <ScreenWrapper testID={ProfileScreen.displayName}>
@@ -268,26 +270,28 @@ function ProfileScreen({route}: ProfileScreenProps) {
           }}
         />
         <View style={localStyles.bottomContainer}>
-          {user?.uid !== userID ? (
-            <TouchableOpacity
-              accessibilityRole="button"
-              style={localStyles.manageFriendButton}
+          {user?.uid !== userID && (
+            <Button
+              text={translate('common.manage')}
+              style={styles.m2}
               onPress={() =>
                 dispatch({
                   type: 'SET_MANAGE_FRIEND_MODAL_VISIBLE',
                   payload: true,
                 })
-              }>
-              <Text style={localStyles.manageFriendButtonText}>Manage</Text>
-            </TouchableOpacity>
-          ) : null}
+              }
+            />
+          )}
         </View>
         <FillerView />
       </ScrollView>
       <ManageFriendPopup
         visible={state.manageFriendModalVisible}
         setVisibility={(visible: boolean) =>
-          dispatch({type: 'SET_MANAGE_FRIEND_MODAL_VISIBLE', payload: visible})
+          dispatch({
+            type: 'SET_MANAGE_FRIEND_MODAL_VISIBLE',
+            payload: visible,
+          })
         }
         onGoBack={() => Navigation.goBack()}
         friendId={userID}

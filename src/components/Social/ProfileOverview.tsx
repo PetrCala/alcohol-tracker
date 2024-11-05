@@ -36,6 +36,7 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
   const {auth, storage} = useFirebase();
   const StyleUtils = useStyleUtils();
   const styles = useThemeStyles();
+  const theme = useThemeStyles();
   const user = auth.currentUser;
   const [layout, setLayout] = useState<ImageLayout>({
     x: 0,
@@ -76,11 +77,14 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
         onLayout={onLayout}
       />
       {user?.uid === userID ? (
-        <View style={localStyles.editProfileIconButton}>
+        <View style={[localStyles.editProfileIconButton, styles.appBG]}>
           <UploadImageComponent
             pathToUpload={`users/${userID}/profile/profile_image.jpg`}
             imageSource={KirokuIcons.Camera}
-            imageStyle={localStyles.editProfileIconButtonImage}
+            imageStyle={[
+              localStyles.editProfileIconButtonImage,
+              {tintColor: StyleUtils.getIconFillColor()},
+            ]}
             isProfilePicture={true}
           />
         </View>
@@ -141,13 +145,12 @@ const localStyles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: profileImageSize / 3,
     borderColor: 'black',
-    borderWidth: 2,
+    borderWidth: 1,
     zIndex: 2,
   },
   editProfileIconButtonImage: {
     height: profileImageSize / 6,
     width: profileImageSize / 6,
-    tintColor: 'gray',
     zIndex: 3, // Always pressable
   },
   userInfoContainer: {

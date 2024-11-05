@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, Dimensions, Alert} from 'react-native';
+import {StyleSheet, Dimensions, Alert, View} from 'react-native';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import YesNoPopup from '../YesNoPopup';
 
@@ -7,6 +7,9 @@ import {unfriend} from '@database/friends';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import ItemListPopup from '../ItemListPopup';
 import CONST from '@src/CONST';
+import ConfirmModal from '@components/ConfirmModal';
+import useLocalize from '@hooks/useLocalize';
+import useThemeStyles from '@hooks/useThemeStyles';
 
 export type ManageFriendPopupProps = {
   visible: boolean;
@@ -25,6 +28,8 @@ const ManageFriendPopup: React.FC<ManageFriendPopupProps> = ({
 }) => {
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
+  const styles = useThemeStyles();
+  const {translate} = useLocalize();
   const [unfriendModalVisible, setUnfriendModalVisible] = React.useState(false);
 
   const manageFriendData = [
@@ -39,7 +44,9 @@ const ManageFriendPopup: React.FC<ManageFriendPopupProps> = ({
   ];
 
   const handleUnfriend = async () => {
-    if (!user) {return;}
+    if (!user) {
+      return;
+    }
     try {
       await unfriend(db, user.uid, friendId);
     } catch (error: any) {
@@ -55,28 +62,27 @@ const ManageFriendPopup: React.FC<ManageFriendPopupProps> = ({
   };
 
   return (
-    <>
+    <View style={styles.fullScreenCenteredContent}>
       <ItemListPopup
         visible={visible}
         transparent={true}
         heading={'Manage Friend'}
         actions={manageFriendData}
         onRequestClose={() => {
-          setUnfriendModalVisible(false); // Extra safety
           setVisibility(false);
         }}
       />
-      <YesNoPopup
-        visible={unfriendModalVisible}
-        transparent={true}
-        message={'Do you really want to\nunfriend this user?'}
-        onRequestClose={() => {
-          setVisibility(true);
+      <ConfirmModal
+        isVisible={unfriendModalVisible}
+        title={translate('common.areYouSure')}
+        prompt={'Do you really want to unfriend this user?'}
+        onCancel={() => {
           setUnfriendModalVisible(false);
         }}
-        onYes={handleUnfriend}
+        onConfirm={handleUnfriend}
+        danger
       />
-    </>
+    </View>
   );
 };
 
