@@ -127,7 +127,6 @@ const localStyles = StyleSheet.create({
     width: profileImageSize,
     height: profileImageSize,
     borderRadius: profileImageSize / 2,
-    backgroundColor: 'white',
     position: 'absolute',
     top: 0, // Makes layout recognize the position
     zIndex: 1, // Ensure that the profile image is below the edit button
@@ -140,7 +139,6 @@ const localStyles = StyleSheet.create({
     left: screenWidth / 2 + profileImageSize / 2 - profileImageSize / 3,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'white',
     borderRadius: profileImageSize / 3,
     borderColor: 'black',
     borderWidth: 2,

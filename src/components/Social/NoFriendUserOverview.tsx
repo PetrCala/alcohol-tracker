@@ -51,7 +51,6 @@ const styles = StyleSheet.create({
   noFriendUserOverviewContainer: {
     width: '100%',
     flexDirection: 'row',
-    backgroundColor: 'white',
     padding: 5,
   },
   noFriendUserOverviewProfile: {

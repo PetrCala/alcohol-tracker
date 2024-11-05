@@ -235,7 +235,6 @@ const localStyles = StyleSheet.create({
   friendOverviewButton: {
     width: '100%',
     maxHeight: 100,
-    backgroundColor: 'white',
   },
   loadingMoreUsersContainer: {
     width: '100%',
