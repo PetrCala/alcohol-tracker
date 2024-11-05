@@ -437,6 +437,11 @@ export default {
       save: 'This session could not be saved. Try again.',
     },
   },
+  sessionDateScreen: {
+    error: {
+      generic: 'Failed to modify the session date',
+    },
+  },
   maintenance: {
     heading: 'Under Maintenance',
     text: 'We are currently under maintenance for the following time frame:',
