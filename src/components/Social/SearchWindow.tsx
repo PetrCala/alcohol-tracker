@@ -15,6 +15,8 @@ import {useFirebase} from '@src/context/global/FirebaseContext';
 import type {SearchWindowRef} from '@src/types/various/Search';
 import KeyboardFocusHandler from '@components/Keyboard/KeyboardFocusHandler';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
+import Button from '@components/Button';
+import useThemeStyles from '@hooks/useThemeStyles';
 
 type SearchWindowProps = {
   windowText: string;
@@ -29,6 +31,7 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
     {windowText, onSearch, onResetSearch, searchOnTextChange, styles},
     parentRef,
   ) => {
+    const themeStyles = useThemeStyles();
     const db = useFirebase().db;
     const [searchText, setSearchText] = useState<string>('');
     const [searchCount, setSearchCount] = useState<number>(0);
@@ -95,12 +98,11 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
         </View>
         {searchOnTextChange ? null : (
           <View style={localStyles.searchButtonContainer}>
-            <TouchableOpacity
-              accessibilityRole="button"
-              style={localStyles.searchButton}
-              onPress={() => handleDoSearch(searchText, db)}>
-              <Text style={localStyles.searchButtonText}>Search</Text>
-            </TouchableOpacity>
+            <Button
+              onPress={() => handleDoSearch(searchText, db)}
+              text="Search"
+              style={[themeStyles.borderRadiusSmall, themeStyles.buttonSuccess]}
+            />
           </View>
         )}
       </View>
@@ -115,7 +117,6 @@ const localStyles = StyleSheet.create({
     flexDirection: 'row',
     paddingTop: 10,
     padding: 5,
-    backgroundColor: '#ffff99',
   },
   textContainer: {
     width: '80%',
@@ -125,7 +126,7 @@ const localStyles = StyleSheet.create({
     alignSelf: 'center',
     flexDirection: 'row',
     paddingRight: 5,
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: '#000',
     borderRadius: 10,
     backgroundColor: 'white',
@@ -160,22 +161,6 @@ const localStyles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'flex-end',
-  },
-  searchButton: {
-    width: '95%',
-    height: '90%',
-    backgroundColor: '#fcf50f',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: 'black',
-    marginLeft: '5%',
-  },
-  searchButtonText: {
-    color: 'black',
-    fontSize: 16,
-    fontWeight: '500',
   },
 });
 

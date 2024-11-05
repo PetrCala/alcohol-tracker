@@ -439,6 +439,10 @@ const styles = (theme: ThemeColors) =>
       borderRadius: variables.buttonBorderRadius,
     },
 
+    borderRadiusTiny: {borderRadius: variables.borderRadiusTiny},
+
+    borderRadiusSmall: {borderRadius: variables.componentBorderRadiusSmall},
+
     borderTop: {
       borderTopWidth: variables.borderTopWidth,
       borderColor: theme.border,

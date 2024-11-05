@@ -15,7 +15,8 @@ const NoFriendInfo: React.FC<NoFriendInfoProps> = ({message, buttonText}) => {
   return (
     <View style={styles.emptyList}>
       <Text style={styles.emptyListText}>{message ?? defaultMessage}</Text>
-      <TouchableOpacity accessibilityRole="button"
+      <TouchableOpacity
+        accessibilityRole="button"
         onPress={() => Navigation.navigate(ROUTES.SOCIAL_FRIEND_SEARCH)}
         style={styles.navigateToSearchButton}>
         <Text style={styles.navigateToSearchText}>
@@ -45,7 +46,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: 5,
     borderColor: 'black',
-    borderWidth: 2,
+    borderWidth: 1,
     borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',

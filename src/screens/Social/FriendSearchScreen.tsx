@@ -215,11 +215,9 @@ function FriendSearchScreen() {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: '#ffff99',
   },
   scrollViewContainer: {
     flex: 1,
-    backgroundColor: '#ffff99',
   },
   loadingData: {
     marginTop: 20,
@@ -230,10 +228,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: '#000',
     borderRadius: 10,
-    backgroundColor: 'white',
     marginTop: 10,
     marginBottom: 5,
     alignSelf: 'center',
@@ -255,13 +252,6 @@ const styles = StyleSheet.create({
     width: 15,
     height: 15,
     tintColor: 'gray',
-  },
-  searchButtonContainer: {
-    width: '95%',
-    flexDirection: 'column',
-    alignItems: 'center',
-    alignSelf: 'center',
-    marginBottom: 5,
   },
   searchResultsContainer: {
     width: '100%',

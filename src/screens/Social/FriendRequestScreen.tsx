@@ -373,11 +373,9 @@ export default FriendRequestScreen;
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: '#ffff99',
   },
   scrollViewContainer: {
     flex: 1,
-    backgroundColor: '#ffff99',
   },
   loadingData: {
     width: '100%',
@@ -463,7 +461,7 @@ const styles = StyleSheet.create({
     width: 120,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: 'black',
     borderRadius: 10,
   },
@@ -485,12 +483,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 20,
     right: 20,
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: 'black',
     borderRadius: 50,
     width: 70,
     height: 70,
-    backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: 'black',

@@ -105,7 +105,6 @@ function FriendListScreen({}: FriendListScreenProps) {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: '#ffff99',
   },
 });
 

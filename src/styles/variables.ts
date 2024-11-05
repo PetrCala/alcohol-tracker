@@ -37,6 +37,8 @@ export default {
   componentBorderWidth: 8,
   appModalAppIconSize: 48,
   buttonBorderRadius: 100,
+  borderRadiusTiny: 4,
+  borderRadiusSmall: 8,
   avatarSizeLargeBordered: 88,
   avatarSizeXLarge: 100,
   avatarSizeLarge: 80,
