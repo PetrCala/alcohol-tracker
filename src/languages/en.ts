@@ -93,6 +93,7 @@ export default {
     here: 'here',
     date: 'Date',
     dob: 'Date of birth',
+    note: 'Note',
     gender: 'Gender',
     weight: 'Weight',
     currentYear: 'Current year',
@@ -435,15 +436,18 @@ export default {
     error: {
       saveTitle: 'Session save failed',
       save: 'This session could not be saved. Try again.',
+      load: 'Failed to fetch details of this session.',
     },
   },
   sessionDateScreen: {
+    title: 'Session date',
     error: {
       load: 'Failed to fetch details of this session.',
       generic: 'Failed to modify the session date.',
     },
   },
   sessionNoteScreen: {
+    title: 'Session note',
     error: {
       load: 'Failed to fetch details of this session.',
       generic: 'Failed to modify the session note.',

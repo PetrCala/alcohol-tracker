@@ -108,7 +108,7 @@ function SesssionNoteScreen({route}: SessionNoteScreenProps) {
       includeSafeAreaPaddingBottom={false}
       testID={SesssionNoteScreen.displayName}>
       <HeaderWithBackButton
-        title={translate('common.dob')}
+        title={translate('sessionNoteScreen.title')}
         onBackButtonPress={() => Navigation.goBack()}
       />
       {isLoading ? (
@@ -123,7 +123,7 @@ function SesssionNoteScreen({route}: SessionNoteScreenProps) {
           <InputWrapper
             InputComponent={TextInput}
             inputID={INPUT_IDS.NOTE}
-            label={translate('liveSessionScreen.note')}
+            label={translate('common.note')}
             defaultValue={session?.note ?? ''}
           />
         </FormProvider>

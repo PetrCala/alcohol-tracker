@@ -60,6 +60,7 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import Button from '@components/Button';
 import ConfirmModal from '@components/ConfirmModal';
 import useWindowDimensions from '@hooks/useWindowDimensions';
+import {useFocusEffect} from '@react-navigation/native';
 
 type LiveSessionScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -351,10 +352,10 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
 
   const openSession = async () => {
     if (!user) {
-      return;
+      throw new Error(translate('liveSessionScreen.error.load'));
     }
     // Fetch the latest database data and use it to open the session
-    setLoadingText('Opening your session...');
+    setLoadingText('Loading your session...');
     let sessionToOpen: DrinkingSession | null = await readDataOnce(
       db,
       DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID.getRoute(
@@ -384,9 +385,11 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   };
 
   // Prepare the session for the user upon component mount
-  useEffect(() => {
-    openSession();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      openSession();
+    }, []),
+  );
 
   useEffect(() => {
     const newText = monkeMode ? 'Exit Monke Mode' : 'Monke Mode';

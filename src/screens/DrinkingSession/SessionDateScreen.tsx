@@ -95,7 +95,7 @@ function SesssionDateScreen({route}: SessionDateScreenProps) {
       includeSafeAreaPaddingBottom={false}
       testID={SesssionDateScreen.displayName}>
       <HeaderWithBackButton
-        title={translate('common.dob')}
+        title={translate('sessionDateScreen.title')}
         onBackButtonPress={() => Navigation.goBack()}
       />
       {isLoading ? (
