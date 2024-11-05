@@ -1,4 +1,4 @@
-import {format, subYears} from 'date-fns';
+import {endOfToday, format} from 'date-fns';
 import React, {useCallback, useEffect, useState} from 'react';
 import DatePicker from '@components/DatePicker';
 import FormProvider from '@components/Form/FormProvider';
@@ -11,11 +11,10 @@ import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Navigation from '@libs/Navigation/Navigation';
 import * as ValidationUtils from '@libs/ValidationUtils';
-import * as PersonalDetails from '@userActions/PersonalDetails';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
 import INPUT_IDS from '@src/types/form/SessionDateForm';
-import type {DrinkingSession, PrivatePersonalDetails} from '@src/types/onyx';
+import type {DrinkingSession} from '@src/types/onyx';
 import {Alert} from 'react-native';
 import {StackScreenProps} from '@react-navigation/stack';
 import {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
@@ -117,9 +116,7 @@ function SesssionDateScreen({route}: SessionDateScreenProps) {
               session?.start_time ?? new Date(), // TODO modify this
               CONST.DATE.SHORT_DATE_FORMAT,
             )}
-            // defaultValue={privatePersonalDetails?.dob ?? ''}
-            // minDate={subYears(new Date(), CONST.DATE_BIRTH.MAX_AGE)}
-            // maxDate={subYears(new Date(), CONST.DATE_BIRTH.MIN_AGE)}
+            maxDate={endOfToday()}
           />
         </FormProvider>
       )}
