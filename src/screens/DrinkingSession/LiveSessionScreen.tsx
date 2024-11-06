@@ -486,9 +486,9 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
         }
       />
       <ScrollView contentContainerStyle={[styles.w100]}>
-        <View style={localStyles.sessionInfoContainer}>
-          <View style={localStyles.sessionTextContainer}>
-            <Text style={[styles.headerText, styles.textLarge]}>
+        <View style={styles.pt2}>
+          <View style={styles.alignItemsCenter}>
+            <Text style={styles.textHeadlineH2}>
               {session?.ongoing
                 ? `Session from ${sessionStartTime}`
                 : `Session on ${sessionDateString}`}
@@ -619,37 +619,10 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
 }
 
 const localStyles = StyleSheet.create({
-  backArrowContainer: {
-    justifyContent: 'center',
-    alignSelf: 'center',
-    padding: 10,
-  },
-  backArrow: {
-    width: 25,
-    height: 25,
-  },
-  sessionInfoContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  sessionTextContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-    padding: 5,
-    paddingTop: 10,
-  },
-  sessionInfoText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: 'black',
-    alignSelf: 'center',
-    alignContent: 'center',
-  },
   isPendingIndicator: {
     width: 25,
     height: 25,
-    margin: 10,
+    margin: 4,
     position: 'absolute',
     right: 0,
   },

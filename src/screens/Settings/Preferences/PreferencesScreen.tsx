@@ -52,6 +52,7 @@ type MenuData = {
   // shouldShowRightIcon?: boolean;
   // iconRight?: IconAsset;
 };
+
 type Menu = {
   sectionTranslationKey: TranslationPaths;
   subtitle?: string;

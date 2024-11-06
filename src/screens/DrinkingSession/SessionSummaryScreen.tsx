@@ -1,4 +1,4 @@
-﻿import {StyleSheet, Text, View} from 'react-native';
+﻿import {StyleProp, StyleSheet, Text, View, ViewStyle} from 'react-native';
 import MenuIcon from '@components/Buttons/MenuIcon';
 import {
   formatDateToTime,
@@ -11,13 +11,13 @@ import {
 } from '@libs/DataHandling';
 import useLocalize from '@hooks/useLocalize';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
-import type {DrinkingSession} from '@src/types/onyx';
+import type {DrinkingSession, DrinkKey} from '@src/types/onyx';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import type {StackScreenProps} from '@react-navigation/stack';
 import CONST from '@src/CONST';
 import SCREENS from '@src/SCREENS';
 import type {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
-import {useEffect, useState} from 'react';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 import DSUtils from '@libs/DrinkingSessionUtils';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
@@ -27,41 +27,23 @@ import {format} from 'date-fns';
 import Button from '@components/Button';
 import useThemeStyles from '@hooks/useThemeStyles';
 import ScrollView from '@components/ScrollView';
-import useStyleUtils from '@hooks/useStyleUtils';
 import useTheme from '@hooks/useTheme';
+import MenuItem from '@components/MenuItem';
+import Section from '@components/Section';
+import {TranslationPaths} from '@src/languages/types';
+import MenuItemGroup from '@components/MenuItemGroup';
 
-const SessionDataItem = ({
-  heading,
-  data,
-  index,
-  sessionColor,
-}: {
-  heading: string;
-  data: any;
-  index: number;
-  sessionColor?: string; // Optional property for sessionColor
-}) => (
-  <View
-    style={[
-      localStyles.sessionDataContainer,
-      {backgroundColor: index % 2 === 0 ? '#FFFFbd' : 'white'},
-    ]}>
-    <Text style={localStyles.sessionDataHeading}>{heading}</Text>
-    {sessionColor ? (
-      // Render the colored rectangle when sessionColor is present
-      <View
-        style={[
-          localStyles.sessionColorMarker,
-          {backgroundColor: sessionColor},
-        ]}
-      />
-    ) : (
-      // Else render the text
-      <Text style={localStyles.sessionDataText}>{data}</Text>
-    )}
-  </View>
-);
+type MenuData = {
+  title?: string;
+  description?: string;
+  rightComponent?: React.ReactNode;
+  additionalStyles?: StyleProp<ViewStyle>;
+};
 
+type Menu = {
+  sectionTranslationKey: TranslationPaths;
+  items: MenuData[];
+};
 type SessionSummaryScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
   typeof SCREENS.DRINKING_SESSION.SUMMARY
@@ -121,40 +103,130 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
     }
   };
 
-  const generalData = [
-    {heading: 'Units:', data: totalUnits.toString()},
-    {heading: 'Date:', data: sessionDay},
-    {
-      heading: 'Start time:',
-      data: !wasLiveSession ? '-' : sessionStartTime,
-    },
-    {
-      heading: 'Last drink added:',
-      data: !wasLiveSession ? '-' : lastDrinkAdded,
-    },
-    {heading: 'End time:', data: !wasLiveSession ? '-' : sessionEndTime},
-    // {heading: 'Timezone:', data: session.timezone ?? ''},
-  ];
-
-  const drinkData = [
-    {heading: 'Drinks:', data: totalDrinks.toString()},
-    {heading: 'Small Beer:', data: drinkSums.small_beer.toString()},
-    {heading: 'Beer:', data: drinkSums.beer.toString()},
-    {heading: 'Wine:', data: drinkSums.wine.toString()},
-    {heading: 'Weak Shot:', data: drinkSums.weak_shot.toString()},
-    {heading: 'Strong Shot:', data: drinkSums.strong_shot.toString()},
-    {heading: 'Cocktail:', data: drinkSums.cocktail.toString()},
-    {heading: 'Other:', data: drinkSums.other.toString()},
-  ];
-
-  const otherData = [
-    {heading: 'Blackout:', data: session.blackout ? 'Yes' : 'No'},
-    {heading: 'Note:', data: session.note ?? ''},
-  ];
-
   const sessionColor = session.blackout
     ? 'black'
     : unitsToColors(totalUnits, preferences.units_to_colors);
+
+  const generalMenuItemsData: Menu = useMemo(() => {
+    return {
+      sectionTranslationKey: 'sessionSummaryScreen.generalSection.title',
+      items: [
+        {
+          title: 'Session color',
+          rightComponent: (
+            <View
+              style={[styles.sessionColorMarker(sessionColor), styles.border]}
+            />
+          ),
+        },
+        {
+          title: 'Units',
+          description: totalUnits.toString(),
+        },
+        {
+          title: 'Date',
+          description: sessionDay,
+        },
+        {
+          title: 'Start time',
+          description: !wasLiveSession ? '-' : sessionStartTime,
+        },
+        {
+          title: 'Last drink added',
+          description: !wasLiveSession ? '-' : lastDrinkAdded,
+        },
+        {
+          title: 'End time',
+          description: !wasLiveSession ? '-' : sessionEndTime,
+        },
+        // {
+        //   title: 'Timezone',
+        //   description: session.timezone ?? '',
+        // },
+      ],
+    };
+  }, [session, styles.border]);
+
+  const drinkMenuItemsData: Menu = useMemo(() => {
+    return {
+      sectionTranslationKey: 'sessionSummaryScreen.drinksSection.title',
+      items: [
+        {title: 'Drinks', description: totalDrinks.toString()},
+        {title: 'Small Beer', description: drinkSums.small_beer.toString()},
+        {title: 'Beer', description: drinkSums.beer.toString()},
+        {title: 'Wine', description: drinkSums.wine.toString()},
+        {title: 'Weak Shot', description: drinkSums.weak_shot.toString()},
+        {title: 'Strong Shot', description: drinkSums.strong_shot.toString()},
+        {title: 'Cocktail', description: drinkSums.cocktail.toString()},
+        {title: 'Other', description: drinkSums.other.toString()},
+      ],
+    };
+  }, [session]);
+
+  const otherMenuItemsData: Menu = useMemo(() => {
+    return {
+      sectionTranslationKey: 'sessionSummaryScreen.otherSection.title',
+      items: [
+        {
+          title: 'Blackout',
+          description: session.blackout ? 'Yes' : 'No',
+        },
+        {
+          title: 'Note',
+          description: session.note ?? '',
+        },
+      ],
+    };
+  }, [session]);
+
+  const getSessionSummarySection = useCallback((menuItemsData: Menu) => {
+    return (
+      <Section
+        title={translate(menuItemsData.sectionTranslationKey)}
+        titleStyles={styles.headerText}
+        containerStyles={styles.pb0}
+        childrenStyles={styles.pt3}>
+        <>
+          {menuItemsData.items.map((detail, index) => (
+            <MenuItem
+              // eslint-disable-next-line react/no-array-index-key
+              key={`${detail.title}_${index}`}
+              title={detail.title}
+              titleStyle={styles.plainSectionTitle}
+              description={detail.description}
+              descriptionTextStyle={styles.textNormalThemeText}
+              wrapperStyle={styles.sectionMenuItemTopDescription}
+              style={[
+                styles.pt0,
+                styles.pb0,
+                styles.borderBottomRounded,
+                {borderBottomLeftRadius: 35, borderBottomRightRadius: 35},
+                index === menuItemsData.items.length - 1 && styles.borderNone,
+              ]}
+              disabled={true}
+              shouldGreyOutWhenDisabled={false}
+              shouldUseRowFlexDirection
+              shouldShowRightComponent={!!detail.rightComponent}
+              rightComponent={detail.rightComponent}
+            />
+          ))}
+        </>
+      </Section>
+    );
+  }, []);
+
+  const generalMenuItems = useMemo(
+    () => getSessionSummarySection(generalMenuItemsData),
+    [generalMenuItemsData, getSessionSummarySection],
+  );
+  const drinkMenuItems = useMemo(
+    () => getSessionSummarySection(drinkMenuItemsData),
+    [drinkMenuItemsData, getSessionSummarySection],
+  );
+  const otherMenuItems = useMemo(
+    () => getSessionSummarySection(otherMenuItemsData),
+    [otherMenuItemsData, getSessionSummarySection],
+  );
 
   useEffect(() => {
     const newSession = DSUtils.extractSessionOrEmpty(
@@ -179,55 +251,17 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
           )
         }
       />
-      <ScrollView style={localStyles.scrollView}>
-        <View style={localStyles.sessionInfoContainer}>
-          <Text style={styles.textHeadlineH2}>Session Summary</Text>
-        </View>
-
-        {/* <View style={localStyles.sessionSectionContainer}>
-          <Text style={localStyles.sessionDataContainerHeading}>General</Text>
-          <SessionDataItem
-            key="sessionColor"
-            heading="Session Color"
-            data={sessionColor}
-            index={generalData.length}
-            sessionColor={sessionColor}
-          />
-          {generalData.map((item, index) => (
-            <SessionDataItem
-              key={index}
-              heading={item.heading}
-              data={item.data}
-              index={index}
-            />
-          ))}
-        </View>
-
-        <View style={localStyles.sessionSectionContainer}>
-          <Text style={localStyles.sessionDataContainerHeading}>
-            Drinks consumed
+      <ScrollView>
+        <View style={[styles.pb4, styles.alignItemsCenter]}>
+          <Text style={styles.textHeadlineH2}>
+            {translate('sessionSummaryScreen.title')}
           </Text>
-          {drinkData.map((item, index) => (
-            <SessionDataItem
-              key={index}
-              heading={item.heading}
-              data={item.data}
-              index={index}
-            />
-          ))}
         </View>
-
-        <View style={localStyles.sessionSectionContainer}>
-          <Text style={localStyles.sessionDataContainerHeading}>Other</Text>
-          {otherData.map((item, index) => (
-            <SessionDataItem
-              key={index}
-              heading={item.heading}
-              data={item.data}
-              index={index}
-            />
-          ))}
-        </View> */}
+        <MenuItemGroup>
+          {generalMenuItems}
+          {drinkMenuItems}
+          {otherMenuItems}
+        </MenuItemGroup>
       </ScrollView>
       <View style={styles.bottomTabBarContainer(true)}>
         <Button
@@ -240,84 +274,6 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
     </ScreenWrapper>
   );
 }
-
-const localStyles = StyleSheet.create({
-  scrollView: {
-    flexGrow: 1,
-    flexShrink: 1,
-  },
-  sessionInfoContainer: {
-    flex: 1,
-    alignItems: 'center',
-    paddingBottom: 8,
-  },
-  sessionInfoText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginTop: 5,
-    color: 'black',
-    alignSelf: 'center',
-    alignContent: 'center',
-    padding: 10,
-  },
-  sessionSectionContainer: {
-    backgroundColor: 'white',
-    borderBottomWidth: 1,
-    borderColor: 'gray',
-    marginHorizontal: 8,
-  },
-  sessionDataContainerHeading: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    color: '#4a4b4d',
-    fontStyle: 'italic',
-    alignSelf: 'center',
-    padding: 10,
-  },
-  sessionDataContainer: {
-    width: '100%',
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    // borderWidth: 1,
-    // borderColor: 'grey',
-    padding: 7,
-  },
-  sessionDataHeading: {
-    marginLeft: 7,
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: 'black',
-  },
-  sessionDataText: {
-    fontSize: 14,
-    color: 'black',
-    fontWeight: '400',
-    marginRight: 5,
-    marginLeft: 10,
-    overflow: 'hidden',
-  },
-  sessionColorMarker: {
-    width: 20,
-    height: 20,
-    borderWidth: 1,
-    borderColor: '#D3D3D3',
-    borderRadius: 5,
-    marginRight: 5,
-  },
-  confirmButtonContainer: {
-    width: '100%',
-    height: '8%',
-    flexShrink: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  confirmButtonText: {
-    color: 'black',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-});
 
 SessionSummaryScreen.displayName = 'Session Summary Screen';
 export default SessionSummaryScreen;

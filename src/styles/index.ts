@@ -9,7 +9,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 import type {PickerStyle} from 'react-native-picker-select';
-import type {CustomAnimation} from 'react-native-animatable';
+import type {CustomAnimation, View} from 'react-native-animatable';
 import type {
   MixedStyleDeclaration,
   MixedStyleRecord,
@@ -1290,6 +1290,14 @@ const styles = (theme: ThemeColors) =>
       height: 56,
       alignItems: 'center',
     },
+
+    sessionColorMarker: (sessionColor: CalendarColors) =>
+      ({
+        height: variables.sessionColorMarkerSize,
+        width: variables.sessionColorMarkerSize,
+        alignSelf: 'center',
+        backgroundColor: sessionColor,
+      }) satisfies ViewStyle,
 
     singleAvatar: {
       height: 24,

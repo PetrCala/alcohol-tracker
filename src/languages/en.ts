@@ -5,6 +5,7 @@ import type {
   UntilTimeParams,
 } from './types';
 import Platform from '@libs/getPlatform/types';
+import SessionSummaryScreen from '@screens/DrinkingSession/SessionSummaryScreen';
 
 /* eslint-disable max-len */
 export default {
@@ -288,6 +289,18 @@ export default {
       'You have unsaved changes. Are you sure you want to go back?',
     error: {
       save: "We couldn't save your preferences. Please try again.",
+    },
+  },
+  sessionSummaryScreen: {
+    title: 'Session Summary',
+    generalSection: {
+      title: 'General',
+    },
+    drinksSection: {
+      title: 'Drinks consumed',
+    },
+    otherSection: {
+      title: 'Other',
     },
   },
   appShareScreen: {
