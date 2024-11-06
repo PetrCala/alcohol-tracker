@@ -226,11 +226,11 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
           ))}
         </View>
       </ScrollView>
-      <View style={[styles.bottomTabBarContainer, styles.p2]}>
+      <View style={styles.bottomTabBarContainer}>
         <Button
           text={translate('common.confirm')}
           onPress={handleBackPress}
-          style={[styles.bottomTabBarItem, styles.ph10]}
+          style={[styles.bottomTabBarItem, styles.ph10, styles.mt1]}
           success
         />
       </View>

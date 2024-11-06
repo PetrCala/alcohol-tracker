@@ -578,11 +578,10 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
           textStyles={styles.buttonText}
           innerStyles={[
             styles.bottomTabBarItem,
-            styles.noBorderRadius,
-            styles.halfScreenWidth(windowWidth),
-            styles.borderRight,
+            styles.halfScreenWidth(windowWidth * 0.75),
+            styles.mr5,
+            styles.mt2,
           ]}
-          shouldRemoveRightBorderRadius
           onPress={handleDiscardSession}
         />
         <Button
@@ -591,8 +590,8 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
           textStyles={styles.buttonText}
           innerStyles={[
             styles.bottomTabBarItem,
-            styles.noBorderRadius,
-            styles.halfScreenWidth(windowWidth),
+            styles.halfScreenWidth(windowWidth * 0.75),
+            styles.mt2,
           ]}
           onPress={() => saveSession(db, user.uid)}
         />
