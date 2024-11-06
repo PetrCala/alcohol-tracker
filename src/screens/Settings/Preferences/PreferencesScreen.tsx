@@ -31,6 +31,7 @@ import ScreenWrapper from '@components/ScreenWrapper';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import useLocalize from '@hooks/useLocalize';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
+import ConfirmModal from '@components/ConfirmModal';
 
 type PreferencesListProps = {
   id: string;
@@ -302,15 +303,15 @@ function PreferencesScreen({route}: PreferencesScreenProps) {
           onPress={handleSavePreferences}
         />
       </View>
-      <YesNoPopup
-        visible={showLeaveConfirmation}
-        transparent={true}
-        onRequestClose={() => setShowLeaveConfirmation(false)}
-        message="You have unsaved changes. Are you sure you want to go back?"
-        onYes={() => {
+      <ConfirmModal
+        isVisible={showLeaveConfirmation}
+        title={translate('common.areYouSure')}
+        prompt={translate('preferencesScreen.unsavedChanges')}
+        onConfirm={() => {
           setShowLeaveConfirmation(false);
           Navigation.goBack();
         }}
+        onCancel={() => setShowLeaveConfirmation(false)}
       />
     </ScreenWrapper>
   );

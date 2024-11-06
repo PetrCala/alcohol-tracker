@@ -1,12 +1,9 @@
 import React from 'react';
-import {StyleSheet, Dimensions, Alert, View} from 'react-native';
+import {Alert, View} from 'react-native';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
-import YesNoPopup from '../YesNoPopup';
-
 import {unfriend} from '@database/friends';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import ItemListPopup from '../ItemListPopup';
-import CONST from '@src/CONST';
 import ConfirmModal from '@components/ConfirmModal';
 import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';

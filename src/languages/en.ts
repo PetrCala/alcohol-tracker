@@ -269,6 +269,8 @@ export default {
   },
   preferencesScreen: {
     title: 'Preferences',
+    unsavedChanges:
+      'You have unsaved changes. Are you sure you want to go back?',
   },
   appShareScreen: {
     title: 'Share the App',
