@@ -1,19 +1,9 @@
 ﻿import {useFocusEffect, useRoute} from '@react-navigation/native';
-import React, {
-  useRef,
-  useState,
-  useEffect,
-  useMemo,
-  useLayoutEffect,
-  useCallback,
-  useContext,
-} from 'react';
+import React, {useRef, useState, useEffect, useMemo} from 'react';
 import {
-  ScrollView as RNScrollView,
   ActivityIndicator,
   Alert,
   BackHandler,
-  ScrollViewProps,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -414,30 +404,6 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     setLoadingText('');
   };
 
-  const {saveScrollOffset, getScrollOffset} = useContext(ScrollOffsetContext);
-  const localRoute = useRoute();
-  const scrollViewRef = useRef<RNScrollView>(null);
-
-  const onScroll = useCallback<NonNullable<ScrollViewProps['onScroll']>>(
-    e => {
-      // If the layout measurement is 0, it means the flashlist is not displayed but the onScroll may be triggered with offset value 0.
-      // We should ignore this case.
-      if (e.nativeEvent.layoutMeasurement.height === 0) {
-        return;
-      }
-      saveScrollOffset(localRoute, e.nativeEvent.contentOffset.y);
-    },
-    [localRoute, saveScrollOffset],
-  );
-
-  useLayoutEffect(() => {
-    const scrollOffset = getScrollOffset(localRoute);
-    if (!scrollOffset || !scrollViewRef.current) {
-      return;
-    }
-    scrollViewRef.current.scrollTo({y: scrollOffset, animated: false});
-  }, [getScrollOffset, localRoute]);
-
   // Prepare the session for the user upon component mount
   useFocusEffect(
     React.useCallback(() => {
@@ -519,11 +485,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
           />
         }
       />
-      <ScrollView
-        ref={scrollViewRef}
-        onScroll={onScroll}
-        scrollEventThrottle={16}
-        contentContainerStyle={[styles.w100]}>
+      <ScrollView contentContainerStyle={[styles.w100]}>
         <View style={localStyles.sessionInfoContainer}>
           <View style={localStyles.sessionTextContainer}>
             <Text style={localStyles.sessionInfoText}>
@@ -591,7 +553,6 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
               />
             </View>
             <SessionDetailsSlider
-              scrollViewRef={scrollViewRef}
               sessionId={sessionId}
               isBlackout={session.blackout}
               onBlackoutChange={handleBlackoutChange}
@@ -709,9 +670,6 @@ const localStyles = StyleSheet.create({
     textShadowRadius: 4,
     elevation: 5,
     zIndex: 1,
-  },
-  scrollView: {
-    flex: 1,
   },
   drinkTypesContainer: {
     alignItems: 'center',

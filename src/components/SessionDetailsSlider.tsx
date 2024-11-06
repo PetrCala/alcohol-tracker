@@ -1,6 +1,6 @@
 ﻿import React, {ReactNode, useRef} from 'react';
 // eslint-disable-next-line no-restricted-imports
-import {StyleSheet, ScrollView} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {View} from 'react-native';
 import type {ValueOf} from 'type-fest';
 import MenuItem from '@components/MenuItem';
@@ -34,7 +34,6 @@ type MenuData = {
 };
 
 type SessionSliderProps = {
-  scrollViewRef: React.RefObject<ScrollView>;
   sessionId: DrinkingSessionId;
   isBlackout: boolean;
   onBlackoutChange: (value: boolean) => void;
@@ -44,7 +43,6 @@ type SessionSliderProps = {
 };
 
 const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
-  scrollViewRef,
   sessionId,
   isBlackout,
   onBlackoutChange,
