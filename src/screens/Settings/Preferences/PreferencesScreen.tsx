@@ -1,15 +1,5 @@
 ﻿import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {
-  Alert,
-  BackHandler,
-  StyleProp,
-  StyleSheet,
-  Text,
-  TextStyle,
-  TouchableOpacity,
-  View,
-  ViewStyle,
-} from 'react-native';
+import {Alert, BackHandler, StyleSheet, View} from 'react-native';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import {useFirebase} from '@context/global/FirebaseContext';
 import UserOffline from '@components/UserOfflineModal';
@@ -33,51 +23,12 @@ import ConfirmModal from '@components/ConfirmModal';
 import Button from '@components/Button';
 import useThemeStyles from '@hooks/useThemeStyles';
 import useWaitForNavigation from '@hooks/useWaitForNavigation';
-import IconAsset from '@src/types/utils/IconAsset';
 import useActiveCentralPaneRoute from '@hooks/useActiveCentralPaneRoute';
 import useSingleExecution from '@hooks/useSingleExecution';
 import ScrollView from '@components/ScrollView';
 import MenuItemGroup from '@components/MenuItemGroup';
 import Section from '@components/Section';
-import MenuItemWithTopDescription from '@components/MenuItemWithTopDescription';
 import MenuItem from '@components/MenuItem';
-import {getDetails} from 'react-native-compressor';
-
-type PreferencesListProps = {
-  id: string;
-  initialContents: Array<{key: string; label: string; value: string}>;
-  onButtonPress: (key: string, label: string, value: number) => void;
-};
-
-const PreferencesList: React.FC<PreferencesListProps> = ({
-  id,
-  initialContents,
-  onButtonPress,
-}) => {
-  return (
-    <View style={localStyles.preferencesListContainer}>
-      {initialContents.map((item, index) => {
-        const itemValue = parseFloat(item.value);
-
-        return (
-          <View key={index} style={localStyles.preferencesListRowContainer}>
-            <Text style={localStyles.preferencesListLabel}>{item.label}</Text>
-            {/* <View style={localStyles.preferencesListUseContainer}>
-            </View> */}
-            <View style={localStyles.preferencesListNumericContainer}>
-              <TouchableOpacity
-                accessibilityRole="button"
-                style={localStyles.preferencesListButton}
-                onPress={() => onButtonPress(item.key, item.label, itemValue)}>
-                <Text style={localStyles.preferencesListText}>{itemValue}</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        );
-      })}
-    </View>
-  );
-};
 
 type MenuData = {
   title?: string;
