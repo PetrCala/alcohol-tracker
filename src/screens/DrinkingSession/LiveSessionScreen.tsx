@@ -564,7 +564,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
         )}
         <FillerView />
       </ScrollView>
-      <View style={styles.bottomTabBarContainer}>
+      <View style={styles.bottomTabBarContainer(true)}>
         <Button
           success
           text={`${deleteSessionWording} Session`}

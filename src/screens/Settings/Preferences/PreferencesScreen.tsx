@@ -321,7 +321,7 @@ function PreferencesScreen({}: PreferencesScreenProps) {
           {drinksToUnitsMenuItems}
         </MenuItemGroup>
       </ScrollView>
-      <View style={styles.bottomTabBarContainer}>
+      <View style={styles.bottomTabBarContainer(true)}>
         <Button
           text={translate('preferencesScreen.save')}
           onPress={handleSavePreferences}

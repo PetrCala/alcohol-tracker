@@ -486,16 +486,18 @@ const styles = (theme: ThemeColors) =>
       borderColor: theme.border,
     },
 
-    bottomTabBarContainer: {
-      flexDirection: 'row',
-      height: variables.bottomTabHeight,
-      alignItems: 'center',
-      justifyContent: 'center',
-      borderTopWidth: 1,
-      borderTopColor: theme.border,
-      backgroundColor: theme.appBG,
-      ...sizing.mw100,
-    },
+    bottomTabBarContainer: (hideTopBorder?: boolean) =>
+      ({
+        flexDirection: 'row',
+        height: variables.bottomTabHeight,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderTopWidth: hideTopBorder ? 0 : 1,
+        borderTopColor: theme.border,
+        backgroundColor: theme.appBG,
+        ...spacing.pt1,
+        ...sizing.mw100,
+      }) satisfies ViewStyle,
 
     bottomTabBarItem: {
       height: '100%',
