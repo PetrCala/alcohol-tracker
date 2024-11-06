@@ -44,6 +44,7 @@ type ThemeColors = {
   transparent: Color;
   signInPage: Color;
   darkSupportingText: Color;
+  searchBarBG: Color;
 
   // Additional keys
   overlay: Color;

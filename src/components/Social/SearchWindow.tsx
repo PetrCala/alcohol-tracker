@@ -25,15 +25,11 @@ type SearchWindowProps = {
   onSearch: (searchText: string, db?: Database) => void;
   onResetSearch: () => void;
   searchOnTextChange?: boolean;
-  styles?: StyleProp<ViewStyle>;
 };
 
 const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
-  (
-    {windowText, onSearch, onResetSearch, searchOnTextChange, styles},
-    parentRef,
-  ) => {
-    const themeStyles = useThemeStyles();
+  ({windowText, onSearch, onResetSearch, searchOnTextChange}, parentRef) => {
+    const styles = useThemeStyles();
     const db = useFirebase().db;
     const StyleUtils = useStyleUtils();
     const [searchText, setSearchText] = useState<string>('');
@@ -69,12 +65,18 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
     return (
       <View style={localStyles.mainContainer}>
         <View
-          style={
-            searchOnTextChange
-              ? [localStyles.textContainer, localStyles.responsiveTextContainer]
-              : localStyles.textContainer
-          }>
+          style={[
+            localStyles.textContainer,
+            searchOnTextChange && localStyles.responsiveTextContainer,
+            styles.searchWindowTextContainer,
+          ]}>
           <KeyboardFocusHandler>
+            <Icon
+              src={KirokuIcons.Search}
+              medium
+              fill={StyleUtils.getIconFillColor()}
+              additionalStyles={[styles.alignSelfCenter, styles.ml3]}
+            />
             <TextInput
               accessibilityLabel="Text input field"
               placeholder={windowText}
@@ -105,7 +107,7 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
             <Button
               onPress={() => handleDoSearch(searchText, db)}
               text="Search"
-              style={[themeStyles.borderRadiusSmall, themeStyles.buttonSuccess]}
+              style={[styles.borderRadiusSmall, styles.buttonSuccess]}
             />
           </View>
         )}
@@ -130,17 +132,16 @@ const localStyles = StyleSheet.create({
     alignSelf: 'center',
     flexDirection: 'row',
     paddingRight: 5,
-    borderWidth: 1,
-    borderColor: '#000',
+    // borderWidth: 1,
+    // borderColor: '#000',
     borderRadius: 10,
-    backgroundColor: 'white',
   },
   responsiveTextContainer: {
     width: '100%',
   },
   searchText: {
     height: '100%',
-    width: '90%',
+    flexGrow: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

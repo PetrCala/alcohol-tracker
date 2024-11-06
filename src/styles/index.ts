@@ -1287,6 +1287,10 @@ const styles = (theme: ThemeColors) =>
       borderRadius: 52,
     },
 
+    searchWindowTextContainer: {
+      backgroundColor: theme.searchBarBG,
+    },
+
     searchTableHeaderActive: {
       fontWeight: FontUtils.fontWeight.bold,
     },

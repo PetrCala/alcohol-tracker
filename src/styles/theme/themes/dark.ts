@@ -38,6 +38,7 @@ const darkTheme = {
   transparent: colors.transparent,
   signInPage: colors.green800,
   darkSupportingText: colors.productDark800,
+  searchBarBG: colors.productDark300,
 
   // Additional keys
   overlay: colors.productDark400,
