@@ -1,4 +1,4 @@
-﻿import React, {useContext, useEffect, useMemo, useRef, useState} from 'react';
+﻿import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {
   Alert,
   BackHandler,
@@ -14,7 +14,6 @@ import {useFirebase} from '@context/global/FirebaseContext';
 import UserOffline from '@components/UserOfflineModal';
 import BasicButton from '@components/Buttons/BasicButton';
 import {savePreferencesData} from '@database/preferences';
-import YesNoPopup from '@components/Popups/YesNoPopup';
 import TextSwitch from '@components/TextSwitch';
 import NumericSlider from '@components/Popups/NumericSlider';
 import {getDefaultPreferences} from '@database/users';
