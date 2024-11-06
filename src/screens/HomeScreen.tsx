@@ -10,7 +10,6 @@ import {
   Dimensions,
   Image,
   Keyboard,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -70,6 +69,8 @@ import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import DSUtils from '@libs/DrinkingSessionUtils';
 import useTheme from '@hooks/useTheme';
 import Icon from '@components/Icon';
+import ScrollView from '@components/ScrollView';
+import FillerView from '@components/FillerView';
 
 type State = {
   visibleDateObject: DateObject;
@@ -367,10 +368,7 @@ function HomeScreen({route}: HomeScreenProps) {
           </TouchableOpacity>
         </View> */}
       </View>
-      <ScrollView
-        style={localStyles.mainScreenContent}
-        keyboardShouldPersistTaps="handled"
-        onScrollBeginDrag={Keyboard.dismiss}>
+      <ScrollView>
         {state.ongoingSessionId ? (
           <MessageBanner
             text="You are currently in session!"
@@ -404,7 +402,6 @@ function HomeScreen({route}: HomeScreenProps) {
             );
           }}
         />
-        <View style={{height: 200}}></View>
       </ScrollView>
       <View style={commonStyles.mainFooter}>
         <View
