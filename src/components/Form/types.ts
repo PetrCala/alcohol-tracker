@@ -19,7 +19,7 @@ import type {ValueOf} from 'type-fest';
 // import type AddressSearch from '@components/AddressSearch';
 // import type AmountForm from '@components/AmountForm';
 // import type AmountPicker from '@components/AmountPicker';
-// import type AmountTextInput from '@components/AmountTextInput';
+import type AmountTextInput from '@components/AmountTextInput';
 // import type CheckboxWithLabel from '@components/CheckboxWithLabel';
 // import type CountrySelector from '@components/CountrySelector';
 // import type CurrencySelector from '@components/CurrencySelector';
@@ -48,7 +48,7 @@ import type {BaseForm} from '@src/types/form/Form';
  */
 type ValidInputs =
   | typeof TextInput
-  // | typeof AmountTextInput
+  | typeof AmountTextInput
   // | typeof SingleChoiceQuestion
   // | typeof CheckboxWithLabel
   // | typeof Picker
