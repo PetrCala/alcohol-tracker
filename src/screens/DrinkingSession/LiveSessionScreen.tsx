@@ -488,7 +488,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       <ScrollView contentContainerStyle={[styles.w100]}>
         <View style={localStyles.sessionInfoContainer}>
           <View style={localStyles.sessionTextContainer}>
-            <Text style={localStyles.sessionInfoText}>
+            <Text style={[styles.headerText, styles.textLarge]}>
               {session?.ongoing
                 ? `Session from ${sessionStartTime}`
                 : `Session on ${sessionDateString}`}

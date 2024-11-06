@@ -94,7 +94,7 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
   return (
     <View style={localStyles.container}>
       <View style={[localStyles.tab, styles.borderColorTheme]}>
-        <Text style={localStyles.tabText}>Session details</Text>
+        <Text style={styles.headerText}>Session details</Text>
       </View>
       <View style={localStyles.sessionDetailsContainer}>
         {sliderData.map(item => {
@@ -158,11 +158,6 @@ const localStyles = StyleSheet.create({
     alignItems: 'center',
     height: 50,
     borderTopWidth: 1,
-  },
-  tabText: {
-    fontWeight: 'bold',
-    fontSize: 14,
-    color: 'black',
   },
   tabArrow: {
     width: 25,

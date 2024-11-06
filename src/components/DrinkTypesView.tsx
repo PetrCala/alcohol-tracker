@@ -23,7 +23,7 @@ const DrinkTypesView = ({
   return (
     <View style={localStyles.mainContainer}>
       <View style={[localStyles.tab, styles.borderColorTheme]}>
-        <Text style={localStyles.tabText}>Drinks consumed</Text>
+        <Text style={styles.headerText}>Drinks consumed</Text>
       </View>
       <View>
         {drinkData.map(drink => (
@@ -56,10 +56,5 @@ const localStyles = StyleSheet.create({
     borderTopWidth: 1,
     marginLeft: 12,
     marginRight: 12,
-  },
-  tabText: {
-    fontWeight: 'bold',
-    fontSize: 14,
-    color: 'black',
   },
 });
