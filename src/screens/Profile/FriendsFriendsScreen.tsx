@@ -296,8 +296,7 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
               {renderSearchResults(false)}
             </View>
           ) : state.noUsersFound ? (
-            <Text
-              style={[styles.textNormal, styles.textAlignCenter, styles.mt2]}>
+            <Text style={styles.noResultsText}>
               {objKeys(state.friends).length > 0
                 ? 'No friends found.\n\nTry searching for other users.'
                 : 'This user has not added any friends yet.'}

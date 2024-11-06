@@ -30,6 +30,7 @@ import ScreenWrapper from '@components/ScreenWrapper';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import useLocalize from '@hooks/useLocalize';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
+import useThemeStyles from '@hooks/useThemeStyles';
 
 type State = {
   searchResultData: UserSearchResults;
@@ -79,6 +80,7 @@ const reducer = (state: State, action: Action): State => {
 
 function FriendSearchScreen() {
   const {auth, db, storage} = useFirebase();
+  const styles = useThemeStyles();
   const {userData} = useDatabaseData();
   const searchInputRef = useRef<SearchWindowRef>(null);
   const user = auth.currentUser;
@@ -179,14 +181,14 @@ function FriendSearchScreen() {
         onSearch={dbSearch}
         onResetSearch={resetSearch}
       />
-      <View style={styles.mainContainer}>
+      <View style={localStyles.mainContainer}>
         <ScrollView
-          style={styles.scrollViewContainer}
+          style={localStyles.scrollViewContainer}
           onScrollBeginDrag={Keyboard.dismiss}
           keyboardShouldPersistTaps="handled">
-          <View style={styles.searchResultsContainer}>
+          <View style={localStyles.searchResultsContainer}>
             {state.searching ? (
-              <FlexibleLoadingIndicator style={styles.loadingData} />
+              <FlexibleLoadingIndicator style={localStyles.loadingData} />
             ) : isNonEmptyArray(state.searchResultData) ? (
               state.searchResultData.map(userID => (
                 <SearchResult
@@ -201,7 +203,7 @@ function FriendSearchScreen() {
                 />
               ))
             ) : state.noUsersFound ? (
-              <Text style={styles.noUsersFoundText}>
+              <Text style={styles.noResultsText}>
                 There are no users with this nickname.
               </Text>
             ) : null}
@@ -212,7 +214,7 @@ function FriendSearchScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   mainContainer: {
     flex: 1,
   },

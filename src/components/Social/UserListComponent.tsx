@@ -192,8 +192,7 @@ const UserListComponent: React.FC<UserListProps> = ({
                 );
               })
             ) : (
-              <Text
-                style={[styles.textNormal, styles.textAlignCenter, styles.mt2]}>
+              <Text style={styles.noResultsText}>
                 {`No friends found.\n\nTry modifying the search text.`}
               </Text>
             )}

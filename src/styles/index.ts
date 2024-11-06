@@ -1046,6 +1046,12 @@ const styles = (theme: ThemeColors) =>
       borderRadius: 0,
     },
 
+    noResultsText: {
+      fontSize: variables.fontSizeNormal,
+      textAlign: 'center',
+      ...spacing.mt2,
+    },
+
     noRightBorderRadius: {
       borderTopRightRadius: 0,
       borderBottomRightRadius: 0,
