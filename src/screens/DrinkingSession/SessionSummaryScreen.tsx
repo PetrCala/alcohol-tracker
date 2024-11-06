@@ -230,7 +230,7 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
         <Button
           text={translate('common.confirm')}
           onPress={handleBackPress}
-          style={[styles.bottomTabBarItem, styles.ph10, styles.mt1]}
+          style={styles.bottomTabButton}
           success
         />
       </View>

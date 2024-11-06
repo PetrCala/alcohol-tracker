@@ -500,6 +500,15 @@ const styles = (theme: ThemeColors) =>
       alignItems: 'center',
     },
 
+    bottomTabButton: {
+      height: '100%',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      ...spacing.ph10,
+      ...spacing.mt1,
+    },
+
     boxShadowNone: {
       boxShadow: 'none',
     },

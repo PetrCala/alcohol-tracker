@@ -269,6 +269,7 @@ export default {
   },
   preferencesScreen: {
     title: 'Preferences',
+    save: 'Save preferences',
     unsavedChanges:
       'You have unsaved changes. Are you sure you want to go back?',
   },

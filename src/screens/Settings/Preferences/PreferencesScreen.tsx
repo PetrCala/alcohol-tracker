@@ -31,6 +31,8 @@ import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import useLocalize from '@hooks/useLocalize';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import ConfirmModal from '@components/ConfirmModal';
+import Button from '@components/Button';
+import useThemeStyles from '@hooks/useThemeStyles';
 
 type PreferencesListProps = {
   id: string;
@@ -44,21 +46,21 @@ const PreferencesList: React.FC<PreferencesListProps> = ({
   onButtonPress,
 }) => {
   return (
-    <View style={styles.preferencesListContainer}>
+    <View style={localStyles.preferencesListContainer}>
       {initialContents.map((item, index) => {
         const itemValue = parseFloat(item.value);
 
         return (
-          <View key={index} style={styles.preferencesListRowContainer}>
-            <Text style={styles.preferencesListLabel}>{item.label}</Text>
-            {/* <View style={styles.preferencesListUseContainer}>
+          <View key={index} style={localStyles.preferencesListRowContainer}>
+            <Text style={localStyles.preferencesListLabel}>{item.label}</Text>
+            {/* <View style={localStyles.preferencesListUseContainer}>
             </View> */}
-            <View style={styles.preferencesListNumericContainer}>
+            <View style={localStyles.preferencesListNumericContainer}>
               <TouchableOpacity
                 accessibilityRole="button"
-                style={styles.preferencesListButton}
+                style={localStyles.preferencesListButton}
                 onPress={() => onButtonPress(item.key, item.label, itemValue)}>
-                <Text style={styles.preferencesListText}>{itemValue}</Text>
+                <Text style={localStyles.preferencesListText}>{itemValue}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -77,6 +79,7 @@ function PreferencesScreen({route}: PreferencesScreenProps) {
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
   const {translate} = useLocalize();
+  const styles = useThemeStyles();
   const {isOnline} = useUserConnection();
   const {preferences} = useDatabaseData();
   const initialPreferences = useRef(preferences);
@@ -196,13 +199,13 @@ function PreferencesScreen({route}: PreferencesScreenProps) {
         onBackButtonPress={handleGoBack}
       />
       <ScrollView
-        style={styles.scrollView}
+        style={localStyles.scrollView}
         onScrollBeginDrag={Keyboard.dismiss}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled">
-        <View style={[styles.container, styles.horizontalContainer]}>
-          <Text style={styles.label}>First Day of Week</Text>
-          <View style={styles.itemContainer}>
+        <View style={[localStyles.container, localStyles.horizontalContainer]}>
+          <Text style={localStyles.label}>First Day of Week</Text>
+          <View style={localStyles.itemContainer}>
             <TextSwitch
               offText="Sun"
               onText="Mon"
@@ -211,9 +214,9 @@ function PreferencesScreen({route}: PreferencesScreenProps) {
             />
           </View>
         </View>
-        <View style={[styles.container, styles.verticalContainer]}>
-          <Text style={styles.label}>Unit Colors</Text>
-          <View style={styles.itemContainer}>
+        <View style={[localStyles.container, localStyles.verticalContainer]}>
+          <Text style={localStyles.label}>Unit Colors</Text>
+          <View style={localStyles.itemContainer}>
             <PreferencesList
               id="units_to_colors"
               initialContents={[
@@ -240,9 +243,9 @@ function PreferencesScreen({route}: PreferencesScreenProps) {
             />
           </View>
         </View>
-        <View style={[styles.container, styles.verticalContainer]}>
-          <Text style={styles.label}>Drinks to Units Conversion</Text>
-          <View style={styles.itemContainer}>
+        <View style={[localStyles.container, localStyles.verticalContainer]}>
+          <Text style={localStyles.label}>Drinks to Units Conversion</Text>
+          <View style={localStyles.itemContainer}>
             <PreferencesList
               id="drinks_to_units" // Another unique identifier
               initialContents={Object.values(CONST.DRINKS.KEYS).map(
@@ -264,11 +267,11 @@ function PreferencesScreen({route}: PreferencesScreenProps) {
             />
           </View>
         </View>
-        {/* <View style={[styles.container, styles.horizontalContainer]}>
-          <Text style={styles.label}>
+        {/* <View style={[localStyles.container, localStyles.horizontalContainer]}>
+          <Text style={localStyles.label}>
             Automatically order drinks in session window
           </Text>
-          <View style={styles.itemContainer}>
+          <View style={localStyles.itemContainer}>
             <Text>hello</Text>
           </View>
         </View> */}
@@ -294,12 +297,12 @@ function PreferencesScreen({route}: PreferencesScreenProps) {
           setSliderVisible(false);
         }}
       />
-      <View style={styles.savePreferencesButtonContainer}>
-        <BasicButton
-          text="Save Preferences"
-          buttonStyle={styles.savePreferencesButton}
-          textStyle={styles.savePreferencesButtonText}
+      <View style={styles.bottomTabBarContainer}>
+        <Button
+          text={translate('preferencesScreen.save')}
           onPress={handleSavePreferences}
+          style={styles.bottomTabButton}
+          success
         />
       </View>
       <ConfirmModal
@@ -316,7 +319,7 @@ function PreferencesScreen({route}: PreferencesScreenProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   scrollView: {
     width: '100%',
     flexGrow: 1,
@@ -398,33 +401,6 @@ const styles = StyleSheet.create({
     color: 'black',
     fontWeight: '500',
     textAlign: 'center',
-  },
-  savePreferencesButtonContainer: {
-    width: '100%',
-    height: 70,
-    flexShrink: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-    backgroundColor: '#FFFF99',
-    padding: 5,
-  },
-  savePreferencesButton: {
-    width: '50%',
-    height: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 10,
-    backgroundColor: '#fcf50f',
-    // backgroundColor: 'white',
-    borderWidth: 2,
-    borderColor: 'black',
-    borderRadius: 8,
-  },
-  savePreferencesButtonText: {
-    color: 'black',
-    fontSize: 18,
-    fontWeight: 'bold',
   },
 });
 
