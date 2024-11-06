@@ -1,10 +1,19 @@
-﻿import React, {useRef, useState, useEffect, useMemo} from 'react';
+﻿import {useFocusEffect, useRoute} from '@react-navigation/native';
+import React, {
+  useRef,
+  useState,
+  useEffect,
+  useMemo,
+  useLayoutEffect,
+  useCallback,
+  useContext,
+} from 'react';
 import {
+  ScrollView as RNScrollView,
   ActivityIndicator,
   Alert,
   BackHandler,
-  Keyboard,
-  ScrollView as ScrollViewRN,
+  ScrollViewProps,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -37,6 +46,7 @@ import type {
   Drinks,
   DrinkKey,
 } from '@src/types/onyx';
+import {ScrollOffsetContext} from '@components/ScrollOffsetContextProvider';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import UserOffline from '@components/UserOfflineModal';
 import DrinkTypesView from '@components/DrinkTypesView';
@@ -67,7 +77,6 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import Button from '@components/Button';
 import ConfirmModal from '@components/ConfirmModal';
 import useWindowDimensions from '@hooks/useWindowDimensions';
-import {useFocusEffect} from '@react-navigation/native';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import ScrollView from '@components/ScrollView';
 import Log from '@libs/Log';
@@ -117,7 +126,6 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   const deleteSessionWording = session?.ongoing
     ? translate('common.discard')
     : translate('common.delete');
-  const scrollViewRef = useRef<ScrollViewRN>(null); // To navigate the view
 
   const {isPending, enqueueUpdate} = useAsyncQueue(
     async (newSession: DrinkingSession) => syncWithDb(newSession),
@@ -406,6 +414,30 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     setLoadingText('');
   };
 
+  const {saveScrollOffset, getScrollOffset} = useContext(ScrollOffsetContext);
+  const localRoute = useRoute();
+  const scrollViewRef = useRef<RNScrollView>(null);
+
+  const onScroll = useCallback<NonNullable<ScrollViewProps['onScroll']>>(
+    e => {
+      // If the layout measurement is 0, it means the flashlist is not displayed but the onScroll may be triggered with offset value 0.
+      // We should ignore this case.
+      if (e.nativeEvent.layoutMeasurement.height === 0) {
+        return;
+      }
+      saveScrollOffset(localRoute, e.nativeEvent.contentOffset.y);
+    },
+    [localRoute, saveScrollOffset],
+  );
+
+  useLayoutEffect(() => {
+    const scrollOffset = getScrollOffset(localRoute);
+    if (!scrollOffset || !scrollViewRef.current) {
+      return;
+    }
+    scrollViewRef.current.scrollTo({y: scrollOffset, animated: false});
+  }, [getScrollOffset, localRoute]);
+
   // Prepare the session for the user upon component mount
   useFocusEffect(
     React.useCallback(() => {
@@ -488,10 +520,10 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
         }
       />
       <ScrollView
-        style={localStyles.scrollView}
         ref={scrollViewRef}
-        onScrollBeginDrag={Keyboard.dismiss}
-        keyboardShouldPersistTaps="handled">
+        onScroll={onScroll}
+        scrollEventThrottle={16}
+        contentContainerStyle={[styles.w100]}>
         <View style={localStyles.sessionInfoContainer}>
           <View style={localStyles.sessionTextContainer}>
             <Text style={localStyles.sessionInfoText}>
