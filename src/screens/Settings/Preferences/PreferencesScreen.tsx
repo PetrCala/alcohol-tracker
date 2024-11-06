@@ -1,30 +1,42 @@
-﻿import React, {useEffect, useMemo, useRef, useState} from 'react';
+﻿import {useRoute} from '@react-navigation/native';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
+  ScrollView as RNScrollView,
   Alert,
   BackHandler,
   Keyboard,
   ScrollView,
+  ScrollViewProps,
+  StyleProp,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
+  ViewStyle,
 } from 'react-native';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import {useFirebase} from '@context/global/FirebaseContext';
 import UserOffline from '@components/UserOfflineModal';
-import BasicButton from '@components/Buttons/BasicButton';
 import {savePreferencesData} from '@database/preferences';
-import TextSwitch from '@components/TextSwitch';
-import NumericSlider from '@components/Popups/NumericSlider';
 import {getDefaultPreferences} from '@database/users';
 import type {Preferences} from '@src/types/onyx';
-import CONST from '@src/CONST';
+import {ScrollOffsetContext} from '@components/ScrollOffsetContextProvider';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import type {StackScreenProps} from '@react-navigation/stack';
 import type {SettingsNavigatorParamList} from '@libs/Navigation/types';
 import type SCREENS from '@src/SCREENS';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
+import type {TranslationPaths} from '@src/languages/types';
+import type {Route} from '@src/ROUTES';
 import {isEqual} from 'lodash';
 import ScreenWrapper from '@components/ScreenWrapper';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
@@ -33,6 +45,14 @@ import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import ConfirmModal from '@components/ConfirmModal';
 import Button from '@components/Button';
 import useThemeStyles from '@hooks/useThemeStyles';
+import useWaitForNavigation from '@hooks/useWaitForNavigation';
+import MenuItem from '@components/MenuItem';
+import IconAsset from '@src/types/utils/IconAsset';
+import useActiveCentralPaneRoute from '@hooks/useActiveCentralPaneRoute';
+import useSingleExecution from '@hooks/useSingleExecution';
+import MenuItemGroup from '@components/MenuItemGroup';
+import Section from '@components/Section';
+import MenuItemWithTopDescription from '@components/MenuItemWithTopDescription';
 
 type PreferencesListProps = {
   id: string;
@@ -70,18 +90,42 @@ const PreferencesList: React.FC<PreferencesListProps> = ({
   );
 };
 
+type MenuData = {
+  translationKey: TranslationPaths;
+  icon: IconAsset;
+  routeName?: Route;
+  action?: () => void;
+  link?: string | (() => Promise<string>);
+  iconStyles?: StyleProp<ViewStyle>;
+  fallbackIcon?: IconAsset;
+  shouldStackHorizontally?: boolean;
+  title?: string;
+  shouldShowRightIcon?: boolean;
+  iconRight?: IconAsset;
+};
+
+type Menu = {
+  sectionStyle: StyleProp<ViewStyle>;
+  sectionTranslationKey: TranslationPaths;
+  items: MenuData[];
+};
+
 type PreferencesScreenProps = StackScreenProps<
   SettingsNavigatorParamList,
   typeof SCREENS.SETTINGS.PREFERENCES.ROOT
 >;
 
-function PreferencesScreen({route}: PreferencesScreenProps) {
+function PreferencesScreen({}: PreferencesScreenProps) {
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
   const {translate} = useLocalize();
   const styles = useThemeStyles();
+  const {isExecuting, singleExecution} = useSingleExecution();
   const {isOnline} = useUserConnection();
   const {preferences} = useDatabaseData();
+  const waitForNavigate = useWaitForNavigation();
+  const popoverAnchor = useRef(null);
+  const activeCentralPaneRoute = useActiveCentralPaneRoute();
   const initialPreferences = useRef(preferences);
   const [showLeaveConfirmation, setShowLeaveConfirmation] = useState(false);
   const [sliderVisible, setSliderVisible] = useState<boolean>(false);
@@ -118,9 +162,10 @@ function PreferencesScreen({route}: PreferencesScreenProps) {
       setSaving(true);
       await savePreferencesData(db, user.uid, currentPreferences);
       Navigation.navigate(ROUTES.SETTINGS);
-      setSaving(false);
     } catch (error: any) {
-      Alert.alert('Preferences saving failed', error.message);
+      Alert.alert(translate('preferencesScreen.error.save'), error.message);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -150,6 +195,58 @@ function PreferencesScreen({route}: PreferencesScreenProps) {
       },
     }));
   };
+
+  /**
+   * Retuns JSX.Element with menu items
+   * @param menuItemsData list with menu items data
+   * @returns the menu items for passed data
+   */
+  // const getMenuItemsSection = useCallback((menuItemsData): Menu => {
+  //   return (
+  //     <Section title={translate('preferencesScreen.generalSection')}>
+  //       <MenuItemWithTopDescription
+  //         key={`${'hello'}_${'wolrd'}`}
+  //         shouldShowRightIcon
+  //         title={'hello'}
+  //         description={'hello'}
+  //         wrapperStyle={styles.sectionMenuItemTopDescription}
+  //         onPress={() => {}}
+  //         // // eslint-disable-next-line react/no-array-index-key
+  //         // key={`${detail.title}_${index}`}
+  //         // shouldShowRightIcon
+  //         // title={detail.title}
+  //         // description={detail.description}
+  //         // wrapperStyle={styles.sectionMenuItemTopDescription}
+  //         // onPress={() => Navigation.navigate(detail.pageRoute)}
+  //         // // brickRoadIndicator={detail.brickRoadIndicator}
+  //       />
+  //     </Section>
+  //   );
+  // }, []);
+
+  const {saveScrollOffset, getScrollOffset} = useContext(ScrollOffsetContext);
+  const route = useRoute();
+  const scrollViewRef = useRef<RNScrollView>(null);
+
+  const onScroll = useCallback<NonNullable<ScrollViewProps['onScroll']>>(
+    e => {
+      // If the layout measurement is 0, it means the flashlist is not displayed but the onScroll may be triggered with offset value 0.
+      // We should ignore this case.
+      if (e.nativeEvent.layoutMeasurement.height === 0) {
+        return;
+      }
+      saveScrollOffset(route, e.nativeEvent.contentOffset.y);
+    },
+    [route, saveScrollOffset],
+  );
+
+  useLayoutEffect(() => {
+    const scrollOffset = getScrollOffset(route);
+    if (!scrollOffset || !scrollViewRef.current) {
+      return;
+    }
+    scrollViewRef.current.scrollTo({y: scrollOffset, animated: false});
+  }, [getScrollOffset, route]);
 
   useMemo(() => {
     if (!preferences) {
@@ -188,7 +285,9 @@ function PreferencesScreen({route}: PreferencesScreenProps) {
   }
   if (saving) {
     return (
-      <FullScreenLoadingIndicator loadingText="Saving your preferences..." />
+      <FullScreenLoadingIndicator
+        loadingText={translate('preferencesScreen.saving')}
+      />
     );
   }
 
@@ -199,104 +298,12 @@ function PreferencesScreen({route}: PreferencesScreenProps) {
         onBackButtonPress={handleGoBack}
       />
       <ScrollView
-        style={localStyles.scrollView}
-        onScrollBeginDrag={Keyboard.dismiss}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled">
-        <View style={[localStyles.container, localStyles.horizontalContainer]}>
-          <Text style={localStyles.label}>First Day of Week</Text>
-          <View style={localStyles.itemContainer}>
-            <TextSwitch
-              offText="Sun"
-              onText="Mon"
-              value={currentPreferences.first_day_of_week === 'Monday'}
-              onValueChange={handleFirstDayOfWeekToggle}
-            />
-          </View>
-        </View>
-        <View style={[localStyles.container, localStyles.verticalContainer]}>
-          <Text style={localStyles.label}>Unit Colors</Text>
-          <View style={localStyles.itemContainer}>
-            <PreferencesList
-              id="units_to_colors"
-              initialContents={[
-                {
-                  key: 'yellow',
-                  label: 'Yellow',
-                  value: currentPreferences.units_to_colors.yellow.toString(),
-                },
-                {
-                  key: 'orange',
-                  label: 'Orange',
-                  value: currentPreferences.units_to_colors.orange.toString(),
-                },
-              ]}
-              onButtonPress={(key, label, value) => {
-                setSliderHeading(label);
-                setSliderStep(1);
-                setSliderMaxValue(15);
-                setSliderValue(value);
-                setSliderVisible(true);
-                setSliderList('units_to_colors');
-                setSliderKey(key);
-              }}
-            />
-          </View>
-        </View>
-        <View style={[localStyles.container, localStyles.verticalContainer]}>
-          <Text style={localStyles.label}>Drinks to Units Conversion</Text>
-          <View style={localStyles.itemContainer}>
-            <PreferencesList
-              id="drinks_to_units" // Another unique identifier
-              initialContents={Object.values(CONST.DRINKS.KEYS).map(
-                (key, index) => ({
-                  key: key,
-                  label: Object.values(CONST.DRINKS.NAMES)[index],
-                  value: currentPreferences.drinks_to_units[key].toString(), // Non-null assertion
-                }),
-              )}
-              onButtonPress={(key, label, value) => {
-                setSliderHeading(label);
-                setSliderStep(0.1);
-                setSliderMaxValue(3);
-                setSliderValue(value);
-                setSliderVisible(true);
-                setSliderList('drinks_to_units');
-                setSliderKey(key);
-              }}
-            />
-          </View>
-        </View>
-        {/* <View style={[localStyles.container, localStyles.horizontalContainer]}>
-          <Text style={localStyles.label}>
-            Automatically order drinks in session window
-          </Text>
-          <View style={localStyles.itemContainer}>
-            <Text>hello</Text>
-          </View>
-        </View> */}
+        ref={scrollViewRef}
+        onScroll={onScroll}
+        scrollEventThrottle={16}
+        contentContainerStyle={[styles.w100]}>
+        {/* <MenuItemGroup>{getMenuItemsSection()}</MenuItemGroup> */}
       </ScrollView>
-      <NumericSlider
-        visible={sliderVisible}
-        transparent={true}
-        value={sliderValue}
-        heading={sliderHeading}
-        step={sliderStep}
-        maxValue={sliderMaxValue}
-        onRequestClose={() => {
-          setSliderVisible(false);
-          setSliderValue(0);
-          setSliderHeading('');
-        }}
-        onSave={newValue => {
-          if (sliderList == 'units_to_colors') {
-            updateUnitsToColors(sliderKey, newValue);
-          } else if (sliderList == 'drinks_to_units') {
-            updateDrinksToUnits(sliderKey, newValue);
-          }
-          setSliderVisible(false);
-        }}
-      />
       <View style={styles.bottomTabBarContainer}>
         <Button
           text={translate('preferencesScreen.save')}
@@ -406,3 +413,97 @@ const localStyles = StyleSheet.create({
 
 PreferencesScreen.displayName = 'Preferences Screen';
 export default PreferencesScreen;
+
+//  <View style={[localStyles.container, localStyles.horizontalContainer]}>
+//   <Text style={localStyles.label}>First Day of Week</Text>
+//   <View style={localStyles.itemContainer}>
+//     <TextSwitch
+//       offText="Sun"
+//       onText="Mon"
+//       value={currentPreferences.first_day_of_week === 'Monday'}
+//       onValueChange={handleFirstDayOfWeekToggle}
+//     />
+//   </View>
+// </View>
+// <View style={[localStyles.container, localStyles.verticalContainer]}>
+//   <Text style={localStyles.label}>Unit Colors</Text>
+//   <View style={localStyles.itemContainer}>
+//     <PreferencesList
+//       id="units_to_colors"
+//       initialContents={[
+//         {
+//           key: 'yellow',
+//           label: 'Yellow',
+//           value: currentPreferences.units_to_colors.yellow.toString(),
+//         },
+//         {
+//           key: 'orange',
+//           label: 'Orange',
+//           value: currentPreferences.units_to_colors.orange.toString(),
+//         },
+//       ]}
+//       onButtonPress={(key, label, value) => {
+//         setSliderHeading(label);
+//         setSliderStep(1);
+//         setSliderMaxValue(15);
+//         setSliderValue(value);
+//         setSliderVisible(true);
+//         setSliderList('units_to_colors');
+//         setSliderKey(key);
+//       }}
+//     />
+//   </View>
+// </View>
+// <View style={[localStyles.container, localStyles.verticalContainer]}>
+//   <Text style={localStyles.label}>Drinks to Units Conversion</Text>
+//   <View style={localStyles.itemContainer}>
+//     <PreferencesList
+//       id="drinks_to_units" // Another unique identifier
+//       initialContents={Object.values(CONST.DRINKS.KEYS).map(
+//         (key, index) => ({
+//           key: key,
+//           label: Object.values(CONST.DRINKS.NAMES)[index],
+//           value: currentPreferences.drinks_to_units[key].toString(), // Non-null assertion
+//         }),
+//       )}
+//       onButtonPress={(key, label, value) => {
+//         setSliderHeading(label);
+//         setSliderStep(0.1);
+//         setSliderMaxValue(3);
+//         setSliderValue(value);
+//         setSliderVisible(true);
+//         setSliderList('drinks_to_units');
+//         setSliderKey(key);
+//       }}
+//     />
+//   </View>
+// </View>
+// {/* <View style={[localStyles.container, localStyles.horizontalContainer]}>
+//   <Text style={localStyles.label}>
+//     Automatically order drinks in session window
+//   </Text>
+//   <View style={localStyles.itemContainer}>
+//     <Text>hello</Text>
+//   </View>
+// </View> */}
+// <NumericSlider
+//   visible={sliderVisible}
+//   transparent={true}
+//   value={sliderValue}
+//   heading={sliderHeading}
+//   step={sliderStep}
+//   maxValue={sliderMaxValue}
+//   onRequestClose={() => {
+//     setSliderVisible(false);
+//     setSliderValue(0);
+//     setSliderHeading('');
+//   }}
+//   onSave={newValue => {
+//     if (sliderList == 'units_to_colors') {
+//       updateUnitsToColors(sliderKey, newValue);
+//     } else if (sliderList == 'drinks_to_units') {
+//       updateDrinksToUnits(sliderKey, newValue);
+//     }
+//     setSliderVisible(false);
+//   }}
+// />

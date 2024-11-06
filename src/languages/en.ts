@@ -269,9 +269,19 @@ export default {
   },
   preferencesScreen: {
     title: 'Preferences',
+    generalSection: 'General',
+    unitsToColorsSection: 'Units to Colors',
+    unitsToColorsDescription:
+      'Choose the cutoff points at which a session changes its color. The selected amount is the maximum value for which the session retains the corresponding color.',
+    drinksToUnitsSection: 'Drinks to Units',
+    drinksToUnitsDescription: 'Choose how many units each drink ammounts to.',
     save: 'Save preferences',
+    saving: 'Saving your preferences...',
     unsavedChanges:
       'You have unsaved changes. Are you sure you want to go back?',
+    error: {
+      save: "We couldn't save your preferences. Please try again.",
+    },
   },
   appShareScreen: {
     title: 'Share the App',

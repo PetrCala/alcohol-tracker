@@ -6,8 +6,6 @@ import type {ValueOf} from 'type-fest';
 import type {MenuItemWithLink} from '@components/MenuItemList';
 import MenuItemList from '@components/MenuItemList';
 import Text from '@components/Text';
-import useStyleUtils from '@hooks/useStyleUtils';
-import useTheme from '@hooks/useTheme';
 import useThemeStyles from '@hooks/useThemeStyles';
 import useWindowDimensions from '@hooks/useWindowDimensions';
 import type ChildrenProps from '@src/types/utils/ChildrenProps';
@@ -82,8 +80,6 @@ function Section({
   renderSubtitle,
 }: SectionProps) {
   const styles = useThemeStyles();
-  const theme = useTheme();
-  const StyleUtils = useStyleUtils();
   const {isSmallScreenWidth} = useWindowDimensions();
 
   return (

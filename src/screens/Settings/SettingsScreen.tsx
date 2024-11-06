@@ -31,7 +31,6 @@ import useActiveCentralPaneRoute from '@hooks/useActiveCentralPaneRoute';
 import useLocalize from '@hooks/useLocalize';
 import useNetwork from '@hooks/useNetwork';
 import useSingleExecution from '@hooks/useSingleExecution';
-import useTheme from '@hooks/useTheme';
 import useThemeStyles from '@hooks/useThemeStyles';
 import useWaitForNavigation from '@hooks/useWaitForNavigation';
 import Navigation from '@libs/Navigation/Navigation';
@@ -39,7 +38,6 @@ import CONST from '@src/CONST';
 import type {TranslationPaths} from '@src/languages/types';
 import type {Route} from '@src/ROUTES';
 import ROUTES from '@src/ROUTES';
-import type {Icon as TIcon} from '@src/types/onyx/OnyxCommon';
 import type IconAsset from '@src/types/utils/IconAsset';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import {useFirebase} from '@context/global/FirebaseContext';
@@ -55,20 +53,14 @@ type MenuData = {
   translationKey: TranslationPaths;
   icon: IconAsset;
   routeName?: Route;
-  brickRoadIndicator?: ValueOf<typeof CONST.BRICK_ROAD_INDICATOR_STATUS>;
   action?: () => void;
   link?: string | (() => Promise<string>);
-  iconType?: typeof CONST.ICON_TYPE_ICON | typeof CONST.ICON_TYPE_AVATAR;
   iconStyles?: StyleProp<ViewStyle>;
   fallbackIcon?: IconAsset;
   shouldStackHorizontally?: boolean;
-  avatarSize?: ValueOf<typeof CONST.AVATAR_SIZE>;
-  floatRightAvatars?: TIcon[];
   title?: string;
   shouldShowRightIcon?: boolean;
   iconRight?: IconAsset;
-  badgeText?: string;
-  badgeStyle?: ViewStyle;
 };
 
 type Menu = {
@@ -232,7 +224,7 @@ function SettingsScreen({}: SettingsScreenProps) {
                 wrapperStyle={styles.sectionMenuItem}
                 title={keyTitle}
                 icon={item.icon}
-                iconType={item.iconType}
+                iconType={CONST.ICON_TYPE_ICON}
                 disabled={isExecuting}
                 onPress={singleExecution(() => {
                   if (item.action) {
@@ -244,17 +236,11 @@ function SettingsScreen({}: SettingsScreenProps) {
                   }
                 })}
                 iconStyles={item.iconStyles}
-                badgeText={item.badgeText ?? ''}
-                badgeStyle={item.badgeStyle}
                 fallbackIcon={item.fallbackIcon}
-                brickRoadIndicator={item.brickRoadIndicator}
-                floatRightAvatars={item.floatRightAvatars}
                 shouldStackHorizontally={item.shouldStackHorizontally}
-                floatRightAvatarSize={item.avatarSize}
                 ref={popoverAnchor}
                 hoverAndPressStyle={styles.hoveredComponentBG}
                 shouldBlockSelection={!!item.link}
-                // onSecondaryInteraction={}
                 focused={
                   !!activeCentralPaneRoute &&
                   !!item.routeName &&

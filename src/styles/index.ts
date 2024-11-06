@@ -300,7 +300,7 @@ const styles = (theme: ThemeColors) =>
     // ...textDecorationLine,
     editedLabelStyles,
 
-    accountSettingsSectionTitle: {
+    generalSectionTitle: {
       ...FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
     },
 

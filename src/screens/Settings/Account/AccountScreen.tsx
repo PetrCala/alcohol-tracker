@@ -98,7 +98,7 @@ function AccountScreen({route}: AccountScreenProps) {
             title={translate('accountScreen.generalOptions.title')}
             isCentralPane
             childrenStyles={styles.pt5}
-            titleStyles={styles.accountSettingsSectionTitle}>
+            titleStyles={styles.generalSectionTitle}>
             {isLoading ? (
               <FullScreenLoadingIndicator
                 style={[
@@ -131,7 +131,7 @@ function AccountScreen({route}: AccountScreenProps) {
             isCentralPane
             subtitleMuted
             childrenStyles={styles.pt3}
-            titleStyles={styles.accountSettingsSectionTitle}>
+            titleStyles={styles.generalSectionTitle}>
             {isLoading ? (
               <FullScreenLoadingIndicator
                 style={[
