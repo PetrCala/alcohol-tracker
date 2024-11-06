@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import lodashClamp from 'lodash/clamp';
-import type {LineLayer} from 'react-map-gl';
 import {
   Platform,
   type AnimatableNumericValue,
@@ -18,7 +17,6 @@ import type {
 import * as Browser from '@libs/Browser';
 import CONST from '@src/CONST';
 import {defaultTheme} from './theme';
-import colors from './theme/colors';
 import type {ThemeColors} from './theme/types';
 // import addOutlineWidth from './utils/addOutlineWidth';
 import borders from './utils/borders';
@@ -1565,6 +1563,22 @@ const styles = (theme: ThemeColors) =>
       backgroundColor: theme.splashBG,
       alignItems: 'center',
       justifyContent: 'center',
+    },
+
+    squareTextInputContainer: {
+      backgroundColor: theme.componentBG,
+      borderRadius: variables.componentBorderRadiusNormal,
+      // width: variables.componentSizeSmall,
+      // height: variables.componentSizeSmall,
+      width: 40,
+      height: 40,
+    },
+
+    squareTextInputText: {
+      alignSelf: 'center',
+      justifySelf: 'center',
+      padding: 20,
+      borderWidth: 0,
     },
 
     statItemContainer: {

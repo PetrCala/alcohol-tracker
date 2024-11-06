@@ -29,12 +29,17 @@ import ScrollView from '@components/ScrollView';
 import MenuItemGroup from '@components/MenuItemGroup';
 import Section from '@components/Section';
 import MenuItem from '@components/MenuItem';
+import Icon from '@components/Icon';
+import TextInput from '@components/TextInput';
+import AmountTextInput from '@components/AmountTextInput';
+import FillerView from '@components/FillerView';
 
 type MenuData = {
   title?: string;
   description?: string;
   pageRoute?: Route;
   disabled?: boolean;
+  rightComponent?: React.ReactNode;
   // action?: () => void;
   // link?: string | (() => Promise<string>);
   // translationKey: TranslationPaths;
@@ -139,6 +144,39 @@ function PreferencesScreen({}: PreferencesScreenProps) {
     }));
   };
 
+  const preferencesTextInput = (
+    key: string,
+    value: number,
+  ): React.ReactNode => {
+    return (
+      <AmountTextInput
+        formattedAmount={value.toString()}
+        onChangeAmount={newValue => {
+          if (key === 'Yellow' || key === 'Orange') {
+            updateUnitsToColors(key, parseFloat(newValue));
+          } else {
+            updateDrinksToUnits(key, parseFloat(newValue));
+          }
+        }}
+        touchableInputWrapperStyle={{
+          backgroundColor: 'white',
+          borderRadius: 8,
+          width: 40,
+          height: 40,
+          justifyContent: 'center',
+          alignItems: 'center',
+          borderWidth: 0,
+        }}
+        style={{
+          fontSize: 16,
+          fontWeight: 'bold',
+          color: 'black',
+        }}
+        placeholder={value.toString()}
+      />
+    );
+  };
+
   const generalMenuItemsData: Menu = useMemo(() => {
     return {
       sectionTranslationKey: 'preferencesScreen.generalSection.title',
@@ -156,7 +194,29 @@ function PreferencesScreen({}: PreferencesScreenProps) {
     return {
       sectionTranslationKey: 'preferencesScreen.unitColorsSection.title',
       subtitle: translate('preferencesScreen.unitColorsSection.description'),
-      items: [],
+      items: [
+        {
+          title: 'Yellow',
+          rightComponent: preferencesTextInput(
+            'Yellow',
+            currentPreferences.units_to_colors.yellow,
+          ),
+          disabled: true,
+        },
+      ],
+
+      //       initialContents={[
+      //         {
+      //           key: 'yellow',
+      //           label: 'Yellow',
+      //           value: currentPreferences.units_to_colors.yellow.toString(),
+      //         },
+      //         {
+      //           key: 'orange',
+      //           label: 'Orange',
+      //           value: currentPreferences.units_to_colors.orange.toString(),
+      //         },
+      //       ]}
     };
   }, []);
 
@@ -187,7 +247,6 @@ function PreferencesScreen({}: PreferencesScreenProps) {
             <MenuItem
               // eslint-disable-next-line react/no-array-index-key
               key={`${detail.title}_${index}`}
-              shouldShowRightIcon
               title={detail.title}
               titleStyle={styles.plainSectionTitle}
               description={detail.description}
@@ -195,6 +254,9 @@ function PreferencesScreen({}: PreferencesScreenProps) {
               disabled={detail.disabled}
               shouldGreyOutWhenDisabled={false}
               shouldUseRowFlexDirection
+              shouldShowRightIcon={!detail.rightComponent}
+              shouldShowRightComponent={!!detail.rightComponent}
+              rightComponent={detail.rightComponent}
               onPress={() => Navigation.navigate(detail.pageRoute)}
             />
           ))}
@@ -220,7 +282,7 @@ function PreferencesScreen({}: PreferencesScreenProps) {
     if (!preferences) {
       return;
     }
-    const newPreferences = {
+    const newPreferences: Preferences = {
       first_day_of_week: preferences.first_day_of_week,
       units_to_colors: preferences.units_to_colors,
       drinks_to_units: preferences.drinks_to_units,
@@ -270,6 +332,7 @@ function PreferencesScreen({}: PreferencesScreenProps) {
           {generalMenuItems}
           {unitsToColorsMenuItems}
           {drinksToUnitsMenuItems}
+          <FillerView height={400} />
         </MenuItemGroup>
       </ScrollView>
       <View style={styles.bottomTabBarContainer(true)}>
@@ -293,91 +356,6 @@ function PreferencesScreen({}: PreferencesScreenProps) {
     </ScreenWrapper>
   );
 }
-
-const localStyles = StyleSheet.create({
-  scrollView: {
-    width: '100%',
-    flexGrow: 1,
-    flexShrink: 1,
-    backgroundColor: '#FFFF99',
-  },
-  container: {
-    justifyContent: 'space-between',
-    backgroundColor: 'white',
-    padding: 10,
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: '#000',
-    margin: 2,
-  },
-  horizontalContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  verticalContainer: {
-    flexDirection: 'column',
-  },
-  label: {
-    color: 'black',
-    fontSize: 16,
-    fontWeight: 'bold',
-    width: 'auto',
-    maxWidth: '75%',
-  },
-  itemContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  button: {
-    borderRadius: 5,
-    padding: 5,
-    margin: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  preferencesListContainer: {
-    flexDirection: 'column',
-    width: '100%',
-  },
-  preferencesListRowContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '100%',
-  },
-  preferencesListLabel: {
-    fontSize: 16,
-    color: 'black',
-    fontWeight: '400',
-    marginLeft: 5,
-  },
-  preferencesListNumericContainer: {
-    height: 35,
-    width: 60,
-    borderRadius: 5,
-    margin: 8,
-    color: 'black',
-  },
-  preferencesListButton: {
-    height: 40,
-    width: 60,
-    borderRadius: 5,
-    borderWidth: 2,
-    borderColor: '#000',
-    backgroundColor: '#FFFF99',
-    justifyContent: 'center',
-  },
-  preferencesListText: {
-    fontSize: 16,
-    color: 'black',
-    fontWeight: '500',
-    textAlign: 'center',
-  },
-});
 
 PreferencesScreen.displayName = 'Preferences Screen';
 export default PreferencesScreen;

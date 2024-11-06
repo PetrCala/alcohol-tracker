@@ -70,7 +70,7 @@ function AmountTextInput(
     touchableInputWrapperStyle,
     onKeyPress,
     containerStyle,
-    disableKeyboard = true,
+    disableKeyboard = false,
     hideFocusedState = true,
     ...rest
   }: AmountTextInputProps,
@@ -82,6 +82,7 @@ function AmountTextInput(
       hideFocusedState={hideFocusedState}
       shouldInterceptSwipe
       disableKeyboard={disableKeyboard}
+      keyboardType={CONST.KEYBOARD_TYPE.DECIMAL_PAD}
       inputStyle={style}
       textInputContainerStyles={containerStyle}
       onChangeText={onChangeAmount}
