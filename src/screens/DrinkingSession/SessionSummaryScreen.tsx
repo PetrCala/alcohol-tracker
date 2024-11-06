@@ -1,4 +1,4 @@
-﻿import {ScrollView, StyleSheet, Text, View} from 'react-native';
+﻿import {StyleSheet, Text, View} from 'react-native';
 import MenuIcon from '@components/Buttons/MenuIcon';
 import {
   formatDateToTime,
@@ -26,6 +26,9 @@ import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import {format} from 'date-fns';
 import Button from '@components/Button';
 import useThemeStyles from '@hooks/useThemeStyles';
+import ScrollView from '@components/ScrollView';
+import useStyleUtils from '@hooks/useStyleUtils';
+import useTheme from '@hooks/useTheme';
 
 const SessionDataItem = ({
   heading,
@@ -69,6 +72,7 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
   const {preferences, drinkingSessionData} = useDatabaseData();
   const {translate} = useLocalize();
   const styles = useThemeStyles();
+  const theme = useTheme();
   if (!preferences) {
     return null;
   } // Careful when writing hooks after this line
@@ -165,12 +169,11 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
       <HeaderWithBackButton
         onBackButtonPress={handleBackPress}
         customRightButton={
-          session.ongoing ? null : (
-            <MenuIcon
-              iconId="edit-session-icon"
-              iconSource={KirokuIcons.Edit}
-              containerStyle={localStyles.menuIconContainer}
-              iconStyle={localStyles.menuIcon}
+          !session.ongoing && (
+            <Button
+              style={styles.bgTransparent}
+              icon={KirokuIcons.Edit}
+              iconFill={theme.textDark}
               onPress={() => onEditSessionPress(sessionId)} // Use keyextractor to load id here
             />
           )
@@ -178,10 +181,10 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
       />
       <ScrollView style={localStyles.scrollView}>
         <View style={localStyles.sessionInfoContainer}>
-          <Text style={localStyles.sessionInfoText}>Session Summary</Text>
+          <Text style={styles.textHeadlineH2}>Session Summary</Text>
         </View>
 
-        <View style={localStyles.sessionSectionContainer}>
+        {/* <View style={localStyles.sessionSectionContainer}>
           <Text style={localStyles.sessionDataContainerHeading}>General</Text>
           <SessionDataItem
             key="sessionColor"
@@ -224,7 +227,7 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
               index={index}
             />
           ))}
-        </View>
+        </View> */}
       </ScrollView>
       <View style={styles.bottomTabBarContainer(true)}>
         <Button
@@ -239,26 +242,14 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
 }
 
 const localStyles = StyleSheet.create({
-  menuIconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  menuIcon: {
-    width: 25,
-    height: 25,
-  },
   scrollView: {
     flexGrow: 1,
     flexShrink: 1,
   },
   sessionInfoContainer: {
     flex: 1,
-    borderBottomWidth: 1,
-    borderColor: 'gray',
-    marginHorizontal: 8,
+    alignItems: 'center',
+    paddingBottom: 8,
   },
   sessionInfoText: {
     fontSize: 20,

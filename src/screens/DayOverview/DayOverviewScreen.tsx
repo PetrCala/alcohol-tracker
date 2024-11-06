@@ -26,7 +26,6 @@ import {useUserConnection} from '@context/global/UserConnectionContext';
 import type {DrinkingSession, DrinkingSessionList} from '@src/types/onyx';
 import {generateDatabaseKey} from '@database/baseFunctions';
 import {useFirebase} from '@src/context/global/FirebaseContext';
-import MainHeaderButton from '@components/Header/MainHeaderButton';
 import type {DrinkingSessionKeyValue} from '@src/types/utils/databaseUtils';
 import type {StackScreenProps} from '@react-navigation/stack';
 import type {DayOverviewNavigatorParamList} from '@libs/Navigation/types';
@@ -198,7 +197,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
 
   const noDrinkingSessionsComponent = () => {
     return (
-      <Text style={localStyles.menuDrinkingSessionInfoText}>
+      <Text style={[styles.noResultsText, styles.mb2]}>
         No drinking sessions
       </Text>
     );
@@ -311,7 +310,8 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
         }
       />
       <View style={localStyles.dayOverviewContainer}>
-        <Text style={localStyles.menuDrinkingSessionInfoText}>
+        <Text
+          style={[styles.textHeadlineH1, styles.alignSelfCenter, styles.mb2]}>
           {date
             ? format(currentDate, CONST.DATE.SHORT_DATE_FORMAT)
             : 'Loading date...'}
