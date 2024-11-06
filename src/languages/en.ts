@@ -273,11 +273,15 @@ export default {
       title: 'General',
       firstDayOfWeek: 'First day of the week',
     },
-    unitsToColorsSection: 'Units to Colors',
-    unitsToColorsDescription:
-      'Choose the cutoff points at which a session changes its color. The selected amount is the maximum value for which the session retains the corresponding color.',
-    drinksToUnitsSection: 'Drinks to Units',
-    drinksToUnitsDescription: 'Choose how many units each drink ammounts to.',
+    unitColorsSection: {
+      title: 'Unit Colors',
+      description:
+        'Set cutoff points where session colors change; each is the maximum value up to which the session retains that color',
+    },
+    drinksToUnitsSection: {
+      title: 'Drinks to Units',
+      description: 'Choose how many units each drink is worth',
+    },
     save: 'Save preferences',
     saving: 'Saving your preferences...',
     unsavedChanges:

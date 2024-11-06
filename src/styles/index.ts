@@ -1416,6 +1416,13 @@ const styles = (theme: ThemeColors) =>
       backgroundColor: theme.appBG,
     },
 
+    sectionSubtitle: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      ...sizing.mw100,
+      ...spacing.mt2,
+    },
+
     optionAlternateText: {
       minHeight: variables.alternateTextHeight,
       lineHeight: variables.lineHeightXLarge,

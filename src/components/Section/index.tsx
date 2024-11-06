@@ -57,9 +57,6 @@ type SectionProps = ChildrenProps & {
 
   /** Overlay content to display on top of animation */
   overlayContent?: () => ReactNode;
-
-  /** The component to display in the title of the section */
-  renderSubtitle?: () => ReactNode;
 };
 
 function Section({
@@ -77,7 +74,6 @@ function Section({
   titleStyles,
   isCentralPane = false,
   overlayContent,
-  renderSubtitle,
 }: SectionProps) {
   const styles = useThemeStyles();
   const {isSmallScreenWidth} = useWindowDimensions();
@@ -140,28 +136,23 @@ function Section({
           )}
         </View>
 
-        {renderSubtitle
-          ? renderSubtitle?.()
-          : !!subtitle && (
-              <View
-                style={[
-                  styles.flexRow,
-                  styles.alignItemsCenter,
-                  styles.w100,
-                  cardLayout === CARD_LAYOUT.ICON_ON_TOP
-                    ? [styles.mt1, styles.mh1]
-                    : styles.mt2,
-                  subtitleStyles,
-                ]}>
-                <Text
-                  style={[
-                    styles.textNormal,
-                    subtitleMuted && styles.colorMuted,
-                  ]}>
-                  {subtitle}
-                </Text>
-              </View>
-            )}
+        {!!subtitle && (
+          <View
+            style={[
+              styles.flexRow,
+              styles.alignItemsCenter,
+              styles.w100,
+              cardLayout === CARD_LAYOUT.ICON_ON_TOP
+                ? [styles.mt1, styles.mh1]
+                : styles.mt2,
+              subtitleStyles,
+            ]}>
+            <Text
+              style={[styles.textNormal, subtitleMuted && styles.colorMuted]}>
+              {subtitle}
+            </Text>
+          </View>
+        )}
 
         <View style={[styles.w100, childrenStyles]}>{children}</View>
 

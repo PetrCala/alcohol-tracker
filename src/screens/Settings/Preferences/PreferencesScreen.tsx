@@ -98,6 +98,7 @@ type MenuData = {
 };
 type Menu = {
   sectionTranslationKey: TranslationPaths;
+  subtitle?: string;
   items: MenuData[];
 };
 
@@ -196,20 +197,25 @@ function PreferencesScreen({}: PreferencesScreenProps) {
           description: 'Monday',
           pageRoute: ROUTES.HOME,
         },
-        // {
-        //   title: translate('preferencesScreen.unitColors'),
-        //   description: '',
-        //   // pageRoute: ROUTES.SETTINGS_DISPLAY_NAME,
-        // },
-        // {
-        //   title: translate('preferencesScreen.drinksToUnitsConversion'),
-        //   description: '',
-        //   // pageRoute: ROUTES.SETTINGS_TIMEZONE,
-
-        // }
       ],
     };
-  }, [styles.generalSettingsSectionContainer]);
+  }, []);
+
+  const unitsToColorsMenuItemsData: Menu = useMemo(() => {
+    return {
+      sectionTranslationKey: 'preferencesScreen.unitColorsSection.title',
+      subtitle: translate('preferencesScreen.unitColorsSection.description'),
+      items: [],
+    };
+  }, []);
+
+  const drinksToColorsItemsData: Menu = useMemo(() => {
+    return {
+      sectionTranslationKey: 'preferencesScreen.drinksToUnitsSection.title',
+      subtitle: translate('preferencesScreen.drinksToUnitsSection.description'),
+      items: [],
+    };
+  }, []);
 
   /**
    * Retuns JSX.Element with menu items
@@ -221,6 +227,8 @@ function PreferencesScreen({}: PreferencesScreenProps) {
       <Section
         title={translate(menuItemsData.sectionTranslationKey)}
         titleStyles={styles.generalSectionTitle}
+        subtitle={menuItemsData.subtitle}
+        subtitleMuted
         isCentralPane
         childrenStyles={styles.pt3}>
         <>
@@ -247,6 +255,14 @@ function PreferencesScreen({}: PreferencesScreenProps) {
   const generalMenuItems = useMemo(
     () => getMenuItemsSection(generalMenuItemsData),
     [generalMenuItemsData, getMenuItemsSection],
+  );
+  const unitsToColorsMenuItems = useMemo(
+    () => getMenuItemsSection(unitsToColorsMenuItemsData),
+    [unitsToColorsMenuItemsData, getMenuItemsSection],
+  );
+  const drinksToUnitsMenuItems = useMemo(
+    () => getMenuItemsSection(drinksToColorsItemsData),
+    [drinksToColorsItemsData, getMenuItemsSection],
   );
 
   useMemo(() => {
@@ -299,7 +315,11 @@ function PreferencesScreen({}: PreferencesScreenProps) {
         onBackButtonPress={handleGoBack}
       />
       <ScrollView contentContainerStyle={[styles.w100]}>
-        <MenuItemGroup>{generalMenuItems}</MenuItemGroup>
+        <MenuItemGroup>
+          {generalMenuItems}
+          {unitsToColorsMenuItems}
+          {drinksToUnitsMenuItems}
+        </MenuItemGroup>
       </ScrollView>
       <View style={styles.bottomTabBarContainer}>
         <Button
