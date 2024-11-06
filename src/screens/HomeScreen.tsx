@@ -618,22 +618,6 @@ const localStyles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
   },
-  navigationArrowButton: {
-    width: '50%',
-    height: 45,
-    alignSelf: 'center',
-    justifyContent: 'center',
-    borderColor: '#ddd',
-    borderRadius: 3,
-    borderWidth: 1,
-    backgroundColor: 'white',
-  },
-  navigationArrowText: {
-    color: 'black',
-    fontSize: 30,
-    fontWeight: '500',
-    textAlign: 'center',
-  },
   mainScreenFooterHalfContainer: {
     width: '50%',
     flexDirection: 'row',
