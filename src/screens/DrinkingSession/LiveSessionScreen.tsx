@@ -590,6 +590,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
         />
       </View>
       <ConfirmModal
+        danger
         title={translate('common.warning')}
         onConfirm={handleConfirmDiscard}
         onCancel={() => setDiscardModalVisible(false)}
