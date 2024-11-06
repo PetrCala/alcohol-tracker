@@ -183,7 +183,7 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
     return (
       <Section
         title={translate(menuItemsData.sectionTranslationKey)}
-        titleStyles={styles.headerText}
+        titleStyles={styles.sectionTitleSimple}
         containerStyles={styles.pb0}
         childrenStyles={styles.pt3}>
         <>

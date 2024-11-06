@@ -1293,6 +1293,13 @@ const styles = (theme: ThemeColors) =>
       color: theme.textSupporting,
     },
 
+    sectionTitleSimple: {
+      ...FontUtils.fontFamily.platform.EXP_NEUE,
+      color: theme.textSupporting,
+      fontSize: 13,
+      lineHeight: 16,
+    },
+
     sectionMenuItem: {
       borderRadius: 8,
       paddingHorizontal: 8,
