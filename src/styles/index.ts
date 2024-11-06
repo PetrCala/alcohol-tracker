@@ -304,6 +304,10 @@ const styles = (theme: ThemeColors) =>
       ...FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
     },
 
+    plainSectionTitle: {
+      ...FontUtils.fontFamily.platform.EXP_NEUE,
+    },
+
     accountSettingsSectionContainer: {
       borderBottomWidth: 1,
       borderBottomColor: theme.border,
@@ -1028,6 +1032,12 @@ const styles = (theme: ThemeColors) =>
 
     menuItemTextContainer: {
       minHeight: variables.componentSizeNormal,
+    },
+
+    menuItemRowFlex: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
     },
 
     messageBanner: {

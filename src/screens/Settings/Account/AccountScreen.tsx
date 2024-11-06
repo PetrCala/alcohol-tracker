@@ -2,7 +2,6 @@ import {Keyboard} from 'react-native';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import MenuItemGroup from '@components/MenuItemGroup';
-import MenuItemWithTopDescription from '@components/MenuItemWithTopDescription';
 import ScreenWrapper from '@components/ScreenWrapper';
 import Section from '@components/Section';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
@@ -17,6 +16,7 @@ import type {StackScreenProps} from '@react-navigation/stack';
 import ROUTES from '@src/ROUTES';
 import type SCREENS from '@src/SCREENS';
 import ScrollView from '@components/ScrollView';
+import MenuItemWithTopDescription from '@components/MenuItemWithTopDescription';
 
 type AccountScreenProps = StackScreenProps<
   SettingsNavigatorParamList,
@@ -97,7 +97,7 @@ function AccountScreen({route}: AccountScreenProps) {
           <Section
             title={translate('accountScreen.generalOptions.title')}
             isCentralPane
-            childrenStyles={styles.pt5}
+            childrenStyles={styles.pt3}
             titleStyles={styles.generalSectionTitle}>
             {isLoading ? (
               <FullScreenLoadingIndicator
@@ -115,10 +115,10 @@ function AccountScreen({route}: AccountScreenProps) {
                     key={`${detail.title}_${index}`}
                     shouldShowRightIcon
                     title={detail.title}
+                    titleStyle={styles.plainSectionTitle}
                     description={detail.description}
                     wrapperStyle={styles.sectionMenuItemTopDescription}
                     onPress={() => Navigation.navigate(detail.pageRoute)}
-                    // brickRoadIndicator={detail.brickRoadIndicator}
                   />
                 ))}
               </>

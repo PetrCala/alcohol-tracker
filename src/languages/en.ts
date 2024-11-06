@@ -269,7 +269,10 @@ export default {
   },
   preferencesScreen: {
     title: 'Preferences',
-    generalSection: 'General',
+    generalSection: {
+      title: 'General',
+      firstDayOfWeek: 'First day of the week',
+    },
     unitsToColorsSection: 'Units to Colors',
     unitsToColorsDescription:
       'Choose the cutoff points at which a session changes its color. The selected amount is the maximum value for which the session retains the corresponding color.',

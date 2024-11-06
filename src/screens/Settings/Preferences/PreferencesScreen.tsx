@@ -1,23 +1,11 @@
-﻿import {useRoute} from '@react-navigation/native';
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+﻿import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {
-  ScrollView as RNScrollView,
   Alert,
   BackHandler,
-  Keyboard,
-  ScrollView,
-  ScrollViewProps,
   StyleProp,
   StyleSheet,
   Text,
+  TextStyle,
   TouchableOpacity,
   View,
   ViewStyle,
@@ -28,7 +16,6 @@ import UserOffline from '@components/UserOfflineModal';
 import {savePreferencesData} from '@database/preferences';
 import {getDefaultPreferences} from '@database/users';
 import type {Preferences} from '@src/types/onyx';
-import {ScrollOffsetContext} from '@components/ScrollOffsetContextProvider';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import type {StackScreenProps} from '@react-navigation/stack';
 import type {SettingsNavigatorParamList} from '@libs/Navigation/types';
@@ -46,13 +33,14 @@ import ConfirmModal from '@components/ConfirmModal';
 import Button from '@components/Button';
 import useThemeStyles from '@hooks/useThemeStyles';
 import useWaitForNavigation from '@hooks/useWaitForNavigation';
-import MenuItem from '@components/MenuItem';
 import IconAsset from '@src/types/utils/IconAsset';
 import useActiveCentralPaneRoute from '@hooks/useActiveCentralPaneRoute';
 import useSingleExecution from '@hooks/useSingleExecution';
+import ScrollView from '@components/ScrollView';
 import MenuItemGroup from '@components/MenuItemGroup';
 import Section from '@components/Section';
 import MenuItemWithTopDescription from '@components/MenuItemWithTopDescription';
+import MenuItem from '@components/MenuItem';
 
 type PreferencesListProps = {
   id: string;
@@ -91,21 +79,38 @@ const PreferencesList: React.FC<PreferencesListProps> = ({
 };
 
 type MenuData = {
-  translationKey: TranslationPaths;
-  icon: IconAsset;
-  routeName?: Route;
-  action?: () => void;
-  link?: string | (() => Promise<string>);
-  iconStyles?: StyleProp<ViewStyle>;
-  fallbackIcon?: IconAsset;
-  shouldStackHorizontally?: boolean;
-  title?: string;
-  shouldShowRightIcon?: boolean;
-  iconRight?: IconAsset;
+  title: string;
+  description?: string;
+  pageRoute?: Route;
+  // action?: () => void;
+  // link?: string | (() => Promise<string>);
+  // translationKey: TranslationPaths;
+  // icon: IconAsset;
+  // routeName?: Route;
+  // action?: () => void;
+  // link?: string | (() => Promise<string>);
+  // iconStyles?: StyleProp<ViewStyle>;
+  // fallbackIcon?: IconAsset;
+  // shouldStackHorizontally?: boolean;
+  // title?: string;
+  // shouldShowRightIcon?: boolean;
+  // iconRight?: IconAsset;
 };
 
+// <MenuItemWithTopDescription
+//   // eslint-disable-next-line react/no-array-index-key
+//   key={`${detail.title}_${index}`}
+//   shouldShowRightIcon
+//   title={detail.title}
+//   // description={detail.description}
+//   description={''}
+//   wrapperStyle={styles.sectionMenuItemTopDescription}
+//   // onPress={() => Navigation.navigate(detail.pageRoute)}
+//   onPress={() => {}}
+//   // brickRoadIndicator={detail.brickRoadIndicator}
+// />
+
 type Menu = {
-  sectionStyle: StyleProp<ViewStyle>;
   sectionTranslationKey: TranslationPaths;
   items: MenuData[];
 };
@@ -196,57 +201,68 @@ function PreferencesScreen({}: PreferencesScreenProps) {
     }));
   };
 
+  const generalMenuItemsData: Menu = useMemo(() => {
+    return {
+      sectionTranslationKey: 'preferencesScreen.generalSection.title',
+      items: [
+        {
+          title: translate('preferencesScreen.generalSection.firstDayOfWeek'),
+          description: 'Monday',
+          // pageRoute: ROUTES.SETTINGS_PREFERENCES,
+        },
+        // {
+        //   title: translate('preferencesScreen.unitColors'),
+        //   description: '',
+        //   // pageRoute: ROUTES.SETTINGS_DISPLAY_NAME,
+        // },
+        // {
+        //   title: translate('preferencesScreen.drinksToUnitsConversion'),
+        //   description: '',
+        //   // pageRoute: ROUTES.SETTINGS_TIMEZONE,
+
+        // }
+      ],
+    };
+  }, [styles.generalSettingsSectionContainer]);
+
   /**
    * Retuns JSX.Element with menu items
    * @param menuItemsData list with menu items data
    * @returns the menu items for passed data
    */
-  // const getMenuItemsSection = useCallback((menuItemsData): Menu => {
-  //   return (
-  //     <Section title={translate('preferencesScreen.generalSection')}>
-  //       <MenuItemWithTopDescription
-  //         key={`${'hello'}_${'wolrd'}`}
-  //         shouldShowRightIcon
-  //         title={'hello'}
-  //         description={'hello'}
-  //         wrapperStyle={styles.sectionMenuItemTopDescription}
-  //         onPress={() => {}}
-  //         // // eslint-disable-next-line react/no-array-index-key
-  //         // key={`${detail.title}_${index}`}
-  //         // shouldShowRightIcon
-  //         // title={detail.title}
-  //         // description={detail.description}
-  //         // wrapperStyle={styles.sectionMenuItemTopDescription}
-  //         // onPress={() => Navigation.navigate(detail.pageRoute)}
-  //         // // brickRoadIndicator={detail.brickRoadIndicator}
-  //       />
-  //     </Section>
-  //   );
-  // }, []);
+  const getMenuItemsSection = useCallback((menuItemsData: Menu) => {
+    return (
+      <Section
+        title={translate(menuItemsData.sectionTranslationKey)}
+        titleStyles={styles.generalSectionTitle}
+        isCentralPane
+        childrenStyles={styles.pt3}>
+        <>
+          {menuItemsData.items.map((detail, index) => (
+            <MenuItem
+              // eslint-disable-next-line react/no-array-index-key
+              key={`${detail.title}_${index}`}
+              shouldShowRightIcon
+              title={detail.title}
+              titleStyle={styles.plainSectionTitle}
+              description={detail.description}
+              wrapperStyle={styles.sectionMenuItemTopDescription}
+              disabled={true}
+              shouldGreyOutWhenDisabled={false}
+              shouldUseRowFlexDirection
+              // onPress={() => Navigation.navigate(detail.pageRoute)}
+              onPress={() => {}}
+            />
+          ))}
+        </>
+      </Section>
+    );
+  }, []);
 
-  const {saveScrollOffset, getScrollOffset} = useContext(ScrollOffsetContext);
-  const route = useRoute();
-  const scrollViewRef = useRef<RNScrollView>(null);
-
-  const onScroll = useCallback<NonNullable<ScrollViewProps['onScroll']>>(
-    e => {
-      // If the layout measurement is 0, it means the flashlist is not displayed but the onScroll may be triggered with offset value 0.
-      // We should ignore this case.
-      if (e.nativeEvent.layoutMeasurement.height === 0) {
-        return;
-      }
-      saveScrollOffset(route, e.nativeEvent.contentOffset.y);
-    },
-    [route, saveScrollOffset],
+  const generalMenuItems = useMemo(
+    () => getMenuItemsSection(generalMenuItemsData),
+    [generalMenuItemsData, getMenuItemsSection],
   );
-
-  useLayoutEffect(() => {
-    const scrollOffset = getScrollOffset(route);
-    if (!scrollOffset || !scrollViewRef.current) {
-      return;
-    }
-    scrollViewRef.current.scrollTo({y: scrollOffset, animated: false});
-  }, [getScrollOffset, route]);
 
   useMemo(() => {
     if (!preferences) {
@@ -297,12 +313,8 @@ function PreferencesScreen({}: PreferencesScreenProps) {
         title={translate('preferencesScreen.title')}
         onBackButtonPress={handleGoBack}
       />
-      <ScrollView
-        ref={scrollViewRef}
-        onScroll={onScroll}
-        scrollEventThrottle={16}
-        contentContainerStyle={[styles.w100]}>
-        {/* <MenuItemGroup>{getMenuItemsSection()}</MenuItemGroup> */}
+      <ScrollView contentContainerStyle={[styles.w100]}>
+        <MenuItemGroup>{generalMenuItems}</MenuItemGroup>
       </ScrollView>
       <View style={styles.bottomTabBarContainer}>
         <Button

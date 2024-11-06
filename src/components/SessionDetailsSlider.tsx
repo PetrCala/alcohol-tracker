@@ -22,11 +22,11 @@ type MenuData = {
   translationKey: TranslationPaths;
   routeName?: Route;
   brickRoadIndicator?: ValueOf<typeof CONST.BRICK_ROAD_INDICATOR_STATUS>;
-  interactive?: boolean;
   action?: () => void;
   link?: string | (() => Promise<string>);
   shouldStackHorizontally?: boolean;
   title?: string;
+  disabled?: boolean;
   description?: string;
   shouldShowRightComponent?: boolean;
   shouldShowRightIcon?: boolean;
@@ -70,7 +70,7 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
       translationKey: 'liveSessionScreen.blackout',
       shouldShowRightComponent: true,
       rightComponent: blackoutSwitch,
-      interactive: false,
+      disabled: true,
     },
     {
       translationKey: 'liveSessionScreen.note',
@@ -107,8 +107,10 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
               key={keyTitle}
               wrapperStyle={styles.sectionMenuItem}
               title={keyTitle}
+              titleStyle={styles.plainSectionTitle}
               description={item.description}
-              disabled={isExecuting}
+              disabled={item.disabled}
+              shouldGreyOutWhenDisabled={false}
               onPress={singleExecution(() => {
                 if (item.action) {
                   item.action();
@@ -118,12 +120,11 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
                   })();
                 }
               })}
-              interactive={item.interactive}
               brickRoadIndicator={item.brickRoadIndicator}
               shouldStackHorizontally={item.shouldStackHorizontally}
               shouldShowRightIcon={item.shouldShowRightIcon}
               ref={popoverAnchor}
-              hoverAndPressStyle={styles.hoveredComponentBG}
+              hoverAndPressStyle={!item.disabled && styles.hoveredComponentBG}
               shouldBlockSelection={!!item.link}
               focused={
                 !!activeCentralPaneRoute &&

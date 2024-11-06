@@ -153,9 +153,7 @@ function SettingsScreen({}: SettingsScreenProps) {
         {
           translationKey: 'settingsScreen.giveFeedback',
           icon: KirokuIcons.Idea,
-          action: () => {
-            Navigation.navigate(ROUTES.SETTINGS_FEEDBACK);
-          },
+          routeName: ROUTES.SETTINGS_FEEDBACK,
         },
         {
           translationKey: 'settingsScreen.shareTheApp',
@@ -193,9 +191,7 @@ function SettingsScreen({}: SettingsScreenProps) {
         {
           translationKey: 'settingsScreen.deleteAccount',
           icon: KirokuIcons.Delete,
-          action: () => {
-            Navigation.navigate(ROUTES.SETTINGS_DELETE);
-          },
+          routeName: ROUTES.SETTINGS_DELETE,
         },
       ],
     };
@@ -282,7 +278,6 @@ function SettingsScreen({}: SettingsScreenProps) {
     () => getMenuItemsSection(generalMenuItemsData),
     [generalMenuItemsData, getMenuItemsSection],
   );
-
   const authenticationMenuItems = useMemo(
     () => getMenuItemsSection(authenticationMenuItemsData),
     [authenticationMenuItemsData, getMenuItemsSection],

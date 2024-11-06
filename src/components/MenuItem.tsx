@@ -134,6 +134,9 @@ type MenuItemBaseProps = {
   /** Overrides the icon for shouldShowRightIcon */
   iconRight?: IconAsset;
 
+  /** Should flex the title and description into a row with flex-end in between */
+  shouldUseRowFlexDirection?: boolean;
+
   /** Should render component on the right */
   shouldShowRightComponent?: boolean;
 
@@ -310,6 +313,7 @@ function MenuItem(
     shouldStackHorizontally = false,
     shouldShowDescriptionOnTop = false,
     shouldShowRightComponent = false,
+    shouldUseRowFlexDirection = false,
     rightComponent,
     floatRightAvatars = [],
     floatRightAvatarSize,
@@ -346,9 +350,11 @@ function MenuItem(
     style && Array.isArray(style)
       ? style.includes(styles.offlineFeedback.deleted)
       : false;
-  const descriptionVerticalMargin = shouldShowDescriptionOnTop
-    ? styles.mb1
-    : styles.mt1;
+  const descriptionVerticalMargin = shouldUseRowFlexDirection
+    ? styles.m0
+    : shouldShowDescriptionOnTop
+      ? styles.mb1
+      : styles.mt1;
   const fallbackAvatarSize =
     viewMode === CONST.OPTION_MODE.COMPACT
       ? CONST.AVATAR_SIZE.SMALL
@@ -374,7 +380,7 @@ function MenuItem(
   const descriptionTextStyles = StyleUtils.combineStyles<TextStyle>([
     styles.textLabelSupporting,
     icon && !Array.isArray(icon) ? styles.ml3 : {},
-    title
+    title && !shouldUseRowFlexDirection
       ? descriptionVerticalMargin
       : StyleUtils.getFontSizeStyle(variables.fontSizeNormal),
     (descriptionTextStyle as TextStyle) || styles.breakWord,
@@ -646,6 +652,7 @@ function MenuItem(
                         StyleUtils.getMenuItemTextContainerStyle(
                           isSmallAvatarSubscriptMenu,
                         ),
+                        shouldUseRowFlexDirection && styles.menuItemRowFlex,
                       ]}>
                       {!!description && shouldShowDescriptionOnTop && (
                         <Text

@@ -104,7 +104,6 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     fontSize: 14,
     color: 'black',
-    fontWeight: 'bold',
     alignSelf: 'center',
     marginLeft: 5,
   },
