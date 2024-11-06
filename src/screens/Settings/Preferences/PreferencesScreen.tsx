@@ -41,6 +41,7 @@ import MenuItemGroup from '@components/MenuItemGroup';
 import Section from '@components/Section';
 import MenuItemWithTopDescription from '@components/MenuItemWithTopDescription';
 import MenuItem from '@components/MenuItem';
+import {getDetails} from 'react-native-compressor';
 
 type PreferencesListProps = {
   id: string;
@@ -79,9 +80,10 @@ const PreferencesList: React.FC<PreferencesListProps> = ({
 };
 
 type MenuData = {
-  title: string;
+  title?: string;
   description?: string;
   pageRoute?: Route;
+  disabled?: boolean;
   // action?: () => void;
   // link?: string | (() => Promise<string>);
   // translationKey: TranslationPaths;
@@ -90,26 +92,10 @@ type MenuData = {
   // action?: () => void;
   // link?: string | (() => Promise<string>);
   // iconStyles?: StyleProp<ViewStyle>;
-  // fallbackIcon?: IconAsset;
   // shouldStackHorizontally?: boolean;
-  // title?: string;
   // shouldShowRightIcon?: boolean;
   // iconRight?: IconAsset;
 };
-
-// <MenuItemWithTopDescription
-//   // eslint-disable-next-line react/no-array-index-key
-//   key={`${detail.title}_${index}`}
-//   shouldShowRightIcon
-//   title={detail.title}
-//   // description={detail.description}
-//   description={''}
-//   wrapperStyle={styles.sectionMenuItemTopDescription}
-//   // onPress={() => Navigation.navigate(detail.pageRoute)}
-//   onPress={() => {}}
-//   // brickRoadIndicator={detail.brickRoadIndicator}
-// />
-
 type Menu = {
   sectionTranslationKey: TranslationPaths;
   items: MenuData[];
@@ -208,7 +194,7 @@ function PreferencesScreen({}: PreferencesScreenProps) {
         {
           title: translate('preferencesScreen.generalSection.firstDayOfWeek'),
           description: 'Monday',
-          // pageRoute: ROUTES.SETTINGS_PREFERENCES,
+          pageRoute: ROUTES.HOME,
         },
         // {
         //   title: translate('preferencesScreen.unitColors'),
@@ -247,11 +233,10 @@ function PreferencesScreen({}: PreferencesScreenProps) {
               titleStyle={styles.plainSectionTitle}
               description={detail.description}
               wrapperStyle={styles.sectionMenuItemTopDescription}
-              disabled={true}
+              disabled={detail.disabled}
               shouldGreyOutWhenDisabled={false}
               shouldUseRowFlexDirection
-              // onPress={() => Navigation.navigate(detail.pageRoute)}
-              onPress={() => {}}
+              onPress={() => Navigation.navigate(detail.pageRoute)}
             />
           ))}
         </>
