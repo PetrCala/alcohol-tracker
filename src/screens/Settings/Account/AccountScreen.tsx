@@ -1,3 +1,4 @@
+import {Keyboard} from 'react-native';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import MenuItemGroup from '@components/MenuItemGroup';
@@ -15,7 +16,7 @@ import type {SettingsNavigatorParamList} from '@libs/Navigation/types';
 import type {StackScreenProps} from '@react-navigation/stack';
 import ROUTES from '@src/ROUTES';
 import type SCREENS from '@src/SCREENS';
-import {Keyboard, ScrollView} from 'react-native';
+import ScrollView from '@components/ScrollView';
 
 type AccountScreenProps = StackScreenProps<
   SettingsNavigatorParamList,

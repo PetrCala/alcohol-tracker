@@ -80,7 +80,6 @@ type Menu = {
 function SettingsScreen({}: SettingsScreenProps) {
   const network = useNetwork();
   const {auth} = useFirebase();
-  const theme = useTheme();
   const styles = useThemeStyles();
   const {isExecuting, singleExecution} = useSingleExecution();
   const waitForNavigate = useWaitForNavigation();
