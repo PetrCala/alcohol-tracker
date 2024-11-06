@@ -113,7 +113,6 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
     if (!preferences) {
       return;
     }
-    const theme = useThemeStyles();
 
     // Calculate the session color
     const totalUnits = sumAllUnits(session.drinks, preferences.drinks_to_units);
@@ -126,64 +125,50 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
     const date = timestampToDate(session.start_time);
     const timeString = nonMidnightString(formatDateToTime(date));
     const shouldDisplayTime = session.type === CONST.SESSION_TYPES.LIVE;
-    const shouldInverseTextColor =
-      session.blackout === true ||
-      sessionColor === 'red' ||
-      sessionColor === 'green';
 
     return (
-      <View style={[styles.dayOverviewTab(sessionColor), styles.border]}>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <View style={{flex: 1}}>
-            <TouchableOpacity
-              accessibilityRole="button"
-              style={localStyles.menuDrinkingSessionButton}
-              onPress={() => onSessionButtonPress(sessionId, session)}>
-              <Text
-                style={[
-                  styles.textNormalThemeText,
-                  styles.p1,
-                  shouldInverseTextColor
-                    ? {color: 'white', fontWeight: '500'}
-                    : {},
-                ]}>
-                Units: {totalUnits}
-              </Text>
-              {shouldDisplayTime && (
-                <Text
-                  style={[
-                    styles.textNormalThemeText,
-                    styles.p1,
-                    shouldInverseTextColor
-                      ? {color: 'white', fontWeight: '500'}
-                      : {},
-                  ]}>
-                  Time: {nonMidnightString(timeString)}
-                </Text>
-              )}
-            </TouchableOpacity>
-          </View>
-          {session?.ongoing ? (
-            <View style={localStyles.ongoingSessionContainer}>
+      <View style={[styles.flexRow, styles.ph1, styles.mb1]}>
+        <View
+          style={[styles.border, styles.dayOverviewTabIndicator(sessionColor)]}
+        />
+        <View style={[styles.border, styles.dayOverviewTab, styles.pr1]}>
+          <View style={[styles.flexRow, styles.alignItemsCenter]}>
+            <View style={styles.flex1}>
               <TouchableOpacity
                 accessibilityRole="button"
-                style={[localStyles.ongoingSessionButton, styles.border]}
+                style={localStyles.menuDrinkingSessionButton}
                 onPress={() => onSessionButtonPress(sessionId, session)}>
-                <Text style={[styles.buttonLargeText]}>In Session</Text>
+                <Text style={[styles.textNormalThemeText, styles.p1]}>
+                  Units: {totalUnits}
+                </Text>
+                {shouldDisplayTime && (
+                  <Text style={[styles.textNormalThemeText, styles.p1]}>
+                    Time: {nonMidnightString(timeString)}
+                  </Text>
+                )}
               </TouchableOpacity>
             </View>
-          ) : editMode ? (
-            <MenuIcon
-              iconId="edit-session-icon"
-              iconSource={KirokuIcons.Edit}
-              containerStyle={[localStyles.menuIconContainer]}
-              iconStyle={[
-                localStyles.menuIcon,
-                shouldInverseTextColor ? {tintColor: 'white'} : {},
-              ]}
-              onPress={() => onEditSessionPress(sessionId)} // Use keyextractor to load id here
-            />
-          ) : null}
+            {session?.ongoing ? (
+              <View style={localStyles.ongoingSessionContainer}>
+                <TouchableOpacity
+                  accessibilityRole="button"
+                  style={[localStyles.ongoingSessionButton, styles.border]}
+                  onPress={() => onSessionButtonPress(sessionId, session)}>
+                  <Text style={[styles.buttonLargeText]}>In Session</Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              editMode && (
+                <MenuIcon
+                  iconId="edit-session-icon"
+                  iconSource={KirokuIcons.Edit}
+                  containerStyle={[localStyles.menuIconContainer]}
+                  iconStyle={[localStyles.menuIcon]}
+                  onPress={() => onEditSessionPress(sessionId)} // Use keyextractor to load id here
+                />
+              )
+            )}
+          </View>
         </View>
       </View>
     );

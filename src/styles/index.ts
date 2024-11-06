@@ -779,15 +779,24 @@ const styles = (theme: ThemeColors) =>
       marginTop: 8,
     },
 
-    dayOverviewTab: (sessionColor: CalendarColors) =>
+    dayOverviewTabIndicator: (sessionColor: CalendarColors) =>
       ({
-        ...spacing.p2,
-        ...spacing.mb1,
-        borderRadius: 12,
         height: variables.sessionOverviewTabHeight,
+        width: 20,
         backgroundColor: sessionColor,
-        // backgroundColor: theme.cardBG,
+        borderRadius: 0,
+        borderTopLeftRadius: variables.componentBorderRadiusNormal,
+        borderBottomLeftRadius: variables.componentBorderRadiusNormal,
       }) satisfies ViewStyle,
+
+    dayOverviewTab: {
+      flexGrow: 1,
+      borderLeftWidth: 0,
+      borderTopLeftRadius: 0,
+      borderBottomLeftRadius: 0,
+      height: variables.sessionOverviewTabHeight,
+      backgroundColor: theme.cardBG,
+    },
 
     defaultModalContainer: {
       backgroundColor: theme.componentBG,
