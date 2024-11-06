@@ -1302,8 +1302,24 @@ const styles = (theme: ThemeColors) =>
       borderRadius: 52,
     },
 
+    searchWindowContainer: {
+      flexDirection: 'row',
+      height: variables.searchWindowHeight,
+      ...spacing.ph2,
+    },
+
     searchWindowTextContainer: {
       backgroundColor: theme.searchBarBG,
+      flexGrow: 1,
+      height: '100%',
+      borderRadius: 10,
+      ...sizing.mw100,
+    },
+
+    searchWindowText: {
+      flexGrow: 1,
+      color: theme.text,
+      alignItems: 'center',
     },
 
     searchTableHeaderActive: {

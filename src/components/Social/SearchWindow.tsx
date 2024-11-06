@@ -63,7 +63,7 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
     // }));
 
     return (
-      <View style={localStyles.mainContainer}>
+      <View style={styles.searchWindowContainer}>
         <View
           style={[
             localStyles.textContainer,
@@ -75,7 +75,7 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
               src={KirokuIcons.Search}
               medium
               fill={StyleUtils.getIconFillColor()}
-              additionalStyles={[styles.alignSelfCenter, styles.ml3]}
+              additionalStyles={[styles.alignSelfCenter, styles.mh3]}
             />
             <TextInput
               accessibilityLabel="Text input field"
@@ -83,7 +83,7 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
               placeholderTextColor={'#a8a8a8'}
               value={searchText}
               onChangeText={text => setSearchText(text)}
-              style={localStyles.searchText}
+              style={styles.searchWindowText}
               keyboardType="default"
               textContentType="nickname"
               ref={textInputRef}
@@ -103,7 +103,12 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
           ) : null}
         </View>
         {searchOnTextChange ? null : (
-          <View style={localStyles.searchButtonContainer}>
+          <View
+            style={[
+              styles.justifyContentCenter,
+              styles.alignItemsCenter,
+              styles.pl2,
+            ]}>
             <Button
               onPress={() => handleDoSearch(searchText, db)}
               text="Search"
@@ -117,50 +122,20 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
 );
 
 const localStyles = StyleSheet.create({
-  mainContainer: {
-    height: 62,
-    alignSelf: 'center',
-    flexDirection: 'row',
-    paddingTop: 10,
-    padding: 5,
-  },
   textContainer: {
-    width: '80%',
-    height: '90%',
     justifyContent: 'flex-start',
     alignContent: 'center',
     alignSelf: 'center',
     flexDirection: 'row',
-    paddingRight: 5,
-    // borderWidth: 1,
-    // borderColor: '#000',
-    borderRadius: 10,
   },
   responsiveTextContainer: {
     width: '100%',
-  },
-  searchText: {
-    height: '100%',
-    flexGrow: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    // justifyContent: 'space-between',
-    paddingLeft: 10,
-    color: 'black',
   },
   searchTextResetContainer: {
     width: '10%',
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  searchButtonContainer: {
-    width: '20%',
-    height: '100%',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'flex-end',
   },
 });
 

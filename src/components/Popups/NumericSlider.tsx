@@ -2,6 +2,7 @@
 import {Modal, StyleSheet, Text, View} from 'react-native';
 import Slider from '@react-native-community/slider';
 import BasicButton from '../Buttons/BasicButton';
+import useThemeStyles from '@hooks/useThemeStyles';
 
 type NumericSliderProps = {
   visible: boolean;
@@ -26,6 +27,7 @@ const NumericSlider = (props: NumericSliderProps) => {
     onSave,
   } = props;
   const [localValue, setLocalValue] = useState<number>(value);
+  const styles = useThemeStyles();
 
   useEffect(() => {
     setLocalValue(value);
@@ -42,16 +44,16 @@ const NumericSlider = (props: NumericSliderProps) => {
       transparent={transparent}
       visible={visible}
       onRequestClose={onRequestClose}>
-      <View style={styles.modalContainer}>
-        <View style={styles.modalView}>
-          <View style={styles.valueTextContainer}>
-            <Text style={styles.valueText}>{heading}</Text>
-            <Text style={styles.valueText}>{localValue}</Text>
+      <View style={localStyles.modalContainer}>
+        <View style={localStyles.modalView}>
+          <View style={localStyles.valueTextContainer}>
+            <Text style={localStyles.valueText}>{heading}</Text>
+            <Text style={localStyles.valueText}>{localValue}</Text>
           </View>
-          <View style={styles.sliderContainer}>
+          <View style={localStyles.sliderContainer}>
             <Slider
               value={localValue}
-              style={styles.slider}
+              style={localStyles.slider}
               minimumValue={0}
               maximumValue={maxValue}
               step={step}
@@ -62,18 +64,18 @@ const NumericSlider = (props: NumericSliderProps) => {
               tapToSeek={true}
             />
           </View>
-          <View style={styles.saveButtonsDelimiter} />
-          <View style={styles.saveButtonsContainer}>
+          <View style={localStyles.saveButtonsDelimiter} />
+          <View style={localStyles.saveButtonsContainer}>
             <BasicButton
               text="Save"
-              buttonStyle={styles.saveButton}
-              textStyle={styles.saveButtonText}
+              buttonStyle={localStyles.saveButton}
+              textStyle={localStyles.saveButtonText}
               onPress={() => onSave(localValue)}
             />
             <BasicButton
               text="Cancel"
-              buttonStyle={styles.cancelButton}
-              textStyle={styles.cancelButtonText}
+              buttonStyle={localStyles.cancelButton}
+              textStyle={localStyles.cancelButtonText}
               onPress={onRequestClose}
             />
           </View>
@@ -85,7 +87,7 @@ const NumericSlider = (props: NumericSliderProps) => {
 
 export default NumericSlider;
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
