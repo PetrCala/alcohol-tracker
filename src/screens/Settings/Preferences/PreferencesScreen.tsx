@@ -212,7 +212,7 @@ function PreferencesScreen({}: PreferencesScreenProps) {
           item.currentValue,
           'units_to_colors',
           1, // Min value
-          5, // Max value
+          15, // Max value
         ),
       })),
     };
