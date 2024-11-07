@@ -379,7 +379,7 @@ function SignUpScreen() {
             <TouchableOpacity
               accessibilityRole="button"
               style={styles.loginButtonContainer}
-              onPress={() => Navigation.goBack()}>
+              onPress={() => Navigation.navigate(ROUTES.LOGIN)}>
               <Text style={styles.loginInfoText}>Already a user?</Text>
               <Text style={styles.loginButtonText}>Log in</Text>
             </TouchableOpacity>
