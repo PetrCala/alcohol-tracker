@@ -34,7 +34,7 @@ import {TranslationPaths} from '@src/languages/types';
 import MenuItemGroup from '@components/MenuItemGroup';
 
 type MenuData = {
-  title?: string;
+  titleKey?: TranslationPaths;
   description?: string;
   rightComponent?: React.ReactNode;
   additionalStyles?: StyleProp<ViewStyle>;
@@ -112,7 +112,7 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
       sectionTranslationKey: 'sessionSummaryScreen.generalSection.title',
       items: [
         {
-          title: 'Session color',
+          titleKey: 'sessionSummaryScreen.generalSection.sessionColor',
           rightComponent: (
             <View
               style={[styles.sessionColorMarker(sessionColor), styles.border]}
@@ -120,27 +120,27 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
           ),
         },
         {
-          title: 'Units',
+          titleKey: 'sessionSummaryScreen.generalSection.units',
           description: totalUnits.toString(),
         },
         {
-          title: 'Date',
+          titleKey: 'sessionSummaryScreen.generalSection.date',
           description: sessionDay,
         },
         {
-          title: 'Start time',
+          titleKey: 'sessionSummaryScreen.generalSection.startTime',
           description: !wasLiveSession ? '-' : sessionStartTime,
         },
         {
-          title: 'Last drink added',
+          titleKey: 'sessionSummaryScreen.generalSection.lastDrinkAdded',
           description: !wasLiveSession ? '-' : lastDrinkAdded,
         },
         {
-          title: 'End time',
+          titleKey: 'sessionSummaryScreen.generalSection.endTime',
           description: !wasLiveSession ? '-' : sessionEndTime,
         },
         // {
-        //   title: 'Timezone',
+        //   titleKey: 'common.timezone',
         //   description: session.timezone ?? '',
         // },
       ],
@@ -151,14 +151,26 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
     return {
       sectionTranslationKey: 'sessionSummaryScreen.drinksSection.title',
       items: [
-        {title: 'Total', description: totalDrinks.toString()},
-        {title: 'Small Beer', description: drinkSums.small_beer.toString()},
-        {title: 'Beer', description: drinkSums.beer.toString()},
-        {title: 'Wine', description: drinkSums.wine.toString()},
-        {title: 'Weak Shot', description: drinkSums.weak_shot.toString()},
-        {title: 'Strong Shot', description: drinkSums.strong_shot.toString()},
-        {title: 'Cocktail', description: drinkSums.cocktail.toString()},
-        {title: 'Other', description: drinkSums.other.toString()},
+        {titleKey: 'common.total', description: totalDrinks.toString()},
+        {
+          titleKey: 'drinks.smallBeer',
+          description: drinkSums.small_beer.toString(),
+        },
+        {titleKey: 'drinks.beer', description: drinkSums.beer.toString()},
+        {titleKey: 'drinks.wine', description: drinkSums.wine.toString()},
+        {
+          titleKey: 'drinks.weakShot',
+          description: drinkSums.weak_shot.toString(),
+        },
+        {
+          titleKey: 'drinks.strongShot',
+          description: drinkSums.strong_shot.toString(),
+        },
+        {
+          titleKey: 'drinks.cocktail',
+          description: drinkSums.cocktail.toString(),
+        },
+        {titleKey: 'drinks.other', description: drinkSums.other.toString()},
       ],
     };
   }, [session]);
@@ -168,11 +180,11 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
       sectionTranslationKey: 'sessionSummaryScreen.otherSection.title',
       items: [
         {
-          title: 'Blackout',
+          titleKey: 'common.blackout',
           description: session.blackout ? 'Yes' : 'No',
         },
         {
-          title: 'Note',
+          titleKey: 'common.note',
           description: session.note ?? '',
         },
       ],
@@ -190,8 +202,8 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
           {menuItemsData.items.map((detail, index) => (
             <MenuItem
               // eslint-disable-next-line react/no-array-index-key
-              key={`${detail.title}_${index}`}
-              title={detail.title}
+              key={`${detail.titleKey}_${index}`}
+              title={detail.titleKey && translate(detail.titleKey)}
               titleStyle={styles.plainSectionTitle}
               description={detail.description}
               descriptionTextStyle={styles.textNormalThemeText}
