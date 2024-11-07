@@ -77,11 +77,17 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
     // Refactor this part using AI later
     <View style={localStyles.sendFriendRequestContainer}>
       {userFrom === userTo ? (
-        <Text style={styles.textNormalThemeText}>{statusToTextMap.self}</Text>
+        <Text numberOfLines={1} style={styles.textNormalThemeText}>
+          {statusToTextMap.self}
+        </Text>
       ) : alreadyAFriend ? (
-        <Text style={styles.textNormalThemeText}>{statusToTextMap.friend}</Text>
+        <Text numberOfLines={1} style={styles.textNormalThemeText}>
+          {statusToTextMap.friend}
+        </Text>
       ) : requestStatus === CONST.FRIEND_REQUEST_STATUS.SENT ? (
-        <Text style={styles.textNormalThemeText}>{statusToTextMap.sent}</Text>
+        <Text numberOfLines={1} style={styles.textNormalThemeText}>
+          {statusToTextMap.sent}
+        </Text>
       ) : requestStatus === CONST.FRIEND_REQUEST_STATUS.RECEIVED ? (
         <Button
           add

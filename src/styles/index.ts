@@ -812,6 +812,7 @@ const styles = (theme: ThemeColors) =>
         width: 20,
         backgroundColor: sessionColor,
         borderRadius: 0,
+        // borderRightWidth: 0, // Divider border
         borderTopLeftRadius: variables.componentBorderRadiusNormal,
         borderBottomLeftRadius: variables.componentBorderRadiusNormal,
       }) satisfies ViewStyle,
