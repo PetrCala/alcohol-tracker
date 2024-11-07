@@ -23,16 +23,11 @@ import ConfirmModal from '@components/ConfirmModal';
 import Button from '@components/Button';
 import useThemeStyles from '@hooks/useThemeStyles';
 import useWaitForNavigation from '@hooks/useWaitForNavigation';
-import useActiveCentralPaneRoute from '@hooks/useActiveCentralPaneRoute';
 import useSingleExecution from '@hooks/useSingleExecution';
 import ScrollView from '@components/ScrollView';
 import MenuItemGroup from '@components/MenuItemGroup';
 import Section from '@components/Section';
 import MenuItem from '@components/MenuItem';
-import Icon from '@components/Icon';
-import TextInput from '@components/TextInput';
-import AmountTextInput from '@components/AmountTextInput';
-import FillerView from '@components/FillerView';
 import NumericSlider from '@components/Popups/NumericSlider';
 import CONST from '@src/CONST';
 
@@ -42,17 +37,6 @@ type MenuData = {
   pageRoute?: Route;
   disabled?: boolean;
   rightComponent?: React.ReactNode;
-  // action?: () => void;
-  // link?: string | (() => Promise<string>);
-  // translationKey: TranslationPaths;
-  // icon: IconAsset;
-  // routeName?: Route;
-  // action?: () => void;
-  // link?: string | (() => Promise<string>);
-  // iconStyles?: StyleProp<ViewStyle>;
-  // shouldStackHorizontally?: boolean;
-  // shouldShowRightIcon?: boolean;
-  // iconRight?: IconAsset;
 };
 
 type Menu = {
@@ -75,8 +59,6 @@ function PreferencesScreen({}: PreferencesScreenProps) {
   const {isOnline} = useUserConnection();
   const {preferences} = useDatabaseData();
   const waitForNavigate = useWaitForNavigation();
-  const popoverAnchor = useRef(null);
-  const activeCentralPaneRoute = useActiveCentralPaneRoute();
   const initialPreferences = useRef(preferences);
   const [showLeaveConfirmation, setShowLeaveConfirmation] = useState(false);
   const [sliderVisible, setSliderVisible] = useState<boolean>(false);
@@ -180,7 +162,7 @@ function PreferencesScreen({}: PreferencesScreenProps) {
         {
           title: translate('preferencesScreen.generalSection.firstDayOfWeek'),
           description: 'Monday',
-          pageRoute: ROUTES.HOME,
+          pageRoute: ROUTES.SETTINGS_FIRST_DAY_OF_WEEK,
         },
       ],
     };
@@ -304,9 +286,11 @@ function PreferencesScreen({}: PreferencesScreenProps) {
               shouldShowRightIcon={!detail.rightComponent}
               shouldShowRightComponent={!!detail.rightComponent}
               rightComponent={detail.rightComponent}
-              onPress={() => {
-                setSliderVisible(true);
-              }}
+              onPress={singleExecution(() => {
+                waitForNavigate(() => {
+                  Navigation.navigate(detail.pageRoute);
+                })();
+              })}
             />
           ))}
         </>
@@ -414,6 +398,7 @@ function PreferencesScreen({}: PreferencesScreenProps) {
         title={translate('common.areYouSure')}
         prompt={translate('preferencesScreen.unsavedChanges')}
         onConfirm={() => {
+          setSliderVisible(false);
           setShowLeaveConfirmation(false);
           Navigation.goBack();
         }}

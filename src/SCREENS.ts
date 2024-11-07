@@ -70,6 +70,7 @@ const SCREENS = {
       ROOT: 'Settings_Preferences',
       LANGUAGE: 'Settings_Preferences_Language',
       THEME: 'Settings_Preferences_Theme',
+      FIRST_DAY_OF_WEEK: 'Settings_Preferences_FirstDayOfWeek',
     },
 
     TERMS_OF_SERVICE: 'Settings_TermsOfService',
