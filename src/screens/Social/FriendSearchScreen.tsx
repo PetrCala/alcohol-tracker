@@ -1,11 +1,4 @@
-﻿import {
-  Alert,
-  Keyboard,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+﻿import {Alert, Keyboard, StyleSheet, Text, View} from 'react-native';
 import type {
   FriendRequestList,
   FriendRequestStatus,
@@ -31,6 +24,7 @@ import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import useLocalize from '@hooks/useLocalize';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
 import useThemeStyles from '@hooks/useThemeStyles';
+import ScrollView from '@components/ScrollView';
 
 type State = {
   searchResultData: UserSearchResults;
@@ -182,10 +176,7 @@ function FriendSearchScreen() {
         onResetSearch={resetSearch}
       />
       <View style={localStyles.mainContainer}>
-        <ScrollView
-          style={localStyles.scrollViewContainer}
-          onScrollBeginDrag={Keyboard.dismiss}
-          keyboardShouldPersistTaps="handled">
+        <ScrollView>
           <View style={localStyles.searchResultsContainer}>
             {state.searching ? (
               <FlexibleLoadingIndicator style={localStyles.loadingData} />
@@ -216,9 +207,6 @@ function FriendSearchScreen() {
 
 const localStyles = StyleSheet.create({
   mainContainer: {
-    flex: 1,
-  },
-  scrollViewContainer: {
     flex: 1,
   },
   loadingData: {

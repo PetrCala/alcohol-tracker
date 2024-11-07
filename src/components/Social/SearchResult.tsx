@@ -13,6 +13,10 @@ import type {FirebaseStorage} from 'firebase/storage';
 import React from 'react';
 import type {FriendRequestStatus, Profile} from '@src/types/onyx';
 import CONST from '@src/CONST';
+import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
+import Button from '@components/Button';
+import useTheme from '@hooks/useTheme';
+import colors from '@src/styles/theme/colors';
 
 const statusToTextMap: {[key in FriendRequestStatus]: string} = {
   self: 'You',
@@ -38,6 +42,7 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
   alreadyAFriend,
 }) => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const theme = useTheme();
 
   const handleSendRequestPress = async (
     db: Database,
@@ -103,21 +108,16 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
             </Text>
           )}
         </TouchableOpacity>
+      ) : isLoading ? (
+        <FlexibleLoadingIndicator size={CONST.ACTIVITY_INDICATOR_SIZE.SMALL} />
       ) : (
-        <TouchableOpacity
-          accessibilityRole="button"
-          style={styles.sendFriendRequestButton}
-          onPress={() =>
-            handleSendRequestPress(db, userFrom, userTo, setIsLoading)
-          }>
-          {isLoading ? (
-            <ActivityIndicator size="small" color="#0000ff" />
-          ) : (
-            <Text style={styles.sendFriendRequestText}>
-              {statusToTextMap.undefined}
-            </Text>
-          )}
-        </TouchableOpacity>
+        <Button
+          add
+          onPress={() => {
+            handleSendRequestPress(db, userFrom, userTo, setIsLoading);
+          }}
+          text={statusToTextMap.undefined}
+        />
       )}
     </View>
   );

@@ -41,6 +41,9 @@ type ThemeColors = {
   success: Color;
   successHover: Color;
   successPressed: Color;
+  add: Color;
+  addHover: Color;
+  addPressed: Color;
   transparent: Color;
   signInPage: Color;
   darkSupportingText: Color;

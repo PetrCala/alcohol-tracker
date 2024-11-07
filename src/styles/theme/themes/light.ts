@@ -35,8 +35,11 @@ const lightTheme = {
   success: colors.yellowStrong,
   successHover: colors.yellowHover,
   successPressed: colors.yellowPressed,
+  add: colors.orange700,
+  addHover: colors.orange400,
+  addPressed: colors.orange100,
   transparent: colors.transparent,
-  signInPage: colors.green800,
+  signInPage: colors.appBG,
   darkSupportingText: colors.productDark800,
 
   // Additional keys
@@ -46,7 +49,7 @@ const lightTheme = {
   componentBG: colors.productLight100,
   hoverComponentBG: colors.productLight300,
   activeComponentBG: colors.productLight400,
-  signInSidebar: colors.green800,
+  signInSidebar: colors.appBG,
   sidebar: colors.productLight100,
   sidebarHover: colors.productLight300,
   heading: colors.productLight900,

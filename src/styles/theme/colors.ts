@@ -96,6 +96,16 @@ const colors: Record<string, Color> = {
   ice600: '#4BA6A6',
   ice700: '#28736D',
   ice800: '#134038',
+
+  orange100: '#FFF3E0',
+  orange200: '#FFE0B2',
+  orange300: '#FFCC80',
+  orange400: '#FFB74D',
+  orange500: '#FFA726',
+  orange600: '#FB8C00',
+  orange700: '#F57C00',
+  orange800: '#EF6C00',
+  orange900: '#E65100',
 };
 
 export default colors;

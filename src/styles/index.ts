@@ -607,13 +607,13 @@ const styles = (theme: ThemeColors) =>
       borderWidth: 0,
     },
 
+    buttonOpacityDisabled: {
+      opacity: 0.5,
+    },
+
     buttonSuccess: {
       backgroundColor: theme.success,
       borderWidth: 0,
-    },
-
-    buttonOpacityDisabled: {
-      opacity: 0.5,
     },
 
     buttonSuccessHovered: {
@@ -626,13 +626,32 @@ const styles = (theme: ThemeColors) =>
       borderWidth: 0,
     },
 
+    buttonSuccessText: {
+      color: theme.textDark,
+    },
+
+    buttonAdd: {
+      backgroundColor: theme.add,
+      borderWidth: 0,
+    },
+
+    buttonAddHovered: {
+      backgroundColor: theme.addHover,
+      borderWidth: 0,
+    },
+
+    buttonAddPressed: {
+      backgroundColor: theme.addPressed,
+      borderWidth: 0,
+    },
+
+    buttonAddText: {
+      color: theme.textDark,
+    },
+
     buttonConfirmText: {
       paddingLeft: 20,
       paddingRight: 20,
-    },
-
-    buttonSuccessText: {
-      color: theme.textDark,
     },
 
     buttonDangerText: {

@@ -97,6 +97,9 @@ type ButtonProps = Partial<ChildrenProps> & {
   /** Additional hover styles */
   hoverStyles?: StyleProp<ViewStyle>;
 
+  /** Whether we should use the add theme color */
+  add?: boolean;
+
   /** Whether we should use the success theme color */
   success?: boolean;
 
@@ -237,6 +240,7 @@ function Button(
 
     shouldUseDefaultHover = true,
     hoverStyles = undefined,
+    add = false,
     success = false,
     danger = false,
 
@@ -275,6 +279,7 @@ function Button(
           small && styles.buttonSmallText,
           medium && styles.buttonMediumText,
           large && styles.buttonLargeText,
+          add && styles.buttonAddText,
           success && styles.buttonSuccessText,
           danger && styles.buttonDangerText,
           !!icon && styles.textAlignLeft,
@@ -290,7 +295,7 @@ function Button(
       </Text>
     );
 
-    const defaultFill = success || danger ? theme.textLight : theme.icon;
+    const defaultFill = success || danger || add ? theme.textLight : theme.icon;
 
     // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
     if (icon || shouldShowRightIcon) {
@@ -430,10 +435,13 @@ function Button(
             !!(text?.length > 0),
             shouldShowRightIcon,
           ),
+          add ? styles.buttonAdd : undefined,
           success ? styles.buttonSuccess : undefined,
           danger ? styles.buttonDanger : undefined,
           isDisabled ? styles.buttonOpacityDisabled : undefined,
-          isDisabled && !danger && !success ? styles.buttonDisabled : undefined,
+          isDisabled && !danger && !success && !add
+            ? styles.buttonDisabled
+            : undefined,
           shouldRemoveRightBorderRadius
             ? styles.noRightBorderRadius
             : undefined,
@@ -448,6 +456,7 @@ function Button(
           shouldUseDefaultHover && !isDisabled
             ? styles.buttonDefaultHovered
             : undefined,
+          add && !isDisabled ? styles.buttonAddHovered : undefined,
           success && !isDisabled ? styles.buttonSuccessHovered : undefined,
           danger && !isDisabled ? styles.buttonDangerHovered : undefined,
           hoverStyles,
@@ -461,7 +470,7 @@ function Button(
         {renderContent()}
         {isLoading && (
           <ActivityIndicator
-            color={success || danger ? theme.textLight : theme.text}
+            color={success || danger || add ? theme.textLight : theme.text}
             style={[styles.pAbsolute, styles.l0, styles.r0]}
           />
         )}
