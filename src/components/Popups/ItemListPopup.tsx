@@ -78,7 +78,6 @@ const localStyles = StyleSheet.create({
   },
   modalView: {
     width: screenWidth * 0.8,
-    backgroundColor: '#FFFF99',
     borderRadius: 8,
     borderWidth: 1,
     padding: 10,

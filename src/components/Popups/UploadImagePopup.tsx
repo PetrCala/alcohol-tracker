@@ -15,6 +15,7 @@ import {
   View,
 } from 'react-native';
 import {useFirebase} from '@context/global/FirebaseContext';
+import useThemeStyles from '@hooks/useThemeStyles';
 
 type UploadImagePopupProps = {
   visible: boolean;
@@ -28,14 +29,15 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
   const {visible, transparent, onRequestClose, parentState, parentDispatch} =
     props;
   const {auth} = useFirebase();
+  const styles = useThemeStyles();
   const user = auth.currentUser;
   const [uploadFinished, setUploadFinished] = useState<boolean>(false);
 
   const UploadWindow: React.FC = () => {
     return (
       <>
-        <Text style={styles.modalText}>Uploading image...</Text>
-        <Text style={styles.uploadText}>{parentState.uploadProgress}</Text>
+        <Text style={localStyles.modalText}>Uploading image...</Text>
+        <Text style={localStyles.uploadText}>{parentState.uploadProgress}</Text>
       </>
     );
   };
@@ -48,19 +50,19 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
 
     return (
       <>
-        <Text style={styles.modalText}>Upload finished!</Text>
-        <View style={styles.uploadFinishedContainer}>
+        <Text style={localStyles.modalText}>Upload finished!</Text>
+        <View style={localStyles.uploadFinishedContainer}>
           <Image
             source={KirokuIcons.Check}
-            style={styles.uploadFinishedImage}
+            style={localStyles.uploadFinishedImage}
           />
         </View>
-        <View style={styles.buttonContainer}>
+        <View style={localStyles.buttonContainer}>
           <TouchableOpacity
             accessibilityRole="button"
-            style={styles.button}
+            style={localStyles.button}
             onPress={handleUploadFinishConfirm}>
-            <Text style={styles.buttonText}>Great!</Text>
+            <Text style={localStyles.buttonText}>Great!</Text>
           </TouchableOpacity>
         </View>
       </>
@@ -91,8 +93,8 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
       transparent={transparent}
       visible={visible}
       onRequestClose={onRequestClose}>
-      <View style={styles.modalContainer}>
-        <View style={styles.modalView}>
+      <View style={localStyles.modalContainer}>
+        <View style={[localStyles.modalView, styles.appBG]}>
           {uploadFinished ? (
             <UploadFinishedWindow />
           ) : parentState.uploadOngoing ? (
@@ -108,7 +110,7 @@ const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 const imageSize = screenWidth > screenHeight ? screenHeight : screenWidth;
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -116,7 +118,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)', // This will fade the background
   },
   modalView: {
-    backgroundColor: '#FFFF99',
     borderRadius: 8,
     borderWidth: 2,
     borderColor: 'black',

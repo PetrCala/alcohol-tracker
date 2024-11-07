@@ -4,8 +4,6 @@ import {Image, View, Alert, TouchableOpacity, StyleSheet} from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import {Image as CompressorImage} from 'react-native-compressor';
 import {uploadImageToFirebase} from '../storage/storageUpload';
-import WarningMessage from './Info/WarningMessage';
-import SuccessMessage from './Info/SuccessMessage';
 import UploadImagePopup from './Popups/UploadImagePopup';
 import type GeneralAction from '@src/types/various/GeneralAction';
 import checkPermission from '@libs/Permissions/checkPermission';
