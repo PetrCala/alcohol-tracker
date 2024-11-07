@@ -454,7 +454,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     return <FullScreenLoadingIndicator loadingText={loadingText} />;
   }
   if (!user) {
-    Navigation.navigate(ROUTES.LOGIN);
+    Navigation.navigate(ROUTES.SIGNUP);
     return;
   }
   if (!session) {

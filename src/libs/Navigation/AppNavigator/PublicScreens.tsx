@@ -14,9 +14,14 @@ const RootStack = createStackNavigator<PublicScreensParamList>();
 function PublicScreens() {
   return (
     <RootStack.Navigator>
-      {/* The structure for the HOME route has to be the same in public and auth screens. That's why the name for LoginScreen is BOTTOM_TAB_NAVIGATOR. */}
+      {/* The structure for the HOME route has to be the same in public and auth screens. That's why the name for SignUpScreen is BOTTOM_TAB_NAVIGATOR. */}
       <RootStack.Screen
         name={NAVIGATORS.BOTTOM_TAB_NAVIGATOR}
+        options={defaultScreenOptions}
+        component={SignUpScreen}
+      />
+      <RootStack.Screen
+        name={SCREENS.LOGIN}
         options={defaultScreenOptions}
         component={LoginScreen}
       />
@@ -24,11 +29,6 @@ function PublicScreens() {
         name={SCREENS.FORCE_UPDATE}
         options={defaultScreenOptions}
         component={ForceUpdateScreen}
-      />
-      <RootStack.Screen
-        name={SCREENS.SIGNUP}
-        options={defaultScreenOptions}
-        component={SignUpScreen}
       />
     </RootStack.Navigator>
   );
