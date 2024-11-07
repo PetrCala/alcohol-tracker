@@ -3,7 +3,6 @@
   Alert,
   Image,
   Keyboard,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -35,6 +34,10 @@ import FillerView from '@components/FillerView';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
 import Icon from '@components/Icon';
 import useTheme from '@hooks/useTheme';
+import ScrollView from '@components/ScrollView';
+import Button from '@components/Button';
+import useLocalize from '@hooks/useLocalize';
+import useThemeStyles from '@hooks/useThemeStyles';
 
 type RequestIdProps = {
   requestId: string;
@@ -102,28 +105,34 @@ const FriendRequestButtons: React.FC<RequestIdProps> = ({requestId}) => {
   }
 
   return (
-    <View style={styles.friendRequestButtonsContainer}>
+    <View style={localStyles.friendRequestButtonsContainer}>
       <TouchableOpacity
         accessibilityRole="button"
         key={requestId + '-accept-request-button'}
-        style={[styles.handleRequestButton, styles.acceptRequestButton]}
+        style={[
+          localStyles.handleRequestButton,
+          localStyles.acceptRequestButton,
+        ]}
         onPress={() =>
           handleAcceptFriendRequest(db, user.uid, requestId, setIsLoading)
         }>
         {isLoading ? (
           <ActivityIndicator size="small" color="#0000ff" />
         ) : (
-          <Text style={styles.handleRequestButtonText}>Accept</Text>
+          <Text style={localStyles.handleRequestButtonText}>Accept</Text>
         )}
       </TouchableOpacity>
       <TouchableOpacity
         accessibilityRole="button"
         key={requestId + '-reject-request-button'}
-        style={[styles.handleRequestButton, styles.rejectRequestButton]}
+        style={[
+          localStyles.handleRequestButton,
+          localStyles.rejectRequestButton,
+        ]}
         onPress={() =>
           handleRejectFriendRequest(db, user.uid, requestId, setIsLoading)
         }>
-        <Text style={styles.handleRequestButtonText}>Remove</Text>
+        <Text style={localStyles.handleRequestButtonText}>Remove</Text>
       </TouchableOpacity>
     </View>
   );
@@ -132,6 +141,8 @@ const FriendRequestButtons: React.FC<RequestIdProps> = ({requestId}) => {
 // Component to be shown when the friend request is pending
 const FriendRequestPending: React.FC<RequestIdProps> = ({requestId}) => {
   const {auth, db} = useFirebase();
+  const {translate} = useLocalize();
+  const styles = useThemeStyles();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const user = auth.currentUser;
 
@@ -140,21 +151,15 @@ const FriendRequestPending: React.FC<RequestIdProps> = ({requestId}) => {
   }
 
   return (
-    <View style={styles.friendRequestPendingContainer}>
-      <TouchableOpacity
-        accessibilityRole="button"
-        style={[styles.handleRequestButton, styles.rejectRequestButton]}
+    <View style={localStyles.friendRequestPendingContainer}>
+      <Button
+        danger
         onPress={() =>
           handleRejectFriendRequest(db, user.uid, requestId, setIsLoading)
-        }>
-        {isLoading ? (
-          <FlexibleLoadingIndicator
-            size={CONST.ACTIVITY_INDICATOR_SIZE.SMALL}
-          />
-        ) : (
-          <Text style={styles.handleRequestButtonText}>Cancel</Text>
-        )}
-      </TouchableOpacity>
+        }
+        text={translate('common.cancel')}
+        isLoading={isLoading}
+      />
     </View>
   );
 };
@@ -315,19 +320,16 @@ function FriendRequestScreen() {
   }, [state.friendRequests]);
 
   return (
-    <View style={styles.mainContainer}>
-      <ScrollView
-        style={styles.scrollViewContainer}
-        onScrollBeginDrag={Keyboard.dismiss}
-        keyboardShouldPersistTaps="handled">
+    <View style={localStyles.mainContainer}>
+      <ScrollView>
         {state.isLoading || isLoading ? (
-          <FlexibleLoadingIndicator style={styles.loadingData} />
+          <FlexibleLoadingIndicator style={localStyles.loadingData} />
         ) : !isEmptyObject(state.friendRequests) ? (
-          <View style={styles.friendList}>
+          <View style={localStyles.friendList}>
             <GrayHeader
               headerText={`Requests Received (${state.requestsReceivedCount})`}
             />
-            <View style={styles.requestsContainer}>
+            <View style={localStyles.requestsContainer}>
               {state.requestsReceived.map(requestId => (
                 <FriendRequestItem
                   key={requestId + '-friend-request-item'}
@@ -342,7 +344,7 @@ function FriendRequestScreen() {
                 Requests Sent ({state.requestsSentCount})
               </Text>
             </View>
-            <View style={styles.requestsContainer}>
+            <View style={localStyles.requestsContainer}>
               {state.requestsSent.map(requestId => (
                 <FriendRequestItem
                   key={requestId + '-friend-request-item'}
@@ -352,7 +354,7 @@ function FriendRequestScreen() {
                 />
               ))}
             </View>
-            <FillerView height={100} />
+            <FillerView />
           </View>
         ) : (
           <NoFriendInfo
@@ -364,7 +366,7 @@ function FriendRequestScreen() {
       <TouchableOpacity
         accessibilityRole="button"
         style={[
-          styles.searchScreenButton,
+          localStyles.searchScreenButton,
           {
             backgroundColor: theme.appColor,
           },
@@ -383,11 +385,8 @@ function FriendRequestScreen() {
 
 export default FriendRequestScreen;
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   mainContainer: {
-    flex: 1,
-  },
-  scrollViewContainer: {
     flex: 1,
   },
   loadingData: {
@@ -465,6 +464,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
+    paddingRight: 8,
   },
   newRequestContainer: {
     position: 'absolute',

@@ -2,6 +2,7 @@
 import {useFirebase} from '../../context/global/FirebaseContext';
 import ProfileImage from '../ProfileImage';
 import type {Profile} from '@src/types/onyx';
+import useThemeStyles from '@hooks/useThemeStyles';
 
 type NoFriendUserOverviewProps = {
   userID: string; // Other user's ID
@@ -15,6 +16,7 @@ const NoFriendUserOverview: React.FC<NoFriendUserOverviewProps> = ({
   RightSideComponent,
 }) => {
   const {db, storage} = useFirebase();
+  const styles = useThemeStyles();
 
   if (!db || !profileData) {
     return;
@@ -23,18 +25,20 @@ const NoFriendUserOverview: React.FC<NoFriendUserOverviewProps> = ({
   return (
     <View
       key={userID + '-container'}
-      style={styles.noFriendUserOverviewContainer}>
-      <View key={userID + 'profile'} style={styles.noFriendUserOverviewProfile}>
+      style={localStyles.noFriendUserOverviewContainer}>
+      <View
+        key={userID + 'profile'}
+        style={localStyles.noFriendUserOverviewProfile}>
         <ProfileImage
           key={userID + '-profile-icon'}
           storage={storage}
           downloadPath={profileData.photo_url}
           userID={userID}
-          style={styles.noFriendUserOverviewImage}
+          style={localStyles.noFriendUserOverviewImage}
         />
         <Text
           key={userID + '-nickname'}
-          style={styles.noFriendUserOverviewText}
+          style={[styles.headerText, styles.ml3, styles.flexShrink1]}
           numberOfLines={1}
           ellipsizeMode="tail">
           {profileData.display_name}
@@ -47,7 +51,7 @@ const NoFriendUserOverview: React.FC<NoFriendUserOverviewProps> = ({
 
 export default NoFriendUserOverview;
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   noFriendUserOverviewContainer: {
     width: '100%',
     flexDirection: 'row',
@@ -65,12 +69,5 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     borderRadius: 35,
-  },
-  noFriendUserOverviewText: {
-    color: 'black',
-    fontSize: 16,
-    fontWeight: '500',
-    marginLeft: 10,
-    flexShrink: 1,
   },
 });

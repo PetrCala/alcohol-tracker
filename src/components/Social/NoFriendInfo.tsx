@@ -16,7 +16,7 @@ const NoFriendInfo: React.FC<NoFriendInfoProps> = ({message, buttonText}) => {
 
   return (
     <View style={styles.fullScreenCenteredContent}>
-      <Text style={[styles.textNormal, styles.p4]}>
+      <Text style={[styles.textNormalThemeText, styles.p4]}>
         {message ?? defaultMessage}
       </Text>
       <Button

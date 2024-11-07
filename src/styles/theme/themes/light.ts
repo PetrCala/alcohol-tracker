@@ -37,7 +37,6 @@ const lightTheme = {
   successPressed: colors.yellowPressed,
   add: colors.orange200,
   addHover: colors.orange300,
-  // addPressed: colors.orange100,
   addPressed: colors.orange800,
   transparent: colors.transparent,
   signInPage: colors.appBG,
