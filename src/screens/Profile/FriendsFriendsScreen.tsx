@@ -47,6 +47,7 @@ import CONST from '@src/CONST';
 import useTheme from '@hooks/useTheme';
 import useThemeStyles from '@hooks/useThemeStyles';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
+import Button from '@components/Button';
 
 type State = {
   searching: boolean;
@@ -185,8 +186,9 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
           alreadyAFriend={userData?.friends ? userData?.friends[userID] : false}
           customButton={
             renderCommonFriends && (
-              <SeeProfileButton
+              <Button
                 key={userID + '-button'}
+                text="See profile"
                 onPress={() =>
                   Navigation.navigate(ROUTES.PROFILE.getRoute(userID))
                 }
