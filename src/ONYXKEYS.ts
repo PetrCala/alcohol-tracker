@@ -375,8 +375,8 @@ const ONYXKEYS = {
     //     POLICY_CREATE_DISTANCE_RATE_FORM_DRAFT: 'policyCreateDistanceRateFormDraft',
     //     POLICY_DISTANCE_RATE_EDIT_FORM: 'policyDistanceRateEditForm',
     //     POLICY_DISTANCE_RATE_EDIT_FORM_DRAFT: 'policyDistanceRateEditFormDraft',
-    DELETE_ACCOUNT_FORM: 'deleteAccount',
-    DELETE_ACCOUNT_FORM_DRAFT: 'deleteAccountDraft',
+    CLOSE_ACCOUNT_FORM: 'closeAccount',
+    CLOSE_ACCOUNT_FORM_DRAFT: 'closeAccountDraft',
     //     PROFILE_SETTINGS_FORM: 'profileSettingsForm',
     //     PROFILE_SETTINGS_FORM_DRAFT: 'profileSettingsFormDraft',
     DISPLAY_NAME_FORM: 'displayNameForm',
@@ -412,7 +412,7 @@ const ONYXKEYS = {
 type AllOnyxKeys = DeepValueOf<typeof ONYXKEYS>;
 
 type OnyxFormValuesMapping = {
-  [ONYXKEYS.FORMS.DELETE_ACCOUNT_FORM]: FormTypes.DeleteAccountForm;
+  [ONYXKEYS.FORMS.CLOSE_ACCOUNT_FORM]: FormTypes.CloseAccountForm;
   //   [ONYXKEYS.FORMS.PROFILE_SETTINGS_FORM]: FormTypes.ProfileSettingsForm;
   [ONYXKEYS.FORMS.DISPLAY_NAME_FORM]: FormTypes.DisplayNameForm;
   [ONYXKEYS.FORMS.USER_NAME_FORM]: FormTypes.UserNameForm;

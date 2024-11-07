@@ -519,6 +519,16 @@ export default {
       `This version of the app is now discontinued. Please update to the latest version using the link below${platform === CONST.PLATFORM.IOS ? ' or from within the TestFlight app' : ''}.`,
     link: 'Update Now',
   },
+  loginForm: {
+    email: 'Email',
+    error: {
+      invalidFormatEmailLogin:
+        'The email entered is invalid. Please fix the format and try again.',
+    },
+    cannotGetAccountDetails:
+      "Couldn't retrieve account details. Please try to sign in again.",
+    loginForm: 'Login form',
+  },
   passwordForm: {
     pleaseFillOutAllFields: 'Please fill out all fields',
     pleaseFillPassword: 'Please enter your password',

@@ -16,22 +16,20 @@ import {sendPasswordResetEmail, signOut} from 'firebase/auth';
 import {signInUserWithEmailAndPassword} from '@libs/auth/auth';
 import commonStyles from '@styles/commonStyles';
 import InputTextPopup from '@components/Popups/InputTextPopup';
-import WarningMessage from '@components/Info/WarningMessage';
-import SuccessMessage from '@components/Info/SuccessMessage';
-import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 import ROUTES from '@src/ROUTES';
 import Navigation from '@navigation/Navigation';
 import {useFirebase} from '@context/global/FirebaseContext';
 import ScreenWrapper from '@components/ScreenWrapper';
 import useTheme from '@hooks/useTheme';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
+import ScrollView from '@components/ScrollView';
+import ImageSVG from '@components/ImageSVG';
+import variables from '@src/styles/variables';
 
 type State = {
   email: string;
   password: string;
   loadingUser: boolean;
-  warning: string;
-  success: string;
   resetPasswordModalVisible: boolean;
 };
 
@@ -44,8 +42,6 @@ const initialState: State = {
   email: '',
   password: '',
   loadingUser: true,
-  warning: '',
-  success: '',
   resetPasswordModalVisible: false,
 };
 
@@ -65,16 +61,6 @@ const reducer = (state: State, action: Action) => {
       return {
         ...state,
         loadingUser: action.payload,
-      };
-    case 'SET_WARNING':
-      return {
-        ...state,
-        warning: action.payload,
-      };
-    case 'SET_SUCCESS':
-      return {
-        ...state,
-        success: action.payload,
       };
     case 'SET_RESET_PASSWORD_MODAL_VISIBLE':
       return {
@@ -144,89 +130,16 @@ function LoginScreen() {
   }
 
   return (
-    <DismissKeyboard>
-      <View style={styles.mainContainer}>
-        <WarningMessage warningText={state.warning} dispatch={dispatch} />
-        <SuccessMessage successText={state.success} dispatch={dispatch} />
-        <View style={styles.logoContainer}>
-          <Image source={KirokuIcons.Logo} style={styles.logo} />
-        </View>
-        <View style={styles.inputContainer}>
-          <TextInput
-            accessibilityLabel="Text input field"
-            placeholder="Email"
-            placeholderTextColor={'#a8a8a8'}
-            selectionColor={'gray'}
-            keyboardType="email-address"
-            textContentType="emailAddress"
-            value={state.email}
-            onChangeText={text =>
-              dispatch({type: 'UPDATE_EMAIL', payload: text})
-            }
-            style={styles.input}
-          />
-          <TextInput
-            accessibilityLabel="Text input field"
-            placeholder="Password"
-            placeholderTextColor={'#a8a8a8'}
-            selectionColor={'gray'}
-            textContentType="password"
-            value={state.password}
-            onChangeText={text =>
-              dispatch({type: 'UPDATE_PASSWORD', payload: text})
-            }
-            secureTextEntry
-            style={styles.input}
-          />
-          <TouchableOpacity
-            accessibilityRole="button"
-            onPress={handleLogin}
-            style={styles.loginButton}>
-            <Text style={styles.loginButtonText}>Login</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            accessibilityRole="button"
-            onPress={() =>
-              dispatch({
-                type: 'SET_RESET_PASSWORD_MODAL_VISIBLE',
-                payload: true,
-              })
-            }
-            style={styles.forgottenPasswordButton}>
-            <Text style={styles.forgottenPasswordText}>
-              Forgot your password?
-            </Text>
-          </TouchableOpacity>
-          <View style={[commonStyles.horizontalLine, styles.customLineWidth]} />
-          <View style={styles.signUpContainer}>
-            <TouchableOpacity
-              accessibilityRole="button"
-              style={styles.signUpButtonContainer}
-              onPress={() => Navigation.navigate(ROUTES.SIGNUP)}>
-              <Text style={styles.signUpInfoText}>Don't have an account?</Text>
-              <Text style={styles.signUpButtonText}>Sign up</Text>
-            </TouchableOpacity>
-          </View>
-          <InputTextPopup
-            visible={state.resetPasswordModalVisible}
-            transparent={true}
-            message={'E-mail to send the reset link to:'}
-            confirmationMessage={'Send link'}
-            placeholder={'E-mail'}
-            onRequestClose={() =>
-              dispatch({
-                type: 'SET_RESET_PASSWORD_MODAL_VISIBLE',
-                payload: false,
-              })
-            }
-            onSubmit={mail => handleResetPassword(mail)}
-            keyboardType="email-address"
-            textContentType="emailAddress"
-            secureTextEntry={false}
-          />
-        </View>
+    <ScrollView>
+      <View style={styles.logoContainer}>
+        <ImageSVG
+          contentFit="contain"
+          src={KirokuIcons.Logo}
+          width={variables.signInLogoSize}
+          height={variables.signInLogoSize}
+        />
       </View>
-    </DismissKeyboard>
+    </ScrollView>
   );
 }
 
@@ -251,14 +164,6 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-  },
-  warningInfoContainer: {
-    backgroundColor: '#fce3e1',
-    borderColor: 'red',
-  },
-  successInfoContainer: {
-    backgroundColor: '#e3f0d5',
-    borderColor: 'green',
   },
   infoButton: {
     justifyContent: 'center',
@@ -354,3 +259,76 @@ const styles = StyleSheet.create({
 
 LoginScreen.displayName = 'Login Screen';
 export default LoginScreen;
+
+// {/* <View style={styles.inputContainer}>
+//   <TextInput
+//     accessibilityLabel="Text input field"
+//     placeholder="Email"
+//     placeholderTextColor={'#a8a8a8'}
+//     selectionColor={'gray'}
+//     keyboardType="email-address"
+//     textContentType="emailAddress"
+//     value={state.email}
+//     onChangeText={text => dispatch({type: 'UPDATE_EMAIL', payload: text})}
+//     style={styles.input}
+//   />
+//   <TextInput
+//     accessibilityLabel="Text input field"
+//     placeholder="Password"
+//     placeholderTextColor={'#a8a8a8'}
+//     selectionColor={'gray'}
+//     textContentType="password"
+//     value={state.password}
+//     onChangeText={text =>
+//       dispatch({type: 'UPDATE_PASSWORD', payload: text})
+//     }
+//     secureTextEntry
+//     style={styles.input}
+//   />
+//   <TouchableOpacity
+//     accessibilityRole="button"
+//     onPress={handleLogin}
+//     style={styles.loginButton}>
+//     <Text style={styles.loginButtonText}>Login</Text>
+//   </TouchableOpacity>
+//   <TouchableOpacity
+//     accessibilityRole="button"
+//     onPress={() =>
+//       dispatch({
+//         type: 'SET_RESET_PASSWORD_MODAL_VISIBLE',
+//         payload: true,
+//       })
+//     }
+//     style={styles.forgottenPasswordButton}>
+//     <Text style={styles.forgottenPasswordText}>
+//       Forgot your password?
+//     </Text>
+//   </TouchableOpacity>
+//   <View style={[commonStyles.horizontalLine, styles.customLineWidth]} />
+//   <View style={styles.signUpContainer}>
+//     <TouchableOpacity
+//       accessibilityRole="button"
+//       style={styles.signUpButtonContainer}
+//       onPress={() => Navigation.navigate(ROUTES.SIGNUP)}>
+//       <Text style={styles.signUpInfoText}>Don't have an account?</Text>
+//       <Text style={styles.signUpButtonText}>Sign up</Text>
+//     </TouchableOpacity>
+//   </View>
+//   <InputTextPopup
+//     visible={state.resetPasswordModalVisible}
+//     transparent={true}
+//     message={'E-mail to send the reset link to:'}
+//     confirmationMessage={'Send link'}
+//     placeholder={'E-mail'}
+//     onRequestClose={() =>
+//       dispatch({
+//         type: 'SET_RESET_PASSWORD_MODAL_VISIBLE',
+//         payload: false,
+//       })
+//     }
+//     onSubmit={mail => handleResetPassword(mail)}
+//     keyboardType="email-address"
+//     textContentType="emailAddress"
+//     secureTextEntry={false}
+//   />
+// </View> */}

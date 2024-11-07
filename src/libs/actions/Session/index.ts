@@ -700,15 +700,15 @@ function checkIfActionIsAllowed<
 //   Onyx.merge(ONYXKEYS.SESSION, {authToken: 'pizza'});
 // }
 
-// /**
-//  * Clear the credentials and partial sign in session so the user can taken back to first Login step
-//  */
-// function clearSignInData() {
-//   Onyx.multiSet({
-//     [ONYXKEYS.ACCOUNT]: null,
-//     [ONYXKEYS.CREDENTIALS]: null,
-//   });
-// }
+/**
+ * Clear the credentials and partial sign in session so the user can taken back to first Login step
+ */
+function clearSignInData() {
+  Onyx.multiSet({
+    [ONYXKEYS.ACCOUNT]: null,
+    [ONYXKEYS.CREDENTIALS]: null,
+  });
+}
 
 /**
  * Reset all current params of the Home route
@@ -750,18 +750,18 @@ function cleanupSession() {
   Timing.clearData();
 }
 
-// function clearAccountMessages() {
-//   Onyx.merge(ONYXKEYS.ACCOUNT, {
-//     success: '',
-//     errors: null,
-//     message: null,
-//     isLoading: false,
-//   });
-// }
+function clearAccountMessages() {
+  Onyx.merge(ONYXKEYS.ACCOUNT, {
+    success: '',
+    errors: null,
+    message: null,
+    isLoading: false,
+  });
+}
 
 // function setAccountError(error: string) {
 //   Onyx.merge(ONYXKEYS.ACCOUNT, {
-//     errors: ErrorUtils.getMicroSecondOnyxError(error, true),
+//     errors: ErrorUtils.getMicroSecondOnyxErrorObject(error, true),
 //   });
 // }
 
@@ -1141,9 +1141,9 @@ export {
   //   resendValidateCode,
   //   requestUnlinkValidationLink,
   //   unlinkLogin,
-  //   clearSignInData,
-  //   clearAccountMessages,
-  //   setAccountError,
+  clearSignInData,
+  clearAccountMessages,
+  // setAccountError,
   //   authenticatePusher,
   //   reauthenticatePusher,
   //   invalidateCredentials,

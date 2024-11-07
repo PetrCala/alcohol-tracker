@@ -1,15 +1,5 @@
-﻿import React, {useEffect, useReducer} from 'react';
-import {
-  Dimensions,
-  Alert,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  TextInput,
-  Keyboard,
-} from 'react-native';
+﻿import React, {useEffect, useReducer, useRef} from 'react';
+import {Dimensions, Alert, StyleSheet, View, Keyboard} from 'react-native';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {getAuth, updateProfile} from 'firebase/auth';
 import {signUpUserWithEmailAndPassword} from '@libs/auth/auth';
@@ -24,16 +14,40 @@ import {
   validateSignInInput,
 } from '@libs/Validation';
 import {deleteUserData, pushNewUserInfo} from '@database/users';
-import WarningMessage from '@components/Info/WarningMessage';
+import variables from '@styles/variables';
 import type {Profile} from '@src/types/onyx';
 import DBPATHS from '@database/DBPATHS';
-import ValidityIndicatorIcon from '@components/ValidityIndicatorIcon';
 import Navigation from '@navigation/Navigation';
 import ROUTES from '@src/ROUTES';
-import useTheme from '@hooks/useTheme';
+import type {Account, Credentials, Locale} from '@src/types/onyx';
 import {checkAccountCreationLimit} from '@database/protection';
-import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
+import ScrollView from '@components/ScrollView';
+import ImageSVG from '@components/ImageSVG';
+import useThemeStyles from '@hooks/useThemeStyles';
+import ScreenWrapper from '@components/ScreenWrapper';
+import useStyleUtils from '@hooks/useStyleUtils';
+import useStyledSafeAreaInsets from '@hooks/useStyledSafeAreaInsets';
+import useResponsiveLayout from '@hooks/useResponsiveLayout';
+import LoginForm from '@libs/LoginForm';
+import {InputHandle} from '@libs/LoginForm/types';
+import {OnyxEntry, withOnyx} from 'react-native-onyx';
+import ONYXKEYS from '@src/ONYXKEYS';
+
+type SignUpScreenInnerOnyxProps = {
+  /** The details about the account that the user is signing in with */
+  account: OnyxEntry<Account>;
+
+  /** The credentials of the person signing in */
+  credentials: OnyxEntry<Credentials>;
+
+  /** The user's preferred locale */
+  preferredLocale: OnyxEntry<Locale>;
+};
+
+type SignUpScreenInnerProps = SignUpScreenInnerOnyxProps & {
+  shouldEnableMaxHeight?: boolean;
+};
 
 type State = {
   email: string;
@@ -109,9 +123,20 @@ const reducer = (state: State, action: Action) => {
   }
 };
 
+type SignUpScreenLayoutRef = {
+  scrollPageToTop: (animated?: boolean) => void;
+};
+
 function SignUpScreen() {
   const {db} = useFirebase();
   const {isOnline} = useUserConnection();
+  const styles = useThemeStyles();
+  const {shouldUseNarrowLayout, isInNarrowPaneModal} = useResponsiveLayout();
+  const StyleUtils = useStyleUtils();
+  const safeAreaInsets = useStyledSafeAreaInsets();
+  const signUpScreenLayoutRef = useRef<SignUpScreenLayoutRef>(null);
+  const loginFormRef = useRef<InputHandle>(null);
+  const [login, setLogin] = React.useState('');
   const [state, dispatch] = useReducer(reducer, initialState);
   // const theme = useTheme();
 
@@ -297,217 +322,141 @@ function SignUpScreen() {
   }
 
   return (
-    <DismissKeyboard>
-      <View style={styles.mainContainer}>
-        <WarningMessage warningText={state.warning} dispatch={dispatch} />
-        <View style={styles.logoContainer}>
-          <Image source={KirokuIcons.Logo} style={styles.logo} />
+    <ScreenWrapper
+      shouldShowOfflineIndicator={false}
+      style={[
+        styles.signUpScreen,
+        StyleUtils.getSafeAreaPadding(
+          {
+            ...safeAreaInsets,
+            bottom: 0,
+            right: 0,
+            left: 0,
+            top: isInNarrowPaneModal ? 0 : safeAreaInsets.paddingTop,
+          },
+          1,
+        ),
+      ]}
+      testID={SignUpScreen.displayName}>
+      <ScrollView style={styles.pt8}>
+        {/* <SignInPageLayout > */}
+        <View style={[styles.alignItemsCenter]}>
+          <ImageSVG
+            contentFit="contain"
+            src={KirokuIcons.Logo}
+            width={variables.signInLogoSize}
+            height={variables.signInLogoSize}
+          />
+          <LoginForm
+            ref={loginFormRef}
+            isVisible={true} // could be shouldShowLoginForm
+            login={login}
+            onLoginChanged={setLogin}
+            blurOnSubmit={false}
+            scrollPageToTop={signUpScreenLayoutRef.current?.scrollPageToTop}
+          />
         </View>
-        <View style={styles.inputContainer}>
-          <View style={styles.inputItemContainer}>
-            <TextInput
-              accessibilityLabel="Text input field"
-              placeholder="Email"
-              placeholderTextColor={'#a8a8a8'}
-              selectionColor={'gray'}
-              keyboardType="email-address"
-              textContentType="emailAddress"
-              value={state.email}
-              onChangeText={text =>
-                dispatch({type: 'UPDATE_EMAIL', payload: text})
-              }
-              style={styles.inputItemText}
-            />
-          </View>
-          <View style={styles.inputItemContainer}>
-            <TextInput
-              accessibilityLabel="Text input field"
-              placeholder="Username"
-              placeholderTextColor={'#a8a8a8'}
-              selectionColor={'gray'}
-              textContentType="username"
-              value={state.username}
-              onChangeText={text =>
-                dispatch({type: 'UPDATE_USERNAME', payload: text})
-              }
-              style={styles.inputItemText}
-            />
-          </View>
-          <View style={styles.inputItemContainer}>
-            <TextInput
-              accessibilityLabel="Text input field"
-              placeholder="Password"
-              placeholderTextColor={'#a8a8a8'}
-              selectionColor={'gray'}
-              textContentType="password"
-              value={state.password}
-              onChangeText={text =>
-                dispatch({type: 'UPDATE_PASSWORD', payload: text})
-              }
-              style={styles.inputItemText}
-              secureTextEntry
-            />
-            {state.password ? (
-              <ValidityIndicatorIcon isValid={state.passwordIsValid} />
-            ) : null}
-          </View>
-          <View style={styles.inputItemContainer}>
-            <TextInput
-              accessibilityLabel="Text input field"
-              placeholder="Confirm your password"
-              placeholderTextColor={'#a8a8a8'}
-              selectionColor={'grey'}
-              textContentType="password"
-              value={state.passwordConfirm}
-              onChangeText={text =>
-                dispatch({type: 'UPDATE_PASSWORD_CONFIRM', payload: text})
-              }
-              style={styles.inputItemText}
-              secureTextEntry
-            />
-            {state.passwordConfirm && state.password ? (
-              <ValidityIndicatorIcon isValid={state.passwordsMatch} />
-            ) : null}
-          </View>
-          <TouchableOpacity
-            accessibilityRole="button"
-            onPress={handleSignUp}
-            style={styles.signUpButton}>
-            <Text style={styles.signUpButtonText}>Create account</Text>
-          </TouchableOpacity>
-          <View style={styles.loginContainer}>
-            <TouchableOpacity
-              accessibilityRole="button"
-              style={styles.loginButtonContainer}
-              onPress={() => Navigation.navigate(ROUTES.LOGIN)}>
-              <Text style={styles.loginInfoText}>Already a user?</Text>
-              <Text style={styles.loginButtonText}>Log in</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-    </DismissKeyboard>
+      </ScrollView>
+    </ScreenWrapper>
   );
 }
 
-const screenHeight = Dimensions.get('window').height;
-
-const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    flexDirection: 'column',
-    backgroundColor: '#FFFF99',
-  },
-  logoContainer: {
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    width: '100%',
-    height: screenHeight * 0.2,
-  },
-  logo: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-  },
-  warningContainer: {
-    width: '80%',
-    position: 'absolute', // Temp
-    top: '10%', // Temp
-    borderRadius: 5,
-    backgroundColor: '#fce3e1',
-    borderColor: 'red',
-    borderWidth: 2,
-    alignItems: 'center',
-    alignSelf: 'center',
-  },
-  warningButton: {
-    flexGrow: 1,
-    width: '90%',
-  },
-  warning: {
-    padding: 5,
-    textAlign: 'center',
-    color: 'red',
-    fontWeight: 'bold',
-  },
-  inputContainer: {
-    paddingTop: screenHeight * 0.04,
-    width: '80%',
-    height: screenHeight * 0.85,
-  },
-  inputItemContainer: {
-    backgroundColor: 'white',
-    justifyContent: 'space-between',
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: 45,
-    paddingLeft: 10,
-    paddingRight: 5,
-    borderRadius: 10,
-    borderColor: '#000',
-    borderWidth: 2,
-    marginTop: 5,
-    marginBottom: 5,
-  },
-  inputItemText: {
-    fontSize: 14,
-    width: '90%',
-    color: 'black', // Text color
-  },
-  passwordCheckContainer: {
-    backgroundColor: 'purple',
-    marginRight: 10,
-  },
-  passwordCheckIcon: {
-    width: 20,
-    height: 20,
-  },
-  passwordsMatch: {
-    backgroundColor: 'green',
-  },
-  passwordsMismatch: {
-    backgroundColor: 'red',
-  },
-  signUpButton: {
-    backgroundColor: '#fcf50f',
-    width: '100%',
-    padding: 15,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#000',
-    marginTop: 10,
-    alignItems: 'center',
-    alignSelf: 'center',
-  },
-  signUpButtonText: {
-    color: 'black',
-    fontWeight: '700',
-    fontSize: 16,
-  },
-  loginContainer: {
-    marginTop: 3,
-    width: '100%',
-  },
-  loginInfoText: {
-    color: '#000',
-  },
-  loginButtonContainer: {
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  loginButtonText: {
-    color: '#02a109',
-    fontWeight: 'bold',
-    fontSize: 14,
-    marginLeft: 4,
-    paddingTop: 10,
-    paddingBottom: 10,
-  },
-});
+type SignUpScreenProps = SignUpScreenInnerProps;
+type SignUpScreenOnyxProps = SignUpScreenInnerOnyxProps;
 
 SignUpScreen.displayName = 'Sign Up Screen';
-export default SignUpScreen;
+
+export default withOnyx<SignUpScreenProps, SignUpScreenOnyxProps>({
+  account: {key: ONYXKEYS.ACCOUNT},
+  credentials: {key: ONYXKEYS.CREDENTIALS},
+  preferredLocale: {
+    key: ONYXKEYS.NVP_PREFERRED_LOCALE,
+  },
+})(SignUpScreen);
+
+// <WarningMessage warningText={state.warning} dispatch={dispatch} />
+// <View style={styles.logoContainer}>
+//   <Image source={KirokuIcons.Logo} style={styles.logo} />
+// </View>
+// <View style={styles.inputContainer}>
+//   <View style={styles.inputItemContainer}>
+//     <TextInput
+//       accessibilityLabel="Text input field"
+//       placeholder="Email"
+//       placeholderTextColor={'#a8a8a8'}
+//       selectionColor={'gray'}
+//       keyboardType="email-address"
+//       textContentType="emailAddress"
+//       value={state.email}
+//       onChangeText={text =>
+//         dispatch({type: 'UPDATE_EMAIL', payload: text})
+//       }
+//       style={styles.inputItemText}
+//     />
+//   </View>
+//   <View style={styles.inputItemContainer}>
+//     <TextInput
+//       accessibilityLabel="Text input field"
+//       placeholder="Username"
+//       placeholderTextColor={'#a8a8a8'}
+//       selectionColor={'gray'}
+//       textContentType="username"
+//       value={state.username}
+//       onChangeText={text =>
+//         dispatch({type: 'UPDATE_USERNAME', payload: text})
+//       }
+//       style={styles.inputItemText}
+//     />
+//   </View>
+//   <View style={styles.inputItemContainer}>
+//     <TextInput
+//       accessibilityLabel="Text input field"
+//       placeholder="Password"
+//       placeholderTextColor={'#a8a8a8'}
+//       selectionColor={'gray'}
+//       textContentType="password"
+//       value={state.password}
+//       onChangeText={text =>
+//         dispatch({type: 'UPDATE_PASSWORD', payload: text})
+//       }
+//       style={styles.inputItemText}
+//       secureTextEntry
+//     />
+//     {state.password ? (
+//       <ValidityIndicatorIcon isValid={state.passwordIsValid} />
+//     ) : null}
+//   </View>
+//   <View style={styles.inputItemContainer}>
+//     <TextInput
+//       accessibilityLabel="Text input field"
+//       placeholder="Confirm your password"
+//       placeholderTextColor={'#a8a8a8'}
+//       selectionColor={'grey'}
+//       textContentType="password"
+//       value={state.passwordConfirm}
+//       onChangeText={text =>
+//         dispatch({type: 'UPDATE_PASSWORD_CONFIRM', payload: text})
+//       }
+//       style={styles.inputItemText}
+//       secureTextEntry
+//     />
+//     {state.passwordConfirm && state.password ? (
+//       <ValidityIndicatorIcon isValid={state.passwordsMatch} />
+//     ) : null}
+//   </View>
+//   <TouchableOpacity
+//     accessibilityRole="button"
+//     onPress={handleSignUp}
+//     style={styles.signUpButton}>
+//     <Text style={styles.signUpButtonText}>Create account</Text>
+//   </TouchableOpacity>
+//   <View style={styles.loginContainer}>
+//     <TouchableOpacity
+//       accessibilityRole="button"
+//       style={styles.loginButtonContainer}
+//       onPress={() => Navigation.navigate(ROUTES.LOGIN)}>
+//       <Text style={styles.loginInfoText}>Already a user?</Text>
+//       <Text style={styles.loginButtonText}>Log in</Text>
+//     </TouchableOpacity>
+//   </View>
+// </View>

@@ -1,4 +1,4 @@
-export type {DeleteAccountForm} from './DeleteAccountForm';
+export type {CloseAccountForm} from './CloseAccountForm';
 export type {DateOfBirthForm} from './DateOfBirthForm';
 export type {DisplayNameForm} from './DisplayNameForm';
 export type {EmailForm} from './EmailForm';

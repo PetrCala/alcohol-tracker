@@ -15,11 +15,11 @@ import Navigation from '@libs/Navigation/Navigation';
 import * as ValidationUtils from '@libs/ValidationUtils';
 import type {SettingsNavigatorParamList} from '@navigation/types';
 import variables from '@styles/variables';
-import * as DeleteAccount from '@userActions/DeleteAccount';
+import * as CloseAccount from '@userActions/CloseAccount';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
 import type SCREENS from '@src/SCREENS';
-import INPUT_IDS from '@src/types/form/DeleteAccountForm';
+import INPUT_IDS from '@src/types/form/CloseAccountForm';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
@@ -45,7 +45,7 @@ function DeleteAccountScreen({}: DeleteAccountScreenProps) {
   // nothing runs on mount and we pass empty dependencies to prevent this from running on every re-render.
   // TODO: We should refactor this so that the data in instead passed directly as a prop instead of "side loading" the data
   // here, we left this as is during refactor to limit the breaking changes.
-  useEffect(() => () => DeleteAccount.clearError(), []);
+  useEffect(() => () => CloseAccount.clearError(), []);
 
   const hideConfirmModal = () => {
     setConfirmModalVisibility(false);
@@ -54,7 +54,7 @@ function DeleteAccountScreen({}: DeleteAccountScreenProps) {
   const onConfirm = async () => {
     setLoadingText(translate('deleteAccountScreen.deletingAccount'));
     setIsLoading(true);
-    await DeleteAccount.deleteAccount(
+    await CloseAccount.closeAccount(
       db,
       auth,
       userData,
@@ -67,7 +67,7 @@ function DeleteAccountScreen({}: DeleteAccountScreenProps) {
   };
 
   const showConfirmModal = (
-    values: FormOnyxValues<typeof ONYXKEYS.FORMS.DELETE_ACCOUNT_FORM>,
+    values: FormOnyxValues<typeof ONYXKEYS.FORMS.CLOSE_ACCOUNT_FORM>,
   ) => {
     setConfirmModalVisibility(true);
     setReasonForLeaving(values.reasonForLeaving);
@@ -75,8 +75,8 @@ function DeleteAccountScreen({}: DeleteAccountScreenProps) {
   };
 
   const validate = (
-    values: FormOnyxValues<typeof ONYXKEYS.FORMS.DELETE_ACCOUNT_FORM>,
-  ): FormInputErrors<typeof ONYXKEYS.FORMS.DELETE_ACCOUNT_FORM> => {
+    values: FormOnyxValues<typeof ONYXKEYS.FORMS.CLOSE_ACCOUNT_FORM>,
+  ): FormInputErrors<typeof ONYXKEYS.FORMS.CLOSE_ACCOUNT_FORM> => {
     const errors = ValidationUtils.getFieldRequiredErrors(values, ['password']);
     return errors;
   };
@@ -94,7 +94,7 @@ function DeleteAccountScreen({}: DeleteAccountScreenProps) {
         onBackButtonPress={() => Navigation.goBack()}
       />
       <FormProvider
-        formID={ONYXKEYS.FORMS.DELETE_ACCOUNT_FORM}
+        formID={ONYXKEYS.FORMS.CLOSE_ACCOUNT_FORM}
         validate={validate}
         onSubmit={showConfirmModal}
         submitButtonText={translate('deleteAccountScreen.deleteAccount')}

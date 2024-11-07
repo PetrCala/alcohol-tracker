@@ -1480,6 +1480,12 @@ const styles = (theme: ThemeColors) =>
       ...spacing.mt2,
     },
 
+    signUpScreen: {
+      backgroundColor: theme.appBG,
+      minHeight: '100%',
+      flex: 1,
+    },
+
     optionAlternateText: {
       minHeight: variables.alternateTextHeight,
       lineHeight: variables.lineHeightXLarge,
