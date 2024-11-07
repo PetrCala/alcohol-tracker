@@ -646,7 +646,7 @@ const styles = (theme: ThemeColors) =>
     },
 
     buttonAddText: {
-      color: theme.textDark,
+      color: theme.addPressed,
     },
 
     buttonConfirmText: {

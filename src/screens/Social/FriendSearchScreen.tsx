@@ -25,6 +25,7 @@ import useLocalize from '@hooks/useLocalize';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
 import useThemeStyles from '@hooks/useThemeStyles';
 import ScrollView from '@components/ScrollView';
+import Button from '@components/Button';
 
 type State = {
   searchResultData: UserSearchResults;
