@@ -33,6 +33,8 @@ import Icon from '@components/Icon';
 import TextInput from '@components/TextInput';
 import AmountTextInput from '@components/AmountTextInput';
 import FillerView from '@components/FillerView';
+import NumericSlider from '@components/Popups/NumericSlider';
+import CONST from '@src/CONST';
 
 type MenuData = {
   title?: string;
@@ -145,35 +147,28 @@ function PreferencesScreen({}: PreferencesScreenProps) {
     }));
   };
 
-  const preferencesTextInput = (
+  /** A helper function to generate the preference set buttons */
+  const setPreferencesButton = (
     key: string,
+    label: string,
     value: number,
+    sliderListKey: string,
+    sliderMinValue: number,
+    sliderMaxValue: number,
   ): React.ReactNode => {
     return (
-      <AmountTextInput
-        formattedAmount={value.toString()}
-        onChangeAmount={newValue => {
-          if (key === 'Yellow' || key === 'Orange') {
-            updateUnitsToColors(key, parseFloat(newValue));
-          } else {
-            updateDrinksToUnits(key, parseFloat(newValue));
-          }
+      <Button
+        text={value.toString()}
+        style={styles.settingValueButton}
+        onPress={() => {
+          setSliderHeading(label);
+          setSliderStep(sliderMinValue);
+          setSliderMaxValue(sliderMaxValue);
+          setSliderValue(value);
+          setSliderVisible(true);
+          setSliderList(sliderListKey);
+          setSliderKey(key);
         }}
-        touchableInputWrapperStyle={{
-          backgroundColor: 'white',
-          borderRadius: 8,
-          width: 40,
-          height: 40,
-          justifyContent: 'center',
-          alignItems: 'center',
-          borderWidth: 0,
-        }}
-        style={{
-          fontSize: 16,
-          fontWeight: 'bold',
-          color: 'black',
-        }}
-        placeholder={value.toString()}
       />
     );
   };
@@ -189,45 +184,96 @@ function PreferencesScreen({}: PreferencesScreenProps) {
         },
       ],
     };
-  }, []);
+  }, [currentPreferences]);
 
   const unitsToColorsMenuItemsData: Menu = useMemo(() => {
+    const unitsHelperData = [
+      {
+        title: 'Yellow',
+        key: 'yellow',
+        currentValue: currentPreferences.units_to_colors.yellow,
+      },
+      {
+        title: 'Orange',
+        key: 'orange',
+        currentValue: currentPreferences.units_to_colors.orange,
+      },
+    ];
+
     return {
       sectionTranslationKey: 'preferencesScreen.unitColorsSection.title',
       subtitle: translate('preferencesScreen.unitColorsSection.description'),
-      items: [
-        {
-          title: 'Yellow',
-          rightComponent: preferencesTextInput(
-            'Yellow',
-            currentPreferences.units_to_colors.yellow,
-          ),
-          disabled: true,
-        },
-      ],
-
-      //       initialContents={[
-      //         {
-      //           key: 'yellow',
-      //           label: 'Yellow',
-      //           value: currentPreferences.units_to_colors.yellow.toString(),
-      //         },
-      //         {
-      //           key: 'orange',
-      //           label: 'Orange',
-      //           value: currentPreferences.units_to_colors.orange.toString(),
-      //         },
-      //       ]}
+      items: unitsHelperData.map(item => ({
+        title: item.title,
+        disabled: true,
+        rightComponent: setPreferencesButton(
+          item.key,
+          item.title,
+          item.currentValue,
+          'units_to_colors',
+          1, // Min value
+          5, // Max value
+        ),
+      })),
     };
-  }, []);
+  }, [currentPreferences]);
 
   const drinksToColorsItemsData: Menu = useMemo(() => {
+    const drinksHelperData = [
+      {
+        title: translate('drinks.smallBeer'),
+        key: CONST.DRINKS.KEYS.SMALL_BEER,
+        currentValue: currentPreferences.drinks_to_units.small_beer,
+      },
+      {
+        title: translate('drinks.beer'),
+        key: CONST.DRINKS.KEYS.BEER,
+        currentValue: currentPreferences.drinks_to_units.beer,
+      },
+      {
+        title: translate('drinks.wine'),
+        key: CONST.DRINKS.KEYS.WINE,
+        currentValue: currentPreferences.drinks_to_units.wine,
+      },
+      {
+        title: translate('drinks.weakShot'),
+        key: CONST.DRINKS.KEYS.WEAK_SHOT,
+        currentValue: currentPreferences.drinks_to_units.weak_shot,
+      },
+      {
+        title: translate('drinks.strongShot'),
+        key: CONST.DRINKS.KEYS.STRONG_SHOT,
+        currentValue: currentPreferences.drinks_to_units.strong_shot,
+      },
+      {
+        title: translate('drinks.cocktail'),
+        key: CONST.DRINKS.KEYS.COCKTAIL,
+        currentValue: currentPreferences.drinks_to_units.cocktail,
+      },
+      {
+        title: translate('drinks.other'),
+        key: CONST.DRINKS.KEYS.OTHER,
+        currentValue: currentPreferences.drinks_to_units.other,
+      },
+    ];
+
     return {
       sectionTranslationKey: 'preferencesScreen.drinksToUnitsSection.title',
       subtitle: translate('preferencesScreen.drinksToUnitsSection.description'),
-      items: [],
+      items: drinksHelperData.map(item => ({
+        title: item.title,
+        disabled: true,
+        rightComponent: setPreferencesButton(
+          item.key,
+          item.title,
+          item.currentValue,
+          'drinks_to_units',
+          0.1, // Min value
+          3, // Max value
+        ),
+      })),
     };
-  }, []);
+  }, [currentPreferences]);
 
   /**
    * Retuns JSX.Element with menu items
@@ -258,7 +304,9 @@ function PreferencesScreen({}: PreferencesScreenProps) {
               shouldShowRightIcon={!detail.rightComponent}
               shouldShowRightComponent={!!detail.rightComponent}
               rightComponent={detail.rightComponent}
-              onPress={() => Navigation.navigate(detail.pageRoute)}
+              onPress={() => {
+                setSliderVisible(true);
+              }}
             />
           ))}
         </>
@@ -333,8 +381,25 @@ function PreferencesScreen({}: PreferencesScreenProps) {
           {generalMenuItems}
           {unitsToColorsMenuItems}
           {drinksToUnitsMenuItems}
-          <FillerView height={400} />
         </MenuItemGroup>
+        <NumericSlider
+          visible={sliderVisible}
+          value={sliderValue}
+          heading={sliderHeading}
+          step={sliderStep}
+          maxValue={sliderMaxValue}
+          onRequestClose={() => {
+            setSliderVisible(false);
+          }}
+          onSave={newValue => {
+            if (sliderList == 'units_to_colors') {
+              updateUnitsToColors(sliderKey, newValue);
+            } else if (sliderList == 'drinks_to_units') {
+              updateDrinksToUnits(sliderKey, newValue);
+            }
+            setSliderVisible(false);
+          }}
+        />
       </ScrollView>
       <View style={styles.bottomTabBarContainer(true)}>
         <Button
@@ -360,97 +425,3 @@ function PreferencesScreen({}: PreferencesScreenProps) {
 
 PreferencesScreen.displayName = 'Preferences Screen';
 export default PreferencesScreen;
-
-//  <View style={[localStyles.container, localStyles.horizontalContainer]}>
-//   <Text style={localStyles.label}>First Day of Week</Text>
-//   <View style={localStyles.itemContainer}>
-//     <TextSwitch
-//       offText="Sun"
-//       onText="Mon"
-//       value={currentPreferences.first_day_of_week === 'Monday'}
-//       onValueChange={handleFirstDayOfWeekToggle}
-//     />
-//   </View>
-// </View>
-// <View style={[localStyles.container, localStyles.verticalContainer]}>
-//   <Text style={localStyles.label}>Unit Colors</Text>
-//   <View style={localStyles.itemContainer}>
-//     <PreferencesList
-//       id="units_to_colors"
-//       initialContents={[
-//         {
-//           key: 'yellow',
-//           label: 'Yellow',
-//           value: currentPreferences.units_to_colors.yellow.toString(),
-//         },
-//         {
-//           key: 'orange',
-//           label: 'Orange',
-//           value: currentPreferences.units_to_colors.orange.toString(),
-//         },
-//       ]}
-//       onButtonPress={(key, label, value) => {
-//         setSliderHeading(label);
-//         setSliderStep(1);
-//         setSliderMaxValue(15);
-//         setSliderValue(value);
-//         setSliderVisible(true);
-//         setSliderList('units_to_colors');
-//         setSliderKey(key);
-//       }}
-//     />
-//   </View>
-// </View>
-// <View style={[localStyles.container, localStyles.verticalContainer]}>
-//   <Text style={localStyles.label}>Drinks to Units Conversion</Text>
-//   <View style={localStyles.itemContainer}>
-//     <PreferencesList
-//       id="drinks_to_units" // Another unique identifier
-//       initialContents={Object.values(CONST.DRINKS.KEYS).map(
-//         (key, index) => ({
-//           key: key,
-//           label: Object.values(CONST.DRINKS.NAMES)[index],
-//           value: currentPreferences.drinks_to_units[key].toString(), // Non-null assertion
-//         }),
-//       )}
-//       onButtonPress={(key, label, value) => {
-//         setSliderHeading(label);
-//         setSliderStep(0.1);
-//         setSliderMaxValue(3);
-//         setSliderValue(value);
-//         setSliderVisible(true);
-//         setSliderList('drinks_to_units');
-//         setSliderKey(key);
-//       }}
-//     />
-//   </View>
-// </View>
-// {/* <View style={[localStyles.container, localStyles.horizontalContainer]}>
-//   <Text style={localStyles.label}>
-//     Automatically order drinks in session window
-//   </Text>
-//   <View style={localStyles.itemContainer}>
-//     <Text>hello</Text>
-//   </View>
-// </View> */}
-// <NumericSlider
-//   visible={sliderVisible}
-//   transparent={true}
-//   value={sliderValue}
-//   heading={sliderHeading}
-//   step={sliderStep}
-//   maxValue={sliderMaxValue}
-//   onRequestClose={() => {
-//     setSliderVisible(false);
-//     setSliderValue(0);
-//     setSliderHeading('');
-//   }}
-//   onSave={newValue => {
-//     if (sliderList == 'units_to_colors') {
-//       updateUnitsToColors(sliderKey, newValue);
-//     } else if (sliderList == 'drinks_to_units') {
-//       updateDrinksToUnits(sliderKey, newValue);
-//     }
-//     setSliderVisible(false);
-//   }}
-// />

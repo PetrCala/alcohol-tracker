@@ -238,6 +238,8 @@ export default {
   statItemTextWidth: 100,
   profileStatOverviewHeight: 120,
   sessionColorMarkerSize: 20,
+  numericSliderWidth: 280,
+  numericSliderHeight: 40,
 
   h20: 20,
   h28: 28,

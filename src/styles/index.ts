@@ -570,6 +570,14 @@ const styles = (theme: ThemeColors) =>
       backgroundColor: theme.buttonDefaultBG,
     },
 
+    buttonLargeSuccess: {
+      borderRadius: variables.buttonBorderRadius,
+      minHeight: variables.componentSizeLarge,
+      minWidth: variables.componentSizeLarge,
+      paddingHorizontal: 20,
+      backgroundColor: theme.success,
+    },
+
     buttonSmallText: {
       fontSize: variables.fontSizeSmall,
       ...FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
@@ -1114,6 +1122,11 @@ const styles = (theme: ThemeColors) =>
       outlineStyle: 'none',
     },
 
+    numericSlider: {
+      height: variables.numericSliderHeight,
+      width: variables.numericSliderWidth,
+    },
+
     headerGap: {
       // height: CONST.DESKTOP_HEADER_PADDING,
       height: 0,
@@ -1608,20 +1621,10 @@ const styles = (theme: ThemeColors) =>
       justifyContent: 'center',
     },
 
-    squareTextInputContainer: {
+    settingValueButton: {
       backgroundColor: theme.componentBG,
       borderRadius: variables.componentBorderRadiusNormal,
-      // width: variables.componentSizeSmall,
-      // height: variables.componentSizeSmall,
-      width: 40,
-      height: 40,
-    },
-
-    squareTextInputText: {
-      alignSelf: 'center',
-      justifySelf: 'center',
-      padding: 20,
-      borderWidth: 0,
+      minWidth: variables.componentSizeNormal,
     },
 
     statItemContainer: {

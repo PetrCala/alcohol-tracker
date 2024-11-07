@@ -3,10 +3,13 @@ import {Modal, StyleSheet, Text, View} from 'react-native';
 import Slider from '@react-native-community/slider';
 import BasicButton from '../Buttons/BasicButton';
 import useThemeStyles from '@hooks/useThemeStyles';
+import FullScreenModal from '@components/Modals/FullScreenModal';
+import Button from '@components/Button';
+import useLocalize from '@hooks/useLocalize';
+import useTheme from '@hooks/useTheme';
 
 type NumericSliderProps = {
   visible: boolean;
-  transparent: boolean;
   heading: string;
   step: number;
   value: number;
@@ -15,19 +18,19 @@ type NumericSliderProps = {
   onSave: (value: number) => void;
 };
 
-const NumericSlider = (props: NumericSliderProps) => {
-  const {
-    visible,
-    transparent,
-    heading,
-    step,
-    value,
-    maxValue,
-    onRequestClose,
-    onSave,
-  } = props;
+const NumericSlider = ({
+  visible,
+  heading,
+  step,
+  value,
+  maxValue,
+  onRequestClose,
+  onSave,
+}: NumericSliderProps) => {
   const [localValue, setLocalValue] = useState<number>(value);
   const styles = useThemeStyles();
+  const theme = useTheme();
+  const {translate} = useLocalize();
 
   useEffect(() => {
     setLocalValue(value);
@@ -39,131 +42,42 @@ const NumericSlider = (props: NumericSliderProps) => {
   };
 
   return (
-    <Modal
-      animationType="none"
-      transparent={transparent}
-      visible={visible}
-      onRequestClose={onRequestClose}>
-      <View style={localStyles.modalContainer}>
-        <View style={localStyles.modalView}>
-          <View style={localStyles.valueTextContainer}>
-            <Text style={localStyles.valueText}>{heading}</Text>
-            <Text style={localStyles.valueText}>{localValue}</Text>
-          </View>
-          <View style={localStyles.sliderContainer}>
-            <Slider
-              value={localValue}
-              style={localStyles.slider}
-              minimumValue={0}
-              maximumValue={maxValue}
-              step={step}
-              minimumTrackTintColor="#000"
-              maximumTrackTintColor="#000"
-              thumbTintColor="#000"
-              onValueChange={handleSliderChange}
-              tapToSeek={true}
-            />
-          </View>
-          <View style={localStyles.saveButtonsDelimiter} />
-          <View style={localStyles.saveButtonsContainer}>
-            <BasicButton
-              text="Save"
-              buttonStyle={localStyles.saveButton}
-              textStyle={localStyles.saveButtonText}
-              onPress={() => onSave(localValue)}
-            />
-            <BasicButton
-              text="Cancel"
-              buttonStyle={localStyles.cancelButton}
-              textStyle={localStyles.cancelButtonText}
-              onPress={onRequestClose}
-            />
-          </View>
+    <FullScreenModal visible={visible} onClose={onRequestClose} hideCloseButton>
+      <View style={styles.fullScreenCenteredContent}>
+        <View style={[styles.justifyContentCenter, styles.alignItemsCenter]}>
+          <Text style={[styles.textHeadline, styles.mb2]}>{heading}</Text>
+          <Text style={styles.textHeadline}>{localValue}</Text>
+        </View>
+        <View style={styles.m4}>
+          <Slider
+            value={localValue}
+            style={styles.numericSlider}
+            minimumValue={0}
+            maximumValue={maxValue}
+            step={step}
+            minimumTrackTintColor={theme.textDark}
+            maximumTrackTintColor={theme.textDark}
+            thumbTintColor={theme.textDark}
+            onValueChange={handleSliderChange}
+            tapToSeek={true}
+          />
+        </View>
+        <View style={[styles.flexRow, styles.mt2]}>
+          <Button
+            text={translate('common.cancel')}
+            style={[styles.mnw25, styles.ph2]}
+            onPress={onRequestClose}
+          />
+          <Button
+            style={[styles.mnw25, styles.ph2]}
+            success
+            text={translate('common.save')}
+            onPress={() => onSave(localValue)}
+          />
         </View>
       </View>
-    </Modal>
+    </FullScreenModal>
   );
 };
 
 export default NumericSlider;
-
-const localStyles = StyleSheet.create({
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // This will fade the background
-  },
-  modalView: {
-    backgroundColor: '#FFFF99',
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: 'black',
-    padding: 20,
-    alignItems: 'center',
-    elevation: 5,
-  },
-  valueTextContainer: {
-    marginTop: 10,
-    height: 50,
-    justifyContent: 'center',
-  },
-  valueText: {
-    fontSize: 25,
-    color: 'black',
-    alignSelf: 'center',
-    margin: 5,
-  },
-  sliderContainer: {
-    justifyContent: 'center',
-    margin: 10,
-    marginTop: 15,
-    marginBottom: 5,
-  },
-  slider: {
-    width: 280,
-    height: 40,
-  },
-  saveButtonsDelimiter: {
-    height: 5,
-    width: '100%',
-    backgroundColor: 'white',
-    borderTopWidth: 1,
-    borderColor: '#000',
-  },
-  saveButtonsContainer: {
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    flexDirection: 'column',
-    backgroundColor: '#FFFF99',
-    marginBottom: 2,
-  },
-  saveButton: {
-    width: 150,
-    backgroundColor: '#fcf50f',
-    padding: 10,
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: 'black',
-    margin: 5,
-    alignItems: 'center',
-  },
-  saveButtonText: {
-    color: 'black',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  cancelButton: {
-    width: '100%',
-    backgroundColor: '#ffff99',
-    padding: 6,
-    margin: 5,
-    alignItems: 'center',
-  },
-  cancelButtonText: {
-    color: 'black',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-});
