@@ -86,7 +86,7 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
         <Button
           add
           onPress={() => {
-            handleSendRequestPress(db, userFrom, userTo, setIsLoading);
+            handleAcceptFriendRequestPress(db, userFrom, userTo, setIsLoading);
           }}
           text={statusToTextMap.received}
           isLoading={isLoading}
