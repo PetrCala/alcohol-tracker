@@ -211,9 +211,10 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
               style={[
                 styles.pt0,
                 styles.pb0,
-                styles.borderBottomRounded,
-                {borderBottomLeftRadius: 35, borderBottomRightRadius: 35},
-                index === menuItemsData.items.length - 1 && styles.borderNone,
+                // Enable the following to add borders in between items
+                // styles.borderBottomRounded,
+                // {borderBottomLeftRadius: 35, borderBottomRightRadius: 35},
+                // index === menuItemsData.items.length - 1 && styles.borderNone,
               ]}
               disabled={true}
               shouldGreyOutWhenDisabled={false}
