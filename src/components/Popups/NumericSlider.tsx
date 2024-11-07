@@ -1,7 +1,6 @@
-﻿import React, {useState, useEffect, useMemo} from 'react';
-import {Modal, StyleSheet, Text, View} from 'react-native';
+﻿import React, {useState, useEffect} from 'react';
+import {Text, View} from 'react-native';
 import Slider from '@react-native-community/slider';
-import BasicButton from '../Buttons/BasicButton';
 import useThemeStyles from '@hooks/useThemeStyles';
 import FullScreenModal from '@components/Modals/FullScreenModal';
 import Button from '@components/Button';
