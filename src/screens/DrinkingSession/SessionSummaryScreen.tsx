@@ -151,7 +151,7 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
     return {
       sectionTranslationKey: 'sessionSummaryScreen.drinksSection.title',
       items: [
-        {title: 'Drinks', description: totalDrinks.toString()},
+        {title: 'Total', description: totalDrinks.toString()},
         {title: 'Small Beer', description: drinkSums.small_beer.toString()},
         {title: 'Beer', description: drinkSums.beer.toString()},
         {title: 'Wine', description: drinkSums.wine.toString()},
