@@ -27,9 +27,7 @@ import type {
   UserSearchResults,
 } from '@src/types/various/Search';
 import {objKeys} from '@libs/DataHandling';
-import SeeProfileButton from '@components/Buttons/SeeProfileButton';
 import type GeneralAction from '@src/types/various/GeneralAction';
-import commonStyles from '@src/styles/commonStyles';
 import {getNicknameMapping} from '@libs/SearchUtils';
 import FillerView from '@components/FillerView';
 import type {StackScreenProps} from '@react-navigation/stack';
@@ -43,7 +41,6 @@ import {readDataOnce} from '@database/baseFunctions';
 import ScreenWrapper from '@components/ScreenWrapper';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import useLocalize from '@hooks/useLocalize';
-import CONST from '@src/CONST';
 import useTheme from '@hooks/useTheme';
 import useThemeStyles from '@hooks/useThemeStyles';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
@@ -331,6 +328,7 @@ const localStyles = StyleSheet.create({
   searchResultsContainer: {
     width: '100%',
     flexDirection: 'column',
+    marginTop: 8,
   },
 });
 
