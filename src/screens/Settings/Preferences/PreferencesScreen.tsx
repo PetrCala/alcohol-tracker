@@ -362,7 +362,8 @@ function PreferencesScreen({}: PreferencesScreenProps) {
       />
       <ScrollView contentContainerStyle={[styles.w100]}>
         <MenuItemGroup>
-          {generalMenuItems}
+          {/* {generalMenuItems} */}
+          {/* Enable this after the general menu items have been implemented */}
           {unitsToColorsMenuItems}
           {drinksToUnitsMenuItems}
         </MenuItemGroup>
