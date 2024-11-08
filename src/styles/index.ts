@@ -1574,6 +1574,7 @@ const styles = (theme: ThemeColors) =>
     changeKirokuLoginLinkContainer: {
       flexDirection: 'row',
       flexWrap: 'wrap',
+      justifyContent: 'center',
       ...wordBreak.breakWord,
     },
 

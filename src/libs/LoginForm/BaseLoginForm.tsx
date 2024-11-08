@@ -47,6 +47,7 @@ import htmlDivElementRef from '@src/types/utils/htmlDivElementRef';
 import viewRef from '@src/types/utils/viewRef';
 import type LoginFormProps from './types';
 import type {InputHandle} from './types';
+import ChangeKirokuLoginLink from '@libs/SignUp/ChangeKirokuLoginLink';
 
 type BaseLoginFormOnyxProps = {
   /** The details about the account that the user is signing in with */
@@ -335,6 +336,8 @@ function BaseLoginForm(
               buttonStyles={[shouldShowServerError ? styles.mt3 : {}]}
               containerStyles={[styles.mh0]}
             />
+            <ChangeKirokuLoginLink onPress={() => Session.clearSignInData()} />
+            {/* --- OR --- */}
             {/* {
                             // This feature has a few behavioral differences in development mode. To prevent confusion
                             // for developers about possible regressions, we won't render buttons in development mode.

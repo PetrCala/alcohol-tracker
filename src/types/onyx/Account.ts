@@ -12,9 +12,6 @@ type Account = {
   /** The message to be displayed to the user */
   message?: string;
 
-  /** Whether the account exists */
-  accountExists?: boolean;
-
   /** Whether a sign is loading */
   isLoading?: boolean;
 

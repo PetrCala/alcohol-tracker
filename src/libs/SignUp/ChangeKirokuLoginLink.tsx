@@ -27,16 +27,14 @@ function ChangeKirokuLoginLink({
   const {translate} = useLocalize();
 
   return (
-    <View style={[styles.changeKirokuLoginLinkContainer, styles.mt3]}>
-      {!!credentials?.login && (
-        <Text style={styles.mr1}>{translate('loginForm.existingAccount')}</Text>
-      )}
+    <View style={styles.changeKirokuLoginLinkContainer}>
+      <Text style={styles.mr1}>{translate('loginForm.existingAccount')}</Text>
       <PressableWithFeedback
         style={[styles.link]}
         onPress={onPress}
         role={CONST.ROLE.LINK}
-        accessibilityLabel={translate('common.goBack')}>
-        <Text style={[styles.link]}>{translate('common.goBack')}.</Text>
+        accessibilityLabel={translate('common.logIn')}>
+        <Text style={[styles.link]}>{translate('common.logIn')}</Text>
       </PressableWithFeedback>
     </View>
   );

@@ -9,8 +9,6 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import * as Session from '@userActions/Session';
 import ONYXKEYS from '@src/ONYXKEYS';
 import type {Account} from '@src/types/onyx';
-import ChangeKirokuLoginLink from './ChangeKirokuLoginLink';
-import Terms from './Terms';
 
 type WelcomeFormOnyxProps = {
   /** State for the account */
@@ -38,10 +36,6 @@ function WelcomeForm({account}: WelcomeFormProps) {
           pressOnEnter
           style={[styles.mb2]}
         />
-        <ChangeKirokuLoginLink onPress={() => Session.clearSignInData()} />
-      </View>
-      <View style={[styles.mt4, styles.signUpScreenWelcomeTextContainer]}>
-        <Terms />
       </View>
     </>
   );

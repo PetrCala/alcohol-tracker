@@ -27,6 +27,7 @@ export default {
     next: 'Next',
     previous: 'Previous',
     goBack: 'Go back',
+    logIn: 'Log in',
     create: 'Create',
     add: 'Add',
     resend: 'Resend',

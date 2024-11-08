@@ -86,7 +86,7 @@ function getRenderOptions({
   const hasAccount = !isEmptyObject(account);
 
   // Show the Welcome form if a user is signing up for a new account
-  const shouldShowWelcomeForm = !!credentials?.login && !account?.accountExists;
+  const shouldShowWelcomeForm = !!credentials?.login;
   const shouldShowLoginForm = !hasLogin; // && !hasSignUp;
   const shouldShowSignUpForm = !shouldShowWelcomeForm && hasAccount && hasLogin;
   const shouldShowWelcomeHeader =

@@ -9,7 +9,6 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import * as Session from '@userActions/Session';
 import ONYXKEYS from '@src/ONYXKEYS';
 import type {Account} from '@src/types/onyx';
-import ChangeKirokuLoginLink from './ChangeKirokuLoginLink';
 import Terms from './Terms';
 
 type SignUpFormOnyxProps = {
@@ -38,6 +37,9 @@ function SignUpForm({account}: SignUpFormProps) {
           pressOnEnter
           style={[styles.mb2]}
         />
+        <View style={[styles.mt4, styles.signUpScreenWelcomeTextContainer]}>
+          <Terms />
+        </View>
       </View>
     </>
   );
