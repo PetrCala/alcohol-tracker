@@ -45,11 +45,11 @@ import type {CloseAccountForm} from '@src/types/form';
 import type {Account} from '@src/types/onyx';
 import htmlDivElementRef from '@src/types/utils/htmlDivElementRef';
 import viewRef from '@src/types/utils/viewRef';
-import type LoginFormProps from './types';
+import type InitialFormProps from './types';
 import type {InputHandle} from './types';
 import ChangeKirokuLoginLink from '@libs/SignUp/ChangeKirokuLoginLink';
 
-type BaseLoginFormOnyxProps = {
+type BaseInitialFormOnyxProps = {
   /** The details about the account that the user is signing in with */
   account: OnyxEntry<Account>;
 
@@ -57,19 +57,20 @@ type BaseLoginFormOnyxProps = {
   closeAccount: OnyxEntry<CloseAccountForm>;
 };
 
-type BaseLoginFormProps = WithToggleVisibilityViewProps &
-  BaseLoginFormOnyxProps &
-  LoginFormProps;
+type BaseInitialFormProps = WithToggleVisibilityViewProps &
+  BaseInitialFormOnyxProps &
+  InitialFormProps;
 
-function BaseLoginForm(
+function BaseInitialForm(
   {
     account,
     login,
     onLoginChanged,
+    setLoginFormHidden,
     closeAccount,
     blurOnSubmit = false,
     isVisible,
-  }: BaseLoginFormProps,
+  }: BaseInitialFormProps,
   ref: ForwardedRef<InputHandle>,
 ) {
   const styles = useThemeStyles();
@@ -95,7 +96,7 @@ function BaseLoginForm(
       }
 
       if (!ValidationUtils.isValidEmail(loginTrim)) {
-        setFormError('loginForm.error.invalidFormatEmailLogin');
+        setFormError('initialForm.error.invalidFormatEmailLogin');
         return false;
       }
 
@@ -158,7 +159,6 @@ function BaseLoginForm(
 
     const loginTrim = login.trim();
 
-    // Check if this login has an account associated with it or not
     // Session.beginSignIn(loginTrim); // TODO - enable this line
     console.log('singing in with login:', loginTrim);
   }, [login, account, closeAccount, isOffline, validate]);
@@ -259,12 +259,12 @@ function BaseLoginForm(
   return (
     <>
       <View
-        accessibilityLabel={translate('loginForm.loginForm')}
+        accessibilityLabel={translate('initialForm.initialForm')}
         style={[styles.mt3]}>
         <TextInput
           ref={input}
-          label={translate('loginForm.email')}
-          accessibilityLabel={translate('loginForm.email')}
+          label={translate('initialForm.email')}
+          accessibilityLabel={translate('initialForm.email')}
           value={login}
           returnKeyType="go"
           autoCompleteType="username"
@@ -328,7 +328,7 @@ function BaseLoginForm(
               buttonText={translate('common.continue')}
               isLoading={
                 account?.isLoading &&
-                account?.loadingForm === CONST.FORMS.LOGIN_FORM
+                account?.loadingForm === CONST.FORMS.INITIAL_FORM
               }
               onSubmit={validateAndSubmitForm}
               message={serverErrorText}
@@ -336,7 +336,7 @@ function BaseLoginForm(
               buttonStyles={[shouldShowServerError ? styles.mt3 : {}]}
               containerStyles={[styles.mh0]}
             />
-            <ChangeKirokuLoginLink onPress={() => Session.clearSignInData()} />
+            <ChangeKirokuLoginLink onPress={() => setLoginFormHidden(false)} />
             {/* --- OR --- */}
             {/* {
                             // This feature has a few behavioral differences in development mode. To prevent confusion
@@ -371,11 +371,11 @@ function BaseLoginForm(
   );
 }
 
-BaseLoginForm.displayName = 'BaseLoginForm';
+BaseInitialForm.displayName = 'BaseInitialForm';
 
 export default withToggleVisibilityView(
-  withOnyx<BaseLoginFormProps, BaseLoginFormOnyxProps>({
+  withOnyx<BaseInitialFormProps, BaseInitialFormOnyxProps>({
     account: {key: ONYXKEYS.ACCOUNT},
     closeAccount: {key: ONYXKEYS.FORMS.CLOSE_ACCOUNT_FORM},
-  })(forwardRef(BaseLoginForm)),
+  })(forwardRef(BaseInitialForm)),
 );

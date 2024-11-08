@@ -1,4 +1,4 @@
-type LoginFormProps = {
+type InitialFormProps = {
   /** The login input value */
   login: string;
 
@@ -7,6 +7,9 @@ type LoginFormProps = {
 
   /** Function used to scroll to the top of the page */
   scrollPageToTop?: () => void;
+
+  /** Function used to switch to the login form  */
+  setLoginFormHidden: (hidden: boolean) => void;
 
   /** Should we dismiss the keyboard when transitioning away from the page? */
   blurOnSubmit?: boolean;
@@ -22,4 +25,4 @@ type InputHandle = {
 
 export type {InputHandle};
 
-export default LoginFormProps;
+export default InitialFormProps;

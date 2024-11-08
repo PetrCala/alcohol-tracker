@@ -528,7 +528,7 @@ export default {
       "You've opened the login page in a separate tab. Please log in from that tab.",
     welcome: 'Welcome!',
     welcomeWithoutExclamation: 'Welcome',
-    enterPassword: 'Please enter your password',
+    enterPassword: 'Please enter your password.',
     welcomeNewAccount: ({login}: SignUpNewAccountCodeParams) =>
       `${login}! Are you ready to create your account?`,
     // welcomeEnterMagicCode: ({login}: WelcomeEnterMagicCodeParams) =>
@@ -540,7 +540,7 @@ export default {
       body: 'Welcome to Kiroku, where you can track, monitor, and share your alcohol consumption',
     },
   },
-  loginForm: {
+  initialForm: {
     email: 'Email',
     error: {
       invalidFormatEmailLogin:
@@ -548,7 +548,7 @@ export default {
     },
     cannotGetAccountDetails:
       "Couldn't retrieve account details. Please try to sign in again.",
-    loginForm: 'Login form',
+    initialForm: 'Initial form',
     existingAccount: 'Already have an account?',
   },
   termsOfUse: {
