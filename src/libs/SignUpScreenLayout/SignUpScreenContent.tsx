@@ -10,6 +10,7 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import variables from '@styles/variables';
 import type {SignUpScreenLayoutProps} from './types';
 import ImageSVG from '@components/ImageSVG';
+import KirokuLogo from '@components/KirokuLogo';
 
 type SignUpScreenContentProps = Pick<
   SignUpScreenLayoutProps,
@@ -59,12 +60,7 @@ function SignUpScreenContent({
                   ? styles.alignItemsCenter
                   : styles.alignSelfStart,
               ]}>
-              <ImageSVG
-                contentFit="contain"
-                src={KirokuIcons.Logo}
-                width={variables.signInLogoSize}
-                height={variables.signInLogoSize}
-              />
+              <KirokuLogo />
             </View>
             <View style={[styles.signUpScreenWelcomeTextContainer]}>
               {shouldShowWelcomeHeader && welcomeHeader ? (

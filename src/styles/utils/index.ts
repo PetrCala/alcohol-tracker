@@ -429,7 +429,7 @@ function getBorderColorStyle(borderColor: string): ViewStyle {
 /**
  * Returns the width style for the wordmark logo on the sign in page
  */
-function getSignInWordmarkWidthStyle(
+function getSignInLogoWidthStyle(
   isSmallScreenWidth: boolean,
   environment: ValueOf<typeof CONST.ENVIRONMENT>,
 ): ViewStyle {
@@ -445,7 +445,7 @@ function getSignInWordmarkWidthStyle(
   }
   if (environment === CONST.ENVIRONMENT.PROD) {
     return isSmallScreenWidth
-      ? {width: variables.signInLogoWidth}
+      ? {width: variables.signInLogoSize}
       : {width: variables.signInLogoWidthLargeScreen};
   }
   return isSmallScreenWidth
@@ -1127,7 +1127,7 @@ const staticStyleUtils = {
   getPaymentMethodMenuWidth,
   getSafeAreaMargins,
   getSafeAreaPadding,
-  getSignInWordmarkWidthStyle,
+  getSignInLogoWidthStyle,
   getTextColorStyle,
   getTransparentColor,
   getWidthAndHeightStyle,
