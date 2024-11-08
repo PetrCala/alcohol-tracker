@@ -37,6 +37,8 @@ import useLocalize from '@hooks/useLocalize';
 import LoginForm from '@libs/LoginForm';
 import SignUpScreenLayout from '@libs/SignUpScreenLayout';
 import WelcomeForm from '@libs/SignUp/WelcomeForm';
+import SignUpForm from '@libs/SignUp/SignUpForm';
+import {useFocusEffect} from '@react-navigation/native';
 
 type SignUpScreenInnerOnyxProps = {
   /** The details about the account that the user is signing in with */
@@ -59,7 +61,7 @@ type SignUpScreenLayoutRef = {
 
 type RenderOption = {
   shouldShowLoginForm: boolean;
-  shouldShowEmailDeliveryFailurePage: boolean;
+  shouldShowSignUpForm: boolean;
   shouldShowWelcomeHeader: boolean;
   shouldShowWelcomeText: boolean;
   shouldShowWelcomeForm: boolean;
@@ -67,45 +69,34 @@ type RenderOption = {
 
 type GetRenderOptionsParams = {
   hasLogin: boolean;
-  hasValidateCode: boolean;
   account: OnyxEntry<Account>;
   credentials: OnyxEntry<Credentials>;
 };
 
 /**
  * @param hasLogin
- * @param hasValidateCode
+ * @param hasSignUp
  * @param account
- * @param hasEmailDeliveryFailure
  */
 function getRenderOptions({
   hasLogin,
-  hasValidateCode,
   account,
   credentials,
 }: GetRenderOptionsParams): RenderOption {
   const hasAccount = !isEmptyObject(account);
-  const hasEmailDeliveryFailure = !!account?.hasEmailDeliveryFailure;
 
   // Show the Welcome form if a user is signing up for a new account
-  const shouldShowWelcomeForm =
-    !!credentials?.login && !account?.validated && !account?.accountExists;
-  const shouldShowLoginForm = !hasLogin; // && !hasValidateCode;
-  const shouldShowEmailDeliveryFailurePage =
-    hasLogin && hasEmailDeliveryFailure;
-  const shouldShowValidateCodeForm =
-    !shouldShowWelcomeForm &&
-    hasAccount &&
-    (hasLogin || hasValidateCode) &&
-    !hasEmailDeliveryFailure;
+  const shouldShowWelcomeForm = !!credentials?.login && !account?.accountExists;
+  const shouldShowLoginForm = !hasLogin; // && !hasSignUp;
+  const shouldShowSignUpForm = !shouldShowWelcomeForm && hasAccount && hasLogin;
   const shouldShowWelcomeHeader =
-    shouldShowLoginForm || shouldShowValidateCodeForm || shouldShowWelcomeForm;
+    shouldShowLoginForm || shouldShowWelcomeForm || shouldShowSignUpForm;
   const shouldShowWelcomeText =
-    shouldShowLoginForm || shouldShowValidateCodeForm || shouldShowWelcomeForm;
+    shouldShowLoginForm || shouldShowWelcomeForm || shouldShowSignUpForm;
 
   return {
     shouldShowLoginForm,
-    shouldShowEmailDeliveryFailurePage,
+    shouldShowSignUpForm,
     shouldShowWelcomeHeader,
     shouldShowWelcomeText,
     shouldShowWelcomeForm,
@@ -118,7 +109,7 @@ function SignUpScreen({
   preferredLocale,
   shouldEnableMaxHeight = true,
 }: SignUpScreenInnerProps) {
-  const {db} = useFirebase();
+  const {auth, db} = useFirebase();
   const {isOnline} = useUserConnection();
   const {translate} = useLocalize();
   const styles = useThemeStyles();
@@ -129,6 +120,21 @@ function SignUpScreen({
   const loginFormRef = useRef<InputHandle>(null);
   const [login, setLogin] = React.useState('');
   // const theme = useTheme();
+
+  useFocusEffect(
+    // Redirect to main screen if user is already logged in (from sign up screen only)
+    React.useCallback(() => {
+      const stopListening = auth.onAuthStateChanged(user => {
+        if (user) {
+          Navigation.navigate(ROUTES.HOME);
+        }
+      });
+
+      return () => {
+        stopListening(); // This will be called when the screen loses focus
+      };
+    }, []),
+  );
 
   async function rollbackChanges(
     newUserID: string,
@@ -146,13 +152,12 @@ function SignUpScreen({
 
   const {
     shouldShowLoginForm,
-    shouldShowEmailDeliveryFailurePage,
+    shouldShowSignUpForm,
     shouldShowWelcomeHeader,
     shouldShowWelcomeText,
     shouldShowWelcomeForm,
   } = getRenderOptions({
     hasLogin: !!credentials?.login,
-    hasValidateCode: !!credentials?.validateCode,
     account,
     credentials,
   });
@@ -170,15 +175,6 @@ function SignUpScreen({
     welcomeText = shouldUseNarrowLayout
       ? translate('welcomeText.getStarted')
       : '';
-  } else if (shouldShowEmailDeliveryFailurePage) {
-    welcomeHeader = shouldUseNarrowLayout
-      ? headerText
-      : translate('welcomeText.welcome');
-
-    // Don't show any welcome text if we're showing the user the email delivery failed view
-    if (shouldShowEmailDeliveryFailurePage) {
-      welcomeText = '';
-    }
   } else if (shouldShowWelcomeForm) {
     welcomeHeader = shouldUseNarrowLayout
       ? headerText
@@ -186,6 +182,15 @@ function SignUpScreen({
     welcomeText = shouldUseNarrowLayout
       ? `${translate('welcomeText.welcomeWithoutExclamation')} ${translate('welcomeText.welcomeNewAccount', {login: userLoginToDisplay})}`
       : translate('welcomeText.welcomeNewAccount', {login: userLoginToDisplay});
+  } else if (shouldShowSignUpForm) {
+    // TODO
+    // welcomeHeader = shouldUseNarrowLayout
+    //   ? headerText
+    //   : translate('welcomeText.welcome');
+    // // Don't show any welcome text if we're showing the user the email delivery failed view
+    // if (shouldShowEmailDeliveryFailurePage) {
+    //   welcomeText = '';
+    // }
   }
 
   const navigateFocus = () => {
@@ -194,7 +199,7 @@ function SignUpScreen({
   };
 
   const navigateBack = () => {
-    if (shouldShowWelcomeForm || shouldShowEmailDeliveryFailurePage) {
+    if (shouldShowWelcomeForm || shouldShowSignUpForm) {
       Session.clearSignInData();
       return;
     }
@@ -249,6 +254,7 @@ function SignUpScreen({
           scrollPageToTop={signUpScreenLayoutRef.current?.scrollPageToTop}
         />
         {shouldShowWelcomeForm && <WelcomeForm />}
+        {shouldShowSignUpForm && <SignUpForm />}
       </SignUpScreenLayout>
     </ScreenWrapper>
   );
