@@ -12,14 +12,14 @@ import type {Account} from '@src/types/onyx';
 import ChangeKirokuLoginLink from './ChangeKirokuLoginLink';
 import Terms from './Terms';
 
-type SignUpWelcomeFormOnyxProps = {
+type WelcomeFormOnyxProps = {
   /** State for the account */
   account: OnyxEntry<Account>;
 };
 
-type SignUpWelcomeFormProps = SignUpWelcomeFormOnyxProps;
+type WelcomeFormProps = WelcomeFormOnyxProps;
 
-function SignUpWelcomeForm({account}: SignUpWelcomeFormProps) {
+function WelcomeForm({account}: WelcomeFormProps) {
   const network = useNetwork();
   const styles = useThemeStyles();
   const {translate} = useLocalize();
@@ -46,8 +46,8 @@ function SignUpWelcomeForm({account}: SignUpWelcomeFormProps) {
     </>
   );
 }
-SignUpWelcomeForm.displayName = 'SignUpWelcomeForm';
+WelcomeForm.displayName = 'WelcomeForm';
 
-export default withOnyx<SignUpWelcomeFormProps, SignUpWelcomeFormOnyxProps>({
+export default withOnyx<WelcomeFormProps, WelcomeFormOnyxProps>({
   account: {key: ONYXKEYS.ACCOUNT},
-})(SignUpWelcomeForm);
+})(WelcomeForm);

@@ -36,7 +36,7 @@ import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import useLocalize from '@hooks/useLocalize';
 import LoginForm from '@libs/LoginForm';
 import SignUpScreenLayout from '@libs/SignUpScreenLayout';
-import SignUpWelcomeForm from '@libs/SignUp/SignUpWelcomeForm';
+import WelcomeForm from '@libs/SignUp/WelcomeForm';
 
 type SignUpScreenInnerOnyxProps = {
   /** The details about the account that the user is signing in with */
@@ -62,7 +62,7 @@ type RenderOption = {
   shouldShowEmailDeliveryFailurePage: boolean;
   shouldShowWelcomeHeader: boolean;
   shouldShowWelcomeText: boolean;
-  shouldShowSignUpWelcomeForm: boolean;
+  shouldShowWelcomeForm: boolean;
 };
 
 type GetRenderOptionsParams = {
@@ -88,31 +88,27 @@ function getRenderOptions({
   const hasEmailDeliveryFailure = !!account?.hasEmailDeliveryFailure;
 
   // Show the Welcome form if a user is signing up for a new account
-  const shouldShowSignUpWelcomeForm =
+  const shouldShowWelcomeForm =
     !!credentials?.login && !account?.validated && !account?.accountExists;
   const shouldShowLoginForm = !hasLogin; // && !hasValidateCode;
   const shouldShowEmailDeliveryFailurePage =
     hasLogin && hasEmailDeliveryFailure;
   const shouldShowValidateCodeForm =
-    !shouldShowSignUpWelcomeForm &&
+    !shouldShowWelcomeForm &&
     hasAccount &&
     (hasLogin || hasValidateCode) &&
     !hasEmailDeliveryFailure;
   const shouldShowWelcomeHeader =
-    shouldShowLoginForm ||
-    shouldShowValidateCodeForm ||
-    shouldShowSignUpWelcomeForm;
+    shouldShowLoginForm || shouldShowValidateCodeForm || shouldShowWelcomeForm;
   const shouldShowWelcomeText =
-    shouldShowLoginForm ||
-    shouldShowValidateCodeForm ||
-    shouldShowSignUpWelcomeForm;
+    shouldShowLoginForm || shouldShowValidateCodeForm || shouldShowWelcomeForm;
 
   return {
     shouldShowLoginForm,
     shouldShowEmailDeliveryFailurePage,
     shouldShowWelcomeHeader,
     shouldShowWelcomeText,
-    shouldShowSignUpWelcomeForm,
+    shouldShowWelcomeForm,
   };
 }
 
@@ -148,163 +144,12 @@ function SignUpScreen({
     }
   }
 
-  // const handleSignUp = async () => {
-  //   Keyboard.dismiss();
-  //   if (!isOnline) {
-  //     return;
-  //   }
-
-  //   const inputValidation = validateSignInInput(
-  //     state.email,
-  //     state.username,
-  //     state.password,
-  //     state.passwordConfirm,
-  //   );
-  //   if (!inputValidation.success) {
-  //     dispatch({type: 'SET_WARNING', payload: inputValidation.message});
-  //     return;
-  //   }
-
-  //   let auth = getAuth();
-  //   const currentUser = auth.currentUser;
-
-  //   if (currentUser) {
-  //     dispatch({
-  //       type: 'SET_WARNING',
-  //       payload:
-  //         'You are already authenticated. This is a system bug, please reset the application data.',
-  //     });
-  //     return;
-  //   }
-
-  //   let newUserID: string | undefined;
-  //   let minSupportedVersion: string | null;
-  //   const minUserCreationPath =
-  //     DBPATHS.CONFIG_APP_SETTINGS_MIN_USER_CREATION_POSSIBLE_VERSION;
-
-  //   dispatch({type: 'SET_LOADING', payload: true});
-  //   try {
-  //     minSupportedVersion = await readDataOnce(db, minUserCreationPath);
-  //   } catch (error: any) {
-  //     Alert.alert(
-  //       'Data fetch failed',
-  //       'Could not fetch the sign-up source data: ' + error.message,
-  //     );
-  //     dispatch({type: 'SET_LOADING', payload: false});
-  //     return;
-  //   }
-
-  //   if (!minSupportedVersion) {
-  //     dispatch({
-  //       type: 'SET_WARNING',
-  //       payload:
-  //         'Failed to fetch the minimum supported version. Please try again later.',
-  //     });
-  //     dispatch({type: 'SET_LOADING', payload: false});
-  //     return;
-  //   }
-  //   const validationResult: ValidationResult =
-  //     validateAppVersion(minSupportedVersion);
-  //   if (!validationResult.success) {
-  //     dispatch({
-  //       type: 'SET_WARNING',
-  //       payload:
-  //         'This version of the application is outdated. Please upgrade to the newest version.',
-  //     });
-  //     dispatch({type: 'SET_LOADING', payload: false});
-  //     return;
-  //   }
-
-  //   // Validate that the user is not spamming account creation
-  //   try {
-  //     await checkAccountCreationLimit(db);
-  //   } catch (error: any) {
-  //     dispatch({type: 'SET_WARNING', payload: error.message});
-  //     dispatch({type: 'SET_LOADING', payload: false});
-  //     return;
-  //   }
-
-  //   // Pushing initial user data to Realtime Database
-  //   const newProfileData: Profile = {
-  //     display_name: state.username,
-  //     photo_url: '',
-  //   };
-
-  //   // Create the user in the Firebase authentication
-  //   try {
-  //     await signUpUserWithEmailAndPassword(auth, state.email, state.password);
-  //   } catch (error: any) {
-  //     console.log(
-  //       'Sign-up failed when creating a user in firebase authentification: ',
-  //       error,
-  //     );
-  //     Alert.alert(
-  //       'Sign-up failed',
-  //       'There was an error during sign-up: ' + error.message,
-  //     );
-  //     dispatch({type: 'SET_LOADING', payload: false});
-  //     return;
-  //   }
-
-  //   auth = getAuth(); // Refresh
-  //   if (!auth.currentUser) {
-  //     dispatch({type: 'SET_LOADING', payload: false});
-  //     throw new Error('User creation failed');
-  //   }
-  //   newUserID = auth.currentUser.uid;
-
-  //   try {
-  //     // Realtime Database updates
-  //     await pushNewUserInfo(db, newUserID, newProfileData);
-  //   } catch (error: any) {
-  //     const errorHeading = 'Sign-up failed';
-  //     const errorMessage = 'There was an error during sign-up: ';
-  //     Alert.alert(errorHeading, errorMessage + error.message);
-
-  //     // Attempt to rollback any changes made
-  //     try {
-  //       await rollbackChanges(newUserID, newProfileData.display_name);
-  //     } catch (rollbackError: any) {
-  //       const errorHeading = 'Rollback error';
-  //       const errorMessage = 'Error during sign-up rollback:';
-  //       Alert.alert(errorHeading, errorMessage + rollbackError.message);
-  //     }
-  //     return;
-  //   } finally {
-  //     dispatch({type: 'SET_LOADING', payload: false});
-  //   }
-  //   // Update Firebase authentication
-  //   if (auth.currentUser) {
-  //     try {
-  //       await updateProfile(auth.currentUser, {displayName: state.username});
-  //     } catch (error: any) {
-  //       const errorHeading = 'User profile update failed';
-  //       const errorMessage = 'There was an error during sign-up: ';
-  //       Alert.alert(errorHeading, errorMessage + error.message);
-  //       return;
-  //     } finally {
-  //       dispatch({type: 'SET_LOADING', payload: false});
-  //     }
-  //   }
-  //   dispatch({type: 'SET_LOADING', payload: false});
-  //   Navigation.navigate(ROUTES.HOME);
-  //   return;
-  // };
-
-  // useEffect(() => Performance.measureTTI(), []);
-  // useEffect(() => {
-  //   if (preferredLocale) {
-  //     return;
-  //   }
-  //   App.setLocale(Localize.getDevicePreferredLocale());
-  // }, [preferredLocale]);
-
   const {
     shouldShowLoginForm,
     shouldShowEmailDeliveryFailurePage,
     shouldShowWelcomeHeader,
     shouldShowWelcomeText,
-    shouldShowSignUpWelcomeForm,
+    shouldShowWelcomeForm,
   } = getRenderOptions({
     hasLogin: !!credentials?.login,
     hasValidateCode: !!credentials?.validateCode,
@@ -334,7 +179,7 @@ function SignUpScreen({
     if (shouldShowEmailDeliveryFailurePage) {
       welcomeText = '';
     }
-  } else if (shouldShowSignUpWelcomeForm) {
+  } else if (shouldShowWelcomeForm) {
     welcomeHeader = shouldUseNarrowLayout
       ? headerText
       : translate('welcomeText.welcome');
@@ -349,7 +194,7 @@ function SignUpScreen({
   };
 
   const navigateBack = () => {
-    if (shouldShowSignUpWelcomeForm || shouldShowEmailDeliveryFailurePage) {
+    if (shouldShowWelcomeForm || shouldShowEmailDeliveryFailurePage) {
       Session.clearSignInData();
       return;
     }
@@ -403,7 +248,7 @@ function SignUpScreen({
           blurOnSubmit={false}
           scrollPageToTop={signUpScreenLayoutRef.current?.scrollPageToTop}
         />
-        {shouldShowSignUpWelcomeForm && <SignUpWelcomeForm />}
+        {shouldShowWelcomeForm && <WelcomeForm />}
       </SignUpScreenLayout>
     </ScreenWrapper>
   );
@@ -524,3 +369,154 @@ export default withOnyx<SignUpScreenProps, SignUpScreenOnyxProps>({
 //     </TouchableOpacity>
 //   </View>
 // </View>
+
+// const handleSignUp = async () => {
+//   Keyboard.dismiss();
+//   if (!isOnline) {
+//     return;
+//   }
+
+//   const inputValidation = validateSignInInput(
+//     state.email,
+//     state.username,
+//     state.password,
+//     state.passwordConfirm,
+//   );
+//   if (!inputValidation.success) {
+//     dispatch({type: 'SET_WARNING', payload: inputValidation.message});
+//     return;
+//   }
+
+//   let auth = getAuth();
+//   const currentUser = auth.currentUser;
+
+//   if (currentUser) {
+//     dispatch({
+//       type: 'SET_WARNING',
+//       payload:
+//         'You are already authenticated. This is a system bug, please reset the application data.',
+//     });
+//     return;
+//   }
+
+//   let newUserID: string | undefined;
+//   let minSupportedVersion: string | null;
+//   const minUserCreationPath =
+//     DBPATHS.CONFIG_APP_SETTINGS_MIN_USER_CREATION_POSSIBLE_VERSION;
+
+//   dispatch({type: 'SET_LOADING', payload: true});
+//   try {
+//     minSupportedVersion = await readDataOnce(db, minUserCreationPath);
+//   } catch (error: any) {
+//     Alert.alert(
+//       'Data fetch failed',
+//       'Could not fetch the sign-up source data: ' + error.message,
+//     );
+//     dispatch({type: 'SET_LOADING', payload: false});
+//     return;
+//   }
+
+//   if (!minSupportedVersion) {
+//     dispatch({
+//       type: 'SET_WARNING',
+//       payload:
+//         'Failed to fetch the minimum supported version. Please try again later.',
+//     });
+//     dispatch({type: 'SET_LOADING', payload: false});
+//     return;
+//   }
+//   const validationResult: ValidationResult =
+//     validateAppVersion(minSupportedVersion);
+//   if (!validationResult.success) {
+//     dispatch({
+//       type: 'SET_WARNING',
+//       payload:
+//         'This version of the application is outdated. Please upgrade to the newest version.',
+//     });
+//     dispatch({type: 'SET_LOADING', payload: false});
+//     return;
+//   }
+
+//   // Validate that the user is not spamming account creation
+//   try {
+//     await checkAccountCreationLimit(db);
+//   } catch (error: any) {
+//     dispatch({type: 'SET_WARNING', payload: error.message});
+//     dispatch({type: 'SET_LOADING', payload: false});
+//     return;
+//   }
+
+//   // Pushing initial user data to Realtime Database
+//   const newProfileData: Profile = {
+//     display_name: state.username,
+//     photo_url: '',
+//   };
+
+//   // Create the user in the Firebase authentication
+//   try {
+//     await signUpUserWithEmailAndPassword(auth, state.email, state.password);
+//   } catch (error: any) {
+//     console.log(
+//       'Sign-up failed when creating a user in firebase authentification: ',
+//       error,
+//     );
+//     Alert.alert(
+//       'Sign-up failed',
+//       'There was an error during sign-up: ' + error.message,
+//     );
+//     dispatch({type: 'SET_LOADING', payload: false});
+//     return;
+//   }
+
+//   auth = getAuth(); // Refresh
+//   if (!auth.currentUser) {
+//     dispatch({type: 'SET_LOADING', payload: false});
+//     throw new Error('User creation failed');
+//   }
+//   newUserID = auth.currentUser.uid;
+
+//   try {
+//     // Realtime Database updates
+//     await pushNewUserInfo(db, newUserID, newProfileData);
+//   } catch (error: any) {
+//     const errorHeading = 'Sign-up failed';
+//     const errorMessage = 'There was an error during sign-up: ';
+//     Alert.alert(errorHeading, errorMessage + error.message);
+
+//     // Attempt to rollback any changes made
+//     try {
+//       await rollbackChanges(newUserID, newProfileData.display_name);
+//     } catch (rollbackError: any) {
+//       const errorHeading = 'Rollback error';
+//       const errorMessage = 'Error during sign-up rollback:';
+//       Alert.alert(errorHeading, errorMessage + rollbackError.message);
+//     }
+//     return;
+//   } finally {
+//     dispatch({type: 'SET_LOADING', payload: false});
+//   }
+//   // Update Firebase authentication
+//   if (auth.currentUser) {
+//     try {
+//       await updateProfile(auth.currentUser, {displayName: state.username});
+//     } catch (error: any) {
+//       const errorHeading = 'User profile update failed';
+//       const errorMessage = 'There was an error during sign-up: ';
+//       Alert.alert(errorHeading, errorMessage + error.message);
+//       return;
+//     } finally {
+//       dispatch({type: 'SET_LOADING', payload: false});
+//     }
+//   }
+//   dispatch({type: 'SET_LOADING', payload: false});
+//   Navigation.navigate(ROUTES.HOME);
+//   return;
+// };
+
+// useEffect(() => Performance.measureTTI(), []);
+// useEffect(() => {
+//   if (preferredLocale) {
+//     return;
+//   }
+//   App.setLocale(Localize.getDevicePreferredLocale());
+// }, [preferredLocale]);
