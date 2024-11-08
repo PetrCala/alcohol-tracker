@@ -506,6 +506,7 @@ const CONST = {
     DEFAULT: 'en',
   },
   MAX_ALLOWED_UNITS: 100,
+  SIGN_IN_FORM_WIDTH: 300,
 
   /**
    * Constants for maxToRenderPerBatch parameter that is used for FlatList or SectionList. This controls the amount of items rendered per batch, which is the next chunk of items

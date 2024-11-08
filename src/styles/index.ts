@@ -1060,6 +1060,19 @@ const styles = (theme: ThemeColors) =>
       backgroundColor: theme.hoverComponentBG,
     },
 
+    loginHeroHeader: {
+      ...FontUtils.fontFamily.platform.EXP_NEW_KANSAS_MEDIUM,
+      color: theme.success,
+      textAlign: 'center',
+    },
+
+    loginHeroBody: {
+      ...FontUtils.fontFamily.platform.EXP_NEUE,
+      fontSize: variables.fontSizeSignInHeroBody,
+      color: theme.text, // was .textLight
+      textAlign: 'center',
+    },
+
     menuItemError: {
       position: 'absolute',
       bottom: -4,
@@ -1481,9 +1494,81 @@ const styles = (theme: ThemeColors) =>
     },
 
     signUpScreen: {
-      backgroundColor: theme.appBG,
+      backgroundColor: theme.highlightBG,
       minHeight: '100%',
       flex: 1,
+    },
+
+    lhnSuccessText: {
+      color: theme.success,
+      fontWeight: FontUtils.fontWeight.bold,
+    },
+
+    signUpScreenHeroCenter: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+
+    signUpScreenGradient: {
+      height: '100%',
+      width: 540,
+      position: 'absolute',
+      top: 0,
+      left: 0,
+    },
+
+    signUpScreenGradientMobile: {
+      height: 300,
+      width: 800,
+      position: 'absolute',
+      top: 0,
+      left: 0,
+    },
+
+    signInBackground: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      minHeight: 700,
+    },
+
+    signUpScreenInner: {
+      marginLeft: 'auto',
+      marginRight: 'auto',
+      height: '100%',
+      width: '100%',
+    },
+
+    signUpScreenContentTopSpacer: {
+      maxHeight: 64,
+      minHeight: 24,
+    },
+
+    signUpScreenContentTopSpacerSmallScreens: {
+      maxHeight: 64,
+      minHeight: 45,
+    },
+
+    signUpScreenLeftContainer: {
+      paddingLeft: 40,
+      paddingRight: 40,
+    },
+
+    signUpScreenLeftContainerWide: {
+      maxWidth: variables.sideBarWidth,
+    },
+
+    signUpScreenWelcomeFormContainer: {
+      maxWidth: CONST.SIGN_IN_FORM_WIDTH,
+    },
+
+    signUpScreenWelcomeTextContainer: {
+      width: CONST.SIGN_IN_FORM_WIDTH,
     },
 
     optionAlternateText: {

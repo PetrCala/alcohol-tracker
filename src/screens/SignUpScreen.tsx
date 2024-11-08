@@ -1,6 +1,5 @@
-﻿import React, {useEffect, useReducer, useRef} from 'react';
-import {Dimensions, Alert, StyleSheet, View, Keyboard} from 'react-native';
-import * as KirokuIcons from '@components/Icon/KirokuIcons';
+﻿import React, {useReducer, useRef} from 'react';
+import {Alert, Keyboard} from 'react-native';
 import {getAuth, updateProfile} from 'firebase/auth';
 import {signUpUserWithEmailAndPassword} from '@libs/auth/auth';
 import {useFirebase} from '@context/global/FirebaseContext';
@@ -21,9 +20,6 @@ import Navigation from '@navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import type {Account, Credentials, Locale} from '@src/types/onyx';
 import {checkAccountCreationLimit} from '@database/protection';
-import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
-import ScrollView from '@components/ScrollView';
-import ImageSVG from '@components/ImageSVG';
 import useThemeStyles from '@hooks/useThemeStyles';
 import ScreenWrapper from '@components/ScreenWrapper';
 import useStyleUtils from '@hooks/useStyleUtils';
@@ -33,6 +29,12 @@ import LoginForm from '@libs/LoginForm';
 import {InputHandle} from '@libs/LoginForm/types';
 import {OnyxEntry, withOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
+import CustomStatusBarAndBackground from '@components/CustomStatusBarAndBackground';
+import ColorSchemeWrapper from '@components/ColorSchemeWrapper';
+import ThemeStylesProvider from '@components/ThemeStylesProvider';
+import {isEmptyObject} from '@src/types/utils/EmptyObject';
+import useLocalize from '@hooks/useLocalize';
+import SignUpScreenLayout from '@libs/SignUpScreenLayout';
 
 type SignUpScreenInnerOnyxProps = {
   /** The details about the account that the user is signing in with */
@@ -127,12 +129,80 @@ type SignUpScreenLayoutRef = {
   scrollPageToTop: (animated?: boolean) => void;
 };
 
-function SignUpScreen() {
+type RenderOption = {
+  shouldShowLoginForm: boolean;
+  shouldShowEmailDeliveryFailurePage: boolean;
+  shouldShowWelcomeHeader: boolean;
+  shouldShowWelcomeText: boolean;
+  shouldShouldSignUpWelcomeForm: boolean;
+};
+
+type GetRenderOptionsParams = {
+  hasLogin: boolean;
+  hasValidateCode: boolean;
+  account: OnyxEntry<Account>;
+  credentials: OnyxEntry<Credentials>;
+};
+
+/**
+ * @param hasLogin
+ * @param hasValidateCode
+ * @param account
+ * @param hasEmailDeliveryFailure
+ */
+function getRenderOptions({
+  hasLogin,
+  hasValidateCode,
+  account,
+  credentials,
+}: GetRenderOptionsParams): RenderOption {
+  const hasAccount = !isEmptyObject(account);
+  const hasEmailDeliveryFailure = !!account?.hasEmailDeliveryFailure;
+
+  // Show the Welcome form if a user is signing up for a new account in a domain that is not controlled
+  const shouldShouldSignUpWelcomeForm =
+    !!credentials?.login &&
+    !account?.validated &&
+    !account?.accountExists &&
+    !account?.domainControlled;
+  const shouldShowLoginForm = !hasLogin && !hasValidateCode;
+  const shouldShowEmailDeliveryFailurePage =
+    hasLogin && hasEmailDeliveryFailure;
+  const shouldShowValidateCodeForm =
+    !shouldShouldSignUpWelcomeForm &&
+    hasAccount &&
+    (hasLogin || hasValidateCode) &&
+    !hasEmailDeliveryFailure;
+  const shouldShowWelcomeHeader =
+    shouldShowLoginForm ||
+    shouldShowValidateCodeForm ||
+    shouldShouldSignUpWelcomeForm;
+  const shouldShowWelcomeText =
+    shouldShowLoginForm ||
+    shouldShowValidateCodeForm ||
+    shouldShouldSignUpWelcomeForm;
+
+  return {
+    shouldShowLoginForm,
+    shouldShowEmailDeliveryFailurePage,
+    shouldShowWelcomeHeader,
+    shouldShowWelcomeText,
+    shouldShouldSignUpWelcomeForm,
+  };
+}
+
+function SignUpScreen({
+  credentials,
+  account,
+  preferredLocale,
+  shouldEnableMaxHeight = true,
+}: SignUpScreenInnerProps) {
   const {db} = useFirebase();
   const {isOnline} = useUserConnection();
+  const {translate} = useLocalize();
   const styles = useThemeStyles();
-  const {shouldUseNarrowLayout, isInNarrowPaneModal} = useResponsiveLayout();
   const StyleUtils = useStyleUtils();
+  const {shouldUseNarrowLayout, isInNarrowPaneModal} = useResponsiveLayout();
   const safeAreaInsets = useStyledSafeAreaInsets();
   const signUpScreenLayoutRef = useRef<SignUpScreenLayoutRef>(null);
   const loginFormRef = useRef<InputHandle>(null);
@@ -297,29 +367,81 @@ function SignUpScreen() {
     return;
   };
 
-  // Track password validity
-  useEffect(() => {
-    if (isValidPassword(state.password)) {
-      dispatch({type: 'UPDATE_PASSWORD_VALIDITY', payload: true});
-    } else {
-      dispatch({type: 'UPDATE_PASSWORD_VALIDITY', payload: false});
-    }
-  }, [state.password]);
+  // useEffect(() => Performance.measureTTI(), []);
+  // useEffect(() => {
+  //   if (preferredLocale) {
+  //     return;
+  //   }
+  //   App.setLocale(Localize.getDevicePreferredLocale());
+  // }, [preferredLocale]);
 
-  // Track password matching
-  useEffect(() => {
-    if (isValidPasswordConfirm(state.password, state.passwordConfirm)) {
-      dispatch({type: 'UPDATE_PASSWORDS_MATCH', payload: true});
-    } else {
-      dispatch({type: 'UPDATE_PASSWORDS_MATCH', payload: false});
-    }
-  }, [state.password, state.passwordConfirm]);
+  const {
+    shouldShowLoginForm,
+    shouldShowEmailDeliveryFailurePage,
+    shouldShowWelcomeHeader,
+    shouldShowWelcomeText,
+    shouldShouldSignUpWelcomeForm,
+  } = getRenderOptions({
+    hasLogin: !!credentials?.login,
+    hasValidateCode: !!credentials?.validateCode,
+    account,
+    credentials,
+  });
 
-  if (state.isLoading) {
-    return (
-      <FullScreenLoadingIndicator loadingText="Creating your account..." />
-    );
+  let welcomeHeader = '';
+  let welcomeText = '';
+  const headerText = translate('login.hero.header');
+
+  const userLoginToDisplay = credentials?.login ?? '';
+
+  if (shouldShowLoginForm) {
+    welcomeHeader = shouldUseNarrowLayout
+      ? headerText
+      : translate('welcomeText.getStarted');
+    welcomeText = shouldUseNarrowLayout
+      ? translate('welcomeText.getStarted')
+      : '';
+  } else if (shouldShowEmailDeliveryFailurePage) {
+    welcomeHeader = shouldUseNarrowLayout
+      ? headerText
+      : translate('welcomeText.welcome');
+
+    // Don't show any welcome text if we're showing the user the email delivery failed view
+    if (shouldShowEmailDeliveryFailurePage) {
+      welcomeText = '';
+    }
+  } else if (shouldShouldSignUpWelcomeForm) {
+    welcomeHeader = shouldUseNarrowLayout
+      ? headerText
+      : translate('welcomeText.welcome');
+    welcomeText = shouldUseNarrowLayout
+      ? `${translate('welcomeText.welcomeWithoutExclamation')} ${translate('welcomeText.welcomeNewAccount', {login: userLoginToDisplay})}`
+      : translate('welcomeText.welcomeNewAccount', {login: userLoginToDisplay});
   }
+
+  const navigateFocus = () => {
+    signUpScreenLayoutRef.current?.scrollPageToTop();
+    loginFormRef.current?.clearDataAndFocus();
+  };
+
+  // const navigateBack = () => {
+  //   if (shouldShouldSignUpWelcomeForm || shouldShowEmailDeliveryFailurePage) {
+  //     Session.clearSignInData();
+  //     return;
+  //   }
+
+  //   Navigation.goBack();
+  // };
+
+  // useImperativeHandle(ref, () => ({
+  //   navigateBack,
+  // }));
+
+  // if (state.isLoading) {
+  //   return (
+  //     <FullScreenLoadingIndicator loadingText="Creating your account..." />
+  //   );
+  // }
 
   return (
     <ScreenWrapper
@@ -337,26 +459,25 @@ function SignUpScreen() {
           1,
         ),
       ]}
-      testID={SignUpScreen.displayName}>
-      <ScrollView style={styles.pt8}>
-        {/* <SignInPageLayout > */}
-        <View style={[styles.alignItemsCenter]}>
-          <ImageSVG
-            contentFit="contain"
-            src={KirokuIcons.Logo}
-            width={variables.signInLogoSize}
-            height={variables.signInLogoSize}
-          />
-          <LoginForm
-            ref={loginFormRef}
-            isVisible={true} // could be shouldShowLoginForm
-            login={login}
-            onLoginChanged={setLogin}
-            blurOnSubmit={false}
-            scrollPageToTop={signUpScreenLayoutRef.current?.scrollPageToTop}
-          />
-        </View>
-      </ScrollView>
+      testID={SignUpScreenThemeWrapper.displayName}>
+      <SignUpScreenLayout
+        welcomeHeader={welcomeHeader}
+        welcomeText={welcomeText}
+        shouldShowWelcomeHeader={
+          shouldShowWelcomeHeader || !shouldUseNarrowLayout
+        }
+        shouldShowWelcomeText={shouldShowWelcomeText}
+        ref={signUpScreenLayoutRef}
+        navigateFocus={navigateFocus}>
+        <LoginForm
+          ref={loginFormRef}
+          isVisible={true} // could be shouldShowLoginForm
+          login={login}
+          onLoginChanged={setLogin}
+          blurOnSubmit={false}
+          scrollPageToTop={signUpScreenLayoutRef.current?.scrollPageToTop}
+        />
+      </SignUpScreenLayout>
     </ScreenWrapper>
   );
 }
@@ -364,7 +485,23 @@ function SignUpScreen() {
 type SignUpScreenProps = SignUpScreenInnerProps;
 type SignUpScreenOnyxProps = SignUpScreenInnerOnyxProps;
 
-SignUpScreen.displayName = 'Sign Up Screen';
+function SignUpScreenThemeWrapper(props: SignUpScreenProps) {
+  return (
+    // <ThemeProvider value={CONST.THEME.LIGHT}>
+    <ThemeStylesProvider>
+      <ColorSchemeWrapper>
+        <CustomStatusBarAndBackground isNested />
+        <SignUpScreen
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          {...props}
+        />
+      </ColorSchemeWrapper>
+    </ThemeStylesProvider>
+    // </ThemeProvider>
+  );
+}
+
+SignUpScreenThemeWrapper.displayName = 'Sign Up Screen';
 
 export default withOnyx<SignUpScreenProps, SignUpScreenOnyxProps>({
   account: {key: ONYXKEYS.ACCOUNT},
@@ -372,7 +509,7 @@ export default withOnyx<SignUpScreenProps, SignUpScreenOnyxProps>({
   preferredLocale: {
     key: ONYXKEYS.NVP_PREFERRED_LOCALE,
   },
-})(SignUpScreen);
+})(SignUpScreenThemeWrapper);
 
 // <WarningMessage warningText={state.warning} dispatch={dispatch} />
 // <View style={styles.logoContainer}>

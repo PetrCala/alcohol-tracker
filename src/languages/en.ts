@@ -4,6 +4,7 @@ import type {
   TranslationBase,
   UntilTimeParams,
 } from './types';
+import type {SignUpNewAccountCodeParams} from './params';
 import Platform from '@libs/getPlatform/types';
 import SessionSummaryScreen from '@screens/DrinkingSession/SessionSummaryScreen';
 
@@ -518,6 +519,25 @@ export default {
     text: (platform: Platform) =>
       `This version of the app is now discontinued. Please update to the latest version using the link below${platform === CONST.PLATFORM.IOS ? ' or from within the TestFlight app' : ''}.`,
     link: 'Update Now',
+  },
+  welcomeText: {
+    getStarted: 'Get started below.',
+    anotherLoginPageIsOpen: 'Another login page is open.',
+    anotherLoginPageIsOpenExplanation:
+      "You've opened the login page in a separate tab. Please log in from that tab.",
+    welcome: 'Welcome!',
+    welcomeWithoutExclamation: 'Welcome',
+    enterPassword: 'Please enter your password',
+    welcomeNewAccount: ({login}: SignUpNewAccountCodeParams) =>
+      `${login}, it's always great to see a new face around here!`,
+    // welcomeEnterMagicCode: ({login}: WelcomeEnterMagicCodeParams) =>
+    //   `Please enter the magic code sent to ${login}. It should arrive within a minute or two.`,
+  },
+  login: {
+    hero: {
+      header: 'Track your everyday alcohol adventures.',
+      body: 'Welcome to Kiroku, where you can track, monitor, and share your alcohol consumption.',
+    },
   },
   loginForm: {
     email: 'Email',
