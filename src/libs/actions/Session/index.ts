@@ -51,7 +51,7 @@ import ONYXKEYS from '@src/ONYXKEYS';
 import type {Route} from '@src/ROUTES';
 import ROUTES from '@src/ROUTES';
 import SCREENS from '@src/SCREENS';
-// import type Credentials from '@src/types/onyx/Credentials';
+import type Credentials from '@src/types/onyx/Credentials';
 // import type {AutoAuthState} from '@src/types/onyx/Session';
 import type Session from '@src/types/onyx/Session';
 import clearCache from './clearCache';
@@ -75,11 +75,11 @@ import clearCache from './clearCache';
 //   callback: value => (stashedSession = value ?? {}),
 // });
 
-// let credentials: Credentials = {};
-// Onyx.connect({
-//   key: ONYXKEYS.CREDENTIALS,
-//   callback: value => (credentials = value ?? {}),
-// });
+let credentials: Credentials = {};
+Onyx.connect({
+  key: ONYXKEYS.CREDENTIALS,
+  callback: value => (credentials = value ?? {}),
+});
 
 // let stashedCredentials: Credentials = {};
 // Onyx.connect({
@@ -116,46 +116,46 @@ import clearCache from './clearCache';
 //   Onyx.set(ONYXKEYS.LAST_VISITED_PATH, '');
 // }
 
-// function getShortLivedLoginParams() {
-//   const optimisticData: OnyxUpdate[] = [
-//     {
-//       onyxMethod: Onyx.METHOD.MERGE,
-//       key: ONYXKEYS.ACCOUNT,
-//       value: {
-//         ...CONST.DEFAULT_ACCOUNT_DATA,
-//         isLoading: true,
-//       },
-//     },
-//     // We are making a temporary modification to 'signedInWithShortLivedAuthToken' to ensure that 'App.openApp' will be called at least once
-//     {
-//       onyxMethod: Onyx.METHOD.MERGE,
-//       key: ONYXKEYS.SESSION,
-//       value: {
-//         signedInWithShortLivedAuthToken: true,
-//       },
-//     },
-//   ];
+function getShortLivedLoginParams() {
+  const optimisticData: OnyxUpdate[] = [
+    {
+      onyxMethod: Onyx.METHOD.MERGE,
+      key: ONYXKEYS.ACCOUNT,
+      value: {
+        ...CONST.DEFAULT_ACCOUNT_DATA,
+        isLoading: true,
+      },
+    },
+    // We are making a temporary modification to 'signedInWithShortLivedAuthToken' to ensure that 'App.openApp' will be called at least once
+    {
+      onyxMethod: Onyx.METHOD.MERGE,
+      key: ONYXKEYS.SESSION,
+      value: {
+        signedInWithShortLivedAuthToken: true,
+      },
+    },
+  ];
 
-//   // Subsequently, we revert it back to the default value of 'signedInWithShortLivedAuthToken' in 'finallyData' to ensure the user is logged out on refresh
-//   const finallyData: OnyxUpdate[] = [
-//     {
-//       onyxMethod: Onyx.METHOD.MERGE,
-//       key: ONYXKEYS.ACCOUNT,
-//       value: {
-//         isLoading: false,
-//       },
-//     },
-//     {
-//       onyxMethod: Onyx.METHOD.MERGE,
-//       key: ONYXKEYS.SESSION,
-//       value: {
-//         signedInWithShortLivedAuthToken: null,
-//       },
-//     },
-//   ];
+  // Subsequently, we revert it back to the default value of 'signedInWithShortLivedAuthToken' in 'finallyData' to ensure the user is logged out on refresh
+  const finallyData: OnyxUpdate[] = [
+    {
+      onyxMethod: Onyx.METHOD.MERGE,
+      key: ONYXKEYS.ACCOUNT,
+      value: {
+        isLoading: false,
+      },
+    },
+    {
+      onyxMethod: Onyx.METHOD.MERGE,
+      key: ONYXKEYS.SESSION,
+      value: {
+        signedInWithShortLivedAuthToken: null,
+      },
+    },
+  ];
 
-//   return {optimisticData, finallyData};
-// }
+  return {optimisticData, finallyData};
+}
 
 // /**
 //  * This method should be used when we are being redirected from oldDot to NewDot on a supportal request
@@ -185,22 +185,6 @@ import clearCache from './clearCache';
 
 //   API.write(WRITE_COMMANDS.LOG_OUT, params);
 // }
-
-/**
- * Signs out the user from the app.
- *
- * @param auth Auth object from firebase
- */
-const signOut = async (auth: Auth) => {
-  try {
-    await fbSignOut(auth);
-  } catch (error: any) {
-    Alert.alert(
-      'User sign out error',
-      'There was an error signing out: ' + error.message,
-    );
-  }
-};
 
 // /**
 //  * Checks if the account is an anonymous account.
@@ -635,71 +619,6 @@ function checkIfActionIsAllowed<
 //     },
 //   ];
 
-//   const failureData: OnyxUpdate[] = [
-//     {
-//       onyxMethod: Onyx.METHOD.MERGE,
-//       key: ONYXKEYS.ACCOUNT,
-//       value: {
-//         isLoading: false,
-//         loadingForm: null,
-//       },
-//     },
-//     {
-//       onyxMethod: Onyx.METHOD.MERGE,
-//       key: ONYXKEYS.SESSION,
-//       value: {autoAuthState: CONST.AUTO_AUTH_STATE.FAILED},
-//     },
-//   ];
-//   Device.getDeviceInfoWithID().then(deviceInfo => {
-//     const params: SignInUserWithLinkParams = {
-//       userID,
-//       validateCode,
-//       twoFactorAuthCode,
-//       preferredLocale,
-//       deviceInfo,
-//     };
-
-//     API.write(WRITE_COMMANDS.SIGN_IN_USER_WITH_LINK, params, {
-//       optimisticData,
-//       successData,
-//       failureData,
-//     });
-//   });
-// }
-
-// /**
-//  * Initializes the state of the automatic authentication when the user clicks on a magic link.
-//  *
-//  * This method is called in componentDidMount event of the lifecycle.
-//  * When the user gets authenticated, the component is unmounted and then remounted
-//  * when AppNavigator switches from PublicScreens to AuthScreens.
-//  * That's the reason why autoAuthState initialization is skipped while the last state is SIGNING_IN.
-//  */
-// function initAutoAuthState(cachedAutoAuthState: AutoAuthState) {
-//   const signedInStates: AutoAuthState[] = [
-//     CONST.AUTO_AUTH_STATE.SIGNING_IN,
-//     CONST.AUTO_AUTH_STATE.JUST_SIGNED_IN,
-//   ];
-
-//   Onyx.merge(ONYXKEYS.SESSION, {
-//     autoAuthState: signedInStates.includes(cachedAutoAuthState)
-//       ? CONST.AUTO_AUTH_STATE.JUST_SIGNED_IN
-//       : CONST.AUTO_AUTH_STATE.NOT_STARTED,
-//   });
-// }
-
-// function invalidateCredentials() {
-//   Onyx.merge(ONYXKEYS.CREDENTIALS, {
-//     autoGeneratedLogin: '',
-//     autoGeneratedPassword: '',
-//   });
-// }
-
-// function invalidateAuthToken() {
-//   NetworkStore.setAuthToken('pizza');
-//   Onyx.merge(ONYXKEYS.SESSION, {authToken: 'pizza'});
-// }
-
 /**
  * Clear the credentials and partial sign in session so the user can taken back to first Login step
  */
@@ -1121,6 +1040,22 @@ function clearAccountMessages() {
 //   }
 //   return false;
 // };
+
+/**
+ * Signs out the user from the app.
+ *
+ * @param auth Auth object from firebase
+ */
+async function signOut(auth: Auth) {
+  try {
+    await fbSignOut(auth);
+  } catch (error: any) {
+    Alert.alert(
+      'User sign out error',
+      'There was an error signing out: ' + error.message,
+    );
+  }
+}
 
 export {
   //   beginSignIn,

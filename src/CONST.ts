@@ -58,8 +58,9 @@ const CONST = {
     TEST: 'https://test.kiroku.com',
   },
   KIROKU_URL: 'https://kiroku.com',
-  PRIVACY_POLICY_URL: `${GH_PAGES_URL}/assets/html/privacy-policy.html`,
-  TERMS_OF_SERVICE_URL: `${GH_PAGES_URL}/assets/html/terms-of-service.html`,
+  GITHUB_URL: 'https://github.com/PetrCala/Kiroku',
+  TERMS_URL: `${GH_PAGES_URL}/assets/html/privacy-policy.html`,
+  PRIVACY_URL: `${GH_PAGES_URL}/assets/html/terms-of-service.html`,
   ADMIN_SDK: {
     DEV: 'kiroku-admin-sdk-dev',
     PROD: 'kiroku-admin-sdk-prod',

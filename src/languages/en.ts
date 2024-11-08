@@ -521,22 +521,22 @@ export default {
     link: 'Update Now',
   },
   welcomeText: {
-    getStarted: 'Get started below.',
-    anotherLoginPageIsOpen: 'Another login page is open.',
+    getStarted: 'Get started below',
+    anotherLoginPageIsOpen: 'Another login page is open',
     anotherLoginPageIsOpenExplanation:
       "You've opened the login page in a separate tab. Please log in from that tab.",
     welcome: 'Welcome!',
     welcomeWithoutExclamation: 'Welcome',
     enterPassword: 'Please enter your password',
     welcomeNewAccount: ({login}: SignUpNewAccountCodeParams) =>
-      `${login}, it's always great to see a new face around here!`,
+      `${login}! Are you ready to create your account?`,
     // welcomeEnterMagicCode: ({login}: WelcomeEnterMagicCodeParams) =>
     //   `Please enter the magic code sent to ${login}. It should arrive within a minute or two.`,
   },
   login: {
     hero: {
-      header: 'Track your everyday alcohol adventures.',
-      body: 'Welcome to Kiroku, where you can track, monitor, and share your alcohol consumption.',
+      header: 'Track your everyday alcohol adventures',
+      body: 'Welcome to Kiroku, where you can track, monitor, and share your alcohol consumption',
     },
   },
   loginForm: {
@@ -548,7 +548,24 @@ export default {
     cannotGetAccountDetails:
       "Couldn't retrieve account details. Please try to sign in again.",
     loginForm: 'Login form',
+    existingAccount: 'Already have an account?',
   },
+  termsOfUse: {
+    phrase1: 'By logging in, you agree to the',
+    phrase2: 'Terms of Service',
+    phrase3: 'and',
+    phrase4: 'Privacy Policy',
+  },
+  // loginForm: {
+  //   email: 'Email',
+  //   error: {
+  //     invalidFormatEmailLogin:
+  //       'The email entered is invalid. Please fix the format and try again.',
+  //   },
+  //   cannotGetAccountDetails:
+  //     "Couldn't retrieve account details. Please try to sign in again.",
+  //   loginForm: 'Login form',
+  // },
   passwordForm: {
     pleaseFillOutAllFields: 'Please fill out all fields',
     pleaseFillPassword: 'Please enter your password',
@@ -575,6 +592,9 @@ export default {
         'Your account has been locked after too many unsuccessful attempts. Please try again after 1 hour.',
       fallback: 'Something went wrong. Please try again later.',
     },
+  },
+  welcomeSignUpForm: {
+    join: 'Join',
   },
   genericErrorScreen: {
     title: 'Oops, something went wrong!',

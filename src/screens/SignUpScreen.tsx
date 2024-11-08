@@ -20,12 +20,12 @@ import Navigation from '@navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import type {Account, Credentials, Locale} from '@src/types/onyx';
 import {checkAccountCreationLimit} from '@database/protection';
+import * as Session from '@userActions/Session';
 import useThemeStyles from '@hooks/useThemeStyles';
 import ScreenWrapper from '@components/ScreenWrapper';
 import useStyleUtils from '@hooks/useStyleUtils';
 import useStyledSafeAreaInsets from '@hooks/useStyledSafeAreaInsets';
 import useResponsiveLayout from '@hooks/useResponsiveLayout';
-import LoginForm from '@libs/LoginForm';
 import {InputHandle} from '@libs/LoginForm/types';
 import {OnyxEntry, withOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
@@ -34,7 +34,9 @@ import ColorSchemeWrapper from '@components/ColorSchemeWrapper';
 import ThemeStylesProvider from '@components/ThemeStylesProvider';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import useLocalize from '@hooks/useLocalize';
+import LoginForm from '@libs/LoginForm';
 import SignUpScreenLayout from '@libs/SignUpScreenLayout';
+import SignUpWelcomeForm from '@libs/SignUp/SignUpWelcomeForm';
 
 type SignUpScreenInnerOnyxProps = {
   /** The details about the account that the user is signing in with */
@@ -51,80 +53,6 @@ type SignUpScreenInnerProps = SignUpScreenInnerOnyxProps & {
   shouldEnableMaxHeight?: boolean;
 };
 
-type State = {
-  email: string;
-  username: string;
-  password: string;
-  passwordIsValid: boolean;
-  passwordConfirm: string;
-  passwordsMatch: boolean;
-  warning: string;
-  isLoading: boolean;
-};
-
-type Action = {
-  type: string;
-  payload: any;
-};
-
-const initialState: State = {
-  email: '',
-  username: '',
-  password: '',
-  passwordIsValid: false,
-  passwordConfirm: '',
-  passwordsMatch: false,
-  warning: '',
-  isLoading: false,
-};
-
-const reducer = (state: State, action: Action) => {
-  switch (action.type) {
-    case 'UPDATE_EMAIL':
-      return {
-        ...state,
-        email: action.payload,
-      };
-    case 'UPDATE_USERNAME':
-      return {
-        ...state,
-        username: action.payload,
-      };
-    case 'UPDATE_PASSWORD':
-      return {
-        ...state,
-        password: action.payload,
-      };
-    case 'UPDATE_PASSWORD_VALIDITY':
-      return {
-        ...state,
-        passwordIsValid: action.payload,
-      };
-    case 'UPDATE_PASSWORD_CONFIRM':
-      return {
-        ...state,
-        passwordConfirm: action.payload,
-      };
-    case 'UPDATE_PASSWORDS_MATCH':
-      return {
-        ...state,
-        passwordsMatch: action.payload,
-      };
-    case 'SET_WARNING':
-      return {
-        ...state,
-        warning: action.payload,
-      };
-    case 'SET_LOADING':
-      return {
-        ...state,
-        isLoading: action.payload,
-      };
-    default:
-      return state;
-  }
-};
-
 type SignUpScreenLayoutRef = {
   scrollPageToTop: (animated?: boolean) => void;
 };
@@ -134,7 +62,7 @@ type RenderOption = {
   shouldShowEmailDeliveryFailurePage: boolean;
   shouldShowWelcomeHeader: boolean;
   shouldShowWelcomeText: boolean;
-  shouldShouldSignUpWelcomeForm: boolean;
+  shouldShowSignUpWelcomeForm: boolean;
 };
 
 type GetRenderOptionsParams = {
@@ -159,35 +87,32 @@ function getRenderOptions({
   const hasAccount = !isEmptyObject(account);
   const hasEmailDeliveryFailure = !!account?.hasEmailDeliveryFailure;
 
-  // Show the Welcome form if a user is signing up for a new account in a domain that is not controlled
-  const shouldShouldSignUpWelcomeForm =
-    !!credentials?.login &&
-    !account?.validated &&
-    !account?.accountExists &&
-    !account?.domainControlled;
-  const shouldShowLoginForm = !hasLogin && !hasValidateCode;
+  // Show the Welcome form if a user is signing up for a new account
+  const shouldShowSignUpWelcomeForm =
+    !!credentials?.login && !account?.validated && !account?.accountExists;
+  const shouldShowLoginForm = !hasLogin; // && !hasValidateCode;
   const shouldShowEmailDeliveryFailurePage =
     hasLogin && hasEmailDeliveryFailure;
   const shouldShowValidateCodeForm =
-    !shouldShouldSignUpWelcomeForm &&
+    !shouldShowSignUpWelcomeForm &&
     hasAccount &&
     (hasLogin || hasValidateCode) &&
     !hasEmailDeliveryFailure;
   const shouldShowWelcomeHeader =
     shouldShowLoginForm ||
     shouldShowValidateCodeForm ||
-    shouldShouldSignUpWelcomeForm;
+    shouldShowSignUpWelcomeForm;
   const shouldShowWelcomeText =
     shouldShowLoginForm ||
     shouldShowValidateCodeForm ||
-    shouldShouldSignUpWelcomeForm;
+    shouldShowSignUpWelcomeForm;
 
   return {
     shouldShowLoginForm,
     shouldShowEmailDeliveryFailurePage,
     shouldShowWelcomeHeader,
     shouldShowWelcomeText,
-    shouldShouldSignUpWelcomeForm,
+    shouldShowSignUpWelcomeForm,
   };
 }
 
@@ -207,7 +132,6 @@ function SignUpScreen({
   const signUpScreenLayoutRef = useRef<SignUpScreenLayoutRef>(null);
   const loginFormRef = useRef<InputHandle>(null);
   const [login, setLogin] = React.useState('');
-  const [state, dispatch] = useReducer(reducer, initialState);
   // const theme = useTheme();
 
   async function rollbackChanges(
@@ -224,148 +148,148 @@ function SignUpScreen({
     }
   }
 
-  const handleSignUp = async () => {
-    Keyboard.dismiss();
-    if (!isOnline) {
-      return;
-    }
+  // const handleSignUp = async () => {
+  //   Keyboard.dismiss();
+  //   if (!isOnline) {
+  //     return;
+  //   }
 
-    const inputValidation = validateSignInInput(
-      state.email,
-      state.username,
-      state.password,
-      state.passwordConfirm,
-    );
-    if (!inputValidation.success) {
-      dispatch({type: 'SET_WARNING', payload: inputValidation.message});
-      return;
-    }
+  //   const inputValidation = validateSignInInput(
+  //     state.email,
+  //     state.username,
+  //     state.password,
+  //     state.passwordConfirm,
+  //   );
+  //   if (!inputValidation.success) {
+  //     dispatch({type: 'SET_WARNING', payload: inputValidation.message});
+  //     return;
+  //   }
 
-    let auth = getAuth();
-    const currentUser = auth.currentUser;
+  //   let auth = getAuth();
+  //   const currentUser = auth.currentUser;
 
-    if (currentUser) {
-      dispatch({
-        type: 'SET_WARNING',
-        payload:
-          'You are already authenticated. This is a system bug, please reset the application data.',
-      });
-      return;
-    }
+  //   if (currentUser) {
+  //     dispatch({
+  //       type: 'SET_WARNING',
+  //       payload:
+  //         'You are already authenticated. This is a system bug, please reset the application data.',
+  //     });
+  //     return;
+  //   }
 
-    let newUserID: string | undefined;
-    let minSupportedVersion: string | null;
-    const minUserCreationPath =
-      DBPATHS.CONFIG_APP_SETTINGS_MIN_USER_CREATION_POSSIBLE_VERSION;
+  //   let newUserID: string | undefined;
+  //   let minSupportedVersion: string | null;
+  //   const minUserCreationPath =
+  //     DBPATHS.CONFIG_APP_SETTINGS_MIN_USER_CREATION_POSSIBLE_VERSION;
 
-    dispatch({type: 'SET_LOADING', payload: true});
-    try {
-      minSupportedVersion = await readDataOnce(db, minUserCreationPath);
-    } catch (error: any) {
-      Alert.alert(
-        'Data fetch failed',
-        'Could not fetch the sign-up source data: ' + error.message,
-      );
-      dispatch({type: 'SET_LOADING', payload: false});
-      return;
-    }
+  //   dispatch({type: 'SET_LOADING', payload: true});
+  //   try {
+  //     minSupportedVersion = await readDataOnce(db, minUserCreationPath);
+  //   } catch (error: any) {
+  //     Alert.alert(
+  //       'Data fetch failed',
+  //       'Could not fetch the sign-up source data: ' + error.message,
+  //     );
+  //     dispatch({type: 'SET_LOADING', payload: false});
+  //     return;
+  //   }
 
-    if (!minSupportedVersion) {
-      dispatch({
-        type: 'SET_WARNING',
-        payload:
-          'Failed to fetch the minimum supported version. Please try again later.',
-      });
-      dispatch({type: 'SET_LOADING', payload: false});
-      return;
-    }
-    const validationResult: ValidationResult =
-      validateAppVersion(minSupportedVersion);
-    if (!validationResult.success) {
-      dispatch({
-        type: 'SET_WARNING',
-        payload:
-          'This version of the application is outdated. Please upgrade to the newest version.',
-      });
-      dispatch({type: 'SET_LOADING', payload: false});
-      return;
-    }
+  //   if (!minSupportedVersion) {
+  //     dispatch({
+  //       type: 'SET_WARNING',
+  //       payload:
+  //         'Failed to fetch the minimum supported version. Please try again later.',
+  //     });
+  //     dispatch({type: 'SET_LOADING', payload: false});
+  //     return;
+  //   }
+  //   const validationResult: ValidationResult =
+  //     validateAppVersion(minSupportedVersion);
+  //   if (!validationResult.success) {
+  //     dispatch({
+  //       type: 'SET_WARNING',
+  //       payload:
+  //         'This version of the application is outdated. Please upgrade to the newest version.',
+  //     });
+  //     dispatch({type: 'SET_LOADING', payload: false});
+  //     return;
+  //   }
 
-    // Validate that the user is not spamming account creation
-    try {
-      await checkAccountCreationLimit(db);
-    } catch (error: any) {
-      dispatch({type: 'SET_WARNING', payload: error.message});
-      dispatch({type: 'SET_LOADING', payload: false});
-      return;
-    }
+  //   // Validate that the user is not spamming account creation
+  //   try {
+  //     await checkAccountCreationLimit(db);
+  //   } catch (error: any) {
+  //     dispatch({type: 'SET_WARNING', payload: error.message});
+  //     dispatch({type: 'SET_LOADING', payload: false});
+  //     return;
+  //   }
 
-    // Pushing initial user data to Realtime Database
-    const newProfileData: Profile = {
-      display_name: state.username,
-      photo_url: '',
-    };
+  //   // Pushing initial user data to Realtime Database
+  //   const newProfileData: Profile = {
+  //     display_name: state.username,
+  //     photo_url: '',
+  //   };
 
-    // Create the user in the Firebase authentication
-    try {
-      await signUpUserWithEmailAndPassword(auth, state.email, state.password);
-    } catch (error: any) {
-      console.log(
-        'Sign-up failed when creating a user in firebase authentification: ',
-        error,
-      );
-      Alert.alert(
-        'Sign-up failed',
-        'There was an error during sign-up: ' + error.message,
-      );
-      dispatch({type: 'SET_LOADING', payload: false});
-      return;
-    }
+  //   // Create the user in the Firebase authentication
+  //   try {
+  //     await signUpUserWithEmailAndPassword(auth, state.email, state.password);
+  //   } catch (error: any) {
+  //     console.log(
+  //       'Sign-up failed when creating a user in firebase authentification: ',
+  //       error,
+  //     );
+  //     Alert.alert(
+  //       'Sign-up failed',
+  //       'There was an error during sign-up: ' + error.message,
+  //     );
+  //     dispatch({type: 'SET_LOADING', payload: false});
+  //     return;
+  //   }
 
-    auth = getAuth(); // Refresh
-    if (!auth.currentUser) {
-      dispatch({type: 'SET_LOADING', payload: false});
-      throw new Error('User creation failed');
-    }
-    newUserID = auth.currentUser.uid;
+  //   auth = getAuth(); // Refresh
+  //   if (!auth.currentUser) {
+  //     dispatch({type: 'SET_LOADING', payload: false});
+  //     throw new Error('User creation failed');
+  //   }
+  //   newUserID = auth.currentUser.uid;
 
-    try {
-      // Realtime Database updates
-      await pushNewUserInfo(db, newUserID, newProfileData);
-    } catch (error: any) {
-      const errorHeading = 'Sign-up failed';
-      const errorMessage = 'There was an error during sign-up: ';
-      Alert.alert(errorHeading, errorMessage + error.message);
+  //   try {
+  //     // Realtime Database updates
+  //     await pushNewUserInfo(db, newUserID, newProfileData);
+  //   } catch (error: any) {
+  //     const errorHeading = 'Sign-up failed';
+  //     const errorMessage = 'There was an error during sign-up: ';
+  //     Alert.alert(errorHeading, errorMessage + error.message);
 
-      // Attempt to rollback any changes made
-      try {
-        await rollbackChanges(newUserID, newProfileData.display_name);
-      } catch (rollbackError: any) {
-        const errorHeading = 'Rollback error';
-        const errorMessage = 'Error during sign-up rollback:';
-        Alert.alert(errorHeading, errorMessage + rollbackError.message);
-      }
-      return;
-    } finally {
-      dispatch({type: 'SET_LOADING', payload: false});
-    }
-    // Update Firebase authentication
-    if (auth.currentUser) {
-      try {
-        await updateProfile(auth.currentUser, {displayName: state.username});
-      } catch (error: any) {
-        const errorHeading = 'User profile update failed';
-        const errorMessage = 'There was an error during sign-up: ';
-        Alert.alert(errorHeading, errorMessage + error.message);
-        return;
-      } finally {
-        dispatch({type: 'SET_LOADING', payload: false});
-      }
-    }
-    dispatch({type: 'SET_LOADING', payload: false});
-    Navigation.navigate(ROUTES.HOME);
-    return;
-  };
+  //     // Attempt to rollback any changes made
+  //     try {
+  //       await rollbackChanges(newUserID, newProfileData.display_name);
+  //     } catch (rollbackError: any) {
+  //       const errorHeading = 'Rollback error';
+  //       const errorMessage = 'Error during sign-up rollback:';
+  //       Alert.alert(errorHeading, errorMessage + rollbackError.message);
+  //     }
+  //     return;
+  //   } finally {
+  //     dispatch({type: 'SET_LOADING', payload: false});
+  //   }
+  //   // Update Firebase authentication
+  //   if (auth.currentUser) {
+  //     try {
+  //       await updateProfile(auth.currentUser, {displayName: state.username});
+  //     } catch (error: any) {
+  //       const errorHeading = 'User profile update failed';
+  //       const errorMessage = 'There was an error during sign-up: ';
+  //       Alert.alert(errorHeading, errorMessage + error.message);
+  //       return;
+  //     } finally {
+  //       dispatch({type: 'SET_LOADING', payload: false});
+  //     }
+  //   }
+  //   dispatch({type: 'SET_LOADING', payload: false});
+  //   Navigation.navigate(ROUTES.HOME);
+  //   return;
+  // };
 
   // useEffect(() => Performance.measureTTI(), []);
   // useEffect(() => {
@@ -380,7 +304,7 @@ function SignUpScreen({
     shouldShowEmailDeliveryFailurePage,
     shouldShowWelcomeHeader,
     shouldShowWelcomeText,
-    shouldShouldSignUpWelcomeForm,
+    shouldShowSignUpWelcomeForm,
   } = getRenderOptions({
     hasLogin: !!credentials?.login,
     hasValidateCode: !!credentials?.validateCode,
@@ -410,7 +334,7 @@ function SignUpScreen({
     if (shouldShowEmailDeliveryFailurePage) {
       welcomeText = '';
     }
-  } else if (shouldShouldSignUpWelcomeForm) {
+  } else if (shouldShowSignUpWelcomeForm) {
     welcomeHeader = shouldUseNarrowLayout
       ? headerText
       : translate('welcomeText.welcome');
@@ -424,14 +348,14 @@ function SignUpScreen({
     loginFormRef.current?.clearDataAndFocus();
   };
 
-  // const navigateBack = () => {
-  //   if (shouldShouldSignUpWelcomeForm || shouldShowEmailDeliveryFailurePage) {
-  //     Session.clearSignInData();
-  //     return;
-  //   }
+  const navigateBack = () => {
+    if (shouldShowSignUpWelcomeForm || shouldShowEmailDeliveryFailurePage) {
+      Session.clearSignInData();
+      return;
+    }
 
-  //   Navigation.goBack();
-  // };
+    Navigation.goBack();
+  };
 
   // useImperativeHandle(ref, () => ({
   //   navigateBack,
@@ -446,6 +370,8 @@ function SignUpScreen({
   return (
     <ScreenWrapper
       shouldShowOfflineIndicator={false}
+      shouldEnableMaxHeight={shouldEnableMaxHeight}
+      shouldUseCachedViewportHeight
       style={[
         styles.signUpScreen,
         StyleUtils.getSafeAreaPadding(
@@ -471,12 +397,13 @@ function SignUpScreen({
         navigateFocus={navigateFocus}>
         <LoginForm
           ref={loginFormRef}
-          isVisible={true} // could be shouldShowLoginForm
+          isVisible={shouldShowLoginForm}
           login={login}
           onLoginChanged={setLogin}
           blurOnSubmit={false}
           scrollPageToTop={signUpScreenLayoutRef.current?.scrollPageToTop}
         />
+        {shouldShowSignUpWelcomeForm && <SignUpWelcomeForm />}
       </SignUpScreenLayout>
     </ScreenWrapper>
   );

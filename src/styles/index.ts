@@ -1571,6 +1571,12 @@ const styles = (theme: ThemeColors) =>
       width: CONST.SIGN_IN_FORM_WIDTH,
     },
 
+    changeKirokuLoginLinkContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      ...wordBreak.breakWord,
+    },
+
     optionAlternateText: {
       minHeight: variables.alternateTextHeight,
       lineHeight: variables.lineHeightXLarge,
