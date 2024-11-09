@@ -146,7 +146,6 @@ export default {
     semicolon: 'semicolon',
     please: 'Please',
     contactUs: 'contact us',
-    pleaseEnterEmail: 'Please enter an email address',
     fixTheErrors: 'fix the errors',
     inTheFormBeforeContinuing: 'in the form before continuing',
     confirm: 'Confirm',
@@ -415,13 +414,6 @@ export default {
     submit: 'Submit email',
     sent: 'Email updated successfully!',
     sending: 'Updating email...',
-    error: {
-      invalidEmail: 'Invalid email',
-      sameEmail: 'This is the same email as your current one',
-      emailTooLong: 'Email is too long',
-      emailRequired: 'Email is required',
-      generic: 'There was an error updating your email.',
-    },
   },
   passwordScreen: {
     changePassword: 'Change password',
@@ -548,41 +540,40 @@ export default {
     signUpForm: 'Sign up form',
     existingAccount: 'Already have an account?',
     noAccount: 'Don’t have an account yet?',
-    error: {
-      invalidFormatEmailLogin:
-        'The email entered is invalid. Please fix the format and try again.',
-    },
+    error: {},
   },
-  logInForm: {},
-  signUpForm: {},
   termsOfUse: {
     phrase1: 'By logging in, you agree to the',
     phrase2: 'Terms of Service',
     phrase3: 'and',
     phrase4: 'Privacy Policy',
   },
+  emailForm: {
+    email: 'Email',
+    error: {
+      invalidEmail: 'Invalid email address',
+      sameEmail: 'This is the same email address as your current one',
+      emailTooLong: 'The email address is too long',
+      emailRequired: 'An email address is required',
+      pleaseEnterEmail: 'Please enter an email address',
+      generic: 'There was an error updating your email address.',
+    },
+  },
   passwordForm: {
     pleaseFillOutAllFields: 'Please fill out all fields',
     pleaseFillPassword: 'Please enter your password',
-    pleaseFillTwoFactorAuth: 'Please enter your two-factor code',
-    enterYourTwoFactorAuthenticationCodeToContinue:
-      'Enter your two-factor authentication code to continue',
     forgot: 'Forgot?',
-    requiredWhen2FAEnabled: 'Required when 2FA is enabled',
     error: {
+      complexPassword:
+        'Password must be at least 8 characters long, contain at least 1 uppercase letter, 1 lowercase letter, and 1 number.',
+      samePassword: 'This is the same password as your current one',
       incorrectPassword: 'Incorrect password. Please try again.',
       incorrectLoginOrPassword:
         'Incorrect login or password. Please try again.',
-      incorrect2fa:
-        'Incorrect two-factor authentication code. Please try again.',
-      twoFactorAuthenticationEnabled:
-        'You have 2FA enabled on this account. Please sign in using your email or phone number.',
       invalidLoginOrPassword:
         'Invalid login or password. Please try again or reset your password.',
       unableToResetPassword:
         'We were unable to change your password. This is likely due to an expired password reset link in an old password reset email. We have emailed you a new link so you can try again. Check your Inbox and your Spam folder; it should arrive in just a few minutes.',
-      noAccess:
-        'You do not have access to this application. Please add your GitHub username for access.',
       accountLocked:
         'Your account has been locked after too many unsuccessful attempts. Please try again after 1 hour.',
       fallback: 'Something went wrong. Please try again later.',

@@ -627,9 +627,6 @@ const CONST = {
     // ...
   },
 
-  // at least 8 characters, 1 capital letter, 1 lowercase number, 1 number
-  PASSWORD_COMPLEXITY_REGEX_STRING: '^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{8,}$',
-
   BOOT_SPLASH_STATE: {
     VISIBLE: 'visible',
     READY_TO_BE_HIDDEN: 'readyToBeHidden',
@@ -750,6 +747,8 @@ const CONST = {
     TIME_FORMAT: /^\d{2}:\d{2} [AP]M$/,
     DATE_TIME_FORMAT: /^\d{2}-\d{2} \d{2}:\d{2} [AP]M$/,
     YEAR_DATE_TIME_FORMAT: /^\d{4}-\d{2}-\d{2} \d{2}:\d{2} [AP]M$/,
+    // at least 8 characters, 1 capital letter, 1 lowercase number, 1 number
+    COMPLEX_PASSWORD: /^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{8,}$/,
   },
 
   /**

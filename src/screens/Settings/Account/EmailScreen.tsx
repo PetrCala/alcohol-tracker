@@ -51,7 +51,7 @@ function EmailScreen({}: EmailScreenProps) {
       console.log('Submitting email...');
       // await User.sendUpdateEmailLink(auth.currentUser, values.email);
     } catch (error: any) {
-      ErrorUtils.raiseAlert(error, translate('emailScreen.error.generic'));
+      ErrorUtils.raiseAlert(error, translate('emailForm.error.generic'));
     } finally {
       console.debug('Navigating to email verification screen...');
       // Navigation.navigate(ROUTES.SETTINGS.ACCOUNT.EMAIL_VERIFICATION);
@@ -62,31 +62,19 @@ function EmailScreen({}: EmailScreenProps) {
     (values: FormOnyxValues<typeof ONYXKEYS.FORMS.EMAIL_FORM>): Errors => {
       const errors: FormInputErrors<typeof ONYXKEYS.FORMS.EMAIL_FORM> = {};
 
-      if (values.email.length === 0) {
+      const emailErrorTranslationKey = ValidationUtils.validateEmail(
+        values.email,
+        currentEmail,
+      );
+
+      if (emailErrorTranslationKey) {
         ErrorUtils.addErrorMessage(
           errors,
           INPUT_IDS.EMAIL,
-          translate('emailScreen.error.emailRequired'),
-        );
-      } else if (!ValidationUtils.isValidEmail(values.email)) {
-        ErrorUtils.addErrorMessage(
-          errors,
-          INPUT_IDS.EMAIL,
-          translate('emailScreen.error.invalidEmail'),
-        );
-      } else if (values.email === currentEmail) {
-        ErrorUtils.addErrorMessage(
-          errors,
-          INPUT_IDS.EMAIL,
-          translate('emailScreen.error.sameEmail'),
-        );
-      } else if (values.email.length > CONST.EMAIL_MAX_LENGTH) {
-        ErrorUtils.addErrorMessage(
-          errors,
-          INPUT_IDS.EMAIL,
-          translate('emailScreen.error.emailTooLong'),
+          translate(emailErrorTranslationKey),
         );
       }
+
       return errors;
     },
     [translate],

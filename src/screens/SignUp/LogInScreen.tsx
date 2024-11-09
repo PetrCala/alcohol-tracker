@@ -20,6 +20,8 @@ import InputWrapper from '@components/Form/InputWrapper';
 import TextInput from '@components/TextInput';
 import {useOnyx} from 'react-native-onyx';
 import CONST from '@src/CONST';
+import * as ValidationUtils from '@libs/ValidationUtils';
+import * as ErrorUtils from '@libs/ErrorUtils';
 import * as Browser from '@libs/Browser';
 
 type LoginScreenLayoutRef = {
@@ -57,6 +59,22 @@ function LogInScreen() {
   const validate = useCallback(
     (values: FormOnyxValues<typeof ONYXKEYS.FORMS.LOG_IN_FORM>): Errors => {
       const errors: FormInputErrors<typeof ONYXKEYS.FORMS.LOG_IN_FORM> = {};
+
+      if (!values.email) {
+        ErrorUtils.addErrorMessage(
+          errors,
+          INPUT_IDS.EMAIL,
+          translate('emailForm.error.pleaseEnterEmail'),
+        );
+      }
+
+      if (!values.password) {
+        ErrorUtils.addErrorMessage(
+          errors,
+          INPUT_IDS.PASSWORD,
+          translate('passwordForm.pleaseFillPassword'),
+        );
+      }
 
       return errors;
     },

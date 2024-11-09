@@ -29,6 +29,7 @@ import type {MaybePhraseKey} from './Localize';
 import * as Localize from './Localize';
 import StringUtils from './StringUtils';
 import {OnyxFormKey} from '@src/ONYXKEYS';
+import {TranslationPaths} from '@src/languages/types';
 
 /**
  * Implements the Luhn Algorithm, a checksum formula used to validate credit card
@@ -69,6 +70,13 @@ function isValidDate(date: string | Date): boolean {
     isAfter(testDate, pastDate) &&
     isBefore(testDate, futureDate)
   );
+}
+
+/**
+ * Validate that a password is complex enough.
+ */
+function isComplexPassword(password: string): boolean {
+  return CONST.REGEX.COMPLEX_PASSWORD.test(password);
 }
 
 /**
@@ -232,6 +240,42 @@ function getDatePassedError(inputDate: string): string {
   }
 
   return '';
+}
+
+/** Check an email for validity and return a key for the error message
+ *
+ * @param email - email to check
+ * @param currentEmail - current email to compare against
+ *
+ */
+function validateEmail(
+  email: string,
+  currentEmail?: string | null,
+): TranslationPaths | null {
+  if (email.length === 0) {
+    return 'emailForm.error.pleaseEnterEmail';
+  } else if (!isValidEmail(email)) {
+    return 'emailForm.error.invalidEmail';
+  } else if (currentEmail && email === currentEmail) {
+    return 'emailForm.error.sameEmail';
+  } else if (email.length > CONST.EMAIL_MAX_LENGTH) {
+    return 'emailForm.error.emailTooLong';
+  }
+  return null;
+}
+
+function validatePassword(
+  password: string,
+  currentPassword?: string | null,
+): TranslationPaths | null {
+  if (password.length === 0) {
+    return 'passwordForm.pleaseFillPassword';
+  } else if (!isComplexPassword(password)) {
+    return 'passwordForm.error.complexPassword';
+  } else if (currentPassword && password === currentPassword) {
+    return 'passwordForm.error.samePassword';
+  }
+  return null;
 }
 
 /**
@@ -408,6 +452,7 @@ export {
   meetsMaximumAgeRequirement,
   getAgeRequirementError,
   isValidEmail,
+  isComplexPassword,
   //   isValidAddress,
   isValidDate,
   isValidPastDate,
@@ -431,4 +476,6 @@ export {
   prepareValues,
   isValidPersonName,
   isValidPercentage,
+  validateEmail,
+  validatePassword,
 };

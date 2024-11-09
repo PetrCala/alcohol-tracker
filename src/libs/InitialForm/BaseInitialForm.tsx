@@ -89,13 +89,11 @@ function BaseInitialForm(
   const validate = useCallback(
     (value: string) => {
       const loginTrim = value.trim();
-      if (!loginTrim) {
-        setFormError('common.pleaseEnterEmail');
-        return false;
-      }
 
-      if (!ValidationUtils.isValidEmail(loginTrim)) {
-        setFormError('login.error.invalidFormatEmailLogin');
+      const errorKey = ValidationUtils.validateEmail(loginTrim);
+
+      if (errorKey) {
+        setFormError(errorKey);
         return false;
       }
 
