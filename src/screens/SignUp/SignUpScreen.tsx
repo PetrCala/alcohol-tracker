@@ -232,6 +232,8 @@ function SignUpScreen() {
               )}
             </FormProvider>
             <ChangeSignUpScreenLink shouldPointToLogIn={true} />
+            {/* --- OR --- */}
+            {/* Use another sign up method <- a simple link that navigates to the initial screen */}
           </>
         )}
       </SignUpScreenLayout>
