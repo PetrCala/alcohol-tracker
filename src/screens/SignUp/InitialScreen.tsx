@@ -63,7 +63,9 @@ function InitialScreen(): InitialScreenOnyxProps {
   useFocusEffect(
     // Redirect to main screen if user is already logged in (from sign up screen only)
     React.useCallback(() => {
+      // Also clear the sign in data each time the screen is focused
       Session.clearSignInData();
+
       const stopListening = auth.onAuthStateChanged(user => {
         if (user) {
           Navigation.navigate(ROUTES.HOME);
