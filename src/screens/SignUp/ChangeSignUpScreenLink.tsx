@@ -27,14 +27,10 @@ function ChangeSignUpScreenLink({
 
   const helperText = shouldPointToLogIn
     ? translate('login.existingAccount')
-    : shouldPointToSignUp
-      ? translate('login.noAccount')
-      : '';
+    : translate('login.noAccount');
   const buttonText = shouldPointToLogIn
     ? translate('common.logIn')
-    : shouldPointToSignUp
-      ? translate('common.signUp')
-      : '';
+    : translate('common.signUp');
 
   const handleOnPress = () => {
     if (shouldPointToLogIn) {

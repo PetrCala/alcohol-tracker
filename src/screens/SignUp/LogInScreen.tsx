@@ -1,4 +1,4 @@
-﻿import React, {useCallback, useReducer, useRef} from 'react';
+﻿import React, {useCallback, useEffect, useReducer, useRef} from 'react';
 import {useFirebase} from '@context/global/FirebaseContext';
 import ScreenWrapper from '@components/ScreenWrapper';
 import useTheme from '@hooks/useTheme';
@@ -28,13 +28,16 @@ import Text from '@components/Text';
 import {PressableWithFeedback} from '@components/Pressable';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
+import DotIndicatorMessage from '@components/DotIndicatorMessage';
+import {useUserConnection} from '@context/global/UserConnectionContext';
+import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
 
 type LoginScreenLayoutRef = {
   scrollPageToTop: (animated?: boolean) => void;
 };
 
 function LogInScreen() {
-  // const {isOnline} = useUserConnection();
+  const {isOnline} = useUserConnection();
   const {auth} = useFirebase();
   const theme = useTheme();
   const {translate} = useLocalize();
@@ -43,7 +46,8 @@ function LogInScreen() {
   const {shouldUseNarrowLayout, isInNarrowPaneModal} = useResponsiveLayout();
   const safeAreaInsets = useStyledSafeAreaInsets();
   const currentScreenLayoutRef = useRef<LoginScreenLayoutRef>(null);
-  const [login] = useOnyx(ONYXKEYS.LOGIN);
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [serverErrorMessage, setServerErrorMessage] = React.useState('');
 
   const headerText = translate('login.hero.header');
   const welcomeHeader = shouldUseNarrowLayout
@@ -58,18 +62,29 @@ function LogInScreen() {
   const onSubmit = async (
     values: FormOnyxValues<typeof ONYXKEYS.FORMS.LOG_IN_FORM>,
   ) => {
+    if (!isOnline || isLoading) {
+      return;
+    }
+    setIsLoading(true);
+
+    const emailTrim = values.email.trim();
+
     try {
-      await signInWithEmailAndPassword(auth, values.email, values.password);
+      await signInWithEmailAndPassword(auth, emailTrim, values.password);
     } catch (error: any) {
       const errorMessage = ErrorUtils.getErrorMessage(error);
-      console.log(errorMessage);
+      setServerErrorMessage(errorMessage);
+    } finally {
+      setIsLoading(false);
     }
-    return;
   };
 
   const validate = useCallback(
     (values: FormOnyxValues<typeof ONYXKEYS.FORMS.LOG_IN_FORM>): Errors => {
       const errors: FormInputErrors<typeof ONYXKEYS.FORMS.LOG_IN_FORM> = {};
+
+      // Hide the server error message each time the form is validated
+      setServerErrorMessage('');
 
       if (!values.email) {
         ErrorUtils.addErrorMessage(
@@ -116,47 +131,65 @@ function LogInScreen() {
         welcomeText={welcomeText}
         ref={currentScreenLayoutRef}
         navigateFocus={navigateFocus}>
-        <FormProvider
-          formID={ONYXKEYS.FORMS.LOG_IN_FORM}
-          validate={validate}
-          onSubmit={onSubmit}
-          shouldValidateOnChange={false}
-          shouldValidateOnBlur={false}
-          submitButtonText={translate('common.logIn')}
-          includeSafeAreaPaddingBottom={false}
-          shouldUseScrollView={false}
-          style={[styles.flexGrow1]}>
-          <InputWrapper
-            InputComponent={TextInput}
-            inputID={INPUT_IDS.EMAIL}
-            name="email"
-            label={translate('login.email')}
-            aria-label={translate('login.email')}
-            defaultValue={login?.email ?? ''}
-            spellCheck={false}
-          />
-          <InputWrapper
-            InputComponent={TextInput}
-            inputID={INPUT_IDS.PASSWORD}
-            name="password"
-            label={translate('common.password')}
-            aria-label={translate('common.password')}
-            defaultValue={login?.password ?? ''}
-            spellCheck={false}
-            secureTextEntry
-            autoComplete={
-              Browser.getBrowser() === CONST.BROWSER.SAFARI ? 'username' : 'off'
-            }
-          />
-          <PressableWithFeedback
-            style={[styles.link, styles.mt3]}
-            onPress={() => Navigation.navigate(ROUTES.FORGOT_PASSWORD)}
-            role={CONST.ROLE.LINK}
-            accessibilityLabel={translate('passwordForm.forgot')}>
-            <Text style={styles.link}>{translate('passwordForm.forgot')}</Text>
-          </PressableWithFeedback>
-        </FormProvider>
-        <ChangeSignUpScreenLink shouldPointToSignUp={true} />
+        {!!isLoading ? (
+          <FlexibleLoadingIndicator />
+        ) : (
+          <>
+            <FormProvider
+              formID={ONYXKEYS.FORMS.LOG_IN_FORM}
+              validate={validate}
+              onSubmit={onSubmit}
+              shouldValidateOnBlur={false}
+              submitButtonText={translate('common.logIn')}
+              includeSafeAreaPaddingBottom={false}
+              isSubmitButtonVisible={!isLoading}
+              shouldUseScrollView={false}
+              style={[styles.flexGrow1]}>
+              <InputWrapper
+                InputComponent={TextInput}
+                inputID={INPUT_IDS.EMAIL}
+                name="email"
+                label={translate('login.email')}
+                aria-label={translate('login.email')}
+                defaultValue={''}
+                spellCheck={false}
+              />
+              <InputWrapper
+                InputComponent={TextInput}
+                inputID={INPUT_IDS.PASSWORD}
+                name="password"
+                label={translate('common.password')}
+                aria-label={translate('common.password')}
+                defaultValue={''}
+                spellCheck={false}
+                secureTextEntry
+                autoComplete={
+                  Browser.getBrowser() === CONST.BROWSER.SAFARI
+                    ? 'username'
+                    : 'off'
+                }
+              />
+              {!!serverErrorMessage && (
+                <DotIndicatorMessage
+                  style={[styles.mv2]}
+                  type="error"
+                  // eslint-disable-next-line @typescript-eslint/naming-convention,@typescript-eslint/prefer-nullish-coalescing
+                  messages={{0: serverErrorMessage || ''}}
+                />
+              )}
+              <PressableWithFeedback
+                style={[styles.link, styles.mt3]}
+                onPress={() => Navigation.navigate(ROUTES.FORGOT_PASSWORD)}
+                role={CONST.ROLE.LINK}
+                accessibilityLabel={translate('passwordForm.forgot')}>
+                <Text style={styles.link}>
+                  {translate('passwordForm.forgot')}
+                </Text>
+              </PressableWithFeedback>
+            </FormProvider>
+            <ChangeSignUpScreenLink />
+          </>
+        )}
       </SignUpScreenLayout>
     </ScreenWrapper>
   );
