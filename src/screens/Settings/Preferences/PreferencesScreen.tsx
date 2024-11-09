@@ -343,7 +343,7 @@ function PreferencesScreen({}: PreferencesScreenProps) {
     return <UserOffline />;
   }
   if (!user || !preferences) {
-    Navigation.navigate(ROUTES.SIGNUP);
+    Navigation.navigate(ROUTES.INITIAL);
     return null;
   }
   if (saving) {

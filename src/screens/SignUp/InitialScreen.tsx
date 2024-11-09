@@ -31,8 +31,6 @@ import {InputHandle} from '@libs/InitialForm/types';
 import {OnyxEntry, withOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 import CustomStatusBarAndBackground from '@components/CustomStatusBarAndBackground';
-import ColorSchemeWrapper from '@components/ColorSchemeWrapper';
-import ThemeStylesProvider from '@components/ThemeStylesProvider';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import useLocalize from '@hooks/useLocalize';
 import InitialForm from '@libs/InitialForm';
@@ -68,15 +66,12 @@ function InitialScreen({
   const {isOnline} = useUserConnection();
   const {translate} = useLocalize();
   const styles = useThemeStyles();
-  const theme = useTheme();
   const StyleUtils = useStyleUtils();
   const {shouldUseNarrowLayout, isInNarrowPaneModal} = useResponsiveLayout();
   const safeAreaInsets = useStyledSafeAreaInsets();
-  const signUpScreenLayoutRef = useRef<InitialScreenLayoutRef>(null);
+  const currentScreenLayoutRef = useRef<InitialScreenLayoutRef>(null);
   const initialFormRef = useRef<InputHandle>(null);
-  const [loginFormHidden, setLogInFormHidden] = React.useState<boolean>(true);
-  const [email, setEmail] = useState(() => login?.email ?? '');
-  // const theme = useTheme();
+  const [email, setEmail] = useState(login?.email ?? '');
 
   useFocusEffect(
     // Redirect to main screen if user is already logged in (from sign up screen only)
@@ -107,33 +102,18 @@ function InitialScreen({
     }
   }
 
-  let welcomeHeader = '';
-  let welcomeText = '';
   const headerText = translate('login.hero.header');
-
-  const userLoginToDisplay = login?.email ?? '';
-
-  welcomeHeader = shouldUseNarrowLayout
+  const welcomeHeader = shouldUseNarrowLayout
     ? headerText
     : translate('welcomeText.getStarted');
-  welcomeText = shouldUseNarrowLayout
+  const welcomeText = shouldUseNarrowLayout
     ? translate('welcomeText.getStarted')
     : '';
 
   const navigateFocus = () => {
-    signUpScreenLayoutRef.current?.scrollPageToTop();
+    currentScreenLayoutRef.current?.scrollPageToTop();
     initialFormRef.current?.clearDataAndFocus();
   };
-
-  // useImperativeHandle(ref, () => ({
-  //   navigateBack,
-  // }));
-
-  // if (state.isLoading) {
-  //   return (
-  //     <FullScreenLoadingIndicator loadingText="Creating your account..." />
-  //   );
-  // }
 
   return (
     <ScreenWrapper
@@ -151,18 +131,16 @@ function InitialScreen({
       <SignUpScreenLayout
         welcomeHeader={welcomeHeader}
         welcomeText={welcomeText}
-        ref={signUpScreenLayoutRef}
+        ref={currentScreenLayoutRef}
         navigateFocus={navigateFocus}>
-        <Text style={{color: theme.appColor}}>Hello, world!</Text>
-        {/* <InitialForm
+        <InitialForm
           ref={initialFormRef}
-          isVisible={shouldShowInitialForm}
+          isVisible={true}
           email={email}
           onEmailChanged={setEmail}
-          setLogInFormHidden={setLogInFormHidden}
           blurOnSubmit={false}
-          scrollPageToTop={signUpScreenLayoutRef.current?.scrollPageToTop}
-        /> */}
+          scrollPageToTop={currentScreenLayoutRef.current?.scrollPageToTop}
+        />
       </SignUpScreenLayout>
     </ScreenWrapper>
   );
@@ -257,7 +235,7 @@ export default withOnyx<InitialScreenProps, InitialScreenOnyxProps>({
 //     <TouchableOpacity
 //       accessibilityRole="button"
 //       style={styles.loginButtonContainer}
-//       onPress={() => Navigation.navigate(ROUTES.LOGIN)}>
+//       onPress={() => Navigation.navigate(ROUTES.LOG_IN)}>
 //       <Text style={styles.loginInfoText}>Already a user?</Text>
 //       <Text style={styles.loginButtonText}>Log in</Text>
 //     </TouchableOpacity>

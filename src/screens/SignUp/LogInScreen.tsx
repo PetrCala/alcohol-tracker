@@ -315,7 +315,7 @@ export default LogInScreen;
 //     <TouchableOpacity
 //       accessibilityRole="button"
 //       style={styles.signUpButtonContainer}
-//       onPress={() => Navigation.navigate(ROUTES.SIGNUP)}>
+//       onPress={() => Navigation.navigate(ROUTES.SIGN_UP)}>
 //       <Text style={styles.signUpInfoText}>Don't have an account?</Text>
 //       <Text style={styles.signUpButtonText}>Sign up</Text>
 //     </TouchableOpacity>

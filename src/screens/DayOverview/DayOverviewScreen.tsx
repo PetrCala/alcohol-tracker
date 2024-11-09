@@ -270,7 +270,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
     return <FullScreenLoadingIndicator />;
   }
   if (!user) {
-    Navigation.navigate(ROUTES.SIGNUP);
+    Navigation.navigate(ROUTES.INITIAL);
     return;
   }
 

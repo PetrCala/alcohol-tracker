@@ -48,6 +48,8 @@ import viewRef from '@src/types/utils/viewRef';
 import type InitialFormProps from './types';
 import type {InputHandle} from './types';
 import ChangeKirokuLoginLink from '@screens/SignUp/ChangeKirokuLoginLink';
+import Navigation from '@libs/Navigation/Navigation';
+import ROUTES from '@src/ROUTES';
 
 type BaseInitialFormOnyxProps = {
   /** The details about the user that is signing in */
@@ -66,7 +68,6 @@ function BaseInitialForm(
     login,
     email,
     onEmailChanged,
-    setLogInFormHidden,
     closeAccount,
     blurOnSubmit = false,
     isVisible,
@@ -336,7 +337,9 @@ function BaseInitialForm(
               buttonStyles={[shouldShowServerError ? styles.mt3 : {}]}
               containerStyles={[styles.mh0]}
             />
-            <ChangeKirokuLoginLink onPress={() => setLogInFormHidden(false)} />
+            <ChangeKirokuLoginLink
+              onPress={() => Navigation.navigate(ROUTES.LOG_IN)}
+            />
             {/* --- OR --- */}
             {/* {
                             // This feature has a few behavioral differences in development mode. To prevent confusion
