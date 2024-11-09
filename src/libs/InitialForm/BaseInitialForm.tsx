@@ -66,7 +66,7 @@ function BaseInitialForm(
     login,
     email,
     onEmailChanged,
-    setLoginFormHidden,
+    setLogInFormHidden,
     closeAccount,
     blurOnSubmit = false,
     isVisible,
@@ -336,7 +336,7 @@ function BaseInitialForm(
               buttonStyles={[shouldShowServerError ? styles.mt3 : {}]}
               containerStyles={[styles.mh0]}
             />
-            <ChangeKirokuLoginLink onPress={() => setLoginFormHidden(false)} />
+            <ChangeKirokuLoginLink onPress={() => setLogInFormHidden(false)} />
             {/* --- OR --- */}
             {/* {
                             // This feature has a few behavioral differences in development mode. To prevent confusion

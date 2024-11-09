@@ -617,8 +617,8 @@ const CONST = {
   FORMS: {
     // Forms to load upon onyx initialization
     INITIAL_FORM: 'InitialForm',
-    LOGIN_FORM: 'LoginForm',
-    SIGNUP_FORM: 'SignUpForm',
+    LOG_IN_FORM: 'LogInForm',
+    SIGN_UP_FORM: 'SignUpForm',
     FORGOT_PASSWORD_FORM: 'ForgotPasswordForm',
     // VALIDATE_CODE_FORM: 'ValidateCodeForm',
     // VALIDATE_TFA_CODE_FORM: 'ValidateTfaCodeForm',

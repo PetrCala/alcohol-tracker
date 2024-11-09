@@ -9,7 +9,7 @@ type InitialFormProps = {
   scrollPageToTop?: () => void;
 
   /** Function used to switch to the login form  */
-  setLoginFormHidden: (hidden: boolean) => void;
+  setLogInFormHidden: (hidden: boolean) => void;
 
   /** Should we dismiss the keyboard when transitioning away from the page? */
   blurOnSubmit?: boolean;
