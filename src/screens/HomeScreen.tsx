@@ -311,7 +311,7 @@ function HomeScreen({route}: HomeScreenProps) {
   );
 
   if (!user) {
-    Navigation.navigate(ROUTES.INITIAL);
+    Navigation.resetToHome();
     return;
   }
   if (!isOnline) {

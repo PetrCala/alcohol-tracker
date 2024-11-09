@@ -49,19 +49,13 @@ type InitialScreenOnyxProps = {
   preferredLocale: OnyxEntry<Locale>;
 };
 
-type InitialScreenProps = InitialScreenOnyxProps & {
-  shouldEnableMaxHeight?: boolean;
-};
+type InitialScreenProps = InitialScreenOnyxProps & {};
 
 type InitialScreenLayoutRef = {
   scrollPageToTop: (animated?: boolean) => void;
 };
 
-function InitialScreen({
-  login,
-  preferredLocale,
-  shouldEnableMaxHeight = true,
-}: InitialScreenProps) {
+function InitialScreen({login, preferredLocale}: InitialScreenProps) {
   const {auth, db} = useFirebase();
   const {isOnline} = useUserConnection();
   const {translate} = useLocalize();
@@ -112,13 +106,13 @@ function InitialScreen({
 
   const navigateFocus = () => {
     currentScreenLayoutRef.current?.scrollPageToTop();
-    initialFormRef.current?.clearDataAndFocus();
+    // initialFormRef.current?.clearDataAndFocus();
   };
 
   return (
     <ScreenWrapper
       shouldShowOfflineIndicator={false}
-      shouldEnableMaxHeight={shouldEnableMaxHeight}
+      shouldEnableMaxHeight={true}
       shouldUseCachedViewportHeight
       style={[
         styles.signUpScreen,

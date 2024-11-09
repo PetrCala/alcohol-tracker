@@ -1571,7 +1571,7 @@ const styles = (theme: ThemeColors) =>
       width: CONST.SIGN_IN_FORM_WIDTH,
     },
 
-    changeKirokuLoginLinkContainer: {
+    changeSignUpScreenLinkContainer: {
       flexDirection: 'row',
       flexWrap: 'wrap',
       justifyContent: 'center',

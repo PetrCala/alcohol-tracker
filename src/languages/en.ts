@@ -28,6 +28,7 @@ export default {
     previous: 'Previous',
     goBack: 'Go back',
     logIn: 'Log in',
+    signUp: 'Sign up',
     create: 'Create',
     add: 'Add',
     resend: 'Resend',
@@ -145,7 +146,7 @@ export default {
     semicolon: 'semicolon',
     please: 'Please',
     contactUs: 'contact us',
-    pleaseEnterEmailOrPhoneNumber: 'Please enter an email or phone number',
+    pleaseEnterEmail: 'Please enter an email address',
     fixTheErrors: 'fix the errors',
     inTheFormBeforeContinuing: 'in the form before continuing',
     confirm: 'Confirm',
@@ -542,12 +543,11 @@ export default {
     email: 'Email',
     cannotGetAccountDetails:
       "Couldn't retrieve account details. Please try to sign in again.",
-    logIn: 'Log In',
-    signUp: 'Sign Up',
     initialForm: 'Initial form',
     logInForm: 'Log in form',
     signUpForm: 'Sign up form',
     existingAccount: 'Already have an account?',
+    noAccount: 'Don’t have an account yet?',
     error: {
       invalidFormatEmailLogin:
         'The email entered is invalid. Please fix the format and try again.',

@@ -47,6 +47,9 @@ type FormWrapperProps = ChildrenProps &
     /** Whether the submit button is disabled */
     isSubmitDisabled?: boolean;
 
+    /** Whether the submit button is visible */
+    includeSafeAreaPaddingBottom?: boolean;
+
     /** Callback to submit the form */
     onSubmit: () => void;
   };
@@ -70,6 +73,7 @@ function FormWrapper({
   scrollContextEnabled = false,
   shouldHideFixErrorsAlert = false,
   disablePressOnEnter = false,
+  includeSafeAreaPaddingBottom = true,
   isSubmitDisabled = false,
 }: FormWrapperProps) {
   const styles = useThemeStyles();
@@ -126,9 +130,11 @@ function FormWrapper({
         ref={formContentRef}
         style={[
           style,
-          safeAreaPaddingBottomStyle.paddingBottom
-            ? safeAreaPaddingBottomStyle
-            : styles.pb5,
+          includeSafeAreaPaddingBottom
+            ? safeAreaPaddingBottomStyle.paddingBottom
+              ? safeAreaPaddingBottomStyle
+              : styles.pb5
+            : {},
         ]}>
         {children}
         {isSubmitButtonVisible && (

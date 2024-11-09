@@ -47,9 +47,7 @@ import htmlDivElementRef from '@src/types/utils/htmlDivElementRef';
 import viewRef from '@src/types/utils/viewRef';
 import type InitialFormProps from './types';
 import type {InputHandle} from './types';
-import ChangeKirokuLoginLink from '@screens/SignUp/ChangeKirokuLoginLink';
-import Navigation from '@libs/Navigation/Navigation';
-import ROUTES from '@src/ROUTES';
+import ChangeSignUpScreenLink from '@screens/SignUp/ChangeSignUpScreenLink';
 
 type BaseInitialFormOnyxProps = {
   /** The details about the user that is signing in */
@@ -92,7 +90,7 @@ function BaseInitialForm(
     (value: string) => {
       const loginTrim = value.trim();
       if (!loginTrim) {
-        setFormError('common.pleaseEnterEmailOrPhoneNumber');
+        setFormError('common.pleaseEnterEmail');
         return false;
       }
 
@@ -337,9 +335,7 @@ function BaseInitialForm(
               buttonStyles={[shouldShowServerError ? styles.mt3 : {}]}
               containerStyles={[styles.mh0]}
             />
-            <ChangeKirokuLoginLink
-              onPress={() => Navigation.navigate(ROUTES.LOG_IN)}
-            />
+            <ChangeSignUpScreenLink shouldPointToLogIn={true} />
             {/* --- OR --- */}
             {/* {
                             // This feature has a few behavioral differences in development mode. To prevent confusion

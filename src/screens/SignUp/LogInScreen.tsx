@@ -1,267 +1,109 @@
-﻿// if (shouldShowLogInForm) {
-//   welcomeHeader = shouldUseNarrowLayout
-//     ? headerText
-//     : translate('welcomeText.welcome');
-//   welcomeText = `${translate('welcomeText.welcome')} ${translate('welcomeText.enterCredentials')}`;
-
-import React, {useReducer} from 'react';
-import {
-  Alert,
-  Dimensions,
-  Image,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import * as KirokuIcons from '@components/Icon/KirokuIcons';
-import * as ErrorUtils from '@libs/ErrorUtils';
-import {useFocusEffect} from '@react-navigation/native';
-import {sendPasswordResetEmail, signOut} from 'firebase/auth';
-import {signInUserWithEmailAndPassword} from '@libs/auth/auth';
-import commonStyles from '@styles/commonStyles';
-import InputTextPopup from '@components/Popups/InputTextPopup';
-import ROUTES from '@src/ROUTES';
-import Navigation from '@navigation/Navigation';
+﻿import React, {useCallback, useReducer, useRef} from 'react';
 import {useFirebase} from '@context/global/FirebaseContext';
 import ScreenWrapper from '@components/ScreenWrapper';
 import useTheme from '@hooks/useTheme';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
-import ScrollView from '@components/ScrollView';
-import ImageSVG from '@components/ImageSVG';
-import variables from '@src/styles/variables';
+import SignUpScreenLayout from './SignUpScreenLayout';
+import useThemeStyles from '@hooks/useThemeStyles';
+import useStyleUtils from '@hooks/useStyleUtils';
+import useResponsiveLayout from '@hooks/useResponsiveLayout';
+import useStyledSafeAreaInsets from '@hooks/useStyledSafeAreaInsets';
+import useLocalize from '@hooks/useLocalize';
+import ChangeSignUpScreenLink from './ChangeSignUpScreenLink';
+import INPUT_IDS from '@src/types/form/LogInForm';
+import ONYXKEYS from '@src/ONYXKEYS';
+import FormProvider from '@components/Form/FormProvider';
+import {FormInputErrors, FormOnyxValues} from '@components/Form/types';
+import {Errors} from '@src/types/onyx/OnyxCommon';
+import {View} from 'react-native';
+import InputWrapper from '@components/Form/InputWrapper';
+import TextInput from '@components/TextInput';
+import {useOnyx} from 'react-native-onyx';
 
-type State = {
-  email: string;
-  password: string;
-  loadingUser: boolean;
-  resetPasswordModalVisible: boolean;
-};
-
-type Action = {
-  type: string;
-  payload: any;
-};
-
-const initialState: State = {
-  email: '',
-  password: '',
-  loadingUser: true,
-  resetPasswordModalVisible: false,
-};
-
-const reducer = (state: State, action: Action) => {
-  switch (action.type) {
-    case 'UPDATE_EMAIL':
-      return {
-        ...state,
-        email: action.payload,
-      };
-    case 'UPDATE_PASSWORD':
-      return {
-        ...state,
-        password: action.payload,
-      };
-    case 'SET_LOADING_USER':
-      return {
-        ...state,
-        loadingUser: action.payload,
-      };
-    case 'SET_RESET_PASSWORD_MODAL_VISIBLE':
-      return {
-        ...state,
-        resetPasswordModalVisible: action.payload,
-      };
-    default:
-      return state;
-  }
+type LoginScreenLayoutRef = {
+  scrollPageToTop: (animated?: boolean) => void;
 };
 
 function LogInScreen() {
   // const {isOnline} = useUserConnection();
   const {auth} = useFirebase();
-  const [state, dispatch] = useReducer(reducer, initialState);
   const theme = useTheme();
+  const {translate} = useLocalize();
+  const styles = useThemeStyles();
+  const StyleUtils = useStyleUtils();
+  const {shouldUseNarrowLayout, isInNarrowPaneModal} = useResponsiveLayout();
+  const safeAreaInsets = useStyledSafeAreaInsets();
+  const currentScreenLayoutRef = useRef<LoginScreenLayoutRef>(null);
+  const [login] = useOnyx(ONYXKEYS.LOGIN);
 
-  useFocusEffect(
-    // Redirect to main screen if user is already logged in (from login screen only)
-    React.useCallback(() => {
-      const stopListening = auth.onAuthStateChanged(user => {
-        if (user) {
-          dispatch({type: 'SET_LOADING_USER', payload: true});
-          Navigation.navigate(ROUTES.HOME);
-        }
-        dispatch({type: 'SET_LOADING_USER', payload: false});
-      });
+  const headerText = translate('login.hero.header');
+  const welcomeHeader = shouldUseNarrowLayout
+    ? headerText
+    : translate('welcomeText.welcome');
+  const welcomeText = `${translate('welcomeText.welcome')} ${translate('welcomeText.enterCredentials')}`;
 
-      return () => {
-        dispatch({type: 'SET_LOADING_USER', payload: false});
-        stopListening(); // This will be called when the screen loses focus
-      };
-    }, []),
+  const navigateFocus = () => {
+    currentScreenLayoutRef.current?.scrollPageToTop();
+  };
+
+  const onSubmit = async (
+    values: FormOnyxValues<typeof ONYXKEYS.FORMS.LOG_IN_FORM>,
+  ) => {
+    console.log('Submitting login...');
+  };
+
+  const validate = useCallback(
+    (values: FormOnyxValues<typeof ONYXKEYS.FORMS.LOG_IN_FORM>): Errors => {
+      const errors: FormInputErrors<typeof ONYXKEYS.FORMS.LOG_IN_FORM> = {};
+
+      return errors;
+    },
+    [translate],
   );
-
-  const handleLogin = async () => {
-    // Validate all hooks on the screen first, return null if invalid
-    // Attempt to login
-    try {
-      dispatch({type: 'SET_LOADING_USER', payload: true});
-      await signInUserWithEmailAndPassword(auth, state.email, state.password);
-    } catch (error: any) {
-      const errorMessage = ErrorUtils.getErrorMessage(error);
-      dispatch({type: 'SET_WARNING', payload: errorMessage});
-    } finally {
-      dispatch({type: 'SET_LOADING_USER', payload: false});
-    }
-    return;
-  };
-
-  const handleResetPassword = async (mail: string) => {
-    try {
-      await sendPasswordResetEmail(auth, mail);
-      dispatch({type: 'SET_SUCCESS', payload: 'Password reset link sent'});
-    } catch (error: any) {
-      const errorMessage = ErrorUtils.getErrorMessage(error);
-      dispatch({type: 'SET_WARNING', payload: errorMessage});
-    } finally {
-      dispatch({type: 'SET_RESET_PASSWORD_MODAL_VISIBLE', payload: false});
-    }
-  };
-
-  // Wait to see whether there already is an authentificated user
-  // Possibly here display the app logo instead of the loading screen
-  if (state.loadingUser) {
-    return <FullScreenLoadingIndicator loadingText="Signing in..." />;
-  }
 
   return (
-    <ScrollView>
-      <View style={styles.logoContainer}>
-        <ImageSVG
-          contentFit="contain"
-          src={KirokuIcons.Logo}
-          width={variables.signInLogoSize}
-          height={variables.signInLogoSize}
-        />
-      </View>
-    </ScrollView>
+    <ScreenWrapper
+      shouldShowOfflineIndicator={false}
+      shouldEnableMaxHeight={true}
+      shouldUseCachedViewportHeight
+      style={[
+        styles.signUpScreen,
+        StyleUtils.getSignUpSafeAreaPadding(
+          safeAreaInsets,
+          isInNarrowPaneModal,
+        ),
+      ]}
+      testID={LogInScreen.displayName}>
+      <SignUpScreenLayout
+        welcomeHeader={welcomeHeader}
+        welcomeText={welcomeText}
+        ref={currentScreenLayoutRef}
+        navigateFocus={navigateFocus}>
+        <FormProvider
+          formID={ONYXKEYS.FORMS.LOG_IN_FORM}
+          validate={validate}
+          onSubmit={onSubmit}
+          submitButtonText={translate('common.logIn')}
+          includeSafeAreaPaddingBottom={false}
+          shouldUseScrollView={false}
+          style={[styles.flexGrow1]}>
+          <View style={[styles.flexGrow1]}>
+            <InputWrapper
+              InputComponent={TextInput}
+              inputID={INPUT_IDS.EMAIL}
+              name="email"
+              label={translate('login.email')}
+              aria-label={translate('login.email')}
+              defaultValue={login?.email ?? ''}
+              spellCheck={false}
+            />
+          </View>
+        </FormProvider>
+        <ChangeSignUpScreenLink shouldPointToSignUp={true} />
+      </SignUpScreenLayout>
+    </ScreenWrapper>
   );
 }
-
-const screenWidth = Dimensions.get('window').width;
-const screenHeight = Dimensions.get('window').height;
-
-const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    flexDirection: 'column',
-    backgroundColor: '#FFFF99',
-  },
-  logoContainer: {
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    width: '100%',
-    height: screenHeight * 0.2,
-  },
-  logo: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-  },
-  infoButton: {
-    justifyContent: 'center',
-    textAlign: 'center',
-    width: '100%',
-    height: '100%',
-  },
-  infoText: {
-    textAlign: 'center',
-    fontWeight: 'bold',
-    padding: 5,
-  },
-  warningInfoText: {
-    color: 'red',
-  },
-  successInfoText: {
-    color: 'green',
-  },
-  inputContainer: {
-    paddingTop: screenHeight * 0.1,
-    width: '80%',
-    height: screenHeight * 0.85,
-  },
-  input: {
-    backgroundColor: 'white',
-    height: 45,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    borderRadius: 10,
-    borderColor: '#000',
-    borderWidth: 2,
-    marginTop: 5,
-    marginBottom: 5,
-    color: 'black',
-  },
-  loginButton: {
-    backgroundColor: '#fcf50f',
-    width: '100%',
-    padding: 15,
-    borderRadius: 10,
-    borderWidth: 2,
-    marginTop: 10,
-    borderColor: '#000',
-    alignItems: 'center',
-    alignSelf: 'center',
-  },
-  loginButtonText: {
-    color: 'black',
-    fontWeight: '700',
-    fontSize: 16,
-  },
-  forgottenPasswordButton: {
-    width: '100%',
-    backgroundColor: '#ffff99',
-    textAlign: 'center',
-    alignItems: 'center',
-    marginTop: 3,
-    marginBottom: 3,
-    padding: 10,
-  },
-  forgottenPasswordText: {
-    color: '#02a109',
-    fontWeight: 'bold',
-    fontSize: 14,
-  },
-  signUpContainer: {
-    width: '100%',
-    marginTop: 5,
-    alignItems: 'center',
-    alignSelf: 'center',
-  },
-  signUpButtonContainer: {
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  signUpInfoText: {
-    color: '#000',
-  },
-  signUpButtonText: {
-    color: '#02a109',
-    fontWeight: 'bold',
-    fontSize: 14,
-    marginLeft: 4,
-    paddingTop: 10,
-    paddingBottom: 10,
-  },
-  customLineWidth: {
-    width: screenWidth * 0.7,
-  },
-});
 
 LogInScreen.displayName = 'Login Screen';
 export default LogInScreen;
@@ -338,3 +180,18 @@ export default LogInScreen;
 //     secureTextEntry={false}
 //   />
 // </View> */}
+
+// const handleLogin = async () => {
+//   // Validate all hooks on the screen first, return null if invalid
+//   // Attempt to login
+//   try {
+//     dispatch({type: 'SET_LOADING_USER', payload: true});
+//     await signInUserWithEmailAndPassword(auth, state.email, state.password);
+//   } catch (error: any) {
+//     const errorMessage = ErrorUtils.getErrorMessage(error);
+//     dispatch({type: 'SET_WARNING', payload: errorMessage});
+//   } finally {
+//     dispatch({type: 'SET_LOADING_USER', payload: false});
+//   }
+//   return;
+// };

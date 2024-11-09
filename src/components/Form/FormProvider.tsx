@@ -107,6 +107,9 @@ type FormProviderProps<TFormID extends OnyxFormKey = OnyxFormKey> =
 
       /** Whether button is disabled */
       isSubmitDisabled?: boolean;
+
+      /** Whether to include a bottom safe area padding */
+      includeSafeAreaPaddingBottom?: boolean;
     };
 
 function FormProvider(
@@ -122,6 +125,7 @@ function FormProvider(
     draftValues,
     onSubmit,
     shouldTrimValues = true,
+    includeSafeAreaPaddingBottom = true,
     ...rest
   }: FormProviderProps,
   forwardedRef: ForwardedRef<FormRef>,
@@ -280,6 +284,7 @@ function FormProvider(
     onSubmit,
     onValidate,
     shouldTrimValues,
+    includeSafeAreaPaddingBottom,
   ]);
 
   // Keep track of the focus state of the current screen.
@@ -487,6 +492,7 @@ function FormProvider(
         onSubmit={submit}
         inputRefs={inputRefs}
         errors={errors}
+        includeSafeAreaPaddingBottom={includeSafeAreaPaddingBottom}
         enabledWhenOffline={enabledWhenOffline}>
         {typeof children === 'function' ? children({inputValues}) : children}
       </FormWrapper>
