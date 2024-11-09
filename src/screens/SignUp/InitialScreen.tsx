@@ -38,18 +38,16 @@ import InitialForm from '@libs/InitialForm';
 // import LogInForm from '@screens/SignUp/LogInForm/BaseLogInForm';
 import SignUpScreenLayout from './SignUpScreenLayout';
 // import SignUpForm from '@screens/SignUp/SignUpForm';
-import Text from '@components/Text';
-import useTheme from '@hooks/useTheme';
 
 type InitialScreenOnyxProps = {};
 
-type InitialScreenProps = InitialScreenOnyxProps & {};
+type InitialScreenProps = InitialScreenOnyxProps;
 
 type InitialScreenLayoutRef = {
   scrollPageToTop: (animated?: boolean) => void;
 };
 
-function InitialScreen(): InitialScreenOnyxProps {
+function InitialScreen({}: InitialScreenProps) {
   const {auth, db} = useFirebase();
   const {isOnline} = useUserConnection();
   const {translate} = useLocalize();

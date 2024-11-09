@@ -269,11 +269,11 @@ function validatePassword(
   currentPassword?: string | null,
 ): TranslationPaths | null {
   if (password.length === 0) {
-    return 'passwordForm.pleaseFillPassword';
+    return 'password.pleaseFillPassword';
   } else if (!isComplexPassword(password)) {
-    return 'passwordForm.error.complexPassword';
+    return 'password.requirements';
   } else if (currentPassword && password === currentPassword) {
-    return 'passwordForm.error.samePassword';
+    return 'password.error.samePassword';
   }
   return null;
 }

@@ -99,7 +99,7 @@ function LogInScreen() {
         ErrorUtils.addErrorMessage(
           errors,
           INPUT_IDS.PASSWORD,
-          translate('passwordForm.pleaseFillPassword'),
+          translate('password.pleaseFillPassword'),
         );
       }
 
@@ -176,10 +176,8 @@ function LogInScreen() {
                 style={[styles.link, styles.mt3]}
                 onPress={() => Navigation.navigate(ROUTES.FORGOT_PASSWORD)}
                 role={CONST.ROLE.LINK}
-                accessibilityLabel={translate('passwordForm.forgot')}>
-                <Text style={styles.link}>
-                  {translate('passwordForm.forgot')}
-                </Text>
+                accessibilityLabel={translate('password.forgot')}>
+                <Text style={styles.link}>{translate('password.forgot')}</Text>
               </PressableWithFeedback>
             </FormProvider>
             <ChangeSignUpScreenLink />

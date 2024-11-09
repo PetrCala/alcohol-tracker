@@ -63,31 +63,31 @@
 //       includeSafeAreaPaddingBottom={false}
 //       testID={EmailScreen.displayName}>
 //       <HeaderWithBackButton
-//         title={translate('passwordScreen.title')}
+//         title={translate('password.title')}
 //         shouldShowBackButton
 //         onBackButtonPress={Navigation.goBack}
 //       />
 //       {isLoading ? (
 //         <FullscreenLoadingIndicator
 //           style={[styles.flex1]}
-//           loadingText={translate('passwordScreen.sending')}
+//           loadingText={translate('password.sending')}
 //         />
 //       ) : (
 //         <FormProvider
 //           formID={ONYXKEYS.FORMS.EMAIL_FORM}
 //           validate={validate}
 //           onSubmit={onSubmit}
-//           submitButtonText={translate('passwordScreen.submit')}
+//           submitButtonText={translate('password.submit')}
 //           style={[styles.flexGrow1, styles.mh5]}>
 //           <View style={[styles.flexGrow1]}>
-//             <Text>{translate('passwordScreen.prompt')}</Text>
+//             <Text>{translate('password.prompt')}</Text>
 //             <InputWrapper
 //               InputComponent={TextInput}
 //               inputID={INPUT_IDS.TEXT}
 //               autoGrowHeight
 //               maxAutoGrowHeight={variables.textInputAutoGrowMaxHeight}
-//               label={translate('passwordScreen.enterEmail')}
-//               aria-label={translate('passwordScreen.enterEmail')}
+//               label={translate('password.enterEmail')}
+//               aria-label={translate('password.enterEmail')}
 //               role={CONST.ROLE.PRESENTATION}
 //               maxLength={CONST.DESCRIPTION_LIMIT}
 //               spellCheck={false}

@@ -46,18 +46,21 @@ function SignUpScreen() {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [serverErrorMessage, setServerErrorMessage] = React.useState('');
 
+  const userLoginToDisplay = login?.email ?? '';
   const headerText = translate('login.hero.header');
   const welcomeHeader = shouldUseNarrowLayout
     ? headerText
     : translate('welcomeText.welcome');
-  const welcomeText = `${translate('welcomeText.welcome')} ${translate('welcomeText.enterCredentials')}`;
+  const welcomeText = shouldUseNarrowLayout
+    ? `${translate('welcomeText.welcomeWithoutExclamation')} ${translate('welcomeText.welcomeNewAccount', {login: userLoginToDisplay})}`
+    : translate('welcomeText.welcomeNewAccount', {login: userLoginToDisplay});
 
   const navigateFocus = () => {
     currentScreenLayoutRef.current?.scrollPageToTop();
   };
 
   const onSubmit = async (
-    values: FormOnyxValues<typeof ONYXKEYS.FORMS.LOG_IN_FORM>,
+    values: FormOnyxValues<typeof ONYXKEYS.FORMS.SIGN_UP_FORM>,
   ) => {
     if (!isOnline || isLoading) {
       return;
@@ -77,8 +80,8 @@ function SignUpScreen() {
   };
 
   const validate = useCallback(
-    (values: FormOnyxValues<typeof ONYXKEYS.FORMS.LOG_IN_FORM>): Errors => {
-      const errors: FormInputErrors<typeof ONYXKEYS.FORMS.LOG_IN_FORM> = {};
+    (values: FormOnyxValues<typeof ONYXKEYS.FORMS.SIGN_UP_FORM>): Errors => {
+      const errors: FormInputErrors<typeof ONYXKEYS.FORMS.SIGN_UP_FORM> = {};
 
       // Hide the server error message each time the form is validated
       setServerErrorMessage('');
@@ -101,7 +104,7 @@ function SignUpScreen() {
         ErrorUtils.addErrorMessage(
           errors,
           INPUT_IDS.PASSWORD,
-          translate('passwordForm.pleaseFillPassword'),
+          translate('password.pleaseFillPassword'),
         );
       }
 
@@ -133,11 +136,11 @@ function SignUpScreen() {
         ) : (
           <>
             <FormProvider
-              formID={ONYXKEYS.FORMS.LOG_IN_FORM}
+              formID={ONYXKEYS.FORMS.SIGN_UP_FORM}
               validate={validate}
               onSubmit={onSubmit}
               shouldValidateOnBlur={false}
-              submitButtonText={translate('common.logIn')}
+              submitButtonText={translate('common.signUp')}
               includeSafeAreaPaddingBottom={false}
               isSubmitButtonVisible={!isLoading}
               shouldUseScrollView={false}
@@ -149,6 +152,15 @@ function SignUpScreen() {
                 label={translate('login.email')}
                 aria-label={translate('login.email')}
                 defaultValue={login?.email ?? ''}
+                spellCheck={false}
+              />
+              <InputWrapper
+                InputComponent={TextInput}
+                inputID={INPUT_IDS.USERNAME}
+                name="username"
+                label={translate('common.username')}
+                aria-label={translate('common.username')}
+                defaultValue={''}
                 spellCheck={false}
               />
               <InputWrapper
@@ -166,6 +178,21 @@ function SignUpScreen() {
                     : 'off'
                 }
               />
+              <InputWrapper
+                InputComponent={TextInput}
+                inputID={INPUT_IDS.RE_ENTER_PASSWORD}
+                name="re-enter-password"
+                label={translate('password.reEnter')}
+                aria-label={translate('password.reEnter')}
+                defaultValue={''}
+                spellCheck={false}
+                secureTextEntry
+                autoComplete={
+                  Browser.getBrowser() === CONST.BROWSER.SAFARI
+                    ? 'username'
+                    : 'off'
+                }
+              />
               {!!serverErrorMessage && (
                 <DotIndicatorMessage
                   style={[styles.mv2]}
@@ -174,17 +201,8 @@ function SignUpScreen() {
                   messages={{0: serverErrorMessage || ''}}
                 />
               )}
-              <PressableWithFeedback
-                style={[styles.link, styles.mt3]}
-                onPress={() => Navigation.navigate(ROUTES.FORGOT_PASSWORD)}
-                role={CONST.ROLE.LINK}
-                accessibilityLabel={translate('passwordForm.forgot')}>
-                <Text style={styles.link}>
-                  {translate('passwordForm.forgot')}
-                </Text>
-              </PressableWithFeedback>
             </FormProvider>
-            <ChangeSignUpScreenLink />
+            <ChangeSignUpScreenLink shouldPointToLogIn={true} />
           </>
         )}
       </SignUpScreenLayout>
@@ -194,12 +212,3 @@ function SignUpScreen() {
 
 SignUpScreen.displayName = 'Login Screen';
 export default SignUpScreen;
-
-// } else if (shouldShowSignUpForm) {
-//   welcomeHeader = shouldUseNarrowLayout
-//     ? headerText
-//     : translate('welcomeText.welcome');
-//   welcomeText = shouldUseNarrowLayout
-//     ? `${translate('welcomeText.welcomeWithoutExclamation')} ${translate('welcomeText.welcomeNewAccount', {login: userLoginToDisplay})}`
-//     : translate('welcomeText.welcomeNewAccount', {login: userLoginToDisplay});
-// }

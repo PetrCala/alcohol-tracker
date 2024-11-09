@@ -46,6 +46,7 @@ export default {
     group: 'Group',
     profile: 'Profile',
     account: 'Account',
+    username: 'Username',
     referral: 'Referral',
     payments: 'Payments',
     wallet: 'Wallet',
@@ -415,14 +416,6 @@ export default {
     sent: 'Email updated successfully!',
     sending: 'Updating email...',
   },
-  passwordScreen: {
-    changePassword: 'Change password',
-    changingYourPasswordPrompt: 'Do not use this',
-    currentPassword: 'Current password',
-    newPassword: 'New password',
-    newPasswordPrompt:
-      'Your new password must be different from your old password and contain at least 8 characters, 1 capital letter, 1 lowercase letter, and 1 number.',
-  },
   feedbackScreen: {
     title: 'Feedback',
     prompt: 'What would you like us to improve?',
@@ -534,13 +527,38 @@ export default {
     },
     email: 'Email',
     cannotGetAccountDetails:
-      "Couldn't retrieve account details. Please try to sign in again.",
+      "Couldn't retrieve account details. Please signing in again.",
     initialForm: 'Initial form',
     logInForm: 'Log in form',
     signUpForm: 'Sign up form',
     existingAccount: 'Already have an account?',
     noAccount: 'Don’t have an account yet?',
     error: {},
+  },
+  password: {
+    changePassword: 'Change password',
+    changingYourPasswordPrompt: 'Do not use this',
+    currentPassword: 'Current password',
+    newPassword: 'New password',
+    reEnter: 'Re-enter your password',
+    requirements:
+      'Your new password must be different from your old password and contain at least 8 characters, 1 capital letter, 1 lowercase letter, and 1 number.',
+    pleaseFillOutAllFields: 'Please fill out all fields',
+    pleaseFillPassword: 'Please enter your password',
+    forgot: 'Forgot password?',
+    error: {
+      samePassword: 'This is the same password as your current one',
+      incorrectPassword: 'Incorrect password. Please try again.',
+      incorrectLoginOrPassword:
+        'Incorrect login or password. Please try again.',
+      invalidLoginOrPassword:
+        'Invalid login or password. Please try again or reset your password.',
+      unableToResetPassword:
+        'We were unable to change your password. This is likely due to an expired password reset link in an old password reset email. We have emailed you a new link so you can try again. Check your Inbox and your Spam folder; it should arrive in just a few minutes.',
+      accountLocked:
+        'Your account has been locked after too many unsuccessful attempts. Please try again after 1 hour.',
+      fallback: 'Something went wrong. Please try again later.',
+    },
   },
   termsOfUse: {
     phrase1: 'By logging in, you agree to the',
@@ -558,29 +576,6 @@ export default {
       pleaseEnterEmail: 'Please enter an email address',
       generic: 'There was an error updating your email address.',
     },
-  },
-  passwordForm: {
-    pleaseFillOutAllFields: 'Please fill out all fields',
-    pleaseFillPassword: 'Please enter your password',
-    forgot: 'Forgot password?',
-    error: {
-      complexPassword:
-        'Password must be at least 8 characters long, contain at least 1 uppercase letter, 1 lowercase letter, and 1 number.',
-      samePassword: 'This is the same password as your current one',
-      incorrectPassword: 'Incorrect password. Please try again.',
-      incorrectLoginOrPassword:
-        'Incorrect login or password. Please try again.',
-      invalidLoginOrPassword:
-        'Invalid login or password. Please try again or reset your password.',
-      unableToResetPassword:
-        'We were unable to change your password. This is likely due to an expired password reset link in an old password reset email. We have emailed you a new link so you can try again. Check your Inbox and your Spam folder; it should arrive in just a few minutes.',
-      accountLocked:
-        'Your account has been locked after too many unsuccessful attempts. Please try again after 1 hour.',
-      fallback: 'Something went wrong. Please try again later.',
-    },
-  },
-  welcomeSignUpForm: {
-    join: 'Join',
   },
   genericErrorScreen: {
     title: 'Oops, something went wrong!',
