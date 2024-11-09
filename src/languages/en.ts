@@ -583,7 +583,11 @@ export default {
       generic: 'There was an error updating your email address.',
     },
   },
+  logInScreen: {
+    loggingIn: 'Logging in...',
+  },
   signUpScreen: {
+    signingIn: 'Signing in...',
     error: {
       generic: 'There was an error creating your account. Please try again.',
     },

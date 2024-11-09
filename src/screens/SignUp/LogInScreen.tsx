@@ -127,7 +127,7 @@ function LogInScreen() {
         ref={currentScreenLayoutRef}
         navigateFocus={navigateFocus}>
         {!!isLoading ? (
-          <FlexibleLoadingIndicator />
+          <FlexibleLoadingIndicator text={translate('logInScreen.loggingIn')} />
         ) : (
           <>
             <FormProvider

@@ -158,7 +158,9 @@ function SignUpScreen() {
         ref={currentScreenLayoutRef}
         navigateFocus={navigateFocus}>
         {!!isLoading ? (
-          <FlexibleLoadingIndicator />
+          <FlexibleLoadingIndicator
+            text={translate('signUpScreen.signingIn')}
+          />
         ) : (
           <>
             <FormProvider
