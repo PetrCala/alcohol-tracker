@@ -80,39 +80,13 @@ function DisplayNameScreen({}: DisplayNameScreenProps) {
   ) => {
     const errors: FormInputErrors<typeof ONYXKEYS.FORMS.DISPLAY_NAME_FORM> = {};
 
-    if (!ValidationUtils.isValidDisplayName(values.displayName)) {
-      ErrorUtils.addErrorMessage(
-        errors,
-        'displayName',
-        translate('personalDetails.error.hasInvalidCharacter'),
-      );
-    } else if (values.displayName.length > CONST.TITLE_CHARACTER_LIMIT) {
-      ErrorUtils.addErrorMessage(
-        errors,
-        'displayName',
-        translate('common.error.characterLimitExceedCounter', {
-          length: values.displayName.length,
-          limit: CONST.TITLE_CHARACTER_LIMIT,
-        }),
-      );
-    } else if (values.displayName.length === 0) {
-      ErrorUtils.addErrorMessage(
-        errors,
-        'displayName',
-        translate('personalDetails.error.requiredDisplayName'),
-      );
-    }
-    if (
-      ValidationUtils.doesContainReservedWord(
-        values.displayName,
-        CONST.DISPLAY_NAME.RESERVED_NAMES,
-      )
-    ) {
-      ErrorUtils.addErrorMessage(
-        errors,
-        'displayName',
-        translate('personalDetails.error.containsReservedWord'),
-      );
+    const errorKey = ValidationUtils.validateUsername(
+      values.displayName,
+      auth.currentUser?.displayName,
+    );
+
+    if (errorKey) {
+      ErrorUtils.addErrorMessage(errors, 'displayName', translate(errorKey));
     }
 
     return errors;

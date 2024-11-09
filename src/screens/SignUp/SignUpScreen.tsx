@@ -19,6 +19,7 @@ import CONST from '@src/CONST';
 import * as ValidationUtils from '@libs/ValidationUtils';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import * as Browser from '@libs/Browser';
+import * as User from '@database/users';
 import {signInWithEmailAndPassword} from 'firebase/auth';
 import Text from '@components/Text';
 import {PressableWithFeedback} from '@components/Pressable';
@@ -28,6 +29,10 @@ import DotIndicatorMessage from '@components/DotIndicatorMessage';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
 import {useOnyx} from 'react-native-onyx';
+import {TranslationPaths} from '@src/languages/types';
+import {ValueOf} from 'type-fest';
+import DBPATHS from '@database/DBPATHS';
+import {readDataOnce} from '@database/baseFunctions';
 
 type LoginScreenLayoutRef = {
   scrollPageToTop: (animated?: boolean) => void;
@@ -35,7 +40,8 @@ type LoginScreenLayoutRef = {
 
 function SignUpScreen() {
   const {isOnline} = useUserConnection();
-  const {auth} = useFirebase();
+  const {db, auth} = useFirebase();
+  const user = auth.currentUser;
   const {translate} = useLocalize();
   const styles = useThemeStyles();
   const StyleUtils = useStyleUtils();
@@ -65,12 +71,19 @@ function SignUpScreen() {
     if (!isOnline || isLoading) {
       return;
     }
+
+    // Check that the user is not authenticated
+    if (user) {
+      throw new Error(translate('signUpScreen.error.generic'));
+    }
+
     setIsLoading(true);
 
     const emailTrim = values.email.trim();
+    const usernameTrim = values.username.trim();
 
     try {
-      await signInWithEmailAndPassword(auth, emailTrim, values.password);
+      await User.signUp(db, auth, emailTrim, usernameTrim, values.password);
     } catch (error: any) {
       const errorMessage = ErrorUtils.getErrorMessage(error);
       setServerErrorMessage(errorMessage);
@@ -86,26 +99,39 @@ function SignUpScreen() {
       // Hide the server error message each time the form is validated
       setServerErrorMessage('');
 
-      if (!values.email) {
-        ErrorUtils.addErrorMessage(
-          errors,
-          INPUT_IDS.EMAIL,
-          translate('emailForm.error.pleaseEnterEmail'),
-        );
-      } else if (!ValidationUtils.isValidEmail(values.email)) {
-        ErrorUtils.addErrorMessage(
-          errors,
-          INPUT_IDS.EMAIL,
-          translate('emailForm.error.invalidEmail'),
-        );
-      }
+      type ErrorDataItem = {
+        errorKey: TranslationPaths | null;
+        formKey: ValueOf<typeof INPUT_IDS>;
+      };
 
-      if (!values.password) {
-        ErrorUtils.addErrorMessage(
-          errors,
-          INPUT_IDS.PASSWORD,
-          translate('password.pleaseFillPassword'),
-        );
+      const errorData: ErrorDataItem[] = [
+        {
+          errorKey: ValidationUtils.validateEmail(values.email),
+          formKey: INPUT_IDS.EMAIL,
+        },
+        {
+          errorKey: ValidationUtils.validateUsername(values.username),
+          formKey: INPUT_IDS.USERNAME,
+        },
+        {
+          errorKey: ValidationUtils.validatePassword(values.password),
+          formKey: INPUT_IDS.PASSWORD,
+        },
+        {
+          errorKey:
+            values.password &&
+            values.reEnterPassword &&
+            values.password !== values.reEnterPassword
+              ? 'password.error.passwordsMustMatch'
+              : null,
+          formKey: INPUT_IDS.RE_ENTER_PASSWORD,
+        },
+      ];
+
+      for (const {errorKey, formKey} of errorData) {
+        if (errorKey) {
+          ErrorUtils.addErrorMessage(errors, formKey, translate(errorKey));
+        }
       }
 
       return errors;
@@ -140,6 +166,7 @@ function SignUpScreen() {
               validate={validate}
               onSubmit={onSubmit}
               shouldValidateOnBlur={false}
+              shouldValidateOnChange={true}
               submitButtonText={translate('common.signUp')}
               includeSafeAreaPaddingBottom={false}
               isSubmitButtonVisible={!isLoading}

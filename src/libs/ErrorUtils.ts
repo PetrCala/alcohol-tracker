@@ -52,6 +52,12 @@ function getErrorMessage(error: any): string {
       return 'Too many requests. Please wait a moment and try again later.';
     case err.includes('PERMISSION_DENIED: Permission denied'):
       return 'Permission denied. Please contact the administrator for assistance.';
+    case err.includes('database/data-fetch-failed'):
+      return 'Data fetch failed';
+    case err.includes('database/outdated-app-version'):
+      return 'This version of the application is outdated. Please upgrade to the newest version.';
+    case err.includes('database/account-creation-limit-exceeded'):
+      return 'Rate limit exceeded. Please try again later.';
     default:
       return err;
   }

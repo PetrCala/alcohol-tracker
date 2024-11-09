@@ -346,9 +346,6 @@ export default {
     explanation:
       'Displaying your name helps your friends easily find and recognize you on your profile.',
     updatingUserName: 'Updating your name...',
-    error: {
-      generic: 'Error updating your name',
-    },
   },
   displayNameScreen: {
     headerTitle: 'Nickname',
@@ -542,7 +539,7 @@ export default {
     newPassword: 'New password',
     reEnter: 'Re-enter your password',
     requirements:
-      'Your new password must be different from your old password and contain at least 8 characters, 1 capital letter, 1 lowercase letter, and 1 number.',
+      'Your password must contain at least 8 characters, 1 capital letter, 1 lowercase letter, and 1 number.',
     pleaseFillOutAllFields: 'Please fill out all fields',
     pleaseFillPassword: 'Please enter your password',
     forgot: 'Forgot password?',
@@ -558,6 +555,15 @@ export default {
       accountLocked:
         'Your account has been locked after too many unsuccessful attempts. Please try again after 1 hour.',
       fallback: 'Something went wrong. Please try again later.',
+      passwordsMustMatch: 'The passwords do not match.',
+    },
+  },
+  username: {
+    error: {
+      usernameRequired: 'A username is required',
+      generic: 'There was an error updating your username.',
+      usernameTooLong: 'This username is too long',
+      sameUsername: 'This is the same username as your current one',
     },
   },
   termsOfUse: {
@@ -575,6 +581,11 @@ export default {
       emailRequired: 'An email address is required',
       pleaseEnterEmail: 'Please enter an email address',
       generic: 'There was an error updating your email address.',
+    },
+  },
+  signUpScreen: {
+    error: {
+      generic: 'There was an error creating your account. Please try again.',
     },
   },
   genericErrorScreen: {

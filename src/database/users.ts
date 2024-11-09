@@ -10,13 +10,15 @@ import type {
   UserStatus,
 } from '@src/types/onyx';
 import type {UserList} from '@src/types/onyx/OnyxCommon';
-import type {User, UserCredential} from 'firebase/auth';
+import type {Auth, User, UserCredential} from 'firebase/auth';
 import {
   EmailAuthProvider,
   reauthenticateWithCredential,
   updateProfile,
   updateEmail as fbUpdateEmail,
   verifyBeforeUpdateEmail,
+  getAuth,
+  createUserWithEmailAndPassword,
 } from 'firebase/auth';
 import {getUniqueId} from 'react-native-device-info';
 import {Alert} from 'react-native';
@@ -26,6 +28,10 @@ import {readDataOnce} from './baseFunctions';
 import {getLastStartedSessionId} from '@libs/DataHandling';
 import _ from 'lodash';
 import {SelectedTimezone, Timezone} from '@src/types/onyx/PersonalDetails';
+import {validateAppVersion, ValidationResult} from '@libs/Validation';
+import {checkAccountCreationLimit} from './protection';
+import Navigation from '@libs/Navigation/Navigation';
+import ROUTES from '@src/ROUTES';
 
 const getDefaultPreferences = (): Preferences => {
   return {
@@ -388,6 +394,82 @@ async function saveSelectedTimezone(
   await update(ref(db), updates);
 }
 
+/**
+ * Sign up a user to the authentication service using an email and a password
+ *
+ * @param db The Firebase database object
+ * @param auth The Firebase authentication object
+ * @param email The new user's email
+ * @param username The new user's username
+ * @param password The new user's password
+ */
+async function signUp(
+  db: Database,
+  auth: Auth,
+  email: string,
+  username: string,
+  password: string,
+): Promise<void> {
+  let newUserID: string | undefined;
+  let minSupportedVersion: string | null;
+  const minUserCreationPath =
+    DBPATHS.CONFIG_APP_SETTINGS_MIN_USER_CREATION_POSSIBLE_VERSION;
+
+  minSupportedVersion = await readDataOnce(db, minUserCreationPath);
+
+  if (!minSupportedVersion) {
+    throw new Error('database/data-fetch-failed');
+  }
+
+  if (!validateAppVersion(minSupportedVersion).success) {
+    throw new Error('database/outdated-app-version');
+  }
+
+  // Validate that the user is not spamming account creation
+  const isWithinCreationLimit = await checkAccountCreationLimit(db);
+  if (!isWithinCreationLimit) {
+    throw new Error('database/account-creation-limit-exceeded');
+  }
+
+  // Pushing initial user data to Realtime Database
+  const newProfileData: Profile = {
+    display_name: username,
+    photo_url: '',
+  };
+
+  // Create the user in the Firebase authentication
+  const userCredential = await createUserWithEmailAndPassword(
+    auth,
+    email,
+    password,
+  );
+  const newUser = userCredential.user;
+  newUserID = newUser.uid;
+
+  try {
+    // Realtime Database updates
+    await pushNewUserInfo(db, newUserID, newProfileData);
+
+    // Update Firebase authentication
+    await updateProfile(newUser, {displayName: username});
+
+    Navigation.navigate(ROUTES.HOME);
+  } catch (error: any) {
+    // Attempt to rollback the changes if the 'transaction' fails
+    await deleteUserData(
+      db,
+      newUserID,
+      newProfileData.display_name,
+      undefined,
+      undefined,
+    );
+
+    // Delete the user from Firebase authentication
+    await newUser.delete();
+    throw new Error('User creation failed', error.message);
+  }
+}
+
 export {
   changeDisplayName,
   changeUserName,
@@ -403,4 +485,5 @@ export {
   updateAutomaticTimezone,
   updateEmail,
   userExistsInDatabase,
+  signUp,
 };

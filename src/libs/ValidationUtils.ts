@@ -221,6 +221,13 @@ function getAgeRequirementError(
 }
 
 /**
+ * Checks that the provided name doesn't contain any commas or semicolons
+ */
+function isValidDisplayName(name: string): boolean {
+  return !name.includes(',') && !name.includes(';');
+}
+
+/**
  * Validate that given date is not in the past.
  */
 function getDatePassedError(inputDate: string): string {
@@ -278,6 +285,26 @@ function validatePassword(
   return null;
 }
 
+function validateUsername(
+  username: string,
+  currentUsername?: string | null,
+): TranslationPaths | null {
+  if (username.length === 0) {
+    return 'username.error.usernameRequired';
+  } else if (!isValidDisplayName(username)) {
+    return 'personalDetails.error.hasInvalidCharacter';
+  } else if (username.length > CONST.TITLE_CHARACTER_LIMIT) {
+    return 'username.error.usernameTooLong';
+  } else if (
+    doesContainReservedWord(username, CONST.DISPLAY_NAME.RESERVED_NAMES)
+  ) {
+    return 'personalDetails.error.containsReservedWord';
+  } else if (currentUsername && username === currentUsername) {
+    return 'username.error.sameUsername';
+  }
+  return null;
+}
+
 /**
  * Similar to backend, checks whether a website has a valid URL or not.
  * http/https/ftp URL scheme required.
@@ -325,13 +352,6 @@ function isValidRoutingNumber(routingNumber: string): boolean {
     return true;
   }
   return false;
-}
-
-/**
- * Checks that the provided name doesn't contain any commas or semicolons
- */
-function isValidDisplayName(name: string): boolean {
-  return !name.includes(',') && !name.includes(';');
 }
 
 // /**
@@ -478,4 +498,5 @@ export {
   isValidPercentage,
   validateEmail,
   validatePassword,
+  validateUsername,
 };
