@@ -19,6 +19,8 @@ import {View} from 'react-native';
 import InputWrapper from '@components/Form/InputWrapper';
 import TextInput from '@components/TextInput';
 import {useOnyx} from 'react-native-onyx';
+import CONST from '@src/CONST';
+import * as Browser from '@libs/Browser';
 
 type LoginScreenLayoutRef = {
   scrollPageToTop: (animated?: boolean) => void;
@@ -87,17 +89,28 @@ function LogInScreen() {
           includeSafeAreaPaddingBottom={false}
           shouldUseScrollView={false}
           style={[styles.flexGrow1]}>
-          <View style={[styles.flexGrow1]}>
-            <InputWrapper
-              InputComponent={TextInput}
-              inputID={INPUT_IDS.EMAIL}
-              name="email"
-              label={translate('login.email')}
-              aria-label={translate('login.email')}
-              defaultValue={login?.email ?? ''}
-              spellCheck={false}
-            />
-          </View>
+          <InputWrapper
+            InputComponent={TextInput}
+            inputID={INPUT_IDS.EMAIL}
+            name="email"
+            label={translate('login.email')}
+            aria-label={translate('login.email')}
+            defaultValue={login?.email ?? ''}
+            spellCheck={false}
+          />
+          <InputWrapper
+            InputComponent={TextInput}
+            inputID={INPUT_IDS.PASSWORD}
+            name="password"
+            label={translate('common.password')}
+            aria-label={translate('common.password')}
+            defaultValue={login?.password ?? ''}
+            spellCheck={false}
+            secureTextEntry
+            autoComplete={
+              Browser.getBrowser() === CONST.BROWSER.SAFARI ? 'username' : 'off'
+            }
+          />
         </FormProvider>
         <ChangeSignUpScreenLink shouldPointToSignUp={true} />
       </SignUpScreenLayout>
