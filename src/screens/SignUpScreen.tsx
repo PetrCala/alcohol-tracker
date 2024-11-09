@@ -164,7 +164,7 @@ function SignUpScreen({
     welcomeHeader = shouldUseNarrowLayout
       ? headerText
       : translate('welcomeText.welcome');
-    welcomeText = `${translate('welcomeText.welcome')} ${translate('welcomeText.enterPassword')}`;
+    welcomeText = `${translate('welcomeText.welcome')} ${translate('welcomeText.enterCredentials')}`;
   } else if (shouldShowInitialForm) {
     welcomeHeader = shouldUseNarrowLayout
       ? headerText

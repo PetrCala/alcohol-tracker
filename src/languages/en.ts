@@ -528,7 +528,7 @@ export default {
       "You've opened the login page in a separate tab. Please log in from that tab.",
     welcome: 'Welcome!',
     welcomeWithoutExclamation: 'Welcome',
-    enterPassword: 'Please enter your password.',
+    enterCredentials: 'Please enter your credentials.',
     welcomeNewAccount: ({login}: SignUpNewAccountCodeParams) =>
       `${login}! Are you ready to create your account?`,
     // welcomeEnterMagicCode: ({login}: WelcomeEnterMagicCodeParams) =>
