@@ -47,7 +47,7 @@ import htmlDivElementRef from '@src/types/utils/htmlDivElementRef';
 import viewRef from '@src/types/utils/viewRef';
 import type InitialFormProps from './types';
 import type {InputHandle} from './types';
-import ChangeKirokuLoginLink from '@libs/SignUp/ChangeKirokuLoginLink';
+import ChangeKirokuLoginLink from '@screens/SignUp/ChangeKirokuLoginLink';
 
 type BaseInitialFormOnyxProps = {
   /** The details about the user that is signing in */
@@ -96,7 +96,7 @@ function BaseInitialForm(
       }
 
       if (!ValidationUtils.isValidEmail(loginTrim)) {
-        setFormError('initialForm.error.invalidFormatEmailLogin');
+        setFormError('login.error.invalidFormatEmailLogin');
         return false;
       }
 
@@ -259,12 +259,12 @@ function BaseInitialForm(
   return (
     <>
       <View
-        accessibilityLabel={translate('initialForm.initialForm')}
+        accessibilityLabel={translate('login.initialForm')}
         style={[styles.mt3]}>
         <TextInput
           ref={input}
-          label={translate('initialForm.email')}
-          accessibilityLabel={translate('initialForm.email')}
+          label={translate('login.email')}
+          accessibilityLabel={translate('login.email')}
           value={email}
           returnKeyType="go"
           autoCompleteType="username"

@@ -1,4 +1,4 @@
-﻿import React, {useReducer, useRef, useState} from 'react';
+import React, {useReducer, useRef, useState} from 'react';
 import {Alert, Keyboard} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 import {getAuth, updateProfile} from 'firebase/auth';
@@ -36,11 +36,14 @@ import ThemeStylesProvider from '@components/ThemeStylesProvider';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import useLocalize from '@hooks/useLocalize';
 import InitialForm from '@libs/InitialForm';
-import SignUpScreenLayout from '@libs/SignUpScreenLayout';
-import LogInForm from '@libs/SignUp/LogInForm';
-import SignUpForm from '@libs/SignUp/SignUpForm';
+// import InitialScreenLayout from '@libs/InitialScreenLayout';
+// import LogInForm from '@screens/SignUp/LogInForm/BaseLogInForm';
+import SignUpScreenLayout from './SignUpScreenLayout';
+// import SignUpForm from '@screens/SignUp/SignUpForm';
+import Text from '@components/Text';
+import useTheme from '@hooks/useTheme';
 
-type SignUpScreenInnerOnyxProps = {
+type InitialScreenOnyxProps = {
   /** The details about the user that is signing in */
   login: OnyxEntry<Login>;
 
@@ -48,67 +51,28 @@ type SignUpScreenInnerOnyxProps = {
   preferredLocale: OnyxEntry<Locale>;
 };
 
-type SignUpScreenInnerProps = SignUpScreenInnerOnyxProps & {
+type InitialScreenProps = InitialScreenOnyxProps & {
   shouldEnableMaxHeight?: boolean;
 };
 
-type SignUpScreenLayoutRef = {
+type InitialScreenLayoutRef = {
   scrollPageToTop: (animated?: boolean) => void;
 };
 
-type RenderOption = {
-  shouldShowInitialForm: boolean;
-  shouldShowLogInForm: boolean;
-  shouldShowSignUpForm: boolean;
-  shouldShowWelcomeHeader: boolean;
-  shouldShowWelcomeText: boolean;
-};
-
-type GetRenderOptionsParams = {
-  hasLogin: boolean;
-  loginFormHidden: boolean;
-};
-
-/**
- * @param hasLogin
- * @param hasSignUp
- * @param account
- */
-function getRenderOptions({
-  hasLogin,
-  loginFormHidden,
-}: GetRenderOptionsParams): RenderOption {
-  const shouldShowLogInForm = !loginFormHidden;
-  const shouldShowSignUpForm = !shouldShowLogInForm && hasLogin;
-  const shouldShowInitialForm =
-    !hasLogin && !shouldShowLogInForm && !shouldShowSignUpForm;
-  const shouldShowWelcomeHeader =
-    shouldShowInitialForm || shouldShowLogInForm || shouldShowSignUpForm;
-  const shouldShowWelcomeText =
-    shouldShowInitialForm || shouldShowLogInForm || shouldShowSignUpForm;
-
-  return {
-    shouldShowInitialForm,
-    shouldShowSignUpForm,
-    shouldShowWelcomeHeader,
-    shouldShowWelcomeText,
-    shouldShowLogInForm,
-  };
-}
-
-function SignUpScreen({
+function InitialScreen({
   login,
   preferredLocale,
   shouldEnableMaxHeight = true,
-}: SignUpScreenInnerProps) {
+}: InitialScreenProps) {
   const {auth, db} = useFirebase();
   const {isOnline} = useUserConnection();
   const {translate} = useLocalize();
   const styles = useThemeStyles();
+  const theme = useTheme();
   const StyleUtils = useStyleUtils();
   const {shouldUseNarrowLayout, isInNarrowPaneModal} = useResponsiveLayout();
   const safeAreaInsets = useStyledSafeAreaInsets();
-  const signUpScreenLayoutRef = useRef<SignUpScreenLayoutRef>(null);
+  const signUpScreenLayoutRef = useRef<InitialScreenLayoutRef>(null);
   const initialFormRef = useRef<InputHandle>(null);
   const [loginFormHidden, setLogInFormHidden] = React.useState<boolean>(true);
   const [email, setEmail] = useState(() => login?.email ?? '');
@@ -143,56 +107,22 @@ function SignUpScreen({
     }
   }
 
-  const {
-    shouldShowInitialForm,
-    shouldShowSignUpForm,
-    shouldShowWelcomeHeader,
-    shouldShowWelcomeText,
-    shouldShowLogInForm,
-  } = getRenderOptions({
-    hasLogin: !!login?.email,
-    loginFormHidden,
-  });
-
   let welcomeHeader = '';
   let welcomeText = '';
   const headerText = translate('login.hero.header');
 
   const userLoginToDisplay = login?.email ?? '';
 
-  if (shouldShowLogInForm) {
-    welcomeHeader = shouldUseNarrowLayout
-      ? headerText
-      : translate('welcomeText.welcome');
-    welcomeText = `${translate('welcomeText.welcome')} ${translate('welcomeText.enterCredentials')}`;
-  } else if (shouldShowInitialForm) {
-    welcomeHeader = shouldUseNarrowLayout
-      ? headerText
-      : translate('welcomeText.getStarted');
-    welcomeText = shouldUseNarrowLayout
-      ? translate('welcomeText.getStarted')
-      : '';
-  } else if (shouldShowSignUpForm) {
-    welcomeHeader = shouldUseNarrowLayout
-      ? headerText
-      : translate('welcomeText.welcome');
-    welcomeText = shouldUseNarrowLayout
-      ? `${translate('welcomeText.welcomeWithoutExclamation')} ${translate('welcomeText.welcomeNewAccount', {login: userLoginToDisplay})}`
-      : translate('welcomeText.welcomeNewAccount', {login: userLoginToDisplay});
-  }
+  welcomeHeader = shouldUseNarrowLayout
+    ? headerText
+    : translate('welcomeText.getStarted');
+  welcomeText = shouldUseNarrowLayout
+    ? translate('welcomeText.getStarted')
+    : '';
 
   const navigateFocus = () => {
     signUpScreenLayoutRef.current?.scrollPageToTop();
     initialFormRef.current?.clearDataAndFocus();
-  };
-
-  const navigateBack = () => {
-    if (shouldShowLogInForm || shouldShowSignUpForm) {
-      Session.clearSignInData();
-      return;
-    }
-
-    Navigation.goBack();
   };
 
   // useImperativeHandle(ref, () => ({
@@ -212,28 +142,19 @@ function SignUpScreen({
       shouldUseCachedViewportHeight
       style={[
         styles.signUpScreen,
-        StyleUtils.getSafeAreaPadding(
-          {
-            ...safeAreaInsets,
-            bottom: 0,
-            right: 0,
-            left: 0,
-            top: isInNarrowPaneModal ? 0 : safeAreaInsets.paddingTop,
-          },
-          1,
+        StyleUtils.getSignUpSafeAreaPadding(
+          safeAreaInsets,
+          isInNarrowPaneModal,
         ),
       ]}
-      testID={SignUpScreenThemeWrapper.displayName}>
+      testID={InitialScreen.displayName}>
       <SignUpScreenLayout
         welcomeHeader={welcomeHeader}
         welcomeText={welcomeText}
-        shouldShowWelcomeHeader={
-          shouldShowWelcomeHeader || !shouldUseNarrowLayout
-        }
-        shouldShowWelcomeText={shouldShowWelcomeText}
         ref={signUpScreenLayoutRef}
         navigateFocus={navigateFocus}>
-        <InitialForm
+        <Text style={{color: theme.appColor}}>Hello, world!</Text>
+        {/* <InitialForm
           ref={initialFormRef}
           isVisible={shouldShowInitialForm}
           email={email}
@@ -241,41 +162,20 @@ function SignUpScreen({
           setLogInFormHidden={setLogInFormHidden}
           blurOnSubmit={false}
           scrollPageToTop={signUpScreenLayoutRef.current?.scrollPageToTop}
-        />
-        {shouldShowLogInForm && <LogInForm />}
-        {shouldShowSignUpForm && <SignUpForm />}
+        /> */}
       </SignUpScreenLayout>
     </ScreenWrapper>
   );
 }
 
-type SignUpScreenProps = SignUpScreenInnerProps;
-type SignUpScreenOnyxProps = SignUpScreenInnerOnyxProps;
+InitialScreen.displayName = 'Sign Up Screen';
 
-function SignUpScreenThemeWrapper(props: SignUpScreenProps) {
-  return (
-    // <ThemeProvider value={CONST.THEME.LIGHT}>
-    <ThemeStylesProvider>
-      <ColorSchemeWrapper>
-        <CustomStatusBarAndBackground isNested />
-        <SignUpScreen
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          {...props}
-        />
-      </ColorSchemeWrapper>
-    </ThemeStylesProvider>
-    // </ThemeProvider>
-  );
-}
-
-SignUpScreenThemeWrapper.displayName = 'Sign Up Screen';
-
-export default withOnyx<SignUpScreenProps, SignUpScreenOnyxProps>({
+export default withOnyx<InitialScreenProps, InitialScreenOnyxProps>({
   login: {key: ONYXKEYS.LOGIN},
   preferredLocale: {
     key: ONYXKEYS.NVP_PREFERRED_LOCALE,
   },
-})(SignUpScreenThemeWrapper);
+})(InitialScreen);
 
 // <WarningMessage warningText={state.warning} dispatch={dispatch} />
 // <View style={styles.logoContainer}>

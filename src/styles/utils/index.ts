@@ -45,6 +45,7 @@ import type {
   SVGAvatarColorStyle,
   WorkspaceColorStyle,
 } from './types';
+import {StyledSafeAreaInsets} from '@hooks/useStyledSafeAreaInsets';
 
 const avatarBorderSizes: Partial<Record<AvatarSizeName, number>> = {
   [CONST.AVATAR_SIZE.SMALL_SUBSCRIPT]: variables.componentBorderRadiusSmall,
@@ -429,7 +430,7 @@ function getBorderColorStyle(borderColor: string): ViewStyle {
 /**
  * Returns the width style for the wordmark logo on the sign in page
  */
-function getSignInLogoWidthStyle(
+function getSignUpLogoWidthStyle(
   isSmallScreenWidth: boolean,
   environment: ValueOf<typeof CONST.ENVIRONMENT>,
 ): ViewStyle {
@@ -451,6 +452,22 @@ function getSignInLogoWidthStyle(
   return isSmallScreenWidth
     ? {width: variables.signInLogoWidthPill}
     : {width: variables.signInLogoWidthLargeScreenPill};
+}
+
+function getSignUpSafeAreaPadding(
+  insets: StyledSafeAreaInsets,
+  isSmallScreenWidth: boolean,
+): ViewStyle {
+  return getSafeAreaPadding(
+    {
+      ...insets,
+      bottom: 0,
+      right: 0,
+      left: 0,
+      top: isSmallScreenWidth ? 0 : insets.paddingTop,
+    },
+    1,
+  );
 }
 
 /**
@@ -1127,7 +1144,8 @@ const staticStyleUtils = {
   getPaymentMethodMenuWidth,
   getSafeAreaMargins,
   getSafeAreaPadding,
-  getSignInLogoWidthStyle,
+  getSignUpSafeAreaPadding,
+  getSignUpLogoWidthStyle,
   getTextColorStyle,
   getTransparentColor,
   getWidthAndHeightStyle,

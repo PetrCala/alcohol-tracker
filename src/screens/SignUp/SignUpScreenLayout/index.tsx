@@ -26,12 +26,8 @@ import type {SignUpScreenLayoutProps, SignUpScreenLayoutRef} from './types';
 
 function SignUpScreenLayout(
   {
-    customHeadline,
-    customHeroBody,
-    shouldShowWelcomeHeader = false,
-    welcomeHeader,
+    welcomeHeader = '',
     welcomeText = '',
-    shouldShowWelcomeText = false,
     navigateFocus = () => {},
     children,
   }: SignUpScreenLayoutProps,
@@ -103,9 +99,7 @@ function SignUpScreenLayout(
             contentContainerStyle={[styles.flex1]}>
             <SignUpScreenContent
               welcomeHeader={welcomeHeader}
-              welcomeText={welcomeText}
-              shouldShowWelcomeText={shouldShowWelcomeText}
-              shouldShowWelcomeHeader={shouldShowWelcomeHeader}>
+              welcomeText={welcomeText}>
               {children}
             </SignUpScreenContent>
           </ScrollView>
@@ -125,9 +119,7 @@ function SignUpScreenLayout(
             ]}>
             <SignUpScreenContent
               welcomeHeader={welcomeHeader}
-              welcomeText={welcomeText}
-              shouldShowWelcomeText={shouldShowWelcomeText}
-              shouldShowWelcomeHeader={shouldShowWelcomeHeader}>
+              welcomeText={welcomeText}>
               {children}
             </SignUpScreenContent>
           </View>

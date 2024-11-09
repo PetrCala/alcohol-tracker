@@ -1,4 +1,10 @@
-﻿import React, {useReducer} from 'react';
+﻿// if (shouldShowLogInForm) {
+//   welcomeHeader = shouldUseNarrowLayout
+//     ? headerText
+//     : translate('welcomeText.welcome');
+//   welcomeText = `${translate('welcomeText.welcome')} ${translate('welcomeText.enterCredentials')}`;
+
+import React, {useReducer} from 'react';
 import {
   Alert,
   Dimensions,
@@ -72,7 +78,7 @@ const reducer = (state: State, action: Action) => {
   }
 };
 
-function LoginScreen() {
+function LogInScreen() {
   // const {isOnline} = useUserConnection();
   const {auth} = useFirebase();
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -257,8 +263,8 @@ const styles = StyleSheet.create({
   },
 });
 
-LoginScreen.displayName = 'Login Screen';
-export default LoginScreen;
+LogInScreen.displayName = 'Login Screen';
+export default LogInScreen;
 
 // {/* <View style={styles.inputContainer}>
 //   <TextInput

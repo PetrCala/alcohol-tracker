@@ -8,26 +8,21 @@ import useResponsiveLayout from '@hooks/useResponsiveLayout';
 import useStyleUtils from '@hooks/useStyleUtils';
 import useThemeStyles from '@hooks/useThemeStyles';
 import variables from '@styles/variables';
-import type {SignUpScreenLayoutProps} from './types';
 import ImageSVG from '@components/ImageSVG';
 import KirokuLogo from '@components/KirokuLogo';
+import type {SignUpScreenLayoutProps} from './types';
 
 type SignUpScreenContentProps = Pick<
   SignUpScreenLayoutProps,
-  | 'welcomeText'
-  | 'welcomeHeader'
-  | 'shouldShowWelcomeText'
-  | 'shouldShowWelcomeHeader'
+  'welcomeText' | 'welcomeHeader'
 > & {
   /** The children to show inside the layout */
   children?: React.ReactNode;
 };
 
 function SignUpScreenContent({
-  shouldShowWelcomeHeader,
   welcomeHeader,
   welcomeText,
-  shouldShowWelcomeText,
   children,
 }: SignUpScreenContentProps) {
   const {shouldUseNarrowLayout} = useResponsiveLayout();
@@ -63,7 +58,7 @@ function SignUpScreenContent({
               <KirokuLogo />
             </View>
             <View style={[styles.signUpScreenWelcomeTextContainer]}>
-              {shouldShowWelcomeHeader && welcomeHeader ? (
+              {welcomeHeader ? (
                 <Text
                   style={[
                     styles.loginHeroHeader,
@@ -80,7 +75,7 @@ function SignUpScreenContent({
                   {welcomeHeader}
                 </Text>
               ) : null}
-              {shouldShowWelcomeText && welcomeText ? (
+              {welcomeText ? (
                 <Text
                   style={[
                     styles.loginHeroBody,

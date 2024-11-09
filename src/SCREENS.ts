@@ -12,8 +12,10 @@ const SCREENS = {
   ...PROTECTED_SCREENS,
   NOT_FOUND: 'not-found',
   // Public screens
-  SIGNUP: 'SignUp',
-  LOGIN: 'Login',
+  INITIAL: 'Initial',
+  SIGN_UP: 'SignUp',
+  LOG_IN: 'LogIn',
+  FORGOT_PASSWORD: 'ForgotPassword',
   FORCE_UPDATE: 'ForceUpdate',
 
   TZ_FIX: {

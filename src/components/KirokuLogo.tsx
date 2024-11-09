@@ -44,7 +44,7 @@ function KirokuLogo({style}: KirokuLogoProps) {
   return (
     <View
       style={[
-        StyleUtils.getSignInLogoWidthStyle(shouldUseNarrowLayout, environment),
+        StyleUtils.getSignUpLogoWidthStyle(shouldUseNarrowLayout, environment),
         StyleUtils.getHeight(
           shouldUseNarrowLayout
             ? variables.signInLogoHeightSmallScreen

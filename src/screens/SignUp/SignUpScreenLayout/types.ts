@@ -10,19 +10,7 @@ type SignUpScreenLayoutProps = {
 
   /** Welcome header to show in the header of the form, changes depending
    * on a form type (for example, sign in) and small vs large screens */
-  welcomeHeader: string;
-
-  /** Whether to show welcome text on a particular page */
-  shouldShowWelcomeText?: boolean;
-
-  /** Whether to show welcome header on a particular page */
-  shouldShowWelcomeHeader?: boolean;
-
-  /** Override the green headline copy */
-  customHeadline?: string;
-
-  /** Override the smaller hero body copy below the headline */
-  customHeroBody?: string;
+  welcomeHeader?: string;
 
   navigateFocus?: () => void;
 };

@@ -199,17 +199,14 @@ type SharedScreensParamList = {
 };
 
 type PublicScreensParamList = SharedScreensParamList & {
-  // [SCREENS.UNLINK_LOGIN]: {
-  //     accountID?: string;
-  //     validateCode?: string;
-  // };
+  [SCREENS.INITIAL]: undefined;
+  [SCREENS.SIGN_UP]: undefined;
+  [SCREENS.LOG_IN]: undefined;
+  [SCREENS.FORGOT_PASSWORD]: undefined;
+  [SCREENS.FORCE_UPDATE]: undefined;
   // [SCREENS.SIGN_IN_WITH_APPLE_DESKTOP]: undefined;
   // [SCREENS.SIGN_IN_WITH_GOOGLE_DESKTOP]: undefined;
-  // [SCREENS.SAML_SIGN_IN]: undefined;
   // [SCREENS.CONNECTION_COMPLETE]: undefined;
-  [SCREENS.FORCE_UPDATE]: undefined;
-  [SCREENS.SIGNUP]: undefined;
-  [SCREENS.LOGIN]: undefined;
 };
 
 type AuthScreensParamList = CentralPaneScreensParamList &

@@ -2,6 +2,18 @@
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import useStyleUtils from './useStyleUtils';
 
+type StyledSafeAreaInsets = {
+  paddingTop: number;
+  paddingBottom: number;
+  insets?: {
+    top: number;
+    right: number;
+    bottom: number;
+    left: number;
+  };
+  safeAreaPaddingBottomStyle: {paddingBottom: number};
+};
+
 /**
  * Custom hook to get the styled safe area insets.
  * This hook utilizes the `SafeAreaInsetsContext` to retrieve the current safe area insets
@@ -21,7 +33,7 @@ import useStyleUtils from './useStyleUtils';
  *     // Use these values to style your component accordingly
  * }
  */
-function useStyledSafeAreaInsets() {
+function useStyledSafeAreaInsets(): StyledSafeAreaInsets {
   const StyleUtils = useStyleUtils();
   const insets = useSafeAreaInsets();
 
@@ -37,3 +49,4 @@ function useStyledSafeAreaInsets() {
 }
 
 export default useStyledSafeAreaInsets;
+export type {StyledSafeAreaInsets};

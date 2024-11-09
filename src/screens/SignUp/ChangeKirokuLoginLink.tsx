@@ -19,7 +19,7 @@ function ChangeKirokuLoginLink({onPress}: ChangeKirokuLoginLinkProps) {
 
   return (
     <View style={styles.changeKirokuLoginLinkContainer}>
-      <Text style={styles.mr1}>{translate('initialForm.existingAccount')}</Text>
+      <Text style={styles.mr1}>{translate('login.existingAccount')}</Text>
       <PressableWithFeedback
         style={[styles.link]}
         onPress={onPress}

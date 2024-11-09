@@ -23,8 +23,10 @@ const ROUTES = {
 
   HOME: 'home',
   FORCE_UPDATE: 'force-update',
-  LOGIN: 'login',
-  SIGNUP: 'signup',
+  INITIAL: 'initial',
+  LOG_IN: 'log-in',
+  SIGN_UP: 'sign-up',
+  FORGOT_PASSWORD: 'forgot-password',
   DESKTOP_SIGN_IN_REDIRECT: 'desktop-signin-redirect',
   APPLE_SIGN_IN: 'sign-in-with-apple',
   GOOGLE_SIGN_IN: 'sign-in-with-google',

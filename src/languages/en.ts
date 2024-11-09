@@ -539,34 +539,28 @@ export default {
       header: 'Track your everyday alcohol adventures',
       body: 'Welcome to Kiroku, where you can track, monitor, and share your alcohol consumption',
     },
-  },
-  initialForm: {
     email: 'Email',
+    cannotGetAccountDetails:
+      "Couldn't retrieve account details. Please try to sign in again.",
+    logIn: 'Log In',
+    signUp: 'Sign Up',
+    initialForm: 'Initial form',
+    logInForm: 'Log in form',
+    signUpForm: 'Sign up form',
+    existingAccount: 'Already have an account?',
     error: {
       invalidFormatEmailLogin:
         'The email entered is invalid. Please fix the format and try again.',
     },
-    cannotGetAccountDetails:
-      "Couldn't retrieve account details. Please try to sign in again.",
-    initialForm: 'Initial form',
-    existingAccount: 'Already have an account?',
   },
+  logInForm: {},
+  signUpForm: {},
   termsOfUse: {
     phrase1: 'By logging in, you agree to the',
     phrase2: 'Terms of Service',
     phrase3: 'and',
     phrase4: 'Privacy Policy',
   },
-  // loginForm: {
-  //   email: 'Email',
-  //   error: {
-  //     invalidFormatEmailLogin:
-  //       'The email entered is invalid. Please fix the format and try again.',
-  //   },
-  //   cannotGetAccountDetails:
-  //     "Couldn't retrieve account details. Please try to sign in again.",
-  //   loginForm: 'Login form',
-  // },
   passwordForm: {
     pleaseFillOutAllFields: 'Please fill out all fields',
     pleaseFillPassword: 'Please enter your password',
