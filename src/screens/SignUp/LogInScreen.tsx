@@ -19,6 +19,7 @@ import CONST from '@src/CONST';
 import * as ValidationUtils from '@libs/ValidationUtils';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import * as Browser from '@libs/Browser';
+import * as User from '@database/users';
 import {signInWithEmailAndPassword} from 'firebase/auth';
 import Text from '@components/Text';
 import {PressableWithFeedback} from '@components/Pressable';
@@ -27,6 +28,7 @@ import ROUTES from '@src/ROUTES';
 import DotIndicatorMessage from '@components/DotIndicatorMessage';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
+import Onyx, {useOnyx} from 'react-native-onyx';
 
 type LoginScreenLayoutRef = {
   scrollPageToTop: (animated?: boolean) => void;
@@ -41,6 +43,7 @@ function LogInScreen() {
   const {shouldUseNarrowLayout, isInNarrowPaneModal} = useResponsiveLayout();
   const safeAreaInsets = useStyledSafeAreaInsets();
   const currentScreenLayoutRef = useRef<LoginScreenLayoutRef>(null);
+  const [login] = useOnyx(ONYXKEYS.LOGIN);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [serverErrorMessage, setServerErrorMessage] = React.useState('');
 
@@ -65,7 +68,7 @@ function LogInScreen() {
     const emailTrim = values.email.trim();
 
     try {
-      await signInWithEmailAndPassword(auth, emailTrim, values.password);
+      await User.logIn(auth, emailTrim, values.password);
     } catch (error: any) {
       const errorMessage = ErrorUtils.getErrorMessage(error);
       setServerErrorMessage(errorMessage);
@@ -146,7 +149,7 @@ function LogInScreen() {
                 name="email"
                 label={translate('login.email')}
                 aria-label={translate('login.email')}
-                defaultValue={''}
+                defaultValue={login?.email ?? ''}
                 spellCheck={false}
               />
               <InputWrapper
@@ -155,7 +158,7 @@ function LogInScreen() {
                 name="password"
                 label={translate('common.password')}
                 aria-label={translate('common.password')}
-                defaultValue={''}
+                defaultValue={login?.password ?? ''}
                 spellCheck={false}
                 secureTextEntry
                 autoComplete={

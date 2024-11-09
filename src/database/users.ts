@@ -19,6 +19,7 @@ import {
   verifyBeforeUpdateEmail,
   getAuth,
   createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
 } from 'firebase/auth';
 import {getUniqueId} from 'react-native-device-info';
 import {Alert} from 'react-native';
@@ -32,6 +33,8 @@ import {validateAppVersion, ValidationResult} from '@libs/Validation';
 import {checkAccountCreationLimit} from './protection';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
+import Onyx from 'react-native-onyx';
+import ONYXKEYS from '@src/ONYXKEYS';
 
 const getDefaultPreferences = (): Preferences => {
   return {
@@ -394,6 +397,25 @@ async function saveSelectedTimezone(
   await update(ref(db), updates);
 }
 
+/** Attempt to log in to the Firebase authentication service with a user's credentials
+ *
+ * @param auth The Firebase authentication object
+ * @param email The user's email
+ * @param password The user's password
+ */
+async function logIn(
+  auth: Auth,
+  email: string,
+  password: string,
+): Promise<void> {
+  // Stash the credentials in case the log in fails
+  Onyx.merge(ONYXKEYS.LOGIN, {
+    email: email,
+    password: password,
+  });
+  await signInWithEmailAndPassword(auth, email, password);
+}
+
 /**
  * Sign up a user to the authentication service using an email and a password
  *
@@ -410,6 +432,14 @@ async function signUp(
   username: string,
   password: string,
 ): Promise<void> {
+  // Stash the login credentials in case the request fails
+  Onyx.merge(ONYXKEYS.LOGIN, {
+    email: email,
+    username: username,
+    password: password,
+    passwordConfirm: password,
+  });
+
   let newUserID: string | undefined;
   let minSupportedVersion: string | null;
   const minUserCreationPath =
@@ -485,5 +515,6 @@ export {
   updateAutomaticTimezone,
   updateEmail,
   userExistsInDatabase,
+  logIn,
   signUp,
 };

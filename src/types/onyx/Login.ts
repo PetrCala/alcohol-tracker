@@ -9,14 +9,14 @@ type Login = {
   /** The email the user logged in with */
   email?: string;
 
+  /** The username the user is trying to set */
+  username?: string;
+
   /** The password the user logged in with */
   password?: string;
 
   /** The password the user is trying to set */
   passwordConfirm?: string;
-
-  /** The nickname the user is trying to set */
-  nickname?: string;
 
   /** Whether the user forgot their password */
   forgotPassword?: boolean;

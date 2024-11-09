@@ -189,7 +189,7 @@ function SignUpScreen() {
                 name="username"
                 label={translate('common.username')}
                 aria-label={translate('common.username')}
-                defaultValue={''}
+                defaultValue={login?.username}
                 spellCheck={false}
               />
               <InputWrapper
@@ -198,7 +198,7 @@ function SignUpScreen() {
                 name="password"
                 label={translate('common.password')}
                 aria-label={translate('common.password')}
-                defaultValue={''}
+                defaultValue={login?.password}
                 spellCheck={false}
                 secureTextEntry
                 autoComplete={
@@ -213,7 +213,7 @@ function SignUpScreen() {
                 name="re-enter-password"
                 label={translate('password.reEnter')}
                 aria-label={translate('password.reEnter')}
-                defaultValue={''}
+                defaultValue={login?.passwordConfirm}
                 spellCheck={false}
                 secureTextEntry
                 autoComplete={
