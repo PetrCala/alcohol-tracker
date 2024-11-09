@@ -42,7 +42,7 @@ import CONST from '@src/CONST';
 import type {TranslationPaths} from '@src/languages/types';
 import ONYXKEYS from '@src/ONYXKEYS';
 import type {CloseAccountForm} from '@src/types/form';
-import type {Account} from '@src/types/onyx';
+import type {Login} from '@src/types/onyx';
 import htmlDivElementRef from '@src/types/utils/htmlDivElementRef';
 import viewRef from '@src/types/utils/viewRef';
 import type InitialFormProps from './types';
@@ -50,8 +50,8 @@ import type {InputHandle} from './types';
 import ChangeKirokuLoginLink from '@libs/SignUp/ChangeKirokuLoginLink';
 
 type BaseInitialFormOnyxProps = {
-  /** The details about the account that the user is signing in with */
-  account: OnyxEntry<Account>;
+  /** The details about the user that is signing in */
+  login: OnyxEntry<Login>;
 
   /** Message to display when user successfully closed their account */
   closeAccount: OnyxEntry<CloseAccountForm>;
@@ -63,9 +63,9 @@ type BaseInitialFormProps = WithToggleVisibilityViewProps &
 
 function BaseInitialForm(
   {
-    account,
     login,
-    onLoginChanged,
+    email,
+    onEmailChanged,
     setLoginFormHidden,
     closeAccount,
     blurOnSubmit = false,
@@ -111,13 +111,13 @@ function BaseInitialForm(
    */
   const onTextInput = useCallback(
     (text: string) => {
-      onLoginChanged(text);
+      onEmailChanged(text);
       if (firstBlurred.current) {
         validate(text);
       }
 
-      if (!!account?.errors || !!account?.message) {
-        Session.clearAccountMessages();
+      if (!!login?.errors || !!login?.message) {
+        Session.clearLoginMessages();
       }
 
       // Clear the "Account successfully closed" message when the user starts typing
@@ -125,7 +125,7 @@ function BaseInitialForm(
         CloseAccount.setDefaultData();
       }
     },
-    [account, closeAccount, input, onLoginChanged, validate],
+    [login, closeAccount, input, onEmailChanged, validate],
   );
 
   function getSignInWithStyles() {
@@ -136,7 +136,7 @@ function BaseInitialForm(
    * Check that all the form fields are valid, then trigger the submit callback
    */
   const validateAndSubmitForm = useCallback(() => {
-    if (!!isOffline || !!account?.isLoading || isLoading.current) {
+    if (!!isOffline || !!login?.isLoading || isLoading.current) {
       return;
     }
     isLoading.current = true;
@@ -152,24 +152,24 @@ function BaseInitialForm(
       firstBlurred.current = true;
     }
 
-    if (!validate(login)) {
+    if (!validate(email)) {
       isLoading.current = false;
       return;
     }
 
-    const loginTrim = login.trim();
+    const emailTrim = email.trim();
 
-    // Session.beginSignIn(loginTrim); // TODO - enable this line
-    console.log('singing in with login:', loginTrim);
-  }, [login, account, closeAccount, isOffline, validate]);
+    // Session.beginSignIn(emailTrim); // TODO - enable this line
+    console.log('singing in with the following email:', emailTrim);
+  }, [login, email, closeAccount, isOffline, validate]);
 
   useEffect(() => {
-    // Call clearAccountMessages on the login page (home route).
+    // Call clearLoginMessages on the login page (home route).
     // When the user is in the transition route and not yet authenticated, this component will also be mounted,
     // resetting account.isLoading will cause the app to briefly display the session expiration page.
 
     if (isFocused && isVisible) {
-      Session.clearAccountMessages();
+      Session.clearLoginMessages();
     }
     if (
       !canFocusInputOnScreenFocus() ||
@@ -193,11 +193,11 @@ function BaseInitialForm(
   }, []);
 
   useEffect(() => {
-    if (account?.isLoading !== false) {
+    if (login?.isLoading !== false) {
       return;
     }
     isLoading.current = false;
-  }, [account?.isLoading]);
+  }, [login?.isLoading]);
 
   useEffect(() => {
     if (blurOnSubmit) {
@@ -230,8 +230,8 @@ function BaseInitialForm(
   }));
 
   const serverErrorText = useMemo(
-    () => (account ? ErrorUtils.getLatestErrorMessage(account) : ''),
-    [account],
+    () => (login ? ErrorUtils.getLatestErrorMessage(login) : ''),
+    [login],
   );
   const shouldShowServerError = !!serverErrorText && !formError;
   const isSigningWithAppleOrGoogle = useRef(false);
@@ -265,7 +265,7 @@ function BaseInitialForm(
           ref={input}
           label={translate('initialForm.email')}
           accessibilityLabel={translate('initialForm.email')}
-          value={login}
+          value={email}
           returnKeyType="go"
           autoCompleteType="username"
           textContentType="username"
@@ -288,7 +288,7 @@ function BaseInitialForm(
                   return;
                 }
                 firstBlurred.current = true;
-                validate(login);
+                validate(email);
               }, 500)
           }
           onFocus={handleFocus}
@@ -302,10 +302,10 @@ function BaseInitialForm(
           maxLength={CONST.LOGIN_CHARACTER_LIMIT}
         />
       </View>
-      {!!account?.success && (
-        <Text style={[styles.formSuccess]}>{account.success}</Text>
+      {!!login?.success && (
+        <Text style={[styles.formSuccess]}>{login.success}</Text>
       )}
-      {(!!closeAccount?.success || !!account?.message) && (
+      {(!!closeAccount?.success || !!login?.message) && (
         <DotIndicatorMessage
           style={[styles.mv2]}
           type="success"
@@ -313,7 +313,7 @@ function BaseInitialForm(
           messages={{
             0: closeAccount?.success
               ? closeAccount.success
-              : account?.message || '',
+              : login?.message || '',
           }}
         />
       )}
@@ -327,8 +327,8 @@ function BaseInitialForm(
             <FormAlertWithSubmitButton
               buttonText={translate('common.continue')}
               isLoading={
-                account?.isLoading &&
-                account?.loadingForm === CONST.FORMS.INITIAL_FORM
+                login?.isLoading &&
+                login?.loadingForm === CONST.FORMS.INITIAL_FORM
               }
               onSubmit={validateAndSubmitForm}
               message={serverErrorText}
@@ -375,7 +375,7 @@ BaseInitialForm.displayName = 'BaseInitialForm';
 
 export default withToggleVisibilityView(
   withOnyx<BaseInitialFormProps, BaseInitialFormOnyxProps>({
-    account: {key: ONYXKEYS.ACCOUNT},
+    login: {key: ONYXKEYS.LOGIN},
     closeAccount: {key: ONYXKEYS.FORMS.CLOSE_ACCOUNT_FORM},
   })(forwardRef(BaseInitialForm)),
 );

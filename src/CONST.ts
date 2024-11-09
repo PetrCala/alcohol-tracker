@@ -623,8 +623,8 @@ const CONST = {
     // VALIDATE_CODE_FORM: 'ValidateCodeForm',
     // VALIDATE_TFA_CODE_FORM: 'ValidateTfaCodeForm',
     // RESEND_VALIDATION_FORM: 'ResendValidationForm',
-    // UNLINK_LOGIN_FORM: 'UnlinkLoginForm',
     // RESEND_VALIDATE_CODE_FORM: 'ResendValidateCodeForm',
+    // ...
   },
 
   // at least 8 characters, 1 capital letter, 1 lowercase number, 1 number

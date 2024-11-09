@@ -8,17 +8,17 @@ import useNetwork from '@hooks/useNetwork';
 import useThemeStyles from '@hooks/useThemeStyles';
 import * as Session from '@userActions/Session';
 import ONYXKEYS from '@src/ONYXKEYS';
-import type {Account} from '@src/types/onyx';
+import type {Login} from '@src/types/onyx';
 import Terms from './Terms';
 
 type SignUpFormOnyxProps = {
-  /** State for the account */
-  account: OnyxEntry<Account>;
+  /** State for the login */
+  login: OnyxEntry<Login>;
 };
 
 type SignUpFormProps = SignUpFormOnyxProps;
 
-function SignUpForm({account}: SignUpFormProps) {
+function SignUpForm({login}: SignUpFormProps) {
   const network = useNetwork();
   const styles = useThemeStyles();
   const {translate} = useLocalize();
@@ -31,7 +31,7 @@ function SignUpForm({account}: SignUpFormProps) {
           success
           large
           text={translate('welcomeSignUpForm.join')}
-          isLoading={account?.isLoading}
+          isLoading={login?.isLoading}
           onPress={() => console.log('Signing up...')}
           // {/* // onPress={() => Session.signUpUser()} // TODO */}
           pressOnEnter
@@ -47,5 +47,5 @@ function SignUpForm({account}: SignUpFormProps) {
 SignUpForm.displayName = 'SignUpForm';
 
 export default withOnyx<SignUpFormProps, SignUpFormOnyxProps>({
-  account: {key: ONYXKEYS.ACCOUNT},
+  login: {key: ONYXKEYS.LOGIN},
 })(SignUpForm);

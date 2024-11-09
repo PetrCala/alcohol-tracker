@@ -1,26 +1,37 @@
+import type {ValueOf} from 'type-fest';
+import type CONST from '@src/CONST';
 import type * as OnyxCommon from './OnyxCommon';
 
-type Login = OnyxCommon.OnyxValueWithOfflineFeedback<
-  {
-    /** Phone/Email associated with user */
-    partnerUserID?: string;
+type Login = {
+  /** Form that is being loaded */
+  loadingForm?: ValueOf<typeof CONST.FORMS>;
 
-    /** Value of partner name */
-    partnerName?: string;
+  /** The email the user logged in with */
+  email?: string;
 
-    /** Date login was validated, used to show info indicator status */
-    validatedDate?: string;
+  /** The password the user logged in with */
+  password?: string;
 
-    /** Whether the user validation code was sent */
-    validateCodeSent?: boolean;
+  /** The password the user is trying to set */
+  passwordConfirm?: string;
 
-    /** Field-specific server side errors keyed by microtime */
-    errorFields?: OnyxCommon.ErrorFields;
-  },
-  'defaultLogin' | 'validateLogin' | 'addedLogin' | 'deletedLogin'
->;
+  /** The nickname the user is trying to set */
+  nickname?: string;
 
-type LoginList = Record<string, Login>;
+  /** Whether the user forgot their password */
+  forgotPassword?: boolean;
+
+  /** The message to be displayed to the user */
+  message?: string;
+
+  /** Whether a sign is loading */
+  isLoading?: boolean;
+
+  /** Authentication failure errors */
+  errors?: OnyxCommon.Errors | null;
+
+  /** Authentication success message */
+  success?: string;
+};
 
 export default Login;
-export type {LoginList};

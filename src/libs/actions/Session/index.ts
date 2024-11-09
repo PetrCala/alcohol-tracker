@@ -51,7 +51,7 @@ import ONYXKEYS from '@src/ONYXKEYS';
 import type {Route} from '@src/ROUTES';
 import ROUTES from '@src/ROUTES';
 import SCREENS from '@src/SCREENS';
-import type Credentials from '@src/types/onyx/Credentials';
+import type Login from '@src/types/onyx/Login';
 // import type {AutoAuthState} from '@src/types/onyx/Session';
 import type Session from '@src/types/onyx/Session';
 import clearCache from './clearCache';
@@ -75,10 +75,10 @@ import clearCache from './clearCache';
 //   callback: value => (stashedSession = value ?? {}),
 // });
 
-let credentials: Credentials = {};
+let login: Login = {};
 Onyx.connect({
-  key: ONYXKEYS.CREDENTIALS,
-  callback: value => (credentials = value ?? {}),
+  key: ONYXKEYS.LOGIN,
+  callback: value => (login = value ?? {}),
 });
 
 // let stashedCredentials: Credentials = {};
@@ -116,46 +116,46 @@ Onyx.connect({
 //   Onyx.set(ONYXKEYS.LAST_VISITED_PATH, '');
 // }
 
-function getShortLivedLoginParams() {
-  const optimisticData: OnyxUpdate[] = [
-    {
-      onyxMethod: Onyx.METHOD.MERGE,
-      key: ONYXKEYS.ACCOUNT,
-      value: {
-        ...CONST.DEFAULT_ACCOUNT_DATA,
-        isLoading: true,
-      },
-    },
-    // We are making a temporary modification to 'signedInWithShortLivedAuthToken' to ensure that 'App.openApp' will be called at least once
-    {
-      onyxMethod: Onyx.METHOD.MERGE,
-      key: ONYXKEYS.SESSION,
-      value: {
-        signedInWithShortLivedAuthToken: true,
-      },
-    },
-  ];
+// function getShortLivedLoginParams() {
+//   const optimisticData: OnyxUpdate[] = [
+//     {
+//       onyxMethod: Onyx.METHOD.MERGE,
+//       key: ONYXKEYS.ACCOUNT,
+//       value: {
+//         ...CONST.DEFAULT_ACCOUNT_DATA,
+//         isLoading: true,
+//       },
+//     },
+//     // We are making a temporary modification to 'signedInWithShortLivedAuthToken' to ensure that 'App.openApp' will be called at least once
+//     {
+//       onyxMethod: Onyx.METHOD.MERGE,
+//       key: ONYXKEYS.SESSION,
+//       value: {
+//         signedInWithShortLivedAuthToken: true,
+//       },
+//     },
+//   ];
 
-  // Subsequently, we revert it back to the default value of 'signedInWithShortLivedAuthToken' in 'finallyData' to ensure the user is logged out on refresh
-  const finallyData: OnyxUpdate[] = [
-    {
-      onyxMethod: Onyx.METHOD.MERGE,
-      key: ONYXKEYS.ACCOUNT,
-      value: {
-        isLoading: false,
-      },
-    },
-    {
-      onyxMethod: Onyx.METHOD.MERGE,
-      key: ONYXKEYS.SESSION,
-      value: {
-        signedInWithShortLivedAuthToken: null,
-      },
-    },
-  ];
+//   // Subsequently, we revert it back to the default value of 'signedInWithShortLivedAuthToken' in 'finallyData' to ensure the user is logged out on refresh
+//   const finallyData: OnyxUpdate[] = [
+//     {
+//       onyxMethod: Onyx.METHOD.MERGE,
+//       key: ONYXKEYS.ACCOUNT,
+//       value: {
+//         isLoading: false,
+//       },
+//     },
+//     {
+//       onyxMethod: Onyx.METHOD.MERGE,
+//       key: ONYXKEYS.SESSION,
+//       value: {
+//         signedInWithShortLivedAuthToken: null,
+//       },
+//     },
+//   ];
 
-  return {optimisticData, finallyData};
-}
+//   return {optimisticData, finallyData};
+// }
 
 // /**
 //  * This method should be used when we are being redirected from oldDot to NewDot on a supportal request
@@ -624,8 +624,7 @@ function checkIfActionIsAllowed<
  */
 function clearSignInData() {
   Onyx.multiSet({
-    [ONYXKEYS.ACCOUNT]: null,
-    [ONYXKEYS.CREDENTIALS]: null,
+    [ONYXKEYS.LOGIN]: null,
   });
 }
 
@@ -669,8 +668,8 @@ function cleanupSession() {
   Timing.clearData();
 }
 
-function clearAccountMessages() {
-  Onyx.merge(ONYXKEYS.ACCOUNT, {
+function clearLoginMessages() {
+  Onyx.merge(ONYXKEYS.LOGIN, {
     success: '',
     errors: null,
     message: null,
@@ -1077,7 +1076,7 @@ export {
   //   requestUnlinkValidationLink,
   //   unlinkLogin,
   clearSignInData,
-  clearAccountMessages,
+  clearLoginMessages,
   // setAccountError,
   //   authenticatePusher,
   //   reauthenticatePusher,

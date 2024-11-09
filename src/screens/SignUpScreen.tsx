@@ -1,5 +1,6 @@
-﻿import React, {useReducer, useRef} from 'react';
+﻿import React, {useReducer, useRef, useState} from 'react';
 import {Alert, Keyboard} from 'react-native';
+import {useFocusEffect} from '@react-navigation/native';
 import {getAuth, updateProfile} from 'firebase/auth';
 import {signUpUserWithEmailAndPassword} from '@libs/auth/auth';
 import {useFirebase} from '@context/global/FirebaseContext';
@@ -18,7 +19,7 @@ import type {Profile} from '@src/types/onyx';
 import DBPATHS from '@database/DBPATHS';
 import Navigation from '@navigation/Navigation';
 import ROUTES from '@src/ROUTES';
-import type {Account, Credentials, Locale} from '@src/types/onyx';
+import type {Login, Locale} from '@src/types/onyx';
 import {checkAccountCreationLimit} from '@database/protection';
 import * as Session from '@userActions/Session';
 import useThemeStyles from '@hooks/useThemeStyles';
@@ -36,16 +37,12 @@ import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import useLocalize from '@hooks/useLocalize';
 import InitialForm from '@libs/InitialForm';
 import SignUpScreenLayout from '@libs/SignUpScreenLayout';
-import WelcomeForm from '@libs/SignUp/WelcomeForm';
+// import LoginForm from '@libs/SignUp/LoginForm'; // TODO enable this
 import SignUpForm from '@libs/SignUp/SignUpForm';
-import {useFocusEffect} from '@react-navigation/native';
 
 type SignUpScreenInnerOnyxProps = {
-  /** The details about the account that the user is signing in with */
-  account: OnyxEntry<Account>;
-
-  /** The credentials of the person signing in */
-  credentials: OnyxEntry<Credentials>;
+  /** The details about the user that is signing in */
+  login: OnyxEntry<Login>;
 
   /** The user's preferred locale */
   preferredLocale: OnyxEntry<Locale>;
@@ -100,8 +97,7 @@ function getRenderOptions({
 }
 
 function SignUpScreen({
-  credentials,
-  account,
+  login,
   preferredLocale,
   shouldEnableMaxHeight = true,
 }: SignUpScreenInnerProps) {
@@ -113,9 +109,9 @@ function SignUpScreen({
   const {shouldUseNarrowLayout, isInNarrowPaneModal} = useResponsiveLayout();
   const safeAreaInsets = useStyledSafeAreaInsets();
   const signUpScreenLayoutRef = useRef<SignUpScreenLayoutRef>(null);
-  const loginFormRef = useRef<InputHandle>(null);
+  const initialFormRef = useRef<InputHandle>(null);
   const [loginFormHidden, setLoginFormHidden] = React.useState<boolean>(true);
-  const [login, setLogin] = React.useState('');
+  const [email, setEmail] = useState(() => login?.email ?? '');
   // const theme = useTheme();
 
   useFocusEffect(
@@ -154,7 +150,7 @@ function SignUpScreen({
     shouldShowWelcomeText,
     shouldShowLoginForm,
   } = getRenderOptions({
-    hasLogin: !!credentials?.login,
+    hasLogin: !!login?.email,
     loginFormHidden,
   });
 
@@ -162,7 +158,7 @@ function SignUpScreen({
   let welcomeText = '';
   const headerText = translate('login.hero.header');
 
-  const userLoginToDisplay = credentials?.login ?? '';
+  const userLoginToDisplay = login?.email ?? '';
 
   if (shouldShowLoginForm) {
     welcomeHeader = shouldUseNarrowLayout
@@ -187,7 +183,7 @@ function SignUpScreen({
 
   const navigateFocus = () => {
     signUpScreenLayoutRef.current?.scrollPageToTop();
-    loginFormRef.current?.clearDataAndFocus();
+    initialFormRef.current?.clearDataAndFocus();
   };
 
   const navigateBack = () => {
@@ -238,16 +234,15 @@ function SignUpScreen({
         ref={signUpScreenLayoutRef}
         navigateFocus={navigateFocus}>
         <InitialForm
-          ref={loginFormRef}
+          ref={initialFormRef}
           isVisible={shouldShowInitialForm}
-          login={login}
-          onLoginChanged={setLogin}
+          email={email}
+          onEmailChanged={setEmail}
           setLoginFormHidden={setLoginFormHidden}
           blurOnSubmit={false}
           scrollPageToTop={signUpScreenLayoutRef.current?.scrollPageToTop}
         />
-        {/* {shouldShowWelcomeForm && <WelcomeForm />} */}
-        {/* // TODO replace with LoginForm */}
+        {/* {shouldShowLoginForm && <LoginForm />} */}
         {shouldShowSignUpForm && <SignUpForm />}
       </SignUpScreenLayout>
     </ScreenWrapper>
@@ -276,8 +271,7 @@ function SignUpScreenThemeWrapper(props: SignUpScreenProps) {
 SignUpScreenThemeWrapper.displayName = 'Sign Up Screen';
 
 export default withOnyx<SignUpScreenProps, SignUpScreenOnyxProps>({
-  account: {key: ONYXKEYS.ACCOUNT},
-  credentials: {key: ONYXKEYS.CREDENTIALS},
+  login: {key: ONYXKEYS.LOGIN},
   preferredLocale: {
     key: ONYXKEYS.NVP_PREFERRED_LOCALE,
   },

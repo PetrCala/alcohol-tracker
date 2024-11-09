@@ -1,28 +1,19 @@
 import React from 'react';
 import {View} from 'react-native';
-import type {OnyxEntry} from 'react-native-onyx';
 import {withOnyx} from 'react-native-onyx';
 import PressableWithFeedback from '@components/Pressable/PressableWithFeedback';
 import Text from '@components/Text';
 import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
 import CONST from '@src/CONST';
-import ONYXKEYS from '@src/ONYXKEYS';
-import type {Credentials} from '@src/types/onyx';
 
-type ChangeKirokuLoginLinkOnyxProps = {
-  /** The credentials of the person logging in */
-  credentials: OnyxEntry<Credentials>;
-};
+type ChangeKirokuLoginLinkOnyxProps = {};
 
 type ChangeKirokuLoginLinkProps = ChangeKirokuLoginLinkOnyxProps & {
   onPress: () => void;
 };
 
-function ChangeKirokuLoginLink({
-  credentials,
-  onPress,
-}: ChangeKirokuLoginLinkProps) {
+function ChangeKirokuLoginLink({onPress}: ChangeKirokuLoginLinkProps) {
   const styles = useThemeStyles();
   const {translate} = useLocalize();
 
@@ -45,8 +36,4 @@ ChangeKirokuLoginLink.displayName = 'ChangeKirokuLoginLink';
 export default withOnyx<
   ChangeKirokuLoginLinkProps,
   ChangeKirokuLoginLinkOnyxProps
->({
-  credentials: {
-    key: ONYXKEYS.CREDENTIALS,
-  },
-})(ChangeKirokuLoginLink);
+>({})(ChangeKirokuLoginLink);

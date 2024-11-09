@@ -10,15 +10,8 @@ import type DeepValueOf from './types/utils/DeepValueOf';
  * This is a file containing constants for all the top level keys in the onyx store
  */
 const ONYXKEYS = {
-  //   /** Holds information about the users account that is logging in */
-  ACCOUNT: 'account',
-
-  //   /** Holds the reportID for the report between the user and their account manager */
-  //   ACCOUNT_MANAGER_REPORT_ID: 'accountManagerReportID',
-
-  //   /** Holds an array of client IDs which is used for multi-tabs on web in order to know
-  //    * which tab is the leader, and which ones are the followers */
-  //   ACTIVE_CLIENTS: 'activeClients',
+  //   /** Holds information about the user that is logging in */
+  LOGIN: 'login',
 
   //   /** A unique ID for the device */
   DEVICE_ID: 'deviceID',
@@ -37,10 +30,6 @@ const ONYXKEYS = {
 
   /** Stores current date */
   CURRENT_DATE: 'currentDate',
-
-  /** Credentials to authenticate the user */
-  CREDENTIALS: 'credentials',
-  STASHED_CREDENTIALS: 'stashedCredentials',
 
   //   // Contains loading data for the IOU feature (MoneyRequestModal, IOUDetail, & MoneyRequestPreview Components)
   //   IOU: 'iou',
@@ -104,9 +93,6 @@ const ONYXKEYS = {
 
   //   /** Contains latitude and longitude of user's last known location */
   //   USER_LOCATION: 'userLocation',
-
-  //   /** Contains metadata (partner, login, validation date) for all of the user's logins */
-  //   LOGIN_LIST: 'loginList',
 
   //   /** Information about the current session (authToken, userID, email, loading, error) */
   SESSION: 'session',
@@ -478,7 +464,6 @@ type OnyxCollectionValuesMapping = {
 };
 
 type OnyxValuesMapping = {
-  [ONYXKEYS.ACCOUNT]: OnyxTypes.Account;
   [ONYXKEYS.NVP_TZ_FIX]: OnyxTypes.TzFix | [];
   //   [ONYXKEYS.ACCOUNT_MANAGER_REPORT_ID]: string;
   //   [ONYXKEYS.NVP_IS_FIRST_TIME_NEW_EXPENSIFY_USER]: boolean;
@@ -487,9 +472,8 @@ type OnyxValuesMapping = {
   [ONYXKEYS.IS_SIDEBAR_LOADED]: boolean;
   [ONYXKEYS.PERSISTED_REQUESTS]: OnyxTypes.Request[];
   [ONYXKEYS.CURRENT_DATE]: string;
-  [ONYXKEYS.CREDENTIALS]: OnyxTypes.Credentials;
-  [ONYXKEYS.STASHED_CREDENTIALS]: OnyxTypes.Credentials;
   //   [ONYXKEYS.IOU]: OnyxTypes.IOU;
+  [ONYXKEYS.LOGIN]: OnyxTypes.Login;
   [ONYXKEYS.MODAL]: OnyxTypes.Modal;
   [ONYXKEYS.NETWORK]: OnyxTypes.Network;
   //   [ONYXKEYS.NEW_GROUP_CHAT_DRAFT]: OnyxTypes.NewGroupChatDraft;

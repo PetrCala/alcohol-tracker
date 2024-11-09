@@ -1,9 +1,9 @@
 type InitialFormProps = {
-  /** The login input value */
-  login: string;
+  /** The email input value */
+  email: string;
 
-  /** A callback to notify that the login input value is changed */
-  onLoginChanged: (login: string) => void;
+  /** A callback to notify that the email input value is changed */
+  onEmailChanged: (email: string) => void;
 
   /** Function used to scroll to the top of the page */
   scrollPageToTop?: () => void;
