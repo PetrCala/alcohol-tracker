@@ -7,6 +7,7 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import CONST from '@src/CONST';
 import ROUTES, {Route} from '@src/ROUTES';
 import Navigation from '@libs/Navigation/Navigation';
+import * as Session from '@userActions/Session';
 
 type ChangeSignUpScreenLinkOnyxProps = {};
 

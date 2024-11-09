@@ -1,8 +1,6 @@
-﻿import React, {useCallback, useEffect, useReducer, useRef} from 'react';
+﻿import React, {useCallback, useRef} from 'react';
 import {useFirebase} from '@context/global/FirebaseContext';
 import ScreenWrapper from '@components/ScreenWrapper';
-import useTheme from '@hooks/useTheme';
-import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import SignUpScreenLayout from './SignUpScreenLayout';
 import useThemeStyles from '@hooks/useThemeStyles';
 import useStyleUtils from '@hooks/useStyleUtils';
@@ -15,10 +13,8 @@ import ONYXKEYS from '@src/ONYXKEYS';
 import FormProvider from '@components/Form/FormProvider';
 import {FormInputErrors, FormOnyxValues} from '@components/Form/types';
 import {Errors} from '@src/types/onyx/OnyxCommon';
-import {View} from 'react-native';
 import InputWrapper from '@components/Form/InputWrapper';
 import TextInput from '@components/TextInput';
-import {useOnyx} from 'react-native-onyx';
 import CONST from '@src/CONST';
 import * as ValidationUtils from '@libs/ValidationUtils';
 import * as ErrorUtils from '@libs/ErrorUtils';
@@ -39,7 +35,6 @@ type LoginScreenLayoutRef = {
 function LogInScreen() {
   const {isOnline} = useUserConnection();
   const {auth} = useFirebase();
-  const theme = useTheme();
   const {translate} = useLocalize();
   const styles = useThemeStyles();
   const StyleUtils = useStyleUtils();
@@ -144,7 +139,7 @@ function LogInScreen() {
               includeSafeAreaPaddingBottom={false}
               isSubmitButtonVisible={!isLoading}
               shouldUseScrollView={false}
-              style={[styles.flexGrow1]}>
+              style={styles.flexGrow1}>
               <InputWrapper
                 InputComponent={TextInput}
                 inputID={INPUT_IDS.EMAIL}

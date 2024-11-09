@@ -28,7 +28,7 @@ import useStyleUtils from '@hooks/useStyleUtils';
 import useStyledSafeAreaInsets from '@hooks/useStyledSafeAreaInsets';
 import useResponsiveLayout from '@hooks/useResponsiveLayout';
 import {InputHandle} from '@libs/InitialForm/types';
-import {OnyxEntry, withOnyx} from 'react-native-onyx';
+import {OnyxEntry, useOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 import CustomStatusBarAndBackground from '@components/CustomStatusBarAndBackground';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
@@ -41,13 +41,7 @@ import SignUpScreenLayout from './SignUpScreenLayout';
 import Text from '@components/Text';
 import useTheme from '@hooks/useTheme';
 
-type InitialScreenOnyxProps = {
-  /** The details about the user that is signing in */
-  login: OnyxEntry<Login>;
-
-  /** The user's preferred locale */
-  preferredLocale: OnyxEntry<Locale>;
-};
+type InitialScreenOnyxProps = {};
 
 type InitialScreenProps = InitialScreenOnyxProps & {};
 
@@ -55,7 +49,7 @@ type InitialScreenLayoutRef = {
   scrollPageToTop: (animated?: boolean) => void;
 };
 
-function InitialScreen({login, preferredLocale}: InitialScreenProps) {
+function InitialScreen(): InitialScreenOnyxProps {
   const {auth, db} = useFirebase();
   const {isOnline} = useUserConnection();
   const {translate} = useLocalize();
@@ -65,11 +59,11 @@ function InitialScreen({login, preferredLocale}: InitialScreenProps) {
   const safeAreaInsets = useStyledSafeAreaInsets();
   const currentScreenLayoutRef = useRef<InitialScreenLayoutRef>(null);
   const initialFormRef = useRef<InputHandle>(null);
-  const [email, setEmail] = useState(login?.email ?? '');
 
   useFocusEffect(
     // Redirect to main screen if user is already logged in (from sign up screen only)
     React.useCallback(() => {
+      Session.clearSignInData();
       const stopListening = auth.onAuthStateChanged(user => {
         if (user) {
           Navigation.navigate(ROUTES.HOME);
@@ -129,10 +123,6 @@ function InitialScreen({login, preferredLocale}: InitialScreenProps) {
         navigateFocus={navigateFocus}>
         <InitialForm
           ref={initialFormRef}
-          isVisible={true}
-          email={email}
-          onEmailChanged={setEmail}
-          blurOnSubmit={false}
           scrollPageToTop={currentScreenLayoutRef.current?.scrollPageToTop}
         />
       </SignUpScreenLayout>
@@ -141,13 +131,7 @@ function InitialScreen({login, preferredLocale}: InitialScreenProps) {
 }
 
 InitialScreen.displayName = 'Sign Up Screen';
-
-export default withOnyx<InitialScreenProps, InitialScreenOnyxProps>({
-  login: {key: ONYXKEYS.LOGIN},
-  preferredLocale: {
-    key: ONYXKEYS.NVP_PREFERRED_LOCALE,
-  },
-})(InitialScreen);
+export default InitialScreen;
 
 // <WarningMessage warningText={state.warning} dispatch={dispatch} />
 // <View style={styles.logoContainer}>
