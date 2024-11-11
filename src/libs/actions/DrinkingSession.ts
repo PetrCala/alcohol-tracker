@@ -3,7 +3,7 @@ import {ref, update} from 'firebase/database';
 import {removeZeroObjectsFromSession} from '@libs/DataHandling';
 import type {DrinkingSession, DrinksList, UserStatus} from '@src/types/onyx';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
-import DBPATHS from './DBPATHS';
+import DBPATHS from '../../database/DBPATHS';
 
 const drinkingSessionRef = DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID;
 const drinkingSessionDrinksRef =
@@ -19,7 +19,7 @@ const placeholderSessionRef = DBPATHS.USER_SESSION_PLACEHOLDER_USER_ID;
  * @param updateStatus Whether to update the user status data or not
  * @returnsPromise void.
  *  */
-export async function saveDrinkingSessionData(
+async function saveDrinkingSessionData(
   db: Database,
   userID: UserID,
   newSessionData: DrinkingSession,
@@ -43,7 +43,7 @@ export async function saveDrinkingSessionData(
 
 /** Save a placeholder session in the database. Update only the placeholder session node.
  */
-export async function savePlaceholderSessionData(
+async function savePlaceholderSessionData(
   db: Database,
   userID: UserID,
   newSessionData: DrinkingSession,
@@ -57,7 +57,7 @@ export async function savePlaceholderSessionData(
 
 /** Remove any potentially existing placeholder session data from the database.
  */
-export async function removePlaceholderSessionData(
+async function removePlaceholderSessionData(
   db: Database,
   userID: UserID,
 ): Promise<void> {
@@ -74,7 +74,7 @@ export async function removePlaceholderSessionData(
  * @param sesisonKey ID of the session to edit (can be null in case of finishing the session)
  * @returnsPromise void.
  *  */
-export async function startLiveDrinkingSession(
+async function startLiveDrinkingSession(
   db: Database,
   userID: string,
   newSessionData: DrinkingSession,
@@ -100,7 +100,7 @@ export async function startLiveDrinkingSession(
  * @param sesisonKey ID of the session to edit (can be null in case of finishing the session)
  * @returnsPromise void.
  *  */
-export async function endLiveDrinkingSession(
+async function endLiveDrinkingSession(
   db: Database,
   userID: string,
   newSessionData: DrinkingSession,
@@ -129,7 +129,7 @@ export async function endLiveDrinkingSession(
  * @param sessionKey ID of the session to remove
  * @returns
  *  */
-export async function removeDrinkingSessionData(
+async function removeDrinkingSessionData(
   db: Database,
   userID: string,
   sessionKey: string,
@@ -147,7 +147,7 @@ export async function removeDrinkingSessionData(
  * @param sessionKey - The key of the session to be discarded.
  * @returns A Promise that resolves when the session is discarded.
  */
-export async function discardLiveDrinkingSession(
+async function discardLiveDrinkingSession(
   db: Database,
   userID: string,
   sessionKey: string,
@@ -168,7 +168,7 @@ export async function discardLiveDrinkingSession(
  * @param newDrinks An object containing the new drinks
  * @returns A promise.
  */
-export async function updateSessionDrinks(
+async function updateSessionDrinks(
   db: Database,
   userID: string,
   sessionKey: string,
@@ -179,3 +179,16 @@ export async function updateSessionDrinks(
     newDrinks || {}; // Can not send undefined
   await update(ref(db), updates);
 }
+
+async function openSession() {}
+
+export {
+  saveDrinkingSessionData,
+  savePlaceholderSessionData,
+  removePlaceholderSessionData,
+  startLiveDrinkingSession,
+  endLiveDrinkingSession,
+  removeDrinkingSessionData,
+  discardLiveDrinkingSession,
+  updateSessionDrinks,
+};

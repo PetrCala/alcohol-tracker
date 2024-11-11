@@ -23,7 +23,7 @@ import SCREENS from '@src/SCREENS';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {readDataOnce} from '@database/baseFunctions';
 import DBPATHS from '@database/DBPATHS';
-import {saveDrinkingSessionData} from '@database/drinkingSessions';
+import {saveDrinkingSessionData} from '@libs/actions/DrinkingSession';
 
 type SessionDateScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,

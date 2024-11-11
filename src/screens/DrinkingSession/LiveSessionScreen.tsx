@@ -10,14 +10,7 @@ import {
   View,
 } from 'react-native';
 import {useFirebase} from '@context/global/FirebaseContext';
-import {
-  discardLiveDrinkingSession,
-  endLiveDrinkingSession,
-  removeDrinkingSessionData,
-  removePlaceholderSessionData,
-  saveDrinkingSessionData,
-  updateSessionDrinks,
-} from '@database/drinkingSessions';
+import * as DS from '@libs/actions/DrinkingSession';
 import {
   addDrinks,
   formatDateToTime,
@@ -127,7 +120,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     }
     try {
       setDbSyncSuccessful(false);
-      await saveDrinkingSessionData(
+      await DS.saveDrinkingSessionData(
         db,
         user.uid,
         newSessionData,
@@ -275,9 +268,9 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
         await new Promise(resolve => setTimeout(resolve, 100));
       }
       if (sessionIsLive) {
-        await endLiveDrinkingSession(db, userID, newSessionData, sessionId);
+        await DS.endLiveDrinkingSession(db, userID, newSessionData, sessionId);
       } else {
-        await saveDrinkingSessionData(
+        await DS.saveDrinkingSessionData(
           db,
           userID,
           newSessionData,
@@ -285,7 +278,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
           false, // Do not update live status
         );
       }
-      await removePlaceholderSessionData(db, userID);
+      await DS.removePlaceholderSessionData(db, userID);
     } catch (error: any) {
       Alert.alert(
         translate('liveSessionScreen.error.saveTitle'),
@@ -314,11 +307,11 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
         `${sessionIsLive ? 'Discarding' : 'Deleting'} this session...`,
       );
       const discardFunction = sessionIsLive
-        ? discardLiveDrinkingSession
-        : removeDrinkingSessionData;
+        ? DS.discardLiveDrinkingSession
+        : DS.removeDrinkingSessionData;
       await waitForNoPendingUpdate();
       await discardFunction(db, user.uid, sessionId);
-      await removePlaceholderSessionData(db, user.uid);
+      await DS.removePlaceholderSessionData(db, user.uid);
     } catch (error: any) {
       Alert.alert(
         'Session discard failed',
@@ -345,7 +338,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       try {
         setLoadingText(translate('liveSessionScreen.synchronizing'));
         await waitForNoPendingUpdate();
-        await updateSessionDrinks(db, user.uid, sessionId, session?.drinks);
+        await DS.updateSessionDrinks(db, user.uid, sessionId, session?.drinks);
       } catch (error: any) {
         Alert.alert('Database synchronization failed', error.message);
       } finally {
@@ -361,7 +354,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     }
     try {
       if (isPlaceholderSession) {
-        await removePlaceholderSessionData(db, user.uid);
+        await DS.removePlaceholderSessionData(db, user.uid);
       }
     } catch (error: any) {
       Log.warn('Could not remove placeholder session data', error.message); // Unimportant

@@ -21,7 +21,7 @@ import {useFirebase} from '@context/global/FirebaseContext';
 import {readDataOnce} from '@database/baseFunctions';
 import DBPATHS from '@database/DBPATHS';
 import TextInput from '@components/TextInput';
-import {saveDrinkingSessionData} from '@database/drinkingSessions';
+import {saveDrinkingSessionData} from '@libs/actions/DrinkingSession';
 
 type SessionNoteScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,

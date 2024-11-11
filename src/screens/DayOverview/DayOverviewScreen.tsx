@@ -37,7 +37,7 @@ import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import DBPATHS from '@database/DBPATHS';
 import DSUtils from '@libs/DrinkingSessionUtils';
 import CONST from '@src/CONST';
-import {savePlaceholderSessionData} from '@database/drinkingSessions';
+import {savePlaceholderSessionData} from '@libs/actions/DrinkingSession';
 import ScreenWrapper from '@components/ScreenWrapper';
 import {nonMidnightString} from '@libs/StringUtilsKiroku';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';

@@ -19,7 +19,7 @@ import type {Database} from 'firebase/database';
 import {
   saveDrinkingSessionData,
   savePlaceholderSessionData,
-} from '@database/drinkingSessions';
+} from '@libs/actions/DrinkingSession';
 
 import {MOCK_USER_IDS} from '../../utils/testsStatic';
 import {readDataOnce} from '@database/baseFunctions';

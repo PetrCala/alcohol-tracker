@@ -23,7 +23,7 @@ import {
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import UserOffline from '@components/UserOfflineModal';
 import {synchronizeUserStatus} from '@database/users';
-import {startLiveDrinkingSession} from '@database/drinkingSessions';
+import {startLiveDrinkingSession} from '@libs/actions/DrinkingSession';
 import commonStyles from '@src/styles/commonStyles';
 import {useFirebase} from '@context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
