@@ -37,7 +37,7 @@ function ChangeSignUpScreenLink({
     if (shouldPointToLogIn) {
       Navigation.navigate(ROUTES.LOG_IN);
     } else if (shouldPointToSignUp) {
-      Navigation.navigate(ROUTES.SIGN_UP);
+      Navigation.resetToHome();
     } else {
       Navigation.resetToHome();
     }

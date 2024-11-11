@@ -1,26 +1,12 @@
-import React, {useReducer, useRef, useState} from 'react';
-import {Alert, Keyboard} from 'react-native';
+import React, {useRef} from 'react';
 import {useFocusEffect} from '@react-navigation/native';
-import {getAuth, updateProfile} from 'firebase/auth';
-import {signUpUserWithEmailAndPassword} from '@libs/auth/auth';
+import {getAuth} from 'firebase/auth';
 import {useFirebase} from '@context/global/FirebaseContext';
-import {readDataOnce} from '@database/baseFunctions';
 import {useUserConnection} from '@context/global/UserConnectionContext';
-import type {ValidationResult} from '@libs/Validation';
-import {
-  isValidPassword,
-  isValidPasswordConfirm,
-  validateAppVersion,
-  validateSignInInput,
-} from '@libs/Validation';
-import {deleteUserData, pushNewUserInfo} from '@database/users';
-import variables from '@styles/variables';
-import type {Profile} from '@src/types/onyx';
+import {deleteUserData} from '@database/users';
 import DBPATHS from '@database/DBPATHS';
 import Navigation from '@navigation/Navigation';
 import ROUTES from '@src/ROUTES';
-import type {Login, Locale} from '@src/types/onyx';
-import {checkAccountCreationLimit} from '@database/protection';
 import * as Session from '@userActions/Session';
 import useThemeStyles from '@hooks/useThemeStyles';
 import ScreenWrapper from '@components/ScreenWrapper';
@@ -28,16 +14,10 @@ import useStyleUtils from '@hooks/useStyleUtils';
 import useStyledSafeAreaInsets from '@hooks/useStyledSafeAreaInsets';
 import useResponsiveLayout from '@hooks/useResponsiveLayout';
 import {InputHandle} from '@libs/InitialForm/types';
-import {OnyxEntry, useOnyx} from 'react-native-onyx';
-import ONYXKEYS from '@src/ONYXKEYS';
-import CustomStatusBarAndBackground from '@components/CustomStatusBarAndBackground';
-import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import useLocalize from '@hooks/useLocalize';
 import InitialForm from '@libs/InitialForm';
-// import InitialScreenLayout from '@libs/InitialScreenLayout';
-// import LogInForm from '@screens/SignUp/LogInForm/BaseLogInForm';
 import SignUpScreenLayout from './SignUpScreenLayout';
-// import SignUpForm from '@screens/SignUp/SignUpForm';
+import OrDelimiter from './OrDelimiter';
 
 type InitialScreenOnyxProps = {};
 

@@ -1221,6 +1221,20 @@ const styles = (theme: ThemeColors) =>
       opacity: 1,
     },
 
+    orDelimiterContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      ...sizing.w100,
+      ...spacing.mv4,
+    },
+
+    orDelimiterLine: {
+      flex: 1,
+      height: 1,
+      backgroundColor: theme.textSupporting,
+      ...spacing.mh2,
+    },
+
     overlayStyles: (current: OverlayStylesParams, isModalOnTheLeft: boolean) =>
       ({
         ...positioning.pFixed,

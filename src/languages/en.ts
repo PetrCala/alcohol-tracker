@@ -19,6 +19,7 @@ export default {
     name: 'Name',
     attachment: 'Attachment',
     to: 'To',
+    or: 'Or',
     optional: 'Optional',
     new: 'New',
     search: 'Search',
@@ -602,6 +603,7 @@ export default {
   },
   signUpScreen: {
     signingIn: 'Signing in...',
+    chooseAnotherMethod: 'Choose another sign in method',
     error: {
       generic: 'There was an error creating your account. Please try again.',
     },

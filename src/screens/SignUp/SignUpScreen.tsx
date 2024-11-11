@@ -20,19 +20,16 @@ import * as ValidationUtils from '@libs/ValidationUtils';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import * as Browser from '@libs/Browser';
 import * as User from '@database/users';
-import {signInWithEmailAndPassword} from 'firebase/auth';
-import Text from '@components/Text';
-import {PressableWithFeedback} from '@components/Pressable';
-import Navigation from '@libs/Navigation/Navigation';
-import ROUTES from '@src/ROUTES';
 import DotIndicatorMessage from '@components/DotIndicatorMessage';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
 import {useOnyx} from 'react-native-onyx';
 import {TranslationPaths} from '@src/languages/types';
 import {ValueOf} from 'type-fest';
-import DBPATHS from '@database/DBPATHS';
-import {readDataOnce} from '@database/baseFunctions';
+import Text from '@components/Text';
+import OrDelimiter from './OrDelimiter';
+import {PressableWithFeedback} from '@components/Pressable';
+import Navigation from '@libs/Navigation/Navigation';
 
 type LoginScreenLayoutRef = {
   scrollPageToTop: (animated?: boolean) => void;
@@ -232,7 +229,18 @@ function SignUpScreen() {
               )}
             </FormProvider>
             <ChangeSignUpScreenLink shouldPointToLogIn={true} />
-            {/* --- OR --- */}
+            <OrDelimiter />
+            <PressableWithFeedback
+              style={[styles.link]}
+              onPress={() => Navigation.resetToHome()}
+              role={CONST.ROLE.LINK}
+              accessibilityLabel={translate(
+                'signUpScreen.chooseAnotherMethod',
+              )}>
+              <Text style={[styles.link, styles.textAlignCenter]}>
+                {translate('signUpScreen.chooseAnotherMethod')}
+              </Text>
+            </PressableWithFeedback>
             {/* Use another sign up method <- a simple link that navigates to the initial screen */}
           </>
         )}
