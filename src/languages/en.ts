@@ -127,6 +127,7 @@ export default {
     genericErrorMessage:
       'Oops... something went wrong and your request could not be completed. Please try again later.',
     error: {
+      error: 'Error',
       invalidAmount: 'Invalid amount',
       acceptTerms: 'You must accept the Terms of Service to continue',
       fieldRequired: 'This field is required.',
@@ -247,6 +248,14 @@ export default {
     please: 'Please',
     allowPermission: 'allow location permission in settings',
     tryAgain: 'and then try again.',
+  },
+  imageUpload: {
+    success: 'Image uploaded successfully!',
+    error: {
+      fetch: 'Could not fetch the image. Please try again.',
+      upload: 'There was an error uploading your image.',
+      choice: 'There was an error when selecting your image.',
+    },
   },
   personalDetails: {
     error: {
