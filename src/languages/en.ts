@@ -6,7 +6,6 @@ import type {
 } from './types';
 import type {SignUpNewAccountCodeParams} from './params';
 import Platform from '@libs/getPlatform/types';
-import SessionSummaryScreen from '@screens/DrinkingSession/SessionSummaryScreen';
 
 /* eslint-disable max-len */
 export default {
@@ -119,6 +118,9 @@ export default {
     noResultsFound: 'No results found',
     recentDestinations: 'Recent destinations',
     timePrefix: "It's",
+    time: 'Time',
+    units: 'Units',
+    drinks: 'Drinks',
     conjunctionFor: 'for',
     todayAt: 'Today at',
     tomorrowAt: 'Tomorrow at',
@@ -459,6 +461,8 @@ export default {
   dayOverviewScreen: {
     enterEditMode: 'Edit Mode',
     exitEditMode: 'Exit Edit Mode',
+    noDrinkingSessions: 'No drinking sessions',
+    inSession: 'In Session',
   },
   liveSessionScreen: {
     saving: 'Saving your session...',

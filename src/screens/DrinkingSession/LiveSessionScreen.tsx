@@ -243,6 +243,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     const newTotalUnits = sumAllUnits(
       session?.drinks,
       preferences.drinks_to_units,
+      true,
     );
     const newAvailableUnits = CONST.MAX_ALLOWED_UNITS - newTotalUnits;
     setTotalUnits(newTotalUnits);

@@ -70,6 +70,20 @@ export function dateToDateObject(date: Date): DateObject {
 }
 
 /**
+ * Rounds a number to two decimal places.
+ * @param value - The number to be rounded.
+ * @returns The rounded number.
+ */
+export function roundToTwoDecimalPlaces(value: number): number {
+  const decimalCheck = value.toString().split('.')[1];
+  if (decimalCheck && decimalCheck.length > 2) {
+    return parseFloat(value.toFixed(2));
+  } else {
+    return value;
+  }
+}
+
+/**
  * Convert a timestamp to a date string.
  *
  * @param timestamp Timestamp
@@ -469,6 +483,7 @@ export function isDrinkTypeKey(key: string): key is keyof Drinks {
 export function sumAllUnits(
   drinksObject: DrinksList | undefined,
   drinksToUnits: DrinksToUnits,
+  roundUp?: boolean,
 ): number {
   if (_.isEmpty(drinksObject)) {
     return 0;
@@ -484,6 +499,9 @@ export function sumAllUnits(
       }
     });
   });
+  if (roundUp) {
+    return roundToTwoDecimalPlaces(totalUnits);
+  }
   return totalUnits;
 }
 
@@ -806,20 +824,6 @@ export function objVals(obj: any): string[] {
   }
   // Return an empty array for non-object inputs or null
   return [];
-}
-
-/**
- * Rounds a number to two decimal places.
- * @param value - The number to be rounded.
- * @returns The rounded number.
- */
-export function roundToTwoDecimalPlaces(value: number): number {
-  const decimalCheck = value.toString().split('.')[1];
-  if (decimalCheck && decimalCheck.length > 2) {
-    return parseFloat(value.toFixed(2));
-  } else {
-    return value;
-  }
 }
 
 // test, getAdjacentMonths, findongoingsession, aggregatesessionsbydays, month entries to colors (move these maybe to a different location), toPercentageVerbose

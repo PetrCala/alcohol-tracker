@@ -19,6 +19,7 @@ import {
   getSingleDayDrinkingSessions,
   sumAllUnits,
   dateStringToDate,
+  roundToTwoDecimalPlaces,
 } from '@libs/DataHandling';
 // import { PreferencesData} from '../types/database';
 import UserOffline from '@components/UserOfflineModal';
@@ -115,7 +116,11 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
     }
 
     // Calculate the session color
-    const totalUnits = sumAllUnits(session.drinks, preferences.drinks_to_units);
+    const totalUnits = sumAllUnits(
+      session.drinks,
+      preferences.drinks_to_units,
+      true,
+    );
     const unitsToColorsInfo = preferences.units_to_colors;
     let sessionColor = unitsToColors(totalUnits, unitsToColorsInfo);
     if (session.blackout === true) {
@@ -139,11 +144,11 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
                 style={localStyles.menuDrinkingSessionButton}
                 onPress={() => onSessionButtonPress(sessionId, session)}>
                 <Text style={[styles.textNormalThemeText, styles.p1]}>
-                  Units: {totalUnits}
+                  {translate('common.units')}: {totalUnits}
                 </Text>
                 {shouldDisplayTime && (
                   <Text style={[styles.textNormalThemeText, styles.p1]}>
-                    Time: {nonMidnightString(timeString)}
+                    {translate('common.time')}: {nonMidnightString(timeString)}
                   </Text>
                 )}
               </TouchableOpacity>
@@ -154,7 +159,9 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
                   accessibilityRole="button"
                   style={[localStyles.ongoingSessionButton, styles.border]}
                   onPress={() => onSessionButtonPress(sessionId, session)}>
-                  <Text style={[styles.buttonLargeText]}>In Session</Text>
+                  <Text style={[styles.buttonLargeText]}>
+                    {translate('dayOverviewScreen.inSession')}
+                  </Text>
                 </TouchableOpacity>
               </View>
             ) : (
@@ -183,7 +190,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
   const noDrinkingSessionsComponent = () => {
     return (
       <Text style={[styles.noResultsText, styles.mb2]}>
-        No drinking sessions
+        {translate('dayOverviewScreen.noDrinkingSessions')}
       </Text>
     );
   };

@@ -63,7 +63,11 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
   );
   // Drinks info
   const totalDrinks = sumAllDrinks(session.drinks);
-  const totalUnits = sumAllUnits(session.drinks, preferences.drinks_to_units);
+  const totalUnits = sumAllUnits(
+    session.drinks,
+    preferences.drinks_to_units,
+    true,
+  );
   const drinkSums = {
     small_beer: sumDrinksOfSingleType(session.drinks, 'small_beer'),
     beer: sumDrinksOfSingleType(session.drinks, 'beer'),
