@@ -84,8 +84,11 @@ const ONYXKEYS = {
   /** Boolean flag used to display the focus mode notification */
   FOCUS_MODE_NOTIFICATION: 'focusModeNotification',
 
-  /** Placeholder session data */
-  PLACEHOLDER_SESSION_DATA: 'placeholderSessionData',
+  /** Live session data */
+  LIVE_SESSION_DATA: 'placeholderSessionData',
+
+  /** Edit session data */
+  EDIT_SESSION_DATA: 'editSessionData',
 
   /** Is drinking session data loading? */
   IS_LOADING_SESSION_DATA: 'isLoadingSessionData',
@@ -247,7 +250,8 @@ type OnyxValuesMapping = {
   [ONYXKEYS.FOCUS_MODE_NOTIFICATION]: boolean;
   [ONYXKEYS.PUSH_NOTIFICATIONS_ENABLED]: boolean;
   [ONYXKEYS.NVP_PREFERRED_LOCALE]: OnyxTypes.Locale;
-  [ONYXKEYS.PLACEHOLDER_SESSION_DATA]: OnyxTypes.DrinkingSession;
+  [ONYXKEYS.LIVE_SESSION_DATA]: OnyxTypes.DrinkingSession;
+  [ONYXKEYS.EDIT_SESSION_DATA]: OnyxTypes.DrinkingSession;
   [ONYXKEYS.IS_LOADING_SESSION_DATA]: boolean;
   [ONYXKEYS.LOADING_SESSION_DATA_TEXT]: string;
   //   [ONYXKEYS.IS_TEST_TOOLS_MODAL_OPEN]: boolean;
