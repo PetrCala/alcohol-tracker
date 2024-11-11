@@ -55,6 +55,7 @@ import type Drinks from './Drinks';
 import type User from './User';
 import type {DrinkKey, DrinkName, DrinksList, DrinksTimestamp} from './Drinks';
 import type UserIsTyping from './UserIsTyping';
+import type UserLocation from './UserLocation';
 import type UserProps from './UserProps';
 import type {
   UserPropsList,
@@ -130,6 +131,7 @@ export type {
   UserProps,
   UserDrinkingSessionsList,
   UserIsTyping,
+  UserLocation,
   UserPropsList,
   UserStatus,
   UserStatusList,
