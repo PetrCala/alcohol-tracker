@@ -45,8 +45,10 @@ function ForgotPasswordScreen({}: ForgotPasswordScreenProps) {
   const onSubmit = async (
     values: FormOnyxValues<typeof ONYXKEYS.FORMS.EMAIL_FORM>,
   ) => {
+    setIsLoading(true);
+    setSuccessMessage('');
+
     try {
-      setIsLoading(true);
       const emailToSend = values.email.trim();
       await sendPasswordResetEmail(auth, emailToSend);
       setSuccessMessage(translate('forgotPasswordScreen.success', emailToSend));
@@ -63,7 +65,6 @@ function ForgotPasswordScreen({}: ForgotPasswordScreenProps) {
       const errors: FormInputErrors<typeof ONYXKEYS.FORMS.EMAIL_FORM> = {};
 
       setServerErrorMessage('');
-      setSuccessMessage('');
 
       const emailErrorTranslationKey = ValidationUtils.validateEmail(
         values.email,
