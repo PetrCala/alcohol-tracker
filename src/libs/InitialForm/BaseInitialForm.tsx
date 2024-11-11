@@ -1,47 +1,18 @@
-import {useFocusEffect, useIsFocused} from '@react-navigation/native';
-import Str from '@libs/common/str';
 import type {ForwardedRef} from 'react';
-import React, {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import {InteractionManager, View} from 'react-native';
-import Onyx, {useOnyx, withOnyx} from 'react-native-onyx';
-import type {OnyxEntry} from 'react-native-onyx';
-import DotIndicatorMessage from '@components/DotIndicatorMessage';
-import FormAlertWithSubmitButton from '@components/FormAlertWithSubmitButton';
+import React, {forwardRef, useCallback} from 'react';
+import Onyx, {useOnyx} from 'react-native-onyx';
 // import AppleSignIn from '@components/SignInButtons/AppleSignIn';
 // import GoogleSignIn from '@components/SignInButtons/GoogleSignIn';
 import Text from '@components/Text';
 import TextInput from '@components/TextInput';
-import isTextInputFocused from '@components/TextInput/BaseTextInput/isTextInputFocused';
 import INPUT_IDS from '@src/types/form/EmailForm';
-import type {BaseTextInputRef} from '@components/TextInput/BaseTextInput/types';
-import withToggleVisibilityView from '@components/withToggleVisibilityView';
 import type {WithToggleVisibilityViewProps} from '@components/withToggleVisibilityView';
 import useLocalize from '@hooks/useLocalize';
-import useNetwork from '@hooks/useNetwork';
-import usePrevious from '@hooks/usePrevious';
 import useResponsiveLayout from '@hooks/useResponsiveLayout';
 import useThemeStyles from '@hooks/useThemeStyles';
-import * as Browser from '@libs/Browser';
-import canFocusInputOnScreenFocus from '@libs/canFocusInputOnScreenFocus';
 import * as ErrorUtils from '@libs/ErrorUtils';
-import isInputAutoFilled from '@libs/isInputAutoFilled';
-import * as LoginUtils from '@libs/LoginUtils';
 import * as ValidationUtils from '@libs/ValidationUtils';
-import Visibility from '@libs/Visibility';
-import * as Session from '@userActions/Session';
-import CONFIG from '@src/CONFIG';
-import CONST from '@src/CONST';
-import type {TranslationPaths} from '@src/languages/types';
 import ONYXKEYS from '@src/ONYXKEYS';
-import type {Login} from '@src/types/onyx';
 import type InitialFormProps from './types';
 import type {InputHandle} from './types';
 import ChangeSignUpScreenLink from '@screens/SignUp/ChangeSignUpScreenLink';

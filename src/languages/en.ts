@@ -608,6 +608,17 @@ export default {
       generic: 'There was an error creating your account. Please try again.',
     },
   },
+  forgotPasswordScreen: {
+    title: 'Forgotten password',
+    prompt:
+      'We will send you instructions on how to reset your password using the following email:',
+    sending: 'Sending you an email...',
+    submit: 'Reset your password',
+    enterEmail: 'Enter your email here',
+    error: {
+      generic: 'There was an error when attempting to reset your password.',
+    },
+  },
   genericErrorScreen: {
     title: 'Oops, something went wrong!',
     body: {

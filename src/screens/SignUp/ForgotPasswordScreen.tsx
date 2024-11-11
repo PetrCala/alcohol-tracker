@@ -1,18 +1,137 @@
-function ForgotPasswordScreen() {
-  return <></>;
+import React, {useCallback} from 'react';
+import {Alert, View} from 'react-native';
+import {sendPasswordResetEmail} from 'firebase/auth';
+import FullscreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
+import HeaderWithBackButton from '@components/HeaderWithBackButton';
+import ScreenWrapper from '@components/ScreenWrapper';
+import useLocalize from '@hooks/useLocalize';
+import useThemeStyles from '@hooks/useThemeStyles';
+import Navigation from '@libs/Navigation/Navigation';
+import * as ValidationUtils from '@libs/ValidationUtils';
+import * as ErrorUtils from '@libs/ErrorUtils';
+import type {SettingsNavigatorParamList} from '@libs/Navigation/types';
+import type {FormInputErrors, FormOnyxValues} from '@src/components/Form/types';
+import ONYXKEYS from '@src/ONYXKEYS';
+import INPUT_IDS from '@src/types/form/EmailForm';
+import FormProvider from '@components/Form/FormProvider';
+import Text from '@components/Text';
+import {Errors} from '@src/types/onyx/OnyxCommon';
+import InputWrapper from '@components/Form/InputWrapper';
+import variables from '@src/styles/variables';
+import TextInput from '@components/TextInput';
+import {StackScreenProps} from '@react-navigation/stack';
+import SCREENS from '@src/SCREENS';
+import {useFirebase} from '@context/global/FirebaseContext';
+import ROUTES from '@src/ROUTES';
+import DotIndicatorMessage from '@components/DotIndicatorMessage';
+
+type ForgotPasswordScreenOnyxProps = {};
+
+type ForgotPasswordScreenProps = ForgotPasswordScreenOnyxProps &
+  StackScreenProps<
+    SettingsNavigatorParamList,
+    typeof SCREENS.SETTINGS.ACCOUNT.EMAIL
+  >;
+
+function ForgotPasswordScreen({}: ForgotPasswordScreenProps) {
+  const styles = useThemeStyles();
+  const {translate} = useLocalize();
+  const {auth} = useFirebase();
+  const currentEmail = auth.currentUser?.email;
+  const [serverErrorMessage, setServerErrorMessage] = React.useState('');
+  const [isLoading, setIsLoading] = React.useState(false);
+
+  const onSubmit = async (
+    values: FormOnyxValues<typeof ONYXKEYS.FORMS.EMAIL_FORM>,
+  ) => {
+    try {
+      setIsLoading(true);
+      const emailToSend = values.email.trim();
+      await sendPasswordResetEmail(auth, emailToSend);
+      Navigation.navigate(ROUTES.LOG_IN);
+    } catch (error: any) {
+      const errorMessage = ErrorUtils.getErrorMessage(error);
+      setServerErrorMessage(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const validate = useCallback(
+    (values: FormOnyxValues<typeof ONYXKEYS.FORMS.EMAIL_FORM>): Errors => {
+      const errors: FormInputErrors<typeof ONYXKEYS.FORMS.EMAIL_FORM> = {};
+
+      setServerErrorMessage('');
+
+      const emailErrorTranslationKey = ValidationUtils.validateEmail(
+        values.email,
+        currentEmail,
+      );
+
+      if (emailErrorTranslationKey) {
+        ErrorUtils.addErrorMessage(
+          errors,
+          INPUT_IDS.EMAIL,
+          translate(emailErrorTranslationKey),
+        );
+      }
+
+      return errors;
+    },
+    [translate],
+  );
+
+  return (
+    <ScreenWrapper
+      includeSafeAreaPaddingBottom={false}
+      testID={ForgotPasswordScreen.displayName}>
+      <HeaderWithBackButton
+        title={translate('forgotPasswordScreen.title')}
+        shouldShowBackButton
+        onBackButtonPress={Navigation.goBack}
+      />
+      {isLoading ? (
+        <FullscreenLoadingIndicator
+          style={[styles.flex1]}
+          loadingText={translate('forgotPasswordScreen.sending')}
+        />
+      ) : (
+        <FormProvider
+          formID={ONYXKEYS.FORMS.EMAIL_FORM}
+          validate={validate}
+          onSubmit={onSubmit}
+          submitButtonText={translate('forgotPasswordScreen.submit')}
+          style={[styles.flexGrow1, styles.mh5]}>
+          <View style={[styles.flexGrow1]}>
+            <Text>{translate('forgotPasswordScreen.prompt')}</Text>
+            <InputWrapper
+              InputComponent={TextInput}
+              inputID={INPUT_IDS.EMAIL}
+              name="email"
+              autoGrowHeight
+              shouldSaveDraft={true}
+              maxAutoGrowHeight={variables.textInputAutoGrowMaxHeight}
+              label={translate('forgotPasswordScreen.enterEmail')}
+              aria-label={translate('forgotPasswordScreen.enterEmail')}
+              defaultValue={currentEmail ?? ''}
+              spellCheck={false}
+              containerStyles={[styles.mt5]}
+            />
+            {!!serverErrorMessage && (
+              <DotIndicatorMessage
+                style={[styles.mv2]}
+                type="error"
+                // eslint-disable-next-line @typescript-eslint/naming-convention,@typescript-eslint/prefer-nullish-coalescing
+                messages={{0: serverErrorMessage || ''}}
+              />
+            )}
+          </View>
+        </FormProvider>
+      )}
+    </ScreenWrapper>
+  );
 }
 
-ForgotPasswordScreen.displayName = 'Login Screen';
-export default ForgotPasswordScreen;
+ForgotPasswordScreen.displayName = 'ForgotPasswordScreen';
 
-// const handleResetPassword = async (mail: string) => {
-//   try {
-//     await sendPasswordResetEmail(auth, mail);
-//     dispatch({type: 'SET_SUCCESS', payload: 'Password reset link sent'});
-//   } catch (error: any) {
-//     const errorMessage = ErrorUtils.getErrorMessage(error);
-//     dispatch({type: 'SET_WARNING', payload: errorMessage});
-//   } finally {
-//     dispatch({type: 'SET_RESET_PASSWORD_MODAL_VISIBLE', payload: false});
-//   }
-// };
+export default ForgotPasswordScreen;
