@@ -46,10 +46,11 @@ function SesssionDateScreen({route}: SessionDateScreenProps) {
       throw new Error(translate('sessionDateScreen.error.load'));
     }
 
-    const newDate = startOfDay(new Date(values.date));
+    const newDate = new Date(values.date);
 
     try {
       setIsLoading(true);
+      console.log('shifting the session date to', newDate);
       const newSession = DSUtils.shiftSessionDate(session, newDate);
       await saveDrinkingSessionData(
         db,
