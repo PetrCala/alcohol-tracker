@@ -104,6 +104,7 @@ function ForgotPasswordScreen({}: ForgotPasswordScreenProps) {
           validate={validate}
           onSubmit={onSubmit}
           submitButtonText={translate('forgotPasswordScreen.submit')}
+          isSubmitDisabled={!!successMessage}
           style={[styles.flexGrow1, styles.mh5]}>
           <View style={[styles.flexGrow1]}>
             <Text>{translate('forgotPasswordScreen.prompt')}</Text>
