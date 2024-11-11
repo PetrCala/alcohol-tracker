@@ -474,6 +474,7 @@ export default {
       `Do you really want to ${discardWord} this session?`,
     unsavedChangesWarning:
       'You have unsaved changes. Are you sure you want to go back?',
+    sessionDetails: 'Session details',
     error: {
       saveTitle: 'Session save failed',
       save: 'This session could not be saved. Try again.',

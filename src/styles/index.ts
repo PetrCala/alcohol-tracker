@@ -1493,6 +1493,14 @@ const styles = (theme: ThemeColors) =>
       ...spacing.mt2,
     },
 
+    sessionDetailsWindowHeader: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderTopWidth: 1,
+      borderColor: theme.border,
+    },
+
     signUpScreen: {
       backgroundColor: theme.highlightBG,
       minHeight: '100%',

@@ -40,7 +40,7 @@ import {ScrollOffsetContext} from '@components/ScrollOffsetContextProvider';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import UserOffline from '@components/UserOfflineModal';
 import DrinkTypesView from '@components/DrinkTypesView';
-import SessionDetailsSlider from '@components/SessionDetailsSlider';
+import SessionDetailsWindow from '@components/SessionDetailsWindow';
 import SuccessIndicator from '@components/SuccessIndicator';
 import commonStyles from '@styles/commonStyles';
 import FillerView from '@components/FillerView';
@@ -552,7 +552,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
                 availableUnits={availableUnits}
               />
             </View>
-            <SessionDetailsSlider
+            <SessionDetailsWindow
               sessionId={sessionId}
               isBlackout={session.blackout}
               onBlackoutChange={handleBlackoutChange}

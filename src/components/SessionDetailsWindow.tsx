@@ -42,7 +42,7 @@ type SessionSliderProps = {
   shouldAllowDateChange?: boolean;
 };
 
-const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
+const SessionDetailsWindow: React.FC<SessionSliderProps> = ({
   sessionId,
   isBlackout,
   onBlackoutChange,
@@ -92,11 +92,13 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
   }
 
   return (
-    <View style={localStyles.container}>
-      <View style={[localStyles.tab, styles.borderColorTheme]}>
-        <Text style={styles.headerText}>Session details</Text>
+    <View style={styles.mh2}>
+      <View style={styles.sessionDetailsWindowHeader}>
+        <Text style={styles.headerText}>
+          {translate('liveSessionScreen.sessionDetails')}
+        </Text>
       </View>
-      <View style={localStyles.sessionDetailsContainer}>
+      <View style={styles.w100}>
         {sliderData.map(item => {
           const keyTitle = item.translationKey
             ? translate(item.translationKey)
@@ -147,72 +149,4 @@ const SessionDetailsSlider: React.FC<SessionSliderProps> = ({
   );
 };
 
-const localStyles = StyleSheet.create({
-  container: {
-    marginLeft: 8,
-    marginRight: 8,
-  },
-  tab: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 50,
-    borderTopWidth: 1,
-  },
-  tabArrow: {
-    width: 25,
-    height: 25,
-    marginRight: 3,
-  },
-  tabArrowExpanded: {
-    transform: [{rotate: '180deg'}],
-  },
-  tabArrowDefault: {},
-  sessionDetailsContainer: {
-    width: '100%',
-  },
-  tileContainerBase: {
-    padding: 10,
-    borderColor: 'gray',
-    borderBottomWidth: 0,
-    borderRadius: 5,
-    marginLeft: 12,
-    marginRight: 12,
-  },
-  tileContainerHorizontal: {
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
-  tileContainerVertical: {
-    flexDirection: 'column',
-    alignContent: 'flex-start',
-  },
-  tileHeading: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: 'black',
-  },
-  noteWindowContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 5,
-    backgroundColor: 'white',
-    marginTop: 5,
-  },
-  noteTextInput: {
-    width: '100%',
-    height: 100,
-    flexGrow: 1,
-    flexShrink: 1,
-    textAlignVertical: 'top',
-    padding: 10,
-    paddingTop: 10,
-    borderRadius: 5,
-    color: 'black',
-  },
-});
-
-export default SessionDetailsSlider;
+export default SessionDetailsWindow;
