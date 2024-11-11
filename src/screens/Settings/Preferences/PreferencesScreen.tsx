@@ -28,7 +28,9 @@ import ScrollView from '@components/ScrollView';
 import MenuItemGroup from '@components/MenuItemGroup';
 import Section from '@components/Section';
 import MenuItem from '@components/MenuItem';
-import NumericSlider from '@components/Popups/NumericSlider';
+import NumericSlider, {
+  NumericSliderProps,
+} from '@components/Popups/NumericSlider';
 import CONST from '@src/CONST';
 
 type MenuData = {
@@ -43,6 +45,11 @@ type Menu = {
   sectionTranslationKey: TranslationPaths;
   subtitle?: string;
   items: MenuData[];
+};
+
+type PreferencesSliderConfig = NumericSliderProps & {
+  list: string;
+  key: string;
 };
 
 type PreferencesScreenProps = StackScreenProps<
@@ -61,19 +68,23 @@ function PreferencesScreen({}: PreferencesScreenProps) {
   const waitForNavigate = useWaitForNavigation();
   const initialPreferences = useRef(preferences);
   const [showLeaveConfirmation, setShowLeaveConfirmation] = useState(false);
-  const [sliderVisible, setSliderVisible] = useState<boolean>(false);
-  const [sliderStep, setSliderStep] = useState<number>(1);
-  const [sliderMaxValue, setSliderMaxValue] = useState<number>(5);
-  const [sliderValue, setSliderValue] = useState<number>(0);
-  const [sliderHeading, setSliderHeading] = useState<string>('');
-  const [sliderList, setSliderList] = useState<string>('');
-  const [sliderKey, setSliderKey] = useState<string>('');
   const [saving, setSaving] = useState<boolean>(false);
   // Deconstruct the preferences
   const defaultPreferences = getDefaultPreferences();
   const [currentPreferences, setCurrentPreferences] = useState<Preferences>(
     preferences || defaultPreferences,
   );
+  const [sliderConfig, setSliderConfig] = useState<PreferencesSliderConfig>({
+    visible: false,
+    heading: '',
+    step: 1,
+    value: 0,
+    maxValue: 5,
+    onRequestClose: () => {},
+    onSave: () => {},
+    list: '',
+    key: '',
+  });
 
   const havePreferencesChanged = () => {
     return !isEqual(initialPreferences.current, currentPreferences);
@@ -142,15 +153,18 @@ function PreferencesScreen({}: PreferencesScreenProps) {
       <Button
         text={value.toString()}
         style={styles.settingValueButton}
-        onPress={() => {
-          setSliderHeading(label);
-          setSliderStep(sliderMinValue);
-          setSliderMaxValue(sliderMaxValue);
-          setSliderValue(value);
-          setSliderVisible(true);
-          setSliderList(sliderListKey);
-          setSliderKey(key);
-        }}
+        onPress={() =>
+          setSliderConfig(prev => ({
+            ...prev,
+            visible: true,
+            heading: label,
+            step: sliderMinValue,
+            value: value,
+            maxValue: sliderMaxValue,
+            list: sliderListKey,
+            key: key,
+          }))
+        }
       />
     );
   };
@@ -368,21 +382,21 @@ function PreferencesScreen({}: PreferencesScreenProps) {
           {drinksToUnitsMenuItems}
         </MenuItemGroup>
         <NumericSlider
-          visible={sliderVisible}
-          value={sliderValue}
-          heading={sliderHeading}
-          step={sliderStep}
-          maxValue={sliderMaxValue}
+          visible={sliderConfig.visible}
+          value={sliderConfig.value}
+          heading={sliderConfig.heading}
+          step={sliderConfig.step}
+          maxValue={sliderConfig.maxValue}
           onRequestClose={() => {
-            setSliderVisible(false);
+            setSliderConfig(prev => ({...prev, visible: false}));
           }}
           onSave={newValue => {
-            if (sliderList == 'units_to_colors') {
-              updateUnitsToColors(sliderKey, newValue);
-            } else if (sliderList == 'drinks_to_units') {
-              updateDrinksToUnits(sliderKey, newValue);
+            if (sliderConfig.list === 'units_to_colors') {
+              updateUnitsToColors(sliderConfig.key, newValue);
+            } else if (sliderConfig.list === 'drinks_to_units') {
+              updateDrinksToUnits(sliderConfig.key, newValue);
             }
-            setSliderVisible(false);
+            setSliderConfig(prev => ({...prev, visible: false}));
           }}
         />
       </ScrollView>
@@ -399,7 +413,7 @@ function PreferencesScreen({}: PreferencesScreenProps) {
         title={translate('common.areYouSure')}
         prompt={translate('preferencesScreen.unsavedChanges')}
         onConfirm={() => {
-          setSliderVisible(false);
+          setSliderConfig(prev => ({...prev, visible: false}));
           setShowLeaveConfirmation(false);
           Navigation.goBack();
         }}

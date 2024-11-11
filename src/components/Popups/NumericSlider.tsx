@@ -31,9 +31,12 @@ const NumericSlider = ({
   const theme = useTheme();
   const {translate} = useLocalize();
 
+  // Ensure correct initialization
   useEffect(() => {
-    setLocalValue(value);
-  }, [value]);
+    if (visible) {
+      setLocalValue(value);
+    }
+  }, [value, visible]);
 
   const handleSliderChange = (value: number) => {
     const newValue = parseFloat(value.toFixed(1));
@@ -80,3 +83,4 @@ const NumericSlider = ({
 };
 
 export default NumericSlider;
+export type {NumericSliderProps};
