@@ -30,6 +30,8 @@ import {
 import {cleanStringForFirebaseKey} from '@libs/StringUtilsKiroku';
 import CONST from '@src/CONST';
 import {UserID} from '@src/types/onyx/OnyxCommon';
+import {addDays, startOfDay, subDays} from 'date-fns';
+import DateUtils from '@libs/DateUtils';
 
 function getMockSessionIDs(): Array<string> {
   return ['mock-session-1', 'mock-session-2', 'mock-session-3'];
@@ -167,31 +169,30 @@ function createMockDrinksList(drinks: Drinks = {}): DrinksList {
  * Generates a DrinkingSession for a specified offset relative to a given date.
  *
  * @param baseDate Date around which sessions are created.
- * @param offsetDays Number of days to offset from baseDate. If not provided, a random offset between -7 and 7 days is used.
+ * @param shouldOffetDays Whether or not the date should be randomly offset
  * @param drinks Drinks consumed during the session
  * @param ongoing Whether the session is ongoing or not
  * @returns A DrinkingSession object.
  */
 function createMockSession(
   baseDate: Date,
-  offsetDays?: number,
+  shouldOffetDays?: boolean,
   drinks?: DrinksList,
   ongoing?: boolean,
 ): DrinkingSession {
   if (!drinks) {
     drinks = getZeroDrinksList();
   }
-  const sessionDate = new Date(baseDate);
+  let sessionDate = new Date(baseDate);
 
-  // If offsetDays is not provided, randomize between -7 and 7 days.
-  const daysOffset =
-    offsetDays !== undefined ? offsetDays : Math.floor(Math.random() * 15) - 7;
-
-  sessionDate.setDate(sessionDate.getDate() + daysOffset);
-
-  const startHour = 3; // you can randomize this or make it configurable
-
-  sessionDate.setHours(startHour, 0, 0, 0);
+  if (shouldOffetDays) {
+    // Randomize between -7 and 7 days
+    const daysOffset = Math.floor(Math.random() * 15) - 7;
+    sessionDate =
+      daysOffset > 0
+        ? addDays(sessionDate, daysOffset)
+        : subDays(sessionDate, daysOffset);
+  }
 
   const newSession: DrinkingSession = {
     start_time: sessionDate.getTime(),
@@ -200,7 +201,7 @@ function createMockSession(
     note: '',
     drinks: drinks,
     type: getRandomChoice(Object.values(CONST.SESSION_TYPES)),
-    // timezone: DateUtils.getCurrentTimezone(),
+    timezone: DateUtils.getCurrentTimezone().selected,
   };
   if (ongoing) {
     newSession.ongoing = true;
@@ -328,7 +329,7 @@ function createMockDatabase(noFriends = false): DatabaseProps {
     let latestSessionId = '';
     mockSessionIDs.forEach(sessionId => {
       const fullSessionId: DrinkingSessionId = `${userID}-${sessionId}`;
-      const mockSession = createMockSession(new Date());
+      const mockSession = createMockSession(new Date(), true);
       mockSessionData[fullSessionId] = mockSession;
       latestSessionId = fullSessionId;
     });

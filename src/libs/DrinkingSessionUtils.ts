@@ -13,7 +13,12 @@ import {numberToVerboseString} from './TimeUtils';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
 import {SelectedTimezone, Timezone} from '@src/types/onyx/PersonalDetails';
 import DBPATHS from '@database/DBPATHS';
-import {differenceInDays, subDays, subMilliseconds} from 'date-fns';
+import {
+  addMilliseconds,
+  differenceInDays,
+  subDays,
+  subMilliseconds,
+} from 'date-fns';
 
 const PlaceholderDrinks: DrinksList = {[Date.now()]: {other: 0}};
 
@@ -234,6 +239,9 @@ function shiftSessionTimestamps(
   session: DrinkingSession,
   millisecondsToSub: number,
 ): DrinkingSession {
+  if (millisecondsToSub === 0) {
+    return session;
+  }
   const convertedSession = {...session};
   convertedSession.start_time = subMilliseconds(
     session.start_time,
