@@ -39,6 +39,7 @@ function ForgotPasswordScreen({}: ForgotPasswordScreenProps) {
   const {auth} = useFirebase();
   const currentEmail = auth.currentUser?.email;
   const [serverErrorMessage, setServerErrorMessage] = React.useState('');
+  const [successMessage, setSuccessMessage] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
 
   const onSubmit = async (
@@ -48,7 +49,7 @@ function ForgotPasswordScreen({}: ForgotPasswordScreenProps) {
       setIsLoading(true);
       const emailToSend = values.email.trim();
       await sendPasswordResetEmail(auth, emailToSend);
-      Navigation.navigate(ROUTES.LOG_IN);
+      setSuccessMessage(translate('forgotPasswordScreen.success', emailToSend));
     } catch (error: any) {
       const errorMessage = ErrorUtils.getErrorMessage(error);
       setServerErrorMessage(errorMessage);
@@ -62,6 +63,7 @@ function ForgotPasswordScreen({}: ForgotPasswordScreenProps) {
       const errors: FormInputErrors<typeof ONYXKEYS.FORMS.EMAIL_FORM> = {};
 
       setServerErrorMessage('');
+      setSuccessMessage('');
 
       const emailErrorTranslationKey = ValidationUtils.validateEmail(
         values.email,
@@ -88,7 +90,7 @@ function ForgotPasswordScreen({}: ForgotPasswordScreenProps) {
       <HeaderWithBackButton
         title={translate('forgotPasswordScreen.title')}
         shouldShowBackButton
-        onBackButtonPress={Navigation.goBack}
+        onBackButtonPress={() => Navigation.navigate(ROUTES.LOG_IN)}
       />
       {isLoading ? (
         <FullscreenLoadingIndicator
@@ -123,6 +125,14 @@ function ForgotPasswordScreen({}: ForgotPasswordScreenProps) {
                 type="error"
                 // eslint-disable-next-line @typescript-eslint/naming-convention,@typescript-eslint/prefer-nullish-coalescing
                 messages={{0: serverErrorMessage || ''}}
+              />
+            )}
+            {!!successMessage && (
+              <DotIndicatorMessage
+                style={[styles.mv2]}
+                type="success"
+                // eslint-disable-next-line @typescript-eslint/naming-convention,@typescript-eslint/prefer-nullish-coalescing
+                messages={{0: successMessage || ''}}
               />
             )}
           </View>

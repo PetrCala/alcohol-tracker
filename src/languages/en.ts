@@ -615,6 +615,8 @@ export default {
     sending: 'Sending you an email...',
     submit: 'Reset your password',
     enterEmail: 'Enter your email here',
+    success: (email: string) =>
+      `An email with password reset instructions has been sent to ${email}.`,
     error: {
       generic: 'There was an error when attempting to reset your password.',
     },
