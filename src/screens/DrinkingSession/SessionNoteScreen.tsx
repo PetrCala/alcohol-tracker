@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import FormProvider from '@components/Form/FormProvider';
 import InputWrapper from '@components/Form/InputWrapper';
 import type {FormOnyxValues} from '@components/Form/types';
@@ -36,6 +36,7 @@ function SesssionNoteScreen({route}: SessionNoteScreenProps) {
   const styles = useThemeStyles();
   const [session, setSession] = useState<DrinkingSession | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [initialNote, setInitialNote] = useState<string>('');
 
   const onSubmit = async (
     values: FormOnyxValues<typeof ONYXKEYS.FORMS.SESSION_NOTE_FORM>,
@@ -43,6 +44,11 @@ function SesssionNoteScreen({route}: SessionNoteScreenProps) {
     if (!user || !session) {
       throw new Error(translate('sessionNoteScreen.error.generic'));
     }
+    if (values.note === initialNote) {
+      Navigation.goBack(); // No changes to the session note
+      return;
+    }
+
     const newSession = {...session, note: values.note};
 
     try {
@@ -95,6 +101,7 @@ function SesssionNoteScreen({route}: SessionNoteScreenProps) {
       ),
     );
     setSession(session);
+    setInitialNote(session?.note ?? '');
     setIsLoading(false);
   };
 
