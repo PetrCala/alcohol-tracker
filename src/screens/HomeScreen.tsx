@@ -1,22 +1,12 @@
-﻿import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useReducer,
-  useState,
-} from 'react';
+﻿import React, {useEffect, useMemo, useReducer} from 'react';
 import {
   Alert,
   Dimensions,
-  Image,
-  Keyboard,
   StyleSheet,
   Text,
   TouchableOpacity,
-  useWindowDimensions,
   View,
 } from 'react-native';
-import Onyx, {useOnyx} from 'react-native-onyx';
 import MenuIcon from '@components/Buttons/MenuIcon';
 import SessionsCalendar from '@components/Calendar';
 import type {DateObject} from '@src/types/time';
@@ -61,16 +51,13 @@ import FriendRequestCounter from '@components/Social/FriendRequestCounter';
 import ScreenWrapper from '@components/ScreenWrapper';
 import MessageBanner from '@components/Info/MessageBanner';
 import VerifyEmailPopup from '@components/Popups/VerifyEmailPopup';
-import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
-import ONYXKEYS from '@src/ONYXKEYS';
 import getPlatform from '@libs/getPlatform';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import DSUtils from '@libs/DrinkingSessionUtils';
 import useTheme from '@hooks/useTheme';
 import Icon from '@components/Icon';
 import ScrollView from '@components/ScrollView';
-import FillerView from '@components/FillerView';
 
 type State = {
   visibleDateObject: DateObject;
@@ -141,8 +128,6 @@ function HomeScreen({route}: HomeScreenProps) {
     isLoading,
   } = useDatabaseData();
   const [state, dispatch] = useReducer(reducer, initialState);
-  const [preferredTheme] = useOnyx(ONYXKEYS.PREFERRED_THEME);
-  const {translate} = useLocalize();
 
   const statsData: StatData = [
     {
@@ -537,57 +522,13 @@ const localStyles = StyleSheet.create({
     flexDirection: 'row',
   },
   friendRequestCounter: {
-    marginLeft: -4,
-    marginRight: 4,
-  },
-  mainScreenContent: {
-    flexGrow: 1,
-    flexShrink: 1,
-  },
-  userInSessionWarningText: {
-    fontSize: 22,
-    color: '#ffffff', // White color for the text
-    fontWeight: 'bold',
+    marginLeft: -6,
+    marginRight: 6,
   },
   statsOverviewHolder: {
-    height: 120,
+    minHeight: 120,
     flexDirection: 'row',
     width: screenWidth,
-  },
-  menuInfoContainer: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    width: '100%',
-    marginTop: 2,
-  },
-  menuInfoItemContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-  },
-  menuInfoHeadingText: {
-    textAlign: 'center',
-    fontSize: 18,
-    fontWeight: '500',
-    color: 'black',
-    padding: 5,
-  },
-  menuInfoText: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: 'black',
-    alignSelf: 'center',
-    padding: 6,
-    marginRight: 4,
-    marginLeft: 4,
-  },
-  thisMonthUnitsText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 12,
-    color: 'black',
-    alignSelf: 'center',
-    alignContent: 'center',
   },
   startSessionButton: {
     position: 'absolute',
@@ -600,23 +541,6 @@ const localStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: 'black',
-  },
-  startSessionImage: {
-    width: 30,
-    height: 30,
-    tintColor: 'white',
-    alignItems: 'center',
-    // color: 'white',
-    // fontSize: 50,
-    // fontWeight: 'bold',
-    // textAlign: 'center',
-    // lineHeight: 70,
-  },
-  navigationArrowContainer: {
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '100%',
-    flexDirection: 'row',
   },
   mainScreenFooterHalfContainer: {
     width: '50%',
