@@ -1,6 +1,4 @@
 ﻿import React, {ReactNode, useRef} from 'react';
-// eslint-disable-next-line no-restricted-imports
-import {StyleSheet} from 'react-native';
 import {View} from 'react-native';
 import type {ValueOf} from 'type-fest';
 import MenuItem from '@components/MenuItem';
@@ -51,7 +49,7 @@ const SessionDetailsWindow: React.FC<SessionSliderProps> = ({
   shouldAllowDateChange,
 }) => {
   const {translate} = useLocalize();
-  const {isExecuting, singleExecution} = useSingleExecution();
+  const {singleExecution} = useSingleExecution();
   const waitForNavigate = useWaitForNavigation();
   const popoverAnchor = useRef(null);
   const activeCentralPaneRoute = useActiveCentralPaneRoute();
