@@ -12,7 +12,6 @@ import {TabView} from 'react-native-tab-view';
 import FriendListScreen from './FriendListScreen';
 import FriendRequestScreen from './FriendRequestScreen';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
-import MainHeader from '@components/Header/MainHeader';
 import {getReceivedRequestsCount} from '@libs/FriendUtils';
 import type {UserProps} from '@src/types/onyx';
 import type {StackScreenProps} from '@react-navigation/stack';
@@ -22,6 +21,12 @@ import Navigation from '@libs/Navigation/Navigation';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import FriendRequestCounter from '@components/Social/FriendRequestCounter';
 import ScreenWrapper from '@components/ScreenWrapper';
+import HeaderWithBackButton from '@components/HeaderWithBackButton';
+import useLocalize from '@hooks/useLocalize';
+import useTheme from '@hooks/useTheme';
+import Icon from '@components/Icon';
+import useThemeStyles from '@hooks/useThemeStyles';
+import styles from '@src/styles';
 
 type SocialFooterButtonProps = {
   index: number;
@@ -40,25 +45,41 @@ const SocialFooterButton: React.FC<SocialFooterButtonProps> = ({
   label,
   infoNumberValue,
 }) => {
+  const theme = useTheme();
+  const styles = useThemeStyles();
   return (
-    <View style={styles.footerPartContainer}>
+    <View style={localStyles.footerPartContainer}>
       <TouchableOpacity
         accessibilityRole="button"
         style={[
-          styles.footerButton,
-          currentIndex === index ? {backgroundColor: '#ebeb02'} : {},
+          // styles.borderRight,
+          styles.noBorderRadius,
+          localStyles.footerButton,
         ]}
         onPress={() => setImageIndex(index)}>
         <View
           style={
             infoNumberValue && infoNumberValue > 0
-              ? [styles.imageContainer, styles.extraSpacing]
-              : styles.imageContainer
+              ? [localStyles.imageContainer, localStyles.extraSpacing]
+              : localStyles.imageContainer
           }>
-          <Image source={source} style={styles.footerImage} />
+          <Icon
+            src={source}
+            height={25}
+            width={25}
+            fill={
+              currentIndex === index ? theme.appColor : theme.textSupporting
+            }
+          />
           <FriendRequestCounter count={infoNumberValue} />
         </View>
-        <Text style={styles.footerText}>{label}</Text>
+        <Text
+          style={[
+            styles.mutedTextLabel,
+            currentIndex === index && {color: theme.appColor},
+          ]}>
+          {label}
+        </Text>
       </TouchableOpacity>
     </View>
   );
@@ -77,6 +98,7 @@ type RouteType = {
 
 function SocialScreen({route}: SocialScreenProps) {
   const {userData} = useDatabaseData();
+  const {translate} = useLocalize();
   const [routes] = useState([
     {key: 'friendList', title: 'Friend List', userData: userData},
     // {key: 'friendSearch', title: 'Friend Search', userData: userData},
@@ -122,7 +144,10 @@ function SocialScreen({route}: SocialScreenProps) {
 
   return (
     <ScreenWrapper testID={SocialScreen.displayName}>
-      <MainHeader headerText="Friends" onGoBack={() => Navigation.goBack()} />
+      <HeaderWithBackButton
+        title={translate('socialScreen.title')}
+        onBackButtonPress={Navigation.goBack}
+      />
       <TabView
         navigationState={{index, routes}}
         renderScene={renderScene}
@@ -151,7 +176,7 @@ function SocialScreen({route}: SocialScreenProps) {
 
 const screenWidth = Dimensions.get('window').width;
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   sectionText: {
     fontSize: 20,
     color: 'black',
@@ -232,14 +257,7 @@ const styles = StyleSheet.create({
   footerImage: {
     width: 25,
     height: 25,
-    // padding: 5,
-    // tintColor: '#ebeb02',
-    // tintColor: '#000',
     tintColor: 'gray',
-  },
-  footerText: {
-    fontSize: 12,
-    color: 'gray',
   },
 });
 

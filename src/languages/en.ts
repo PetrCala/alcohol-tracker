@@ -1,13 +1,11 @@
 import CONST from '@src/CONST';
-import type {Country} from '@src/CONST';
 import type {
   CharacterLimitParams,
   TranslationBase,
   UntilTimeParams,
 } from './types';
-import LiveSessionScreen from '@screens/DrinkingSession/LiveSessionScreen';
-
-type AllCountries = Record<Country, string>;
+import type {SignUpNewAccountCodeParams} from './params';
+import Platform from '@libs/getPlatform/types';
 
 /* eslint-disable max-len */
 export default {
@@ -28,6 +26,8 @@ export default {
     next: 'Next',
     previous: 'Previous',
     goBack: 'Go back',
+    logIn: 'Log in',
+    signUp: 'Sign up',
     create: 'Create',
     add: 'Add',
     resend: 'Resend',
@@ -44,12 +44,16 @@ export default {
     chats: 'Chats',
     group: 'Group',
     profile: 'Profile',
+    account: 'Account',
+    username: 'Username',
     referral: 'Referral',
     payments: 'Payments',
     wallet: 'Wallet',
+    clear: 'Clear',
     preferences: 'Preferences',
     view: 'View',
     not: 'Not',
+    authentication: 'Authentication',
     signIn: 'Sign in',
     signInWithGoogle: 'Sign in with Google',
     signInWithApple: 'Sign in with Apple',
@@ -57,6 +61,8 @@ export default {
     continue: 'Continue',
     firstName: 'First name',
     lastName: 'Last name',
+    displayName: 'Display name',
+    nickname: 'Nickname',
     phone: 'Phone',
     phoneNumber: 'Phone number',
     phoneNumberPlaceholder: '(xxx) xxx-xxx-xxx',
@@ -74,6 +80,8 @@ export default {
     close: 'Close',
     download: 'Download',
     downloading: 'Downloading',
+    warning: 'Warning',
+    manage: 'Manage',
     pin: 'Pin',
     unPin: 'Unpin',
     back: 'Back',
@@ -81,11 +89,14 @@ export default {
     settings: 'Settings',
     termsOfService: 'Terms of Service',
     kirokuTermsOfService: 'Kiroku Terms of Service',
+    privacyPolicy: 'Privacy Policy',
     members: 'Members',
     invite: 'Invite',
     here: 'here',
     date: 'Date',
     dob: 'Date of birth',
+    gender: 'Gender',
+    weight: 'Weight',
     currentYear: 'Current year',
     currentMonth: 'Current month',
     city: 'City',
@@ -107,6 +118,9 @@ export default {
     noResultsFound: 'No results found',
     recentDestinations: 'Recent destinations',
     timePrefix: "It's",
+    time: 'Time',
+    units: 'Units',
+    drinks: 'Drinks',
     conjunctionFor: 'for',
     todayAt: 'Today at',
     tomorrowAt: 'Tomorrow at',
@@ -115,6 +129,7 @@ export default {
     genericErrorMessage:
       'Oops... something went wrong and your request could not be completed. Please try again later.',
     error: {
+      error: 'Error',
       invalidAmount: 'Invalid amount',
       acceptTerms: 'You must accept the Terms of Service to continue',
       fieldRequired: 'This field is required.',
@@ -135,21 +150,15 @@ export default {
     semicolon: 'semicolon',
     please: 'Please',
     contactUs: 'contact us',
-    pleaseEnterEmailOrPhoneNumber: 'Please enter an email or phone number',
     fixTheErrors: 'fix the errors',
     inTheFormBeforeContinuing: 'in the form before continuing',
     confirm: 'Confirm',
     reset: 'Reset',
     done: 'Done',
     more: 'More',
-    debitCard: 'Debit card',
-    bankAccount: 'Bank account',
-    personalBankAccount: 'Personal bank account',
-    businessBankAccount: 'Business bank account',
     join: 'Join',
     leave: 'Leave',
     decline: 'Decline',
-    transferBalance: 'Transfer balance',
     cantFindAddress: "Can't find your address? ",
     enterManually: 'Enter it manually',
     message: 'Message ',
@@ -180,8 +189,6 @@ export default {
     letsStart: `Let's start`,
     showMore: 'Show more',
     category: 'Category',
-    billable: 'Billable',
-    nonBillable: 'Non-billable',
     tag: 'Tag',
     receipt: 'Receipt',
     replace: 'Replace',
@@ -195,7 +202,6 @@ export default {
     am: 'AM',
     pm: 'PM',
     tbd: 'TBD',
-    selectCurrency: 'Select a currency',
     card: 'Card',
     whyDoWeAskForThis: 'Why do we ask for this?',
     required: 'Required',
@@ -205,7 +211,18 @@ export default {
     update: 'Update',
     member: 'Member',
     role: 'Role',
-    currency: 'Currency',
+    note: 'Note',
+    blackout: 'Blackout',
+    timezone: 'Timezone',
+  },
+  drinks: {
+    smallBeer: 'Small Beer',
+    beer: 'Beer',
+    wine: 'Wine',
+    weakShot: 'Weak Shot',
+    strongShot: 'Strong Shot',
+    cocktail: 'Cocktail',
+    other: 'Other',
   },
   timePeriods: {
     never: 'Never',
@@ -217,6 +234,13 @@ export default {
     untilTomorrow: 'Until tomorrow',
     untilTime: ({time}: UntilTimeParams) => `Until ${time}`,
   },
+  session: {
+    people: {
+      selectAll: 'Select all',
+    },
+    offlineMessageRetry:
+      "Looks like you're offline. Please check your connection and try again.",
+  },
   location: {
     useCurrent: 'Use current location',
     notFound:
@@ -227,55 +251,370 @@ export default {
     allowPermission: 'allow location permission in settings',
     tryAgain: 'and then try again.',
   },
-  profileScreen: {
-    editProfile: 'Edit Your Profile',
-    publicSection: {
-      title: 'Public Section',
-      subtitle: 'This information will be visible to other members.',
+  imageUpload: {
+    success: 'Image uploaded successfully!',
+    error: {
+      fetch: 'Could not fetch the image. Please try again.',
+      upload: 'There was an error uploading your image.',
+      choice: 'There was an error when selecting your image.',
     },
   },
-  mainMenuScreen: {
-    deleteAccount: 'Delete account',
-    deleteConfirmation: 'Are you sure that you want to delete this account?',
-    improvementThoughts: 'What would you like us to improve?',
+  personalDetails: {
+    error: {
+      hasInvalidCharacter: 'Invalid character',
+      containsReservedWord: 'This name contains a reserved word.',
+      characterLimitExceedCounter: ({length, limit}) =>
+        `Character limit exceeded (${length}/${limit})`,
+      characterLimit: ({limit}: CharacterLimitParams) =>
+        `Exceeds the maximum length of ${limit} characters`,
+      requiredFirstName: 'First name cannot be empty',
+      requiredLastName: 'Last name cannot be empty',
+      requiredDisplayName: 'Nickname cannot be empty',
+    },
   },
-  LiveSessionScreen: {
+  socialScreen: {
+    title: 'Friends',
+  },
+  friendsFriendsScreen: {
+    title: 'Find Friends of Friends',
+  },
+  friendSearchScreen: {
+    title: 'Search For New Friends',
+  },
+  notFoundScreen: {
+    title: 'Not Found',
+  },
+  preferencesScreen: {
+    title: 'Preferences',
+    generalSection: {
+      title: 'General',
+      firstDayOfWeek: 'First day of the week',
+    },
+    unitColorsSection: {
+      title: 'Unit Colors',
+      description:
+        'Set cutoff points where session colors change; each is the maximum value up to which the session retains that color',
+    },
+    drinksToUnitsSection: {
+      title: 'Drinks to Units',
+      description: 'Choose how many units each drink is worth',
+    },
+    save: 'Save preferences',
+    saving: 'Saving your preferences...',
+    unsavedChanges:
+      'You have unsaved changes. Are you sure you want to go back?',
+    error: {
+      save: "We couldn't save your preferences. Please try again.",
+    },
+  },
+  sessionSummaryScreen: {
+    title: 'Session Summary',
+    generalSection: {
+      title: 'General',
+      sessionColor: 'Session color',
+      units: 'Units',
+      date: 'Date',
+      startTime: 'Start time',
+      lastDrinkAdded: 'Last drink added',
+      endTime: 'End time',
+    },
+    drinksSection: {
+      title: 'Drinks consumed',
+    },
+    otherSection: {
+      title: 'Other',
+    },
+  },
+  appShareScreen: {
+    title: 'Share the App',
+  },
+  settingsScreen: {
+    title: 'Settings',
+    deleteAccount: 'Delete account',
+    improvementThoughts: 'What would you like us to improve?',
+    general: 'General',
+    giveFeedback: 'Give use a feedback',
+    signOut: 'Sign out',
+    shareTheApp: 'Share the app',
+    // signOutConfirmationText: "You'll lose any offline changes if you sign out.",
+    signOutConfirmationText: 'Do you really want to sign out?',
+    signingOut: 'Signing out...',
+    error: {},
+  },
+  accountScreen: {
+    title: 'Profile Details',
+    generalOptions: {
+      title: 'General',
+    },
+    personalDetails: {
+      title: 'Personal Details',
+      subtitle:
+        'These details help us provide you with the best user experience.',
+    },
+  },
+  userNameScreen: {
+    headerTitle: 'User name',
+    explanation:
+      'Displaying your name helps your friends easily find and recognize you on your profile.',
+    updatingUserName: 'Updating your name...',
+  },
+  displayNameScreen: {
+    headerTitle: 'Nickname',
+    isShownOnProfile: 'Your nickname is shown on your profile.',
+    updatingDisplayName: 'Updating your nickname...',
+    error: {
+      generic: 'Error updating nickname',
+    },
+  },
+  tzFix: {
+    introduction: {
+      title: 'Important!',
+      text1:
+        'Hello! We want to inform you about an important update regarding how your data is handled in our app.',
+      troubleWithTimezones: 'Trouble with timezones',
+      text2:
+        "Until now, the data we've collected hasn't included timezone information, which can affect the accuracy and consistency of your data across different regions.",
+      whatDoesThisMean: 'What does this mean?',
+      text3:
+        "To enhance your experience and ensure all your data is accurately timestamped, we need to add a timezone to all of your existing sessions. In the following steps, we'll determine your current timezone and ask for your permission to proceed with the synchronization.",
+      confirmButtonText: 'Okay, got it!',
+    },
+    detection: {
+      title: "Let's get started!",
+      isTimezoneCorrect:
+        'We have automatically detected your timezone as the following. Is this correct?',
+      correct: 'Yes, this is correct',
+      incorrect: 'No, my usual timezone is different',
+    },
+    confirmation: {
+      title: 'Ready to sync?',
+      text: 'Do you wish to proceed with syncing all your existing data to UTC using your selected timezone?',
+      cancelPrompt:
+        'Failing to synchronize your data may result in inaccurate timestamps.',
+      cancel: "I'll do this later",
+      resume: 'I changed my mind, let’s do this!',
+      syncNow: "Yeah, let's do it!",
+      syncLater: 'No, not now',
+      syncing: 'Syncing your data...',
+      error: {
+        generic: 'Error synchronizing your data',
+      },
+    },
+    success: {
+      title: 'Success!',
+      text1:
+        "Your data has been successfully synchronized to Coordinated Universal Time (UTC). You're all set!",
+      finishButton: 'Awesome!',
+    },
+  },
+  timezoneScreen: {
+    timezone: 'Timezone',
+    isShownOnProfile: 'Your timezone is shown on your profile.',
+    getLocationAutomatically: 'Automatically determine your location',
+    saving: 'Saving your timezone...',
+    error: {
+      generic: 'Error updating your timezone',
+    },
+  },
+  emailScreen: {
+    title: 'Update Email',
+    prompt: 'Your email is used to log in and receive important notifications.',
+    enterEmail: 'Enter your email here',
+    submit: 'Submit email',
+    sent: 'Email updated successfully!',
+    sending: 'Updating email...',
+  },
+  feedbackScreen: {
+    title: 'Feedback',
+    prompt: 'What would you like us to improve?',
+    enterFeedback: 'Enter your feedback here',
+    submit: 'Submit feedback',
+    sent: 'Feedback sent!',
+    sending: 'Sending feedback...',
+    error: 'There was an error sending your feedback. Please try again.',
+  },
+  deleteAccountScreen: {
+    deleteAccount: 'Delete account',
+    reasonForLeavingPrompt:
+      'We’d hate to see you go! Would you kindly tell us why, so we can improve?',
+    enterMessageHere: 'Enter message here',
+    deleteAccountWarning: 'Deleting your account cannot be undone.',
+    deleteAccountPermanentlyDeleteData:
+      'Are you sure you want to delete your account? This will permanently delete all of your data.',
+    enterPasswordToConfirm: 'Please enter your password to confirm deletion.',
+    enterPassword: 'Enter your password',
+    deletingAccount: 'Deleting account...',
+    error: {
+      generic: 'Error deleting your account',
+    },
+  },
+  profileScreen: {
+    title: 'Profile',
+    titleNotSelf: 'Friend Overview',
+  },
+  statisticsScreen: {
+    title: 'Statistics',
+  },
+  achievementsScreen: {
+    title: 'Achievements',
+  },
+  dayOverviewScreen: {
+    enterEditMode: 'Edit Mode',
+    exitEditMode: 'Exit Edit Mode',
+    noDrinkingSessions: 'No drinking sessions',
+    inSession: 'In Session',
+  },
+  liveSessionScreen: {
     saving: 'Saving your session...',
+    synchronizing: 'Synchronizing data...',
+    loading: 'Loading your session...',
+    enterMonkeMode: 'Monke Mode',
+    exitMonkeMode: 'Exit Monke Mode',
+    blackout: 'Blackout',
+    blackoutSwitchLabel:
+      'This indicates whether your session ended in a blackout.',
+    note: 'Note',
+    discardSessionWarning: (discardWord: string) =>
+      `Do you really want to ${discardWord} this session?`,
+    unsavedChangesWarning:
+      'You have unsaved changes. Are you sure you want to go back?',
+    sessionDetails: 'Session details',
     error: {
       saveTitle: 'Session save failed',
       save: 'This session could not be saved. Try again.',
+      load: 'Failed to fetch details of this session.',
     },
   },
-  passwordForm: {
+  sessionDateScreen: {
+    title: 'Session date',
+    error: {
+      load: 'Failed to fetch details of this session.',
+      generic: 'Failed to modify the session date.',
+    },
+  },
+  sessionNoteScreen: {
+    title: 'Session note',
+    error: {
+      load: 'Failed to fetch details of this session.',
+      generic: 'Failed to modify the session note.',
+      noteTooLongError: 'Your note is too long.',
+    },
+  },
+  maintenance: {
+    heading: 'Under Maintenance',
+    text: 'We are currently under maintenance for the following time frame:',
+  },
+  userOffline: {
+    heading: 'You are offline',
+    text: 'Unfortunately, Kiroku does not support offline mode yet. We appreciate your patience while we work on this feature.',
+  },
+  yearPickerScreen: {
+    year: 'Year',
+    selectYear: 'Please select a year',
+  },
+  forceUpdate: {
+    heading: 'App Update Required',
+    text: (platform: Platform) =>
+      `This version of the app is now discontinued. Please update to the latest version using the link below${platform === CONST.PLATFORM.IOS ? ' or from within the TestFlight app' : ''}.`,
+    link: 'Update Now',
+  },
+  welcomeText: {
+    getStarted: 'Get started below',
+    anotherLoginPageIsOpen: 'Another login page is open',
+    anotherLoginPageIsOpenExplanation:
+      "You've opened the login page in a separate tab. Please log in from that tab.",
+    welcome: 'Welcome!',
+    welcomeWithoutExclamation: 'Welcome',
+    enterCredentials: 'Please enter your credentials.',
+    welcomeNewAccount: ({login}: SignUpNewAccountCodeParams) =>
+      `${login}! Are you ready to create your account?`,
+    // welcomeEnterMagicCode: ({login}: WelcomeEnterMagicCodeParams) =>
+    //   `Please enter the magic code sent to ${login}. It should arrive within a minute or two.`,
+  },
+  login: {
+    hero: {
+      header: 'Track your everyday alcohol adventures',
+      body: 'Welcome to Kiroku, where you can track, monitor, and share your alcohol consumption',
+    },
+    email: 'Email',
+    cannotGetAccountDetails:
+      "Couldn't retrieve account details. Please signing in again.",
+    initialForm: 'Initial form',
+    logInForm: 'Log in form',
+    signUpForm: 'Sign up form',
+    existingAccount: 'Already have an account?',
+    noAccount: 'Don’t have an account yet?',
+    error: {},
+  },
+  password: {
+    changePassword: 'Change password',
+    changingYourPasswordPrompt: 'Do not use this',
+    currentPassword: 'Current password',
+    newPassword: 'New password',
+    reEnter: 'Re-enter your password',
+    requirements:
+      'Your password must contain at least 8 characters, 1 capital letter, 1 lowercase letter, and 1 number.',
     pleaseFillOutAllFields: 'Please fill out all fields',
     pleaseFillPassword: 'Please enter your password',
-    pleaseFillTwoFactorAuth: 'Please enter your two-factor code',
-    enterYourTwoFactorAuthenticationCodeToContinue:
-      'Enter your two-factor authentication code to continue',
-    forgot: 'Forgot?',
-    requiredWhen2FAEnabled: 'Required when 2FA is enabled',
+    forgot: 'Forgot password?',
     error: {
+      samePassword: 'This is the same password as your current one',
       incorrectPassword: 'Incorrect password. Please try again.',
       incorrectLoginOrPassword:
         'Incorrect login or password. Please try again.',
-      incorrect2fa:
-        'Incorrect two-factor authentication code. Please try again.',
-      twoFactorAuthenticationEnabled:
-        'You have 2FA enabled on this account. Please sign in using your email or phone number.',
       invalidLoginOrPassword:
         'Invalid login or password. Please try again or reset your password.',
       unableToResetPassword:
         'We were unable to change your password. This is likely due to an expired password reset link in an old password reset email. We have emailed you a new link so you can try again. Check your Inbox and your Spam folder; it should arrive in just a few minutes.',
-      noAccess:
-        'You do not have access to this application. Please add your GitHub username for access.',
       accountLocked:
         'Your account has been locked after too many unsuccessful attempts. Please try again after 1 hour.',
       fallback: 'Something went wrong. Please try again later.',
+      passwordsMustMatch: 'The passwords do not match.',
     },
   },
-  session: {
-    offlineMessageRetry:
-      "Looks like you're offline. Please check your connection and try again.",
+  username: {
+    error: {
+      usernameRequired: 'A username is required',
+      generic: 'There was an error updating your username.',
+      usernameTooLong: 'This username is too long',
+      sameUsername: 'This is the same username as your current one',
+    },
+  },
+  termsOfUse: {
+    phrase1: 'By logging in, you agree to the',
+    phrase2: 'Terms of Service',
+    phrase3: 'and',
+    phrase4: 'Privacy Policy',
+  },
+  emailForm: {
+    email: 'Email',
+    error: {
+      invalidEmail: 'Invalid email address',
+      sameEmail: 'This is the same email address as your current one',
+      emailTooLong: 'The email address is too long',
+      emailRequired: 'An email address is required',
+      pleaseEnterEmail: 'Please enter an email address',
+      generic: 'There was an error updating your email address.',
+    },
+  },
+  logInScreen: {
+    loggingIn: 'Logging in...',
+  },
+  signUpScreen: {
+    signingIn: 'Signing in...',
+    error: {
+      generic: 'There was an error creating your account. Please try again.',
+    },
+  },
+  genericErrorScreen: {
+    title: 'Oops, something went wrong!',
+    body: {
+      helpTextMobile: 'Please close and reopen the app.',
+      // helpTextMobile: 'Please close and reopen the app, or switch to',
+      // helpTextWeb: 'web.',
+      helpTextEmail: 'If the problem persists, reach out to',
+    },
+    refresh: 'Refresh',
   },
 } satisfies TranslationBase;
 

@@ -3,7 +3,6 @@
   Alert,
   Image,
   Keyboard,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -19,7 +18,6 @@ import {useEffect, useMemo, useReducer, useState} from 'react';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {acceptFriendRequest, deleteFriendRequest} from '@database/friends';
-import LoadingData from '@components/LoadingData';
 import type {Database} from 'firebase/database';
 import NoFriendUserOverview from '@components/Social/NoFriendUserOverview';
 import {fetchUserProfiles} from '@database/profile';
@@ -33,6 +31,13 @@ import ROUTES from '@src/ROUTES';
 import NoFriendInfo from '@components/Social/NoFriendInfo';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import FillerView from '@components/FillerView';
+import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
+import Icon from '@components/Icon';
+import useTheme from '@hooks/useTheme';
+import ScrollView from '@components/ScrollView';
+import Button from '@components/Button';
+import useLocalize from '@hooks/useLocalize';
+import useThemeStyles from '@hooks/useThemeStyles';
 
 type RequestIdProps = {
   requestId: string;
@@ -100,28 +105,34 @@ const FriendRequestButtons: React.FC<RequestIdProps> = ({requestId}) => {
   }
 
   return (
-    <View style={styles.friendRequestButtonsContainer}>
+    <View style={localStyles.friendRequestButtonsContainer}>
       <TouchableOpacity
         accessibilityRole="button"
         key={requestId + '-accept-request-button'}
-        style={[styles.handleRequestButton, styles.acceptRequestButton]}
+        style={[
+          localStyles.handleRequestButton,
+          localStyles.acceptRequestButton,
+        ]}
         onPress={() =>
           handleAcceptFriendRequest(db, user.uid, requestId, setIsLoading)
         }>
         {isLoading ? (
           <ActivityIndicator size="small" color="#0000ff" />
         ) : (
-          <Text style={styles.handleRequestButtonText}>Accept</Text>
+          <Text style={localStyles.handleRequestButtonText}>Accept</Text>
         )}
       </TouchableOpacity>
       <TouchableOpacity
         accessibilityRole="button"
         key={requestId + '-reject-request-button'}
-        style={[styles.handleRequestButton, styles.rejectRequestButton]}
+        style={[
+          localStyles.handleRequestButton,
+          localStyles.rejectRequestButton,
+        ]}
         onPress={() =>
           handleRejectFriendRequest(db, user.uid, requestId, setIsLoading)
         }>
-        <Text style={styles.handleRequestButtonText}>Remove</Text>
+        <Text style={localStyles.handleRequestButtonText}>Remove</Text>
       </TouchableOpacity>
     </View>
   );
@@ -130,25 +141,25 @@ const FriendRequestButtons: React.FC<RequestIdProps> = ({requestId}) => {
 // Component to be shown when the friend request is pending
 const FriendRequestPending: React.FC<RequestIdProps> = ({requestId}) => {
   const {auth, db} = useFirebase();
+  const {translate} = useLocalize();
+  const styles = useThemeStyles();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const user = auth.currentUser;
 
-  if (!user) {return;}
+  if (!user) {
+    return;
+  }
 
   return (
-    <View style={styles.friendRequestPendingContainer}>
-      <TouchableOpacity
-        accessibilityRole="button"
-        style={[styles.handleRequestButton, styles.rejectRequestButton]}
+    <View style={localStyles.friendRequestPendingContainer}>
+      <Button
+        danger
         onPress={() =>
           handleRejectFriendRequest(db, user.uid, requestId, setIsLoading)
-        }>
-        {isLoading ? (
-          <ActivityIndicator size="small" color="#0000ff" />
-        ) : (
-          <Text style={styles.handleRequestButtonText}>Cancel</Text>
-        )}
-      </TouchableOpacity>
+        }
+        text={translate('common.cancel')}
+        isLoading={isLoading}
+      />
     </View>
   );
 };
@@ -176,7 +187,9 @@ const FriendRequestItem: React.FC<FriendRequestItemProps> = ({
   friendRequests,
   displayData,
 }) => {
-  if (!friendRequests || !displayData) {return null;}
+  if (!friendRequests || !displayData) {
+    return null;
+  }
   const profileData = displayData[requestId];
   const requestStatus = friendRequests[requestId];
 
@@ -242,6 +255,7 @@ const reducer = (state: State, action: Action): State => {
 function FriendRequestScreen() {
   const {db} = useFirebase();
   const {userData, isLoading} = useDatabaseData();
+  const theme = useTheme();
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useMemo(() => {
@@ -278,7 +292,9 @@ function FriendRequestScreen() {
     const newRequestsReceived: string[] = [];
     if (!isEmptyObject(state.friendRequests)) {
       Object.keys(state.friendRequests).forEach(requestId => {
-        if (!state.friendRequests) {return;}
+        if (!state.friendRequests) {
+          return;
+        }
         if (
           state.friendRequests[requestId] === CONST.FRIEND_REQUEST_STATUS.SENT
         ) {
@@ -304,19 +320,16 @@ function FriendRequestScreen() {
   }, [state.friendRequests]);
 
   return (
-    <View style={styles.mainContainer}>
-      <ScrollView
-        style={styles.scrollViewContainer}
-        onScrollBeginDrag={Keyboard.dismiss}
-        keyboardShouldPersistTaps="handled">
+    <View style={localStyles.mainContainer}>
+      <ScrollView>
         {state.isLoading || isLoading ? (
-          <LoadingData style={styles.loadingData} />
+          <FlexibleLoadingIndicator style={localStyles.loadingData} />
         ) : !isEmptyObject(state.friendRequests) ? (
-          <View style={styles.friendList}>
+          <View style={localStyles.friendList}>
             <GrayHeader
               headerText={`Requests Received (${state.requestsReceivedCount})`}
             />
-            <View style={styles.requestsContainer}>
+            <View style={localStyles.requestsContainer}>
               {state.requestsReceived.map(requestId => (
                 <FriendRequestItem
                   key={requestId + '-friend-request-item'}
@@ -331,7 +344,7 @@ function FriendRequestScreen() {
                 Requests Sent ({state.requestsSentCount})
               </Text>
             </View>
-            <View style={styles.requestsContainer}>
+            <View style={localStyles.requestsContainer}>
               {state.requestsSent.map(requestId => (
                 <FriendRequestItem
                   key={requestId + '-friend-request-item'}
@@ -341,7 +354,7 @@ function FriendRequestScreen() {
                 />
               ))}
             </View>
-            <FillerView height={100} />
+            <FillerView />
           </View>
         ) : (
           <NoFriendInfo
@@ -352,9 +365,19 @@ function FriendRequestScreen() {
       </ScrollView>
       <TouchableOpacity
         accessibilityRole="button"
-        style={styles.searchScreenButton}
+        style={[
+          localStyles.searchScreenButton,
+          {
+            backgroundColor: theme.appColor,
+          },
+        ]}
         onPress={() => Navigation.navigate(ROUTES.SOCIAL_FRIEND_SEARCH)}>
-        <Image source={KirokuIcons.Search} style={styles.searchScreenImage} />
+        <Icon
+          src={KirokuIcons.Search}
+          width={28}
+          height={28}
+          fill={theme.textLight}
+        />
       </TouchableOpacity>
     </View>
   );
@@ -362,14 +385,9 @@ function FriendRequestScreen() {
 
 export default FriendRequestScreen;
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: '#ffff99',
-  },
-  scrollViewContainer: {
-    flex: 1,
-    backgroundColor: '#ffff99',
   },
   loadingData: {
     width: '100%',
@@ -446,6 +464,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
+    paddingRight: 8,
   },
   newRequestContainer: {
     position: 'absolute',
@@ -455,7 +474,7 @@ const styles = StyleSheet.create({
     width: 120,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: 'black',
     borderRadius: 10,
   },
@@ -477,20 +496,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 20,
     right: 20,
-    borderWidth: 2,
-    borderColor: 'black',
     borderRadius: 50,
-    width: 70,
-    height: 70,
-    backgroundColor: 'white',
+    width: 60,
+    height: 60,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: 'black',
-  },
-  searchScreenImage: {
-    width: 30,
-    height: 30,
-    tintColor: 'black',
-    alignItems: 'center',
   },
 });

@@ -9,17 +9,14 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {
-  formatDateToDay,
-  formatDateToTime,
-  timestampToDate,
-} from '@libs/DataHandling';
+import {formatDateToTime, timestampToDate} from '@libs/DataHandling';
 import {removeFeedback} from '@database/feedback';
 import {fetchNicknameByUID} from '@database/baseFunctions';
 import {useFirebase} from '@context/global/FirebaseContext';
 import CONST from '@src/CONST';
 import type {FeedbackList, Feedback} from '@src/types/onyx';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
+import {format} from 'date-fns';
 
 // AdminFeedbackModal props
 type AdminFeedbackPopupProps = {
@@ -33,7 +30,9 @@ const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
   const {visible, transparent, onRequestClose, FeedbackList} = props;
   const [nicknames, setNicknames] = useState<Record<string, string>>({});
   const {db} = useFirebase();
-  if (!db) {return null;}
+  if (!db) {
+    return null;
+  }
 
   const FeedbackListArray = Object.entries(FeedbackList).map(
     ([feedback_id, Feedback]) => ({
@@ -80,7 +79,7 @@ const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
 
   const renderFeedback = ({item}: {item: Feedback & {feedback_id: string}}) => {
     const dateSubmitted = timestampToDate(item.submit_time);
-    const daySubmitted = formatDateToDay(dateSubmitted);
+    const daySubmitted = format(dateSubmitted, CONST.DATE.SHORT_DATE_FORMAT);
     const timeSubmitted = formatDateToTime(dateSubmitted);
     const nickname = nicknames[item.user_id] || 'Loading...'; // Default to "Loading..." if the nickname isn't fetched yet
 
@@ -91,7 +90,8 @@ const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
             {daySubmitted} {timeSubmitted}
           </Text>
           <Text style={styles.feedbackTimeText}> - {nickname}</Text>
-          <TouchableOpacity accessibilityRole="button"
+          <TouchableOpacity
+            accessibilityRole="button"
             onPress={() => handleDeleteFeedback(db, item.feedback_id)}
             style={styles.deleteFeedbackButton}>
             <Image
@@ -126,7 +126,10 @@ const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
             // keyExtractor={(item) => item.feedback_id}
           />
           <View style={styles.buttonContainer}>
-            <TouchableOpacity accessibilityRole="button" style={styles.button} onPress={onRequestClose}>
+            <TouchableOpacity
+              accessibilityRole="button"
+              style={styles.button}
+              onPress={onRequestClose}>
               <Text style={styles.buttonText}>Close</Text>
             </TouchableOpacity>
           </View>

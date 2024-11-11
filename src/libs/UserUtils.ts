@@ -1,12 +1,10 @@
 // import Str from 'expensify-common/lib/str';
 import type {OnyxEntry} from 'react-native-onyx';
 import type {ValueOf} from 'type-fest';
-import * as defaultAvatars from '@components/Icon/DefaultAvatars';
 import {UserIcon} from '@components/Icon/KirokuIcons';
 import CONST from '@src/CONST';
 import type {LoginList} from '@src/types/onyx';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
-import type Login from '@src/types/onyx/Login';
 import type IconAsset from '@src/types/utils/IconAsset';
 import hashCode from './hashCode';
 

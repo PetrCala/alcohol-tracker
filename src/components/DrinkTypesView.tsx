@@ -2,6 +2,8 @@
 import DrinkingSessionDrinksWindow from './DrinkingSessionDrinksWindow';
 import type {DrinksList} from '@src/types/onyx';
 import type DrinkDataProps from '@libs/DrinkData/types';
+import useTheme from '@hooks/useTheme';
+import useThemeStyles from '@hooks/useThemeStyles';
 
 export type DrinkTypesViewProps = {
   drinkData: DrinkDataProps;
@@ -16,46 +18,43 @@ const DrinkTypesView = ({
   setCurrentDrinks,
   availableUnits,
 }: DrinkTypesViewProps) => {
+  const styles = useThemeStyles();
+
   return (
-    <View style={styles.mainContainer}>
-      <View style={styles.tab}>
-        <Text style={styles.tabText}>Drinks consumed</Text>
+    <View style={localStyles.mainContainer}>
+      <View style={[localStyles.tab, styles.borderColorTheme]}>
+        <Text style={styles.headerText}>Drinks consumed</Text>
       </View>
-      {drinkData.map(drink => (
-        <DrinkingSessionDrinksWindow
-          key={drink.key} // JS unique key property - no need to list
-          drinkKey={drink.key}
-          iconSource={drink.icon}
-          currentDrinks={currentDrinks}
-          setCurrentDrinks={setCurrentDrinks}
-          availableUnits={availableUnits}
-        />
-      ))}
+      <View>
+        {drinkData.map(drink => (
+          <DrinkingSessionDrinksWindow
+            key={drink.key} // JS unique key property - no need to list
+            drinkKey={drink.key}
+            iconSource={drink.icon}
+            currentDrinks={currentDrinks}
+            setCurrentDrinks={setCurrentDrinks}
+            availableUnits={availableUnits}
+          />
+        ))}
+      </View>
     </View>
   );
 };
 
 export default DrinkTypesView;
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   mainContainer: {
     width: '100%',
-    backgroundColor: 'white',
+    paddingBottom: 4,
   },
   tab: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     height: 50,
-    width: '100%',
-    borderColor: '#212421',
-    borderWidth: 1,
-    backgroundColor: 'white',
-    paddingHorizontal: 10,
-  },
-  tabText: {
-    fontWeight: 'bold',
-    fontSize: 14,
-    color: 'black',
+    borderTopWidth: 1,
+    marginLeft: 12,
+    marginRight: 12,
   },
 });

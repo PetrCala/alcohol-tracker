@@ -6,7 +6,6 @@
   dateToDateObject,
   findDrinkName,
   formatDate,
-  formatDateToDay,
   formatDateToTime,
   getAdjacentMonths,
   getLastDrinkAddedTime,
@@ -35,7 +34,7 @@ import {
   createMockPreferences,
   createMockSession,
   createMockDrinksList,
-} from '../../utils/mockDatabase';
+} from '../../../src/database/MockDatabase';
 import type {
   DrinkingSession,
   DrinkingSessionArray,
@@ -67,27 +66,6 @@ describe('formatDate function', () => {
     checkFormattedDate(new Date(2024, 11, 31), '2024-12-31');
   });
 });
-
-describe('formatDateToDay function', () => {
-  function checkFormattedDay(date: Date, expectedFormattedDay: string) {
-    const formattedDay = formatDateToDay(date);
-    expect(formattedDay).toEqual(expectedFormattedDay);
-    expect(typeof formattedDay).toBe('string');
-  }
-
-  it('formats an arbitrary date to its day', () => {
-    checkFormattedDay(new Date(2023, 7, 18), '08-18');
-  });
-
-  it('formats the first day of the year to its day', () => {
-    checkFormattedDay(new Date(2022, 0, 1), '01-01');
-  });
-
-  it('formats the last day of the year to its day', () => {
-    checkFormattedDay(new Date(2024, 11, 31), '12-31');
-  });
-});
-
 describe('formatDateToTime function', () => {
   function checkFormattedTime(date: Date, expectedFormattedTime: string) {
     const formattedTime = formatDateToTime(date);

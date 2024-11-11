@@ -7,10 +7,18 @@ import type {
   DrinkingSessionType,
   DrinksList,
 } from '@src/types/onyx';
+import {ref, update, type Database} from 'firebase/database';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
-import {getTimestampAge, numberToVerboseString} from './TimeUtils';
+import {numberToVerboseString} from './TimeUtils';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
-import * as Localize from './Localize';
+import {SelectedTimezone, Timezone} from '@src/types/onyx/PersonalDetails';
+import DBPATHS from '@database/DBPATHS';
+import {
+  addMilliseconds,
+  differenceInDays,
+  subDays,
+  subMilliseconds,
+} from 'date-fns';
 
 const PlaceholderDrinks: DrinksList = {[Date.now()]: {other: 0}};
 
@@ -28,6 +36,8 @@ function getEmptySession(
     drinks: usePlaceholderDrinks ? PlaceholderDrinks : {},
     blackout: false,
     note: '',
+    timezone: Intl.DateTimeFormat().resolvedOptions()
+      .timeZone as SelectedTimezone,
     type: type ?? CONST.SESSION_TYPES.EDIT,
     ...(ongoing && {ongoing: true}),
   };
@@ -203,14 +213,148 @@ function getUserDetailTooltipText(
   return displayNameForParticipant || fallbackUserDisplayName;
 }
 
-export {
+/**
+ * Check if all sessions contain a timezone.
+ *
+ * @param sessions The list of drinking sessions to check
+ * @returns Whether all sessions contain a timezone
+ */
+function allSessionsContainTimezone(sessions?: DrinkingSessionList): boolean {
+  if (isEmptyObject(sessions)) {
+    return true; // No session to fix
+  }
+
+  return Object.values(sessions).every(
+    session => 'timezone' in session && session.timezone,
+  );
+}
+
+/**
+ * Modify all timestamps of a drinking session and return the updated session
+ *
+ * @param session The session to update
+ * @param millisecondsToSub How many milliseconds to subtract the timestamps by
+ */
+function shiftSessionTimestamps(
+  session: DrinkingSession,
+  millisecondsToSub: number,
+): DrinkingSession {
+  if (millisecondsToSub === 0) {
+    return session;
+  }
+  const convertedSession = {...session};
+  convertedSession.start_time = subMilliseconds(
+    session.start_time,
+    millisecondsToSub,
+  ).getTime();
+  convertedSession.end_time = subMilliseconds(
+    session.end_time,
+    millisecondsToSub,
+  ).getTime();
+
+  const convertedDrinks: DrinksList = {};
+  const existingTimestamps = new Set<number>();
+
+  if (!isEmptyObject(session.drinks)) {
+    Object.entries(session.drinks).forEach(([timestamp, drinksAtTimestamp]) => {
+      let newTimestamp = subMilliseconds(
+        Number(timestamp),
+        millisecondsToSub,
+      ).getTime();
+
+      // Ensure the new timestamp is unique by checking for collisions
+      while (existingTimestamps.has(newTimestamp)) {
+        newTimestamp += 1; // Increment timestamp slightly to avoid collision
+      }
+
+      existingTimestamps.add(newTimestamp);
+      convertedDrinks[newTimestamp] = drinksAtTimestamp;
+    });
+
+    convertedSession.drinks = convertedDrinks;
+  }
+
+  return convertedSession;
+}
+
+/**
+ * Change all timestamps in a session so that its start time corresponds to a new date.
+ *
+ * Shift the timestamps by whole days, keeping the hour:minute times as they are.
+ *
+ * @param session The session to modify
+ * @param newDate The new date to modify the session's timestamps to
+ * @returns The modified session
+ */
+function shiftSessionDate(
+  session: DrinkingSession,
+  newDate: Date,
+): DrinkingSession {
+  const currentDate = new Date(session.start_time);
+  const daysDelta = differenceInDays(currentDate, newDate);
+  const millisecondsToSub = daysDelta * 24 * 60 * 60 * 1000;
+  const modifiedSession = shiftSessionTimestamps(session, millisecondsToSub);
+  return modifiedSession;
+}
+
+async function fixTimezoneSessions(
+  db: Database,
+  userID: UserID | undefined,
+  sessions: DrinkingSessionList | undefined,
+  timezone: SelectedTimezone,
+) {
+  if (!userID) {
+    throw new Error('Invalid user. Try reloading the app.');
+  }
+  if (isEmptyObject(sessions)) {
+    return;
+  }
+  const convertedSessions: DrinkingSessionList = {};
+  Object.entries(sessions).forEach(([sessionId, session]) => {
+    const convertedSession = {...session};
+    if (!convertedSession.timezone) {
+      convertedSession.timezone = timezone;
+    }
+
+    if ('session_type' in session) {
+      convertedSession.type = session.session_type as DrinkingSessionType;
+      delete convertedSession.session_type;
+    }
+
+    convertedSessions[sessionId] = convertedSession;
+  });
+
+  // We flag the sessions with the TZ the user chose, but for the app, we automatically assign the automatic timezone
+  const userTimezone: Timezone = {
+    selected: Intl.DateTimeFormat().resolvedOptions()
+      .timeZone as SelectedTimezone,
+    automatic: true,
+  };
+
+  const sessionsRef = DBPATHS.USER_DRINKING_SESSIONS_USER_ID;
+  const timezoneRef = DBPATHS.USERS_USER_ID_PRIVATE_DATA_TIMEZONE;
+
+  const updates: Record<string, DrinkingSessionList | Timezone> = {};
+  updates[sessionsRef.getRoute(userID)] = convertedSessions;
+  updates[timezoneRef.getRoute(userID)] = userTimezone;
+
+  await update(ref(db), updates);
+}
+
+const DSUtils = {
   PlaceholderDrinks,
-  determineSessionMostCommonDrink,
+  allSessionsContainTimezone,
   calculateSessionLength,
+  determineSessionMostCommonDrink,
   extractSessionOrEmpty,
-  sessionIsExpired,
-  getEmptySession,
-  isEmptySession,
   getDisplayNameForParticipant,
+  getEmptySession,
   getUserDetailTooltipText,
+  isEmptySession,
+  sessionIsExpired,
+  fixTimezoneSessions,
+  shiftSessionTimestamps,
+  shiftSessionDate,
 };
+
+export default DSUtils;

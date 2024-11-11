@@ -13,6 +13,7 @@ import {
 import {format as tzFormat, utcToZonedTime} from 'date-fns-tz';
 import Onyx from 'react-native-onyx';
 import DateUtils from '@libs/DateUtils';
+import DSUtils from '@libs/DrinkingSessionUtils';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
 import type {SelectedTimezone} from '@src/types/onyx/PersonalDetails';

@@ -1,6 +1,8 @@
 ﻿import type {ReactNode} from 'react';
-import { createContext, useContext, useEffect, useState} from 'react';
+import {createContext, useContext, useEffect, useState} from 'react';
 import NetInfo from '@react-native-community/netinfo';
+import {useFirebase} from './FirebaseContext';
+import {isConnectedToDatabaseEmulator} from '@libs/Firebase/FirebaseUtils';
 
 type UserConnectionContextProps = {
   isOnline: boolean | undefined;
@@ -36,6 +38,7 @@ type UserConnectionProviderProps = {
 export const UserConnectionProvider: React.FC<UserConnectionProviderProps> = ({
   children,
 }) => {
+  const {db} = useFirebase();
   const [isOnline, setIsOnline] = useState<boolean | undefined>(true);
 
   useEffect(() => {
@@ -46,7 +49,9 @@ export const UserConnectionProvider: React.FC<UserConnectionProviderProps> = ({
 
     // Check the initial network status
     NetInfo.fetch().then(state => {
-      setIsOnline(state.isConnected as boolean | undefined);
+      const isUsingEmulators = isConnectedToDatabaseEmulator(db);
+      const isConnected = state.isConnected as boolean | undefined;
+      setIsOnline(isConnected || isUsingEmulators);
     });
 
     // Unsubscribe to clean up the subscription

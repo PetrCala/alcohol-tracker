@@ -1,15 +1,10 @@
 import React, {useState, useRef} from 'react';
 import type {ImageSourcePropType, LayoutChangeEvent} from 'react-native';
-import {
-  Image,
-  TouchableOpacity,
-  Animated,
-  StyleSheet,
-  Dimensions,
-} from 'react-native';
+import {Image, TouchableOpacity, Animated, Dimensions} from 'react-native';
 import FullScreenModal from '@components/Modals/FullScreenModal';
 import type ImageLayout from '@src/types/various/ImageLayout';
 import commonStyles from '@src/styles/commonStyles';
+import useThemeStyles from '@hooks/useThemeStyles';
 
 type EnlargableImageProps = {
   imageSource: ImageSourcePropType;
@@ -22,6 +17,7 @@ const ScreenWidth = Dimensions.get('window').width;
 const ScreenHeight = Dimensions.get('window').height;
 
 const EnlargableImage: React.FC<EnlargableImageProps> = props => {
+  const styles = useThemeStyles();
   const {imageSource, imageStyle, imageLayout, onImageLayout} = props;
   const [modalVisible, setModalVisible] = useState(false);
   const scaleAnimation = useRef(new Animated.Value(1)).current;
@@ -84,7 +80,10 @@ const EnlargableImage: React.FC<EnlargableImageProps> = props => {
           style={imageStyle}
         />
       </TouchableOpacity>
-      <FullScreenModal visible={modalVisible} onClose={closeModal}>
+      <FullScreenModal
+        visible={modalVisible}
+        onClose={closeModal}
+        style={styles.bgDark}>
         <Animated.Image
           source={imageSource}
           style={[

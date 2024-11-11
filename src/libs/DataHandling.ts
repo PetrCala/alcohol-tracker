@@ -18,22 +18,27 @@ import type {
   DrinkName,
   Drinks,
 } from '@src/types/onyx';
+import {formatInTimeZone} from 'date-fns-tz';
 import CONST from '../CONST';
 import type {MeasureType} from '@src/types/onyx/OnyxCommon';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
-import _, {get} from 'lodash';
+import type {SelectedTimezone, Timezone} from '@src/types/onyx/PersonalDetails';
+import _ from 'lodash';
+import {
+  endOfDay,
+  endOfMonth,
+  endOfToday,
+  startOfDay,
+  startOfMonth,
+} from 'date-fns';
+
+let defaultTimezone: Required<Timezone> = CONST.DEFAULT_TIME_ZONE;
 
 export function formatDate(date: Date): DateString {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
     2,
     '0',
   )}-${String(date.getDate()).padStart(2, '0')}` as DateString;
-}
-
-export function formatDateToDay(date: Date): string {
-  return `${String(date.getMonth() + 1).padStart(2, '0')}-${String(
-    date.getDate(),
-  ).padStart(2, '0')}`;
 }
 
 export function formatDateToTime(date: Date): string {
@@ -62,6 +67,20 @@ export function dateToDateObject(date: Date): DateObject {
     year: date.getFullYear(),
   };
   return dateObject;
+}
+
+/**
+ * Rounds a number to two decimal places.
+ * @param value - The number to be rounded.
+ * @returns The rounded number.
+ */
+export function roundToTwoDecimalPlaces(value: number): number {
+  const decimalCheck = value.toString().split('.')[1];
+  if (decimalCheck && decimalCheck.length > 2) {
+    return parseFloat(value.toFixed(2));
+  } else {
+    return value;
+  }
 }
 
 /**
@@ -256,31 +275,17 @@ export function getSingleDayDrinkingSessions(
   sessions: DrinkingSessionList | undefined,
   returnArray = true,
 ): DrinkingSessionArray | DrinkingSessionList {
-  if (isEmptyObject(sessions)) {
-    return [];
-  }
-  // Define the time boundaries
-  date.setHours(0, 0, 0, 0); // set to start of day
+  const sessionBelongsToDate = (session: DrinkingSession) => {
+    const sessionDate = new Date(session.start_time);
+    return sessionDate >= startOfDay(date) && sessionDate <= endOfDay(date);
+  };
 
-  const tomorrow = new Date(date);
-  tomorrow.setDate(date.getDate() + 1); // set to start of next day
-
-  // Convert to UNIX timestamp
-  const todayUnix = Math.floor(date.getTime());
-  const tomorrowUnix = Math.floor(tomorrow.getTime());
   if (returnArray) {
-    return _.filter(
-      sessions,
-      session =>
-        session.start_time >= todayUnix && session.start_time < tomorrowUnix,
-    );
+    return _.filter(sessions, session => sessionBelongsToDate(session));
   }
+
   return _.entries(sessions)
-    .filter(([sessionId, session]) => {
-      return (
-        session.start_time >= todayUnix && session.start_time < tomorrowUnix
-      );
-    })
+    .filter(([sessionId, session]) => sessionBelongsToDate(session))
     .reduce((acc, [sessionId, session]) => {
       acc[sessionId] = session;
       return acc;
@@ -299,35 +304,14 @@ export function getSingleMonthDrinkingSessions(
   sessions: DrinkingSessionArray,
   untilToday = false,
 ) {
-  if (!sessions) {
-    return [];
-  }
-  date.setHours(0, 0, 0, 0); // To midnight
-  // Find the beginning date
-  const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
-  const beginningDate = firstDayOfMonth;
-  // Find the end date
-  const firstDayOfNextMonth = new Date(
-    date.getFullYear(),
-    date.getMonth() + 1,
-    1,
-  );
-  let endDate = firstDayOfNextMonth;
-  if (untilToday) {
-    const today = new Date(); // automatically set to midnight
-    const tomorrowMidnight = changeDateBySomeDays(today, 1);
-    if (endDate >= tomorrowMidnight) {
-      endDate = tomorrowMidnight; // Filter until today only
-    }
-  }
-  // Find the timestamps
-  const beginningUnix = Math.floor(beginningDate.getTime());
-  const endUnix = Math.floor(endDate.getTime());
-  // Filter to current month only
-  const monthDrinkingSessions = sessions.filter(
-    session =>
-      session.start_time >= beginningUnix && session.start_time < endUnix,
-  );
+  const startDate = startOfMonth(date);
+  const endDate = untilToday ? endOfToday() : endOfMonth(date);
+
+  const monthDrinkingSessions = sessions.filter(session => {
+    const sessionDate = new Date(session.start_time);
+    return sessionDate >= startDate && sessionDate <= endDate;
+  });
+
   return monthDrinkingSessions;
 }
 
@@ -338,7 +322,11 @@ export function aggregateSessionsByDays(
 ): SessionsCalendarDatesType {
   return sessions.reduce(
     (acc: SessionsCalendarDatesType, item: DrinkingSession) => {
-      const dateString = formatDate(new Date(item.start_time)); // MM-DD-YYYY
+      const dateString = formatInTimeZone(
+        item.start_time,
+        item.timezone ?? defaultTimezone.selected,
+        CONST.DATE.CALENDAR_FORMAT,
+      );
       let newDrinks: number;
       if (measureType === 'units') {
         if (!drinksToUnits) {
@@ -454,6 +442,28 @@ export function sumDrinkTypes(drinkTypes: Drinks): number {
   );
 }
 
+/** Get an array of unique keys that appear in a session */
+export function getUniqueDrinkTypesInSession(
+  session: DrinkingSession,
+): Array<DrinkKey> | undefined {
+  const sessionDrinks = session?.drinks;
+  if (!sessionDrinks) {
+    return undefined;
+  }
+  const uniqueKeys = new Set<DrinkKey>();
+
+  // Iterate over each Drinks entry in the DrinksList
+  for (const drinks of Object.values(sessionDrinks)) {
+    // Iterate over each DrinkKey in the current Drinks object
+    for (const key of Object.keys(drinks) as DrinkKey[]) {
+      uniqueKeys.add(key);
+    }
+  }
+
+  // Convert the Set to an array before returning
+  return Array.from(uniqueKeys);
+}
+
 /** Type guard to check if a given key is a valid DrinkType key */
 export function isDrinkTypeKey(key: string): key is keyof Drinks {
   return _.includes(Object.values(CONST.DRINKS.KEYS), key);
@@ -473,6 +483,7 @@ export function isDrinkTypeKey(key: string): key is keyof Drinks {
 export function sumAllUnits(
   drinksObject: DrinksList | undefined,
   drinksToUnits: DrinksToUnits,
+  roundUp?: boolean,
 ): number {
   if (_.isEmpty(drinksObject)) {
     return 0;
@@ -488,6 +499,9 @@ export function sumAllUnits(
       }
     });
   });
+  if (roundUp) {
+    return roundToTwoDecimalPlaces(totalUnits);
+  }
   return totalUnits;
 }
 
@@ -810,20 +824,6 @@ export function objVals(obj: any): string[] {
   }
   // Return an empty array for non-object inputs or null
   return [];
-}
-
-/**
- * Rounds a number to two decimal places.
- * @param value - The number to be rounded.
- * @returns The rounded number.
- */
-export function roundToTwoDecimalPlaces(value: number): number {
-  const decimalCheck = value.toString().split('.')[1];
-  if (decimalCheck && decimalCheck.length > 2) {
-    return parseFloat(value.toFixed(2));
-  } else {
-    return value;
-  }
 }
 
 // test, getAdjacentMonths, findongoingsession, aggregatesessionsbydays, month entries to colors (move these maybe to a different location), toPercentageVerbose

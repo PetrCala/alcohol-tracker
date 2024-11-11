@@ -1,16 +1,14 @@
-﻿import React, {useRef, useState, useEffect, useMemo} from 'react';
+﻿import {useFocusEffect, useRoute} from '@react-navigation/native';
+import React, {useRef, useState, useEffect, useMemo} from 'react';
 import {
   ActivityIndicator,
   Alert,
   BackHandler,
-  Keyboard,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import BasicButton from '@components/Buttons/BasicButton';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {
   discardLiveDrinkingSession,
@@ -22,28 +20,31 @@ import {
 } from '@database/drinkingSessions';
 import {
   addDrinks,
-  formatDateToDay,
   formatDateToTime,
+  getUniqueDrinkTypesInSession,
   removeDrinks,
+  sumAllDrinks,
   sumAllUnits,
   sumDrinksOfSingleType,
   timestampToDate,
   timestampToDateString,
   unitsToColors,
 } from '@libs/DataHandling';
-import type {DrinkingSession, DrinksList, Drinks} from '@src/types/onyx';
-import YesNoPopup from '@components/Popups/YesNoPopup';
+import type {
+  DrinkingSession,
+  DrinksList,
+  Drinks,
+  DrinkKey,
+} from '@src/types/onyx';
+import {ScrollOffsetContext} from '@components/ScrollOffsetContextProvider';
 import {useUserConnection} from '@context/global/UserConnectionContext';
-import UserOffline from '@components/UserOffline';
+import UserOffline from '@components/UserOfflineModal';
 import DrinkTypesView from '@components/DrinkTypesView';
-import SessionDetailsSlider from '@components/SessionDetailsSlider';
-import LoadingData from '@components/LoadingData';
+import SessionDetailsWindow from '@components/SessionDetailsWindow';
 import SuccessIndicator from '@components/SuccessIndicator';
 import commonStyles from '@styles/commonStyles';
 import FillerView from '@components/FillerView';
 import CONST from '@src/CONST';
-import MainHeader from '@components/Header/MainHeader';
-import MainHeaderButton from '@components/Header/MainHeaderButton';
 import Navigation from '@navigation/Navigation';
 import type {StackScreenProps} from '@react-navigation/stack';
 import type {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
@@ -58,6 +59,18 @@ import type DeepValueOf from '@src/types/utils/DeepValueOf';
 import ScreenWrapper from '@components/ScreenWrapper';
 import DrinkData from '@libs/DrinkData';
 import useLocalize from '@hooks/useLocalize';
+import HeaderWithBackButton from '@components/HeaderWithBackButton';
+import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
+import {format} from 'date-fns';
+import useTheme from '@hooks/useTheme';
+import useThemeStyles from '@hooks/useThemeStyles';
+import Button from '@components/Button';
+import ConfirmModal from '@components/ConfirmModal';
+import useWindowDimensions from '@hooks/useWindowDimensions';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
+import ScrollView from '@components/ScrollView';
+import Log from '@libs/Log';
+import Icon from '@components/Icon';
 
 type LiveSessionScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -69,9 +82,12 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   // Context, database, and authentification
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
+  const theme = useTheme();
+  const styles = useThemeStyles();
   const {translate} = useLocalize();
   const {isOnline} = useUserConnection();
   const {preferences} = useDatabaseData();
+  const {windowWidth} = useWindowDimensions();
   const [session, setSession] = useState<DrinkingSession | null>(null);
   const initialSession = useRef<DrinkingSession | null>(null);
   // Session details
@@ -81,6 +97,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   // Time info
   const [dbSyncSuccessful, setDbSyncSuccessful] = useState(false);
   const sessionDate = timestampToDate(session?.start_time ?? Date.now());
+  const sessionDateString = format(sessionDate, CONST.DATE.SHORT_DATE_FORMAT);
   const sessionStartTime = formatDateToTime(sessionDate);
   const sessionColor = preferences
     ? unitsToColors(totalUnits, preferences.units_to_colors)
@@ -91,16 +108,14 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     useState<boolean>(false);
   const [openingSession, setOpeningSession] = useState<boolean>(true);
   const [loadingText, setLoadingText] = useState<string>('');
-  const [showLeaveConfirmation, setShowLeaveConfirmation] = useState(false);
+  const [shouldShowLeaveConfirmation, setShouldShowLeaveConfirmation] =
+    useState(false);
   const [isPlaceholderSession, setIsPlaceholderSession] =
     useState<boolean>(false);
-  const sessionIsLive = session?.ongoing ? true : false;
+  const [sessionIsLive, setSessionIsLive] = useState<boolean | null>(null);
   const deleteSessionWording = session?.ongoing
-    ? // ? translate('common.discard')
-      // : translate('common.delete');
-      'Discard'
-    : 'Delete';
-  const scrollViewRef = useRef<ScrollView>(null); // To navigate the view
+    ? translate('common.discard')
+    : translate('common.delete');
 
   const {isPending, enqueueUpdate} = useAsyncQueue(
     async (newSession: DrinkingSession) => syncWithDb(newSession),
@@ -121,7 +136,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       );
       setDbSyncSuccessful(true);
     } catch (error: any) {
-      throw new Error(translate('LiveSessionScreen.error.save'));
+      throw new Error(translate('liveSessionScreen.error.save'));
     }
   };
 
@@ -147,16 +162,31 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     if (!session) {
       return;
     }
-    if (sumDrinksOfSingleType(session.drinks, CONST.DRINKS.KEYS.OTHER) > 0) {
+    const otherUnitsLeft = sumDrinksOfSingleType(
+      session.drinks,
+      CONST.DRINKS.KEYS.OTHER,
+    );
+    let keyToRemove: DrinkKey | null = null;
+    if (otherUnitsLeft > 0) {
+      // Try to remove a drink from 'others' first
+      keyToRemove = CONST.DRINKS.KEYS.OTHER;
+    } else if (sumAllDrinks(session.drinks) > 0) {
+      // In case there are no other drinks, remove one at random
+      const drinkKeysLeft = getUniqueDrinkTypesInSession(session);
+      if (!drinkKeysLeft) {
+        return;
+      }
+      keyToRemove =
+        drinkKeysLeft[Math.floor(Math.random() * drinkKeysLeft.length)];
+    }
+    if (keyToRemove) {
       const newDrinks: DrinksList | undefined = removeDrinks(
         session.drinks,
-        'other',
+        keyToRemove,
         1,
       );
       setSession({...session, drinks: newDrinks});
     }
-    // Here, as else, maybe send an alert that there are other types of
-    // drinks logged
   };
 
   const handleBlackoutChange = (value: boolean) => {
@@ -164,13 +194,6 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       return;
     }
     setSession({...session, blackout: value});
-  };
-
-  const handleNoteChange = (value: string) => {
-    if (!session) {
-      return;
-    }
-    setSession({...session, note: value});
   };
 
   const setCurrentDrinks = (newDrinks: DrinksList | undefined) => {
@@ -220,6 +243,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     const newTotalUnits = sumAllUnits(
       session?.drinks,
       preferences.drinks_to_units,
+      true,
     );
     const newAvailableUnits = CONST.MAX_ALLOWED_UNITS - newTotalUnits;
     setTotalUnits(newTotalUnits);
@@ -231,44 +255,46 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       return;
     }
     if (totalUnits > CONST.MAX_ALLOWED_UNITS) {
-      console.log(translate('LiveSessionScreen.error.save'));
+      Log.warn(translate('liveSessionScreen.error.save'));
       return null;
     }
-    if (totalUnits > 0) {
-      try {
-        setLoadingText(translate('LiveSessionScreen.saving'));
-        setSessionFinished(true); // No more db syncs
-        const newSessionData: DrinkingSession = {
-          ...session,
-          end_time: sessionIsLive ? Date.now() : session.start_time,
-        };
-        delete newSessionData.ongoing;
-        // Wait for any pending updates to resolve first
-        while (isPending) {
-          await new Promise(resolve => setTimeout(resolve, 100));
-        }
-        if (sessionIsLive) {
-          await endLiveDrinkingSession(db, userID, newSessionData, sessionId);
-        } else {
-          await saveDrinkingSessionData(
-            db,
-            userID,
-            newSessionData,
-            sessionId,
-            false, // Do not update live status
-          );
-        }
-        await removePlaceholderSessionData(db, userID);
-      } catch (error: any) {
-        Alert.alert(
-          translate('LiveSessionScreen.error.saveTitle'),
-          translate('LiveSessionScreen.error.save'),
-        );
-      } finally {
-        // Reroute to session summary, do not allow user to return
-        navigateBackDynamically(CONST.NAVIGATION.SESSION_ACTION.SAVE);
-        setLoadingText('');
+    if (totalUnits <= 0) {
+      // TODO inform the user why the they can not save their session - 0 units
+      return;
+    }
+    try {
+      setLoadingText(translate('liveSessionScreen.saving'));
+      setSessionFinished(true); // No more db syncs
+      const newSessionData: DrinkingSession = {
+        ...session,
+        end_time: sessionIsLive ? Date.now() : session.start_time,
+      };
+      delete newSessionData.ongoing;
+      // Wait for any pending updates to resolve first
+      while (isPending) {
+        await new Promise(resolve => setTimeout(resolve, 100));
       }
+      if (sessionIsLive) {
+        await endLiveDrinkingSession(db, userID, newSessionData, sessionId);
+      } else {
+        await saveDrinkingSessionData(
+          db,
+          userID,
+          newSessionData,
+          sessionId,
+          false, // Do not update live status
+        );
+      }
+      await removePlaceholderSessionData(db, userID);
+    } catch (error: any) {
+      Alert.alert(
+        translate('liveSessionScreen.error.saveTitle'),
+        translate('liveSessionScreen.error.save'),
+      );
+    } finally {
+      // Reroute to session summary, do not allow user to return
+      navigateBackDynamically(CONST.NAVIGATION.SESSION_ACTION.SAVE);
+      setLoadingText('');
     }
   }
 
@@ -312,12 +338,12 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       return;
     }
     if (!sessionIsLive && hasSessionChanged()) {
-      setShowLeaveConfirmation(true); // Unsaved changes
+      setShouldShowLeaveConfirmation(true); // Unsaved changes
       return;
     }
     if (sessionIsLive) {
       try {
-        setLoadingText('Synchronizing data...');
+        setLoadingText(translate('liveSessionScreen.synchronizing'));
         await waitForNoPendingUpdate();
         await updateSessionDrinks(db, user.uid, sessionId, session?.drinks);
       } catch (error: any) {
@@ -338,19 +364,19 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
         await removePlaceholderSessionData(db, user.uid);
       }
     } catch (error: any) {
-      console.log('Could not remove placeholder session data', error.message); // Unimportant
+      Log.warn('Could not remove placeholder session data', error.message); // Unimportant
     } finally {
-      setShowLeaveConfirmation(false);
+      setShouldShowLeaveConfirmation(false);
       Navigation.goBack();
     }
   };
 
   const openSession = async () => {
     if (!user) {
-      return;
+      throw new Error(translate('liveSessionScreen.error.load'));
     }
     // Fetch the latest database data and use it to open the session
-    setLoadingText('Opening your session...');
+    setLoadingText(translate('liveSessionScreen.loading'));
     let sessionToOpen: DrinkingSession | null = await readDataOnce(
       db,
       DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID.getRoute(
@@ -380,9 +406,16 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   };
 
   // Prepare the session for the user upon component mount
+  useFocusEffect(
+    React.useCallback(() => {
+      openSession();
+    }, []),
+  );
+
+  // Monitor various dynamic attributes stemming from the session
   useEffect(() => {
-    openSession();
-  }, []);
+    setSessionIsLive(!!session?.ongoing);
+  }, [session?.ongoing]);
 
   // Synchronize the session with database
   useEffect(() => {
@@ -419,10 +452,10 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     return <UserOffline />;
   }
   if (openingSession || loadingText) {
-    return <LoadingData loadingText={loadingText} />;
+    return <FullScreenLoadingIndicator loadingText={loadingText} />;
   }
   if (!user) {
-    Navigation.navigate(ROUTES.LOGIN);
+    Navigation.resetToHome();
     return;
   }
   if (!session) {
@@ -435,66 +468,84 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
 
   return (
     <ScreenWrapper testID={LiveSessionScreen.displayName}>
-      <MainHeader
-        headerText=""
-        onGoBack={handleBackPress}
-        rightSideComponent={
-          <MainHeaderButton
-            buttonOn={monkeMode}
-            textOn="Exit Monke Mode"
-            textOff="Monke Mode"
+      <HeaderWithBackButton
+        onBackButtonPress={handleBackPress}
+        customRightButton={
+          <Button
             onPress={() => setMonkeMode(!monkeMode)}
+            text={translate(
+              monkeMode
+                ? 'liveSessionScreen.exitMonkeMode'
+                : 'liveSessionScreen.enterMonkeMode',
+            )}
+            style={[
+              styles.buttonMedium,
+              monkeMode ? styles.buttonSuccessPressed : styles.buttonSuccess,
+            ]}
+            textStyles={styles.buttonLargeText}
           />
         }
       />
-      <ScrollView
-        style={styles.scrollView}
-        ref={scrollViewRef}
-        onScrollBeginDrag={Keyboard.dismiss}
-        keyboardShouldPersistTaps="handled">
-        <View style={styles.sessionInfoContainer}>
-          <View style={styles.sessionTextContainer}>
-            <Text style={styles.sessionInfoText}>
+      <ScrollView contentContainerStyle={[styles.w100]}>
+        <View style={styles.pt2}>
+          <View style={styles.alignItemsCenter}>
+            <Text style={styles.textHeadlineH2}>
               {session?.ongoing
                 ? `Session from ${sessionStartTime}`
-                : `Session on ${formatDateToDay(sessionDate)}`}
+                : `Session on ${sessionDateString}`}
             </Text>
           </View>
           {isPending && (
             <ActivityIndicator
               size="small"
               color="#0000ff"
-              style={styles.isPendingIndicator}
+              style={localStyles.isPendingIndicator}
             />
           )}
           <SuccessIndicator
             visible={dbSyncSuccessful}
-            successStyle={[styles.successStyle, commonStyles.successIndicator]}
+            successStyle={[
+              localStyles.successStyle,
+              commonStyles.successIndicator,
+            ]}
           />
         </View>
-        <View style={styles.unitCountContainer}>
-          <Text style={[styles.unitCountText, {color: sessionColor}]}>
+        <View style={localStyles.unitCountContainer}>
+          <Text style={[localStyles.unitCountText, {color: sessionColor}]}>
             {totalUnits}
           </Text>
         </View>
         {monkeMode ? (
-          <View style={styles.modifyUnitsContainer}>
+          <View style={localStyles.modifyUnitsContainer}>
             <TouchableOpacity
               accessibilityRole="button"
-              style={[styles.modifyUnitsButton, {backgroundColor: 'red'}]}
+              style={[localStyles.modifyUnitsButton, {backgroundColor: 'red'}]}
               onPress={() => handleMonkeMinus()}>
-              <Text style={styles.modifyUnitsText}>-</Text>
+              <Icon
+                src={KirokuIcons.Minus}
+                height={60}
+                width={40}
+                fill={theme.textLight}
+              />
             </TouchableOpacity>
             <TouchableOpacity
               accessibilityRole="button"
-              style={[styles.modifyUnitsButton, {backgroundColor: 'green'}]}
+              style={[
+                localStyles.modifyUnitsButton,
+                {backgroundColor: 'green'},
+              ]}
               onPress={() => handleMonkePlus()}>
-              <Text style={styles.modifyUnitsText}>+</Text>
+              <Icon
+                src={KirokuIcons.Plus}
+                height={40}
+                width={40}
+                fill={theme.textLight}
+              />
             </TouchableOpacity>
           </View>
         ) : (
           <>
-            <View style={styles.drinkTypesContainer}>
+            <View style={localStyles.drinkTypesContainer}>
               <DrinkTypesView
                 drinkData={DrinkData}
                 currentDrinks={session.drinks}
@@ -502,95 +553,77 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
                 availableUnits={availableUnits}
               />
             </View>
-            <SessionDetailsSlider
-              scrollViewRef={scrollViewRef}
+            <SessionDetailsWindow
+              sessionId={sessionId}
               isBlackout={session.blackout}
               onBlackoutChange={handleBlackoutChange}
               note={session.note}
-              onNoteChange={handleNoteChange}
+              dateString={sessionDateString}
+              shouldAllowDateChange={session.type !== CONST.SESSION_TYPES.LIVE}
             />
           </>
         )}
         <FillerView />
       </ScrollView>
-      <View style={styles.saveSessionDelimiter} />
-      <View style={styles.saveSessionContainer}>
-        <BasicButton
+      <View style={styles.bottomTabBarContainer(true)}>
+        <Button
+          success
           text={`${deleteSessionWording} Session`}
-          buttonStyle={[
-            styles.saveSessionButton,
-            isPending
-              ? styles.disabledSaveSessionButton
-              : styles.enabledSaveSessionButton,
+          textStyles={styles.buttonText}
+          innerStyles={[
+            styles.bottomTabBarItem,
+            styles.halfScreenWidth(windowWidth * 0.75),
+            styles.mr5,
+            styles.mt2,
           ]}
-          textStyle={styles.saveSessionButtonText}
           onPress={handleDiscardSession}
         />
-        <YesNoPopup
-          visible={discardModalVisible}
-          transparent={true}
-          onRequestClose={() => setDiscardModalVisible(false)}
-          message={`Do you really want to\n${deleteSessionWording.toLowerCase()} this session?`}
-          onYes={handleConfirmDiscard}
-        />
-        <BasicButton
+        <Button
+          success
           text="Save Session"
-          buttonStyle={[
-            styles.saveSessionButton,
-            isPending
-              ? styles.disabledSaveSessionButton
-              : styles.enabledSaveSessionButton,
+          textStyles={styles.buttonText}
+          innerStyles={[
+            styles.bottomTabBarItem,
+            styles.halfScreenWidth(windowWidth * 0.75),
+            styles.mt2,
           ]}
-          textStyle={styles.saveSessionButtonText}
           onPress={() => saveSession(db, user.uid)}
         />
-        <YesNoPopup
-          visible={showLeaveConfirmation}
-          transparent={true}
-          onRequestClose={() => setShowLeaveConfirmation(false)}
-          message="You have unsaved changes. Are you sure you want to go back?"
-          onYes={() => confirmGoBack()} // No changes to the session object
-        />
-        {/* <AsyncResponsiveComponent
-          trigger={isPending}
-          asyncOperation={asyncOperation}
-        /> */}
       </View>
+      <ConfirmModal
+        danger
+        title={translate('common.warning')}
+        onConfirm={handleConfirmDiscard}
+        onCancel={() => setDiscardModalVisible(false)}
+        isVisible={discardModalVisible}
+        prompt={translate(
+          'liveSessionScreen.discardSessionWarning',
+          deleteSessionWording.toLowerCase(),
+        )}
+        confirmText={translate('common.yes')}
+        cancelText={translate('common.no')}
+        shouldDisableConfirmButtonWhenOffline
+        shouldShowCancelButton
+      />
+      <ConfirmModal
+        title={translate('common.warning')}
+        onConfirm={() => confirmGoBack()} // No changes to the session object
+        onCancel={() => setShouldShowLeaveConfirmation(false)}
+        isVisible={shouldShowLeaveConfirmation}
+        prompt={translate('liveSessionScreen.unsavedChangesWarning')}
+        confirmText={translate('common.yes')}
+        cancelText={translate('common.no')}
+        shouldShowCancelButton
+      />
     </ScreenWrapper>
   );
 }
 
-const styles = StyleSheet.create({
-  backArrowContainer: {
-    justifyContent: 'center',
-    alignSelf: 'center',
-    padding: 10,
-  },
-  backArrow: {
-    width: 25,
-    height: 25,
-  },
-  sessionInfoContainer: {
-    backgroundColor: '#FFFF99',
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  sessionTextContainer: {
-    alignItems: 'center',
-  },
-  sessionInfoText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginTop: 5,
-    color: 'black',
-    alignSelf: 'center',
-    alignContent: 'center',
-    padding: 5,
-  },
+const localStyles = StyleSheet.create({
   isPendingIndicator: {
     width: 25,
     height: 25,
-    margin: 10,
+    margin: 4,
     position: 'absolute',
     right: 0,
   },
@@ -598,9 +631,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 0,
   },
-  unitCountContainer: {
-    backgroundColor: '#FFFF99',
-  },
+  unitCountContainer: {},
   unitCountText: {
     fontSize: 90,
     fontWeight: 'bold',
@@ -611,13 +642,9 @@ const styles = StyleSheet.create({
     padding: 2,
     textShadowColor: '#000',
     textShadowOffset: {width: 1, height: 1},
-    textShadowRadius: 8,
+    textShadowRadius: 4,
     elevation: 5,
     zIndex: 1,
-  },
-  scrollView: {
-    flex: 1,
-    backgroundColor: '#FFFF99',
   },
   drinkTypesContainer: {
     alignItems: 'center',
@@ -660,66 +687,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 50,
   },
-  modifyUnitsText: {
-    fontSize: 60,
-    fontWeight: 'bold',
-    color: 'white',
-    textAlign: 'center',
-  },
   sessionDetailsContainer: {
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
     marginTop: 20,
-  },
-  saveSessionDelimiter: {
-    width: 0,
-    // height: 5,
-    // width: '100%',
-    // backgroundColor: 'white',
-    // borderTopWidth: 1,
-    // borderColor: '#000',
-  },
-  saveSessionContainer: {
-    height: '8%',
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-    backgroundColor: '#FFFF99',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: -2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 10,
-    borderTopWidth: 1,
-    borderColor: '#ddd',
-    elevation: 10, // for Android shadow
-  },
-  saveSessionButton: {
-    width: '50%',
-    height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 10,
-    marginBottom: 10,
-    marginTop: 10,
-    borderWidth: 1,
-    borderColor: '#000',
-  },
-  enabledSaveSessionButton: {
-    backgroundColor: '#fcf50f',
-  },
-  disabledSaveSessionButton: {
-    // backgroundColor: '#fffb82', // No longer used
-    backgroundColor: '#fcf50f',
-  },
-  saveSessionButtonText: {
-    color: 'black',
-    fontSize: 18,
-    fontWeight: 'bold',
   },
 });
 

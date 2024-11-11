@@ -10,17 +10,8 @@ import type DeepValueOf from './types/utils/DeepValueOf';
  * This is a file containing constants for all the top level keys in the onyx store
  */
 const ONYXKEYS = {
-  /** Keeps track if there is modal currently visible or not */
-  MODAL: 'modal',
-  //   /** Holds information about the users account that is logging in */
-  ACCOUNT: 'account',
-
-  //   /** Holds the reportID for the report between the user and their account manager */
-  //   ACCOUNT_MANAGER_REPORT_ID: 'accountManagerReportID',
-
-  //   /** Holds an array of client IDs which is used for multi-tabs on web in order to know
-  //    * which tab is the leader, and which ones are the followers */
-  //   ACTIVE_CLIENTS: 'activeClients',
+  //   /** Holds information about the user that is logging in */
+  LOGIN: 'login',
 
   //   /** A unique ID for the device */
   DEVICE_ID: 'deviceID',
@@ -31,21 +22,20 @@ const ONYXKEYS = {
   //   /** Boolean flag set whenever we are searching for reports in the server */
   //   IS_SEARCHING_FOR_REPORTS: 'isSearchingForReports',
 
+  /** This NVP contains information about whether the timezone fix was completed or not */
+  NVP_TZ_FIX: 'nvp_tz_fix',
+
   /** Note: These are Persisted Requests - not all requests in the main queue as the key name might lead one to believe */
   PERSISTED_REQUESTS: 'networkRequestQueue',
 
   /** Stores current date */
   CURRENT_DATE: 'currentDate',
 
-  /** Credentials to authenticate the user */
-  CREDENTIALS: 'credentials',
-  STASHED_CREDENTIALS: 'stashedCredentials',
-
   //   // Contains loading data for the IOU feature (MoneyRequestModal, IOUDetail, & MoneyRequestPreview Components)
   //   IOU: 'iou',
 
-  //   /** Keeps track if there is modal currently visible or not */
-  //   MODAL: 'modal',
+  /** Keeps track if there is modal currently visible or not */
+  MODAL: 'modal',
 
   //   /** Has information about the network status (offline/online) */
   NETWORK: 'network',
@@ -103,9 +93,6 @@ const ONYXKEYS = {
 
   //   /** Contains latitude and longitude of user's last known location */
   //   USER_LOCATION: 'userLocation',
-
-  //   /** Contains metadata (partner, login, validation date) for all of the user's logins */
-  //   LOGIN_LIST: 'loginList',
 
   //   /** Information about the current session (authToken, userID, email, loading, error) */
   SESSION: 'session',
@@ -285,6 +272,9 @@ const ONYXKEYS = {
   // Stores last visited path
   LAST_VISITED_PATH: 'lastVisitedPath',
 
+  /** Stores the route to open after changing app permission from settings */
+  LAST_ROUTE: 'lastRoute',
+
   //   // Stores the recently used report fields
   //   RECENTLY_USED_REPORT_FIELDS: 'recentlyUsedReportFields',
 
@@ -353,6 +343,10 @@ const ONYXKEYS = {
 
   //   /** List of Form ids */
   FORMS: {
+    LOG_IN_FORM: 'logInForm',
+    LOG_IN_FORM_DRAFT: 'logInFormDraft',
+    SIGN_UP_FORM: 'signUpForm',
+    SIGN_UP_FORM_DRAFT: 'signUpFormDraft',
     // ADD_DEBIT_CARD_FORM: 'addDebitCardForm',
     //     ADD_DEBIT_CARD_FORM_DRAFT: 'addDebitCardFormDraft',
     //     WORKSPACE_SETTINGS_FORM: 'workspaceSettingsForm',
@@ -377,6 +371,8 @@ const ONYXKEYS = {
     //     PROFILE_SETTINGS_FORM_DRAFT: 'profileSettingsFormDraft',
     DISPLAY_NAME_FORM: 'displayNameForm',
     DISPLAY_NAME_FORM_DRAFT: 'displayNameFormDraft',
+    USER_NAME_FORM: 'userNameForm',
+    USER_NAME_FORM_DRAFT: 'userNameFormDraft',
     //     ONBOARDING_PERSONAL_DETAILS_FORM: 'onboardingPersonalDetailsForm',
     //     ONBOARDING_PERSONAL_DETAILS_FORM_DRAFT:
     //       'onboardingPersonalDetailsFormDraft',
@@ -390,139 +386,43 @@ const ONYXKEYS = {
     //     WORKSPACE_INVITE_MESSAGE_FORM_DRAFT: 'workspaceInviteMessageFormDraft',
     DATE_OF_BIRTH_FORM: 'dateOfBirthForm',
     DATE_OF_BIRTH_FORM_DRAFT: 'dateOfBirthFormDraft',
-    //     HOME_ADDRESS_FORM: 'homeAddressForm',
-    //     HOME_ADDRESS_FORM_DRAFT: 'homeAddressFormDraft',
-    //     NEW_ROOM_FORM: 'newRoomForm',
-    //     NEW_ROOM_FORM_DRAFT: 'newRoomFormDraft',
-    //     ROOM_SETTINGS_FORM: 'roomSettingsForm',
-    //     ROOM_SETTINGS_FORM_DRAFT: 'roomSettingsFormDraft',
-    //     NEW_TASK_FORM: 'newTaskForm',
-    //     NEW_TASK_FORM_DRAFT: 'newTaskFormDraft',
-    //     EDIT_TASK_FORM: 'editTaskForm',
-    //     EDIT_TASK_FORM_DRAFT: 'editTaskFormDraft',
-    //     MONEY_REQUEST_DESCRIPTION_FORM: 'moneyRequestDescriptionForm',
-    //     MONEY_REQUEST_DESCRIPTION_FORM_DRAFT: 'moneyRequestDescriptionFormDraft',
-    //     MONEY_REQUEST_MERCHANT_FORM: 'moneyRequestMerchantForm',
-    //     MONEY_REQUEST_MERCHANT_FORM_DRAFT: 'moneyRequestMerchantFormDraft',
-    //     MONEY_REQUEST_AMOUNT_FORM: 'moneyRequestAmountForm',
-    //     MONEY_REQUEST_AMOUNT_FORM_DRAFT: 'moneyRequestAmountFormDraft',
-    //     MONEY_REQUEST_DATE_FORM: 'moneyRequestCreatedForm',
-    //     MONEY_REQUEST_DATE_FORM_DRAFT: 'moneyRequestCreatedFormDraft',
-    //     MONEY_REQUEST_HOLD_FORM: 'moneyHoldReasonForm',
-    //     MONEY_REQUEST_HOLD_FORM_DRAFT: 'moneyHoldReasonFormDraft',
-    //     NEW_CONTACT_METHOD_FORM: 'newContactMethodForm',
-    //     NEW_CONTACT_METHOD_FORM_DRAFT: 'newContactMethodFormDraft',
-    //     WAYPOINT_FORM: 'waypointForm',
-    //     WAYPOINT_FORM_DRAFT: 'waypointFormDraft',
-    //     SETTINGS_STATUS_SET_FORM: 'settingsStatusSetForm',
-    //     SETTINGS_STATUS_SET_FORM_DRAFT: 'settingsStatusSetFormDraft',
-    //     SETTINGS_STATUS_SET_CLEAR_AFTER_FORM: 'settingsStatusSetClearAfterForm',
-    //     SETTINGS_STATUS_SET_CLEAR_AFTER_FORM_DRAFT:
-    //       'settingsStatusSetClearAfterFormDraft',
-    //     SETTINGS_STATUS_CLEAR_DATE_FORM: 'settingsStatusClearDateForm',
-    //     SETTINGS_STATUS_CLEAR_DATE_FORM_DRAFT: 'settingsStatusClearDateFormDraft',
-    //     PRIVATE_NOTES_FORM: 'privateNotesForm',
-    //     PRIVATE_NOTES_FORM_DRAFT: 'privateNotesFormDraft',
-    //     I_KNOW_A_TEACHER_FORM: 'iKnowTeacherForm',
-    //     I_KNOW_A_TEACHER_FORM_DRAFT: 'iKnowTeacherFormDraft',
-    //     INTRO_SCHOOL_PRINCIPAL_FORM: 'introSchoolPrincipalForm',
-    //     INTRO_SCHOOL_PRINCIPAL_FORM_DRAFT: 'introSchoolPrincipalFormDraft',
-    //     REPORT_PHYSICAL_CARD_FORM: 'requestPhysicalCardForm',
-    //     REPORT_PHYSICAL_CARD_FORM_DRAFT: 'requestPhysicalCardFormDraft',
-    //     REPORT_VIRTUAL_CARD_FRAUD: 'reportVirtualCardFraudForm',
-    //     REPORT_VIRTUAL_CARD_FRAUD_DRAFT: 'reportVirtualCardFraudFormDraft',
-    //     GET_PHYSICAL_CARD_FORM: 'getPhysicalCardForm',
-    //     GET_PHYSICAL_CARD_FORM_DRAFT: 'getPhysicalCardFormDraft',
-    //     REPORT_FIELD_EDIT_FORM: 'reportFieldEditForm',
-    //     REPORT_FIELD_EDIT_FORM_DRAFT: 'reportFieldEditFormDraft',
-    //     REIMBURSEMENT_ACCOUNT_FORM: 'reimbursementAccount',
-    //     REIMBURSEMENT_ACCOUNT_FORM_DRAFT: 'reimbursementAccountDraft',
-    //     PERSONAL_BANK_ACCOUNT_FORM: 'personalBankAccountForm',
-    //     PERSONAL_BANK_ACCOUNT_FORM_DRAFT: 'personalBankAccountFormDraft',
-    //     EXIT_SURVEY_REASON_FORM: 'exitSurveyReasonForm',
-    //     EXIT_SURVEY_REASON_FORM_DRAFT: 'exitSurveyReasonFormDraft',
-    //     EXIT_SURVEY_RESPONSE_FORM: 'exitSurveyResponseForm',
-    //     EXIT_SURVEY_RESPONSE_FORM_DRAFT: 'exitSurveyResponseFormDraft',
-    //     WALLET_ADDITIONAL_DETAILS: 'walletAdditionalDetails',
-    //     WALLET_ADDITIONAL_DETAILS_DRAFT: 'walletAdditionalDetailsDraft',
-    //     POLICY_TAG_NAME_FORM: 'policyTagNameForm',
-    //     POLICY_TAG_NAME_FORM_DRAFT: 'policyTagNameFormDraft',
-    //     WORKSPACE_NEW_TAX_FORM: 'workspaceNewTaxForm',
-    //     WORKSPACE_NEW_TAX_FORM_DRAFT: 'workspaceNewTaxFormDraft',
-    //     WORKSPACE_TAX_NAME_FORM: 'workspaceTaxNameForm',
-    //     WORKSPACE_TAX_NAME_FORM_DRAFT: 'workspaceTaxNameFormDraft',
-    //     WORKSPACE_TAX_VALUE_FORM: 'workspaceTaxValueForm',
-    //     WORKSPACE_TAX_VALUE_FORM_DRAFT: 'workspaceTaxValueFormDraft',
+    EMAIL_FORM: 'emailForm',
+    EMAIL_FORM_DRAFT: 'emailFormDraft',
+    PASSWORD_FORM: 'passwordForm',
+    PASSWORD_FORM_DRAFT: 'passwordFormDraft',
+    FEEDBACK_FORM: 'feedbackForm',
+    FEEDBACK_FORM_DRAFT: 'feedbackFormDraft',
+    SESSION_DATE_FORM: 'sessionDateForm',
+    SESSION_DATE_FORM_DRAFT: 'sessionDateFormDraft',
+    SESSION_NOTE_FORM: 'sessionNoteForm',
+    SESSION_NOTE_FORM_DRAFT: 'sessionNoteFormDraft',
   },
 } as const;
 
 type AllOnyxKeys = DeepValueOf<typeof ONYXKEYS>;
 
 type OnyxFormValuesMapping = {
-  // [ONYXKEYS.FORMS.ADD_DEBIT_CARD_FORM]: FormTypes.AddDebitCardForm;
-  //   [ONYXKEYS.FORMS.WORKSPACE_SETTINGS_FORM]: FormTypes.WorkspaceSettingsForm;
-  //   [ONYXKEYS.FORMS.WORKSPACE_CATEGORY_FORM]: FormTypes.WorkspaceCategoryForm;
-  //   [ONYXKEYS.FORMS.WORKSPACE_TAG_FORM]: FormTypes.WorkspaceTagForm;
-  //   [ONYXKEYS.FORMS
-  //     .WORKSPACE_RATE_AND_UNIT_FORM]: FormTypes.WorkspaceRateAndUnitForm;
-  //   [ONYXKEYS.FORMS.WORKSPACE_TAX_CUSTOM_NAME]: FormTypes.WorkspaceTaxCustomName;
+  [ONYXKEYS.FORMS.LOG_IN_FORM]: FormTypes.LogInForm;
+  [ONYXKEYS.FORMS.SIGN_UP_FORM]: FormTypes.SignUpForm;
   [ONYXKEYS.FORMS.CLOSE_ACCOUNT_FORM]: FormTypes.CloseAccountForm;
   //   [ONYXKEYS.FORMS.PROFILE_SETTINGS_FORM]: FormTypes.ProfileSettingsForm;
   [ONYXKEYS.FORMS.DISPLAY_NAME_FORM]: FormTypes.DisplayNameForm;
-  //   [ONYXKEYS.FORMS.ONBOARDING_PERSONAL_DETAILS_FORM]: FormTypes.DisplayNameForm;
-  //   [ONYXKEYS.FORMS.ROOM_NAME_FORM]: FormTypes.RoomNameForm;
-  //   [ONYXKEYS.FORMS.REPORT_DESCRIPTION_FORM]: FormTypes.ReportDescriptionForm;
+  [ONYXKEYS.FORMS.USER_NAME_FORM]: FormTypes.UserNameForm;
   [ONYXKEYS.FORMS.LEGAL_NAME_FORM]: FormTypes.LegalNameForm;
-  //   [ONYXKEYS.FORMS
-  //     .WORKSPACE_INVITE_MESSAGE_FORM]: FormTypes.WorkspaceInviteMessageForm;
   [ONYXKEYS.FORMS.DATE_OF_BIRTH_FORM]: FormTypes.DateOfBirthForm;
   // [ONYXKEYS.FORMS.HOME_ADDRESS_FORM]: FormTypes.HomeAddressForm;
-  //   [ONYXKEYS.FORMS.NEW_ROOM_FORM]: FormTypes.NewRoomForm;
-  //   [ONYXKEYS.FORMS.ROOM_SETTINGS_FORM]: FormTypes.RoomSettingsForm;
-  //   [ONYXKEYS.FORMS.NEW_TASK_FORM]: FormTypes.NewTaskForm;
-  //   [ONYXKEYS.FORMS.EDIT_TASK_FORM]: FormTypes.EditTaskForm;
   //   [ONYXKEYS.FORMS.EXIT_SURVEY_REASON_FORM]: FormTypes.ExitSurveyReasonForm;
   //   [ONYXKEYS.FORMS.EXIT_SURVEY_RESPONSE_FORM]: FormTypes.ExitSurveyResponseForm;
-  //   [ONYXKEYS.FORMS
-  //     .MONEY_REQUEST_DESCRIPTION_FORM]: FormTypes.MoneyRequestDescriptionForm;
-  //   [ONYXKEYS.FORMS
-  //     .MONEY_REQUEST_MERCHANT_FORM]: FormTypes.MoneyRequestMerchantForm;
-  //   [ONYXKEYS.FORMS.MONEY_REQUEST_AMOUNT_FORM]: FormTypes.MoneyRequestAmountForm;
-  //   [ONYXKEYS.FORMS.MONEY_REQUEST_DATE_FORM]: FormTypes.MoneyRequestDateForm;
-  //   [ONYXKEYS.FORMS
-  //     .MONEY_REQUEST_HOLD_FORM]: FormTypes.MoneyRequestHoldReasonForm;
-  //   [ONYXKEYS.FORMS.NEW_CONTACT_METHOD_FORM]: FormTypes.NewContactMethodForm;
-  //   [ONYXKEYS.FORMS.WAYPOINT_FORM]: FormTypes.WaypointForm;
-  //   [ONYXKEYS.FORMS.SETTINGS_STATUS_SET_FORM]: FormTypes.SettingsStatusSetForm;
   //   [ONYXKEYS.FORMS
   //     .SETTINGS_STATUS_CLEAR_DATE_FORM]: FormTypes.SettingsStatusClearDateForm;
   //   [ONYXKEYS.FORMS
   //     .SETTINGS_STATUS_SET_CLEAR_AFTER_FORM]: FormTypes.SettingsStatusSetClearAfterForm;
   //   [ONYXKEYS.FORMS.PRIVATE_NOTES_FORM]: FormTypes.PrivateNotesForm;
-  //   [ONYXKEYS.FORMS.I_KNOW_A_TEACHER_FORM]: FormTypes.IKnowTeacherForm;
-  //   [ONYXKEYS.FORMS
-  //     .INTRO_SCHOOL_PRINCIPAL_FORM]: FormTypes.IntroSchoolPrincipalForm;
-  //   [ONYXKEYS.FORMS
-  //     .REPORT_VIRTUAL_CARD_FRAUD]: FormTypes.ReportVirtualCardFraudForm;
-  //   [ONYXKEYS.FORMS.REPORT_PHYSICAL_CARD_FORM]: FormTypes.ReportPhysicalCardForm;
-  //   [ONYXKEYS.FORMS.GET_PHYSICAL_CARD_FORM]: FormTypes.GetPhysicalCardForm;
-  //   [ONYXKEYS.FORMS.REPORT_FIELD_EDIT_FORM]: FormTypes.ReportFieldEditForm;
-  //   [ONYXKEYS.FORMS
-  //     .REIMBURSEMENT_ACCOUNT_FORM]: FormTypes.ReimbursementAccountForm;
-  //   [ONYXKEYS.FORMS
-  //     .PERSONAL_BANK_ACCOUNT_FORM]: FormTypes.PersonalBankAccountForm;
-  //   [ONYXKEYS.FORMS
-  //     .WORKSPACE_DESCRIPTION_FORM]: FormTypes.WorkspaceDescriptionForm;
-  //   [ONYXKEYS.FORMS
-  //     .WALLET_ADDITIONAL_DETAILS]: FormTypes.AdditionalDetailStepForm;
-  //   [ONYXKEYS.FORMS.POLICY_TAG_NAME_FORM]: FormTypes.PolicyTagNameForm;
-  //   [ONYXKEYS.FORMS.WORKSPACE_NEW_TAX_FORM]: FormTypes.WorkspaceNewTaxForm;
-  //   [ONYXKEYS.FORMS
-  //     .POLICY_CREATE_DISTANCE_RATE_FORM]: FormTypes.PolicyCreateDistanceRateForm;
-  //   [ONYXKEYS.FORMS
-  //     .POLICY_DISTANCE_RATE_EDIT_FORM]: FormTypes.PolicyDistanceRateEditForm;
-  //   [ONYXKEYS.FORMS.WORKSPACE_TAX_NAME_FORM]: FormTypes.WorkspaceTaxNameForm;
-  //   [ONYXKEYS.FORMS.WORKSPACE_TAX_VALUE_FORM]: FormTypes.WorkspaceTaxValueForm;
+  [ONYXKEYS.FORMS.EMAIL_FORM]: FormTypes.EmailForm;
+  [ONYXKEYS.FORMS.PASSWORD_FORM]: FormTypes.PasswordForm;
+  [ONYXKEYS.FORMS.FEEDBACK_FORM]: FormTypes.FeedbackForm;
+  [ONYXKEYS.FORMS.SESSION_DATE_FORM]: FormTypes.SessionDateForm;
+  [ONYXKEYS.FORMS.SESSION_NOTE_FORM]: FormTypes.SessionNoteForm;
 };
 
 type OnyxFormDraftValuesMapping = {
@@ -570,8 +470,7 @@ type OnyxCollectionValuesMapping = {
 };
 
 type OnyxValuesMapping = {
-  [ONYXKEYS.MODAL]: OnyxTypes.Modal;
-  [ONYXKEYS.ACCOUNT]: OnyxTypes.Account;
+  [ONYXKEYS.NVP_TZ_FIX]: OnyxTypes.TzFix | [];
   //   [ONYXKEYS.ACCOUNT_MANAGER_REPORT_ID]: string;
   //   [ONYXKEYS.NVP_IS_FIRST_TIME_NEW_EXPENSIFY_USER]: boolean;
   //   [ONYXKEYS.ACTIVE_CLIENTS]: string[];
@@ -579,10 +478,9 @@ type OnyxValuesMapping = {
   [ONYXKEYS.IS_SIDEBAR_LOADED]: boolean;
   [ONYXKEYS.PERSISTED_REQUESTS]: OnyxTypes.Request[];
   [ONYXKEYS.CURRENT_DATE]: string;
-  [ONYXKEYS.CREDENTIALS]: OnyxTypes.Credentials;
-  [ONYXKEYS.STASHED_CREDENTIALS]: OnyxTypes.Credentials;
   //   [ONYXKEYS.IOU]: OnyxTypes.IOU;
-  //   [ONYXKEYS.MODAL]: OnyxTypes.Modal;
+  [ONYXKEYS.LOGIN]: OnyxTypes.Login;
+  [ONYXKEYS.MODAL]: OnyxTypes.Modal;
   [ONYXKEYS.NETWORK]: OnyxTypes.Network;
   //   [ONYXKEYS.NEW_GROUP_CHAT_DRAFT]: OnyxTypes.NewGroupChatDraft;
   //   [ONYXKEYS.CUSTOM_STATUS_DRAFT]: OnyxTypes.CustomStatusDraft;
@@ -661,6 +559,7 @@ type OnyxValuesMapping = {
   //   [ONYXKEYS.ONBOARDING_PURPOSE_SELECTED]: string;
   //   [ONYXKEYS.IS_SEARCHING_FOR_REPORTS]: boolean;
   [ONYXKEYS.LAST_VISITED_PATH]: string | undefined;
+  [ONYXKEYS.LAST_ROUTE]: string;
   //   [ONYXKEYS.RECENTLY_USED_REPORT_FIELDS]: OnyxTypes.RecentlyUsedReportFields;
   [ONYXKEYS.UPDATE_REQUIRED]: boolean;
   //   [ONYXKEYS.PLAID_CURRENT_EVENT]: string;

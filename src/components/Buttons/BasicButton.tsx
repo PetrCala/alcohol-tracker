@@ -11,11 +11,10 @@ type Props = {
 /**
  * Button that can be stylized in the .css and that does something on press.
  */
-const BasicButton = (props: Props) => {
-  const {text, buttonStyle, textStyle, onPress} = props;
-
+const BasicButton = ({text, buttonStyle, textStyle, onPress}: Props) => {
   return (
-    <TouchableOpacity accessibilityRole="button"
+    <TouchableOpacity
+      accessibilityRole="button"
       id={text}
       testID={text}
       style={buttonStyle}

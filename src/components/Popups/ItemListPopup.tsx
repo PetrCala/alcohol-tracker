@@ -1,4 +1,8 @@
-﻿import React from 'react';
+﻿import Button from '@components/Button';
+import Icon from '@components/Icon';
+import useLocalize from '@hooks/useLocalize';
+import useThemeStyles from '@hooks/useThemeStyles';
+import React from 'react';
 import {
   View,
   Modal,
@@ -30,27 +34,33 @@ const ItemListPopup: React.FC<ItemListPopupProps> = ({
   actions,
   onRequestClose,
 }) => {
+  const styles = useThemeStyles();
+  const {translate} = useLocalize();
   return (
     <Modal
       animationType="none"
       transparent={transparent}
       visible={visible}
       onRequestClose={onRequestClose}>
-      <View style={styles.modalContainer}>
-        <View style={styles.modalView}>
-          <Text style={styles.modalHeading}>{heading}</Text>
+      <View style={localStyles.modalContainer}>
+        <View style={[localStyles.modalView, styles.appBG]}>
+          <Text style={[styles.textHeadlineH2, styles.pb2]}>{heading}</Text>
           {actions.map((item, index) => (
-            <TouchableOpacity accessibilityRole="button"
+            <TouchableOpacity
+              accessibilityRole="button"
               key={index}
-              style={styles.actionButton}
+              style={localStyles.actionButton}
               onPress={item.action}>
-              <Image source={item.icon} style={styles.actionIcon} />
-              <Text style={styles.actionText}>{item.label}</Text>
+              <Icon src={item.icon} width={24} height={24} />
+              <Text style={[styles.textNormal, styles.ml2]}>{item.label}</Text>
             </TouchableOpacity>
           ))}
-          <TouchableOpacity accessibilityRole="button" style={styles.closeButton} onPress={onRequestClose}>
-            <Text style={styles.closeButtonText}>Close</Text>
-          </TouchableOpacity>
+          <Button
+            text={translate('common.close')}
+            onPress={onRequestClose}
+            innerStyles={[styles.ph8, styles.mt2]}
+            success
+          />
         </View>
       </View>
     </Modal>
@@ -59,7 +69,7 @@ const ItemListPopup: React.FC<ItemListPopupProps> = ({
 
 const screenWidth = Dimensions.get('window').width;
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -68,12 +78,10 @@ const styles = StyleSheet.create({
   },
   modalView: {
     width: screenWidth * 0.8,
-    backgroundColor: '#FFFF99',
     borderRadius: 8,
-    borderWidth: 2,
+    borderWidth: 1,
+    padding: 10,
     borderColor: 'black',
-    paddingBottom: 15,
-    paddingTop: 20,
     alignItems: 'center',
     elevation: 5,
   },
@@ -91,31 +99,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: 10,
     borderRadius: 8,
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: 'black',
     margin: 3,
-  },
-  actionIcon: {
-    width: 24,
-    height: 24,
-    marginRight: 10,
-  },
-  actionText: {
-    fontSize: 16,
-    color: 'black',
-    fontWeight: '500',
-  },
-  closeButton: {
-    width: '100%',
-    backgroundColor: '#ffff99',
-    padding: 6,
-    marginTop: 10,
-    alignItems: 'center',
-  },
-  closeButtonText: {
-    color: 'black',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
 });
 

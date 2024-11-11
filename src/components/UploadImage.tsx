@@ -4,8 +4,6 @@ import {Image, View, Alert, TouchableOpacity, StyleSheet} from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import {Image as CompressorImage} from 'react-native-compressor';
 import {uploadImageToFirebase} from '../storage/storageUpload';
-import WarningMessage from './Info/WarningMessage';
-import SuccessMessage from './Info/SuccessMessage';
 import UploadImagePopup from './Popups/UploadImagePopup';
 import type GeneralAction from '@src/types/various/GeneralAction';
 import checkPermission from '@libs/Permissions/checkPermission';
@@ -13,6 +11,7 @@ import {requestPermission} from '@libs/Permissions/requestPermission';
 import {updateProfileInfo} from '@database/profile';
 
 import {useFirebase} from '@src/context/global/FirebaseContext';
+import useLocalize from '@hooks/useLocalize';
 
 type UploadImageState = {
   imageSource: string | null;
@@ -68,6 +67,7 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
   isProfilePicture = false,
 }) => {
   const {auth, db, storage} = useFirebase();
+  const {translate} = useLocalize();
   const user = auth.currentUser;
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -86,7 +86,10 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
       .then((image: any) => {
         const source = {uri: image.path};
         if (!source) {
-          Alert.alert('Error', 'Could not fetch the image. Please try again.');
+          Alert.alert(
+            translate('common.error.error'),
+            translate('imageUpload.error.fetch'),
+          );
           // dispatch({
           //   type: 'SET_WARNING',
           //   payload: 'Could not fetch the image. Please try again.',
@@ -100,7 +103,7 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
         if ('User cancelled image selection' === error.message) {
           return;
         }
-        Alert.alert('Error choosing image', error.message);
+        Alert.alert(translate('imageUpload.error.choice'), error.message);
         // dispatch({type: 'SET_WARNING', payload: error.message});
       });
   };
@@ -118,7 +121,7 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
       await chooseImage(); // Call automatically
       resetIndicators(); // Clean the indicators for upload
     } catch (error: any) {
-      Alert.alert('Error choosing image', error.message);
+      Alert.alert(translate('imageUpload.error.choice'), error.message);
     }
   };
 
@@ -148,12 +151,13 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
         if (isProfilePicture) {
           await updateProfileInfo(pathToUpload, user, auth, db, storage);
         }
+        Alert.alert(translate('imageUpload.success'));
       } catch (error: any) {
-        dispatch({type: 'SET_UPLOAD_ONGOING', payload: false}); // Otherwise dispatch upon success in child component
         dispatch({type: 'SET_IMAGE_SOURCE', payload: null});
+        Alert.alert(translate('imageUpload.error.upload'), error.message);
+      } finally {
+        dispatch({type: 'SET_UPLOAD_ONGOING', payload: false}); // Otherwise dispatch upon success in child component
         dispatch({type: 'SET_UPLOAD_MODAL_VISIBLE', payload: false});
-        Alert.alert('Image upload error', error.message);
-        // handleErrors(error, 'Error uploading image', error.message, dispatch); // Use after popup alerts have been implemented
       }
     };
 

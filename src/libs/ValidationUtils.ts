@@ -10,6 +10,7 @@ import {
   parse,
   parseISO,
   startOfDay,
+  startOfTomorrow,
   subYears,
 } from 'date-fns';
 import {URL_REGEX_WITH_REQUIRED_PROTOCOL} from '@libs/common/Url';
@@ -23,11 +24,12 @@ import type {
   FormValue,
 } from '@components/Form/types';
 import CONST from '@src/CONST';
-// import * as CardUtils from './CardUtils';
 import DateUtils from './DateUtils';
 import type {MaybePhraseKey} from './Localize';
-// import * as LoginUtils from './LoginUtils';
+import * as Localize from './Localize';
 import StringUtils from './StringUtils';
+import {OnyxFormKey} from '@src/ONYXKEYS';
+import {TranslationPaths} from '@src/languages/types';
 
 /**
  * Implements the Luhn Algorithm, a checksum formula used to validate credit card
@@ -48,20 +50,9 @@ function validateCardNumber(value: string): boolean {
   return sum % 10 === 0;
 }
 
-// /**
-//  * Validating that this is a valid address (PO boxes are not allowed)
-//  */
-// function isValidAddress(value: FormValue): boolean {
-//   if (typeof value !== 'string') {
-//     return false;
-//   }
-
-//   if (!CONST.REGEX.ANY_VALUE.test(value) || value.match(CONST.REGEX.EMOJIS)) {
-//     return false;
-//   }
-
-//   return !CONST.REGEX.PO_BOX.test(value);
-// }
+function isValidEmail(email: string): boolean {
+  return CONST.REGEX.EMAIL.test(email);
+}
 
 /**
  * Validate date fields
@@ -79,6 +70,13 @@ function isValidDate(date: string | Date): boolean {
     isAfter(testDate, pastDate) &&
     isBefore(testDate, futureDate)
   );
+}
+
+/**
+ * Validate that a password is complex enough.
+ */
+function isComplexPassword(password: string): boolean {
+  return CONST.REGEX.COMPLEX_PASSWORD.test(password);
 }
 
 /**
@@ -127,23 +125,22 @@ function isRequiredFulfilled(
  * @param values - all form values
  * @param requiredFields - required fields for particular form
  */
-// TODO re-enable this
-// function getFieldRequiredErrors<TFormID extends OnyxFormKey>(
-//   values: FormOnyxValues<TFormID>,
-//   requiredFields: Array<FormOnyxKeys<TFormID>>,
-// ): FormInputErrors<TFormID> {
-//   const errors: FormInputErrors<TFormID> = {};
+function getFieldRequiredErrors<TFormID extends OnyxFormKey>(
+  values: FormOnyxValues<TFormID>,
+  requiredFields: Array<FormOnyxKeys<TFormID>>,
+): FormInputErrors<TFormID> {
+  const errors: FormInputErrors<TFormID> = {};
 
-//   requiredFields.forEach(fieldKey => {
-//     if (isRequiredFulfilled(values[fieldKey] as FormValue)) {
-//       return;
-//     }
+  requiredFields.forEach(fieldKey => {
+    if (isRequiredFulfilled(values[fieldKey] as FormValue)) {
+      return;
+    }
 
-//     errors[fieldKey] = 'common.error.fieldRequired';
-//   });
+    errors[fieldKey] = Localize.translateLocal('common.error.fieldRequired');
+  });
 
-//   return errors;
-// }
+  return errors;
+}
 
 /**
  * Validates that this is a valid security code
@@ -224,6 +221,13 @@ function getAgeRequirementError(
 }
 
 /**
+ * Checks that the provided name doesn't contain any commas or semicolons
+ */
+function isValidDisplayName(name: string): boolean {
+  return !name.includes(',') && !name.includes(';');
+}
+
+/**
  * Validate that given date is not in the past.
  */
 function getDatePassedError(inputDate: string): string {
@@ -245,6 +249,62 @@ function getDatePassedError(inputDate: string): string {
   return '';
 }
 
+/** Check an email for validity and return a key for the error message
+ *
+ * @param email - email to check
+ * @param currentEmail - current email to compare against
+ *
+ */
+function validateEmail(
+  email: string,
+  currentEmail?: string | null,
+): TranslationPaths | null {
+  if (email.length === 0) {
+    return 'emailForm.error.pleaseEnterEmail';
+  } else if (!isValidEmail(email)) {
+    return 'emailForm.error.invalidEmail';
+  } else if (currentEmail && email === currentEmail) {
+    return 'emailForm.error.sameEmail';
+  } else if (email.length > CONST.EMAIL_MAX_LENGTH) {
+    return 'emailForm.error.emailTooLong';
+  }
+  return null;
+}
+
+function validatePassword(
+  password: string,
+  currentPassword?: string | null,
+): TranslationPaths | null {
+  if (password.length === 0) {
+    return 'password.pleaseFillPassword';
+  } else if (!isComplexPassword(password)) {
+    return 'password.requirements';
+  } else if (currentPassword && password === currentPassword) {
+    return 'password.error.samePassword';
+  }
+  return null;
+}
+
+function validateUsername(
+  username: string,
+  currentUsername?: string | null,
+): TranslationPaths | null {
+  if (username.length === 0) {
+    return 'username.error.usernameRequired';
+  } else if (!isValidDisplayName(username)) {
+    return 'personalDetails.error.hasInvalidCharacter';
+  } else if (username.length > CONST.TITLE_CHARACTER_LIMIT) {
+    return 'username.error.usernameTooLong';
+  } else if (
+    doesContainReservedWord(username, CONST.DISPLAY_NAME.RESERVED_NAMES)
+  ) {
+    return 'personalDetails.error.containsReservedWord';
+  } else if (currentUsername && username === currentUsername) {
+    return 'username.error.sameUsername';
+  }
+  return null;
+}
+
 /**
  * Similar to backend, checks whether a website has a valid URL or not.
  * http/https/ftp URL scheme required.
@@ -257,25 +317,9 @@ function isValidWebsite(url: string): boolean {
   );
 }
 
-// function isValidUSPhone(
-//   phoneNumber = '',
-//   isCountryCodeOptional?: boolean,
-// ): boolean {
-//   const phone = phoneNumber || '';
-//   const regionCode = isCountryCodeOptional ? CONST.COUNTRY.US : undefined;
-
-//   // When we pass regionCode as an option to parsePhoneNumber it wrongly assumes inputs like '=15123456789' as valid
-//   // so we need to check if it is a valid phone.
-//   if (regionCode && !Str.isValidPhoneFormat(phone)) {
-//     return false;
-//   }
-
-//   const parsedPhoneNumber = parsePhoneNumber(phone, {regionCode});
-//   return (
-//     parsedPhoneNumber.possible &&
-//     parsedPhoneNumber.regionCode === CONST.COUNTRY.US
-//   );
-// }
+function isValidSessionNote(note: string): boolean {
+  return note.length <= CONST.SESSION_NAME_CHARACTER_LIMIT;
+}
 
 function isValidValidateCode(validateCode: string): boolean {
   return Boolean(validateCode.match(CONST.VALIDATE_CODE_REGEX_STRING));
@@ -288,15 +332,6 @@ function isValidRecoveryCode(recoveryCode: string): boolean {
 function isValidTwoFactorCode(code: string): boolean {
   return Boolean(code.match(CONST.REGEX.CODE_2FA));
 }
-
-// /**
-//  * Checks whether a value is a numeric string including `(`, `)`, `-` and optional leading `+`
-//  */
-// function isNumericWithSpecialChars(input: string): boolean {
-//   return /^\+?[\d\\+]*$/.test(
-//     LoginUtils.getPhoneNumberWithoutSpecialChars(input),
-//   );
-// }
 
 /**
  * Checks the given number is a valid US Routing Number
@@ -317,13 +352,6 @@ function isValidRoutingNumber(routingNumber: string): boolean {
     return true;
   }
   return false;
-}
-
-/**
- * Checks that the provided name doesn't contain any commas or semicolons
- */
-function isValidDisplayName(name: string): boolean {
-  return !name.includes(',') && !name.includes(';');
 }
 
 // /**
@@ -443,6 +471,8 @@ export {
   meetsMinimumAgeRequirement,
   meetsMaximumAgeRequirement,
   getAgeRequirementError,
+  isValidEmail,
+  isComplexPassword,
   //   isValidAddress,
   isValidDate,
   isValidPastDate,
@@ -450,10 +480,11 @@ export {
   //   isValidExpirationDate,
   isValidDebitCard,
   isRequiredFulfilled,
-  // getFieldRequiredErrors,
+  getFieldRequiredErrors,
   isValidWebsite,
   isValidTwoFactorCode,
   //   isNumericWithSpecialChars,
+  isValidSessionNote,
   isValidRoutingNumber,
   isValidValidateCode,
   isValidDisplayName,
@@ -465,4 +496,7 @@ export {
   prepareValues,
   isValidPersonName,
   isValidPercentage,
+  validateEmail,
+  validatePassword,
+  validateUsername,
 };

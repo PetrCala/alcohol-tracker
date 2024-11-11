@@ -7,10 +7,11 @@ import {
   removeDrinks,
   sumDrinkTypes,
   sumDrinksOfSingleType,
-} from '../libs/DataHandling';
+} from '@libs/DataHandling';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
-import CONST from '@src/CONST';
 import type {DrinkKey, Drinks, DrinksList} from '@src/types/onyx';
+import Icon from './Icon';
+import CONST from '@src/CONST';
 
 type DrinkingSessionDrinksWindowProps = {
   drinkKey: DrinkKey;
@@ -51,18 +52,12 @@ const DrinkingSessionDrinksWindow = ({
   };
 
   const drinkName = findDrinkName(drinkKey);
+  const iconSize = drinkKey === CONST.DRINKS.KEYS.SMALL_BEER ? 22 : 28;
 
   return (
     <View style={styles.sessionDrinkContainer}>
       <View style={styles.iconContainer}>
-        <Image
-          source={iconSource}
-          style={
-            drinkKey === CONST.DRINKS.KEYS.SMALL_BEER
-              ? styles.smallIconStyle
-              : styles.normalIconStyle
-          }
-        />
+        <Icon src={iconSource} height={iconSize} width={iconSize} />
       </View>
       <Text style={styles.drinkInfoText}>{drinkName}</Text>
       <TouchableOpacity
@@ -76,13 +71,12 @@ const DrinkingSessionDrinksWindow = ({
         currentDrinks={currentDrinks}
         setCurrentDrinks={setCurrentDrinks}
         availableUnits={availableUnits}
-        styles={styles}
       />
       <TouchableOpacity
         accessibilityRole="button"
         style={styles.adjustDrinksButton}
         onPress={() => handleAddDrinks({[drinkKey]: 1})}>
-        <Image source={KirokuIcons.Plus} style={styles.adjustDrinksIcon} />
+        <Icon src={KirokuIcons.Plus} additionalStyles={{alignSelf: 'center'}} />
       </TouchableOpacity>
     </View>
   );
@@ -90,61 +84,28 @@ const DrinkingSessionDrinksWindow = ({
 
 const styles = StyleSheet.create({
   sessionDrinkContainer: {
-    borderWidth: 1,
-    borderColor: 'black',
-    backgroundColor: '#fcf50f',
+    paddingTop: 4,
+    paddingBottom: 4,
+    marginLeft: 12,
+    marginRight: 12,
     flexDirection: 'row',
-    padding: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
   iconContainer: {
-    width: 30,
-    height: 30,
-    marginLeft: 5,
-    marginRight: 5,
+    width: 32,
+    height: 32,
+    marginLeft: 4,
+    marginRight: 4,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  normalIconStyle: {
-    width: '100%',
-    height: '100%',
-  },
-  smallIconStyle: {
-    width: '75%',
-    height: '75%',
   },
   drinkInfoText: {
     flexGrow: 1,
     fontSize: 14,
     color: 'black',
-    fontWeight: 'bold',
     alignSelf: 'center',
     marginLeft: 5,
-  },
-  drinksInputContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 4,
-    marginBottom: 4,
-  },
-  drinksInputButton: {
-    width: 43,
-    height: 43,
-    borderRadius: 5,
-    borderWidth: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderColor: '#212421',
-    backgroundColor: 'white',
-  },
-  drinksInputText: {
-    width: 43,
-    height: 43,
-    fontSize: 17,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: '#212421',
   },
   adjustDrinksButton: {
     width: 50,

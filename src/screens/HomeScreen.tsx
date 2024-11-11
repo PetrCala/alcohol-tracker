@@ -2,18 +2,13 @@
 import {
   Alert,
   Dimensions,
-  Image,
-  Keyboard,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import {useOnyx} from 'react-native-onyx';
 import MenuIcon from '@components/Buttons/MenuIcon';
 import SessionsCalendar from '@components/Calendar';
-import LoadingData from '@components/LoadingData';
 import type {DateObject} from '@src/types/time';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {
@@ -26,7 +21,7 @@ import {
   roundToTwoDecimalPlaces,
 } from '@libs/DataHandling';
 import {useUserConnection} from '@context/global/UserConnectionContext';
-import UserOffline from '@components/UserOffline';
+import UserOffline from '@components/UserOfflineModal';
 import {synchronizeUserStatus} from '@database/users';
 import {startLiveDrinkingSession} from '@database/drinkingSessions';
 import commonStyles from '@src/styles/commonStyles';
@@ -47,7 +42,6 @@ import type {BottomTabNavigatorParamList} from '@libs/Navigation/types';
 import type SCREENS from '@src/SCREENS';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import type {DateData} from 'react-native-calendars';
-import {getEmptySession} from '@libs/DrinkingSessionUtils';
 import DBPATHS from '@database/DBPATHS';
 import type {StatData} from '@components/Items/StatOverview';
 import {StatsOverview} from '@components/Items/StatOverview';
@@ -57,10 +51,13 @@ import FriendRequestCounter from '@components/Social/FriendRequestCounter';
 import ScreenWrapper from '@components/ScreenWrapper';
 import MessageBanner from '@components/Info/MessageBanner';
 import VerifyEmailPopup from '@components/Popups/VerifyEmailPopup';
-import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
-import ONYXKEYS from '@src/ONYXKEYS';
 import getPlatform from '@libs/getPlatform';
+import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
+import DSUtils from '@libs/DrinkingSessionUtils';
+import useTheme from '@hooks/useTheme';
+import Icon from '@components/Icon';
+import ScrollView from '@components/ScrollView';
 
 type State = {
   visibleDateObject: DateObject;
@@ -70,6 +67,7 @@ type State = {
   initializingSession: boolean;
   ongoingSessionId: DrinkingSessionId | undefined;
   verifyEmailModalVisible: boolean;
+  shouldNavigateToTzFix: boolean;
 };
 
 type Action = {
@@ -85,6 +83,7 @@ const initialState: State = {
   initializingSession: false,
   ongoingSessionId: undefined,
   verifyEmailModalVisible: false,
+  shouldNavigateToTzFix: false,
 };
 
 const reducer = (state: State, action: Action): State => {
@@ -103,6 +102,8 @@ const reducer = (state: State, action: Action): State => {
       return {...state, ongoingSessionId: action.payload};
     case 'SET_VERIFY_EMAIL_MODAL_VISIBLE':
       return {...state, verifyEmailModalVisible: action.payload};
+    case 'SET_SHOULD_NAVIGATE_TO_TZ_FIX':
+      return {...state, shouldNavigateToTzFix: action.payload};
     default:
       return state;
   }
@@ -115,6 +116,7 @@ type HomeScreenProps = HomeScreenOnyxProps &
 
 function HomeScreen({route}: HomeScreenProps) {
   const styles = useThemeStyles();
+  const theme = useTheme();
   const {auth, db, storage} = useFirebase();
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
@@ -126,8 +128,6 @@ function HomeScreen({route}: HomeScreenProps) {
     isLoading,
   } = useDatabaseData();
   const [state, dispatch] = useReducer(reducer, initialState);
-  const [preferredTheme] = useOnyx(ONYXKEYS.PREFERRED_THEME);
-  const {translate} = useLocalize();
 
   const statsData: StatData = [
     {
@@ -154,7 +154,7 @@ function HomeScreen({route}: HomeScreenProps) {
     }
     dispatch({type: 'SET_INITIALIZING_SESSION', payload: true});
     // The user is not in an active session
-    const newSessionData: DrinkingSession = getEmptySession(
+    const newSessionData: DrinkingSession = DSUtils.getEmptySession(
       CONST.SESSION_TYPES.LIVE,
       true,
       true,
@@ -234,6 +234,20 @@ function HomeScreen({route}: HomeScreenProps) {
     dispatch({type: 'SET_UNITS_CONSUMED', payload: thisMonthUnits});
   }, [drinkingSessionData, state.visibleDateObject, preferences]);
 
+  useMemo(() => {
+    const sessionsAreMissingTz =
+      !DSUtils.allSessionsContainTimezone(drinkingSessionData);
+
+    // Only navigate in case the user is setting up TZ for the first time
+    const shouldNavigateToTzFix =
+      sessionsAreMissingTz && !!!userData?.private_data?.timezone;
+
+    dispatch({
+      type: 'SET_SHOULD_NAVIGATE_TO_TZ_FIX',
+      payload: shouldNavigateToTzFix,
+    });
+  }, [drinkingSessionData, userData]);
+
   useEffect(() => {
     if (!userStatusData) {
       return;
@@ -269,11 +283,20 @@ function HomeScreen({route}: HomeScreenProps) {
           'Could not update user online status:' + error.message,
         );
       }
-    }, [userData, preferences, drinkingSessionData]),
+      // TZFIX (09-2024) - Redirect to TZ_FIX_INTRODUCTION if user has not set timezone
+      if (state.shouldNavigateToTzFix) {
+        Navigation.navigate(ROUTES.TZ_FIX_INTRODUCTION);
+      }
+    }, [
+      userData,
+      preferences,
+      drinkingSessionData,
+      state.shouldNavigateToTzFix,
+    ]),
   );
 
   if (!user) {
-    Navigation.navigate(ROUTES.SIGNUP);
+    Navigation.resetToHome();
     return;
   }
   if (!isOnline) {
@@ -287,9 +310,9 @@ function HomeScreen({route}: HomeScreenProps) {
     !userStatusData
   ) {
     return (
-      <LoadingData
+      <FullScreenLoadingIndicator
         loadingText={
-          state.initializingSession ? 'Starting a new session...' : ''
+          (state.initializingSession && 'Starting a new session...') || ''
         }
       />
     );
@@ -300,7 +323,7 @@ function HomeScreen({route}: HomeScreenProps) {
       testID={HomeScreen.displayName}
       includePaddingTop={false}
       includeSafeAreaPaddingBottom={getPlatform() !== CONST.PLATFORM.IOS}>
-      <View style={commonStyles.headerContainer}>
+      <View style={[commonStyles.headerContainer, styles.borderBottom]}>
         {userData && (
           <View style={localStyles.profileContainer}>
             <TouchableOpacity
@@ -317,7 +340,9 @@ function HomeScreen({route}: HomeScreenProps) {
                 // refreshTrigger={refreshCounter}
                 refreshTrigger={0}
               />
-              <Text style={localStyles.headerUsername}>{user.displayName}</Text>
+              <Text style={[styles.headerText, styles.textLarge, styles.ml3]}>
+                {user.displayName}
+              </Text>
             </TouchableOpacity>
           </View>
         )}
@@ -328,14 +353,12 @@ function HomeScreen({route}: HomeScreenProps) {
           </TouchableOpacity>
         </View> */}
       </View>
-      <ScrollView
-        style={localStyles.mainScreenContent}
-        keyboardShouldPersistTaps="handled"
-        onScrollBeginDrag={Keyboard.dismiss}>
+      <ScrollView>
         {state.ongoingSessionId ? (
           <MessageBanner
             text="You are currently in session!"
             onPress={openSessionInProgress}
+            danger
           />
         ) : null}
         {/* User verification modal -- Enable later on
@@ -350,6 +373,7 @@ function HomeScreen({route}: HomeScreenProps) {
         <View style={localStyles.statsOverviewHolder}>
           <StatsOverview statsData={statsData} />
         </View>
+
         <SessionsCalendar
           drinkingSessionData={drinkingSessionData}
           preferences={preferences}
@@ -363,7 +387,6 @@ function HomeScreen({route}: HomeScreenProps) {
             );
           }}
         />
-        <View style={{height: 200}}></View>
       </ScrollView>
       <View style={commonStyles.mainFooter}>
         <View
@@ -398,29 +421,31 @@ function HomeScreen({route}: HomeScreenProps) {
             localStyles.mainScreenFooterRightContainer,
           ]}>
           <MenuIcon
-            iconId="main-menu-popup-icon"
+            iconId="settings-popup-icon"
             iconSource={KirokuIcons.Statistics}
             containerStyle={localStyles.menuIconContainer}
             iconStyle={localStyles.menuIcon}
             onPress={() => Navigation.navigate(ROUTES.STATISTICS)}
           />
           <MenuIcon
-            iconId="main-menu-popup-icon"
+            iconId="settings-popup-icon"
             iconSource={KirokuIcons.BarMenu}
             containerStyle={localStyles.menuIconContainer}
             iconStyle={localStyles.menuIcon}
-            onPress={() => Navigation.navigate(ROUTES.MAIN_MENU)}
+            onPress={() => Navigation.navigate(ROUTES.SETTINGS)}
           />
         </View>
       </View>
       {state.ongoingSessionId ? null : (
         <TouchableOpacity
           accessibilityRole="button"
-          style={localStyles.startSessionButton}
+          style={[localStyles.startSessionButton, styles.buttonSuccess]}
           onPress={startDrinkingSession}>
-          <Image
-            source={KirokuIcons.Plus}
-            style={localStyles.startSessionImage}
+          <Icon
+            src={KirokuIcons.Plus}
+            height={36}
+            width={36}
+            fill={theme.textLight}
           />
         </TouchableOpacity>
       )}
@@ -451,6 +476,7 @@ const localStyles = StyleSheet.create({
   profileButton: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
+    alignItems: 'center',
   },
   profileImage: {
     width: 50,
@@ -496,76 +522,13 @@ const localStyles = StyleSheet.create({
     flexDirection: 'row',
   },
   friendRequestCounter: {
-    marginLeft: -4,
-    marginRight: 4,
-  },
-  mainScreenContent: {
-    flexGrow: 1,
-    flexShrink: 1,
-    backgroundColor: '#ffff99',
-  },
-  ///
-  userInSessionWarningContainer: {
-    backgroundColor: '#ff5d54',
-    padding: 16,
-    borderRadius: 8,
-    marginVertical: 4,
-    borderColor: '#ddd',
-    borderWidth: 1,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    alignItems: 'center',
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  userInSessionWarningText: {
-    fontSize: 22,
-    color: '#ffffff', // White color for the text
-    fontWeight: 'bold',
+    marginLeft: -6,
+    marginRight: 6,
   },
   statsOverviewHolder: {
-    height: 120,
+    minHeight: 120,
     flexDirection: 'row',
     width: screenWidth,
-  },
-  menuInfoContainer: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    width: '100%',
-    marginTop: 2,
-  },
-  menuInfoItemContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-  },
-  menuInfoHeadingText: {
-    textAlign: 'center',
-    fontSize: 18,
-    fontWeight: '500',
-    color: 'black',
-    padding: 5,
-  },
-  menuInfoText: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: 'black',
-    alignSelf: 'center',
-    padding: 6,
-    marginRight: 4,
-    marginLeft: 4,
-  },
-  thisMonthUnitsText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 12,
-    color: 'black',
-    alignSelf: 'center',
-    alignContent: 'center',
   },
   startSessionButton: {
     position: 'absolute',
@@ -575,43 +538,9 @@ const localStyles = StyleSheet.create({
     borderRadius: 50,
     width: 70,
     height: 70,
-    backgroundColor: 'green',
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: 'black',
-  },
-  startSessionImage: {
-    width: 30,
-    height: 30,
-    tintColor: 'white',
-    alignItems: 'center',
-    // color: 'white',
-    // fontSize: 50,
-    // fontWeight: 'bold',
-    // textAlign: 'center',
-    // lineHeight: 70,
-  },
-  navigationArrowContainer: {
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '100%',
-    flexDirection: 'row',
-  },
-  navigationArrowButton: {
-    width: '50%',
-    height: 45,
-    alignSelf: 'center',
-    justifyContent: 'center',
-    borderColor: '#ddd',
-    borderRadius: 3,
-    borderWidth: 1,
-    backgroundColor: 'white',
-  },
-  navigationArrowText: {
-    color: 'black',
-    fontSize: 30,
-    fontWeight: '500',
-    textAlign: 'center',
   },
   mainScreenFooterHalfContainer: {
     width: '50%',

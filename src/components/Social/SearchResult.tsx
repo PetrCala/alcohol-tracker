@@ -1,11 +1,4 @@
-import {
-  ActivityIndicator,
-  Alert,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {Alert, StyleSheet, Text, View} from 'react-native';
 import {acceptFriendRequest, sendFriendRequest} from '../../database/friends';
 import type {Database} from 'firebase/database';
 import ProfileImage from '@components/ProfileImage';
@@ -13,6 +6,8 @@ import type {FirebaseStorage} from 'firebase/storage';
 import React from 'react';
 import type {FriendRequestStatus, Profile} from '@src/types/onyx';
 import CONST from '@src/CONST';
+import Button from '@components/Button';
+import useThemeStyles from '@hooks/useThemeStyles';
 
 const statusToTextMap: {[key in FriendRequestStatus]: string} = {
   self: 'You',
@@ -38,6 +33,7 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
   alreadyAFriend,
 }) => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const styles = useThemeStyles();
 
   const handleSendRequestPress = async (
     db: Database,
@@ -79,45 +75,37 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
 
   return (
     // Refactor this part using AI later
-    <View style={styles.sendFriendRequestContainer}>
+    <View style={localStyles.sendFriendRequestContainer}>
       {userFrom === userTo ? (
-        <Text style={styles.sendFriendRequestText}>{statusToTextMap.self}</Text>
+        <Text numberOfLines={1} style={styles.textNormalThemeText}>
+          {statusToTextMap.self}
+        </Text>
       ) : alreadyAFriend ? (
-        <Text style={styles.sendFriendRequestText}>
+        <Text numberOfLines={1} style={styles.textNormalThemeText}>
           {statusToTextMap.friend}
         </Text>
       ) : requestStatus === CONST.FRIEND_REQUEST_STATUS.SENT ? (
-        <Text style={styles.sendFriendRequestText}>{statusToTextMap.sent}</Text>
+        <Text numberOfLines={1} style={styles.textNormalThemeText}>
+          {statusToTextMap.sent}
+        </Text>
       ) : requestStatus === CONST.FRIEND_REQUEST_STATUS.RECEIVED ? (
-        <TouchableOpacity
-          accessibilityRole="button"
-          style={styles.sendFriendRequestButton}
-          onPress={() =>
-            handleAcceptFriendRequestPress(db, userFrom, userTo, setIsLoading)
-          }>
-          {isLoading ? (
-            <ActivityIndicator size="small" color="#0000ff" />
-          ) : (
-            <Text style={styles.sendFriendRequestText}>
-              {statusToTextMap.received}
-            </Text>
-          )}
-        </TouchableOpacity>
+        <Button
+          add
+          onPress={() => {
+            handleAcceptFriendRequestPress(db, userFrom, userTo, setIsLoading);
+          }}
+          text={statusToTextMap.received}
+          isLoading={isLoading}
+        />
       ) : (
-        <TouchableOpacity
-          accessibilityRole="button"
-          style={styles.sendFriendRequestButton}
-          onPress={() =>
-            handleSendRequestPress(db, userFrom, userTo, setIsLoading)
-          }>
-          {isLoading ? (
-            <ActivityIndicator size="small" color="#0000ff" />
-          ) : (
-            <Text style={styles.sendFriendRequestText}>
-              {statusToTextMap.undefined}
-            </Text>
-          )}
-        </TouchableOpacity>
+        <Button
+          add
+          onPress={() => {
+            handleSendRequestPress(db, userFrom, userTo, setIsLoading);
+          }}
+          text={statusToTextMap.undefined}
+          isLoading={isLoading}
+        />
       )}
     </View>
   );
@@ -144,17 +132,18 @@ const SearchResult: React.FC<SearchResultProps> = ({
   alreadyAFriend,
   customButton,
 }) => {
+  const styles = useThemeStyles();
   return (
-    <View style={styles.userOverviewContainer}>
-      <View style={styles.userInfoContainer}>
+    <View style={localStyles.userOverviewContainer}>
+      <View style={localStyles.userInfoContainer}>
         <ProfileImage
           key={userID + '-profile-icon'}
           storage={storage}
           userID={userID}
           downloadPath={userDisplayData?.photo_url}
-          style={styles.userProfileImage}
+          style={localStyles.userProfileImage}
         />
-        <Text style={styles.userNicknameText}>
+        <Text style={[styles.headerText, styles.ml3]}>
           {userDisplayData?.display_name
             ? userDisplayData.display_name
             : 'Unknown'}
@@ -175,13 +164,12 @@ const SearchResult: React.FC<SearchResultProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   userOverviewContainer: {
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: 'white',
     padding: 5,
   },
   userInfoContainer: {
@@ -190,12 +178,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     padding: 5,
-  },
-  userNicknameText: {
-    color: 'black',
-    fontSize: 16,
-    fontWeight: '500',
-    marginLeft: 10,
   },
   userProfileImage: {
     width: 70,

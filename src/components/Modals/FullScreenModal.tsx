@@ -4,24 +4,36 @@ import {
   Image,
   Modal,
   PanResponder,
+  StyleProp,
   StyleSheet,
   TouchableOpacity,
   View,
+  ViewStyle,
 } from 'react-native';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {useEffect, useRef, useState} from 'react';
+import useThemeStyles from '@hooks/useThemeStyles';
 
 type FullScreenModalProps = {
   visible: boolean;
   onClose: () => void;
   children: React.ReactNode;
+  style?: StyleProp<ViewStyle>;
+  hideCloseButton?: boolean;
 };
 
 const ScreenWidth = Dimensions.get('window').width;
 const ScreenHeight = Dimensions.get('window').height;
 
-const FullScreenModal: React.FC<FullScreenModalProps> = props => {
-  const [modalVisible, setModalVisible] = useState(props.visible);
+const FullScreenModal: React.FC<FullScreenModalProps> = ({
+  visible,
+  onClose,
+  children,
+  hideCloseButton,
+  style,
+}: FullScreenModalProps) => {
+  const [modalVisible, setModalVisible] = useState(visible);
+  const styles = useThemeStyles();
 
   // Use a pan responsder to dismiss the modal upon swiping up
   const panResponder = useRef(
@@ -37,37 +49,48 @@ const FullScreenModal: React.FC<FullScreenModalProps> = props => {
   ).current;
 
   useEffect(() => {
-    setModalVisible(props.visible);
-  }, [props.visible]);
+    setModalVisible(visible);
+  }, [visible]);
 
   const handleCloseModal = () => {
     setModalVisible(false);
-    if (props.onClose) {
-      props.onClose();
+    if (onClose) {
+      onClose();
     }
   };
   return (
     <Modal animationType="fade" transparent={false} visible={modalVisible}>
-      <TouchableOpacity accessibilityRole="button" style={styles.modalButton} onPress={handleCloseModal}>
-        <Image source={KirokuIcons.ThinX} style={styles.modalButtonImage} />
-      </TouchableOpacity>
+      {!hideCloseButton && (
+        <TouchableOpacity
+          accessibilityRole="button"
+          style={localStyles.modalButton}
+          onPress={handleCloseModal}>
+          <Image
+            source={KirokuIcons.ThinX}
+            style={localStyles.modalButtonImage}
+          />
+        </TouchableOpacity>
+      )}
       <View
-        style={{
-          width: ScreenWidth,
-          height: ScreenHeight,
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: 'black', // Adjust to your color scheme
-        }}
+        style={[
+          {
+            width: ScreenWidth,
+            height: ScreenHeight,
+            alignItems: 'center',
+            justifyContent: 'center',
+          },
+          styles.appBG,
+          style,
+        ]}
         {...panResponder.panHandlers} // This applies the swipe up functionality
       >
-        {props.children}
+        {children}
       </View>
     </Modal>
   );
 };
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   modalButton: {
     justifyContent: 'center',
     alignItems: 'center',

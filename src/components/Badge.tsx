@@ -82,12 +82,11 @@ function Badge({
     ({pressed}) => [
       styles.badge,
       styles.ml2,
-      // TODO: Modify the environment to properly map to our environments
       StyleUtils.getBadgeColorStyle(
         success,
         error,
         pressed,
-        environment === CONST.ENVIRONMENT.TEST, // ADHOC
+        environment === CONST.ENVIRONMENT.ADHOC,
       ),
       badgeStyles,
     ],

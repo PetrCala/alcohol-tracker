@@ -12,11 +12,13 @@ import {useFirebase} from '../../context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
 import Navigation from '@libs/Navigation/Navigation';
 import UploadImageComponent from '@components/UploadImage';
+import useStyleUtils from '@hooks/useStyleUtils';
 import ROUTES from '@src/ROUTES';
 import {useState} from 'react';
 import type ImageLayout from '@src/types/various/ImageLayout';
 import type {Profile} from '@src/types/onyx';
 import useThemeStyles from '@hooks/useThemeStyles';
+import Icon from '@components/Icon';
 
 type ProfileOverviewProps = {
   userID: string;
@@ -32,7 +34,9 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
   profileData,
 }) => {
   const {auth, storage} = useFirebase();
+  const StyleUtils = useStyleUtils();
   const styles = useThemeStyles();
+  const theme = useThemeStyles();
   const user = auth.currentUser;
   const [layout, setLayout] = useState<ImageLayout>({
     x: 0,
@@ -53,27 +57,14 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
 
   return (
     <View style={localStyles.profileOverviewContainer}>
-      {/* {user?.uid === userID && (
-        <TouchableOpacity accessibilityRole="button"
-          onPress={() =>
-            Navigation.navigate(ROUTES.PROFILE_EDIT.getRoute(userID))
-          }
+      {user?.uid === userID && (
+        <TouchableOpacity
+          accessibilityRole="button"
+          onPress={() => Navigation.navigate(ROUTES.SETTINGS_ACCOUNT)}
           style={localStyles.editProfileButton}>
-          <Image
-            source={KirokuIcons.Settings}
-            style={localStyles.editProfileIcon}
-          />
+          <Icon src={KirokuIcons.Gear} fill={StyleUtils.getIconFillColor()} />
         </TouchableOpacity>
-        // <Button
-        //     // success
-        //     // medium
-        //     onPress={() =>
-        //       Navigation.navigate(ROUTES.PROFILE_EDIT.getRoute(userID))
-        //     }
-        //     text={'some text'}
-        //     style={styles.mt3}
-        //   />
-      )} */}
+      )}
       <View style={localStyles.profileImageContainer} />
       <ProfileImage
         key={`${userID}-profile-image`}
@@ -86,11 +77,14 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
         onLayout={onLayout}
       />
       {user?.uid === userID ? (
-        <View style={localStyles.editProfileIconButton}>
+        <View style={[localStyles.editProfileIconButton, styles.appBG]}>
           <UploadImageComponent
             pathToUpload={`users/${userID}/profile/profile_image.jpg`}
             imageSource={KirokuIcons.Camera}
-            imageStyle={localStyles.editProfileIconButtonImage}
+            imageStyle={[
+              localStyles.editProfileIconButtonImage,
+              {tintColor: StyleUtils.getIconFillColor()},
+            ]}
             isProfilePicture={true}
           />
         </View>
@@ -98,7 +92,7 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
       <View />
       <View style={localStyles.userInfoContainer}>
         <Text
-          style={localStyles.profileNameText}
+          style={[localStyles.profileNameText, styles.textStrong]}
           numberOfLines={1}
           ellipsizeMode="tail">
           {profileData.display_name}
@@ -125,11 +119,6 @@ const localStyles = StyleSheet.create({
     width: 'auto',
     height: 'auto',
   },
-  editProfileIcon: {
-    width: 24,
-    height: 24,
-    tintColor: '#1A3D32',
-  },
   profileImageContainer: {
     height: profileImageSize,
     width: profileImageSize,
@@ -142,7 +131,6 @@ const localStyles = StyleSheet.create({
     width: profileImageSize,
     height: profileImageSize,
     borderRadius: profileImageSize / 2,
-    backgroundColor: 'white',
     position: 'absolute',
     top: 0, // Makes layout recognize the position
     zIndex: 1, // Ensure that the profile image is below the edit button
@@ -155,16 +143,14 @@ const localStyles = StyleSheet.create({
     left: screenWidth / 2 + profileImageSize / 2 - profileImageSize / 3,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'white',
     borderRadius: profileImageSize / 3,
     borderColor: 'black',
-    borderWidth: 2,
+    borderWidth: 1,
     zIndex: 2,
   },
   editProfileIconButtonImage: {
     height: profileImageSize / 6,
     width: profileImageSize / 6,
-    tintColor: 'gray',
     zIndex: 3, // Always pressable
   },
   userInfoContainer: {
@@ -179,7 +165,6 @@ const localStyles = StyleSheet.create({
   profileNameText: {
     color: 'black',
     fontSize: 20,
-    fontWeight: 'bold',
     marginLeft: 10,
     flexShrink: 1,
   },
