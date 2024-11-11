@@ -32,6 +32,7 @@ import type {
 import useTheme from '@hooks/useTheme';
 import FullScreenLoadingIndicator from './FullscreenLoadingIndicator';
 import useThemeStyles from '@hooks/useThemeStyles';
+import CONST from '@src/CONST';
 
 type DayMarking = {
   units?: number;
@@ -309,7 +310,7 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
           onPress={onDayPress}
         />
       )}
-      monthFormat="MMM yyyy"
+      monthFormat={CONST.DATE.MONTH_YEAR_ABBR_FORMAT}
       onPressArrowLeft={(subtractMonth: () => void) =>
         handleLeftArrowPress(subtractMonth)
       }
