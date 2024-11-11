@@ -404,7 +404,9 @@ export default {
     success: {
       title: 'Success!',
       text1:
-        "Your data has been successfully synchronized to Coordinated Universal Time (UTC). You're all set!",
+        "Your data has been successfully marked with timesamps. You're all set!",
+      text2:
+        "In case you have any questions or need help regarding this synchronization, don't hesitate to reach out to us at kiroku.alcohol.tracker@gmail.com.",
       finishButton: 'Awesome!',
     },
   },
