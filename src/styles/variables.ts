@@ -234,7 +234,7 @@ export default {
   textInputAutoGrowMaxHeight: 115,
 
   sessionOverviewTabHeight: 85,
-  statItemTextWidth: 100,
+  statItemTextMaxWidth: 100,
   profileStatOverviewHeight: 120,
   sessionColorMarkerSize: 20,
   numericSliderWidth: 280,

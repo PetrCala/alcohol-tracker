@@ -12,18 +12,10 @@ const StatItem: React.FC<StatItemProps> = ({header, content}) => {
 
   return (
     <View style={styles.flexRow}>
-      <View style={styles.statItemContainer}>
+      <View style={[styles.alignItemsCenter, styles.justifyContentCenter]}>
+        <Text style={[styles.statItemText]}>{content}</Text>
         <Text
-          style={[
-            styles.textXXXXLarge,
-            styles.textStrong,
-            styles.textAlignCenter,
-            styles.appColor,
-          ]}>
-          {content}
-        </Text>
-        <Text
-          style={[styles.textNormal, styles.textAlignCenter]}
+          style={styles.statItemHeaderText}
           numberOfLines={2}
           ellipsizeMode="tail">
           {header}

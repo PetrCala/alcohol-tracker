@@ -1726,9 +1726,17 @@ const styles = (theme: ThemeColors) =>
       minWidth: variables.componentSizeNormal,
     },
 
-    statItemContainer: {
-      justifyContent: 'center',
-      width: variables.statItemTextWidth,
+    statItemText: {
+      fontSize: variables.fontSizeXXXXLarge,
+      ...FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
+      textAlign: 'center',
+      color: theme.appColor,
+    },
+
+    statItemHeaderText: {
+      fontSize: variables.fontSizeNormal,
+      textAlign: 'center',
+      width: variables.statItemTextMaxWidth,
     },
 
     subscriptIcon: {
