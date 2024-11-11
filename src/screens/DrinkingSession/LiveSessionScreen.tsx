@@ -644,26 +644,6 @@ const localStyles = StyleSheet.create({
     justifyContent: 'center',
     width: '100%',
   },
-  drinksInputContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  drinksInputButton: {
-    width: '40%',
-    alignItems: 'center',
-  },
-  drinksInputText: {
-    fontSize: 90,
-    fontWeight: 'bold',
-    // marginTop: 5,
-    marginBottom: 10,
-    alignSelf: 'center',
-    alignContent: 'center',
-    padding: 2,
-    textShadowColor: 'black',
-    textShadowOffset: {width: 1, height: 1},
-    textShadowRadius: 9,
-  },
   modifyUnitsContainer: {
     height: 400,
     flexGrow: 1,
@@ -679,12 +659,6 @@ const localStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 50,
-  },
-  sessionDetailsContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    marginTop: 20,
   },
 });
 
