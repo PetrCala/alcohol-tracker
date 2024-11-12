@@ -1,7 +1,13 @@
 ﻿import type {Database} from 'firebase/database';
 import {ref, update} from 'firebase/database';
 import {removeZeroObjectsFromSession} from '@libs/DataHandling';
-import type {DrinkingSession, DrinksList, UserStatus} from '@src/types/onyx';
+import type {
+  DrinkingSession,
+  DrinkingSessionId,
+  DrinkingSessionList,
+  DrinksList,
+  UserStatus,
+} from '@src/types/onyx';
 import * as Localize from '@src/libs/Localize';
 import * as DSUtils from '@src/libs/DrinkingSessionUtils';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
@@ -11,8 +17,26 @@ import CONST from '@src/CONST';
 import {generateDatabaseKey} from '@database/baseFunctions';
 import Onyx from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
-import Navigation from '@libs/Navigation/Navigation';
-import ROUTES from '@src/ROUTES';
+
+let currentLiveSessionData: DrinkingSession | undefined;
+Onyx.connect({
+  key: ONYXKEYS.LIVE_SESSION_DATA,
+  callback: value => {
+    if (value) {
+      currentLiveSessionData = value;
+    }
+  },
+});
+
+let currentEditSessionData: DrinkingSession | undefined;
+Onyx.connect({
+  key: ONYXKEYS.EDIT_SESSION_DATA,
+  callback: value => {
+    if (value) {
+      currentEditSessionData = value;
+    }
+  },
+});
 
 const drinkingSessionRef = DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID;
 const drinkingSessionDrinksRef =
@@ -155,6 +179,29 @@ async function endLiveDrinkingSession(
   await update(ref(db), updates);
 }
 
+/**
+ * Retrieve data for a drinking session based on its ID.
+ *
+ * @param sessionKey
+ */
+function openDrinkingSession(
+  sessionKey: DrinkingSessionId,
+  drinkingSessionData?: DrinkingSessionList | undefined,
+): DrinkingSession {
+  if (sessionKey === currentLiveSessionData?.id) {
+    return currentLiveSessionData;
+  } else if (sessionKey === currentEditSessionData?.id) {
+    return currentEditSessionData;
+  } else {
+    if (drinkingSessionData) {
+      return drinkingSessionData[sessionKey];
+    }
+    throw new Error(
+      Localize.translateLocal('drinkingSession.error.sessionOpen'),
+    );
+  }
+}
+
 /** Remove drinking session data from the database
  *
  * Should only be used to edit non-live sessions.
@@ -223,6 +270,7 @@ export {
   removePlaceholderSessionData,
   startLiveDrinkingSession,
   endLiveDrinkingSession,
+  openDrinkingSession,
   removeDrinkingSessionData,
   discardLiveDrinkingSession,
   updateSessionDrinks,

@@ -29,7 +29,6 @@ import type {
   Drinks,
   DrinkKey,
 } from '@src/types/onyx';
-import {ScrollOffsetContext} from '@components/ScrollOffsetContextProvider';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import UserOffline from '@components/UserOfflineModal';
 import DrinkTypesView from '@components/DrinkTypesView';
@@ -45,8 +44,6 @@ import SCREENS from '@src/SCREENS';
 import ROUTES from '@src/ROUTES';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {isEqual} from 'lodash';
-import {readDataOnce} from '@database/baseFunctions';
-import DBPATHS from '@database/DBPATHS';
 import useAsyncQueue from '@hooks/useAsyncQueue';
 import type DeepValueOf from '@src/types/utils/DeepValueOf';
 import ScreenWrapper from '@components/ScreenWrapper';
@@ -64,7 +61,7 @@ import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import ScrollView from '@components/ScrollView';
 import Log from '@libs/Log';
 import Icon from '@components/Icon';
-import Onyx, {useOnyx} from 'react-native-onyx';
+import Onyx from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 
 type LiveSessionScreenProps = StackScreenProps<
@@ -84,8 +81,10 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   const {preferences} = useDatabaseData();
   const {windowWidth} = useWindowDimensions();
   // const [sessionNote] = useOnyx(ONYXKEYS.DRINKING_SESSION_NOTE);
-  const [session, setSession] = useState<DrinkingSession | null>(null);
-  const initialSession = useRef<DrinkingSession | null>(null);
+  const [session, setSession] = useState<DrinkingSession>(
+    DS.openDrinkingSession(sessionId),
+  );
+  const initialSession = useRef<DrinkingSession>(session);
   // Session details
   const [totalUnits, setTotalUnits] = useState<number>(0);
   const [availableUnits, setAvailableUnits] = useState<number>(0);
@@ -102,7 +101,6 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   const [monkeMode, setMonkeMode] = useState<boolean>(false);
   const [discardModalVisible, setDiscardModalVisible] =
     useState<boolean>(false);
-  const [openingSession, setOpeningSession] = useState<boolean>(true);
   const [loadingText, setLoadingText] = useState<string>('');
   const [shouldShowLeaveConfirmation, setShouldShowLeaveConfirmation] =
     useState(false);
@@ -266,6 +264,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
         end_time: sessionIsLive ? Date.now() : session.start_time,
       };
       delete newSessionData.ongoing;
+      delete newSessionData.id;
       // Wait for any pending updates to resolve first
       while (isPending) {
         await new Promise(resolve => setTimeout(resolve, 100));
@@ -294,10 +293,8 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     }
   }
 
-  const handleDiscardSession = () => {
-    if (isPending) {
-      return null;
-    }
+  const handleDiscardSession = async () => {
+    await waitForNoPendingUpdate();
     setDiscardModalVisible(true);
   };
 
@@ -315,6 +312,11 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       await waitForNoPendingUpdate();
       await discardFunction(db, user.uid, sessionId);
       await DS.removePlaceholderSessionData(db, user.uid);
+      if (sessionIsLive) {
+        Onyx.set(ONYXKEYS.LIVE_SESSION_DATA, null);
+      } else {
+        Onyx.set(ONYXKEYS.EDIT_SESSION_DATA, null);
+      }
     } catch (error: any) {
       Alert.alert(
         'Session discard failed',
@@ -367,75 +369,16 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     }
   };
 
-  const openSession = async () => {
-    if (!user) {
-      throw new Error(translate('liveSessionScreen.error.load'));
-    }
-    // Fetch the latest database data and use it to open the session
-    setLoadingText(translate('liveSessionScreen.loading'));
-    let sessionToOpen: DrinkingSession | null = await readDataOnce(
-      db,
-      DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID.getRoute(
-        user.uid,
-        sessionId,
-      ),
-    );
-    if (!sessionToOpen) {
-      // No drinking session with this ID => check for a placeholder session.
-      const existingPlaceholderSession: DrinkingSession | null =
-        await readDataOnce(
-          db,
-          DBPATHS.USER_SESSION_PLACEHOLDER_USER_ID.getRoute(user.uid),
-        );
-      if (!existingPlaceholderSession) {
-        Alert.alert('Database Error', 'Failed to start a new session');
-        Navigation.navigate(ROUTES.HOME);
-        return;
-      }
-      sessionToOpen = existingPlaceholderSession;
-      setIsPlaceholderSession(true);
-    }
-    // Onyx.set(ONYXKEYS.DRINKING_SESSION_NOTE, sessionToOpen?.note ?? '');
-    setSession(sessionToOpen);
-    initialSession.current = sessionToOpen;
-    setOpeningSession(false);
-    setLoadingText('');
-  };
-
-  // Open the session upon component mount
-  useEffect(() => {
-    openSession();
-  }, []);
-
-  // Monitor various dynamic attributes stemming from the session
-  useEffect(() => {
-    setSessionIsLive(!!session?.ongoing);
-  }, [session?.ongoing]);
-
-  // Keep the session note in sync with the note form
-  // useEffect(() => {
-  //   if (!session || openingSession) {
-  //     return;
-  //   }
-  //   setSession({...session, note: sessionNote ?? ''});
-  // }, [sessionNote, openingSession]);
-
   // Synchronize the session with database
   useEffect(() => {
     // Only schedule a database update if any hooks changed
     // Do not automatically save if the session is over, or
     // if the initial fetch has not finished
-    if (
-      !user ||
-      !sessionIsLive ||
-      !session ||
-      sessionFinished ||
-      openingSession
-    ) {
+    if (!user || !sessionIsLive || !session || sessionFinished) {
       return;
     }
     enqueueUpdate({...session, ongoing: true});
-  }, [session, openingSession]);
+  }, [session]);
 
   // Make the system back press toggle the go back handler
   useEffect(() => {
@@ -454,18 +397,15 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   if (!isOnline) {
     return <UserOffline />;
   }
-  if (openingSession || loadingText) {
+  if (loadingText) {
     return <FullScreenLoadingIndicator loadingText={loadingText} />;
   }
-  if (!user) {
+  if (!user || !preferences) {
     Navigation.resetToHome();
     return;
   }
   if (!session) {
     Navigation.navigate(ROUTES.HOME); // If a session fails to load
-    return;
-  }
-  if (!preferences) {
     return;
   }
 

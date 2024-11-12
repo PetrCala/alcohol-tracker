@@ -353,6 +353,11 @@ export default {
         'These details help us provide you with the best user experience.',
     },
   },
+  drinkingSession: {
+    error: {
+      sessionOpen: 'Failed to open a session',
+    },
+  },
   userNameScreen: {
     headerTitle: 'User name',
     explanation:
