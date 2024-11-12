@@ -30,7 +30,6 @@ function SesssionNoteScreen({}: SessionNoteScreenProps) {
   const onSubmit = async (
     values: FormOnyxValues<typeof ONYXKEYS.FORMS.SESSION_NOTE_FORM>,
   ) => {
-    console.log('settings the onyx note to', values.note);
     Onyx.set(ONYXKEYS.DRINKING_SESSION_NOTE, values.note);
     Navigation.goBack();
   };
