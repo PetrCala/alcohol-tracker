@@ -64,6 +64,8 @@ import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import ScrollView from '@components/ScrollView';
 import Log from '@libs/Log';
 import Icon from '@components/Icon';
+import {useOnyx} from 'react-native-onyx';
+import ONYXKEYS from '@src/ONYXKEYS';
 
 type LiveSessionScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -81,6 +83,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   const {isOnline} = useUserConnection();
   const {preferences} = useDatabaseData();
   const {windowWidth} = useWindowDimensions();
+  const [sessionNoteData] = useOnyx(ONYXKEYS.FORMS.SESSION_NOTE_FORM);
   const [session, setSession] = useState<DrinkingSession | null>(null);
   const initialSession = useRef<DrinkingSession | null>(null);
   // Session details
@@ -410,6 +413,14 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     setSessionIsLive(!!session?.ongoing);
   }, [session?.ongoing]);
 
+  // Keep the session note in sync with the note form
+  useEffect(() => {
+    if (!session) {
+      return;
+    }
+    setSession({...session, note: sessionNoteData?.note ?? ''});
+  }, [sessionNoteData]);
+
   // Synchronize the session with database
   useEffect(() => {
     // Only schedule a database update if any hooks changed
@@ -550,7 +561,8 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
               sessionId={sessionId}
               isBlackout={session.blackout}
               onBlackoutChange={handleBlackoutChange}
-              note={session.note}
+              // note={session.note}
+              note={sessionNoteData?.note ?? ''}
               dateString={sessionDateString}
               shouldAllowDateChange={session.type !== CONST.SESSION_TYPES.LIVE}
             />
