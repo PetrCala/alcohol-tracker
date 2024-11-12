@@ -61,7 +61,7 @@ import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import ScrollView from '@components/ScrollView';
 import Log from '@libs/Log';
 import Icon from '@components/Icon';
-import Onyx from 'react-native-onyx';
+import Onyx, {useOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 
 type LiveSessionScreenProps = StackScreenProps<
@@ -80,11 +80,12 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   const {isOnline} = useUserConnection();
   const {preferences} = useDatabaseData();
   const {windowWidth} = useWindowDimensions();
-  // const [sessionNote] = useOnyx(ONYXKEYS.DRINKING_SESSION_NOTE);
-  const [session, setSession] = useState<DrinkingSession>(
-    DS.openDrinkingSession(sessionId),
+  const [liveSessionData] = useOnyx(ONYXKEYS.LIVE_SESSION_DATA);
+  const [editSessionData] = useOnyx(ONYXKEYS.EDIT_SESSION_DATA);
+  const [session, setSession] = useState<DrinkingSession | undefined>(
+    undefined,
   );
-  const initialSession = useRef<DrinkingSession>(session);
+  const initialSession = useRef<DrinkingSession | undefined>(undefined);
   // Session details
   const [totalUnits, setTotalUnits] = useState<number>(0);
   const [availableUnits, setAvailableUnits] = useState<number>(0);
@@ -104,8 +105,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   const [loadingText, setLoadingText] = useState<string>('');
   const [shouldShowLeaveConfirmation, setShouldShowLeaveConfirmation] =
     useState(false);
-  const [isPlaceholderSession, setIsPlaceholderSession] =
-    useState<boolean>(false);
+  useState<boolean>(false);
   const [sessionIsLive, setSessionIsLive] = useState<boolean | null>(null);
   const deleteSessionWording = session?.ongoing
     ? translate('common.discard')
@@ -271,6 +271,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       }
       if (sessionIsLive) {
         await DS.endLiveDrinkingSession(db, userID, newSessionData, sessionId);
+        Onyx.set(ONYXKEYS.LIVE_SESSION_DATA, null);
       } else {
         await DS.saveDrinkingSessionData(
           db,
@@ -279,8 +280,9 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
           sessionId,
           false, // Do not update live status
         );
+        Onyx.set(ONYXKEYS.EDIT_SESSION_DATA, null);
       }
-      await DS.removePlaceholderSessionData(db, userID);
+      // await DS.removePlaceholderSessionData(db, userID);
     } catch (error: any) {
       Alert.alert(
         translate('liveSessionScreen.error.saveTitle'),
@@ -350,24 +352,22 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
         setLoadingText('');
       }
     }
-    await confirmGoBack();
+    confirmGoBack();
   };
 
   const confirmGoBack = async () => {
-    if (!user) {
-      return;
-    }
-    try {
-      if (isPlaceholderSession) {
-        await DS.removePlaceholderSessionData(db, user.uid);
-      }
-    } catch (error: any) {
-      Log.warn('Could not remove placeholder session data', error.message); // Unimportant
-    } finally {
-      setShouldShowLeaveConfirmation(false);
-      Navigation.goBack();
-    }
+    setShouldShowLeaveConfirmation(false);
+    Navigation.goBack();
   };
+
+  // Monitor the session object for changes
+  useEffect(() => {
+    const newSession =
+      liveSessionData?.id === sessionId ? liveSessionData : editSessionData;
+    setSession(newSession);
+    setSessionIsLive(!!newSession?.ongoing);
+    initialSession.current = newSession;
+  }, [liveSessionData, editSessionData]);
 
   // Synchronize the session with database
   useEffect(() => {
@@ -397,15 +397,11 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   if (!isOnline) {
     return <UserOffline />;
   }
-  if (loadingText) {
+  if (loadingText || !session) {
     return <FullScreenLoadingIndicator loadingText={loadingText} />;
   }
   if (!user || !preferences) {
     Navigation.resetToHome();
-    return;
-  }
-  if (!session) {
-    Navigation.navigate(ROUTES.HOME); // If a session fails to load
     return;
   }
 

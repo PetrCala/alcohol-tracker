@@ -16,7 +16,7 @@ import {User} from 'firebase/auth';
 import CONST from '@src/CONST';
 import {generateDatabaseKey} from '@database/baseFunctions';
 import Onyx from 'react-native-onyx';
-import ONYXKEYS from '@src/ONYXKEYS';
+import ONYXKEYS, {OnyxKey} from '@src/ONYXKEYS';
 
 let currentLiveSessionData: DrinkingSession | undefined;
 Onyx.connect({
@@ -43,6 +43,36 @@ const drinkingSessionDrinksRef =
   DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID_DRINKS;
 const userStatusRef = DBPATHS.USER_STATUS_USER_ID;
 const placeholderSessionRef = DBPATHS.USER_SESSION_PLACEHOLDER_USER_ID;
+
+/**
+ * Based on the session ID, get the drinking session data.
+ *
+ * @param sessionId The ID of the session.
+ * @returns The drinking session data.
+ */
+function getDrinkingSessionData(
+  sessionId: DrinkingSessionId,
+): DrinkingSession | undefined {
+  if (currentLiveSessionData && currentLiveSessionData.id === sessionId) {
+    return currentLiveSessionData;
+  }
+  if (currentEditSessionData && currentEditSessionData.id === sessionId) {
+    return currentEditSessionData;
+  }
+  return undefined;
+}
+
+function getDrinkingSessionOnyxKey(
+  sessionId: DrinkingSessionId,
+): OnyxKey | null {
+  if (currentLiveSessionData && currentLiveSessionData.id === sessionId) {
+    return ONYXKEYS.LIVE_SESSION_DATA;
+  }
+  if (currentEditSessionData && currentEditSessionData.id === sessionId) {
+    return ONYXKEYS.EDIT_SESSION_DATA;
+  }
+  return null;
+}
 
 /** Write drinking session data into the database
  *
@@ -99,12 +129,35 @@ async function removePlaceholderSessionData(
   await update(ref(db), updates);
 }
 
+/**
+ * Check if the current live session data is the same as the one in the database. If not, update the local data.
+ *
+ * @param ongoingSessionId  The ID of the ongoing session.
+ * @param drinkingSessionData  The drinking session data.
+ */
+function syncLocalLiveSessionData(
+  ongoingSessionId: DrinkingSessionId | undefined,
+  drinkingSessionData: DrinkingSessionList | undefined,
+) {
+  if (ongoingSessionId && drinkingSessionData) {
+    const ongoingSessionData = drinkingSessionData[ongoingSessionId];
+    if (ongoingSessionData) {
+      Onyx.set(ONYXKEYS.LIVE_SESSION_DATA, {
+        id: ongoingSessionId,
+        ...ongoingSessionData,
+      });
+    }
+  } else {
+    Onyx.set(ONYXKEYS.LIVE_SESSION_DATA, null);
+  }
+}
+
 /** Start a live drinking session
  *
+ * Assume that if a session is ongoing, it is a live session and its data is stored in the local database.
+ *
  * @param db Firebase Database object
- * @param string userID User ID
- * @param newSessionData Data to save the new drinking session with
- * @param sesisonKey ID of the session to edit (can be null in case of finishing the session)
+ * @param user User object
  * @returnsPromise newSessionId Id of the newly started session.
  *  */
 async function startLiveDrinkingSession(
@@ -179,29 +232,6 @@ async function endLiveDrinkingSession(
   await update(ref(db), updates);
 }
 
-/**
- * Retrieve data for a drinking session based on its ID.
- *
- * @param sessionKey
- */
-function openDrinkingSession(
-  sessionKey: DrinkingSessionId,
-  drinkingSessionData?: DrinkingSessionList | undefined,
-): DrinkingSession {
-  if (sessionKey === currentLiveSessionData?.id) {
-    return currentLiveSessionData;
-  } else if (sessionKey === currentEditSessionData?.id) {
-    return currentEditSessionData;
-  } else {
-    if (drinkingSessionData) {
-      return drinkingSessionData[sessionKey];
-    }
-    throw new Error(
-      Localize.translateLocal('drinkingSession.error.sessionOpen'),
-    );
-  }
-}
-
 /** Remove drinking session data from the database
  *
  * Should only be used to edit non-live sessions.
@@ -264,14 +294,37 @@ async function updateSessionDrinks(
 
 async function openSession() {}
 
+/**
+ * Update a drinking session note
+ *
+ * @param sessionId Id of the session to update
+ * @param newNote The new note
+ * @returns void
+ */
+function updateSessionNote(
+  sessionId: DrinkingSessionId,
+  newNote: string,
+): void {
+  const onyxKey = getDrinkingSessionOnyxKey(sessionId);
+  if (!onyxKey) {
+    return;
+  }
+  Onyx.merge(onyxKey, {
+    note: newNote,
+  });
+}
+
 export {
+  getDrinkingSessionData,
+  getDrinkingSessionOnyxKey,
+  discardLiveDrinkingSession,
+  endLiveDrinkingSession,
+  removeDrinkingSessionData,
+  removePlaceholderSessionData,
   saveDrinkingSessionData,
   savePlaceholderSessionData,
-  removePlaceholderSessionData,
   startLiveDrinkingSession,
-  endLiveDrinkingSession,
-  openDrinkingSession,
-  removeDrinkingSessionData,
-  discardLiveDrinkingSession,
+  syncLocalLiveSessionData,
   updateSessionDrinks,
+  updateSessionNote,
 };

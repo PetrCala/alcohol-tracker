@@ -85,7 +85,7 @@ const ONYXKEYS = {
   FOCUS_MODE_NOTIFICATION: 'focusModeNotification',
 
   /** Live session data */
-  LIVE_SESSION_DATA: 'placeholderSessionData',
+  LIVE_SESSION_DATA: 'liveSessionData',
 
   /** Edit session data */
   EDIT_SESSION_DATA: 'editSessionData',

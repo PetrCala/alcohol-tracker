@@ -140,9 +140,10 @@ function HomeScreen({route}: HomeScreenProps) {
     },
   ];
 
-  // Start a new session if there is none ongoing, otherwise open the ongoing one
+  // If there is an ongoing session, open it, otherwise start a new one
   const onOpenLiveSessionPress = async () => {
-    if (state.ongoingSessionId) {
+    if (state?.ongoingSessionId) {
+      // Assume the live session data is in sync with the database
       Navigation.navigate(
         ROUTES.DRINKING_SESSION_LIVE.getRoute(state.ongoingSessionId),
       );
@@ -152,8 +153,8 @@ function HomeScreen({route}: HomeScreenProps) {
     try {
       setIsStartingSession(true);
       const newSessionId = await DS.startLiveDrinkingSession(db, user);
-      Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(newSessionId));
       dispatch({type: 'SET_ONGOING_SESSION_ID', payload: newSessionId});
+      Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(newSessionId));
     } catch (error: any) {
       ErrorUtils.raiseAlert(error, translate('homeScreen.error.title'));
     } finally {
@@ -252,6 +253,11 @@ function HomeScreen({route}: HomeScreenProps) {
       state.shouldNavigateToTzFix,
     ]),
   );
+
+  // Ensure the live session data is in sync with the database on component mount
+  useEffect(() => {
+    DS.syncLocalLiveSessionData(state.ongoingSessionId, drinkingSessionData);
+  }, [state.ongoingSessionId, drinkingSessionData]);
 
   if (!user) {
     Navigation.resetToHome();

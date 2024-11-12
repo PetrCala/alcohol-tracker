@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import FormProvider from '@components/Form/FormProvider';
 import InputWrapper from '@components/Form/InputWrapper';
 import type {FormOnyxValues} from '@components/Form/types';
@@ -9,29 +9,29 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import Navigation from '@libs/Navigation/Navigation';
 import * as ValidationUtils from '@libs/ValidationUtils';
 import * as ErrorUtils from '@libs/ErrorUtils';
+import * as DS from '@libs/actions/DrinkingSession';
 import ONYXKEYS from '@src/ONYXKEYS';
 import INPUT_IDS from '@src/types/form/SessionNoteForm';
 import {StackScreenProps} from '@react-navigation/stack';
 import {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
 import TextInput from '@components/TextInput';
-import Onyx, {useOnyx} from 'react-native-onyx';
 
 type SessionNoteScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
   typeof SCREENS.DRINKING_SESSION.SESSION_NOTE_SCREEN
 >;
 
-function SesssionNoteScreen({}: SessionNoteScreenProps) {
+function SesssionNoteScreen({route}: SessionNoteScreenProps) {
+  const sessionId = route.params?.sessionId;
   const {translate} = useLocalize();
   const styles = useThemeStyles();
-  // const [sessionNote] = useOnyx(ONYXKEYS.DRINKING_SESSION_NOTE);
-  const sessionNote = '';
+  const session = DS.getDrinkingSessionData(sessionId);
 
   const onSubmit = async (
     values: FormOnyxValues<typeof ONYXKEYS.FORMS.SESSION_NOTE_FORM>,
   ) => {
-    // Onyx.set(ONYXKEYS.DRINKING_SESSION_NOTE, values.note);
+    DS.updateSessionNote(sessionId, values.note);
     Navigation.goBack();
   };
 
@@ -73,7 +73,7 @@ function SesssionNoteScreen({}: SessionNoteScreenProps) {
           InputComponent={TextInput}
           inputID={INPUT_IDS.NOTE}
           label={translate('common.note')}
-          defaultValue={sessionNote ?? ''}
+          defaultValue={session?.note ?? ''}
         />
       </FormProvider>
     </ScreenWrapper>
