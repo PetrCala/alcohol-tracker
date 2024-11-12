@@ -25,12 +25,13 @@ type SessionNoteScreenProps = StackScreenProps<
 function SesssionNoteScreen({}: SessionNoteScreenProps) {
   const {translate} = useLocalize();
   const styles = useThemeStyles();
-  const [sessionNote] = useOnyx(ONYXKEYS.DRINKING_SESSION_NOTE);
+  // const [sessionNote] = useOnyx(ONYXKEYS.DRINKING_SESSION_NOTE);
+  const sessionNote = '';
 
   const onSubmit = async (
     values: FormOnyxValues<typeof ONYXKEYS.FORMS.SESSION_NOTE_FORM>,
   ) => {
-    Onyx.set(ONYXKEYS.DRINKING_SESSION_NOTE, values.note);
+    // Onyx.set(ONYXKEYS.DRINKING_SESSION_NOTE, values.note);
     Navigation.goBack();
   };
 

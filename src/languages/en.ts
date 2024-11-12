@@ -467,6 +467,14 @@ export default {
     noDrinkingSessions: 'No drinking sessions',
     inSession: 'In Session',
   },
+  homeScreen: {
+    openingSession: 'Opening your session...',
+    error: {
+      title: 'Failed to open a session',
+      sessionStart: "We couldn't start a new session. Please try again.",
+      noLiveSession: "You're not in a session",
+    },
+  },
   liveSessionScreen: {
     saving: 'Saving your session...',
     synchronizing: 'Synchronizing data...',

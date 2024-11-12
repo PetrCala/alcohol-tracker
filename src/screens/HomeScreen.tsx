@@ -1,4 +1,4 @@
-﻿import React, {useEffect, useMemo, useReducer} from 'react';
+﻿import React, {useEffect, useMemo, useReducer, useState} from 'react';
 import {
   Alert,
   Dimensions,
@@ -23,7 +23,6 @@ import {
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import UserOffline from '@components/UserOfflineModal';
 import {synchronizeUserStatus} from '@database/users';
-import {startLiveDrinkingSession} from '@libs/actions/DrinkingSession';
 import commonStyles from '@src/styles/commonStyles';
 import {useFirebase} from '@context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
@@ -54,17 +53,19 @@ import VerifyEmailPopup from '@components/Popups/VerifyEmailPopup';
 import useThemeStyles from '@hooks/useThemeStyles';
 import getPlatform from '@libs/getPlatform';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
-import DSUtils from '@libs/DrinkingSessionUtils';
+import * as DSUtils from '@libs/DrinkingSessionUtils';
+import * as DS from '@libs/actions/DrinkingSession';
+import * as ErrorUtils from '@libs/ErrorUtils';
 import useTheme from '@hooks/useTheme';
 import Icon from '@components/Icon';
 import ScrollView from '@components/ScrollView';
+import useLocalize from '@hooks/useLocalize';
 
 type State = {
   visibleDateObject: DateObject;
   drinkingSessionsCount: number;
   drinksConsumed: number;
   unitsConsumed: number;
-  initializingSession: boolean;
   ongoingSessionId: DrinkingSessionId | undefined;
   verifyEmailModalVisible: boolean;
   shouldNavigateToTzFix: boolean;
@@ -80,7 +81,6 @@ const initialState: State = {
   drinkingSessionsCount: 0,
   drinksConsumed: 0,
   unitsConsumed: 0,
-  initializingSession: false,
   ongoingSessionId: undefined,
   verifyEmailModalVisible: false,
   shouldNavigateToTzFix: false,
@@ -96,8 +96,6 @@ const reducer = (state: State, action: Action): State => {
       return {...state, drinksConsumed: action.payload};
     case 'SET_UNITS_CONSUMED':
       return {...state, unitsConsumed: action.payload};
-    case 'SET_INITIALIZING_SESSION':
-      return {...state, initializingSession: action.payload};
     case 'SET_ONGOING_SESSION_ID':
       return {...state, ongoingSessionId: action.payload};
     case 'SET_VERIFY_EMAIL_MODAL_VISIBLE':
@@ -118,6 +116,7 @@ function HomeScreen({route}: HomeScreenProps) {
   const styles = useThemeStyles();
   const theme = useTheme();
   const {auth, db, storage} = useFirebase();
+  const {translate} = useLocalize();
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
   const {
@@ -127,6 +126,7 @@ function HomeScreen({route}: HomeScreenProps) {
     userData,
     isLoading,
   } = useDatabaseData();
+  const [isOpeningSession, setIsOpeningSession] = useState(false);
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const statsData: StatData = [
@@ -141,66 +141,24 @@ function HomeScreen({route}: HomeScreenProps) {
   ];
 
   // Handle drinking session button press
-  const startDrinkingSession = async () => {
-    if (!user) {
-      return null;
-    }
+  const onOpenLiveSessionPress = async () => {
     if (state.ongoingSessionId) {
-      Alert.alert(
-        'A session already exists',
-        "You can't start a new session while you are in one",
+      Navigation.navigate(
+        ROUTES.DRINKING_SESSION_LIVE.getRoute(state.ongoingSessionId),
       );
       return;
     }
-    dispatch({type: 'SET_INITIALIZING_SESSION', payload: true});
-    // The user is not in an active session
-    const newSessionData: DrinkingSession = DSUtils.getEmptySession(
-      CONST.SESSION_TYPES.LIVE,
-      true,
-      true,
-    );
-    const newSessionId = generateDatabaseKey(
-      db,
-      DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(user.uid),
-    );
-    if (!newSessionId) {
-      Alert.alert(
-        'New session key generation failed',
-        "Couldn't generate a new session key",
-      );
-      return;
-    }
+
     try {
-      await startLiveDrinkingSession(
-        db,
-        user.uid,
-        newSessionData,
-        newSessionId,
-      );
+      setIsOpeningSession(true);
+      const newSessionId = await DS.openLiveDrinkingSession(db, user);
       Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(newSessionId));
       dispatch({type: 'SET_ONGOING_SESSION_ID', payload: newSessionId});
     } catch (error: any) {
-      Alert.alert(
-        'New session initialization failed',
-        'Could not start a new session: ' + error.message,
-      );
-      return;
+      ErrorUtils.raiseAlert(error, translate('homeScreen.error.title'));
     } finally {
-      dispatch({type: 'SET_INITIALIZING_SESSION', payload: false});
+      setIsOpeningSession(false);
     }
-  };
-
-  const openSessionInProgress = () => {
-    if (!state.ongoingSessionId) {
-      Alert.alert(
-        'New session initialization failed',
-        'Could not find the existing session',
-      );
-      return;
-    }
-    Navigation.navigate(
-      ROUTES.DRINKING_SESSION_LIVE.getRoute(state.ongoingSessionId),
-    );
   };
 
   // Monitor visible month and various statistics
@@ -304,7 +262,7 @@ function HomeScreen({route}: HomeScreenProps) {
   }
   if (
     isLoading ||
-    state.initializingSession ||
+    isOpeningSession ||
     !preferences ||
     !userData ||
     !userStatusData
@@ -312,7 +270,7 @@ function HomeScreen({route}: HomeScreenProps) {
     return (
       <FullScreenLoadingIndicator
         loadingText={
-          (state.initializingSession && 'Starting a new session...') || ''
+          (isOpeningSession && translate('homeScreen.openingSession')) || ''
         }
       />
     );
@@ -357,7 +315,7 @@ function HomeScreen({route}: HomeScreenProps) {
         {state.ongoingSessionId ? (
           <MessageBanner
             text="You are currently in session!"
-            onPress={openSessionInProgress}
+            onPress={onOpenLiveSessionPress}
             danger
           />
         ) : null}
@@ -440,7 +398,7 @@ function HomeScreen({route}: HomeScreenProps) {
         <TouchableOpacity
           accessibilityRole="button"
           style={[localStyles.startSessionButton, styles.buttonSuccess]}
-          onPress={startDrinkingSession}>
+          onPress={onOpenLiveSessionPress}>
           <Icon
             src={KirokuIcons.Plus}
             height={36}

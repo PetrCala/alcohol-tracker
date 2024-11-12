@@ -5,7 +5,7 @@ import type {
 import type {UserStatus, UserStatusList} from '@src/types/onyx';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
 import {sumAllDrinks} from '@libs/DataHandling';
-import DSUtils from '@libs/DrinkingSessionUtils';
+import * as DSUtils from '@libs/DrinkingSessionUtils';
 import _, {get} from 'lodash';
 
 /**

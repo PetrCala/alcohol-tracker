@@ -5,7 +5,7 @@ import {getTimestampAge} from '@libs/TimeUtils';
 import commonStyles from '@src/styles/commonStyles';
 import {formatDateToTime, timestampToDate} from '@libs/DataHandling';
 import type {Profile, UserStatus} from '@src/types/onyx';
-import DSUtils from '@libs/DrinkingSessionUtils';
+import * as DSUtils from '@libs/DrinkingSessionUtils';
 import DrinkData from '@libs/DrinkData';
 import _, {get} from 'lodash';
 import useThemeStyles from '@hooks/useThemeStyles';

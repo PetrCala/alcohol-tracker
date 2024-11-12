@@ -1,4 +1,4 @@
-import DSUtils from '@libs/DrinkingSessionUtils';
+import * as DSUtils from '@libs/DrinkingSessionUtils';
 import type {DrinkingSession} from '@src/types/onyx';
 import {createMockSession} from '../../../src/database/MockDatabase';
 import CONST from '@src/CONST';

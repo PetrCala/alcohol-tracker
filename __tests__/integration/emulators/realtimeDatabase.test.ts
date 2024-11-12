@@ -43,7 +43,7 @@ import {
 } from '@database/friends';
 import DBPATHS from '@database/DBPATHS';
 import CONST from '@src/CONST';
-import DSUtils from '@libs/DrinkingSessionUtils';
+import * as DSUtils from '@libs/DrinkingSessionUtils';
 import {describeWithEmulator} from '../../emulators/utils';
 
 const testUserID: string = MOCK_USER_IDS[0];

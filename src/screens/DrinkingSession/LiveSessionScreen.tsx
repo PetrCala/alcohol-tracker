@@ -83,7 +83,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   const {isOnline} = useUserConnection();
   const {preferences} = useDatabaseData();
   const {windowWidth} = useWindowDimensions();
-  const [sessionNote] = useOnyx(ONYXKEYS.DRINKING_SESSION_NOTE);
+  // const [sessionNote] = useOnyx(ONYXKEYS.DRINKING_SESSION_NOTE);
   const [session, setSession] = useState<DrinkingSession | null>(null);
   const initialSession = useRef<DrinkingSession | null>(null);
   // Session details
@@ -395,7 +395,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       sessionToOpen = existingPlaceholderSession;
       setIsPlaceholderSession(true);
     }
-    Onyx.set(ONYXKEYS.DRINKING_SESSION_NOTE, sessionToOpen?.note ?? '');
+    // Onyx.set(ONYXKEYS.DRINKING_SESSION_NOTE, sessionToOpen?.note ?? '');
     setSession(sessionToOpen);
     initialSession.current = sessionToOpen;
     setOpeningSession(false);
@@ -413,12 +413,12 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   }, [session?.ongoing]);
 
   // Keep the session note in sync with the note form
-  useEffect(() => {
-    if (!session || openingSession) {
-      return;
-    }
-    setSession({...session, note: sessionNote ?? ''});
-  }, [sessionNote, openingSession]);
+  // useEffect(() => {
+  //   if (!session || openingSession) {
+  //     return;
+  //   }
+  //   setSession({...session, note: sessionNote ?? ''});
+  // }, [sessionNote, openingSession]);
 
   // Synchronize the session with database
   useEffect(() => {

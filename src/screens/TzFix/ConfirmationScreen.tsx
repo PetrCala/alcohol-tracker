@@ -11,7 +11,7 @@ import Navigation from '@libs/Navigation/Navigation';
 import {TzFixModalNavigatorParamList} from '@libs/Navigation/types';
 import {StackScreenProps} from '@react-navigation/stack';
 import * as ErrorUtils from '@libs/ErrorUtils';
-import DSUtils from '@libs/DrinkingSessionUtils';
+import * as DSUtils from '@libs/DrinkingSessionUtils';
 import ROUTES from '@src/ROUTES';
 import SCREENS from '@src/SCREENS';
 import {useState} from 'react';

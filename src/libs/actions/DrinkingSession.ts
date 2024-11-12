@@ -2,8 +2,17 @@
 import {ref, update} from 'firebase/database';
 import {removeZeroObjectsFromSession} from '@libs/DataHandling';
 import type {DrinkingSession, DrinksList, UserStatus} from '@src/types/onyx';
+import * as Localize from '@src/libs/Localize';
+import * as DSUtils from '@src/libs/DrinkingSessionUtils';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
 import DBPATHS from '../../database/DBPATHS';
+import {User} from 'firebase/auth';
+import CONST from '@src/CONST';
+import {generateDatabaseKey} from '@database/baseFunctions';
+import Onyx from 'react-native-onyx';
+import ONYXKEYS from '@src/ONYXKEYS';
+import Navigation from '@libs/Navigation/Navigation';
+import ROUTES from '@src/ROUTES';
 
 const drinkingSessionRef = DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID;
 const drinkingSessionDrinksRef =
@@ -72,24 +81,50 @@ async function removePlaceholderSessionData(
  * @param string userID User ID
  * @param newSessionData Data to save the new drinking session with
  * @param sesisonKey ID of the session to edit (can be null in case of finishing the session)
- * @returnsPromise void.
+ * @returnsPromise newSessionId Id of the newly started session.
  *  */
-async function startLiveDrinkingSession(
+async function openLiveDrinkingSession(
   db: Database,
-  userID: string,
-  newSessionData: DrinkingSession,
-  sessionKey: string,
-): Promise<void> {
+  user: User | null,
+): Promise<string> {
+  if (!user) {
+    throw new Error(Localize.translateLocal('homeScreen.error.sessionStart'));
+  }
+
+  // The user is not in an active session
+  const newSessionData: DrinkingSession = DSUtils.getEmptySession(
+    CONST.SESSION_TYPES.LIVE,
+    true,
+    true,
+  );
+
+  const newSessionId = generateDatabaseKey(
+    db,
+    DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(user.uid),
+  );
+  if (!newSessionId) {
+    throw new Error(Localize.translateLocal('homeScreen.error.sessionStart'));
+  }
+
+  // Update Firebase
   newSessionData.drinks = newSessionData.drinks || {}; // Can not send undefined
   const updates: Record<string, any> = {};
   const userStatusData: UserStatus = {
     last_online: new Date().getTime(),
-    latest_session_id: sessionKey,
+    latest_session_id: newSessionId,
     latest_session: newSessionData,
   };
-  updates[userStatusRef.getRoute(userID)] = userStatusData;
-  updates[drinkingSessionRef.getRoute(userID, sessionKey)] = newSessionData;
+  updates[userStatusRef.getRoute(user.uid)] = userStatusData;
+  updates[drinkingSessionRef.getRoute(user.uid, newSessionId)] = newSessionData;
   await update(ref(db), updates);
+
+  // Update Onyx
+  Onyx.set(ONYXKEYS.LIVE_SESSION_DATA, {
+    id: newSessionId,
+    ...newSessionData,
+  });
+
+  return newSessionId;
 }
 
 /** End a live drinking session
@@ -186,7 +221,7 @@ export {
   saveDrinkingSessionData,
   savePlaceholderSessionData,
   removePlaceholderSessionData,
-  startLiveDrinkingSession,
+  openLiveDrinkingSession,
   endLiveDrinkingSession,
   removeDrinkingSessionData,
   discardLiveDrinkingSession,

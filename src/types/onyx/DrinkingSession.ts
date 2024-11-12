@@ -9,6 +9,7 @@ type DrinkingSessionId = string;
 type DrinkingSessionType = ValueOf<typeof CONST.SESSION_TYPES>;
 
 type DrinkingSession = {
+  id?: DrinkingSessionId; // Only used locally - in the database it's the key
   start_time: number;
   end_time: number;
   timezone?: SelectedTimezone;

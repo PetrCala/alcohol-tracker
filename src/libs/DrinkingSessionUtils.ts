@@ -341,7 +341,7 @@ async function fixTimezoneSessions(
   await update(ref(db), updates);
 }
 
-const DSUtils = {
+export {
   PlaceholderDrinks,
   allSessionsContainTimezone,
   calculateSessionLength,
@@ -356,5 +356,3 @@ const DSUtils = {
   shiftSessionTimestamps,
   shiftSessionDate,
 };
-
-export default DSUtils;

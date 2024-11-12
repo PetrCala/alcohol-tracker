@@ -18,7 +18,7 @@ import CONST from '@src/CONST';
 import SCREENS from '@src/SCREENS';
 import type {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
 import {useCallback, useEffect, useMemo, useState} from 'react';
-import DSUtils from '@libs/DrinkingSessionUtils';
+import * as DSUtils from '@libs/DrinkingSessionUtils';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import ScreenWrapper from '@components/ScreenWrapper';

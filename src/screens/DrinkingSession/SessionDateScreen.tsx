@@ -11,7 +11,7 @@ import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Navigation from '@libs/Navigation/Navigation';
 import * as ValidationUtils from '@libs/ValidationUtils';
-import DSUtils from '@libs/DrinkingSessionUtils';
+import * as DSUtils from '@libs/DrinkingSessionUtils';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
 import INPUT_IDS from '@src/types/form/SessionDateForm';
@@ -42,13 +42,13 @@ function SesssionDateScreen({route}: SessionDateScreenProps) {
   const onSubmit = async (
     values: FormOnyxValues<typeof ONYXKEYS.FORMS.SESSION_DATE_FORM>,
   ) => {
-    if (!user || !session) {
-      throw new Error(translate('sessionDateScreen.error.load'));
-    }
-
-    const newDate = new Date(values.date);
-
     try {
+      if (!user || !session) {
+        throw new Error(translate('sessionDateScreen.error.load'));
+      }
+
+      const newDate = new Date(values.date);
+
       setIsLoading(true);
       const newSession = DSUtils.shiftSessionDate(session, newDate);
       await saveDrinkingSessionData(
