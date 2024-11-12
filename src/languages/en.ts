@@ -471,6 +471,9 @@ export default {
     exitEditMode: 'Exit Edit Mode',
     noDrinkingSessions: 'No drinking sessions',
     inSession: 'In Session',
+    error: {
+      open: 'Failed to open a new session. Please try again.',
+    },
   },
   homeScreen: {
     startingSession: 'Starting a new session...',
@@ -634,6 +637,11 @@ export default {
       `An email with password reset instructions has been sent to ${email}.`,
     error: {
       generic: 'There was an error when attempting to reset your password.',
+    },
+  },
+  onyx: {
+    error: {
+      generic: 'Failed to reach the local database',
     },
   },
   genericErrorScreen: {

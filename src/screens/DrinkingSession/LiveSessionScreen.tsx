@@ -282,7 +282,6 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
         );
         Onyx.set(ONYXKEYS.EDIT_SESSION_DATA, null);
       }
-      // await DS.removePlaceholderSessionData(db, userID);
     } catch (error: any) {
       Alert.alert(
         translate('liveSessionScreen.error.saveTitle'),
@@ -313,7 +312,6 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
         : DS.removeDrinkingSessionData;
       await waitForNoPendingUpdate();
       await discardFunction(db, user.uid, sessionId);
-      await DS.removePlaceholderSessionData(db, user.uid);
       if (sessionIsLive) {
         Onyx.set(ONYXKEYS.LIVE_SESSION_DATA, null);
       } else {

@@ -19,13 +19,11 @@ import {
   getSingleDayDrinkingSessions,
   sumAllUnits,
   dateStringToDate,
-  roundToTwoDecimalPlaces,
 } from '@libs/DataHandling';
 // import { PreferencesData} from '../types/database';
 import UserOffline from '@components/UserOfflineModal';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import type {DrinkingSession, DrinkingSessionList} from '@src/types/onyx';
-import {generateDatabaseKey} from '@database/baseFunctions';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import type {DrinkingSessionKeyValue} from '@src/types/utils/databaseUtils';
 import type {StackScreenProps} from '@react-navigation/stack';
@@ -34,10 +32,9 @@ import type SCREENS from '@src/SCREENS';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
-import DBPATHS from '@database/DBPATHS';
-import * as DSUtils from '@libs/DrinkingSessionUtils';
+import * as ErrorUtils from '@libs/ErrorUtils';
+import * as DS from '@libs/actions/DrinkingSession';
 import CONST from '@src/CONST';
-import {savePlaceholderSessionData} from '@libs/actions/DrinkingSession';
 import ScreenWrapper from '@components/ScreenWrapper';
 import {nonMidnightString} from '@libs/StringUtilsKiroku';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
@@ -50,6 +47,7 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import Icon from '@components/Icon';
 import useTheme from '@hooks/useTheme';
 import commonStyles from '@src/styles/commonStyles';
+import ONYXKEYS from '@src/ONYXKEYS';
 
 type DayOverviewScreenProps = StackScreenProps<
   DayOverviewNavigatorParamList,
@@ -93,21 +91,21 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
     setDailyData(newDailyData);
   }, [currentDate, drinkingSessionData]);
 
+  const onEditSessionPress = (sessionId: string, session: DrinkingSession) => {
+    DS.updateLocalData(sessionId, session, ONYXKEYS.EDIT_SESSION_DATA);
+    Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(sessionId));
+  };
+
   const onSessionButtonPress = (
     sessionId: string,
     session: DrinkingSession,
   ) => {
-    {
-      session?.ongoing
-        ? Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(sessionId))
-        : Navigation.navigate(
-            ROUTES.DRINKING_SESSION_SUMMARY.getRoute(sessionId),
-          );
+    if (!session?.ongoing) {
+      Navigation.navigate(ROUTES.DRINKING_SESSION_SUMMARY.getRoute(sessionId));
+      return;
     }
-  };
-
-  const onEditSessionPress = (sessionId: string) => {
-    Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(sessionId));
+    // If the session is ongoing, behave as if the edit button was pressed
+    onEditSessionPress(sessionId, session);
   };
 
   const DrinkingSession = ({sessionId, session}: DrinkingSessionKeyValue) => {
@@ -171,7 +169,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
                   iconSource={KirokuIcons.Edit}
                   containerStyle={[localStyles.menuIconContainer]}
                   iconStyle={[localStyles.menuIcon]}
-                  onPress={() => onEditSessionPress(sessionId)} // Use keyextractor to load id here
+                  onPress={() => onEditSessionPress(sessionId, session)} // Use keyextractor to load id here
                 />
               )
             )}
@@ -210,37 +208,18 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
       return null;
     }
 
-    /** Generate a placeholder session that corresponds to the current day */
-    const getPlaceholderSession = (): DrinkingSession => {
-      const timestamp = currentDate.getTime();
-      const session: DrinkingSession = DSUtils.getEmptySession(
-        CONST.SESSION_TYPES.EDIT,
-        true,
-        false,
-      );
-      session.start_time = timestamp;
-      session.end_time = timestamp;
-      return session;
-    };
-
-    const onAddSessionButtonPress = async () => {
-      // Generate a new drinking session key
-      const newSessionId = generateDatabaseKey(
-        db,
-        DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(user.uid),
-      );
-      if (!newSessionId) {
-        Alert.alert('Error', 'Could not generate a new session key.');
-        return;
-      }
+    const onAddSessionButtonPress = () => {
       try {
-        const placeholderSession = getPlaceholderSession();
-        await savePlaceholderSessionData(db, user.uid, placeholderSession);
+        const newSessionId = DS.getNewSessionToEdit(
+          db,
+          auth.currentUser,
+          currentDate,
+        );
         Navigation.navigate(
           ROUTES.DRINKING_SESSION_LIVE.getRoute(newSessionId),
         );
       } catch (error: any) {
-        Alert.alert('Database Error', 'Failed to create a new session.');
+        ErrorUtils.raiseAlert(error);
       }
     };
 

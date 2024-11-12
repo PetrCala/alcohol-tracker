@@ -42,7 +42,6 @@ const drinkingSessionRef = DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID;
 const drinkingSessionDrinksRef =
   DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID_DRINKS;
 const userStatusRef = DBPATHS.USER_STATUS_USER_ID;
-const placeholderSessionRef = DBPATHS.USER_SESSION_PLACEHOLDER_USER_ID;
 
 /**
  * Based on the session ID, get the drinking session data.
@@ -72,6 +71,21 @@ function getDrinkingSessionOnyxKey(
     return ONYXKEYS.EDIT_SESSION_DATA;
   }
   return null;
+}
+
+/**
+ * Set the edit session data object in Onyx so that it can be modified. This function should be called only if the relevant object already exists in the onyx database.
+ *
+ * @param sessionId The ID of the session
+ * @param newData The new data to set
+ */
+function updateLocalData(
+  sessionId: DrinkingSessionId,
+  newData: DrinkingSession | null,
+  onyxKey: OnyxKey,
+): void {
+  let dataToSet = newData ? {id: sessionId, ...newData} : null;
+  Onyx.set(onyxKey, dataToSet);
 }
 
 /** Write drinking session data into the database
@@ -104,31 +118,6 @@ async function saveDrinkingSessionData(
   await update(ref(db), updates);
 }
 
-/** Save a placeholder session in the database. Update only the placeholder session node.
- */
-async function savePlaceholderSessionData(
-  db: Database,
-  userID: UserID,
-  newSessionData: DrinkingSession,
-): Promise<void> {
-  newSessionData = removeZeroObjectsFromSession(newSessionData);
-  newSessionData.drinks = newSessionData.drinks || {}; // Can not send undefined
-  const updates: Record<string, any> = {};
-  updates[placeholderSessionRef.getRoute(userID)] = newSessionData;
-  await update(ref(db), updates);
-}
-
-/** Remove any potentially existing placeholder session data from the database.
- */
-async function removePlaceholderSessionData(
-  db: Database,
-  userID: UserID,
-): Promise<void> {
-  const updates: Record<string, any> = {};
-  updates[placeholderSessionRef.getRoute(userID)] = null;
-  await update(ref(db), updates);
-}
-
 /**
  * Check if the current live session data is the same as the one in the database. If not, update the local data.
  *
@@ -142,10 +131,11 @@ function syncLocalLiveSessionData(
   if (ongoingSessionId && drinkingSessionData) {
     const ongoingSessionData = drinkingSessionData[ongoingSessionId];
     if (ongoingSessionData) {
-      Onyx.set(ONYXKEYS.LIVE_SESSION_DATA, {
-        id: ongoingSessionId,
-        ...ongoingSessionData,
-      });
+      updateLocalData(
+        ongoingSessionId,
+        ongoingSessionData,
+        ONYXKEYS.LIVE_SESSION_DATA,
+      );
     }
   } else {
     Onyx.set(ONYXKEYS.LIVE_SESSION_DATA, null);
@@ -196,10 +186,7 @@ async function startLiveDrinkingSession(
   await update(ref(db), updates);
 
   // Update Onyx
-  Onyx.set(ONYXKEYS.LIVE_SESSION_DATA, {
-    id: newSessionId,
-    ...newSessionData,
-  });
+  updateLocalData(newSessionId, newSessionData, ONYXKEYS.LIVE_SESSION_DATA);
 
   return newSessionId;
 }
@@ -291,9 +278,6 @@ async function updateSessionDrinks(
     newDrinks || {}; // Can not send undefined
   await update(ref(db), updates);
 }
-
-async function openSession() {}
-
 /**
  * Update a drinking session note
  *
@@ -314,17 +298,46 @@ function updateSessionNote(
   });
 }
 
+function getNewSessionToEdit(
+  db: Database,
+  user: User | null,
+  currentDate: Date,
+): DrinkingSessionId {
+  if (!user) {
+    throw new Error(Localize.translateLocal('dayOverviewScreen.error.open'));
+  }
+  const newSessionId = generateDatabaseKey(
+    db,
+    DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(user.uid),
+  );
+  if (!newSessionId) {
+    throw new Error(Localize.translateLocal('dayOverviewScreen.error.open'));
+  }
+  const timestamp = currentDate.getTime();
+  const newSession: DrinkingSession = DSUtils.getEmptySession(
+    CONST.SESSION_TYPES.EDIT,
+    true,
+    false,
+  );
+  newSession.start_time = timestamp;
+  newSession.end_time = timestamp;
+
+  updateLocalData(newSessionId, newSession, ONYXKEYS.EDIT_SESSION_DATA);
+
+  return newSessionId;
+}
+
 export {
   getDrinkingSessionData,
   getDrinkingSessionOnyxKey,
   discardLiveDrinkingSession,
   endLiveDrinkingSession,
   removeDrinkingSessionData,
-  removePlaceholderSessionData,
   saveDrinkingSessionData,
-  savePlaceholderSessionData,
   startLiveDrinkingSession,
   syncLocalLiveSessionData,
   updateSessionDrinks,
   updateSessionNote,
+  updateLocalData,
+  getNewSessionToEdit,
 };

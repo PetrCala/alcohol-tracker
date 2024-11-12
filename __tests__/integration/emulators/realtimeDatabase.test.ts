@@ -16,10 +16,7 @@ import type {
   DrinkingSession,
 } from '@src/types/onyx';
 import type {Database} from 'firebase/database';
-import {
-  saveDrinkingSessionData,
-  savePlaceholderSessionData,
-} from '@libs/actions/DrinkingSession';
+import {saveDrinkingSessionData} from '@libs/actions/DrinkingSession';
 
 import {MOCK_USER_IDS} from '../../utils/testsStatic';
 import {readDataOnce} from '@database/baseFunctions';
@@ -206,21 +203,6 @@ describeWithEmulator('Test drinking session functionality', () => {
 
     expect(userSession).not.toBeNull();
     expect(userSession).toMatchObject(mockDrinkingSession);
-  });
-
-  it('should save a placeholder session', async () => {
-    const mockPlaceholderSession: DrinkingSession = DSUtils.getEmptySession(
-      CONST.SESSION_TYPES.EDIT,
-      true,
-      false,
-    );
-
-    await savePlaceholderSessionData(db, testUserID, mockPlaceholderSession);
-    const placeholderSessionRef =
-      DBPATHS.USER_SESSION_PLACEHOLDER_USER_ID.getRoute(testUserID);
-    const placeholderSession = await readDataOnce(db, placeholderSessionRef);
-
-    expect(placeholderSession).toMatchObject(mockPlaceholderSession);
   });
 });
 
