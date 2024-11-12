@@ -148,7 +148,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
         session?.drinks,
         drinksToAdd,
       );
-      setSession({...session, drinks: newDrinks});
+      DS.updateDrinks(sessionId, newDrinks);
     }
   };
 
@@ -179,22 +179,8 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
         keyToRemove,
         1,
       );
-      setSession({...session, drinks: newDrinks});
+      DS.updateDrinks(sessionId, newDrinks);
     }
-  };
-
-  const handleBlackoutChange = (value: boolean) => {
-    if (!session) {
-      return;
-    }
-    setSession({...session, blackout: value});
-  };
-
-  const setCurrentDrinks = (newDrinks: DrinksList | undefined) => {
-    if (!session) {
-      return;
-    }
-    setSession({...session, drinks: newDrinks});
   };
 
   // Function to wait for pending updates to finish
@@ -271,7 +257,6 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       }
       if (sessionIsLive) {
         await DS.endLiveDrinkingSession(db, userID, newSessionData, sessionId);
-        Onyx.set(ONYXKEYS.LIVE_SESSION_DATA, null);
       } else {
         await DS.saveDrinkingSessionData(
           db,
@@ -279,8 +264,8 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
           newSessionData,
           sessionId,
           false, // Do not update live status
+          true, // Clean the local onyx edit session data
         );
-        Onyx.set(ONYXKEYS.EDIT_SESSION_DATA, null);
       }
     } catch (error: any) {
       Alert.alert(
@@ -332,9 +317,6 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   /** If an update is pending, update immediately before navigating away
    */
   const handleBackPress = async () => {
-    if (!user) {
-      return;
-    }
     if (!sessionIsLive && hasSessionChanged()) {
       setShouldShowLeaveConfirmation(true); // Unsaved changes
       return;
@@ -343,7 +325,6 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       try {
         setLoadingText(translate('liveSessionScreen.synchronizing'));
         await waitForNoPendingUpdate();
-        await DS.updateSessionDrinks(db, user.uid, sessionId, session?.drinks);
       } catch (error: any) {
         Alert.alert('Database synchronization failed', error.message);
       } finally {
@@ -486,14 +467,18 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
               <DrinkTypesView
                 drinkData={DrinkData}
                 currentDrinks={session.drinks}
-                setCurrentDrinks={setCurrentDrinks}
+                setCurrentDrinks={(newDrinks: DrinksList | undefined) =>
+                  DS.updateDrinks(sessionId, newDrinks)
+                }
                 availableUnits={availableUnits}
               />
             </View>
             <SessionDetailsWindow
               sessionId={sessionId}
               isBlackout={session.blackout}
-              onBlackoutChange={handleBlackoutChange}
+              onBlackoutChange={(value: boolean) =>
+                DS.updateBlackout(sessionId, value)
+              }
               note={session.note}
               dateString={sessionDateString}
               shouldAllowDateChange={session.type !== CONST.SESSION_TYPES.LIVE}

@@ -1513,6 +1513,7 @@ const styles = (theme: ThemeColors) =>
       alignItems: 'center',
       borderTopWidth: 1,
       borderColor: theme.border,
+      ...spacing.pt4,
     },
 
     signUpScreen: {

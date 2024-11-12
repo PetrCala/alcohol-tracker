@@ -94,6 +94,7 @@ function updateLocalData(
  * @param string userID User ID
  * @param newSessionData Data to save the new drinking session with
  * @param updateStatus Whether to update the user status data or not
+ * @param updateLocal Whether to update the local data or not. This means removing the data from the Onyx store.
  * @returnsPromise void.
  *  */
 async function saveDrinkingSessionData(
@@ -102,6 +103,7 @@ async function saveDrinkingSessionData(
   newSessionData: DrinkingSession,
   sessionKey: string,
   updateStatus?: boolean,
+  updateLocal?: boolean,
 ): Promise<void> {
   newSessionData = removeZeroObjectsFromSession(newSessionData); // Delete the initial log of zero drinks that was used as a placeholder
   newSessionData.drinks = newSessionData.drinks || {}; // Can not send undefined
@@ -116,6 +118,9 @@ async function saveDrinkingSessionData(
     updates[userStatusRef.getRoute(userID)] = userStatusData;
   }
   await update(ref(db), updates);
+  if (updateLocal) {
+    Onyx.set(ONYXKEYS.EDIT_SESSION_DATA, null);
+  }
 }
 
 /**
@@ -217,6 +222,7 @@ async function endLiveDrinkingSession(
   updates[userStatusRef.getRoute(userID)] = userStatusData;
   updates[drinkingSessionRef.getRoute(userID, sessionKey)] = newSessionData;
   await update(ref(db), updates);
+  Onyx.set(ONYXKEYS.LIVE_SESSION_DATA, null);
 }
 
 /** Remove drinking session data from the database
@@ -258,26 +264,18 @@ async function discardLiveDrinkingSession(
   await update(ref(db), updates);
 }
 
-/** Access the database reference point of a user's drinking session
- * and update the drinks of that session.
- *
- * @param db Firebase Database object
- * @param userID User ID
- * @param sessionKey ID of the session to edit
- * @param newDrinks An object containing the new drinks
- * @returns A promise.
- */
-async function updateSessionDrinks(
-  db: Database,
-  userID: string,
-  sessionKey: string,
+function updateDrinks(
+  sessionId: DrinkingSessionId,
   newDrinks: DrinksList | undefined,
-): Promise<void> {
-  const updates: Record<string, DrinksList> = {};
-  updates[drinkingSessionDrinksRef.getRoute(userID, sessionKey)] =
-    newDrinks || {}; // Can not send undefined
-  await update(ref(db), updates);
+) {
+  const onyxKey = getDrinkingSessionOnyxKey(sessionId);
+  if (onyxKey) {
+    Onyx.merge(onyxKey, {
+      drinks: newDrinks,
+    });
+  }
 }
+
 /**
  * Update a drinking session note
  *
@@ -285,17 +283,22 @@ async function updateSessionDrinks(
  * @param newNote The new note
  * @returns void
  */
-function updateSessionNote(
-  sessionId: DrinkingSessionId,
-  newNote: string,
-): void {
+function updateNote(sessionId: DrinkingSessionId, newNote: string): void {
   const onyxKey = getDrinkingSessionOnyxKey(sessionId);
-  if (!onyxKey) {
-    return;
+  if (onyxKey) {
+    Onyx.merge(onyxKey, {
+      note: newNote,
+    });
   }
-  Onyx.merge(onyxKey, {
-    note: newNote,
-  });
+}
+
+function updateBlackout(sessionId: DrinkingSessionId, blackout: boolean): void {
+  const onyxKey = getDrinkingSessionOnyxKey(sessionId);
+  if (onyxKey) {
+    Onyx.merge(onyxKey, {
+      blackout,
+    });
+  }
 }
 
 function getNewSessionToEdit(
@@ -336,8 +339,9 @@ export {
   saveDrinkingSessionData,
   startLiveDrinkingSession,
   syncLocalLiveSessionData,
-  updateSessionDrinks,
-  updateSessionNote,
+  updateBlackout,
+  updateDrinks,
+  updateNote,
   updateLocalData,
   getNewSessionToEdit,
 };

@@ -54,7 +54,6 @@ const localStyles = StyleSheet.create({
     alignItems: 'center',
     height: 50,
     borderTopWidth: 1,
-    marginLeft: 12,
-    marginRight: 12,
+    marginHorizontal: 12,
   },
 });

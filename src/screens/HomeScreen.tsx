@@ -258,6 +258,7 @@ function HomeScreen({route}: HomeScreenProps) {
   useEffect(() => {
     DS.syncLocalLiveSessionData(state.ongoingSessionId, drinkingSessionData);
   }, [state.ongoingSessionId, drinkingSessionData]);
+  console.log(user?.uid);
 
   if (!user) {
     Navigation.resetToHome();

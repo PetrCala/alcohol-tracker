@@ -31,7 +31,7 @@ function SesssionNoteScreen({route}: SessionNoteScreenProps) {
   const onSubmit = async (
     values: FormOnyxValues<typeof ONYXKEYS.FORMS.SESSION_NOTE_FORM>,
   ) => {
-    DS.updateSessionNote(sessionId, values.note);
+    DS.updateNote(sessionId, values.note);
     Navigation.goBack();
   };
 
