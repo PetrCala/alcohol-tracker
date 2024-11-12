@@ -39,7 +39,7 @@ const commonStyles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   mainFooter: {
-    height: 55,
+    height: 54,
     width: screenWidth,
     flexDirection: 'row',
     justifyContent: 'center',

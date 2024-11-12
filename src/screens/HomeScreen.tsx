@@ -496,7 +496,7 @@ const localStyles = StyleSheet.create({
   },
   startSessionButton: {
     position: 'absolute',
-    bottom: 20,
+    bottom: 18,
     left: '50%',
     transform: [{translateX: -35}],
     borderRadius: 50,
