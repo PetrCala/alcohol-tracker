@@ -90,6 +90,8 @@ const ONYXKEYS = {
   /** Edit session data */
   EDIT_SESSION_DATA: 'editSessionData',
 
+  DRINKING_SESSION_NOTE: 'drinkingSessionNote',
+
   /** Is drinking session data loading? */
   IS_LOADING_SESSION_DATA: 'isLoadingSessionData',
 
@@ -252,6 +254,7 @@ type OnyxValuesMapping = {
   [ONYXKEYS.NVP_PREFERRED_LOCALE]: OnyxTypes.Locale;
   [ONYXKEYS.LIVE_SESSION_DATA]: OnyxTypes.DrinkingSession;
   [ONYXKEYS.EDIT_SESSION_DATA]: OnyxTypes.DrinkingSession;
+  [ONYXKEYS.DRINKING_SESSION_NOTE]: string;
   [ONYXKEYS.IS_LOADING_SESSION_DATA]: boolean;
   [ONYXKEYS.LOADING_SESSION_DATA_TEXT]: string;
   //   [ONYXKEYS.IS_TEST_TOOLS_MODAL_OPEN]: boolean;

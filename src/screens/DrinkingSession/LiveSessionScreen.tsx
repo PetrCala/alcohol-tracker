@@ -64,7 +64,7 @@ import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import ScrollView from '@components/ScrollView';
 import Log from '@libs/Log';
 import Icon from '@components/Icon';
-import {useOnyx} from 'react-native-onyx';
+import Onyx, {useOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 
 type LiveSessionScreenProps = StackScreenProps<
@@ -83,7 +83,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   const {isOnline} = useUserConnection();
   const {preferences} = useDatabaseData();
   const {windowWidth} = useWindowDimensions();
-  const [sessionNoteData] = useOnyx(ONYXKEYS.FORMS.SESSION_NOTE_FORM);
+  const [sessionNote] = useOnyx(ONYXKEYS.DRINKING_SESSION_NOTE);
   const [session, setSession] = useState<DrinkingSession | null>(null);
   const initialSession = useRef<DrinkingSession | null>(null);
   // Session details
@@ -395,18 +395,17 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       sessionToOpen = existingPlaceholderSession;
       setIsPlaceholderSession(true);
     }
+    Onyx.set(ONYXKEYS.DRINKING_SESSION_NOTE, sessionToOpen?.note ?? '');
     setSession(sessionToOpen);
     initialSession.current = sessionToOpen;
     setOpeningSession(false);
     setLoadingText('');
   };
 
-  // Prepare the session for the user upon component mount
-  useFocusEffect(
-    React.useCallback(() => {
-      openSession();
-    }, []),
-  );
+  // Open the session upon component mount
+  useEffect(() => {
+    openSession();
+  }, []);
 
   // Monitor various dynamic attributes stemming from the session
   useEffect(() => {
@@ -415,11 +414,11 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
 
   // Keep the session note in sync with the note form
   useEffect(() => {
-    if (!session) {
+    if (!session || openingSession) {
       return;
     }
-    setSession({...session, note: sessionNoteData?.note ?? ''});
-  }, [sessionNoteData]);
+    setSession({...session, note: sessionNote ?? ''});
+  }, [sessionNote, openingSession]);
 
   // Synchronize the session with database
   useEffect(() => {
@@ -561,8 +560,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
               sessionId={sessionId}
               isBlackout={session.blackout}
               onBlackoutChange={handleBlackoutChange}
-              // note={session.note}
-              note={sessionNoteData?.note ?? ''}
+              note={session.note}
               dateString={sessionDateString}
               shouldAllowDateChange={session.type !== CONST.SESSION_TYPES.LIVE}
             />
