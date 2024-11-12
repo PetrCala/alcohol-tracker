@@ -312,13 +312,13 @@ function HomeScreen({route}: HomeScreenProps) {
         </View> */}
       </View>
       <ScrollView>
-        {state.ongoingSessionId ? (
+        {state.ongoingSessionId && (
           <MessageBanner
             text="You are currently in session!"
             onPress={onOpenLiveSessionPress}
             danger
           />
-        ) : null}
+        )}
         {/* User verification modal -- Enable later on
         {user.emailVerified ? null : (
           <MessageBanner
@@ -394,7 +394,7 @@ function HomeScreen({route}: HomeScreenProps) {
           />
         </View>
       </View>
-      {state.ongoingSessionId ? null : (
+      {!state.ongoingSessionId && (
         <TouchableOpacity
           accessibilityRole="button"
           style={[localStyles.startSessionButton, styles.buttonSuccess]}
