@@ -83,7 +83,7 @@ async function removePlaceholderSessionData(
  * @param sesisonKey ID of the session to edit (can be null in case of finishing the session)
  * @returnsPromise newSessionId Id of the newly started session.
  *  */
-async function openLiveDrinkingSession(
+async function startLiveDrinkingSession(
   db: Database,
   user: User | null,
 ): Promise<string> {
@@ -221,7 +221,7 @@ export {
   saveDrinkingSessionData,
   savePlaceholderSessionData,
   removePlaceholderSessionData,
-  openLiveDrinkingSession,
+  startLiveDrinkingSession,
   endLiveDrinkingSession,
   removeDrinkingSessionData,
   discardLiveDrinkingSession,

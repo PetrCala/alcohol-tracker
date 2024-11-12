@@ -126,7 +126,7 @@ function HomeScreen({route}: HomeScreenProps) {
     userData,
     isLoading,
   } = useDatabaseData();
-  const [isOpeningSession, setIsOpeningSession] = useState(false);
+  const [isStartingSession, setIsStartingSession] = useState(false);
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const statsData: StatData = [
@@ -140,7 +140,7 @@ function HomeScreen({route}: HomeScreenProps) {
     },
   ];
 
-  // Handle drinking session button press
+  // Start a new session if there is none ongoing, otherwise open the ongoing one
   const onOpenLiveSessionPress = async () => {
     if (state.ongoingSessionId) {
       Navigation.navigate(
@@ -150,14 +150,14 @@ function HomeScreen({route}: HomeScreenProps) {
     }
 
     try {
-      setIsOpeningSession(true);
-      const newSessionId = await DS.openLiveDrinkingSession(db, user);
+      setIsStartingSession(true);
+      const newSessionId = await DS.startLiveDrinkingSession(db, user);
       Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(newSessionId));
       dispatch({type: 'SET_ONGOING_SESSION_ID', payload: newSessionId});
     } catch (error: any) {
       ErrorUtils.raiseAlert(error, translate('homeScreen.error.title'));
     } finally {
-      setIsOpeningSession(false);
+      setIsStartingSession(false);
     }
   };
 
@@ -262,7 +262,7 @@ function HomeScreen({route}: HomeScreenProps) {
   }
   if (
     isLoading ||
-    isOpeningSession ||
+    isStartingSession ||
     !preferences ||
     !userData ||
     !userStatusData
@@ -270,7 +270,7 @@ function HomeScreen({route}: HomeScreenProps) {
     return (
       <FullScreenLoadingIndicator
         loadingText={
-          (isOpeningSession && translate('homeScreen.openingSession')) || ''
+          (isStartingSession && translate('homeScreen.startingSession')) || ''
         }
       />
     );

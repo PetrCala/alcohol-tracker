@@ -468,7 +468,7 @@ export default {
     inSession: 'In Session',
   },
   homeScreen: {
-    openingSession: 'Opening your session...',
+    startingSession: 'Starting a new session...',
     error: {
       title: 'Failed to open a session',
       sessionStart: "We couldn't start a new session. Please try again.",
