@@ -87,6 +87,8 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     undefined,
   );
   const initialSession = useRef<DrinkingSession | undefined>(undefined);
+  const [isFetchingSessionData, setIsFetchingSessionData] =
+    useState<boolean>(true);
   // Session details
   const [totalUnits, setTotalUnits] = useState<number>(0);
   const [availableUnits, setAvailableUnits] = useState<number>(0);
@@ -350,7 +352,12 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       liveSessionData?.id === sessionId ? liveSessionData : editSessionData;
     setSession(newSession);
     setSessionIsLive(!!newSession?.ongoing);
-    initialSession.current = newSession;
+
+    // Set the intial session ref upon the first load
+    if (isFetchingSessionData) {
+      initialSession.current = newSession;
+      setIsFetchingSessionData(false);
+    }
   }, [liveSessionData, editSessionData]);
 
   // Synchronize the session with database
@@ -377,7 +384,6 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       BackHandler.removeEventListener('hardwareBackPress', backAction);
     };
   }, [session]);
-  console.log(session);
 
   if (!isOnline) {
     return <UserOffline />;
