@@ -19,6 +19,7 @@ import SCREENS from '@src/SCREENS';
 import type {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
+import * as DS from '@libs/actions/DrinkingSession';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import ScreenWrapper from '@components/ScreenWrapper';
@@ -32,6 +33,12 @@ import MenuItem from '@components/MenuItem';
 import Section from '@components/Section';
 import {TranslationPaths} from '@src/languages/types';
 import MenuItemGroup from '@components/MenuItemGroup';
+import _ from 'lodash';
+
+type DrinkMenuItem = {
+  key: TranslationPaths;
+  val: number;
+};
 
 type MenuData = {
   titleKey?: TranslationPaths;
@@ -94,10 +101,6 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
     lastDrinkAdded = formatDateToTime(lastDrinkAddedDate);
   }
 
-  const onEditSessionPress = (sessionId: string) => {
-    Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(sessionId));
-  };
-
   const handleBackPress = () => {
     const screenBeforeSummaryScreen = Navigation.getLastScreenName(true);
     if (screenBeforeSummaryScreen === SCREENS.DAY_OVERVIEW.ROOT) {
@@ -151,31 +154,26 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
     };
   }, [session, styles.border]);
 
+  const drinkData: DrinkMenuItem[] = [
+    {key: 'common.total', val: totalDrinks},
+    {key: 'drinks.smallBeer', val: drinkSums.small_beer},
+    {key: 'drinks.beer', val: drinkSums.beer},
+    {key: 'drinks.wine', val: drinkSums.wine},
+    {key: 'drinks.weakShot', val: drinkSums.weak_shot},
+    {key: 'drinks.strongShot', val: drinkSums.strong_shot},
+    {key: 'drinks.cocktail', val: drinkSums.cocktail},
+    {key: 'drinks.other', val: drinkSums.other},
+  ];
+
   const drinkMenuItemsData: Menu = useMemo(() => {
     return {
       sectionTranslationKey: 'sessionSummaryScreen.drinksSection.title',
-      items: [
-        {titleKey: 'common.total', description: totalDrinks.toString()},
-        {
-          titleKey: 'drinks.smallBeer',
-          description: drinkSums.small_beer.toString(),
-        },
-        {titleKey: 'drinks.beer', description: drinkSums.beer.toString()},
-        {titleKey: 'drinks.wine', description: drinkSums.wine.toString()},
-        {
-          titleKey: 'drinks.weakShot',
-          description: drinkSums.weak_shot.toString(),
-        },
-        {
-          titleKey: 'drinks.strongShot',
-          description: drinkSums.strong_shot.toString(),
-        },
-        {
-          titleKey: 'drinks.cocktail',
-          description: drinkSums.cocktail.toString(),
-        },
-        {titleKey: 'drinks.other', description: drinkSums.other.toString()},
-      ],
+      items: _.cloneDeep(drinkData)
+        .filter(({val}) => val > 0) // Filter out drinks with 0 count
+        .map(({key, val}: DrinkMenuItem) => ({
+          titleKey: key,
+          description: val.toString(),
+        })),
     };
   }, [session]);
 
@@ -263,7 +261,7 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
               style={styles.bgTransparent}
               icon={KirokuIcons.Edit}
               iconFill={theme.textDark}
-              onPress={() => onEditSessionPress(sessionId)} // Use keyextractor to load id here
+              onPress={() => DS.navigateToEditSessionScreen(sessionId, session)} // Use keyextractor to load id here
             />
           )
         }

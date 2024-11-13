@@ -17,6 +17,8 @@ import CONST from '@src/CONST';
 import {generateDatabaseKey} from '@database/baseFunctions';
 import Onyx from 'react-native-onyx';
 import ONYXKEYS, {OnyxKey} from '@src/ONYXKEYS';
+import Navigation from '@libs/Navigation/Navigation';
+import ROUTES from '@src/ROUTES';
 
 let liveSessionData: DrinkingSession | undefined;
 Onyx.connect({
@@ -342,11 +344,26 @@ function getNewSessionToEdit(
   return newSessionId;
 }
 
+/**
+ * Navigate to the edit session screen
+ *
+ * @param sessionId ID of the session to navigate to
+ * @param session Current session data
+ */
+function navigateToEditSessionScreen(
+  sessionId: DrinkingSessionId,
+  session: DrinkingSession,
+) {
+  updateLocalData(sessionId, session, ONYXKEYS.EDIT_SESSION_DATA);
+  Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(sessionId));
+}
+
 export {
   getDrinkingSessionData,
   getDrinkingSessionOnyxKey,
   discardLiveDrinkingSession,
   endLiveDrinkingSession,
+  navigateToEditSessionScreen,
   removeDrinkingSessionData,
   saveDrinkingSessionData,
   startLiveDrinkingSession,

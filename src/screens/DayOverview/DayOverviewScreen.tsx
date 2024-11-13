@@ -92,8 +92,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
   }, [currentDate, drinkingSessionData]);
 
   const onEditSessionPress = (sessionId: string, session: DrinkingSession) => {
-    DS.updateLocalData(sessionId, session, ONYXKEYS.EDIT_SESSION_DATA);
-    Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(sessionId));
+    DS.navigateToEditSessionScreen(sessionId, session);
   };
 
   const onSessionButtonPress = (
