@@ -33,6 +33,15 @@
         }
       }
     },
+    "reasons_for_leaving": {
+      ".read": "auth.token.admin === true",
+      ".write": "auth.token.admin === true",
+      "$reason_id": {
+        ".validate": "newData.val() === null || newData.isString()",
+        ".read": "auth.token.admin === true",
+        ".write": "auth != null"
+      }
+    },
     "user_drinking_sessions": {
       ".read": "auth.token.admin === true",
       ".write": "auth.token.admin === true",

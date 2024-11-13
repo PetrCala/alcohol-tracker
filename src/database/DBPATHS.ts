@@ -1,4 +1,4 @@
-import type {DeviceId, FeedbackId} from '@src/types/onyx';
+import type {DeviceId, FeedbackId, ReasonForLeavingId} from '@src/types/onyx';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
 import type {NicknameKey} from '@src/types/onyx/NicknameToId';
 import type {IsEqual} from 'type-fest';
@@ -37,6 +37,12 @@ const DBPATHS = {
     route: '/nickname_to_id/:key/:user_id',
     getRoute: (key: NicknameKey, user_id: UserID) =>
       `nickname_to_id/${key}/${user_id}` as const,
+  },
+  REASONS_FOR_LEAVING: 'reasons_for_leaving',
+  REASONS_FOR_LEAVING_REASON_ID: {
+    route: '/reasons_for_leaving/:reason_id',
+    getRoute: (reason_id: ReasonForLeavingId) =>
+      `reasons_for_leaving/${reason_id}` as const,
   },
   USER_DRINKING_SESSIONS: 'user_drinking_sessions',
   USER_DRINKING_SESSIONS_USER_ID: {

@@ -5,6 +5,8 @@ import type {
   FriendRequestList,
   Preferences,
   Profile,
+  ReasonForLeaving,
+  ReasonForLeavingId,
   UserPrivateData,
   UserProps,
   UserStatus,
@@ -21,6 +23,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
+import StringUtils from '@libs/StringUtils';
 import {getUniqueId} from 'react-native-device-info';
 import {Alert} from 'react-native';
 import {cleanStringForFirebaseKey} from '../libs/StringUtilsKiroku';
@@ -35,6 +38,8 @@ import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import Onyx from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
+import CONST from '@src/CONST';
+import {getReasonForLeavingID} from '@libs/ReasonForLeaving';
 
 const getDefaultPreferences = (): Preferences => {
   return {
@@ -139,6 +144,9 @@ async function pushNewUserInfo(
  * @param db The firebase database object;
  * @param userID The user ID
  * @param userNickname The user nickname
+ * @param friends The user's friends
+ * @param friendRequests The user's friend requests
+ * @param reasonForLeaving The reason for leaving
  * @returns {Promise<void>}
  */
 async function deleteUserData(
@@ -147,6 +155,7 @@ async function deleteUserData(
   userNickname: string,
   friends: UserList | undefined,
   friendRequests: FriendRequestList | undefined,
+  reasonForLeaving?: ReasonForLeaving,
 ): Promise<void> {
   const nicknameKey = cleanStringForFirebaseKey(userNickname);
 
@@ -158,14 +167,21 @@ async function deleteUserData(
   const unconfirmedDaysRef = DBPATHS.USER_UNCONFIRMED_DAYS_USER_ID;
   const friendsRef = DBPATHS.USERS_USER_ID_FRIENDS_FRIEND_ID;
   const friendRequestsRef = DBPATHS.USERS_USER_ID_FRIEND_REQUESTS_REQUEST_ID;
+  const reasonForLeavingRef = DBPATHS.REASONS_FOR_LEAVING_REASON_ID;
 
-  const updates: Record<string, null | false> = {};
+  const updates: Record<string, null | false | ReasonForLeaving> = {};
   updates[nicknameRef.getRoute(nicknameKey, userID)] = null;
   updates[userStatusRef.getRoute(userID)] = null;
   updates[userPreferencesRef.getRoute(userID)] = null;
   updates[userRef.getRoute(userID)] = null;
   updates[drinkingSessionsRef.getRoute(userID)] = null;
   updates[unconfirmedDaysRef.getRoute(userID)] = null;
+
+  if (reasonForLeaving) {
+    const reasonID: ReasonForLeavingId = getReasonForLeavingID(userID);
+    updates[reasonForLeavingRef.getRoute(reasonID)] = reasonForLeaving;
+  }
+
   // Data stored in other users' nodes
   if (friends) {
     Object.keys(friends).forEach(friendId => {

@@ -725,6 +725,9 @@ const CONST = {
   PUSHER: {
     PRIVATE_USER_CHANNEL_PREFIX: 'private-encrypted-user-userID-',
   },
+  REASON_FOR_LEAVING: {
+    DB_KEY_LENGTH: 32,
+  },
   REGEX: {
     SPECIAL_CHARS_WITHOUT_NEWLINE: /((?!\n)[()-\s\t])/g,
     DIGITS_AND_PLUS: /^\+?[0-9]*$/,

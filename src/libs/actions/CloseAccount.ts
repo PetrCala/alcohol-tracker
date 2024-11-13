@@ -52,6 +52,7 @@ async function closeAccount(
       userNickname,
       userData.friends,
       userData.friend_requests,
+      reasonForLeaving,
     );
     await deleteUser(user);
 

@@ -45,6 +45,11 @@ import type {
 } from './Preferences';
 import type PrivatePersonalDetails from './PrivatePersonalDetails';
 import type Request from './Request';
+import type ReasonForLeaving from './ReasonForLeaving';
+import type {
+  ReasonForLeavingId,
+  ReasonForLeavingList,
+} from './ReasonForLeaving';
 import type Response from './Response';
 import type Session from './Session';
 import type SessionPlaceholder from './SessionPlaceholder';
@@ -115,6 +120,9 @@ export type {
   PrivatePersonalDetails,
   Profile,
   ProfileList,
+  ReasonForLeaving,
+  ReasonForLeavingId,
+  ReasonForLeavingList,
   Request,
   Response,
   Session,
