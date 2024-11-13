@@ -31,6 +31,7 @@ import DBPATHS from './DBPATHS';
 import {readDataOnce} from './baseFunctions';
 import {getLastStartedSessionId} from '@libs/DataHandling';
 import _ from 'lodash';
+import * as Session from '@userActions/Session';
 import {SelectedTimezone, Timezone} from '@src/types/onyx/PersonalDetails';
 import {validateAppVersion, ValidationResult} from '@libs/Validation';
 import {checkAccountCreationLimit} from './protection';
@@ -498,6 +499,8 @@ async function signUp(
 
     // Update Firebase authentication
     await updateProfile(newUser, {displayName: username});
+
+    Session.clearSignInData();
 
     Navigation.navigate(ROUTES.HOME);
   } catch (error: any) {

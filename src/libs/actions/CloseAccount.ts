@@ -5,6 +5,7 @@ import {deleteUserData, reauthentificateUser} from '@database/users';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
 import {UserProps} from '@src/types/onyx';
+import * as Localize from '@libs/Localize';
 import * as ErrorUtils from '@libs/ErrorUtils';
 
 /**
@@ -20,6 +21,12 @@ function clearError() {
 function setDefaultData() {
   Onyx.merge(ONYXKEYS.FORMS.CLOSE_ACCOUNT_FORM, {
     ...CONST.DEFAULT_CLOSE_ACCOUNT_DATA,
+  });
+}
+
+function setSuccessMessage(message: string) {
+  Onyx.merge(ONYXKEYS.FORMS.CLOSE_ACCOUNT_FORM, {
+    success: message,
   });
 }
 
@@ -59,6 +66,8 @@ async function closeAccount(
     // Updating the loading state here might cause some issues
     await signOut(auth);
 
+    setSuccessMessage(Localize.translateLocal('closeAccount.successMessage'));
+
     // Add an alert here informing about the user deletion
     // Navigation.resetToHome(); // This is has been disabled as the redirect happens automatically upon Auth state change
   } catch (error: any) {
@@ -70,5 +79,6 @@ export {
   // eslint-disable-next-line import/prefer-default-export
   clearError,
   setDefaultData,
+  setSuccessMessage,
   closeAccount,
 };

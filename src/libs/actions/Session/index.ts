@@ -620,12 +620,10 @@ function checkIfActionIsAllowed<
 //   ];
 
 /**
- * Clear the credentials and partial sign in session so the user can taken back to first Login step
+ * Clear the login information when the user goes back to first Login step
  */
 function clearSignInData() {
-  Onyx.multiSet({
-    [ONYXKEYS.LOGIN]: null,
-  });
+  Onyx.set(ONYXKEYS.FORMS.SIGN_UP_FORM, null);
 }
 
 /**

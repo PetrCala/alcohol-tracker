@@ -20,7 +20,6 @@ import * as ValidationUtils from '@libs/ValidationUtils';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import * as Browser from '@libs/Browser';
 import * as User from '@database/users';
-import {signInWithEmailAndPassword} from 'firebase/auth';
 import Text from '@components/Text';
 import {PressableWithFeedback} from '@components/Pressable';
 import Navigation from '@libs/Navigation/Navigation';
@@ -43,7 +42,8 @@ function LogInScreen() {
   const {shouldUseNarrowLayout, isInNarrowPaneModal} = useResponsiveLayout();
   const safeAreaInsets = useStyledSafeAreaInsets();
   const currentScreenLayoutRef = useRef<LoginScreenLayoutRef>(null);
-  const [login] = useOnyx(ONYXKEYS.LOGIN);
+  const [loginForm] = useOnyx(ONYXKEYS.FORMS.LOG_IN_FORM);
+  const [signUpFormDraft] = useOnyx(ONYXKEYS.FORMS.SIGN_UP_FORM_DRAFT);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [serverErrorMessage, setServerErrorMessage] = React.useState('');
 
@@ -149,7 +149,7 @@ function LogInScreen() {
                 name="email"
                 label={translate('login.email')}
                 aria-label={translate('login.email')}
-                defaultValue={login?.email ?? ''}
+                defaultValue={signUpFormDraft?.email ?? ''}
                 spellCheck={false}
               />
               <InputWrapper
@@ -158,7 +158,7 @@ function LogInScreen() {
                 name="password"
                 label={translate('common.password')}
                 aria-label={translate('common.password')}
-                defaultValue={login?.password ?? ''}
+                defaultValue={loginForm?.password ?? ''}
                 spellCheck={false}
                 secureTextEntry
                 autoComplete={
@@ -183,7 +183,7 @@ function LogInScreen() {
                 <Text style={styles.link}>{translate('password.forgot')}</Text>
               </PressableWithFeedback>
             </FormProvider>
-            <ChangeSignUpScreenLink />
+            <ChangeSignUpScreenLink navigatesTo={ROUTES.SIGN_UP} />
           </>
         )}
       </SignUpScreenLayout>

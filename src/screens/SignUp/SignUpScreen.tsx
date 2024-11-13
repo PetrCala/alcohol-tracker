@@ -16,6 +16,7 @@ import {Errors} from '@src/types/onyx/OnyxCommon';
 import InputWrapper from '@components/Form/InputWrapper';
 import TextInput from '@components/TextInput';
 import CONST from '@src/CONST';
+import * as Session from '@userActions/Session';
 import * as ValidationUtils from '@libs/ValidationUtils';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import * as Browser from '@libs/Browser';
@@ -30,6 +31,7 @@ import Text from '@components/Text';
 import OrDelimiter from './OrDelimiter';
 import {PressableWithFeedback} from '@components/Pressable';
 import Navigation from '@libs/Navigation/Navigation';
+import ROUTES from '@src/ROUTES';
 
 type LoginScreenLayoutRef = {
   scrollPageToTop: (animated?: boolean) => void;
@@ -42,24 +44,30 @@ function SignUpScreen() {
   const {translate} = useLocalize();
   const styles = useThemeStyles();
   const StyleUtils = useStyleUtils();
-  const [login] = useOnyx(ONYXKEYS.LOGIN);
+  const [signUpForm] = useOnyx(ONYXKEYS.FORMS.SIGN_UP_FORM_DRAFT);
   const {shouldUseNarrowLayout, isInNarrowPaneModal} = useResponsiveLayout();
   const safeAreaInsets = useStyledSafeAreaInsets();
   const currentScreenLayoutRef = useRef<LoginScreenLayoutRef>(null);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [serverErrorMessage, setServerErrorMessage] = React.useState('');
 
-  const userLoginToDisplay = login?.email ?? '';
   const headerText = translate('login.hero.header');
   const welcomeHeader = shouldUseNarrowLayout
     ? headerText
     : translate('welcomeText.welcome');
   const welcomeText = shouldUseNarrowLayout
-    ? `${translate('welcomeText.welcomeWithoutExclamation')} ${translate('welcomeText.welcomeNewAccount', {login: userLoginToDisplay})}`
-    : translate('welcomeText.welcomeNewAccount', {login: userLoginToDisplay});
+    ? `${translate('welcomeText.welcomeWithoutExclamation')} ${translate('welcomeText.welcomeNewAccount', {login: signUpForm?.email || ''})}`
+    : translate('welcomeText.welcomeNewAccount', {
+        login: signUpForm?.email || '',
+      });
 
   const navigateFocus = () => {
     currentScreenLayoutRef.current?.scrollPageToTop();
+  };
+
+  const onNavigateBack = () => {
+    Session.clearSignInData();
+    Navigation.resetToHome();
   };
 
   const onSubmit = async (
@@ -175,9 +183,10 @@ function SignUpScreen() {
                 InputComponent={TextInput}
                 inputID={INPUT_IDS.EMAIL}
                 name="email"
+                shouldSaveDraft={true} // Allows login screen to read this email value
                 label={translate('login.email')}
                 aria-label={translate('login.email')}
-                defaultValue={login?.email ?? ''}
+                defaultValue={signUpForm?.email ?? ''}
                 spellCheck={false}
               />
               <InputWrapper
@@ -186,7 +195,7 @@ function SignUpScreen() {
                 name="username"
                 label={translate('common.username')}
                 aria-label={translate('common.username')}
-                defaultValue={login?.username ?? ''}
+                defaultValue={''}
                 spellCheck={false}
               />
               <InputWrapper
@@ -195,7 +204,7 @@ function SignUpScreen() {
                 name="password"
                 label={translate('common.password')}
                 aria-label={translate('common.password')}
-                defaultValue={login?.password ?? ''}
+                defaultValue={''}
                 spellCheck={false}
                 secureTextEntry
                 autoComplete={
@@ -210,7 +219,7 @@ function SignUpScreen() {
                 name="re-enter-password"
                 label={translate('password.reEnter')}
                 aria-label={translate('password.reEnter')}
-                defaultValue={login?.passwordConfirm ?? ''}
+                defaultValue={''}
                 spellCheck={false}
                 secureTextEntry
                 autoComplete={
@@ -228,11 +237,11 @@ function SignUpScreen() {
                 />
               )}
             </FormProvider>
-            <ChangeSignUpScreenLink shouldPointToLogIn={true} />
+            <ChangeSignUpScreenLink navigatesTo={ROUTES.LOG_IN} />
             <OrDelimiter />
             <PressableWithFeedback
               style={[styles.link]}
-              onPress={() => Navigation.resetToHome()}
+              onPress={onNavigateBack}
               role={CONST.ROLE.LINK}
               accessibilityLabel={translate(
                 'signUpScreen.chooseAnotherMethod',

@@ -652,6 +652,9 @@ export default {
       generic: 'There was an error when attempting to reset your password.',
     },
   },
+  closeAccount: {
+    successMessage: 'Your account has been successfully deleted.',
+  },
   onyx: {
     error: {
       generic: 'Failed to reach the local database',
