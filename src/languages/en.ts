@@ -489,6 +489,8 @@ export default {
     loading: 'Loading your session...',
     enterMonkeMode: 'Monke Mode',
     exitMonkeMode: 'Exit Monke Mode',
+    sessionFrom: 'Session from',
+    sessionOn: 'Session on',
     blackout: 'Blackout',
     blackoutSwitchLabel:
       'This indicates whether your session ended in a blackout.',
@@ -498,9 +500,15 @@ export default {
     unsavedChangesWarning:
       'You have unsaved changes. Are you sure you want to go back?',
     sessionDetails: 'Session details',
+    discardSession: (discardWord: string) => `${discardWord} Session`,
+    saveSession: 'Save Session',
+    discardingSession: (discardWord: string) =>
+      `${discardWord} this session...`,
     error: {
+      discardTitle: 'Session discard failed',
+      discard: "We couldn't discard this session. Please try again.",
       saveTitle: 'Session save failed',
-      save: 'This session could not be saved. Try again.',
+      save: 'This session could not be saved. Please try again.',
       load: 'Failed to fetch details of this session.',
     },
   },

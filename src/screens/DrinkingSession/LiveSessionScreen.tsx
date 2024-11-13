@@ -58,6 +58,7 @@ import Button from '@components/Button';
 import ConfirmModal from '@components/ConfirmModal';
 import useWindowDimensions from '@hooks/useWindowDimensions';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
+import * as ErrorUtils from '@libs/ErrorUtils';
 import ScrollView from '@components/ScrollView';
 import Log from '@libs/Log';
 import Icon from '@components/Icon';
@@ -290,7 +291,10 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     }
     try {
       setLoadingText(
-        `${sessionIsLive ? 'Discarding' : 'Deleting'} this session...`,
+        translate(
+          'liveSessionScreen.discardingSession',
+          sessionIsLive ? 'Discarding' : 'Deleting',
+        ),
       );
       const discardFunction = sessionIsLive
         ? DS.discardLiveDrinkingSession
@@ -303,9 +307,10 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
         Onyx.set(ONYXKEYS.EDIT_SESSION_DATA, null);
       }
     } catch (error: any) {
-      Alert.alert(
-        'Session discard failed',
-        'Could not discard the session: ' + error.message,
+      ErrorUtils.raiseAlert(
+        error,
+        translate('liveSessionScreen.error.discardTitle'),
+        translate('liveSessionScreen.error.discard'),
       );
     } finally {
       navigateBackDynamically(CONST.NAVIGATION.SESSION_ACTION.DISCARD);
@@ -409,8 +414,8 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
           <View style={styles.alignItemsCenter}>
             <Text style={styles.textHeadlineH2}>
               {session?.ongoing
-                ? `Session from ${sessionStartTime}`
-                : `Session on ${sessionDateString}`}
+                ? `${translate('liveSessionScreen.sessionFrom')} ${sessionStartTime}`
+                : `${translate('liveSessionScreen.sessionOn')} ${sessionDateString}`}
             </Text>
           </View>
           {isPending && (
@@ -490,7 +495,10 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       <View style={styles.bottomTabBarContainer(true)}>
         <Button
           success
-          text={`${deleteSessionWording} Session`}
+          text={translate(
+            'liveSessionScreen.discardSession',
+            deleteSessionWording,
+          )}
           textStyles={styles.buttonText}
           innerStyles={[
             styles.bottomTabBarItem,
@@ -502,7 +510,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
         />
         <Button
           success
-          text="Save Session"
+          text={translate('liveSessionScreen.saveSession')}
           textStyles={styles.buttonText}
           innerStyles={[
             styles.bottomTabBarItem,
