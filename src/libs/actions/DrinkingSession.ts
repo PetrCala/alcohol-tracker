@@ -18,22 +18,22 @@ import {generateDatabaseKey} from '@database/baseFunctions';
 import Onyx from 'react-native-onyx';
 import ONYXKEYS, {OnyxKey} from '@src/ONYXKEYS';
 
-let currentLiveSessionData: DrinkingSession | undefined;
+let liveSessionData: DrinkingSession | undefined;
 Onyx.connect({
   key: ONYXKEYS.LIVE_SESSION_DATA,
   callback: value => {
     if (value) {
-      currentLiveSessionData = value;
+      liveSessionData = value;
     }
   },
 });
 
-let currentEditSessionData: DrinkingSession | undefined;
+let editSessionData: DrinkingSession | undefined;
 Onyx.connect({
   key: ONYXKEYS.EDIT_SESSION_DATA,
   callback: value => {
     if (value) {
-      currentEditSessionData = value;
+      editSessionData = value;
     }
   },
 });
@@ -52,22 +52,25 @@ const userStatusRef = DBPATHS.USER_STATUS_USER_ID;
 function getDrinkingSessionData(
   sessionId: DrinkingSessionId,
 ): DrinkingSession | undefined {
-  if (currentLiveSessionData && currentLiveSessionData.id === sessionId) {
-    return currentLiveSessionData;
+  if (liveSessionData && liveSessionData.id === sessionId) {
+    return liveSessionData;
   }
-  if (currentEditSessionData && currentEditSessionData.id === sessionId) {
-    return currentEditSessionData;
+  if (editSessionData && editSessionData.id === sessionId) {
+    return editSessionData;
   }
   return undefined;
 }
 
 function getDrinkingSessionOnyxKey(
-  sessionId: DrinkingSessionId,
+  sessionId: DrinkingSessionId | undefined,
 ): OnyxKey | null {
-  if (currentLiveSessionData && currentLiveSessionData.id === sessionId) {
+  if (!sessionId) {
+    return null;
+  }
+  if (liveSessionData && liveSessionData.id === sessionId) {
     return ONYXKEYS.LIVE_SESSION_DATA;
   }
-  if (currentEditSessionData && currentEditSessionData.id === sessionId) {
+  if (editSessionData && editSessionData.id === sessionId) {
     return ONYXKEYS.EDIT_SESSION_DATA;
   }
   return null;
@@ -265,12 +268,15 @@ async function discardLiveDrinkingSession(
 }
 
 function updateDrinks(
-  sessionId: DrinkingSessionId,
+  session: DrinkingSession | undefined,
   newDrinks: DrinksList | undefined,
 ) {
-  const onyxKey = getDrinkingSessionOnyxKey(sessionId);
+  const onyxKey = getDrinkingSessionOnyxKey(session?.id);
   if (onyxKey) {
-    Onyx.merge(onyxKey, {
+    // The drinks are a complex object, so Onyx.set must be called
+    // TODO try to rewrite the drinks object into a collection
+    Onyx.set(onyxKey, {
+      ...session,
       drinks: newDrinks,
     });
   }
@@ -279,12 +285,15 @@ function updateDrinks(
 /**
  * Update a drinking session note
  *
- * @param sessionId Id of the session to update
+ * @param session The session to update
  * @param newNote The new note
  * @returns void
  */
-function updateNote(sessionId: DrinkingSessionId, newNote: string): void {
-  const onyxKey = getDrinkingSessionOnyxKey(sessionId);
+function updateNote(
+  session: DrinkingSession | undefined,
+  newNote: string,
+): void {
+  const onyxKey = getDrinkingSessionOnyxKey(session?.id);
   if (onyxKey) {
     Onyx.merge(onyxKey, {
       note: newNote,
@@ -292,8 +301,11 @@ function updateNote(sessionId: DrinkingSessionId, newNote: string): void {
   }
 }
 
-function updateBlackout(sessionId: DrinkingSessionId, blackout: boolean): void {
-  const onyxKey = getDrinkingSessionOnyxKey(sessionId);
+function updateBlackout(
+  session: DrinkingSession | undefined,
+  blackout: boolean,
+): void {
+  const onyxKey = getDrinkingSessionOnyxKey(session?.id);
   if (onyxKey) {
     Onyx.merge(onyxKey, {
       blackout,

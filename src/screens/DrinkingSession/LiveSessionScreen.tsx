@@ -148,7 +148,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
         session?.drinks,
         drinksToAdd,
       );
-      DS.updateDrinks(sessionId, newDrinks);
+      DS.updateDrinks(session, newDrinks);
     }
   };
 
@@ -179,7 +179,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
         keyToRemove,
         1,
       );
-      DS.updateDrinks(sessionId, newDrinks);
+      DS.updateDrinks(session, newDrinks);
     }
   };
 
@@ -467,9 +467,9 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
               <DrinkTypesView
                 drinkData={DrinkData}
                 currentDrinks={session.drinks}
-                setCurrentDrinks={(newDrinks: DrinksList | undefined) =>
-                  DS.updateDrinks(sessionId, newDrinks)
-                }
+                setCurrentDrinks={(newDrinks: DrinksList | undefined) => {
+                  DS.updateDrinks(session, newDrinks);
+                }}
                 availableUnits={availableUnits}
               />
             </View>
@@ -477,7 +477,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
               sessionId={sessionId}
               isBlackout={session.blackout}
               onBlackoutChange={(value: boolean) =>
-                DS.updateBlackout(sessionId, value)
+                DS.updateBlackout(session, value)
               }
               note={session.note}
               dateString={sessionDateString}
