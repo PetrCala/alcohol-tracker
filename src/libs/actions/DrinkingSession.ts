@@ -19,6 +19,12 @@ import Onyx from 'react-native-onyx';
 import ONYXKEYS, {OnyxKey} from '@src/ONYXKEYS';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
+import {
+  addMilliseconds,
+  differenceInDays,
+  subDays,
+  subMilliseconds,
+} from 'date-fns';
 
 let liveSessionData: DrinkingSession | undefined;
 Onyx.connect({
@@ -315,6 +321,36 @@ function updateBlackout(
   }
 }
 
+/**
+ * Change all timestamps in a session so that its start time corresponds to a new date.
+ *
+ * Shift the timestamps by whole days, keeping the hour:minute times as they are.
+ *
+ * @param sessionId The ID of the session to modify
+ * @param session The session to modify
+ * @param newDate The new date to modify the session's timestamps to
+ * @param shouldUpdateLiveSessionData Whether to update the live session data or not. If not specified, the function updates the edit session data.
+ * @returns The modified session
+ */
+function updateSessionDate(
+  sessionId: DrinkingSessionId,
+  session: DrinkingSession,
+  newDate: Date,
+  shouldUpdateLiveSessionData?: boolean,
+): void {
+  const currentDate = new Date(session.start_time);
+  const daysDelta = differenceInDays(currentDate, newDate);
+  const millisecondsToSub = daysDelta * 24 * 60 * 60 * 1000;
+  const modifiedSession = DSUtils.shiftSessionTimestamps(
+    session,
+    millisecondsToSub,
+  );
+  const onyxKey = shouldUpdateLiveSessionData
+    ? ONYXKEYS.LIVE_SESSION_DATA
+    : ONYXKEYS.EDIT_SESSION_DATA;
+  updateLocalData(sessionId, modifiedSession, onyxKey);
+}
+
 function getNewSessionToEdit(
   db: Database,
   user: User | null,
@@ -372,5 +408,6 @@ export {
   updateDrinks,
   updateNote,
   updateLocalData,
+  updateSessionDate,
   getNewSessionToEdit,
 };

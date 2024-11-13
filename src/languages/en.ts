@@ -315,6 +315,7 @@ export default {
       sessionColor: 'Session color',
       units: 'Units',
       date: 'Date',
+      type: 'Session type',
       startTime: 'Start time',
       lastDrinkAdded: 'Last drink added',
       endTime: 'End time',
@@ -354,6 +355,10 @@ export default {
     },
   },
   drinkingSession: {
+    type: {
+      live: 'Live',
+      edit: 'Edit',
+    },
     error: {
       sessionOpen: 'Failed to open a session',
     },

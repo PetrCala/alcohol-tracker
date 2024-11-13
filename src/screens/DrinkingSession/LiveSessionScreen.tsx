@@ -377,6 +377,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       BackHandler.removeEventListener('hardwareBackPress', backAction);
     };
   }, [session]);
+  console.log(session);
 
   if (!isOnline) {
     return <UserOffline />;

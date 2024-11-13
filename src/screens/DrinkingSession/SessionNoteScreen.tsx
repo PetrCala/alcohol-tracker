@@ -23,7 +23,7 @@ type SessionNoteScreenProps = StackScreenProps<
 >;
 
 function SesssionNoteScreen({route}: SessionNoteScreenProps) {
-  const sessionId = route.params?.sessionId;
+  const {sessionId} = route.params;
   const {translate} = useLocalize();
   const styles = useThemeStyles();
   const session = DS.getDrinkingSessionData(sessionId);

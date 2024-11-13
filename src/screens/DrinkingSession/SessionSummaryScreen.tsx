@@ -146,6 +146,14 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
           titleKey: 'sessionSummaryScreen.generalSection.endTime',
           description: !wasLiveSession ? '-' : sessionEndTime,
         },
+        {
+          titleKey: 'sessionSummaryScreen.generalSection.type',
+          description: translate(
+            wasLiveSession
+              ? 'drinkingSession.type.live'
+              : 'drinkingSession.type.edit',
+          ),
+        },
         // {
         //   titleKey: 'common.timezone',
         //   description: session.timezone ?? '',

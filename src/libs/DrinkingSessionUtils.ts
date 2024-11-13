@@ -13,12 +13,7 @@ import {numberToVerboseString} from './TimeUtils';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
 import {SelectedTimezone, Timezone} from '@src/types/onyx/PersonalDetails';
 import DBPATHS from '@database/DBPATHS';
-import {
-  addMilliseconds,
-  differenceInDays,
-  subDays,
-  subMilliseconds,
-} from 'date-fns';
+import {subMilliseconds} from 'date-fns';
 
 const PlaceholderDrinks: DrinksList = {[Date.now()]: {other: 0}};
 
@@ -277,26 +272,6 @@ function shiftSessionTimestamps(
   return convertedSession;
 }
 
-/**
- * Change all timestamps in a session so that its start time corresponds to a new date.
- *
- * Shift the timestamps by whole days, keeping the hour:minute times as they are.
- *
- * @param session The session to modify
- * @param newDate The new date to modify the session's timestamps to
- * @returns The modified session
- */
-function shiftSessionDate(
-  session: DrinkingSession,
-  newDate: Date,
-): DrinkingSession {
-  const currentDate = new Date(session.start_time);
-  const daysDelta = differenceInDays(currentDate, newDate);
-  const millisecondsToSub = daysDelta * 24 * 60 * 60 * 1000;
-  const modifiedSession = shiftSessionTimestamps(session, millisecondsToSub);
-  return modifiedSession;
-}
-
 async function fixTimezoneSessions(
   db: Database,
   userID: UserID | undefined,
@@ -354,5 +329,4 @@ export {
   sessionIsExpired,
   fixTimezoneSessions,
   shiftSessionTimestamps,
-  shiftSessionDate,
 };
