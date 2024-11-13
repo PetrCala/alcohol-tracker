@@ -1,5 +1,5 @@
 import React, {useCallback} from 'react';
-import {Alert, View} from 'react-native';
+import {View} from 'react-native';
 import {sendPasswordResetEmail} from 'firebase/auth';
 import FullscreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
@@ -9,41 +9,33 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import Navigation from '@libs/Navigation/Navigation';
 import * as ValidationUtils from '@libs/ValidationUtils';
 import * as ErrorUtils from '@libs/ErrorUtils';
-import type {SettingsNavigatorParamList} from '@libs/Navigation/types';
 import type {FormInputErrors, FormOnyxValues} from '@src/components/Form/types';
 import ONYXKEYS from '@src/ONYXKEYS';
-import INPUT_IDS from '@src/types/form/EmailForm';
+import INPUT_IDS from '@src/types/form/ForgotPasswordForm';
 import FormProvider from '@components/Form/FormProvider';
 import Text from '@components/Text';
 import {Errors} from '@src/types/onyx/OnyxCommon';
 import InputWrapper from '@components/Form/InputWrapper';
 import variables from '@src/styles/variables';
 import TextInput from '@components/TextInput';
-import {StackScreenProps} from '@react-navigation/stack';
-import SCREENS from '@src/SCREENS';
 import {useFirebase} from '@context/global/FirebaseContext';
 import ROUTES from '@src/ROUTES';
 import DotIndicatorMessage from '@components/DotIndicatorMessage';
 
 type ForgotPasswordScreenOnyxProps = {};
 
-type ForgotPasswordScreenProps = ForgotPasswordScreenOnyxProps &
-  StackScreenProps<
-    SettingsNavigatorParamList,
-    typeof SCREENS.SETTINGS.ACCOUNT.EMAIL
-  >;
+type ForgotPasswordScreenProps = ForgotPasswordScreenOnyxProps;
 
 function ForgotPasswordScreen({}: ForgotPasswordScreenProps) {
   const styles = useThemeStyles();
   const {translate} = useLocalize();
   const {auth} = useFirebase();
-  const currentEmail = auth.currentUser?.email;
   const [serverErrorMessage, setServerErrorMessage] = React.useState('');
   const [successMessage, setSuccessMessage] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
 
   const onSubmit = async (
-    values: FormOnyxValues<typeof ONYXKEYS.FORMS.EMAIL_FORM>,
+    values: FormOnyxValues<typeof ONYXKEYS.FORMS.FORGOT_PASSWORD_FORM>,
   ) => {
     setIsLoading(true);
     setSuccessMessage('');
@@ -61,14 +53,17 @@ function ForgotPasswordScreen({}: ForgotPasswordScreenProps) {
   };
 
   const validate = useCallback(
-    (values: FormOnyxValues<typeof ONYXKEYS.FORMS.EMAIL_FORM>): Errors => {
-      const errors: FormInputErrors<typeof ONYXKEYS.FORMS.EMAIL_FORM> = {};
+    (
+      values: FormOnyxValues<typeof ONYXKEYS.FORMS.FORGOT_PASSWORD_FORM>,
+    ): Errors => {
+      const errors: FormInputErrors<
+        typeof ONYXKEYS.FORMS.FORGOT_PASSWORD_FORM
+      > = {};
 
       setServerErrorMessage('');
 
       const emailErrorTranslationKey = ValidationUtils.validateEmail(
         values.email,
-        currentEmail,
       );
 
       if (emailErrorTranslationKey) {
@@ -100,7 +95,7 @@ function ForgotPasswordScreen({}: ForgotPasswordScreenProps) {
         />
       ) : (
         <FormProvider
-          formID={ONYXKEYS.FORMS.EMAIL_FORM}
+          formID={ONYXKEYS.FORMS.FORGOT_PASSWORD_FORM}
           validate={validate}
           onSubmit={onSubmit}
           submitButtonText={translate('forgotPasswordScreen.submit')}
@@ -112,12 +107,12 @@ function ForgotPasswordScreen({}: ForgotPasswordScreenProps) {
               InputComponent={TextInput}
               inputID={INPUT_IDS.EMAIL}
               name="email"
-              autoGrowHeight
+              shouldShowClearButton={true}
               shouldSaveDraft={true}
               maxAutoGrowHeight={variables.textInputAutoGrowMaxHeight}
               label={translate('forgotPasswordScreen.enterEmail')}
               aria-label={translate('forgotPasswordScreen.enterEmail')}
-              defaultValue={currentEmail ?? ''}
+              defaultValue={''}
               spellCheck={false}
               containerStyles={[styles.mt5]}
             />

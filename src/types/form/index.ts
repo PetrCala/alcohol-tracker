@@ -3,6 +3,7 @@ export type {DateOfBirthForm} from './DateOfBirthForm';
 export type {DisplayNameForm} from './DisplayNameForm';
 export type {EmailForm} from './EmailForm';
 export type {FeedbackForm} from './FeedbackForm';
+export type {ForgotPasswordForm} from './ForgotPasswordForm';
 export type {LegalNameForm} from './LegalNameForm';
 export type {LogInForm} from './LogInForm';
 export type {PasswordForm} from './PasswordForm';

@@ -151,11 +151,12 @@ function InitialScreen({}: InitialScreenProps) {
             InputComponent={TextInput}
             inputID={INPUT_IDS.EMAIL}
             name="email"
-            shouldSaveDraft={true} // Allows login screen to read this email value
             label={translate('login.email')}
             aria-label={translate('login.email')}
             defaultValue={signUpForm?.email ?? ''}
             spellCheck={false}
+            shouldSaveDraft // Allows login screen to read this email value
+            shouldShowClearButton
           />
           {!!closeAccount?.success && (
             <DotIndicatorMessage

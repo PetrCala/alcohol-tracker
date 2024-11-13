@@ -169,6 +169,8 @@ const ONYXKEYS = {
     DATE_OF_BIRTH_FORM_DRAFT: 'dateOfBirthFormDraft',
     EMAIL_FORM: 'emailForm',
     EMAIL_FORM_DRAFT: 'emailFormDraft',
+    FORGOT_PASSWORD_FORM: 'forgotPasswordForm',
+    FORGOT_PASSWORD_FORM_DRAFT: 'forgotPasswordFormDraft',
     PASSWORD_FORM: 'passwordForm',
     PASSWORD_FORM_DRAFT: 'passwordFormDraft',
     FEEDBACK_FORM: 'feedbackForm',
@@ -200,6 +202,7 @@ type OnyxFormValuesMapping = {
   //     .SETTINGS_STATUS_SET_CLEAR_AFTER_FORM]: FormTypes.SettingsStatusSetClearAfterForm;
   //   [ONYXKEYS.FORMS.PRIVATE_NOTES_FORM]: FormTypes.PrivateNotesForm;
   [ONYXKEYS.FORMS.EMAIL_FORM]: FormTypes.EmailForm;
+  [ONYXKEYS.FORMS.FORGOT_PASSWORD_FORM]: FormTypes.ForgotPasswordForm;
   [ONYXKEYS.FORMS.PASSWORD_FORM]: FormTypes.PasswordForm;
   [ONYXKEYS.FORMS.FEEDBACK_FORM]: FormTypes.FeedbackForm;
   [ONYXKEYS.FORMS.SESSION_DATE_FORM]: FormTypes.SessionDateForm;
