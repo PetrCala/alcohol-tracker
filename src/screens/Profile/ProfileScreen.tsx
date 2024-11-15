@@ -123,11 +123,14 @@ function ProfileScreen({route}: ProfileScreenProps) {
 
   const statsData: StatData = [
     {
-      header: `Drinking Session${getPlural(state.drinkingSessionsCount)}`,
+      header: translate(
+        'profileScreen.drinkingSessions',
+        getPlural(state.drinkingSessionsCount),
+      ),
       content: String(state.drinkingSessionsCount),
     },
     {
-      header: 'Units Consumed',
+      header: translate('profileScreen.unitsConsumed'),
       content: String(roundToTwoDecimalPlaces(state.unitsConsumed)),
     },
   ];
@@ -245,7 +248,7 @@ function ProfileScreen({route}: ProfileScreenProps) {
               style={localStyles.seeFriendsButton}>
               <Text
                 style={[localStyles.friendsInfoText, commonStyles.linkText]}>
-                See all friends
+                {translate('profileScreen.seeAllFriends')}
               </Text>
             </TouchableOpacity>
           </View>

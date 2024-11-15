@@ -465,6 +465,9 @@ export default {
   profileScreen: {
     title: 'Profile',
     titleNotSelf: 'Friend Overview',
+    seeAllFriends: 'See all friends',
+    drinkingSessions: (plural: string) => `Drinking Session${plural}`,
+    unitsConsumed: 'Units Consumed',
   },
   statisticsScreen: {
     title: 'Statistics',

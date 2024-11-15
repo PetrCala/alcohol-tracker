@@ -292,8 +292,12 @@ function HomeScreen({route}: HomeScreenProps) {
           <View style={localStyles.profileContainer}>
             <TouchableOpacity
               accessibilityRole="button"
-              onPress={() =>
-                Navigation.navigate(ROUTES.PROFILE.getRoute(user.uid))
+              onPress={
+                () =>
+                  Navigation.navigate(
+                    ROUTES.PROFILE_FRIENDS_FRIENDS.getRoute(user.uid),
+                  )
+                // Navigation.navigate(ROUTES.PROFILE.getRoute(user.uid))
               }
               style={localStyles.profileButton}>
               <ProfileImage
