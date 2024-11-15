@@ -426,7 +426,7 @@ async function logIn(
   password: string,
 ): Promise<void> {
   // Stash the credentials in case the log in fails
-  Onyx.merge(ONYXKEYS.LOGIN, {
+  Onyx.merge(ONYXKEYS.FORMS.LOG_IN_FORM_DRAFT, {
     email: email,
     password: password,
   });
@@ -449,12 +449,12 @@ async function signUp(
   username: string,
   password: string,
 ): Promise<void> {
-  // Stash the login credentials in case the request fails
-  Onyx.merge(ONYXKEYS.LOGIN, {
+  // Stash the sign up credentials in case the request fails
+  Onyx.merge(ONYXKEYS.FORMS.SIGN_UP_FORM_DRAFT, {
     email: email,
     username: username,
     password: password,
-    passwordConfirm: password,
+    reEnterPassword: password,
   });
 
   let newUserID: string | undefined;

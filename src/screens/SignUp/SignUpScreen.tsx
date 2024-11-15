@@ -24,7 +24,7 @@ import * as User from '@database/users';
 import DotIndicatorMessage from '@components/DotIndicatorMessage';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
-import {useOnyx} from 'react-native-onyx';
+import Onyx, {useOnyx} from 'react-native-onyx';
 import {TranslationPaths} from '@src/languages/types';
 import {ValueOf} from 'type-fest';
 import Text from '@components/Text';
@@ -68,6 +68,14 @@ function SignUpScreen() {
   const onNavigateBack = () => {
     Session.clearSignInData();
     Navigation.resetToHome();
+  };
+
+  const onNavigateToLogIn = () => {
+    // Stash the email credentials for the login screen
+    Onyx.set(ONYXKEYS.FORMS.LOG_IN_FORM_DRAFT, {
+      email: signUpForm?.email ?? '',
+    });
+    Navigation.navigate(ROUTES.LOG_IN);
   };
 
   const onSubmit = async (
@@ -183,7 +191,6 @@ function SignUpScreen() {
                 InputComponent={TextInput}
                 inputID={INPUT_IDS.EMAIL}
                 name="email"
-                shouldSaveDraft={true} // Allows login screen to read this email value
                 label={translate('login.email')}
                 aria-label={translate('login.email')}
                 defaultValue={signUpForm?.email ?? ''}
@@ -237,7 +244,10 @@ function SignUpScreen() {
                 />
               )}
             </FormProvider>
-            <ChangeSignUpScreenLink navigatesTo={ROUTES.LOG_IN} />
+            <ChangeSignUpScreenLink
+              navigatesTo={ROUTES.LOG_IN}
+              onPress={onNavigateToLogIn}
+            />
             <OrDelimiter />
             <PressableWithFeedback
               style={[styles.link]}

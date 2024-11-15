@@ -1,7 +1,6 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useRef} from 'react';
 import {useFocusEffect} from '@react-navigation/native';
 import {useFirebase} from '@context/global/FirebaseContext';
-import {useUserConnection} from '@context/global/UserConnectionContext';
 import Navigation from '@navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import * as CloseAccount from '@userActions/CloseAccount';
@@ -36,7 +35,6 @@ type InitialScreenLayoutRef = {
 
 function InitialScreen({}: InitialScreenProps) {
   const {auth} = useFirebase();
-  const {isOnline} = useUserConnection();
   const {translate} = useLocalize();
   const styles = useThemeStyles();
   const StyleUtils = useStyleUtils();
@@ -54,14 +52,10 @@ function InitialScreen({}: InitialScreenProps) {
     ? translate('welcomeText.getStarted')
     : '';
 
-  const onSubmit = async (
+  const onSubmit = (
     values: FormOnyxValues<typeof ONYXKEYS.FORMS.EMAIL_FORM>,
   ) => {
-    if (!isOnline) {
-      return;
-    }
-
-    Onyx.set(ONYXKEYS.FORMS.SIGN_UP_FORM, {email: values.email.trim()});
+    Onyx.set(ONYXKEYS.FORMS.SIGN_UP_FORM_DRAFT, {email: values.email.trim()});
     Navigation.navigate(ROUTES.SIGN_UP);
   };
 
@@ -155,8 +149,6 @@ function InitialScreen({}: InitialScreenProps) {
             aria-label={translate('login.email')}
             defaultValue={signUpForm?.email ?? ''}
             spellCheck={false}
-            shouldSaveDraft // Allows login screen to read this email value
-            shouldShowClearButton
           />
           {!!closeAccount?.success && (
             <DotIndicatorMessage

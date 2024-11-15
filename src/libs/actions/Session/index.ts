@@ -623,7 +623,12 @@ function checkIfActionIsAllowed<
  * Clear the login information when the user goes back to first Login step
  */
 function clearSignInData() {
-  Onyx.set(ONYXKEYS.FORMS.SIGN_UP_FORM, null);
+  Onyx.multiSet({
+    [ONYXKEYS.FORMS.SIGN_UP_FORM]: null,
+    [ONYXKEYS.FORMS.SIGN_UP_FORM_DRAFT]: null,
+    [ONYXKEYS.FORMS.LOG_IN_FORM]: null,
+    [ONYXKEYS.FORMS.LOG_IN_FORM_DRAFT]: null,
+  });
 }
 
 /**

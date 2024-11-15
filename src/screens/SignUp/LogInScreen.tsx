@@ -42,8 +42,7 @@ function LogInScreen() {
   const {shouldUseNarrowLayout, isInNarrowPaneModal} = useResponsiveLayout();
   const safeAreaInsets = useStyledSafeAreaInsets();
   const currentScreenLayoutRef = useRef<LoginScreenLayoutRef>(null);
-  const [loginForm] = useOnyx(ONYXKEYS.FORMS.LOG_IN_FORM);
-  const [signUpFormDraft] = useOnyx(ONYXKEYS.FORMS.SIGN_UP_FORM_DRAFT);
+  const [logInForm] = useOnyx(ONYXKEYS.FORMS.LOG_IN_FORM_DRAFT);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [serverErrorMessage, setServerErrorMessage] = React.useState('');
 
@@ -55,6 +54,14 @@ function LogInScreen() {
 
   const navigateFocus = () => {
     currentScreenLayoutRef.current?.scrollPageToTop();
+  };
+
+  const onNavigateToSignUp = () => {
+    // Stash the email credentials for the sign up screen
+    Onyx.set(ONYXKEYS.FORMS.SIGN_UP_FORM_DRAFT, {
+      email: logInForm?.email ?? '',
+    });
+    Navigation.navigate(ROUTES.SIGN_UP);
   };
 
   const onSubmit = async (
@@ -110,6 +117,7 @@ function LogInScreen() {
     },
     [translate],
   );
+  console.log(logInForm);
 
   return (
     <ScreenWrapper
@@ -149,7 +157,7 @@ function LogInScreen() {
                 name="email"
                 label={translate('login.email')}
                 aria-label={translate('login.email')}
-                defaultValue={signUpFormDraft?.email ?? ''}
+                defaultValue={logInForm?.email ?? ''}
                 spellCheck={false}
               />
               <InputWrapper
@@ -158,7 +166,7 @@ function LogInScreen() {
                 name="password"
                 label={translate('common.password')}
                 aria-label={translate('common.password')}
-                defaultValue={loginForm?.password ?? ''}
+                defaultValue={''}
                 spellCheck={false}
                 secureTextEntry
                 autoComplete={
@@ -183,7 +191,10 @@ function LogInScreen() {
                 <Text style={styles.link}>{translate('password.forgot')}</Text>
               </PressableWithFeedback>
             </FormProvider>
-            <ChangeSignUpScreenLink navigatesTo={ROUTES.SIGN_UP} />
+            <ChangeSignUpScreenLink
+              navigatesTo={ROUTES.SIGN_UP}
+              onPress={onNavigateToSignUp}
+            />
           </>
         )}
       </SignUpScreenLayout>
