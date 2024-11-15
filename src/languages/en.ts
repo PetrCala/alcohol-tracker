@@ -281,6 +281,7 @@ export default {
   },
   friendSearchScreen: {
     title: 'Search For New Friends',
+    noUsersFound: 'There are no users with this nickname.',
   },
   notFoundScreen: {
     title: 'Not Found',

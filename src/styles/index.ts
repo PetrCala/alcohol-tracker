@@ -1118,7 +1118,7 @@ const styles = (theme: ThemeColors) =>
     noResultsText: {
       fontSize: variables.fontSizeNormal,
       textAlign: 'center',
-      ...spacing.mt2,
+      ...spacing.mt3,
     },
 
     noRightBorderRadius: {
