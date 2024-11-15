@@ -279,6 +279,12 @@ export default {
   friendsFriendsScreen: {
     title: 'Find Friends of Friends',
     seeProfile: 'See profile',
+    searchUsersFriends: "Search for the user's friends",
+    commonFriends: 'Common Friends',
+    otherFriends: 'Other Friends',
+    noFriendsFound: 'No friends found.',
+    trySearching: 'Try searching for other users.',
+    hasNoFriends: 'This user has not added any friends yet.',
   },
   friendSearchScreen: {
     title: 'Search For New Friends',

@@ -26,6 +26,7 @@ import type {
   UserIDToNicknameMapping,
   UserSearchResults,
 } from '@src/types/various/Search';
+import * as ErrorUtils from '@libs/ErrorUtils';
 import {objKeys} from '@libs/DataHandling';
 import type GeneralAction from '@src/types/various/GeneralAction';
 import {getNicknameMapping} from '@libs/SearchUtils';
@@ -123,10 +124,7 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
       );
       dispatch({type: 'SET_DISPLAYED_FRIENDS', payload: relevantResults}); // Hide irrelevant
     } catch (error: any) {
-      Alert.alert(
-        'Database serach failed',
-        'Could not search the database: ' + error.message,
-      );
+      ErrorUtils.raiseAlert(error, translate('onyx.error.generic'));
       return;
     }
   };
@@ -265,7 +263,7 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
         onBackButtonPress={Navigation.goBack}
       />
       <SearchWindow
-        windowText="Search this user's friends"
+        windowText={translate('friendsFriendsScreen.searchUsersFriends')}
         onSearch={localSearch}
         onResetSearch={resetSearch}
         searchOnTextChange={true}
@@ -280,14 +278,14 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
           ) : isNonEmptyArray(state.displayedFriends) ? (
             <View style={styles.appBG}>
               <GrayHeader
-                headerText={`Common Friends (${getCommonFriendsCount(
+                headerText={`${translate('friendsFriendsScreen.commonFriends')} (${getCommonFriendsCount(
                   state.commonFriends,
                   state.displayedFriends,
                 )})`}
               />
               {renderSearchResults(true)}
               <GrayHeader
-                headerText={`Other Friends (${getCommonFriendsCount(
+                headerText={`${translate('friendsFriendsScreen.otherFriends')} (${getCommonFriendsCount(
                   state.otherFriends,
                   state.displayedFriends,
                 )})`}
@@ -298,8 +296,10 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
             state.noUsersFound && (
               <Text style={styles.noResultsText}>
                 {objKeys(state.friends).length > 0
-                  ? 'No friends found.\n\nTry searching for other users.'
-                  : 'This user has not added any friends yet.'}
+                  ? `${translate('friendsFriendsScreen.noFriendsFound')}\n\n${translate(
+                      'friendsFriendsScreen.trySearching',
+                    )}`
+                  : translate('friendsFriendsScreen.hasNoFriends')}
               </Text>
             )
           )}
