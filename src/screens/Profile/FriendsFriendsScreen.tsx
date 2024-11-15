@@ -185,7 +185,7 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
             renderCommonFriends && (
               <Button
                 key={userID + '-button'}
-                text="See profile"
+                text={translate('friendsFriendsScreen.seeProfile')}
                 onPress={() =>
                   Navigation.navigate(ROUTES.PROFILE.getRoute(userID))
                 }
@@ -294,15 +294,17 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
               />
               {renderSearchResults(false)}
             </View>
-          ) : state.noUsersFound ? (
-            <Text style={styles.noResultsText}>
-              {objKeys(state.friends).length > 0
-                ? 'No friends found.\n\nTry searching for other users.'
-                : 'This user has not added any friends yet.'}
-            </Text>
-          ) : null}
+          ) : (
+            state.noUsersFound && (
+              <Text style={styles.noResultsText}>
+                {objKeys(state.friends).length > 0
+                  ? 'No friends found.\n\nTry searching for other users.'
+                  : 'This user has not added any friends yet.'}
+              </Text>
+            )
+          )}
         </View>
-        <FillerView height={100} />
+        <FillerView />
       </ScrollView>
     </ScreenWrapper>
   );

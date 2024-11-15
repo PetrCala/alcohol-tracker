@@ -278,6 +278,7 @@ export default {
   },
   friendsFriendsScreen: {
     title: 'Find Friends of Friends',
+    seeProfile: 'See profile',
   },
   friendSearchScreen: {
     title: 'Search For New Friends',
