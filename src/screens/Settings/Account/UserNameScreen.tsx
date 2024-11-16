@@ -165,8 +165,11 @@ function UserNameScreen({}: UserNameScreenProps) {
           enabledWhenOffline
           shouldValidateOnBlur
           shouldValidateOnChange>
-          <Text style={[styles.mb6]}>
+          <Text style={[styles.mb3]}>
             {translate('userNameScreen.explanation')}
+          </Text>
+          <Text style={[styles.mb6, styles.mutedTextLabel]}>
+            {translate('userNameScreen.note')}
           </Text>
           <View style={styles.mb4}>
             <InputWrapper
