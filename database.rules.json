@@ -142,15 +142,15 @@
           ".write": "auth != null && auth.uid === $uid",
           "gender": {
             ".validate": "newData.val() === null || newData.isString()"
+          }
+        },
+        "timezone": {
+          ".validate": "newData.val() === null || newData.hasChildren(['selected', 'automatic'])",
+          "selected": {
+            ".validate": "newData.val() === null || newData.isString()"
           },
-          "timezone": {
-            ".validate": "newData.val() === null || newData.hasChildren(['selected', 'automatic'])",
-            "selected": {
-              ".validate": "newData.val() === null || newData.isString()"
-            },
-            "automatic": {
-              ".validate": "newData.val() === null || newData.isBoolean()"
-            }
+          "automatic": {
+            ".validate": "newData.val() === null || newData.isBoolean()"
           }
         }
       }

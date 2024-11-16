@@ -35,7 +35,7 @@ type SelectionScreenProps = StackScreenProps<
 const getKey = (text: string): string => `${text}-${new Date().getTime()}`;
 
 const getUserTimezone = (userData: UserProps | undefined) =>
-  userData?.private_data?.timezone ?? CONST.DEFAULT_TIME_ZONE;
+  userData?.timezone ?? CONST.DEFAULT_TIME_ZONE;
 
 function SelectionScreen({}: SelectionScreenProps) {
   const {translate} = useLocalize();

@@ -307,7 +307,7 @@ async function fixTimezoneSessions(
   };
 
   const sessionsRef = DBPATHS.USER_DRINKING_SESSIONS_USER_ID;
-  const timezoneRef = DBPATHS.USERS_USER_ID_PRIVATE_DATA_TIMEZONE;
+  const timezoneRef = DBPATHS.USERS_USER_ID_TIMEZONE;
 
   const updates: Record<string, DrinkingSessionList | Timezone> = {};
   updates[sessionsRef.getRoute(userID)] = convertedSessions;

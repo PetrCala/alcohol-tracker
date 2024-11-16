@@ -68,13 +68,10 @@ const getDefaultUserData = (profileData: Profile): UserProps => {
       .timeZone as SelectedTimezone,
     automatic: true,
   };
-  const defaultPrivateData: UserPrivateData = {
-    timezone: timezone,
-  };
   return {
     profile: profileData,
     role: userRole,
-    private_data: defaultPrivateData,
+    timezone: timezone,
   };
 };
 
@@ -375,7 +372,7 @@ async function updateAutomaticTimezone(
   }
 
   const userID = user.uid;
-  const timezoneRef = DBPATHS.USERS_USER_ID_PRIVATE_DATA_TIMEZONE;
+  const timezoneRef = DBPATHS.USERS_USER_ID_TIMEZONE;
 
   const newData: Timezone = {
     selected: selectedTimezone,
@@ -406,7 +403,7 @@ async function saveSelectedTimezone(
   }
 
   const userID = user.uid;
-  const timezoneRef = DBPATHS.USERS_USER_ID_PRIVATE_DATA_TIMEZONE_SELECTED;
+  const timezoneRef = DBPATHS.USERS_USER_ID_TIMEZONE_SELECTED;
 
   const updates: Record<string, SelectedTimezone> = {};
   updates[timezoneRef.getRoute(userID)] = selectedTimezone;

@@ -40,7 +40,7 @@ function ConfirmationScreen({}: ConfirmationScreenProps) {
   };
 
   const selectedTimezone =
-    userData?.private_data?.timezone?.selected ?? currentTimezone.timeZone;
+    userData?.timezone?.selected ?? currentTimezone.timeZone;
 
   const onCorrect = async () => {
     try {

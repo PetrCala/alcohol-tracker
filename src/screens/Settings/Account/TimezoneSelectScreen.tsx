@@ -42,7 +42,7 @@ const getKey = (text: string): string => `${text}-${new Date().getTime()}`;
 //   >,
 // ) => currentUserPersonalDetails?.timezone ?? CONST.DEFAULT_TIME_ZONE;
 const getUserTimezone = (userData: UserProps | undefined) =>
-  userData?.private_data?.timezone ?? CONST.DEFAULT_TIME_ZONE;
+  userData?.timezone ?? CONST.DEFAULT_TIME_ZONE;
 
 function TimezoneSelectScreen({}: TimezoneSelectScreenProps) {
   const {translate} = useLocalize();

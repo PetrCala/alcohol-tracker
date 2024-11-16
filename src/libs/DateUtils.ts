@@ -38,12 +38,12 @@ import Onyx from 'react-native-onyx';
 import type {ValueOf} from 'type-fest';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
+import {auth} from './Firebase/FirebaseApp';
 import {timezoneBackwardMap} from '@src/TIMEZONES';
 import type {SelectedTimezone, Timezone} from '@src/types/onyx/PersonalDetails';
 import * as CurrentDate from './actions/CurrentDate';
 import * as Localize from './Localize';
 import Log from './Log';
-import type {UserID} from '@src/types/onyx/OnyxCommon';
 
 type CustomStatusTypes =
   (typeof CONST.CUSTOM_STATUS_TYPES)[keyof typeof CONST.CUSTOM_STATUS_TYPES];
@@ -51,24 +51,24 @@ type TimePeriod = 'AM' | 'PM';
 type Locale = ValueOf<typeof CONST.LOCALES>;
 type WeekDay = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
-let currentUserID: UserID | undefined;
-Onyx.connect({
-  key: ONYXKEYS.SESSION,
-  callback: val => {
-    // When signed out, val is undefined
-    if (!val) {
-      return;
-    }
+// let currentUserAccountID: number | undefined;
+// Onyx.connect({
+//     key: ONYXKEYS.SESSION,
+//     callback: (val) => {
+//         // When signed out, val is undefined
+//         if (!val) {
+//             return;
+//         }
 
-    currentUserID = val.userID;
-  },
-});
+//         currentUserAccountID = val.accountID;
+//     },
+// });
 
 let timezone: Required<Timezone> = CONST.DEFAULT_TIME_ZONE;
 Onyx.connect({
   key: ONYXKEYS.PERSONAL_DETAILS_LIST,
   callback: value => {
-    if (!currentUserID) {
+    if (!auth?.currentUser) {
       return;
     }
 

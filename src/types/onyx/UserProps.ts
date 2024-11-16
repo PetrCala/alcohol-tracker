@@ -13,7 +13,6 @@ type UserPrivateData = {
   birthdate?: number;
   weight?: number;
   gender?: string;
-  timezone?: Timezone;
 };
 
 type UserPublicData = {
@@ -21,13 +20,13 @@ type UserPublicData = {
 };
 
 type UserProps = {
-  email_verified?: boolean;
-  profile: Profile;
-  private_data?: UserPrivateData;
-  public_data?: UserPublicData;
-  friends?: UserList;
   friend_requests?: FriendRequestList;
+  friends?: UserList;
+  private_data?: UserPrivateData;
+  profile: Profile;
+  public_data?: UserPublicData;
   role: string;
+  timezone?: Timezone;
 };
 
 type UserPropsList = Record<UserID, UserProps>;

@@ -60,7 +60,7 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
   const {sessionId} = route.params;
   const {preferences, drinkingSessionData, userData} = useDatabaseData();
   const {translate} = useLocalize();
-  // const timezone = userData?.private_data?.timezone?.selected;
+  // const timezone = userData?.timezone?.selected;
   const styles = useThemeStyles();
   const theme = useTheme();
   if (!preferences) {

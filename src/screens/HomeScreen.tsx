@@ -198,8 +198,7 @@ function HomeScreen({route}: HomeScreenProps) {
       !DSUtils.allSessionsContainTimezone(drinkingSessionData);
 
     // Only navigate in case the user is setting up TZ for the first time
-    const shouldNavigateToTzFix =
-      sessionsAreMissingTz && !!!userData?.private_data?.timezone;
+    const shouldNavigateToTzFix = sessionsAreMissingTz && !!!userData?.timezone;
 
     dispatch({
       type: 'SET_SHOULD_NAVIGATE_TO_TZ_FIX',

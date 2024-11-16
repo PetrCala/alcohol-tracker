@@ -30,8 +30,7 @@ function TimezoneInitialScreen({}: TimezoneInitialScreenProps) {
   const styles = useThemeStyles();
   const {db, auth} = useFirebase();
   const {userData} = useDatabaseData();
-  const timezone: Timezone =
-    userData?.private_data?.timezone ?? CONST.DEFAULT_TIME_ZONE;
+  const timezone: Timezone = userData?.timezone ?? CONST.DEFAULT_TIME_ZONE;
 
   const {translate} = useLocalize();
 
