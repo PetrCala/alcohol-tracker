@@ -185,7 +185,7 @@ function LogInScreen() {
                 />
               )}
               <PressableWithFeedback
-                style={[styles.link, styles.mt3]}
+                style={[styles.link, styles.mt5]}
                 onPress={() => Navigation.navigate(ROUTES.FORGOT_PASSWORD)}
                 role={CONST.ROLE.LINK}
                 accessibilityLabel={translate('password.forgot')}>
