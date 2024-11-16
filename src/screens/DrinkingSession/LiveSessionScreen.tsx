@@ -501,7 +501,6 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       </ScrollView>
       <View style={styles.bottomTabBarContainer(true)}>
         <Button
-          success
           text={translate(
             'liveSessionScreen.discardSession',
             deleteSessionWording,
