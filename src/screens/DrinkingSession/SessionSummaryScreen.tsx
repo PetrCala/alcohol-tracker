@@ -85,21 +85,21 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
   // Time info
   const sessionDay = DateUtils.getLocalizedDay(
     session.start_time,
-    timezone?.selected,
+    session?.timezone,
   );
   const sessionStartTime = DateUtils.getLocalizedTime(
     session.start_time,
-    timezone?.selected,
+    session?.timezone,
   );
   const sessionEndTime = DateUtils.getLocalizedTime(
     session.end_time,
-    timezone?.selected,
+    session?.timezone,
   );
   const wasLiveSession = session?.type == CONST.SESSION_TYPES.LIVE;
   // Figure out last drink added
   const lastDrinkEditTimestamp = getLastDrinkAddedTime(session);
   const lastDrinkAdded = lastDrinkEditTimestamp
-    ? DateUtils.getLocalizedTime(lastDrinkEditTimestamp, timezone?.selected)
+    ? DateUtils.getLocalizedTime(lastDrinkEditTimestamp, session?.timezone)
     : 'Unknown';
 
   const handleBackPress = () => {
@@ -140,31 +140,23 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
           description: !wasLiveSession ? '-' : sessionStartTime,
         },
         {
-          titleKey: 'sessionSummaryScreen.generalSection.lastDrinkAdded',
-          description: !wasLiveSession ? '-' : lastDrinkAdded,
-        },
-        {
           titleKey: 'sessionSummaryScreen.generalSection.endTime',
           description: !wasLiveSession ? '-' : sessionEndTime,
         },
         {
-          titleKey: 'sessionSummaryScreen.generalSection.type',
-          description: translate(
-            wasLiveSession
-              ? 'drinkingSession.type.live'
-              : 'drinkingSession.type.edit',
-          ),
+          titleKey: 'common.blackout',
+          description: session.blackout ? 'Yes' : 'No',
         },
-        // {
-        //   titleKey: 'common.timezone',
-        //   description: session.timezone ?? '',
-        // },
+        {
+          titleKey: 'common.note',
+          description: session.note ?? '',
+        },
       ],
     };
   }, [session, styles.border]);
 
   const drinkData: DrinkMenuItem[] = [
-    {key: 'common.total', val: totalDrinks},
+    // {key: 'common.total', val: totalDrinks},
     {key: 'drinks.smallBeer', val: drinkSums.small_beer},
     {key: 'drinks.beer', val: drinkSums.beer},
     {key: 'drinks.wine', val: drinkSums.wine},
@@ -191,12 +183,20 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
       sectionTranslationKey: 'sessionSummaryScreen.otherSection.title',
       items: [
         {
-          titleKey: 'common.blackout',
-          description: session.blackout ? 'Yes' : 'No',
+          titleKey: 'common.timezone',
+          description: session.timezone ?? '',
         },
         {
-          titleKey: 'common.note',
-          description: session.note ?? '',
+          titleKey: 'sessionSummaryScreen.generalSection.type',
+          description: translate(
+            wasLiveSession
+              ? 'drinkingSession.type.live'
+              : 'drinkingSession.type.edit',
+          ),
+        },
+        {
+          titleKey: 'sessionSummaryScreen.generalSection.lastDrinkAdded',
+          description: !wasLiveSession ? '-' : lastDrinkAdded,
         },
       ],
     };
