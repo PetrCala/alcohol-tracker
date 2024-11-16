@@ -537,6 +537,7 @@ export default {
   },
   sessionNoteScreen: {
     title: 'Session note',
+    noteDescription: "This note is private and won't be shared with others.",
     error: {
       load: 'Failed to fetch details of this session.',
       generic: 'Failed to modify the session note.',

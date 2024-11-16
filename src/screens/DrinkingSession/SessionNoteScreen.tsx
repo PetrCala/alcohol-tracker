@@ -16,6 +16,7 @@ import {StackScreenProps} from '@react-navigation/stack';
 import {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
 import TextInput from '@components/TextInput';
+import Text from '@components/Text';
 
 type SessionNoteScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -69,6 +70,9 @@ function SesssionNoteScreen({route}: SessionNoteScreenProps) {
         validate={validate}
         onSubmit={onSubmit}
         submitButtonText={translate('common.save')}>
+        <Text style={[styles.mb6]}>
+          {translate('sessionNoteScreen.noteDescription')}
+        </Text>
         <InputWrapper
           InputComponent={TextInput}
           inputID={INPUT_IDS.NOTE}
