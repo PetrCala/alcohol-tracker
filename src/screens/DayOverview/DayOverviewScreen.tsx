@@ -45,7 +45,6 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import Icon from '@components/Icon';
 import useTheme from '@hooks/useTheme';
 import commonStyles from '@src/styles/commonStyles';
-import ONYXKEYS from '@src/ONYXKEYS';
 import DateUtils from '@libs/DateUtils';
 
 type DayOverviewScreenProps = StackScreenProps<
