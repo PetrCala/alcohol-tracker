@@ -147,6 +147,7 @@ function LogInScreen() {
               onSubmit={onSubmit}
               shouldValidateOnBlur={false}
               submitButtonText={translate('common.logIn')}
+              submitButtonStyles={styles.pb5}
               includeSafeAreaPaddingBottom={false}
               isSubmitButtonVisible={!isLoading}
               shouldUseScrollView={false}

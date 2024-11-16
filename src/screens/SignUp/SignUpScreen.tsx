@@ -24,14 +24,15 @@ import * as User from '@database/users';
 import DotIndicatorMessage from '@components/DotIndicatorMessage';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
-import Onyx, {useOnyx} from 'react-native-onyx';
 import {TranslationPaths} from '@src/languages/types';
 import {ValueOf} from 'type-fest';
-import Text from '@components/Text';
+import {View} from 'react-native';
 import OrDelimiter from './OrDelimiter';
 import {PressableWithFeedback} from '@components/Pressable';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
+import {useOnyx} from 'react-native-onyx';
+import Text from '@components/Text';
 
 type LoginScreenLayoutRef = {
   scrollPageToTop: (animated?: boolean) => void;
@@ -72,9 +73,10 @@ function SignUpScreen() {
 
   const onNavigateToLogIn = () => {
     // Stash the email credentials for the login screen
-    Onyx.set(ONYXKEYS.FORMS.LOG_IN_FORM_DRAFT, {
-      email: signUpForm?.email ?? '',
-    });
+    // TODO
+    // Onyx.set(ONYXKEYS.FORMS.LOG_IN_FORM_DRAFT, {
+    //   email: signUpForm?.email ?? '',
+    // });
     Navigation.navigate(ROUTES.LOG_IN);
   };
 
@@ -166,8 +168,8 @@ function SignUpScreen() {
       ]}
       testID={SignUpScreen.displayName}>
       <SignUpScreenLayout
-        welcomeHeader={welcomeHeader}
-        welcomeText={welcomeText}
+        welcomeHeader={''} // use 'welcomeHeader' to show the header
+        welcomeText={''}
         ref={currentScreenLayoutRef}
         navigateFocus={navigateFocus}>
         {!!isLoading ? (
@@ -182,11 +184,12 @@ function SignUpScreen() {
               onSubmit={onSubmit}
               shouldValidateOnBlur={false}
               shouldValidateOnChange={true}
-              submitButtonText={translate('common.signUp')}
               includeSafeAreaPaddingBottom={false}
+              submitButtonText={translate('common.signUp')}
+              submitButtonStyles={styles.pb5}
               isSubmitButtonVisible={!isLoading}
               shouldUseScrollView={false}
-              style={[styles.flexGrow1]}>
+              style={styles.flexGrow1}>
               <InputWrapper
                 InputComponent={TextInput}
                 inputID={INPUT_IDS.EMAIL}
@@ -244,23 +247,25 @@ function SignUpScreen() {
                 />
               )}
             </FormProvider>
-            <ChangeSignUpScreenLink
-              navigatesTo={ROUTES.LOG_IN}
-              onPress={onNavigateToLogIn}
-            />
-            <OrDelimiter />
-            <PressableWithFeedback
-              style={[styles.link]}
-              onPress={onNavigateBack}
-              role={CONST.ROLE.LINK}
-              accessibilityLabel={translate(
-                'signUpScreen.chooseAnotherMethod',
-              )}>
-              <Text style={[styles.link, styles.textAlignCenter]}>
-                {translate('signUpScreen.chooseAnotherMethod')}
-              </Text>
-            </PressableWithFeedback>
-            {/* Use another sign up method <- a simple link that navigates to the initial screen */}
+            <View>
+              {/* Use another sign up method <- a simple link that navigates to the initial screen */}
+              <ChangeSignUpScreenLink
+                navigatesTo={ROUTES.LOG_IN}
+                onPress={onNavigateToLogIn}
+              />
+              <OrDelimiter />
+              <PressableWithFeedback
+                style={[styles.link]}
+                onPress={onNavigateBack}
+                role={CONST.ROLE.LINK}
+                accessibilityLabel={translate(
+                  'signUpScreen.chooseAnotherMethod',
+                )}>
+                <Text style={[styles.link, styles.textAlignCenter]}>
+                  {translate('signUpScreen.chooseAnotherMethod')}
+                </Text>
+              </PressableWithFeedback>
+            </View>
           </>
         )}
       </SignUpScreenLayout>

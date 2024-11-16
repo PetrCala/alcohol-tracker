@@ -138,6 +138,7 @@ function InitialScreen({}: InitialScreenProps) {
           validate={validate}
           onSubmit={onSubmit}
           submitButtonText={translate('common.continue')}
+          submitButtonStyles={styles.pb5}
           includeSafeAreaPaddingBottom={false}
           shouldUseScrollView={false}
           style={styles.flexGrow1}>
