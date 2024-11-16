@@ -116,7 +116,7 @@ const ONYXKEYS = {
   ONYX_UPDATES_LAST_UPDATE_ID_APPLIED_TO_CLIENT:
     'OnyxUpdatesLastUpdateIDAppliedToClient',
 
-  // Stores last visited path
+  /** Stores last visited path */
   LAST_VISITED_PATH: 'lastVisitedPath',
 
   /** Stores the route to open after changing app permission from settings */

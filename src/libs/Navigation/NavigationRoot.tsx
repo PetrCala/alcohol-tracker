@@ -18,11 +18,7 @@ import getAdaptedStateFromPath from './linkingConfig/getAdaptedStateFromPath';
 import Navigation, {navigationRef} from './Navigation';
 import CONST from '@src/CONST';
 import {ScrollOffsetContext} from '@components/ScrollOffsetContextProvider';
-import {useOnyx} from 'react-native-onyx';
-import ONYXKEYS from '@src/ONYXKEYS';
 import setupCustomAndroidBackHandler from './setupCustomAndroidBackHandler';
-import hasCompletedGuidedSetupFlowSelector from '@libs/hasCompletedGuidedSetupFlowSelector';
-import ROUTES from '@src/ROUTES';
 import {useFirebase} from '@context/global/FirebaseContext';
 
 type NavigationRootProps = {

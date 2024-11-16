@@ -34,8 +34,6 @@ import Section from '@components/Section';
 import {TranslationPaths} from '@src/languages/types';
 import MenuItemGroup from '@components/MenuItemGroup';
 import _ from 'lodash';
-import {useOnyx} from 'react-native-onyx';
-import ONYXKEYS from '@src/ONYXKEYS';
 
 type DrinkMenuItem = {
   key: TranslationPaths;
