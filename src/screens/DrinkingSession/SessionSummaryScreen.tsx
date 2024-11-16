@@ -40,6 +40,7 @@ type DrinkMenuItem = {
 type MenuData = {
   titleKey?: TranslationPaths;
   description?: string;
+  shouldHide?: boolean;
   rightComponent?: React.ReactNode;
   additionalStyles?: StyleProp<ViewStyle>;
 };
@@ -136,11 +137,18 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
         },
         {
           titleKey: 'sessionSummaryScreen.generalSection.startTime',
-          description: !wasLiveSession ? '-' : sessionStartTime,
+          description: sessionStartTime,
+          shouldHide: !wasLiveSession,
+        },
+        {
+          titleKey: 'sessionSummaryScreen.generalSection.lastDrinkAdded',
+          description: lastDrinkAdded,
+          shouldHide: !wasLiveSession,
         },
         {
           titleKey: 'sessionSummaryScreen.generalSection.endTime',
-          description: !wasLiveSession ? '-' : sessionEndTime,
+          description: sessionEndTime,
+          shouldHide: !wasLiveSession,
         },
         {
           titleKey: 'common.blackout',
@@ -193,10 +201,6 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
               : 'drinkingSession.type.edit',
           ),
         },
-        {
-          titleKey: 'sessionSummaryScreen.generalSection.lastDrinkAdded',
-          description: !wasLiveSession ? '-' : lastDrinkAdded,
-        },
       ],
     };
   }, [session]);
@@ -209,30 +213,33 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
         containerStyles={styles.pb0}
         childrenStyles={styles.pt3}>
         <>
-          {menuItemsData.items.map((detail, index) => (
-            <MenuItem
-              // eslint-disable-next-line react/no-array-index-key
-              key={`${detail.titleKey}_${index}`}
-              title={detail.titleKey && translate(detail.titleKey)}
-              titleStyle={styles.plainSectionTitle}
-              description={detail.description}
-              descriptionTextStyle={styles.textNormalThemeText}
-              wrapperStyle={styles.sectionMenuItemTopDescription}
-              style={[
-                styles.pt0,
-                styles.pb0,
-                // Enable the following to add borders in between items
-                // styles.borderBottomRounded,
-                // {borderBottomLeftRadius: 35, borderBottomRightRadius: 35},
-                // index === menuItemsData.items.length - 1 && styles.borderNone,
-              ]}
-              disabled={true}
-              shouldGreyOutWhenDisabled={false}
-              shouldUseRowFlexDirection
-              shouldShowRightComponent={!!detail.rightComponent}
-              rightComponent={detail.rightComponent}
-            />
-          ))}
+          {menuItemsData.items.map(
+            (detail, index) =>
+              !detail?.shouldHide && (
+                <MenuItem
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={`${detail.titleKey}_${index}`}
+                  title={detail.titleKey && translate(detail.titleKey)}
+                  titleStyle={styles.plainSectionTitle}
+                  description={detail.description}
+                  descriptionTextStyle={styles.textNormalThemeText}
+                  wrapperStyle={styles.sectionMenuItemTopDescription}
+                  style={[
+                    styles.pt0,
+                    styles.pb0,
+                    // Enable the following to add borders in between items
+                    // styles.borderBottomRounded,
+                    // {borderBottomLeftRadius: 35, borderBottomRightRadius: 35},
+                    // index === menuItemsData.items.length - 1 && styles.borderNone,
+                  ]}
+                  disabled={true}
+                  shouldGreyOutWhenDisabled={false}
+                  shouldUseRowFlexDirection
+                  shouldShowRightComponent={!!detail.rightComponent}
+                  rightComponent={detail.rightComponent}
+                />
+              ),
+          )}
         </>
       </Section>
     );
