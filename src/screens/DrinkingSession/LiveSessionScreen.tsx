@@ -483,16 +483,14 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
             </View>
             <SessionDetailsWindow
               sessionId={sessionId}
-              isBlackout={session.blackout}
+              session={session}
               onBlackoutChange={(value: boolean) =>
                 DS.updateBlackout(session, value)
               }
-              note={session.note}
-              dateString={DateUtils.getLocalizedDay(
-                session.start_time,
-                session.timezone,
-              )}
               shouldAllowDateChange={session.type !== CONST.SESSION_TYPES.LIVE}
+              shouldAllowTimezoneChange={
+                session.type !== CONST.SESSION_TYPES.LIVE
+              }
             />
           </>
         )}

@@ -545,6 +545,12 @@ export default {
       noteTooLongError: 'Your note is too long.',
     },
   },
+  sessionTimezoneScreen: {
+    title: 'Session timezone',
+    error: {
+      generic: 'Failed to modify the session timezone.',
+    },
+  },
   maintenance: {
     heading: 'Under Maintenance',
     text: 'We are currently under maintenance for the following time frame:',

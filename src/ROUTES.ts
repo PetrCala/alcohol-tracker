@@ -59,6 +59,11 @@ const ROUTES = {
     getRoute: (sessionId: DrinkingSessionId) =>
       `drinking-session/${sessionId}/session-note-screen` as const,
   },
+  DRINKING_SESSION_SESSION_TIMEZONE_SCREEN: {
+    route: 'drinking-session/:sessionId/session-timezone-screen',
+    getRoute: (sessionId: DrinkingSessionId) =>
+      `drinking-session/${sessionId}/session-timezone-screen` as const,
+  },
   DRINKING_SESSION_SUMMARY: {
     route: 'drinking-session/:sessionId/summary',
     getRoute: (sessionId: DrinkingSessionId) =>

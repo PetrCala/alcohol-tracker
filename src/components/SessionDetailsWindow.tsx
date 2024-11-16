@@ -14,7 +14,8 @@ import useSingleExecution from '@hooks/useSingleExecution';
 import useWaitForNavigation from '@hooks/useWaitForNavigation';
 import useActiveCentralPaneRoute from '@hooks/useActiveCentralPaneRoute';
 import Switch from './Switch';
-import {DrinkingSessionId} from '@src/types/onyx';
+import {DrinkingSession, DrinkingSessionId} from '@src/types/onyx';
+import DateUtils from '@libs/DateUtils';
 
 type MenuData = {
   translationKey: TranslationPaths;
@@ -33,20 +34,18 @@ type MenuData = {
 
 type SessionSliderProps = {
   sessionId: DrinkingSessionId;
-  isBlackout: boolean;
+  session: DrinkingSession;
   onBlackoutChange: (value: boolean) => void;
-  note: string;
-  dateString: string;
   shouldAllowDateChange?: boolean;
+  shouldAllowTimezoneChange?: boolean;
 };
 
 const SessionDetailsWindow: React.FC<SessionSliderProps> = ({
   sessionId,
-  isBlackout,
+  session,
   onBlackoutChange,
-  note,
-  dateString,
   shouldAllowDateChange,
+  shouldAllowTimezoneChange,
 }) => {
   const {translate} = useLocalize();
   const {singleExecution} = useSingleExecution();
@@ -58,7 +57,7 @@ const SessionDetailsWindow: React.FC<SessionSliderProps> = ({
   const blackoutSwitch: ReactNode = (
     <Switch
       accessibilityLabel={translate('liveSessionScreen.blackoutSwitchLabel')}
-      isOn={isBlackout}
+      isOn={!!session.blackout}
       onToggle={value => onBlackoutChange(value)}
     />
   );
@@ -72,7 +71,7 @@ const SessionDetailsWindow: React.FC<SessionSliderProps> = ({
     },
     {
       translationKey: 'liveSessionScreen.note',
-      description: note,
+      description: session.note ?? '',
       shouldShowRightIcon: true,
       routeName:
         ROUTES.DRINKING_SESSION_SESSION_NOTE_SCREEN.getRoute(sessionId),
@@ -83,9 +82,22 @@ const SessionDetailsWindow: React.FC<SessionSliderProps> = ({
     sliderData.push({
       translationKey: 'common.date',
       shouldShowRightIcon: true,
-      description: dateString,
+      description: DateUtils.getLocalizedDay(
+        session.start_time,
+        session.timezone,
+      ),
       routeName:
         ROUTES.DRINKING_SESSION_SESSION_DATE_SCREEN.getRoute(sessionId),
+    });
+  }
+
+  if (shouldAllowTimezoneChange) {
+    sliderData.push({
+      translationKey: 'common.timezone',
+      shouldShowRightIcon: true,
+      description: session.timezone ?? '',
+      routeName:
+        ROUTES.DRINKING_SESSION_SESSION_TIMEZONE_SCREEN.getRoute(sessionId),
     });
   }
 
