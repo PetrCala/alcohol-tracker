@@ -56,11 +56,12 @@ function SignUpScreen() {
   const welcomeHeader = shouldUseNarrowLayout
     ? headerText
     : translate('welcomeText.welcome');
-  const welcomeText = shouldUseNarrowLayout
-    ? `${translate('welcomeText.welcomeWithoutExclamation')} ${translate('welcomeText.welcomeNewAccount', {login: signUpForm?.email || ''})}`
-    : translate('welcomeText.welcomeNewAccount', {
-        login: signUpForm?.email || '',
-      });
+  const welcomeText = `${translate('welcomeText.welcomeWithoutExclamation')}${signUpForm?.email && ' '}${translate(
+    'welcomeText.welcomeNewAccount',
+    {
+      login: signUpForm?.email || '',
+    },
+  )}`;
 
   const navigateFocus = () => {
     currentScreenLayoutRef.current?.scrollPageToTop();
