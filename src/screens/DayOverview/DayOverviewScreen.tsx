@@ -38,7 +38,7 @@ import {nonMidnightString} from '@libs/StringUtilsKiroku';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
-import {format} from 'date-fns';
+import {endOfToday, format} from 'date-fns';
 import Button from '@components/Button';
 import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
@@ -198,11 +198,9 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
     if (!editMode || !user) {
       return null;
     } // Do not display outside edit mode
+
     // No button if the date is in the future
-    const today = new Date();
-    const tomorrowMidnight = changeDateBySomeDays(today, 1);
-    tomorrowMidnight.setHours(0, 0, 0, 0);
-    if (currentDate >= tomorrowMidnight) {
+    if (currentDate >= endOfToday()) {
       return null;
     }
 
