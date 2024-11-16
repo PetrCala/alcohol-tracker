@@ -60,9 +60,9 @@ import type Drinks from './Drinks';
 import type {DrinkKey, DrinkName, DrinksList, DrinksTimestamp} from './Drinks';
 import type UserIsTyping from './UserIsTyping';
 import type UserLocation from './UserLocation';
-import type UserProps from './UserData';
+import type UserData from './UserData';
 import type {
-  UserPropsList,
+  UserDataList,
   UserPrivateData,
   UserPublicData,
   Profile,
@@ -134,11 +134,11 @@ export type {
   UnitsToColors,
   UserPublicData,
   UserPrivateData,
-  UserProps,
+  UserData,
+  UserDataList,
   UserDrinkingSessionsList,
   UserIsTyping,
   UserLocation,
-  UserPropsList,
   UserStatus,
   UserStatusList,
 };
