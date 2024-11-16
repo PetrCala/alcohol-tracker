@@ -86,6 +86,7 @@ export default {
     pin: 'Pin',
     unPin: 'Unpin',
     back: 'Back',
+    yesIKnowWhatIAmDoing: 'Yes, I know what I am doing',
     saveAndContinue: 'Save & continue',
     settings: 'Settings',
     termsOfService: 'Terms of Service',
@@ -547,8 +548,14 @@ export default {
   },
   sessionTimezoneScreen: {
     title: 'Session timezone',
+    description:
+      'Please choose the timezone you were in when you started the session.',
+    note: 'Note: Each time the details of this session are viewed, its timestamps will be displayed in the selected timezone.',
+    confirmPrompt: (newTimezone: string) =>
+      `Setting the timezone to ${newTimezone} will change the date of this session. Are you sure you'd like to proceed?`,
     error: {
       generic: 'Failed to modify the session timezone.',
+      errorSelectTimezone: 'Failed to select a timezone. Please try again.',
     },
   },
   maintenance: {

@@ -13,10 +13,11 @@ import {numberToVerboseString} from './TimeUtils';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
 import {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
 import DBPATHS from '@database/DBPATHS';
-import {subMilliseconds} from 'date-fns';
+import {format, subMilliseconds} from 'date-fns';
 import Onyx from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 import {auth} from './Firebase/FirebaseApp';
+import {formatInTimeZone} from 'date-fns-tz';
 
 const PlaceholderDrinks: DrinksList = {[Date.now()]: {other: 0}};
 
@@ -217,6 +218,29 @@ function getDisplayNameForParticipant(
 }
 
 /**
+ * Determine whether the given session is on a different day when converted to the given timezone.
+ *
+ * @param session The session to check
+ * @param timezone The timezone to convert the session to
+ * @returns Whether the session is on a different day
+ */
+function isDifferentDay(
+  session: DrinkingSession,
+  timezone: SelectedTimezone,
+): boolean {
+  const stringFormat = 'yyyy-MM-dd';
+  const start_time = session.start_time;
+  let currentDay: string;
+  if (session.timezone) {
+    currentDay = formatInTimeZone(start_time, session.timezone, stringFormat);
+  } else {
+    currentDay = format(start_time, stringFormat);
+  }
+  const newDay = formatInTimeZone(session.start_time, timezone, stringFormat);
+  return currentDay !== newDay;
+}
+
+/**
  * Returns the the display names of the given user userIDs
  */
 function getUserDetailTooltipText(
@@ -344,6 +368,7 @@ export {
   getDisplayNameForParticipant,
   getEmptySession,
   getUserDetailTooltipText,
+  isDifferentDay,
   isEmptySession,
   sessionIsExpired,
   fixTimezoneSessions,

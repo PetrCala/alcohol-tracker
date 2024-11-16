@@ -13,6 +13,8 @@ import {useFirebase} from '@context/global/FirebaseContext';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import TimezoneSelect from '@components/TimezoneSelect';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
+import CONST from '@src/CONST';
 
 type TimezoneSelectScreenProps = StackScreenProps<
   SettingsNavigatorParamList,
@@ -22,6 +24,8 @@ type TimezoneSelectScreenProps = StackScreenProps<
 function TimezoneSelectScreen({}: TimezoneSelectScreenProps) {
   const {translate} = useLocalize();
   const {db, auth} = useFirebase();
+  const {userData} = useDatabaseData();
+  const timezone = userData?.timezone ?? CONST.DEFAULT_TIME_ZONE;
   const [isLoading, setIsLoading] = useState(false);
 
   const saveSelectedTimezone = async (timezone: SelectedTimezone) => {
@@ -52,7 +56,10 @@ function TimezoneSelectScreen({}: TimezoneSelectScreenProps) {
         title={translate('timezoneScreen.timezone')}
         onBackButtonPress={() => Navigation.goBack(ROUTES.SETTINGS_TIMEZONE)}
       />
-      <TimezoneSelect onSelectedTimezone={saveSelectedTimezone} />
+      <TimezoneSelect
+        initialTimezone={timezone}
+        onSelectedTimezone={saveSelectedTimezone}
+      />
     </ScreenWrapper>
   );
 }

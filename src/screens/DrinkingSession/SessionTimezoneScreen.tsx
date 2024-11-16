@@ -1,21 +1,19 @@
-import React, {useCallback, useEffect} from 'react';
-import FormProvider from '@components/Form/FormProvider';
-import InputWrapper from '@components/Form/InputWrapper';
-import type {FormOnyxValues} from '@components/Form/types';
+import React, {useState} from 'react';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import ScreenWrapper from '@components/ScreenWrapper';
 import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Navigation from '@libs/Navigation/Navigation';
-import * as ValidationUtils from '@libs/ValidationUtils';
-import * as ErrorUtils from '@libs/ErrorUtils';
 import * as DS from '@libs/actions/DrinkingSession';
-import ONYXKEYS from '@src/ONYXKEYS';
+import * as DSUtils from '@libs/DrinkingSessionUtils';
 import {StackScreenProps} from '@react-navigation/stack';
 import {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
-import TextInput from '@components/TextInput';
 import Text from '@components/Text';
+import TimezoneSelect from '@components/TimezoneSelect';
+import {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
+import ConfirmModal from '@components/ConfirmModal';
+import CONST from '@src/CONST';
 
 type SessionTimezoneScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -27,33 +25,37 @@ function SesssionTimezoneScreen({route}: SessionTimezoneScreenProps) {
   const {translate} = useLocalize();
   const styles = useThemeStyles();
   const session = DS.getDrinkingSessionData(sessionId);
+  const initialTimezone: Timezone = {
+    selected: session?.timezone ?? CONST.DEFAULT_TIME_ZONE.selected,
+    automatic: false,
+  };
+  const [selectedTimezone, setSelectedTimezone] =
+    useState<SelectedTimezone | null>(null);
 
-  // const onSubmit = async (
-  //   values: FormOnyxValues<typeof ONYXKEYS.FORMS.SESSION_NOTE_FORM>,
-  // ) => {
-  //   DS.updateTimezone(session, values.note);
-  //   Navigation.goBack();
-  // };
+  const onConfirm = (timezone: SelectedTimezone | null) => {
+    if (!session || !timezone) {
+      throw new Error(
+        translate('sessionTimezoneScreen.error.errorSelectTimezone'),
+      );
+    }
+    DS.updateTimezone(session, timezone);
+    setSelectedTimezone(null);
+    Navigation.goBack();
+  };
 
-  // /**
-  //  * @returns An object containing the errors for each inputID
-  //  */
-  // const validate = useCallback(
-  //   (values: FormOnyxValues<typeof ONYXKEYS.FORMS.SESSION_NOTE_FORM>) => {
-  //     const errors = {};
+  const onSelectedTimezone = (timezone: SelectedTimezone) => {
+    if (!session) {
+      return;
+    }
+    const isDifferentDay = DSUtils.isDifferentDay(session, timezone);
+    if (isDifferentDay) {
+      // If the timezone would change the session day, show the confirm modal
+      setSelectedTimezone(timezone);
+      return;
+    }
 
-  //     if (!ValidationUtils.isValidSessionTimezone(values.note)) {
-  //       ErrorUtils.addErrorMessage(
-  //         errors,
-  //         'sessionTimezoneScreen',
-  //         translate('sessionTimezoneScreen.error.noteTooLongError'),
-  //       );
-  //     }
-
-  //     return errors;
-  //   },
-  //   [],
-  // );
+    onConfirm(timezone);
+  };
 
   return (
     <ScreenWrapper
@@ -63,21 +65,29 @@ function SesssionTimezoneScreen({route}: SessionTimezoneScreenProps) {
         title={translate('sessionTimezoneScreen.title')}
         onBackButtonPress={() => Navigation.goBack()}
       />
-      {/* <FormProvider
-        style={[styles.flexGrow1, styles.ph5]}
-        formID={ONYXKEYS.FORMS.SESSION_NOTE_FORM}
-        validate={validate}
-        onSubmit={onSubmit}
-        submitButtonText={translate('common.save')}>
-        <Text style={[styles.mb6]}>
-          {translate('sessionTimezoneScreen.noteDescription')}
-        </Text>
-        <InputWrapper
-          InputComponent={TextInput}
-          inputID={INPUT_IDS.NOTE}
-          label={translate('common.note')}
-          defaultValue={session?.note ?? ''}
-        /> */}
+      <Text style={[styles.mb2, styles.mh5]}>
+        {translate('sessionTimezoneScreen.description')}
+      </Text>
+      <Text style={[styles.mb6, styles.mh5, styles.mutedTextLabel]}>
+        {translate('sessionTimezoneScreen.note')}
+      </Text>
+      <TimezoneSelect
+        initialTimezone={initialTimezone}
+        onSelectedTimezone={timezone => onSelectedTimezone(timezone)}
+      />
+      <ConfirmModal
+        danger
+        title={translate('common.warning')}
+        prompt={translate(
+          'sessionTimezoneScreen.confirmPrompt',
+          selectedTimezone ?? '',
+        )}
+        confirmText={translate('common.yesIKnowWhatIAmDoing')}
+        cancelText={translate('common.cancel')}
+        isVisible={!!selectedTimezone}
+        onConfirm={() => onConfirm(selectedTimezone)}
+        onCancel={() => setSelectedTimezone(null)}
+      />
     </ScreenWrapper>
   );
 }

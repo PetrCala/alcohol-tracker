@@ -1,13 +1,11 @@
 import React, {ForwardedRef, useState} from 'react';
-import {View} from 'react-native';
 import SelectionList from '@components/SelectionList';
 import RadioListItem from '@components/SelectionList/RadioListItem';
 import useInitialValue from '@hooks/useInitialValue';
 import useLocalize from '@hooks/useLocalize';
-import CONST from '@src/CONST';
 import TIMEZONES from '@src/TIMEZONES';
-import {useDatabaseData} from '@context/global/DatabaseDataContext';
-import {SelectedTimezone} from '@src/types/onyx/UserData';
+import {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
+import {SelectionListHandle} from './SelectionList/types';
 
 /**
  * We add the current time to the key to fix a bug where the list options don't update unless the key is updated.
@@ -15,6 +13,9 @@ import {SelectedTimezone} from '@src/types/onyx/UserData';
 const getKey = (text: string): string => `${text}-${new Date().getTime()}`;
 
 type TimezoneSelectProps = {
+  /** The initial timezone */
+  initialTimezone: Timezone;
+
   /** Callback when a timezone is selected */
   onSelectedTimezone?: (timezone: SelectedTimezone) => void;
 
@@ -23,18 +24,23 @@ type TimezoneSelectProps = {
 };
 
 function TimezoneSelect(
-  {onSelectedTimezone, id = '', ...rest}: TimezoneSelectProps,
-  ref: ForwardedRef<View>,
+  {
+    initialTimezone,
+
+    onSelectedTimezone,
+
+    id = '',
+    ...rest
+  }: TimezoneSelectProps,
+  ref: ForwardedRef<SelectionListHandle>,
 ) {
   const {translate} = useLocalize();
-  const {userData} = useDatabaseData();
-  const timezone = userData?.timezone ?? CONST.DEFAULT_TIME_ZONE; // TODO change this to onyx user timezone
   const allTimezones = useInitialValue(() =>
     TIMEZONES.filter((tz: string) => !tz.startsWith('Etc/GMT')).map(
       (text: string) => ({
         text,
         keyForList: getKey(text),
-        isSelected: text === timezone.selected,
+        isSelected: text === initialTimezone.selected,
       }),
     ),
   );
@@ -69,6 +75,7 @@ function TimezoneSelect(
 
   return (
     <SelectionList
+      ref={ref}
       headerMessage={
         timezoneInputText.trim() && !timezoneOptions.length
           ? translate('common.noResultsFound')
@@ -79,9 +86,12 @@ function TimezoneSelect(
       onChangeText={filterShownTimezones}
       onSelectRow={handleSelectRow}
       shouldSingleExecuteRowSelect
-      sections={[{data: timezoneOptions, isDisabled: timezone.automatic}]}
+      sections={[
+        {data: timezoneOptions, isDisabled: initialTimezone.automatic},
+      ]}
       initiallyFocusedOptionKey={
-        timezoneOptions.find(tz => tz.text === timezone.selected)?.keyForList
+        timezoneOptions.find(tz => tz.text === initialTimezone.selected)
+          ?.keyForList
       }
       showScrollIndicator
       shouldShowTooltips={false}

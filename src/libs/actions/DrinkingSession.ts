@@ -25,6 +25,7 @@ import {
   subDays,
   subMilliseconds,
 } from 'date-fns';
+import {SelectedTimezone} from '@src/types/onyx/UserData';
 
 let liveSessionData: DrinkingSession | undefined;
 Onyx.connect({
@@ -322,6 +323,25 @@ function updateBlackout(
 }
 
 /**
+ * Update a drinking session timezone
+ *
+ * @param session The session to update
+ * @param newTimezone The new timezone
+ * @returns void
+ */
+function updateTimezone(
+  session: DrinkingSession | undefined,
+  newTimezone: SelectedTimezone,
+): void {
+  const onyxKey = getDrinkingSessionOnyxKey(session?.id);
+  if (onyxKey) {
+    Onyx.merge(onyxKey, {
+      timezone: newTimezone,
+    });
+  }
+}
+
+/**
  * Change all timestamps in a session so that its start time corresponds to a new date.
  *
  * Shift the timestamps by whole days, keeping the hour:minute times as they are.
@@ -409,5 +429,6 @@ export {
   updateNote,
   updateLocalData,
   updateSessionDate,
+  updateTimezone,
   getNewSessionToEdit,
 };
