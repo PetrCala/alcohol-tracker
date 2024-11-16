@@ -90,6 +90,7 @@ function initializeEmptyMockDatabase(): DatabaseProps {
     },
     feedback: {},
     nickname_to_id: {},
+    reasons_for_leaving: {},
     user_status: {},
     user_drinking_sessions: {},
     user_preferences: {},
