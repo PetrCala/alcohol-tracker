@@ -1,12 +1,9 @@
 ﻿import {StyleProp, StyleSheet, Text, View, ViewStyle} from 'react-native';
-import MenuIcon from '@components/Buttons/MenuIcon';
 import {
-  formatDateToTime,
   getLastDrinkAddedTime,
   sumAllUnits,
   sumAllDrinks,
   sumDrinksOfSingleType,
-  timestampToDate,
   unitsToColors,
 } from '@libs/DataHandling';
 import useLocalize from '@hooks/useLocalize';
@@ -20,11 +17,11 @@ import type {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
 import * as DS from '@libs/actions/DrinkingSession';
+import DateUtils from '@libs/DateUtils';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import ScreenWrapper from '@components/ScreenWrapper';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
-import {format} from 'date-fns';
 import Button from '@components/Button';
 import useThemeStyles from '@hooks/useThemeStyles';
 import ScrollView from '@components/ScrollView';
@@ -59,8 +56,8 @@ type SessionSummaryScreenProps = StackScreenProps<
 function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
   const {sessionId} = route.params;
   const {preferences, drinkingSessionData, userData} = useDatabaseData();
+  const timezone = userData?.timezone;
   const {translate} = useLocalize();
-  // const timezone = userData?.timezone?.selected;
   const styles = useThemeStyles();
   const theme = useTheme();
   if (!preferences) {
@@ -86,21 +83,24 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
     other: sumDrinksOfSingleType(session.drinks, 'other'),
   };
   // Time info
-  const sessionStartDate = timestampToDate(session.start_time);
-  const sessionEndDate = timestampToDate(session.end_time);
-  const sessionDay = format(sessionStartDate, CONST.DATE.SHORT_DATE_FORMAT);
-  const sessionStartTime = formatDateToTime(sessionStartDate);
-  const sessionEndTime = formatDateToTime(sessionEndDate);
+  const sessionDay = DateUtils.getLocalizedDay(
+    session.start_time,
+    timezone?.selected,
+  );
+  const sessionStartTime = DateUtils.getLocalizedTime(
+    session.start_time,
+    timezone?.selected,
+  );
+  const sessionEndTime = DateUtils.getLocalizedTime(
+    session.end_time,
+    timezone?.selected,
+  );
   const wasLiveSession = session?.type == CONST.SESSION_TYPES.LIVE;
   // Figure out last drink added
-  let lastDrinkAdded: string;
   const lastDrinkEditTimestamp = getLastDrinkAddedTime(session);
-  if (!lastDrinkEditTimestamp) {
-    lastDrinkAdded = 'Unknown';
-  } else {
-    const lastDrinkAddedDate = timestampToDate(lastDrinkEditTimestamp);
-    lastDrinkAdded = formatDateToTime(lastDrinkAddedDate);
-  }
+  const lastDrinkAdded = lastDrinkEditTimestamp
+    ? DateUtils.getLocalizedTime(lastDrinkEditTimestamp, timezone?.selected)
+    : 'Unknown';
 
   const handleBackPress = () => {
     const screenBeforeSummaryScreen = Navigation.getLastScreenName(true);

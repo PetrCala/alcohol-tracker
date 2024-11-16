@@ -13,13 +13,11 @@ import {useFirebase} from '@context/global/FirebaseContext';
 import * as DS from '@libs/actions/DrinkingSession';
 import {
   addDrinks,
-  formatDateToTime,
   getUniqueDrinkTypesInSession,
   removeDrinks,
   sumAllDrinks,
   sumAllUnits,
   sumDrinksOfSingleType,
-  timestampToDate,
   timestampToDateString,
   unitsToColors,
 } from '@libs/DataHandling';
@@ -64,6 +62,7 @@ import Log from '@libs/Log';
 import Icon from '@components/Icon';
 import Onyx, {useOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
+import DateUtils from '@libs/DateUtils';
 
 type LiveSessionScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -79,7 +78,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   const styles = useThemeStyles();
   const {translate} = useLocalize();
   const {isOnline} = useUserConnection();
-  const {preferences} = useDatabaseData();
+  const {preferences, userData} = useDatabaseData();
   const {windowWidth} = useWindowDimensions();
   const [liveSessionData] = useOnyx(ONYXKEYS.LIVE_SESSION_DATA);
   const [editSessionData] = useOnyx(ONYXKEYS.EDIT_SESSION_DATA);
@@ -95,9 +94,6 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   const [sessionFinished, setSessionFinished] = useState<boolean>(false);
   // Time info
   const [dbSyncSuccessful, setDbSyncSuccessful] = useState(false);
-  const sessionDate = timestampToDate(session?.start_time ?? Date.now());
-  const sessionDateString = format(sessionDate, CONST.DATE.SHORT_DATE_FORMAT);
-  const sessionStartTime = formatDateToTime(sessionDate);
   const sessionColor = preferences
     ? unitsToColors(totalUnits, preferences.units_to_colors)
     : 'green';
@@ -421,8 +417,8 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
           <View style={styles.alignItemsCenter}>
             <Text style={styles.textHeadlineH2}>
               {session?.ongoing
-                ? `${translate('liveSessionScreen.sessionFrom')} ${sessionStartTime}`
-                : `${translate('liveSessionScreen.sessionOn')} ${sessionDateString}`}
+                ? `${translate('liveSessionScreen.sessionFrom')} ${DateUtils.getLocalizedTime(session.start_time, userData?.timezone?.selected)}`
+                : `${translate('liveSessionScreen.sessionOn')} ${DateUtils.getLocalizedDay(session.start_time, userData?.timezone?.selected)}`}
             </Text>
           </View>
           {isPending && (
@@ -492,7 +488,10 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
                 DS.updateBlackout(session, value)
               }
               note={session.note}
-              dateString={sessionDateString}
+              dateString={DateUtils.getLocalizedDay(
+                session.start_time,
+                userData?.timezone?.selected,
+              )}
               shouldAllowDateChange={session.type !== CONST.SESSION_TYPES.LIVE}
             />
           </>

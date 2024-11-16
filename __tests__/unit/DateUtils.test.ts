@@ -31,7 +31,6 @@ describe('DateUtils', () => {
         },
         [ONYXKEYS.USER_DATA_LIST]: {
           '999': {
-            userID: '999',
             timezone: {
               // UTC is not recognized as a valid timezone but
               // in these tests we want to use it to avoid issues
@@ -149,7 +148,6 @@ describe('DateUtils', () => {
     );
     Onyx.set(ONYXKEYS.USER_DATA_LIST, {
       '999': {
-        userID: '999',
         timezone: {selected: 'Europe/London', automatic: true},
       },
     }).then(() => {
@@ -170,7 +168,6 @@ describe('DateUtils', () => {
     );
     Onyx.set(ONYXKEYS.USER_DATA_LIST, {
       '999': {
-        userID: '999',
         timezone: {selected: 'Europe/London', automatic: true},
       },
     }).then(() => {

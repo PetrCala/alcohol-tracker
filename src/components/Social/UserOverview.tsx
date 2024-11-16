@@ -3,23 +3,27 @@ import {useFirebase} from '../../context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
 import {getTimestampAge} from '@libs/TimeUtils';
 import commonStyles from '@src/styles/commonStyles';
-import {formatDateToTime, timestampToDate} from '@libs/DataHandling';
+import {timestampToDate} from '@libs/DataHandling';
 import type {Profile, UserStatus} from '@src/types/onyx';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
 import DrinkData from '@libs/DrinkData';
 import _, {get} from 'lodash';
 import useThemeStyles from '@hooks/useThemeStyles';
+import DateUtils from '@libs/DateUtils';
+import {Timezone} from '@src/types/onyx/UserData';
 
 type UserOverviewProps = {
   userID: string;
   profileData: Profile;
   userStatusData: UserStatus;
+  timezone?: Timezone;
 };
 
 const UserOverview: React.FC<UserOverviewProps> = ({
   userID,
   profileData,
   userStatusData,
+  timezone,
 }) => {
   const {storage} = useFirebase();
   const styles = useThemeStyles();
@@ -36,7 +40,7 @@ const UserOverview: React.FC<UserOverviewProps> = ({
     inSession && !DSUtils.sessionIsExpired(latest_session);
   // const sessionLength = calculateSessionLength(latest_session, true);
   const sessionStartTime = latest_session?.start_time
-    ? formatDateToTime(timestampToDate(latest_session?.start_time))
+    ? DateUtils.getLocalizedTime(latest_session.start_time, timezone?.selected)
     : null;
   const mostCommonDrink =
     DSUtils.determineSessionMostCommonDrink(latest_session);

@@ -32,6 +32,7 @@ import CONST from '@src/CONST';
 import useThemeStyles from '@hooks/useThemeStyles';
 import useTheme from '@hooks/useTheme';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
 
 type UserListProps = {
   fullUserArray: UserArray;
@@ -60,6 +61,7 @@ const UserListComponent: React.FC<UserListProps> = ({
 }) => {
   const {auth, db} = useFirebase();
   const styles = useThemeStyles();
+  const {userData} = useDatabaseData();
   // Partial list of users for initial display and dynamic updates
   const [displayUserArray, setDisplayUserArray] = useState<UserArray>([]);
   const [userStatusList, setUserStatusList] = useState<UserStatusList>({});
@@ -187,6 +189,7 @@ const UserListComponent: React.FC<UserListProps> = ({
                       userID={userID}
                       profileData={profileData}
                       userStatusData={userStatusData}
+                      timezone={userData?.timezone}
                     />
                   </PressableWithAnimation>
                 );

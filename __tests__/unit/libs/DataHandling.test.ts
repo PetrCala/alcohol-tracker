@@ -6,8 +6,6 @@
   dateToDateObject,
   findDrinkName,
   formatDate,
-  formatDateToTime,
-  getAdjacentMonths,
   getLastDrinkAddedTime,
   getNextMonth,
   getPreviousMonth,
@@ -66,29 +64,6 @@ describe('formatDate function', () => {
     checkFormattedDate(new Date(2024, 11, 31), '2024-12-31');
   });
 });
-describe('formatDateToTime function', () => {
-  function checkFormattedTime(date: Date, expectedFormattedTime: string) {
-    const formattedTime = formatDateToTime(date);
-    expect(formattedTime).toEqual(expectedFormattedTime);
-    expect(typeof formattedTime).toBe('string');
-  }
-
-  it('formats an arbitrary date to its time', () => {
-    const date = new Date(2023, 7, 18, 16, 20);
-    checkFormattedTime(date, '16:20');
-  });
-
-  it('formats a date with hours/minutes starting with 0 to its time', () => {
-    const date = new Date(2023, 7, 18, 1, 1);
-    checkFormattedTime(date, '01:01');
-  });
-
-  it('formats a date at midnight to its time', () => {
-    const date = new Date(2023, 7, 18, 0, 0);
-    checkFormattedTime(date, '00:00');
-  });
-});
-
 describe('timestampToDate function', () => {
   function checkTimestampToDateConversion(timestamp: number) {
     const convertedDate = timestampToDate(timestamp);

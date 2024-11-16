@@ -41,12 +41,6 @@ export function formatDate(date: Date): DateString {
   )}-${String(date.getDate()).padStart(2, '0')}` as DateString;
 }
 
-export function formatDateToTime(date: Date): string {
-  return `${String(date.getHours()).padStart(2, '0')}:${String(
-    date.getMinutes(),
-  ).padStart(2, '0')}`;
-}
-
 /** Convert a timestamp to a Date object */
 export function timestampToDate(timestamp: number): Date {
   return new Date(timestamp);

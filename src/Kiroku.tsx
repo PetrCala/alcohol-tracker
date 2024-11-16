@@ -34,12 +34,10 @@ import DBPATHS from '@database/DBPATHS';
 import {listenForDataChanges, readDataOnce} from '@database/baseFunctions';
 import {checkIfUnderMaintenance} from '@libs/Maintenance';
 import {validateAppVersion} from '@libs/Validation';
-import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import UnderMaintenanceModal from '@components/Modals/UnderMaintenanceModal';
 import Modal from '@components/Modal';
 import CONST from './CONST';
 import UserOfflineModal from '@components/UserOfflineModal';
-import {isConnectedToDatabaseEmulator} from '@libs/Firebase/FirebaseUtils';
 import SplashScreenStateContext from '@context/global/SplashScreenStateContext';
 
 Onyx.registerLogger(({level, message}) => {

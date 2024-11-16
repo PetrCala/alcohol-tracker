@@ -55,18 +55,19 @@ let timezone: Required<Timezone> = CONST.DEFAULT_TIME_ZONE;
 Onyx.connect({
   key: ONYXKEYS.USER_DATA_LIST,
   callback: value => {
-    if (!auth?.currentUser) {
-      return;
-    }
-    const currentUserID = auth.currentUser.uid;
-
-    const userDataTimezone = value?.[currentUserID]?.timezone;
-
-    timezone = {
-      selected: userDataTimezone?.selected ?? CONST.DEFAULT_TIME_ZONE.selected,
-      automatic:
-        userDataTimezone?.automatic ?? CONST.DEFAULT_TIME_ZONE.automatic,
-    };
+    auth.onAuthStateChanged(user => {
+      if (!user) {
+        return;
+      }
+      const currentUserID = user.uid;
+      const userDataTimezone = value?.[currentUserID]?.timezone;
+      timezone = {
+        selected:
+          userDataTimezone?.selected ?? CONST.DEFAULT_TIME_ZONE.selected,
+        automatic:
+          userDataTimezone?.automatic ?? CONST.DEFAULT_TIME_ZONE.automatic,
+      };
+    });
   },
 });
 
@@ -148,6 +149,30 @@ function isToday(date: Date, timeZone: SelectedTimezone): boolean {
   const currentDate = new Date();
   const currentDateInTimeZone = utcToZonedTime(currentDate, timeZone);
   return isSameDay(date, currentDateInTimeZone);
+}
+
+/**
+ * Returns a localized time string based on the provided date, format string, and selected timezone.
+ *
+ * @param {Date | string | number} date - The date to be formatted. Can be a Date object, a string, or a timestamp.
+ * @param {string} - The format string to use for formatting the time. Defaults to a predefined short time format.
+ * @returns {string} The formatted time string localized to the selected timezone.
+ */
+function getLocalizedTime(
+  date: Date | string | number,
+  selectedTimezone: SelectedTimezone = timezone.selected,
+  formatString: string = CONST.DATE.SHORT_TIME_FORMAT,
+): string {
+  return formatInTimeZone(date, selectedTimezone, formatString);
+}
+
+function getLocalizedDay(
+  date: Date | string | number,
+  selectedTimezone: SelectedTimezone = timezone.selected,
+  formatString: string = CONST.DATE.SHORT_DATE_FORMAT,
+): string {
+  const day = utcToZonedTime(date, selectedTimezone);
+  return format(day, formatString);
 }
 
 /**
@@ -824,50 +849,52 @@ function getLastBusinessDayOfMonth(inputDate: Date): number {
 }
 
 const DateUtils = {
-  formatToDayOfWeek,
-  formatToLongDateWithWeekday,
-  formatToLocalTime,
-  getZoneAbbreviation,
-  datetimeToRelative,
-  datetimeToCalendarTime,
-  startCurrentDateUpdater,
-  getLocalDateFromDatetime,
-  getCurrentTimezone,
+  areDatesIdentical,
   canUpdateTimezone,
-  setTimezoneUpdated,
-  getMicroseconds,
+  combineDateAndTime,
+  datetimeToCalendarTime,
+  datetimeToRelative,
+  extractDate,
+  extractTime12Hour,
+  formatDateTimeTo12Hour,
+  formatToDayOfWeek,
+  formatToLocalTime,
+  formatToLongDateWithWeekday,
+  formatToSupportedTimezone,
+  formatWithUTCTimeZone,
+  get12HourTimeObjectFromDate,
+  getCurrentTimezone,
   getDBTime,
   getDBTimeWithSkew,
-  setLocale,
-  subtractMillisecondsFromDateTime,
-  getDateStringFromISOTimestamp,
-  getThirtyMinutesFromNow,
-  getEndOfToday,
-  getOneWeekFromNow,
   getDateFromStatusType,
-  getOneHourFromNow,
-  extractDate,
-  formatDateTimeTo12Hour,
-  getStatusUntilDate,
-  extractTime12Hour,
-  get12HourTimeObjectFromDate,
-  areDatesIdentical,
-  getTimePeriod,
-  getLocalizedTimePeriodDescription,
-  combineDateAndTime,
+  getDateStringFromISOTimestamp,
   getDayValidationErrorKey,
+  getDaysOfWeek,
+  getEndOfToday,
+  getLastBusinessDayOfMonth,
+  getLocalDateFromDatetime,
+  getLocalizedTime,
+  getLocalizedDay,
+  getLocalizedTimePeriodDescription,
+  getMicroseconds,
+  getMonthNames,
+  getOneHourFromNow,
+  getOneWeekFromNow,
+  getStatusUntilDate,
+  getThirtyMinutesFromNow,
+  getTimePeriod,
   getTimeValidationErrorKey,
+  getWeekEndsOn,
+  getWeekStartsOn,
+  getZoneAbbreviation,
+  isTimeAtLeastOneMinuteInFuture,
   isToday,
   isTomorrow,
   isYesterday,
-  getMonthNames,
-  getDaysOfWeek,
-  formatWithUTCTimeZone,
-  getWeekStartsOn,
-  getWeekEndsOn,
-  isTimeAtLeastOneMinuteInFuture,
-  formatToSupportedTimezone,
-  getLastBusinessDayOfMonth,
+  setLocale,
+  setTimezoneUpdated,
+  startCurrentDateUpdater,
+  subtractMillisecondsFromDateTime,
 };
 
 export default DateUtils;

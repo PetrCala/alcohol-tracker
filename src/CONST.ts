@@ -161,6 +161,7 @@ const CONST = {
     SQL_DATE_TIME: 'YYYY-MM-DD HH:mm:ss',
     FNS_FORMAT_STRING: 'yyyy-MM-dd',
     LOCAL_TIME_FORMAT: 'h:mm a',
+    SHORT_TIME_FORMAT: 'HH:mm',
     YEAR_MONTH_FORMAT: 'yyyyMM',
     MONTH_FORMAT: 'MMMM',
     WEEKDAY_TIME_FORMAT: 'eeee',

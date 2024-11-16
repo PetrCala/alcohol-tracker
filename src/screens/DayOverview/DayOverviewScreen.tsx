@@ -12,8 +12,6 @@ import {
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import MenuIcon from '../../components/Buttons/MenuIcon';
 import {
-  timestampToDate,
-  formatDateToTime,
   changeDateBySomeDays,
   unitsToColors,
   getSingleDayDrinkingSessions,
@@ -48,6 +46,7 @@ import Icon from '@components/Icon';
 import useTheme from '@hooks/useTheme';
 import commonStyles from '@src/styles/commonStyles';
 import ONYXKEYS from '@src/ONYXKEYS';
+import DateUtils from '@libs/DateUtils';
 
 type DayOverviewScreenProps = StackScreenProps<
   DayOverviewNavigatorParamList,
@@ -62,7 +61,8 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
   const {translate} = useLocalize();
   const styles = useThemeStyles();
   const theme = useTheme();
-  const {drinkingSessionData, preferences} = useDatabaseData();
+  const {drinkingSessionData, preferences, userData} = useDatabaseData();
+  const timezone = userData?.timezone;
   const [currentDate, setCurrentDate] = useState<Date>(
     date ? dateStringToDate(date) : new Date(),
   );
@@ -124,8 +124,9 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
       sessionColor = 'black';
     }
     // Convert the timestamp to a Date object
-    const date = timestampToDate(session.start_time);
-    const timeString = nonMidnightString(formatDateToTime(date));
+    const timeString = nonMidnightString(
+      DateUtils.getLocalizedTime(session.start_time, timezone?.selected),
+    );
     const shouldDisplayTime = session.type === CONST.SESSION_TYPES.LIVE;
 
     return (

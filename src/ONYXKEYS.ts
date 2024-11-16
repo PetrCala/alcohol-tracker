@@ -10,9 +10,6 @@ import type DeepValueOf from './types/utils/DeepValueOf';
  * This is a file containing constants for all the top level keys in the onyx store
  */
 const ONYXKEYS = {
-  //   /** Holds information about the user that is logging in */
-  LOGIN: 'login',
-
   //   /** A unique ID for the device */
   DEVICE_ID: 'deviceID',
 
@@ -229,7 +226,6 @@ type OnyxValuesMapping = {
   [ONYXKEYS.PERSISTED_REQUESTS]: OnyxTypes.Request[];
   [ONYXKEYS.CURRENT_DATE]: string;
   //   [ONYXKEYS.IOU]: OnyxTypes.IOU;
-  [ONYXKEYS.LOGIN]: OnyxTypes.Login;
   [ONYXKEYS.MODAL]: OnyxTypes.Modal;
   [ONYXKEYS.NETWORK]: OnyxTypes.Network;
   //   [ONYXKEYS.NEW_GROUP_CHAT_DRAFT]: OnyxTypes.NewGroupChatDraft;
