@@ -14,8 +14,28 @@ import type {UserID} from '@src/types/onyx/OnyxCommon';
 import {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
 import DBPATHS from '@database/DBPATHS';
 import {subMilliseconds} from 'date-fns';
+import Onyx from 'react-native-onyx';
+import ONYXKEYS from '@src/ONYXKEYS';
+import {auth} from './Firebase/FirebaseApp';
 
 const PlaceholderDrinks: DrinksList = {[Date.now()]: {other: 0}};
+
+let timezone: Required<Timezone> = CONST.DEFAULT_TIME_ZONE;
+Onyx.connect({
+  key: ONYXKEYS.USER_DATA_LIST,
+  callback: value => {
+    if (!auth?.currentUser) {
+      return;
+    }
+    const currentUserID = auth?.currentUser?.uid;
+    const userDataTimezone = value?.[currentUserID]?.timezone;
+    timezone = {
+      selected: userDataTimezone?.selected ?? CONST.DEFAULT_TIME_ZONE.selected,
+      automatic:
+        userDataTimezone?.automatic ?? CONST.DEFAULT_TIME_ZONE.automatic,
+    };
+  },
+});
 
 /**
  * @returns An empty drinking session object.
@@ -31,8 +51,7 @@ function getEmptySession(
     drinks: usePlaceholderDrinks ? PlaceholderDrinks : {},
     blackout: false,
     note: '',
-    timezone: Intl.DateTimeFormat().resolvedOptions()
-      .timeZone as SelectedTimezone,
+    timezone: timezone.selected,
     type: type ?? CONST.SESSION_TYPES.EDIT,
     ...(ongoing && {ongoing: true}),
   };
