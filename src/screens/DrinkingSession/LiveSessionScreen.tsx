@@ -78,7 +78,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   const styles = useThemeStyles();
   const {translate} = useLocalize();
   const {isOnline} = useUserConnection();
-  const {preferences, userData} = useDatabaseData();
+  const {preferences} = useDatabaseData();
   const {windowWidth} = useWindowDimensions();
   const [liveSessionData] = useOnyx(ONYXKEYS.LIVE_SESSION_DATA);
   const [editSessionData] = useOnyx(ONYXKEYS.EDIT_SESSION_DATA);
