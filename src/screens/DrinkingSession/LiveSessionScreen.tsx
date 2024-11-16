@@ -489,7 +489,8 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
               }
               shouldAllowDateChange={session.type !== CONST.SESSION_TYPES.LIVE}
               shouldAllowTimezoneChange={
-                session.type !== CONST.SESSION_TYPES.LIVE
+                !session?.ongoing
+                // session.type !== CONST.SESSION_TYPES.LIVE // Enable this down the line
               }
             />
           </>

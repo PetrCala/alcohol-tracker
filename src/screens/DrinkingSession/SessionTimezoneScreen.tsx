@@ -39,8 +39,8 @@ function SesssionTimezoneScreen({route}: SessionTimezoneScreenProps) {
       );
     }
     DS.updateTimezone(session, timezone);
-    setSelectedTimezone(null);
     Navigation.goBack();
+    setSelectedTimezone(null);
   };
 
   const onSelectedTimezone = (timezone: SelectedTimezone) => {
