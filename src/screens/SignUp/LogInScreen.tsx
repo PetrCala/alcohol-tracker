@@ -156,6 +156,8 @@ function LogInScreen() {
                 InputComponent={TextInput}
                 inputID={INPUT_IDS.EMAIL}
                 name="email"
+                textContentType="emailAddress"
+                keyboardType="email-address"
                 label={translate('login.email')}
                 aria-label={translate('login.email')}
                 defaultValue={logInForm?.email ?? ''}

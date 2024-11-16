@@ -194,6 +194,8 @@ function SignUpScreen() {
                 InputComponent={TextInput}
                 inputID={INPUT_IDS.EMAIL}
                 name="email"
+                textContentType="emailAddress"
+                keyboardType="email-address"
                 label={translate('login.email')}
                 aria-label={translate('login.email')}
                 defaultValue={signUpForm?.email ?? ''}
@@ -203,6 +205,7 @@ function SignUpScreen() {
                 InputComponent={TextInput}
                 inputID={INPUT_IDS.USERNAME}
                 name="username"
+                textContentType="username"
                 label={translate('common.username')}
                 aria-label={translate('common.username')}
                 defaultValue={''}
