@@ -171,7 +171,7 @@ const localStyles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 5,
-    paddingRight: 8,
+    paddingRight: 12,
   },
   userInfoContainer: {
     flexGrow: 1,
