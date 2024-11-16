@@ -34,6 +34,8 @@ import Section from '@components/Section';
 import {TranslationPaths} from '@src/languages/types';
 import MenuItemGroup from '@components/MenuItemGroup';
 import _ from 'lodash';
+import {useOnyx} from 'react-native-onyx';
+import ONYXKEYS from '@src/ONYXKEYS';
 
 type DrinkMenuItem = {
   key: TranslationPaths;
@@ -58,8 +60,9 @@ type SessionSummaryScreenProps = StackScreenProps<
 
 function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
   const {sessionId} = route.params;
-  const {preferences, drinkingSessionData} = useDatabaseData();
+  const {preferences, drinkingSessionData, userData} = useDatabaseData();
   const {translate} = useLocalize();
+  // const timezone = userData?.private_data?.timezone?.selected;
   const styles = useThemeStyles();
   const theme = useTheme();
   if (!preferences) {

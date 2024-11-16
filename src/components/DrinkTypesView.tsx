@@ -4,6 +4,8 @@ import type {DrinksList} from '@src/types/onyx';
 import type DrinkDataProps from '@libs/DrinkData/types';
 import useTheme from '@hooks/useTheme';
 import useThemeStyles from '@hooks/useThemeStyles';
+import {translate} from '@libs/Localize';
+import useLocalize from '@hooks/useLocalize';
 
 export type DrinkTypesViewProps = {
   drinkData: DrinkDataProps;
@@ -18,12 +20,15 @@ const DrinkTypesView = ({
   setCurrentDrinks,
   availableUnits,
 }: DrinkTypesViewProps) => {
+  const {translate} = useLocalize();
   const styles = useThemeStyles();
 
   return (
     <View style={localStyles.mainContainer}>
       <View style={[localStyles.tab, styles.borderColorTheme]}>
-        <Text style={styles.headerText}>Drinks consumed</Text>
+        <Text style={styles.headerText}>
+          {translate('liveSessionScreen.drinksConsumed')}
+        </Text>
       </View>
       <View>
         {drinkData.map(drink => (

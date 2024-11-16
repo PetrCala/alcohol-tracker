@@ -503,6 +503,7 @@ export default {
     saving: 'Saving your session...',
     synchronizing: 'Synchronizing data...',
     loading: 'Loading your session...',
+    drinksConsumed: 'Drinks consumed',
     enterMonkeMode: 'Monke Mode',
     exitMonkeMode: 'Exit Monke Mode',
     sessionFrom: 'Session from',
