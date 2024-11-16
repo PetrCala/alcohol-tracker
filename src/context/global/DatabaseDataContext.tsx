@@ -6,7 +6,7 @@ import type {
   DrinkingSessionList,
   Preferences,
   UnconfirmedDays,
-  UserProps,
+  UserData,
   UserStatus,
 } from '@src/types/onyx';
 import type {FetchDataKeys} from '@hooks/useFetchData/types';
@@ -17,7 +17,7 @@ type DatabaseDataContextType = {
   drinkingSessionData?: DrinkingSessionList;
   preferences?: Preferences;
   unconfirmedDays?: UnconfirmedDays;
-  userData?: UserProps;
+  userData?: UserData;
   isLoading: boolean;
 };
 

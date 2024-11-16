@@ -17,7 +17,7 @@ import {
 } from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
-import {UserProps} from '@src/types/onyx';
+import {UserData} from '@src/types/onyx';
 import * as User from '@database/users';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {Alert} from 'react-native';
@@ -34,7 +34,7 @@ type SelectionScreenProps = StackScreenProps<
  */
 const getKey = (text: string): string => `${text}-${new Date().getTime()}`;
 
-const getUserTimezone = (userData: UserProps | undefined) =>
+const getUserTimezone = (userData: UserData | undefined) =>
   userData?.timezone ?? CONST.DEFAULT_TIME_ZONE;
 
 function SelectionScreen({}: SelectionScreenProps) {

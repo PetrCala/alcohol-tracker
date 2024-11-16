@@ -60,14 +60,14 @@ import type Drinks from './Drinks';
 import type {DrinkKey, DrinkName, DrinksList, DrinksTimestamp} from './Drinks';
 import type UserIsTyping from './UserIsTyping';
 import type UserLocation from './UserLocation';
-import type UserProps from './UserProps';
+import type UserProps from './UserData';
 import type {
   UserPropsList,
   UserPrivateData,
   UserPublicData,
   Profile,
   ProfileList,
-} from './UserProps';
+} from './UserData';
 import type UserStatus from './UserStatus';
 import type {UserStatusList} from './UserStatus';
 import TzFix from './TzFix';

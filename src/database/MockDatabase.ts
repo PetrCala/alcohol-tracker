@@ -14,7 +14,7 @@ import type {
   UnconfirmedDays,
   Drinks,
   UnitsToColors,
-  UserProps,
+  UserData,
   UserStatus,
   DrinksList,
   DrinkingSessionList,
@@ -288,12 +288,12 @@ function createMockFriendRequests(userID: string): FriendRequestList {
  * @param noFriends If set to true, no friends or friend requests will be created.
  * @returns Mock user data
  */
-function createMockUserData(userID: string, noFriends = false): UserProps {
+function createMockUserData(userID: string, noFriends = false): UserData {
   const mockProfile: Profile = {
     display_name: 'mock-user',
     photo_url: '',
   };
-  const mockUserData: UserProps = {
+  const mockUserData: UserData = {
     profile: mockProfile,
     role: 'mock-user',
   };

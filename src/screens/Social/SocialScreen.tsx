@@ -13,7 +13,7 @@ import FriendListScreen from './FriendListScreen';
 import FriendRequestScreen from './FriendRequestScreen';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {getReceivedRequestsCount} from '@libs/FriendUtils';
-import type {UserProps} from '@src/types/onyx';
+import type {UserData} from '@src/types/onyx';
 import type {StackScreenProps} from '@react-navigation/stack';
 import type SCREENS from '@src/SCREENS';
 import type {SocialNavigatorParamList} from '@libs/Navigation/types';
@@ -93,7 +93,7 @@ type SocialScreenProps = StackScreenProps<
 type RouteType = {
   key: string;
   title: string;
-  userData: UserProps | undefined;
+  userData: UserData | undefined;
 };
 
 function SocialScreen({route}: SocialScreenProps) {

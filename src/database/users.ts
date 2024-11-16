@@ -8,7 +8,7 @@ import type {
   ReasonForLeaving,
   ReasonForLeavingId,
   UserPrivateData,
-  UserProps,
+  UserData,
   UserStatus,
 } from '@src/types/onyx';
 import type {UserList} from '@src/types/onyx/OnyxCommon';
@@ -61,7 +61,7 @@ const getDefaultPreferences = (): Preferences => {
   };
 };
 
-const getDefaultUserData = (profileData: Profile): UserProps => {
+const getDefaultUserData = (profileData: Profile): UserData => {
   const userRole = 'open_beta_user';
   const timezone: Timezone = {
     selected: Intl.DateTimeFormat().resolvedOptions()
@@ -124,7 +124,7 @@ async function pushNewUserInfo(
 
   const updates: Record<
     string,
-    UserProps | Preferences | string | number | any
+    UserData | Preferences | string | number | any
   > = {};
   updates[accountCreationsRef.getRoute(deviceId, userID)] = Date.now();
   updates[nicknameRef.getRoute(nicknameKey, userID)] = userNickname;

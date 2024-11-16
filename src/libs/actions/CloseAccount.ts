@@ -4,7 +4,7 @@ import {Database} from 'firebase/database';
 import {deleteUserData, reauthentificateUser} from '@database/users';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
-import {UserProps} from '@src/types/onyx';
+import {UserData} from '@src/types/onyx';
 import * as Localize from '@libs/Localize';
 import * as ErrorUtils from '@libs/ErrorUtils';
 
@@ -33,7 +33,7 @@ function setSuccessMessage(message: string) {
 async function closeAccount(
   db: Database | null,
   auth: Auth | null,
-  userData: UserProps | undefined,
+  userData: UserData | undefined,
   reasonForLeaving: string,
   password: string,
 ) {

@@ -19,7 +19,7 @@ type UserPublicData = {
   last_active?: number;
 };
 
-type UserProps = {
+type UserData = {
   friend_requests?: FriendRequestList;
   friends?: UserList;
   private_data?: UserPrivateData;
@@ -29,15 +29,15 @@ type UserProps = {
   timezone?: Timezone;
 };
 
-type UserPropsList = Record<UserID, UserProps>;
+type UserDataList = Record<UserID, UserData>;
 
 type ProfileList = Record<UserID, Profile>;
 
-export default UserProps;
+export default UserData;
 export type {
   Profile,
   UserPublicData,
   UserPrivateData,
-  UserPropsList,
+  UserDataList,
   ProfileList,
 };
