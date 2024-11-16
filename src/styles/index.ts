@@ -2186,8 +2186,7 @@ const styles = (theme: ThemeColors) =>
     },
 
     textLoading: {
-      ...FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
-      fontSize: variables.fontSizeXLarge,
+      fontSize: variables.fontSizeLarge,
       color: theme.text,
     },
 

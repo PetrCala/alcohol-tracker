@@ -23,7 +23,6 @@ import * as Browser from '@libs/Browser';
 import * as User from '@database/users';
 import DotIndicatorMessage from '@components/DotIndicatorMessage';
 import {useUserConnection} from '@context/global/UserConnectionContext';
-import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
 import {TranslationPaths} from '@src/languages/types';
 import {ValueOf} from 'type-fest';
 import {View} from 'react-native';
@@ -33,6 +32,7 @@ import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import {useOnyx} from 'react-native-onyx';
 import Text from '@components/Text';
+import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 
 type LoginScreenLayoutRef = {
   scrollPageToTop: (animated?: boolean) => void;
@@ -167,111 +167,109 @@ function SignUpScreen() {
         ),
       ]}
       testID={SignUpScreen.displayName}>
-      <SignUpScreenLayout
-        welcomeHeader={''} // use 'welcomeHeader' to show the header
-        welcomeText={welcomeText}
-        ref={currentScreenLayoutRef}
-        navigateFocus={navigateFocus}>
-        {!!isLoading ? (
-          <FlexibleLoadingIndicator
-            text={translate('signUpScreen.signingIn')}
-          />
-        ) : (
-          <>
-            <FormProvider
-              formID={ONYXKEYS.FORMS.SIGN_UP_FORM}
-              validate={validate}
-              onSubmit={onSubmit}
-              shouldValidateOnBlur={false}
-              shouldValidateOnChange={true}
-              includeSafeAreaPaddingBottom={false}
-              submitButtonText={translate('common.signUp')}
-              submitButtonStyles={styles.pb5}
-              isSubmitButtonVisible={!isLoading}
-              shouldUseScrollView={false}
-              style={styles.flexGrow1}>
-              <InputWrapper
-                InputComponent={TextInput}
-                inputID={INPUT_IDS.EMAIL}
-                name="email"
-                textContentType="emailAddress"
-                keyboardType="email-address"
-                label={translate('login.email')}
-                aria-label={translate('login.email')}
-                defaultValue={signUpForm?.email ?? ''}
-                spellCheck={false}
+      {!!isLoading ? (
+        <FullScreenLoadingIndicator
+          loadingText={translate('signUpScreen.signingIn')}
+        />
+      ) : (
+        <SignUpScreenLayout
+          welcomeHeader={''} // use 'welcomeHeader' to show the header
+          welcomeText={welcomeText}
+          ref={currentScreenLayoutRef}
+          navigateFocus={navigateFocus}>
+          <FormProvider
+            formID={ONYXKEYS.FORMS.SIGN_UP_FORM}
+            validate={validate}
+            onSubmit={onSubmit}
+            shouldValidateOnBlur={false}
+            shouldValidateOnChange={true}
+            includeSafeAreaPaddingBottom={false}
+            submitButtonText={translate('common.signUp')}
+            submitButtonStyles={styles.pb5}
+            isSubmitButtonVisible={!isLoading}
+            shouldUseScrollView={false}
+            style={styles.flexGrow1}>
+            <InputWrapper
+              InputComponent={TextInput}
+              inputID={INPUT_IDS.EMAIL}
+              name="email"
+              textContentType="emailAddress"
+              keyboardType="email-address"
+              label={translate('login.email')}
+              aria-label={translate('login.email')}
+              defaultValue={signUpForm?.email ?? ''}
+              spellCheck={false}
+            />
+            <InputWrapper
+              InputComponent={TextInput}
+              inputID={INPUT_IDS.USERNAME}
+              name="username"
+              textContentType="username"
+              label={translate('common.username')}
+              aria-label={translate('common.username')}
+              defaultValue={''}
+              spellCheck={false}
+            />
+            <InputWrapper
+              InputComponent={TextInput}
+              inputID={INPUT_IDS.PASSWORD}
+              name="password"
+              label={translate('common.password')}
+              aria-label={translate('common.password')}
+              defaultValue={''}
+              spellCheck={false}
+              secureTextEntry
+              autoComplete={
+                Browser.getBrowser() === CONST.BROWSER.SAFARI
+                  ? 'username'
+                  : 'off'
+              }
+            />
+            <InputWrapper
+              InputComponent={TextInput}
+              inputID={INPUT_IDS.RE_ENTER_PASSWORD}
+              name="re-enter-password"
+              label={translate('password.reEnter')}
+              aria-label={translate('password.reEnter')}
+              defaultValue={''}
+              spellCheck={false}
+              secureTextEntry
+              autoComplete={
+                Browser.getBrowser() === CONST.BROWSER.SAFARI
+                  ? 'username'
+                  : 'off'
+              }
+            />
+            {!!serverErrorMessage && (
+              <DotIndicatorMessage
+                style={[styles.mv2]}
+                type="error"
+                // eslint-disable-next-line @typescript-eslint/naming-convention,@typescript-eslint/prefer-nullish-coalescing
+                messages={{0: serverErrorMessage || ''}}
               />
-              <InputWrapper
-                InputComponent={TextInput}
-                inputID={INPUT_IDS.USERNAME}
-                name="username"
-                textContentType="username"
-                label={translate('common.username')}
-                aria-label={translate('common.username')}
-                defaultValue={''}
-                spellCheck={false}
-              />
-              <InputWrapper
-                InputComponent={TextInput}
-                inputID={INPUT_IDS.PASSWORD}
-                name="password"
-                label={translate('common.password')}
-                aria-label={translate('common.password')}
-                defaultValue={''}
-                spellCheck={false}
-                secureTextEntry
-                autoComplete={
-                  Browser.getBrowser() === CONST.BROWSER.SAFARI
-                    ? 'username'
-                    : 'off'
-                }
-              />
-              <InputWrapper
-                InputComponent={TextInput}
-                inputID={INPUT_IDS.RE_ENTER_PASSWORD}
-                name="re-enter-password"
-                label={translate('password.reEnter')}
-                aria-label={translate('password.reEnter')}
-                defaultValue={''}
-                spellCheck={false}
-                secureTextEntry
-                autoComplete={
-                  Browser.getBrowser() === CONST.BROWSER.SAFARI
-                    ? 'username'
-                    : 'off'
-                }
-              />
-              {!!serverErrorMessage && (
-                <DotIndicatorMessage
-                  style={[styles.mv2]}
-                  type="error"
-                  // eslint-disable-next-line @typescript-eslint/naming-convention,@typescript-eslint/prefer-nullish-coalescing
-                  messages={{0: serverErrorMessage || ''}}
-                />
-              )}
-            </FormProvider>
-            <View>
-              {/* Use another sign up method <- a simple link that navigates to the initial screen */}
-              <ChangeSignUpScreenLink
-                navigatesTo={ROUTES.LOG_IN}
-                onPress={onNavigateToLogIn}
-              />
-              <OrDelimiter />
-              <PressableWithFeedback
-                style={[styles.link]}
-                onPress={onNavigateBack}
-                role={CONST.ROLE.LINK}
-                accessibilityLabel={translate(
-                  'signUpScreen.chooseAnotherMethod',
-                )}>
-                <Text style={[styles.link, styles.textAlignCenter]}>
-                  {translate('signUpScreen.chooseAnotherMethod')}
-                </Text>
-              </PressableWithFeedback>
-            </View>
-          </>
-        )}
-      </SignUpScreenLayout>
+            )}
+          </FormProvider>
+          <View>
+            {/* Use another sign up method <- a simple link that navigates to the initial screen */}
+            <ChangeSignUpScreenLink
+              navigatesTo={ROUTES.LOG_IN}
+              onPress={onNavigateToLogIn}
+            />
+            <OrDelimiter />
+            <PressableWithFeedback
+              style={[styles.link]}
+              onPress={onNavigateBack}
+              role={CONST.ROLE.LINK}
+              accessibilityLabel={translate(
+                'signUpScreen.chooseAnotherMethod',
+              )}>
+              <Text style={[styles.link, styles.textAlignCenter]}>
+                {translate('signUpScreen.chooseAnotherMethod')}
+              </Text>
+            </PressableWithFeedback>
+          </View>
+        </SignUpScreenLayout>
+      )}
     </ScreenWrapper>
   );
 }
