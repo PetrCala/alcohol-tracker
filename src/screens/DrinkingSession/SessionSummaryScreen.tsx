@@ -55,8 +55,7 @@ type SessionSummaryScreenProps = StackScreenProps<
 
 function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
   const {sessionId} = route.params;
-  const {preferences, drinkingSessionData, userData} = useDatabaseData();
-  const timezone = userData?.timezone;
+  const {preferences, drinkingSessionData} = useDatabaseData();
   const {translate} = useLocalize();
   const styles = useThemeStyles();
   const theme = useTheme();

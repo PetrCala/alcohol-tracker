@@ -2,6 +2,7 @@ import dateAdd from 'date-fns/add';
 import dateSubtract from 'date-fns/sub';
 import * as KeyCommand from 'react-native-key-command';
 import SCREENS from './SCREENS';
+import {SelectedTimezone} from './types/onyx/UserData';
 
 // Creating a default array and object this way because objects ({}) and arrays ([]) are not stable types.
 // Freezing the array ensures that it cannot be unintentionally modified.
@@ -676,7 +677,11 @@ const CONST = {
       UNKNOWN: 'unknown',
     },
   },
-  DEFAULT_TIME_ZONE: {automatic: true, selected: 'Europe/Prague'},
+  DEFAULT_TIME_ZONE: {
+    automatic: true,
+    selected: Intl.DateTimeFormat().resolvedOptions()
+      .timeZone as SelectedTimezone,
+  },
   DEFAULT_ACCOUNT_DATA: {errors: null, success: '', isLoading: false},
   DEFAULT_NETWORK_DATA: {isOffline: false},
   DEFAULT_CLOSE_ACCOUNT_DATA: {errors: null, success: '', isLoading: false},

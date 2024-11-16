@@ -417,8 +417,8 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
           <View style={styles.alignItemsCenter}>
             <Text style={styles.textHeadlineH2}>
               {session?.ongoing
-                ? `${translate('liveSessionScreen.sessionFrom')} ${DateUtils.getLocalizedTime(session.start_time, userData?.timezone?.selected)}`
-                : `${translate('liveSessionScreen.sessionOn')} ${DateUtils.getLocalizedDay(session.start_time, userData?.timezone?.selected)}`}
+                ? `${translate('liveSessionScreen.sessionFrom')} ${DateUtils.getLocalizedTime(session.start_time, session.timezone)}`
+                : `${translate('liveSessionScreen.sessionOn')} ${DateUtils.getLocalizedDay(session.start_time, session.timezone)}`}
             </Text>
           </View>
           {isPending && (
@@ -490,7 +490,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
               note={session.note}
               dateString={DateUtils.getLocalizedDay(
                 session.start_time,
-                userData?.timezone?.selected,
+                session.timezone,
               )}
               shouldAllowDateChange={session.type !== CONST.SESSION_TYPES.LIVE}
             />

@@ -55,19 +55,16 @@ let timezone: Required<Timezone> = CONST.DEFAULT_TIME_ZONE;
 Onyx.connect({
   key: ONYXKEYS.USER_DATA_LIST,
   callback: value => {
-    auth.onAuthStateChanged(user => {
-      if (!user) {
-        return;
-      }
-      const currentUserID = user.uid;
-      const userDataTimezone = value?.[currentUserID]?.timezone;
-      timezone = {
-        selected:
-          userDataTimezone?.selected ?? CONST.DEFAULT_TIME_ZONE.selected,
-        automatic:
-          userDataTimezone?.automatic ?? CONST.DEFAULT_TIME_ZONE.automatic,
-      };
-    });
+    if (!auth?.currentUser) {
+      return;
+    }
+    const currentUserID = auth?.currentUser?.uid;
+    const userDataTimezone = value?.[currentUserID]?.timezone;
+    timezone = {
+      selected: userDataTimezone?.selected ?? CONST.DEFAULT_TIME_ZONE.selected,
+      automatic:
+        userDataTimezone?.automatic ?? CONST.DEFAULT_TIME_ZONE.automatic,
+    };
   },
 });
 
@@ -174,6 +171,13 @@ function getLocalizedDay(
   const day = utcToZonedTime(date, selectedTimezone);
   return format(day, formatString);
 }
+
+/**
+ * Get the device's time zone
+ */
+const getDeviceTimezone = (): SelectedTimezone => {
+  return Intl.DateTimeFormat().resolvedOptions().timeZone as SelectedTimezone;
+};
 
 /**
  * Checks if a given date is tomorrow in the specified time zone.
@@ -870,6 +874,7 @@ const DateUtils = {
   getDateStringFromISOTimestamp,
   getDayValidationErrorKey,
   getDaysOfWeek,
+  getDeviceTimezone,
   getEndOfToday,
   getLastBusinessDayOfMonth,
   getLocalDateFromDatetime,

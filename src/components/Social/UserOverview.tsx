@@ -41,7 +41,7 @@ const UserOverview: React.FC<UserOverviewProps> = ({
   // const sessionLength = calculateSessionLength(latest_session, true);
   const sessionStartTime = latest_session?.start_time
     ? DateUtils.getLocalizedTime(latest_session.start_time, timezone?.selected)
-    : null;
+    : null; // Show the time in the current user's timezone
   const mostCommonDrink =
     DSUtils.determineSessionMostCommonDrink(latest_session);
   const mostCommonDrinkIcon = DrinkData.find(

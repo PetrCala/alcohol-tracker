@@ -60,8 +60,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
   const {translate} = useLocalize();
   const styles = useThemeStyles();
   const theme = useTheme();
-  const {drinkingSessionData, preferences, userData} = useDatabaseData();
-  const timezone = userData?.timezone;
+  const {drinkingSessionData, preferences} = useDatabaseData();
   const [currentDate, setCurrentDate] = useState<Date>(
     date ? dateStringToDate(date) : new Date(),
   );
@@ -124,7 +123,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
     }
     // Convert the timestamp to a Date object
     const timeString = nonMidnightString(
-      DateUtils.getLocalizedTime(session.start_time, timezone?.selected),
+      DateUtils.getLocalizedTime(session.start_time, session.timezone),
     );
     const shouldDisplayTime = session.type === CONST.SESSION_TYPES.LIVE;
 

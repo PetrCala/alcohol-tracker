@@ -18,7 +18,7 @@ import type {
   DrinkName,
   Drinks,
 } from '@src/types/onyx';
-import {formatInTimeZone} from 'date-fns-tz';
+import {formatInTimeZone, utcToZonedTime} from 'date-fns-tz';
 import CONST from '../CONST';
 import type {MeasureType} from '@src/types/onyx/OnyxCommon';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
@@ -28,11 +28,30 @@ import {
   endOfDay,
   endOfMonth,
   endOfToday,
+  format,
   startOfDay,
   startOfMonth,
 } from 'date-fns';
+import Onyx from 'react-native-onyx';
+import ONYXKEYS from '@src/ONYXKEYS';
+import {auth} from './Firebase/FirebaseApp';
 
-let defaultTimezone: Required<Timezone> = CONST.DEFAULT_TIME_ZONE;
+let timezone: Required<Timezone> = CONST.DEFAULT_TIME_ZONE;
+Onyx.connect({
+  key: ONYXKEYS.USER_DATA_LIST,
+  callback: value => {
+    if (!auth?.currentUser) {
+      return;
+    }
+    const currentUserID = auth?.currentUser?.uid;
+    const userDataTimezone = value?.[currentUserID]?.timezone;
+    timezone = {
+      selected: userDataTimezone?.selected ?? CONST.DEFAULT_TIME_ZONE.selected,
+      automatic:
+        userDataTimezone?.automatic ?? CONST.DEFAULT_TIME_ZONE.automatic,
+    };
+  },
+});
 
 export function formatDate(date: Date): DateString {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
@@ -269,9 +288,11 @@ export function getSingleDayDrinkingSessions(
   sessions: DrinkingSessionList | undefined,
   returnArray = true,
 ): DrinkingSessionArray | DrinkingSessionList {
+  // This is without timezones
   const sessionBelongsToDate = (session: DrinkingSession) => {
-    const sessionDate = new Date(session.start_time);
-    return sessionDate >= startOfDay(date) && sessionDate <= endOfDay(date);
+    const tz = session.timezone ?? timezone.selected;
+    const sessionDate = formatInTimeZone(session.start_time, tz, 'yyyy-MM-dd');
+    return sessionDate === format(date, 'yyyy-MM-dd');
   };
 
   if (returnArray) {
@@ -302,7 +323,8 @@ export function getSingleMonthDrinkingSessions(
   const endDate = untilToday ? endOfToday() : endOfMonth(date);
 
   const monthDrinkingSessions = sessions.filter(session => {
-    const sessionDate = new Date(session.start_time);
+    const tz = session.timezone ?? timezone.selected;
+    const sessionDate = new Date(utcToZonedTime(session.start_time, tz));
     return sessionDate >= startDate && sessionDate <= endDate;
   });
 
@@ -318,7 +340,7 @@ export function aggregateSessionsByDays(
     (acc: SessionsCalendarDatesType, item: DrinkingSession) => {
       const dateString = formatInTimeZone(
         item.start_time,
-        item.timezone ?? defaultTimezone.selected,
+        item.timezone ?? timezone.selected,
         CONST.DATE.CALENDAR_FORMAT,
       );
       let newDrinks: number;
