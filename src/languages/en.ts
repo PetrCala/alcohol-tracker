@@ -570,7 +570,7 @@ export default {
     welcomeWithoutExclamation: 'Welcome',
     enterCredentials: 'Please enter your credentials.',
     welcomeNewAccount: ({login}: SignUpNewAccountCodeParams) =>
-      `${login}! Are you ready to create your account?`,
+      `${login}!\nAre you ready to create your account?`,
     // welcomeEnterMagicCode: ({login}: WelcomeEnterMagicCodeParams) =>
     //   `Please enter the magic code sent to ${login}. It should arrive within a minute or two.`,
   },

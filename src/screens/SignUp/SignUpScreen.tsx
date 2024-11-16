@@ -169,7 +169,7 @@ function SignUpScreen() {
       testID={SignUpScreen.displayName}>
       <SignUpScreenLayout
         welcomeHeader={''} // use 'welcomeHeader' to show the header
-        welcomeText={''}
+        welcomeText={welcomeText}
         ref={currentScreenLayoutRef}
         navigateFocus={navigateFocus}>
         {!!isLoading ? (
