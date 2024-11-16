@@ -2,7 +2,7 @@ import type {ValueOf} from 'type-fest';
 import type {UserID} from './OnyxCommon';
 import type {DrinksList} from './Drinks';
 import type CONST from '@src/CONST';
-import {SelectedTimezone} from './PersonalDetails';
+import {SelectedTimezone} from './UserData';
 
 type DrinkingSessionId = string;
 

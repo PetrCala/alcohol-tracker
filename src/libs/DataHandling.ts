@@ -22,7 +22,7 @@ import {formatInTimeZone} from 'date-fns-tz';
 import CONST from '../CONST';
 import type {MeasureType} from '@src/types/onyx/OnyxCommon';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
-import type {SelectedTimezone, Timezone} from '@src/types/onyx/PersonalDetails';
+import type {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
 import _ from 'lodash';
 import {
   endOfDay,

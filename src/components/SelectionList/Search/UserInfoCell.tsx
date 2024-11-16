@@ -5,10 +5,10 @@
 // import useThemeStyles from '@hooks/useThemeStyles';
 // import useWindowDimensions from '@hooks/useWindowDimensions';
 // import CONST from '@src/CONST';
-// import type {SearchPersonalDetails} from '@src/types/onyx/SearchResults';
+// import type {SearchUserData} from '@src/types/onyx/SearchResults';
 
 // type UserInfoCellProps = {
-//   participant: SearchPersonalDetails;
+//   participant: SearchUserData;
 //   displayName: string;
 // };
 

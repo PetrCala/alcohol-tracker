@@ -32,7 +32,7 @@ import {readDataOnce} from './baseFunctions';
 import {getLastStartedSessionId} from '@libs/DataHandling';
 import _ from 'lodash';
 import * as Session from '@userActions/Session';
-import {SelectedTimezone, Timezone} from '@src/types/onyx/PersonalDetails';
+import {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
 import {validateAppVersion, ValidationResult} from '@libs/Validation';
 import {checkAccountCreationLimit} from './protection';
 import Navigation from '@libs/Navigation/Navigation';

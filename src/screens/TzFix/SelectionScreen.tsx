@@ -9,7 +9,7 @@ import Navigation from '@libs/Navigation/Navigation';
 import CONST from '@src/CONST';
 import ROUTES from '@src/ROUTES';
 import TIMEZONES from '@src/TIMEZONES';
-import type {SelectedTimezone} from '@src/types/onyx/PersonalDetails';
+import type {SelectedTimezone} from '@src/types/onyx/UserData';
 import {StackScreenProps} from '@react-navigation/stack';
 import {
   SettingsNavigatorParamList,

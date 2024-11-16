@@ -10,7 +10,7 @@ import {StackScreenProps} from '@react-navigation/stack';
 import ONYXKEYS from '@src/ONYXKEYS';
 import ROUTES from '@src/ROUTES';
 import SCREENS from '@src/SCREENS';
-import {SelectedTimezone} from '@src/types/onyx/PersonalDetails';
+import {SelectedTimezone} from '@src/types/onyx/UserData';
 import {useEffect} from 'react';
 import {View} from 'react-native';
 

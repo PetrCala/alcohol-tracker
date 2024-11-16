@@ -17,7 +17,7 @@ import SCREENS from '@src/SCREENS';
 import {useState} from 'react';
 import {View} from 'react-native';
 import {useFirebase} from '@context/global/FirebaseContext';
-import {SelectedTimezone} from '@src/types/onyx/PersonalDetails';
+import {SelectedTimezone} from '@src/types/onyx/UserData';
 
 type ConfirmationScreenProps = StackScreenProps<
   TzFixModalNavigatorParamList,

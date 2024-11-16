@@ -2,7 +2,7 @@ import type {IsEqual} from 'type-fest';
 import type {DrinkingSessionId} from './types/onyx';
 import type {UserID} from './types/onyx/OnyxCommon';
 import type {DateString} from './types/time';
-import {SelectedTimezone} from './types/onyx/PersonalDetails';
+import {SelectedTimezone} from './types/onyx/UserData';
 
 /**
  * Builds a URL with an encoded URI component for the `backTo` param which can be added to the end of URLs

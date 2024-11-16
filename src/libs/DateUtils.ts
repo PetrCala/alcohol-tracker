@@ -40,7 +40,7 @@ import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
 import {auth} from './Firebase/FirebaseApp';
 import {timezoneBackwardMap} from '@src/TIMEZONES';
-import type {SelectedTimezone, Timezone} from '@src/types/onyx/PersonalDetails';
+import type {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
 import * as CurrentDate from './actions/CurrentDate';
 import * as Localize from './Localize';
 import Log from './Log';
@@ -51,34 +51,21 @@ type TimePeriod = 'AM' | 'PM';
 type Locale = ValueOf<typeof CONST.LOCALES>;
 type WeekDay = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
-// let currentUserAccountID: number | undefined;
-// Onyx.connect({
-//     key: ONYXKEYS.SESSION,
-//     callback: (val) => {
-//         // When signed out, val is undefined
-//         if (!val) {
-//             return;
-//         }
-
-//         currentUserAccountID = val.accountID;
-//     },
-// });
-
 let timezone: Required<Timezone> = CONST.DEFAULT_TIME_ZONE;
 Onyx.connect({
-  key: ONYXKEYS.PERSONAL_DETAILS_LIST,
+  key: ONYXKEYS.USER_DATA_LIST,
   callback: value => {
     if (!auth?.currentUser) {
       return;
     }
+    const currentUserID = auth.currentUser.uid;
 
-    const personalDetailsTimezone = value?.[currentUserID]?.timezone;
+    const userDataTimezone = value?.[currentUserID]?.timezone;
 
     timezone = {
-      selected:
-        personalDetailsTimezone?.selected ?? CONST.DEFAULT_TIME_ZONE.selected,
+      selected: userDataTimezone?.selected ?? CONST.DEFAULT_TIME_ZONE.selected,
       automatic:
-        personalDetailsTimezone?.automatic ?? CONST.DEFAULT_TIME_ZONE.automatic,
+        userDataTimezone?.automatic ?? CONST.DEFAULT_TIME_ZONE.automatic,
     };
   },
 });

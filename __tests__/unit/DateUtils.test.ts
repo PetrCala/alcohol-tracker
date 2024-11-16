@@ -16,7 +16,7 @@ import DateUtils from '@libs/DateUtils';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
-import type {SelectedTimezone} from '@src/types/onyx/PersonalDetails';
+import type {SelectedTimezone} from '@src/types/onyx/UserData';
 import waitForBatchedUpdates from '../utils/waitForBatchedUpdates';
 
 const LOCALE = CONST.LOCALES.EN;
@@ -29,7 +29,7 @@ describe('DateUtils', () => {
         [ONYXKEYS.SESSION]: {
           userID: '999',
         },
-        [ONYXKEYS.PERSONAL_DETAILS_LIST]: {
+        [ONYXKEYS.USER_DATA_LIST]: {
           '999': {
             userID: '999',
             timezone: {
@@ -147,7 +147,7 @@ describe('DateUtils', () => {
           resolvedOptions: () => ({timeZone: 'America/Chicago'}),
         }) as Intl.DateTimeFormat,
     );
-    Onyx.set(ONYXKEYS.PERSONAL_DETAILS_LIST, {
+    Onyx.set(ONYXKEYS.USER_DATA_LIST, {
       '999': {
         userID: '999',
         timezone: {selected: 'Europe/London', automatic: true},
@@ -168,7 +168,7 @@ describe('DateUtils', () => {
           resolvedOptions: () => ({timeZone: UTC}),
         }) as Intl.DateTimeFormat,
     );
-    Onyx.set(ONYXKEYS.PERSONAL_DETAILS_LIST, {
+    Onyx.set(ONYXKEYS.USER_DATA_LIST, {
       '999': {
         userID: '999',
         timezone: {selected: 'Europe/London', automatic: true},

@@ -9,7 +9,7 @@ import Navigation from '@libs/Navigation/Navigation';
 import CONST from '@src/CONST';
 import ROUTES from '@src/ROUTES';
 import TIMEZONES from '@src/TIMEZONES';
-import type {SelectedTimezone} from '@src/types/onyx/PersonalDetails';
+import type {SelectedTimezone} from '@src/types/onyx/UserData';
 import {StackScreenProps} from '@react-navigation/stack';
 import {SettingsNavigatorParamList} from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
@@ -26,8 +26,8 @@ type TimezoneSelectScreenProps = StackScreenProps<
   typeof SCREENS.SETTINGS.ACCOUNT.TIMEZONE_SELECT
 >;
 // type TimezoneSelectScreenProps = Pick<
-//   WithCurrentUserPersonalDetailsProps,
-//   'currentUserPersonalDetails'
+//   WithCurrentUserDataProps,
+//   'currentUserData'
 // >;
 
 /**
@@ -36,11 +36,11 @@ type TimezoneSelectScreenProps = StackScreenProps<
 const getKey = (text: string): string => `${text}-${new Date().getTime()}`;
 
 // const getUserTimezone = (
-//   currentUserPersonalDetails: ValueOf<
-//     WithCurrentUserPersonalDetailsProps,
-//     'currentUserPersonalDetails'
+//   currentUserData: ValueOf<
+//     WithCurrentUserDataProps,
+//     'currentUserData'
 //   >,
-// ) => currentUserPersonalDetails?.timezone ?? CONST.DEFAULT_TIME_ZONE;
+// ) => currentUserData?.timezone ?? CONST.DEFAULT_TIME_ZONE;
 const getUserTimezone = (userData: UserData | undefined) =>
   userData?.timezone ?? CONST.DEFAULT_TIME_ZONE;
 

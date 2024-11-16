@@ -11,7 +11,7 @@ import {ref, update, type Database} from 'firebase/database';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import {numberToVerboseString} from './TimeUtils';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
-import {SelectedTimezone, Timezone} from '@src/types/onyx/PersonalDetails';
+import {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
 import DBPATHS from '@database/DBPATHS';
 import {subMilliseconds} from 'date-fns';
 
@@ -160,7 +160,7 @@ function getDisplayNameForParticipant(
   }
   return 'not-yet-implemented'; // TODO implement this
 
-  // const personalDetails = getPersonalDetailsForUserID(userID);
+  // const personalDetails = getUserDataForUserID(userID);
   // // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   // const formattedLogin = LocalePhoneNumber.formatPhoneNumber(
   //   personalDetails.login || '',
@@ -176,7 +176,7 @@ function getDisplayNameForParticipant(
   // const shouldAddPostfix =
   //   shouldAddCurrentUserPostfix && userID === currentUserID;
 
-  // const longName = PersonalDetailsUtils.getDisplayNameOrDefault(
+  // const longName = UserDataUtils.getDisplayNameOrDefault(
   //   personalDetails,
   //   formattedLogin,
   //   shouldFallbackToHidden,

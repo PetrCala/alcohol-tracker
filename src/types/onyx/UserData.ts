@@ -1,6 +1,18 @@
+import type {TupleToUnion} from 'type-fest';
+import type TIMEZONES from '@src/TIMEZONES';
 import type {UserID, UserList} from './OnyxCommon';
 import type FriendRequestList from './FriendRequestList';
-import type {Timezone} from '@src/types/onyx/PersonalDetails';
+
+/** Selectable timezones */
+type SelectedTimezone = TupleToUnion<typeof TIMEZONES>;
+
+type Timezone = {
+  /** Value of selected timezone */
+  selected?: SelectedTimezone;
+
+  /** Whether timezone is automatically set */
+  automatic?: boolean;
+};
 
 type Profile = {
   first_name?: string; // TODO: make required from 0.4.x
@@ -33,11 +45,20 @@ type UserDataList = Record<UserID, UserData>;
 
 type ProfileList = Record<UserID, Profile>;
 
+/** Model of user data metadata */
+type UserDataMetadata = {
+  /** Whether we are waiting for the data to load via the API */
+  isLoading?: boolean;
+};
+
 export default UserData;
 export type {
   Profile,
+  Timezone,
+  SelectedTimezone,
   UserPublicData,
   UserPrivateData,
   UserDataList,
+  UserDataMetadata,
   ProfileList,
 };
