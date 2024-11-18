@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {formatDateToTime, timestampToDate} from '@libs/DataHandling';
+import {timestampToDate} from '@libs/DataHandling';
 import {removeFeedback} from '@database/feedback';
 import {fetchNicknameByUID} from '@database/baseFunctions';
 import {useFirebase} from '@context/global/FirebaseContext';
@@ -17,6 +17,8 @@ import CONST from '@src/CONST';
 import type {FeedbackList, Feedback} from '@src/types/onyx';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {format} from 'date-fns';
+import DateUtils from '@libs/DateUtils';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
 
 // AdminFeedbackModal props
 type AdminFeedbackPopupProps = {
@@ -28,6 +30,8 @@ type AdminFeedbackPopupProps = {
 
 const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
   const {visible, transparent, onRequestClose, FeedbackList} = props;
+  const {userData} = useDatabaseData();
+  const timezone = userData?.timezone;
   const [nicknames, setNicknames] = useState<Record<string, string>>({});
   const {db} = useFirebase();
   if (!db) {
@@ -80,7 +84,10 @@ const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
   const renderFeedback = ({item}: {item: Feedback & {feedback_id: string}}) => {
     const dateSubmitted = timestampToDate(item.submit_time);
     const daySubmitted = format(dateSubmitted, CONST.DATE.SHORT_DATE_FORMAT);
-    const timeSubmitted = formatDateToTime(dateSubmitted);
+    const timeSubmitted = DateUtils.getLocalizedTime(
+      dateSubmitted,
+      timezone?.selected,
+    );
     const nickname = nicknames[item.user_id] || 'Loading...'; // Default to "Loading..." if the nickname isn't fetched yet
 
     return (

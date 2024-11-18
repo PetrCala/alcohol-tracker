@@ -4,7 +4,8 @@ import {Database} from 'firebase/database';
 import {deleteUserData, reauthentificateUser} from '@database/users';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
-import {UserProps} from '@src/types/onyx';
+import {UserData} from '@src/types/onyx';
+import * as Localize from '@libs/Localize';
 import * as ErrorUtils from '@libs/ErrorUtils';
 
 /**
@@ -18,15 +19,21 @@ function clearError() {
  * Set default Onyx data
  */
 function setDefaultData() {
-  Onyx.merge(ONYXKEYS.FORMS.CLOSE_ACCOUNT_FORM, {
+  Onyx.set(ONYXKEYS.FORMS.CLOSE_ACCOUNT_FORM, {
     ...CONST.DEFAULT_CLOSE_ACCOUNT_DATA,
+  });
+}
+
+function setSuccessMessage(message: string) {
+  Onyx.merge(ONYXKEYS.FORMS.CLOSE_ACCOUNT_FORM, {
+    success: message,
   });
 }
 
 async function closeAccount(
   db: Database | null,
   auth: Auth | null,
-  userData: UserProps | undefined,
+  userData: UserData | undefined,
   reasonForLeaving: string,
   password: string,
 ) {
@@ -52,11 +59,14 @@ async function closeAccount(
       userNickname,
       userData.friends,
       userData.friend_requests,
+      reasonForLeaving,
     );
     await deleteUser(user);
 
     // Updating the loading state here might cause some issues
     await signOut(auth);
+
+    setSuccessMessage(Localize.translateLocal('closeAccount.successMessage'));
 
     // Add an alert here informing about the user deletion
     // Navigation.resetToHome(); // This is has been disabled as the redirect happens automatically upon Auth state change
@@ -69,5 +79,6 @@ export {
   // eslint-disable-next-line import/prefer-default-export
   clearError,
   setDefaultData,
+  setSuccessMessage,
   closeAccount,
 };

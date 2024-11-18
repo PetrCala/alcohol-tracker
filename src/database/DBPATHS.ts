@@ -1,4 +1,4 @@
-import type {DeviceId, FeedbackId} from '@src/types/onyx';
+import type {DeviceId, FeedbackId, ReasonForLeavingId} from '@src/types/onyx';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
 import type {NicknameKey} from '@src/types/onyx/NicknameToId';
 import type {IsEqual} from 'type-fest';
@@ -37,6 +37,12 @@ const DBPATHS = {
     route: '/nickname_to_id/:key/:user_id',
     getRoute: (key: NicknameKey, user_id: UserID) =>
       `nickname_to_id/${key}/${user_id}` as const,
+  },
+  REASONS_FOR_LEAVING: 'reasons_for_leaving',
+  REASONS_FOR_LEAVING_REASON_ID: {
+    route: '/reasons_for_leaving/:reason_id',
+    getRoute: (reason_id: ReasonForLeavingId) =>
+      `reasons_for_leaving/${reason_id}` as const,
   },
   USER_DRINKING_SESSIONS: 'user_drinking_sessions',
   USER_DRINKING_SESSIONS_USER_ID: {
@@ -158,20 +164,19 @@ const DBPATHS = {
       `users/${user_id}/profile/private_data` as const,
   },
 
-  USERS_USER_ID_PRIVATE_DATA_TIMEZONE: {
-    route: '/users/:user_id/private_data/timezone',
-    getRoute: (user_id: UserID) =>
-      `users/${user_id}/private_data/timezone` as const,
+  USERS_USER_ID_TIMEZONE: {
+    route: '/users/:user_id/timezone',
+    getRoute: (user_id: UserID) => `users/${user_id}/timezone` as const,
   },
-  USERS_USER_ID_PRIVATE_DATA_TIMEZONE_SELECTED: {
-    route: '/users/:user_id/private_data/timezone/selected',
+  USERS_USER_ID_TIMEZONE_SELECTED: {
+    route: '/users/:user_id/timezone/selected',
     getRoute: (user_id: UserID) =>
-      `users/${user_id}/private_data/timezone/selected` as const,
+      `users/${user_id}/timezone/selected` as const,
   },
-  USERS_USER_ID_PRIVATE_DATA_TIMEZONE_AUTOMATIC: {
-    route: '/users/:user_id/private_data/timezone/automatic',
+  USERS_USER_ID_TIMEZONE_AUTOMATIC: {
+    route: '/users/:user_id/timezone/automatic',
     getRoute: (user_id: UserID) =>
-      `users/${user_id}/private_data/timezone/automatic` as const,
+      `users/${user_id}/timezone/automatic` as const,
   },
 
   USERS_USER_ID_PUBLIC_DATA: {

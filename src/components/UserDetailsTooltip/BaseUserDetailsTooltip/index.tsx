@@ -2,7 +2,7 @@
 // import React, {useCallback} from 'react';
 // import {View} from 'react-native';
 // import Avatar from '@components/Avatar';
-// import {usePersonalDetails} from '@components/OnyxProvider';
+// import {useUserData} from '@components/OnyxProvider';
 // import Text from '@components/Text';
 // import Tooltip from '@components/Tooltip';
 // import type UserDetailsTooltipProps from '@components/UserDetailsTooltip/types';
@@ -22,7 +22,7 @@
 // }: UserDetailsTooltipProps) {
 //   const styles = useThemeStyles();
 //   const {translate} = useLocalize();
-//   const personalDetails = usePersonalDetails();
+//   const personalDetails = useUserData();
 
 //   const userDetails = personalDetails?.[userID] ?? fallbackUserDetails ?? {};
 //   let userDisplayName = ReportUtils.getUserDetailTooltipText(

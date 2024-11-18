@@ -209,13 +209,13 @@ function getAgeRequirementError(
 
   if (isSameDay(testDate, maximalDate) || isAfter(testDate, maximalDate)) {
     return [
-      'privatePersonalDetails.error.dateShouldBeBefore',
+      'UserPrivateData.error.dateShouldBeBefore',
       {dateString: format(maximalDate, CONST.DATE.FNS_FORMAT_STRING)},
     ];
   }
 
   return [
-    'privatePersonalDetails.error.dateShouldBeAfter',
+    'UserPrivateData.error.dateShouldBeAfter',
     {dateString: format(minimalDate, CONST.DATE.FNS_FORMAT_STRING)},
   ];
 }

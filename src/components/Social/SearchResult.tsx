@@ -171,9 +171,10 @@ const localStyles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 5,
+    paddingRight: 12,
   },
   userInfoContainer: {
-    width: '65%',
+    flexGrow: 1,
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
@@ -185,28 +186,11 @@ const localStyles = StyleSheet.create({
     borderRadius: 35,
   },
   sendFriendRequestContainer: {
-    width: '35%',
+    flexShrink: 1,
     height: '100%',
     maxHeight: 100,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  sendFriendRequestButton: {
-    width: '95%',
-    height: 35,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#4CAF50',
-    borderWidth: 1,
-    borderColor: 'black',
-    borderRadius: 10,
-  },
-  sendFriendRequestText: {
-    fontSize: 15,
-    fontWeight: '500',
-    color: 'black',
-    textAlign: 'center',
-    padding: 5,
   },
 });
 

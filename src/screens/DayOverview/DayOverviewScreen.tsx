@@ -12,20 +12,15 @@ import {
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import MenuIcon from '../../components/Buttons/MenuIcon';
 import {
-  timestampToDate,
-  formatDateToTime,
   changeDateBySomeDays,
   unitsToColors,
   getSingleDayDrinkingSessions,
-  sumAllUnits,
   dateStringToDate,
-  roundToTwoDecimalPlaces,
 } from '@libs/DataHandling';
 // import { PreferencesData} from '../types/database';
 import UserOffline from '@components/UserOfflineModal';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import type {DrinkingSession, DrinkingSessionList} from '@src/types/onyx';
-import {generateDatabaseKey} from '@database/baseFunctions';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import type {DrinkingSessionKeyValue} from '@src/types/utils/databaseUtils';
 import type {StackScreenProps} from '@react-navigation/stack';
@@ -34,22 +29,23 @@ import type SCREENS from '@src/SCREENS';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
-import DBPATHS from '@database/DBPATHS';
-import DSUtils from '@libs/DrinkingSessionUtils';
+import * as ErrorUtils from '@libs/ErrorUtils';
+import * as DS from '@libs/actions/DrinkingSession';
+import * as DSUtils from '@libs/DrinkingSessionUtils';
 import CONST from '@src/CONST';
-import {savePlaceholderSessionData} from '@database/drinkingSessions';
 import ScreenWrapper from '@components/ScreenWrapper';
 import {nonMidnightString} from '@libs/StringUtilsKiroku';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
-import {format} from 'date-fns';
+import {endOfToday, format} from 'date-fns';
 import Button from '@components/Button';
 import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Icon from '@components/Icon';
 import useTheme from '@hooks/useTheme';
 import commonStyles from '@src/styles/commonStyles';
+import DateUtils from '@libs/DateUtils';
 
 type DayOverviewScreenProps = StackScreenProps<
   DayOverviewNavigatorParamList,
@@ -64,7 +60,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
   const {translate} = useLocalize();
   const styles = useThemeStyles();
   const theme = useTheme();
-  const {drinkingSessionData, preferences} = useDatabaseData();
+  const {drinkingSessionData, preferences, userData} = useDatabaseData();
   const [currentDate, setCurrentDate] = useState<Date>(
     date ? dateStringToDate(date) : new Date(),
   );
@@ -93,21 +89,20 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
     setDailyData(newDailyData);
   }, [currentDate, drinkingSessionData]);
 
+  const onEditSessionPress = (sessionId: string, session: DrinkingSession) => {
+    DS.navigateToEditSessionScreen(sessionId, session);
+  };
+
   const onSessionButtonPress = (
     sessionId: string,
     session: DrinkingSession,
   ) => {
-    {
-      session?.ongoing
-        ? Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(sessionId))
-        : Navigation.navigate(
-            ROUTES.DRINKING_SESSION_SUMMARY.getRoute(sessionId),
-          );
+    if (!session?.ongoing) {
+      Navigation.navigate(ROUTES.DRINKING_SESSION_SUMMARY.getRoute(sessionId));
+      return;
     }
-  };
-
-  const onEditSessionPress = (sessionId: string) => {
-    Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(sessionId));
+    // If the session is ongoing, behave as if the edit button was pressed
+    onEditSessionPress(sessionId, session);
   };
 
   const DrinkingSession = ({sessionId, session}: DrinkingSessionKeyValue) => {
@@ -116,7 +111,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
     }
 
     // Calculate the session color
-    const totalUnits = sumAllUnits(
+    const totalUnits = DSUtils.calculateTotalUnits(
       session.drinks,
       preferences.drinks_to_units,
       true,
@@ -127,8 +122,9 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
       sessionColor = 'black';
     }
     // Convert the timestamp to a Date object
-    const date = timestampToDate(session.start_time);
-    const timeString = nonMidnightString(formatDateToTime(date));
+    const timeString = nonMidnightString(
+      DateUtils.getLocalizedTime(session.start_time, session.timezone),
+    );
     const shouldDisplayTime = session.type === CONST.SESSION_TYPES.LIVE;
 
     return (
@@ -171,7 +167,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
                   iconSource={KirokuIcons.Edit}
                   containerStyle={[localStyles.menuIconContainer]}
                   iconStyle={[localStyles.menuIcon]}
-                  onPress={() => onEditSessionPress(sessionId)} // Use keyextractor to load id here
+                  onPress={() => onEditSessionPress(sessionId, session)} // Use keyextractor to load id here
                 />
               )
             )}
@@ -202,45 +198,25 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
     if (!editMode || !user) {
       return null;
     } // Do not display outside edit mode
+
     // No button if the date is in the future
-    const today = new Date();
-    const tomorrowMidnight = changeDateBySomeDays(today, 1);
-    tomorrowMidnight.setHours(0, 0, 0, 0);
-    if (currentDate >= tomorrowMidnight) {
+    if (currentDate >= endOfToday()) {
       return null;
     }
 
-    /** Generate a placeholder session that corresponds to the current day */
-    const getPlaceholderSession = (): DrinkingSession => {
-      const timestamp = currentDate.getTime();
-      const session: DrinkingSession = DSUtils.getEmptySession(
-        CONST.SESSION_TYPES.EDIT,
-        true,
-        false,
-      );
-      session.start_time = timestamp;
-      session.end_time = timestamp;
-      return session;
-    };
-
-    const onAddSessionButtonPress = async () => {
-      // Generate a new drinking session key
-      const newSessionId = generateDatabaseKey(
-        db,
-        DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(user.uid),
-      );
-      if (!newSessionId) {
-        Alert.alert('Error', 'Could not generate a new session key.');
-        return;
-      }
+    const onAddSessionButtonPress = () => {
       try {
-        const placeholderSession = getPlaceholderSession();
-        await savePlaceholderSessionData(db, user.uid, placeholderSession);
+        const newSessionId = DS.getNewSessionToEdit(
+          db,
+          auth.currentUser,
+          currentDate,
+          userData?.timezone?.selected,
+        );
         Navigation.navigate(
           ROUTES.DRINKING_SESSION_LIVE.getRoute(newSessionId),
         );
       } catch (error: any) {
-        Alert.alert('Database Error', 'Failed to create a new session.');
+        ErrorUtils.raiseAlert(error);
       }
     };
 

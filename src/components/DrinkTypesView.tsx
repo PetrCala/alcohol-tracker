@@ -1,41 +1,89 @@
 ﻿import {StyleSheet, Text, View} from 'react-native';
-import DrinkingSessionDrinksWindow from './DrinkingSessionDrinksWindow';
-import type {DrinksList} from '@src/types/onyx';
-import type DrinkDataProps from '@libs/DrinkData/types';
-import useTheme from '@hooks/useTheme';
+import type {DrinkingSessionId, DrinkKey} from '@src/types/onyx';
 import useThemeStyles from '@hooks/useThemeStyles';
+import useLocalize from '@hooks/useLocalize';
+import DrinkData from '@libs/DrinkData';
+import * as DS from '@userActions/DrinkingSession';
+import {findDrinkName} from '@libs/DataHandling';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
+import CONST from '@src/CONST';
+import Icon from './Icon';
+import SessionDrinksInputWindow from './Buttons/SessionDrinksInputWindow';
+import Button from './Button';
+import useTheme from '@hooks/useTheme';
 
 export type DrinkTypesViewProps = {
-  drinkData: DrinkDataProps;
-  currentDrinks: DrinksList | undefined;
-  setCurrentDrinks: (newDrinks: DrinksList | undefined) => void;
-  availableUnits: number;
+  /** ID of the session to render */
+  sessionId: DrinkingSessionId;
 };
 
-const DrinkTypesView = ({
-  drinkData,
-  currentDrinks,
-  setCurrentDrinks,
-  availableUnits,
-}: DrinkTypesViewProps) => {
+const DrinkTypesView = ({sessionId}: DrinkTypesViewProps) => {
+  const {translate} = useLocalize();
+  const {preferences} = useDatabaseData();
   const styles = useThemeStyles();
+  const theme = useTheme();
+
+  const handleAddDrinks = (drinkKey: DrinkKey, amount: number) => {
+    DS.updateDrinks(
+      sessionId,
+      drinkKey,
+      amount,
+      CONST.DRINKS.ACTIONS.ADD,
+      preferences?.drinks_to_units,
+    );
+  };
+
+  const handleRemoveDrinks = (drinkKey: DrinkKey, amount: number) => {
+    DS.updateDrinks(
+      sessionId,
+      drinkKey,
+      amount,
+      CONST.DRINKS.ACTIONS.REMOVE,
+      preferences?.drinks_to_units,
+    );
+  };
 
   return (
     <View style={localStyles.mainContainer}>
       <View style={[localStyles.tab, styles.borderColorTheme]}>
-        <Text style={styles.headerText}>Drinks consumed</Text>
+        <Text style={styles.headerText}>
+          {translate('liveSessionScreen.drinksConsumed')}
+        </Text>
       </View>
       <View>
-        {drinkData.map(drink => (
-          <DrinkingSessionDrinksWindow
-            key={drink.key} // JS unique key property - no need to list
-            drinkKey={drink.key}
-            iconSource={drink.icon}
-            currentDrinks={currentDrinks}
-            setCurrentDrinks={setCurrentDrinks}
-            availableUnits={availableUnits}
-          />
-        ))}
+        {DrinkData.map(drink => {
+          const drinkKey = drink.key;
+          const iconSource = drink.icon;
+          const drinkName = findDrinkName(drinkKey);
+          const iconSize = drinkKey === CONST.DRINKS.KEYS.SMALL_BEER ? 22 : 28;
+
+          return (
+            <View key={drink.key} style={localStyles.sessionDrinkContainer}>
+              <View style={localStyles.iconContainer}>
+                <Icon src={iconSource} height={iconSize} width={iconSize} />
+              </View>
+              <Text style={localStyles.drinkInfoText}>{drinkName}</Text>
+              <Button
+                style={[styles.bgTransparent, styles.p1]}
+                onPress={() => handleRemoveDrinks(drinkKey, 1)}
+                icon={KirokuIcons.Minus}
+                iconFill={theme.textDark}
+              />
+              <SessionDrinksInputWindow
+                sessionId={sessionId}
+                drinkKey={drinkKey}
+                // Add more input parameters
+              />
+              <Button
+                style={[styles.bgTransparent, styles.p1]}
+                onPress={() => handleAddDrinks(drinkKey, 1)}
+                icon={KirokuIcons.Plus}
+                iconFill={theme.textDark}
+              />
+            </View>
+          );
+        })}
       </View>
     </View>
   );
@@ -54,7 +102,30 @@ const localStyles = StyleSheet.create({
     alignItems: 'center',
     height: 50,
     borderTopWidth: 1,
+    marginHorizontal: 12,
+  },
+  sessionDrinkContainer: {
+    paddingTop: 4,
+    paddingBottom: 4,
     marginLeft: 12,
     marginRight: 12,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  iconContainer: {
+    width: 32,
+    height: 32,
+    marginLeft: 4,
+    marginRight: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  drinkInfoText: {
+    flexGrow: 1,
+    fontSize: 14,
+    color: 'black',
+    alignSelf: 'center',
+    marginLeft: 5,
   },
 });

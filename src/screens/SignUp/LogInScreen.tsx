@@ -20,15 +20,14 @@ import * as ValidationUtils from '@libs/ValidationUtils';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import * as Browser from '@libs/Browser';
 import * as User from '@database/users';
-import {signInWithEmailAndPassword} from 'firebase/auth';
 import Text from '@components/Text';
 import {PressableWithFeedback} from '@components/Pressable';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import DotIndicatorMessage from '@components/DotIndicatorMessage';
 import {useUserConnection} from '@context/global/UserConnectionContext';
-import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
 import Onyx, {useOnyx} from 'react-native-onyx';
+import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 
 type LoginScreenLayoutRef = {
   scrollPageToTop: (animated?: boolean) => void;
@@ -43,7 +42,7 @@ function LogInScreen() {
   const {shouldUseNarrowLayout, isInNarrowPaneModal} = useResponsiveLayout();
   const safeAreaInsets = useStyledSafeAreaInsets();
   const currentScreenLayoutRef = useRef<LoginScreenLayoutRef>(null);
-  const [login] = useOnyx(ONYXKEYS.LOGIN);
+  const [logInForm] = useOnyx(ONYXKEYS.FORMS.LOG_IN_FORM_DRAFT);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [serverErrorMessage, setServerErrorMessage] = React.useState('');
 
@@ -55,6 +54,14 @@ function LogInScreen() {
 
   const navigateFocus = () => {
     currentScreenLayoutRef.current?.scrollPageToTop();
+  };
+
+  const onNavigateToSignUp = () => {
+    // Stash the email credentials for the sign up screen
+    Onyx.set(ONYXKEYS.FORMS.SIGN_UP_FORM_DRAFT, {
+      email: logInForm?.email ?? '',
+    });
+    Navigation.navigate(ROUTES.SIGN_UP);
   };
 
   const onSubmit = async (
@@ -124,69 +131,75 @@ function LogInScreen() {
         ),
       ]}
       testID={LogInScreen.displayName}>
-      <SignUpScreenLayout
-        welcomeHeader={welcomeHeader}
-        welcomeText={welcomeText}
-        ref={currentScreenLayoutRef}
-        navigateFocus={navigateFocus}>
-        {!!isLoading ? (
-          <FlexibleLoadingIndicator text={translate('logInScreen.loggingIn')} />
-        ) : (
-          <>
-            <FormProvider
-              formID={ONYXKEYS.FORMS.LOG_IN_FORM}
-              validate={validate}
-              onSubmit={onSubmit}
-              shouldValidateOnBlur={false}
-              submitButtonText={translate('common.logIn')}
-              includeSafeAreaPaddingBottom={false}
-              isSubmitButtonVisible={!isLoading}
-              shouldUseScrollView={false}
-              style={styles.flexGrow1}>
-              <InputWrapper
-                InputComponent={TextInput}
-                inputID={INPUT_IDS.EMAIL}
-                name="email"
-                label={translate('login.email')}
-                aria-label={translate('login.email')}
-                defaultValue={login?.email ?? ''}
-                spellCheck={false}
+      {!!isLoading ? (
+        <FullScreenLoadingIndicator
+          loadingText={translate('logInScreen.loggingIn')}
+        />
+      ) : (
+        <SignUpScreenLayout
+          welcomeHeader={''} // use welcomeHeader to show the header
+          welcomeText={welcomeText}
+          ref={currentScreenLayoutRef}
+          navigateFocus={navigateFocus}>
+          <FormProvider
+            formID={ONYXKEYS.FORMS.LOG_IN_FORM}
+            validate={validate}
+            onSubmit={onSubmit}
+            shouldValidateOnBlur={false}
+            submitButtonText={translate('common.logIn')}
+            submitButtonStyles={styles.pb5}
+            includeSafeAreaPaddingBottom={false}
+            isSubmitButtonVisible={!isLoading}
+            shouldUseScrollView={false}
+            style={styles.flexGrow1}>
+            <InputWrapper
+              InputComponent={TextInput}
+              inputID={INPUT_IDS.EMAIL}
+              name="email"
+              textContentType="emailAddress"
+              keyboardType="email-address"
+              label={translate('login.email')}
+              aria-label={translate('login.email')}
+              defaultValue={logInForm?.email ?? ''}
+              spellCheck={false}
+            />
+            <InputWrapper
+              InputComponent={TextInput}
+              inputID={INPUT_IDS.PASSWORD}
+              name="password"
+              label={translate('common.password')}
+              aria-label={translate('common.password')}
+              defaultValue={''}
+              spellCheck={false}
+              secureTextEntry
+              autoComplete={
+                Browser.getBrowser() === CONST.BROWSER.SAFARI
+                  ? 'username'
+                  : 'off'
+              }
+            />
+            {!!serverErrorMessage && (
+              <DotIndicatorMessage
+                style={[styles.mv2]}
+                type="error"
+                // eslint-disable-next-line @typescript-eslint/naming-convention,@typescript-eslint/prefer-nullish-coalescing
+                messages={{0: serverErrorMessage || ''}}
               />
-              <InputWrapper
-                InputComponent={TextInput}
-                inputID={INPUT_IDS.PASSWORD}
-                name="password"
-                label={translate('common.password')}
-                aria-label={translate('common.password')}
-                defaultValue={login?.password ?? ''}
-                spellCheck={false}
-                secureTextEntry
-                autoComplete={
-                  Browser.getBrowser() === CONST.BROWSER.SAFARI
-                    ? 'username'
-                    : 'off'
-                }
-              />
-              {!!serverErrorMessage && (
-                <DotIndicatorMessage
-                  style={[styles.mv2]}
-                  type="error"
-                  // eslint-disable-next-line @typescript-eslint/naming-convention,@typescript-eslint/prefer-nullish-coalescing
-                  messages={{0: serverErrorMessage || ''}}
-                />
-              )}
-              <PressableWithFeedback
-                style={[styles.link, styles.mt3]}
-                onPress={() => Navigation.navigate(ROUTES.FORGOT_PASSWORD)}
-                role={CONST.ROLE.LINK}
-                accessibilityLabel={translate('password.forgot')}>
-                <Text style={styles.link}>{translate('password.forgot')}</Text>
-              </PressableWithFeedback>
-            </FormProvider>
-            <ChangeSignUpScreenLink />
-          </>
-        )}
-      </SignUpScreenLayout>
+            )}
+            <PressableWithFeedback
+              style={[styles.link, styles.mt4]}
+              onPress={() => Navigation.navigate(ROUTES.FORGOT_PASSWORD)}
+              role={CONST.ROLE.LINK}
+              accessibilityLabel={translate('password.forgot')}>
+              <Text style={styles.link}>{translate('password.forgot')}</Text>
+            </PressableWithFeedback>
+          </FormProvider>
+          <ChangeSignUpScreenLink
+            navigatesTo={ROUTES.SIGN_UP}
+            onPress={onNavigateToSignUp}
+          />
+        </SignUpScreenLayout>
+      )}
     </ScreenWrapper>
   );
 }

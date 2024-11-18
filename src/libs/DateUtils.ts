@@ -38,12 +38,12 @@ import Onyx from 'react-native-onyx';
 import type {ValueOf} from 'type-fest';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
+import {auth} from './Firebase/FirebaseApp';
 import {timezoneBackwardMap} from '@src/TIMEZONES';
-import type {SelectedTimezone, Timezone} from '@src/types/onyx/PersonalDetails';
+import type {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
 import * as CurrentDate from './actions/CurrentDate';
 import * as Localize from './Localize';
 import Log from './Log';
-import type {UserID} from '@src/types/onyx/OnyxCommon';
 
 type CustomStatusTypes =
   (typeof CONST.CUSTOM_STATUS_TYPES)[keyof typeof CONST.CUSTOM_STATUS_TYPES];
@@ -51,34 +51,19 @@ type TimePeriod = 'AM' | 'PM';
 type Locale = ValueOf<typeof CONST.LOCALES>;
 type WeekDay = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
-let currentUserID: UserID | undefined;
-Onyx.connect({
-  key: ONYXKEYS.SESSION,
-  callback: val => {
-    // When signed out, val is undefined
-    if (!val) {
-      return;
-    }
-
-    currentUserID = val.userID;
-  },
-});
-
 let timezone: Required<Timezone> = CONST.DEFAULT_TIME_ZONE;
 Onyx.connect({
-  key: ONYXKEYS.PERSONAL_DETAILS_LIST,
+  key: ONYXKEYS.USER_DATA_LIST,
   callback: value => {
-    if (!currentUserID) {
+    if (!auth?.currentUser) {
       return;
     }
-
-    const personalDetailsTimezone = value?.[currentUserID]?.timezone;
-
+    const currentUserID = auth?.currentUser?.uid;
+    const userDataTimezone = value?.[currentUserID]?.timezone;
     timezone = {
-      selected:
-        personalDetailsTimezone?.selected ?? CONST.DEFAULT_TIME_ZONE.selected,
+      selected: userDataTimezone?.selected ?? CONST.DEFAULT_TIME_ZONE.selected,
       automatic:
-        personalDetailsTimezone?.automatic ?? CONST.DEFAULT_TIME_ZONE.automatic,
+        userDataTimezone?.automatic ?? CONST.DEFAULT_TIME_ZONE.automatic,
     };
   },
 });
@@ -162,6 +147,37 @@ function isToday(date: Date, timeZone: SelectedTimezone): boolean {
   const currentDateInTimeZone = utcToZonedTime(currentDate, timeZone);
   return isSameDay(date, currentDateInTimeZone);
 }
+
+/**
+ * Returns a localized time string based on the provided date, format string, and selected timezone.
+ *
+ * @param {Date | string | number} date - The date to be formatted. Can be a Date object, a string, or a timestamp.
+ * @param {string} - The format string to use for formatting the time. Defaults to a predefined short time format.
+ * @returns {string} The formatted time string localized to the selected timezone.
+ */
+function getLocalizedTime(
+  date: Date | string | number,
+  selectedTimezone: SelectedTimezone = timezone.selected,
+  formatString: string = CONST.DATE.SHORT_TIME_FORMAT,
+): string {
+  return formatInTimeZone(date, selectedTimezone, formatString);
+}
+
+function getLocalizedDay(
+  date: Date | string | number,
+  selectedTimezone: SelectedTimezone = timezone.selected,
+  formatString: string = CONST.DATE.SHORT_DATE_FORMAT,
+): string {
+  const day = utcToZonedTime(date, selectedTimezone);
+  return format(day, formatString);
+}
+
+/**
+ * Get the device's time zone
+ */
+const getDeviceTimezone = (): SelectedTimezone => {
+  return Intl.DateTimeFormat().resolvedOptions().timeZone as SelectedTimezone;
+};
 
 /**
  * Checks if a given date is tomorrow in the specified time zone.
@@ -837,50 +853,53 @@ function getLastBusinessDayOfMonth(inputDate: Date): number {
 }
 
 const DateUtils = {
-  formatToDayOfWeek,
-  formatToLongDateWithWeekday,
-  formatToLocalTime,
-  getZoneAbbreviation,
-  datetimeToRelative,
-  datetimeToCalendarTime,
-  startCurrentDateUpdater,
-  getLocalDateFromDatetime,
-  getCurrentTimezone,
+  areDatesIdentical,
   canUpdateTimezone,
-  setTimezoneUpdated,
-  getMicroseconds,
+  combineDateAndTime,
+  datetimeToCalendarTime,
+  datetimeToRelative,
+  extractDate,
+  extractTime12Hour,
+  formatDateTimeTo12Hour,
+  formatToDayOfWeek,
+  formatToLocalTime,
+  formatToLongDateWithWeekday,
+  formatToSupportedTimezone,
+  formatWithUTCTimeZone,
+  get12HourTimeObjectFromDate,
+  getCurrentTimezone,
   getDBTime,
   getDBTimeWithSkew,
-  setLocale,
-  subtractMillisecondsFromDateTime,
-  getDateStringFromISOTimestamp,
-  getThirtyMinutesFromNow,
-  getEndOfToday,
-  getOneWeekFromNow,
   getDateFromStatusType,
-  getOneHourFromNow,
-  extractDate,
-  formatDateTimeTo12Hour,
-  getStatusUntilDate,
-  extractTime12Hour,
-  get12HourTimeObjectFromDate,
-  areDatesIdentical,
-  getTimePeriod,
-  getLocalizedTimePeriodDescription,
-  combineDateAndTime,
+  getDateStringFromISOTimestamp,
   getDayValidationErrorKey,
+  getDaysOfWeek,
+  getDeviceTimezone,
+  getEndOfToday,
+  getLastBusinessDayOfMonth,
+  getLocalDateFromDatetime,
+  getLocalizedTime,
+  getLocalizedDay,
+  getLocalizedTimePeriodDescription,
+  getMicroseconds,
+  getMonthNames,
+  getOneHourFromNow,
+  getOneWeekFromNow,
+  getStatusUntilDate,
+  getThirtyMinutesFromNow,
+  getTimePeriod,
   getTimeValidationErrorKey,
+  getWeekEndsOn,
+  getWeekStartsOn,
+  getZoneAbbreviation,
+  isTimeAtLeastOneMinuteInFuture,
   isToday,
   isTomorrow,
   isYesterday,
-  getMonthNames,
-  getDaysOfWeek,
-  formatWithUTCTimeZone,
-  getWeekStartsOn,
-  getWeekEndsOn,
-  isTimeAtLeastOneMinuteInFuture,
-  formatToSupportedTimezone,
-  getLastBusinessDayOfMonth,
+  setLocale,
+  setTimezoneUpdated,
+  startCurrentDateUpdater,
+  subtractMillisecondsFromDateTime,
 };
 
 export default DateUtils;

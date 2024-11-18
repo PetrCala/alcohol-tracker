@@ -28,9 +28,10 @@ import ONYXKEYS from '@src/ONYXKEYS';
 import type {Route} from '@src/ROUTES';
 import ROUTES from '@src/ROUTES';
 import type * as OnyxTypes from '@src/types/onyx';
-// import type {SelectedTimezone} from '@src/types/onyx/PersonalDetails';
+// import type {SelectedTimezone} from '@src/types/onyx/UserData';
 import type {OnyxData} from '@src/types/onyx/Request';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
+import {User} from 'firebase/auth';
 // import * as Session from './Session';
 // import Timing from './Timing';
 
@@ -381,15 +382,13 @@ function endSignOnTransition() {
  * pass it in as a parameter. withOnyx guarantees that the value has been read
  * from Onyx because it will not render the AuthScreens until that point.
  */
-function setUpPoliciesAndNavigate(session: OnyxEntry<OnyxTypes.Session>) {
+function setUpPoliciesAndNavigate(user: User | null) {
   const currentUrl = getCurrentUrl();
-  if (!session || !currentUrl?.includes('exitTo')) {
+  if (!user || !currentUrl?.includes('exitTo')) {
     return;
   }
 
-  const isLoggingInAsNewUser =
-    !!session.email &&
-    SessionUtils.isLoggingInAsNewUser(currentUrl, session.email);
+  const isLoggingInAsNewUser = !!user.email; //&& SessionUtils.isLoggingInAsNewUser(currentUrl, user.email);
   const url = new URL(currentUrl);
   const exitTo = url.searchParams.get('exitTo') as Route | null;
 
@@ -445,7 +444,7 @@ function redirectThirdPartyDesktopSignIn() {
   }
 }
 
-// function openProfile(personalDetails: OnyxTypes.PersonalDetails) {
+// function openProfile(personalDetails: OnyxTypes.UserData) {
 //   const oldTimezoneData = personalDetails.timezone ?? {};
 //   let newTimezoneData = oldTimezoneData;
 
@@ -469,7 +468,7 @@ function redirectThirdPartyDesktopSignIn() {
 //       optimisticData: [
 //         {
 //           onyxMethod: Onyx.METHOD.MERGE,
-//           key: ONYXKEYS.PERSONAL_DETAILS_LIST,
+//           key: ONYXKEYS.USER_DATA_LIST,
 //           value: {
 //             [currentUserID]: {
 //               timezone: newTimezoneData,
@@ -480,7 +479,7 @@ function redirectThirdPartyDesktopSignIn() {
 //       failureData: [
 //         {
 //           onyxMethod: Onyx.METHOD.MERGE,
-//           key: ONYXKEYS.PERSONAL_DETAILS_LIST,
+//           key: ONYXKEYS.USER_DATA_LIST,
 //           value: {
 //             [currentUserID]: {
 //               timezone: oldTimezoneData,

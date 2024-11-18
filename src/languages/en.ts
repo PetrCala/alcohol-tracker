@@ -19,6 +19,7 @@ export default {
     name: 'Name',
     attachment: 'Attachment',
     to: 'To',
+    or: 'Or',
     optional: 'Optional',
     new: 'New',
     search: 'Search',
@@ -85,6 +86,7 @@ export default {
     pin: 'Pin',
     unPin: 'Unpin',
     back: 'Back',
+    yesIKnowWhatIAmDoing: 'Yes, I know what I am doing',
     saveAndContinue: 'Save & continue',
     settings: 'Settings',
     termsOfService: 'Terms of Service',
@@ -277,9 +279,17 @@ export default {
   },
   friendsFriendsScreen: {
     title: 'Find Friends of Friends',
+    seeProfile: 'See profile',
+    searchUsersFriends: "Search for the user's friends",
+    commonFriends: 'Common Friends',
+    otherFriends: 'Other Friends',
+    noFriendsFound: 'No friends found.',
+    trySearching: 'Try searching for other users.',
+    hasNoFriends: 'This user has not added any friends yet.',
   },
   friendSearchScreen: {
     title: 'Search For New Friends',
+    noUsersFound: 'There are no users with this nickname.',
   },
   notFoundScreen: {
     title: 'Not Found',
@@ -314,6 +324,7 @@ export default {
       sessionColor: 'Session color',
       units: 'Units',
       date: 'Date',
+      type: 'Session type',
       startTime: 'Start time',
       lastDrinkAdded: 'Last drink added',
       endTime: 'End time',
@@ -352,10 +363,20 @@ export default {
         'These details help us provide you with the best user experience.',
     },
   },
+  drinkingSession: {
+    type: {
+      live: 'Live',
+      edit: 'Edit',
+    },
+    error: {
+      sessionOpen: 'Failed to open a session',
+    },
+  },
   userNameScreen: {
     headerTitle: 'User name',
     explanation:
       'Displaying your name helps your friends easily find and recognize you on your profile.',
+    note: "Note: Your name will show up elsewhere in the app just yet. We're working on it!",
     updatingUserName: 'Updating your name...',
   },
   displayNameScreen: {
@@ -403,7 +424,9 @@ export default {
     success: {
       title: 'Success!',
       text1:
-        "Your data has been successfully synchronized to Coordinated Universal Time (UTC). You're all set!",
+        "Your data has been successfully marked with timesamps. You're all set!",
+      text2:
+        "In case you have any questions or need help regarding this synchronization, don't hesitate to reach out to us at kiroku.alcohol.tracker@gmail.com.",
       finishButton: 'Awesome!',
     },
   },
@@ -451,6 +474,9 @@ export default {
   profileScreen: {
     title: 'Profile',
     titleNotSelf: 'Friend Overview',
+    seeAllFriends: 'See all friends',
+    drinkingSessions: (plural: string) => `Drinking Session${plural}`,
+    unitsConsumed: 'Units Consumed',
   },
   statisticsScreen: {
     title: 'Statistics',
@@ -463,13 +489,27 @@ export default {
     exitEditMode: 'Exit Edit Mode',
     noDrinkingSessions: 'No drinking sessions',
     inSession: 'In Session',
+    error: {
+      open: 'Failed to open a new session. Please try again.',
+    },
+  },
+  homeScreen: {
+    startingSession: 'Starting a new session...',
+    error: {
+      title: 'Failed to open a session',
+      sessionStart: "We couldn't start a new session. Please try again.",
+      noLiveSession: "You're not in a session",
+    },
   },
   liveSessionScreen: {
     saving: 'Saving your session...',
     synchronizing: 'Synchronizing data...',
     loading: 'Loading your session...',
+    drinksConsumed: 'Drinks consumed',
     enterMonkeMode: 'Monke Mode',
     exitMonkeMode: 'Exit Monke Mode',
+    sessionFrom: 'Session from',
+    sessionOn: 'Session on',
     blackout: 'Blackout',
     blackoutSwitchLabel:
       'This indicates whether your session ended in a blackout.',
@@ -479,9 +519,15 @@ export default {
     unsavedChangesWarning:
       'You have unsaved changes. Are you sure you want to go back?',
     sessionDetails: 'Session details',
+    discardSession: (discardWord: string) => `${discardWord} Session`,
+    saveSession: 'Save Session',
+    discardingSession: (discardWord: string) =>
+      `${discardWord} this session...`,
     error: {
+      discardTitle: 'Session discard failed',
+      discard: "We couldn't discard this session. Please try again.",
       saveTitle: 'Session save failed',
-      save: 'This session could not be saved. Try again.',
+      save: 'This session could not be saved. Please try again.',
       load: 'Failed to fetch details of this session.',
     },
   },
@@ -494,10 +540,23 @@ export default {
   },
   sessionNoteScreen: {
     title: 'Session note',
+    noteDescription: "This note is private and won't be shared with others.",
     error: {
       load: 'Failed to fetch details of this session.',
       generic: 'Failed to modify the session note.',
       noteTooLongError: 'Your note is too long.',
+    },
+  },
+  sessionTimezoneScreen: {
+    title: 'Session timezone',
+    description:
+      'Please choose the timezone you were in when you started the session.',
+    note: 'Note: Each time the details of this session are viewed, its timestamps will be displayed in the selected timezone.',
+    confirmPrompt: (newTimezone: string) =>
+      `Setting the timezone to ${newTimezone} will change the date of this session. Are you sure you'd like to proceed?`,
+    error: {
+      generic: 'Failed to modify the session timezone.',
+      errorSelectTimezone: 'Failed to select a timezone. Please try again.',
     },
   },
   maintenance: {
@@ -527,7 +586,7 @@ export default {
     welcomeWithoutExclamation: 'Welcome',
     enterCredentials: 'Please enter your credentials.',
     welcomeNewAccount: ({login}: SignUpNewAccountCodeParams) =>
-      `${login}! Are you ready to create your account?`,
+      `${login}!\nAre you ready to create your account?`,
     // welcomeEnterMagicCode: ({login}: WelcomeEnterMagicCodeParams) =>
     //   `Please enter the magic code sent to ${login}. It should arrive within a minute or two.`,
   },
@@ -602,8 +661,30 @@ export default {
   },
   signUpScreen: {
     signingIn: 'Signing in...',
+    chooseAnotherMethod: 'Choose another sign in method',
     error: {
       generic: 'There was an error creating your account. Please try again.',
+    },
+  },
+  forgotPasswordScreen: {
+    title: 'Forgotten password',
+    prompt:
+      'We will send you instructions on how to reset your password using the following email:',
+    sending: 'Sending you an email...',
+    submit: 'Reset your password',
+    enterEmail: 'Enter your email here',
+    success: (email: string) =>
+      `An email with password reset instructions has been sent to ${email}.`,
+    error: {
+      generic: 'There was an error when attempting to reset your password.',
+    },
+  },
+  closeAccount: {
+    successMessage: 'Your account has been successfully deleted.',
+  },
+  onyx: {
+    error: {
+      generic: 'Failed to reach the local database',
     },
   },
   genericErrorScreen: {

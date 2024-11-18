@@ -91,6 +91,9 @@ type DrinkingSessionNavigatorParamList = {
   [SCREENS.DRINKING_SESSION.SESSION_NOTE_SCREEN]: {
     sessionId: DrinkingSessionId;
   };
+  [SCREENS.DRINKING_SESSION.SESSION_TIMEZONE_SCREEN]: {
+    sessionId: DrinkingSessionId;
+  };
   [SCREENS.DRINKING_SESSION.SUMMARY]: {
     sessionId: DrinkingSessionId;
   };

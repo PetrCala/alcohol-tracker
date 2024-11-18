@@ -1,6 +1,5 @@
 import type AccountCreations from './AccountCreations';
 import type {AccountCreationsList, DeviceId} from './AccountCreations';
-import type {Address} from './PrivatePersonalDetails';
 import type Config from './Config';
 import type {AppSettings, Maintenance} from './Config';
 import type {CapturedLogs, Log} from './Console';
@@ -32,19 +31,18 @@ import type {
   OnyxUpdatesFromServer,
 } from './OnyxUpdatesFromServer';
 
-import type {
-  PersonalDetailsList,
-  PersonalDetailsMetadata,
-} from './PersonalDetails';
-import type PersonalDetails from './PersonalDetails';
 import type Preferences from './Preferences';
 import type {
   PreferencesList,
   UnitsToColors,
   DrinksToUnits,
 } from './Preferences';
-import type PrivatePersonalDetails from './PrivatePersonalDetails';
 import type Request from './Request';
+import type ReasonForLeaving from './ReasonForLeaving';
+import type {
+  ReasonForLeavingId,
+  ReasonForLeavingList,
+} from './ReasonForLeaving';
 import type Response from './Response';
 import type Session from './Session';
 import type SessionPlaceholder from './SessionPlaceholder';
@@ -52,17 +50,18 @@ import type {SessionPlaceholderList} from './SessionPlaceholder';
 import type UnconfirmedDays from './UnconfirmedDays';
 import type {UnconfirmedDaysList, UnconfirmedDayKey} from './UnconfirmedDays';
 import type Drinks from './Drinks';
-import type User from './User';
 import type {DrinkKey, DrinkName, DrinksList, DrinksTimestamp} from './Drinks';
 import type UserIsTyping from './UserIsTyping';
-import type UserProps from './UserProps';
+import type UserLocation from './UserLocation';
+import type UserData from './UserData';
 import type {
-  UserPropsList,
-  UserPrivateData,
-  UserPublicData,
   Profile,
   ProfileList,
-} from './UserProps';
+  UserDataList,
+  UserDataMetadata,
+  UserPrivateData,
+  UserPublicData,
+} from './UserData';
 import type UserStatus from './UserStatus';
 import type {UserStatusList} from './UserStatus';
 import TzFix from './TzFix';
@@ -70,7 +69,6 @@ import TzFix from './TzFix';
 export type {
   AccountCreations,
   AccountCreationsList,
-  Address,
   AppSettings,
   CapturedLogs,
   Config,
@@ -106,14 +104,13 @@ export type {
   NicknameToIdList,
   OnyxUpdateEvent,
   OnyxUpdatesFromServer,
-  PersonalDetailsList,
-  PersonalDetailsMetadata,
-  PersonalDetails,
   Preferences,
   PreferencesList,
-  PrivatePersonalDetails,
   Profile,
   ProfileList,
+  ReasonForLeaving,
+  ReasonForLeavingId,
+  ReasonForLeavingList,
   Request,
   Response,
   Session,
@@ -124,13 +121,14 @@ export type {
   UnconfirmedDays,
   UnconfirmedDaysList,
   UnitsToColors,
-  User,
   UserPublicData,
   UserPrivateData,
-  UserProps,
+  UserData,
+  UserDataList,
+  UserDataMetadata,
   UserDrinkingSessionsList,
   UserIsTyping,
-  UserPropsList,
+  UserLocation,
   UserStatus,
   UserStatusList,
 };

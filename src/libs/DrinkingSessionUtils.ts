@@ -5,39 +5,83 @@ import type {
   DrinkingSessionId,
   DrinkingSessionList,
   DrinkingSessionType,
+  Drinks,
   DrinksList,
+  DrinksToUnits,
 } from '@src/types/onyx';
 import {ref, update, type Database} from 'firebase/database';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import {numberToVerboseString} from './TimeUtils';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
-import {SelectedTimezone, Timezone} from '@src/types/onyx/PersonalDetails';
+import {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
 import DBPATHS from '@database/DBPATHS';
+import {format, subMilliseconds} from 'date-fns';
+import Onyx, {OnyxKey} from 'react-native-onyx';
+import ONYXKEYS from '@src/ONYXKEYS';
+import {auth} from './Firebase/FirebaseApp';
+import {formatInTimeZone} from 'date-fns-tz';
 import {
-  addMilliseconds,
-  differenceInDays,
-  subDays,
-  subMilliseconds,
-} from 'date-fns';
+  AddDrinksOptions,
+  RemoveDrinksOptions,
+} from '@src/types/onyx/DrinkingSession';
+import {roundToTwoDecimalPlaces} from './NumberUtils';
+import _ from 'lodash';
+import {ValueOf} from 'type-fest';
+import Log from './Log';
 
 const PlaceholderDrinks: DrinksList = {[Date.now()]: {other: 0}};
+
+let timezone: Required<Timezone> = CONST.DEFAULT_TIME_ZONE;
+Onyx.connect({
+  key: ONYXKEYS.USER_DATA_LIST,
+  callback: value => {
+    if (!auth?.currentUser) {
+      return;
+    }
+    const currentUserID = auth?.currentUser?.uid;
+    const userDataTimezone = value?.[currentUserID]?.timezone;
+    timezone = {
+      selected: userDataTimezone?.selected ?? CONST.DEFAULT_TIME_ZONE.selected,
+      automatic:
+        userDataTimezone?.automatic ?? CONST.DEFAULT_TIME_ZONE.automatic,
+    };
+  },
+});
+
+let liveSessionData: DrinkingSession | undefined;
+Onyx.connect({
+  key: ONYXKEYS.LIVE_SESSION_DATA,
+  callback: value => {
+    if (value) {
+      liveSessionData = value;
+    }
+  },
+});
+
+let editSessionData: DrinkingSession | undefined;
+Onyx.connect({
+  key: ONYXKEYS.EDIT_SESSION_DATA,
+  callback: value => {
+    if (value) {
+      editSessionData = value;
+    }
+  },
+});
 
 /**
  * @returns An empty drinking session object.
  */
 function getEmptySession(
   type?: DrinkingSessionType,
-  usePlaceholderDrinks?: boolean,
+  timezone?: SelectedTimezone,
   ongoing?: boolean,
 ): DrinkingSession {
   const emptySession: DrinkingSession = {
     start_time: Date.now(),
     end_time: Date.now(),
-    drinks: usePlaceholderDrinks ? PlaceholderDrinks : {},
     blackout: false,
     note: '',
-    timezone: Intl.DateTimeFormat().resolvedOptions()
-      .timeZone as SelectedTimezone,
+    timezone: timezone ?? CONST.DEFAULT_TIME_ZONE.selected,
     type: type ?? CONST.SESSION_TYPES.EDIT,
     ...(ongoing && {ongoing: true}),
   };
@@ -55,6 +99,281 @@ function isEmptySession(session: DrinkingSession): boolean {
     session.blackout === false &&
     session.note === ''
   );
+}
+
+/**
+ * Based on the session ID, get the drinking session data.
+ *
+ * @param sessionId The ID of the session.
+ * @returns The drinking session data.
+ */
+function getDrinkingSessionData(
+  sessionId: DrinkingSessionId | undefined,
+): DrinkingSession | undefined {
+  if (liveSessionData && liveSessionData.id === sessionId) {
+    return liveSessionData;
+  }
+  if (editSessionData && editSessionData.id === sessionId) {
+    return editSessionData;
+  }
+  return undefined;
+}
+
+function getDrinkingSessionOnyxKey(
+  sessionId: DrinkingSessionId | undefined,
+): OnyxKey | null {
+  if (!sessionId) {
+    return null;
+  }
+  if (liveSessionData && liveSessionData.id === sessionId) {
+    return ONYXKEYS.LIVE_SESSION_DATA;
+  }
+  if (editSessionData && editSessionData.id === sessionId) {
+    return ONYXKEYS.EDIT_SESSION_DATA;
+  }
+  return null;
+}
+
+/**
+ * Calculates the total units of a Drinks object based on a DrinksToUnits mapping.
+ *
+ * @param drinks - The Drinks object containing drink counts.
+ * @param drinksToUnits - A mapping from DrinkKey to unit conversion factors.
+ * @param roundUp?: boolean,
+ * @returns The total units calculated.
+ */
+function calculateTotalUnits(
+  drinks: DrinksList | undefined,
+  drinksToUnits: DrinksToUnits,
+  roundUp?: boolean,
+): number {
+  if (!drinks) {
+    return 0;
+  }
+
+  let totalUnits = 0;
+
+  _.forEach(Object.values(drinks), drink => {
+    for (const [drinkKey, count] of Object.entries(drink)) {
+      const conversionFactor = drinksToUnits[drinkKey as DrinkKey] || 0;
+      totalUnits += (count || 0) * conversionFactor;
+    }
+  });
+
+  if (roundUp) {
+    return roundToTwoDecimalPlaces(totalUnits);
+  }
+
+  return totalUnits;
+}
+
+/**
+ * Calculate how many units are available to add based on the current drinks and the drinksToUnits mapping.
+ *
+ * @param drinks Current drinks
+ * @param drinksToUnits The mapping from DrinkKey to unit conversion factors.
+ * @returns The number of units available to add
+ */
+function calculateAvailableUnits(
+  drinks: DrinksList | undefined,
+  drinksToUnits: DrinksToUnits,
+): number {
+  const currentUnits = calculateTotalUnits(drinks, drinksToUnits);
+  return CONST.MAX_ALLOWED_UNITS - currentUnits;
+}
+
+/**
+ * Adds a Drinks object to an existing DrinksList object with a specified timestamp behavior.
+ * It checks if the total units exceed the maximum allowed units before adding.
+ *
+ * @param drinkType - The type of drink to add.
+ * @param amount - The amount of the drink to add.
+ * @param drinksList - The existing DrinksList object.
+ * @param drinksToUnits - A mapping from DrinkKey to unit conversion factors.
+ * @param options - Options to specify the timestamp behavior.
+ * @param maxUnits - The maximum allowed units. Defaults to CONST.MAX_ALLOWED_UNITS.
+ * @returns The updated DrinksList object.
+ */
+function addDrinksToList(
+  drinkKey: DrinkKey,
+  amount: number,
+  drinksList: DrinksList | undefined,
+  drinksToUnits: DrinksToUnits,
+  options: AddDrinksOptions,
+): DrinksList {
+  if (!drinksList) {
+    drinksList = {};
+  }
+
+  if (amount <= 0) {
+    Log.warn(`Invalid amount: ${amount}`);
+    return drinksList;
+  }
+
+  if (!drinksToUnits[drinkKey]) {
+    Log.warn(`Invalid drink key: ${drinkKey}`);
+    return drinksList;
+  }
+
+  const availableUnits = calculateAvailableUnits(drinksList, drinksToUnits);
+  const newUnits = amount * (drinksToUnits[drinkKey] || 0);
+  if (newUnits > availableUnits) {
+    // TODO potentially show a warning message to the user
+    Log.warn('Total units exceed the maximum allowed units. Drinks not added.');
+    return drinksList;
+  }
+
+  let timestamp: number;
+
+  if (options.timestampOption === 'now') {
+    timestamp = Date.now();
+  } else if (options.timestampOption === 'sessionEndTime') {
+    timestamp = options.end_time;
+  } else if (options.timestampOption === 'sessionStartTime') {
+    timestamp = options.start_time;
+  } else {
+    throw new Error('Invalid timestampOption');
+  }
+
+  // Create a shallow copy of drinksList to avoid mutating the original
+  const updatedDrinksList: DrinksList = {...drinksList};
+
+  if (updatedDrinksList[timestamp]) {
+    // Timestamp already exists, merge the drinks
+    const existingDrinks = updatedDrinksList[timestamp];
+    const mergedDrinks: Drinks = {...existingDrinks};
+
+    mergedDrinks[drinkKey as DrinkKey] =
+      (mergedDrinks[drinkKey as DrinkKey] || 0) + (amount || 0);
+
+    updatedDrinksList[timestamp] = mergedDrinks;
+  } else {
+    // Timestamp does not exist, add the drinks
+    updatedDrinksList[timestamp] = {[drinkKey]: amount};
+  }
+
+  return updatedDrinksList;
+}
+
+/**
+ * Removes drinks from a DrinksList based on the specified behavior.
+ *
+ * @param drinkKey - The drink key to remove.
+ * @param amount - The number of drinks to remove.
+ * @param drinksList - The existing DrinksList from which to remove drinks.
+ * @param options - The behavior for removal ('removeFromLatest' or 'removeFromEarliest').
+ * @returns The updated DrinksList after removal.
+ */
+function removeDrinksFromList(
+  drinkKey: DrinkKey,
+  amount: number,
+  drinksList: DrinksList | undefined,
+  options: RemoveDrinksOptions,
+): DrinksList {
+  if (!drinksList) {
+    return {};
+  }
+
+  if (amount <= 0) {
+    Log.warn(`Invalid amount: ${amount}`);
+    return drinksList;
+  }
+
+  const updatedDrinksList: DrinksList = JSON.parse(JSON.stringify(drinksList));
+
+  let remainingAmountToRemove = amount || 0;
+
+  for (const timestamp of Object.keys(updatedDrinksList).sort((a, b) =>
+    options === 'removeFromLatest' ? +b - +a : +a - +b,
+  )) {
+    const drinksAtTimestamp = updatedDrinksList[+timestamp];
+    const avaiableAmount = drinksAtTimestamp[drinkKey as DrinkKey] || 0;
+
+    if (avaiableAmount > 0) {
+      const amountRemoved = Math.min(remainingAmountToRemove, avaiableAmount);
+
+      drinksAtTimestamp[drinkKey] = avaiableAmount - amountRemoved;
+      remainingAmountToRemove -= amountRemoved;
+
+      // Clean up if there are zero drinks left for this type at this timestamp
+      if (drinksAtTimestamp[drinkKey] === 0) {
+        delete drinksAtTimestamp[drinkKey];
+      }
+
+      // Clean up if there are zero drinks left at this timestamp
+      if (Object.keys(drinksAtTimestamp).length === 0) {
+        delete updatedDrinksList[+timestamp];
+      }
+    }
+
+    if (remainingAmountToRemove <= 0) {
+      break;
+    }
+  }
+  return updatedDrinksList;
+}
+
+/**
+ * Get the options for adding drinks to a session based on the session state.
+ *
+ * @param session The session to add drinks to
+ * @returns The options for adding drinks
+ */
+function getSessionAddDrinksOptions(
+  session: DrinkingSession,
+): AddDrinksOptions {
+  return session?.ongoing
+    ? {
+        timestampOption: 'now',
+      }
+    : session?.type === CONST.SESSION_TYPES.LIVE && session?.end_time
+      ? {
+          timestampOption: 'sessionEndTime',
+          end_time: session.end_time,
+        }
+      : {
+          timestampOption: 'sessionStartTime',
+          start_time: session.start_time,
+        };
+}
+
+function getSessionRemoveDrinksOptions(): RemoveDrinksOptions {
+  return 'removeFromLatest';
+}
+
+/**
+ * Modify the drinks in a session based on the action.
+ *
+ * @param session The session to modify
+ * @param drinkKey The key of the drink to modify
+ * @param amount The amount of the drink to modify
+ * @param drinksToUnits The mapping from drink keys to units
+ * @param action The action to perform
+ * @returns The updated drinks list
+ */
+function modifySessionDrinks(
+  session: DrinkingSession,
+  drinkKey: DrinkKey,
+  amount: number,
+  action: ValueOf<typeof CONST.DRINKS.ACTIONS>,
+  drinksToUnits: DrinksToUnits,
+): DrinksList | undefined {
+  let drinksList = _.cloneDeep(session?.drinks);
+  if (action === 'add') {
+    const options: AddDrinksOptions = getSessionAddDrinksOptions(session);
+    drinksList = addDrinksToList(
+      drinkKey,
+      amount,
+      drinksList,
+      drinksToUnits,
+      options,
+    );
+  } else if (action === 'remove') {
+    const options: RemoveDrinksOptions = 'removeFromLatest';
+    drinksList = removeDrinksFromList(drinkKey, amount, drinksList, options);
+  }
+
+  return drinksList;
 }
 
 function sessionIsExpired(session: DrinkingSession | undefined): boolean {
@@ -165,7 +484,7 @@ function getDisplayNameForParticipant(
   }
   return 'not-yet-implemented'; // TODO implement this
 
-  // const personalDetails = getPersonalDetailsForUserID(userID);
+  // const personalDetails = getUserDataForUserID(userID);
   // // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   // const formattedLogin = LocalePhoneNumber.formatPhoneNumber(
   //   personalDetails.login || '',
@@ -181,7 +500,7 @@ function getDisplayNameForParticipant(
   // const shouldAddPostfix =
   //   shouldAddCurrentUserPostfix && userID === currentUserID;
 
-  // const longName = PersonalDetailsUtils.getDisplayNameOrDefault(
+  // const longName = UserDataUtils.getDisplayNameOrDefault(
   //   personalDetails,
   //   formattedLogin,
   //   shouldFallbackToHidden,
@@ -200,6 +519,29 @@ function getDisplayNameForParticipant(
   //   ? personalDetails.firstName
   //   : longName;
   // return shouldUseShortForm ? shortName : longName;
+}
+
+/**
+ * Determine whether the given session is on a different day when converted to the given timezone.
+ *
+ * @param session The session to check
+ * @param timezone The timezone to convert the session to
+ * @returns Whether the session is on a different day
+ */
+function isDifferentDay(
+  session: DrinkingSession,
+  timezone: SelectedTimezone,
+): boolean {
+  const stringFormat = 'yyyy-MM-dd';
+  const start_time = session.start_time;
+  let currentDay: string;
+  if (session.timezone) {
+    currentDay = formatInTimeZone(start_time, session.timezone, stringFormat);
+  } else {
+    currentDay = format(start_time, stringFormat);
+  }
+  const newDay = formatInTimeZone(session.start_time, timezone, stringFormat);
+  return currentDay !== newDay;
 }
 
 /**
@@ -277,26 +619,6 @@ function shiftSessionTimestamps(
   return convertedSession;
 }
 
-/**
- * Change all timestamps in a session so that its start time corresponds to a new date.
- *
- * Shift the timestamps by whole days, keeping the hour:minute times as they are.
- *
- * @param session The session to modify
- * @param newDate The new date to modify the session's timestamps to
- * @returns The modified session
- */
-function shiftSessionDate(
-  session: DrinkingSession,
-  newDate: Date,
-): DrinkingSession {
-  const currentDate = new Date(session.start_time);
-  const daysDelta = differenceInDays(currentDate, newDate);
-  const millisecondsToSub = daysDelta * 24 * 60 * 60 * 1000;
-  const modifiedSession = shiftSessionTimestamps(session, millisecondsToSub);
-  return modifiedSession;
-}
-
 async function fixTimezoneSessions(
   db: Database,
   userID: UserID | undefined,
@@ -332,7 +654,7 @@ async function fixTimezoneSessions(
   };
 
   const sessionsRef = DBPATHS.USER_DRINKING_SESSIONS_USER_ID;
-  const timezoneRef = DBPATHS.USERS_USER_ID_PRIVATE_DATA_TIMEZONE;
+  const timezoneRef = DBPATHS.USERS_USER_ID_TIMEZONE;
 
   const updates: Record<string, DrinkingSessionList | Timezone> = {};
   updates[sessionsRef.getRoute(userID)] = convertedSessions;
@@ -341,20 +663,27 @@ async function fixTimezoneSessions(
   await update(ref(db), updates);
 }
 
-const DSUtils = {
+export {
   PlaceholderDrinks,
+  addDrinksToList,
   allSessionsContainTimezone,
+  calculateAvailableUnits,
   calculateSessionLength,
+  calculateTotalUnits,
   determineSessionMostCommonDrink,
   extractSessionOrEmpty,
-  getDisplayNameForParticipant,
-  getEmptySession,
-  getUserDetailTooltipText,
-  isEmptySession,
-  sessionIsExpired,
   fixTimezoneSessions,
+  getDisplayNameForParticipant,
+  getDrinkingSessionData,
+  getDrinkingSessionOnyxKey,
+  getEmptySession,
+  getSessionAddDrinksOptions,
+  getSessionRemoveDrinksOptions,
+  getUserDetailTooltipText,
+  isDifferentDay,
+  isEmptySession,
+  modifySessionDrinks,
+  removeDrinksFromList,
+  sessionIsExpired,
   shiftSessionTimestamps,
-  shiftSessionDate,
 };
-
-export default DSUtils;

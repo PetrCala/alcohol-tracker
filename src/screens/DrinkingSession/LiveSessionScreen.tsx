@@ -10,33 +10,16 @@ import {
   View,
 } from 'react-native';
 import {useFirebase} from '@context/global/FirebaseContext';
+import * as DS from '@libs/actions/DrinkingSession';
+import * as DSUtils from '@libs/DrinkingSessionUtils';
 import {
-  discardLiveDrinkingSession,
-  endLiveDrinkingSession,
-  removeDrinkingSessionData,
-  removePlaceholderSessionData,
-  saveDrinkingSessionData,
-  updateSessionDrinks,
-} from '@database/drinkingSessions';
-import {
-  addDrinks,
-  formatDateToTime,
   getUniqueDrinkTypesInSession,
-  removeDrinks,
   sumAllDrinks,
-  sumAllUnits,
   sumDrinksOfSingleType,
-  timestampToDate,
   timestampToDateString,
   unitsToColors,
 } from '@libs/DataHandling';
-import type {
-  DrinkingSession,
-  DrinksList,
-  Drinks,
-  DrinkKey,
-} from '@src/types/onyx';
-import {ScrollOffsetContext} from '@components/ScrollOffsetContextProvider';
+import type {DrinkingSession, Drinks, DrinkKey} from '@src/types/onyx';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import UserOffline from '@components/UserOfflineModal';
 import DrinkTypesView from '@components/DrinkTypesView';
@@ -52,8 +35,6 @@ import SCREENS from '@src/SCREENS';
 import ROUTES from '@src/ROUTES';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {isEqual} from 'lodash';
-import {readDataOnce} from '@database/baseFunctions';
-import DBPATHS from '@database/DBPATHS';
 import useAsyncQueue from '@hooks/useAsyncQueue';
 import type DeepValueOf from '@src/types/utils/DeepValueOf';
 import ScreenWrapper from '@components/ScreenWrapper';
@@ -68,9 +49,13 @@ import Button from '@components/Button';
 import ConfirmModal from '@components/ConfirmModal';
 import useWindowDimensions from '@hooks/useWindowDimensions';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
+import * as ErrorUtils from '@libs/ErrorUtils';
 import ScrollView from '@components/ScrollView';
 import Log from '@libs/Log';
 import Icon from '@components/Icon';
+import Onyx, {useOnyx} from 'react-native-onyx';
+import ONYXKEYS from '@src/ONYXKEYS';
+import DateUtils from '@libs/DateUtils';
 
 type LiveSessionScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -88,17 +73,19 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   const {isOnline} = useUserConnection();
   const {preferences} = useDatabaseData();
   const {windowWidth} = useWindowDimensions();
-  const [session, setSession] = useState<DrinkingSession | null>(null);
-  const initialSession = useRef<DrinkingSession | null>(null);
+  const [liveSessionData] = useOnyx(ONYXKEYS.LIVE_SESSION_DATA);
+  const [editSessionData] = useOnyx(ONYXKEYS.EDIT_SESSION_DATA);
+  const [session, setSession] = useState<DrinkingSession | undefined>(
+    undefined,
+  );
+  const initialSession = useRef<DrinkingSession | undefined>(undefined);
+  const [isFetchingSessionData, setIsFetchingSessionData] =
+    useState<boolean>(true);
   // Session details
   const [totalUnits, setTotalUnits] = useState<number>(0);
-  const [availableUnits, setAvailableUnits] = useState<number>(0);
   const [sessionFinished, setSessionFinished] = useState<boolean>(false);
   // Time info
   const [dbSyncSuccessful, setDbSyncSuccessful] = useState(false);
-  const sessionDate = timestampToDate(session?.start_time ?? Date.now());
-  const sessionDateString = format(sessionDate, CONST.DATE.SHORT_DATE_FORMAT);
-  const sessionStartTime = formatDateToTime(sessionDate);
   const sessionColor = preferences
     ? unitsToColors(totalUnits, preferences.units_to_colors)
     : 'green';
@@ -106,12 +93,10 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   const [monkeMode, setMonkeMode] = useState<boolean>(false);
   const [discardModalVisible, setDiscardModalVisible] =
     useState<boolean>(false);
-  const [openingSession, setOpeningSession] = useState<boolean>(true);
   const [loadingText, setLoadingText] = useState<string>('');
   const [shouldShowLeaveConfirmation, setShouldShowLeaveConfirmation] =
     useState(false);
-  const [isPlaceholderSession, setIsPlaceholderSession] =
-    useState<boolean>(false);
+  useState<boolean>(false);
   const [sessionIsLive, setSessionIsLive] = useState<boolean | null>(null);
   const deleteSessionWording = session?.ongoing
     ? translate('common.discard')
@@ -127,7 +112,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     }
     try {
       setDbSyncSuccessful(false);
-      await saveDrinkingSessionData(
+      await DS.saveDrinkingSessionData(
         db,
         user.uid,
         newSessionData,
@@ -145,17 +130,13 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   };
 
   const handleMonkePlus = () => {
-    if (!session) {
-      return;
-    }
-    if (availableUnits > 0) {
-      const drinksToAdd: Drinks = {other: 1};
-      const newDrinks: DrinksList | undefined = addDrinks(
-        session?.drinks,
-        drinksToAdd,
-      );
-      setSession({...session, drinks: newDrinks});
-    }
+    DS.updateDrinks(
+      sessionId,
+      CONST.DRINKS.KEYS.OTHER,
+      1,
+      CONST.DRINKS.ACTIONS.ADD,
+      preferences?.drinks_to_units,
+    );
   };
 
   const handleMonkeMinus = () => {
@@ -180,27 +161,14 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
         drinkKeysLeft[Math.floor(Math.random() * drinkKeysLeft.length)];
     }
     if (keyToRemove) {
-      const newDrinks: DrinksList | undefined = removeDrinks(
-        session.drinks,
+      DS.updateDrinks(
+        sessionId,
         keyToRemove,
         1,
+        CONST.DRINKS.ACTIONS.REMOVE,
+        preferences?.drinks_to_units,
       );
-      setSession({...session, drinks: newDrinks});
     }
-  };
-
-  const handleBlackoutChange = (value: boolean) => {
-    if (!session) {
-      return;
-    }
-    setSession({...session, blackout: value});
-  };
-
-  const setCurrentDrinks = (newDrinks: DrinksList | undefined) => {
-    if (!session) {
-      return;
-    }
-    setSession({...session, drinks: newDrinks});
   };
 
   // Function to wait for pending updates to finish
@@ -235,21 +203,6 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     Navigation.navigate(route());
   };
 
-  // Update the hooks whenever drinks change
-  useMemo(() => {
-    if (!preferences) {
-      return;
-    }
-    const newTotalUnits = sumAllUnits(
-      session?.drinks,
-      preferences.drinks_to_units,
-      true,
-    );
-    const newAvailableUnits = CONST.MAX_ALLOWED_UNITS - newTotalUnits;
-    setTotalUnits(newTotalUnits);
-    setAvailableUnits(newAvailableUnits);
-  }, [session?.drinks]);
-
   async function saveSession(db: any, userID: string) {
     if (!session || !user) {
       return;
@@ -270,22 +223,23 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
         end_time: sessionIsLive ? Date.now() : session.start_time,
       };
       delete newSessionData.ongoing;
+      delete newSessionData.id;
       // Wait for any pending updates to resolve first
       while (isPending) {
         await new Promise(resolve => setTimeout(resolve, 100));
       }
       if (sessionIsLive) {
-        await endLiveDrinkingSession(db, userID, newSessionData, sessionId);
+        await DS.endLiveDrinkingSession(db, userID, newSessionData, sessionId);
       } else {
-        await saveDrinkingSessionData(
+        await DS.saveDrinkingSessionData(
           db,
           userID,
           newSessionData,
           sessionId,
           false, // Do not update live status
+          true, // Clean the local onyx edit session data
         );
       }
-      await removePlaceholderSessionData(db, userID);
     } catch (error: any) {
       Alert.alert(
         translate('liveSessionScreen.error.saveTitle'),
@@ -298,10 +252,8 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     }
   }
 
-  const handleDiscardSession = () => {
-    if (isPending) {
-      return null;
-    }
+  const handleDiscardSession = async () => {
+    await waitForNoPendingUpdate();
     setDiscardModalVisible(true);
   };
 
@@ -311,18 +263,26 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     }
     try {
       setLoadingText(
-        `${sessionIsLive ? 'Discarding' : 'Deleting'} this session...`,
+        translate(
+          'liveSessionScreen.discardingSession',
+          sessionIsLive ? 'Discarding' : 'Deleting',
+        ),
       );
       const discardFunction = sessionIsLive
-        ? discardLiveDrinkingSession
-        : removeDrinkingSessionData;
+        ? DS.discardLiveDrinkingSession
+        : DS.removeDrinkingSessionData;
       await waitForNoPendingUpdate();
       await discardFunction(db, user.uid, sessionId);
-      await removePlaceholderSessionData(db, user.uid);
+      if (sessionIsLive) {
+        Onyx.set(ONYXKEYS.LIVE_SESSION_DATA, null);
+      } else {
+        Onyx.set(ONYXKEYS.EDIT_SESSION_DATA, null);
+      }
     } catch (error: any) {
-      Alert.alert(
-        'Session discard failed',
-        'Could not discard the session: ' + error.message,
+      ErrorUtils.raiseAlert(
+        error,
+        translate('liveSessionScreen.error.discardTitle'),
+        translate('liveSessionScreen.error.discard'),
       );
     } finally {
       navigateBackDynamically(CONST.NAVIGATION.SESSION_ACTION.DISCARD);
@@ -334,9 +294,6 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   /** If an update is pending, update immediately before navigating away
    */
   const handleBackPress = async () => {
-    if (!user) {
-      return;
-    }
     if (!sessionIsLive && hasSessionChanged()) {
       setShouldShowLeaveConfirmation(true); // Unsaved changes
       return;
@@ -345,94 +302,57 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       try {
         setLoadingText(translate('liveSessionScreen.synchronizing'));
         await waitForNoPendingUpdate();
-        await updateSessionDrinks(db, user.uid, sessionId, session?.drinks);
       } catch (error: any) {
         Alert.alert('Database synchronization failed', error.message);
       } finally {
         setLoadingText('');
       }
     }
-    await confirmGoBack();
+    confirmGoBack();
   };
 
   const confirmGoBack = async () => {
-    if (!user) {
+    setShouldShowLeaveConfirmation(false);
+    Navigation.goBack();
+  };
+
+  // Monitor the session object for changes
+  useEffect(() => {
+    const newSession =
+      liveSessionData?.id === sessionId ? liveSessionData : editSessionData;
+    setSession(newSession);
+    setSessionIsLive(!!newSession?.ongoing);
+
+    // Set the intial session ref upon the first load
+    if (isFetchingSessionData) {
+      initialSession.current = newSession;
+      setIsFetchingSessionData(false);
+    }
+  }, [liveSessionData, editSessionData]);
+
+  // Update the hooks whenever drinks change
+  useMemo(() => {
+    if (!preferences) {
       return;
     }
-    try {
-      if (isPlaceholderSession) {
-        await removePlaceholderSessionData(db, user.uid);
-      }
-    } catch (error: any) {
-      Log.warn('Could not remove placeholder session data', error.message); // Unimportant
-    } finally {
-      setShouldShowLeaveConfirmation(false);
-      Navigation.goBack();
-    }
-  };
-
-  const openSession = async () => {
-    if (!user) {
-      throw new Error(translate('liveSessionScreen.error.load'));
-    }
-    // Fetch the latest database data and use it to open the session
-    setLoadingText(translate('liveSessionScreen.loading'));
-    let sessionToOpen: DrinkingSession | null = await readDataOnce(
-      db,
-      DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID.getRoute(
-        user.uid,
-        sessionId,
-      ),
+    const totalUnits = DSUtils.calculateTotalUnits(
+      session?.drinks,
+      preferences.drinks_to_units,
+      true,
     );
-    if (!sessionToOpen) {
-      // No drinking session with this ID => check for a placeholder session.
-      const existingPlaceholderSession: DrinkingSession | null =
-        await readDataOnce(
-          db,
-          DBPATHS.USER_SESSION_PLACEHOLDER_USER_ID.getRoute(user.uid),
-        );
-      if (!existingPlaceholderSession) {
-        Alert.alert('Database Error', 'Failed to start a new session');
-        Navigation.navigate(ROUTES.HOME);
-        return;
-      }
-      sessionToOpen = existingPlaceholderSession;
-      setIsPlaceholderSession(true);
-    }
-    setSession(sessionToOpen);
-    initialSession.current = sessionToOpen;
-    setOpeningSession(false);
-    setLoadingText('');
-  };
-
-  // Prepare the session for the user upon component mount
-  useFocusEffect(
-    React.useCallback(() => {
-      openSession();
-    }, []),
-  );
-
-  // Monitor various dynamic attributes stemming from the session
-  useEffect(() => {
-    setSessionIsLive(!!session?.ongoing);
-  }, [session?.ongoing]);
+    setTotalUnits(totalUnits);
+  }, [session?.drinks]);
 
   // Synchronize the session with database
   useEffect(() => {
     // Only schedule a database update if any hooks changed
     // Do not automatically save if the session is over, or
     // if the initial fetch has not finished
-    if (
-      !user ||
-      !sessionIsLive ||
-      !session ||
-      sessionFinished ||
-      openingSession
-    ) {
+    if (!user || !sessionIsLive || !session || sessionFinished) {
       return;
     }
     enqueueUpdate({...session, ongoing: true});
-  }, [session, openingSession]);
+  }, [session]);
 
   // Make the system back press toggle the go back handler
   useEffect(() => {
@@ -451,18 +371,11 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   if (!isOnline) {
     return <UserOffline />;
   }
-  if (openingSession || loadingText) {
+  if (loadingText || !session) {
     return <FullScreenLoadingIndicator loadingText={loadingText} />;
   }
-  if (!user) {
+  if (!user || !preferences) {
     Navigation.resetToHome();
-    return;
-  }
-  if (!session) {
-    Navigation.navigate(ROUTES.HOME); // If a session fails to load
-    return;
-  }
-  if (!preferences) {
     return;
   }
 
@@ -491,8 +404,8 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
           <View style={styles.alignItemsCenter}>
             <Text style={styles.textHeadlineH2}>
               {session?.ongoing
-                ? `Session from ${sessionStartTime}`
-                : `Session on ${sessionDateString}`}
+                ? `${translate('liveSessionScreen.sessionFrom')} ${DateUtils.getLocalizedTime(session.start_time, session.timezone)}`
+                : `${translate('liveSessionScreen.sessionOn')} ${DateUtils.getLocalizedDay(session.start_time, session.timezone)}`}
             </Text>
           </View>
           {isPending && (
@@ -545,21 +458,18 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
           </View>
         ) : (
           <>
-            <View style={localStyles.drinkTypesContainer}>
-              <DrinkTypesView
-                drinkData={DrinkData}
-                currentDrinks={session.drinks}
-                setCurrentDrinks={setCurrentDrinks}
-                availableUnits={availableUnits}
-              />
-            </View>
+            <DrinkTypesView sessionId={sessionId} />
             <SessionDetailsWindow
               sessionId={sessionId}
-              isBlackout={session.blackout}
-              onBlackoutChange={handleBlackoutChange}
-              note={session.note}
-              dateString={sessionDateString}
+              session={session}
+              onBlackoutChange={(value: boolean) =>
+                DS.updateBlackout(session, value)
+              }
               shouldAllowDateChange={session.type !== CONST.SESSION_TYPES.LIVE}
+              shouldAllowTimezoneChange={
+                !session?.ongoing
+                // session.type !== CONST.SESSION_TYPES.LIVE // Enable this down the line
+              }
             />
           </>
         )}
@@ -567,8 +477,10 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       </ScrollView>
       <View style={styles.bottomTabBarContainer(true)}>
         <Button
-          success
-          text={`${deleteSessionWording} Session`}
+          text={translate(
+            'liveSessionScreen.discardSession',
+            deleteSessionWording,
+          )}
           textStyles={styles.buttonText}
           innerStyles={[
             styles.bottomTabBarItem,
@@ -580,7 +492,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
         />
         <Button
           success
-          text="Save Session"
+          text={translate('liveSessionScreen.saveSession')}
           textStyles={styles.buttonText}
           innerStyles={[
             styles.bottomTabBarItem,
@@ -646,31 +558,6 @@ const localStyles = StyleSheet.create({
     elevation: 5,
     zIndex: 1,
   },
-  drinkTypesContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-  },
-  drinksInputContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  drinksInputButton: {
-    width: '40%',
-    alignItems: 'center',
-  },
-  drinksInputText: {
-    fontSize: 90,
-    fontWeight: 'bold',
-    // marginTop: 5,
-    marginBottom: 10,
-    alignSelf: 'center',
-    alignContent: 'center',
-    padding: 2,
-    textShadowColor: 'black',
-    textShadowOffset: {width: 1, height: 1},
-    textShadowRadius: 9,
-  },
   modifyUnitsContainer: {
     height: 400,
     flexGrow: 1,
@@ -686,12 +573,6 @@ const localStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 50,
-  },
-  sessionDetailsContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    marginTop: 20,
   },
 });
 

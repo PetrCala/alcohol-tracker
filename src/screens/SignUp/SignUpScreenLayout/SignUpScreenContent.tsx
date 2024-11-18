@@ -1,16 +1,16 @@
 import React from 'react';
 import {View} from 'react-native';
+import Onyx, {useOnyx} from 'react-native-onyx';
 import FormElement from '@components/FormElement';
 // import OfflineIndicator from '@components/OfflineIndicator';
-import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import Text from '@components/Text';
 import useResponsiveLayout from '@hooks/useResponsiveLayout';
 import useStyleUtils from '@hooks/useStyleUtils';
 import useThemeStyles from '@hooks/useThemeStyles';
 import variables from '@styles/variables';
-import ImageSVG from '@components/ImageSVG';
 import KirokuLogo from '@components/KirokuLogo';
 import type {SignUpScreenLayoutProps} from './types';
+import useLocalize from '@hooks/useLocalize';
 
 type SignUpScreenContentProps = Pick<
   SignUpScreenLayoutProps,
@@ -26,6 +26,7 @@ function SignUpScreenContent({
   children,
 }: SignUpScreenContentProps) {
   const {shouldUseNarrowLayout} = useResponsiveLayout();
+  const {translate} = useLocalize();
   const styles = useThemeStyles();
   const StyleUtils = useStyleUtils();
 
@@ -58,7 +59,7 @@ function SignUpScreenContent({
               <KirokuLogo />
             </View>
             <View style={[styles.signUpScreenWelcomeTextContainer]}>
-              {welcomeHeader ? (
+              {welcomeHeader && (
                 <Text
                   style={[
                     styles.loginHeroHeader,
@@ -74,8 +75,8 @@ function SignUpScreenContent({
                   ]}>
                   {welcomeHeader}
                 </Text>
-              ) : null}
-              {welcomeText ? (
+              )}
+              {welcomeText && (
                 <Text
                   style={[
                     styles.loginHeroBody,
@@ -85,25 +86,20 @@ function SignUpScreenContent({
                   ]}>
                   {welcomeText}
                 </Text>
-              ) : null}
+              )}
             </View>
             {children}
           </FormElement>
-          <View
+          {/* <View
             style={[
               styles.mb8,
               styles.signUpScreenWelcomeTextContainer,
               styles.alignSelfCenter,
             ]}>
-            {/* <OfflineIndicator
+            <OfflineIndicator
               style={[styles.m0, styles.pl0, styles.alignItemsStart]}
-            /> */}
-          </View>
-          {/* {shouldUseNarrowLayout ? (
-            <View style={[styles.mt8]}>
-              <SignInHeroImage />
-            </View>
-          ) : null} */}
+            />
+          </View> */}
         </View>
       </View>
     </View>

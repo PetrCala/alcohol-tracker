@@ -1118,7 +1118,7 @@ const styles = (theme: ThemeColors) =>
     noResultsText: {
       fontSize: variables.fontSizeNormal,
       textAlign: 'center',
-      ...spacing.mt2,
+      ...spacing.mt3,
     },
 
     noRightBorderRadius: {
@@ -1219,6 +1219,20 @@ const styles = (theme: ThemeColors) =>
 
     opacity1: {
       opacity: 1,
+    },
+
+    orDelimiterContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      ...sizing.w100,
+      ...spacing.mv4,
+    },
+
+    orDelimiterLine: {
+      flex: 1,
+      height: 1,
+      backgroundColor: theme.textSupporting,
+      ...spacing.mh2,
     },
 
     overlayStyles: (current: OverlayStylesParams, isModalOnTheLeft: boolean) =>
@@ -1499,6 +1513,7 @@ const styles = (theme: ThemeColors) =>
       alignItems: 'center',
       borderTopWidth: 1,
       borderColor: theme.border,
+      ...spacing.pt4,
     },
 
     signUpScreen: {
@@ -2172,7 +2187,7 @@ const styles = (theme: ThemeColors) =>
 
     textLoading: {
       ...FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
-      fontSize: variables.fontSizeXLarge,
+      fontSize: variables.fontSizeLarge,
       color: theme.text,
     },
 

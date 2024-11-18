@@ -11,7 +11,7 @@ const lightTheme = {
   appColor: colors.yellowStrong,
   border: colors.productLight400,
   borderLighter: colors.productLight400,
-  borderFocus: colors.yellow,
+  borderFocus: colors.yellowHover,
   icon: colors.productLight700,
   iconMenu: colors.yellow,
   iconHovered: colors.productLight900,

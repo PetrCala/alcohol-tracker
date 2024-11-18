@@ -57,7 +57,7 @@ function AccountScreen({route}: AccountScreenProps) {
     // },
     {
       description: translate('timezoneScreen.timezone'),
-      title: userData?.private_data?.timezone?.selected ?? '',
+      title: userData?.timezone?.selected ?? '',
       pageRoute: ROUTES.SETTINGS_TIMEZONE,
     },
   ];

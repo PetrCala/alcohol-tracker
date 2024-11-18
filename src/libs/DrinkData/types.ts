@@ -1,9 +1,9 @@
 import type {DrinkKey} from '@src/types/onyx';
-import type {ImageSourcePropType} from 'react-native';
+import IconAsset from '@src/types/utils/IconAsset';
 
 type DrinkDataProps = Array<{
   key: DrinkKey;
-  icon: ImageSourcePropType;
+  icon: IconAsset;
 }>;
 
 export default DrinkDataProps;

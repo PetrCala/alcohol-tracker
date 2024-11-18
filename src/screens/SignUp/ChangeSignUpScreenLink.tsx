@@ -7,41 +7,40 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import CONST from '@src/CONST';
 import ROUTES, {Route} from '@src/ROUTES';
 import Navigation from '@libs/Navigation/Navigation';
-import * as Session from '@userActions/Session';
 
 type ChangeSignUpScreenLinkOnyxProps = {};
 
 type ChangeSignUpScreenLinkProps = ChangeSignUpScreenLinkOnyxProps & {
-  /** Whether the link button should redirect to the log in screen */
-  shouldPointToLogIn?: boolean;
+  /** The route this link navigates to */
+  navigatesTo?: Route;
 
-  /** Whether the link button should redirect to the sign up screen */
-  shouldPointToSignUp?: boolean;
+  /** Custom on press functionality */
+  onPress?: () => void;
 };
 
 function ChangeSignUpScreenLink({
-  shouldPointToLogIn,
-  shouldPointToSignUp,
+  navigatesTo = ROUTES.LOG_IN,
+  onPress,
 }: ChangeSignUpScreenLinkProps) {
   const styles = useThemeStyles();
   const {translate} = useLocalize();
 
-  const helperText = shouldPointToLogIn
-    ? translate('login.existingAccount')
-    : translate('login.noAccount');
-  const buttonText = shouldPointToLogIn
-    ? translate('common.logIn')
-    : translate('common.signUp');
-
   const handleOnPress = () => {
-    if (shouldPointToLogIn) {
-      Navigation.navigate(ROUTES.LOG_IN);
-    } else if (shouldPointToSignUp) {
-      Navigation.navigate(ROUTES.SIGN_UP);
-    } else {
-      Navigation.resetToHome();
+    if (onPress) {
+      onPress();
+      return;
     }
+    Navigation.navigate(navigatesTo);
   };
+
+  const helperText =
+    navigatesTo === ROUTES.LOG_IN
+      ? translate('login.existingAccount')
+      : translate('login.noAccount');
+  const buttonText =
+    navigatesTo === ROUTES.LOG_IN
+      ? translate('common.logIn')
+      : translate('common.signUp');
 
   return (
     <View style={styles.changeSignUpScreenLinkContainer}>

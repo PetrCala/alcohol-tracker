@@ -11,13 +11,13 @@ import Navigation from '@libs/Navigation/Navigation';
 import {TzFixModalNavigatorParamList} from '@libs/Navigation/types';
 import {StackScreenProps} from '@react-navigation/stack';
 import * as ErrorUtils from '@libs/ErrorUtils';
-import DSUtils from '@libs/DrinkingSessionUtils';
+import * as DSUtils from '@libs/DrinkingSessionUtils';
 import ROUTES from '@src/ROUTES';
 import SCREENS from '@src/SCREENS';
 import {useState} from 'react';
 import {View} from 'react-native';
 import {useFirebase} from '@context/global/FirebaseContext';
-import {SelectedTimezone} from '@src/types/onyx/PersonalDetails';
+import {SelectedTimezone} from '@src/types/onyx/UserData';
 
 type ConfirmationScreenProps = StackScreenProps<
   TzFixModalNavigatorParamList,
@@ -40,7 +40,7 @@ function ConfirmationScreen({}: ConfirmationScreenProps) {
   };
 
   const selectedTimezone =
-    userData?.private_data?.timezone?.selected ?? currentTimezone.timeZone;
+    userData?.timezone?.selected ?? currentTimezone.timeZone;
 
   const onCorrect = async () => {
     try {

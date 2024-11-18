@@ -196,7 +196,7 @@ describe('ValidationUtils', () => {
         150,
       );
       expect(error).toEqual([
-        'privatePersonalDetails.error.dateShouldBeBefore',
+        'UserPrivateData.error.dateShouldBeBefore',
         {
           dateString: format(
             startOfDay(subYears(new Date(), 18)),
@@ -217,7 +217,7 @@ describe('ValidationUtils', () => {
         150,
       );
       expect(error).toEqual([
-        'privatePersonalDetails.error.dateShouldBeAfter',
+        'UserPrivateData.error.dateShouldBeAfter',
         {
           dateString: format(
             startOfDay(subYears(new Date(), 150)),

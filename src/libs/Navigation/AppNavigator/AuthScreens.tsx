@@ -23,7 +23,7 @@ import NotFoundScreen from '@screens/ErrorScreen/NotFoundScreen';
 import * as App from '@userActions/App';
 // import * as Download from '@userActions/Download';
 import * as Modal from '@userActions/Modal';
-import * as PersonalDetails from '@userActions/PersonalDetails';
+import * as UserData from '@libs/actions/UserData';
 // import * as PriorityMode from '@userActions/PriorityMode';
 import * as Session from '@userActions/Session';
 import Timing from '@userActions/Timing';
@@ -36,7 +36,7 @@ import ROUTES from '@src/ROUTES';
 import SCREENS from '@src/SCREENS';
 import type * as OnyxTypes from '@src/types/onyx';
 import {DatabaseDataProvider} from '@context/global/DatabaseDataContext';
-import type {SelectedTimezone, Timezone} from '@src/types/onyx/PersonalDetails';
+import type {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
 import createCustomStackNavigator from './createCustomStackNavigator';
 import defaultScreenOptions from './defaultScreenOptions';
 import getRootNavigatorScreenOptions from './getRootNavigatorScreenOptions';
@@ -47,55 +47,34 @@ import BottomTabNavigator from './Navigators/BottomTabNavigator';
 // import OnboardingModalNavigator from './Navigators/OnboardingModalNavigator';
 import TzFixModalNavigator from './Navigators/TzFixModalNavigator';
 import RightModalNavigator from './Navigators/RightModalNavigator';
+import {auth} from '@libs/Firebase/FirebaseApp';
+import {useFirebase} from '@context/global/FirebaseContext';
 // import WelcomeVideoModalNavigator from './Navigators/WelcomeVideoModalNavigator';
 
 type AuthScreensProps = {
-  /** Session of currently logged in user */
-  session: OnyxEntry<OnyxTypes.Session>;
-
   /** The last Onyx update ID was applied to the client */
   initialLastUpdateIDAppliedToClient: OnyxEntry<number>;
 };
 
 let timezone: Timezone | null;
-let currentUserID = '-1';
 let isLoadingApp = false;
 let lastUpdateIDAppliedToClient: OnyxEntry<number>;
 
 Onyx.connect({
-  key: ONYXKEYS.SESSION,
+  key: ONYXKEYS.USER_DATA_LIST,
   callback: value => {
-    // When signed out, val hasn't userID
-    if (!(value && 'userID' in value)) {
-      timezone = null;
+    if (!value || timezone || !auth.currentUser) {
       return;
     }
 
-    currentUserID = value.userID ?? '-1';
-
-    // TODO
-    // if (Navigation.isActiveRoute(ROUTES.SIGN_IN_MODAL)) {
-    //   // This means sign in in RHP was successful, so we can subscribe to user events
-    //   User.subscribeToUserEvents();
-    // }
-  },
-});
-
-Onyx.connect({
-  key: ONYXKEYS.PERSONAL_DETAILS_LIST,
-  callback: value => {
-    if (!value || timezone) {
-      return;
-    }
-
-    timezone = value?.[currentUserID]?.timezone ?? {};
+    timezone = value?.[auth.currentUser?.uid]?.timezone ?? {};
     const currentTimezone = Intl.DateTimeFormat().resolvedOptions()
       .timeZone as SelectedTimezone;
 
     // If the current timezone is different than the user's timezone, and their timezone is set to automatic, then update their timezone.
     if (timezone?.automatic && timezone?.selected !== currentTimezone) {
       timezone.selected = currentTimezone;
-      PersonalDetails.updateAutomaticTimezone({
+      UserData.updateAutomaticTimezone({
         automatic: true,
         selected: currentTimezone,
       });
@@ -147,10 +126,7 @@ const modalScreenListeners = {
   },
 };
 
-function AuthScreens({
-  session,
-  initialLastUpdateIDAppliedToClient,
-}: AuthScreensProps) {
+function AuthScreens({initialLastUpdateIDAppliedToClient}: AuthScreensProps) {
   const styles = useThemeStyles();
   const StyleUtils = useStyleUtils();
   const {isSmallScreenWidth} = useWindowDimensions();
@@ -177,9 +153,9 @@ function AuthScreens({
     const searchShortcutConfig = CONST.KEYBOARD_SHORTCUTS.SEARCH;
     const chatShortcutConfig = CONST.KEYBOARD_SHORTCUTS.NEW_CHAT;
     const currentUrl = getCurrentUrl();
-    const isLoggingInAsNewUser =
-      !!session?.email &&
-      SessionUtils.isLoggingInAsNewUser(currentUrl, session.email);
+    const user = auth?.currentUser;
+    const isLoggingInAsNewUser = !!user?.email;
+    // && SessionUtils.isLoggingInAsNewUser(currentUrl, user.email);
     // Sign out the current user if we're transitioning with a different user
     const isTransitioning = currentUrl.includes(ROUTES.TRANSITION_BETWEEN_APPS);
     const isSupportalTransition = currentUrl.includes('authTokenType=support');
@@ -213,7 +189,7 @@ function AuthScreens({
 
     // PriorityMode.autoSwitchToFocusMode();
 
-    App.setUpPoliciesAndNavigate(session);
+    App.setUpPoliciesAndNavigate(user);
 
     App.redirectThirdPartyDesktopSignIn();
 
@@ -364,9 +340,6 @@ AuthScreens.displayName = 'AuthScreens';
 const AuthScreensMemoized = memo(AuthScreens, () => true);
 
 export default withOnyx<AuthScreensProps, AuthScreensProps>({
-  session: {
-    key: ONYXKEYS.SESSION,
-  },
   initialLastUpdateIDAppliedToClient: {
     key: ONYXKEYS.ONYX_UPDATES_LAST_UPDATE_ID_APPLIED_TO_CLIENT,
   },

@@ -75,11 +75,11 @@ import clearCache from './clearCache';
 //   callback: value => (stashedSession = value ?? {}),
 // });
 
-let login: Login = {};
-Onyx.connect({
-  key: ONYXKEYS.LOGIN,
-  callback: value => (login = value ?? {}),
-});
+// let login: Login = {};
+// Onyx.connect({
+//   key: ONYXKEYS.LOGIN,
+//   callback: value => (login = value ?? {}),
+// });
 
 // let stashedCredentials: Credentials = {};
 // Onyx.connect({
@@ -620,11 +620,14 @@ function checkIfActionIsAllowed<
 //   ];
 
 /**
- * Clear the credentials and partial sign in session so the user can taken back to first Login step
+ * Clear the login information when the user goes back to first Login step
  */
 function clearSignInData() {
   Onyx.multiSet({
-    [ONYXKEYS.LOGIN]: null,
+    [ONYXKEYS.FORMS.SIGN_UP_FORM]: null,
+    [ONYXKEYS.FORMS.SIGN_UP_FORM_DRAFT]: null,
+    [ONYXKEYS.FORMS.LOG_IN_FORM]: null,
+    [ONYXKEYS.FORMS.LOG_IN_FORM_DRAFT]: null,
   });
 }
 
@@ -668,14 +671,14 @@ function cleanupSession() {
   Timing.clearData();
 }
 
-function clearLoginMessages() {
-  Onyx.merge(ONYXKEYS.LOGIN, {
-    success: '',
-    errors: null,
-    message: null,
-    isLoading: false,
-  });
-}
+// function clearLoginMessages() {
+//   Onyx.merge(ONYXKEYS.LOGIN, {
+//     success: '',
+//     errors: null,
+//     message: null,
+//     isLoading: false,
+//   });
+// }
 
 // function setAccountError(error: string) {
 //   Onyx.merge(ONYXKEYS.ACCOUNT, {
@@ -1076,7 +1079,7 @@ export {
   //   requestUnlinkValidationLink,
   //   unlinkLogin,
   clearSignInData,
-  clearLoginMessages,
+  // clearLoginMessages,
   // setAccountError,
   //   authenticatePusher,
   //   reauthenticatePusher,

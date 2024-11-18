@@ -1,12 +1,8 @@
 ﻿import {StyleProp, StyleSheet, Text, View, ViewStyle} from 'react-native';
-import MenuIcon from '@components/Buttons/MenuIcon';
 import {
-  formatDateToTime,
   getLastDrinkAddedTime,
-  sumAllUnits,
   sumAllDrinks,
   sumDrinksOfSingleType,
-  timestampToDate,
   unitsToColors,
 } from '@libs/DataHandling';
 import useLocalize from '@hooks/useLocalize';
@@ -18,12 +14,13 @@ import CONST from '@src/CONST';
 import SCREENS from '@src/SCREENS';
 import type {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
 import {useCallback, useEffect, useMemo, useState} from 'react';
-import DSUtils from '@libs/DrinkingSessionUtils';
+import * as DSUtils from '@libs/DrinkingSessionUtils';
+import * as DS from '@libs/actions/DrinkingSession';
+import DateUtils from '@libs/DateUtils';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import ScreenWrapper from '@components/ScreenWrapper';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
-import {format} from 'date-fns';
 import Button from '@components/Button';
 import useThemeStyles from '@hooks/useThemeStyles';
 import ScrollView from '@components/ScrollView';
@@ -32,10 +29,17 @@ import MenuItem from '@components/MenuItem';
 import Section from '@components/Section';
 import {TranslationPaths} from '@src/languages/types';
 import MenuItemGroup from '@components/MenuItemGroup';
+import _ from 'lodash';
+
+type DrinkMenuItem = {
+  key: TranslationPaths;
+  val: number;
+};
 
 type MenuData = {
   titleKey?: TranslationPaths;
   description?: string;
+  shouldHide?: boolean;
   rightComponent?: React.ReactNode;
   additionalStyles?: StyleProp<ViewStyle>;
 };
@@ -63,7 +67,7 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
   );
   // Drinks info
   const totalDrinks = sumAllDrinks(session.drinks);
-  const totalUnits = sumAllUnits(
+  const totalUnits = DSUtils.calculateTotalUnits(
     session.drinks,
     preferences.drinks_to_units,
     true,
@@ -78,25 +82,24 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
     other: sumDrinksOfSingleType(session.drinks, 'other'),
   };
   // Time info
-  const sessionStartDate = timestampToDate(session.start_time);
-  const sessionEndDate = timestampToDate(session.end_time);
-  const sessionDay = format(sessionStartDate, CONST.DATE.SHORT_DATE_FORMAT);
-  const sessionStartTime = formatDateToTime(sessionStartDate);
-  const sessionEndTime = formatDateToTime(sessionEndDate);
+  const sessionDay = DateUtils.getLocalizedDay(
+    session.start_time,
+    session?.timezone,
+  );
+  const sessionStartTime = DateUtils.getLocalizedTime(
+    session.start_time,
+    session?.timezone,
+  );
+  const sessionEndTime = DateUtils.getLocalizedTime(
+    session.end_time,
+    session?.timezone,
+  );
   const wasLiveSession = session?.type == CONST.SESSION_TYPES.LIVE;
   // Figure out last drink added
-  let lastDrinkAdded: string;
   const lastDrinkEditTimestamp = getLastDrinkAddedTime(session);
-  if (!lastDrinkEditTimestamp) {
-    lastDrinkAdded = 'Unknown';
-  } else {
-    const lastDrinkAddedDate = timestampToDate(lastDrinkEditTimestamp);
-    lastDrinkAdded = formatDateToTime(lastDrinkAddedDate);
-  }
-
-  const onEditSessionPress = (sessionId: string) => {
-    Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(sessionId));
-  };
+  const lastDrinkAdded = lastDrinkEditTimestamp
+    ? DateUtils.getLocalizedTime(lastDrinkEditTimestamp, session?.timezone)
+    : 'Unknown';
 
   const handleBackPress = () => {
     const screenBeforeSummaryScreen = Navigation.getLastScreenName(true);
@@ -133,49 +136,51 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
         },
         {
           titleKey: 'sessionSummaryScreen.generalSection.startTime',
-          description: !wasLiveSession ? '-' : sessionStartTime,
+          description: sessionStartTime,
+          shouldHide: !wasLiveSession,
         },
         {
           titleKey: 'sessionSummaryScreen.generalSection.lastDrinkAdded',
-          description: !wasLiveSession ? '-' : lastDrinkAdded,
+          description: lastDrinkAdded,
+          shouldHide: !wasLiveSession,
         },
         {
           titleKey: 'sessionSummaryScreen.generalSection.endTime',
-          description: !wasLiveSession ? '-' : sessionEndTime,
+          description: sessionEndTime,
+          shouldHide: !wasLiveSession,
         },
-        // {
-        //   titleKey: 'common.timezone',
-        //   description: session.timezone ?? '',
-        // },
+        {
+          titleKey: 'common.blackout',
+          description: session.blackout ? 'Yes' : 'No',
+        },
+        {
+          titleKey: 'common.note',
+          description: session.note ?? '',
+        },
       ],
     };
   }, [session, styles.border]);
 
+  const drinkData: DrinkMenuItem[] = [
+    // {key: 'common.total', val: totalDrinks},
+    {key: 'drinks.smallBeer', val: drinkSums.small_beer},
+    {key: 'drinks.beer', val: drinkSums.beer},
+    {key: 'drinks.wine', val: drinkSums.wine},
+    {key: 'drinks.weakShot', val: drinkSums.weak_shot},
+    {key: 'drinks.strongShot', val: drinkSums.strong_shot},
+    {key: 'drinks.cocktail', val: drinkSums.cocktail},
+    {key: 'drinks.other', val: drinkSums.other},
+  ];
+
   const drinkMenuItemsData: Menu = useMemo(() => {
     return {
       sectionTranslationKey: 'sessionSummaryScreen.drinksSection.title',
-      items: [
-        {titleKey: 'common.total', description: totalDrinks.toString()},
-        {
-          titleKey: 'drinks.smallBeer',
-          description: drinkSums.small_beer.toString(),
-        },
-        {titleKey: 'drinks.beer', description: drinkSums.beer.toString()},
-        {titleKey: 'drinks.wine', description: drinkSums.wine.toString()},
-        {
-          titleKey: 'drinks.weakShot',
-          description: drinkSums.weak_shot.toString(),
-        },
-        {
-          titleKey: 'drinks.strongShot',
-          description: drinkSums.strong_shot.toString(),
-        },
-        {
-          titleKey: 'drinks.cocktail',
-          description: drinkSums.cocktail.toString(),
-        },
-        {titleKey: 'drinks.other', description: drinkSums.other.toString()},
-      ],
+      items: _.cloneDeep(drinkData)
+        .filter(({val}) => val > 0) // Filter out drinks with 0 count
+        .map(({key, val}: DrinkMenuItem) => ({
+          titleKey: key,
+          description: val.toString(),
+        })),
     };
   }, [session]);
 
@@ -184,12 +189,16 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
       sectionTranslationKey: 'sessionSummaryScreen.otherSection.title',
       items: [
         {
-          titleKey: 'common.blackout',
-          description: session.blackout ? 'Yes' : 'No',
+          titleKey: 'common.timezone',
+          description: session.timezone ?? '',
         },
         {
-          titleKey: 'common.note',
-          description: session.note ?? '',
+          titleKey: 'sessionSummaryScreen.generalSection.type',
+          description: translate(
+            wasLiveSession
+              ? 'drinkingSession.type.live'
+              : 'drinkingSession.type.edit',
+          ),
         },
       ],
     };
@@ -203,30 +212,33 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
         containerStyles={styles.pb0}
         childrenStyles={styles.pt3}>
         <>
-          {menuItemsData.items.map((detail, index) => (
-            <MenuItem
-              // eslint-disable-next-line react/no-array-index-key
-              key={`${detail.titleKey}_${index}`}
-              title={detail.titleKey && translate(detail.titleKey)}
-              titleStyle={styles.plainSectionTitle}
-              description={detail.description}
-              descriptionTextStyle={styles.textNormalThemeText}
-              wrapperStyle={styles.sectionMenuItemTopDescription}
-              style={[
-                styles.pt0,
-                styles.pb0,
-                // Enable the following to add borders in between items
-                // styles.borderBottomRounded,
-                // {borderBottomLeftRadius: 35, borderBottomRightRadius: 35},
-                // index === menuItemsData.items.length - 1 && styles.borderNone,
-              ]}
-              disabled={true}
-              shouldGreyOutWhenDisabled={false}
-              shouldUseRowFlexDirection
-              shouldShowRightComponent={!!detail.rightComponent}
-              rightComponent={detail.rightComponent}
-            />
-          ))}
+          {menuItemsData.items.map(
+            (detail, index) =>
+              !detail?.shouldHide && (
+                <MenuItem
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={`${detail.titleKey}_${index}`}
+                  title={detail.titleKey && translate(detail.titleKey)}
+                  titleStyle={styles.plainSectionTitle}
+                  description={detail.description}
+                  descriptionTextStyle={styles.textNormalThemeText}
+                  wrapperStyle={styles.sectionMenuItemTopDescription}
+                  style={[
+                    styles.pt0,
+                    styles.pb0,
+                    // Enable the following to add borders in between items
+                    // styles.borderBottomRounded,
+                    // {borderBottomLeftRadius: 35, borderBottomRightRadius: 35},
+                    // index === menuItemsData.items.length - 1 && styles.borderNone,
+                  ]}
+                  disabled={true}
+                  shouldGreyOutWhenDisabled={false}
+                  shouldUseRowFlexDirection
+                  shouldShowRightComponent={!!detail.rightComponent}
+                  rightComponent={detail.rightComponent}
+                />
+              ),
+          )}
         </>
       </Section>
     );
@@ -263,7 +275,7 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
               style={styles.bgTransparent}
               icon={KirokuIcons.Edit}
               iconFill={theme.textDark}
-              onPress={() => onEditSessionPress(sessionId)} // Use keyextractor to load id here
+              onPress={() => DS.navigateToEditSessionScreen(sessionId, session)} // Use keyextractor to load id here
             />
           )
         }

@@ -194,11 +194,13 @@ function FriendSearchScreen() {
                   alreadyAFriend={state.friends ? state.friends[userID] : false}
                 />
               ))
-            ) : state.noUsersFound ? (
-              <Text style={styles.noResultsText}>
-                There are no users with this nickname.
-              </Text>
-            ) : null}
+            ) : (
+              state.noUsersFound && (
+                <Text style={styles.noResultsText}>
+                  {translate('friendSearchScreen.noUsersFound')}
+                </Text>
+              )
+            )}
           </View>
         </ScrollView>
       </View>

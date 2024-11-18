@@ -10,7 +10,7 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import Navigation from '@libs/Navigation/Navigation';
 import CONST from '@src/CONST';
 import ROUTES from '@src/ROUTES';
-import type {SelectedTimezone, Timezone} from '@src/types/onyx/PersonalDetails';
+import type {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
 import {StackScreenProps} from '@react-navigation/stack';
 import {SettingsNavigatorParamList} from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
@@ -24,14 +24,13 @@ type TimezoneInitialScreenProps = StackScreenProps<
   SettingsNavigatorParamList,
   typeof SCREENS.SETTINGS.ACCOUNT.TIMEZONE
 >;
-// type TimezoneInitialScreenProps = WithCurrentUserPersonalDetailsProps;
+// type TimezoneInitialScreenProps = WithCurrentUserDataProps;
 
 function TimezoneInitialScreen({}: TimezoneInitialScreenProps) {
   const styles = useThemeStyles();
   const {db, auth} = useFirebase();
   const {userData} = useDatabaseData();
-  const timezone: Timezone =
-    userData?.private_data?.timezone ?? CONST.DEFAULT_TIME_ZONE;
+  const timezone: Timezone = userData?.timezone ?? CONST.DEFAULT_TIME_ZONE;
 
   const {translate} = useLocalize();
 

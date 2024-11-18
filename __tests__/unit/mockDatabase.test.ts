@@ -20,10 +20,10 @@ import type {
   Drinks,
   Preferences,
   UnconfirmedDays,
-  UserProps,
+  UserData,
   UnitsToColors,
   UserStatus,
-  UserPropsList,
+  UserDataList,
 } from '../../src/types/onyx';
 import CONST from '@src/CONST';
 
@@ -231,7 +231,7 @@ function validateUserUnconfirmedDays(
  * @param obj Object to validate
  * @returns bool
  */
-function isUserData(obj: any): obj is UserProps {
+function isUserData(obj: any): obj is UserData {
   return typeof obj.role === 'string';
 }
 
@@ -240,7 +240,7 @@ function isUserData(obj: any): obj is UserProps {
  * @param userData Data to validate
  * @returns bool
  */
-function validateUserData(userData: UserPropsList): boolean {
+function validateUserData(userData: UserDataList): boolean {
   for (const userID in userData) {
     if (!isUserData(userData[userID])) {
       return false;

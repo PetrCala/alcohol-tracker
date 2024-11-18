@@ -5,8 +5,10 @@ import type {
   FriendRequestList,
   Preferences,
   Profile,
+  ReasonForLeaving,
+  ReasonForLeavingId,
   UserPrivateData,
-  UserProps,
+  UserData,
   UserStatus,
 } from '@src/types/onyx';
 import type {UserList} from '@src/types/onyx/OnyxCommon';
@@ -21,6 +23,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
+import StringUtils from '@libs/StringUtils';
 import {getUniqueId} from 'react-native-device-info';
 import {Alert} from 'react-native';
 import {cleanStringForFirebaseKey} from '../libs/StringUtilsKiroku';
@@ -28,13 +31,16 @@ import DBPATHS from './DBPATHS';
 import {readDataOnce} from './baseFunctions';
 import {getLastStartedSessionId} from '@libs/DataHandling';
 import _ from 'lodash';
-import {SelectedTimezone, Timezone} from '@src/types/onyx/PersonalDetails';
+import * as Session from '@userActions/Session';
+import {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
 import {validateAppVersion, ValidationResult} from '@libs/Validation';
 import {checkAccountCreationLimit} from './protection';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import Onyx from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
+import CONST from '@src/CONST';
+import {getReasonForLeavingID} from '@libs/ReasonForLeaving';
 
 const getDefaultPreferences = (): Preferences => {
   return {
@@ -55,20 +61,17 @@ const getDefaultPreferences = (): Preferences => {
   };
 };
 
-const getDefaultUserData = (profileData: Profile): UserProps => {
+const getDefaultUserData = (profileData: Profile): UserData => {
   const userRole = 'open_beta_user';
   const timezone: Timezone = {
     selected: Intl.DateTimeFormat().resolvedOptions()
       .timeZone as SelectedTimezone,
     automatic: true,
   };
-  const defaultPrivateData: UserPrivateData = {
-    timezone: timezone,
-  };
   return {
     profile: profileData,
     role: userRole,
-    private_data: defaultPrivateData,
+    timezone: timezone,
   };
 };
 
@@ -121,7 +124,7 @@ async function pushNewUserInfo(
 
   const updates: Record<
     string,
-    UserProps | Preferences | string | number | any
+    UserData | Preferences | string | number | any
   > = {};
   updates[accountCreationsRef.getRoute(deviceId, userID)] = Date.now();
   updates[nicknameRef.getRoute(nicknameKey, userID)] = userNickname;
@@ -139,6 +142,9 @@ async function pushNewUserInfo(
  * @param db The firebase database object;
  * @param userID The user ID
  * @param userNickname The user nickname
+ * @param friends The user's friends
+ * @param friendRequests The user's friend requests
+ * @param reasonForLeaving The reason for leaving
  * @returns {Promise<void>}
  */
 async function deleteUserData(
@@ -147,6 +153,7 @@ async function deleteUserData(
   userNickname: string,
   friends: UserList | undefined,
   friendRequests: FriendRequestList | undefined,
+  reasonForLeaving?: ReasonForLeaving,
 ): Promise<void> {
   const nicknameKey = cleanStringForFirebaseKey(userNickname);
 
@@ -158,14 +165,21 @@ async function deleteUserData(
   const unconfirmedDaysRef = DBPATHS.USER_UNCONFIRMED_DAYS_USER_ID;
   const friendsRef = DBPATHS.USERS_USER_ID_FRIENDS_FRIEND_ID;
   const friendRequestsRef = DBPATHS.USERS_USER_ID_FRIEND_REQUESTS_REQUEST_ID;
+  const reasonForLeavingRef = DBPATHS.REASONS_FOR_LEAVING_REASON_ID;
 
-  const updates: Record<string, null | false> = {};
+  const updates: Record<string, null | false | ReasonForLeaving> = {};
   updates[nicknameRef.getRoute(nicknameKey, userID)] = null;
   updates[userStatusRef.getRoute(userID)] = null;
   updates[userPreferencesRef.getRoute(userID)] = null;
   updates[userRef.getRoute(userID)] = null;
   updates[drinkingSessionsRef.getRoute(userID)] = null;
   updates[unconfirmedDaysRef.getRoute(userID)] = null;
+
+  if (reasonForLeaving) {
+    const reasonID: ReasonForLeavingId = getReasonForLeavingID(userID);
+    updates[reasonForLeavingRef.getRoute(reasonID)] = reasonForLeaving;
+  }
+
   // Data stored in other users' nodes
   if (friends) {
     Object.keys(friends).forEach(friendId => {
@@ -358,7 +372,7 @@ async function updateAutomaticTimezone(
   }
 
   const userID = user.uid;
-  const timezoneRef = DBPATHS.USERS_USER_ID_PRIVATE_DATA_TIMEZONE;
+  const timezoneRef = DBPATHS.USERS_USER_ID_TIMEZONE;
 
   const newData: Timezone = {
     selected: selectedTimezone,
@@ -389,7 +403,7 @@ async function saveSelectedTimezone(
   }
 
   const userID = user.uid;
-  const timezoneRef = DBPATHS.USERS_USER_ID_PRIVATE_DATA_TIMEZONE_SELECTED;
+  const timezoneRef = DBPATHS.USERS_USER_ID_TIMEZONE_SELECTED;
 
   const updates: Record<string, SelectedTimezone> = {};
   updates[timezoneRef.getRoute(userID)] = selectedTimezone;
@@ -409,7 +423,7 @@ async function logIn(
   password: string,
 ): Promise<void> {
   // Stash the credentials in case the log in fails
-  Onyx.merge(ONYXKEYS.LOGIN, {
+  Onyx.merge(ONYXKEYS.FORMS.LOG_IN_FORM_DRAFT, {
     email: email,
     password: password,
   });
@@ -432,12 +446,12 @@ async function signUp(
   username: string,
   password: string,
 ): Promise<void> {
-  // Stash the login credentials in case the request fails
-  Onyx.merge(ONYXKEYS.LOGIN, {
+  // Stash the sign up credentials in case the request fails
+  Onyx.merge(ONYXKEYS.FORMS.SIGN_UP_FORM_DRAFT, {
     email: email,
     username: username,
     password: password,
-    passwordConfirm: password,
+    reEnterPassword: password,
   });
 
   let newUserID: string | undefined;
@@ -482,6 +496,8 @@ async function signUp(
 
     // Update Firebase authentication
     await updateProfile(newUser, {displayName: username});
+
+    Session.clearSignInData();
 
     Navigation.navigate(ROUTES.HOME);
   } catch (error: any) {

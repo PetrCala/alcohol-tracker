@@ -1,4 +1,4 @@
-﻿import React, {useEffect, useMemo, useReducer} from 'react';
+﻿import React, {useEffect, useMemo, useReducer, useState} from 'react';
 import {
   Alert,
   Dimensions,
@@ -18,12 +18,10 @@ import {
   getSingleMonthDrinkingSessions,
   timestampToDate,
   timestampToDateString,
-  roundToTwoDecimalPlaces,
 } from '@libs/DataHandling';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import UserOffline from '@components/UserOfflineModal';
 import {synchronizeUserStatus} from '@database/users';
-import {startLiveDrinkingSession} from '@database/drinkingSessions';
 import commonStyles from '@src/styles/commonStyles';
 import {useFirebase} from '@context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
@@ -54,17 +52,20 @@ import VerifyEmailPopup from '@components/Popups/VerifyEmailPopup';
 import useThemeStyles from '@hooks/useThemeStyles';
 import getPlatform from '@libs/getPlatform';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
-import DSUtils from '@libs/DrinkingSessionUtils';
+import * as DSUtils from '@libs/DrinkingSessionUtils';
+import * as DS from '@libs/actions/DrinkingSession';
+import * as ErrorUtils from '@libs/ErrorUtils';
 import useTheme from '@hooks/useTheme';
 import Icon from '@components/Icon';
 import ScrollView from '@components/ScrollView';
+import useLocalize from '@hooks/useLocalize';
+import {roundToTwoDecimalPlaces} from '@libs/NumberUtils';
 
 type State = {
   visibleDateObject: DateObject;
   drinkingSessionsCount: number;
   drinksConsumed: number;
   unitsConsumed: number;
-  initializingSession: boolean;
   ongoingSessionId: DrinkingSessionId | undefined;
   verifyEmailModalVisible: boolean;
   shouldNavigateToTzFix: boolean;
@@ -80,7 +81,6 @@ const initialState: State = {
   drinkingSessionsCount: 0,
   drinksConsumed: 0,
   unitsConsumed: 0,
-  initializingSession: false,
   ongoingSessionId: undefined,
   verifyEmailModalVisible: false,
   shouldNavigateToTzFix: false,
@@ -96,8 +96,6 @@ const reducer = (state: State, action: Action): State => {
       return {...state, drinksConsumed: action.payload};
     case 'SET_UNITS_CONSUMED':
       return {...state, unitsConsumed: action.payload};
-    case 'SET_INITIALIZING_SESSION':
-      return {...state, initializingSession: action.payload};
     case 'SET_ONGOING_SESSION_ID':
       return {...state, ongoingSessionId: action.payload};
     case 'SET_VERIFY_EMAIL_MODAL_VISIBLE':
@@ -118,6 +116,7 @@ function HomeScreen({route}: HomeScreenProps) {
   const styles = useThemeStyles();
   const theme = useTheme();
   const {auth, db, storage} = useFirebase();
+  const {translate} = useLocalize();
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
   const {
@@ -127,6 +126,7 @@ function HomeScreen({route}: HomeScreenProps) {
     userData,
     isLoading,
   } = useDatabaseData();
+  const [isStartingSession, setIsStartingSession] = useState(false);
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const statsData: StatData = [
@@ -140,67 +140,30 @@ function HomeScreen({route}: HomeScreenProps) {
     },
   ];
 
-  // Handle drinking session button press
-  const startDrinkingSession = async () => {
-    if (!user) {
-      return null;
-    }
-    if (state.ongoingSessionId) {
-      Alert.alert(
-        'A session already exists',
-        "You can't start a new session while you are in one",
+  // If there is an ongoing session, open it, otherwise start a new one
+  const onOpenLiveSessionPress = async () => {
+    if (state?.ongoingSessionId) {
+      // Assume the live session data is in sync with the database
+      Navigation.navigate(
+        ROUTES.DRINKING_SESSION_LIVE.getRoute(state.ongoingSessionId),
       );
       return;
     }
-    dispatch({type: 'SET_INITIALIZING_SESSION', payload: true});
-    // The user is not in an active session
-    const newSessionData: DrinkingSession = DSUtils.getEmptySession(
-      CONST.SESSION_TYPES.LIVE,
-      true,
-      true,
-    );
-    const newSessionId = generateDatabaseKey(
-      db,
-      DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(user.uid),
-    );
-    if (!newSessionId) {
-      Alert.alert(
-        'New session key generation failed',
-        "Couldn't generate a new session key",
-      );
-      return;
-    }
-    try {
-      await startLiveDrinkingSession(
-        db,
-        user.uid,
-        newSessionData,
-        newSessionId,
-      );
-      Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(newSessionId));
-      dispatch({type: 'SET_ONGOING_SESSION_ID', payload: newSessionId});
-    } catch (error: any) {
-      Alert.alert(
-        'New session initialization failed',
-        'Could not start a new session: ' + error.message,
-      );
-      return;
-    } finally {
-      dispatch({type: 'SET_INITIALIZING_SESSION', payload: false});
-    }
-  };
 
-  const openSessionInProgress = () => {
-    if (!state.ongoingSessionId) {
-      Alert.alert(
-        'New session initialization failed',
-        'Could not find the existing session',
+    try {
+      setIsStartingSession(true);
+      const newSessionId = await DS.startLiveDrinkingSession(
+        db,
+        user,
+        userData?.timezone?.selected,
       );
-      return;
+      dispatch({type: 'SET_ONGOING_SESSION_ID', payload: newSessionId});
+      Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(newSessionId));
+    } catch (error: any) {
+      ErrorUtils.raiseAlert(error, translate('homeScreen.error.title'));
+    } finally {
+      setIsStartingSession(false);
     }
-    Navigation.navigate(
-      ROUTES.DRINKING_SESSION_LIVE.getRoute(state.ongoingSessionId),
-    );
   };
 
   // Monitor visible month and various statistics
@@ -239,8 +202,7 @@ function HomeScreen({route}: HomeScreenProps) {
       !DSUtils.allSessionsContainTimezone(drinkingSessionData);
 
     // Only navigate in case the user is setting up TZ for the first time
-    const shouldNavigateToTzFix =
-      sessionsAreMissingTz && !!!userData?.private_data?.timezone;
+    const shouldNavigateToTzFix = sessionsAreMissingTz && !!!userData?.timezone;
 
     dispatch({
       type: 'SET_SHOULD_NAVIGATE_TO_TZ_FIX',
@@ -295,6 +257,11 @@ function HomeScreen({route}: HomeScreenProps) {
     ]),
   );
 
+  // Ensure the live session data is in sync with the database on component mount
+  useEffect(() => {
+    DS.syncLocalLiveSessionData(state.ongoingSessionId, drinkingSessionData);
+  }, [state.ongoingSessionId, drinkingSessionData]);
+
   if (!user) {
     Navigation.resetToHome();
     return;
@@ -304,7 +271,7 @@ function HomeScreen({route}: HomeScreenProps) {
   }
   if (
     isLoading ||
-    state.initializingSession ||
+    isStartingSession ||
     !preferences ||
     !userData ||
     !userStatusData
@@ -312,7 +279,7 @@ function HomeScreen({route}: HomeScreenProps) {
     return (
       <FullScreenLoadingIndicator
         loadingText={
-          (state.initializingSession && 'Starting a new session...') || ''
+          (isStartingSession && translate('homeScreen.startingSession')) || ''
         }
       />
     );
@@ -354,13 +321,13 @@ function HomeScreen({route}: HomeScreenProps) {
         </View> */}
       </View>
       <ScrollView>
-        {state.ongoingSessionId ? (
+        {state.ongoingSessionId && (
           <MessageBanner
             text="You are currently in session!"
-            onPress={openSessionInProgress}
+            onPress={onOpenLiveSessionPress}
             danger
           />
-        ) : null}
+        )}
         {/* User verification modal -- Enable later on
         {user.emailVerified ? null : (
           <MessageBanner
@@ -436,11 +403,11 @@ function HomeScreen({route}: HomeScreenProps) {
           />
         </View>
       </View>
-      {state.ongoingSessionId ? null : (
+      {!state.ongoingSessionId && (
         <TouchableOpacity
           accessibilityRole="button"
           style={[localStyles.startSessionButton, styles.buttonSuccess]}
-          onPress={startDrinkingSession}>
+          onPress={onOpenLiveSessionPress}>
           <Icon
             src={KirokuIcons.Plus}
             height={36}
@@ -532,7 +499,7 @@ const localStyles = StyleSheet.create({
   },
   startSessionButton: {
     position: 'absolute',
-    bottom: 20,
+    bottom: 18,
     left: '50%',
     transform: [{translateX: -35}],
     borderRadius: 50,

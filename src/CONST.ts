@@ -2,6 +2,7 @@ import dateAdd from 'date-fns/add';
 import dateSubtract from 'date-fns/sub';
 import * as KeyCommand from 'react-native-key-command';
 import SCREENS from './SCREENS';
+import {SelectedTimezone} from './types/onyx/UserData';
 
 // Creating a default array and object this way because objects ({}) and arrays ([]) are not stable types.
 // Freezing the array ensures that it cannot be unintentionally modified.
@@ -161,6 +162,7 @@ const CONST = {
     SQL_DATE_TIME: 'YYYY-MM-DD HH:mm:ss',
     FNS_FORMAT_STRING: 'yyyy-MM-dd',
     LOCAL_TIME_FORMAT: 'h:mm a',
+    SHORT_TIME_FORMAT: 'HH:mm',
     YEAR_MONTH_FORMAT: 'yyyyMM',
     MONTH_FORMAT: 'MMMM',
     WEEKDAY_TIME_FORMAT: 'eeee',
@@ -507,7 +509,7 @@ const CONST = {
 
     DEFAULT: 'en',
   },
-  MAX_ALLOWED_UNITS: 100,
+  MAX_ALLOWED_UNITS: 99,
   SIGN_IN_FORM_WIDTH: 300,
 
   /**
@@ -675,7 +677,11 @@ const CONST = {
       UNKNOWN: 'unknown',
     },
   },
-  DEFAULT_TIME_ZONE: {automatic: true, selected: 'Europe/Prague'},
+  DEFAULT_TIME_ZONE: {
+    automatic: true,
+    selected: Intl.DateTimeFormat().resolvedOptions()
+      .timeZone as SelectedTimezone,
+  },
   DEFAULT_ACCOUNT_DATA: {errors: null, success: '', isLoading: false},
   DEFAULT_NETWORK_DATA: {isOffline: false},
   DEFAULT_CLOSE_ACCOUNT_DATA: {errors: null, success: '', isLoading: false},
@@ -724,6 +730,9 @@ const CONST = {
 
   PUSHER: {
     PRIVATE_USER_CHANNEL_PREFIX: 'private-encrypted-user-userID-',
+  },
+  REASON_FOR_LEAVING: {
+    DB_KEY_LENGTH: 32,
   },
   REGEX: {
     SPECIAL_CHARS_WITHOUT_NEWLINE: /((?!\n)[()-\s\t])/g,
@@ -897,6 +906,10 @@ const CONST = {
       STRONG_SHOT: 'Strong Shot',
       WEAK_SHOT: 'Weak Shot',
       WINE: 'Wine',
+    },
+    ACTIONS: {
+      ADD: 'add',
+      REMOVE: 'remove',
     },
   },
 

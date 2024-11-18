@@ -25,8 +25,8 @@ import ScreenWrapper from '@components/ScreenWrapper';
 import {ScrollOffsetContext} from '@components/ScrollOffsetContextProvider';
 import ScrollView from '@components/ScrollView';
 import Text from '@components/Text';
-import type {WithCurrentUserPersonalDetailsProps} from '@components/withCurrentUserPersonalDetails';
-import withCurrentUserPersonalDetails from '@components/withCurrentUserPersonalDetails';
+import type {WithCurrentUserDataProps} from '@components/withCurrentUserData';
+import withCurrentUserData from '@components/withCurrentUserData';
 import useActiveCentralPaneRoute from '@hooks/useActiveCentralPaneRoute';
 import useLocalize from '@hooks/useLocalize';
 import useNetwork from '@hooks/useNetwork';
@@ -46,8 +46,7 @@ import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 
 type SettingsScreenOnyxProps = {};
 
-type SettingsScreenProps = SettingsScreenOnyxProps &
-  WithCurrentUserPersonalDetailsProps;
+type SettingsScreenProps = SettingsScreenOnyxProps & WithCurrentUserDataProps;
 
 type MenuData = {
   translationKey: TranslationPaths;
@@ -349,6 +348,6 @@ function SettingsScreen({}: SettingsScreenProps) {
 
 SettingsScreen.displayName = 'SettingsScreen';
 
-export default withCurrentUserPersonalDetails(
+export default withCurrentUserData(
   withOnyx<SettingsScreenProps, SettingsScreenOnyxProps>({})(SettingsScreen),
 );

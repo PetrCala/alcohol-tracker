@@ -2,7 +2,7 @@ import type {IsEqual} from 'type-fest';
 import type {DrinkingSessionId} from './types/onyx';
 import type {UserID} from './types/onyx/OnyxCommon';
 import type {DateString} from './types/time';
-import {SelectedTimezone} from './types/onyx/PersonalDetails';
+import {SelectedTimezone} from './types/onyx/UserData';
 
 /**
  * Builds a URL with an encoded URI component for the `backTo` param which can be added to the end of URLs
@@ -58,6 +58,11 @@ const ROUTES = {
     route: 'drinking-session/:sessionId/session-note-screen',
     getRoute: (sessionId: DrinkingSessionId) =>
       `drinking-session/${sessionId}/session-note-screen` as const,
+  },
+  DRINKING_SESSION_SESSION_TIMEZONE_SCREEN: {
+    route: 'drinking-session/:sessionId/session-timezone-screen',
+    getRoute: (sessionId: DrinkingSessionId) =>
+      `drinking-session/${sessionId}/session-timezone-screen` as const,
   },
   DRINKING_SESSION_SUMMARY: {
     route: 'drinking-session/:sessionId/summary',

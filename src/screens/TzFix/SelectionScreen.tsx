@@ -9,7 +9,7 @@ import Navigation from '@libs/Navigation/Navigation';
 import CONST from '@src/CONST';
 import ROUTES from '@src/ROUTES';
 import TIMEZONES from '@src/TIMEZONES';
-import type {SelectedTimezone} from '@src/types/onyx/PersonalDetails';
+import type {SelectedTimezone} from '@src/types/onyx/UserData';
 import {StackScreenProps} from '@react-navigation/stack';
 import {
   SettingsNavigatorParamList,
@@ -17,7 +17,7 @@ import {
 } from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
-import {UserProps} from '@src/types/onyx';
+import {UserData} from '@src/types/onyx';
 import * as User from '@database/users';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {Alert} from 'react-native';
@@ -34,8 +34,8 @@ type SelectionScreenProps = StackScreenProps<
  */
 const getKey = (text: string): string => `${text}-${new Date().getTime()}`;
 
-const getUserTimezone = (userData: UserProps | undefined) =>
-  userData?.private_data?.timezone ?? CONST.DEFAULT_TIME_ZONE;
+const getUserTimezone = (userData: UserData | undefined) =>
+  userData?.timezone ?? CONST.DEFAULT_TIME_ZONE;
 
 function SelectionScreen({}: SelectionScreenProps) {
   const {translate} = useLocalize();

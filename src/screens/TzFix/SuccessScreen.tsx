@@ -38,6 +38,9 @@ function SuccessScreen({}: SuccessScreenProps) {
           <Text style={[styles.mt6, styles.textAlignCenter]}>
             {translate('tzFix.success.text1')}
           </Text>
+          <Text style={[styles.mt4, styles.textAlignCenter]}>
+            {translate('tzFix.success.text2')}
+          </Text>
         </View>
         <Button
           success
