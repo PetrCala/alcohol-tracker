@@ -143,7 +143,7 @@ function getDrinkingSessionOnyxKey(
  * @returns The total units calculated.
  */
 function calculateTotalUnits(
-  drinks: Drinks | undefined,
+  drinks: DrinksList | undefined,
   drinksToUnits: DrinksToUnits,
   roundUp?: boolean,
 ): number {
@@ -153,10 +153,12 @@ function calculateTotalUnits(
 
   let totalUnits = 0;
 
-  for (const [drinkKey, count] of Object.entries(drinks)) {
-    const conversionFactor = drinksToUnits[drinkKey as DrinkKey] || 0;
-    totalUnits += (count || 0) * conversionFactor;
-  }
+  _.forEach(Object.values(drinks), drink => {
+    for (const [drinkKey, count] of Object.entries(drink)) {
+      const conversionFactor = drinksToUnits[drinkKey as DrinkKey] || 0;
+      totalUnits += (count || 0) * conversionFactor;
+    }
+  });
 
   if (roundUp) {
     return roundToTwoDecimalPlaces(totalUnits);
@@ -207,10 +209,26 @@ function addDrinksToList(
     throw new Error('Invalid timestampOption');
   }
 
-  return {
-    ...drinksList,
-    [timestamp]: drinks,
-  };
+  // Create a shallow copy of drinksList to avoid mutating the original
+  const updatedDrinksList: DrinksList = {...drinksList};
+
+  if (updatedDrinksList[timestamp]) {
+    // Timestamp already exists, merge the drinks
+    const existingDrinks = updatedDrinksList[timestamp];
+    const mergedDrinks: Drinks = {...existingDrinks};
+
+    for (const [drinkKey, amount] of Object.entries(drinks)) {
+      mergedDrinks[drinkKey as DrinkKey] =
+        (mergedDrinks[drinkKey as DrinkKey] || 0) + (amount || 0);
+    }
+
+    updatedDrinksList[timestamp] = mergedDrinks;
+  } else {
+    // Timestamp does not exist, add the drinks
+    updatedDrinksList[timestamp] = {...drinks};
+  }
+
+  return updatedDrinksList;
 }
 
 /**

@@ -27,15 +27,26 @@ export type DrinkTypesViewProps = {
 
 const DrinkTypesView = ({sessionId}: DrinkTypesViewProps) => {
   const {translate} = useLocalize();
+  const {preferences} = useDatabaseData();
   const styles = useThemeStyles();
   const theme = useTheme();
 
   const handleAddDrinks = (drinks: Drinks) => {
-    DS.updateDrinks(sessionId, drinks, CONST.DRINKS.ACTIONS.ADD);
+    DS.updateDrinks(
+      sessionId,
+      drinks,
+      preferences?.drinks_to_units,
+      CONST.DRINKS.ACTIONS.ADD,
+    );
   };
 
   const handleRemoveDrinks = (drinks: Drinks) => {
-    DS.updateDrinks(sessionId, drinks, CONST.DRINKS.ACTIONS.REMOVE);
+    DS.updateDrinks(
+      sessionId,
+      drinks,
+      preferences?.drinks_to_units,
+      CONST.DRINKS.ACTIONS.REMOVE,
+    );
   };
 
   return (

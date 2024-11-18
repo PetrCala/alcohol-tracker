@@ -255,12 +255,15 @@ async function discardLiveDrinkingSession(
  * @param drinksToUnits Drink to units mapping.
  * @param action The action to perform (i.e., add, remove,...).
  */
-function updateDrinksList(
+function updateDrinks(
   sessionId: DrinkingSessionId | undefined,
   drinks: Drinks,
-  drinksToUnits: DrinksToUnits,
+  drinksToUnits: DrinksToUnits | undefined,
   action: ValueOf<typeof CONST.DRINKS.ACTIONS>,
 ): void {
+  if (!drinksToUnits || !sessionId) {
+    return;
+  }
   const session = DSUtils.getDrinkingSessionData(sessionId);
   const onyxKey = DSUtils.getDrinkingSessionOnyxKey(sessionId);
   if (session && onyxKey) {
@@ -270,6 +273,7 @@ function updateDrinksList(
       drinksToUnits,
       action,
     );
+    console.log('drinksList', drinksList);
     const modifyAction =
       action === CONST.DRINKS.ACTIONS.ADD ? Onyx.merge : Onyx.set;
 
@@ -411,7 +415,7 @@ export {
   startLiveDrinkingSession,
   syncLocalLiveSessionData,
   updateBlackout,
-  updateDrinksList,
+  updateDrinks,
   updateNote,
   updateLocalData,
   updateSessionDate,
