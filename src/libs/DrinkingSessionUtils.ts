@@ -227,8 +227,10 @@ function addDrinksToList(
 
   if (options.timestampOption === 'now') {
     timestamp = Date.now();
+  } else if (options.timestampOption === 'sessionEndTime') {
+    timestamp = options.end_time;
   } else if (options.timestampOption === 'sessionStartTime') {
-    timestamp = options.session.start_time;
+    timestamp = options.start_time;
   } else {
     throw new Error('Invalid timestampOption');
   }
@@ -324,10 +326,15 @@ function getSessionAddDrinksOptions(
     ? {
         timestampOption: 'now',
       }
-    : {
-        timestampOption: 'sessionStartTime',
-        session: session,
-      };
+    : session?.type === CONST.SESSION_TYPES.LIVE && session?.end_time
+      ? {
+          timestampOption: 'sessionEndTime',
+          end_time: session.end_time,
+        }
+      : {
+          timestampOption: 'sessionStartTime',
+          start_time: session.start_time,
+        };
 }
 
 function getSessionRemoveDrinksOptions(): RemoveDrinksOptions {
