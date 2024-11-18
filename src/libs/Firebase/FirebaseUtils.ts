@@ -1,4 +1,3 @@
-import Config from 'react-native-config';
 import type {FirebaseStorage} from 'firebase/storage';
 import type {Database} from 'firebase/database';
 import type {Auth} from 'firebase/auth';
@@ -20,7 +19,7 @@ function isConnectedToStorageEmulator(storage: FirebaseStorage): boolean {
     return false;
   }
   return storageConfig.includes(
-    `${CONFIG.TEST_HOST}:${CONFIG.TEST_STORAGE_BUCKET_PORT}`,
+    `${CONFIG.EMULATORS.HOST}:${CONFIG.EMULATORS.STORAGE_BUCKET_PORT}`,
   );
 }
 
@@ -39,7 +38,9 @@ function isConnectedToAuthEmulator(auth: Auth): boolean {
   if (!authConfig) {
     return false;
   }
-  return authConfig.includes(`${CONFIG.TEST_HOST}:${CONFIG.TEST_AUTH_PORT}`);
+  return authConfig.includes(
+    `${CONFIG.EMULATORS.HOST}:${CONFIG.EMULATORS.AUTH_PORT}`,
+  );
 }
 
 /**
@@ -49,11 +50,7 @@ function isConnectedToAuthEmulator(auth: Auth): boolean {
  * @returns True if connected to the emulator, false otherwise.
  */
 function isConnectedToDatabaseEmulator(database: Database): boolean {
-  const dbConfig = database.app.options.databaseURL;
-  if (!dbConfig) {
-    return false;
-  }
-  return dbConfig.includes(`${CONFIG.TEST_HOST}:${CONFIG.TEST_AUTH_PORT}`);
+  return (database as any)._repoInternal.repoInfo_.isUsingEmulator;
 }
 
 export {

@@ -12,16 +12,27 @@ const SCREENS = {
   ...PROTECTED_SCREENS,
   NOT_FOUND: 'not-found',
   // Public screens
-  SIGNUP: 'SignUp',
-  LOGIN: 'Login',
+  INITIAL: 'Initial',
+  SIGN_UP: 'SignUp',
+  LOG_IN: 'LogIn',
+  FORGOT_PASSWORD: 'ForgotPassword',
   FORCE_UPDATE: 'ForceUpdate',
+
+  TZ_FIX: {
+    ROOT: 'TZFix_Root',
+    INTRODUCTION: 'TZFix_Introduction',
+    DETECTION: 'TZFix_Detection',
+    SELECTION: 'TZFix_Selection',
+    CONFIRMATION: 'TZFix_Confirmation',
+    SUCCESS: 'TZFix_Success',
+  },
+
   RIGHT_MODAL: {
     ACHIEVEMENTS: 'Achievements',
     DAY_OVERVIEW: 'DayOverview',
     DRINKING_SESSION: 'DrinkingSession',
-    MAIN_MENU: 'MainMenu',
-    PROFILE: 'Profile',
     SETTINGS: 'Settings',
+    PROFILE: 'Profile',
     SOCIAL: 'Social',
     STATISTICS: 'Statistics',
   },
@@ -37,27 +48,43 @@ const SCREENS = {
   DRINKING_SESSION: {
     ROOT: 'DrinkingSession_Root',
     LIVE: 'DrinkingSession_Live',
+    SESSION_DATE_SCREEN: 'DrinkingSession_SessionDateScreen',
+    SESSION_NOTE_SCREEN: 'DrinkingSession_SessionNoteScreen',
+    SESSION_TIMEZONE_SCREEN: 'DrinkingSession_SessionTimezoneScreen',
     SUMMARY: 'DrinkingSession_Summary',
-  },
-
-  MAIN_MENU: {
-    ROOT: 'MainMenu_Root',
-    APP_SHARE: 'MainMenu_AppShare',
-    PREFERENCES: 'MainMenu_Preferences',
-    POLICIES: {
-      TERMS_OF_SERVICE: 'MainMenu_Policies_TermsOfService',
-      PRIVACY_POLICY: 'MainMenu_Policies_PrivacyPolicy',
-    },
-  },
-
-  PROFILE: {
-    ROOT: 'Profile_Root',
-    EDIT: 'Profile_Edit',
-    FRIENDS_FRIENDS: 'Profile_FriendsFriends',
   },
 
   SETTINGS: {
     ROOT: 'Settings_Root',
+    APP_SHARE: 'Settings_AppShare',
+
+    ACCOUNT: {
+      ROOT: 'Settings_Account',
+      USER_NAME: 'Settings_UserName',
+      DISPLAY_NAME: 'Settings_DisplayName',
+      EMAIL: 'Settings_Email',
+      PASSWORD: 'Settings_Password',
+      TIMEZONE: 'Settings_Timezone',
+      TIMEZONE_SELECT: 'Settings_Timezone_Select',
+      //...
+    },
+
+    PREFERENCES: {
+      ROOT: 'Settings_Preferences',
+      LANGUAGE: 'Settings_Preferences_Language',
+      THEME: 'Settings_Preferences_Theme',
+      FIRST_DAY_OF_WEEK: 'Settings_Preferences_FirstDayOfWeek',
+    },
+
+    TERMS_OF_SERVICE: 'Settings_TermsOfService',
+    PRIVACY_POLICY: 'Settings_PrivacyPolicy',
+    FEEDBACK: 'Settings_Feedback',
+    DELETE: 'Settings_Delete',
+  },
+
+  PROFILE: {
+    ROOT: 'Profile_Root',
+    FRIENDS_FRIENDS: 'Profile_FriendsFriends',
   },
 
   SOCIAL: {

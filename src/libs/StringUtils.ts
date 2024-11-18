@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import CONST from '@src/CONST';
+import hashCode from './hashCode';
 
 /**
  * Removes diacritical marks and non-alphabetic and non-latin characters from a string.
@@ -74,9 +75,46 @@ function normalizeCRLF(value?: string): string | undefined {
   return value?.replace(/\r\n/g, '\n');
 }
 
+/**
+ * Generates a unique hash from a given input string and timestamp, with a customizable length.
+ *
+ * This function uses SHA-256 to hash a combination of the input string and timestamp,
+ * ensuring a unique hash for each unique input. The resulting hash can be truncated
+ * to a specified length.
+ *
+ * @param {string} input - The input string to be hashed.
+ * @param {number} timestamp - The timestamp to include in the hash for uniqueness.
+ * @param {number} [length=64] - The desired length of the resulting hash. Defaults to 64 characters.
+ *                                If specified length is greater than 64, the full hash length (64) will be returned.
+ * @returns {string} - A unique hash generated from the input and timestamp, truncated to the specified length.
+ *
+ * @example
+ * // Generates a 16-character hash
+ * const hash = generateUniqueHash('exampleString', Date.now(), 16);
+ * console.log(hash); // Outputs a unique 16-character hash
+ */
+function generateUniqueHash(
+  input: string,
+  timestamp: number,
+  length: number = 64,
+): string {
+  let data = `${input}-${timestamp}`;
+
+  // Pad or truncate the data to the desired length
+  if (data.length < length) {
+    data = data.padEnd(length, '0');
+  } else if (data.length > length) {
+    data = data.substring(0, length);
+  }
+
+  const hash = hashCode(data).toString();
+  return hash.substring(0, length);
+}
+
 export default {
-  sanitizeString,
+  generateUniqueHash,
   isEmptyString,
-  removeInvisibleCharacters,
   normalizeCRLF,
+  removeInvisibleCharacters,
+  sanitizeString,
 };

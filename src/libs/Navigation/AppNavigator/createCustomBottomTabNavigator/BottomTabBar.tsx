@@ -67,7 +67,7 @@
 //   //       : undefined;
 
 //   return (
-//     <View style={styles.bottomTabBarContainer}>
+//     <View style={styles.bottomTabBarContainer()}>
 //       <Text>Hello, world!</Text>
 //       {/* <Tooltip text={translate('common.chats')}>
 //         <PressableWithFeedback

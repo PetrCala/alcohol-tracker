@@ -43,11 +43,11 @@ function numberToVerboseString(
       break;
     case number < 365 * 24 * 60 * 60 * 1000:
       count = Math.floor(number / (30 * 24 * 60 * 60 * 1000));
-      unit = 'month';
+      unit = 'Month';
       break;
     default:
       count = Math.floor(number / (365 * 24 * 60 * 60 * 1000));
-      unit = 'year';
+      unit = 'Year';
   }
 
   const unitInfo = useAbbreviation
@@ -63,7 +63,9 @@ function getTimestampAge(
   addAgo = true,
   useAbbreviation = false,
 ): string | null | undefined {
-  if (!timestamp) {return null;}
+  if (!timestamp) {
+    return null;
+  }
   const now = Date.now();
   const difference = now - timestamp;
   return numberToVerboseString(difference, addAgo, useAbbreviation);

@@ -1,61 +1,53 @@
-﻿import {ScrollView, StyleSheet, Text, View} from 'react-native';
-import MenuIcon from '@components/Buttons/MenuIcon';
+﻿import {StyleProp, StyleSheet, Text, View, ViewStyle} from 'react-native';
 import {
-  formatDateToDay,
-  formatDateToTime,
   getLastDrinkAddedTime,
-  sumAllUnits,
   sumAllDrinks,
   sumDrinksOfSingleType,
-  timestampToDate,
   unitsToColors,
 } from '@libs/DataHandling';
+import useLocalize from '@hooks/useLocalize';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
-import BasicButton from '@components/Buttons/BasicButton';
-import MainHeader from '@components/Header/MainHeader';
-import type {DrinkingSession} from '@src/types/onyx';
+import type {DrinkingSession, DrinkKey} from '@src/types/onyx';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import type {StackScreenProps} from '@react-navigation/stack';
+import CONST from '@src/CONST';
 import SCREENS from '@src/SCREENS';
 import type {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
-import {useEffect, useState} from 'react';
-import {
-  calculateSessionLength,
-  extractSessionOrEmpty,
-} from '@libs/DrinkingSessionUtils';
+import {useCallback, useEffect, useMemo, useState} from 'react';
+import * as DSUtils from '@libs/DrinkingSessionUtils';
+import * as DS from '@libs/actions/DrinkingSession';
+import DateUtils from '@libs/DateUtils';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import ScreenWrapper from '@components/ScreenWrapper';
+import HeaderWithBackButton from '@components/HeaderWithBackButton';
+import Button from '@components/Button';
+import useThemeStyles from '@hooks/useThemeStyles';
+import ScrollView from '@components/ScrollView';
+import useTheme from '@hooks/useTheme';
+import MenuItem from '@components/MenuItem';
+import Section from '@components/Section';
+import {TranslationPaths} from '@src/languages/types';
+import MenuItemGroup from '@components/MenuItemGroup';
+import _ from 'lodash';
 
-const SessionDataItem = ({
-  heading,
-  data,
-  index,
-  sessionColor,
-}: {
-  heading: string;
-  data: any;
-  index: number;
-  sessionColor?: string; // Optional property for sessionColor
-}) => (
-  <View
-    style={[
-      styles.sessionDataContainer,
-      {backgroundColor: index % 2 === 0 ? '#FFFFbd' : 'white'},
-    ]}>
-    <Text style={styles.sessionDataHeading}>{heading}</Text>
-    {sessionColor ? (
-      // Render the colored rectangle when sessionColor is present
-      <View
-        style={[styles.sessionColorMarker, {backgroundColor: sessionColor}]}
-      />
-    ) : (
-      // Else render the text
-      <Text style={styles.sessionDataText}>{data}</Text>
-    )}
-  </View>
-);
+type DrinkMenuItem = {
+  key: TranslationPaths;
+  val: number;
+};
 
+type MenuData = {
+  titleKey?: TranslationPaths;
+  description?: string;
+  shouldHide?: boolean;
+  rightComponent?: React.ReactNode;
+  additionalStyles?: StyleProp<ViewStyle>;
+};
+
+type Menu = {
+  sectionTranslationKey: TranslationPaths;
+  items: MenuData[];
+};
 type SessionSummaryScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
   typeof SCREENS.DRINKING_SESSION.SUMMARY
@@ -64,15 +56,22 @@ type SessionSummaryScreenProps = StackScreenProps<
 function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
   const {sessionId} = route.params;
   const {preferences, drinkingSessionData} = useDatabaseData();
+  const {translate} = useLocalize();
+  const styles = useThemeStyles();
+  const theme = useTheme();
   if (!preferences) {
     return null;
   } // Careful when writing hooks after this line
   const [session, setSession] = useState<DrinkingSession>(
-    extractSessionOrEmpty(sessionId, drinkingSessionData),
+    DSUtils.extractSessionOrEmpty(sessionId, drinkingSessionData),
   );
   // Drinks info
   const totalDrinks = sumAllDrinks(session.drinks);
-  const totalUnits = sumAllUnits(session.drinks, preferences.drinks_to_units);
+  const totalUnits = DSUtils.calculateTotalUnits(
+    session.drinks,
+    preferences.drinks_to_units,
+    true,
+  );
   const drinkSums = {
     small_beer: sumDrinksOfSingleType(session.drinks, 'small_beer'),
     beer: sumDrinksOfSingleType(session.drinks, 'beer'),
@@ -83,25 +82,24 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
     other: sumDrinksOfSingleType(session.drinks, 'other'),
   };
   // Time info
-  const sessionStartDate = timestampToDate(session.start_time);
-  const sessionEndDate = timestampToDate(session.end_time);
-  const sessionDay = formatDateToDay(sessionStartDate);
-  const sessionStartTime = formatDateToTime(sessionStartDate);
-  const sessionEndTime = formatDateToTime(sessionEndDate);
-  const sessionLength = calculateSessionLength(session, false);
+  const sessionDay = DateUtils.getLocalizedDay(
+    session.start_time,
+    session?.timezone,
+  );
+  const sessionStartTime = DateUtils.getLocalizedTime(
+    session.start_time,
+    session?.timezone,
+  );
+  const sessionEndTime = DateUtils.getLocalizedTime(
+    session.end_time,
+    session?.timezone,
+  );
+  const wasLiveSession = session?.type == CONST.SESSION_TYPES.LIVE;
   // Figure out last drink added
-  let lastDrinkAdded: string;
   const lastDrinkEditTimestamp = getLastDrinkAddedTime(session);
-  if (!lastDrinkEditTimestamp) {
-    lastDrinkAdded = 'Unknown';
-  } else {
-    const lastDrinkAddedDate = timestampToDate(lastDrinkEditTimestamp);
-    lastDrinkAdded = formatDateToTime(lastDrinkAddedDate);
-  }
-
-  const onEditSessionPress = (sessionId: string) => {
-    Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(sessionId));
-  };
+  const lastDrinkAdded = lastDrinkEditTimestamp
+    ? DateUtils.getLocalizedTime(lastDrinkEditTimestamp, session?.timezone)
+    : 'Unknown';
 
   const handleBackPress = () => {
     const screenBeforeSummaryScreen = Navigation.getLastScreenName(true);
@@ -112,227 +110,199 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
     }
   };
 
-  const generalData = [
-    {heading: 'Units:', data: totalUnits.toString()},
-    {heading: 'Date:', data: sessionDay},
-    {
-      heading: 'Start time:',
-      data: sessionLength === 0 ? '-' : sessionStartTime,
-    },
-    {
-      heading: 'Last drink added:',
-      data: sessionLength === 0 ? '-' : lastDrinkAdded,
-    },
-    {heading: 'End time:', data: sessionLength === 0 ? '-' : sessionEndTime},
-  ];
-
-  const drinkData = [
-    {heading: 'Drinks:', data: totalDrinks.toString()},
-    {heading: 'Small Beer:', data: drinkSums.small_beer.toString()},
-    {heading: 'Beer:', data: drinkSums.beer.toString()},
-    {heading: 'Wine:', data: drinkSums.wine.toString()},
-    {heading: 'Weak Shot:', data: drinkSums.weak_shot.toString()},
-    {heading: 'Strong Shot:', data: drinkSums.strong_shot.toString()},
-    {heading: 'Cocktail:', data: drinkSums.cocktail.toString()},
-    {heading: 'Other:', data: drinkSums.other.toString()},
-  ];
-
-  const otherData = [
-    {heading: 'Blackout:', data: session.blackout ? 'Yes' : 'No'},
-    {heading: 'Note:', data: session.note},
-  ];
-
   const sessionColor = session.blackout
     ? 'black'
     : unitsToColors(totalUnits, preferences.units_to_colors);
 
+  const generalMenuItemsData: Menu = useMemo(() => {
+    return {
+      sectionTranslationKey: 'sessionSummaryScreen.generalSection.title',
+      items: [
+        {
+          titleKey: 'sessionSummaryScreen.generalSection.sessionColor',
+          rightComponent: (
+            <View
+              style={[styles.sessionColorMarker(sessionColor), styles.border]}
+            />
+          ),
+        },
+        {
+          titleKey: 'sessionSummaryScreen.generalSection.units',
+          description: totalUnits.toString(),
+        },
+        {
+          titleKey: 'sessionSummaryScreen.generalSection.date',
+          description: sessionDay,
+        },
+        {
+          titleKey: 'sessionSummaryScreen.generalSection.startTime',
+          description: sessionStartTime,
+          shouldHide: !wasLiveSession,
+        },
+        {
+          titleKey: 'sessionSummaryScreen.generalSection.lastDrinkAdded',
+          description: lastDrinkAdded,
+          shouldHide: !wasLiveSession,
+        },
+        {
+          titleKey: 'sessionSummaryScreen.generalSection.endTime',
+          description: sessionEndTime,
+          shouldHide: !wasLiveSession,
+        },
+        {
+          titleKey: 'common.blackout',
+          description: session.blackout ? 'Yes' : 'No',
+        },
+        {
+          titleKey: 'common.note',
+          description: session.note ?? '',
+        },
+      ],
+    };
+  }, [session, styles.border]);
+
+  const drinkData: DrinkMenuItem[] = [
+    // {key: 'common.total', val: totalDrinks},
+    {key: 'drinks.smallBeer', val: drinkSums.small_beer},
+    {key: 'drinks.beer', val: drinkSums.beer},
+    {key: 'drinks.wine', val: drinkSums.wine},
+    {key: 'drinks.weakShot', val: drinkSums.weak_shot},
+    {key: 'drinks.strongShot', val: drinkSums.strong_shot},
+    {key: 'drinks.cocktail', val: drinkSums.cocktail},
+    {key: 'drinks.other', val: drinkSums.other},
+  ];
+
+  const drinkMenuItemsData: Menu = useMemo(() => {
+    return {
+      sectionTranslationKey: 'sessionSummaryScreen.drinksSection.title',
+      items: _.cloneDeep(drinkData)
+        .filter(({val}) => val > 0) // Filter out drinks with 0 count
+        .map(({key, val}: DrinkMenuItem) => ({
+          titleKey: key,
+          description: val.toString(),
+        })),
+    };
+  }, [session]);
+
+  const otherMenuItemsData: Menu = useMemo(() => {
+    return {
+      sectionTranslationKey: 'sessionSummaryScreen.otherSection.title',
+      items: [
+        {
+          titleKey: 'common.timezone',
+          description: session.timezone ?? '',
+        },
+        {
+          titleKey: 'sessionSummaryScreen.generalSection.type',
+          description: translate(
+            wasLiveSession
+              ? 'drinkingSession.type.live'
+              : 'drinkingSession.type.edit',
+          ),
+        },
+      ],
+    };
+  }, [session]);
+
+  const getSessionSummarySection = useCallback((menuItemsData: Menu) => {
+    return (
+      <Section
+        title={translate(menuItemsData.sectionTranslationKey)}
+        titleStyles={styles.sectionTitleSimple}
+        containerStyles={styles.pb0}
+        childrenStyles={styles.pt3}>
+        <>
+          {menuItemsData.items.map(
+            (detail, index) =>
+              !detail?.shouldHide && (
+                <MenuItem
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={`${detail.titleKey}_${index}`}
+                  title={detail.titleKey && translate(detail.titleKey)}
+                  titleStyle={styles.plainSectionTitle}
+                  description={detail.description}
+                  descriptionTextStyle={styles.textNormalThemeText}
+                  wrapperStyle={styles.sectionMenuItemTopDescription}
+                  style={[
+                    styles.pt0,
+                    styles.pb0,
+                    // Enable the following to add borders in between items
+                    // styles.borderBottomRounded,
+                    // {borderBottomLeftRadius: 35, borderBottomRightRadius: 35},
+                    // index === menuItemsData.items.length - 1 && styles.borderNone,
+                  ]}
+                  disabled={true}
+                  shouldGreyOutWhenDisabled={false}
+                  shouldUseRowFlexDirection
+                  shouldShowRightComponent={!!detail.rightComponent}
+                  rightComponent={detail.rightComponent}
+                />
+              ),
+          )}
+        </>
+      </Section>
+    );
+  }, []);
+
+  const generalMenuItems = useMemo(
+    () => getSessionSummarySection(generalMenuItemsData),
+    [generalMenuItemsData, getSessionSummarySection],
+  );
+  const drinkMenuItems = useMemo(
+    () => getSessionSummarySection(drinkMenuItemsData),
+    [drinkMenuItemsData, getSessionSummarySection],
+  );
+  const otherMenuItems = useMemo(
+    () => getSessionSummarySection(otherMenuItemsData),
+    [otherMenuItemsData, getSessionSummarySection],
+  );
+
   useEffect(() => {
-    const newSession = extractSessionOrEmpty(sessionId, drinkingSessionData);
+    const newSession = DSUtils.extractSessionOrEmpty(
+      sessionId,
+      drinkingSessionData,
+    );
     setSession(newSession);
   }, [drinkingSessionData]);
 
   return (
     <ScreenWrapper testID={SessionSummaryScreen.displayName}>
-      <MainHeader
-        headerText=""
-        onGoBack={handleBackPress}
-        rightSideComponent={
-          session.ongoing ? null : (
-            <MenuIcon
-              iconId="edit-session-icon"
-              iconSource={KirokuIcons.Edit}
-              containerStyle={styles.menuIconContainer}
-              iconStyle={styles.menuIcon}
-              onPress={() => onEditSessionPress(sessionId)} // Use keyextractor to load id here
+      <HeaderWithBackButton
+        onBackButtonPress={handleBackPress}
+        customRightButton={
+          !session.ongoing && (
+            <Button
+              style={styles.bgTransparent}
+              icon={KirokuIcons.Edit}
+              iconFill={theme.textDark}
+              onPress={() => DS.navigateToEditSessionScreen(sessionId, session)} // Use keyextractor to load id here
             />
           )
         }
       />
-      <ScrollView style={styles.scrollView}>
-        <View style={styles.sessionInfoContainer}>
-          <Text style={styles.sessionInfoText}>Session Summary</Text>
-        </View>
-
-        <View style={styles.sessionSectionContainer}>
-          <Text style={styles.sessionDataContainerHeading}>General</Text>
-          <SessionDataItem
-            key="sessionColor"
-            heading="Session Color"
-            data={sessionColor}
-            index={generalData.length}
-            sessionColor={sessionColor}
-          />
-          {generalData.map((item, index) => (
-            <SessionDataItem
-              key={index}
-              heading={item.heading}
-              data={item.data}
-              index={index}
-            />
-          ))}
-        </View>
-
-        <View style={styles.sessionSectionContainer}>
-          <Text style={styles.sessionDataContainerHeading}>
-            Drinks consumed
+      <ScrollView>
+        <View style={[styles.pb4, styles.alignItemsCenter]}>
+          <Text style={styles.textHeadlineH2}>
+            {translate('sessionSummaryScreen.title')}
           </Text>
-          {drinkData.map((item, index) => (
-            <SessionDataItem
-              key={index}
-              heading={item.heading}
-              data={item.data}
-              index={index}
-            />
-          ))}
         </View>
-
-        <View style={styles.sessionSectionContainer}>
-          <Text style={styles.sessionDataContainerHeading}>Other</Text>
-          {otherData.map((item, index) => (
-            <SessionDataItem
-              key={index}
-              heading={item.heading}
-              data={item.data}
-              index={index}
-            />
-          ))}
-        </View>
+        <MenuItemGroup>
+          {generalMenuItems}
+          {drinkMenuItems}
+          {otherMenuItems}
+        </MenuItemGroup>
       </ScrollView>
-      <View style={styles.confirmButtonContainer}>
-        <BasicButton
-          text="Confirm"
-          buttonStyle={styles.confirmButton}
-          textStyle={styles.confirmButtonText}
+      <View style={styles.bottomTabBarContainer(true)}>
+        <Button
+          text={translate('common.confirm')}
           onPress={handleBackPress}
+          style={styles.bottomTabButton}
+          success
         />
       </View>
     </ScreenWrapper>
   );
 }
-
-const styles = StyleSheet.create({
-  menuIconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 10,
-  },
-  menuIcon: {
-    width: 25,
-    height: 25,
-  },
-  scrollView: {
-    flexGrow: 1,
-    flexShrink: 1,
-    backgroundColor: '#FFFF99',
-  },
-  sessionInfoContainer: {
-    flex: 1,
-    borderBottomWidth: 1,
-    borderColor: '#000',
-  },
-  sessionInfoText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginTop: 5,
-    color: 'black',
-    alignSelf: 'center',
-    alignContent: 'center',
-    padding: 10,
-  },
-  sessionSectionContainer: {
-    backgroundColor: 'white',
-    borderBottomWidth: 1,
-    borderColor: '#000',
-  },
-  sessionDataContainerHeading: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    color: '#4a4b4d',
-    fontStyle: 'italic',
-    alignSelf: 'center',
-    padding: 10,
-  },
-  sessionDataContainer: {
-    width: '100%',
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    // borderWidth: 1,
-    // borderColor: 'grey',
-    padding: 7,
-  },
-  sessionDataHeading: {
-    marginLeft: 7,
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: 'black',
-  },
-  sessionDataText: {
-    fontSize: 14,
-    color: 'black',
-    fontWeight: '400',
-    marginRight: 5,
-    marginLeft: 10,
-    overflow: 'hidden',
-  },
-  sessionColorMarker: {
-    width: 20,
-    height: 20,
-    borderWidth: 1,
-    borderColor: '#D3D3D3',
-    borderRadius: 5,
-    marginRight: 5,
-  },
-  confirmButtonContainer: {
-    width: '100%',
-    height: '10%',
-    flexShrink: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-    backgroundColor: '#FFFF99',
-    padding: 5,
-  },
-  confirmButton: {
-    width: '50%',
-    height: '90%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 10,
-    backgroundColor: '#fcf50f',
-    borderWidth: 1,
-    borderColor: '#000',
-    borderRadius: 8,
-  },
-  confirmButtonText: {
-    color: 'black',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-});
 
 SessionSummaryScreen.displayName = 'Session Summary Screen';
 export default SessionSummaryScreen;

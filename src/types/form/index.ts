@@ -1,6 +1,15 @@
 export type {CloseAccountForm} from './CloseAccountForm';
 export type {DateOfBirthForm} from './DateOfBirthForm';
 export type {DisplayNameForm} from './DisplayNameForm';
+export type {EmailForm} from './EmailForm';
+export type {FeedbackForm} from './FeedbackForm';
+export type {ForgotPasswordForm} from './ForgotPasswordForm';
 export type {LegalNameForm} from './LegalNameForm';
+export type {LogInForm} from './LogInForm';
+export type {PasswordForm} from './PasswordForm';
 export type {ProfileSettingsForm} from './ProfileSettingsForm';
+export type {SessionDateForm} from './SessionDateForm';
+export type {SessionNoteForm} from './SessionNoteForm';
+export type {SignUpForm} from './SignUpForm';
+export type {UserNameForm} from './UserNameForm';
 export type {default as Form} from './Form';

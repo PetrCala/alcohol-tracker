@@ -10,18 +10,18 @@ import * as NumberFormatUtils from '@libs/NumberFormatUtils';
 import CONST from '@src/CONST';
 import type {TranslationPaths} from '@src/languages/types';
 import ONYXKEYS from '@src/ONYXKEYS';
-import type {WithCurrentUserPersonalDetailsProps} from './withCurrentUserPersonalDetails';
-import withCurrentUserPersonalDetails from './withCurrentUserPersonalDetails';
+import type {WithCurrentUserDataProps} from './withCurrentUserData';
+import withCurrentUserData from './withCurrentUserData';
 
 type Locale = ValueOf<typeof CONST.LOCALES>;
 
 type LocaleContextProviderOnyxProps = {
-  /** The user's preferred locale e.g. 'en', 'es-ES' */
+  /** The user's preferred locale e.g. 'en', 'cs-CZ' */
   preferredLocale: OnyxEntry<Locale>;
 };
 
 type LocaleContextProviderProps = LocaleContextProviderOnyxProps &
-  WithCurrentUserPersonalDetailsProps & {
+  WithCurrentUserDataProps & {
     /** Actual content wrapped by this component */
     children: React.ReactNode;
   };
@@ -76,14 +76,14 @@ const LocaleContext = createContext<LocaleContextProps>({
 
 function LocaleContextProvider({
   preferredLocale,
-  currentUserPersonalDetails = {},
+  currentUserData = {},
   children,
 }: LocaleContextProviderProps) {
   const locale = preferredLocale ?? CONST.LOCALES.DEFAULT;
 
   const selectedTimezone = useMemo(
-    () => currentUserPersonalDetails?.timezone?.selected,
-    [currentUserPersonalDetails],
+    () => currentUserData?.timezone?.selected,
+    [currentUserData],
   );
 
   const translate = useMemo<LocaleContextProps['translate']>(
@@ -178,7 +178,7 @@ const Provider = compose(
       selector: preferredLocale => preferredLocale,
     },
   }),
-  withCurrentUserPersonalDetails,
+  withCurrentUserData,
 )(LocaleContextProvider);
 
 Provider.displayName = 'withOnyx(LocaleContextProvider)';

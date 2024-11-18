@@ -1,12 +1,9 @@
 // import Str from 'expensify-common/lib/str';
 import type {OnyxEntry} from 'react-native-onyx';
 import type {ValueOf} from 'type-fest';
-import * as defaultAvatars from '@components/Icon/DefaultAvatars';
 import {UserIcon} from '@components/Icon/KirokuIcons';
 import CONST from '@src/CONST';
-import type {LoginList} from '@src/types/onyx';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
-import type Login from '@src/types/onyx/Login';
 import type IconAsset from '@src/types/utils/IconAsset';
 import hashCode from './hashCode';
 
@@ -63,38 +60,38 @@ type LoginListIndicator =
  *      }
  * }}
  */
-function hasLoginListError(loginList: OnyxEntry<LoginList>): boolean {
-  return Object.values(loginList ?? {}).some(loginData =>
-    Object.values(loginData.errorFields ?? {}).some(
-      field => Object.keys(field ?? {}).length > 0,
-    ),
-  );
-}
+// function hasLoginListError(loginList: OnyxEntry<LoginList>): boolean {
+//   return Object.values(loginList ?? {}).some(loginData =>
+//     Object.values(loginData.errorFields ?? {}).some(
+//       field => Object.keys(field ?? {}).length > 0,
+//     ),
+//   );
+// }
 
 /**
  * Searches through given loginList for any contact method / login that requires
  * an Info brick road status indicator. Currently this only applies if the user
  * has an unvalidated contact method.
  */
-function hasLoginListInfo(loginList: OnyxEntry<LoginList>): boolean {
-  return !Object.values(loginList ?? {}).every(field => field.validatedDate);
-}
+// function hasLoginListInfo(loginList: OnyxEntry<LoginList>): boolean {
+//   return !Object.values(loginList ?? {}).every(field => field.validatedDate);
+// }
 
-/**
- * Gets the appropriate brick road indicator status for a given loginList.
- * Error status is higher priority, so we check for that first.
- */
-function getLoginListBrickRoadIndicator(
-  loginList: OnyxEntry<LoginList>,
-): LoginListIndicator {
-  if (hasLoginListError(loginList)) {
-    return CONST.BRICK_ROAD_INDICATOR_STATUS.ERROR;
-  }
-  if (hasLoginListInfo(loginList)) {
-    return CONST.BRICK_ROAD_INDICATOR_STATUS.INFO;
-  }
-  return undefined;
-}
+// /**
+//  * Gets the appropriate brick road indicator status for a given loginList.
+//  * Error status is higher priority, so we check for that first.
+//  */
+// function getLoginListBrickRoadIndicator(
+//   loginList: OnyxEntry<LoginList>,
+// ): LoginListIndicator {
+//   if (hasLoginListError(loginList)) {
+//     return CONST.BRICK_ROAD_INDICATOR_STATUS.ERROR;
+//   }
+//   if (hasLoginListInfo(loginList)) {
+//     return CONST.BRICK_ROAD_INDICATOR_STATUS.INFO;
+//   }
+//   return undefined;
+// }
 
 /**
  * Hashes provided string and returns a value between [0, range)
@@ -277,11 +274,11 @@ export {
   getDefaultAvatar,
   getDefaultAvatarURL,
   getFullSizeAvatar,
-  getLoginListBrickRoadIndicator,
+  // getLoginListBrickRoadIndicator,
   // getSecondaryPhoneLogin,
   getSmallSizeAvatar,
-  hasLoginListError,
-  hasLoginListInfo,
+  // hasLoginListError,
+  // hasLoginListInfo,
   hashText,
   isDefaultAvatar,
 };

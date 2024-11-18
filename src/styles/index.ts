@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import lodashClamp from 'lodash/clamp';
-import type {LineLayer} from 'react-map-gl';
-import type {
-  AnimatableNumericValue,
-  Animated,
-  ImageStyle,
-  TextStyle,
-  ViewStyle,
+import {
+  Platform,
+  type AnimatableNumericValue,
+  type Animated,
+  type ImageStyle,
+  type TextStyle,
+  type ViewStyle,
 } from 'react-native';
 import type {PickerStyle} from 'react-native-picker-select';
-import type {CustomAnimation} from 'react-native-animatable';
+import type {CustomAnimation, View} from 'react-native-animatable';
 import type {
   MixedStyleDeclaration,
   MixedStyleRecord,
@@ -17,7 +17,6 @@ import type {
 import * as Browser from '@libs/Browser';
 import CONST from '@src/CONST';
 import {defaultTheme} from './theme';
-import colors from './theme/colors';
 import type {ThemeColors} from './theme/types';
 // import addOutlineWidth from './utils/addOutlineWidth';
 import borders from './utils/borders';
@@ -46,6 +45,7 @@ import whiteSpace from './utils/whiteSpace';
 import wordBreak from './utils/wordBreak';
 import writingDirection from './utils/writingDirection';
 import variables from './variables';
+import {CalendarColors} from '@components/Calendar';
 
 type ColorScheme = (typeof CONST.COLOR_SCHEME)[keyof typeof CONST.COLOR_SCHEME];
 type StatusBarStyle =
@@ -95,6 +95,7 @@ type Translation =
 type OfflineFeedbackStyle = Record<
   | 'deleted'
   | 'pending'
+  | 'default'
   | 'error'
   | 'container'
   | 'textContainer'
@@ -297,6 +298,14 @@ const styles = (theme: ThemeColors) =>
     // ...textDecorationLine,
     editedLabelStyles,
 
+    generalSectionTitle: {
+      ...FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
+    },
+
+    plainSectionTitle: {
+      ...FontUtils.fontFamily.platform.EXP_NEUE,
+    },
+
     accountSettingsSectionContainer: {
       borderBottomWidth: 1,
       borderBottomColor: theme.border,
@@ -305,12 +314,18 @@ const styles = (theme: ThemeColors) =>
       ...spacing.pt0,
     },
 
-    accountSettingsSectionTitle: {
-      ...FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
+    generalSettingsSectionContainer: {
+      borderBottomWidth: 1,
+      borderBottomColor: theme.border,
+      ...spacing.pt4,
     },
 
     activeComponentBG: {
       backgroundColor: theme.activeComponentBG,
+    },
+
+    appColor: {
+      color: theme.appColor,
     },
 
     appContent: {
@@ -404,9 +419,31 @@ const styles = (theme: ThemeColors) =>
       backgroundColor: theme.inverse,
     },
 
+    border: {
+      borderWidth: 1,
+      borderRadius: variables.componentBorderRadius,
+      borderColor: theme.border,
+    },
+
+    borderColorTheme: {
+      borderColor: theme.border,
+    },
+
+    borderColorFocus: {
+      borderColor: theme.borderFocus,
+    },
+
+    borderColorDanger: {
+      borderColor: theme.danger,
+    },
+
     borderRadiusNormal: {
       borderRadius: variables.buttonBorderRadius,
     },
+
+    borderRadiusTiny: {borderRadius: variables.borderRadiusTiny},
+
+    borderRadiusSmall: {borderRadius: variables.componentBorderRadiusSmall},
 
     borderTop: {
       borderTopWidth: variables.borderTopWidth,
@@ -447,20 +484,33 @@ const styles = (theme: ThemeColors) =>
       borderColor: theme.border,
     },
 
-    bottomTabBarContainer: {
-      flexDirection: 'row',
-      height: variables.bottomTabHeight,
-      borderTopWidth: 1,
-      borderTopColor: theme.border,
-      // backgroundColor: theme.appBG, // TODO
-      backgroundColor: colors.white,
-    },
+    bottomTabBarContainer: (hideTopBorder?: boolean) =>
+      ({
+        flexDirection: 'row',
+        height: variables.bottomTabHeight,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderTopWidth: hideTopBorder ? 0 : 1,
+        borderTopColor: theme.border,
+        backgroundColor: theme.appBG,
+        ...spacing.pt1,
+        ...sizing.mw100,
+      }) satisfies ViewStyle,
 
     bottomTabBarItem: {
       height: '100%',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
+    },
+
+    bottomTabButton: {
+      height: '100%',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      ...spacing.ph10,
+      ...spacing.mt1,
     },
 
     boxShadowNone: {
@@ -478,7 +528,6 @@ const styles = (theme: ThemeColors) =>
     },
 
     buttonContainer: {
-      padding: 1,
       borderRadius: variables.buttonBorderRadius,
     },
 
@@ -521,6 +570,14 @@ const styles = (theme: ThemeColors) =>
       backgroundColor: theme.buttonDefaultBG,
     },
 
+    buttonLargeSuccess: {
+      borderRadius: variables.buttonBorderRadius,
+      minHeight: variables.componentSizeLarge,
+      minWidth: variables.componentSizeLarge,
+      paddingHorizontal: 20,
+      backgroundColor: theme.success,
+    },
+
     buttonSmallText: {
       fontSize: variables.fontSizeSmall,
       ...FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
@@ -539,6 +596,12 @@ const styles = (theme: ThemeColors) =>
       textAlign: 'center',
     },
 
+    buttonHugeText: {
+      fontSize: variables.fontSizeXLarge,
+      ...FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
+      textAlign: 'center',
+    },
+
     buttonDefaultBG: {
       backgroundColor: theme.buttonDefaultBG,
     },
@@ -552,13 +615,13 @@ const styles = (theme: ThemeColors) =>
       borderWidth: 0,
     },
 
+    buttonOpacityDisabled: {
+      opacity: 0.5,
+    },
+
     buttonSuccess: {
       backgroundColor: theme.success,
       borderWidth: 0,
-    },
-
-    buttonOpacityDisabled: {
-      opacity: 0.5,
     },
 
     buttonSuccessHovered: {
@@ -566,13 +629,37 @@ const styles = (theme: ThemeColors) =>
       borderWidth: 0,
     },
 
-    buttonConfirmText: {
-      paddingLeft: 20,
-      paddingRight: 20,
+    buttonSuccessPressed: {
+      backgroundColor: theme.successPressed,
+      borderWidth: 0,
     },
 
     buttonSuccessText: {
-      color: theme.textLight,
+      color: theme.textDark,
+    },
+
+    buttonAdd: {
+      backgroundColor: theme.add,
+      borderWidth: 0,
+    },
+
+    buttonAddHovered: {
+      backgroundColor: theme.addHover,
+      borderWidth: 0,
+    },
+
+    buttonAddPressed: {
+      backgroundColor: theme.addPressed,
+      borderWidth: 0,
+    },
+
+    buttonAddText: {
+      color: theme.addPressed,
+    },
+
+    buttonConfirmText: {
+      paddingLeft: 20,
+      paddingRight: 20,
     },
 
     buttonDangerText: {
@@ -675,12 +762,20 @@ const styles = (theme: ThemeColors) =>
 
     colorSchemeStyle: (colorScheme: ColorScheme) => ({colorScheme}),
 
+    checkedContainer: {
+      backgroundColor: theme.checkBox,
+    },
+
     colorMutedReversed: {
       color: theme.textMutedReversed,
     },
 
     colorMuted: {
       color: theme.textSupporting,
+    },
+
+    colorReversed: {
+      color: theme.textReversed,
     },
 
     contextMenuItemPopoverMaxWidth: {
@@ -698,6 +793,39 @@ const styles = (theme: ThemeColors) =>
       color: theme.textSupporting,
     },
 
+    datePickerRoot: {
+      position: 'relative',
+      zIndex: 99,
+    },
+
+    datePickerPopover: {
+      backgroundColor: theme.appBG,
+      width: '100%',
+      alignSelf: 'center',
+      zIndex: 100,
+      marginTop: 8,
+    },
+
+    dayOverviewTabIndicator: (sessionColor: CalendarColors) =>
+      ({
+        height: variables.sessionOverviewTabHeight,
+        width: 20,
+        backgroundColor: sessionColor,
+        borderRadius: 0,
+        // borderRightWidth: 0, // Divider border
+        borderTopLeftRadius: variables.componentBorderRadiusNormal,
+        borderBottomLeftRadius: variables.componentBorderRadiusNormal,
+      }) satisfies ViewStyle,
+
+    dayOverviewTab: {
+      flexGrow: 1,
+      borderLeftWidth: 0,
+      borderTopLeftRadius: 0,
+      borderBottomLeftRadius: 0,
+      height: variables.sessionOverviewTabHeight,
+      backgroundColor: theme.cardBG,
+    },
+
     defaultModalContainer: {
       backgroundColor: theme.componentBG,
       borderColor: theme.transparent,
@@ -708,6 +836,12 @@ const styles = (theme: ThemeColors) =>
       opacity: 0,
       right: 0,
       bottom: 0,
+    },
+
+    dotIndicatorMessage: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
     },
 
     draggableTopBar: {
@@ -782,6 +916,18 @@ const styles = (theme: ThemeColors) =>
       transform: [{rotate: '180deg'}],
     },
 
+    highlightBG: {
+      backgroundColor: theme.highlightBG,
+    },
+
+    appBG: {
+      backgroundColor: theme.appBG,
+    },
+
+    fontSizeLabel: {
+      fontSize: variables.fontSizeLabel,
+    },
+
     fontWeightNormal: {
       fontWeight: FontUtils.fontWeight.normal,
     },
@@ -821,6 +967,14 @@ const styles = (theme: ThemeColors) =>
       justifyContent: 'center',
       alignItems: 'center',
       zIndex: 10,
+    },
+
+    fullScreenCenteredContent: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: theme.appBG,
+      overflow: 'hidden',
     },
 
     headerBar: {
@@ -879,14 +1033,44 @@ const styles = (theme: ThemeColors) =>
       left: -9999,
     },
 
+    makeSlideInTranslation: (translationType: Translation, fromValue: number) =>
+      ({
+        from: {
+          [translationType]: fromValue,
+        },
+        to: {
+          [translationType]: 0,
+        },
+      }) satisfies CustomAnimation,
+
     headerText: {
       color: theme.heading,
       ...FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
       fontSize: variables.fontSizeNormal,
     },
 
+    hiddenElementOutsideOfWindow: {
+      position: 'absolute',
+      top: -10000,
+      left: 0,
+      opacity: 0,
+    },
+
     hoveredComponentBG: {
       backgroundColor: theme.hoverComponentBG,
+    },
+
+    loginHeroHeader: {
+      ...FontUtils.fontFamily.platform.EXP_NEW_KANSAS_MEDIUM,
+      color: theme.success,
+      textAlign: 'center',
+    },
+
+    loginHeroBody: {
+      ...FontUtils.fontFamily.platform.EXP_NEUE,
+      fontSize: variables.fontSizeSignInHeroBody,
+      color: theme.text, // was .textLight
+      textAlign: 'center',
     },
 
     menuItemError: {
@@ -898,6 +1082,20 @@ const styles = (theme: ThemeColors) =>
 
     menuItemTextContainer: {
       minHeight: variables.componentSizeNormal,
+    },
+
+    menuItemRowFlex: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+
+    messageBanner: {
+      color: theme.danger,
+      alignItems: 'center',
+      borderRadius: 8,
+      ...spacing.p4,
+      ...spacing.m2,
     },
 
     nativeOverlayStyles: (current: OverlayStylesParams) =>
@@ -917,6 +1115,12 @@ const styles = (theme: ThemeColors) =>
       borderRadius: 0,
     },
 
+    noResultsText: {
+      fontSize: variables.fontSizeNormal,
+      textAlign: 'center',
+      ...spacing.mt3,
+    },
+
     noRightBorderRadius: {
       borderTopRightRadius: 0,
       borderBottomRightRadius: 0,
@@ -930,6 +1134,11 @@ const styles = (theme: ThemeColors) =>
     noSelect: {
       boxShadow: 'none',
       outlineStyle: 'none',
+    },
+
+    numericSlider: {
+      height: variables.numericSliderHeight,
+      width: variables.numericSliderWidth,
     },
 
     headerGap: {
@@ -949,6 +1158,22 @@ const styles = (theme: ThemeColors) =>
       height: '100%',
     },
 
+    componentHeightLarge: {
+      height: variables.inputHeight,
+    },
+
+    maintenanceBeaverImage: (smallerScreenSize: number) =>
+      ({
+        width: smallerScreenSize * 0.75,
+        height: smallerScreenSize * 0.75,
+        borderRadius: 12,
+      }) satisfies ViewStyle,
+
+    halfScreenWidth: (screenWidth: number) =>
+      ({
+        width: screenWidth * 0.5,
+      }) satisfies ViewStyle,
+
     offlineFeedback: {
       deleted: {
         textDecorationLine: 'line-through',
@@ -956,6 +1181,12 @@ const styles = (theme: ThemeColors) =>
       },
       pending: {
         opacity: 0.5,
+      },
+      default: {
+        // fixes a crash on iOS when we attempt to remove already unmounted children
+        // see https://github.com/Expensify/App/issues/48197 for more details
+        // it's a temporary solution while we are working on a permanent fix
+        opacity: Platform.OS === 'ios' ? 0.99 : undefined,
       },
       error: {
         flexDirection: 'row',
@@ -990,6 +1221,20 @@ const styles = (theme: ThemeColors) =>
       opacity: 1,
     },
 
+    orDelimiterContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      ...sizing.w100,
+      ...spacing.mv4,
+    },
+
+    orDelimiterLine: {
+      flex: 1,
+      height: 1,
+      backgroundColor: theme.textSupporting,
+      ...spacing.mh2,
+    },
+
     overlayStyles: (current: OverlayStylesParams, isModalOnTheLeft: boolean) =>
       ({
         ...positioning.pFixed,
@@ -1010,6 +1255,20 @@ const styles = (theme: ThemeColors) =>
       width: '100%',
       alignItems: 'center',
       padding: 20,
+    },
+
+    peopleRow: {
+      width: '100%',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      ...spacing.ph5,
+    },
+
+    peopleRowBorderBottom: {
+      borderColor: theme.border,
+      borderBottomWidth: 1,
+      ...spacing.pb2,
     },
 
     pointerEventsNone,
@@ -1038,6 +1297,11 @@ const styles = (theme: ThemeColors) =>
       color: theme.heading,
     },
 
+    profileStatOverview: {
+      height: variables.profileStatOverviewHeight,
+      ...spacing.mh4,
+    },
+
     rightLabelMenuItem: {
       fontSize: variables.fontSizeLabel,
       color: theme.textSupporting,
@@ -1057,11 +1321,59 @@ const styles = (theme: ThemeColors) =>
         flex: 1,
       }) satisfies ViewStyle,
 
+    onboardingNavigatorOuterView: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+
+    OnboardingNavigatorInnerView: (shouldUseNarrowLayout: boolean) =>
+      ({
+        width: shouldUseNarrowLayout ? variables.onboardingModalWidth : '100%',
+        height: shouldUseNarrowLayout ? 732 : '100%',
+        maxHeight: '100%',
+        borderRadius: shouldUseNarrowLayout ? 16 : 0,
+        overflow: 'hidden',
+      }) satisfies ViewStyle,
+
     sectionMenuItemTopDescription: {
       ...spacing.ph8,
       ...spacing.mhn8,
       width: 'auto',
     },
+
+    sectionTitle: {
+      ...spacing.pt2,
+      ...spacing.pr3,
+      ...spacing.pb4,
+      paddingLeft: 13,
+      fontSize: 13,
+      ...FontUtils.fontFamily.platform.EXP_NEUE,
+      lineHeight: 16,
+      color: theme.textSupporting,
+    },
+
+    sectionTitleSimple: {
+      ...FontUtils.fontFamily.platform.EXP_NEUE,
+      color: theme.textSupporting,
+      fontSize: 13,
+      lineHeight: 16,
+    },
+
+    sectionMenuItem: {
+      borderRadius: 8,
+      paddingHorizontal: 8,
+      height: 56,
+      alignItems: 'center',
+    },
+
+    sessionColorMarker: (sessionColor: CalendarColors) =>
+      ({
+        height: variables.sessionColorMarkerSize,
+        width: variables.sessionColorMarkerSize,
+        alignSelf: 'center',
+        backgroundColor: sessionColor,
+      }) satisfies ViewStyle,
 
     singleAvatar: {
       height: 24,
@@ -1082,6 +1394,30 @@ const styles = (theme: ThemeColors) =>
       width: 52,
       backgroundColor: theme.icon,
       borderRadius: 52,
+    },
+
+    searchWindowContainer: {
+      flexDirection: 'row',
+      height: variables.searchWindowHeight,
+      ...spacing.ph2,
+    },
+
+    searchWindowTextContainer: {
+      backgroundColor: theme.searchBarBG,
+      flexGrow: 1,
+      height: '100%',
+      borderRadius: 10,
+      ...sizing.mw100,
+    },
+
+    searchWindowText: {
+      flexGrow: 1,
+      color: theme.text,
+      alignItems: 'center',
+    },
+
+    searchTableHeaderActive: {
+      fontWeight: FontUtils.fontWeight.bold,
     },
 
     secondAvatar: {
@@ -1150,14 +1486,191 @@ const styles = (theme: ThemeColors) =>
       marginLeft: 8,
     },
 
+    selectionListPressableItemWrapper: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      paddingHorizontal: 16,
+      paddingVertical: 16,
+      marginHorizontal: 20,
+      backgroundColor: theme.highlightBG,
+      borderRadius: 8,
+    },
+
+    selectionListStickyHeader: {
+      backgroundColor: theme.appBG,
+    },
+
+    sectionSubtitle: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      ...sizing.mw100,
+      ...spacing.mt2,
+    },
+
+    sessionDetailsWindowHeader: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderTopWidth: 1,
+      borderColor: theme.border,
+      ...spacing.pt4,
+    },
+
+    signUpScreen: {
+      backgroundColor: theme.highlightBG,
+      minHeight: '100%',
+      flex: 1,
+    },
+
+    lhnSuccessText: {
+      color: theme.success,
+      fontWeight: FontUtils.fontWeight.bold,
+    },
+
+    signUpScreenHeroCenter: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+
+    signUpScreenGradient: {
+      height: '100%',
+      width: 540,
+      position: 'absolute',
+      top: 0,
+      left: 0,
+    },
+
+    signUpScreenGradientMobile: {
+      height: 300,
+      width: 800,
+      position: 'absolute',
+      top: 0,
+      left: 0,
+    },
+
+    signInBackground: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      minHeight: 700,
+    },
+
+    signUpScreenInner: {
+      marginLeft: 'auto',
+      marginRight: 'auto',
+      height: '100%',
+      width: '100%',
+    },
+
+    signUpScreenContentTopSpacer: {
+      maxHeight: 64,
+      minHeight: 24,
+    },
+
+    signUpScreenContentTopSpacerSmallScreens: {
+      maxHeight: 64,
+      minHeight: 45,
+    },
+
+    signUpScreenLeftContainer: {
+      paddingLeft: 40,
+      paddingRight: 40,
+    },
+
+    signUpScreenLeftContainerWide: {
+      maxWidth: variables.sideBarWidth,
+    },
+
+    signUpScreenWelcomeFormContainer: {
+      maxWidth: CONST.SIGN_IN_FORM_WIDTH,
+    },
+
+    signUpScreenWelcomeTextContainer: {
+      width: CONST.SIGN_IN_FORM_WIDTH,
+    },
+
+    changeSignUpScreenLinkContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'center',
+      ...wordBreak.breakWord,
+    },
+
     optionAlternateText: {
       minHeight: variables.alternateTextHeight,
       lineHeight: variables.lineHeightXLarge,
     },
 
+    optionsListSectionHeader: {
+      marginTop: 8,
+      marginBottom: 4,
+    },
+
     optionSelectCircle: {
       borderRadius: variables.componentSizeSmall / 2 + 1,
       padding: 1,
+    },
+
+    optionRow: {
+      minHeight: variables.optionRowHeight,
+      paddingTop: 12,
+      paddingBottom: 12,
+    },
+
+    optionRowSelected: {
+      backgroundColor: theme.activeComponentBG,
+    },
+
+    optionRowDisabled: {
+      color: theme.textSupporting,
+    },
+
+    optionRowCompact: {
+      height: variables.optionRowHeightCompact,
+      paddingTop: 12,
+      paddingBottom: 12,
+    },
+
+    optionDisplayName: {
+      ...FontUtils.fontFamily.platform.EXP_NEUE,
+      minHeight: variables.alternateTextHeight,
+      lineHeight: variables.lineHeightXLarge,
+      ...whiteSpace.noWrap,
+    },
+
+    optionDisplayNameCompact: {
+      minWidth: 'auto',
+      flexBasis: 'auto',
+      flexGrow: 0,
+      flexShrink: 1,
+    },
+
+    shortTermsBorder: {
+      borderWidth: 1,
+      borderColor: theme.border,
+      borderRadius: variables.componentBorderRadius,
+    },
+
+    shortTermsHorizontalRule: {
+      borderBottomWidth: 1,
+      borderColor: theme.border,
+      ...spacing.mh3,
+    },
+
+    shortTermsLargeHorizontalRule: {
+      borderWidth: 1,
+      borderColor: theme.border,
+      ...spacing.mh3,
+    },
+
+    shortTermsRow: {
+      flexDirection: 'row',
+      padding: 12,
     },
 
     sidebarLink: {
@@ -1230,6 +1743,25 @@ const styles = (theme: ThemeColors) =>
       justifyContent: 'center',
     },
 
+    settingValueButton: {
+      backgroundColor: theme.componentBG,
+      borderRadius: variables.componentBorderRadiusNormal,
+      minWidth: variables.componentSizeNormal,
+    },
+
+    statItemText: {
+      fontSize: variables.fontSizeXXXXLarge,
+      ...FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
+      textAlign: 'center',
+      color: theme.appColor,
+    },
+
+    statItemHeaderText: {
+      fontSize: variables.fontSizeNormal,
+      textAlign: 'center',
+      width: variables.statItemTextMaxWidth,
+    },
+
     subscriptIcon: {
       position: 'absolute',
       bottom: -4,
@@ -1251,10 +1783,56 @@ const styles = (theme: ThemeColors) =>
       color: theme.textError,
     },
 
+    switchTrack: {
+      width: 50,
+      height: 28,
+      justifyContent: 'center',
+      borderRadius: 20,
+      padding: 15,
+      backgroundColor: theme.success,
+    },
+
+    switchInactive: {
+      backgroundColor: theme.icon,
+    },
+
+    switchThumb: {
+      width: 22,
+      height: 22,
+      borderRadius: 11,
+      position: 'absolute',
+      left: 4,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: theme.appBG,
+    },
+
+    switchThumbTransformation: (translateX: AnimatableNumericValue) =>
+      ({
+        transform: [{translateX}],
+      }) satisfies ViewStyle,
+
     furtherDetailsText: {
       ...FontUtils.fontFamily.platform.EXP_NEUE,
       fontSize: variables.fontSizeSmall,
       color: theme.textSupporting,
+    },
+
+    toggleSwitchLockIcon: {
+      width: variables.iconSizeExtraSmall,
+      height: variables.iconSizeExtraSmall,
+    },
+
+    lh14: {
+      lineHeight: variables.lineHeightSmall,
+    },
+
+    lh16: {
+      lineHeight: 16,
+    },
+
+    lh20: {
+      lineHeight: 20,
     },
 
     mutedTextLabel: {
@@ -1289,6 +1867,10 @@ const styles = (theme: ThemeColors) =>
       fontSize: variables.fontSizeExtraSmall,
     },
 
+    textPlainColor: {
+      color: theme.text,
+    },
+
     textNormal: {
       fontSize: variables.fontSizeNormal,
     },
@@ -1302,12 +1884,20 @@ const styles = (theme: ThemeColors) =>
       fontSize: variables.fontSizeLarge,
     },
 
+    textXLarge: {
+      fontSize: variables.fontSizeXLarge,
+    },
+
     textXXLarge: {
       fontSize: variables.fontSizeXXLarge,
     },
 
     textXXXLarge: {
       fontSize: variables.fontSizeXXXLarge,
+    },
+
+    textXXXXLarge: {
+      fontSize: variables.fontSizeXXXXLarge,
     },
 
     textHero: {
@@ -1324,6 +1914,10 @@ const styles = (theme: ThemeColors) =>
       color: theme.danger,
     },
 
+    textSupporting: {
+      color: theme.textSupporting,
+    },
+
     baseTextInput: {
       ...FontUtils.fontFamily.platform.EXP_NEUE,
       fontSize: variables.fontSizeNormal,
@@ -1336,6 +1930,76 @@ const styles = (theme: ThemeColors) =>
     },
 
     textInputDesktop: addOutlineWidth(theme, {}, 0),
+
+    textInputIconContainer: {
+      paddingHorizontal: 11,
+      justifyContent: 'center',
+      margin: 1,
+    },
+
+    textInputLeftIconContainer: {
+      justifyContent: 'center',
+      paddingRight: 8,
+    },
+
+    secureInput: {
+      borderTopRightRadius: 0,
+      borderBottomRightRadius: 0,
+    },
+
+    textInput: {
+      backgroundColor: 'transparent',
+      borderRadius: variables.componentBorderRadiusNormal,
+      height: variables.inputComponentSizeNormal,
+      borderColor: theme.border,
+      borderWidth: 1,
+      color: theme.text,
+      ...FontUtils.fontFamily.platform.EXP_NEUE,
+      fontSize: variables.fontSizeNormal,
+      paddingLeft: 12,
+      paddingRight: 12,
+      paddingTop: 10,
+      paddingBottom: 10,
+      verticalAlign: 'middle',
+    },
+
+    textInputPrefixWrapper: {
+      position: 'absolute',
+      left: 0,
+      top: 0,
+      height: variables.inputHeight,
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingTop: 23,
+      paddingBottom: 8,
+    },
+
+    textInputSuffixWrapper: {
+      position: 'absolute',
+      right: 0,
+      top: 0,
+      height: variables.inputHeight,
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingTop: 23,
+      paddingBottom: 8,
+    },
+
+    textInputPrefix: {
+      color: theme.text,
+      ...FontUtils.fontFamily.platform.EXP_NEUE,
+      fontSize: variables.fontSizeNormal,
+      verticalAlign: 'middle',
+    },
+
+    textInputSuffix: {
+      color: theme.text,
+      ...FontUtils.fontFamily.platform.EXP_NEUE,
+      fontSize: variables.fontSizeNormal,
+      verticalAlign: 'middle',
+    },
 
     // Be extremely careful when editing the compose styles, as it is easy to introduce regressions.
     textInputCompose: addOutlineWidth(
@@ -1412,8 +2076,56 @@ const styles = (theme: ThemeColors) =>
       flexDirection: 'row',
     },
 
+    textInputLabel: {
+      position: 'absolute',
+      left: 0,
+      top: 0,
+      fontSize: variables.fontSizeNormal,
+      color: theme.textSupporting,
+      ...FontUtils.fontFamily.platform.EXP_NEUE,
+      width: '100%',
+      zIndex: 1,
+    },
+
+    textInputLabelBackground: {
+      position: 'absolute',
+      top: 0,
+      width: '100%',
+      height: 23,
+      backgroundColor: theme.componentBG,
+    },
+
+    textInputLabelDesktop: {
+      transformOrigin: 'left center',
+    },
+
+    textInputLabelTransformation: (
+      translateY: AnimatableNumericValue,
+      translateX: AnimatableNumericValue,
+      scale: AnimatableNumericValue,
+    ) =>
+      ({
+        transform: [{translateY}, {translateX}, {scale}],
+      }) satisfies TextStyle,
+
     textAlignCenter: {
       textAlign: 'center',
+    },
+
+    textInputDisabled: {
+      // Adding disabled color theme to indicate user that the field is not editable.
+      backgroundColor: theme.highlightBG,
+      borderBottomWidth: 2,
+      borderColor: theme.borderLighter,
+      // Adding browser specefic style to bring consistency between Safari and other platforms.
+      // Applying the Webkit styles only to browsers as it is not available in native.
+      ...(Browser.getBrowser()
+        ? {
+            WebkitTextFillColor: theme.textSupporting,
+            WebkitOpacity: 1,
+          }
+        : {}),
+      color: theme.textSupporting,
     },
 
     textAlignRight: {
@@ -1448,6 +2160,13 @@ const styles = (theme: ThemeColors) =>
       lineHeight: variables.lineHeightSizeh1,
     },
 
+    textHeadlineXXXLarge: {
+      ...headlineFont,
+      ...whiteSpace.preWrap,
+      color: theme.heading,
+      fontSize: variables.fontSizeXXXLarge,
+    },
+
     textLabelSupporting: {
       ...FontUtils.fontFamily.platform.EXP_NEUE,
       fontSize: variables.fontSizeLabel,
@@ -1464,6 +2183,12 @@ const styles = (theme: ThemeColors) =>
       ...FontUtils.fontFamily.platform.EXP_NEUE,
       fontSize: variables.fontSizeLabel,
       color: theme.textSupporting,
+    },
+
+    textLoading: {
+      ...FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
+      fontSize: variables.fontSizeLarge,
+      color: theme.text,
     },
 
     textWhite: {

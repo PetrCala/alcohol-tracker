@@ -1,4 +1,4 @@
-import type {DeviceId, FeedbackId} from '@src/types/onyx';
+import type {DeviceId, FeedbackId, ReasonForLeavingId} from '@src/types/onyx';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
 import type {NicknameKey} from '@src/types/onyx/NicknameToId';
 import type {IsEqual} from 'type-fest';
@@ -37,6 +37,12 @@ const DBPATHS = {
     route: '/nickname_to_id/:key/:user_id',
     getRoute: (key: NicknameKey, user_id: UserID) =>
       `nickname_to_id/${key}/${user_id}` as const,
+  },
+  REASONS_FOR_LEAVING: 'reasons_for_leaving',
+  REASONS_FOR_LEAVING_REASON_ID: {
+    route: '/reasons_for_leaving/:reason_id',
+    getRoute: (reason_id: ReasonForLeavingId) =>
+      `reasons_for_leaving/${reason_id}` as const,
   },
   USER_DRINKING_SESSIONS: 'user_drinking_sessions',
   USER_DRINKING_SESSIONS_USER_ID: {
@@ -136,10 +142,46 @@ const DBPATHS = {
     getRoute: (user_id: UserID) =>
       `users/${user_id}/profile/photo_url` as const,
   },
+  USERS_USER_ID_PROFILE_FIRST_NAME: {
+    route: '/users/:user_id/profile/first_name',
+    getRoute: (user_id: UserID) =>
+      `users/${user_id}/profile/first_name` as const,
+  },
+  USERS_USER_ID_PROFILE_LAST_NAME: {
+    route: '/users/:user_id/profile/last_name',
+    getRoute: (user_id: UserID) =>
+      `users/${user_id}/profile/last_name` as const,
+  },
   USERS_USER_ID_PROFILE_DISPLAY_NAME: {
     route: '/users/:user_id/profile/display_name',
     getRoute: (user_id: UserID) =>
       `users/${user_id}/profile/display_name` as const,
+  },
+
+  USERS_USER_ID_PRIVATE_DATA: {
+    route: '/users/:user_id/private_data',
+    getRoute: (user_id: UserID) =>
+      `users/${user_id}/profile/private_data` as const,
+  },
+
+  USERS_USER_ID_TIMEZONE: {
+    route: '/users/:user_id/timezone',
+    getRoute: (user_id: UserID) => `users/${user_id}/timezone` as const,
+  },
+  USERS_USER_ID_TIMEZONE_SELECTED: {
+    route: '/users/:user_id/timezone/selected',
+    getRoute: (user_id: UserID) =>
+      `users/${user_id}/timezone/selected` as const,
+  },
+  USERS_USER_ID_TIMEZONE_AUTOMATIC: {
+    route: '/users/:user_id/timezone/automatic',
+    getRoute: (user_id: UserID) =>
+      `users/${user_id}/timezone/automatic` as const,
+  },
+
+  USERS_USER_ID_PUBLIC_DATA: {
+    route: '/users/:user_id/public_data',
+    getRoute: (user_id: UserID) => `users/${user_id}/public_data` as const,
   },
 } as const;
 

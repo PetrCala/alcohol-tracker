@@ -6,16 +6,17 @@ import SCREENS from '@src/SCREENS';
 const darkTheme = {
   // Figma keys
   appBG: colors.productDark100,
-  splashBG: colors.yellowLight,
+  splashBG: colors.yellow,
   highlightBG: colors.productDark200,
+  appColor: colors.yellowStrong,
   border: colors.productDark400,
   borderLighter: colors.productDark400,
-  borderFocus: colors.yellowLight,
+  borderFocus: colors.yellow,
   icon: colors.productDark700,
-  iconMenu: colors.yellowLight,
+  iconMenu: colors.yellow,
   iconHovered: colors.productDark900,
-  iconMenuHovered: colors.yellowLight,
-  iconSuccessFill: colors.green400,
+  iconMenuHovered: colors.yellow,
+  iconSuccessFill: colors.yellowStrong,
   iconReversed: colors.productDark100,
   iconColorfulBackground: `${colors.ivory}cc`,
   textSupporting: colors.productDark800,
@@ -31,12 +32,16 @@ const darkTheme = {
   dangerHover: colors.redHover,
   dangerPressed: colors.redHover,
   warning: colors.yellow400,
-  success: colors.green400,
-  successHover: colors.greenHover,
-  successPressed: colors.greenPressed,
+  success: colors.yellowStrong,
+  successHover: colors.yellowHover,
+  successPressed: colors.yellowPressed,
+  add: colors.orange200,
+  addHover: colors.orange300,
+  addPressed: colors.orange800,
   transparent: colors.transparent,
   signInPage: colors.green800,
   darkSupportingText: colors.productDark800,
+  searchBarBG: colors.productDark300,
 
   // Additional keys
   overlay: colors.productDark400,
@@ -82,7 +87,7 @@ const darkTheme = {
   tooltipPrimaryText: colors.productLight900,
   skeletonLHNIn: colors.productDark400,
   skeletonLHNOut: colors.productDark600,
-  QRLogo: colors.yellowLight,
+  QRLogo: colors.yellow,
   starDefaultBG: 'rgb(254, 228, 94)',
   loungeAccessOverlay: colors.blue800,
   mapAttributionText: colors.black,
@@ -95,10 +100,10 @@ const darkTheme = {
   // The route urls from ROUTES.ts are only used for deep linking and configuring URLs on web.
   // The screen name (see SCREENS.ts) is the name of the screen as far as react-navigation is concerned, and the linkingConfig maps screen names to URLs
   PAGE_THEMES: {
-    //     [SCREENS.HOME]: {
-    //       backgroundColor: colors.productDark200,
-    //       statusBarStyle: CONST.STATUS_BAR_STYLE.LIGHT_CONTENT,
-    //     },
+    // [SCREENS.HOME]: {
+    //   backgroundColor: colors.productDark200,
+    //   statusBarStyle: CONST.STATUS_BAR_STYLE.LIGHT_CONTENT,
+    // },
     //     [SCREENS.REPORT]: {
     //       backgroundColor: colors.productDark100,
     //       statusBarStyle: CONST.STATUS_BAR_STYLE.LIGHT_CONTENT,

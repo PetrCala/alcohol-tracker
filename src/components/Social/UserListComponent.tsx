@@ -1,5 +1,4 @@
 import PressableWithAnimation from '@components/Buttons/PressableWithAnimation';
-import LoadingData from '@components/LoadingData';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {fetchUserStatuses} from '@database/profile';
 import useProfileList from '@hooks/useProfileList';
@@ -29,6 +28,11 @@ import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import FillerView from '@components/FillerView';
 import {sleep} from '@libs/TimeUtils';
 import _ from 'lodash';
+import CONST from '@src/CONST';
+import useThemeStyles from '@hooks/useThemeStyles';
+import useTheme from '@hooks/useTheme';
+import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
 
 type UserListProps = {
   fullUserArray: UserArray;
@@ -56,7 +60,8 @@ const UserListComponent: React.FC<UserListProps> = ({
   orderUsers,
 }) => {
   const {auth, db} = useFirebase();
-  const user = auth.currentUser;
+  const styles = useThemeStyles();
+  const {userData} = useDatabaseData();
   // Partial list of users for initial display and dynamic updates
   const [displayUserArray, setDisplayUserArray] = useState<UserArray>([]);
   const [userStatusList, setUserStatusList] = useState<UserStatusList>({});
@@ -152,16 +157,16 @@ const UserListComponent: React.FC<UserListProps> = ({
 
   return (
     <ScrollView
-      style={styles.scrollViewContainer}
+      style={localStyles.scrollViewContainer}
       onScrollBeginDrag={Keyboard.dismiss}
       onMomentumScrollEnd={handleScroll}
       scrollEventThrottle={400}
       keyboardShouldPersistTaps="handled">
       {loadingDisplayData && isInitialLoad ? (
-        <LoadingData style={styles.loadingContainer} />
+        <FlexibleLoadingIndicator />
       ) : isNonEmptyArray(fullUserArray) ? (
         <>
-          <View style={styles.userList}>
+          <View style={localStyles.userList}>
             {isNonEmptyArray(displayUserArray) ? (
               _.map(displayUserArray, (userID: string) => {
                 const profileData = profileList[userID] ?? {};
@@ -177,25 +182,26 @@ const UserListComponent: React.FC<UserListProps> = ({
                 return (
                   <PressableWithAnimation
                     key={userID + '-button'}
-                    style={styles.friendOverviewButton}
+                    style={localStyles.friendOverviewButton}
                     onPress={() => navigateToProfile(userID)}>
                     <UserOverview
                       key={userID + '-user-overview'}
                       userID={userID}
                       profileData={profileData}
                       userStatusData={userStatusData}
+                      timezone={userData?.timezone}
                     />
                   </PressableWithAnimation>
                 );
               })
             ) : (
-              <Text style={commonStyles.noUsersFoundText}>
+              <Text style={styles.noResultsText}>
                 {`No friends found.\n\nTry modifying the search text.`}
               </Text>
             )}
           </View>
           {loadingMoreUsers ? (
-            <View style={styles.loadingMoreUsersContainer}>
+            <View style={localStyles.loadingMoreUsersContainer}>
               <ActivityIndicator size="large" color="#0000ff" />
             </View>
           ) : (
@@ -211,7 +217,7 @@ const UserListComponent: React.FC<UserListProps> = ({
 
 const screenHeight = Dimensions.get('window').height;
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   scrollViewContainer: {
     flex: 1,
     // backgroundColor: 'white',
@@ -230,7 +236,6 @@ const styles = StyleSheet.create({
   friendOverviewButton: {
     width: '100%',
     maxHeight: 100,
-    backgroundColor: 'white',
   },
   loadingMoreUsersContainer: {
     width: '100%',

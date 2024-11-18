@@ -1,19 +1,24 @@
 import {
   Image,
   Keyboard,
+  StyleProp,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
+  ViewStyle,
 } from 'react-native';
 import {useState, forwardRef, useEffect, useRef} from 'react';
 import type {Database} from 'firebase/database';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import type {SearchWindowRef} from '@src/types/various/Search';
 import KeyboardFocusHandler from '@components/Keyboard/KeyboardFocusHandler';
-import DismissKeyboard from '@components/Keyboard/DismissKeyboard';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
+import Button from '@components/Button';
+import useThemeStyles from '@hooks/useThemeStyles';
+import Icon from '@components/Icon';
+import useStyleUtils from '@hooks/useStyleUtils';
 
 type SearchWindowProps = {
   windowText: string;
@@ -24,7 +29,9 @@ type SearchWindowProps = {
 
 const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
   ({windowText, onSearch, onResetSearch, searchOnTextChange}, parentRef) => {
+    const styles = useThemeStyles();
     const db = useFirebase().db;
+    const StyleUtils = useStyleUtils();
     const [searchText, setSearchText] = useState<string>('');
     const [searchCount, setSearchCount] = useState<number>(0);
     const textInputRef = useRef<TextInput>(null); // Input field ref for focus handling
@@ -56,21 +63,27 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
     // }));
 
     return (
-      <View style={styles.mainContainer}>
+      <View style={styles.searchWindowContainer}>
         <View
-          style={
-            searchOnTextChange
-              ? [styles.textContainer, styles.responsiveTextContainer]
-              : styles.textContainer
-          }>
+          style={[
+            localStyles.textContainer,
+            searchOnTextChange && localStyles.responsiveTextContainer,
+            styles.searchWindowTextContainer,
+          ]}>
           <KeyboardFocusHandler>
+            <Icon
+              src={KirokuIcons.Search}
+              medium
+              fill={StyleUtils.getIconFillColor()}
+              additionalStyles={[styles.alignSelfCenter, styles.mh3]}
+            />
             <TextInput
               accessibilityLabel="Text input field"
               placeholder={windowText}
               placeholderTextColor={'#a8a8a8'}
               value={searchText}
               onChangeText={text => setSearchText(text)}
-              style={styles.searchText}
+              style={styles.searchWindowText}
               keyboardType="default"
               textContentType="nickname"
               ref={textInputRef}
@@ -80,22 +93,27 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
             <TouchableOpacity
               accessibilityRole="button"
               onPress={handleResetSearch}
-              style={styles.searchTextResetContainer}>
-              <Image
-                style={styles.searchTextResetImage}
-                source={KirokuIcons.ThinX}
+              style={localStyles.searchTextResetContainer}>
+              <Icon
+                src={KirokuIcons.ThinX}
+                small
+                fill={StyleUtils.getIconFillColor()}
               />
             </TouchableOpacity>
           ) : null}
         </View>
         {searchOnTextChange ? null : (
-          <View style={styles.searchButtonContainer}>
-            <TouchableOpacity
-              accessibilityRole="button"
-              style={styles.searchButton}
-              onPress={() => handleDoSearch(searchText, db)}>
-              <Text style={styles.searchButtonText}>Search</Text>
-            </TouchableOpacity>
+          <View
+            style={[
+              styles.justifyContentCenter,
+              styles.alignItemsCenter,
+              styles.pl2,
+            ]}>
+            <Button
+              onPress={() => handleDoSearch(searchText, db)}
+              text="Search"
+              style={[styles.borderRadiusSmall, styles.buttonSuccess]}
+            />
           </View>
         )}
       </View>
@@ -103,74 +121,21 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
   },
 );
 
-const styles = StyleSheet.create({
-  mainContainer: {
-    width: '95%',
-    height: 50,
-    alignSelf: 'center',
-    flexDirection: 'row',
-    marginTop: 10,
-    marginBottom: 5,
-  },
+const localStyles = StyleSheet.create({
   textContainer: {
-    width: '80%',
-    height: '90%',
     justifyContent: 'flex-start',
     alignContent: 'center',
     alignSelf: 'center',
     flexDirection: 'row',
-    paddingRight: 5,
-    borderWidth: 2,
-    borderColor: '#000',
-    borderRadius: 10,
-    backgroundColor: 'white',
   },
   responsiveTextContainer: {
     width: '100%',
-  },
-  searchText: {
-    height: '100%',
-    width: '90%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    // justifyContent: 'space-between',
-    paddingLeft: 10,
-    color: 'black',
   },
   searchTextResetContainer: {
     width: '10%',
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  searchTextResetImage: {
-    width: 15,
-    height: 15,
-    tintColor: 'gray',
-  },
-  searchButtonContainer: {
-    width: '20%',
-    height: '100%',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'flex-end',
-  },
-  searchButton: {
-    width: '95%',
-    height: '90%',
-    backgroundColor: '#fcf50f',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: 'black',
-    marginLeft: '5%',
-  },
-  searchButtonText: {
-    color: 'black',
-    fontSize: 16,
-    fontWeight: '500',
   },
 });
 

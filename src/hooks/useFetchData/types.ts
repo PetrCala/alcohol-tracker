@@ -2,7 +2,7 @@ import type {
   DrinkingSessionList,
   Preferences,
   UnconfirmedDays,
-  UserProps,
+  UserData,
   UserStatus,
 } from '@src/types/onyx';
 import type {StringKeyOf, ValueOf} from 'type-fest';
@@ -15,7 +15,7 @@ type FetchData = {
   drinkingSessionData?: DrinkingSessionList;
   preferences?: Preferences;
   unconfirmedDays?: UnconfirmedDays;
-  userData?: UserProps;
+  userData?: UserData;
 };
 
 type FetchDataKey = StringKeyOf<FetchData>;

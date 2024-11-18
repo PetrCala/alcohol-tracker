@@ -18,28 +18,40 @@ import type {
   DrinkName,
   Drinks,
 } from '@src/types/onyx';
+import {formatInTimeZone, utcToZonedTime} from 'date-fns-tz';
 import CONST from '../CONST';
 import type {MeasureType} from '@src/types/onyx/OnyxCommon';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
-import _, {get} from 'lodash';
+import type {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
+import _ from 'lodash';
+import {endOfMonth, endOfToday, format, startOfMonth} from 'date-fns';
+import * as DSUtils from '@libs/DrinkingSessionUtils';
+import Onyx from 'react-native-onyx';
+import ONYXKEYS from '@src/ONYXKEYS';
+import {auth} from './Firebase/FirebaseApp';
+
+let timezone: Required<Timezone> = CONST.DEFAULT_TIME_ZONE;
+Onyx.connect({
+  key: ONYXKEYS.USER_DATA_LIST,
+  callback: value => {
+    if (!auth?.currentUser) {
+      return;
+    }
+    const currentUserID = auth?.currentUser?.uid;
+    const userDataTimezone = value?.[currentUserID]?.timezone;
+    timezone = {
+      selected: userDataTimezone?.selected ?? CONST.DEFAULT_TIME_ZONE.selected,
+      automatic:
+        userDataTimezone?.automatic ?? CONST.DEFAULT_TIME_ZONE.automatic,
+    };
+  },
+});
 
 export function formatDate(date: Date): DateString {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
     2,
     '0',
   )}-${String(date.getDate()).padStart(2, '0')}` as DateString;
-}
-
-export function formatDateToDay(date: Date): string {
-  return `${String(date.getMonth() + 1).padStart(2, '0')}-${String(
-    date.getDate(),
-  ).padStart(2, '0')}`;
-}
-
-export function formatDateToTime(date: Date): string {
-  return `${String(date.getHours()).padStart(2, '0')}:${String(
-    date.getMinutes(),
-  ).padStart(2, '0')}`;
 }
 
 /** Convert a timestamp to a Date object */
@@ -256,31 +268,19 @@ export function getSingleDayDrinkingSessions(
   sessions: DrinkingSessionList | undefined,
   returnArray = true,
 ): DrinkingSessionArray | DrinkingSessionList {
-  if (isEmptyObject(sessions)) {
-    return [];
-  }
-  // Define the time boundaries
-  date.setHours(0, 0, 0, 0); // set to start of day
+  // This is without timezones
+  const sessionBelongsToDate = (session: DrinkingSession) => {
+    const tz = session.timezone ?? timezone.selected;
+    const sessionDate = formatInTimeZone(session.start_time, tz, 'yyyy-MM-dd');
+    return sessionDate === format(date, 'yyyy-MM-dd');
+  };
 
-  const tomorrow = new Date(date);
-  tomorrow.setDate(date.getDate() + 1); // set to start of next day
-
-  // Convert to UNIX timestamp
-  const todayUnix = Math.floor(date.getTime());
-  const tomorrowUnix = Math.floor(tomorrow.getTime());
   if (returnArray) {
-    return _.filter(
-      sessions,
-      session =>
-        session.start_time >= todayUnix && session.start_time < tomorrowUnix,
-    );
+    return _.filter(sessions, session => sessionBelongsToDate(session));
   }
+
   return _.entries(sessions)
-    .filter(([sessionId, session]) => {
-      return (
-        session.start_time >= todayUnix && session.start_time < tomorrowUnix
-      );
-    })
+    .filter(([sessionId, session]) => sessionBelongsToDate(session))
     .reduce((acc, [sessionId, session]) => {
       acc[sessionId] = session;
       return acc;
@@ -299,35 +299,15 @@ export function getSingleMonthDrinkingSessions(
   sessions: DrinkingSessionArray,
   untilToday = false,
 ) {
-  if (!sessions) {
-    return [];
-  }
-  date.setHours(0, 0, 0, 0); // To midnight
-  // Find the beginning date
-  const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
-  const beginningDate = firstDayOfMonth;
-  // Find the end date
-  const firstDayOfNextMonth = new Date(
-    date.getFullYear(),
-    date.getMonth() + 1,
-    1,
-  );
-  let endDate = firstDayOfNextMonth;
-  if (untilToday) {
-    const today = new Date(); // automatically set to midnight
-    const tomorrowMidnight = changeDateBySomeDays(today, 1);
-    if (endDate >= tomorrowMidnight) {
-      endDate = tomorrowMidnight; // Filter until today only
-    }
-  }
-  // Find the timestamps
-  const beginningUnix = Math.floor(beginningDate.getTime());
-  const endUnix = Math.floor(endDate.getTime());
-  // Filter to current month only
-  const monthDrinkingSessions = sessions.filter(
-    session =>
-      session.start_time >= beginningUnix && session.start_time < endUnix,
-  );
+  const startDate = startOfMonth(date);
+  const endDate = untilToday ? endOfToday() : endOfMonth(date);
+
+  const monthDrinkingSessions = sessions.filter(session => {
+    const tz = session.timezone ?? timezone.selected;
+    const sessionDate = new Date(utcToZonedTime(session.start_time, tz));
+    return sessionDate >= startDate && sessionDate <= endDate;
+  });
+
   return monthDrinkingSessions;
 }
 
@@ -338,13 +318,17 @@ export function aggregateSessionsByDays(
 ): SessionsCalendarDatesType {
   return sessions.reduce(
     (acc: SessionsCalendarDatesType, item: DrinkingSession) => {
-      const dateString = formatDate(new Date(item.start_time)); // MM-DD-YYYY
+      const dateString = formatInTimeZone(
+        item.start_time,
+        item.timezone ?? timezone.selected,
+        CONST.DATE.CALENDAR_FORMAT,
+      );
       let newDrinks: number;
       if (measureType === 'units') {
         if (!drinksToUnits) {
           throw new Error('You must specify the drink to unit conversion');
         }
-        newDrinks = sumAllUnits(item.drinks, drinksToUnits);
+        newDrinks = DSUtils.calculateTotalUnits(item.drinks, drinksToUnits);
       } else if (measureType === 'drinks') {
         newDrinks = sumAllDrinks(item.drinks);
       } else {
@@ -454,42 +438,68 @@ export function sumDrinkTypes(drinkTypes: Drinks): number {
   );
 }
 
+/** Get an array of unique keys that appear in a session */
+export function getUniqueDrinkTypesInSession(
+  session: DrinkingSession,
+): Array<DrinkKey> | undefined {
+  const sessionDrinks = session?.drinks;
+  if (!sessionDrinks) {
+    return undefined;
+  }
+  const uniqueKeys = new Set<DrinkKey>();
+
+  // Iterate over each Drinks entry in the DrinksList
+  for (const drinks of Object.values(sessionDrinks)) {
+    // Iterate over each DrinkKey in the current Drinks object
+    for (const key of Object.keys(drinks) as DrinkKey[]) {
+      uniqueKeys.add(key);
+    }
+  }
+
+  // Convert the Set to an array before returning
+  return Array.from(uniqueKeys);
+}
+
 /** Type guard to check if a given key is a valid DrinkType key */
 export function isDrinkTypeKey(key: string): key is keyof Drinks {
   return _.includes(Object.values(CONST.DRINKS.KEYS), key);
 }
 
-/** Using a DrinksList and the drinks to units conversion object, calculate how many units this object amounts to.
- *
- * @param drinksObject DrinksList type
- * @param unitsToPoits Drinks to units conversion object
- * @returns Number of points
- *
- * @example let points = sumAllUnits({
- * [1694819284]: {'beer': 5},
- * [1694819286]: {'wine': 2, 'cocktail': 1},
- * }, DrinksToUnits)
- */
-export function sumAllUnits(
-  drinksObject: DrinksList | undefined,
-  drinksToUnits: DrinksToUnits,
-): number {
-  if (_.isEmpty(drinksObject)) {
-    return 0;
-  }
-  let totalUnits = 0;
-  // Iterate over each timestamp in drinksObject
-  _.forEach(Object.values(drinksObject), drinkTypes => {
-    _.forEach(Object.keys(drinkTypes), DrinkKey => {
-      if (isDrinkTypeKey(DrinkKey)) {
-        const typeDrinks = drinkTypes[DrinkKey] ?? 0;
-        const typeUnits = drinksToUnits[DrinkKey] ?? 0;
-        totalUnits += typeDrinks * typeUnits;
-      }
-    });
-  });
-  return totalUnits;
-}
+// /** Using a DrinksList and the drinks to units conversion object, calculate how many units this object amounts to.
+//  *
+//  * @param drinksObject DrinksList type
+//  * @param unitsToPoits Drinks to units conversion object
+//  * @returns Number of points
+//  *
+//  * @example let points = sumAllUnits({
+//  * [1694819284]: {'beer': 5},
+//  * [1694819286]: {'wine': 2, 'cocktail': 1},
+//  * }, DrinksToUnits)
+//  */
+// export function sumAllUnits(
+//   drinksObject: DrinksList | undefined,
+//   drinksToUnits: DrinksToUnits,
+//   roundUp?: boolean,
+// ): number {
+//   if (_.isEmpty(drinksObject)) {
+//     return 0;
+//   }
+//   let totalUnits = 0;
+//   // Iterate over each timestamp in drinksObject
+//   _.forEach(Object.values(drinksObject), drinkTypes => {
+//     _.forEach(Object.keys(drinkTypes), DrinkKey => {
+//       if (isDrinkTypeKey(DrinkKey)) {
+//         const typeDrinks = drinkTypes[DrinkKey] ?? 0;
+//         const typeUnits = drinksToUnits[DrinkKey] ?? 0;
+//         totalUnits += typeDrinks * typeUnits;
+//       }
+//     });
+//   });
+//   if (roundUp) {
+//     return roundToTwoDecimalPlaces(totalUnits);
+//   }
+//   return totalUnits;
+// }
 
 /** Input a session item and return the timestamp of the last drink
  * consumed in that session.
@@ -570,7 +580,8 @@ export const calculateThisMonthUnits = (
   );
   // Sum up the drinks
   return sessionsThisMonth.reduce(
-    (sum, session) => sum + sumAllUnits(session.drinks, drinksToUnits),
+    (sum, session) =>
+      sum + DSUtils.calculateTotalUnits(session.drinks, drinksToUnits),
     0,
   );
 };
@@ -599,108 +610,6 @@ export function getLastStartedSessionId(
   // Return the key (session ID) of the latest session, if it exists
   return latestSession ? latestSession[0] : undefined;
 }
-
-/** List all drinks to add and their amounts and add this to the current drinks hook
- *
- * @param drinks Drinks kind of object listing each drink to add and its amount
- */
-export const addDrinks = (
-  existingDrinks: DrinksList | undefined,
-  drinks: Drinks,
-): DrinksList | undefined => {
-  if (isEmptyObject(drinks)) {
-    return existingDrinks;
-  }
-  const newDrinks: DrinksList = {
-    ...existingDrinks,
-    [Date.now()]: drinks,
-  };
-  return newDrinks;
-};
-
-/** Specify the kind of drink to remove units from and the number of drinks to remove.
- * Remove this many drinks from that kind of drink
- *
- * @param drinkType Kind of drink to remove the units from
- * @param number Number of drinks to remove
- */
-export const removeDrinks = (
-  existingDrinks: DrinksList | undefined,
-  drinkType: DrinkKey,
-  count: number,
-): DrinksList | undefined => {
-  if (isEmptyObject(existingDrinks)) {
-    return existingDrinks;
-  }
-  let drinksToRemove = count;
-  const updatedDrinks: DrinksList = JSON.parse(JSON.stringify(existingDrinks)); // Deep copy
-  for (const timestamp of Object.keys(updatedDrinks).sort((a, b) => +b - +a)) {
-    // sort in descending order
-    const drinksAtTimestamp = updatedDrinks[+timestamp] ?? {};
-    const availableDrinks = drinksAtTimestamp[drinkType] ?? 0;
-    if (availableDrinks > 0) {
-      const drinksToRemoveNow = Math.min(drinksToRemove, availableDrinks);
-      drinksAtTimestamp[drinkType] = availableDrinks - drinksToRemoveNow;
-      drinksToRemove -= drinksToRemoveNow;
-
-      // Clean up if there are zero drinks left for this type at this timestamp
-      if (drinksAtTimestamp[drinkType] === 0) {
-        delete drinksAtTimestamp[drinkType];
-      }
-
-      // Clean up if there are zero drinks left at this timestamp
-      if (Object.keys(drinksAtTimestamp).length === 0) {
-        delete updatedDrinks[+timestamp];
-      }
-
-      // Add a zero-drink placeholder if there are no drinks left in the object
-      if (Object.keys(updatedDrinks).length === 0) {
-        updatedDrinks[+timestamp] = {other: 0};
-      }
-    }
-
-    if (drinksToRemove <= 0) {
-      break;
-    }
-  }
-  return updatedDrinks;
-};
-
-/** Input a drinking session and remove all drink records
- * where add drinks of a given timestamp are set to 0. Return the
- * updated session.
- *
- * @param session Drinking session
- * @returns The updated session
- */
-export const removeZeroObjectsFromSession = (
-  session: DrinkingSession,
-): DrinkingSession => {
-  // Clone the session object to avoid mutating the original object
-  const updatedSession = {...session};
-
-  if (updatedSession.drinks === undefined) {
-    return updatedSession;
-  }
-
-  // Go through each timestamp in the session's drinks object
-  for (const timestamp in updatedSession.drinks) {
-    // Check if all the drink values are set to 0
-    const allZero = Object.values(CONST.DRINKS.KEYS).every(
-      key =>
-        // ! to assert that the value is not undefined
-        updatedSession.drinks![timestamp][key] === 0 ||
-        updatedSession.drinks![timestamp][key] === undefined,
-    );
-
-    // If all drink values are 0, delete the timestamp from the drinks object, unless it is the last one
-    if (allZero && Object.keys(updatedSession.drinks).length > 1) {
-      delete updatedSession.drinks[+timestamp];
-    }
-  }
-
-  return updatedSession;
-};
 
 /** Generate an object with all available drinks where
  * each drink's value is set to a random integer.
@@ -810,20 +719,6 @@ export function objVals(obj: any): string[] {
   }
   // Return an empty array for non-object inputs or null
   return [];
-}
-
-/**
- * Rounds a number to two decimal places.
- * @param value - The number to be rounded.
- * @returns The rounded number.
- */
-export function roundToTwoDecimalPlaces(value: number): number {
-  const decimalCheck = value.toString().split('.')[1];
-  if (decimalCheck && decimalCheck.length > 2) {
-    return parseFloat(value.toFixed(2));
-  } else {
-    return value;
-  }
 }
 
 // test, getAdjacentMonths, findongoingsession, aggregatesessionsbydays, month entries to colors (move these maybe to a different location), toPercentageVerbose

@@ -30,19 +30,6 @@
       "@userActions/*": ["./src/libs/actions/*"]
     }
   },
-  "ts-node": {
-    // these options are overrides used only by ts-node
-    // same as the --compilerOptions flag and the TS_NODE_COMPILER_OPTIONS environment variable
-    "compilerOptions": {
-      "module": "commonjs",
-      "paths": {
-        "@local/*": ["./local/*"],
-        "@firebase/auth": ["./node_modules/@firebase/auth/dist/index.rn.d.ts"],
-        "@components/*": ["./src/components/*"],
-        "@src/*": ["./src/*"]
-      }
-    }
-  },
   "exclude": [
     "**/node_modules/*",
     "**/dist/*",
@@ -67,6 +54,7 @@
     "firebase.json",
     "**/alcohol-tracker*.json",
     "react-native.config.js",
-    "local/toImplement/Form"
+    "local/toImplement/Form",
+    "../Kiroku-dev/admin"
   ]
 }

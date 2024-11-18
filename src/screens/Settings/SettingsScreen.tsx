@@ -1,169 +1,353 @@
-﻿import React, {useContext, useState} from 'react';
-import {
-  Keyboard,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+﻿import {useRoute} from '@react-navigation/native';
+import React, {
+  useCallback,
+  useContext,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+// eslint-disable-next-line no-restricted-imports
+import type {
+  ScrollView as RNScrollView,
+  ScrollViewProps,
+  StyleProp,
+  ViewStyle,
 } from 'react-native';
-import MenuIcon from '../../components/Buttons/MenuIcon';
-import {useUserConnection} from '../../context/global/UserConnectionContext';
-import UserOffline from '../../components/UserOffline';
-import BasicButton from '../../components/Buttons/BasicButton';
-import commonStyles from '../../styles/commonStyles';
-import MainHeader from '@components/Header/MainHeader';
-import {useFirebase} from '@context/global/FirebaseContext';
-import {useDatabaseData} from '@context/global/DatabaseDataContext';
+import {View} from 'react-native';
+import {withOnyx} from 'react-native-onyx';
+import type {ValueOf} from 'type-fest';
+import ConfirmModal from '@components/ConfirmModal';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
+import * as Session from '@userActions/Session';
+import MenuItem from '@components/MenuItem';
+import ScreenWrapper from '@components/ScreenWrapper';
+import {ScrollOffsetContext} from '@components/ScrollOffsetContextProvider';
+import ScrollView from '@components/ScrollView';
+import Text from '@components/Text';
+import type {WithCurrentUserDataProps} from '@components/withCurrentUserData';
+import withCurrentUserData from '@components/withCurrentUserData';
+import useActiveCentralPaneRoute from '@hooks/useActiveCentralPaneRoute';
+import useLocalize from '@hooks/useLocalize';
+import useNetwork from '@hooks/useNetwork';
+import useSingleExecution from '@hooks/useSingleExecution';
+import useThemeStyles from '@hooks/useThemeStyles';
+import useWaitForNavigation from '@hooks/useWaitForNavigation';
 import Navigation from '@libs/Navigation/Navigation';
+import CONST from '@src/CONST';
+import type {TranslationPaths} from '@src/languages/types';
+import type {Route} from '@src/ROUTES';
 import ROUTES from '@src/ROUTES';
+import type IconAsset from '@src/types/utils/IconAsset';
+import HeaderWithBackButton from '@components/HeaderWithBackButton';
+import {useFirebase} from '@context/global/FirebaseContext';
+import UserOffline from '@components/UserOfflineModal';
+import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 
-const SettingsItem: React.FC<{item: any}> = ({item}) => (
-  <View style={styles.settingContainer}>
-    <Text style={styles.settingLabel}>{item.label}</Text>
-    <View style={styles.buttonsContainer}>
-      {item.buttons.map((button: any, index: any) => (
-        <TouchableOpacity
-          accessibilityRole="button"
-          key={index}
-          style={[styles.button, {backgroundColor: button.color}]}
-          onPress={button.action}>
-          <Text style={styles.buttonText}>{button.text}</Text>
-        </TouchableOpacity>
-      ))}
-    </View>
-  </View>
-);
+type SettingsScreenOnyxProps = {};
 
-function SettingsScreen() {
+type SettingsScreenProps = SettingsScreenOnyxProps & WithCurrentUserDataProps;
+
+type MenuData = {
+  translationKey: TranslationPaths;
+  icon: IconAsset;
+  routeName?: Route;
+  action?: () => void;
+  link?: string | (() => Promise<string>);
+  iconStyles?: StyleProp<ViewStyle>;
+  fallbackIcon?: IconAsset;
+  shouldStackHorizontally?: boolean;
+  title?: string;
+  shouldShowRightIcon?: boolean;
+  iconRight?: IconAsset;
+};
+
+type Menu = {
+  sectionStyle: StyleProp<ViewStyle>;
+  sectionTranslationKey: TranslationPaths;
+  items: MenuData[];
+};
+
+function SettingsScreen({}: SettingsScreenProps) {
+  const network = useNetwork();
   const {auth} = useFirebase();
-  const user = auth.currentUser;
-  const {preferences} = useDatabaseData();
-  const {isOnline} = useUserConnection();
+  const styles = useThemeStyles();
+  const {isExecuting, singleExecution} = useSingleExecution();
+  const waitForNavigate = useWaitForNavigation();
+  const popoverAnchor = useRef(null);
+  const {translate} = useLocalize();
+  const activeCentralPaneRoute = useActiveCentralPaneRoute();
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingText, setLoadingText] = useState('');
 
-  // Automatically navigate to login screen if login expires
-  if (!user || !preferences) {
-    Navigation.navigate(ROUTES.LOGIN);
-    return null;
-  }
+  const [shouldShowSignoutConfirmModal, setShouldShowSignoutConfirmModal] =
+    useState(false);
 
-  const handleSaveSettings = () => {
-    Navigation.goBack();
+  const toggleSignoutConfirmModal = (value: boolean) => {
+    setShouldShowSignoutConfirmModal(value);
+  };
+  const signOut = async (auth: any) => {
+    if (!shouldShowSignoutConfirmModal) {
+      toggleSignoutConfirmModal(true);
+      return;
+    }
+
+    setLoadingText(translate('settingsScreen.signingOut'));
+    setIsLoading(true);
+    toggleSignoutConfirmModal(false);
+    await Session.signOut(auth);
+    setIsLoading(false);
   };
 
-  const settingsData = [
-    {
-      label: 'Unit Colors',
-      buttons: [
+  /**
+   * Retuns a list of menu items data for account section
+   * @returns object with translationKey, style and items for the account section
+   */
+  const accountMenuItemsData: Menu = useMemo(() => {
+    // const profileBrickRoadIndicator =
+    // UserUtils.getLoginListBrickRoadIndicator(loginList);
+    const defaultMenu: Menu = {
+      sectionStyle: styles.accountSettingsSectionContainer,
+      sectionTranslationKey: 'common.account',
+      items: [
         {
-          color: 'green',
-          text: '9',
-          action: () => console.log('Green 9 pressed'),
+          translationKey: 'common.profile',
+          icon: KirokuIcons.Profile,
+          routeName: ROUTES.SETTINGS_ACCOUNT,
         },
         {
-          color: 'yellow',
-          text: '10',
-          action: () => console.log('Yellow 10 pressed'),
+          translationKey: 'common.preferences',
+          icon: KirokuIcons.Gear,
+          routeName: ROUTES.SETTINGS_PREFERENCES,
         },
       ],
-    },
-    {
-      label: 'Drink to Unit Conversion',
-      buttons: [
-        {color: 'blue', text: '5', action: () => console.log('Blue 5 pressed')},
-      ],
-    },
-    // Add more settings items as needed
-  ];
+    };
 
-  if (!isOnline) {
+    return defaultMenu;
+  }, [styles.accountSettingsSectionContainer]);
+
+  /**
+   * Retuns a list of menu items data for general section
+   * @returns object with translationKey, style and items for the general section
+   */
+  const generalMenuItemsData: Menu = useMemo(() => {
+    return {
+      sectionStyle: styles.generalSettingsSectionContainer,
+      sectionTranslationKey: 'settingsScreen.general',
+      items: [
+        {
+          translationKey: 'common.termsOfService',
+          icon: KirokuIcons.FileDocument,
+          routeName: ROUTES.SETTINGS_TERMS_OF_SERVICE,
+        },
+        {
+          translationKey: 'common.privacyPolicy',
+          icon: KirokuIcons.FileDocument,
+          routeName: ROUTES.SETTINGS_PRIVACY_POLICY,
+        },
+        //   label: 'Report a bug',
+        //   icon: KirokuIcons.Bug,
+        //   action: () => console.log('Bug reporting'),
+        // },
+        {
+          translationKey: 'settingsScreen.giveFeedback',
+          icon: KirokuIcons.Idea,
+          routeName: ROUTES.SETTINGS_FEEDBACK,
+        },
+        {
+          translationKey: 'settingsScreen.shareTheApp',
+          icon: KirokuIcons.Share,
+          routeName: ROUTES.SETTINGS_APP_SHARE,
+        },
+      ],
+      // {
+      //   translationKey: 'initialSettingsPage.about',
+      //   icon: Expensicons.Info,
+      //   routeName: ROUTES.SETTINGS_ABOUT,
+      // },
+      // ],
+    };
+  }, [styles.generalSettingsSectionContainer]);
+
+  /**
+   * Retuns a list of menu items data for authentication section
+   * @returns object with translationKey, style and items for the authentication section
+   */
+  const authenticationMenuItemsData: Menu = useMemo(() => {
+    return {
+      sectionStyle: {
+        ...styles.pt4,
+      },
+      sectionTranslationKey: 'common.authentication',
+      items: [
+        {
+          translationKey: 'settingsScreen.signOut',
+          icon: KirokuIcons.Exit,
+          action: () => {
+            signOut(auth);
+          },
+        },
+        {
+          translationKey: 'settingsScreen.deleteAccount',
+          icon: KirokuIcons.Delete,
+          routeName: ROUTES.SETTINGS_DELETE,
+        },
+      ],
+    };
+  }, [styles.pt4, translate]); // signOut
+
+  /**
+   * Retuns JSX.Element with menu items
+   * @param menuItemsData list with menu items data
+   * @returns the menu items for passed data
+   */
+  const getMenuItemsSection = useCallback(
+    (menuItemsData: Menu) => {
+      return (
+        <View style={[menuItemsData.sectionStyle, styles.pb4, styles.mh3]}>
+          <Text style={styles.sectionTitle}>
+            {translate(menuItemsData.sectionTranslationKey)}
+          </Text>
+          {menuItemsData.items.map(item => {
+            const keyTitle = item.translationKey
+              ? translate(item.translationKey)
+              : item.title;
+
+            return (
+              <MenuItem
+                key={keyTitle}
+                wrapperStyle={styles.sectionMenuItem}
+                title={keyTitle}
+                icon={item.icon}
+                iconType={CONST.ICON_TYPE_ICON}
+                disabled={isExecuting}
+                onPress={singleExecution(() => {
+                  if (item.action) {
+                    item.action();
+                  } else {
+                    waitForNavigate(() => {
+                      Navigation.navigate(item.routeName);
+                    })();
+                  }
+                })}
+                iconStyles={item.iconStyles}
+                fallbackIcon={item.fallbackIcon}
+                shouldStackHorizontally={item.shouldStackHorizontally}
+                ref={popoverAnchor}
+                hoverAndPressStyle={styles.hoveredComponentBG}
+                shouldBlockSelection={!!item.link}
+                focused={
+                  !!activeCentralPaneRoute &&
+                  !!item.routeName &&
+                  !!(
+                    activeCentralPaneRoute.name
+                      .toLowerCase()
+                      .replaceAll('_', '') ===
+                    item.routeName.toLowerCase().replaceAll('/', '')
+                  )
+                }
+                isPaneMenu
+                iconRight={item.iconRight}
+                shouldShowRightIcon={item.shouldShowRightIcon}
+              />
+            );
+          })}
+        </View>
+      );
+    },
+    [
+      styles.pb4,
+      styles.mh3,
+      styles.sectionTitle,
+      styles.sectionMenuItem,
+      styles.hoveredComponentBG,
+      translate,
+      isExecuting,
+      singleExecution,
+      activeCentralPaneRoute,
+      waitForNavigate,
+    ],
+  );
+
+  const accountMenuItems = useMemo(
+    () => getMenuItemsSection(accountMenuItemsData),
+    [accountMenuItemsData, getMenuItemsSection],
+  );
+  const generalMenuItems = useMemo(
+    () => getMenuItemsSection(generalMenuItemsData),
+    [generalMenuItemsData, getMenuItemsSection],
+  );
+  const authenticationMenuItems = useMemo(
+    () => getMenuItemsSection(authenticationMenuItemsData),
+    [authenticationMenuItemsData, getMenuItemsSection],
+  );
+
+  const {saveScrollOffset, getScrollOffset} = useContext(ScrollOffsetContext);
+  const route = useRoute();
+  const scrollViewRef = useRef<RNScrollView>(null);
+
+  const onScroll = useCallback<NonNullable<ScrollViewProps['onScroll']>>(
+    e => {
+      // If the layout measurement is 0, it means the flashlist is not displayed but the onScroll may be triggered with offset value 0.
+      // We should ignore this case.
+      if (e.nativeEvent.layoutMeasurement.height === 0) {
+        return;
+      }
+      saveScrollOffset(route, e.nativeEvent.contentOffset.y);
+    },
+    [route, saveScrollOffset],
+  );
+
+  useLayoutEffect(() => {
+    const scrollOffset = getScrollOffset(route);
+    if (!scrollOffset || !scrollViewRef.current) {
+      return;
+    }
+    scrollViewRef.current.scrollTo({y: scrollOffset, animated: false});
+  }, [getScrollOffset, route]);
+
+  if (network.isOffline) {
     return <UserOffline />;
+  }
+  if (isLoading) {
+    return <FullScreenLoadingIndicator loadingText={loadingText} />;
   }
 
   return (
-    <View style={{flex: 1, backgroundColor: '#FFFF99'}}>
-      <MainHeader headerText="" onGoBack={() => Navigation.goBack()} />
+    <ScreenWrapper
+      style={[styles.w100, styles.pb0]}
+      includePaddingTop={true}
+      includeSafeAreaPaddingBottom={false}
+      testID={SettingsScreen.displayName}>
+      <HeaderWithBackButton
+        title={translate('settingsScreen.title')}
+        onBackButtonPress={Navigation.goBack}
+      />
       <ScrollView
-        style={styles.scrollView}
-        onScrollBeginDrag={Keyboard.dismiss}
-        keyboardShouldPersistTaps="handled">
-        {settingsData.map((item, index) => (
-          <SettingsItem key={index} item={item} />
-        ))}
-      </ScrollView>
-      <View style={styles.saveSettingsButtonContainer}>
-        <BasicButton
-          text="Save Settings"
-          buttonStyle={styles.saveSettingsButton}
-          textStyle={styles.saveSettingsButtonText}
-          onPress={handleSaveSettings}
+        ref={scrollViewRef}
+        onScroll={onScroll}
+        scrollEventThrottle={16}
+        contentContainerStyle={[styles.w100]}>
+        {accountMenuItems}
+        {generalMenuItems}
+        {authenticationMenuItems}
+        <ConfirmModal
+          danger
+          title={translate('common.areYouSure')}
+          prompt={translate('settingsScreen.signOutConfirmationText')}
+          confirmText={translate('settingsScreen.signOut')}
+          cancelText={translate('common.cancel')}
+          isVisible={shouldShowSignoutConfirmModal}
+          onConfirm={() => signOut(auth)}
+          onCancel={() => toggleSignoutConfirmModal(false)}
         />
-      </View>
-    </View>
+      </ScrollView>
+    </ScreenWrapper>
   );
 }
 
-export default SettingsScreen;
+SettingsScreen.displayName = 'SettingsScreen';
 
-const styles = StyleSheet.create({
-  scrollView: {
-    width: '100%',
-    flexGrow: 1,
-    flexShrink: 1,
-    backgroundColor: '#FFFF99',
-  },
-  settingContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 10,
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: 'gray',
-  },
-  settingLabel: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  buttonsContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  button: {
-    borderRadius: 5,
-    padding: 5,
-    margin: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  saveSettingsButtonContainer: {
-    width: '100%',
-    height: '10%',
-    flexShrink: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-    backgroundColor: '#FFFF99',
-    marginBottom: 5,
-    padding: 5,
-  },
-  saveSettingsButton: {
-    width: '50%',
-    height: '90%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 10,
-    backgroundColor: '#fcf50f',
-    borderWidth: 1,
-    borderColor: '#000',
-    borderRadius: 8,
-  },
-  saveSettingsButtonText: {
-    color: 'black',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-});
+export default withCurrentUserData(
+  withOnyx<SettingsScreenProps, SettingsScreenOnyxProps>({})(SettingsScreen),
+);

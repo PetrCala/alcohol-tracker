@@ -19,15 +19,12 @@ import {
   dateToDateObject,
   getSingleMonthDrinkingSessions,
   objKeys,
-  roundToTwoDecimalPlaces,
   timestampToDate,
   timestampToDateString,
 } from '@libs/DataHandling';
 import type {DateObject} from '@src/types/time';
 import SessionsCalendar from '@components/Calendar';
-import LoadingData from '@components/LoadingData';
 import {getCommonFriendsCount} from '@libs/FriendUtils';
-import MainHeader from '@components/Header/MainHeader';
 import ManageFriendPopup from '@components/Popups/Profile/ManageFriendPopup';
 import type {DrinkingSessionArray} from '@src/types/onyx';
 import type {UserList} from '@src/types/onyx/OnyxCommon';
@@ -42,6 +39,13 @@ import useFetchData from '@hooks/useFetchData';
 import {getPlural} from '@libs/StringUtilsKiroku';
 import ScreenWrapper from '@components/ScreenWrapper';
 import type {FetchDataKeys} from '@hooks/useFetchData/types';
+import HeaderWithBackButton from '@components/HeaderWithBackButton';
+import useLocalize from '@hooks/useLocalize';
+import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
+import useThemeStyles from '@hooks/useThemeStyles';
+import FillerView from '@components/FillerView';
+import Button from '@components/Button';
+import {roundToTwoDecimalPlaces} from '@libs/NumberUtils';
 
 type State = {
   selfFriends: UserList | undefined;
@@ -108,6 +112,8 @@ function ProfileScreen({route}: ProfileScreenProps) {
     'preferences',
   ]; //
   const [state, dispatch] = useReducer(reducer, initialState);
+  const {translate} = useLocalize();
+  const styles = useThemeStyles();
   const {data: fetchedData, isLoading} = useFetchData(userID, relevantDataKeys);
   let userData = fetchedData?.userData;
   let drinkingSessionData = fetchedData?.drinkingSessionData;
@@ -117,11 +123,14 @@ function ProfileScreen({route}: ProfileScreenProps) {
 
   const statsData: StatData = [
     {
-      header: `Drinking Session${getPlural(state.drinkingSessionsCount)}`,
+      header: translate(
+        'profileScreen.drinkingSessions',
+        getPlural(state.drinkingSessionsCount),
+      ),
       content: String(state.drinkingSessionsCount),
     },
     {
-      header: 'Units Consumed',
+      header: translate('profileScreen.unitsConsumed'),
       content: String(roundToTwoDecimalPlaces(state.unitsConsumed)),
     },
   ];
@@ -182,7 +191,7 @@ function ProfileScreen({route}: ProfileScreenProps) {
   }, [drinkingSessionData, preferences, state.visibleDateObject]);
 
   if (isLoading) {
-    return <LoadingData />;
+    return <FullScreenLoadingIndicator />;
   }
   if (!profileData || !preferences || !userData) {
     return;
@@ -190,9 +199,13 @@ function ProfileScreen({route}: ProfileScreenProps) {
 
   return (
     <ScreenWrapper testID={ProfileScreen.displayName}>
-      <MainHeader
-        headerText={user?.uid === userID ? 'Profile' : 'Friend Overview'}
-        onGoBack={() => Navigation.goBack()}
+      <HeaderWithBackButton
+        title={
+          user?.uid === userID
+            ? translate('profileScreen.title')
+            : translate('profileScreen.titleNotSelf')
+        }
+        onBackButtonPress={Navigation.goBack}
       />
       <ScrollView
         style={localStyles.scrollView}
@@ -235,13 +248,12 @@ function ProfileScreen({route}: ProfileScreenProps) {
               style={localStyles.seeFriendsButton}>
               <Text
                 style={[localStyles.friendsInfoText, commonStyles.linkText]}>
-                See all friends
+                {translate('profileScreen.seeAllFriends')}
               </Text>
             </TouchableOpacity>
           </View>
         </View>
-        <View style={commonStyles.horizontalLine} />
-        <View style={localStyles.statsOverviewHolder}>
+        <View style={[styles.borderTop, styles.profileStatOverview]}>
           <StatsOverview statsData={statsData} />
         </View>
         <SessionsCalendar
@@ -260,26 +272,28 @@ function ProfileScreen({route}: ProfileScreenProps) {
           }}
         />
         <View style={localStyles.bottomContainer}>
-          {user?.uid !== userID ? (
-            <TouchableOpacity
-              accessibilityRole="button"
-              style={localStyles.manageFriendButton}
+          {user?.uid !== userID && (
+            <Button
+              text={translate('common.manage')}
+              style={styles.m2}
               onPress={() =>
                 dispatch({
                   type: 'SET_MANAGE_FRIEND_MODAL_VISIBLE',
                   payload: true,
                 })
-              }>
-              <Text style={localStyles.manageFriendButtonText}>Manage</Text>
-            </TouchableOpacity>
-          ) : null}
+              }
+            />
+          )}
         </View>
-        <View style={{height: 200, backgroundColor: '#ffff99'}}></View>
+        <FillerView />
       </ScrollView>
       <ManageFriendPopup
         visible={state.manageFriendModalVisible}
         setVisibility={(visible: boolean) =>
-          dispatch({type: 'SET_MANAGE_FRIEND_MODAL_VISIBLE', payload: visible})
+          dispatch({
+            type: 'SET_MANAGE_FRIEND_MODAL_VISIBLE',
+            payload: visible,
+          })
         }
         onGoBack={() => Navigation.goBack()}
         friendId={userID}
@@ -287,9 +301,6 @@ function ProfileScreen({route}: ProfileScreenProps) {
     </ScreenWrapper>
   );
 }
-
-const screenHeight = Dimensions.get('window').height;
-const screenWidth = Dimensions.get('window').width;
 
 const localStyles = StyleSheet.create({
   sectionText: {
@@ -300,7 +311,6 @@ const localStyles = StyleSheet.create({
     textAlign: 'center',
   },
   scrollView: {
-    backgroundColor: '#ffff99',
     width: '100%',
     flexGrow: 1,
     flexShrink: 1,
@@ -312,7 +322,6 @@ const localStyles = StyleSheet.create({
     padding: 8,
     width: 'auto',
     height: 'auto',
-    backgroundColor: 'pink',
     zIndex: -2,
   },
   editProfileIcon: {
@@ -359,11 +368,6 @@ const localStyles = StyleSheet.create({
     paddingLeft: 10,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  statsOverviewHolder: {
-    height: 120,
-    flexDirection: 'row',
-    width: screenWidth,
   },
   bottomContainer: {
     width: '100%',

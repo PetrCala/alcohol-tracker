@@ -1,11 +1,8 @@
-import type Account from './Account';
 import type AccountCreations from './AccountCreations';
 import type {AccountCreationsList, DeviceId} from './AccountCreations';
-import type {Address} from './PrivatePersonalDetails';
 import type Config from './Config';
 import type {AppSettings, Maintenance} from './Config';
 import type {CapturedLogs, Log} from './Console';
-import type Credentials from './Credentials';
 import type DatabaseProps from './DatabaseProps';
 import type Download from './Download';
 import type DrinkingSession from './DrinkingSession';
@@ -24,7 +21,6 @@ import type {
   FriendRequestStatus,
 } from './FriendRequestList';
 import type Locale from './Locale';
-import type {LoginList} from './Login';
 import type Login from './Login';
 import type Modal from './Modal';
 import type Network from './Network';
@@ -35,19 +31,18 @@ import type {
   OnyxUpdatesFromServer,
 } from './OnyxUpdatesFromServer';
 
-import type {
-  PersonalDetailsList,
-  PersonalDetailsMetadata,
-} from './PersonalDetails';
-import type PersonalDetails from './PersonalDetails';
 import type Preferences from './Preferences';
 import type {
   PreferencesList,
   UnitsToColors,
   DrinksToUnits,
 } from './Preferences';
-import type PrivatePersonalDetails from './PrivatePersonalDetails';
 import type Request from './Request';
+import type ReasonForLeaving from './ReasonForLeaving';
+import type {
+  ReasonForLeavingId,
+  ReasonForLeavingList,
+} from './ReasonForLeaving';
 import type Response from './Response';
 import type Session from './Session';
 import type SessionPlaceholder from './SessionPlaceholder';
@@ -55,23 +50,28 @@ import type {SessionPlaceholderList} from './SessionPlaceholder';
 import type UnconfirmedDays from './UnconfirmedDays';
 import type {UnconfirmedDaysList, UnconfirmedDayKey} from './UnconfirmedDays';
 import type Drinks from './Drinks';
-import type User from './User';
 import type {DrinkKey, DrinkName, DrinksList, DrinksTimestamp} from './Drinks';
 import type UserIsTyping from './UserIsTyping';
-import type UserProps from './UserProps';
-import type {UserPropsList, Profile, ProfileList} from './UserProps';
+import type UserLocation from './UserLocation';
+import type UserData from './UserData';
+import type {
+  Profile,
+  ProfileList,
+  UserDataList,
+  UserDataMetadata,
+  UserPrivateData,
+  UserPublicData,
+} from './UserData';
 import type UserStatus from './UserStatus';
 import type {UserStatusList} from './UserStatus';
+import TzFix from './TzFix';
 
 export type {
-  Account,
   AccountCreations,
   AccountCreationsList,
-  Address,
   AppSettings,
   CapturedLogs,
   Config,
-  Credentials,
   DatabaseProps,
   DeviceId,
   Download,
@@ -95,7 +95,6 @@ export type {
   Locale,
   Log,
   Login,
-  LoginList,
   Maintenance,
   Modal,
   Network,
@@ -105,28 +104,31 @@ export type {
   NicknameToIdList,
   OnyxUpdateEvent,
   OnyxUpdatesFromServer,
-  PersonalDetailsList,
-  PersonalDetailsMetadata,
-  PersonalDetails,
   Preferences,
   PreferencesList,
-  PrivatePersonalDetails,
   Profile,
   ProfileList,
+  ReasonForLeaving,
+  ReasonForLeavingId,
+  ReasonForLeavingList,
   Request,
   Response,
   Session,
   SessionPlaceholder,
   SessionPlaceholderList,
+  TzFix,
   UnconfirmedDayKey,
   UnconfirmedDays,
   UnconfirmedDaysList,
   UnitsToColors,
-  User,
-  UserProps,
+  UserPublicData,
+  UserPrivateData,
+  UserData,
+  UserDataList,
+  UserDataMetadata,
   UserDrinkingSessionsList,
   UserIsTyping,
-  UserPropsList,
+  UserLocation,
   UserStatus,
   UserStatusList,
 };

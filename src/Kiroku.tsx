@@ -1,5 +1,6 @@
 import React, {
   useCallback,
+  useContext,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -7,18 +8,16 @@ import React, {
   useState,
 } from 'react';
 import type {NativeEventSubscription} from 'react-native';
-import {AppState, Linking} from 'react-native';
+import {AppState, Linking, Platform} from 'react-native';
 import type {OnyxEntry} from 'react-native-onyx';
-import Onyx, {withOnyx} from 'react-native-onyx';
+import Onyx, {useOnyx, withOnyx} from 'react-native-onyx';
 import Navigation from '@navigation/Navigation';
 import NavigationRoot from '@navigation/NavigationRoot';
-import NetworkConnection from '@libs/NetworkConnection';
 // import PushNotification from '@libs/Notification/PushNotification';
 import BootSplash from '@libs/BootSplash';
 import Log from '@libs/Log';
 import migrateOnyx from '@libs/migrateOnyx';
 import SplashScreenHider from '@components/SplashScreenHider';
-import CONST from '@src/CONST';
 import * as ActiveClientManager from '@libs/ActiveClientManager';
 // import StartupTimer from '@libs/StartupTimer';
 import Visibility from '@libs/Visibility';
@@ -27,6 +26,19 @@ import ONYXKEYS from '@src/ONYXKEYS';
 import type {Route} from '@src/ROUTES';
 import ForceUpdateModal from '@components/Modals/ForceUpdateModal';
 import type {Session} from '@src/types/onyx';
+import type {Config} from '@src/types/onyx';
+import {updateLastRoute} from '@libs/actions/App';
+import setCrashlyticsUserId from '@libs/setCrashlyticsUserId';
+import {useUserConnection} from '@context/global/UserConnectionContext';
+import DBPATHS from '@database/DBPATHS';
+import {listenForDataChanges, readDataOnce} from '@database/baseFunctions';
+import {checkIfUnderMaintenance} from '@libs/Maintenance';
+import {validateAppVersion} from '@libs/Validation';
+import UnderMaintenanceModal from '@components/Modals/UnderMaintenanceModal';
+import Modal from '@components/Modal';
+import CONST from './CONST';
+import UserOfflineModal from '@components/UserOfflineModal';
+import SplashScreenStateContext from '@context/global/SplashScreenStateContext';
 
 Onyx.registerLogger(({level, message}) => {
   if (level === 'alert') {
@@ -68,24 +80,28 @@ function Kiroku({
   focusModeNotification = false,
   lastVisitedPath,
 }: KirokuProps) {
-  const {auth} = useFirebase();
+  const {db, auth} = useFirebase();
+  const {isOnline} = useUserConnection();
   const appStateChangeListener = useRef<NativeEventSubscription | null>(null);
   const [isNavigationReady, setIsNavigationReady] = useState(false);
   const [isOnyxMigrated, setIsOnyxMigrated] = useState(false);
-  const [isSplashHidden, setIsSplashHidden] = useState(false);
+  const {splashScreenState, setSplashScreenState} = useContext(
+    SplashScreenStateContext,
+  );
   const [initialUrl, setInitialUrl] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authenticationChecked, setAuthenticationChecked] = useState(false);
+  const [lastRoute] = useOnyx(ONYXKEYS.LAST_ROUTE);
+  const [isFetchingConfig, setIsFetchingConfig] = useState<boolean>(true);
+  const [config, setConfig] = useState<Config | null>(null);
+  const [isVersionValid, setIsVersionValid] = useState<boolean>(true);
+  const [isUnderMaintenance, setIsUnderMaintenance] = useState<boolean>(false);
+
+  // const [session] = useOnyx(ONYXKEYS.SESSION);
+  // const [account] = useOnyx(ONYXKEYS.ACCOUNT);
 
   // const isAuthenticated = useMemo(() => !!(auth.currentUser ?? null), [auth]);
   // const autoAuthState = useMemo(() => session?.autoAuthState ?? '', [session]);
-
-  const contextValue = useMemo(
-    () => ({
-      isSplashHidden,
-    }),
-    [isSplashHidden],
-  );
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
@@ -96,9 +112,45 @@ function Kiroku({
     return () => unsubscribe();
   }, [auth]);
 
+  useEffect(() => {
+    const configPath = DBPATHS.CONFIG;
+    const stopListening = listenForDataChanges(
+      db,
+      configPath,
+      (data: Config) => {
+        setConfig(data);
+        setIsFetchingConfig(false);
+        if (!data) {
+          console.debug(
+            'Could not fetch the application configuration data from the database.',
+          );
+        }
+      },
+    );
+
+    return () => stopListening();
+  }, []);
+
+  useMemo(() => {
+    const underMaintenance: boolean = checkIfUnderMaintenance(
+      config?.maintenance,
+    );
+    const versionValidationResult = validateAppVersion(
+      config?.app_settings.min_supported_version,
+    );
+
+    setIsUnderMaintenance(underMaintenance);
+    setIsVersionValid(versionValidationResult.success);
+  }, [config]);
+
   const shouldInit = isNavigationReady;
+  // const shouldHideSplash =
+  //   shouldInit && !isSplashHidden && authenticationChecked;
+
   const shouldHideSplash =
-    shouldInit && !isSplashHidden && authenticationChecked;
+    shouldInit &&
+    authenticationChecked &&
+    splashScreenState === CONST.BOOT_SPLASH_STATE.VISIBLE;
 
   const initializeClient = () => {
     if (!Visibility.isVisible()) {
@@ -116,9 +168,9 @@ function Kiroku({
   }, []);
 
   const onSplashHide = useCallback(() => {
-    setIsSplashHidden(true);
+    setSplashScreenState(CONST.BOOT_SPLASH_STATE.HIDDEN);
     // Performance.markEnd(CONST.TIMING.SIDEBAR_LOADED);
-  }, []);
+  }, [setSplashScreenState]);
 
   useLayoutEffect(() => {
     // Initialize this client as being an active client
@@ -128,34 +180,37 @@ function Kiroku({
     // NetworkConnection.subscribeToNetInfo(); // TODO enable this
   }, []);
 
+  // Log the platform and config to debug .env issues
+  useEffect(() => {
+    Log.info('App launched', false, {Platform});
+  }, []);
+
   useEffect(() => {
     setTimeout(() => {
-      BootSplash.getVisibilityStatus().then(status => {
-        const appState = AppState.currentState;
-        Log.info('[BootSplash] splash screen status', false, {
-          appState,
-          status,
-        });
-
-        // if (status === 'visible') {
-        //   const propsToLog: Omit<
-        //     KirokuProps & {isAuthenticated: boolean},
-        //     'children' | 'session'
-        //   > = {
-        //     updateRequired,
-        //     updateAvailable,
-        //     isSidebarLoaded,
-        //     focusModeNotification,
-        //     isAuthenticated,
-        //     lastVisitedPath,
-        //   };
-        //   Log.alert(
-        //     '[BootSplash] splash screen is still visible',
-        //     {propsToLog},
-        //     false,
-        //   );
-        // }
+      const appState = AppState.currentState;
+      Log.info('[BootSplash] splash screen status', false, {
+        appState,
+        splashScreenState,
       });
+
+      if (splashScreenState === CONST.BOOT_SPLASH_STATE.VISIBLE) {
+        const propsToLog: Omit<
+          KirokuProps & {isAuthenticated: boolean},
+          'children' | 'session'
+        > = {
+          updateRequired,
+          updateAvailable,
+          isSidebarLoaded,
+          focusModeNotification,
+          isAuthenticated,
+          lastVisitedPath,
+        };
+        Log.alert(
+          '[BootSplash] splash screen is still visible',
+          {propsToLog},
+          false,
+        );
+      }
     }, 30 * 1000);
 
     // This timer is set in the native layer when launching the app and we stop it here so we can measure how long
@@ -197,14 +252,32 @@ function Kiroku({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- we don't want this effect to run again
   }, []);
 
+  useLayoutEffect(() => {
+    if (!isNavigationReady || !lastRoute) {
+      return;
+    }
+    updateLastRoute('');
+    Navigation.navigate(lastRoute as Route);
+    // Disabling this rule because we only want it to run on the first render.
+    // eslint-disable-next-line react-compiler/react-compiler, react-hooks/exhaustive-deps
+  }, [isNavigationReady]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      return;
+    }
+    setCrashlyticsUserId(auth?.currentUser?.uid ?? '-1');
+  }, [isAuthenticated, auth?.currentUser?.uid]);
+
   // Display a blank page until the onyx migration completes
   if (!isOnyxMigrated) {
     return null;
   }
 
-  if (updateRequired) {
-    throw new Error(CONST.ERROR.UPDATE_REQUIRED);
-  }
+  // TODO enable this
+  // if (updateRequired) {
+  //   throw new Error(CONST.ERROR.UPDATE_REQUIRED);
+  // }
 
   return (
     // TODO
@@ -213,25 +286,20 @@ function Kiroku({
     //     autoAuthState={autoAuthState}
     // >
     <>
-      {shouldInit && (
+      {!isFetchingConfig && (
         <>
-          {/* {updateAvailable && !updateRequired ? <UpdateAppModal /> : null} */}
-          {updateAvailable && !updateRequired ? <ForceUpdateModal /> : null}
-          {/* {focusModeNotification ? <FocusModeNotification /> : null} */}
+          {!isOnline && <UserOfflineModal />}
+          {isUnderMaintenance && <UnderMaintenanceModal config={config} />}
+          {!isVersionValid && <ForceUpdateModal />}
         </>
       )}
-      {/* <AppleAuthWrapper /> */}
 
-      {/* Possibly conditional display for the next block */}
-      <SplashScreenHiddenContext.Provider value={contextValue}>
-        <NavigationRoot
-          onReady={setNavigationReady}
-          authenticated={isAuthenticated}
-          lastVisitedPath={lastVisitedPath as Route}
-          initialUrl={initialUrl}
-        />
-      </SplashScreenHiddenContext.Provider>
-
+      <NavigationRoot
+        onReady={setNavigationReady}
+        authenticated={isAuthenticated}
+        lastVisitedPath={lastVisitedPath as Route}
+        initialUrl={initialUrl}
+      />
       {shouldHideSplash && <SplashScreenHider onHide={onSplashHide} />}
     </>
   );

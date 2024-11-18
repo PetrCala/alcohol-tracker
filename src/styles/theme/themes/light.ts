@@ -6,16 +6,17 @@ import SCREENS from '@src/SCREENS';
 const lightTheme = {
   // Figma keys
   appBG: colors.productLight100,
-  splashBG: colors.yellowLight,
+  splashBG: colors.yellow,
   highlightBG: colors.productLight200,
+  appColor: colors.yellowStrong,
   border: colors.productLight400,
   borderLighter: colors.productLight400,
-  borderFocus: colors.yellowLight,
+  borderFocus: colors.yellowHover,
   icon: colors.productLight700,
-  iconMenu: colors.yellowLight,
+  iconMenu: colors.yellow,
   iconHovered: colors.productLight900,
-  iconMenuHovered: colors.yellowLight,
-  iconSuccessFill: colors.green400,
+  iconMenuHovered: colors.yellow,
+  iconSuccessFill: colors.yellowStrong,
   iconReversed: colors.productLight100,
   iconColorfulBackground: `${colors.ivory}cc`,
   textSupporting: colors.productLight800,
@@ -31,11 +32,14 @@ const lightTheme = {
   dangerHover: colors.redHover,
   dangerPressed: colors.redHover,
   warning: colors.yellow400,
-  success: colors.green400,
-  successHover: colors.greenHover,
-  successPressed: colors.greenPressed,
+  success: colors.yellowStrong,
+  successHover: colors.yellowHover,
+  successPressed: colors.yellowPressed,
+  add: colors.orange200,
+  addHover: colors.orange300,
+  addPressed: colors.orange800,
   transparent: colors.transparent,
-  signInPage: colors.green800,
+  signInPage: colors.appBG,
   darkSupportingText: colors.productDark800,
 
   // Additional keys
@@ -45,7 +49,7 @@ const lightTheme = {
   componentBG: colors.productLight100,
   hoverComponentBG: colors.productLight300,
   activeComponentBG: colors.productLight400,
-  signInSidebar: colors.green800,
+  signInSidebar: colors.appBG,
   sidebar: colors.productLight100,
   sidebarHover: colors.productLight300,
   heading: colors.productLight900,
@@ -82,23 +86,25 @@ const lightTheme = {
   tooltipPrimaryText: colors.productDark900,
   skeletonLHNIn: colors.productLight400,
   skeletonLHNOut: colors.productLight600,
-  QRLogo: colors.yellowLight,
+  QRLogo: colors.yellow,
   starDefaultBG: 'rgb(254, 228, 94)',
   loungeAccessOverlay: colors.blue800,
   mapAttributionText: colors.black,
   white: colors.white,
   videoPlayerBG: `${colors.productDark100}cc`,
   transparentWhite: `${colors.white}51`,
+  searchBarBG: colors.productLight300,
 
   // Adding a color here will animate the status bar to the right color when the screen is opened.
   // Note that it needs to be a screen name, not a route url.
   // The route urls from ROUTES.ts are only used for deep linking and configuring URLs on web.
   // The screen name (see SCREENS.ts) is the name of the screen as far as react-navigation is concerned, and the linkingConfig maps screen names to URLs
   PAGE_THEMES: {
-    //     [SCREENS.HOME]: {
-    //       backgroundColor: colors.productLight200,
-    //       statusBarStyle: CONST.STATUS_BAR_STYLE.DARK_CONTENT,
-    //     },
+    // [SCREENS.HOME]: {
+    //   // backgroundColor: colors.productLight200,
+    //   backgroundColor: colors.success,
+    //   statusBarStyle: CONST.STATUS_BAR_STYLE.DARK_CONTENT,
+    // },
     //     [SCREENS.REPORT]: {
     //       backgroundColor: colors.productLight100,
     //       statusBarStyle: CONST.STATUS_BAR_STYLE.DARK_CONTENT,

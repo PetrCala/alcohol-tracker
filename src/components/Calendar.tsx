@@ -3,7 +3,7 @@ import React, {useEffect, useState, useMemo, useCallback} from 'react';
 import type {StyleProp, TextStyle} from 'react-native';
 import {
   Dimensions,
-  Image,
+  // Image,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -19,17 +19,20 @@ import {
   aggregateSessionsByDays,
   monthEntriesToColors,
   hasDecimalPoint,
-  roundToTwoDecimalPlaces,
 } from '@libs/DataHandling';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
+import Icon from '@components/Icon';
 import type {DateObject} from '@src/types/time';
-import LoadingData from './LoadingData';
-import CONST from '@src/CONST';
 import type {
   DrinkingSessionArray,
   DrinkingSessionList,
   Preferences,
 } from '@src/types/onyx';
+import useTheme from '@hooks/useTheme';
+import FullScreenLoadingIndicator from './FullscreenLoadingIndicator';
+import useThemeStyles from '@hooks/useThemeStyles';
+import CONST from '@src/CONST';
+import {roundToTwoDecimalPlaces} from '@libs/NumberUtils';
 
 type DayMarking = {
   units?: number;
@@ -46,7 +49,6 @@ type SessionsCalendarProps = {
   preferences: Preferences;
   visibleDateObject: DateObject;
   dispatch: React.Dispatch<any>;
-  // setVisibleDateObject: React.Dispatch<React.SetStateAction<DateObject>>;
   onDayPress: (day: DateData) => void;
 };
 
@@ -197,6 +199,7 @@ const DayComponent: React.FC<DayComponentProps> = ({
 };
 
 function CustomArrow(direction: string): ReactNode {
+  const theme = useTheme();
   return (
     <View
       style={[
@@ -205,10 +208,11 @@ function CustomArrow(direction: string): ReactNode {
           ? arrowStyles.leftContainer
           : arrowStyles.rightContainer,
       ]}>
-      <Image
-        source={KirokuIcons.ArrowBack}
-        style={[
-          arrowStyles.customArrowIcon,
+      <Icon
+        src={KirokuIcons.BackArrow}
+        fill={theme.inverse}
+        additionalStyles={[
+          // arrowStyles.customArrowIcon,
           direction === 'left'
             ? arrowStyles.customArrowLeft
             : arrowStyles.customArrowRight,
@@ -226,6 +230,8 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
   dispatch,
   onDayPress,
 }) => {
+  const theme = useTheme();
+  const styles = useThemeStyles();
   const [calendarData, setCalendarData] = useState<DrinkingSessionArray>(
     drinkingSessionData ? Object.values(drinkingSessionData) : [],
   );
@@ -289,7 +295,7 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
   }, [calendarData, preferences]);
 
   if (loadingMarkedDates) {
-    return <LoadingData />;
+    return <FullScreenLoadingIndicator />;
   }
 
   return (
@@ -304,7 +310,7 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
           onPress={onDayPress}
         />
       )}
-      monthFormat="MMM yyyy"
+      monthFormat={CONST.DATE.MONTH_YEAR_ABBR_FORMAT}
       onPressArrowLeft={(subtractMonth: () => void) =>
         handleLeftArrowPress(subtractMonth)
       }
@@ -317,7 +323,12 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
       enableSwipeMonths={false}
       disableAllTouchEventsForDisabledDays={true}
       renderArrow={CustomArrow}
-      style={localStyles.mainScreenCalendarStyle}
+      style={[
+        localStyles.mainScreenCalendarStyle,
+        {
+          borderColor: theme.border,
+        },
+      ]}
       theme={
         {
           textDayHeaderFontWeight: 'bold',
@@ -327,14 +338,11 @@ const SessionsCalendar: React.FC<SessionsCalendarProps> = ({
               marginLeft: -5,
               flexDirection: 'row',
               alignItems: 'center',
-              margin: 0,
-              padding: 0,
               borderTopWidth: 1,
-              borderBottomWidth: 1,
-              borderColor: 'grey',
+              borderColor: theme.border,
             },
             monthText: {
-              color: 'black',
+              color: theme.text,
               fontSize: 20,
               fontWeight: '500',
               width: screenWidth / 3,
@@ -354,7 +362,7 @@ const arrowStyles = StyleSheet.create({
     height: 45,
     alignSelf: 'center',
     justifyContent: 'center',
-    backgroundColor: 'white',
+    // backgroundColor: '#f2be1c',
     alignItems: 'center',
     width: screenWidth / 3,
     marginVertical: -10,
@@ -424,10 +432,8 @@ const localStyles = StyleSheet.create({
   // Calendar styles
   mainScreenCalendarStyle: {
     width: '100%',
-    backgroundColor: 'white',
     borderTopWidth: 0,
     borderBottomWidth: 1,
-    borderColor: 'grey',
     flexGrow: 1,
     flexShrink: 1,
   },

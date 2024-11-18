@@ -1,23 +1,25 @@
 ﻿// DatabaseDataContext.tsx
 import type {ReactNode} from 'react';
-import React, {createContext, useContext, useMemo} from 'react';
+import React, {createContext, useContext, useEffect, useMemo} from 'react';
 import {useFirebase} from './FirebaseContext';
 import type {
   DrinkingSessionList,
   Preferences,
   UnconfirmedDays,
-  UserProps,
+  UserData,
   UserStatus,
 } from '@src/types/onyx';
 import type {FetchDataKeys} from '@hooks/useFetchData/types';
 import useListenToData from '@hooks/useListenToData';
+import Onyx from 'react-native-onyx';
+import ONYXKEYS from '@src/ONYXKEYS';
 
 type DatabaseDataContextType = {
   userStatusData?: UserStatus;
   drinkingSessionData?: DrinkingSessionList;
   preferences?: Preferences;
   unconfirmedDays?: UnconfirmedDays;
-  userData?: UserProps;
+  userData?: UserData;
   isLoading: boolean;
 };
 
@@ -67,6 +69,17 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
     }),
     [data, isLoading],
   );
+
+  // Monitor local data for changes - TODO rewrite this later
+  // useEffect(() => {
+  //   Object.entries(data).forEach(([key, value]) => {
+  //     if (key === 'userData') {
+  //       Onyx.merge(ONYXKEYS.USER_DATA_LIST, {
+  //         [userID]: value as UserData,
+  //       });
+  //     }
+  //   });
+  // }, [data.userData]);
 
   return (
     <DatabaseDataContext.Provider value={value}>

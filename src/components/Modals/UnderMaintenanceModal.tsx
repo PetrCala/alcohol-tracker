@@ -1,8 +1,15 @@
 import type {Config, Maintenance} from '@src/types/onyx';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
-import {View, StyleSheet, Text, Image, Dimensions} from 'react-native';
+import {View, Text, Image} from 'react-native';
+import useThemeStyles from '@hooks/useThemeStyles';
+import useWindowDimensions from '@hooks/useWindowDimensions';
+import useLocalize from '@hooks/useLocalize';
+import Modal from '@components/Modal';
+import SafeAreaConsumer from '@components/SafeAreaConsumer';
+import CONST from '@src/CONST';
 
 type UnderMaintenanceProps = {
+  /** Configuration database object */
   config: Config | null;
 };
 
@@ -14,7 +21,11 @@ function getHourMinute(date: Date): string {
   return `${hours}:${minutes}`;
 }
 
-const UnderMaintenanceModal = ({config}: UnderMaintenanceProps) => {
+function UnderMaintenanceModal({config}: UnderMaintenanceProps) {
+  const styles = useThemeStyles();
+  const {windowHeight, windowWidth} = useWindowDimensions();
+  const {translate} = useLocalize();
+  const smallerScreenSize = Math.min(windowHeight, windowWidth);
   const defaultMaintenance: Maintenance = {
     maintenance_mode: true,
     start_time: 1704067200,
@@ -25,58 +36,33 @@ const UnderMaintenanceModal = ({config}: UnderMaintenanceProps) => {
   const endTime = getHourMinute(new Date(maintenance.end_time));
 
   return (
-    <View style={styles.container}>
-      <Image style={styles.beaverImage} source={KirokuIcons.UnderMaintenance} />
-      <Text style={styles.heading}>Under maintenance</Text>
-      <Text style={[styles.text, styles.messageText]}>
-        We are currently under maintenance for the following time frame:
-      </Text>
-      <Text style={styles.text}>
-        {startTime} - {endTime}
-      </Text>
-    </View>
+    <SafeAreaConsumer>
+      {() => (
+        <Modal
+          onClose={() => {}}
+          isVisible={true}
+          type={CONST.MODAL.MODAL_TYPE.CENTERED}>
+          <View
+            style={[styles.fullScreenCenteredContent, styles.p2, styles.pb8]}>
+            <Text style={[styles.textHeadlineXXXLarge, styles.mb3]}>
+              {translate('maintenance.heading')}
+            </Text>
+            <Text
+              style={[styles.textLarge, styles.textAlignCenter, styles.mb3]}>
+              {translate('maintenance.text')}
+            </Text>
+            <Text style={[styles.textLarge, styles.textStrong, styles.pb5]}>
+              {startTime} - {endTime}
+            </Text>
+            <Image
+              style={styles.maintenanceBeaverImage(smallerScreenSize)}
+              source={KirokuIcons.UnderMaintenance}
+            />
+          </View>
+        </Modal>
+      )}
+    </SafeAreaConsumer>
   );
-};
-
-const screenWidth = Dimensions.get('window').width;
-const screenHeight = Dimensions.get('window').height;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#FFFF99',
-  },
-  heading: {
-    fontSize: 40,
-    fontWeight: 'bold',
-    color: 'black',
-    marginBottom: 20,
-    textShadowColor: 'rgba(0, 0, 0, 0.75)', // Text shadow for legibility
-    textShadowOffset: {width: 0.5, height: 0.5},
-    textShadowRadius: 1,
-  },
-  text: {
-    fontSize: 20,
-    color: 'black',
-    lineHeight: 28,
-    marginBottom: 10,
-    marginLeft: 30,
-    marginRight: 30,
-    textAlign: 'center',
-  },
-  messageText: {
-    marginBottom: 20,
-  },
-  beaverImage: {
-    width: screenWidth > screenHeight ? screenHeight * 0.8 : screenWidth * 0.8,
-    height: screenWidth > screenHeight ? screenHeight * 0.8 : screenWidth * 0.8,
-    aspectRatio: 1,
-    marginTop: -50,
-    marginBottom: 30,
-    borderRadius: 10,
-  },
-});
+}
 
 export default UnderMaintenanceModal;

@@ -1,6 +1,6 @@
 import {useIsFocused} from '@react-navigation/native';
 import type {ForwardedRef} from 'react';
-import React, {useCallback, useMemo} from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import type {
   GestureResponderEvent,
   StyleProp,
@@ -33,6 +33,9 @@ type ButtonProps = Partial<ChildrenProps> & {
 
   /** The fill color to pass into the icon. */
   iconFill?: string;
+
+  /** The fill color to pass into the icon when the button is hovered. */
+  iconHoverFill?: string;
 
   /** Any additional styles to pass to the left icon container. */
   iconStyles?: StyleProp<ViewStyle>;
@@ -85,14 +88,26 @@ type ButtonProps = Partial<ChildrenProps> & {
   /** Additional text styles */
   textStyles?: StyleProp<TextStyle>;
 
+  /** Additional text styles when the button is hovered */
+  textHoverStyles?: StyleProp<TextStyle>;
+
   /** Whether we should use the default hover style */
   shouldUseDefaultHover?: boolean;
+
+  /** Additional hover styles */
+  hoverStyles?: StyleProp<ViewStyle>;
+
+  /** Whether we should use the add theme color */
+  add?: boolean;
 
   /** Whether we should use the success theme color */
   success?: boolean;
 
   /** Whether we should use the danger theme color */
   danger?: boolean;
+
+  /** Whether we should display the button as a link */
+  link?: boolean;
 
   /** Should we remove the right border radius top + bottom? */
   shouldRemoveRightBorderRadius?: boolean;
@@ -120,6 +135,12 @@ type ButtonProps = Partial<ChildrenProps> & {
 
   /** Boolean whether to display the right icon */
   shouldShowRightIcon?: boolean;
+
+  /** Whether the button should use split style or not */
+  isSplitButton?: boolean;
+
+  /** Whether button's content should be centered */
+  isContentCentered?: boolean;
 };
 
 type KeyboardShortcutComponentProps = Pick<
@@ -132,7 +153,7 @@ type KeyboardShortcutComponentProps = Pick<
   | 'enterKeyEventListenerPriority'
 >;
 
-const roles: string[] = Object.values(CONST.ROLE);
+const accessibilityRoles: string[] = Object.values(CONST.ROLE);
 
 function KeyboardShortcutComponent({
   isDisabled = false,
@@ -147,7 +168,7 @@ function KeyboardShortcutComponent({
 
   const shouldDisableEnterShortcut = useMemo(
     () =>
-      roles.includes(activeElementRole ?? '') &&
+      accessibilityRoles.includes(activeElementRole ?? '') &&
       activeElementRole !== CONST.ROLE.TEXT,
     [activeElementRole],
   );
@@ -169,7 +190,7 @@ function KeyboardShortcutComponent({
       priority: enterKeyEventListenerPriority,
       shouldPreventDefault: false,
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-compiler/react-compiler, react-hooks/exhaustive-deps
     [shouldDisableEnterShortcut, isFocused],
   );
 
@@ -190,6 +211,7 @@ function Button(
 
     iconRight = KirokuIcons.ArrowRight,
     iconFill,
+    iconHoverFill,
     icon = null,
     iconStyles = [],
     iconRightStyles = [],
@@ -214,8 +236,11 @@ function Button(
     style = [],
     innerStyles = [],
     textStyles = [],
+    textHoverStyles = [],
 
     shouldUseDefaultHover = true,
+    hoverStyles = undefined,
+    add = false,
     success = false,
     danger = false,
 
@@ -227,13 +252,17 @@ function Button(
 
     id = '',
     accessibilityLabel = '',
+    isSplitButton = false,
+    link = false,
+    isContentCentered = false,
     ...rest
   }: ButtonProps,
-  ref: ForwardedRef<View | HTMLDivElement>,
+  ref: ForwardedRef<View>,
 ) {
   const theme = useTheme();
   const styles = useThemeStyles();
   const StyleUtils = useStyleUtils();
+  const [isHovered, setIsHovered] = useState(false);
 
   const renderContent = () => {
     if ('children' in rest) {
@@ -250,20 +279,34 @@ function Button(
           small && styles.buttonSmallText,
           medium && styles.buttonMediumText,
           large && styles.buttonLargeText,
+          add && styles.buttonAddText,
           success && styles.buttonSuccessText,
           danger && styles.buttonDangerText,
-          Boolean(icon) && styles.textAlignLeft,
+          !!icon && styles.textAlignLeft,
           textStyles,
+          isHovered && textHoverStyles,
+          link && styles.link,
+          link && isHovered && StyleUtils.getColorStyle(theme.linkHover),
+          link && styles.fontWeightNormal,
+          link && styles.fontSizeLabel,
         ]}
         dataSet={{[CONST.SELECTION_SCRAPER_HIDDEN_ELEMENT]: true}}>
         {text}
       </Text>
     );
 
+    const defaultFill = success || danger || add ? theme.textLight : theme.icon;
+
     // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
     if (icon || shouldShowRightIcon) {
       return (
-        <View style={[styles.justifyContentBetween, styles.flexRow]}>
+        <View
+          style={[
+            isContentCentered
+              ? styles.justifyContentCenter
+              : styles.justifyContentBetween,
+            styles.flexRow,
+          ]}>
           <View
             style={[
               styles.alignItemsCenter,
@@ -281,8 +324,9 @@ function Button(
                   src={icon}
                   hasText={!!text}
                   fill={
-                    iconFill ??
-                    (success || danger ? theme.textLight : theme.icon)
+                    isHovered
+                      ? iconHoverFill ?? defaultFill
+                      : iconFill ?? defaultFill
                   }
                   small={small}
                   medium={medium}
@@ -290,7 +334,7 @@ function Button(
                 />
               </View>
             )}
-            {textComponent}
+            {!!text && textComponent}
           </View>
           {shouldShowRightIcon && (
             <View
@@ -299,15 +343,31 @@ function Button(
                 large ? styles.ml2 : styles.ml1,
                 iconRightStyles,
               ]}>
-              <Icon
-                src={iconRight}
-                fill={
-                  iconFill ?? (success || danger ? theme.textLight : theme.icon)
-                }
-                small={small}
-                medium={medium}
-                large={large}
-              />
+              {!isSplitButton ? (
+                <Icon
+                  src={iconRight}
+                  fill={
+                    isHovered
+                      ? iconHoverFill ?? defaultFill
+                      : iconFill ?? defaultFill
+                  }
+                  small={small}
+                  medium={medium}
+                  large={large}
+                />
+              ) : (
+                <Icon
+                  src={iconRight}
+                  fill={
+                    isHovered
+                      ? iconHoverFill ?? defaultFill
+                      : iconFill ?? defaultFill
+                  }
+                  small={small}
+                  medium={medium}
+                  large={large}
+                />
+              )}
             </View>
           )}
         </View>
@@ -371,14 +431,17 @@ function Button(
             small,
             medium,
             large,
-            Boolean(icon),
-            Boolean(text?.length > 0),
+            !!icon,
+            !!(text?.length > 0),
             shouldShowRightIcon,
           ),
+          add ? styles.buttonAdd : undefined,
           success ? styles.buttonSuccess : undefined,
           danger ? styles.buttonDanger : undefined,
           isDisabled ? styles.buttonOpacityDisabled : undefined,
-          isDisabled && !danger && !success ? styles.buttonDisabled : undefined,
+          isDisabled && !danger && !success && !add
+            ? styles.buttonDisabled
+            : undefined,
           shouldRemoveRightBorderRadius
             ? styles.noRightBorderRadius
             : undefined,
@@ -386,22 +449,28 @@ function Button(
           // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
           text && shouldShowRightIcon ? styles.alignItemsStretch : undefined,
           innerStyles,
+          link && styles.bgTransparent,
+          style,
         ]}
         hoverStyle={[
           shouldUseDefaultHover && !isDisabled
             ? styles.buttonDefaultHovered
             : undefined,
+          add && !isDisabled ? styles.buttonAddHovered : undefined,
           success && !isDisabled ? styles.buttonSuccessHovered : undefined,
           danger && !isDisabled ? styles.buttonDangerHovered : undefined,
+          hoverStyles,
         ]}
         id={id}
         accessibilityLabel={accessibilityLabel}
         role={CONST.ROLE.BUTTON}
-        hoverDimmingValue={1}>
+        hoverDimmingValue={1}
+        onHoverIn={() => setIsHovered(true)}
+        onHoverOut={() => setIsHovered(false)}>
         {renderContent()}
         {isLoading && (
           <ActivityIndicator
-            color={success || danger ? theme.textLight : theme.text}
+            color={success || danger || add ? theme.textLight : theme.text}
             style={[styles.pAbsolute, styles.l0, styles.r0]}
           />
         )}
