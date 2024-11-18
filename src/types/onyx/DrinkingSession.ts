@@ -40,5 +40,6 @@ export type {
   DrinkingSessionId,
   DrinkingSessionList,
   DrinkingSessionType,
+  RemoveDrinksOptions,
   UserDrinkingSessionsList,
 };
