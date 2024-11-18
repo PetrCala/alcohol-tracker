@@ -38,6 +38,11 @@ const SessionDrinksInputWindow = ({
   const inputRef = useRef<TextInput>(null);
 
   const handleKeyPress = (event: {nativeEvent: {key: string}}): void => {
+    if (!preferences || !session) {
+      Log.warn('SessionDrinksInputWindow', 'No preferences or session');
+      return;
+    }
+
     let updatedValue = '0';
     const key = event.nativeEvent.key;
 
@@ -66,9 +71,14 @@ const SessionDrinksInputWindow = ({
       }
 
       const inputValueNumeric = parseFloat(inputValue); // In case one digit is already input, adjust the availableDrinks for this digit
+
+      const availableUnits = DSUtils.calculateAvailableUnits(
+        session.drinks,
+        preferences.drinks_to_units,
+      );
+
       // if (numericValue > availableUnits + inputValueNumeric) {
-      if (numericValue > 0 + inputValueNumeric) {
-        // TODO
+      if (numericValue > availableUnits + inputValueNumeric) {
         return; // If the new value is greater than available units, do nothing.
       }
 

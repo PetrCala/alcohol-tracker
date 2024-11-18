@@ -19,6 +19,7 @@ import {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
 import {useFirebase} from '@context/global/FirebaseContext';
 import * as DS from '@libs/actions/DrinkingSession';
+import * as DSUtils from '@libs/DrinkingSessionUtils';
 
 type SessionDateScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -31,7 +32,7 @@ function SesssionDateScreen({route}: SessionDateScreenProps) {
   const user = auth.currentUser;
   const {translate} = useLocalize();
   const styles = useThemeStyles();
-  const session = DS.getDrinkingSessionData(sessionId);
+  const session = DSUtils.getDrinkingSessionData(sessionId);
 
   const onSubmit = async (
     values: FormOnyxValues<typeof ONYXKEYS.FORMS.SESSION_DATE_FORM>,

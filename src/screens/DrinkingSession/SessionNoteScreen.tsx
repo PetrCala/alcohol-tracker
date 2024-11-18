@@ -10,6 +10,7 @@ import Navigation from '@libs/Navigation/Navigation';
 import * as ValidationUtils from '@libs/ValidationUtils';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import * as DS from '@libs/actions/DrinkingSession';
+import * as DSUtils from '@libs/DrinkingSessionUtils';
 import ONYXKEYS from '@src/ONYXKEYS';
 import INPUT_IDS from '@src/types/form/SessionNoteForm';
 import {StackScreenProps} from '@react-navigation/stack';
@@ -27,7 +28,7 @@ function SesssionNoteScreen({route}: SessionNoteScreenProps) {
   const {sessionId} = route.params;
   const {translate} = useLocalize();
   const styles = useThemeStyles();
-  const session = DS.getDrinkingSessionData(sessionId);
+  const session = DSUtils.getDrinkingSessionData(sessionId);
 
   const onSubmit = async (
     values: FormOnyxValues<typeof ONYXKEYS.FORMS.SESSION_NOTE_FORM>,

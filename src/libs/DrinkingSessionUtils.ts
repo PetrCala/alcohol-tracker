@@ -167,6 +167,21 @@ function calculateTotalUnits(
 }
 
 /**
+ * Calculate how many units are available to add based on the current drinks and the drinksToUnits mapping.
+ *
+ * @param drinks Current drinks
+ * @param drinksToUnits The mapping from DrinkKey to unit conversion factors.
+ * @returns The number of units available to add
+ */
+function calculateAvailableUnits(
+  drinks: DrinksList | undefined,
+  drinksToUnits: DrinksToUnits,
+): number {
+  const currentUnits = calculateTotalUnits(drinks, drinksToUnits);
+  return CONST.MAX_ALLOWED_UNITS - currentUnits;
+}
+
+/**
  * Adds a Drinks object to an existing DrinksList object with a specified timestamp behavior.
  * It checks if the total units exceed the maximum allowed units before adding.
  *
@@ -184,7 +199,6 @@ function addDrinksToList(
   drinksList: DrinksList | undefined,
   drinksToUnits: DrinksToUnits,
   options: AddDrinksOptions,
-  maxUnits: number = CONST.MAX_ALLOWED_UNITS,
 ): DrinksList {
   if (!drinksList) {
     drinksList = {};
@@ -200,12 +214,9 @@ function addDrinksToList(
     return drinksList;
   }
 
-  const conversion = drinksToUnits[drinkKey] || 0;
-
-  const currentUnits = calculateTotalUnits(drinksList, drinksToUnits);
-  const newUnits = amount * conversion;
-
-  if (currentUnits + newUnits > maxUnits) {
+  const availableUnits = calculateAvailableUnits(drinksList, drinksToUnits);
+  const newUnits = amount * (drinksToUnits[drinkKey] || 0);
+  if (newUnits > availableUnits) {
     // TODO potentially show a warning message to the user
     Log.warn('Total units exceed the maximum allowed units. Drinks not added.');
     return drinksList;
@@ -648,6 +659,7 @@ export {
   PlaceholderDrinks,
   addDrinksToList,
   allSessionsContainTimezone,
+  calculateAvailableUnits,
   calculateSessionLength,
   calculateTotalUnits,
   determineSessionMostCommonDrink,

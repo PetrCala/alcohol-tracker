@@ -24,7 +24,7 @@ function SesssionTimezoneScreen({route}: SessionTimezoneScreenProps) {
   const {sessionId} = route.params;
   const {translate} = useLocalize();
   const styles = useThemeStyles();
-  const session = DS.getDrinkingSessionData(sessionId);
+  const session = DSUtils.getDrinkingSessionData(sessionId);
   const initialTimezone: Timezone = {
     selected: session?.timezone ?? CONST.DEFAULT_TIME_ZONE.selected,
     automatic: false,
