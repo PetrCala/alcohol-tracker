@@ -6,8 +6,8 @@ import {SelectedTimezone} from './UserData';
 
 type AddDrinksOptions =
   | {timestampOption: 'now'}
-  | {timestampOption: 'sessionStartTime'; session: DrinkingSession}
-  | {timestampOption: 'sessionEndTime'; session: DrinkingSession};
+  | {timestampOption: 'sessionStartTime'; start_time: number}
+  | {timestampOption: 'sessionEndTime'; end_time: number};
 
 type RemoveDrinksOptions = 'removeFromLatest' | 'removeFromEarliest';
 
