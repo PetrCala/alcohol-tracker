@@ -130,7 +130,13 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   };
 
   const handleMonkePlus = () => {
-    DS.updateDrinks(sessionId, {other: 1}, CONST.DRINKS.ACTIONS.ADD);
+    DS.updateDrinks(
+      sessionId,
+      CONST.DRINKS.KEYS.OTHER,
+      1,
+      CONST.DRINKS.ACTIONS.ADD,
+      preferences?.drinks_to_units,
+    );
   };
 
   const handleMonkeMinus = () => {
@@ -155,8 +161,13 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
         drinkKeysLeft[Math.floor(Math.random() * drinkKeysLeft.length)];
     }
     if (keyToRemove) {
-      const drinksToModify: Drinks = {[keyToRemove]: 1};
-      DS.updateDrinks(sessionId, drinksToModify, CONST.DRINKS.ACTIONS.REMOVE);
+      DS.updateDrinks(
+        sessionId,
+        keyToRemove,
+        1,
+        CONST.DRINKS.ACTIONS.REMOVE,
+        preferences?.drinks_to_units,
+      );
     }
   };
 

@@ -1,17 +1,10 @@
-﻿import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import type {
-  DrinkingSessionId,
-  DrinkKey,
-  Drinks,
-  DrinksList,
-} from '@src/types/onyx';
+﻿import {StyleSheet, Text, View} from 'react-native';
+import type {DrinkingSessionId, DrinkKey} from '@src/types/onyx';
 import useThemeStyles from '@hooks/useThemeStyles';
 import useLocalize from '@hooks/useLocalize';
 import DrinkData from '@libs/DrinkData';
-import * as DSUtils from '@libs/DrinkingSessionUtils';
 import * as DS from '@userActions/DrinkingSession';
-import {useState} from 'react';
-import {addDrinks, findDrinkName, sumDrinkTypes} from '@libs/DataHandling';
+import {findDrinkName} from '@libs/DataHandling';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import CONST from '@src/CONST';
@@ -31,21 +24,23 @@ const DrinkTypesView = ({sessionId}: DrinkTypesViewProps) => {
   const styles = useThemeStyles();
   const theme = useTheme();
 
-  const handleAddDrinks = (drinks: Drinks) => {
+  const handleAddDrinks = (drinkKey: DrinkKey, amount: number) => {
     DS.updateDrinks(
       sessionId,
-      drinks,
-      preferences?.drinks_to_units,
+      drinkKey,
+      amount,
       CONST.DRINKS.ACTIONS.ADD,
+      preferences?.drinks_to_units,
     );
   };
 
-  const handleRemoveDrinks = (drinks: Drinks) => {
+  const handleRemoveDrinks = (drinkKey: DrinkKey, amount: number) => {
     DS.updateDrinks(
       sessionId,
-      drinks,
-      preferences?.drinks_to_units,
+      drinkKey,
+      amount,
       CONST.DRINKS.ACTIONS.REMOVE,
+      preferences?.drinks_to_units,
     );
   };
 
@@ -71,7 +66,7 @@ const DrinkTypesView = ({sessionId}: DrinkTypesViewProps) => {
               <Text style={localStyles.drinkInfoText}>{drinkName}</Text>
               <Button
                 style={[styles.bgTransparent, styles.p1]}
-                onPress={() => handleRemoveDrinks({[drinkKey]: 1})}
+                onPress={() => handleRemoveDrinks(drinkKey, 1)}
                 icon={KirokuIcons.Minus}
                 iconFill={theme.textDark}
               />
@@ -82,7 +77,7 @@ const DrinkTypesView = ({sessionId}: DrinkTypesViewProps) => {
               />
               <Button
                 style={[styles.bgTransparent, styles.p1]}
-                onPress={() => handleAddDrinks({[drinkKey]: 1})}
+                onPress={() => handleAddDrinks(drinkKey, 1)}
                 icon={KirokuIcons.Plus}
                 iconFill={theme.textDark}
               />

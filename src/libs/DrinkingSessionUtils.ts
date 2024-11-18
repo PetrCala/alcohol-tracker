@@ -27,6 +27,7 @@ import {
 import {roundToTwoDecimalPlaces} from './NumberUtils';
 import _ from 'lodash';
 import {ValueOf} from 'type-fest';
+import Log from './Log';
 
 const PlaceholderDrinks: DrinksList = {[Date.now()]: {other: 0}};
 
@@ -171,7 +172,8 @@ function calculateTotalUnits(
  * Adds a Drinks object to an existing DrinksList object with a specified timestamp behavior.
  * It checks if the total units exceed the maximum allowed units before adding.
  *
- * @param drinks - The Drinks object to add.
+ * @param drinkType - The type of drink to add.
+ * @param amount - The amount of the drink to add.
  * @param drinksList - The existing DrinksList object.
  * @param drinksToUnits - A mapping from DrinkKey to unit conversion factors.
  * @param options - Options to specify the timestamp behavior.
@@ -179,7 +181,8 @@ function calculateTotalUnits(
  * @returns The updated DrinksList object.
  */
 function addDrinksToList(
-  drinks: Drinks,
+  drinkKey: DrinkKey,
+  amount: number,
   drinksList: DrinksList | undefined,
   drinksToUnits: DrinksToUnits,
   options: AddDrinksOptions,
@@ -189,13 +192,24 @@ function addDrinksToList(
     drinksList = {};
   }
 
-  const totalUnits = calculateTotalUnits(drinks, drinksToUnits);
+  if (amount <= 0) {
+    Log.warn(`Invalid amount: ${amount}`);
+    return drinksList;
+  }
 
-  if (totalUnits > maxUnits) {
+  if (!drinksToUnits[drinkKey]) {
+    Log.warn(`Invalid drink key: ${drinkKey}`);
+    return drinksList;
+  }
+
+  const conversion = drinksToUnits[drinkKey] || 0;
+
+  const currentUnits = calculateTotalUnits(drinksList, drinksToUnits);
+  const newUnits = amount * conversion;
+
+  if (currentUnits + newUnits > maxUnits) {
     // TODO potentially show a warning message to the user
-    console.warn(
-      'Total units exceed the maximum allowed units. Drinks not added.',
-    );
+    Log.warn('Total units exceed the maximum allowed units. Drinks not added.');
     return drinksList;
   }
 
@@ -217,15 +231,13 @@ function addDrinksToList(
     const existingDrinks = updatedDrinksList[timestamp];
     const mergedDrinks: Drinks = {...existingDrinks};
 
-    for (const [drinkKey, amount] of Object.entries(drinks)) {
-      mergedDrinks[drinkKey as DrinkKey] =
-        (mergedDrinks[drinkKey as DrinkKey] || 0) + (amount || 0);
-    }
+    mergedDrinks[drinkKey as DrinkKey] =
+      (mergedDrinks[drinkKey as DrinkKey] || 0) + (amount || 0);
 
     updatedDrinksList[timestamp] = mergedDrinks;
   } else {
     // Timestamp does not exist, add the drinks
-    updatedDrinksList[timestamp] = {...drinks};
+    updatedDrinksList[timestamp] = {[drinkKey]: amount};
   }
 
   return updatedDrinksList;
@@ -234,98 +246,120 @@ function addDrinksToList(
 /**
  * Removes drinks from a DrinksList based on the specified behavior.
  *
- * @param drinksToRemove - The Drinks object specifying drinks and amounts to remove.
+ * @param drinkKey - The drink key to remove.
+ * @param amount - The number of drinks to remove.
  * @param drinksList - The existing DrinksList from which to remove drinks.
  * @param options - The behavior for removal ('removeFromLatest' or 'removeFromEarliest').
  * @returns The updated DrinksList after removal.
  */
 function removeDrinksFromList(
-  drinksToRemove: Drinks,
+  drinkKey: DrinkKey,
+  amount: number,
   drinksList: DrinksList | undefined,
   options: RemoveDrinksOptions,
 ): DrinksList {
   if (!drinksList) {
     return {};
   }
-  // Create a deep copy to avoid mutating the original drinksList
-  const updatedDrinksList: DrinksList = JSON.parse(JSON.stringify(drinksList));
 
-  // Get sorted timestamps based on the behavior
-  const timestamps = Object.keys(updatedDrinksList)
-    .map(Number)
-    .sort((a, b) => (options === 'removeFromLatest' ? b - a : a - b));
-
-  // For each drink to remove
-  for (const [drinkKey, amountToRemove] of Object.entries(drinksToRemove)) {
-    let remainingAmountToRemove = amountToRemove || 0;
-
-    for (const timestamp of timestamps) {
-      if (remainingAmountToRemove <= 0) break;
-
-      const drinksAtTimestamp = updatedDrinksList[timestamp];
-      const availableAmount = drinksAtTimestamp[drinkKey as DrinkKey] || 0;
-
-      if (availableAmount > 0) {
-        const amountRemoved = Math.min(
-          availableAmount,
-          remainingAmountToRemove,
-        );
-        const updatedAmount = availableAmount - amountRemoved;
-
-        drinksAtTimestamp[drinkKey as DrinkKey] =
-          availableAmount - amountRemoved;
-        remainingAmountToRemove -= amountRemoved;
-
-        // Remove the drink key if the amount is zero or less
-        if (updatedAmount <= 0) {
-          delete drinksAtTimestamp[drinkKey as DrinkKey];
-        }
-      }
-
-      // Remove the timestamp if no drinks are left at this timestamp
-      if (Object.keys(drinksAtTimestamp).length === 0) {
-        delete updatedDrinksList[timestamp];
-        // Remove the timestamp from the array to prevent redundant checks
-        const index = timestamps.indexOf(timestamp);
-        if (index > -1) {
-          timestamps.splice(index, 1);
-        }
-      }
-    }
+  if (amount <= 0) {
+    Log.warn(`Invalid amount: ${amount}`);
+    return drinksList;
   }
 
+  const updatedDrinksList: DrinksList = JSON.parse(JSON.stringify(drinksList));
+
+  let remainingAmountToRemove = amount || 0;
+
+  for (const timestamp of Object.keys(updatedDrinksList).sort((a, b) =>
+    options === 'removeFromLatest' ? +b - +a : +a - +b,
+  )) {
+    const drinksAtTimestamp = updatedDrinksList[+timestamp];
+    const avaiableAmount = drinksAtTimestamp[drinkKey as DrinkKey] || 0;
+
+    if (avaiableAmount > 0) {
+      const amountRemoved = Math.min(remainingAmountToRemove, avaiableAmount);
+      const updatedAmount = avaiableAmount - amountRemoved;
+
+      drinksAtTimestamp[drinkKey] = avaiableAmount - amountRemoved;
+      remainingAmountToRemove -= amountRemoved;
+
+      // Clean up if there are zero drinks left for this type at this timestamp
+      if (drinksAtTimestamp[drinkKey] === 0) {
+        delete drinksAtTimestamp[drinkKey];
+      }
+
+      // Clean up if there are zero drinks left at this timestamp
+      if (Object.keys(drinksAtTimestamp).length === 0) {
+        delete updatedDrinksList[+timestamp];
+      }
+
+      // Add a zero-drink placeholder if there are no drinks left in the object
+      if (Object.keys(updatedDrinksList).length === 0) {
+        updatedDrinksList[+timestamp] = {other: 0};
+      }
+    }
+
+    if (remainingAmountToRemove <= 0) {
+      break;
+    }
+  }
   return updatedDrinksList;
+}
+
+/**
+ * Get the options for adding drinks to a session based on the session state.
+ *
+ * @param session The session to add drinks to
+ * @returns The options for adding drinks
+ */
+function getSessionAddDrinksOptions(
+  session: DrinkingSession,
+): AddDrinksOptions {
+  return session?.ongoing
+    ? {
+        timestampOption: 'now',
+      }
+    : {
+        timestampOption: 'sessionStartTime',
+        session: session,
+      };
+}
+
+function getSessionRemoveDrinksOptions(): RemoveDrinksOptions {
+  return 'removeFromLatest';
 }
 
 /**
  * Modify the drinks in a session based on the action.
  *
  * @param session The session to modify
- * @param drinks The drinks to add or remove
+ * @param drinkKey The key of the drink to modify
+ * @param amount The amount of the drink to modify
  * @param drinksToUnits The mapping from drink keys to units
  * @param action The action to perform
  * @returns The updated drinks list
  */
 function modifySessionDrinks(
   session: DrinkingSession,
-  drinks: Drinks,
-  drinksToUnits: DrinksToUnits,
+  drinkKey: DrinkKey,
+  amount: number,
   action: ValueOf<typeof CONST.DRINKS.ACTIONS>,
+  drinksToUnits: DrinksToUnits,
 ): DrinksList | undefined {
   let drinksList = _.cloneDeep(session?.drinks);
   if (action === 'add') {
-    const options: AddDrinksOptions = session?.ongoing
-      ? {
-          timestampOption: 'now',
-        }
-      : {
-          timestampOption: 'sessionStartTime',
-          session: session,
-        };
-    drinksList = addDrinksToList(drinks, drinksList, drinksToUnits, options);
+    const options: AddDrinksOptions = getSessionAddDrinksOptions(session);
+    drinksList = addDrinksToList(
+      drinkKey,
+      amount,
+      drinksList,
+      drinksToUnits,
+      options,
+    );
   } else if (action === 'remove') {
     const options: RemoveDrinksOptions = 'removeFromLatest';
-    drinksList = removeDrinksFromList(drinks, drinksList, options);
+    drinksList = removeDrinksFromList(drinkKey, amount, drinksList, options);
   }
 
   return drinksList;
@@ -631,6 +665,8 @@ export {
   getDrinkingSessionData,
   getDrinkingSessionOnyxKey,
   getEmptySession,
+  getSessionAddDrinksOptions,
+  getSessionRemoveDrinksOptions,
   getUserDetailTooltipText,
   isDifferentDay,
   isEmptySession,

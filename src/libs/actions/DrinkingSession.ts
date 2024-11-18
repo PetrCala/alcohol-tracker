@@ -257,9 +257,10 @@ async function discardLiveDrinkingSession(
  */
 function updateDrinks(
   sessionId: DrinkingSessionId | undefined,
-  drinks: Drinks,
-  drinksToUnits: DrinksToUnits | undefined,
+  drinkKey: DrinkKey,
+  amount: number,
   action: ValueOf<typeof CONST.DRINKS.ACTIONS>,
+  drinksToUnits: DrinksToUnits | undefined,
 ): void {
   if (!drinksToUnits || !sessionId) {
     return;
@@ -269,9 +270,10 @@ function updateDrinks(
   if (session && onyxKey) {
     const drinksList = DSUtils.modifySessionDrinks(
       session,
-      drinks,
-      drinksToUnits,
+      drinkKey,
+      amount,
       action,
+      drinksToUnits,
     );
     const modifyAction =
       action === CONST.DRINKS.ACTIONS.ADD ? Onyx.merge : Onyx.set;
