@@ -273,7 +273,6 @@ function updateDrinks(
       drinksToUnits,
       action,
     );
-    console.log('drinksList', drinksList);
     const modifyAction =
       action === CONST.DRINKS.ACTIONS.ADD ? Onyx.merge : Onyx.set;
 
