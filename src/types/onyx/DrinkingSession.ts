@@ -8,6 +8,8 @@ type AddDrinksOptions =
   | {timestampOption: 'now'}
   | {timestampOption: 'sessionStartTime'; session: DrinkingSession};
 
+type RemoveDrinksOptions = 'removeFromLatest' | 'removeFromEarliest';
+
 type DrinkingSessionId = string;
 
 type DrinkingSessionType = ValueOf<typeof CONST.SESSION_TYPES>;

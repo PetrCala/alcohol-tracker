@@ -8,6 +8,7 @@ import type {
   DrinkKey,
   Drinks,
   DrinksList,
+  DrinksToUnits,
   UserStatus,
 } from '@src/types/onyx';
 import * as Localize from '@src/libs/Localize';
@@ -25,6 +26,10 @@ import {differenceInDays} from 'date-fns';
 import {SelectedTimezone} from '@src/types/onyx/UserData';
 import {ValueOf} from 'type-fest';
 import _ from 'lodash';
+import {
+  AddDrinksOptions,
+  RemoveDrinksOptions,
+} from '@src/types/onyx/DrinkingSession';
 
 let liveSessionData: DrinkingSession | undefined;
 Onyx.connect({
@@ -242,55 +247,34 @@ async function discardLiveDrinkingSession(
   await update(ref(db), updates);
 }
 
-function updateDrinks(
+/**
+ * Update the drinks list in a drinking session. Perform the changes locally and update the Onyx store.
+ *
+ * @param sessionId ID of the session to update.
+ * @param drinks The drinks to add or remove.
+ * @param drinksToUnits Drink to units mapping.
+ * @param action The action to perform (i.e., add, remove,...).
+ */
+function updateDrinksList(
   sessionId: DrinkingSessionId | undefined,
-  drinksToModify: Drinks,
+  drinks: Drinks,
+  drinksToUnits: DrinksToUnits,
   action: ValueOf<typeof CONST.DRINKS.ACTIONS>,
-) {
+): void {
   const session = DSUtils.getDrinkingSessionData(sessionId);
   const onyxKey = DSUtils.getDrinkingSessionOnyxKey(sessionId);
   if (session && onyxKey) {
-    const newDrinks: DrinksList = {...session.drinks};
-
-    const drinkKeys = Object.keys(drinksToModify) as DrinkKey[];
-
-    // Iterate over the drinks object
-    for (const key of drinkKeys) {
-      const value = drinksToModify[key];
-      if (value === undefined) continue; // Skip undefined values
-
-      if (action === 'add') {
-        const timestamp = new Date().getTime();
-        const currentQuantity = newDrinks[timestamp][key] || 0;
-        // Ensure the timestamp exists in newDrinks
-        if (!newDrinks[timestamp]) {
-          newDrinks[timestamp] = {};
-        }
-        // Add the quantity while respecting the maxUnits limit
-        newDrinks[timestamp][key] = Math.min(
-          currentQuantity + value,
-          CONST.MAX_ALLOWED_UNITS,
-        );
-      } else if (action === 'remove') {
-        const timestamp = Object.keys(newDrinks).lastIndexOf();
-        // Remove the quantity, but do not allow negative values
-        newDrinks[timestamp][key] = Math.max(currentQuantity - value, 0);
-        // If the resulting quantity is 0, optionally delete the key
-        if (newDrinks[timestamp][key] === 0) {
-          delete newDrinks[timestamp][key];
-        }
-      }
-    }
-
-    // // Cleanup: If the drinks object for the timestamp is empty, delete the timestamp entry
-    // if (Object.keys(newDrinks[timestamp]).length === 0) {
-    //   delete newDrinks[timestamp];
-    // }
+    const drinksList = DSUtils.modifySessionDrinks(
+      session,
+      drinks,
+      drinksToUnits,
+      action,
+    );
     const modifyAction =
       action === CONST.DRINKS.ACTIONS.ADD ? Onyx.merge : Onyx.set;
 
     modifyAction(onyxKey, {
-      drinks: newDrinks,
+      drinks: drinksList,
     });
   }
 }
@@ -427,7 +411,7 @@ export {
   startLiveDrinkingSession,
   syncLocalLiveSessionData,
   updateBlackout,
-  updateDrinks,
+  updateDrinksList,
   updateNote,
   updateLocalData,
   updateSessionDate,
