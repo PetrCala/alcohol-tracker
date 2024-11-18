@@ -91,6 +91,20 @@ function roundToNearestMultipleOfFour(n: number): number {
   return 0;
 }
 
+/**
+ * Rounds a number to two decimal places.
+ * @param value - The number to be rounded.
+ * @returns The rounded number.
+ */
+function roundToTwoDecimalPlaces(value: number): number {
+  const decimalCheck = value.toString().split('.')[1];
+  if (decimalCheck && decimalCheck.length > 2) {
+    return parseFloat(value.toFixed(2));
+  } else {
+    return value;
+  }
+}
+
 export default roundToNearestMultipleOfFour;
 
 export {
@@ -99,4 +113,5 @@ export {
   generateRandomInt,
   parseFloatAnyLocale,
   roundToNearestMultipleOfFour,
+  roundToTwoDecimalPlaces,
 };

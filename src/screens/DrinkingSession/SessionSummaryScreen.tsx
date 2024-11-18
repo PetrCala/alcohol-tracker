@@ -1,7 +1,6 @@
 ﻿import {StyleProp, StyleSheet, Text, View, ViewStyle} from 'react-native';
 import {
   getLastDrinkAddedTime,
-  sumAllUnits,
   sumAllDrinks,
   sumDrinksOfSingleType,
   unitsToColors,
@@ -68,7 +67,7 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
   );
   // Drinks info
   const totalDrinks = sumAllDrinks(session.drinks);
-  const totalUnits = sumAllUnits(
+  const totalUnits = DSUtils.calculateTotalUnits(
     session.drinks,
     preferences.drinks_to_units,
     true,

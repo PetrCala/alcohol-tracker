@@ -19,7 +19,6 @@ import {
   dateToDateObject,
   getSingleMonthDrinkingSessions,
   objKeys,
-  roundToTwoDecimalPlaces,
   timestampToDate,
   timestampToDateString,
 } from '@libs/DataHandling';
@@ -46,6 +45,7 @@ import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import useThemeStyles from '@hooks/useThemeStyles';
 import FillerView from '@components/FillerView';
 import Button from '@components/Button';
+import {roundToTwoDecimalPlaces} from '@libs/NumberUtils';
 
 type State = {
   selfFriends: UserList | undefined;

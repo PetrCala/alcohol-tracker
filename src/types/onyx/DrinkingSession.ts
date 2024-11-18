@@ -4,6 +4,10 @@ import type {DrinksList} from './Drinks';
 import type CONST from '@src/CONST';
 import {SelectedTimezone} from './UserData';
 
+type AddDrinksOptions =
+  | {timestampOption: 'now'}
+  | {timestampOption: 'sessionStartTime'; session: DrinkingSession};
+
 type DrinkingSessionId = string;
 
 type DrinkingSessionType = ValueOf<typeof CONST.SESSION_TYPES>;
@@ -29,6 +33,7 @@ type UserDrinkingSessionsList = Record<UserID, DrinkingSessionList>;
 
 export default DrinkingSession;
 export type {
+  AddDrinksOptions,
   DrinkingSessionArray,
   DrinkingSessionId,
   DrinkingSessionList,

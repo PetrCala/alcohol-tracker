@@ -24,14 +24,8 @@ import type {MeasureType} from '@src/types/onyx/OnyxCommon';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import type {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
 import _ from 'lodash';
-import {
-  endOfDay,
-  endOfMonth,
-  endOfToday,
-  format,
-  startOfDay,
-  startOfMonth,
-} from 'date-fns';
+import {endOfMonth, endOfToday, format, startOfMonth} from 'date-fns';
+import * as DSUtils from '@libs/DrinkingSessionUtils';
 import Onyx from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 import {auth} from './Firebase/FirebaseApp';
@@ -80,20 +74,6 @@ export function dateToDateObject(date: Date): DateObject {
     year: date.getFullYear(),
   };
   return dateObject;
-}
-
-/**
- * Rounds a number to two decimal places.
- * @param value - The number to be rounded.
- * @returns The rounded number.
- */
-export function roundToTwoDecimalPlaces(value: number): number {
-  const decimalCheck = value.toString().split('.')[1];
-  if (decimalCheck && decimalCheck.length > 2) {
-    return parseFloat(value.toFixed(2));
-  } else {
-    return value;
-  }
 }
 
 /**
@@ -348,7 +328,7 @@ export function aggregateSessionsByDays(
         if (!drinksToUnits) {
           throw new Error('You must specify the drink to unit conversion');
         }
-        newDrinks = sumAllUnits(item.drinks, drinksToUnits);
+        newDrinks = DSUtils.calculateTotalUnits(item.drinks, drinksToUnits);
       } else if (measureType === 'drinks') {
         newDrinks = sumAllDrinks(item.drinks);
       } else {
@@ -485,41 +465,41 @@ export function isDrinkTypeKey(key: string): key is keyof Drinks {
   return _.includes(Object.values(CONST.DRINKS.KEYS), key);
 }
 
-/** Using a DrinksList and the drinks to units conversion object, calculate how many units this object amounts to.
- *
- * @param drinksObject DrinksList type
- * @param unitsToPoits Drinks to units conversion object
- * @returns Number of points
- *
- * @example let points = sumAllUnits({
- * [1694819284]: {'beer': 5},
- * [1694819286]: {'wine': 2, 'cocktail': 1},
- * }, DrinksToUnits)
- */
-export function sumAllUnits(
-  drinksObject: DrinksList | undefined,
-  drinksToUnits: DrinksToUnits,
-  roundUp?: boolean,
-): number {
-  if (_.isEmpty(drinksObject)) {
-    return 0;
-  }
-  let totalUnits = 0;
-  // Iterate over each timestamp in drinksObject
-  _.forEach(Object.values(drinksObject), drinkTypes => {
-    _.forEach(Object.keys(drinkTypes), DrinkKey => {
-      if (isDrinkTypeKey(DrinkKey)) {
-        const typeDrinks = drinkTypes[DrinkKey] ?? 0;
-        const typeUnits = drinksToUnits[DrinkKey] ?? 0;
-        totalUnits += typeDrinks * typeUnits;
-      }
-    });
-  });
-  if (roundUp) {
-    return roundToTwoDecimalPlaces(totalUnits);
-  }
-  return totalUnits;
-}
+// /** Using a DrinksList and the drinks to units conversion object, calculate how many units this object amounts to.
+//  *
+//  * @param drinksObject DrinksList type
+//  * @param unitsToPoits Drinks to units conversion object
+//  * @returns Number of points
+//  *
+//  * @example let points = sumAllUnits({
+//  * [1694819284]: {'beer': 5},
+//  * [1694819286]: {'wine': 2, 'cocktail': 1},
+//  * }, DrinksToUnits)
+//  */
+// export function sumAllUnits(
+//   drinksObject: DrinksList | undefined,
+//   drinksToUnits: DrinksToUnits,
+//   roundUp?: boolean,
+// ): number {
+//   if (_.isEmpty(drinksObject)) {
+//     return 0;
+//   }
+//   let totalUnits = 0;
+//   // Iterate over each timestamp in drinksObject
+//   _.forEach(Object.values(drinksObject), drinkTypes => {
+//     _.forEach(Object.keys(drinkTypes), DrinkKey => {
+//       if (isDrinkTypeKey(DrinkKey)) {
+//         const typeDrinks = drinkTypes[DrinkKey] ?? 0;
+//         const typeUnits = drinksToUnits[DrinkKey] ?? 0;
+//         totalUnits += typeDrinks * typeUnits;
+//       }
+//     });
+//   });
+//   if (roundUp) {
+//     return roundToTwoDecimalPlaces(totalUnits);
+//   }
+//   return totalUnits;
+// }
 
 /** Input a session item and return the timestamp of the last drink
  * consumed in that session.
@@ -600,7 +580,8 @@ export const calculateThisMonthUnits = (
   );
   // Sum up the drinks
   return sessionsThisMonth.reduce(
-    (sum, session) => sum + sumAllUnits(session.drinks, drinksToUnits),
+    (sum, session) =>
+      sum + DSUtils.calculateTotalUnits(session.drinks, drinksToUnits),
     0,
   );
 };

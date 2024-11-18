@@ -11,22 +11,15 @@ import {
 } from 'react-native';
 import {useFirebase} from '@context/global/FirebaseContext';
 import * as DS from '@libs/actions/DrinkingSession';
+import * as DSUtils from '@libs/DrinkingSessionUtils';
 import {
-  addDrinks,
   getUniqueDrinkTypesInSession,
-  removeDrinks,
   sumAllDrinks,
-  sumAllUnits,
   sumDrinksOfSingleType,
   timestampToDateString,
   unitsToColors,
 } from '@libs/DataHandling';
-import type {
-  DrinkingSession,
-  DrinksList,
-  Drinks,
-  DrinkKey,
-} from '@src/types/onyx';
+import type {DrinkingSession, Drinks, DrinkKey} from '@src/types/onyx';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import UserOffline from '@components/UserOfflineModal';
 import DrinkTypesView from '@components/DrinkTypesView';
@@ -331,7 +324,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     if (!preferences) {
       return;
     }
-    const totalUnits = sumAllUnits(
+    const totalUnits = DSUtils.calculateTotalUnits(
       session?.drinks,
       preferences.drinks_to_units,
       true,

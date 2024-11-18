@@ -5,7 +5,9 @@ import type {
   DrinkingSessionId,
   DrinkingSessionList,
   DrinkingSessionType,
+  Drinks,
   DrinksList,
+  DrinksToUnits,
 } from '@src/types/onyx';
 import {ref, update, type Database} from 'firebase/database';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
@@ -18,6 +20,8 @@ import Onyx, {OnyxKey} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 import {auth} from './Firebase/FirebaseApp';
 import {formatInTimeZone} from 'date-fns-tz';
+import {AddDrinksOptions} from '@src/types/onyx/DrinkingSession';
+import {roundToTwoDecimalPlaces} from './NumberUtils';
 
 const PlaceholderDrinks: DrinksList = {[Date.now()]: {other: 0}};
 
@@ -123,6 +127,66 @@ function getDrinkingSessionOnyxKey(
     return ONYXKEYS.EDIT_SESSION_DATA;
   }
   return null;
+}
+
+/**
+ * Calculates the total units of a Drinks object based on a DrinksToUnits mapping.
+ *
+ * @param drinks - The Drinks object containing drink counts.
+ * @param drinksToUnits - A mapping from DrinkKey to unit conversion factors.
+ * @param roundUp?: boolean,
+ * @returns The total units calculated.
+ */
+function calculateTotalUnits(
+  drinks: Drinks | undefined,
+  drinksToUnits: DrinksToUnits,
+  roundUp?: boolean,
+): number {
+  if (!drinks) {
+    return 0;
+  }
+
+  let totalUnits = 0;
+
+  for (const [drinkKey, count] of Object.entries(drinks)) {
+    const conversionFactor = drinksToUnits[drinkKey as DrinkKey] || 0;
+    totalUnits += (count || 0) * conversionFactor;
+  }
+
+  if (roundUp) {
+    return roundToTwoDecimalPlaces(totalUnits);
+  }
+
+  return totalUnits;
+}
+
+/**
+ * Adds a Drinks object to an existing DrinksList object with a specified timestamp behavior.
+ *
+ * @param drinks - The Drinks object to add.
+ * @param drinksList - The existing DrinksList object.
+ * @param options - Options to specify the timestamp behavior.
+ * @returns The updated DrinksList object.
+ */
+function addDrinks(
+  drinks: Drinks,
+  drinksList: DrinksList,
+  options: AddDrinksOptions,
+): DrinksList {
+  let timestamp: number;
+
+  if (options.timestampOption === 'now') {
+    timestamp = Date.now();
+  } else if (options.timestampOption === 'sessionStartTime') {
+    timestamp = options.session.start_time;
+  } else {
+    throw new Error('Invalid timestampOption');
+  }
+
+  return {
+    ...drinksList,
+    [timestamp]: drinks,
+  };
 }
 
 function sessionIsExpired(session: DrinkingSession | undefined): boolean {
@@ -414,8 +478,10 @@ async function fixTimezoneSessions(
 
 export {
   PlaceholderDrinks,
+  addDrinks,
   allSessionsContainTimezone,
   calculateSessionLength,
+  calculateTotalUnits,
   determineSessionMostCommonDrink,
   extractSessionOrEmpty,
   fixTimezoneSessions,

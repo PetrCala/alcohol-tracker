@@ -18,7 +18,6 @@ import {
   getSingleMonthDrinkingSessions,
   timestampToDate,
   timestampToDateString,
-  roundToTwoDecimalPlaces,
 } from '@libs/DataHandling';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import UserOffline from '@components/UserOfflineModal';
@@ -60,6 +59,7 @@ import useTheme from '@hooks/useTheme';
 import Icon from '@components/Icon';
 import ScrollView from '@components/ScrollView';
 import useLocalize from '@hooks/useLocalize';
+import {roundToTwoDecimalPlaces} from '@libs/NumberUtils';
 
 type State = {
   visibleDateObject: DateObject;

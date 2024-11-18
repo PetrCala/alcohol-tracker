@@ -15,7 +15,6 @@ import {
   changeDateBySomeDays,
   unitsToColors,
   getSingleDayDrinkingSessions,
-  sumAllUnits,
   dateStringToDate,
 } from '@libs/DataHandling';
 // import { PreferencesData} from '../types/database';
@@ -32,6 +31,7 @@ import ROUTES from '@src/ROUTES';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import * as DS from '@libs/actions/DrinkingSession';
+import * as DSUtils from '@libs/DrinkingSessionUtils';
 import CONST from '@src/CONST';
 import ScreenWrapper from '@components/ScreenWrapper';
 import {nonMidnightString} from '@libs/StringUtilsKiroku';
@@ -111,7 +111,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
     }
 
     // Calculate the session color
-    const totalUnits = sumAllUnits(
+    const totalUnits = DSUtils.calculateTotalUnits(
       session.drinks,
       preferences.drinks_to_units,
       true,

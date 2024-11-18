@@ -19,7 +19,6 @@ import {
   aggregateSessionsByDays,
   monthEntriesToColors,
   hasDecimalPoint,
-  roundToTwoDecimalPlaces,
 } from '@libs/DataHandling';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import Icon from '@components/Icon';
@@ -33,6 +32,7 @@ import useTheme from '@hooks/useTheme';
 import FullScreenLoadingIndicator from './FullscreenLoadingIndicator';
 import useThemeStyles from '@hooks/useThemeStyles';
 import CONST from '@src/CONST';
+import {roundToTwoDecimalPlaces} from '@libs/NumberUtils';
 
 type DayMarking = {
   units?: number;
