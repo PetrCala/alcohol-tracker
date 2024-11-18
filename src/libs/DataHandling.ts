@@ -611,42 +611,6 @@ export function getLastStartedSessionId(
   return latestSession ? latestSession[0] : undefined;
 }
 
-/** Input a drinking session and remove all drink records
- * where add drinks of a given timestamp are set to 0. Return the
- * updated session.
- *
- * @param session Drinking session
- * @returns The updated session
- */
-export const removeZeroObjectsFromSession = (
-  session: DrinkingSession,
-): DrinkingSession => {
-  // Clone the session object to avoid mutating the original object
-  const updatedSession = {...session};
-
-  if (updatedSession.drinks === undefined) {
-    return updatedSession;
-  }
-
-  // Go through each timestamp in the session's drinks object
-  for (const timestamp in updatedSession.drinks) {
-    // Check if all the drink values are set to 0
-    const allZero = Object.values(CONST.DRINKS.KEYS).every(
-      key =>
-        // ! to assert that the value is not undefined
-        updatedSession.drinks![timestamp][key] === 0 ||
-        updatedSession.drinks![timestamp][key] === undefined,
-    );
-
-    // If all drink values are 0, delete the timestamp from the drinks object, unless it is the last one
-    if (allZero && Object.keys(updatedSession.drinks).length > 1) {
-      delete updatedSession.drinks[+timestamp];
-    }
-  }
-
-  return updatedSession;
-};
-
 /** Generate an object with all available drinks where
  * each drink's value is set to a random integer.
  */

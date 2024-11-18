@@ -1,13 +1,10 @@
 ﻿import type {Database} from 'firebase/database';
 import {ref, update} from 'firebase/database';
-import {removeZeroObjectsFromSession} from '@libs/DataHandling';
 import type {
   DrinkingSession,
   DrinkingSessionId,
   DrinkingSessionList,
   DrinkKey,
-  Drinks,
-  DrinksList,
   DrinksToUnits,
   UserStatus,
 } from '@src/types/onyx';
@@ -26,30 +23,6 @@ import {differenceInDays} from 'date-fns';
 import {SelectedTimezone} from '@src/types/onyx/UserData';
 import {ValueOf} from 'type-fest';
 import _ from 'lodash';
-import {
-  AddDrinksOptions,
-  RemoveDrinksOptions,
-} from '@src/types/onyx/DrinkingSession';
-
-let liveSessionData: DrinkingSession | undefined;
-Onyx.connect({
-  key: ONYXKEYS.LIVE_SESSION_DATA,
-  callback: value => {
-    if (value) {
-      liveSessionData = value;
-    }
-  },
-});
-
-let editSessionData: DrinkingSession | undefined;
-Onyx.connect({
-  key: ONYXKEYS.EDIT_SESSION_DATA,
-  callback: value => {
-    if (value) {
-      editSessionData = value;
-    }
-  },
-});
 
 const drinkingSessionRef = DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID;
 const drinkingSessionDrinksRef =
@@ -88,7 +61,6 @@ async function saveDrinkingSessionData(
   updateStatus?: boolean,
   updateLocal?: boolean,
 ): Promise<void> {
-  newSessionData = removeZeroObjectsFromSession(newSessionData); // Delete the initial log of zero drinks that was used as a placeholder
   newSessionData.drinks = newSessionData.drinks || {}; // Can not send undefined
   const updates: Record<string, any> = {};
   updates[drinkingSessionRef.getRoute(userID, sessionKey)] = newSessionData;
@@ -150,7 +122,6 @@ async function startLiveDrinkingSession(
   const newSessionData: DrinkingSession = DSUtils.getEmptySession(
     CONST.SESSION_TYPES.LIVE,
     true,
-    true,
   );
 
   const newSessionId = generateDatabaseKey(
@@ -162,7 +133,6 @@ async function startLiveDrinkingSession(
   }
 
   // Update Firebase
-  newSessionData.drinks = newSessionData.drinks || {}; // Can not send undefined
   const updates: Record<string, any> = {};
   const userStatusData: UserStatus = {
     last_online: new Date().getTime(),
@@ -193,8 +163,6 @@ async function endLiveDrinkingSession(
   newSessionData: DrinkingSession,
   sessionKey: string,
 ): Promise<void> {
-  newSessionData = removeZeroObjectsFromSession(newSessionData);
-  newSessionData.drinks = newSessionData.drinks || {}; // Can not send undefined
   const updates: Record<string, any> = {};
   const userStatusData: UserStatus = {
     // ETC - 1
@@ -275,12 +243,23 @@ function updateDrinks(
       action,
       drinksToUnits,
     );
-    const modifyAction =
-      action === CONST.DRINKS.ACTIONS.ADD ? Onyx.merge : Onyx.set;
 
-    modifyAction(onyxKey, {
-      drinks: drinksList,
-    });
+    const drinks = drinksList ? Object.values(drinksList)[0] : null;
+
+    // Merge can only be used when adding drinks, or when removing drinks does not delete the drink key
+    if (
+      action === CONST.DRINKS.ACTIONS.ADD ||
+      (drinks && Object.keys(drinks).includes(drinkKey))
+    ) {
+      Onyx.merge(onyxKey, {
+        drinks: drinksList,
+      });
+    } else {
+      Onyx.set(onyxKey, {
+        ...session,
+        drinks: drinksList,
+      });
+    }
   }
 }
 
@@ -382,8 +361,6 @@ function getNewSessionToEdit(
   const timestamp = currentDate.getTime();
   const newSession: DrinkingSession = DSUtils.getEmptySession(
     CONST.SESSION_TYPES.EDIT,
-    true,
-    false,
   );
   newSession.start_time = timestamp;
   newSession.end_time = timestamp;

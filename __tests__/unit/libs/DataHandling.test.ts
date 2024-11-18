@@ -17,8 +17,6 @@
   getYearMonth,
   getYearMonthVerbose,
   getZeroDrinksList,
-  removeDrinks,
-  removeZeroObjectsFromSession,
   setDateToCurrentTime,
   sumAllDrinks,
   sumDrinkTypes,
@@ -708,171 +706,60 @@ describe('addDrinks function', () => {
   });
 });
 
-describe('removeDrinks function', () => {
-  let existingDrinks: DrinksList;
+// describe('removeDrinks function', () => {
+//   let existingDrinks: DrinksList;
 
-  beforeEach(() => {
-    existingDrinks = {
-      1632423423: {
-        beer: 4,
-        cocktail: 2,
-      },
-      1632434223: {
-        beer: 3,
-      },
-      1632435223: {
-        cocktail: 1,
-      },
-    };
-  });
+//   beforeEach(() => {
+//     existingDrinks = {
+//       1632423423: {
+//         beer: 4,
+//         cocktail: 2,
+//       },
+//       1632434223: {
+//         beer: 3,
+//       },
+//       1632435223: {
+//         cocktail: 1,
+//       },
+//     };
+//   });
 
-  it('should remove drinks starting from the most recent session', () => {
-    const newDrinks = removeDrinks(existingDrinks, 'beer', 5)!;
-    expect(newDrinks[1632434223]).toBeUndefined();
-    expect(newDrinks[1632423423]?.beer).toBe(2);
-  });
+//   it('should remove drinks starting from the most recent session', () => {
+//     const newDrinks = removeDrinks(existingDrinks, 'beer', 5)!;
+//     expect(newDrinks[1632434223]).toBeUndefined();
+//     expect(newDrinks[1632423423]?.beer).toBe(2);
+//   });
 
-  it('should remove all drinks if the count equals the total', () => {
-    const newDrinks = removeDrinks(existingDrinks, 'beer', 7)!;
-    expect(newDrinks[1632434223]).toBeUndefined();
-    expect(newDrinks[1632423423]?.beer).toBeUndefined();
-  });
+//   it('should remove all drinks if the count equals the total', () => {
+//     const newDrinks = removeDrinks(existingDrinks, 'beer', 7)!;
+//     expect(newDrinks[1632434223]).toBeUndefined();
+//     expect(newDrinks[1632423423]?.beer).toBeUndefined();
+//   });
 
-  it('should handle removing more drinks than exist', () => {
-    const newDrinks = removeDrinks(existingDrinks, 'beer', 10)!;
-    expect(newDrinks[1632434223]).toBeUndefined();
-    expect(newDrinks[1632423423]?.beer).toBeUndefined();
-  });
+//   it('should handle removing more drinks than exist', () => {
+//     const newDrinks = removeDrinks(existingDrinks, 'beer', 10)!;
+//     expect(newDrinks[1632434223]).toBeUndefined();
+//     expect(newDrinks[1632423423]?.beer).toBeUndefined();
+//   });
 
-  it('should not modify other drink types when removing drinks', () => {
-    const newDrinks = removeDrinks(existingDrinks, 'beer', 5)!;
-    expect(newDrinks[1632423423]?.cocktail).toBe(2);
-    expect(newDrinks[1632435223]?.cocktail).toBe(1);
-    expect(sumDrinksOfSingleType(newDrinks, 'cocktail')).toBe(3);
-  });
+//   it('should not modify other drink types when removing drinks', () => {
+//     const newDrinks = removeDrinks(existingDrinks, 'beer', 5)!;
+//     expect(newDrinks[1632423423]?.cocktail).toBe(2);
+//     expect(newDrinks[1632435223]?.cocktail).toBe(1);
+//     expect(sumDrinksOfSingleType(newDrinks, 'cocktail')).toBe(3);
+//   });
 
-  it('should remove 0 drinks if the count is 0', () => {
-    const newDrinks = removeDrinks(existingDrinks, 'beer', 0);
-    expect(newDrinks).toEqual(existingDrinks);
-  });
+//   it('should remove 0 drinks if the count is 0', () => {
+//     const newDrinks = removeDrinks(existingDrinks, 'beer', 0);
+//     expect(newDrinks).toEqual(existingDrinks);
+//   });
 
-  it('should clean up sessions that have zero drinks left', () => {
-    const newDrinks = removeDrinks(existingDrinks, 'cocktail', 3)!;
-    expect(newDrinks[1632423423]?.cocktail).toBeUndefined();
-    expect(newDrinks[1632435223]).toBeUndefined();
-  });
-});
-
-describe('removeZeroObjectsFromSession', () => {
-  // Helper function to create mock session with drinks
-  const createMockSessionWithDrinks = (drinks: DrinksList): DrinkingSession => {
-    return {
-      start_time: Date.now(),
-      end_time: Date.now() + 1000,
-      blackout: false,
-      note: '',
-      drinks: drinks,
-      type: CONST.SESSION_TYPES.EDIT,
-    };
-  };
-
-  it('should remove DrinksList children with all drink values set to 0', () => {
-    const mockSession: DrinkingSession = createMockSessionWithDrinks({
-      12345679: {
-        beer: 0,
-        cocktail: 0,
-        other: 0,
-        strong_shot: 0,
-        weak_shot: 0,
-        wine: 0,
-      },
-      12345680: {beer: 1},
-    });
-
-    const result = removeZeroObjectsFromSession(mockSession);
-    const drinks = result.drinks!;
-    expect(Object.keys(drinks)).toHaveLength(1);
-    expect(sumAllDrinks(drinks)).toEqual(1);
-    expect(drinks).toBeDefined();
-  });
-
-  it('should remove DrinksList children where one object has a single key set to 0', () => {
-    const mockSession: DrinkingSession = createMockSessionWithDrinks({
-      12345679: {
-        other: 0,
-      },
-      12345680: {beer: 1},
-    });
-
-    const result = removeZeroObjectsFromSession(mockSession);
-    const drinks = result.drinks!;
-    expect(Object.keys(drinks)).toHaveLength(1);
-    expect(sumAllDrinks(drinks)).toEqual(1);
-    expect(drinks).toBeDefined();
-  });
-
-  it('should not do anything if there are only zero-drink objects', () => {
-    const mockSession: DrinkingSession = createMockSessionWithDrinks({
-      12345679: {
-        other: 0,
-      },
-    });
-
-    const result = removeZeroObjectsFromSession(mockSession);
-    expect(result).toMatchObject(mockSession);
-  });
-
-  it('should keep DrinksList children with at least one drink value not set to 0', () => {
-    const mockSession: DrinkingSession = createMockSessionWithDrinks({
-      12345679: {beer: 1, cocktail: 0},
-      12345680: {beer: 0, wine: 1},
-    });
-
-    const result = removeZeroObjectsFromSession(mockSession);
-    const drinks = result.drinks!;
-    expect(Object.keys(drinks)).toHaveLength(2);
-    expect(sumAllDrinks(drinks)).toEqual(2);
-    expect(drinks[12345679]).toBeDefined();
-    expect(drinks[12345680]).toBeDefined();
-  });
-
-  it('should return the same session if no DrinksList children have all drink values set to 0', () => {
-    const mockSession: DrinkingSession = createMockSessionWithDrinks({
-      12345679: {beer: 1},
-      12345680: {wine: 1},
-    });
-
-    const result = removeZeroObjectsFromSession(mockSession);
-    expect(sumAllDrinks(result.drinks)).toEqual(2);
-    expect(result).toEqual(mockSession);
-  });
-
-  it('should return a session with no drinks if all DrinksList children have all drink values set to 0', () => {
-    const mockSession: DrinkingSession = createMockSessionWithDrinks({
-      12345679: {
-        beer: 0,
-        cocktail: 0,
-        other: 0,
-        strong_shot: 0,
-        weak_shot: 0,
-        wine: 0,
-      },
-      12345680: {
-        beer: 0,
-        cocktail: 0,
-        other: 0,
-        strong_shot: 0,
-        weak_shot: 0,
-        wine: 0,
-      },
-    });
-
-    const result = removeZeroObjectsFromSession(mockSession);
-    const drinks = result.drinks!;
-    expect(sumAllDrinks(drinks)).toEqual(0);
-    expect(Object.keys(drinks)).toHaveLength(1);
-  });
-});
+//   it('should clean up sessions that have zero drinks left', () => {
+//     const newDrinks = removeDrinks(existingDrinks, 'cocktail', 3)!;
+//     expect(newDrinks[1632423423]?.cocktail).toBeUndefined();
+//     expect(newDrinks[1632435223]).toBeUndefined();
+//   });
+// });
 
 describe('getRandomDrinksList', () => {
   let randomDrinksList: DrinksList = {};

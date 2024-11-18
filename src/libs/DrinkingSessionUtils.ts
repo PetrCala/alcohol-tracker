@@ -73,13 +73,11 @@ Onyx.connect({
  */
 function getEmptySession(
   type?: DrinkingSessionType,
-  usePlaceholderDrinks?: boolean,
   ongoing?: boolean,
 ): DrinkingSession {
   const emptySession: DrinkingSession = {
     start_time: Date.now(),
     end_time: Date.now(),
-    drinks: usePlaceholderDrinks ? PlaceholderDrinks : {},
     blackout: false,
     note: '',
     timezone: timezone.selected,
@@ -279,7 +277,6 @@ function removeDrinksFromList(
 
     if (avaiableAmount > 0) {
       const amountRemoved = Math.min(remainingAmountToRemove, avaiableAmount);
-      const updatedAmount = avaiableAmount - amountRemoved;
 
       drinksAtTimestamp[drinkKey] = avaiableAmount - amountRemoved;
       remainingAmountToRemove -= amountRemoved;
@@ -292,11 +289,6 @@ function removeDrinksFromList(
       // Clean up if there are zero drinks left at this timestamp
       if (Object.keys(drinksAtTimestamp).length === 0) {
         delete updatedDrinksList[+timestamp];
-      }
-
-      // Add a zero-drink placeholder if there are no drinks left in the object
-      if (Object.keys(updatedDrinksList).length === 0) {
-        updatedDrinksList[+timestamp] = {other: 0};
       }
     }
 
