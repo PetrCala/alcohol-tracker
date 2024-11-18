@@ -90,7 +90,6 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     useState<boolean>(true);
   // Session details
   const [totalUnits, setTotalUnits] = useState<number>(0);
-  const [availableUnits, setAvailableUnits] = useState<number>(0);
   const [sessionFinished, setSessionFinished] = useState<boolean>(false);
   // Time info
   const [dbSyncSuccessful, setDbSyncSuccessful] = useState(false);
@@ -138,17 +137,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   };
 
   const handleMonkePlus = () => {
-    if (!session) {
-      return;
-    }
-    if (availableUnits > 0) {
-      const drinksToAdd: Drinks = {other: 1};
-      const newDrinks: DrinksList | undefined = addDrinks(
-        session?.drinks,
-        drinksToAdd,
-      );
-      DS.updateDrinks(session, newDrinks);
-    }
+    DS.updateDrinks(sessionId, {other: 1}, CONST.DRINKS.ACTIONS.ADD);
   };
 
   const handleMonkeMinus = () => {
@@ -173,12 +162,8 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
         drinkKeysLeft[Math.floor(Math.random() * drinkKeysLeft.length)];
     }
     if (keyToRemove) {
-      const newDrinks: DrinksList | undefined = removeDrinks(
-        session.drinks,
-        keyToRemove,
-        1,
-      );
-      DS.updateDrinks(session, newDrinks);
+      const drinksToModify: Drinks = {[keyToRemove]: 1};
+      DS.updateDrinks(sessionId, drinksToModify, CONST.DRINKS.ACTIONS.REMOVE);
     }
   };
 
@@ -213,21 +198,6 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
 
     Navigation.navigate(route());
   };
-
-  // Update the hooks whenever drinks change
-  useMemo(() => {
-    if (!preferences) {
-      return;
-    }
-    const newTotalUnits = sumAllUnits(
-      session?.drinks,
-      preferences.drinks_to_units,
-      true,
-    );
-    const newAvailableUnits = CONST.MAX_ALLOWED_UNITS - newTotalUnits;
-    setTotalUnits(newTotalUnits);
-    setAvailableUnits(newAvailableUnits);
-  }, [session?.drinks]);
 
   async function saveSession(db: any, userID: string) {
     if (!session || !user) {
@@ -356,6 +326,19 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     }
   }, [liveSessionData, editSessionData]);
 
+  // Update the hooks whenever drinks change
+  useMemo(() => {
+    if (!preferences) {
+      return;
+    }
+    const totalUnits = sumAllUnits(
+      session?.drinks,
+      preferences.drinks_to_units,
+      true,
+    );
+    setTotalUnits(totalUnits);
+  }, [session?.drinks]);
+
   // Synchronize the session with database
   useEffect(() => {
     // Only schedule a database update if any hooks changed
@@ -471,16 +454,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
           </View>
         ) : (
           <>
-            <View style={localStyles.drinkTypesContainer}>
-              <DrinkTypesView
-                drinkData={DrinkData}
-                currentDrinks={session.drinks}
-                setCurrentDrinks={(newDrinks: DrinksList | undefined) => {
-                  DS.updateDrinks(session, newDrinks);
-                }}
-                availableUnits={availableUnits}
-              />
-            </View>
+            <DrinkTypesView sessionId={sessionId} />
             <SessionDetailsWindow
               sessionId={sessionId}
               session={session}
@@ -579,11 +553,6 @@ const localStyles = StyleSheet.create({
     textShadowRadius: 4,
     elevation: 5,
     zIndex: 1,
-  },
-  drinkTypesContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
   },
   modifyUnitsContainer: {
     height: 400,

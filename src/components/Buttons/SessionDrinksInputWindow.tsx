@@ -11,29 +11,38 @@ import {
   removeDrinks,
   sumDrinksOfSingleType,
 } from '@libs/DataHandling';
-import type {DrinkKey, Drinks, DrinksList} from '@src/types/onyx';
+import * as DSUtils from '@src/libs/DrinkingSessionUtils';
+import type {
+  DrinkingSessionId,
+  DrinkKey,
+  Drinks,
+  DrinksList,
+} from '@src/types/onyx';
 import useThemeStyles from '@hooks/useThemeStyles';
 import useTheme from '@hooks/useTheme';
 
 type SessionDrinksInputWindowProps = {
+  /** ID of the drinking session */
+  sessionId: DrinkingSessionId;
+
+  /** Key of the drinking session */
   drinkKey: DrinkKey;
-  currentDrinks: DrinksList | undefined;
-  setCurrentDrinks: (newDrinks: DrinksList | undefined) => void;
-  availableUnits: number;
 };
 
 const SessionDrinksInputWindow = ({
+  sessionId,
   drinkKey,
-  currentDrinks,
-  setCurrentDrinks,
-  availableUnits,
 }: SessionDrinksInputWindowProps) => {
   const styles = useThemeStyles();
   const theme = useTheme();
+  const session = DSUtils.getDrinkingSessionData(sessionId);
   const [inputValue, setInputValue] = useState<string>(
-    sumDrinksOfSingleType(currentDrinks, drinkKey).toString(),
+    sumDrinksOfSingleType(session?.drinks, drinkKey).toString(),
   );
   const inputRef = useRef<TextInput>(null);
+
+  const currentDrinks = {};
+  const availableUnits = 0;
 
   const handleKeyPress = (event: {nativeEvent: {key: string}}): void => {
     let updatedValue = '0';
@@ -102,7 +111,8 @@ const SessionDrinksInputWindow = ({
       const numberToRemove: number = typeSum - numericValue;
       newDrinks = removeDrinks(newDrinks, drinkKey, numberToRemove);
     }
-    setCurrentDrinks(newDrinks);
+
+    // setCurrentDrinks(newDrinks);
   };
 
   const handleContainerPress = () => {
@@ -116,9 +126,9 @@ const SessionDrinksInputWindow = ({
     }
   };
 
-  useMemo(() => {
-    setInputValue(sumDrinksOfSingleType(currentDrinks, drinkKey).toString());
-  }, [currentDrinks, drinkKey]);
+  // useMemo(() => {
+  //   setInputValue(sumDrinksOfSingleType(currentDrinks, drinkKey).toString());
+  // }, [currentDrinks, drinkKey]);
 
   return (
     <View style={localStyles.drinksInputContainer}>

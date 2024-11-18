@@ -5,6 +5,8 @@ import type {
   DrinkingSession,
   DrinkingSessionId,
   DrinkingSessionList,
+  DrinkKey,
+  Drinks,
   DrinksList,
   UserStatus,
 } from '@src/types/onyx';
@@ -19,13 +21,10 @@ import Onyx from 'react-native-onyx';
 import ONYXKEYS, {OnyxKey} from '@src/ONYXKEYS';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
-import {
-  addMilliseconds,
-  differenceInDays,
-  subDays,
-  subMilliseconds,
-} from 'date-fns';
+import {differenceInDays} from 'date-fns';
 import {SelectedTimezone} from '@src/types/onyx/UserData';
+import {ValueOf} from 'type-fest';
+import _ from 'lodash';
 
 let liveSessionData: DrinkingSession | undefined;
 Onyx.connect({
@@ -51,39 +50,6 @@ const drinkingSessionRef = DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID;
 const drinkingSessionDrinksRef =
   DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID_DRINKS;
 const userStatusRef = DBPATHS.USER_STATUS_USER_ID;
-
-/**
- * Based on the session ID, get the drinking session data.
- *
- * @param sessionId The ID of the session.
- * @returns The drinking session data.
- */
-function getDrinkingSessionData(
-  sessionId: DrinkingSessionId,
-): DrinkingSession | undefined {
-  if (liveSessionData && liveSessionData.id === sessionId) {
-    return liveSessionData;
-  }
-  if (editSessionData && editSessionData.id === sessionId) {
-    return editSessionData;
-  }
-  return undefined;
-}
-
-function getDrinkingSessionOnyxKey(
-  sessionId: DrinkingSessionId | undefined,
-): OnyxKey | null {
-  if (!sessionId) {
-    return null;
-  }
-  if (liveSessionData && liveSessionData.id === sessionId) {
-    return ONYXKEYS.LIVE_SESSION_DATA;
-  }
-  if (editSessionData && editSessionData.id === sessionId) {
-    return ONYXKEYS.EDIT_SESSION_DATA;
-  }
-  return null;
-}
 
 /**
  * Set the edit session data object in Onyx so that it can be modified. This function should be called only if the relevant object already exists in the onyx database.
@@ -277,15 +243,53 @@ async function discardLiveDrinkingSession(
 }
 
 function updateDrinks(
-  session: DrinkingSession | undefined,
-  newDrinks: DrinksList | undefined,
+  sessionId: DrinkingSessionId | undefined,
+  drinksToModify: Drinks,
+  action: ValueOf<typeof CONST.DRINKS.ACTIONS>,
 ) {
-  const onyxKey = getDrinkingSessionOnyxKey(session?.id);
-  if (onyxKey) {
-    // The drinks are a complex object, so Onyx.set must be called
-    // TODO try to rewrite the drinks object into a collection
-    Onyx.set(onyxKey, {
-      ...session,
+  const session = DSUtils.getDrinkingSessionData(sessionId);
+  const onyxKey = DSUtils.getDrinkingSessionOnyxKey(sessionId);
+  if (session && onyxKey) {
+    const newDrinks: DrinksList = {...session.drinks};
+
+    const drinkKeys = Object.keys(drinksToModify) as DrinkKey[];
+
+    // Iterate over the drinks object
+    for (const key of drinkKeys) {
+      const value = drinksToModify[key];
+      if (value === undefined) continue; // Skip undefined values
+
+      if (action === 'add') {
+        const timestamp = new Date().getTime();
+        const currentQuantity = newDrinks[timestamp][key] || 0;
+        // Ensure the timestamp exists in newDrinks
+        if (!newDrinks[timestamp]) {
+          newDrinks[timestamp] = {};
+        }
+        // Add the quantity while respecting the maxUnits limit
+        newDrinks[timestamp][key] = Math.min(
+          currentQuantity + value,
+          CONST.MAX_ALLOWED_UNITS,
+        );
+      } else if (action === 'remove') {
+        const timestamp = Object.keys(newDrinks).lastIndexOf();
+        // Remove the quantity, but do not allow negative values
+        newDrinks[timestamp][key] = Math.max(currentQuantity - value, 0);
+        // If the resulting quantity is 0, optionally delete the key
+        if (newDrinks[timestamp][key] === 0) {
+          delete newDrinks[timestamp][key];
+        }
+      }
+    }
+
+    // // Cleanup: If the drinks object for the timestamp is empty, delete the timestamp entry
+    // if (Object.keys(newDrinks[timestamp]).length === 0) {
+    //   delete newDrinks[timestamp];
+    // }
+    const modifyAction =
+      action === CONST.DRINKS.ACTIONS.ADD ? Onyx.merge : Onyx.set;
+
+    modifyAction(onyxKey, {
       drinks: newDrinks,
     });
   }
@@ -302,7 +306,7 @@ function updateNote(
   session: DrinkingSession | undefined,
   newNote: string,
 ): void {
-  const onyxKey = getDrinkingSessionOnyxKey(session?.id);
+  const onyxKey = DSUtils.getDrinkingSessionOnyxKey(session?.id);
   if (onyxKey) {
     Onyx.merge(onyxKey, {
       note: newNote,
@@ -314,7 +318,7 @@ function updateBlackout(
   session: DrinkingSession | undefined,
   blackout: boolean,
 ): void {
-  const onyxKey = getDrinkingSessionOnyxKey(session?.id);
+  const onyxKey = DSUtils.getDrinkingSessionOnyxKey(session?.id);
   if (onyxKey) {
     Onyx.merge(onyxKey, {
       blackout,
@@ -333,7 +337,7 @@ function updateTimezone(
   session: DrinkingSession | undefined,
   newTimezone: SelectedTimezone,
 ): void {
-  const onyxKey = getDrinkingSessionOnyxKey(session?.id);
+  const onyxKey = DSUtils.getDrinkingSessionOnyxKey(session?.id);
   if (onyxKey) {
     Onyx.merge(onyxKey, {
       timezone: newTimezone,
@@ -415,8 +419,6 @@ function navigateToEditSessionScreen(
 }
 
 export {
-  getDrinkingSessionData,
-  getDrinkingSessionOnyxKey,
   discardLiveDrinkingSession,
   endLiveDrinkingSession,
   navigateToEditSessionScreen,

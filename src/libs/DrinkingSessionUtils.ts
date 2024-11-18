@@ -14,7 +14,7 @@ import type {UserID} from '@src/types/onyx/OnyxCommon';
 import {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
 import DBPATHS from '@database/DBPATHS';
 import {format, subMilliseconds} from 'date-fns';
-import Onyx from 'react-native-onyx';
+import Onyx, {OnyxKey} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 import {auth} from './Firebase/FirebaseApp';
 import {formatInTimeZone} from 'date-fns-tz';
@@ -35,6 +35,26 @@ Onyx.connect({
       automatic:
         userDataTimezone?.automatic ?? CONST.DEFAULT_TIME_ZONE.automatic,
     };
+  },
+});
+
+let liveSessionData: DrinkingSession | undefined;
+Onyx.connect({
+  key: ONYXKEYS.LIVE_SESSION_DATA,
+  callback: value => {
+    if (value) {
+      liveSessionData = value;
+    }
+  },
+});
+
+let editSessionData: DrinkingSession | undefined;
+Onyx.connect({
+  key: ONYXKEYS.EDIT_SESSION_DATA,
+  callback: value => {
+    if (value) {
+      editSessionData = value;
+    }
   },
 });
 
@@ -70,6 +90,39 @@ function isEmptySession(session: DrinkingSession): boolean {
     session.blackout === false &&
     session.note === ''
   );
+}
+
+/**
+ * Based on the session ID, get the drinking session data.
+ *
+ * @param sessionId The ID of the session.
+ * @returns The drinking session data.
+ */
+function getDrinkingSessionData(
+  sessionId: DrinkingSessionId | undefined,
+): DrinkingSession | undefined {
+  if (liveSessionData && liveSessionData.id === sessionId) {
+    return liveSessionData;
+  }
+  if (editSessionData && editSessionData.id === sessionId) {
+    return editSessionData;
+  }
+  return undefined;
+}
+
+function getDrinkingSessionOnyxKey(
+  sessionId: DrinkingSessionId | undefined,
+): OnyxKey | null {
+  if (!sessionId) {
+    return null;
+  }
+  if (liveSessionData && liveSessionData.id === sessionId) {
+    return ONYXKEYS.LIVE_SESSION_DATA;
+  }
+  if (editSessionData && editSessionData.id === sessionId) {
+    return ONYXKEYS.EDIT_SESSION_DATA;
+  }
+  return null;
 }
 
 function sessionIsExpired(session: DrinkingSession | undefined): boolean {
@@ -365,12 +418,14 @@ export {
   calculateSessionLength,
   determineSessionMostCommonDrink,
   extractSessionOrEmpty,
+  fixTimezoneSessions,
   getDisplayNameForParticipant,
+  getDrinkingSessionData,
+  getDrinkingSessionOnyxKey,
   getEmptySession,
   getUserDetailTooltipText,
   isDifferentDay,
   isEmptySession,
   sessionIsExpired,
-  fixTimezoneSessions,
   shiftSessionTimestamps,
 };

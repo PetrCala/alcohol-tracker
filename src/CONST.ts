@@ -509,7 +509,7 @@ const CONST = {
 
     DEFAULT: 'en',
   },
-  MAX_ALLOWED_UNITS: 100,
+  MAX_ALLOWED_UNITS: 99,
   SIGN_IN_FORM_WIDTH: 300,
 
   /**
@@ -906,6 +906,10 @@ const CONST = {
       STRONG_SHOT: 'Strong Shot',
       WEAK_SHOT: 'Weak Shot',
       WINE: 'Wine',
+    },
+    ACTIONS: {
+      ADD: 'add',
+      REMOVE: 'remove',
     },
   },
 
