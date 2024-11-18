@@ -1,4 +1,4 @@
-﻿import React, {useState, useRef, useMemo} from 'react';
+﻿import React, {useState, useRef, useMemo, useEffect} from 'react';
 import {
   Keyboard,
   StyleSheet,
@@ -32,9 +32,7 @@ const SessionDrinksInputWindow = ({
   const theme = useTheme();
   const {preferences} = useDatabaseData();
   const session = DSUtils.getDrinkingSessionData(sessionId);
-  const [inputValue, setInputValue] = useState<string>(
-    sumDrinksOfSingleType(session?.drinks, drinkKey).toString(),
-  );
+  const [inputValue, setInputValue] = useState<string>('');
   const inputRef = useRef<TextInput>(null);
 
   const handleKeyPress = (event: {nativeEvent: {key: string}}): void => {
@@ -135,9 +133,18 @@ const SessionDrinksInputWindow = ({
     }
   };
 
-  useMemo(() => {
-    setInputValue(sumDrinksOfSingleType(session?.drinks, drinkKey).toString());
+  // Update input value when drinks change
+  useEffect(() => {
+    const newInputValue = sumDrinksOfSingleType(
+      session?.drinks,
+      drinkKey,
+    ).toString();
+    setInputValue(newInputValue);
   }, [session?.drinks, drinkKey]);
+
+  if (!session || !preferences) {
+    return;
+  }
 
   return (
     <View style={localStyles.drinksInputContainer}>

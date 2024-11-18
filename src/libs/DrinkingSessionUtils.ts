@@ -73,6 +73,7 @@ Onyx.connect({
  */
 function getEmptySession(
   type?: DrinkingSessionType,
+  timezone?: SelectedTimezone,
   ongoing?: boolean,
 ): DrinkingSession {
   const emptySession: DrinkingSession = {
@@ -80,7 +81,7 @@ function getEmptySession(
     end_time: Date.now(),
     blackout: false,
     note: '',
-    timezone: timezone.selected,
+    timezone: timezone ?? CONST.DEFAULT_TIME_ZONE.selected,
     type: type ?? CONST.SESSION_TYPES.EDIT,
     ...(ongoing && {ongoing: true}),
   };

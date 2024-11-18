@@ -113,6 +113,7 @@ function syncLocalLiveSessionData(
 async function startLiveDrinkingSession(
   db: Database,
   user: User | null,
+  timezone: SelectedTimezone | undefined,
 ): Promise<string> {
   if (!user) {
     throw new Error(Localize.translateLocal('homeScreen.error.sessionStart'));
@@ -121,6 +122,7 @@ async function startLiveDrinkingSession(
   // The user is not in an active session
   const newSessionData: DrinkingSession = DSUtils.getEmptySession(
     CONST.SESSION_TYPES.LIVE,
+    timezone,
     true,
   );
 
@@ -347,6 +349,7 @@ function getNewSessionToEdit(
   db: Database,
   user: User | null,
   currentDate: Date,
+  timezone: SelectedTimezone | undefined,
 ): DrinkingSessionId {
   if (!user) {
     throw new Error(Localize.translateLocal('dayOverviewScreen.error.open'));
@@ -361,6 +364,7 @@ function getNewSessionToEdit(
   const timestamp = currentDate.getTime();
   const newSession: DrinkingSession = DSUtils.getEmptySession(
     CONST.SESSION_TYPES.EDIT,
+    timezone,
   );
   newSession.start_time = timestamp;
   newSession.end_time = timestamp;

@@ -152,7 +152,11 @@ function HomeScreen({route}: HomeScreenProps) {
 
     try {
       setIsStartingSession(true);
-      const newSessionId = await DS.startLiveDrinkingSession(db, user);
+      const newSessionId = await DS.startLiveDrinkingSession(
+        db,
+        user,
+        userData?.timezone?.selected,
+      );
       dispatch({type: 'SET_ONGOING_SESSION_ID', payload: newSessionId});
       Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(newSessionId));
     } catch (error: any) {

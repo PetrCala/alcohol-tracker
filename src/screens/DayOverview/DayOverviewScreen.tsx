@@ -60,7 +60,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
   const {translate} = useLocalize();
   const styles = useThemeStyles();
   const theme = useTheme();
-  const {drinkingSessionData, preferences} = useDatabaseData();
+  const {drinkingSessionData, preferences, userData} = useDatabaseData();
   const [currentDate, setCurrentDate] = useState<Date>(
     date ? dateStringToDate(date) : new Date(),
   );
@@ -210,6 +210,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
           db,
           auth.currentUser,
           currentDate,
+          userData?.timezone?.selected,
         );
         Navigation.navigate(
           ROUTES.DRINKING_SESSION_LIVE.getRoute(newSessionId),
