@@ -1,6 +1,5 @@
-import React, {useRef, useState, useEffect, useMemo} from 'react';
+import React, {useState, useEffect, useMemo} from 'react';
 import {
-  ActivityIndicator,
   Alert,
   BackHandler,
   StyleSheet,
@@ -18,7 +17,7 @@ import {
   timestampToDateString,
   unitsToColors,
 } from '@libs/DataHandling';
-import type {DrinkingSession, Drinks, DrinkKey} from '@src/types/onyx';
+import type {DrinkingSession, DrinkKey} from '@src/types/onyx';
 import DrinkTypesView from '@components/DrinkTypesView';
 import SessionDetailsWindow from '@components/SessionDetailsWindow';
 import FillerView from '@components/FillerView';
@@ -40,10 +39,7 @@ import * as ErrorUtils from '@libs/ErrorUtils';
 import ScrollView from '@components/ScrollView';
 import Log from '@libs/Log';
 import Icon from '@components/Icon';
-import Onyx, {useOnyx} from 'react-native-onyx';
-import ONYXKEYS from '@src/ONYXKEYS';
 import DateUtils from '@libs/DateUtils';
-import {auth} from '@libs/Firebase/FirebaseApp';
 import {DrinkingSessionWindowProps} from './types';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
 
@@ -80,29 +76,6 @@ function DrinkingSessionWindow({
   const deleteSessionWording = session.ongoing
     ? translate('common.discard')
     : translate('common.delete');
-
-  // const {isPending, enqueueUpdate} = useAsyncQueue(
-  //   async (newSession: DrinkingSession) => syncWithDb(newSession),
-  // );
-
-  // const syncWithDb = async (newSessionData: DrinkingSession) => {
-  //   if (!user || !session) {
-  //     return;
-  //   }
-  //   try {
-  //     setDbSyncSuccessful(false);
-  //     await DS.saveDrinkingSessionData(
-  //       db,
-  //       user.uid,
-  //       newSessionData,
-  //       sessionId,
-  //       true, // Update live session status
-  //     );
-  //     setDbSyncSuccessful(true);
-  //   } catch (error: any) {
-  //     throw new Error(translate('liveSessionScreen.error.save'));
-  //   }
-  // };
 
   // TODO
   const hasSessionChanged = () => false;
@@ -152,13 +125,6 @@ function DrinkingSessionWindow({
     }
   };
 
-  // // Function to wait for pending updates to finish
-  // const waitForNoPendingUpdate = async () => {
-  //   while (isPending) {
-  //     await new Promise(resolve => setTimeout(resolve, 1000));
-  //   }
-  // };
-
   /** Determine the screen to return to, and navigate to it */
   const navigateBackDynamically = (
     action: DeepValueOf<typeof CONST.NAVIGATION.SESSION_ACTION>,
@@ -196,40 +162,34 @@ function DrinkingSessionWindow({
       // TODO inform the user why the they can not save their session - 0 units
       return;
     }
+
+    setLoadingText(translate('liveSessionScreen.saving'));
+    setSessionFinished(true); // No more db syncs
+    const newSessionData: DrinkingSession = {
+      ...session,
+      end_time: sessionIsLive ? Date.now() : session.start_time,
+    };
+    delete newSessionData.ongoing;
+    delete newSessionData.id;
+
     try {
-      setLoadingText(translate('liveSessionScreen.saving'));
-      setSessionFinished(true); // No more db syncs
-      const newSessionData: DrinkingSession = {
-        ...session,
-        end_time: sessionIsLive ? Date.now() : session.start_time,
-      };
-      delete newSessionData.ongoing;
-      delete newSessionData.id;
-      // Wait for any pending updates to resolve first
-      // TODO
-      // while (isPending) {
-      //   await new Promise(resolve => setTimeout(resolve, 100));
-      // }
-      if (sessionIsLive) {
-        await DS.endLiveDrinkingSession(db, userID, newSessionData, sessionId);
-      } else {
-        await DS.saveDrinkingSessionData(
-          db,
-          userID,
-          newSessionData,
-          sessionId,
-          false, // Do not update live status
-          // true, // Clean the local onyx edit session data
-        );
-      }
+      await DS.saveDrinkingSessionData(
+        db,
+        userID,
+        newSessionData,
+        sessionId,
+        onyxKey,
+        !!sessionIsLive, // Update status if the session is live
+      );
+      // Reroute to session summary, do not allow user to return
+      navigateBackDynamically(CONST.NAVIGATION.SESSION_ACTION.SAVE);
     } catch (error: any) {
       Alert.alert(
         translate('liveSessionScreen.error.saveTitle'),
         translate('liveSessionScreen.error.save'),
       );
+      setSessionFinished(false);
     } finally {
-      // Reroute to session summary, do not allow user to return
-      navigateBackDynamically(CONST.NAVIGATION.SESSION_ACTION.SAVE);
       setLoadingText('');
     }
   }
@@ -250,12 +210,14 @@ function DrinkingSessionWindow({
           sessionIsLive ? 'Discarding' : 'Deleting',
         ),
       );
-      const discardFunction = sessionIsLive
-        ? DS.discardLiveDrinkingSession
-        : DS.removeDrinkingSessionData;
-      // await waitForNoPendingUpdate();
-      await discardFunction(db, user.uid, sessionId);
-      Onyx.set(onyxKey, null);
+      await DS.removeDrinkingSessionData(
+        db,
+        user.uid,
+        sessionId,
+        onyxKey,
+        !!sessionIsLive, // Update status if the session is live
+      );
+      navigateBackDynamically(CONST.NAVIGATION.SESSION_ACTION.DISCARD);
     } catch (error: any) {
       ErrorUtils.raiseAlert(
         error,
@@ -263,7 +225,6 @@ function DrinkingSessionWindow({
         translate('liveSessionScreen.error.discard'),
       );
     } finally {
-      navigateBackDynamically(CONST.NAVIGATION.SESSION_ACTION.DISCARD);
       setDiscardModalVisible(false);
       setLoadingText('');
     }
@@ -294,20 +255,6 @@ function DrinkingSessionWindow({
     Navigation.goBack();
   };
 
-  // Fetch the session object at component mount
-  // useEffect(() => {
-  //   const newSession =
-  //     liveSessionData?.id === sessionId ? liveSessionData : editSessionData;
-  //   setSession(newSession);
-  //   setSessionIsLive(!!newSession?.ongoing);
-
-  //   // Set the intial session ref upon the first load
-  //   if (isFetchingSessionData) {
-  //     initialSession.current = newSession;
-  //     setIsFetchingSessionData(false);
-  //   }
-  // }, []);
-
   // Update the hooks whenever drinks change
   useMemo(() => {
     if (!preferences) {
@@ -322,17 +269,6 @@ function DrinkingSessionWindow({
     setTotalUnits(totalUnits);
     setSessionColor(sessionColor);
   }, [session?.drinks]);
-
-  // Synchronize the session with database
-  // useEffect(() => {
-  //   // Only schedule a database update if any hooks changed
-  //   // Do not automatically save if the session is over, or
-  //   // if the initial fetch has not finished
-  //   if (!user || !sessionIsLive || !session || sessionFinished) {
-  //     return;
-  //   }
-  //   enqueueUpdate({...session, ongoing: true});
-  // }, [session]);
 
   // Make the system back press toggle the go back handler
   useEffect(() => {
