@@ -28,7 +28,7 @@ import {
   startOfDay,
   endOfDay,
 } from 'date-fns';
-import {formatInTimeZone, utcToZonedTime} from 'date-fns-tz';
+import {formatInTimeZone, utcToZonedTime, zonedTimeToUtc} from 'date-fns-tz';
 import {
   AddDrinksOptions,
   RemoveDrinksOptions,
@@ -37,6 +37,7 @@ import {roundToTwoDecimalPlaces} from './NumberUtils';
 import _ from 'lodash';
 import {ValueOf} from 'type-fest';
 import Log from './Log';
+import DateUtils from './DateUtils';
 
 const PlaceholderDrinks: DrinksList = {[Date.now()]: {other: 0}};
 
@@ -500,30 +501,34 @@ function getSingleDayDrinkingSessions(
   sessions: DrinkingSessionList | undefined,
   returnArray = true,
 ): DrinkingSessionArray | DrinkingSessionList {
-  // This is without timezones
-  const start = startOfDay(date).getTime();
-  const end = endOfDay(date).getTime();
+  if (!sessions) return returnArray ? [] : {};
 
   const baseTimezone = timezone.selected;
+  const timezoneCache: Record<
+    string,
+    {startOfDayUTC: number; endOfDayUTC: number}
+  > = {};
 
   const sessionBelongsToDate = (session: DrinkingSession) => {
     const tz = session.timezone ?? baseTimezone;
-    const sessionTimestamp = utcToZonedTime(session.start_time, tz).getTime();
-    return end >= sessionTimestamp && start <= sessionTimestamp;
+
+    // Cache the start and end of day UTC timestamps per timezone
+    if (!timezoneCache[tz]) {
+      timezoneCache[tz] = DateUtils.getDayStartAndEndUTC(date, tz);
+    }
+
+    const {startOfDayUTC, endOfDayUTC} = timezoneCache[tz];
+    const sessionStartTime = session.start_time; // UTC timestamp in milliseconds
+
+    // Directly compare UTC timestamps
+    return sessionStartTime >= startOfDayUTC && sessionStartTime <= endOfDayUTC;
   };
-  // const sessionDate = formatInTimeZone(session.start_time, tz, 'yyyy-MM-dd');
-  // return sessionDate === format(date, 'yyyy-MM-dd');
 
-  if (returnArray) {
-    return _.filter(sessions, session => sessionBelongsToDate(session));
-  }
+  const filteredSessions = returnArray
+    ? _.filter(sessions, sessionBelongsToDate)
+    : _.pickBy(sessions, sessionBelongsToDate);
 
-  return _.entries(sessions)
-    .filter(([sessionId, session]) => sessionBelongsToDate(session))
-    .reduce((acc, [sessionId, session]) => {
-      acc[sessionId] = session;
-      return acc;
-    }, {} as DrinkingSessionList);
+  return filteredSessions;
 }
 
 /** Subset an array of drinking sessions to the current month only.

@@ -106,6 +106,19 @@ function setLocale(localeString: Locale) {
   }
 }
 
+function getDayStartAndEndUTC(date: Date, timezone: SelectedTimezone) {
+  const dateString = format(date, 'yyyy-MM-dd');
+  const startOfDayUTC = zonedTimeToUtc(
+    `${dateString} 00:00:00`,
+    timezone,
+  ).getTime();
+  const endOfDayUTC = zonedTimeToUtc(
+    `${dateString} 23:59:59.999`,
+    timezone,
+  ).getTime();
+  return {startOfDayUTC, endOfDayUTC};
+}
+
 /**
  * Gets the user's stored time zone NVP and returns a localized
  * Date object for the given ISO-formatted datetime string
@@ -875,6 +888,7 @@ const DateUtils = {
   getDayValidationErrorKey,
   getDaysOfWeek,
   getDeviceTimezone,
+  getDayStartAndEndUTC,
   getEndOfToday,
   getLastBusinessDayOfMonth,
   getLocalDateFromDatetime,
