@@ -246,12 +246,13 @@ function updateDrinks(
       drinksToUnits,
     );
 
-    const drinks = drinksList ? Object.values(drinksList)[0] : null;
+    // const drinks = drinksList ? Object.values(drinksList)[0] : null;
 
     // Merge can only be used when adding drinks, or when removing drinks does not delete the drink key
     if (
-      action === CONST.DRINKS.ACTIONS.ADD ||
-      (drinks && Object.keys(drinks).includes(drinkKey))
+      action === CONST.DRINKS.ACTIONS.ADD
+      // ||
+      // (drinks && Object.keys(drinks).includes(drinkKey))
     ) {
       Onyx.merge(onyxKey, {
         drinks: drinksList,
