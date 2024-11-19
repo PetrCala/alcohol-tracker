@@ -144,15 +144,15 @@ async function startLiveDrinkingSession(
     timezone: timezone,
     ongoing: true,
   });
-
-  // Update Firebase
-  const updates: Record<string, any> = {};
-  const userStatusData: UserStatus = {
+  const newStatusData: UserStatus = {
     last_online: new Date().getTime(),
     latest_session_id: newSessionId,
     latest_session: newSessionData,
   };
-  updates[userStatusRef.getRoute(user.uid)] = userStatusData;
+
+  // Update Firebase
+  const updates: Record<string, any> = {};
+  updates[userStatusRef.getRoute(user.uid)] = newStatusData;
   updates[drinkingSessionRef.getRoute(user.uid, newSessionId)] = newSessionData;
   await update(ref(db), updates);
 
