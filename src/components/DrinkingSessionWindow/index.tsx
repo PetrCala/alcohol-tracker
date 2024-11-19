@@ -42,6 +42,7 @@ import Icon from '@components/Icon';
 import DateUtils from '@libs/DateUtils';
 import {DrinkingSessionWindowProps} from './types';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
+import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 
 function DrinkingSessionWindow({
   sessionId,
@@ -285,7 +286,7 @@ function DrinkingSessionWindow({
   }, [session]);
 
   if (loadingText) {
-    return <FlexibleLoadingIndicator text={loadingText} />;
+    return <FullScreenLoadingIndicator loadingText={loadingText} />;
   }
   if (!user || !preferences) {
     Navigation.resetToHome();
