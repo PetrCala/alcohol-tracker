@@ -1,12 +1,10 @@
 ﻿import React, {useState, useMemo} from 'react';
 import {
   Text,
-  Image,
   View,
   FlatList,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   Dimensions,
 } from 'react-native';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
@@ -14,7 +12,6 @@ import MenuIcon from '../../components/Buttons/MenuIcon';
 import {
   changeDateBySomeDays,
   unitsToColors,
-  getSingleDayDrinkingSessions,
   dateStringToDate,
 } from '@libs/DataHandling';
 // import { PreferencesData} from '../types/database';
@@ -73,7 +70,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
       setDailyData([]);
       return;
     }
-    const relevantData = getSingleDayDrinkingSessions(
+    const relevantData = DSUtils.getSingleDayDrinkingSessions(
       currentDate,
       drinkingSessionData,
       false,

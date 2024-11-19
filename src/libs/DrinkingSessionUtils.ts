@@ -2,6 +2,7 @@ import CONST from '@src/CONST';
 import type {
   DrinkKey,
   DrinkingSession,
+  DrinkingSessionArray,
   DrinkingSessionId,
   DrinkingSessionList,
   DrinkingSessionType,
@@ -15,11 +16,17 @@ import {numberToVerboseString} from './TimeUtils';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
 import {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
 import DBPATHS from '@database/DBPATHS';
-import {format, subMilliseconds} from 'date-fns';
 import Onyx, {OnyxKey} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 import {auth} from './Firebase/FirebaseApp';
-import {formatInTimeZone} from 'date-fns-tz';
+import {
+  endOfMonth,
+  endOfToday,
+  format,
+  subMilliseconds,
+  startOfMonth,
+} from 'date-fns';
+import {formatInTimeZone, utcToZonedTime} from 'date-fns-tz';
 import {
   AddDrinksOptions,
   RemoveDrinksOptions,
@@ -478,6 +485,62 @@ function determineSessionMostCommonDrink(
   return mostCommonDrink;
 }
 
+/** Subset an array of drinking sessions to a single day.
+ *
+ * @param dateObject Date type object for whose day to subset the sessions to
+ * @param sessions An array of sessions to subset
+ * @param returnArray If true, return an array of sessions without IDs. If false,
+ *  simply subset the drinking session list to the relevant sessions.
+ * @returns The subsetted array of sessions
+ */
+function getSingleDayDrinkingSessions(
+  date: Date,
+  sessions: DrinkingSessionList | undefined,
+  returnArray = true,
+): DrinkingSessionArray | DrinkingSessionList {
+  // This is without timezones
+  const sessionBelongsToDate = (session: DrinkingSession) => {
+    const tz = session.timezone ?? timezone.selected;
+    const sessionDate = formatInTimeZone(session.start_time, tz, 'yyyy-MM-dd');
+    return sessionDate === format(date, 'yyyy-MM-dd');
+  };
+
+  if (returnArray) {
+    return _.filter(sessions, session => sessionBelongsToDate(session));
+  }
+
+  return _.entries(sessions)
+    .filter(([sessionId, session]) => sessionBelongsToDate(session))
+    .reduce((acc, [sessionId, session]) => {
+      acc[sessionId] = session;
+      return acc;
+    }, {} as DrinkingSessionList);
+}
+
+/** Subset an array of drinking sessions to the current month only.
+ *
+ * @param dateObject Date type object for whose month to subset the sessions to
+ * @param sessions An array of sessions to subset
+ * @param untilToday If true, include no sessions that occured after today
+ * @returns The subsetted array of sessions
+ */
+function getSingleMonthDrinkingSessions(
+  date: Date,
+  sessions: DrinkingSessionArray,
+  untilToday = false,
+) {
+  const startDate = startOfMonth(date);
+  const endDate = untilToday ? endOfToday() : endOfMonth(date);
+
+  const monthDrinkingSessions = sessions.filter(session => {
+    const tz = session.timezone ?? timezone.selected;
+    const sessionDate = new Date(utcToZonedTime(session.start_time, tz));
+    return sessionDate >= startDate && sessionDate <= endDate;
+  });
+
+  return monthDrinkingSessions;
+}
+
 /**
  * Get the displayName for a single session participant.
  */
@@ -687,6 +750,8 @@ export {
   getEmptySession,
   getSessionAddDrinksOptions,
   getSessionRemoveDrinksOptions,
+  getSingleDayDrinkingSessions,
+  getSingleMonthDrinkingSessions,
   getUserDetailTooltipText,
   isDifferentDay,
   isDrinkTypeKey,

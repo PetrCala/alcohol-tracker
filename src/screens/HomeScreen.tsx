@@ -15,7 +15,6 @@ import {
   dateToDateObject,
   calculateThisMonthDrinks,
   calculateThisMonthUnits,
-  getSingleMonthDrinkingSessions,
   timestampToDate,
   timestampToDateString,
 } from '@libs/DataHandling';
@@ -183,7 +182,7 @@ function HomeScreen({route}: HomeScreenProps) {
       drinkingSessionArray,
       preferences.drinks_to_units,
     );
-    const thisMonthSessionCount = getSingleMonthDrinkingSessions(
+    const thisMonthSessionCount = DSUtils.getSingleMonthDrinkingSessions(
       timestampToDate(state.visibleDateObject.timestamp),
       drinkingSessionArray,
       false,
