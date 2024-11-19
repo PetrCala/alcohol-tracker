@@ -48,34 +48,44 @@ function updateLocalData(
  *
  * @param db Firebase Database object
  * @param string userID User ID
- * @param newSessionData Data to save the new drinking session with
+ * @param updates The updates to send
  * @param updateStatus Whether to update the user status data or not
- * @param updateLocal Whether to update the local data or not. This means removing the data from the Onyx store.
  * @returnsPromise void.
  *  */
 async function saveDrinkingSessionData(
   db: Database,
   userID: UserID,
-  newSessionData: DrinkingSession,
+  updates: Partial<DrinkingSession>,
   sessionKey: string,
   updateStatus?: boolean,
-  updateLocal?: boolean,
 ): Promise<void> {
-  newSessionData.drinks = newSessionData.drinks || {}; // Can not send undefined
-  const updates: Record<string, any> = {};
-  updates[drinkingSessionRef.getRoute(userID, sessionKey)] = newSessionData;
+  const updatesToDB: Record<string, any> = {};
+
+  // Build the database paths for the updates
+  function buildUpdates(updates: any, path: string = '') {
+    for (const [key, value] of Object.entries(updates)) {
+      const currentPath = path ? `${path}/${key}` : key;
+      if (value && typeof value === 'object' && !Array.isArray(value)) {
+        // Recursively handle nested objects
+        buildUpdates(value, currentPath);
+      } else {
+        // Set the value at the current path
+        const dbPath = `${drinkingSessionRef.getRoute(userID, sessionKey)}/${currentPath}`;
+        updatesToDB[dbPath] = value;
+      }
+    }
+  }
+
+  buildUpdates(updates);
+
   if (updateStatus) {
-    const userStatusData: UserStatus = {
-      last_online: new Date().getTime(),
-      latest_session_id: sessionKey,
-      latest_session: newSessionData,
+    const userStatusPath = userStatusRef.getRoute(userID);
+    updatesToDB[`${userStatusPath}/latest_session`] = {
+      ...(updates as any),
     };
-    updates[userStatusRef.getRoute(userID)] = userStatusData;
   }
-  await update(ref(db), updates);
-  if (updateLocal) {
-    Onyx.set(ONYXKEYS.EDIT_SESSION_DATA, null);
-  }
+
+  await update(ref(db), updatesToDB);
 }
 
 /**

@@ -1,8 +1,14 @@
 ﻿import type {Database} from 'firebase/database';
 import {get, ref, child, push, onValue, off} from 'firebase/database';
-import type {Profile, ProfileList, UserStatusList} from '@src/types/onyx';
+import type {
+  DrinkingSession,
+  Profile,
+  ProfileList,
+  UserStatusList,
+} from '@src/types/onyx';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
 import DBPATHS from './DBPATHS';
+import {Diff} from 'deep-diff';
 
 /** Read data once from the realtime database using get(). Return the data if it exists.
  *
@@ -127,4 +133,55 @@ export async function fetchDisplayDataForUsers(
     });
   }
   return newDisplayData;
+}
+
+export function differencesToUpdates(
+  differences: Diff<any, any>[],
+): Partial<DrinkingSession> {
+  const updates: any = {};
+
+  differences.forEach(difference => {
+    const path = difference.path || [];
+
+    if (path.length === 0) {
+      return; // Ignore if path is empty
+    }
+
+    // Build the nested updates object based on the path
+    let current = updates;
+    for (let i = 0; i < path.length - 1; i++) {
+      const key = path[i];
+      if (!current[key]) {
+        current[key] = {};
+      }
+      current = current[key];
+    }
+
+    const lastKey = path[path.length - 1];
+
+    if (difference.kind === 'A') {
+      // Handle array changes
+      const index = difference.index;
+      const arrayPath = [...(difference.path || []), index];
+      // Build the nested updates object based on the array path
+      let current = updates;
+      for (let i = 0; i < arrayPath.length - 1; i++) {
+        const key = arrayPath[i];
+        if (!current[key]) {
+          current[key] = {};
+        }
+        current = current[key];
+      }
+      const lastKey = arrayPath[arrayPath.length - 1];
+      current[lastKey] = difference.item?.rhs;
+    } else if (difference.kind === 'N' || difference.kind === 'E') {
+      // For new, edited, or array changes
+      current[lastKey] = difference.rhs;
+    } else if (difference.kind === 'D') {
+      // For deleted properties, set to null or handle deletion accordingly
+      current[lastKey] = null; // Or you can decide how to handle deletions
+    }
+  });
+
+  return updates;
 }
