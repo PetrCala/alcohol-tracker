@@ -205,7 +205,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
 
     const onAddSessionButtonPress = () => {
       try {
-        setLoadingText(translate('liveSessionScreen.loading'));
+        setLoadingText(translate('common.loading'));
         const newSession = DS.getNewSessionToEdit(
           db,
           auth.currentUser,
