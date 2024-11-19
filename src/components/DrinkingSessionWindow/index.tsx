@@ -358,14 +358,14 @@ function DrinkingSessionWindow({
           </View>
         ) : (
           <>
-            <DrinkTypesView sessionId={sessionId} />
+            <DrinkTypesView session={session} />
             <SessionDetailsWindow
               sessionId={sessionId}
               session={session}
               onBlackoutChange={(value: boolean) =>
                 DS.updateBlackout(session, value)
               }
-              shouldAllowDateChange={session.type !== CONST.SESSION_TYPES.LIVE}
+              shouldAllowDateChange={type !== CONST.SESSION_TYPES.LIVE}
               shouldAllowTimezoneChange={
                 !session?.ongoing
                 // session.type !== CONST.SESSION_TYPES.LIVE // Enable this down the line

@@ -352,7 +352,7 @@ function getNewSessionToEdit(
   user: User | null,
   currentDate: Date,
   timezone: SelectedTimezone | undefined,
-): DrinkingSessionId {
+): DrinkingSession {
   if (!user) {
     throw new Error(Localize.translateLocal('dayOverviewScreen.error.open'));
   }
@@ -372,9 +372,7 @@ function getNewSessionToEdit(
     timezone: timezone,
   });
 
-  updateLocalData(newSessionId, newSession, ONYXKEYS.EDIT_SESSION_DATA);
-
-  return newSessionId;
+  return newSession;
 }
 
 /**
@@ -401,9 +399,12 @@ function navigateToLiveSessionScreen(
  * @param session Current session data
  */
 function navigateToEditSessionScreen(
-  sessionId: DrinkingSessionId,
+  sessionId: DrinkingSessionId | undefined,
   session: DrinkingSession,
 ) {
+  if (!sessionId) {
+    throw new Error(Localize.translateLocal('drinkingSession.error.missingId'));
+  }
   updateLocalData(sessionId, session, ONYXKEYS.EDIT_SESSION_DATA);
   Navigation.navigate(ROUTES.DRINKING_SESSION_EDIT.getRoute(sessionId));
 }

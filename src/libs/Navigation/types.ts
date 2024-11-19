@@ -85,6 +85,9 @@ type DrinkingSessionNavigatorParamList = {
   [SCREENS.DRINKING_SESSION.LIVE]: {
     sessionId: DrinkingSessionId;
   };
+  [SCREENS.DRINKING_SESSION.EDIT]: {
+    sessionId: DrinkingSessionId;
+  };
   [SCREENS.DRINKING_SESSION.SESSION_DATE_SCREEN]: {
     sessionId: DrinkingSessionId;
   };
