@@ -27,14 +27,13 @@ import ProfileImage from '@components/ProfileImage';
 import CONST from '@src/CONST';
 import type {DrinkingSessionArray, DrinkingSessionId} from '@src/types/onyx';
 import ROUTES from '@src/ROUTES';
-import Navigation, {navigationRef} from '@navigation/Navigation';
+import Navigation from '@navigation/Navigation';
 import type {StackScreenProps} from '@react-navigation/stack';
 import {useFocusEffect} from '@react-navigation/native';
 import type {BottomTabNavigatorParamList} from '@libs/Navigation/types';
 import type SCREENS from '@src/SCREENS';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import type {DateData} from 'react-native-calendars';
-import DBPATHS from '@database/DBPATHS';
 import type {StatData} from '@components/Items/StatOverview';
 import {StatsOverview} from '@components/Items/StatOverview';
 import {getPlural} from '@libs/StringUtilsKiroku';
@@ -134,25 +133,31 @@ function HomeScreen({route}: HomeScreenProps) {
     },
   ];
 
-  // If there is an ongoing session, open it, otherwise start a new one
   const onOpenLiveSessionPress = async () => {
+    // If there is an ongoing session, open it
     if (state?.ongoingSessionId) {
-      // Assume the live session data is in sync with the database
-      Navigation.navigate(
-        ROUTES.DRINKING_SESSION_LIVE.getRoute(state.ongoingSessionId),
-      );
+      try {
+        if (!drinkingSessionData) {
+          throw new Error(translate('homeScreen.error.title'));
+        }
+        const session = drinkingSessionData[state.ongoingSessionId];
+        DS.navigateToLiveSessionScreen(session?.id, session);
+      } catch (error: any) {
+        ErrorUtils.raiseAlert(error);
+      }
       return;
     }
 
+    // Start a new session
     try {
       setIsStartingSession(true);
-      const newSessionId = await DS.startLiveDrinkingSession(
+      const newSession = await DS.startLiveDrinkingSession(
         db,
         user,
         userData?.timezone?.selected,
       );
-      dispatch({type: 'SET_ONGOING_SESSION_ID', payload: newSessionId});
-      Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(newSessionId));
+      dispatch({type: 'SET_ONGOING_SESSION_ID', payload: newSession?.id});
+      DS.navigateToLiveSessionScreen(newSession?.id, newSession);
     } catch (error: any) {
       ErrorUtils.raiseAlert(error, translate('homeScreen.error.title'));
     } finally {
@@ -245,12 +250,6 @@ function HomeScreen({route}: HomeScreenProps) {
       state.shouldNavigateToTzFix,
     ]),
   );
-
-  // Ensure the live session data is in sync with the database on component mount
-  useEffect(() => {
-    DS.syncLocalLiveSessionData(state.ongoingSessionId, drinkingSessionData);
-  }, [state.ongoingSessionId, drinkingSessionData]);
-
   if (!user) {
     Navigation.resetToHome();
     return;
