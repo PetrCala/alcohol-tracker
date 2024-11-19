@@ -41,7 +41,6 @@ import {getReceivedRequestsCount} from '@libs/FriendUtils';
 import FriendRequestCounter from '@components/Social/FriendRequestCounter';
 import ScreenWrapper from '@components/ScreenWrapper';
 import MessageBanner from '@components/Info/MessageBanner';
-import VerifyEmailPopup from '@components/Popups/VerifyEmailPopup';
 import useThemeStyles from '@hooks/useThemeStyles';
 import getPlatform from '@libs/getPlatform';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
@@ -60,7 +59,6 @@ type State = {
   drinksConsumed: number;
   unitsConsumed: number;
   ongoingSessionId: DrinkingSessionId | undefined;
-  verifyEmailModalVisible: boolean;
   shouldNavigateToTzFix: boolean;
 };
 
@@ -75,7 +73,6 @@ const initialState: State = {
   drinksConsumed: 0,
   unitsConsumed: 0,
   ongoingSessionId: undefined,
-  verifyEmailModalVisible: false,
   shouldNavigateToTzFix: false,
 };
 
@@ -91,8 +88,6 @@ const reducer = (state: State, action: Action): State => {
       return {...state, unitsConsumed: action.payload};
     case 'SET_ONGOING_SESSION_ID':
       return {...state, ongoingSessionId: action.payload};
-    case 'SET_VERIFY_EMAIL_MODAL_VISIBLE':
-      return {...state, verifyEmailModalVisible: action.payload};
     case 'SET_SHOULD_NAVIGATE_TO_TZ_FIX':
       return {...state, shouldNavigateToTzFix: action.payload};
     default:
@@ -310,15 +305,6 @@ function HomeScreen({route}: HomeScreenProps) {
             danger
           />
         )}
-        {/* User verification modal -- Enable later on
-        {user.emailVerified ? null : (
-          <MessageBanner
-            text="Your email is not verified!"
-            onPress={() =>
-              dispatch({type: 'SET_VERIFY_EMAIL_MODAL_VISIBLE', payload: true})
-            }
-          />
-        )} */}
         <View style={localStyles.statsOverviewHolder}>
           <StatsOverview statsData={statsData} />
         </View>
@@ -398,15 +384,6 @@ function HomeScreen({route}: HomeScreenProps) {
           />
         </TouchableOpacity>
       )}
-      <VerifyEmailPopup
-        visible={state.verifyEmailModalVisible}
-        onRequestClose={() =>
-          dispatch({
-            type: 'SET_VERIFY_EMAIL_MODAL_VISIBLE',
-            payload: false,
-          })
-        }
-      />
     </ScreenWrapper>
   );
 }
