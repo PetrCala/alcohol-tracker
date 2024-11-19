@@ -52,6 +52,7 @@ import Icon from '@components/Icon';
 import ScrollView from '@components/ScrollView';
 import useLocalize from '@hooks/useLocalize';
 import {roundToTwoDecimalPlaces} from '@libs/NumberUtils';
+import NoSessionsInfo from '@components/NoSessionsInfo';
 
 type State = {
   visibleDateObject: DateObject;
@@ -305,23 +306,28 @@ function HomeScreen({route}: HomeScreenProps) {
             danger
           />
         )}
-        <View style={localStyles.statsOverviewHolder}>
-          <StatsOverview statsData={statsData} />
-        </View>
-
-        <SessionsCalendar
-          drinkingSessionData={drinkingSessionData}
-          preferences={preferences}
-          visibleDateObject={state.visibleDateObject}
-          dispatch={dispatch}
-          onDayPress={(day: DateData) => {
-            Navigation.navigate(
-              ROUTES.DAY_OVERVIEW.getRoute(
-                timestampToDateString(day.timestamp),
-              ),
-            );
-          }}
-        />
+        {drinkingSessionData ? (
+          <>
+            <View style={localStyles.statsOverviewHolder}>
+              <StatsOverview statsData={statsData} />
+            </View>
+            <SessionsCalendar
+              drinkingSessionData={drinkingSessionData}
+              preferences={preferences}
+              visibleDateObject={state.visibleDateObject}
+              dispatch={dispatch}
+              onDayPress={(day: DateData) => {
+                Navigation.navigate(
+                  ROUTES.DAY_OVERVIEW.getRoute(
+                    timestampToDateString(day.timestamp),
+                  ),
+                );
+              }}
+            />
+          </>
+        ) : (
+          <NoSessionsInfo />
+        )}
       </ScrollView>
       <View style={commonStyles.mainFooter}>
         <View
