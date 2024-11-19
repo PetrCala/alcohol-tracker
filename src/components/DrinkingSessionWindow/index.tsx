@@ -219,7 +219,7 @@ function DrinkingSessionWindow({
           newSessionData,
           sessionId,
           false, // Do not update live status
-          true, // Clean the local onyx edit session data
+          // true, // Clean the local onyx edit session data
         );
       }
     } catch (error: any) {
@@ -385,20 +385,6 @@ function DrinkingSessionWindow({
                 : `${translate('liveSessionScreen.sessionOn')} ${DateUtils.getLocalizedDay(session.start_time, session.timezone)}`}
             </Text>
           </View>
-          {/* {isPending && (
-            <ActivityIndicator
-              size="small"
-              color="#0000ff"
-              style={localStyles.isPendingIndicator}
-            />
-          )} */}
-          {/* <SuccessIndicator
-            visible={dbSyncSuccessful}
-            successStyle={[
-              localStyles.successStyle,
-              commonStyles.successIndicator,
-            ]}
-          /> */}
         </View>
         <View style={localStyles.unitCountContainer}>
           <Text style={[localStyles.unitCountText, {color: sessionColor}]}>
@@ -519,17 +505,6 @@ function DrinkingSessionWindow({
 }
 
 const localStyles = StyleSheet.create({
-  isPendingIndicator: {
-    width: 25,
-    height: 25,
-    margin: 4,
-    position: 'absolute',
-    right: 0,
-  },
-  successStyle: {
-    position: 'absolute',
-    right: 0,
-  },
   unitCountContainer: {},
   unitCountText: {
     fontSize: 90,

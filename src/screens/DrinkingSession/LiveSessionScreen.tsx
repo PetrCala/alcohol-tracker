@@ -1,19 +1,26 @@
-﻿import React, {useRef, useState} from 'react';
+﻿import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {useFirebase} from '@context/global/FirebaseContext';
 import * as DS from '@libs/actions/DrinkingSession';
 import type {DrinkingSession} from '@src/types/onyx';
 import {useUserConnection} from '@context/global/UserConnectionContext';
-import UserOffline from '@components/UserOfflineModal';
 import CONST from '@src/CONST';
 import type {StackScreenProps} from '@react-navigation/stack';
 import type {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
-import ScreenWrapper from '@components/ScreenWrapper';
 import useLocalize from '@hooks/useLocalize';
-import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import {useOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 import DrinkingSessionWindow from '@components/DrinkingSessionWindow';
+import useBatchedUpdates from '@hooks/useBatchedUpdates';
+import {ActivityIndicator, StyleSheet} from 'react-native';
+import _ from 'lodash';
+import {diff} from 'deep-diff';
+import ScreenWrapper from '@components/ScreenWrapper';
+import SuccessIndicator from '@components/SuccessIndicator';
+import commonStyles from '@src/styles/commonStyles';
+import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
+import UserOfflineModal from '@components/UserOfflineModal';
+import {differencesToUpdates} from '@database/baseFunctions';
 
 type LiveSessionScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -28,21 +35,15 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   const {translate} = useLocalize();
   const {isOnline} = useUserConnection();
   const [session] = useOnyx(ONYXKEYS.LIVE_SESSION_DATA);
-  const initialSession = useRef<DrinkingSession | undefined>(session);
+  const sessionRef = useRef<DrinkingSession | undefined>(undefined);
   // Session details
   const [sessionFinished, setSessionFinished] = useState<boolean>(false);
   // Time info
   const [dbSyncSuccessful, setDbSyncSuccessful] = useState(false);
-  const [discardModalVisible, setDiscardModalVisible] =
-    useState<boolean>(false);
   const [loadingText, setLoadingText] = useState<string>('');
   useState<boolean>(false);
 
-  // const {isPending, enqueueUpdate} = useAsyncQueue(
-  //   async (newSession: DrinkingSession) => syncWithDb(newSession),
-  // );
-
-  const syncWithDb = async (newSessionData: DrinkingSession) => {
+  const syncWithDb = async (updates: Partial<DrinkingSession>) => {
     if (!user || !session) {
       return;
     }
@@ -51,7 +52,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       await DS.saveDrinkingSessionData(
         db,
         user.uid,
-        newSessionData,
+        updates,
         sessionId,
         true, // Update live session status
       );
@@ -61,33 +62,47 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     }
   };
 
-  // Fetch the session object at component mount
-  // useEffect(() => {
-  //   const newSession =
-  //     liveSessionData?.id === sessionId ? liveSessionData : editSessionData;
-  //   setSession(newSession);
-  //   setSessionIsLive(!!newSession?.ongoing);
+  const processUpdates = async (updates: Partial<DrinkingSession>) => {
+    await syncWithDb(updates);
+  };
 
-  //   // Set the intial session ref upon the first load
-  //   if (isFetchingSessionData) {
-  //     initialSession.current = newSession;
-  //     setIsFetchingSessionData(false);
-  //   }
-  // }, []);
+  const {isPending, enqueueUpdate: batchedEnqueue} = useBatchedUpdates(
+    processUpdates,
+    2000,
+  );
+
+  const enqueueUpdate = useCallback(
+    (updates: Partial<DrinkingSession>) => {
+      batchedEnqueue(updates);
+    },
+    [batchedEnqueue],
+  );
 
   // Synchronize the session with database
-  // useEffect(() => {
-  //   // Only schedule a database update if any hooks changed
-  //   // Do not automatically save if the session is over, or
-  //   // if the initial fetch has not finished
-  //   if (!user || !sessionIsLive || !session || sessionFinished) {
-  //     return;
-  //   }
-  //   enqueueUpdate({...session, ongoing: true});
-  // }, [session]);
+  useEffect(() => {
+    // Only schedule a database update if any hooks changed
+    // Do not automatically save if the session is over, or
+    // if the initial fetch has not finished
+    const shouldRunUpdates =
+      !!user &&
+      !!session?.ongoing &&
+      !!session &&
+      !sessionFinished &&
+      !!sessionRef.current;
+
+    if (shouldRunUpdates) {
+      const differences = diff(sessionRef.current, session);
+      if (differences && differences.length > 0) {
+        const updates = differencesToUpdates(differences);
+        console.log(updates);
+        // enqueueUpdate(updates);
+      }
+    }
+    sessionRef.current = session;
+  }, [session, enqueueUpdate]);
 
   if (!isOnline) {
-    return <UserOffline />;
+    return <UserOfflineModal />;
   }
   if (loadingText || !session) {
     return <FullScreenLoadingIndicator loadingText={loadingText} />;
@@ -95,6 +110,17 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
 
   return (
     <ScreenWrapper testID={LiveSessionScreen.displayName}>
+      {isPending && (
+        <ActivityIndicator
+          size="small"
+          color="#0000ff"
+          style={localStyles.isPendingIndicator}
+        />
+      )}
+      <SuccessIndicator
+        visible={dbSyncSuccessful}
+        successStyle={[localStyles.successStyle, commonStyles.successIndicator]}
+      />
       <DrinkingSessionWindow
         sessionId={sessionId}
         session={session}
@@ -104,6 +130,22 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     </ScreenWrapper>
   );
 }
+
+const localStyles = StyleSheet.create({
+  isPendingIndicator: {
+    width: 25,
+    height: 25,
+    margin: 4,
+    position: 'absolute',
+    right: 10,
+    top: 70,
+  },
+  successStyle: {
+    position: 'absolute',
+    right: 10,
+    top: 70,
+  },
+});
 
 LiveSessionScreen.displayName = 'Live Session Screen';
 export default LiveSessionScreen;
