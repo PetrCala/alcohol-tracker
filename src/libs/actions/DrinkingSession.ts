@@ -28,6 +28,7 @@ const drinkingSessionRef = DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID;
 const drinkingSessionDrinksRef =
   DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID_DRINKS;
 const userStatusRef = DBPATHS.USER_STATUS_USER_ID;
+const userStatusLatestSessionRef = DBPATHS.USER_STATUS_USER_ID_LATEST_SESSION;
 
 /**
  * Set the edit session data object in Onyx so that it can be modified. This function should be called only if the relevant object already exists in the onyx database.
@@ -80,8 +81,8 @@ async function saveDrinkingSessionData(
   buildUpdates(updates, dsPath);
 
   if (updateStatus) {
-    const userStatusPath = userStatusRef.getRoute(userID);
-    buildUpdates(updates, `${userStatusPath}/latestSession`);
+    const userStatusPath = userStatusLatestSessionRef.getRoute(userID);
+    buildUpdates(updates, userStatusPath);
   }
 
   await update(ref(db), updatesToDB);
