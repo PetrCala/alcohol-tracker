@@ -56,7 +56,7 @@ async function saveDrinkingSessionData(
   db: Database,
   userID: UserID,
   updates: Partial<DrinkingSession>,
-  sessionKey: string,
+  sessionId: DrinkingSessionId,
   updateStatus?: boolean,
 ): Promise<void> {
   const updatesToDB: Record<string, any> = {};
@@ -76,7 +76,7 @@ async function saveDrinkingSessionData(
     }
   }
 
-  const dsPath = drinkingSessionRef.getRoute(userID, sessionKey);
+  const dsPath = drinkingSessionRef.getRoute(userID, sessionId);
   buildUpdates(updates, dsPath);
 
   if (updateStatus) {
