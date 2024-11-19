@@ -129,13 +129,6 @@ async function startLiveDrinkingSession(
     throw new Error(Localize.translateLocal('homeScreen.error.sessionStart'));
   }
 
-  // The user is not in an active session
-  const newSessionData: DrinkingSession = DSUtils.getEmptySession(
-    CONST.SESSION_TYPES.LIVE,
-    timezone,
-    true,
-  );
-
   const newSessionId = generateDatabaseKey(
     db,
     DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(user.uid),
@@ -143,6 +136,14 @@ async function startLiveDrinkingSession(
   if (!newSessionId) {
     throw new Error(Localize.translateLocal('homeScreen.error.sessionStart'));
   }
+
+  // The user is not in an active session
+  const newSessionData: DrinkingSession = DSUtils.getEmptySession({
+    id: newSessionId,
+    type: CONST.SESSION_TYPES.LIVE,
+    timezone: timezone,
+    ongoing: true,
+  });
 
   // Update Firebase
   const updates: Record<string, any> = {};
@@ -363,12 +364,13 @@ function getNewSessionToEdit(
     throw new Error(Localize.translateLocal('dayOverviewScreen.error.open'));
   }
   const timestamp = currentDate.getTime();
-  const newSession: DrinkingSession = DSUtils.getEmptySession(
-    CONST.SESSION_TYPES.EDIT,
-    timezone,
-  );
-  newSession.start_time = timestamp;
-  newSession.end_time = timestamp;
+  const newSession: DrinkingSession = DSUtils.getEmptySession({
+    id: newSessionId,
+    start_time: timestamp,
+    end_time: timestamp,
+    type: CONST.SESSION_TYPES.EDIT,
+    timezone: timezone,
+  });
 
   updateLocalData(newSessionId, newSession, ONYXKEYS.EDIT_SESSION_DATA);
 
