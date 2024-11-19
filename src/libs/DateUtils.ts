@@ -199,18 +199,24 @@ function isToday(date: Date, timeZone: SelectedTimezone): boolean {
  * @returns {string} The formatted time string localized to the selected timezone.
  */
 function getLocalizedTime(
-  date: Date | string | number,
+  date: Date | string | number | undefined | null,
   selectedTimezone: SelectedTimezone = timezone.selected,
   formatString: string = CONST.DATE.SHORT_TIME_FORMAT,
 ): string {
+  if (!date) {
+    return 'unknown';
+  }
   return formatInTimeZone(date, selectedTimezone, formatString);
 }
 
 function getLocalizedDay(
-  date: Date | string | number,
+  date: Date | string | number | undefined | null,
   selectedTimezone: SelectedTimezone = timezone.selected,
   formatString: string = CONST.DATE.SHORT_DATE_FORMAT,
 ): string {
+  if (!date) {
+    return 'unknown';
+  }
   const day = utcToZonedTime(date, selectedTimezone);
   return format(day, formatString);
 }

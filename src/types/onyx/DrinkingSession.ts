@@ -18,13 +18,13 @@ type DrinkingSessionType = ValueOf<typeof CONST.SESSION_TYPES>;
 type DrinkingSession = {
   id?: DrinkingSessionId; // Only used locally - in the database it's the key
   start_time: number;
-  end_time: number;
+  end_time?: number;
   timezone?: SelectedTimezone;
   drinks?: DrinksList;
-  blackout: boolean;
-  note: string;
+  blackout?: boolean;
+  note?: string;
   ongoing?: boolean;
-  type: DrinkingSessionType;
+  type?: DrinkingSessionType;
   session_type?: string; // TODO: remove in 0.4.x
 };
 

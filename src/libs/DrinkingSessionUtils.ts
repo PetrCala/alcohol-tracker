@@ -74,18 +74,20 @@ Onyx.connect({
  * @returns An empty drinking session object.
  */
 function getEmptySession(
-  type?: DrinkingSessionType,
-  timezone?: SelectedTimezone,
-  ongoing?: boolean,
+  session: Partial<DrinkingSession>,
+  // type?: DrinkingSessionType,
+  // timezone?: SelectedTimezone,
+  // ongoing?: boolean,
 ): DrinkingSession {
   const emptySession: DrinkingSession = {
-    start_time: Date.now(),
-    end_time: Date.now(),
-    blackout: false,
-    note: '',
-    timezone: timezone ?? CONST.DEFAULT_TIME_ZONE.selected,
-    type: type ?? CONST.SESSION_TYPES.EDIT,
-    ...(ongoing && {ongoing: true}),
+    id: session?.id,
+    start_time: session?.start_time || Date.now(),
+    end_time: session?.end_time || Date.now(),
+    blackout: session?.blackout || false,
+    note: session?.note || '',
+    timezone: session?.timezone || CONST.DEFAULT_TIME_ZONE.selected,
+    type: session?.type || CONST.SESSION_TYPES.EDIT,
+    ongoing: session?.ongoing,
   };
   return emptySession;
 }
@@ -418,7 +420,7 @@ function extractSessionOrEmpty(
   drinkingSessionData: DrinkingSessionList | undefined,
 ): DrinkingSession {
   if (isEmptyObject(drinkingSessionData)) {
-    return getEmptySession();
+    return getEmptySession({});
   }
   if (
     drinkingSessionData &&
@@ -426,7 +428,7 @@ function extractSessionOrEmpty(
   ) {
     return drinkingSessionData[sessionId];
   }
-  return getEmptySession();
+  return getEmptySession({});
 }
 
 /** Given a DrinkingSession object, determine its type (i.e.,
@@ -685,10 +687,12 @@ function shiftSessionTimestamps(
     session.start_time,
     millisecondsToSub,
   ).getTime();
-  convertedSession.end_time = subMilliseconds(
-    session.end_time,
-    millisecondsToSub,
-  ).getTime();
+  if (!!session.end_time) {
+    convertedSession.end_time = subMilliseconds(
+      session.end_time,
+      millisecondsToSub,
+    ).getTime();
+  }
 
   const convertedDrinks: DrinksList = {};
   const existingTimestamps = new Set<number>();
