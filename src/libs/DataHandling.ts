@@ -460,11 +460,6 @@ export function getUniqueDrinkTypesInSession(
   return Array.from(uniqueKeys);
 }
 
-/** Type guard to check if a given key is a valid DrinkType key */
-export function isDrinkTypeKey(key: string): key is keyof Drinks {
-  return _.includes(Object.values(CONST.DRINKS.KEYS), key);
-}
-
 // /** Using a DrinksList and the drinks to units conversion object, calculate how many units this object amounts to.
 //  *
 //  * @param drinksObject DrinksList type
