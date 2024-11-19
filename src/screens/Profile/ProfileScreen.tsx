@@ -17,7 +17,6 @@ import {readDataOnce} from '@database/baseFunctions';
 import {
   calculateThisMonthUnits,
   dateToDateObject,
-  getSingleMonthDrinkingSessions,
   objKeys,
   timestampToDate,
   timestampToDateString,
@@ -26,6 +25,7 @@ import type {DateObject} from '@src/types/time';
 import SessionsCalendar from '@components/Calendar';
 import {getCommonFriendsCount} from '@libs/FriendUtils';
 import ManageFriendPopup from '@components/Popups/Profile/ManageFriendPopup';
+import * as DSUtils from '@libs/DrinkingSessionUtils';
 import type {DrinkingSessionArray} from '@src/types/onyx';
 import type {UserList} from '@src/types/onyx/OnyxCommon';
 import type {StackScreenProps} from '@react-navigation/stack';
@@ -177,7 +177,7 @@ function ProfileScreen({route}: ProfileScreenProps) {
       drinkingSessionArray,
       preferences.drinks_to_units,
     );
-    const thisMonthSessionCount = getSingleMonthDrinkingSessions(
+    const thisMonthSessionCount = DSUtils.getSingleMonthDrinkingSessions(
       timestampToDate(state.visibleDateObject.timestamp),
       drinkingSessionArray,
       false,
