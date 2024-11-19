@@ -49,7 +49,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     }
     try {
       setDbSyncSuccessful(false);
-      await DS.saveDrinkingSessionData(
+      await DS.updateDrinkingSessionData(
         db,
         user.uid,
         updates,

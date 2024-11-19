@@ -53,7 +53,7 @@ function updateLocalData(
  * @param updateStatus Whether to update the user status data or not
  * @returnsPromise void.
  *  */
-async function saveDrinkingSessionData(
+async function updateDrinkingSessionData(
   db: Database,
   userID: UserID,
   updates: Partial<DrinkingSession>,
@@ -161,7 +161,7 @@ async function startLiveDrinkingSession(
   return newSessionId;
 }
 
-/** End a live drinking session
+/** Save final drinking session data to the database
  *
  * @param db Firebase Database object
  * @param string userID User ID
@@ -169,28 +169,32 @@ async function startLiveDrinkingSession(
  * @param sesisonKey ID of the session to edit (can be null in case of finishing the session)
  * @returnsPromise void.
  *  */
-async function endLiveDrinkingSession(
+async function saveDrinkingSessionData(
   db: Database,
   userID: string,
   newSessionData: DrinkingSession,
   sessionKey: string,
+  onyxKey: OnyxKey,
+  updateStatus?: boolean,
 ): Promise<void> {
   const updates: Record<string, any> = {};
-  const userStatusData: UserStatus = {
-    // ETC - 1
-    last_online: new Date().getTime(),
-    latest_session_id: sessionKey,
-    latest_session: newSessionData,
-  };
-  updates[userStatusRef.getRoute(userID)] = userStatusData;
+  if (updateStatus) {
+    const userStatusData: UserStatus = {
+      // ETC - 1
+      last_online: new Date().getTime(),
+      latest_session_id: sessionKey,
+      latest_session: newSessionData,
+    };
+    updates[userStatusRef.getRoute(userID)] = userStatusData;
+  }
   updates[drinkingSessionRef.getRoute(userID, sessionKey)] = newSessionData;
+
   await update(ref(db), updates);
-  Onyx.set(ONYXKEYS.LIVE_SESSION_DATA, null);
+
+  Onyx.set(onyxKey, null);
 }
 
 /** Remove drinking session data from the database
- *
- * Should only be used to edit non-live sessions.
  *
  * @param db Firebase Database object
  * @param userID User ID
@@ -201,30 +205,19 @@ async function removeDrinkingSessionData(
   db: Database,
   userID: string,
   sessionKey: string,
+  onyxKey: OnyxKey,
+  updateStatus?: boolean,
 ): Promise<void> {
   const updates: Record<string, any> = {};
   updates[drinkingSessionRef.getRoute(userID, sessionKey)] = null;
-  await update(ref(db), updates);
-}
+  if (updateStatus) {
+    const userStatusData: UserStatus = {last_online: new Date().getTime()}; // No session info
+    updates[userStatusRef.getRoute(userID)] = userStatusData;
+  }
 
-/**
- * Discards a drinking session for a specific user.
- *
- * @param db - The database instance.
- * @param userID - The ID of the user.
- * @param sessionKey - The key of the session to be discarded.
- * @returns A Promise that resolves when the session is discarded.
- */
-async function discardLiveDrinkingSession(
-  db: Database,
-  userID: string,
-  sessionKey: string,
-): Promise<void> {
-  const updates: Record<string, any> = {};
-  const userStatusData: UserStatus = {last_online: new Date().getTime()}; // No session info
-  updates[drinkingSessionRef.getRoute(userID, sessionKey)] = null;
-  updates[userStatusRef.getRoute(userID)] = userStatusData;
   await update(ref(db), updates);
+
+  Onyx.set(onyxKey, null);
 }
 
 /**
@@ -400,14 +393,13 @@ function navigateToEditSessionScreen(
 }
 
 export {
-  discardLiveDrinkingSession,
-  endLiveDrinkingSession,
   navigateToEditSessionScreen,
   removeDrinkingSessionData,
   saveDrinkingSessionData,
   startLiveDrinkingSession,
   syncLocalLiveSessionData,
   updateBlackout,
+  updateDrinkingSessionData,
   updateDrinks,
   updateNote,
   updateLocalData,

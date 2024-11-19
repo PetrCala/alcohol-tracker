@@ -19,16 +19,8 @@ import DBPATHS from '@database/DBPATHS';
 import Onyx, {OnyxKey} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 import {auth} from './Firebase/FirebaseApp';
-import {
-  endOfMonth,
-  endOfToday,
-  format,
-  subMilliseconds,
-  startOfMonth,
-  startOfDay,
-  endOfDay,
-} from 'date-fns';
-import {formatInTimeZone, utcToZonedTime, zonedTimeToUtc} from 'date-fns-tz';
+import {format, subMilliseconds} from 'date-fns';
+import {formatInTimeZone} from 'date-fns-tz';
 import {
   AddDrinksOptions,
   RemoveDrinksOptions,
