@@ -25,6 +25,8 @@ import {
   format,
   subMilliseconds,
   startOfMonth,
+  startOfDay,
+  endOfDay,
 } from 'date-fns';
 import {formatInTimeZone, utcToZonedTime} from 'date-fns-tz';
 import {
@@ -499,11 +501,18 @@ function getSingleDayDrinkingSessions(
   returnArray = true,
 ): DrinkingSessionArray | DrinkingSessionList {
   // This is without timezones
+  const start = startOfDay(date).getTime();
+  const end = endOfDay(date).getTime();
+
+  const baseTimezone = timezone.selected;
+
   const sessionBelongsToDate = (session: DrinkingSession) => {
-    const tz = session.timezone ?? timezone.selected;
-    const sessionDate = formatInTimeZone(session.start_time, tz, 'yyyy-MM-dd');
-    return sessionDate === format(date, 'yyyy-MM-dd');
+    const tz = session.timezone ?? baseTimezone;
+    const sessionTimestamp = utcToZonedTime(session.start_time, tz).getTime();
+    return end >= sessionTimestamp && start <= sessionTimestamp;
   };
+  // const sessionDate = formatInTimeZone(session.start_time, tz, 'yyyy-MM-dd');
+  // return sessionDate === format(date, 'yyyy-MM-dd');
 
   if (returnArray) {
     return _.filter(sessions, session => sessionBelongsToDate(session));
@@ -531,11 +540,16 @@ function getSingleMonthDrinkingSessions(
 ) {
   const startDate = startOfMonth(date);
   const endDate = untilToday ? endOfToday() : endOfMonth(date);
+  const baseTimezone = timezone.selected;
+
+  const start = startDate.getTime();
+  const end = endDate.getTime();
 
   const monthDrinkingSessions = sessions.filter(session => {
-    const tz = session.timezone ?? timezone.selected;
-    const sessionDate = new Date(utcToZonedTime(session.start_time, tz));
-    return sessionDate >= startDate && sessionDate <= endDate;
+    const tz = session.timezone ?? baseTimezone;
+    const sessionDate = utcToZonedTime(session.start_time, tz);
+    const sessionTimestamp = sessionDate.getTime();
+    return sessionTimestamp >= start && sessionTimestamp <= end;
   });
 
   return monthDrinkingSessions;
