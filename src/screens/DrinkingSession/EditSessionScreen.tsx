@@ -1,5 +1,4 @@
-import React, {useRef} from 'react';
-import type {DrinkingSession} from '@src/types/onyx';
+import React from 'react';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import CONST from '@src/CONST';
 import type {StackScreenProps} from '@react-navigation/stack';
@@ -24,7 +23,6 @@ function EditSessionScreen({route}: EditSessionScreenProps) {
   const {isOnline} = useUserConnection();
   const {translate} = useLocalize();
   const [session] = useOnyx(ONYXKEYS.EDIT_SESSION_DATA);
-  const sessionRef = useRef<DrinkingSession | undefined>(undefined);
 
   if (!isOnline) {
     return <UserOfflineModal />;

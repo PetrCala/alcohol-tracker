@@ -79,6 +79,7 @@ export default {
     contacts: 'Contacts',
     recents: 'Recents',
     close: 'Close',
+    loading: 'Loading',
     download: 'Download',
     downloading: 'Downloading',
     warning: 'Warning',

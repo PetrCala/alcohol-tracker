@@ -1,4 +1,12 @@
-import React, {useState, useEffect, useMemo} from 'react';
+import React, {
+  useState,
+  useEffect,
+  useMemo,
+  ForwardedRef,
+  Ref,
+  ElementRef,
+  useRef,
+} from 'react';
 import {
   Alert,
   BackHandler,
@@ -43,6 +51,7 @@ import DateUtils from '@libs/DateUtils';
 import {DrinkingSessionWindowProps} from './types';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
+import {isEqual} from 'lodash';
 
 function DrinkingSessionWindow({
   sessionId,
@@ -58,8 +67,8 @@ function DrinkingSessionWindow({
   const {translate} = useLocalize();
   const {preferences} = useDatabaseData();
   const {windowWidth} = useWindowDimensions();
-  // const initialSession = useRef<DrinkingSession | undefined>(session);
-  // // Session details
+  const sessionRef = useRef<DrinkingSession | undefined>(session);
+  // Session details
   const [totalUnits, setTotalUnits] = useState<number>(0);
   const [sessionColor, setSessionColor] = useState<string>('green');
   const [sessionFinished, setSessionFinished] = useState<boolean>(false);
@@ -78,11 +87,10 @@ function DrinkingSessionWindow({
     ? translate('common.discard')
     : translate('common.delete');
 
-  // TODO
-  const hasSessionChanged = () => false;
-  // const hasSessionChanged = () => {
-  //   return !isEqual(initialSession.current, session);
-  // };
+  const hasSessionChanged = () => {
+    console.log('checking for change');
+    return !isEqual(sessionRef.current, session);
+  };
 
   const handleMonkePlus = () => {
     DS.updateDrinks(
@@ -238,16 +246,6 @@ function DrinkingSessionWindow({
       setShouldShowLeaveConfirmation(true); // Unsaved changes
       return;
     }
-    if (sessionIsLive) {
-      try {
-        setLoadingText(translate('liveSessionScreen.synchronizing'));
-        // await waitForNoPendingUpdate(); // TODO
-      } catch (error: any) {
-        Alert.alert('Database synchronization failed', error.message);
-      } finally {
-        setLoadingText('');
-      }
-    }
     confirmGoBack();
   };
 
@@ -296,7 +294,7 @@ function DrinkingSessionWindow({
   return (
     <>
       <HeaderWithBackButton
-        // onBackButtonPress={handleBackPress}
+        onBackButtonPress={handleBackPress}
         customRightButton={
           <Button
             onPress={() => setMonkeMode(!monkeMode)}
