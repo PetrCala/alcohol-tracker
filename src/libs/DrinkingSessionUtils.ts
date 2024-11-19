@@ -533,7 +533,7 @@ function getSingleDayDrinkingSessions(
 
 /** Subset an array of drinking sessions to the current month only.
  *
- * @param dateObject Date type object for whose month to subset the sessions to
+ * @param date Date type object for whose month to subset the sessions to
  * @param sessions An array of sessions to subset
  * @param untilToday If true, include no sessions that occured after today
  * @returns The subsetted array of sessions
@@ -542,22 +542,53 @@ function getSingleMonthDrinkingSessions(
   date: Date,
   sessions: DrinkingSessionArray,
   untilToday = false,
-) {
-  const startDate = startOfMonth(date);
-  const endDate = untilToday ? endOfToday() : endOfMonth(date);
+): DrinkingSessionArray {
   const baseTimezone = timezone.selected;
-
-  const start = startDate.getTime();
-  const end = endDate.getTime();
-
-  const monthDrinkingSessions = sessions.filter(session => {
+  const timezoneCache: Record<
+    string,
+    {startOfMonthUTC: number; endOfMonthUTC: number}
+  > = {};
+  const sessionBelongsToMonth = (session: DrinkingSession) => {
     const tz = session.timezone ?? baseTimezone;
-    const sessionDate = utcToZonedTime(session.start_time, tz);
-    const sessionTimestamp = sessionDate.getTime();
-    return sessionTimestamp >= start && sessionTimestamp <= end;
-  });
-
-  return monthDrinkingSessions;
+    // Cache the start and end of month UTC timestamps per timezone
+    if (!timezoneCache[tz]) {
+      timezoneCache[tz] = getMonthStartAndEndUTC(date, tz, untilToday);
+    }
+    const {startOfMonthUTC, endOfMonthUTC} = timezoneCache[tz];
+    const sessionStartTime = session.start_time; // Assuming it's a UTC timestamp in milliseconds
+    // Directly compare UTC timestamps
+    return (
+      sessionStartTime >= startOfMonthUTC && sessionStartTime <= endOfMonthUTC
+    );
+  };
+  const filteredSessions = sessions.filter(sessionBelongsToMonth);
+  return filteredSessions;
+  function getMonthStartAndEndUTC(
+    date: Date,
+    timezone: string,
+    untilToday: boolean,
+  ) {
+    // Get the date in the session's timezone
+    const zonedDate = utcToZonedTime(date, timezone);
+    // Start of the month in the session's timezone
+    const startOfMonthDate = startOfMonth(zonedDate);
+    const startOfMonthUTC = zonedTimeToUtc(
+      startOfMonthDate,
+      timezone,
+    ).getTime();
+    // End of the month in the session's timezone
+    let endOfMonthDate = endOfMonth(zonedDate);
+    if (untilToday) {
+      const todayInTz = utcToZonedTime(new Date(), timezone);
+      const todayEndInTz = endOfDay(todayInTz);
+      // If today is before the end of the month, use today as the end date
+      if (todayEndInTz.getTime() < endOfMonthDate.getTime()) {
+        endOfMonthDate = todayEndInTz;
+      }
+    }
+    const endOfMonthUTC = zonedTimeToUtc(endOfMonthDate, timezone).getTime();
+    return {startOfMonthUTC, endOfMonthUTC};
+  }
 }
 
 /**

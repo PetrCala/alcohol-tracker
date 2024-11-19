@@ -21,6 +21,7 @@ import {
   set,
   setDefaultOptions,
   startOfDay,
+  startOfMonth,
   startOfWeek,
   subDays,
   subMilliseconds,
@@ -119,6 +120,35 @@ function getDayStartAndEndUTC(date: Date, timezone: SelectedTimezone) {
   return {startOfDayUTC, endOfDayUTC};
 }
 
+function getMonthStartAndEndUTC(
+  date: Date,
+  timezone: string,
+  untilToday: boolean,
+) {
+  // Get the date in the session's timezone
+  const zonedDate = utcToZonedTime(date, timezone);
+
+  // Start of the month in the session's timezone
+  const startOfMonthDate = startOfMonth(zonedDate);
+  const startOfMonthUTC = zonedTimeToUtc(startOfMonthDate, timezone).getTime();
+
+  // End of the month in the session's timezone
+  let endOfMonthDate = endOfMonth(zonedDate);
+
+  if (untilToday) {
+    const todayInTz = utcToZonedTime(new Date(), timezone);
+    const todayEndInTz = endOfDay(todayInTz);
+
+    // If today is before the end of the month, use today as the end date
+    if (todayEndInTz.getTime() < endOfMonthDate.getTime()) {
+      endOfMonthDate = todayEndInTz;
+    }
+  }
+
+  const endOfMonthUTC = zonedTimeToUtc(endOfMonthDate, timezone).getTime();
+
+  return {startOfMonthUTC, endOfMonthUTC};
+}
 /**
  * Gets the user's stored time zone NVP and returns a localized
  * Date object for the given ISO-formatted datetime string
@@ -890,6 +920,7 @@ const DateUtils = {
   getDeviceTimezone,
   getDayStartAndEndUTC,
   getEndOfToday,
+  getMonthStartAndEndUTC,
   getLastBusinessDayOfMonth,
   getLocalDateFromDatetime,
   getLocalizedTime,
