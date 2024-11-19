@@ -197,21 +197,19 @@ async function deleteUserData(
 async function synchronizeUserStatus(
   db: Database,
   userID: string,
-  currentUserStatus: UserStatus | undefined,
   drinkingSessions: DrinkingSessionList | undefined,
 ): Promise<void> {
-  if (!currentUserStatus) {
-    return;
-  }
-  const newUserStatus: UserStatus = currentUserStatus;
-  newUserStatus.last_online = new Date().getTime();
-  const latestSessionId = getLastStartedSessionId(drinkingSessions);
-  if (newUserStatus.latest_session_id !== latestSessionId) {
-    newUserStatus.latest_session = latestSessionId
-      ? _.get(drinkingSessions, latestSessionId, undefined)
-      : undefined;
-    newUserStatus.latest_session_id = latestSessionId;
-  }
+  const latestSessionId = getLastStartedSessionId(drinkingSessions) || null;
+  const latestSession =
+    drinkingSessions && latestSessionId
+      ? _.get(drinkingSessions, latestSessionId, null)
+      : null;
+
+  const newUserStatus: UserStatus = {
+    last_online: new Date().getTime(),
+    latest_session: latestSession,
+    latest_session_id: latestSessionId,
+  };
   const userStatusRef = DBPATHS.USER_STATUS_USER_ID;
   const updates: Record<string, UserStatus> = {};
   updates[userStatusRef.getRoute(userID)] = newUserStatus;

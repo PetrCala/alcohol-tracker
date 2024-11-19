@@ -24,13 +24,8 @@ import {synchronizeUserStatus} from '@database/users';
 import commonStyles from '@src/styles/commonStyles';
 import {useFirebase} from '@context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
-import {generateDatabaseKey} from '@database/baseFunctions';
 import CONST from '@src/CONST';
-import type {
-  DrinkingSession,
-  DrinkingSessionArray,
-  DrinkingSessionId,
-} from '@src/types/onyx';
+import type {DrinkingSessionArray, DrinkingSessionId} from '@src/types/onyx';
 import ROUTES from '@src/ROUTES';
 import Navigation, {navigationRef} from '@navigation/Navigation';
 import type {StackScreenProps} from '@react-navigation/stack';
@@ -214,10 +209,10 @@ function HomeScreen({route}: HomeScreenProps) {
       return;
     }
 
-    const currentSessionId: DrinkingSessionId | undefined = userStatusData
-      .latest_session?.ongoing
-      ? userStatusData.latest_session_id
-      : undefined;
+    const currentSessionId: DrinkingSessionId | null | undefined =
+      userStatusData.latest_session?.ongoing
+        ? userStatusData.latest_session_id
+        : undefined;
 
     dispatch({
       type: 'SET_ONGOING_SESSION_ID',
@@ -228,16 +223,11 @@ function HomeScreen({route}: HomeScreenProps) {
   useFocusEffect(
     React.useCallback(() => {
       // Update user status on home screen focus
-      if (!user || !userData || !preferences || !drinkingSessionData) {
+      if (!user || !userData || !preferences) {
         return;
       }
       try {
-        synchronizeUserStatus(
-          db,
-          user.uid,
-          userStatusData,
-          drinkingSessionData,
-        );
+        synchronizeUserStatus(db, user.uid, drinkingSessionData);
       } catch (error: any) {
         Alert.alert(
           'Failed to contact the database',
@@ -268,13 +258,7 @@ function HomeScreen({route}: HomeScreenProps) {
   if (!isOnline) {
     return <UserOffline />;
   }
-  if (
-    isLoading ||
-    isStartingSession ||
-    !preferences ||
-    !userData ||
-    !userStatusData
-  ) {
+  if (isLoading || isStartingSession || !preferences || !userData) {
     return (
       <FullScreenLoadingIndicator
         loadingText={

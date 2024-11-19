@@ -138,20 +138,20 @@ export async function fetchDisplayDataForUsers(
 export function differencesToUpdates(
   differences: Diff<any, any>[],
 ): Partial<DrinkingSession> {
-  const updates: any = {};
+  const updates: Partial<DrinkingSession> = {};
 
   differences.forEach(difference => {
     const path = difference.path || [];
 
     if (path.length === 0) {
-      return; // Ignore if path is empty
+      return;
     }
 
-    // Build the nested updates object based on the path
-    let current = updates;
+    let current: any = updates;
+
     for (let i = 0; i < path.length - 1; i++) {
       const key = path[i];
-      if (!current[key]) {
+      if (!(key in current)) {
         current[key] = {};
       }
       current = current[key];
@@ -159,27 +159,29 @@ export function differencesToUpdates(
 
     const lastKey = path[path.length - 1];
 
-    if (difference.kind === 'A') {
-      // Handle array changes
-      const index = difference.index;
-      const arrayPath = [...(difference.path || []), index];
-      // Build the nested updates object based on the array path
-      let current = updates;
-      for (let i = 0; i < arrayPath.length - 1; i++) {
-        const key = arrayPath[i];
-        if (!current[key]) {
-          current[key] = {};
+    switch (difference.kind) {
+      case 'N': // New property added
+      case 'E': // Property edited
+        current[lastKey] = difference.rhs;
+        break;
+      case 'D': // Property deleted
+        current[lastKey] = null; // Or handle deletion as needed
+        break;
+      case 'A': // Array change
+        if (!current[lastKey]) {
+          current[lastKey] = [];
         }
-        current = current[key];
-      }
-      const lastKey = arrayPath[arrayPath.length - 1];
-      current[lastKey] = difference.item?.rhs;
-    } else if (difference.kind === 'N' || difference.kind === 'E') {
-      // For new, edited, or array changes
-      current[lastKey] = difference.rhs;
-    } else if (difference.kind === 'D') {
-      // For deleted properties, set to null or handle deletion accordingly
-      current[lastKey] = null; // Or you can decide how to handle deletions
+        const arrayIndex = difference.index;
+        const itemDiff = difference.item;
+
+        if (itemDiff?.kind === 'N' || itemDiff?.kind === 'E') {
+          current[lastKey][arrayIndex] = itemDiff.rhs;
+        } else if (itemDiff?.kind === 'D') {
+          current[lastKey][arrayIndex] = null; // Or remove the element
+        }
+        break;
+      default:
+        break;
     }
   });
 
