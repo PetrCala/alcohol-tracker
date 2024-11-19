@@ -306,7 +306,7 @@ function HomeScreen({route}: HomeScreenProps) {
             danger
           />
         )}
-        {drinkingSessionData ? (
+        {!!drinkingSessionData ? (
           <>
             <View style={localStyles.statsOverviewHolder}>
               <StatsOverview statsData={statsData} />
