@@ -370,6 +370,7 @@ export default {
     },
     error: {
       sessionOpen: 'Failed to open a session',
+      missingId: 'Missing session ID',
     },
   },
   userNameScreen: {

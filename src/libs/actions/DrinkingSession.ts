@@ -124,7 +124,7 @@ async function startLiveDrinkingSession(
   db: Database,
   user: User | null,
   timezone: SelectedTimezone | undefined,
-): Promise<string> {
+): Promise<DrinkingSession> {
   if (!user) {
     throw new Error(Localize.translateLocal('homeScreen.error.sessionStart'));
   }
@@ -155,10 +155,7 @@ async function startLiveDrinkingSession(
   updates[drinkingSessionRef.getRoute(user.uid, newSessionId)] = newSessionData;
   await update(ref(db), updates);
 
-  // Update Onyx
-  updateLocalData(newSessionId, newSessionData, ONYXKEYS.LIVE_SESSION_DATA);
-
-  return newSessionId;
+  return newSessionData;
 }
 
 /** Save final drinking session data to the database
@@ -379,6 +376,23 @@ function getNewSessionToEdit(
 }
 
 /**
+ * Navigate to the live session screen
+ *
+ * @param sessionId ID of the session to navigate to
+ * @param session Current session data
+ */
+function navigateToLiveSessionScreen(
+  sessionId: DrinkingSessionId | undefined,
+  session: DrinkingSession,
+): void {
+  if (!sessionId) {
+    throw new Error(Localize.translateLocal('drinkingSession.error.missingId'));
+  }
+  updateLocalData(sessionId, session, ONYXKEYS.LIVE_SESSION_DATA);
+  Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(sessionId));
+}
+
+/**
  * Navigate to the edit session screen
  *
  * @param sessionId ID of the session to navigate to
@@ -389,11 +403,12 @@ function navigateToEditSessionScreen(
   session: DrinkingSession,
 ) {
   updateLocalData(sessionId, session, ONYXKEYS.EDIT_SESSION_DATA);
-  Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(sessionId));
+  Navigation.navigate(ROUTES.DRINKING_SESSION_EDIT.getRoute(sessionId));
 }
 
 export {
   navigateToEditSessionScreen,
+  navigateToLiveSessionScreen,
   removeDrinkingSessionData,
   saveDrinkingSessionData,
   startLiveDrinkingSession,
