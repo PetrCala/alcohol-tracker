@@ -134,6 +134,11 @@ function getDrinkingSessionOnyxKey(
   return null;
 }
 
+/** Type guard to check if a given key is a valid DrinkType key */
+function isDrinkTypeKey(key: string): key is keyof Drinks {
+  return _.includes(Object.values(CONST.DRINKS.KEYS), key);
+}
+
 /**
  * Calculates the total units of a Drinks object based on a DrinksToUnits mapping.
  *
@@ -152,12 +157,15 @@ function calculateTotalUnits(
   }
 
   let totalUnits = 0;
-
-  _.forEach(Object.values(drinks), drink => {
-    for (const [drinkKey, count] of Object.entries(drink)) {
-      const conversionFactor = drinksToUnits[drinkKey as DrinkKey] || 0;
-      totalUnits += (count || 0) * conversionFactor;
-    }
+  // Iterate over each timestamp in drinksObject
+  _.forEach(Object.values(drinks), drinkTypes => {
+    _.forEach(Object.keys(drinkTypes), DrinkKey => {
+      if (isDrinkTypeKey(DrinkKey)) {
+        const typeDrinks = drinkTypes[DrinkKey] ?? 0;
+        const typeUnits = drinksToUnits[DrinkKey] ?? 0;
+        totalUnits += typeDrinks * typeUnits;
+      }
+    });
   });
 
   if (roundUp) {
@@ -681,6 +689,7 @@ export {
   getSessionRemoveDrinksOptions,
   getUserDetailTooltipText,
   isDifferentDay,
+  isDrinkTypeKey,
   isEmptySession,
   modifySessionDrinks,
   removeDrinksFromList,
