@@ -1,5 +1,9 @@
 ﻿import {StyleSheet, Text, View} from 'react-native';
-import type {DrinkingSessionId, DrinkKey} from '@src/types/onyx';
+import type {
+  DrinkingSession,
+  DrinkingSessionId,
+  DrinkKey,
+} from '@src/types/onyx';
 import useThemeStyles from '@hooks/useThemeStyles';
 import useLocalize from '@hooks/useLocalize';
 import DrinkData from '@libs/DrinkData';
@@ -14,11 +18,11 @@ import Button from './Button';
 import useTheme from '@hooks/useTheme';
 
 export type DrinkTypesViewProps = {
-  /** ID of the session to render */
-  sessionId: DrinkingSessionId;
+  /** The session to render */
+  session: DrinkingSession;
 };
 
-const DrinkTypesView = ({sessionId}: DrinkTypesViewProps) => {
+const DrinkTypesView = ({session}: DrinkTypesViewProps) => {
   const {translate} = useLocalize();
   const {preferences} = useDatabaseData();
   const styles = useThemeStyles();
@@ -26,7 +30,7 @@ const DrinkTypesView = ({sessionId}: DrinkTypesViewProps) => {
 
   const handleAddDrinks = (drinkKey: DrinkKey, amount: number) => {
     DS.updateDrinks(
-      sessionId,
+      session?.id,
       drinkKey,
       amount,
       CONST.DRINKS.ACTIONS.ADD,
@@ -36,7 +40,7 @@ const DrinkTypesView = ({sessionId}: DrinkTypesViewProps) => {
 
   const handleRemoveDrinks = (drinkKey: DrinkKey, amount: number) => {
     DS.updateDrinks(
-      sessionId,
+      session?.id,
       drinkKey,
       amount,
       CONST.DRINKS.ACTIONS.REMOVE,
@@ -71,9 +75,9 @@ const DrinkTypesView = ({sessionId}: DrinkTypesViewProps) => {
                 iconFill={theme.textDark}
               />
               <SessionDrinksInputWindow
-                sessionId={sessionId}
+                drinks={session?.drinks}
                 drinkKey={drinkKey}
-                // Add more input parameters
+                sessionId={session?.id}
               />
               <Button
                 style={[styles.bgTransparent, styles.p1]}

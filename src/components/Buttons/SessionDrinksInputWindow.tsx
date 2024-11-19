@@ -17,26 +17,31 @@ import Log from '@libs/Log';
 import CONST from '@src/CONST';
 
 type SessionDrinksInputWindowProps = {
-  /** ID of the drinking session */
-  sessionId: DrinkingSessionId;
+  /** Current session drinks */
+  drinks: DrinksList | undefined;
 
   /** Key of the drinking session */
   drinkKey: DrinkKey;
+
+  /** ID of the drinking session */
+  sessionId?: DrinkingSessionId;
 };
 
 const SessionDrinksInputWindow = ({
-  sessionId,
+  drinks,
   drinkKey,
+  sessionId,
 }: SessionDrinksInputWindowProps) => {
   const styles = useThemeStyles();
   const theme = useTheme();
   const {preferences} = useDatabaseData();
-  const session = DSUtils.getDrinkingSessionData(sessionId);
-  const [inputValue, setInputValue] = useState<string>('');
+  const [inputValue, setInputValue] = useState<string>(
+    sumDrinksOfSingleType(drinks, drinkKey).toString(),
+  );
   const inputRef = useRef<TextInput>(null);
 
   const handleKeyPress = (event: {nativeEvent: {key: string}}): void => {
-    if (!preferences || !session) {
+    if (!preferences) {
       Log.warn('SessionDrinksInputWindow', 'No preferences or session');
       return;
     }
@@ -71,7 +76,7 @@ const SessionDrinksInputWindow = ({
       const inputValueNumeric = parseFloat(inputValue); // In case one digit is already input, adjust the availableDrinks for this digit
 
       const availableUnits = DSUtils.calculateAvailableUnits(
-        session.drinks,
+        drinks,
         preferences.drinks_to_units,
       );
 
@@ -94,8 +99,8 @@ const SessionDrinksInputWindow = ({
    * @returnsvoid, the upstream hooks get updated
    */
   const handleNewNumericValue = (numericValue: number): void => {
-    if (!preferences || !session) {
-      Log.warn('SessionDrinksInputWindow', 'No preferences or session');
+    if (!preferences) {
+      Log.warn('SessionDrinksInputWindow', 'No preferences');
       return;
     }
     if (isNaN(numericValue)) {
@@ -134,15 +139,12 @@ const SessionDrinksInputWindow = ({
   };
 
   // Update input value when drinks change
-  useEffect(() => {
-    const newInputValue = sumDrinksOfSingleType(
-      session?.drinks,
-      drinkKey,
-    ).toString();
+  useMemo(() => {
+    const newInputValue = sumDrinksOfSingleType(drinks, drinkKey).toString();
     setInputValue(newInputValue);
-  }, [session?.drinks, drinkKey]);
+  }, [drinks, drinkKey]);
 
-  if (!session || !preferences) {
+  if (!preferences) {
     return;
   }
 
@@ -156,7 +158,7 @@ const SessionDrinksInputWindow = ({
           localStyles.drinksInputButton,
           {
             backgroundColor:
-              sumDrinksOfSingleType(session?.drinks, drinkKey) > 0
+              sumDrinksOfSingleType(drinks, drinkKey) > 0
                 ? theme.appColor
                 : theme.cardBG,
           },
