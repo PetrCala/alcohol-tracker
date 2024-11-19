@@ -94,8 +94,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       const differences = diff(sessionRef.current, session);
       if (differences && differences.length > 0) {
         const updates = differencesToUpdates(differences);
-        console.log(updates);
-        // enqueueUpdate(updates);
+        enqueueUpdate(updates);
       }
     }
     sessionRef.current = session;

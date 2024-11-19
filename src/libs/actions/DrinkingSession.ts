@@ -62,27 +62,26 @@ async function saveDrinkingSessionData(
   const updatesToDB: Record<string, any> = {};
 
   // Build the database paths for the updates
-  function buildUpdates(updates: any, path: string = '') {
+  function buildUpdates(updates: any, dbRef: string, path: string = '') {
     for (const [key, value] of Object.entries(updates)) {
       const currentPath = path ? `${path}/${key}` : key;
       if (value && typeof value === 'object' && !Array.isArray(value)) {
         // Recursively handle nested objects
-        buildUpdates(value, currentPath);
+        buildUpdates(value, dbRef, currentPath);
       } else {
         // Set the value at the current path
-        const dbPath = `${drinkingSessionRef.getRoute(userID, sessionKey)}/${currentPath}`;
+        const dbPath = `${dbRef}/${currentPath}`;
         updatesToDB[dbPath] = value;
       }
     }
   }
 
-  buildUpdates(updates);
+  const dsPath = drinkingSessionRef.getRoute(userID, sessionKey);
+  buildUpdates(updates, dsPath);
 
   if (updateStatus) {
     const userStatusPath = userStatusRef.getRoute(userID);
-    updatesToDB[`${userStatusPath}/latest_session`] = {
-      ...(updates as any),
-    };
+    buildUpdates(updates, `${userStatusPath}/latestSession`);
   }
 
   await update(ref(db), updatesToDB);
