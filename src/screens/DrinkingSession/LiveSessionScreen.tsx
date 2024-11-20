@@ -20,7 +20,10 @@ import SuccessIndicator from '@components/SuccessIndicator';
 import commonStyles from '@src/styles/commonStyles';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import UserOfflineModal from '@components/UserOfflineModal';
-import {differencesToUpdates} from '@database/baseFunctions';
+import {
+  computeFirebaseUpdates,
+  differencesToUpdates,
+} from '@database/baseFunctions';
 
 type LiveSessionScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -91,9 +94,8 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       !!sessionRef.current;
 
     if (shouldRunUpdates) {
-      const differences = diff(sessionRef.current, session);
-      if (differences && differences.length > 0) {
-        const updates = differencesToUpdates(differences);
+      const updates = computeFirebaseUpdates(sessionRef.current, session);
+      if (updates && updates.length > 0) {
         enqueueUpdate(updates);
       }
     }
