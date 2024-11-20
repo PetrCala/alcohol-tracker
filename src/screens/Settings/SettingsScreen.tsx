@@ -15,8 +15,6 @@ import type {
   ViewStyle,
 } from 'react-native';
 import {View} from 'react-native';
-import {withOnyx} from 'react-native-onyx';
-import type {ValueOf} from 'type-fest';
 import ConfirmModal from '@components/ConfirmModal';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import * as Session from '@userActions/Session';
@@ -25,8 +23,6 @@ import ScreenWrapper from '@components/ScreenWrapper';
 import {ScrollOffsetContext} from '@components/ScrollOffsetContextProvider';
 import ScrollView from '@components/ScrollView';
 import Text from '@components/Text';
-import type {WithCurrentUserDataProps} from '@components/withCurrentUserData';
-import withCurrentUserData from '@components/withCurrentUserData';
 import useActiveCentralPaneRoute from '@hooks/useActiveCentralPaneRoute';
 import useLocalize from '@hooks/useLocalize';
 import useNetwork from '@hooks/useNetwork';
@@ -46,7 +42,7 @@ import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 
 type SettingsScreenOnyxProps = {};
 
-type SettingsScreenProps = SettingsScreenOnyxProps & WithCurrentUserDataProps;
+type SettingsScreenProps = SettingsScreenOnyxProps;
 
 type MenuData = {
   translationKey: TranslationPaths;
@@ -347,7 +343,4 @@ function SettingsScreen({}: SettingsScreenProps) {
 }
 
 SettingsScreen.displayName = 'SettingsScreen';
-
-export default withCurrentUserData(
-  withOnyx<SettingsScreenProps, SettingsScreenOnyxProps>({})(SettingsScreen),
-);
+export default SettingsScreen;
