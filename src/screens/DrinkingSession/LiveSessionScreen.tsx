@@ -98,7 +98,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       }
     }
     sessionRef.current = session;
-  }, [session, enqueueUpdate]);
+  }, [session, enqueueUpdate, user]);
 
   if (!isOnline) {
     return <UserOfflineModal />;

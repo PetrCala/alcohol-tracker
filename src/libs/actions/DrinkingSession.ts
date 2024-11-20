@@ -209,7 +209,11 @@ async function removeDrinkingSessionData(
   const updates: Record<string, any> = {};
   updates[drinkingSessionRef.getRoute(userID, sessionKey)] = null;
   if (updateStatus) {
-    const userStatusData: UserStatus = {last_online: new Date().getTime()}; // No session info
+    const userStatusData: UserStatus = {
+      last_online: new Date().getTime(),
+      latest_session: null,
+      latest_session_id: null,
+    };
     updates[userStatusRef.getRoute(userID)] = userStatusData;
   }
 
