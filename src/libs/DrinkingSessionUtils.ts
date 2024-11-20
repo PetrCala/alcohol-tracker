@@ -532,7 +532,6 @@ function getSingleDayDrinkingSessions(
  * @param untilToday If true, include no sessions that occured after today
  * @returns The subsetted array of sessions
  */
-
 function getSingleMonthDrinkingSessions(
   date: Date,
   sessions: DrinkingSessionArray,
@@ -568,6 +567,7 @@ function getSingleMonthDrinkingSessions(
   const filteredSessions = sessions.filter(sessionBelongsToMonth);
   return filteredSessions;
 }
+
 /**
  * Get the displayName for a single session participant.
  */
