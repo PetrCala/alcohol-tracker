@@ -44,7 +44,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   useState<boolean>(false);
 
   const syncWithDb = async (updates: Partial<DrinkingSession>) => {
-    if (!user || !session) {
+    if (!user) {
       return;
     }
     try {
@@ -68,7 +68,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
 
   const {isPending, enqueueUpdate: batchedEnqueue} = useBatchedUpdates(
     processUpdates,
-    2000,
+    500,
   );
 
   const enqueueUpdate = useCallback(

@@ -685,6 +685,12 @@ export default {
   closeAccount: {
     successMessage: 'Your account has been successfully deleted.',
   },
+  database: {
+    error: {
+      generic: 'Failed to reach the database',
+      saveData: 'Failed to save your data to the database. Please try again.',
+    },
+  },
   onyx: {
     error: {
       generic: 'Failed to reach the local database',
