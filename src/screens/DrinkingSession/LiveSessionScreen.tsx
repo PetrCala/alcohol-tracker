@@ -12,7 +12,6 @@ import {useOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 import DrinkingSessionWindow from '@components/DrinkingSessionWindow';
 import useBatchedUpdates from '@hooks/useBatchedUpdates';
-import {ActivityIndicator, StyleSheet, View} from 'react-native';
 import _ from 'lodash';
 import ScreenWrapper from '@components/ScreenWrapper';
 import SuccessIndicator from '@components/SuccessIndicator';
@@ -94,11 +93,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     return <UserOfflineModal />;
   }
   if (!session) {
-    return (
-      <FullScreenLoadingIndicator
-        loadingText={translate('liveSessionScreen.loading')}
-      />
-    );
+    return <FullScreenLoadingIndicator />;
   }
 
   return (

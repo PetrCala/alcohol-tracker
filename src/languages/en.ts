@@ -498,6 +498,7 @@ export default {
   homeScreen: {
     startingSession: 'Starting a new session...',
     welcomeToKiroku: 'Welcome to Kiroku!',
+    currentlyInSession: 'You are currently in a session!',
     error: {
       title: 'Failed to open a session',
       sessionStart: "We couldn't start a new session. Please try again.",

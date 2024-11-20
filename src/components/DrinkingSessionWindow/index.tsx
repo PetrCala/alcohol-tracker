@@ -49,7 +49,6 @@ import Log from '@libs/Log';
 import Icon from '@components/Icon';
 import DateUtils from '@libs/DateUtils';
 import {DrinkingSessionWindowProps} from './types';
-import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import {isEqual} from 'lodash';
 

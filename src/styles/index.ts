@@ -333,18 +333,6 @@ const styles = (theme: ThemeColors) =>
       overflow: 'hidden',
     },
 
-    appContentHeader: {
-      height: variables.contentHeaderHeight,
-      justifyContent: 'center',
-      display: 'flex',
-      paddingRight: 20,
-    },
-
-    appContentHeaderTitle: {
-      alignItems: 'center',
-      flexDirection: 'row',
-    },
-
     autoGrowHeightInputContainer: (
       textInputHeight: number,
       minHeight: number,
@@ -981,7 +969,7 @@ const styles = (theme: ThemeColors) =>
       overflow: 'hidden',
       justifyContent: 'center',
       display: 'flex',
-      paddingLeft: 20,
+      paddingLeft: 12,
       height: variables.contentHeaderHeight,
       width: '100%',
     },
@@ -989,6 +977,7 @@ const styles = (theme: ThemeColors) =>
     headerBarDesktopHeight: {
       height: variables.contentHeaderDesktopHeight,
     },
+
     headerEnvBadge: {
       position: 'absolute',
       bottom: -8,

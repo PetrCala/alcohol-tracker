@@ -23,7 +23,7 @@ const EnlargableImage: React.FC<EnlargableImageProps> = props => {
   const scaleAnimation = useRef(new Animated.Value(1)).current;
   const positionAnimation = useRef(new Animated.ValueXY()).current;
   const enlargedImageScale = ScreenWidth / imageStyle.width;
-  const headerHeight = commonStyles.headerContainer.height; // Assume always rendered with header visible
+  const headerHeight = styles.headerBar.height; // Assume always rendered with header visible
 
   const handleOnLayout = (event: LayoutChangeEvent) => {
     onImageLayout(event);
