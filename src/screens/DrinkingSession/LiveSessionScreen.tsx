@@ -28,19 +28,13 @@ type LiveSessionScreenProps = StackScreenProps<
 
 function LiveSessionScreen({route}: LiveSessionScreenProps) {
   const {sessionId} = route.params;
-  // Context, database, and authentification
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
   const {translate} = useLocalize();
   const {isOnline} = useUserConnection();
   const [session] = useOnyx(ONYXKEYS.LIVE_SESSION_DATA);
   const sessionRef = useRef<DrinkingSession | undefined>(undefined);
-  // Session details
-  const [sessionFinished, setSessionFinished] = useState<boolean>(false);
-  // Time info
   const [dbSyncSuccessful, setDbSyncSuccessful] = useState(false);
-  const [loadingText, setLoadingText] = useState<string>('');
-  useState<boolean>(false);
 
   const syncWithDb = async (updates: Partial<DrinkingSession>) => {
     if (!user) {
@@ -79,14 +73,8 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   // Synchronize the session with database
   useEffect(() => {
     // Only schedule a database update if any hooks changed
-    // Do not automatically save if the session is over, or
-    // if the initial fetch has not finished
     const shouldRunUpdates =
-      !!user &&
-      !!session?.ongoing &&
-      !!session &&
-      !sessionFinished &&
-      !!sessionRef.current;
+      !!user && !!session?.ongoing && !!session && !!sessionRef.current;
 
     if (shouldRunUpdates) {
       const updates = computeFirebaseUpdates(sessionRef.current, session);
@@ -101,8 +89,12 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   if (!isOnline) {
     return <UserOfflineModal />;
   }
-  if (loadingText || !session) {
-    return <FullScreenLoadingIndicator loadingText={loadingText} />;
+  if (!session) {
+    return (
+      <FullScreenLoadingIndicator
+        loadingText={translate('liveSessionScreen.loading')}
+      />
+    );
   }
 
   return (

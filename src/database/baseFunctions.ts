@@ -10,6 +10,8 @@ import type {UserID} from '@src/types/onyx/OnyxCommon';
 import DBPATHS from './DBPATHS';
 import {diff, Diff, DiffArray} from 'deep-diff';
 
+type FirebaseUpdates = {[key: string]: any};
+
 /** Read data once from the realtime database using get(). Return the data if it exists.
  *
  * @param {Database} db The Realtime Database instance.
@@ -198,12 +200,14 @@ function differencesToUpdates<T>(differences: Diff<T, T>[]): Partial<T> {
  *
  * @template T - The type of the object to be converted.
  * @param {Partial<T>} updates - The nested object containing updates.
- * @returns {{ [key: string]: any }} - A flattened object with database paths as keys and update values.
+ * @param {string} [basePath=''] - An optional base path to prepend to all output keys.
+ * @returns {FirebaseUpdates} - A flattened object with database paths as keys and update values.
  */
-function buildUpdates<T>(updates: Partial<T>): {
-  [key: string]: any;
-} {
-  const updatesToDB: {[key: string]: any} = {};
+function buildUpdates<T>(
+  updates: Partial<T>,
+  basePath: string = '',
+): FirebaseUpdates {
+  const updatesToDB: FirebaseUpdates = {};
 
   function recurse(current: any, path: string = '') {
     for (const [key, value] of Object.entries(current)) {
@@ -218,21 +222,42 @@ function buildUpdates<T>(updates: Partial<T>): {
     }
   }
 
-  recurse(updates);
+  recurse(updates, basePath);
   return updatesToDB;
 }
 
 /**
- * Computes the differences between two objects and converts them into a flattened updates object
- * suitable for Firebase's `update` method. This function effectively merges the functionality of
- * computing differences and building the updates object.
+ * Having a list of Firebase updates, prepend the base path to each key.
+ *
+ * @param updates A list of Firebase updates.
+ * @param basePath The base path to prepend to each key.
+ * @returns A list of Firebase updates with the base path prepended to each key.
+ */
+function prependFirebaseUpdateKeys(
+  updates: FirebaseUpdates,
+  basePath: string,
+): FirebaseUpdates {
+  const updatesWithBasePath: FirebaseUpdates = {};
+  for (const [key, value] of Object.entries(updates)) {
+    updatesWithBasePath[`${basePath}/${key}`] = value;
+  }
+  return updatesWithBasePath;
+}
+
+/**
+ * Computes the differences between two objects and converts them into a flattened updates object suitable for Firebase's `update` method. This function effectively merges the functionality of computing differences and building the updates object.
  *
  * @template T - The type of the objects being compared.
  * @param {T} lhs - The original object (left-hand side).
  * @param {T} rhs - The updated object (right-hand side).
+ * @param {string} basePath - An optional base path to prepend to all output keys.
  * @returns {{ [key: string]: any }} - A flattened object with database paths as keys and update values.
  */
-function computeFirebaseUpdates<T>(lhs: T, rhs: T): {[key: string]: any} {
+function computeFirebaseUpdates<T>(
+  lhs: T,
+  rhs: T,
+  basePath: string = '',
+): FirebaseUpdates {
   const differences = diff(lhs, rhs) as Diff<T, T>[];
   if (!differences) {
     return {};
@@ -275,6 +300,10 @@ function computeFirebaseUpdates<T>(lhs: T, rhs: T): {[key: string]: any} {
     }
   });
 
+  if (basePath) {
+    return prependFirebaseUpdateKeys(updatesToDB, basePath);
+  }
+
   return updatesToDB;
 }
 
@@ -287,5 +316,7 @@ export {
   fetchNicknameByUID,
   generateDatabaseKey,
   listenForDataChanges,
+  prependFirebaseUpdateKeys,
   readDataOnce,
 };
+export type {FirebaseUpdates};
