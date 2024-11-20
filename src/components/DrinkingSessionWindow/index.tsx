@@ -175,7 +175,7 @@ function DrinkingSessionWindow({
     setSessionFinished(true); // No more db syncs
     const newSessionData: DrinkingSession = {
       ...session,
-      end_time: sessionIsLive ? Date.now() : session.start_time,
+      end_time: session?.ongoing ? Date.now() : session.start_time,
     };
     delete newSessionData.ongoing;
     delete newSessionData.id;
