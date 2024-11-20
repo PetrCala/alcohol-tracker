@@ -530,7 +530,7 @@ export default {
       discardTitle: 'Session discard failed',
       discard: "We couldn't discard this session. Please try again.",
       saveTitle: 'Session save failed',
-      save: 'This session could not be saved. Please try again.',
+      save: 'This session could not be saved. Please try reloading the app.',
       load: 'Failed to fetch details of this session.',
     },
   },
