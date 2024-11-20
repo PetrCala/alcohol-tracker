@@ -14,7 +14,11 @@ import type {UserID} from '@src/types/onyx/OnyxCommon';
 import DBPATHS from '../../database/DBPATHS';
 import {User} from 'firebase/auth';
 import CONST from '@src/CONST';
-import {generateDatabaseKey} from '@database/baseFunctions';
+import {
+  buildUpdates,
+  FirebaseUpdates,
+  generateDatabaseKey,
+} from '@database/baseFunctions';
 import Onyx from 'react-native-onyx';
 import ONYXKEYS, {OnyxKey} from '@src/ONYXKEYS';
 import Navigation from '@libs/Navigation/Navigation';
@@ -25,8 +29,6 @@ import {ValueOf} from 'type-fest';
 import _ from 'lodash';
 
 const drinkingSessionRef = DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID;
-const drinkingSessionDrinksRef =
-  DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID_DRINKS;
 const userStatusRef = DBPATHS.USER_STATUS_USER_ID;
 const userStatusLatestSessionRef = DBPATHS.USER_STATUS_USER_ID_LATEST_SESSION;
 
@@ -49,40 +51,29 @@ function updateLocalData(
  *
  * @param db Firebase Database object
  * @param string userID User ID
- * @param updates The updates to send
+ * @param updates The updates to send, with base path set to the session ID
  * @param updateStatus Whether to update the user status data or not
  * @returnsPromise void.
  *  */
 async function updateDrinkingSessionData(
   db: Database,
   userID: UserID,
-  updates: Partial<DrinkingSession>,
+  updates: FirebaseUpdates,
   sessionId: DrinkingSessionId,
   updateStatus?: boolean,
 ): Promise<void> {
   const updatesToDB: Record<string, any> = {};
 
-  // Build the database paths for the updates
-  function buildUpdates(updates: any, dbRef: string, path: string = '') {
-    for (const [key, value] of Object.entries(updates)) {
-      const currentPath = path ? `${path}/${key}` : key;
-      if (value && typeof value === 'object' && !Array.isArray(value)) {
-        // Recursively handle nested objects
-        buildUpdates(value, dbRef, currentPath);
-      } else {
-        // Set the value at the current path
-        const dbPath = `${dbRef}/${currentPath}`;
-        updatesToDB[dbPath] = value;
-      }
-    }
-  }
-
   const dsPath = drinkingSessionRef.getRoute(userID, sessionId);
-  buildUpdates(updates, dsPath);
+  _.forEach(updates, (value, key) => {
+    updatesToDB[`${dsPath}/${key}`] = value;
+  });
 
   if (updateStatus) {
     const userStatusPath = userStatusLatestSessionRef.getRoute(userID);
-    buildUpdates(updates, userStatusPath);
+    _.forEach(updates, (value, key) => {
+      updatesToDB[`${userStatusPath}/${key}`] = value;
+    });
   }
 
   await update(ref(db), updatesToDB);
