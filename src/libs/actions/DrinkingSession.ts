@@ -28,6 +28,7 @@ const drinkingSessionRef = DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID;
 const drinkingSessionDrinksRef =
   DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID_DRINKS;
 const userStatusRef = DBPATHS.USER_STATUS_USER_ID;
+const userStatusLatestSessionRef = DBPATHS.USER_STATUS_USER_ID_LATEST_SESSION;
 
 /**
  * Set the edit session data object in Onyx so that it can be modified. This function should be called only if the relevant object already exists in the onyx database.
@@ -48,34 +49,43 @@ function updateLocalData(
  *
  * @param db Firebase Database object
  * @param string userID User ID
- * @param newSessionData Data to save the new drinking session with
+ * @param updates The updates to send
  * @param updateStatus Whether to update the user status data or not
- * @param updateLocal Whether to update the local data or not. This means removing the data from the Onyx store.
  * @returnsPromise void.
  *  */
-async function saveDrinkingSessionData(
+async function updateDrinkingSessionData(
   db: Database,
   userID: UserID,
-  newSessionData: DrinkingSession,
-  sessionKey: string,
+  updates: Partial<DrinkingSession>,
+  sessionId: DrinkingSessionId,
   updateStatus?: boolean,
-  updateLocal?: boolean,
 ): Promise<void> {
-  newSessionData.drinks = newSessionData.drinks || {}; // Can not send undefined
-  const updates: Record<string, any> = {};
-  updates[drinkingSessionRef.getRoute(userID, sessionKey)] = newSessionData;
+  const updatesToDB: Record<string, any> = {};
+
+  // Build the database paths for the updates
+  function buildUpdates(updates: any, dbRef: string, path: string = '') {
+    for (const [key, value] of Object.entries(updates)) {
+      const currentPath = path ? `${path}/${key}` : key;
+      if (value && typeof value === 'object' && !Array.isArray(value)) {
+        // Recursively handle nested objects
+        buildUpdates(value, dbRef, currentPath);
+      } else {
+        // Set the value at the current path
+        const dbPath = `${dbRef}/${currentPath}`;
+        updatesToDB[dbPath] = value;
+      }
+    }
+  }
+
+  const dsPath = drinkingSessionRef.getRoute(userID, sessionId);
+  buildUpdates(updates, dsPath);
+
   if (updateStatus) {
-    const userStatusData: UserStatus = {
-      last_online: new Date().getTime(),
-      latest_session_id: sessionKey,
-      latest_session: newSessionData,
-    };
-    updates[userStatusRef.getRoute(userID)] = userStatusData;
+    const userStatusPath = userStatusLatestSessionRef.getRoute(userID);
+    buildUpdates(updates, userStatusPath);
   }
-  await update(ref(db), updates);
-  if (updateLocal) {
-    Onyx.set(ONYXKEYS.EDIT_SESSION_DATA, null);
-  }
+
+  await update(ref(db), updatesToDB);
 }
 
 /**
@@ -114,17 +124,10 @@ async function startLiveDrinkingSession(
   db: Database,
   user: User | null,
   timezone: SelectedTimezone | undefined,
-): Promise<string> {
+): Promise<DrinkingSession> {
   if (!user) {
     throw new Error(Localize.translateLocal('homeScreen.error.sessionStart'));
   }
-
-  // The user is not in an active session
-  const newSessionData: DrinkingSession = DSUtils.getEmptySession(
-    CONST.SESSION_TYPES.LIVE,
-    timezone,
-    true,
-  );
 
   const newSessionId = generateDatabaseKey(
     db,
@@ -134,24 +137,29 @@ async function startLiveDrinkingSession(
     throw new Error(Localize.translateLocal('homeScreen.error.sessionStart'));
   }
 
-  // Update Firebase
-  const updates: Record<string, any> = {};
-  const userStatusData: UserStatus = {
+  // The user is not in an active session
+  const newSessionData: DrinkingSession = DSUtils.getEmptySession({
+    id: newSessionId,
+    type: CONST.SESSION_TYPES.LIVE,
+    timezone: timezone,
+    ongoing: true,
+  });
+  const newStatusData: UserStatus = {
     last_online: new Date().getTime(),
     latest_session_id: newSessionId,
     latest_session: newSessionData,
   };
-  updates[userStatusRef.getRoute(user.uid)] = userStatusData;
+
+  // Update Firebase
+  const updates: Record<string, any> = {};
+  updates[userStatusRef.getRoute(user.uid)] = newStatusData;
   updates[drinkingSessionRef.getRoute(user.uid, newSessionId)] = newSessionData;
   await update(ref(db), updates);
 
-  // Update Onyx
-  updateLocalData(newSessionId, newSessionData, ONYXKEYS.LIVE_SESSION_DATA);
-
-  return newSessionId;
+  return newSessionData;
 }
 
-/** End a live drinking session
+/** Save final drinking session data to the database
  *
  * @param db Firebase Database object
  * @param string userID User ID
@@ -159,28 +167,32 @@ async function startLiveDrinkingSession(
  * @param sesisonKey ID of the session to edit (can be null in case of finishing the session)
  * @returnsPromise void.
  *  */
-async function endLiveDrinkingSession(
+async function saveDrinkingSessionData(
   db: Database,
   userID: string,
   newSessionData: DrinkingSession,
   sessionKey: string,
+  onyxKey: OnyxKey,
+  updateStatus?: boolean,
 ): Promise<void> {
   const updates: Record<string, any> = {};
-  const userStatusData: UserStatus = {
-    // ETC - 1
-    last_online: new Date().getTime(),
-    latest_session_id: sessionKey,
-    latest_session: newSessionData,
-  };
-  updates[userStatusRef.getRoute(userID)] = userStatusData;
+  if (updateStatus) {
+    const userStatusData: UserStatus = {
+      // ETC - 1
+      last_online: new Date().getTime(),
+      latest_session_id: sessionKey,
+      latest_session: newSessionData,
+    };
+    updates[userStatusRef.getRoute(userID)] = userStatusData;
+  }
   updates[drinkingSessionRef.getRoute(userID, sessionKey)] = newSessionData;
+
   await update(ref(db), updates);
-  Onyx.set(ONYXKEYS.LIVE_SESSION_DATA, null);
+
+  Onyx.set(onyxKey, null);
 }
 
 /** Remove drinking session data from the database
- *
- * Should only be used to edit non-live sessions.
  *
  * @param db Firebase Database object
  * @param userID User ID
@@ -191,30 +203,23 @@ async function removeDrinkingSessionData(
   db: Database,
   userID: string,
   sessionKey: string,
+  onyxKey: OnyxKey,
+  updateStatus?: boolean,
 ): Promise<void> {
   const updates: Record<string, any> = {};
   updates[drinkingSessionRef.getRoute(userID, sessionKey)] = null;
-  await update(ref(db), updates);
-}
+  if (updateStatus) {
+    const userStatusData: UserStatus = {
+      last_online: new Date().getTime(),
+      latest_session: null,
+      latest_session_id: null,
+    };
+    updates[userStatusRef.getRoute(userID)] = userStatusData;
+  }
 
-/**
- * Discards a drinking session for a specific user.
- *
- * @param db - The database instance.
- * @param userID - The ID of the user.
- * @param sessionKey - The key of the session to be discarded.
- * @returns A Promise that resolves when the session is discarded.
- */
-async function discardLiveDrinkingSession(
-  db: Database,
-  userID: string,
-  sessionKey: string,
-): Promise<void> {
-  const updates: Record<string, any> = {};
-  const userStatusData: UserStatus = {last_online: new Date().getTime()}; // No session info
-  updates[drinkingSessionRef.getRoute(userID, sessionKey)] = null;
-  updates[userStatusRef.getRoute(userID)] = userStatusData;
   await update(ref(db), updates);
+
+  Onyx.set(onyxKey, null);
 }
 
 /**
@@ -246,12 +251,13 @@ function updateDrinks(
       drinksToUnits,
     );
 
-    const drinks = drinksList ? Object.values(drinksList)[0] : null;
+    // const drinks = drinksList ? Object.values(drinksList)[0] : null;
 
     // Merge can only be used when adding drinks, or when removing drinks does not delete the drink key
     if (
-      action === CONST.DRINKS.ACTIONS.ADD ||
-      (drinks && Object.keys(drinks).includes(drinkKey))
+      action === CONST.DRINKS.ACTIONS.ADD
+      // ||
+      // (drinks && Object.keys(drinks).includes(drinkKey))
     ) {
       Onyx.merge(onyxKey, {
         drinks: drinksList,
@@ -350,7 +356,7 @@ function getNewSessionToEdit(
   user: User | null,
   currentDate: Date,
   timezone: SelectedTimezone | undefined,
-): DrinkingSessionId {
+): DrinkingSession {
   if (!user) {
     throw new Error(Localize.translateLocal('dayOverviewScreen.error.open'));
   }
@@ -362,16 +368,32 @@ function getNewSessionToEdit(
     throw new Error(Localize.translateLocal('dayOverviewScreen.error.open'));
   }
   const timestamp = currentDate.getTime();
-  const newSession: DrinkingSession = DSUtils.getEmptySession(
-    CONST.SESSION_TYPES.EDIT,
-    timezone,
-  );
-  newSession.start_time = timestamp;
-  newSession.end_time = timestamp;
+  const newSession: DrinkingSession = DSUtils.getEmptySession({
+    id: newSessionId,
+    start_time: timestamp,
+    end_time: timestamp,
+    type: CONST.SESSION_TYPES.EDIT,
+    timezone: timezone,
+  });
 
-  updateLocalData(newSessionId, newSession, ONYXKEYS.EDIT_SESSION_DATA);
+  return newSession;
+}
 
-  return newSessionId;
+/**
+ * Navigate to the live session screen
+ *
+ * @param sessionId ID of the session to navigate to
+ * @param session Current session data
+ */
+function navigateToLiveSessionScreen(
+  sessionId: DrinkingSessionId | undefined,
+  session: DrinkingSession,
+): void {
+  if (!sessionId) {
+    throw new Error(Localize.translateLocal('drinkingSession.error.missingId'));
+  }
+  updateLocalData(sessionId, session, ONYXKEYS.LIVE_SESSION_DATA);
+  Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(sessionId));
 }
 
 /**
@@ -381,22 +403,25 @@ function getNewSessionToEdit(
  * @param session Current session data
  */
 function navigateToEditSessionScreen(
-  sessionId: DrinkingSessionId,
+  sessionId: DrinkingSessionId | undefined,
   session: DrinkingSession,
 ) {
+  if (!sessionId) {
+    throw new Error(Localize.translateLocal('drinkingSession.error.missingId'));
+  }
   updateLocalData(sessionId, session, ONYXKEYS.EDIT_SESSION_DATA);
-  Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(sessionId));
+  Navigation.navigate(ROUTES.DRINKING_SESSION_EDIT.getRoute(sessionId));
 }
 
 export {
-  discardLiveDrinkingSession,
-  endLiveDrinkingSession,
   navigateToEditSessionScreen,
+  navigateToLiveSessionScreen,
   removeDrinkingSessionData,
   saveDrinkingSessionData,
   startLiveDrinkingSession,
   syncLocalLiveSessionData,
   updateBlackout,
+  updateDrinkingSessionData,
   updateDrinks,
   updateNote,
   updateLocalData,

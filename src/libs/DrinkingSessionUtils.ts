@@ -2,6 +2,7 @@ import CONST from '@src/CONST';
 import type {
   DrinkKey,
   DrinkingSession,
+  DrinkingSessionArray,
   DrinkingSessionId,
   DrinkingSessionList,
   DrinkingSessionType,
@@ -15,10 +16,10 @@ import {numberToVerboseString} from './TimeUtils';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
 import {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
 import DBPATHS from '@database/DBPATHS';
-import {format, subMilliseconds} from 'date-fns';
 import Onyx, {OnyxKey} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 import {auth} from './Firebase/FirebaseApp';
+import {format, subMilliseconds} from 'date-fns';
 import {formatInTimeZone} from 'date-fns-tz';
 import {
   AddDrinksOptions,
@@ -28,6 +29,7 @@ import {roundToTwoDecimalPlaces} from './NumberUtils';
 import _ from 'lodash';
 import {ValueOf} from 'type-fest';
 import Log from './Log';
+import DateUtils from './DateUtils';
 
 const PlaceholderDrinks: DrinksList = {[Date.now()]: {other: 0}};
 
@@ -72,18 +74,20 @@ Onyx.connect({
  * @returns An empty drinking session object.
  */
 function getEmptySession(
-  type?: DrinkingSessionType,
-  timezone?: SelectedTimezone,
-  ongoing?: boolean,
+  session: Partial<DrinkingSession>,
+  // type?: DrinkingSessionType,
+  // timezone?: SelectedTimezone,
+  // ongoing?: boolean,
 ): DrinkingSession {
   const emptySession: DrinkingSession = {
-    start_time: Date.now(),
-    end_time: Date.now(),
-    blackout: false,
-    note: '',
-    timezone: timezone ?? CONST.DEFAULT_TIME_ZONE.selected,
-    type: type ?? CONST.SESSION_TYPES.EDIT,
-    ...(ongoing && {ongoing: true}),
+    id: session?.id,
+    start_time: session?.start_time || Date.now(),
+    end_time: session?.end_time || Date.now(),
+    blackout: session?.blackout || false,
+    note: session?.note || '',
+    timezone: session?.timezone || CONST.DEFAULT_TIME_ZONE.selected,
+    type: session?.type || CONST.SESSION_TYPES.EDIT,
+    ongoing: session?.ongoing,
   };
   return emptySession;
 }
@@ -134,6 +138,11 @@ function getDrinkingSessionOnyxKey(
   return null;
 }
 
+/** Type guard to check if a given key is a valid DrinkType key */
+function isDrinkTypeKey(key: string): key is keyof Drinks {
+  return _.includes(Object.values(CONST.DRINKS.KEYS), key);
+}
+
 /**
  * Calculates the total units of a Drinks object based on a DrinksToUnits mapping.
  *
@@ -152,12 +161,15 @@ function calculateTotalUnits(
   }
 
   let totalUnits = 0;
-
-  _.forEach(Object.values(drinks), drink => {
-    for (const [drinkKey, count] of Object.entries(drink)) {
-      const conversionFactor = drinksToUnits[drinkKey as DrinkKey] || 0;
-      totalUnits += (count || 0) * conversionFactor;
-    }
+  // Iterate over each timestamp in drinksObject
+  _.forEach(Object.values(drinks), drinkTypes => {
+    _.forEach(Object.keys(drinkTypes), DrinkKey => {
+      if (isDrinkTypeKey(DrinkKey)) {
+        const typeDrinks = drinkTypes[DrinkKey] ?? 0;
+        const typeUnits = drinksToUnits[DrinkKey] ?? 0;
+        totalUnits += typeDrinks * typeUnits;
+      }
+    });
   });
 
   if (roundUp) {
@@ -408,7 +420,7 @@ function extractSessionOrEmpty(
   drinkingSessionData: DrinkingSessionList | undefined,
 ): DrinkingSession {
   if (isEmptyObject(drinkingSessionData)) {
-    return getEmptySession();
+    return getEmptySession({});
   }
   if (
     drinkingSessionData &&
@@ -416,7 +428,7 @@ function extractSessionOrEmpty(
   ) {
     return drinkingSessionData[sessionId];
   }
-  return getEmptySession();
+  return getEmptySession({});
 }
 
 /** Given a DrinkingSession object, determine its type (i.e.,
@@ -470,6 +482,92 @@ function determineSessionMostCommonDrink(
   return mostCommonDrink;
 }
 
+/** Subset an array of drinking sessions to a single day.
+ *
+ * @param dateObject Date type object for whose day to subset the sessions to
+ * @param sessions An array of sessions to subset
+ * @param returnArray If true, return an array of sessions without IDs. If false,
+ *  simply subset the drinking session list to the relevant sessions.
+ * @returns The subsetted array of sessions
+ */
+function getSingleDayDrinkingSessions(
+  date: Date,
+  sessions: DrinkingSessionList | undefined,
+  returnArray = true,
+): DrinkingSessionArray | DrinkingSessionList {
+  if (!sessions) return returnArray ? [] : {};
+
+  const baseTimezone = timezone.selected;
+  const timezoneCache: Record<
+    string,
+    {startOfDayUTC: number; endOfDayUTC: number}
+  > = {};
+
+  const sessionBelongsToDate = (session: DrinkingSession) => {
+    const tz = session.timezone ?? baseTimezone;
+
+    // Cache the start and end of day UTC timestamps per timezone
+    if (!timezoneCache[tz]) {
+      timezoneCache[tz] = DateUtils.getDayStartAndEndUTC(date, tz);
+    }
+
+    const {startOfDayUTC, endOfDayUTC} = timezoneCache[tz];
+    const sessionStartTime = session.start_time; // UTC timestamp in milliseconds
+
+    // Directly compare UTC timestamps
+    return sessionStartTime >= startOfDayUTC && sessionStartTime <= endOfDayUTC;
+  };
+
+  const filteredSessions = returnArray
+    ? _.filter(sessions, sessionBelongsToDate)
+    : _.pickBy(sessions, sessionBelongsToDate);
+
+  return filteredSessions;
+}
+
+/** Subset an array of drinking sessions to the current month only.
+ *
+ * @param date Date type object for whose month to subset the sessions to
+ * @param sessions An array of sessions to subset
+ * @param untilToday If true, include no sessions that occured after today
+ * @returns The subsetted array of sessions
+ */
+
+function getSingleMonthDrinkingSessions(
+  date: Date,
+  sessions: DrinkingSessionArray,
+  untilToday = false,
+): DrinkingSessionArray {
+  const baseTimezone = timezone.selected;
+  const timezoneCache: Record<
+    string,
+    {startOfMonthUTC: number; endOfMonthUTC: number}
+  > = {};
+
+  const sessionBelongsToMonth = (session: DrinkingSession) => {
+    const tz = session.timezone ?? baseTimezone;
+
+    // Cache the start and end of month UTC timestamps per timezone
+    if (!timezoneCache[tz]) {
+      timezoneCache[tz] = DateUtils.getMonthStartAndEndUTC(
+        date,
+        tz,
+        untilToday,
+      );
+    }
+
+    const {startOfMonthUTC, endOfMonthUTC} = timezoneCache[tz];
+    const sessionStartTime = session.start_time; // Assuming it's a UTC timestamp in milliseconds
+
+    // Directly compare UTC timestamps
+    return (
+      sessionStartTime >= startOfMonthUTC && sessionStartTime <= endOfMonthUTC
+    );
+  };
+
+  const filteredSessions = sessions.filter(sessionBelongsToMonth);
+  return filteredSessions;
+}
 /**
  * Get the displayName for a single session participant.
  */
@@ -589,10 +687,12 @@ function shiftSessionTimestamps(
     session.start_time,
     millisecondsToSub,
   ).getTime();
-  convertedSession.end_time = subMilliseconds(
-    session.end_time,
-    millisecondsToSub,
-  ).getTime();
+  if (!!session.end_time) {
+    convertedSession.end_time = subMilliseconds(
+      session.end_time,
+      millisecondsToSub,
+    ).getTime();
+  }
 
   const convertedDrinks: DrinksList = {};
   const existingTimestamps = new Set<number>();
@@ -679,8 +779,11 @@ export {
   getEmptySession,
   getSessionAddDrinksOptions,
   getSessionRemoveDrinksOptions,
+  getSingleDayDrinkingSessions,
+  getSingleMonthDrinkingSessions,
   getUserDetailTooltipText,
   isDifferentDay,
+  isDrinkTypeKey,
   isEmptySession,
   modifySessionDrinks,
   removeDrinksFromList,

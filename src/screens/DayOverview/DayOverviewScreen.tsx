@@ -1,12 +1,10 @@
 ﻿import React, {useState, useMemo} from 'react';
 import {
   Text,
-  Image,
   View,
   FlatList,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   Dimensions,
 } from 'react-native';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
@@ -14,7 +12,6 @@ import MenuIcon from '../../components/Buttons/MenuIcon';
 import {
   changeDateBySomeDays,
   unitsToColors,
-  getSingleDayDrinkingSessions,
   dateStringToDate,
 } from '@libs/DataHandling';
 // import { PreferencesData} from '../types/database';
@@ -46,6 +43,7 @@ import Icon from '@components/Icon';
 import useTheme from '@hooks/useTheme';
 import commonStyles from '@src/styles/commonStyles';
 import DateUtils from '@libs/DateUtils';
+import {setIsLoading} from '@libs/actions/FormActions';
 
 type DayOverviewScreenProps = StackScreenProps<
   DayOverviewNavigatorParamList,
@@ -64,6 +62,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
   const [currentDate, setCurrentDate] = useState<Date>(
     date ? dateStringToDate(date) : new Date(),
   );
+  const [loadingText, setLoadingText] = useState<string>('');
   const [editMode, setEditMode] = useState<boolean>(false);
   const [dailyData, setDailyData] = useState<DrinkingSessionKeyValue[]>([]);
 
@@ -73,7 +72,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
       setDailyData([]);
       return;
     }
-    const relevantData = getSingleDayDrinkingSessions(
+    const relevantData = DSUtils.getSingleDayDrinkingSessions(
       currentDate,
       drinkingSessionData,
       false,
@@ -206,17 +205,18 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
 
     const onAddSessionButtonPress = () => {
       try {
-        const newSessionId = DS.getNewSessionToEdit(
+        setLoadingText(translate('common.loading'));
+        const newSession = DS.getNewSessionToEdit(
           db,
           auth.currentUser,
           currentDate,
           userData?.timezone?.selected,
         );
-        Navigation.navigate(
-          ROUTES.DRINKING_SESSION_LIVE.getRoute(newSessionId),
-        );
+        DS.navigateToEditSessionScreen(newSession?.id, newSession);
       } catch (error: any) {
         ErrorUtils.raiseAlert(error);
+      } finally {
+        setLoadingText('');
       }
     };
 
@@ -248,6 +248,9 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
 
   if (!isOnline) {
     return <UserOffline />;
+  }
+  if (!!loadingText) {
+    return <FullScreenLoadingIndicator loadingText={loadingText} />;
   }
   if (!date) {
     return <FullScreenLoadingIndicator />;

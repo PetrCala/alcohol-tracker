@@ -2199,6 +2199,14 @@ const styles = (theme: ThemeColors) =>
       color: theme.link,
     },
 
+    textHomeScreenNoSessions: {
+      color: theme.text,
+      fontSize: variables.fontSizeNormal,
+      textAlign: 'center',
+      ...spacing.mt5,
+      ...sizing.mw75,
+    },
+
     timePickerInput: {
       fontSize: 69,
       minWidth: 56,

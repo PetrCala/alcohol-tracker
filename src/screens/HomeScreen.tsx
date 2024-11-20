@@ -15,7 +15,6 @@ import {
   dateToDateObject,
   calculateThisMonthDrinks,
   calculateThisMonthUnits,
-  getSingleMonthDrinkingSessions,
   timestampToDate,
   timestampToDateString,
 } from '@libs/DataHandling';
@@ -25,22 +24,16 @@ import {synchronizeUserStatus} from '@database/users';
 import commonStyles from '@src/styles/commonStyles';
 import {useFirebase} from '@context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
-import {generateDatabaseKey} from '@database/baseFunctions';
 import CONST from '@src/CONST';
-import type {
-  DrinkingSession,
-  DrinkingSessionArray,
-  DrinkingSessionId,
-} from '@src/types/onyx';
+import type {DrinkingSessionArray, DrinkingSessionId} from '@src/types/onyx';
 import ROUTES from '@src/ROUTES';
-import Navigation, {navigationRef} from '@navigation/Navigation';
+import Navigation from '@navigation/Navigation';
 import type {StackScreenProps} from '@react-navigation/stack';
 import {useFocusEffect} from '@react-navigation/native';
 import type {BottomTabNavigatorParamList} from '@libs/Navigation/types';
 import type SCREENS from '@src/SCREENS';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import type {DateData} from 'react-native-calendars';
-import DBPATHS from '@database/DBPATHS';
 import type {StatData} from '@components/Items/StatOverview';
 import {StatsOverview} from '@components/Items/StatOverview';
 import {getPlural} from '@libs/StringUtilsKiroku';
@@ -48,7 +41,6 @@ import {getReceivedRequestsCount} from '@libs/FriendUtils';
 import FriendRequestCounter from '@components/Social/FriendRequestCounter';
 import ScreenWrapper from '@components/ScreenWrapper';
 import MessageBanner from '@components/Info/MessageBanner';
-import VerifyEmailPopup from '@components/Popups/VerifyEmailPopup';
 import useThemeStyles from '@hooks/useThemeStyles';
 import getPlatform from '@libs/getPlatform';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
@@ -60,6 +52,7 @@ import Icon from '@components/Icon';
 import ScrollView from '@components/ScrollView';
 import useLocalize from '@hooks/useLocalize';
 import {roundToTwoDecimalPlaces} from '@libs/NumberUtils';
+import NoSessionsInfo from '@components/NoSessionsInfo';
 
 type State = {
   visibleDateObject: DateObject;
@@ -67,7 +60,6 @@ type State = {
   drinksConsumed: number;
   unitsConsumed: number;
   ongoingSessionId: DrinkingSessionId | undefined;
-  verifyEmailModalVisible: boolean;
   shouldNavigateToTzFix: boolean;
 };
 
@@ -82,7 +74,6 @@ const initialState: State = {
   drinksConsumed: 0,
   unitsConsumed: 0,
   ongoingSessionId: undefined,
-  verifyEmailModalVisible: false,
   shouldNavigateToTzFix: false,
 };
 
@@ -98,8 +89,6 @@ const reducer = (state: State, action: Action): State => {
       return {...state, unitsConsumed: action.payload};
     case 'SET_ONGOING_SESSION_ID':
       return {...state, ongoingSessionId: action.payload};
-    case 'SET_VERIFY_EMAIL_MODAL_VISIBLE':
-      return {...state, verifyEmailModalVisible: action.payload};
     case 'SET_SHOULD_NAVIGATE_TO_TZ_FIX':
       return {...state, shouldNavigateToTzFix: action.payload};
     default:
@@ -140,25 +129,31 @@ function HomeScreen({route}: HomeScreenProps) {
     },
   ];
 
-  // If there is an ongoing session, open it, otherwise start a new one
   const onOpenLiveSessionPress = async () => {
+    // If there is an ongoing session, open it
     if (state?.ongoingSessionId) {
-      // Assume the live session data is in sync with the database
-      Navigation.navigate(
-        ROUTES.DRINKING_SESSION_LIVE.getRoute(state.ongoingSessionId),
-      );
+      try {
+        if (!drinkingSessionData) {
+          throw new Error(translate('homeScreen.error.title'));
+        }
+        const session = drinkingSessionData[state.ongoingSessionId];
+        DS.navigateToLiveSessionScreen(session?.id, session);
+      } catch (error: any) {
+        ErrorUtils.raiseAlert(error);
+      }
       return;
     }
 
+    // Start a new session
     try {
       setIsStartingSession(true);
-      const newSessionId = await DS.startLiveDrinkingSession(
+      const newSession = await DS.startLiveDrinkingSession(
         db,
         user,
         userData?.timezone?.selected,
       );
-      dispatch({type: 'SET_ONGOING_SESSION_ID', payload: newSessionId});
-      Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(newSessionId));
+      dispatch({type: 'SET_ONGOING_SESSION_ID', payload: newSession?.id});
+      DS.navigateToLiveSessionScreen(newSession?.id, newSession);
     } catch (error: any) {
       ErrorUtils.raiseAlert(error, translate('homeScreen.error.title'));
     } finally {
@@ -183,7 +178,7 @@ function HomeScreen({route}: HomeScreenProps) {
       drinkingSessionArray,
       preferences.drinks_to_units,
     );
-    const thisMonthSessionCount = getSingleMonthDrinkingSessions(
+    const thisMonthSessionCount = DSUtils.getSingleMonthDrinkingSessions(
       timestampToDate(state.visibleDateObject.timestamp),
       drinkingSessionArray,
       false,
@@ -215,10 +210,10 @@ function HomeScreen({route}: HomeScreenProps) {
       return;
     }
 
-    const currentSessionId: DrinkingSessionId | undefined = userStatusData
-      .latest_session?.ongoing
-      ? userStatusData.latest_session_id
-      : undefined;
+    const currentSessionId: DrinkingSessionId | null | undefined =
+      userStatusData.latest_session?.ongoing
+        ? userStatusData.latest_session_id
+        : undefined;
 
     dispatch({
       type: 'SET_ONGOING_SESSION_ID',
@@ -229,16 +224,11 @@ function HomeScreen({route}: HomeScreenProps) {
   useFocusEffect(
     React.useCallback(() => {
       // Update user status on home screen focus
-      if (!user || !userData || !preferences || !drinkingSessionData) {
+      if (!user || !userData || !preferences) {
         return;
       }
       try {
-        synchronizeUserStatus(
-          db,
-          user.uid,
-          userStatusData,
-          drinkingSessionData,
-        );
+        synchronizeUserStatus(db, user.uid, drinkingSessionData);
       } catch (error: any) {
         Alert.alert(
           'Failed to contact the database',
@@ -256,12 +246,6 @@ function HomeScreen({route}: HomeScreenProps) {
       state.shouldNavigateToTzFix,
     ]),
   );
-
-  // Ensure the live session data is in sync with the database on component mount
-  useEffect(() => {
-    DS.syncLocalLiveSessionData(state.ongoingSessionId, drinkingSessionData);
-  }, [state.ongoingSessionId, drinkingSessionData]);
-
   if (!user) {
     Navigation.resetToHome();
     return;
@@ -269,13 +253,7 @@ function HomeScreen({route}: HomeScreenProps) {
   if (!isOnline) {
     return <UserOffline />;
   }
-  if (
-    isLoading ||
-    isStartingSession ||
-    !preferences ||
-    !userData ||
-    !userStatusData
-  ) {
+  if (isLoading || isStartingSession || !preferences || !userData) {
     return (
       <FullScreenLoadingIndicator
         loadingText={
@@ -328,32 +306,28 @@ function HomeScreen({route}: HomeScreenProps) {
             danger
           />
         )}
-        {/* User verification modal -- Enable later on
-        {user.emailVerified ? null : (
-          <MessageBanner
-            text="Your email is not verified!"
-            onPress={() =>
-              dispatch({type: 'SET_VERIFY_EMAIL_MODAL_VISIBLE', payload: true})
-            }
-          />
-        )} */}
-        <View style={localStyles.statsOverviewHolder}>
-          <StatsOverview statsData={statsData} />
-        </View>
-
-        <SessionsCalendar
-          drinkingSessionData={drinkingSessionData}
-          preferences={preferences}
-          visibleDateObject={state.visibleDateObject}
-          dispatch={dispatch}
-          onDayPress={(day: DateData) => {
-            Navigation.navigate(
-              ROUTES.DAY_OVERVIEW.getRoute(
-                timestampToDateString(day.timestamp),
-              ),
-            );
-          }}
-        />
+        {!!drinkingSessionData ? (
+          <>
+            <View style={localStyles.statsOverviewHolder}>
+              <StatsOverview statsData={statsData} />
+            </View>
+            <SessionsCalendar
+              drinkingSessionData={drinkingSessionData}
+              preferences={preferences}
+              visibleDateObject={state.visibleDateObject}
+              dispatch={dispatch}
+              onDayPress={(day: DateData) => {
+                Navigation.navigate(
+                  ROUTES.DAY_OVERVIEW.getRoute(
+                    timestampToDateString(day.timestamp),
+                  ),
+                );
+              }}
+            />
+          </>
+        ) : (
+          <NoSessionsInfo />
+        )}
       </ScrollView>
       <View style={commonStyles.mainFooter}>
         <View
@@ -416,15 +390,6 @@ function HomeScreen({route}: HomeScreenProps) {
           />
         </TouchableOpacity>
       )}
-      <VerifyEmailPopup
-        visible={state.verifyEmailModalVisible}
-        onRequestClose={() =>
-          dispatch({
-            type: 'SET_VERIFY_EMAIL_MODAL_VISIBLE',
-            payload: false,
-          })
-        }
-      />
     </ScreenWrapper>
   );
 }

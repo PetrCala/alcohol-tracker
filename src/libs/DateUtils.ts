@@ -21,6 +21,7 @@ import {
   set,
   setDefaultOptions,
   startOfDay,
+  startOfMonth,
   startOfWeek,
   subDays,
   subMilliseconds,
@@ -106,6 +107,48 @@ function setLocale(localeString: Locale) {
   }
 }
 
+function getDayStartAndEndUTC(date: Date, timezone: SelectedTimezone) {
+  const dateString = format(date, 'yyyy-MM-dd');
+  const startOfDayUTC = zonedTimeToUtc(
+    `${dateString} 00:00:00`,
+    timezone,
+  ).getTime();
+  const endOfDayUTC = zonedTimeToUtc(
+    `${dateString} 23:59:59.999`,
+    timezone,
+  ).getTime();
+  return {startOfDayUTC, endOfDayUTC};
+}
+
+function getMonthStartAndEndUTC(
+  date: Date,
+  timezone: string,
+  untilToday: boolean,
+) {
+  // Get the date in the session's timezone
+  const zonedDate = utcToZonedTime(date, timezone);
+
+  // Start of the month in the session's timezone
+  const startOfMonthDate = startOfMonth(zonedDate);
+  const startOfMonthUTC = zonedTimeToUtc(startOfMonthDate, timezone).getTime();
+
+  // End of the month in the session's timezone
+  let endOfMonthDate = endOfMonth(zonedDate);
+
+  if (untilToday) {
+    const todayInTz = utcToZonedTime(new Date(), timezone);
+    const todayEndInTz = endOfDay(todayInTz);
+
+    // If today is before the end of the month, use today as the end date
+    if (todayEndInTz.getTime() < endOfMonthDate.getTime()) {
+      endOfMonthDate = todayEndInTz;
+    }
+  }
+
+  const endOfMonthUTC = zonedTimeToUtc(endOfMonthDate, timezone).getTime();
+
+  return {startOfMonthUTC, endOfMonthUTC};
+}
 /**
  * Gets the user's stored time zone NVP and returns a localized
  * Date object for the given ISO-formatted datetime string
@@ -156,18 +199,24 @@ function isToday(date: Date, timeZone: SelectedTimezone): boolean {
  * @returns {string} The formatted time string localized to the selected timezone.
  */
 function getLocalizedTime(
-  date: Date | string | number,
+  date: Date | string | number | undefined | null,
   selectedTimezone: SelectedTimezone = timezone.selected,
   formatString: string = CONST.DATE.SHORT_TIME_FORMAT,
 ): string {
+  if (!date) {
+    return 'unknown';
+  }
   return formatInTimeZone(date, selectedTimezone, formatString);
 }
 
 function getLocalizedDay(
-  date: Date | string | number,
+  date: Date | string | number | undefined | null,
   selectedTimezone: SelectedTimezone = timezone.selected,
   formatString: string = CONST.DATE.SHORT_DATE_FORMAT,
 ): string {
+  if (!date) {
+    return 'unknown';
+  }
   const day = utcToZonedTime(date, selectedTimezone);
   return format(day, formatString);
 }
@@ -875,7 +924,9 @@ const DateUtils = {
   getDayValidationErrorKey,
   getDaysOfWeek,
   getDeviceTimezone,
+  getDayStartAndEndUTC,
   getEndOfToday,
+  getMonthStartAndEndUTC,
   getLastBusinessDayOfMonth,
   getLocalDateFromDatetime,
   getLocalizedTime,

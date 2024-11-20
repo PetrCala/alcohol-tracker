@@ -79,6 +79,7 @@ export default {
     contacts: 'Contacts',
     recents: 'Recents',
     close: 'Close',
+    loading: 'Loading',
     download: 'Download',
     downloading: 'Downloading',
     warning: 'Warning',
@@ -370,6 +371,7 @@ export default {
     },
     error: {
       sessionOpen: 'Failed to open a session',
+      missingId: 'Missing session ID',
     },
   },
   userNameScreen: {
@@ -495,6 +497,7 @@ export default {
   },
   homeScreen: {
     startingSession: 'Starting a new session...',
+    welcomeToKiroku: 'Welcome to Kiroku!',
     error: {
       title: 'Failed to open a session',
       sessionStart: "We couldn't start a new session. Please try again.",
@@ -681,6 +684,12 @@ export default {
   },
   closeAccount: {
     successMessage: 'Your account has been successfully deleted.',
+  },
+  database: {
+    error: {
+      generic: 'Failed to reach the database',
+      saveData: 'Failed to save your data to the database. Please try again.',
+    },
   },
   onyx: {
     error: {

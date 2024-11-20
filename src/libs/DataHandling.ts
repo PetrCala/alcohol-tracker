@@ -18,13 +18,12 @@ import type {
   DrinkName,
   Drinks,
 } from '@src/types/onyx';
-import {formatInTimeZone, utcToZonedTime} from 'date-fns-tz';
+import {formatInTimeZone} from 'date-fns-tz';
 import CONST from '../CONST';
 import type {MeasureType} from '@src/types/onyx/OnyxCommon';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
-import type {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
+import type {Timezone} from '@src/types/onyx/UserData';
 import _ from 'lodash';
-import {endOfMonth, endOfToday, format, startOfMonth} from 'date-fns';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
 import Onyx from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
@@ -255,62 +254,6 @@ export function setDateToCurrentTime(inputDate: Date): Date {
   return inputDate;
 }
 
-/** Subset an array of drinking sessions to a single day.
- *
- * @param dateObject Date type object for whose day to subset the sessions to
- * @param sessions An array of sessions to subset
- * @param returnArray If true, return an array of sessions without IDs. If false,
- *  simply subset the drinking session list to the relevant sessions.
- * @returns The subsetted array of sessions
- */
-export function getSingleDayDrinkingSessions(
-  date: Date,
-  sessions: DrinkingSessionList | undefined,
-  returnArray = true,
-): DrinkingSessionArray | DrinkingSessionList {
-  // This is without timezones
-  const sessionBelongsToDate = (session: DrinkingSession) => {
-    const tz = session.timezone ?? timezone.selected;
-    const sessionDate = formatInTimeZone(session.start_time, tz, 'yyyy-MM-dd');
-    return sessionDate === format(date, 'yyyy-MM-dd');
-  };
-
-  if (returnArray) {
-    return _.filter(sessions, session => sessionBelongsToDate(session));
-  }
-
-  return _.entries(sessions)
-    .filter(([sessionId, session]) => sessionBelongsToDate(session))
-    .reduce((acc, [sessionId, session]) => {
-      acc[sessionId] = session;
-      return acc;
-    }, {} as DrinkingSessionList);
-}
-
-/** Subset an array of drinking sessions to the current month only.
- *
- * @param dateObject Date type object for whose month to subset the sessions to
- * @param sessions An array of sessions to subset
- * @param untilToday If true, include no sessions that occured after today
- * @returns The subsetted array of sessions
- */
-export function getSingleMonthDrinkingSessions(
-  date: Date,
-  sessions: DrinkingSessionArray,
-  untilToday = false,
-) {
-  const startDate = startOfMonth(date);
-  const endDate = untilToday ? endOfToday() : endOfMonth(date);
-
-  const monthDrinkingSessions = sessions.filter(session => {
-    const tz = session.timezone ?? timezone.selected;
-    const sessionDate = new Date(utcToZonedTime(session.start_time, tz));
-    return sessionDate >= startDate && sessionDate <= endDate;
-  });
-
-  return monthDrinkingSessions;
-}
-
 export function aggregateSessionsByDays(
   sessions: DrinkingSession[],
   measureType: MeasureType = 'units',
@@ -460,11 +403,6 @@ export function getUniqueDrinkTypesInSession(
   return Array.from(uniqueKeys);
 }
 
-/** Type guard to check if a given key is a valid DrinkType key */
-export function isDrinkTypeKey(key: string): key is keyof Drinks {
-  return _.includes(Object.values(CONST.DRINKS.KEYS), key);
-}
-
 // /** Using a DrinksList and the drinks to units conversion object, calculate how many units this object amounts to.
 //  *
 //  * @param drinksObject DrinksList type
@@ -543,7 +481,7 @@ export const calculateThisMonthDrinks = (
 ): number => {
   // Subset to this month's sessions only
   const currentDate = timestampToDate(dateObject.timestamp);
-  const sessionsThisMonth = getSingleMonthDrinkingSessions(
+  const sessionsThisMonth = DSUtils.getSingleMonthDrinkingSessions(
     currentDate,
     sessions,
     false,
@@ -573,7 +511,7 @@ export const calculateThisMonthUnits = (
   }
   // Subset to this month's sessions only
   const currentDate = timestampToDate(dateObject.timestamp);
-  const sessionsThisMonth = getSingleMonthDrinkingSessions(
+  const sessionsThisMonth = DSUtils.getSingleMonthDrinkingSessions(
     currentDate,
     sessions,
     false,

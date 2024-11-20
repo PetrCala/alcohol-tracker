@@ -91,7 +91,7 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
     session?.timezone,
   );
   const sessionEndTime = DateUtils.getLocalizedTime(
-    session.end_time,
+    session?.end_time,
     session?.timezone,
   );
   const wasLiveSession = session?.type == CONST.SESSION_TYPES.LIVE;
