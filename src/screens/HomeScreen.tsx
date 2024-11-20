@@ -3,7 +3,6 @@ import {
   Alert,
   Dimensions,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -53,13 +52,13 @@ import ScrollView from '@components/ScrollView';
 import useLocalize from '@hooks/useLocalize';
 import {roundToTwoDecimalPlaces} from '@libs/NumberUtils';
 import NoSessionsInfo from '@components/NoSessionsInfo';
+import Text from '@components/Text';
 
 type State = {
   visibleDateObject: DateObject;
   drinkingSessionsCount: number;
   drinksConsumed: number;
   unitsConsumed: number;
-  ongoingSessionId: DrinkingSessionId | undefined;
   shouldNavigateToTzFix: boolean;
 };
 
@@ -73,7 +72,6 @@ const initialState: State = {
   drinkingSessionsCount: 0,
   drinksConsumed: 0,
   unitsConsumed: 0,
-  ongoingSessionId: undefined,
   shouldNavigateToTzFix: false,
 };
 
@@ -87,8 +85,6 @@ const reducer = (state: State, action: Action): State => {
       return {...state, drinksConsumed: action.payload};
     case 'SET_UNITS_CONSUMED':
       return {...state, unitsConsumed: action.payload};
-    case 'SET_ONGOING_SESSION_ID':
-      return {...state, ongoingSessionId: action.payload};
     case 'SET_SHOULD_NAVIGATE_TO_TZ_FIX':
       return {...state, shouldNavigateToTzFix: action.payload};
     default:
@@ -115,6 +111,9 @@ function HomeScreen({route}: HomeScreenProps) {
     userData,
     isLoading,
   } = useDatabaseData();
+  const [ongoingSessionId, setOngoingSessionId] = useState<
+    DrinkingSessionId | null | undefined
+  >();
   const [isStartingSession, setIsStartingSession] = useState(false);
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -131,12 +130,12 @@ function HomeScreen({route}: HomeScreenProps) {
 
   const onOpenLiveSessionPress = async () => {
     // If there is an ongoing session, open it
-    if (state?.ongoingSessionId) {
+    if (ongoingSessionId) {
       try {
         if (!drinkingSessionData) {
           throw new Error(translate('homeScreen.error.title'));
         }
-        const session = drinkingSessionData[state.ongoingSessionId];
+        const session = drinkingSessionData[ongoingSessionId];
         DS.navigateToLiveSessionScreen(session?.id, session);
       } catch (error: any) {
         ErrorUtils.raiseAlert(error);
@@ -152,7 +151,7 @@ function HomeScreen({route}: HomeScreenProps) {
         user,
         userData?.timezone?.selected,
       );
-      dispatch({type: 'SET_ONGOING_SESSION_ID', payload: newSession?.id});
+      setOngoingSessionId(newSession?.id);
       DS.navigateToLiveSessionScreen(newSession?.id, newSession);
     } catch (error: any) {
       ErrorUtils.raiseAlert(error, translate('homeScreen.error.title'));
@@ -209,16 +208,11 @@ function HomeScreen({route}: HomeScreenProps) {
     if (!userStatusData) {
       return;
     }
-
-    const currentSessionId: DrinkingSessionId | null | undefined =
-      userStatusData.latest_session?.ongoing
-        ? userStatusData.latest_session_id
-        : undefined;
-
-    dispatch({
-      type: 'SET_ONGOING_SESSION_ID',
-      payload: currentSessionId,
-    });
+    setOngoingSessionId(
+      userStatusData?.latest_session?.ongoing
+        ? userStatusData?.latest_session_id
+        : undefined,
+    );
   }, [userStatusData]);
 
   useFocusEffect(
@@ -267,40 +261,29 @@ function HomeScreen({route}: HomeScreenProps) {
       testID={HomeScreen.displayName}
       includePaddingTop={false}
       includeSafeAreaPaddingBottom={getPlatform() !== CONST.PLATFORM.IOS}>
-      <View style={[commonStyles.headerContainer, styles.borderBottom]}>
-        {userData && (
-          <View style={localStyles.profileContainer}>
-            <TouchableOpacity
-              accessibilityRole="button"
-              onPress={() =>
-                Navigation.navigate(ROUTES.PROFILE.getRoute(user.uid))
-              }
-              style={localStyles.profileButton}>
-              <ProfileImage
-                storage={storage}
-                userID={user.uid}
-                downloadPath={userData.profile.photo_url}
-                style={localStyles.profileImage}
-                // refreshTrigger={refreshCounter}
-                refreshTrigger={0}
-              />
-              <Text style={[styles.headerText, styles.textLarge, styles.ml3]}>
-                {user.displayName}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        )}
-        {/* Enable later on */}
-        {/* <View style={localStyles.menuContainer}>
-          <TouchableOpacity style={localStyles.notificationsButton}>
-            <Image source={KirokuIcons.Bell} style={localStyles.notificationsIcon} />
-          </TouchableOpacity>
-        </View> */}
+      {/* // TODO rewrite this into the HeaderWithBackButton component */}
+      <View style={[styles.headerBar, styles.borderBottom]}>
+        <TouchableOpacity
+          accessibilityRole="button"
+          onPress={() => Navigation.navigate(ROUTES.PROFILE.getRoute(user.uid))}
+          style={localStyles.profileButton}>
+          <ProfileImage
+            storage={storage}
+            userID={user.uid}
+            downloadPath={userData.profile.photo_url}
+            style={localStyles.profileImage}
+            // refreshTrigger={refreshCounter}
+            refreshTrigger={0}
+          />
+          <Text style={[styles.headerText, styles.textLarge, styles.ml3]}>
+            {user.displayName}
+          </Text>
+        </TouchableOpacity>
       </View>
       <ScrollView>
-        {state.ongoingSessionId && (
+        {ongoingSessionId && (
           <MessageBanner
-            text="You are currently in session!"
+            text={translate('homeScreen.currentlyInSession')}
             onPress={onOpenLiveSessionPress}
             danger
           />
@@ -344,7 +327,7 @@ function HomeScreen({route}: HomeScreenProps) {
             />
             <FriendRequestCounter
               count={getReceivedRequestsCount(userData?.friend_requests)}
-              style={localStyles.friendRequestCounter}
+              style={styles.mh3}
             />
           </View>
           <MenuIcon
@@ -376,7 +359,7 @@ function HomeScreen({route}: HomeScreenProps) {
           />
         </View>
       </View>
-      {!state.ongoingSessionId && (
+      {!ongoingSessionId && (
         <TouchableOpacity
           accessibilityRole="button"
           style={[localStyles.startSessionButton, styles.buttonSuccess]}
@@ -398,12 +381,6 @@ const currentPlatform = getPlatform();
 const iconSize = currentPlatform === CONST.PLATFORM.IOS ? 48 : 28;
 
 const localStyles = StyleSheet.create({
-  profileContainer: {
-    //Ensure the container fills all space between, no more, no less
-    padding: 10,
-    height: '100%',
-    width: '85%',
-  },
   profileButton: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
@@ -439,22 +416,8 @@ const localStyles = StyleSheet.create({
     height: iconSize,
     padding: 10,
   },
-  notificationsButton: {
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  notificationsIcon: {
-    width: 24,
-    height: 24,
-  },
   socialContainer: {
     flexDirection: 'row',
-  },
-  friendRequestCounter: {
-    marginLeft: -6,
-    marginRight: 6,
   },
   statsOverviewHolder: {
     minHeight: 120,
