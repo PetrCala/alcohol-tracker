@@ -263,46 +263,8 @@ function computeFirebaseUpdates<T>(
     return {};
   }
 
-  const updatesToDB: {[key: string]: any} = {};
-
-  differences.forEach(difference => {
-    const path = difference.path || [];
-
-    if (path.length === 0) {
-      return;
-    }
-
-    const dbPath = path.join('/');
-
-    switch (difference.kind) {
-      case 'N': // New property added
-      case 'E': // Property edited
-        updatesToDB[dbPath] = difference.rhs;
-        break;
-      case 'D': // Property deleted
-        updatesToDB[dbPath] = null; // Or handle deletion as needed
-        break;
-      case 'A': // Array change
-        const arrayDiff = difference as DiffArray<any, any>;
-        const arrayIndex = arrayDiff.index;
-        const itemDiff = arrayDiff.item;
-
-        const arrayPath = `${dbPath}/${arrayIndex}`;
-
-        if (itemDiff?.kind === 'N' || itemDiff?.kind === 'E') {
-          updatesToDB[arrayPath] = itemDiff.rhs;
-        } else if (itemDiff?.kind === 'D') {
-          updatesToDB[arrayPath] = null; // Or remove the element
-        }
-        break;
-      default:
-        break;
-    }
-  });
-
-  if (basePath) {
-    return prependFirebaseUpdateKeys(updatesToDB, basePath);
-  }
+  const updates = differencesToUpdates(differences);
+  const updatesToDB = buildUpdates(updates, basePath);
 
   return updatesToDB;
 }
