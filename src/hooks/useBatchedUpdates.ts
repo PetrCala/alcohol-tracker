@@ -2,6 +2,54 @@ import {useState, useRef, useCallback, useEffect} from 'react';
 import {Alert} from 'react-native';
 import useLocalize from './useLocalize';
 
+/**
+ * Custom React hook for batching and processing updates with a specified delay.
+ *
+ * NOTE: This hook should only be used for non-nested objects. If you need to batch updates for nested objects, consider using a different approach.
+ *
+ * The `useBatchedUpdates` hook allows you to accumulate multiple updates and process them
+ * in a single batch after a period of inactivity. This is useful for optimizing performance
+ * by reducing the number of state updates or network requests.
+ *
+ * **Features:**
+ * - **Debouncing:** Waits for a specified delay before processing the accumulated updates.
+ * - **Synchronization:** Ensures that only one synchronization process runs at a time.
+ * - **Retry Mechanism:** Retries processing updates up to a maximum number of attempts if failures occur.
+ * - **Pending State:** Provides a state indicator to show if updates are currently being processed.
+ *
+ * @param processUpdates - An asynchronous function that takes the accumulated updates and processes them.
+ *                          It should return a `Promise<void>`. This function is called with the merged
+ *                          updates after the debounce delay.
+ * @param delay - (Optional) The debounce delay in milliseconds before processing the updates.
+ *                Defaults to `500` milliseconds.
+ *
+ * @returns An object containing:
+ * - `isPending`: A boolean indicating whether the updates are currently being processed.
+ * - `enqueueUpdate`: A function to enqueue a new update. It accepts an update object that will be
+ *                    merged with existing updates and scheduled for processing.
+ *
+ * @example
+ * ```typescript
+ * const processUpdates = async (updates: any) => {
+ *   // Handle the batched updates, e.g., send to an API or update a database
+ * };
+ *
+ * const MyComponent = () => {
+ *   const { isPending, enqueueUpdate } = useBatchedUpdates(processUpdates, 1000);
+ *
+ *   const handleChange = (newData: any) => {
+ *     enqueueUpdate(newData);
+ *   };
+ *
+ *   return (
+ *     <div>
+ *       <input onChange={(e) => handleChange(e.target.value)} />
+ *       {isPending && <span>Saving...</span>}
+ *     </div>
+ *   );
+ * };
+ * ```
+ */
 const useBatchedUpdates = (
   processUpdates: (updates: any) => Promise<void>,
   delay: number = 500,
