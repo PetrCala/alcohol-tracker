@@ -14,11 +14,7 @@ import type {UserID} from '@src/types/onyx/OnyxCommon';
 import DBPATHS from '../../database/DBPATHS';
 import {User} from 'firebase/auth';
 import CONST from '@src/CONST';
-import {
-  buildUpdates,
-  FirebaseUpdates,
-  generateDatabaseKey,
-} from '@database/baseFunctions';
+import {FirebaseUpdates, generateDatabaseKey} from '@database/baseFunctions';
 import Onyx from 'react-native-onyx';
 import ONYXKEYS, {OnyxKey} from '@src/ONYXKEYS';
 import Navigation from '@libs/Navigation/Navigation';

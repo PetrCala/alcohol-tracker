@@ -247,7 +247,6 @@ function HomeScreen({route}: HomeScreenProps) {
     ]),
   );
   if (!user) {
-    Navigation.resetToHome();
     return;
   }
   if (!isOnline) {
