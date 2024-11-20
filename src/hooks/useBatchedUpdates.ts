@@ -11,6 +11,8 @@ const useBatchedUpdates = (
   const updatesRef = useRef<any>({});
   const syncingRef = useRef<boolean>(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const retriesRef = useRef<number>(0);
+  const maxRetries = 3;
 
   const enqueueUpdate = useCallback(
     (update: any) => {
@@ -55,14 +57,19 @@ const useBatchedUpdates = (
                 delete updatesRef.current[key];
               }
             });
+            retriesRef.current = 0;
           } catch (error: any) {
             // On failure, keep updates in the pool and raise an alert
             Alert.alert(translate('database.error.saveData'), error.message);
+            retriesRef.current += 1;
           } finally {
             syncingRef.current = false;
             setIsPending(false);
             // If new updates arrived during synchronization, schedule another sync
-            if (Object.keys(updatesRef.current).length > 0) {
+            if (
+              Object.keys(updatesRef.current).length > 0 &&
+              retriesRef.current < maxRetries
+            ) {
               enqueueUpdate({});
             }
           }
