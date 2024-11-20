@@ -68,13 +68,6 @@ const commonStyles = StyleSheet.create({
   smallMarginLeft: {
     marginLeft: 5,
   },
-  successIndicator: {
-    width: 20,
-    height: 20,
-    borderRadius: 25,
-    margin: 10,
-    backgroundColor: 'green',
-  },
 });
 
 export default commonStyles;

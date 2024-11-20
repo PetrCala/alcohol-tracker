@@ -659,6 +659,17 @@ function getButtonStyleWithIcon(
   }
 }
 
+function getSuccessIndicatorStyle(): ViewStyle {
+  return {
+    position: 'absolute',
+    width: variables.successIndicatorSize,
+    height: variables.successIndicatorSize,
+    borderRadius: variables.successIndicatorSize,
+    right: 12,
+    top: variables.contentHeaderHeight + 8,
+  };
+}
+
 /**
  * Returns the font size for the HTML code tag renderer.
  */
@@ -1146,6 +1157,7 @@ const staticStyleUtils = {
   getSafeAreaPadding,
   getSignUpSafeAreaPadding,
   getSignUpLogoWidthStyle,
+  getSuccessIndicatorStyle,
   getTextColorStyle,
   getTransparentColor,
   getWidthAndHeightStyle,

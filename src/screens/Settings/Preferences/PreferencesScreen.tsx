@@ -357,7 +357,6 @@ function PreferencesScreen({}: PreferencesScreenProps) {
     return <UserOffline />;
   }
   if (!user || !preferences) {
-    Navigation.resetToHome();
     return null;
   }
   if (saving) {

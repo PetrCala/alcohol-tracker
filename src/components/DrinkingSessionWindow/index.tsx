@@ -286,8 +286,7 @@ function DrinkingSessionWindow({
   if (loadingText) {
     return <FullScreenLoadingIndicator loadingText={loadingText} />;
   }
-  if (!user || !preferences) {
-    Navigation.resetToHome();
+  if (!user) {
     return;
   }
 

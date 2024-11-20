@@ -239,6 +239,7 @@ export default {
   sessionColorMarkerSize: 20,
   numericSliderWidth: 280,
   numericSliderHeight: 40,
+  successIndicatorSize: 20,
 
   h20: 20,
   h28: 28,

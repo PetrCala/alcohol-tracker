@@ -12,14 +12,16 @@ import {useOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 import DrinkingSessionWindow from '@components/DrinkingSessionWindow';
 import useBatchedUpdates from '@hooks/useBatchedUpdates';
-import {ActivityIndicator, StyleSheet} from 'react-native';
+import {ActivityIndicator, StyleSheet, View} from 'react-native';
 import _ from 'lodash';
 import ScreenWrapper from '@components/ScreenWrapper';
 import SuccessIndicator from '@components/SuccessIndicator';
-import commonStyles from '@src/styles/commonStyles';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import UserOfflineModal from '@components/UserOfflineModal';
 import {computeFirebaseUpdates} from '@database/baseFunctions';
+import useThemeStyles from '@hooks/useThemeStyles';
+import useStyleUtils from '@hooks/useStyleUtils';
+import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
 
 type LiveSessionScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -30,6 +32,8 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   const {sessionId} = route.params;
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
+  const styles = useThemeStyles();
+  const StyleUtils = useStyleUtils();
   const {translate} = useLocalize();
   const {isOnline} = useUserConnection();
   const [session] = useOnyx(ONYXKEYS.LIVE_SESSION_DATA);
@@ -100,16 +104,12 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   return (
     <ScreenWrapper testID={LiveSessionScreen.displayName}>
       {isPending && (
-        <ActivityIndicator
+        <FlexibleLoadingIndicator
           size="small"
-          color="#0000ff"
-          style={localStyles.isPendingIndicator}
+          style={StyleUtils.getSuccessIndicatorStyle()}
         />
       )}
-      <SuccessIndicator
-        visible={dbSyncSuccessful}
-        successStyle={[localStyles.successStyle, commonStyles.successIndicator]}
-      />
+      <SuccessIndicator visible={dbSyncSuccessful} />
       <DrinkingSessionWindow
         sessionId={sessionId}
         session={session}
@@ -119,22 +119,6 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
     </ScreenWrapper>
   );
 }
-
-const localStyles = StyleSheet.create({
-  isPendingIndicator: {
-    width: 25,
-    height: 25,
-    margin: 4,
-    position: 'absolute',
-    right: 10,
-    top: 70,
-  },
-  successStyle: {
-    position: 'absolute',
-    right: 10,
-    top: 70,
-  },
-});
 
 LiveSessionScreen.displayName = 'Live Session Screen';
 export default LiveSessionScreen;
