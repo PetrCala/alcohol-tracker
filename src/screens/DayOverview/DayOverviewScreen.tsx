@@ -8,13 +8,12 @@ import {
   Dimensions,
 } from 'react-native';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
-import MenuIcon from '../../components/Buttons/MenuIcon';
+import MenuIcon from '@components/Buttons/MenuIcon';
 import {
   changeDateBySomeDays,
   unitsToColors,
   dateStringToDate,
 } from '@libs/DataHandling';
-// import { PreferencesData} from '../types/database';
 import UserOffline from '@components/UserOfflineModal';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import type {DrinkingSession, DrinkingSessionList} from '@src/types/onyx';
@@ -43,7 +42,6 @@ import Icon from '@components/Icon';
 import useTheme from '@hooks/useTheme';
 import commonStyles from '@src/styles/commonStyles';
 import DateUtils from '@libs/DateUtils';
-import {setIsLoading} from '@libs/actions/FormActions';
 
 type DayOverviewScreenProps = StackScreenProps<
   DayOverviewNavigatorParamList,
