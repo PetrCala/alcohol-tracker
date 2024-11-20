@@ -19,7 +19,7 @@ import type {
   Drinks,
 } from '@src/types/onyx';
 import {formatInTimeZone} from 'date-fns-tz';
-import CONST from '../CONST';
+import CONST from '@src/CONST';
 import type {MeasureType} from '@src/types/onyx/OnyxCommon';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import type {Timezone} from '@src/types/onyx/UserData';
@@ -259,47 +259,60 @@ export function aggregateSessionsByDays(
   measureType: MeasureType = 'units',
   drinksToUnits?: DrinksToUnits,
 ): SessionsCalendarDatesType {
-  return sessions.reduce(
-    (acc: SessionsCalendarDatesType, item: DrinkingSession) => {
-      const dateString = formatInTimeZone(
-        item.start_time,
-        item.timezone ?? timezone.selected,
+  if (measureType === 'units' && !drinksToUnits) {
+    throw new Error(
+      'You must specify the drink-to-unit conversion for the "units" measure type',
+    );
+  }
+  const baseTimezone = timezone.selected;
+
+  // Cache to store formatted date strings based on timezone and timestamp
+  const dateStringCache: Record<string, string> = {};
+
+  return sessions.reduce<SessionsCalendarDatesType>((acc, session) => {
+    const tz = session.timezone ?? baseTimezone;
+    const cacheKey = `${tz}-${session.start_time}`;
+
+    // Retrieve from cache or compute and store the date string
+    let dateString = dateStringCache[cacheKey];
+    if (!dateString) {
+      dateString = formatInTimeZone(
+        session.start_time,
+        tz,
         CONST.DATE.CALENDAR_FORMAT,
       );
-      let newDrinks: number;
-      if (measureType === 'units') {
-        if (!drinksToUnits) {
-          throw new Error('You must specify the drink to unit conversion');
-        }
-        newDrinks = DSUtils.calculateTotalUnits(item.drinks, drinksToUnits);
-      } else if (measureType === 'drinks') {
-        newDrinks = sumAllDrinks(item.drinks);
-      } else {
-        throw new Error('Unknown measure type');
-      }
-      acc[dateString] = acc[dateString]
-        ? {
-            // Already an entry exists
-            units: acc[dateString].units + newDrinks, // Does not distinguish between drinks/units
-            blackout: acc[dateString].blackout === false ? item.blackout : true,
-          }
-        : {
-            // First entry
-            units: newDrinks,
-            blackout: item.blackout,
-          };
+      dateStringCache[cacheKey] = dateString;
+    }
 
-      return acc;
-    },
-    {},
-  );
+    // Calculate the new drinks based on the measure type
+    const newDrinks =
+      measureType === 'units'
+        ? DSUtils.calculateTotalUnits(session.drinks, drinksToUnits!)
+        : measureType === 'drinks'
+          ? sumAllDrinks(session.drinks)
+          : (() => {
+              throw new Error(`Unknown measure type: ${measureType}`);
+            })();
+
+    // Aggregate the drinks and blackout status
+    if (acc[dateString]) {
+      acc[dateString].units += newDrinks;
+      acc[dateString].blackout = acc[dateString].blackout || session.blackout;
+    } else {
+      acc[dateString] = {
+        units: newDrinks,
+        blackout: session.blackout,
+      };
+    }
+
+    return acc;
+  }, {});
 }
 
 export function monthEntriesToColors(
   sessions: SessionsCalendarDatesType,
   preferences: Preferences,
-) {
-  // MarkedDates object, see official react-native-calendars docs
+): SessionsCalendarMarkedDates {
   const markedDates: SessionsCalendarMarkedDates = _.entries(sessions).reduce(
     (
       acc: SessionsCalendarMarkedDates,
@@ -307,23 +320,30 @@ export function monthEntriesToColors(
     ) => {
       const unitsToColorsInfo = preferences.units_to_colors;
       let color: CalendarColors = unitsToColors(value, unitsToColorsInfo);
+
+      // Override color to 'black' if blackout is true
       if (blackoutInfo === true) {
         color = 'black';
       }
-      let textColor = 'black';
-      if (color == 'red' ?? color == 'green' ?? color == 'black') {
+
+      // Determine text color based on background color
+      let textColor: string = 'black';
+      if (color === 'red' || color === 'green' || color === 'black') {
         textColor = 'white';
       }
+
       const markingObject: DayMarking = {
         units: value, // number of units
         color: color,
         textColor: textColor,
       };
+
       acc[key] = markingObject;
       return acc;
     },
-    {},
+    {} as SessionsCalendarMarkedDates, // Explicitly type the initial accumulator
   );
+
   return markedDates;
 }
 
@@ -402,42 +422,6 @@ export function getUniqueDrinkTypesInSession(
   // Convert the Set to an array before returning
   return Array.from(uniqueKeys);
 }
-
-// /** Using a DrinksList and the drinks to units conversion object, calculate how many units this object amounts to.
-//  *
-//  * @param drinksObject DrinksList type
-//  * @param unitsToPoits Drinks to units conversion object
-//  * @returns Number of points
-//  *
-//  * @example let points = sumAllUnits({
-//  * [1694819284]: {'beer': 5},
-//  * [1694819286]: {'wine': 2, 'cocktail': 1},
-//  * }, DrinksToUnits)
-//  */
-// export function sumAllUnits(
-//   drinksObject: DrinksList | undefined,
-//   drinksToUnits: DrinksToUnits,
-//   roundUp?: boolean,
-// ): number {
-//   if (_.isEmpty(drinksObject)) {
-//     return 0;
-//   }
-//   let totalUnits = 0;
-//   // Iterate over each timestamp in drinksObject
-//   _.forEach(Object.values(drinksObject), drinkTypes => {
-//     _.forEach(Object.keys(drinkTypes), DrinkKey => {
-//       if (isDrinkTypeKey(DrinkKey)) {
-//         const typeDrinks = drinkTypes[DrinkKey] ?? 0;
-//         const typeUnits = drinksToUnits[DrinkKey] ?? 0;
-//         totalUnits += typeDrinks * typeUnits;
-//       }
-//     });
-//   });
-//   if (roundUp) {
-//     return roundToTwoDecimalPlaces(totalUnits);
-//   }
-//   return totalUnits;
-// }
 
 /** Input a session item and return the timestamp of the last drink
  * consumed in that session.

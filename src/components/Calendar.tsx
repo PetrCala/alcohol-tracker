@@ -66,7 +66,7 @@ type SessionsCalendarDatesType = Record<
   string,
   {
     units: number;
-    blackout: boolean;
+    blackout?: boolean;
   }
 >;
 
