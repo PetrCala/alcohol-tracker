@@ -1,6 +1,7 @@
 import {useState, useRef, useCallback, useEffect} from 'react';
 import {Alert} from 'react-native';
 import useLocalize from './useLocalize';
+import {mergeUpdates, removeOverlappingUpdates} from '@database/baseFunctions';
 
 /**
  * Custom React hook for batching and processing updates with a specified delay.
@@ -60,15 +61,12 @@ const useBatchedUpdates = (
   const syncingRef = useRef<boolean>(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const retriesRef = useRef<number>(0);
-  const maxRetries = 3;
+  const maxRetries = 1;
 
   const enqueueUpdate = useCallback(
     (update: any) => {
-      // Merge the new update into the accumulated updates
-      updatesRef.current = {
-        ...updatesRef.current,
-        ...update,
-      };
+      // Merge the new update into the accumulated updates, removing any conflicts
+      updatesRef.current = mergeUpdates(updatesRef.current, update);
 
       setIsPending(true);
 

@@ -351,6 +351,26 @@ async function changeUserName(
 }
 
 /**
+ * Fetch the Firebase nickname of a user given their UID.
+ * @param {Database} db The Realtime Database instance.
+ * @param {string} uid The user's UID.
+ * @returns{Promise<string|null>} The nickname or null if not found.
+ *
+ * @example const userNickname = await fetchNicknameByUID(db, "userUIDHere");
+ */
+async function fetchNicknameByUID(
+  db: Database,
+  uid: string,
+): Promise<string | null> {
+  const userRef = ref(db, DBPATHS.USERS_USER_ID_PROFILE.getRoute(uid));
+  const userSnapshot = await get(userRef);
+  if (!userSnapshot.exists()) {
+    return 'Not found';
+  }
+  return userSnapshot.val().display_name || null;
+}
+
+/**
  * Change a user's automatic timezone setting.
  *
  * @param db Database to change the display name in
@@ -518,6 +538,7 @@ export {
   changeDisplayName,
   changeUserName,
   deleteUserData,
+  fetchNicknameByUID,
   getDefaultPreferences,
   getDefaultUserData,
   getDefaultUserStatus,

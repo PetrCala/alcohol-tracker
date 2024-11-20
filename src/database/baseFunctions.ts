@@ -56,27 +56,6 @@ function listenForDataChanges(
 }
 
 /**
- * Fetch the Firebase nickname of a user given their UID.
- * @param {Database} db The Realtime Database instance.
- * @param {string} uid The user's UID.
- * @returns{Promise<string|null>} The nickname or null if not found.
- *
- * @example const userNickname = await fetchNicknameByUID(db, "userUIDHere");
- */
-async function fetchNicknameByUID(
-  db: Database,
-  uid: string,
-): Promise<string | null> {
-  const userRef = ref(db, DBPATHS.USERS_USER_ID_PROFILE.getRoute(uid));
-  const userSnapshot = await get(userRef);
-  if (!userSnapshot.exists()) {
-    // console.error("No user found for the given UID.");
-    return 'Not found';
-  }
-  return userSnapshot.val().display_name || null;
-}
-
-/**
  * Generates a database key based on the provided reference string.
  *
  * @param db The database object.
@@ -269,16 +248,145 @@ function computeFirebaseUpdates<T>(
   return updatesToDB;
 }
 
+/**
+ * Cleans up updates by removing any overlapping paths where a parent is being set to null.
+ *
+ * @param updates - The updates object with paths as keys and values.
+ * @returns - A new updates object with conflicting paths removed.
+ */
+function removeOverlappingUpdates(updates: FirebaseUpdates): FirebaseUpdates {
+  const cleanUpdates: FirebaseUpdates = {};
+  const paths = Object.keys(updates);
+
+  // Collect all paths being set to null
+  const nullPaths = new Set<string>();
+  for (const path of paths) {
+    if (updates[path] === null) {
+      nullPaths.add(path);
+    }
+  }
+
+  // Build a set of paths to exclude
+  const excludePaths = new Set<string>();
+
+  // For each nullPath, add its descendants to excludePaths
+  for (const nullPath of nullPaths) {
+    for (const path of paths) {
+      if (path !== nullPath && path.startsWith(`${nullPath}/`)) {
+        excludePaths.add(path);
+      }
+    }
+  }
+
+  // For each path, check if any of its ancestor paths are in nullPaths
+  for (const path of paths) {
+    if (excludePaths.has(path)) {
+      continue; // Exclude this path
+    }
+
+    const pathSegments = path.split('/');
+
+    let ancestorPath = '';
+    let shouldExclude = false;
+
+    for (let i = 0; i < pathSegments.length - 1; i++) {
+      ancestorPath = ancestorPath
+        ? `${ancestorPath}/${pathSegments[i]}`
+        : pathSegments[i];
+
+      if (nullPaths.has(ancestorPath)) {
+        // Ancestor is being set to null, exclude this path
+        shouldExclude = true;
+        break;
+      }
+    }
+
+    if (shouldExclude) {
+      continue;
+    }
+
+    cleanUpdates[path] = updates[path];
+  }
+
+  return cleanUpdates;
+}
+
+/**
+ * Determines if two paths conflict by checking if one path is strictly above or below the other.
+ *
+ * A conflict occurs if one path is a prefix of the other but not equal to it.
+ * For example:
+ * - "a/b" conflicts with "a/b/c" (above/below relationship).
+ * - "a/b" does not conflict with "a/b" (equal paths).
+ *
+ * @param path1 - The first path as a string.
+ * @param path2 - The second path as a string.
+ * @returns `true` if `path1` and `path2` conflict; otherwise, `false`.
+ */
+function pathsConflict(path1: string, path2: string): boolean {
+  if (path1 === path2) {
+    return false;
+  }
+  const path1Parts = path1.split('/');
+  const path2Parts = path2.split('/');
+
+  if (path1Parts.length < path2Parts.length) {
+    // path1 could be above path2
+    const path2Prefix = path2Parts.slice(0, path1Parts.length).join('/');
+    return path2Prefix === path1;
+  } else if (path1Parts.length > path2Parts.length) {
+    // path1 could be below path2
+    const path1Prefix = path1Parts.slice(0, path2Parts.length).join('/');
+    return path1Prefix === path2;
+  } else {
+    // Paths are of equal length but not the same; no conflict
+    return false;
+  }
+}
+
+/**
+ * Merges a new set of updates into an existing set of updates, resolving path conflicts.
+ *
+ * If any key in the new updates conflicts with an existing key (one is strictly above or below the other),
+ * the existing key is removed before merging the new updates.
+ *
+ * @param existingUpdates - An object representing the current set of updates, where keys are paths.
+ * @param update - An object representing the new updates to be merged, where keys are paths.
+ * @returns A new object representing the merged updates, with conflicts resolved.
+ */
+function mergeUpdates(
+  existingUpdates: Record<string, any>,
+  update: Record<string, any>,
+) {
+  const newUpdates = {...existingUpdates};
+
+  for (const newKey of Object.keys(update)) {
+    for (const existingKey of Object.keys(newUpdates)) {
+      if (pathsConflict(existingKey, newKey)) {
+        delete newUpdates[existingKey];
+      }
+    }
+  }
+
+  // Merge the new update into the updates
+  Object.assign(newUpdates, update);
+
+  // Update the reference
+  return newUpdates;
+}
+
 export {
   buildUpdates,
   computeFirebaseUpdates,
   differencesToUpdates,
   fetchDataForUsers,
   fetchDisplayDataForUsers,
-  fetchNicknameByUID,
   generateDatabaseKey,
   listenForDataChanges,
+  mergeUpdates,
+  pathsConflict,
   prependFirebaseUpdateKeys,
   readDataOnce,
+  removeOverlappingUpdates,
 };
 export type {FirebaseUpdates};
