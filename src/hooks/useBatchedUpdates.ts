@@ -1,11 +1,15 @@
 import {useState, useRef, useCallback, useEffect} from 'react';
+import {Alert} from 'react-native';
+import useLocalize from './useLocalize';
 
 const useBatchedUpdates = (
   processUpdates: (updates: any) => Promise<void>,
   delay: number = 500,
 ) => {
+  const {translate} = useLocalize();
   const [isPending, setIsPending] = useState(false);
   const updatesRef = useRef<any>({});
+  const syncingRef = useRef<boolean>(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const enqueueUpdate = useCallback(
@@ -16,21 +20,54 @@ const useBatchedUpdates = (
         ...update,
       };
 
-      // If there's no timer running, start one
-      if (!timerRef.current) {
-        timerRef.current = setTimeout(async () => {
-          setIsPending(true);
-
-          // Process the accumulated updates
-          const updatesToProcess = {...updatesRef.current};
-          updatesRef.current = {}; // Clear the accumulated updates
-
-          await processUpdates(updatesToProcess);
-
-          setIsPending(false);
-          timerRef.current = null;
-        }, delay);
+      // Reset the timer every time an update is enqueued
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
       }
+
+      // Schedule synchronization after 'delay' milliseconds of inactivity
+      timerRef.current = setTimeout(() => {
+        if (syncingRef.current) {
+          // If synchronization is already in progress, reschedule
+          timerRef.current = setTimeout(() => {
+            enqueueUpdate({});
+          }, delay);
+          return;
+        }
+
+        if (Object.keys(updatesRef.current).length === 0) {
+          // No updates to process
+          return;
+        }
+
+        // Start synchronization
+        syncingRef.current = true;
+        setIsPending(true);
+
+        (async () => {
+          const updatesToProcess = {...updatesRef.current};
+          try {
+            await processUpdates(updatesToProcess);
+
+            // Remove processed updates from the pool only if they haven't changed during synchronization, meaning if a new update to that key was enqueued
+            Object.keys(updatesToProcess).forEach(key => {
+              if (updatesRef.current[key] === updatesToProcess[key]) {
+                delete updatesRef.current[key];
+              }
+            });
+          } catch (error: any) {
+            // On failure, keep updates in the pool and raise an alert
+            Alert.alert(translate('database.error.saveData'), error.message);
+          } finally {
+            syncingRef.current = false;
+            setIsPending(false);
+            // If new updates arrived during synchronization, schedule another sync
+            if (Object.keys(updatesRef.current).length > 0) {
+              enqueueUpdate({});
+            }
+          }
+        })();
+      }, delay);
     },
     [processUpdates, delay],
   );
