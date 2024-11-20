@@ -14,16 +14,12 @@ import DrinkingSessionWindow from '@components/DrinkingSessionWindow';
 import useBatchedUpdates from '@hooks/useBatchedUpdates';
 import {ActivityIndicator, StyleSheet} from 'react-native';
 import _ from 'lodash';
-import {diff} from 'deep-diff';
 import ScreenWrapper from '@components/ScreenWrapper';
 import SuccessIndicator from '@components/SuccessIndicator';
 import commonStyles from '@src/styles/commonStyles';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import UserOfflineModal from '@components/UserOfflineModal';
-import {
-  computeFirebaseUpdates,
-  differencesToUpdates,
-} from '@database/baseFunctions';
+import {computeFirebaseUpdates} from '@database/baseFunctions';
 
 type LiveSessionScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -51,7 +47,6 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       return;
     }
     try {
-      setDbSyncSuccessful(false);
       await DS.updateDrinkingSessionData(
         db,
         user.uid,
@@ -95,12 +90,13 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
 
     if (shouldRunUpdates) {
       const updates = computeFirebaseUpdates(sessionRef.current, session);
-      if (updates && updates.length > 0) {
+      if (updates) {
+        setDbSyncSuccessful(false);
         enqueueUpdate(updates);
       }
     }
     sessionRef.current = session;
-  }, [session, enqueueUpdate, user]);
+  }, [session, user]);
 
   if (!isOnline) {
     return <UserOfflineModal />;

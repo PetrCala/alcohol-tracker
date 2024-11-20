@@ -25,8 +25,8 @@ import useLocalize from './useLocalize';
  *
  * @returns An object containing:
  * - `isPending`: A boolean indicating whether the updates are currently being processed.
- * - `enqueueUpdate`: A function to enqueue a new update. It accepts an update object that will be
- *                    merged with existing updates and scheduled for processing.
+ * - `enqueueUpdate`: A function to enqueue a new update. It accepts an update object that will be merged with existing updates and scheduled for processing.
+ * - `syncingRef`: A reference to a boolean value that indicates whether synchronization is currently in progress.
  *
  * @example
  * ```typescript
@@ -70,6 +70,8 @@ const useBatchedUpdates = (
         ...update,
       };
 
+      setIsPending(true);
+
       // Reset the timer every time an update is enqueued
       if (timerRef.current) {
         clearTimeout(timerRef.current);
@@ -87,12 +89,12 @@ const useBatchedUpdates = (
 
         if (Object.keys(updatesRef.current).length === 0) {
           // No updates to process
+          setIsPending(false);
           return;
         }
 
         // Start synchronization
         syncingRef.current = true;
-        setIsPending(true);
 
         (async () => {
           const updatesToProcess = {...updatesRef.current};
@@ -112,13 +114,14 @@ const useBatchedUpdates = (
             retriesRef.current += 1;
           } finally {
             syncingRef.current = false;
-            setIsPending(false);
             // If new updates arrived during synchronization, schedule another sync
             if (
               Object.keys(updatesRef.current).length > 0 &&
               retriesRef.current < maxRetries
             ) {
               enqueueUpdate({});
+            } else {
+              setIsPending(false);
             }
           }
         })();
@@ -136,7 +139,7 @@ const useBatchedUpdates = (
     };
   }, []);
 
-  return {isPending, enqueueUpdate};
+  return {isPending, enqueueUpdate, syncingRef};
 };
 
 export default useBatchedUpdates;
