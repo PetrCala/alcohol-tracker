@@ -22,7 +22,7 @@ import {
   timestampToDateString,
 } from '@libs/DataHandling';
 import type {DateObject} from '@src/types/time';
-import SessionsCalendar from '@components/Calendar';
+import SessionsCalendar from '@components/SessionsCalendar/SessionsCalendar';
 import {getCommonFriendsCount} from '@libs/FriendUtils';
 import ManageFriendPopup from '@components/Popups/Profile/ManageFriendPopup';
 import * as DSUtils from '@libs/DrinkingSessionUtils';

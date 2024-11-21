@@ -51,7 +51,7 @@ import DateUtils from '@libs/DateUtils';
 import {DrinkingSessionWindowProps} from './types';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import {isEqual} from 'lodash';
-import {CalendarColors} from '@components/Calendar';
+import {CalendarColors} from '@components/SessionsCalendar/types';
 
 function DrinkingSessionWindow({
   sessionId,

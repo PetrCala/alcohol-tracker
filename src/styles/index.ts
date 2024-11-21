@@ -45,7 +45,7 @@ import whiteSpace from './utils/whiteSpace';
 import wordBreak from './utils/wordBreak';
 import writingDirection from './utils/writingDirection';
 import variables from './variables';
-import {CalendarColors} from '@components/Calendar';
+import {CalendarColors} from '@components/SessionsCalendar/types';
 
 type ColorScheme = (typeof CONST.COLOR_SCHEME)[keyof typeof CONST.COLOR_SCHEME];
 type StatusBarStyle =

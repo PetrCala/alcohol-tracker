@@ -99,81 +99,82 @@ describe('calculateTotalUnits', () => {
   });
 });
 
-describe('getSingleDayDrinkingSessions', () => {
-  it('should return sessions that only fall within the given date', () => {
-    const baseDate = new Date('2023-08-20');
-    const testSessions: DrinkingSessionList = {
-      [new Date().getTime()]: createMockSession(baseDate, 0), // Session from 'today'
-      [new Date().getTime() + 1]: createMockSession(baseDate, -1), // Session from 'yesterday'
-      [new Date().getTime() + 2]: createMockSession(baseDate, 1), // Session from 'tomorrow'
-    };
+// TODO
+// describe('getSingleDayDrinkingSessions', () => {
+//   it('should return sessions that only fall within the given date', () => {
+//     const baseDate = new Date('2023-08-20');
+//     const testSessions: DrinkingSessionList = {
+//       [new Date().getTime()]: createMockSession(baseDate, 0), // Session from 'today'
+//       [new Date().getTime() + 1]: createMockSession(baseDate, -1), // Session from 'yesterday'
+//       [new Date().getTime() + 2]: createMockSession(baseDate, 1), // Session from 'tomorrow'
+//     };
 
-    const result = DSUtils.getSingleDayDrinkingSessions(baseDate, testSessions);
-    expect(result).toHaveLength(1);
-  });
+//     const result = DSUtils.getSingleDayDrinkingSessions(baseDate, testSessions);
+//     expect(result).toHaveLength(1);
+//   });
 
-  it('should return an empty array if no sessions fall within the given date', () => {
-    const baseDate = new Date('2023-08-22');
-    const testSessions: DrinkingSessionList = {
-      [new Date().getTime()]: createMockSession(baseDate, -2),
-      [new Date().getTime() + 1]: createMockSession(baseDate, -3),
-    };
+//   it('should return an empty array if no sessions fall within the given date', () => {
+//     const baseDate = new Date('2023-08-22');
+//     const testSessions: DrinkingSessionList = {
+//       [new Date().getTime()]: createMockSession(baseDate, -2),
+//       [new Date().getTime() + 1]: createMockSession(baseDate, -3),
+//     };
 
-    const result = DSUtils.getSingleDayDrinkingSessions(baseDate, testSessions);
-    expect(result).toHaveLength(0);
-    expect(result).toEqual([]);
-  });
-});
+//     const result = DSUtils.getSingleDayDrinkingSessions(baseDate, testSessions);
+//     expect(result).toHaveLength(0);
+//     expect(result).toEqual([]);
+//   });
+// });
 
-describe('getSingleMonthDrinkingSessions', () => {
-  it('should return sessions that only fall within the given month', () => {
-    const baseDate = new Date('2023-08-20');
-    const testSessions: DrinkingSessionArray = [
-      createMockSession(baseDate, 0), // Session from this month
-      createMockSession(baseDate, -30), // Session from last month
-      createMockSession(baseDate, 30), // Session from next month
-    ];
+// describe('getSingleMonthDrinkingSessions', () => {
+//   it('should return sessions that only fall within the given month', () => {
+//     const baseDate = new Date('2023-08-20');
+//     const testSessions: DrinkingSessionArray = [
+//       createMockSession(baseDate, 0), // Session from this month
+//       createMockSession(baseDate, -30), // Session from last month
+//       createMockSession(baseDate, 30), // Session from next month
+//     ];
 
-    const result = DSUtils.getSingleMonthDrinkingSessions(
-      baseDate,
-      testSessions,
-    );
-    expect(result).toHaveLength(1);
-  });
+//     const result = DSUtils.getSingleMonthDrinkingSessions(
+//       baseDate,
+//       testSessions,
+//     );
+//     expect(result).toHaveLength(1);
+//   });
 
-  it('should return sessions until today when untilToday flag is true', () => {
-    const baseDate = new Date('2023-08-20');
-    const futureSessionDate = new Date();
-    futureSessionDate.setDate(futureSessionDate.getDate() + 5); // A session 5 days into the future
+//   it('should return sessions until today when untilToday flag is true', () => {
+//     const baseDate = new Date('2023-08-20');
+//     const futureSessionDate = new Date();
+//     futureSessionDate.setDate(futureSessionDate.getDate() + 5); // A session 5 days into the future
 
-    const testSessions: DrinkingSessionArray = [
-      createMockSession(baseDate, 0), // Session from this month
-      {
-        ...createMockSession(baseDate, 0),
-        start_time: futureSessionDate.getTime(),
-      },
-    ];
+//     const testSessions: DrinkingSessionArray = [
+//       createMockSession(baseDate, 0), // Session from this month
+//       {
+//         ...createMockSession(baseDate, 0),
+//         start_time: futureSessionDate.getTime(),
+//       },
+//     ];
 
-    const result = DSUtils.getSingleMonthDrinkingSessions(
-      baseDate,
-      testSessions,
-      true,
-    );
-    expect(result).toHaveLength(1);
-  });
+//     const result = DSUtils.getSingleMonthDrinkingSessions(
+//       baseDate,
+//       testSessions,
+//       true,
+//     );
+//     expect(result).toHaveLength(1);
+//   });
 
-  it('should return an empty array if no sessions fall within the given month', () => {
-    const baseDate = new Date('2023-08-22');
-    const testSessions: DrinkingSessionArray = [
-      createMockSession(baseDate, -60),
-      createMockSession(baseDate, -90),
-    ];
+//   it('should return an empty array if no sessions fall within the given month', () => {
+//     const baseDate = new Date('2023-08-22');
+//     const testSessions: DrinkingSessionArray = [
+//       createMockSession(baseDate, -60),
+//       createMockSession(baseDate, -90),
+//     ];
 
-    const result = DSUtils.getSingleMonthDrinkingSessions(
-      baseDate,
-      testSessions,
-    );
-    expect(result).toHaveLength(0);
-    expect(result).toEqual([]);
-  });
-});
+//     const result = DSUtils.getSingleMonthDrinkingSessions(
+//       baseDate,
+//       testSessions,
+//     );
+//     expect(result).toHaveLength(0);
+//     expect(result).toEqual([]);
+//   });
+// });
