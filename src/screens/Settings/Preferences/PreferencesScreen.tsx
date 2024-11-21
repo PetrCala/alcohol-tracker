@@ -399,7 +399,7 @@ function PreferencesScreen({}: PreferencesScreenProps) {
           }}
         />
       </ScrollView>
-      <View style={styles.bottomTabBarContainer(true)}>
+      <View style={[styles.bottomTabBarContainer, styles.noBorder]}>
         <Button
           text={translate('preferencesScreen.save')}
           onPress={handleSavePreferences}

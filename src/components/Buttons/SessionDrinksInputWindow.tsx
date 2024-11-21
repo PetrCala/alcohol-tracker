@@ -117,7 +117,6 @@ const SessionDrinksInputWindow = ({
     const action = shouldAdd
       ? CONST.DRINKS.ACTIONS.ADD
       : CONST.DRINKS.ACTIONS.REMOVE;
-
     DS.updateDrinks(
       sessionId,
       drinkKey,
@@ -166,7 +165,12 @@ const SessionDrinksInputWindow = ({
         <TextInput
           accessibilityLabel="Text input field"
           ref={inputRef}
-          style={[styles.textLarge, styles.textStrong]}
+          style={[
+            styles.textLarge,
+            styles.textStrong,
+            styles.textNormalThemeText,
+            styles.textAlignCenter,
+          ]}
           value={inputValue}
           onKeyPress={handleKeyPress}
           keyboardType="numeric"

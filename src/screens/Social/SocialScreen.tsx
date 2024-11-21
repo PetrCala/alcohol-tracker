@@ -26,7 +26,6 @@ import useLocalize from '@hooks/useLocalize';
 import useTheme from '@hooks/useTheme';
 import Icon from '@components/Icon';
 import useThemeStyles from '@hooks/useThemeStyles';
-import styles from '@src/styles';
 
 type SocialFooterButtonProps = {
   index: number;
@@ -48,14 +47,10 @@ const SocialFooterButton: React.FC<SocialFooterButtonProps> = ({
   const theme = useTheme();
   const styles = useThemeStyles();
   return (
-    <View style={localStyles.footerPartContainer}>
+    <View>
       <TouchableOpacity
         accessibilityRole="button"
-        style={[
-          // styles.borderRight,
-          styles.noBorderRadius,
-          localStyles.footerButton,
-        ]}
+        style={localStyles.footerButton}
         onPress={() => setImageIndex(index)}>
         <View
           style={
@@ -99,6 +94,7 @@ type RouteType = {
 function SocialScreen({route}: SocialScreenProps) {
   const {userData} = useDatabaseData();
   const {translate} = useLocalize();
+  const styles = useThemeStyles();
   const [routes] = useState([
     {key: 'friendList', title: 'Friend List', userData: userData},
     // {key: 'friendSearch', title: 'Friend Search', userData: userData},
@@ -157,7 +153,7 @@ function SocialScreen({route}: SocialScreenProps) {
         tabBarPosition="bottom"
         renderTabBar={() => null} // Do not render the default tab bar
       />
-      <View style={commonStyles.mainFooter}>
+      <View style={styles.bottomTabBarContainer}>
         {footerButtons.map(button => (
           <SocialFooterButton
             key={button.index}
@@ -208,10 +204,6 @@ const localStyles = StyleSheet.create({
     color: 'black',
     fontSize: 13,
     fontWeight: '400',
-  },
-  footerPartContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
   },
   footerButton: {
     width: screenWidth / 2,

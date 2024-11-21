@@ -293,7 +293,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
           ListFooterComponentStyle={localStyles.addSessionButtonContainer}
         />
       </View>
-      <View style={commonStyles.mainFooter}>
+      <View style={styles.bottomTabBarContainer}>
         <MenuIcon
           iconId="navigate-day-back"
           iconSource={KirokuIcons.ArrowBack}

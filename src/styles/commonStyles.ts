@@ -31,22 +31,6 @@ const commonStyles = StyleSheet.create({
   spaceBetween: {
     justifyContent: 'space-between',
   },
-  mainFooter: {
-    height: 54,
-    width: screenWidth,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: -5,
-    },
-    shadowOpacity: 0.05,
-    shadowRadius: 3,
-    borderTopWidth: 1,
-    borderColor: '#ddd',
-    elevation: 10, // for Android shadow
-  },
   horizontalLine: {
     width: screenWidth * 0.9,
     height: 1,

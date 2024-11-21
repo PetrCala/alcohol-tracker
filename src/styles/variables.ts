@@ -17,7 +17,7 @@ function getValueUsingPixelRatio(
 }
 
 export default {
-  bottomTabHeight: 50,
+  bottomTabHeight: getValueUsingPixelRatio(58, 64),
   contentHeaderHeight: getValueUsingPixelRatio(72, 100),
   contentHeaderDesktopHeight: getValueUsingPixelRatio(80, 100),
   componentSizeSmall: getValueUsingPixelRatio(28, 32),
@@ -240,6 +240,7 @@ export default {
   numericSliderWidth: 280,
   numericSliderHeight: 40,
   successIndicatorSize: 20,
+  startSessionPlusButtonSize: 70,
 
   h20: 20,
   h28: 28,

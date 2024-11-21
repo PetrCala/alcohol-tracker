@@ -22,7 +22,6 @@ import type {Form} from '@src/types/form';
 import type ChildrenProps from '@src/types/utils/ChildrenProps';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import type {FormInputErrors, FormProps, InputRefs} from './types';
-import ONYXKEYS from '@src/ONYXKEYS';
 
 type FormWrapperOnyxProps = {
   /** Contains the form state that must be accessed outside the component */

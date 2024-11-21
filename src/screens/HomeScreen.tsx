@@ -53,6 +53,9 @@ import useLocalize from '@hooks/useLocalize';
 import {roundToTwoDecimalPlaces} from '@libs/NumberUtils';
 import NoSessionsInfo from '@components/NoSessionsInfo';
 import Text from '@components/Text';
+import variables from '@src/styles/variables';
+import stylePropTypes from '@src/styles/stylePropTypes';
+import useWindowDimensions from '@hooks/useWindowDimensions';
 
 type State = {
   visibleDateObject: DateObject;
@@ -104,6 +107,7 @@ function HomeScreen({route}: HomeScreenProps) {
   const {translate} = useLocalize();
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
+  const {windowWidth} = useWindowDimensions();
   const {
     userStatusData,
     drinkingSessionData,
@@ -311,7 +315,7 @@ function HomeScreen({route}: HomeScreenProps) {
           <NoSessionsInfo />
         )}
       </ScrollView>
-      <View style={commonStyles.mainFooter}>
+      <View style={styles.bottomTabBarContainer}>
         <View
           style={[
             localStyles.mainScreenFooterHalfContainer,
@@ -362,7 +366,7 @@ function HomeScreen({route}: HomeScreenProps) {
       {!ongoingSessionId && (
         <TouchableOpacity
           accessibilityRole="button"
-          style={[localStyles.startSessionButton, styles.buttonSuccess]}
+          style={styles.startSessionPlusButton(windowWidth)}
           onPress={onOpenLiveSessionPress}>
           <Icon
             src={KirokuIcons.Plus}
@@ -405,16 +409,13 @@ const localStyles = StyleSheet.create({
     width: '15%',
   },
   menuIconContainer: {
-    width: 'auto',
-    height: 'auto',
-    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
+    padding: 16,
   },
   menuIcon: {
     width: iconSize,
     height: iconSize,
-    padding: 10,
   },
   socialContainer: {
     flexDirection: 'row',
@@ -424,24 +425,11 @@ const localStyles = StyleSheet.create({
     flexDirection: 'row',
     width: screenWidth,
   },
-  startSessionButton: {
-    position: 'absolute',
-    bottom: 18,
-    left: '50%',
-    transform: [{translateX: -35}],
-    borderRadius: 50,
-    width: 70,
-    height: 70,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: 'black',
-  },
   mainScreenFooterHalfContainer: {
     width: '50%',
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     alignItems: 'center',
-    backgroundColor: 'shite',
   },
   mainScreenFooterLeftContainer: {
     paddingRight: 30,
