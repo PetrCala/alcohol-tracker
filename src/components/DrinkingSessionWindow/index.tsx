@@ -371,7 +371,7 @@ function DrinkingSessionWindow({
         )}
         <FillerView />
       </ScrollView>
-      <View style={styles.bottomTabBarContainer(true)}>
+      <View style={styles.bottomTabBarContainer}>
         <Button
           text={translate(
             'liveSessionScreen.discardSession',
@@ -380,9 +380,8 @@ function DrinkingSessionWindow({
           textStyles={styles.buttonText}
           innerStyles={[
             styles.bottomTabBarItem,
-            styles.halfScreenWidth(windowWidth * 0.75),
-            styles.mr5,
-            styles.mt2,
+            styles.halfScreenWidth(windowWidth * 0.8),
+            styles.mh3,
           ]}
           onPress={handleDiscardSession}
         />
@@ -392,8 +391,8 @@ function DrinkingSessionWindow({
           textStyles={styles.buttonText}
           innerStyles={[
             styles.bottomTabBarItem,
-            styles.halfScreenWidth(windowWidth * 0.75),
-            styles.mt2,
+            styles.halfScreenWidth(windowWidth * 0.8),
+            styles.mh3,
           ]}
           onPress={() => saveSession(db, user.uid)}
         />

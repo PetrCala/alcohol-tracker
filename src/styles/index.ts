@@ -472,18 +472,17 @@ const styles = (theme: ThemeColors) =>
       borderColor: theme.border,
     },
 
-    bottomTabBarContainer: (hideTopBorder?: boolean) =>
-      ({
-        flexDirection: 'row',
-        height: variables.bottomTabHeight,
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderTopWidth: hideTopBorder ? 0 : 1,
-        borderTopColor: theme.border,
-        backgroundColor: theme.appBG,
-        ...spacing.pt1,
-        ...sizing.mw100,
-      }) satisfies ViewStyle,
+    bottomTabBarContainer: {
+      flexDirection: 'row',
+      height: variables.bottomTabHeight,
+      borderTopWidth: 1,
+      borderTopColor: theme.border,
+      backgroundColor: theme.appBG,
+      justifyContent: 'center',
+      alignItems: 'center',
+      ...spacing.p1,
+      ...sizing.mw100,
+    },
 
     bottomTabBarItem: {
       height: '100%',
@@ -498,7 +497,6 @@ const styles = (theme: ThemeColors) =>
       justifyContent: 'center',
       alignItems: 'center',
       ...spacing.ph10,
-      ...spacing.mt1,
     },
 
     boxShadowNone: {
@@ -1102,6 +1100,14 @@ const styles = (theme: ThemeColors) =>
 
     noBorderRadius: {
       borderRadius: 0,
+    },
+
+    noBorder: {
+      borderWidth: 0,
+      borderTopWidth: 0,
+      borderBottomWidth: 0,
+      borderLeftWidth: 0,
+      borderRightWidth: 0,
     },
 
     noResultsText: {
@@ -1750,6 +1756,21 @@ const styles = (theme: ThemeColors) =>
       textAlign: 'center',
       width: variables.statItemTextMaxWidth,
     },
+
+    startSessionPlusButton: (screenWidth: number) =>
+      ({
+        position: 'absolute',
+        left: screenWidth / 2 - variables.startSessionPlusButtonSize / 2,
+        bottom:
+          variables.bottomTabHeight - variables.startSessionPlusButtonSize / 2,
+        borderRadius: variables.startSessionPlusButtonSize / 2,
+        width: variables.startSessionPlusButtonSize,
+        height: variables.startSessionPlusButtonSize,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: theme.success,
+        borderWidth: 0,
+      }) satisfies ViewStyle,
 
     subscriptIcon: {
       position: 'absolute',
