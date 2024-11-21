@@ -1,11 +1,12 @@
-﻿import type {DateObject, DateString} from '@src/types/time';
+﻿import type {DateData} from 'react-native-calendars';
+import type {DateString} from '@src/types/time';
 import {getRandomInt} from './Choice';
 import type {
   CalendarColors,
   DayMarking,
   SessionsCalendarDatesType,
   SessionsCalendarMarkedDates,
-} from '@components/Calendar';
+} from '@components/SessionsCalendar/types';
 import type {
   DrinkingSession,
   DrinkingSessionArray,
@@ -58,21 +59,21 @@ export function timestampToDate(timestamp: number): Date {
   return new Date(timestamp);
 }
 
-/** Convert a Date type object to a JSON-type DateObject.
+/** Convert a Date type object to a JSON-type DateData.
  * Month is indexed from 1 in this object
  *
  * @param date Date type object
- * @returns A DateObject
+ * @returns A DateData
  */
-export function dateToDateObject(date: Date): DateObject {
-  const dateObject = {
+export function dateToDateData(date: Date): DateData {
+  const dateData = {
     dateString: formatDate(date),
     day: date.getDate(),
     month: date.getMonth() + 1,
     timestamp: date.getTime(),
     year: date.getFullYear(),
   };
-  return dateObject;
+  return dateData;
 }
 
 /**
@@ -115,12 +116,12 @@ export function changeDateBySomeDays(date: Date, days: number): Date {
   return newDate;
 }
 
-/** Input a DateObject and change it to the following month.
+/** Input a DateData and change it to the following month.
  *
- * @param currentDate Current date as a DateObject
- * @returns Next month's date as a DateObject
+ * @param currentDate Current date as a DateData
+ * @returns Next month's date as a DateData
  */
-export const getNextMonth = (currentDate: DateObject): DateObject => {
+export const getNextMonth = (currentDate: DateData): DateData => {
   // Setting it to the same day of the next month
   const newDate = new Date(
     currentDate.year,
@@ -135,15 +136,15 @@ export const getNextMonth = (currentDate: DateObject): DateObject => {
     newDate.setDate(0); // Setting the date to the last day of the previous month
   }
 
-  return dateToDateObject(newDate);
+  return dateToDateData(newDate);
 };
 
-/** Input a DateObject and change it to the previous month.
+/** Input a DateData and change it to the previous month.
  *
- * @param currentDate Current date as a DateObject
- * @returns Previous month's date as a DateObject
+ * @param currentDate Current date as a DateData
+ * @returns Previous month's date as a DateData
  */
-export const getPreviousMonth = (currentDate: DateObject): DateObject => {
+export const getPreviousMonth = (currentDate: DateData): DateData => {
   // Setting it to the same day of the previous month
   const newDate = new Date(
     currentDate.year,
@@ -159,23 +160,23 @@ export const getPreviousMonth = (currentDate: DateObject): DateObject => {
     newDate.setDate(0); // Setting the date to the last day of the previous month
   }
 
-  return dateToDateObject(newDate);
+  return dateToDateData(newDate);
 };
 
 /**
- * Returns an array of DateObjects representing months adjacent to the input DateObject.
+ * Returns an array of DateDatas representing months adjacent to the input DateData.
  * The number of months returned before and after the input month is determined by the input number `n`.
  *
- * For example, if given a DateObject for September and n = 2, the returned array will have
- * DateObjects for July, August, September, October, and November.
+ * For example, if given a DateData for September and n = 2, the returned array will have
+ * DateDatas for July, August, September, October, and November.
  *
  * @param currentDate - The reference date from which adjacent months are computed.
  * @param n - The number of months to compute before and after the `currentDate`.
  *
- * @returns - An array of DateObjects, including the `currentDate` and `n` months before and after it.
+ * @returns - An array of DateDatas, including the `currentDate` and `n` months before and after it.
  *
  * @example
- * const inputDate: DateObject = {
+ * const inputDate: DateData = {
  *     dateString: '2023-09-15',
  *     day: 15,
  *     month: 9,
@@ -184,13 +185,13 @@ export const getPreviousMonth = (currentDate: DateObject): DateObject => {
  * };
  * const outputDates = getAdjacentMonths(inputDate, 2);
  * console.log(outputDates);
- * // Expected output: DateObjects for July, August, September, October, and November of 2023.
+ * // Expected output: DateDatas for July, August, September, October, and November of 2023.
  */
 export const getAdjacentMonths = (
-  currentDate: DateObject,
+  currentDate: DateData,
   n: number,
-): DateObject[] => {
-  const result: DateObject[] = [currentDate]; // Start with the input date
+): DateData[] => {
+  const result: DateData[] = [currentDate]; // Start with the input date
 
   // Add next n months
   let nextDate = currentDate;
@@ -211,19 +212,19 @@ export const getAdjacentMonths = (
 
 /** Using a date object, return a year-month string in the format YYYY-MM.
  *
- * @param dateObject Date object
+ * @param dateData Date object
  * @returns Year-Month string, e.g. '2023-08'
  *
- * @example let yearMonth = getYearMonth(testDateObject);
+ * @example let yearMonth = getYearMonth(testDateData);
  */
-export function getYearMonth(dateObject: DateObject): string {
-  return `${dateObject.year}-${String(dateObject.month).padStart(2, '0')}`;
+export function getYearMonth(dateData: DateData): string {
+  return `${dateData.year}-${String(dateData.month).padStart(2, '0')}`;
 }
 
 /**
  * Returns a string representation of the month and year in the format "MMM/YYYY" or with full month names (default)
  *
- * @param dateObject - An object containing numeric values for 'year' and 'month'.
+ * @param dateData - An object containing numeric values for 'year' and 'month'.
  * @param abbreviated - If true, return the months in the abbreviated format, returns to false.
  * @returns - A string in the format "MMM/YYYY", where "MMM" is the abbreviated or full month name.
  *
@@ -232,12 +233,12 @@ export function getYearMonth(dateObject: DateObject): string {
  * getYearMonthVerbose(date, true); // Returns "Oct/2023"
  */
 export function getYearMonthVerbose(
-  dateObject: DateObject,
+  dateData: DateData,
   abbreviated = false,
 ): string {
   const months = abbreviated ? CONST.MONTHS_ABBREVIATED : CONST.MONTHS;
-  const monthName = months[dateObject.month - 1];
-  return `${monthName} ${dateObject.year}`;
+  const monthName = months[dateData.month - 1];
+  return `${monthName} ${dateData.year}`;
 }
 
 /** Change the time of a datetime object to now,
@@ -452,19 +453,19 @@ export function findOngoingSession(
   return ongoingSession ? ongoingSession : null;
 }
 
-/** Enter a dateObject and an array of drinking sessions and calculate
+/** Enter a dateData and an array of drinking sessions and calculate
  * drinks consumed in the current month.
  *
- * @param dateObject DateObject
+ * @param dateData DateData
  * @param sessions Array of drinking sessions
  * @returns Number of drinks consumed during the current month
  */
 export const calculateThisMonthDrinks = (
-  dateObject: DateObject,
+  dateData: DateData,
   sessions: DrinkingSessionArray,
 ): number => {
   // Subset to this month's sessions only
-  const currentDate = timestampToDate(dateObject.timestamp);
+  const currentDate = timestampToDate(dateData.timestamp);
   const sessionsThisMonth = DSUtils.getSingleMonthDrinkingSessions(
     currentDate,
     sessions,
@@ -477,16 +478,16 @@ export const calculateThisMonthDrinks = (
   );
 };
 
-/** Enter a dateObject and an array of drinking sessions and calculate
+/** Enter a dateData and an array of drinking sessions and calculate
  * units for drinks consumed in the current month.
  *
- * @param dateObject DateObject
+ * @param dateData DateData
  * @param sessions Array of drinking sessions
  * @param drinksToUnits Drinks to units conversion object
  * @returns Number of units consumed during the current month
  */
 export const calculateThisMonthUnits = (
-  dateObject: DateObject,
+  dateData: DateData,
   sessions: DrinkingSessionArray,
   drinksToUnits: DrinksToUnits,
 ): number => {
@@ -494,7 +495,7 @@ export const calculateThisMonthUnits = (
     return 0;
   }
   // Subset to this month's sessions only
-  const currentDate = timestampToDate(dateObject.timestamp);
+  const currentDate = timestampToDate(dateData.timestamp);
   const sessionsThisMonth = DSUtils.getSingleMonthDrinkingSessions(
     currentDate,
     sessions,

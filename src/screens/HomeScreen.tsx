@@ -7,8 +7,8 @@ import {
   View,
 } from 'react-native';
 import MenuIcon from '@components/Buttons/MenuIcon';
-import SessionsCalendar from '@components/Calendar';
-import type {DateObject} from '@src/types/time';
+import SessionsCalendar from '@components/SessionsCalendar/SessionsCalendar';
+import type {DateData} from 'react-native-calendars';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {
   dateToDateObject,
@@ -32,7 +32,6 @@ import {useFocusEffect} from '@react-navigation/native';
 import type {BottomTabNavigatorParamList} from '@libs/Navigation/types';
 import type SCREENS from '@src/SCREENS';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
-import type {DateData} from 'react-native-calendars';
 import type {StatData} from '@components/Items/StatOverview';
 import {StatsOverview} from '@components/Items/StatOverview';
 import {getPlural} from '@libs/StringUtilsKiroku';
@@ -58,7 +57,7 @@ import stylePropTypes from '@src/styles/stylePropTypes';
 import useWindowDimensions from '@hooks/useWindowDimensions';
 
 type State = {
-  visibleDateObject: DateObject;
+  visibleDateObject: DateData;
   drinkingSessionsCount: number;
   drinksConsumed: number;
   unitsConsumed: number;
@@ -298,16 +297,14 @@ function HomeScreen({route}: HomeScreenProps) {
               <StatsOverview statsData={statsData} />
             </View>
             <SessionsCalendar
+              userID={user.uid}
               drinkingSessionData={drinkingSessionData}
               preferences={preferences}
-              visibleDateObject={state.visibleDateObject}
-              dispatch={dispatch}
-              onDayPress={(day: DateData) => {
-                Navigation.navigate(
-                  ROUTES.DAY_OVERVIEW.getRoute(
-                    timestampToDateString(day.timestamp),
-                  ),
-                );
+              onDateChange={(date: Date) => {
+                dispatch({
+                  type: 'SET_VISIBLE_DATE_OBJECT',
+                  payload: dateToDateObject(date),
+                });
               }}
             />
           </>
