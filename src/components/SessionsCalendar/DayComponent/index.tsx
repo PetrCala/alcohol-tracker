@@ -1,11 +1,39 @@
+import Text from '@components/Text';
+import {useCallback, useMemo} from 'react';
+import {
+  StyleProp,
+  StyleSheet,
+  TextStyle,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import {CalendarColors, DayComponentProps, DayMarking} from '../types';
+import {DateData} from 'react-native-calendars';
+import {
+  changeDateBySomeDays,
+  getTimestampAtMidnight,
+  hasDecimalPoint,
+} from '@libs/DataHandling';
+import {DayState} from 'react-native-calendars/src/types';
+import {MarkingProps} from 'react-native-calendars/src/calendar/day/marking';
+import {roundToTwoDecimalPlaces} from '@libs/NumberUtils';
+
+const colorToTextColorMap: Record<CalendarColors, string> = {
+  yellow: 'black',
+  red: 'white',
+  orange: 'black',
+  black: 'white',
+  green: 'white',
+};
+
 // Custom Day Component
-const DayComponent: React.FC<DayComponentProps> = ({
+function DayComponent({
   date,
   state,
   marking,
   theme,
   onPress,
-}) => {
+}: DayComponentProps) {
   if (!date) {
     return null;
   }
@@ -108,4 +136,48 @@ const DayComponent: React.FC<DayComponentProps> = ({
       </View>
     </TouchableOpacity>
   );
-};
+}
+
+const localStyles = StyleSheet.create({
+  // Day component styles
+  dayContainer: {
+    // flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    // borderWidth: 1,
+    // borderColor: '#E0E0E0',
+    width: '100%', // Give explicit width and height
+    height: 50,
+    // borderRadius: 4, // Rounded corners
+  },
+  dayText: {
+    marginTop: 1,
+    marginLeft: 2,
+    fontSize: 10,
+    alignSelf: 'flex-start',
+    color: 'black' as string, // allow overrides
+  },
+  dayTextDisabled: {
+    color: '#D3D3D3',
+  },
+  dayTextToday: {
+    color: 'blue', // Blue text for the current day
+  },
+  daySessionsMarkingContainer: {
+    marginTop: 0,
+    marginBottom: 5,
+    height: 35,
+    width: 35,
+    borderWidth: 1,
+    borderColor: '#D3D3D3',
+    borderRadius: 5,
+    alignSelf: 'center',
+    justifyContent: 'center',
+  },
+  daySessionMarkingText: {
+    fontSize: 18,
+    alignSelf: 'center',
+  },
+});
+
+export default DayComponent;

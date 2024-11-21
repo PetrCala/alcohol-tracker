@@ -1,8 +1,11 @@
 import {DrinkingSessionList, Preferences} from '@src/types/onyx';
-import type {DayMarking, DayComponentProps} from './DayComponent/types';
+import type {
+  DayMarking,
+  DayComponentProps,
+  CalendarColors,
+} from './DayComponent/types';
 import {UserID} from '@src/types/onyx/OnyxCommon';
-
-type CalendarColors = 'yellow' | 'red' | 'orange' | 'black' | 'green';
+import {DateData} from 'react-native-calendars';
 
 // type DayState = 'selected' | 'disabled' | 'today' | ''; // Old day state
 
@@ -10,14 +13,17 @@ type SessionsCalendarProps = {
   /** ID of the user for which to render the calendar */
   userID: UserID;
 
+  /** The currently visible date */
+  visibleDate: DateData;
+
+  /** Callback for when the date changes */
+  onDateChange: (date: DateData) => void;
+
   /** The drinking session to render */
   drinkingSessionData: DrinkingSessionList;
 
   /** User's preferences */
   preferences: Preferences;
-
-  /** Callback for when the date changes */
-  onDateChange?: (date: Date) => void;
 };
 
 type MarkingProps = {
@@ -37,14 +43,6 @@ type SessionsCalendarDatesType = Record<
     blackout?: boolean;
   }
 >;
-
-const colorToTextColorMap: Record<CalendarColors, string> = {
-  yellow: 'black',
-  red: 'white',
-  orange: 'black',
-  black: 'white',
-  green: 'white',
-};
 
 export default SessionsCalendarProps;
 export type {

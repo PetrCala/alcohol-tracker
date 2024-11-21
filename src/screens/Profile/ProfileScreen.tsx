@@ -7,6 +7,7 @@
   TouchableOpacity,
   View,
 } from 'react-native';
+import type {DateData} from 'react-native-calendars';
 import commonStyles from '@styles/commonStyles';
 import {useFirebase} from '@context/global/FirebaseContext';
 import type {StatData} from '@components/Items/StatOverview';
@@ -16,13 +17,12 @@ import React, {useEffect, useMemo, useReducer} from 'react';
 import {readDataOnce} from '@database/baseFunctions';
 import {
   calculateThisMonthUnits,
-  dateToDateObject,
+  dateToDateData,
   objKeys,
   timestampToDate,
   timestampToDateString,
 } from '@libs/DataHandling';
-import type {DateObject} from '@src/types/time';
-import SessionsCalendar from '@components/SessionsCalendar/SessionsCalendar';
+import SessionsCalendar from '@components/SessionsCalendar';
 import {getCommonFriendsCount} from '@libs/FriendUtils';
 import ManageFriendPopup from '@components/Popups/Profile/ManageFriendPopup';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
@@ -34,7 +34,6 @@ import SCREENS from '@src/SCREENS';
 import Navigation from '@libs/Navigation/Navigation';
 import DBPATHS from '@database/DBPATHS';
 import ROUTES from '@src/ROUTES';
-import type {DateData} from 'react-native-calendars';
 import useFetchData from '@hooks/useFetchData';
 import {getPlural} from '@libs/StringUtilsKiroku';
 import ScreenWrapper from '@components/ScreenWrapper';
@@ -51,7 +50,7 @@ type State = {
   selfFriends: UserList | undefined;
   friendCount: number;
   commonFriendCount: number;
-  visibleDateObject: DateObject;
+  visibleDateData: DateData;
   drinkingSessionsCount: number;
   unitsConsumed: number;
   manageFriendModalVisible: boolean;
@@ -67,7 +66,7 @@ const initialState: State = {
   selfFriends: undefined,
   friendCount: 0,
   commonFriendCount: 0,
-  visibleDateObject: dateToDateObject(new Date()),
+  visibleDateData: dateToDateData(new Date()),
   drinkingSessionsCount: 0,
   unitsConsumed: 0,
   manageFriendModalVisible: false,
@@ -83,7 +82,7 @@ const reducer = (state: State, action: Action): State => {
     case 'SET_COMMON_FRIEND_COUNT':
       return {...state, commonFriendCount: action.payload};
     case 'SET_VISIBLE_DATE_OBJECT':
-      return {...state, visibleDateObject: action.payload};
+      return {...state, visibleDateData: action.payload};
     case 'SET_DRINKING_SESSIONS_COUNT':
       return {...state, drinkingSessionsCount: action.payload};
     case 'SET_UNITS_CONSUMED':
@@ -173,12 +172,12 @@ function ProfileScreen({route}: ProfileScreenProps) {
       Object.values(drinkingSessionData);
 
     const thisMonthUnits = calculateThisMonthUnits(
-      state.visibleDateObject,
+      state.visibleDateData,
       drinkingSessionArray,
       preferences.drinks_to_units,
     );
     const thisMonthSessionCount = DSUtils.getSingleMonthDrinkingSessions(
-      timestampToDate(state.visibleDateObject.timestamp),
+      timestampToDate(state.visibleDateData.timestamp),
       drinkingSessionArray,
       false,
     ).length; // Replace this in the future
@@ -188,7 +187,7 @@ function ProfileScreen({route}: ProfileScreenProps) {
       payload: thisMonthSessionCount,
     });
     dispatch({type: 'SET_UNITS_CONSUMED', payload: thisMonthUnits});
-  }, [drinkingSessionData, preferences, state.visibleDateObject]);
+  }, [drinkingSessionData, preferences, state.visibleDateData]);
 
   if (isLoading) {
     return <FullScreenLoadingIndicator />;
@@ -257,19 +256,22 @@ function ProfileScreen({route}: ProfileScreenProps) {
           <StatsOverview statsData={statsData} />
         </View>
         <SessionsCalendar
-          drinkingSessionData={drinkingSessionData}
+          userID={userID}
+          visibleDate={state.visibleDateData}
+          onDateChange={(date: DateData) =>
+            dispatch({type: 'SET_VISIBLE_DATE_OBJECT', payload: date})
+          }
+          drinkingSessionData={drinkingSessionData ?? {}}
           preferences={preferences}
-          visibleDateObject={state.visibleDateObject}
-          dispatch={dispatch}
-          onDayPress={(day: DateData) => {
-            user?.uid === userID
-              ? Navigation.navigate(
-                  ROUTES.DAY_OVERVIEW.getRoute(
-                    timestampToDateString(day.timestamp),
-                  ),
-                )
-              : null;
-          }}
+          // onDayPress={(day: DateData) => {
+          //   user?.uid === userID
+          //     ? Navigation.navigate(
+          //         ROUTES.DAY_OVERVIEW.getRoute(
+          //           timestampToDateString(day.timestamp),
+          //         ),
+          //       )
+          //     : null;
+          // }}
         />
         <View style={localStyles.bottomContainer}>
           {user?.uid !== userID && (

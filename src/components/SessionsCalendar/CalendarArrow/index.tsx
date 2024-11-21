@@ -1,4 +1,7 @@
+import Icon from '@components/Icon';
 import useTheme from '@hooks/useTheme';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
+import useWindowDimensions from '@hooks/useWindowDimensions';
 import {StyleSheet, View} from 'react-native';
 
 type CalendarArrowProps = {
@@ -8,11 +11,13 @@ type CalendarArrowProps = {
 
 function CalendarArrow({direction}: CalendarArrowProps) {
   const theme = useTheme();
+  const {windowWidth} = useWindowDimensions();
 
   return (
     <View
       style={[
         arrowStyles.customArrowContainer,
+        {width: windowWidth / 3},
         direction === 'left'
           ? arrowStyles.leftContainer
           : arrowStyles.rightContainer,
@@ -39,7 +44,6 @@ const arrowStyles = StyleSheet.create({
     justifyContent: 'center',
     // backgroundColor: '#f2be1c',
     alignItems: 'center',
-    width: screenWidth / 3,
     marginVertical: -10,
   },
   leftContainer: {
