@@ -51,6 +51,7 @@ import DateUtils from '@libs/DateUtils';
 import {DrinkingSessionWindowProps} from './types';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import {isEqual} from 'lodash';
+import {CalendarColors} from '@components/Calendar';
 
 function DrinkingSessionWindow({
   sessionId,
@@ -319,8 +320,17 @@ function DrinkingSessionWindow({
             </Text>
           </View>
         </View>
-        <View style={localStyles.unitCountContainer}>
-          <Text style={[localStyles.unitCountText, {color: sessionColor}]}>
+        <View
+          style={[
+            styles.pb2,
+            styles.alignItemsCenter,
+            styles.justifyContentCenter,
+          ]}>
+          <Text
+            style={[
+              styles.sessionUnitCountText(sessionColor as CalendarColors),
+              styles.shadowStrong,
+            ]}>
             {totalUnits}
           </Text>
         </View>
@@ -437,21 +447,6 @@ function DrinkingSessionWindow({
 }
 
 const localStyles = StyleSheet.create({
-  unitCountContainer: {},
-  unitCountText: {
-    fontSize: 90,
-    fontWeight: 'bold',
-    // marginTop: 5,
-    marginBottom: 10,
-    alignSelf: 'center',
-    alignContent: 'center',
-    padding: 2,
-    textShadowColor: '#000',
-    textShadowOffset: {width: 1, height: 1},
-    textShadowRadius: 4,
-    elevation: 5,
-    zIndex: 1,
-  },
   modifyUnitsContainer: {
     height: 400,
     flexGrow: 1,

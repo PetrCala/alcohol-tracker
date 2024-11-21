@@ -235,6 +235,7 @@ export default {
 
   sessionOverviewTabHeight: 85,
   statItemTextMaxWidth: 100,
+  sessionUnitCountFontSize: 90,
   profileStatOverviewHeight: 120,
   sessionColorMarkerSize: 20,
   numericSliderWidth: 280,

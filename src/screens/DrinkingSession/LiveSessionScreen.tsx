@@ -31,7 +31,6 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   const {sessionId} = route.params;
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
-  const styles = useThemeStyles();
   const StyleUtils = useStyleUtils();
   const {translate} = useLocalize();
   const {isOnline} = useUserConnection();
