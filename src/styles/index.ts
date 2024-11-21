@@ -1131,6 +1131,21 @@ const styles = (theme: ThemeColors) =>
       outlineStyle: 'none',
     },
 
+    shadowStrong: {
+      textShadowColor: theme.textDark,
+      textShadowOffset: {width: 1, height: 1},
+      textShadowRadius: 8,
+      elevation: 5,
+      zIndex: 1,
+    },
+
+    sessionUnitCountText: (color: CalendarColors) =>
+      ({
+        color,
+        ...FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
+        fontSize: variables.sessionUnitCountFontSize,
+      }) satisfies TextStyle,
+
     numericSlider: {
       height: variables.numericSliderHeight,
       width: variables.numericSliderWidth,
