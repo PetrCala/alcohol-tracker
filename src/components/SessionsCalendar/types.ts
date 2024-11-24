@@ -7,8 +7,6 @@ import type {
 import {UserID} from '@src/types/onyx/OnyxCommon';
 import {DateData} from 'react-native-calendars';
 
-// type DayState = 'selected' | 'disabled' | 'today' | ''; // Old day state
-
 type SessionsCalendarProps = {
   /** ID of the user for which to render the calendar */
   userID: UserID;

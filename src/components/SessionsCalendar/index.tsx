@@ -23,12 +23,14 @@ import SessionsCalendarProps, {
   SessionsCalendarMarkedDates,
 } from './types';
 import CalendarArrow from './CalendarArrow';
+import type {Direction} from './CalendarArrow';
 import DayComponent from './DayComponent';
 import {format} from 'date-fns';
 import {auth} from '@libs/Firebase/FirebaseApp';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import {DateString} from '@src/types/time';
+import useStyleUtils from '@hooks/useStyleUtils';
 
 function SessionsCalendar({
   userID,
@@ -39,6 +41,7 @@ function SessionsCalendar({
 }: SessionsCalendarProps) {
   const theme = useTheme();
   const styles = useThemeStyles();
+  const StyleUtils = useStyleUtils();
   const user = auth?.currentUser;
 
   const [calendarData, setCalendarData] = useState<DrinkingSessionArray>(
@@ -157,51 +160,12 @@ function SessionsCalendar({
       firstDay={CONST.WEEK_STARTS_ON}
       enableSwipeMonths={false}
       disableAllTouchEventsForDisabledDays={true}
-      renderArrow={CalendarArrow}
-      style={[
-        localStyles.mainScreenCalendarStyle,
-        {
-          borderColor: theme.border,
-        },
-      ]}
-      theme={
-        {
-          textDayHeaderFontWeight: 'bold',
-          'stylesheet.calendar.header': {
-            header: {
-              width: screenWidth,
-              marginLeft: -5,
-              flexDirection: 'row',
-              alignItems: 'center',
-              borderTopWidth: 1,
-              borderColor: theme.border,
-            },
-            monthText: {
-              color: theme.text,
-              fontSize: 20,
-              fontWeight: '500',
-              width: screenWidth / 3,
-              textAlign: 'center',
-            },
-          },
-        } as any
-      } // Circumvent typescript gymnastics
+      renderArrow={(direction: Direction) => CalendarArrow(direction)}
+      style={styles.sessionsCalendarContainer}
+      theme={StyleUtils.getSessionsCalendarHeaderStyle()}
     />
   );
 }
-
-const screenWidth = Dimensions.get('window').width;
-
-const localStyles = StyleSheet.create({
-  // Calendar styles
-  mainScreenCalendarStyle: {
-    width: '100%',
-    borderTopWidth: 0,
-    borderBottomWidth: 1,
-    flexGrow: 1,
-    flexShrink: 1,
-  },
-});
 
 SessionsCalendar.displayName = 'SessionsCalendar';
 export default SessionsCalendar;

@@ -243,6 +243,8 @@ export default {
   successIndicatorSize: 20,
   startSessionPlusButtonSize: 70,
   bottomTabBarCounterSize: 20,
+  calendarHeaderHeight: 50,
+  sessionsCalendarArrowWidth: 90,
 
   h20: 20,
   h28: 28,
