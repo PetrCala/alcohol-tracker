@@ -338,32 +338,6 @@ const localStyles = StyleSheet.create({
     marginLeft: 10,
     alignSelf: 'center',
   },
-  menuContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '15%',
-  },
-  menuIconContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 16,
-  },
-  socialContainer: {
-    flexDirection: 'row',
-  },
-  mainScreenFooterHalfContainer: {
-    width: '50%',
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
-    paddingHorizontal: 8,
-  },
-  mainScreenFooterLeftContainer: {
-    paddingRight: 36,
-  },
-  mainScreenFooterRightContainer: {
-    paddingLeft: 36,
-  },
 });
 
 HomeScreen.displayName = 'Home Screen';
