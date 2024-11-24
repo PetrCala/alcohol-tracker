@@ -17,6 +17,7 @@ import {
 import {DayState} from 'react-native-calendars/src/types';
 import {MarkingProps} from 'react-native-calendars/src/calendar/day/marking';
 import {roundToTwoDecimalPlaces} from '@libs/NumberUtils';
+import {endOfDay} from 'date-fns';
 
 const colorToTextColorMap: Record<CalendarColors, string> = {
   yellow: 'black',
@@ -37,20 +38,6 @@ function DayComponent({
   if (!date) {
     return null;
   }
-  // Calculate the date information with memos to avoid recalculation
-  const today = useMemo(() => new Date(), []);
-  const tomorrow = useMemo(() => changeDateBySomeDays(today, 1), [today]);
-  const tomorrowMidnight = useMemo(
-    () => getTimestampAtMidnight(tomorrow),
-    [tomorrow],
-  );
-
-  const dateNoLaterThanToday = useCallback(
-    (date: DateData): boolean => {
-      return date.timestamp < tomorrowMidnight;
-    },
-    [tomorrowMidnight],
-  );
 
   const getTextStyle = (state: DayState | undefined): StyleProp<TextStyle> => {
     let textStyle = localStyles.dayText;
@@ -81,7 +68,7 @@ function DayComponent({
       return {...baseStyle, borderWidth: 0};
     }
 
-    if (!dateNoLaterThanToday(date)) {
+    if (endOfDay(date.timestamp).getTime() <= date.timestamp) {
       return {...baseStyle, borderWidth: 0};
     }
 

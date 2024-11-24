@@ -1,6 +1,5 @@
 ﻿import React, {useEffect, useState} from 'react';
 import {DateData} from 'react-native-calendars';
-import {Dimensions, StyleSheet} from 'react-native';
 import {Calendar} from 'react-native-calendars';
 import {
   getPreviousMonth,
@@ -8,13 +7,8 @@ import {
   aggregateSessionsByDays,
   monthEntriesToColors,
 } from '@libs/DataHandling';
-import type {
-  DrinkingSessionArray,
-  DrinkingSessionList,
-  Preferences,
-} from '@src/types/onyx';
+import type {DrinkingSessionArray, Preferences} from '@src/types/onyx';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
-import useTheme from '@hooks/useTheme';
 import FullScreenLoadingIndicator from '../FullscreenLoadingIndicator';
 import useThemeStyles from '@hooks/useThemeStyles';
 import CONST from '@src/CONST';
@@ -31,6 +25,8 @@ import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import {DateString} from '@src/types/time';
 import useStyleUtils from '@hooks/useStyleUtils';
+import _ from 'lodash';
+import useLazySessions from '@hooks/useLazySessions';
 
 function SessionsCalendar({
   userID,
@@ -39,13 +35,12 @@ function SessionsCalendar({
   drinkingSessionData,
   preferences,
 }: SessionsCalendarProps) {
-  const theme = useTheme();
   const styles = useThemeStyles();
   const StyleUtils = useStyleUtils();
   const user = auth?.currentUser;
 
-  const [calendarData, setCalendarData] = useState<DrinkingSessionArray>(
-    drinkingSessionData ? Object.values(drinkingSessionData) : [],
+  const {loadedSessions, loadSessionsForMonth} = useLazySessions(
+    drinkingSessionData || {},
   );
   const [markedDates, setMarkedDates] = useState<SessionsCalendarMarkedDates>(
     {},
@@ -53,9 +48,7 @@ function SessionsCalendar({
   const [loadingMarkedDates, setLoadingMarkedDays] = useState<boolean>(true);
   const [minDate, setMinDate] = useState<string>(CONST.DATE.MIN_DATE);
 
-  const calculateMinDate = (
-    data: DrinkingSessionList | null | undefined,
-  ): string => {
+  const calculateMinDate = (data: DrinkingSessionArray): string => {
     const trackingStartDate = DSUtils.getUserTrackingStartDate(data);
 
     if (!trackingStartDate) {
@@ -81,22 +74,13 @@ function SessionsCalendar({
     return newMarkedDates;
   };
 
-  /** Handler for the left arrow calendar press. Uses a callback to
-   * move to the previous month
-   *
-   * @param subtractMonth A callback to move the months
-   */
   const handleLeftArrowPress = (subtractMonth: () => void) => {
     const previousMonth = getPreviousMonth(visibleDate);
     onDateChange(previousMonth);
+    loadSessionsForMonth(previousMonth.year, previousMonth.month - 3);
     subtractMonth(); // Use the callback to move to the previous month
   };
 
-  /** Handler for the left arrow calendar press. Uses a callback to
-   * move to the following month
-   *
-   * @param addMonth A callback to move the months
-   */
   const handleRightArrowPress = (addMonth: () => void) => {
     const nextMonth = getNextMonth(visibleDate);
     onDateChange(nextMonth);
@@ -112,23 +96,16 @@ function SessionsCalendar({
     // TODO display other user's sessions too in a clever manner
   };
 
-  // Monitor the local calendarData hook that depends on the drinking session data
-  useEffect(() => {
-    const newData = drinkingSessionData
-      ? Object.values(drinkingSessionData)
-      : [];
-    const newMinDate = calculateMinDate(drinkingSessionData);
-
-    setCalendarData(newData);
-    setMinDate(newMinDate);
-  }, [drinkingSessionData]);
-
   // Monitor marked days
   useEffect(() => {
-    const newMarkedDates = getMarkedDates(calendarData, preferences);
+    const newMarkedDates = getMarkedDates(loadedSessions, preferences);
+    const newMinDate = calculateMinDate(loadedSessions);
+
     setMarkedDates(newMarkedDates);
+    setMinDate(newMinDate);
     setLoadingMarkedDays(false);
-  }, [calendarData, preferences]);
+    // }, [loadedSessions, preferences]);
+  }, [preferences]);
 
   if (loadingMarkedDates) {
     return <FullScreenLoadingIndicator />;

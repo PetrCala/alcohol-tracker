@@ -30,6 +30,7 @@ import _ from 'lodash';
 import {ValueOf} from 'type-fest';
 import Log from './Log';
 import DateUtils from './DateUtils';
+import {isNonEmptyArray} from './Validation';
 
 const PlaceholderDrinks: DrinksList = {[Date.now()]: {other: 0}};
 
@@ -569,6 +570,20 @@ function getSingleMonthDrinkingSessions(
 }
 
 /**
+ * Given a list of user sessions data, return a list of those that should be rendered in a drinking sessions calendar.
+ * This calculation should be memoized and fast.
+ * */
+function getSessionsToRenderInCalendar(
+  sessions: DrinkingSessionList | null | undefined,
+  renderFrom: Date,
+): DrinkingSessionArray {
+  //   Object.values(drinkingSessionData),
+  //   session => session.start_time >= renderFrom,
+  // );
+  return [];
+}
+
+/**
  * Get the displayName for a single session participant.
  */
 function getDisplayNameForParticipant(
@@ -648,17 +663,12 @@ function isDifferentDay(
  * @param drinkingSessionsData The user's drinking session data
  * @returns [Date | null]
  */
-function getUserTrackingStartDate(
-  drinkingSessionsData: DrinkingSessionList | null | undefined,
-): Date | null {
-  if (!drinkingSessionsData) {
+function getUserTrackingStartDate(data: DrinkingSessionArray): Date | null {
+  if (!isNonEmptyArray(data)) {
     return null;
   }
 
-  const startTimes = _.map(
-    Object.values(drinkingSessionsData),
-    session => session.start_time,
-  );
+  const startTimes = _.map(data, session => session.start_time);
 
   const earliestTimestamp = _.min(startTimes);
   if (!earliestTimestamp) {
@@ -805,6 +815,7 @@ export {
   getEmptySession,
   getSessionAddDrinksOptions,
   getSessionRemoveDrinksOptions,
+  getSessionsToRenderInCalendar,
   getSingleDayDrinkingSessions,
   getSingleMonthDrinkingSessions,
   getUserDetailTooltipText,

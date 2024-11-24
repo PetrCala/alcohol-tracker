@@ -1,11 +1,5 @@
 ﻿import React, {useEffect, useMemo, useReducer, useState} from 'react';
-import {
-  Alert,
-  Dimensions,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {Alert, StyleSheet, TouchableOpacity, View} from 'react-native';
 import SessionsCalendar from '@components/SessionsCalendar';
 import type {DateData} from 'react-native-calendars';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
