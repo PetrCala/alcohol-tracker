@@ -94,7 +94,7 @@ export default {
   emojiSize: 20,
   emojiLineHeight: 28,
   iouAmountTextSize: 40,
-  searchWindowHeight: 42,
+  searchWindowHeight: 50,
   extraSmallMobileResponsiveWidthBreakpoint: 320,
   extraSmallMobileResponsiveHeightBreakpoint: 667,
   mobileResponsiveWidthBreakpoint: 800,

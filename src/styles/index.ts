@@ -1436,6 +1436,7 @@ const styles = (theme: ThemeColors) =>
       flexDirection: 'row',
       height: variables.searchWindowHeight,
       ...spacing.ph2,
+      ...spacing.pb2,
     },
 
     searchWindowTextContainer: {
