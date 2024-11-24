@@ -450,7 +450,7 @@ export default {
   },
 
   pr9: {
-    paddingRight: 32,
+    paddingRight: 36,
   },
 
   pr15: {
@@ -483,6 +483,10 @@ export default {
 
   pl6: {
     paddingLeft: 24,
+  },
+
+  pl9: {
+    paddingLeft: 36,
   },
 
   pl10: {

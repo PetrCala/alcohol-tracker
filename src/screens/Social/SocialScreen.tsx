@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import commonStyles from '@src/styles/commonStyles';
 import {TabView} from 'react-native-tab-view';
 import FriendListScreen from './FriendListScreen';
 import FriendRequestScreen from './FriendRequestScreen';
@@ -19,7 +18,6 @@ import type SCREENS from '@src/SCREENS';
 import type {SocialNavigatorParamList} from '@libs/Navigation/types';
 import Navigation from '@libs/Navigation/Navigation';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
-import FriendRequestCounter from '@components/Social/FriendRequestCounter';
 import ScreenWrapper from '@components/ScreenWrapper';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import useLocalize from '@hooks/useLocalize';
@@ -66,7 +64,11 @@ const SocialFooterButton: React.FC<SocialFooterButtonProps> = ({
               currentIndex === index ? theme.appColor : theme.textSupporting
             }
           />
-          <FriendRequestCounter count={infoNumberValue} />
+          {!!infoNumberValue && infoNumberValue > 0 && (
+            <View style={localStyles.friendRequestCounter}>
+              <Text style={styles.textWhite}>{infoNumberValue}</Text>
+            </View>
+          )}
         </View>
         <Text
           style={[
@@ -238,8 +240,6 @@ const localStyles = StyleSheet.create({
     marginBottom: 5,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'black',
   },
   friendRequestCounterValue: {
     fontSize: 12,

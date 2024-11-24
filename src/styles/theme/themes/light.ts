@@ -13,6 +13,7 @@ const lightTheme = {
   borderLighter: colors.productLight400,
   borderFocus: colors.yellowHover,
   icon: colors.productLight700,
+  iconDark: colors.productLight900,
   iconMenu: colors.yellow,
   iconHovered: colors.productLight900,
   iconMenuHovered: colors.yellow,

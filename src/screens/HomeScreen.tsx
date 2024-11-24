@@ -34,7 +34,6 @@ import type {StatData} from '@components/Items/StatOverview';
 import {StatsOverview} from '@components/Items/StatOverview';
 import {getPlural} from '@libs/StringUtilsKiroku';
 import {getReceivedRequestsCount} from '@libs/FriendUtils';
-import FriendRequestCounter from '@components/Social/FriendRequestCounter';
 import ScreenWrapper from '@components/ScreenWrapper';
 import MessageBanner from '@components/Info/MessageBanner';
 import useThemeStyles from '@hooks/useThemeStyles';
@@ -51,6 +50,8 @@ import {roundToTwoDecimalPlaces} from '@libs/NumberUtils';
 import NoSessionsInfo from '@components/NoSessionsInfo';
 import Text from '@components/Text';
 import useWindowDimensions from '@hooks/useWindowDimensions';
+import Button from '@components/Button';
+import BottomTabBarIcon from '@components/BottomTabBarIcon';
 
 type State = {
   drinkingSessionsCount: number;
@@ -304,50 +305,29 @@ function HomeScreen({route}: HomeScreenProps) {
         )}
       </ScrollView>
       <View style={styles.bottomTabBarContainer}>
-        <View
-          style={[
-            localStyles.mainScreenFooterHalfContainer,
-            localStyles.mainScreenFooterLeftContainer,
-          ]}>
-          <View style={localStyles.socialContainer}>
-            <MenuIcon
-              iconId="social-icon"
-              iconSource={KirokuIcons.Social}
-              containerStyle={localStyles.menuIconContainer}
-              iconStyle={localStyles.menuIcon}
-              onPress={() => Navigation.navigate(ROUTES.SOCIAL)}
-            />
-            <FriendRequestCounter
-              count={getReceivedRequestsCount(userData?.friend_requests)}
-              style={styles.mh3}
-            />
-          </View>
-          <MenuIcon
-            iconId="achievement-icon"
-            iconSource={KirokuIcons.Achievements}
-            containerStyle={localStyles.menuIconContainer}
-            iconStyle={localStyles.menuIcon}
+        <View style={[localStyles.mainScreenFooterHalfContainer, styles.pr9]}>
+          <BottomTabBarIcon
+            src={KirokuIcons.Social}
+            onPress={() => Navigation.navigate(ROUTES.SOCIAL)}
+            accessibilityLabel="Social"
+            counter={getReceivedRequestsCount(userData?.friend_requests)}
+          />
+          <BottomTabBarIcon
+            src={KirokuIcons.Achievements}
             onPress={() => Navigation.navigate(ROUTES.ACHIEVEMENTS)}
+            accessibilityLabel="Achievements"
           />
         </View>
-        <View
-          style={[
-            localStyles.mainScreenFooterHalfContainer,
-            localStyles.mainScreenFooterRightContainer,
-          ]}>
-          <MenuIcon
-            iconId="settings-popup-icon"
-            iconSource={KirokuIcons.Statistics}
-            containerStyle={localStyles.menuIconContainer}
-            iconStyle={localStyles.menuIcon}
+        <View style={[localStyles.mainScreenFooterHalfContainer, styles.pl9]}>
+          <BottomTabBarIcon
+            src={KirokuIcons.Statistics}
             onPress={() => Navigation.navigate(ROUTES.STATISTICS)}
+            accessibilityLabel="Statistics"
           />
-          <MenuIcon
-            iconId="settings-popup-icon"
-            iconSource={KirokuIcons.BarMenu}
-            containerStyle={localStyles.menuIconContainer}
-            iconStyle={localStyles.menuIcon}
+          <BottomTabBarIcon
+            src={KirokuIcons.BarMenu}
             onPress={() => Navigation.navigate(ROUTES.SETTINGS)}
+            accessibilityLabel="Settings"
           />
         </View>
       </View>
@@ -369,8 +349,7 @@ function HomeScreen({route}: HomeScreenProps) {
 }
 
 const screenWidth = Dimensions.get('window').width;
-const currentPlatform = getPlatform();
-const iconSize = currentPlatform === CONST.PLATFORM.IOS ? 48 : 28;
+// const iconSize = currentPlatform === CONST.PLATFORM.IOS ? 48 : 28;
 
 const localStyles = StyleSheet.create({
   profileButton: {
@@ -401,10 +380,6 @@ const localStyles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
   },
-  menuIcon: {
-    width: iconSize,
-    height: iconSize,
-  },
   socialContainer: {
     flexDirection: 'row',
   },
@@ -418,12 +393,13 @@ const localStyles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     alignItems: 'center',
+    paddingHorizontal: 4,
   },
   mainScreenFooterLeftContainer: {
-    paddingRight: 30,
+    paddingRight: 36,
   },
   mainScreenFooterRightContainer: {
-    paddingLeft: 30,
+    paddingLeft: 36,
   },
 });
 

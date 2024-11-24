@@ -19,6 +19,7 @@ type ThemeColors = {
   borderLighter: Color;
   borderFocus: Color;
   icon: Color;
+  iconDark: Color;
   iconMenu: Color;
   iconHovered: Color;
   iconMenuHovered: Color;
