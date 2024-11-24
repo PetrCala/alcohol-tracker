@@ -378,7 +378,7 @@ export default {
     headerTitle: 'User name',
     explanation:
       'Displaying your name helps your friends easily find and recognize you on your profile.',
-    note: "Note: Your name will show up elsewhere in the app just yet. We're working on it!",
+    note: "Note: Your name will not show up elsewhere in the app just yet. We're working on it!",
     updatingUserName: 'Updating your name...',
   },
   displayNameScreen: {
