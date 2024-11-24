@@ -393,7 +393,7 @@ const localStyles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     alignItems: 'center',
-    paddingHorizontal: 4,
+    paddingHorizontal: 8,
   },
   mainScreenFooterLeftContainer: {
     paddingRight: 36,
