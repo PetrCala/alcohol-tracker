@@ -25,6 +25,10 @@ import SessionsCalendarProps, {
 import CalendarArrow from './CalendarArrow';
 import DayComponent from './DayComponent';
 import {format} from 'date-fns';
+import {auth} from '@libs/Firebase/FirebaseApp';
+import Navigation from '@libs/Navigation/Navigation';
+import ROUTES from '@src/ROUTES';
+import {DateString} from '@src/types/time';
 
 function SessionsCalendar({
   userID,
@@ -35,6 +39,7 @@ function SessionsCalendar({
 }: SessionsCalendarProps) {
   const theme = useTheme();
   const styles = useThemeStyles();
+  const user = auth?.currentUser;
 
   const [calendarData, setCalendarData] = useState<DrinkingSessionArray>(
     drinkingSessionData ? Object.values(drinkingSessionData) : [],
@@ -53,7 +58,6 @@ function SessionsCalendar({
     if (!trackingStartDate) {
       return CONST.DATE.MIN_DATE;
     }
-
     return format(trackingStartDate, CONST.DATE.CALENDAR_FORMAT);
   };
 
@@ -97,7 +101,12 @@ function SessionsCalendar({
   };
 
   const onDayPress = (date: DateData) => {
-    console.log('Day pressed', date);
+    if (userID === user?.uid) {
+      Navigation.navigate(
+        ROUTES.DAY_OVERVIEW.getRoute(date.dateString as DateString),
+      );
+    }
+    // TODO display other user's sessions too in a clever manner
   };
 
   // Monitor the local calendarData hook that depends on the drinking session data

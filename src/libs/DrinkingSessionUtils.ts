@@ -655,13 +655,17 @@ function getUserTrackingStartDate(
     return null;
   }
 
-  const earliestTimestamp = _.min(Object.keys(drinkingSessionsData));
+  const startTimes = _.map(
+    Object.values(drinkingSessionsData),
+    session => session.start_time,
+  );
+
+  const earliestTimestamp = _.min(startTimes);
   if (!earliestTimestamp) {
     return null;
   }
 
-  const earliestSession = drinkingSessionsData[earliestTimestamp].start_time;
-  return new Date(earliestSession);
+  return new Date(earliestTimestamp);
 }
 
 /**
