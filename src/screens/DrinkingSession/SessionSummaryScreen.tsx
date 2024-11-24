@@ -152,10 +152,12 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
         {
           titleKey: 'common.blackout',
           description: session.blackout ? 'Yes' : 'No',
+          shouldHide: !session.blackout,
         },
         {
           titleKey: 'common.note',
-          description: session.note ?? '',
+          description: session.note,
+          shouldHide: !session.note,
         },
       ],
     };
