@@ -433,6 +433,8 @@ const styles = (theme: ThemeColors) =>
 
     borderRadiusSmall: {borderRadius: variables.componentBorderRadiusSmall},
 
+    borderRadiusXLarge: {borderRadius: variables.componentBorderRadiusXLarge},
+
     borderTop: {
       borderTopWidth: variables.borderTopWidth,
       borderColor: theme.border,
@@ -1321,9 +1323,12 @@ const styles = (theme: ThemeColors) =>
       color: theme.heading,
     },
 
-    profileStatOverview: {
-      height: variables.profileStatOverviewHeight,
-      ...spacing.mh4,
+    statOverviewContainer: {
+      height: variables.statOverviewHeight,
+      ...sizing.mw100,
+      flexDirection: 'row',
+      flex: 1,
+      justifyContent: 'space-evenly',
     },
 
     rightLabelMenuItem: {
