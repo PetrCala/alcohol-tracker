@@ -20,7 +20,7 @@ type SessionsCalendarProps = {
   onDateChange: (date: DateData) => void;
 
   /** The drinking session to render */
-  drinkingSessionData: DrinkingSessionList;
+  drinkingSessionData: DrinkingSessionList | null | undefined;
 
   /** User's preferences */
   preferences: Preferences;

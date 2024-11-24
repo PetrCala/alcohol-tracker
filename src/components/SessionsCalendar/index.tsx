@@ -121,7 +121,7 @@ function SessionsCalendar({
       }
       markedDates={markedDates}
       markingType={'period'}
-      firstDay={preferences.first_day_of_week === 'Monday' ? 1 : 0}
+      firstDay={CONST.WEEK_STARTS_ON}
       enableSwipeMonths={false}
       disableAllTouchEventsForDisabledDays={true}
       renderArrow={CalendarArrow}

@@ -289,9 +289,7 @@ function HomeScreen({route}: HomeScreenProps) {
         )}
         {!!drinkingSessionData ? (
           <>
-            <View style={localStyles.statsOverviewHolder}>
-              <StatsOverview statsData={statsData} />
-            </View>
+            <StatsOverview statsData={statsData} />
             <SessionsCalendar
               userID={user.uid}
               visibleDate={visibleDate}
@@ -348,7 +346,6 @@ function HomeScreen({route}: HomeScreenProps) {
   );
 }
 
-const screenWidth = Dimensions.get('window').width;
 // const iconSize = currentPlatform === CONST.PLATFORM.IOS ? 48 : 28;
 
 const localStyles = StyleSheet.create({
@@ -382,11 +379,6 @@ const localStyles = StyleSheet.create({
   },
   socialContainer: {
     flexDirection: 'row',
-  },
-  statsOverviewHolder: {
-    minHeight: 120,
-    flexDirection: 'row',
-    width: screenWidth,
   },
   mainScreenFooterHalfContainer: {
     width: '50%',

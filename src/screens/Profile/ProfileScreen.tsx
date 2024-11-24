@@ -45,6 +45,7 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import FillerView from '@components/FillerView';
 import Button from '@components/Button';
 import {roundToTwoDecimalPlaces} from '@libs/NumberUtils';
+import OrDelimiter from '@screens/SignUp/OrDelimiter';
 
 type State = {
   selfFriends: UserList | undefined;
@@ -252,27 +253,31 @@ function ProfileScreen({route}: ProfileScreenProps) {
             </TouchableOpacity>
           </View>
         </View>
-        <View style={[styles.borderTop, styles.profileStatOverview]}>
-          <StatsOverview statsData={statsData} />
-        </View>
-        <SessionsCalendar
-          userID={userID}
-          visibleDate={state.visibleDateData}
-          onDateChange={(date: DateData) =>
-            dispatch({type: 'SET_VISIBLE_DATE_OBJECT', payload: date})
-          }
-          drinkingSessionData={drinkingSessionData ?? {}}
-          preferences={preferences}
-          // onDayPress={(day: DateData) => {
-          //   user?.uid === userID
-          //     ? Navigation.navigate(
-          //         ROUTES.DAY_OVERVIEW.getRoute(
-          //           timestampToDateString(day.timestamp),
-          //         ),
-          //       )
-          //     : null;
-          // }}
-        />
+        {!!drinkingSessionData ? (
+          <View style={[styles.borderTop, styles.borderRadiusXLarge]}>
+            <StatsOverview statsData={statsData} />
+            <SessionsCalendar
+              userID={userID}
+              visibleDate={state.visibleDateData}
+              onDateChange={(date: DateData) =>
+                dispatch({type: 'SET_VISIBLE_DATE_OBJECT', payload: date})
+              }
+              drinkingSessionData={drinkingSessionData}
+              preferences={preferences}
+              // onDayPress={(day: DateData) => {
+              //   user?.uid === userID
+              //     ? Navigation.navigate(
+              //         ROUTES.DAY_OVERVIEW.getRoute(
+              //           timestampToDateString(day.timestamp),
+              //         ),
+              //       )
+              //     : null;
+              // }}
+            />
+          </View>
+        ) : (
+          <View style={[styles.borderTop, styles.borderRadiusXLarge]} />
+        )}
         <View style={localStyles.bottomContainer}>
           {user?.uid !== userID && (
             <Button
