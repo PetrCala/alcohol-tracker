@@ -39,6 +39,7 @@ import Modal from '@components/Modal';
 import CONST from './CONST';
 import UserOfflineModal from '@components/UserOfflineModal';
 import SplashScreenStateContext from '@context/global/SplashScreenStateContext';
+import CONFIG from './CONFIG';
 
 Onyx.registerLogger(({level, message}) => {
   if (level === 'alert') {
@@ -288,7 +289,7 @@ function Kiroku({
     <>
       {!isFetchingConfig && (
         <>
-          {!isOnline && <UserOfflineModal />}
+          {!isOnline && !CONFIG.IS_USING_EMULATORS && <UserOfflineModal />}
           {isUnderMaintenance && <UnderMaintenanceModal config={config} />}
           {!isVersionValid && <ForceUpdateModal />}
         </>

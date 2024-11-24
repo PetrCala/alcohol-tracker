@@ -264,15 +264,6 @@ function ProfileScreen({route}: ProfileScreenProps) {
               }
               drinkingSessionData={drinkingSessionData}
               preferences={preferences}
-              // onDayPress={(day: DateData) => {
-              //   user?.uid === userID
-              //     ? Navigation.navigate(
-              //         ROUTES.DAY_OVERVIEW.getRoute(
-              //           timestampToDateString(day.timestamp),
-              //         ),
-              //       )
-              //     : null;
-              // }}
             />
           </View>
         ) : (
