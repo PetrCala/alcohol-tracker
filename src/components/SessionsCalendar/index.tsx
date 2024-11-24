@@ -8,7 +8,12 @@ import {
   aggregateSessionsByDays,
   monthEntriesToColors,
 } from '@libs/DataHandling';
-import type {DrinkingSessionArray, Preferences} from '@src/types/onyx';
+import type {
+  DrinkingSessionArray,
+  DrinkingSessionList,
+  Preferences,
+} from '@src/types/onyx';
+import * as DSUtils from '@libs/DrinkingSessionUtils';
 import useTheme from '@hooks/useTheme';
 import FullScreenLoadingIndicator from '../FullscreenLoadingIndicator';
 import useThemeStyles from '@hooks/useThemeStyles';
@@ -19,6 +24,7 @@ import SessionsCalendarProps, {
 } from './types';
 import CalendarArrow from './CalendarArrow';
 import DayComponent from './DayComponent';
+import {format} from 'date-fns';
 
 function SessionsCalendar({
   userID,
@@ -37,6 +43,19 @@ function SessionsCalendar({
     {},
   );
   const [loadingMarkedDates, setLoadingMarkedDays] = useState<boolean>(true);
+  const [minDate, setMinDate] = useState<string>(CONST.DATE.MIN_DATE);
+
+  const calculateMinDate = (
+    data: DrinkingSessionList | null | undefined,
+  ): string => {
+    const trackingStartDate = DSUtils.getUserTrackingStartDate(data);
+
+    if (!trackingStartDate) {
+      return CONST.DATE.MIN_DATE;
+    }
+
+    return format(trackingStartDate, CONST.DATE.CALENDAR_FORMAT);
+  };
 
   const getMarkedDates = (
     calendarData: DrinkingSessionArray,
@@ -86,7 +105,10 @@ function SessionsCalendar({
     const newData = drinkingSessionData
       ? Object.values(drinkingSessionData)
       : [];
+    const newMinDate = calculateMinDate(drinkingSessionData);
+
     setCalendarData(newData);
+    setMinDate(newMinDate);
   }, [drinkingSessionData]);
 
   // Monitor marked days
@@ -112,6 +134,8 @@ function SessionsCalendar({
           onPress={onDayPress}
         />
       )}
+      minDate={minDate}
+      maxDate={format(new Date(), CONST.DATE.CALENDAR_FORMAT)} // today
       monthFormat={CONST.DATE.MONTH_YEAR_ABBR_FORMAT}
       onPressArrowLeft={(subtractMonth: () => void) =>
         handleLeftArrowPress(subtractMonth)

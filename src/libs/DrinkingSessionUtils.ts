@@ -643,6 +643,28 @@ function isDifferentDay(
 }
 
 /**
+ * Get the date on which a user started tracking their alcohol consumption / drinking sessions
+ *
+ * @param drinkingSessionsData The user's drinking session data
+ * @returns [Date | null]
+ */
+function getUserTrackingStartDate(
+  drinkingSessionsData: DrinkingSessionList | null | undefined,
+): Date | null {
+  if (!drinkingSessionsData) {
+    return null;
+  }
+
+  const earliestTimestamp = _.min(Object.keys(drinkingSessionsData));
+  if (!earliestTimestamp) {
+    return null;
+  }
+
+  const earliestSession = drinkingSessionsData[earliestTimestamp].start_time;
+  return new Date(earliestSession);
+}
+
+/**
  * Returns the the display names of the given user userIDs
  */
 function getUserDetailTooltipText(
@@ -782,6 +804,7 @@ export {
   getSingleDayDrinkingSessions,
   getSingleMonthDrinkingSessions,
   getUserDetailTooltipText,
+  getUserTrackingStartDate,
   isDifferentDay,
   isDrinkTypeKey,
   isEmptySession,
