@@ -43,37 +43,6 @@ function BottomTabBar() {
 }
 
 const localStyles = StyleSheet.create({
-  profileButton: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-  },
-  profileImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-  },
-  headerUsername: {
-    flexWrap: 'wrap',
-    fontSize: 18,
-    fontWeight: '500',
-    color: 'black',
-    marginLeft: 10,
-    alignSelf: 'center',
-  },
-  menuContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '15%',
-  },
-  menuIconContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 16,
-  },
-  socialContainer: {
-    flexDirection: 'row',
-  },
   mainScreenFooterHalfContainer: {
     width: '50%',
     flexDirection: 'row',
