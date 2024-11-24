@@ -295,19 +295,21 @@ function DrinkingSessionWindow({
       <HeaderWithBackButton
         onBackButtonPress={handleBackPress}
         customRightButton={
-          <Button
-            onPress={() => setMonkeMode(!monkeMode)}
-            text={translate(
-              monkeMode
-                ? 'liveSessionScreen.exitMonkeMode'
-                : 'liveSessionScreen.enterMonkeMode',
-            )}
-            style={[
-              styles.buttonMedium,
-              monkeMode ? styles.buttonSuccessPressed : styles.buttonSuccess,
-            ]}
-            textStyles={styles.buttonLargeText}
-          />
+          sessionIsLive && (
+            <Button
+              onPress={() => setMonkeMode(!monkeMode)}
+              text={translate(
+                monkeMode
+                  ? 'liveSessionScreen.exitMonkeMode'
+                  : 'liveSessionScreen.enterMonkeMode',
+              )}
+              style={[
+                styles.buttonMedium,
+                monkeMode ? styles.buttonSuccessPressed : styles.buttonSuccess,
+              ]}
+              textStyles={styles.buttonLargeText}
+            />
+          )
         }
       />
       <ScrollView contentContainerStyle={[styles.w100]}>
