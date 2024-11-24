@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import MenuIcon from '@components/Buttons/MenuIcon';
 import SessionsCalendar from '@components/SessionsCalendar';
 import type {DateData} from 'react-native-calendars';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
@@ -33,7 +32,6 @@ import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import type {StatData} from '@components/Items/StatOverview';
 import {StatsOverview} from '@components/Items/StatOverview';
 import {getPlural} from '@libs/StringUtilsKiroku';
-import {getReceivedRequestsCount} from '@libs/FriendUtils';
 import ScreenWrapper from '@components/ScreenWrapper';
 import MessageBanner from '@components/Info/MessageBanner';
 import useThemeStyles from '@hooks/useThemeStyles';
@@ -50,8 +48,7 @@ import {roundToTwoDecimalPlaces} from '@libs/NumberUtils';
 import NoSessionsInfo from '@components/NoSessionsInfo';
 import Text from '@components/Text';
 import useWindowDimensions from '@hooks/useWindowDimensions';
-import Button from '@components/Button';
-import BottomTabBarIcon from '@components/BottomTabBarIcon';
+import BottomTabBar from '@libs/Navigation/AppNavigator/createCustomBottomTabNavigator/BottomTabBar';
 
 type State = {
   drinkingSessionsCount: number;
@@ -302,33 +299,7 @@ function HomeScreen({route}: HomeScreenProps) {
           <NoSessionsInfo />
         )}
       </ScrollView>
-      <View style={styles.bottomTabBarContainer}>
-        <View style={[localStyles.mainScreenFooterHalfContainer, styles.pr9]}>
-          <BottomTabBarIcon
-            src={KirokuIcons.Social}
-            onPress={() => Navigation.navigate(ROUTES.SOCIAL)}
-            accessibilityLabel="Social"
-            counter={getReceivedRequestsCount(userData?.friend_requests)}
-          />
-          <BottomTabBarIcon
-            src={KirokuIcons.Achievements}
-            onPress={() => Navigation.navigate(ROUTES.ACHIEVEMENTS)}
-            accessibilityLabel="Achievements"
-          />
-        </View>
-        <View style={[localStyles.mainScreenFooterHalfContainer, styles.pl9]}>
-          <BottomTabBarIcon
-            src={KirokuIcons.Statistics}
-            onPress={() => Navigation.navigate(ROUTES.STATISTICS)}
-            accessibilityLabel="Statistics"
-          />
-          <BottomTabBarIcon
-            src={KirokuIcons.BarMenu}
-            onPress={() => Navigation.navigate(ROUTES.SETTINGS)}
-            accessibilityLabel="Settings"
-          />
-        </View>
-      </View>
+      <BottomTabBar />
       {!ongoingSessionId && (
         <TouchableOpacity
           accessibilityRole="button"

@@ -1,3 +1,98 @@
+import BottomTabBarIcon from '@components/BottomTabBarIcon';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
+import {getReceivedRequestsCount} from '@libs/FriendUtils';
+import useThemeStyles from '@hooks/useThemeStyles';
+import Navigation from '@libs/Navigation/Navigation';
+import ROUTES from '@src/ROUTES';
+import {StyleSheet, View} from 'react-native';
+
+function BottomTabBar() {
+  const styles = useThemeStyles();
+  const {userData} = useDatabaseData();
+
+  return (
+    <View style={styles.bottomTabBarContainer}>
+      <View style={[localStyles.mainScreenFooterHalfContainer, styles.pr9]}>
+        <BottomTabBarIcon
+          src={KirokuIcons.Social}
+          onPress={() => Navigation.navigate(ROUTES.SOCIAL)}
+          accessibilityLabel="Social"
+          counter={getReceivedRequestsCount(userData?.friend_requests)}
+        />
+        <BottomTabBarIcon
+          src={KirokuIcons.Achievements}
+          onPress={() => Navigation.navigate(ROUTES.ACHIEVEMENTS)}
+          accessibilityLabel="Achievements"
+        />
+      </View>
+      <View style={[localStyles.mainScreenFooterHalfContainer, styles.pl9]}>
+        <BottomTabBarIcon
+          src={KirokuIcons.Statistics}
+          onPress={() => Navigation.navigate(ROUTES.STATISTICS)}
+          accessibilityLabel="Statistics"
+        />
+        <BottomTabBarIcon
+          src={KirokuIcons.BarMenu}
+          onPress={() => Navigation.navigate(ROUTES.SETTINGS)}
+          accessibilityLabel="Settings"
+        />
+      </View>
+    </View>
+  );
+}
+
+const localStyles = StyleSheet.create({
+  profileButton: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+  profileImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+  },
+  headerUsername: {
+    flexWrap: 'wrap',
+    fontSize: 18,
+    fontWeight: '500',
+    color: 'black',
+    marginLeft: 10,
+    alignSelf: 'center',
+  },
+  menuContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '15%',
+  },
+  menuIconContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+  },
+  socialContainer: {
+    flexDirection: 'row',
+  },
+  mainScreenFooterHalfContainer: {
+    width: '50%',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+  },
+  mainScreenFooterLeftContainer: {
+    paddingRight: 36,
+  },
+  mainScreenFooterRightContainer: {
+    paddingLeft: 36,
+  },
+});
+
+export default BottomTabBar;
+
+// TODO original implementation in Expensify - perhaps rewrite the component more in line with this implementation
+
 // import {useNavigation, useNavigationState} from '@react-navigation/native';
 // import React, {useEffect} from 'react';
 // import {Text, View} from 'react-native';
