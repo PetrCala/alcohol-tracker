@@ -46,6 +46,7 @@ import type {
   WorkspaceColorStyle,
 } from './types';
 import {StyledSafeAreaInsets} from '@hooks/useStyledSafeAreaInsets';
+import {CalendarHeaderProps} from 'react-native-calendars/src/calendar/header';
 
 const avatarBorderSizes: Partial<Record<AvatarSizeName, number>> = {
   [CONST.AVATAR_SIZE.SMALL_SUBSCRIPT]: variables.componentBorderRadiusSmall,
@@ -1279,6 +1280,28 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
       return isPressed ? styles.badgeDangerPressed : styles.badgeDanger;
     }
     return {};
+  },
+
+  getSessionsCalendarHeaderStyle: (): CalendarHeaderProps => {
+    return {
+      textDayHeaderFontWeight: 'bold',
+      'stylesheet.calendar.header': {
+        header: {
+          height: variables.calendarHeaderHeight,
+          marginLeft: -5,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        },
+        monthText: {
+          color: theme.text,
+          fontSize: variables.fontSizeLarge,
+          ...FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
+          flexShrink: 1,
+          textAlign: 'center',
+        },
+      },
+    } as CalendarHeaderProps;
   },
 
   /**

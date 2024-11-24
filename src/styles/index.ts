@@ -46,6 +46,7 @@ import wordBreak from './utils/wordBreak';
 import writingDirection from './utils/writingDirection';
 import variables from './variables';
 import {CalendarColors} from '@components/SessionsCalendar/types';
+import {Direction} from '@components/SessionsCalendar/CalendarArrow';
 
 type ColorScheme = (typeof CONST.COLOR_SCHEME)[keyof typeof CONST.COLOR_SCHEME];
 type StatusBarStyle =
@@ -702,7 +703,7 @@ const styles = (theme: ThemeColors) =>
     },
 
     calendarHeader: {
-      height: 50,
+      height: variables.calendarHeaderHeight,
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
@@ -1396,6 +1397,12 @@ const styles = (theme: ThemeColors) =>
       alignItems: 'center',
     },
 
+    sessionsCalendarContainer: {
+      borderColor: theme.border,
+      borderTopWidth: 1,
+      borderBottomWidth: 1,
+    },
+
     sessionColorMarker: (sessionColor: CalendarColors) =>
       ({
         height: variables.sessionColorMarkerSize,
@@ -1678,6 +1685,13 @@ const styles = (theme: ThemeColors) =>
       flexGrow: 0,
       flexShrink: 1,
     },
+
+    sessionsCalendarArrow: (direction: Direction) =>
+      ({
+        width: variables.sessionsCalendarArrowWidth,
+        alignItems:
+          direction === CONST.DIRECTION.LEFT ? 'flex-start' : 'flex-end',
+      }) satisfies ViewStyle,
 
     shortTermsBorder: {
       borderWidth: 1,
