@@ -242,6 +242,7 @@ export default {
   numericSliderHeight: 40,
   successIndicatorSize: 20,
   startSessionPlusButtonSize: 70,
+  bottomTabBarCounterSize: 20,
 
   h20: 20,
   h28: 28,

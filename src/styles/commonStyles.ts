@@ -1,5 +1,6 @@
-﻿import {Dimensions, StyleSheet} from 'react-native';
-import useTheme from '@hooks/useTheme';
+﻿// This module is outdated at will be depcrecated/deleted in the future
+
+import {Dimensions, StyleSheet} from 'react-native';
 
 const screenWidth = Dimensions.get('window').width;
 const backArrowWidth = 60;

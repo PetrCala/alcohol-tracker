@@ -499,6 +499,20 @@ const styles = (theme: ThemeColors) =>
       ...spacing.ph10,
     },
 
+    bottomTabBarIcon: {
+      height: variables.iconBottomBar,
+      width: variables.iconBottomBar,
+    },
+
+    bottomTabBarCounter: {
+      width: variables.bottomTabBarCounterSize,
+      height: variables.bottomTabBarCounterSize,
+      backgroundColor: '#4CAF50',
+      borderRadius: variables.bottomTabBarCounterSize / 2,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+
     boxShadowNone: {
       boxShadow: 'none',
     },
