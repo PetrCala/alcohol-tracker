@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 import {utcToZonedTime} from 'date-fns-tz';
 import {
   DrinkingSessionArray,
@@ -39,7 +39,7 @@ function useLazyMarkedDates(
         session.start_time,
         session.timezone ?? defaultTimezone,
       );
-      const dayKey = format(sessionDate, 'yyyy-MM-dd');
+      const dayKey = format(sessionDate, CONST.DATE.FNS_FORMAT_STRING);
 
       if (!index.has(dayKey)) {
         index.set(dayKey, []);
@@ -47,31 +47,53 @@ function useLazyMarkedDates(
       index.get(dayKey)!.push(session);
     });
 
+    // Reset the index and load sessions for the current month
+    const newMarkedDatesMap = new Map<string, MarkingProps>();
+    const newUnitsMap = new Map<string, number>();
+
     sessionIndex.current = index;
 
-    // Clear markedDatesMap and unitsMap
-    setMarkedDatesMap(new Map());
-    setUnitsMap(new Map());
-
     // Load sessions for the current month
-    loadSessionsForMonth(new Date().getFullYear(), new Date().getMonth() + 1);
+    loadSessionsForMonthInternal(
+      new Date().getFullYear(),
+      new Date().getMonth() + 1,
+      newMarkedDatesMap,
+      newUnitsMap,
+    );
+
+    setMarkedDatesMap(newMarkedDatesMap);
+    setUnitsMap(newUnitsMap);
 
     setIsLoading(false);
   }, [sessions, preferences]);
 
-  const loadSessionsForMonth = (year: number, month: number) => {
+  // Internal function to load sessions for a specific month into provided maps
+  const loadSessionsForMonthInternal = (
+    year: number,
+    month: number,
+    markedDatesMapToUpdate: Map<string, MarkingProps>,
+    unitsMapToUpdate: Map<string, number>,
+  ) => {
     const endOfMonth = new Date(year, month, 0);
 
     for (let day = 1; day <= endOfMonth.getDate(); day++) {
       const date = new Date(year, month - 1, day);
       const dayKey = format(date, 'yyyy-MM-dd');
-      loadSessionsForDay(dayKey);
+      loadSessionsForDayInternal(
+        dayKey,
+        markedDatesMapToUpdate,
+        unitsMapToUpdate,
+      );
     }
   };
 
-  // Function to load sessions for a specific month
-  const loadSessionsForDay = (dayKey: string) => {
-    if (markedDatesMap.has(dayKey)) {
+  // Internal function to load sessions for a specific day into provided maps
+  const loadSessionsForDayInternal = (
+    dayKey: string,
+    markedDatesMapToUpdate: Map<string, MarkingProps>,
+    unitsMapToUpdate: Map<string, number>,
+  ) => {
+    if (markedDatesMapToUpdate.has(dayKey)) {
       return;
     }
 
@@ -82,8 +104,19 @@ function useLazyMarkedDates(
       return;
     }
 
-    setMarkedDatesMap(prev => new Map(prev).set(dayKey, newMarking.marking));
-    setUnitsMap(prev => new Map(prev).set(dayKey, newMarking.units));
+    markedDatesMapToUpdate.set(dayKey, newMarking.marking);
+    unitsMapToUpdate.set(dayKey, newMarking.units);
+  };
+
+  const loadSessionsForMonth = (year: number, month: number) => {
+    // Use existing state maps as a base
+    const newMarkedDatesMap = new Map(markedDatesMap);
+    const newUnitsMap = new Map(unitsMap);
+
+    loadSessionsForMonthInternal(year, month, newMarkedDatesMap, newUnitsMap);
+
+    setMarkedDatesMap(newMarkedDatesMap);
+    setUnitsMap(newUnitsMap);
   };
 
   // Memoize the markedDates to avoid unnecessary re-renders
