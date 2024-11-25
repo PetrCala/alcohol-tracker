@@ -1,9 +1,8 @@
-import {Image, StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {useFirebase} from '../../context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
 import {getTimestampAge} from '@libs/TimeUtils';
 import commonStyles from '@src/styles/commonStyles';
-import {timestampToDate} from '@libs/DataHandling';
 import type {Profile, UserStatus} from '@src/types/onyx';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
 import DrinkData from '@libs/DrinkData';
@@ -11,6 +10,8 @@ import _, {get} from 'lodash';
 import useThemeStyles from '@hooks/useThemeStyles';
 import DateUtils from '@libs/DateUtils';
 import {Timezone} from '@src/types/onyx/UserData';
+import Text from '@components/Text';
+import Icon from '@components/Icon';
 
 type UserOverviewProps = {
   userID: string;
@@ -94,9 +95,9 @@ const UserOverview: React.FC<UserOverviewProps> = ({
                 {`In session${mostCommonDrinkIcon ? ':' : ''}`}
               </Text>
               {mostCommonDrinkIcon && (
-                <Image
-                  source={mostCommonDrinkIcon}
-                  style={localStyles.userDetailsIcon}
+                <Icon
+                  src={mostCommonDrinkIcon}
+                  additionalStyles={localStyles.userDetailsIcon}
                 />
               )}
             </View>

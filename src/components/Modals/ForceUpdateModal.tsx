@@ -6,7 +6,8 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import getPlatform from '@libs/getPlatform';
 import CONST from '@src/CONST';
 import React from 'react';
-import {View, Text, Linking} from 'react-native';
+import {View, Linking} from 'react-native';
+import Text from '@components/Text';
 
 function ForceUpdateModal() {
   const styles = useThemeStyles();

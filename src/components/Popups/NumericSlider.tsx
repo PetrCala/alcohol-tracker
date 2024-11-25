@@ -1,11 +1,12 @@
 ﻿import React, {useState, useEffect} from 'react';
-import {Text, View} from 'react-native';
+import {View} from 'react-native';
 import Slider from '@react-native-community/slider';
 import useThemeStyles from '@hooks/useThemeStyles';
 import FullScreenModal from '@components/Modals/FullScreenModal';
 import Button from '@components/Button';
 import useLocalize from '@hooks/useLocalize';
 import useTheme from '@hooks/useTheme';
+import Text from '@components/Text';
 
 type NumericSliderProps = {
   visible: boolean;

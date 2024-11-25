@@ -1,6 +1,5 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {View} from 'react-native';
 import StatItem from './StatItem';
-import useTheme from '@hooks/useTheme';
 import useThemeStyles from '@hooks/useThemeStyles';
 
 export type StatData = Array<{

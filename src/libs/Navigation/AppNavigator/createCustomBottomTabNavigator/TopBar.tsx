@@ -1,5 +1,6 @@
 import React from 'react';
-import {Text, View} from 'react-native';
+import {View} from 'react-native';
+import Text from '@components/Text';
 // import Search from '@components/Search';
 // import WorkspaceSwitcherButton from '@components/WorkspaceSwitcherButton';
 // import useActiveWorkspace from '@hooks/useActiveWorkspace';

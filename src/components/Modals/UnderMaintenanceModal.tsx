@@ -1,12 +1,13 @@
 import type {Config, Maintenance} from '@src/types/onyx';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
-import {View, Text, Image} from 'react-native';
+import {View, Image} from 'react-native';
 import useThemeStyles from '@hooks/useThemeStyles';
 import useWindowDimensions from '@hooks/useWindowDimensions';
 import useLocalize from '@hooks/useLocalize';
 import Modal from '@components/Modal';
 import SafeAreaConsumer from '@components/SafeAreaConsumer';
 import CONST from '@src/CONST';
+import Text from '@components/Text';
 
 type UnderMaintenanceProps = {
   /** Configuration database object */

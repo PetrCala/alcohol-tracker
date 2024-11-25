@@ -1,6 +1,7 @@
 import React from 'react';
-import {Text, View} from 'react-native';
+import {View} from 'react-native';
 import headerStyles from '@src/styles/headerStyles';
+import Text from '@components/Text';
 
 type GrayHeaderProps = {
   headerText: string;

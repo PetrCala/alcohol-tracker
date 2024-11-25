@@ -1,4 +1,4 @@
-import {Alert, StyleSheet, Text, View} from 'react-native';
+import {Alert, StyleSheet, View} from 'react-native';
 import {acceptFriendRequest, sendFriendRequest} from '../../database/friends';
 import type {Database} from 'firebase/database';
 import ProfileImage from '@components/ProfileImage';
@@ -8,6 +8,7 @@ import type {FriendRequestStatus, Profile} from '@src/types/onyx';
 import CONST from '@src/CONST';
 import Button from '@components/Button';
 import useThemeStyles from '@hooks/useThemeStyles';
+import Text from '@components/Text';
 
 const statusToTextMap: {[key in FriendRequestStatus]: string} = {
   self: 'You',
