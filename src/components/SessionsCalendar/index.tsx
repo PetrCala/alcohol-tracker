@@ -6,11 +6,7 @@ import {
   getNextMonth,
   // monthEntriesToColors,
 } from '@libs/DataHandling';
-import type {
-  DrinkingSessionArray,
-  DrinkingSessionList,
-  Preferences,
-} from '@src/types/onyx';
+import type {DrinkingSessionList} from '@src/types/onyx';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
 import useThemeStyles from '@hooks/useThemeStyles';
 import CONST from '@src/CONST';
