@@ -43,7 +43,6 @@ import NoSessionsInfo from '@components/NoSessionsInfo';
 import Text from '@components/Text';
 import useWindowDimensions from '@hooks/useWindowDimensions';
 import BottomTabBar from '@libs/Navigation/AppNavigator/createCustomBottomTabNavigator/BottomTabBar';
-import useLazySessions from '@hooks/useLazyMarkedDates';
 
 type State = {
   drinkingSessionsCount: number;
