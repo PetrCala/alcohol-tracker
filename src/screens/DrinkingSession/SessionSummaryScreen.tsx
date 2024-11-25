@@ -1,4 +1,4 @@
-﻿import {StyleProp, StyleSheet, Text, View, ViewStyle} from 'react-native';
+﻿import {StyleProp, View, ViewStyle} from 'react-native';
 import {
   getLastDrinkAddedTime,
   sumAllDrinks,
@@ -7,11 +7,12 @@ import {
 } from '@libs/DataHandling';
 import useLocalize from '@hooks/useLocalize';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
-import type {DrinkingSession, DrinkKey} from '@src/types/onyx';
+import type {DrinkingSession} from '@src/types/onyx';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import type {StackScreenProps} from '@react-navigation/stack';
 import CONST from '@src/CONST';
 import SCREENS from '@src/SCREENS';
+import Text from '@components/Text';
 import type {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import * as DSUtils from '@libs/DrinkingSessionUtils';

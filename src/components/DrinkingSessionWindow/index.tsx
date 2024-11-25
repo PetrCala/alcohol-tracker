@@ -11,10 +11,10 @@ import {
   Alert,
   BackHandler,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from 'react-native';
+import Text from '@components/Text';
 import {useFirebase} from '@context/global/FirebaseContext';
 import * as DS from '@libs/actions/DrinkingSession';
 import * as DSUtils from '@libs/DrinkingSessionUtils';

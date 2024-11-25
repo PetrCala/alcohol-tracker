@@ -1,4 +1,4 @@
-﻿import {StyleSheet, Text, View} from 'react-native';
+﻿import {StyleSheet, View} from 'react-native';
 import type {
   DrinkingSession,
   DrinkingSessionId,
@@ -16,6 +16,7 @@ import Icon from './Icon';
 import SessionDrinksInputWindow from './Buttons/SessionDrinksInputWindow';
 import Button from './Button';
 import useTheme from '@hooks/useTheme';
+import Text from './Text';
 
 export type DrinkTypesViewProps = {
   /** The session to render */

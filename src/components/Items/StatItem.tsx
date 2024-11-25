@@ -1,5 +1,6 @@
+import Text from '@components/Text';
 import useThemeStyles from '@hooks/useThemeStyles';
-import {Text, View} from 'react-native';
+import {View} from 'react-native';
 
 type StatItemProps = {
   header: string;

@@ -1,7 +1,8 @@
 import useTheme from '@hooks/useTheme';
 import useThemeStyles from '@hooks/useThemeStyles';
 import stylePropTypes from '@src/styles/stylePropTypes';
-import {StyleSheet, Text, TouchableOpacity} from 'react-native';
+import {StyleSheet, TouchableOpacity} from 'react-native';
+import Text from '@components/Text';
 
 type MessageBannerProps = {
   text: string;

@@ -1,9 +1,10 @@
-﻿import {Alert, Keyboard, StyleSheet, Text, View} from 'react-native';
+﻿import {Alert, Keyboard, StyleSheet, View} from 'react-native';
 import type {
   FriendRequestList,
   FriendRequestStatus,
   ProfileList,
 } from '@src/types/onyx';
+import Text from '@components/Text';
 import type {UserList} from '@src/types/onyx/OnyxCommon';
 import React, {useMemo, useReducer, useRef} from 'react';
 import {useFirebase} from '@src/context/global/FirebaseContext';
