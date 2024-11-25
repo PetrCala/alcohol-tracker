@@ -1,11 +1,8 @@
 import {DrinkingSessionList, Preferences} from '@src/types/onyx';
-import type {
-  DayMarking,
-  DayComponentProps,
-  CalendarColors,
-} from './DayComponent/types';
+import type {DayComponentProps, CalendarColors} from './DayComponent/types';
 import {UserID} from '@src/types/onyx/OnyxCommon';
 import {DateData} from 'react-native-calendars';
+import {MarkingProps} from 'react-native-calendars/src/calendar/day/marking';
 
 type SessionsCalendarProps = {
   /** ID of the user for which to render the calendar */
@@ -24,29 +21,16 @@ type SessionsCalendarProps = {
   preferences: Preferences;
 };
 
-type MarkingProps = {
-  selected?: boolean;
-  marked?: boolean;
-  dotColor?: string;
-  disabled?: boolean;
-  color?: string; // This is the field causing the issue in your case
+type SessionsCalendarDayMarking = {
+  marking: MarkingProps;
+  units: number;
 };
-
-type SessionsCalendarMarkedDates = Record<string, DayMarking>;
-
-type SessionsCalendarDatesType = Record<
-  string,
-  {
-    units: number;
-    blackout?: boolean;
-  }
->;
+type SessionsCalendarMarkedDates = Record<string, SessionsCalendarDayMarking>;
 
 export default SessionsCalendarProps;
 export type {
-  DayMarking,
   DayComponentProps,
   CalendarColors,
-  SessionsCalendarDatesType,
+  SessionsCalendarDayMarking,
   SessionsCalendarMarkedDates,
 };

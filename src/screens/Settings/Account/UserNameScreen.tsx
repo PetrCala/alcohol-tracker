@@ -23,7 +23,7 @@ import SCREENS from '@src/SCREENS';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {changeUserName} from '@database/users';
-import useLazySessions from '@hooks/useLazySessions';
+import useLazySessions from '@hooks/useLazyMarkedDates';
 import {createMockSession} from '@database/MockDatabase';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
 

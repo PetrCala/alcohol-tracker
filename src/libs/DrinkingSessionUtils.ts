@@ -663,12 +663,13 @@ function isDifferentDay(
  * @param drinkingSessionsData The user's drinking session data
  * @returns [Date | null]
  */
-function getUserTrackingStartDate(data: DrinkingSessionArray): Date | null {
-  if (!isNonEmptyArray(data)) {
+function getUserTrackingStartDate(
+  data: DrinkingSessionList | undefined | null,
+): Date | null {
+  if (isEmptyObject(data)) {
     return null;
   }
-
-  const startTimes = _.map(data, session => session.start_time);
+  const startTimes = _.map(Object.values(data), session => session.start_time);
 
   const earliestTimestamp = _.min(startTimes);
   if (!earliestTimestamp) {
