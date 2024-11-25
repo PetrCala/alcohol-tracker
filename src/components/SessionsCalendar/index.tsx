@@ -1,11 +1,7 @@
 ﻿import React, {useEffect, useState} from 'react';
 import {DateData} from 'react-native-calendars';
 import {Calendar} from 'react-native-calendars';
-import {
-  getPreviousMonth,
-  getNextMonth,
-  // monthEntriesToColors,
-} from '@libs/DataHandling';
+import {getPreviousMonth, getNextMonth} from '@libs/DataHandling';
 import type {DrinkingSessionList} from '@src/types/onyx';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
 import useThemeStyles from '@hooks/useThemeStyles';
@@ -23,7 +19,6 @@ import useStyleUtils from '@hooks/useStyleUtils';
 import _ from 'lodash';
 import useLazyMarkedDates from '@hooks/useLazyMarkedDates';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
-import {MarkedDates} from 'react-native-calendars/src/types';
 
 function SessionsCalendar({
   userID,
