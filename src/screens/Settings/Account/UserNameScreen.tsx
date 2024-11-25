@@ -23,6 +23,9 @@ import SCREENS from '@src/SCREENS';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {changeUserName} from '@database/users';
+import useLazySessions from '@hooks/useLazySessions';
+import {createMockSession} from '@database/MockDatabase';
+import * as DSUtils from '@libs/DrinkingSessionUtils';
 
 type UserNameScreenOnyxProps = {};
 
@@ -35,13 +38,19 @@ type UserNameScreenProps = UserNameScreenOnyxProps &
 function UserNameScreen({}: UserNameScreenProps) {
   const styles = useThemeStyles();
   const {translate} = useLocalize();
-
   const {db, auth} = useFirebase();
   const {userData, isLoading} = useDatabaseData();
   const profileData = userData?.profile;
-
   const [isLoadingName, setIsLoadingName] = React.useState(false);
+  const mockSessions = {
+    [new Date().getTime()]: DSUtils.getEmptySession({}),
+    [new Date().getTime()]: DSUtils.getEmptySession({}),
+    [new Date().getTime()]: DSUtils.getEmptySession({}),
+    [new Date().getTime()]: DSUtils.getEmptySession({}),
+  };
   const [loadingText, setLoadingText] = React.useState('');
+  const {loadedSessions, loadSessionsForMonth} = useLazySessions(mockSessions);
+  console.log(loadedSessions);
 
   const currentUserDetails = {
     firstName: profileData?.first_name,
