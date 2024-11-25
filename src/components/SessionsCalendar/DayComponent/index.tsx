@@ -1,5 +1,4 @@
 import Text from '@components/Text';
-import {useCallback, useMemo} from 'react';
 import {
   StyleProp,
   StyleSheet,
@@ -7,13 +6,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {CalendarColors, DayComponentProps, DayMarking} from '../types';
+import {CalendarColors, DayComponentProps} from '../types';
 import {DateData} from 'react-native-calendars';
-import {
-  changeDateBySomeDays,
-  getTimestampAtMidnight,
-  hasDecimalPoint,
-} from '@libs/DataHandling';
+import {hasDecimalPoint} from '@libs/DataHandling';
 import {DayState} from 'react-native-calendars/src/types';
 import {MarkingProps} from 'react-native-calendars/src/calendar/day/marking';
 import {roundToTwoDecimalPlaces} from '@libs/NumberUtils';
@@ -31,6 +26,7 @@ const colorToTextColorMap: Record<CalendarColors, string> = {
 function DayComponent({
   date,
   state,
+  units,
   marking,
   theme,
   onPress,
@@ -46,15 +42,12 @@ function DayComponent({
     } else if (state === 'today') {
       textStyle = {...textStyle, ...localStyles.dayTextToday};
     } else {
-      textStyle = {...textStyle, ...{color: theme?.textDayColor || 'black'}};
+      textStyle = {...textStyle, ...{color: theme?.dayTextColor || 'black'}};
     }
     return textStyle;
   };
 
-  const getMarkingContainerStyle = (
-    date: DateData,
-    marking?: DayMarking | MarkingProps,
-  ) => {
+  const getMarkingContainerStyle = (date: DateData, marking?: MarkingProps) => {
     const baseStyle = localStyles.daySessionsMarkingContainer;
     const validColors: CalendarColors[] = [
       'black',
@@ -79,26 +72,21 @@ function DayComponent({
     return {...baseStyle, backgroundColor: color};
   };
 
-  const getMarkingTextStyle = (marking?: DayMarking) => {
+  const getMarkingTextStyle = (marking?: MarkingProps) => {
     let baseStyle = localStyles.daySessionMarkingText;
 
-    // Ensure no funky numbers
-    if (marking?.units) {
-      marking.units = roundToTwoDecimalPlaces(marking.units);
+    if (units) {
+      units = roundToTwoDecimalPlaces(units);
     }
 
-    if (
-      marking?.units &&
-      hasDecimalPoint(marking.units) &&
-      marking.units >= 10
-    ) {
+    if (units && hasDecimalPoint(units) && units >= 10) {
       baseStyle = {...baseStyle, fontSize: 15}; // Handle overflow
     }
 
     if (
       marking?.color &&
       (marking.color as CalendarColors) in colorToTextColorMap &&
-      marking.units != 0
+      units != 0
     ) {
       return {
         ...baseStyle,
@@ -118,7 +106,7 @@ function DayComponent({
       <Text style={getTextStyle(state)}>{date?.day}</Text>
       <View style={getMarkingContainerStyle(date, marking)}>
         <Text style={getMarkingTextStyle(marking)}>
-          {state === 'disabled' ? '' : marking?.units}
+          {state === 'disabled' ? '' : units}
         </Text>
       </View>
     </TouchableOpacity>

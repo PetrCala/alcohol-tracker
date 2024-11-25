@@ -1,19 +1,15 @@
-import type {DayState, DateData} from 'react-native-calendars/src/types';
+import type {DayState, DateData, Theme} from 'react-native-calendars/src/types';
+import {MarkingProps} from 'react-native-calendars/src/calendar/day/marking';
 
 type CalendarColors = 'yellow' | 'red' | 'orange' | 'black' | 'green';
-
-type DayMarking = {
-  units?: number;
-  color?: string;
-  textColor?: string;
-};
 
 type DayComponentProps = {
   date?: DateData;
   state?: DayState;
-  marking?: DayMarking;
-  theme?: any;
+  units?: number;
+  marking?: MarkingProps;
+  theme?: Theme;
   onPress?: (day: DateData) => void;
 };
 
-export type {DayMarking, DayComponentProps, CalendarColors};
+export type {DayComponentProps, CalendarColors};

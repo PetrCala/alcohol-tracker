@@ -3,9 +3,7 @@ import type {DateString} from '@src/types/time';
 import {getRandomInt} from './Choice';
 import type {
   CalendarColors,
-  DayMarking,
-  SessionsCalendarDatesType,
-  SessionsCalendarMarkedDates,
+  SessionsCalendarDayMarking,
 } from '@components/SessionsCalendar/types';
 import type {
   DrinkingSession,
@@ -29,6 +27,7 @@ import * as DSUtils from '@libs/DrinkingSessionUtils';
 import Onyx from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 import {auth} from './Firebase/FirebaseApp';
+import {MarkingProps} from 'react-native-calendars/src/calendar/day/marking';
 
 let timezone: Required<Timezone> = CONST.DEFAULT_TIME_ZONE;
 Onyx.connect({
@@ -255,97 +254,43 @@ export function setDateToCurrentTime(inputDate: Date): Date {
   return inputDate;
 }
 
-export function aggregateSessionsByDays(
-  sessions: DrinkingSession[],
-  measureType: MeasureType = 'units',
-  drinksToUnits?: DrinksToUnits,
-): SessionsCalendarDatesType {
-  if (measureType === 'units' && !drinksToUnits) {
-    throw new Error(
-      'You must specify the drink-to-unit conversion for the "units" measure type',
-    );
-  }
-  const baseTimezone = timezone.selected;
-
-  // Cache to store formatted date strings based on timezone and timestamp
-  const dateStringCache: Record<string, string> = {};
-
-  return sessions.reduce<SessionsCalendarDatesType>((acc, session) => {
-    const tz = session.timezone ?? baseTimezone;
-    const cacheKey = `${tz}-${session.start_time}`;
-
-    // Retrieve from cache or compute and store the date string
-    let dateString = dateStringCache[cacheKey];
-    if (!dateString) {
-      dateString = formatInTimeZone(
-        session.start_time,
-        tz,
-        CONST.DATE.CALENDAR_FORMAT,
-      );
-      dateStringCache[cacheKey] = dateString;
-    }
-
-    // Calculate the new drinks based on the measure type
-    const newDrinks =
-      measureType === 'units'
-        ? DSUtils.calculateTotalUnits(session.drinks, drinksToUnits!)
-        : measureType === 'drinks'
-          ? sumAllDrinks(session.drinks)
-          : (() => {
-              throw new Error(`Unknown measure type: ${measureType}`);
-            })();
-
-    // Aggregate the drinks and blackout status
-    if (acc[dateString]) {
-      acc[dateString].units += newDrinks;
-      acc[dateString].blackout = acc[dateString].blackout || session.blackout;
-    } else {
-      acc[dateString] = {
-        units: newDrinks,
-        blackout: session.blackout,
-      };
-    }
-
-    return acc;
-  }, {});
-}
-
-export function monthEntriesToColors(
-  sessions: SessionsCalendarDatesType,
+/** Based on a collection of DrinkingSession objects, determine a day marking and return it as an object. */
+export function sessionsToDayMarking(
+  sessions: DrinkingSessionArray,
   preferences: Preferences,
-): SessionsCalendarMarkedDates {
-  const markedDates: SessionsCalendarMarkedDates = _.entries(sessions).reduce(
-    (
-      acc: SessionsCalendarMarkedDates,
-      [key, {units: value, blackout: blackoutInfo}],
-    ) => {
-      const unitsToColorsInfo = preferences.units_to_colors;
-      let color: CalendarColors = unitsToColors(value, unitsToColorsInfo);
-
-      // Override color to 'black' if blackout is true
-      if (blackoutInfo === true) {
-        color = 'black';
-      }
-
-      // Determine text color based on background color
-      let textColor: string = 'black';
-      if (color === 'red' || color === 'green' || color === 'black') {
-        textColor = 'white';
-      }
-
-      const markingObject: DayMarking = {
-        units: value, // number of units
-        color: color,
-        textColor: textColor,
-      };
-
-      acc[key] = markingObject;
-      return acc;
+): SessionsCalendarDayMarking | null {
+  if (isEmptyObject(sessions)) {
+    return null;
+  }
+  const totalUnits = _.reduce(
+    sessions,
+    (sum, session) => {
+      return (
+        sum +
+        DSUtils.calculateTotalUnits(session.drinks, preferences.drinks_to_units)
+      );
     },
-    {} as SessionsCalendarMarkedDates, // Explicitly type the initial accumulator
+    0,
   );
 
-  return markedDates;
+  const hasBlackout = _.some(sessions, obj => obj['blackout'] === true);
+  const color: CalendarColors = hasBlackout
+    ? 'black'
+    : unitsToColors(totalUnits, preferences.units_to_colors);
+
+  // Determine text color based on background color
+  const shouldUseContrast = _.includes(['red', 'green', 'black'], color);
+  const textColor = shouldUseContrast ? 'white' : 'black';
+
+  const markingObject: SessionsCalendarDayMarking = {
+    units: totalUnits,
+    marking: {
+      color: color,
+      textColor: textColor,
+    },
+  };
+
+  return markingObject;
 }
 
 /** Sum up all drinks regardless of category
