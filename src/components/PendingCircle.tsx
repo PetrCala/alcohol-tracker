@@ -1,5 +1,5 @@
 ﻿import React, {useState} from 'react';
-import {View, TouchableOpacity, StyleSheet, Text} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 
 const PendingCircleComponent = (visible: boolean) => {
   // A sample boolean hook to determine visibility of the circle.
