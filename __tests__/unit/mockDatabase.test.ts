@@ -291,7 +291,7 @@ describe('mockDatabase functions', () => {
   it('should create a mock session', () => {
     const session = createMockSession(new Date());
     expect(session).toBeDefined();
-    expect(session.start_time).toBeLessThan(session.end_time);
+    expect(session.start_time).toBeLessThan(session.end_time ?? 0);
   });
 
   it('should create mock preferences', () => {
