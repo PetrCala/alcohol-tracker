@@ -7,10 +7,20 @@ import {
 } from '@src/types/onyx';
 import CONST from '@src/CONST';
 import _ from 'lodash';
-import {format} from 'date-fns';
+import {
+  differenceInMonths,
+  eachDayOfInterval,
+  format,
+  isWithinInterval,
+  startOfMonth,
+  subDays,
+  subMonths,
+} from 'date-fns';
 import {sessionsToDayMarking} from '@libs/DataHandling';
 import {MarkingProps} from 'react-native-calendars/src/calendar/day/marking';
 import {MarkedDates} from 'react-native-calendars/src/types';
+
+type DateString = string;
 
 /**
  * Custom hook to manage and memoize drinking session data with lazy loading
@@ -23,18 +33,56 @@ function useLazyMarkedDates(
   preferences: Preferences,
 ) {
   const [markedDatesMap, setMarkedDatesMap] = useState<
-    Map<string, MarkingProps>
+    Map<DateString, MarkingProps>
   >(new Map());
-  const [unitsMap, setUnitsMap] = useState<Map<string, number>>(new Map());
-  const sessionIndex = useRef<Map<string, DrinkingSessionArray>>(new Map()); // synchronous
+  const [unitsMap, setUnitsMap] = useState<Map<DateString, number>>(new Map());
+  const sessionIndex = useRef<Map<DateString, DrinkingSessionArray>>(new Map()); // synchronous
+  const loadedFrom = useRef<Date | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const defaultTimezone = CONST.DEFAULT_TIME_ZONE.selected;
 
-  // Build the index when sessions change
-  useEffect(() => {
-    const index = new Map<string, DrinkingSessionArray>();
+  /** Check up to which data the data has already loaded and return the date to load from. This date will capture one more month than the last loaded month. Always load one more day than the first day of the month in order to handle timezone modifications.
+   */
+  const getDateToLoadFrom = (monthsToLoad: number = 1): Date => {
+    const today = new Date();
+    const alreadyLoaded = loadedFrom.current;
+    const monthsDifference = differenceInMonths(today, alreadyLoaded ?? today);
+    const monthsToSubtract = monthsDifference + monthsToLoad - 1;
+    const dateInCorrectMonth = subMonths(today, monthsToSubtract);
+    return subDays(startOfMonth(dateInCorrectMonth), 1);
+  };
 
-    Object.values(sessions).forEach(session => {
+  // Internal function to load sessions for a specific day into provided maps
+  const loadSessionsForDayInternal = (
+    dayKey: DateString,
+    markedDatesMapToUpdate: Map<DateString, MarkingProps>,
+    unitsMapToUpdate: Map<DateString, number>,
+  ) => {
+    const relevantSessions = sessionIndex.current.get(dayKey) || [];
+    const newMarking = sessionsToDayMarking(relevantSessions, preferences);
+    if (!newMarking) {
+      return;
+    }
+    markedDatesMapToUpdate.set(dayKey, newMarking.marking);
+    unitsMapToUpdate.set(dayKey, newMarking.units);
+  };
+
+  // Internal function to load sessions for a specific month into provided maps
+  const loadSessionsForMonthsInternal = (
+    monthsToLoad: number,
+    markedDatesMapToUpdate: Map<DateString, MarkingProps>,
+    unitsMapToUpdate: Map<DateString, number>,
+  ) => {
+    const index = sessionIndex.current;
+    const start = getDateToLoadFrom(monthsToLoad);
+    const end = loadedFrom.current ?? new Date();
+
+    const relevantSessions = Object.values(sessions).filter(session =>
+      isWithinInterval(session.start_time, {start, end}),
+    );
+
+    // Build the sessionIndex for relevant sessions
+    _.forEach(relevantSessions, session => {
       const sessionDate = utcToZonedTime(
         session.start_time,
         session.timezone ?? defaultTimezone,
@@ -47,74 +95,32 @@ function useLazyMarkedDates(
       index.get(dayKey)!.push(session);
     });
 
-    // Reset the index and load sessions for the current month
-    const newMarkedDatesMap = new Map<string, MarkingProps>();
-    const newUnitsMap = new Map<string, number>();
-
-    sessionIndex.current = index;
-
-    // Load sessions for the current month
-    loadSessionsForMonthInternal(
-      new Date().getFullYear(),
-      new Date().getMonth() + 1,
-      newMarkedDatesMap,
-      newUnitsMap,
+    const datesToLoad = eachDayOfInterval({start, end});
+    const dayStrings = _.map(datesToLoad, date =>
+      format(date, CONST.DATE.FNS_FORMAT_STRING),
     );
 
-    setMarkedDatesMap(newMarkedDatesMap);
-    setUnitsMap(newUnitsMap);
-
-    setIsLoading(false);
-  }, [sessions, preferences]);
-
-  // Internal function to load sessions for a specific month into provided maps
-  const loadSessionsForMonthInternal = (
-    year: number,
-    month: number,
-    markedDatesMapToUpdate: Map<string, MarkingProps>,
-    unitsMapToUpdate: Map<string, number>,
-  ) => {
-    const endOfMonth = new Date(year, month, 0);
-
-    for (let day = 1; day <= endOfMonth.getDate(); day++) {
-      const date = new Date(year, month - 1, day);
-      const dayKey = format(date, 'yyyy-MM-dd');
+    // Mark the dates and units for each day
+    _.forEach(dayStrings, dayKey => {
       loadSessionsForDayInternal(
         dayKey,
         markedDatesMapToUpdate,
         unitsMapToUpdate,
       );
-    }
+    });
+
+    loadedFrom.current = start;
   };
 
-  // Internal function to load sessions for a specific day into provided maps
-  const loadSessionsForDayInternal = (
-    dayKey: string,
-    markedDatesMapToUpdate: Map<string, MarkingProps>,
-    unitsMapToUpdate: Map<string, number>,
-  ) => {
-    if (markedDatesMapToUpdate.has(dayKey)) {
-      return;
-    }
-
-    const relevantSessions = sessionIndex.current.get(dayKey) || [];
-    const newMarking = sessionsToDayMarking(relevantSessions, preferences);
-
-    if (!newMarking) {
-      return;
-    }
-
-    markedDatesMapToUpdate.set(dayKey, newMarking.marking);
-    unitsMapToUpdate.set(dayKey, newMarking.units);
-  };
-
-  const loadSessionsForMonth = (year: number, month: number) => {
+  const loadMoreMonths = (monthsToLoad: number = 1) => {
     // Use existing state maps as a base
+    // const newSessionIndex = new Map(sessionIndex);
     const newMarkedDatesMap = new Map(markedDatesMap);
     const newUnitsMap = new Map(unitsMap);
 
-    loadSessionsForMonthInternal(year, month, newMarkedDatesMap, newUnitsMap);
+    loadSessionsForMonthsInternal(monthsToLoad, newMarkedDatesMap, newUnitsMap);
 
+    // setSessionIndex(newSessionIndex);
     setMarkedDatesMap(newMarkedDatesMap);
     setUnitsMap(newUnitsMap);
   };
@@ -125,10 +131,19 @@ function useLazyMarkedDates(
     [markedDatesMap],
   );
 
+  useEffect(() => {
+    // Upon sessions/preferences change, reset the loadedFrom information, but keep the existing data - the hook checks for differences and rewrites the data if necessary
+    setIsLoading(true);
+    sessionIndex.current = new Map<DateString, DrinkingSessionArray>();
+    loadedFrom.current = null;
+    loadMoreMonths();
+    setIsLoading(false);
+  }, [sessions, preferences]);
+
   return {
     markedDates,
     unitsMap,
-    loadSessionsForMonth,
+    loadMoreMonths,
     isLoading,
   };
 }

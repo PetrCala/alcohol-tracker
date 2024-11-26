@@ -30,8 +30,10 @@ function SessionsCalendar({
   const styles = useThemeStyles();
   const StyleUtils = useStyleUtils();
   const user = auth?.currentUser;
-  const {markedDates, unitsMap, loadSessionsForMonth, isLoading} =
-    useLazyMarkedDates(drinkingSessionData || {}, preferences);
+  const {markedDates, unitsMap, loadMoreMonths, isLoading} = useLazyMarkedDates(
+    drinkingSessionData || {},
+    preferences,
+  );
   const [minDate, setMinDate] = useState<string>(CONST.DATE.MIN_DATE);
 
   const calculateMinDate = (
@@ -46,9 +48,9 @@ function SessionsCalendar({
   };
 
   const handleLeftArrowPress = (subtractMonth: () => void) => {
+    loadMoreMonths(1); // Should be called only when necessary TODO
     const previousMonth = getPreviousMonth(visibleDate);
     onDateChange(previousMonth);
-    loadSessionsForMonth(previousMonth.year, previousMonth.month);
     subtractMonth(); // Use the callback to move to the previous month
   };
 
