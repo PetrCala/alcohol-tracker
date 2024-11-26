@@ -6,12 +6,12 @@ import React from 'react';
 import {
   View,
   Modal,
-  Text,
   StyleSheet,
   TouchableOpacity,
   Image,
   Dimensions,
 } from 'react-native';
+import Text from '@components/Text';
 
 type ItemList = {
   label: string;
