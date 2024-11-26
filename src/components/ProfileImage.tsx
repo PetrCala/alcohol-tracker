@@ -8,6 +8,7 @@ import useProfileImageCache from '@hooks/useProfileImageCache';
 import CONST from '@src/CONST';
 import EnlargableImage from './Buttons/EnlargableImage';
 import type ImageLayout from '@src/types/various/ImageLayout';
+import FlexibleLoadingIndicator from './FlexibleLoadingIndicator';
 
 type State = {
   imageUrl: string | null;
@@ -121,7 +122,7 @@ function ProfileImage(props: ProfileImageProps) {
   }, [downloadPath, cachedUrl, isCacheChecked]); // add props.refreshTrigger if necessary
 
   if (state.loadingImage) {
-    return <ActivityIndicator size="large" color="#0000ff" style={style} />;
+    return <FlexibleLoadingIndicator style={[style, {flex: 0}]} />;
   }
   if (!props.enlargable) {
     return <Image source={imageSource} style={style} />;
