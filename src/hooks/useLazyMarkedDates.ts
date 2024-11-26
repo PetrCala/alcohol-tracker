@@ -38,6 +38,7 @@ function useLazyMarkedDates(
   const [unitsMap, setUnitsMap] = useState<Map<DateString, number>>(new Map());
   const sessionIndex = useRef<Map<DateString, DrinkingSessionArray>>(new Map()); // synchronous
   const loadedFrom = useRef<Date | null>(null);
+  const [monthsLoaded, setMonthsLoaded] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const defaultTimezone = CONST.DEFAULT_TIME_ZONE.selected;
 
@@ -47,7 +48,7 @@ function useLazyMarkedDates(
     const today = new Date();
     const alreadyLoaded = loadedFrom.current;
     const monthsDifference = differenceInMonths(today, alreadyLoaded ?? today);
-    const monthsToSubtract = monthsDifference + monthsToLoad - 1;
+    const monthsToSubtract = monthsDifference + monthsToLoad;
     const dateInCorrectMonth = subMonths(today, monthsToSubtract);
     return subDays(startOfMonth(dateInCorrectMonth), 1);
   };
@@ -108,19 +109,17 @@ function useLazyMarkedDates(
         unitsMapToUpdate,
       );
     });
-
     loadedFrom.current = start;
+    setMonthsLoaded(prev => prev + monthsToLoad);
   };
 
   const loadMoreMonths = (monthsToLoad: number = 1) => {
     // Use existing state maps as a base
-    // const newSessionIndex = new Map(sessionIndex);
     const newMarkedDatesMap = new Map(markedDatesMap);
     const newUnitsMap = new Map(unitsMap);
 
     loadSessionsForMonthsInternal(monthsToLoad, newMarkedDatesMap, newUnitsMap);
 
-    // setSessionIndex(newSessionIndex);
     setMarkedDatesMap(newMarkedDatesMap);
     setUnitsMap(newUnitsMap);
   };
@@ -132,17 +131,21 @@ function useLazyMarkedDates(
   );
 
   useEffect(() => {
-    // Upon sessions/preferences change, reset the loadedFrom information, but keep the existing data - the hook checks for differences and rewrites the data if necessary
     setIsLoading(true);
-    sessionIndex.current = new Map<DateString, DrinkingSessionArray>();
     loadedFrom.current = null;
-    loadMoreMonths();
+    // Resetting the session index causes recalculation of of dependent hooks when necssary, so it is not needed to reset them here
+    sessionIndex.current = new Map<DateString, DrinkingSessionArray>();
+
+    // If this is the first time loading, load the current month only
+    // If more data have already been loaded, reload the same amount of months
+    loadMoreMonths(monthsLoaded);
     setIsLoading(false);
   }, [sessions, preferences]);
 
   return {
     markedDates,
     unitsMap,
+    loadedFrom,
     loadMoreMonths,
     isLoading,
   };

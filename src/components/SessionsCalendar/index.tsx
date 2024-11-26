@@ -10,7 +10,7 @@ import SessionsCalendarProps, {DayComponentProps} from './types';
 import CalendarArrow from './CalendarArrow';
 import type {Direction} from './CalendarArrow';
 import DayComponent from './DayComponent';
-import {format} from 'date-fns';
+import {differenceInMonths, format} from 'date-fns';
 import {auth} from '@libs/Firebase/FirebaseApp';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
@@ -30,10 +30,8 @@ function SessionsCalendar({
   const styles = useThemeStyles();
   const StyleUtils = useStyleUtils();
   const user = auth?.currentUser;
-  const {markedDates, unitsMap, loadMoreMonths, isLoading} = useLazyMarkedDates(
-    drinkingSessionData || {},
-    preferences,
-  );
+  const {markedDates, unitsMap, loadedFrom, loadMoreMonths, isLoading} =
+    useLazyMarkedDates(drinkingSessionData || {}, preferences);
   const [minDate, setMinDate] = useState<string>(CONST.DATE.MIN_DATE);
 
   const calculateMinDate = (
@@ -48,9 +46,17 @@ function SessionsCalendar({
   };
 
   const handleLeftArrowPress = (subtractMonth: () => void) => {
-    loadMoreMonths(1); // Should be called only when necessary TODO
+    const monthsAway = differenceInMonths(
+      new Date(visibleDate.timestamp),
+      new Date(loadedFrom?.current ?? new Date()),
+    );
+    if (monthsAway < 1) {
+      loadMoreMonths(1);
+    }
+
     const previousMonth = getPreviousMonth(visibleDate);
     onDateChange(previousMonth);
+
     subtractMonth(); // Use the callback to move to the previous month
   };
 
