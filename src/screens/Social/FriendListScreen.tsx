@@ -93,7 +93,7 @@ function FriendListScreen({}: FriendListScreenProps) {
       />
       <UserListComponent
         fullUserArray={state.friends}
-        initialLoadSize={15}
+        initialLoadSize={20}
         emptyListComponent={<NoFriendInfo />}
         userSubset={state.friendsToDisplay}
         orderUsers={true}
