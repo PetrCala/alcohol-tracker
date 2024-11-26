@@ -476,6 +476,8 @@ export default {
   profileScreen: {
     title: 'Profile',
     titleNotSelf: 'Friend Overview',
+    noDrinkingSessions: (isSelf: boolean) =>
+      `${isSelf ? 'You have not' : 'This user has not'} added any drinking sessions yet.`,
     seeAllFriends: 'See all friends',
     drinkingSessions: (plural: string) => `Drinking Session${plural}`,
     unitsConsumed: 'Units Consumed',
@@ -498,6 +500,8 @@ export default {
   homeScreen: {
     startingSession: 'Starting a new session...',
     welcomeToKiroku: 'Welcome to Kiroku!',
+    startNewSessionByClickingPlus:
+      'Start a new session by clicking the plus button at the bottom of your screen',
     currentlyInSession: 'You are currently in a session!',
     error: {
       title: 'Failed to open a session',

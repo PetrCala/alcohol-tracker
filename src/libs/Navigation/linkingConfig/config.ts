@@ -7,7 +7,6 @@ import type {Screen} from '@src/SCREENS';
 import SCREENS from '@src/SCREENS';
 import type {RouteConfig} from './createNormalizedConfigs';
 import createNormalizedConfigs from './createNormalizedConfigs';
-import {exact} from 'prop-types';
 
 // Moved to a separate file to avoid cyclic dependencies.
 const config: LinkingOptions<RootStackParamList>['config'] = {
@@ -35,6 +34,7 @@ const config: LinkingOptions<RootStackParamList>['config'] = {
     },
 
     [SCREENS.NOT_FOUND]: '*',
+    [SCREENS.VERIFY_EMAIL]: ROUTES.VERIFY_EMAIL,
     [NAVIGATORS.LEFT_MODAL_NAVIGATOR]: {
       screens: {
         //         [SCREENS.LEFT_MODAL.SEARCH]: {

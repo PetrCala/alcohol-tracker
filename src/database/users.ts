@@ -19,7 +19,6 @@ import {
   updateProfile,
   updateEmail as fbUpdateEmail,
   verifyBeforeUpdateEmail,
-  getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from 'firebase/auth';

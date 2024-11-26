@@ -1,7 +1,4 @@
-import Button from '@components/Button';
 import useThemeStyles from '@hooks/useThemeStyles';
-import Navigation from '@libs/Navigation/Navigation';
-import ROUTES from '@src/ROUTES';
 import useStyleUtils from '@hooks/useStyleUtils';
 import {View, Text} from 'react-native';
 import variables from '@src/styles/variables';
@@ -20,8 +17,6 @@ const NoSessionsInfo: React.FC<NoSessionsInfoProps> = ({
   const styles = useThemeStyles();
   const StyleUtils = useStyleUtils();
   const {translate} = useLocalize();
-  const defaultMessage =
-    'Start a new session by clicking the plus button at the bottom of your screen';
 
   return (
     <View
@@ -34,7 +29,7 @@ const NoSessionsInfo: React.FC<NoSessionsInfoProps> = ({
         {translate('homeScreen.welcomeToKiroku')}
       </Text>
       <Text style={styles.textHomeScreenNoSessions}>
-        {message ?? defaultMessage}
+        {message ?? translate('homeScreen.startNewSessionByClickingPlus')}
       </Text>
     </View>
   );

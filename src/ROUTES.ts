@@ -17,11 +17,8 @@ function getUrlWithBackToParam<TUrl extends string>(
   return `${url}${backToParam}` as const;
 }
 
-const ROUTES = {
-  // If the user opens this route, we'll redirect them to the path saved in the last visited path or to the home page if the last visited path is empty.
+const PUBLIC_SCREENS_ROUTES = {
   ROOT: '',
-
-  HOME: 'home',
   FORCE_UPDATE: 'force-update',
   INITIAL: 'initial',
   LOG_IN: 'log-in',
@@ -31,6 +28,13 @@ const ROUTES = {
   APPLE_SIGN_IN: 'sign-in-with-apple',
   GOOGLE_SIGN_IN: 'sign-in-with-google',
   TRANSITION_BETWEEN_APPS: 'transition',
+  VERIFY_EMAIL: 'verify-email',
+} as const;
+
+const ROUTES = {
+  ...PUBLIC_SCREENS_ROUTES,
+
+  HOME: 'home',
 
   ACHIEVEMENTS: 'achievements',
 
@@ -135,7 +139,7 @@ const ROUTES = {
   STATISTICS: 'statistics',
 } as const;
 
-export {getUrlWithBackToParam};
+export {getUrlWithBackToParam, PUBLIC_SCREENS_ROUTES};
 export default ROUTES;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
