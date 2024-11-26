@@ -113,10 +113,21 @@ function useLazyMarkedDates(
     setMonthsLoaded(prev => prev + monthsToLoad);
   };
 
-  const loadMoreMonths = (monthsToLoad: number = 1) => {
-    // Use existing state maps as a base
-    const newMarkedDatesMap = new Map(markedDatesMap);
-    const newUnitsMap = new Map(unitsMap);
+  /** Create a new map either using an existing object, or an empty object if the reset argument is set to true. Return the relevant map. */
+  function createNewMap<K, V>(
+    reset: boolean,
+    existingMap: Map<K, V>,
+  ): Map<K, V> {
+    return reset ? new Map<K, V>() : new Map(existingMap);
+  }
+
+  // Here, set the 'reset' argument to true if empty maps are needed
+  const loadMoreMonths = (monthsToLoad: number = 1, reset: boolean = false) => {
+    const newMarkedDatesMap = createNewMap<DateString, MarkingProps>(
+      reset,
+      markedDatesMap,
+    );
+    const newUnitsMap = createNewMap<DateString, number>(reset, unitsMap);
 
     loadSessionsForMonthsInternal(monthsToLoad, newMarkedDatesMap, newUnitsMap);
 
@@ -138,7 +149,7 @@ function useLazyMarkedDates(
 
     // If this is the first time loading, load the current month only
     // If more data have already been loaded, reload the same amount of months
-    loadMoreMonths(monthsLoaded);
+    loadMoreMonths(monthsLoaded, true);
     setIsLoading(false);
   }, [sessions, preferences]);
 
