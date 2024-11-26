@@ -56,7 +56,7 @@ const UserListComponent: React.FC<UserListProps> = ({
   userSubset,
   orderUsers,
 }) => {
-  const {auth, db} = useFirebase();
+  const {db} = useFirebase();
   const styles = useThemeStyles();
   const {userData} = useDatabaseData();
   // Partial list of users for initial display and dynamic updates
@@ -94,8 +94,8 @@ const UserListComponent: React.FC<UserListProps> = ({
     const height = event.nativeEvent.layoutMeasurement.height;
     const contentHeight = event.nativeEvent.contentSize.height;
 
-    // Check for more users to load upon reaching the bottom
-    if (y + height >= contentHeight - 20) {
+    // Load more users when the user is within 300 pixels from the bottom
+    if (y + height >= contentHeight - 300 && !loadingMoreUsers) {
       await loadMoreUsers(initialLoadSize);
     }
   };
@@ -156,8 +156,8 @@ const UserListComponent: React.FC<UserListProps> = ({
     <ScrollView
       style={localStyles.scrollViewContainer}
       onScrollBeginDrag={Keyboard.dismiss}
-      onMomentumScrollEnd={handleScroll}
-      scrollEventThrottle={400}
+      onScroll={handleScroll}
+      scrollEventThrottle={16}
       keyboardShouldPersistTaps="handled">
       {loadingDisplayData && isInitialLoad ? (
         <FlexibleLoadingIndicator />
@@ -176,6 +176,7 @@ const UserListComponent: React.FC<UserListProps> = ({
                 ) {
                   return null;
                 }
+
                 return (
                   <PressableWithAnimation
                     key={userID + '-button'}
@@ -197,12 +198,10 @@ const UserListComponent: React.FC<UserListProps> = ({
               </Text>
             )}
           </View>
-          {loadingMoreUsers ? (
+          {loadingMoreUsers && (
             <View style={localStyles.loadingMoreUsersContainer}>
-              <ActivityIndicator size="large" color="#0000ff" />
+              <FlexibleLoadingIndicator />
             </View>
-          ) : (
-            <FillerView height={100} />
           )}
         </>
       ) : (
