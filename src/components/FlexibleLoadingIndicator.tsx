@@ -34,7 +34,7 @@ function FlexibleLoadingIndicator({
     <>
       <ActivityIndicator
         color={theme.spinner}
-        style={[styles.flex1, style]}
+        style={[style]}
         size={size || CONST.ACTIVITY_INDICATOR_SIZE.LARGE}
       />
       {text && (

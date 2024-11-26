@@ -21,16 +21,13 @@ import {
   View,
 } from 'react-native';
 import UserOverview from './UserOverview';
-import commonStyles from '@src/styles/commonStyles';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import FillerView from '@components/FillerView';
 import {sleep} from '@libs/TimeUtils';
 import _ from 'lodash';
-import CONST from '@src/CONST';
 import useThemeStyles from '@hooks/useThemeStyles';
-import useTheme from '@hooks/useTheme';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 
