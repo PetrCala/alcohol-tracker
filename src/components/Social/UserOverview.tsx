@@ -94,12 +94,7 @@ const UserOverview: React.FC<UserOverviewProps> = ({
                 ]}>
                 {`In session${mostCommonDrinkIcon ? ':' : ''}`}
               </Text>
-              {mostCommonDrinkIcon && (
-                <Icon
-                  src={mostCommonDrinkIcon}
-                  additionalStyles={localStyles.userDetailsIcon}
-                />
-              )}
+              {mostCommonDrinkIcon && <Icon small src={mostCommonDrinkIcon} />}
             </View>
             <Text
               key={userID + '-status-time'}
@@ -194,10 +189,6 @@ const localStyles = StyleSheet.create({
     fontSize: 12,
     textAlign: 'center',
     padding: 2,
-  },
-  userDetailsIcon: {
-    width: 15,
-    height: 15,
   },
   leftContainerText: {},
   rightContainerText: {
