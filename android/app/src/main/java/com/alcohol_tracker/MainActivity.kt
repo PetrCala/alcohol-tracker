@@ -35,7 +35,7 @@ class MainActivity : ReactActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         BootSplash.init(this)
-        super.onCreate(savedInstanceState)
+        super.onCreate(null)
         if (resources.getBoolean(R.bool.portrait_only)) {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
