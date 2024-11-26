@@ -17,6 +17,7 @@ const SCREENS = {
   LOG_IN: 'LogIn',
   FORGOT_PASSWORD: 'ForgotPassword',
   FORCE_UPDATE: 'ForceUpdate',
+  VERIFY_EMAIL: 'VerifyEmail',
 
   TZ_FIX: {
     ROOT: 'TZFix_Root',

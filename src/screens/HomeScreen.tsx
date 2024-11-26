@@ -205,6 +205,15 @@ function HomeScreen({route}: HomeScreenProps) {
     );
   }, [userStatusData]);
 
+  //TODO enable in the next update
+  // useEffect(() => {
+  //   if (user) {
+  //     if (!user?.emailVerified) {
+  //       Navigation.navigate(ROUTES.VERIFY_EMAIL);
+  //     }
+  //   }
+  // }, [user]);
+
   useFocusEffect(
     React.useCallback(() => {
       // Update user status on home screen focus
@@ -230,6 +239,7 @@ function HomeScreen({route}: HomeScreenProps) {
       state.shouldNavigateToTzFix,
     ]),
   );
+
   if (!user) {
     return;
   }

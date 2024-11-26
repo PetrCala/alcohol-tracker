@@ -267,7 +267,15 @@ function ProfileScreen({route}: ProfileScreenProps) {
             />
           </View>
         ) : (
-          <View style={[styles.borderTop, styles.borderRadiusXLarge]} />
+          <View style={[styles.borderTop, styles.borderRadiusXLarge]}>
+            <Text
+              style={[styles.textNormal, styles.textAlignCenter, styles.mt4]}>
+              {translate(
+                'profileScreen.noDrinkingSessions',
+                user?.uid === userID,
+              )}
+            </Text>
+          </View>
         )}
         <View style={localStyles.bottomContainer}>
           {user?.uid !== userID && (

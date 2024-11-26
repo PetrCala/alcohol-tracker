@@ -20,6 +20,7 @@ import CONST from '@src/CONST';
 import {ScrollOffsetContext} from '@components/ScrollOffsetContextProvider';
 import setupCustomAndroidBackHandler from './setupCustomAndroidBackHandler';
 import {useFirebase} from '@context/global/FirebaseContext';
+import ROUTES from '@src/ROUTES';
 
 type NavigationRootProps = {
   /** Whether the current user is logged in with an authToken */
@@ -64,12 +65,6 @@ function parseAndLogRoute(state: NavigationState) {
   }
 
   Navigation.setIsNavigationReady();
-
-  // // Fullstory Page navigation tracking - not used in Kiroku
-  // const focusedRouteName = focusedRoute?.name;
-  // if (focusedRouteName) {
-  //     new FSPage(focusedRouteName, {path: currentPath}).start();
-  // }
 }
 
 function NavigationRoot({
@@ -122,7 +117,7 @@ function NavigationRoot({
       return adaptedState;
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+    [user],
   );
 
   // https://reactnavigation.org/docs/themes

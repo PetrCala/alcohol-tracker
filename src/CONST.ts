@@ -252,7 +252,7 @@ const CONST = {
   EXCLUDE_FROM_LAST_VISITED_PATH: [
     SCREENS.NOT_FOUND,
     // SCREENS.SAML_SIGN_IN,
-    // SCREENS.VALIDATE_LOGIN,
+    SCREENS.VERIFY_EMAIL,
   ] as string[],
 
   // Character Limits

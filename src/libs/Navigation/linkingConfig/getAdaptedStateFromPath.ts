@@ -1,10 +1,5 @@
-import type {
-  NavigationState,
-  PartialState,
-  Route,
-} from '@react-navigation/native';
+import type {NavigationState, PartialState} from '@react-navigation/native';
 import {findFocusedRoute, getStateFromPath} from '@react-navigation/native';
-import pick from 'lodash/pick';
 import getIsNarrowLayout from '@libs/getIsNarrowLayout';
 import type {
   BottomTabName,
@@ -14,13 +9,12 @@ import type {
 } from '@libs/Navigation/types';
 import {isCentralPaneName} from '@libs/NavigationUtils';
 import NAVIGATORS from '@src/NAVIGATORS';
-import type {Screen} from '@src/SCREENS';
 import SCREENS from '@src/SCREENS';
-import config, {normalizedConfigs} from './config';
+import config from './config';
 import getMatchingBottomTabRouteForState from './getMatchingBottomTabRouteForState';
 import getMatchingCentralPaneRouteForState from './getMatchingCentralPaneRouteForState';
 import replacePathInNestedState from './replacePathInNestedState';
-import CENTRAL_PANE_TO_RHP_MAPPING from './CENTRAL_PANE_TO_RHP_MAPPING';
+import ROUTES from '@src/ROUTES';
 
 type Metainfo = {
   // Sometimes modal screens don't have information about what should be visible under the overlay.
@@ -75,10 +69,11 @@ function createBottomTabNavigator(
     NavigationPartialRoute<BottomTabName>
   > = [];
   routesForBottomTabNavigator.push(
-    addPolicyIDToRoute(
-      route,
-      policyID,
-    ) as NavigationPartialRoute<BottomTabName>,
+    route as NavigationPartialRoute<BottomTabName>,
+    // addPolicyIDToRoute(
+    //   route,
+    //   policyID,
+    // ) as NavigationPartialRoute<BottomTabName>,
   );
 
   return {
@@ -253,6 +248,10 @@ function getAdaptedState(
     // if (onboardingModalNavigator) {
     //     routes.push(onboardingModalNavigator);
     // }
+
+    if (state.routes.find(route => route.name === SCREENS.VERIFY_EMAIL)) {
+      routes.push({name: SCREENS.VERIFY_EMAIL});
+    }
 
     return {
       adaptedState: getRoutesWithIndex(routes),

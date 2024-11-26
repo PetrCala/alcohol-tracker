@@ -17,8 +17,6 @@ import * as Pusher from '@libs/Pusher/pusher';
 // import PusherConnectionManager from '@libs/PusherConnectionManager';
 import getTzFixModalScreenOptions from '@libs/Navigation/getTzFixModalScreenOptions';
 import * as SessionUtils from '@libs/SessionUtils';
-// import NotFoundPage from '@pages/ErrorPage/NotFoundPage';
-import NotFoundScreen from '@screens/ErrorScreen/NotFoundScreen';
 // import DesktopSignInRedirectPage from '@pages/signin/DesktopSignInRedirectPage';
 import * as App from '@userActions/App';
 // import * as Download from '@userActions/Download';
@@ -34,11 +32,9 @@ import NAVIGATORS from '@src/NAVIGATORS';
 import ONYXKEYS from '@src/ONYXKEYS';
 import ROUTES from '@src/ROUTES';
 import SCREENS from '@src/SCREENS';
-import type * as OnyxTypes from '@src/types/onyx';
 import {DatabaseDataProvider} from '@context/global/DatabaseDataContext';
 import type {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
 import createCustomStackNavigator from './createCustomStackNavigator';
-import defaultScreenOptions from './defaultScreenOptions';
 import getRootNavigatorScreenOptions from './getRootNavigatorScreenOptions';
 import BottomTabNavigator from './Navigators/BottomTabNavigator';
 // import CentralPaneNavigator from './Navigators/CentralPaneNavigator';
@@ -48,13 +44,17 @@ import BottomTabNavigator from './Navigators/BottomTabNavigator';
 import TzFixModalNavigator from './Navigators/TzFixModalNavigator';
 import RightModalNavigator from './Navigators/RightModalNavigator';
 import {auth} from '@libs/Firebase/FirebaseApp';
-import {useFirebase} from '@context/global/FirebaseContext';
+import ReactComponentModule from '@src/types/utils/ReactComponentModule';
+import VerifyEmailScreen from '@screens/VerifyEmailScreen';
 // import WelcomeVideoModalNavigator from './Navigators/WelcomeVideoModalNavigator';
 
 type AuthScreensProps = {
   /** The last Onyx update ID was applied to the client */
   initialLastUpdateIDAppliedToClient: OnyxEntry<number>;
 };
+
+const notFoundScreen = () =>
+  require<ReactComponentModule>('@screens/ErrorScreen/NotFoundScreen').default;
 
 let timezone: Timezone | null;
 let isLoadingApp = false;
@@ -276,7 +276,12 @@ function AuthScreens({initialLastUpdateIDAppliedToClient}: AuthScreensProps) {
           <RootStack.Screen
             name={SCREENS.NOT_FOUND}
             options={screenOptions.fullScreen}
-            component={NotFoundScreen}
+            getComponent={notFoundScreen}
+          />
+          <RootStack.Screen
+            name={SCREENS.VERIFY_EMAIL}
+            options={screenOptions.fullScreen}
+            component={VerifyEmailScreen}
           />
           <RootStack.Screen
             name={NAVIGATORS.RIGHT_MODAL_NAVIGATOR}
