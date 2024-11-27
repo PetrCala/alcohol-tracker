@@ -236,7 +236,7 @@ async function sendUpdateEmailLink(
   newEmail: string,
 ): Promise<void> {
   if (!user) {
-    throw new Error('User is null');
+    throw new Error(Localize.translateLocal('common.error.userNull'));
   }
   await verifyBeforeUpdateEmail(user, newEmail);
 }
@@ -249,7 +249,7 @@ async function sendUpdateEmailLink(
  */
 async function updateEmail(user: User | null, newEmail: string): Promise<void> {
   if (!user) {
-    throw new Error('User is null');
+    throw new Error(Localize.translateLocal('common.error.userNull'));
   }
   await fbUpdateEmail(user, newEmail);
 }
@@ -262,9 +262,7 @@ async function updateEmail(user: User | null, newEmail: string): Promise<void> {
  */
 async function sendVerifyEmailLink(user: User | null): Promise<void> {
   if (!user) {
-    throw new Error(
-      Localize.translateLocal('verifyEmailScreen.error.userNull'),
-    );
+    throw new Error(Localize.translateLocal('common.error.userNull'));
   }
   const hasSentEmailRecently =
     verifyEmailSent &&
@@ -323,7 +321,7 @@ async function changeDisplayName(
   newDisplayName: string,
 ): Promise<void> {
   if (!user) {
-    throw new Error('User is null');
+    throw new Error(Localize.translateLocal('common.error.userNull'));
   }
   if (!oldDisplayName) {
     throw new Error(
@@ -370,7 +368,7 @@ async function changeUserName(
   lastName: string,
 ): Promise<void> {
   if (!user) {
-    throw new Error('User is null');
+    throw new Error(Localize.translateLocal('common.error.userNull'));
   }
 
   const userID = user.uid;
@@ -399,7 +397,7 @@ async function fetchNicknameByUID(
   const userRef = ref(db, DBPATHS.USERS_USER_ID_PROFILE.getRoute(uid));
   const userSnapshot = await get(userRef);
   if (!userSnapshot.exists()) {
-    return 'Not found';
+    return Localize.translateLocal('common.error.notFound');
   }
   return userSnapshot.val().display_name || null;
 }
@@ -420,7 +418,7 @@ async function updateAutomaticTimezone(
   selectedTimezone: SelectedTimezone,
 ): Promise<void> {
   if (!user) {
-    throw new Error('User is null');
+    throw new Error(Localize.translateLocal('common.error.userNull'));
   }
 
   const userID = user.uid;
@@ -451,7 +449,7 @@ async function saveSelectedTimezone(
   selectedTimezone: SelectedTimezone,
 ): Promise<void> {
   if (!user) {
-    throw new Error('User is null');
+    throw new Error(Localize.translateLocal('common.error.userNull'));
   }
 
   const userID = user.uid;
