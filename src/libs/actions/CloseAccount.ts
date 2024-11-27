@@ -49,7 +49,9 @@ async function closeAccount(
     authentificationResult = await reauthentificateUser(user, password);
 
     if (!authentificationResult) {
-      throw new Error('Reauthentification failed');
+      throw new Error(
+        Localize.translateLocal('common.error.reauthenticationFailed'),
+      );
     }
 
     const userNickname = userData.profile.display_name;

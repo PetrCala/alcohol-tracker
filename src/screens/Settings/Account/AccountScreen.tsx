@@ -44,12 +44,12 @@ function AccountScreen({route}: AccountScreenProps) {
       title: profileData?.display_name ?? '',
       pageRoute: ROUTES.SETTINGS_DISPLAY_NAME,
     },
+    {
+      description: translate('common.email'),
+      title: user?.email ?? '',
+      pageRoute: ROUTES.SETTINGS_EMAIL,
+    },
     // TODO enable these after the email and password screens are ready
-    // {
-    //   description: translate('common.email'),
-    //   title: user?.email ?? '',
-    //   pageRoute: ROUTES.SETTINGS_EMAIL,
-    // },
     // {
     //   description: translate('common.password'),
     //   title: '••••••••',
