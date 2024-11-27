@@ -49,12 +49,11 @@ function AccountScreen({route}: AccountScreenProps) {
       title: user?.email ?? '',
       pageRoute: ROUTES.SETTINGS_EMAIL,
     },
-    // TODO enable these after the email and password screens are ready
-    // {
-    //   description: translate('common.password'),
-    //   title: '••••••••',
-    //   pageRoute: ROUTES.SETTINGS_PASSWORD,
-    // },
+    {
+      description: translate('common.password'),
+      title: '••••••••',
+      pageRoute: ROUTES.SETTINGS_PASSWORD,
+    },
     {
       description: translate('timezoneScreen.timezone'),
       title: userData?.timezone?.selected ?? '',

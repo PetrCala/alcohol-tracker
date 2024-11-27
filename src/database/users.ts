@@ -15,12 +15,13 @@ import type {Timestamp, UserList} from '@src/types/onyx/OnyxCommon';
 import type {Auth, User, UserCredential} from 'firebase/auth';
 import {
   EmailAuthProvider,
+  createUserWithEmailAndPassword,
   reauthenticateWithCredential,
+  sendEmailVerification,
+  signInWithEmailAndPassword,
+  updatePassword as fbUpdatePassword,
   updateProfile,
   verifyBeforeUpdateEmail,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  sendEmailVerification,
 } from 'firebase/auth';
 import StringUtils from '@libs/StringUtils';
 import {getUniqueId} from 'react-native-device-info';
@@ -276,6 +277,29 @@ async function sendUpdateEmailLink(
   }
 
   await verifyBeforeUpdateEmail(user, newEmail);
+}
+
+async function updatePassword(
+  user: User | null,
+  currentPassword: string,
+  newPassword: string,
+) {
+  if (!user) {
+    throw new Error(Localize.translateLocal('common.error.userNull'));
+  }
+
+  let authentificationResult: void | UserCredential;
+  authentificationResult = await reauthentificateUser(user, currentPassword);
+
+  if (!authentificationResult) {
+    throw new Error(
+      Localize.translateLocal('common.error.reauthenticationFailed'),
+    );
+  }
+
+  await fbUpdatePassword(user, newPassword);
+
+  await Onyx.set(ONYXKEYS.FORMS.PASSWORD_FORM_DRAFT, null); // Reset upon success
 }
 
 /**
@@ -578,6 +602,7 @@ export {
   sendVerifyEmailLink,
   synchronizeUserStatus,
   updateAutomaticTimezone,
+  updatePassword,
   userExistsInDatabase,
   logIn,
   signUp,

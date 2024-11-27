@@ -169,30 +169,27 @@ function UserNameScreen({}: UserNameScreenProps) {
           <Text style={[styles.mb6, styles.mutedTextLabel]}>
             {translate('userNameScreen.note')}
           </Text>
-          <View style={styles.mb4}>
-            <InputWrapper
-              InputComponent={TextInput}
-              inputID={INPUT_IDS.FIRST_NAME}
-              name="fname"
-              label={translate('common.firstName')}
-              aria-label={translate('common.firstName')}
-              role={CONST.ROLE.PRESENTATION}
-              defaultValue={currentUserDetails.firstName ?? ''}
-              spellCheck={false}
-            />
-          </View>
-          <View>
-            <InputWrapper
-              InputComponent={TextInput}
-              inputID={INPUT_IDS.LAST_NAME}
-              name="lname"
-              label={translate('common.lastName')}
-              aria-label={translate('common.lastName')}
-              role={CONST.ROLE.PRESENTATION}
-              defaultValue={currentUserDetails.lastName ?? ''}
-              spellCheck={false}
-            />
-          </View>
+          <InputWrapper
+            InputComponent={TextInput}
+            inputID={INPUT_IDS.FIRST_NAME}
+            name="fname"
+            label={translate('common.firstName')}
+            aria-label={translate('common.firstName')}
+            role={CONST.ROLE.PRESENTATION}
+            defaultValue={currentUserDetails.firstName ?? ''}
+            spellCheck={false}
+          />
+          <InputWrapper
+            InputComponent={TextInput}
+            inputID={INPUT_IDS.LAST_NAME}
+            name="lname"
+            label={translate('common.lastName')}
+            aria-label={translate('common.lastName')}
+            role={CONST.ROLE.PRESENTATION}
+            defaultValue={currentUserDetails.lastName ?? ''}
+            spellCheck={false}
+            containerStyles={styles.mt4}
+          />
         </FormProvider>
       )}
     </ScreenWrapper>

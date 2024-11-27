@@ -645,7 +645,6 @@ export default {
   },
   password: {
     changePassword: 'Change password',
-    changingYourPasswordPrompt: 'Do not use this',
     currentPassword: 'Current password',
     newPassword: 'New password',
     reEnter: 'Re-enter your password',
@@ -654,6 +653,7 @@ export default {
     pleaseFillOutAllFields: 'Please fill out all fields',
     pleaseFillPassword: 'Please enter your password',
     forgot: 'Forgot password?',
+    changingPassword: 'Changing your password...',
     error: {
       samePassword: 'This is the same password as your current one',
       incorrectPassword: 'Incorrect password. Please try again.',
@@ -715,6 +715,15 @@ export default {
       `An email with password reset instructions has been sent to ${email}.`,
     error: {
       generic: 'There was an error when attempting to reset your password.',
+    },
+  },
+  passwordScreen: {
+    title: 'Change your password',
+    prompt: 'Please enter your current password and then your new password.',
+    submit: 'Change password',
+    success: 'Password changed successfully!',
+    error: {
+      generic: 'There was an error when attempting to change your password.',
     },
   },
   closeAccount: {
