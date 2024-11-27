@@ -20,12 +20,14 @@ import Icon from '@components/Icon';
 import useTheme from '@hooks/useTheme';
 import SuccessAnimation from '@components/SuccessAnimation';
 import {sleep} from '@libs/TimeUtils';
+import {useFirebase} from '@context/global/FirebaseContext';
 
 type VerifyEmailScreenOnyxProps = {};
 type VerifyEmailScreenProps = VerifyEmailScreenOnyxProps &
   StackScreenProps<AuthScreensParamList, typeof SCREENS.VERIFY_EMAIL>;
 
 function VerifyEmailScreen({route}: VerifyEmailScreenProps) {
+  const {auth} = useFirebase();
   const user = auth.currentUser;
   const styles = useThemeStyles();
   const {translate} = useLocalize();
@@ -81,7 +83,7 @@ function VerifyEmailScreen({route}: VerifyEmailScreenProps) {
     if (user && user.emailVerified) {
       setEmailVerified(true);
     }
-  }, [user]);
+  }, [user, auth]);
 
   return (
     <ScreenWrapper
