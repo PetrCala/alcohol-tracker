@@ -1,5 +1,5 @@
 import React from 'react';
-import {Alert, View} from 'react-native';
+import {View} from 'react-native';
 import {withOnyx} from 'react-native-onyx';
 import FormProvider from '@components/Form/FormProvider';
 import InputWrapper from '@components/Form/InputWrapper';
@@ -23,9 +23,6 @@ import SCREENS from '@src/SCREENS';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {changeUserName} from '@database/users';
-import useLazySessions from '@hooks/useLazyMarkedDates';
-import {createMockSession} from '@database/MockDatabase';
-import * as DSUtils from '@libs/DrinkingSessionUtils';
 
 type UserNameScreenOnyxProps = {};
 
@@ -42,15 +39,7 @@ function UserNameScreen({}: UserNameScreenProps) {
   const {userData, isLoading} = useDatabaseData();
   const profileData = userData?.profile;
   const [isLoadingName, setIsLoadingName] = React.useState(false);
-  const mockSessions = {
-    [new Date().getTime()]: DSUtils.getEmptySession({}),
-    [new Date().getTime()]: DSUtils.getEmptySession({}),
-    [new Date().getTime()]: DSUtils.getEmptySession({}),
-    [new Date().getTime()]: DSUtils.getEmptySession({}),
-  };
   const [loadingText, setLoadingText] = React.useState('');
-  const {loadedSessions, loadSessionsForMonth} = useLazySessions(mockSessions);
-  console.log(loadedSessions);
 
   const currentUserDetails = {
     firstName: profileData?.first_name,
