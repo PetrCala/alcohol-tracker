@@ -44,8 +44,6 @@ import NoSessionsInfo from '@components/NoSessionsInfo';
 import Text from '@components/Text';
 import useWindowDimensions from '@hooks/useWindowDimensions';
 import BottomTabBar from '@libs/Navigation/AppNavigator/createCustomBottomTabNavigator/BottomTabBar';
-import Onyx, {useOnyx} from 'react-native-onyx';
-import ONYXKEYS from '@src/ONYXKEYS';
 
 type State = {
   drinkingSessionsCount: number;
