@@ -149,6 +149,8 @@ export default {
       invalidCharacter: 'Invalid character',
       enterAmount: 'Enter an amount',
       enterDate: 'Enter a date',
+      userNull: 'We could not find your user. Please log in again.',
+      notFound: 'Not found',
     },
     comma: 'comma',
     semicolon: 'semicolon',
@@ -463,7 +465,6 @@ export default {
     iHaveVerified: 'I have verified my email',
     error: {
       generic: 'Error verifying your email',
-      userNull: 'We could not find your user. Please log in again.',
       sending: 'Error sending verification email',
       dismissing: 'Error dismissing verification email',
       emailSentRecently:
