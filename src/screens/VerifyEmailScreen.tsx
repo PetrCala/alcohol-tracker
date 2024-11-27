@@ -5,6 +5,7 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import {auth} from '@libs/Firebase/FirebaseApp';
 import {AuthScreensParamList} from '@libs/Navigation/types';
 import {StackScreenProps} from '@react-navigation/stack';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import * as User from '@database/users';
 import SCREENS from '@src/SCREENS';
 import {useEffect, useState} from 'react';
@@ -15,6 +16,8 @@ import ROUTES from '@src/ROUTES';
 import DotIndicatorMessage from '@components/DotIndicatorMessage';
 import Onyx from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
+import Icon from '@components/Icon';
+import useTheme from '@hooks/useTheme';
 
 type VerifyEmailScreenOnyxProps = {};
 type VerifyEmailScreenProps = VerifyEmailScreenOnyxProps &
@@ -23,12 +26,15 @@ type VerifyEmailScreenProps = VerifyEmailScreenOnyxProps &
 function VerifyEmailScreen({route}: VerifyEmailScreenProps) {
   const styles = useThemeStyles();
   const {translate} = useLocalize();
+  const theme = useTheme();
   const [emailSent, setEmailSent] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorText, setErrorText] = useState('');
+  const [mockEmailVerified, setMockEmailVerified] = useState(false); // TODO delete
   const user = auth.currentUser;
 
   const onVerifyEmailButtonPress = async () => {
+    // setMockEmailVerified(true); // TODO delete
     try {
       setErrorText('');
       setIsLoading(true);
@@ -53,6 +59,10 @@ function VerifyEmailScreen({route}: VerifyEmailScreenProps) {
 
   // Redirect to home screen if user is verified
   useEffect(() => {
+    if (mockEmailVerified) {
+      Navigation.navigate(ROUTES.HOME);
+      return;
+    }
     if (user && user.emailVerified) {
       Navigation.navigate(ROUTES.HOME);
     }
@@ -63,9 +73,23 @@ function VerifyEmailScreen({route}: VerifyEmailScreenProps) {
       testID={VerifyEmailScreen.displayName}
       style={styles.appContent}>
       <View style={[styles.flex1, styles.ph4]}>
-        <View style={[styles.flexGrow1]}>
-          <Text>{translate('verifyEmailScreen.youAreNotVerified')}</Text>
-          <Text>{translate('verifyEmailScreen.wouldYouLikeToVerify')}</Text>
+        <View
+          style={[
+            styles.flexGrow1,
+            styles.justifyContentCenter,
+            styles.alignItemsCenter,
+            styles.mh4,
+          ]}>
+          <Icon src={KirokuIcons.Mail} fill={theme.appColor} large />
+          <Text textAlign="center" style={[styles.textHeadlineH2, styles.mt3]}>
+            {translate('verifyEmailScreen.youAreNotVerified')}
+          </Text>
+          <Text textAlign="center" style={styles.mt3}>
+            {translate(
+              'verifyEmailScreen.wouldYouLikeToVerify',
+              user?.email ?? '',
+            )}
+          </Text>
         </View>
         <View style={styles.pb1}>
           {!!emailSent && !errorText && (
@@ -101,7 +125,7 @@ function VerifyEmailScreen({route}: VerifyEmailScreenProps) {
           <Button
             style={[styles.mt1]}
             text={translate('verifyEmailScreen.changeEmail')}
-            onPress={() => {}} // Navigate to change email screen
+            onPress={() => Navigation.navigate(ROUTES.SETTINGS_EMAIL)}
             large
           />
           <Button
