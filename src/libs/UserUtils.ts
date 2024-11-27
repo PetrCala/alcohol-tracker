@@ -3,9 +3,20 @@ import type {OnyxEntry} from 'react-native-onyx';
 import type {ValueOf} from 'type-fest';
 import {UserIcon} from '@components/Icon/KirokuIcons';
 import CONST from '@src/CONST';
-import type {UserID} from '@src/types/onyx/OnyxCommon';
+import type {Timestamp, UserID} from '@src/types/onyx/OnyxCommon';
 import type IconAsset from '@src/types/utils/IconAsset';
 import hashCode from './hashCode';
+import Onyx from 'react-native-onyx';
+import ONYXKEYS from '@src/ONYXKEYS';
+import {User} from 'firebase/auth';
+
+let verifyEmailDismissed: OnyxEntry<Timestamp | null> = null;
+Onyx.connect({
+  key: ONYXKEYS.VERIFY_EMAIL_DISMISSED,
+  callback: val => {
+    verifyEmailDismissed = val;
+  },
+});
 
 type AvatarRange =
   | 1
@@ -267,6 +278,16 @@ function getSmallSizeAvatar(
 //   return parsedLoginList.find(login => Str.isValidE164Phone(login));
 // }
 
+function shouldNavigateToVerifyEmailScreen(user: User | null): boolean {
+  if (!user || user.emailVerified) {
+    return false; // Already verified
+  }
+  if (!verifyEmailDismissed) {
+    return true; // Has not dismissed the modal yet
+  }
+  return verifyEmailDismissed < Date.now() - CONST.VERIFY_EMAIL.DISMISS_TIME;
+}
+
 export {
   generateUserID,
   getAvatar,
@@ -281,5 +302,6 @@ export {
   // hasLoginListInfo,
   hashText,
   isDefaultAvatar,
+  shouldNavigateToVerifyEmailScreen,
 };
 export type {AvatarSource, LoginListIndicator};

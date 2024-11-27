@@ -34,6 +34,7 @@ import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
 import * as DS from '@libs/actions/DrinkingSession';
 import * as ErrorUtils from '@libs/ErrorUtils';
+import * as UserUtils from '@libs/UserUtils';
 import useTheme from '@hooks/useTheme';
 import Icon from '@components/Icon';
 import ScrollView from '@components/ScrollView';
@@ -43,6 +44,8 @@ import NoSessionsInfo from '@components/NoSessionsInfo';
 import Text from '@components/Text';
 import useWindowDimensions from '@hooks/useWindowDimensions';
 import BottomTabBar from '@libs/Navigation/AppNavigator/createCustomBottomTabNavigator/BottomTabBar';
+import Onyx, {useOnyx} from 'react-native-onyx';
+import ONYXKEYS from '@src/ONYXKEYS';
 
 type State = {
   drinkingSessionsCount: number;
@@ -205,21 +208,18 @@ function HomeScreen({route}: HomeScreenProps) {
     );
   }, [userStatusData]);
 
-  //TODO enable in the next update
-  // useEffect(() => {
-  //   if (user) {
-  //     if (!user?.emailVerified) {
-  //       Navigation.navigate(ROUTES.VERIFY_EMAIL);
-  //     }
-  //   }
-  // }, [user]);
-
   useFocusEffect(
     React.useCallback(() => {
       // Update user status on home screen focus
       if (!user || !userData || !preferences) {
         return;
       }
+
+      if (UserUtils.shouldNavigateToVerifyEmailScreen(user)) {
+        Navigation.navigate(ROUTES.VERIFY_EMAIL);
+        return;
+      }
+
       try {
         synchronizeUserStatus(db, user.uid, drinkingSessionData);
       } catch (error: any) {
@@ -231,8 +231,10 @@ function HomeScreen({route}: HomeScreenProps) {
       // TZFIX (09-2024) - Redirect to TZ_FIX_INTRODUCTION if user has not set timezone
       if (state.shouldNavigateToTzFix) {
         Navigation.navigate(ROUTES.TZ_FIX_INTRODUCTION);
+        return;
       }
     }, [
+      user,
       userData,
       preferences,
       drinkingSessionData,
