@@ -241,6 +241,7 @@ export default {
   numericSliderWidth: 280,
   numericSliderHeight: 40,
   successIndicatorSize: 20,
+  successAnimationIconSize: 100,
   startSessionPlusButtonSize: 70,
   bottomTabBarCounterSize: 20,
   calendarHeaderHeight: 50,

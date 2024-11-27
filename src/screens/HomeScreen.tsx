@@ -323,8 +323,6 @@ function HomeScreen({route}: HomeScreenProps) {
   );
 }
 
-// const iconSize = currentPlatform === CONST.PLATFORM.IOS ? 48 : 28;
-
 const localStyles = StyleSheet.create({
   profileButton: {
     flexDirection: 'row',

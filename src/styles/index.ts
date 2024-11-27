@@ -1959,6 +1959,10 @@ const styles = (theme: ThemeColors) =>
       fontSize: variables.fontSizeXXXXLarge,
     },
 
+    textSuccess: {
+      color: theme.success,
+    },
+
     textHero: {
       fontSize: variables.fontSizeHero,
       ...FontUtils.fontFamily.platform.EXP_NEW_KANSAS_MEDIUM,

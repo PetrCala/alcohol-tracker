@@ -128,6 +128,7 @@ export default {
     todayAt: 'Today at',
     tomorrowAt: 'Tomorrow at',
     yesterdayAt: 'Yesterday at',
+    success: 'Success',
     conjunctionAt: 'at',
     genericErrorMessage:
       'Oops... something went wrong and your request could not be completed. Please try again later.',
@@ -458,6 +459,8 @@ export default {
     changeEmail: 'Change email',
     resendEmail: 'Resend email',
     emailSent: 'A verification email has been sent to your email address.',
+    emailVerified: 'Email verified!',
+    iHaveVerified: 'I have verified my email',
     error: {
       generic: 'Error verifying your email',
       userNull: 'We could not find your user. Please log in again.',
@@ -465,6 +468,7 @@ export default {
       dismissing: 'Error dismissing verification email',
       emailSentRecently:
         'Please wait before sending another verification email.',
+      emailNotVerified: 'Your email has not been verified yet.',
     },
   },
   feedbackScreen: {
