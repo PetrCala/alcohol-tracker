@@ -151,6 +151,7 @@ export default {
       enterDate: 'Enter a date',
       userNull: 'We could not find your user. Please log in again.',
       notFound: 'Not found',
+      reauthenticationFailed: 'Reauthentication failed',
     },
     comma: 'comma',
     semicolon: 'semicolon',
@@ -447,10 +448,15 @@ export default {
   emailScreen: {
     title: 'Update Email',
     prompt: 'Your email is used to log in and receive important notifications.',
-    enterEmail: 'Enter your email here',
+    enterEmail: 'Enter your new email address here',
     submit: 'Submit email',
     sent: 'Email updated successfully!',
     sending: 'Updating email...',
+    success: (email: string) =>
+      `An email with instructions to change your email address has been sent to ${email}. Please reload the app after changing your email.`,
+    enterPasswordToConfirm:
+      'Please enter your password to confirm your identity.',
+    enterPassword: 'Enter your password',
   },
   verifyEmailScreen: {
     youAreNotVerified: "It looks like you haven't verified your email yet.",

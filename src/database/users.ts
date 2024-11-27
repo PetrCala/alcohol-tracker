@@ -17,7 +17,6 @@ import {
   EmailAuthProvider,
   reauthenticateWithCredential,
   updateProfile,
-  updateEmail as fbUpdateEmail,
   verifyBeforeUpdateEmail,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -225,58 +224,6 @@ async function synchronizeUserStatus(
   await update(ref(db), updates);
 }
 
-/**
- * Send an email to the user with a link to update their email.
- *
- * @param user The user to send the email to
- * @param newEmail The new email
- */
-async function sendUpdateEmailLink(
-  user: User | null,
-  newEmail: string,
-): Promise<void> {
-  if (!user) {
-    throw new Error(Localize.translateLocal('common.error.userNull'));
-  }
-  await verifyBeforeUpdateEmail(user, newEmail);
-}
-
-/**
- * Update the email for a user.
- *
- * @param user The user to update the email for
- * @param newEmail The new email
- */
-async function updateEmail(user: User | null, newEmail: string): Promise<void> {
-  if (!user) {
-    throw new Error(Localize.translateLocal('common.error.userNull'));
-  }
-  await fbUpdateEmail(user, newEmail);
-}
-
-/**
- * Send an email verification link to a user.
- *
- * @params user The user to send the email to
- * @returns {Promise<void>} A promise that resolves when the email is sent.
- */
-async function sendVerifyEmailLink(user: User | null): Promise<void> {
-  if (!user) {
-    throw new Error(Localize.translateLocal('common.error.userNull'));
-  }
-  const hasSentEmailRecently =
-    verifyEmailSent &&
-    verifyEmailSent > Date.now() - CONST.VERIFY_EMAIL.COOLDOWN;
-
-  if (hasSentEmailRecently) {
-    throw new Error(
-      Localize.translateLocal('verifyEmailScreen.error.emailSentRecently'),
-    );
-  }
-  await sendEmailVerification(user);
-  await Onyx.set(ONYXKEYS.VERIFY_EMAIL_SENT, new Date().getTime());
-}
-
 /** Reauthentificate a user using the User object and a password
  * Necessary before important operations such as deleting a user
  * or changing a password.
@@ -302,6 +249,56 @@ async function reauthentificateUser(
   const credential = EmailAuthProvider.credential(email, password);
   const result = await reauthenticateWithCredential(user, credential);
   return result;
+}
+
+/**
+ * Send an email to the user with a link to update their email.
+ *
+ * @param user The user to send the email to
+ * @param newEmail The new email
+ */
+async function sendUpdateEmailLink(
+  user: User | null,
+  newEmail: string,
+  password: string,
+): Promise<void> {
+  if (!user) {
+    throw new Error(Localize.translateLocal('common.error.userNull'));
+  }
+
+  let authentificationResult: void | UserCredential;
+  authentificationResult = await reauthentificateUser(user, password);
+
+  if (!authentificationResult) {
+    throw new Error(
+      Localize.translateLocal('common.error.reauthenticationFailed'),
+    );
+  }
+
+  await verifyBeforeUpdateEmail(user, newEmail);
+}
+
+/**
+ * Send an email verification link to a user.
+ *
+ * @params user The user to send the email to
+ * @returns {Promise<void>} A promise that resolves when the email is sent.
+ */
+async function sendVerifyEmailLink(user: User | null): Promise<void> {
+  if (!user) {
+    throw new Error(Localize.translateLocal('common.error.userNull'));
+  }
+  const hasSentEmailRecently =
+    verifyEmailSent &&
+    verifyEmailSent > Date.now() - CONST.VERIFY_EMAIL.COOLDOWN;
+
+  if (hasSentEmailRecently) {
+    throw new Error(
+      Localize.translateLocal('verifyEmailScreen.error.emailSentRecently'),
+    );
+  }
+  await sendEmailVerification(user);
+  await Onyx.set(ONYXKEYS.VERIFY_EMAIL_SENT, new Date().getTime());
 }
 
 /**
@@ -581,7 +578,6 @@ export {
   sendVerifyEmailLink,
   synchronizeUserStatus,
   updateAutomaticTimezone,
-  updateEmail,
   userExistsInDatabase,
   logIn,
   signUp,
