@@ -136,9 +136,9 @@ function EmailScreen({}: EmailScreenProps) {
               shouldSaveDraft
               defaultValue={currentEmail ?? ''}
               spellCheck={false}
-              containerStyles={[styles.mt5]}
+              containerStyles={[styles.mt4]}
             />
-            <Text style={[styles.mt5]}>
+            <Text style={[styles.mt6]}>
               {translate('emailScreen.enterPasswordToConfirm')}
             </Text>
             <InputWrapper
@@ -148,7 +148,7 @@ function EmailScreen({}: EmailScreenProps) {
               label={translate('emailScreen.enterPassword')}
               aria-label={translate('emailScreen.enterPassword')}
               role={CONST.ROLE.PRESENTATION}
-              containerStyles={[styles.mt5]}
+              containerStyles={[styles.mt4]}
               autoCorrect={false}
               inputMode={CONST.INPUT_MODE.TEXT}
               secureTextEntry
