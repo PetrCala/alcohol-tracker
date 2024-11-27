@@ -39,6 +39,7 @@ import FriendList from '@assets/images/friend-list.png';
 import Idea from '@assets/images/idea.png';
 import Lock from '@assets/images/lock.svg';
 import Logo from '@assets/images/app-logo.svg';
+import Mail from '@assets/images/mail.svg';
 import Menu from '@assets/images/menu.png';
 import Minus from '@assets/images/minus.png';
 import Pencil from '@assets/images/pencil.png';
@@ -106,6 +107,7 @@ export {
   Idea,
   Lock,
   Logo,
+  Mail,
   Menu,
   Minus,
   Pencil,

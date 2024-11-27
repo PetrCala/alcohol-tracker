@@ -25,6 +25,7 @@ import SCREENS from '@src/SCREENS';
 // import {submitEmail} from '@database/feedback';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {applyActionCode, verifyBeforeUpdateEmail} from 'firebase/auth';
+import ROUTES from '@src/ROUTES';
 
 type EmailScreenOnyxProps = {};
 
@@ -53,8 +54,8 @@ function EmailScreen({}: EmailScreenProps) {
     } catch (error: any) {
       ErrorUtils.raiseAlert(error, translate('emailForm.error.generic'));
     } finally {
-      console.debug('Navigating to email verification screen...');
-      // Navigation.navigate(ROUTES.SETTINGS.ACCOUNT.EMAIL_VERIFICATION);
+      Navigation.goBack();
+      // Navigation.navigate(ROUTES.VERIFY_EMAIL);
     }
   };
 
