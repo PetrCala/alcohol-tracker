@@ -121,7 +121,10 @@ function EmailScreen({}: EmailScreenProps) {
           isSubmitDisabled={!!successMessage}
           style={[styles.flexGrow1, styles.mh5]}>
           <View style={[styles.flexGrow1]}>
-            <Text>{translate('emailScreen.prompt')}</Text>
+            <Text style={styles.mb3}>{translate('emailScreen.prompt')}</Text>
+            <Text style={[styles.mutedTextLabel]}>
+              {translate('emailScreen.note')}
+            </Text>
             <InputWrapper
               InputComponent={TextInput}
               inputID={INPUT_IDS.EMAIL}

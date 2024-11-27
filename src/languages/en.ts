@@ -448,8 +448,9 @@ export default {
   emailScreen: {
     title: 'Update Email',
     prompt: 'Your email is used to log in and receive important notifications.',
-    enterEmail: 'Enter your new email address here',
-    submit: 'Submit email',
+    note: "Note: Upon confirmation, we will send a verification email to your new address. You'll need to verify it to complete the change, and restart the app afterwards to see changes.",
+    enterEmail: 'Your email address',
+    submit: 'Update email',
     sent: 'Email updated successfully!',
     sending: 'Updating email...',
     success: (email: string) =>
