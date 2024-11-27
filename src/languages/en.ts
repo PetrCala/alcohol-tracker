@@ -449,6 +449,23 @@ export default {
     sent: 'Email updated successfully!',
     sending: 'Updating email...',
   },
+  verifyEmailScreen: {
+    youAreNotVerified: "It looks like you haven't verified your email yet.",
+    wouldYouLikeToVerify: 'Would you like to verify it now?',
+    illDoItLater: "I'll do it later",
+    verifyEmail: 'Verify email',
+    changeEmail: 'Change email',
+    resendEmail: 'Resend email',
+    emailSent: 'A verification email has been sent to your email address.',
+    error: {
+      generic: 'Error verifying your email',
+      userNull: 'We could not find your user. Please log in again.',
+      sending: 'Error sending verification email',
+      dismissing: 'Error dismissing verification email',
+      emailSentRecently:
+        'Please wait before sending another verification email.',
+    },
+  },
   feedbackScreen: {
     title: 'Feedback',
     prompt: 'What would you like us to improve?',

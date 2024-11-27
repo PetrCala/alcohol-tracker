@@ -11,7 +11,7 @@ import type {
   UserData,
   UserStatus,
 } from '@src/types/onyx';
-import type {UserList} from '@src/types/onyx/OnyxCommon';
+import type {Timestamp, UserList} from '@src/types/onyx/OnyxCommon';
 import type {Auth, User, UserCredential} from 'firebase/auth';
 import {
   EmailAuthProvider,
@@ -21,6 +21,7 @@ import {
   verifyBeforeUpdateEmail,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  sendEmailVerification,
 } from 'firebase/auth';
 import StringUtils from '@libs/StringUtils';
 import {getUniqueId} from 'react-native-device-info';
@@ -31,15 +32,24 @@ import {readDataOnce} from './baseFunctions';
 import {getLastStartedSessionId} from '@libs/DataHandling';
 import _ from 'lodash';
 import * as Session from '@userActions/Session';
+import * as Localize from '@libs/Localize';
 import {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
 import {validateAppVersion, ValidationResult} from '@libs/Validation';
 import {checkAccountCreationLimit} from './protection';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
-import Onyx from 'react-native-onyx';
+import Onyx, {OnyxEntry} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 import CONST from '@src/CONST';
 import {getReasonForLeavingID} from '@libs/ReasonForLeaving';
+
+let verifyEmailSent: OnyxEntry<Timestamp | null> = null;
+Onyx.connect({
+  key: ONYXKEYS.VERIFY_EMAIL_SENT,
+  callback: val => {
+    verifyEmailSent = val;
+  },
+});
 
 const getDefaultPreferences = (): Preferences => {
   return {
@@ -242,6 +252,31 @@ async function updateEmail(user: User | null, newEmail: string): Promise<void> {
     throw new Error('User is null');
   }
   await fbUpdateEmail(user, newEmail);
+}
+
+/**
+ * Send an email verification link to a user.
+ *
+ * @params user The user to send the email to
+ * @returns {Promise<void>} A promise that resolves when the email is sent.
+ */
+async function sendVerifyEmailLink(user: User | null): Promise<void> {
+  if (!user) {
+    throw new Error(
+      Localize.translateLocal('verifyEmailScreen.error.userNull'),
+    );
+  }
+  const hasSentEmailRecently =
+    verifyEmailSent &&
+    verifyEmailSent > Date.now() - CONST.VERIFY_EMAIL.COOLDOWN;
+
+  if (hasSentEmailRecently) {
+    throw new Error(
+      Localize.translateLocal('verifyEmailScreen.error.emailSentRecently'),
+    );
+  }
+  await sendEmailVerification(user);
+  await Onyx.set(ONYXKEYS.VERIFY_EMAIL_SENT, new Date().getTime());
 }
 
 /** Reauthentificate a user using the User object and a password
@@ -545,6 +580,7 @@ export {
   reauthentificateUser,
   saveSelectedTimezone,
   sendUpdateEmailLink,
+  sendVerifyEmailLink,
   synchronizeUserStatus,
   updateAutomaticTimezone,
   updateEmail,

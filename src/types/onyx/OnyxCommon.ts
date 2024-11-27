@@ -1,5 +1,4 @@
 import type {ValueOf} from 'type-fest';
-import type {MaybePhraseKey} from '@libs/Localize';
 import type {AvatarSource} from '@libs/UserUtils';
 import type CONST from '@src/CONST';
 
@@ -67,6 +66,8 @@ type UserArray = UserID[];
 
 type MeasureType = 'drinks' | 'units';
 
+type Timestamp = number;
+
 export type {
   AvatarType,
   ErrorFields,
@@ -75,6 +76,7 @@ export type {
   MeasureType,
   OnyxValueWithOfflineFeedback,
   PendingAction,
+  Timestamp,
   UserArray,
   UserID,
   UserList,

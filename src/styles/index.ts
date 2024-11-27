@@ -1988,6 +1988,10 @@ const styles = (theme: ThemeColors) =>
       borderWidth: 0,
     },
 
+    textAppColor: {
+      color: theme.appColor,
+    },
+
     textInputDesktop: addOutlineWidth(theme, {}, 0),
 
     textInputIconContainer: {

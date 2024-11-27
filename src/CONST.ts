@@ -654,6 +654,14 @@ const CONST = {
     URL: 'url',
   },
 
+  VERIFY_EMAIL: {
+    // How often a user can request a new verification email
+    COOLDOWN: 60 * 1000, // 1 minute
+
+    // How long the dismiss verify email button should hide the window for
+    DISMISS_TIME: 1000 * 60 * 60 * 24 * 1, // 1 day
+  },
+
   SESSION_STORAGE_KEYS: {
     INITIAL_URL: 'INITIAL_URL',
     ACTIVE_WORKSPACE_ID: 'ACTIVE_WORKSPACE_ID',

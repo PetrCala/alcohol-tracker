@@ -5,6 +5,7 @@ import type * as FormTypes from './types/form';
 import type * as OnyxTypes from './types/onyx';
 import type AssertTypesEqual from './types/utils/AssertTypesEqual';
 import type DeepValueOf from './types/utils/DeepValueOf';
+import {Timestamp} from './types/onyx/OnyxCommon';
 
 /**
  * This is a file containing constants for all the top level keys in the onyx store
@@ -95,6 +96,12 @@ const ONYXKEYS = {
 
   /** Whether we should show the compose input or not */
   SHOULD_SHOW_COMPOSE_INPUT: 'shouldShowComposeInput',
+
+  /** The last time a user has sent a verification email */
+  VERIFY_EMAIL_SENT: 'verifyEmailSent',
+
+  /** The last time a user dismissed the verify email value */
+  VERIFY_EMAIL_DISMISSED: 'verifyEmailDismissed',
 
   /** Is app in beta version */
   IS_BETA: 'isBeta',
@@ -250,6 +257,8 @@ type OnyxValuesMapping = {
   //   [ONYXKEYS.APP_PROFILING_IN_PROGRESS]: boolean;
   [ONYXKEYS.IS_LOADING_APP]: boolean;
   [ONYXKEYS.SHOULD_SHOW_COMPOSE_INPUT]: boolean;
+  [ONYXKEYS.VERIFY_EMAIL_SENT]: Timestamp;
+  [ONYXKEYS.VERIFY_EMAIL_DISMISSED]: Timestamp;
   [ONYXKEYS.IS_BETA]: boolean;
   [ONYXKEYS.PREFERRED_THEME]: ValueOf<typeof CONST.THEME>;
   [ONYXKEYS.ONYX_UPDATES_FROM_SERVER]: OnyxTypes.OnyxUpdatesFromServer;
