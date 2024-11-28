@@ -359,6 +359,7 @@ export default {
     deleteAccount: 'Delete account',
     improvementThoughts: 'What would you like us to improve?',
     general: 'General',
+    reportBug: 'Report a bug',
     giveFeedback: 'Give use a feedback',
     signOut: 'Sign out',
     shareTheApp: 'Share the app',
@@ -366,6 +367,18 @@ export default {
     // signOutConfirmationText: "You'll lose any offline changes if you sign out.",
     signOutConfirmationText: 'Do you really want to sign out?',
     signingOut: 'Signing out...',
+    aboutScreen: {
+      viewTheCode: 'View the code',
+      aboutKiroku: 'About Kiroku',
+      description:
+        'Kiroku is a mobile app that helps you track your alcohol consumption.',
+      readTheTermsAndPrivacy: {
+        phrase1: 'Read the',
+        phrase2: 'Terms of Service',
+        phrase3: 'and',
+        phrase4: 'Privacy Policy',
+      },
+    },
     error: {},
   },
   accountScreen: {
@@ -492,6 +505,15 @@ export default {
         'Please wait before sending another verification email.',
       emailNotVerified: 'Your email has not been verified yet.',
     },
+  },
+  reportBugScreen: {
+    title: 'Report a bug',
+    prompt: 'What happened? Please describe the bug in detail.',
+    describeBug: 'Describe the bug here',
+    submit: 'Submit bug report',
+    sent: 'Bug report sent!',
+    sending: 'Sending a bug report...',
+    error: 'There was bug reporting your bug. Please try again.',
   },
   feedbackScreen: {
     title: 'Feedback',

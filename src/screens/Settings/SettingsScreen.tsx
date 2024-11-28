@@ -132,19 +132,10 @@ function SettingsScreen({}: SettingsScreenProps) {
       sectionTranslationKey: 'settingsScreen.general',
       items: [
         {
-          translationKey: 'common.termsOfService',
-          icon: KirokuIcons.FileDocument,
-          routeName: ROUTES.SETTINGS_TERMS_OF_SERVICE,
+          translationKey: 'settingsScreen.reportBug',
+          icon: KirokuIcons.Bug,
+          routeName: ROUTES.SETTINGS_REPORT_BUG,
         },
-        {
-          translationKey: 'common.privacyPolicy',
-          icon: KirokuIcons.FileDocument,
-          routeName: ROUTES.SETTINGS_PRIVACY_POLICY,
-        },
-        //   label: 'Report a bug',
-        //   icon: KirokuIcons.Bug,
-        //   action: () => console.log('Bug reporting'),
-        // },
         {
           translationKey: 'settingsScreen.giveFeedback',
           icon: KirokuIcons.Idea,

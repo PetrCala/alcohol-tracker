@@ -118,6 +118,7 @@ type SettingsNavigatorParamList = {
   [SCREENS.SETTINGS.APP_SHARE]: undefined;
   [SCREENS.SETTINGS.TERMS_OF_SERVICE]: undefined;
   [SCREENS.SETTINGS.PRIVACY_POLICY]: undefined;
+  [SCREENS.SETTINGS.REPORT_BUG]: undefined;
   [SCREENS.SETTINGS.FEEDBACK]: undefined;
   [SCREENS.SETTINGS.ABOUT]: undefined;
   [SCREENS.SETTINGS.DELETE]: undefined;

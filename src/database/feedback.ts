@@ -1,11 +1,12 @@
 ﻿import type {Database} from 'firebase/database';
 import {child, push, ref, update} from 'firebase/database';
-import type {FeedbackList, Feedback} from '../types/onyx';
+import type {FeedbackList, Feedback, Bug, BugList} from '@src/types/onyx';
 import DBPATHS from './DBPATHS';
 import {FormOnyxValues} from '@components/Form/types';
 import ONYXKEYS from '@src/ONYXKEYS';
 
 const feedbackItemRef = DBPATHS.FEEDBACK_FEEDBACK_ID;
+const bugItemRef = DBPATHS.BUGS_BUG_ID;
 
 /** Submit feedback into the database
  *
@@ -66,4 +67,46 @@ async function removeFeedback(
   await update(ref(db), updates);
 }
 
-export {submitFeedback, removeFeedback};
+/** Submit a bug report into the database
+ *
+ * @param db The database object
+ * @param userID The user ID
+ * @param bugDescription The bug description
+ * @returns An empty promise
+ *
+ *  */
+async function reportABug(
+  db: Database,
+  userID: string | undefined,
+  bugDescription: string,
+): Promise<void> {
+  if (!userID) {
+    throw new Error(
+      'The application failed to retrieve the user ID from the authentication context',
+    );
+  }
+
+  const timestampNow = new Date().getTime();
+  const newBug: Bug = {
+    submit_time: timestampNow,
+    text: bugDescription,
+    user_id: userID,
+  };
+
+  // Create a new bug id
+  const newBugKey = push(child(ref(db), DBPATHS.BUGS)).key;
+  if (!newBugKey) {
+    throw new Error(
+      'The application failed to create a new bug object in the database',
+    );
+  }
+
+  // Create the updates object
+  const updates: BugList = {};
+  updates[bugItemRef.getRoute(newBugKey)] = newBug;
+
+  // Submit the bug
+  await update(ref(db), updates);
+}
+
+export {submitFeedback, removeFeedback, reportABug};

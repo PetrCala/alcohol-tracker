@@ -43,6 +43,7 @@ import Logo from '@assets/images/app-logo.svg';
 import Mail from '@assets/images/mail.svg';
 import Menu from '@assets/images/menu.png';
 import Minus from '@assets/images/minus.png';
+import NewWindow from '@assets/images/new-window.svg';
 import Pencil from '@assets/images/pencil.png';
 import Plus from '@assets/images/plus.svg';
 import Gear from '@assets/images/gear.svg';
@@ -112,6 +113,7 @@ export {
   Mail,
   Menu,
   Minus,
+  NewWindow,
   Pencil,
   Plus,
   Profile,

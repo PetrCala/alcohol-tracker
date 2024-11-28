@@ -136,6 +136,9 @@ const SettingsModalStackNavigator =
     [SCREENS.SETTINGS.PRIVACY_POLICY]: () =>
       require<ReactComponentModule>('@screens/Settings/PrivacyPolicyScreen')
         .default,
+    [SCREENS.SETTINGS.REPORT_BUG]: () =>
+      require<ReactComponentModule>('@screens/Settings/ReportBugScreen')
+        .default,
     [SCREENS.SETTINGS.FEEDBACK]: () =>
       require<ReactComponentModule>('@screens/Settings/FeedbackScreen').default,
     [SCREENS.SETTINGS.ABOUT]: () =>

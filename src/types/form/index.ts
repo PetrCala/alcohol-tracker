@@ -8,6 +8,7 @@ export type {LegalNameForm} from './LegalNameForm';
 export type {LogInForm} from './LogInForm';
 export type {PasswordForm} from './PasswordForm';
 export type {ProfileSettingsForm} from './ProfileSettingsForm';
+export type {ReportBugForm} from './ReportBugForm';
 export type {SessionDateForm} from './SessionDateForm';
 export type {SessionNoteForm} from './SessionNoteForm';
 export type {SignUpForm} from './SignUpForm';

@@ -1,9 +1,10 @@
-import React, {useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {StyleProp, TextStyle, View} from 'react-native';
 import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
 import CONST from '@src/CONST';
 import Modal from './Modal';
+import * as UserUtils from '@libs/UserUtils';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import * as User from '@database/users';
 import SafeAreaConsumer from './SafeAreaConsumer';
@@ -12,13 +13,17 @@ import Button from './Button';
 import CheckboxWithLabel from './CheckboxWithLabel';
 import TextLink from './TextLink';
 import {useFirebase} from '@context/global/FirebaseContext';
+import {useConfig} from '@context/global/ConfigContext';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
 
 function AgreeToTermsModal() {
   const styles = useThemeStyles();
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
+  const {userData} = useDatabaseData();
+  const {config, isFetchingConfig} = useConfig();
   const {translate} = useLocalize();
-  const [isModalVisible, setIsModalVisible] = useState(true);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [errorText, setErrorText] = useState('');
 
@@ -47,6 +52,19 @@ function AgreeToTermsModal() {
       setErrorText(errorMessage);
     }
   };
+
+  useEffect(() => {
+    if (
+      !isFetchingConfig &&
+      config &&
+      UserUtils.shouldShowAgreeToTermsModal(
+        userData?.agreed_to_terms_at,
+        config?.terms_last_updated,
+      )
+    ) {
+      setIsModalVisible(true);
+    }
+  }, [config, isFetchingConfig, userData]);
 
   return (
     <SafeAreaConsumer>

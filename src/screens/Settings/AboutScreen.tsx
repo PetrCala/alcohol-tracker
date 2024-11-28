@@ -1,5 +1,5 @@
 import React, {useCallback, useMemo, useRef} from 'react';
-import {View} from 'react-native';
+import {Linking, View} from 'react-native';
 // eslint-disable-next-line no-restricted-imports
 import type {
   GestureResponderEvent,
@@ -48,7 +48,8 @@ type MenuItem = {
   translationKey: TranslationPaths;
   icon: IconAsset;
   iconRight?: IconAsset;
-  action: () => Promise<void>;
+  action?: () => Promise<void>;
+  onPress?: () => void;
   link?: string;
   wrapperStyle?: StyleProp<ViewStyle>;
 };
@@ -69,47 +70,41 @@ function AboutScreen() {
       //       Navigation.navigate(ROUTES.SETTINGS_APP_DOWNLOAD_LINKS),
       //     ),
       //   },
-      //   {
-      //     translationKey: 'initialSettingsPage.aboutPage.viewKeyboardShortcuts',
-      //     icon: KirokuIcons.Keyboard,
-      //     action: waitForNavigate(() =>
-      //       Navigation.navigate(ROUTES.KEYBOARD_SHORTCUTS),
-      //     ),
-      //   },
-      //   {
-      //     translationKey: 'initialSettingsPage.aboutPage.viewTheCode',
-      //     icon: KirokuIcons.Eye,
-      //     iconRight: KirokuIcons.NewWindow,
-      //     action: () => {
-      //       Link.openExternalLink(CONST.GITHUB_URL);
-      //       return Promise.resolve();
-      //     },
-      //     link: CONST.GITHUB_URL,
-      //   },
-      //   {
-      //     translationKey: 'initialSettingsPage.aboutPage.viewOpenJobs',
-      //     icon: KirokuIcons.MoneyBag,
-      //     iconRight: KirokuIcons.NewWindow,
-      //     action: () => {
-      //       Link.openExternalLink(CONST.UPWORK_URL);
-      //       return Promise.resolve();
-      //     },
-      //     link: CONST.UPWORK_URL,
-      //   },
+      {
+        translationKey: 'settingsScreen.aboutScreen.viewTheCode',
+        icon: KirokuIcons.Eye,
+        iconRight: KirokuIcons.NewWindow,
+        action: () => {
+          Linking.openURL(CONST.GITHUB_URL);
+          // Link.openExternalLink(CONST.GITHUB_URL); // TODO
+          return Promise.resolve();
+        },
+        link: CONST.GITHUB_URL,
+      },
       //   {
       //     translationKey: 'initialSettingsPage.aboutPage.reportABug',
       //     icon: KirokuIcons.Bug,
       //     action: waitForNavigate(Report.navigateToConciergeChat),
       //   },
+      {
+        translationKey: 'common.termsOfService',
+        icon: KirokuIcons.FileDocument,
+        onPress: () => Navigation.navigate(ROUTES.SETTINGS_TERMS_OF_SERVICE),
+      },
+      {
+        translationKey: 'common.privacyPolicy',
+        icon: KirokuIcons.FileDocument,
+        onPress: () => Navigation.navigate(ROUTES.SETTINGS_PRIVACY_POLICY),
+      },
     ];
 
     return baseMenuItems.map(
-      ({translationKey, icon, iconRight, action, link}: MenuItem) => ({
+      ({translationKey, icon, iconRight, action, link, onPress}: MenuItem) => ({
         key: translationKey,
         title: translate(translationKey),
         icon,
         iconRight,
-        onPress: action,
+        onPress: action || onPress,
         shouldShowRightIcon: true,
         ref: popoverAnchor,
         shouldBlockSelection: !!link,
@@ -160,45 +155,19 @@ function AboutScreen() {
         // icon={Illustrations.PalmTree}
       />
       <ScrollView contentContainerStyle={styles.pt3}>
-        <View
-          style={[
-            styles.flex1,
-            // TODO
-            // shouldUseNarrowLayout
-            //   ? styles.workspaceSectionMobile
-            //   : styles.workspaceSection,
-          ]}>
-          {/* <Section
-            title={translate('footer.aboutExpensify')}
-            subtitle={translate('initialSettingsPage.aboutPage.description')}
+        <View style={[styles.flex1]}>
+          <Section
+            title={translate('settingsScreen.aboutScreen.aboutKiroku')}
+            subtitle={translate('settingsScreen.aboutScreen.description')}
             isCentralPane
             subtitleMuted
-            illustration={LottieAnimations.Coin}
+            // illustration={LottieAnimations.Coin}
             titleStyles={styles.accountSettingsSectionTitle}
             overlayContent={overlayContent}>
             <View style={[styles.flex1, styles.mt5]}>
               <MenuItemList menuItems={menuItems} shouldUseSingleExecution />
             </View>
-          </Section> */}
-        </View>
-        <View style={[styles.sidebarFooter, styles.mb5]}>
-          {/* <Text
-            style={[styles.chatItemMessageHeaderTimestamp]}
-            numberOfLines={1}>
-            {translate('initialSettingsPage.readTheTermsAndPrivacy.phrase1')}{' '}
-            <TextLink
-              style={[styles.textMicroSupporting, styles.link]}
-              href={CONST.TERMS_URL}>
-              {translate('initialSettingsPage.readTheTermsAndPrivacy.phrase2')}
-            </TextLink>{' '}
-            {translate('initialSettingsPage.readTheTermsAndPrivacy.phrase3')}{' '}
-            <TextLink
-              style={[styles.textMicroSupporting, styles.link]}
-              href={CONST.PRIVACY_URL}>
-              {translate('initialSettingsPage.readTheTermsAndPrivacy.phrase4')}
-            </TextLink>
-            .
-          </Text> */}
+          </Section>
         </View>
       </ScrollView>
     </ScreenWrapper>
