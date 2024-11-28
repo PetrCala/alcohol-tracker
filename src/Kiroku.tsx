@@ -62,10 +62,10 @@ function Kiroku({}: KirokuProps) {
     SplashScreenStateContext,
   );
   const [lastVisitedPath] = useOnyx(ONYXKEYS.LAST_VISITED_PATH);
+  const [lastRoute] = useOnyx(ONYXKEYS.LAST_ROUTE);
   const [initialUrl, setInitialUrl] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authenticationChecked, setAuthenticationChecked] = useState(false);
-  const [lastRoute] = useOnyx(ONYXKEYS.LAST_ROUTE);
   const [isFetchingConfig, setIsFetchingConfig] = useState<boolean>(true);
   const [config, setConfig] = useState<Config | null>(null);
   const [isUnderMaintenance, setIsUnderMaintenance] = useState<boolean>(false);
