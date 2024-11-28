@@ -454,6 +454,37 @@ async function updateAutomaticTimezone(
   updates[timezoneRef.getRoute(userID)] = newData;
 
   await update(ref(db), updates);
+
+  await Onyx.merge(ONYXKEYS.USER_DATA_LIST, {
+    [userID]: {timezone: newData},
+  });
+}
+
+/**
+ * Update the agreed to terms at timestamp for a user.
+ *
+ * @param db The Firebase database object
+ * @param user The user to update the agreed to terms at timestamp for
+ */
+async function updateAgreedToTermsAt(
+  db: Database,
+  user: User | null,
+): Promise<void> {
+  if (!user) {
+    throw new Error(Localize.translateLocal('common.error.userNull'));
+  }
+
+  const userID = user.uid;
+  const agreedToTermsAtRef = DBPATHS.USERS_USER_ID_AGREED_TO_TERMS_AT;
+
+  const updates: Record<string, number> = {};
+  updates[agreedToTermsAtRef.getRoute(userID)] = Date.now();
+
+  await update(ref(db), updates);
+
+  await Onyx.merge(ONYXKEYS.USER_DATA_LIST, {
+    [userID]: {agreed_to_terms_at: Date.now()},
+  });
 }
 
 /**
@@ -480,6 +511,10 @@ async function saveSelectedTimezone(
   updates[timezoneRef.getRoute(userID)] = selectedTimezone;
 
   await update(ref(db), updates);
+
+  await Onyx.merge(ONYXKEYS.USER_DATA_LIST, {
+    [userID]: {timezone: {selected: selectedTimezone}},
+  });
 }
 
 /** Attempt to log in to the Firebase authentication service with a user's credentials
@@ -526,17 +561,14 @@ async function signUp(
   });
 
   let newUserID: string | undefined;
-  let minSupportedVersion: string | null;
-  const minUserCreationPath =
-    DBPATHS.CONFIG_APP_SETTINGS_MIN_USER_CREATION_POSSIBLE_VERSION;
 
-  minSupportedVersion = await readDataOnce(db, minUserCreationPath);
+  const appSettings = await readDataOnce(db, DBPATHS.CONFIG_APP_SETTINGS);
 
-  if (!minSupportedVersion) {
+  if (!appSettings) {
     throw new Error('database/data-fetch-failed');
   }
 
-  if (!validateAppVersion(minSupportedVersion).success) {
+  if (!validateAppVersion(appSettings).success) {
     throw new Error('database/outdated-app-version');
   }
 
@@ -601,6 +633,7 @@ export {
   sendUpdateEmailLink,
   sendVerifyEmailLink,
   synchronizeUserStatus,
+  updateAgreedToTermsAt,
   updateAutomaticTimezone,
   updatePassword,
   userExistsInDatabase,

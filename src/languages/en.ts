@@ -669,6 +669,11 @@ export default {
       passwordsMustMatch: 'The passwords do not match.',
     },
   },
+  baseUpdateAppModal: {
+    updateApp: 'Update app',
+    updatePrompt:
+      'A new version of this app is available.\nWould you like to update now?',
+  },
   username: {
     error: {
       usernameRequired: 'A username is required',

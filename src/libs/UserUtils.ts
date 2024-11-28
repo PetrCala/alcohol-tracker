@@ -18,6 +18,14 @@ Onyx.connect({
   },
 });
 
+let appUpdateDismissed: OnyxEntry<Timestamp | null> = null;
+Onyx.connect({
+  key: ONYXKEYS.APP_UPDATE_DISMISSED,
+  callback: val => {
+    appUpdateDismissed = val;
+  },
+});
+
 type AvatarRange =
   | 1
   | 2
@@ -288,6 +296,23 @@ function shouldNavigateToVerifyEmailScreen(user: User | null): boolean {
   return verifyEmailDismissed < Date.now() - CONST.VERIFY_EMAIL.DISMISS_TIME;
 }
 
+/**
+ * Determines if the update modal should be shown based on the given parameters.
+ *
+ * @param updateAvailable Whether an update is available
+ * @param updateRequired Whether an update is required
+ * @returns A boolean indicating whether the update modal should be shown
+ */
+function shouldShowUpdateModal(
+  updateAvailable: boolean,
+  updateRequired: boolean,
+): boolean {
+  const updateDismissedRecently =
+    appUpdateDismissed &&
+    appUpdateDismissed > Date.now() - CONST.APP_UPDATE.DISMISS_TIME;
+  return updateAvailable && !updateRequired && !updateDismissedRecently;
+}
+
 export {
   generateUserID,
   getAvatar,
@@ -303,5 +328,6 @@ export {
   hashText,
   isDefaultAvatar,
   shouldNavigateToVerifyEmailScreen,
+  shouldShowUpdateModal,
 };
 export type {AvatarSource, LoginListIndicator};

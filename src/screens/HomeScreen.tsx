@@ -226,6 +226,11 @@ function HomeScreen({route}: HomeScreenProps) {
           'Could not update user online status:' + error.message,
         );
       }
+
+      if (!userData.agreed_to_terms_at) {
+        console.log('User has not agreed to terms');
+      }
+
       // TZFIX (09-2024) - Redirect to TZ_FIX_INTRODUCTION if user has not set timezone
       if (state.shouldNavigateToTzFix) {
         Navigation.navigate(ROUTES.TZ_FIX_INTRODUCTION);

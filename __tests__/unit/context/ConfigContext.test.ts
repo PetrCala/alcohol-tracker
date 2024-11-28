@@ -1,6 +1,8 @@
-﻿import {validateAppVersion} from '../../../src/libs/Validation';
+﻿import {AppSettings} from '../../../src/types/onyx';
+import {validateAppVersion} from '../../../src/libs/Validation';
 
 describe('validateAppVersion', () => {
+  let appSettings: AppSettings;
   // Mock the current version of the application
   const mockCurrentVersion = '5.6.7-0';
   // Mock minimum required versions to test against
@@ -14,13 +16,19 @@ describe('validateAppVersion', () => {
   const newerBuildNumber = '5.6.7-2';
   const newerVersionWithLowerBuildNumber = '5.6.8-0';
 
+  beforeEach(() => {
+    appSettings = {} as AppSettings;
+  });
+
   it('validates minor version number correctly', () => {
+    appSettings.min_supported_version = olderMinorVersion;
     const olderMinorVersionResult = validateAppVersion(
-      olderMinorVersion,
+      appSettings,
       mockCurrentVersion,
     );
+    appSettings.min_supported_version = newerMinorVersion;
     const newerMinorVersionResult = validateAppVersion(
-      newerMinorVersion,
+      appSettings,
       mockCurrentVersion,
     );
 
@@ -29,12 +37,14 @@ describe('validateAppVersion', () => {
   });
 
   it('validates middle version number correctly', () => {
+    appSettings.min_supported_version = olderMiddleVersion;
     const olderMiddleVersionResult = validateAppVersion(
-      olderMiddleVersion,
+      appSettings,
       mockCurrentVersion,
     );
+    appSettings.min_supported_version = newerMiddleVersion;
     const newerMiddleVersionResult = validateAppVersion(
-      newerMiddleVersion,
+      appSettings,
       mockCurrentVersion,
     );
 
@@ -43,12 +53,14 @@ describe('validateAppVersion', () => {
   });
 
   it('validates major version number correctly', () => {
+    appSettings.min_supported_version = olderMajorVersion;
     const olderMajorVersionResult = validateAppVersion(
-      olderMajorVersion,
+      appSettings,
       mockCurrentVersion,
     );
+    appSettings.min_supported_version = newerMajorVersion;
     const newerMajorVersionResult = validateAppVersion(
-      newerMajorVersion,
+      appSettings,
       mockCurrentVersion,
     );
 
@@ -57,8 +69,10 @@ describe('validateAppVersion', () => {
   });
 
   it('validates build number correctly', () => {
+    appSettings.min_supported_version = olderBuildNumber;
+
     const olderBuildNumberResult = validateAppVersion(
-      olderBuildNumber,
+      appSettings,
       newerBuildNumber,
     );
 
@@ -66,8 +80,10 @@ describe('validateAppVersion', () => {
   });
 
   it('validates version with lower build number correctly', () => {
+    appSettings.min_supported_version = olderBuildNumber;
+
     const newerVersionWithLowerBuildNumberResult = validateAppVersion(
-      olderBuildNumber,
+      appSettings,
       newerVersionWithLowerBuildNumber,
     );
 

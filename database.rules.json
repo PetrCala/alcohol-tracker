@@ -106,6 +106,10 @@
         ".validate": "newData.val() === null || newData.hasChildren()",
         ".read": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('friends').child($uid).exists())",
         ".write": "auth != null && auth.uid === $uid",
+        "agreed_to_terms_at": {
+          ".validate": "(newData.isNumber() && newData.val() > 0) || newData.val() === null",
+          ".write": "auth != null && auth.uid === $uid"
+        },
         "friends": {
           ".validate": "newData.val() === null || newData.hasChildren()",
           ".read": "auth != null",
