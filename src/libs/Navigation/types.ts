@@ -119,6 +119,7 @@ type SettingsNavigatorParamList = {
   [SCREENS.SETTINGS.TERMS_OF_SERVICE]: undefined;
   [SCREENS.SETTINGS.PRIVACY_POLICY]: undefined;
   [SCREENS.SETTINGS.FEEDBACK]: undefined;
+  [SCREENS.SETTINGS.ABOUT]: undefined;
   [SCREENS.SETTINGS.DELETE]: undefined;
 };
 

@@ -155,13 +155,12 @@ function SettingsScreen({}: SettingsScreenProps) {
           icon: KirokuIcons.Share,
           routeName: ROUTES.SETTINGS_APP_SHARE,
         },
+        {
+          translationKey: 'settingsScreen.about',
+          icon: KirokuIcons.Info,
+          routeName: ROUTES.SETTINGS_ABOUT,
+        },
       ],
-      // {
-      //   translationKey: 'initialSettingsPage.about',
-      //   icon: Expensicons.Info,
-      //   routeName: ROUTES.SETTINGS_ABOUT,
-      // },
-      // ],
     };
   }, [styles.generalSettingsSectionContainer]);
 

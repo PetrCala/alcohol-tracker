@@ -165,6 +165,7 @@ const config: LinkingOptions<RootStackParamList>['config'] = {
             [SCREENS.SETTINGS.TERMS_OF_SERVICE]:
               ROUTES.SETTINGS_TERMS_OF_SERVICE,
             [SCREENS.SETTINGS.FEEDBACK]: ROUTES.SETTINGS_FEEDBACK,
+            [SCREENS.SETTINGS.ABOUT]: ROUTES.SETTINGS_ABOUT,
             [SCREENS.SETTINGS.DELETE]: {
               path: ROUTES.SETTINGS_DELETE,
               exact: true,

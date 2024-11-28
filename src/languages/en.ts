@@ -362,6 +362,7 @@ export default {
     giveFeedback: 'Give use a feedback',
     signOut: 'Sign out',
     shareTheApp: 'Share the app',
+    about: 'About',
     // signOutConfirmationText: "You'll lose any offline changes if you sign out.",
     signOutConfirmationText: 'Do you really want to sign out?',
     signingOut: 'Signing out...',
