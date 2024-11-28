@@ -1,32 +1,21 @@
 import React, {useCallback, useMemo, useRef} from 'react';
 import {Linking, View} from 'react-native';
 // eslint-disable-next-line no-restricted-imports
-import type {
-  GestureResponderEvent,
-  Text as RNText,
-  StyleProp,
-  ViewStyle,
-} from 'react-native';
+import type {Text as RNText, StyleProp, ViewStyle} from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
-// import * as Illustrations from '@components/Icon/Illustrations';
-// import LottieAnimations from '@components/LottieAnimations';
 import MenuItemList from '@components/MenuItemList';
 import ScreenWrapper from '@components/ScreenWrapper';
 import ScrollView from '@components/ScrollView';
 import Section from '@components/Section';
 import Text from '@components/Text';
-import TextLink from '@components/TextLink';
 import useLocalize from '@hooks/useLocalize';
 import useResponsiveLayout from '@hooks/useResponsiveLayout';
 import useThemeStyles from '@hooks/useThemeStyles';
 import useWaitForNavigation from '@hooks/useWaitForNavigation';
 import * as Environment from '@libs/Environment/Environment';
 import Navigation from '@libs/Navigation/Navigation';
-// import * as ReportActionContextMenu from '@pages/home/report/ContextMenu/ReportActionContextMenu';
-// import * as Link from '@userActions/Link';
-// import * as Report from '@userActions/Report';
 import CONST from '@src/CONST';
 import type {TranslationPaths} from '@src/languages/types';
 import ROUTES from '@src/ROUTES';
@@ -106,7 +95,7 @@ function AboutScreen() {
 
     return baseMenuItems.map(
       ({translationKey, icon, iconRight, action, link, onPress}: MenuItem) => ({
-        key: translationKey,
+        translationKey, // represents the key object here
         title: translate(translationKey),
         icon,
         iconRight,
@@ -119,24 +108,13 @@ function AboutScreen() {
     );
   }, [styles, translate, waitForNavigate]);
 
-  const overlayContent = useCallback(
+  const versionInfoContainer = useCallback(
     () => (
-      <View
-        style={[
-          styles.pAbsolute,
-          styles.w100,
-          styles.h100,
-          styles.justifyContentEnd,
-          styles.pb3,
-        ]}>
+      <View style={[styles.justifyContentEnd, styles.pr5, styles.pb3]}>
         <Text
           selectable
-          style={[
-            styles.textLabel,
-            styles.textVersion,
-            styles.alignSelfCenter,
-          ]}>
-          v
+          style={[styles.textNormal, styles.textVersion, styles.alignSelfEnd]}>
+          {translate('settingsScreen.aboutScreen.versionLetter')}
           {Environment.isInternalTestBuild()
             ? `${_version} PR:${CONST.PULL_REQUEST_NUMBER}${getFlavor()}`
             : `${_version}${getFlavor()}`}
@@ -156,9 +134,7 @@ function AboutScreen() {
       <HeaderWithBackButton
         title={translate('settingsScreen.about')}
         shouldShowBackButton={shouldUseNarrowLayout}
-        // shouldDisplaySearchRouter
         onBackButtonPress={() => Navigation.goBack(ROUTES.SETTINGS)}
-        // icon={Illustrations.PalmTree}
       />
       <ScrollView contentContainerStyle={styles.pt3}>
         <View style={[styles.flex1]}>
@@ -167,15 +143,14 @@ function AboutScreen() {
             subtitle={translate('settingsScreen.aboutScreen.description')}
             isCentralPane
             subtitleMuted
-            // illustration={LottieAnimations.Coin}
-            titleStyles={styles.accountSettingsSectionTitle}
-            overlayContent={overlayContent}>
+            titleStyles={styles.accountSettingsSectionTitle}>
             <View style={[styles.flex1, styles.mt5]}>
               <MenuItemList menuItems={menuItems} shouldUseSingleExecution />
             </View>
           </Section>
         </View>
       </ScrollView>
+      {versionInfoContainer()}
     </ScreenWrapper>
   );
 }
