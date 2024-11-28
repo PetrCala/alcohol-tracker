@@ -1,7 +1,7 @@
 import React, {useContext, useMemo, useState} from 'react';
 import type {ValueOf} from 'type-fest';
-import CONST from '../../CONST';
-import type ChildrenProps from '../../types/utils/ChildrenProps';
+import CONST from '@src/CONST';
+import type ChildrenProps from '@src/types/utils/ChildrenProps';
 
 type SplashScreenStateContextType = {
   splashScreenState: ValueOf<typeof CONST.BOOT_SPLASH_STATE>;

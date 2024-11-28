@@ -1,6 +1,6 @@
 import type {TupleToUnion} from 'type-fest';
 import type TIMEZONES from '@src/TIMEZONES';
-import type {UserID, UserList} from './OnyxCommon';
+import type {Timestamp, UserID, UserList} from './OnyxCommon';
 import type FriendRequestList from './FriendRequestList';
 
 /** Selectable timezones */
@@ -15,8 +15,8 @@ type Timezone = {
 };
 
 type Profile = {
-  first_name?: string; // TODO: make required from 0.4.x
-  last_name?: string; // TODO: make required from 0.4.x
+  first_name?: string;
+  last_name?: string;
   display_name: string;
   photo_url: string;
 };
@@ -28,10 +28,11 @@ type UserPrivateData = {
 };
 
 type UserPublicData = {
-  last_active?: number;
+  last_active?: Timestamp;
 };
 
 type UserData = {
+  agreed_to_terms_at?: Timestamp;
   friend_requests?: FriendRequestList;
   friends?: UserList;
   private_data?: UserPrivateData;

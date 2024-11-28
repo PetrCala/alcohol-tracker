@@ -2,12 +2,14 @@
 import CONST from '@src/CONST';
 
 import {version as _version} from '../../package.json';
+import {AppSettings} from '@src/types/onyx';
 
 const version: string = _version;
 
 type ValidationResult = {
   success: boolean;
   message?: string;
+  updateAvailable?: boolean;
 };
 
 /**
@@ -150,27 +152,32 @@ export function cleanSemver(version: string): string {
  * @returns {ValidationResult} Validation result type object.
  */
 export const validateAppVersion = (
-  minSupportedVersion: string | undefined,
+  appSettings: AppSettings,
   currentAppVersion: string = version,
 ): ValidationResult => {
-  if (!minSupportedVersion) {
-    // Allowing to be null allows cleaner code down the line
-    return {
-      success: false,
-      message:
-        'This version of the application is outdated. Please upgrade to the newest version.',
-    };
-  }
-  // Compare versions
   const cleanCurrentAppVersion = cleanSemver(currentAppVersion); // No build metadata
-  if (semver.lt(cleanCurrentAppVersion, minSupportedVersion)) {
+
+  const minVersion = appSettings?.min_supported_version;
+  if (!minVersion || semver.lt(cleanCurrentAppVersion, minVersion)) {
     return {
       success: false,
       message:
         'This version of the application is outdated. Please upgrade to the newest version.',
     };
   }
-  return {success: true};
+
+  const latestVersion = appSettings?.latest_version;
+  if (latestVersion && semver.gt(latestVersion, cleanCurrentAppVersion)) {
+    return {
+      success: true,
+      updateAvailable: true,
+      message: 'A new version of the application is available.',
+    };
+  }
+
+  return {
+    success: true,
+  };
 };
 
 /**

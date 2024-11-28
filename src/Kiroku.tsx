@@ -9,8 +9,7 @@ import React, {
 } from 'react';
 import type {NativeEventSubscription} from 'react-native';
 import {AppState, Linking, Platform} from 'react-native';
-import type {OnyxEntry} from 'react-native-onyx';
-import Onyx, {useOnyx, withOnyx} from 'react-native-onyx';
+import Onyx, {useOnyx} from 'react-native-onyx';
 import Navigation from '@navigation/Navigation';
 import NavigationRoot from '@navigation/NavigationRoot';
 // import PushNotification from '@libs/Notification/PushNotification';
@@ -19,13 +18,12 @@ import Log from '@libs/Log';
 import migrateOnyx from '@libs/migrateOnyx';
 import SplashScreenHider from '@components/SplashScreenHider';
 import * as ActiveClientManager from '@libs/ActiveClientManager';
+import * as UserUtils from '@libs/UserUtils';
 // import StartupTimer from '@libs/StartupTimer';
 import Visibility from '@libs/Visibility';
 import {useFirebase} from '@context/global/FirebaseContext';
 import ONYXKEYS from '@src/ONYXKEYS';
 import type {Route} from '@src/ROUTES';
-import ForceUpdateModal from '@components/Modals/ForceUpdateModal';
-import type {Session} from '@src/types/onyx';
 import type {Config} from '@src/types/onyx';
 import {updateLastRoute} from '@libs/actions/App';
 import setCrashlyticsUserId from '@libs/setCrashlyticsUserId';
@@ -35,11 +33,11 @@ import {listenForDataChanges, readDataOnce} from '@database/baseFunctions';
 import {checkIfUnderMaintenance} from '@libs/Maintenance';
 import {validateAppVersion} from '@libs/Validation';
 import UnderMaintenanceModal from '@components/Modals/UnderMaintenanceModal';
-import Modal from '@components/Modal';
 import CONST from './CONST';
 import UserOfflineModal from '@components/UserOfflineModal';
 import SplashScreenStateContext from '@context/global/SplashScreenStateContext';
 import CONFIG from './CONFIG';
+import UpdateAppModal from '@components/UpdateAppModal';
 
 Onyx.registerLogger(({level, message}) => {
   if (level === 'alert') {
@@ -50,37 +48,11 @@ Onyx.registerLogger(({level, message}) => {
   }
 });
 
-type KirokuOnyxProps = {
-  /** Whether the app is waiting for the server's response to determine if a room is public */
-  // isCheckingPublicRoom: OnyxEntry<boolean>;
-  /** Session info for the currently logged in user. */
-  session: OnyxEntry<Session>;
-  /** Whether a new update is available and ready to install. */
-  updateAvailable: OnyxEntry<boolean>;
-  /** Tells us if the sidebar has rendered */
-  isSidebarLoaded: OnyxEntry<boolean>;
-  /** Information about a screen share call requested by a GuidesPlus agent */
-  // screenShareRequest: OnyxEntry<ScreenShareRequest>;
-  /** True when the user must update to the latest minimum version of the app */
-  updateRequired: OnyxEntry<boolean>;
-  /** Whether we should display the notification alerting the user that focus mode has been auto-enabled */
-  focusModeNotification: OnyxEntry<boolean>;
-  /** Last visited path in the app */
-  lastVisitedPath: OnyxEntry<string | undefined>;
-};
-
-type KirokuProps = KirokuOnyxProps;
+type KirokuProps = {};
 
 const SplashScreenHiddenContext = React.createContext({});
 
-function Kiroku({
-  session,
-  updateAvailable,
-  isSidebarLoaded = false,
-  updateRequired = false,
-  focusModeNotification = false,
-  lastVisitedPath,
-}: KirokuProps) {
+function Kiroku({}: KirokuProps) {
   const {db, auth} = useFirebase();
   const {isOnline} = useUserConnection();
   const appStateChangeListener = useRef<NativeEventSubscription | null>(null);
@@ -89,17 +61,19 @@ function Kiroku({
   const {splashScreenState, setSplashScreenState} = useContext(
     SplashScreenStateContext,
   );
+  const [lastVisitedPath] = useOnyx(ONYXKEYS.LAST_VISITED_PATH);
   const [initialUrl, setInitialUrl] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authenticationChecked, setAuthenticationChecked] = useState(false);
   const [lastRoute] = useOnyx(ONYXKEYS.LAST_ROUTE);
   const [isFetchingConfig, setIsFetchingConfig] = useState<boolean>(true);
   const [config, setConfig] = useState<Config | null>(null);
-  const [isVersionValid, setIsVersionValid] = useState<boolean>(true);
   const [isUnderMaintenance, setIsUnderMaintenance] = useState<boolean>(false);
-
-  // const [session] = useOnyx(ONYXKEYS.SESSION);
-  // const [account] = useOnyx(ONYXKEYS.ACCOUNT);
+  const [emailVerified, setEmailVerified] = useState<boolean>(true);
+  const [updateAvailable, setUpdateAvailable] = useState<boolean>(false);
+  const [updateRequired, setUpdateRequired] = useState<boolean>(false);
+  const [shouldShowUpdateModal, setShouldShowUpdateModal] =
+    useState<boolean>(false);
 
   // const isAuthenticated = useMemo(() => !!(auth.currentUser ?? null), [auth]);
   // const autoAuthState = useMemo(() => session?.autoAuthState ?? '', [session]);
@@ -133,16 +107,32 @@ function Kiroku({
   }, []);
 
   useMemo(() => {
-    const underMaintenance: boolean = checkIfUnderMaintenance(
-      config?.maintenance,
-    );
-    const versionValidationResult = validateAppVersion(
-      config?.app_settings.min_supported_version,
-    );
+    if (config) {
+      const underMaintenance: boolean = checkIfUnderMaintenance(
+        config?.maintenance,
+      );
+      const versionValidationResult = validateAppVersion(config.app_settings);
+      const newUpdateAvailable = !!versionValidationResult?.updateAvailable;
+      const newUpdateRequired = !versionValidationResult.success;
+      const newShouldShowUpdateModal = UserUtils.shouldShowUpdateModal(
+        newUpdateAvailable,
+        newUpdateRequired,
+      );
 
-    setIsUnderMaintenance(underMaintenance);
-    setIsVersionValid(versionValidationResult.success);
+      setIsUnderMaintenance(underMaintenance);
+      setUpdateAvailable(newUpdateAvailable);
+      setUpdateRequired(newUpdateRequired);
+      setShouldShowUpdateModal(newShouldShowUpdateModal);
+    }
   }, [config]);
+
+  useEffect(() => {
+    if (auth?.currentUser) {
+      if (!auth.currentUser.emailVerified) {
+        setEmailVerified(false);
+      }
+    }
+  }, [auth]);
 
   const shouldInit = isNavigationReady;
   // const shouldHideSplash =
@@ -195,14 +185,11 @@ function Kiroku({
       });
 
       if (splashScreenState === CONST.BOOT_SPLASH_STATE.VISIBLE) {
-        const propsToLog: Omit<
-          KirokuProps & {isAuthenticated: boolean},
-          'children' | 'session'
-        > = {
+        const propsToLog = {
           updateRequired,
           updateAvailable,
-          isSidebarLoaded,
-          focusModeNotification,
+          // isSidebarLoaded,
+          // focusModeNotification,
           isAuthenticated,
           lastVisitedPath,
         };
@@ -275,10 +262,9 @@ function Kiroku({
     return null;
   }
 
-  // TODO enable this
-  // if (updateRequired) {
-  //   throw new Error(CONST.ERROR.UPDATE_REQUIRED);
-  // }
+  if (updateRequired) {
+    throw new Error(CONST.ERROR.UPDATE_REQUIRED);
+  }
 
   return (
     // TODO
@@ -291,7 +277,14 @@ function Kiroku({
         <>
           {!isOnline && !CONFIG.IS_USING_EMULATORS && <UserOfflineModal />}
           {isUnderMaintenance && <UnderMaintenanceModal config={config} />}
-          {!isVersionValid && <ForceUpdateModal />}
+        </>
+      )}
+
+      {shouldInit && (
+        <>
+          {shouldShowUpdateModal && <UpdateAppModal />}
+          {/* {!emailVerified && <VerifyEmailModal />} */}
+          {/* // TODO show shared session invites here */}
         </>
       )}
 
@@ -305,28 +298,6 @@ function Kiroku({
     </>
   );
 }
-export default withOnyx<KirokuProps, KirokuOnyxProps>({
-  session: {
-    key: ONYXKEYS.SESSION,
-  },
-  updateAvailable: {
-    key: ONYXKEYS.UPDATE_AVAILABLE,
-    initWithStoredValues: false,
-  },
-  updateRequired: {
-    key: ONYXKEYS.UPDATE_REQUIRED,
-    initWithStoredValues: false,
-  },
-  isSidebarLoaded: {
-    key: ONYXKEYS.IS_SIDEBAR_LOADED,
-  },
-  focusModeNotification: {
-    key: ONYXKEYS.FOCUS_MODE_NOTIFICATION,
-    initWithStoredValues: false,
-  },
-  lastVisitedPath: {
-    key: ONYXKEYS.LAST_VISITED_PATH,
-  },
-})(Kiroku);
 
+export default Kiroku;
 export {SplashScreenHiddenContext};

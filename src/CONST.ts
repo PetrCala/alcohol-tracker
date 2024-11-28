@@ -83,6 +83,10 @@ const CONST = {
     INACTIVE: 'inactive',
   },
   APP_IN_BETA: true,
+  APP_UPDATE: {
+    // How long the dismiss update button should hide the window for
+    DISMISS_TIME: 1000 * 60 * 60 * 24 * 1, // 1 day
+  },
   AUTH_TOKEN_TYPES: {
     ANONYMOUS: 'anonymousAccount',
     SUPPORT: 'support',

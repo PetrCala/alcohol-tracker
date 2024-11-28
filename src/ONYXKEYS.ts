@@ -97,6 +97,9 @@ const ONYXKEYS = {
   /** Whether we should show the compose input or not */
   SHOULD_SHOW_COMPOSE_INPUT: 'shouldShowComposeInput',
 
+  /** The last time a user has dismissed the app update modal */
+  APP_UPDATE_DISMISSED: 'appUpdateDismissed',
+
   /** The last time a user has sent a verification email */
   VERIFY_EMAIL_SENT: 'verifyEmailSent',
 
@@ -257,6 +260,7 @@ type OnyxValuesMapping = {
   //   [ONYXKEYS.APP_PROFILING_IN_PROGRESS]: boolean;
   [ONYXKEYS.IS_LOADING_APP]: boolean;
   [ONYXKEYS.SHOULD_SHOW_COMPOSE_INPUT]: boolean;
+  [ONYXKEYS.APP_UPDATE_DISMISSED]: Timestamp;
   [ONYXKEYS.VERIFY_EMAIL_SENT]: Timestamp;
   [ONYXKEYS.VERIFY_EMAIL_DISMISSED]: Timestamp;
   [ONYXKEYS.IS_BETA]: boolean;
