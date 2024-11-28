@@ -54,9 +54,6 @@ type SectionProps = ChildrenProps & {
 
   /** Whether the section is in the central pane of the layout */
   isCentralPane?: boolean;
-
-  /** Overlay content to display on top of animation */
-  overlayContent?: () => ReactNode;
 };
 
 function Section({
@@ -73,7 +70,6 @@ function Section({
   title,
   titleStyles,
   isCentralPane = false,
-  overlayContent,
 }: SectionProps) {
   const styles = useThemeStyles();
   const {isSmallScreenWidth} = useWindowDimensions();

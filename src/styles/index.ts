@@ -2297,11 +2297,10 @@ const styles = (theme: ThemeColors) =>
     },
 
     textVersion: {
-      color: theme.iconColorfulBackground,
+      color: theme.textMutedReversed,
       fontSize: variables.fontSizeNormal,
       lineHeight: variables.lineHeightNormal,
       ...FontUtils.fontFamily.platform.MONOSPACE,
-      textAlign: 'center',
     },
 
     timePickerInput: {
