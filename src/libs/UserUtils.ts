@@ -324,7 +324,6 @@ function shouldShowAgreeToTermsModal(
   agreedToTermsAt: Timestamp | null | undefined,
   termsLastUpdated?: Timestamp,
 ): boolean {
-  console.log(agreedToTermsAt);
   return (
     !agreedToTermsAt ||
     !!(termsLastUpdated && termsLastUpdated > agreedToTermsAt)
