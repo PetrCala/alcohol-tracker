@@ -13,7 +13,6 @@ import Onyx, {useOnyx} from 'react-native-onyx';
 import Navigation from '@navigation/Navigation';
 import NavigationRoot from '@navigation/NavigationRoot';
 // import PushNotification from '@libs/Notification/PushNotification';
-import BootSplash from '@libs/BootSplash';
 import Log from '@libs/Log';
 import migrateOnyx from '@libs/migrateOnyx';
 import SplashScreenHider from '@components/SplashScreenHider';
@@ -38,6 +37,7 @@ import UserOfflineModal from '@components/UserOfflineModal';
 import SplashScreenStateContext from '@context/global/SplashScreenStateContext';
 import CONFIG from './CONFIG';
 import UpdateAppModal from '@components/UpdateAppModal';
+import VerifyEmailModal from '@libs/VerifyEmailModal';
 
 Onyx.registerLogger(({level, message}) => {
   if (level === 'alert') {
@@ -69,7 +69,8 @@ function Kiroku({}: KirokuProps) {
   const [isFetchingConfig, setIsFetchingConfig] = useState<boolean>(true);
   const [config, setConfig] = useState<Config | null>(null);
   const [isUnderMaintenance, setIsUnderMaintenance] = useState<boolean>(false);
-  const [emailVerified, setEmailVerified] = useState<boolean>(true);
+  const [shouldShowVerifyEmailModal, setShouldShowVerifyEmailModal] =
+    useState<boolean>(false);
   const [updateAvailable, setUpdateAvailable] = useState<boolean>(false);
   const [updateRequired, setUpdateRequired] = useState<boolean>(false);
   const [shouldShowUpdateModal, setShouldShowUpdateModal] =
@@ -82,6 +83,11 @@ function Kiroku({}: KirokuProps) {
     const unsubscribe = auth.onAuthStateChanged(user => {
       setIsAuthenticated(!!user);
       setAuthenticationChecked(true);
+
+      // Check only once after the user is authenticated
+      if (UserUtils.shouldShowVerifyEmailModal(user)) {
+        setShouldShowVerifyEmailModal(true);
+      }
     });
 
     return () => unsubscribe();
@@ -114,25 +120,16 @@ function Kiroku({}: KirokuProps) {
       const versionValidationResult = validateAppVersion(config.app_settings);
       const newUpdateAvailable = !!versionValidationResult?.updateAvailable;
       const newUpdateRequired = !versionValidationResult.success;
-      const newShouldShowUpdateModal = UserUtils.shouldShowUpdateModal(
-        newUpdateAvailable,
-        newUpdateRequired,
-      );
+      const newShouldShowUpdateModal =
+        !shouldShowVerifyEmailModal &&
+        UserUtils.shouldShowUpdateModal(newUpdateAvailable, newUpdateRequired);
 
       setIsUnderMaintenance(underMaintenance);
       setUpdateAvailable(newUpdateAvailable);
       setUpdateRequired(newUpdateRequired);
       setShouldShowUpdateModal(newShouldShowUpdateModal);
     }
-  }, [config]);
-
-  useEffect(() => {
-    if (auth?.currentUser) {
-      if (!auth.currentUser.emailVerified) {
-        setEmailVerified(false);
-      }
-    }
-  }, [auth]);
+  }, [config, shouldShowVerifyEmailModal]);
 
   const shouldInit = isNavigationReady;
   // const shouldHideSplash =
@@ -282,8 +279,8 @@ function Kiroku({}: KirokuProps) {
 
       {shouldInit && (
         <>
+          {shouldShowVerifyEmailModal && <VerifyEmailModal />}
           {shouldShowUpdateModal && <UpdateAppModal />}
-          {/* {!emailVerified && <VerifyEmailModal />} */}
           {/* // TODO show shared session invites here */}
         </>
       )}

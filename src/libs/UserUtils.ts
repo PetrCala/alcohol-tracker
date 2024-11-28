@@ -286,7 +286,7 @@ function getSmallSizeAvatar(
 //   return parsedLoginList.find(login => Str.isValidE164Phone(login));
 // }
 
-function shouldNavigateToVerifyEmailScreen(user: User | null): boolean {
+function shouldShowVerifyEmailModal(user: User | null): boolean {
   if (!user || user.emailVerified) {
     return false; // Already verified
   }
@@ -327,7 +327,7 @@ export {
   // hasLoginListInfo,
   hashText,
   isDefaultAvatar,
-  shouldNavigateToVerifyEmailScreen,
+  shouldShowVerifyEmailModal,
   shouldShowUpdateModal,
 };
 export type {AvatarSource, LoginListIndicator};

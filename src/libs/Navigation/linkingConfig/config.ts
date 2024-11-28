@@ -34,7 +34,6 @@ const config: LinkingOptions<RootStackParamList>['config'] = {
     },
 
     [SCREENS.NOT_FOUND]: '*',
-    [SCREENS.VERIFY_EMAIL]: ROUTES.VERIFY_EMAIL,
     [NAVIGATORS.LEFT_MODAL_NAVIGATOR]: {
       screens: {
         //         [SCREENS.LEFT_MODAL.SEARCH]: {

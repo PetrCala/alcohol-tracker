@@ -28,7 +28,6 @@ const PUBLIC_SCREENS_ROUTES = {
   APPLE_SIGN_IN: 'sign-in-with-apple',
   GOOGLE_SIGN_IN: 'sign-in-with-google',
   TRANSITION_BETWEEN_APPS: 'transition',
-  VERIFY_EMAIL: 'verify-email',
 } as const;
 
 const ROUTES = {

@@ -470,6 +470,9 @@ export default {
     emailSent: 'A verification email has been sent to your email address.',
     emailVerified: 'Email verified!',
     iHaveVerified: 'I have verified my email',
+    oneMoreStep: 'One more step!',
+    checkYourInbox:
+      "Please check your inbox and verify your email.\nAfterwards, either restart the app to see changes, or press the 'I have verified my email' button below.",
     error: {
       generic: 'Error verifying your email',
       sending: 'Error sending verification email',
