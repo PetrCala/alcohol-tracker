@@ -15,6 +15,7 @@ import {WindowDimensionsProvider} from '@components/withWindowDimensions';
 import {KeyboardStateProvider} from '@components/withKeyboardState';
 import {SplashScreenStateContextProvider} from '@context/global/SplashScreenStateContext';
 import {EnvironmentProvider} from '@components/withEnvironment';
+import {ConfigProvider} from '@context/global/ConfigContext';
 import ThemeProvider from '@components/ThemeProvider';
 import ThemeStylesProvider from '@components/ThemeStylesProvider';
 import SafeArea from '@components/SafeArea';
@@ -52,6 +53,7 @@ const App = ({url}: KirokuProps): React.JSX.Element => {
               ThemeProvider,
               ThemeStylesProvider,
               FirebaseProvider,
+              ConfigProvider,
               UserConnectionProvider,
               SafeAreaProvider,
               PortalProvider,

@@ -44,6 +44,8 @@ import NoSessionsInfo from '@components/NoSessionsInfo';
 import Text from '@components/Text';
 import useWindowDimensions from '@hooks/useWindowDimensions';
 import BottomTabBar from '@libs/Navigation/AppNavigator/createCustomBottomTabNavigator/BottomTabBar';
+import AgreeToTermsModal from '@components/AgreeToTermsModal';
+import {useConfig} from '@context/global/ConfigContext';
 
 type State = {
   drinkingSessionsCount: number;
@@ -99,12 +101,15 @@ function HomeScreen({route}: HomeScreenProps) {
     userData,
     isLoading,
   } = useDatabaseData();
+  const {config, isFetchingConfig} = useConfig();
   const [visibleDate, setVisibleDate] = useState<DateData>(
     dateToDateData(new Date()),
   );
   const [ongoingSessionId, setOngoingSessionId] = useState<
     DrinkingSessionId | null | undefined
   >();
+  const [shouldShowAgreeToTermsModal, setShouldShowAgreeToTermsModal] =
+    useState(false);
   const [isStartingSession, setIsStartingSession] = useState(false);
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -206,6 +211,19 @@ function HomeScreen({route}: HomeScreenProps) {
     );
   }, [userStatusData]);
 
+  useEffect(() => {
+    if (
+      !isFetchingConfig &&
+      config &&
+      UserUtils.shouldShowAgreeToTermsModal(
+        userData?.agreed_to_terms_at,
+        config?.terms_last_updated,
+      )
+    ) {
+      setShouldShowAgreeToTermsModal(true);
+    }
+  }, [config, isFetchingConfig, userData]);
+
   useFocusEffect(
     React.useCallback(() => {
       // Update user status on home screen focus
@@ -220,10 +238,6 @@ function HomeScreen({route}: HomeScreenProps) {
           'Failed to contact the database',
           'Could not update user online status:' + error.message,
         );
-      }
-
-      if (!userData.agreed_to_terms_at) {
-        console.log('User has not agreed to terms');
       }
 
       // TZFIX (09-2024) - Redirect to TZ_FIX_INTRODUCTION if user has not set timezone
@@ -317,6 +331,7 @@ function HomeScreen({route}: HomeScreenProps) {
           />
         </TouchableOpacity>
       )}
+      {shouldShowAgreeToTermsModal && <AgreeToTermsModal />}
     </ScreenWrapper>
   );
 }

@@ -1,6 +1,6 @@
 ﻿// DatabaseDataContext.tsx
 import type {ReactNode} from 'react';
-import React, {createContext, useContext, useEffect, useMemo} from 'react';
+import React, {createContext, useContext, useMemo} from 'react';
 import {useFirebase} from './FirebaseContext';
 import type {
   DrinkingSessionList,
@@ -11,8 +11,6 @@ import type {
 } from '@src/types/onyx';
 import type {FetchDataKeys} from '@hooks/useFetchData/types';
 import useListenToData from '@hooks/useListenToData';
-import Onyx from 'react-native-onyx';
-import ONYXKEYS from '@src/ONYXKEYS';
 
 type DatabaseDataContextType = {
   userStatusData?: UserStatus;
@@ -56,7 +54,7 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
     'userData',
   ];
 
-  const {data, isLoading} = useListenToData(userID, dataTypes);
+  const {data, isLoading} = useListenToData(dataTypes, userID);
 
   const value = useMemo(
     () => ({

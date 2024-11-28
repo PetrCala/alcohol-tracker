@@ -116,9 +116,9 @@ const DBPATHS = {
     getRoute: (user_id: UserID) => `users/${user_id}` as const,
   },
   USERS_USER_ID_AGREED_TO_TERMS_AT: {
-    route: '/users/:user_id/agree_to_terms_at',
+    route: '/users/:user_id/agreed_to_terms_at',
     getRoute: (user_id: UserID) =>
-      `users/${user_id}/agree_to_terms_at` as const,
+      `users/${user_id}/agreed_to_terms_at` as const,
   },
   USERS_USER_ID_FRIENDS: {
     route: '/users/:user_id/friends',

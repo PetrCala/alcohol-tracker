@@ -313,6 +313,24 @@ function shouldShowUpdateModal(
   return updateAvailable && !updateRequired && !updateDismissedRecently;
 }
 
+/**
+ * Determines if the agree to terms modal should be shown based on the given parameters.
+ *
+ * @param agreedToTermsAt A timestamp representing when the user last agreed to the terms
+ * @param termsLastUpdated A timestamp representing the last update of terms and conditions
+ * @returns A boolean indicating whether the agree to terms modal should be shown
+ */
+function shouldShowAgreeToTermsModal(
+  agreedToTermsAt: Timestamp | null | undefined,
+  termsLastUpdated?: Timestamp,
+): boolean {
+  console.log(agreedToTermsAt);
+  return (
+    !agreedToTermsAt ||
+    !!(termsLastUpdated && termsLastUpdated > agreedToTermsAt)
+  );
+}
+
 export {
   generateUserID,
   getAvatar,
@@ -327,6 +345,7 @@ export {
   // hasLoginListInfo,
   hashText,
   isDefaultAvatar,
+  shouldShowAgreeToTermsModal,
   shouldShowVerifyEmailModal,
   shouldShowUpdateModal,
 };

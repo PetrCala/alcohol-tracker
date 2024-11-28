@@ -28,13 +28,15 @@ function UnderMaintenanceModal({config}: UnderMaintenanceProps) {
   const {translate} = useLocalize();
   const smallerScreenSize = Math.min(windowHeight, windowWidth);
   const defaultMaintenance: Maintenance = {
-    maintenance_mode: true,
-    start_time: 1704067200,
-    end_time: 1704067200,
+    maintenance_mode: false,
   };
   const maintenance = config?.maintenance ?? defaultMaintenance;
-  const startTime = getHourMinute(new Date(maintenance.start_time));
-  const endTime = getHourMinute(new Date(maintenance.end_time));
+  const startTime = maintenance?.start_time
+    ? getHourMinute(new Date(maintenance.start_time))
+    : null;
+  const endTime = maintenance?.end_time
+    ? getHourMinute(new Date(maintenance.end_time))
+    : null;
 
   return (
     <SafeAreaConsumer>
@@ -53,7 +55,8 @@ function UnderMaintenanceModal({config}: UnderMaintenanceProps) {
               {translate('maintenance.text')}
             </Text>
             <Text style={[styles.textLarge, styles.textStrong, styles.pb5]}>
-              {startTime} - {endTime}
+              {startTime || translate('common.unknown')} -
+              {endTime || translate('common.unknown')}
             </Text>
             <Image
               style={styles.maintenanceBeaverImage(smallerScreenSize)}

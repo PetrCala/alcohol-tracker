@@ -5,14 +5,25 @@ type AppSettings = {
 };
 
 type Maintenance = {
+  /** Whether or not a maintenance is ongoing */
   maintenance_mode: boolean;
-  start_time: number;
-  end_time: number;
+
+  /** Start time of the maintenance */
+  start_time?: number;
+
+  /** End time of the maintenance */
+  end_time?: number;
 };
 
 type Config = {
+  /** Application settings */
   app_settings: AppSettings;
+
+  /** Information about the application maintenance */
   maintenance: Maintenance;
+
+  /** A timestamp representing the last update of terms and conditions */
+  terms_last_updated?: number;
 };
 
 export default Config;

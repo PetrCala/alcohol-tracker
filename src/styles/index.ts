@@ -754,6 +754,10 @@ const styles = (theme: ThemeColors) =>
       lineHeight: variables.lineHeightXLarge,
     },
 
+    checkboxWithLabelCheckboxStyle: {
+      marginLeft: -2,
+    },
+
     centeredModalStyles: (
       isSmallScreenWidth: boolean,
       isFullScreenWhenSmall: boolean,
