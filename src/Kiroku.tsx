@@ -37,7 +37,7 @@ import UserOfflineModal from '@components/UserOfflineModal';
 import SplashScreenStateContext from '@context/global/SplashScreenStateContext';
 import CONFIG from './CONFIG';
 import UpdateAppModal from '@components/UpdateAppModal';
-import VerifyEmailModal from '@libs/VerifyEmailModal';
+import VerifyEmailModal from '@components/VerifyEmailModal';
 
 Onyx.registerLogger(({level, message}) => {
   if (level === 'alert') {
