@@ -372,6 +372,7 @@ export default {
       aboutKiroku: 'About Kiroku',
       description:
         'Kiroku is a mobile app that helps you track your alcohol consumption.',
+      joinDiscord: 'Join our Discord server',
       readTheTermsAndPrivacy: {
         phrase1: 'Read the',
         phrase2: 'Terms of Service',

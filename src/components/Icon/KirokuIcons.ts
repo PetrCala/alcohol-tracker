@@ -26,6 +26,7 @@ import Cocktail from '@assets/images/cocktail.png';
 import Copy from '@assets/images/copy.png';
 import Delete from '@assets/images/delete.png';
 import DeleteSession from '@assets/images/delete-session.png';
+import Discord from '@assets/images/discord.svg';
 import Document from '@assets/images/document.svg';
 import DotIndicator from '@assets/images/dot-indicator.svg';
 import DownArrow from '@assets/images/down.svg';
@@ -95,6 +96,7 @@ export {
   Copy,
   Delete,
   DeleteSession,
+  Discord,
   Document,
   DotIndicator,
   DownArrow,
