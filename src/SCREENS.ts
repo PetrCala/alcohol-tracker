@@ -77,6 +77,7 @@ const SCREENS = {
       FIRST_DAY_OF_WEEK: 'Settings_Preferences_FirstDayOfWeek',
     },
 
+    ABOUT: 'Settings_About',
     TERMS_OF_SERVICE: 'Settings_TermsOfService',
     PRIVACY_POLICY: 'Settings_PrivacyPolicy',
     FEEDBACK: 'Settings_Feedback',

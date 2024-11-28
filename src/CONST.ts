@@ -1,5 +1,6 @@
 import dateAdd from 'date-fns/add';
 import dateSubtract from 'date-fns/sub';
+import Config from 'react-native-config';
 import * as KeyCommand from 'react-native-key-command';
 import SCREENS from './SCREENS';
 import {SelectedTimezone} from './types/onyx/UserData';
@@ -13,6 +14,7 @@ const PLATFORM_OS_MACOS = 'Mac OS';
 const PLATFORM_IOS = 'iOS';
 const ANDROID_PACKAGE_NAME = 'com.alcohol_tracker';
 const GH_PAGES_URL = 'https://petrcala.github.io/Kiroku';
+const PULL_REQUEST_NUMBER = Config?.PULL_REQUEST_NUMBER ?? '';
 const MAX_DATE = dateAdd(new Date(), {years: 1});
 const MIN_DATE = dateSubtract(new Date(), {years: 20});
 
@@ -256,7 +258,6 @@ const CONST = {
   EXCLUDE_FROM_LAST_VISITED_PATH: [
     SCREENS.NOT_FOUND,
     // SCREENS.SAML_SIGN_IN,
-    SCREENS.VERIFY_EMAIL,
   ] as string[],
 
   // Character Limits
@@ -739,7 +740,7 @@ const CONST = {
     SAMPLE_INPUT: '123456.789',
     EXPECTED_OUTPUT: 'FCFA 123,457',
   },
-
+  PULL_REQUEST_NUMBER,
   PUSHER: {
     PRIVATE_USER_CHANNEL_PREFIX: 'private-encrypted-user-userID-',
   },

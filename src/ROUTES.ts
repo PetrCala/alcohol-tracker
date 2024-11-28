@@ -87,6 +87,7 @@ const ROUTES = {
 
   SETTINGS: 'settings',
 
+  SETTINGS_ABOUT: 'settings/about',
   SETTINGS_ACCOUNT: 'settings/account',
   SETTINGS_USER_NAME: 'settings/user-name',
   SETTINGS_DISPLAY_NAME: 'settings/display-name',

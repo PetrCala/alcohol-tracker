@@ -1721,6 +1721,13 @@ const styles = (theme: ThemeColors) =>
       padding: 12,
     },
 
+    sidebarFooter: {
+      display: 'flex',
+      justifyContent: 'center',
+      width: '100%',
+      paddingLeft: 20,
+    },
+
     sidebarLink: {
       textDecorationLine: 'none',
     },
@@ -2276,6 +2283,14 @@ const styles = (theme: ThemeColors) =>
       textAlign: 'center',
       ...spacing.mt5,
       ...sizing.mw75,
+    },
+
+    textVersion: {
+      color: theme.iconColorfulBackground,
+      fontSize: variables.fontSizeNormal,
+      lineHeight: variables.lineHeightNormal,
+      ...FontUtils.fontFamily.platform.MONOSPACE,
+      textAlign: 'center',
     },
 
     timePickerInput: {

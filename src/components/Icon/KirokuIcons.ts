@@ -37,6 +37,7 @@ import EyeDisabled from '@assets/images/eye-disabled.svg';
 import FileDocument from '@assets/images/file-document.svg';
 import FriendList from '@assets/images/friend-list.png';
 import Idea from '@assets/images/idea.png';
+import Info from '@assets/images/info.svg';
 import Lock from '@assets/images/lock.svg';
 import Logo from '@assets/images/app-logo.svg';
 import Mail from '@assets/images/mail.svg';
@@ -105,6 +106,7 @@ export {
   FriendList,
   Gear,
   Idea,
+  Info,
   Lock,
   Logo,
   Mail,
