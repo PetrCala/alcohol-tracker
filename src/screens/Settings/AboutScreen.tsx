@@ -81,11 +81,17 @@ function AboutScreen() {
         },
         link: CONST.GITHUB_URL,
       },
-      //   {
-      //     translationKey: 'initialSettingsPage.aboutPage.reportABug',
-      //     icon: KirokuIcons.Bug,
-      //     action: waitForNavigate(Report.navigateToConciergeChat),
-      //   },
+      {
+        translationKey: 'settingsScreen.aboutScreen.joinDiscord',
+        icon: KirokuIcons.Discord,
+        iconRight: KirokuIcons.NewWindow,
+        action: () => {
+          Linking.openURL(CONST.DISCORD_INVITE_URL);
+          // Link.openExternalLink(CONST.DISCORD_INVITE_URL); // TODO
+          return Promise.resolve();
+        },
+        link: CONST.DISCORD_INVITE_URL,
+      },
       {
         translationKey: 'common.termsOfService',
         icon: KirokuIcons.FileDocument,
