@@ -549,6 +549,8 @@ export default {
     seeAllFriends: 'See all friends',
     drinkingSessions: (plural: string) => `Drinking Session${plural}`,
     unitsConsumed: 'Units Consumed',
+    manageFriend: 'Manage Friend',
+    unfriend: 'Unfriend',
   },
   statisticsScreen: {
     title: 'Statistics',

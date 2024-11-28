@@ -1,14 +1,13 @@
 import type {LayoutChangeEvent} from 'react-native';
 import {
   Dimensions,
-  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
-import {useFirebase} from '../../context/global/FirebaseContext';
+import {useFirebase} from '@src/context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
 import Navigation from '@libs/Navigation/Navigation';
 import UploadImageComponent from '@components/UploadImage';
@@ -76,7 +75,7 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
         layout={layout}
         onLayout={onLayout}
       />
-      {user?.uid === userID ? (
+      {user?.uid === userID && (
         <View style={[localStyles.editProfileIconButton, styles.appBG]}>
           <UploadImageComponent
             pathToUpload={`users/${userID}/profile/profile_image.jpg`}
@@ -88,8 +87,7 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
             isProfilePicture={true}
           />
         </View>
-      ) : null}
-      <View />
+      )}
       <View style={localStyles.userInfoContainer}>
         <Text
           style={[localStyles.profileNameText, styles.textStrong]}

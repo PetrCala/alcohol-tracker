@@ -24,7 +24,6 @@ import {
 } from '@libs/DataHandling';
 import SessionsCalendar from '@components/SessionsCalendar';
 import {getCommonFriendsCount} from '@libs/FriendUtils';
-import ManageFriendPopup from '@components/Popups/Profile/ManageFriendPopup';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
 import type {DrinkingSessionArray} from '@src/types/onyx';
 import type {UserList} from '@src/types/onyx/OnyxCommon';
@@ -45,7 +44,7 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import FillerView from '@components/FillerView';
 import Button from '@components/Button';
 import {roundToTwoDecimalPlaces} from '@libs/NumberUtils';
-import OrDelimiter from '@screens/SignUp/OrDelimiter';
+import ManageFriendModal from '@components/ManageFriendModal';
 
 type State = {
   selfFriends: UserList | undefined;
@@ -293,15 +292,14 @@ function ProfileScreen({route}: ProfileScreenProps) {
         </View>
         <FillerView />
       </ScrollView>
-      <ManageFriendPopup
-        visible={state.manageFriendModalVisible}
+      <ManageFriendModal
+        isModalVisible={state.manageFriendModalVisible}
         setVisibility={(visible: boolean) =>
-          dispatch({
-            type: 'SET_MANAGE_FRIEND_MODAL_VISIBLE',
-            payload: visible,
-          })
+          dispatch({type: 'SET_MANAGE_FRIEND_MODAL_VISIBLE', payload: visible})
         }
-        onGoBack={() => Navigation.goBack()}
+        onClose={() =>
+          dispatch({type: 'SET_MANAGE_FRIEND_MODAL_VISIBLE', payload: false})
+        }
         friendId={userID}
       />
     </ScreenWrapper>
