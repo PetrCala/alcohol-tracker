@@ -54,6 +54,7 @@ export default {
     preferences: 'Preferences',
     view: 'View',
     not: 'Not',
+    unknown: 'Unknown',
     authentication: 'Authentication',
     signIn: 'Sign in',
     signInWithGoogle: 'Sign in with Google',
@@ -247,6 +248,15 @@ export default {
     },
     offlineMessageRetry:
       "Looks like you're offline. Please check your connection and try again.",
+  },
+  agreeToTerms: {
+    title: "We've updated our terms of service",
+    description:
+      'We encourage you to read the updated terms of service and privacy policy in full.',
+    iHaveRead:
+      'I have read and agree to the terms of service and privacy policy',
+    mustAgree:
+      'You must agree to the terms of service and privacy policy before continuing.',
   },
   location: {
     useCurrent: 'Use current location',
@@ -684,12 +694,6 @@ export default {
       usernameTooLong: 'This username is too long',
       sameUsername: 'This is the same username as your current one',
     },
-  },
-  termsOfUse: {
-    phrase1: 'By logging in, you agree to the',
-    phrase2: 'Terms of Service',
-    phrase3: 'and',
-    phrase4: 'Privacy Policy',
   },
   emailForm: {
     email: 'Email',

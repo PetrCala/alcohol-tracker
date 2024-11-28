@@ -6,11 +6,12 @@ import type {
 } from 'react';
 import React, {forwardRef} from 'react';
 // eslint-disable-next-line no-restricted-imports
-import type {
-  GestureResponderEvent,
-  Text as RNText,
-  StyleProp,
-  TextStyle,
+import {
+  Linking,
+  type GestureResponderEvent,
+  type Text as RNText,
+  type StyleProp,
+  type TextStyle,
 } from 'react-native';
 import useEnvironment from '@hooks/useEnvironment';
 import useThemeStyles from '@hooks/useThemeStyles';
@@ -60,7 +61,7 @@ function TextLink(
     if (onPress) {
       onPress(event);
     } else {
-      console.debug('opening link...');
+      Linking.openURL(href);
       //   Link.openLink(href, environmentURL); // TODO enable this
     }
   };

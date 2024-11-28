@@ -27,15 +27,15 @@ type UseListenToDataReturn = {
  * const {data, isLoading, refetch} = useListenToData(userID, ['userStatusData', 'drinkingSessionData']);
  */
 const useListenToData = (
-  userID: string,
   dataTypes: FetchDataKeys,
+  userID?: string,
 ): UseListenToDataReturn => {
   const {db} = useFirebase();
   const [data, setData] = useState<{[key in FetchDataKey]?: any}>({});
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    if (!userID || !db) {
+    if (!db) {
       setIsLoading(false);
       return;
     }
@@ -61,13 +61,7 @@ const useListenToData = (
   }, [userID, ...dataTypes]); // Depend on dataTypes to allow dynamically changing what data to listen to
 
   return {
-    data: {
-      userStatusData: data.userStatusData,
-      drinkingSessionData: data.drinkingSessionData,
-      preferences: data.preferences,
-      unconfirmedDays: data.unconfirmedDays,
-      userData: data.userData,
-    },
+    data: data,
     isLoading,
   };
 };
