@@ -45,7 +45,6 @@ import TzFixModalNavigator from './Navigators/TzFixModalNavigator';
 import RightModalNavigator from './Navigators/RightModalNavigator';
 import {auth} from '@libs/Firebase/FirebaseApp';
 import ReactComponentModule from '@src/types/utils/ReactComponentModule';
-import VerifyEmailScreen from '@screens/VerifyEmailScreen';
 // import WelcomeVideoModalNavigator from './Navigators/WelcomeVideoModalNavigator';
 
 type AuthScreensProps = {
@@ -277,11 +276,6 @@ function AuthScreens({initialLastUpdateIDAppliedToClient}: AuthScreensProps) {
             name={SCREENS.NOT_FOUND}
             options={screenOptions.fullScreen}
             getComponent={notFoundScreen}
-          />
-          <RootStack.Screen
-            name={SCREENS.VERIFY_EMAIL}
-            options={screenOptions.fullScreen}
-            component={VerifyEmailScreen}
           />
           <RootStack.Screen
             name={NAVIGATORS.RIGHT_MODAL_NAVIGATOR}

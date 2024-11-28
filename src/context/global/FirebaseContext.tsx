@@ -1,5 +1,5 @@
 ﻿import type {ReactNode} from 'react';
-import {createContext, useContext, useEffect} from 'react';
+import {createContext, useContext} from 'react';
 import type {Auth} from 'firebase/auth';
 import {connectAuthEmulator} from 'firebase/auth';
 import type {Database} from 'firebase/database';
@@ -14,8 +14,6 @@ import {
   isConnectedToStorageEmulator,
 } from '@src/libs/Firebase/FirebaseUtils';
 import CONFIG from '@src/CONFIG';
-import Onyx from 'react-native-onyx';
-import ONYXKEYS from '@src/ONYXKEYS';
 
 type FirebaseContextProps = {
   auth: Auth;

@@ -213,11 +213,6 @@ function HomeScreen({route}: HomeScreenProps) {
         return;
       }
 
-      if (UserUtils.shouldNavigateToVerifyEmailScreen(user)) {
-        Navigation.navigate(ROUTES.VERIFY_EMAIL);
-        return;
-      }
-
       try {
         synchronizeUserStatus(db, user.uid, drinkingSessionData);
       } catch (error: any) {
