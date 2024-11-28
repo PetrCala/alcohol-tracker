@@ -11,6 +11,14 @@
         }
       }
     },
+    "bugs": {
+      ".read": "auth.token.admin === true",
+      ".write": "auth.token.admin === true",
+      "$bug_id": {
+        ".validate": "newData.val() === null || newData.hasChildren(['submit_time', 'text', 'user_id'])",
+        ".write": "auth != null"
+      }
+    },
     "config": {
       ".read": true,
       ".write": "auth.token.admin === true"

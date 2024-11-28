@@ -325,6 +325,10 @@ const styles = (theme: ThemeColors) =>
       backgroundColor: theme.activeComponentBG,
     },
 
+    accountSettingsSectionTitle: {
+      ...FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
+    },
+
     appColor: {
       color: theme.appColor,
     },
@@ -752,6 +756,13 @@ const styles = (theme: ThemeColors) =>
     cardSectionTitle: {
       fontSize: variables.fontSizeLarge,
       lineHeight: variables.lineHeightXLarge,
+    },
+
+    chatItemMessageHeaderTimestamp: {
+      flexShrink: 0,
+      color: theme.textSupporting,
+      fontSize: variables.fontSizeSmall,
+      paddingTop: 2,
     },
 
     checkboxWithLabelCheckboxStyle: {

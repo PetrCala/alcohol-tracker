@@ -1,5 +1,7 @@
 import type AccountCreations from './AccountCreations';
 import type {AccountCreationsList, DeviceId} from './AccountCreations';
+import type Bug from './Bug';
+import type {BugList, BugId} from './Bug';
 import type Config from './Config';
 import type {AppSettings, Maintenance} from './Config';
 import type {CapturedLogs, Log} from './Console';
@@ -70,6 +72,9 @@ export type {
   AccountCreations,
   AccountCreationsList,
   AppSettings,
+  Bug,
+  BugId,
+  BugList,
   CapturedLogs,
   Config,
   DatabaseProps,

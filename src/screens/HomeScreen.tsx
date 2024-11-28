@@ -34,7 +34,6 @@ import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
 import * as DS from '@libs/actions/DrinkingSession';
 import * as ErrorUtils from '@libs/ErrorUtils';
-import * as UserUtils from '@libs/UserUtils';
 import useTheme from '@hooks/useTheme';
 import Icon from '@components/Icon';
 import ScrollView from '@components/ScrollView';
@@ -45,7 +44,6 @@ import Text from '@components/Text';
 import useWindowDimensions from '@hooks/useWindowDimensions';
 import BottomTabBar from '@libs/Navigation/AppNavigator/createCustomBottomTabNavigator/BottomTabBar';
 import AgreeToTermsModal from '@components/AgreeToTermsModal';
-import {useConfig} from '@context/global/ConfigContext';
 
 type State = {
   drinkingSessionsCount: number;
@@ -101,15 +99,12 @@ function HomeScreen({route}: HomeScreenProps) {
     userData,
     isLoading,
   } = useDatabaseData();
-  const {config, isFetchingConfig} = useConfig();
   const [visibleDate, setVisibleDate] = useState<DateData>(
     dateToDateData(new Date()),
   );
   const [ongoingSessionId, setOngoingSessionId] = useState<
     DrinkingSessionId | null | undefined
   >();
-  const [shouldShowAgreeToTermsModal, setShouldShowAgreeToTermsModal] =
-    useState(false);
   const [isStartingSession, setIsStartingSession] = useState(false);
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -211,19 +206,6 @@ function HomeScreen({route}: HomeScreenProps) {
     );
   }, [userStatusData]);
 
-  useEffect(() => {
-    if (
-      !isFetchingConfig &&
-      config &&
-      UserUtils.shouldShowAgreeToTermsModal(
-        userData?.agreed_to_terms_at,
-        config?.terms_last_updated,
-      )
-    ) {
-      setShouldShowAgreeToTermsModal(true);
-    }
-  }, [config, isFetchingConfig, userData]);
-
   useFocusEffect(
     React.useCallback(() => {
       // Update user status on home screen focus
@@ -316,6 +298,7 @@ function HomeScreen({route}: HomeScreenProps) {
         ) : (
           <NoSessionsInfo />
         )}
+        <AgreeToTermsModal />
       </ScrollView>
       <BottomTabBar />
       {!ongoingSessionId && (
@@ -331,7 +314,6 @@ function HomeScreen({route}: HomeScreenProps) {
           />
         </TouchableOpacity>
       )}
-      {shouldShowAgreeToTermsModal && <AgreeToTermsModal />}
     </ScreenWrapper>
   );
 }
