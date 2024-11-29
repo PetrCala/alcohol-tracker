@@ -19,8 +19,7 @@ function FullScreenLoadingIndicator({
   const styles = useThemeStyles();
 
   return (
-    <View
-      style={[StyleSheet.absoluteFillObject, styles.fullScreenLoading, style]}>
+    <View style={[styles.fullScreen, styles.fullScreenLoading, style]}>
       {loadingText && (
         <Text style={[styles.textLoading, styles.mb4]}>{loadingText}</Text>
       )}

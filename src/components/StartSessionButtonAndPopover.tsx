@@ -13,10 +13,13 @@ import React, {
 } from 'react';
 import {View} from 'react-native';
 import type {OnyxEntry} from 'react-native-onyx';
-import {useOnyx} from 'react-native-onyx';
+import Onyx, {useOnyx} from 'react-native-onyx';
 import ConfirmModal from '@components/ConfirmModal';
 import FloatingActionButton from '@components/FloatingActionButton';
+import * as DSUtils from '@libs/DrinkingSessionUtils';
+import * as DS from '@libs/actions/DrinkingSession';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
+import * as ErrorUtils from '@libs/ErrorUtils';
 import type {PopoverMenuItem} from '@components/PopoverMenu';
 import PopoverMenu from '@components/PopoverMenu';
 import Text from '@components/Text';
@@ -40,6 +43,10 @@ import type {DrinkingSessionType} from '@src/types/onyx';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import getIconForSession from '@libs/getIconForSession';
 import Log from '@libs/common/Log';
+import {useDatabaseData} from '@context/global/DatabaseDataContext';
+import {useFirebase} from '@context/global/FirebaseContext';
+import FullScreenLoadingIndicator from './FullscreenLoadingIndicator';
+import _ from 'lodash';
 
 // Utils
 
@@ -59,19 +66,6 @@ type StartSessionButtonAndPopoverProps = {
 type StartSessionButtonAndPopoverRef = {
   hideCreateMenu: () => void;
 };
-const getSessionTypeTitle = (
-  sessionType: DrinkingSessionType,
-): TranslationPaths => {
-  switch (sessionType) {
-    case CONST.SESSION_TYPES.LIVE:
-      return 'drinkingSession.type.live';
-    case CONST.SESSION_TYPES.EDIT:
-      return 'drinkingSession.type.edit';
-    default:
-      return '' as TranslationPaths;
-  }
-};
-
 /**
  * Responsible for rendering the {@link PopoverMenu}, and the accompanying
  * FAB that can open or close the menu.
@@ -81,23 +75,44 @@ function StartSessionButtonAndPopover(
   ref: ForwardedRef<StartSessionButtonAndPopoverRef>,
 ) {
   const styles = useThemeStyles();
-  const theme = useTheme();
+  const {auth, db} = useFirebase();
   const {translate} = useLocalize();
-  const [isLoading = false] = useOnyx(ONYXKEYS.IS_LOADING_APP);
+  const user = auth.currentUser;
+  const [isVisible, setIsVisible] = useState(false);
+  const {drinkingSessionData, userData, userStatusData, isLoading} =
+    useDatabaseData();
+  const [ongoingSessionData] = useOnyx(ONYXKEYS.ONGOING_SESSION_DATA);
   const [startSession] = useOnyx(ONYXKEYS.START_SESSION_GLOBAL_CREATE);
-
-  //KIROKU
-  // const ongoingSessionId = useOnyx(ONYXKEYS.ONGOING_SESSION_ID)
-
+  const [isStartingSession, setIsStartingSession] = useState(false);
   const [isCreateMenuActive, setIsCreateMenuActive] = useState(false);
   const fabRef = useRef<HTMLDivElement>(null);
   const {windowHeight} = useWindowDimensions();
   const {shouldUseNarrowLayout} = useResponsiveLayout();
   const isFocused = useIsFocused();
   const prevIsFocused = usePrevious(isFocused);
-  const {isOffline} = useNetwork();
 
   const {environment} = useEnvironment();
+
+  const startLiveDrinkingSession = async (): Promise<void> => {
+    try {
+      setIsStartingSession(true);
+      const newSession = await DS.startLiveDrinkingSession(
+        db,
+        user,
+        userData?.timezone?.selected,
+      );
+      if (!newSession?.id) {
+        throw new Error(translate('drinkingSession.error.sessionOpen'));
+      }
+      Onyx.set(ONYXKEYS.ONGOING_SESSION_DATA, newSession).then(() => {
+        DS.navigateToOngoingSessionScreen(drinkingSessionData);
+      });
+    } catch (error: any) {
+      ErrorUtils.raiseAlert(error, translate('homeScreen.error.title'));
+    } finally {
+      setIsStartingSession(false);
+    }
+  };
 
   const renderSessionTypeTooltip = useCallback(
     () => (
@@ -118,49 +133,47 @@ function StartSessionButtonAndPopover(
     ],
   );
 
-  const sessionTypeTitle = useMemo(() => {
-    const titleKey = getSessionTypeTitle(
-      startSession?.sessionType ?? ('' as DrinkingSessionType),
-    );
-    return titleKey ? translate(titleKey) : '';
-  }, [startSession?.sessionType, translate]);
+  const getSessionTypeTitle = (
+    sessionType: DrinkingSessionType,
+  ): TranslationPaths => {
+    switch (sessionType) {
+      case CONST.SESSION_TYPES.LIVE:
+        return 'drinkingSession.type.live';
+      case CONST.SESSION_TYPES.EDIT:
+        return 'drinkingSession.type.edit';
+      default:
+        return '' as TranslationPaths;
+    }
+  };
 
-  const selectOption = useCallback(
-    (onSelected: () => void, shouldRestrictAction?: boolean) => {
-      if (shouldRestrictAction) {
-        Log.warn("This is a restricted action. You can't do this.");
-        // Navigation.navigate(
-        //   ROUTES.RESTRICTED_ACTION.getRoute(someSessionId),
-        // );
-        return;
-      }
-      onSelected();
-    },
-    [], // someSessionId
-  );
+  const selectOption = async (
+    onSelected: () => Promise<void>,
+    shouldRestrictAction?: boolean,
+  ): Promise<void> => {
+    if (shouldRestrictAction) {
+      Log.warn("This is a restricted action. You can't do this.");
+      // Navigation.navigate(
+      //   ROUTES.RESTRICTED_ACTION.getRoute(someSessionId),
+      // );
+      return;
+    }
+    await onSelected();
+  };
 
-  const navigateToSessionType = useCallback(() => {
+  const navigateToSessionType = useCallback(async () => {
     // const sessionID = DSUtils.generateSessionID();
 
     switch (startSession?.sessionType) {
       case CONST.SESSION_TYPES.LIVE:
-        selectOption(
-          () => {}, // Start a live session
-          // {}
-          // IOU.startMoneyRequest(
-          //   CONST.IOU.TYPE.SUBMIT,
-          //   sessionTypeReportID,
-          //   undefined,
-          //   true,
-          // ),
-        );
-        return;
+        await selectOption(() => startLiveDrinkingSession());
+        break;
       case CONST.SESSION_TYPES.EDIT:
-        selectOption(
-          () => {}, // Edit a session
+        await selectOption(
+          async () => {}, // Edit a session
         );
-        return;
+        break;
       default:
+        Log.warn(`Unsupported session type: ${startSession?.sessionType}`);
     }
   }, [startSession?.sessionType, selectOption]);
 
@@ -230,7 +243,7 @@ function StartSessionButtonAndPopover(
     }
   };
 
-  const sessionTypeMenuItems = useMemo(() => {
+  const sessionTypeMenuItemsData: PopoverMenuItem[] = useMemo(() => {
     // Define common properties in baseSessionType
     const baseSessionType = {
       label: translate('startSession.header'),
@@ -246,19 +259,50 @@ function StartSessionButtonAndPopover(
       tooltipWrapperStyle: styles.sessionTypeTooltipWrapper,
     };
 
-    if (startSession?.sessionType) {
-      return [
-        {
-          ...baseSessionType,
-          icon: getIconForSession(startSession.sessionType),
-          text: sessionTypeTitle,
-          description: 'A custom description', // TODO add a description here
-          onSelected: () => navigateToSessionType(),
-          shouldRenderTooltip: startSession.isFirstSession,
-        },
-      ];
-    }
-    // Possibly render other menu items here
+    const sessionTypes: DrinkingSessionType[] = Object.values(
+      CONST.SESSION_TYPES,
+    );
+
+    return _.map(sessionTypes, sessionType => {
+      return {
+        ...baseSessionType,
+        icon: getIconForSession(sessionType),
+        text: getSessionTypeTitle(sessionType),
+        description: 'A custom description', // TODO add a description here
+        onSelected: async () => navigateToSessionType(),
+        shouldRenderTooltip: false, // TODO
+        // shouldRenderTooltip: startSession.isFirstSession,
+      };
+    });
+  }, [
+    translate,
+    styles.popoverMenuItem.paddingHorizontal,
+    styles.popoverMenuItem.paddingVertical,
+    styles.sessionTypeTooltipWrapper,
+    getSessionTypeTitle,
+    renderSessionTypeTooltip,
+    startSession?.sessionType,
+    navigateToSessionType,
+    selectOption,
+  ]);
+
+  const sessionTypeMenuItems = useMemo(() => {
+    // TODO - here, render each session type
+
+    // TODO
+    // if (startSession?.sessionType) {
+    //   return [
+    //     {
+    //       ...baseSessionType,
+    //       icon: getIconForSession(startSession.sessionType),
+    //       text: getSessionTypeTitle(startSession.sessionType),
+    //       description: 'A custom description', // TODO add a description here
+    //       onSelected: async () => navigateToSessionType(),
+    //       shouldRenderTooltip: startSession.isFirstSession,
+    //     },
+    //   ];
+    // }
+    // // Possibly render other menu items here
 
     return [];
   }, [
@@ -266,12 +310,39 @@ function StartSessionButtonAndPopover(
     styles.popoverMenuItem.paddingHorizontal,
     styles.popoverMenuItem.paddingVertical,
     styles.sessionTypeTooltipWrapper,
+    getSessionTypeTitle,
     renderSessionTypeTooltip,
     startSession?.sessionType,
-    sessionTypeTitle,
     navigateToSessionType,
     selectOption,
   ]);
+
+  useEffect(() => {
+    if (userStatusData) {
+      Onyx.set(
+        ONYXKEYS.ONGOING_SESSION_DATA,
+        !!userStatusData?.latest_session?.ongoing
+          ? userStatusData?.latest_session
+          : null,
+      );
+    }
+  }, [userStatusData]);
+
+  useEffect(() => {
+    setIsVisible(!isLoading && !ongoingSessionData?.ongoing);
+  }, [ongoingSessionData?.ongoing, isLoading]);
+
+  if (!isVisible) {
+    return null;
+  }
+
+  if (isStartingSession) {
+    return (
+      <FullScreenLoadingIndicator
+        loadingText={translate('homeScreen.startingSession')}
+      />
+    );
+  }
 
   return (
     <View style={[styles.flexShrink1, styles.ph2]}>

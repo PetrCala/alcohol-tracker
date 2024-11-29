@@ -28,6 +28,36 @@ const drinkingSessionRef = DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID;
 const userStatusRef = DBPATHS.USER_STATUS_USER_ID;
 const userStatusLatestSessionRef = DBPATHS.USER_STATUS_USER_ID_LATEST_SESSION;
 
+let ongoingSessionId: DrinkingSessionId | undefined;
+Onyx.connect({
+  key: ONYXKEYS.ONGOING_SESSION_ID,
+  callback: value => {
+    if (value) {
+      ongoingSessionId = value;
+    }
+  },
+});
+
+let ongoingSessionData: DrinkingSession | undefined;
+Onyx.connect({
+  key: ONYXKEYS.ONGOING_SESSION_DATA,
+  callback: value => {
+    if (value) {
+      ongoingSessionData = value;
+    }
+  },
+});
+
+let editSessionData: DrinkingSession | undefined;
+Onyx.connect({
+  key: ONYXKEYS.EDIT_SESSION_DATA,
+  callback: value => {
+    if (value) {
+      editSessionData = value;
+    }
+  },
+});
+
 /**
  * Set the edit session data object in Onyx so that it can be modified. This function should be called only if the relevant object already exists in the onyx database.
  *
@@ -91,11 +121,11 @@ function syncLocalLiveSessionData(
       updateLocalData(
         ongoingSessionId,
         ongoingSessionData,
-        ONYXKEYS.LIVE_SESSION_DATA,
+        ONYXKEYS.ONGOING_SESSION_DATA,
       );
     }
   } else {
-    Onyx.set(ONYXKEYS.LIVE_SESSION_DATA, null);
+    Onyx.set(ONYXKEYS.ONGOING_SESSION_DATA, null);
   }
 }
 
@@ -160,10 +190,10 @@ async function saveDrinkingSessionData(
   newSessionData: DrinkingSession,
   sessionKey: string,
   onyxKey: OnyxKey,
-  updateStatus?: boolean,
+  sessionIsLive?: boolean,
 ): Promise<void> {
   const updates: Record<string, any> = {};
-  if (updateStatus) {
+  if (sessionIsLive) {
     const userStatusData: UserStatus = {
       // ETC - 1
       last_online: new Date().getTime(),
@@ -176,7 +206,11 @@ async function saveDrinkingSessionData(
 
   await update(ref(db), updates);
 
-  Onyx.set(onyxKey, null);
+  await Onyx.set(onyxKey, null);
+
+  if (sessionIsLive) {
+    await Onyx.set(ONYXKEYS.ONGOING_SESSION_ID, null);
+  }
 }
 
 /** Remove drinking session data from the database
@@ -191,11 +225,11 @@ async function removeDrinkingSessionData(
   userID: string,
   sessionKey: string,
   onyxKey: OnyxKey,
-  updateStatus?: boolean,
+  sessionIsLive?: boolean,
 ): Promise<void> {
   const updates: Record<string, any> = {};
   updates[drinkingSessionRef.getRoute(userID, sessionKey)] = null;
-  if (updateStatus) {
+  if (sessionIsLive) {
     const userStatusData: UserStatus = {
       last_online: new Date().getTime(),
       latest_session: null,
@@ -206,7 +240,11 @@ async function removeDrinkingSessionData(
 
   await update(ref(db), updates);
 
-  Onyx.set(onyxKey, null);
+  await Onyx.set(onyxKey, null);
+
+  if (sessionIsLive) {
+    await Onyx.set(ONYXKEYS.ONGOING_SESSION_ID, null);
+  }
 }
 
 /**
@@ -333,7 +371,7 @@ function updateSessionDate(
     millisecondsToSub,
   );
   const onyxKey = shouldUpdateLiveSessionData
-    ? ONYXKEYS.LIVE_SESSION_DATA
+    ? ONYXKEYS.ONGOING_SESSION_DATA
     : ONYXKEYS.EDIT_SESSION_DATA;
   updateLocalData(sessionId, modifiedSession, onyxKey);
 }
@@ -367,20 +405,20 @@ function getNewSessionToEdit(
 }
 
 /**
- * Navigate to the live session screen
+ * Navigate to the an ongoing session screen
  *
  * @param sessionId ID of the session to navigate to
  * @param session Current session data
  */
-function navigateToLiveSessionScreen(
-  sessionId: DrinkingSessionId | undefined,
-  session: DrinkingSession,
+function navigateToOngoingSessionScreen(
+  drinkingSessionData: DrinkingSessionList | undefined,
 ): void {
-  if (!sessionId) {
+  if (!ongoingSessionId || !drinkingSessionData) {
     throw new Error(Localize.translateLocal('drinkingSession.error.missingId'));
   }
-  updateLocalData(sessionId, session, ONYXKEYS.LIVE_SESSION_DATA);
-  Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(sessionId));
+  const session = drinkingSessionData[ongoingSessionId];
+  updateLocalData(ongoingSessionId, session, ONYXKEYS.ONGOING_SESSION_DATA);
+  Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(ongoingSessionId));
 }
 
 /**
@@ -402,7 +440,7 @@ function navigateToEditSessionScreen(
 
 export {
   navigateToEditSessionScreen,
-  navigateToLiveSessionScreen,
+  navigateToOngoingSessionScreen,
   removeDrinkingSessionData,
   saveDrinkingSessionData,
   startLiveDrinkingSession,
