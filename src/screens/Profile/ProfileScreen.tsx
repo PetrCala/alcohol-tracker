@@ -44,7 +44,7 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import FillerView from '@components/FillerView';
 import Button from '@components/Button';
 import {roundToTwoDecimalPlaces} from '@libs/NumberUtils';
-import ManageFriendModal from '@components/ManageFriendModal';
+import ManageFriendPopover from '@components/ManageFriendPopover';
 
 type State = {
   selfFriends: UserList | undefined;
@@ -290,13 +290,9 @@ function ProfileScreen({route}: ProfileScreenProps) {
             />
           )}
         </View>
-        <FillerView />
       </ScrollView>
-      <ManageFriendModal
-        isModalVisible={state.manageFriendModalVisible}
-        setVisibility={(visible: boolean) =>
-          dispatch({type: 'SET_MANAGE_FRIEND_MODAL_VISIBLE', payload: visible})
-        }
+      <ManageFriendPopover
+        isVisible={state.manageFriendModalVisible}
         onClose={() =>
           dispatch({type: 'SET_MANAGE_FRIEND_MODAL_VISIBLE', payload: false})
         }
