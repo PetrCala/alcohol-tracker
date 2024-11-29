@@ -52,6 +52,8 @@ import {DrinkingSessionWindowProps} from './types';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import {isEqual} from 'lodash';
 import {CalendarColors} from '@components/SessionsCalendar/types';
+import ONYXKEYS from '@src/ONYXKEYS';
+import Onyx from 'react-native-onyx';
 
 function DrinkingSessionWindow({
   sessionId,
@@ -88,7 +90,6 @@ function DrinkingSessionWindow({
     : translate('common.delete');
 
   const hasSessionChanged = () => {
-    console.log('checking for change');
     return !isEqual(sessionRef.current, session);
   };
 
@@ -224,7 +225,7 @@ function DrinkingSessionWindow({
         user.uid,
         sessionId,
         onyxKey,
-        !!sessionIsLive, // Update status if the session is live
+        !!sessionIsLive,
       );
       navigateBackDynamically(CONST.NAVIGATION.SESSION_ACTION.DISCARD);
     } catch (error: any) {

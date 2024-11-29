@@ -42,6 +42,7 @@ import DBPATHS from '@database/DBPATHS';
 import CONST from '@src/CONST';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
 import {describeWithEmulator} from '../../emulators/utils';
+import ONYXKEYS from '@src/ONYXKEYS';
 
 const testUserID: string = MOCK_USER_IDS[0];
 const testUserDisplayName = 'mock-user';
@@ -192,6 +193,7 @@ describeWithEmulator('Test drinking session functionality', () => {
       testUserID,
       mockDrinkingSession,
       mockSessionKey,
+      ONYXKEYS.EDIT_SESSION_DATA,
     );
 
     const userSessionRef =

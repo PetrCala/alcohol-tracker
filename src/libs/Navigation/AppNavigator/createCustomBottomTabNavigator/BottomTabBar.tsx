@@ -7,6 +7,7 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import StartSessionButtonAndPopover from '@components/StartSessionButtonAndPopover';
+import {useEffect} from 'react';
 
 function BottomTabBar() {
   const styles = useThemeStyles();

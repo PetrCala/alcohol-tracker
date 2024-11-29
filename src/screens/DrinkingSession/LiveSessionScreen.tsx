@@ -34,7 +34,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   const StyleUtils = useStyleUtils();
   const {translate} = useLocalize();
   const {isOnline} = useUserConnection();
-  const [session] = useOnyx(ONYXKEYS.LIVE_SESSION_DATA);
+  const [session] = useOnyx(ONYXKEYS.ONGOING_SESSION_DATA);
   const sessionRef = useRef<DrinkingSession | undefined>(undefined);
   const [dbSyncSuccessful, setDbSyncSuccessful] = useState(false);
 
@@ -107,7 +107,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       <DrinkingSessionWindow
         sessionId={sessionId}
         session={session}
-        onyxKey={ONYXKEYS.LIVE_SESSION_DATA}
+        onyxKey={ONYXKEYS.ONGOING_SESSION_DATA}
         type={CONST.SESSION_TYPES.LIVE}
       />
     </ScreenWrapper>

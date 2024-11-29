@@ -51,12 +51,12 @@ Onyx.connect({
   },
 });
 
-let liveSessionData: DrinkingSession | undefined;
+let ongoingSessionData: DrinkingSession | undefined;
 Onyx.connect({
-  key: ONYXKEYS.LIVE_SESSION_DATA,
+  key: ONYXKEYS.ONGOING_SESSION_DATA,
   callback: value => {
     if (value) {
-      liveSessionData = value;
+      ongoingSessionData = value;
     }
   },
 });
@@ -115,8 +115,8 @@ function isEmptySession(session: DrinkingSession): boolean {
 function getDrinkingSessionData(
   sessionId: DrinkingSessionId | undefined,
 ): DrinkingSession | undefined {
-  if (liveSessionData && liveSessionData.id === sessionId) {
-    return liveSessionData;
+  if (ongoingSessionData && ongoingSessionData.id === sessionId) {
+    return ongoingSessionData;
   }
   if (editSessionData && editSessionData.id === sessionId) {
     return editSessionData;
@@ -130,8 +130,8 @@ function getDrinkingSessionOnyxKey(
   if (!sessionId) {
     return null;
   }
-  if (liveSessionData && liveSessionData.id === sessionId) {
-    return ONYXKEYS.LIVE_SESSION_DATA;
+  if (ongoingSessionData && ongoingSessionData.id === sessionId) {
+    return ONYXKEYS.ONGOING_SESSION_DATA;
   }
   if (editSessionData && editSessionData.id === sessionId) {
     return ONYXKEYS.EDIT_SESSION_DATA;

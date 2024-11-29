@@ -34,8 +34,6 @@ import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
 import * as DS from '@libs/actions/DrinkingSession';
 import * as ErrorUtils from '@libs/ErrorUtils';
-import useTheme from '@hooks/useTheme';
-import Icon from '@components/Icon';
 import ScrollView from '@components/ScrollView';
 import useLocalize from '@hooks/useLocalize';
 import {roundToTwoDecimalPlaces} from '@libs/NumberUtils';
@@ -45,6 +43,8 @@ import useWindowDimensions from '@hooks/useWindowDimensions';
 import BottomTabBar from '@libs/Navigation/AppNavigator/createCustomBottomTabNavigator/BottomTabBar';
 import AgreeToTermsModal from '@components/AgreeToTermsModal';
 import StartSessionButtonAndPopover from '@components/StartSessionButtonAndPopover';
+import {useOnyx} from 'react-native-onyx';
+import ONYXKEYS from '@src/ONYXKEYS';
 
 type State = {
   drinkingSessionsCount: number;
@@ -85,27 +85,18 @@ type HomeScreenOnyxProps = {};
 type HomeScreenProps = HomeScreenOnyxProps &
   StackScreenProps<BottomTabNavigatorParamList, typeof SCREENS.HOME>;
 
-function HomeScreen({route}: HomeScreenProps) {
+function HomeScreen({}: HomeScreenProps) {
   const styles = useThemeStyles();
-  const theme = useTheme();
   const {auth, db, storage} = useFirebase();
   const {translate} = useLocalize();
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
-  const {
-    userStatusData,
-    drinkingSessionData,
-    preferences,
-    userData,
-    isLoading,
-  } = useDatabaseData();
+  const [ongoingSessionData] = useOnyx(ONYXKEYS.ONGOING_SESSION_DATA);
+  const {drinkingSessionData, preferences, userData, isLoading} =
+    useDatabaseData();
   const [visibleDate, setVisibleDate] = useState<DateData>(
     dateToDateData(new Date()),
   );
-  const [ongoingSessionId, setOngoingSessionId] = useState<
-    DrinkingSessionId | null | undefined
-  >();
-  const [isStartingSession, setIsStartingSession] = useState(false);
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const statsData: StatData = [
@@ -118,38 +109,6 @@ function HomeScreen({route}: HomeScreenProps) {
       content: String(roundToTwoDecimalPlaces(state.unitsConsumed)),
     },
   ];
-
-  const onOpenLiveSessionPress = async () => {
-    // If there is an ongoing session, open it
-    if (ongoingSessionId) {
-      try {
-        if (!drinkingSessionData) {
-          throw new Error(translate('homeScreen.error.title'));
-        }
-        const session = drinkingSessionData[ongoingSessionId];
-        DS.navigateToLiveSessionScreen(session?.id, session);
-      } catch (error: any) {
-        ErrorUtils.raiseAlert(error);
-      }
-      return;
-    }
-
-    // Start a new session
-    try {
-      setIsStartingSession(true);
-      const newSession = await DS.startLiveDrinkingSession(
-        db,
-        user,
-        userData?.timezone?.selected,
-      );
-      setOngoingSessionId(newSession?.id);
-      DS.navigateToLiveSessionScreen(newSession?.id, newSession);
-    } catch (error: any) {
-      ErrorUtils.raiseAlert(error, translate('homeScreen.error.title'));
-    } finally {
-      setIsStartingSession(false);
-    }
-  };
 
   // Monitor visible month and various statistics
   useMemo(() => {
@@ -195,17 +154,6 @@ function HomeScreen({route}: HomeScreenProps) {
     });
   }, [drinkingSessionData, userData]);
 
-  useEffect(() => {
-    if (!userStatusData) {
-      return;
-    }
-    setOngoingSessionId(
-      userStatusData?.latest_session?.ongoing
-        ? userStatusData?.latest_session_id
-        : undefined,
-    );
-  }, [userStatusData]);
-
   useFocusEffect(
     React.useCallback(() => {
       // Update user status on home screen focus
@@ -239,17 +187,13 @@ function HomeScreen({route}: HomeScreenProps) {
   if (!user) {
     return;
   }
+
   if (!isOnline) {
     return <UserOffline />;
   }
-  if (isLoading || isStartingSession || !preferences || !userData) {
-    return (
-      <FullScreenLoadingIndicator
-        loadingText={
-          (isStartingSession && translate('homeScreen.startingSession')) || ''
-        }
-      />
-    );
+
+  if (isLoading || !preferences || !userData) {
+    return <FullScreenLoadingIndicator />;
   }
 
   return (
@@ -277,11 +221,13 @@ function HomeScreen({route}: HomeScreenProps) {
         </TouchableOpacity>
       </View>
       <ScrollView>
-        {ongoingSessionId && (
+        {!!ongoingSessionData?.ongoing && (
           <MessageBanner
-            text={translate('homeScreen.currentlyInSession')}
-            onPress={onOpenLiveSessionPress}
             danger
+            text={translate('homeScreen.currentlyInSession')}
+            onPress={() =>
+              DS.navigateToOngoingSessionScreen(drinkingSessionData)
+            }
           />
         )}
         {!!drinkingSessionData ? (
