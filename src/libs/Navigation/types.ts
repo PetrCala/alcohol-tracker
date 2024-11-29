@@ -62,8 +62,7 @@ type State<TParamList extends ParamListBase = ParamListBase> =
 
 type CentralPaneScreensParamList = {
   [SCREENS.HOME]: undefined;
-  [SCREENS.SETTINGS.ACCOUNT.ROOT]: undefined;
-  [SCREENS.SETTINGS.PREFERENCES.ROOT]: undefined;
+  // Other screens that are not part of the bottom tab navigator, such as drinking session?, statistics, etc.
 };
 
 type BackToParams = {
