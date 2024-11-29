@@ -550,6 +550,7 @@ export default {
     drinkingSessions: (plural: string) => `Drinking Session${plural}`,
     unitsConsumed: 'Units Consumed',
     manageFriend: 'Manage Friend',
+    unfriendPrompt: 'Do you really want to unfriend this user?',
     unfriend: 'Unfriend',
   },
   statisticsScreen: {

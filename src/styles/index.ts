@@ -805,6 +805,16 @@ const styles = (theme: ThemeColors) =>
       paddingVertical: variables.componentBorderRadiusLarge,
     },
 
+    createMenuPositionSidebar: (windowHeight: number) =>
+      ({
+        horizontal: 18,
+        // Menu should be displayed 12px above the floating action button.
+        // To achieve that sidebar must be moved by: distance from the bottom of the sidebar to the fab (variables.fabBottom) + fab height (variables.componentSizeLarge) + distance above the fab (12px)
+        vertical:
+          windowHeight -
+          (variables.fabBottom + variables.componentSizeLarge + 12),
+      }) satisfies AnchorPosition,
+
     createMenuHeaderText: {
       ...FontUtils.fontFamily.platform.EXP_NEUE,
       fontSize: variables.fontSizeLabel,
