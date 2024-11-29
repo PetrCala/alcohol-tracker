@@ -487,6 +487,7 @@ const styles = (theme: ThemeColors) =>
       backgroundColor: theme.appBG,
       justifyContent: 'center',
       alignItems: 'center',
+      ...spacing.ph3,
       ...spacing.p1,
       ...sizing.mw100,
     },
@@ -942,6 +943,15 @@ const styles = (theme: ThemeColors) =>
     flipUpsideDown: {
       // transform: `rotate(180deg)`,
       transform: [{rotate: '180deg'}],
+    },
+
+    floatingActionButton: {
+      backgroundColor: theme.appColor,
+      height: variables.floatingActionButtonSize,
+      width: variables.floatingActionButtonSize,
+      borderRadius: 999,
+      alignItems: 'center',
+      justifyContent: 'center',
     },
 
     highlightBG: {
@@ -1856,12 +1866,12 @@ const styles = (theme: ThemeColors) =>
     startSessionPlusButton: (screenWidth: number) =>
       ({
         position: 'absolute',
-        left: screenWidth / 2 - variables.startSessionPlusButtonSize / 2,
+        left: screenWidth / 2 - variables.floatingActionButtonSize / 2,
         bottom:
-          variables.bottomTabHeight - variables.startSessionPlusButtonSize / 2,
-        borderRadius: variables.startSessionPlusButtonSize / 2,
-        width: variables.startSessionPlusButtonSize,
-        height: variables.startSessionPlusButtonSize,
+          variables.bottomTabHeight - variables.floatingActionButtonSize / 2,
+        borderRadius: variables.floatingActionButtonSize / 2,
+        width: variables.floatingActionButtonSize,
+        height: variables.floatingActionButtonSize,
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: theme.success,
