@@ -406,6 +406,8 @@ export default {
   },
   startSession: {
     header: 'Start a new session',
+    newSession: 'Start a session',
+    newSessionExplained: 'Start a session (Floating action)',
   },
   userNameScreen: {
     headerTitle: 'User name',

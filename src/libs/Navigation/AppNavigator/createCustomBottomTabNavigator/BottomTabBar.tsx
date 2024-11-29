@@ -1,3 +1,4 @@
+import {View} from 'react-native';
 import BottomTabBarIcon from '@components/BottomTabBarIcon';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
@@ -5,7 +6,7 @@ import {getReceivedRequestsCount} from '@libs/FriendUtils';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
-import {StyleSheet, View} from 'react-native';
+import StartSessionButtonAndPopover from '@components/StartSessionButtonAndPopover';
 
 function BottomTabBar() {
   const styles = useThemeStyles();
@@ -13,50 +14,31 @@ function BottomTabBar() {
 
   return (
     <View style={styles.bottomTabBarContainer}>
-      <View style={[localStyles.mainScreenFooterHalfContainer, styles.pr9]}>
-        <BottomTabBarIcon
-          src={KirokuIcons.Social}
-          onPress={() => Navigation.navigate(ROUTES.SOCIAL)}
-          accessibilityLabel="Social"
-          counter={getReceivedRequestsCount(userData?.friend_requests)}
-        />
-        <BottomTabBarIcon
-          src={KirokuIcons.Achievements}
-          onPress={() => Navigation.navigate(ROUTES.ACHIEVEMENTS)}
-          accessibilityLabel="Achievements"
-        />
-      </View>
-      <View style={[localStyles.mainScreenFooterHalfContainer, styles.pl9]}>
-        <BottomTabBarIcon
-          src={KirokuIcons.Statistics}
-          onPress={() => Navigation.navigate(ROUTES.STATISTICS)}
-          accessibilityLabel="Statistics"
-        />
-        <BottomTabBarIcon
-          src={KirokuIcons.BarMenu}
-          onPress={() => Navigation.navigate(ROUTES.SETTINGS)}
-          accessibilityLabel="Settings"
-        />
-      </View>
+      <BottomTabBarIcon
+        src={KirokuIcons.Social}
+        onPress={() => Navigation.navigate(ROUTES.SOCIAL)}
+        accessibilityLabel="Social"
+        counter={getReceivedRequestsCount(userData?.friend_requests)}
+      />
+      <BottomTabBarIcon
+        src={KirokuIcons.Achievements}
+        onPress={() => Navigation.navigate(ROUTES.ACHIEVEMENTS)}
+        accessibilityLabel="Achievements"
+      />
+      <StartSessionButtonAndPopover />
+      <BottomTabBarIcon
+        src={KirokuIcons.Statistics}
+        onPress={() => Navigation.navigate(ROUTES.STATISTICS)}
+        accessibilityLabel="Statistics"
+      />
+      <BottomTabBarIcon
+        src={KirokuIcons.BarMenu}
+        onPress={() => Navigation.navigate(ROUTES.SETTINGS)}
+        accessibilityLabel="Settings"
+      />
     </View>
   );
 }
-
-const localStyles = StyleSheet.create({
-  mainScreenFooterHalfContainer: {
-    width: '50%',
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
-    paddingHorizontal: 8,
-  },
-  mainScreenFooterLeftContainer: {
-    paddingRight: 36,
-  },
-  mainScreenFooterRightContainer: {
-    paddingLeft: 36,
-  },
-});
 
 export default BottomTabBar;
 

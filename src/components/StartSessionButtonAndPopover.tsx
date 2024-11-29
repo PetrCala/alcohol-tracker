@@ -15,7 +15,7 @@ import {View} from 'react-native';
 import type {OnyxEntry} from 'react-native-onyx';
 import {useOnyx} from 'react-native-onyx';
 import ConfirmModal from '@components/ConfirmModal';
-// import FloatingActionButton from '@components/FloatingActionButton';
+import FloatingActionButton from '@components/FloatingActionButton';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import type {PopoverMenuItem} from '@components/PopoverMenu';
 import PopoverMenu from '@components/PopoverMenu';
@@ -274,7 +274,7 @@ function StartSessionButtonAndPopover(
   ]);
 
   return (
-    <View style={styles.flexGrow1}>
+    <View style={[styles.flexShrink1, styles.ph2]}>
       <PopoverMenu
         onClose={hideCreateMenu}
         isVisible={isCreateMenuActive && (!shouldUseNarrowLayout || isFocused)}
@@ -289,14 +289,13 @@ function StartSessionButtonAndPopover(
         withoutOverlay
         anchorRef={fabRef}
       />
-      {/* TODO */}
-      {/* <FloatingActionButton
-                accessibilityLabel={translate('sidebarScreen.fabNewChatExplained')}
-                role={CONST.ROLE.BUTTON}
-                isActive={isCreateMenuActive}
-                ref={fabRef}
-                onPress={toggleCreateMenu}
-            /> */}
+      <FloatingActionButton
+        accessibilityLabel={translate('startSession.newSessionExplained')}
+        role={CONST.ROLE.BUTTON}
+        isActive={isCreateMenuActive}
+        ref={fabRef}
+        onPress={toggleCreateMenu}
+      />
     </View>
   );
 }

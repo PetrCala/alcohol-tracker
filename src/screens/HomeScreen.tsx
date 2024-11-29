@@ -44,6 +44,7 @@ import Text from '@components/Text';
 import useWindowDimensions from '@hooks/useWindowDimensions';
 import BottomTabBar from '@libs/Navigation/AppNavigator/createCustomBottomTabNavigator/BottomTabBar';
 import AgreeToTermsModal from '@components/AgreeToTermsModal';
+import StartSessionButtonAndPopover from '@components/StartSessionButtonAndPopover';
 
 type State = {
   drinkingSessionsCount: number;
@@ -91,7 +92,6 @@ function HomeScreen({route}: HomeScreenProps) {
   const {translate} = useLocalize();
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
-  const {windowWidth} = useWindowDimensions();
   const {
     userStatusData,
     drinkingSessionData,
@@ -301,19 +301,6 @@ function HomeScreen({route}: HomeScreenProps) {
         <AgreeToTermsModal />
       </ScrollView>
       <BottomTabBar />
-      {!ongoingSessionId && (
-        <TouchableOpacity
-          accessibilityRole="button"
-          style={styles.startSessionPlusButton(windowWidth)}
-          onPress={onOpenLiveSessionPress}>
-          <Icon
-            src={KirokuIcons.Plus}
-            height={36}
-            width={36}
-            fill={theme.textLight}
-          />
-        </TouchableOpacity>
-      )}
     </ScreenWrapper>
   );
 }

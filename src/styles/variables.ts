@@ -242,7 +242,7 @@ export default {
   numericSliderHeight: 40,
   successIndicatorSize: 20,
   successAnimationIconSize: 100,
-  startSessionPlusButtonSize: 70,
+  floatingActionButtonSize: 70,
   bottomTabBarCounterSize: 20,
   calendarHeaderHeight: 50,
   sessionsCalendarArrowWidth: 90,
