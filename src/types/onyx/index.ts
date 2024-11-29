@@ -49,6 +49,7 @@ import type Response from './Response';
 import type Session from './Session';
 import type SessionPlaceholder from './SessionPlaceholder';
 import type {SessionPlaceholderList} from './SessionPlaceholder';
+import type StartSession from './StartSession';
 import type UnconfirmedDays from './UnconfirmedDays';
 import type {UnconfirmedDaysList, UnconfirmedDayKey} from './UnconfirmedDays';
 import type Drinks from './Drinks';
@@ -121,6 +122,7 @@ export type {
   Session,
   SessionPlaceholder,
   SessionPlaceholderList,
+  StartSession,
   TzFix,
   UnconfirmedDayKey,
   UnconfirmedDays,

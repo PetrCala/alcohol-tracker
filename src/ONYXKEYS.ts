@@ -26,8 +26,8 @@ const ONYXKEYS = {
   /** Stores current date */
   CURRENT_DATE: 'currentDate',
 
-  //   // Contains loading data for the IOU feature (MoneyRequestModal, IOUDetail, & MoneyRequestPreview Components)
-  //   IOU: 'iou',
+  /** The last session create action taken (for the Start Session Button) */
+  START_SESSION_GLOBAL_CREATE: 'startSessionGlobalCreate',
 
   /** Keeps track if there is modal currently visible or not */
   MODAL: 'modal',
@@ -238,7 +238,7 @@ type OnyxValuesMapping = {
   [ONYXKEYS.IS_SIDEBAR_LOADED]: boolean;
   [ONYXKEYS.PERSISTED_REQUESTS]: OnyxTypes.Request[];
   [ONYXKEYS.CURRENT_DATE]: string;
-  //   [ONYXKEYS.IOU]: OnyxTypes.IOU;
+  [ONYXKEYS.START_SESSION_GLOBAL_CREATE]: OnyxTypes.StartSession;
   [ONYXKEYS.MODAL]: OnyxTypes.Modal;
   [ONYXKEYS.NETWORK]: OnyxTypes.Network;
   //   [ONYXKEYS.NEW_GROUP_CHAT_DRAFT]: OnyxTypes.NewGroupChatDraft;

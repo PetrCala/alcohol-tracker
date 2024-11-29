@@ -84,8 +84,10 @@ const darkTheme = {
   mentionBG: colors.blue600,
   ourMentionText: colors.green100,
   ourMentionBG: colors.green600,
-  tooltipSupportingText: colors.productLight800,
-  tooltipPrimaryText: colors.productLight900,
+  tooltipHighlightBG: colors.orange100, // TODO check
+  tooltipHighlightText: colors.orange500, // TODO check
+  tooltipSupportingText: colors.productDark800,
+  tooltipPrimaryText: colors.productDark900,
   skeletonLHNIn: colors.productDark400,
   skeletonLHNOut: colors.productDark600,
   QRLogo: colors.yellow,

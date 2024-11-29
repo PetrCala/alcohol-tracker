@@ -1578,6 +1578,21 @@ const styles = (theme: ThemeColors) =>
       ...spacing.pt4,
     },
 
+    sessionTypeTooltipWrapper: {
+      backgroundColor: theme.tooltipHighlightBG,
+    },
+
+    sessionTypeTooltipTitle: {
+      ...FontUtils.fontFamily.platform.EXP_NEUE_BOLD,
+      fontSize: variables.fontSizeLabel,
+      color: theme.tooltipHighlightText,
+    },
+
+    sessionTypeTooltipSubtitle: {
+      fontSize: variables.fontSizeLabel,
+      color: theme.textDark,
+    },
+
     signUpScreen: {
       backgroundColor: theme.highlightBG,
       minHeight: '100%',

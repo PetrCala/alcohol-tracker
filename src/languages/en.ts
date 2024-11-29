@@ -404,6 +404,9 @@ export default {
       missingId: 'Missing session ID',
     },
   },
+  startSession: {
+    header: 'Start a new session',
+  },
   userNameScreen: {
     headerTitle: 'User name',
     explanation:
