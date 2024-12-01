@@ -1,6 +1,5 @@
 // Sourced from FloatingActionButtonAndPopover.tsx - see that file for more functionality
 import {useIsFocused} from '@react-navigation/native';
-import type {ImageContentFit} from 'expo-image';
 import type {ForwardedRef} from 'react';
 import React, {
   forwardRef,
@@ -25,13 +24,10 @@ import PopoverMenu from '@components/PopoverMenu';
 import Text from '@components/Text';
 import useEnvironment from '@hooks/useEnvironment';
 import useLocalize from '@hooks/useLocalize';
-import useNetwork from '@hooks/useNetwork';
 import usePrevious from '@hooks/usePrevious';
 import useResponsiveLayout from '@hooks/useResponsiveLayout';
-import useTheme from '@hooks/useTheme';
 import useThemeStyles from '@hooks/useThemeStyles';
 import useWindowDimensions from '@hooks/useWindowDimensions';
-import Navigation from '@libs/Navigation/Navigation';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
 import type * as OnyxTypes from '@src/types/onyx';
@@ -39,7 +35,6 @@ import type {DrinkingSessionType} from '@src/types/onyx';
 import Log from '@libs/common/Log';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {useFirebase} from '@context/global/FirebaseContext';
-import FullScreenLoadingIndicator from './FullscreenLoadingIndicator';
 import _ from 'lodash';
 
 // Utils
@@ -278,10 +273,6 @@ function StartSessionButtonAndPopover(
   useEffect(() => {
     setIsVisible(!loadingText && !ongoingSessionData?.ongoing);
   }, [ongoingSessionData?.ongoing, loadingText]);
-
-  // if (!isVisible) {
-  //   return null;
-  // }
 
   return (
     <View style={[styles.flexShrink1, styles.ph2]}>

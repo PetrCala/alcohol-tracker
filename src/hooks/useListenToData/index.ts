@@ -42,7 +42,7 @@ const useListenToData = (
       return;
     }
 
-    Utils.setLoadingText('');
+    Utils.setLoadingText(translate('database.loading'));
     const unsubscribers = dataTypes.map(dataTypes => {
       const path = fetchDataKeyToDbPath(dataTypes, userID);
 
@@ -54,7 +54,7 @@ const useListenToData = (
       return () => {};
     });
 
-    Utils.setLoadingText(translate('database.loading'));
+    Utils.setLoadingText(null);
 
     // Cleanup function to unsubscribe from all listeners when the component unmounts or the effect reruns
     return () => {

@@ -8,6 +8,7 @@ import {
   Dimensions,
 } from 'react-native';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
+import * as Utils from '@libs/Utils';
 import MenuIcon from '@components/Buttons/MenuIcon';
 import {
   changeDateBySomeDays,
@@ -42,6 +43,8 @@ import Icon from '@components/Icon';
 import useTheme from '@hooks/useTheme';
 import commonStyles from '@src/styles/commonStyles';
 import DateUtils from '@libs/DateUtils';
+import {useOnyx} from 'react-native-onyx';
+import ONYXKEYS from '@src/ONYXKEYS';
 
 type DayOverviewScreenProps = StackScreenProps<
   DayOverviewNavigatorParamList,
@@ -56,11 +59,11 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
   const {translate} = useLocalize();
   const styles = useThemeStyles();
   const theme = useTheme();
+  const [loadingText] = useOnyx(ONYXKEYS.APP_LOADING_TEXT);
   const {drinkingSessionData, preferences, userData} = useDatabaseData();
   const [currentDate, setCurrentDate] = useState<Date>(
     date ? dateStringToDate(date) : new Date(),
   );
-  const [loadingText, setLoadingText] = useState<string>('');
   const [editMode, setEditMode] = useState<boolean>(false);
   const [dailyData, setDailyData] = useState<DrinkingSessionKeyValue[]>([]);
 
@@ -201,9 +204,9 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
       return null;
     }
 
-    const onAddSessionButtonPress = () => {
+    const onAddSessionButtonPress = async () => {
       try {
-        setLoadingText(translate('common.loading'));
+        await Utils.setLoadingText(translate('liveSessionScreen.loading'));
         const newSession = DS.getNewSessionToEdit(
           db,
           auth.currentUser,
@@ -214,7 +217,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
       } catch (error: any) {
         ErrorUtils.raiseAlert(error);
       } finally {
-        setLoadingText('');
+        await Utils.setLoadingText(null);
       }
     };
 
@@ -246,9 +249,6 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
 
   if (!isOnline) {
     return <UserOffline />;
-  }
-  if (!!loadingText) {
-    return <FullScreenLoadingIndicator loadingText={loadingText} />;
   }
   if (!date) {
     return <FullScreenLoadingIndicator />;
@@ -320,20 +320,6 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
 const screenWidth = Dimensions.get('window').width;
 
 const localStyles = StyleSheet.create({
-  menuDrinkingSessionContainer: {
-    height: 85,
-    padding: 8,
-    borderRadius: 12,
-    marginVertical: 2,
-  },
-  backArrowContainer: {
-    justifyContent: 'center',
-    padding: 10,
-  },
-  backArrow: {
-    width: 25,
-    height: 25,
-  },
   menuIconContainer: {
     width: 40,
     height: 40,
@@ -357,16 +343,6 @@ const localStyles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'flex-start',
     padding: 5,
-  },
-  menuDrinkingSessionInfoText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginTop: 5,
-    marginBottom: 5,
-    color: 'black',
-    alignSelf: 'center',
-    alignContent: 'center',
-    padding: 10,
   },
   addSessionButton: {
     borderRadius: 50,
