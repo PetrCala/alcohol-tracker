@@ -23,7 +23,6 @@ import Visibility from '@libs/Visibility';
 import {useFirebase} from '@context/global/FirebaseContext';
 import ONYXKEYS from '@src/ONYXKEYS';
 import type {Route} from '@src/ROUTES';
-import type {Config} from '@src/types/onyx';
 import {updateLastRoute} from '@libs/actions/App';
 import setCrashlyticsUserId from '@libs/setCrashlyticsUserId';
 import {useUserConnection} from '@context/global/UserConnectionContext';
@@ -38,6 +37,8 @@ import SplashScreenStateContext from '@context/global/SplashScreenStateContext';
 import CONFIG from './CONFIG';
 import UpdateAppModal from '@components/UpdateAppModal';
 import VerifyEmailModal from '@components/VerifyEmailModal';
+import {useConfig} from '@context/global/ConfigContext';
+import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 
 Onyx.registerLogger(({level, message}) => {
   if (level === 'alert') {
@@ -63,11 +64,11 @@ function Kiroku({}: KirokuProps) {
   );
   const [lastVisitedPath] = useOnyx(ONYXKEYS.LAST_VISITED_PATH);
   const [lastRoute] = useOnyx(ONYXKEYS.LAST_ROUTE);
+  const [loadingText] = useOnyx(ONYXKEYS.APP_LOADING_TEXT);
   const [initialUrl, setInitialUrl] = useState<string | null>(null);
+  const {config} = useConfig();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authenticationChecked, setAuthenticationChecked] = useState(false);
-  const [isFetchingConfig, setIsFetchingConfig] = useState<boolean>(true);
-  const [config, setConfig] = useState<Config | null>(null);
   const [isUnderMaintenance, setIsUnderMaintenance] = useState<boolean>(false);
   const [shouldShowVerifyEmailModal, setShouldShowVerifyEmailModal] =
     useState<boolean>(false);
@@ -93,24 +94,24 @@ function Kiroku({}: KirokuProps) {
     return () => unsubscribe();
   }, [auth]);
 
-  useEffect(() => {
-    const configPath = DBPATHS.CONFIG;
-    const stopListening = listenForDataChanges(
-      db,
-      configPath,
-      (data: Config) => {
-        setConfig(data);
-        setIsFetchingConfig(false);
-        if (!data) {
-          console.debug(
-            'Could not fetch the application configuration data from the database.',
-          );
-        }
-      },
-    );
+  // useEffect(() => {
+  //   const configPath = DBPATHS.CONFIG;
+  //   const stopListening = listenForDataChanges(
+  //     db,
+  //     configPath,
+  //     (data: Config) => {
+  //       setConfig(data);
+  //       setIsFetchingConfig(false);
+  //       if (!data) {
+  //         console.debug(
+  //           'Could not fetch the application configuration data from the database.',
+  //         );
+  //       }
+  //     },
+  //   );
 
-    return () => stopListening();
-  }, []);
+  //   return () => stopListening();
+  // }, []);
 
   useMemo(() => {
     if (config) {
@@ -270,7 +271,9 @@ function Kiroku({}: KirokuProps) {
     //     autoAuthState={autoAuthState}
     // >
     <>
-      {!isFetchingConfig && (
+      {!!loadingText ? (
+        <FullScreenLoadingIndicator loadingText={loadingText} />
+      ) : (
         <>
           {!isOnline && !CONFIG.IS_USING_EMULATORS && <UserOfflineModal />}
           {isUnderMaintenance && <UnderMaintenanceModal config={config} />}

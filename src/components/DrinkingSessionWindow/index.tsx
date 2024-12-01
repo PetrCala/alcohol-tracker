@@ -17,6 +17,7 @@ import {
   unitsToColors,
 } from '@libs/DataHandling';
 import Text from '@components/Text';
+import useWaitForNavigation from '@hooks/useWaitForNavigation';
 import type {DrinkingSession, DrinkKey} from '@src/types/onyx';
 import DrinkTypesView from '@components/DrinkTypesView';
 import SessionDetailsWindow from '@components/SessionDetailsWindow';
@@ -42,11 +43,8 @@ import Log from '@libs/Log';
 import Icon from '@components/Icon';
 import DateUtils from '@libs/DateUtils';
 import {DrinkingSessionWindowProps} from './types';
-import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import {isEqual} from 'lodash';
 import {CalendarColors} from '@components/SessionsCalendar/types';
-import ONYXKEYS from '@src/ONYXKEYS';
-import Onyx, {useOnyx} from 'react-native-onyx';
 import {User} from 'firebase/auth';
 
 function DrinkingSessionWindow({
@@ -70,12 +68,11 @@ function DrinkingSessionWindow({
   const [sessionFinished, setSessionFinished] = useState<boolean>(false);
   // // Time info
   const [monkeMode, setMonkeMode] = useState<boolean>(false);
+  const waitForNavigate = useWaitForNavigation();
   // const [dbSyncSuccessful, setDbSyncSuccessful] = useState(false);
   // // Other
   const [discardModalVisible, setDiscardModalVisible] =
     useState<boolean>(false);
-  const [loadingText] = useOnyx(ONYXKEYS.APP_LOADING_TEXT);
-  // const [loadingText, setLoadingText] = useState<string>('');
   const [shouldShowLeaveConfirmation, setShouldShowLeaveConfirmation] =
     useState(false);
   // useState<boolean>(false);
@@ -200,7 +197,6 @@ function DrinkingSessionWindow({
   }
 
   const handleDiscardSession = async () => {
-    // await waitForNoPendingUpdate(); // TODO
     setDiscardModalVisible(true);
   };
 
@@ -209,13 +205,12 @@ function DrinkingSessionWindow({
       return;
     }
     try {
-      // TODO
-      // setLoadingText(
-      //   translate(
-      //     'liveSessionScreen.discardingSession',
-      //     sessionIsLive ? 'Discarding' : 'Deleting',
-      //   ),
-      // );
+      await Utils.setLoadingText(
+        translate(
+          'liveSessionScreen.discardingSession',
+          sessionIsLive ? 'Discarding' : 'Deleting',
+        ),
+      );
       await DS.removeDrinkingSessionData(
         db,
         user.uid,
@@ -232,7 +227,7 @@ function DrinkingSessionWindow({
       );
     } finally {
       setDiscardModalVisible(false);
-      // setLoadingText(''); // TODO
+      await Utils.setLoadingText(null);
     }
   };
 
@@ -281,13 +276,11 @@ function DrinkingSessionWindow({
   }, [session]);
 
   useEffect(() => {
-    Utils.setLoadingText(null);
+    waitForNavigate(() => {
+      Utils.setLoadingText(null);
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps -- we don't want this effect to run again
   }, []); // Upon component mount
-
-  if (!!loadingText) {
-    return <FullScreenLoadingIndicator loadingText={loadingText} />;
-  }
 
   return (
     <>

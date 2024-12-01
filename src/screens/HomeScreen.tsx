@@ -182,15 +182,15 @@ function HomeScreen({}: HomeScreenProps) {
   );
 
   if (!user) {
-    return;
+    throw new Error(translate('common.error.userNull'));
   }
 
   if (!isOnline) {
     return <UserOffline />;
   }
 
-  if (!!loadingText || !preferences || !userData) {
-    return <FullScreenLoadingIndicator />;
+  if (!!loadingText || !preferences || !userData || !user) {
+    return <FullScreenLoadingIndicator loadingText={loadingText} />;
   }
 
   return (
@@ -198,7 +198,6 @@ function HomeScreen({}: HomeScreenProps) {
       testID={HomeScreen.displayName}
       includePaddingTop={false}
       includeSafeAreaPaddingBottom={getPlatform() !== CONST.PLATFORM.IOS}>
-      <FullScreenLoadingIndicator />
       {/* // TODO rewrite this into the HeaderWithBackButton component */}
       <View style={[styles.headerBar, styles.borderBottom]}>
         <TouchableOpacity

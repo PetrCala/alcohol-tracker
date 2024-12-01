@@ -11,7 +11,7 @@ import Text from '@components/Text';
 
 type UnderMaintenanceProps = {
   /** Configuration database object */
-  config: Config | null;
+  config: Config | undefined | null;
 };
 
 /** Given a date, return this date in human-legible hours and minutes */
