@@ -783,6 +783,7 @@ export default {
     successMessage: 'Your account has been successfully deleted.',
   },
   database: {
+    loading: 'Fetching data...',
     error: {
       generic: 'Failed to reach the database',
       saveData: 'Failed to save your data to the database. Please try again.',

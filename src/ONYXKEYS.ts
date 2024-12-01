@@ -85,14 +85,11 @@ const ONYXKEYS = {
   /** Edit session data */
   EDIT_SESSION_DATA: 'editSessionData',
 
-  /** Is drinking session data loading? */
-  IS_LOADING_SESSION_DATA: 'isLoadingSessionData',
-
-  /** Text to show when a drinking session is loading */
-  LOADING_SESSION_DATA_TEXT: 'loadingSessionDataText',
-
   /** Is the app loading? */
   IS_LOADING_APP: 'isLoadingApp',
+
+  /** Text to show when the app is loading */
+  APP_LOADING_TEXT: 'appLoadingText',
 
   /** Whether we should show the compose input or not */
   SHOULD_SHOW_COMPOSE_INPUT: 'shouldShowComposeInput',
@@ -257,8 +254,7 @@ type OnyxValuesMapping = {
   [ONYXKEYS.NVP_PREFERRED_LOCALE]: OnyxTypes.Locale;
   [ONYXKEYS.ONGOING_SESSION_DATA]: OnyxTypes.DrinkingSession;
   [ONYXKEYS.EDIT_SESSION_DATA]: OnyxTypes.DrinkingSession;
-  [ONYXKEYS.IS_LOADING_SESSION_DATA]: boolean;
-  [ONYXKEYS.LOADING_SESSION_DATA_TEXT]: string;
+  [ONYXKEYS.APP_LOADING_TEXT]: string;
   //   [ONYXKEYS.IS_TEST_TOOLS_MODAL_OPEN]: boolean;
   //   [ONYXKEYS.APP_PROFILING_IN_PROGRESS]: boolean;
   [ONYXKEYS.IS_LOADING_APP]: boolean;

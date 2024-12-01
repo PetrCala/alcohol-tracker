@@ -15,13 +15,16 @@ import TextLink from './TextLink';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {useConfig} from '@context/global/ConfigContext';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
+import {useOnyx} from 'react-native-onyx';
+import ONYXKEYS from '@src/ONYXKEYS';
 
 function AgreeToTermsModal() {
   const styles = useThemeStyles();
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
+  const [loadingText] = useOnyx(ONYXKEYS.APP_LOADING_TEXT);
   const {userData} = useDatabaseData();
-  const {config, isFetchingConfig} = useConfig();
+  const {config} = useConfig();
   const {translate} = useLocalize();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
@@ -55,7 +58,7 @@ function AgreeToTermsModal() {
 
   useEffect(() => {
     if (
-      !isFetchingConfig &&
+      !loadingText &&
       config &&
       UserUtils.shouldShowAgreeToTermsModal(
         userData?.agreed_to_terms_at,
@@ -64,7 +67,7 @@ function AgreeToTermsModal() {
     ) {
       setIsModalVisible(true);
     }
-  }, [config, isFetchingConfig, userData]);
+  }, [config, loadingText, userData]);
 
   return (
     <SafeAreaConsumer>

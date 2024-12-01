@@ -18,7 +18,6 @@ type DatabaseDataContextType = {
   preferences?: Preferences;
   unconfirmedDays?: UnconfirmedDays;
   userData?: UserData;
-  isLoading: boolean;
 };
 
 export const DatabaseDataContext = createContext<
@@ -54,7 +53,7 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
     'userData',
   ];
 
-  const {data, isLoading} = useListenToData(dataTypes, userID);
+  const {data} = useListenToData(dataTypes, userID);
 
   const value = useMemo(
     () => ({
@@ -63,9 +62,8 @@ export const DatabaseDataProvider: React.FC<DatabaseDataProviderProps> = ({
       preferences: data.preferences,
       unconfirmedDays: data.unconfirmedDays,
       userData: data.userData,
-      isLoading,
     }),
-    [data, isLoading],
+    [data],
   );
 
   // Monitor local data for changes - TODO rewrite this later

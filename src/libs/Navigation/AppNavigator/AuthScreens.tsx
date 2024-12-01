@@ -1,7 +1,7 @@
 import React, {memo, useEffect, useMemo, useRef} from 'react';
 import {View} from 'react-native';
 import type {OnyxEntry} from 'react-native-onyx';
-import Onyx, {withOnyx} from 'react-native-onyx';
+import Onyx, {useOnyx, withOnyx} from 'react-native-onyx';
 // import OptionsListContextProvider from '@components/OptionListContextProvider';
 // import useOnboardingLayout from '@hooks/useOnboardingLayout';
 import useStyleUtils from '@hooks/useStyleUtils';
@@ -44,6 +44,7 @@ import TzFixModalNavigator from './Navigators/TzFixModalNavigator';
 import RightModalNavigator from './Navigators/RightModalNavigator';
 import {auth} from '@libs/Firebase/FirebaseApp';
 import ReactComponentModule from '@src/types/utils/ReactComponentModule';
+import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 // import WelcomeVideoModalNavigator from './Navigators/WelcomeVideoModalNavigator';
 
 type AuthScreensProps = {
@@ -55,7 +56,6 @@ const notFoundScreen = () =>
   require<ReactComponentModule>('@screens/ErrorScreen/NotFoundScreen').default;
 
 let timezone: Timezone | null;
-let isLoadingApp = false;
 let lastUpdateIDAppliedToClient: OnyxEntry<number>;
 
 Onyx.connect({
@@ -81,27 +81,20 @@ Onyx.connect({
 });
 
 Onyx.connect({
-  key: ONYXKEYS.IS_LOADING_APP,
-  callback: value => {
-    isLoadingApp = !!value;
-  },
-});
-
-Onyx.connect({
   key: ONYXKEYS.ONYX_UPDATES_LAST_UPDATE_ID_APPLIED_TO_CLIENT,
   callback: (value: OnyxEntry<number>) => {
     lastUpdateIDAppliedToClient = value;
   },
 });
 
-function handleNetworkReconnect() {
-  if (isLoadingApp) {
-    App.openApp();
-  } else {
-    Log.info('[handleNetworkReconnect] Sending ReconnectApp');
-    App.reconnectApp(lastUpdateIDAppliedToClient);
-  }
-}
+// function handleNetworkReconnect() {
+//   if (isLoadingApp) {
+//     App.openApp();
+//   } else {
+//     Log.info('[handleNetworkReconnect] Sending ReconnectApp');
+//     App.reconnectApp(lastUpdateIDAppliedToClient);
+//   }
+// }
 
 const RootStack = createCustomStackNavigator<AuthScreensParamList>();
 // We want to delay the re-rendering for components

@@ -1,5 +1,7 @@
 import type {ValueOf} from 'type-fest';
 import CONST from '@src/CONST';
+import Onyx, {OnyxEntry, OnyxMergeInput} from 'react-native-onyx';
+import ONYXKEYS from '@src/ONYXKEYS';
 
 type BrickRoad = ValueOf<typeof CONST.BRICK_ROAD_INDICATOR_STATUS> | undefined;
 
@@ -65,5 +67,17 @@ function arrayDifference<TItem>(array1: TItem[], array2: TItem[]): TItem[] {
   return [array1, array2].reduce((a, b) => a.filter(c => !b.includes(c)));
 }
 
-export {isObject, objectsAreEqual, arrayItemsAreEqual, arrayDifference};
+async function setLoadingText(
+  text: OnyxMergeInput<'appLoadingText'>,
+): Promise<void> {
+  await Onyx.merge(ONYXKEYS.APP_LOADING_TEXT, text);
+}
+
+export {
+  isObject,
+  objectsAreEqual,
+  arrayItemsAreEqual,
+  arrayDifference,
+  setLoadingText,
+};
 export type {BrickRoad};

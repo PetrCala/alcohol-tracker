@@ -1,12 +1,4 @@
-import React, {
-  useState,
-  useEffect,
-  useMemo,
-  ForwardedRef,
-  Ref,
-  ElementRef,
-  useRef,
-} from 'react';
+import React, {useState, useEffect, useMemo, useRef} from 'react';
 import {
   Alert,
   BackHandler,
@@ -44,6 +36,7 @@ import ConfirmModal from '@components/ConfirmModal';
 import useWindowDimensions from '@hooks/useWindowDimensions';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import * as ErrorUtils from '@libs/ErrorUtils';
+import * as Utils from '@libs/Utils';
 import ScrollView from '@components/ScrollView';
 import Log from '@libs/Log';
 import Icon from '@components/Icon';
@@ -53,7 +46,8 @@ import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import {isEqual} from 'lodash';
 import {CalendarColors} from '@components/SessionsCalendar/types';
 import ONYXKEYS from '@src/ONYXKEYS';
-import Onyx from 'react-native-onyx';
+import Onyx, {useOnyx} from 'react-native-onyx';
+import {User} from 'firebase/auth';
 
 function DrinkingSessionWindow({
   sessionId,
@@ -80,7 +74,8 @@ function DrinkingSessionWindow({
   // // Other
   const [discardModalVisible, setDiscardModalVisible] =
     useState<boolean>(false);
-  const [loadingText, setLoadingText] = useState<string>('');
+  const [loadingText] = useOnyx(ONYXKEYS.APP_LOADING_TEXT);
+  // const [loadingText, setLoadingText] = useState<string>('');
   const [shouldShowLeaveConfirmation, setShouldShowLeaveConfirmation] =
     useState(false);
   // useState<boolean>(false);
@@ -160,7 +155,7 @@ function DrinkingSessionWindow({
     Navigation.navigate(route());
   };
 
-  async function saveSession(db: any, userID: string) {
+  async function saveSession(db: any, user: User | null) {
     if (!session || !user) {
       return;
     }
@@ -173,7 +168,7 @@ function DrinkingSessionWindow({
       return;
     }
 
-    setLoadingText(translate('liveSessionScreen.saving'));
+    await Utils.setLoadingText(translate('liveSessionScreen.saving'));
     setSessionFinished(true); // No more db syncs
     const newSessionData: DrinkingSession = {
       ...session,
@@ -185,7 +180,7 @@ function DrinkingSessionWindow({
     try {
       await DS.saveDrinkingSessionData(
         db,
-        userID,
+        user.uid,
         newSessionData,
         sessionId,
         onyxKey,
@@ -200,7 +195,7 @@ function DrinkingSessionWindow({
       );
       setSessionFinished(false);
     } finally {
-      setLoadingText('');
+      await Utils.setLoadingText(null);
     }
   }
 
@@ -214,12 +209,13 @@ function DrinkingSessionWindow({
       return;
     }
     try {
-      setLoadingText(
-        translate(
-          'liveSessionScreen.discardingSession',
-          sessionIsLive ? 'Discarding' : 'Deleting',
-        ),
-      );
+      // TODO
+      // setLoadingText(
+      //   translate(
+      //     'liveSessionScreen.discardingSession',
+      //     sessionIsLive ? 'Discarding' : 'Deleting',
+      //   ),
+      // );
       await DS.removeDrinkingSessionData(
         db,
         user.uid,
@@ -236,7 +232,7 @@ function DrinkingSessionWindow({
       );
     } finally {
       setDiscardModalVisible(false);
-      setLoadingText('');
+      // setLoadingText(''); // TODO
     }
   };
 
@@ -284,11 +280,13 @@ function DrinkingSessionWindow({
     };
   }, [session]);
 
-  if (loadingText) {
+  useEffect(() => {
+    Utils.setLoadingText(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- we don't want this effect to run again
+  }, []); // Upon component mount
+
+  if (!!loadingText) {
     return <FullScreenLoadingIndicator loadingText={loadingText} />;
-  }
-  if (!user) {
-    return;
   }
 
   return (
@@ -407,7 +405,7 @@ function DrinkingSessionWindow({
             styles.halfScreenWidth(windowWidth * 0.8),
             styles.mh3,
           ]}
-          onPress={() => saveSession(db, user.uid)}
+          onPress={() => saveSession(db, user)}
         />
       </View>
       <ConfirmModal
