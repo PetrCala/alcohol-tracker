@@ -225,9 +225,7 @@ function HomeScreen({}: HomeScreenProps) {
           <MessageBanner
             danger
             text={translate('homeScreen.currentlyInSession')}
-            onPress={() =>
-              DS.navigateToOngoingSessionScreen(drinkingSessionData)
-            }
+            onPress={() => DS.navigateToOngoingSessionScreen()}
           />
         )}
         {!!drinkingSessionData ? (

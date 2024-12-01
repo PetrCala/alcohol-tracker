@@ -16,7 +16,6 @@ import NetworkConnection from '@libs/NetworkConnection';
 import * as Pusher from '@libs/Pusher/pusher';
 // import PusherConnectionManager from '@libs/PusherConnectionManager';
 import getTzFixModalScreenOptions from '@libs/Navigation/getTzFixModalScreenOptions';
-import * as SessionUtils from '@libs/SessionUtils';
 // import DesktopSignInRedirectPage from '@pages/signin/DesktopSignInRedirectPage';
 import * as App from '@userActions/App';
 // import * as Download from '@userActions/Download';

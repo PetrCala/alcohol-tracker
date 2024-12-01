@@ -26,11 +26,15 @@ import {
   RemoveDrinksOptions,
 } from '@src/types/onyx/DrinkingSession';
 import {roundToTwoDecimalPlaces} from './NumberUtils';
+import * as Localize from '@libs/Localize';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import _ from 'lodash';
 import {ValueOf} from 'type-fest';
 import Log from './Log';
 import DateUtils from './DateUtils';
 import {isNonEmptyArray} from './Validation';
+import {ImageSourcePropType} from 'react-native';
+import {TranslationPaths} from '@src/languages/types';
 
 const PlaceholderDrinks: DrinksList = {[Date.now()]: {other: 0}};
 
@@ -800,6 +804,47 @@ async function fixTimezoneSessions(
   await update(ref(db), updates);
 }
 
+/** Based on a session type, return the icon that should be associated with this session */
+function getIconForSession(
+  sessionType: DrinkingSessionType,
+): ImageSourcePropType {
+  switch (sessionType) {
+    case CONST.SESSION_TYPES.LIVE:
+      return KirokuIcons.AlcoholAssortment; // TODO
+    case CONST.SESSION_TYPES.EDIT:
+      return KirokuIcons.AlcoholAssortment;
+    default:
+      return KirokuIcons.AlcoholAssortment;
+  }
+}
+
+function getSessionTypeTitle(
+  sessionType: DrinkingSessionType,
+): TranslationPaths {
+  switch (sessionType) {
+    case CONST.SESSION_TYPES.LIVE:
+      return 'drinkingSession.live.title';
+    case CONST.SESSION_TYPES.EDIT:
+      return 'drinkingSession.edit.title';
+    default:
+      return 'common.unknown';
+  }
+}
+
+/** Return a description for a session type */
+function getSessionTypeDescription(
+  sessionType: DrinkingSessionType,
+): TranslationPaths {
+  switch (sessionType) {
+    case CONST.SESSION_TYPES.LIVE:
+      return 'drinkingSession.live.description';
+    case CONST.SESSION_TYPES.EDIT:
+      return 'drinkingSession.edit.description';
+    default:
+      return 'common.unknown';
+  }
+}
+
 export {
   PlaceholderDrinks,
   addDrinksToList,
@@ -814,8 +859,11 @@ export {
   getDrinkingSessionData,
   getDrinkingSessionOnyxKey,
   getEmptySession,
+  getIconForSession,
   getSessionAddDrinksOptions,
   getSessionRemoveDrinksOptions,
+  getSessionTypeDescription,
+  getSessionTypeTitle,
   getSessionsToRenderInCalendar,
   getSingleDayDrinkingSessions,
   getSingleMonthDrinkingSessions,

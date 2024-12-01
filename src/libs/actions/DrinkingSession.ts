@@ -28,16 +28,6 @@ const drinkingSessionRef = DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID;
 const userStatusRef = DBPATHS.USER_STATUS_USER_ID;
 const userStatusLatestSessionRef = DBPATHS.USER_STATUS_USER_ID_LATEST_SESSION;
 
-let ongoingSessionId: DrinkingSessionId | undefined;
-Onyx.connect({
-  key: ONYXKEYS.ONGOING_SESSION_ID,
-  callback: value => {
-    if (value) {
-      ongoingSessionId = value;
-    }
-  },
-});
-
 let ongoingSessionData: DrinkingSession | undefined;
 Onyx.connect({
   key: ONYXKEYS.ONGOING_SESSION_DATA,
@@ -141,7 +131,7 @@ async function startLiveDrinkingSession(
   db: Database,
   user: User | null,
   timezone: SelectedTimezone | undefined,
-): Promise<DrinkingSession> {
+): Promise<void> {
   if (!user) {
     throw new Error(Localize.translateLocal('homeScreen.error.sessionStart'));
   }
@@ -173,7 +163,9 @@ async function startLiveDrinkingSession(
   updates[drinkingSessionRef.getRoute(user.uid, newSessionId)] = newSessionData;
   await update(ref(db), updates);
 
-  return newSessionData;
+  await Onyx.set(ONYXKEYS.ONGOING_SESSION_DATA, newSessionData);
+
+  return;
 }
 
 /** Save final drinking session data to the database
@@ -207,10 +199,6 @@ async function saveDrinkingSessionData(
   await update(ref(db), updates);
 
   await Onyx.set(onyxKey, null);
-
-  if (sessionIsLive) {
-    await Onyx.set(ONYXKEYS.ONGOING_SESSION_ID, null);
-  }
 }
 
 /** Remove drinking session data from the database
@@ -241,10 +229,6 @@ async function removeDrinkingSessionData(
   await update(ref(db), updates);
 
   await Onyx.set(onyxKey, null);
-
-  if (sessionIsLive) {
-    await Onyx.set(ONYXKEYS.ONGOING_SESSION_ID, null);
-  }
 }
 
 /**
@@ -407,18 +391,18 @@ function getNewSessionToEdit(
 /**
  * Navigate to the an ongoing session screen
  *
+ * Assume the session data is correctly synced with the local ongoingSessionData Onyx object
+ *
  * @param sessionId ID of the session to navigate to
  * @param session Current session data
  */
-function navigateToOngoingSessionScreen(
-  drinkingSessionData: DrinkingSessionList | undefined,
-): void {
-  if (!ongoingSessionId || !drinkingSessionData) {
+function navigateToOngoingSessionScreen(): void {
+  if (!ongoingSessionData?.id) {
     throw new Error(Localize.translateLocal('drinkingSession.error.missingId'));
   }
-  const session = drinkingSessionData[ongoingSessionId];
-  updateLocalData(ongoingSessionId, session, ONYXKEYS.ONGOING_SESSION_DATA);
-  Navigation.navigate(ROUTES.DRINKING_SESSION_LIVE.getRoute(ongoingSessionId));
+  Navigation.navigate(
+    ROUTES.DRINKING_SESSION_LIVE.getRoute(ongoingSessionData.id),
+  );
 }
 
 /**

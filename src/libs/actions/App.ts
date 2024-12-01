@@ -22,7 +22,6 @@ import getCurrentUrl from '@libs/Navigation/currentUrl';
 import Navigation from '@libs/Navigation/Navigation';
 // import Performance from '@libs/Performance';
 // import * as ReportActionsUtils from '@libs/ReportActionsUtils';
-import * as SessionUtils from '@libs/SessionUtils';
 import type CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
 import type {Route} from '@src/ROUTES';
