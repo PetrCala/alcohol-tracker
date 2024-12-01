@@ -38,6 +38,8 @@ import ScrollView from '@components/ScrollView';
 import Button from '@components/Button';
 import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
+import {useOnyx} from 'react-native-onyx';
+import ONYXKEYS from '@src/ONYXKEYS';
 
 type RequestIdProps = {
   requestId: string;
@@ -254,8 +256,9 @@ const reducer = (state: State, action: Action): State => {
 
 function FriendRequestScreen() {
   const {db} = useFirebase();
-  const {userData, isLoading} = useDatabaseData();
+  const {userData} = useDatabaseData();
   const theme = useTheme();
+  const [loadingText] = useOnyx(ONYXKEYS.APP_LOADING_TEXT);
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useMemo(() => {
@@ -322,7 +325,7 @@ function FriendRequestScreen() {
   return (
     <View style={localStyles.mainContainer}>
       <ScrollView>
-        {state.isLoading || isLoading ? (
+        {state.isLoading || !!loadingText ? (
           <FlexibleLoadingIndicator style={localStyles.loadingData} />
         ) : !isEmptyObject(state.friendRequests) ? (
           <View style={localStyles.friendList}>

@@ -1,6 +1,6 @@
 import React from 'react';
 import {View} from 'react-native';
-import {withOnyx} from 'react-native-onyx';
+import {useOnyx, withOnyx} from 'react-native-onyx';
 import FormProvider from '@components/Form/FormProvider';
 import InputWrapper from '@components/Form/InputWrapper';
 import type {FormInputErrors, FormOnyxValues} from '@components/Form/types';
@@ -14,6 +14,7 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import Navigation from '@libs/Navigation/Navigation';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import * as ValidationUtils from '@libs/ValidationUtils';
+import * as Utils from '@libs/Utils';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
 import INPUT_IDS from '@src/types/form/UserNameForm';
@@ -36,10 +37,10 @@ function UserNameScreen({}: UserNameScreenProps) {
   const styles = useThemeStyles();
   const {translate} = useLocalize();
   const {db, auth} = useFirebase();
-  const {userData, isLoading} = useDatabaseData();
+  const [loadingText] = useOnyx(ONYXKEYS.APP_LOADING_TEXT);
+  const {userData} = useDatabaseData();
   const profileData = userData?.profile;
   const [isLoadingName, setIsLoadingName] = React.useState(false);
-  const [loadingText, setLoadingText] = React.useState('');
 
   const currentUserDetails = {
     firstName: profileData?.first_name,
@@ -53,15 +54,15 @@ function UserNameScreen({}: UserNameScreenProps) {
     const newLastName = values.lastName.trim();
 
     try {
-      setLoadingText(translate('userNameScreen.updatingUserName'));
       setIsLoadingName(true);
+      await Utils.setLoadingText(translate('userNameScreen.updatingUserName'));
       await changeUserName(db, auth.currentUser, newFirstName, newLastName);
       Navigation.goBack();
     } catch (error: any) {
       ErrorUtils.raiseAlert(error, translate('username.error.generic'));
     } finally {
-      setLoadingText('');
       setIsLoadingName(false);
+      await Utils.setLoadingText(null);
     }
   };
 
@@ -148,7 +149,7 @@ function UserNameScreen({}: UserNameScreenProps) {
         title={translate('userNameScreen.headerTitle')}
         onBackButtonPress={() => Navigation.goBack()}
       />
-      {isLoading || isLoadingName ? (
+      {!!loadingText || isLoadingName ? (
         <FullScreenLoadingIndicator
           style={[styles.flex1]}
           loadingText={loadingText}

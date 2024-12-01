@@ -7,7 +7,6 @@ import useListenToData from '@hooks/useListenToData';
 
 type ConfigContextType = {
   config?: Config;
-  isFetchingConfig: boolean;
 };
 
 export const ConfigContext = createContext<ConfigContextType | undefined>(
@@ -29,14 +28,13 @@ type ConfigProviderProps = {
 export const ConfigProvider: React.FC<ConfigProviderProps> = ({children}) => {
   const dataTypes: FetchDataKeys = ['config'];
 
-  const {data, isLoading} = useListenToData(dataTypes);
+  const {data} = useListenToData(dataTypes);
 
   const value = useMemo(
     () => ({
       config: data.config,
-      isFetchingConfig: isLoading,
     }),
-    [data, isLoading],
+    [data],
   );
   return (
     <ConfigContext.Provider value={value}>{children}</ConfigContext.Provider>

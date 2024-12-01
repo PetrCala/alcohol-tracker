@@ -1,6 +1,6 @@
 import React from 'react';
 import {Alert, View} from 'react-native';
-import {withOnyx} from 'react-native-onyx';
+import {useOnyx, withOnyx} from 'react-native-onyx';
 import FormProvider from '@components/Form/FormProvider';
 import InputWrapper from '@components/Form/InputWrapper';
 import type {FormInputErrors, FormOnyxValues} from '@components/Form/types';
@@ -13,6 +13,7 @@ import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import * as ValidationUtils from '@libs/ValidationUtils';
+import * as Utils from '@libs/Utils';
 import Navigation from '@libs/Navigation/Navigation';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
@@ -35,13 +36,11 @@ type DisplayNameScreenProps = DisplayNameScreenOnyxProps &
 function DisplayNameScreen({}: DisplayNameScreenProps) {
   const styles = useThemeStyles();
   const {translate} = useLocalize();
-
   const {db, auth} = useFirebase();
-  const {userData, isLoading} = useDatabaseData();
+  const [loadingText] = useOnyx(ONYXKEYS.APP_LOADING_TEXT);
+  const {userData} = useDatabaseData();
   const profileData = userData?.profile;
-
   const [isLoadingName, setIsLoadingName] = React.useState(false);
-  const [loadingText, setLoadingText] = React.useState('');
 
   const currentUserDetails = {
     displayName: profileData?.display_name,
@@ -55,8 +54,10 @@ function DisplayNameScreen({}: DisplayNameScreenProps) {
   ) => {
     const newDisplayName = values.displayName.trim();
     try {
-      setLoadingText(translate('displayNameScreen.updatingDisplayName'));
       setIsLoadingName(true);
+      await Utils.setLoadingText(
+        translate('displayNameScreen.updatingDisplayName'),
+      );
       await changeDisplayName(
         db,
         auth.currentUser,
@@ -70,7 +71,7 @@ function DisplayNameScreen({}: DisplayNameScreenProps) {
       );
     } finally {
       Navigation.goBack();
-      setLoadingText('');
+      Utils.setLoadingText(null);
       setIsLoadingName(false);
     }
   };
@@ -101,7 +102,7 @@ function DisplayNameScreen({}: DisplayNameScreenProps) {
         title={translate('displayNameScreen.headerTitle')}
         onBackButtonPress={() => Navigation.goBack()}
       />
-      {isLoading || isLoadingName ? (
+      {!!loadingText || isLoadingName ? (
         <FullScreenLoadingIndicator
           style={[styles.flex1]}
           loadingText={loadingText}

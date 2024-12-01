@@ -17,6 +17,8 @@ import ROUTES from '@src/ROUTES';
 import type SCREENS from '@src/SCREENS';
 import ScrollView from '@components/ScrollView';
 import MenuItemWithTopDescription from '@components/MenuItemWithTopDescription';
+import {useOnyx} from 'react-native-onyx';
+import ONYXKEYS from '@src/ONYXKEYS';
 
 type AccountScreenProps = StackScreenProps<
   SettingsNavigatorParamList,
@@ -30,7 +32,8 @@ function AccountScreen({route}: AccountScreenProps) {
   const {translate} = useLocalize();
   const {auth} = useFirebase();
   const user = auth.currentUser;
-  const {userData, isLoading} = useDatabaseData();
+  const [loadingText] = useOnyx(ONYXKEYS.APP_LOADING_TEXT);
+  const {userData} = useDatabaseData();
   const profileData = userData?.profile;
 
   const generalOptions = [
@@ -98,8 +101,9 @@ function AccountScreen({route}: AccountScreenProps) {
             isCentralPane
             childrenStyles={styles.pt3}
             titleStyles={styles.generalSectionTitle}>
-            {isLoading ? (
+            {!!loadingText ? (
               <FullScreenLoadingIndicator
+                loadingText={loadingText}
                 style={[
                   styles.flex1,
                   styles.pRelative,

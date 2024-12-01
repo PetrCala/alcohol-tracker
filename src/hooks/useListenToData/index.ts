@@ -6,12 +6,14 @@ import type {
   FetchDataKeys,
 } from '@hooks/useFetchData/types';
 import {fetchDataKeyToDbPath} from '@hooks/useFetchData/utils';
+import useLocalize from '@hooks/useLocalize';
+import * as Utils from '@libs/Utils';
+import ONYXKEYS from '@src/ONYXKEYS';
 import {useEffect, useState} from 'react';
 
 // Define a type for the hook's return value
 type UseListenToDataReturn = {
   data: FetchData;
-  isLoading: boolean;
 };
 
 /**
@@ -31,16 +33,16 @@ const useListenToData = (
   userID?: string,
 ): UseListenToDataReturn => {
   const {db} = useFirebase();
+  const {translate} = useLocalize(); // potentially might cause issues if the hooks and context providers are incorrectly ordered
   const [data, setData] = useState<{[key in FetchDataKey]?: any}>({});
-  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     if (!db) {
-      setIsLoading(false);
+      Utils.setLoadingText(null);
       return;
     }
 
-    setIsLoading(true);
+    Utils.setLoadingText('');
     const unsubscribers = dataTypes.map(dataTypes => {
       const path = fetchDataKeyToDbPath(dataTypes, userID);
 
@@ -52,7 +54,7 @@ const useListenToData = (
       return () => {};
     });
 
-    setIsLoading(false);
+    Utils.setLoadingText(translate('database.loading'));
 
     // Cleanup function to unsubscribe from all listeners when the component unmounts or the effect reruns
     return () => {
@@ -62,7 +64,6 @@ const useListenToData = (
 
   return {
     data: data,
-    isLoading,
   };
 };
 

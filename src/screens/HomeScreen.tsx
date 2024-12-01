@@ -33,16 +33,13 @@ import getPlatform from '@libs/getPlatform';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
 import * as DS from '@libs/actions/DrinkingSession';
-import * as ErrorUtils from '@libs/ErrorUtils';
 import ScrollView from '@components/ScrollView';
 import useLocalize from '@hooks/useLocalize';
 import {roundToTwoDecimalPlaces} from '@libs/NumberUtils';
 import NoSessionsInfo from '@components/NoSessionsInfo';
 import Text from '@components/Text';
-import useWindowDimensions from '@hooks/useWindowDimensions';
 import BottomTabBar from '@libs/Navigation/AppNavigator/createCustomBottomTabNavigator/BottomTabBar';
 import AgreeToTermsModal from '@components/AgreeToTermsModal';
-import StartSessionButtonAndPopover from '@components/StartSessionButtonAndPopover';
 import {useOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 
@@ -91,9 +88,9 @@ function HomeScreen({}: HomeScreenProps) {
   const {translate} = useLocalize();
   const user = auth.currentUser;
   const {isOnline} = useUserConnection();
+  const [loadingText] = useOnyx(ONYXKEYS.APP_LOADING_TEXT);
   const [ongoingSessionData] = useOnyx(ONYXKEYS.ONGOING_SESSION_DATA);
-  const {drinkingSessionData, preferences, userData, isLoading} =
-    useDatabaseData();
+  const {drinkingSessionData, preferences, userData} = useDatabaseData();
   const [visibleDate, setVisibleDate] = useState<DateData>(
     dateToDateData(new Date()),
   );
@@ -192,7 +189,7 @@ function HomeScreen({}: HomeScreenProps) {
     return <UserOffline />;
   }
 
-  if (isLoading || !preferences || !userData) {
+  if (!!loadingText || !preferences || !userData) {
     return <FullScreenLoadingIndicator />;
   }
 
@@ -201,6 +198,7 @@ function HomeScreen({}: HomeScreenProps) {
       testID={HomeScreen.displayName}
       includePaddingTop={false}
       includeSafeAreaPaddingBottom={getPlatform() !== CONST.PLATFORM.IOS}>
+      <FullScreenLoadingIndicator />
       {/* // TODO rewrite this into the HeaderWithBackButton component */}
       <View style={[styles.headerBar, styles.borderBottom]}>
         <TouchableOpacity

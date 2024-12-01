@@ -19,6 +19,7 @@ import FloatingActionButton from '@components/FloatingActionButton';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
 import * as DS from '@libs/actions/DrinkingSession';
 import * as ErrorUtils from '@libs/ErrorUtils';
+import * as Utils from '@libs/Utils';
 import type {PopoverMenuItem} from '@components/PopoverMenu';
 import PopoverMenu from '@components/PopoverMenu';
 import Text from '@components/Text';
@@ -72,11 +73,10 @@ function StartSessionButtonAndPopover(
   const {translate} = useLocalize();
   const user = auth.currentUser;
   const [isVisible, setIsVisible] = useState(false);
-  const {drinkingSessionData, userData, userStatusData, isLoading} =
-    useDatabaseData();
+  const {drinkingSessionData, userData, userStatusData} = useDatabaseData();
   const [ongoingSessionData] = useOnyx(ONYXKEYS.ONGOING_SESSION_DATA);
   const [startSession] = useOnyx(ONYXKEYS.START_SESSION_GLOBAL_CREATE);
-  const [isStartingSession, setIsStartingSession] = useState(false);
+  const [loadingText] = useOnyx(ONYXKEYS.APP_LOADING_TEXT);
   const [isCreateMenuActive, setIsCreateMenuActive] = useState(false);
   const fabRef = useRef<HTMLDivElement>(null);
   const {windowHeight} = useWindowDimensions();
@@ -88,13 +88,11 @@ function StartSessionButtonAndPopover(
 
   const startLiveDrinkingSession = async (): Promise<void> => {
     try {
-      setIsStartingSession(true);
+      await Utils.setLoadingText(translate('liveSessionScreen.loading'));
       await DS.startLiveDrinkingSession(db, user, userData?.timezone?.selected);
       DS.navigateToOngoingSessionScreen();
     } catch (error: any) {
       ErrorUtils.raiseAlert(error, translate('homeScreen.error.title'));
-    } finally {
-      setIsStartingSession(false);
     }
   };
 
@@ -278,20 +276,13 @@ function StartSessionButtonAndPopover(
   }, [userStatusData]);
 
   useEffect(() => {
-    setIsVisible(!isLoading && !ongoingSessionData?.ongoing);
-  }, [ongoingSessionData?.ongoing, isLoading]);
+    setIsVisible(!loadingText && !ongoingSessionData?.ongoing);
+  }, [ongoingSessionData?.ongoing, loadingText]);
 
   // if (!isVisible) {
   //   return null;
   // }
 
-  if (isStartingSession) {
-    return (
-      <FullScreenLoadingIndicator
-        loadingText={translate('homeScreen.startingSession')}
-      />
-    );
-  }
   return (
     <View style={[styles.flexShrink1, styles.ph2]}>
       <PopoverMenu
