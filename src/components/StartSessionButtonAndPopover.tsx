@@ -18,7 +18,6 @@ import ConfirmModal from '@components/ConfirmModal';
 import FloatingActionButton from '@components/FloatingActionButton';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
 import * as DS from '@libs/actions/DrinkingSession';
-import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import type {PopoverMenuItem} from '@components/PopoverMenu';
 import PopoverMenu from '@components/PopoverMenu';
@@ -31,17 +30,11 @@ import useResponsiveLayout from '@hooks/useResponsiveLayout';
 import useTheme from '@hooks/useTheme';
 import useThemeStyles from '@hooks/useThemeStyles';
 import useWindowDimensions from '@hooks/useWindowDimensions';
-import getIconForAction from '@libs/getIconForSession';
 import Navigation from '@libs/Navigation/Navigation';
 import CONST from '@src/CONST';
-import type {TranslationPaths} from '@src/languages/types';
 import ONYXKEYS from '@src/ONYXKEYS';
-import ROUTES from '@src/ROUTES';
-import SCREENS from '@src/SCREENS';
 import type * as OnyxTypes from '@src/types/onyx';
 import type {DrinkingSessionType} from '@src/types/onyx';
-import {isEmptyObject} from '@src/types/utils/EmptyObject';
-import getIconForSession from '@libs/getIconForSession';
 import Log from '@libs/common/Log';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {useFirebase} from '@context/global/FirebaseContext';
@@ -96,17 +89,8 @@ function StartSessionButtonAndPopover(
   const startLiveDrinkingSession = async (): Promise<void> => {
     try {
       setIsStartingSession(true);
-      const newSession = await DS.startLiveDrinkingSession(
-        db,
-        user,
-        userData?.timezone?.selected,
-      );
-      if (!newSession?.id) {
-        throw new Error(translate('drinkingSession.error.sessionOpen'));
-      }
-      Onyx.set(ONYXKEYS.ONGOING_SESSION_DATA, newSession).then(() => {
-        DS.navigateToOngoingSessionScreen(drinkingSessionData);
-      });
+      await DS.startLiveDrinkingSession(db, user, userData?.timezone?.selected);
+      DS.navigateToOngoingSessionScreen();
     } catch (error: any) {
       ErrorUtils.raiseAlert(error, translate('homeScreen.error.title'));
     } finally {
@@ -133,19 +117,6 @@ function StartSessionButtonAndPopover(
     ],
   );
 
-  const getSessionTypeTitle = (
-    sessionType: DrinkingSessionType,
-  ): TranslationPaths => {
-    switch (sessionType) {
-      case CONST.SESSION_TYPES.LIVE:
-        return 'drinkingSession.type.live';
-      case CONST.SESSION_TYPES.EDIT:
-        return 'drinkingSession.type.edit';
-      default:
-        return '' as TranslationPaths;
-    }
-  };
-
   const selectOption = async (
     onSelected: () => Promise<void>,
     shouldRestrictAction?: boolean,
@@ -160,22 +131,25 @@ function StartSessionButtonAndPopover(
     await onSelected();
   };
 
-  const navigateToSessionType = useCallback(async () => {
-    // const sessionID = DSUtils.generateSessionID();
+  const navigateToSessionType = useCallback(
+    async (sessionType: DrinkingSessionType) => {
+      // const sessionID = DSUtils.generateSessionID();
 
-    switch (startSession?.sessionType) {
-      case CONST.SESSION_TYPES.LIVE:
-        await selectOption(() => startLiveDrinkingSession());
-        break;
-      case CONST.SESSION_TYPES.EDIT:
-        await selectOption(
-          async () => {}, // Edit a session
-        );
-        break;
-      default:
-        Log.warn(`Unsupported session type: ${startSession?.sessionType}`);
-    }
-  }, [startSession?.sessionType, selectOption]);
+      switch (sessionType) {
+        case CONST.SESSION_TYPES.LIVE:
+          await selectOption(() => startLiveDrinkingSession());
+          break;
+        case CONST.SESSION_TYPES.EDIT:
+          await selectOption(
+            async () => {}, // Edit a session
+          );
+          break;
+        default:
+          Log.warn(`Unsupported session type: ${startSession?.sessionType}`);
+      }
+    },
+    [startSession?.sessionType, selectOption],
+  );
 
   /**
    * Check if LHN status changed from active to inactive.
@@ -243,12 +217,12 @@ function StartSessionButtonAndPopover(
     }
   };
 
-  const sessionTypeMenuItemsData: PopoverMenuItem[] = useMemo(() => {
+  const sessionTypeMenuItems: PopoverMenuItem[] = useMemo(() => {
     // Define common properties in baseSessionType
     const baseSessionType = {
       label: translate('startSession.header'),
       isLabelHoverable: false,
-      numberOfLinesDescription: 1,
+      numberOfLinesDescription: 2,
       tooltipAnchorAlignment: {
         vertical: CONST.MODAL.ANCHOR_ORIGIN_VERTICAL.BOTTOM,
         horizontal: CONST.MODAL.ANCHOR_ORIGIN_HORIZONTAL.LEFT,
@@ -263,13 +237,17 @@ function StartSessionButtonAndPopover(
       CONST.SESSION_TYPES,
     );
 
-    return _.map(sessionTypes, sessionType => {
+    return _.map(sessionTypes, (sessionType, index) => {
       return {
         ...baseSessionType,
-        icon: getIconForSession(sessionType),
-        text: getSessionTypeTitle(sessionType),
-        description: 'A custom description', // TODO add a description here
-        onSelected: async () => navigateToSessionType(),
+        label: index === 0 ? translate('startSession.header') : undefined,
+        icon: DSUtils.getIconForSession(sessionType),
+        text: translate(DSUtils.getSessionTypeTitle(sessionType)),
+        description: translate(DSUtils.getSessionTypeDescription(sessionType)),
+        onSelected: async () => {
+          await navigateToSessionType(sessionType);
+          hideCreateMenu();
+        },
         shouldRenderTooltip: false, // TODO
         // shouldRenderTooltip: startSession.isFirstSession,
       };
@@ -279,38 +257,9 @@ function StartSessionButtonAndPopover(
     styles.popoverMenuItem.paddingHorizontal,
     styles.popoverMenuItem.paddingVertical,
     styles.sessionTypeTooltipWrapper,
-    getSessionTypeTitle,
-    renderSessionTypeTooltip,
-    startSession?.sessionType,
-    navigateToSessionType,
-    selectOption,
-  ]);
-
-  const sessionTypeMenuItems = useMemo(() => {
-    // TODO - here, render each session type
-
-    // TODO
-    // if (startSession?.sessionType) {
-    //   return [
-    //     {
-    //       ...baseSessionType,
-    //       icon: getIconForSession(startSession.sessionType),
-    //       text: getSessionTypeTitle(startSession.sessionType),
-    //       description: 'A custom description', // TODO add a description here
-    //       onSelected: async () => navigateToSessionType(),
-    //       shouldRenderTooltip: startSession.isFirstSession,
-    //     },
-    //   ];
-    // }
-    // // Possibly render other menu items here
-
-    return [];
-  }, [
-    translate,
-    styles.popoverMenuItem.paddingHorizontal,
-    styles.popoverMenuItem.paddingVertical,
-    styles.sessionTypeTooltipWrapper,
-    getSessionTypeTitle,
+    DSUtils.getSessionTypeTitle,
+    DSUtils.getSessionTypeDescription,
+    DSUtils.getIconForSession,
     renderSessionTypeTooltip,
     startSession?.sessionType,
     navigateToSessionType,
@@ -332,9 +281,9 @@ function StartSessionButtonAndPopover(
     setIsVisible(!isLoading && !ongoingSessionData?.ongoing);
   }, [ongoingSessionData?.ongoing, isLoading]);
 
-  if (!isVisible) {
-    return null;
-  }
+  // if (!isVisible) {
+  //   return null;
+  // }
 
   if (isStartingSession) {
     return (
@@ -343,7 +292,6 @@ function StartSessionButtonAndPopover(
       />
     );
   }
-
   return (
     <View style={[styles.flexShrink1, styles.ph2]}>
       <PopoverMenu

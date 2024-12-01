@@ -399,6 +399,14 @@ export default {
       live: 'Live',
       edit: 'Edit',
     },
+    live: {
+      title: 'Live',
+      description: 'Track drinks as you go',
+    },
+    edit: {
+      title: 'Edit',
+      description: 'Log past sessions',
+    },
     error: {
       sessionOpen: 'Failed to open a session',
       missingId: 'Missing session ID',
