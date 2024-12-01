@@ -41,7 +41,6 @@ function SesssionDateScreen({route}: SessionDateScreenProps) {
       Alert.alert(translate('sessionDateScreen.error.load'));
       return;
     }
-    console.log(values.date);
     DS.updateSessionDate(sessionId, session, new Date(values.date));
     Navigation.goBack();
   };
