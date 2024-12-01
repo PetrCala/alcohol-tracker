@@ -19,7 +19,7 @@ import Onyx from 'react-native-onyx';
 import ONYXKEYS, {OnyxKey} from '@src/ONYXKEYS';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
-import {differenceInDays} from 'date-fns';
+import {differenceInDays, startOfDay} from 'date-fns';
 import {SelectedTimezone} from '@src/types/onyx/UserData';
 import {ValueOf} from 'type-fest';
 import _ from 'lodash';
@@ -347,8 +347,8 @@ function updateSessionDate(
   newDate: Date,
   shouldUpdateLiveSessionData?: boolean,
 ): void {
-  const currentDate = new Date(session.start_time);
-  const daysDelta = differenceInDays(currentDate, newDate);
+  const currentDate = startOfDay(new Date(session.start_time));
+  const daysDelta = differenceInDays(currentDate, startOfDay(newDate));
   const millisecondsToSub = daysDelta * 24 * 60 * 60 * 1000;
   const modifiedSession = DSUtils.shiftSessionTimestamps(
     session,
