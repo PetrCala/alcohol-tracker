@@ -177,7 +177,8 @@ module.exports = {
       'error',
       {
         selector: ['variable', 'property'],
-        format: ['camelCase', 'UPPER_CASE', 'PascalCase'],
+        // Lower case is enabled because of Firebase naming conventions
+        format: ['camelCase', 'UPPER_CASE', 'PascalCase', 'lower_case'],
       },
       {
         selector: 'function',
