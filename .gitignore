@@ -22,6 +22,7 @@ xcuserdata
 *.moved-aside
 DerivedData
 *.hmap
+*.jsbundle.map
 *.ipa
 *.xcuserstate
 ios/.xcode.env.local

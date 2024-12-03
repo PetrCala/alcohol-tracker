@@ -174,8 +174,8 @@
     "@types/seedrandom": "^3.0.8",
     "@types/semver": "^7.5.8",
     "@types/underscore": "^1.11.15",
-    "@typescript-eslint/eslint-plugin": "^6.13.2",
-    "@typescript-eslint/parser": "^6.13.2",
+    "@typescript-eslint/eslint-plugin": "^7.13.1",
+    "@typescript-eslint/parser": "^7.13.1",
     "@vercel/ncc": "^0.38.1",
     "ajv-cli": "^5.0.0",
     "axios": "^1.7.2",
@@ -186,8 +186,8 @@
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-remove-console": "^6.9.4",
     "eslint": "^8.57.0",
-    "eslint-config-airbnb-typescript": "^17.1.0",
-    "eslint-config-expensify": "^2.0.43",
+    "eslint-config-airbnb-typescript": "^18.0.0",
+    "eslint-config-expensify": "^2.0.60",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-jest": "^27.6.1",
@@ -247,9 +247,5 @@
       "*.test.*",
       "*.spec.*"
     ]
-  },
-  "engines": {
-    "node": "20.15.1",
-    "npm": "10.7.0"
   }
 }
