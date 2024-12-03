@@ -5,7 +5,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import {Image as CompressorImage} from 'react-native-compressor';
 import {uploadImageToFirebase} from '../storage/storageUpload';
 import UploadImagePopup from './Popups/UploadImagePopup';
-import type GeneralAction from '@src/types/various/GeneralAction';
+import type ReducerAction from '@src/types/various/ReducerAction';
 import checkPermission from '@libs/Permissions/checkPermission';
 import {requestPermission} from '@libs/Permissions/requestPermission';
 import {updateProfileInfo} from '@database/profile';
@@ -33,7 +33,7 @@ const initialState: UploadImageState = {
 
 const reducer = (
   state: UploadImageState,
-  action: GeneralAction,
+  action: ReducerAction,
 ): UploadImageState => {
   switch (action.type) {
     case 'SET_IMAGE_SOURCE':
