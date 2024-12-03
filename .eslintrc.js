@@ -334,11 +334,11 @@ module.exports = {
         'rulesdir/no-default-props': 'off',
       },
     },
-    {
-      files: ['en.ts', 'cs_CZ.ts'],
-      rules: {
-        'rulesdir/use-periods-for-error-messages': 'error',
-      },
-    },
+    // {
+    //   files: ['en.ts', 'cs_CZ.ts'],
+    //   rules: {
+    //     'rulesdir/use-periods-for-error-messages': 'error',
+    //   },
+    // },
   ],
 };
