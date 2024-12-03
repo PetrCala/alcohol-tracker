@@ -28,7 +28,7 @@ import type {
 } from '@src/types/various/Search';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import {objKeys} from '@libs/DataHandling';
-import type GeneralAction from '@src/types/various/GeneralAction';
+import type ReducerAction from '@src/types/various/ReducerAction';
 import {getNicknameMapping} from '@libs/SearchUtils';
 import FillerView from '@components/FillerView';
 import type {StackScreenProps} from '@react-navigation/stack';
@@ -71,7 +71,7 @@ const initialState: State = {
   isLoading: true,
 };
 
-const reducer = (state: State, action: GeneralAction): State => {
+const reducer = (state: State, action: ReducerAction): State => {
   switch (action.type) {
     case 'SET_SEARCHING':
       return {...state, searching: action.payload};

@@ -4,7 +4,7 @@ import type {
   SearchWindowRef,
   UserIDToNicknameMapping,
 } from '@src/types/various/Search';
-import type GeneralAction from '@src/types/various/GeneralAction';
+import type ReducerAction from '@src/types/various/ReducerAction';
 import React, {useMemo, useReducer, useRef} from 'react';
 import {objKeys} from '@libs/DataHandling';
 import {getNicknameMapping} from '@libs/SearchUtils';
@@ -27,7 +27,7 @@ const initialState: State = {
   friendsToDisplay: [],
 };
 
-const reducer = (state: State, action: GeneralAction): State => {
+const reducer = (state: State, action: ReducerAction): State => {
   switch (action.type) {
     case 'SET_SEARCHING':
       return {...state, searching: action.payload};

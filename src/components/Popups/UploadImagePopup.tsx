@@ -2,7 +2,7 @@ import type {UploadImageState} from '@components/UploadImage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CONST from '@src/CONST';
 
-import type GeneralAction from '@src/types/various/GeneralAction';
+import type ReducerAction from '@src/types/various/ReducerAction';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {useEffect, useState} from 'react';
 import {
@@ -22,7 +22,7 @@ type UploadImagePopupProps = {
   transparent: boolean;
   onRequestClose: () => void;
   parentState: UploadImageState;
-  parentDispatch: React.Dispatch<GeneralAction>;
+  parentDispatch: React.Dispatch<ReducerAction>;
 };
 
 const UploadImagePopup = (props: UploadImagePopupProps) => {
