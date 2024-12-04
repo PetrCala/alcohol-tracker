@@ -601,7 +601,7 @@ async function signUp(
     Session.clearSignInData();
 
     Navigation.navigate(ROUTES.HOME);
-  } catch (error: any) {
+  } catch (error: unknown) {
     // Attempt to rollback the changes if the 'transaction' fails
     await deleteUserData(
       db,

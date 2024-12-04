@@ -63,7 +63,7 @@ const handleAcceptFriendRequest = async (
     setIsLoading(true);
     await acceptFriendRequest(db, userID, requestId);
     setIsLoading(false);
-  } catch (error: any) {
+  } catch (error: unknown) {
     Alert.alert(
       'User does not exist in the database',
       `Could not accept the friend request: ${error.message}`,
@@ -81,7 +81,7 @@ const handleRejectFriendRequest = async (
     setIsLoading(true);
     await deleteFriendRequest(db, userID, requestId);
     setIsLoading(false);
-  } catch (error: any) {
+  } catch (error: unknown) {
     Alert.alert(
       'User does not exist in the database',
       `Could not accept the friend request: ${error.message}`,

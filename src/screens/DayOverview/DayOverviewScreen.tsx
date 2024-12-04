@@ -213,7 +213,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
           userData?.timezone?.selected,
         );
         DS.navigateToEditSessionScreen(newSession?.id, newSession);
-      } catch (error: any) {
+      } catch (error: unknown) {
         ErrorUtils.raiseAlert(error);
       } finally {
         await Utils.setLoadingText(null);

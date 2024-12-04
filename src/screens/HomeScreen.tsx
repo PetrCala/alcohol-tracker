@@ -123,7 +123,7 @@ function HomeScreen({}: HomeScreenProps) {
 
       try {
         synchronizeUserStatus(db, user.uid, drinkingSessionData);
-      } catch (error: any) {
+      } catch (error: unknown) {
         Alert.alert(
           'Failed to contact the database',
           `Could not update user online status:${error.message}`,

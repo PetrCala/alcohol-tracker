@@ -86,7 +86,7 @@ function StartSessionButtonAndPopover(
       await Utils.setLoadingText(translate('liveSessionScreen.loading'));
       await DS.startLiveDrinkingSession(db, user, userData?.timezone?.selected);
       DS.navigateToOngoingSessionScreen();
-    } catch (error: any) {
+    } catch (error: unknown) {
       ErrorUtils.raiseAlert(error, translate('homeScreen.error.title'));
     }
   };

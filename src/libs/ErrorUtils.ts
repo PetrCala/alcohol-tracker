@@ -17,7 +17,7 @@ import * as Localize from './Localize';
  * @param error - The error object to be translated.
  * @returns
  */
-function getErrorMessage(error: any): string {
+function getErrorMessage(error: unknown): string {
   const err = error.message;
   switch (true) {
     case err.includes('storage/object-not-found'):
@@ -63,7 +63,7 @@ function getErrorMessage(error: any): string {
   }
 }
 
-function raiseAlert(error: any, heading = '', message = ''): void {
+function raiseAlert(error: unknown, heading = '', message = ''): void {
   const payload = getErrorMessage(error);
   Alert.alert(heading ?? 'Unknown error', `${message || ''}${payload}`);
 }

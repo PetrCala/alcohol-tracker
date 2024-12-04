@@ -100,7 +100,7 @@ function SignUpScreen() {
 
     try {
       await User.signUp(db, auth, emailTrim, usernameTrim, values.password);
-    } catch (error: any) {
+    } catch (error: unknown) {
       const errorMessage = ErrorUtils.getErrorMessage(error);
       setServerErrorMessage(errorMessage);
     } finally {
