@@ -82,11 +82,11 @@ function normalizeCRLF(value?: string): string | undefined {
  * ensuring a unique hash for each unique input. The resulting hash can be truncated
  * to a specified length.
  *
- * @param {string} input - The input string to be hashed.
- * @param {number} timestamp - The timestamp to include in the hash for uniqueness.
- * @param {number} [length=64] - The desired length of the resulting hash. Defaults to 64 characters.
+ * @param input - The input string to be hashed.
+ * @param timestamp - The timestamp to include in the hash for uniqueness.
+ * @param [length=64] - The desired length of the resulting hash. Defaults to 64 characters.
  *                                If specified length is greater than 64, the full hash length (64) will be returned.
- * @returns {string} - A unique hash generated from the input and timestamp, truncated to the specified length.
+ * @returns - A unique hash generated from the input and timestamp, truncated to the specified length.
  *
  * @example
  * // Generates a 16-character hash
@@ -96,7 +96,7 @@ function normalizeCRLF(value?: string): string | undefined {
 function generateUniqueHash(
   input: string,
   timestamp: number,
-  length: number = 64,
+  length = 64,
 ): string {
   let data = `${input}-${timestamp}`;
 

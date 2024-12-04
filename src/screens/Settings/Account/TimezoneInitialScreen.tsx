@@ -11,9 +11,9 @@ import Navigation from '@libs/Navigation/Navigation';
 import CONST from '@src/CONST';
 import ROUTES from '@src/ROUTES';
 import type {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
-import {StackScreenProps} from '@react-navigation/stack';
-import {SettingsNavigatorParamList} from '@libs/Navigation/types';
-import SCREENS from '@src/SCREENS';
+import type {StackScreenProps} from '@react-navigation/stack';
+import type {SettingsNavigatorParamList} from '@libs/Navigation/types';
+import type SCREENS from '@src/SCREENS';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {useFirebase} from '@context/global/FirebaseContext';
 import * as User from '@userActions/User';
@@ -49,7 +49,7 @@ function TimezoneInitialScreen({}: TimezoneInitialScreenProps) {
         isAutomatic,
         isAutomatic && !isEmptyObject(currentTimezone)
           ? currentTimezone
-          : (timezone.selected as SelectedTimezone),
+          : timezone.selected!,
       );
     } catch (error: any) {
       ErrorUtils.raiseAlert(error, translate('timezoneScreen.error.generic'));

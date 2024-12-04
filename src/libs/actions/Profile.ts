@@ -1,13 +1,13 @@
-﻿import type {Database} from 'firebase/database';
+import type {Database} from 'firebase/database';
 import {ref, update} from 'firebase/database';
 import type {FirebaseStorage} from 'firebase/storage';
 import {ref as StorageRef, getDownloadURL} from 'firebase/storage';
 import type {Auth, User} from 'firebase/auth';
 import {updateProfile} from 'firebase/auth';
-import {fetchDisplayDataForUsers} from '@database/baseFunctions';
 import type {ProfileList, UserStatusList} from '@src/types/onyx';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
 import DBPATHS from '@src/DBPATHS';
+import {fetchDisplayDataForUsers} from '@src/database/baseFunctions';
 
 /**
  * Fetches user profiles from the database.
@@ -96,5 +96,4 @@ export async function updateProfileInfo(
   const downloadURL = await getDownloadURL(StorageRef(storage, pathToUpload));
   await setProfilePictureURL(db, user.uid, downloadURL);
   await updateProfile(auth.currentUser, {photoURL: downloadURL});
-  return;
 }

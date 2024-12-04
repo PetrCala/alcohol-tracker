@@ -1,7 +1,7 @@
 import React from 'react';
 import {Image, StyleSheet, View} from 'react-native';
-import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import CONST from '@src/CONST';
+import * as KirokuIcons from './Icon/KirokuIcons';
 
 const ValidityIndicatorIcon: React.FC<{
   isValid: boolean;

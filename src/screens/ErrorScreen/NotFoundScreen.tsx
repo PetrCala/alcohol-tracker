@@ -26,7 +26,7 @@ function NotFoundScreen({onBackButtonPress}: NotFoundScreenProps) {
         title={translate('notFoundScreen.title')}
         onBackButtonPress={() => Navigation.navigate(ROUTES.HOME)}
       />
-      <View style={{backgroundColor: theme.appBG}}></View>
+      <View style={{backgroundColor: theme.appBG}} />
       {/* //   <FullPageNotFoundView shouldShow onBackButtonPress={onBackButtonPress} /> */}
     </ScreenWrapper>
   );

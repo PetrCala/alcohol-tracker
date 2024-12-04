@@ -1,4 +1,4 @@
-﻿import {
+import {
   initializeEmptyMockDatabase,
   createMockConfig,
   createMockFeedback,
@@ -10,7 +10,7 @@
   createMockDatabase,
   createMockMaintenance,
   createMockAppSettings,
-} from '../../src/database/MockDatabase';
+} from '@src/database/MockDatabase';
 import type {
   DatabaseProps,
   Config,
@@ -24,7 +24,7 @@ import type {
   UnitsToColors,
   UserStatus,
   UserDataList,
-} from '../../src/types/onyx';
+} from '@src/types/onyx';
 import CONST from '@src/CONST';
 
 /** Enter an object that is supposed to be of the Config type and validate it. Return true if it has that type, and false otherwise.

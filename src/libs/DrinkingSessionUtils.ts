@@ -10,31 +10,33 @@ import type {
   DrinksList,
   DrinksToUnits,
 } from '@src/types/onyx';
-import {ref, update, type Database} from 'firebase/database';
+import {ref, update} from 'firebase/database';
+import type {Database} from 'firebase/database';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
-import {numberToVerboseString} from './TimeUtils';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
-import {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
-import DBPATHS from '@src/DBPATHS';
-import Onyx, {OnyxKey} from 'react-native-onyx';
+import type {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
+import DBPATHS from '@database/DBPATHS';
+import type {OnyxKey} from 'react-native-onyx';
+import Onyx from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
-import {auth} from './Firebase/FirebaseApp';
 import {format, subMilliseconds} from 'date-fns';
 import {formatInTimeZone} from 'date-fns-tz';
-import {
+import type {
   AddDrinksOptions,
   RemoveDrinksOptions,
 } from '@src/types/onyx/DrinkingSession';
-import {roundToTwoDecimalPlaces} from './NumberUtils';
-import * as Localize from '@libs/Localize';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import _ from 'lodash';
-import {ValueOf} from 'type-fest';
+import type {ValueOf} from 'type-fest';
+import type {ImageSourcePropType} from 'react-native';
+import type {TranslationPaths} from '@src/languages/types';
 import Log from './Log';
 import DateUtils from './DateUtils';
 import {isNonEmptyArray} from './Validation';
-import {ImageSourcePropType} from 'react-native';
-import {TranslationPaths} from '@src/languages/types';
+import * as Localize from './Localize';
+import {roundToTwoDecimalPlaces} from './NumberUtils';
+import {auth} from './Firebase/FirebaseApp';
+import {numberToVerboseString} from './TimeUtils';
 
 const PlaceholderDrinks: DrinksList = {[Date.now()]: {other: 0}};
 
@@ -260,8 +262,7 @@ function addDrinksToList(
     const existingDrinks = updatedDrinksList[timestamp];
     const mergedDrinks: Drinks = {...existingDrinks};
 
-    mergedDrinks[drinkKey as DrinkKey] =
-      (mergedDrinks[drinkKey as DrinkKey] || 0) + (amount || 0);
+    mergedDrinks[drinkKey] = (mergedDrinks[drinkKey] || 0) + (amount || 0);
 
     updatedDrinksList[timestamp] = mergedDrinks;
   } else {
@@ -304,7 +305,7 @@ function removeDrinksFromList(
     options === 'removeFromLatest' ? +b - +a : +a - +b,
   )) {
     const drinksAtTimestamp = updatedDrinksList[+timestamp];
-    const avaiableAmount = drinksAtTimestamp[drinkKey as DrinkKey] || 0;
+    const avaiableAmount = drinksAtTimestamp[drinkKey] || 0;
 
     if (avaiableAmount > 0) {
       const amountRemoved = Math.min(remainingAmountToRemove, avaiableAmount);
@@ -500,7 +501,9 @@ function getSingleDayDrinkingSessions(
   sessions: DrinkingSessionList | undefined,
   returnArray = true,
 ): DrinkingSessionArray | DrinkingSessionList {
-  if (!sessions) return returnArray ? [] : {};
+  if (!sessions) {
+    return returnArray ? [] : {};
+  }
 
   const baseTimezone = timezone.selected;
   const timezoneCache: Record<
@@ -728,7 +731,7 @@ function shiftSessionTimestamps(
     session.start_time,
     millisecondsToSub,
   ).getTime();
-  if (!!session.end_time) {
+  if (session.end_time) {
     convertedSession.end_time = subMilliseconds(
       session.end_time,
       millisecondsToSub,

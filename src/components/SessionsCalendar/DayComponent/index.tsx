@@ -1,18 +1,16 @@
 import Text from '@components/Text';
-import {
-  StyleProp,
-  StyleSheet,
-  TextStyle,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import {CalendarColors, DayComponentProps} from '../types';
-import {DateData} from 'react-native-calendars';
+import type {StyleProp, TextStyle} from 'react-native';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import type {DateData} from 'react-native-calendars';
 import {hasDecimalPoint} from '@libs/DataHandling';
-import {DayState} from 'react-native-calendars/src/types';
-import {MarkingProps} from 'react-native-calendars/src/calendar/day/marking';
+import type {DayState} from 'react-native-calendars/src/types';
+import type {MarkingProps} from 'react-native-calendars/src/calendar/day/marking';
 import {roundToTwoDecimalPlaces} from '@libs/NumberUtils';
 import {endOfDay} from 'date-fns';
+import type {
+  CalendarColors,
+  DayComponentProps,
+} from '@components/SessionsCalendar/types';
 
 const colorToTextColorMap: Record<CalendarColors, string> = {
   yellow: 'black',

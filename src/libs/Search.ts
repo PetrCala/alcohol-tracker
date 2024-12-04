@@ -1,12 +1,12 @@
-﻿import type {Database} from 'firebase/database';
+import type {Database} from 'firebase/database';
 import {ref, get} from 'firebase/database';
-import {cleanStringForFirebaseKey} from '@libs/StringUtilsKiroku';
-import {QUIRKY_NICKNAMES} from '@libs/QuirkyNicknames';
 import type {
   UserIDToNicknameMapping,
   UserSearchResults,
 } from '@src/types/various/Search';
 import type {NicknameToId} from '@src/types/onyx';
+import {cleanStringForFirebaseKey} from './StringUtilsKiroku';
+import {QUIRKY_NICKNAMES} from './QuirkyNicknames';
 
 /**
  * Using a database object and a nickname to search,
@@ -14,9 +14,9 @@ import type {NicknameToId} from '@src/types/onyx';
  * Return this object if it exists, or an empty object
  * if not.
  *
- * @param {Database} db Firebase Database object.
- * @param {string} searchText The nickname to search for.
- * @returns {Promise<NicknameToIdData|null>} The user IDs
+ * @param db Firebase Database object.
+ * @param searchText The nickname to search for.
+ * @returns The user IDs
  *  that belong to this nickname
  */
 async function searchDbByNickname(

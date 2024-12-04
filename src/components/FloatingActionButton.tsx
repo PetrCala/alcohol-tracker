@@ -14,12 +14,12 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import Svg, {Path} from 'react-native-svg';
-import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import useTheme from '@hooks/useTheme';
 import useThemeStyles from '@hooks/useThemeStyles';
 import variables from '@styles/variables';
-import {PressableWithoutFeedback} from './Pressable';
 import useWindowDimensions from '@hooks/useWindowDimensions';
+import * as KirokuIcons from './Icon/KirokuIcons';
+import {PressableWithoutFeedback} from './Pressable';
 import Icon from './Icon';
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);

@@ -13,7 +13,7 @@ import Logger from './Logger';
  * @return {Promise}
  */
 function serverLoggingCallback(logger, params) {
-    return API(Network('/api/')).logToServer(params);
+  return API(Network('/api/')).logToServer(params);
 }
 
 /**
@@ -22,17 +22,20 @@ function serverLoggingCallback(logger, params) {
  * @param {String} message
  */
 function clientLoggingCallback(message) {
-    if (typeof window.g_printableReport !== 'undefined' && window.g_printableReport === true) {
-        return;
-    }
+  if (
+    typeof window.g_printableReport !== 'undefined' &&
+    window.g_printableReport === true
+  ) {
+    return;
+  }
 
-    if (window.console && _.isFunction(console.log)) {
-        console.log(message);
-    }
+  if (window.console && _.isFunction(console.log)) {
+    console.log(message);
+  }
 }
 
 export default new Logger({
-    serverLoggingCallback,
-    clientLoggingCallback,
-    isDebug: window.DEBUG,
+  serverLoggingCallback,
+  clientLoggingCallback,
+  isDebug: window.DEBUG,
 });

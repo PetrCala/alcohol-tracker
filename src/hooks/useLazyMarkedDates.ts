@@ -1,6 +1,6 @@
 import {useEffect, useMemo, useRef, useState} from 'react';
 import {utcToZonedTime} from 'date-fns-tz';
-import {
+import type {
   DrinkingSessionArray,
   DrinkingSessionList,
   Preferences,
@@ -17,8 +17,8 @@ import {
   subMonths,
 } from 'date-fns';
 import {sessionsToDayMarking} from '@libs/DataHandling';
-import {MarkingProps} from 'react-native-calendars/src/calendar/day/marking';
-import {MarkedDates} from 'react-native-calendars/src/types';
+import type {MarkingProps} from 'react-native-calendars/src/calendar/day/marking';
+import type {MarkedDates} from 'react-native-calendars/src/types';
 
 type DateString = string;
 
@@ -44,7 +44,7 @@ function useLazyMarkedDates(
 
   /** Check up to which data the data has already loaded and return the date to load from. This date will capture one more month than the last loaded month. Always load one more day than the first day of the month in order to handle timezone modifications.
    */
-  const getDateToLoadFrom = (monthsToLoad: number = 1): Date => {
+  const getDateToLoadFrom = (monthsToLoad = 1): Date => {
     const today = new Date();
     const alreadyLoaded = loadedFrom.current;
     const monthsDifference = differenceInMonths(today, alreadyLoaded ?? today);
@@ -122,7 +122,7 @@ function useLazyMarkedDates(
   }
 
   // Here, set the 'reset' argument to true if empty maps are needed
-  const loadMoreMonths = (monthsToLoad: number = 1, reset: boolean = false) => {
+  const loadMoreMonths = (monthsToLoad = 1, reset = false) => {
     const newMarkedDatesMap = createNewMap<DateString, MarkingProps>(
       reset,
       markedDatesMap,

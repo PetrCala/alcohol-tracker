@@ -1,5 +1,4 @@
 import {Alert, StyleSheet, View} from 'react-native';
-import {acceptFriendRequest, sendFriendRequest} from '../../database/friends';
 import type {Database} from 'firebase/database';
 import ProfileImage from '@components/ProfileImage';
 import type {FirebaseStorage} from 'firebase/storage';
@@ -9,6 +8,7 @@ import CONST from '@src/CONST';
 import Button from '@components/Button';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Text from '@components/Text';
+import {acceptFriendRequest, sendFriendRequest} from '@src/database/friends';
 
 const statusToTextMap: {[key in FriendRequestStatus]: string} = {
   self: 'You',
@@ -49,9 +49,8 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
     } catch (error: any) {
       Alert.alert(
         'User does not exist in the database',
-        'Could not send a friend request: ' + error.message,
+        `Could not send a friend request: ${error.message}`,
       );
-      return;
     }
   };
 
@@ -68,9 +67,8 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
     } catch (error: any) {
       Alert.alert(
         'User does not exist in the database',
-        'Could not accept a friend request: ' + error.message,
+        `Could not accept a friend request: ${error.message}`,
       );
-      return;
     }
   };
 
@@ -138,7 +136,7 @@ const SearchResult: React.FC<SearchResultProps> = ({
     <View style={localStyles.userOverviewContainer}>
       <View style={localStyles.userInfoContainer}>
         <ProfileImage
-          key={userID + '-profile-icon'}
+          key={`${userID}-profile-icon`}
           storage={storage}
           userID={userID}
           downloadPath={userDisplayData?.photo_url}
@@ -150,9 +148,7 @@ const SearchResult: React.FC<SearchResultProps> = ({
             : 'Unknown'}
         </Text>
       </View>
-      {customButton ? (
-        customButton
-      ) : (
+      {customButton || (
         <SendFriendRequestButton
           db={db}
           userFrom={userFrom}

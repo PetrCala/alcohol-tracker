@@ -1,4 +1,4 @@
-﻿import fs from 'fs';
+import fs from 'fs';
 import type {
   AppSettings,
   Config,
@@ -29,15 +29,15 @@ import {
 } from '@libs/DataHandling';
 import {cleanStringForFirebaseKey} from '@libs/StringUtilsKiroku';
 import CONST from '@src/CONST';
-import {UserID} from '@src/types/onyx/OnyxCommon';
+import type {UserID} from '@src/types/onyx/OnyxCommon';
 import {addDays, startOfDay, subDays} from 'date-fns';
 import DateUtils from '@libs/DateUtils';
 
-function getMockSessionIDs(): Array<string> {
+function getMockSessionIDs(): string[] {
   return ['mock-session-1', 'mock-session-2', 'mock-session-3'];
 }
 
-function getMockUserIDs(): Array<UserID> {
+function getMockUserIDs(): UserID[] {
   return [
     'mock-user-1',
     'mock-user-2',
@@ -200,7 +200,7 @@ function createMockSession(
     end_time: sessionDate.getTime() + 2 * 60 * 60 * 1000, // +2 hours
     blackout: false,
     note: '',
-    drinks: drinks,
+    drinks,
     type: getRandomChoice(Object.values(CONST.SESSION_TYPES)),
     timezone: DateUtils.getCurrentTimezone().selected,
   };
@@ -371,7 +371,7 @@ function exportMockDatabase(verbose = false): string {
   const filePath = './mockDatabase.json';
   fs.writeFileSync(filePath, JSON.stringify(mockDatabase));
   if (verbose) {
-    console.log('Mock database exported to: ' + filePath);
+    console.log(`Mock database exported to: ${filePath}`);
   }
   return filePath;
 }

@@ -6,6 +6,9 @@ import type FriendRequestList from './FriendRequestList';
 /** Selectable timezones */
 type SelectedTimezone = TupleToUnion<typeof TIMEZONES>;
 
+/**
+ *
+ */
 type Timezone = {
   /** Value of selected timezone */
   selected?: SelectedTimezone;
@@ -14,6 +17,9 @@ type Timezone = {
   automatic?: boolean;
 };
 
+/**
+ *
+ */
 type Profile = {
   /** User first name */
   first_name?: string;
@@ -28,6 +34,9 @@ type Profile = {
   photo_url: string;
 };
 
+/**
+ *
+ */
 type UserPrivateData = {
   /** User birthdate, stored as a timestamp */
   birthdate?: Timestamp;
@@ -39,11 +48,17 @@ type UserPrivateData = {
   gender?: string;
 };
 
+/**
+ *
+ */
 type UserPublicData = {
   /** A timestamp marking the last activity of the user  */
   last_active?: Timestamp;
 };
 
+/**
+ *
+ */
 type UserData = {
   /** A timestamp marking when the user agreed to the terms and conditions */
   agreed_to_terms_at?: Timestamp;
@@ -70,8 +85,14 @@ type UserData = {
   timezone?: Timezone;
 };
 
+/**
+ *
+ */
 type UserDataList = Record<UserID, UserData>;
 
+/**
+ *
+ */
 type ProfileList = Record<UserID, Profile>;
 
 /** Model of user data metadata */

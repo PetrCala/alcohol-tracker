@@ -77,7 +77,6 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
       setDisplayedFriends(relevantResults); // Hide irrelevant
     } catch (error: any) {
       ErrorUtils.raiseAlert(error, translate('onyx.error.generic'));
-      return;
     }
   };
 
@@ -120,19 +119,19 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
       .filter(userID => commonFriends.includes(userID) === renderCommonFriends)
       .map(userID => (
         <SearchResult
-          key={userID + '-container'}
+          key={`${userID}-container`}
           userID={userID}
           userDisplayData={displayData[userID]}
           db={db}
           storage={storage}
-          //@ts-ignore
+          // @ts-ignore
           userFrom={user.uid}
           requestStatus={requestStatuses[userID]}
           alreadyAFriend={userData?.friends ? userData?.friends[userID] : false}
           customButton={
             renderCommonFriends && (
               <Button
-                key={userID + '-button'}
+                key={`${userID}-button`}
                 text={translate('friendsFriendsScreen.seeProfile')}
                 onPress={() =>
                   Navigation.navigate(ROUTES.PROFILE.getRoute(userID))
@@ -216,7 +215,7 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
         windowText={translate('friendsFriendsScreen.searchUsersFriends')}
         onSearch={localSearch}
         onResetSearch={resetSearch}
-        searchOnTextChange={true}
+        searchOnTextChange
       />
       <ScrollView
         style={localStyles.scrollViewContainer}

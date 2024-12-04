@@ -1,4 +1,5 @@
-﻿import {StyleProp, View, ViewStyle} from 'react-native';
+import type {StyleProp, ViewStyle} from 'react-native';
+import {View} from 'react-native';
 import {
   getLastDrinkAddedTime,
   sumAllDrinks,
@@ -28,7 +29,7 @@ import ScrollView from '@components/ScrollView';
 import useTheme from '@hooks/useTheme';
 import MenuItem from '@components/MenuItem';
 import Section from '@components/Section';
-import {TranslationPaths} from '@src/languages/types';
+import type {TranslationPaths} from '@src/languages/types';
 import MenuItemGroup from '@components/MenuItemGroup';
 import _ from 'lodash';
 
@@ -234,7 +235,7 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
                     // {borderBottomLeftRadius: 35, borderBottomRightRadius: 35},
                     // index === menuItemsData.items.length - 1 && styles.borderNone,
                   ]}
-                  disabled={true}
+                  disabled
                   shouldGreyOutWhenDisabled={false}
                   shouldUseRowFlexDirection
                   shouldShowRightComponent={!!detail.rightComponent}

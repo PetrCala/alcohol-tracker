@@ -20,7 +20,6 @@ import {
   Text,
   View,
 } from 'react-native';
-import UserOverview from './UserOverview';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
@@ -30,6 +29,7 @@ import _ from 'lodash';
 import useThemeStyles from '@hooks/useThemeStyles';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
+import UserOverview from './UserOverview';
 
 type UserListProps = {
   fullUserArray: UserArray;
@@ -113,10 +113,8 @@ const UserListComponent: React.FC<UserListProps> = ({
       }
       const newUsers = fullUserArray.filter(userID => !userStatusList[userID]);
       if (isNonEmptyArray(newUsers)) {
-        const newUserStatusList: UserStatusList = await Profile.fetchUserStatuses(
-          db,
-          newUsers,
-        );
+        const newUserStatusList: UserStatusList =
+          await Profile.fetchUserStatuses(db, newUsers);
         setUserStatusList({...userStatusList, ...newUserStatusList});
       }
     }
@@ -179,11 +177,11 @@ const UserListComponent: React.FC<UserListProps> = ({
 
                 return (
                   <PressableWithAnimation
-                    key={userID + '-button'}
+                    key={`${userID}-button`}
                     style={localStyles.friendOverviewButton}
                     onPress={() => navigateToProfile(userID)}>
                     <UserOverview
-                      key={userID + '-user-overview'}
+                      key={`${userID}-user-overview`}
                       userID={userID}
                       profileData={profileData}
                       userStatusData={userStatusData}

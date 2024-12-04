@@ -25,6 +25,7 @@ import * as Session from '@userActions/Session';
 import CONST from '@src/CONST';
 import type {Icon as IconType} from '@src/types/onyx/OnyxCommon';
 import type IconAsset from '@src/types/utils/IconAsset';
+import * as KirokuIcons from './Icon/KirokuIcons';
 import Avatar from './Avatar';
 import Badge from './Badge';
 import DisplayNames from './DisplayNames';
@@ -32,7 +33,6 @@ import type {DisplayNameWithTooltip} from './DisplayNames/types';
 import FormHelpMessage from './FormHelpMessage';
 import Hoverable from './Hoverable';
 import Icon from './Icon';
-import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {MenuItemGroupContext} from './MenuItemGroup';
 import MultipleAvatars from './MultipleAvatars';
 import type {PressableRef} from './Pressable/GenericPressable/types';
@@ -191,7 +191,7 @@ type MenuItemBaseProps = {
   shouldStackHorizontally?: boolean;
 
   /** Prop to represent the size of the avatar images to be shown */
-  avatarSize?: (typeof CONST.AVATAR_SIZE)[keyof typeof CONST.AVATAR_SIZE];
+  avatarSize?: ValueOf<typeof CONST.AVATAR_SIZE>;
 
   /** Avatars to show on the right of the menu item */
   floatRightAvatars?: IconType[];

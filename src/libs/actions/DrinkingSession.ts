@@ -1,4 +1,4 @@
-﻿import type {Database} from 'firebase/database';
+import type {Database} from 'firebase/database';
 import {ref, update} from 'firebase/database';
 import type {
   DrinkingSession,
@@ -11,18 +11,20 @@ import type {
 import * as Localize from '@src/libs/Localize';
 import * as DSUtils from '@src/libs/DrinkingSessionUtils';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
-import DBPATHS from '@src/DBPATHS';
-import {User} from 'firebase/auth';
+import type {User} from 'firebase/auth';
 import CONST from '@src/CONST';
-import {FirebaseUpdates, generateDatabaseKey} from '@database/baseFunctions';
+import type {FirebaseUpdates} from '@database/baseFunctions';
+import {generateDatabaseKey} from '@database/baseFunctions';
 import Onyx from 'react-native-onyx';
-import ONYXKEYS, {OnyxKey} from '@src/ONYXKEYS';
+import type {OnyxKey} from '@src/ONYXKEYS';
+import ONYXKEYS from '@src/ONYXKEYS';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import {differenceInDays, startOfDay} from 'date-fns';
-import {SelectedTimezone} from '@src/types/onyx/UserData';
-import {ValueOf} from 'type-fest';
+import type {SelectedTimezone} from '@src/types/onyx/UserData';
+import type {ValueOf} from 'type-fest';
 import _ from 'lodash';
+import DBPATHS from '@src/database/DBPATHS';
 
 const drinkingSessionRef = DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID;
 const userStatusRef = DBPATHS.USER_STATUS_USER_ID;
@@ -59,7 +61,7 @@ function updateLocalData(
   newData: DrinkingSession | null,
   onyxKey: OnyxKey,
 ): void {
-  let dataToSet = newData ? {id: sessionId, ...newData} : null;
+  const dataToSet = newData ? {id: sessionId, ...newData} : null;
   Onyx.set(onyxKey, dataToSet);
 }
 
@@ -148,7 +150,7 @@ async function startLiveDrinkingSession(
   const newSessionData: DrinkingSession = DSUtils.getEmptySession({
     id: newSessionId,
     type: CONST.SESSION_TYPES.LIVE,
-    timezone: timezone,
+    timezone,
     ongoing: true,
   });
   const newStatusData: UserStatus = {
@@ -164,8 +166,6 @@ async function startLiveDrinkingSession(
   await update(ref(db), updates);
 
   await Onyx.set(ONYXKEYS.ONGOING_SESSION_DATA, newSessionData);
-
-  return;
 }
 
 /** Save final drinking session data to the database
@@ -382,7 +382,7 @@ function getNewSessionToEdit(
     start_time: timestamp,
     end_time: timestamp,
     type: CONST.SESSION_TYPES.EDIT,
-    timezone: timezone,
+    timezone,
   });
 
   return newSession;

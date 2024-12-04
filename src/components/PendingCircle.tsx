@@ -1,7 +1,7 @@
-﻿import React, {useState} from 'react';
+import React, {useState} from 'react';
 import {View, StyleSheet} from 'react-native';
 
-const PendingCircleComponent = (visible: boolean) => {
+function PendingCircleComponent(visible: boolean) {
   // A sample boolean hook to determine visibility of the circle.
   const [isVisible, setIsVisible] = useState(false);
 
@@ -11,10 +11,10 @@ const PendingCircleComponent = (visible: boolean) => {
   return (
     <View style={styles.container}>
       {/* Conditionally render circle if isVisible is true */}
-      {isVisible && <View style={styles.circle}></View>}
+      {isVisible && <View style={styles.circle} />}
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {

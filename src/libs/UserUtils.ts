@@ -5,10 +5,10 @@ import {UserIcon} from '@components/Icon/KirokuIcons';
 import CONST from '@src/CONST';
 import type {Timestamp, UserID} from '@src/types/onyx/OnyxCommon';
 import type IconAsset from '@src/types/utils/IconAsset';
-import hashCode from './hashCode';
 import Onyx from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
-import {User} from 'firebase/auth';
+import type {User} from 'firebase/auth';
+import hashCode from './hashCode';
 
 let verifyEmailDismissed: OnyxEntry<Timestamp | null> = null;
 Onyx.connect({

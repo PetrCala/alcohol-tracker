@@ -25,7 +25,7 @@ function getActionForBottomTabNavigator(
   }
 
   const params = action.payload.params as ActionPayloadParams;
-  let payloadParams = params.params as Record<string, string | undefined>;
+  const payloadParams = params.params as Record<string, string | undefined>;
   const screen = params.screen;
 
   // Check if the current bottom tab is the same as the one we want to navigate to. If it is, we don't need to do anything.

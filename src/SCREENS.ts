@@ -67,7 +67,7 @@ const SCREENS = {
       PASSWORD: 'Settings_Password',
       TIMEZONE: 'Settings_Timezone',
       TIMEZONE_SELECT: 'Settings_Timezone_Select',
-      //...
+      // ...
     },
 
     PREFERENCES: {

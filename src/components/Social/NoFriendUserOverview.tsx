@@ -1,9 +1,9 @@
-﻿import {StyleSheet, View} from 'react-native';
-import {useFirebase} from '../../context/global/FirebaseContext';
-import ProfileImage from '../ProfileImage';
+import {StyleSheet, View} from 'react-native';
 import type {Profile} from '@src/types/onyx';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Text from '@components/Text';
+import {useFirebase} from '@src/context/global/FirebaseContext';
+import ProfileImage from '@components/ProfileImage';
 
 type NoFriendUserOverviewProps = {
   userID: string; // Other user's ID
@@ -25,20 +25,20 @@ const NoFriendUserOverview: React.FC<NoFriendUserOverviewProps> = ({
 
   return (
     <View
-      key={userID + '-container'}
+      key={`${userID}-container`}
       style={localStyles.noFriendUserOverviewContainer}>
       <View
-        key={userID + 'profile'}
+        key={`${userID}profile`}
         style={localStyles.noFriendUserOverviewProfile}>
         <ProfileImage
-          key={userID + '-profile-icon'}
+          key={`${userID}-profile-icon`}
           storage={storage}
           downloadPath={profileData.photo_url}
           userID={userID}
           style={localStyles.noFriendUserOverviewImage}
         />
         <Text
-          key={userID + '-nickname'}
+          key={`${userID}-nickname`}
           style={[styles.headerText, styles.ml3, styles.flexShrink1]}
           numberOfLines={1}
           ellipsizeMode="tail">

@@ -6,12 +6,12 @@ import type {
 } from 'react';
 import React, {forwardRef} from 'react';
 // eslint-disable-next-line no-restricted-imports
-import {
-  Linking,
-  type GestureResponderEvent,
-  type Text as RNText,
-  type StyleProp,
-  type TextStyle,
+import {Linking} from 'react-native';
+import type {
+  GestureResponderEvent,
+  Text as RNText,
+  StyleProp,
+  TextStyle,
 } from 'react-native';
 import useEnvironment from '@hooks/useEnvironment';
 import useThemeStyles from '@hooks/useThemeStyles';

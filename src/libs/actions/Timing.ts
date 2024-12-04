@@ -22,7 +22,6 @@ function start(eventName: string, shouldUseFirebase = false) {
   timestampData[eventName] = {startTime: Date.now(), shouldUseFirebase};
 
   if (!shouldUseFirebase) {
-    return;
   }
 
   //   Firebase.startTrace(eventName);

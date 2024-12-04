@@ -1,4 +1,4 @@
-﻿import type {FirebaseStorage} from 'firebase/storage';
+import type {FirebaseStorage} from 'firebase/storage';
 import {getDownloadURL, ref} from 'firebase/storage';
 
 /**
@@ -6,9 +6,9 @@ import {getDownloadURL, ref} from 'firebase/storage';
  * profile picture path, fetch the download URL for the picture, which
  * can be directly loaded into the Image URI prop.
  *
- * @param {FirebaseStorage} storage The Firebase Storage object.
- * @param {string} userID User UID.
- * @param {string} downloadPath Full path to where the image can be downloaded on the storage.
+ * @param storage The Firebase Storage object.
+ * @param userID User UID.
+ * @param downloadPath Full path to where the image can be downloaded on the storage.
  * @returns Promise<string>} Full path to the image
  *
  * @example

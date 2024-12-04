@@ -1,4 +1,4 @@
-﻿import {StyleSheet, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import type {
   DrinkingSession,
   DrinkingSessionId,
@@ -9,13 +9,13 @@ import useLocalize from '@hooks/useLocalize';
 import DrinkData from '@libs/DrinkData';
 import * as DS from '@userActions/DrinkingSession';
 import {findDrinkName} from '@libs/DataHandling';
-import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import CONST from '@src/CONST';
+import useTheme from '@hooks/useTheme';
+import * as KirokuIcons from './Icon/KirokuIcons';
 import Icon from './Icon';
 import SessionDrinksInputWindow from './Buttons/SessionDrinksInputWindow';
 import Button from './Button';
-import useTheme from '@hooks/useTheme';
 import Text from './Text';
 
 export type DrinkTypesViewProps = {
@@ -23,7 +23,7 @@ export type DrinkTypesViewProps = {
   session: DrinkingSession;
 };
 
-const DrinkTypesView = ({session}: DrinkTypesViewProps) => {
+function DrinkTypesView({session}: DrinkTypesViewProps) {
   const {translate} = useLocalize();
   const {preferences} = useDatabaseData();
   const styles = useThemeStyles();
@@ -92,7 +92,7 @@ const DrinkTypesView = ({session}: DrinkTypesViewProps) => {
       </View>
     </View>
   );
-};
+}
 
 export default DrinkTypesView;
 

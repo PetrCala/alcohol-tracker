@@ -1,15 +1,15 @@
-﻿import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import type {ImageSourcePropType} from 'react-native';
 import {Image, View, Alert, TouchableOpacity, StyleSheet} from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import {Image as CompressorImage} from 'react-native-compressor';
-import {uploadImageToFirebase} from '../storage/storageUpload';
-import UploadImagePopup from './Popups/UploadImagePopup';
 import checkPermission from '@libs/Permissions/checkPermission';
 import {requestPermission} from '@libs/Permissions/requestPermission';
 import * as Profile from '@userActions/Profile';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import useLocalize from '@hooks/useLocalize';
+import {uploadImageToFirebase} from '@src/storage/storageUpload';
+import UploadImagePopup from './Popups/UploadImagePopup';
 
 type UploadImageComponentProps = {
   pathToUpload: string;
@@ -63,7 +63,7 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
       })
       .catch((error: any) => {
         // TODO add clever error handling
-        if ('User cancelled image selection' === error.message) {
+        if (error.message === 'User cancelled image selection') {
           return;
         }
         Alert.alert(translate('imageUpload.error.choice'), error.message);
@@ -146,7 +146,7 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
       {imageSource && (
         <UploadImagePopup
           visible={uploadModalVisible}
-          transparent={true}
+          transparent
           onRequestClose={() => setUploadModalVisible(false)}
           uploadProgress={uploadProgress}
           uploadOngoing={uploadOngoing}

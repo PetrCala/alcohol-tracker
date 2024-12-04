@@ -4,7 +4,7 @@ import {ActivityIndicator} from 'react-native';
 import useTheme from '@hooks/useTheme';
 import useThemeStyles from '@hooks/useThemeStyles';
 import CONST from '@src/CONST';
-import {ValueOf} from 'type-fest';
+import type {ValueOf} from 'type-fest';
 import Text from './Text';
 
 type FlexibleLoadingIndicatorProps = {

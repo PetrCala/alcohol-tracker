@@ -1,13 +1,8 @@
 // !! Run using npm test - to run using bun test, resolve first issue with Config -> mock react-native-config
 
-require('dotenv').config(); // Use .env variables in this file - CONFIG does not work here
+// Use .env variables in this file - CONFIG does not work here
 import {ref, get, set} from 'firebase/database';
 import type {FirebaseApp} from 'firebase/app';
-import {
-  createMockConfig,
-  createMockSession,
-  createMockUserStatus,
-} from '../../../src/database/MockDatabase';
 import {isConnectedToDatabaseEmulator} from '@src/libs/Firebase/FirebaseUtils';
 import type {
   FriendRequestList,
@@ -16,12 +11,9 @@ import type {
   DrinkingSession,
 } from '@src/types/onyx';
 import type {Database} from 'firebase/database';
-import {saveDrinkingSessionData} from '@userActions/DrinkingSession';
+import {saveDrinkingSessionData} from '@libs/actions/DrinkingSession';
 
-import {MOCK_USER_IDS} from '../../utils/testsStatic';
 import {readDataOnce} from '@database/baseFunctions';
-import {setupGlobalMocks} from '../../utils/testUtils';
-import DatabaseEmulator from '../../emulators/database';
 import {
   changeDisplayName,
   deleteUserData,
@@ -29,7 +21,7 @@ import {
   getDefaultUserData,
   getDefaultUserStatus,
   pushNewUserInfo,
-} from '@userActions/User';
+} from '@database/users';
 import {cleanStringForFirebaseKey} from '@libs/StringUtilsKiroku';
 import {
   acceptFriendRequest,
@@ -38,11 +30,21 @@ import {
   sendFriendRequest,
   unfriend,
 } from '@database/friends';
-import DBPATHS from '@src/DBPATHS';
+import DBPATHS from '@database/DBPATHS';
 import CONST from '@src/CONST';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
-import {describeWithEmulator} from '../../emulators/utils';
 import ONYXKEYS from '@src/ONYXKEYS';
+import {
+  createMockConfig,
+  createMockSession,
+  createMockUserStatus,
+} from '@src/database/MockDatabase';
+import {describeWithEmulator} from '../../emulators/utils';
+import {MOCK_USER_IDS} from '../../utils/testsStatic';
+import DatabaseEmulator from '../../emulators/database';
+import {setupGlobalMocks} from '../../utils/testUtils';
+
+require('dotenv').config();
 
 const testUserID: string = MOCK_USER_IDS[0];
 const testUserDisplayName = 'mock-user';

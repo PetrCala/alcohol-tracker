@@ -13,13 +13,13 @@ import ONYXKEYS from '@src/ONYXKEYS';
 import INPUT_IDS from '@src/types/form/FeedbackForm';
 import FormProvider from '@components/Form/FormProvider';
 import Text from '@components/Text';
-import {Errors} from '@src/types/onyx/OnyxCommon';
+import type {Errors} from '@src/types/onyx/OnyxCommon';
 import InputWrapper from '@components/Form/InputWrapper';
 import variables from '@src/styles/variables';
 import CONST from '@src/CONST';
 import TextInput from '@components/TextInput';
-import {StackScreenProps} from '@react-navigation/stack';
-import SCREENS from '@src/SCREENS';
+import type {StackScreenProps} from '@react-navigation/stack';
+import type SCREENS from '@src/SCREENS';
 import {submitFeedback} from '@database/feedback';
 import {useFirebase} from '@context/global/FirebaseContext';
 

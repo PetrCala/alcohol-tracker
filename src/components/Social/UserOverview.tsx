@@ -1,5 +1,4 @@
 import {StyleSheet, View} from 'react-native';
-import {useFirebase} from '../../context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
 import {getTimestampAge} from '@libs/TimeUtils';
 import commonStyles from '@src/styles/commonStyles';
@@ -9,9 +8,10 @@ import DrinkData from '@libs/DrinkData';
 import _, {get} from 'lodash';
 import useThemeStyles from '@hooks/useThemeStyles';
 import DateUtils from '@libs/DateUtils';
-import {Timezone} from '@src/types/onyx/UserData';
+import type {Timezone} from '@src/types/onyx/UserData';
 import Text from '@components/Text';
 import Icon from '@components/Icon';
+import {useFirebase} from '@src/context/global/FirebaseContext';
 
 type UserOverviewProps = {
   userID: string;
@@ -50,12 +50,12 @@ const UserOverview: React.FC<UserOverviewProps> = ({
   )?.icon;
 
   return (
-    <View key={userID + '-container'} style={localStyles.userOverviewContainer}>
-      <View key={userID + '-left-container'} style={localStyles.leftContainer}>
-        <View key={userID + '-profile'} style={localStyles.userOverviewProfile}>
+    <View key={`${userID}-container`} style={localStyles.userOverviewContainer}>
+      <View key={`${userID}-left-container`} style={localStyles.leftContainer}>
+        <View key={`${userID}-profile`} style={localStyles.userOverviewProfile}>
           <View style={localStyles.imageContainer}>
             <ProfileImage
-              key={userID + '-profile-icon'}
+              key={`${userID}-profile-icon`}
               storage={storage}
               userID={userID}
               downloadPath={profileData.photo_url}
@@ -63,14 +63,14 @@ const UserOverview: React.FC<UserOverviewProps> = ({
             />
           </View>
           <View
-            key={userID + 'info'}
+            key={`${userID}info`}
             style={
               // shouldDisplaySessionInfo ?
               // : [localStyles.userInfoContainer, localStyles.centerUserInfo]
               [localStyles.userInfoContainer, localStyles.centerUserInfo]
             }>
             <Text
-              key={userID + '-nickname'}
+              key={`${userID}-nickname`}
               style={[styles.headerText, styles.ml1, styles.flexShrink1]}
               numberOfLines={1}
               ellipsizeMode="tail">
@@ -80,14 +80,14 @@ const UserOverview: React.FC<UserOverviewProps> = ({
         </View>
       </View>
       <View
-        key={userID + '-right-container'}
+        key={`${userID}-right-container`}
         style={localStyles.rightContainer}>
         {/* ? `In session:\n${drinksThisSession} ${mostCommonDrink}` */}
         {inSession && shouldDisplaySessionInfo ? (
           <>
             <View style={commonStyles.flexRow}>
               <Text
-                key={userID + '-status-info'}
+                key={`${userID}-status-info`}
                 style={[
                   localStyles.userDetailsText,
                   localStyles.rightContainerText,
@@ -97,7 +97,7 @@ const UserOverview: React.FC<UserOverviewProps> = ({
               {mostCommonDrinkIcon && <Icon small src={mostCommonDrinkIcon} />}
             </View>
             <Text
-              key={userID + '-status-time'}
+              key={`${userID}-status-time`}
               style={[
                 localStyles.userDetailsText,
                 localStyles.rightContainerText,
@@ -107,7 +107,7 @@ const UserOverview: React.FC<UserOverviewProps> = ({
           </>
         ) : (
           <Text
-            key={userID + '-status'}
+            key={`${userID}-status`}
             style={[
               localStyles.userDetailsText,
               localStyles.rightContainerText,

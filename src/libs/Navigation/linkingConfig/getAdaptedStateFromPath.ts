@@ -10,11 +10,11 @@ import type {
 import {isCentralPaneName} from '@libs/NavigationUtils';
 import NAVIGATORS from '@src/NAVIGATORS';
 import SCREENS from '@src/SCREENS';
+import ROUTES from '@src/ROUTES';
 import config from './config';
 import getMatchingBottomTabRouteForState from './getMatchingBottomTabRouteForState';
 import getMatchingCentralPaneRouteForState from './getMatchingCentralPaneRouteForState';
 import replacePathInNestedState from './replacePathInNestedState';
-import ROUTES from '@src/ROUTES';
 
 type Metainfo = {
   // Sometimes modal screens don't have information about what should be visible under the overlay.
@@ -69,7 +69,7 @@ function createBottomTabNavigator(
     NavigationPartialRoute<BottomTabName>
   > = [];
   routesForBottomTabNavigator.push(
-    route as NavigationPartialRoute<BottomTabName>,
+    route,
     // addPolicyIDToRoute(
     //   route,
     //   policyID,
@@ -190,7 +190,8 @@ function getAdaptedState(
     const routes = [];
 
     if (focusedRHPRoute) {
-      let matchingRootRoute = getMatchingRootRouteForRHPRoute(focusedRHPRoute);
+      const matchingRootRoute =
+        getMatchingRootRouteForRHPRoute(focusedRHPRoute);
       const isRHPScreenOpenedFromLHN = focusedRHPRoute?.name;
       //  && RHP_SCREENS_OPENED_FROM_LHN.includes(
       //   focusedRHPRoute?.name as RHPScreenOpenedFromLHN,

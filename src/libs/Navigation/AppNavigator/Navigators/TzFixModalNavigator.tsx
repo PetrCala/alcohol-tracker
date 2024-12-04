@@ -20,9 +20,9 @@ import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
 import ROUTES from '@src/ROUTES';
 import SCREENS from '@src/SCREENS';
-import Overlay from '@libs/Navigation/AppNavigator/Navigators/Overlay';
 import useStyleUtils from '@hooks/useStyleUtils';
 import SelectionScreen from '@screens/TzFix/SelectionScreen';
+import Overlay from './Overlay';
 
 const Stack = createStackNavigator<TzFixModalNavigatorParamList>();
 

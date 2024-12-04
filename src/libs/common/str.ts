@@ -59,8 +59,8 @@ const Str = {
   /**
    * A simple GUID generator taken from https://stackoverflow.com/a/32760401/9114791
    *
-   * @param {String} [prefix] an optional prefix to put in front of the guid
-   * @returns {String}
+   * @param [prefix] an optional prefix to put in front of the guid
+   * @returns
    */
   guid(prefix = ''): string {
     function s4() {
@@ -74,8 +74,8 @@ const Str = {
   /**
    * Modifies the string so the first letter of the string is capitalized
    *
-   * @param {String} str The string to modify.
-   * @return {String} The recapitalized string.
+   * @param str The string to modify.
+   * @return The recapitalized string.
    */
   UCFirst(str: string): string {
     return str.substr(0, 1).toUpperCase() + str.substr(1);

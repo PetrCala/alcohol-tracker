@@ -1,7 +1,7 @@
-import {ReasonForLeavingId} from '@src/types/onyx';
-import {UserID} from '@src/types/onyx/OnyxCommon';
-import StringUtils from './StringUtils';
+import type {ReasonForLeavingId} from '@src/types/onyx';
+import type {UserID} from '@src/types/onyx/OnyxCommon';
 import CONST from '@src/CONST';
+import StringUtils from './StringUtils';
 
 /**
  * Generate a unique reason for leaving ID as a hash combination of the user ID and the current timestamp.

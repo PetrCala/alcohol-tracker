@@ -1,4 +1,4 @@
-﻿import type {ReactNode} from 'react';
+import type {ReactNode} from 'react';
 import {createContext, useContext} from 'react';
 import type {Auth} from 'firebase/auth';
 import {connectAuthEmulator} from 'firebase/auth';
@@ -6,13 +6,13 @@ import type {Database} from 'firebase/database';
 import {connectDatabaseEmulator, getDatabase} from 'firebase/database';
 import type {FirebaseStorage} from 'firebase/storage';
 import {getStorage, connectStorageEmulator} from 'firebase/storage';
-import {isConnectedToAuthEmulator} from '@src/libs/Firebase/FirebaseUtils';
-import {FirebaseApp, auth} from '@libs/Firebase/FirebaseApp';
-import FirebaseConfig from '@libs/Firebase/FirebaseConfig';
 import {
+  isConnectedToAuthEmulator,
   isConnectedToDatabaseEmulator,
   isConnectedToStorageEmulator,
 } from '@src/libs/Firebase/FirebaseUtils';
+import {FirebaseApp, auth} from '@libs/Firebase/FirebaseApp';
+import FirebaseConfig from '@libs/Firebase/FirebaseConfig';
 import CONFIG from '@src/CONFIG';
 
 type FirebaseContextProps = {

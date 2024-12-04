@@ -1,8 +1,8 @@
-import {DrinkingSessionList, Preferences} from '@src/types/onyx';
+import type {DrinkingSessionList, Preferences} from '@src/types/onyx';
+import type {UserID} from '@src/types/onyx/OnyxCommon';
+import type {DateData} from 'react-native-calendars';
+import type {MarkingProps} from 'react-native-calendars/src/calendar/day/marking';
 import type {DayComponentProps, CalendarColors} from './DayComponent/types';
-import {UserID} from '@src/types/onyx/OnyxCommon';
-import {DateData} from 'react-native-calendars';
-import {MarkingProps} from 'react-native-calendars/src/calendar/day/marking';
 
 type SessionsCalendarProps = {
   /** ID of the user for which to render the calendar */

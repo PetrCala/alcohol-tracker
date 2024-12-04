@@ -7,9 +7,9 @@ import type {
 } from '@src/languages/types';
 import type {ErrorFields, Errors} from '@src/types/onyx/OnyxCommon';
 import type Response from '@src/types/onyx/Response';
+import {Alert} from 'react-native';
 import DateUtils from './DateUtils';
 import * as Localize from './Localize';
-import {Alert} from 'react-native';
 
 /**
  * Parses the error object and returns the appropriate error message.
@@ -63,13 +63,9 @@ function getErrorMessage(error: any): string {
   }
 }
 
-function raiseAlert(
-  error: any,
-  heading: string = '',
-  message: string = '',
-): void {
+function raiseAlert(error: any, heading = '', message = ''): void {
   const payload = getErrorMessage(error);
-  Alert.alert(heading ?? 'Unknown error', `${message || ''}` + payload);
+  Alert.alert(heading ?? 'Unknown error', `${message || ''}${payload}`);
 }
 
 /**

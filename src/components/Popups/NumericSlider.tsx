@@ -1,4 +1,4 @@
-﻿import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View} from 'react-native';
 import Slider from '@react-native-community/slider';
 import useThemeStyles from '@hooks/useThemeStyles';
@@ -18,7 +18,7 @@ type NumericSliderProps = {
   onSave: (value: number) => void;
 };
 
-const NumericSlider = ({
+function NumericSlider({
   visible,
   heading,
   step,
@@ -26,7 +26,7 @@ const NumericSlider = ({
   maxValue,
   onRequestClose,
   onSave,
-}: NumericSliderProps) => {
+}: NumericSliderProps) {
   const [localValue, setLocalValue] = useState<number>(value);
   const styles = useThemeStyles();
   const theme = useTheme();
@@ -62,7 +62,7 @@ const NumericSlider = ({
             maximumTrackTintColor={theme.textDark}
             thumbTintColor={theme.textDark}
             onValueChange={handleSliderChange}
-            tapToSeek={true}
+            tapToSeek
           />
         </View>
         <View style={[styles.flexRow, styles.mt2]}>
@@ -81,7 +81,7 @@ const NumericSlider = ({
       </View>
     </FullScreenModal>
   );
-};
+}
 
 export default NumericSlider;
 export type {NumericSliderProps};

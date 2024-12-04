@@ -1,12 +1,13 @@
-﻿import useTheme from '@hooks/useTheme';
-import {StyleProp, View, ViewStyle} from 'react-native';
+import useTheme from '@hooks/useTheme';
+import type {StyleProp, ViewStyle} from 'react-native';
+import {View} from 'react-native';
 
 type FillerViewProps = {
   styles?: StyleProp<ViewStyle>;
   height?: number;
 };
-const FillerView = ({height, styles}: FillerViewProps) => {
-  const fillerHeight = height ? height : 200;
+function FillerView({height, styles}: FillerViewProps) {
+  const fillerHeight = height || 200;
   const theme = useTheme();
   return (
     <View
@@ -19,6 +20,6 @@ const FillerView = ({height, styles}: FillerViewProps) => {
       ]}
     />
   );
-};
+}
 
 export default FillerView;

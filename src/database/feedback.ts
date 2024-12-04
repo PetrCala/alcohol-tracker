@@ -1,9 +1,9 @@
-﻿import type {Database} from 'firebase/database';
+import type {Database} from 'firebase/database';
 import {child, push, ref, update} from 'firebase/database';
 import type {FeedbackList, Feedback, Bug, BugList} from '@src/types/onyx';
+import type {FormOnyxValues} from '@components/Form/types';
+import type ONYXKEYS from '@src/ONYXKEYS';
 import DBPATHS from '@src/DBPATHS';
-import {FormOnyxValues} from '@components/Form/types';
-import ONYXKEYS from '@src/ONYXKEYS';
 
 const feedbackItemRef = DBPATHS.FEEDBACK_FEEDBACK_ID;
 const bugItemRef = DBPATHS.BUGS_BUG_ID;

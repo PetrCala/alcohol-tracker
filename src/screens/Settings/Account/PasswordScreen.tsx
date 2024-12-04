@@ -16,18 +16,18 @@ import ONYXKEYS from '@src/ONYXKEYS';
 import INPUT_IDS from '@src/types/form/PasswordForm';
 import FormProvider from '@components/Form/FormProvider';
 import Text from '@components/Text';
-import {Errors} from '@src/types/onyx/OnyxCommon';
+import type {Errors} from '@src/types/onyx/OnyxCommon';
 import InputWrapper from '@components/Form/InputWrapper';
 import variables from '@src/styles/variables';
 import CONST from '@src/CONST';
 import TextInput from '@components/TextInput';
-import {StackScreenProps} from '@react-navigation/stack';
-import SCREENS from '@src/SCREENS';
+import type {StackScreenProps} from '@react-navigation/stack';
+import type SCREENS from '@src/SCREENS';
 // import {submitPassword} from '@database/feedback';
 import {useFirebase} from '@context/global/FirebaseContext';
 import DotIndicatorMessage from '@components/DotIndicatorMessage';
-import {TranslationPaths} from '@src/languages/types';
-import {ValueOf} from 'type-fest';
+import type {TranslationPaths} from '@src/languages/types';
+import type {ValueOf} from 'type-fest';
 
 type PasswordScreenOnyxProps = {};
 
@@ -137,7 +137,7 @@ function PasswordScreen({}: PasswordScreenProps) {
               label={translate('password.currentPassword')}
               aria-label={translate('password.currentPassword')}
               shouldSaveDraft
-              defaultValue={''}
+              defaultValue=""
               spellCheck={false}
               secureTextEntry
               autoComplete={
@@ -154,7 +154,7 @@ function PasswordScreen({}: PasswordScreenProps) {
               label={translate('password.newPassword')}
               aria-label={translate('password.newPassword')}
               shouldSaveDraft
-              defaultValue={''}
+              defaultValue=""
               spellCheck={false}
               secureTextEntry
               autoComplete={
@@ -171,7 +171,7 @@ function PasswordScreen({}: PasswordScreenProps) {
               label={translate('password.reEnter')}
               aria-label={translate('password.reEnter')}
               shouldSaveDraft
-              defaultValue={''}
+              defaultValue=""
               spellCheck={false}
               secureTextEntry
               autoComplete={

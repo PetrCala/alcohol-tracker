@@ -1,4 +1,4 @@
-﻿import {PERMISSIONS} from 'react-native-permissions';
+import {PERMISSIONS} from 'react-native-permissions';
 import type {PermissionEntry, PermissionKey} from './PermissionsUtils';
 
 const PermissionsMap: Record<PermissionKey, PermissionEntry> = {

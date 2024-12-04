@@ -1,14 +1,15 @@
 import CONST from '@src/CONST';
-import {PressableWithFeedback} from './Pressable';
 import useThemeStyles from '@hooks/useThemeStyles';
 import useLocalize from '@hooks/useLocalize';
 import useTheme from '@hooks/useTheme';
-import IconAsset from '@src/types/utils/IconAsset';
-import {StyleProp, View, ViewStyle} from 'react-native';
-import Icon from './Icon';
+import type IconAsset from '@src/types/utils/IconAsset';
+import type {StyleProp, ViewStyle} from 'react-native';
+import {View} from 'react-native';
 import variables from '@src/styles/variables';
-import Text from './Text';
 import spacing from '@src/styles/utils/spacing';
+import Icon from './Icon';
+import Text from './Text';
+import {PressableWithFeedback} from './Pressable';
 
 type BottomTabBarIconProps = {
   /** The icon source */
@@ -50,7 +51,7 @@ function BottomTabBarIcon({
   const counterMarginLeft = styles.ml1;
   const translateX = variables.iconBottomBar / 2;
   const transformStyles: StyleProp<ViewStyle> = counter
-    ? {transform: [{translateX: translateX}]}
+    ? {transform: [{translateX}]}
     : null;
 
   return (

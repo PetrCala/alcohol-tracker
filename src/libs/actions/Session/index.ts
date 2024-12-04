@@ -1,7 +1,8 @@
 import throttle from 'lodash/throttle';
 // import type {ChannelAuthorizationData} from 'pusher-js/types/src/core/auth/options';
 // import type {ChannelAuthorizationCallback} from 'pusher-js/with-encryption';
-import {Auth, signOut as fbSignOut} from 'firebase/auth';
+import type {Auth} from 'firebase/auth';
+import {signOut as fbSignOut} from 'firebase/auth';
 import {Alert, InteractionManager, Linking, NativeModules} from 'react-native';
 import type {OnyxEntry, OnyxUpdate} from 'react-native-onyx';
 import Onyx from 'react-native-onyx';
@@ -1053,7 +1054,7 @@ async function signOut(auth: Auth) {
   } catch (error: any) {
     Alert.alert(
       'User sign out error',
-      'There was an error signing out: ' + error.message,
+      `There was an error signing out: ${error.message}`,
     );
   }
 }

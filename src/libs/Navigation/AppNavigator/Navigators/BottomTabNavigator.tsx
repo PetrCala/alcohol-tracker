@@ -10,8 +10,8 @@ import type {
   RootStackParamList,
 } from '@navigation/types';
 import SCREENS from '@src/SCREENS';
-import ActiveRouteContext from './ActiveRouteContext';
 import HomeScreen from '@screens/HomeScreen';
+import ActiveRouteContext from './ActiveRouteContext';
 import ActiveCentralPaneRouteContext from './ActiveRouteContext';
 
 // const loadWorkspaceInitialPage = () =>

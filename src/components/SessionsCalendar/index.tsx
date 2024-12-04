@@ -1,24 +1,24 @@
-﻿import React, {useEffect, useState} from 'react';
-import {DateData} from 'react-native-calendars';
-import {Calendar} from 'react-native-calendars';
+import React, {useEffect, useState} from 'react';
+import type {DateData, Calendar} from 'react-native-calendars';
 import {getPreviousMonth, getNextMonth} from '@libs/DataHandling';
 import type {DrinkingSessionList} from '@src/types/onyx';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
 import useThemeStyles from '@hooks/useThemeStyles';
 import CONST from '@src/CONST';
-import SessionsCalendarProps, {DayComponentProps} from './types';
-import CalendarArrow from './CalendarArrow';
-import type {Direction} from './CalendarArrow';
-import DayComponent from './DayComponent';
 import {differenceInMonths, format} from 'date-fns';
 import {auth} from '@libs/Firebase/FirebaseApp';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
-import {DateString} from '@src/types/time';
+import type {DateString} from '@src/types/time';
 import useStyleUtils from '@hooks/useStyleUtils';
 import _ from 'lodash';
 import useLazyMarkedDates from '@hooks/useLazyMarkedDates';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
+import DayComponent from './DayComponent';
+import type {Direction} from './CalendarArrow';
+import type SessionsCalendarProps from './types';
+import type {DayComponentProps} from './types';
+import CalendarArrow from './CalendarArrow';
 
 function SessionsCalendar({
   userID,
@@ -87,7 +87,9 @@ function SessionsCalendar({
     <Calendar
       current={visibleDate.dateString}
       dayComponent={({date, state, marking, theme}: DayComponentProps) => {
-        if (!date) return;
+        if (!date) {
+          return;
+        }
         return (
           <DayComponent
             date={date}
@@ -109,10 +111,10 @@ function SessionsCalendar({
         handleRightArrowPress(addMonth)
       }
       markedDates={markedDates}
-      markingType={'period'}
+      markingType="period"
       firstDay={CONST.WEEK_STARTS_ON}
       enableSwipeMonths={false}
-      disableAllTouchEventsForDisabledDays={true}
+      disableAllTouchEventsForDisabledDays
       renderArrow={(direction: Direction) => CalendarArrow(direction)}
       style={styles.sessionsCalendarContainer}
       theme={StyleUtils.getSessionsCalendarHeaderStyle()}

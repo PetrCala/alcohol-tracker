@@ -21,8 +21,8 @@ Onyx.connect({
     if (!network) {
       return;
     }
-    shouldFailAllRequests = Boolean(network.shouldFailAllRequests);
-    shouldForceOffline = Boolean(network.shouldForceOffline);
+    shouldFailAllRequests = !!network.shouldFailAllRequests;
+    shouldForceOffline = !!network.shouldForceOffline;
   },
 });
 
@@ -199,7 +199,7 @@ function xhr(
   });
 
   const url = ApiUtils.getCommandURL({shouldUseSecure, command});
-  return processHTTPRequest(url, type, formData, Boolean(data.canCancel));
+  return processHTTPRequest(url, type, formData, !!data.canCancel);
 }
 
 function cancelPendingRequests() {

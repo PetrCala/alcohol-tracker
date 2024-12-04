@@ -14,8 +14,8 @@ const SuccessMessage: React.FC<SuccessMessageProps> = ({
     successText && (
       <View style={[styles.infoContainer, styles.successInfoContainer]}>
         <TouchableOpacity
-          id={'success'}
-          testID={'success'}
+          id="success"
+          testID="success"
           accessibilityRole="button"
           onPress={() => dispatch({type: 'SET_SUCCESS', payload: ''})}
           style={styles.infoButton}>

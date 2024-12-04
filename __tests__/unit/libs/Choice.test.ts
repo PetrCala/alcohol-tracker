@@ -1,4 +1,4 @@
-﻿import {getRandomChoice, getRandomInt} from '../../../src/libs/Choice';
+import {getRandomChoice, getRandomInt} from '@libs/Choice';
 
 describe('getRandomChoice', () => {
   const stringChoices = ['test-choice1', 'test-choice2', 'test-choice3'];

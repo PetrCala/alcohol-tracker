@@ -1,22 +1,23 @@
 import React, {useEffect, useMemo, useState} from 'react';
-import {StyleProp, TextStyle, View} from 'react-native';
+import type {StyleProp, TextStyle} from 'react-native';
+import {View} from 'react-native';
 import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
 import CONST from '@src/CONST';
-import Modal from './Modal';
 import * as UserUtils from '@libs/UserUtils';
 import * as ErrorUtils from '@libs/ErrorUtils';
-import * as User from '@userActions/User';
-import SafeAreaConsumer from './SafeAreaConsumer';
-import Text from './Text';
-import Button from './Button';
-import CheckboxWithLabel from './CheckboxWithLabel';
-import TextLink from './TextLink';
+import * as User from '@libs/actions/User';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {useConfig} from '@context/global/ConfigContext';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {useOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
+import SafeAreaConsumer from './SafeAreaConsumer';
+import Text from './Text';
+import Button from './Button';
+import CheckboxWithLabel from './CheckboxWithLabel';
+import TextLink from './TextLink';
+import Modal from './Modal';
 
 function AgreeToTermsModal() {
   const styles = useThemeStyles();

@@ -1,7 +1,7 @@
 import Onyx from 'react-native-onyx';
-import CONST from '../../src/CONST';
-import * as Localize from '../../src/libs/Localize';
-import ONYXKEYS from '../../src/ONYXKEYS';
+import CONST from '@src/CONST';
+import * as Localize from '@libs/Localize';
+import ONYXKEYS from '@src/ONYXKEYS';
 import waitForBatchedUpdates from '../utils/waitForBatchedUpdates';
 
 // TODO enable this after fixing the localize bugs

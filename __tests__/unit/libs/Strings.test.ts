@@ -1,4 +1,4 @@
-﻿import {cleanStringForFirebaseKey} from '../../../src/libs/StringUtilsKiroku';
+import {cleanStringForFirebaseKey} from '@libs/StringUtilsKiroku';
 
 describe('cleanStringForFirebaseKey', () => {
   const testCleanString = (input: string, expected: string) => {

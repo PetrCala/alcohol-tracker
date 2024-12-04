@@ -4,7 +4,7 @@ import type {Maintenance} from '@src/types/onyx';
 function checkIfUnderMaintenance(
   maintenance: Maintenance | null | undefined,
 ): boolean {
-  if (!maintenance || !maintenance.maintenance_mode) {
+  if (!maintenance?.maintenance_mode) {
     return false;
   }
 

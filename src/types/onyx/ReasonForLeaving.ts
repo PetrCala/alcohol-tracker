@@ -1,9 +1,18 @@
-import {UserID} from './OnyxCommon';
+import type {UserID} from './OnyxCommon';
 
+/**
+ *
+ */
 type ReasonForLeavingId = UserID;
 
+/**
+ *
+ */
 type ReasonForLeaving = string;
 
+/**
+ *
+ */
 type ReasonForLeavingList = Record<ReasonForLeavingId, ReasonForLeaving>;
 
 export default ReasonForLeaving;

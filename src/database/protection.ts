@@ -1,9 +1,9 @@
 import CONST from '@src/CONST';
 import type {Database} from 'firebase/database';
 import {getUniqueId} from 'react-native-device-info';
-import DBPATHS from '@src/DBPATHS';
-import {readDataOnce} from '@database/baseFunctions';
 import type {AccountCreations} from '@src/types/onyx';
+import DBPATHS from '@src/DBPATHS';
+import {readDataOnce} from './baseFunctions';
 
 /** Check that the current device has not created too many accounts
  * in the last 24 hours. If the limit is exceeded, return false.

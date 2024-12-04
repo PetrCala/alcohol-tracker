@@ -10,14 +10,12 @@ import CONST from '@src/CONST';
 import ROUTES from '@src/ROUTES';
 import TIMEZONES from '@src/TIMEZONES';
 import type {SelectedTimezone} from '@src/types/onyx/UserData';
-import {StackScreenProps} from '@react-navigation/stack';
-import {
-  SettingsNavigatorParamList,
-  TzFixModalNavigatorParamList,
-} from '@libs/Navigation/types';
-import SCREENS from '@src/SCREENS';
+import type {StackScreenProps} from '@react-navigation/stack';
+import type {TzFixModalNavigatorParamList} from '@libs/Navigation/types';
+import {SettingsNavigatorParamList} from '@libs/Navigation/types';
+import type SCREENS from '@src/SCREENS';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
-import {UserData} from '@src/types/onyx';
+import type {UserData} from '@src/types/onyx';
 import * as User from '@userActions/User';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {Alert} from 'react-native';

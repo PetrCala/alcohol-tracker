@@ -44,12 +44,12 @@ function DotIndicatorMessage({
   }
 
   // Fetch the keys, sort them, and map through each key to get the corresponding message
-  const sortedMessages: Array<string> = Object.keys(messages)
+  const sortedMessages: string[] = Object.keys(messages)
     .sort()
     .map(key => messages[key])
     .filter((message): message is string => message !== null);
   // Removing duplicates using Set and transforming the result into an array
-  const uniqueMessages: Array<string> = [...new Set(sortedMessages)].map(
+  const uniqueMessages: string[] = [...new Set(sortedMessages)].map(
     message => message,
   );
 

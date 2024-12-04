@@ -6,9 +6,9 @@ import type {
   DrinksList,
   DrinksToUnits,
 } from '@src/types/onyx';
-import {createMockSession} from '../../../src/database/MockDatabase';
 import CONST from '@src/CONST';
 import {getZeroDrinksList} from '@libs/DataHandling';
+import {createMockSession} from '@src/database/MockDatabase';
 
 describe('determineSessionMostCommonDrink', () => {
   let session: DrinkingSession;

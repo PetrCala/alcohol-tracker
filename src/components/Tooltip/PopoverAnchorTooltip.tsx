@@ -15,7 +15,7 @@ function PopoverAnchorTooltip({
   const isPopoverRelatedToTooltipOpen = useMemo(() => {
     // eslint-disable-next-line @typescript-eslint/dot-notation
     const tooltipNode =
-      (tooltipRef.current?.['_childNode'] as Node | undefined) ?? null;
+      (tooltipRef.current?._childNode as Node | undefined) ?? null;
 
     if (
       isOpen &&

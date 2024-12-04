@@ -1,5 +1,5 @@
-﻿import {AppSettings} from '../../../src/types/onyx';
-import {validateAppVersion} from '../../../src/libs/Validation';
+import type {AppSettings} from '@src/types/onyx';
+import {validateAppVersion} from '@libs/Validation';
 
 describe('validateAppVersion', () => {
   let appSettings: AppSettings;

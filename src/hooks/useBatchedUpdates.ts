@@ -1,7 +1,7 @@
 import {useState, useRef, useCallback, useEffect} from 'react';
 import {Alert} from 'react-native';
-import useLocalize from './useLocalize';
 import {mergeUpdates, removeOverlappingUpdates} from '@database/baseFunctions';
+import useLocalize from './useLocalize';
 
 /**
  * Custom React hook for batching and processing updates with a specified delay.
@@ -53,7 +53,7 @@ import {mergeUpdates, removeOverlappingUpdates} from '@database/baseFunctions';
  */
 const useBatchedUpdates = (
   processUpdates: (updates: any) => Promise<void>,
-  delay: number = 500,
+  delay = 500,
 ) => {
   const {translate} = useLocalize();
   const [isPending, setIsPending] = useState(false);

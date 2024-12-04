@@ -1,4 +1,4 @@
-﻿import React, {useState, useMemo} from 'react';
+import React, {useState, useMemo} from 'react';
 import {
   View,
   FlatList,
@@ -80,8 +80,8 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
     const newDailyData = Object.entries(relevantData).map(
       ([sessionId, session]) => {
         return {
-          sessionId: sessionId,
-          session: session,
+          sessionId,
+          session,
         };
       },
     );
@@ -104,7 +104,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
     onEditSessionPress(sessionId, session);
   };
 
-  const DrinkingSession = ({sessionId, session}: DrinkingSessionKeyValue) => {
+  function DrinkingSession({sessionId, session}: DrinkingSessionKeyValue) {
     if (!preferences) {
       return;
     }
@@ -174,7 +174,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
         </View>
       </View>
     );
-  };
+  }
 
   const renderDrinkingSession = ({item}: {item: DrinkingSessionKeyValue}) => {
     return (

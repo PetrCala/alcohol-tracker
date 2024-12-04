@@ -1,7 +1,7 @@
 import Config from 'react-native-config';
 import CONST from '@src/CONST';
-import getEnvironment from './getEnvironment';
 import CONFIG from '@src/CONFIG';
+import getEnvironment from './getEnvironment';
 
 const ENVIRONMENT_URLS = {
   [CONST.ENVIRONMENT.DEV]: CONST.APP_URLS.DEV + CONFIG.DEV_PORT,
@@ -29,7 +29,7 @@ function isProduction(): Promise<boolean> {
   );
 }
 
-/**Are we running the app in a test environment?
+/** Are we running the app in a test environment?
  */
 function isTest(): Promise<boolean> {
   return getEnvironment().then(

@@ -1,6 +1,6 @@
-import getRootNavigatorScreenOptions from '@libs/Navigation/AppNavigator/getRootNavigatorScreenOptions';
 import type {ThemeStyles} from '@styles/index';
 import type {StyleUtilsType} from '@styles/utils';
+import getRootNavigatorScreenOptions from './AppNavigator/getRootNavigatorScreenOptions';
 
 function getOnboardingModalScreenOptions(
   isSmallScreenWidth: boolean,

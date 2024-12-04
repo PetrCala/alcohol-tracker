@@ -14,7 +14,7 @@ import ONYXKEYS from '@src/ONYXKEYS';
 import INPUT_IDS from '@src/types/form/ForgotPasswordForm';
 import FormProvider from '@components/Form/FormProvider';
 import Text from '@components/Text';
-import {Errors} from '@src/types/onyx/OnyxCommon';
+import type {Errors} from '@src/types/onyx/OnyxCommon';
 import InputWrapper from '@components/Form/InputWrapper';
 import variables from '@src/styles/variables';
 import TextInput from '@components/TextInput';
@@ -107,12 +107,12 @@ function ForgotPasswordScreen({}: ForgotPasswordScreenProps) {
               InputComponent={TextInput}
               inputID={INPUT_IDS.EMAIL}
               name="email"
-              shouldShowClearButton={true}
-              shouldSaveDraft={true}
+              shouldShowClearButton
+              shouldSaveDraft
               maxAutoGrowHeight={variables.textInputAutoGrowMaxHeight}
               label={translate('forgotPasswordScreen.enterEmail')}
               aria-label={translate('forgotPasswordScreen.enterEmail')}
-              defaultValue={''}
+              defaultValue=""
               spellCheck={false}
               containerStyles={[styles.mt5]}
             />

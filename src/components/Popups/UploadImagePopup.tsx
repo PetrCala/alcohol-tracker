@@ -23,14 +23,14 @@ type UploadImagePopupProps = {
   onUploadFinish: () => void;
 };
 
-const UploadImagePopup = ({
+function UploadImagePopup({
   visible,
   transparent,
   onRequestClose,
   uploadProgress,
   uploadOngoing,
   onUploadFinish,
-}: UploadImagePopupProps) => {
+}: UploadImagePopupProps) {
   const {auth} = useFirebase();
   const styles = useThemeStyles();
   const user = auth.currentUser;
@@ -103,7 +103,7 @@ const UploadImagePopup = ({
       </View>
     </Modal>
   );
-};
+}
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;

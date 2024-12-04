@@ -1,4 +1,4 @@
-﻿/** Choose from an array of any values one at random.
+/** Choose from an array of any values one at random.
  * Return this randomly chosen value.
  */
 function getRandomChoice(values: any[]): any {

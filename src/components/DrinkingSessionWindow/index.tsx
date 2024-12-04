@@ -42,10 +42,10 @@ import ScrollView from '@components/ScrollView';
 import Log from '@libs/Log';
 import Icon from '@components/Icon';
 import DateUtils from '@libs/DateUtils';
-import {DrinkingSessionWindowProps} from './types';
 import {isEqual} from 'lodash';
-import {CalendarColors} from '@components/SessionsCalendar/types';
-import {User} from 'firebase/auth';
+import type {CalendarColors} from '@components/SessionsCalendar/types';
+import type {User} from 'firebase/auth';
+import type {DrinkingSessionWindowProps} from './types';
 
 function DrinkingSessionWindow({
   sessionId,

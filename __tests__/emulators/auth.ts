@@ -1,4 +1,4 @@
-require('dotenv').config(); // for the process.env variables to read the .env file
+// for the process.env variables to read the .env file
 import type {Auth} from 'firebase/auth';
 import {
   initializeAuth,
@@ -15,6 +15,8 @@ import CONFIG from '@src/CONFIG';
 import {MOCK_USER_IDS} from '../utils/testsStatic';
 import {getTestAuthDomain} from './utils';
 
+require('dotenv').config();
+
 function setup(): {
   testApp: FirebaseApp;
   auth: Auth;
@@ -23,8 +25,8 @@ function setup(): {
   const projectId = CONFIG.TEST_PROJECT_ID;
 
   const testApp = initializeApp({
-    authDomain: authDomain,
-    projectId: projectId,
+    authDomain,
+    projectId,
   });
 
   const auth = initializeAuth(testApp, {

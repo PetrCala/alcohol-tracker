@@ -30,7 +30,7 @@ import type * as OnyxTypes from '@src/types/onyx';
 // import type {SelectedTimezone} from '@src/types/onyx/UserData';
 import type {OnyxData} from '@src/types/onyx/Request';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
-import {User} from 'firebase/auth';
+import type {User} from 'firebase/auth';
 // import * as Session from './Session';
 // import Timing from './Timing';
 
@@ -387,7 +387,7 @@ function setUpPoliciesAndNavigate(user: User | null) {
     return;
   }
 
-  const isLoggingInAsNewUser = !!user.email; //&& SessionUtils.isLoggingInAsNewUser(currentUrl, user.email);
+  const isLoggingInAsNewUser = !!user.email; // && SessionUtils.isLoggingInAsNewUser(currentUrl, user.email);
   const url = new URL(currentUrl);
   const exitTo = url.searchParams.get('exitTo') as Route | null;
 

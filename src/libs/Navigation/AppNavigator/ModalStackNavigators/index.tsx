@@ -14,8 +14,8 @@ import type {
   SocialNavigatorParamList,
   StatisticsNavigatorParamList,
 } from '@navigation/types';
+import type ReactComponentModule from '@src/types/utils/ReactComponentModule';
 import useModalScreenOptions from './useModalScreenOptions';
-import ReactComponentModule from '@src/types/utils/ReactComponentModule';
 
 type Screens = Partial<Record<Screen, () => React.ComponentType>>;
 

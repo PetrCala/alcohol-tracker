@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
 import ConfirmModal from '@components/ConfirmModal';
 import useLocalize from '@hooks/useLocalize';
-import type UpdateAppModalProps from './types';
 import Onyx from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
+import type UpdateAppModalProps from './types';
 
 function BaseUpdateAppModal({onSubmit}: UpdateAppModalProps) {
   const [isModalOpen, setIsModalOpen] = useState(true);

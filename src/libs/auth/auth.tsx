@@ -1,4 +1,4 @@
-﻿import {
+import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
@@ -20,7 +20,7 @@ async function signUpUserWithEmailAndPassword(
     // return userCredential.user;
     await createUserWithEmailAndPassword(auth, email, password);
   } catch (error: any) {
-    throw new Error('User creation failed: ' + error.message);
+    throw new Error(`User creation failed: ${error.message}`);
   }
 }
 
@@ -37,7 +37,7 @@ async function signInUserWithEmailAndPassword(
     );
     return userCredential.user;
   } catch (error: any) {
-    throw new Error('User login failed: ' + error.message);
+    throw new Error(`User login failed: ${error.message}`);
   }
 }
 

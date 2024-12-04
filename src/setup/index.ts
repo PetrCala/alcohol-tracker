@@ -3,10 +3,10 @@ import Onyx from 'react-native-onyx';
 import * as Device from '@userActions/Device';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
+import intlPolyfill from '@libs/IntlPolyfill';
 import addUtilsToWindow from './addUtilsToWindow';
 import initializeLastVisitedPath from './initializeLastVisitedPath';
 import platformSetup from './platformSetup';
-import intlPolyfill from '@libs/IntlPolyfill';
 
 export default function () {
   /*

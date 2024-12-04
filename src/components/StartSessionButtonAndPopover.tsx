@@ -13,15 +13,10 @@ import React, {
 import {View} from 'react-native';
 import type {OnyxEntry} from 'react-native-onyx';
 import Onyx, {useOnyx} from 'react-native-onyx';
-import ConfirmModal from '@components/ConfirmModal';
-import FloatingActionButton from '@components/FloatingActionButton';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
 import * as DS from '@userActions/DrinkingSession';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import * as Utils from '@libs/Utils';
-import type {PopoverMenuItem} from '@components/PopoverMenu';
-import PopoverMenu from '@components/PopoverMenu';
-import Text from '@components/Text';
 import useEnvironment from '@hooks/useEnvironment';
 import useLocalize from '@hooks/useLocalize';
 import usePrevious from '@hooks/usePrevious';
@@ -36,6 +31,11 @@ import Log from '@libs/common/Log';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {useFirebase} from '@context/global/FirebaseContext';
 import _ from 'lodash';
+import Text from './Text';
+import PopoverMenu from './PopoverMenu';
+import type {PopoverMenuItem} from './PopoverMenu';
+import FloatingActionButton from './FloatingActionButton';
+import ConfirmModal from './ConfirmModal';
 
 // Utils
 
@@ -263,7 +263,7 @@ function StartSessionButtonAndPopover(
     if (userStatusData) {
       Onyx.set(
         ONYXKEYS.ONGOING_SESSION_DATA,
-        !!userStatusData?.latest_session?.ongoing
+        userStatusData?.latest_session?.ongoing
           ? userStatusData?.latest_session
           : null,
       );

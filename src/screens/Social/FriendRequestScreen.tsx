@@ -1,4 +1,4 @@
-﻿// TODO translate
+// TODO translate
 import {
   ActivityIndicator,
   Alert,
@@ -66,7 +66,7 @@ const handleAcceptFriendRequest = async (
   } catch (error: any) {
     Alert.alert(
       'User does not exist in the database',
-      'Could not accept the friend request: ' + error.message,
+      `Could not accept the friend request: ${error.message}`,
     );
   }
 };
@@ -84,7 +84,7 @@ const handleRejectFriendRequest = async (
   } catch (error: any) {
     Alert.alert(
       'User does not exist in the database',
-      'Could not accept the friend request: ' + error.message,
+      `Could not accept the friend request: ${error.message}`,
     );
   }
 };
@@ -102,7 +102,7 @@ const FriendRequestButtons: React.FC<RequestIdProps> = ({requestId}) => {
     <View style={localStyles.friendRequestButtonsContainer}>
       <TouchableOpacity
         accessibilityRole="button"
-        key={requestId + '-accept-request-button'}
+        key={`${requestId}-accept-request-button`}
         style={[
           localStyles.handleRequestButton,
           localStyles.acceptRequestButton,
@@ -118,7 +118,7 @@ const FriendRequestButtons: React.FC<RequestIdProps> = ({requestId}) => {
       </TouchableOpacity>
       <TouchableOpacity
         accessibilityRole="button"
-        key={requestId + '-reject-request-button'}
+        key={`${requestId}-reject-request-button`}
         style={[
           localStyles.handleRequestButton,
           localStyles.rejectRequestButton,
@@ -165,12 +165,12 @@ const FriendRequestComponent: React.FC<FriendRequestComponentProps> = ({
 }) => {
   return requestStatus === CONST.FRIEND_REQUEST_STATUS.RECEIVED ? (
     <FriendRequestButtons
-      key={requestId + '-friend-request-buttons'}
+      key={`${requestId}-friend-request-buttons`}
       requestId={requestId}
     />
   ) : requestStatus === CONST.FRIEND_REQUEST_STATUS.SENT ? (
     <FriendRequestPending
-      key={requestId + '-friend-request-pending'}
+      key={`${requestId}-friend-request-pending`}
       requestId={requestId}
     />
   ) : null;
@@ -189,7 +189,7 @@ const FriendRequestItem: React.FC<FriendRequestItemProps> = ({
 
   return (
     <NoFriendUserOverview
-      key={requestId + '-friend-request'}
+      key={`${requestId}-friend-request`}
       userID={requestId}
       profileData={profileData}
       RightSideComponent={FriendRequestComponent({
@@ -280,7 +280,7 @@ function FriendRequestScreen() {
             <View style={localStyles.requestsContainer}>
               {requestsReceived.map(requestId => (
                 <FriendRequestItem
-                  key={requestId + '-friend-request-item'}
+                  key={`${requestId}-friend-request-item`}
                   requestId={requestId}
                   friendRequests={friendRequests}
                   displayData={displayData}
@@ -295,7 +295,7 @@ function FriendRequestScreen() {
             <View style={localStyles.requestsContainer}>
               {requestsSent.map(requestId => (
                 <FriendRequestItem
-                  key={requestId + '-friend-request-item'}
+                  key={`${requestId}-friend-request-item`}
                   requestId={requestId}
                   friendRequests={friendRequests}
                   displayData={displayData}

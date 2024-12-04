@@ -1,5 +1,5 @@
 import type {DayState, DateData, Theme} from 'react-native-calendars/src/types';
-import {MarkingProps} from 'react-native-calendars/src/calendar/day/marking';
+import type {MarkingProps} from 'react-native-calendars/src/calendar/day/marking';
 
 type CalendarColors = 'yellow' | 'red' | 'orange' | 'black' | 'green';
 

@@ -43,7 +43,7 @@ function UnderMaintenanceModal({config}: UnderMaintenanceProps) {
       {() => (
         <Modal
           onClose={() => {}}
-          isVisible={true}
+          isVisible
           type={CONST.MODAL.MODAL_TYPE.CENTERED}>
           <View
             style={[styles.fullScreenCenteredContent, styles.p2, styles.pb8]}>

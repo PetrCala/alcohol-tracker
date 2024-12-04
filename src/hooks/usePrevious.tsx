@@ -1,4 +1,4 @@
-﻿import {useEffect, useRef} from 'react';
+import {useEffect, useRef} from 'react';
 
 /**
  * A hook that returns the previous value of a variable

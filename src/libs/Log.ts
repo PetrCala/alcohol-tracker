@@ -2,11 +2,11 @@
 // action would likely cause confusion about which one to use. But most other API methods should happen inside an action file.
 
 /* eslint-disable rulesdir/no-api-in-views */
-import Logger from '@libs/common/Logger';
 import Onyx from 'react-native-onyx';
 import type {Merge} from 'type-fest';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
+import Logger from './common/Logger';
 import pkg from '../../package.json';
 import {addLog} from './actions/Console';
 import {shouldAttachLog} from './Console';
@@ -24,7 +24,7 @@ Onyx.connect({
       shouldCollectLogs = false;
     }
 
-    shouldCollectLogs = Boolean(val);
+    shouldCollectLogs = !!val;
   },
 });
 

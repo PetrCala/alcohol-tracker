@@ -1,11 +1,13 @@
-require('dotenv').config(); // Use .env variables in this file - CONFIG does not work here
+// Use .env variables in this file - CONFIG does not work here
 import type {FirebaseApp} from 'firebase/app';
 import {initializeApp, deleteApp} from 'firebase/app';
-import * as firebaseJson from '../../firebase.json';
 import type {FirebaseStorage} from 'firebase/storage';
 import {connectStorageEmulator, getStorage} from 'firebase/storage';
-import CONFIG from '../../src/CONFIG';
+import CONFIG from '@src/CONFIG';
+import * as firebaseJson from '../../firebase.json';
 import {getTestStorageBucket} from './utils';
+
+require('dotenv').config();
 
 function setup(): {
   testApp: FirebaseApp;
@@ -15,8 +17,8 @@ function setup(): {
   const projectId = CONFIG.TEST_PROJECT_ID;
 
   const testApp: FirebaseApp = initializeApp({
-    storageBucket: storageBucket,
-    projectId: projectId,
+    storageBucket,
+    projectId,
   });
 
   const storage = getStorage();
