@@ -1,4 +1,4 @@
-﻿import React, {useEffect, useReducer, useState} from 'react';
+﻿import React, {useEffect, useState} from 'react';
 import type {ImageSourcePropType} from 'react-native';
 import {Image, View, Alert, TouchableOpacity, StyleSheet} from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';

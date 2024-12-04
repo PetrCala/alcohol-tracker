@@ -1,4 +1,4 @@
-﻿import React, {useEffect, useReducer, useRef, useState} from 'react';
+﻿import React, {useEffect, useRef, useState} from 'react';
 import type {ImageSourcePropType, LayoutChangeEvent} from 'react-native';
 import {Alert, Image} from 'react-native';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
