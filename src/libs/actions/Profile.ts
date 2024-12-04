@@ -7,7 +7,7 @@ import {updateProfile} from 'firebase/auth';
 import {fetchDisplayDataForUsers} from '../../database/baseFunctions';
 import type {ProfileList, UserStatusList} from '@src/types/onyx';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
-import DBPATHS from '../../database/DBPATHS';
+import DBPATHS from '../../DBPATHS';
 
 /**
  * Fetches user profiles from the database.

@@ -18,7 +18,7 @@ import {
   SAMPLE_DRINKS_TO_UNITS,
 } from '../../utils/testsStatic';
 import CONST from '../../../src/CONST';
-import DBPATHS from '@database/DBPATHS';
+import DBPATHS from '@src/DBPATHS';
 
 const testFeedbackId = 'testFeedbackId';
 const testFeedback: Feedback = {

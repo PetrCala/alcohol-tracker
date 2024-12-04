@@ -38,7 +38,7 @@ import {
   sendFriendRequest,
   unfriend,
 } from '@database/friends';
-import DBPATHS from '@database/DBPATHS';
+import DBPATHS from '@src/DBPATHS';
 import CONST from '@src/CONST';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
 import {describeWithEmulator} from '../../emulators/utils';

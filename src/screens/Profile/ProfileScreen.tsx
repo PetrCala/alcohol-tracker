@@ -30,7 +30,7 @@ import type {StackScreenProps} from '@react-navigation/stack';
 import type {ProfileNavigatorParamList} from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
 import Navigation from '@libs/Navigation/Navigation';
-import DBPATHS from '@database/DBPATHS';
+import DBPATHS from '@src/DBPATHS';
 import ROUTES from '@src/ROUTES';
 import useFetchData from '@hooks/useFetchData';
 import {getPlural} from '@libs/StringUtilsKiroku';
