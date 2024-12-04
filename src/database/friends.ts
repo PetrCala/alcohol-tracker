@@ -1,8 +1,8 @@
 ﻿import CONST from '@src/CONST';
 import type {FriendRequestStatus} from '@src/types/onyx';
 import type {Database} from 'firebase/database';
-import { ref, get, update} from 'firebase/database';
-import DBPATHS from './DBPATHS';
+import {ref, get, update} from 'firebase/database';
+import DBPATHS from '../DBPATHS';
 
 const friendRef = DBPATHS.USERS_USER_ID_FRIENDS_FRIEND_ID;
 const friendRequestRef = DBPATHS.USERS_USER_ID_FRIEND_REQUESTS_REQUEST_ID;

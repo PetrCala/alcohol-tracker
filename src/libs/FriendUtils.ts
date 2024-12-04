@@ -4,7 +4,7 @@ import type {UserArray, UserList} from '@src/types/onyx/OnyxCommon';
 import type {Database} from 'firebase/database';
 import {isNonEmptyArray} from './Validation';
 import CONST from '@src/CONST';
-import DBPATHS from '@database/DBPATHS';
+import DBPATHS from '@src/DBPATHS';
 
 export async function fetchUserFriends(
   db: Database,

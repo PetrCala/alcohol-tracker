@@ -26,7 +26,7 @@ import {
 import {getUniqueId} from 'react-native-device-info';
 import {Alert} from 'react-native';
 import {cleanStringForFirebaseKey} from '@libs/StringUtilsKiroku';
-import DBPATHS from '@database/DBPATHS';
+import DBPATHS from '@src/DBPATHS';
 import {readDataOnce} from '@database/baseFunctions';
 import {getLastStartedSessionId} from '@libs/DataHandling';
 import * as Session from '@userActions/Session';

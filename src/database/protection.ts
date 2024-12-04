@@ -1,7 +1,7 @@
 import CONST from '@src/CONST';
 import type {Database} from 'firebase/database';
 import {getUniqueId} from 'react-native-device-info';
-import DBPATHS from './DBPATHS';
+import DBPATHS from '../DBPATHS';
 import {readDataOnce} from './baseFunctions';
 import type {AccountCreations} from '@src/types/onyx';
 

@@ -1,6 +1,6 @@
 import type {UserID} from '@src/types/onyx/OnyxCommon';
 import type {FetchDataKey} from './types';
-import DBPATHS from '@database/DBPATHS';
+import DBPATHS from '@src/DBPATHS';
 
 /** Given a database base key, fetch the full route to the database node
  * for a specific user.

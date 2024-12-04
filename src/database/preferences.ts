@@ -1,7 +1,7 @@
 ﻿import type {Database} from 'firebase/database';
 import {ref, update} from 'firebase/database';
 import type {Preferences} from '../types/onyx';
-import DBPATHS from './DBPATHS';
+import DBPATHS from '../DBPATHS';
 
 /** Save preferences data into the database.
  *
