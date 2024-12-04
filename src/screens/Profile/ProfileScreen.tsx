@@ -1,5 +1,4 @@
 ﻿import {
-  Dimensions,
   Keyboard,
   ScrollView,
   StyleSheet,
@@ -13,7 +12,7 @@ import {useFirebase} from '@context/global/FirebaseContext';
 import type {StatData} from '@components/Items/StatOverview';
 import {StatsOverview} from '@components/Items/StatOverview';
 import ProfileOverview from '@components/Social/ProfileOverview';
-import React, {useEffect, useMemo, useReducer} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {readDataOnce} from '@database/baseFunctions';
 import {
   calculateThisMonthUnits,
@@ -41,60 +40,9 @@ import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import useLocalize from '@hooks/useLocalize';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import useThemeStyles from '@hooks/useThemeStyles';
-import FillerView from '@components/FillerView';
 import Button from '@components/Button';
 import {roundToTwoDecimalPlaces} from '@libs/NumberUtils';
 import ManageFriendPopover from '@components/ManageFriendPopover';
-
-type State = {
-  selfFriends: UserList | undefined;
-  friendCount: number;
-  commonFriendCount: number;
-  visibleDateData: DateData;
-  drinkingSessionsCount: number;
-  unitsConsumed: number;
-  manageFriendModalVisible: boolean;
-  unfriendModalVisible: boolean;
-};
-
-type Action = {
-  type: string;
-  payload: any;
-};
-
-const initialState: State = {
-  selfFriends: undefined,
-  friendCount: 0,
-  commonFriendCount: 0,
-  visibleDateData: dateToDateData(new Date()),
-  drinkingSessionsCount: 0,
-  unitsConsumed: 0,
-  manageFriendModalVisible: false,
-  unfriendModalVisible: false,
-};
-
-const reducer = (state: State, action: Action): State => {
-  switch (action.type) {
-    case 'SET_SELF_FRIENDS':
-      return {...state, selfFriends: action.payload};
-    case 'SET_FRIEND_COUNT':
-      return {...state, friendCount: action.payload};
-    case 'SET_COMMON_FRIEND_COUNT':
-      return {...state, commonFriendCount: action.payload};
-    case 'SET_VISIBLE_DATE_OBJECT':
-      return {...state, visibleDateData: action.payload};
-    case 'SET_DRINKING_SESSIONS_COUNT':
-      return {...state, drinkingSessionsCount: action.payload};
-    case 'SET_UNITS_CONSUMED':
-      return {...state, unitsConsumed: action.payload};
-    case 'SET_MANAGE_FRIEND_MODAL_VISIBLE':
-      return {...state, manageFriendModalVisible: action.payload};
-    case 'SET_UNFRIEND_MODAL_VISIBLE':
-      return {...state, unfriendModalVisible: action.payload};
-    default:
-      return state;
-  }
-};
 
 type ProfileScreenOnyxProps = {};
 
@@ -110,10 +58,21 @@ function ProfileScreen({route}: ProfileScreenProps) {
     'drinkingSessionData',
     'preferences',
   ]; //
-  const [state, dispatch] = useReducer(reducer, initialState);
   const {translate} = useLocalize();
   const styles = useThemeStyles();
   const {data: fetchedData, isLoading} = useFetchData(userID, relevantDataKeys);
+
+  const [selfFriends, setSelfFriends] = useState<UserList | undefined>();
+  const [friendCount, setFriendCount] = useState(0);
+  const [commonFriendCount, setCommonFriendCount] = useState(0);
+  const [visibleDateData, setVisibleDateData] = useState(
+    dateToDateData(new Date()),
+  );
+  const [drinkingSessionsCount, setDrinkingSessionsCount] = useState(0);
+  const [unitsConsumed, setUnitsConsumed] = useState(0);
+  const [manageFriendModalVisible, setManageFriendModalVisible] =
+    useState(false);
+
   let userData = fetchedData?.userData;
   let drinkingSessionData = fetchedData?.drinkingSessionData;
   let preferences = fetchedData?.preferences;
@@ -124,13 +83,13 @@ function ProfileScreen({route}: ProfileScreenProps) {
     {
       header: translate(
         'profileScreen.drinkingSessions',
-        getPlural(state.drinkingSessionsCount),
+        getPlural(drinkingSessionsCount),
       ),
-      content: String(state.drinkingSessionsCount),
+      content: String(drinkingSessionsCount),
     },
     {
       header: translate('profileScreen.unitsConsumed'),
-      content: String(roundToTwoDecimalPlaces(state.unitsConsumed)),
+      content: String(roundToTwoDecimalPlaces(unitsConsumed)),
     },
   ];
 
@@ -147,7 +106,7 @@ function ProfileScreen({route}: ProfileScreenProps) {
           DBPATHS.USERS_USER_ID_FRIENDS.getRoute(user.uid),
         );
       }
-      dispatch({type: 'SET_SELF_FRIENDS', payload: ownFriends});
+      setSelfFriends(ownFriends);
     };
     getOwnFriends();
   }, []);
@@ -156,11 +115,11 @@ function ProfileScreen({route}: ProfileScreenProps) {
   useMemo(() => {
     const friendCount = friends ? objKeys(friends).length : 0;
     const commonFriendCount = getCommonFriendsCount(
-      objKeys(state.selfFriends),
+      objKeys(selfFriends),
       objKeys(friends),
     );
-    dispatch({type: 'SET_FRIEND_COUNT', payload: friendCount});
-    dispatch({type: 'SET_COMMON_FRIEND_COUNT', payload: commonFriendCount});
+    setFriendCount(friendCount);
+    setCommonFriendCount(commonFriendCount);
   }, [friends]);
 
   // Monitor stats
@@ -172,22 +131,19 @@ function ProfileScreen({route}: ProfileScreenProps) {
       Object.values(drinkingSessionData);
 
     const thisMonthUnits = calculateThisMonthUnits(
-      state.visibleDateData,
+      visibleDateData,
       drinkingSessionArray,
       preferences.drinks_to_units,
     );
     const thisMonthSessionCount = DSUtils.getSingleMonthDrinkingSessions(
-      timestampToDate(state.visibleDateData.timestamp),
+      timestampToDate(visibleDateData.timestamp),
       drinkingSessionArray,
       false,
     ).length; // Replace this in the future
 
-    dispatch({
-      type: 'SET_DRINKING_SESSIONS_COUNT',
-      payload: thisMonthSessionCount,
-    });
-    dispatch({type: 'SET_UNITS_CONSUMED', payload: thisMonthUnits});
-  }, [drinkingSessionData, preferences, state.visibleDateData]);
+    setDrinkingSessionsCount(thisMonthSessionCount);
+    setUnitsConsumed(thisMonthUnits);
+  }, [drinkingSessionData, preferences, visibleDateData]);
 
   if (isLoading) {
     return <FullScreenLoadingIndicator />;
@@ -219,9 +175,7 @@ function ProfileScreen({route}: ProfileScreenProps) {
           <View style={localStyles.leftContainer}>
             <Text style={localStyles.friendsInfoHeading}>
               {`${
-                user?.uid !== userID && state.commonFriendCount > 0
-                  ? 'Common f'
-                  : 'F'
+                user?.uid !== userID && commonFriendCount > 0 ? 'Common f' : 'F'
               }riends:`}
             </Text>
             <Text
@@ -229,9 +183,9 @@ function ProfileScreen({route}: ProfileScreenProps) {
                 localStyles.friendsInfoText,
                 commonStyles.smallMarginLeft,
               ]}>
-              {user?.uid !== userID && state.commonFriendCount > 0
-                ? state.commonFriendCount
-                : state.friendCount}
+              {user?.uid !== userID && commonFriendCount > 0
+                ? commonFriendCount
+                : friendCount}
             </Text>
           </View>
           <View style={localStyles.rightContainer}>
@@ -257,10 +211,8 @@ function ProfileScreen({route}: ProfileScreenProps) {
             <StatsOverview statsData={statsData} />
             <SessionsCalendar
               userID={userID}
-              visibleDate={state.visibleDateData}
-              onDateChange={(date: DateData) =>
-                dispatch({type: 'SET_VISIBLE_DATE_OBJECT', payload: date})
-              }
+              visibleDate={visibleDateData}
+              onDateChange={(date: DateData) => setVisibleDateData(date)}
               drinkingSessionData={drinkingSessionData}
               preferences={preferences}
             />
@@ -281,21 +233,14 @@ function ProfileScreen({route}: ProfileScreenProps) {
             <Button
               text={translate('common.manage')}
               style={styles.m2}
-              onPress={() =>
-                dispatch({
-                  type: 'SET_MANAGE_FRIEND_MODAL_VISIBLE',
-                  payload: true,
-                })
-              }
+              onPress={() => setManageFriendModalVisible(true)}
             />
           )}
         </View>
       </ScrollView>
       <ManageFriendPopover
-        isVisible={state.manageFriendModalVisible}
-        onClose={() =>
-          dispatch({type: 'SET_MANAGE_FRIEND_MODAL_VISIBLE', payload: false})
-        }
+        isVisible={manageFriendModalVisible}
+        onClose={() => setManageFriendModalVisible(false)}
         friendId={userID}
       />
     </ScreenWrapper>
