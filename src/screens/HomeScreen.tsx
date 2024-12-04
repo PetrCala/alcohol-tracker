@@ -1,8 +1,7 @@
-﻿import React, {useEffect, useMemo, useReducer, useState} from 'react';
+﻿import React, {useMemo, useReducer, useState} from 'react';
 import {Alert, StyleSheet, TouchableOpacity, View} from 'react-native';
 import SessionsCalendar from '@components/SessionsCalendar';
 import type {DateData} from 'react-native-calendars';
-import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {
   calculateThisMonthDrinks,
   calculateThisMonthUnits,
@@ -15,7 +14,7 @@ import {synchronizeUserStatus} from '@database/users';
 import {useFirebase} from '@context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
 import CONST from '@src/CONST';
-import type {DrinkingSessionArray, DrinkingSessionId} from '@src/types/onyx';
+import type {DrinkingSessionArray} from '@src/types/onyx';
 import ROUTES from '@src/ROUTES';
 import Navigation from '@navigation/Navigation';
 import type {StackScreenProps} from '@react-navigation/stack';
