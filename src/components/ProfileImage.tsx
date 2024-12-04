@@ -1,6 +1,6 @@
-﻿import React, {useEffect, useMemo, useReducer, useRef, useState} from 'react';
+﻿import React, {useEffect, useReducer, useRef, useState} from 'react';
 import type {ImageSourcePropType, LayoutChangeEvent} from 'react-native';
-import {ActivityIndicator, Alert, Image, TouchableOpacity} from 'react-native';
+import {Alert, Image} from 'react-native';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import type {FirebaseStorage} from 'firebase/storage';
 import {getProfilePictureURL} from '@src/storage/storageProfile';
@@ -9,36 +9,6 @@ import CONST from '@src/CONST';
 import EnlargableImage from './Buttons/EnlargableImage';
 import type ImageLayout from '@src/types/various/ImageLayout';
 import FlexibleLoadingIndicator from './FlexibleLoadingIndicator';
-
-type State = {
-  imageUrl: string | null;
-  loadingImage: boolean;
-  warning: string;
-};
-
-type Action = {
-  type: string;
-  payload: any;
-};
-
-const initialState: State = {
-  imageUrl: null,
-  loadingImage: true,
-  warning: '',
-};
-
-const reducer = (state: State, action: Action) => {
-  switch (action.type) {
-    case 'SET_IMAGE_URL':
-      return {...state, imageUrl: action.payload};
-    case 'SET_LOADING_IMAGE':
-      return {...state, loadingImage: action.payload};
-    case 'SET_WARNING':
-      return {...state, warning: action.payload};
-    default:
-      return state;
-  }
-};
 
 type ProfileImageProps = {
   storage: FirebaseStorage;
@@ -53,21 +23,23 @@ type ProfileImageProps = {
 
 function ProfileImage(props: ProfileImageProps) {
   const {storage, userID, downloadPath, style} = props;
-  const [state, dispatch] = useReducer(reducer, initialState);
   const {cachedUrl, cacheImage, isCacheChecked} = useProfileImageCache(userID);
   const prevCachedUrl = useRef(cachedUrl); // Crucial
-  const initialDownloadPath = useRef(downloadPath); //
+  const initialDownloadPath = useRef(downloadPath);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [loadingImage, setLoadingImage] = useState<boolean>(true);
+  const [warning, setWarning] = useState<string>('');
 
   const imageSource: ImageSourcePropType =
-    state.imageUrl && state.imageUrl !== CONST.NO_IMAGE
-      ? {uri: state.imageUrl}
+    imageUrl && imageUrl !== CONST.NO_IMAGE
+      ? {uri: imageUrl}
       : KirokuIcons.UserIcon;
 
   const checkAvailableCache = async (url: string | null): Promise<boolean> => {
     if (downloadPath?.startsWith(CONST.LOCAL_IMAGE_PREFIX)) {
       // Is a local file
-      dispatch({type: 'SET_IMAGE_URL', payload: downloadPath});
-      dispatch({type: 'SET_LOADING_IMAGE', payload: false});
+      setImageUrl(downloadPath);
+      setLoadingImage(false);
       return true;
     }
     if (
@@ -78,8 +50,8 @@ function ProfileImage(props: ProfileImageProps) {
       !props.refreshTrigger // Only if the refresh trigger is not set
     ) {
       // Use cache if available and unchanged
-      dispatch({type: 'SET_IMAGE_URL', payload: cachedUrl});
-      dispatch({type: 'SET_LOADING_IMAGE', payload: false});
+      setImageUrl(cachedUrl);
+      setLoadingImage(false);
       return true;
     }
     return false;
@@ -96,7 +68,7 @@ function ProfileImage(props: ProfileImageProps) {
         return;
       } // Use cache if available and unchanged
 
-      dispatch({type: 'SET_LOADING_IMAGE', payload: true});
+      setLoadingImage(true);
       try {
         let downloadUrl: string | null = null;
         if (downloadPath?.includes(CONST.FIREBASE_STORAGE_URL)) {
@@ -109,11 +81,11 @@ function ProfileImage(props: ProfileImageProps) {
           await cacheImage(downloadUrl);
         }
 
-        dispatch({type: 'SET_IMAGE_URL', payload: downloadUrl});
+        setImageUrl(downloadUrl);
       } catch (error: any) {
         Alert.alert('Error fetching the image', error.message);
       } finally {
-        dispatch({type: 'SET_LOADING_IMAGE', payload: false});
+        setLoadingImage(false);
       }
     };
 
@@ -121,7 +93,7 @@ function ProfileImage(props: ProfileImageProps) {
     prevCachedUrl.current = cachedUrl;
   }, [downloadPath, cachedUrl, isCacheChecked]); // add props.refreshTrigger if necessary
 
-  if (state.loadingImage) {
+  if (loadingImage) {
     return <FlexibleLoadingIndicator style={[style, {flex: 0}]} />;
   }
   if (!props.enlargable) {
