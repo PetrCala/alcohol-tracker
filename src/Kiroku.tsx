@@ -12,7 +12,7 @@ import {AppState, Linking, Platform} from 'react-native';
 import Onyx, {useOnyx} from 'react-native-onyx';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {useUserConnection} from '@context/global/UserConnectionContext';
-import DBPATHS from '@database/DBPATHS';
+import DBPATHS from '@src/DBPATHS';
 import {listenForDataChanges, readDataOnce} from '@database/baseFunctions';
 import SplashScreenStateContext from '@context/global/SplashScreenStateContext';
 import {useConfig} from '@context/global/ConfigContext';

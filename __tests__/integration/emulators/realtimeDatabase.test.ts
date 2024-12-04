@@ -21,7 +21,7 @@ import {
   getDefaultUserData,
   getDefaultUserStatus,
   pushNewUserInfo,
-} from '@database/users';
+} from '@userActions/User';
 import {cleanStringForFirebaseKey} from '@libs/StringUtilsKiroku';
 import {
   acceptFriendRequest,
@@ -30,7 +30,7 @@ import {
   sendFriendRequest,
   unfriend,
 } from '@database/friends';
-import DBPATHS from '@database/DBPATHS';
+import DBPATHS from '@src/DBPATHS';
 import CONST from '@src/CONST';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
 import ONYXKEYS from '@src/ONYXKEYS';
