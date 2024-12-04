@@ -28,14 +28,14 @@ type SocialFooterButtonProps = {
   infoNumberValue?: number;
 };
 
-const SocialFooterButton: React.FC<SocialFooterButtonProps> = ({
+function SocialFooterButton({
   index,
   currentIndex,
   setImageIndex,
   source,
   label,
   infoNumberValue,
-}) => {
+}: SocialFooterButtonProps) {
   const theme = useTheme();
   const styles = useThemeStyles();
   return (
@@ -74,7 +74,7 @@ const SocialFooterButton: React.FC<SocialFooterButtonProps> = ({
       </TouchableOpacity>
     </View>
   );
-};
+}
 
 type SocialScreenProps = StackScreenProps<
   SocialNavigatorParamList,
