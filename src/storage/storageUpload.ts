@@ -1,7 +1,9 @@
 import {toPercentageVerbose} from '@libs/DataHandling';
 import * as ErrorUtils from '@libs/ErrorUtils';
-import type {FirebaseStorage} from 'firebase/storage';
+import type {FirebaseStorage, UploadTaskSnapshot} from 'firebase/storage';
 import {ref, uploadBytesResumable} from 'firebase/storage';
+
+/* eslint-disable @lwc/lwc/no-async-await */
 
 /**
  * Uploads an image to Firebase storage.
@@ -9,7 +11,8 @@ import {ref, uploadBytesResumable} from 'firebase/storage';
  * @param storage - The Firebase storage instance.
  * @param uri - The URI of the image to upload.
  * @param pathToUpload - The path in Firebase storage where the image should be uploaded.
- * @param dispatch - The dispatch function to update the state.
+ * @param setUploadProgress - Function to update upload progress.
+ * @param setSuccess - Function to update success message.
  * @returns A promise that resolves when the upload is complete.
  */
 async function uploadImageToFirebase(
@@ -19,47 +22,46 @@ async function uploadImageToFirebase(
   setUploadProgress: React.Dispatch<string | null>,
   setSuccess: React.Dispatch<string>,
 ): Promise<void> {
-  return new Promise(async (resolve, reject) => {
-    // Wrap the logic in a new Promise
-    if (!uri) {
-      reject('No URI provided');
-      return;
-    }
-    try {
-      const storageRef = ref(storage, pathToUpload);
-      const response = await fetch(uri);
-      const blob = await response.blob();
-      const uploadTask = uploadBytesResumable(storageRef, blob);
+  if (!uri) {
+    throw new Error('No URI provided');
+  }
 
-      uploadTask.on(
-        'state_changed',
-        (snapshot: any) => {
-          const progressFraction =
-            snapshot.bytesTransferred / snapshot.totalBytes;
-          const progressVerbose = toPercentageVerbose(progressFraction);
-          setUploadProgress(progressVerbose);
-          switch (snapshot.state) {
-            case 'paused':
-              // console.log('Upload is paused');
-              break;
-            case 'running':
-              // console.log('Upload is running');
-              break;
-          }
-        },
-        (error: unknown) => {
-          ErrorUtils.raiseAlert(error, 'Error uploading image');
-        },
-        () => {
-          setUploadProgress('0');
-          setSuccess('Image uploaded successfully');
-          resolve();
-        },
-      );
-    } catch (error: unknown) {
-      reject(error);
-    }
-  });
+  try {
+    const storageRef = ref(storage, pathToUpload);
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    const uploadTask = uploadBytesResumable(storageRef, blob);
+
+    // Track the progress
+    uploadTask.on(
+      'state_changed',
+      (snapshot: UploadTaskSnapshot) => {
+        const progressFraction =
+          snapshot.bytesTransferred / snapshot.totalBytes;
+        const progressVerbose = toPercentageVerbose(progressFraction);
+        setUploadProgress(progressVerbose);
+
+        switch (snapshot.state) {
+          case 'paused':
+            break;
+          case 'running':
+            break;
+          default:
+            break;
+        }
+      },
+      (error: unknown) => {
+        ErrorUtils.raiseAlert(error, 'Error uploading image');
+      },
+    );
+
+    await uploadTask;
+    setUploadProgress('0');
+    setSuccess('Image uploaded successfully');
+  } catch (error: unknown) {
+    ErrorUtils.raiseAlert(error, 'Error uploading image');
+    throw error; // Re-throw the error after handling
+  }
 }
 
 export default uploadImageToFirebase;

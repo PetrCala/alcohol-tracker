@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import type {ImageSourcePropType, LayoutChangeEvent} from 'react-native';
 import {Alert, Image} from 'react-native';
 import type {FirebaseStorage} from 'firebase/storage';
-import {getProfilePictureURL} from '@src/storage/storageProfile';
+import getProfilePictureURL from '@src/storage/storageProfile';
 import useProfileImageCache from '@hooks/useProfileImageCache';
 import CONST from '@src/CONST';
 import type ImageLayout from '@src/types/various/ImageLayout';
