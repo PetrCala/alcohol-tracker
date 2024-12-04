@@ -1,5 +1,6 @@
 ﻿import type {Database} from 'firebase/database';
 import {update, ref, get} from 'firebase/database';
+import _ from 'lodash';
 import type {
   DrinkingSessionList,
   FriendRequestList,
@@ -28,7 +29,6 @@ import {cleanStringForFirebaseKey} from '@libs/StringUtilsKiroku';
 import DBPATHS from '@database/DBPATHS';
 import {readDataOnce} from '@database/baseFunctions';
 import {getLastStartedSessionId} from '@libs/DataHandling';
-import _ from 'lodash';
 import * as Session from '@userActions/Session';
 import * as Localize from '@libs/Localize';
 import {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
