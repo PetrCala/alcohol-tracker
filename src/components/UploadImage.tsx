@@ -8,7 +8,7 @@ import {requestPermission} from '@libs/Permissions/requestPermission';
 import * as Profile from '@userActions/Profile';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import useLocalize from '@hooks/useLocalize';
-import {uploadImageToFirebase} from '@src/storage/storageUpload';
+import uploadImageToFirebase from '@src/storage/storageUpload';
 import UploadImagePopup from './Popups/UploadImagePopup';
 
 type UploadImageComponentProps = {
