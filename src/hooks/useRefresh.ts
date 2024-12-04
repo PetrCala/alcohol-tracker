@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import type {RefetchDatabaseData} from '@src/types/utils/RefetchDatabaseData';
+import type RefetchDatabaseData from '@src/types/utils/RefetchDatabaseData';
 import type {FetchDataKeys} from './useFetchData/types';
 
 type UseRefreshProps = {
