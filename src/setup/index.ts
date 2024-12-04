@@ -4,7 +4,6 @@ import * as Device from '@userActions/Device';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
 import intlPolyfill from '@libs/IntlPolyfill';
-import addUtilsToWindow from './addUtilsToWindow';
 import initializeLastVisitedPath from './initializeLastVisitedPath';
 import platformSetup from './platformSetup';
 
@@ -31,7 +30,7 @@ export default function () {
     initialKeyStates: {
       // Clear any loading and error messages so they do not appear on app startup
       [ONYXKEYS.SESSION]: {loading: false},
-      [ONYXKEYS.ACCOUNT]: CONST.DEFAULT_ACCOUNT_DATA,
+      [ONYXKEYS.FORMS.CLOSE_ACCOUNT_FORM]: CONST.DEFAULT_CLOSE_ACCOUNT_DATA,
       [ONYXKEYS.NETWORK]: CONST.DEFAULT_NETWORK_DATA,
       [ONYXKEYS.IS_SIDEBAR_LOADED]: false,
       [ONYXKEYS.SHOULD_SHOW_COMPOSE_INPUT]: true,
@@ -56,5 +55,5 @@ export default function () {
   // Perform any other platform-specific setup
   platformSetup();
 
-  addUtilsToWindow();
+  // addUtilsToWindow(); // A desktop specific setup function
 }

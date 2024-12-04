@@ -1,6 +1,8 @@
 import type {FirebaseStorage} from 'firebase/storage';
 import {getDownloadURL, ref} from 'firebase/storage';
 
+/* eslint-disable @lwc/lwc/no-async-await */
+
 /**
  * Using the Firebase Storage object, the user UID, and the full name of the
  * profile picture path, fetch the download URL for the picture, which
@@ -15,7 +17,7 @@ import {getDownloadURL, ref} from 'firebase/storage';
  * const url = await setProfilePictureURL(db, 'test-user-id', 'profile_picture.jpg');
  * console.log(url);
  */
-export async function getProfilePictureURL(
+async function getProfilePictureURL(
   storage: FirebaseStorage,
   userID: string,
   downloadPath: string,
@@ -29,3 +31,5 @@ export async function getProfilePictureURL(
 
   return downloadURL;
 }
+
+export default getProfilePictureURL;
