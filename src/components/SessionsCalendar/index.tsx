@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import type {DateData, Calendar} from 'react-native-calendars';
+import type {DateData} from 'react-native-calendars';
+import {Calendar} from 'react-native-calendars';
 import {getPreviousMonth, getNextMonth} from '@libs/DataHandling';
 import type {DrinkingSessionList} from '@src/types/onyx';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
