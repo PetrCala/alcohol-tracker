@@ -8,7 +8,7 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import Navigation from '@libs/Navigation/Navigation';
 import * as ValidationUtils from '@libs/ValidationUtils';
 import * as ErrorUtils from '@libs/ErrorUtils';
-import * as User from '@database/users';
+import * as User from '@libs/actions/User';
 import * as Session from '@userActions/Session';
 import type {SettingsNavigatorParamList} from '@libs/Navigation/types';
 import type {FormInputErrors, FormOnyxValues} from '@src/components/Form/types';

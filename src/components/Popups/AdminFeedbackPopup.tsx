@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import {timestampToDate} from '@libs/DataHandling';
 import {removeFeedback} from '@database/feedback';
-import {fetchNicknameByUID} from '@database/users';
+import {fetchNicknameByUID} from '@libs/actions/User';
 import {useFirebase} from '@context/global/FirebaseContext';
 import CONST from '@src/CONST';
 import type {FeedbackList, Feedback} from '@src/types/onyx';

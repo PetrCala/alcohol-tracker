@@ -8,7 +8,7 @@ import type {SelectedTimezone} from '@src/types/onyx/UserData';
 import {StackScreenProps} from '@react-navigation/stack';
 import {SettingsNavigatorParamList} from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
-import * as User from '@database/users';
+import * as User from '@libs/actions/User';
 import {useFirebase} from '@context/global/FirebaseContext';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';

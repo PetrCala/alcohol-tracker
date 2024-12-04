@@ -6,7 +6,7 @@ import CONST from '@src/CONST';
 import Modal from './Modal';
 import * as UserUtils from '@libs/UserUtils';
 import * as ErrorUtils from '@libs/ErrorUtils';
-import * as User from '@database/users';
+import * as User from '@libs/actions/User';
 import SafeAreaConsumer from './SafeAreaConsumer';
 import Text from './Text';
 import Button from './Button';

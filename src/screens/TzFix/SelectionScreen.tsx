@@ -18,7 +18,7 @@ import {
 import SCREENS from '@src/SCREENS';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {UserData} from '@src/types/onyx';
-import * as User from '@database/users';
+import * as User from '@libs/actions/User';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {Alert} from 'react-native';
 import * as ErrorUtils from '@libs/ErrorUtils';

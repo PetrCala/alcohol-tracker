@@ -10,7 +10,7 @@ import {
 } from '@libs/DataHandling';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import UserOffline from '@components/UserOfflineModal';
-import {synchronizeUserStatus} from '@database/users';
+import {synchronizeUserStatus} from '@libs/actions/User';
 import {useFirebase} from '@context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
 import CONST from '@src/CONST';
