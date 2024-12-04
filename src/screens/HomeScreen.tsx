@@ -208,6 +208,7 @@ function HomeScreen({}: HomeScreenProps) {
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-use-before-define
 const localStyles = StyleSheet.create({
   profileButton: {
     flexDirection: 'row',

@@ -211,6 +211,7 @@ const UserListComponent: React.FC<UserListProps> = ({
 
 const screenHeight = Dimensions.get('window').height;
 
+// eslint-disable-next-line @typescript-eslint/no-use-before-define
 const localStyles = StyleSheet.create({
   scrollViewContainer: {
     flex: 1,

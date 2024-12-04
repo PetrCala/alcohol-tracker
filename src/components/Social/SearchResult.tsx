@@ -161,6 +161,7 @@ const SearchResult: React.FC<SearchResultProps> = ({
   );
 };
 
+// eslint-disable-next-line @typescript-eslint/no-use-before-define
 const localStyles = StyleSheet.create({
   userOverviewContainer: {
     width: '100%',

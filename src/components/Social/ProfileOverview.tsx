@@ -100,6 +100,7 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
   );
 };
 
+// eslint-disable-next-line @typescript-eslint/no-use-before-define
 const localStyles = StyleSheet.create({
   profileOverviewContainer: {
     width: screenWidth,

@@ -89,6 +89,7 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
   );
 };
 
+// eslint-disable-next-line @typescript-eslint/no-use-before-define
 const localStyles = StyleSheet.create({
   modalButton: {
     justifyContent: 'center',

@@ -259,6 +259,7 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-use-before-define
 const localStyles = StyleSheet.create({
   scrollViewContainer: {
     flex: 1,

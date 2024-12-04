@@ -121,6 +121,7 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
   },
 );
 
+// eslint-disable-next-line @typescript-eslint/no-use-before-define
 const localStyles = StyleSheet.create({
   textContainer: {
     justifyContent: 'flex-start',

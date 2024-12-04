@@ -96,6 +96,7 @@ function DrinkTypesView({session}: DrinkTypesViewProps) {
 
 export default DrinkTypesView;
 
+// eslint-disable-next-line @typescript-eslint/no-use-before-define
 const localStyles = StyleSheet.create({
   mainContainer: {
     width: '100%',
