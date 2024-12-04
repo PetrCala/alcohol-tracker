@@ -1,6 +1,5 @@
 ﻿import React, {useState, useMemo} from 'react';
 import {
-  Text,
   View,
   FlatList,
   TouchableOpacity,
@@ -40,8 +39,8 @@ import Button from '@components/Button';
 import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Icon from '@components/Icon';
+import Text from '@components/Text';
 import useTheme from '@hooks/useTheme';
-import commonStyles from '@src/styles/commonStyles';
 import DateUtils from '@libs/DateUtils';
 import {useOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
