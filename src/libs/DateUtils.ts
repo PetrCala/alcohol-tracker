@@ -39,15 +39,14 @@ import Onyx from 'react-native-onyx';
 import type {ValueOf} from 'type-fest';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
-import {auth} from './Firebase/FirebaseApp';
 import {timezoneBackwardMap} from '@src/TIMEZONES';
 import type {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
+import {auth} from './Firebase/FirebaseApp';
 import * as CurrentDate from './actions/CurrentDate';
 import * as Localize from './Localize';
 import Log from './Log';
 
-type CustomStatusTypes =
-  (typeof CONST.CUSTOM_STATUS_TYPES)[keyof typeof CONST.CUSTOM_STATUS_TYPES];
+type CustomStatusTypes = ValueOf<typeof CONST.CUSTOM_STATUS_TYPES>;
 type TimePeriod = 'AM' | 'PM';
 type Locale = ValueOf<typeof CONST.LOCALES>;
 type WeekDay = 0 | 1 | 2 | 3 | 4 | 5 | 6;
@@ -194,9 +193,9 @@ function isToday(date: Date, timeZone: SelectedTimezone): boolean {
 /**
  * Returns a localized time string based on the provided date, format string, and selected timezone.
  *
- * @param {Date | string | number} date - The date to be formatted. Can be a Date object, a string, or a timestamp.
- * @param {string} - The format string to use for formatting the time. Defaults to a predefined short time format.
- * @returns {string} The formatted time string localized to the selected timezone.
+ * @param date - The date to be formatted. Can be a Date object, a string, or a timestamp.
+ * @param - The format string to use for formatting the time. Defaults to a predefined short time format.
+ * @returns The formatted time string localized to the selected timezone.
  */
 function getLocalizedTime(
   date: Date | string | number | undefined | null,

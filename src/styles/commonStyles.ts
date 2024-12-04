@@ -1,4 +1,4 @@
-﻿// This module is outdated at will be depcrecated/deleted in the future
+// This module is outdated at will be depcrecated/deleted in the future
 
 import {Dimensions, StyleSheet} from 'react-native';
 

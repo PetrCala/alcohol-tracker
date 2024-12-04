@@ -1,6 +1,9 @@
 import type {UserID} from './OnyxCommon';
 import type DrinkingSession from './DrinkingSession';
 
+/**
+ *
+ */
 type UserStatus = {
   /** A timestamp indicating the last time a user was online */
   last_online: number;
@@ -12,6 +15,9 @@ type UserStatus = {
   latest_session?: DrinkingSession | null;
 };
 
+/**
+ *
+ */
 type UserStatusList = Record<UserID, UserStatus>;
 
 export default UserStatus;

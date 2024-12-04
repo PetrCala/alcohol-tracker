@@ -13,9 +13,9 @@ import * as DS from '@userActions/DrinkingSession';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
 import ONYXKEYS from '@src/ONYXKEYS';
 import INPUT_IDS from '@src/types/form/SessionNoteForm';
-import {StackScreenProps} from '@react-navigation/stack';
-import {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
-import SCREENS from '@src/SCREENS';
+import type {StackScreenProps} from '@react-navigation/stack';
+import type {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
+import type SCREENS from '@src/SCREENS';
 import TextInput from '@components/TextInput';
 import Text from '@components/Text';
 

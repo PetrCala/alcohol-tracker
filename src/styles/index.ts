@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/naming-convention */
+import type {ValueOf} from 'type-fest';
 import lodashClamp from 'lodash/clamp';
-import {
-  Platform,
-  type AnimatableNumericValue,
-  type Animated,
-  type ImageStyle,
-  type TextStyle,
-  type ViewStyle,
+import {Platform} from 'react-native';
+import type {
+  AnimatableNumericValue,
+  Animated,
+  ImageStyle,
+  TextStyle,
+  ViewStyle,
 } from 'react-native';
 import type {PickerStyle} from 'react-native-picker-select';
 import type {CustomAnimation, View} from 'react-native-animatable';
@@ -16,6 +17,8 @@ import type {
 } from 'react-native-render-html';
 import * as Browser from '@libs/Browser';
 import CONST from '@src/CONST';
+import type {CalendarColors} from '@components/SessionsCalendar/types';
+import type {Direction} from '@components/SessionsCalendar/CalendarArrow';
 import {defaultTheme} from './theme';
 import type {ThemeColors} from './theme/types';
 // import addOutlineWidth from './utils/addOutlineWidth';
@@ -45,12 +48,9 @@ import whiteSpace from './utils/whiteSpace';
 import wordBreak from './utils/wordBreak';
 import writingDirection from './utils/writingDirection';
 import variables from './variables';
-import {CalendarColors} from '@components/SessionsCalendar/types';
-import {Direction} from '@components/SessionsCalendar/CalendarArrow';
 
-type ColorScheme = (typeof CONST.COLOR_SCHEME)[keyof typeof CONST.COLOR_SCHEME];
-type StatusBarStyle =
-  (typeof CONST.STATUS_BAR_STYLE)[keyof typeof CONST.STATUS_BAR_STYLE];
+type ColorScheme = ValueOf<typeof CONST.COLOR_SCHEME>;
+type StatusBarStyle = ValueOf<typeof CONST.STATUS_BAR_STYLE>;
 
 type AnchorDimensions = {
   width: number;

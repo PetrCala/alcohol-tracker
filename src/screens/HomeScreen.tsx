@@ -1,4 +1,4 @@
-﻿import React, {useMemo, useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {Alert, StyleSheet, TouchableOpacity, View} from 'react-native';
 import SessionsCalendar from '@components/SessionsCalendar';
 import type {DateData} from 'react-native-calendars';
@@ -109,7 +109,7 @@ function HomeScreen({}: HomeScreenProps) {
       !DSUtils.allSessionsContainTimezone(drinkingSessionData);
 
     // Only navigate in case the user is setting up TZ for the first time
-    const shouldNavigateToTzFix = sessionsAreMissingTz && !!!userData?.timezone;
+    const shouldNavigateToTzFix = sessionsAreMissingTz && !userData?.timezone;
 
     setShouldNavigateToTzFix(shouldNavigateToTzFix);
   }, [drinkingSessionData, userData]);
@@ -126,14 +126,13 @@ function HomeScreen({}: HomeScreenProps) {
       } catch (error: any) {
         Alert.alert(
           'Failed to contact the database',
-          'Could not update user online status:' + error.message,
+          `Could not update user online status:${error.message}`,
         );
       }
 
       // TZFIX (09-2024) - Redirect to TZ_FIX_INTRODUCTION if user has not set timezone
       if (shouldNavigateToTzFix) {
         Navigation.navigate(ROUTES.TZ_FIX_INTRODUCTION);
-        return;
       }
     }, [
       user,
@@ -188,7 +187,7 @@ function HomeScreen({}: HomeScreenProps) {
             onPress={() => DS.navigateToOngoingSessionScreen()}
           />
         )}
-        {!!drinkingSessionData ? (
+        {drinkingSessionData ? (
           <>
             <StatsOverview statsData={statsData} />
             <SessionsCalendar

@@ -20,6 +20,8 @@ import colors from '@styles/theme/colors';
 import type {ThemeColors} from '@styles/theme/types';
 import variables from '@styles/variables';
 import CONST from '@src/CONST';
+import type {StyledSafeAreaInsets} from '@hooks/useStyledSafeAreaInsets';
+import type {CalendarHeaderProps} from 'react-native-calendars/src/calendar/header';
 import {defaultStyles} from '..';
 import type {ThemeStyles} from '..';
 import containerComposeStyles from './containerComposeStyles';
@@ -45,8 +47,6 @@ import type {
   SVGAvatarColorStyle,
   WorkspaceColorStyle,
 } from './types';
-import {StyledSafeAreaInsets} from '@hooks/useStyledSafeAreaInsets';
-import {CalendarHeaderProps} from 'react-native-calendars/src/calendar/header';
 
 const avatarBorderSizes: Partial<Record<AvatarSizeName, number>> = {
   [CONST.AVATAR_SIZE.SMALL_SUBSCRIPT]: variables.componentBorderRadiusSmall,
@@ -629,8 +629,7 @@ function getButtonStyleWithIcon(
   shouldShowRightIcon?: boolean,
 ): ViewStyle | undefined {
   const useDefaultButtonStyles =
-    Boolean(hasIcon && shouldShowRightIcon) ||
-    Boolean(!hasIcon && !shouldShowRightIcon);
+    !!(hasIcon && shouldShowRightIcon) || !!(!hasIcon && !shouldShowRightIcon);
   switch (true) {
     case small: {
       const verticalStyle = hasIcon ? styles.pl2 : styles.pr2;

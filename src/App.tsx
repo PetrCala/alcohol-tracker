@@ -1,26 +1,26 @@
 import React from 'react';
 import {PortalProvider} from '@gorhom/portal';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import InitialUrlContext from '@libs/InitialUrlContext';
-import ColorSchemeWrapper from '@components/ColorSchemeWrapper';
-import ActiveElementRoleProvider from '@components/ActiveElementRoleProvider';
-import ComposeProviders from '@components/ComposeProviders';
-import ErrorBoundary from '@components/ErrorBoundary';
-import {LocaleContextProvider} from '@components/LocaleContextProvider';
-import OnyxProvider from '@components/OnyxProvider';
 import {FirebaseProvider} from '@context/global/FirebaseContext';
 import {UserConnectionProvider} from '@context/global/UserConnectionContext';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import {WindowDimensionsProvider} from '@components/withWindowDimensions';
-import {KeyboardStateProvider} from '@components/withKeyboardState';
 import {SplashScreenStateContextProvider} from '@context/global/SplashScreenStateContext';
-import {EnvironmentProvider} from '@components/withEnvironment';
 import {ConfigProvider} from '@context/global/ConfigContext';
-import ThemeProvider from '@components/ThemeProvider';
-import ThemeStylesProvider from '@components/ThemeStylesProvider';
-import SafeArea from '@components/SafeArea';
-import CustomStatusBarAndBackground from '@components/CustomStatusBarAndBackground';
-import CustomStatusBarAndBackgroundContextProvider from '@components/CustomStatusBarAndBackground/CustomStatusBarAndBackgroundContextProvider';
+import InitialUrlContext from './libs/InitialUrlContext';
+import ColorSchemeWrapper from './components/ColorSchemeWrapper';
+import ActiveElementRoleProvider from './components/ActiveElementRoleProvider';
+import ComposeProviders from './components/ComposeProviders';
+import ErrorBoundary from './components/ErrorBoundary';
+import {LocaleContextProvider} from './components/LocaleContextProvider';
+import OnyxProvider from './components/OnyxProvider';
+import {WindowDimensionsProvider} from './components/withWindowDimensions';
+import {KeyboardStateProvider} from './components/withKeyboardState';
+import {EnvironmentProvider} from './components/withEnvironment';
+import ThemeProvider from './components/ThemeProvider';
+import ThemeStylesProvider from './components/ThemeStylesProvider';
+import SafeArea from './components/SafeArea';
+import CustomStatusBarAndBackground from './components/CustomStatusBarAndBackground';
+import CustomStatusBarAndBackgroundContextProvider from './components/CustomStatusBarAndBackground/CustomStatusBarAndBackgroundContextProvider';
 import type {Route} from './ROUTES';
 import Kiroku from './Kiroku';
 // import OnyxUpdateManager from './libs/actions/OnyxUpdateManager';
@@ -40,7 +40,7 @@ type KirokuProps = {
 
 const fill = {flex: 1};
 
-const App = ({url}: KirokuProps): React.JSX.Element => {
+function App({url}: KirokuProps): React.JSX.Element {
   // OnyxUpdateManager(); // Fix the API first before enabling this
 
   return (
@@ -76,7 +76,7 @@ const App = ({url}: KirokuProps): React.JSX.Element => {
       </InitialUrlContext.Provider>
     </SplashScreenStateContextProvider>
   );
-};
+}
 
 App.displayName = 'App';
 

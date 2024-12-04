@@ -1,9 +1,24 @@
+/**
+ *
+ */
 type AppSettings = {
+  /**
+   *
+   */
   min_supported_version?: string;
+  /**
+   *
+   */
   min_user_creation_possible_version?: string;
+  /**
+   *
+   */
   latest_version?: string;
 };
 
+/**
+ *
+ */
 type Maintenance = {
   /** Whether or not a maintenance is ongoing */
   maintenance_mode: boolean;
@@ -15,6 +30,9 @@ type Maintenance = {
   end_time?: number;
 };
 
+/**
+ *
+ */
 type Config = {
   /** Application settings */
   app_settings: AppSettings;

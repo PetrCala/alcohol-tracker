@@ -1,4 +1,4 @@
-﻿import type {DateData} from 'react-native-calendars';
+import type {DateData} from 'react-native-calendars';
 import {
   // calculateThisMonthUnits,
   // calculateThisMonthDrinks,
@@ -21,12 +21,12 @@ import {
   sumDrinksOfSingleType,
   timestampToDate,
   unitsToColors,
-} from '../../../src/libs/DataHandling';
+} from '@libs/DataHandling';
 import {
   createMockPreferences,
   createMockSession,
   createMockDrinksList,
-} from '../../../src/database/MockDatabase';
+} from '@src/database/MockDatabase';
 import type {
   DrinkingSession,
   DrinkingSessionArray,
@@ -36,8 +36,8 @@ import type {
   Drinks,
   UnitsToColors,
   DrinksToUnits,
-} from '../../../src/types/onyx';
-import CONST from '../../../src/CONST';
+} from '@src/types/onyx';
+import CONST from '@src/CONST';
 
 describe('formatDate function', () => {
   function checkFormattedDate(date: Date, expectedFormattedDate: string) {

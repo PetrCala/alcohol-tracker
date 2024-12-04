@@ -1,4 +1,4 @@
-import {DrinkingSessionId, DrinkingSessionType} from './DrinkingSession';
+import type {DrinkingSessionId, DrinkingSessionType} from './DrinkingSession';
 
 /** Model of user start session action */
 type StartSession = {
@@ -8,7 +8,7 @@ type StartSession = {
   /** ID of the session to create */
   sessionId?: DrinkingSessionId;
 
-  /** True if it is the first session we store for this user **/
+  /** True if it is the first session we store for this user * */
   isFirstSession?: boolean;
 };
 

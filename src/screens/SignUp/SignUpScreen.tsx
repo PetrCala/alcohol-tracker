@@ -1,18 +1,16 @@
-﻿import React, {useCallback, useRef} from 'react';
+import React, {useCallback, useRef} from 'react';
 import {useFirebase} from '@context/global/FirebaseContext';
 import ScreenWrapper from '@components/ScreenWrapper';
-import SignUpScreenLayout from './SignUpScreenLayout';
 import useThemeStyles from '@hooks/useThemeStyles';
 import useStyleUtils from '@hooks/useStyleUtils';
 import useResponsiveLayout from '@hooks/useResponsiveLayout';
 import useStyledSafeAreaInsets from '@hooks/useStyledSafeAreaInsets';
 import useLocalize from '@hooks/useLocalize';
-import ChangeSignUpScreenLink from './ChangeSignUpScreenLink';
 import INPUT_IDS from '@src/types/form/SignUpForm';
 import ONYXKEYS from '@src/ONYXKEYS';
 import FormProvider from '@components/Form/FormProvider';
-import {FormInputErrors, FormOnyxValues} from '@components/Form/types';
-import {Errors} from '@src/types/onyx/OnyxCommon';
+import type {FormInputErrors, FormOnyxValues} from '@components/Form/types';
+import type {Errors} from '@src/types/onyx/OnyxCommon';
 import InputWrapper from '@components/Form/InputWrapper';
 import TextInput from '@components/TextInput';
 import CONST from '@src/CONST';
@@ -23,16 +21,18 @@ import * as Browser from '@libs/Browser';
 import * as User from '@userActions/User';
 import DotIndicatorMessage from '@components/DotIndicatorMessage';
 import {useUserConnection} from '@context/global/UserConnectionContext';
-import {TranslationPaths} from '@src/languages/types';
-import {ValueOf} from 'type-fest';
+import type {TranslationPaths} from '@src/languages/types';
+import type {ValueOf} from 'type-fest';
 import {View} from 'react-native';
-import OrDelimiter from './OrDelimiter';
 import {PressableWithFeedback} from '@components/Pressable';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import {useOnyx} from 'react-native-onyx';
 import Text from '@components/Text';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
+import OrDelimiter from './OrDelimiter';
+import ChangeSignUpScreenLink from './ChangeSignUpScreenLink';
+import SignUpScreenLayout from './SignUpScreenLayout';
 
 type LoginScreenLayoutRef = {
   scrollPageToTop: (animated?: boolean) => void;
@@ -158,7 +158,7 @@ function SignUpScreen() {
   return (
     <ScreenWrapper
       shouldShowOfflineIndicator={false}
-      shouldEnableMaxHeight={true}
+      shouldEnableMaxHeight
       shouldUseCachedViewportHeight
       style={[
         styles.signUpScreen,
@@ -168,13 +168,13 @@ function SignUpScreen() {
         ),
       ]}
       testID={SignUpScreen.displayName}>
-      {!!isLoading ? (
+      {isLoading ? (
         <FullScreenLoadingIndicator
           loadingText={translate('signUpScreen.signingIn')}
         />
       ) : (
         <SignUpScreenLayout
-          welcomeHeader={''} // use 'welcomeHeader' to show the header
+          welcomeHeader="" // use 'welcomeHeader' to show the header
           welcomeText={welcomeText}
           ref={currentScreenLayoutRef}
           navigateFocus={navigateFocus}>
@@ -183,7 +183,7 @@ function SignUpScreen() {
             validate={validate}
             onSubmit={onSubmit}
             shouldValidateOnBlur={false}
-            shouldValidateOnChange={true}
+            shouldValidateOnChange
             includeSafeAreaPaddingBottom={false}
             submitButtonText={translate('common.signUp')}
             submitButtonStyles={styles.pb5}
@@ -208,7 +208,7 @@ function SignUpScreen() {
               textContentType="username"
               label={translate('common.username')}
               aria-label={translate('common.username')}
-              defaultValue={''}
+              defaultValue=""
               spellCheck={false}
             />
             <InputWrapper
@@ -217,7 +217,7 @@ function SignUpScreen() {
               name="password"
               label={translate('common.password')}
               aria-label={translate('common.password')}
-              defaultValue={''}
+              defaultValue=""
               spellCheck={false}
               secureTextEntry
               autoComplete={
@@ -232,7 +232,7 @@ function SignUpScreen() {
               name="re-enter-password"
               label={translate('password.reEnter')}
               aria-label={translate('password.reEnter')}
-              defaultValue={''}
+              defaultValue=""
               spellCheck={false}
               secureTextEntry
               autoComplete={

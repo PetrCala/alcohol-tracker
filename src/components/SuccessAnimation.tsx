@@ -1,14 +1,15 @@
 import useThemeStyles from '@hooks/useThemeStyles';
 import React from 'react';
-import {StyleProp, ViewStyle, Image, TextStyle} from 'react-native';
+import type {StyleProp, ViewStyle, TextStyle} from 'react-native';
+import {Image} from 'react-native';
 import useNativeDriver from '@libs/useNativeDriver';
 import * as Animatable from 'react-native-animatable';
-import * as KirokuIcons from '@components/Icon/KirokuIcons';
-import Icon from './Icon';
 import variables from '@src/styles/variables';
-import IconAsset from '@src/types/utils/IconAsset';
+import type IconAsset from '@src/types/utils/IconAsset';
 import useTheme from '@hooks/useTheme';
 import useLocalize from '@hooks/useLocalize';
+import * as KirokuIcons from './Icon/KirokuIcons';
+import Icon from './Icon';
 
 type SuccessAnimationProps = {
   /** The icon asset to display */

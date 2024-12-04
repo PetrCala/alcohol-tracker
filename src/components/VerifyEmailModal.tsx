@@ -1,24 +1,24 @@
-import Button from '@components/Button';
-import Text from '@components/Text';
 import useThemeStyles from '@hooks/useThemeStyles';
-import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import * as User from '@userActions/User';
 import {useEffect, useState} from 'react';
 import {View} from 'react-native';
 import useLocalize from '@hooks/useLocalize';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
-import DotIndicatorMessage from '@components/DotIndicatorMessage';
 import Onyx from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
-import Icon from '@components/Icon';
 import useTheme from '@hooks/useTheme';
-import SuccessAnimation from '@components/SuccessAnimation';
 import {sleep} from '@libs/TimeUtils';
 import {useFirebase} from '@context/global/FirebaseContext';
-import Modal from '@components/Modal';
-import SafeAreaConsumer from '@components/SafeAreaConsumer';
 import CONST from '@src/CONST';
+import Icon from './Icon';
+import SuccessAnimation from './SuccessAnimation';
+import Modal from './Modal';
+import SafeAreaConsumer from './SafeAreaConsumer';
+import DotIndicatorMessage from './DotIndicatorMessage';
+import * as KirokuIcons from './Icon/KirokuIcons';
+import Text from './Text';
+import Button from './Button';
 
 function VerifyEmailModal() {
   const {auth} = useFirebase();
@@ -185,7 +185,7 @@ function VerifyEmailModal() {
               <SuccessAnimation
                 iconSource={KirokuIcons.Checkmark}
                 text={translate('verifyEmailScreen.emailVerified')}
-                visible={true}
+                visible
                 onAnimationEnd={onSuccessAnimationEnd}
                 style={styles.flexGrow1}
               />

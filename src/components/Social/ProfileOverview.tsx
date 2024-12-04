@@ -71,7 +71,7 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
         userID={userID}
         downloadPath={profileData.photo_url}
         style={localStyles.profileOverviewImage}
-        enlargable={true}
+        enlargable
         layout={layout}
         onLayout={onLayout}
       />
@@ -84,7 +84,7 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
               localStyles.editProfileIconButtonImage,
               {tintColor: StyleUtils.getIconFillColor()},
             ]}
-            isProfilePicture={true}
+            isProfilePicture
           />
         </View>
       )}

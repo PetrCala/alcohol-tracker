@@ -3,8 +3,14 @@ import type CONST from '@src/CONST';
 import type * as OnyxCommon from './OnyxCommon';
 import type {UserID} from './OnyxCommon';
 
+/**
+ *
+ */
 type AutoAuthState = ValueOf<typeof CONST.AUTO_AUTH_STATE>;
 
+/**
+ *
+ */
 type Session = {
   /** The user's email for the current session */
   email?: string;
@@ -27,6 +33,9 @@ type Session = {
   /** Currently logged in user userID */
   userID?: UserID;
 
+  /**
+   *
+   */
   autoAuthState?: AutoAuthState;
 
   /** Server side errors keyed by microtime */

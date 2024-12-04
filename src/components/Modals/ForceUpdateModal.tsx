@@ -1,4 +1,4 @@
-﻿import Modal from '@components/Modal';
+import Modal from '@components/Modal';
 import SafeAreaConsumer from '@components/SafeAreaConsumer';
 import ScreenWrapper from '@components/ScreenWrapper';
 import useLocalize from '@hooks/useLocalize';
@@ -24,7 +24,7 @@ function ForceUpdateModal() {
       {() => (
         <Modal
           onClose={() => {}}
-          isVisible={true}
+          isVisible
           type={CONST.MODAL.MODAL_TYPE.CENTERED}>
           <View style={[styles.fullScreenCenteredContent, styles.p2]}>
             <Text style={styles.textHeadlineXXXLarge}>

@@ -1,6 +1,5 @@
-﻿import type {FirebaseApp as FirebaseAppProps} from 'firebase/app';
+import type {FirebaseApp as FirebaseAppProps} from 'firebase/app';
 import {initializeApp, getApp, getApps} from 'firebase/app';
-import FirebaseConfig from './FirebaseConfig';
 import type {Auth} from 'firebase/auth';
 import {
   getAuth,
@@ -8,6 +7,7 @@ import {
   initializeAuth,
 } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import FirebaseConfig from './FirebaseConfig';
 
 let FirebaseApp: FirebaseAppProps;
 let auth: Auth;

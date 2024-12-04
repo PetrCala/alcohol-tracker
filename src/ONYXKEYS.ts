@@ -5,7 +5,7 @@ import type * as FormTypes from './types/form';
 import type * as OnyxTypes from './types/onyx';
 import type AssertTypesEqual from './types/utils/AssertTypesEqual';
 import type DeepValueOf from './types/utils/DeepValueOf';
-import {Timestamp} from './types/onyx/OnyxCommon';
+import type {Timestamp} from './types/onyx/OnyxCommon';
 
 /**
  * This is a file containing constants for all the top level keys in the onyx store

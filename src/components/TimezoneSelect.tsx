@@ -1,11 +1,12 @@
-import React, {ForwardedRef, useState} from 'react';
-import SelectionList from '@components/SelectionList';
-import RadioListItem from '@components/SelectionList/RadioListItem';
+import type {ForwardedRef} from 'react';
+import React, {useState} from 'react';
 import useInitialValue from '@hooks/useInitialValue';
 import useLocalize from '@hooks/useLocalize';
 import TIMEZONES from '@src/TIMEZONES';
-import {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
-import {SelectionListHandle} from './SelectionList/types';
+import type {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
+import RadioListItem from './SelectionList/RadioListItem';
+import SelectionList from './SelectionList';
+import type {SelectionListHandle} from './SelectionList/types';
 
 /**
  * We add the current time to the key to fix a bug where the list options don't update unless the key is updated.

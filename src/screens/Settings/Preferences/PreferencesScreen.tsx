@@ -1,4 +1,4 @@
-﻿import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {Alert, BackHandler, StyleSheet, View} from 'react-native';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import {useFirebase} from '@context/global/FirebaseContext';
@@ -28,9 +28,8 @@ import ScrollView from '@components/ScrollView';
 import MenuItemGroup from '@components/MenuItemGroup';
 import Section from '@components/Section';
 import MenuItem from '@components/MenuItem';
-import NumericSlider, {
-  NumericSliderProps,
-} from '@components/Popups/NumericSlider';
+import type {NumericSliderProps} from '@components/Popups/NumericSlider';
+import NumericSlider from '@components/Popups/NumericSlider';
 import CONST from '@src/CONST';
 
 type MenuData = {
@@ -159,10 +158,10 @@ function PreferencesScreen({}: PreferencesScreenProps) {
             visible: true,
             heading: label,
             step: sliderMinValue,
-            value: value,
+            value,
             maxValue: sliderMaxValue,
             list: sliderListKey,
-            key: key,
+            key,
           }))
         }
       />

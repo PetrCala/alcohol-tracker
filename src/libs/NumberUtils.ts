@@ -100,9 +100,8 @@ function roundToTwoDecimalPlaces(value: number): number {
   const decimalCheck = value.toString().split('.')[1];
   if (decimalCheck && decimalCheck.length > 2) {
     return parseFloat(value.toFixed(2));
-  } else {
-    return value;
   }
+  return value;
 }
 
 export default roundToNearestMultipleOfFour;

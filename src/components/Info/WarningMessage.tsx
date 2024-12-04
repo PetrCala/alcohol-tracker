@@ -14,8 +14,8 @@ const WarningMessage: React.FC<WarningMessageProps> = ({
     warningText && (
       <View style={[styles.infoContainer, styles.warningInfoContainer]}>
         <TouchableOpacity
-          id={'warning'}
-          testID={'warning'}
+          id="warning"
+          testID="warning"
           accessibilityRole="button"
           onPress={() => dispatch({type: 'SET_WARNING', payload: ''})}
           style={styles.infoButton}>

@@ -1,11 +1,13 @@
 // !! Run using npm test - to run using bun test, resolve first issue with Config -> mock react-native-config
 
-require('dotenv').config(); // Use .env variables in this file - CONFIG does not work here
+// Use .env variables in this file - CONFIG does not work here
 import type {FirebaseStorage} from 'firebase/storage';
 import type {FirebaseApp} from 'firebase/app';
-import {isConnectedToStorageEmulator} from '../../../src/libs/Firebase/FirebaseUtils';
+import {isConnectedToStorageEmulator} from '@libs/Firebase/FirebaseUtils';
 import {describeWithEmulator} from '../../emulators/utils';
 import StorageEmulator from '../../emulators/storage';
+
+require('dotenv').config();
 
 describeWithEmulator('Test connecting to the storage emulator', () => {
   let testApp: FirebaseApp;

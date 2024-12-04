@@ -1,24 +1,26 @@
 // !! Run using npm test - to run using bun test, resolve first issue with Config -> mock react-native-config
 
-require('dotenv').config(); // Use .env variables in this file - CONFIG does not work here
+// Use .env variables in this file - CONFIG does not work here
 import type {RulesTestEnvironment} from '@firebase/rules-unit-testing';
 import {assertFails, assertSucceeds} from '@firebase/rules-unit-testing';
-import {describeWithEmulator, makeFriends} from '../../emulators/utils';
-import FBRules from '../../emulators/fbRules';
 import type {Feedback} from '@src/types/onyx';
-import {setupGlobalMocks} from '../../utils/testUtils';
 import {
   createMockSession,
   createMockUserData,
   createMockUserStatus,
-} from '../../../src/database/MockDatabase';
-import {getDefaultPreferences} from '@userActions/User';
+} from '@src/database/MockDatabase';
+import {getDefaultPreferences} from '@database/users';
+import CONST from '@src/CONST';
+import DBPATHS from '@database/DBPATHS';
+import {describeWithEmulator, makeFriends} from '../../emulators/utils';
+import FBRules from '../../emulators/fbRules';
+import {setupGlobalMocks} from '../../utils/testUtils';
 import {
   SAMPLE_UNITS_TO_COLORS,
   SAMPLE_DRINKS_TO_UNITS,
 } from '../../utils/testsStatic';
-import CONST from '../../../src/CONST';
-import DBPATHS from '@src/DBPATHS';
+
+require('dotenv').config();
 
 const testFeedbackId = 'testFeedbackId';
 const testFeedback: Feedback = {

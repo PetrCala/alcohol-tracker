@@ -1,18 +1,16 @@
-﻿import React, {useCallback, useRef} from 'react';
+import React, {useCallback, useRef} from 'react';
 import {useFirebase} from '@context/global/FirebaseContext';
 import ScreenWrapper from '@components/ScreenWrapper';
-import SignUpScreenLayout from './SignUpScreenLayout';
 import useThemeStyles from '@hooks/useThemeStyles';
 import useStyleUtils from '@hooks/useStyleUtils';
 import useResponsiveLayout from '@hooks/useResponsiveLayout';
 import useStyledSafeAreaInsets from '@hooks/useStyledSafeAreaInsets';
 import useLocalize from '@hooks/useLocalize';
-import ChangeSignUpScreenLink from './ChangeSignUpScreenLink';
 import INPUT_IDS from '@src/types/form/LogInForm';
 import ONYXKEYS from '@src/ONYXKEYS';
 import FormProvider from '@components/Form/FormProvider';
-import {FormInputErrors, FormOnyxValues} from '@components/Form/types';
-import {Errors} from '@src/types/onyx/OnyxCommon';
+import type {FormInputErrors, FormOnyxValues} from '@components/Form/types';
+import type {Errors} from '@src/types/onyx/OnyxCommon';
 import InputWrapper from '@components/Form/InputWrapper';
 import TextInput from '@components/TextInput';
 import CONST from '@src/CONST';
@@ -28,6 +26,8 @@ import DotIndicatorMessage from '@components/DotIndicatorMessage';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import Onyx, {useOnyx} from 'react-native-onyx';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
+import ChangeSignUpScreenLink from './ChangeSignUpScreenLink';
+import SignUpScreenLayout from './SignUpScreenLayout';
 
 type LoginScreenLayoutRef = {
   scrollPageToTop: (animated?: boolean) => void;
@@ -121,7 +121,7 @@ function LogInScreen() {
   return (
     <ScreenWrapper
       shouldShowOfflineIndicator={false}
-      shouldEnableMaxHeight={true}
+      shouldEnableMaxHeight
       shouldUseCachedViewportHeight
       style={[
         styles.signUpScreen,
@@ -131,13 +131,13 @@ function LogInScreen() {
         ),
       ]}
       testID={LogInScreen.displayName}>
-      {!!isLoading ? (
+      {isLoading ? (
         <FullScreenLoadingIndicator
           loadingText={translate('logInScreen.loggingIn')}
         />
       ) : (
         <SignUpScreenLayout
-          welcomeHeader={''} // use welcomeHeader to show the header
+          welcomeHeader="" // use welcomeHeader to show the header
           welcomeText={welcomeText}
           ref={currentScreenLayoutRef}
           navigateFocus={navigateFocus}>
@@ -169,7 +169,7 @@ function LogInScreen() {
               name="password"
               label={translate('common.password')}
               aria-label={translate('common.password')}
-              defaultValue={''}
+              defaultValue=""
               spellCheck={false}
               secureTextEntry
               autoComplete={

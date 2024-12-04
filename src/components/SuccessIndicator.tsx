@@ -1,5 +1,6 @@
-﻿import React, {useState, useEffect} from 'react';
-import {Animated, StyleProp, ViewStyle} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import type {StyleProp, ViewStyle} from 'react-native';
+import {Animated} from 'react-native';
 import useStyleUtils from '@hooks/useStyleUtils';
 
 type SuccessIndicatorProps = {

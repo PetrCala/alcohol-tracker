@@ -8,16 +8,16 @@ import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Navigation from '@libs/Navigation/Navigation';
-import {TzFixModalNavigatorParamList} from '@libs/Navigation/types';
-import {StackScreenProps} from '@react-navigation/stack';
+import type {TzFixModalNavigatorParamList} from '@libs/Navigation/types';
+import type {StackScreenProps} from '@react-navigation/stack';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
 import ROUTES from '@src/ROUTES';
-import SCREENS from '@src/SCREENS';
+import type SCREENS from '@src/SCREENS';
 import {useState} from 'react';
 import {View} from 'react-native';
 import {useFirebase} from '@context/global/FirebaseContext';
-import {SelectedTimezone} from '@src/types/onyx/UserData';
+import type {SelectedTimezone} from '@src/types/onyx/UserData';
 
 type ConfirmationScreenProps = StackScreenProps<
   TzFixModalNavigatorParamList,

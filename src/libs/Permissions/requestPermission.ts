@@ -6,6 +6,9 @@ import type {
   NotificationsResponse,
 } from 'react-native-permissions';
 import {request, RESULTS, requestNotifications} from 'react-native-permissions';
+import getPlatform from '@libs/getPlatform';
+import CONST from '@src/CONST';
+import {get} from 'lodash';
 import type {PermissionKey} from './PermissionsUtils';
 import {
   AndroidFilePermissions,
@@ -14,9 +17,6 @@ import {
 } from './PermissionsUtils';
 import permissionsMap from './PermissionsMap';
 import permissionsMessages from './PermissionsMessages';
-import getPlatform from '@libs/getPlatform';
-import CONST from '@src/CONST';
-import {get} from 'lodash';
 
 const openSettings = () => {
   Linking.openSettings();

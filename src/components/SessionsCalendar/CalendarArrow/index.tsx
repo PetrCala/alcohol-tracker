@@ -1,8 +1,8 @@
 import {View} from 'react-native';
 import useThemeStyles from '@hooks/useThemeStyles';
 import ArrowIcon from '@components/DatePicker/CalendarPicker/ArrowIcon';
-import CONST from '@src/CONST';
-import {ValueOf} from 'type-fest';
+import type CONST from '@src/CONST';
+import type {ValueOf} from 'type-fest';
 
 /** Direction of the calendar arrow */
 type Direction = ValueOf<typeof CONST.DIRECTION>;

@@ -6,12 +6,12 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import Navigation from '@libs/Navigation/Navigation';
 import * as DS from '@userActions/DrinkingSession';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
-import {StackScreenProps} from '@react-navigation/stack';
-import {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
-import SCREENS from '@src/SCREENS';
+import type {StackScreenProps} from '@react-navigation/stack';
+import type {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
+import type SCREENS from '@src/SCREENS';
 import Text from '@components/Text';
 import TimezoneSelect from '@components/TimezoneSelect';
-import {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
+import type {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
 import ConfirmModal from '@components/ConfirmModal';
 import CONST from '@src/CONST';
 

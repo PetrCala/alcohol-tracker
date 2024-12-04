@@ -1,21 +1,22 @@
-﻿import React, {ReactNode, useRef} from 'react';
+import type {ReactNode} from 'react';
+import React, {useRef} from 'react';
 import {View} from 'react-native';
 import type {ValueOf} from 'type-fest';
-import MenuItem from '@components/MenuItem';
-import Text from '@components/Text';
 import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Navigation from '@libs/Navigation/Navigation';
-import CONST from '@src/CONST';
+import type CONST from '@src/CONST';
 import type {TranslationPaths} from '@src/languages/types';
 import type {Route} from '@src/ROUTES';
 import ROUTES from '@src/ROUTES';
 import useSingleExecution from '@hooks/useSingleExecution';
 import useWaitForNavigation from '@hooks/useWaitForNavigation';
 import useActiveCentralPaneRoute from '@hooks/useActiveCentralPaneRoute';
-import Switch from './Switch';
-import {DrinkingSession, DrinkingSessionId} from '@src/types/onyx';
+import type {DrinkingSession, DrinkingSessionId} from '@src/types/onyx';
 import DateUtils from '@libs/DateUtils';
+import Text from './Text';
+import MenuItem from './MenuItem';
+import Switch from './Switch';
 
 type MenuData = {
   translationKey: TranslationPaths;

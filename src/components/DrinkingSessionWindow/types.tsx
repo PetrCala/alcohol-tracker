@@ -1,5 +1,5 @@
-import {OnyxKey} from '@src/ONYXKEYS';
-import {
+import type {OnyxKey} from '@src/ONYXKEYS';
+import type {
   DrinkingSession,
   DrinkingSessionId,
   DrinkingSessionType,

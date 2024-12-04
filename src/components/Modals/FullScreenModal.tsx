@@ -1,14 +1,13 @@
 import CONST from '@src/CONST';
+import type {StyleProp, ViewStyle} from 'react-native';
 import {
   Dimensions,
   Image,
   Modal,
   PanResponder,
-  StyleProp,
   StyleSheet,
   TouchableOpacity,
   View,
-  ViewStyle,
 } from 'react-native';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {useEffect, useRef, useState} from 'react';

@@ -1,7 +1,6 @@
 import React from 'react';
 import type {StyleProp, ViewStyle} from 'react-native';
 import {View} from 'react-native';
-import * as KirokuIcons from '@components/Icon/KirokuIcons';
 // import AdHocLogo from '@assets/images/expensify-logo--adhoc.svg';
 // import DevLogo from '@assets/images/expensify-logo--dev.svg';
 // import StagingLogo from '@assets/images/expensify-logo--staging.svg';
@@ -12,6 +11,7 @@ import useStyleUtils from '@hooks/useStyleUtils';
 import useThemeStyles from '@hooks/useThemeStyles';
 import variables from '@styles/variables';
 import CONST from '@src/CONST';
+import * as KirokuIcons from './Icon/KirokuIcons';
 import ImageSVG from './ImageSVG';
 
 type KirokuLogoProps = {

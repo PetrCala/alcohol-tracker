@@ -13,7 +13,6 @@ import {
   startOfTomorrow,
   subYears,
 } from 'date-fns';
-import {URL_REGEX_WITH_REQUIRED_PROTOCOL} from '@libs/common/Url';
 import isDate from 'lodash/isDate';
 import isEmpty from 'lodash/isEmpty';
 import isObject from 'lodash/isObject';
@@ -24,12 +23,13 @@ import type {
   FormValue,
 } from '@components/Form/types';
 import CONST from '@src/CONST';
+import type {OnyxFormKey} from '@src/ONYXKEYS';
+import type {TranslationPaths} from '@src/languages/types';
 import DateUtils from './DateUtils';
 import type {MaybePhraseKey} from './Localize';
 import * as Localize from './Localize';
 import StringUtils from './StringUtils';
-import {OnyxFormKey} from '@src/ONYXKEYS';
-import {TranslationPaths} from '@src/languages/types';
+import {URL_REGEX_WITH_REQUIRED_PROTOCOL} from './common/Url';
 
 /**
  * Implements the Luhn Algorithm, a checksum formula used to validate credit card
@@ -117,7 +117,7 @@ function isRequiredFulfilled(
   if (Array.isArray(value) || isObject(value)) {
     return !isEmpty(value);
   }
-  return Boolean(value);
+  return !!value;
 }
 
 /**
@@ -261,11 +261,14 @@ function validateEmail(
 ): TranslationPaths | null {
   if (email.length === 0) {
     return 'emailForm.error.pleaseEnterEmail';
-  } else if (!isValidEmail(email)) {
+  }
+  if (!isValidEmail(email)) {
     return 'emailForm.error.invalidEmail';
-  } else if (currentEmail && email === currentEmail) {
+  }
+  if (currentEmail && email === currentEmail) {
     return 'emailForm.error.sameEmail';
-  } else if (email.length > CONST.EMAIL_MAX_LENGTH) {
+  }
+  if (email.length > CONST.EMAIL_MAX_LENGTH) {
     return 'emailForm.error.emailTooLong';
   }
   return null;
@@ -277,9 +280,11 @@ function validatePassword(
 ): TranslationPaths | null {
   if (password.length === 0) {
     return 'password.pleaseFillPassword';
-  } else if (!isComplexPassword(password)) {
+  }
+  if (!isComplexPassword(password)) {
     return 'password.requirements';
-  } else if (currentPassword && password === currentPassword) {
+  }
+  if (currentPassword && password === currentPassword) {
     return 'password.error.samePassword';
   }
   return null;
@@ -291,15 +296,17 @@ function validateUsername(
 ): TranslationPaths | null {
   if (username.length === 0) {
     return 'username.error.usernameRequired';
-  } else if (!isValidDisplayName(username)) {
+  }
+  if (!isValidDisplayName(username)) {
     return 'personalDetails.error.hasInvalidCharacter';
-  } else if (username.length > CONST.TITLE_CHARACTER_LIMIT) {
+  }
+  if (username.length > CONST.TITLE_CHARACTER_LIMIT) {
     return 'username.error.usernameTooLong';
-  } else if (
-    doesContainReservedWord(username, CONST.DISPLAY_NAME.RESERVED_NAMES)
-  ) {
+  }
+  if (doesContainReservedWord(username, CONST.DISPLAY_NAME.RESERVED_NAMES)) {
     return 'personalDetails.error.containsReservedWord';
-  } else if (currentUsername && username === currentUsername) {
+  }
+  if (currentUsername && username === currentUsername) {
     return 'username.error.sameUsername';
   }
   return null;
@@ -322,15 +329,15 @@ function isValidSessionNote(note: string): boolean {
 }
 
 function isValidValidateCode(validateCode: string): boolean {
-  return Boolean(validateCode.match(CONST.VALIDATE_CODE_REGEX_STRING));
+  return !!validateCode.match(CONST.VALIDATE_CODE_REGEX_STRING);
 }
 
 function isValidRecoveryCode(recoveryCode: string): boolean {
-  return Boolean(recoveryCode.match(CONST.RECOVERY_CODE_REGEX_STRING));
+  return !!recoveryCode.match(CONST.RECOVERY_CODE_REGEX_STRING);
 }
 
 function isValidTwoFactorCode(code: string): boolean {
-  return Boolean(code.match(CONST.REGEX.CODE_2FA));
+  return !!code.match(CONST.REGEX.CODE_2FA);
 }
 
 /**

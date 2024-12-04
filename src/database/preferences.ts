@@ -1,4 +1,4 @@
-﻿import type {Database} from 'firebase/database';
+import type {Database} from 'firebase/database';
 import {ref, update} from 'firebase/database';
 import type {Preferences} from '@src/types/onyx';
 import DBPATHS from '@src/DBPATHS';

@@ -2,9 +2,9 @@ import {readDataOnce} from '@database/baseFunctions';
 import type {FriendRequestList, FriendRequestStatus} from '@src/types/onyx';
 import type {UserArray, UserList} from '@src/types/onyx/OnyxCommon';
 import type {Database} from 'firebase/database';
-import {isNonEmptyArray} from './Validation';
 import CONST from '@src/CONST';
-import DBPATHS from '@src/DBPATHS';
+import DBPATHS from '@database/DBPATHS';
+import {isNonEmptyArray} from './Validation';
 
 export async function fetchUserFriends(
   db: Database,

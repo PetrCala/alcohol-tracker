@@ -1,5 +1,7 @@
-require('dotenv').config(); // for the process.env variables to read the .env file
+// for the process.env variables to read the .env file
 import CONFIG from '@src/CONFIG';
+
+require('dotenv').config();
 
 const describeWithEmulator = CONFIG.IS_USING_EMULATORS
   ? describe

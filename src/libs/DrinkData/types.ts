@@ -1,5 +1,5 @@
 import type {DrinkKey} from '@src/types/onyx';
-import IconAsset from '@src/types/utils/IconAsset';
+import type IconAsset from '@src/types/utils/IconAsset';
 
 type DrinkDataProps = Array<{
   key: DrinkKey;

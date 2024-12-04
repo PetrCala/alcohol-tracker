@@ -3,7 +3,7 @@ import dateSubtract from 'date-fns/sub';
 import Config from 'react-native-config';
 import * as KeyCommand from 'react-native-key-command';
 import SCREENS from './SCREENS';
-import {SelectedTimezone} from './types/onyx/UserData';
+import type {SelectedTimezone} from './types/onyx/UserData';
 
 // Creating a default array and object this way because objects ({}) and arrays ([]) are not stable types.
 // Freezing the array ensures that it cannot be unintentionally modified.

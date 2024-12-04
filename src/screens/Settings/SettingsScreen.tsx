@@ -1,4 +1,4 @@
-﻿import {useRoute} from '@react-navigation/native';
+import {useRoute} from '@react-navigation/native';
 import React, {
   useCallback,
   useContext,
@@ -302,7 +302,7 @@ function SettingsScreen({}: SettingsScreenProps) {
   return (
     <ScreenWrapper
       style={[styles.w100, styles.pb0]}
-      includePaddingTop={true}
+      includePaddingTop
       includeSafeAreaPaddingBottom={false}
       testID={SettingsScreen.displayName}>
       <HeaderWithBackButton

@@ -9,11 +9,10 @@ import type {AvatarSource} from '@libs/UserUtils';
 import * as UserUtils from '@libs/UserUtils';
 import type {AvatarSizeName} from '@styles/utils';
 import CONST from '@src/CONST';
-import type {AvatarType} from '@src/types/onyx/OnyxCommon';
+import type {AvatarType, UserID} from '@src/types/onyx/OnyxCommon';
 import Icon from './Icon';
 import * as KirokuIcons from './Icon/KirokuIcons';
 import Image from './Image';
-import type {UserID} from '@src/types/onyx/OnyxCommon';
 
 type AvatarProps = {
   /** Source for the avatar. Can be a URL or an icon. */

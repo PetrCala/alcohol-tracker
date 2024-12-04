@@ -1,8 +1,8 @@
-﻿import semver from 'semver';
+import semver from 'semver';
 import CONST from '@src/CONST';
 
+import type {AppSettings} from '@src/types/onyx';
 import {version as _version} from '../../package.json';
-import {AppSettings} from '@src/types/onyx';
 
 const version: string = _version;
 
@@ -25,8 +25,8 @@ export function isValidEmail(email: string): boolean {
  * Validate that a string does not contain any characters not accepted
  * as keys by the Realtime Firebase.
  *
- * @param {string} input Input string to check.
- * @returns {boolean} True if the string is valid, false otherwise.
+ * @param input Input string to check.
+ * @returns True if the string is valid, false otherwise.
  */
 export function isValidString(input: string): boolean {
   for (const char of CONST.INVALID_CHARS) {
@@ -90,8 +90,7 @@ export const validateSignInInput = (
   if (!isValidString(username) && username !== '') {
     return {
       success: false,
-      message:
-        'Your nickname can not contain ' + CONST.INVALID_CHARS.join(', '),
+      message: `Your nickname can not contain ${CONST.INVALID_CHARS.join(', ')}`,
     };
   }
   if (!isValidPassword(password)) {
@@ -149,7 +148,7 @@ export function cleanSemver(version: string): string {
  *
  * @param minSupportedVersion Version to validate against.
  * @param currentAppVersion Current version of the application. Defaults to the version stored in 'package.json'. Overwrite this value only in testing.
- * @returns {ValidationResult} Validation result type object.
+ * @returns Validation result type object.
  */
 export const validateAppVersion = (
   appSettings: AppSettings,
@@ -187,8 +186,8 @@ export const validateAppVersion = (
  * Validate that the object is JSON-like type object with at least one key-value pair.
  * For arrays, return false.
  *
- * @param {any} input Element/variable to check
- * @returns {boolean} True if the element is a non-empty object, false otherwise.
+ * @param input Element/variable to check
+ * @returns True if the element is a non-empty object, false otherwise.
  */
 export function isNonEmptyObject(input: any): boolean {
   try {

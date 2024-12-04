@@ -1,7 +1,6 @@
-﻿// DatabaseDataContext.tsx
+// DatabaseDataContext.tsx
 import type {ReactNode} from 'react';
 import React, {createContext, useContext, useMemo} from 'react';
-import {useFirebase} from './FirebaseContext';
 import type {
   DrinkingSessionList,
   Preferences,
@@ -11,6 +10,7 @@ import type {
 } from '@src/types/onyx';
 import type {FetchDataKeys} from '@hooks/useFetchData/types';
 import useListenToData from '@hooks/useListenToData';
+import {useFirebase} from './FirebaseContext';
 
 type DatabaseDataContextType = {
   userStatusData?: UserStatus;

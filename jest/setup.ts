@@ -20,34 +20,34 @@ jest.mock('react-native/Libraries/EventEmitter/NativeEventEmitter');
 
 // Turn off the console logs for timing events. They are not relevant for unit tests and create a lot of noise
 jest.spyOn(console, 'debug').mockImplementation((...params) => {
-    if (params[0].indexOf('Timing:') === 0) {
-        return;
-    }
+  if (params[0].indexOf('Timing:') === 0) {
+    return;
+  }
 
-    // Send the message to console.log but don't re-used console.debug or else this mock method is called in an infinite loop. Instead, just prefix the output with the word "DEBUG"
-    // eslint-disable-next-line no-console
-    console.log('DEBUG', ...params);
+  // Send the message to console.log but don't re-used console.debug or else this mock method is called in an infinite loop. Instead, just prefix the output with the word "DEBUG"
+  // eslint-disable-next-line no-console
+  console.log('DEBUG', ...params);
 });
 
 // This mock is required for mocking file systems when running tests
 jest.mock('react-native-fs', () => ({
-    unlink: jest.fn(
-        () =>
-            new Promise<void>((res) => {
-                res();
-            }),
-    ),
-    CachesDirectoryPath: jest.fn(),
+  unlink: jest.fn(
+    () =>
+      new Promise<void>(res => {
+        res();
+      }),
+  ),
+  CachesDirectoryPath: jest.fn(),
 }));
 
 jest.mock('react-native-sound', () => {
-    class SoundMock {
-        play = jest.fn();
-    }
+  class SoundMock {
+    play = jest.fn();
+  }
 
-    return SoundMock;
+  return SoundMock;
 });
 
 jest.mock('react-native-share', () => ({
-    default: jest.fn(),
+  default: jest.fn(),
 }));

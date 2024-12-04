@@ -11,16 +11,16 @@ import Log from '@libs/Log';
 import {getPathFromURL} from '@libs/Url';
 import {updateLastVisitedPath} from '@userActions/App';
 import type {Route} from '@src/ROUTES';
+import CONST from '@src/CONST';
+import {ScrollOffsetContext} from '@components/ScrollOffsetContextProvider';
+import {useFirebase} from '@context/global/FirebaseContext';
+import ROUTES from '@src/ROUTES';
 import AppNavigator from './AppNavigator';
 import linkingConfig from './linkingConfig';
 import customGetPathFromState from './linkingConfig/customGetPathFromState';
 import getAdaptedStateFromPath from './linkingConfig/getAdaptedStateFromPath';
 import Navigation, {navigationRef} from './Navigation';
-import CONST from '@src/CONST';
-import {ScrollOffsetContext} from '@components/ScrollOffsetContextProvider';
 import setupCustomAndroidBackHandler from './setupCustomAndroidBackHandler';
-import {useFirebase} from '@context/global/FirebaseContext';
-import ROUTES from '@src/ROUTES';
 
 type NavigationRootProps = {
   /** Whether the current user is logged in with an authToken */

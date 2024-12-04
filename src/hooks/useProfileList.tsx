@@ -45,7 +45,7 @@ const useProfileList = (userArray: UserArray) => {
     } catch (error: any) {
       Alert.alert(
         'Database fetch failed',
-        'Could not fetch user display data: ' + error.message,
+        `Could not fetch user display data: ${error.message}`,
       );
     } finally {
       setLoadingDisplayData(false);

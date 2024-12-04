@@ -5,7 +5,7 @@ import {useFocusEffect} from '@react-navigation/native';
 // Define props type to include children of type ReactNode
 type KeyboardFocusHandlerProps = {
   children?: React.ReactNode;
-}
+};
 
 const KeyboardFocusHandler: React.FC<KeyboardFocusHandlerProps> = ({
   children,

@@ -1,12 +1,13 @@
 import Onyx from 'react-native-onyx';
-import {Auth, deleteUser, signOut, type UserCredential} from 'firebase/auth';
-import {Database} from 'firebase/database';
-import {deleteUserData, reauthentificateUser} from '@userActions/User';
+import type {Auth, UserCredential} from 'firebase/auth';
+import {deleteUser, signOut} from 'firebase/auth';
+import type {Database} from 'firebase/database';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
-import {UserData} from '@src/types/onyx';
+import type {UserData} from '@src/types/onyx';
 import * as Localize from '@libs/Localize';
 import * as ErrorUtils from '@libs/ErrorUtils';
+import {deleteUserData, reauthentificateUser} from './User';
 
 /**
  * Clear CloseAccount error message to hide modal

@@ -1,4 +1,4 @@
-﻿import {toPercentageVerbose} from '@libs/DataHandling';
+import {toPercentageVerbose} from '@libs/DataHandling';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import type {FirebaseStorage} from 'firebase/storage';
 import {ref, uploadBytesResumable} from 'firebase/storage';

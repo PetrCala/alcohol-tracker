@@ -1,6 +1,6 @@
 import {useState, useRef, useCallback} from 'react';
 
-type UpdateFunction = (newForm: any) => Promise<void>
+type UpdateFunction = (newForm: any) => Promise<void>;
 
 const useAsyncQueue = (onUpdate: UpdateFunction) => {
   const [isPending, setIsPending] = useState(false);

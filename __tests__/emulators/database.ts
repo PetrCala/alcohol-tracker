@@ -1,4 +1,4 @@
-require('dotenv').config(); // Use .env variables in this file - CONFIG does not work here
+// Use .env variables in this file - CONFIG does not work here
 import {
   getDatabase,
   connectDatabaseEmulator,
@@ -7,11 +7,13 @@ import {
 import type {FirebaseApp} from 'firebase/app';
 import {initializeApp, deleteApp} from 'firebase/app';
 import type {Database} from 'firebase/database';
-import * as firebaseJson from '../../firebase.json';
-import {createMockDatabase} from '../../src/database/MockDatabase';
 import {ref, set} from 'firebase/database';
-import CONFIG from '../../src/CONFIG';
+import CONFIG from '@src/CONFIG';
+import {createMockDatabase} from '@src/database/MockDatabase';
+import * as firebaseJson from '../../firebase.json';
 import {getTestDatabaseURL} from './utils';
+
+require('dotenv').config();
 
 export function setup(): {
   testApp: FirebaseApp;
@@ -21,8 +23,8 @@ export function setup(): {
   const projectId = CONFIG.TEST_PROJECT_ID;
 
   const testApp: FirebaseApp = initializeApp({
-    databaseURL: databaseURL,
-    projectId: projectId,
+    databaseURL,
+    projectId,
   });
 
   // Initialize the database

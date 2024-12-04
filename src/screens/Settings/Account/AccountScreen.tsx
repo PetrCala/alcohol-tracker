@@ -101,7 +101,7 @@ function AccountScreen({route}: AccountScreenProps) {
             isCentralPane
             childrenStyles={styles.pt3}
             titleStyles={styles.generalSectionTitle}>
-            {!!loadingText ? (
+            {loadingText ? (
               <FullScreenLoadingIndicator
                 loadingText={loadingText}
                 style={[

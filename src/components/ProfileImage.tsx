@@ -1,13 +1,13 @@
-﻿import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import type {ImageSourcePropType, LayoutChangeEvent} from 'react-native';
 import {Alert, Image} from 'react-native';
-import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import type {FirebaseStorage} from 'firebase/storage';
 import {getProfilePictureURL} from '@src/storage/storageProfile';
 import useProfileImageCache from '@hooks/useProfileImageCache';
 import CONST from '@src/CONST';
-import EnlargableImage from './Buttons/EnlargableImage';
 import type ImageLayout from '@src/types/various/ImageLayout';
+import * as KirokuIcons from './Icon/KirokuIcons';
+import EnlargableImage from './Buttons/EnlargableImage';
 import FlexibleLoadingIndicator from './FlexibleLoadingIndicator';
 
 type ProfileImageProps = {

@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import {View, TouchableOpacity, Image} from 'react-native';
 
 type Props = {
@@ -12,7 +12,7 @@ type Props = {
 /**
  * A touchable icon, that can be stylized.
  */
-const MenuIcon = (props: Props) => {
+function MenuIcon(props: Props) {
   const {iconId, iconSource, containerStyle, iconStyle, onPress} = props;
 
   return (
@@ -25,6 +25,6 @@ const MenuIcon = (props: Props) => {
       <Image source={iconSource} style={iconStyle} />
     </TouchableOpacity>
   );
-};
+}
 
 export default MenuIcon;

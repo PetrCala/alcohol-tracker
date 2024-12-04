@@ -63,7 +63,7 @@ const useListenToData = (
   }, [userID, ...dataTypes]); // Depend on dataTypes to allow dynamically changing what data to listen to
 
   return {
-    data: data,
+    data,
   };
 };
 

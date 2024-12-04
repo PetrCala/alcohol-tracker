@@ -67,7 +67,7 @@ import type {
 } from './UserData';
 import type UserStatus from './UserStatus';
 import type {UserStatusList} from './UserStatus';
-import TzFix from './TzFix';
+import type TzFix from './TzFix';
 
 export type {
   AccountCreations,

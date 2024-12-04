@@ -1,4 +1,4 @@
-﻿import {Alert, StyleSheet, View} from 'react-native';
+import {Alert, StyleSheet, View} from 'react-native';
 import React, {useMemo, useRef, useState} from 'react';
 import type {
   FriendRequestList,
@@ -60,7 +60,7 @@ function FriendSearchScreen() {
     } catch (error: any) {
       Alert.alert(
         'Database serach failed',
-        'Could not search the database: ' + error.message,
+        `Could not search the database: ${error.message}`,
       );
       return;
     } finally {
@@ -147,7 +147,7 @@ function FriendSearchScreen() {
             ) : isNonEmptyArray(searchResultData) ? (
               searchResultData.map(userID => (
                 <SearchResult
-                  key={userID + '-container'}
+                  key={`${userID}-container`}
                   userID={userID}
                   userDisplayData={displayData[userID]}
                   db={db}

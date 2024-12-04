@@ -1,4 +1,4 @@
-﻿import React, {useState, useRef, useMemo, useEffect} from 'react';
+import React, {useState, useRef, useMemo, useEffect} from 'react';
 import {
   Keyboard,
   StyleSheet,
@@ -27,11 +27,11 @@ type SessionDrinksInputWindowProps = {
   sessionId?: DrinkingSessionId;
 };
 
-const SessionDrinksInputWindow = ({
+function SessionDrinksInputWindow({
   drinks,
   drinkKey,
   sessionId,
-}: SessionDrinksInputWindowProps) => {
+}: SessionDrinksInputWindowProps) {
   const styles = useThemeStyles();
   const theme = useTheme();
   const {preferences} = useDatabaseData();
@@ -174,15 +174,15 @@ const SessionDrinksInputWindow = ({
           value={inputValue}
           onKeyPress={handleKeyPress}
           keyboardType="numeric"
-          caretHidden={true}
-          blurOnSubmit={true}
+          caretHidden
+          blurOnSubmit
           onSubmitEditing={() => inputRef.current && inputRef.current.blur()} // Hide keyboard
           maxLength={2}
         />
       </TouchableOpacity>
     </View>
   );
-};
+}
 
 export default SessionDrinksInputWindow;
 

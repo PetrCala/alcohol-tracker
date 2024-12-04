@@ -1,5 +1,5 @@
 import type CONST from '@src/CONST';
-import type DeepValueOf from '../utils/DeepValueOf';
+import type DeepValueOf from '@src/types/utils/DeepValueOf';
 
 declare module 'react-native-config' {
   export type NativeConfig = {

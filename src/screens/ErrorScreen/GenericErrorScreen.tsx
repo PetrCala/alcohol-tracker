@@ -15,8 +15,8 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import variables from '@styles/variables';
 import * as Session from '@userActions/Session';
 import CONST from '@src/CONST';
-import ErrorBodyText from './ErrorBodyText';
 import {useFirebase} from '@context/global/FirebaseContext';
+import ErrorBodyText from './ErrorBodyText';
 
 function GenericErrorScreen() {
   const {auth} = useFirebase();

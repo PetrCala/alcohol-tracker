@@ -1,8 +1,6 @@
-﻿import React, {useState} from 'react';
+import React, {useState} from 'react';
 import {Dimensions, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {TabView} from 'react-native-tab-view';
-import FriendListScreen from './FriendListScreen';
-import FriendRequestScreen from './FriendRequestScreen';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {getReceivedRequestsCount} from '@libs/FriendUtils';
 import type {UserData} from '@src/types/onyx';
@@ -18,6 +16,8 @@ import useTheme from '@hooks/useTheme';
 import Text from '@components/Text';
 import Icon from '@components/Icon';
 import useThemeStyles from '@hooks/useThemeStyles';
+import FriendRequestScreen from './FriendRequestScreen';
+import FriendListScreen from './FriendListScreen';
 
 type SocialFooterButtonProps = {
   index: number;
@@ -92,9 +92,9 @@ function SocialScreen({route}: SocialScreenProps) {
   const {translate} = useLocalize();
   const styles = useThemeStyles();
   const [routes] = useState([
-    {key: 'friendList', title: 'Friend List', userData: userData},
+    {key: 'friendList', title: 'Friend List', userData},
     // {key: 'friendSearch', title: 'Friend Search', userData: userData},
-    {key: 'friendRequests', title: 'Friend Requests', userData: userData},
+    {key: 'friendRequests', title: 'Friend Requests', userData},
   ]);
 
   const [index, setIndex] = useState<number>(0);
@@ -145,7 +145,7 @@ function SocialScreen({route}: SocialScreenProps) {
         renderScene={renderScene}
         onIndexChange={setIndex}
         initialLayout={{width: Dimensions.get('window').width}}
-        swipeEnabled={true}
+        swipeEnabled
         tabBarPosition="bottom"
         renderTabBar={() => null} // Do not render the default tab bar
       />

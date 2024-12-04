@@ -80,7 +80,7 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
             <TextInput
               accessibilityLabel="Text input field"
               placeholder={windowText}
-              placeholderTextColor={'#a8a8a8'}
+              placeholderTextColor="#a8a8a8"
               value={searchText}
               onChangeText={text => setSearchText(text)}
               style={styles.searchWindowText}

@@ -1,4 +1,4 @@
-﻿import {Linking, View} from 'react-native';
+import {Linking, View} from 'react-native';
 import {WebView} from 'react-native-webview';
 import Navigation from '@libs/Navigation/Navigation';
 import ScreenWrapper from '@components/ScreenWrapper';

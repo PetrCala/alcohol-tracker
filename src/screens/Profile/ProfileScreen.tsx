@@ -1,4 +1,4 @@
-﻿import {
+import {
   Keyboard,
   ScrollView,
   StyleSheet,
@@ -28,7 +28,7 @@ import type {DrinkingSessionArray} from '@src/types/onyx';
 import type {UserList} from '@src/types/onyx/OnyxCommon';
 import type {StackScreenProps} from '@react-navigation/stack';
 import type {ProfileNavigatorParamList} from '@libs/Navigation/types';
-import SCREENS from '@src/SCREENS';
+import type SCREENS from '@src/SCREENS';
 import Navigation from '@libs/Navigation/Navigation';
 import DBPATHS from '@src/DBPATHS';
 import ROUTES from '@src/ROUTES';
@@ -73,9 +73,9 @@ function ProfileScreen({route}: ProfileScreenProps) {
   const [manageFriendModalVisible, setManageFriendModalVisible] =
     useState(false);
 
-  let userData = fetchedData?.userData;
-  let drinkingSessionData = fetchedData?.drinkingSessionData;
-  let preferences = fetchedData?.preferences;
+  const userData = fetchedData?.userData;
+  const drinkingSessionData = fetchedData?.drinkingSessionData;
+  const preferences = fetchedData?.preferences;
   const profileData = userData?.profile;
   const friends = userData?.friends;
 
@@ -206,7 +206,7 @@ function ProfileScreen({route}: ProfileScreenProps) {
             </TouchableOpacity>
           </View>
         </View>
-        {!!drinkingSessionData ? (
+        {drinkingSessionData ? (
           <View style={[styles.borderTop, styles.borderRadiusXLarge]}>
             <StatsOverview statsData={statsData} />
             <SessionsCalendar

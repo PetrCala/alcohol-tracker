@@ -12,6 +12,10 @@ import CONST from '@src/CONST';
 import NAVIGATORS from '@src/NAVIGATORS';
 import type {Route} from '@src/ROUTES';
 import ROUTES from '@src/ROUTES';
+import Log from '@libs/common/Log';
+import {isCentralPaneName} from '@libs/NavigationUtils';
+import SCREENS from '@src/SCREENS';
+import type {EmptyObject} from '@src/types/utils/EmptyObject';
 import originalDismissModal from './dismissModal';
 import linkingConfig from './linkingConfig';
 import linkTo from './linkTo';
@@ -22,13 +26,9 @@ import type {
   State,
   StateOrRoute,
 } from './types';
-import Log from '@libs/common/Log';
-import {isCentralPaneName} from '@libs/NavigationUtils';
 import getTopmostCentralPaneRoute from './getTopmostCentralPaneRoute';
 import getTopmostBottomTabRoute from './getTopmostBottomTabRoute';
 import getMatchingBottomTabRouteForState from './linkingConfig/getMatchingBottomTabRouteForState';
-import SCREENS from '@src/SCREENS';
-import {EmptyObject} from '@src/types/utils/EmptyObject';
 
 let resolveNavigationIsReadyPromise: () => void;
 const navigationIsReadyPromise = new Promise<void>(resolve => {
@@ -63,7 +63,6 @@ function canNavigate(
 // Re-exporting the dismissModal here to fill in default value for navigationRef. The dismissModal isn't defined in this file to avoid cyclic dependencies.
 const dismissModal = (ref = navigationRef) => {
   originalDismissModal(ref);
-  return;
 };
 
 /** Method for finding on which index in stack we are. */

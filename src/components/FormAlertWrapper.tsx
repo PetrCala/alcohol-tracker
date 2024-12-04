@@ -61,7 +61,7 @@ function FormAlertWrapper({
         {`${translate('common.please')} `}
         {translate('common.fixTheErrors')}
         {/* <TextLink style={styles.label} onPress={onFixTheErrorsLinkPressed}>
-        </TextLink> TODO enable this*/}
+        </TextLink> TODO enable this */}
         {` ${translate('common.inTheFormBeforeContinuing')}.`}
       </Text>
     );

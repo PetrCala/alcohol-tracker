@@ -1,6 +1,7 @@
 import type {ValueOf} from 'type-fest';
-import CONST from '@src/CONST';
-import Onyx, {OnyxEntry, OnyxMergeInput} from 'react-native-onyx';
+import type CONST from '@src/CONST';
+import type {OnyxMergeInput} from 'react-native-onyx';
+import Onyx, {OnyxEntry} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 
 type BrickRoad = ValueOf<typeof CONST.BRICK_ROAD_INDICATOR_STATUS> | undefined;

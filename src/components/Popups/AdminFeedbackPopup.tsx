@@ -1,4 +1,4 @@
-﻿import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Alert,
   FlatList,
@@ -28,7 +28,7 @@ type AdminFeedbackPopupProps = {
   FeedbackList: FeedbackList;
 };
 
-const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
+function AdminFeedbackPopup(props: AdminFeedbackPopupProps) {
   const {visible, transparent, onRequestClose, FeedbackList} = props;
   const {userData} = useDatabaseData();
   const timezone = userData?.timezone;
@@ -40,7 +40,7 @@ const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
 
   const FeedbackListArray = Object.entries(FeedbackList).map(
     ([feedback_id, Feedback]) => ({
-      feedback_id: feedback_id,
+      feedback_id,
       ...Feedback,
     }),
   );
@@ -51,7 +51,7 @@ const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
     } catch (error: any) {
       Alert.alert(
         'Failed to remove feedback',
-        'Feedback could not be removed:' + error.message,
+        `Feedback could not be removed:${error.message}`,
       );
     }
   }
@@ -69,9 +69,7 @@ const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
         } catch (error: any) {
           Alert.alert(
             'User nickname fetch failed',
-            'Could not fetch the nickname of user with UID: ' +
-              item.user_id +
-              error.message,
+            `Could not fetch the nickname of user with UID: ${item.user_id}${error.message}`,
           );
         }
       }
@@ -144,7 +142,7 @@ const AdminFeedbackPopup = (props: AdminFeedbackPopupProps) => {
       </View>
     </Modal>
   );
-};
+}
 
 export default AdminFeedbackPopup;
 

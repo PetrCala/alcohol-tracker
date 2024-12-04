@@ -1,4 +1,4 @@
-﻿import {Alert, StyleSheet, View} from 'react-native';
+import {Alert, StyleSheet, View} from 'react-native';
 import SearchWindow from '@components/Social/SearchWindow';
 import type {
   SearchWindowRef,
@@ -40,7 +40,7 @@ function FriendListScreen({}: FriendListScreenProps) {
     } catch (error: any) {
       Alert.alert(
         'Database serach failed',
-        'Could not search the database: ' + error.message,
+        `Could not search the database: ${error.message}`,
       );
       return;
     } finally {
@@ -65,14 +65,14 @@ function FriendListScreen({}: FriendListScreenProps) {
         windowText="Search your friend list"
         onSearch={localSearch}
         onResetSearch={resetSearch}
-        searchOnTextChange={true}
+        searchOnTextChange
       />
       <UserListComponent
         fullUserArray={friends}
         initialLoadSize={20}
         emptyListComponent={<NoFriendInfo />}
         userSubset={friendsToDisplay}
-        orderUsers={true}
+        orderUsers
       />
     </View>
   );

@@ -1,6 +1,5 @@
-﻿import type {DateData} from 'react-native-calendars';
+import type {DateData} from 'react-native-calendars';
 import type {DateString} from '@src/types/time';
-import {getRandomInt} from './Choice';
 import type {
   CalendarColors,
   SessionsCalendarDayMarking,
@@ -23,11 +22,12 @@ import type {MeasureType} from '@src/types/onyx/OnyxCommon';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import type {Timezone} from '@src/types/onyx/UserData';
 import _ from 'lodash';
-import * as DSUtils from '@libs/DrinkingSessionUtils';
 import Onyx from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
-import {auth} from './Firebase/FirebaseApp';
 import {MarkingProps} from 'react-native-calendars/src/calendar/day/marking';
+import * as DSUtils from './DrinkingSessionUtils';
+import {auth} from './Firebase/FirebaseApp';
+import {getRandomInt} from './Choice';
 
 let timezone: Required<Timezone> = CONST.DEFAULT_TIME_ZONE;
 Onyx.connect({
@@ -273,7 +273,7 @@ export function sessionsToDayMarking(
     0,
   );
 
-  const hasBlackout = _.some(sessions, obj => obj['blackout'] === true);
+  const hasBlackout = _.some(sessions, obj => obj.blackout === true);
   const color: CalendarColors = hasBlackout
     ? 'black'
     : unitsToColors(totalUnits, preferences.units_to_colors);
@@ -285,8 +285,8 @@ export function sessionsToDayMarking(
   const markingObject: SessionsCalendarDayMarking = {
     units: totalUnits,
     marking: {
-      color: color,
-      textColor: textColor,
+      color,
+      textColor,
     },
   };
 
@@ -350,7 +350,7 @@ export function sumDrinkTypes(drinkTypes: Drinks): number {
 /** Get an array of unique keys that appear in a session */
 export function getUniqueDrinkTypesInSession(
   session: DrinkingSession,
-): Array<DrinkKey> | undefined {
+): DrinkKey[] | undefined {
   const sessionDrinks = session?.drinks;
   if (!sessionDrinks) {
     return undefined;
@@ -395,7 +395,7 @@ export function findOngoingSession(
   const ongoingSession = Object.values(sessions).find(
     session => session.ongoing === true,
   );
-  return ongoingSession ? ongoingSession : null;
+  return ongoingSession || null;
 }
 
 /** Enter a dateData and an array of drinking sessions and calculate

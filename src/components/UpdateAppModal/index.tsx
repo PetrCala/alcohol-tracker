@@ -1,9 +1,9 @@
 import React from 'react';
 import {Linking} from 'react-native';
-import BaseUpdateAppModal from './BaseUpdateAppModal';
-import type UpdateAppModalProps from './types';
 import getPlatform from '@libs/getPlatform';
 import CONST from '@src/CONST';
+import BaseUpdateAppModal from './BaseUpdateAppModal';
+import type UpdateAppModalProps from './types';
 
 function UpdateAppModal(props: UpdateAppModalProps) {
   const currentPlatform = getPlatform();

@@ -5,8 +5,8 @@ import {View} from 'react-native';
 import useTheme from '@hooks/useTheme';
 import useThemeStyles from '@hooks/useThemeStyles';
 import * as Localize from '@libs/Localize';
+import * as KirokuIcons from './Icon/KirokuIcons';
 import Icon from './Icon';
-import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import Text from './Text';
 
 type FormHelpMessageProps = {

@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import {View} from 'react-native';
 import Navigation from '@libs/Navigation/Navigation';
 import ScreenWrapper from '@components/ScreenWrapper';

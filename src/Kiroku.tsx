@@ -10,33 +10,35 @@ import React, {
 import type {NativeEventSubscription} from 'react-native';
 import {AppState, Linking, Platform} from 'react-native';
 import Onyx, {useOnyx} from 'react-native-onyx';
-import Navigation from '@navigation/Navigation';
-import NavigationRoot from '@navigation/NavigationRoot';
-// import PushNotification from '@libs/Notification/PushNotification';
-import Log from '@libs/Log';
-import migrateOnyx from '@libs/migrateOnyx';
-import SplashScreenHider from '@components/SplashScreenHider';
-import * as ActiveClientManager from '@libs/ActiveClientManager';
-import * as UserUtils from '@libs/UserUtils';
-// import StartupTimer from '@libs/StartupTimer';
-import Visibility from '@libs/Visibility';
 import {useFirebase} from '@context/global/FirebaseContext';
-import ONYXKEYS from '@src/ONYXKEYS';
-import type {Route} from '@src/ROUTES';
-import {updateLastRoute} from '@userActions/App';
-import setCrashlyticsUserId from '@libs/setCrashlyticsUserId';
 import {useUserConnection} from '@context/global/UserConnectionContext';
-import {checkIfUnderMaintenance} from '@libs/Maintenance';
-import {validateAppVersion} from '@libs/Validation';
-import UnderMaintenanceModal from '@components/Modals/UnderMaintenanceModal';
-import CONST from './CONST';
-import UserOfflineModal from '@components/UserOfflineModal';
+import DBPATHS from '@database/DBPATHS';
+import {listenForDataChanges, readDataOnce} from '@database/baseFunctions';
 import SplashScreenStateContext from '@context/global/SplashScreenStateContext';
-import CONFIG from './CONFIG';
-import UpdateAppModal from '@components/UpdateAppModal';
-import VerifyEmailModal from '@components/VerifyEmailModal';
 import {useConfig} from '@context/global/ConfigContext';
-import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
+import Navigation from './libs/Navigation/Navigation';
+import NavigationRoot from './libs/Navigation/NavigationRoot';
+// import PushNotification from '@libs/Notification/PushNotification';
+import Log from './libs/Log';
+import migrateOnyx from './libs/migrateOnyx';
+import SplashScreenHider from './components/SplashScreenHider';
+import * as ActiveClientManager from './libs/ActiveClientManager';
+import * as UserUtils from './libs/UserUtils';
+// import StartupTimer from '@libs/StartupTimer';
+import Visibility from './libs/Visibility';
+import ONYXKEYS from './ONYXKEYS';
+import type {Route} from './ROUTES';
+import {updateLastRoute} from './libs/actions/App';
+import setCrashlyticsUserId from './libs/setCrashlyticsUserId';
+import {checkIfUnderMaintenance} from './libs/Maintenance';
+import {validateAppVersion} from './libs/Validation';
+import UnderMaintenanceModal from './components/Modals/UnderMaintenanceModal';
+import UserOfflineModal from './components/UserOfflineModal';
+import CONFIG from './CONFIG';
+import UpdateAppModal from './components/UpdateAppModal';
+import VerifyEmailModal from './components/VerifyEmailModal';
+import FullScreenLoadingIndicator from './components/FullscreenLoadingIndicator';
+import CONST from './CONST';
 
 Onyx.registerLogger(({level, message}) => {
   if (level === 'alert') {
@@ -269,7 +271,7 @@ function Kiroku({}: KirokuProps) {
     //     autoAuthState={autoAuthState}
     // >
     <>
-      {!!loadingText ? (
+      {loadingText ? (
         <FullScreenLoadingIndicator loadingText={loadingText} />
       ) : (
         <>

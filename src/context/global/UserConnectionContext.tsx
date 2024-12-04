@@ -1,8 +1,8 @@
-﻿import type {ReactNode} from 'react';
+import type {ReactNode} from 'react';
 import {createContext, useContext, useEffect, useState} from 'react';
 import NetInfo from '@react-native-community/netinfo';
-import {useFirebase} from './FirebaseContext';
 import {isConnectedToDatabaseEmulator} from '@libs/Firebase/FirebaseUtils';
+import {useFirebase} from './FirebaseContext';
 
 type UserConnectionContextProps = {
   isOnline: boolean | undefined;

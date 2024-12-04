@@ -11,11 +11,11 @@ import _ from 'underscore';
  * @returns {Mixed}
  */
 function invoke(callback, args, scope) {
-    if (!_(callback).isFunction()) {
-        return null;
-    }
+  if (!_(callback).isFunction()) {
+    return null;
+  }
 
-    return callback.apply(scope, args || []);
+  return callback.apply(scope, args || []);
 }
 
 /**
@@ -29,18 +29,18 @@ function invoke(callback, args, scope) {
  * @returns {$.Deferred}
  */
 function invokeAsync(callback, args, scope) {
-    if (!_(callback).isFunction()) {
-        return new $.Deferred().resolve();
-    }
+  if (!_(callback).isFunction()) {
+    return new $.Deferred().resolve();
+  }
 
-    let promiseFromCallback = callback.apply(scope, args || []);
+  let promiseFromCallback = callback.apply(scope, args || []);
 
-    // If there was not a promise returned from the prefetch callback, then create a dummy promise and resolve it
-    if (!promiseFromCallback) {
-        promiseFromCallback = new $.Deferred().resolve();
-    }
+  // If there was not a promise returned from the prefetch callback, then create a dummy promise and resolve it
+  if (!promiseFromCallback) {
+    promiseFromCallback = new $.Deferred().resolve();
+  }
 
-    return promiseFromCallback;
+  return promiseFromCallback;
 }
 
 /**
@@ -50,14 +50,14 @@ function invokeAsync(callback, args, scope) {
  * @param {Array} [args]
  */
 function bulkInvoke(callbacks, args) {
-    callbacks.forEach((callback) => invoke(callback, args));
+  callbacks.forEach(callback => invoke(callback, args));
 }
 
 /**
  * Throws an uncaught error in an attempt to stop JS execution
  */
 function die() {
-    throw new Error('Aborting JavaScript execution');
+  throw new Error('Aborting JavaScript execution');
 }
 
 /**
@@ -68,7 +68,7 @@ function die() {
  * @returns {Array}
  */
 function mapByName(list, methodName) {
-    return _.map(list, (item) => item[methodName].call(item));
+  return _.map(list, item => item[methodName].call(item));
 }
 
 export {invoke, invokeAsync, bulkInvoke, die, mapByName};

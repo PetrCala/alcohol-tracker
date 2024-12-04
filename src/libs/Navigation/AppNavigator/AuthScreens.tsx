@@ -33,6 +33,9 @@ import ROUTES from '@src/ROUTES';
 import SCREENS from '@src/SCREENS';
 import {DatabaseDataProvider} from '@context/global/DatabaseDataContext';
 import type {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
+import {auth} from '@libs/Firebase/FirebaseApp';
+import type ReactComponentModule from '@src/types/utils/ReactComponentModule';
+import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import createCustomStackNavigator from './createCustomStackNavigator';
 import getRootNavigatorScreenOptions from './getRootNavigatorScreenOptions';
 import BottomTabNavigator from './Navigators/BottomTabNavigator';
@@ -42,9 +45,6 @@ import BottomTabNavigator from './Navigators/BottomTabNavigator';
 // import OnboardingModalNavigator from './Navigators/OnboardingModalNavigator';
 import TzFixModalNavigator from './Navigators/TzFixModalNavigator';
 import RightModalNavigator from './Navigators/RightModalNavigator';
-import {auth} from '@libs/Firebase/FirebaseApp';
-import ReactComponentModule from '@src/types/utils/ReactComponentModule';
-import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 // import WelcomeVideoModalNavigator from './Navigators/WelcomeVideoModalNavigator';
 
 type AuthScreensProps = {

@@ -14,16 +14,16 @@ import useStyledSafeAreaInsets from '@hooks/useStyledSafeAreaInsets';
 import useResponsiveLayout from '@hooks/useResponsiveLayout';
 import INPUT_IDS from '@src/types/form/SignUpForm';
 import useLocalize from '@hooks/useLocalize';
-import SignUpScreenLayout from './SignUpScreenLayout';
 import Onyx, {useOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 import FormProvider from '@components/Form/FormProvider';
 import InputWrapper from '@components/Form/InputWrapper';
 import TextInput from '@components/TextInput';
-import {FormInputErrors, FormOnyxValues} from '@components/Form/types';
-import {Errors} from '@src/types/onyx/OnyxCommon';
-import ChangeSignUpScreenLink from './ChangeSignUpScreenLink';
+import type {FormInputErrors, FormOnyxValues} from '@components/Form/types';
+import type {Errors} from '@src/types/onyx/OnyxCommon';
 import DotIndicatorMessage from '@components/DotIndicatorMessage';
+import ChangeSignUpScreenLink from './ChangeSignUpScreenLink';
+import SignUpScreenLayout from './SignUpScreenLayout';
 
 type InitialScreenOnyxProps = {};
 
@@ -118,7 +118,7 @@ function InitialScreen({}: InitialScreenProps) {
   return (
     <ScreenWrapper
       shouldShowOfflineIndicator={false}
-      shouldEnableMaxHeight={true}
+      shouldEnableMaxHeight
       shouldUseCachedViewportHeight
       style={[
         styles.signUpScreen,

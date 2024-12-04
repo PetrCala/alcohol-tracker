@@ -1,6 +1,6 @@
 import CONST from '@src/CONST';
-import type DrinkDataProps from './types';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
+import type DrinkDataProps from './types';
 
 const DrinkData: DrinkDataProps = [
   {
