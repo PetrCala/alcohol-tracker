@@ -1,19 +1,11 @@
-import {
-  ActivityIndicator,
-  Alert,
-  Keyboard,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import {Keyboard, ScrollView, StyleSheet, Text, View} from 'react-native';
 import type {
   FriendRequestStatus,
   ProfileList,
   FriendRequestList,
 } from '@src/types/onyx';
 import type {UserList} from '@src/types/onyx/OnyxCommon';
-import {useEffect, useMemo, useReducer} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {isNonEmptyArray} from '@libs/Validation';
 import {searchArrayByText} from '@libs/Search';
@@ -28,7 +20,6 @@ import type {
 } from '@src/types/various/Search';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import {objKeys} from '@libs/DataHandling';
-import type ReducerAction from '@src/types/various/ReducerAction';
 import {getNicknameMapping} from '@libs/SearchUtils';
 import FillerView from '@components/FillerView';
 import type {StackScreenProps} from '@react-navigation/stack';
@@ -42,59 +33,9 @@ import {readDataOnce} from '@database/baseFunctions';
 import ScreenWrapper from '@components/ScreenWrapper';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import useLocalize from '@hooks/useLocalize';
-import useTheme from '@hooks/useTheme';
 import useThemeStyles from '@hooks/useThemeStyles';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
 import Button from '@components/Button';
-
-type State = {
-  searching: boolean;
-  friends: UserList | undefined;
-  displayedFriends: UserSearchResults;
-  commonFriends: UserSearchResults;
-  otherFriends: UserSearchResults;
-  requestStatuses: Record<string, FriendRequestStatus | undefined>;
-  noUsersFound: boolean;
-  displayData: ProfileList;
-  isLoading: boolean;
-};
-
-const initialState: State = {
-  searching: false,
-  friends: undefined,
-  displayedFriends: [],
-  commonFriends: [],
-  otherFriends: [],
-  requestStatuses: {},
-  noUsersFound: false,
-  displayData: {},
-  isLoading: true,
-};
-
-const reducer = (state: State, action: ReducerAction): State => {
-  switch (action.type) {
-    case 'SET_SEARCHING':
-      return {...state, searching: action.payload};
-    case 'SET_FRIENDS':
-      return {...state, friends: action.payload};
-    case 'SET_DISPLAYED_FRIENDS':
-      return {...state, displayedFriends: action.payload};
-    case 'SET_COMMON_FRIENDS':
-      return {...state, commonFriends: action.payload};
-    case 'SET_OTHER_FRIENDS':
-      return {...state, otherFriends: action.payload};
-    case 'SET_REQUEST_STATUSES':
-      return {...state, requestStatuses: action.payload};
-    case 'SET_NO_USERS_FOUND':
-      return {...state, noUsersFound: action.payload};
-    case 'SET_DISPLAY_DATA':
-      return {...state, displayData: action.payload};
-    case 'SET_IS_LOADING':
-      return {...state, isLoading: action.payload};
-    default:
-      return state;
-  }
-};
 
 type FriendsFriendsScreenProps = StackScreenProps<
   ProfileNavigatorParamList,
@@ -102,27 +43,38 @@ type FriendsFriendsScreenProps = StackScreenProps<
 >;
 
 function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
-  const theme = useTheme();
   const styles = useThemeStyles();
   const {userID} = route.params;
   const {auth, db, storage} = useFirebase();
   const {userData} = useDatabaseData();
   const user = auth.currentUser;
   const {translate} = useLocalize();
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [searching, setSearching] = useState<boolean>(false);
+  const [friends, setFriends] = useState<UserList | undefined>(undefined);
+  const [displayedFriends, setDisplayedFriends] = useState<UserSearchResults>(
+    [],
+  );
+  const [commonFriends, setCommonFriends] = useState<UserSearchResults>([]);
+  const [otherFriends, setOtherFriends] = useState<UserSearchResults>([]);
+  const [requestStatuses, setRequestStatuses] = useState<
+    Record<string, FriendRequestStatus | undefined>
+  >({});
+  const [noUsersFound, setNoUsersFound] = useState<boolean>(false);
+  const [displayData, setDisplayData] = useState<ProfileList>({});
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const localSearch = async (searchText: string): Promise<void> => {
     try {
       const searchMapping: UserIDToNicknameMapping = getNicknameMapping(
-        state.displayData,
+        displayData,
         'display_name',
       );
       const relevantResults = searchArrayByText(
-        objKeys(state.friends),
+        objKeys(friends),
         searchText,
         searchMapping,
       );
-      dispatch({type: 'SET_DISPLAYED_FRIENDS', payload: relevantResults}); // Hide irrelevant
+      setDisplayedFriends(relevantResults); // Hide irrelevant
     } catch (error: any) {
       ErrorUtils.raiseAlert(error, translate('onyx.error.generic'));
       return;
@@ -136,7 +88,7 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
       db,
       searchResultData,
     );
-    dispatch({type: 'SET_DISPLAY_DATA', payload: newDisplayData});
+    setDisplayData(newDisplayData);
   };
 
   useMemo(() => {
@@ -149,10 +101,10 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
           newRequestStatuses[userID] = friendRequests[userID];
         });
       }
-      dispatch({type: 'SET_REQUEST_STATUSES', payload: newRequestStatuses});
+      setRequestStatuses(newRequestStatuses);
     };
     updateRequestStatuses(userData?.friend_requests);
-  }, [userData?.friend_requests, state.friends]);
+  }, [userData?.friend_requests, friends]);
 
   const updateHooksBasedOnSearchResults = async (
     searchResults: UserSearchResults,
@@ -160,24 +112,22 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
     // updateRequestStatuses(searchResults); // Perhaps redundant
     await updateDisplayData(searchResults); // Assuming this returns a Promise
     const noUsersFound = !isNonEmptyArray(searchResults);
-    dispatch({type: 'SET_NO_USERS_FOUND', payload: noUsersFound});
+    setNoUsersFound(noUsersFound);
   };
 
   const renderSearchResults = (renderCommonFriends: boolean): JSX.Element[] => {
-    return state.displayedFriends
-      .filter(
-        userID => state.commonFriends.includes(userID) === renderCommonFriends,
-      )
+    return displayedFriends
+      .filter(userID => commonFriends.includes(userID) === renderCommonFriends)
       .map(userID => (
         <SearchResult
           key={userID + '-container'}
           userID={userID}
-          userDisplayData={state.displayData[userID]}
+          userDisplayData={displayData[userID]}
           db={db}
           storage={storage}
           //@ts-ignore
           userFrom={user.uid}
-          requestStatus={state.requestStatuses[userID]}
+          requestStatus={requestStatuses[userID]}
           alreadyAFriend={userData?.friends ? userData?.friends[userID] : false}
           customButton={
             renderCommonFriends && (
@@ -196,14 +146,14 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
 
   const fetchData = async () => {
     try {
-      dispatch({type: 'SET_IS_LOADING', payload: true});
+      setIsLoading(true);
       const userFriends: UserList | undefined = await readDataOnce(
         db,
         DBPATHS.USERS_USER_ID_FRIENDS.getRoute(userID),
       );
-      dispatch({type: 'SET_FRIENDS', payload: userFriends});
+      setFriends(userFriends);
     } finally {
-      dispatch({type: 'SET_IS_LOADING', payload: false});
+      setIsLoading(false);
     }
   };
 
@@ -216,44 +166,44 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
   useMemo(() => {
     let commonFriends: string[] = [];
     let otherFriends: string[] = [];
-    if (state.friends) {
+    if (friends) {
       commonFriends = getCommonFriends(
-        objKeys(state.friends),
+        objKeys(friends),
         objKeys(userData?.friends),
       );
-      otherFriends = objKeys(state.friends).filter(
+      otherFriends = objKeys(friends).filter(
         friend => !commonFriends.includes(friend),
       );
     }
-    dispatch({type: 'SET_COMMON_FRIENDS', payload: commonFriends});
-    dispatch({type: 'SET_OTHER_FRIENDS', payload: otherFriends});
-  }, [userData, state.friends, state.requestStatuses]);
+    setCommonFriends(commonFriends);
+    setOtherFriends(otherFriends);
+  }, [userData, friends, requestStatuses]);
 
   useMemo(() => {
     let noUsersFound = true;
-    if (isNonEmptyArray(state.displayedFriends)) {
+    if (isNonEmptyArray(displayedFriends)) {
       noUsersFound = false;
     }
-    dispatch({type: 'SET_NO_USERS_FOUND', payload: noUsersFound});
-  }, [state.displayedFriends]);
+    setNoUsersFound(noUsersFound);
+  }, [displayedFriends]);
 
   useEffect(() => {
     const initialSearch = async (): Promise<void> => {
-      dispatch({type: 'SET_SEARCHING', payload: true});
-      const friendIds = objKeys(state.friends);
+      setSearching(true);
+      const friendIds = objKeys(friends);
       await updateHooksBasedOnSearchResults(friendIds);
-      dispatch({type: 'SET_DISPLAYED_FRIENDS', payload: friendIds});
-      dispatch({type: 'SET_SEARCHING', payload: false});
+      setDisplayedFriends(friendIds);
+      setSearching(false);
     };
     initialSearch();
-  }, [state.friends]);
+  }, [friends]);
 
   const resetSearch = (): void => {
     // Reset all values displayed on screen
-    const friendIds = objKeys(state.friends);
-    dispatch({type: 'SET_DISPLAYED_FRIENDS', payload: friendIds});
-    dispatch({type: 'SET_SEARCHING', payload: false});
-    dispatch({type: 'SET_NO_USERS_FOUND', payload: false});
+    const friendIds = objKeys(friends);
+    setDisplayedFriends(friendIds);
+    setSearching(false);
+    setNoUsersFound(false);
   };
 
   return (
@@ -273,29 +223,29 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
         onScrollBeginDrag={Keyboard.dismiss}
         keyboardShouldPersistTaps="handled">
         <View style={localStyles.searchResultsContainer}>
-          {state.searching ? (
+          {searching ? (
             <FlexibleLoadingIndicator />
-          ) : isNonEmptyArray(state.displayedFriends) ? (
+          ) : isNonEmptyArray(displayedFriends) ? (
             <View style={styles.appBG}>
               <GrayHeader
                 headerText={`${translate('friendsFriendsScreen.commonFriends')} (${getCommonFriendsCount(
-                  state.commonFriends,
-                  state.displayedFriends,
+                  commonFriends,
+                  displayedFriends,
                 )})`}
               />
               {renderSearchResults(true)}
               <GrayHeader
                 headerText={`${translate('friendsFriendsScreen.otherFriends')} (${getCommonFriendsCount(
-                  state.otherFriends,
-                  state.displayedFriends,
+                  otherFriends,
+                  displayedFriends,
                 )})`}
               />
               {renderSearchResults(false)}
             </View>
           ) : (
-            state.noUsersFound && (
+            noUsersFound && (
               <Text style={styles.noResultsText}>
-                {objKeys(state.friends).length > 0
+                {objKeys(friends).length > 0
                   ? `${translate('friendsFriendsScreen.noFriendsFound')}\n\n${translate(
                       'friendsFriendsScreen.trySearching',
                     )}`
