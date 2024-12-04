@@ -23,7 +23,7 @@ import {SettingsNavigatorParamList} from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
-import {changeUserName} from '@database/users';
+import {changeUserName} from '@libs/actions/User';
 
 type UserNameScreenOnyxProps = {};
 

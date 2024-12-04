@@ -29,7 +29,7 @@ import {
   getDefaultUserData,
   getDefaultUserStatus,
   pushNewUserInfo,
-} from '@database/users';
+} from '@libs/actions/User';
 import {cleanStringForFirebaseKey} from '@libs/StringUtilsKiroku';
 import {
   acceptFriendRequest,

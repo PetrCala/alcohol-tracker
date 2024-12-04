@@ -4,7 +4,7 @@ import {useUserConnection} from '@context/global/UserConnectionContext';
 import {useFirebase} from '@context/global/FirebaseContext';
 import UserOffline from '@components/UserOfflineModal';
 import {savePreferencesData} from '@database/preferences';
-import {getDefaultPreferences} from '@database/users';
+import {getDefaultPreferences} from '@libs/actions/User';
 import type {Preferences} from '@src/types/onyx';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import type {StackScreenProps} from '@react-navigation/stack';

@@ -7,7 +7,6 @@ import type {
   Profile,
   ReasonForLeaving,
   ReasonForLeavingId,
-  UserPrivateData,
   UserData,
   UserStatus,
 } from '@src/types/onyx';
@@ -23,7 +22,6 @@ import {
   updateProfile,
   verifyBeforeUpdateEmail,
 } from 'firebase/auth';
-import StringUtils from '@libs/StringUtils';
 import {getUniqueId} from 'react-native-device-info';
 import {Alert} from 'react-native';
 import {cleanStringForFirebaseKey} from '../libs/StringUtilsKiroku';

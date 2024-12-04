@@ -1,7 +1,7 @@
 import Onyx from 'react-native-onyx';
 import {Auth, deleteUser, signOut, type UserCredential} from 'firebase/auth';
 import {Database} from 'firebase/database';
-import {deleteUserData, reauthentificateUser} from '@database/users';
+import {deleteUserData, reauthentificateUser} from '@libs/actions/User';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
 import {UserData} from '@src/types/onyx';
