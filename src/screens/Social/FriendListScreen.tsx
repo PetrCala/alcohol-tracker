@@ -4,8 +4,7 @@ import type {
   SearchWindowRef,
   UserIDToNicknameMapping,
 } from '@src/types/various/Search';
-import type ReducerAction from '@src/types/various/ReducerAction';
-import React, {useMemo, useReducer, useRef} from 'react';
+import React, {useMemo, useRef, useState} from 'react';
 import {objKeys} from '@libs/DataHandling';
 import {getNicknameMapping} from '@libs/SearchUtils';
 import {searchArrayByText} from '@libs/Search';
@@ -15,52 +14,29 @@ import UserListComponent from '@components/Social/UserListComponent';
 import useProfileList from '@hooks/useProfileList';
 import NoFriendInfo from '@components/Social/NoFriendInfo';
 
-type State = {
-  searching: boolean;
-  friends: UserArray;
-  friendsToDisplay: UserArray;
-};
-
-const initialState: State = {
-  searching: false,
-  friends: [],
-  friendsToDisplay: [],
-};
-
-const reducer = (state: State, action: ReducerAction): State => {
-  switch (action.type) {
-    case 'SET_SEARCHING':
-      return {...state, searching: action.payload};
-    case 'SET_FRIENDS':
-      return {...state, friends: action.payload};
-    case 'SET_FRIENDS_TO_DISPLAY':
-      return {...state, friendsToDisplay: action.payload};
-    default:
-      return state;
-  }
-};
-
 type FriendListScreenProps = object; // TODO: Add props
 
 function FriendListScreen({}: FriendListScreenProps) {
   const {userData} = useDatabaseData();
   const friendListInputRef = useRef<SearchWindowRef>(null);
-  const [state, dispatch] = useReducer(reducer, initialState);
-  const {profileList} = useProfileList(state.friends);
+  const [searching, setSearching] = useState(false);
+  const [friends, setFriends] = useState<UserArray>([]);
+  const [friendsToDisplay, setFriendsToDisplay] = useState<UserArray>([]);
+  const {profileList} = useProfileList(friends);
 
   const localSearch = (searchText: string) => {
     try {
-      dispatch({type: 'SET_SEARCHING', payload: true});
+      setSearching(true);
       const searchMapping: UserIDToNicknameMapping = getNicknameMapping(
         profileList,
         'display_name',
       );
       const relevantResults = searchArrayByText(
-        state.friends,
+        friends,
         searchText,
         searchMapping,
       );
-      dispatch({type: 'SET_FRIENDS_TO_DISPLAY', payload: relevantResults}); // Hide irrelevant
+      setFriendsToDisplay(relevantResults); // Hide irrelevant
     } catch (error: any) {
       Alert.alert(
         'Database serach failed',
@@ -68,18 +44,18 @@ function FriendListScreen({}: FriendListScreenProps) {
       );
       return;
     } finally {
-      dispatch({type: 'SET_SEARCHING', payload: false});
+      setSearching(false);
     }
   };
 
   const resetSearch = () => {
-    dispatch({type: 'SET_FRIENDS_TO_DISPLAY', payload: state.friends});
+    setFriendsToDisplay(friends);
   };
 
   useMemo(() => {
     const friendsArray = objKeys(userData?.friends);
-    dispatch({type: 'SET_FRIENDS', payload: friendsArray});
-    dispatch({type: 'SET_FRIENDS_TO_DISPLAY', payload: friendsArray});
+    setFriends(friendsArray);
+    setFriendsToDisplay(friendsArray);
   }, [userData]);
 
   return (
@@ -92,10 +68,10 @@ function FriendListScreen({}: FriendListScreenProps) {
         searchOnTextChange={true}
       />
       <UserListComponent
-        fullUserArray={state.friends}
+        fullUserArray={friends}
         initialLoadSize={20}
         emptyListComponent={<NoFriendInfo />}
-        userSubset={state.friendsToDisplay}
+        userSubset={friendsToDisplay}
         orderUsers={true}
       />
     </View>
