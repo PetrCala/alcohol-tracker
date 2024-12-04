@@ -1,4 +1,4 @@
-﻿import {Alert, Keyboard, StyleSheet, View} from 'react-native';
+﻿import {Alert, StyleSheet, View} from 'react-native';
 import type {
   FriendRequestList,
   FriendRequestStatus,
@@ -6,7 +6,7 @@ import type {
 } from '@src/types/onyx';
 import Text from '@components/Text';
 import type {UserList} from '@src/types/onyx/OnyxCommon';
-import React, {useMemo, useReducer, useRef} from 'react';
+import React, {useMemo, useRef, useState} from 'react';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import {isNonEmptyArray} from '@libs/Validation';
 import type {Database} from 'firebase/database';
@@ -26,53 +26,6 @@ import useLocalize from '@hooks/useLocalize';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
 import useThemeStyles from '@hooks/useThemeStyles';
 import ScrollView from '@components/ScrollView';
-import Button from '@components/Button';
-
-type State = {
-  searchResultData: UserSearchResults;
-  searching: boolean;
-  friends: UserList | undefined;
-  friendRequests: FriendRequestList | undefined;
-  requestStatuses: Record<string, FriendRequestStatus | undefined>;
-  noUsersFound: boolean;
-  displayData: ProfileList;
-};
-
-type Action = {
-  type: string;
-  payload: any;
-};
-
-const initialState: State = {
-  searchResultData: [],
-  searching: false,
-  friends: undefined,
-  friendRequests: undefined,
-  requestStatuses: {},
-  noUsersFound: false,
-  displayData: {},
-};
-
-const reducer = (state: State, action: Action): State => {
-  switch (action.type) {
-    case 'SET_SEARCH_RESULT_DATA':
-      return {...state, searchResultData: action.payload};
-    case 'SET_SEARCHING':
-      return {...state, searching: action.payload};
-    case 'SET_FRIENDS':
-      return {...state, friends: action.payload};
-    case 'SET_FRIEND_REQUESTS':
-      return {...state, friendRequests: action.payload};
-    case 'SET_REQUEST_STATUSES':
-      return {...state, requestStatuses: action.payload};
-    case 'SET_NO_USERS_FOUND':
-      return {...state, noUsersFound: action.payload};
-    case 'SET_DISPLAY_DATA':
-      return {...state, displayData: action.payload};
-    default:
-      return state;
-  }
-};
 
 function FriendSearchScreen() {
   const {auth, db, storage} = useFirebase();
@@ -81,17 +34,29 @@ function FriendSearchScreen() {
   const searchInputRef = useRef<SearchWindowRef>(null);
   const user = auth.currentUser;
   const {translate} = useLocalize();
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [searchResultData, setSearchResultData] = useState<UserSearchResults>(
+    [],
+  );
+  const [searching, setSearching] = useState(false);
+  const [friends, setFriends] = useState<UserList | undefined>(undefined);
+  const [friendRequests, setFriendRequests] = useState<
+    FriendRequestList | undefined
+  >(undefined);
+  const [requestStatuses, setRequestStatuses] = useState<
+    Record<string, FriendRequestStatus | undefined>
+  >({});
+  const [noUsersFound, setNoUsersFound] = useState(false);
+  const [displayData, setDisplayData] = useState<ProfileList>({});
 
   const dbSearch = async (searchText: string, db?: Database): Promise<void> => {
     try {
-      dispatch({type: 'SET_SEARCHING', payload: true});
+      setSearching(true);
       const searchResultData: UserSearchResults = await searchDatabaseForUsers(
         db,
         searchText,
       );
       await updateHooksBasedOnSearchResults(searchResultData);
-      dispatch({type: 'SET_SEARCH_RESULT_DATA', payload: searchResultData});
+      setSearchResultData(searchResultData);
     } catch (error: any) {
       Alert.alert(
         'Database serach failed',
@@ -99,7 +64,7 @@ function FriendSearchScreen() {
       );
       return;
     } finally {
-      dispatch({type: 'SET_SEARCHING', payload: false});
+      setSearching(false);
     }
   };
 
@@ -110,7 +75,7 @@ function FriendSearchScreen() {
       db,
       searchResultData,
     );
-    dispatch({type: 'SET_DISPLAY_DATA', payload: newDisplayData});
+    setDisplayData(newDisplayData);
   };
 
   /** Having a list of users returned by the search,
@@ -118,15 +83,15 @@ function FriendSearchScreen() {
    * the RequestStatuses hook.
    */
   const updateRequestStatuses = (
-    searchResultData: UserSearchResults = state.searchResultData,
+    data: UserSearchResults = searchResultData,
   ): void => {
     const newRequestStatuses: Record<string, FriendRequestStatus> = {};
-    searchResultData.forEach(userID => {
-      if (state.friendRequests?.[userID]) {
-        newRequestStatuses[userID] = state.friendRequests[userID];
+    data.forEach(userID => {
+      if (friendRequests?.[userID]) {
+        newRequestStatuses[userID] = friendRequests[userID];
       }
     });
-    dispatch({type: 'SET_REQUEST_STATUSES', payload: newRequestStatuses});
+    setRequestStatuses(newRequestStatuses);
   };
 
   const updateHooksBasedOnSearchResults = async (
@@ -135,31 +100,28 @@ function FriendSearchScreen() {
     updateRequestStatuses(searchResults); // Perhaps redundant
     await updateDisplayData(searchResults); // Assuming this returns a Promise
     const noUsersFound = !isNonEmptyArray(searchResults);
-    dispatch({type: 'SET_NO_USERS_FOUND', payload: noUsersFound});
+    setNoUsersFound(noUsersFound);
   };
 
   const resetSearch = (): void => {
     // Reset all values displayed on screen
-    dispatch({type: 'SET_SEARCHING', payload: false});
-    dispatch({type: 'SET_SEARCH_RESULT_DATA', payload: {}});
-    dispatch({type: 'SET_REQUEST_STATUSES', payload: {}});
-    dispatch({type: 'SET_DISPLAY_DATA', payload: {}});
-    dispatch({type: 'SET_NO_USERS_FOUND', payload: false});
+    setSearching(false);
+    setSearchResultData([]);
+    setRequestStatuses({});
+    setDisplayData({});
+    setNoUsersFound(false);
   };
 
   useMemo(() => {
     if (userData) {
-      dispatch({type: 'SET_FRIENDS', payload: userData?.friends});
-      dispatch({
-        type: 'SET_FRIEND_REQUESTS',
-        payload: userData?.friend_requests,
-      });
+      setFriends(userData.friends);
+      setFriendRequests(userData.friend_requests);
     }
   }, [userData]);
 
   useMemo(() => {
     updateRequestStatuses();
-  }, [state.friendRequests]); // When updated in the database, not locally
+  }, [friendRequests]); // When updated in the database, not locally
 
   if (!user) {
     return;
@@ -180,23 +142,23 @@ function FriendSearchScreen() {
       <View style={localStyles.mainContainer}>
         <ScrollView>
           <View style={localStyles.searchResultsContainer}>
-            {state.searching ? (
+            {searching ? (
               <FlexibleLoadingIndicator style={localStyles.loadingData} />
-            ) : isNonEmptyArray(state.searchResultData) ? (
-              state.searchResultData.map(userID => (
+            ) : isNonEmptyArray(searchResultData) ? (
+              searchResultData.map(userID => (
                 <SearchResult
                   key={userID + '-container'}
                   userID={userID}
-                  userDisplayData={state.displayData[userID]}
+                  userDisplayData={displayData[userID]}
                   db={db}
                   storage={storage}
                   userFrom={user.uid}
-                  requestStatus={state.requestStatuses[userID]}
-                  alreadyAFriend={state.friends ? state.friends[userID] : false}
+                  requestStatus={requestStatuses[userID]}
+                  alreadyAFriend={friends ? friends[userID] : false}
                 />
               ))
             ) : (
-              state.noUsersFound && (
+              noUsersFound && (
                 <Text style={styles.noResultsText}>
                   {translate('friendSearchScreen.noUsersFound')}
                 </Text>
