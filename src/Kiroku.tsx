@@ -26,8 +26,6 @@ import type {Route} from '@src/ROUTES';
 import {updateLastRoute} from '@userActions/App';
 import setCrashlyticsUserId from '@libs/setCrashlyticsUserId';
 import {useUserConnection} from '@context/global/UserConnectionContext';
-import DBPATHS from '@src/DBPATHS';
-import {listenForDataChanges, readDataOnce} from '@database/baseFunctions';
 import {checkIfUnderMaintenance} from '@libs/Maintenance';
 import {validateAppVersion} from '@libs/Validation';
 import UnderMaintenanceModal from '@components/Modals/UnderMaintenanceModal';
