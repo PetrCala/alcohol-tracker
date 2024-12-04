@@ -1,6 +1,6 @@
 import PressableWithAnimation from '@components/Buttons/PressableWithAnimation';
 import {useFirebase} from '@context/global/FirebaseContext';
-import {fetchUserStatuses} from '@database/profile';
+import * as Profile from '@userActions/Profile';
 import useProfileList from '@hooks/useProfileList';
 import {isNonEmptyArray} from '@libs/Validation';
 import {
@@ -113,7 +113,7 @@ const UserListComponent: React.FC<UserListProps> = ({
       }
       const newUsers = fullUserArray.filter(userID => !userStatusList[userID]);
       if (isNonEmptyArray(newUsers)) {
-        const newUserStatusList: UserStatusList = await fetchUserStatuses(
+        const newUserStatusList: UserStatusList = await Profile.fetchUserStatuses(
           db,
           newUsers,
         );

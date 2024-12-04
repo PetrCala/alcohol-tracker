@@ -11,7 +11,7 @@ import {useFirebase} from '@src/context/global/FirebaseContext';
 import {isNonEmptyArray} from '@libs/Validation';
 import type {Database} from 'firebase/database';
 import {searchDatabaseForUsers} from '@libs/Search';
-import {fetchUserProfiles} from '@database/profile';
+import * as Profile from '@userActions/Profile';
 import SearchResult from '@components/Social/SearchResult';
 import SearchWindow from '@components/Social/SearchWindow';
 import type {
@@ -71,7 +71,7 @@ function FriendSearchScreen() {
   const updateDisplayData = async (
     searchResultData: UserSearchResults,
   ): Promise<void> => {
-    const newDisplayData: ProfileList = await fetchUserProfiles(
+    const newDisplayData: ProfileList = await Profile.fetchUserProfiles(
       db,
       searchResultData,
     );

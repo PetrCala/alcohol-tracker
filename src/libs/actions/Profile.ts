@@ -4,10 +4,10 @@ import type {FirebaseStorage} from 'firebase/storage';
 import {ref as StorageRef, getDownloadURL} from 'firebase/storage';
 import type {Auth, User} from 'firebase/auth';
 import {updateProfile} from 'firebase/auth';
-import {fetchDisplayDataForUsers} from './baseFunctions';
+import {fetchDisplayDataForUsers} from '../../database/baseFunctions';
 import type {ProfileList, UserStatusList} from '@src/types/onyx';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
-import DBPATHS from './DBPATHS';
+import DBPATHS from '../../database/DBPATHS';
 
 /**
  * Fetches user profiles from the database.

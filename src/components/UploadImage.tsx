@@ -7,7 +7,7 @@ import {uploadImageToFirebase} from '../storage/storageUpload';
 import UploadImagePopup from './Popups/UploadImagePopup';
 import checkPermission from '@libs/Permissions/checkPermission';
 import {requestPermission} from '@libs/Permissions/requestPermission';
-import {updateProfileInfo} from '@database/profile';
+import * as Profile from '@userActions/Profile';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import useLocalize from '@hooks/useLocalize';
 
@@ -113,7 +113,13 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
           setSuccess,
         ); // Wait for the promise to resolve
         if (isProfilePicture) {
-          await updateProfileInfo(pathToUpload, user, auth, db, storage);
+          await Profile.updateProfileInfo(
+            pathToUpload,
+            user,
+            auth,
+            db,
+            storage,
+          );
         }
         Alert.alert(translate('imageUpload.success'));
       } catch (error: any) {

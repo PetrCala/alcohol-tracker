@@ -9,7 +9,7 @@ import {useEffect, useMemo, useState} from 'react';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {isNonEmptyArray} from '@libs/Validation';
 import {searchArrayByText} from '@libs/Search';
-import {fetchUserProfiles} from '@database/profile';
+import * as Profile from '@userActions/Profile';
 import SearchResult from '@components/Social/SearchResult';
 import SearchWindow from '@components/Social/SearchWindow';
 import GrayHeader from '@components/Header/GrayHeader';
@@ -84,7 +84,7 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
   const updateDisplayData = async (
     searchResultData: UserSearchResults,
   ): Promise<void> => {
-    const newDisplayData: ProfileList = await fetchUserProfiles(
+    const newDisplayData: ProfileList = await Profile.fetchUserProfiles(
       db,
       searchResultData,
     );
