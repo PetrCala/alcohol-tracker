@@ -279,6 +279,7 @@ module.exports = {
     'prefer-regex-literals': 'off',
     'valid-jsdoc': 'off',
     'jsdoc/no-types': 'error',
+    '@lwc/lwc/no-async-await': 'off',
     '@dword-design/import-alias/prefer-alias': [
       'warn',
       {
