@@ -11,7 +11,7 @@ import type {
 import * as Localize from '@src/libs/Localize';
 import * as DSUtils from '@src/libs/DrinkingSessionUtils';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
-import DBPATHS from '../../DBPATHS';
+import DBPATHS from '@src/DBPATHS';
 import {User} from 'firebase/auth';
 import CONST from '@src/CONST';
 import {FirebaseUpdates, generateDatabaseKey} from '@database/baseFunctions';

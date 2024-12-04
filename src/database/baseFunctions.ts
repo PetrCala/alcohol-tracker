@@ -7,7 +7,6 @@ import type {
   UserStatusList,
 } from '@src/types/onyx';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
-import DBPATHS from '../DBPATHS';
 import {diff, Diff, DiffArray} from 'deep-diff';
 
 type FirebaseUpdates = {[key: string]: any};

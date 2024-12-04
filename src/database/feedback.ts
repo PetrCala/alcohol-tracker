@@ -1,7 +1,7 @@
 ﻿import type {Database} from 'firebase/database';
 import {child, push, ref, update} from 'firebase/database';
 import type {FeedbackList, Feedback, Bug, BugList} from '@src/types/onyx';
-import DBPATHS from '../DBPATHS';
+import DBPATHS from '@src/DBPATHS';
 import {FormOnyxValues} from '@components/Form/types';
 import ONYXKEYS from '@src/ONYXKEYS';
 
