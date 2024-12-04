@@ -1,4 +1,4 @@
-﻿import React, {useMemo, useReducer, useState} from 'react';
+﻿import React, {useMemo, useState} from 'react';
 import {Alert, StyleSheet, TouchableOpacity, View} from 'react-native';
 import SessionsCalendar from '@components/SessionsCalendar';
 import type {DateData} from 'react-native-calendars';
@@ -42,40 +42,6 @@ import AgreeToTermsModal from '@components/AgreeToTermsModal';
 import {useOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 
-type State = {
-  drinkingSessionsCount: number;
-  drinksConsumed: number;
-  unitsConsumed: number;
-  shouldNavigateToTzFix: boolean;
-};
-
-type Action = {
-  type: string;
-  payload: any;
-};
-
-const initialState: State = {
-  drinkingSessionsCount: 0,
-  drinksConsumed: 0,
-  unitsConsumed: 0,
-  shouldNavigateToTzFix: false,
-};
-
-const reducer = (state: State, action: Action): State => {
-  switch (action.type) {
-    case 'SET_DRINKING_SESSIONS_COUNT':
-      return {...state, drinkingSessionsCount: action.payload};
-    case 'SET_DRINKS_CONSUMED':
-      return {...state, drinksConsumed: action.payload};
-    case 'SET_UNITS_CONSUMED':
-      return {...state, unitsConsumed: action.payload};
-    case 'SET_SHOULD_NAVIGATE_TO_TZ_FIX':
-      return {...state, shouldNavigateToTzFix: action.payload};
-    default:
-      return state;
-  }
-};
-
 type HomeScreenOnyxProps = {};
 
 type HomeScreenProps = HomeScreenOnyxProps &
@@ -93,16 +59,20 @@ function HomeScreen({}: HomeScreenProps) {
   const [visibleDate, setVisibleDate] = useState<DateData>(
     dateToDateData(new Date()),
   );
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [drinkingSessionsCount, setDrinkingSessionsCount] = useState<number>(0);
+  const [drinksConsumed, setDrinksConsumed] = useState<number>(0);
+  const [unitsConsumed, setUnitsConsumed] = useState<number>(0);
+  const [shouldNavigateToTzFix, setShouldNavigateToTzFix] =
+    useState<boolean>(false);
 
   const statsData: StatData = [
     {
-      header: `Drinking Session${getPlural(state.drinkingSessionsCount)}`,
-      content: String(state.drinkingSessionsCount),
+      header: `Drinking Session${getPlural(drinkingSessionsCount)}`,
+      content: String(drinkingSessionsCount),
     },
     {
       header: 'Units Consumed',
-      content: String(roundToTwoDecimalPlaces(state.unitsConsumed)),
+      content: String(roundToTwoDecimalPlaces(unitsConsumed)),
     },
   ];
 
@@ -129,12 +99,9 @@ function HomeScreen({}: HomeScreenProps) {
       false,
     ).length; // Replace this in the future
 
-    dispatch({
-      type: 'SET_DRINKING_SESSIONS_COUNT',
-      payload: thisMonthSessionCount,
-    });
-    dispatch({type: 'SET_DRINKS_CONSUMED', payload: thisMonthDrinks});
-    dispatch({type: 'SET_UNITS_CONSUMED', payload: thisMonthUnits});
+    setDrinkingSessionsCount(thisMonthSessionCount);
+    setDrinksConsumed(thisMonthDrinks);
+    setUnitsConsumed(thisMonthUnits);
   }, [drinkingSessionData, visibleDate, preferences]);
 
   useMemo(() => {
@@ -144,10 +111,7 @@ function HomeScreen({}: HomeScreenProps) {
     // Only navigate in case the user is setting up TZ for the first time
     const shouldNavigateToTzFix = sessionsAreMissingTz && !!!userData?.timezone;
 
-    dispatch({
-      type: 'SET_SHOULD_NAVIGATE_TO_TZ_FIX',
-      payload: shouldNavigateToTzFix,
-    });
+    setShouldNavigateToTzFix(shouldNavigateToTzFix);
   }, [drinkingSessionData, userData]);
 
   useFocusEffect(
@@ -167,7 +131,7 @@ function HomeScreen({}: HomeScreenProps) {
       }
 
       // TZFIX (09-2024) - Redirect to TZ_FIX_INTRODUCTION if user has not set timezone
-      if (state.shouldNavigateToTzFix) {
+      if (shouldNavigateToTzFix) {
         Navigation.navigate(ROUTES.TZ_FIX_INTRODUCTION);
         return;
       }
@@ -176,7 +140,7 @@ function HomeScreen({}: HomeScreenProps) {
       userData,
       preferences,
       drinkingSessionData,
-      state.shouldNavigateToTzFix,
+      shouldNavigateToTzFix,
     ]),
   );
 
