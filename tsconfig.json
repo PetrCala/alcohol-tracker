@@ -5,6 +5,7 @@
     "module": "commonjs",
     "types": ["react-native", "jest", "node"],
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "jsx": "react-native",
     "isolatedModules": true,
     "strict": true,
     "allowSyntheticDefaultImports": true,
