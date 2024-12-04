@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import ScreenWrapper from '@components/ScreenWrapper';
 import SelectionList from '@components/SelectionList';
@@ -12,20 +12,13 @@ import TIMEZONES from '@src/TIMEZONES';
 import type {SelectedTimezone} from '@src/types/onyx/UserData';
 import type {StackScreenProps} from '@react-navigation/stack';
 import type {TzFixModalNavigatorParamList} from '@libs/Navigation/types';
-import {SettingsNavigatorParamList} from '@libs/Navigation/types';
 import type SCREENS from '@src/SCREENS';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import type {UserData} from '@src/types/onyx';
 import * as User from '@userActions/User';
 import {useFirebase} from '@context/global/FirebaseContext';
-import {Alert} from 'react-native';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
-
-type SelectionScreenProps = StackScreenProps<
-  TzFixModalNavigatorParamList,
-  typeof SCREENS.TZ_FIX.SELECTION
->;
 
 /**
  * We add the current time to the key to fix a bug where the list options don't update unless the key is updated.
@@ -35,6 +28,12 @@ const getKey = (text: string): string => `${text}-${new Date().getTime()}`;
 const getUserTimezone = (userData: UserData | undefined) =>
   userData?.timezone ?? CONST.DEFAULT_TIME_ZONE;
 
+type SelectionScreenProps = StackScreenProps<
+  TzFixModalNavigatorParamList,
+  typeof SCREENS.TZ_FIX.SELECTION
+>;
+
+// eslint-disable-next-line no-empty-pattern
 function SelectionScreen({}: SelectionScreenProps) {
   const {translate} = useLocalize();
   const {db, auth} = useFirebase();
@@ -53,22 +52,25 @@ function SelectionScreen({}: SelectionScreenProps) {
   const [timezoneOptions, setTimezoneOptions] = useState(allTimezones);
   const [isLoading, setIsLoading] = useState(false);
 
-  const saveSelectedTimezone = async ({text}: {text: string}) => {
-    try {
+  const handleTimezoneSelection = useCallback(
+    async ({text}: {text: string}): Promise<void> => {
       setIsLoading(true);
-      await User.updateAutomaticTimezone(
-        db,
-        auth.currentUser,
-        false,
-        text as SelectedTimezone,
-      );
-    } catch (error: unknown) {
-      ErrorUtils.raiseAlert(error, translate('timezoneScreen.error.generic'));
-    } finally {
-      Navigation.navigate(ROUTES.TZ_FIX_CONFIRMATION);
-      setIsLoading(false);
-    }
-  };
+      try {
+        await User.updateAutomaticTimezone(
+          db,
+          auth.currentUser,
+          false,
+          text as SelectedTimezone,
+        );
+        Navigation.navigate(ROUTES.TZ_FIX_CONFIRMATION);
+      } catch (error: unknown) {
+        ErrorUtils.raiseAlert(error, translate('timezoneScreen.error.generic'));
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [db, auth.currentUser, translate],
+  );
 
   const filterShownTimezones = (searchText: string) => {
     setTimezoneInputText(searchText);
@@ -110,7 +112,7 @@ function SelectionScreen({}: SelectionScreenProps) {
         textInputLabel={translate('timezoneScreen.timezone')}
         textInputValue={timezoneInputText}
         onChangeText={filterShownTimezones}
-        onSelectRow={saveSelectedTimezone}
+        onSelectRow={handleTimezoneSelection}
         shouldSingleExecuteRowSelect
         sections={[{data: timezoneOptions, isDisabled: false}]}
         initiallyFocusedOptionKey={

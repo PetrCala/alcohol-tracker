@@ -16,6 +16,7 @@ type SuccessScreenProps = StackScreenProps<
   typeof SCREENS.TZ_FIX.SUCCESS
 >;
 
+// eslint-disable-next-line no-empty-pattern
 function SuccessScreen({}: SuccessScreenProps) {
   const styles = useThemeStyles();
   const {translate} = useLocalize();
