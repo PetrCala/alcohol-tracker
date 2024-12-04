@@ -12,11 +12,8 @@ import type {
 import type {EdgeInsets} from 'react-native-safe-area-context';
 import type {ValueOf} from 'type-fest';
 import type ImageSVGProps from '@components/ImageSVG/types';
-// import * as Browser from '@libs/Browser';
-import * as UserUtils from '@libs/UserUtils';
 // eslint-disable-next-line no-restricted-imports
 import {defaultTheme} from '@styles/theme';
-import colors from '@styles/theme/colors';
 import type {ThemeColors} from '@styles/theme/types';
 import variables from '@styles/variables';
 import CONST from '@src/CONST';
@@ -45,7 +42,6 @@ import type {
   ParsableStyle,
   TextColorStyle,
   SVGAvatarColorStyle,
-  WorkspaceColorStyle,
 } from './types';
 
 const avatarBorderSizes: Partial<Record<AvatarSizeName, number>> = {
@@ -244,9 +240,9 @@ function getAvatarBorderWidth(size: AvatarSizeName): ViewStyle {
  * Return the border radius for an avatar
  */
 function getAvatarBorderRadius(size: AvatarSizeName, type?: string): ViewStyle {
-  // if (type === CONST.ICON_TYPE_WORKSPACE) {
-  //   return {borderRadius: avatarBorderSizes[size]};
-  // }
+  if (type === CONST.ICON_TYPE_AVATAR) {
+    return {borderRadius: avatarBorderSizes[size]};
+  }
 
   // Default to rounded border
   return {borderRadius: variables.buttonBorderRadius};
@@ -1284,6 +1280,7 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
   getSessionsCalendarHeaderStyle: (): CalendarHeaderProps => {
     return {
       textDayHeaderFontWeight: 'bold',
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       'stylesheet.calendar.header': {
         header: {
           height: variables.calendarHeaderHeight,
