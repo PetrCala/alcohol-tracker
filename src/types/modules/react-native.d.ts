@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
-// eslint-disable-next-line no-restricted-imports
+/* eslint-disable no-restricted-imports */
 import type {
   CSSProperties,
   FocusEventHandler,

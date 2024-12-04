@@ -5,4 +5,4 @@ type DrinkingSessionKeyValue = {
   session: DrinkingSession;
 };
 
-export type {DrinkingSessionKeyValue};
+export default DrinkingSessionKeyValue;
