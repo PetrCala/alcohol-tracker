@@ -82,8 +82,9 @@ function ProfileImage(props: ProfileImageProps) {
         }
 
         setImageUrl(downloadUrl);
-      } catch (error: unknown) {
-        Alert.alert('Error fetching the image', error.message);
+      } catch (error: Error | unknown) {
+        const errorMessage = error instanceof Error ? error.message : '';
+        Alert.alert('Error fetching the image', errorMessage);
       } finally {
         setLoadingImage(false);
       }

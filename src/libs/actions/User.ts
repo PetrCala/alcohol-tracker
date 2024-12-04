@@ -1,4 +1,4 @@
-﻿import type {Database} from 'firebase/database';
+import type {Database} from 'firebase/database';
 import {update, ref, get} from 'firebase/database';
 import _ from 'lodash';
 import type {
@@ -29,17 +29,18 @@ import {cleanStringForFirebaseKey} from '@libs/StringUtilsKiroku';
 import DBPATHS from '@src/DBPATHS';
 import {readDataOnce} from '@database/baseFunctions';
 import {getLastStartedSessionId} from '@libs/DataHandling';
-import * as Session from '@userActions/Session';
 import * as Localize from '@libs/Localize';
-import {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
+import type {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
 import {validateAppVersion} from '@libs/Validation';
 import {checkAccountCreationLimit} from '@database/protection';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
-import Onyx, {OnyxEntry} from 'react-native-onyx';
+import type {OnyxEntry} from 'react-native-onyx';
+import Onyx from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 import CONST from '@src/CONST';
 import {getReasonForLeavingID} from '@libs/ReasonForLeaving';
+import * as Session from './Session';
 
 let verifyEmailSent: OnyxEntry<Timestamp | null> = null;
 Onyx.connect({
@@ -78,7 +79,7 @@ const getDefaultUserData = (profileData: Profile): UserData => {
   return {
     profile: profileData,
     role: userRole,
-    timezone: timezone,
+    timezone,
   };
 };
 
@@ -93,7 +94,7 @@ const getDefaultUserStatus = (): {last_online: number} => {
  *
  * @param db - The database object against which to validate this conditio
  * @param userID - User ID of the user to check.
- * @returns {Promise<boolean>} - Returns true if the user exists, false otherwise.
+ * @returns - Returns true if the user exists, false otherwise.
  */
 async function userExistsInDatabase(
   db: Database,
@@ -111,7 +112,7 @@ async function userExistsInDatabase(
  * @param db The firebase realtime database object
  * @param userID The user ID
  * @param profileData Profile data of the user to create
- * @returns {Promise<void>}
+ * @returns
  */
 async function pushNewUserInfo(
   db: Database,
@@ -152,7 +153,7 @@ async function pushNewUserInfo(
  * @param friends The user's friends
  * @param friendRequests The user's friend requests
  * @param reasonForLeaving The reason for leaving
- * @returns {Promise<void>}
+ * @returns
  */
 async function deleteUserData(
   db: Database,
@@ -232,7 +233,7 @@ async function synchronizeUserStatus(
  *
  * @param user User object from firebase
  * @param password Password to reauthentificate with
- * @returns {Promise<void|UserCredential>} Null if the user does not exist, otherwise the result of the authentification.
+ * @returns Null if the user does not exist, otherwise the result of the authentification.
  */
 async function reauthentificateUser(
   user: User,
@@ -304,7 +305,7 @@ async function updatePassword(
  * Send an email verification link to a user.
  *
  * @params user The user to send the email to
- * @returns {Promise<void>} A promise that resolves when the email is sent.
+ * @returns A promise that resolves when the email is sent.
  */
 async function sendVerifyEmailLink(user: User | null): Promise<void> {
   if (!user) {
@@ -403,8 +404,8 @@ async function changeUserName(
 
 /**
  * Fetch the Firebase nickname of a user given their UID.
- * @param {Database} db The Realtime Database instance.
- * @param {string} uid The user's UID.
+ * @param db The Realtime Database instance.
+ * @param uid The user's UID.
  * @returns{Promise<string|null>} The nickname or null if not found.
  *
  * @example const userNickname = await fetchNicknameByUID(db, "userUIDHere");
@@ -528,8 +529,8 @@ async function logIn(
 ): Promise<void> {
   // Stash the credentials in case the log in fails
   Onyx.merge(ONYXKEYS.FORMS.LOG_IN_FORM_DRAFT, {
-    email: email,
-    password: password,
+    email,
+    password,
   });
   await signInWithEmailAndPassword(auth, email, password);
 }
@@ -552,9 +553,9 @@ async function signUp(
 ): Promise<void> {
   // Stash the sign up credentials in case the request fails
   Onyx.merge(ONYXKEYS.FORMS.SIGN_UP_FORM_DRAFT, {
-    email: email,
-    username: username,
-    password: password,
+    email,
+    username,
+    password,
     reEnterPassword: password,
   });
 

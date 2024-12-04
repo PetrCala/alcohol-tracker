@@ -1,12 +1,12 @@
+import type {IsEqual} from 'type-fest';
 import type {
   DeviceId,
   FeedbackId,
   BugId,
   ReasonForLeavingId,
-} from '@src/types/onyx';
-import type {UserID} from '@src/types/onyx/OnyxCommon';
-import type {NicknameKey} from '@src/types/onyx/NicknameToId';
-import type {IsEqual} from 'type-fest';
+} from './types/onyx';
+import type {UserID} from './types/onyx/OnyxCommon';
+import type {NicknameKey} from './types/onyx/NicknameToId';
 
 const DBPATHS = {
   ROOT: '',

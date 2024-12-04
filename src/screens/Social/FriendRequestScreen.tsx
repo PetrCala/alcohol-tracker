@@ -63,10 +63,11 @@ const handleAcceptFriendRequest = async (
     setIsLoading(true);
     await acceptFriendRequest(db, userID, requestId);
     setIsLoading(false);
-  } catch (error: unknown) {
+  } catch (error: Error | unknown) {
+    const errorMessage = error instanceof Error ? error.message : '';
     Alert.alert(
       'User does not exist in the database',
-      `Could not accept the friend request: ${error.message}`,
+      `Could not accept the friend request: ${errorMessage}`,
     );
   }
 };
@@ -81,10 +82,11 @@ const handleRejectFriendRequest = async (
     setIsLoading(true);
     await deleteFriendRequest(db, userID, requestId);
     setIsLoading(false);
-  } catch (error: unknown) {
+  } catch (error: Error | unknown) {
+    const errorMessage = error instanceof Error ? error.message : '';
     Alert.alert(
       'User does not exist in the database',
-      `Could not accept the friend request: ${error.message}`,
+      `Could not accept the friend request: ${errorMessage}`,
     );
   }
 };
