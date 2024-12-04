@@ -18,7 +18,7 @@ import UserOffline from '@components/UserOfflineModal';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import type {DrinkingSession, DrinkingSessionList} from '@src/types/onyx';
 import {useFirebase} from '@src/context/global/FirebaseContext';
-import type {DrinkingSessionKeyValue} from '@src/types/utils/databaseUtils';
+import type DrinkingSessionKeyValue from '@src/types/utils/databaseUtils';
 import type {StackScreenProps} from '@react-navigation/stack';
 import type {DayOverviewNavigatorParamList} from '@libs/Navigation/types';
 import type SCREENS from '@src/SCREENS';
