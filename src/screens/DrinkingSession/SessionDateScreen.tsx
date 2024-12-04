@@ -18,7 +18,7 @@ import {StackScreenProps} from '@react-navigation/stack';
 import {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
 import {useFirebase} from '@context/global/FirebaseContext';
-import * as DS from '@libs/actions/DrinkingSession';
+import * as DS from '@userActions/DrinkingSession';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
 
 type SessionDateScreenProps = StackScreenProps<

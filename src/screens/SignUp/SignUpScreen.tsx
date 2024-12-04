@@ -20,7 +20,7 @@ import * as Session from '@userActions/Session';
 import * as ValidationUtils from '@libs/ValidationUtils';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import * as Browser from '@libs/Browser';
-import * as User from '@libs/actions/User';
+import * as User from '@userActions/User';
 import DotIndicatorMessage from '@components/DotIndicatorMessage';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import {TranslationPaths} from '@src/languages/types';

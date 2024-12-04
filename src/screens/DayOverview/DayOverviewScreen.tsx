@@ -26,7 +26,7 @@ import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import * as ErrorUtils from '@libs/ErrorUtils';
-import * as DS from '@libs/actions/DrinkingSession';
+import * as DS from '@userActions/DrinkingSession';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
 import CONST from '@src/CONST';
 import ScreenWrapper from '@components/ScreenWrapper';

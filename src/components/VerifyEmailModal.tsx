@@ -2,7 +2,7 @@ import Button from '@components/Button';
 import Text from '@components/Text';
 import useThemeStyles from '@hooks/useThemeStyles';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
-import * as User from '@libs/actions/User';
+import * as User from '@userActions/User';
 import {useEffect, useState} from 'react';
 import {View} from 'react-native';
 import useLocalize from '@hooks/useLocalize';

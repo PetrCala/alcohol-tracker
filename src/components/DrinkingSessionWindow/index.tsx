@@ -7,7 +7,7 @@ import {
   View,
 } from 'react-native';
 import {useFirebase} from '@context/global/FirebaseContext';
-import * as DS from '@libs/actions/DrinkingSession';
+import * as DS from '@userActions/DrinkingSession';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
 import {
   getUniqueDrinkTypesInSession,

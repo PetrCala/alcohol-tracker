@@ -1,4 +1,4 @@
-import * as DS from '@libs/actions/DrinkingSession';
+import * as DS from '@userActions/DrinkingSession';
 import type {DrinkingSession} from '@src/types/onyx';
 import {createMockSession} from '@src/database/MockDatabase';
 import {differenceInDays} from 'date-fns';

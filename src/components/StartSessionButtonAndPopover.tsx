@@ -16,7 +16,7 @@ import Onyx, {useOnyx} from 'react-native-onyx';
 import ConfirmModal from '@components/ConfirmModal';
 import FloatingActionButton from '@components/FloatingActionButton';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
-import * as DS from '@libs/actions/DrinkingSession';
+import * as DS from '@userActions/DrinkingSession';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import * as Utils from '@libs/Utils';
 import type {PopoverMenuItem} from '@components/PopoverMenu';

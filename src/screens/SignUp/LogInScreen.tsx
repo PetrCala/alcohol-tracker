@@ -19,7 +19,7 @@ import CONST from '@src/CONST';
 import * as ValidationUtils from '@libs/ValidationUtils';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import * as Browser from '@libs/Browser';
-import * as User from '@libs/actions/User';
+import * as User from '@userActions/User';
 import Text from '@components/Text';
 import {PressableWithFeedback} from '@components/Pressable';
 import Navigation from '@libs/Navigation/Navigation';
