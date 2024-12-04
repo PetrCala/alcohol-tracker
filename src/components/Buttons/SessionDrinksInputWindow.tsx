@@ -186,6 +186,7 @@ function SessionDrinksInputWindow({
 
 export default SessionDrinksInputWindow;
 
+// eslint-disable-next-line @typescript-eslint/no-use-before-define
 const localStyles = StyleSheet.create({
   drinksInputContainer: {
     justifyContent: 'center',

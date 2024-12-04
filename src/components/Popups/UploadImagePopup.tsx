@@ -109,6 +109,7 @@ const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 const imageSize = screenWidth > screenHeight ? screenHeight : screenWidth;
 
+// eslint-disable-next-line @typescript-eslint/no-use-before-define
 const localStyles = StyleSheet.create({
   modalContainer: {
     flex: 1,

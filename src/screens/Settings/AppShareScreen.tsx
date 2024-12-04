@@ -103,6 +103,7 @@ function AppShareScreen({route}: AppShareScreenProps) {
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-use-before-define
 const localStyles = StyleSheet.create({
   centeringContainer: {
     width: '100%',

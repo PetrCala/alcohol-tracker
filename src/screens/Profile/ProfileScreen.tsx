@@ -247,6 +247,7 @@ function ProfileScreen({route}: ProfileScreenProps) {
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-use-before-define
 const localStyles = StyleSheet.create({
   sectionText: {
     fontSize: 20,

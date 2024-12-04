@@ -332,6 +332,7 @@ function FriendRequestScreen() {
 
 export default FriendRequestScreen;
 
+// eslint-disable-next-line @typescript-eslint/no-use-before-define
 const localStyles = StyleSheet.create({
   mainContainer: {
     flex: 1,

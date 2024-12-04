@@ -52,6 +52,7 @@ const NoFriendUserOverview: React.FC<NoFriendUserOverviewProps> = ({
 
 export default NoFriendUserOverview;
 
+// eslint-disable-next-line @typescript-eslint/no-use-before-define
 const localStyles = StyleSheet.create({
   noFriendUserOverviewContainer: {
     width: '100%',

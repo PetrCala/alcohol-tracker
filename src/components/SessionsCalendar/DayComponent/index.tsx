@@ -111,6 +111,7 @@ function DayComponent({
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-use-before-define
 const localStyles = StyleSheet.create({
   // Day component styles
   dayContainer: {

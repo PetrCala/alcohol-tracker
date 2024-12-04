@@ -318,6 +318,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
 
 const screenWidth = Dimensions.get('window').width;
 
+// eslint-disable-next-line @typescript-eslint/no-use-before-define
 const localStyles = StyleSheet.create({
   menuIconContainer: {
     width: 40,
