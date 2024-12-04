@@ -75,7 +75,7 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
         searchMapping,
       );
       setDisplayedFriends(relevantResults); // Hide irrelevant
-    } catch (error: any) {
+    } catch (error: unknown) {
       ErrorUtils.raiseAlert(error, translate('onyx.error.generic'));
     }
   };

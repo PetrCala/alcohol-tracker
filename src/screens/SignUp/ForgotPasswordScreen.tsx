@@ -44,7 +44,7 @@ function ForgotPasswordScreen({}: ForgotPasswordScreenProps) {
       const emailToSend = values.email.trim();
       await sendPasswordResetEmail(auth, emailToSend);
       setSuccessMessage(translate('forgotPasswordScreen.success', emailToSend));
-    } catch (error: any) {
+    } catch (error: unknown) {
       const errorMessage = ErrorUtils.getErrorMessage(error);
       setServerErrorMessage(errorMessage);
     } finally {

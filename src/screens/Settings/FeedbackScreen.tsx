@@ -43,7 +43,7 @@ function FeedbackScreen({}: FeedbackScreenProps) {
       setIsLoading(true);
       await submitFeedback(db, userID, values);
       Navigation.goBack();
-    } catch (error: any) {
+    } catch (error: unknown) {
       Alert.alert('Failed to submit feedback', error.message);
     } finally {
       setIsLoading(false);

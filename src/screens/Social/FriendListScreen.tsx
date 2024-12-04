@@ -37,7 +37,7 @@ function FriendListScreen({}: FriendListScreenProps) {
         searchMapping,
       );
       setFriendsToDisplay(relevantResults); // Hide irrelevant
-    } catch (error: any) {
+    } catch (error: unknown) {
       Alert.alert(
         'Database serach failed',
         `Could not search the database: ${error.message}`,

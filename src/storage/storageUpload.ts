@@ -47,7 +47,7 @@ async function uploadImageToFirebase(
               break;
           }
         },
-        (error: any) => {
+        (error: unknown) => {
           ErrorUtils.raiseAlert(error, 'Error uploading image');
         },
         () => {

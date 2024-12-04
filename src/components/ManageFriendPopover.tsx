@@ -61,7 +61,7 @@ const ManageFriendPopover: React.FC<ManageFriendPopoverProps> = ({
     }
     try {
       await unfriend(db, user.uid, friendId);
-    } catch (error: any) {
+    } catch (error: unknown) {
       Alert.alert(
         'User does not exist in the database',
         `Could not unfriend this user: ${error.message}`,

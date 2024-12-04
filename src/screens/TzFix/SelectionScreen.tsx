@@ -62,7 +62,7 @@ function SelectionScreen({}: SelectionScreenProps) {
         false,
         text as SelectedTimezone,
       );
-    } catch (error: any) {
+    } catch (error: unknown) {
       ErrorUtils.raiseAlert(error, translate('timezoneScreen.error.generic'));
     } finally {
       Navigation.navigate(ROUTES.TZ_FIX_CONFIRMATION);

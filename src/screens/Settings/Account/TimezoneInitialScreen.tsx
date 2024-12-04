@@ -51,7 +51,7 @@ function TimezoneInitialScreen({}: TimezoneInitialScreenProps) {
           ? currentTimezone
           : timezone.selected!,
       );
-    } catch (error: any) {
+    } catch (error: unknown) {
       ErrorUtils.raiseAlert(error, translate('timezoneScreen.error.generic'));
     }
   };

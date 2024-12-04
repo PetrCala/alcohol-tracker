@@ -48,7 +48,7 @@ function AdminFeedbackPopup(props: AdminFeedbackPopupProps) {
   async function handleDeleteFeedback(db: any, feedbackId: string) {
     try {
       await removeFeedback(db, feedbackId);
-    } catch (error: any) {
+    } catch (error: unknown) {
       Alert.alert(
         'Failed to remove feedback',
         `Feedback could not be removed:${error.message}`,
@@ -66,7 +66,7 @@ function AdminFeedbackPopup(props: AdminFeedbackPopupProps) {
           if (data) {
             newNicknames[item.user_id] = data; // Set if not null
           }
-        } catch (error: any) {
+        } catch (error: unknown) {
           Alert.alert(
             'User nickname fetch failed',
             `Could not fetch the nickname of user with UID: ${item.user_id}${error.message}`,
