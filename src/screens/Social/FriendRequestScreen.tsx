@@ -1,4 +1,5 @@
-﻿import {
+﻿// TODO translate
+import {
   ActivityIndicator,
   Alert,
   StyleSheet,
