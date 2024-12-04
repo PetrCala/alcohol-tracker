@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 import {readDataOnce} from '@database/baseFunctions'; // Ensure this import is added
 import {useFirebase} from '@context/global/FirebaseContext';
-import type {RefetchDatabaseData} from '@src/types/utils/RefetchDatabaseData';
+import type RefetchDatabaseData from '@src/types/utils/RefetchDatabaseData';
 import type {FetchData, FetchDataKey, FetchDataKeys} from './types';
 import {fetchDataKeyToDbPath} from './utils';
 
