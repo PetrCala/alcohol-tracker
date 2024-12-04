@@ -14,7 +14,7 @@ import * as ErrorUtils from '@libs/ErrorUtils';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
 import ROUTES from '@src/ROUTES';
 import type SCREENS from '@src/SCREENS';
-import {useState} from 'react';
+import {useCallback, useState} from 'react';
 import {View} from 'react-native';
 import {useFirebase} from '@context/global/FirebaseContext';
 import type {SelectedTimezone} from '@src/types/onyx/UserData';
@@ -24,6 +24,7 @@ type ConfirmationScreenProps = StackScreenProps<
   typeof SCREENS.TZ_FIX.CONFIRMATION
 >;
 
+// eslint-disable-next-line no-empty-pattern
 function ConfirmationScreen({}: ConfirmationScreenProps) {
   const styles = useThemeStyles();
   const {translate} = useLocalize();
@@ -42,7 +43,7 @@ function ConfirmationScreen({}: ConfirmationScreenProps) {
   const selectedTimezone =
     userData?.timezone?.selected ?? currentTimezone.timeZone;
 
-  const onCorrect = async () => {
+  const onCorrect = useCallback(async (): Promise<void> => {
     try {
       setIsSynchronizing(true);
       await DSUtils.fixTimezoneSessions(
@@ -52,19 +53,23 @@ function ConfirmationScreen({}: ConfirmationScreenProps) {
         selectedTimezone as SelectedTimezone,
       );
       Navigation.navigate(ROUTES.TZ_FIX_SUCCESS);
-    } catch (error) {
+    } finally {
+      setIsSynchronizing(false);
+    }
+  }, [db, auth.currentUser, drinkingSessionData, selectedTimezone]);
+
+  const handleOnCorrect = useCallback((): void => {
+    onCorrect().catch((error: unknown) => {
       ErrorUtils.raiseAlert(
         error,
         translate('tzFix.confirmation.error.generic'),
       );
-    } finally {
-      setIsSynchronizing(false);
-    }
-  };
+    });
+  }, [onCorrect, translate]);
 
-  const onIncorrect = () => {
-    setShouldShowCancelConfirmModal(true);
-  };
+  // const onIncorrect = () => {
+  //   setShouldShowCancelConfirmModal(true);
+  // };
 
   if (isSynchronizing) {
     return (
@@ -96,7 +101,7 @@ function ConfirmationScreen({}: ConfirmationScreenProps) {
           <Button
             success
             style={[styles.mt4]}
-            onPress={onCorrect}
+            onPress={handleOnCorrect}
             pressOnEnter
             large
             text={translate('tzFix.confirmation.syncNow')}
