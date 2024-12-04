@@ -18,7 +18,7 @@ import {useFirebase} from '@context/global/FirebaseContext';
 import {acceptFriendRequest, deleteFriendRequest} from '@database/friends';
 import type {Database} from 'firebase/database';
 import NoFriendUserOverview from '@components/Social/NoFriendUserOverview';
-import {fetchUserProfiles} from '@database/profile';
+import * as Profile from '@userActions/Profile';
 import headerStyles from '@src/styles/headerStyles';
 import GrayHeader from '@components/Header/GrayHeader';
 import {objKeys} from '@libs/DataHandling';
@@ -225,7 +225,7 @@ function FriendRequestScreen() {
     db: Database,
     friendRequests: FriendRequestList | undefined,
   ): Promise<void> => {
-    const newDisplayData: ProfileList = await fetchUserProfiles(
+    const newDisplayData: ProfileList = await Profile.fetchUserProfiles(
       db,
       objKeys(friendRequests),
     );
