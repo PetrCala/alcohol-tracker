@@ -1,12 +1,5 @@
 ﻿import React, {useState} from 'react';
-import {
-  Dimensions,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {Dimensions, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {TabView} from 'react-native-tab-view';
 import FriendListScreen from './FriendListScreen';
 import FriendRequestScreen from './FriendRequestScreen';
@@ -22,6 +15,7 @@ import ScreenWrapper from '@components/ScreenWrapper';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import useLocalize from '@hooks/useLocalize';
 import useTheme from '@hooks/useTheme';
+import Text from '@components/Text';
 import Icon from '@components/Icon';
 import useThemeStyles from '@hooks/useThemeStyles';
 
@@ -175,38 +169,6 @@ function SocialScreen({route}: SocialScreenProps) {
 const screenWidth = Dimensions.get('window').width;
 
 const localStyles = StyleSheet.create({
-  sectionText: {
-    fontSize: 20,
-    color: 'black',
-    fontWeight: 'bold',
-    margin: 10,
-    textAlign: 'center',
-  },
-  scrollViewContainer: {
-    flex: 1,
-    // justifyContent: 'center',
-  },
-  friendList: {
-    width: '100%',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    padding: 3,
-  },
-  friendOverviewContainer: {
-    width: '80%',
-    flexDirection: 'row',
-    backgroundColor: 'white',
-    borderWidth: 1,
-    borderColor: 'black',
-    borderRadius: 5,
-    margin: 2,
-    padding: 2,
-  },
-  friendText: {
-    color: 'black',
-    fontSize: 13,
-    fontWeight: '400',
-  },
   footerButton: {
     width: screenWidth / 2,
     height: '100%',
@@ -240,16 +202,6 @@ const localStyles = StyleSheet.create({
     marginBottom: 5,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  friendRequestCounterValue: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    color: 'white',
-  },
-  footerImage: {
-    width: 25,
-    height: 25,
-    tintColor: 'gray',
   },
 });
 

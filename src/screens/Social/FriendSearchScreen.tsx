@@ -1,4 +1,5 @@
 ﻿import {Alert, StyleSheet, View} from 'react-native';
+import React, {useMemo, useRef, useState} from 'react';
 import type {
   FriendRequestList,
   FriendRequestStatus,
@@ -6,7 +7,6 @@ import type {
 } from '@src/types/onyx';
 import Text from '@components/Text';
 import type {UserList} from '@src/types/onyx/OnyxCommon';
-import React, {useMemo, useRef, useState} from 'react';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import {isNonEmptyArray} from '@libs/Validation';
 import type {Database} from 'firebase/database';
@@ -178,61 +178,9 @@ const localStyles = StyleSheet.create({
   loadingData: {
     marginTop: 20,
   },
-  textContainer: {
-    width: '95%',
-    height: 50,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderWidth: 1,
-    borderColor: '#000',
-    borderRadius: 10,
-    marginTop: 10,
-    marginBottom: 5,
-    alignSelf: 'center',
-  },
-  searchText: {
-    height: '100%',
-    width: '90%',
-    padding: 10,
-    marginTop: 5,
-    marginBottom: 5,
-  },
-  searchTextResetContainer: {
-    width: '10%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  searchTextResetImage: {
-    width: 15,
-    height: 15,
-    tintColor: 'gray',
-  },
   searchResultsContainer: {
     width: '100%',
     flexDirection: 'column',
-  },
-  searchButton: {
-    width: '100%',
-    backgroundColor: '#fcf50f',
-    padding: 10,
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: 'black',
-    alignItems: 'center',
-  },
-  searchButtonText: {
-    color: 'black',
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  noUsersFoundText: {
-    color: 'black',
-    fontSize: 16,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginTop: 15,
   },
 });
 
