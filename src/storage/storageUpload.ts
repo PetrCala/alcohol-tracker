@@ -2,7 +2,6 @@
 import * as ErrorUtils from '@libs/ErrorUtils';
 import type {FirebaseStorage} from 'firebase/storage';
 import {ref, uploadBytesResumable} from 'firebase/storage';
-import {Alert} from 'react-native';
 
 /**
  * Uploads an image to Firebase storage.
@@ -17,7 +16,8 @@ export async function uploadImageToFirebase(
   storage: FirebaseStorage,
   uri: string,
   pathToUpload: string,
-  dispatch: React.Dispatch<any>,
+  setUploadProgress: React.Dispatch<string | null>,
+  setSuccess: React.Dispatch<string>,
 ): Promise<void> {
   return new Promise(async (resolve, reject) => {
     // Wrap the logic in a new Promise
@@ -37,7 +37,7 @@ export async function uploadImageToFirebase(
           const progressFraction =
             snapshot.bytesTransferred / snapshot.totalBytes;
           const progressVerbose = toPercentageVerbose(progressFraction);
-          dispatch({type: 'SET_UPLOAD_PROGRESS', payload: progressVerbose});
+          setUploadProgress(progressVerbose);
           switch (snapshot.state) {
             case 'paused':
               // console.log('Upload is paused');
@@ -51,11 +51,8 @@ export async function uploadImageToFirebase(
           ErrorUtils.raiseAlert(error, 'Error uploading image');
         },
         () => {
-          dispatch({type: 'SET_UPLOAD_PROGRESS', payload: 0});
-          dispatch({
-            type: 'SET_SUCESS',
-            payload: 'Image uploaded successfully',
-          });
+          setUploadProgress('0');
+          setSuccess('Image uploaded successfully');
           resolve();
         },
       );

@@ -1,75 +1,38 @@
-﻿import React, {useEffect, useReducer} from 'react';
+﻿import React, {useEffect, useReducer, useState} from 'react';
 import type {ImageSourcePropType} from 'react-native';
 import {Image, View, Alert, TouchableOpacity, StyleSheet} from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import {Image as CompressorImage} from 'react-native-compressor';
 import {uploadImageToFirebase} from '../storage/storageUpload';
 import UploadImagePopup from './Popups/UploadImagePopup';
-import type ReducerAction from '@src/types/various/ReducerAction';
 import checkPermission from '@libs/Permissions/checkPermission';
 import {requestPermission} from '@libs/Permissions/requestPermission';
 import {updateProfileInfo} from '@database/profile';
-
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import useLocalize from '@hooks/useLocalize';
 
-type UploadImageState = {
-  imageSource: string | null;
-  uploadModalVisible: boolean;
-  uploadOngoing: boolean;
-  uploadProgress: string | null;
-  warning: string;
-  success: string;
-};
-
-const initialState: UploadImageState = {
-  imageSource: null,
-  uploadModalVisible: false,
-  uploadProgress: null,
-  uploadOngoing: false,
-  warning: '',
-  success: '',
-};
-
-const reducer = (
-  state: UploadImageState,
-  action: ReducerAction,
-): UploadImageState => {
-  switch (action.type) {
-    case 'SET_IMAGE_SOURCE':
-      return {...state, imageSource: action.payload};
-    case 'SET_UPLOAD_MODAL_VISIBLE':
-      return {...state, uploadModalVisible: action.payload};
-    case 'SET_UPLOAD_ONGOING':
-      return {...state, uploadOngoing: action.payload};
-    case 'SET_UPLOAD_PROGRESS':
-      return {...state, uploadProgress: action.payload};
-    case 'SET_WARNING':
-      return {...state, warning: action.payload};
-    case 'SET_SUCCESS':
-      return {...state, success: action.payload};
-    default:
-      return state;
-  }
-};
-
 type UploadImageComponentProps = {
   pathToUpload: string;
-  imageSource: ImageSourcePropType;
+  src: ImageSourcePropType;
   imageStyle: any;
   isProfilePicture: boolean;
 };
 
 const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
   pathToUpload,
-  imageSource,
+  src,
   imageStyle,
   isProfilePicture = false,
 }) => {
   const {auth, db, storage} = useFirebase();
   const {translate} = useLocalize();
   const user = auth.currentUser;
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [imageSource, setImageSource] = useState<string | null>(null);
+  const [uploadModalVisible, setUploadModalVisible] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<string | null>(null);
+  const [uploadOngoing, setUploadOngoing] = useState(false);
+  const [warning, setWarning] = useState('');
+  const [success, setSuccess] = useState('');
 
   const chooseImage = async () => {
     ImagePicker.openPicker({
@@ -96,7 +59,7 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
           // });
           return;
         }
-        dispatch({type: 'SET_IMAGE_SOURCE', payload: source.uri}); // Triggers upload
+        setImageSource(source.uri); // Triggers upload
       })
       .catch((error: any) => {
         // TODO add clever error handling
@@ -126,10 +89,10 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
   };
 
   const resetIndicators = () => {
-    dispatch({type: 'SET_UPLOAD_ONGOING', payload: false});
-    dispatch({type: 'SET_UPLOAD_PROGRESS', payload: null});
-    dispatch({type: 'SET_WARNING', payload: ''});
-    dispatch({type: 'SET_SUCCESS', payload: ''});
+    setUploadOngoing(false);
+    setUploadProgress(null);
+    setWarning('');
+    setSuccess('');
   };
 
   useEffect(() => {
@@ -139,30 +102,31 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
       }
 
       try {
-        dispatch({type: 'SET_UPLOAD_MODAL_VISIBLE', payload: true});
-        dispatch({type: 'SET_UPLOAD_ONGOING', payload: true});
+        setUploadModalVisible(true);
+        setUploadOngoing(true);
         const compressedURI = await CompressorImage.compress(sourceURI);
         await uploadImageToFirebase(
           storage,
           compressedURI,
           pathToUpload,
-          dispatch,
+          setUploadProgress,
+          setSuccess,
         ); // Wait for the promise to resolve
         if (isProfilePicture) {
           await updateProfileInfo(pathToUpload, user, auth, db, storage);
         }
         Alert.alert(translate('imageUpload.success'));
       } catch (error: any) {
-        dispatch({type: 'SET_IMAGE_SOURCE', payload: null});
+        setImageSource(null);
         Alert.alert(translate('imageUpload.error.upload'), error.message);
       } finally {
-        dispatch({type: 'SET_UPLOAD_ONGOING', payload: false}); // Otherwise dispatch upon success in child component
-        dispatch({type: 'SET_UPLOAD_MODAL_VISIBLE', payload: false});
+        setUploadOngoing(false); // Otherwise set upon success in child component
+        setUploadModalVisible(false);
       }
     };
 
-    handleUpload(state.imageSource);
-  }, [state.imageSource]);
+    handleUpload(imageSource);
+  }, [imageSource]);
 
   return (
     <View style={styles.container}>
@@ -170,22 +134,21 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
         accessibilityRole="button"
         onPress={handleChooseImagePress}
         style={styles.button}>
-        <Image source={imageSource} style={imageStyle} />
+        <Image source={src} style={imageStyle} />
       </TouchableOpacity>
 
-      {state.imageSource && (
+      {imageSource && (
         <UploadImagePopup
-          visible={state.uploadModalVisible}
+          visible={uploadModalVisible}
           transparent={true}
-          onRequestClose={() =>
-            dispatch({type: 'SET_UPLOAD_MODAL_VISIBLE', payload: false})
-          }
-          parentState={state}
-          parentDispatch={dispatch}
+          onRequestClose={() => setUploadModalVisible(false)}
+          uploadProgress={uploadProgress}
+          uploadOngoing={uploadOngoing}
+          onUploadFinish={() => setUploadOngoing(false)}
         />
       )}
-      {/* <WarningMessage warningText={state.warning} dispatch={dispatch} />
-      <SuccessMessage successText={state.success} dispatch={dispatch} /> */}
+      {/* <WarningMessage warningText={warning} dispatch={dispatch} />
+      <SuccessMessage successText={success} dispatch={dispatch} /> */}
     </View>
   );
 };
@@ -209,4 +172,3 @@ const styles = StyleSheet.create({
 });
 
 export default UploadImageComponent;
-export type {UploadImageState};

@@ -79,7 +79,7 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
         <View style={[localStyles.editProfileIconButton, styles.appBG]}>
           <UploadImageComponent
             pathToUpload={`users/${userID}/profile/profile_image.jpg`}
-            imageSource={KirokuIcons.Camera}
+            src={KirokuIcons.Camera}
             imageStyle={[
               localStyles.editProfileIconButtonImage,
               {tintColor: StyleUtils.getIconFillColor()},

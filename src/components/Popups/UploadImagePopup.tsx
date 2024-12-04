@@ -1,8 +1,5 @@
-import type {UploadImageState} from '@components/UploadImage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CONST from '@src/CONST';
-
-import type ReducerAction from '@src/types/various/ReducerAction';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {useEffect, useState} from 'react';
 import {
@@ -21,13 +18,19 @@ type UploadImagePopupProps = {
   visible: boolean;
   transparent: boolean;
   onRequestClose: () => void;
-  parentState: UploadImageState;
-  parentDispatch: React.Dispatch<ReducerAction>;
+  uploadProgress: string | null;
+  uploadOngoing: boolean;
+  onUploadFinish: () => void;
 };
 
-const UploadImagePopup = (props: UploadImagePopupProps) => {
-  const {visible, transparent, onRequestClose, parentState, parentDispatch} =
-    props;
+const UploadImagePopup = ({
+  visible,
+  transparent,
+  onRequestClose,
+  uploadProgress,
+  uploadOngoing,
+  onUploadFinish,
+}: UploadImagePopupProps) => {
   const {auth} = useFirebase();
   const styles = useThemeStyles();
   const user = auth.currentUser;
@@ -37,7 +40,7 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
     return (
       <>
         <Text style={localStyles.modalText}>Uploading image...</Text>
-        <Text style={localStyles.uploadText}>{parentState.uploadProgress}</Text>
+        <Text style={localStyles.uploadText}>{uploadProgress}</Text>
       </>
     );
   };
@@ -71,21 +74,17 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
 
   useEffect(() => {
     const updateInfoUponUpload = async () => {
-      if (
-        parentState.uploadProgress &&
-        parentState.uploadProgress.includes('100') &&
-        user
-      ) {
+      if (uploadProgress && uploadProgress.includes('100') && user) {
         await AsyncStorage.removeItem(
           CONST.CACHE.PROFILE_PICTURE_KEY + user.uid,
         );
         setUploadFinished(true);
-        parentDispatch({type: 'SET_UPLOAD_ONGOING', payload: false});
+        onUploadFinish();
       }
     };
 
     updateInfoUponUpload();
-  }, [parentState.uploadProgress]);
+  }, [uploadProgress]);
 
   return (
     <Modal
@@ -97,7 +96,7 @@ const UploadImagePopup = (props: UploadImagePopupProps) => {
         <View style={[localStyles.modalView, styles.appBG]}>
           {uploadFinished ? (
             <UploadFinishedWindow />
-          ) : parentState.uploadOngoing ? (
+          ) : uploadOngoing ? (
             <UploadWindow />
           ) : null}
         </View>
