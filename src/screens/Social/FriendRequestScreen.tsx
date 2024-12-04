@@ -1,8 +1,6 @@
 ﻿import {
   ActivityIndicator,
   Alert,
-  Image,
-  Keyboard,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -13,8 +11,7 @@ import type {
   FriendRequestStatus,
   ProfileList,
 } from '@src/types/onyx';
-import type {UserList} from '@src/types/onyx/OnyxCommon';
-import {useEffect, useMemo, useReducer, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {acceptFriendRequest, deleteFriendRequest} from '@database/friends';
@@ -30,7 +27,6 @@ import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import NoFriendInfo from '@components/Social/NoFriendInfo';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
-import FillerView from '@components/FillerView';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
 import Icon from '@components/Icon';
 import useTheme from '@hooks/useTheme';
@@ -54,11 +50,6 @@ type FriendRequestItemProps = {
   requestId: string;
   friendRequests: FriendRequestList | undefined;
   displayData: ProfileList;
-};
-
-type ScreenProps = {
-  friendRequests: FriendRequestList | undefined;
-  friends: UserList | undefined;
 };
 
 const handleAcceptFriendRequest = async (
@@ -208,65 +199,24 @@ const FriendRequestItem: React.FC<FriendRequestItemProps> = ({
   );
 };
 
-type State = {
-  isLoading: boolean;
-  friendRequests: FriendRequestList | undefined;
-  displayData: ProfileList;
-  requestsSent: string[];
-  requestsReceived: string[];
-  requestsSentCount: number;
-  requestsReceivedCount: number;
-};
-
-type Action = {
-  type: string;
-  payload: any;
-};
-
-const initialState: State = {
-  isLoading: true,
-  friendRequests: undefined,
-  displayData: {},
-  requestsSent: [],
-  requestsReceived: [],
-  requestsSentCount: 0,
-  requestsReceivedCount: 0,
-};
-
-const reducer = (state: State, action: Action): State => {
-  switch (action.type) {
-    case 'SET_IS_LOADING':
-      return {...state, isLoading: action.payload};
-    case 'SET_FRIEND_REQUESTS':
-      return {...state, friendRequests: action.payload};
-    case 'SET_DISPLAY_DATA':
-      return {...state, displayData: action.payload};
-    case 'SET_REQUESTS_SENT':
-      return {...state, requestsSent: action.payload};
-    case 'SET_REQUESTS_RECEIVED':
-      return {...state, requestsReceived: action.payload};
-    case 'SET_REQUESTS_SENT_COUNT':
-      return {...state, requestsSentCount: action.payload};
-    case 'SET_REQUESTS_RECEIVED_COUNT':
-      return {...state, requestsReceivedCount: action.payload};
-    default:
-      return state;
-  }
-};
-
 function FriendRequestScreen() {
   const {db} = useFirebase();
   const {userData} = useDatabaseData();
   const theme = useTheme();
   const [loadingText] = useOnyx(ONYXKEYS.APP_LOADING_TEXT);
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [friendRequests, setFriendRequests] = useState<
+    FriendRequestList | undefined
+  >();
+  const [displayData, setDisplayData] = useState<ProfileList>({});
+  const [requestsSent, setRequestsSent] = useState<string[]>([]);
+  const [requestsReceived, setRequestsReceived] = useState<string[]>([]);
+  const [requestsSentCount, setRequestsSentCount] = useState<number>(0);
+  const [requestsReceivedCount, setRequestsReceivedCount] = useState<number>(0);
 
   useMemo(() => {
     if (userData) {
-      dispatch({
-        type: 'SET_FRIEND_REQUESTS',
-        payload: userData?.friend_requests,
-      });
+      setFriendRequests(userData?.friend_requests);
     }
   }, [userData]);
 
@@ -278,33 +228,30 @@ function FriendRequestScreen() {
       db,
       objKeys(friendRequests),
     );
-    dispatch({type: 'SET_DISPLAY_DATA', payload: newDisplayData});
+    setDisplayData(newDisplayData);
   };
 
   useEffect(() => {
     const updateLocalHooks = async () => {
-      dispatch({type: 'SET_IS_LOADING', payload: true});
-      await updateDisplayData(db, state.friendRequests);
-      dispatch({type: 'SET_IS_LOADING', payload: false});
+      setIsLoading(true);
+      await updateDisplayData(db, friendRequests);
+      setIsLoading(false);
     };
     updateLocalHooks();
-  }, [state.friendRequests]);
+  }, [friendRequests]);
 
   useMemo(() => {
     const newRequestsSent: string[] = [];
     const newRequestsReceived: string[] = [];
-    if (!isEmptyObject(state.friendRequests)) {
-      Object.keys(state.friendRequests).forEach(requestId => {
-        if (!state.friendRequests) {
+    if (!isEmptyObject(friendRequests)) {
+      Object.keys(friendRequests).forEach(requestId => {
+        if (!friendRequests) {
           return;
         }
-        if (
-          state.friendRequests[requestId] === CONST.FRIEND_REQUEST_STATUS.SENT
-        ) {
+        if (friendRequests[requestId] === CONST.FRIEND_REQUEST_STATUS.SENT) {
           newRequestsSent.push(requestId);
         } else if (
-          state.friendRequests[requestId] ===
-          CONST.FRIEND_REQUEST_STATUS.RECEIVED
+          friendRequests[requestId] === CONST.FRIEND_REQUEST_STATUS.RECEIVED
         ) {
           newRequestsReceived.push(requestId);
         }
@@ -313,51 +260,47 @@ function FriendRequestScreen() {
     const newRequestsSentCount = newRequestsSent.length;
     const newRequestsReceivedCount = newRequestsReceived.length;
 
-    dispatch({type: 'SET_REQUESTS_SENT', payload: newRequestsSent});
-    dispatch({type: 'SET_REQUESTS_RECEIVED', payload: newRequestsReceived});
-    dispatch({type: 'SET_REQUESTS_SENT_COUNT', payload: newRequestsSentCount});
-    dispatch({
-      type: 'SET_REQUESTS_RECEIVED_COUNT',
-      payload: newRequestsReceivedCount,
-    });
-  }, [state.friendRequests]);
+    setRequestsSent(newRequestsSent);
+    setRequestsReceived(newRequestsReceived);
+    setRequestsSentCount(newRequestsSentCount);
+    setRequestsReceivedCount(newRequestsReceivedCount);
+  }, [friendRequests]);
 
   return (
     <View style={localStyles.mainContainer}>
       <ScrollView>
-        {state.isLoading || !!loadingText ? (
+        {isLoading || !!loadingText ? (
           <FlexibleLoadingIndicator style={localStyles.loadingData} />
-        ) : !isEmptyObject(state.friendRequests) ? (
+        ) : !isEmptyObject(friendRequests) ? (
           <View style={localStyles.friendList}>
             <GrayHeader
-              headerText={`Requests Received (${state.requestsReceivedCount})`}
+              headerText={`Requests Received (${requestsReceivedCount})`}
             />
             <View style={localStyles.requestsContainer}>
-              {state.requestsReceived.map(requestId => (
+              {requestsReceived.map(requestId => (
                 <FriendRequestItem
                   key={requestId + '-friend-request-item'}
                   requestId={requestId}
-                  friendRequests={state.friendRequests}
-                  displayData={state.displayData}
+                  friendRequests={friendRequests}
+                  displayData={displayData}
                 />
               ))}
             </View>
             <View style={headerStyles.grayHeaderContainer}>
               <Text style={headerStyles.grayHeaderText}>
-                Requests Sent ({state.requestsSentCount})
+                Requests Sent ({requestsSentCount})
               </Text>
             </View>
             <View style={localStyles.requestsContainer}>
-              {state.requestsSent.map(requestId => (
+              {requestsSent.map(requestId => (
                 <FriendRequestItem
                   key={requestId + '-friend-request-item'}
                   requestId={requestId}
-                  friendRequests={state.friendRequests}
-                  displayData={state.displayData}
+                  friendRequests={friendRequests}
+                  displayData={displayData}
                 />
               ))}
             </View>
-            <FillerView />
           </View>
         ) : (
           <NoFriendInfo
