@@ -345,6 +345,8 @@ const CONST = {
     },
   },
 
+  DESKTOP_HEADER_PADDING: 12,
+
   ICON_TYPE_ICON: 'icon',
   ICON_TYPE_AVATAR: 'avatar',
   INVALID_CHARS: ['.', '#', '$', '[', ']'],
