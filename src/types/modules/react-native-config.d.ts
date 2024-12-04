@@ -1,7 +1,7 @@
 import type CONST from '@src/CONST';
 import type DeepValueOf from '@src/types/utils/DeepValueOf';
 
-export type NativeConfig = {
+type NativeConfig = {
   ENVIRONMENT: DeepValueOf<typeof CONST.ENVIRONMENT>;
   API_KEY: string;
   AUTH_DOMAIN: string;
@@ -20,3 +20,4 @@ export type NativeConfig = {
 declare const Config: NativeConfig;
 
 export default Config;
+export type {NativeConfig};
