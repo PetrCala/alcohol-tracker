@@ -10,7 +10,7 @@ import type {
   ViewStyle,
 } from 'react-native';
 import type {PickerStyle} from 'react-native-picker-select';
-import type {CustomAnimation, View} from 'react-native-animatable';
+import type {CustomAnimation} from 'react-native-animatable';
 import type {
   MixedStyleDeclaration,
   MixedStyleRecord,
@@ -29,7 +29,7 @@ import display from './utils/display';
 import editedLabelStyles from './utils/editedLabelStyles';
 import flex from './utils/flex';
 import FontUtils from './utils/FontUtils';
-// import getPopOverVerticalOffset from './utils/getPopOverVerticalOffset';
+import getPopOverVerticalOffset from './utils/getPopOverVerticalOffset';
 // import objectFit from './utils/objectFit';
 // import optionAlternateTextPlatformStyles from './utils/optionAlternateTextPlatformStyles';
 import overflow from './utils/overflow';
@@ -73,10 +73,10 @@ type OverlayStylesParams = {
   progress: Animated.AnimatedInterpolation<string | number>;
 };
 
-type TwoFactorAuthCodesBoxParams = {
-  isExtraSmallScreenWidth: boolean;
-  isSmallScreenWidth: boolean;
-};
+// type TwoFactorAuthCodesBoxParams = {
+//   isExtraSmallScreenWidth: boolean;
+//   isSmallScreenWidth: boolean;
+// };
 
 type Translation =
   | 'perspective'
@@ -112,8 +112,8 @@ type Styles = Record<
   | ImageStyle
   | WebViewStyle
   | OfflineFeedbackStyle
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   | ((
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ...args: any[]
     ) =>
       | ViewStyle
@@ -132,21 +132,21 @@ const lineHeightBadge: Pick<ViewStyle, 'lineHeight'> = Browser.isSafari()
   ? {lineHeight: variables.lineHeightXSmall}
   : {lineHeight: variables.lineHeightNormal};
 
-const picker = (theme: ThemeColors) =>
-  ({
-    backgroundColor: theme.transparent,
-    color: theme.text,
-    ...FontUtils.fontFamily.platform.EXP_NEUE,
-    fontSize: variables.fontSizeNormal,
-    lineHeight: variables.fontSizeNormalHeight,
-    paddingBottom: 8,
-    paddingTop: 23,
-    paddingLeft: 0,
-    paddingRight: 25,
-    height: variables.inputHeight,
-    borderWidth: 0,
-    textAlign: 'left',
-  }) satisfies TextStyle;
+// const picker = (theme: ThemeColors) =>
+//   ({
+//     backgroundColor: theme.transparent,
+//     color: theme.text,
+//     ...FontUtils.fontFamily.platform.EXP_NEUE,
+//     fontSize: variables.fontSizeNormal,
+//     lineHeight: variables.fontSizeNormalHeight,
+//     paddingBottom: 8,
+//     paddingTop: 23,
+//     paddingLeft: 0,
+//     paddingRight: 25,
+//     height: variables.inputHeight,
+//     borderWidth: 0,
+//     textAlign: 'left',
+//   }) satisfies TextStyle;
 
 const link = (theme: ThemeColors) =>
   ({
@@ -168,12 +168,12 @@ const headlineFont = {
   fontWeight: '500',
 } satisfies TextStyle;
 
-const modalNavigatorContainer = (isSmallScreenWidth: boolean) =>
-  ({
-    position: 'absolute',
-    width: isSmallScreenWidth ? '100%' : variables.sideBarWidth,
-    height: '100%',
-  }) satisfies ViewStyle;
+// const modalNavigatorContainer = (isSmallScreenWidth: boolean) =>
+//   ({
+//     position: 'absolute',
+//     width: isSmallScreenWidth ? '100%' : variables.sideBarWidth,
+//     height: '100%',
+//   }) satisfies ViewStyle;
 
 const webViewStyles = (theme: ThemeColors) =>
   ({
@@ -1358,6 +1358,12 @@ const styles = (theme: ThemeColors) =>
       fontSize: variables.fontSizeNormal,
       color: theme.heading,
     },
+
+    popoverMenuOffset: (windowWidth: number) =>
+      ({
+        ...getPopOverVerticalOffset(180),
+        horizontal: windowWidth - 355,
+      }) satisfies AnchorPosition,
 
     statOverviewContainer: {
       height: variables.statOverviewHeight,
