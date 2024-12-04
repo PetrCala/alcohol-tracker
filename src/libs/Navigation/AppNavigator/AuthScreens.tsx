@@ -20,7 +20,7 @@ import getTzFixModalScreenOptions from '@libs/Navigation/getTzFixModalScreenOpti
 import * as App from '@userActions/App';
 // import * as Download from '@userActions/Download';
 import * as Modal from '@userActions/Modal';
-import * as UserData from '@libs/actions/UserData';
+import * as UserData from '@userActions/UserData';
 // import * as PriorityMode from '@userActions/PriorityMode';
 import * as Session from '@userActions/Session';
 import Timing from '@userActions/Timing';

@@ -16,7 +16,7 @@ import type {
   DrinkingSession,
 } from '@src/types/onyx';
 import type {Database} from 'firebase/database';
-import {saveDrinkingSessionData} from '@libs/actions/DrinkingSession';
+import {saveDrinkingSessionData} from '@userActions/DrinkingSession';
 
 import {MOCK_USER_IDS} from '../../utils/testsStatic';
 import {readDataOnce} from '@database/baseFunctions';
@@ -29,7 +29,7 @@ import {
   getDefaultUserData,
   getDefaultUserStatus,
   pushNewUserInfo,
-} from '@libs/actions/User';
+} from '@userActions/User';
 import {cleanStringForFirebaseKey} from '@libs/StringUtilsKiroku';
 import {
   acceptFriendRequest,

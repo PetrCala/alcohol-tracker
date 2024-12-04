@@ -16,7 +16,7 @@ import {SettingsNavigatorParamList} from '@libs/Navigation/types';
 import SCREENS from '@src/SCREENS';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {useFirebase} from '@context/global/FirebaseContext';
-import * as User from '@libs/actions/User';
+import * as User from '@userActions/User';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import * as ErrorUtils from '@libs/ErrorUtils';
 

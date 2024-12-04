@@ -12,7 +12,7 @@ import {
   createMockUserData,
   createMockUserStatus,
 } from '../../../src/database/MockDatabase';
-import {getDefaultPreferences} from '@libs/actions/User';
+import {getDefaultPreferences} from '@userActions/User';
 import {
   SAMPLE_UNITS_TO_COLORS,
   SAMPLE_DRINKS_TO_UNITS,

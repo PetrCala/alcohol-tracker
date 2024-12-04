@@ -1,3 +1,3 @@
 ﻿import '_dev/admin';
-import '@libs/actions/User';
+import '@userActions/User';
 import '@libs/Validation';

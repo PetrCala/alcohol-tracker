@@ -1,6 +1,6 @@
 ﻿import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {useFirebase} from '@context/global/FirebaseContext';
-import * as DS from '@libs/actions/DrinkingSession';
+import * as DS from '@userActions/DrinkingSession';
 import type {DrinkingSession} from '@src/types/onyx';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import CONST from '@src/CONST';

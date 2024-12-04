@@ -6,7 +6,7 @@ import {Alert, InteractionManager, Linking, NativeModules} from 'react-native';
 import type {OnyxEntry, OnyxUpdate} from 'react-native-onyx';
 import Onyx from 'react-native-onyx';
 import type {ValueOf} from 'type-fest';
-import * as PersistedRequests from '@libs/actions/PersistedRequests';
+import * as PersistedRequests from '@userActions/PersistedRequests';
 import * as API from '@libs/API';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
 // import type {
