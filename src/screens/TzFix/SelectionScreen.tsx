@@ -52,7 +52,7 @@ function SelectionScreen({}: SelectionScreenProps) {
   const [timezoneOptions, setTimezoneOptions] = useState(allTimezones);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleTimezoneSelection = useCallback(
+  const saveSelectedTimezone = useCallback(
     async ({text}: {text: string}): Promise<void> => {
       setIsLoading(true);
       try {
@@ -63,13 +63,20 @@ function SelectionScreen({}: SelectionScreenProps) {
           text as SelectedTimezone,
         );
         Navigation.navigate(ROUTES.TZ_FIX_CONFIRMATION);
-      } catch (error: unknown) {
-        ErrorUtils.raiseAlert(error, translate('timezoneScreen.error.generic'));
       } finally {
         setIsLoading(false);
       }
     },
-    [db, auth.currentUser, translate],
+    [db, auth.currentUser],
+  );
+
+  const handleTimezoneSelection = useCallback(
+    ({text}: {text: string}): void => {
+      saveSelectedTimezone({text}).catch((error: unknown) => {
+        ErrorUtils.raiseAlert(error, translate('timezoneScreen.error.generic'));
+      });
+    },
+    [saveSelectedTimezone, translate],
   );
 
   const filterShownTimezones = (searchText: string) => {

@@ -7,11 +7,8 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import Navigation from '@libs/Navigation/Navigation';
 import type {TzFixModalNavigatorParamList} from '@libs/Navigation/types';
 import type {StackScreenProps} from '@react-navigation/stack';
-import ONYXKEYS from '@src/ONYXKEYS';
 import ROUTES from '@src/ROUTES';
 import type SCREENS from '@src/SCREENS';
-import {SelectedTimezone} from '@src/types/onyx/UserData';
-import {useEffect} from 'react';
 import {View} from 'react-native';
 
 type DetectionScreenProps = StackScreenProps<
@@ -19,6 +16,7 @@ type DetectionScreenProps = StackScreenProps<
   typeof SCREENS.TZ_FIX.DETECTION
 >;
 
+// eslint-disable-next-line no-empty-pattern
 function DetectionScreen({}: DetectionScreenProps) {
   const styles = useThemeStyles();
   const {translate} = useLocalize();

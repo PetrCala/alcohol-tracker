@@ -7,17 +7,16 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import Navigation from '@libs/Navigation/Navigation';
 import type {TzFixModalNavigatorParamList} from '@libs/Navigation/types';
 import type {StackScreenProps} from '@react-navigation/stack';
-import ONYXKEYS from '@src/ONYXKEYS';
 import ROUTES from '@src/ROUTES';
 import type SCREENS from '@src/SCREENS';
 import {View} from 'react-native';
-import Onyx from 'react-native-onyx';
 
 type IntroductionScreenProps = StackScreenProps<
   TzFixModalNavigatorParamList,
   typeof SCREENS.TZ_FIX.INTRODUCTION
 >;
 
+// eslint-disable-next-line no-empty-pattern
 function IntroductionScreen({}: IntroductionScreenProps) {
   const styles = useThemeStyles();
   const {translate} = useLocalize();
