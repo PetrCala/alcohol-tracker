@@ -9,9 +9,9 @@ import {
   createMockUserData,
   createMockUserStatus,
 } from '@src/database/MockDatabase';
-import {getDefaultPreferences} from '@database/users';
+import {getDefaultPreferences} from '@userActions/User';
 import CONST from '@src/CONST';
-import DBPATHS from '@database/DBPATHS';
+import DBPATHS from '@src/DBPATHS';
 import {describeWithEmulator, makeFriends} from '../../emulators/utils';
 import FBRules from '../../emulators/fbRules';
 import {setupGlobalMocks} from '../../utils/testUtils';

@@ -24,7 +24,7 @@ import {differenceInDays, startOfDay} from 'date-fns';
 import type {SelectedTimezone} from '@src/types/onyx/UserData';
 import type {ValueOf} from 'type-fest';
 import _ from 'lodash';
-import DBPATHS from '@src/database/DBPATHS';
+import DBPATHS from '@src/DBPATHS';
 
 const drinkingSessionRef = DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID;
 const userStatusRef = DBPATHS.USER_STATUS_USER_ID;

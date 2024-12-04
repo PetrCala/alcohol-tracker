@@ -15,7 +15,7 @@ import type {Database} from 'firebase/database';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
 import type {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
-import DBPATHS from '@database/DBPATHS';
+import DBPATHS from '@src/DBPATHS';
 import type {OnyxKey} from 'react-native-onyx';
 import Onyx from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
