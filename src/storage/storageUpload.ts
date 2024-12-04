@@ -12,7 +12,7 @@ import {ref, uploadBytesResumable} from 'firebase/storage';
  * @param dispatch - The dispatch function to update the state.
  * @returns A promise that resolves when the upload is complete.
  */
-export async function uploadImageToFirebase(
+async function uploadImageToFirebase(
   storage: FirebaseStorage,
   uri: string,
   pathToUpload: string,
@@ -56,8 +56,10 @@ export async function uploadImageToFirebase(
           resolve();
         },
       );
-    } catch (error: any) {
+    } catch (error: unknown) {
       reject(error);
     }
   });
 }
+
+export default uploadImageToFirebase;
