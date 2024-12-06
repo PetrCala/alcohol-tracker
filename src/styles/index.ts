@@ -2391,6 +2391,21 @@ const styles = (theme: ThemeColors) =>
       width: variables.componentSizeNormal,
     },
 
+    userOverviewContainer: {
+      flexDirection: 'row',
+      ...sizing.mw100,
+      ...spacing.p3,
+      ...spacing.pb1,
+    },
+
+    userOverviewLeftContent: {
+      flexGrow: 1,
+      flexDirection: 'row',
+      justifyContent: 'flex-start',
+      alignItems: 'center',
+      ...sizing.h100,
+    },
+
     verticalAlignTop: {
       verticalAlign: 'top',
     },

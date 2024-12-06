@@ -50,8 +50,10 @@ const UserOverview: React.FC<UserOverviewProps> = ({
   )?.icon;
 
   return (
-    <View key={`${userID}-container`} style={localStyles.userOverviewContainer}>
-      <View key={`${userID}-left-container`} style={localStyles.leftContainer}>
+    <View key={`${userID}-container`} style={styles.userOverviewContainer}>
+      <View
+        key={`${userID}-left-container`}
+        style={styles.userOverviewLeftContent}>
         <View key={`${userID}-profile`} style={localStyles.userOverviewProfile}>
           <View style={localStyles.imageContainer}>
             <ProfileImage
@@ -59,7 +61,7 @@ const UserOverview: React.FC<UserOverviewProps> = ({
               storage={storage}
               userID={userID}
               downloadPath={profileData.photo_url}
-              style={localStyles.userOverviewImage}
+              style={styles.avatarLarge}
             />
           </View>
           <View
@@ -81,7 +83,7 @@ const UserOverview: React.FC<UserOverviewProps> = ({
       </View>
       <View
         key={`${userID}-right-container`}
-        style={localStyles.rightContainer}>
+        style={[styles.flexRow, styles.alignItemsCenter]}>
         {/* ? `In session:\n${drinksThisSession} ${mostCommonDrink}` */}
         {inSession && shouldDisplaySessionInfo ? (
           <>
@@ -128,26 +130,6 @@ export default UserOverview;
 
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
 const localStyles = StyleSheet.create({
-  userOverviewContainer: {
-    width: '100%',
-    height: 80,
-    flexDirection: 'row',
-    padding: 5,
-  },
-  leftContainer: {
-    flexDirection: 'column',
-    width: '70%',
-    height: '100%',
-  },
-  rightContainer: {
-    flexDirection: 'column',
-    width: '30%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'flex-end',
-    padding: 5,
-    paddingRight: 7,
-  },
   userOverviewProfile: {
     width: '100%',
     flexDirection: 'row',
@@ -159,11 +141,6 @@ const localStyles = StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  userOverviewImage: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
   },
   userInfoContainer: {
     height: '100%',
