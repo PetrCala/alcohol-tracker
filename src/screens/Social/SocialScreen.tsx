@@ -93,9 +93,13 @@ function SocialScreen(_: SocialScreenProps) {
   const {translate} = useLocalize();
   const styles = useThemeStyles();
   const [routes] = useState([
-    {key: 'friendList', title: 'Friend List', userData},
-    // {key: 'friendSearch', title: 'Friend Search', userData: userData},
-    {key: 'friendRequests', title: 'Friend Requests', userData},
+    {key: 'friendList', title: translate('socialScreen.friendList'), userData},
+    // {key: 'friendSearch', translate('socialScreen.friendSearch'), userData: userData},
+    {
+      key: 'friendRequests',
+      title: translate('socialScreen.friendRequests'),
+      userData,
+    },
   ]);
 
   const [index, setIndex] = useState<number>(0);
@@ -120,17 +124,17 @@ function SocialScreen(_: SocialScreenProps) {
     {
       index: 0,
       source: KirokuIcons.FriendList,
-      label: 'Friend List',
+      label: translate('socialScreen.friendList'),
     },
     // {
     //   index: 1,
     //   source: KirokuIcons.Search,
-    //   label: 'Find New Friends',
+    //   label: translate('socialScreen.friendSearch'),
     // },
     {
       index: 1,
       source: KirokuIcons.AddUser,
-      label: 'Friend Requests',
+      label: translate('socialScreen.friendRequests'),
       infoNumberValue: getReceivedRequestsCount(userData?.friend_requests),
     },
   ];
