@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {Alert, BackHandler, StyleSheet, View} from 'react-native';
+import {Alert, BackHandler, View} from 'react-native';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import {useFirebase} from '@context/global/FirebaseContext';
 import UserOffline from '@components/UserOfflineModal';
@@ -105,8 +105,9 @@ function PreferencesScreen({}: PreferencesScreenProps) {
       setSaving(true);
       await savePreferencesData(db, user.uid, currentPreferences);
       Navigation.navigate(ROUTES.SETTINGS);
-    } catch (error: unknown) {
-      Alert.alert(translate('preferencesScreen.error.save'), error.message);
+    } catch (error: Error | unknown) {
+      const errorMessage = error instanceof Error ? error.message : '';
+      Alert.alert(translate('preferencesScreen.error.save'), errorMessage);
     } finally {
       setSaving(false);
     }

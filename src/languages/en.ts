@@ -291,6 +291,9 @@ export default {
   },
   socialScreen: {
     title: 'Friends',
+    friendList: 'Friend List',
+    friendSearch: 'Friend Search',
+    friendRequests: 'Friend Requests',
   },
   friendsFriendsScreen: {
     title: 'Find Friends of Friends',

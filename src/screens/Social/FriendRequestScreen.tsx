@@ -1,11 +1,11 @@
 // TODO translate
-import {ActivityIndicator, Alert, StyleSheet, View} from 'react-native';
+import {Alert, View} from 'react-native';
 import type {
   FriendRequestList,
   FriendRequestStatus,
   ProfileList,
 } from '@src/types/onyx';
-import {useEffect, useMemo, useState} from 'react';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {acceptFriendRequest, deleteFriendRequest} from '@database/friends';
@@ -25,12 +25,14 @@ import Icon from '@components/Icon';
 import useTheme from '@hooks/useTheme';
 import ScrollView from '@components/ScrollView';
 import Button from '@components/Button';
-import Text from '@components/Text';
 import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
 import {useOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 import {PressableWithFeedback} from '@components/Pressable';
+import Section from '@components/Section';
+import {TranslationPaths} from '@src/languages/types';
+import MenuItem from '@components/MenuItem';
 
 type RequestIdProps = {
   requestId: string;
@@ -45,6 +47,12 @@ type FriendRequestItemProps = {
   requestId: string;
   friendRequests: FriendRequestList | undefined;
   displayData: ProfileList;
+};
+
+type Menu = {
+  sectionTitle: string;
+  subtitle?: string;
+  requestIds: string[];
 };
 
 const handleAcceptFriendRequest = async (
@@ -85,109 +93,66 @@ const handleRejectFriendRequest = async (
   }
 };
 
-// Component to be shown for a received friend request
-const FriendRequestButtons: React.FC<RequestIdProps> = ({requestId}) => {
-  const {auth, db} = useFirebase();
-  const user = auth.currentUser;
-  const styles = useThemeStyles();
-  const {translate} = useLocalize();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  if (!user) {
-    return;
-  }
+// const getMenuItem = useCallback((menuItemsData: Menu) => {
 
-  return (
-    <View style={[styles.flexRow, styles.alignItemsCenter]}>
-      <Button
-        success
-        key={`${requestId}-accept-request-button`}
-        text={translate('friendRequestScreen.accept')}
-        onPress={() =>
-          handleAcceptFriendRequest(db, user.uid, requestId, setIsLoading)
-        }
-        isLoading={isLoading}
-      />
-      <Button
-        danger
-        key={`${requestId}-reject-request-button`}
-        text={translate('friendRequestScreen.remove')}
-        onPress={() =>
-          handleRejectFriendRequest(db, user.uid, requestId, setIsLoading)
-        }
-        style={styles.ml1}
-        isLoading={isLoading}
-      />
-    </View>
-  );
-};
+//     const requestId = menuItemsData.requestId
+//     const viewKey = `${requestId}-friend-request-buttons`
 
-// Component to be shown when the friend request is pending
-const FriendRequestPending: React.FC<RequestIdProps> = ({requestId}) => {
-  const {auth, db} = useFirebase();
-  const {translate} = useLocalize();
-  const styles = useThemeStyles();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const user = auth.currentUser;
+//     return (
 
-  if (!user) {
-    return;
-  }
+//     <View key={viewKey} style={[styles.flexRow, styles.alignItemsCenter]}>
+//       (requestStatus === CONST.FRIEND_REQUEST_STATUS.RECEIVED &&
+//         <Button
+//           success
+//           key={`${requestId}-accept-request-button`}
+//           text={translate('friendRequestScreen.accept')}
+//           onPress={() =>
+//             handleAcceptFriendRequest(db, user.uid, requestId, setIsLoading)
+//           }
+//           isLoading={isLoading}
+//         />
+//         <Button
+//           danger
+//           key={`${requestId}-reject-request-button`}
+//           text={translate('friendRequestScreen.remove')}
+//           onPress={() =>
+//             handleRejectFriendRequest(db, user.uid, requestId, setIsLoading)
+//           }
+//           style={styles.ml1}
+//           isLoading={isLoading}
+//         />
+//       )
 
-  return (
-    <View style={[styles.flexRow, styles.alignItemsCenter]}>
-      <Button
-        danger
-        onPress={() =>
-          handleRejectFriendRequest(db, user.uid, requestId, setIsLoading)
-        }
-        text={translate('common.cancel')}
-        isLoading={isLoading}
-      />
-    </View>
-  );
-};
+// {/* // ) : requestStatus === CONST.FRIEND_REQUEST_STATUS.SENT ? ( */}
+//       <Button
+//         danger
+//         onPress={() =>
+//           handleRejectFriendRequest(db, user.uid, requestId, setIsLoading)
+//         }
+//         text={translate('common.cancel')}
+//         isLoading={isLoading}
+//       />
+//     </View>
+//     )
 
-// Component to be rendered on the right hand side of each friend request container
-const FriendRequestComponent: React.FC<FriendRequestComponentProps> = ({
-  requestStatus,
-  requestId,
-}) => {
-  return requestStatus === CONST.FRIEND_REQUEST_STATUS.RECEIVED ? (
-    <FriendRequestButtons
-      key={`${requestId}-friend-request-buttons`}
-      requestId={requestId}
-    />
-  ) : requestStatus === CONST.FRIEND_REQUEST_STATUS.SENT ? (
-    <FriendRequestPending
-      key={`${requestId}-friend-request-pending`}
-      requestId={requestId}
-    />
-  ) : null;
-};
+//     // {menuItemsData.items.map((detail, index) => (
+//         //   <MenuItem
+//         //     // eslint-disable-next-line react/no-array-index-key
+//         //     key={`${detail.title}_${index}`}
+//         //     title={detail.title}
+//         //     titleStyle={styles.plainSectionTitle}
+//         //     wrapperStyle={styles.sectionMenuItemTopDescription}
+//         //     shouldUseRowFlexDirection
+//         //     shouldShowRightIcon={false}
+//         //     shouldShowRightComponent={!!detail.rightComponent}
+//         //     rightComponent={detail.rightComponent}
+//         //   />
+//         // ))}
 
-const FriendRequestItem: React.FC<FriendRequestItemProps> = ({
-  requestId,
-  friendRequests,
-  displayData,
-}) => {
-  if (!friendRequests || !displayData) {
-    return null;
-  }
-  const profileData = displayData[requestId];
-  const requestStatus = friendRequests[requestId];
-
-  return (
-    <NoFriendUserOverview
-      key={`${requestId}-friend-request`}
-      userID={requestId}
-      profileData={profileData}
-      RightSideComponent={FriendRequestComponent({
-        requestId,
-        requestStatus,
-      })}
-    />
-  );
-};
+//         // key={`${requestId}-friend-request-item`}
+//         // requestId={requestId}
+//         // // friendRequests={friendRequests}
+//   }
 
 function FriendRequestScreen() {
   const {db} = useFirebase();
@@ -258,51 +223,115 @@ function FriendRequestScreen() {
     setRequestsReceivedCount(newRequestsReceivedCount);
   }, [friendRequests]);
 
+  const requestsSentMenuItemsData: Menu = useMemo(() => {
+    return {
+      sectionTitle: translate(
+        'friendRequestScreen.requestsSent',
+        requestsSentCount,
+      ),
+      requestIds: requestsSent,
+    };
+  }, [requestsSentCount, requestsSent, translate]);
+
+  const requestsReceivedMenuItemsData: Menu = useMemo(() => {
+    return {
+      sectionTitle: translate(
+        'friendRequestScreen.requestsReceived',
+        requestsReceivedCount,
+      ),
+      requestIds: requestsReceived,
+    };
+  }, [requestsReceivedCount, requestsReceived, translate]);
+
+  const getMenuItemsSection = useCallback((menuItemsData: Menu) => {
+    return (
+      <Section
+        title={menuItemsData.sectionTitle}
+        titleStyles={styles.plainSectionTitle}
+        containerStyles={[styles.bgTransparent, styles.mh0]}
+        childrenStyles={styles.pt3}>
+        <>
+          {menuItemsData.requestIds.map((requestId, index) => {
+            const profileData = displayData[requestId];
+            const requestStatus = friendRequests
+              ? friendRequests[requestId]
+              : 'unknown';
+
+            return (
+              <MenuItem
+                // eslint-disable-next-line react/no-array-index-key
+                key={`friend-request-overview_${index}`}
+                // wrapperStyle={styles.sectionMenuItem}
+                // title={keyTitle}
+                // icon={item.icon}
+                icon={KirokuIcons.Logo}
+                iconType={CONST.ICON_TYPE_AVATAR}
+                disabled
+                shouldGreyOutWhenDisabled={false}
+                // onPress={singleExecution(() => {
+                //   if (item.action) {
+                //     item.action();
+                //   } else {
+                //     waitForNavigate(() => {
+                //       Navigation.navigate(item.routeName);
+                //     })();
+                //   }
+                // })}
+                // iconStyles={item.iconStyles}
+                // fallbackIcon={item.fallbackIcon}
+                // shouldStackHorizontally={item.shouldStackHorizontally}
+                // ref={popoverAnchor}
+                // hoverAndPressStyle={styles.hoveredComponentBG}
+                // shouldBlockSelection={!!item.link}
+                // focused={
+                //   !!activeCentralPaneRoute &&
+                //   !!item.routeName &&
+                //   !!(
+                //     activeCentralPaneRoute.name
+                //       .toLowerCase()
+                //       .replaceAll('_', '') ===
+                //     item.routeName.toLowerCase().replaceAll('/', '')
+                //   )
+                // }
+                isPaneMenu
+                // iconRight={item.iconRight}
+                // shouldShowRightIcon={item.shouldShowRightIcon}
+              />
+            );
+          })}
+        </>
+      </Section>
+    );
+  }, []);
+
+  const requestsReceivedMenuItems = useMemo(
+    () => getMenuItemsSection(requestsReceivedMenuItemsData),
+    [requestsReceivedMenuItemsData, getMenuItemsSection],
+  );
+  const requestsSentMenuItems = useMemo(
+    () => getMenuItemsSection(requestsSentMenuItemsData),
+    [requestsSentMenuItemsData, getMenuItemsSection],
+  );
+
   return (
     <View style={styles.flex1}>
       <ScrollView style={[styles.mw100]}>
         {isLoading || !!loadingText ? (
           <FlexibleLoadingIndicator style={styles.mt5} />
-        ) : !isEmptyObject(friendRequests) ? (
-          <View>
-            <GrayHeader
-              headerText={translate(
-                'friendRequestScreen.requestsReceived',
-                requestsReceivedCount,
-              )}
-            />
-            <View>
-              {requestsReceived.map(requestId => (
-                <FriendRequestItem
-                  key={`${requestId}-friend-request-item`}
-                  requestId={requestId}
-                  friendRequests={friendRequests}
-                  displayData={displayData}
-                />
-              ))}
-            </View>
-            <GrayHeader
-              headerText={translate(
-                'friendRequestScreen.requestsSent',
-                requestsSentCount,
-              )}
-            />
-            <View>
-              {requestsSent.map(requestId => (
-                <FriendRequestItem
-                  key={`${requestId}-friend-request-item`}
-                  requestId={requestId}
-                  friendRequests={friendRequests}
-                  displayData={displayData}
-                />
-              ))}
-            </View>
-          </View>
         ) : (
-          <NoFriendInfo
-            message={translate('friendRequestScreen.lookingForNewFriends')}
-            buttonText={translate('friendRequestScreen.trySearchingHere')}
-          />
+          <View>
+            {!isEmptyObject(friendRequests) ? (
+              <>
+                {requestsReceivedMenuItems}
+                {requestsSentMenuItems}
+              </>
+            ) : (
+              <NoFriendInfo
+                message={translate('friendRequestScreen.lookingForNewFriends')}
+                buttonText={translate('friendRequestScreen.trySearchingHere')}
+              />
+            )}
+          </View>
         )}
       </ScrollView>
       <PressableWithFeedback
