@@ -24,17 +24,8 @@ const NoFriendUserOverview: React.FC<NoFriendUserOverviewProps> = ({
   }
 
   return (
-    <View
-      key={`${userID}-container`}
-      style={[styles.mw100, styles.flexRow, styles.p3, styles.pb1]}>
-      <View
-        key={`${userID}profile`}
-        style={[
-          styles.flexGrow1,
-          styles.flexRow,
-          styles.justifyContentStart,
-          styles.alignItemsCenter,
-        ]}>
+    <View key={`${userID}-container`} style={styles.userOverviewContainer}>
+      <View key={`${userID}profile`} style={styles.userOverviewLeftContent}>
         <ProfileImage
           key={`${userID}-profile-icon`}
           storage={storage}
