@@ -42,10 +42,11 @@ const useProfileList = (userArray: UserArray) => {
         );
         setProfileList({...profileList, ...newProfileList});
       }
-    } catch (error: unknown) {
+    } catch (error: Error | unknown) {
+      const errorMessage = error instanceof Error ? error.message : '';
       Alert.alert(
         'Database fetch failed',
-        `Could not fetch user display data: ${error.message}`,
+        `Could not fetch user display data: ${errorMessage}`,
       );
     } finally {
       setLoadingDisplayData(false);

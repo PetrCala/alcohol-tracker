@@ -22,7 +22,7 @@ import useStyleUtils from '@hooks/useStyleUtils';
 
 type SearchWindowProps = {
   windowText: string;
-  onSearch: (searchText: string, db?: Database) => void;
+  onSearch: (searchText: string, database?: Database) => void;
   onResetSearch: () => void;
   searchOnTextChange?: boolean;
 };
@@ -30,14 +30,14 @@ type SearchWindowProps = {
 const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
   ({windowText, onSearch, onResetSearch, searchOnTextChange}, parentRef) => {
     const styles = useThemeStyles();
-    const db = useFirebase().db;
+    const {db} = useFirebase();
     const StyleUtils = useStyleUtils();
     const [searchText, setSearchText] = useState<string>('');
     const [searchCount, setSearchCount] = useState<number>(0);
     const textInputRef = useRef<TextInput>(null); // Input field ref for focus handling
 
-    const handleDoSearch = (searchText: string, db?: Database): void => {
-      onSearch(searchText, db);
+    const handleDoSearch = (searchText: string, database?: Database): void => {
+      onSearch(searchText, database);
       if (!searchOnTextChange) {
         setSearchCount(searchCount + 1);
         Keyboard.dismiss();

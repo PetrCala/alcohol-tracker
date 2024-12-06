@@ -26,16 +26,21 @@ const NoFriendUserOverview: React.FC<NoFriendUserOverviewProps> = ({
   return (
     <View
       key={`${userID}-container`}
-      style={localStyles.noFriendUserOverviewContainer}>
+      style={[styles.mw100, styles.flexRow, styles.p3, styles.pb1]}>
       <View
         key={`${userID}profile`}
-        style={localStyles.noFriendUserOverviewProfile}>
+        style={[
+          styles.flexGrow1,
+          styles.flexRow,
+          styles.justifyContentStart,
+          styles.alignItemsCenter,
+        ]}>
         <ProfileImage
           key={`${userID}-profile-icon`}
           storage={storage}
           downloadPath={profileData.photo_url}
           userID={userID}
-          style={localStyles.noFriendUserOverviewImage}
+          style={styles.avatarLarge}
         />
         <Text
           key={`${userID}-nickname`}
@@ -51,25 +56,3 @@ const NoFriendUserOverview: React.FC<NoFriendUserOverviewProps> = ({
 };
 
 export default NoFriendUserOverview;
-
-// eslint-disable-next-line @typescript-eslint/no-use-before-define
-const localStyles = StyleSheet.create({
-  noFriendUserOverviewContainer: {
-    width: '100%',
-    flexDirection: 'row',
-    padding: 5,
-  },
-  noFriendUserOverviewProfile: {
-    width: '55%',
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    padding: 5,
-    paddingTop: 7,
-  },
-  noFriendUserOverviewImage: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-  },
-});

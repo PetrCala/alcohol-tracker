@@ -894,49 +894,55 @@ const styles = (theme: ThemeColors) =>
       textAlign: 'center',
     },
 
-    emptyAvatar: {
+    avatar: {
       height: variables.avatarSizeNormal,
       width: variables.avatarSizeNormal,
+      borderRadius: variables.avatarSizeNormal / 2,
     },
 
-    emptyAvatarSmallNormal: {
+    avatarSmallNormal: {
       height: variables.avatarSizeSmallNormal,
       width: variables.avatarSizeSmallNormal,
+      borderRadius: variables.avatarSizeSmallNormal / 2,
     },
 
-    emptyAvatarSmall: {
+    avatarSmall: {
       height: variables.avatarSizeSmall,
       width: variables.avatarSizeSmall,
+      borderRadius: variables.avatarSizeSmall / 2,
     },
 
-    emptyAvatarSmaller: {
+    avatarSmaller: {
       height: variables.avatarSizeSmaller,
       width: variables.avatarSizeSmaller,
+      borderRadius: variables.avatarSizeSmaller / 2,
     },
 
-    emptyAvatarMedium: {
+    avatarMedium: {
       height: variables.avatarSizeMedium,
       width: variables.avatarSizeMedium,
+      borderRadius: variables.avatarSizeMedium / 2,
     },
 
-    emptyAvatarLarge: {
+    avatarLarge: {
       height: variables.avatarSizeLarge,
       width: variables.avatarSizeLarge,
+      borderRadius: variables.avatarSizeLarge / 2,
     },
 
-    emptyAvatarMargin: {
+    avatarMargin: {
       marginRight: variables.avatarChatSpacing,
     },
 
-    emptyAvatarMarginChat: {
+    avatarMarginChat: {
       marginRight: variables.avatarChatSpacing - 12,
     },
 
-    emptyAvatarMarginSmall: {
+    avatarMarginSmall: {
       marginRight: variables.avatarChatSpacing - 4,
     },
 
-    emptyAvatarMarginSmaller: {
+    avatarMarginSmaller: {
       marginRight: variables.avatarChatSpacing - 4,
     },
 
@@ -1496,6 +1502,18 @@ const styles = (theme: ThemeColors) =>
 
     searchTableHeaderActive: {
       fontWeight: FontUtils.fontWeight.bold,
+    },
+
+    goToSearchScreenButton: {
+      position: 'absolute',
+      bottom: variables.goToSearchButtonOffset,
+      right: variables.goToSearchButtonOffset,
+      width: variables.iconSizeSuperLarge,
+      height: variables.iconSizeSuperLarge,
+      borderRadius: variables.iconSizeSuperLarge / 2,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: theme.appColor,
     },
 
     secondAvatar: {

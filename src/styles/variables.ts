@@ -41,7 +41,7 @@ export default {
   borderRadiusSmall: 8,
   avatarSizeLargeBordered: 88,
   avatarSizeXLarge: 100,
-  avatarSizeLarge: 80,
+  avatarSizeLarge: 70,
   avatarSizeMedium: 52,
   avatarSizeHeader: 40,
   avatarSizeNormal: 40,
@@ -246,6 +246,7 @@ export default {
   bottomTabBarCounterSize: 20,
   calendarHeaderHeight: 50,
   sessionsCalendarArrowWidth: 90,
+  goToSearchButtonOffset: 20,
 
   h20: 20,
   h28: 28,

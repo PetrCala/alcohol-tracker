@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Dimensions, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {Dimensions, StyleSheet, View} from 'react-native';
 import {TabView} from 'react-native-tab-view';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {getReceivedRequestsCount} from '@libs/FriendUtils';
@@ -8,6 +8,7 @@ import type {StackScreenProps} from '@react-navigation/stack';
 import type SCREENS from '@src/SCREENS';
 import type {SocialNavigatorParamList} from '@libs/Navigation/types';
 import Navigation from '@libs/Navigation/Navigation';
+import {PressableWithFeedback} from '@components/Pressable';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import ScreenWrapper from '@components/ScreenWrapper';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
@@ -16,14 +17,17 @@ import useTheme from '@hooks/useTheme';
 import Text from '@components/Text';
 import Icon from '@components/Icon';
 import useThemeStyles from '@hooks/useThemeStyles';
-import FriendRequestScreen from './FriendRequestScreen';
+import type IconAsset from '@src/types/utils/IconAsset';
 import FriendListScreen from './FriendListScreen';
+import FriendRequestScreen from './FriendRequestScreen';
+
+/* eslint-disable @typescript-eslint/no-use-before-define */
 
 type SocialFooterButtonProps = {
   index: number;
   currentIndex: number;
   setImageIndex: (index: number) => void;
-  source: any;
+  source: IconAsset;
   label: string;
   infoNumberValue?: number;
 };
@@ -39,40 +43,36 @@ function SocialFooterButton({
   const theme = useTheme();
   const styles = useThemeStyles();
   return (
-    <View>
-      <TouchableOpacity
-        accessibilityRole="button"
-        style={localStyles.footerButton}
-        onPress={() => setImageIndex(index)}>
-        <View
-          style={
-            infoNumberValue && infoNumberValue > 0
-              ? [localStyles.imageContainer, localStyles.extraSpacing]
-              : localStyles.imageContainer
-          }>
-          <Icon
-            src={source}
-            height={25}
-            width={25}
-            fill={
-              currentIndex === index ? theme.appColor : theme.textSupporting
-            }
-          />
-          {!!infoNumberValue && infoNumberValue > 0 && (
-            <View style={localStyles.friendRequestCounter}>
-              <Text style={styles.textWhite}>{infoNumberValue}</Text>
-            </View>
-          )}
-        </View>
-        <Text
-          style={[
-            styles.mutedTextLabel,
-            currentIndex === index && {color: theme.appColor},
-          ]}>
-          {label}
-        </Text>
-      </TouchableOpacity>
-    </View>
+    <PressableWithFeedback
+      wrapperStyle={localStyles.footerButton}
+      onPress={() => setImageIndex(index)}
+      accessibilityLabel={label}>
+      <View
+        style={
+          infoNumberValue && infoNumberValue > 0
+            ? [localStyles.imageContainer, localStyles.extraSpacing]
+            : localStyles.imageContainer
+        }>
+        <Icon
+          src={source}
+          height={25}
+          width={25}
+          fill={currentIndex === index ? theme.appColor : theme.textSupporting}
+        />
+        {!!infoNumberValue && infoNumberValue > 0 && (
+          <View style={localStyles.friendRequestCounter}>
+            <Text style={styles.textWhite}>{infoNumberValue}</Text>
+          </View>
+        )}
+      </View>
+      <Text
+        style={[
+          styles.mutedTextLabel,
+          currentIndex === index && {color: theme.appColor},
+        ]}>
+        {label}
+      </Text>
+    </PressableWithFeedback>
   );
 }
 
@@ -87,7 +87,8 @@ type RouteType = {
   userData: UserData | undefined;
 };
 
-function SocialScreen({route}: SocialScreenProps) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function SocialScreen(_: SocialScreenProps) {
   const {userData} = useDatabaseData();
   const {translate} = useLocalize();
   const styles = useThemeStyles();
@@ -168,7 +169,6 @@ function SocialScreen({route}: SocialScreenProps) {
 
 const screenWidth = Dimensions.get('window').width;
 
-// eslint-disable-next-line @typescript-eslint/no-use-before-define
 const localStyles = StyleSheet.create({
   footerButton: {
     width: screenWidth / 2,
