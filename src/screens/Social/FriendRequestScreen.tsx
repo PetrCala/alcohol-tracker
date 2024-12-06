@@ -1,12 +1,5 @@
 // TODO translate
-import {
-  ActivityIndicator,
-  Alert,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {ActivityIndicator, Alert, StyleSheet, View} from 'react-native';
 import type {
   FriendRequestList,
   FriendRequestStatus,
@@ -19,7 +12,6 @@ import {acceptFriendRequest, deleteFriendRequest} from '@database/friends';
 import type {Database} from 'firebase/database';
 import NoFriendUserOverview from '@components/Social/NoFriendUserOverview';
 import * as Profile from '@userActions/Profile';
-import headerStyles from '@src/styles/headerStyles';
 import GrayHeader from '@components/Header/GrayHeader';
 import {objKeys} from '@libs/DataHandling';
 import CONST from '@src/CONST';
@@ -33,10 +25,12 @@ import Icon from '@components/Icon';
 import useTheme from '@hooks/useTheme';
 import ScrollView from '@components/ScrollView';
 import Button from '@components/Button';
+import Text from '@components/Text';
 import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
 import {useOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
+import {PressableWithFeedback} from '@components/Pressable';
 
 type RequestIdProps = {
   requestId: string;
@@ -95,41 +89,34 @@ const handleRejectFriendRequest = async (
 const FriendRequestButtons: React.FC<RequestIdProps> = ({requestId}) => {
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
+  const styles = useThemeStyles();
+  const {translate} = useLocalize();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   if (!user) {
     return;
   }
 
   return (
-    <View style={localStyles.friendRequestButtonsContainer}>
-      <TouchableOpacity
-        accessibilityRole="button"
+    <View style={[styles.flexRow, styles.alignItemsCenter]}>
+      <Button
+        success
         key={`${requestId}-accept-request-button`}
-        style={[
-          localStyles.handleRequestButton,
-          localStyles.acceptRequestButton,
-        ]}
+        text={translate('friendRequestScreen.accept')}
         onPress={() =>
           handleAcceptFriendRequest(db, user.uid, requestId, setIsLoading)
-        }>
-        {isLoading ? (
-          <ActivityIndicator size="small" color="#0000ff" />
-        ) : (
-          <Text style={localStyles.handleRequestButtonText}>Accept</Text>
-        )}
-      </TouchableOpacity>
-      <TouchableOpacity
-        accessibilityRole="button"
+        }
+        isLoading={isLoading}
+      />
+      <Button
+        danger
         key={`${requestId}-reject-request-button`}
-        style={[
-          localStyles.handleRequestButton,
-          localStyles.rejectRequestButton,
-        ]}
+        text={translate('friendRequestScreen.remove')}
         onPress={() =>
           handleRejectFriendRequest(db, user.uid, requestId, setIsLoading)
-        }>
-        <Text style={localStyles.handleRequestButtonText}>Remove</Text>
-      </TouchableOpacity>
+        }
+        style={styles.ml1}
+        isLoading={isLoading}
+      />
     </View>
   );
 };
@@ -147,7 +134,7 @@ const FriendRequestPending: React.FC<RequestIdProps> = ({requestId}) => {
   }
 
   return (
-    <View style={localStyles.friendRequestPendingContainer}>
+    <View style={[styles.flexRow, styles.alignItemsCenter]}>
       <Button
         danger
         onPress={() =>
@@ -206,6 +193,8 @@ function FriendRequestScreen() {
   const {db} = useFirebase();
   const {userData} = useDatabaseData();
   const theme = useTheme();
+  const styles = useThemeStyles();
+  const {translate} = useLocalize();
   const [loadingText] = useOnyx(ONYXKEYS.APP_LOADING_TEXT);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [friendRequests, setFriendRequests] = useState<
@@ -270,16 +259,19 @@ function FriendRequestScreen() {
   }, [friendRequests]);
 
   return (
-    <View style={localStyles.mainContainer}>
-      <ScrollView>
+    <View style={styles.flex1}>
+      <ScrollView style={[styles.mw100]}>
         {isLoading || !!loadingText ? (
-          <FlexibleLoadingIndicator style={localStyles.loadingData} />
+          <FlexibleLoadingIndicator style={styles.mt5} />
         ) : !isEmptyObject(friendRequests) ? (
-          <View style={localStyles.friendList}>
+          <View>
             <GrayHeader
-              headerText={`Requests Received (${requestsReceivedCount})`}
+              headerText={translate(
+                'friendRequestScreen.requestsReceived',
+                requestsReceivedCount,
+              )}
             />
-            <View style={localStyles.requestsContainer}>
+            <View>
               {requestsReceived.map(requestId => (
                 <FriendRequestItem
                   key={`${requestId}-friend-request-item`}
@@ -289,12 +281,13 @@ function FriendRequestScreen() {
                 />
               ))}
             </View>
-            <View style={headerStyles.grayHeaderContainer}>
-              <Text style={headerStyles.grayHeaderText}>
-                Requests Sent ({requestsSentCount})
-              </Text>
-            </View>
-            <View style={localStyles.requestsContainer}>
+            <GrayHeader
+              headerText={translate(
+                'friendRequestScreen.requestsSent',
+                requestsSentCount,
+              )}
+            />
+            <View>
               {requestsSent.map(requestId => (
                 <FriendRequestItem
                   key={`${requestId}-friend-request-item`}
@@ -307,19 +300,14 @@ function FriendRequestScreen() {
           </View>
         ) : (
           <NoFriendInfo
-            message="Looking for new friends?"
-            buttonText="Try searching here"
+            message={translate('friendRequestScreen.lookingForNewFriends')}
+            buttonText={translate('friendRequestScreen.trySearchingHere')}
           />
         )}
       </ScrollView>
-      <TouchableOpacity
-        accessibilityRole="button"
-        style={[
-          localStyles.searchScreenButton,
-          {
-            backgroundColor: theme.appColor,
-          },
-        ]}
+      <PressableWithFeedback
+        accessibilityLabel={'search-screen-button'}
+        style={styles.goToSearchScreenButton}
         onPress={() => Navigation.navigate(ROUTES.SOCIAL_FRIEND_SEARCH)}>
         <Icon
           src={KirokuIcons.Search}
@@ -327,94 +315,9 @@ function FriendRequestScreen() {
           height={28}
           fill={theme.textLight}
         />
-      </TouchableOpacity>
+      </PressableWithFeedback>
     </View>
   );
 }
 
 export default FriendRequestScreen;
-
-// eslint-disable-next-line @typescript-eslint/no-use-before-define
-const localStyles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-  },
-  loadingData: {
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 100,
-    margin: 5,
-  },
-  friendList: {
-    width: '100%',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  requestsInfoContainer: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    padding: 10,
-    backgroundColor: 'gray',
-  },
-  requestsInfoText: {
-    fontSize: 16,
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  requestsContainer: {
-    width: '100%',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  friendRequestButtonsContainer: {
-    width: '45%',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingRight: 5,
-  },
-  handleRequestButton: {
-    width: '50%',
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 5,
-    margin: 2,
-  },
-  acceptRequestButton: {
-    backgroundColor: 'green',
-  },
-  rejectRequestButton: {
-    backgroundColor: 'red',
-  },
-  handleRequestButtonText: {
-    width: '100%',
-    color: 'white',
-    textAlign: 'center',
-    fontSize: 16,
-    fontWeight: '400',
-  },
-  friendRequestPendingContainer: {
-    width: '45%',
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    paddingRight: 8,
-  },
-  searchScreenButton: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    borderRadius: 50,
-    width: 60,
-    height: 60,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: 'black',
-  },
-});

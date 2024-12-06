@@ -1,5 +1,5 @@
-import {Alert, StyleSheet, View} from 'react-native';
-import React, {useMemo, useRef, useState} from 'react';
+import {Alert, View} from 'react-native';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
 import type {
   FriendRequestList,
   FriendRequestStatus,
@@ -48,33 +48,35 @@ function FriendSearchScreen() {
   const [noUsersFound, setNoUsersFound] = useState(false);
   const [displayData, setDisplayData] = useState<ProfileList>({});
 
-  const dbSearch = async (searchText: string, db?: Database): Promise<void> => {
-    try {
-      setSearching(true);
-      const searchResultData: UserSearchResults = await searchDatabaseForUsers(
-        db,
-        searchText,
-      );
-      await updateHooksBasedOnSearchResults(searchResultData);
-      setSearchResultData(searchResultData);
-    } catch (error: Error | unknown) {
-      const errorMessage = error instanceof Error ? error.message : '';
-      Alert.alert(
-        'Database serach failed',
-        `Could not search the database: ${errorMessage}`,
-      );
-      return;
-    } finally {
-      setSearching(false);
-    }
-  };
+  const dbSearch = useCallback(
+    async (searchText: string, database?: Database): Promise<void> => {
+      try {
+        setSearching(true);
+        const newData: UserSearchResults = await searchDatabaseForUsers(
+          database,
+          searchText,
+        );
+        await updateHooksBasedOnSearchResults(newData);
+        setSearchResultData(newData);
+      } catch (error: Error | unknown) {
+        const errorMessage = error instanceof Error ? error.message : '';
+        Alert.alert(
+          'Database serach failed',
+          `Could not search the database: ${errorMessage}`,
+        );
+      } finally {
+        setSearching(false);
+      }
+    },
+    [],
+  );
 
   const updateDisplayData = async (
-    searchResultData: UserSearchResults,
+    newData: UserSearchResults,
   ): Promise<void> => {
     const newDisplayData: ProfileList = await Profile.fetchUserProfiles(
       db,
-      searchResultData,
+      newData,
     );
     setDisplayData(newDisplayData);
   };
@@ -100,8 +102,8 @@ function FriendSearchScreen() {
   ): Promise<void> => {
     updateRequestStatuses(searchResults); // Perhaps redundant
     await updateDisplayData(searchResults); // Assuming this returns a Promise
-    const noUsersFound = !isNonEmptyArray(searchResults);
-    setNoUsersFound(noUsersFound);
+    const newNoUsersFound = !isNonEmptyArray(searchResults);
+    setNoUsersFound(newNoUsersFound);
   };
 
   const resetSearch = (): void => {
@@ -122,6 +124,7 @@ function FriendSearchScreen() {
 
   useMemo(() => {
     updateRequestStatuses();
+    // eslint-disable-next-line react-compiler/react-compiler, react-hooks/exhaustive-deps
   }, [friendRequests]); // When updated in the database, not locally
 
   if (!user) {
@@ -140,12 +143,16 @@ function FriendSearchScreen() {
         onSearch={dbSearch}
         onResetSearch={resetSearch}
       />
-      <View style={localStyles.mainContainer}>
-        <ScrollView>
-          <View style={localStyles.searchResultsContainer}>
-            {searching ? (
-              <FlexibleLoadingIndicator style={localStyles.loadingData} />
-            ) : isNonEmptyArray(searchResultData) ? (
+      <ScrollView style={[styles.w100, styles.flex1]}>
+        {searching ? (
+          <FlexibleLoadingIndicator style={styles.pt4} />
+        ) : (
+          <View>
+            {noUsersFound ? (
+              <Text style={styles.noResultsText}>
+                {translate('friendSearchScreen.noUsersFound')}
+              </Text>
+            ) : (
               searchResultData.map(userID => (
                 <SearchResult
                   key={`${userID}-container`}
@@ -158,33 +165,13 @@ function FriendSearchScreen() {
                   alreadyAFriend={friends ? friends[userID] : false}
                 />
               ))
-            ) : (
-              noUsersFound && (
-                <Text style={styles.noResultsText}>
-                  {translate('friendSearchScreen.noUsersFound')}
-                </Text>
-              )
             )}
           </View>
-        </ScrollView>
-      </View>
+        )}
+      </ScrollView>
     </ScreenWrapper>
   );
 }
-
-// eslint-disable-next-line @typescript-eslint/no-use-before-define
-const localStyles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-  },
-  loadingData: {
-    marginTop: 20,
-  },
-  searchResultsContainer: {
-    width: '100%',
-    flexDirection: 'column',
-  },
-});
 
 FriendSearchScreen.displayName = 'Friend Search Screen';
 export default FriendSearchScreen;

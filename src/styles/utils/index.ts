@@ -1532,29 +1532,21 @@ const createStyleUtils = (theme: ThemeColors, styles: ThemeStyles) => ({
 
     switch (size) {
       case CONST.AVATAR_SIZE.SMALL:
-        containerStyles = [
-          styles.emptyAvatarSmall,
-          styles.emptyAvatarMarginSmall,
-        ];
+        containerStyles = [styles.avatarSmall, styles.avatarMarginSmall];
         break;
       case CONST.AVATAR_SIZE.SMALLER:
-        containerStyles = [
-          styles.emptyAvatarSmaller,
-          styles.emptyAvatarMarginSmaller,
-        ];
+        containerStyles = [styles.avatarSmaller, styles.avatarMarginSmaller];
         break;
       case CONST.AVATAR_SIZE.MEDIUM:
-        containerStyles = [styles.emptyAvatarMedium, styles.emptyAvatarMargin];
+        containerStyles = [styles.avatarMedium, styles.avatarMargin];
         break;
       case CONST.AVATAR_SIZE.LARGE:
-        containerStyles = [styles.emptyAvatarLarge, styles.mb2, styles.mr2];
+        containerStyles = [styles.avatarLarge, styles.mb2, styles.mr2];
         break;
       default:
         containerStyles = [
-          styles.emptyAvatar,
-          isInReportAction
-            ? styles.emptyAvatarMarginChat
-            : styles.emptyAvatarMargin,
+          styles.avatar,
+          isInReportAction ? styles.avatarMarginChat : styles.avatarMargin,
         ];
     }
 

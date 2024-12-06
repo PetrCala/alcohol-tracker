@@ -306,6 +306,15 @@ export default {
     title: 'Search For New Friends',
     noUsersFound: 'There are no users with this nickname.',
   },
+  friendRequestScreen: {
+    requestsReceived: (requestsCount: number) =>
+      `Requests Received (${requestsCount})`,
+    requestsSent: (requestsCount: number) => `Requests Sent (${requestsCount})`,
+    lookingForNewFriends: 'Looking for new friends?',
+    trySearchingHere: 'Try searching here',
+    accept: 'Accept',
+    remove: 'Remove',
+  },
   notFoundScreen: {
     title: 'Not Found',
   },
