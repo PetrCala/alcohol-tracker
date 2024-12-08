@@ -19,6 +19,10 @@ import {
 import {sessionsToDayMarking} from '@libs/DataHandling';
 import type {MarkingProps} from 'react-native-calendars/src/calendar/day/marking';
 import type {MarkedDates} from 'react-native-calendars/src/types';
+import Onyx, {useOnyx} from 'react-native-onyx';
+import ONYXKEYS from '@src/ONYXKEYS';
+import {useFirebase} from '@context/global/FirebaseContext';
+import {UserID} from '@src/types/onyx/OnyxCommon';
 
 type DateString = string;
 
@@ -29,16 +33,19 @@ type DateString = string;
  * @returns Marked dates and units for the calendar
  */
 function useLazyMarkedDates(
+  userID: UserID,
   sessions: DrinkingSessionList,
   preferences: Preferences,
 ) {
+  const {auth} = useFirebase();
+  const user = auth?.currentUser;
   const [markedDatesMap, setMarkedDatesMap] = useState<
     Map<DateString, MarkingProps>
   >(new Map());
   const [unitsMap, setUnitsMap] = useState<Map<DateString, number>>(new Map());
   const sessionIndex = useRef<Map<DateString, DrinkingSessionArray>>(new Map()); // synchronous
   const loadedFrom = useRef<Date | null>(null);
-  const [monthsLoaded, setMonthsLoaded] = useState(0);
+  const [monthsLoaded] = useOnyx(ONYXKEYS.SESSIONS_CALENDAR_MONTHS_LOADED);
   const [isLoading, setIsLoading] = useState(true);
   const defaultTimezone = CONST.DEFAULT_TIME_ZONE.selected;
 
@@ -70,12 +77,12 @@ function useLazyMarkedDates(
 
   // Internal function to load sessions for a specific month into provided maps
   const loadSessionsForMonthsInternal = (
-    monthsToLoad: number,
+    newMonthsToLoad: number,
     markedDatesMapToUpdate: Map<DateString, MarkingProps>,
     unitsMapToUpdate: Map<DateString, number>,
   ) => {
     const index = sessionIndex.current;
-    const start = getDateToLoadFrom(monthsToLoad);
+    const start = getDateToLoadFrom(newMonthsToLoad);
     const end = loadedFrom.current ?? new Date();
 
     const relevantSessions = Object.values(sessions).filter(session =>
@@ -109,8 +116,13 @@ function useLazyMarkedDates(
         unitsMapToUpdate,
       );
     });
+
     loadedFrom.current = start;
-    setMonthsLoaded(prev => prev + monthsToLoad);
+
+    if (user?.uid == userID) {
+      const newMonthsLoaded = newMonthsToLoad + (monthsLoaded || 0);
+      Onyx.merge(ONYXKEYS.SESSIONS_CALENDAR_MONTHS_LOADED, newMonthsLoaded);
+    }
   };
 
   /** Create a new map either using an existing object, or an empty object if the reset argument is set to true. Return the relevant map. */
@@ -122,14 +134,18 @@ function useLazyMarkedDates(
   }
 
   // Here, set the 'reset' argument to true if empty maps are needed
-  const loadMoreMonths = (monthsToLoad = 1, reset = false) => {
+  const loadMoreMonths = (newMonthsToLoad = 1, reset = false) => {
     const newMarkedDatesMap = createNewMap<DateString, MarkingProps>(
       reset,
       markedDatesMap,
     );
     const newUnitsMap = createNewMap<DateString, number>(reset, unitsMap);
 
-    loadSessionsForMonthsInternal(monthsToLoad, newMarkedDatesMap, newUnitsMap);
+    loadSessionsForMonthsInternal(
+      newMonthsToLoad,
+      newMarkedDatesMap,
+      newUnitsMap,
+    );
 
     setMarkedDatesMap(newMarkedDatesMap);
     setUnitsMap(newUnitsMap);
@@ -149,9 +165,12 @@ function useLazyMarkedDates(
 
     // If this is the first time loading, load the current month only
     // If more data have already been loaded, reload the same amount of months
-    loadMoreMonths(monthsLoaded, true);
+    const newMonthsToLoad =
+      user?.uid == userID && monthsLoaded && monthsLoaded > 0 ? 0 : 1;
+
+    loadMoreMonths(newMonthsToLoad, true);
     setIsLoading(false);
-  }, [sessions, preferences]);
+  }, [sessions, preferences, userID]);
 
   return {
     markedDates,
