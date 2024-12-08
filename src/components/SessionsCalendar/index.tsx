@@ -6,7 +6,7 @@ import type {DrinkingSessionList} from '@src/types/onyx';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
 import useThemeStyles from '@hooks/useThemeStyles';
 import CONST from '@src/CONST';
-import {differenceInMonths, format} from 'date-fns';
+import {differenceInMonths, format, subMonths} from 'date-fns';
 import {auth} from '@libs/Firebase/FirebaseApp';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
@@ -32,7 +32,7 @@ function SessionsCalendar({
   const StyleUtils = useStyleUtils();
   const user = auth?.currentUser;
   const {markedDates, unitsMap, loadedFrom, loadMoreMonths, isLoading} =
-    useLazyMarkedDates(drinkingSessionData || {}, preferences);
+    useLazyMarkedDates(userID, drinkingSessionData || {}, preferences);
   const [minDate, setMinDate] = useState<string>(CONST.DATE.MIN_DATE);
 
   const calculateMinDate = (
@@ -51,7 +51,7 @@ function SessionsCalendar({
       new Date(visibleDate.timestamp),
       new Date(loadedFrom?.current ?? new Date()),
     );
-    if (monthsAway < 1) {
+    if (monthsAway <= 1) {
       loadMoreMonths(1);
     }
 

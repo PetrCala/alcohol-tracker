@@ -8,7 +8,6 @@ import type {
 import {fetchDataKeyToDbPath} from '@hooks/useFetchData/utils';
 import useLocalize from '@hooks/useLocalize';
 import * as Utils from '@libs/Utils';
-import ONYXKEYS from '@src/ONYXKEYS';
 import {useEffect, useState} from 'react';
 
 // Define a type for the hook's return value

@@ -85,6 +85,9 @@ const ONYXKEYS = {
   /** Edit session data */
   EDIT_SESSION_DATA: 'editSessionData',
 
+  /** How many months of the calendar the user has loaded already */
+  SESSIONS_CALENDAR_MONTHS_LOADED: 'sessionsCalendarMonthsLoaded',
+
   /** Is the app loading? */
   IS_LOADING_APP: 'isLoadingApp',
 
@@ -254,6 +257,7 @@ type OnyxValuesMapping = {
   [ONYXKEYS.NVP_PREFERRED_LOCALE]: OnyxTypes.Locale;
   [ONYXKEYS.ONGOING_SESSION_DATA]: OnyxTypes.DrinkingSession;
   [ONYXKEYS.EDIT_SESSION_DATA]: OnyxTypes.DrinkingSession;
+  [ONYXKEYS.SESSIONS_CALENDAR_MONTHS_LOADED]: number;
   [ONYXKEYS.APP_LOADING_TEXT]: string;
   //   [ONYXKEYS.IS_TEST_TOOLS_MODAL_OPEN]: boolean;
   //   [ONYXKEYS.APP_PROFILING_IN_PROGRESS]: boolean;
