@@ -136,6 +136,7 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
                 onPress={() =>
                   Navigation.navigate(ROUTES.PROFILE.getRoute(userID))
                 }
+                style={[styles.alignItemsCenter, styles.justifyContentCenter]}
               />
             )
           }

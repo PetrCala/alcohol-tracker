@@ -133,8 +133,8 @@ const SearchResult: React.FC<SearchResultProps> = ({
 }) => {
   const styles = useThemeStyles();
   return (
-    <View style={localStyles.userOverviewContainer}>
-      <View style={localStyles.userInfoContainer}>
+    <View style={styles.userOverviewContainer}>
+      <View style={styles.userOverviewLeftContent}>
         <ProfileImage
           key={`${userID}-profile-icon`}
           storage={storage}
@@ -163,21 +163,6 @@ const SearchResult: React.FC<SearchResultProps> = ({
 
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
 const localStyles = StyleSheet.create({
-  userOverviewContainer: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 5,
-    paddingRight: 12,
-  },
-  userInfoContainer: {
-    flexGrow: 1,
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    padding: 5,
-  },
   userProfileImage: {
     width: 70,
     height: 70,
