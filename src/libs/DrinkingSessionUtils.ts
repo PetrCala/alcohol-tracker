@@ -32,11 +32,10 @@ import type {ImageSourcePropType} from 'react-native';
 import type {TranslationPaths} from '@src/languages/types';
 import Log from './Log';
 import DateUtils from './DateUtils';
-import {isNonEmptyArray} from './Validation';
-import * as Localize from './Localize';
 import {roundToTwoDecimalPlaces} from './NumberUtils';
 import {auth} from './Firebase/FirebaseApp';
 import {numberToVerboseString} from './TimeUtils';
+import IconAsset from '@src/types/utils/IconAsset';
 
 const PlaceholderDrinks: DrinksList = {[Date.now()]: {other: 0}};
 
@@ -810,12 +809,12 @@ async function fixTimezoneSessions(
 /** Based on a session type, return the icon that should be associated with this session */
 function getIconForSession(
   sessionType: DrinkingSessionType,
-): ImageSourcePropType {
+): IconAsset | ImageSourcePropType {
   switch (sessionType) {
     case CONST.SESSION_TYPES.LIVE:
-      return KirokuIcons.AlcoholAssortment; // TODO
+      return KirokuIcons.Stopwatch;
     case CONST.SESSION_TYPES.EDIT:
-      return KirokuIcons.AlcoholAssortment;
+      return KirokuIcons.Edit;
     default:
       return KirokuIcons.AlcoholAssortment;
   }
