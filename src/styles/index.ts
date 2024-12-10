@@ -2394,8 +2394,8 @@ const styles = (theme: ThemeColors) =>
     userOverviewContainer: {
       flexDirection: 'row',
       ...sizing.mw100,
-      ...spacing.p3,
-      ...spacing.pb1,
+      ...spacing.p2,
+      ...spacing.ph3,
     },
 
     userOverviewLeftContent: {
