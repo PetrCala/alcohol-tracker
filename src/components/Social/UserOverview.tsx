@@ -54,32 +54,20 @@ const UserOverview: React.FC<UserOverviewProps> = ({
       <View
         key={`${userID}-left-container`}
         style={styles.userOverviewLeftContent}>
-        <View key={`${userID}-profile`} style={localStyles.userOverviewProfile}>
-          <View style={localStyles.imageContainer}>
-            <ProfileImage
-              key={`${userID}-profile-icon`}
-              storage={storage}
-              userID={userID}
-              downloadPath={profileData.photo_url}
-              style={styles.avatarLarge}
-            />
-          </View>
-          <View
-            key={`${userID}info`}
-            style={
-              // shouldDisplaySessionInfo ?
-              // : [localStyles.userInfoContainer, localStyles.centerUserInfo]
-              [localStyles.userInfoContainer, localStyles.centerUserInfo]
-            }>
-            <Text
-              key={`${userID}-nickname`}
-              style={[styles.headerText, styles.ml1, styles.flexShrink1]}
-              numberOfLines={1}
-              ellipsizeMode="tail">
-              {profileData.display_name}
-            </Text>
-          </View>
-        </View>
+        <ProfileImage
+          key={`${userID}-profile-icon`}
+          storage={storage}
+          userID={userID}
+          downloadPath={profileData.photo_url}
+          style={styles.avatarLarge}
+        />
+        <Text
+          key={`${userID}-nickname`}
+          style={[styles.headerText, styles.ml3, styles.flexShrink1]}
+          numberOfLines={1}
+          ellipsizeMode="tail">
+          {profileData.display_name}
+        </Text>
       </View>
       <View
         key={`${userID}-right-container`}
@@ -90,30 +78,21 @@ const UserOverview: React.FC<UserOverviewProps> = ({
             <View style={commonStyles.flexRow}>
               <Text
                 key={`${userID}-status-info`}
-                style={[
-                  localStyles.userDetailsText,
-                  localStyles.rightContainerText,
-                ]}>
+                style={[styles.textLabelSupporting, styles.textAlignCenter]}>
                 {`In session${mostCommonDrinkIcon ? ':' : ''}`}
               </Text>
               {mostCommonDrinkIcon && <Icon small src={mostCommonDrinkIcon} />}
             </View>
             <Text
               key={`${userID}-status-time`}
-              style={[
-                localStyles.userDetailsText,
-                localStyles.rightContainerText,
-              ]}>
+              style={[styles.textLabel, styles.textAlignCenter]}>
               {`From: ${sessionStartTime}`}
             </Text>
           </>
         ) : (
           <Text
             key={`${userID}-status`}
-            style={[
-              localStyles.userDetailsText,
-              localStyles.rightContainerText,
-            ]}>
+            style={[styles.textLabelSupporting, styles.textAlignCenter]}>
             {!_.isEmpty(sessionEndTimeVerbose)
               ? `${sessionEndTimeVerbose}\nsober`
               : inSession
@@ -130,45 +109,10 @@ export default UserOverview;
 
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
 const localStyles = StyleSheet.create({
-  userOverviewProfile: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-  },
-  imageContainer: {
-    width: '30%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  userInfoContainer: {
-    height: '100%',
-    width: '70%',
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
-    marginTop: 5,
-  },
-  centerUserInfo: {
-    justifyContent: 'center',
-    marginTop: -5, // 5 is the margin of the text
-  },
-  userOverviewText: {
-    color: 'black',
-    fontSize: 16,
-    fontWeight: '500',
-    marginLeft: 5,
-    marginBottom: 3,
-    marginTop: 5,
-  },
   userDetailsText: {
     color: 'black',
     fontSize: 12,
-    textAlign: 'center',
-    padding: 2,
   },
-  leftContainerText: {},
   rightContainerText: {
     textAlign: 'center',
     color: '#333',
