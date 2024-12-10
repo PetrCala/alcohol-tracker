@@ -37,10 +37,11 @@ function FriendListScreen({}: FriendListScreenProps) {
         searchMapping,
       );
       setFriendsToDisplay(relevantResults); // Hide irrelevant
-    } catch (error: unknown) {
+    } catch (error: Error | unknown) {
+      const errorMessage = error instanceof Error ? error.message : '';
       Alert.alert(
         'Database serach failed',
-        `Could not search the database: ${error.message}`,
+        `Could not search the database: ${errorMessage}`,
       );
       return;
     } finally {
