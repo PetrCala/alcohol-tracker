@@ -46,6 +46,7 @@ import {isEqual} from 'lodash';
 import type {CalendarColors} from '@components/SessionsCalendar/types';
 import type {User} from 'firebase/auth';
 import type {DrinkingSessionWindowProps} from './types';
+import {useFocusEffect} from '@react-navigation/native';
 
 function DrinkingSessionWindow({
   sessionId,
@@ -275,12 +276,9 @@ function DrinkingSessionWindow({
     };
   }, [session]);
 
-  useEffect(() => {
-    waitForNavigate(() => {
-      Utils.setLoadingText(null);
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- we don't want this effect to run again
-  }, []); // Upon component mount
+  useFocusEffect(() => {
+    Utils.setLoadingText(null);
+  });
 
   return (
     <>

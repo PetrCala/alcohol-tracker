@@ -68,7 +68,7 @@ function StartSessionButtonAndPopover(
   const {translate} = useLocalize();
   const user = auth.currentUser;
   const [isVisible, setIsVisible] = useState(false);
-  const {drinkingSessionData, userData, userStatusData} = useDatabaseData();
+  const {userData, userStatusData} = useDatabaseData();
   const [ongoingSessionData] = useOnyx(ONYXKEYS.ONGOING_SESSION_DATA);
   const [startSession] = useOnyx(ONYXKEYS.START_SESSION_GLOBAL_CREATE);
   const [loadingText] = useOnyx(ONYXKEYS.APP_LOADING_TEXT);
