@@ -46,10 +46,11 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
       setIsLoading(true);
       await sendFriendRequest(db, userFrom, userTo);
       setIsLoading(false);
-    } catch (error: unknown) {
+    } catch (error: Error | unknown) {
+      const errorMessage = error instanceof Error ? error.message : '';
       Alert.alert(
         'User does not exist in the database',
-        `Could not send a friend request: ${error.message}`,
+        `Could not send a friend request: ${errorMessage}`,
       );
     }
   };
@@ -64,10 +65,11 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
       setIsLoading(true);
       await acceptFriendRequest(db, userFrom, userTo);
       setIsLoading(false);
-    } catch (error: unknown) {
+    } catch (error: Error | unknown) {
+      const errorMessage = error instanceof Error ? error.message : '';
       Alert.alert(
         'User does not exist in the database',
-        `Could not accept a friend request: ${error.message}`,
+        `Could not accept a friend request: ${errorMessage}`,
       );
     }
   };
