@@ -84,6 +84,7 @@ function StartSessionButtonAndPopover(
   const startLiveDrinkingSession = async (): Promise<void> => {
     try {
       await Utils.setLoadingText(translate('liveSessionScreen.loading'));
+      // TODO start only if user is not already in a session - otherwise use ongoing session data to navigate
       await DS.startLiveDrinkingSession(db, user, userData?.timezone?.selected);
       DS.navigateToOngoingSessionScreen();
     } catch (error: unknown) {
