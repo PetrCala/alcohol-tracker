@@ -79,13 +79,16 @@ function StartSessionButtonAndPopover(
   const isFocused = useIsFocused();
   const prevIsFocused = usePrevious(isFocused);
 
-  const {environment} = useEnvironment();
-
   const startLiveDrinkingSession = async (): Promise<void> => {
     try {
-      await Utils.setLoadingText(translate('liveSessionScreen.loading'));
-      // TODO start only if user is not already in a session - otherwise use ongoing session data to navigate
-      await DS.startLiveDrinkingSession(db, user, userData?.timezone?.selected);
+      if (!ongoingSessionData?.ongoing) {
+        await Utils.setLoadingText(translate('liveSessionScreen.loading'));
+        await DS.startLiveDrinkingSession(
+          db,
+          user,
+          userData?.timezone?.selected,
+        );
+      }
       DS.navigateToOngoingSessionScreen();
     } catch (error: unknown) {
       ErrorUtils.raiseAlert(error, translate('homeScreen.error.title'));
