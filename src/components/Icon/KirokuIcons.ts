@@ -31,7 +31,7 @@ import Document from '@assets/images/document.svg';
 import DotIndicator from '@assets/images/dot-indicator.svg';
 import DownArrow from '@assets/images/down.svg';
 import Download from '@assets/images/download.png';
-import Edit from '@assets/images/edit.png';
+import Edit from '@assets/images/edit.svg';
 import Exit from '@assets/images/exit.svg';
 import Eye from '@assets/images/eye.svg';
 import EyeDisabled from '@assets/images/eye-disabled.svg';
@@ -59,6 +59,7 @@ import Settings from '@assets/images/settings.png';
 import Share from '@assets/images/share.png';
 import Social from '@assets/images/social.png';
 import Statistics from '@assets/images/statistics.png';
+import Stopwatch from '@assets/images/stopwatch.svg';
 import StrongShot from '@assets/images/strong-shot.png';
 import ThinX from '@assets/images/thin-x.png';
 import ThreeDots from '@assets/images/three-dots.svg';
@@ -129,6 +130,7 @@ export {
   Share,
   Social,
   Statistics,
+  Stopwatch,
   StrongShot,
   ThinX,
   ThreeDots,
