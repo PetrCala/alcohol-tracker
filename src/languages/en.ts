@@ -590,7 +590,7 @@ export default {
     enterEditMode: 'Edit Mode',
     exitEditMode: 'Exit Edit Mode',
     noDrinkingSessions: 'No drinking sessions',
-    inSession: 'In Session',
+    ongoing: 'Ongoing',
     error: {
       open: 'Failed to open a new session. Please try again.',
     },

@@ -148,7 +148,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
               <Button
                 danger
                 onPress={() => onSessionButtonPress(sessionId, session)}
-                text={translate('dayOverviewScreen.inSession')}
+                text={translate('dayOverviewScreen.ongoing')}
               />
             ) : (
               editMode && (
