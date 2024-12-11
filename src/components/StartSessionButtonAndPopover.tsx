@@ -11,13 +11,11 @@ import React, {
   useState,
 } from 'react';
 import {View} from 'react-native';
-import type {OnyxEntry} from 'react-native-onyx';
 import Onyx, {useOnyx} from 'react-native-onyx';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
 import * as DS from '@userActions/DrinkingSession';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import * as Utils from '@libs/Utils';
-import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import useLocalize from '@hooks/useLocalize';
 import usePrevious from '@hooks/usePrevious';
 import useResponsiveLayout from '@hooks/useResponsiveLayout';
@@ -25,17 +23,15 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import useWindowDimensions from '@hooks/useWindowDimensions';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
-import type * as OnyxTypes from '@src/types/onyx';
 import type {DrinkingSessionType} from '@src/types/onyx';
 import Log from '@libs/common/Log';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {useFirebase} from '@context/global/FirebaseContext';
-import _, {get} from 'lodash';
+import _ from 'lodash';
 import Text from './Text';
 import PopoverMenu from './PopoverMenu';
 import type {PopoverMenuItem} from './PopoverMenu';
 import FloatingActionButton from './FloatingActionButton';
-import ConfirmModal from './ConfirmModal';
 import DateUtils from '@libs/DateUtils';
 
 // Utils
