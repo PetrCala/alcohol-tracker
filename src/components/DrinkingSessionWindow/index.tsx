@@ -206,6 +206,7 @@ function DrinkingSessionWindow({
       return;
     }
     try {
+      setDiscardModalVisible(false);
       await Utils.setLoadingText(
         translate(
           'liveSessionScreen.discardingSession',
@@ -227,7 +228,6 @@ function DrinkingSessionWindow({
         translate('liveSessionScreen.error.discard'),
       );
     } finally {
-      setDiscardModalVisible(false);
       await Utils.setLoadingText(null);
     }
   };
