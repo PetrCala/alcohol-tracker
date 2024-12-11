@@ -446,15 +446,17 @@ async function updateLocalSessionDataAndNavigate(
 async function navigateToEditSessionScreen(
   sessionId: DrinkingSessionId | undefined,
   session?: DrinkingSession,
+  backTo?: Route,
 ): Promise<void> {
   if (!sessionId) {
     throw new Error(Localize.translateLocal('drinkingSession.error.missingId'));
   }
+
   await updateLocalSessionDataAndNavigate(
     sessionId,
     session,
     ONYXKEYS.EDIT_SESSION_DATA,
-    ROUTES.DRINKING_SESSION_EDIT.getRoute(sessionId),
+    ROUTES.DRINKING_SESSION_EDIT.getRoute(sessionId, backTo),
   );
 }
 

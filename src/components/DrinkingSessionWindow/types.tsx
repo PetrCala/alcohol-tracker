@@ -4,8 +4,14 @@ import type {
   DrinkingSessionId,
   DrinkingSessionType,
 } from '@src/types/onyx';
+import CONST from '@src/CONST';
+import DeepValueOf from '@src/types/utils/DeepValueOf';
 
 type DrinkingSessionWindowProps = {
+  onNavigateBack: (
+    action: DeepValueOf<typeof CONST.NAVIGATION.SESSION_ACTION>,
+  ) => void;
+
   /** The session id */
   sessionId: DrinkingSessionId;
 

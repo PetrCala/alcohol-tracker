@@ -621,6 +621,7 @@ const CONST = {
     SESSION_ACTION: {
       SAVE: 'SAVE',
       DISCARD: 'DISCARD',
+      BACK: 'BACK',
     },
   },
 

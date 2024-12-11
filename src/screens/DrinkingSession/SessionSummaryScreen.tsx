@@ -104,8 +104,8 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
     : 'Unknown';
 
   const handleBackPress = () => {
-    const screenBeforeSummaryScreen = Navigation.getLastScreenName(true);
-    if (screenBeforeSummaryScreen === SCREENS.DAY_OVERVIEW.ROOT) {
+    const lastScreenName = Navigation.getLastScreenName(true);
+    if (lastScreenName === SCREENS.DAY_OVERVIEW.ROOT) {
       Navigation.goBack();
     } else {
       Navigation.navigate(ROUTES.HOME);

@@ -23,6 +23,7 @@ import * as DSUtils from '@libs/DrinkingSessionUtils';
 import Text from '@components/Text';
 import {TranslationPaths} from '@src/languages/types';
 import Onyx, {useOnyx} from 'react-native-onyx';
+import ROUTES from '@src/ROUTES';
 
 type SessionDateScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -52,7 +53,7 @@ function SesssionDateScreen({route}: SessionDateScreenProps) {
     await DS.updateSessionDate(sessionId, session, new Date(values.date));
     if (!!isBeingCreated) {
       await Onyx.set(ONYXKEYS.IS_CREATING_NEW_SESSION, false);
-      DS.navigateToEditSessionScreen(sessionId);
+      DS.navigateToEditSessionScreen(sessionId, undefined, ROUTES.HOME);
     } else {
       Navigation.goBack();
     }
