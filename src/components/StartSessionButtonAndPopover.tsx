@@ -17,7 +17,7 @@ import * as DSUtils from '@libs/DrinkingSessionUtils';
 import * as DS from '@userActions/DrinkingSession';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import * as Utils from '@libs/Utils';
-import useEnvironment from '@hooks/useEnvironment';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import useLocalize from '@hooks/useLocalize';
 import usePrevious from '@hooks/usePrevious';
 import useResponsiveLayout from '@hooks/useResponsiveLayout';
@@ -30,12 +30,13 @@ import type {DrinkingSessionType} from '@src/types/onyx';
 import Log from '@libs/common/Log';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {useFirebase} from '@context/global/FirebaseContext';
-import _ from 'lodash';
+import _, {get} from 'lodash';
 import Text from './Text';
 import PopoverMenu from './PopoverMenu';
 import type {PopoverMenuItem} from './PopoverMenu';
 import FloatingActionButton from './FloatingActionButton';
 import ConfirmModal from './ConfirmModal';
+import DateUtils from '@libs/DateUtils';
 
 // Utils
 
@@ -81,8 +82,8 @@ function StartSessionButtonAndPopover(
 
   const startLiveDrinkingSession = async (): Promise<void> => {
     try {
+      await Utils.setLoadingText(translate('liveSessionScreen.loading'));
       if (!ongoingSessionData?.ongoing) {
-        await Utils.setLoadingText(translate('liveSessionScreen.loading'));
         await DS.startLiveDrinkingSession(
           db,
           user,
@@ -133,10 +134,10 @@ function StartSessionButtonAndPopover(
       // const sessionID = DSUtils.generateSessionID();
 
       switch (sessionType) {
-        case CONST.SESSION_TYPES.LIVE:
+        case CONST.SESSION.TYPES.LIVE:
           await selectOption(() => startLiveDrinkingSession());
           break;
-        case CONST.SESSION_TYPES.EDIT:
+        case CONST.SESSION.TYPES.EDIT:
           await selectOption(
             async () => {}, // Edit a session
           );
@@ -214,10 +215,8 @@ function StartSessionButtonAndPopover(
     }
   };
 
-  const sessionTypeMenuItems: PopoverMenuItem[] = useMemo(() => {
-    // Define common properties in baseSessionType
-    const baseSessionType = {
-      label: translate('startSession.header'),
+  const getBaseSessionType = useCallback(
+    (sessionType: DrinkingSessionType) => ({
       isLabelHoverable: false,
       numberOfLinesDescription: 2,
       tooltipAnchorAlignment: {
@@ -228,27 +227,65 @@ function StartSessionButtonAndPopover(
       tooltipShiftVertical: styles.popoverMenuItem.paddingVertical / 2,
       renderTooltipContent: renderSessionTypeTooltip,
       tooltipWrapperStyle: styles.sessionTypeTooltipWrapper,
-    };
+      onSelected: async () => {
+        await navigateToSessionType(sessionType);
+        hideCreateMenu();
+      },
+      shouldRenderTooltip: false, // TODO
+      // shouldRenderTooltip: startSession.isFirstSession,
+      text: translate(DSUtils.getSessionTypeTitle(sessionType)),
+    }),
+    [
+      styles.popoverMenuItem.paddingHorizontal,
+      styles.popoverMenuItem.paddingVertical,
+      styles.sessionTypeTooltipWrapper,
+      renderSessionTypeTooltip,
+      navigateToSessionType,
+      selectOption,
+      renderSessionTypeTooltip,
+    ],
+  );
 
-    const sessionTypes: DrinkingSessionType[] = Object.values(
-      CONST.SESSION_TYPES,
+  const ongoingSessionMenuItems: PopoverMenuItem[] = useMemo(() => {
+    const session = userStatusData?.latest_session;
+    if (!session || !session.ongoing || !session.type) {
+      return [];
+    }
+
+    const sessionStartTime = DateUtils.getLocalizedTime(
+      session.start_time,
+      userData?.timezone?.selected,
+    );
+    getBaseSessionType(session.type);
+
+    return [
+      {
+        ...getBaseSessionType(session.type),
+        label: translate('startSession.ongoingSessions'),
+        icon: DSUtils.getIconForSession(
+          userStatusData?.latest_session?.type as DrinkingSessionType,
+        ),
+        description: translate('startSession.sessionFrom', sessionStartTime),
+      },
+    ];
+  }, [userStatusData, translate]);
+
+  const staticSessionTypeMenuItems: PopoverMenuItem[] = useMemo(() => {
+    const sessionTypes = _.filter(
+      Object.values(CONST.SESSION.TYPES),
+      type =>
+        // Only non-ongoing (static) sessions
+        !userStatusData?.latest_session?.ongoing ||
+        type !== userStatusData?.latest_session?.type,
     );
 
-    return _.map(sessionTypes, (sessionType, index) => {
-      return {
-        ...baseSessionType,
-        label: index === 0 ? translate('startSession.header') : undefined,
-        icon: DSUtils.getIconForSession(sessionType),
-        text: translate(DSUtils.getSessionTypeTitle(sessionType)),
-        description: translate(DSUtils.getSessionTypeDescription(sessionType)),
-        onSelected: async () => {
-          await navigateToSessionType(sessionType);
-          hideCreateMenu();
-        },
-        shouldRenderTooltip: false, // TODO
-        // shouldRenderTooltip: startSession.isFirstSession,
-      };
-    });
+    return _.map(sessionTypes, (sessionType, index) => ({
+      ...getBaseSessionType(sessionType),
+      label:
+        index === 0 ? translate('startSession.startNewSession') : undefined,
+      icon: DSUtils.getIconForSession(sessionType),
+      description: translate(DSUtils.getSessionTypeDescription(sessionType)),
+    }));
   }, [
     translate,
     styles.popoverMenuItem.paddingHorizontal,
@@ -257,10 +294,8 @@ function StartSessionButtonAndPopover(
     DSUtils.getSessionTypeTitle,
     DSUtils.getSessionTypeDescription,
     DSUtils.getIconForSession,
-    renderSessionTypeTooltip,
+    userStatusData,
     startSession?.sessionType,
-    navigateToSessionType,
-    selectOption,
   ]);
 
   useEffect(() => {
@@ -287,9 +322,9 @@ function StartSessionButtonAndPopover(
         onItemSelected={hideCreateMenu}
         fromSidebarMediumScreen={!shouldUseNarrowLayout}
         menuItems={[
-          // icon, text, onSelected
           // ...(condition ? [{icon: ..., ...}] : []) // to add items conditionally
-          ...sessionTypeMenuItems,
+          ...ongoingSessionMenuItems,
+          ...staticSessionTypeMenuItems,
         ]}
         withoutOverlay
         anchorRef={fabRef}

@@ -149,7 +149,7 @@ async function startLiveDrinkingSession(
   // The user is not in an active session
   const newSessionData: DrinkingSession = DSUtils.getEmptySession({
     id: newSessionId,
-    type: CONST.SESSION_TYPES.LIVE,
+    type: CONST.SESSION.TYPES.LIVE,
     timezone,
     ongoing: true,
   });
@@ -381,7 +381,7 @@ function getNewSessionToEdit(
     id: newSessionId,
     start_time: timestamp,
     end_time: timestamp,
-    type: CONST.SESSION_TYPES.EDIT,
+    type: CONST.SESSION.TYPES.EDIT,
     timezone,
   });
 

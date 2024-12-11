@@ -92,7 +92,7 @@ function getEmptySession(
     blackout: session?.blackout || false,
     note: session?.note || '',
     timezone: session?.timezone || CONST.DEFAULT_TIME_ZONE.selected,
-    type: session?.type || CONST.SESSION_TYPES.EDIT,
+    type: session?.type || CONST.SESSION.TYPES.EDIT,
     ongoing: session?.ongoing,
   };
   return emptySession;
@@ -343,7 +343,7 @@ function getSessionAddDrinksOptions(
     ? {
         timestampOption: 'now',
       }
-    : session?.type === CONST.SESSION_TYPES.LIVE && session?.end_time
+    : session?.type === CONST.SESSION.TYPES.LIVE && session?.end_time
       ? {
           timestampOption: 'sessionEndTime',
           end_time: session.end_time,
@@ -811,22 +811,26 @@ function getIconForSession(
   sessionType: DrinkingSessionType,
 ): IconAsset | ImageSourcePropType {
   switch (sessionType) {
-    case CONST.SESSION_TYPES.LIVE:
+    case CONST.SESSION.TYPES.LIVE:
       return KirokuIcons.Stopwatch;
-    case CONST.SESSION_TYPES.EDIT:
+    case CONST.SESSION.TYPES.EDIT:
       return KirokuIcons.Edit;
     default:
       return KirokuIcons.AlcoholAssortment;
   }
 }
 
+function isRealtimeSession(type: DrinkingSessionType): boolean {
+  return type in CONST.SESSION.REALTIME;
+}
+
 function getSessionTypeTitle(
   sessionType: DrinkingSessionType,
 ): TranslationPaths {
   switch (sessionType) {
-    case CONST.SESSION_TYPES.LIVE:
+    case CONST.SESSION.TYPES.LIVE:
       return 'drinkingSession.live.title';
-    case CONST.SESSION_TYPES.EDIT:
+    case CONST.SESSION.TYPES.EDIT:
       return 'drinkingSession.edit.title';
     default:
       return 'common.unknown';
@@ -838,9 +842,9 @@ function getSessionTypeDescription(
   sessionType: DrinkingSessionType,
 ): TranslationPaths {
   switch (sessionType) {
-    case CONST.SESSION_TYPES.LIVE:
+    case CONST.SESSION.TYPES.LIVE:
       return 'drinkingSession.live.description';
-    case CONST.SESSION_TYPES.EDIT:
+    case CONST.SESSION.TYPES.EDIT:
       return 'drinkingSession.edit.description';
     default:
       return 'common.unknown';
@@ -874,6 +878,7 @@ export {
   isDifferentDay,
   isDrinkTypeKey,
   isEmptySession,
+  isRealtimeSession,
   modifySessionDrinks,
   removeDrinksFromList,
   sessionIsExpired,

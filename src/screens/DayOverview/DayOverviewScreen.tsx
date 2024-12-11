@@ -124,7 +124,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
     const timeString = nonMidnightString(
       DateUtils.getLocalizedTime(session.start_time, session.timezone),
     );
-    const shouldDisplayTime = session.type === CONST.SESSION_TYPES.LIVE;
+    const shouldDisplayTime = session.type === CONST.SESSION.TYPES.LIVE;
 
     return (
       <View style={[styles.flexRow, styles.ph1, styles.mb1]}>

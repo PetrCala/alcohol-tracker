@@ -52,7 +52,7 @@ type DrinkingSessionId = string;
 /**
  *
  */
-type DrinkingSessionType = ValueOf<typeof CONST.SESSION_TYPES>;
+type DrinkingSessionType = ValueOf<typeof CONST.SESSION.TYPES>;
 
 /**
  *
