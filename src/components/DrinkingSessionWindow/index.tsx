@@ -25,7 +25,7 @@ import FillerView from '@components/FillerView';
 import CONST from '@src/CONST';
 import Navigation from '@navigation/Navigation';
 import SCREENS from '@src/SCREENS';
-import ROUTES from '@src/ROUTES';
+import ROUTES, {Route} from '@src/ROUTES';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import type DeepValueOf from '@src/types/utils/DeepValueOf';
 import useLocalize from '@hooks/useLocalize';
@@ -139,18 +139,23 @@ function DrinkingSessionWindow({
       DISCARD: () => ROUTES.HOME,
     };
 
-    const navigateToOverview = () =>
-      ROUTES.DAY_OVERVIEW.getRoute(
-        timestampToDateString(session?.start_time || Date.now()),
-      );
-
     // Decide the route based on the action or previous screen
-    const route =
-      previousScreenName === SCREENS.DAY_OVERVIEW.ROOT
-        ? navigateToOverview
-        : routesMap[action];
+    let route: Route;
+    switch (previousScreenName) {
+      case SCREENS.DAY_OVERVIEW.ROOT:
+        route = ROUTES.DAY_OVERVIEW.getRoute(
+          timestampToDateString(session?.start_time || Date.now()),
+        );
+        break;
+      case SCREENS.HOME:
+        route = ROUTES.HOME;
+        break;
+      default:
+        route = routesMap[action]();
+        break;
+    }
 
-    Navigation.navigate(route());
+    Navigation.navigate(route);
   };
 
   async function saveSession(db: any, user: User | null) {
