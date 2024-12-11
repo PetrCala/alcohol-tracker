@@ -1,4 +1,4 @@
-import React, {useState, useMemo} from 'react';
+import React, {useState, useMemo, useCallback} from 'react';
 import {
   View,
   FlatList,
@@ -42,7 +42,7 @@ import Icon from '@components/Icon';
 import Text from '@components/Text';
 import useTheme from '@hooks/useTheme';
 import DateUtils from '@libs/DateUtils';
-import {useOnyx} from 'react-native-onyx';
+import Onyx, {useOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 
 type DayOverviewScreenProps = StackScreenProps<
@@ -88,11 +88,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
     setDailyData(newDailyData);
   }, [currentDate, drinkingSessionData]);
 
-  const onEditSessionPress = (sessionId: string, session: DrinkingSession) => {
-    DS.navigateToEditSessionScreen(sessionId, session);
-  };
-
-  const onSessionButtonPress = (
+  const onSessionButtonPress = async (
     sessionId: string,
     session: DrinkingSession,
   ) => {
@@ -100,8 +96,8 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
       Navigation.navigate(ROUTES.DRINKING_SESSION_SUMMARY.getRoute(sessionId));
       return;
     }
-    // If the session is ongoing, behave as if the edit button was pressed
-    onEditSessionPress(sessionId, session);
+    await Onyx.set(ONYXKEYS.ONGOING_SESSION_DATA, session);
+    DS.navigateToOngoingSessionScreen();
   };
 
   function DrinkingSession({sessionId, session}: DrinkingSessionKeyValue) {
@@ -131,7 +127,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
         <View
           style={[styles.border, styles.dayOverviewTabIndicator(sessionColor)]}
         />
-        <View style={[styles.border, styles.dayOverviewTab, styles.pr1]}>
+        <View style={[styles.border, styles.dayOverviewTab, styles.pr2]}>
           <View style={[styles.flexRow, styles.alignItemsCenter]}>
             <View style={styles.flex1}>
               <TouchableOpacity
@@ -149,23 +145,20 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
               </TouchableOpacity>
             </View>
             {session?.ongoing ? (
-              <View style={[localStyles.ongoingSessionContainer, styles.appBG]}>
-                <TouchableOpacity
-                  accessibilityRole="button"
-                  style={[localStyles.ongoingSessionButton, styles.border]}
-                  onPress={() => onSessionButtonPress(sessionId, session)}>
-                  <Text style={[styles.buttonLargeText]}>
-                    {translate('dayOverviewScreen.inSession')}
-                  </Text>
-                </TouchableOpacity>
-              </View>
+              <Button
+                danger
+                onPress={() => onSessionButtonPress(sessionId, session)}
+                text={translate('dayOverviewScreen.inSession')}
+              />
             ) : (
               editMode && (
                 <Button
                   large
                   style={styles.bgTransparent}
                   icon={KirokuIcons.Edit}
-                  onPress={() => onEditSessionPress(sessionId, session)} // Use keyextractor to load id here
+                  onPress={() =>
+                    DS.navigateToEditSessionScreen(sessionId, session)
+                  } // Use keyextractor to load id here
                 />
               )
             )}
@@ -368,12 +361,6 @@ const localStyles = StyleSheet.create({
   nextDayArrow: {
     transform: [{rotate: '180deg'}],
     alignSelf: 'flex-end',
-  },
-  ongoingSessionContainer: {
-    width: 100,
-    height: 35,
-    borderRadius: 10,
-    margin: 5,
   },
   ongoingSessionButton: {
     width: '100%',
