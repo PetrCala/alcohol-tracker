@@ -108,7 +108,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
         sessionId={sessionId}
         session={session}
         onyxKey={ONYXKEYS.ONGOING_SESSION_DATA}
-        type={CONST.SESSION_TYPES.LIVE}
+        type={CONST.SESSION.TYPES.LIVE}
       />
     </ScreenWrapper>
   );

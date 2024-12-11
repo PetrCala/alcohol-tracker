@@ -363,10 +363,10 @@ function DrinkingSessionWindow({
               onBlackoutChange={(value: boolean) =>
                 DS.updateBlackout(session, value)
               }
-              shouldAllowDateChange={type !== CONST.SESSION_TYPES.LIVE}
+              shouldAllowDateChange={type !== CONST.SESSION.TYPES.LIVE}
               shouldAllowTimezoneChange={
                 !session?.ongoing
-                // session.type !== CONST.SESSION_TYPES.LIVE // Enable this down the line
+                // session.type !== CONST.SESSION.TYPES.LIVE // Enable this down the line
               }
             />
           </>

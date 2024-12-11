@@ -201,7 +201,7 @@ function createMockSession(
     blackout: false,
     note: '',
     drinks,
-    type: getRandomChoice(Object.values(CONST.SESSION_TYPES)),
+    type: getRandomChoice(Object.values(CONST.SESSION.TYPES)),
     timezone: DateUtils.getCurrentTimezone().selected,
   };
   if (ongoing) {

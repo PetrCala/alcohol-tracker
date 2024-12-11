@@ -96,7 +96,7 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
     session?.end_time,
     session?.timezone,
   );
-  const wasLiveSession = session?.type == CONST.SESSION_TYPES.LIVE;
+  const wasLiveSession = session?.type == CONST.SESSION.TYPES.LIVE;
   // Figure out last drink added
   const lastDrinkEditTimestamp = getLastDrinkAddedTime(session);
   const lastDrinkAdded = lastDrinkEditTimestamp

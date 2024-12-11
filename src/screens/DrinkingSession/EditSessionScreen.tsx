@@ -41,7 +41,7 @@ function EditSessionScreen({route}: EditSessionScreenProps) {
         sessionId={sessionId}
         session={session}
         onyxKey={ONYXKEYS.EDIT_SESSION_DATA}
-        type={CONST.SESSION_TYPES.EDIT}
+        type={CONST.SESSION.TYPES.EDIT}
       />
     </ScreenWrapper>
   );

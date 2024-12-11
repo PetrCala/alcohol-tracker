@@ -41,6 +41,12 @@ const keyInputRightArrow =
 // describes if a shortcut key can cause navigation
 const KEYBOARD_SHORTCUT_NAVIGATION_TYPE = 'NAVIGATION_SHORTCUT';
 
+/** Drinking session types */
+const SESSION_TYPES = {
+  LIVE: 'live',
+  EDIT: 'edit',
+} as const;
+
 const CONST = {
   ACCOUNT_CREATION_LIMIT: 3,
   ANDROID_PACKAGE_NAME,
@@ -849,9 +855,9 @@ const CONST = {
   },
   SELECTION_SCRAPER_HIDDEN_ELEMENT: 'selection-scrapper-hidden-element',
   SESSION_EXPIRY: 60 * 60 * 1000 * 12, // 12 hours
-  SESSION_TYPES: {
-    LIVE: 'live',
-    EDIT: 'edit',
+  SESSION: {
+    TYPES: SESSION_TYPES,
+    REALTIME: [SESSION_TYPES.LIVE],
   },
   SOCIALS: {
     TWITTER: '',

@@ -425,9 +425,11 @@ export default {
     },
   },
   startSession: {
-    header: 'Start a new session',
+    ongoingSessions: 'Ongoing sessions',
+    startNewSession: 'Start a new session',
     newSession: 'Start a session',
     newSessionExplained: 'Start a session (Floating action)',
+    sessionFrom: (startTime: string) => `A session from ${startTime}`,
   },
   userNameScreen: {
     headerTitle: 'User name',
