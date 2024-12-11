@@ -149,7 +149,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
               </TouchableOpacity>
             </View>
             {session?.ongoing ? (
-              <View style={localStyles.ongoingSessionContainer}>
+              <View style={[localStyles.ongoingSessionContainer, styles.appBG]}>
                 <TouchableOpacity
                   accessibilityRole="button"
                   style={[localStyles.ongoingSessionButton, styles.border]}
@@ -161,11 +161,10 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
               </View>
             ) : (
               editMode && (
-                <MenuIcon
-                  iconId="edit-session-icon"
-                  iconSource={KirokuIcons.Edit}
-                  containerStyle={[localStyles.menuIconContainer]}
-                  iconStyle={[localStyles.menuIcon]}
+                <Button
+                  large
+                  style={styles.bgTransparent}
+                  icon={KirokuIcons.Edit}
                   onPress={() => onEditSessionPress(sessionId, session)} // Use keyextractor to load id here
                 />
               )
@@ -320,16 +319,6 @@ const screenWidth = Dimensions.get('window').width;
 
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
 const localStyles = StyleSheet.create({
-  menuIconContainer: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  menuIcon: {
-    width: 25,
-    height: 25,
-  },
   dayOverviewContainer: {
     flex: 1,
     overflow: 'hidden',
@@ -385,7 +374,6 @@ const localStyles = StyleSheet.create({
     height: 35,
     borderRadius: 10,
     margin: 5,
-    backgroundColor: 'white',
   },
   ongoingSessionButton: {
     width: '100%',
