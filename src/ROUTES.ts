@@ -49,13 +49,19 @@ const ROUTES = {
   },
   DRINKING_SESSION_LIVE: {
     route: 'drinking-session/:sessionId/live',
-    getRoute: (sessionId: DrinkingSessionId) =>
-      `drinking-session/${sessionId}/live` as const,
+    getRoute: (sessionId: DrinkingSessionId, backTo = '') =>
+      getUrlWithBackToParam(
+        `drinking-session/${sessionId}/live` as const,
+        backTo,
+      ),
   },
   DRINKING_SESSION_EDIT: {
     route: 'drinking-session/:sessionId/edit',
-    getRoute: (sessionId: DrinkingSessionId) =>
-      `drinking-session/${sessionId}/edit` as const,
+    getRoute: (sessionId: DrinkingSessionId, backTo = '') =>
+      getUrlWithBackToParam(
+        `drinking-session/${sessionId}/edit` as const,
+        backTo,
+      ),
   },
   DRINKING_SESSION_SESSION_DATE_SCREEN: {
     route: 'drinking-session/:sessionId/session-date-screen',

@@ -6,7 +6,7 @@ import {useUserConnection} from '@context/global/UserConnectionContext';
 import CONST from '@src/CONST';
 import type {StackScreenProps} from '@react-navigation/stack';
 import type {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
-import type SCREENS from '@src/SCREENS';
+import SCREENS from '@src/SCREENS';
 import useLocalize from '@hooks/useLocalize';
 import {useOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
@@ -21,6 +21,9 @@ import {computeFirebaseUpdates} from '@database/baseFunctions';
 import useThemeStyles from '@hooks/useThemeStyles';
 import useStyleUtils from '@hooks/useStyleUtils';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
+import DeepValueOf from '@src/types/utils/DeepValueOf';
+import Navigation from '@libs/Navigation/Navigation';
+import ROUTES, {Route} from '@src/ROUTES';
 
 type LiveSessionScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -28,7 +31,7 @@ type LiveSessionScreenProps = StackScreenProps<
 >;
 
 function LiveSessionScreen({route}: LiveSessionScreenProps) {
-  const {sessionId} = route.params;
+  const {sessionId, backTo} = route.params;
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
   const StyleUtils = useStyleUtils();
@@ -37,6 +40,22 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   const [session] = useOnyx(ONYXKEYS.ONGOING_SESSION_DATA);
   const sessionRef = useRef<DrinkingSession | undefined>(undefined);
   const [dbSyncSuccessful, setDbSyncSuccessful] = useState(false);
+
+  const onNavigateBack = (
+    action: DeepValueOf<typeof CONST.NAVIGATION.SESSION_ACTION>,
+  ) => {
+    if (!!backTo) {
+      Navigation.navigate(backTo as Route);
+      return;
+    }
+    if (action === CONST.NAVIGATION.SESSION_ACTION.SAVE) {
+      Navigation.navigate(ROUTES.DRINKING_SESSION_SUMMARY.getRoute(sessionId));
+      return;
+    } else {
+      Navigation.navigate(ROUTES.HOME);
+      return;
+    }
+  };
 
   const syncWithDb = async (updates: Partial<DrinkingSession>) => {
     if (!user) {
@@ -105,6 +124,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       )}
       <SuccessIndicator visible={dbSyncSuccessful} />
       <DrinkingSessionWindow
+        onNavigateBack={onNavigateBack}
         sessionId={sessionId}
         session={session}
         onyxKey={ONYXKEYS.ONGOING_SESSION_DATA}

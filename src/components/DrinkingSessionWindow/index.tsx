@@ -13,7 +13,6 @@ import {
   getUniqueDrinkTypesInSession,
   sumAllDrinks,
   sumDrinksOfSingleType,
-  timestampToDateString,
   unitsToColors,
 } from '@libs/DataHandling';
 import Text from '@components/Text';
@@ -24,10 +23,7 @@ import SessionDetailsWindow from '@components/SessionDetailsWindow';
 import FillerView from '@components/FillerView';
 import CONST from '@src/CONST';
 import Navigation from '@navigation/Navigation';
-import SCREENS from '@src/SCREENS';
-import ROUTES, {Route} from '@src/ROUTES';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
-import type DeepValueOf from '@src/types/utils/DeepValueOf';
 import useLocalize from '@hooks/useLocalize';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import useTheme from '@hooks/useTheme';
@@ -49,6 +45,7 @@ import type {DrinkingSessionWindowProps} from './types';
 import {useFocusEffect} from '@react-navigation/native';
 
 function DrinkingSessionWindow({
+  onNavigateBack,
   sessionId,
   session,
   onyxKey,
@@ -128,36 +125,6 @@ function DrinkingSessionWindow({
     }
   };
 
-  /** Determine the screen to return to, and navigate to it */
-  const navigateBackDynamically = (
-    action: DeepValueOf<typeof CONST.NAVIGATION.SESSION_ACTION>,
-  ) => {
-    const previousScreenName = Navigation.getLastScreenName(true);
-
-    const routesMap = {
-      SAVE: () => ROUTES.DRINKING_SESSION_SUMMARY.getRoute(sessionId),
-      DISCARD: () => ROUTES.HOME,
-    };
-
-    // Decide the route based on the action or previous screen
-    let route: Route;
-    switch (previousScreenName) {
-      case SCREENS.DAY_OVERVIEW.ROOT:
-        route = ROUTES.DAY_OVERVIEW.getRoute(
-          timestampToDateString(session?.start_time || Date.now()),
-        );
-        break;
-      case SCREENS.HOME:
-        route = ROUTES.HOME;
-        break;
-      default:
-        route = routesMap[action]();
-        break;
-    }
-
-    Navigation.navigate(route);
-  };
-
   async function saveSession(db: any, user: User | null) {
     if (!session || !user) {
       return;
@@ -190,7 +157,7 @@ function DrinkingSessionWindow({
         !!sessionIsLive, // Update status if the session is live
       );
       // Reroute to session summary, do not allow user to return
-      navigateBackDynamically(CONST.NAVIGATION.SESSION_ACTION.SAVE);
+      onNavigateBack(CONST.NAVIGATION.SESSION_ACTION.SAVE);
     } catch (error: unknown) {
       Alert.alert(
         translate('liveSessionScreen.error.saveTitle'),
@@ -225,7 +192,7 @@ function DrinkingSessionWindow({
         onyxKey,
         !!sessionIsLive,
       );
-      navigateBackDynamically(CONST.NAVIGATION.SESSION_ACTION.DISCARD);
+      onNavigateBack(CONST.NAVIGATION.SESSION_ACTION.DISCARD);
     } catch (error: unknown) {
       ErrorUtils.raiseAlert(
         error,
@@ -249,7 +216,7 @@ function DrinkingSessionWindow({
 
   const confirmGoBack = async () => {
     setShouldShowLeaveConfirmation(false);
-    Navigation.goBack();
+    onNavigateBack(CONST.NAVIGATION.SESSION_ACTION.BACK);
   };
 
   // Update the hooks whenever drinks change
