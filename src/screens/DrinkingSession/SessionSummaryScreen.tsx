@@ -278,7 +278,6 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
             <Button
               style={styles.bgTransparent}
               icon={KirokuIcons.Edit}
-              iconFill={theme.textDark}
               onPress={() => DS.navigateToEditSessionScreen(sessionId, session)} // Use keyextractor to load id here
             />
           )
