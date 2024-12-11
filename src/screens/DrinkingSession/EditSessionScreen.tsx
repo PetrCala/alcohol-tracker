@@ -34,10 +34,17 @@ function EditSessionScreen({route}: EditSessionScreenProps) {
       Navigation.navigate(backTo as Route);
       return;
     }
-    // const previousScreenName = Navigation.getLastScreenName(true);
+    const previousScreenName = Navigation.getLastScreenName(true);
     if (action === CONST.NAVIGATION.SESSION_ACTION.SAVE) {
-      Navigation.goBack();
-      return;
+      if (previousScreenName === SCREENS.DAY_OVERVIEW.ROOT) {
+        Navigation.goBack();
+        return;
+      } else if (previousScreenName === SCREENS.DRINKING_SESSION.SUMMARY) {
+        Navigation.goBack();
+        return;
+      } else {
+        Navigation.navigate(ROUTES.HOME);
+      }
     } else {
       Navigation.goBack();
       return;
