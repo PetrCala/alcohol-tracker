@@ -33,6 +33,8 @@ import PopoverMenu from './PopoverMenu';
 import type {PopoverMenuItem} from './PopoverMenu';
 import FloatingActionButton from './FloatingActionButton';
 import DateUtils from '@libs/DateUtils';
+import Navigation from '@libs/Navigation/Navigation';
+import ROUTES from '@src/ROUTES';
 
 // Utils
 
@@ -92,6 +94,30 @@ function StartSessionButtonAndPopover(
     }
   };
 
+  const createEditDrinkingSession = async (): Promise<void> => {
+    try {
+      await Utils.setLoadingText(translate('common.loading'));
+      await Onyx.merge(ONYXKEYS.IS_CREATING_NEW_SESSION, true);
+      const newSession = await DS.getNewSessionToEdit(
+        db,
+        auth.currentUser,
+        new Date(),
+        userData?.timezone?.selected,
+      );
+      if (!newSession?.id) {
+        throw new Error(translate('drinkingSession.error.missingId'));
+      }
+      Navigation.navigate(
+        ROUTES.DRINKING_SESSION_SESSION_DATE_SCREEN.getRoute(newSession.id),
+      );
+    } catch (error: unknown) {
+      await Onyx.merge(ONYXKEYS.IS_CREATING_NEW_SESSION, false);
+      ErrorUtils.raiseAlert(error, translate('homeScreen.error.title'));
+    } finally {
+      await Utils.setLoadingText(null);
+    }
+  };
+
   const renderSessionTypeTooltip = useCallback(
     () => (
       <Text>
@@ -134,9 +160,7 @@ function StartSessionButtonAndPopover(
           await selectOption(() => startLiveDrinkingSession());
           break;
         case CONST.SESSION.TYPES.EDIT:
-          await selectOption(
-            async () => {}, // Edit a session
-          );
+          await selectOption(() => createEditDrinkingSession());
           break;
         default:
           Log.warn(`Unsupported session type: ${startSession?.sessionType}`);

@@ -20,6 +20,9 @@ import type SCREENS from '@src/SCREENS';
 import {useFirebase} from '@context/global/FirebaseContext';
 import * as DS from '@userActions/DrinkingSession';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
+import Text from '@components/Text';
+import {TranslationPaths} from '@src/languages/types';
+import Onyx, {useOnyx} from 'react-native-onyx';
 
 type SessionDateScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -30,9 +33,14 @@ function SesssionDateScreen({route}: SessionDateScreenProps) {
   const {sessionId} = route.params;
   const {auth} = useFirebase();
   const user = auth.currentUser;
+  const [isBeingCreated] = useOnyx(ONYXKEYS.IS_CREATING_NEW_SESSION);
   const {translate} = useLocalize();
   const styles = useThemeStyles();
   const session = DSUtils.getDrinkingSessionData(sessionId);
+
+  const confirmTextKey: TranslationPaths = !!isBeingCreated
+    ? 'common.confirm'
+    : 'common.save';
 
   const onSubmit = async (
     values: FormOnyxValues<typeof ONYXKEYS.FORMS.SESSION_DATE_FORM>,
@@ -41,8 +49,13 @@ function SesssionDateScreen({route}: SessionDateScreenProps) {
       Alert.alert(translate('sessionDateScreen.error.load'));
       return;
     }
-    DS.updateSessionDate(sessionId, session, new Date(values.date));
-    Navigation.goBack();
+    await DS.updateSessionDate(sessionId, session, new Date(values.date));
+    if (!!isBeingCreated) {
+      await Onyx.set(ONYXKEYS.IS_CREATING_NEW_SESSION, false);
+      DS.navigateToEditSessionScreen(sessionId);
+    } else {
+      Navigation.goBack();
+    }
   };
 
   /**
@@ -61,20 +74,30 @@ function SesssionDateScreen({route}: SessionDateScreenProps) {
     [],
   );
 
+  const onGoBack = async () => {
+    if (!!isBeingCreated) {
+      await Onyx.set(ONYXKEYS.IS_CREATING_NEW_SESSION, false);
+    }
+    Navigation.goBack();
+  };
+
   return (
     <ScreenWrapper
       includeSafeAreaPaddingBottom={false}
       testID={SesssionDateScreen.displayName}>
       <HeaderWithBackButton
         title={translate('sessionDateScreen.title')}
-        onBackButtonPress={() => Navigation.goBack()}
+        onBackButtonPress={onGoBack}
       />
       <FormProvider
         style={[styles.flexGrow1, styles.ph5]}
         formID={ONYXKEYS.FORMS.SESSION_DATE_FORM}
         validate={validate}
         onSubmit={onSubmit}
-        submitButtonText={translate('common.save')}>
+        submitButtonText={translate(confirmTextKey)}>
+        <Text style={[styles.mb3]}>
+          {translate('sessionDateScreen.prompt')}
+        </Text>
         <InputWrapper
           InputComponent={DatePicker}
           inputID={INPUT_IDS.DATE}
