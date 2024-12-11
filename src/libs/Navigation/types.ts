@@ -91,6 +91,7 @@ type DrinkingSessionNavigatorParamList = {
   };
   [SCREENS.DRINKING_SESSION.SESSION_DATE_SCREEN]: {
     sessionId: DrinkingSessionId;
+    backTo?: Routes;
   };
   [SCREENS.DRINKING_SESSION.SESSION_NOTE_SCREEN]: {
     sessionId: DrinkingSessionId;

@@ -63,6 +63,14 @@ const SessionDetailsWindow: React.FC<SessionSliderProps> = ({
     />
   );
 
+  const getRouteBackToThisScreen = (): Route => {
+    const ongoing = !!session?.ongoing;
+
+    return ongoing
+      ? ROUTES.DRINKING_SESSION_LIVE.getRoute(sessionId)
+      : ROUTES.DRINKING_SESSION_EDIT.getRoute(sessionId);
+  };
+
   const sliderData: MenuData[] = [
     {
       translationKey: 'liveSessionScreen.blackout',
@@ -87,8 +95,10 @@ const SessionDetailsWindow: React.FC<SessionSliderProps> = ({
         session.start_time,
         session.timezone,
       ),
-      routeName:
-        ROUTES.DRINKING_SESSION_SESSION_DATE_SCREEN.getRoute(sessionId),
+      routeName: ROUTES.DRINKING_SESSION_SESSION_DATE_SCREEN.getRoute(
+        sessionId,
+        getRouteBackToThisScreen(),
+      ),
     });
   }
 

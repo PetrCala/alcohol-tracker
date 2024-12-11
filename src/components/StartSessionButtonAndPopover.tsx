@@ -108,7 +108,10 @@ function StartSessionButtonAndPopover(
         throw new Error(translate('drinkingSession.error.missingId'));
       }
       Navigation.navigate(
-        ROUTES.DRINKING_SESSION_SESSION_DATE_SCREEN.getRoute(newSession.id),
+        ROUTES.DRINKING_SESSION_SESSION_DATE_SCREEN.getRoute(
+          newSession.id,
+          ROUTES.HOME,
+        ),
       );
     } catch (error: unknown) {
       await Onyx.merge(ONYXKEYS.IS_CREATING_NEW_SESSION, false);

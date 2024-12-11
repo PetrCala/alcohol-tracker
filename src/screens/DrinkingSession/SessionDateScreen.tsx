@@ -23,7 +23,7 @@ import * as DSUtils from '@libs/DrinkingSessionUtils';
 import Text from '@components/Text';
 import {TranslationPaths} from '@src/languages/types';
 import Onyx, {useOnyx} from 'react-native-onyx';
-import ROUTES from '@src/ROUTES';
+import ROUTES, {Route} from '@src/ROUTES';
 
 type SessionDateScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -31,7 +31,7 @@ type SessionDateScreenProps = StackScreenProps<
 >;
 
 function SesssionDateScreen({route}: SessionDateScreenProps) {
-  const {sessionId} = route.params;
+  const {sessionId, backTo} = route.params;
   const {auth} = useFirebase();
   const user = auth.currentUser;
   const [isBeingCreated] = useOnyx(ONYXKEYS.IS_CREATING_NEW_SESSION);
@@ -42,6 +42,17 @@ function SesssionDateScreen({route}: SessionDateScreenProps) {
   const confirmTextKey: TranslationPaths = !!isBeingCreated
     ? 'common.confirm'
     : 'common.save';
+
+  const onGoBack = async () => {
+    if (!!isBeingCreated) {
+      await Onyx.set(ONYXKEYS.IS_CREATING_NEW_SESSION, false);
+    }
+    if (!!backTo) {
+      Navigation.navigate(backTo as Route);
+      return;
+    }
+    Navigation.goBack();
+  };
 
   const onSubmit = async (
     values: FormOnyxValues<typeof ONYXKEYS.FORMS.SESSION_DATE_FORM>,
@@ -55,7 +66,7 @@ function SesssionDateScreen({route}: SessionDateScreenProps) {
       await Onyx.set(ONYXKEYS.IS_CREATING_NEW_SESSION, false);
       DS.navigateToEditSessionScreen(sessionId, undefined, ROUTES.HOME);
     } else {
-      Navigation.goBack();
+      onGoBack();
     }
   };
 
@@ -74,13 +85,6 @@ function SesssionDateScreen({route}: SessionDateScreenProps) {
     },
     [],
   );
-
-  const onGoBack = async () => {
-    if (!!isBeingCreated) {
-      await Onyx.set(ONYXKEYS.IS_CREATING_NEW_SESSION, false);
-    }
-    Navigation.goBack();
-  };
 
   return (
     <ScreenWrapper
