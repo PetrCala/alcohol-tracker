@@ -153,6 +153,7 @@ export default {
       userNull: 'We could not find your user. Please log in again.',
       notFound: 'Not found',
       reauthenticationFailed: 'Reauthentication failed',
+      sessionIdCreation: 'Failed to create a new session ID',
     },
     comma: 'comma',
     semicolon: 'semicolon',
@@ -422,6 +423,7 @@ export default {
     error: {
       sessionOpen: 'Failed to open a session',
       missingId: 'Missing session ID',
+      missingData: 'Missing session data',
     },
   },
   startSession: {
@@ -639,6 +641,7 @@ export default {
   },
   sessionDateScreen: {
     title: 'Session date',
+    prompt: 'Please choose a date when you started this session.',
     error: {
       load: 'Failed to fetch details of this session.',
       generic: 'Failed to modify the session date.',

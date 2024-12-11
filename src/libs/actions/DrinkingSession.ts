@@ -19,7 +19,7 @@ import Onyx from 'react-native-onyx';
 import type {OnyxKey} from '@src/ONYXKEYS';
 import ONYXKEYS from '@src/ONYXKEYS';
 import Navigation from '@libs/Navigation/Navigation';
-import ROUTES from '@src/ROUTES';
+import ROUTES, {Route} from '@src/ROUTES';
 import {differenceInDays, startOfDay} from 'date-fns';
 import type {SelectedTimezone} from '@src/types/onyx/UserData';
 import type {ValueOf} from 'type-fest';
@@ -56,13 +56,13 @@ Onyx.connect({
  * @param sessionId The ID of the session
  * @param newData The new data to set
  */
-function updateLocalData(
+async function updateLocalData(
   sessionId: DrinkingSessionId,
   newData: DrinkingSession | null,
   onyxKey: OnyxKey,
-): void {
+): Promise<void> {
   const dataToSet = newData ? {id: sessionId, ...newData} : null;
-  Onyx.set(onyxKey, dataToSet);
+  await Onyx.set(onyxKey, dataToSet);
 }
 
 /** Write drinking session data into the database
@@ -103,14 +103,14 @@ async function updateDrinkingSessionData(
  * @param ongoingSessionId  The ID of the ongoing session.
  * @param drinkingSessionData  The drinking session data.
  */
-function syncLocalLiveSessionData(
+async function syncLocalLiveSessionData(
   ongoingSessionId: DrinkingSessionId | undefined,
   drinkingSessionData: DrinkingSessionList | undefined,
 ) {
   if (ongoingSessionId && drinkingSessionData) {
     const ongoingSessionData = drinkingSessionData[ongoingSessionId];
     if (ongoingSessionData) {
-      updateLocalData(
+      await updateLocalData(
         ongoingSessionId,
         ongoingSessionData,
         ONYXKEYS.ONGOING_SESSION_DATA,
@@ -341,12 +341,12 @@ function updateTimezone(
  * @param shouldUpdateLiveSessionData Whether to update the live session data or not. If not specified, the function updates the edit session data.
  * @returns The modified session
  */
-function updateSessionDate(
+async function updateSessionDate(
   sessionId: DrinkingSessionId,
   session: DrinkingSession,
   newDate: Date,
   shouldUpdateLiveSessionData?: boolean,
-): void {
+): Promise<void> {
   const currentDate = startOfDay(new Date(session.start_time));
   const daysDelta = differenceInDays(currentDate, startOfDay(newDate));
   const millisecondsToSub = daysDelta * 24 * 60 * 60 * 1000;
@@ -357,25 +357,38 @@ function updateSessionDate(
   const onyxKey = shouldUpdateLiveSessionData
     ? ONYXKEYS.ONGOING_SESSION_DATA
     : ONYXKEYS.EDIT_SESSION_DATA;
-  updateLocalData(sessionId, modifiedSession, onyxKey);
+  await updateLocalData(sessionId, modifiedSession, onyxKey);
 }
 
-function getNewSessionToEdit(
+/** Generate a new key for a drinking session */
+function generateDrinkingSessionId(
+  db: Database,
+  user: User | null,
+): DrinkingSessionId {
+  if (!user) {
+    throw new Error(Localize.translateLocal('common.error.userNull'));
+  }
+  const newKey = generateDatabaseKey(
+    db,
+    DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(user.uid),
+  );
+  if (!newKey) {
+    throw new Error(Localize.translateLocal('common.error.sessionIdCreation'));
+  }
+  return newKey;
+}
+
+async function getNewSessionToEdit(
   db: Database,
   user: User | null,
   currentDate: Date,
   timezone: SelectedTimezone | undefined,
-): DrinkingSession {
+  shouldUpdateLocalData = true,
+): Promise<DrinkingSession> {
   if (!user) {
     throw new Error(Localize.translateLocal('dayOverviewScreen.error.open'));
   }
-  const newSessionId = generateDatabaseKey(
-    db,
-    DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(user.uid),
-  );
-  if (!newSessionId) {
-    throw new Error(Localize.translateLocal('dayOverviewScreen.error.open'));
-  }
+  const newSessionId = generateDrinkingSessionId(db, user);
   const timestamp = currentDate.getTime();
   const newSession: DrinkingSession = DSUtils.getEmptySession({
     id: newSessionId,
@@ -384,6 +397,10 @@ function getNewSessionToEdit(
     type: CONST.SESSION.TYPES.EDIT,
     timezone,
   });
+
+  if (shouldUpdateLocalData) {
+    await updateLocalData(newSessionId, newSession, ONYXKEYS.EDIT_SESSION_DATA);
+  }
 
   return newSession;
 }
@@ -405,24 +422,44 @@ function navigateToOngoingSessionScreen(): void {
   );
 }
 
+async function updateLocalSessionDataAndNavigate(
+  sessionId: DrinkingSessionId | undefined,
+  session: DrinkingSession | undefined,
+  onyxKey: OnyxKey,
+  route: Route,
+): Promise<void> {
+  if (!sessionId) {
+    throw new Error(Localize.translateLocal('drinkingSession.error.missingId'));
+  }
+  if (session) {
+    await updateLocalData(sessionId, session, onyxKey);
+  }
+  Navigation.navigate(route);
+}
+
 /**
- * Navigate to the edit session screen
+ * Navigate to the edit session screen. If the session object is provided, update the local data before navigating.
  *
  * @param sessionId ID of the session to navigate to
  * @param session Current session data
  */
-function navigateToEditSessionScreen(
+async function navigateToEditSessionScreen(
   sessionId: DrinkingSessionId | undefined,
-  session: DrinkingSession,
-) {
+  session?: DrinkingSession,
+): Promise<void> {
   if (!sessionId) {
     throw new Error(Localize.translateLocal('drinkingSession.error.missingId'));
   }
-  updateLocalData(sessionId, session, ONYXKEYS.EDIT_SESSION_DATA);
-  Navigation.navigate(ROUTES.DRINKING_SESSION_EDIT.getRoute(sessionId));
+  await updateLocalSessionDataAndNavigate(
+    sessionId,
+    session,
+    ONYXKEYS.EDIT_SESSION_DATA,
+    ROUTES.DRINKING_SESSION_EDIT.getRoute(sessionId),
+  );
 }
 
 export {
+  generateDrinkingSessionId,
   navigateToEditSessionScreen,
   navigateToOngoingSessionScreen,
   removeDrinkingSessionData,
@@ -434,6 +471,7 @@ export {
   updateDrinks,
   updateNote,
   updateLocalData,
+  updateLocalSessionDataAndNavigate,
   updateSessionDate,
   updateTimezone,
   getNewSessionToEdit,

@@ -198,13 +198,13 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
     const onAddSessionButtonPress = async () => {
       try {
         await Utils.setLoadingText(translate('liveSessionScreen.loading'));
-        const newSession = DS.getNewSessionToEdit(
+        const newSession = await DS.getNewSessionToEdit(
           db,
           auth.currentUser,
           currentDate,
           userData?.timezone?.selected,
         );
-        DS.navigateToEditSessionScreen(newSession?.id, newSession);
+        DS.navigateToEditSessionScreen(newSession?.id);
       } catch (error: unknown) {
         ErrorUtils.raiseAlert(error);
       } finally {
