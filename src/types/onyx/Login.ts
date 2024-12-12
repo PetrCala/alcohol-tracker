@@ -2,9 +2,7 @@ import type {ValueOf} from 'type-fest';
 import type CONST from '@src/CONST';
 import type * as OnyxCommon from './OnyxCommon';
 
-/**
- *
- */
+/** Model of login state */
 type Login = {
   /** Form that is being loaded */
   loadingForm?: ValueOf<typeof CONST.FORMS>;
