@@ -18,6 +18,7 @@ import * as ValidationUtils from '@libs/ValidationUtils';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import * as Browser from '@libs/Browser';
 import * as User from '@userActions/User';
+import * as Session from '@userActions/Session';
 import Text from '@components/Text';
 import {PressableWithFeedback} from '@components/Pressable';
 import Navigation from '@libs/Navigation/Navigation';
@@ -55,14 +56,6 @@ function LogInScreen() {
 
   const navigateFocus = () => {
     currentScreenLayoutRef.current?.scrollPageToTop();
-  };
-
-  const onNavigateToSignUp = () => {
-    // Stash the email credentials for the sign up screen
-    Onyx.set(ONYXKEYS.FORMS.SIGN_UP_FORM_DRAFT, {
-      email: logInForm?.email ?? '',
-    });
-    Navigation.navigate(ROUTES.SIGN_UP);
   };
 
   const onSubmit = async (
@@ -197,7 +190,7 @@ function LogInScreen() {
           </FormProvider>
           <ChangeSignUpScreenLink
             navigatesTo={ROUTES.SIGN_UP}
-            onPress={onNavigateToSignUp}
+            onPress={() => Session.navigateToSignUp()}
           />
         </SignUpScreenLayout>
       )}

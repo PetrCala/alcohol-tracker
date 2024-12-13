@@ -100,9 +100,10 @@ function VerifyEmailModal() {
           }}>
           <View
             style={[
+              styles.flex1,
               styles.mh4,
               styles.pb1,
-              styles.flex1,
+              styles.alignItemsCenter,
               safeAreaPaddingBottomStyle,
             ]}>
             {!emailVerified ? (

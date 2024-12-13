@@ -4,6 +4,7 @@ import throttle from 'lodash/throttle';
 import type {Auth} from 'firebase/auth';
 import {signOut as fbSignOut} from 'firebase/auth';
 import {Alert, InteractionManager, Linking, NativeModules} from 'react-native';
+import type * as FormTypes from '@src/types/form';
 import type {OnyxEntry, OnyxUpdate} from 'react-native-onyx';
 import Onyx from 'react-native-onyx';
 import type {ValueOf} from 'type-fest';
@@ -75,11 +76,18 @@ import clearCache from './clearCache';
 //   callback: value => (stashedSession = value ?? {}),
 // });
 
-// let login: Login = {};
-// Onyx.connect({
-//   key: ONYXKEYS.LOGIN,
-//   callback: value => (login = value ?? {}),
-// });
+let logInForm: FormTypes.LogInForm = {
+  email: '',
+  password: '',
+};
+Onyx.connect({
+  key: ONYXKEYS.FORMS.LOG_IN_FORM_DRAFT,
+  callback: value =>
+    (logInForm = value ?? {
+      email: '',
+      password: '',
+    }),
+});
 
 // let stashedCredentials: Credentials = {};
 // Onyx.connect({
@@ -1044,6 +1052,18 @@ function cleanupSession() {
 // };
 
 /**
+ * Navigate to the sign up screen
+ *
+ */
+function navigateToSignUp() {
+  // Stash the email credentials for the sign up screen
+  Onyx.set(ONYXKEYS.FORMS.SIGN_UP_FORM_DRAFT, {
+    email: logInForm?.email ?? '',
+  });
+  Navigation.navigate(ROUTES.SIGN_UP);
+}
+
+/**
  * Signs out the user from the app.
  *
  * @param auth Auth object from firebase
@@ -1052,9 +1072,10 @@ async function signOut(auth: Auth) {
   try {
     await fbSignOut(auth);
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : '';
     Alert.alert(
       'User sign out error',
-      `There was an error signing out: ${error.message}`,
+      `There was an error signing out: ${errorMessage}`,
     );
   }
 }
@@ -1094,4 +1115,5 @@ export {
   //   signInWithSupportAuthToken,
   //   isSupportAuthToken,
   //   hasStashedSession,
+  navigateToSignUp,
 };
