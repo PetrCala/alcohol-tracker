@@ -1,11 +1,4 @@
-import {
-  Keyboard,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {Keyboard, StyleSheet, View} from 'react-native';
 import type {DateData} from 'react-native-calendars';
 import commonStyles from '@styles/commonStyles';
 import {useFirebase} from '@context/global/FirebaseContext';
@@ -19,7 +12,6 @@ import {
   dateToDateData,
   objKeys,
   timestampToDate,
-  timestampToDateString,
 } from '@libs/DataHandling';
 import SessionsCalendar from '@components/SessionsCalendar';
 import {getCommonFriendsCount} from '@libs/FriendUtils';
@@ -43,11 +35,14 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import Button from '@components/Button';
 import {roundToTwoDecimalPlaces} from '@libs/NumberUtils';
 import ManageFriendPopover from '@components/ManageFriendPopover';
+import ScrollView from '@components/ScrollView';
+import Text from '@components/Text';
+import {PressableWithFeedback} from '@components/Pressable';
 
-type ProfileScreenOnyxProps = {};
-
-type ProfileScreenProps = ProfileScreenOnyxProps &
-  StackScreenProps<ProfileNavigatorParamList, typeof SCREENS.PROFILE.ROOT>;
+type ProfileScreenProps = StackScreenProps<
+  ProfileNavigatorParamList,
+  typeof SCREENS.PROFILE.ROOT
+>;
 
 function ProfileScreen({route}: ProfileScreenProps) {
   const {auth, db} = useFirebase();
@@ -109,18 +104,18 @@ function ProfileScreen({route}: ProfileScreenProps) {
       setSelfFriends(ownFriends);
     };
     getOwnFriends();
-  }, []);
+  }, [db, friends, user, userID]);
 
   // Monitor friends count
   useMemo(() => {
-    const friendCount = friends ? objKeys(friends).length : 0;
-    const commonFriendCount = getCommonFriendsCount(
+    const newFriendCount = friends ? objKeys(friends).length : 0;
+    const newCommonFriendCount = getCommonFriendsCount(
       objKeys(selfFriends),
       objKeys(friends),
     );
-    setFriendCount(friendCount);
-    setCommonFriendCount(commonFriendCount);
-  }, [friends]);
+    setFriendCount(newFriendCount);
+    setCommonFriendCount(newCommonFriendCount);
+  }, [friends, selfFriends]);
 
   // Monitor stats
   useMemo(() => {
@@ -189,8 +184,8 @@ function ProfileScreen({route}: ProfileScreenProps) {
             </Text>
           </View>
           <View style={localStyles.rightContainer}>
-            <TouchableOpacity
-              accessibilityRole="button"
+            <PressableWithFeedback
+              accessibilityLabel="See all friends"
               onPress={() => {
                 user?.uid === userID
                   ? Navigation.navigate(ROUTES.SOCIAL)
@@ -203,7 +198,7 @@ function ProfileScreen({route}: ProfileScreenProps) {
                 style={[localStyles.friendsInfoText, commonStyles.linkText]}>
                 {translate('profileScreen.seeAllFriends')}
               </Text>
-            </TouchableOpacity>
+            </PressableWithFeedback>
           </View>
         </View>
         {drinkingSessionData ? (
