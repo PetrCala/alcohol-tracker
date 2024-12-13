@@ -10,6 +10,7 @@ import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
 import useLocalize from '@hooks/useLocalize';
+import type {WebViewRequest} from '@libs/WebView/types';
 
 function TermsOfServiceScreen() {
   const styles = useThemeStyles();
@@ -18,7 +19,7 @@ function TermsOfServiceScreen() {
   const loadingText = translate('settingsScreen.termsOfServiceScreen.loading');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleStartLoadWithRequest = (request: any) => {
+  const handleStartLoadWithRequest = (request: WebViewRequest) => {
     // Check if the URL has "mailto:" scheme
     if (request.url.startsWith('mailto:')) {
       // Use Linking to open the default email client
