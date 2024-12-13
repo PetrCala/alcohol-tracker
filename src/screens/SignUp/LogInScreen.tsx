@@ -25,7 +25,7 @@ import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import DotIndicatorMessage from '@components/DotIndicatorMessage';
 import {useUserConnection} from '@context/global/UserConnectionContext';
-import Onyx, {useOnyx} from 'react-native-onyx';
+import {useOnyx} from 'react-native-onyx';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import ChangeSignUpScreenLink from './ChangeSignUpScreenLink';
 import SignUpScreenLayout from './SignUpScreenLayout';
@@ -58,24 +58,26 @@ function LogInScreen() {
     currentScreenLayoutRef.current?.scrollPageToTop();
   };
 
-  const onSubmit = async (
+  const onSubmit = (
     values: FormOnyxValues<typeof ONYXKEYS.FORMS.LOG_IN_FORM>,
   ) => {
-    if (!isOnline || isLoading) {
-      return;
-    }
-    setIsLoading(true);
+    (async () => {
+      if (!isOnline || isLoading) {
+        return;
+      }
+      setIsLoading(true);
 
-    const emailTrim = values.email.trim();
+      const emailTrim = values.email.trim();
 
-    try {
-      await User.logIn(auth, emailTrim, values.password);
-    } catch (error) {
-      const errorMessage = ErrorUtils.getErrorMessage(error);
-      setServerErrorMessage(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
+      try {
+        await User.logIn(auth, emailTrim, values.password);
+      } catch (error) {
+        const errorMessage = ErrorUtils.getErrorMessage(error);
+        setServerErrorMessage(errorMessage);
+      } finally {
+        setIsLoading(false);
+      }
+    })();
   };
 
   const validate = useCallback(
@@ -190,7 +192,7 @@ function LogInScreen() {
           </FormProvider>
           <ChangeSignUpScreenLink
             navigatesTo={ROUTES.SIGN_UP}
-            onPress={() => Session.navigateToSignUp()}
+            onPress={() => Session.navigateToSignUpFromLoginScreen()}
           />
         </SignUpScreenLayout>
       )}

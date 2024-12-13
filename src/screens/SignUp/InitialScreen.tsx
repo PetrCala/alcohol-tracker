@@ -4,8 +4,8 @@ import {useFirebase} from '@context/global/FirebaseContext';
 import Navigation from '@navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import * as CloseAccount from '@userActions/CloseAccount';
-import * as Session from '@userActions/Session';
 import * as ErrorUtils from '@libs/ErrorUtils';
+import * as Session from '@userActions/Session';
 import * as ValidationUtils from '@libs/ValidationUtils';
 import useThemeStyles from '@hooks/useThemeStyles';
 import ScreenWrapper from '@components/ScreenWrapper';
@@ -25,15 +25,11 @@ import DotIndicatorMessage from '@components/DotIndicatorMessage';
 import ChangeSignUpScreenLink from './ChangeSignUpScreenLink';
 import SignUpScreenLayout from './SignUpScreenLayout';
 
-type InitialScreenOnyxProps = {};
-
-type InitialScreenProps = InitialScreenOnyxProps;
-
 type InitialScreenLayoutRef = {
   scrollPageToTop: (animated?: boolean) => void;
 };
 
-function InitialScreen({}: InitialScreenProps) {
+function InitialScreen() {
   const {auth} = useFirebase();
   const {translate} = useLocalize();
   const styles = useThemeStyles();
@@ -55,8 +51,7 @@ function InitialScreen({}: InitialScreenProps) {
   const onSubmit = (
     values: FormOnyxValues<typeof ONYXKEYS.FORMS.EMAIL_FORM>,
   ) => {
-    Onyx.set(ONYXKEYS.FORMS.SIGN_UP_FORM_DRAFT, {email: values.email.trim()});
-    Navigation.navigate(ROUTES.SIGN_UP);
+    Session.navigateToSignUpFromInitialScreen(values);
   };
 
   /**
@@ -82,12 +77,12 @@ function InitialScreen({}: InitialScreenProps) {
       }
       return errors;
     },
-    [],
+    [closeAccount?.success, translate],
   );
 
-  function getSignInWithStyles() {
-    return shouldUseNarrowLayout ? [styles.mt1] : [styles.mt5, styles.mb5];
-  }
+  // function getSignInWithStyles() {
+  //   return shouldUseNarrowLayout ? [styles.mt1] : [styles.mt5, styles.mb5];
+  // }
 
   // const isSigningWithAppleOrGoogle = useRef(false);
   // const setIsSigningWithAppleOrGoogle = useCallback(
@@ -100,15 +95,16 @@ function InitialScreen({}: InitialScreenProps) {
     React.useCallback(() => {
       Session.clearSignInData();
       const stopListening = auth.onAuthStateChanged(user => {
-        if (user) {
-          Navigation.navigate(ROUTES.HOME);
+        if (!user) {
+          return;
         }
+        Navigation.navigate(ROUTES.HOME);
       });
 
       return () => {
         stopListening(); // This will be called when the screen loses focus
       };
-    }, []),
+    }, [auth]),
   );
 
   const navigateFocus = () => {
@@ -157,8 +153,8 @@ function InitialScreen({}: InitialScreenProps) {
             <DotIndicatorMessage
               style={[styles.mv2]}
               type="success"
-              // eslint-disable-next-line @typescript-eslint/naming-convention,@typescript-eslint/prefer-nullish-coalescing
               messages={{
+                // eslint-disable-next-line @typescript-eslint/naming-convention,@typescript-eslint/prefer-nullish-coalescing
                 0: closeAccount?.success || '',
               }}
             />

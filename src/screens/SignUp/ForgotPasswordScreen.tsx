@@ -22,11 +22,7 @@ import {useFirebase} from '@context/global/FirebaseContext';
 import ROUTES from '@src/ROUTES';
 import DotIndicatorMessage from '@components/DotIndicatorMessage';
 
-type ForgotPasswordScreenOnyxProps = {};
-
-type ForgotPasswordScreenProps = ForgotPasswordScreenOnyxProps;
-
-function ForgotPasswordScreen({}: ForgotPasswordScreenProps) {
+function ForgotPasswordScreen() {
   const styles = useThemeStyles();
   const {translate} = useLocalize();
   const {auth} = useFirebase();

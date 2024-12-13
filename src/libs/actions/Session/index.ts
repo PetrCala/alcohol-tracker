@@ -56,6 +56,7 @@ import type Login from '@src/types/onyx/Login';
 // import type {AutoAuthState} from '@src/types/onyx/Session';
 import type Session from '@src/types/onyx/Session';
 import clearCache from './clearCache';
+import {FormOnyxValues} from '@components/Form/types';
 
 // let session: Session = {};
 // let authPromiseResolver: ((value: boolean) => void) | null = null;
@@ -1052,10 +1053,19 @@ function cleanupSession() {
 // };
 
 /**
- * Navigate to the sign up screen
+ * Navigate to the sign up screen from the initial screen
  *
+ * @param values The email form values
  */
-function navigateToSignUp() {
+function navigateToSignUpFromInitialScreen(
+  values: FormOnyxValues<typeof ONYXKEYS.FORMS.EMAIL_FORM>,
+) {
+  Onyx.set(ONYXKEYS.FORMS.SIGN_UP_FORM_DRAFT, {email: values.email.trim()});
+  Navigation.navigate(ROUTES.SIGN_UP);
+}
+
+/** Navigate to the sign up screen from the login screen */
+function navigateToSignUpFromLoginScreen() {
   // Stash the email credentials for the sign up screen
   Onyx.set(ONYXKEYS.FORMS.SIGN_UP_FORM_DRAFT, {
     email: logInForm?.email ?? '',
@@ -1115,5 +1125,6 @@ export {
   //   signInWithSupportAuthToken,
   //   isSupportAuthToken,
   //   hasStashedSession,
-  navigateToSignUp,
+  navigateToSignUpFromInitialScreen,
+  navigateToSignUpFromLoginScreen,
 };
