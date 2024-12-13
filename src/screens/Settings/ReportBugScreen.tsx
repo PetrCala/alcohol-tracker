@@ -23,12 +23,13 @@ import type SCREENS from '@src/SCREENS';
 import {reportABug} from '@database/feedback';
 import {useFirebase} from '@context/global/FirebaseContext';
 
-type ReportBugScreenOnyxProps = {};
+type ReportBugScreenProps = StackScreenProps<
+  SettingsNavigatorParamList,
+  typeof SCREENS.SETTINGS.DELETE
+>;
 
-type ReportBugScreenProps = ReportBugScreenOnyxProps &
-  StackScreenProps<SettingsNavigatorParamList, typeof SCREENS.SETTINGS.DELETE>;
-
-function ReportBugScreen({}: ReportBugScreenProps) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function ReportBugScreen({route}: ReportBugScreenProps) {
   const styles = useThemeStyles();
   const {translate} = useLocalize();
   const {db, auth} = useFirebase();
@@ -36,19 +37,21 @@ function ReportBugScreen({}: ReportBugScreenProps) {
 
   const [isLoading, setIsLoading] = React.useState(false);
 
-  const onSubmit = async (
+  const onSubmit = (
     values: FormOnyxValues<typeof ONYXKEYS.FORMS.REPORT_BUG_FORM>,
   ) => {
-    try {
-      setIsLoading(true);
-      await reportABug(db, userID, values.text);
-      Navigation.goBack();
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : '';
-      Alert.alert('Failed to submit feedback', errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
+    (async () => {
+      try {
+        setIsLoading(true);
+        await reportABug(db, userID, values.text);
+        Navigation.goBack();
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : '';
+        Alert.alert('Failed to submit feedback', errorMessage);
+      } finally {
+        setIsLoading(false);
+      }
+    })();
   };
 
   const validate = useCallback(
@@ -56,7 +59,7 @@ function ReportBugScreen({}: ReportBugScreenProps) {
       const errors = ValidationUtils.getFieldRequiredErrors(values, ['text']);
       return errors;
     },
-    [translate],
+    [],
   );
 
   return (

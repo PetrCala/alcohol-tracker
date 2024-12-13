@@ -7,8 +7,8 @@ import React, {
   useRef,
   useState,
 } from 'react';
-// eslint-disable-next-line no-restricted-imports
 import type {
+  // eslint-disable-next-line no-restricted-imports
   ScrollView as RNScrollView,
   ScrollViewProps,
   StyleProp,
@@ -40,10 +40,6 @@ import {useFirebase} from '@context/global/FirebaseContext';
 import UserOffline from '@components/UserOfflineModal';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 
-type SettingsScreenOnyxProps = {};
-
-type SettingsScreenProps = SettingsScreenOnyxProps;
-
 type MenuData = {
   translationKey: TranslationPaths;
   icon: IconAsset;
@@ -64,7 +60,7 @@ type Menu = {
   items: MenuData[];
 };
 
-function SettingsScreen({}: SettingsScreenProps) {
+function SettingsScreen() {
   const network = useNetwork();
   const {auth} = useFirebase();
   const styles = useThemeStyles();
@@ -82,18 +78,21 @@ function SettingsScreen({}: SettingsScreenProps) {
   const toggleSignoutConfirmModal = (value: boolean) => {
     setShouldShowSignoutConfirmModal(value);
   };
-  const signOut = async (auth: any) => {
-    if (!shouldShowSignoutConfirmModal) {
-      toggleSignoutConfirmModal(true);
-      return;
-    }
 
-    setLoadingText(translate('settingsScreen.signingOut'));
-    setIsLoading(true);
-    toggleSignoutConfirmModal(false);
-    await Session.signOut(auth);
-    setIsLoading(false);
-  };
+  const onSignOut = useCallback(() => {
+    (async () => {
+      if (!shouldShowSignoutConfirmModal) {
+        toggleSignoutConfirmModal(true);
+        return;
+      }
+
+      setLoadingText(translate('settingsScreen.signingOut'));
+      setIsLoading(true);
+      toggleSignoutConfirmModal(false);
+      await Session.signOut(auth);
+      setIsLoading(false);
+    })();
+  }, [auth, shouldShowSignoutConfirmModal, translate]);
 
   /**
    * Retuns a list of menu items data for account section
@@ -169,9 +168,7 @@ function SettingsScreen({}: SettingsScreenProps) {
         {
           translationKey: 'settingsScreen.signOut',
           icon: KirokuIcons.Exit,
-          action: () => {
-            signOut(auth);
-          },
+          action: onSignOut,
         },
         {
           translationKey: 'settingsScreen.deleteAccount',
@@ -180,7 +177,7 @@ function SettingsScreen({}: SettingsScreenProps) {
         },
       ],
     };
-  }, [styles.pt4, translate]); // signOut
+  }, [styles.pt4, onSignOut]);
 
   /**
    * Retuns JSX.Element with menu items
@@ -324,7 +321,7 @@ function SettingsScreen({}: SettingsScreenProps) {
           confirmText={translate('settingsScreen.signOut')}
           cancelText={translate('common.cancel')}
           isVisible={shouldShowSignoutConfirmModal}
-          onConfirm={() => signOut(auth)}
+          onConfirm={onSignOut}
           onCancel={() => toggleSignoutConfirmModal(false)}
         />
       </ScrollView>
