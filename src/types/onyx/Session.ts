@@ -32,9 +32,7 @@ type Session = {
   /** Currently logged in user userID */
   userID?: OnyxCommon.UserID;
 
-  /**
-   *
-   */
+  /** An automatic authentication state */
   autoAuthState?: AutoAuthState;
 
   /** Server side errors keyed by microtime */
