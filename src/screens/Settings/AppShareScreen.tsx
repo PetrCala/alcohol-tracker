@@ -1,26 +1,36 @@
-// TODO translate
 import ScreenWrapper from '@components/ScreenWrapper';
 import Navigation from '@libs/Navigation/Navigation';
 import type {SettingsNavigatorParamList} from '@libs/Navigation/types';
 import type {StackScreenProps} from '@react-navigation/stack';
 import type SCREENS from '@src/SCREENS';
-import commonStyles from '@src/styles/commonStyles';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
-import {
-  Alert,
-  Image,
-  Linking,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {Alert, Image, StyleProp, View, ViewStyle} from 'react-native';
 import CONST from '@src/CONST';
 import {copyToClipboard} from '@libs/StringUtilsKiroku';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
-import useTheme from '@hooks/useTheme';
+import ScrollView from '@components/ScrollView';
+import Section from '@components/Section';
+import MenuItemList from '@components/MenuItemList';
+import {useMemo, useRef, useState} from 'react';
+import IconAsset from '@src/types/utils/IconAsset';
+import useWaitForNavigation from '@hooks/useWaitForNavigation';
+import {TranslationPaths} from '@src/languages/types';
+import Modal from '@components/Modal';
+import Button from '@components/Button';
+import useWindowDimensions from '@hooks/useWindowDimensions';
+import useStyleUtils from '@hooks/useStyleUtils';
+
+type MenuItem = {
+  translationKey: TranslationPaths;
+  icon: IconAsset;
+  iconRight?: IconAsset;
+  action?: () => Promise<void>;
+  onPress?: () => void;
+  link?: string;
+  wrapperStyle?: StyleProp<ViewStyle>;
+};
 
 type AppShareScreenProps = StackScreenProps<
   SettingsNavigatorParamList,
@@ -29,8 +39,14 @@ type AppShareScreenProps = StackScreenProps<
 
 function AppShareScreen({route}: AppShareScreenProps) {
   const styles = useThemeStyles();
-  const theme = useTheme();
+  const popoverAnchor = useRef<View | null>(null);
+  const {isSmallScreenWidth, windowWidth, windowHeight} = useWindowDimensions();
+  const StyleUtils = useStyleUtils();
+  const [isQrModalVisible, setIsQrModalVisible] = useState(false);
+  const waitForNavigate = useWaitForNavigation();
   const {translate} = useLocalize();
+
+  const onClose = () => setIsQrModalVisible(false);
 
   const handleCopyLinkPress = () => {
     try {
@@ -41,133 +57,91 @@ function AppShareScreen({route}: AppShareScreenProps) {
     }
   };
 
+  const menuItems = useMemo(() => {
+    const baseMenuItems: MenuItem[] = [
+      {
+        translationKey: 'appShareScreen.link',
+        icon: KirokuIcons.Link,
+        iconRight: KirokuIcons.Copy,
+        onPress: handleCopyLinkPress,
+      },
+      {
+        translationKey: 'appShareScreen.qrCode',
+        icon: KirokuIcons.QrCode,
+        iconRight: KirokuIcons.Search,
+        onPress: () => setIsQrModalVisible(true),
+      },
+    ];
+
+    return baseMenuItems.map(
+      ({translationKey, icon, iconRight, onPress}: MenuItem) => ({
+        translationKey,
+        title: translate(translationKey),
+        icon,
+        iconRight: iconRight,
+        onPress: onPress,
+        shouldShowRightIcon: true,
+        ref: popoverAnchor,
+        wrapperStyle: [styles.sectionMenuItemTopDescription],
+      }),
+    );
+  }, [styles, translate, waitForNavigate]);
+
   return (
     <ScreenWrapper testID={AppShareScreen.displayName}>
       <HeaderWithBackButton
         title={translate('appShareScreen.title')}
         onBackButtonPress={Navigation.goBack}
       />
-      <View style={[styles.appContent]}>
-        <View
-          style={[
-            localStyles.centeringContainer,
-            localStyles.headingContainer,
-          ]}>
-          <Text style={[localStyles.mainText, styles.textPlainColor]}>
-            Help us by sharing the app
-          </Text>
+      <ScrollView
+        scrollEventThrottle={16}
+        contentContainerStyle={[styles.w100]}>
+        <View style={[styles.flex1]}>
+          <Section
+            title={translate('appShareScreen.sectionTitle')}
+            subtitle={translate('appShareScreen.prompt')}
+            titleStyles={styles.accountSettingsSectionTitle}
+            subtitleMuted>
+            <View style={[styles.flex1, styles.mt5]}>
+              <MenuItemList menuItems={menuItems} shouldUseSingleExecution />
+            </View>
+          </Section>
         </View>
-        <View style={[localStyles.centeringContainer, {height: '15%'}]}>
+        <Modal
+          isVisible={isQrModalVisible}
+          onClose={onClose}
+          type={CONST.MODAL.MODAL_TYPE.BOTTOM_DOCKED}>
           <View
             style={[
-              localStyles.centeringContainer,
-              {height: '20%', flexDirection: 'row'},
+              styles.alignItemsCenter,
+              styles.justifyContentCenter,
+              styles.m5,
+              styles.mnh60,
             ]}>
-            <Text style={[localStyles.mainText, styles.textPlainColor]}>
-              either through a link
-            </Text>
-          </View>
-          <View style={[localStyles.centeringContainer, {height: '80%'}]}>
-            <TouchableOpacity
-              accessibilityRole="button"
-              style={localStyles.linkCopyButton}
-              onPress={handleCopyLinkPress}>
-              <Text style={localStyles.shareLinkText}>
-                Copy share link to clipboard
-              </Text>
+            <View style={[styles.flexGrow1, styles.justifyContentCenter]}>
               <Image
-                source={KirokuIcons.Copy}
-                style={[localStyles.linkCopyImage, {tintColor: theme.icon}]}
+                source={KirokuIcons.QrCodeWithLogo}
+                style={[
+                  StyleUtils.getQrCodeSizeStyle(
+                    isSmallScreenWidth,
+                    windowWidth,
+                    windowHeight,
+                  ),
+                ]}
               />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={commonStyles.horizontalLine} />
-        <View style={localStyles.qrCodeItemsContainer}>
-          <View style={[localStyles.centeringContainer, {height: '15%'}]}>
-            <Text style={[localStyles.mainText, styles.textPlainColor]}>
-              or through a QR code
-            </Text>
-          </View>
-          <TouchableOpacity
-            accessibilityRole="button"
-            onPress={() => Linking.openURL(CONST.APP_QR_CODE_LINK)}
-            style={[localStyles.centeringContainer, {height: 'auto'}]}>
-            <Image
-              source={KirokuIcons.QrCodeWithLogo}
-              style={localStyles.qrCode}
+            </View>
+            <Button
+              large
+              text={translate('common.close')}
+              style={[styles.p2, styles.mnw100]}
+              onPress={onClose}
             />
-          </TouchableOpacity>
-        </View>
-      </View>
+          </View>
+        </Modal>
+      </ScrollView>
     </ScreenWrapper>
   );
 }
-
-// eslint-disable-next-line @typescript-eslint/no-use-before-define
-const localStyles = StyleSheet.create({
-  centeringContainer: {
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  headingContainer: {
-    height: '10%',
-    marginBottom: '5%',
-  },
-  itemsContainer: {
-    height: '90%',
-  },
-  horizontalLineContainer: {
-    height: '2%',
-    width: '100%',
-    marginTop: 0,
-  },
-  qrCodeItemsContainer: {
-    width: '100%',
-    height: '70%',
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-  },
-  mainText: {
-    fontSize: 17,
-  },
-  linkCopyButton: {
-    width: 'auto',
-    height: 'auto',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 10,
-  },
-  shareLinkText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: 'blue',
-  },
-  linkCopyImage: {
-    marginLeft: 10,
-    tintColor: 'black',
-    width: 25,
-    height: 25,
-  },
-  qrCode: {
-    width: 200,
-    height: 200,
-  },
-  copyQrCodeButton: {
-    height: 'auto',
-    width: 'auto',
-    padding: 15,
-  },
-  copyQrCodeImage: {
-    tintColor: 'black',
-    width: 30,
-    height: 30,
-  },
-});
 
 AppShareScreen.displayName = 'App Share Screen';
 export default AppShareScreen;

@@ -26,6 +26,14 @@ export default {
     width: '25%',
   },
 
+  mnh60: {
+    minHeight: '60%',
+  },
+
+  mnh75: {
+    minHeight: '75%',
+  },
+
   mnh100: {
     minHeight: '100%',
   },

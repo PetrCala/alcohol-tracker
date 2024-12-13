@@ -24,12 +24,13 @@ import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 
-type DeleteAccountScreenOnyxProps = {};
+type DeleteAccountScreenProps = StackScreenProps<
+  SettingsNavigatorParamList,
+  typeof SCREENS.SETTINGS.DELETE
+>;
 
-type DeleteAccountScreenProps = DeleteAccountScreenOnyxProps &
-  StackScreenProps<SettingsNavigatorParamList, typeof SCREENS.SETTINGS.DELETE>;
-
-function DeleteAccountScreen({}: DeleteAccountScreenProps) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function DeleteAccountScreen({route}: DeleteAccountScreenProps) {
   const styles = useThemeStyles();
   const {translate} = useLocalize();
   const {db, auth} = useFirebase();
@@ -51,19 +52,21 @@ function DeleteAccountScreen({}: DeleteAccountScreenProps) {
     setConfirmModalVisibility(false);
   };
 
-  const onConfirm = async () => {
-    setLoadingText(translate('deleteAccountScreen.deletingAccount'));
-    setIsLoading(true);
-    await CloseAccount.closeAccount(
-      db,
-      auth,
-      userData,
-      reasonForLeaving,
-      password,
-    );
-    hideConfirmModal();
-    setLoadingText('');
-    setIsLoading(false);
+  const onConfirm = () => {
+    (async () => {
+      setLoadingText(translate('deleteAccountScreen.deletingAccount'));
+      setIsLoading(true);
+      await CloseAccount.closeAccount(
+        db,
+        auth,
+        userData,
+        reasonForLeaving,
+        password,
+      );
+      hideConfirmModal();
+      setLoadingText('');
+      setIsLoading(false);
+    })();
   };
 
   const showConfirmModal = (

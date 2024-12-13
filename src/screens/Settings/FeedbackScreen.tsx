@@ -37,19 +37,21 @@ function FeedbackScreen({route}: FeedbackScreenProps) {
 
   const [isLoading, setIsLoading] = React.useState(false);
 
-  const onSubmit = async (
+  const onSubmit = (
     values: FormOnyxValues<typeof ONYXKEYS.FORMS.FEEDBACK_FORM>,
   ) => {
-    try {
-      setIsLoading(true);
-      await submitFeedback(db, userID, values);
-      Navigation.goBack();
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : '';
-      Alert.alert('Failed to submit feedback', errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
+    (async () => {
+      try {
+        setIsLoading(true);
+        await submitFeedback(db, userID, values);
+        Navigation.goBack();
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : '';
+        Alert.alert('Failed to submit feedback', errorMessage);
+      } finally {
+        setIsLoading(false);
+      }
+    })();
   };
 
   const validate = useCallback(
@@ -57,7 +59,7 @@ function FeedbackScreen({route}: FeedbackScreenProps) {
       const errors = ValidationUtils.getFieldRequiredErrors(values, ['text']);
       return errors;
     },
-    [translate],
+    [],
   );
 
   return (
