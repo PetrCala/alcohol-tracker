@@ -212,11 +212,11 @@ function FriendRequestScreen() {
   }, [userData]);
 
   const updateDisplayData = async (
-    db: Database,
+    database: Database,
     friendRequests: FriendRequestList | undefined,
   ): Promise<void> => {
     const newDisplayData: ProfileList = await Profile.fetchUserProfiles(
-      db,
+      database,
       objKeys(friendRequests),
     );
     setDisplayData(newDisplayData);
