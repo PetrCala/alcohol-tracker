@@ -784,6 +784,23 @@ function getMaximumWidth(maxWidth: number): ViewStyle {
   };
 }
 
+/** * Return a style for a displayable QR code */
+function getQrCodeSizeStyle(
+  isSmallScreenWidth: boolean,
+  windowWidth: number,
+  windowHeight: number,
+): ImageStyle {
+  const baseSize =
+    Math.min(windowWidth, windowHeight) * variables.qrCodeScreenSizePercentage;
+  const size = isSmallScreenWidth
+    ? baseSize
+    : Math.min(baseSize, variables.qrCodeMinSizeLargeScreen);
+  return {
+    width: size,
+    height: size,
+  };
+}
+
 /**
  * Return style for opacity animation.
  */
@@ -1125,6 +1142,7 @@ const staticStyleUtils = {
   getBackgroundColorWithOpacityStyle,
   getPaddingLeft,
   getPaddingRight,
+  getQrCodeSizeStyle,
   hasSafeAreas,
   getHeight,
   getMinimumHeight,

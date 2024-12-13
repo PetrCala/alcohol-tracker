@@ -23,7 +23,7 @@ import Checkmark from '@assets/images/checkmark.svg';
 import Clear from '@assets/images/x-circle.svg';
 import Close from '@assets/images/close.png';
 import Cocktail from '@assets/images/cocktail.png';
-import Copy from '@assets/images/copy.png';
+import Copy from '@assets/images/copy.svg';
 import Delete from '@assets/images/delete.png';
 import DeleteSession from '@assets/images/delete-session.png';
 import Discord from '@assets/images/discord.svg';
@@ -39,6 +39,7 @@ import FileDocument from '@assets/images/file-document.svg';
 import FriendList from '@assets/images/friend-list.png';
 import Idea from '@assets/images/idea.png';
 import Info from '@assets/images/info.svg';
+import Link from '@assets/images/link.svg';
 import Lock from '@assets/images/lock.svg';
 import Logo from '@assets/images/app-logo.svg';
 import Mail from '@assets/images/mail.svg';
@@ -48,6 +49,7 @@ import NewWindow from '@assets/images/new-window.svg';
 import Pencil from '@assets/images/pencil.png';
 import Plus from '@assets/images/plus.svg';
 import Gear from '@assets/images/gear.svg';
+import QrCode from '@assets/images/qrcode.svg';
 import QrCodeFullColor from '@assets/images/kiroku-qr-code-full-color.png';
 import QrCodePlain from '@assets/images/kiroku-qr-code-plain.png';
 import QrCodeWithLogo from '@assets/images/kiroku-qr-code-with-logo.png';
@@ -111,6 +113,7 @@ export {
   Gear,
   Idea,
   Info,
+  Link,
   Lock,
   Logo,
   Mail,
@@ -120,6 +123,7 @@ export {
   Pencil,
   Plus,
   Profile,
+  QrCode,
   QrCodeFullColor,
   QrCodePlain,
   QrCodeWithLogo,

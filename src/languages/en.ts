@@ -374,6 +374,11 @@ export default {
   },
   appShareScreen: {
     title: 'Share the App',
+    sectionTitle: 'Everyone, get in here!',
+    prompt:
+      'Help us grow by sharing Kiroku with your friends! You do so through a link or by scanning a QR code.',
+    link: 'Copy share link to clipboard',
+    qrCode: 'Show QR Code',
   },
   settingsScreen: {
     title: 'Settings',
