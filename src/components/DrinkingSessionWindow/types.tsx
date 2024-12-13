@@ -4,8 +4,8 @@ import type {
   DrinkingSessionId,
   DrinkingSessionType,
 } from '@src/types/onyx';
-import CONST from '@src/CONST';
-import DeepValueOf from '@src/types/utils/DeepValueOf';
+import type CONST from '@src/CONST';
+import type DeepValueOf from '@src/types/utils/DeepValueOf';
 
 type DrinkingSessionWindowProps = {
   onNavigateBack: (

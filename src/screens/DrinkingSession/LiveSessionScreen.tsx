@@ -6,7 +6,7 @@ import {useUserConnection} from '@context/global/UserConnectionContext';
 import CONST from '@src/CONST';
 import type {StackScreenProps} from '@react-navigation/stack';
 import type {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
-import SCREENS from '@src/SCREENS';
+import type SCREENS from '@src/SCREENS';
 import useLocalize from '@hooks/useLocalize';
 import {useOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
@@ -21,9 +21,10 @@ import {computeFirebaseUpdates} from '@database/baseFunctions';
 import useThemeStyles from '@hooks/useThemeStyles';
 import useStyleUtils from '@hooks/useStyleUtils';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
-import DeepValueOf from '@src/types/utils/DeepValueOf';
+import type DeepValueOf from '@src/types/utils/DeepValueOf';
 import Navigation from '@libs/Navigation/Navigation';
-import ROUTES, {Route} from '@src/ROUTES';
+import type {Route} from '@src/ROUTES';
+import ROUTES from '@src/ROUTES';
 
 type LiveSessionScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -44,16 +45,14 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   const onNavigateBack = (
     action: DeepValueOf<typeof CONST.NAVIGATION.SESSION_ACTION>,
   ) => {
-    if (!!backTo) {
+    if (backTo) {
       Navigation.navigate(backTo as Route);
       return;
     }
     if (action === CONST.NAVIGATION.SESSION_ACTION.SAVE) {
       Navigation.navigate(ROUTES.DRINKING_SESSION_SUMMARY.getRoute(sessionId));
-      return;
     } else {
       Navigation.navigate(ROUTES.HOME);
-      return;
     }
   };
 

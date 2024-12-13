@@ -306,7 +306,7 @@ function FriendRequestScreen() {
         )}
       </ScrollView>
       <PressableWithFeedback
-        accessibilityLabel={'search-screen-button'}
+        accessibilityLabel="search-screen-button"
         style={styles.goToSearchScreenButton}
         onPress={() => Navigation.navigate(ROUTES.SOCIAL_FRIEND_SEARCH)}>
         <Icon

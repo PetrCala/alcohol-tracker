@@ -41,8 +41,8 @@ import DateUtils from '@libs/DateUtils';
 import {isEqual} from 'lodash';
 import type {CalendarColors} from '@components/SessionsCalendar/types';
 import type {User} from 'firebase/auth';
-import type {DrinkingSessionWindowProps} from './types';
 import {useFocusEffect} from '@react-navigation/native';
+import type {DrinkingSessionWindowProps} from './types';
 
 function DrinkingSessionWindow({
   onNavigateBack,

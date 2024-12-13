@@ -12,9 +12,10 @@ import ScreenWrapper from '@components/ScreenWrapper';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import UserOfflineModal from '@components/UserOfflineModal';
 import useLocalize from '@hooks/useLocalize';
-import DeepValueOf from '@src/types/utils/DeepValueOf';
+import type DeepValueOf from '@src/types/utils/DeepValueOf';
 import Navigation from '@libs/Navigation/Navigation';
-import ROUTES, {Route} from '@src/ROUTES';
+import type {Route} from '@src/ROUTES';
+import ROUTES from '@src/ROUTES';
 
 type EditSessionScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -30,7 +31,7 @@ function EditSessionScreen({route}: EditSessionScreenProps) {
   const onNavigateBack = (
     action: DeepValueOf<typeof CONST.NAVIGATION.SESSION_ACTION>,
   ) => {
-    if (!!backTo) {
+    if (backTo) {
       Navigation.navigate(backTo as Route);
       return;
     }
@@ -38,16 +39,13 @@ function EditSessionScreen({route}: EditSessionScreenProps) {
     if (action === CONST.NAVIGATION.SESSION_ACTION.SAVE) {
       if (previousScreenName === SCREENS.DAY_OVERVIEW.ROOT) {
         Navigation.goBack();
-        return;
       } else if (previousScreenName === SCREENS.DRINKING_SESSION.SUMMARY) {
         Navigation.goBack();
-        return;
       } else {
         Navigation.navigate(ROUTES.HOME);
       }
     } else {
       Navigation.goBack();
-      return;
     }
   };
 

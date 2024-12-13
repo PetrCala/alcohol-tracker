@@ -1,4 +1,4 @@
-import {Semver, Timestamp} from './OnyxCommon';
+import type {Semver, Timestamp} from './OnyxCommon';
 
 /** A model of global application settings */
 type AppSettings = {

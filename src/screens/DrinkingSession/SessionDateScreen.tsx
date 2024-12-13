@@ -21,9 +21,10 @@ import {useFirebase} from '@context/global/FirebaseContext';
 import * as DS from '@userActions/DrinkingSession';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
 import Text from '@components/Text';
-import {TranslationPaths} from '@src/languages/types';
+import type {TranslationPaths} from '@src/languages/types';
 import Onyx, {useOnyx} from 'react-native-onyx';
-import ROUTES, {Route} from '@src/ROUTES';
+import type {Route} from '@src/ROUTES';
+import ROUTES from '@src/ROUTES';
 
 type SessionDateScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -39,15 +40,15 @@ function SesssionDateScreen({route}: SessionDateScreenProps) {
   const styles = useThemeStyles();
   const session = DSUtils.getDrinkingSessionData(sessionId);
 
-  const confirmTextKey: TranslationPaths = !!isBeingCreated
+  const confirmTextKey: TranslationPaths = isBeingCreated
     ? 'common.confirm'
     : 'common.save';
 
   const onGoBack = async () => {
-    if (!!isBeingCreated) {
+    if (isBeingCreated) {
       await Onyx.set(ONYXKEYS.IS_CREATING_NEW_SESSION, false);
     }
-    if (!!backTo) {
+    if (backTo) {
       Navigation.navigate(backTo as Route);
       return;
     }
@@ -62,7 +63,7 @@ function SesssionDateScreen({route}: SessionDateScreenProps) {
       return;
     }
     await DS.updateSessionDate(sessionId, session, new Date(values.date));
-    if (!!isBeingCreated) {
+    if (isBeingCreated) {
       await Onyx.set(ONYXKEYS.IS_CREATING_NEW_SESSION, false);
       DS.navigateToEditSessionScreen(sessionId, undefined, ROUTES.HOME);
     } else {
