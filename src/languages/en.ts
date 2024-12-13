@@ -130,6 +130,7 @@ export default {
     tomorrowAt: 'Tomorrow at',
     yesterdayAt: 'Yesterday at',
     success: 'Success',
+    copiedToClipboard: 'Copied to clipboard',
     conjunctionAt: 'at',
     genericErrorMessage:
       'Oops... something went wrong and your request could not be completed. Please try again later.',
@@ -378,6 +379,7 @@ export default {
     prompt:
       'Help us grow by sharing Kiroku with your friends! You do so through a link or by scanning a QR code.',
     link: 'Copy share link to clipboard',
+    linkCopied: 'Share link copied to clipboard!',
     qrCode: 'Show QR Code',
   },
   settingsScreen: {

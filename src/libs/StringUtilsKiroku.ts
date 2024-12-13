@@ -1,6 +1,7 @@
 import CONST from '@src/CONST';
 import Clipboard from '@react-native-clipboard/clipboard';
 import seedrandom from 'seedrandom';
+import * as Localize from '@libs/Localize';
 import {Alert} from 'react-native';
 
 /**
@@ -69,11 +70,27 @@ function generateRandomString(length: number, seed: string): string {
   return result;
 }
 
-/** Copy a text to a clipboard */
-const copyToClipboard = (text: string, alert?: boolean) => {
+/**
+ * Copy a text to a clipboard
+ *
+ * @param text - The text to be copied to the clipboard
+ * @param alert - If true, an alert will be shown to the user
+ * @param successTitle - The title of the success alert
+ * @param successText - The text of the success alert
+ * */
+const copyToClipboard = (
+  text: string,
+  alert?: boolean,
+  successTitle?: string,
+  successText?: string,
+) => {
+  const title = successTitle || Localize.translateLocal('common.success');
+  const message =
+    successText || Localize.translateLocal('common.copiedToClipboard');
+
   Clipboard.setString(text);
   if (alert) {
-    Alert.alert('Success', 'Copied to clipboard!');
+    Alert.alert(title, message);
   }
 };
 
