@@ -61,12 +61,13 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
         }
         setImageSource(source.uri); // Triggers upload
       })
-      .catch((error: unknown) => {
+      .catch((error: Error | unknown) => {
+        const errorMessage = error instanceof Error ? error.message : '';
         // TODO add clever error handling
-        if (error.message === 'User cancelled image selection') {
+        if (errorMessage === 'User cancelled image selection') {
           return;
         }
-        Alert.alert(translate('imageUpload.error.choice'), error.message);
+        Alert.alert(translate('imageUpload.error.choice'), errorMessage);
         // dispatch({type: 'SET_WARNING', payload: error.message});
       });
   };
@@ -83,8 +84,9 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
       }
       await chooseImage(); // Call automatically
       resetIndicators(); // Clean the indicators for upload
-    } catch (error: unknown) {
-      Alert.alert(translate('imageUpload.error.choice'), error.message);
+    } catch (error: Error | unknown) {
+      const errorMessage = error instanceof Error ? error.message : '';
+      Alert.alert(translate('imageUpload.error.choice'), errorMessage);
     }
   };
 
@@ -122,9 +124,10 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
           );
         }
         Alert.alert(translate('imageUpload.success'));
-      } catch (error: unknown) {
+      } catch (error: Error | unknown) {
+        const errorMessage = error instanceof Error ? error.message : '';
         setImageSource(null);
-        Alert.alert(translate('imageUpload.error.upload'), error.message);
+        Alert.alert(translate('imageUpload.error.upload'), errorMessage);
       } finally {
         setUploadOngoing(false); // Otherwise set upon success in child component
         setUploadModalVisible(false);

@@ -14,9 +14,7 @@ import UserListComponent from '@components/Social/UserListComponent';
 import useProfileList from '@hooks/useProfileList';
 import NoFriendInfo from '@components/Social/NoFriendInfo';
 
-type FriendListScreenProps = object; // TODO: Add props
-
-function FriendListScreen({}: FriendListScreenProps) {
+function FriendListScreen() {
   const {userData} = useDatabaseData();
   const friendListInputRef = useRef<SearchWindowRef>(null);
   const [searching, setSearching] = useState(false);

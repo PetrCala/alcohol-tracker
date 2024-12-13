@@ -89,7 +89,7 @@ function StartSessionButtonAndPopover(
         );
       }
       DS.navigateToOngoingSessionScreen();
-    } catch (error: unknown) {
+    } catch (error: Error | unknown) {
       ErrorUtils.raiseAlert(error, translate('homeScreen.error.title'));
     }
   };
@@ -113,7 +113,7 @@ function StartSessionButtonAndPopover(
           ROUTES.HOME,
         ),
       );
-    } catch (error: unknown) {
+    } catch (error: Error | unknown) {
       await Onyx.merge(ONYXKEYS.IS_CREATING_NEW_SESSION, false);
       ErrorUtils.raiseAlert(error, translate('homeScreen.error.title'));
     } finally {

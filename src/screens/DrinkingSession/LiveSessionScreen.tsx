@@ -69,7 +69,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
         true, // Update live session status
       );
       setDbSyncSuccessful(true);
-    } catch (error: unknown) {
+    } catch (error: Error | unknown) {
       throw new Error(translate('liveSessionScreen.error.save'));
     }
   };

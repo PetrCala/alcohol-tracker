@@ -48,10 +48,11 @@ function AdminFeedbackPopup(props: AdminFeedbackPopupProps) {
   async function handleDeleteFeedback(db: any, feedbackId: string) {
     try {
       await removeFeedback(db, feedbackId);
-    } catch (error: unknown) {
+    } catch (error: Error | unknown) {
+      const errorMessage = error instanceof Error ? error.message : '';
       Alert.alert(
         'Failed to remove feedback',
-        `Feedback could not be removed:${error.message}`,
+        `Feedback could not be removed:${errorMessage}`,
       );
     }
   }
@@ -66,10 +67,11 @@ function AdminFeedbackPopup(props: AdminFeedbackPopupProps) {
           if (data) {
             newNicknames[item.user_id] = data; // Set if not null
           }
-        } catch (error: unknown) {
+        } catch (error: Error | unknown) {
+          const errorMessage = error instanceof Error ? error.message : '';
           Alert.alert(
             'User nickname fetch failed',
-            `Could not fetch the nickname of user with UID: ${item.user_id}${error.message}`,
+            `Could not fetch the nickname of user with UID: ${item.user_id}${errorMessage}`,
           );
         }
       }

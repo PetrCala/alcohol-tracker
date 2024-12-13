@@ -1,5 +1,5 @@
 // TODO translate
-import {ActivityIndicator, Alert, StyleSheet, View} from 'react-native';
+import {Alert, View} from 'react-native';
 import type {
   FriendRequestList,
   FriendRequestStatus,
@@ -25,7 +25,6 @@ import Icon from '@components/Icon';
 import useTheme from '@hooks/useTheme';
 import ScrollView from '@components/ScrollView';
 import Button from '@components/Button';
-import Text from '@components/Text';
 import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
 import {useOnyx} from 'react-native-onyx';
