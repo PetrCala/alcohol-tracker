@@ -55,8 +55,8 @@ import SCREENS from '@src/SCREENS';
 import type Login from '@src/types/onyx/Login';
 // import type {AutoAuthState} from '@src/types/onyx/Session';
 import type Session from '@src/types/onyx/Session';
+import type {FormOnyxValues} from '@components/Form/types';
 import clearCache from './clearCache';
-import {FormOnyxValues} from '@components/Form/types';
 
 // let session: Session = {};
 // let authPromiseResolver: ((value: boolean) => void) | null = null;
