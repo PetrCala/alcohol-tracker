@@ -56,7 +56,13 @@ function FriendSearchScreen() {
           database,
           searchText,
         );
-        await updateHooksBasedOnSearchResults(newData);
+        const newDisplayData: ProfileList = await Profile.fetchUserProfiles(
+          db,
+          newData,
+        );
+        updateRequestStatuses(newData);
+        setDisplayData(newDisplayData);
+        setNoUsersFound(!isNonEmptyArray(newData));
         setSearchResultData(newData);
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : '';
@@ -70,16 +76,6 @@ function FriendSearchScreen() {
     },
     [],
   );
-
-  const updateDisplayData = async (
-    newData: UserSearchResults,
-  ): Promise<void> => {
-    const newDisplayData: ProfileList = await Profile.fetchUserProfiles(
-      db,
-      newData,
-    );
-    setDisplayData(newDisplayData);
-  };
 
   /** Having a list of users returned by the search,
    * determine the request status for each and update
@@ -95,15 +91,6 @@ function FriendSearchScreen() {
       }
     });
     setRequestStatuses(newRequestStatuses);
-  };
-
-  const updateHooksBasedOnSearchResults = async (
-    searchResults: UserSearchResults,
-  ): Promise<void> => {
-    updateRequestStatuses(searchResults); // Perhaps redundant
-    await updateDisplayData(searchResults); // Assuming this returns a Promise
-    const newNoUsersFound = !isNonEmptyArray(searchResults);
-    setNoUsersFound(newNoUsersFound);
   };
 
   const resetSearch = (): void => {
