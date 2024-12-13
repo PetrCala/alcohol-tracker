@@ -4,7 +4,8 @@ import type {SettingsNavigatorParamList} from '@libs/Navigation/types';
 import type {StackScreenProps} from '@react-navigation/stack';
 import type SCREENS from '@src/SCREENS';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
-import {Alert, Image, StyleProp, View, ViewStyle} from 'react-native';
+import {Alert, Image, View} from 'react-native';
+import type {StyleProp, ViewStyle} from 'react-native';
 import CONST from '@src/CONST';
 import {copyToClipboard} from '@libs/StringUtilsKiroku';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
@@ -13,10 +14,9 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import ScrollView from '@components/ScrollView';
 import Section from '@components/Section';
 import MenuItemList from '@components/MenuItemList';
-import {useMemo, useRef, useState} from 'react';
-import IconAsset from '@src/types/utils/IconAsset';
-import useWaitForNavigation from '@hooks/useWaitForNavigation';
-import {TranslationPaths} from '@src/languages/types';
+import {useCallback, useMemo, useRef, useState} from 'react';
+import type IconAsset from '@src/types/utils/IconAsset';
+import type {TranslationPaths} from '@src/languages/types';
 import Modal from '@components/Modal';
 import Button from '@components/Button';
 import useWindowDimensions from '@hooks/useWindowDimensions';
@@ -37,10 +37,10 @@ type AppShareScreenProps = StackScreenProps<
   typeof SCREENS.SETTINGS.APP_SHARE
 >;
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function AppShareScreen({route}: AppShareScreenProps) {
   const styles = useThemeStyles();
   const {translate} = useLocalize();
-  const waitForNavigate = useWaitForNavigation();
   const StyleUtils = useStyleUtils();
   const popoverAnchor = useRef<View | null>(null);
   const {isSmallScreenWidth, windowWidth, windowHeight} = useWindowDimensions();
@@ -48,7 +48,7 @@ function AppShareScreen({route}: AppShareScreenProps) {
 
   const onClose = () => setIsQrModalVisible(false);
 
-  const handleCopyLinkPress = () => {
+  const onCopyLinkPress = useCallback(() => {
     const successTitle = translate('common.success');
     const successText = translate('appShareScreen.linkCopied');
     try {
@@ -57,7 +57,7 @@ function AppShareScreen({route}: AppShareScreenProps) {
       const errorMessage = error instanceof Error ? error.message : '';
       Alert.alert('Error', errorMessage);
     }
-  };
+  }, [translate]);
 
   const menuItems = useMemo(() => {
     const baseMenuItems: MenuItem[] = [
@@ -65,7 +65,7 @@ function AppShareScreen({route}: AppShareScreenProps) {
         translationKey: 'appShareScreen.link',
         icon: KirokuIcons.Link,
         iconRight: KirokuIcons.Copy,
-        onPress: handleCopyLinkPress,
+        onPress: onCopyLinkPress,
       },
       {
         translationKey: 'appShareScreen.qrCode',
@@ -80,14 +80,14 @@ function AppShareScreen({route}: AppShareScreenProps) {
         translationKey,
         title: translate(translationKey),
         icon,
-        iconRight: iconRight,
-        onPress: onPress,
+        iconRight,
+        onPress,
         shouldShowRightIcon: true,
         ref: popoverAnchor,
         wrapperStyle: [styles.sectionMenuItemTopDescription],
       }),
     );
-  }, [styles, translate, waitForNavigate]);
+  }, [styles, translate, onCopyLinkPress]);
 
   return (
     <ScreenWrapper testID={AppShareScreen.displayName}>

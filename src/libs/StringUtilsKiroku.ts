@@ -1,8 +1,8 @@
 import CONST from '@src/CONST';
 import Clipboard from '@react-native-clipboard/clipboard';
 import seedrandom from 'seedrandom';
-import * as Localize from '@libs/Localize';
 import {Alert} from 'react-native';
+import * as Localize from './Localize';
 
 /**
  * Clean a string to be used as a key for the Firebase Realtime Database.
