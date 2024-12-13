@@ -51,7 +51,7 @@ function AgreeToTermsModal() {
     try {
       await User.updateAgreedToTermsAt(db, user);
       setIsModalVisible(false);
-    } catch (error: Error | unknown) {
+    } catch (error) {
       const errorMessage = ErrorUtils.getErrorMessage(error);
       setErrorText(errorMessage);
     }

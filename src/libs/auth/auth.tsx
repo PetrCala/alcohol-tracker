@@ -19,7 +19,7 @@ async function signUpUserWithEmailAndPassword(
     // const userCredential = await createUserWithEmailAndPassword(auth, email, password)
     // return userCredential.user;
     await createUserWithEmailAndPassword(auth, email, password);
-  } catch (error: Error | unknown) {
+  } catch (error) {
     throw new Error(`User creation failed: ${error.message}`);
   }
 }
@@ -36,7 +36,7 @@ async function signInUserWithEmailAndPassword(
       password,
     );
     return userCredential.user;
-  } catch (error: Error | unknown) {
+  } catch (error) {
     throw new Error(`User login failed: ${error.message}`);
   }
 }

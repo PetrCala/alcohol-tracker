@@ -58,7 +58,7 @@ function FriendSearchScreen() {
         );
         await updateHooksBasedOnSearchResults(newData);
         setSearchResultData(newData);
-      } catch (error: Error | unknown) {
+      } catch (error) {
         const errorMessage = error instanceof Error ? error.message : '';
         Alert.alert(
           'Database serach failed',

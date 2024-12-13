@@ -105,7 +105,7 @@ function PreferencesScreen({}: PreferencesScreenProps) {
       setSaving(true);
       await savePreferencesData(db, user.uid, currentPreferences);
       Navigation.navigate(ROUTES.SETTINGS);
-    } catch (error: Error | unknown) {
+    } catch (error) {
       const errorMessage = error instanceof Error ? error.message : '';
       Alert.alert(translate('preferencesScreen.error.save'), errorMessage);
     } finally {

@@ -50,7 +50,7 @@ async function uploadImageToFirebase(
             break;
         }
       },
-      (error: Error | unknown) => {
+      error => {
         ErrorUtils.raiseAlert(error, 'Error uploading image');
       },
     );
@@ -58,7 +58,7 @@ async function uploadImageToFirebase(
     await uploadTask;
     setUploadProgress('0');
     setSuccess('Image uploaded successfully');
-  } catch (error: Error | unknown) {
+  } catch (error) {
     ErrorUtils.raiseAlert(error, 'Error uploading image');
     throw error; // Re-throw the error after handling
   }

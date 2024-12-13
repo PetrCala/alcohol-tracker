@@ -123,7 +123,7 @@ function HomeScreen({}: HomeScreenProps) {
 
       try {
         synchronizeUserStatus(db, user.uid, drinkingSessionData);
-      } catch (error: Error | unknown) {
+      } catch (error) {
         const errorMessage = error instanceof Error ? error.message : '';
         Alert.alert(
           'Failed to contact the database',

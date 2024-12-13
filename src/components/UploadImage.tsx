@@ -61,7 +61,7 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
         }
         setImageSource(source.uri); // Triggers upload
       })
-      .catch((error: Error | unknown) => {
+      .catch(error => {
         const errorMessage = error instanceof Error ? error.message : '';
         // TODO add clever error handling
         if (errorMessage === 'User cancelled image selection') {
@@ -84,7 +84,7 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
       }
       await chooseImage(); // Call automatically
       resetIndicators(); // Clean the indicators for upload
-    } catch (error: Error | unknown) {
+    } catch (error) {
       const errorMessage = error instanceof Error ? error.message : '';
       Alert.alert(translate('imageUpload.error.choice'), errorMessage);
     }
@@ -124,7 +124,7 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
           );
         }
         Alert.alert(translate('imageUpload.success'));
-      } catch (error: Error | unknown) {
+      } catch (error) {
         const errorMessage = error instanceof Error ? error.message : '';
         setImageSource(null);
         Alert.alert(translate('imageUpload.error.upload'), errorMessage);

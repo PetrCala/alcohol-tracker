@@ -35,7 +35,7 @@ function FriendListScreen() {
         searchMapping,
       );
       setFriendsToDisplay(relevantResults); // Hide irrelevant
-    } catch (error: Error | unknown) {
+    } catch (error) {
       const errorMessage = error instanceof Error ? error.message : '';
       Alert.alert(
         'Database serach failed',
