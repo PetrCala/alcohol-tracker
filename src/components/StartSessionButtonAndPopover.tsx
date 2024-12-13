@@ -28,13 +28,13 @@ import Log from '@libs/common/Log';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {useFirebase} from '@context/global/FirebaseContext';
 import _ from 'lodash';
+import DateUtils from '@libs/DateUtils';
+import Navigation from '@libs/Navigation/Navigation';
+import ROUTES from '@src/ROUTES';
 import Text from './Text';
 import PopoverMenu from './PopoverMenu';
 import type {PopoverMenuItem} from './PopoverMenu';
 import FloatingActionButton from './FloatingActionButton';
-import DateUtils from '@libs/DateUtils';
-import Navigation from '@libs/Navigation/Navigation';
-import ROUTES from '@src/ROUTES';
 
 // Utils
 
@@ -285,9 +285,7 @@ function StartSessionButtonAndPopover(
       {
         ...getBaseSessionType(session.type),
         label: translate('startSession.ongoingSessions'),
-        icon: DSUtils.getIconForSession(
-          userStatusData?.latest_session?.type as DrinkingSessionType,
-        ),
+        icon: DSUtils.getIconForSession(userStatusData?.latest_session?.type!),
         description: translate('startSession.sessionFrom', sessionStartTime),
       },
     ];

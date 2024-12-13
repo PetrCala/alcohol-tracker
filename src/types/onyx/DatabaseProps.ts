@@ -8,8 +8,8 @@ import type {UserDrinkingSessionsList} from './DrinkingSession';
 import type {UserStatusList} from './UserStatus';
 import type {SessionPlaceholderList} from './SessionPlaceholder';
 import type {ReasonForLeavingList} from './ReasonForLeaving';
-import {BugList} from './Bug';
-import {AccountCreationsList} from './AccountCreations';
+import type {BugList} from './Bug';
+import type {AccountCreationsList} from './AccountCreations';
 
 /** Main database props object
  *

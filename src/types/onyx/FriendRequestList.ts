@@ -1,5 +1,5 @@
 import type CONST from '@src/CONST';
-import DeepValueOf from '@src/types/utils/DeepValueOf';
+import type DeepValueOf from '@src/types/utils/DeepValueOf';
 import type {UserID} from './OnyxCommon';
 
 /** A friend request status value */

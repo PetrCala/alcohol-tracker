@@ -1,8 +1,8 @@
 import type CONST from '@src/CONST';
+import type DeepValueOf from '@src/types/utils/DeepValueOf';
 import type {Timestamp, UserID} from './OnyxCommon';
 import type {DrinksList} from './Drinks';
 import type {SelectedTimezone} from './UserData';
-import DeepValueOf from '../utils/DeepValueOf';
 
 /** Options denoting how drinks should be added to an object of drinks */
 type AddDrinksOptions =

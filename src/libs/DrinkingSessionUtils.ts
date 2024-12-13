@@ -30,12 +30,12 @@ import _ from 'lodash';
 import type {ValueOf} from 'type-fest';
 import type {ImageSourcePropType} from 'react-native';
 import type {TranslationPaths} from '@src/languages/types';
+import type IconAsset from '@src/types/utils/IconAsset';
 import Log from './Log';
 import DateUtils from './DateUtils';
 import {roundToTwoDecimalPlaces} from './NumberUtils';
 import {auth} from './Firebase/FirebaseApp';
 import {numberToVerboseString} from './TimeUtils';
-import IconAsset from '@src/types/utils/IconAsset';
 
 const PlaceholderDrinks: DrinksList = {[Date.now()]: {other: 0}};
 

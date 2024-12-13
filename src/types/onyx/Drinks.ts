@@ -1,7 +1,6 @@
 import type CONST from '@src/CONST';
-import type {ValueOf} from 'type-fest';
-import {Timestamp} from './OnyxCommon';
-import DeepValueOf from '../utils/DeepValueOf';
+import type DeepValueOf from '@src/types/utils/DeepValueOf';
+import type {Timestamp} from './OnyxCommon';
 
 /** A timestamp of when this drink was recorded */
 type DrinksTimestamp = Timestamp;
