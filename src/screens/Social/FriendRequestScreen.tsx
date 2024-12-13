@@ -1,4 +1,3 @@
-// TODO translate
 import {Alert, View} from 'react-native';
 import type {
   FriendRequestList,
@@ -30,9 +29,10 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import {useOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 import {PressableWithFeedback} from '@components/Pressable';
+import type {UserID} from '@src/types/onyx/OnyxCommon';
 
-type RequestIdProps = {
-  requestId: string;
+type FriendRequestButtonsProps = {
+  requestId: UserID;
 };
 
 type FriendRequestComponentProps = {
@@ -46,46 +46,8 @@ type FriendRequestItemProps = {
   displayData: ProfileList;
 };
 
-const handleAcceptFriendRequest = async (
-  db: Database,
-  userID: string,
-  requestId: string,
-  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
-): Promise<void> => {
-  try {
-    setIsLoading(true);
-    await acceptFriendRequest(db, userID, requestId);
-    setIsLoading(false);
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : '';
-    Alert.alert(
-      'User does not exist in the database',
-      `Could not accept the friend request: ${errorMessage}`,
-    );
-  }
-};
-
-const handleRejectFriendRequest = async (
-  db: Database,
-  userID: string,
-  requestId: string,
-  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
-): Promise<void> => {
-  try {
-    setIsLoading(true);
-    await deleteFriendRequest(db, userID, requestId);
-    setIsLoading(false);
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : '';
-    Alert.alert(
-      'User does not exist in the database',
-      `Could not accept the friend request: ${errorMessage}`,
-    );
-  }
-};
-
 // Component to be shown for a received friend request
-const FriendRequestButtons: React.FC<RequestIdProps> = ({requestId}) => {
+function FriendRequestButtons({requestId}: FriendRequestButtonsProps) {
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
   const styles = useThemeStyles();
@@ -94,6 +56,38 @@ const FriendRequestButtons: React.FC<RequestIdProps> = ({requestId}) => {
   if (!user) {
     return;
   }
+
+  const handleAcceptPress = () => {
+    (async () => {
+      try {
+        setIsLoading(true);
+        await acceptFriendRequest(db, user.uid, requestId);
+        setIsLoading(false);
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : '';
+        Alert.alert(
+          `${translate('friendRequestScreen.error.userDoesNotExist')}`,
+          `${translate('friendRequestScreen.error.couldNotAccept')}: ${errorMessage}`,
+        );
+      }
+    })();
+  };
+
+  const handleRejectPress = () => {
+    (async () => {
+      try {
+        setIsLoading(true);
+        await deleteFriendRequest(db, user.uid, requestId);
+        setIsLoading(false);
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : '';
+        Alert.alert(
+          `${translate('friendRequestScreen.error.userDoesNotExist')}`,
+          `${translate('friendRequestScreen.error.couldNotRemove')}: ${errorMessage}`,
+        );
+      }
+    })();
+  };
 
   return (
     <View style={[styles.flexRow, styles.alignItemsCenter]}>
@@ -101,27 +95,23 @@ const FriendRequestButtons: React.FC<RequestIdProps> = ({requestId}) => {
         success
         key={`${requestId}-accept-request-button`}
         text={translate('friendRequestScreen.accept')}
-        onPress={() =>
-          handleAcceptFriendRequest(db, user.uid, requestId, setIsLoading)
-        }
+        onPress={handleAcceptPress}
         isLoading={isLoading}
       />
       <Button
         danger
         key={`${requestId}-reject-request-button`}
         text={translate('friendRequestScreen.remove')}
-        onPress={() =>
-          handleRejectFriendRequest(db, user.uid, requestId, setIsLoading)
-        }
+        onPress={handleRejectPress}
         style={styles.ml1}
         isLoading={isLoading}
       />
     </View>
   );
-};
+}
 
 // Component to be shown when the friend request is pending
-const FriendRequestPending: React.FC<RequestIdProps> = ({requestId}) => {
+function FriendRequestPending({requestId}: FriendRequestButtonsProps) {
   const {auth, db} = useFirebase();
   const {translate} = useLocalize();
   const styles = useThemeStyles();
@@ -132,43 +122,59 @@ const FriendRequestPending: React.FC<RequestIdProps> = ({requestId}) => {
     return;
   }
 
+  const handleRejectPress = () => {
+    (async () => {
+      try {
+        setIsLoading(true);
+        await deleteFriendRequest(db, user.uid, requestId);
+        setIsLoading(false);
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : '';
+        Alert.alert(
+          `${translate('friendRequestScreen.error.userDoesNotExist')}`,
+          `${translate('friendRequestScreen.error.couldNotRemove')}: ${errorMessage}`,
+        );
+      }
+    })();
+  };
+
   return (
     <View style={[styles.flexRow, styles.alignItemsCenter]}>
-      <Button
-        danger
-        onPress={() =>
-          handleRejectFriendRequest(db, user.uid, requestId, setIsLoading)
-        }
-        text={translate('common.cancel')}
-        isLoading={isLoading}
-      />
+      <Button danger onPress={handleRejectPress} isLoading={isLoading} />
     </View>
   );
-};
+}
 
 // Component to be rendered on the right hand side of each friend request container
-const FriendRequestComponent: React.FC<FriendRequestComponentProps> = ({
+function FriendRequestComponent({
   requestStatus,
   requestId,
-}) => {
-  return requestStatus === CONST.FRIEND_REQUEST_STATUS.RECEIVED ? (
-    <FriendRequestButtons
-      key={`${requestId}-friend-request-buttons`}
-      requestId={requestId}
-    />
-  ) : requestStatus === CONST.FRIEND_REQUEST_STATUS.SENT ? (
-    <FriendRequestPending
-      key={`${requestId}-friend-request-pending`}
-      requestId={requestId}
-    />
-  ) : null;
-};
+}: FriendRequestComponentProps) {
+  switch (requestStatus) {
+    case CONST.FRIEND_REQUEST_STATUS.RECEIVED:
+      return (
+        <FriendRequestButtons
+          key={`${requestId}-friend-request-buttons`}
+          requestId={requestId}
+        />
+      );
+    case CONST.FRIEND_REQUEST_STATUS.SENT:
+      return (
+        <FriendRequestPending
+          key={`${requestId}-friend-request-pending`}
+          requestId={requestId}
+        />
+      );
+    default:
+      return null;
+  }
+}
 
-const FriendRequestItem: React.FC<FriendRequestItemProps> = ({
+function FriendRequestItem({
   requestId,
   friendRequests,
   displayData,
-}) => {
+}: FriendRequestItemProps) {
   if (!friendRequests || !displayData) {
     return null;
   }
@@ -186,7 +192,7 @@ const FriendRequestItem: React.FC<FriendRequestItemProps> = ({
       })}
     />
   );
-};
+}
 
 function FriendRequestScreen() {
   const {db} = useFirebase();
@@ -206,18 +212,19 @@ function FriendRequestScreen() {
   const [requestsReceivedCount, setRequestsReceivedCount] = useState<number>(0);
 
   useMemo(() => {
-    if (userData) {
-      setFriendRequests(userData?.friend_requests);
+    if (!userData) {
+      return;
     }
+    setFriendRequests(userData?.friend_requests);
   }, [userData]);
 
   const updateDisplayData = async (
     database: Database,
-    friendRequests: FriendRequestList | undefined,
+    requests: FriendRequestList | undefined,
   ): Promise<void> => {
     const newDisplayData: ProfileList = await Profile.fetchUserProfiles(
       database,
-      objKeys(friendRequests),
+      objKeys(requests),
     );
     setDisplayData(newDisplayData);
   };
@@ -229,7 +236,7 @@ function FriendRequestScreen() {
       setIsLoading(false);
     };
     updateLocalHooks();
-  }, [friendRequests]);
+  }, [friendRequests, db]);
 
   useEffect(() => {
     const newRequestsSent: string[] = [];
@@ -262,46 +269,50 @@ function FriendRequestScreen() {
       <ScrollView style={[styles.mw100]}>
         {isLoading || !!loadingText ? (
           <FlexibleLoadingIndicator style={styles.mt5} />
-        ) : !isEmptyObject(friendRequests) ? (
-          <View>
-            <GrayHeader
-              headerText={translate(
-                'friendRequestScreen.requestsReceived',
-                requestsReceivedCount,
-              )}
-            />
-            <View>
-              {requestsReceived.map(requestId => (
-                <FriendRequestItem
-                  key={`${requestId}-friend-request-item`}
-                  requestId={requestId}
-                  friendRequests={friendRequests}
-                  displayData={displayData}
-                />
-              ))}
-            </View>
-            <GrayHeader
-              headerText={translate(
-                'friendRequestScreen.requestsSent',
-                requestsSentCount,
-              )}
-            />
-            <View>
-              {requestsSent.map(requestId => (
-                <FriendRequestItem
-                  key={`${requestId}-friend-request-item`}
-                  requestId={requestId}
-                  friendRequests={friendRequests}
-                  displayData={displayData}
-                />
-              ))}
-            </View>
-          </View>
         ) : (
-          <NoFriendInfo
-            message={translate('friendRequestScreen.lookingForNewFriends')}
-            buttonText={translate('friendRequestScreen.trySearchingHere')}
-          />
+          <View>
+            {!isEmptyObject(friendRequests) ? (
+              <View>
+                <GrayHeader
+                  headerText={translate(
+                    'friendRequestScreen.requestsReceived',
+                    requestsReceivedCount,
+                  )}
+                />
+                <View>
+                  {requestsReceived.map(requestId => (
+                    <FriendRequestItem
+                      key={`${requestId}-friend-request-item`}
+                      requestId={requestId}
+                      friendRequests={friendRequests}
+                      displayData={displayData}
+                    />
+                  ))}
+                </View>
+                <GrayHeader
+                  headerText={translate(
+                    'friendRequestScreen.requestsSent',
+                    requestsSentCount,
+                  )}
+                />
+                <View>
+                  {requestsSent.map(requestId => (
+                    <FriendRequestItem
+                      key={`${requestId}-friend-request-item`}
+                      requestId={requestId}
+                      friendRequests={friendRequests}
+                      displayData={displayData}
+                    />
+                  ))}
+                </View>
+              </View>
+            ) : (
+              <NoFriendInfo
+                message={translate('friendRequestScreen.lookingForNewFriends')}
+                buttonText={translate('friendRequestScreen.trySearchingHere')}
+              />
+            )}
+          </View>
         )}
       </ScrollView>
       <PressableWithFeedback

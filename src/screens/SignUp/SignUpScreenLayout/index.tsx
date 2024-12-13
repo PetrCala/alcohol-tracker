@@ -28,7 +28,7 @@ function SignUpScreenLayout(
   {
     welcomeHeader = '',
     welcomeText = '',
-    navigateFocus = () => {},
+    // navigateFocus = () => {},
     children,
   }: SignUpScreenLayoutProps,
   ref: ForwardedRef<SignUpScreenLayoutRef>,
@@ -41,8 +41,7 @@ function SignUpScreenLayout(
   const scrollViewRef = useRef<RNScrollView>(null);
   const prevPreferredLocale = usePrevious(preferredLocale);
   const {windowHeight} = useWindowDimensions();
-  const {shouldUseNarrowLayout, isMediumScreenWidth, isLargeScreenWidth} =
-    useResponsiveLayout();
+  const {shouldUseNarrowLayout} = useResponsiveLayout();
 
   const {containerStyles, contentContainerStyles} = useMemo(
     () => ({

@@ -1,6 +1,5 @@
 import React from 'react';
 import {View} from 'react-native';
-import Onyx, {useOnyx} from 'react-native-onyx';
 import FormElement from '@components/FormElement';
 // import OfflineIndicator from '@components/OfflineIndicator';
 import Text from '@components/Text';
@@ -26,7 +25,6 @@ function SignUpScreenContent({
   children,
 }: SignUpScreenContentProps) {
   const {shouldUseNarrowLayout} = useResponsiveLayout();
-  const {translate} = useLocalize();
   const styles = useThemeStyles();
   const StyleUtils = useStyleUtils();
 

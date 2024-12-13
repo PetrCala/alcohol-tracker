@@ -1,10 +1,10 @@
-import {Alert, StyleSheet, View} from 'react-native';
+import {Alert, View} from 'react-native';
 import SearchWindow from '@components/Social/SearchWindow';
 import type {
   SearchWindowRef,
   UserIDToNicknameMapping,
 } from '@src/types/various/Search';
-import React, {useMemo, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {objKeys} from '@libs/DataHandling';
 import {getNicknameMapping} from '@libs/SearchUtils';
 import {searchArrayByText} from '@libs/Search';
@@ -13,18 +13,21 @@ import type {UserArray} from '@src/types/onyx/OnyxCommon';
 import UserListComponent from '@components/Social/UserListComponent';
 import useProfileList from '@hooks/useProfileList';
 import NoFriendInfo from '@components/Social/NoFriendInfo';
+import useLocalize from '@hooks/useLocalize';
+import useThemeStyles from '@hooks/useThemeStyles';
 
 function FriendListScreen() {
   const {userData} = useDatabaseData();
+  const {translate} = useLocalize();
+  const styles = useThemeStyles();
   const friendListInputRef = useRef<SearchWindowRef>(null);
-  const [searching, setSearching] = useState(false);
   const [friends, setFriends] = useState<UserArray>([]);
   const [friendsToDisplay, setFriendsToDisplay] = useState<UserArray>([]);
   const {profileList} = useProfileList(friends);
 
-  const localSearch = (searchText: string) => {
+  // eslint-disable-next-line @typescript-eslint/require-await
+  const localSearch = async (searchText: string): Promise<void> => {
     try {
-      setSearching(true);
       const searchMapping: UserIDToNicknameMapping = getNicknameMapping(
         profileList,
         'display_name',
@@ -38,12 +41,9 @@ function FriendListScreen() {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : '';
       Alert.alert(
-        'Database serach failed',
-        `Could not search the database: ${errorMessage}`,
+        translate('database.error.searchFailed'),
+        `${translate('database.error.couldNotSearch')}: ${errorMessage}`,
       );
-      return;
-    } finally {
-      setSearching(false);
     }
   };
 
@@ -51,17 +51,17 @@ function FriendListScreen() {
     setFriendsToDisplay(friends);
   };
 
-  useMemo(() => {
+  useEffect(() => {
     const friendsArray = objKeys(userData?.friends);
     setFriends(friendsArray);
     setFriendsToDisplay(friendsArray);
   }, [userData]);
 
   return (
-    <View style={styles.mainContainer}>
+    <View style={styles.flex1}>
       <SearchWindow
         ref={friendListInputRef}
-        windowText="Search your friend list"
+        windowText={translate('friendListScreen.searchYourFriendList')}
         onSearch={localSearch}
         onResetSearch={resetSearch}
         searchOnTextChange
@@ -76,11 +76,4 @@ function FriendListScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-  },
-});
-
 export default FriendListScreen;
