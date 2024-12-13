@@ -76,7 +76,7 @@ function LogInScreen() {
 
     try {
       await User.logIn(auth, emailTrim, values.password);
-    } catch (error: Error | unknown) {
+    } catch (error) {
       const errorMessage = ErrorUtils.getErrorMessage(error);
       setServerErrorMessage(errorMessage);
     } finally {

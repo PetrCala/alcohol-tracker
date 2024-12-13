@@ -22,7 +22,7 @@ function loadJsonData(filename: string): DatabaseProps | null {
     const jsonData: DatabaseProps = JSON.parse(rawData);
 
     return jsonData;
-  } catch (error: Error | unknown) {
+  } catch (error) {
     throw new Error(`Error reading or parsing the JSON file: ${error.message}`);
   }
 }

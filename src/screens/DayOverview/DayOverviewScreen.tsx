@@ -205,7 +205,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
           userData?.timezone?.selected,
         );
         DS.navigateToEditSessionScreen(newSession?.id);
-      } catch (error: Error | unknown) {
+      } catch (error) {
         ErrorUtils.raiseAlert(error);
       } finally {
         await Utils.setLoadingText(null);

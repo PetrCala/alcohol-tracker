@@ -57,7 +57,7 @@ function PasswordScreen({}: PasswordScreenProps) {
         values.newPassword,
       );
       Navigation.goBack(); // TODO add a success message
-    } catch (error: Error | unknown) {
+    } catch (error) {
       const errorMessage = ErrorUtils.getErrorMessage(error);
       setServerErrorMessage(errorMessage);
     } finally {

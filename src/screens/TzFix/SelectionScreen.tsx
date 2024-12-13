@@ -72,7 +72,7 @@ function SelectionScreen({}: SelectionScreenProps) {
 
   const handleTimezoneSelection = useCallback(
     ({text}: {text: string}): void => {
-      saveSelectedTimezone({text}).catch((error: Error | unknown) => {
+      saveSelectedTimezone({text}).catch(error => {
         ErrorUtils.raiseAlert(error, translate('timezoneScreen.error.generic'));
       });
     },

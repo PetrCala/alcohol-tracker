@@ -38,7 +38,7 @@ function VerifyEmailModal() {
       setIsLoading(true);
       await User.sendVerifyEmailLink(user);
       setEmailSent(true);
-    } catch (error: Error | unknown) {
+    } catch (error) {
       const errorMessage = error instanceof Error ? error.message : '';
       setErrorText(errorMessage);
     } finally {

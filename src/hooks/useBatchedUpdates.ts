@@ -106,7 +106,7 @@ const useBatchedUpdates = (
               }
             });
             retriesRef.current = 0;
-          } catch (error: Error | unknown) {
+          } catch (error) {
             // On failure, keep updates in the pool and raise an alert
             const errorMessage = error instanceof Error ? error.message : '';
             Alert.alert(translate('database.error.saveData'), errorMessage);

@@ -56,7 +56,7 @@ const handleAcceptFriendRequest = async (
     setIsLoading(true);
     await acceptFriendRequest(db, userID, requestId);
     setIsLoading(false);
-  } catch (error: Error | unknown) {
+  } catch (error) {
     const errorMessage = error instanceof Error ? error.message : '';
     Alert.alert(
       'User does not exist in the database',
@@ -75,7 +75,7 @@ const handleRejectFriendRequest = async (
     setIsLoading(true);
     await deleteFriendRequest(db, userID, requestId);
     setIsLoading(false);
-  } catch (error: Error | unknown) {
+  } catch (error) {
     const errorMessage = error instanceof Error ? error.message : '';
     Alert.alert(
       'User does not exist in the database',
@@ -231,7 +231,7 @@ function FriendRequestScreen() {
     updateLocalHooks();
   }, [friendRequests]);
 
-  useMemo(() => {
+  useEffect(() => {
     const newRequestsSent: string[] = [];
     const newRequestsReceived: string[] = [];
     if (!isEmptyObject(friendRequests)) {
