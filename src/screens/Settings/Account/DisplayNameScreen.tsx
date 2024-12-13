@@ -1,6 +1,6 @@
 import React from 'react';
-import {Alert, View} from 'react-native';
-import {useOnyx, withOnyx} from 'react-native-onyx';
+import {View} from 'react-native';
+import {useOnyx} from 'react-native-onyx';
 import FormProvider from '@components/Form/FormProvider';
 import InputWrapper from '@components/Form/InputWrapper';
 import type {FormInputErrors, FormOnyxValues} from '@components/Form/types';
@@ -25,15 +25,13 @@ import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {changeDisplayName} from '@userActions/User';
 
-type DisplayNameScreenOnyxProps = {};
+type DisplayNameScreenProps = StackScreenProps<
+  SettingsNavigatorParamList,
+  typeof SCREENS.SETTINGS.ACCOUNT.DISPLAY_NAME
+>;
 
-type DisplayNameScreenProps = DisplayNameScreenOnyxProps &
-  StackScreenProps<
-    SettingsNavigatorParamList,
-    typeof SCREENS.SETTINGS.ACCOUNT.DISPLAY_NAME
-  >;
-
-function DisplayNameScreen({}: DisplayNameScreenProps) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function DisplayNameScreen({route}: DisplayNameScreenProps) {
   const styles = useThemeStyles();
   const {translate} = useLocalize();
   const {db, auth} = useFirebase();
@@ -139,7 +137,4 @@ function DisplayNameScreen({}: DisplayNameScreenProps) {
 }
 
 DisplayNameScreen.displayName = 'DisplayNameScreen';
-
-export default withOnyx<DisplayNameScreenProps, DisplayNameScreenOnyxProps>({})(
-  DisplayNameScreen,
-);
+export default DisplayNameScreen;
