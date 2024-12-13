@@ -140,7 +140,12 @@ function FriendRequestPending({requestId}: FriendRequestButtonsProps) {
 
   return (
     <View style={[styles.flexRow, styles.alignItemsCenter]}>
-      <Button danger onPress={handleRejectPress} isLoading={isLoading} />
+      <Button
+        danger
+        onPress={handleRejectPress}
+        text={translate('common.cancel')}
+        isLoading={isLoading}
+      />
     </View>
   );
 }
