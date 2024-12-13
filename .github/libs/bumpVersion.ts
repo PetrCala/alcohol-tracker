@@ -94,7 +94,7 @@ try {
 
   // Output only the new version
   console.log(newVersion);
-} catch (error: unknown) {
+} catch (error: Error | unknown) {
   console.error('An error occurred:', error);
   process.exit(1);
 }

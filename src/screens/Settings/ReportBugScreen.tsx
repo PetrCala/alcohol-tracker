@@ -43,8 +43,9 @@ function ReportBugScreen({}: ReportBugScreenProps) {
       setIsLoading(true);
       await reportABug(db, userID, values.text);
       Navigation.goBack();
-    } catch (error: unknown) {
-      Alert.alert('Failed to submit feedback', error.message);
+    } catch (error: Error | unknown) {
+      const errorMessage = error instanceof Error ? error.message : '';
+      Alert.alert('Failed to submit feedback', errorMessage);
     } finally {
       setIsLoading(false);
     }

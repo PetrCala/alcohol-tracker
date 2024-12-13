@@ -197,7 +197,7 @@ export function isNonEmptyObject(input: any): boolean {
       !Array.isArray(input) &&
       Object.keys(input).length > 0
     );
-  } catch (error: unknown) {
+  } catch (error: Error | unknown) {
     return false;
   }
 }

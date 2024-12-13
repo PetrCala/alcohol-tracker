@@ -59,7 +59,7 @@ function ConfirmationScreen({}: ConfirmationScreenProps) {
   }, [db, auth.currentUser, drinkingSessionData, selectedTimezone]);
 
   const handleOnCorrect = useCallback((): void => {
-    onCorrect().catch((error: unknown) => {
+    onCorrect().catch((error: Error | unknown) => {
       ErrorUtils.raiseAlert(
         error,
         translate('tzFix.confirmation.error.generic'),

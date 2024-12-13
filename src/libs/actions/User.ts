@@ -602,7 +602,7 @@ async function signUp(
     Session.clearSignInData();
 
     Navigation.navigate(ROUTES.HOME);
-  } catch (error: unknown) {
+  } catch (error: Error | unknown) {
     // Attempt to rollback the changes if the 'transaction' fails
     await deleteUserData(
       db,

@@ -158,7 +158,7 @@ function DrinkingSessionWindow({
       );
       // Reroute to session summary, do not allow user to return
       onNavigateBack(CONST.NAVIGATION.SESSION_ACTION.SAVE);
-    } catch (error: unknown) {
+    } catch (error: Error | unknown) {
       Alert.alert(
         translate('liveSessionScreen.error.saveTitle'),
         translate('liveSessionScreen.error.save'),
@@ -193,7 +193,7 @@ function DrinkingSessionWindow({
         !!sessionIsLive,
       );
       onNavigateBack(CONST.NAVIGATION.SESSION_ACTION.DISCARD);
-    } catch (error: unknown) {
+    } catch (error: Error | unknown) {
       ErrorUtils.raiseAlert(
         error,
         translate('liveSessionScreen.error.discardTitle'),

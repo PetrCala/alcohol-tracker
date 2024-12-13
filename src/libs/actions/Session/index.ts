@@ -1051,7 +1051,7 @@ function cleanupSession() {
 async function signOut(auth: Auth) {
   try {
     await fbSignOut(auth);
-  } catch (error: unknown) {
+  } catch (error: Error | unknown) {
     Alert.alert(
       'User sign out error',
       `There was an error signing out: ${error.message}`,

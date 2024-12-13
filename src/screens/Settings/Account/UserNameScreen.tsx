@@ -58,7 +58,7 @@ function UserNameScreen({}: UserNameScreenProps) {
       await Utils.setLoadingText(translate('userNameScreen.updatingUserName'));
       await changeUserName(db, auth.currentUser, newFirstName, newLastName);
       Navigation.goBack();
-    } catch (error: unknown) {
+    } catch (error: Error | unknown) {
       ErrorUtils.raiseAlert(error, translate('username.error.generic'));
     } finally {
       setIsLoadingName(false);

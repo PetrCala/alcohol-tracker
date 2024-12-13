@@ -32,7 +32,7 @@ function TimezoneSelectScreen({}: TimezoneSelectScreenProps) {
     try {
       setIsLoading(true);
       await User.saveSelectedTimezone(db, auth.currentUser, timezone);
-    } catch (error: unknown) {
+    } catch (error: Error | unknown) {
       ErrorUtils.raiseAlert(error, translate('timezoneScreen.error.generic'));
     } finally {
       Navigation.goBack(ROUTES.SETTINGS_TIMEZONE);

@@ -106,7 +106,7 @@ function VerifyEmailModal() {
               safeAreaPaddingBottomStyle,
             ]}>
             {!emailVerified ? (
-              <>
+              <View>
                 <View
                   style={[
                     styles.flexGrow1,
@@ -181,7 +181,7 @@ function VerifyEmailModal() {
                     large
                   />
                 </View>
-              </>
+              </View>
             ) : (
               <SuccessAnimation
                 iconSource={KirokuIcons.Checkmark}

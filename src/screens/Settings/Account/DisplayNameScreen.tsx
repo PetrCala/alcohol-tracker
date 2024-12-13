@@ -64,7 +64,7 @@ function DisplayNameScreen({}: DisplayNameScreenProps) {
         profileData?.display_name,
         newDisplayName,
       );
-    } catch (error: unknown) {
+    } catch (error: Error | unknown) {
       ErrorUtils.raiseAlert(
         error,
         translate('displayNameScreen.error.generic'),

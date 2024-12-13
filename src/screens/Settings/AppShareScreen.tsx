@@ -35,8 +35,9 @@ function AppShareScreen({route}: AppShareScreenProps) {
   const handleCopyLinkPress = () => {
     try {
       copyToClipboard(CONST.APP_DOWNLOAD_LINK, true);
-    } catch (error: unknown) {
-      Alert.alert('Error', error.message);
+    } catch (error: Error | unknown) {
+      const errorMessage = error instanceof Error ? error.message : '';
+      Alert.alert('Error', errorMessage);
     }
   };
 
