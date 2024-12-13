@@ -48,6 +48,30 @@ function FriendSearchScreen() {
   const [noUsersFound, setNoUsersFound] = useState(false);
   const [displayData, setDisplayData] = useState<ProfileList>({});
 
+  /** Having a list of users returned by the search,
+   * determine the request status for each and update
+   * the RequestStatuses hook.
+   */
+  const updateRequestStatuses = useCallback(
+    (data: UserSearchResults = searchResultData): void => {
+      if (!friendRequests) {
+        setRequestStatuses({});
+        return;
+      }
+
+      const newRequestStatuses: Record<string, FriendRequestStatus> = {};
+      data.forEach(userID => {
+        if (!friendRequests[userID]) {
+          return;
+        }
+        newRequestStatuses[userID] = friendRequests[userID];
+      });
+
+      setRequestStatuses(newRequestStatuses);
+    },
+    [friendRequests, searchResultData],
+  );
+
   const dbSearch = useCallback(
     async (searchText: string, database?: Database): Promise<void> => {
       try {
@@ -74,24 +98,8 @@ function FriendSearchScreen() {
         setSearching(false);
       }
     },
-    [],
+    [db, updateRequestStatuses],
   );
-
-  /** Having a list of users returned by the search,
-   * determine the request status for each and update
-   * the RequestStatuses hook.
-   */
-  const updateRequestStatuses = (
-    data: UserSearchResults = searchResultData,
-  ): void => {
-    const newRequestStatuses: Record<string, FriendRequestStatus> = {};
-    data.forEach(userID => {
-      if (friendRequests?.[userID]) {
-        newRequestStatuses[userID] = friendRequests[userID];
-      }
-    });
-    setRequestStatuses(newRequestStatuses);
-  };
 
   const resetSearch = (): void => {
     // Reset all values displayed on screen
@@ -103,10 +111,11 @@ function FriendSearchScreen() {
   };
 
   useMemo(() => {
-    if (userData) {
-      setFriends(userData.friends);
-      setFriendRequests(userData.friend_requests);
+    if (!userData) {
+      return;
     }
+    setFriends(userData.friends);
+    setFriendRequests(userData.friend_requests);
   }, [userData]);
 
   useMemo(() => {
