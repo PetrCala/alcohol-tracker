@@ -11,11 +11,7 @@ type OrDelimiterProps = {
   textStyle?: StyleProp<TextStyle>;
 };
 
-const OrDelimiter: React.FC<OrDelimiterProps> = ({
-  containerStyle,
-  lineStyle,
-  textStyle,
-}) => {
+function OrDelimiter({containerStyle, lineStyle, textStyle}: OrDelimiterProps) {
   const {translate} = useLocalize();
   const styles = useThemeStyles();
 
@@ -28,7 +24,7 @@ const OrDelimiter: React.FC<OrDelimiterProps> = ({
       <View style={[styles.orDelimiterLine, lineStyle]} />
     </View>
   );
-};
+}
 
 OrDelimiter.displayName = 'OrDelimiter';
 export default OrDelimiter;

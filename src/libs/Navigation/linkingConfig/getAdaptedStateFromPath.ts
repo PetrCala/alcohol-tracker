@@ -10,7 +10,6 @@ import type {
 import {isCentralPaneName} from '@libs/NavigationUtils';
 import NAVIGATORS from '@src/NAVIGATORS';
 import SCREENS from '@src/SCREENS';
-import ROUTES from '@src/ROUTES';
 import config from './config';
 import getMatchingBottomTabRouteForState from './getMatchingBottomTabRouteForState';
 import getMatchingCentralPaneRouteForState from './getMatchingCentralPaneRouteForState';
@@ -39,27 +38,27 @@ const getRoutesWithIndex = (
   routes: NavigationPartialRoute[],
 ): PartialState<NavigationState> => ({routes, index: routes.length - 1});
 
-const addPolicyIDToRoute = (
-  route: NavigationPartialRoute,
-  policyID?: string,
-) => {
-  const routeWithPolicyID = {...route};
-  if (!routeWithPolicyID.params) {
-    routeWithPolicyID.params = {policyID};
-    return routeWithPolicyID;
-  }
+// const addPolicyIDToRoute = (
+//   route: NavigationPartialRoute,
+//   policyID?: string,
+// ) => {
+//   const routeWithPolicyID = {...route};
+//   if (!routeWithPolicyID.params) {
+//     routeWithPolicyID.params = {policyID};
+//     return routeWithPolicyID;
+//   }
 
-  if (
-    'policyID' in routeWithPolicyID.params &&
-    !!routeWithPolicyID.params.policyID
-  ) {
-    return routeWithPolicyID;
-  }
+//   if (
+//     'policyID' in routeWithPolicyID.params &&
+//     !!routeWithPolicyID.params.policyID
+//   ) {
+//     return routeWithPolicyID;
+//   }
 
-  routeWithPolicyID.params = {...routeWithPolicyID.params, policyID};
+//   routeWithPolicyID.params = {...routeWithPolicyID.params, policyID};
 
-  return routeWithPolicyID;
-};
+//   return routeWithPolicyID;
+// };
 
 function createBottomTabNavigator(
   route: NavigationPartialRoute<BottomTabName>,
@@ -99,6 +98,7 @@ function getMatchingRootRouteForRHPRoute(
     >
   | undefined {
   // Check for backTo param. One screen with different backTo value may need diferent screens visible under the overlay.
+  // eslint-disable-next-line @typescript-eslint/prefer-early-return
   if (
     route.params &&
     'backTo' in route.params &&
@@ -249,10 +249,6 @@ function getAdaptedState(
     // if (onboardingModalNavigator) {
     //     routes.push(onboardingModalNavigator);
     // }
-
-    if (state.routes.find(route => route.name === SCREENS.VERIFY_EMAIL)) {
-      routes.push({name: SCREENS.VERIFY_EMAIL});
-    }
 
     return {
       adaptedState: getRoutesWithIndex(routes),

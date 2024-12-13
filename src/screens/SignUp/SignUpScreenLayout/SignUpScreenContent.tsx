@@ -8,7 +8,6 @@ import useStyleUtils from '@hooks/useStyleUtils';
 import useThemeStyles from '@hooks/useThemeStyles';
 import variables from '@styles/variables';
 import KirokuLogo from '@components/KirokuLogo';
-import useLocalize from '@hooks/useLocalize';
 import type {SignUpScreenLayoutProps} from './types';
 
 type SignUpScreenContentProps = Pick<
