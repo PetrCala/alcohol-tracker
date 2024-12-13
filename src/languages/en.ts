@@ -402,6 +402,12 @@ export default {
         phrase4: 'Privacy Policy',
       },
     },
+    termsOfServiceScreen: {
+      loading: 'Loading Terms of Service...',
+    },
+    privacyPolicyScreen: {
+      loading: 'Loading Privacy Policy...',
+    },
     error: {},
   },
   accountScreen: {

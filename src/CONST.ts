@@ -69,8 +69,8 @@ const CONST = {
   KIROKU_URL: 'https://kiroku.com',
   GITHUB_URL: 'https://github.com/PetrCala/Kiroku',
   DISCORD_INVITE_URL: 'https://discord.gg/YYR5bQhS',
-  TERMS_URL: `${GH_PAGES_URL}/assets/html/privacy-policy.html`,
-  PRIVACY_URL: `${GH_PAGES_URL}/assets/html/terms-of-service.html`,
+  TERMS_URL: `${GH_PAGES_URL}/assets/html/terms-of-service.html`,
+  PRIVACY_URL: `${GH_PAGES_URL}/assets/html/privacy-policy.html`,
   ADMIN_SDK: {
     DEV: 'kiroku-admin-sdk-dev',
     PROD: 'kiroku-admin-sdk-prod',
