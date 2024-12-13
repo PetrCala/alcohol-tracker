@@ -60,7 +60,7 @@ function SignUpScreen() {
   const welcomeText = `${translate('welcomeText.welcomeWithoutExclamation')}${signUpForm?.email && ' '}${translate(
     'welcomeText.welcomeNewAccount',
     {
-      login: signUpForm?.email || '',
+      login: signUpForm?.email ?? '',
     },
   )}`;
 
@@ -82,31 +82,33 @@ function SignUpScreen() {
     Navigation.navigate(ROUTES.LOG_IN);
   };
 
-  const onSubmit = async (
+  const onSubmit = (
     values: FormOnyxValues<typeof ONYXKEYS.FORMS.SIGN_UP_FORM>,
   ) => {
-    if (!isOnline || isLoading) {
-      return;
-    }
+    (async () => {
+      if (!isOnline || isLoading) {
+        return;
+      }
 
-    // Check that the user is not authenticated
-    if (user) {
-      throw new Error(translate('signUpScreen.error.generic'));
-    }
+      // Check that the user is not authenticated
+      if (user) {
+        throw new Error(translate('signUpScreen.error.generic'));
+      }
 
-    setIsLoading(true);
+      setIsLoading(true);
 
-    const emailTrim = values.email.trim();
-    const usernameTrim = values.username.trim();
+      const emailTrim = values.email.trim();
+      const usernameTrim = values.username.trim();
 
-    try {
-      await User.signUp(db, auth, emailTrim, usernameTrim, values.password);
-    } catch (error) {
-      const errorMessage = ErrorUtils.getErrorMessage(error);
-      setServerErrorMessage(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
+      try {
+        await User.signUp(db, auth, emailTrim, usernameTrim, values.password);
+      } catch (error) {
+        const errorMessage = ErrorUtils.getErrorMessage(error);
+        setServerErrorMessage(errorMessage);
+      } finally {
+        setIsLoading(false);
+      }
+    })();
   };
 
   const validate = useCallback(
