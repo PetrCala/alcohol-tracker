@@ -56,12 +56,13 @@ type PreferencesScreenProps = StackScreenProps<
   typeof SCREENS.SETTINGS.PREFERENCES.ROOT
 >;
 
-function PreferencesScreen({}: PreferencesScreenProps) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function PreferencesScreen({route}: PreferencesScreenProps) {
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
   const {translate} = useLocalize();
   const styles = useThemeStyles();
-  const {isExecuting, singleExecution} = useSingleExecution();
+  const {singleExecution} = useSingleExecution();
   const {isOnline} = useUserConnection();
   const {preferences} = useDatabaseData();
   const waitForNavigate = useWaitForNavigation();
@@ -71,7 +72,7 @@ function PreferencesScreen({}: PreferencesScreenProps) {
   // Deconstruct the preferences
   const defaultPreferences = getDefaultPreferences();
   const [currentPreferences, setCurrentPreferences] = useState<Preferences>(
-    preferences || defaultPreferences,
+    preferences ?? defaultPreferences,
   );
   const [sliderConfig, setSliderConfig] = useState<PreferencesSliderConfig>({
     visible: false,
@@ -85,38 +86,40 @@ function PreferencesScreen({}: PreferencesScreenProps) {
     key: '',
   });
 
-  const havePreferencesChanged = () => {
+  const havePreferencesChanged = useCallback(() => {
     return !isEqual(initialPreferences.current, currentPreferences);
-  };
+  }, [currentPreferences]);
 
-  const handleGoBack = () => {
+  const handleGoBack = useCallback(() => {
     if (havePreferencesChanged()) {
       setShowLeaveConfirmation(true); // Unsaved changes
     } else {
       Navigation.goBack();
     }
+  }, [havePreferencesChanged]);
+
+  const handleSavePreferences = () => {
+    (async () => {
+      if (!user) {
+        return;
+      }
+      try {
+        setSaving(true);
+        await savePreferencesData(db, user.uid, currentPreferences);
+        Navigation.navigate(ROUTES.SETTINGS);
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : '';
+        Alert.alert(translate('preferencesScreen.error.save'), errorMessage);
+      } finally {
+        setSaving(false);
+      }
+    })();
   };
 
-  const handleSavePreferences = async () => {
-    if (!user) {
-      return;
-    }
-    try {
-      setSaving(true);
-      await savePreferencesData(db, user.uid, currentPreferences);
-      Navigation.navigate(ROUTES.SETTINGS);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : '';
-      Alert.alert(translate('preferencesScreen.error.save'), errorMessage);
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleFirstDayOfWeekToggle = (value: boolean) => {
-    const newValue = value ? 'Monday' : 'Sunday';
-    setCurrentPreferences(prev => ({...prev, first_day_of_week: newValue}));
-  };
+  // const handleFirstDayOfWeekToggle = (value: boolean) => {
+  //   const newValue = value ? 'Monday' : 'Sunday';
+  //   setCurrentPreferences(prev => ({...prev, first_day_of_week: newValue}));
+  // };
 
   const updateUnitsToColors = (colorKey: string, value: number) => {
     // const updateUnitsToColors = (colorKey: keyof UnitsToColorsData, value: number) => {
@@ -141,46 +144,49 @@ function PreferencesScreen({}: PreferencesScreenProps) {
   };
 
   /** A helper function to generate the preference set buttons */
-  const setPreferencesButton = (
-    key: string,
-    label: string,
-    value: number,
-    sliderListKey: string,
-    sliderMinValue: number,
-    sliderMaxValue: number,
-  ): React.ReactNode => {
-    return (
-      <Button
-        text={value.toString()}
-        style={styles.settingValueButton}
-        onPress={() =>
-          setSliderConfig(prev => ({
-            ...prev,
-            visible: true,
-            heading: label,
-            step: sliderMinValue,
-            value,
-            maxValue: sliderMaxValue,
-            list: sliderListKey,
-            key,
-          }))
-        }
-      />
-    );
-  };
+  const setPreferencesButton = useCallback(
+    (
+      key: string,
+      label: string,
+      value: number,
+      sliderListKey: string,
+      sliderMinValue: number,
+      sliderMaxValue: number,
+    ) => {
+      return (
+        <Button
+          text={value.toString()}
+          style={styles.settingValueButton}
+          onPress={() =>
+            setSliderConfig(prev => ({
+              ...prev,
+              visible: true,
+              heading: label,
+              step: sliderMinValue,
+              value,
+              maxValue: sliderMaxValue,
+              list: sliderListKey,
+              key,
+            }))
+          }
+        />
+      );
+    },
+    [styles.settingValueButton],
+  );
 
-  const generalMenuItemsData: Menu = useMemo(() => {
-    return {
-      sectionTranslationKey: 'preferencesScreen.generalSection.title',
-      items: [
-        {
-          title: translate('preferencesScreen.generalSection.firstDayOfWeek'),
-          description: 'Monday',
-          pageRoute: ROUTES.SETTINGS_FIRST_DAY_OF_WEEK,
-        },
-      ],
-    };
-  }, [currentPreferences]);
+  // const generalMenuItemsData: Menu = useMemo(() => {
+  //   return {
+  //     sectionTranslationKey: 'preferencesScreen.generalSection.title',
+  //     items: [
+  //       {
+  //         title: translate('preferencesScreen.generalSection.firstDayOfWeek'),
+  //         description: 'Monday',
+  //         pageRoute: ROUTES.SETTINGS_FIRST_DAY_OF_WEEK,
+  //       },
+  //     ],
+  //   };
+  // }, [translate]);
 
   const unitsToColorsMenuItemsData: Menu = useMemo(() => {
     const unitsHelperData = [
@@ -212,7 +218,7 @@ function PreferencesScreen({}: PreferencesScreenProps) {
         ),
       })),
     };
-  }, [currentPreferences]);
+  }, [currentPreferences, setPreferencesButton, translate]);
 
   const drinksToColorsItemsData: Menu = useMemo(() => {
     const drinksHelperData = [
@@ -269,53 +275,64 @@ function PreferencesScreen({}: PreferencesScreenProps) {
         ),
       })),
     };
-  }, [currentPreferences]);
+  }, [currentPreferences, setPreferencesButton, translate]);
 
   /**
    * Retuns JSX.Element with menu items
    * @param menuItemsData list with menu items data
    * @returns the menu items for passed data
    */
-  const getMenuItemsSection = useCallback((menuItemsData: Menu) => {
-    return (
-      <Section
-        title={translate(menuItemsData.sectionTranslationKey)}
-        titleStyles={styles.generalSectionTitle}
-        subtitle={menuItemsData.subtitle}
-        subtitleMuted
-        isCentralPane
-        childrenStyles={styles.pt3}>
-        <>
-          {menuItemsData.items.map((detail, index) => (
-            <MenuItem
-              // eslint-disable-next-line react/no-array-index-key
-              key={`${detail.title}_${index}`}
-              title={detail.title}
-              titleStyle={styles.plainSectionTitle}
-              description={detail.description}
-              wrapperStyle={styles.sectionMenuItemTopDescription}
-              disabled={detail.disabled}
-              shouldGreyOutWhenDisabled={false}
-              shouldUseRowFlexDirection
-              shouldShowRightIcon={!detail.rightComponent}
-              shouldShowRightComponent={!!detail.rightComponent}
-              rightComponent={detail.rightComponent}
-              onPress={singleExecution(() => {
-                waitForNavigate(() => {
-                  Navigation.navigate(detail.pageRoute);
-                })();
-              })}
-            />
-          ))}
-        </>
-      </Section>
-    );
-  }, []);
-
-  const generalMenuItems = useMemo(
-    () => getMenuItemsSection(generalMenuItemsData),
-    [generalMenuItemsData, getMenuItemsSection],
+  const getMenuItemsSection = useCallback(
+    (menuItemsData: Menu) => {
+      return (
+        <Section
+          title={translate(menuItemsData.sectionTranslationKey)}
+          titleStyles={styles.generalSectionTitle}
+          subtitle={menuItemsData.subtitle}
+          subtitleMuted
+          isCentralPane
+          childrenStyles={styles.pt3}>
+          <>
+            {menuItemsData.items.map((detail, index) => (
+              <MenuItem
+                // eslint-disable-next-line react/no-array-index-key
+                key={`${detail.title}_${index}`}
+                title={detail.title}
+                titleStyle={styles.plainSectionTitle}
+                description={detail.description}
+                wrapperStyle={styles.sectionMenuItemTopDescription}
+                disabled={detail.disabled}
+                shouldGreyOutWhenDisabled={false}
+                shouldUseRowFlexDirection
+                shouldShowRightIcon={!detail.rightComponent}
+                shouldShowRightComponent={!!detail.rightComponent}
+                rightComponent={detail.rightComponent}
+                onPress={singleExecution(() => {
+                  waitForNavigate(() => {
+                    Navigation.navigate(detail.pageRoute);
+                  })();
+                })}
+              />
+            ))}
+          </>
+        </Section>
+      );
+    },
+    [
+      singleExecution,
+      styles.generalSectionTitle,
+      styles.plainSectionTitle,
+      styles.sectionMenuItemTopDescription,
+      styles.pt3,
+      waitForNavigate,
+      translate,
+    ],
   );
+
+  // const generalMenuItems = useMemo(
+  //   () => getMenuItemsSection(generalMenuItemsData),
+  //   [generalMenuItemsData, getMenuItemsSection],
+  // );
   const unitsToColorsMenuItems = useMemo(
     () => getMenuItemsSection(unitsToColorsMenuItemsData),
     [unitsToColorsMenuItemsData, getMenuItemsSection],
@@ -351,7 +368,7 @@ function PreferencesScreen({}: PreferencesScreenProps) {
     return () => {
       BackHandler.removeEventListener('hardwareBackPress', backAction);
     };
-  }, [currentPreferences]); // Add your state dependencies here
+  }, [currentPreferences, handleGoBack]);
 
   if (!isOnline) {
     return <UserOffline />;

@@ -23,12 +23,13 @@ import type SCREENS from '@src/SCREENS';
 import {submitFeedback} from '@database/feedback';
 import {useFirebase} from '@context/global/FirebaseContext';
 
-type FeedbackScreenOnyxProps = {};
+type FeedbackScreenProps = StackScreenProps<
+  SettingsNavigatorParamList,
+  typeof SCREENS.SETTINGS.DELETE
+>;
 
-type FeedbackScreenProps = FeedbackScreenOnyxProps &
-  StackScreenProps<SettingsNavigatorParamList, typeof SCREENS.SETTINGS.DELETE>;
-
-function FeedbackScreen({}: FeedbackScreenProps) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function FeedbackScreen({route}: FeedbackScreenProps) {
   const styles = useThemeStyles();
   const {translate} = useLocalize();
   const {db, auth} = useFirebase();
