@@ -1,9 +1,7 @@
 import type {UserID} from './OnyxCommon';
 import type {DrinkKey} from './Drinks';
 
-/**
- *
- */
+/** A model mapping units to session colors */
 type UnitsToColors = {
   /** At maximum how many units a session is still yellow */
   yellow: number;
@@ -12,14 +10,10 @@ type UnitsToColors = {
   orange: number;
 };
 
-/**
- *
- */
+/** A model mapping drinks to unit values */
 type DrinksToUnits = Record<DrinkKey, number>;
 
-/**
- *
- */
+/** User's preferences */
 type Preferences = {
   /** User's preferred first day of week */
   first_day_of_week: string;
@@ -31,9 +25,7 @@ type Preferences = {
   drinks_to_units: DrinksToUnits;
 };
 
-/**
- *
- */
+/** A collection of preferences of multiple users */
 type PreferencesList = Record<UserID, Preferences>;
 
 export default Preferences;

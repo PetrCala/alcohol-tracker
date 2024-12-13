@@ -1,4 +1,3 @@
-import type {ValueOf} from 'type-fest';
 import type CONST from '@src/CONST';
 import type {Timestamp, UserID} from './OnyxCommon';
 import type {DrinksList} from './Drinks';
@@ -68,19 +67,13 @@ type DrinkingSession = {
   session_type?: string; // TODO: remove in 0.4.x
 };
 
-/**
- *
- */
+/** A collection of drinking sessions */
 type DrinkingSessionList = Record<DrinkingSessionId, DrinkingSession>;
 
-/**
- *
- */
+/** An array of drinking sessions */
 type DrinkingSessionArray = DrinkingSession[];
 
-/**
- *
- */
+/** A collection of drinking sessions of multiple users */
 type UserDrinkingSessionsList = Record<UserID, DrinkingSessionList>;
 
 export default DrinkingSession;

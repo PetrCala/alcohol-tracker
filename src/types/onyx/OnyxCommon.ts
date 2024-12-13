@@ -75,6 +75,9 @@ type UserArray = UserID[];
 /** A way of measuring consumed alcohol */
 type MeasureType = 'drinks' | 'units';
 
+/** A semantic versioning string */
+type Semver = number;
+
 /** A UNIX timestamp */
 type Timestamp = number;
 
@@ -86,6 +89,7 @@ export type {
   MeasureType,
   OnyxValueWithOfflineFeedback,
   PendingAction,
+  Semver,
   Timestamp,
   UserArray,
   UserID,
