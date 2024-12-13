@@ -39,18 +39,20 @@ type AppShareScreenProps = StackScreenProps<
 
 function AppShareScreen({route}: AppShareScreenProps) {
   const styles = useThemeStyles();
+  const {translate} = useLocalize();
+  const waitForNavigate = useWaitForNavigation();
+  const StyleUtils = useStyleUtils();
   const popoverAnchor = useRef<View | null>(null);
   const {isSmallScreenWidth, windowWidth, windowHeight} = useWindowDimensions();
-  const StyleUtils = useStyleUtils();
   const [isQrModalVisible, setIsQrModalVisible] = useState(false);
-  const waitForNavigate = useWaitForNavigation();
-  const {translate} = useLocalize();
 
   const onClose = () => setIsQrModalVisible(false);
 
   const handleCopyLinkPress = () => {
+    const successTitle = translate('common.success');
+    const successText = translate('appShareScreen.linkCopied');
     try {
-      copyToClipboard(CONST.APP_DOWNLOAD_LINK, true);
+      copyToClipboard(CONST.APP_DOWNLOAD_LINK, true, successTitle, successText);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : '';
       Alert.alert('Error', errorMessage);
