@@ -318,6 +318,14 @@ export default {
     trySearchingHere: 'Try searching here',
     accept: 'Accept',
     remove: 'Remove',
+    error: {
+      userDoesNotExist: "This user doesn't exist.",
+      couldNotAccept: 'Could not accept the friend request.',
+      couldNotRemove: 'Could not remove the friend request.',
+    },
+  },
+  friendListScreen: {
+    searchYourFriendList: 'Search your friend list',
   },
   notFoundScreen: {
     title: 'Not Found',
@@ -803,6 +811,8 @@ export default {
     loading: 'Fetching data...',
     error: {
       generic: 'Failed to reach the database',
+      searchFailed: 'Database search failed',
+      couldNotSearch: 'Could not search the database',
       saveData: 'Failed to save your data to the database. Please try again.',
     },
   },

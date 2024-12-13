@@ -53,6 +53,7 @@ function SignUpScreen() {
   const [serverErrorMessage, setServerErrorMessage] = React.useState('');
 
   const headerText = translate('login.hero.header');
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const welcomeHeader = shouldUseNarrowLayout
     ? headerText
     : translate('welcomeText.welcome');
