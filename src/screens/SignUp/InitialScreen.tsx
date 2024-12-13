@@ -14,7 +14,7 @@ import useStyledSafeAreaInsets from '@hooks/useStyledSafeAreaInsets';
 import useResponsiveLayout from '@hooks/useResponsiveLayout';
 import INPUT_IDS from '@src/types/form/SignUpForm';
 import useLocalize from '@hooks/useLocalize';
-import Onyx, {useOnyx} from 'react-native-onyx';
+import {useOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 import FormProvider from '@components/Form/FormProvider';
 import InputWrapper from '@components/Form/InputWrapper';

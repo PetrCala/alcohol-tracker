@@ -9,9 +9,7 @@ import type {Route} from '@src/ROUTES';
 import ROUTES from '@src/ROUTES';
 import Navigation from '@libs/Navigation/Navigation';
 
-type ChangeSignUpScreenLinkOnyxProps = {};
-
-type ChangeSignUpScreenLinkProps = ChangeSignUpScreenLinkOnyxProps & {
+type ChangeSignUpScreenLinkProps = {
   /** The route this link navigates to */
   navigatesTo?: Route;
 

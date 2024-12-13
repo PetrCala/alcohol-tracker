@@ -30,22 +30,26 @@ function ForgotPasswordScreen() {
   const [successMessage, setSuccessMessage] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
 
-  const onSubmit = async (
+  const onSubmit = (
     values: FormOnyxValues<typeof ONYXKEYS.FORMS.FORGOT_PASSWORD_FORM>,
   ) => {
-    setIsLoading(true);
-    setSuccessMessage('');
+    (async () => {
+      setIsLoading(true);
+      setSuccessMessage('');
 
-    try {
-      const emailToSend = values.email.trim();
-      await sendPasswordResetEmail(auth, emailToSend);
-      setSuccessMessage(translate('forgotPasswordScreen.success', emailToSend));
-    } catch (error) {
-      const errorMessage = ErrorUtils.getErrorMessage(error);
-      setServerErrorMessage(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
+      try {
+        const emailToSend = values.email.trim();
+        await sendPasswordResetEmail(auth, emailToSend);
+        setSuccessMessage(
+          translate('forgotPasswordScreen.success', emailToSend),
+        );
+      } catch (error) {
+        const errorMessage = ErrorUtils.getErrorMessage(error);
+        setServerErrorMessage(errorMessage);
+      } finally {
+        setIsLoading(false);
+      }
+    })();
   };
 
   const validate = useCallback(
