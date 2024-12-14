@@ -1,6 +1,5 @@
-import {Keyboard, StyleSheet, View} from 'react-native';
+import {View} from 'react-native';
 import type {DateData} from 'react-native-calendars';
-import commonStyles from '@styles/commonStyles';
 import {useFirebase} from '@context/global/FirebaseContext';
 import type {StatData} from '@components/Items/StatOverview';
 import {StatsOverview} from '@components/Items/StatOverview';
@@ -37,7 +36,6 @@ import {roundToTwoDecimalPlaces} from '@libs/NumberUtils';
 import ManageFriendPopover from '@components/ManageFriendPopover';
 import ScrollView from '@components/ScrollView';
 import Text from '@components/Text';
-import {PressableWithFeedback} from '@components/Pressable';
 
 type ProfileScreenProps = StackScreenProps<
   ProfileNavigatorParamList,
@@ -66,7 +64,6 @@ function ProfileScreen({route}: ProfileScreenProps) {
   const [unitsConsumed, setUnitsConsumed] = useState(0);
   const [manageFriendModalVisible, setManageFriendModalVisible] =
     useState(false);
-
   const userData = fetchedData?.userData;
   const drinkingSessionData = fetchedData?.drinkingSessionData;
   const preferences = fetchedData?.preferences;
@@ -86,6 +83,29 @@ function ProfileScreen({route}: ProfileScreenProps) {
       content: String(roundToTwoDecimalPlaces(unitsConsumed)),
     },
   ];
+
+  const friendCountLabel = useMemo((): string => {
+    return `${translate(
+      'profileScreen.commonFriendsLabel',
+      user?.uid !== userID && commonFriendCount > 0,
+    )}`;
+  }, [translate, user?.uid, userID, commonFriendCount]);
+
+  const friendCountText = useMemo((): string => {
+    return `${
+      user?.uid !== userID && commonFriendCount > 0
+        ? commonFriendCount
+        : friendCount
+    }`;
+  }, [user?.uid, userID, commonFriendCount, friendCount]);
+
+  const onSeeAllFriendsButtonPress = () => {
+    const screenRoute =
+      user?.uid === userID
+        ? ROUTES.SOCIAL
+        : ROUTES.PROFILE_FRIENDS_FRIENDS.getRoute(userID);
+    Navigation.navigate(screenRoute);
+  };
 
   // Track own friends
   useEffect(() => {
@@ -157,51 +177,26 @@ function ProfileScreen({route}: ProfileScreenProps) {
         onBackButtonPress={Navigation.goBack}
       />
       <ScrollView
-        style={localStyles.scrollView}
-        onScrollBeginDrag={Keyboard.dismiss}
-        keyboardShouldPersistTaps="handled"
+        style={[styles.flexGrow1, styles.mnw100]}
         showsVerticalScrollIndicator={false}>
         <ProfileOverview
           userID={userID}
           profileData={profileData} // For live propagation of current user
         />
-        <View style={localStyles.friendsInfoContainer}>
-          <View style={localStyles.leftContainer}>
-            <Text style={localStyles.friendsInfoHeading}>
-              {`${
-                user?.uid !== userID && commonFriendCount > 0 ? 'Common f' : 'F'
-              }riends:`}
-            </Text>
-            <Text
-              style={[
-                localStyles.friendsInfoText,
-                commonStyles.smallMarginLeft,
-              ]}>
-              {user?.uid !== userID && commonFriendCount > 0
-                ? commonFriendCount
-                : friendCount}
-            </Text>
+        <View style={[styles.profileFriendsInfoContainer, styles.borderBottom]}>
+          <View style={[styles.flexGrow1, styles.flexRow]}>
+            <Text>{friendCountLabel}</Text>
+            <Text style={styles.ml2}>{friendCountText}</Text>
           </View>
-          <View style={localStyles.rightContainer}>
-            <PressableWithFeedback
-              accessibilityLabel="See all friends"
-              onPress={() => {
-                user?.uid === userID
-                  ? Navigation.navigate(ROUTES.SOCIAL)
-                  : Navigation.navigate(
-                      ROUTES.PROFILE_FRIENDS_FRIENDS.getRoute(userID),
-                    );
-              }}
-              style={localStyles.seeFriendsButton}>
-              <Text
-                style={[localStyles.friendsInfoText, commonStyles.linkText]}>
-                {translate('profileScreen.seeAllFriends')}
-              </Text>
-            </PressableWithFeedback>
-          </View>
+          <Button
+            text={translate('profileScreen.seeAllFriends')}
+            style={[styles.bgTransparent, styles.p0]}
+            textStyles={styles.link}
+            onPress={onSeeAllFriendsButtonPress}
+          />
         </View>
         {drinkingSessionData ? (
-          <View style={[styles.borderTop, styles.borderRadiusXLarge]}>
+          <View style={[]}>
             <StatsOverview statsData={statsData} />
             <SessionsCalendar
               userID={userID}
@@ -222,7 +217,7 @@ function ProfileScreen({route}: ProfileScreenProps) {
             </Text>
           </View>
         )}
-        <View style={localStyles.bottomContainer}>
+        <View style={[styles.flexRow, styles.justifyContentEnd]}>
           {user?.uid !== userID && (
             <Button
               text={translate('common.manage')}
@@ -241,97 +236,5 @@ function ProfileScreen({route}: ProfileScreenProps) {
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-use-before-define
-const localStyles = StyleSheet.create({
-  sectionText: {
-    fontSize: 20,
-    color: 'black',
-    fontWeight: 'bold',
-    margin: 10,
-    textAlign: 'center',
-  },
-  scrollView: {
-    width: '100%',
-    flexGrow: 1,
-    flexShrink: 1,
-  },
-  editProfileButton: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    padding: 8,
-    width: 'auto',
-    height: 'auto',
-    zIndex: -2,
-  },
-  editProfileIcon: {
-    width: 24,
-    height: 24,
-    tintColor: '#1A3D32',
-    backgroundColor: 'blue',
-    zIndex: -3,
-  },
-  friendsInfoContainer: {
-    width: '90%',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    alignSelf: 'center',
-    flexDirection: 'row',
-    margin: 10,
-  },
-  friendsInfoHeading: {
-    fontSize: 16,
-    color: 'black',
-    fontWeight: '500',
-    textAlign: 'center',
-  },
-  friendsInfoText: {
-    fontSize: 16,
-    color: 'black',
-    textAlign: 'center',
-  },
-  leftContainer: {
-    width: '60%',
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-  },
-  rightContainer: {
-    width: '40%',
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-  },
-  seeFriendsButton: {
-    paddingTop: 5,
-    paddingBottom: 5,
-    paddingLeft: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  bottomContainer: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-  },
-  manageFriendButton: {
-    width: '30%',
-    height: 40,
-    backgroundColor: 'rgba(128, 128, 128, 0.2)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 5,
-    borderWidth: 2,
-    borderColor: 'black',
-    margin: 10,
-  },
-  manageFriendButtonText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: 'black',
-  },
-});
-
 ProfileScreen.displayName = 'Profile Screen';
-
 export default ProfileScreen;

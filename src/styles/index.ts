@@ -1371,6 +1371,14 @@ const styles = (theme: ThemeColors) =>
         horizontal: windowWidth - 355,
       }) satisfies AnchorPosition,
 
+    profileFriendsInfoContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyItems: 'between',
+      ...spacing.pv1,
+      ...spacing.mh4, // Horizontal margin to align the border
+    },
+
     statOverviewContainer: {
       height: variables.statOverviewHeight,
       ...sizing.mw100,
