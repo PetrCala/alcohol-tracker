@@ -3,8 +3,9 @@ import {useFirebase} from '@src/context/global/FirebaseContext';
 import type {ProfileList} from '@src/types/onyx';
 import type {UserArray} from '@src/types/onyx/OnyxCommon';
 import * as Profile from '@userActions/Profile';
-import {Alert} from 'react-native';
+import * as ErrorUtils from '@libs/ErrorUtils';
 import {isNonEmptyArray} from '@libs/Validation';
+import ERRORS from '@src/ERRORS';
 
 /**
  * Custom hook for fetching and managing list of profiles based on a list of users.
@@ -43,11 +44,7 @@ const useProfileList = (userArray: UserArray) => {
         setProfileList({...profileList, ...newProfileList});
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : '';
-      Alert.alert(
-        'Database fetch failed',
-        `Could not fetch user display data: ${errorMessage}`,
-      );
+      ErrorUtils.raiseAppError(ERRORS.USER.DATA_FETCH_FAILED, error);
     } finally {
       setLoadingDisplayData(false);
     }

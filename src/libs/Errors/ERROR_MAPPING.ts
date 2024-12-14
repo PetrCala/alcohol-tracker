@@ -10,6 +10,7 @@ import {ErrorMapping} from './types';
 const ERROR_MAPPING: ErrorMapping = {
   [ERRORS.STORAGE.OBJECT_NOT_FOUND]: 'errors.storage.objectNotFound',
   [ERRORS.STORAGE.UNAUTHORIZED]: 'errors.storage.unauthorized',
+  [ERRORS.AUTH.ACCOUNT_DELETION_FAILED]: 'errors.auth.accountDeletionFailed',
   [ERRORS.AUTH.MISSING_EMAIL]: 'errors.auth.missingEmail',
   [ERRORS.AUTH.INVALID_EMAIL]: 'errors.auth.invalidEmail',
   [ERRORS.AUTH.VERIFY_EMAIL]: 'errors.auth.verifyEmail',
@@ -23,10 +24,12 @@ const ERROR_MAPPING: ErrorMapping = {
   [ERRORS.AUTH.REQUIRES_RECENT_LOGIN]: 'errors.auth.requiresRecentLogin',
   [ERRORS.AUTH.API_KEY_NOT_VALID]: 'errors.auth.apiKeyNotValid',
   [ERRORS.AUTH.TOO_MANY_REQUESTS]: 'errors.auth.tooManyRequests',
-  [ERRORS.DATABASE.DATA_FETCH_FAILED]: 'errors.database.dataFetchFailed',
-  [ERRORS.DATABASE.OUTDATED_APP_VERSION]: 'errors.database.outdatedAppVersion',
+  [ERRORS.AUTH.SIGN_OUT_FAILED]: 'errors.auth.signOutFailed',
   [ERRORS.DATABASE.ACCOUNT_CREATION_LIMIT_EXCEEDED]:
     'errors.database.accountCreationLimitExceeded',
+  [ERRORS.DATABASE.DATA_FETCH_FAILED]: 'errors.database.dataFetchFailed',
+  [ERRORS.DATABASE.OUTDATED_APP_VERSION]: 'errors.database.outdatedAppVersion',
+  [ERRORS.DATABASE.SEARCH_FAILED]: 'errors.database.searchFailed',
   [ERRORS.DATABASE.USER_CREATION_FAILED]: 'errors.database.userCreationFailed',
   [ERRORS.HOME_SCREEN.TITLE]: 'errors.homeScreen.title',
   [ERRORS.HOME_SCREEN.NO_LIVE_SESSION]: 'errors.homeScreen.noLiveSession',
@@ -38,9 +41,17 @@ const ERROR_MAPPING: ErrorMapping = {
   [ERRORS.SESSION.LOAD_FAILED]: 'errors.session.loadFailed',
   [ERRORS.SESSION.SAVE_FAILED]: 'errors.session.saveFailed',
   [ERRORS.SESSION.START_FAILED]: 'errors.session.startFailed',
-  [ERRORS.USER.ACCOUNT_DELETION_FAILED]: 'errors.user.accountDeletionFailed',
   [ERRORS.USER.COULD_NOT_UNFRIEND]: 'errors.user.couldNotUnfriend',
+  [ERRORS.USER.DATA_FETCH_FAILED]: 'errors.user.dataFetchFailed',
+  [ERRORS.USER.FEEDBACK_REMOVAL_FAILED]: 'errors.user.feedbackRemovalFailed',
+  [ERRORS.USER.FRIEND_REQUEST_SEND_FAILED]:
+    'errors.user.friendRequestSendFailed',
+  [ERRORS.USER.FRIEND_REQUEST_ACCEPT_FAILED]:
+    'errors.user.friendRequestAcceptFailed',
+  [ERRORS.USER.FRIEND_REQUEST_REJECT_FAILED]:
+    'errors.user.friendRequestRejectFailed',
   [ERRORS.USER.NICKNAME_UPDATE_FAILED]: 'errors.user.nicknameUpdateFailed',
+  [ERRORS.USER.STATUS_UPDATE_FAILED]: 'errors.user.statusUpdateFailed',
   [ERRORS.USER.TIMEZONE_UPDATE_FAILED]: 'errors.user.timezoneUpdateFailed',
   [ERRORS.USER.USERNAME_UPDATE_FAILED]: 'errors.user.usernameUpdateFailed',
   [ERRORS.GENERIC]: 'errors.generic',

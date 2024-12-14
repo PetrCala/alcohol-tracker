@@ -76,7 +76,7 @@ type UserArray = UserID[];
 type MeasureType = 'drinks' | 'units';
 
 /** A semantic versioning string */
-type Semver = number;
+type Semver = string;
 
 /** A UNIX timestamp */
 type Timestamp = number;

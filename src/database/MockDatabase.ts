@@ -84,6 +84,8 @@ function createMockMaintenance(
  */
 function initializeEmptyMockDatabase(): DatabaseProps {
   return {
+    account_creations: {},
+    bugs: {},
     config: {
       app_settings: createMockAppSettings(),
       maintenance: createMockMaintenance(),

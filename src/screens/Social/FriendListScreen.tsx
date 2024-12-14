@@ -1,4 +1,4 @@
-import {Alert, View} from 'react-native';
+import {View} from 'react-native';
 import SearchWindow from '@components/Social/SearchWindow';
 import type {
   SearchWindowRef,
@@ -10,11 +10,13 @@ import {getNicknameMapping} from '@libs/SearchUtils';
 import {searchArrayByText} from '@libs/Search';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import type {UserArray} from '@src/types/onyx/OnyxCommon';
+import * as ErrorUtils from '@libs/ErrorUtils';
 import UserListComponent from '@components/Social/UserListComponent';
 import useProfileList from '@hooks/useProfileList';
 import NoFriendInfo from '@components/Social/NoFriendInfo';
 import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
+import ERRORS from '@src/ERRORS';
 
 function FriendListScreen() {
   const {userData} = useDatabaseData();
@@ -41,11 +43,7 @@ function FriendListScreen() {
         );
         setFriendsToDisplay(relevantResults); // Hide irrelevant
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : '';
-        Alert.alert(
-          translate('database.error.searchFailed'),
-          `${translate('database.error.couldNotSearch')}: ${errorMessage}`,
-        );
+        ErrorUtils.raiseAppError(ERRORS.DATABASE.SEARCH_FAILED, error);
       } finally {
         setIsLoading(false);
       }

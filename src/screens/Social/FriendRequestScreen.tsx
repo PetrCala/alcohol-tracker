@@ -1,4 +1,4 @@
-import {Alert, View} from 'react-native';
+import {View} from 'react-native';
 import type {
   FriendRequestList,
   FriendRequestStatus,
@@ -6,6 +6,7 @@ import type {
 } from '@src/types/onyx';
 import {useEffect, useMemo, useState} from 'react';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
+import * as ErrorUtils from '@libs/ErrorUtils';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {acceptFriendRequest, deleteFriendRequest} from '@database/friends';
 import type {Database} from 'firebase/database';
@@ -30,6 +31,7 @@ import {useOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 import {PressableWithFeedback} from '@components/Pressable';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
+import ERRORS from '@src/ERRORS';
 
 type FriendRequestButtonsProps = {
   requestId: UserID;
@@ -64,10 +66,9 @@ function FriendRequestButtons({requestId}: FriendRequestButtonsProps) {
         await acceptFriendRequest(db, user.uid, requestId);
         setIsLoading(false);
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : '';
-        Alert.alert(
-          `${translate('friendRequestScreen.error.userDoesNotExist')}`,
-          `${translate('friendRequestScreen.error.couldNotAccept')}: ${errorMessage}`,
+        ErrorUtils.raiseAppError(
+          ERRORS.USER.FRIEND_REQUEST_ACCEPT_FAILED,
+          error,
         );
       }
     })();
@@ -80,11 +81,7 @@ function FriendRequestButtons({requestId}: FriendRequestButtonsProps) {
         await deleteFriendRequest(db, user.uid, requestId);
         setIsLoading(false);
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : '';
-        Alert.alert(
-          `${translate('friendRequestScreen.error.userDoesNotExist')}`,
-          `${translate('friendRequestScreen.error.couldNotRemove')}: ${errorMessage}`,
-        );
+        ErrorUtils.raiseAppError(ERRORS.USER.FEEDBACK_REMOVAL_FAILED, error);
       }
     })();
   };
@@ -129,11 +126,7 @@ function FriendRequestPending({requestId}: FriendRequestButtonsProps) {
         await deleteFriendRequest(db, user.uid, requestId);
         setIsLoading(false);
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : '';
-        Alert.alert(
-          `${translate('friendRequestScreen.error.userDoesNotExist')}`,
-          `${translate('friendRequestScreen.error.couldNotRemove')}: ${errorMessage}`,
-        );
+        ErrorUtils.raiseAppError(ERRORS.USER.FEEDBACK_REMOVAL_FAILED, error);
       }
     })();
   };

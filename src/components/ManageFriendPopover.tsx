@@ -1,5 +1,5 @@
 import React, {useMemo, useRef} from 'react';
-import {Alert, View} from 'react-native';
+import {View} from 'react-native';
 import {unfriend} from '@database/friends';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import useLocalize from '@hooks/useLocalize';

@@ -1,14 +1,4 @@
-import {
-  Image,
-  Keyboard,
-  StyleProp,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  ViewStyle,
-} from 'react-native';
+import {Keyboard, StyleSheet, TextInput, View} from 'react-native';
 import {useState, forwardRef, useEffect, useRef} from 'react';
 import type {Database} from 'firebase/database';
 import {useFirebase} from '@src/context/global/FirebaseContext';
@@ -19,6 +9,7 @@ import Button from '@components/Button';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Icon from '@components/Icon';
 import useStyleUtils from '@hooks/useStyleUtils';
+import {PressableWithFeedback} from '@components/Pressable';
 
 type SearchWindowProps = {
   windowText: string;
@@ -89,18 +80,19 @@ const SearchWindow = forwardRef<SearchWindowRef, SearchWindowProps>(
               ref={textInputRef}
             />
           </KeyboardFocusHandler>
-          {searchText !== '' || searchCount > 0 ? (
-            <TouchableOpacity
-              accessibilityRole="button"
-              onPress={handleResetSearch}
-              style={localStyles.searchTextResetContainer}>
-              <Icon
-                src={KirokuIcons.ThinX}
-                small
-                fill={StyleUtils.getIconFillColor()}
-              />
-            </TouchableOpacity>
-          ) : null}
+          {searchText !== '' ||
+            (searchCount > 0 && (
+              <PressableWithFeedback
+                accessibilityLabel="Reset search"
+                onPress={handleResetSearch}
+                style={localStyles.searchTextResetContainer}>
+                <Icon
+                  src={KirokuIcons.ThinX}
+                  small
+                  fill={StyleUtils.getIconFillColor()}
+                />
+              </PressableWithFeedback>
+            ))}
         </View>
         {searchOnTextChange ? null : (
           <View

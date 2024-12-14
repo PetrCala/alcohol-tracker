@@ -41,6 +41,7 @@ import ONYXKEYS from '@src/ONYXKEYS';
 import CONST from '@src/CONST';
 import {getReasonForLeavingID} from '@libs/ReasonForLeaving';
 import * as Session from './Session';
+import Log from '@libs/common/Log';
 
 let verifyEmailSent: OnyxEntry<Timestamp | null> = null;
 Onyx.connect({
@@ -243,7 +244,7 @@ async function reauthentificateUser(
   if (user.email) {
     email = user.email;
   } else {
-    Alert.alert('User email not found', 'This user has no email');
+    Log.warn('User email not found when reauthentificating');
     return;
   }
   const credential = EmailAuthProvider.credential(email, password);

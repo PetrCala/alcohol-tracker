@@ -1,14 +1,17 @@
-import {Alert, StyleSheet, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import type {Database} from 'firebase/database';
 import ProfileImage from '@components/ProfileImage';
 import type {FirebaseStorage} from 'firebase/storage';
 import React from 'react';
 import type {FriendRequestStatus, Profile} from '@src/types/onyx';
 import CONST from '@src/CONST';
+import * as ErrorUtils from '@libs/ErrorUtils';
 import Button from '@components/Button';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Text from '@components/Text';
 import {acceptFriendRequest, sendFriendRequest} from '@src/database/friends';
+import ERRORS from '@src/ERRORS';
+import useLocalize from '@hooks/useLocalize';
 
 const statusToTextMap: {[key in FriendRequestStatus]: string} = {
   self: 'You',
@@ -47,11 +50,7 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
       await sendFriendRequest(db, userFrom, userTo);
       setIsLoading(false);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : '';
-      Alert.alert(
-        'User does not exist in the database',
-        `Could not send a friend request: ${errorMessage}`,
-      );
+      ErrorUtils.raiseAppError(ERRORS.USER.FRIEND_REQUEST_SEND_FAILED, error);
     }
   };
 
@@ -66,11 +65,7 @@ const SendFriendRequestButton: React.FC<SendFriendRequestButtonProps> = ({
       await acceptFriendRequest(db, userFrom, userTo);
       setIsLoading(false);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : '';
-      Alert.alert(
-        'User does not exist in the database',
-        `Could not accept a friend request: ${errorMessage}`,
-      );
+      ErrorUtils.raiseAppError(ERRORS.USER.FRIEND_REQUEST_SEND_FAILED, error);
     }
   };
 
@@ -133,6 +128,7 @@ const SearchResult: React.FC<SearchResultProps> = ({
   alreadyAFriend,
   customButton,
 }) => {
+  const {translate} = useLocalize();
   const styles = useThemeStyles();
   return (
     <View style={styles.userOverviewContainer}>
@@ -147,7 +143,7 @@ const SearchResult: React.FC<SearchResultProps> = ({
         <Text style={[styles.headerText, styles.ml3]}>
           {userDisplayData?.display_name
             ? userDisplayData.display_name
-            : 'Unknown'}
+            : translate('common.unknown')}
         </Text>
       </View>
       {customButton || (

@@ -800,11 +800,8 @@ export default {
     loading: 'Fetching data...',
     error: {
       generic: 'Failed to reach the database',
-      searchFailed: 'Database search failed',
-      couldNotSearch: 'Could not search the database',
       userDoesNotExist: 'User does not exist in the database',
       saveData: 'Failed to save your data to the database. Please try again.',
-      userCreationFailed: 'User creation failed',
     },
   },
   genericErrorScreen: {
@@ -831,6 +828,11 @@ export default {
       },
     },
     auth: {
+      accountDeletionFailed: {
+        title: 'Account Deletion Failed',
+        message:
+          'There was an issue deleting your account. Please try again later.',
+      },
       missingEmail: {
         title: 'Missing Email',
         message: 'Please provide a valid email address to continue.',
@@ -893,8 +895,17 @@ export default {
         message:
           'You have made too many requests. Please wait a while before trying again.',
       },
+      signOutFailed: {
+        title: 'Sign Out Failed',
+        message: 'There was an issue signing you out. Please try again.',
+      },
     },
     database: {
+      accountCreationLimitExceeded: {
+        title: 'Rate Limit Exceeded',
+        message:
+          'You have exceeded the rate limit for account creation. Please try again later.',
+      },
       dataFetchFailed: {
         title: 'Data Fetch Failed',
         message:
@@ -905,10 +916,9 @@ export default {
         message:
           'Your app version is outdated. Please update to the latest version.',
       },
-      accountCreationLimitExceeded: {
-        title: 'Rate Limit Exceeded',
-        message:
-          'You have exceeded the rate limit for account creation. Please try again later.',
+      searchFailed: {
+        title: 'Search Failed',
+        message: 'Failed to search the database. Please try again.',
       },
       userCreationFailed: {
         title: 'User Creation Failed',
@@ -966,19 +976,41 @@ export default {
       },
     },
     user: {
-      accountDeletionFailed: {
-        title: 'Account Deletion Failed',
-        message:
-          'There was an issue deleting your account. Please try again later.',
-      },
       couldNotUnfriend: {
         title: 'Could Not Unfriend',
         message:
           'There was an issue trying to unfriend this user. Please try again.',
       },
+      dataFetchFailed: {
+        title: 'Data Fetch Failed',
+        message: 'Failed to fetch user data. Please try reloading the page.',
+      },
+      feedbackRemovalFailed: {
+        title: 'Feedback Removal Failed',
+        message: 'There was an issue removing the feedback. Please try again.',
+      },
+      friendRequestSendFailed: {
+        title: 'Friend Request Failed',
+        message:
+          'There was an issue sending the friend request. Please try again.',
+      },
+      friendRequestAcceptFailed: {
+        title: 'Friend Request Failed',
+        message:
+          'There was an issue accepting the friend request. Please try again.',
+      },
+      friendRequestRejectFailed: {
+        title: 'Friend Request Failed',
+        message:
+          'There was an issue removing the friend request. Please try again.',
+      },
       nicknameUpdateFailed: {
         title: 'Nickname Update Failed',
         message: 'There was an error updating your nickname. Please try again.',
+      },
+      statusUpdateFailed: {
+        title: 'Status Update Failed',
+        message: 'There was an error updating your status. Please try again.',
       },
       timezoneUpdateFailed: {
         title: 'Timezone Update Failed',
