@@ -38,6 +38,7 @@ import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
 import Button from '@components/Button';
 import Text from '@components/Text';
 import ScrollView from '@components/ScrollView';
+import ERRORS from '@src/ERRORS';
 
 type FriendsFriendsScreenProps = StackScreenProps<
   ProfileNavigatorParamList,
@@ -80,7 +81,7 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
       );
       setDisplayedFriends(relevantResults); // Hide irrelevant
     } catch (error) {
-      ErrorUtils.raiseAlert(error, translate('onyx.error.generic'));
+      ErrorUtils.raiseAppError(ERRORS.ONYX.GENERIC, error);
     }
   };
 
@@ -154,7 +155,7 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
   const fetchData = useCallback(async () => {
     try {
       setIsLoading(true);
-      const userFriends: UserList | undefined = await readDataOnce(
+      const userFriends = await readDataOnce<UserList>(
         db,
         DBPATHS.USERS_USER_ID_FRIENDS.getRoute(userID),
       );
@@ -225,7 +226,7 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
         searchOnTextChange
       />
       <ScrollView style={styles.flex1}>
-        <View style={localStyles.searchResultsContainer}>
+        <View style={[styles.mt2, styles.flexColumn]}>
           {searching || isLoading ? (
             <FlexibleLoadingIndicator />
           ) : isNonEmptyArray(displayedFriends) ? (
@@ -262,15 +263,6 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
     </ScreenWrapper>
   );
 }
-
-// eslint-disable-next-line @typescript-eslint/no-use-before-define
-const localStyles = StyleSheet.create({
-  searchResultsContainer: {
-    width: '100%',
-    flexDirection: 'column',
-    marginTop: 8,
-  },
-});
 
 FriendsFriendsScreen.displayName = 'Friends Friends Screen';
 export default FriendsFriendsScreen;

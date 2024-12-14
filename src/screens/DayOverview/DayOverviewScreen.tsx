@@ -44,6 +44,7 @@ import useTheme from '@hooks/useTheme';
 import DateUtils from '@libs/DateUtils';
 import Onyx, {useOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
+import ERRORS from '@src/ERRORS';
 
 type DayOverviewScreenProps = StackScreenProps<
   DayOverviewNavigatorParamList,
@@ -211,10 +212,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
           );
           DS.navigateToEditSessionScreen(newSession?.id);
         } catch (error) {
-          ErrorUtils.raiseAlert(
-            error,
-            translate('dayOverviewScreen.error.createSession'),
-          );
+          ErrorUtils.raiseAppError(ERRORS.DATABASE.USER_CREATION_FAILED, error);
         } finally {
           await Utils.setLoadingText(null);
         }

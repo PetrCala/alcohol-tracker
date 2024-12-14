@@ -1,26 +1,26 @@
+import {ErrorKey} from '@src/ERRORS';
+import {
+  NonFinalNodePaths,
+  NonFinalPaths,
+  TranslationBase,
+  TranslationPaths,
+} from '@src/languages/types';
+
 /**
  * Represents the details of an error, including a user-friendly title and a descriptive message.
+ *
  */
 type ErrorDetails = {
   /** A short, descriptive title for the error.  */
   title: string;
 
   /** A detailed message explaining the error or providing guidance to the user.  */
-  message: string;
+  message: TranslationPaths;
 };
 
 /**
- * Maps an error key to its corresponding details, including the title and message.
+ * Represents the mapping of error keys to their corresponding details, including title and message.
  */
-type ErrorMapping = {
-  /** The unique identifier for the error, used to match specific error scenarios.  */
-  key: string;
-
-  /** A short, descriptive title for the error, providing immediate context to the user.  */
-  title: string;
-
-  /** A detailed message explaining the error or suggesting next steps for the user.  */
-  message: string;
-};
+type ErrorMapping = Record<ErrorKey, NonFinalNodePaths>;
 
 export type {ErrorDetails, ErrorMapping};
