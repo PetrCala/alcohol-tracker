@@ -23,6 +23,7 @@ import type SCREENS from '@src/SCREENS';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {changeUserName} from '@userActions/User';
+import ERRORS from '@src/ERRORS';
 
 type UserNameScreenProps = StackScreenProps<
   SettingsNavigatorParamList,
@@ -59,7 +60,7 @@ function UserNameScreen({route}: UserNameScreenProps) {
         await changeUserName(db, auth.currentUser, newFirstName, newLastName);
         Navigation.goBack();
       } catch (error) {
-        ErrorUtils.raiseAlert(error, translate('username.error.generic'));
+        ErrorUtils.raiseAppError(ERRORS.USER.USERNAME_UPDATE_FAILED, error);
       } finally {
         setIsLoadingName(false);
         await Utils.setLoadingText(null);

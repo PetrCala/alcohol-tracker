@@ -15,6 +15,7 @@ import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import TimezoneSelect from '@components/TimezoneSelect';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import CONST from '@src/CONST';
+import ERRORS from '@src/ERRORS';
 
 type TimezoneSelectScreenProps = StackScreenProps<
   SettingsNavigatorParamList,
@@ -35,7 +36,7 @@ function TimezoneSelectScreen({route}: TimezoneSelectScreenProps) {
         setIsLoading(true);
         await User.saveSelectedTimezone(db, auth.currentUser, tz);
       } catch (error) {
-        ErrorUtils.raiseAlert(error, translate('timezoneScreen.error.generic'));
+        ErrorUtils.raiseAppError(ERRORS.USER.TIMEZONE_UPDATE_FAILED, error);
       } finally {
         Navigation.goBack(ROUTES.SETTINGS_TIMEZONE);
         setIsLoading(false);

@@ -19,6 +19,7 @@ import * as User from '@userActions/User';
 import {useFirebase} from '@context/global/FirebaseContext';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
+import ERRORS from '@src/ERRORS';
 
 /**
  * We add the current time to the key to fix a bug where the list options don't update unless the key is updated.
@@ -73,7 +74,7 @@ function SelectionScreen({}: SelectionScreenProps) {
   const handleTimezoneSelection = useCallback(
     ({text}: {text: string}): void => {
       saveSelectedTimezone({text}).catch(error => {
-        ErrorUtils.raiseAlert(error, translate('timezoneScreen.error.generic'));
+        ErrorUtils.raiseAppError(ERRORS.USER.TIMEZONE_UPDATE_FAILED, error);
       });
     },
     [saveSelectedTimezone, translate],

@@ -272,7 +272,7 @@ export default {
     tryAgain: 'and then try again.',
   },
   imageUpload: {
-    success: 'Image uploaded successfully!',
+    uploadSuccess: 'Image uploaded successfully!',
   },
   personalDetails: {
     error: {
@@ -461,9 +461,6 @@ export default {
     headerTitle: 'Nickname',
     isShownOnProfile: 'Your nickname is shown on your profile.',
     updatingDisplayName: 'Updating your nickname...',
-    error: {
-      generic: 'Error updating nickname',
-    },
   },
   tzFix: {
     introduction: {
@@ -513,9 +510,6 @@ export default {
     isShownOnProfile: 'Your timezone is shown on your profile.',
     getLocationAutomatically: 'Automatically determine your location',
     saving: 'Saving your timezone...',
-    error: {
-      generic: 'Error updating your timezone',
-    },
   },
   emailScreen: {
     title: 'Update Email',
@@ -583,9 +577,6 @@ export default {
     enterPasswordToConfirm: 'Please enter your password to confirm deletion.',
     enterPassword: 'Enter your password',
     deletingAccount: 'Deleting account...',
-    error: {
-      generic: 'Error deleting your account',
-    },
   },
   profileScreen: {
     title: 'Profile',
@@ -600,9 +591,6 @@ export default {
     unfriend: 'Unfriend',
     commonFriendsLabel: (hasCommonFriends: boolean) =>
       `${hasCommonFriends ? 'Common friends:' : 'Friends:'}`,
-    errors: {
-      couldNotUnfriend: 'Could not unfriend this user.',
-    },
   },
   statisticsScreen: {
     title: 'Statistics',
@@ -617,7 +605,6 @@ export default {
     ongoing: 'Ongoing',
     error: {
       open: 'Failed to open a new session. Please try again.',
-      createSession: 'Error creating a new session',
     },
   },
   homeScreen: {
@@ -649,13 +636,6 @@ export default {
     saveSession: 'Save Session',
     discardingSession: (discardWord: string) =>
       `${discardWord} this session...`,
-    error: {
-      discardTitle: 'Session discard failed',
-      discard: "We couldn't discard this session. Please try again.",
-      saveTitle: 'Session save failed',
-      save: 'This session could not be saved. Please try reloading the app.',
-      load: 'Failed to fetch details of this session.',
-    },
   },
   sessionDateScreen: {
     title: 'Session date',
@@ -766,7 +746,6 @@ export default {
   username: {
     error: {
       usernameRequired: 'A username is required',
-      generic: 'There was an error updating your username.',
       usernameTooLong: 'This username is too long',
       sameUsername: 'This is the same username as your current one',
     },
@@ -948,15 +927,15 @@ export default {
       },
     },
     imageUpload: {
-      fetch: {
+      fetchFailed: {
         title: 'Image Upload Failed',
         message: 'Could not fetch the image. Please try again.',
       },
-      upload: {
+      uploadFailed: {
         title: 'Image Upload Failed',
         message: 'There was an error uploading your image. Please try again.',
       },
-      choice: {
+      choiceFailed: {
         title: 'Image Choice Failed',
         message:
           'There was an error when selecting your image. Please try again.',
@@ -969,17 +948,50 @@ export default {
       },
     },
     session: {
-      sessionStart: {
+      discardFailed: {
+        title: 'Session Discard Error',
+        message: 'Failed to discard the session. Please try again.',
+      },
+      loadFailed: {
+        title: 'Session Load Error',
+        message: 'Failed to load the session. Please try again.',
+      },
+      saveFailed: {
+        title: 'Session Save Error',
+        message: 'Failed to save the session. Please try again.',
+      },
+      startFailed: {
         title: 'Session Start Error',
         message: 'Failed to start a new session.',
       },
     },
     user: {
+      accountDeletionFailed: {
+        title: 'Account Deletion Failed',
+        message:
+          'There was an issue deleting your account. Please try again later.',
+      },
       couldNotUnfriend: {
         title: 'Could Not Unfriend',
         message:
           'There was an issue trying to unfriend this user. Please try again.',
       },
+      nicknameUpdateFailed: {
+        title: 'Nickname Update Failed',
+        message: 'There was an error updating your nickname. Please try again.',
+      },
+      timezoneUpdateFailed: {
+        title: 'Timezone Update Failed',
+        message: 'There was an error updating your timezone. Please try again.',
+      },
+      usernameUpdateFailed: {
+        title: 'Username Update Failed',
+        message: 'There was an error updating your username. Please try again.',
+      },
+    },
+    generic: {
+      title: 'Error',
+      message: 'An error occurred.',
     },
     permissionDenied: {
       title: 'Permission Denied',

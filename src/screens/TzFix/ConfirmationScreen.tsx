@@ -18,6 +18,7 @@ import {useCallback, useState} from 'react';
 import {View} from 'react-native';
 import {useFirebase} from '@context/global/FirebaseContext';
 import type {SelectedTimezone} from '@src/types/onyx/UserData';
+import ERRORS from '@src/ERRORS';
 
 type ConfirmationScreenProps = StackScreenProps<
   TzFixModalNavigatorParamList,
@@ -60,10 +61,7 @@ function ConfirmationScreen({}: ConfirmationScreenProps) {
 
   const handleOnCorrect = useCallback((): void => {
     onCorrect().catch(error => {
-      ErrorUtils.raiseAlert(
-        error,
-        translate('tzFix.confirmation.error.generic'),
-      );
+      ErrorUtils.raiseAppError(ERRORS.GENERIC, error);
     });
   }, [onCorrect, translate]);
 

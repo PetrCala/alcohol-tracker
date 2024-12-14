@@ -390,7 +390,7 @@ async function getNewSessionToEdit(
   shouldUpdateLocalData = true,
 ): Promise<DrinkingSession> {
   if (!user) {
-    throw new Error(Localize.translateLocal('dayOverviewScreen.error.open'));
+    throw new Error('User is null when trying to create a new session');
   }
   const newSessionId = generateDrinkingSessionId(db, user);
   const timestamp = currentDate.getTime();

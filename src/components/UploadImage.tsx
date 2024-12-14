@@ -51,7 +51,7 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
       .then((image: any) => {
         const source = {uri: image.path};
         if (!source) {
-          ErrorUtils.raiseAppError(ERRORS.IMAGE_UPLOAD.FETCH);
+          ErrorUtils.raiseAppError(ERRORS.IMAGE_UPLOAD.FETCH_FAILED);
           return;
         }
         setImageSource(source.uri); // Triggers upload
@@ -62,7 +62,7 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
         if (errorMessage === 'User cancelled image selection') {
           return;
         }
-        ErrorUtils.raiseAppError(ERRORS.IMAGE_UPLOAD.CHOICE, error);
+        ErrorUtils.raiseAppError(ERRORS.IMAGE_UPLOAD.CHOICE_FAILED, error);
       });
   };
 
@@ -79,7 +79,7 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
       await chooseImage(); // Call automatically
       resetIndicators(); // Clean the indicators for upload
     } catch (error) {
-      ErrorUtils.raiseAppError(ERRORS.IMAGE_UPLOAD.CHOICE, error);
+      ErrorUtils.raiseAppError(ERRORS.IMAGE_UPLOAD.CHOICE_FAILED, error);
     }
   };
 
@@ -116,10 +116,10 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
             storage,
           );
         }
-        Alert.alert(translate('imageUpload.success'));
+        Alert.alert(translate('imageUpload.uploadSuccess'));
       } catch (error) {
         setImageSource(null);
-        ErrorUtils.raiseAppError(ERRORS.IMAGE_UPLOAD.UPLOAD, error);
+        ErrorUtils.raiseAppError(ERRORS.IMAGE_UPLOAD.UPLOAD_FAILED, error);
       } finally {
         setUploadOngoing(false); // Otherwise set upon success in child component
         setUploadModalVisible(false);

@@ -1,5 +1,7 @@
+import useLocalize from '@hooks/useLocalize';
 import {toPercentageVerbose} from '@libs/DataHandling';
 import * as ErrorUtils from '@libs/ErrorUtils';
+import ERRORS from '@src/ERRORS';
 import type {FirebaseStorage, UploadTaskSnapshot} from 'firebase/storage';
 import {ref, uploadBytesResumable} from 'firebase/storage';
 
@@ -22,6 +24,7 @@ async function uploadImageToFirebase(
   setUploadProgress: React.Dispatch<string | null>,
   setSuccess: React.Dispatch<string>,
 ): Promise<void> {
+  const {translate} = useLocalize();
   if (!uri) {
     throw new Error('No URI provided');
   }
@@ -51,15 +54,15 @@ async function uploadImageToFirebase(
         }
       },
       error => {
-        ErrorUtils.raiseAlert(error, 'Error uploading image');
+        ErrorUtils.raiseAppError(ERRORS.IMAGE_UPLOAD.UPLOAD_FAILED, error);
       },
     );
 
     await uploadTask;
     setUploadProgress('0');
-    setSuccess('Image uploaded successfully');
+    setSuccess(translate('imageUpload.uploadSuccess'));
   } catch (error) {
-    ErrorUtils.raiseAlert(error, 'Error uploading image');
+    ErrorUtils.raiseAppError(ERRORS.IMAGE_UPLOAD.UPLOAD_FAILED, error);
     throw error; // Re-throw the error after handling
   }
 }

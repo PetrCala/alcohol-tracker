@@ -40,19 +40,27 @@ const ERRORS = {
     NO_LIVE_SESSION: 'home-screen/no-live-session',
   },
   IMAGE_UPLOAD: {
-    FETCH: 'image-upload/fetch',
-    UPLOAD: 'image-upload/upload',
-    CHOICE: 'image-upload/choice',
+    FETCH_FAILED: 'image-upload/fetch-failed',
+    UPLOAD_FAILED: 'image-upload/upload-failed',
+    CHOICE_FAILED: 'image-upload/choice-failed',
   },
   ONYX: {
     GENERIC: 'onyx/generic',
   },
   SESSION: {
-    SESSION_START: 'session/session-start',
+    DISCARD_FAILED: 'session/discard-failed',
+    LOAD_FAILED: 'session/load-failed',
+    SAVE_FAILED: 'session/save-failed',
+    START_FAILED: 'session/start-failed',
   },
   USER: {
+    ACCOUNT_DELETION_FAILED: 'user/account-deletion-failed',
     COULD_NOT_UNFRIEND: 'user/could-not-unfriend',
+    NICKNAME_UPDATE_FAILED: 'user/nickname-update-failed',
+    TIMEZONE_UPDATE_FAILED: 'user/timezone-update-failed',
+    USERNAME_UPDATE_FAILED: 'user/username-update-failed',
   },
+  GENERIC: 'error/generic',
   PERMISSION_DENIED: 'error/PERMISSION_DENIED: Permission denied',
   UNKNOWN: 'error/unknown',
 } as const;

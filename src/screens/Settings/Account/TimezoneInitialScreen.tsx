@@ -19,6 +19,7 @@ import {useFirebase} from '@context/global/FirebaseContext';
 import * as User from '@userActions/User';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import * as ErrorUtils from '@libs/ErrorUtils';
+import ERRORS from '@src/ERRORS';
 
 type TimezoneInitialScreenProps = StackScreenProps<
   SettingsNavigatorParamList,
@@ -55,7 +56,7 @@ function TimezoneInitialScreen({route}: TimezoneInitialScreenProps) {
             : defaultTimezone,
         );
       } catch (error) {
-        ErrorUtils.raiseAlert(error, translate('timezoneScreen.error.generic'));
+        ErrorUtils.raiseAppError(ERRORS.USER.TIMEZONE_UPDATE_FAILED, error);
       }
     })();
   };
