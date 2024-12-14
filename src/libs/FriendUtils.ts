@@ -9,8 +9,11 @@ import {isNonEmptyArray} from './Validation';
 export async function fetchUserFriends(
   db: Database,
   userID: string,
-): Promise<UserList | undefined> {
-  return readDataOnce(db, DBPATHS.USERS_USER_ID_FRIENDS.getRoute(userID));
+): Promise<UserList | null> {
+  return readDataOnce<UserList>(
+    db,
+    DBPATHS.USERS_USER_ID_FRIENDS.getRoute(userID),
+  );
 }
 
 /**

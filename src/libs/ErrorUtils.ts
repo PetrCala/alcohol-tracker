@@ -6,8 +6,9 @@ import type {ErrorFields, Errors} from '@src/types/onyx/OnyxCommon';
 import AppError from '@libs/Errors/AppError';
 import ERROR_MAPPING from '@libs/Errors/ERROR_MAPPING';
 import DateUtils from './DateUtils';
+import Log from '@libs/Log';
 import * as Localize from './Localize';
-import ERRORS from '@src/ERRORS';
+import ERRORS, {ErrorKey} from '@src/ERRORS';
 
 /**
  * Transforms an unknown error into a typed AppError object with a title and message.
@@ -15,30 +16,54 @@ import ERRORS from '@src/ERRORS';
  * @param error - The unknown error object to be processed.
  * @returns An AppError instance representing the provided error.
  */
-function getAppError(error: unknown): AppError {
-  const errMessage = error instanceof Error ? error.message : ERRORS.UNKNOWN;
+function getAppError(errorKey?: ErrorKey): AppError {
+  const key = errorKey ?? ERRORS.UNKNOWN;
+  const mappingValue = ERROR_MAPPING[key];
 
-  for (const {key, title, message} of ERROR_MAPPING) {
-    if (errMessage.includes(key)) {
-      return new AppError(message, title, key);
-    }
+  const titlePath = `${mappingValue}.title` as TranslationPaths;
+  const messagePath = `${mappingValue}.message` as TranslationPaths;
+
+  let title: string;
+  let message: string;
+
+  try {
+    // There is a chance the path is malformed, in which case we want to assign a default message
+    title = Localize.translateLocal(titlePath);
+    message = Localize.translateLocal(messagePath);
+  } catch (error: unknown) {
+    title = Localize.translateLocal('errors.unknown.title');
+    message = Localize.translateLocal('errors.unknown.message');
   }
 
-  return new AppError(errMessage);
+  return new AppError(message, title, key);
 }
 
 /**
- * Raise an alert message from an error.
+ * Raise an alert message from an error key.
  *
  * @param error The error (unknown type)
  * @param heading A custom heading to use (defaults to the error's inherent title if not provided)
  * @param message A custom message to prepend to the returned error message
  */
-function raiseAlert(error: unknown, heading = '', message = ''): void {
-  const appError = getAppError(error);
-  const alertHeading = heading || appError.title;
-  const alertMessage = `${message}${appError.message}`;
-  Alert.alert(alertHeading, alertMessage);
+function raiseAlert(errorKey: ErrorKey): void {
+  const appError = getAppError(errorKey);
+  Alert.alert(appError.title, appError.message);
+}
+
+/**
+ * Raise an alert safely in the application.
+ *
+ * @param errorKey The key of the error to raise
+ * @param error The error to raise the app error from
+ */
+function raiseAppError(errorKey: ErrorKey, error?: unknown): void {
+  // Show a controlled message to the user first
+  raiseAlert(errorKey);
+
+  if (error) {
+    const errorMessage = error instanceof Error ? error.message : '';
+    Log.warn(errorMessage);
+  }
 }
 
 /**
@@ -222,6 +247,7 @@ export {
   getMicroSecondOnyxErrorWithMessage,
   getMicroSecondOnyxErrorObject,
   raiseAlert,
+  raiseAppError,
 };
 
 export type {OnyxDataWithErrors};

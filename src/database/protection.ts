@@ -15,7 +15,8 @@ async function checkAccountCreationLimit(db: Database): Promise<boolean> {
   const limit = CONST.ACCOUNT_CREATION_LIMIT;
 
   const deviceRef = DBPATHS.ACCOUNT_CREATIONS_DEVICE_ID.getRoute(deviceId);
-  const deviceData: AccountCreations | null = await readDataOnce(db, deviceRef);
+  const deviceData: AccountCreations | null =
+    await readDataOnce<AccountCreations>(db, deviceRef);
   if (!deviceData) {
     return true;
   }

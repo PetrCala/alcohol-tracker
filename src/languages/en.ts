@@ -838,11 +838,6 @@ export default {
       userCreationFailed: 'User creation failed',
     },
   },
-  onyx: {
-    error: {
-      generic: 'Failed to reach the local database',
-    },
-  },
   genericErrorScreen: {
     title: 'Oops, something went wrong!',
     body: {
@@ -852,6 +847,128 @@ export default {
       helpTextEmail: 'If the problem persists, reach out to',
     },
     refresh: 'Refresh',
+  },
+  errors: {
+    storage: {
+      objectNotFound: {
+        title: 'Object Not Found',
+        message:
+          'The requested object could not be found. Please check the details and try again.',
+      },
+      unauthorized: {
+        title: 'Unauthorized Access',
+        message:
+          'You do not have the necessary permissions to perform this action.',
+      },
+    },
+    auth: {
+      missingEmail: {
+        title: 'Missing Email',
+        message: 'Please provide a valid email address to continue.',
+      },
+      invalidEmail: {
+        title: 'Invalid Email',
+        message:
+          'The email address provided is not valid. Please check and try again.',
+      },
+      verifyEmail: {
+        title: 'Email Verification Required',
+        message:
+          'Please verify your email address before making changes to it.',
+      },
+      missingPassword: {
+        title: 'Missing Password',
+        message:
+          'A password is required to proceed. Please enter your password.',
+      },
+      invalidCredential: {
+        title: 'Invalid Credentials',
+        message:
+          'The credentials provided are incorrect. Please check and try again.',
+      },
+      weakPassword: {
+        title: 'Weak Password',
+        message:
+          'Your password must be at least 6 characters long. Please choose a stronger password.',
+      },
+      emailAlreadyInUse: {
+        title: 'Email Already in Use',
+        message:
+          'The email address is already associated with another account.',
+      },
+      userNotFound: {
+        title: 'User Not Found',
+        message:
+          'No user account matches the provided details. Please sign up or try again.',
+      },
+      wrongPassword: {
+        title: 'Incorrect Password',
+        message: 'The password entered is incorrect. Please try again.',
+      },
+      networkRequestFailed: {
+        title: 'Offline',
+        message:
+          'You appear to be offline. Please check your internet connection and try again.',
+      },
+      requiresRecentLogin: {
+        title: 'Session Expired',
+        message: 'For security reasons, please log in again to proceed.',
+      },
+      apiKeyNotValid: {
+        title: 'Configuration Error',
+        message:
+          'The app is not configured correctly. Please contact the developer for assistance.',
+      },
+      tooManyRequests: {
+        title: 'Too Many Requests',
+        message:
+          'You have made too many requests. Please wait a while before trying again.',
+      },
+    },
+    database: {
+      dataFetchFailed: {
+        title: 'Data Fetch Failed',
+        message:
+          'An error occurred while fetching data. Please try again later.',
+      },
+      outdatedAppVersion: {
+        title: 'Outdated App Version',
+        message:
+          'Your app version is outdated. Please update to the latest version.',
+      },
+      accountCreationLimitExceeded: {
+        title: 'Rate Limit Exceeded',
+        message:
+          'You have exceeded the rate limit for account creation. Please try again later.',
+      },
+      userCreationFailed: {
+        title: 'User Creation Failed',
+        message:
+          'There was an issue creating the user account. Please try again.',
+      },
+    },
+    onyx: {
+      generic: {
+        title: 'Database error',
+        message: 'Failed to reach the local database',
+      },
+    },
+    user: {
+      couldNotUnfriend: {
+        title: 'Could Not Unfriend',
+        message:
+          'There was an issue trying to unfriend this user. Please try again.',
+      },
+    },
+    permissionDenied: {
+      title: 'Permission Denied',
+      message:
+        'You do not have the necessary permissions. Contact the administrator for help.',
+    },
+    unknown: {
+      title: 'Unknown Error',
+      message: 'An unknown error occurred.',
+    },
   },
 } satisfies TranslationBase;
 

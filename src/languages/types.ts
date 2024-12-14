@@ -32,6 +32,15 @@ type FlattenObject<TObject, TPrefix extends string = ''> = {
         : `${TPrefix}${TKey & string}`;
 }[keyof TObject];
 
+/** A type for accessing non final translation node paths */
+type NonFinalPaths<TObject, TPrefix extends string = ''> = {
+  [TKey in keyof TObject]: TObject[TKey] extends TranslationBase
+    ?
+        | `${TPrefix}${TKey & string}`
+        | NonFinalPaths<TObject[TKey], `${TPrefix}${TKey & string}.`>
+    : never;
+}[keyof TObject];
+
 // Retrieves a type for a given key path (calculated from the type above)
 type TranslateType<TObject, TPath extends string> = TPath extends keyof TObject
   ? TObject[TPath]
@@ -45,6 +54,8 @@ type EnglishTranslation = typeof en;
 
 type TranslationPaths = FlattenObject<EnglishTranslation>;
 
+type NonFinalNodePaths = NonFinalPaths<EnglishTranslation>;
+
 type TranslationFlatObject = {
   [TKey in TranslationPaths]: TranslateType<EnglishTranslation, TKey>;
 };
@@ -53,6 +64,8 @@ export type {
   CharacterLimitParams,
   EnglishTranslation,
   LocalTimeParams,
+  NonFinalPaths,
+  NonFinalNodePaths,
   FlattenObject,
   TranslationBase,
   TranslationPaths,

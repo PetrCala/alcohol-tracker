@@ -13,6 +13,7 @@ import useWindowDimensions from '@hooks/useWindowDimensions';
 import type {PopoverMenuItem} from './PopoverMenu';
 import PopoverMenu from './PopoverMenu';
 import ConfirmModal from './ConfirmModal';
+import ERRORS from '@src/ERRORS';
 
 type ManageFriendPopoverProps = {
   /** Whether the modal is visible */
@@ -62,11 +63,7 @@ const ManageFriendPopover: React.FC<ManageFriendPopoverProps> = ({
       try {
         await unfriend(db, user.uid, friendId);
       } catch (error) {
-        ErrorUtils.raiseAlert(
-          error,
-          translate('database.error.userDoesNotExist'),
-          translate('profileScreen.errors.couldNotUnfriend'),
-        );
+        ErrorUtils.raiseAppError(ERRORS.USER.COULD_NOT_UNFRIEND, error);
       } finally {
         setUnfriendModalVisible(false);
         Navigation.goBack();

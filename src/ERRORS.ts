@@ -1,3 +1,5 @@
+import type DeepValueOf from './types/utils/DeepValueOf';
+
 /**
  * A centralized object defining all known error keys used in the application.
  * This object categorizes errors based on their domain (e.g., STORAGE, AUTH, DATABASE)
@@ -33,8 +35,18 @@ const ERRORS = {
     ACCOUNT_CREATION_LIMIT_EXCEEDED: 'database/account-creation-limit-exceeded',
     USER_CREATION_FAILED: 'database/user-creation-failed',
   },
+  ONYX: {
+    GENERIC: 'onyx/generic',
+  },
+  SESSION: {},
+  USER: {
+    COULD_NOT_UNFRIEND: 'user/could-not-unfriend',
+  },
   PERMISSION_DENIED: 'error/PERMISSION_DENIED: Permission denied',
   UNKNOWN: 'error/unknown',
 } as const;
 
+type ErrorKey = DeepValueOf<typeof ERRORS>;
+
 export default ERRORS;
+export type {ErrorKey};
