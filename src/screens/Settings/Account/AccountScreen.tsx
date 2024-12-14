@@ -1,4 +1,4 @@
-import {Keyboard} from 'react-native';
+import {Keyboard, View} from 'react-native';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import MenuItemGroup from '@components/MenuItemGroup';
@@ -25,6 +25,7 @@ type AccountScreenProps = StackScreenProps<
   typeof SCREENS.SETTINGS.ACCOUNT.ROOT
 >;
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function AccountScreen({route}: AccountScreenProps) {
   const theme = useTheme();
   const styles = useThemeStyles();
@@ -64,10 +65,11 @@ function AccountScreen({route}: AccountScreenProps) {
     },
   ];
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const personalDetails = [
     {
       description: translate('common.dob'),
-      title: (userData?.private_data?.birthdate || '').toString(),
+      title: (userData?.private_data?.birthdate ?? '').toString(),
       pageRoute: ROUTES.HOME,
     },
     {
@@ -77,7 +79,7 @@ function AccountScreen({route}: AccountScreenProps) {
     },
     {
       description: translate('common.weight'),
-      title: (userData?.private_data?.weight || '').toString(),
+      title: (userData?.private_data?.weight ?? '').toString(),
       pageRoute: ROUTES.HOME,
     },
   ];
@@ -111,7 +113,7 @@ function AccountScreen({route}: AccountScreenProps) {
                 ]}
               />
             ) : (
-              <>
+              <View>
                 {generalOptions.map((detail, index) => (
                   <MenuItemWithTopDescription
                     // eslint-disable-next-line react/no-array-index-key
@@ -124,7 +126,7 @@ function AccountScreen({route}: AccountScreenProps) {
                     onPress={() => Navigation.navigate(detail.pageRoute)}
                   />
                 ))}
-              </>
+              </View>
             )}
           </Section>
           {/* Unhide the personal details in a later patch - visually, they are ready */}

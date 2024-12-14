@@ -47,31 +47,33 @@ function DisplayNameScreen({route}: DisplayNameScreenProps) {
   /**
    * Submit form to update user's display
    */
-  const updateDisplayName = async (
+  const updateDisplayName = (
     values: FormOnyxValues<typeof ONYXKEYS.FORMS.DISPLAY_NAME_FORM>,
   ) => {
-    const newDisplayName = values.displayName.trim();
-    try {
-      setIsLoadingName(true);
-      await Utils.setLoadingText(
-        translate('displayNameScreen.updatingDisplayName'),
-      );
-      await changeDisplayName(
-        db,
-        auth.currentUser,
-        profileData?.display_name,
-        newDisplayName,
-      );
-    } catch (error) {
-      ErrorUtils.raiseAlert(
-        error,
-        translate('displayNameScreen.error.generic'),
-      );
-    } finally {
-      Navigation.goBack();
-      Utils.setLoadingText(null);
-      setIsLoadingName(false);
-    }
+    (async () => {
+      const newDisplayName = values.displayName.trim();
+      try {
+        setIsLoadingName(true);
+        await Utils.setLoadingText(
+          translate('displayNameScreen.updatingDisplayName'),
+        );
+        await changeDisplayName(
+          db,
+          auth.currentUser,
+          profileData?.display_name,
+          newDisplayName,
+        );
+      } catch (error) {
+        ErrorUtils.raiseAlert(
+          error,
+          translate('displayNameScreen.error.generic'),
+        );
+      } finally {
+        Navigation.goBack();
+        Utils.setLoadingText(null);
+        setIsLoadingName(false);
+      }
+    })();
   };
 
   const validate = (

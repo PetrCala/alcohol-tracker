@@ -27,15 +27,13 @@ import DotIndicatorMessage from '@components/DotIndicatorMessage';
 import type {TranslationPaths} from '@src/languages/types';
 import type {ValueOf} from 'type-fest';
 
-type PasswordScreenOnyxProps = {};
+type PasswordScreenProps = StackScreenProps<
+  SettingsNavigatorParamList,
+  typeof SCREENS.SETTINGS.ACCOUNT.PASSWORD
+>;
 
-type PasswordScreenProps = PasswordScreenOnyxProps &
-  StackScreenProps<
-    SettingsNavigatorParamList,
-    typeof SCREENS.SETTINGS.ACCOUNT.PASSWORD
-  >;
-
-function PasswordScreen({}: PasswordScreenProps) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function PasswordScreen({route}: PasswordScreenProps) {
   const styles = useThemeStyles();
   const {translate} = useLocalize();
   const {auth} = useFirebase();
