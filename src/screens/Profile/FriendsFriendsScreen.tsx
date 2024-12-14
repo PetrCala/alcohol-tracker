@@ -1,4 +1,4 @@
-import {Keyboard, StyleSheet, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import type {
   FriendRequestStatus,
   ProfileList,
@@ -220,12 +220,9 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
         onResetSearch={resetSearch}
         searchOnTextChange
       />
-      <ScrollView
-        style={localStyles.scrollViewContainer}
-        onScrollBeginDrag={Keyboard.dismiss}
-        keyboardShouldPersistTaps="handled">
+      <ScrollView style={styles.flex1}>
         <View style={localStyles.searchResultsContainer}>
-          {searching ? (
+          {searching || isLoading ? (
             <FlexibleLoadingIndicator />
           ) : isNonEmptyArray(displayedFriends) ? (
             <View style={styles.appBG}>
@@ -264,9 +261,6 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
 
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
 const localStyles = StyleSheet.create({
-  scrollViewContainer: {
-    flex: 1,
-  },
   textContainer: {
     width: '95%',
     height: 50,

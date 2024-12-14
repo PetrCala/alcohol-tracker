@@ -12,7 +12,6 @@ import type {UserArray} from '@src/types/onyx/OnyxCommon';
 import React, {useState, useEffect} from 'react';
 import type {NativeScrollEvent, NativeSyntheticEvent} from 'react-native';
 import {
-  ActivityIndicator,
   Dimensions,
   Keyboard,
   ScrollView,
@@ -23,13 +22,13 @@ import {
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
-import FillerView from '@components/FillerView';
 import {sleep} from '@libs/TimeUtils';
 import _ from 'lodash';
 import useThemeStyles from '@hooks/useThemeStyles';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import UserOverview from './UserOverview';
+import style from '@components/Icon/IconWrapperStyles';
 
 type UserListProps = {
   fullUserArray: UserArray;
@@ -37,6 +36,7 @@ type UserListProps = {
   emptyListComponent?: React.ReactNode;
   userSubset?: UserArray;
   orderUsers?: boolean;
+  isLoading?: boolean;
 };
 
 /**
@@ -55,6 +55,7 @@ const UserListComponent: React.FC<UserListProps> = ({
   emptyListComponent,
   userSubset,
   orderUsers,
+  isLoading = false,
 }) => {
   const {db} = useFirebase();
   const styles = useThemeStyles();
@@ -152,12 +153,12 @@ const UserListComponent: React.FC<UserListProps> = ({
 
   return (
     <ScrollView
-      style={localStyles.scrollViewContainer}
+      style={[styles.flex1, styles.mnw100]}
       onScrollBeginDrag={Keyboard.dismiss}
       onScroll={handleScroll}
       scrollEventThrottle={16}
       keyboardShouldPersistTaps="handled">
-      {loadingDisplayData && isInitialLoad ? (
+      {(loadingDisplayData && isInitialLoad) || isLoading ? (
         <FlexibleLoadingIndicator />
       ) : isNonEmptyArray(fullUserArray) ? (
         <>
@@ -213,15 +214,6 @@ const screenHeight = Dimensions.get('window').height;
 
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
 const localStyles = StyleSheet.create({
-  scrollViewContainer: {
-    flex: 1,
-    // backgroundColor: 'white',
-    // justifyContent: 'center',
-  },
-  loadingContainer: {
-    width: '100%',
-    height: screenHeight * 0.8,
-  },
   userList: {
     width: '100%',
     flexDirection: 'column',
