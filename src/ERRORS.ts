@@ -37,7 +37,6 @@ const ERRORS = {
   },
   HOME_SCREEN: {
     TITLE: 'home-screen/title',
-    SESSION_START: 'home-screen/session-start',
     NO_LIVE_SESSION: 'home-screen/no-live-session',
   },
   IMAGE_UPLOAD: {
@@ -48,7 +47,9 @@ const ERRORS = {
   ONYX: {
     GENERIC: 'onyx/generic',
   },
-  SESSION: {},
+  SESSION: {
+    SESSION_START: 'session/session-start',
+  },
   USER: {
     COULD_NOT_UNFRIEND: 'user/could-not-unfriend',
   },
