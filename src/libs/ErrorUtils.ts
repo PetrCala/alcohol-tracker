@@ -1,73 +1,44 @@
+import {Alert} from 'react-native';
 import mapValues from 'lodash/mapValues';
 import type {OnyxEntry} from 'react-native-onyx';
-import CONST from '@src/CONST';
-import type {
-  TranslationFlatObject,
-  TranslationPaths,
-} from '@src/languages/types';
+import type {TranslationPaths} from '@src/languages/types';
 import type {ErrorFields, Errors} from '@src/types/onyx/OnyxCommon';
-import type Response from '@src/types/onyx/Response';
-import {Alert} from 'react-native';
+import AppError from '@libs/Errors/AppError';
+import ERROR_MAPPING from '@libs/Errors/ERROR_MAPPING';
 import DateUtils from './DateUtils';
 import * as Localize from './Localize';
+import ERRORS from '@src/ERRORS';
 
 /**
- * Parses the error object and returns the appropriate error message.
+ * Transforms an unknown error into a typed AppError object with a title and message.
  *
- * @param error - The error object to be translated.
- * @returns
+ * @param error - The unknown error object to be processed.
+ * @returns An AppError instance representing the provided error.
  */
-function getErrorMessage(error: unknown): string {
-  const err = error instanceof Error ? error.message : '';
-  switch (true) {
-    case err.includes('storage/object-not-found'):
-      return 'Object not found';
-    case err.includes('storage/unauthorized'):
-      return 'Unauthorized access';
-    case err.includes('auth/missing-email'):
-      return 'Missing email';
-    case err.includes('auth/invalid-email'):
-      return 'Invalid email';
-    case err.includes('verify the new email'):
-      return 'Please verify your email first before changing it.';
-    case err.includes('auth/missing-password'):
-      return 'Missing password';
-    case err.includes('auth/invalid-credential'):
-      return 'Invalid credentials';
-    case err.includes('auth/weak-password'):
-      return 'Your password is too weak - password should be at least 6 characters';
-    case err.includes('auth/email-already-in-use'):
-      return 'This email is already in use';
-    case err.includes('auth/user-not-found'):
-      return 'User not found';
-    case err.includes('auth/wrong-password'):
-      return 'Incorrect password';
-    case err.includes('auth/network-request-failed'):
-      return 'You are offline';
-    case err.includes('auth/requires-recent-login'):
-      return 'Please login again';
-    case err.includes('auth/api-key-not-valid'):
-      return 'The app is not configured correctly. Please contact the developer.';
-    case err.includes('auth/too-many-requests'):
-      return 'Too many requests. Please wait a moment and try again later.';
-    case err.includes('PERMISSION_DENIED: Permission denied'):
-      return 'Permission denied. Please contact the administrator for assistance.';
-    case err.includes('database/data-fetch-failed'):
-      return 'Data fetch failed';
-    case err.includes('database/outdated-app-version'):
-      return 'This version of the application is outdated. Please upgrade to the newest version.';
-    case err.includes('database/account-creation-limit-exceeded'):
-      return 'Rate limit exceeded. Please try again later.';
-    case err.includes('database/user-creation-failed'):
-      return 'User creation failed.';
-    default:
-      return err;
+function getAppError(error: unknown): AppError {
+  const errMessage = error instanceof Error ? error.message : ERRORS.UNKNOWN;
+
+  for (const {key, title, message} of ERROR_MAPPING) {
+    if (errMessage.includes(key)) {
+      return new AppError(message, title, key);
+    }
   }
+
+  return new AppError(errMessage);
 }
 
+/**
+ * Raise an alert message from an error.
+ *
+ * @param error The error (unknown type)
+ * @param heading A custom heading to use (defaults to the error's inherent title if not provided)
+ * @param message A custom message to prepend to the returned error message
+ */
 function raiseAlert(error: unknown, heading = '', message = ''): void {
-  const payload = getErrorMessage(error);
-  Alert.alert(heading ?? 'Unknown error', `${message || ''}${payload}`);
+  const appError = getAppError(error);
+  const alertHeading = heading || appError.title;
+  const alertMessage = `${message}${appError.message}`;
+  Alert.alert(alertHeading, alertMessage);
 }
 
 /**
@@ -238,7 +209,7 @@ function addErrorMessage(
 }
 
 export {
-  getErrorMessage,
+  getAppError,
   addErrorMessage,
   getEarliestErrorField,
   getErrorMessageWithTranslationData,

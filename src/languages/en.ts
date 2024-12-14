@@ -136,6 +136,7 @@ export default {
       'Oops... something went wrong and your request could not be completed. Please try again later.',
     error: {
       error: 'Error',
+      unknown: 'Unknown error',
       invalidAmount: 'Invalid amount',
       acceptTerms: 'You must accept the Terms of Service to continue',
       fieldRequired: 'This field is required.',
@@ -604,6 +605,9 @@ export default {
     unfriend: 'Unfriend',
     commonFriendsLabel: (hasCommonFriends: boolean) =>
       `${hasCommonFriends ? 'Common friends:' : 'Friends:'}`,
+    errors: {
+      couldNotUnfriend: 'Could not unfriend this user.',
+    },
   },
   statisticsScreen: {
     title: 'Statistics',
@@ -618,6 +622,7 @@ export default {
     ongoing: 'Ongoing',
     error: {
       open: 'Failed to open a new session. Please try again.',
+      createSession: 'Error creating a new session',
     },
   },
   homeScreen: {
@@ -828,6 +833,7 @@ export default {
       generic: 'Failed to reach the database',
       searchFailed: 'Database search failed',
       couldNotSearch: 'Could not search the database',
+      userDoesNotExist: 'User does not exist in the database',
       saveData: 'Failed to save your data to the database. Please try again.',
       userCreationFailed: 'User creation failed',
     },
