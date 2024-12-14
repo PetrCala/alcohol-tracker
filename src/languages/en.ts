@@ -829,6 +829,7 @@ export default {
       searchFailed: 'Database search failed',
       couldNotSearch: 'Could not search the database',
       saveData: 'Failed to save your data to the database. Please try again.',
+      userCreationFailed: 'User creation failed',
     },
   },
   onyx: {

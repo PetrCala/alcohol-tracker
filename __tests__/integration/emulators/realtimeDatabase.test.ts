@@ -4,11 +4,19 @@
 import {ref, get, set} from 'firebase/database';
 import type {FirebaseApp} from 'firebase/app';
 import {isConnectedToDatabaseEmulator} from '@src/libs/Firebase/FirebaseUtils';
-import type {
-  FriendRequestList,
-  Profile,
-  Drinks,
-  DrinkingSession,
+import {
+  type FriendRequestList,
+  type Profile,
+  type Drinks,
+  type DrinkingSession,
+  Config,
+  UserStatus,
+  UnconfirmedDays,
+  DrinkingSessionList,
+  Preferences,
+  UserData,
+  Nickname,
+  UserStatusList,
 } from '@src/types/onyx';
 import type {Database} from 'firebase/database';
 import {saveDrinkingSessionData} from '@libs/actions/DrinkingSession';
@@ -43,6 +51,7 @@ import {describeWithEmulator} from '../../emulators/utils';
 import {MOCK_USER_IDS} from '../../utils/testsStatic';
 import DatabaseEmulator from '../../emulators/database';
 import {setupGlobalMocks} from '../../utils/testUtils';
+import {UserList} from '@src/types/onyx/OnyxCommon';
 
 require('dotenv').config();
 
@@ -155,7 +164,7 @@ describeWithEmulator('Test config functionality', () => {
 
   it('should correctly read the config', async () => {
     const expectedConfig = createMockConfig();
-    const config = await readDataOnce(db, DBPATHS.CONFIG);
+    const config = await readDataOnce<Config>(db, DBPATHS.CONFIG);
     expect(config).not.toBeNull();
     expect(config).toEqual(expectedConfig);
   });
@@ -185,7 +194,7 @@ describeWithEmulator('Test drinking session functionality', () => {
   it('should correctly save user status info', async () => {
     const dbRef = DBPATHS.USER_STATUS_USER_ID.getRoute(testUserID);
     await set(ref(db, dbRef), mockUserStatus);
-    const newSessionInfo = await readDataOnce(db, dbRef);
+    const newSessionInfo = await readDataOnce<UserStatus>(db, dbRef);
     expect(newSessionInfo).toEqual(newSessionInfo);
   });
 
@@ -203,7 +212,7 @@ describeWithEmulator('Test drinking session functionality', () => {
         testUserID,
         mockSessionKey,
       );
-    const userSession = await readDataOnce(db, userSessionRef);
+    const userSession = await readDataOnce<DrinkingSession>(db, userSessionRef);
 
     expect(userSession).not.toBeNull();
     expect(userSession).toMatchObject(mockDrinkingSession);
@@ -228,9 +237,14 @@ describeWithEmulator('Test pushing new user info into the database', () => {
   beforeEach(async () => {
     await DatabaseEmulator.fillWithMockData(db);
 
-    const userStatusList = await readDataOnce(db, DBPATHS.USER_STATUS); // Arbitrary node with all user ids in top level
-    const userKeys = Object.keys(userStatusList);
-    expect(userKeys).not.toContain(newUserID); // Check that the user does not exist in the mock database
+    const userStatusList = await readDataOnce<UserStatusList>(
+      db,
+      DBPATHS.USER_STATUS,
+    ); // Arbitrary node with all user ids in top level
+    if (userStatusList) {
+      const userKeys = Object.keys(userStatusList);
+      expect(userKeys).not.toContain(newUserID); // Check that the user does not exist in the mock database
+    }
 
     await pushNewUserInfo(db, newUserID, newUserProfileData);
   });
@@ -262,33 +276,33 @@ describeWithEmulator('Test pushing new user info into the database', () => {
       nicknameKey,
       newUserID,
     );
-    const dbNickname: string = await readDataOnce(db, dbRef);
+    const dbNickname = await readDataOnce<Nickname>(db, dbRef);
     expect(dbNickname).toEqual(expectedNickname);
   });
 
   it('pushes the user preferences into the database', async () => {
     const expectedPreferences = getDefaultPreferences();
     const dbRef = DBPATHS.USER_PREFERENCES_USER_ID.getRoute(newUserID);
-    const dbPreferencesData = await readDataOnce(db, dbRef);
+    const dbPreferencesData = await readDataOnce<Preferences>(db, dbRef);
     expect(dbPreferencesData).toMatchObject(expectedPreferences);
   });
 
   it('pushes the user data into the database', async () => {
     const expectedData = getDefaultUserData(newUserProfileData);
     const dbRef = DBPATHS.USERS_USER_ID.getRoute(newUserID);
-    const dbUserData = await readDataOnce(db, dbRef);
+    const dbUserData = await readDataOnce<UserData>(db, dbRef);
     expect(dbUserData).toMatchObject(expectedData);
   });
 
   it('pushes the user status into the database', async () => {
     const expectedStatus = getDefaultUserStatus();
     const dbRef = DBPATHS.USER_STATUS_USER_ID.getRoute(newUserID);
-    const dbStatusData = await readDataOnce(db, dbRef);
+    const dbStatusData = await readDataOnce<UserStatus>(db, dbRef);
     expect(dbStatusData).toMatchObject({
       ...expectedStatus,
       last_online: expect.any(Number),
     });
-    expect(dbStatusData.last_online).toBeCloseTo(
+    expect(dbStatusData?.last_online).toBeCloseTo(
       expectedStatus.last_online,
       -2,
     ); // Within 100ms
@@ -329,37 +343,37 @@ describeWithEmulator('Test deleting data from the database', () => {
       nicknameKey,
       testUserID,
     );
-    const dbNickname = await readDataOnce(db, dbRef);
+    const dbNickname = await readDataOnce<Nickname>(db, dbRef);
     expect(dbNickname).toBeNull();
   });
 
   it('deletes the user data from the database', async () => {
     const dbRef = DBPATHS.USERS_USER_ID.getRoute(testUserID);
-    const dbData = await readDataOnce(db, dbRef);
+    const dbData = await readDataOnce<UserData>(db, dbRef);
     expect(dbData).toBeNull();
   });
 
   it('deletes the user status data from the database', async () => {
     const dbRef = DBPATHS.USER_STATUS_USER_ID.getRoute(testUserID);
-    const dbSessionData = await readDataOnce(db, dbRef);
+    const dbSessionData = await readDataOnce<UserStatus>(db, dbRef);
     expect(dbSessionData).toBeNull();
   });
 
   it('deletes the user preferences from the database', async () => {
     const dbRef = DBPATHS.USER_PREFERENCES_USER_ID.getRoute(testUserID);
-    const dbPreferencesData = await readDataOnce(db, dbRef);
+    const dbPreferencesData = await readDataOnce<Preferences>(db, dbRef);
     expect(dbPreferencesData).toBeNull();
   });
 
   it('deletes the user drinking sessions from the database', async () => {
     const dbRef = DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(testUserID);
-    const dbSessionsData = await readDataOnce(db, dbRef);
+    const dbSessionsData = await readDataOnce<DrinkingSessionList>(db, dbRef);
     expect(dbSessionsData).toBeNull();
   });
 
   it('deletes the user unconfirmed days from the database', async () => {
     const dbRef = DBPATHS.USER_UNCONFIRMED_DAYS_USER_ID.getRoute(testUserID);
-    const dbUnconfirmedDays = await readDataOnce(db, dbRef);
+    const dbUnconfirmedDays = await readDataOnce<UnconfirmedDays>(db, dbRef);
     expect(dbUnconfirmedDays).toBeNull();
   });
 });
@@ -385,8 +399,11 @@ describeWithEmulator('Test friend request functionality', () => {
     const user1FriendsRef = DBPATHS.USERS_USER_ID_FRIENDS.getRoute(testUserID);
     const friendRequestsRef =
       DBPATHS.USERS_USER_ID_FRIEND_REQUESTS.getRoute(testUserID);
-    const friends = await readDataOnce(db, user1FriendsRef);
-    const friendRequests = await readDataOnce(db, friendRequestsRef);
+    const friends = await readDataOnce<UserList>(db, user1FriendsRef);
+    const friendRequests = await readDataOnce<FriendRequestList>(
+      db,
+      friendRequestsRef,
+    );
     expect(friends).toBeNull();
     expect(friendRequests).toBeNull();
   });
@@ -425,8 +442,14 @@ describeWithEmulator('Test friend request functionality', () => {
       [testUserID]: CONST.FRIEND_REQUEST_STATUS.RECEIVED,
     };
     await sendFriendRequest(db, testUserID, testUserID2);
-    const user1FriendRequests = await readDataOnce(db, user1Ref);
-    const user2FriendRequests = await readDataOnce(db, user2Ref);
+    const user1FriendRequests = await readDataOnce<FriendRequestList>(
+      db,
+      user1Ref,
+    );
+    const user2FriendRequests = await readDataOnce<FriendRequestList>(
+      db,
+      user2Ref,
+    );
     expect(user1FriendRequests).toMatchObject(expectedRequestsUser1);
     expect(user2FriendRequests).toMatchObject(expectedRequestsUser2);
   });
@@ -447,8 +470,14 @@ describeWithEmulator('Test friend request functionality', () => {
       DBPATHS.USERS_USER_ID_FRIEND_REQUESTS.getRoute(testUserID);
     const user2FriendRequestsRef =
       DBPATHS.USERS_USER_ID_FRIEND_REQUESTS.getRoute(testUserID2);
-    const user1FriendRequests = await readDataOnce(db, user1FriendRequestsRef);
-    const user2FriendRequests = await readDataOnce(db, user2FriendRequestsRef);
+    const user1FriendRequests = await readDataOnce<FriendRequestList>(
+      db,
+      user1FriendRequestsRef,
+    );
+    const user2FriendRequests = await readDataOnce<FriendRequestList>(
+      db,
+      user2FriendRequestsRef,
+    );
     expect(user1FriendRequests).toBeNull();
     expect(user2FriendRequests).toBeNull();
   });
@@ -472,13 +501,19 @@ describeWithEmulator('Test friend request functionality', () => {
     await set(ref(db, user1Ref), CONST.FRIEND_REQUEST_STATUS.SENT);
     await set(ref(db, user2Ref), CONST.FRIEND_REQUEST_STATUS.RECEIVED);
     await acceptFriendRequest(db, testUserID, testUserID2);
-    const user1FriendRequests = await readDataOnce(db, user1FriendRequestsRef);
-    const user2FriendRequests = await readDataOnce(db, user2FriendRequestsRef);
+    const user1FriendRequests = await readDataOnce<UserList>(
+      db,
+      user1FriendRequestsRef,
+    );
+    const user2FriendRequests = await readDataOnce<UserList>(
+      db,
+      user2FriendRequestsRef,
+    );
     expect(user1FriendRequests).toBeNull();
     expect(user2FriendRequests).toBeNull();
 
-    const user1Friends = await readDataOnce(db, user1FriendsRef);
-    const user2Friends = await readDataOnce(db, user2FriendsRef);
+    const user1Friends = await readDataOnce<UserList>(db, user1FriendsRef);
+    const user2Friends = await readDataOnce<UserList>(db, user2FriendsRef);
     expect(user1Friends).toMatchObject({[testUserID2]: true});
     expect(user2Friends).toMatchObject({[testUserID]: true});
   });
@@ -497,8 +532,8 @@ describeWithEmulator('Test friend request functionality', () => {
     await set(ref(db, user1Ref), true);
     await set(ref(db, user2Ref), true);
     await unfriend(db, testUserID, testUserID2);
-    const user1Friends = await readDataOnce(db, user1FriendsRef);
-    const user2Friends = await readDataOnce(db, user2FriendsRef);
+    const user1Friends = await readDataOnce<UserList>(db, user1FriendsRef);
+    const user2Friends = await readDataOnce<UserList>(db, user2FriendsRef);
     expect(user1Friends).toBeNull();
     expect(user2Friends).toBeNull();
 
@@ -506,48 +541,3 @@ describeWithEmulator('Test friend request functionality', () => {
     expect(usersAreFriends).toBe(false);
   });
 });
-
-// describeWithEmulator('Test user data modifications', () => {
-//   let testApp: FirebaseApp;
-//   let db: Database;
-//   let auth: Auth;
-//   setupGlobalMocks();
-
-//   beforeAll(async () => {
-//     ({testApp, auth} = setupAuthTestEnv());
-//     ({testApp, db} = DatabaseEmulator.setup()); // Overrides the testApp
-//   });
-
-//   beforeEach(async () => {
-//     await DatabaseEmulator.fillWithMockData(db, true); // No friends
-//     await DatabaseEmulator.create(auth);
-//   });
-
-//   afterEach(async () => {
-//     await set(ref(db), null);
-//   });
-
-//   afterAll(async () => {
-//     await DatabaseEmulator.teardown(testApp, db);
-//   });
-
-//   it("should correctly modify a user's display name", async () => {
-//     const displayNameRef =
-//       DBPATHS.USERS_USER_ID_PROFILE_DISPLAY_NAME.getRoute(testUserID);
-//     const displayNameToUpdate = 'test-new-display-name';
-
-//     await changeDisplayName(db, auth.currentUser, displayNameToUpdate);
-
-//     const newDisplayName = await readDataOnce(db, displayNameRef);
-//     expect(newDisplayName).toEqual(displayNameToUpdate);
-
-//     const newNicknameKey = cleanStringForFirebaseKey(displayNameToUpdate);
-//     const nicknameRef = DBPATHS.NICKNAME_TO_ID_NICKNAME_KEY_USER_ID.getRoute(
-//       newNicknameKey,
-//       testUserID,
-//     );
-
-//     const newNicknameToId = await readDataOnce(db, nicknameRef);
-//     expect(newNicknameToId).toEqual(displayNameToUpdate);
-//   });
-// });

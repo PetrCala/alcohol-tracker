@@ -11,17 +11,19 @@ type FirebaseUpdates = Record<string, any>;
  *
  * @param db The Realtime Database instance.
  * @param refString Ref string to listen at
- * @returns
- *
+ * @returns A promise with either the data or null
+ * @example
+ * const {db} = useFirebase();
+ * const myData = await readDataOnce<MyDataType>(db, DBPATHS.SOME_ROUTE.getRoute())
  * */
-async function readDataOnce(
+async function readDataOnce<T>(
   db: Database,
   refString: string,
-): Promise<any | null> {
+): Promise<T | null> {
   const userRef = ref(db, refString);
   const snapshot = await get(userRef); // One-off fetch
   if (snapshot.exists()) {
-    return snapshot.val(); // Return user data
+    return snapshot.val() as T; // Return user data cast to the expected type
   }
   return null;
 }
@@ -73,7 +75,7 @@ function fetchDataForUsers(
   db: Database,
   userIDs: UserID[],
   refTemplate: string,
-): Promise<Profile[]> {
+): Promise<(Profile | null)[]> {
   if (!userIDs || userIDs.length === 0) {
     return Promise.resolve([]);
   }
@@ -81,7 +83,9 @@ function fetchDataForUsers(
     throw new Error('Invalid ref template');
   }
   return Promise.all(
-    userIDs.map(id => readDataOnce(db, refTemplate.replace('{userID}', id))),
+    userIDs.map(id =>
+      readDataOnce<Profile>(db, refTemplate.replace('{userID}', id)),
+    ),
   );
 }
 

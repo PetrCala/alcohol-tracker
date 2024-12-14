@@ -17,8 +17,8 @@ import * as Localize from './Localize';
  * @param error - The error object to be translated.
  * @returns
  */
-function getErrorMessage(error): string {
-  const err = error.message;
+function getErrorMessage(error: unknown): string {
+  const err = error instanceof Error ? error.message : '';
   switch (true) {
     case err.includes('storage/object-not-found'):
       return 'Object not found';
@@ -58,12 +58,14 @@ function getErrorMessage(error): string {
       return 'This version of the application is outdated. Please upgrade to the newest version.';
     case err.includes('database/account-creation-limit-exceeded'):
       return 'Rate limit exceeded. Please try again later.';
+    case err.includes('database/user-creation-failed'):
+      return 'User creation failed.';
     default:
       return err;
   }
 }
 
-function raiseAlert(error, heading = '', message = ''): void {
+function raiseAlert(error: unknown, heading = '', message = ''): void {
   const payload = getErrorMessage(error);
   Alert.alert(heading ?? 'Unknown error', `${message || ''}${payload}`);
 }
