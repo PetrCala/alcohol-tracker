@@ -32,32 +32,36 @@ function VerifyEmailModal() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorText, setErrorText] = useState('');
 
-  const onVerifyEmailButtonPress = async () => {
-    try {
-      setErrorText('');
-      setIsLoading(true);
-      await User.sendVerifyEmailLink(user);
-      setEmailSent(true);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : '';
-      setErrorText(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
+  const onVerifyEmailButtonPress = () => {
+    (async () => {
+      try {
+        setErrorText('');
+        setIsLoading(true);
+        await User.sendVerifyEmailLink(user);
+        setEmailSent(true);
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : '';
+        setErrorText(errorMessage);
+      } finally {
+        setIsLoading(false);
+      }
+    })();
   };
 
-  const onChangeEmailButtonPress = async () => {
-    if (!emailSent) {
-      setIsVisible(false);
-      Navigation.navigate(ROUTES.SETTINGS_EMAIL);
-      return;
-    }
-    if (user) {
-      await user.reload();
-      setEmailVerified(user.emailVerified);
-    } else {
-      setErrorText(translate('verifyEmailScreen.error.emailNotVerified'));
-    }
+  const onChangeEmailButtonPress = () => {
+    (async () => {
+      if (!emailSent) {
+        setIsVisible(false);
+        Navigation.navigate(ROUTES.SETTINGS_EMAIL);
+        return;
+      }
+      if (user) {
+        await user.reload();
+        setEmailVerified(user.emailVerified);
+      } else {
+        setErrorText(translate('verifyEmailScreen.error.emailNotVerified'));
+      }
+    })();
   };
 
   const onDismissVerifyEmail = () => {

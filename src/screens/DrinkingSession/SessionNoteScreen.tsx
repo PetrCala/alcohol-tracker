@@ -30,11 +30,13 @@ function SesssionNoteScreen({route}: SessionNoteScreenProps) {
   const styles = useThemeStyles();
   const session = DSUtils.getDrinkingSessionData(sessionId);
 
-  const onSubmit = async (
+  const onSubmit = (
     values: FormOnyxValues<typeof ONYXKEYS.FORMS.SESSION_NOTE_FORM>,
   ) => {
-    DS.updateNote(session, values.note);
-    Navigation.goBack();
+    (async () => {
+      DS.updateNote(session, values.note);
+      Navigation.goBack();
+    })();
   };
 
   /**

@@ -44,31 +44,35 @@ function SesssionDateScreen({route}: SessionDateScreenProps) {
     ? 'common.confirm'
     : 'common.save';
 
-  const onGoBack = async () => {
-    if (isBeingCreated) {
-      await Onyx.set(ONYXKEYS.IS_CREATING_NEW_SESSION, false);
-    }
-    if (backTo) {
-      Navigation.navigate(backTo as Route);
-      return;
-    }
-    Navigation.goBack();
+  const onGoBack = () => {
+    (async () => {
+      if (isBeingCreated) {
+        await Onyx.set(ONYXKEYS.IS_CREATING_NEW_SESSION, false);
+      }
+      if (backTo) {
+        Navigation.navigate(backTo as Route);
+        return;
+      }
+      Navigation.goBack();
+    })();
   };
 
-  const onSubmit = async (
+  const onSubmit = (
     values: FormOnyxValues<typeof ONYXKEYS.FORMS.SESSION_DATE_FORM>,
   ) => {
-    if (!user || !session) {
-      Alert.alert(translate('sessionDateScreen.error.load'));
-      return;
-    }
-    await DS.updateSessionDate(sessionId, session, new Date(values.date));
-    if (isBeingCreated) {
-      await Onyx.set(ONYXKEYS.IS_CREATING_NEW_SESSION, false);
-      DS.navigateToEditSessionScreen(sessionId, undefined, ROUTES.HOME);
-    } else {
-      onGoBack();
-    }
+    (async () => {
+      if (!user || !session) {
+        Alert.alert(translate('sessionDateScreen.error.load'));
+        return;
+      }
+      await DS.updateSessionDate(sessionId, session, new Date(values.date));
+      if (isBeingCreated) {
+        await Onyx.set(ONYXKEYS.IS_CREATING_NEW_SESSION, false);
+        DS.navigateToEditSessionScreen(sessionId, undefined, ROUTES.HOME);
+      } else {
+        onGoBack();
+      }
+    })();
   };
 
   /**

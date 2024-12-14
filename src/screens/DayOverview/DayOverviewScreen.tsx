@@ -88,16 +88,20 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
     setDailyData(newDailyData);
   }, [currentDate, drinkingSessionData]);
 
-  const onSessionButtonPress = async (
+  const onSessionButtonPress = (
     sessionId: string,
     session: DrinkingSession,
   ) => {
-    if (!session?.ongoing) {
-      Navigation.navigate(ROUTES.DRINKING_SESSION_SUMMARY.getRoute(sessionId));
-      return;
-    }
-    await Onyx.set(ONYXKEYS.ONGOING_SESSION_DATA, session);
-    DS.navigateToOngoingSessionScreen();
+    (async () => {
+      if (!session?.ongoing) {
+        Navigation.navigate(
+          ROUTES.DRINKING_SESSION_SUMMARY.getRoute(sessionId),
+        );
+        return;
+      }
+      await Onyx.set(ONYXKEYS.ONGOING_SESSION_DATA, session);
+      DS.navigateToOngoingSessionScreen();
+    })();
   };
 
   function DrinkingSession({sessionId, session}: DrinkingSessionKeyValue) {
@@ -195,21 +199,23 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
       return null;
     }
 
-    const onAddSessionButtonPress = async () => {
-      try {
-        await Utils.setLoadingText(translate('liveSessionScreen.loading'));
-        const newSession = await DS.getNewSessionToEdit(
-          db,
-          auth.currentUser,
-          currentDate,
-          userData?.timezone?.selected,
-        );
-        DS.navigateToEditSessionScreen(newSession?.id);
-      } catch (error) {
-        ErrorUtils.raiseAlert(error);
-      } finally {
-        await Utils.setLoadingText(null);
-      }
+    const onAddSessionButtonPress = () => {
+      (async () => {
+        try {
+          await Utils.setLoadingText(translate('liveSessionScreen.loading'));
+          const newSession = await DS.getNewSessionToEdit(
+            db,
+            auth.currentUser,
+            currentDate,
+            userData?.timezone?.selected,
+          );
+          DS.navigateToEditSessionScreen(newSession?.id);
+        } catch (error) {
+          ErrorUtils.raiseAlert(error);
+        } finally {
+          await Utils.setLoadingText(null);
+        }
+      })();
     };
 
     return (
