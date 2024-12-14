@@ -273,11 +273,6 @@ export default {
   },
   imageUpload: {
     success: 'Image uploaded successfully!',
-    error: {
-      fetch: 'Could not fetch the image. Please try again.',
-      upload: 'There was an error uploading your image.',
-      choice: 'There was an error when selecting your image.',
-    },
   },
   personalDetails: {
     error: {
@@ -631,11 +626,6 @@ export default {
     startNewSessionByClickingPlus:
       'Start a new session by clicking the plus button at the bottom of your screen',
     currentlyInSession: 'You are currently in a session!',
-    error: {
-      title: 'Failed to open a session',
-      sessionStart: "We couldn't start a new session. Please try again.",
-      noLiveSession: "You're not in a session",
-    },
   },
   liveSessionScreen: {
     saving: 'Saving your session...',
@@ -947,10 +937,41 @@ export default {
           'There was an issue creating the user account. Please try again.',
       },
     },
+    homeScreen: {
+      title: {
+        title: 'Home Screen Error',
+        message: 'Failed to load the home screen.',
+      },
+      noLiveSession: {
+        title: 'No Live Session',
+        message: "You're not currently in a session.",
+      },
+    },
+    imageUpload: {
+      fetch: {
+        title: 'Image Upload Failed',
+        message: 'Could not fetch the image. Please try again.',
+      },
+      upload: {
+        title: 'Image Upload Failed',
+        message: 'There was an error uploading your image. Please try again.',
+      },
+      choice: {
+        title: 'Image Choice Failed',
+        message:
+          'There was an error when selecting your image. Please try again.',
+      },
+    },
     onyx: {
       generic: {
         title: 'Database error',
         message: 'Failed to reach the local database',
+      },
+    },
+    session: {
+      sessionStart: {
+        title: 'Session Start Error',
+        message: 'Failed to start a new session.',
       },
     },
     user: {

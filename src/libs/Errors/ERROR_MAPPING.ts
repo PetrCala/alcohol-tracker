@@ -29,7 +29,13 @@ const ERROR_MAPPING: ErrorMapping = {
   [ERRORS.DATABASE.ACCOUNT_CREATION_LIMIT_EXCEEDED]:
     'errors.database.accountCreationLimitExceeded',
   [ERRORS.DATABASE.USER_CREATION_FAILED]: 'errors.database.userCreationFailed',
-  [ERRORS.ONYX.GENERIC]: 'errors.onxy.generic',
+  [ERRORS.HOME_SCREEN.TITLE]: 'errors.homeScreen.title',
+  [ERRORS.HOME_SCREEN.NO_LIVE_SESSION]: 'errors.homeScreen.noLiveSession',
+  [ERRORS.IMAGE_UPLOAD.FETCH]: 'errors.imageUpload.fetch',
+  [ERRORS.IMAGE_UPLOAD.UPLOAD]: 'errors.imageUpload.upload',
+  [ERRORS.IMAGE_UPLOAD.CHOICE]: 'errors.imageUpload.choice',
+  [ERRORS.ONYX.GENERIC]: 'errors.onyx.generic',
+  [ERRORS.SESSION.SESSION_START]: 'errors.session.sessionStart',
   [ERRORS.USER.COULD_NOT_UNFRIEND]: 'errors.user.couldNotUnfriend',
   [ERRORS.UNKNOWN]: 'errors.unknown',
 };
