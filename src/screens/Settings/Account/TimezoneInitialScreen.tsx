@@ -1,5 +1,5 @@
 import React from 'react';
-import {Alert, View} from 'react-native';
+import {View} from 'react-native';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import MenuItemWithTopDescription from '@components/MenuItemWithTopDescription';
 import ScreenWrapper from '@components/ScreenWrapper';
@@ -24,9 +24,9 @@ type TimezoneInitialScreenProps = StackScreenProps<
   SettingsNavigatorParamList,
   typeof SCREENS.SETTINGS.ACCOUNT.TIMEZONE
 >;
-// type TimezoneInitialScreenProps = WithCurrentUserDataProps;
 
-function TimezoneInitialScreen({}: TimezoneInitialScreenProps) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function TimezoneInitialScreen({route}: TimezoneInitialScreenProps) {
   const styles = useThemeStyles();
   const {db, auth} = useFirebase();
   const {userData} = useDatabaseData();
@@ -41,19 +41,23 @@ function TimezoneInitialScreen({}: TimezoneInitialScreenProps) {
    * Updates setting for automatic timezone selection.
    * Note: If we are updating automatically, we'll immediately calculate the user's timezone.
    */
-  const updateAutomaticTimezone = async (isAutomatic: boolean) => {
-    try {
-      await User.updateAutomaticTimezone(
-        db,
-        auth.currentUser,
-        isAutomatic,
-        isAutomatic && !isEmptyObject(currentTimezone)
-          ? currentTimezone
-          : timezone.selected!,
-      );
-    } catch (error) {
-      ErrorUtils.raiseAlert(error, translate('timezoneScreen.error.generic'));
-    }
+  const updateAutomaticTimezone = (isAutomatic: boolean) => {
+    (async () => {
+      const defaultTimezone =
+        timezone.selected ?? CONST.DEFAULT_TIME_ZONE.selected;
+      try {
+        await User.updateAutomaticTimezone(
+          db,
+          auth.currentUser,
+          isAutomatic,
+          isAutomatic && !isEmptyObject(currentTimezone)
+            ? currentTimezone
+            : defaultTimezone,
+        );
+      } catch (error) {
+        ErrorUtils.raiseAlert(error, translate('timezoneScreen.error.generic'));
+      }
+    })();
   };
 
   return (

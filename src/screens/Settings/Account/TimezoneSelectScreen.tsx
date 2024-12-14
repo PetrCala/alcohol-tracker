@@ -21,23 +21,26 @@ type TimezoneSelectScreenProps = StackScreenProps<
   typeof SCREENS.SETTINGS.ACCOUNT.TIMEZONE_SELECT
 >;
 
-function TimezoneSelectScreen({}: TimezoneSelectScreenProps) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function TimezoneSelectScreen({route}: TimezoneSelectScreenProps) {
   const {translate} = useLocalize();
   const {db, auth} = useFirebase();
   const {userData} = useDatabaseData();
   const timezone = userData?.timezone ?? CONST.DEFAULT_TIME_ZONE;
   const [isLoading, setIsLoading] = useState(false);
 
-  const saveSelectedTimezone = async (timezone: SelectedTimezone) => {
-    try {
-      setIsLoading(true);
-      await User.saveSelectedTimezone(db, auth.currentUser, timezone);
-    } catch (error) {
-      ErrorUtils.raiseAlert(error, translate('timezoneScreen.error.generic'));
-    } finally {
-      Navigation.goBack(ROUTES.SETTINGS_TIMEZONE);
-      setIsLoading(false);
-    }
+  const saveSelectedTimezone = (tz: SelectedTimezone) => {
+    (async () => {
+      try {
+        setIsLoading(true);
+        await User.saveSelectedTimezone(db, auth.currentUser, tz);
+      } catch (error) {
+        ErrorUtils.raiseAlert(error, translate('timezoneScreen.error.generic'));
+      } finally {
+        Navigation.goBack(ROUTES.SETTINGS_TIMEZONE);
+        setIsLoading(false);
+      }
+    })();
   };
 
   if (isLoading) {
