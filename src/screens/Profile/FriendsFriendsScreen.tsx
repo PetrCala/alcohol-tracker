@@ -65,21 +65,23 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
   const [displayData, setDisplayData] = useState<ProfileList>({});
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const localSearch = async (searchText: string): Promise<void> => {
-    try {
-      const searchMapping: UserIDToNicknameMapping = getNicknameMapping(
-        displayData,
-        'display_name',
-      );
-      const relevantResults = searchArrayByText(
-        objKeys(friends),
-        searchText,
-        searchMapping,
-      );
-      setDisplayedFriends(relevantResults); // Hide irrelevant
-    } catch (error) {
-      ErrorUtils.raiseAlert(error, translate('onyx.error.generic'));
-    }
+  const onLocalSearch = async (searchText: string) => {
+    (async () => {
+      try {
+        const searchMapping: UserIDToNicknameMapping = getNicknameMapping(
+          displayData,
+          'display_name',
+        );
+        const relevantResults = searchArrayByText(
+          objKeys(friends),
+          searchText,
+          searchMapping,
+        );
+        setDisplayedFriends(relevantResults); // Hide irrelevant
+      } catch (error) {
+        ErrorUtils.raiseAlert(error, translate('onyx.error.generic'));
+      }
+    })();
   };
 
   const updateDisplayData = async (
@@ -98,14 +100,14 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
     ): void => {
       const newRequestStatuses: Record<string, FriendRequestStatus> = {};
       if (friendRequests) {
-        Object.keys(friendRequests).forEach(userID => {
-          newRequestStatuses[userID] = friendRequests[userID];
+        Object.keys(friendRequests).forEach(id => {
+          newRequestStatuses[id] = friendRequests[id];
         });
       }
       setRequestStatuses(newRequestStatuses);
     };
     updateRequestStatuses(userData?.friend_requests);
-  }, [userData?.friend_requests, friends]);
+  }, [userData?.friend_requests]);
 
   const updateHooksBasedOnSearchResults = async (
     searchResults: UserSearchResults,
@@ -117,6 +119,11 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
   };
 
   const renderSearchResults = (renderCommonFriends: boolean): JSX.Element[] => {
+    const currentUserId = user?.uid;
+    if (!currentUserId) {
+      return [];
+    }
+
     return displayedFriends
       .filter(userID => commonFriends.includes(userID) === renderCommonFriends)
       .map(userID => (
@@ -126,8 +133,7 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
           userDisplayData={displayData[userID]}
           db={db}
           storage={storage}
-          // @ts-ignore
-          userFrom={user.uid}
+          userFrom={currentUserId}
           requestStatus={requestStatuses[userID]}
           alreadyAFriend={userData?.friends ? userData?.friends[userID] : false}
           customButton={
@@ -162,7 +168,7 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
   // Database data hooks
   useEffect(() => {
     fetchData();
-  }, [userID]);
+  }, [fetchData]);
 
   // Monitor friend groups
   useMemo(() => {
@@ -179,7 +185,7 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
     }
     setCommonFriends(commonFriends);
     setOtherFriends(otherFriends);
-  }, [userData, friends, requestStatuses]);
+  }, [userData, friends]);
 
   useMemo(() => {
     let noUsersFound = true;
@@ -198,7 +204,7 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
       setSearching(false);
     };
     initialSearch();
-  }, [friends]);
+  }, [friends, updateHooksBasedOnSearchResults]);
 
   const resetSearch = (): void => {
     // Reset all values displayed on screen
@@ -216,7 +222,7 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
       />
       <SearchWindow
         windowText={translate('friendsFriendsScreen.searchUsersFriends')}
-        onSearch={localSearch}
+        onSearch={onLocalSearch}
         onResetSearch={resetSearch}
         searchOnTextChange
       />
