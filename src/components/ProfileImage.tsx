@@ -1,14 +1,16 @@
 import React, {useEffect, useRef, useState} from 'react';
 import type {ImageSourcePropType, LayoutChangeEvent} from 'react-native';
-import {Alert, Image} from 'react-native';
+import {Image} from 'react-native';
 import type {FirebaseStorage} from 'firebase/storage';
 import getProfilePictureURL from '@src/storage/storageProfile';
 import useProfileImageCache from '@hooks/useProfileImageCache';
 import CONST from '@src/CONST';
 import type ImageLayout from '@src/types/various/ImageLayout';
+import * as ErrorUtils from '@libs/ErrorUtils';
 import * as KirokuIcons from './Icon/KirokuIcons';
 import EnlargableImage from './Buttons/EnlargableImage';
 import FlexibleLoadingIndicator from './FlexibleLoadingIndicator';
+import ERRORS from '@src/ERRORS';
 
 type ProfileImageProps = {
   storage: FirebaseStorage;
@@ -83,8 +85,7 @@ function ProfileImage(props: ProfileImageProps) {
 
         setImageUrl(downloadUrl);
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : '';
-        Alert.alert('Error fetching the image', errorMessage);
+        ErrorUtils.raiseAppError(ERRORS.IMAGE_UPLOAD.FETCH_FAILED, error);
       } finally {
         setLoadingImage(false);
       }

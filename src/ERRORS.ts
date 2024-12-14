@@ -15,6 +15,7 @@ const ERRORS = {
     UNAUTHORIZED: 'storage/unauthorized',
   },
   AUTH: {
+    ACCOUNT_DELETION_FAILED: 'user/account-deletion-failed',
     MISSING_EMAIL: 'auth/missing-email',
     INVALID_EMAIL: 'auth/invalid-email',
     VERIFY_EMAIL: 'auth/verify-email',
@@ -28,11 +29,13 @@ const ERRORS = {
     REQUIRES_RECENT_LOGIN: 'auth/requires-recent-login',
     API_KEY_NOT_VALID: 'auth/api-key-not-valid',
     TOO_MANY_REQUESTS: 'auth/too-many-requests',
+    SIGN_OUT_FAILED: 'auth/sign-out-failed',
   },
   DATABASE: {
+    ACCOUNT_CREATION_LIMIT_EXCEEDED: 'database/account-creation-limit-exceeded',
     DATA_FETCH_FAILED: 'database/data-fetch-failed',
     OUTDATED_APP_VERSION: 'database/outdated-app-version',
-    ACCOUNT_CREATION_LIMIT_EXCEEDED: 'database/account-creation-limit-exceeded',
+    SEARCH_FAILED: 'database/search-failed',
     USER_CREATION_FAILED: 'database/user-creation-failed',
   },
   HOME_SCREEN: {
@@ -54,9 +57,14 @@ const ERRORS = {
     START_FAILED: 'session/start-failed',
   },
   USER: {
-    ACCOUNT_DELETION_FAILED: 'user/account-deletion-failed',
     COULD_NOT_UNFRIEND: 'user/could-not-unfriend',
+    DATA_FETCH_FAILED: 'user/data-fetch-failed',
+    FEEDBACK_REMOVAL_FAILED: 'user/feedback-removal-failed',
+    FRIEND_REQUEST_SEND_FAILED: 'user/friend-request-send-failed',
+    FRIEND_REQUEST_ACCEPT_FAILED: 'user/friend-request-accept-failed',
+    FRIEND_REQUEST_REJECT_FAILED: 'user/friend-request-reject-failed',
     NICKNAME_UPDATE_FAILED: 'user/nickname-update-failed',
+    STATUS_UPDATE_FAILED: 'user/status-update-failed',
     TIMEZONE_UPDATE_FAILED: 'user/timezone-update-failed',
     USERNAME_UPDATE_FAILED: 'user/username-update-failed',
   },

@@ -1,6 +1,6 @@
+// TODO translate
 import React, {useEffect, useState} from 'react';
 import {
-  Alert,
   FlatList,
   Image,
   Modal,
@@ -15,10 +15,12 @@ import {fetchNicknameByUID} from '@userActions/User';
 import {useFirebase} from '@context/global/FirebaseContext';
 import CONST from '@src/CONST';
 import type {FeedbackList, Feedback} from '@src/types/onyx';
+import * as ErrorUtils from '@libs/ErrorUtils';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {format} from 'date-fns';
 import DateUtils from '@libs/DateUtils';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
+import ERRORS from '@src/ERRORS';
 
 // AdminFeedbackModal props
 type AdminFeedbackPopupProps = {
@@ -49,11 +51,7 @@ function AdminFeedbackPopup(props: AdminFeedbackPopupProps) {
     try {
       await removeFeedback(db, feedbackId);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : '';
-      Alert.alert(
-        'Failed to remove feedback',
-        `Feedback could not be removed:${errorMessage}`,
-      );
+      ErrorUtils.raiseAppError(ERRORS.USER.FEEDBACK_REMOVAL_FAILED, error);
     }
   }
 
@@ -68,11 +66,7 @@ function AdminFeedbackPopup(props: AdminFeedbackPopupProps) {
             newNicknames[item.user_id] = data; // Set if not null
           }
         } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : '';
-          Alert.alert(
-            'User nickname fetch failed',
-            `Could not fetch the nickname of user with UID: ${item.user_id}${errorMessage}`,
-          );
+          ErrorUtils.raiseAppError(ERRORS.USER.DATA_FETCH_FAILED, error);
         }
       }
       setNicknames(newNicknames);

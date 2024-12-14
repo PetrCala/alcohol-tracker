@@ -71,7 +71,7 @@ function DeleteAccountScreen({route}: DeleteAccountScreenProps) {
         setIsLoading(false);
       } catch (error) {
         // The navigation back to the public screens happens automatically upon Auth state change, so there is no need to call it here
-        ErrorUtils.raiseAppError(ERRORS.USER.ACCOUNT_DELETION_FAILED, error);
+        ErrorUtils.raiseAppError(ERRORS.AUTH.ACCOUNT_DELETION_FAILED, error);
       }
     })();
   };

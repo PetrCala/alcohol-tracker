@@ -1,5 +1,5 @@
 import React, {useMemo, useState} from 'react';
-import {Alert, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import SessionsCalendar from '@components/SessionsCalendar';
 import type {DateData} from 'react-native-calendars';
 import {
@@ -32,6 +32,7 @@ import getPlatform from '@libs/getPlatform';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
 import * as DS from '@userActions/DrinkingSession';
+import * as ErrorUtils from '@libs/ErrorUtils';
 import ScrollView from '@components/ScrollView';
 import useLocalize from '@hooks/useLocalize';
 import {roundToTwoDecimalPlaces} from '@libs/NumberUtils';
@@ -41,6 +42,7 @@ import BottomTabBar from '@libs/Navigation/AppNavigator/createCustomBottomTabNav
 import AgreeToTermsModal from '@components/AgreeToTermsModal';
 import {useOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
+import ERRORS from '@src/ERRORS';
 
 type HomeScreenOnyxProps = {};
 
@@ -124,11 +126,7 @@ function HomeScreen({}: HomeScreenProps) {
       try {
         synchronizeUserStatus(db, user.uid, drinkingSessionData);
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : '';
-        Alert.alert(
-          'Failed to contact the database',
-          `Could not update user online status:${errorMessage}`,
-        );
+        ErrorUtils.raiseAppError(ERRORS.USER.STATUS_UPDATE_FAILED, error);
       }
 
       // TZFIX (09-2024) - Redirect to TZ_FIX_INTRODUCTION if user has not set timezone

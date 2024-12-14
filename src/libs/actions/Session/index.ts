@@ -1,16 +1,17 @@
-import throttle from 'lodash/throttle';
+// import throttle from 'lodash/throttle';
 // import type {ChannelAuthorizationData} from 'pusher-js/types/src/core/auth/options';
 // import type {ChannelAuthorizationCallback} from 'pusher-js/with-encryption';
 import type {Auth} from 'firebase/auth';
 import {signOut as fbSignOut} from 'firebase/auth';
-import {Alert, InteractionManager, Linking, NativeModules} from 'react-native';
+// import {InteractionManager, Linking, NativeModules} from 'react-native';
 import type * as FormTypes from '@src/types/form';
-import type {OnyxEntry, OnyxUpdate} from 'react-native-onyx';
 import Onyx from 'react-native-onyx';
-import type {ValueOf} from 'type-fest';
+// import type {OnyxEntry, OnyxUpdate} from 'react-native-onyx';
+// import type {ValueOf} from 'type-fest';
+import * as ErrorUtils from '@libs/ErrorUtils';
 import * as PersistedRequests from '@userActions/PersistedRequests';
-import * as API from '@libs/API';
-import type {UserID} from '@src/types/onyx/OnyxCommon';
+// import * as API from '@libs/API';
+// import type {UserID} from '@src/types/onyx/OnyxCommon';
 // import type {
 //   AuthenticatePusherParams,
 //   BeginAppleSignInParams,
@@ -24,39 +25,38 @@ import type {UserID} from '@src/types/onyx/OnyxCommon';
 //   ValidateTwoFactorAuthParams,
 // } from '@libs/API/parameters';
 // import type SignInUserParams from '@libs/API/parameters/SignInUserParams';
-import {
-  READ_COMMANDS,
-  SIDE_EFFECT_REQUEST_COMMANDS,
-  WRITE_COMMANDS,
-} from '@libs/API/types';
+// import {
+//   READ_COMMANDS,
+//   SIDE_EFFECT_REQUEST_COMMANDS,
+//   WRITE_COMMANDS,
+// } from '@libs/API/types';
 // import * as Authentication from '@libs/Authentication';
-import * as ErrorUtils from '@libs/ErrorUtils';
-import HttpUtils from '@libs/HttpUtils';
-import Log from '@libs/Log';
+// import HttpUtils from '@libs/HttpUtils';
+// import Log from '@libs/Log';
 import Navigation from '@libs/Navigation/Navigation';
 import navigationRef from '@libs/Navigation/navigationRef';
 import * as MainQueue from '@libs/Network/MainQueue';
-import * as NetworkStore from '@libs/Network/NetworkStore';
-import NetworkConnection from '@libs/NetworkConnection';
-import * as Pusher from '@libs/Pusher/pusher';
+// import * as NetworkStore from '@libs/Network/NetworkStore';
+// import NetworkConnection from '@libs/NetworkConnection';
+// import * as Pusher from '@libs/Pusher/pusher';
 // import * as ReportUtils from '@libs/ReportUtils';
 import Timers from '@libs/Timers';
 // import {hideContextMenu} from '@pages/home/report/ContextMenu/ReportActionContextMenu';
-import * as Device from '@userActions/Device';
+// import * as Device from '@userActions/Device';
 // import * as PriorityMode from '@userActions/PriorityMode';
 // import redirectToSignIn from '@userActions/SignInRedirect';
 import Timing from '@userActions/Timing';
-import CONFIG from '@src/CONFIG';
-import CONST from '@src/CONST';
+// import CONFIG from '@src/CONFIG';
+// import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
-import type {Route} from '@src/ROUTES';
+// import type {Route} from '@src/ROUTES';
 import ROUTES from '@src/ROUTES';
 import SCREENS from '@src/SCREENS';
-import type Login from '@src/types/onyx/Login';
 // import type {AutoAuthState} from '@src/types/onyx/Session';
-import type Session from '@src/types/onyx/Session';
+// import type Session from '@src/types/onyx/Session';
 import type {FormOnyxValues} from '@components/Form/types';
-import clearCache from './clearCache';
+import ERRORS from '@src/ERRORS';
+// import clearCache from './clearCache';
 
 // let session: Session = {};
 // let authPromiseResolver: ((value: boolean) => void) | null = null;
@@ -1074,7 +1074,7 @@ function navigateToSignUpFromLoginScreen() {
 }
 
 /**
- * Signs out the user from the app.
+ * Signs out the user from the app. All errors should be handled within this function.
  *
  * @param auth Auth object from firebase
  */
@@ -1082,11 +1082,7 @@ async function signOut(auth: Auth) {
   try {
     await fbSignOut(auth);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : '';
-    Alert.alert(
-      'User sign out error',
-      `There was an error signing out: ${errorMessage}`,
-    );
+    ErrorUtils.raiseAppError(ERRORS.AUTH.SIGN_OUT_FAILED, error);
   }
 }
 
