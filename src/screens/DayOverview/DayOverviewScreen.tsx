@@ -211,7 +211,10 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
           );
           DS.navigateToEditSessionScreen(newSession?.id);
         } catch (error) {
-          ErrorUtils.raiseAlert(error);
+          ErrorUtils.raiseAlert(
+            error,
+            translate('dayOverviewScreen.error.createSession'),
+          );
         } finally {
           await Utils.setLoadingText(null);
         }

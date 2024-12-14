@@ -1,19 +1,18 @@
 import React, {useMemo, useRef} from 'react';
-import {Alert, View, Text as RNText, StyleProp, ViewStyle} from 'react-native';
+import {Alert, View} from 'react-native';
 import {unfriend} from '@database/friends';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Navigation from '@libs/Navigation/Navigation';
 import useWaitForNavigation from '@hooks/useWaitForNavigation';
-import IconAsset from '@src/types/utils/IconAsset';
-import {TranslationPaths} from '@src/languages/types';
+import * as ErrorUtils from '@libs/ErrorUtils';
+import * as KirokuIcons from './Icon/KirokuIcons';
 import useResponsiveLayout from '@hooks/useResponsiveLayout';
 import useWindowDimensions from '@hooks/useWindowDimensions';
 import type {PopoverMenuItem} from './PopoverMenu';
 import PopoverMenu from './PopoverMenu';
 import ConfirmModal from './ConfirmModal';
-import * as KirokuIcons from './Icon/KirokuIcons';
 
 type ManageFriendPopoverProps = {
   /** Whether the modal is visible */
@@ -63,10 +62,10 @@ const ManageFriendPopover: React.FC<ManageFriendPopoverProps> = ({
       try {
         await unfriend(db, user.uid, friendId);
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : '';
-        Alert.alert(
-          'User does not exist in the database',
-          `Could not unfriend this user: ${errorMessage}`,
+        ErrorUtils.raiseAlert(
+          error,
+          translate('database.error.userDoesNotExist'),
+          translate('profileScreen.errors.couldNotUnfriend'),
         );
       } finally {
         setUnfriendModalVisible(false);
