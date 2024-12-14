@@ -5,7 +5,7 @@ import type {
   FriendRequestList,
 } from '@src/types/onyx';
 import type {UserList} from '@src/types/onyx/OnyxCommon';
-import {useEffect, useMemo, useState} from 'react';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {isNonEmptyArray} from '@libs/Validation';
 import {searchArrayByText} from '@libs/Search';
@@ -52,7 +52,9 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
   const user = auth.currentUser;
   const {translate} = useLocalize();
   const [searching, setSearching] = useState<boolean>(false);
-  const [friends, setFriends] = useState<UserList | undefined>(undefined);
+  const [friends, setFriends] = useState<UserList | null | undefined>(
+    undefined,
+  );
   const [displayedFriends, setDisplayedFriends] = useState<UserSearchResults>(
     [],
   );
@@ -65,34 +67,65 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
   const [displayData, setDisplayData] = useState<ProfileList>({});
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const onLocalSearch = async (searchText: string) => {
-    (async () => {
-      try {
-        const searchMapping: UserIDToNicknameMapping = getNicknameMapping(
-          displayData,
-          'display_name',
-        );
-        const relevantResults = searchArrayByText(
-          objKeys(friends),
-          searchText,
-          searchMapping,
-        );
-        setDisplayedFriends(relevantResults); // Hide irrelevant
-      } catch (error) {
-        ErrorUtils.raiseAlert(error, translate('onyx.error.generic'));
-      }
-    })();
+  const onLocalSearch = (searchText: string) => {
+    try {
+      const searchMapping: UserIDToNicknameMapping = getNicknameMapping(
+        displayData,
+        'display_name',
+      );
+      const relevantResults = searchArrayByText(
+        objKeys(friends),
+        searchText,
+        searchMapping,
+      );
+      setDisplayedFriends(relevantResults); // Hide irrelevant
+    } catch (error) {
+      ErrorUtils.raiseAlert(error, translate('onyx.error.generic'));
+    }
   };
 
-  const updateDisplayData = async (
-    searchResultData: UserSearchResults,
-  ): Promise<void> => {
-    const newDisplayData: ProfileList = await Profile.fetchUserProfiles(
-      db,
-      searchResultData,
-    );
-    setDisplayData(newDisplayData);
+  const renderSearchResults = (renderCommonFriends: boolean): JSX.Element[] => {
+    const currentUserId = user?.uid;
+    if (!currentUserId) {
+      return [];
+    }
+
+    return displayedFriends
+      .filter(id => commonFriends.includes(id) === renderCommonFriends)
+      .map(id => (
+        <SearchResult
+          key={`${id}-container`}
+          userID={id}
+          userDisplayData={displayData[id]}
+          db={db}
+          storage={storage}
+          userFrom={currentUserId}
+          requestStatus={requestStatuses[id]}
+          alreadyAFriend={userData?.friends ? userData?.friends[id] : false}
+          customButton={
+            renderCommonFriends && (
+              <Button
+                key={`${id}-button`}
+                text={translate('friendsFriendsScreen.seeProfile')}
+                onPress={() => Navigation.navigate(ROUTES.PROFILE.getRoute(id))}
+                style={[styles.alignItemsCenter, styles.justifyContentCenter]}
+              />
+            )
+          }
+        />
+      ));
   };
+
+  const updateDisplayData = useCallback(
+    async (searchResultData: UserSearchResults): Promise<void> => {
+      const newDisplayData: ProfileList = await Profile.fetchUserProfiles(
+        db,
+        searchResultData,
+      );
+      setDisplayData(newDisplayData);
+    },
+    [db],
+  );
 
   useMemo(() => {
     const updateRequestStatuses = (
@@ -109,50 +142,16 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
     updateRequestStatuses(userData?.friend_requests);
   }, [userData?.friend_requests]);
 
-  const updateHooksBasedOnSearchResults = async (
-    searchResults: UserSearchResults,
-  ): Promise<void> => {
-    // updateRequestStatuses(searchResults); // Perhaps redundant
-    await updateDisplayData(searchResults); // Assuming this returns a Promise
-    const noUsersFound = !isNonEmptyArray(searchResults);
-    setNoUsersFound(noUsersFound);
-  };
+  const updateHooksBasedOnSearchResults = useCallback(
+    async (searchResults: UserSearchResults): Promise<void> => {
+      await updateDisplayData(searchResults);
+      const newNoUsersFound = !isNonEmptyArray(searchResults);
+      setNoUsersFound(newNoUsersFound);
+    },
+    [updateDisplayData],
+  );
 
-  const renderSearchResults = (renderCommonFriends: boolean): JSX.Element[] => {
-    const currentUserId = user?.uid;
-    if (!currentUserId) {
-      return [];
-    }
-
-    return displayedFriends
-      .filter(userID => commonFriends.includes(userID) === renderCommonFriends)
-      .map(userID => (
-        <SearchResult
-          key={`${userID}-container`}
-          userID={userID}
-          userDisplayData={displayData[userID]}
-          db={db}
-          storage={storage}
-          userFrom={currentUserId}
-          requestStatus={requestStatuses[userID]}
-          alreadyAFriend={userData?.friends ? userData?.friends[userID] : false}
-          customButton={
-            renderCommonFriends && (
-              <Button
-                key={`${userID}-button`}
-                text={translate('friendsFriendsScreen.seeProfile')}
-                onPress={() =>
-                  Navigation.navigate(ROUTES.PROFILE.getRoute(userID))
-                }
-                style={[styles.alignItemsCenter, styles.justifyContentCenter]}
-              />
-            )
-          }
-        />
-      ));
-  };
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setIsLoading(true);
       const userFriends: UserList | undefined = await readDataOnce(
@@ -163,37 +162,11 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [db, userID]);
 
-  // Database data hooks
   useEffect(() => {
     fetchData();
   }, [fetchData]);
-
-  // Monitor friend groups
-  useMemo(() => {
-    let commonFriends: string[] = [];
-    let otherFriends: string[] = [];
-    if (friends) {
-      commonFriends = getCommonFriends(
-        objKeys(friends),
-        objKeys(userData?.friends),
-      );
-      otherFriends = objKeys(friends).filter(
-        friend => !commonFriends.includes(friend),
-      );
-    }
-    setCommonFriends(commonFriends);
-    setOtherFriends(otherFriends);
-  }, [userData, friends]);
-
-  useMemo(() => {
-    let noUsersFound = true;
-    if (isNonEmptyArray(displayedFriends)) {
-      noUsersFound = false;
-    }
-    setNoUsersFound(noUsersFound);
-  }, [displayedFriends]);
 
   useEffect(() => {
     const initialSearch = async (): Promise<void> => {
@@ -205,6 +178,31 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
     };
     initialSearch();
   }, [friends, updateHooksBasedOnSearchResults]);
+
+  // Monitor friend groups
+  useMemo(() => {
+    let newCommonFriends: string[] = [];
+    let newOtherFriends: string[] = [];
+    if (friends) {
+      newCommonFriends = getCommonFriends(
+        objKeys(friends),
+        objKeys(userData?.friends),
+      );
+      newOtherFriends = objKeys(friends).filter(
+        friend => !newCommonFriends.includes(friend),
+      );
+    }
+    setCommonFriends(newCommonFriends);
+    setOtherFriends(newOtherFriends);
+  }, [userData?.friends, friends]);
+
+  useEffect(() => {
+    let newNoUsersFound = true;
+    if (isNonEmptyArray(displayedFriends)) {
+      newNoUsersFound = false;
+    }
+    setNoUsersFound(newNoUsersFound);
+  }, [displayedFriends]);
 
   const resetSearch = (): void => {
     // Reset all values displayed on screen
@@ -267,19 +265,6 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
 
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
 const localStyles = StyleSheet.create({
-  textContainer: {
-    width: '95%',
-    height: 50,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderWidth: 2,
-    borderColor: '#000',
-    borderRadius: 10,
-    marginTop: 10,
-    marginBottom: 5,
-    alignSelf: 'center',
-  },
   searchResultsContainer: {
     width: '100%',
     flexDirection: 'column',

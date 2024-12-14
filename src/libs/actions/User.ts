@@ -354,7 +354,7 @@ async function changeDisplayName(
   const nicknameRef = DBPATHS.NICKNAME_TO_ID_NICKNAME_KEY_USER_ID;
   const displayNameRef = DBPATHS.USERS_USER_ID_PROFILE_DISPLAY_NAME;
 
-  const currentDisplayName = await readDataOnce(
+  const currentDisplayName = await readDataOnce<string>(
     db,
     displayNameRef.getRoute(userID),
   );
@@ -614,7 +614,7 @@ async function signUp(
 
     // Delete the user from Firebase authentication
     await newUser.delete();
-    throw new Error('User creation failed', error.message);
+    throw new Error('database/user-creation-failed');
   }
 }
 
