@@ -35,6 +35,16 @@ const ERRORS = {
     ACCOUNT_CREATION_LIMIT_EXCEEDED: 'database/account-creation-limit-exceeded',
     USER_CREATION_FAILED: 'database/user-creation-failed',
   },
+  HOME_SCREEN: {
+    TITLE: 'home-screen/title',
+    SESSION_START: 'home-screen/session-start',
+    NO_LIVE_SESSION: 'home-screen/no-live-session',
+  },
+  IMAGE_UPLOAD: {
+    FETCH: 'image-upload/fetch',
+    UPLOAD: 'image-upload/upload',
+    CHOICE: 'image-upload/choice',
+  },
   ONYX: {
     GENERIC: 'onyx/generic',
   },

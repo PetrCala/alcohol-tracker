@@ -26,6 +26,7 @@ import type {SelectedTimezone} from '@src/types/onyx/UserData';
 import type {ValueOf} from 'type-fest';
 import _ from 'lodash';
 import DBPATHS from '@src/DBPATHS';
+import ERRORS from '@src/ERRORS';
 
 const drinkingSessionRef = DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID;
 const userStatusRef = DBPATHS.USER_STATUS_USER_ID;
@@ -136,7 +137,7 @@ async function startLiveDrinkingSession(
   timezone: SelectedTimezone | undefined,
 ): Promise<void> {
   if (!user) {
-    throw new Error(Localize.translateLocal('homeScreen.error.sessionStart'));
+    throw new Error('Failed to start a live session: User is null');
   }
 
   const newSessionId = generateDatabaseKey(
@@ -144,7 +145,9 @@ async function startLiveDrinkingSession(
     DBPATHS.USER_DRINKING_SESSIONS_USER_ID.getRoute(user.uid),
   );
   if (!newSessionId) {
-    throw new Error(Localize.translateLocal('homeScreen.error.sessionStart'));
+    throw new Error(
+      "Failed to start a live session: Couldn't generate a new session ID",
+    );
   }
 
   // The user is not in an active session

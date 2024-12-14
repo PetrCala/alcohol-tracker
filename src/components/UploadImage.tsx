@@ -6,10 +6,12 @@ import {Image as CompressorImage} from 'react-native-compressor';
 import checkPermission from '@libs/Permissions/checkPermission';
 import {requestPermission} from '@libs/Permissions/requestPermission';
 import * as Profile from '@userActions/Profile';
+import * as ErrorUtils from '@libs/ErrorUtils';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import useLocalize from '@hooks/useLocalize';
 import uploadImageToFirebase from '@src/storage/storageUpload';
 import UploadImagePopup from './Popups/UploadImagePopup';
+import ERRORS from '@src/ERRORS';
 
 type UploadImageComponentProps = {
   pathToUpload: string;
@@ -49,14 +51,7 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
       .then((image: any) => {
         const source = {uri: image.path};
         if (!source) {
-          Alert.alert(
-            translate('common.error.error'),
-            translate('imageUpload.error.fetch'),
-          );
-          // dispatch({
-          //   type: 'SET_WARNING',
-          //   payload: 'Could not fetch the image. Please try again.',
-          // });
+          ErrorUtils.raiseAppError(ERRORS.IMAGE_UPLOAD.FETCH);
           return;
         }
         setImageSource(source.uri); // Triggers upload
@@ -67,8 +62,7 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
         if (errorMessage === 'User cancelled image selection') {
           return;
         }
-        Alert.alert(translate('imageUpload.error.choice'), errorMessage);
-        // dispatch({type: 'SET_WARNING', payload: error.message});
+        ErrorUtils.raiseAppError(ERRORS.IMAGE_UPLOAD.CHOICE, error);
       });
   };
 
@@ -85,8 +79,7 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
       await chooseImage(); // Call automatically
       resetIndicators(); // Clean the indicators for upload
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : '';
-      Alert.alert(translate('imageUpload.error.choice'), errorMessage);
+      ErrorUtils.raiseAppError(ERRORS.IMAGE_UPLOAD.CHOICE, error);
     }
   };
 
@@ -125,9 +118,8 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
         }
         Alert.alert(translate('imageUpload.success'));
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : '';
         setImageSource(null);
-        Alert.alert(translate('imageUpload.error.upload'), errorMessage);
+        ErrorUtils.raiseAppError(ERRORS.IMAGE_UPLOAD.UPLOAD, error);
       } finally {
         setUploadOngoing(false); // Otherwise set upon success in child component
         setUploadModalVisible(false);

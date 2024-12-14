@@ -35,6 +35,7 @@ import Text from './Text';
 import PopoverMenu from './PopoverMenu';
 import type {PopoverMenuItem} from './PopoverMenu';
 import FloatingActionButton from './FloatingActionButton';
+import ERRORS from '@src/ERRORS';
 
 // Utils
 
@@ -90,7 +91,7 @@ function StartSessionButtonAndPopover(
       }
       DS.navigateToOngoingSessionScreen();
     } catch (error) {
-      ErrorUtils.raiseAlert(error, translate('homeScreen.error.title'));
+      ErrorUtils.raiseAppError(ERRORS.SESSION.SESSION_START, error);
     }
   };
 
@@ -105,7 +106,7 @@ function StartSessionButtonAndPopover(
         userData?.timezone?.selected,
       );
       if (!newSession?.id) {
-        throw new Error(translate('drinkingSession.error.missingId'));
+        throw new Error('Failed to create a new session: no session ID');
       }
       Navigation.navigate(
         ROUTES.DRINKING_SESSION_SESSION_DATE_SCREEN.getRoute(
@@ -115,7 +116,7 @@ function StartSessionButtonAndPopover(
       );
     } catch (error) {
       await Onyx.merge(ONYXKEYS.IS_CREATING_NEW_SESSION, false);
-      ErrorUtils.raiseAlert(error, translate('homeScreen.error.title'));
+      ErrorUtils.raiseAppError(ERRORS.SESSION.SESSION_START, error);
     } finally {
       await Utils.setLoadingText(null);
     }
