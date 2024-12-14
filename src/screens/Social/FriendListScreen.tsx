@@ -24,10 +24,12 @@ function FriendListScreen() {
   const [friends, setFriends] = useState<UserArray>([]);
   const [friendsToDisplay, setFriendsToDisplay] = useState<UserArray>([]);
   const {profileList} = useProfileList(friends);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // eslint-disable-next-line @typescript-eslint/require-await
   const localSearch = async (searchText: string): Promise<void> => {
     try {
+      setIsLoading(true);
       const searchMapping: UserIDToNicknameMapping = getNicknameMapping(
         profileList,
         'display_name',
@@ -44,6 +46,8 @@ function FriendListScreen() {
         translate('database.error.searchFailed'),
         `${translate('database.error.couldNotSearch')}: ${errorMessage}`,
       );
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -72,6 +76,7 @@ function FriendListScreen() {
         emptyListComponent={<NoFriendInfo />}
         userSubset={friendsToDisplay}
         orderUsers
+        isLoading={isLoading}
       />
     </View>
   );
