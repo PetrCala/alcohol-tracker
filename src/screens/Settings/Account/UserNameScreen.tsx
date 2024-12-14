@@ -1,6 +1,5 @@
 import React from 'react';
-import {View} from 'react-native';
-import {useOnyx, withOnyx} from 'react-native-onyx';
+import {useOnyx} from 'react-native-onyx';
 import FormProvider from '@components/Form/FormProvider';
 import InputWrapper from '@components/Form/InputWrapper';
 import type {FormInputErrors, FormOnyxValues} from '@components/Form/types';
@@ -25,15 +24,13 @@ import {useFirebase} from '@context/global/FirebaseContext';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {changeUserName} from '@userActions/User';
 
-type UserNameScreenOnyxProps = {};
+type UserNameScreenProps = StackScreenProps<
+  SettingsNavigatorParamList,
+  typeof SCREENS.SETTINGS.ACCOUNT.USER_NAME
+>;
 
-type UserNameScreenProps = UserNameScreenOnyxProps &
-  StackScreenProps<
-    SettingsNavigatorParamList,
-    typeof SCREENS.SETTINGS.ACCOUNT.USER_NAME
-  >;
-
-function UserNameScreen({}: UserNameScreenProps) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function UserNameScreen({route}: UserNameScreenProps) {
   const styles = useThemeStyles();
   const {translate} = useLocalize();
   const {db, auth} = useFirebase();
@@ -47,23 +44,27 @@ function UserNameScreen({}: UserNameScreenProps) {
     lastName: profileData?.last_name,
   };
 
-  const updateUserName = async (
+  const updateUserName = (
     values: FormOnyxValues<typeof ONYXKEYS.FORMS.USER_NAME_FORM>,
   ) => {
-    const newFirstName = values.firstName.trim();
-    const newLastName = values.lastName.trim();
+    (async () => {
+      const newFirstName = values.firstName.trim();
+      const newLastName = values.lastName.trim();
 
-    try {
-      setIsLoadingName(true);
-      await Utils.setLoadingText(translate('userNameScreen.updatingUserName'));
-      await changeUserName(db, auth.currentUser, newFirstName, newLastName);
-      Navigation.goBack();
-    } catch (error) {
-      ErrorUtils.raiseAlert(error, translate('username.error.generic'));
-    } finally {
-      setIsLoadingName(false);
-      await Utils.setLoadingText(null);
-    }
+      try {
+        setIsLoadingName(true);
+        await Utils.setLoadingText(
+          translate('userNameScreen.updatingUserName'),
+        );
+        await changeUserName(db, auth.currentUser, newFirstName, newLastName);
+        Navigation.goBack();
+      } catch (error) {
+        ErrorUtils.raiseAlert(error, translate('username.error.generic'));
+      } finally {
+        setIsLoadingName(false);
+        await Utils.setLoadingText(null);
+      }
+    })();
   };
 
   const validate = (
@@ -198,7 +199,4 @@ function UserNameScreen({}: UserNameScreenProps) {
 }
 
 UserNameScreen.userName = 'UserNameScreen';
-
-export default withOnyx<UserNameScreenProps, UserNameScreenOnyxProps>({})(
-  UserNameScreen,
-);
+export default UserNameScreen;
