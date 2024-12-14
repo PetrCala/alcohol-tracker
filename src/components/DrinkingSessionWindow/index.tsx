@@ -43,6 +43,7 @@ import type {CalendarColors} from '@components/SessionsCalendar/types';
 import type {User} from 'firebase/auth';
 import {useFocusEffect} from '@react-navigation/native';
 import type {DrinkingSessionWindowProps} from './types';
+import ERRORS from '@src/ERRORS';
 
 function DrinkingSessionWindow({
   onNavigateBack,
@@ -130,7 +131,7 @@ function DrinkingSessionWindow({
       return;
     }
     if (totalUnits > CONST.MAX_ALLOWED_UNITS) {
-      Log.warn(translate('liveSessionScreen.error.save'));
+      Log.warn('DrinkingSessionWindow - saveSession - Max units exceeded');
       return null;
     }
     if (totalUnits <= 0) {
@@ -159,10 +160,7 @@ function DrinkingSessionWindow({
       // Reroute to session summary, do not allow user to return
       onNavigateBack(CONST.NAVIGATION.SESSION_ACTION.SAVE);
     } catch (error) {
-      Alert.alert(
-        translate('liveSessionScreen.error.saveTitle'),
-        translate('liveSessionScreen.error.save'),
-      );
+      ErrorUtils.raiseAppError(ERRORS.SESSION.SAVE_FAILED, error);
       setSessionFinished(false);
     } finally {
       await Utils.setLoadingText(null);
@@ -194,11 +192,7 @@ function DrinkingSessionWindow({
       );
       onNavigateBack(CONST.NAVIGATION.SESSION_ACTION.DISCARD);
     } catch (error) {
-      ErrorUtils.raiseAlert(
-        error,
-        translate('liveSessionScreen.error.discardTitle'),
-        translate('liveSessionScreen.error.discard'),
-      );
+      ErrorUtils.raiseAppError(ERRORS.SESSION.DISCARD_FAILED, error);
     } finally {
       await Utils.setLoadingText(null);
     }

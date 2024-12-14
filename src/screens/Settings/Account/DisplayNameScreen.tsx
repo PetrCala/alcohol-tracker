@@ -24,6 +24,7 @@ import type SCREENS from '@src/SCREENS';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {changeDisplayName} from '@userActions/User';
+import ERRORS from '@src/ERRORS';
 
 type DisplayNameScreenProps = StackScreenProps<
   SettingsNavigatorParamList,
@@ -64,10 +65,7 @@ function DisplayNameScreen({route}: DisplayNameScreenProps) {
           newDisplayName,
         );
       } catch (error) {
-        ErrorUtils.raiseAlert(
-          error,
-          translate('displayNameScreen.error.generic'),
-        );
+        ErrorUtils.raiseAppError(ERRORS.USER.NICKNAME_UPDATE_FAILED, error);
       } finally {
         Navigation.goBack();
         Utils.setLoadingText(null);

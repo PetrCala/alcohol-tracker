@@ -1,3 +1,4 @@
+// TODO translate
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CONST from '@src/CONST';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
@@ -38,10 +39,10 @@ function UploadImagePopup({
 
   const UploadWindow: React.FC = () => {
     return (
-      <>
+      <View>
         <Text style={localStyles.modalText}>Uploading image...</Text>
         <Text style={localStyles.uploadText}>{uploadProgress}</Text>
-      </>
+      </View>
     );
   };
 
@@ -52,7 +53,7 @@ function UploadImagePopup({
     };
 
     return (
-      <>
+      <View>
         <Text style={localStyles.modalText}>Upload finished!</Text>
         <View style={localStyles.uploadFinishedContainer}>
           <Image
@@ -68,7 +69,7 @@ function UploadImagePopup({
             <Text style={localStyles.buttonText}>Great!</Text>
           </TouchableOpacity>
         </View>
-      </>
+      </View>
     );
   };
 

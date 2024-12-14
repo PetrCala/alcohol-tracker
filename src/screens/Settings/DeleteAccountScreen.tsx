@@ -12,9 +12,10 @@ import TextInput from '@components/TextInput';
 import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Navigation from '@libs/Navigation/Navigation';
-import * as ValidationUtils from '@libs/ValidationUtils';
 import type {SettingsNavigatorParamList} from '@navigation/types';
 import variables from '@styles/variables';
+import * as ErrorUtils from '@libs/ErrorUtils';
+import * as ValidationUtils from '@libs/ValidationUtils';
 import * as CloseAccount from '@userActions/CloseAccount';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
@@ -23,6 +24,7 @@ import INPUT_IDS from '@src/types/form/CloseAccountForm';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
+import ERRORS from '@src/ERRORS';
 
 type DeleteAccountScreenProps = StackScreenProps<
   SettingsNavigatorParamList,
@@ -54,18 +56,23 @@ function DeleteAccountScreen({route}: DeleteAccountScreenProps) {
 
   const onConfirm = () => {
     (async () => {
-      setLoadingText(translate('deleteAccountScreen.deletingAccount'));
-      setIsLoading(true);
-      await CloseAccount.closeAccount(
-        db,
-        auth,
-        userData,
-        reasonForLeaving,
-        password,
-      );
-      hideConfirmModal();
-      setLoadingText('');
-      setIsLoading(false);
+      try {
+        setLoadingText(translate('deleteAccountScreen.deletingAccount'));
+        setIsLoading(true);
+        await CloseAccount.closeAccount(
+          db,
+          auth,
+          userData,
+          reasonForLeaving,
+          password,
+        );
+        hideConfirmModal();
+        setLoadingText('');
+        setIsLoading(false);
+      } catch (error) {
+        // The navigation back to the public screens happens automatically upon Auth state change, so there is no need to call it here
+        ErrorUtils.raiseAppError(ERRORS.USER.ACCOUNT_DELETION_FAILED, error);
+      }
     })();
   };
 

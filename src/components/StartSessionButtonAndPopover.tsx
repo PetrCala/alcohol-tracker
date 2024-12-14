@@ -91,7 +91,7 @@ function StartSessionButtonAndPopover(
       }
       DS.navigateToOngoingSessionScreen();
     } catch (error) {
-      ErrorUtils.raiseAppError(ERRORS.SESSION.SESSION_START, error);
+      ErrorUtils.raiseAppError(ERRORS.SESSION.START_FAILED, error);
     }
   };
 
@@ -116,7 +116,7 @@ function StartSessionButtonAndPopover(
       );
     } catch (error) {
       await Onyx.merge(ONYXKEYS.IS_CREATING_NEW_SESSION, false);
-      ErrorUtils.raiseAppError(ERRORS.SESSION.SESSION_START, error);
+      ErrorUtils.raiseAppError(ERRORS.SESSION.START_FAILED, error);
     } finally {
       await Utils.setLoadingText(null);
     }
