@@ -56,8 +56,7 @@ function ProfileScreen({route}: ProfileScreenProps) {
   const {translate} = useLocalize();
   const styles = useThemeStyles();
   const {data: fetchedData, isLoading} = useFetchData(userID, relevantDataKeys);
-
-  const [selfFriends, setSelfFriends] = useState<UserList | undefined>();
+  const [selfFriends, setSelfFriends] = useState<UserList | null | undefined>();
   const [friendCount, setFriendCount] = useState(0);
   const [commonFriendCount, setCommonFriendCount] = useState(0);
   const [visibleDateData, setVisibleDateData] = useState(
@@ -94,12 +93,12 @@ function ProfileScreen({route}: ProfileScreenProps) {
       if (!user) {
         return;
       }
-      let ownFriends = friends;
+      let ownFriends: UserList | null | undefined = friends;
       if (user?.uid !== userID) {
-        ownFriends = await readDataOnce(
+        ownFriends = (await readDataOnce(
           db,
           DBPATHS.USERS_USER_ID_FRIENDS.getRoute(user.uid),
-        );
+        )) as UserList | null;
       }
       setSelfFriends(ownFriends);
     };

@@ -55,22 +55,24 @@ const ManageFriendPopover: React.FC<ManageFriendPopoverProps> = ({
     return baseMenuItems;
   }, [styles, translate, waitForNavigate]);
 
-  const handleUnfriend = async () => {
-    if (!user) {
-      return;
-    }
-    try {
-      await unfriend(db, user.uid, friendId);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : '';
-      Alert.alert(
-        'User does not exist in the database',
-        `Could not unfriend this user: ${errorMessage}`,
-      );
-    } finally {
-      setUnfriendModalVisible(false);
-      Navigation.goBack();
-    }
+  const handleUnfriend = () => {
+    (async () => {
+      if (!user) {
+        return;
+      }
+      try {
+        await unfriend(db, user.uid, friendId);
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : '';
+        Alert.alert(
+          'User does not exist in the database',
+          `Could not unfriend this user: ${errorMessage}`,
+        );
+      } finally {
+        setUnfriendModalVisible(false);
+        Navigation.goBack();
+      }
+    })();
   };
 
   return (

@@ -1,4 +1,4 @@
-import {Keyboard, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {Keyboard, StyleSheet, View} from 'react-native';
 import type {
   FriendRequestStatus,
   ProfileList,
@@ -36,6 +36,8 @@ import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
 import Button from '@components/Button';
+import Text from '@components/Text';
+import ScrollView from '@components/ScrollView';
 
 type FriendsFriendsScreenProps = StackScreenProps<
   ProfileNavigatorParamList,

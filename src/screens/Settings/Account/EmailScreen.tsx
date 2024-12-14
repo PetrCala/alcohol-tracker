@@ -26,15 +26,13 @@ import type SCREENS from '@src/SCREENS';
 import {useFirebase} from '@context/global/FirebaseContext';
 import DotIndicatorMessage from '@components/DotIndicatorMessage';
 
-type EmailScreenOnyxProps = {};
+type EmailScreenProps = StackScreenProps<
+  SettingsNavigatorParamList,
+  typeof SCREENS.SETTINGS.ACCOUNT.EMAIL
+>;
 
-type EmailScreenProps = EmailScreenOnyxProps &
-  StackScreenProps<
-    SettingsNavigatorParamList,
-    typeof SCREENS.SETTINGS.ACCOUNT.EMAIL
-  >;
-
-function EmailScreen({}: EmailScreenProps) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function EmailScreen({route}: EmailScreenProps) {
   const styles = useThemeStyles();
   const {translate} = useLocalize();
   const {auth} = useFirebase();
@@ -88,7 +86,7 @@ function EmailScreen({}: EmailScreenProps) {
 
       return errors;
     },
-    [translate],
+    [translate, currentEmail],
   );
 
   useEffect(() => {

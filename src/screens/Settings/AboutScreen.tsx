@@ -13,7 +13,6 @@ import Text from '@components/Text';
 import useLocalize from '@hooks/useLocalize';
 import useResponsiveLayout from '@hooks/useResponsiveLayout';
 import useThemeStyles from '@hooks/useThemeStyles';
-import useWaitForNavigation from '@hooks/useWaitForNavigation';
 import * as Environment from '@libs/Environment/Environment';
 import Navigation from '@libs/Navigation/Navigation';
 import CONST from '@src/CONST';
@@ -47,7 +46,6 @@ function AboutScreen() {
   const {translate} = useLocalize();
   const styles = useThemeStyles();
   const popoverAnchor = useRef<View | RNText | null>(null);
-  const waitForNavigate = useWaitForNavigation();
   const {shouldUseNarrowLayout} = useResponsiveLayout();
 
   const menuItems = useMemo(() => {
@@ -99,14 +97,14 @@ function AboutScreen() {
         title: translate(translationKey),
         icon,
         iconRight,
-        onPress: action || onPress,
+        onPress: action ?? onPress,
         shouldShowRightIcon: true,
         ref: popoverAnchor,
         shouldBlockSelection: !!link,
         wrapperStyle: [styles.sectionMenuItemTopDescription],
       }),
     );
-  }, [styles, translate, waitForNavigate]);
+  }, [styles, translate]);
 
   const versionInfoContainer = useCallback(
     () => (
