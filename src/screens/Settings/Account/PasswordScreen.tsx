@@ -43,24 +43,26 @@ function PasswordScreen({}: PasswordScreenProps) {
   const [serverErrorMessage, setServerErrorMessage] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
 
-  const onSubmit = async (
+  const onSubmit = (
     values: FormOnyxValues<typeof ONYXKEYS.FORMS.PASSWORD_FORM>,
   ) => {
-    setIsLoading(true);
+    (async () => {
+      setIsLoading(true);
 
-    try {
-      await User.updatePassword(
-        user,
-        values.currentPassword,
-        values.newPassword,
-      );
-      Navigation.goBack(); // TODO add a success message
-    } catch (error) {
-      const errorMessage = ErrorUtils.getErrorMessage(error);
-      setServerErrorMessage(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
+      try {
+        await User.updatePassword(
+          user,
+          values.currentPassword,
+          values.newPassword,
+        );
+        Navigation.goBack(); // TODO add a success message
+      } catch (error) {
+        const errorMessage = ErrorUtils.getErrorMessage(error);
+        setServerErrorMessage(errorMessage);
+      } finally {
+        setIsLoading(false);
+      }
+    })();
   };
 
   const validate = useCallback(

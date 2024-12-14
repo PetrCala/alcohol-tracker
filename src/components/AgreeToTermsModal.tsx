@@ -42,19 +42,21 @@ function AgreeToTermsModal() {
     setErrorText(newErrorText);
   };
 
-  const onConfirm = async () => {
-    if (!isChecked) {
-      setErrorText(translate('agreeToTerms.mustAgree'));
-      return;
-    }
+  const onConfirm = () => {
+    (async () => {
+      if (!isChecked) {
+        setErrorText(translate('agreeToTerms.mustAgree'));
+        return;
+      }
 
-    try {
-      await User.updateAgreedToTermsAt(db, user);
-      setIsModalVisible(false);
-    } catch (error) {
-      const errorMessage = ErrorUtils.getErrorMessage(error);
-      setErrorText(errorMessage);
-    }
+      try {
+        await User.updateAgreedToTermsAt(db, user);
+        setIsModalVisible(false);
+      } catch (error) {
+        const errorMessage = ErrorUtils.getErrorMessage(error);
+        setErrorText(errorMessage);
+      }
+    })();
   };
 
   useEffect(() => {

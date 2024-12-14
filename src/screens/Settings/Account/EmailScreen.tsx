@@ -44,24 +44,26 @@ function EmailScreen({}: EmailScreenProps) {
   const [successMessage, setSuccessMessage] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
 
-  const onSubmit = async (
+  const onSubmit = (
     values: FormOnyxValues<typeof ONYXKEYS.FORMS.EMAIL_FORM>,
   ) => {
-    setIsLoading(true);
-    setSuccessMessage('');
+    (async () => {
+      setIsLoading(true);
+      setSuccessMessage('');
 
-    try {
-      const emailToSend = values.email.trim();
-      const password = values.password;
+      try {
+        const emailToSend = values.email.trim();
+        const password = values.password;
 
-      await User.sendUpdateEmailLink(auth.currentUser, emailToSend, password);
-      setSuccessMessage(translate('emailScreen.success', emailToSend));
-    } catch (error) {
-      const errorMessage = ErrorUtils.getErrorMessage(error);
-      setServerErrorMessage(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
+        await User.sendUpdateEmailLink(auth.currentUser, emailToSend, password);
+        setSuccessMessage(translate('emailScreen.success', emailToSend));
+      } catch (error) {
+        const errorMessage = ErrorUtils.getErrorMessage(error);
+        setServerErrorMessage(errorMessage);
+      } finally {
+        setIsLoading(false);
+      }
+    })();
   };
 
   const validate = useCallback(

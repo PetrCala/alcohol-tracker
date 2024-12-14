@@ -17,9 +17,9 @@ function BaseUpdateAppModal({onSubmit}: UpdateAppModalProps) {
     setIsModalOpen(false);
   };
 
-  const onCancel = async () => {
+  const onCancel = () => {
     setIsModalOpen(false);
-    await Onyx.merge(ONYXKEYS.APP_UPDATE_DISMISSED, new Date().getTime());
+    Onyx.merge(ONYXKEYS.APP_UPDATE_DISMISSED, new Date().getTime());
   };
 
   return (
