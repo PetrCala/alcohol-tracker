@@ -602,6 +602,8 @@ export default {
     manageFriend: 'Manage Friend',
     unfriendPrompt: 'Do you really want to unfriend this user?',
     unfriend: 'Unfriend',
+    commonFriendsLabel: (hasCommonFriends: boolean) =>
+      `${hasCommonFriends ? 'Common friends:' : 'Friends:'}`,
   },
   statisticsScreen: {
     title: 'Statistics',
