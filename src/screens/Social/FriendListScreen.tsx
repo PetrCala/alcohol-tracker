@@ -4,7 +4,7 @@ import type {
   SearchWindowRef,
   UserIDToNicknameMapping,
 } from '@src/types/various/Search';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {objKeys} from '@libs/DataHandling';
 import {getNicknameMapping} from '@libs/SearchUtils';
 import {searchArrayByText} from '@libs/Search';
@@ -26,30 +26,32 @@ function FriendListScreen() {
   const {profileList} = useProfileList(friends);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // eslint-disable-next-line @typescript-eslint/require-await
-  const localSearch = async (searchText: string): Promise<void> => {
-    try {
-      setIsLoading(true);
-      const searchMapping: UserIDToNicknameMapping = getNicknameMapping(
-        profileList,
-        'display_name',
-      );
-      const relevantResults = searchArrayByText(
-        friends,
-        searchText,
-        searchMapping,
-      );
-      setFriendsToDisplay(relevantResults); // Hide irrelevant
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : '';
-      Alert.alert(
-        translate('database.error.searchFailed'),
-        `${translate('database.error.couldNotSearch')}: ${errorMessage}`,
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const localSearch = useCallback(
+    (searchText: string): void => {
+      try {
+        setIsLoading(true);
+        const searchMapping: UserIDToNicknameMapping = getNicknameMapping(
+          profileList,
+          'display_name',
+        );
+        const relevantResults = searchArrayByText(
+          friends,
+          searchText,
+          searchMapping,
+        );
+        setFriendsToDisplay(relevantResults); // Hide irrelevant
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : '';
+        Alert.alert(
+          translate('database.error.searchFailed'),
+          `${translate('database.error.couldNotSearch')}: ${errorMessage}`,
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [translate, friends, profileList],
+  );
 
   const resetSearch = () => {
     setFriendsToDisplay(friends);

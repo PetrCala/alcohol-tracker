@@ -22,7 +22,7 @@ import useStyleUtils from '@hooks/useStyleUtils';
 
 type SearchWindowProps = {
   windowText: string;
-  onSearch: (searchText: string, database?: Database) => Promise<void>;
+  onSearch: (searchText: string, database?: Database) => Promise<void> | void;
   onResetSearch: () => void;
   searchOnTextChange?: boolean;
 };
