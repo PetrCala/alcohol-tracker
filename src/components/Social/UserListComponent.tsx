@@ -27,8 +27,8 @@ import _ from 'lodash';
 import useThemeStyles from '@hooks/useThemeStyles';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
-import UserOverview from './UserOverview';
 import style from '@components/Icon/IconWrapperStyles';
+import UserOverview from './UserOverview';
 
 type UserListProps = {
   fullUserArray: UserArray;

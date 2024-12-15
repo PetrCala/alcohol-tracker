@@ -48,7 +48,7 @@ function FriendListScreen() {
         setIsLoading(false);
       }
     },
-    [translate, friends, profileList],
+    [friends, profileList],
   );
 
   const resetSearch = () => {

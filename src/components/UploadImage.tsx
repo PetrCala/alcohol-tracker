@@ -10,8 +10,8 @@ import * as ErrorUtils from '@libs/ErrorUtils';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import useLocalize from '@hooks/useLocalize';
 import uploadImageToFirebase from '@src/storage/storageUpload';
-import UploadImagePopup from './Popups/UploadImagePopup';
 import ERRORS from '@src/ERRORS';
+import UploadImagePopup from './Popups/UploadImagePopup';
 
 type UploadImageComponentProps = {
   pathToUpload: string;
