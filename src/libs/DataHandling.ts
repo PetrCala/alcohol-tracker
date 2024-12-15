@@ -16,15 +16,12 @@ import type {
   DrinkName,
   Drinks,
 } from '@src/types/onyx';
-import {formatInTimeZone} from 'date-fns-tz';
 import CONST from '@src/CONST';
-import type {MeasureType} from '@src/types/onyx/OnyxCommon';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import type {Timezone} from '@src/types/onyx/UserData';
 import _ from 'lodash';
 import Onyx from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
-import {MarkingProps} from 'react-native-calendars/src/calendar/day/marking';
 import * as DSUtils from './DrinkingSessionUtils';
 import {auth} from './Firebase/FirebaseApp';
 import {getRandomInt} from './Choice';
@@ -514,8 +511,11 @@ export function getZeroDrinksList(): DrinksList {
  */
 export function unitsToColors(
   units: number,
-  unitsToColors: UnitsToColors,
+  unitsToColors: UnitsToColors | undefined,
 ): CalendarColors {
+  if (!unitsToColors) {
+    return 'green';
+  }
   let sessionColor: CalendarColors;
   if (units === 0) {
     sessionColor = 'green';

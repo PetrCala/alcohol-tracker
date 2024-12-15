@@ -8,12 +8,7 @@ import ROUTES from '@src/ROUTES';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import useLocalize from '@hooks/useLocalize';
 
-type NotFoundScreenProps = {
-  onBackButtonPress?: () => void;
-};
-
-// eslint-disable-next-line rulesdir/no-negated-variables
-function NotFoundScreen({onBackButtonPress}: NotFoundScreenProps) {
+function NotFoundScreen() {
   const styles = useThemeStyles();
   const theme = useTheme();
   const {translate} = useLocalize();

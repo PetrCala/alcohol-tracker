@@ -63,7 +63,7 @@ function ConfirmationScreen({}: ConfirmationScreenProps) {
     onCorrect().catch(error => {
       ErrorUtils.raiseAppError(ERRORS.GENERIC, error);
     });
-  }, [onCorrect, translate]);
+  }, [onCorrect]);
 
   // const onIncorrect = () => {
   //   setShouldShowCancelConfirmModal(true);

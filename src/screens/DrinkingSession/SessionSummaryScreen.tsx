@@ -2,7 +2,6 @@ import type {StyleProp, ViewStyle} from 'react-native';
 import {View} from 'react-native';
 import {
   getLastDrinkAddedTime,
-  sumAllDrinks,
   sumDrinksOfSingleType,
   unitsToColors,
 } from '@libs/DataHandling';
@@ -26,7 +25,6 @@ import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import Button from '@components/Button';
 import useThemeStyles from '@hooks/useThemeStyles';
 import ScrollView from '@components/ScrollView';
-import useTheme from '@hooks/useTheme';
 import MenuItem from '@components/MenuItem';
 import Section from '@components/Section';
 import type {TranslationPaths} from '@src/languages/types';
@@ -60,18 +58,13 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
   const {preferences, drinkingSessionData} = useDatabaseData();
   const {translate} = useLocalize();
   const styles = useThemeStyles();
-  const theme = useTheme();
-  if (!preferences) {
-    return null;
-  } // Careful when writing hooks after this line
   const [session, setSession] = useState<DrinkingSession>(
     DSUtils.extractSessionOrEmpty(sessionId, drinkingSessionData),
   );
   // Drinks info
-  const totalDrinks = sumAllDrinks(session.drinks);
   const totalUnits = DSUtils.calculateTotalUnits(
     session.drinks,
-    preferences.drinks_to_units,
+    preferences?.drinks_to_units,
     true,
   );
   const drinkSums = {
@@ -96,7 +89,7 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
     session?.end_time,
     session?.timezone,
   );
-  const wasLiveSession = session?.type == CONST.SESSION.TYPES.LIVE;
+  const wasLiveSession = session?.type === CONST.SESSION.TYPES.LIVE;
   // Figure out last drink added
   const lastDrinkEditTimestamp = getLastDrinkAddedTime(session);
   const lastDrinkAdded = lastDrinkEditTimestamp
@@ -114,7 +107,7 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
 
   const sessionColor = session.blackout
     ? 'black'
-    : unitsToColors(totalUnits, preferences.units_to_colors);
+    : unitsToColors(totalUnits, preferences?.units_to_colors);
 
   const generalMenuItemsData: Menu = useMemo(() => {
     return {
@@ -163,7 +156,18 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
         },
       ],
     };
-  }, [session, styles.border]);
+  }, [
+    session,
+    styles.border,
+    lastDrinkAdded,
+    sessionColor,
+    sessionDay,
+    sessionEndTime,
+    sessionStartTime,
+    totalUnits,
+    wasLiveSession,
+    styles,
+  ]);
 
   const drinkData: DrinkMenuItem[] = [
     // {key: 'common.total', val: totalDrinks},
@@ -186,7 +190,7 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
           description: val.toString(),
         })),
     };
-  }, [session]);
+  }, [session, drinkData]);
 
   const otherMenuItemsData: Menu = useMemo(() => {
     return {
@@ -206,7 +210,7 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
         },
       ],
     };
-  }, [session]);
+  }, [session, translate, wasLiveSession]);
 
   const getSessionSummarySection = useCallback((menuItemsData: Menu) => {
     return (
@@ -215,7 +219,7 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
         titleStyles={styles.sectionTitleSimple}
         containerStyles={styles.pb0}
         childrenStyles={styles.pt3}>
-        <>
+        <View>
           {menuItemsData.items.map(
             (detail, index) =>
               !detail?.shouldHide && (
@@ -243,7 +247,7 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
                 />
               ),
           )}
-        </>
+        </View>
       </Section>
     );
   }, []);

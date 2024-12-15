@@ -1025,7 +1025,6 @@ const styles = (theme: ThemeColors) =>
       overflow: 'hidden',
       justifyContent: 'center',
       display: 'flex',
-      paddingLeft: 12,
       height: variables.contentHeaderHeight,
       width: '100%',
     },

@@ -4,11 +4,7 @@
 import {ref, get, set} from 'firebase/database';
 import type {FirebaseApp} from 'firebase/app';
 import {isConnectedToDatabaseEmulator} from '@src/libs/Firebase/FirebaseUtils';
-import {
-  type FriendRequestList,
-  type Profile,
-  type Drinks,
-  type DrinkingSession,
+import type {
   Config,
   UserStatus,
   UnconfirmedDays,
@@ -17,6 +13,10 @@ import {
   UserData,
   Nickname,
   UserStatusList,
+  FriendRequestList,
+  Profile,
+  Drinks,
+  DrinkingSession,
 } from '@src/types/onyx';
 import type {Database} from 'firebase/database';
 import {saveDrinkingSessionData} from '@libs/actions/DrinkingSession';
@@ -47,11 +47,11 @@ import {
   createMockSession,
   createMockUserStatus,
 } from '@src/database/MockDatabase';
+import type {UserList} from '@src/types/onyx/OnyxCommon';
 import {describeWithEmulator} from '../../emulators/utils';
 import {MOCK_USER_IDS} from '../../utils/testsStatic';
 import DatabaseEmulator from '../../emulators/database';
 import {setupGlobalMocks} from '../../utils/testUtils';
-import {UserList} from '@src/types/onyx/OnyxCommon';
 
 require('dotenv').config();
 

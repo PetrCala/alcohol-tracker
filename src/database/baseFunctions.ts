@@ -75,7 +75,7 @@ function fetchDataForUsers(
   db: Database,
   userIDs: UserID[],
   refTemplate: string,
-): Promise<(Profile | null)[]> {
+): Promise<Array<Profile | null>> {
   if (!userIDs || userIDs.length === 0) {
     return Promise.resolve([]);
   }

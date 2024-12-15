@@ -159,10 +159,10 @@ function isDrinkTypeKey(key: string): key is keyof Drinks {
  */
 function calculateTotalUnits(
   drinks: DrinksList | undefined,
-  drinksToUnits: DrinksToUnits,
+  drinksToUnits: DrinksToUnits | undefined,
   roundUp?: boolean,
 ): number {
-  if (!drinks) {
+  if (!drinks || !drinksToUnits) {
     return 0;
   }
 

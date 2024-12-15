@@ -3,12 +3,13 @@ import mapValues from 'lodash/mapValues';
 import type {OnyxEntry} from 'react-native-onyx';
 import type {TranslationPaths} from '@src/languages/types';
 import type {ErrorFields, Errors} from '@src/types/onyx/OnyxCommon';
-import AppError from '@libs/Errors/AppError';
-import ERROR_MAPPING from '@libs/Errors/ERROR_MAPPING';
+import type {ErrorKey} from '@src/ERRORS';
+import ERRORS from '@src/ERRORS';
+import Log from './Log';
+import AppError from './Errors/AppError';
+import ERROR_MAPPING from './Errors/ERROR_MAPPING';
 import DateUtils from './DateUtils';
-import Log from '@libs/Log';
 import * as Localize from './Localize';
-import ERRORS, {ErrorKey} from '@src/ERRORS';
 
 /**
  * Transforms an unknown error into a typed AppError object with a title and message.

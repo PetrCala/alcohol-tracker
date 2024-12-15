@@ -1,9 +1,8 @@
 import React, {useMemo, useState} from 'react';
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import {View} from 'react-native';
 import SessionsCalendar from '@components/SessionsCalendar';
 import type {DateData} from 'react-native-calendars';
 import {
-  calculateThisMonthDrinks,
   calculateThisMonthUnits,
   timestampToDate,
   dateToDateData,
@@ -43,13 +42,15 @@ import AgreeToTermsModal from '@components/AgreeToTermsModal';
 import {useOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 import ERRORS from '@src/ERRORS';
+import Button from '@components/Button';
 
-type HomeScreenOnyxProps = {};
+type HomeScreenProps = StackScreenProps<
+  BottomTabNavigatorParamList,
+  typeof SCREENS.HOME
+>;
 
-type HomeScreenProps = HomeScreenOnyxProps &
-  StackScreenProps<BottomTabNavigatorParamList, typeof SCREENS.HOME>;
-
-function HomeScreen({}: HomeScreenProps) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function HomeScreen({route}: HomeScreenProps) {
   const styles = useThemeStyles();
   const {auth, db, storage} = useFirebase();
   const {translate} = useLocalize();
@@ -62,7 +63,6 @@ function HomeScreen({}: HomeScreenProps) {
     dateToDateData(new Date()),
   );
   const [drinkingSessionsCount, setDrinkingSessionsCount] = useState<number>(0);
-  const [drinksConsumed, setDrinksConsumed] = useState<number>(0);
   const [unitsConsumed, setUnitsConsumed] = useState<number>(0);
   const [shouldNavigateToTzFix, setShouldNavigateToTzFix] =
     useState<boolean>(false);
@@ -86,10 +86,6 @@ function HomeScreen({}: HomeScreenProps) {
     const drinkingSessionArray: DrinkingSessionArray = drinkingSessionData
       ? Object.values(drinkingSessionData)
       : [];
-    const thisMonthDrinks = calculateThisMonthDrinks(
-      visibleDate,
-      drinkingSessionArray,
-    );
     const thisMonthUnits = calculateThisMonthUnits(
       visibleDate,
       drinkingSessionArray,
@@ -102,7 +98,6 @@ function HomeScreen({}: HomeScreenProps) {
     ).length; // Replace this in the future
 
     setDrinkingSessionsCount(thisMonthSessionCount);
-    setDrinksConsumed(thisMonthDrinks);
     setUnitsConsumed(thisMonthUnits);
   }, [drinkingSessionData, visibleDate, preferences]);
 
@@ -111,10 +106,10 @@ function HomeScreen({}: HomeScreenProps) {
       !DSUtils.allSessionsContainTimezone(drinkingSessionData);
 
     // Only navigate in case the user is setting up TZ for the first time
-    const shouldNavigateToTzFix = sessionsAreMissingTz && !userData?.timezone;
+    const shouldNavigate = sessionsAreMissingTz && !userData?.timezone;
 
-    setShouldNavigateToTzFix(shouldNavigateToTzFix);
-  }, [drinkingSessionData, userData]);
+    setShouldNavigateToTzFix(shouldNavigate);
+  }, [drinkingSessionData, userData?.timezone]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -134,6 +129,7 @@ function HomeScreen({}: HomeScreenProps) {
         Navigation.navigate(ROUTES.TZ_FIX_INTRODUCTION);
       }
     }, [
+      db,
       user,
       userData,
       preferences,
@@ -161,22 +157,23 @@ function HomeScreen({}: HomeScreenProps) {
       includeSafeAreaPaddingBottom={getPlatform() !== CONST.PLATFORM.IOS}>
       {/* // TODO rewrite this into the HeaderWithBackButton component */}
       <View style={[styles.headerBar, styles.borderBottom]}>
-        <TouchableOpacity
-          accessibilityRole="button"
-          onPress={() => Navigation.navigate(ROUTES.PROFILE.getRoute(user.uid))}
-          style={localStyles.profileButton}>
+        <Button
+          style={[styles.flexRow, styles.bgTransparent]}
+          onPress={() =>
+            Navigation.navigate(ROUTES.PROFILE.getRoute(user.uid))
+          }>
           <ProfileImage
             storage={storage}
             userID={user.uid}
             downloadPath={userData.profile.photo_url}
-            style={localStyles.profileImage}
+            style={styles.avatarMedium}
             // refreshTrigger={refreshCounter}
             refreshTrigger={0}
           />
           <Text style={[styles.headerText, styles.textLarge, styles.ml3]}>
             {user.displayName}
           </Text>
-        </TouchableOpacity>
+        </Button>
       </View>
       <ScrollView>
         {!!ongoingSessionData?.ongoing && (
@@ -207,28 +204,5 @@ function HomeScreen({}: HomeScreenProps) {
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-use-before-define
-const localStyles = StyleSheet.create({
-  profileButton: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-  },
-  profileImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-  },
-  headerUsername: {
-    flexWrap: 'wrap',
-    fontSize: 18,
-    fontWeight: '500',
-    color: 'black',
-    marginLeft: 10,
-    alignSelf: 'center',
-  },
-});
-
 HomeScreen.displayName = 'Home Screen';
-
 export default HomeScreen;

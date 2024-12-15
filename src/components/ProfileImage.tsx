@@ -7,10 +7,10 @@ import useProfileImageCache from '@hooks/useProfileImageCache';
 import CONST from '@src/CONST';
 import type ImageLayout from '@src/types/various/ImageLayout';
 import * as ErrorUtils from '@libs/ErrorUtils';
+import ERRORS from '@src/ERRORS';
 import * as KirokuIcons from './Icon/KirokuIcons';
 import EnlargableImage from './Buttons/EnlargableImage';
 import FlexibleLoadingIndicator from './FlexibleLoadingIndicator';
-import ERRORS from '@src/ERRORS';
 
 type ProfileImageProps = {
   storage: FirebaseStorage;

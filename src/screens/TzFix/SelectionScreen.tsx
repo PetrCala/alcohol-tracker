@@ -77,7 +77,7 @@ function SelectionScreen({}: SelectionScreenProps) {
         ErrorUtils.raiseAppError(ERRORS.USER.TIMEZONE_UPDATE_FAILED, error);
       });
     },
-    [saveSelectedTimezone, translate],
+    [saveSelectedTimezone],
   );
 
   const filterShownTimezones = (searchText: string) => {

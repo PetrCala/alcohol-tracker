@@ -7,13 +7,13 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import Navigation from '@libs/Navigation/Navigation';
 import useWaitForNavigation from '@hooks/useWaitForNavigation';
 import * as ErrorUtils from '@libs/ErrorUtils';
-import * as KirokuIcons from './Icon/KirokuIcons';
 import useResponsiveLayout from '@hooks/useResponsiveLayout';
 import useWindowDimensions from '@hooks/useWindowDimensions';
+import ERRORS from '@src/ERRORS';
+import * as KirokuIcons from './Icon/KirokuIcons';
 import type {PopoverMenuItem} from './PopoverMenu';
 import PopoverMenu from './PopoverMenu';
 import ConfirmModal from './ConfirmModal';
-import ERRORS from '@src/ERRORS';
 
 type ManageFriendPopoverProps = {
   /** Whether the modal is visible */

@@ -4,6 +4,7 @@
  */
 export default class AppError extends Error {
   public title: string;
+
   public code: string;
 
   constructor(message: string, title = 'Error', code = 'UNKNOWN_ERROR') {

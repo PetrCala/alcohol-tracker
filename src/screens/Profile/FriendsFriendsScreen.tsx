@@ -1,4 +1,4 @@
-import {StyleSheet, View} from 'react-native';
+import {View} from 'react-native';
 import type {
   FriendRequestStatus,
   ProfileList,
@@ -229,33 +229,37 @@ function FriendsFriendsScreen({route}: FriendsFriendsScreenProps) {
         <View style={[styles.mt2, styles.flexColumn]}>
           {searching || isLoading ? (
             <FlexibleLoadingIndicator />
-          ) : isNonEmptyArray(displayedFriends) ? (
-            <View style={styles.appBG}>
-              <GrayHeader
-                headerText={`${translate('friendsFriendsScreen.commonFriends')} (${getCommonFriendsCount(
-                  commonFriends,
-                  displayedFriends,
-                )})`}
-              />
-              {renderSearchResults(true)}
-              <GrayHeader
-                headerText={`${translate('friendsFriendsScreen.otherFriends')} (${getCommonFriendsCount(
-                  otherFriends,
-                  displayedFriends,
-                )})`}
-              />
-              {renderSearchResults(false)}
-            </View>
           ) : (
-            noUsersFound && (
-              <Text style={styles.noResultsText}>
-                {objKeys(friends).length > 0
-                  ? `${translate('friendsFriendsScreen.noFriendsFound')}\n\n${translate(
-                      'friendsFriendsScreen.trySearching',
-                    )}`
-                  : translate('friendsFriendsScreen.hasNoFriends')}
-              </Text>
-            )
+            <View>
+              {isNonEmptyArray(displayedFriends) ? (
+                <View style={styles.appBG}>
+                  <GrayHeader
+                    headerText={`${translate('friendsFriendsScreen.commonFriends')} (${getCommonFriendsCount(
+                      commonFriends,
+                      displayedFriends,
+                    )})`}
+                  />
+                  {renderSearchResults(true)}
+                  <GrayHeader
+                    headerText={`${translate('friendsFriendsScreen.otherFriends')} (${getCommonFriendsCount(
+                      otherFriends,
+                      displayedFriends,
+                    )})`}
+                  />
+                  {renderSearchResults(false)}
+                </View>
+              ) : (
+                noUsersFound && (
+                  <Text style={styles.noResultsText}>
+                    {objKeys(friends).length > 0
+                      ? `${translate('friendsFriendsScreen.noFriendsFound')}\n\n${translate(
+                          'friendsFriendsScreen.trySearching',
+                        )}`
+                      : translate('friendsFriendsScreen.hasNoFriends')}
+                  </Text>
+                )
+              )}
+            </View>
           )}
         </View>
         <FillerView />

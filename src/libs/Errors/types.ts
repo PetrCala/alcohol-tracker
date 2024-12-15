@@ -1,10 +1,6 @@
-import {ErrorKey} from '@src/ERRORS';
-import {
-  NonFinalNodePaths,
-  NonFinalPaths,
-  TranslationBase,
-  TranslationPaths,
-} from '@src/languages/types';
+import type {ErrorKey} from '@src/ERRORS';
+import type {NonFinalNodePaths, TranslationPaths} from '@src/languages/types';
+import {NonFinalPaths, TranslationBase} from '@src/languages/types';
 
 /**
  * Represents the details of an error, including a user-friendly title and a descriptive message.

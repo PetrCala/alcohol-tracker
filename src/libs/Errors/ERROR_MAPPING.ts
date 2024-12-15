@@ -1,5 +1,5 @@
 import ERRORS from '@src/ERRORS';
-import {ErrorMapping} from './types';
+import type {ErrorMapping} from './types';
 
 /**
  * A mapping of known error keys to short titles and descriptive messages.
