@@ -5,10 +5,10 @@ import type {
   MouseEventHandler,
 } from 'react';
 import React, {forwardRef} from 'react';
-// eslint-disable-next-line no-restricted-imports
 import {Linking} from 'react-native';
 import type {
   GestureResponderEvent,
+  // eslint-disable-next-line no-restricted-imports
   Text as RNText,
   StyleProp,
   TextStyle,

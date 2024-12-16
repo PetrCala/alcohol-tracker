@@ -152,7 +152,7 @@ module.exports = {
     'testing-library',
     'eslint-plugin-react-compiler',
   ],
-  ignorePatterns: ['lib/**'],
+  ignorePatterns: ['lib/**', 'src/libs/common/**'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     project: path.resolve(__dirname, './tsconfig.json'),

@@ -54,9 +54,6 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
   const [editMode, setEditMode] = useState<boolean>(false);
   const [dailyData, setDailyData] = useState<DrinkingSessionKeyValue[]>([]);
 
-  const changeDay = (days: number) =>
-    setCurrentDate(changeDateBySomeDays(currentDate, days));
-
   // Monitor the combined data
   useMemo(() => {
     if (!drinkingSessionData) {
@@ -81,6 +78,9 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
   }, [currentDate, drinkingSessionData]);
 
   const changeDayButtons = useMemo(() => {
+    const changeDay = (days: number) =>
+      setCurrentDate(changeDateBySomeDays(currentDate, days));
+
     const buttonData: ButtonItemData[] = [
       {
         onPress: () => changeDay(-1),
@@ -110,7 +110,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
         onPress={item.onPress}
       />
     ));
-  }, [changeDay, StyleUtils, windowWidth, styles]);
+  }, [currentDate, StyleUtils, windowWidth, styles]);
 
   if (!isOnline) {
     return <UserOffline />;
