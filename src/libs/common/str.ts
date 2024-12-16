@@ -1,6 +1,3 @@
-/* eslint-disable no-control-regex */
-import _ from 'underscore';
-
 /**
  * Checks if parameter is a string or function
  * if it is a function then we will call it with
@@ -132,13 +129,13 @@ const Str = {
     }
     str = str.substr(0, 1).toUpperCase() + str.substr(1).toLowerCase();
 
-    function recap_callback(t: unknown, a: string, b: string) {
+    function recapCallaback(t: unknown, a: string, b: string) {
       return a + b.toUpperCase();
     }
     return str.replace(
       // **NOTE: Match to _libfop.php
       /([^A-Za-z'.0-9])([a-z])/g,
-      recap_callback,
+      recapCallaback,
     );
   },
 
