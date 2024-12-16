@@ -6,6 +6,7 @@ import type {
   UntilTimeParams,
 } from './types';
 import type {SignUpNewAccountCodeParams} from './params';
+import {DrinkingSessionId} from '@src/types/onyx';
 
 /* eslint-disable max-len */
 export default {
@@ -633,7 +634,11 @@ export default {
     enterEditMode: 'Edit Mode',
     exitEditMode: 'Exit Edit Mode',
     noDrinkingSessions: 'No drinking sessions',
+    addSessionExplained: 'Add a session (Floating action)',
+    sessionWindow: (sessionId: DrinkingSessionId) =>
+      `Drinking session: ${sessionId}`,
     ongoing: 'Ongoing',
+    loadingDate: 'Loading date...',
     error: {
       open: 'Failed to open a new session. Please try again.',
     },

@@ -67,15 +67,6 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
     preferences?.drinks_to_units,
     true,
   );
-  const drinkSums = {
-    small_beer: sumDrinksOfSingleType(session.drinks, 'small_beer'),
-    beer: sumDrinksOfSingleType(session.drinks, 'beer'),
-    wine: sumDrinksOfSingleType(session.drinks, 'wine'),
-    weak_shot: sumDrinksOfSingleType(session.drinks, 'weak_shot'),
-    strong_shot: sumDrinksOfSingleType(session.drinks, 'strong_shot'),
-    cocktail: sumDrinksOfSingleType(session.drinks, 'cocktail'),
-    other: sumDrinksOfSingleType(session.drinks, 'other'),
-  };
   // Time info
   const sessionDay = DateUtils.getLocalizedDay(
     session.start_time,
@@ -96,13 +87,19 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
     ? DateUtils.getLocalizedTime(lastDrinkEditTimestamp, session?.timezone)
     : 'Unknown';
 
-  const handleBackPress = () => {
+  const onBackPress = () => {
     const lastScreenName = Navigation.getLastScreenName(true);
     if (lastScreenName === SCREENS.DAY_OVERVIEW.ROOT) {
       Navigation.goBack();
     } else {
       Navigation.navigate(ROUTES.HOME);
     }
+  };
+
+  const onEditSessionPress = () => {
+    (async () => {
+      await DS.navigateToEditSessionScreen(sessionId, session); // Use keyextractor to load id
+    })();
   };
 
   const sessionColor = session.blackout
@@ -169,6 +166,15 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
   ]);
 
   const drinkMenuItemsData: Menu = useMemo(() => {
+    const drinkSums = {
+      small_beer: sumDrinksOfSingleType(session.drinks, 'small_beer'),
+      beer: sumDrinksOfSingleType(session.drinks, 'beer'),
+      wine: sumDrinksOfSingleType(session.drinks, 'wine'),
+      weak_shot: sumDrinksOfSingleType(session.drinks, 'weak_shot'),
+      strong_shot: sumDrinksOfSingleType(session.drinks, 'strong_shot'),
+      cocktail: sumDrinksOfSingleType(session.drinks, 'cocktail'),
+      other: sumDrinksOfSingleType(session.drinks, 'other'),
+    };
     const drinkData: DrinkMenuItem[] = [
       // {key: 'common.total', val: totalDrinks},
       {key: 'drinks.smallBeer', val: drinkSums.small_beer},
@@ -189,7 +195,7 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
           description: val.toString(),
         })),
     };
-  }, [drinkSums]);
+  }, [session.drinks]);
 
   const otherMenuItemsData: Menu = useMemo(() => {
     return {
@@ -287,13 +293,13 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
   return (
     <ScreenWrapper testID={SessionSummaryScreen.displayName}>
       <HeaderWithBackButton
-        onBackButtonPress={handleBackPress}
+        onBackButtonPress={onBackPress}
         customRightButton={
           !session.ongoing && (
             <Button
               style={styles.bgTransparent}
               icon={KirokuIcons.Edit}
-              onPress={() => DS.navigateToEditSessionScreen(sessionId, session)} // Use keyextractor to load id here
+              onPress={onEditSessionPress}
             />
           )
         }
@@ -313,7 +319,7 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
       <View style={styles.bottomTabBarContainer}>
         <Button
           text={translate('common.confirm')}
-          onPress={handleBackPress}
+          onPress={onBackPress}
           style={styles.bottomTabButton}
           success
         />
