@@ -103,8 +103,8 @@ function SignUpScreen() {
       try {
         await User.signUp(db, auth, emailTrim, usernameTrim, values.password);
       } catch (error) {
-        const errorMessage = ErrorUtils.getErrorMessage(error);
-        setServerErrorMessage(errorMessage);
+        const appError = ErrorUtils.getAppError(undefined, error);
+        setServerErrorMessage(appError.message);
       } finally {
         setIsLoading(false);
       }

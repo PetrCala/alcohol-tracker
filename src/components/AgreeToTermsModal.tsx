@@ -53,8 +53,8 @@ function AgreeToTermsModal() {
         await User.updateAgreedToTermsAt(db, user);
         setIsModalVisible(false);
       } catch (error) {
-        const errorMessage = ErrorUtils.getErrorMessage(error);
-        setErrorText(errorMessage);
+        const appError = ErrorUtils.getAppError(undefined, error);
+        setErrorText(appError.message);
       }
     })();
   };

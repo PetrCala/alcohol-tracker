@@ -56,8 +56,8 @@ function EmailScreen({route}: EmailScreenProps) {
         await User.sendUpdateEmailLink(auth.currentUser, emailToSend, password);
         setSuccessMessage(translate('emailScreen.success', emailToSend));
       } catch (error) {
-        const errorMessage = ErrorUtils.getErrorMessage(error);
-        setServerErrorMessage(errorMessage);
+        const appError = ErrorUtils.getAppError(undefined, error);
+        setServerErrorMessage(appError.message);
       } finally {
         setIsLoading(false);
       }
