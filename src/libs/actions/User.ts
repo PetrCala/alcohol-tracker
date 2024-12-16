@@ -1,6 +1,5 @@
 import type {Database} from 'firebase/database';
 import {update, ref, get} from 'firebase/database';
-import _ from 'lodash';
 import type {
   AppSettings,
   DrinkingSessionList,
@@ -25,10 +24,10 @@ import {
   verifyBeforeUpdateEmail,
 } from 'firebase/auth';
 import {getUniqueId} from 'react-native-device-info';
-import {Alert} from 'react-native';
 import {cleanStringForFirebaseKey} from '@libs/StringUtilsKiroku';
 import DBPATHS from '@src/DBPATHS';
 import {readDataOnce} from '@database/baseFunctions';
+import type {FirebaseUpdates} from '@database/baseFunctions';
 import {getLastStartedSessionId} from '@libs/DataHandling';
 import * as Localize from '@libs/Localize';
 import type {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
@@ -133,10 +132,7 @@ async function pushNewUserInfo(
   const userPreferencesRef = DBPATHS.USER_PREFERENCES_USER_ID;
   const userRef = DBPATHS.USERS_USER_ID;
 
-  const updates: Record<
-    string,
-    UserData | Preferences | string | number | any
-  > = {};
+  const updates: FirebaseUpdates = {};
   updates[accountCreationsRef.getRoute(deviceId, userID)] = Date.now();
   updates[nicknameRef.getRoute(nicknameKey, userID)] = userNickname;
   updates[userStatusRef.getRoute(userID)] = getDefaultUserStatus();
@@ -210,12 +206,11 @@ async function synchronizeUserStatus(
   userID: string,
   drinkingSessions: DrinkingSessionList | undefined,
 ): Promise<void> {
-  const latestSessionId = getLastStartedSessionId(drinkingSessions) || null;
+  const latestSessionId = getLastStartedSessionId(drinkingSessions) ?? null;
   const latestSession =
     drinkingSessions && latestSessionId
-      ? _.get(drinkingSessions, latestSessionId, null)
+      ? drinkingSessions[latestSessionId]
       : null;
-
   const newUserStatus: UserStatus = {
     last_online: new Date().getTime(),
     latest_session: latestSession,
@@ -269,8 +264,8 @@ async function sendUpdateEmailLink(
     throw new Error(Localize.translateLocal('common.error.userNull'));
   }
 
-  let authentificationResult: void | UserCredential;
-  authentificationResult = await reauthentificateUser(user, password);
+  const authentificationResult: void | UserCredential =
+    await reauthentificateUser(user, password);
 
   if (!authentificationResult) {
     throw new Error(
@@ -290,8 +285,8 @@ async function updatePassword(
     throw new Error(ERRORS.AUTH.USER_IS_NULL);
   }
 
-  let authentificationResult: void | UserCredential;
-  authentificationResult = await reauthentificateUser(user, currentPassword);
+  const authentificationResult: void | UserCredential =
+    await reauthentificateUser(user, currentPassword);
 
   if (!authentificationResult) {
     throw new Error(
@@ -417,12 +412,15 @@ async function fetchNicknameByUID(
   db: Database,
   uid: string,
 ): Promise<string | null> {
-  const userRef = ref(db, DBPATHS.USERS_USER_ID_PROFILE.getRoute(uid));
-  const userSnapshot = await get(userRef);
-  if (!userSnapshot.exists()) {
-    return Localize.translateLocal('common.error.notFound');
+  const userRef = DBPATHS.USERS_USER_ID_PROFILE.getRoute(uid);
+
+  const userSnapshot = await readDataOnce<Profile>(db, userRef);
+
+  if (!userSnapshot) {
+    return null;
   }
-  return userSnapshot.val().display_name || null;
+
+  return userSnapshot.display_name;
 }
 
 /**
@@ -561,9 +559,6 @@ async function signUp(
     password,
     reEnterPassword: password,
   });
-
-  let newUserID: string | undefined;
-
   const appSettings = await readDataOnce<AppSettings>(
     db,
     DBPATHS.CONFIG_APP_SETTINGS,
@@ -596,7 +591,7 @@ async function signUp(
     password,
   );
   const newUser = userCredential.user;
-  newUserID = newUser.uid;
+  const newUserID = newUser.uid;
 
   try {
     // Realtime Database updates

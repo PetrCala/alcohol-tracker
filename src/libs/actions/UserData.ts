@@ -2,15 +2,14 @@
 // import type {OnyxEntry, OnyxUpdate} from 'react-native-onyx';
 // import Onyx from 'react-native-onyx';
 // import * as API from '@libs/API';
-import type {
-  // OpenPublicProfilePageParams,
-  UpdateAutomaticTimezoneParams,
-  // UpdateDateOfBirthParams,
-  // UpdateHomeAddressParams,
-  // UpdateLegalNameParams,
-  // UpdateSelectedTimezoneParams,
-  // UpdateUserAvatarParams,
-} from '@libs/API/parameters';
+import type {} from // OpenPublicProfilePageParams,
+// UpdateAutomaticTimezoneParams,
+// UpdateDateOfBirthParams,
+// UpdateHomeAddressParams,
+// UpdateLegalNameParams,
+// UpdateSelectedTimezoneParams,
+// UpdateUserAvatarParams,
+'@libs/API/parameters';
 import {auth} from '@libs/Firebase/FirebaseApp';
 // import {READ_COMMANDS, WRITE_COMMANDS} from '@libs/API/types';
 // // import type {CustomRNImageManipulatorResult} from '@libs/cropOrRotateImage/types';
@@ -25,7 +24,7 @@ import DateUtils from '@libs/DateUtils';
 // import type {DateOfBirthForm} from '@src/types/form';
 // import type {UserData, UserDataList} from '@src/types/onyx';
 // import type {UserID} from '@src/types/onyx/OnyxCommon';
-import type {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
+import type {Timezone} from '@src/types/onyx/UserData';
 import Onyx from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 
@@ -423,6 +422,7 @@ export {
   // deleteAvatar,
   // openPublicProfilePage,
   // updateAddress,
+  // eslint-disable-next-line import/prefer-default-export
   updateAutomaticTimezone,
   // updateAvatar,
   // updateDateOfBirth,

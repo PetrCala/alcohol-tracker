@@ -1,7 +1,8 @@
-import * as API from '@libs/API';
+// import * as API from '@libs/API';
 // import type {SendPerformanceTimingParams} from '@libs/API/parameters';
-import {READ_COMMANDS} from '@libs/API/types';
+// import {READ_COMMANDS} from '@libs/API/types';
 import * as Environment from '@libs/Environment/Environment';
+import Firebase from '@libs/Firebase';
 import getPlatform from '@libs/getPlatform';
 import Log from '@libs/Log';
 
@@ -18,13 +19,12 @@ let timestampData: Record<string, TimestampData> = {};
  * @param eventName
  * @param shouldUseFirebase - adds an additional trace in Firebase
  */
-function start(eventName: string, shouldUseFirebase = false) {
-  timestampData[eventName] = {startTime: Date.now(), shouldUseFirebase};
-
-  if (!shouldUseFirebase) {
+function start(eventName: string, shouldUseFirebase = true) {
+  if (shouldUseFirebase) {
+    Firebase.startTrace(eventName);
   }
 
-  //   Firebase.startTrace(eventName);
+  timestampData[eventName] = {startTime: performance.now(), shouldUseFirebase};
 }
 
 /**
@@ -40,14 +40,15 @@ function end(eventName: string, secondaryName = '', maxExecutionTime = 0) {
   }
 
   const {startTime, shouldUseFirebase} = timestampData[eventName];
+
+  const eventTime = performance.now() - startTime;
+
+  if (shouldUseFirebase) {
+    Firebase.stopTrace(eventName);
+  }
+
   Environment.getEnvironment().then(envName => {
-    const eventTime = Date.now() - startTime;
-
-    // if (shouldUseFirebase) {
-    //   Firebase.stopTrace(eventName);
-    // }
-
-    const baseEventName = `${envName}.kiroku.${eventName}`;
+    const baseEventName = `${envName}.new.expensify.${eventName}`;
     const grafanaEventName = secondaryName
       ? `${baseEventName}.${secondaryName}`
       : baseEventName;
@@ -67,11 +68,10 @@ function end(eventName: string, secondaryName = '', maxExecutionTime = 0) {
       );
     }
 
-    // TODO not implemented yet - send performance timing
     // const parameters: SendPerformanceTimingParams = {
-    //   name: grafanaEventName,
-    //   value: eventTime,
-    //   platform: `${getPlatform()}`,
+    //     name: grafanaEventName,
+    //     value: eventTime,
+    //     platform: `${getPlatform()}`,
     // };
 
     // API.read(READ_COMMANDS.SEND_PERFORMANCE_TIMING, parameters, {});
