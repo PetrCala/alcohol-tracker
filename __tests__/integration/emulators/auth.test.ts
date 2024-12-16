@@ -19,7 +19,7 @@ describeWithEmulator('Connect to the storage emulator', () => {
   });
 
   beforeEach(async () => {
-    await AuthEmulator.createMockUsers(auth);
+    // await AuthEmulator.createMockUsers(auth);
   });
 
   afterEach(async () => {

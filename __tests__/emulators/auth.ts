@@ -41,39 +41,6 @@ async function teardown(testApp: FirebaseApp): Promise<void> {
   await deleteApp(testApp); // Delete the app
 }
 
-/** Using an emulator authentication object, create authenticated users
- * in the authentication emulator.
- *
- * @param emulatorAuth Auth object from the emulator.
- * @returns Promise<void>
- */
-async function createMockUsers(emulatorAuth: Auth): Promise<void> {
-  if (!isConnectedToAuthEmulator) {
-    throw new Error('Not connected to the auth emulator');
-  }
-  MOCK_USER_IDS.forEach(userID => async () => {
-    const email = `${userID}@gmail.com`;
-    const password = 'mock-password';
-
-    try {
-      await signUpUserWithEmailAndPassword(emulatorAuth, email, password);
-    } catch (error) {
-      throw new Error(`Error creating mock user ${userID}: ${error}`);
-    }
-
-    if (!emulatorAuth.currentUser) {
-      throw new Error('Failed to create a new mock user');
-    }
-    try {
-      await updateProfile(emulatorAuth.currentUser, {displayName: userID});
-    } catch (error) {
-      throw new Error(
-        `Error updating profile data for mock user ${userID}: ${error}`,
-      );
-    }
-  });
-}
-
-const AuthEmulator = {setup, teardown, createMockUsers};
+const AuthEmulator = {setup, teardown};
 
 export default AuthEmulator;

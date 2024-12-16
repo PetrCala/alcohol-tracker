@@ -47,7 +47,7 @@ import {
   createMockSession,
   createMockUserStatus,
 } from '@src/database/MockDatabase';
-import type {Timestamp, type UserList} from '@src/types/onyx/OnyxCommon';
+import type {Timestamp, UserList} from '@src/types/onyx/OnyxCommon';
 import {describeWithEmulator} from '../../emulators/utils';
 import {MOCK_USER_IDS} from '../../utils/testsStatic';
 import DatabaseEmulator from '../../emulators/database';
