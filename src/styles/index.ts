@@ -835,22 +835,21 @@ const styles = (theme: ThemeColors) =>
       marginTop: 8,
     },
 
-    dayOverviewTabIndicator: (sessionColor: CalendarColors) =>
+    drinkingSessionOverviewTabIndicator: (sessionColor: CalendarColors) =>
       ({
         height: variables.sessionOverviewTabHeight,
         width: 20,
         backgroundColor: sessionColor,
-        borderRadius: 0,
-        // borderRightWidth: 0, // Divider border
         borderTopLeftRadius: variables.componentBorderRadiusNormal,
         borderBottomLeftRadius: variables.componentBorderRadiusNormal,
       }) satisfies ViewStyle,
 
-    dayOverviewTab: {
+    drinkingSessionOverviewMainTab: {
       flexGrow: 1,
-      borderLeftWidth: 0,
-      borderTopLeftRadius: 0,
-      borderBottomLeftRadius: 0,
+      flexDirection: 'row',
+      alignItems: 'center',
+      borderTopRightRadius: variables.componentBorderRadiusNormal,
+      borderBottomRightRadius: variables.componentBorderRadiusNormal,
       height: variables.sessionOverviewTabHeight,
       backgroundColor: theme.cardBG,
     },
@@ -876,6 +875,15 @@ const styles = (theme: ThemeColors) =>
     draggableTopBar: {
       height: 30,
       width: '100%',
+    },
+
+    drinkingSessionOverview: {
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'flex-start',
+      ...spacing.p1,
+      // width: '100%',
+      // height: '100%',
     },
 
     avatarInnerText: {

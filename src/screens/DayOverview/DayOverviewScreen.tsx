@@ -1,62 +1,37 @@
-import React, {useState, useMemo, useEffect} from 'react';
-import {View, FlatList, StyleSheet, Dimensions} from 'react-native';
+import React, {useState, useMemo} from 'react';
+import {View, FlatList} from 'react-native';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
-import * as Utils from '@libs/Utils';
-import {
-  changeDateBySomeDays,
-  unitsToColors,
-  dateStringToDate,
-} from '@libs/DataHandling';
+import {changeDateBySomeDays, dateStringToDate} from '@libs/DataHandling';
 import UserOffline from '@components/UserOfflineModal';
 import {useUserConnection} from '@context/global/UserConnectionContext';
-import type {
-  DrinkingSession,
-  DrinkingSessionId,
-  DrinkingSessionList,
-} from '@src/types/onyx';
-import {useFirebase} from '@src/context/global/FirebaseContext';
+import type {DrinkingSessionList} from '@src/types/onyx';
 import type DrinkingSessionKeyValue from '@src/types/utils/databaseUtils';
 import type {StackScreenProps} from '@react-navigation/stack';
 import type {DayOverviewNavigatorParamList} from '@libs/Navigation/types';
 import type SCREENS from '@src/SCREENS';
 import Navigation from '@libs/Navigation/Navigation';
-import ROUTES from '@src/ROUTES';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
-import * as ErrorUtils from '@libs/ErrorUtils';
-import * as DS from '@userActions/DrinkingSession';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
 import CONST from '@src/CONST';
 import ScreenWrapper from '@components/ScreenWrapper';
-import {nonMidnightString} from '@libs/StringUtilsKiroku';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
-import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
-import {endOfToday, format} from 'date-fns';
+import {format} from 'date-fns';
 import Button from '@components/Button';
 import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
-import Icon from '@components/Icon';
 import Text from '@components/Text';
-import useTheme from '@hooks/useTheme';
-import DateUtils from '@libs/DateUtils';
-import Onyx, {useOnyx} from 'react-native-onyx';
+import {useOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
-import ERRORS from '@src/ERRORS';
-import variables from '@styles/variables';
-import {PressableWithFeedback} from '@components/Pressable';
 import useStyleUtils from '@hooks/useStyleUtils';
 import useWindowDimensions from '@hooks/useWindowDimensions';
 import type DeepValueOf from '@src/types/utils/DeepValueOf';
+import DrinkingSessionOverview from '@components/DrinkingSessionOverview';
+import AddSessionButton from '@components/DrinkingSessionOverview/AddSessionButton';
 
 type ButtonItemData = {
   onPress: () => void;
   direction: DeepValueOf<typeof CONST.DIRECTION>;
-};
-
-type DrinkingSessionProps = {
-  sessionId: DrinkingSessionId;
-  session: DrinkingSession;
-  isEditModeOn: boolean;
 };
 
 type DayOverviewScreenProps = StackScreenProps<
@@ -64,113 +39,23 @@ type DayOverviewScreenProps = StackScreenProps<
   typeof SCREENS.DAY_OVERVIEW.ROOT
 >;
 
-function DrinkingSession({
-  sessionId,
-  session,
-  isEditModeOn,
-}: DrinkingSessionProps) {
-  const {preferences} = useDatabaseData();
-  const {translate} = useLocalize();
-  const styles = useThemeStyles();
-  // Convert the timestamp to a Date object
-  const timeString = nonMidnightString(
-    DateUtils.getLocalizedTime(session.start_time, session.timezone),
-  );
-  const shouldDisplayTime = session.type === CONST.SESSION.TYPES.LIVE;
-
-  const onSessionButtonPress = (
-    sessionId: string,
-    session: DrinkingSession,
-  ) => {
-    (async () => {
-      if (!session?.ongoing) {
-        Navigation.navigate(
-          ROUTES.DRINKING_SESSION_SUMMARY.getRoute(sessionId),
-        );
-        return;
-      }
-      await Onyx.set(ONYXKEYS.ONGOING_SESSION_DATA, session);
-      DS.navigateToOngoingSessionScreen();
-    })();
-  };
-
-  // Calculate the session color
-  const totalUnits = DSUtils.calculateTotalUnits(
-    session.drinks,
-    preferences?.drinks_to_units,
-    true,
-  );
-  let sessionColor = unitsToColors(totalUnits, preferences?.units_to_colors);
-  if (session.blackout === true) {
-    sessionColor = 'black';
-  }
-
-  return (
-    <View style={[styles.flexRow, styles.ph1, styles.mb1]}>
-      <View
-        style={[styles.border, styles.dayOverviewTabIndicator(sessionColor)]}
-      />
-      <View style={[styles.border, styles.dayOverviewTab, styles.pr2]}>
-        <View style={[styles.flexRow, styles.alignItemsCenter]}>
-          <View style={styles.flex1}>
-            <PressableWithFeedback
-              accessibilityLabel={translate(
-                'dayOverviewScreen.sessionWindow',
-                sessionId,
-              )}
-              style={localStyles.menuDrinkingSessionButton}
-              onPress={() => onSessionButtonPress(sessionId, session)}>
-              <Text style={[styles.textNormalThemeText, styles.p1]}>
-                {translate('common.units')}: {totalUnits}
-              </Text>
-              {shouldDisplayTime && (
-                <Text style={[styles.textNormalThemeText, styles.p1]}>
-                  {translate('common.time')}: {nonMidnightString(timeString)}
-                </Text>
-              )}
-            </PressableWithFeedback>
-          </View>
-          {session?.ongoing ? (
-            <Button
-              danger
-              onPress={() => onSessionButtonPress(sessionId, session)}
-              text={translate('dayOverviewScreen.ongoing')}
-            />
-          ) : (
-            isEditModeOn && (
-              <Button
-                large
-                style={styles.bgTransparent}
-                icon={KirokuIcons.Edit}
-                onPress={() =>
-                  DS.navigateToEditSessionScreen(sessionId, session)
-                } // Use keyextractor to load id here
-              />
-            )
-          )}
-        </View>
-      </View>
-    </View>
-  );
-}
-
 function DayOverviewScreen({route}: DayOverviewScreenProps) {
   const {date} = route.params;
-  const {auth, db} = useFirebase();
-  const user = auth.currentUser;
   const {isOnline} = useUserConnection();
   const {translate} = useLocalize();
   const styles = useThemeStyles();
   const StyleUtils = useStyleUtils();
-  const {textLight} = useTheme();
   const [loadingText] = useOnyx(ONYXKEYS.APP_LOADING_TEXT);
   const {windowWidth} = useWindowDimensions();
-  const {drinkingSessionData, preferences, userData} = useDatabaseData();
+  const {drinkingSessionData} = useDatabaseData();
   const [currentDate, setCurrentDate] = useState<Date>(
     date ? dateStringToDate(date) : new Date(),
   );
   const [editMode, setEditMode] = useState<boolean>(false);
   const [dailyData, setDailyData] = useState<DrinkingSessionKeyValue[]>([]);
+
+  const changeDay = (days: number) =>
+    setCurrentDate(changeDateBySomeDays(currentDate, days));
 
   // Monitor the combined data
   useMemo(() => {
@@ -195,85 +80,8 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
     setDailyData(newDailyData);
   }, [currentDate, drinkingSessionData]);
 
-  const renderDrinkingSession = ({item}: {item: DrinkingSessionKeyValue}) => {
-    return (
-      <DrinkingSession
-        sessionId={item.sessionId}
-        session={item.session}
-        isEditModeOn={editMode}
-      />
-    );
-  };
-
-  const noDrinkingSessionsComponent = () => {
-    return (
-      <Text style={[styles.noResultsText, styles.mb2]}>
-        {translate('dayOverviewScreen.noDrinkingSessions')}
-      </Text>
-    );
-  };
-
-  const addSessionButton = () => {
-    if (date == null) {
-      return <FlexibleLoadingIndicator />;
-    }
-    if (!editMode || !user) {
-      return null;
-    } // Do not display outside edit mode
-
-    // No button if the date is in the future
-    if (currentDate >= endOfToday()) {
-      return null;
-    }
-
-    const onAddSessionButtonPress = () => {
-      (async () => {
-        try {
-          await Utils.setLoadingText(translate('liveSessionScreen.loading'));
-          const newSession = await DS.getNewSessionToEdit(
-            db,
-            auth.currentUser,
-            currentDate,
-            userData?.timezone?.selected,
-          );
-          DS.navigateToEditSessionScreen(newSession?.id);
-        } catch (error) {
-          ErrorUtils.raiseAppError(ERRORS.DATABASE.USER_CREATION_FAILED, error);
-        } finally {
-          await Utils.setLoadingText(null);
-        }
-      })();
-    };
-
-    return (
-      <PressableWithFeedback
-        accessibilityLabel={translate('dayOverviewScreen.addSessionExplained')}
-        style={[localStyles.addSessionButton, styles.buttonSuccess]}
-        onPress={onAddSessionButtonPress}>
-        <Icon
-          src={KirokuIcons.Plus}
-          width={variables.iconSizeExtraLarge}
-          height={variables.iconSizeExtraLarge}
-          fill={textLight}
-          additionalStyles={styles.appColor}
-        />
-      </PressableWithFeedback>
-    );
-  };
-
-  /** Offset the "date" hook by a number of days.
-   *
-   * @param days Number of days to change the day by.
-   */
-  const changeDay = (days: number) => {
-    if (date != null) {
-      const newDate = changeDateBySomeDays(currentDate, days);
-      setCurrentDate(newDate);
-    }
-  };
-
   const changeDayButtons = useMemo(() => {
-    const buttonData = [
+    const buttonData: ButtonItemData[] = [
       {
         onPress: () => changeDay(-1),
         direction: CONST.DIRECTION.LEFT,
@@ -284,11 +92,11 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
       },
     ];
 
-    return buttonData.map(({onPress, direction}: ButtonItemData, index) => (
+    return buttonData.map(item => (
       <Button
-        key={index}
+        key={item.direction as string}
         iconStyles={[
-          StyleUtils.getDirectionStyle(direction),
+          StyleUtils.getDirectionStyle(item.direction),
           styles.w100,
           styles.alignItemsEnd,
         ]}
@@ -299,26 +107,16 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
           styles.halfScreenWidth(windowWidth),
           styles.ph5,
         ]}
-        onPress={onPress}
+        onPress={item.onPress}
       />
     ));
-  }, [
-    changeDay,
-    styles.w100,
-    styles.alignItemsEnd,
-    styles.bgTransparent,
-    styles.bottomTabButton,
-    styles.ph5,
-  ]);
+  }, [changeDay, StyleUtils, windowWidth, styles]);
 
   if (!isOnline) {
     return <UserOffline />;
   }
   if (!date || !!loadingText) {
     return <FullScreenLoadingIndicator loadingText={loadingText} />;
-  }
-  if (!user) {
-    return;
   }
 
   return (
@@ -350,10 +148,25 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
         </Text>
         <FlatList
           data={dailyData}
-          renderItem={renderDrinkingSession}
+          renderItem={({item}) => (
+            <DrinkingSessionOverview
+              sessionId={item.sessionId}
+              session={item.session}
+              isEditModeOn={editMode}
+            />
+          )}
           keyExtractor={item => String(item.sessionId)} // Use start time as id
-          ListEmptyComponent={noDrinkingSessionsComponent}
-          ListFooterComponent={addSessionButton}
+          ListEmptyComponent={
+            <Text style={[styles.noResultsText, styles.mb2]}>
+              {translate('dayOverviewScreen.noDrinkingSessions')}
+            </Text>
+          }
+          ListFooterComponent={
+            <AddSessionButton
+              currentDate={currentDate}
+              isEditModeOn={editMode}
+            />
+          }
           ListFooterComponentStyle={[styles.alignSelfCenter, styles.mt2]}
         />
       </View>
@@ -361,31 +174,6 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
     </ScreenWrapper>
   );
 }
-
-// eslint-disable-next-line @typescript-eslint/no-use-before-define
-const localStyles = StyleSheet.create({
-  menuDrinkingSessionButton: {
-    width: '100%',
-    height: '100%',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-    padding: 5,
-  },
-  addSessionButton: {
-    borderRadius: 50,
-    width: 70,
-    height: 70,
-    alignItems: 'center',
-    justifyContent: 'center', // Center the text within the button
-  },
-  addSessionImage: {
-    width: 30,
-    height: 30,
-    tintColor: 'white',
-    alignItems: 'center',
-  },
-});
 
 DayOverviewScreen.displayName = 'Day Overview Screen';
 export default DayOverviewScreen;

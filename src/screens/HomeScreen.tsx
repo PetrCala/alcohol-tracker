@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {View} from 'react-native';
 import SessionsCalendar from '@components/SessionsCalendar';
 import type {DateData} from 'react-native-calendars';
@@ -101,7 +101,7 @@ function HomeScreen({route}: HomeScreenProps) {
     setUnitsConsumed(thisMonthUnits);
   }, [drinkingSessionData, visibleDate, preferences]);
 
-  useMemo(() => {
+  useEffect(() => {
     const sessionsAreMissingTz =
       !DSUtils.allSessionsContainTimezone(drinkingSessionData);
 
