@@ -47,7 +47,7 @@ import {
   createMockSession,
   createMockUserStatus,
 } from '@src/database/MockDatabase';
-import type {UserList} from '@src/types/onyx/OnyxCommon';
+import type {Timestamp, type UserList} from '@src/types/onyx/OnyxCommon';
 import {describeWithEmulator} from '../../emulators/utils';
 import {MOCK_USER_IDS} from '../../utils/testsStatic';
 import DatabaseEmulator from '../../emulators/database';
@@ -263,7 +263,7 @@ describeWithEmulator('Test pushing new user info into the database', () => {
       deviceId,
       newUserID,
     );
-    const dbCreationData = await readDataOnce(db, dbRef);
+    const dbCreationData = await readDataOnce<Timestamp>(db, dbRef);
     expect(dbCreationData).toBeCloseTo(Date.now(), -2); // Within 100ms
   });
 

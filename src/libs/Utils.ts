@@ -6,7 +6,7 @@ import ONYXKEYS from '@src/ONYXKEYS';
 
 type BrickRoad = ValueOf<typeof CONST.BRICK_ROAD_INDICATOR_STATUS> | undefined;
 
-type NestedObject = {[key: string]: any};
+type NestedObject = Record<string, any>;
 
 function isObject(item: any): boolean {
   return item && typeof item === 'object' && !Array.isArray(item);
@@ -96,8 +96,8 @@ console.log(result);
  */
 function iterateNestedObject<T>(
   obj: NestedObject,
-): {keyPath: string[]; value: T}[] {
-  const results: {keyPath: string[]; value: T}[] = [];
+): Array<{keyPath: string[]; value: T}> {
+  const results: Array<{keyPath: string[]; value: T}> = [];
 
   /**
 Helper function to recursively traverse the nested object.

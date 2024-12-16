@@ -158,7 +158,6 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
     };
   }, [
     session,
-    styles.border,
     lastDrinkAdded,
     sessionColor,
     sessionDay,
@@ -169,18 +168,18 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
     styles,
   ]);
 
-  const drinkData: DrinkMenuItem[] = [
-    // {key: 'common.total', val: totalDrinks},
-    {key: 'drinks.smallBeer', val: drinkSums.small_beer},
-    {key: 'drinks.beer', val: drinkSums.beer},
-    {key: 'drinks.wine', val: drinkSums.wine},
-    {key: 'drinks.weakShot', val: drinkSums.weak_shot},
-    {key: 'drinks.strongShot', val: drinkSums.strong_shot},
-    {key: 'drinks.cocktail', val: drinkSums.cocktail},
-    {key: 'drinks.other', val: drinkSums.other},
-  ];
-
   const drinkMenuItemsData: Menu = useMemo(() => {
+    const drinkData: DrinkMenuItem[] = [
+      // {key: 'common.total', val: totalDrinks},
+      {key: 'drinks.smallBeer', val: drinkSums.small_beer},
+      {key: 'drinks.beer', val: drinkSums.beer},
+      {key: 'drinks.wine', val: drinkSums.wine},
+      {key: 'drinks.weakShot', val: drinkSums.weak_shot},
+      {key: 'drinks.strongShot', val: drinkSums.strong_shot},
+      {key: 'drinks.cocktail', val: drinkSums.cocktail},
+      {key: 'drinks.other', val: drinkSums.other},
+    ];
+
     return {
       sectionTranslationKey: 'sessionSummaryScreen.drinksSection.title',
       items: _.cloneDeep(drinkData)
@@ -190,7 +189,7 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
           description: val.toString(),
         })),
     };
-  }, [session, drinkData]);
+  }, [drinkSums]);
 
   const otherMenuItemsData: Menu = useMemo(() => {
     return {
@@ -212,45 +211,57 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
     };
   }, [session, translate, wasLiveSession]);
 
-  const getSessionSummarySection = useCallback((menuItemsData: Menu) => {
-    return (
-      <Section
-        title={translate(menuItemsData.sectionTranslationKey)}
-        titleStyles={styles.sectionTitleSimple}
-        containerStyles={styles.pb0}
-        childrenStyles={styles.pt3}>
-        <View>
-          {menuItemsData.items.map(
-            (detail, index) =>
-              !detail?.shouldHide && (
-                <MenuItem
-                  // eslint-disable-next-line react/no-array-index-key
-                  key={`${detail.titleKey}_${index}`}
-                  title={detail.titleKey && translate(detail.titleKey)}
-                  titleStyle={styles.plainSectionTitle}
-                  description={detail.description}
-                  descriptionTextStyle={styles.textNormalThemeText}
-                  wrapperStyle={styles.sectionMenuItemTopDescription}
-                  style={[
-                    styles.pt0,
-                    styles.pb0,
-                    // Enable the following to add borders in between items
-                    // styles.borderBottomRounded,
-                    // {borderBottomLeftRadius: 35, borderBottomRightRadius: 35},
-                    // index === menuItemsData.items.length - 1 && styles.borderNone,
-                  ]}
-                  disabled
-                  shouldGreyOutWhenDisabled={false}
-                  shouldUseRowFlexDirection
-                  shouldShowRightComponent={!!detail.rightComponent}
-                  rightComponent={detail.rightComponent}
-                />
-              ),
-          )}
-        </View>
-      </Section>
-    );
-  }, []);
+  const getSessionSummarySection = useCallback(
+    (menuItemsData: Menu) => {
+      return (
+        <Section
+          title={translate(menuItemsData.sectionTranslationKey)}
+          titleStyles={styles.sectionTitleSimple}
+          containerStyles={styles.pb0}
+          childrenStyles={styles.pt3}>
+          <View>
+            {menuItemsData.items.map(
+              (detail, index) =>
+                !detail?.shouldHide && (
+                  <MenuItem
+                    // eslint-disable-next-line react/no-array-index-key
+                    key={`${detail.titleKey}_${index}`}
+                    title={detail.titleKey && translate(detail.titleKey)}
+                    titleStyle={styles.plainSectionTitle}
+                    description={detail.description}
+                    descriptionTextStyle={styles.textNormalThemeText}
+                    wrapperStyle={styles.sectionMenuItemTopDescription}
+                    style={[
+                      styles.pt0,
+                      styles.pb0,
+                      // Enable the following to add borders in between items
+                      // styles.borderBottomRounded,
+                      // {borderBottomLeftRadius: 35, borderBottomRightRadius: 35},
+                      // index === menuItemsData.items.length - 1 && styles.borderNone,
+                    ]}
+                    disabled
+                    shouldGreyOutWhenDisabled={false}
+                    shouldUseRowFlexDirection
+                    shouldShowRightComponent={!!detail.rightComponent}
+                    rightComponent={detail.rightComponent}
+                  />
+                ),
+            )}
+          </View>
+        </Section>
+      );
+    },
+    [
+      styles.pb0,
+      styles.plainSectionTitle,
+      styles.pt0,
+      styles.pt3,
+      styles.sectionMenuItemTopDescription,
+      styles.sectionTitleSimple,
+      styles.textNormalThemeText,
+      translate,
+    ],
+  );
 
   const generalMenuItems = useMemo(
     () => getSessionSummarySection(generalMenuItemsData),
@@ -271,7 +282,7 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
       drinkingSessionData,
     );
     setSession(newSession);
-  }, [drinkingSessionData]);
+  }, [sessionId, drinkingSessionData]);
 
   return (
     <ScreenWrapper testID={SessionSummaryScreen.displayName}>

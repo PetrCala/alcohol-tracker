@@ -2,14 +2,15 @@ import type {Database} from 'firebase/database';
 import {update, ref, get} from 'firebase/database';
 import _ from 'lodash';
 import type {
-  DrinkingSessionList,
-  FriendRequestList,
-  Preferences,
-  Profile,
-  ReasonForLeaving,
-  ReasonForLeavingId,
-  UserData,
-  UserStatus,
+  AppSettings,
+  type DrinkingSessionList,
+  type FriendRequestList,
+  type Preferences,
+  type Profile,
+  type ReasonForLeaving,
+  type ReasonForLeavingId,
+  type UserData,
+  type UserStatus,
 } from '@src/types/onyx';
 import type {Timestamp, UserList} from '@src/types/onyx/OnyxCommon';
 import type {Auth, User, UserCredential} from 'firebase/auth';
@@ -41,8 +42,8 @@ import ONYXKEYS from '@src/ONYXKEYS';
 import CONST from '@src/CONST';
 import {getReasonForLeavingID} from '@libs/ReasonForLeaving';
 import Log from '@libs/common/Log';
-import * as Session from './Session';
 import ERRORS from '@src/ERRORS';
+import * as Session from './Session';
 
 let verifyEmailSent: OnyxEntry<Timestamp | null> = null;
 Onyx.connect({
@@ -563,7 +564,10 @@ async function signUp(
 
   let newUserID: string | undefined;
 
-  const appSettings = await readDataOnce(db, DBPATHS.CONFIG_APP_SETTINGS);
+  const appSettings = await readDataOnce<AppSettings>(
+    db,
+    DBPATHS.CONFIG_APP_SETTINGS,
+  );
 
   if (!appSettings) {
     throw new Error('database/data-fetch-failed');
