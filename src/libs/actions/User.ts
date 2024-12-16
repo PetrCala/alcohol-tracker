@@ -3,14 +3,14 @@ import {update, ref, get} from 'firebase/database';
 import _ from 'lodash';
 import type {
   AppSettings,
-  type DrinkingSessionList,
-  type FriendRequestList,
-  type Preferences,
-  type Profile,
-  type ReasonForLeaving,
-  type ReasonForLeavingId,
-  type UserData,
-  type UserStatus,
+  DrinkingSessionList,
+  FriendRequestList,
+  Preferences,
+  Profile,
+  ReasonForLeaving,
+  ReasonForLeavingId,
+  UserData,
+  UserStatus,
 } from '@src/types/onyx';
 import type {Timestamp, UserList} from '@src/types/onyx/OnyxCommon';
 import type {Auth, User, UserCredential} from 'firebase/auth';
