@@ -7,7 +7,6 @@ import type Onboarding from '@src/types/onyx/Onboarding';
 type OnboardingData = Onboarding | [] | undefined;
 type TzFixData = TzFix | [] | undefined;
 
-let isLoadingReportData = true;
 // let tryNewDotData: TryNewDot | undefined;
 let onboarding: OnboardingData;
 let tzFix: TzFixData;
@@ -27,10 +26,10 @@ let isOnboardingFlowStatusKnownPromise = new Promise<void>(resolve => {
   resolveOnboardingFlowStatus = resolve;
 });
 
-let resolveTryNewDotStatus: (value?: Promise<void>) => void | undefined;
-const tryNewDotStatusPromise = new Promise<void>(resolve => {
-  resolveTryNewDotStatus = resolve;
-});
+// let resolveTryNewDotStatus: (value?: Promise<void>) => void | undefined;
+// const tryNewDotStatusPromise = new Promise<void>(resolve => {
+//   resolveTryNewDotStatus = resolve;
+// });
 
 function onServerDataReady(): Promise<void> {
   return isServerDataReadyPromise;
@@ -80,9 +79,9 @@ function isTzFixFlowCompleted({
  * Check if report data are loaded
  */
 function checkServerDataReady() {
-  if (isLoadingReportData) {
-    return;
-  }
+  // if (isLoadingReportData) {
+  //   return;
+  // }
 
   resolveIsReadyPromise?.();
 }
@@ -129,10 +128,10 @@ function resetAllChecks() {
   isOnboardingFlowStatusKnownPromise = new Promise<void>(resolve => {
     resolveOnboardingFlowStatus = resolve;
   });
-  isLoadingReportData = true;
 }
 
 export {
+  checkServerDataReady,
   onServerDataReady,
   isOnboardingFlowCompleted,
   isTzFixFlowCompleted,

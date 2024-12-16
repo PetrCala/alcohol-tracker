@@ -6,7 +6,6 @@ import type {UserStatus, UserStatusList} from '@src/types/onyx';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
 import {sumAllDrinks} from '@libs/DataHandling';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
-import _, {get} from 'lodash';
 
 /**
  * Based on the user status data, calculate the display priority of the users.
@@ -40,7 +39,11 @@ function calculateAllUsersPriority(
 
 function calculateUserPriority(userStatusData: UserStatus): number {
   const latestSession = userStatusData.latest_session;
-  const latestSessionTime = get(latestSession, 'start_time', null);
+  if (!latestSession) {
+    return 0;
+  }
+
+  const latestSessionTime = latestSession ? latestSession.start_time : null;
   const timeSinceLastSession = latestSessionTime
     ? new Date().getTime() - latestSessionTime
     : 1e15;

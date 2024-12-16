@@ -5,7 +5,7 @@ import type {UserID} from '@src/types/onyx/OnyxCommon';
 import type {Diff, DiffArray} from 'deep-diff';
 import {diff} from 'deep-diff';
 
-type FirebaseUpdates = Record<string, any>;
+type FirebaseUpdates<T = any> = Record<string, T>;
 
 /** Read data once from the realtime database using get(). Return the data if it exists.
  *
