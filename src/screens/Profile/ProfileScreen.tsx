@@ -115,10 +115,10 @@ function ProfileScreen({route}: ProfileScreenProps) {
       }
       let ownFriends: UserList | null | undefined = friends;
       if (user?.uid !== userID) {
-        ownFriends = (await readDataOnce(
+        ownFriends = await readDataOnce<UserList>(
           db,
           DBPATHS.USERS_USER_ID_FRIENDS.getRoute(user.uid),
-        )) as UserList | null;
+        );
       }
       setSelfFriends(ownFriends);
     };

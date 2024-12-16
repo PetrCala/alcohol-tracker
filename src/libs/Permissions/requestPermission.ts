@@ -8,16 +8,16 @@ import type {
 import {request, requestNotifications} from 'react-native-permissions';
 import getPlatform from '@libs/getPlatform';
 import CONST from '@src/CONST';
+import * as Localize from '@libs/Localize';
+import useLocalize from '@hooks/useLocalize';
 import type {PermissionKey} from './PermissionsUtils';
 import {
   AndroidFilePermissions,
   permissionIsDenied,
   permissionIsGranted,
 } from './PermissionsUtils';
-import * as Localize from '@libs/Localize';
 import permissionsMap from './PermissionsMap';
 import permissionsMessages from './PermissionsMessages';
-import useLocalize from '@hooks/useLocalize';
 
 const openSettings = () => {
   Linking.openSettings();

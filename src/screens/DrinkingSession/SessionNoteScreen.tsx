@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect} from 'react';
+import React, {useCallback} from 'react';
 import FormProvider from '@components/Form/FormProvider';
 import InputWrapper from '@components/Form/InputWrapper';
 import type {FormOnyxValues} from '@components/Form/types';
@@ -33,10 +33,8 @@ function SesssionNoteScreen({route}: SessionNoteScreenProps) {
   const onSubmit = (
     values: FormOnyxValues<typeof ONYXKEYS.FORMS.SESSION_NOTE_FORM>,
   ) => {
-    (async () => {
-      DS.updateNote(session, values.note);
-      Navigation.goBack();
-    })();
+    DS.updateNote(session, values.note);
+    Navigation.goBack();
   };
 
   /**
@@ -56,7 +54,7 @@ function SesssionNoteScreen({route}: SessionNoteScreenProps) {
 
       return errors;
     },
-    [],
+    [translate],
   );
 
   return (

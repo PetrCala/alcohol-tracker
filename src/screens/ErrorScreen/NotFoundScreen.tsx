@@ -8,6 +8,7 @@ import ROUTES from '@src/ROUTES';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import useLocalize from '@hooks/useLocalize';
 
+// eslint-disable-next-line rulesdir/no-negated-variables
 function NotFoundScreen() {
   const styles = useThemeStyles();
   const theme = useTheme();
@@ -22,6 +23,7 @@ function NotFoundScreen() {
         onBackButtonPress={() => Navigation.navigate(ROUTES.HOME)}
       />
       <View style={{backgroundColor: theme.appBG}} />
+      {/* // TODO  */}
       {/* //   <FullPageNotFoundView shouldShow onBackButtonPress={onBackButtonPress} /> */}
     </ScreenWrapper>
   );

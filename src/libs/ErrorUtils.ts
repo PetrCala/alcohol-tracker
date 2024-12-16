@@ -5,13 +5,13 @@ import type {TranslationPaths} from '@src/languages/types';
 import type {ErrorFields, Errors} from '@src/types/onyx/OnyxCommon';
 import type {ErrorKey} from '@src/ERRORS';
 import ERRORS from '@src/ERRORS';
+import _ from 'lodash';
 import Log from './Log';
 import AppError from './Errors/AppError';
 import ERROR_MAPPING from './Errors/ERROR_MAPPING';
 import DateUtils from './DateUtils';
 import * as Utils from './Utils';
 import * as Localize from './Localize';
-import _ from 'lodash';
 
 /** Search an error object for a known error key. If any is found, return it, otherwise return an unknown key. */
 function extractErrorKeyFromError(error: unknown): ErrorKey {
