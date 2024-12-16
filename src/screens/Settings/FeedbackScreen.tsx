@@ -1,11 +1,12 @@
 import React, {useCallback} from 'react';
-import {Alert, View} from 'react-native';
+import {View} from 'react-native';
 import FullscreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import ScreenWrapper from '@components/ScreenWrapper';
 import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Navigation from '@libs/Navigation/Navigation';
+import * as ErrorUtils from '@libs/ErrorUtils';
 import * as ValidationUtils from '@libs/ValidationUtils';
 import type {SettingsNavigatorParamList} from '@libs/Navigation/types';
 import type {FormOnyxValues} from '@src/components/Form/types';
@@ -22,6 +23,7 @@ import type {StackScreenProps} from '@react-navigation/stack';
 import type SCREENS from '@src/SCREENS';
 import {submitFeedback} from '@database/feedback';
 import {useFirebase} from '@context/global/FirebaseContext';
+import ERRORS from '@src/ERRORS';
 
 type FeedbackScreenProps = StackScreenProps<
   SettingsNavigatorParamList,
@@ -46,8 +48,7 @@ function FeedbackScreen({route}: FeedbackScreenProps) {
         await submitFeedback(db, userID, values);
         Navigation.goBack();
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : '';
-        Alert.alert('Failed to submit feedback', errorMessage);
+        ErrorUtils.raiseAppError(ERRORS.USER.FEEDBACK_SUBMISSION_FAILED, error);
       } finally {
         setIsLoading(false);
       }

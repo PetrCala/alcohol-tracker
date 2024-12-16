@@ -9,7 +9,24 @@ import Log from './Log';
 import AppError from './Errors/AppError';
 import ERROR_MAPPING from './Errors/ERROR_MAPPING';
 import DateUtils from './DateUtils';
+import * as Utils from './Utils';
 import * as Localize from './Localize';
+import _ from 'lodash';
+
+/** Search an error object for a known error key. If any is found, return it, otherwise return an unknown key. */
+function extractErrorKeyFromError(error: unknown): ErrorKey {
+  if (error instanceof Error) {
+    const iteratedErrors = Utils.iterateNestedObject<ErrorKey>(ERRORS);
+    const errorKeys = _.map(iteratedErrors, obj => obj.value);
+    const errorMessage = error instanceof Error ? error.message : '';
+    for (const errorKey of errorKeys) {
+      if (errorMessage.includes(errorKey)) {
+        return errorKey;
+      }
+    }
+  }
+  return ERRORS.UNKNOWN;
+}
 
 /**
  * Transforms an unknown error into a typed AppError object with a title and message.
@@ -17,8 +34,8 @@ import * as Localize from './Localize';
  * @param error - The unknown error object to be processed.
  * @returns An AppError instance representing the provided error.
  */
-function getAppError(errorKey?: ErrorKey): AppError {
-  const key = errorKey ?? ERRORS.UNKNOWN;
+function getAppError(errorKey?: ErrorKey, error?: unknown): AppError {
+  const key = errorKey ?? extractErrorKeyFromError(error);
   const mappingValue = ERROR_MAPPING[key];
 
   const titlePath = `${mappingValue}.title` as TranslationPaths;
@@ -40,14 +57,13 @@ function getAppError(errorKey?: ErrorKey): AppError {
 }
 
 /**
- * Raise an alert message from an error key.
+ * Raise an alert message from an error key. If the error key is not provided, try searching for the known error key in the error message, and extract the error key from there, if found.
  *
+ * @param errorKey The error key
  * @param error The error (unknown type)
- * @param heading A custom heading to use (defaults to the error's inherent title if not provided)
- * @param message A custom message to prepend to the returned error message
  */
-function raiseAlert(errorKey: ErrorKey): void {
-  const appError = getAppError(errorKey);
+function raiseAlert(errorKey?: ErrorKey, error?: unknown): void {
+  const appError = getAppError(errorKey, error);
   Alert.alert(appError.title, appError.message);
 }
 
@@ -57,9 +73,9 @@ function raiseAlert(errorKey: ErrorKey): void {
  * @param errorKey The key of the error to raise
  * @param error The error to raise the app error from
  */
-function raiseAppError(errorKey: ErrorKey, error?: unknown): void {
+function raiseAppError(errorKey?: ErrorKey, error?: unknown): void {
   // Show a controlled message to the user first
-  raiseAlert(errorKey);
+  raiseAlert(errorKey, error);
 
   if (error) {
     const errorMessage = error instanceof Error ? error.message : '';

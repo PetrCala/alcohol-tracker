@@ -1,4 +1,4 @@
-import {Alert, View} from 'react-native';
+import {View} from 'react-native';
 import React, {useCallback, useMemo, useRef, useState} from 'react';
 import type {
   FriendRequestList,
@@ -11,6 +11,7 @@ import {useFirebase} from '@src/context/global/FirebaseContext';
 import {isNonEmptyArray} from '@libs/Validation';
 import type {Database} from 'firebase/database';
 import {searchDatabaseForUsers} from '@libs/Search';
+import * as ErrorUtils from '@libs/ErrorUtils';
 import * as Profile from '@userActions/Profile';
 import SearchResult from '@components/Social/SearchResult';
 import SearchWindow from '@components/Social/SearchWindow';
@@ -26,6 +27,7 @@ import useLocalize from '@hooks/useLocalize';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
 import useThemeStyles from '@hooks/useThemeStyles';
 import ScrollView from '@components/ScrollView';
+import ERRORS from '@src/ERRORS';
 
 function FriendSearchScreen() {
   const {auth, db, storage} = useFirebase();
@@ -89,11 +91,7 @@ function FriendSearchScreen() {
         setNoUsersFound(!isNonEmptyArray(newData));
         setSearchResultData(newData);
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : '';
-        Alert.alert(
-          'Database serach failed',
-          `Could not search the database: ${errorMessage}`,
-        );
+        ErrorUtils.raiseAppError(ERRORS.DATABASE.SEARCH_FAILED, error);
       } finally {
         setSearching(false);
       }

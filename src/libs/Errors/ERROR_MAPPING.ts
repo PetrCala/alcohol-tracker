@@ -25,6 +25,7 @@ const ERROR_MAPPING: ErrorMapping = {
   [ERRORS.AUTH.API_KEY_NOT_VALID]: 'errors.auth.apiKeyNotValid',
   [ERRORS.AUTH.TOO_MANY_REQUESTS]: 'errors.auth.tooManyRequests',
   [ERRORS.AUTH.SIGN_OUT_FAILED]: 'errors.auth.signOutFailed',
+  [ERRORS.AUTH.USER_IS_NULL]: 'errors.auth.userIsNull',
   [ERRORS.DATABASE.ACCOUNT_CREATION_LIMIT_EXCEEDED]:
     'errors.database.accountCreationLimitExceeded',
   [ERRORS.DATABASE.DATA_FETCH_FAILED]: 'errors.database.dataFetchFailed',
@@ -41,9 +42,12 @@ const ERROR_MAPPING: ErrorMapping = {
   [ERRORS.SESSION.LOAD_FAILED]: 'errors.session.loadFailed',
   [ERRORS.SESSION.SAVE_FAILED]: 'errors.session.saveFailed',
   [ERRORS.SESSION.START_FAILED]: 'errors.session.startFailed',
+  [ERRORS.USER.BUG_SUBMISSION_FAILED]: 'errors.user.bugSubmissionFailed',
   [ERRORS.USER.COULD_NOT_UNFRIEND]: 'errors.user.couldNotUnfriend',
   [ERRORS.USER.DATA_FETCH_FAILED]: 'errors.user.dataFetchFailed',
   [ERRORS.USER.FEEDBACK_REMOVAL_FAILED]: 'errors.user.feedbackRemovalFailed',
+  [ERRORS.USER.FEEDBACK_SUBMISSION_FAILED]:
+    'errors.user.feedbackSubmissionFailed',
   [ERRORS.USER.FRIEND_REQUEST_SEND_FAILED]:
     'errors.user.friendRequestSendFailed',
   [ERRORS.USER.FRIEND_REQUEST_ACCEPT_FAILED]:
