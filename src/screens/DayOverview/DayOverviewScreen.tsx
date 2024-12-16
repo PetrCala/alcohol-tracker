@@ -1,11 +1,5 @@
 import React, {useState, useMemo} from 'react';
-import {
-  View,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-} from 'react-native';
+import {View, FlatList, StyleSheet, Dimensions} from 'react-native';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import * as Utils from '@libs/Utils';
 import MenuIcon from '@components/Buttons/MenuIcon';
@@ -45,6 +39,8 @@ import DateUtils from '@libs/DateUtils';
 import Onyx, {useOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 import ERRORS from '@src/ERRORS';
+import variables from '@styles/variables';
+import {PressableWithFeedback} from '@components/Pressable';
 
 type DayOverviewScreenProps = StackScreenProps<
   DayOverviewNavigatorParamList,
@@ -58,7 +54,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
   const {isOnline} = useUserConnection();
   const {translate} = useLocalize();
   const styles = useThemeStyles();
-  const theme = useTheme();
+  const {textLight} = useTheme();
   const [loadingText] = useOnyx(ONYXKEYS.APP_LOADING_TEXT);
   const {drinkingSessionData, preferences, userData} = useDatabaseData();
   const [currentDate, setCurrentDate] = useState<Date>(
@@ -135,8 +131,11 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
         <View style={[styles.border, styles.dayOverviewTab, styles.pr2]}>
           <View style={[styles.flexRow, styles.alignItemsCenter]}>
             <View style={styles.flex1}>
-              <TouchableOpacity
-                accessibilityRole="button"
+              <PressableWithFeedback
+                accessibilityLabel={translate(
+                  'dayOverviewScreen.sessionWindow',
+                  sessionId,
+                )}
                 style={localStyles.menuDrinkingSessionButton}
                 onPress={() => onSessionButtonPress(sessionId, session)}>
                 <Text style={[styles.textNormalThemeText, styles.p1]}>
@@ -147,7 +146,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
                     {translate('common.time')}: {nonMidnightString(timeString)}
                   </Text>
                 )}
-              </TouchableOpacity>
+              </PressableWithFeedback>
             </View>
             {session?.ongoing ? (
               <Button
@@ -220,17 +219,18 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
     };
 
     return (
-      <TouchableOpacity
-        accessibilityRole="button"
+      <PressableWithFeedback
+        accessibilityLabel={translate('dayOverviewScreen.addSessionExplained')}
         style={[localStyles.addSessionButton, styles.buttonSuccess]}
         onPress={onAddSessionButtonPress}>
         <Icon
           src={KirokuIcons.Plus}
-          height={36}
-          width={36}
-          fill={theme.textLight}
+          width={variables.iconSizeExtraLarge}
+          height={variables.iconSizeExtraLarge}
+          fill={textLight}
+          additionalStyles={styles.appColor}
         />
-      </TouchableOpacity>
+      </PressableWithFeedback>
     );
   };
 
@@ -248,8 +248,8 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
   if (!isOnline) {
     return <UserOffline />;
   }
-  if (!date) {
-    return <FullScreenLoadingIndicator />;
+  if (!date || !!loadingText) {
+    return <FullScreenLoadingIndicator loadingText={loadingText} />;
   }
   if (!user) {
     return;
@@ -280,7 +280,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
           style={[styles.textHeadlineH1, styles.alignSelfCenter, styles.mb2]}>
           {date
             ? format(currentDate, CONST.DATE.SHORT_DATE_FORMAT)
-            : 'Loading date...'}
+            : translate('dayOverviewScreen.loadingDate')}
         </Text>
         <FlatList
           data={dailyData}

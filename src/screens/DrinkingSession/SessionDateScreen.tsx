@@ -22,7 +22,7 @@ import * as DS from '@userActions/DrinkingSession';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
 import Text from '@components/Text';
 import type {TranslationPaths} from '@src/languages/types';
-import Onyx, {useOnyx} from 'react-native-onyx';
+import {useOnyx} from 'react-native-onyx';
 import type {Route} from '@src/ROUTES';
 import ROUTES from '@src/ROUTES';
 
@@ -47,7 +47,7 @@ function SesssionDateScreen({route}: SessionDateScreenProps) {
   const onGoBack = () => {
     (async () => {
       if (isBeingCreated) {
-        await Onyx.set(ONYXKEYS.IS_CREATING_NEW_SESSION, false);
+        await DS.setIsCreatingNewSession(false);
       }
       if (backTo) {
         Navigation.navigate(backTo as Route);
@@ -67,7 +67,7 @@ function SesssionDateScreen({route}: SessionDateScreenProps) {
       }
       await DS.updateSessionDate(sessionId, session, new Date(values.date));
       if (isBeingCreated) {
-        await Onyx.set(ONYXKEYS.IS_CREATING_NEW_SESSION, false);
+        await DS.setIsCreatingNewSession(false);
         DS.navigateToEditSessionScreen(sessionId, undefined, ROUTES.HOME);
       } else {
         onGoBack();

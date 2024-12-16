@@ -1,30 +1,29 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {useFirebase} from '@context/global/FirebaseContext';
 import * as DS from '@userActions/DrinkingSession';
+import * as ErrorUtils from '@libs/ErrorUtils';
 import type {DrinkingSession} from '@src/types/onyx';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import CONST from '@src/CONST';
 import type {StackScreenProps} from '@react-navigation/stack';
 import type {DrinkingSessionNavigatorParamList} from '@libs/Navigation/types';
 import type SCREENS from '@src/SCREENS';
-import useLocalize from '@hooks/useLocalize';
 import {useOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 import DrinkingSessionWindow from '@components/DrinkingSessionWindow';
 import useBatchedUpdates from '@hooks/useBatchedUpdates';
-import _ from 'lodash';
 import ScreenWrapper from '@components/ScreenWrapper';
 import SuccessIndicator from '@components/SuccessIndicator';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import UserOfflineModal from '@components/UserOfflineModal';
 import {computeFirebaseUpdates} from '@database/baseFunctions';
-import useThemeStyles from '@hooks/useThemeStyles';
 import useStyleUtils from '@hooks/useStyleUtils';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
 import type DeepValueOf from '@src/types/utils/DeepValueOf';
 import Navigation from '@libs/Navigation/Navigation';
 import type {Route} from '@src/ROUTES';
 import ROUTES from '@src/ROUTES';
+import ERRORS from '@src/ERRORS';
 
 type LiveSessionScreenProps = StackScreenProps<
   DrinkingSessionNavigatorParamList,
@@ -36,7 +35,6 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
   const StyleUtils = useStyleUtils();
-  const {translate} = useLocalize();
   const {isOnline} = useUserConnection();
   const [session] = useOnyx(ONYXKEYS.ONGOING_SESSION_DATA);
   const sessionRef = useRef<DrinkingSession | undefined>(undefined);
@@ -70,7 +68,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       );
       setDbSyncSuccessful(true);
     } catch (error) {
-      throw new Error(translate('liveSessionScreen.error.save'));
+      ErrorUtils.raiseAppError(ERRORS.SESSION.SAVE_FAILED, error);
     }
   };
 
@@ -104,7 +102,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       }
     }
     sessionRef.current = session;
-  }, [session, user]);
+  }, [session, user, enqueueUpdate]);
 
   if (!isOnline) {
     return <UserOfflineModal />;

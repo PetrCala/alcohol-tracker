@@ -409,6 +409,11 @@ async function getNewSessionToEdit(
   return newSession;
 }
 
+/** Set a value under the isCreatingNewSession onyx key */
+async function setIsCreatingNewSession(val: boolean): Promise<void> {
+  await Onyx.set(ONYXKEYS.IS_CREATING_NEW_SESSION, val);
+}
+
 /**
  * Navigate to the an ongoing session screen
  *
@@ -470,6 +475,7 @@ export {
   navigateToOngoingSessionScreen,
   removeDrinkingSessionData,
   saveDrinkingSessionData,
+  setIsCreatingNewSession,
   startLiveDrinkingSession,
   syncLocalLiveSessionData,
   updateBlackout,

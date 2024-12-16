@@ -13,11 +13,10 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import Svg, {Path} from 'react-native-svg';
+import {Path} from 'react-native-svg';
 import useTheme from '@hooks/useTheme';
 import useThemeStyles from '@hooks/useThemeStyles';
 import variables from '@styles/variables';
-import useWindowDimensions from '@hooks/useWindowDimensions';
 import * as KirokuIcons from './Icon/KirokuIcons';
 import {PressableWithoutFeedback} from './Pressable';
 import Icon from './Icon';

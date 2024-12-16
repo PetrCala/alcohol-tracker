@@ -7,7 +7,6 @@ import SCREENS from '@src/SCREENS';
 import {useOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 import DrinkingSessionWindow from '@components/DrinkingSessionWindow';
-import _ from 'lodash';
 import ScreenWrapper from '@components/ScreenWrapper';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import UserOfflineModal from '@components/UserOfflineModal';
