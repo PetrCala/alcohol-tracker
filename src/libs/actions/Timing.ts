@@ -2,7 +2,7 @@
 // import type {SendPerformanceTimingParams} from '@libs/API/parameters';
 // import {READ_COMMANDS} from '@libs/API/types';
 import * as Environment from '@libs/Environment/Environment';
-import Firebase from '@libs/Firebase';
+// import Firebase from '@libs/Firebase';
 import getPlatform from '@libs/getPlatform';
 import Log from '@libs/Log';
 
@@ -20,9 +20,10 @@ let timestampData: Record<string, TimestampData> = {};
  * @param shouldUseFirebase - adds an additional trace in Firebase
  */
 function start(eventName: string, shouldUseFirebase = true) {
-  if (shouldUseFirebase) {
-    Firebase.startTrace(eventName);
-  }
+  // TODO enable this when Firebase is integrated
+  // if (shouldUseFirebase) {
+  //   Firebase.startTrace(eventName);
+  // }
 
   timestampData[eventName] = {startTime: performance.now(), shouldUseFirebase};
 }
@@ -43,9 +44,9 @@ function end(eventName: string, secondaryName = '', maxExecutionTime = 0) {
 
   const eventTime = performance.now() - startTime;
 
-  if (shouldUseFirebase) {
-    Firebase.stopTrace(eventName);
-  }
+  // if (shouldUseFirebase) {
+  //   Firebase.stopTrace(eventName);
+  // }
 
   Environment.getEnvironment().then(envName => {
     const baseEventName = `${envName}.new.expensify.${eventName}`;
