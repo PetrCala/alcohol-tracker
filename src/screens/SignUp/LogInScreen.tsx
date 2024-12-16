@@ -72,8 +72,8 @@ function LogInScreen() {
       try {
         await User.logIn(auth, emailTrim, values.password);
       } catch (error) {
-        const errorMessage = ErrorUtils.getErrorMessage(error);
-        setServerErrorMessage(errorMessage);
+        const appError = ErrorUtils.getAppError(undefined, error);
+        setServerErrorMessage(appError.message);
       } finally {
         setIsLoading(false);
       }
