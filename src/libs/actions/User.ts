@@ -42,6 +42,7 @@ import CONST from '@src/CONST';
 import {getReasonForLeavingID} from '@libs/ReasonForLeaving';
 import Log from '@libs/common/Log';
 import * as Session from './Session';
+import ERRORS from '@src/ERRORS';
 
 let verifyEmailSent: OnyxEntry<Timestamp | null> = null;
 Onyx.connect({
@@ -285,7 +286,7 @@ async function updatePassword(
   newPassword: string,
 ) {
   if (!user) {
-    throw new Error(Localize.translateLocal('common.error.userNull'));
+    throw new Error(ERRORS.AUTH.USER_IS_NULL);
   }
 
   let authentificationResult: void | UserCredential;

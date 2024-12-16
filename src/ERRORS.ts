@@ -30,6 +30,7 @@ const ERRORS = {
     API_KEY_NOT_VALID: 'auth/api-key-not-valid',
     TOO_MANY_REQUESTS: 'auth/too-many-requests',
     SIGN_OUT_FAILED: 'auth/sign-out-failed',
+    USER_IS_NULL: 'auth/user-is-null',
   },
   DATABASE: {
     ACCOUNT_CREATION_LIMIT_EXCEEDED: 'database/account-creation-limit-exceeded',
@@ -57,9 +58,11 @@ const ERRORS = {
     START_FAILED: 'session/start-failed',
   },
   USER: {
+    BUG_SUBMISSION_FAILED: 'user/bug-submission-failed',
     COULD_NOT_UNFRIEND: 'user/could-not-unfriend',
     DATA_FETCH_FAILED: 'user/data-fetch-failed',
     FEEDBACK_REMOVAL_FAILED: 'user/feedback-removal-failed',
+    FEEDBACK_SUBMISSION_FAILED: 'user/feedback-submission-failed',
     FRIEND_REQUEST_SEND_FAILED: 'user/friend-request-send-failed',
     FRIEND_REQUEST_ACCEPT_FAILED: 'user/friend-request-accept-failed',
     FRIEND_REQUEST_REJECT_FAILED: 'user/friend-request-reject-failed',

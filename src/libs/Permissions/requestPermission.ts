@@ -5,18 +5,19 @@ import type {
   PermissionStatus as RNPermissionStatus,
   NotificationsResponse,
 } from 'react-native-permissions';
-import {request, RESULTS, requestNotifications} from 'react-native-permissions';
+import {request, requestNotifications} from 'react-native-permissions';
 import getPlatform from '@libs/getPlatform';
 import CONST from '@src/CONST';
-import {get} from 'lodash';
 import type {PermissionKey} from './PermissionsUtils';
 import {
   AndroidFilePermissions,
   permissionIsDenied,
   permissionIsGranted,
 } from './PermissionsUtils';
+import * as Localize from '@libs/Localize';
 import permissionsMap from './PermissionsMap';
 import permissionsMessages from './PermissionsMessages';
+import useLocalize from '@hooks/useLocalize';
 
 const openSettings = () => {
   Linking.openSettings();
@@ -75,9 +76,9 @@ const requestPermissionAndroid = async (
     const rationale: Rationale = {
       title: permissionsMessages[permissionType].title,
       message: permissionsMessages[permissionType].message,
-      buttonNeutral: 'Ask Me Later',
-      buttonNegative: 'Cancel',
-      buttonPositive: 'OK',
+      buttonNeutral: Localize.translateLocal('common.askMeLater'),
+      buttonNegative: Localize.translateLocal('common.cancel'),
+      buttonPositive: Localize.translateLocal('common.ok'),
     };
     // const status = await PermissionsAndroid.request(permission, rationale);
     const status = await PermissionsAndroid.request(permission, rationale);
@@ -109,6 +110,7 @@ const requestNotificationsPermissionIOS =
 export const requestPermission = async (permissionType: PermissionKey) => {
   let status: any;
   const currentPlatform = getPlatform();
+  const {translate} = useLocalize();
   const permission: Permission | RNPermission =
     permissionsMap[permissionType][currentPlatform];
 
@@ -131,17 +133,17 @@ export const requestPermission = async (permissionType: PermissionKey) => {
     const restrictedAccess = permissionIsDenied(status);
     if (restrictedAccess) {
       Alert.alert(
-        'Storage Permission Required',
-        'App needs access to your storage to read files. Please go to app settings and grant permission.',
+        translate('storage.permissionDenied'),
+        translate('storage.appNeedsAccess'),
         [
-          {text: 'Cancel', style: 'cancel'},
-          {text: 'Open Settings', onPress: openSettings},
+          {text: translate('common.cancel'), style: 'cancel'},
+          {text: translate('storage.openSettings'), onPress: openSettings},
         ],
       );
     } else {
       Alert.alert(
-        'Permission Denied',
-        'You need to grant permission for this functionality to work.',
+        translate('permissions.permissionDenied'),
+        translate('permissions.youNeedToGrantPermission'),
       );
     }
   }

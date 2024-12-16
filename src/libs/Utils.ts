@@ -6,6 +6,8 @@ import ONYXKEYS from '@src/ONYXKEYS';
 
 type BrickRoad = ValueOf<typeof CONST.BRICK_ROAD_INDICATOR_STATUS> | undefined;
 
+type NestedObject = {[key: string]: any};
+
 function isObject(item: any): boolean {
   return item && typeof item === 'object' && !Array.isArray(item);
 }
@@ -68,6 +70,61 @@ function arrayDifference<TItem>(array1: TItem[], array2: TItem[]): TItem[] {
   return [array1, array2].reduce((a, b) => a.filter(c => !b.includes(c)));
 }
 
+/**
+Iterates over all the final (non-object) values of a nested object and returns them along with their key paths.
+
+@param obj - The nested object to iterate over.
+@returns An array of objects containing the key path and the corresponding value.
+
+Example:
+```
+const nestedObject = {
+  a: { b: { c: 1, d: 2 }, e: 3 },
+  f: 4,
+};
+
+const result = iterateNestedObject(nestedObject);
+console.log(result);
+// Output:
+// [
+//   { keyPath: ['a', 'b', 'c'], value: 1 },
+//   { keyPath: ['a', 'b', 'd'], value: 2 },
+//   { keyPath: ['a', 'e'], value: 3 },
+//   { keyPath: ['f'], value: 4 }
+// ]
+```
+ */
+function iterateNestedObject<T>(
+  obj: NestedObject,
+): {keyPath: string[]; value: T}[] {
+  const results: {keyPath: string[]; value: T}[] = [];
+
+  /**
+Helper function to recursively traverse the nested object.
+@param obj - The current object being traversed.
+@param keyPath - The current path of keys leading to this object.
+   */
+  function traverse(obj: NestedObject, keyPath: string[] = []): void {
+    Object.entries(obj).forEach(([key, value]) => {
+      const currentPath = [...keyPath, key];
+      if (
+        value !== null &&
+        typeof value === 'object' &&
+        !Array.isArray(value)
+      ) {
+        // Recursive call for nested objects
+        traverse(value, currentPath);
+      } else {
+        // Final value, add to results
+        results.push({keyPath: currentPath, value});
+      }
+    });
+  }
+
+  traverse(obj);
+  return results;
+}
+
 async function setLoadingText(
   text: OnyxMergeInput<'appLoadingText'>,
 ): Promise<void> {
@@ -75,10 +132,11 @@ async function setLoadingText(
 }
 
 export {
-  isObject,
-  objectsAreEqual,
-  arrayItemsAreEqual,
   arrayDifference,
+  arrayItemsAreEqual,
+  isObject,
+  iterateNestedObject,
+  objectsAreEqual,
   setLoadingText,
 };
 export type {BrickRoad};

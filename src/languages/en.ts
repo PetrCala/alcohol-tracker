@@ -15,6 +15,7 @@ export default {
     yes: 'Yes',
     no: 'No',
     ok: 'OK',
+    askMeLater: 'Ask Me Later',
     buttonConfirm: 'Got it',
     name: 'Name',
     attachment: 'Attachment',
@@ -274,6 +275,33 @@ export default {
   imageUpload: {
     uploadSuccess: 'Image uploaded successfully!',
   },
+  storage: {
+    permissionDenied: 'Storage Permission Required',
+    appNeedsAccess:
+      'App needs access to your storage to read files. Please go to app settings and grant permission.',
+    openSettings: 'Open Settings',
+  },
+  permissions: {
+    permissionDenied: 'Permission Denied',
+    youNeedToGrantPermission:
+      'You need to grant permission for this functionality to work.',
+    camera: {
+      title: 'Camera Access Required',
+      message: 'This app needs access to your camera for taking pictures.',
+    },
+    read_photos: {
+      title: 'Access to Photos Required',
+      message: 'This app requires access to your photos to function properly.',
+    },
+    write_photos: {
+      title: 'Write Photos Access Required',
+      message: 'This app needs access to write photos to your device.',
+    },
+    notifications: {
+      title: 'Notification Access Required',
+      message: 'This app needs access to send notifications to your device.',
+    },
+  },
   personalDetails: {
     error: {
       hasInvalidCharacter: 'Invalid character',
@@ -377,6 +405,9 @@ export default {
     link: 'Copy share link to clipboard',
     linkCopied: 'Share link copied to clipboard!',
     qrCode: 'Show QR Code',
+    error: {
+      copy: 'Error copying to clipboard. Please try again.',
+    },
   },
   settingsScreen: {
     title: 'Settings',
@@ -899,6 +930,11 @@ export default {
         title: 'Sign Out Failed',
         message: 'There was an issue signing you out. Please try again.',
       },
+      userIsNull: {
+        title: 'User Not Found',
+        message:
+          'Your account could not be identified. Please restart the app.',
+      },
     },
     database: {
       accountCreationLimitExceeded: {
@@ -976,6 +1012,10 @@ export default {
       },
     },
     user: {
+      bugSubmissionFailed: {
+        title: 'Bug Submission Failed',
+        message: 'There was an issue submitting the bug. Please try again.',
+      },
       couldNotUnfriend: {
         title: 'Could Not Unfriend',
         message:
@@ -988,6 +1028,11 @@ export default {
       feedbackRemovalFailed: {
         title: 'Feedback Removal Failed',
         message: 'There was an issue removing the feedback. Please try again.',
+      },
+      feedbackSubmissionFailed: {
+        title: 'Feedback Submission Failed',
+        message:
+          'There was an issue submitting the feedback. Please try again.',
       },
       friendRequestSendFailed: {
         title: 'Friend Request Failed',

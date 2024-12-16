@@ -55,8 +55,7 @@ function PasswordScreen({route}: PasswordScreenProps) {
         );
         Navigation.goBack(); // TODO add a success message
       } catch (error) {
-        const errorMessage = ErrorUtils.getErrorMessage(error);
-        setServerErrorMessage(errorMessage);
+        ErrorUtils.raiseAppError(undefined, error);
       } finally {
         setIsLoading(false);
       }
