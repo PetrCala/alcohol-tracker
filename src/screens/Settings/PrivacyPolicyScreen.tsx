@@ -10,7 +10,7 @@ import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import useLocalize from '@hooks/useLocalize';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
-import type {WebViewRequest} from '@libs/WebView/types';
+import type WebViewRequest from '@libs/WebView/types';
 
 function PrivacyPolicyScreen() {
   const styles = useThemeStyles();

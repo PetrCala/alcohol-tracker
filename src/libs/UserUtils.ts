@@ -26,6 +26,7 @@ Onyx.connect({
   },
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type AvatarRange =
   | 1
   | 2

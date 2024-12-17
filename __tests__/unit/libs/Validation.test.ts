@@ -107,4 +107,4 @@ describe('Test the cleanSemver function', () => {
   });
 });
 
-// TODO test isNonEmptyArray, isValidPassword, isValidString, isValidEmail, validateSignInInput
+// TODO test isNonEmptyArray

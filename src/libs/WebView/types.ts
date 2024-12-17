@@ -34,4 +34,4 @@ type WebViewRequest = {
   hasTargetFrame?: boolean; // iOS only
 };
 
-export type {WebViewRequest};
+export default WebViewRequest;
