@@ -16,7 +16,7 @@ import {fetchDisplayDataForUsers} from '@src/database/baseFunctions';
  * @param userIDs An array of user IDs.
  * @returns A promise that resolves to a list of user profiles.
  */
-export async function fetchUserProfiles(
+async function fetchUserProfiles(
   db: Database,
   userIDs: UserID[],
 ): Promise<ProfileList> {
@@ -35,7 +35,7 @@ export async function fetchUserProfiles(
  * @param userIDs An array of user IDs.
  * @returns A promise that resolves to a UserStatusList object.
  */
-export async function fetchUserStatuses(
+async function fetchUserStatuses(
   db: Database,
   userIDs: UserID[],
 ): Promise<UserStatusList> {
@@ -62,7 +62,7 @@ export async function fetchUserStatuses(
  * @example
  * await setProfilePictureURL(db, 'test-user-id', 'profile_picture.jpg');
  */
-export async function setProfilePictureURL(
+async function setProfilePictureURL(
   db: Database,
   userID: string,
   photoURL: string,
@@ -83,7 +83,7 @@ export async function setProfilePictureURL(
  * @param storage - The Firebase storage object.
  * @returns A promise that resolves when the profile information is updated.
  */
-export async function updateProfileInfo(
+async function updateProfileInfo(
   pathToUpload: string,
   user: User | null,
   auth: Auth,
@@ -97,3 +97,10 @@ export async function updateProfileInfo(
   await setProfilePictureURL(db, user.uid, downloadURL);
   await updateProfile(auth.currentUser, {photoURL: downloadURL});
 }
+
+export {
+  fetchUserProfiles,
+  fetchUserStatuses,
+  setProfilePictureURL,
+  updateProfileInfo,
+};

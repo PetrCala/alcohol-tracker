@@ -290,9 +290,10 @@ Onyx.connect({
  * @param isAnonymousAction The action is allowed for anonymous or not
  * @returns same callback if the action is allowed, otherwise a function that signs out and redirects to sign in
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function checkIfActionIsAllowed<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   TCallback extends ((...args: any[]) => any) | void,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
 >(callback: TCallback, isAnonymousAction = false): TCallback | (() => void) {
   // if (isAnonymousUser() && !isAnonymousAction) {
   //   return () => signOutAndRedirectToSignIn();
