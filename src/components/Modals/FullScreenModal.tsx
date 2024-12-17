@@ -12,6 +12,7 @@ import {
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {useEffect, useRef, useState} from 'react';
 import useThemeStyles from '@hooks/useThemeStyles';
+import Button from '@components/Button';
 
 type FullScreenModalProps = {
   visible: boolean;
@@ -60,15 +61,11 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
   return (
     <Modal animationType="fade" transparent={false} visible={modalVisible}>
       {!hideCloseButton && (
-        <TouchableOpacity
-          accessibilityRole="button"
-          style={localStyles.modalButton}
-          onPress={handleCloseModal}>
-          <Image
-            source={KirokuIcons.ThinX}
-            style={localStyles.modalButtonImage}
-          />
-        </TouchableOpacity>
+        <Button
+          onPress={handleCloseModal}
+          icon={KirokuIcons.ThinX}
+          style={styles.closePageButton}
+        />
       )}
       <View
         style={[
@@ -88,22 +85,5 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
     </Modal>
   );
 };
-
-// eslint-disable-next-line @typescript-eslint/no-use-before-define
-const localStyles = StyleSheet.create({
-  modalButton: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
-    top: 70,
-    right: 25,
-    zIndex: 1,
-  },
-  modalButtonImage: {
-    height: 30,
-    width: 30,
-    tintColor: '#444', // #F2F2F2 for white
-  },
-});
 
 export default FullScreenModal;

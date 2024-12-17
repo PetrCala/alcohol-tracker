@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import type {ImageSourcePropType} from 'react-native';
-import {Image, View, Alert, TouchableOpacity, StyleSheet} from 'react-native';
+import {View} from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import {Image as CompressorImage} from 'react-native-compressor';
 import checkPermission from '@libs/Permissions/checkPermission';
@@ -8,10 +8,11 @@ import {requestPermission} from '@libs/Permissions/requestPermission';
 import * as Profile from '@userActions/Profile';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import {useFirebase} from '@src/context/global/FirebaseContext';
-import useLocalize from '@hooks/useLocalize';
 import uploadImageToFirebase from '@src/storage/storageUpload';
 import ERRORS from '@src/ERRORS';
 import UploadImagePopup from './Popups/UploadImagePopup';
+import useThemeStyles from '@hooks/useThemeStyles';
+import Button from './Button';
 
 type UploadImageComponentProps = {
   pathToUpload: string;
@@ -27,13 +28,16 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
   isProfilePicture = false,
 }) => {
   const {auth, db, storage} = useFirebase();
-  const {translate} = useLocalize();
+  const styles = useThemeStyles();
   const user = auth.currentUser;
   const [imageSource, setImageSource] = useState<string | null>(null);
   const [uploadModalVisible, setUploadModalVisible] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<string | null>(null);
   const [uploadOngoing, setUploadOngoing] = useState(false);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [warning, setWarning] = useState('');
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [success, setSuccess] = useState('');
 
   const chooseImage = async () => {
@@ -116,13 +120,12 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
             storage,
           );
         }
-        Alert.alert(translate('imageUpload.uploadSuccess'));
       } catch (error) {
         setImageSource(null);
         ErrorUtils.raiseAppError(ERRORS.IMAGE_UPLOAD.UPLOAD_FAILED, error);
+        setUploadModalVisible(false);
       } finally {
         setUploadOngoing(false); // Otherwise set upon success in child component
-        setUploadModalVisible(false);
       }
     };
 
@@ -130,18 +133,17 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
   }, [imageSource]);
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity
-        accessibilityRole="button"
+    <View style={[styles.alignItemsCenter, styles.justifyContentCenter]}>
+      <Button
         onPress={handleChooseImagePress}
-        style={styles.button}>
-        <Image source={src} style={imageStyle} />
-      </TouchableOpacity>
+        icon={src}
+        iconStyles={imageStyle}
+        style={[styles.border, styles.borderRadiusNormal]}
+      />
 
       {imageSource && (
         <UploadImagePopup
           visible={uploadModalVisible}
-          transparent
           onRequestClose={() => setUploadModalVisible(false)}
           uploadProgress={uploadProgress}
           uploadOngoing={uploadOngoing}
@@ -153,23 +155,5 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-    height: '100%',
-    zIndex: 2,
-  },
-  button: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-    height: '100%',
-    zIndex: 3,
-  },
-});
 
 export default UploadImageComponent;

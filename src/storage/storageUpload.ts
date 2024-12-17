@@ -58,9 +58,9 @@ async function uploadImageToFirebase(
     );
 
     await uploadTask;
-    setUploadProgress('0');
     setSuccess(Localize.translateLocal('imageUpload.uploadSuccess'));
   } catch (error) {
+    setUploadProgress('0');
     ErrorUtils.raiseAppError(ERRORS.IMAGE_UPLOAD.UPLOAD_FAILED, error);
     throw error; // Re-throw the error after handling
   }

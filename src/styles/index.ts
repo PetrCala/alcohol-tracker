@@ -785,6 +785,14 @@ const styles = (theme: ThemeColors) =>
       backgroundColor: theme.checkBox,
     },
 
+    closePageButton: {
+      position: 'absolute',
+      top: 40,
+      right: 10,
+      padding: 10,
+      zIndex: 10,
+    },
+
     colorMutedReversed: {
       color: theme.textMutedReversed,
     },
@@ -2404,6 +2412,15 @@ const styles = (theme: ThemeColors) =>
       height: variables.componentSizeNormal,
       justifyContent: 'center',
       width: variables.componentSizeNormal,
+    },
+
+    uploadFinishedIcon: {
+      backgroundColor: theme.success,
+      width: variables.iconSizeXLarge,
+      height: variables.iconSizeXLarge,
+      borderRadius: variables.componentBorderRadiusXLarge,
+      alignSelf: 'center',
+      ...spacing.p1,
     },
 
     userOverviewContainer: {

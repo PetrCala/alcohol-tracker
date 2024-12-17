@@ -119,6 +119,7 @@ export default {
     owner: 'Owner',
     dateFormat: 'YYYY-MM-DD',
     send: 'Send',
+    great: 'Great!',
     notifications: 'Notifications',
     na: 'N/A',
     noResultsFound: 'No results found',
@@ -275,6 +276,9 @@ export default {
   },
   imageUpload: {
     uploadSuccess: 'Image uploaded successfully!',
+    uploadingImage: 'Uploading image...',
+    uploadFinished: 'Upload finished!',
+    pleaseReload: 'Please reload the app to see changes.',
   },
   storage: {
     permissionDenied: 'Storage Permission Required',
