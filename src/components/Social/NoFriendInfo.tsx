@@ -1,3 +1,4 @@
+// TODO translate
 import Button from '@components/Button';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Navigation from '@libs/Navigation/Navigation';
