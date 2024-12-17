@@ -10,7 +10,7 @@ import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import {useUserConnection} from '@context/global/UserConnectionContext';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
 import useLocalize from '@hooks/useLocalize';
-import type {WebViewRequest} from '@libs/WebView/types';
+import type WebViewRequest from '@libs/WebView/types';
 
 function TermsOfServiceScreen() {
   const styles = useThemeStyles();

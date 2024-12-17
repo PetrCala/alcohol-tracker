@@ -1,6 +1,5 @@
 import {
   addYears,
-  endOfMonth,
   format,
   isAfter,
   isBefore,
@@ -10,9 +9,9 @@ import {
   parse,
   parseISO,
   startOfDay,
-  startOfTomorrow,
   subYears,
 } from 'date-fns';
+// eslint-disable-next-line you-dont-need-lodash-underscore/is-date
 import isDate from 'lodash/isDate';
 import isEmpty from 'lodash/isEmpty';
 import isObject from 'lodash/isObject';

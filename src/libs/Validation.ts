@@ -1,6 +1,5 @@
+// TODO move these to ValidationUtils.ts
 import semver from 'semver';
-import CONST from '@src/CONST';
-
 import type {AppSettings} from '@src/types/onyx';
 import {version as _version} from '../../package.json';
 
@@ -10,102 +9,6 @@ type ValidationResult = {
   success: boolean;
   message?: string;
   updateAvailable?: boolean;
-};
-
-/**
- * Checks if the given email is valid.
- * @param email - The email to be validated.
- * @returns True if the email is valid, false otherwise.
- */
-export function isValidEmail(email: string): boolean {
-  return /\S+@\S+\.\S+/.test(email);
-}
-
-/**
- * Validate that a string does not contain any characters not accepted
- * as keys by the Realtime Firebase.
- *
- * @param input Input string to check.
- * @returns True if the string is valid, false otherwise.
- */
-export function isValidString(input: string): boolean {
-  for (const char of CONST.INVALID_CHARS) {
-    if (input.includes(char)) {
-      return false;
-    }
-  }
-  return true;
-}
-
-/**
- * Checks if a password is valid.
- * @param password - The password to validate.
- * @returns True if the password is valid, false otherwise.
- */
-export function isValidPassword(password: string): boolean {
-  return password.length >= 6;
-}
-
-/**
- * Checks if the given password matches the password confirmation.
- * @param password - The password to be validated.
- * @param passwordConfirm - The password confirmation to be compared with the password.
- * @returns True if the password matches the password confirmation, false otherwise.
- */
-export function isValidPasswordConfirm(
-  password: string,
-  passwordConfirm: string,
-): boolean {
-  return password === passwordConfirm;
-}
-
-/**
- * Having a list of input sign in text, check that all fields are valid. Return the
- * results as a ValidationResult object.
- *
- * @param email User mail
- * @param username User name
- * @param password User password
- */
-export const validateSignInInput = (
-  email: string,
-  username: string,
-  password: string,
-  passwordConfirm: string,
-): ValidationResult => {
-  if (
-    email == '' ||
-    username == '' ||
-    password == '' ||
-    passwordConfirm == ''
-  ) {
-    return {success: false, message: 'Please fill out all fields first'};
-  }
-  if (!isValidEmail(email)) {
-    return {
-      success: false,
-      message: 'Please enter a valid email address',
-    };
-  }
-  if (!isValidString(username) && username !== '') {
-    return {
-      success: false,
-      message: `Your nickname can not contain ${CONST.INVALID_CHARS.join(', ')}`,
-    };
-  }
-  if (!isValidPassword(password)) {
-    return {
-      success: false,
-      message: 'Your password must be at least 6 characters long',
-    };
-  }
-  if (!isValidPasswordConfirm(password, passwordConfirm)) {
-    return {
-      success: false,
-      message: 'Your passwords do not match',
-    };
-  }
-  return {success: true};
 };
 
 /** Validate that a string is semver-able. If not, throw an error.
@@ -125,10 +28,10 @@ export const validateSignInInput = (
  * validateSemver('2.10.3-alpha.1+build.456'); // Valid, no error thrown
  * validateSemver('01.0.0'); // Invalid, error thrown
  */
-export function validateSemver(version: string): void {
+function validateSemver(ver: string): void {
   const semverRegex =
     /^v?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?$/;
-  if (!semverRegex.test(version)) {
+  if (!semverRegex.test(ver)) {
     throw new Error('Invalid SemVer version.');
   }
 }
@@ -138,10 +41,10 @@ export function validateSemver(version: string): void {
  * @param version - The semantic version string to clean.
  * @returns The cleaned semantic version string containing only the major, minor, and patch version components.
  */
-export function cleanSemver(version: string): string {
+function cleanSemver(ver: string): string {
   const regex = /^(\d+\.\d+\.\d+)/;
-  const match = version.match(regex);
-  return match ? match[1] : version;
+  const match = ver.match(regex);
+  return match ? match[1] : ver;
 }
 
 /** Input the minimum supported version of the application and validate that the current version is not older than that one. If it is newer, return true, otherwise return false.
@@ -150,7 +53,7 @@ export function cleanSemver(version: string): string {
  * @param currentAppVersion Current version of the application. Defaults to the version stored in 'package.json'. Overwrite this value only in testing.
  * @returns Validation result type object.
  */
-export const validateAppVersion = (
+const validateAppVersion = (
   appSettings: AppSettings,
   currentAppVersion: string = version,
 ): ValidationResult => {
@@ -180,19 +83,19 @@ export const validateAppVersion = (
 };
 
 /**
- * Check whether an element is a non-empty object.
+ * Check whether an element is a non-empty object of a specific type.
  *
  * @description
- * Validate that the object is JSON-like type object with at least one key-value pair.
+ * Validate that the object is a JSON-like type object with at least one key-value pair.
  * For arrays, return false.
  *
  * @param input Element/variable to check
  * @returns True if the element is a non-empty object, false otherwise.
  */
-export function isNonEmptyObject(input: any): boolean {
+function isNonEmptyObject<T>(input: unknown): input is T {
   try {
     return (
-      input &&
+      input !== null &&
       typeof input === 'object' &&
       !Array.isArray(input) &&
       Object.keys(input).length > 0
@@ -203,12 +106,18 @@ export function isNonEmptyObject(input: any): boolean {
 }
 
 /**
- * Checks if the input is a non-empty array.
+ * Checks if the input is a non-empty array of a specific type.
  * @param input - The input to be checked.
  * @returns True if the input is a non-empty array, false otherwise.
  */
-export function isNonEmptyArray(input: any) {
+function isNonEmptyArray<T>(input: unknown): input is T[] {
   return Array.isArray(input) && input.length > 0;
 }
-
+export {
+  cleanSemver,
+  isNonEmptyObject,
+  isNonEmptyArray,
+  validateAppVersion,
+  validateSemver,
+};
 export type {ValidationResult};

@@ -1,7 +1,7 @@
 // Issue - https://github.com/Expensify/App/issues/26719
 import type {AppStateStatus} from 'react-native';
 import {AppState} from 'react-native';
-import type {OnyxCollection, OnyxEntry, OnyxUpdate} from 'react-native-onyx';
+import type {OnyxEntry, OnyxUpdate} from 'react-native-onyx';
 import Onyx from 'react-native-onyx';
 import type {ValueOf} from 'type-fest';
 import * as API from '@libs/API';
@@ -15,9 +15,9 @@ import type {
   UpdatePreferredLocaleParams,
 } from '@libs/API/parameters';
 import {SIDE_EFFECT_REQUEST_COMMANDS, WRITE_COMMANDS} from '@libs/API/types';
-import * as Browser from '@libs/Browser';
-import DateUtils from '@libs/DateUtils';
-import Log from '@libs/Log';
+// import * as Browser from '@libs/Browser';
+// import DateUtils from '@libs/DateUtils';
+// import Log from '@libs/Log';
 import getCurrentUrl from '@libs/Navigation/currentUrl';
 import Navigation from '@libs/Navigation/Navigation';
 // import Performance from '@libs/Performance';
@@ -36,13 +36,14 @@ import type {User} from 'firebase/auth';
 
 type Locale = ValueOf<typeof CONST.LOCALES>;
 
-let currentUserID: UserID | undefined;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 let currentUserEmail: string;
+let currentUserID: UserID | undefined;
 Onyx.connect({
   key: ONYXKEYS.SESSION,
   callback: val => {
-    currentUserID = val?.userID ?? undefined;
     currentUserEmail = val?.email ?? '';
+    currentUserID = val?.userID ?? undefined;
   },
 });
 
@@ -111,6 +112,7 @@ function setSidebarLoaded() {
   // Performance.markStart(CONST.TIMING.REPORT_INITIAL_RENDER);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 let appState: AppStateStatus;
 AppState.addEventListener('change', nextAppState => {
   // if (nextAppState.match(/inactive|background/) && appState === 'active') {
@@ -124,20 +126,22 @@ AppState.addEventListener('change', nextAppState => {
  */
 function getOnyxDataForOpenOrReconnect(isOpenApp = false): OnyxData {
   const defaultData = {
-    optimisticData: [
-      {
-        onyxMethod: Onyx.METHOD.MERGE,
-        key: ONYXKEYS.IS_LOADING_SESSION_DATA,
-        value: true,
-      },
-    ],
-    finallyData: [
-      {
-        onyxMethod: Onyx.METHOD.MERGE,
-        key: ONYXKEYS.IS_LOADING_SESSION_DATA,
-        value: false,
-      },
-    ],
+    optimisticData: [],
+    finallyData: [],
+    // Possibly add data for sessions
+    //   {
+    //     onyxMethod: Onyx.METHOD.MERGE,
+    //     key: ONYXKEYS.IS_LOADING_SESSION_DATA,
+    //     value: true,
+    //   },
+    // ],
+    // finallyData: [
+    //   {
+    //     onyxMethod: Onyx.METHOD.MERGE,
+    //     key: ONYXKEYS.IS_LOADING_SESSION_DATA,
+    //     value: false,
+    //   },
+    // ],
   };
   if (!isOpenApp) {
     return defaultData;
@@ -562,6 +566,7 @@ export {
   setUpPoliciesAndNavigate,
   // openProfile,
   redirectThirdPartyDesktopSignIn,
+  isReadyToOpenApp,
   openApp,
   reconnectApp,
   confirmReadyToOpenApp,
@@ -574,4 +579,5 @@ export {
   // createWorkspaceWithPolicyDraftAndNavigateToIt,
   updateLastVisitedPath,
   updateLastRoute,
+  waitForSignOnTransitionToFinish,
 };

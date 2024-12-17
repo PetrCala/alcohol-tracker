@@ -1,5 +1,5 @@
 import Onyx from 'react-native-onyx';
-import type {Auth, UserCredential} from 'firebase/auth';
+import type {Auth} from 'firebase/auth';
 import {deleteUser, signOut} from 'firebase/auth';
 import type {Database} from 'firebase/database';
 import CONST from '@src/CONST';
@@ -43,9 +43,7 @@ async function closeAccount(
     throw new Error('Missing data. Try reloading the page');
   }
 
-  // Reauthentificate the user
-  let authentificationResult: void | UserCredential;
-  authentificationResult = await reauthentificateUser(user, password);
+  const authentificationResult = await reauthentificateUser(user, password);
 
   if (!authentificationResult) {
     throw new Error(
