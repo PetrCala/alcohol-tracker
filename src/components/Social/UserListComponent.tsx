@@ -11,14 +11,7 @@ import type {UserStatusList} from '@src/types/onyx';
 import type {UserArray} from '@src/types/onyx/OnyxCommon';
 import React, {useState, useEffect} from 'react';
 import type {NativeScrollEvent, NativeSyntheticEvent} from 'react-native';
-import {
-  Dimensions,
-  Keyboard,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import {Dimensions, Keyboard, StyleSheet, View} from 'react-native';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
@@ -27,8 +20,9 @@ import _ from 'lodash';
 import useThemeStyles from '@hooks/useThemeStyles';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
-import style from '@components/Icon/IconWrapperStyles';
 import UserOverview from './UserOverview';
+import Text from '@components/Text';
+import ScrollView from '@components/ScrollView';
 
 type UserListProps = {
   fullUserArray: UserArray;
