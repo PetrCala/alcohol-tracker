@@ -18,14 +18,14 @@ import type ImageLayout from '@src/types/various/ImageLayout';
 import type {Profile} from '@src/types/onyx';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Icon from '@components/Icon';
+import variables from '@src/styles/variables';
+import useWindowDimensions from '@hooks/useWindowDimensions';
 
 type ProfileOverviewProps = {
   userID: string;
   profileData: Profile;
 };
 
-const screenWidth = Dimensions.get('window').width;
-const profileImageSize = 110;
 const topOffset = 20; // Profile image offset from main container top
 
 const ProfileOverview: React.FC<ProfileOverviewProps> = ({
@@ -35,8 +35,8 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
   const {auth, storage} = useFirebase();
   const StyleUtils = useStyleUtils();
   const styles = useThemeStyles();
-  const theme = useThemeStyles();
   const user = auth.currentUser;
+  const {windowWidth} = useWindowDimensions();
   const [layout, setLayout] = useState<ImageLayout>({
     x: 0,
     y: topOffset,
@@ -55,7 +55,13 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
   };
 
   return (
-    <View style={localStyles.profileOverviewContainer}>
+    <View
+      style={[
+        styles.flexColumn,
+        styles.alignItemsCenter,
+        styles.p1,
+        {marginTop: topOffset},
+      ]}>
       {user?.uid === userID && (
         <TouchableOpacity
           accessibilityRole="button"
@@ -76,21 +82,16 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
         onLayout={onLayout}
       />
       {user?.uid === userID && (
-        <View style={[localStyles.editProfileIconButton, styles.appBG]}>
-          <UploadImageComponent
-            pathToUpload={`users/${userID}/profile/profile_image.jpg`}
-            src={KirokuIcons.Camera}
-            imageStyle={[
-              localStyles.editProfileIconButtonImage,
-              {tintColor: StyleUtils.getIconFillColor()},
-            ]}
-            isProfilePicture
-          />
-        </View>
+        <UploadImageComponent
+          pathToUpload={`users/${userID}/profile/profile_image.jpg`}
+          src={KirokuIcons.Camera}
+          isProfilePicture
+          containerStyles={styles.editProfileImageContainer(windowWidth)}
+        />
       )}
-      <View style={localStyles.userInfoContainer}>
+      <View style={[styles.flexRow, styles.mt2, styles.p1]}>
         <Text
-          style={[localStyles.profileNameText, styles.textStrong]}
+          style={[styles.textLarge, styles.textStrong, styles.textAlignCenter]}
           numberOfLines={1}
           ellipsizeMode="tail">
           {profileData.display_name}
@@ -102,14 +103,6 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
 
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
 const localStyles = StyleSheet.create({
-  profileOverviewContainer: {
-    width: screenWidth,
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    padding: 5,
-    marginTop: topOffset,
-  },
   editProfileButton: {
     position: 'absolute',
     top: -topOffset + 8,
@@ -119,53 +112,20 @@ const localStyles = StyleSheet.create({
     height: 'auto',
   },
   profileImageContainer: {
-    height: profileImageSize,
-    width: profileImageSize,
+    height: variables.avatarSizeXLarge,
+    width: variables.avatarSizeXLarge,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'transparent',
     zIndex: 0,
   },
   profileOverviewImage: {
-    width: profileImageSize,
-    height: profileImageSize,
-    borderRadius: profileImageSize / 2,
+    width: variables.avatarSizeXLarge,
+    height: variables.avatarSizeXLarge,
+    borderRadius: variables.avatarSizeXLarge / 2,
     position: 'absolute',
     top: 0, // Makes layout recognize the position
     zIndex: 1, // Ensure that the profile image is below the edit button
-  },
-  editProfileIconButton: {
-    height: profileImageSize / 3,
-    width: profileImageSize / 3,
-    position: 'absolute',
-    top: profileImageSize / 2 + profileImageSize / 7,
-    left: screenWidth / 2 + profileImageSize / 2 - profileImageSize / 3,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: profileImageSize / 3,
-    borderColor: 'black',
-    borderWidth: 1,
-    zIndex: 2,
-  },
-  editProfileIconButtonImage: {
-    height: profileImageSize / 6,
-    width: profileImageSize / 6,
-    zIndex: 3, // Always pressable
-  },
-  userInfoContainer: {
-    width: screenWidth,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-    marginTop: 5,
-    padding: 5,
-    textAlign: 'center',
-  },
-  profileNameText: {
-    color: 'black',
-    fontSize: 20,
-    marginLeft: 10,
-    flexShrink: 1,
   },
 });
 
