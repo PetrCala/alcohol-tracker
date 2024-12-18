@@ -24,7 +24,9 @@ import ROUTES from '@src/ROUTES';
 import {differenceInDays, startOfDay} from 'date-fns';
 import type {SelectedTimezone} from '@src/types/onyx/UserData';
 import type {ValueOf} from 'type-fest';
+import _ from 'lodash';
 import DBPATHS from '@src/DBPATHS';
+import ERRORS from '@src/ERRORS';
 
 const drinkingSessionRef = DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID;
 const userStatusRef = DBPATHS.USER_STATUS_USER_ID;
@@ -34,23 +36,21 @@ let ongoingSessionData: DrinkingSession | undefined;
 Onyx.connect({
   key: ONYXKEYS.ONGOING_SESSION_DATA,
   callback: value => {
-    if (!value) {
-      return;
+    if (value) {
+      ongoingSessionData = value;
     }
-    ongoingSessionData = value;
   },
 });
 
-// let editSessionData: DrinkingSession | undefined;
-// Onyx.connect({
-//   key: ONYXKEYS.EDIT_SESSION_DATA,
-//   callback: value => {
-//     if (!value) {
-//       return;
-//     }
-//     editSessionData = value;
-//   },
-// });
+let editSessionData: DrinkingSession | undefined;
+Onyx.connect({
+  key: ONYXKEYS.EDIT_SESSION_DATA,
+  callback: value => {
+    if (value) {
+      editSessionData = value;
+    }
+  },
+});
 
 /**
  * Set the edit session data object in Onyx so that it can be modified. This function should be called only if the relevant object already exists in the onyx database.
@@ -82,16 +82,16 @@ async function updateDrinkingSessionData(
   sessionId: DrinkingSessionId,
   updateStatus?: boolean,
 ): Promise<void> {
-  const updatesToDB: FirebaseUpdates = {};
+  const updatesToDB: Record<string, any> = {};
 
   const dsPath = drinkingSessionRef.getRoute(userID, sessionId);
-  Object.entries(updates).forEach((value, key) => {
+  _.forEach(updates, (value, key) => {
     updatesToDB[`${dsPath}/${key}`] = value;
   });
 
   if (updateStatus) {
     const userStatusPath = userStatusLatestSessionRef.getRoute(userID);
-    Object.entries(updates).forEach((value, key) => {
+    _.forEach(updates, (value, key) => {
       updatesToDB[`${userStatusPath}/${key}`] = value;
     });
   }
@@ -110,11 +110,11 @@ async function syncLocalLiveSessionData(
   drinkingSessionData: DrinkingSessionList | undefined,
 ) {
   if (ongoingSessionId && drinkingSessionData) {
-    const ongoingData = drinkingSessionData[ongoingSessionId];
-    if (ongoingData) {
+    const ongoingSessionData = drinkingSessionData[ongoingSessionId];
+    if (ongoingSessionData) {
       await updateLocalData(
         ongoingSessionId,
-        ongoingData,
+        ongoingSessionData,
         ONYXKEYS.ONGOING_SESSION_DATA,
       );
     }
@@ -164,7 +164,7 @@ async function startLiveDrinkingSession(
   };
 
   // Update Firebase
-  const updates: FirebaseUpdates = {};
+  const updates: Record<string, any> = {};
   updates[userStatusRef.getRoute(user.uid)] = newStatusData;
   updates[drinkingSessionRef.getRoute(user.uid, newSessionId)] = newSessionData;
   await update(ref(db), updates);
@@ -188,7 +188,7 @@ async function saveDrinkingSessionData(
   onyxKey: OnyxKey,
   sessionIsLive?: boolean,
 ): Promise<void> {
-  const updates: FirebaseUpdates = {};
+  const updates: Record<string, any> = {};
   if (sessionIsLive) {
     const userStatusData: UserStatus = {
       // ETC - 1
@@ -219,7 +219,7 @@ async function removeDrinkingSessionData(
   onyxKey: OnyxKey,
   sessionIsLive?: boolean,
 ): Promise<void> {
-  const updates: FirebaseUpdates = {};
+  const updates: Record<string, any> = {};
   updates[drinkingSessionRef.getRoute(userID, sessionKey)] = null;
   if (sessionIsLive) {
     const userStatusData: UserStatus = {
