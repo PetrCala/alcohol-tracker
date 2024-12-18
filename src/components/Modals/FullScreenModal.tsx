@@ -1,18 +1,10 @@
-import CONST from '@src/CONST';
 import type {StyleProp, ViewStyle} from 'react-native';
-import {
-  Dimensions,
-  Image,
-  Modal,
-  PanResponder,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {Dimensions, Modal, PanResponder, View} from 'react-native';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {useEffect, useRef, useState} from 'react';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Button from '@components/Button';
+import useTheme from '@hooks/useTheme';
 
 type FullScreenModalProps = {
   visible: boolean;
@@ -33,6 +25,7 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
   style,
 }: FullScreenModalProps) => {
   const [modalVisible, setModalVisible] = useState(visible);
+  const theme = useTheme();
   const styles = useThemeStyles();
 
   // Use a pan responsder to dismiss the modal upon swiping up
@@ -64,6 +57,7 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
         <Button
           onPress={handleCloseModal}
           icon={KirokuIcons.ThinX}
+          iconFill={theme.textLight}
           style={styles.closePageButton}
         />
       )}
