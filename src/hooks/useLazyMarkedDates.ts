@@ -44,8 +44,8 @@ function useLazyMarkedDates(
   >(new Map());
   const [unitsMap, setUnitsMap] = useState<Map<DateString, number>>(new Map());
   const sessionIndex = useRef<Map<DateString, DrinkingSessionArray>>(new Map()); // synchronous
-  const loadedFrom = useRef<Date | null>(null);
   const [monthsLoaded] = useOnyx(ONYXKEYS.SESSIONS_CALENDAR_MONTHS_LOADED);
+  const loadedFrom = useRef<Date | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const defaultTimezone = CONST.DEFAULT_TIME_ZONE.selected;
 
@@ -118,11 +118,6 @@ function useLazyMarkedDates(
     });
 
     loadedFrom.current = start;
-
-    if (user?.uid == userID) {
-      const newMonthsLoaded = newMonthsToLoad + (monthsLoaded || 0);
-      Onyx.merge(ONYXKEYS.SESSIONS_CALENDAR_MONTHS_LOADED, newMonthsLoaded);
-    }
   };
 
   /** Create a new map either using an existing object, or an empty object if the reset argument is set to true. Return the relevant map. */
@@ -158,15 +153,28 @@ function useLazyMarkedDates(
   );
 
   useEffect(() => {
+    // For the current user, save the number of months loaded when the component unmounts
+    return () => {
+      if (user?.uid === userID) {
+        const newMonthsLoaded = differenceInMonths(
+          new Date(),
+          loadedFrom.current ?? new Date(),
+        );
+        Onyx.merge(ONYXKEYS.SESSIONS_CALENDAR_MONTHS_LOADED, newMonthsLoaded);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     setIsLoading(true);
     loadedFrom.current = null;
+
     // Resetting the session index causes recalculation of of dependent hooks when necssary, so it is not needed to reset them here
     sessionIndex.current = new Map<DateString, DrinkingSessionArray>();
 
-    // If this is the first time loading, load the current month only
-    // If more data have already been loaded, reload the same amount of months
-    const newMonthsToLoad =
-      user?.uid == userID && monthsLoaded && monthsLoaded > 0 ? 0 : 1;
+    // If the current user has already loaded data, reload the same amount of months
+    // If this is the first time loading, or the user is different load the current month only
+    const newMonthsToLoad = user?.uid !== userID ? 0 : monthsLoaded || 0;
 
     loadMoreMonths(newMonthsToLoad, true);
     setIsLoading(false);

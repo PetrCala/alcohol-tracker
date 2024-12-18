@@ -32,7 +32,7 @@ export default function () {
       [ONYXKEYS.SESSION]: {loading: false},
       [ONYXKEYS.NETWORK]: CONST.DEFAULT_NETWORK_DATA,
       [ONYXKEYS.IS_SIDEBAR_LOADED]: false,
-      [ONYXKEYS.SESSIONS_CALENDAR_MONTHS_LOADED]: 0, // Reset calendar
+      [ONYXKEYS.SESSIONS_CALENDAR_MONTHS_LOADED]: null, // Reset calendar
       [ONYXKEYS.SHOULD_SHOW_COMPOSE_INPUT]: true,
       [ONYXKEYS.MODAL]: {
         isVisible: false,
