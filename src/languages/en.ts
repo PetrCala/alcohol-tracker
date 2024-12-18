@@ -562,7 +562,7 @@ export default {
     enterPassword: 'Enter your password',
   },
   verifyEmailScreen: {
-    youAreNotVerified: "It looks like you haven't verified your email yet.",
+    youAreNotVerified: "Let's verify your email!",
     wouldYouLikeToVerify: (email: string) =>
       `Would you like to verify ${email ?? 'your email'} now?`,
     illDoItLater: "I'll do it later",
