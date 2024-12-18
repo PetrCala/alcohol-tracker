@@ -38,7 +38,7 @@ import {roundToTwoDecimalPlaces} from '@libs/NumberUtils';
 import NoSessionsInfo from '@components/NoSessionsInfo';
 import Text from '@components/Text';
 import BottomTabBar from '@libs/Navigation/AppNavigator/createCustomBottomTabNavigator/BottomTabBar';
-import {useOnyx} from 'react-native-onyx';
+import Onyx, {useOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 import ERRORS from '@src/ERRORS';
 import Button from '@components/Button';
@@ -62,6 +62,7 @@ function HomeScreen({route}: HomeScreenProps) {
     dateToDateData(new Date()),
   );
   const [drinkingSessionsCount, setDrinkingSessionsCount] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [unitsConsumed, setUnitsConsumed] = useState<number>(0);
   const [shouldNavigateToTzFix, setShouldNavigateToTzFix] =
     useState<boolean>(false);
@@ -137,6 +138,14 @@ function HomeScreen({route}: HomeScreenProps) {
     ]),
   );
 
+  useEffect(() => {
+    if (!!loadingText || !preferences || !userData || !user) {
+      return;
+    }
+    Onyx.set(ONYXKEYS.HAS_CHECKED_AUTO_LOGIN, true);
+    setIsLoading(false);
+  }, [loadingText, preferences, userData, user]);
+
   if (!user) {
     throw new Error(translate('common.error.userNull'));
   }
@@ -145,7 +154,7 @@ function HomeScreen({route}: HomeScreenProps) {
     return <UserOffline />;
   }
 
-  if (!!loadingText || !preferences || !userData || !user) {
+  if (isLoading || !preferences || !userData) {
     return <FullScreenLoadingIndicator loadingText={loadingText} />;
   }
 

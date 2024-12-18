@@ -658,6 +658,11 @@ function resetHomeRouteParams() {
   });
 }
 
+/** Save the information about whether the app has attempted to auto login the user */
+function setHasCheckedAutoLogin(val: boolean) {
+  Onyx.merge(ONYXKEYS.HAS_CHECKED_AUTO_LOGIN, val);
+}
+
 /**
  * Put any logic that needs to run when we are signed out here. This can be triggered when the current tab or another tab signs out.
  * - Cancels pending network calls - any lingering requests are discarded to prevent unwanted storage writes
@@ -1099,6 +1104,7 @@ export {
   //   signInWithValidateCodeAndNavigate,
   //   initAutoAuthState,
   //   signInWithShortLivedAuthToken,
+  setHasCheckedAutoLogin,
   cleanupSession,
   signOut,
   //   signOutAndRedirectToSignIn,
