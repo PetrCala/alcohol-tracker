@@ -15,8 +15,8 @@ import * as ErrorUtils from '@libs/ErrorUtils';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import uploadImageToFirebase from '@src/storage/storageUpload';
 import ERRORS from '@src/ERRORS';
-import UploadImagePopup from './Popups/UploadImagePopup';
 import useThemeStyles from '@hooks/useThemeStyles';
+import UploadImagePopup from './Popups/UploadImagePopup';
 import Button from './Button';
 
 type UploadImageComponentProps = {

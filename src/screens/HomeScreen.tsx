@@ -39,7 +39,7 @@ import {roundToTwoDecimalPlaces} from '@libs/NumberUtils';
 import NoSessionsInfo from '@components/NoSessionsInfo';
 import Text from '@components/Text';
 import BottomTabBar from '@libs/Navigation/AppNavigator/createCustomBottomTabNavigator/BottomTabBar';
-import Onyx, {useOnyx} from 'react-native-onyx';
+import {useOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 import ERRORS from '@src/ERRORS';
 import Button from '@components/Button';

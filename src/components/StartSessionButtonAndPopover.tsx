@@ -15,7 +15,7 @@ import Onyx, {useOnyx} from 'react-native-onyx';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
 import * as DS from '@userActions/DrinkingSession';
 import * as ErrorUtils from '@libs/ErrorUtils';
-import * as Utils from '@libs/Utils';
+import * as App from '@userActions/App';
 import useLocalize from '@hooks/useLocalize';
 import usePrevious from '@hooks/usePrevious';
 import useResponsiveLayout from '@hooks/useResponsiveLayout';
@@ -81,7 +81,7 @@ function StartSessionButtonAndPopover(
 
   const startLiveDrinkingSession = async (): Promise<void> => {
     try {
-      await Utils.setLoadingText(translate('liveSessionScreen.loading'));
+      await App.setLoadingText(translate('liveSessionScreen.loading'));
       if (!ongoingSessionData?.ongoing) {
         await DS.startLiveDrinkingSession(
           db,
@@ -97,7 +97,7 @@ function StartSessionButtonAndPopover(
 
   const createEditDrinkingSession = async (): Promise<void> => {
     try {
-      await Utils.setLoadingText(translate('common.loading'));
+      await App.setLoadingText(translate('common.loading'));
       await Onyx.merge(ONYXKEYS.IS_CREATING_NEW_SESSION, true);
       const newSession = await DS.getNewSessionToEdit(
         db,
@@ -118,7 +118,7 @@ function StartSessionButtonAndPopover(
       await Onyx.merge(ONYXKEYS.IS_CREATING_NEW_SESSION, false);
       ErrorUtils.raiseAppError(ERRORS.SESSION.START_FAILED, error);
     } finally {
-      await Utils.setLoadingText(null);
+      await App.setLoadingText(null);
     }
   };
 

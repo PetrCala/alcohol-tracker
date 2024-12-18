@@ -18,7 +18,7 @@ import DateUtils from '@libs/DateUtils';
 import Onyx from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 import {PressableWithFeedback} from '@components/Pressable';
-import {DrinkingSessionOverviewProps} from './types';
+import type {DrinkingSessionOverviewProps} from './types';
 
 function DrinkingSessionOverview({
   sessionId,

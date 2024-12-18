@@ -1,7 +1,7 @@
 import type {ValueOf} from 'type-fest';
 import type CONST from '@src/CONST';
 import type {OnyxMergeInput} from 'react-native-onyx';
-import Onyx, {OnyxEntry} from 'react-native-onyx';
+import Onyx from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 
 type BrickRoad = ValueOf<typeof CONST.BRICK_ROAD_INDICATOR_STATUS> | undefined;
@@ -125,18 +125,11 @@ Helper function to recursively traverse the nested object.
   return results;
 }
 
-async function setLoadingText(
-  text: OnyxMergeInput<'appLoadingText'>,
-): Promise<void> {
-  await Onyx.merge(ONYXKEYS.APP_LOADING_TEXT, text);
-}
-
 export {
   arrayDifference,
   arrayItemsAreEqual,
   isObject,
   iterateNestedObject,
   objectsAreEqual,
-  setLoadingText,
 };
 export type {BrickRoad};

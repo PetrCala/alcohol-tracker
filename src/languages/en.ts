@@ -1,12 +1,12 @@
 import CONST from '@src/CONST';
 import type Platform from '@libs/getPlatform/types';
+import type {DrinkingSessionId} from '@src/types/onyx';
 import type {
   CharacterLimitParams,
   TranslationBase,
   UntilTimeParams,
 } from './types';
 import type {SignUpNewAccountCodeParams} from './params';
-import {DrinkingSessionId} from '@src/types/onyx';
 
 /* eslint-disable max-len */
 export default {

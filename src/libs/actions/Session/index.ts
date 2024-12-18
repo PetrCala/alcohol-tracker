@@ -90,7 +90,7 @@ Onyx.connect({
     }),
 });
 
-let hasCheckedAutoLogin: boolean = false;
+let hasCheckedAutoLogin = false;
 Onyx.connect({
   key: ONYXKEYS.HAS_CHECKED_AUTO_LOGIN,
   callback: value => (hasCheckedAutoLogin = value ?? false),

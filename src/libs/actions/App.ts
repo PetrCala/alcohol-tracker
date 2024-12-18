@@ -1,7 +1,7 @@
 // Issue - https://github.com/Expensify/App/issues/26719
 import type {AppStateStatus} from 'react-native';
 import {AppState} from 'react-native';
-import type {OnyxEntry, OnyxUpdate} from 'react-native-onyx';
+import type {OnyxEntry, OnyxMergeInput, OnyxUpdate} from 'react-native-onyx';
 import Onyx from 'react-native-onyx';
 import type {ValueOf} from 'type-fest';
 import * as API from '@libs/API';
@@ -559,7 +559,14 @@ function updateLastRoute(screen: string) {
   Onyx.set(ONYXKEYS.LAST_ROUTE, screen);
 }
 
+async function setLoadingText(
+  text: OnyxMergeInput<'appLoadingText'>,
+): Promise<void> {
+  await Onyx.merge(ONYXKEYS.APP_LOADING_TEXT, text);
+}
+
 export {
+  setLoadingText,
   setLocale,
   setLocaleAndNavigate,
   setSidebarLoaded,

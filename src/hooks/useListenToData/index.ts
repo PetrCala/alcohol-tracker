@@ -7,7 +7,7 @@ import type {
 } from '@hooks/useFetchData/types';
 import {fetchDataKeyToDbPath} from '@hooks/useFetchData/utils';
 import useLocalize from '@hooks/useLocalize';
-import * as Utils from '@libs/Utils';
+import * as App from '@userActions/App';
 import {useEffect, useState} from 'react';
 
 // Define a type for the hook's return value
@@ -37,11 +37,11 @@ const useListenToData = (
 
   useEffect(() => {
     if (!db) {
-      Utils.setLoadingText(null);
+      App.setLoadingText(null);
       return;
     }
 
-    Utils.setLoadingText(translate('database.loading'));
+    App.setLoadingText(translate('database.loading'));
     const unsubscribers = dataTypes.map(dataTypes => {
       const path = fetchDataKeyToDbPath(dataTypes, userID);
 
@@ -53,7 +53,7 @@ const useListenToData = (
       return () => {};
     });
 
-    Utils.setLoadingText(null);
+    App.setLoadingText(null);
 
     // Cleanup function to unsubscribe from all listeners when the component unmounts or the effect reruns
     return () => {
