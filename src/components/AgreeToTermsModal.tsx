@@ -1,17 +1,12 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import type {StyleProp, TextStyle} from 'react-native';
 import {View} from 'react-native';
 import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
 import CONST from '@src/CONST';
-import * as UserUtils from '@libs/UserUtils';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import * as User from '@libs/actions/User';
 import {useFirebase} from '@context/global/FirebaseContext';
-import {useConfig} from '@context/global/ConfigContext';
-import {useDatabaseData} from '@context/global/DatabaseDataContext';
-import {useOnyx} from 'react-native-onyx';
-import ONYXKEYS from '@src/ONYXKEYS';
 import SafeAreaConsumer from './SafeAreaConsumer';
 import Text from './Text';
 import Button from './Button';
@@ -23,11 +18,8 @@ function AgreeToTermsModal() {
   const styles = useThemeStyles();
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
-  const [loadingText] = useOnyx(ONYXKEYS.APP_LOADING_TEXT);
-  const {userData} = useDatabaseData();
-  const {config} = useConfig();
   const {translate} = useLocalize();
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(true);
   const [isChecked, setIsChecked] = useState(false);
   const [errorText, setErrorText] = useState('');
 
@@ -58,19 +50,6 @@ function AgreeToTermsModal() {
       }
     })();
   };
-
-  useEffect(() => {
-    if (
-      !loadingText &&
-      config &&
-      UserUtils.shouldShowAgreeToTermsModal(
-        userData?.agreed_to_terms_at,
-        config?.terms_last_updated,
-      )
-    ) {
-      setIsModalVisible(true);
-    }
-  }, [config, loadingText, userData]);
 
   return (
     <SafeAreaConsumer>

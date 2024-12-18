@@ -11,7 +11,7 @@ import type {
   UserData,
   UserStatus,
 } from '@src/types/onyx';
-import type {Timestamp, UserList} from '@src/types/onyx/OnyxCommon';
+import type {Timestamp, UserID, UserList} from '@src/types/onyx/OnyxCommon';
 import type {Auth, User, UserCredential} from 'firebase/auth';
 import {
   EmailAuthProvider,
@@ -423,6 +423,19 @@ async function fetchNicknameByUID(
   return userSnapshot.display_name;
 }
 
+/** Fetch the timestamp of when a user last agreed to terms and conditions */
+async function fetchLastAgreedToTermsAt(
+  db: Database,
+  userID: UserID,
+): Promise<Timestamp | null> {
+  const agreedToTermsAtRef = DBPATHS.USERS_USER_ID_AGREED_TO_TERMS_AT;
+  const agreedToTermsAt = await readDataOnce<Timestamp>(
+    db,
+    agreedToTermsAtRef.getRoute(userID),
+  );
+  return agreedToTermsAt;
+}
+
 /**
  * Change a user's automatic timezone setting.
  *
@@ -623,6 +636,7 @@ export {
   changeDisplayName,
   changeUserName,
   deleteUserData,
+  fetchLastAgreedToTermsAt,
   fetchNicknameByUID,
   getDefaultPreferences,
   getDefaultUserData,
