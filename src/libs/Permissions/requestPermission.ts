@@ -9,8 +9,6 @@ import {request, requestNotifications} from 'react-native-permissions';
 import getPlatform from '@libs/getPlatform';
 import CONST from '@src/CONST';
 import * as Localize from '@libs/Localize';
-import useLocalize from '@hooks/useLocalize';
-import type {PermissionKey} from './PermissionsUtils';
 import {
   AndroidFilePermissions,
   permissionIsDenied,
@@ -18,6 +16,11 @@ import {
 } from './PermissionsUtils';
 import permissionsMap from './PermissionsMap';
 import permissionsMessages from './PermissionsMessages';
+import type {
+  GeneralPermissionStatus,
+  PermissionKey,
+  PermissionValue,
+} from './types';
 
 const openSettings = () => {
   Linking.openSettings();
@@ -83,8 +86,7 @@ const requestPermissionAndroid = async (
     // const status = await PermissionsAndroid.request(permission, rationale);
     const status = await PermissionsAndroid.request(permission, rationale);
     return status; // status === PermissionsAndroid.RESULTS.GRANTED;
-  } catch (err: any) {
-    // console.warn(err);
+  } catch (err) {
     return PermissionsAndroid.RESULTS.DENIED;
   }
 };
@@ -107,15 +109,16 @@ const requestNotificationsPermissionIOS =
  * @param permissionType - The type of permission to request.
  * @returns A promise that resolves to a boolean indicating whether the permission was granted.
  */
-export const requestPermission = async (permissionType: PermissionKey) => {
-  let status: any;
+const requestPermission = async (permissionType: PermissionKey) => {
   const currentPlatform = getPlatform();
-  const {translate} = useLocalize();
-  const permission: Permission | RNPermission =
+  const permission: PermissionValue | undefined =
     permissionsMap[permissionType][currentPlatform];
 
   const isAndroid = currentPlatform === CONST.PLATFORM.ANDROID;
   const isIOS = currentPlatform === CONST.PLATFORM.IOS;
+
+  let status: GeneralPermissionStatus = 'unavailable';
+
   if (isAndroid) {
     status = await requestPermissionAndroid(
       permission as Permission,
@@ -133,20 +136,25 @@ export const requestPermission = async (permissionType: PermissionKey) => {
     const restrictedAccess = permissionIsDenied(status);
     if (restrictedAccess) {
       Alert.alert(
-        translate('storage.permissionDenied'),
-        translate('storage.appNeedsAccess'),
+        Localize.translateLocal('storage.permissionDenied'),
+        Localize.translateLocal('storage.appNeedsAccess'),
         [
-          {text: translate('common.cancel'), style: 'cancel'},
-          {text: translate('storage.openSettings'), onPress: openSettings},
+          {text: Localize.translateLocal('common.cancel'), style: 'cancel'},
+          {
+            text: Localize.translateLocal('storage.openSettings'),
+            onPress: openSettings,
+          },
         ],
       );
     } else {
       Alert.alert(
-        translate('permissions.permissionDenied'),
-        translate('permissions.youNeedToGrantPermission'),
+        Localize.translateLocal('permissions.permissionDenied'),
+        Localize.translateLocal('permissions.youNeedToGrantPermission'),
       );
     }
   }
 
   return isGranted;
 };
+
+export default requestPermission;

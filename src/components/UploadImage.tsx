@@ -9,7 +9,7 @@ import {View} from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import {Image as CompressorImage} from 'react-native-compressor';
 import checkPermission from '@libs/Permissions/checkPermission';
-import {requestPermission} from '@libs/Permissions/requestPermission';
+import requestPermission from '@libs/Permissions/requestPermission';
 import * as Profile from '@userActions/Profile';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import {useFirebase} from '@src/context/global/FirebaseContext';

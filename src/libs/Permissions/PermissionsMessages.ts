@@ -1,5 +1,5 @@
 import * as Localize from '@libs/Localize';
-import type {PermissionKey} from './PermissionsUtils';
+import type {PermissionKey} from './types';
 
 const permissionsMessages: Record<PermissionKey, Record<string, string>> = {
   camera: {

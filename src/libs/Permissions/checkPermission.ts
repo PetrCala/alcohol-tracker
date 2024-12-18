@@ -1,10 +1,10 @@
 // SinglePermissionHandler.js
-import {check, checkNotifications} from 'react-native-permissions';
+import {check, checkNotifications, Permission} from 'react-native-permissions';
 import getPlatform from '@libs/getPlatform';
 import CONST from '@src/CONST';
-import type {PermissionKey} from './PermissionsUtils';
 import {permissionIsGranted} from './PermissionsUtils';
 import permissionsMap from './PermissionsMap';
+import type {PermissionKey} from './types';
 
 const getPermission = (permissionType: PermissionKey) => {
   return permissionsMap[permissionType][getPlatform()];
@@ -13,7 +13,11 @@ const getPermission = (permissionType: PermissionKey) => {
 const checkGeneralPermission = async (
   permissionType: PermissionKey,
 ): Promise<boolean> => {
-  const status = await check(getPermission(permissionType));
+  const value = getPermission(permissionType);
+  if (!value) {
+    return false;
+  }
+  const status = await check(value as Permission);
   return permissionIsGranted(status);
 };
 

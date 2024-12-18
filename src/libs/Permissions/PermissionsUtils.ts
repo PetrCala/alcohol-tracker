@@ -1,34 +1,32 @@
-import type Platform from '@libs/getPlatform/types';
 import {PermissionsAndroid} from 'react-native';
 import {RESULTS} from 'react-native-permissions';
+import type {GeneralPermissionStatus} from './types';
 
-export type PermissionKey =
-  | 'camera'
-  | 'notifications'
-  | 'read_photos'
-  | 'write_photos';
-
-export type PermissionEntry = Partial<{[P in Platform]: any}>;
-
-export const permissionIsGranted = (status: any) => {
-  return [
+const permissionIsGranted = (status: GeneralPermissionStatus) => {
+  const allowedStatuses = [
     PermissionsAndroid.RESULTS.GRANTED,
     RESULTS.GRANTED,
     RESULTS.LIMITED,
-  ].includes(status);
+  ];
+
+  return allowedStatuses.some(allowedStatus => allowedStatus === status);
 };
 
-export const permissionIsDenied = (status: any) => {
-  return [
+const permissionIsDenied = (status: GeneralPermissionStatus) => {
+  const deniedStatuses = [
     PermissionsAndroid.RESULTS.DENIED,
     PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN,
     RESULTS.DENIED,
     RESULTS.BLOCKED,
     RESULTS.UNAVAILABLE,
-  ].includes(status);
+  ];
+
+  return deniedStatuses.some(deniedStatus => deniedStatus === status);
 };
 
-export const AndroidFilePermissions = [
+const AndroidFilePermissions = [
   PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
   PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
 ];
+
+export {permissionIsGranted, permissionIsDenied, AndroidFilePermissions};
