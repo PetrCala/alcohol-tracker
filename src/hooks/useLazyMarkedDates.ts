@@ -23,6 +23,7 @@ import Onyx, {useOnyx} from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 import {useFirebase} from '@context/global/FirebaseContext';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
+import {useIsFocused} from '@react-navigation/native';
 
 type DateString = string;
 
@@ -39,6 +40,7 @@ function useLazyMarkedDates(
 ) {
   const {auth} = useFirebase();
   const user = auth?.currentUser;
+  const isFocused = useIsFocused();
   const [markedDatesMap, setMarkedDatesMap] = useState<
     Map<DateString, MarkingProps>
   >(new Map());
@@ -166,6 +168,8 @@ function useLazyMarkedDates(
   }, []);
 
   useEffect(() => {
+    if (!isFocused) return;
+
     setIsLoading(true);
     loadedFrom.current = null;
 
