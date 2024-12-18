@@ -27,4 +27,5 @@ function isCentralPaneName(
   return CENTRAL_PANE_SCREEN_NAMES.has(screen as CentralPaneName);
 }
 
+// eslint-disable-next-line import/prefer-default-export
 export {isCentralPaneName};

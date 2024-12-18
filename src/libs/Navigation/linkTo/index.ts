@@ -103,7 +103,7 @@ export default function linkTo(
       // We need to push a tab if the tab doesn't match the central pane route that we are going to push.
       const topmostBottomTabRoute = getTopmostBottomTabRoute(rootState);
 
-      const focusedRoute = findFocusedRoute(stateFromPath);
+      // const focusedRoute = findFocusedRoute(stateFromPath);
       const matchingBottomTabRoute =
         getMatchingBottomTabRouteForState(stateFromPath);
       const isOpeningSearch = false;

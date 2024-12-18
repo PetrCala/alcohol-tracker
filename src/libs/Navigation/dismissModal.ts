@@ -26,6 +26,8 @@ function dismissModal(
     case NAVIGATORS.RIGHT_MODAL_NAVIGATOR:
     // case NAVIGATORS.ONBOARDING_MODAL_NAVIGATOR:
     case SCREENS.NOT_FOUND:
+      navigationRef.dispatch({...StackActions.pop(), target: state.key});
+      break;
     default: {
       console.log(
         '[Navigation] dismissModal failed because there is no modal stack to dismiss',
