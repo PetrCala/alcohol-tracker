@@ -21,7 +21,9 @@ import Log from './libs/Log';
 import migrateOnyx from './libs/migrateOnyx';
 import SplashScreenHider from './components/SplashScreenHider';
 import * as ActiveClientManager from './libs/ActiveClientManager';
+import * as ErrorUtils from './libs/ErrorUtils';
 import * as UserUtils from './libs/UserUtils';
+import * as User from '@userActions/User';
 // import StartupTimer from '@libs/StartupTimer';
 import Visibility from './libs/Visibility';
 import ONYXKEYS from './ONYXKEYS';
@@ -35,8 +37,10 @@ import UserOfflineModal from './components/UserOfflineModal';
 import CONFIG from './CONFIG';
 import UpdateAppModal from './components/UpdateAppModal';
 import VerifyEmailModal from './components/VerifyEmailModal';
+import AgreeToTermsModal from '@components/AgreeToTermsModal';
 import FullScreenLoadingIndicator from './components/FullscreenLoadingIndicator';
 import CONST from './CONST';
+import ERRORS from './ERRORS';
 
 Onyx.registerLogger(({level, message}) => {
   if (level === 'alert') {
@@ -68,11 +72,13 @@ function Kiroku({}: KirokuProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authenticationChecked, setAuthenticationChecked] = useState(false);
   const [isUnderMaintenance, setIsUnderMaintenance] = useState<boolean>(false);
-  const [shouldShowVerifyEmailModal, setShouldShowVerifyEmailModal] =
-    useState<boolean>(false);
   const [updateAvailable, setUpdateAvailable] = useState<boolean>(false);
   const [updateRequired, setUpdateRequired] = useState<boolean>(false);
+  const [shouldShowVerifyEmailModal, setShouldShowVerifyEmailModal] =
+    useState<boolean>(false);
   const [shouldShowUpdateModal, setShouldShowUpdateModal] =
+    useState<boolean>(false);
+  const [shouldShowAgreeToTermsModal, setShouldShowAgreeToTermsModal] =
     useState<boolean>(false);
 
   // const isAuthenticated = useMemo(() => !!(auth.currentUser ?? null), [auth]);
@@ -91,25 +97,6 @@ function Kiroku({}: KirokuProps) {
 
     return () => unsubscribe();
   }, [auth]);
-
-  // useEffect(() => {
-  //   const configPath = DBPATHS.CONFIG;
-  //   const stopListening = listenForDataChanges(
-  //     db,
-  //     configPath,
-  //     (data: Config) => {
-  //       setConfig(data);
-  //       setIsFetchingConfig(false);
-  //       if (!data) {
-  //         console.debug(
-  //           'Could not fetch the application configuration data from the database.',
-  //         );
-  //       }
-  //     },
-  //   );
-
-  //   return () => stopListening();
-  // }, []);
 
   useMemo(() => {
     if (config) {
@@ -253,6 +240,31 @@ function Kiroku({}: KirokuProps) {
     setCrashlyticsUserId(auth?.currentUser?.uid ?? '-1');
   }, [isAuthenticated, auth?.currentUser?.uid]);
 
+  useEffect(() => {
+    // This should later be refactored to use onyx/API
+    const checkShouldShowAgreeToTermsModal = async () => {
+      try {
+        if (!auth.currentUser || !db || !config) {
+          return;
+        }
+        const lastAgreedAt = await User.fetchLastAgreedToTermsAt(
+          db,
+          auth.currentUser.uid,
+        );
+        const shouldShowAgreeToTermsModal =
+          UserUtils.shouldShowAgreeToTermsModal(
+            lastAgreedAt,
+            config?.terms_last_updated,
+          );
+        setShouldShowAgreeToTermsModal(shouldShowAgreeToTermsModal);
+      } catch (error) {
+        ErrorUtils.raiseAlert(ERRORS.DATABASE.DATA_FETCH_FAILED, error);
+      }
+    };
+
+    checkShouldShowAgreeToTermsModal();
+  }, [auth?.currentUser, db, config?.terms_last_updated]);
+
   // Display a blank page until the onyx migration completes
   if (!isOnyxMigrated) {
     return null;
@@ -282,6 +294,7 @@ function Kiroku({}: KirokuProps) {
         <>
           {shouldShowVerifyEmailModal && <VerifyEmailModal />}
           {shouldShowUpdateModal && <UpdateAppModal />}
+          {shouldShowAgreeToTermsModal && <AgreeToTermsModal />}
           {/* // TODO show shared session invites here */}
         </>
       )}
