@@ -102,7 +102,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       }
     }
     sessionRef.current = session;
-  }, [session, user, enqueueUpdate]);
+  }, [session, user]); // Do not include enqueueUpdate in the dependencies, as it will cause an infinite loop
 
   if (!isOnline) {
     return <UserOfflineModal />;
