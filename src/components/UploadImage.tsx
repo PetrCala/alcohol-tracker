@@ -1,5 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import type {ImageSourcePropType} from 'react-native';
+import type {
+  ImageSourcePropType,
+  StyleProp,
+  ViewProps,
+  ViewStyle,
+} from 'react-native';
 import {View} from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import {Image as CompressorImage} from 'react-native-compressor';
@@ -17,15 +22,15 @@ import Button from './Button';
 type UploadImageComponentProps = {
   pathToUpload: string;
   src: ImageSourcePropType;
-  imageStyle: any;
   isProfilePicture: boolean;
+  containerStyles?: StyleProp<ViewStyle>;
 };
 
 const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
   pathToUpload,
   src,
-  imageStyle,
   isProfilePicture = false,
+  containerStyles,
 }) => {
   const {auth, db, storage} = useFirebase();
   const styles = useThemeStyles();
@@ -133,12 +138,16 @@ const UploadImageComponent: React.FC<UploadImageComponentProps> = ({
   }, [imageSource]);
 
   return (
-    <View style={[styles.alignItemsCenter, styles.justifyContentCenter]}>
+    <View
+      style={[
+        styles.alignItemsCenter,
+        styles.justifyContentCenter,
+        containerStyles,
+      ]}>
       <Button
         onPress={handleChooseImagePress}
         icon={src}
-        iconStyles={imageStyle}
-        style={[styles.border, styles.borderRadiusNormal]}
+        style={[styles.border, styles.borderRadiusNormal, styles.appBG]}
       />
 
       {imageSource && (

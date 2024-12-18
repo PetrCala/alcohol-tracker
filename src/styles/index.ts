@@ -962,6 +962,20 @@ const styles = (theme: ThemeColors) =>
       marginRight: variables.avatarChatSpacing - 4,
     },
 
+    editProfileImageContainer: (screenWidth: number) =>
+      ({
+        position: 'absolute',
+        height: variables.avatarSizeXLarge / 3,
+        width: variables.avatarSizeXLarge / 3,
+        top: variables.avatarSizeXLarge / 2 + variables.avatarSizeXLarge / 7,
+        left:
+          screenWidth / 2 +
+          variables.avatarSizeXLarge / 2 -
+          variables.avatarSizeXLarge / 3,
+        borderRadius: variables.avatarSizeXLarge / 3,
+        zIndex: 10,
+      }) satisfies ViewStyle,
+
     flipUpsideDown: {
       // transform: `rotate(180deg)`,
       transform: [{rotate: '180deg'}],
