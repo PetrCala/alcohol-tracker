@@ -6,7 +6,7 @@ import type {DrinkingSessionList} from '@src/types/onyx';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
 import useThemeStyles from '@hooks/useThemeStyles';
 import CONST from '@src/CONST';
-import {differenceInMonths, format, subMonths} from 'date-fns';
+import {differenceInMonths, format} from 'date-fns';
 import {auth} from '@libs/Firebase/FirebaseApp';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
