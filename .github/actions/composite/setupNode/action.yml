@@ -4,15 +4,9 @@ description: Set up Node
 runs:
   using: composite
   steps:
-    - name: Remove E/App version from package-lock.json
-      shell: bash
-      run: jq 'del(.version, .packages[""].version)' package-lock.json > normalized-package-lock.json
-
     - uses: actions/setup-node@v4
       with:
         node-version-file: '.nvmrc'
-        cache-dependency-path: |
-          normalized-package-lock.json
 
     - name: Install root project node packages
       uses: nick-fields/retry@3f757583fb1b1f940bc8ef4bf4734c8dc02a5847
