@@ -21,9 +21,9 @@ async function readDataOnce<T>(
   refString: string,
 ): Promise<T | null> {
   const userRef = ref(db, refString);
-  const snapshot = await get(userRef); // One-off fetch
+  const snapshot = await get(userRef);
   if (snapshot.exists()) {
-    return snapshot.val() as T; // Return user data cast to the expected type
+    return snapshot.val() as T;
   }
   return null;
 }

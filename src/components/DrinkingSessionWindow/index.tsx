@@ -16,7 +16,6 @@ import DrinkTypesView from '@components/DrinkTypesView';
 import SessionDetailsWindow from '@components/SessionDetailsWindow';
 import FillerView from '@components/FillerView';
 import CONST from '@src/CONST';
-import Navigation from '@navigation/Navigation';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import useLocalize from '@hooks/useLocalize';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
@@ -46,7 +45,6 @@ function DrinkingSessionWindow({
   onyxKey,
   type,
 }: DrinkingSessionWindowProps) {
-  // Context, database, and authentification
   const {auth, db} = useFirebase();
   const user = auth.currentUser;
   const theme = useTheme();
@@ -59,16 +57,13 @@ function DrinkingSessionWindow({
   const [totalUnits, setTotalUnits] = useState<number>(0);
   const [sessionColor, setSessionColor] = useState<string>('green');
   const [sessionFinished, setSessionFinished] = useState<boolean>(false);
-  // // Time info
   const [monkeMode, setMonkeMode] = useState<boolean>(false);
   const waitForNavigate = useWaitForNavigation();
   // const [dbSyncSuccessful, setDbSyncSuccessful] = useState(false);
-  // // Other
   const [discardModalVisible, setDiscardModalVisible] =
     useState<boolean>(false);
   const [shouldShowLeaveConfirmation, setShouldShowLeaveConfirmation] =
     useState(false);
-  // useState<boolean>(false);
   const sessionIsLive = session?.ongoing;
   const deleteSessionWording = session.ongoing
     ? translate('common.discard')
