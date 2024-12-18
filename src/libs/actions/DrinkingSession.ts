@@ -82,7 +82,7 @@ async function updateDrinkingSessionData(
   sessionId: DrinkingSessionId,
   updateStatus?: boolean,
 ): Promise<void> {
-  const updatesToDB: Record<string, any> = {};
+  const updatesToDB: FirebaseUpdates = {};
 
   const dsPath = drinkingSessionRef.getRoute(userID, sessionId);
   _.forEach(updates, (value, key) => {
@@ -164,7 +164,7 @@ async function startLiveDrinkingSession(
   };
 
   // Update Firebase
-  const updates: Record<string, any> = {};
+  const updates: FirebaseUpdates = {};
   updates[userStatusRef.getRoute(user.uid)] = newStatusData;
   updates[drinkingSessionRef.getRoute(user.uid, newSessionId)] = newSessionData;
   await update(ref(db), updates);
@@ -188,7 +188,7 @@ async function saveDrinkingSessionData(
   onyxKey: OnyxKey,
   sessionIsLive?: boolean,
 ): Promise<void> {
-  const updates: Record<string, any> = {};
+  const updates: FirebaseUpdates = {};
   if (sessionIsLive) {
     const userStatusData: UserStatus = {
       // ETC - 1
@@ -219,7 +219,7 @@ async function removeDrinkingSessionData(
   onyxKey: OnyxKey,
   sessionIsLive?: boolean,
 ): Promise<void> {
-  const updates: Record<string, any> = {};
+  const updates: FirebaseUpdates = {};
   updates[drinkingSessionRef.getRoute(userID, sessionKey)] = null;
   if (sessionIsLive) {
     const userStatusData: UserStatus = {
