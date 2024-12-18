@@ -70,7 +70,7 @@ function DrinkingSessionOverview({
         'dayOverviewScreen.sessionWindow',
         sessionId,
       )}
-      style={[styles.flexRow, styles.border, styles.m1]}
+      style={[styles.flexRow, styles.border, styles.mh1, styles.mt1]}
       onPress={() => onSessionButtonPress(sessionId, session)}>
       <View
         style={[styles.drinkingSessionOverviewTabIndicator(sessionColor)]}
