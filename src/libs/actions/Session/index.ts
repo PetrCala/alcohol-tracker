@@ -32,7 +32,7 @@ import * as PersistedRequests from '@userActions/PersistedRequests';
 // } from '@libs/API/types';
 // import * as Authentication from '@libs/Authentication';
 // import HttpUtils from '@libs/HttpUtils';
-// import Log from '@libs/Log';
+import Log from '@libs/Log';
 import Navigation from '@libs/Navigation/Navigation';
 import navigationRef from '@libs/Navigation/navigationRef';
 import * as MainQueue from '@libs/Network/MainQueue';
@@ -56,7 +56,7 @@ import SCREENS from '@src/SCREENS';
 // import type Session from '@src/types/onyx/Session';
 import type {FormOnyxValues} from '@components/Form/types';
 import ERRORS from '@src/ERRORS';
-// import clearCache from './clearCache';
+import clearCache from './clearCache';
 
 // let session: Session = {};
 // let authPromiseResolver: ((value: boolean) => void) | null = null;
@@ -688,10 +688,9 @@ function cleanupSession() {
   // NetworkConnection.clearReconnectionCallbacks();
   // SessionUtils.resetDidUserLogInDuringSession();
   resetHomeRouteParams();
-  // TODO enable this
-  // clearCache().then(() => {
-  //   Log.info('Cleared all cache data', true, {}, true);
-  // });
+  clearCache().then(() => {
+    Log.info('Cleared all cache data', true, {}, true);
+  });
   Timing.clearData();
 }
 

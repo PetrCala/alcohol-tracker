@@ -12,7 +12,7 @@ import CONST from '@src/CONST';
 import NAVIGATORS from '@src/NAVIGATORS';
 import type {Route} from '@src/ROUTES';
 import ROUTES from '@src/ROUTES';
-import Log from '@libs/common/Log';
+import Log from '@libs/Log';
 import {isCentralPaneName} from '@libs/NavigationUtils';
 import SCREENS from '@src/SCREENS';
 import type {EmptyObject} from '@src/types/utils/EmptyObject';

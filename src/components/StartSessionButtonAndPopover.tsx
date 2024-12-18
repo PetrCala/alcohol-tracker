@@ -24,7 +24,7 @@ import useWindowDimensions from '@hooks/useWindowDimensions';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
 import type {DrinkingSessionType} from '@src/types/onyx';
-import Log from '@libs/common/Log';
+import Log from '@libs/Log';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import {useFirebase} from '@context/global/FirebaseContext';
 import _ from 'lodash';
