@@ -26,7 +26,6 @@ import type {SelectedTimezone} from '@src/types/onyx/UserData';
 import type {ValueOf} from 'type-fest';
 import _ from 'lodash';
 import DBPATHS from '@src/DBPATHS';
-import ERRORS from '@src/ERRORS';
 
 const drinkingSessionRef = DBPATHS.USER_DRINKING_SESSIONS_USER_ID_SESSION_ID;
 const userStatusRef = DBPATHS.USER_STATUS_USER_ID;
@@ -36,21 +35,23 @@ let ongoingSessionData: DrinkingSession | undefined;
 Onyx.connect({
   key: ONYXKEYS.ONGOING_SESSION_DATA,
   callback: value => {
-    if (value) {
-      ongoingSessionData = value;
+    if (!value) {
+      return;
     }
+    ongoingSessionData = value;
   },
 });
 
-let editSessionData: DrinkingSession | undefined;
-Onyx.connect({
-  key: ONYXKEYS.EDIT_SESSION_DATA,
-  callback: value => {
-    if (value) {
-      editSessionData = value;
-    }
-  },
-});
+// let editSessionData: DrinkingSession | undefined;
+// Onyx.connect({
+//   key: ONYXKEYS.EDIT_SESSION_DATA,
+//   callback: value => {
+//     if (!value) {
+//       return;
+//     }
+//     editSessionData = value;
+//   },
+// });
 
 /**
  * Set the edit session data object in Onyx so that it can be modified. This function should be called only if the relevant object already exists in the onyx database.
@@ -85,12 +86,16 @@ async function updateDrinkingSessionData(
   const updatesToDB: FirebaseUpdates = {};
 
   const dsPath = drinkingSessionRef.getRoute(userID, sessionId);
+
+  // Be mindful of using Object.forEach here, as that leads to an incorrect parsing of the object for some reason
+  // eslint-disable-next-line you-dont-need-lodash-underscore/for-each @typescript-eslint/no-unsafe-member-access
   _.forEach(updates, (value, key) => {
     updatesToDB[`${dsPath}/${key}`] = value;
   });
 
   if (updateStatus) {
     const userStatusPath = userStatusLatestSessionRef.getRoute(userID);
+    // eslint-disable-next-line you-dont-need-lodash-underscore/for-each @typescript-eslint/no-unsafe-member-access
     _.forEach(updates, (value, key) => {
       updatesToDB[`${userStatusPath}/${key}`] = value;
     });
@@ -110,11 +115,11 @@ async function syncLocalLiveSessionData(
   drinkingSessionData: DrinkingSessionList | undefined,
 ) {
   if (ongoingSessionId && drinkingSessionData) {
-    const ongoingSessionData = drinkingSessionData[ongoingSessionId];
-    if (ongoingSessionData) {
+    const newData = drinkingSessionData[ongoingSessionId];
+    if (newData) {
       await updateLocalData(
         ongoingSessionId,
-        ongoingSessionData,
+        newData,
         ONYXKEYS.ONGOING_SESSION_DATA,
       );
     }

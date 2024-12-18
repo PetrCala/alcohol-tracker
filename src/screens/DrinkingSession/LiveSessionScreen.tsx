@@ -102,6 +102,7 @@ function LiveSessionScreen({route}: LiveSessionScreenProps) {
       }
     }
     sessionRef.current = session;
+    // eslint-disable-next-line react-compiler/react-compiler, react-hooks/exhaustive-deps
   }, [session, user]); // Do not include enqueueUpdate in the dependencies, as it will cause an infinite loop
 
   if (!isOnline) {
