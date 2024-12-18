@@ -13,7 +13,7 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import Navigation from '@libs/Navigation/Navigation';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import * as ValidationUtils from '@libs/ValidationUtils';
-import * as Utils from '@libs/Utils';
+import * as App from '@userActions/App';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
 import INPUT_IDS from '@src/types/form/UserNameForm';
@@ -54,16 +54,14 @@ function UserNameScreen({route}: UserNameScreenProps) {
 
       try {
         setIsLoadingName(true);
-        await Utils.setLoadingText(
-          translate('userNameScreen.updatingUserName'),
-        );
+        await App.setLoadingText(translate('userNameScreen.updatingUserName'));
         await changeUserName(db, auth.currentUser, newFirstName, newLastName);
         Navigation.goBack();
       } catch (error) {
         ErrorUtils.raiseAppError(ERRORS.USER.USERNAME_UPDATE_FAILED, error);
       } finally {
         setIsLoadingName(false);
-        await Utils.setLoadingText(null);
+        await App.setLoadingText(null);
       }
     })();
   };

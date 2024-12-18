@@ -1,5 +1,5 @@
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
-import * as Utils from '@libs/Utils';
+import * as App from '@userActions/App';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import * as ErrorUtils from '@libs/ErrorUtils';
@@ -37,7 +37,7 @@ function AddSessionButton({currentDate, isEditModeOn}: AddSessionButtonProps) {
   const onAddSessionButtonPress = () => {
     (async () => {
       try {
-        await Utils.setLoadingText(translate('liveSessionScreen.loading'));
+        await App.setLoadingText(translate('liveSessionScreen.loading'));
         const newSession = await DS.getNewSessionToEdit(
           db,
           auth.currentUser,
@@ -48,7 +48,7 @@ function AddSessionButton({currentDate, isEditModeOn}: AddSessionButtonProps) {
       } catch (error) {
         ErrorUtils.raiseAppError(ERRORS.DATABASE.USER_CREATION_FAILED, error);
       } finally {
-        await Utils.setLoadingText(null);
+        await App.setLoadingText(null);
       }
     })();
   };

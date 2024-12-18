@@ -13,7 +13,7 @@ import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import * as ValidationUtils from '@libs/ValidationUtils';
-import * as Utils from '@libs/Utils';
+import * as App from '@userActions/App';
 import Navigation from '@libs/Navigation/Navigation';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
@@ -55,7 +55,7 @@ function DisplayNameScreen({route}: DisplayNameScreenProps) {
       const newDisplayName = values.displayName.trim();
       try {
         setIsLoadingName(true);
-        await Utils.setLoadingText(
+        await App.setLoadingText(
           translate('displayNameScreen.updatingDisplayName'),
         );
         await changeDisplayName(
@@ -68,7 +68,7 @@ function DisplayNameScreen({route}: DisplayNameScreenProps) {
         ErrorUtils.raiseAppError(ERRORS.USER.NICKNAME_UPDATE_FAILED, error);
       } finally {
         Navigation.goBack();
-        Utils.setLoadingText(null);
+        App.setLoadingText(null);
         setIsLoadingName(false);
       }
     })();

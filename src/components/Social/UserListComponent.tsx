@@ -20,9 +20,9 @@ import _ from 'lodash';
 import useThemeStyles from '@hooks/useThemeStyles';
 import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
-import UserOverview from './UserOverview';
 import Text from '@components/Text';
 import ScrollView from '@components/ScrollView';
+import UserOverview from './UserOverview';
 
 type UserListProps = {
   fullUserArray: UserArray;

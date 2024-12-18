@@ -1,11 +1,5 @@
 import React, {useState, useEffect, useMemo, useRef} from 'react';
-import {
-  Alert,
-  BackHandler,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {BackHandler, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {useFirebase} from '@context/global/FirebaseContext';
 import * as DS from '@userActions/DrinkingSession';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
@@ -33,7 +27,7 @@ import ConfirmModal from '@components/ConfirmModal';
 import useWindowDimensions from '@hooks/useWindowDimensions';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import * as ErrorUtils from '@libs/ErrorUtils';
-import * as Utils from '@libs/Utils';
+import * as App from '@userActions/App';
 import ScrollView from '@components/ScrollView';
 import Log from '@libs/Log';
 import Icon from '@components/Icon';
@@ -139,7 +133,7 @@ function DrinkingSessionWindow({
       return;
     }
 
-    await Utils.setLoadingText(translate('liveSessionScreen.saving'));
+    await App.setLoadingText(translate('liveSessionScreen.saving'));
     setSessionFinished(true); // No more db syncs
     const newSessionData: DrinkingSession = {
       ...session,
@@ -163,7 +157,7 @@ function DrinkingSessionWindow({
       ErrorUtils.raiseAppError(ERRORS.SESSION.SAVE_FAILED, error);
       setSessionFinished(false);
     } finally {
-      await Utils.setLoadingText(null);
+      await App.setLoadingText(null);
     }
   }
 
@@ -177,7 +171,7 @@ function DrinkingSessionWindow({
     }
     try {
       setDiscardModalVisible(false);
-      await Utils.setLoadingText(
+      await App.setLoadingText(
         translate(
           'liveSessionScreen.discardingSession',
           sessionIsLive ? 'Discarding' : 'Deleting',
@@ -194,7 +188,7 @@ function DrinkingSessionWindow({
     } catch (error) {
       ErrorUtils.raiseAppError(ERRORS.SESSION.DISCARD_FAILED, error);
     } finally {
-      await Utils.setLoadingText(null);
+      await App.setLoadingText(null);
     }
   };
 
@@ -243,7 +237,7 @@ function DrinkingSessionWindow({
   }, [session]);
 
   useFocusEffect(() => {
-    Utils.setLoadingText(null);
+    App.setLoadingText(null);
   });
 
   return (
