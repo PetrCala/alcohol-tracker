@@ -96,6 +96,7 @@ function InitialScreen() {
       Session.clearSignInData();
       const stopListening = auth.onAuthStateChanged(user => {
         if (!user) {
+          Session.setHasCheckedAutoLogin(true);
           return;
         }
         Navigation.navigate(ROUTES.HOME);

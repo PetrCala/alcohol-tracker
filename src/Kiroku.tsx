@@ -64,10 +64,12 @@ function Kiroku({}: KirokuProps) {
   const {splashScreenState, setSplashScreenState} = useContext(
     SplashScreenStateContext,
   );
+  const [hasAttemptedToAutoLogin, setAttemptedToAutoLogin] = useState(false);
   const [lastVisitedPath] = useOnyx(ONYXKEYS.LAST_VISITED_PATH);
   const [lastRoute] = useOnyx(ONYXKEYS.LAST_ROUTE);
   const [loadingText] = useOnyx(ONYXKEYS.APP_LOADING_TEXT);
   const [initialUrl, setInitialUrl] = useState<string | null>(null);
+  const [hasCheckedAutoLogin] = useOnyx(ONYXKEYS.HAS_CHECKED_AUTO_LOGIN);
   const {config} = useConfig();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authenticationChecked, setAuthenticationChecked] = useState(false);
@@ -117,10 +119,7 @@ function Kiroku({}: KirokuProps) {
     }
   }, [config, shouldShowVerifyEmailModal]);
 
-  const shouldInit = isNavigationReady;
-  // const shouldHideSplash =
-  //   shouldInit && !isSplashHidden && authenticationChecked;
-
+  const shouldInit = isNavigationReady && hasCheckedAutoLogin;
   const shouldHideSplash =
     shouldInit &&
     authenticationChecked &&

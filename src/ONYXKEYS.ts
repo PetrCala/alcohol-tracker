@@ -112,6 +112,9 @@ const ONYXKEYS = {
   /** Is app in beta version */
   IS_BETA: 'isBeta',
 
+  /** Whether we've checked if the user can auto login */
+  HAS_CHECKED_AUTO_LOGIN: 'hasCheckedAutoLogin',
+
   //   // The theme setting set by the user in preferences.
   //   // This can be either "light", "dark" or "system"
   PREFERRED_THEME: 'preferredTheme',
@@ -271,6 +274,7 @@ type OnyxValuesMapping = {
   [ONYXKEYS.VERIFY_EMAIL_SENT]: Timestamp;
   [ONYXKEYS.VERIFY_EMAIL_DISMISSED]: Timestamp;
   [ONYXKEYS.IS_BETA]: boolean;
+  [ONYXKEYS.HAS_CHECKED_AUTO_LOGIN]: boolean;
   [ONYXKEYS.PREFERRED_THEME]: ValueOf<typeof CONST.THEME>;
   [ONYXKEYS.ONYX_UPDATES_FROM_SERVER]: OnyxTypes.OnyxUpdatesFromServer;
   [ONYXKEYS.ONYX_UPDATES_LAST_UPDATE_ID_APPLIED_TO_CLIENT]: number;
