@@ -90,6 +90,12 @@ Onyx.connect({
     }),
 });
 
+let hasCheckedAutoLogin: boolean = false;
+Onyx.connect({
+  key: ONYXKEYS.HAS_CHECKED_AUTO_LOGIN,
+  callback: value => (hasCheckedAutoLogin = value ?? false),
+});
+
 // let stashedCredentials: Credentials = {};
 // Onyx.connect({
 //   key: ONYXKEYS.STASHED_CREDENTIALS,
@@ -660,6 +666,9 @@ function resetHomeRouteParams() {
 
 /** Save the information about whether the app has attempted to auto login the user */
 function setHasCheckedAutoLogin(val: boolean) {
+  if (hasCheckedAutoLogin === val) {
+    return;
+  }
   Onyx.merge(ONYXKEYS.HAS_CHECKED_AUTO_LOGIN, val);
 }
 
