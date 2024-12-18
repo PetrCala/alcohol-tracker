@@ -17,4 +17,5 @@ function getReasonForLeavingID(userID: UserID): ReasonForLeavingId {
   );
 }
 
+// eslint-disable-next-line import/prefer-default-export
 export {getReasonForLeavingID};

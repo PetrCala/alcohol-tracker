@@ -5,7 +5,6 @@ import type {
 } from '@src/types/various/Search';
 import type {NicknameToId} from '@src/types/onyx';
 import {readDataOnce} from '@database/baseFunctions';
-import {QUIRKY_NICKNAMES} from './QuirkyNicknames';
 import {cleanStringForFirebaseKey} from './StringUtilsKiroku';
 
 /**
@@ -31,13 +30,11 @@ async function searchDbByNickname(
  * Searches the database for a given searchText and returns a string of IDs that match the search text.
  * @param db - The database object.
  * @param searchText - The text to search for.
- * @param useQuirkyNicknames - Whether to include quirky nicknames in the search results. Default is true.
  * @returns A Promise that resolves to a string of IDs that match the search text.
  */
 async function searchDatabaseForUsers(
   db: Database | undefined,
   searchText: string,
-  useQuirkyNicknames = true,
 ): Promise<UserSearchResults> {
   if (!searchText || !db) {
     return [];
@@ -46,9 +43,6 @@ async function searchDatabaseForUsers(
   const newResults = await searchDbByNickname(db, searchText); // Nickname is cleaned in the function
   if (newResults) {
     searchResultData = Object.keys(newResults);
-  }
-  if (useQuirkyNicknames && QUIRKY_NICKNAMES[searchText]) {
-    searchResultData.push(searchText);
   }
   return searchResultData;
 }
