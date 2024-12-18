@@ -2,17 +2,19 @@ import Onyx from 'react-native-onyx';
 import * as ActiveClientManager from '@libs/ActiveClientManager';
 import Log from '@libs/Log';
 import * as Request from '@libs/Request';
-import * as RequestThrottle from '@libs/RequestThrottle';
+import RequestThrottle from '@libs/RequestThrottle';
 import * as PersistedRequests from '@userActions/PersistedRequests';
 import * as QueuedOnyxUpdates from '@userActions/QueuedOnyxUpdates';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
 import type OnyxRequest from '@src/types/onyx/Request';
+import type {ConflictData} from '@src/types/onyx/Request';
 import * as NetworkStore from './NetworkStore';
 
 type RequestError = Error & {
   name?: string;
   message?: string;
+  status?: string;
 };
 
 let resolveIsReadyPromise: ((args?: unknown[]) => void) | undefined;
@@ -24,8 +26,9 @@ let isReadyPromise = new Promise(resolve => {
 resolveIsReadyPromise?.();
 
 let isSequentialQueueRunning = false;
-let currentRequest: Promise<void> | null = null;
+let currentRequestPromise: Promise<void> | null = null;
 let isQueuePaused = false;
+const sequentialQueueRequestThrottle = new RequestThrottle('SequentialQueue');
 
 /**
  * Puts the queue into a paused state so that no requests will be processed
@@ -79,10 +82,14 @@ function process(): Promise<void> {
     return Promise.resolve();
   }
 
-  const requestToProcess = persistedRequests[0];
+  const requestToProcess = PersistedRequests.processNextRequest();
+  if (!requestToProcess) {
+    Log.info('[SequentialQueue] Unable to process. No next request to handle.');
+    return Promise.resolve();
+  }
 
   // Set the current request to a promise awaiting its processing so that getCurrentRequest can be used to take some action after the current request has processed.
-  currentRequest = Request.processWithMiddleware(requestToProcess, true)
+  currentRequestPromise = Request.processWithMiddleware(requestToProcess, true)
     .then(response => {
       // A response might indicate that the queue should be paused. This happens when a gap in onyx updates is detected between the client and the server and
       // that gap needs resolved before the queue can continue.
@@ -92,8 +99,14 @@ function process(): Promise<void> {
         );
         pause();
       }
-      PersistedRequests.remove(requestToProcess);
-      RequestThrottle.clear();
+
+      Log.info(
+        '[SequentialQueue] Removing persisted request because it was processed successfully.',
+        false,
+        {request: requestToProcess},
+      );
+      PersistedRequests.endRequestAndRemoveFromQueue(requestToProcess);
+      sequentialQueueRequestThrottle.clear();
       return process();
     })
     .catch((error: RequestError) => {
@@ -103,21 +116,33 @@ function process(): Promise<void> {
         error.name === CONST.ERROR.REQUEST_CANCELLED ||
         error.message === CONST.ERROR.DUPLICATE_RECORD
       ) {
-        PersistedRequests.remove(requestToProcess);
-        RequestThrottle.clear();
+        Log.info(
+          "[SequentialQueue] Removing persisted request because it failed and doesn't need to be retried.",
+          false,
+          {error, request: requestToProcess},
+        );
+        PersistedRequests.endRequestAndRemoveFromQueue(requestToProcess);
+        sequentialQueueRequestThrottle.clear();
         return process();
       }
-      return RequestThrottle.sleep()
+      PersistedRequests.rollbackOngoingRequest();
+      return sequentialQueueRequestThrottle
+        .sleep(error, requestToProcess.command)
         .then(process)
         .catch(() => {
           Onyx.update(requestToProcess.failureData ?? []);
-          PersistedRequests.remove(requestToProcess);
-          RequestThrottle.clear();
+          Log.info(
+            '[SequentialQueue] Removing persisted request because it failed too many times.',
+            false,
+            {error, request: requestToProcess},
+          );
+          PersistedRequests.endRequestAndRemoveFromQueue(requestToProcess);
+          sequentialQueueRequestThrottle.clear();
           return process();
         });
     });
 
-  return currentRequest;
+  return currentRequestPromise;
 }
 
 function flush() {
@@ -132,8 +157,10 @@ function flush() {
     return;
   }
 
-  if (PersistedRequests.getAll().length === 0) {
-    Log.info('[SequentialQueue] Unable to flush. No requests to process.');
+  if (PersistedRequests.getAll().length === 0 && QueuedOnyxUpdates.isEmpty()) {
+    Log.info(
+      '[SequentialQueue] Unable to flush. No requests or queued Onyx updates to process.',
+    );
     return;
   }
 
@@ -168,7 +195,8 @@ function flush() {
         ) {
           resolveIsReadyPromise?.();
         }
-        currentRequest = null;
+        currentRequestPromise = null;
+
         // The queue can be paused when we sync the data with backend so we should only update the Onyx data when the queue is empty
         if (PersistedRequests.getAll().length === 0) {
           flushOnyxUpdatesQueue();
@@ -190,7 +218,7 @@ function unpause() {
   }
 
   const numberOfPersistedRequests = PersistedRequests.getAll().length || 0;
-  console.debug(
+  Log.info(
     `[SequentialQueue] Unpausing the queue and flushing ${numberOfPersistedRequests} requests`,
   );
   isQueuePaused = false;
@@ -208,9 +236,50 @@ function isPaused(): boolean {
 // Flush the queue when the connection resumes
 NetworkStore.onReconnection(flush);
 
-function push(request: OnyxRequest) {
-  // Add request to Persisted Requests so that it can be retried if it fails
-  PersistedRequests.save(request);
+function handleConflictActions(
+  conflictAction: ConflictData,
+  newRequest: OnyxRequest,
+) {
+  if (conflictAction.type === 'push') {
+    PersistedRequests.save(newRequest);
+  } else if (conflictAction.type === 'replace') {
+    PersistedRequests.update(
+      conflictAction.index,
+      conflictAction.request ?? newRequest,
+    );
+  } else if (conflictAction.type === 'delete') {
+    PersistedRequests.deleteRequestsByIndices(conflictAction.indices);
+    if (conflictAction.pushNewRequest) {
+      PersistedRequests.save(newRequest);
+    }
+    if (conflictAction.nextAction) {
+      handleConflictActions(conflictAction.nextAction, newRequest);
+    }
+  } else {
+    Log.info(
+      `[SequentialQueue] No action performed to command ${newRequest.command} and it will be ignored.`,
+    );
+  }
+}
+
+function push(newRequest: OnyxRequest) {
+  const {checkAndFixConflictingRequest} = newRequest;
+
+  if (checkAndFixConflictingRequest) {
+    const requests = PersistedRequests.getAll();
+    const {conflictAction} = checkAndFixConflictingRequest(requests);
+    Log.info(
+      `[SequentialQueue] Conflict action for command ${newRequest.command} - ${conflictAction.type}:`,
+    );
+
+    // don't try to serialize a function.
+    // eslint-disable-next-line no-param-reassign
+    delete newRequest.checkAndFixConflictingRequest;
+    handleConflictActions(conflictAction, newRequest);
+  } else {
+    // Add request to Persisted Requests so that it can be retried if it fails
+    PersistedRequests.save(newRequest);
+  }
 
   // If we are offline we don't need to trigger the queue to empty as it will happen when we come back online
   if (NetworkStore.isOffline()) {
@@ -227,10 +296,10 @@ function push(request: OnyxRequest) {
 }
 
 function getCurrentRequest(): Promise<void> {
-  if (currentRequest === null) {
+  if (currentRequestPromise === null) {
     return Promise.resolve();
   }
-  return currentRequest;
+  return currentRequestPromise;
 }
 
 /**
@@ -238,6 +307,20 @@ function getCurrentRequest(): Promise<void> {
  */
 function waitForIdle(): Promise<unknown> {
   return isReadyPromise;
+}
+
+/**
+ * Clear any pending requests during test runs
+ * This is to prevent previous requests interfering with other tests
+ */
+function resetQueue(): void {
+  isSequentialQueueRunning = false;
+  currentRequestPromise = null;
+  isQueuePaused = false;
+  isReadyPromise = new Promise(resolve => {
+    resolveIsReadyPromise = resolve;
+  });
+  resolveIsReadyPromise?.();
 }
 
 export {
@@ -249,4 +332,8 @@ export {
   waitForIdle,
   pause,
   unpause,
+  process,
+  resetQueue,
+  sequentialQueueRequestThrottle,
 };
+export type {RequestError};

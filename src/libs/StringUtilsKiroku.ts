@@ -34,7 +34,8 @@ function cleanStringForFirebaseKey(rawStr: string): string {
     .replace(/-/g, '_') // No dashes
     .split('')
     .map(char =>
-      CONST.INVALID_CHARS.includes(char as any) || char.trim() === ''
+      CONST.INVALID_CHARS.includes(char as '.' | '#' | '$' | '[' | ']') ||
+      char.trim() === ''
         ? '_'
         : char,
     )
@@ -84,9 +85,9 @@ const copyToClipboard = (
   successTitle?: string,
   successText?: string,
 ) => {
-  const title = successTitle || Localize.translateLocal('common.success');
+  const title = successTitle ?? Localize.translateLocal('common.success');
   const message =
-    successText || Localize.translateLocal('common.copiedToClipboard');
+    successText ?? Localize.translateLocal('common.copiedToClipboard');
 
   Clipboard.setString(text);
   if (alert) {

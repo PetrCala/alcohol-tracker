@@ -325,6 +325,8 @@ export default {
     friendList: 'Friend List',
     friendSearch: 'Friend Search',
     friendRequests: 'Friend Requests',
+    noFriendsYet: 'You do not have any friends yet',
+    addThemHere: 'Add them here',
   },
   friendsFriendsScreen: {
     title: 'Find Friends of Friends',

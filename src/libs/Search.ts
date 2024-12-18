@@ -1,12 +1,12 @@
 import type {Database} from 'firebase/database';
-import {ref, get} from 'firebase/database';
 import type {
   UserIDToNicknameMapping,
   UserSearchResults,
 } from '@src/types/various/Search';
 import type {NicknameToId} from '@src/types/onyx';
-import {cleanStringForFirebaseKey} from './StringUtilsKiroku';
+import {readDataOnce} from '@database/baseFunctions';
 import {QUIRKY_NICKNAMES} from './QuirkyNicknames';
+import {cleanStringForFirebaseKey} from './StringUtilsKiroku';
 
 /**
  * Using a database object and a nickname to search,
@@ -24,12 +24,7 @@ async function searchDbByNickname(
   searchText: string,
 ): Promise<NicknameToId | null> {
   const nicknameKey = cleanStringForFirebaseKey(searchText);
-  const dbRef = ref(db, `nickname_to_id/${nicknameKey}`);
-  const snapshot = await get(dbRef);
-  if (snapshot.exists()) {
-    return snapshot.val(); // The nicknames
-  }
-  return null;
+  return readDataOnce<NicknameToId>(db, `nickname_to_id/${nicknameKey}`);
 }
 
 /**
@@ -85,29 +80,31 @@ function searchArrayByText(
   );
 }
 
-function searchObjectByText(
-  obj: Record<string, any>,
-  searchText: string,
-  mapping: UserIDToNicknameMapping,
-): Record<string, any> {
-  if (!searchText) {
-    return obj;
-  }
-  const cleanedSearchText = cleanStringForFirebaseKey(searchText);
-  return Object.keys(obj)
-    .filter(key => searchItemIsRelevant(key, cleanedSearchText, mapping))
-    .reduce(
-      (acc, key) => {
-        acc[key] = obj[key];
-        return acc;
-      },
-      {} as Record<string, any>,
-    );
+/**
+ * Input an object where the keys are userIDs, and the first level
+ * of the object contains the display name of the user
+ *
+ * @param object - The input object containing user data
+ * @param displayNameKey - The key to access the display name of the user, defaults to "display_name"
+ * @returns A mapping of user ids to nicknames
+ */
+function getNicknameMapping(
+  object: Record<string, Record<string, string>>,
+  displayNameKey = 'display_name',
+): UserIDToNicknameMapping {
+  const mapping: UserIDToNicknameMapping = Object.fromEntries(
+    Object.entries(object).map(([userID, user]) => [
+      userID,
+      user[displayNameKey],
+    ]),
+  );
+
+  return mapping;
 }
 
 export {
+  getNicknameMapping,
   searchDbByNickname,
   searchDatabaseForUsers,
   searchArrayByText,
-  searchObjectByText,
 };

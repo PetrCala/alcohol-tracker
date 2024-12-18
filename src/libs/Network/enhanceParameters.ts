@@ -19,6 +19,15 @@ Onyx.connect({
   },
 });
 
+// Check if the user is logged in as a delegate and send that if so
+// let delegate = '';
+// Onyx.connect({
+//   key: ONYXKEYS.ACCOUNT,
+//   callback: val => {
+//     delegate = val?.delegatedAccess?.delegate ?? '';
+//   },
+// });
+
 /**
  * Does this command require an authToken?
  */
@@ -41,6 +50,8 @@ export default function enhanceParameters(
     finalParameters.authToken = NetworkStore.getAuthToken() ?? null;
   }
 
+  // finalParameters.referer = CONFIG.EXPENSIFY.EXPENSIFY_CASH_REFERER;
+
   // In addition to the referer (ecash), we pass the platform to help differentiate what device type
   // is sending the request.
   finalParameters.platform = getPlatform();
@@ -59,6 +70,10 @@ export default function enhanceParameters(
   finalParameters.appversion = pkg.version;
 
   finalParameters.clientUpdateID = lastUpdateIDAppliedToClient;
+
+  // if (delegate) {
+  //   finalParameters.delegate = delegate;
+  // }
 
   return finalParameters;
 }

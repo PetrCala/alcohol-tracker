@@ -5,6 +5,7 @@ import type {BugList, BugId} from './Bug';
 import type Config from './Config';
 import type {AppSettings, Maintenance} from './Config';
 import type {CapturedLogs, Log} from './Console';
+import type Credentials from './Credentials';
 import type DatabaseProps from './DatabaseProps';
 import type Download from './Download';
 import type DrinkingSession from './DrinkingSession';
@@ -78,6 +79,7 @@ export type {
   BugList,
   CapturedLogs,
   Config,
+  Credentials,
   DatabaseProps,
   DeviceId,
   Download,
