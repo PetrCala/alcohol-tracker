@@ -32,6 +32,7 @@ import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import * as DSUtils from '@libs/DrinkingSessionUtils';
 import * as DS from '@userActions/DrinkingSession';
 import * as ErrorUtils from '@libs/ErrorUtils';
+import * as Session from '@userActions/Session';
 import ScrollView from '@components/ScrollView';
 import useLocalize from '@hooks/useLocalize';
 import {roundToTwoDecimalPlaces} from '@libs/NumberUtils';
@@ -142,7 +143,7 @@ function HomeScreen({route}: HomeScreenProps) {
     if (!!loadingText || !preferences || !userData || !user) {
       return;
     }
-    Onyx.set(ONYXKEYS.HAS_CHECKED_AUTO_LOGIN, true);
+    Session.setHasCheckedAutoLogin(true);
     setIsLoading(false);
   }, [loadingText, preferences, userData, user]);
 
