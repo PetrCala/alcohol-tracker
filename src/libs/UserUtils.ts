@@ -1,11 +1,11 @@
 // import Str from 'expensify-common/lib/str';
+import Onyx from 'react-native-onyx';
 import type {OnyxEntry} from 'react-native-onyx';
 import type {ValueOf} from 'type-fest';
-import {UserIcon} from '@components/Icon/KirokuIcons';
+import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import CONST from '@src/CONST';
 import type {Timestamp, UserID} from '@src/types/onyx/OnyxCommon';
 import type IconAsset from '@src/types/utils/IconAsset';
-import Onyx from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 import type {User} from 'firebase/auth';
 import hashCode from './hashCode';
@@ -136,45 +136,18 @@ function getDefaultAvatar(
   userID: UserID = '-1',
   avatarURL?: string,
 ): IconAsset {
-  return UserIcon;
-  // TODO enable this
-  // if (userID <= 0) {
-  //   return UserIcon;
-  // }
-  // if (Number(userID) === CONST.USER_ID.CONCIERGE) {
-  //   return ConciergeAvatar;
-  // }
-  // if (Number(userID) === CONST.USER_ID.NOTIFICATIONS) {
-  //   return NotificationsAvatar;
-  // }
+  if (userID === '-1') {
+    return KirokuIcons.UserIcon;
+  }
 
-  // There are 24 possible default avatars, so we choose which one this user has based
-  // on a simple modulo operation of their login number. Note that Avatar count starts at 1.
-
-  // When creating a chat, we generate an avatar using an ID and the backend response will modify the ID to the actual user ID.
-  // But the avatar link still corresponds to the original ID-generated link. So we extract the SVG image number from the backend's link instead of using the user ID directly
-  // let userIDHashBucket: AvatarRange;
-  // if (avatarURL) {
-  //   const match = avatarURL.match(/(default-avatar_|avatar_)(\d+)(?=\.)/);
-  //   const lastDigit = match && parseInt(match[2], 10);
-  //   userIDHashBucket = lastDigit as AvatarRange;
-  // } else {
-  //   userIDHashBucket = ((userID % CONST.DEFAULT_AVATAR_COUNT) +
-  //     1) as AvatarRange;
-  // }
-  // return defaultAvatars[`Avatar${userIDHashBucket}`];
+  return {uri: avatarURL ?? ''};
 }
 
 /**
  * Helper method to return default avatar URL associated with the userID
  */
-function getDefaultAvatarURL(userID: string | number = ''): string {
-  // Note that Avatar count starts at 1 which is why 1 has to be added to the result (or else 0 would result in a broken avatar link)
-  const userIDHashBucket = (Number(userID) % CONST.DEFAULT_AVATAR_COUNT) + 1;
-  const avatarPrefix = `default-avatar`;
-
-  // return `${CONST.CLOUDFRONT_URL}/images/avatars/${avatarPrefix}_${userIDHashBucket}.png`; // TODO link this to the Firebase storage
-  return '';
+function getDefaultAvatarURL(): IconAsset {
+  return KirokuIcons.UserIcon;
 }
 
 /**
@@ -222,13 +195,8 @@ function getAvatar(avatarSource?: AvatarSource, userID?: UserID): AvatarSource {
  * @param avatarURL - the avatar source from user's personalDetails
  * @param userID - the userID of the user
  */
-function getAvatarUrl(
-  avatarSource: AvatarSource | undefined,
-  userID: UserID,
-): AvatarSource {
-  return isDefaultAvatar(avatarSource)
-    ? getDefaultAvatarURL(userID)
-    : avatarSource;
+function getAvatarUrl(avatarSource: AvatarSource | undefined): AvatarSource {
+  return isDefaultAvatar(avatarSource) ? getDefaultAvatarURL() : avatarSource;
 }
 
 /**
@@ -258,12 +226,6 @@ function getSmallSizeAvatar(
   if (typeof source !== 'string') {
     return source;
   }
-
-  // Because other urls than CloudFront do not support dynamic image sizing (_SIZE suffix), the current source is already what we want to use here.
-  // TODO check this
-  // if (!CONST.CLOUDFRONT_DOMAIN_REGEX.test(source)) {
-  //   return source;
-  // }
 
   // If image source already has _128 at the end, the given avatar URL is already what we want to use here.
   const lastPeriodIndex = source.lastIndexOf('.');

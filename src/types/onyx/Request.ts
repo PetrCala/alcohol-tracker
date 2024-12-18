@@ -1,93 +1,204 @@
 import type {OnyxUpdate} from 'react-native-onyx';
 import type Response from './Response';
 
-/** A model representing Onyx data */
+/** Model of onyx requests sent to the API */
 type OnyxData = {
-  /** Onyx data to set upon a successful request */
+  /** Onyx instructions that are executed after getting response from server with jsonCode === 200 */
   successData?: OnyxUpdate[];
 
-  /** Onyx data to set upon a failed request */
+  /** Onyx instructions that are executed after getting response from server with jsonCode !== 200 */
   failureData?: OnyxUpdate[];
 
-  /** Onyx data to set upon a finished request */
+  /** Onyx instructions that are executed after getting any response from server */
   finallyData?: OnyxUpdate[];
 
-  /** Onyx data to set optimistically */
+  /** Onyx instructions that are executed before request is made to the server */
   optimisticData?: OnyxUpdate[];
 };
 
-/** A type of an API request */
+/** HTTP request method names */
 type RequestType = 'get' | 'post';
 
-/** API request payload data */
+/** Model of overall requests sent to the API */
 type RequestData = {
-  /** An API command */
+  /** Name of the API command */
   command: string;
 
-  /** An API command name */
+  /** Command name for logging purposes */
   commandName?: string;
 
-  /** Data to send through an API request */
+  /** Additional parameters that can be sent with the request */
   data?: Record<string, unknown>;
 
-  /** A type of an API request */
+  /** The HTTP request method name */
   type?: RequestType;
 
-  /** Whether or not to use a secure request */
+  /** Whether the app should connect to the secure API endpoints */
   shouldUseSecure?: boolean;
 
-  /** Onyx data to set upon a successful request */
+  /** Onyx instructions that are executed after getting response from server with jsonCode === 200 */
   successData?: OnyxUpdate[];
 
-  /** Onyx data to set upon a failed request */
+  /** Onyx instructions that are executed after getting response from server with jsonCode !== 200 */
   failureData?: OnyxUpdate[];
 
-  /** Onyx data to set upon a finished request */
+  /** Onyx instructions that are executed after getting any response from server */
   finallyData?: OnyxUpdate[];
 
-  /** Whether or not to get conflicting requests */
-  getConflictingRequests?: (persistedRequests: Request[]) => Request[];
-
-  /** Whether or not to handle conflicting requests */
-  handleConflictingRequest?: (persistedRequest: Request) => unknown;
-
-  /** A callback for when the request is resolved */
+  /** Promise resolve handler */
   resolve?: (value: Response) => void;
 
-  /** A callback for when the request is rejected */
+  /** Promise reject handler */
   reject?: (value?: unknown) => void;
+
+  /** Whether the app should skip the web proxy to connect to API endpoints */
+  shouldSkipWebProxy?: boolean;
 };
 
-/** A model for a request conflict resolver */
+/**
+ * Represents the possible actions to take in case of a conflict in the request queue.
+ */
+type ConflictData =
+  | ConflictRequestReplace
+  | ConflictRequestDelete
+  | ConflictRequestPush
+  | ConflictRequestNoAction;
+
+/**
+ * Model of a conflict request that has to be replaced in the request queue.
+ */
+type ConflictRequestReplace = {
+  /**
+   * The action to take in case of a conflict.
+   */
+  type: 'replace';
+
+  /**
+   * The index of the request in the queue to update.
+   */
+  index: number;
+
+  /**
+   * The new request to replace the existing request in the queue.
+   */
+  request?: Request;
+};
+
+/**
+ * Model of a conflict request that needs to be deleted from the request queue.
+ */
+type ConflictRequestDelete = {
+  /**
+   * The action to take in case of a conflict.
+   */
+  type: 'delete';
+
+  /**
+   * The indices of the requests in the queue that are to be deleted.
+   */
+  indices: number[];
+
+  /**
+   * A flag to mark if the new request should be pushed into the queue after deleting the conflicting requests.
+   */
+  pushNewRequest: boolean;
+
+  /**
+   * The next action to execute after the current conflict is resolved.
+   */
+  nextAction?: ConflictData;
+};
+
+/**
+ * Model of a conflict request that has to be enqueued at the end of request queue.
+ */
+type ConflictRequestPush = {
+  /**
+   * The action to take in case of a conflict.
+   */
+  type: 'push';
+};
+
+/**
+ * Model of a conflict request that does not need to be updated or saved in the request queue.
+ */
+type ConflictRequestNoAction = {
+  /**
+   * The action to take in case of a conflict.
+   */
+  type: 'noAction';
+};
+
+/**
+ * An object that has the request and the action to take in case of a conflict.
+ */
+type ConflictActionData = {
+  /**
+   * The action to take in case of a conflict.
+   */
+  conflictAction: ConflictData;
+};
+
+/**
+ * An object that describes how a new write request can identify any queued requests that may conflict with or be undone by the new request,
+ * and how to resolve those conflicts.
+ */
 type RequestConflictResolver = {
   /**
-   * A callback that's provided with all the currently serialized functions in the sequential queue.
-   * Should return a subset of the requests passed in that conflict with the new request.
-   * Any conflicting requests will be cancelled and removed from the queue.
-   *
-   * @example - In ReconnectApp, you'd only want to have one instance of that command serialized to run on reconnect. The callback for that might look like this:
-   * (persistedRequests) => persistedRequests.filter((request) => request.command === 'ReconnectApp')
-   * */
-  getConflictingRequests?: (persistedRequests: Request[]) => Request[];
-
-  /**
-   * Should the requests provided to getConflictingRequests include the new request?
-   * This is useful if the new request and an existing request cancel eachother out completely.
-   *
-   * @example - In DeleteComment, if you're deleting an optimistic comment, you'd want to cancel the optimistic AddComment call AND the DeleteComment call.
-   * */
-  shouldIncludeCurrentRequest?: boolean;
-
-  /**
-   * Callback to handle a single conflicting request.
-   * This is useful if you need to clean up some optimistic data for a request that was queued but never sent.
-   * In these cases the optimisticData will be applied immediately, but the successData, failureData, and/or finallyData will never be applied unless you do it manually in this callback.
+   * A function that checks if a new request conflicts with any existing requests in the queue.
    */
-  handleConflictingRequest?: (persistedRequest: Request) => unknown;
+  checkAndFixConflictingRequest?: (
+    persistedRequest: Request[],
+  ) => ConflictActionData;
+
+  /**
+   * A boolean flag to mark a request as persisting into Onyx, if set to true it means when Onyx loads
+   * the ongoing request, it will be removed from the persisted request queue.
+   */
+  persistWhenOngoing?: boolean;
+
+  /**
+   * A boolean flag to mark a request as rollbacked, if set to true it means the request failed and was added back into the queue.
+   */
+  isRollbacked?: boolean;
 };
 
-/** A model for an API request */
+/** Model of requests sent to the API */
 type Request = RequestData & OnyxData & RequestConflictResolver;
 
+/**
+ * An object used to describe how a request can be paginated.
+ */
+type PaginationConfig = {
+  /**
+   * The ID of the resource we're trying to paginate (i.e: the reportID in the case of paginating reportActions).
+   */
+  resourceID: string;
+
+  /**
+   * The ID used as a cursor/offset when making a paginated request.
+   */
+  cursorID?: string | null;
+};
+
+/**
+ * A paginated request object.
+ */
+type PaginatedRequest = Request &
+  PaginationConfig & {
+    /**
+     * A boolean flag to mark a request as Paginated.
+     */
+    isPaginated: true;
+  };
+
 export default Request;
-export type {OnyxData, RequestType, RequestConflictResolver};
+export type {
+  OnyxData,
+  RequestType,
+  PaginationConfig,
+  PaginatedRequest,
+  RequestConflictResolver,
+  ConflictActionData,
+  ConflictData,
+};

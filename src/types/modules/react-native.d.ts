@@ -15,6 +15,7 @@ import type {
 } from 'react';
 import 'react-native';
 import type {BootSplashModule} from '@libs/BootSplash/types';
+import type StartupTimer from '@libs/StartupTimer/types';
 
 declare module 'react-native' {
   // <------ REACT NATIVE WEB (0.19.0) ------>
@@ -383,5 +384,10 @@ declare module 'react-native' {
 
   interface NativeModulesStatic {
     BootSplash: BootSplashModule;
+    StartupTimer: StartupTimer;
+    // RNTextInputReset: RNTextInputResetModule;
+    // RNNavBarManager: RNNavBarManagerModule;
+    // EnvironmentChecker: EnvironmentCheckerModule;
+    // ShortcutManager: ShortcutManagerModule;
   }
 }

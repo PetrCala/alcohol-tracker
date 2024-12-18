@@ -1,4 +1,3 @@
-import Text from '@components/Text';
 import type {StyleProp, TextStyle} from 'react-native';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import type {DateData} from 'react-native-calendars';
@@ -11,6 +10,7 @@ import type {
   CalendarColors,
   DayComponentProps,
 } from '@components/SessionsCalendar/types';
+import Text from '@components/Text';
 
 const colorToTextColorMap: Record<CalendarColors, string> = {
   yellow: 'black',

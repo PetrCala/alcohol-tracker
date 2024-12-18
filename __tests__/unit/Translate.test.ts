@@ -75,7 +75,6 @@ describe('Translation Keys', () => {
         typeof source[key] === 'object' &&
         typeof source[key] !== 'function'
       ) {
-        // @ts-expect-error - We are modifying the translations object for testing purposes
         traverseKeyPath(source[key], keyPath + key, pathArray);
       } else {
         pathArray.push(keyPath + key);

@@ -1,22 +1,16 @@
-import type {OnyxEntry, OnyxUpdate} from 'react-native-onyx';
 import Onyx from 'react-native-onyx';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
-import type {UserData, UserDataList} from '@src/types/onyx';
+import type {UserData} from '@src/types/onyx';
 import * as Localize from './Localize';
 
-type FirstAndLastName = {
-  firstName: string;
-  lastName: string;
-};
-
 let userData: Array<UserData | null> = [];
-let allUserData: OnyxEntry<UserDataList> = {};
+// let allUserData: OnyxEntry<UserDataList> = {};
 Onyx.connect({
   key: ONYXKEYS.USER_DATA_LIST,
   callback: val => {
     userData = Object.values(val ?? {});
-    allUserData = val;
+    // allUserData = val;
   },
 });
 
@@ -112,16 +106,6 @@ function getDisplayNameOrDefault(
 //     finallyData,
 //   };
 // }
-
-/**
- * Applies common formatting to each piece of an address
- *
- * @param piece - address piece to format
- * @returns - formatted piece
- */
-function formatPiece(piece?: string): string {
-  return piece ? `${piece}, ` : '';
-}
 
 // /**
 //  *

@@ -6,8 +6,7 @@ import type {
 } from '@src/types/various/Search';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {objKeys} from '@libs/DataHandling';
-import {getNicknameMapping} from '@libs/SearchUtils';
-import {searchArrayByText} from '@libs/Search';
+import {getNicknameMapping, searchArrayByText} from '@libs/Search';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import type {UserArray} from '@src/types/onyx/OnyxCommon';
 import * as ErrorUtils from '@libs/ErrorUtils';

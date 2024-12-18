@@ -8,7 +8,7 @@ import type {UserList} from '@src/types/onyx/OnyxCommon';
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {useFirebase} from '@context/global/FirebaseContext';
 import {isNonEmptyArray} from '@libs/Validation';
-import {searchArrayByText} from '@libs/Search';
+import {searchArrayByText, getNicknameMapping} from '@libs/Search';
 import * as Profile from '@userActions/Profile';
 import SearchResult from '@components/Social/SearchResult';
 import SearchWindow from '@components/Social/SearchWindow';
@@ -20,7 +20,6 @@ import type {
 } from '@src/types/various/Search';
 import * as ErrorUtils from '@libs/ErrorUtils';
 import {objKeys} from '@libs/DataHandling';
-import {getNicknameMapping} from '@libs/SearchUtils';
 import FillerView from '@components/FillerView';
 import type {StackScreenProps} from '@react-navigation/stack';
 import type {ProfileNavigatorParamList} from '@libs/Navigation/types';

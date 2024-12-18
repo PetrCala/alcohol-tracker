@@ -6,6 +6,7 @@ import type StartupTimer from './types';
  */
 const startupTimer: StartupTimer = {
   stop: () => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     NativeModules.StartupTimer.stop();
   },
 };

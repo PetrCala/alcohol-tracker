@@ -1,19 +1,20 @@
-// TODO translate
 import Button from '@components/Button';
+import Text from '@components/Text';
+import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
-import {View, Text} from 'react-native';
+import {View} from 'react-native';
 
 type NoFriendInfoProps = {
   message?: string;
   buttonText?: string;
 };
 
-/** A View that informs the users that they have no friends */
-const NoFriendInfo: React.FC<NoFriendInfoProps> = ({message, buttonText}) => {
+function NoFriendInfo({message, buttonText}: NoFriendInfoProps) {
   const styles = useThemeStyles();
-  const defaultMessage = 'You do not have any friends yet';
+  const {translate} = useLocalize();
+  const defaultMessage = translate('socialScreen.noFriendsYet');
 
   return (
     <View style={styles.fullScreenCenteredContent}>
@@ -21,13 +22,13 @@ const NoFriendInfo: React.FC<NoFriendInfoProps> = ({message, buttonText}) => {
         {message ?? defaultMessage}
       </Text>
       <Button
-        text={buttonText ?? 'Add them here'}
+        text={buttonText ?? translate('socialScreen.addThemHere')}
         onPress={() => Navigation.navigate(ROUTES.SOCIAL_FRIEND_SEARCH)}
         style={[styles.buttonSuccess, styles.ph2]}
         success
       />
     </View>
   );
-};
+}
 
 export default NoFriendInfo;
