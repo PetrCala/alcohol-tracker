@@ -1,6 +1,5 @@
 import getTopmostBottomTabRoute from '@libs/Navigation/getTopmostBottomTabRoute';
 import type {
-  AuthScreensParamList,
   CentralPaneName,
   NavigationPartialRoute,
   RootStackParamList,
@@ -69,7 +68,7 @@ const getTopMostReportIDFromRHP = (state: State): string => {
 // Get matching central pane route for bottom tab navigator. e.g HOME -> REPORT
 function getMatchingCentralPaneRouteForState(
   state: State<RootStackParamList>,
-  rootState?: State,
+  rootState?: State, // eslint-disable-line @typescript-eslint/no-unused-vars
 ): NavigationPartialRoute<CentralPaneName> | undefined {
   const topmostBottomTabRoute = getTopmostBottomTabRoute(state);
 

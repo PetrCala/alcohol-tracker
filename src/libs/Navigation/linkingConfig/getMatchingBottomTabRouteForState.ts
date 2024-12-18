@@ -5,7 +5,6 @@ import type {
   RootStackParamList,
   State,
 } from '@libs/Navigation/types';
-import NAVIGATORS from '@src/NAVIGATORS';
 import SCREENS from '@src/SCREENS';
 import {CENTRAL_PANE_TO_TAB_MAPPING} from './TAB_TO_CENTRAL_PANE_MAPPING';
 

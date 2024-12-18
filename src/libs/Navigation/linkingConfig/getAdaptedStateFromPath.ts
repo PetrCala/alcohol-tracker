@@ -1,3 +1,4 @@
+import pick from 'lodash/pick';
 import type {NavigationState, PartialState} from '@react-navigation/native';
 import {findFocusedRoute, getStateFromPath} from '@react-navigation/native';
 import getIsNarrowLayout from '@libs/getIsNarrowLayout';
@@ -10,10 +11,11 @@ import type {
 import {isCentralPaneName} from '@libs/NavigationUtils';
 import NAVIGATORS from '@src/NAVIGATORS';
 import SCREENS from '@src/SCREENS';
-import config from './config';
+import config, {normalizedConfigs} from './config';
 import getMatchingBottomTabRouteForState from './getMatchingBottomTabRouteForState';
 import getMatchingCentralPaneRouteForState from './getMatchingCentralPaneRouteForState';
 import replacePathInNestedState from './replacePathInNestedState';
+import CENTRAL_PANE_TO_RHP_MAPPING from './CENTRAL_PANE_TO_RHP_MAPPING';
 
 type Metainfo = {
   // Sometimes modal screens don't have information about what should be visible under the overlay.
@@ -60,34 +62,28 @@ const getRoutesWithIndex = (
 //   return routeWithPolicyID;
 // };
 
+function getParamsFromRoute(screenName: string): string[] {
+  const routeConfig =
+    normalizedConfigs[screenName as keyof typeof normalizedConfigs];
+
+  const route = routeConfig.pattern;
+
+  return route.match(/(?<=[:?&])(\w+)(?=[/=?&]|$)/g) ?? [];
+}
+
 function createBottomTabNavigator(
   route: NavigationPartialRoute<BottomTabName>,
-  policyID?: string,
 ): NavigationPartialRoute<typeof NAVIGATORS.BOTTOM_TAB_NAVIGATOR> {
   const routesForBottomTabNavigator: Array<
     NavigationPartialRoute<BottomTabName>
   > = [];
-  routesForBottomTabNavigator.push(
-    route,
-    // addPolicyIDToRoute(
-    //   route,
-    //   policyID,
-    // ) as NavigationPartialRoute<BottomTabName>,
-  );
+  routesForBottomTabNavigator.push(route);
 
   return {
     name: NAVIGATORS.BOTTOM_TAB_NAVIGATOR,
     state: getRoutesWithIndex(routesForBottomTabNavigator),
   };
 }
-
-// function getParamsFromRoute(screenName: string): string[] {
-//   const routeConfig = normalizedConfigs[screenName as Screen];
-
-//   const route = routeConfig.pattern;
-
-//   return route.match(/(?<=[:?&])(\w+)(?=[/=?&]|$)/g) ?? [];
-// }
 
 // This function will return CentralPaneNavigator route or FullScreenNavigator route.
 function getMatchingRootRouteForRHPRoute(
@@ -98,7 +94,6 @@ function getMatchingRootRouteForRHPRoute(
     >
   | undefined {
   // Check for backTo param. One screen with different backTo value may need diferent screens visible under the overlay.
-  // eslint-disable-next-line @typescript-eslint/prefer-early-return
   if (
     route.params &&
     'backTo' in route.params &&
@@ -108,7 +103,7 @@ function getMatchingRootRouteForRHPRoute(
     if (stateForBackTo) {
       // eslint-disable-next-line @typescript-eslint/no-shadow
       const rhpNavigator = stateForBackTo.routes.find(
-        route => route.name === NAVIGATORS.RIGHT_MODAL_NAVIGATOR,
+        thisRoute => thisRoute.name === NAVIGATORS.RIGHT_MODAL_NAVIGATOR,
       );
 
       const centralPaneOrFullScreenNavigator = stateForBackTo.routes.find(
@@ -138,18 +133,18 @@ function getMatchingRootRouteForRHPRoute(
   }
 
   // Check for CentralPaneNavigator
-  // for (const [centralPaneName, RHPNames] of Object.entries(
-  //   CENTRAL_PANE_TO_RHP_MAPPING,
-  // )) {
-  //   if (RHPNames.includes(route.name)) {
-  //     const paramsFromRoute = getParamsFromRoute(centralPaneName);
+  for (const [centralPaneName, RHPNames] of Object.entries(
+    CENTRAL_PANE_TO_RHP_MAPPING,
+  )) {
+    if (RHPNames.includes(route.name)) {
+      const paramsFromRoute = getParamsFromRoute(centralPaneName);
 
-  //     return {
-  //       name: centralPaneName as CentralPaneName,
-  //       params: pick(route.params, paramsFromRoute),
-  //     };
-  //   }
-  // }
+      return {
+        name: centralPaneName as CentralPaneName,
+        params: pick(route.params, paramsFromRoute),
+      };
+    }
+  }
 }
 
 function getAdaptedState(

@@ -7,7 +7,7 @@ import type {InitialState} from '@react-navigation/native';
  * e.g. making sure that we are not navigating to the same screen twice.
  * @param state - react-navigation state
  */
-function extrapolateStateFromParams(state: InitialState) {
+function extrapolateStateFromParams<T>(state: InitialState) {
   let current: InitialState | undefined = state;
 
   while (current?.routes != null) {
@@ -26,7 +26,10 @@ function extrapolateStateFromParams(state: InitialState) {
         routes: [
           {
             name: params.screen,
-            params: 'params' in params ? (params.params as object) : undefined,
+            params:
+              'params' in params
+                ? (params.params as Record<string, T>)
+                : undefined,
           },
         ],
       };

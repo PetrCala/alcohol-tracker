@@ -17,6 +17,13 @@ import 'react-native';
 import type {BootSplashModule} from '@libs/BootSplash/types';
 import type StartupTimer from '@libs/StartupTimer/types';
 
+type HybridAppModule = {
+  closeReactNativeApp: (shouldSignOut: boolean, shouldSetNVP: boolean) => void;
+  completeOnboarding: (status: boolean) => void;
+  switchAccount: (newDotCurrentAccount: string) => void;
+  exitApp: () => void;
+};
+
 declare module 'react-native' {
   // <------ REACT NATIVE WEB (0.19.0) ------>
   // Extracted from react-native-web, packages/react-native-web/src/exports/View/types.js
@@ -384,6 +391,7 @@ declare module 'react-native' {
 
   interface NativeModulesStatic {
     BootSplash: BootSplashModule;
+    HybridAppModule: HybridAppModule;
     StartupTimer: StartupTimer;
     // RNTextInputReset: RNTextInputResetModule;
     // RNNavBarManager: RNNavBarManagerModule;
