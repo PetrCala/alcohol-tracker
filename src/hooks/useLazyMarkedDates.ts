@@ -155,20 +155,24 @@ function useLazyMarkedDates(
   );
 
   useEffect(() => {
-    // For the current user, save the number of months loaded when the component unmounts
-    return () => {
+    // For the current user, save the number of months loaded when focus is lost
+    if (!isFocused) {
       if (user?.uid === userID) {
+        console.log('loading from', loadedFrom.current);
         const newMonthsLoaded = differenceInMonths(
           new Date(),
           loadedFrom.current ?? new Date(),
         );
         Onyx.merge(ONYXKEYS.SESSIONS_CALENDAR_MONTHS_LOADED, newMonthsLoaded);
       }
-    };
-  }, []);
+    }
+  }, [isFocused]);
 
   useEffect(() => {
-    if (!isFocused) return;
+    // Calculate only upon refocus
+    if (!isFocused) {
+      return;
+    }
 
     setIsLoading(true);
     loadedFrom.current = null;
@@ -182,7 +186,7 @@ function useLazyMarkedDates(
 
     loadMoreMonths(newMonthsToLoad, true);
     setIsLoading(false);
-  }, [sessions, preferences, userID]);
+  }, [sessions, preferences, userID, isFocused]);
 
   return {
     markedDates,
