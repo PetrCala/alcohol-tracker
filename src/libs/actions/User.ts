@@ -40,7 +40,7 @@ import Onyx from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 import CONST from '@src/CONST';
 import {getReasonForLeavingID} from '@libs/ReasonForLeaving';
-import Log from '@libs/common/Log';
+import Log from '@libs/Log';
 import ERRORS from '@src/ERRORS';
 import * as Session from './Session';
 
