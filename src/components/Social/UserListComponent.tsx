@@ -1,3 +1,4 @@
+// TODO translate
 import PressableWithAnimation from '@components/Buttons/PressableWithAnimation';
 import {useFirebase} from '@context/global/FirebaseContext';
 import * as Profile from '@userActions/Profile';

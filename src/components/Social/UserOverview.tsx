@@ -1,3 +1,4 @@
+// TODO translate
 import {StyleSheet, View} from 'react-native';
 import ProfileImage from '@components/ProfileImage';
 import {getTimestampAge} from '@libs/TimeUtils';
@@ -74,7 +75,7 @@ const UserOverview: React.FC<UserOverviewProps> = ({
         style={[styles.flexRow, styles.alignItemsCenter]}>
         {/* ? `In session:\n${drinksThisSession} ${mostCommonDrink}` */}
         {inSession && shouldDisplaySessionInfo ? (
-          <>
+          <View>
             <View style={commonStyles.flexRow}>
               <Text
                 key={`${userID}-status-info`}
@@ -88,7 +89,7 @@ const UserOverview: React.FC<UserOverviewProps> = ({
               style={[styles.textLabel, styles.textAlignCenter]}>
               {`From: ${sessionStartTime}`}
             </Text>
-          </>
+          </View>
         ) : (
           <Text
             key={`${userID}-status`}
@@ -106,15 +107,3 @@ const UserOverview: React.FC<UserOverviewProps> = ({
 };
 
 export default UserOverview;
-
-// eslint-disable-next-line @typescript-eslint/no-use-before-define
-const localStyles = StyleSheet.create({
-  userDetailsText: {
-    color: 'black',
-    fontSize: 12,
-  },
-  rightContainerText: {
-    textAlign: 'center',
-    color: '#333',
-  },
-});
