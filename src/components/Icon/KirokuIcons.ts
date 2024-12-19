@@ -1,4 +1,3 @@
-import Achievements from '@assets/images/achievements.png';
 import AddImage from '@assets/images/add-image.png';
 import AddUser from '@assets/images/add-user.png';
 import AlcoholAssortment from '@assets/images/alcohol-assortment.png';
@@ -11,7 +10,6 @@ import ArrowUpLong from '@assets/images/arrow-up-long.svg';
 import ArrowUp from '@assets/images/arrow-up.svg';
 import ArrowUpDown from '@assets/images/arrows-updown.svg';
 import BackArrow from '@assets/images/back-left.svg';
-import BarMenu from '@assets/images/bar-menu.png';
 import Beer from '@assets/images/beer.png';
 import Bell from '@assets/images/bell.png';
 import Book from '@assets/images/book.png';
@@ -43,7 +41,7 @@ import Link from '@assets/images/link.svg';
 import Lock from '@assets/images/lock.svg';
 import Logo from '@assets/images/app-logo.svg';
 import Mail from '@assets/images/mail.svg';
-import Menu from '@assets/images/menu.png';
+import Menu from '@assets/images/menu.svg';
 import Minus from '@assets/images/minus.png';
 import NewWindow from '@assets/images/new-window.svg';
 import Pencil from '@assets/images/pencil.png';
@@ -55,23 +53,23 @@ import QrCodePlain from '@assets/images/kiroku-qr-code-plain.png';
 import QrCodeWithLogo from '@assets/images/kiroku-qr-code-with-logo.png';
 import Profile from '@assets/images/profile.svg';
 import Remove from '@assets/images/remove.png';
-import RemoveUser from '@assets/images/remove-user.png';
+import RemoveUser from '@assets/images/remove-user.svg';
 import Search from '@assets/images/search.png';
 import Settings from '@assets/images/settings.png';
 import Share from '@assets/images/share.png';
-import Social from '@assets/images/social.png';
-import Statistics from '@assets/images/statistics.png';
+import Star from '@assets/images/star.svg';
+import Statistics from '@assets/images/statistics.svg';
 import Stopwatch from '@assets/images/stopwatch.svg';
 import StrongShot from '@assets/images/strong-shot.png';
 import ThinX from '@assets/images/thin-x.png';
 import ThreeDots from '@assets/images/three-dots.svg';
 import UnderMaintenance from '@assets/images/under-maintenance.jpg';
 import UserIcon from '@assets/temp/user-icon.png';
+import Users from '@assets/images/users.svg';
 import WeakShot from '@assets/images/weak-shot.png';
 import Wine from '@assets/images/wine.png';
 
 export {
-  Achievements,
   AddImage,
   AddUser,
   AlcoholAssortment,
@@ -84,7 +82,6 @@ export {
   ArrowUp,
   ArrowUpDown,
   BackArrow,
-  BarMenu,
   Beer,
   Bell,
   Book,
@@ -132,7 +129,7 @@ export {
   Search,
   Settings,
   Share,
-  Social,
+  Star,
   Statistics,
   Stopwatch,
   StrongShot,
@@ -140,6 +137,7 @@ export {
   ThreeDots,
   UnderMaintenance,
   UserIcon,
+  Users,
   WeakShot,
   Wine,
 };
