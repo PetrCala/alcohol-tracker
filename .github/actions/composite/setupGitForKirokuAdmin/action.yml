@@ -19,7 +19,6 @@ runs:
     - name: Ensure correct GPG configuration 
       run: |
         export GPG_TTY=$(tty) 
-        echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
       shell: bash
 
     - name: Decrypt KirokuAdmin GPG key
