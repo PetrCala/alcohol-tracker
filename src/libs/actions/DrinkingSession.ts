@@ -88,15 +88,17 @@ async function updateDrinkingSessionData(
   const dsPath = drinkingSessionRef.getRoute(userID, sessionId);
 
   // Be mindful of using Object.forEach here, as that leads to an incorrect parsing of the object for some reason
-  // eslint-disable-next-line you-dont-need-lodash-underscore/for-each @typescript-eslint/no-unsafe-member-access
+  // eslint-disable-next-line you-dont-need-lodash-underscore/for-each, @typescript-eslint/no-unsafe-member-access
   _.forEach(updates, (value, key) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     updatesToDB[`${dsPath}/${key}`] = value;
   });
 
   if (updateStatus) {
     const userStatusPath = userStatusLatestSessionRef.getRoute(userID);
-    // eslint-disable-next-line you-dont-need-lodash-underscore/for-each @typescript-eslint/no-unsafe-member-access
+    // eslint-disable-next-line you-dont-need-lodash-underscore/for-each, @typescript-eslint/no-unsafe-member-access
     _.forEach(updates, (value, key) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       updatesToDB[`${userStatusPath}/${key}`] = value;
     });
   }
