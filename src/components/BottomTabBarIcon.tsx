@@ -10,6 +10,7 @@ import spacing from '@src/styles/utils/spacing';
 import Icon from './Icon';
 import Text from './Text';
 import {PressableWithFeedback} from './Pressable';
+import Tooltip from './Tooltip';
 
 type BottomTabBarIconProps = {
   /** The icon source */
@@ -65,7 +66,7 @@ function BottomTabBarIcon({
       <View>
         <Icon
           src={src}
-          fill={theme.iconDark}
+          fill={theme.textSupporting}
           width={width ?? variables.iconBottomBar}
           height={height ?? variables.iconBottomBar}
           additionalStyles={transformStyles}

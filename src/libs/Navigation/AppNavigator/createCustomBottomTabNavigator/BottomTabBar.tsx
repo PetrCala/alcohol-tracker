@@ -15,13 +15,13 @@ function BottomTabBar() {
   return (
     <View style={styles.bottomTabBarContainer}>
       <BottomTabBarIcon
-        src={KirokuIcons.Social}
+        src={KirokuIcons.Users}
         onPress={() => Navigation.navigate(ROUTES.SOCIAL)}
         accessibilityLabel="Social"
         counter={getReceivedRequestsCount(userData?.friend_requests)}
       />
       <BottomTabBarIcon
-        src={KirokuIcons.Achievements}
+        src={KirokuIcons.Star}
         onPress={() => Navigation.navigate(ROUTES.ACHIEVEMENTS)}
         accessibilityLabel="Achievements"
       />
@@ -32,7 +32,7 @@ function BottomTabBar() {
         accessibilityLabel="Statistics"
       />
       <BottomTabBarIcon
-        src={KirokuIcons.BarMenu}
+        src={KirokuIcons.Menu}
         onPress={() => Navigation.navigate(ROUTES.SETTINGS)}
         accessibilityLabel="Settings"
       />
