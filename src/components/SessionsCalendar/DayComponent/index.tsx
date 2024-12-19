@@ -115,14 +115,10 @@ function DayComponent({
 const localStyles = StyleSheet.create({
   // Day component styles
   dayContainer: {
-    // flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    // borderWidth: 1,
-    // borderColor: '#E0E0E0',
     width: '100%', // Give explicit width and height
     height: 50,
-    // borderRadius: 4, // Rounded corners
   },
   dayText: {
     marginTop: 1,
