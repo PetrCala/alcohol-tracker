@@ -34,6 +34,6 @@ info "Encrypting $FILE with a passphrase..."
 
 # Encrypt the file using the provided passphrase
 export GPG_TTY=$(tty) # Ensure the gpg decryptions work in workflows
-gpg --quiet --batch --yes --pinentry-mode=loopback --passphrase="$PASSPHRASE" --decrypt --output "$FILE" "$FILE.gpg"
+gpg --batch --yes --pinentry-mode=loopback --passphrase "$PASSPHRASE" --symmetric --cipher-algo AES256 --output "$FILE.gpg" "$FILE"
 
 success "Encrypted file: $FILE.gpg"
