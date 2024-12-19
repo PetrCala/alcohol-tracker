@@ -100,6 +100,11 @@ jobs:
     needs: createNewVersion
     if: ${{ failure() }}
     steps:
+      - name: Check out
+        uses: actions/checkout@v4
+        with:
+          ref: master
+
       - name: Announce failed workflow in Discord
         uses: ./.github/actions/composite/announceFailedWorkflowInDiscord
         with:
