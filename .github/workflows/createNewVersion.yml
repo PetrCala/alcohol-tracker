@@ -91,9 +91,13 @@ jobs:
             ./ios/kiroku/Info.plist \
             ./ios/kirokuTests/Info.plist
           git commit -m "Update version to ${{ steps.bumpVersion.outputs.NEW_VERSION }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.KIROKU_ADMIN_COMMIT_TOKEN }}
 
       - name: Update master branch
         run: git push origin master
+        env:
+          GITHUB_TOKEN: ${{ secrets.KIROKU_ADMIN_COMMIT_TOKEN }}
 
       - name: Announce failed workflow in Discord
         if: ${{ failure() }}
