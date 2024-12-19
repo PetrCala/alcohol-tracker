@@ -38,9 +38,11 @@ function calculateAllUsersPriority(
 }
 
 function calculateUserPriority(userStatusData: UserStatus): number {
+  const lowestPrio = -1e10;
+
   const latestSession = userStatusData.latest_session;
   if (!latestSession) {
-    return 0;
+    return lowestPrio;
   }
 
   const latestSessionTime = latestSession ? latestSession.start_time : null;
