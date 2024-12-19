@@ -1,4 +1,3 @@
-// TODO translate
 import PressableWithAnimation from '@components/Buttons/PressableWithAnimation';
 import {useFirebase} from '@context/global/FirebaseContext';
 import * as Profile from '@userActions/Profile';
@@ -12,7 +11,7 @@ import type {UserStatusList} from '@src/types/onyx';
 import type {UserArray} from '@src/types/onyx/OnyxCommon';
 import React, {useState, useEffect} from 'react';
 import type {NativeScrollEvent, NativeSyntheticEvent} from 'react-native';
-import {Dimensions, Keyboard, StyleSheet, View} from 'react-native';
+import {Keyboard, StyleSheet, View} from 'react-native';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
@@ -24,6 +23,7 @@ import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import Text from '@components/Text';
 import ScrollView from '@components/ScrollView';
 import UserOverview from './UserOverview';
+import useLocalize from '@hooks/useLocalize';
 
 type UserListProps = {
   fullUserArray: UserArray;
@@ -55,6 +55,7 @@ const UserListComponent: React.FC<UserListProps> = ({
   const {db} = useFirebase();
   const styles = useThemeStyles();
   const {userData} = useDatabaseData();
+  const {translate} = useLocalize();
   // Partial list of users for initial display and dynamic updates
   const [displayUserArray, setDisplayUserArray] = useState<UserArray>([]);
   const [userStatusList, setUserStatusList] = useState<UserStatusList>({});
@@ -188,7 +189,7 @@ const UserListComponent: React.FC<UserListProps> = ({
               })
             ) : (
               <Text style={styles.noResultsText}>
-                {`No friends found.\n\nTry modifying the search text.`}
+                {`${translate('userList.noFriendsFound')}\n\n${translate('userList.tryModifyingSearch')}`}
               </Text>
             )}
           </View>
@@ -204,8 +205,6 @@ const UserListComponent: React.FC<UserListProps> = ({
     </ScrollView>
   );
 };
-
-const screenHeight = Dimensions.get('window').height;
 
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
 const localStyles = StyleSheet.create({
