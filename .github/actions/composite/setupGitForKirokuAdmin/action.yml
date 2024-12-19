@@ -26,12 +26,7 @@ runs:
 
     - name: Import KirokuAdmin GPG Key
       shell: bash
-      run: |
-        cd .github/workflows
-        gpg --quiet --batch --yes \
-          --pinentry-mode=loopback \
-          --passphrase="${{ inputs.GPG_PASSPHRASE }}" \
-          --import KirokuAdmin-private-key.asc
+      run: cd .github/workflows && gpg --import KirokuAdmin-private-key.asc
 
     - name: Set up git for KirokuAdmin
       shell: bash
