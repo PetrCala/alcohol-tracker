@@ -12,7 +12,7 @@ runs:
     - name: Send Discord Notification
       uses: peter-evans/webhook-action@v2
       with:
-        url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        url: ${{ inputs.DISCORD_WEBHOOK_URL }}
         content-type: 'json'
         payload: |
           {
@@ -28,3 +28,5 @@ runs:
               }
             }]
           }
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
