@@ -27,7 +27,6 @@ runs:
     - name: Import KirokuAdmin GPG Key
       shell: bash
       run: cd .github/workflows && gpg --import KirokuAdmin-private-key.asc
-          
 
     - name: Set up git for KirokuAdmin
       shell: bash
