@@ -158,7 +158,6 @@ function useLazyMarkedDates(
     // For the current user, save the number of months loaded when focus is lost
     if (!isFocused) {
       if (user?.uid === userID) {
-        console.log('loading from', loadedFrom.current);
         const newMonthsLoaded = differenceInMonths(
           new Date(),
           loadedFrom.current ?? new Date(),
