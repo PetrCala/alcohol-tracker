@@ -1,5 +1,5 @@
 // TODO translate
-import {StyleSheet, View} from 'react-native';
+import {View} from 'react-native';
 import ProfileImage from '@components/ProfileImage';
 import {getTimestampAge} from '@libs/TimeUtils';
 import commonStyles from '@src/styles/commonStyles';
@@ -13,6 +13,7 @@ import type {Timezone} from '@src/types/onyx/UserData';
 import Text from '@components/Text';
 import Icon from '@components/Icon';
 import {useFirebase} from '@src/context/global/FirebaseContext';
+import useTheme from '@hooks/useTheme';
 
 type UserOverviewProps = {
   userID: string;
@@ -29,7 +30,8 @@ const UserOverview: React.FC<UserOverviewProps> = ({
 }) => {
   const {storage} = useFirebase();
   const styles = useThemeStyles();
-  const {last_online, latest_session, latest_session_id} = userStatusData;
+  const theme = useTheme();
+  const {latest_session} = userStatusData;
   // const activeNow = isRecent(last_online);
   const inSession = latest_session?.ongoing;
   const lastSessionEndTime = get(latest_session, 'end_time', null);
@@ -75,18 +77,28 @@ const UserOverview: React.FC<UserOverviewProps> = ({
         style={[styles.flexRow, styles.alignItemsCenter]}>
         {/* ? `In session:\n${drinksThisSession} ${mostCommonDrink}` */}
         {inSession && shouldDisplaySessionInfo ? (
-          <View>
+          <View style={styles.flexColumn}>
             <View style={commonStyles.flexRow}>
               <Text
                 key={`${userID}-status-info`}
                 style={[styles.textLabelSupporting, styles.textAlignCenter]}>
                 {`In session${mostCommonDrinkIcon ? ':' : ''}`}
               </Text>
-              {mostCommonDrinkIcon && <Icon small src={mostCommonDrinkIcon} />}
+              {mostCommonDrinkIcon && (
+                <Icon
+                  small
+                  src={mostCommonDrinkIcon}
+                  fill={theme.textSupporting}
+                />
+              )}
             </View>
             <Text
               key={`${userID}-status-time`}
-              style={[styles.textLabel, styles.textAlignCenter]}>
+              style={[
+                styles.textLabelSupporting,
+                styles.textAlignCenter,
+                styles.mt1,
+              ]}>
               {`From: ${sessionStartTime}`}
             </Text>
           </View>
