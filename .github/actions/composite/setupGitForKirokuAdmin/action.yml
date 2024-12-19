@@ -16,6 +16,10 @@ outputs:
 runs:
   using: composite
   steps:
+    - name: Ensure correct GPG configuration 
+      run: export GPG_TTY=$(tty)
+      shell: bash
+
     - name: Decrypt KirokuAdmin GPG key
       run: cd .github/workflows && gpg --quiet --batch --yes --decrypt --passphrase=${{ inputs.GPG_PASSPHRASE }} --output KirokuAdmin-private-key.asc KirokuAdmin-private-key.asc.gpg
       shell: bash
