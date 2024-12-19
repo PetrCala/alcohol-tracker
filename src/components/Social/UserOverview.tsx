@@ -1,4 +1,3 @@
-// TODO translate
 import {View} from 'react-native';
 import ProfileImage from '@components/ProfileImage';
 import {getTimestampAge} from '@libs/TimeUtils';
@@ -14,6 +13,7 @@ import Text from '@components/Text';
 import Icon from '@components/Icon';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import useTheme from '@hooks/useTheme';
+import useLocalize from '@hooks/useLocalize';
 
 type UserOverviewProps = {
   userID: string;
@@ -31,6 +31,7 @@ const UserOverview: React.FC<UserOverviewProps> = ({
   const {storage} = useFirebase();
   const styles = useThemeStyles();
   const theme = useTheme();
+  const {translate} = useLocalize();
   const {latest_session} = userStatusData;
   // const activeNow = isRecent(last_online);
   const inSession = latest_session?.ongoing;
@@ -82,7 +83,7 @@ const UserOverview: React.FC<UserOverviewProps> = ({
               <Text
                 key={`${userID}-status-info`}
                 style={[styles.textLabelSupporting, styles.textAlignCenter]}>
-                {`In session${mostCommonDrinkIcon ? ':' : ''}`}
+                {`${translate('userOverview.inSession')}${mostCommonDrinkIcon ? ':' : ''}`}
               </Text>
               {mostCommonDrinkIcon && (
                 <Icon
@@ -99,7 +100,7 @@ const UserOverview: React.FC<UserOverviewProps> = ({
                 styles.textAlignCenter,
                 styles.mt1,
               ]}>
-              {`From: ${sessionStartTime}`}
+              {`${translate('userOverview.from')}: ${sessionStartTime}`}
             </Text>
           </View>
         ) : (
@@ -107,10 +108,10 @@ const UserOverview: React.FC<UserOverviewProps> = ({
             key={`${userID}-status`}
             style={[styles.textLabelSupporting, styles.textAlignCenter]}>
             {!_.isEmpty(sessionEndTimeVerbose)
-              ? `${sessionEndTimeVerbose}\nsober`
+              ? `${sessionEndTimeVerbose}\n${translate('userOverview.sober').toLowerCase()}`
               : inSession
-                ? `Session started:\n${sessionStartTime}`
-                : 'No sessions yet'}
+                ? `${translate('userOverview.sessionStarted')}:\n${sessionStartTime}`
+                : `${translate('userOverview.noSessionsYet')}`}
           </Text>
         )}
       </View>

@@ -716,6 +716,13 @@ export default {
     heading: 'You are offline',
     text: 'Unfortunately, Kiroku does not support offline mode yet. We appreciate your patience while we work on this feature.',
   },
+  userOverview: {
+    inSession: 'In session',
+    from: 'From',
+    sober: 'Sober',
+    sessionStarted: 'Session started',
+    noSessionsYet: 'No sessions yet',
+  },
   yearPickerScreen: {
     year: 'Year',
     selectYear: 'Please select a year',
