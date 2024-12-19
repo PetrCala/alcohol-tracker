@@ -256,3 +256,9 @@ jobs:
           IOS: ${{ needs.iOS.result }}
           ANDROID_LINK: ${{steps.get_android_path.outputs.android_path}}
           IOS_LINK: ${{steps.get_ios_path.outputs.ios_path}}
+
+      - name: Announce failed workflow in Discord
+        if: ${{ failure() }}
+        uses: ./.github/actions/composite/announceFailedWorkflowInDiscord
+        with:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
