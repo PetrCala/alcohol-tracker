@@ -99,8 +99,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.KIROKU_ADMIN_COMMIT_TOKEN }}
 
+  announceFailedWorkflow:
+    runs-on: ubuntu-latest
+    if: ${{ failure() }}
+    steps:
       - name: Announce failed workflow in Discord
-        if: ${{ failure() }}
         uses: ./.github/actions/composite/announceFailedWorkflowInDiscord
         with:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
