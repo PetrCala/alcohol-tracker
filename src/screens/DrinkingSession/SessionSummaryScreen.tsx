@@ -316,7 +316,7 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
           {otherMenuItems}
         </MenuItemGroup>
       </ScrollView>
-      <View style={[styles.bottomTabBarContainer, styles.mh5]}>
+      <View style={[styles.bottomTabBarContainer, styles.ph5]}>
         <Button
           large
           text={translate('common.confirm')}
