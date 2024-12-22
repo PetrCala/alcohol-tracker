@@ -1,6 +1,5 @@
 import type {
   ParamListBase,
-  RouteProp,
   StackActionHelpers,
   StackNavigationState,
 } from '@react-navigation/native';
@@ -14,14 +13,9 @@ import type {
 } from '@react-navigation/stack';
 import {StackView} from '@react-navigation/stack';
 import React, {useEffect, useMemo} from 'react';
-import {View} from 'react-native';
-import useThemeStyles from '@hooks/useThemeStyles';
 import useWindowDimensions from '@hooks/useWindowDimensions';
-import getTopmostCentralPaneRoute from '@libs/Navigation/getTopmostCentralPaneRoute';
 import navigationRef from '@libs/Navigation/navigationRef';
-import type {RootStackParamList, State} from '@libs/Navigation/types';
 import {isCentralPaneName} from '@libs/NavigationUtils';
-import SCREENS from '@src/SCREENS';
 import CustomRouter from './CustomRouter';
 import type {
   ResponsiveStackNavigatorProps,
@@ -51,7 +45,6 @@ function reduceCentralPaneRoutes(routes: Routes): Routes {
 
 function ResponsiveStackNavigator(props: ResponsiveStackNavigatorProps) {
   const {isSmallScreenWidth} = useWindowDimensions();
-  const styles = useThemeStyles();
 
   const {navigation, state, descriptors, NavigationContent} =
     useNavigationBuilder<
@@ -73,46 +66,8 @@ function ResponsiveStackNavigator(props: ResponsiveStackNavigatorProps) {
     navigationRef.resetRoot(navigationRef.getRootState());
   }, [isSmallScreenWidth]);
 
-  const {stateToRender, searchRoute} = useMemo(() => {
+  const {stateToRender} = useMemo(() => {
     const routes = reduceCentralPaneRoutes(state.routes);
-
-    if (isSmallScreenWidth) {
-      // TODO this should be uncommented
-      const isSearchCentralPane = (route: RouteProp<ParamListBase>) => false;
-      // const isSearchCentralPane = (route: RouteProp<ParamListBase>) =>
-      //   getTopmostCentralPaneRoute({
-      //     routes: [route],
-      //   } as State<RootStackParamList>)?.name === SCREENS.SEARCH.CENTRAL_PANE;
-
-      const lastRoute = routes[routes.length - 1];
-      const lastSearchCentralPane = isSearchCentralPane(lastRoute)
-        ? lastRoute
-        : undefined;
-      const filteredRoutes = routes.filter(
-        route => !isSearchCentralPane(route),
-      );
-
-      // On narrow layout, if we are on /search route we want to hide all central pane routes and show only the bottom tab navigator.
-      if (lastSearchCentralPane) {
-        return {
-          stateToRender: {
-            ...state,
-            index: 0,
-            routes: [filteredRoutes[0]],
-          },
-          searchRoute: lastSearchCentralPane,
-        };
-      }
-
-      return {
-        stateToRender: {
-          ...state,
-          index: filteredRoutes.length - 1,
-          routes: filteredRoutes,
-        },
-        searchRoute: undefined,
-      };
-    }
 
     return {
       stateToRender: {
@@ -120,7 +75,6 @@ function ResponsiveStackNavigator(props: ResponsiveStackNavigatorProps) {
         index: routes.length - 1,
         routes: [...routes],
       },
-      searchRoute: undefined,
     };
   }, [state, isSmallScreenWidth]);
 
@@ -133,11 +87,11 @@ function ResponsiveStackNavigator(props: ResponsiveStackNavigatorProps) {
         descriptors={descriptors}
         navigation={navigation}
       />
-      {searchRoute && (
+      {/* {searchRoute && (
         <View style={styles.dNone}>
           {descriptors[searchRoute.key].render()}
         </View>
-      )}
+      )} */}
     </NavigationContent>
   );
 }
