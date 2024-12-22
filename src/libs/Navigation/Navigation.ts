@@ -53,7 +53,7 @@ function canNavigate(
   if (navigationRef.isReady()) {
     return true;
   }
-  console.log(
+  Log.hmmm(
     `[Navigation] ${methodName} failed because navigation ref was not yet ready`,
     params,
   );
@@ -325,6 +325,10 @@ function closeAndNavigate(route: Route) {
   navigate(route);
 }
 
+/** Attempts to extract the last route name from the root state.
+ *
+ * @returns The name of the last route in the navigation stack, if found.
+ */
 function getLastRouteName(): string | undefined {
   const rootState = navigationRef.getRootState();
 
