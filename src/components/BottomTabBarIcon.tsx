@@ -1,12 +1,10 @@
 import CONST from '@src/CONST';
 import useThemeStyles from '@hooks/useThemeStyles';
-import useLocalize from '@hooks/useLocalize';
 import useTheme from '@hooks/useTheme';
 import type IconAsset from '@src/types/utils/IconAsset';
 import type {StyleProp, ViewStyle} from 'react-native';
 import {View} from 'react-native';
 import variables from '@src/styles/variables';
-import spacing from '@src/styles/utils/spacing';
 import Icon from './Icon';
 import Text from './Text';
 import {PressableWithFeedback} from './Pressable';
@@ -15,6 +13,12 @@ import Tooltip from './Tooltip';
 type BottomTabBarIconProps = {
   /** The icon source */
   src: IconAsset;
+
+  /** The icon label **/
+  label: string;
+
+  /** Whether the icon is selected */
+  isSelected: boolean;
 
   /** Accessibility label */
   accessibilityLabel: string;
@@ -37,6 +41,8 @@ type BottomTabBarIconProps = {
 
 function BottomTabBarIcon({
   src,
+  label,
+  isSelected,
   accessibilityLabel,
   onPress,
   width,
@@ -45,7 +51,6 @@ function BottomTabBarIcon({
   counter,
 }: BottomTabBarIconProps) {
   const styles = useThemeStyles();
-  const {translate} = useLocalize();
   const theme = useTheme();
 
   // We want to offset the icon and the counter by the same amount
@@ -56,35 +61,36 @@ function BottomTabBarIcon({
     : null;
 
   return (
-    // <Tooltip text={translate('common.search')}>
-    <PressableWithFeedback
-      onPress={onPress}
-      role={CONST.ROLE.BUTTON}
-      accessibilityLabel={accessibilityLabel}
-      wrapperStyle={styles.flex1}
-      style={[styles.bottomTabBarItem, styles.flexRow, additionalStyles]}>
-      <View>
-        <Icon
-          src={src}
-          fill={theme.textSupporting}
-          width={width ?? variables.iconBottomBar}
-          height={height ?? variables.iconBottomBar}
-          additionalStyles={transformStyles}
-        />
-      </View>
-      {!!counter && counter > 0 && (
-        <View
-          style={[
-            styles.bottomTabBarCounter,
-            styles.mb4,
-            counterMarginLeft,
-            transformStyles,
-          ]}>
-          <Text style={styles.textWhite}>{counter}</Text>
+    <Tooltip text={label}>
+      <PressableWithFeedback
+        onPress={onPress}
+        role={CONST.ROLE.BUTTON}
+        accessibilityLabel={accessibilityLabel}
+        wrapperStyle={styles.flex1}
+        style={[styles.bottomTabBarItem, styles.flexColumn, additionalStyles]}>
+        <View>
+          <Icon
+            src={src}
+            fill={theme.textSupporting}
+            width={width ?? variables.iconBottomBar}
+            height={height ?? variables.iconBottomBar}
+            additionalStyles={transformStyles}
+          />
         </View>
-      )}
-    </PressableWithFeedback>
-    // </Tooltip>
+        <Text style={[styles.bottomTabBarLabel(isSelected)]}>{label}</Text>
+        {!!counter && counter > 0 && (
+          <View
+            style={[
+              styles.bottomTabBarCounter,
+              styles.mb4,
+              counterMarginLeft,
+              transformStyles,
+            ]}>
+            <Text style={styles.textWhite}>{counter}</Text>
+          </View>
+        )}
+      </PressableWithFeedback>
+    </Tooltip>
   );
 }
 
