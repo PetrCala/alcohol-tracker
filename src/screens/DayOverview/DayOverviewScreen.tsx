@@ -167,7 +167,7 @@ function DayOverviewScreen({route}: DayOverviewScreenProps) {
               isEditModeOn={editMode}
             />
           }
-          ListFooterComponentStyle={[styles.alignSelfCenter, styles.mt2]}
+          ListFooterComponentStyle={[styles.alignSelfCenter, styles.mt3]}
         />
       </View>
       <View style={[styles.bottomTabBarContainer]}>{changeDayButtons}</View>
