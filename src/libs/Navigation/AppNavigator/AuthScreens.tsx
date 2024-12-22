@@ -1,19 +1,13 @@
 import React, {memo, useEffect, useMemo, useRef} from 'react';
 import {View} from 'react-native';
 import type {OnyxEntry} from 'react-native-onyx';
-import Onyx, {useOnyx, withOnyx} from 'react-native-onyx';
+import Onyx from 'react-native-onyx';
 // import OptionsListContextProvider from '@components/OptionListContextProvider';
 // import useOnboardingLayout from '@hooks/useOnboardingLayout';
 import useStyleUtils from '@hooks/useStyleUtils';
 import useThemeStyles from '@hooks/useThemeStyles';
 import useWindowDimensions from '@hooks/useWindowDimensions';
-import KeyboardShortcut from '@libs/KeyboardShortcut';
-import Log from '@libs/Log';
-import getCurrentUrl from '@libs/Navigation/currentUrl';
-import Navigation from '@libs/Navigation/Navigation';
 import type {AuthScreensParamList} from '@libs/Navigation/types';
-import NetworkConnection from '@libs/NetworkConnection';
-import * as Pusher from '@libs/Pusher/pusher';
 // import PusherConnectionManager from '@libs/PusherConnectionManager';
 import getTzFixModalScreenOptions from '@libs/Navigation/getTzFixModalScreenOptions';
 // import DesktopSignInRedirectPage from '@pages/signin/DesktopSignInRedirectPage';
@@ -25,17 +19,16 @@ import * as UserData from '@userActions/UserData';
 import * as Session from '@userActions/Session';
 import Timing from '@userActions/Timing';
 // import * as User from '@userActions/User';
-import CONFIG from '@src/CONFIG';
+// import CONFIG from '@src/CONFIG';
 import CONST from '@src/CONST';
 import NAVIGATORS from '@src/NAVIGATORS';
 import ONYXKEYS from '@src/ONYXKEYS';
-import ROUTES from '@src/ROUTES';
+// import ROUTES from '@src/ROUTES';
 import SCREENS from '@src/SCREENS';
 import {DatabaseDataProvider} from '@context/global/DatabaseDataContext';
 import type {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
 import {auth} from '@libs/Firebase/FirebaseApp';
 import type ReactComponentModule from '@src/types/utils/ReactComponentModule';
-import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
 import createCustomStackNavigator from './createCustomStackNavigator';
 import getRootNavigatorScreenOptions from './getRootNavigatorScreenOptions';
 import BottomTabNavigator from './Navigators/BottomTabNavigator';
@@ -140,16 +133,16 @@ function AuthScreens({initialLastUpdateIDAppliedToClient}: AuthScreensProps) {
   }
 
   useEffect(() => {
-    const shortcutsOverviewShortcutConfig = CONST.KEYBOARD_SHORTCUTS.SHORTCUTS;
-    const searchShortcutConfig = CONST.KEYBOARD_SHORTCUTS.SEARCH;
-    const chatShortcutConfig = CONST.KEYBOARD_SHORTCUTS.NEW_CHAT;
-    const currentUrl = getCurrentUrl();
+    // const shortcutsOverviewShortcutConfig = CONST.KEYBOARD_SHORTCUTS.SHORTCUTS;
+    // const searchShortcutConfig = CONST.KEYBOARD_SHORTCUTS.SEARCH;
+    // const chatShortcutConfig = CONST.KEYBOARD_SHORTCUTS.NEW_CHAT;
+    // const currentUrl = getCurrentUrl();
     const user = auth?.currentUser;
-    const isLoggingInAsNewUser = !!user?.email;
+    // const isLoggingInAsNewUser = !!user?.email;
     // && SessionUtils.isLoggingInAsNewUser(currentUrl, user.email);
     // Sign out the current user if we're transitioning with a different user
-    const isTransitioning = currentUrl.includes(ROUTES.TRANSITION_BETWEEN_APPS);
-    const isSupportalTransition = currentUrl.includes('authTokenType=support');
+    // const isTransitioning = currentUrl.includes(ROUTES.TRANSITION_BETWEEN_APPS);
+    // const isSupportalTransition = currentUrl.includes('authTokenType=support');
     // TODO enable this after signing in is put into place
     // if (isLoggingInAsNewUser && isTransitioning) {
     //   Session.signOutAndRedirectToSignIn(false, isSupportalTransition);
@@ -329,9 +322,4 @@ function AuthScreens({initialLastUpdateIDAppliedToClient}: AuthScreensProps) {
 AuthScreens.displayName = 'AuthScreens';
 
 const AuthScreensMemoized = memo(AuthScreens, () => true);
-
-export default withOnyx<AuthScreensProps, AuthScreensProps>({
-  initialLastUpdateIDAppliedToClient: {
-    key: ONYXKEYS.ONYX_UPDATES_LAST_UPDATE_ID_APPLIED_TO_CLIENT,
-  },
-})(AuthScreensMemoized);
+export default AuthScreensMemoized;

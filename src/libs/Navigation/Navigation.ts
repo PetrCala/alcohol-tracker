@@ -332,11 +332,7 @@ function closeAndNavigate(route: Route) {
 function getLastRouteName(): string | undefined {
   const rootState = navigationRef.getRootState();
 
-  if (rootState && rootState.routes && rootState.routes.length > 0) {
-    return rootState.routes[rootState.routes.length - 1]?.path;
-  }
-
-  return undefined;
+  return rootState?.routes?.[rootState.routes.length - 1]?.path;
 }
 
 /**
@@ -348,14 +344,14 @@ function getLastRouteName(): string | undefined {
  */
 function getLastScreenName(
   getOneDeepInstead = false,
-): keyof typeof Screen | string {
+): Exclude<keyof typeof Screen, 'prototype'> | string {
   const rootState = navigationRef.getRootState();
   const route = rootState.routes[rootState.routes.length - 1];
   // eslint-disable-next-line @typescript-eslint/ban-types
   const idx = getOneDeepInstead ? -2 : -1;
-  const screenParams = route?.state?.routes?.[
-    route?.state?.routes?.length + idx
-  ]?.params as EmptyObject;
+  const routeLength = route?.state?.routes?.length ?? 0;
+  const screenParams = route?.state?.routes?.[routeLength + idx]
+    ?.params as EmptyObject;
   return (screenParams?.screen as keyof typeof SCREENS) ?? SCREENS.HOME;
 }
 

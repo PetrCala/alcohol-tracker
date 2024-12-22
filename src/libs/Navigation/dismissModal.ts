@@ -30,6 +30,7 @@ function dismissModal(
       break;
     default: {
       // Using a Log.hmmm causes an unhandled promise rejection
+      // eslint-disable-next-line no-console
       console.log(
         '[Navigation] dismissModal failed because there is no modal stack to dismiss',
       );
