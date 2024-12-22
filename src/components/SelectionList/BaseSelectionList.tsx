@@ -22,7 +22,6 @@ import Button from '@components/Button';
 import Checkbox from '@components/Checkbox';
 import FixedFooter from '@components/FixedFooter';
 import OptionsListSkeletonView from '@components/OptionsListSkeletonView';
-import {PressableWithFeedback} from '@components/Pressable';
 import SafeAreaConsumer from '@components/SafeAreaConsumer';
 import SectionList from '@components/SectionList';
 import ShowMoreButton from '@components/ShowMoreButton';

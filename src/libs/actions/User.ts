@@ -1,5 +1,5 @@
 import type {Database} from 'firebase/database';
-import {update, ref, get} from 'firebase/database';
+import {update, ref, get, set} from 'firebase/database';
 import type {
   AppSettings,
   DrinkingSessionList,
@@ -8,6 +8,7 @@ import type {
   Profile,
   ReasonForLeaving,
   ReasonForLeavingId,
+  Theme,
   UserData,
   UserStatus,
 } from '@src/types/onyx';
@@ -35,7 +36,7 @@ import {validateAppVersion} from '@libs/Validation';
 import {checkAccountCreationLimit} from '@database/protection';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
-import type {OnyxEntry} from 'react-native-onyx';
+import type {OnyxEntry, OnyxUpdate} from 'react-native-onyx';
 import Onyx from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 import CONST from '@src/CONST';
@@ -43,6 +44,7 @@ import {getReasonForLeavingID} from '@libs/ReasonForLeaving';
 import Log from '@libs/Log';
 import ERRORS from '@src/ERRORS';
 import * as Session from './Session';
+import {ValueOf} from 'type-fest';
 
 let verifyEmailSent: OnyxEntry<Timestamp | null> = null;
 Onyx.connect({
@@ -68,6 +70,7 @@ const getDefaultPreferences = (): Preferences => {
       weak_shot: 0.5,
       wine: 1,
     },
+    theme: CONST.THEME.SYSTEM,
   };
 };
 
@@ -274,6 +277,33 @@ async function sendUpdateEmailLink(
   }
 
   await verifyBeforeUpdateEmail(user, newEmail);
+}
+
+/** Update the user's preferred theme */
+async function updateTheme(db: Database, user: User | null, theme: Theme) {
+  if (!user) {
+    throw new Error(Localize.translateLocal('common.error.userNull'));
+  }
+  // const optimisticData: OnyxUpdate[] = [
+  //   {
+  //     onyxMethod: Onyx.METHOD.SET,
+  //     key: ONYXKEYS.PREFERRED_THEME,
+  //     value: theme,
+  //   },
+  // ];
+
+  // const parameters: UpdateThemeParams = {
+  //   value: theme,
+  // };
+
+  // API.write(WRITE_COMMANDS.UPDATE_THEME, parameters, {optimisticData});
+
+  const dbPath = DBPATHS.USER_PREFERENCES_USER_ID_THEME;
+
+  await set(ref(db, dbPath.getRoute(user.uid)), theme);
+  await Onyx.set(ONYXKEYS.PREFERRED_THEME, theme);
+
+  Navigation.goBack();
 }
 
 async function updatePassword(
@@ -650,6 +680,7 @@ export {
   updateAgreedToTermsAt,
   updateAutomaticTimezone,
   updatePassword,
+  updateTheme,
   userExistsInDatabase,
   logIn,
   signUp,

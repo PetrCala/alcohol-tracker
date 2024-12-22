@@ -376,6 +376,7 @@ export default {
     generalSection: {
       title: 'General',
       firstDayOfWeek: 'First day of the week',
+      theme: "App's theme",
     },
     unitColorsSection: {
       title: 'Unit Colors',
@@ -393,6 +394,34 @@ export default {
     error: {
       save: "We couldn't save your preferences. Please try again.",
     },
+  },
+  languageScreen: {
+    language: 'Language',
+    languages: {
+      en: {
+        label: 'English',
+      },
+      cs_CZ: {
+        label: 'Czech',
+      },
+    },
+  },
+  themeScreen: {
+    theme: 'Theme',
+    themes: {
+      dark: {
+        label: 'Dark',
+      },
+      light: {
+        label: 'Light',
+      },
+      system: {
+        label: 'System',
+      },
+    },
+    loading: 'Setting your theme. Please wait...',
+    chooseThemeBelowOrSync:
+      'Choose a theme below, or sync with your device settings.',
   },
   sessionSummaryScreen: {
     title: 'Session Summary',
@@ -1089,6 +1118,10 @@ export default {
       statusUpdateFailed: {
         title: 'Status Update Failed',
         message: 'There was an error updating your status. Please try again.',
+      },
+      themeUpdateFailed: {
+        title: 'Theme Update Failed',
+        message: 'There was an error updating your theme. Please try again.',
       },
       timezoneUpdateFailed: {
         title: 'Timezone Update Failed',

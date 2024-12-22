@@ -295,6 +295,8 @@ const CONST = {
     UNKNOWN_ERROR: 520,
   },
 
+  LANGUAGES: ['en', 'cs_CZ'],
+
   SEARCH: {
     RESULTS_PAGE_SIZE: 50,
     DATA_TYPES: {
@@ -879,8 +881,8 @@ const CONST = {
   },
   TOOLTIP_MAX_LINES: 3,
   THEME: {
-    DEFAULT: 'light', // was 'system'
-    FALLBACK: 'light', // was 'dark
+    DEFAULT: 'system',
+    FALLBACK: 'dark',
     DARK: 'dark',
     LIGHT: 'light',
     SYSTEM: 'system',

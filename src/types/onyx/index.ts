@@ -39,6 +39,7 @@ import type {
   PreferencesList,
   UnitsToColors,
   DrinksToUnits,
+  Theme,
 } from './Preferences';
 import type Request from './Request';
 import type ReasonForLeaving from './ReasonForLeaving';
@@ -125,6 +126,7 @@ export type {
   SessionPlaceholder,
   SessionPlaceholderList,
   StartSession,
+  Theme,
   TzFix,
   UnconfirmedDayKey,
   UnconfirmedDays,

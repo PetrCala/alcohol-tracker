@@ -235,6 +235,7 @@ function createMockPreferences(): Preferences {
     first_day_of_week: getRandomChoice(['Monday', 'Sunday']),
     units_to_colors: mockUnitsToColors,
     drinks_to_units: mockDrinksToUnitsData,
+    theme: getRandomChoice([CONST.THEME.DARK, CONST.THEME.LIGHT]),
   };
   return mockPreferences;
 }

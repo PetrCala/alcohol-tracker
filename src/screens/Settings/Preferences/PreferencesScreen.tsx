@@ -19,6 +19,7 @@ import ScreenWrapper from '@components/ScreenWrapper';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import useLocalize from '@hooks/useLocalize';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
+import LocaleUtils from '@libs/LocaleUtils';
 import ConfirmModal from '@components/ConfirmModal';
 import Button from '@components/Button';
 import useThemeStyles from '@hooks/useThemeStyles';
@@ -175,18 +176,30 @@ function PreferencesScreen({route}: PreferencesScreenProps) {
     [styles.settingValueButton],
   );
 
-  // const generalMenuItemsData: Menu = useMemo(() => {
-  //   return {
-  //     sectionTranslationKey: 'preferencesScreen.generalSection.title',
-  //     items: [
-  //       {
-  //         title: translate('preferencesScreen.generalSection.firstDayOfWeek'),
-  //         description: 'Monday',
-  //         pageRoute: ROUTES.SETTINGS_FIRST_DAY_OF_WEEK,
-  //       },
-  //     ],
-  //   };
-  // }, [translate]);
+  const generalMenuItemsData: Menu = useMemo(() => {
+    return {
+      sectionTranslationKey: 'preferencesScreen.generalSection.title',
+      items: [
+        // {
+        //   title: translate('preferencesScreen.generalSection.firstDayOfWeek'),
+        //   description: 'Monday',
+        //   pageRoute: ROUTES.SETTINGS_FIRST_DAY_OF_WEEK,
+        // },
+        // {
+        //   title: translate('languageScreen.language'),
+        //   description: `${translate(`languageScreen.languages.${LocaleUtils.getLanguageFromLocale(currentPreferences.locale ?? CONST.LOCALES.DEFAULT)}.label`)}`,
+        //   pageRoute: ROUTES.SETTINGS_LANGUAGE,
+        // },
+        {
+          title: translate('themeScreen.theme'),
+          description: `${translate(
+            `themeScreen.themes.${currentPreferences.theme ?? CONST.THEME.DEFAULT}.label`,
+          )}`,
+          pageRoute: ROUTES.SETTINGS_THEME,
+        },
+      ],
+    };
+  }, [translate]);
 
   const unitsToColorsMenuItemsData: Menu = useMemo(() => {
     const unitsHelperData = [
@@ -329,10 +342,10 @@ function PreferencesScreen({route}: PreferencesScreenProps) {
     ],
   );
 
-  // const generalMenuItems = useMemo(
-  //   () => getMenuItemsSection(generalMenuItemsData),
-  //   [generalMenuItemsData, getMenuItemsSection],
-  // );
+  const generalMenuItems = useMemo(
+    () => getMenuItemsSection(generalMenuItemsData),
+    [generalMenuItemsData, getMenuItemsSection],
+  );
   const unitsToColorsMenuItems = useMemo(
     () => getMenuItemsSection(unitsToColorsMenuItemsData),
     [unitsToColorsMenuItemsData, getMenuItemsSection],
@@ -392,8 +405,7 @@ function PreferencesScreen({route}: PreferencesScreenProps) {
       />
       <ScrollView contentContainerStyle={[styles.w100]}>
         <MenuItemGroup>
-          {/* {generalMenuItems} */}
-          {/* Enable this after the general menu items have been implemented */}
+          {generalMenuItems}
           {unitsToColorsMenuItems}
           {drinksToUnitsMenuItems}
         </MenuItemGroup>
@@ -416,12 +428,13 @@ function PreferencesScreen({route}: PreferencesScreenProps) {
           }}
         />
       </ScrollView>
-      <View style={[styles.bottomTabBarContainer, styles.noBorder]}>
+      <View style={[styles.bottomTabBarContainer, styles.p5]}>
         <Button
+          large
+          success
           text={translate('preferencesScreen.save')}
           onPress={handleSavePreferences}
           style={styles.bottomTabButton}
-          success
         />
       </View>
       <ConfirmModal
