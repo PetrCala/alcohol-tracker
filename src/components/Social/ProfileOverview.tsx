@@ -1,11 +1,5 @@
 import type {LayoutChangeEvent} from 'react-native';
-import {
-  Dimensions,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import {useFirebase} from '@src/context/global/FirebaseContext';
 import ProfileImage from '@components/ProfileImage';
@@ -17,9 +11,10 @@ import {useState} from 'react';
 import type ImageLayout from '@src/types/various/ImageLayout';
 import type {Profile} from '@src/types/onyx';
 import useThemeStyles from '@hooks/useThemeStyles';
-import Icon from '@components/Icon';
 import variables from '@src/styles/variables';
 import useWindowDimensions from '@hooks/useWindowDimensions';
+import Text from '@components/Text';
+import Button from '@components/Button';
 
 type ProfileOverviewProps = {
   userID: string;
@@ -63,12 +58,12 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({
         {marginTop: topOffset},
       ]}>
       {user?.uid === userID && (
-        <TouchableOpacity
-          accessibilityRole="button"
+        <Button
+          icon={KirokuIcons.Gear}
+          iconFill={StyleUtils.getIconFillColor()}
+          style={[localStyles.editProfileButton, styles.bgTransparent]}
           onPress={() => Navigation.navigate(ROUTES.SETTINGS_ACCOUNT)}
-          style={localStyles.editProfileButton}>
-          <Icon src={KirokuIcons.Gear} fill={StyleUtils.getIconFillColor()} />
-        </TouchableOpacity>
+        />
       )}
       <View style={localStyles.profileImageContainer} />
       <ProfileImage
@@ -106,10 +101,7 @@ const localStyles = StyleSheet.create({
   editProfileButton: {
     position: 'absolute',
     top: -topOffset + 8,
-    right: 8,
-    padding: 8,
-    width: 'auto',
-    height: 'auto',
+    right: 4,
   },
   profileImageContainer: {
     height: variables.avatarSizeXLarge,
