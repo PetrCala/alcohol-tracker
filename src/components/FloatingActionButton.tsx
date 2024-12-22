@@ -13,7 +13,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import {Path} from 'react-native-svg';
+import Svg, {Path} from 'react-native-svg';
 import useTheme from '@hooks/useTheme';
 import useThemeStyles from '@hooks/useThemeStyles';
 import variables from '@styles/variables';
@@ -125,39 +125,20 @@ function FloatingActionButton(
           buttonRef.current = el ?? null;
         }
       }}
-      style={[
-        styles.h100,
-        styles.bottomTabBarItem,
-        {transform: [{translateY: -variables.bottomTabHeight / 2}]},
-      ]}
+      style={[styles.bottomTabBarItem, {transform: [{translateY: -4}]}]}
       accessibilityLabel={accessibilityLabel}
       onPress={toggleFabAction}
       onLongPress={() => {}}
       role={role}
       shouldUseHapticsOnLongPress={false}>
-      <Icon
-        src={KirokuIcons.Plus}
-        width={variables.iconSizeExtraLarge}
-        height={variables.iconSizeExtraLarge}
-        additionalStyles={[
-          styles.floatingActionButton,
-          styles.appColor, // Disable this if animatedStyle is on
-          // animatedStyle
-        ]}
-        fill={textLight}
-        // fill={animatedProps.fill}
-      />
-      {/* TODO this may be animated */}
-      {/* <Animated.View style={[styles.floatingActionButton, animatedStyle]}>
-        <Svg
-          width={variables.iconSizeExtraLarge}
-          height={variables.iconSizeExtraLarge}>
+      <Animated.View style={[styles.floatingActionButton, animatedStyle]}>
+        <Svg width={variables.iconSizeNormal} height={variables.iconSizeNormal}>
           <AnimatedPath
             d="M12,3c0-1.1-0.9-2-2-2C8.9,1,8,1.9,8,3v5H3c-1.1,0-2,0.9-2,2c0,1.1,0.9,2,2,2h5v5c0,1.1,0.9,2,2,2c1.1,0,2-0.9,2-2v-5h5c1.1,0,2-0.9,2-2c0-1.1-0.9-2-2-2h-5V3z"
             animatedProps={animatedProps}
           />
         </Svg>
-      </Animated.View> */}
+      </Animated.View>
     </PressableWithoutFeedback>
   );
 }

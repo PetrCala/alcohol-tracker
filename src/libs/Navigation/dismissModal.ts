@@ -1,6 +1,5 @@
 import type {NavigationContainerRef} from '@react-navigation/native';
 import {StackActions} from '@react-navigation/native';
-import Log from '@libs/Log';
 import NAVIGATORS from '@src/NAVIGATORS';
 import SCREENS from '@src/SCREENS';
 import type {RootStackParamList} from './types';
@@ -30,7 +29,8 @@ function dismissModal(
       navigationRef.dispatch({...StackActions.pop(), target: state.key});
       break;
     default: {
-      Log.hmmm(
+      // Using a Log.hmmm causes an unhandled promise rejection
+      console.log(
         '[Navigation] dismissModal failed because there is no modal stack to dismiss',
       );
     }

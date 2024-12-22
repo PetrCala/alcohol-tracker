@@ -2,7 +2,6 @@ import {View} from 'react-native';
 import BottomTabBarIcon from '@components/BottomTabBarIcon';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
-import {getReceivedRequestsCount} from '@libs/FriendUtils';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
@@ -12,7 +11,6 @@ import SCREENS from '@src/SCREENS';
 
 function BottomTabBar() {
   const styles = useThemeStyles();
-  const {userData} = useDatabaseData();
   const {translate} = useLocalize();
   const selectedTab = null;
   // const selectedTab = SCREENS.SEARCH.BOTTOM_TAB
@@ -25,7 +23,6 @@ function BottomTabBar() {
         isSelected={selectedTab === SCREENS.SOCIAL}
         onPress={() => Navigation.navigate(ROUTES.SOCIAL)}
         accessibilityLabel={translate('bottomTabBar.friends')}
-        counter={getReceivedRequestsCount(userData?.friend_requests)}
       />
       <BottomTabBarIcon
         src={KirokuIcons.Star}

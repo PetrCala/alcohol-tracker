@@ -485,11 +485,7 @@ const styles = (theme: ThemeColors) =>
       borderTopWidth: 1,
       borderTopColor: theme.border,
       backgroundColor: theme.appBG,
-      justifyContent: 'center',
-      alignItems: 'center',
-      ...spacing.ph3,
-      ...spacing.p1,
-      ...sizing.mw100,
+      ...spacing.ph1,
     },
 
     bottomTabBarItem: {
@@ -997,8 +993,8 @@ const styles = (theme: ThemeColors) =>
 
     floatingActionButton: {
       backgroundColor: theme.appColor,
-      height: variables.floatingActionButtonSize,
-      width: variables.floatingActionButtonSize,
+      height: variables.componentSizeLarge,
+      width: variables.componentSizeLarge,
       borderRadius: 999,
       alignItems: 'center',
       justifyContent: 'center',
