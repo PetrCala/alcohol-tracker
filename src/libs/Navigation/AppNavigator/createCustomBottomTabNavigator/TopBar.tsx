@@ -6,10 +6,10 @@ import Text from '@components/Text';
 // import useActiveWorkspace from '@hooks/useActiveWorkspace';
 // import useLocalize from '@hooks/useLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
-import Navigation from '@navigation/Navigation';
+// import Navigation from '@navigation/Navigation';
 // import SignInOrAvatarWithOptionalStatus from '@pages/home/sidebar/SignInOrAvatarWithOptionalStatus';
 // import * as Session from '@userActions/Session';
-import ROUTES from '@src/ROUTES';
+// import ROUTES from '@src/ROUTES';
 
 function TopBar() {
   const styles = useThemeStyles();

@@ -151,6 +151,7 @@ const SettingsModalStackNavigator =
 const ProfileModalStackNavigator =
   createModalStackNavigator<ProfileNavigatorParamList>({
     [SCREENS.PROFILE.ROOT]: () =>
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       require('@screens/Profile/ProfileScreen').default as React.ComponentType,
     [SCREENS.PROFILE.FRIENDS_FRIENDS]: () =>
       require<ReactComponentModule>('@screens/Profile/FriendsFriendsScreen')
@@ -160,6 +161,7 @@ const ProfileModalStackNavigator =
 const SocialModalStackNavigator =
   createModalStackNavigator<SocialNavigatorParamList>({
     [SCREENS.SOCIAL.ROOT]: () =>
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       require('@screens/Social/SocialScreen').default as React.ComponentType,
     [SCREENS.SOCIAL.FRIEND_LIST]: () =>
       require<ReactComponentModule>('@screens/Social/FriendListScreen').default,

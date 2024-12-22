@@ -50,7 +50,7 @@ function end(eventName: string, secondaryName = '', maxExecutionTime = 0) {
   // }
 
   Environment.getEnvironment().then(envName => {
-    const baseEventName = `${envName}.new.expensify.${eventName}`;
+    const baseEventName = `${envName}.kiroku.${eventName}`;
     const grafanaEventName = secondaryName
       ? `${baseEventName}.${secondaryName}`
       : baseEventName;

@@ -50,7 +50,7 @@ function ProfileScreen({route}: ProfileScreenProps) {
     'userData',
     'drinkingSessionData',
     'preferences',
-  ]; //
+  ];
   const {translate} = useLocalize();
   const styles = useThemeStyles();
   const {data: fetchedData, isLoading} = useFetchData(userID, relevantDataKeys);

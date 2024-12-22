@@ -88,9 +88,6 @@ function RightModalNavigator({navigation}: RightModalNavigatorProps) {
     </>
   );
 }
-{
-  /* </NoDropZone> */
-}
 
 RightModalNavigator.displayName = 'RightModalNavigator';
 

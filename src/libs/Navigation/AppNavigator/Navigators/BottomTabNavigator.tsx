@@ -11,12 +11,7 @@ import type {
 } from '@navigation/types';
 import SCREENS from '@src/SCREENS';
 import HomeScreen from '@screens/HomeScreen';
-import ActiveRouteContext from './ActiveRouteContext';
 import ActiveCentralPaneRouteContext from './ActiveRouteContext';
-
-// const loadWorkspaceInitialPage = () =>
-//   require('../../../../pages/workspace/WorkspaceInitialPage')
-//     .default as React.ComponentType;
 
 const Tab = createCustomBottomTabNavigator<BottomTabNavigatorParamList>();
 
