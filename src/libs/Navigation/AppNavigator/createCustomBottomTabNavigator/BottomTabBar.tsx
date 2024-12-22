@@ -1,6 +1,5 @@
 import {View} from 'react-native';
 import BottomTabBarIcon from '@components/BottomTabBarIcon';
-import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
 import useThemeStyles from '@hooks/useThemeStyles';
 import Navigation from '@libs/Navigation/Navigation';

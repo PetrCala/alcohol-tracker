@@ -76,7 +76,7 @@ function ResponsiveStackNavigator(props: ResponsiveStackNavigatorProps) {
         routes: [...routes],
       },
     };
-  }, [state, isSmallScreenWidth]);
+  }, [state]);
 
   return (
     <NavigationContent>

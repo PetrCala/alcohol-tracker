@@ -18,7 +18,6 @@ import type {
 } from '@navigation/types';
 import {isCentralPaneName} from '@libs/NavigationUtils';
 import NAVIGATORS from '@src/NAVIGATORS';
-import SCREENS from '@src/SCREENS';
 import type {ResponsiveStackNavigatorRouterOptions} from './types';
 
 function insertRootRoute(

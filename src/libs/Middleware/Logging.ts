@@ -1,9 +1,40 @@
 // import {SIDE_EFFECT_REQUEST_COMMANDS} from '@libs/API/types';
 import Log from '@libs/Log';
 import CONST from '@src/CONST';
+import type HttpsError from '@libs/Errors/HttpsError';
 import type Request from '@src/types/onyx/Request';
 import type Response from '@src/types/onyx/Response';
 import type Middleware from './types';
+
+function getCircularReplacer() {
+  const ancestors: unknown[] = [];
+  return function (this: unknown, key: string, value: unknown): unknown {
+    if (typeof value !== 'object' || value === null) {
+      return value;
+    }
+    // `this` is the object that value is contained in, i.e the direct parent
+    // eslint-disable-next-line no-invalid-this
+    while (ancestors.length > 0 && ancestors.at(-1) !== this) {
+      ancestors.pop();
+    }
+    if (ancestors.includes(value)) {
+      return '[Circular]';
+    }
+    ancestors.push(value);
+    return value;
+  };
+}
+
+function serializeLoggingData<T extends Record<string, unknown> | undefined>(
+  logData: T,
+): T | null {
+  try {
+    return JSON.parse(JSON.stringify(logData, getCircularReplacer())) as T;
+  } catch (error) {
+    Log.hmmm('Failed to serialize log data', {error});
+    return null;
+  }
+}
 
 function logRequestDetails(
   message: string,
@@ -35,17 +66,36 @@ function logRequestDetails(
     logParams.requestID = response.requestID;
   }
 
-  Log.info(message, false, logParams);
+  const extraData: Record<string, unknown> = {};
+
+  /**
+   * We don't want to log the request and response data for AuthenticatePusher
+   * requests because they contain sensitive information.
+   */
+  if (request.command !== 'AuthenticatePusher') {
+    extraData.request = {
+      ...request,
+      data: serializeLoggingData(request.data),
+    };
+    extraData.response = response;
+  }
+
+  Log.info(message, false, logParams, false, extraData);
 }
 
 const Logging: Middleware = (response, request) => {
-  logRequestDetails('Making API request', request);
+  const startTime = Date.now();
+  logRequestDetails('[Network] Making API request', request);
   return response
     .then(data => {
-      logRequestDetails('Finished API request', request, data);
+      logRequestDetails(
+        `[Network] Finished API request in ${Date.now() - startTime}ms`,
+        request,
+        data,
+      );
       return data;
     })
-    .catch(error => {
+    .catch((error: HttpsError) => {
       const logParams: Record<string, unknown> = {
         message: error.message,
         status: error.status,
@@ -73,9 +123,9 @@ const Logging: Middleware = (response, request) => {
       } else if (
         [
           CONST.ERROR.IOS_NETWORK_CONNECTION_LOST,
+          // CONST.ERROR.IOS_NETWORK_CONNECTION_LOST_CZECH,
           CONST.ERROR.NETWORK_REQUEST_FAILED,
-          CONST.ERROR.IOS_NETWORK_CONNECTION_LOST_CZECH,
-        ].includes(error.message)
+        ].some(message => message === error.message)
       ) {
         // These errors seem to happen for native devices with interrupted connections. Often we will see logs about Pusher disconnecting together with these.
         // This type of error may also indicate a problem with SSL certs.
@@ -87,7 +137,7 @@ const Logging: Middleware = (response, request) => {
         [
           CONST.ERROR.FIREFOX_DOCUMENT_LOAD_ABORTED,
           CONST.ERROR.SAFARI_DOCUMENT_LOAD_ABORTED,
-        ].includes(error.message)
+        ].some(message => message === error.message)
       ) {
         // This message can be observed page load is interrupted (closed or navigated away).
         Log.hmmm(
@@ -114,11 +164,6 @@ const Logging: Middleware = (response, request) => {
           '[Network] API request error: Gateway Timeout error',
           logParams,
         );
-        // } else if (request.command === SIDE_EFFECT_REQUEST_COMMANDS.AUTHENTICATE_PUSHER) {
-        //     // AuthenticatePusher requests can return with fetch errors and no message. It happens because we return a non 200 header like 403 Forbidden.
-        //     // This is common to see if we are subscribing to a bad channel related to something the user shouldn't be able to access. There's no additional information
-        //     // we can get about these requests.
-        //     Log.hmmm('[Network] API request error: AuthenticatePusher', logParams);
       } else if (error.message === CONST.ERROR.KIROKU_SERVICE_INTERRUPTED) {
         // Kiroku site is down completely OR
         // Auth (database connection) is down / bedrock has timed out while making a request. We currently can't tell the difference between Auth down and bedrock timing out.
@@ -153,3 +198,5 @@ const Logging: Middleware = (response, request) => {
 };
 
 export default Logging;
+
+export {serializeLoggingData};

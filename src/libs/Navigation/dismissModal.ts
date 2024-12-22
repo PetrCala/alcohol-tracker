@@ -3,6 +3,7 @@ import {StackActions} from '@react-navigation/native';
 import NAVIGATORS from '@src/NAVIGATORS';
 import SCREENS from '@src/SCREENS';
 import type {RootStackParamList} from './types';
+import Log from '@libs/Log';
 
 // This function is in a separate file than Navigation.ts to avoid cyclic dependency.
 
@@ -29,9 +30,7 @@ function dismissModal(
       navigationRef.dispatch({...StackActions.pop(), target: state.key});
       break;
     default: {
-      // Using a Log.hmmm causes an unhandled promise rejection
-      // eslint-disable-next-line no-console
-      console.log(
+      Log.hmmm(
         '[Navigation] dismissModal failed because there is no modal stack to dismiss',
       );
     }

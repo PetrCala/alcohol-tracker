@@ -1,8 +1,8 @@
 import type CONST from '@src/CONST';
 
-/** A model representing a console log */
+/** Model of a log */
 type Log = {
-  /** Time when the log was created */
+  /** Log time */
   time: Date;
 
   /** Log level */
@@ -10,9 +10,16 @@ type Log = {
 
   /** Log message */
   message: string;
+
+  /** Additional data */
+  extraData:
+    | string
+    | Record<string, unknown>
+    | Array<Record<string, unknown>>
+    | Error;
 };
 
-/** A collection of captured logs */
+/** Record of captured logs */
 type CapturedLogs = Record<number, Log>;
 
 export type {Log, CapturedLogs};

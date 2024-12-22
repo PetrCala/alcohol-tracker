@@ -40,15 +40,18 @@ import TzFixModalNavigator from './Navigators/TzFixModalNavigator';
 import RightModalNavigator from './Navigators/RightModalNavigator';
 // import WelcomeVideoModalNavigator from './Navigators/WelcomeVideoModalNavigator';
 
+// eslint-disable-next-line rulesdir/no-negated-variables
 const notFoundScreen = () =>
   require<ReactComponentModule>('@screens/ErrorScreen/NotFoundScreen').default;
 
-let timezone: Timezone | null;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 let lastUpdateIDAppliedToClient: OnyxEntry<number>;
+let timezone: Timezone | null;
 
 Onyx.connect({
   key: ONYXKEYS.USER_DATA_LIST,
   callback: value => {
+    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
     if (!value || timezone || !auth.currentUser) {
       return;
     }
@@ -229,7 +232,7 @@ function AuthScreens() {
     };
 
     // Rule disabled because this effect is only for component did mount & will component unmount lifecycle event
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-compiler/react-compiler, react-hooks/exhaustive-deps
   }, []);
 
   // const CentralPaneScreenOptions = {
