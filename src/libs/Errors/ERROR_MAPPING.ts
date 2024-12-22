@@ -56,6 +56,7 @@ const ERROR_MAPPING: ErrorMapping = {
     'errors.user.friendRequestRejectFailed',
   [ERRORS.USER.NICKNAME_UPDATE_FAILED]: 'errors.user.nicknameUpdateFailed',
   [ERRORS.USER.STATUS_UPDATE_FAILED]: 'errors.user.statusUpdateFailed',
+  [ERRORS.USER.THEME_UPDATE_FAILED]: 'errors.user.themeUpdateFailed',
   [ERRORS.USER.TIMEZONE_UPDATE_FAILED]: 'errors.user.timezoneUpdateFailed',
   [ERRORS.USER.USERNAME_UPDATE_FAILED]: 'errors.user.usernameUpdateFailed',
   [ERRORS.GENERIC]: 'errors.generic',

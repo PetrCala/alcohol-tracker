@@ -74,6 +74,12 @@
         },
         "drinks_to_units": {
           ".validate": "newData.hasChildren(['beer', 'cocktail', 'other', 'strong_shot', 'weak_shot', 'wine'])"
+        },
+        "locale":  {
+          ".validate": "newData.isString() || newData.val() === null"
+        },
+        "theme": {
+          ".validate": "newData.isString() || newData.val() === null"
         }
       }
     },

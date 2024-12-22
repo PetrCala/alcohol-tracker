@@ -1,5 +1,10 @@
 import type {UserID} from './OnyxCommon';
 import type {DrinkKey} from './Drinks';
+import CONST from '@src/CONST';
+import DeepValueOf from '../utils/DeepValueOf';
+import Locale from './Locale';
+
+type Theme = DeepValueOf<typeof CONST.THEME>;
 
 /** A model mapping units to session colors */
 type UnitsToColors = {
@@ -23,10 +28,16 @@ type Preferences = {
 
   /** Preferences that determine how many units each drink equals to */
   drinks_to_units: DrinksToUnits;
+
+  /** User's preferred locale */
+  locale?: Locale;
+
+  /** User's preferred theme */
+  theme?: Theme;
 };
 
 /** A collection of preferences of multiple users */
 type PreferencesList = Record<UserID, Preferences>;
 
 export default Preferences;
-export type {UnitsToColors, DrinksToUnits, PreferencesList};
+export type {UnitsToColors, DrinksToUnits, PreferencesList, Theme};

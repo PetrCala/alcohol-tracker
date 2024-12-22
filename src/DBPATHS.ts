@@ -89,6 +89,15 @@ const DBPATHS = {
     getRoute: (user_id: UserID) =>
       `user_preferences/${user_id}/drinks_to_units` as const,
   },
+  USER_PREFERENCES_USER_ID_LOCALE: {
+    route: '/user_preferences/:user_id/locale',
+    getRoute: (user_id: UserID) =>
+      `user_preferences/${user_id}/locale` as const,
+  },
+  USER_PREFERENCES_USER_ID_THEME: {
+    route: '/user_preferences/:user_id/theme',
+    getRoute: (user_id: UserID) => `user_preferences/${user_id}/theme` as const,
+  },
   USER_SESSION_PLACEHOLDER: 'user_session_placeholder',
   USER_SESSION_PLACEHOLDER_USER_ID: {
     route: '/user_session_placeholder/:user_id',
