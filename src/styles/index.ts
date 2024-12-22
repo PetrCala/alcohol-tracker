@@ -485,7 +485,8 @@ const styles = (theme: ThemeColors) =>
       borderTopWidth: 1,
       borderTopColor: theme.border,
       backgroundColor: theme.appBG,
-      ...spacing.ph1,
+      justifyContent: 'center',
+      alignItems: 'center',
     },
 
     bottomTabBarItem: {
@@ -496,11 +497,9 @@ const styles = (theme: ThemeColors) =>
     },
 
     bottomTabButton: {
-      height: '100%',
-      display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      ...spacing.ph10,
+      width: '100%',
     },
 
     bottomTabBarIcon: {

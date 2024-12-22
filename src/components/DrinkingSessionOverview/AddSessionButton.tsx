@@ -60,8 +60,8 @@ function AddSessionButton({currentDate, isEditModeOn}: AddSessionButtonProps) {
       onPress={onAddSessionButtonPress}>
       <Icon
         src={KirokuIcons.Plus}
-        width={variables.iconSizeExtraLarge}
-        height={variables.iconSizeExtraLarge}
+        width={variables.iconSizeNormal}
+        height={variables.iconSizeNormal}
         fill={textLight}
         additionalStyles={styles.appColor}
       />
