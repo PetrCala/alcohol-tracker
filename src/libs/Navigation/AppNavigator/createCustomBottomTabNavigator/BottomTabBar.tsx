@@ -7,34 +7,47 @@ import useThemeStyles from '@hooks/useThemeStyles';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
 import StartSessionButtonAndPopover from '@components/StartSessionButtonAndPopover';
+import useLocalize from '@hooks/useLocalize';
+import SCREENS from '@src/SCREENS';
 
 function BottomTabBar() {
   const styles = useThemeStyles();
   const {userData} = useDatabaseData();
+  const {translate} = useLocalize();
+  const selectedTab = null;
+  // const selectedTab = SCREENS.SEARCH.BOTTOM_TAB
 
   return (
     <View style={styles.bottomTabBarContainer}>
       <BottomTabBarIcon
         src={KirokuIcons.Users}
+        label={translate('bottomTabBar.friends')}
+        isSelected={selectedTab === SCREENS.SOCIAL}
         onPress={() => Navigation.navigate(ROUTES.SOCIAL)}
-        accessibilityLabel="Social"
+        accessibilityLabel={translate('bottomTabBar.friends')}
         counter={getReceivedRequestsCount(userData?.friend_requests)}
       />
       <BottomTabBarIcon
         src={KirokuIcons.Star}
+        label={translate('bottomTabBar.achievements')}
+        isSelected={selectedTab === SCREENS.ACHIEVEMENTS}
         onPress={() => Navigation.navigate(ROUTES.ACHIEVEMENTS)}
-        accessibilityLabel="Achievements"
+        accessibilityLabel={translate('bottomTabBar.achievements')}
       />
       <StartSessionButtonAndPopover />
       <BottomTabBarIcon
         src={KirokuIcons.Statistics}
+        label={translate('bottomTabBar.statistics')}
+        isSelected={selectedTab === SCREENS.STATISTICS}
         onPress={() => Navigation.navigate(ROUTES.STATISTICS)}
-        accessibilityLabel="Statistics"
+        accessibilityLabel={translate('bottomTabBar.statistics')}
       />
       <BottomTabBarIcon
         src={KirokuIcons.Menu}
+        label={translate('bottomTabBar.settings')}
+        isSelected={selectedTab === SCREENS.SETTINGS}
         onPress={() => Navigation.navigate(ROUTES.SETTINGS)}
-        accessibilityLabel="Settings"
+        accessibilityLabel={translate('bottomTabBar.settings')}
       />
     </View>
   );

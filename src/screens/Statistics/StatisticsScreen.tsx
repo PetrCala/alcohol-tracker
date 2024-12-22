@@ -19,7 +19,7 @@ function StatisticsScreen() {
       />
       <View style={styles.flex1}>
         <Text style={[styles.textLarge, styles.textAlignCenter]}>
-          Coming soon...
+          {translate('statisticsScreen.comingSoon')}
         </Text>
       </View>
     </ScreenWrapper>

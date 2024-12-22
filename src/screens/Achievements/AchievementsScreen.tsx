@@ -19,7 +19,7 @@ function AchievementsScreen() {
       />
       <View style={styles.flex1}>
         <Text style={[styles.textLarge, styles.textAlignCenter]}>
-          Coming soon...
+          {translate('achievementsScreen.comingSoon')}
         </Text>
       </View>
     </ScreenWrapper>

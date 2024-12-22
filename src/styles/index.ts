@@ -521,6 +521,20 @@ const styles = (theme: ThemeColors) =>
       alignItems: 'center',
     },
 
+    bottomTabBarLabel: (isSelected: boolean) =>
+      ({
+        ...FontUtils.fontFamily.platform.EXP_NEUE,
+        fontSize: variables.fontSizeSmall,
+        textAlign: 'center',
+        lineHeight: 14,
+        height: 16,
+        ...spacing.mt1Half,
+        color: isSelected ? theme.text : theme.textSupporting,
+        fontWeight: isSelected
+          ? FontUtils.fontWeight.bold
+          : FontUtils.fontWeight.normal,
+      }) satisfies TextStyle,
+
     boxShadowNone: {
       boxShadow: 'none',
     },
@@ -2018,6 +2032,11 @@ const styles = (theme: ThemeColors) =>
       lineHeight: variables.lineHeightLarge,
     },
 
+    textSmall: {
+      ...FontUtils.fontFamily.platform.EXP_NEUE,
+      fontSize: variables.fontSizeSmall,
+    },
+
     textMicro: {
       ...FontUtils.fontFamily.platform.EXP_NEUE,
       fontSize: variables.fontSizeSmall,
@@ -2097,6 +2116,10 @@ const styles = (theme: ThemeColors) =>
 
     textSupporting: {
       color: theme.textSupporting,
+    },
+
+    textBold: {
+      fontWeight: FontUtils.fontWeight.bold,
     },
 
     baseTextInput: {

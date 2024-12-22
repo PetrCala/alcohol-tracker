@@ -229,6 +229,15 @@ export default {
     blackout: 'Blackout',
     timezone: 'Timezone',
   },
+  bottomTabBar: {
+    home: 'Home',
+    friends: 'Friends',
+    profile: 'Profile',
+    settings: 'Settings',
+    achievements: 'Badges',
+    statistics: 'Statistics',
+    menu: 'Menu',
+  },
   drinks: {
     smallBeer: 'Small Beer',
     beer: 'Beer',
@@ -632,9 +641,11 @@ export default {
   },
   statisticsScreen: {
     title: 'Statistics',
+    comingSoon: 'Coming soon!',
   },
   achievementsScreen: {
-    title: 'Achievements',
+    title: 'Badges',
+    comingSoon: 'Coming soon!',
   },
   dayOverviewScreen: {
     enterEditMode: 'Edit Mode',
