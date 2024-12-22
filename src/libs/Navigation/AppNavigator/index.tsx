@@ -1,4 +1,4 @@
-import React, {lazy, memo, Suspense, useContext, useEffect} from 'react';
+import React, {lazy, Suspense, useContext, useEffect} from 'react';
 import {NativeModules} from 'react-native';
 import InitialUrlContext from '@libs/InitialUrlContext';
 import Navigation from '@navigation/Navigation';

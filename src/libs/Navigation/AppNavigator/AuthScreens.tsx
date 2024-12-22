@@ -40,11 +40,6 @@ import TzFixModalNavigator from './Navigators/TzFixModalNavigator';
 import RightModalNavigator from './Navigators/RightModalNavigator';
 // import WelcomeVideoModalNavigator from './Navigators/WelcomeVideoModalNavigator';
 
-type AuthScreensProps = {
-  /** The last Onyx update ID was applied to the client */
-  initialLastUpdateIDAppliedToClient: OnyxEntry<number>;
-};
-
 const notFoundScreen = () =>
   require<ReactComponentModule>('@screens/ErrorScreen/NotFoundScreen').default;
 
@@ -110,7 +105,7 @@ const modalScreenListeners = {
   },
 };
 
-function AuthScreens({initialLastUpdateIDAppliedToClient}: AuthScreensProps) {
+function AuthScreens() {
   const styles = useThemeStyles();
   const StyleUtils = useStyleUtils();
   const {isSmallScreenWidth} = useWindowDimensions();
