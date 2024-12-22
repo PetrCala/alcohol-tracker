@@ -2,8 +2,8 @@ import type {NavigationContainerRef} from '@react-navigation/native';
 import {StackActions} from '@react-navigation/native';
 import NAVIGATORS from '@src/NAVIGATORS';
 import SCREENS from '@src/SCREENS';
-import type {RootStackParamList} from './types';
 import Log from '@libs/Log';
+import type {RootStackParamList} from './types';
 
 // This function is in a separate file than Navigation.ts to avoid cyclic dependency.
 

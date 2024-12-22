@@ -19,4 +19,5 @@ function checkIfUnderMaintenance(
   return !!maintenance.maintenance_mode;
 }
 
+// eslint-disable-next-line import/prefer-default-export
 export {checkIfUnderMaintenance};
