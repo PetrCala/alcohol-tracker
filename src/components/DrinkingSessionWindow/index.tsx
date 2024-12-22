@@ -328,29 +328,23 @@ function DrinkingSessionWindow({
         )}
         <FillerView />
       </ScrollView>
-      <View style={styles.bottomTabBarContainer}>
+      <View style={[styles.bottomTabBarContainer, styles.gap4]}>
         <Button
+          large
           text={translate(
             'liveSessionScreen.discardSession',
             deleteSessionWording,
           )}
           textStyles={styles.buttonText}
-          innerStyles={[
-            styles.bottomTabBarItem,
-            styles.halfScreenWidth(windowWidth * 0.8),
-            styles.mh3,
-          ]}
+          innerStyles={styles.bottomTabButton}
           onPress={handleDiscardSession}
         />
         <Button
           success
+          large
           text={translate('liveSessionScreen.saveSession')}
           textStyles={styles.buttonText}
-          innerStyles={[
-            styles.bottomTabBarItem,
-            styles.halfScreenWidth(windowWidth * 0.8),
-            styles.mh3,
-          ]}
+          innerStyles={styles.bottomTabButton}
           onPress={() => saveSession(db, user)}
         />
       </View>

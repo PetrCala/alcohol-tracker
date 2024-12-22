@@ -143,7 +143,7 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
         },
         {
           titleKey: 'common.blackout',
-          description: session.blackout ? 'Yes' : 'No',
+          description: translate(session.blackout ? 'common.yes' : 'common.no'),
           shouldHide: !session.blackout,
         },
         {
@@ -316,8 +316,9 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
           {otherMenuItems}
         </MenuItemGroup>
       </ScrollView>
-      <View style={styles.bottomTabBarContainer}>
+      <View style={[styles.bottomTabBarContainer, styles.mh5]}>
         <Button
+          large
           text={translate('common.confirm')}
           onPress={onBackPress}
           style={styles.bottomTabButton}

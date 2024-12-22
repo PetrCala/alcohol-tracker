@@ -15,7 +15,7 @@ function BottomTabBar() {
   // const selectedTab = SCREENS.SEARCH.BOTTOM_TAB
 
   return (
-    <View style={styles.bottomTabBarContainer}>
+    <View style={[styles.bottomTabBarContainer, styles.ph1]}>
       <BottomTabBarIcon
         src={KirokuIcons.Users}
         label={translate('bottomTabBar.friends')}
