@@ -34,9 +34,6 @@ type BottomTabBarIconProps = {
 
   /** Additional styles to add to the Icon */
   additionalStyles?: StyleProp<ViewStyle>;
-
-  /** An optional counter to display above the icon */
-  counter?: number;
 };
 
 function BottomTabBarIcon({
@@ -48,17 +45,9 @@ function BottomTabBarIcon({
   width,
   height,
   additionalStyles,
-  counter,
 }: BottomTabBarIconProps) {
   const styles = useThemeStyles();
   const theme = useTheme();
-
-  // We want to offset the icon and the counter by the same amount
-  const counterMarginLeft = styles.ml1;
-  const translateX = variables.iconBottomBar / 2;
-  const transformStyles: StyleProp<ViewStyle> = counter
-    ? {transform: [{translateX}]}
-    : null;
 
   return (
     <Tooltip text={label}>
@@ -72,23 +61,12 @@ function BottomTabBarIcon({
           <Icon
             src={src}
             fill={theme.textSupporting}
+            // fill={isSelected ? theme.iconMenu : theme.icon}
             width={width ?? variables.iconBottomBar}
             height={height ?? variables.iconBottomBar}
-            additionalStyles={transformStyles}
           />
         </View>
         <Text style={[styles.bottomTabBarLabel(isSelected)]}>{label}</Text>
-        {!!counter && counter > 0 && (
-          <View
-            style={[
-              styles.bottomTabBarCounter,
-              styles.mb4,
-              counterMarginLeft,
-              transformStyles,
-            ]}>
-            <Text style={styles.textWhite}>{counter}</Text>
-          </View>
-        )}
       </PressableWithFeedback>
     </Tooltip>
   );
