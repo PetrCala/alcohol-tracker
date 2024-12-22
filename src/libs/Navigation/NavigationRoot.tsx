@@ -14,7 +14,6 @@ import type {Route} from '@src/ROUTES';
 import CONST from '@src/CONST';
 import {ScrollOffsetContext} from '@components/ScrollOffsetContextProvider';
 import {useFirebase} from '@context/global/FirebaseContext';
-import ROUTES from '@src/ROUTES';
 import AppNavigator from './AppNavigator';
 import linkingConfig from './linkingConfig';
 import customGetPathFromState from './linkingConfig/customGetPathFromState';
@@ -116,7 +115,7 @@ function NavigationRoot({
       );
       return adaptedState;
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-compiler/react-compiler, react-hooks/exhaustive-deps
     [user],
   );
 

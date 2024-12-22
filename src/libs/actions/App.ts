@@ -31,6 +31,7 @@ import type * as OnyxTypes from '@src/types/onyx';
 import type {OnyxData} from '@src/types/onyx/Request';
 import type {UserID} from '@src/types/onyx/OnyxCommon';
 import type {User} from 'firebase/auth';
+import {resolveDuplicationConflictAction} from './RequestConflictUtils';
 // import * as Session from './Session';
 // import Timing from './Timing';
 
@@ -222,9 +223,10 @@ function reconnectApp(updateIDFrom: OnyxEntry<number> = 0) {
     params,
     getOnyxDataForOpenOrReconnect(),
     {
-      getConflictingRequests: persistedRequests =>
-        persistedRequests.filter(
-          request => request?.command === WRITE_COMMANDS.RECONNECT_APP,
+      checkAndFixConflictingRequest: persistedRequests =>
+        resolveDuplicationConflictAction(
+          persistedRequests,
+          request => request.command === WRITE_COMMANDS.RECONNECT_APP,
         ),
     },
   );

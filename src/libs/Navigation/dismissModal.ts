@@ -1,5 +1,6 @@
 import type {NavigationContainerRef} from '@react-navigation/native';
 import {StackActions} from '@react-navigation/native';
+import Log from '@libs/Log';
 import NAVIGATORS from '@src/NAVIGATORS';
 import SCREENS from '@src/SCREENS';
 import type {RootStackParamList} from './types';
@@ -21,15 +22,15 @@ function dismissModal(
   const state = navigationRef.getState();
   const lastRoute = state.routes[state.routes.length - 1];
   switch (lastRoute?.name) {
+    // case NAVIGATORS.ONBOARDING_MODAL_NAVIGATOR:
     case NAVIGATORS.FULL_SCREEN_NAVIGATOR:
     case NAVIGATORS.LEFT_MODAL_NAVIGATOR:
     case NAVIGATORS.RIGHT_MODAL_NAVIGATOR:
-    // case NAVIGATORS.ONBOARDING_MODAL_NAVIGATOR:
     case SCREENS.NOT_FOUND:
       navigationRef.dispatch({...StackActions.pop(), target: state.key});
       break;
     default: {
-      console.log(
+      Log.hmmm(
         '[Navigation] dismissModal failed because there is no modal stack to dismiss',
       );
     }
