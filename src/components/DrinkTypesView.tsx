@@ -1,9 +1,5 @@
 import {StyleSheet, View} from 'react-native';
-import type {
-  DrinkingSession,
-  DrinkingSessionId,
-  DrinkKey,
-} from '@src/types/onyx';
+import type {DrinkingSession, DrinkKey} from '@src/types/onyx';
 import useThemeStyles from '@hooks/useThemeStyles';
 import useLocalize from '@hooks/useLocalize';
 import DrinkData from '@libs/DrinkData';
@@ -66,9 +62,14 @@ function DrinkTypesView({session}: DrinkTypesViewProps) {
           return (
             <View key={drink.key} style={localStyles.sessionDrinkContainer}>
               <View style={localStyles.iconContainer}>
-                <Icon src={iconSource} height={iconSize} width={iconSize} />
+                <Icon
+                  fill={theme.textLight}
+                  src={iconSource}
+                  height={iconSize}
+                  width={iconSize}
+                />
               </View>
-              <Text style={localStyles.drinkInfoText}>{drinkName}</Text>
+              <Text style={[styles.flexGrow1, styles.ml1]}>{drinkName}</Text>
               <Button
                 style={[styles.bgTransparent, styles.p1]}
                 onPress={() => handleRemoveDrinks(drinkKey, 1)}
@@ -126,12 +127,5 @@ const localStyles = StyleSheet.create({
     marginRight: 4,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  drinkInfoText: {
-    flexGrow: 1,
-    fontSize: 14,
-    color: 'black',
-    alignSelf: 'center',
-    marginLeft: 5,
   },
 });
