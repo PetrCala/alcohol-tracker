@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import isEmpty from 'lodash/isEmpty';
 import Onyx from 'react-native-onyx';
-import {addLog} from '@userActions/Console';
+import {addLog} from '@libs/actions/Console';
 import CONFIG from '@src/CONFIG';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
@@ -92,8 +92,7 @@ const charMap: Record<string, string> = {
  * @param text the text to sanitize
  * @returns the sanitized text
  */
-function sanitizeConsoleInput(text: string) {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+function sanitizeConsoleInput(text: string): string {
   return text.replace(charsToSanitize, match => charMap[match]);
 }
 
@@ -107,28 +106,45 @@ function createLog(text: string) {
   try {
     // @ts-expect-error Any code inside `sanitizedInput` that gets evaluated by `eval()` will be executed in the context of the current this value.
     // eslint-disable-next-line no-eval, no-invalid-this
-    const result = eval.call(this, text);
+    const result = eval.call(this, text) as unknown;
 
     if (result !== undefined) {
       return [
-        {time, level: CONST.DEBUG_CONSOLE.LEVELS.INFO, message: `> ${text}`},
+        {
+          time,
+          level: CONST.DEBUG_CONSOLE.LEVELS.INFO,
+          message: `> ${text}`,
+          extraData: '',
+        },
         {
           time,
           level: CONST.DEBUG_CONSOLE.LEVELS.RESULT,
           message: String(result),
+          extraData: '',
         },
       ];
     }
     return [
-      {time, level: CONST.DEBUG_CONSOLE.LEVELS.INFO, message: `> ${text}`},
+      {
+        time,
+        level: CONST.DEBUG_CONSOLE.LEVELS.INFO,
+        message: `> ${text}`,
+        extraData: '',
+      },
     ];
   } catch (error) {
     return [
-      {time, level: CONST.DEBUG_CONSOLE.LEVELS.ERROR, message: `> ${text}`},
+      {
+        time,
+        level: CONST.DEBUG_CONSOLE.LEVELS.ERROR,
+        message: `> ${text}`,
+        extraData: '',
+      },
       {
         time,
         level: CONST.DEBUG_CONSOLE.LEVELS.ERROR,
         message: `Error: ${(error as Error).message}`,
+        extraData: '',
       },
     ];
   }
@@ -146,7 +162,7 @@ function parseStringifiedMessages(logs: Log[]): Log[] {
 
   return logs.map(log => {
     try {
-      const parsedMessage = JSON.parse(log.message);
+      const parsedMessage = JSON.parse(log.message) as Log['message'];
       return {
         ...log,
         message: parsedMessage,

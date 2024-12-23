@@ -232,18 +232,14 @@ function sessionsToDayMarking(
   if (isEmptyObject(sessions)) {
     return null;
   }
-  const totalUnits = _.reduce(
-    sessions,
-    (sum, session) => {
-      return (
-        sum +
-        DSUtils.calculateTotalUnits(session.drinks, preferences.drinks_to_units)
-      );
-    },
-    0,
-  );
+  const totalUnits = sessions.reduce((sum, session) => {
+    return (
+      sum +
+      DSUtils.calculateTotalUnits(session.drinks, preferences.drinks_to_units)
+    );
+  }, 0);
 
-  const hasBlackout = _.some(sessions, obj => obj.blackout === true);
+  const hasBlackout = sessions.some(obj => obj.blackout === true);
   const color: CalendarColors = hasBlackout
     ? 'black'
     : convertUnitsToColors(totalUnits, preferences.units_to_colors);
@@ -294,8 +290,7 @@ function sumDrinksOfSingleType(
   if (!drinksObject) {
     return 0;
   }
-  return _.reduce(
-    drinksObject,
+  return Object.values(drinksObject).reduce(
     (total, session) => total + (session[drinkType] ?? 0),
     0,
   );
@@ -310,9 +305,8 @@ function sumDrinkTypes(drinkTypes: Drinks): number {
   if (!drinkTypes) {
     return 0;
   }
-  return _.reduce(
-    drinkTypes,
-    (total, drinkCount) => total + (drinkCount ?? 0),
+  return Object.values(drinkTypes).reduce(
+    (total, drinksCount) => total + (drinksCount ?? 0),
     0,
   );
 }
@@ -349,7 +343,7 @@ function getLastDrinkAddedTime(session: DrinkingSession): number | null {
   if (_.isEmpty(session?.drinks)) {
     return null;
   }
-  const timestamps = _.map(Object.keys(session.drinks), Number);
+  const timestamps = Object.keys(session.drinks).map(Number);
   // Return the maximum timestamp or null if there aren't any
   return timestamps.length ? Math.max(...timestamps) : null;
 }
@@ -365,7 +359,7 @@ function findOngoingSession(
   const ongoingSession = Object.values(sessions).find(
     session => session.ongoing === true,
   );
-  return ongoingSession || null;
+  return ongoingSession ?? null;
 }
 
 /** Enter a dateData and an array of drinking sessions and calculate
@@ -430,7 +424,7 @@ function getLastStartedSession(
   if (!sessions) {
     return undefined;
   }
-  return _.maxBy(_.values(sessions), 'start_time');
+  return _.maxBy(Object.values(sessions), 'start_time');
 }
 
 function getLastStartedSessionId(
@@ -441,7 +435,7 @@ function getLastStartedSessionId(
   }
 
   const latestSession = _.maxBy(
-    _.entries(sessions),
+    Object.entries(sessions),
     ([, sessionValue]) => sessionValue.start_time,
   );
 
