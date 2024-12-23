@@ -1,4 +1,4 @@
-import {DrinkingSessionId} from '@src/types/onyx';
+import type {DrinkingSessionId} from '@src/types/onyx';
 import type Platform from '@libs/getPlatform/types';
 
 type CommonFriendsLabelParams = {
