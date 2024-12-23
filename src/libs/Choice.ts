@@ -1,7 +1,7 @@
 /** Choose from an array of any values one at random.
  * Return this randomly chosen value.
  */
-function getRandomChoice(values: any[]): any {
+function getRandomChoice<T>(values: T[]): T {
   return values[Math.floor(Math.random() * values.length)];
 }
 

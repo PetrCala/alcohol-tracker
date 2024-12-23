@@ -56,6 +56,7 @@ import type UnconfirmedDays from './UnconfirmedDays';
 import type {UnconfirmedDaysList, UnconfirmedDayKey} from './UnconfirmedDays';
 import type Drinks from './Drinks';
 import type {DrinkKey, DrinkName, DrinksList, DrinksTimestamp} from './Drinks';
+import type User from './User';
 import type UserIsTyping from './UserIsTyping';
 import type UserLocation from './UserLocation';
 import type UserData from './UserData';
@@ -132,6 +133,7 @@ export type {
   UnconfirmedDays,
   UnconfirmedDaysList,
   UnitsToColors,
+  User,
   UserPublicData,
   UserPrivateData,
   UserData,
