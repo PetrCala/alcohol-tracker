@@ -63,7 +63,7 @@ function DrinkTypesView({session}: DrinkTypesViewProps) {
             <View key={drink.key} style={localStyles.sessionDrinkContainer}>
               <View style={localStyles.iconContainer}>
                 <Icon
-                  fill={theme.textLight}
+                  fill={theme.textDark}
                   src={iconSource}
                   height={iconSize}
                   width={iconSize}
