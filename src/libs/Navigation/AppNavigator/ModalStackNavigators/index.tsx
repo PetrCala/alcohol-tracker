@@ -128,6 +128,12 @@ const SettingsModalStackNavigator =
     [SCREENS.SETTINGS.PREFERENCES.FIRST_DAY_OF_WEEK]: () =>
       require<ReactComponentModule>('@screens/Settings/Preferences/FirstDayOfWeekScreen')
         .default,
+    [SCREENS.SETTINGS.PREFERENCES.UNITS_TO_COLORS]: () =>
+      require<ReactComponentModule>('@screens/Settings/Preferences/UnitsToColorsScreen')
+        .default,
+    [SCREENS.SETTINGS.PREFERENCES.DRINKS_TO_UNITS]: () =>
+      require<ReactComponentModule>('@screens/Settings/Preferences/DrinksToUnitsScreen')
+        .default,
     [SCREENS.SETTINGS.APP_SHARE]: () =>
       require<ReactComponentModule>('@screens/Settings/AppShareScreen').default,
     [SCREENS.SETTINGS.TERMS_OF_SERVICE]: () =>
