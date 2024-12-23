@@ -6,7 +6,6 @@ import FocusTrapForScreens from '@components/FocusTrap/FocusTrapForScreen';
 import useKeyboardShortcut from '@hooks/useKeyboardShortcut';
 import useOnboardingLayout from '@hooks/useOnboardingLayout';
 import useThemeStyles from '@hooks/useThemeStyles';
-import useWindowDimensions from '@hooks/useWindowDimensions';
 import hasCompletedGuidedSetupFlowSelector from '@libs/hasCompletedGuidedSetupFlowSelector';
 import TzFixModalNavigatorScreenOptions from '@libs/Navigation/getTzFixModalScreenOptions';
 import Navigation from '@libs/Navigation/Navigation';
@@ -23,6 +22,7 @@ import SCREENS from '@src/SCREENS';
 import useStyleUtils from '@hooks/useStyleUtils';
 import SelectionScreen from '@screens/TzFix/SelectionScreen';
 import Overlay from './Overlay';
+import useResponsiveLayout from '@hooks/useResponsiveLayout';
 
 const Stack = createStackNavigator<TzFixModalNavigatorParamList>();
 
@@ -33,7 +33,7 @@ function TzFixModalNavigator() {
   const [hasCompletedGuidedSetupFlow] = useOnyx(ONYXKEYS.NVP_TZ_FIX, {
     selector: hasCompletedGuidedSetupFlowSelector,
   });
-  const {isSmallScreenWidth} = useWindowDimensions();
+  const {shouldUseNarrowLayout} = useResponsiveLayout();
 
   useEffect(() => {
     if (!hasCompletedGuidedSetupFlow) {
@@ -43,14 +43,14 @@ function TzFixModalNavigator() {
       // On small screens, pop all navigation states and go back to HOME.
       // On large screens, need to go back to previous route and then redirect to Concierge,
       // otherwise going back on Concierge will go to onboarding and then redirected to Concierge again
-      if (isSmallScreenWidth) {
+      if (shouldUseNarrowLayout) {
         Navigation.setShouldPopAllStateOnUP(true);
         Navigation.goBack(ROUTES.HOME, true, true);
       } else {
         Navigation.goBack();
       }
     });
-  }, [hasCompletedGuidedSetupFlow, isSmallScreenWidth]);
+  }, [hasCompletedGuidedSetupFlow, shouldUseNarrowLayout]);
 
   const outerViewRef = React.useRef<View>(null);
 
@@ -80,7 +80,7 @@ function TzFixModalNavigator() {
             )}>
             <Stack.Navigator
               screenOptions={TzFixModalNavigatorScreenOptions(
-                isSmallScreenWidth,
+                shouldUseNarrowLayout,
                 styles,
                 StyleUtils,
               )}>
