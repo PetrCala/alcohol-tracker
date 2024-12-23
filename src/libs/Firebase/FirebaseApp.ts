@@ -9,19 +9,27 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FirebaseConfig from './FirebaseConfig';
 
-let FirebaseApp: FirebaseAppProps;
-let auth: Auth;
+const currentApps = getApps();
 
-// Check for existing apps. Only initialize if none exist.
-if (getApps().length === 0) {
-  FirebaseApp = initializeApp(FirebaseConfig);
-  auth = initializeAuth(FirebaseApp, {
-    persistence: getReactNativePersistence(AsyncStorage),
-  });
-} else {
-  FirebaseApp = getApp();
-  auth = getAuth();
-}
+/**
+ * Firebase application instance.
+ * If no apps are initialized, it initializes the Firebase app with the provided configuration.
+ * Otherwise, it retrieves the existing Firebase app instance.
+ */
+const FirebaseApp: FirebaseAppProps =
+  currentApps.length === 0 ? initializeApp(FirebaseConfig) : getApp();
+
+/**
+ * Firebase authentication instance.
+ * If no apps are initialized, it initializes authentication with React Native persistence using AsyncStorage.
+ * Otherwise, it retrieves the existing authentication instance.
+ */
+const auth: Auth =
+  currentApps.length === 0
+    ? initializeAuth(FirebaseApp, {
+        persistence: getReactNativePersistence(AsyncStorage),
+      })
+    : getAuth();
 
 export {FirebaseApp, auth};
 export type {FirebaseAppProps};
