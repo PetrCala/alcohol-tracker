@@ -20,7 +20,7 @@ import {
   sumDrinkTypes,
   sumDrinksOfSingleType,
   timestampToDate,
-  unitsToColors,
+  convertUnitsToColors,
 } from '@libs/DataHandling';
 import {
   createMockPreferences,
@@ -739,22 +739,22 @@ describe('unitsToColors', () => {
   };
 
   it('should return green for 0 units', () => {
-    expect(unitsToColors(0, mockUnitsToColors)).toBe('green');
+    expect(convertUnitsToColors(0, mockUnitsToColors)).toBe('green');
   });
 
   it('should return yellow for units up to yellow limit', () => {
-    expect(unitsToColors(1, mockUnitsToColors)).toBe('yellow');
-    expect(unitsToColors(2, mockUnitsToColors)).toBe('yellow');
+    expect(convertUnitsToColors(1, mockUnitsToColors)).toBe('yellow');
+    expect(convertUnitsToColors(2, mockUnitsToColors)).toBe('yellow');
   });
 
   it('should return orange for units between yellow and orange limits', () => {
-    expect(unitsToColors(3, mockUnitsToColors)).toBe('orange');
-    expect(unitsToColors(4, mockUnitsToColors)).toBe('orange');
+    expect(convertUnitsToColors(3, mockUnitsToColors)).toBe('orange');
+    expect(convertUnitsToColors(4, mockUnitsToColors)).toBe('orange');
   });
 
   it('should return red for units above the orange limit', () => {
-    expect(unitsToColors(5, mockUnitsToColors)).toBe('red');
-    expect(unitsToColors(6, mockUnitsToColors)).toBe('red');
+    expect(convertUnitsToColors(5, mockUnitsToColors)).toBe('red');
+    expect(convertUnitsToColors(6, mockUnitsToColors)).toBe('red');
   });
 });
 

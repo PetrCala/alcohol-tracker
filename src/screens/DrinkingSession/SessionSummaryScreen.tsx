@@ -3,7 +3,7 @@ import {View} from 'react-native';
 import {
   getLastDrinkAddedTime,
   sumDrinksOfSingleType,
-  unitsToColors,
+  convertUnitsToColors,
 } from '@libs/DataHandling';
 import useLocalize from '@hooks/useLocalize';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
@@ -104,7 +104,7 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
 
   const sessionColor = session.blackout
     ? 'black'
-    : unitsToColors(totalUnits, preferences?.units_to_colors);
+    : convertUnitsToColors(totalUnits, preferences?.units_to_colors);
 
   const generalMenuItemsData: Menu = useMemo(() => {
     return {
