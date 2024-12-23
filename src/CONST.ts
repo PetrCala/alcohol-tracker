@@ -299,7 +299,7 @@ const CONST = {
   },
 
   MISSING_TRANSLATION: 'MISSING TRANSLATION',
-  LANGUAGES: ['en', 'cs_CZ'],
+  LANGUAGES: ['en', 'cs_cz'],
 
   SEARCH: {
     RESULTS_PAGE_SIZE: 50,
@@ -525,7 +525,7 @@ const CONST = {
   LOCAL_IMAGE_PREFIX: 'file://',
   LOCALES: {
     EN: 'en',
-    CS_CZ: 'cs_CZ',
+    CS_CZ: 'cs_cz',
 
     DEFAULT: 'en',
   },

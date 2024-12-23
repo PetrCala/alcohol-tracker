@@ -99,9 +99,9 @@ const translationCache = new Map<Locale, Map<TranslationPaths, string>>(
  * @param phraseParameters
  */
 function getTranslatedPhrase<TKey extends TranslationPaths>(
-  language: 'en' | 'cs_CZ',
+  language: 'en' | 'cs_cz',
   phraseKey: TKey,
-  fallbackLanguage: 'en' | 'cs_CZ' | null = null,
+  fallbackLanguage: 'en' | 'cs_cz' | null = null,
   ...phraseParameters: PhraseParameters<Phrase<TKey>>
 ): string | null {
   // Get the cache for the above locale
@@ -162,11 +162,11 @@ function getTranslatedPhrase<TKey extends TranslationPaths>(
 /**
  * Return translated string for given locale and phrase
  *
- * @param [desiredLanguage] eg 'en', 'cs_CZ'
+ * @param [desiredLanguage] eg 'en', 'cs_cz'
  * @param [phraseParameters] Parameters to supply if the phrase is a template literal.
  */
 function translate<TKey extends TranslationPaths>(
-  desiredLanguage: 'en' | 'cs_CZ',
+  desiredLanguage: 'en' | 'cs_cz',
   phraseKey: TKey,
   ...phraseParameters: PhraseParameters<Phrase<TKey>>
 ): string {
