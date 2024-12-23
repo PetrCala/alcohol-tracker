@@ -1,8 +1,6 @@
-import type {IsEqual} from 'type-fest';
 import type {DrinkingSessionId} from './types/onyx';
 import type {UserID} from './types/onyx/OnyxCommon';
 import type {DateString} from './types/time';
-import {SelectedTimezone} from './types/onyx/UserData';
 
 /**
  * Builds a URL with an encoded URI component for the `backTo` param which can be added to the end of URLs
@@ -118,6 +116,8 @@ const ROUTES = {
   SETTINGS_LANGUAGE: 'settings/preferences/language',
   SETTINGS_THEME: 'settings/preferences/theme',
   SETTINGS_FIRST_DAY_OF_WEEK: 'settings/preferences/first-day-of-week',
+  SETTINGS_UNITS_TO_COLORS: 'settings/preferences/units-to-colors',
+  SETTINGS_DRINKS_TO_UNITS: 'settings/preferences/drinks-to-units',
 
   SETTINGS_TERMS_OF_SERVICE: 'settings/terms-of-service',
   SETTINGS_PRIVACY_POLICY: 'settings/privacy-policy',

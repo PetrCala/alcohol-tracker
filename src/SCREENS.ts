@@ -75,6 +75,8 @@ const SCREENS = {
       LANGUAGE: 'Settings_Preferences_Language',
       THEME: 'Settings_Preferences_Theme',
       FIRST_DAY_OF_WEEK: 'Settings_Preferences_FirstDayOfWeek',
+      UNITS_TO_COLORS: 'Settings_Preferences_UnitsToColors',
+      DRINKS_TO_UNITS: 'Settings_Preferences_DrinksToUnits',
     },
 
     ABOUT: 'Settings_About',

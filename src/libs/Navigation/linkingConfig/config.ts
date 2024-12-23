@@ -136,6 +136,14 @@ const config: LinkingOptions<RootStackParamList>['config'] = {
               path: ROUTES.SETTINGS_FIRST_DAY_OF_WEEK,
               exact: true,
             },
+            [SCREENS.SETTINGS.PREFERENCES.UNITS_TO_COLORS]: {
+              path: ROUTES.SETTINGS_UNITS_TO_COLORS,
+              exact: true,
+            },
+            [SCREENS.SETTINGS.PREFERENCES.DRINKS_TO_UNITS]: {
+              path: ROUTES.SETTINGS_DRINKS_TO_UNITS,
+              exact: true,
+            },
             [SCREENS.SETTINGS.ACCOUNT.USER_NAME]: {
               path: ROUTES.SETTINGS_USER_NAME,
               exact: true,
