@@ -28,6 +28,7 @@ import {DatabaseDataProvider} from '@context/global/DatabaseDataContext';
 import type {SelectedTimezone, Timezone} from '@src/types/onyx/UserData';
 import {auth} from '@libs/Firebase/FirebaseApp';
 import type ReactComponentModule from '@src/types/utils/ReactComponentModule';
+import useResponsiveLayout from '@hooks/useResponsiveLayout';
 import createCustomStackNavigator from './createCustomStackNavigator';
 import getRootNavigatorScreenOptions from './getRootNavigatorScreenOptions';
 import BottomTabNavigator from './Navigators/BottomTabNavigator';
@@ -37,7 +38,6 @@ import BottomTabNavigator from './Navigators/BottomTabNavigator';
 // import OnboardingModalNavigator from './Navigators/OnboardingModalNavigator';
 import TzFixModalNavigator from './Navigators/TzFixModalNavigator';
 import RightModalNavigator from './Navigators/RightModalNavigator';
-import useResponsiveLayout from '@hooks/useResponsiveLayout';
 // import WelcomeVideoModalNavigator from './Navigators/WelcomeVideoModalNavigator';
 
 // eslint-disable-next-line rulesdir/no-negated-variables
@@ -112,10 +112,10 @@ function AuthScreens() {
   const styles = useThemeStyles();
   const StyleUtils = useStyleUtils();
   // We need to use isSmallScreenWidth for the root stack navigator
-  // eslint-disable-next-line rulesdir/prefer-shouldUseNarrowLayout-instead-of-isSmallScreenWidth
   const {
     shouldUseNarrowLayout,
     onboardingIsMediumOrLargerScreenWidth,
+    // eslint-disable-next-line rulesdir/prefer-shouldUseNarrowLayout-instead-of-isSmallScreenWidth
     isSmallScreenWidth,
   } = useResponsiveLayout();
   const screenOptions = getRootNavigatorScreenOptions(
@@ -124,6 +124,7 @@ function AuthScreens() {
     StyleUtils,
   );
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const onboardingModalScreenOptions = useMemo(
     () =>
       screenOptions.onboardingModalNavigator(
@@ -131,6 +132,7 @@ function AuthScreens() {
       ),
     [screenOptions, onboardingIsMediumOrLargerScreenWidth],
   );
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const onboardingScreenOptions = useMemo(
     () =>
       getOnboardingModalScreenOptions(

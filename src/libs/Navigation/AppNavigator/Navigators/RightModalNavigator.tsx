@@ -44,7 +44,7 @@ function RightModalNavigator({navigation}: RightModalNavigatorProps) {
     // <NoDropZone>
     // <View style={styles.RHPNavigatorContainer(isSmallScreenWidth)}>
     <>
-      {!isSmallScreenWidth && (
+      {!shouldUseNarrowLayout && (
         <Overlay
           onPress={() => {
             if (isExecutingRef.current) {

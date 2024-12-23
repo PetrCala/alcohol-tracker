@@ -13,13 +13,13 @@ import type {Route} from '@src/ROUTES';
 import CONST from '@src/CONST';
 import {ScrollOffsetContext} from '@components/ScrollOffsetContextProvider';
 import {useFirebase} from '@context/global/FirebaseContext';
+import useResponsiveLayout from '@hooks/useResponsiveLayout';
 import AppNavigator from './AppNavigator';
 import linkingConfig from './linkingConfig';
 import customGetPathFromState from './linkingConfig/customGetPathFromState';
 import getAdaptedStateFromPath from './linkingConfig/getAdaptedStateFromPath';
 import Navigation, {navigationRef} from './Navigation';
 import setupCustomAndroidBackHandler from './setupCustomAndroidBackHandler';
-import useResponsiveLayout from '@hooks/useResponsiveLayout';
 
 type NavigationRootProps = {
   /** Whether the current user is logged in with an authToken */
