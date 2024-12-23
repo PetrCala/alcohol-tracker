@@ -8,8 +8,8 @@ import Text from '@components/Text';
 import useThemeStyles from '@hooks/useThemeStyles';
 import type ChildrenProps from '@src/types/utils/ChildrenProps';
 import type IconAsset from '@src/types/utils/IconAsset';
-import IconSection from './IconSection';
 import useResponsiveLayout from '@hooks/useResponsiveLayout';
+import IconSection from './IconSection';
 
 const CARD_LAYOUT = {
   ICON_ON_TOP: 'iconOnTop',

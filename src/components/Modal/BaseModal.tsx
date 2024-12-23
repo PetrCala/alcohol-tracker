@@ -23,10 +23,10 @@ import useNativeDriver from '@libs/useNativeDriver';
 import variables from '@styles/variables';
 import * as Modal from '@userActions/Modal';
 import CONST from '@src/CONST';
+import useResponsiveLayout from '@hooks/useResponsiveLayout';
 import ModalContent from './ModalContent';
 import ModalContext from './ModalContext';
 import type BaseModalProps from './types';
-import useResponsiveLayout from '@hooks/useResponsiveLayout';
 
 function BaseModal(
   {
