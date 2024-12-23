@@ -35,16 +35,16 @@ async function readDataOnce<T>(
  * @param refString Ref string to listen at
  * @param onDataChange Callback function to execute on data change.
  */
-function listenForDataChanges(
+function listenForDataChanges<T>(
   db: Database,
   refString: string,
-  onDataChange: (data: any) => void,
+  onDataChange: (data: T | null) => void,
 ) {
   const dbRef = ref(db, refString);
   const listener = onValue(dbRef, snapshot => {
-    let data: any = null;
+    let data: T | null = null;
     if (snapshot.exists()) {
-      data = snapshot.val();
+      data = snapshot.val() as T;
     }
     onDataChange(data);
   });

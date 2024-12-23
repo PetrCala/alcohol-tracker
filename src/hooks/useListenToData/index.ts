@@ -10,6 +10,8 @@ import useLocalize from '@hooks/useLocalize';
 import * as App from '@userActions/App';
 import {useEffect, useState} from 'react';
 
+/* eslint-disable react-compiler/react-compiler */
+
 // Define a type for the hook's return value
 type UseListenToDataReturn = {
   data: FetchData;
@@ -23,17 +25,17 @@ type UseListenToDataReturn = {
  *
  * @param userID User to listen to the data for
  * @param dataTypes Database node keys to listen to data for
- * @returns An object with the data and a loading state
+ * @returns An object with the data
  * @example
- * const {data, isLoading, refetch} = useListenToData(userID, ['userStatusData', 'drinkingSessionData']);
+ * const {data} = useListenToData(userID, ['userStatusData', 'drinkingSessionData']);
  */
 const useListenToData = (
   dataTypes: FetchDataKeys,
   userID?: string,
 ): UseListenToDataReturn => {
   const {db} = useFirebase();
-  const {translate} = useLocalize(); // potentially might cause issues if the hooks and context providers are incorrectly ordered
-  const [data, setData] = useState<{[key in FetchDataKey]?: any}>({});
+  const {translate} = useLocalize();
+  const [data, setData] = useState<Partial<Record<FetchDataKey, unknown>>>({});
 
   useEffect(() => {
     if (!db) {
@@ -42,12 +44,16 @@ const useListenToData = (
     }
 
     App.setLoadingText(translate('database.loading'));
-    const unsubscribers = dataTypes.map(dataTypes => {
-      const path = fetchDataKeyToDbPath(dataTypes, userID);
+
+    const unsubscribers = dataTypes.map(dataTypeKey => {
+      const path = fetchDataKeyToDbPath(dataTypeKey, userID);
 
       if (path) {
         return listenForDataChanges(db, path, fetchedData => {
-          setData(prevData => ({...prevData, [dataTypes]: fetchedData}));
+          setData(prevData => ({
+            ...prevData,
+            [dataTypeKey]: fetchedData,
+          }));
         });
       }
       return () => {};
@@ -55,14 +61,14 @@ const useListenToData = (
 
     App.setLoadingText(null);
 
-    // Cleanup function to unsubscribe from all listeners when the component unmounts or the effect reruns
     return () => {
       unsubscribers.forEach(unsubscribe => unsubscribe());
     };
-  }, [userID, ...dataTypes]); // Depend on dataTypes to allow dynamically changing what data to listen to
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [db, userID, translate]);
 
   return {
-    data,
+    data: data as FetchData,
   };
 };
 
