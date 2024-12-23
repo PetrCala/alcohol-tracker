@@ -1,6 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CONST from '@src/CONST';
 
+type ProfileImageCacheItem = {
+  url: string;
+  timestamp: number;
+};
+
 /**
  * Caches the profile image URL for a user.
  * @param userID - The ID of the user.
@@ -9,12 +14,12 @@ import CONST from '@src/CONST';
 const cacheProfileImage = async (userID: string, url: string | null) => {
   const key = CONST.CACHE.PROFILE_PICTURE_KEY + userID;
   const now = new Date().getTime();
-  const item = {
+  const item: ProfileImageCacheItem = {
     url: url ?? CONST.NO_IMAGE,
     timestamp: now,
   };
   await AsyncStorage.setItem(key, JSON.stringify(item));
 };
 
-// eslint-disable-next-line import/prefer-default-export
 export {cacheProfileImage};
+export type {ProfileImageCacheItem};
