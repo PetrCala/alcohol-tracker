@@ -246,7 +246,7 @@ function sessionsToDayMarking(
   const hasBlackout = _.some(sessions, obj => obj.blackout === true);
   const color: CalendarColors = hasBlackout
     ? 'black'
-    : unitsToColors(totalUnits, preferences.units_to_colors);
+    : convertUnitsToColors(totalUnits, preferences.units_to_colors);
 
   // Determine text color based on background color
   const shouldUseContrast = color in ['red', 'green', 'black'];
@@ -482,7 +482,7 @@ function getZeroDrinksList(): DrinksList {
  * @param unitsToColors Information about limits for different colors
  * @returns String
  */
-function unitsToColors(
+function convertUnitsToColors(
   units: number,
   unitsToColors: UnitsToColors | undefined,
 ): CalendarColors {
@@ -539,24 +539,10 @@ function toPercentageVerbose(number: number): string {
  * @param obj - The object to retrieve keys from.
  * @returns An array of keys from the object.
  */
-function objKeys(obj: any): string[] {
+function objKeys(obj: Record<string, unknown> | null | undefined): string[] {
   // Check if obj is an object and not null
-  if (typeof obj === 'object' && obj !== null) {
+  if (obj && typeof obj === 'object') {
     return Object.keys(obj);
-  }
-  // Return an empty array for non-object inputs or null
-  return [];
-}
-
-/**
- * Returns an array of values from the provided object.
- * @param obj - The object to retrieve keys from.
- * @returns An array of keys from the object.
- */
-function objVals(obj: any): string[] {
-  // Check if obj is an object and not null
-  if (typeof obj === 'object' && obj !== null) {
-    return Object.values(obj);
   }
   // Return an empty array for non-object inputs or null
   return [];
@@ -590,12 +576,11 @@ export {
   getLastStartedSessionId,
   getRandomDrinksList,
   getZeroDrinksList,
-  unitsToColors,
+  convertUnitsToColors,
   findDrinkName,
   hasDecimalPoint,
   toPercentageVerbose,
   objKeys,
-  objVals,
 };
 
 // test, getAdjacentMonths, findongoingsession, aggregatesessionsbydays, month entries to colors (move these maybe to a different location), toPercentageVerbose

@@ -1,7 +1,7 @@
 import React from 'react';
 import {View} from 'react-native';
 import * as KirokuIcons from '@components/Icon/KirokuIcons';
-import {unitsToColors} from '@libs/DataHandling';
+import {convertUnitsToColors} from '@libs/DataHandling';
 import type {DrinkingSession} from '@src/types/onyx';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
@@ -56,7 +56,10 @@ function DrinkingSessionOverview({
     preferences?.drinks_to_units,
     true,
   );
-  let sessionColor = unitsToColors(totalUnits, preferences?.units_to_colors);
+  let sessionColor = convertUnitsToColors(
+    totalUnits,
+    preferences?.units_to_colors,
+  );
   if (session.blackout === true) {
     sessionColor = 'black';
   }

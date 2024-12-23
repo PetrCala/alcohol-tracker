@@ -7,7 +7,7 @@ import {
   getUniqueDrinkTypesInSession,
   sumAllDrinks,
   sumDrinksOfSingleType,
-  unitsToColors,
+  convertUnitsToColors,
 } from '@libs/DataHandling';
 import Text from '@components/Text';
 import useWaitForNavigation from '@hooks/useWaitForNavigation';
@@ -211,7 +211,10 @@ function DrinkingSessionWindow({
       preferences.drinks_to_units,
       true,
     );
-    const sessionColor = unitsToColors(totalUnits, preferences.units_to_colors);
+    const sessionColor = convertUnitsToColors(
+      totalUnits,
+      preferences.units_to_colors,
+    );
     setTotalUnits(totalUnits);
     setSessionColor(sessionColor);
   }, [session?.drinks]);
