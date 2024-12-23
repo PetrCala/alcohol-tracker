@@ -73,11 +73,6 @@ type OverlayStylesParams = {
   progress: Animated.AnimatedInterpolation<string | number>;
 };
 
-// type TwoFactorAuthCodesBoxParams = {
-//   isExtraSmallScreenWidth: boolean;
-//   isSmallScreenWidth: boolean;
-// };
-
 type Translation =
   | 'perspective'
   | 'rotate'
