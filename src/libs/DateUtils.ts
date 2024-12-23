@@ -33,7 +33,8 @@ import {
   utcToZonedTime,
   zonedTimeToUtc,
 } from 'date-fns-tz';
-import {cs, enUS} from 'date-fns/locale';
+import enUS from 'date-fns/locale/en-US';
+import CS_CZ from 'date-fns/locale/cs';
 import throttle from 'lodash/throttle';
 import Onyx from 'react-native-onyx';
 import type {ValueOf} from 'type-fest';
@@ -99,22 +100,19 @@ function setLocale(localeString: Locale) {
       setDefaultOptions({locale: enUS});
       break;
     case CONST.LOCALES.CS_CZ:
-      setDefaultOptions({locale: cs});
+      setDefaultOptions({locale: CS_CZ});
       break;
     default:
       break;
   }
 }
 
-function getDayStartAndEndUTC(date: Date, timezone: SelectedTimezone) {
+function getDayStartAndEndUTC(date: Date, tz: SelectedTimezone) {
   const dateString = format(date, 'yyyy-MM-dd');
-  const startOfDayUTC = zonedTimeToUtc(
-    `${dateString} 00:00:00`,
-    timezone,
-  ).getTime();
+  const startOfDayUTC = zonedTimeToUtc(`${dateString} 00:00:00`, tz).getTime();
   const endOfDayUTC = zonedTimeToUtc(
     `${dateString} 23:59:59.999`,
-    timezone,
+    tz,
   ).getTime();
   return {startOfDayUTC, endOfDayUTC};
 }
