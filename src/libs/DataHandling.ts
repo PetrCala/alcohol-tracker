@@ -43,7 +43,7 @@ Onyx.connect({
   },
 });
 
-export function formatDate(date: Date): DateString {
+function formatDate(date: Date): DateString {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
     2,
     '0',
@@ -51,7 +51,7 @@ export function formatDate(date: Date): DateString {
 }
 
 /** Convert a timestamp to a Date object */
-export function timestampToDate(timestamp: number): Date {
+function timestampToDate(timestamp: number): Date {
   return new Date(timestamp);
 }
 
@@ -61,7 +61,7 @@ export function timestampToDate(timestamp: number): Date {
  * @param date Date type object
  * @returns A DateData
  */
-export function dateToDateData(date: Date): DateData {
+function dateToDateData(date: Date): DateData {
   const dateData = {
     dateString: formatDate(date),
     day: date.getDate(),
@@ -78,25 +78,25 @@ export function dateToDateData(date: Date): DateData {
  * @param timestamp Timestamp
  * @returns Date string
  */
-export function timestampToDateString(timestamp: number): DateString {
+function timestampToDateString(timestamp: number): DateString {
   return formatDate(timestampToDate(timestamp));
 }
 
 /** Inverse of timestampToDate, sets time to midnight
  */
-export function getTimestampAtMidnight(date: Date): number {
+function getTimestampAtMidnight(date: Date): number {
   const dateAtMidnight = new Date(date);
   dateAtMidnight.setHours(0, 0, 0, 0);
   return dateAtMidnight.getTime();
 }
 
-export function getTimestampAtNoon(date: Date): number {
+function getTimestampAtNoon(date: Date): number {
   const dateAtMidnight = new Date(date);
   dateAtMidnight.setHours(12, 0, 0, 0);
   return dateAtMidnight.getTime();
 }
 
-export function dateStringToDate(dateString: DateString): Date {
+function dateStringToDate(dateString: DateString): Date {
   return new Date(dateString);
 }
 
@@ -106,7 +106,7 @@ export function dateStringToDate(dateString: DateString): Date {
  * @param days Number of days to change the date by
  * @returns A new, modified Date type object
  */
-export function changeDateBySomeDays(date: Date, days: number): Date {
+function changeDateBySomeDays(date: Date, days: number): Date {
   const newDate = new Date(date); // to avoid mutating original date
   newDate.setDate(newDate.getDate() + days);
   return newDate;
@@ -117,7 +117,7 @@ export function changeDateBySomeDays(date: Date, days: number): Date {
  * @param currentDate Current date as a DateData
  * @returns Next month's date as a DateData
  */
-export const getNextMonth = (currentDate: DateData): DateData => {
+const getNextMonth = (currentDate: DateData): DateData => {
   // Setting it to the same day of the next month
   const newDate = new Date(
     currentDate.year,
@@ -140,7 +140,7 @@ export const getNextMonth = (currentDate: DateData): DateData => {
  * @param currentDate Current date as a DateData
  * @returns Previous month's date as a DateData
  */
-export const getPreviousMonth = (currentDate: DateData): DateData => {
+const getPreviousMonth = (currentDate: DateData): DateData => {
   // Setting it to the same day of the previous month
   const newDate = new Date(
     currentDate.year,
@@ -183,10 +183,7 @@ export const getPreviousMonth = (currentDate: DateData): DateData => {
  * console.log(outputDates);
  * // Expected output: DateDatas for July, August, September, October, and November of 2023.
  */
-export const getAdjacentMonths = (
-  currentDate: DateData,
-  n: number,
-): DateData[] => {
+const getAdjacentMonths = (currentDate: DateData, n: number): DateData[] => {
   const result: DateData[] = [currentDate]; // Start with the input date
 
   // Add next n months
@@ -213,7 +210,7 @@ export const getAdjacentMonths = (
  *
  * @example let yearMonth = getYearMonth(testDateData);
  */
-export function getYearMonth(dateData: DateData): string {
+function getYearMonth(dateData: DateData): string {
   return `${dateData.year}-${String(dateData.month).padStart(2, '0')}`;
 }
 
@@ -228,10 +225,7 @@ export function getYearMonth(dateData: DateData): string {
  * const date = { year: 2023, month: 10 };
  * getYearMonthVerbose(date, true); // Returns "Oct/2023"
  */
-export function getYearMonthVerbose(
-  dateData: DateData,
-  abbreviated = false,
-): string {
+function getYearMonthVerbose(dateData: DateData, abbreviated = false): string {
   const months = abbreviated ? CONST.MONTHS_ABBREVIATED : CONST.MONTHS;
   const monthName = months[dateData.month - 1];
   return `${monthName} ${dateData.year}`;
@@ -240,7 +234,7 @@ export function getYearMonthVerbose(
 /** Change the time of a datetime object to now,
  * keeping the date constant.
  */
-export function setDateToCurrentTime(inputDate: Date): Date {
+function setDateToCurrentTime(inputDate: Date): Date {
   const currentTime = new Date();
 
   inputDate.setHours(currentTime.getHours());
@@ -252,7 +246,7 @@ export function setDateToCurrentTime(inputDate: Date): Date {
 }
 
 /** Based on a collection of DrinkingSession objects, determine a day marking and return it as an object. */
-export function sessionsToDayMarking(
+function sessionsToDayMarking(
   sessions: DrinkingSessionArray,
   preferences: Preferences,
 ): SessionsCalendarDayMarking | null {
@@ -294,7 +288,7 @@ export function sessionsToDayMarking(
  *
  * @param all_drinks Drinks to sum up.
  */
-export function sumAllDrinks(drinks: DrinksList | undefined): number {
+function sumAllDrinks(drinks: DrinksList | undefined): number {
   if (isEmptyObject(drinks)) {
     return 0;
   }
@@ -314,7 +308,7 @@ export function sumAllDrinks(drinks: DrinksList | undefined): number {
  * @param drinksOjbect DrinksList to sum up.
  * @param drinkType The type of drink to sum.
  */
-export function sumDrinksOfSingleType(
+function sumDrinksOfSingleType(
   drinksObject: DrinksList | undefined,
   drinkType: DrinkKey,
 ): number {
@@ -333,7 +327,7 @@ export function sumDrinksOfSingleType(
  * @param drinkTypes A Drinks kind of object
  * @returns The sum
  */
-export function sumDrinkTypes(drinkTypes: Drinks): number {
+function sumDrinkTypes(drinkTypes: Drinks): number {
   if (!drinkTypes) {
     return 0;
   }
@@ -345,7 +339,7 @@ export function sumDrinkTypes(drinkTypes: Drinks): number {
 }
 
 /** Get an array of unique keys that appear in a session */
-export function getUniqueDrinkTypesInSession(
+function getUniqueDrinkTypesInSession(
   session: DrinkingSession,
 ): DrinkKey[] | undefined {
   const sessionDrinks = session?.drinks;
@@ -372,7 +366,7 @@ export function getUniqueDrinkTypesInSession(
  * @param session Drinking session array item
  * @returnsTimestamp of the last drink consumed
  */
-export function getLastDrinkAddedTime(session: DrinkingSession): number | null {
+function getLastDrinkAddedTime(session: DrinkingSession): number | null {
   if (_.isEmpty(session?.drinks)) {
     return null;
   }
@@ -383,7 +377,7 @@ export function getLastDrinkAddedTime(session: DrinkingSession): number | null {
 
 /** Out of an array of session items, return an a session that is ongoing. If there is no such session, return null
  */
-export function findOngoingSession(
+function findOngoingSession(
   sessions: DrinkingSessionList,
 ): DrinkingSession | null {
   if (isEmptyObject(sessions)) {
@@ -402,7 +396,7 @@ export function findOngoingSession(
  * @param sessions Array of drinking sessions
  * @returns Number of drinks consumed during the current month
  */
-export const calculateThisMonthDrinks = (
+const calculateThisMonthDrinks = (
   dateData: DateData,
   sessions: DrinkingSessionArray,
 ): number => {
@@ -428,7 +422,7 @@ export const calculateThisMonthDrinks = (
  * @param drinksToUnits Drinks to units conversion object
  * @returns Number of units consumed during the current month
  */
-export const calculateThisMonthUnits = (
+const calculateThisMonthUnits = (
   dateData: DateData,
   sessions: DrinkingSessionArray,
   drinksToUnits: DrinksToUnits,
@@ -451,7 +445,7 @@ export const calculateThisMonthUnits = (
   );
 };
 
-export function getLastStartedSession(
+function getLastStartedSession(
   sessions: DrinkingSessionList | undefined,
 ): DrinkingSession | undefined {
   if (!sessions) {
@@ -460,7 +454,7 @@ export function getLastStartedSession(
   return _.maxBy(_.values(sessions), 'start_time');
 }
 
-export function getLastStartedSessionId(
+function getLastStartedSessionId(
   sessions: DrinkingSessionList | undefined,
 ): string | undefined {
   if (!sessions) {
@@ -480,7 +474,7 @@ export function getLastStartedSessionId(
  * each drink's value is set to a random integer.
  */
 
-export const getRandomDrinksList = (maxDrinkValue = 30): DrinksList => {
+const getRandomDrinksList = (maxDrinkValue = 30): DrinksList => {
   const drinkWithRandomValues: Drinks = {};
 
   // Loop over each item in DrinkTypesKeys and set its value to a random number between 0 and maxDrinkValue
@@ -499,7 +493,7 @@ export const getRandomDrinksList = (maxDrinkValue = 30): DrinksList => {
 
 /** Generate an object with all available drinks where each drink's value is set to 0.
  */
-export function getZeroDrinksList(): DrinksList {
+function getZeroDrinksList(): DrinksList {
   return getRandomDrinksList(0);
 }
 
@@ -509,7 +503,7 @@ export function getZeroDrinksList(): DrinksList {
  * @param unitsToColors Information about limits for different colors
  * @returns String
  */
-export function unitsToColors(
+function unitsToColors(
   units: number,
   unitsToColors: UnitsToColors | undefined,
 ): CalendarColors {
@@ -533,7 +527,7 @@ export function unitsToColors(
  *
  * @returns The verbose name of that drink.
  */
-export const findDrinkName = (key: DrinkKey): DrinkName | undefined => {
+const findDrinkName = (key: DrinkKey): DrinkName | undefined => {
   const drinkIdx = Object.values(CONST.DRINKS.KEYS).findIndex(
     type => type === key,
   );
@@ -548,12 +542,12 @@ export const findDrinkName = (key: DrinkKey): DrinkName | undefined => {
  * @param number - The number to check.
  * @returns True if the number has a decimal point, false otherwise.
  */
-export function hasDecimalPoint(number: number): boolean {
+function hasDecimalPoint(number: number): boolean {
   const numberAsString = number.toString();
   return numberAsString.includes('.');
 }
 
-export function toPercentageVerbose(number: number): string {
+function toPercentageVerbose(number: number): string {
   if (number > 1 || number < 0) {
     throw new Error('A fraction number must be between 0 and 1.');
   }
@@ -566,7 +560,7 @@ export function toPercentageVerbose(number: number): string {
  * @param obj - The object to retrieve keys from.
  * @returns An array of keys from the object.
  */
-export function objKeys(obj: any): string[] {
+function objKeys(obj: any): string[] {
   // Check if obj is an object and not null
   if (typeof obj === 'object' && obj !== null) {
     return Object.keys(obj);
@@ -580,7 +574,7 @@ export function objKeys(obj: any): string[] {
  * @param obj - The object to retrieve keys from.
  * @returns An array of keys from the object.
  */
-export function objVals(obj: any): string[] {
+function objVals(obj: any): string[] {
   // Check if obj is an object and not null
   if (typeof obj === 'object' && obj !== null) {
     return Object.values(obj);
@@ -588,5 +582,40 @@ export function objVals(obj: any): string[] {
   // Return an empty array for non-object inputs or null
   return [];
 }
+
+export {
+  formatDate,
+  timestampToDate,
+  dateToDateData,
+  getTimestampAtMidnight,
+  getTimestampAtNoon,
+  dateStringToDate,
+  changeDateBySomeDays,
+  getNextMonth,
+  getPreviousMonth,
+  getAdjacentMonths,
+  getYearMonth,
+  getYearMonthVerbose,
+  setDateToCurrentTime,
+  sessionsToDayMarking,
+  sumAllDrinks,
+  sumDrinksOfSingleType,
+  sumDrinkTypes,
+  getUniqueDrinkTypesInSession,
+  getLastDrinkAddedTime,
+  findOngoingSession,
+  calculateThisMonthDrinks,
+  calculateThisMonthUnits,
+  getLastStartedSession,
+  getLastStartedSessionId,
+  getRandomDrinksList,
+  getZeroDrinksList,
+  unitsToColors,
+  findDrinkName,
+  hasDecimalPoint,
+  toPercentageVerbose,
+  objKeys,
+  objVals,
+};
 
 // test, getAdjacentMonths, findongoingsession, aggregatesessionsbydays, month entries to colors (move these maybe to a different location), toPercentageVerbose

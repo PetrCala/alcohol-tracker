@@ -36,7 +36,7 @@ import {validateAppVersion} from '@libs/Validation';
 import {checkAccountCreationLimit} from '@database/protection';
 import Navigation from '@libs/Navigation/Navigation';
 import ROUTES from '@src/ROUTES';
-import type {OnyxEntry, OnyxUpdate} from 'react-native-onyx';
+import type {OnyxEntry} from 'react-native-onyx';
 import Onyx from 'react-native-onyx';
 import ONYXKEYS from '@src/ONYXKEYS';
 import CONST from '@src/CONST';
@@ -44,7 +44,6 @@ import {getReasonForLeavingID} from '@libs/ReasonForLeaving';
 import Log from '@libs/Log';
 import ERRORS from '@src/ERRORS';
 import * as Session from './Session';
-import {ValueOf} from 'type-fest';
 
 let verifyEmailSent: OnyxEntry<Timestamp | null> = null;
 Onyx.connect({

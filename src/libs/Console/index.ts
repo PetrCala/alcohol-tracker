@@ -57,6 +57,7 @@ function logMessage(args: unknown[]) {
     time: new Date(),
     level: CONST.DEBUG_CONSOLE.LEVELS.INFO,
     message,
+    extraData: '',
   };
   addLog(newLog);
 }

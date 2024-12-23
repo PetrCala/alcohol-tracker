@@ -19,7 +19,6 @@ import ScreenWrapper from '@components/ScreenWrapper';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
 import useLocalize from '@hooks/useLocalize';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
-import LocaleUtils from '@libs/LocaleUtils';
 import ConfirmModal from '@components/ConfirmModal';
 import Button from '@components/Button';
 import useThemeStyles from '@hooks/useThemeStyles';
@@ -199,7 +198,7 @@ function PreferencesScreen({route}: PreferencesScreenProps) {
         },
       ],
     };
-  }, [translate]);
+  }, [translate, currentPreferences.theme]);
 
   const unitsToColorsMenuItemsData: Menu = useMemo(() => {
     const unitsHelperData = [
