@@ -1,7 +1,9 @@
 import React, {useCallback, useContext, useMemo, useRef} from 'react';
 import type ChildrenProps from '@src/types/utils/ChildrenProps';
-import type {ResponsiveLayoutProperties} from './types';
-import type {FullScreenContext as FullScreenContextType} from './types';
+import type {
+  ResponsiveLayoutProperties,
+  FullScreenContext as FullScreenContextType,
+} from './types';
 
 const FullScreenContext = React.createContext<FullScreenContextType | null>(
   null,

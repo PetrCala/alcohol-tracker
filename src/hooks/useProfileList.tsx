@@ -48,7 +48,7 @@ const useProfileList = (userArray: UserArray) => {
     } finally {
       setLoadingDisplayData(false);
     }
-  }, [userArray]);
+  }, [userArray, profileList, db]);
 
   useEffect(() => {
     updateDisplayData();
