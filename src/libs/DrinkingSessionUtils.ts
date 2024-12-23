@@ -60,9 +60,10 @@ let ongoingSessionData: DrinkingSession | undefined;
 Onyx.connect({
   key: ONYXKEYS.ONGOING_SESSION_DATA,
   callback: value => {
-    if (value) {
-      ongoingSessionData = value;
+    if (!value) {
+      return;
     }
+    ongoingSessionData = value;
   },
 });
 
@@ -70,29 +71,25 @@ let editSessionData: DrinkingSession | undefined;
 Onyx.connect({
   key: ONYXKEYS.EDIT_SESSION_DATA,
   callback: value => {
-    if (value) {
-      editSessionData = value;
+    if (!value) {
+      return;
     }
+    editSessionData = value;
   },
 });
 
 /**
  * @returns An empty drinking session object.
  */
-function getEmptySession(
-  session: Partial<DrinkingSession>,
-  // type?: DrinkingSessionType,
-  // timezone?: SelectedTimezone,
-  // ongoing?: boolean,
-): DrinkingSession {
+function getEmptySession(session: Partial<DrinkingSession>): DrinkingSession {
   const emptySession: DrinkingSession = {
     id: session?.id,
-    start_time: session?.start_time || Date.now(),
-    end_time: session?.end_time || Date.now(),
-    blackout: session?.blackout || false,
-    note: session?.note || '',
-    timezone: session?.timezone || CONST.DEFAULT_TIME_ZONE.selected,
-    type: session?.type || CONST.SESSION.TYPES.EDIT,
+    start_time: session?.start_time ?? Date.now(),
+    end_time: session?.end_time ?? Date.now(),
+    blackout: session?.blackout ?? false,
+    note: session?.note ?? '',
+    timezone: session?.timezone ?? CONST.DEFAULT_TIME_ZONE.selected,
+    type: session?.type ?? CONST.SESSION.TYPES.EDIT,
     ongoing: session?.ongoing,
   };
   return emptySession;
