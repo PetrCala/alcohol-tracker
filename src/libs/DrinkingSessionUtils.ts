@@ -143,7 +143,7 @@ function getDrinkingSessionOnyxKey(
 
 /** Type guard to check if a given key is a valid DrinkType key */
 function isDrinkTypeKey(key: string): key is keyof Drinks {
-  return _.includes(Object.values(CONST.DRINKS.KEYS), key);
+  return key in Object.values(CONST.DRINKS.KEYS);
 }
 
 /**
@@ -165,13 +165,14 @@ function calculateTotalUnits(
 
   let totalUnits = 0;
   // Iterate over each timestamp in drinksObject
-  _.forEach(Object.values(drinks), drinkTypes => {
-    _.forEach(Object.keys(drinkTypes), DrinkKey => {
-      if (isDrinkTypeKey(DrinkKey)) {
-        const typeDrinks = drinkTypes[DrinkKey] ?? 0;
-        const typeUnits = drinksToUnits[DrinkKey] ?? 0;
-        totalUnits += typeDrinks * typeUnits;
+  Object.values(drinks).forEach(drinkTypes => {
+    Object.keys(drinkTypes).forEach(DrinkKey => {
+      if (!isDrinkTypeKey(DrinkKey)) {
+        return;
       }
+      const typeDrinks = drinkTypes[DrinkKey] ?? 0;
+      const typeUnits = drinksToUnits[DrinkKey] ?? 0;
+      totalUnits += typeDrinks * typeUnits;
     });
   });
 
@@ -216,18 +217,17 @@ function addDrinksToList(
   drinksToUnits: DrinksToUnits,
   options: AddDrinksOptions,
 ): DrinksList {
-  if (!drinksList) {
-    drinksList = {};
-  }
+  // Create a shallow copy of drinksList to avoid mutating the original
+  const updatedDrinksList = drinksList ? {...drinksList} : {};
 
   if (amount <= 0) {
     Log.warn(`Invalid amount: ${amount}`);
-    return drinksList;
+    return updatedDrinksList;
   }
 
   if (!drinksToUnits[drinkKey]) {
     Log.warn(`Invalid drink key: ${drinkKey}`);
-    return drinksList;
+    return updatedDrinksList;
   }
 
   const availableUnits = calculateAvailableUnits(drinksList, drinksToUnits);
@@ -235,7 +235,7 @@ function addDrinksToList(
   if (newUnits > availableUnits) {
     // TODO potentially show a warning message to the user
     Log.warn('Total units exceed the maximum allowed units. Drinks not added.');
-    return drinksList;
+    return updatedDrinksList;
   }
 
   let timestamp: number;
@@ -250,15 +250,12 @@ function addDrinksToList(
     throw new Error('Invalid timestampOption');
   }
 
-  // Create a shallow copy of drinksList to avoid mutating the original
-  const updatedDrinksList: DrinksList = {...drinksList};
-
   if (updatedDrinksList[timestamp]) {
     // Timestamp already exists, merge the drinks
     const existingDrinks = updatedDrinksList[timestamp];
     const mergedDrinks: Drinks = {...existingDrinks};
 
-    mergedDrinks[drinkKey] = (mergedDrinks[drinkKey] || 0) + (amount || 0);
+    mergedDrinks[drinkKey] = (mergedDrinks[drinkKey] ?? 0) + (amount ?? 0);
 
     updatedDrinksList[timestamp] = mergedDrinks;
   } else {
@@ -293,15 +290,15 @@ function removeDrinksFromList(
     return drinksList;
   }
 
-  const updatedDrinksList: DrinksList = JSON.parse(JSON.stringify(drinksList));
+  const updatedDrinksList: DrinksList = _.cloneDeep(drinksList);
 
-  let remainingAmountToRemove = amount || 0;
+  let remainingAmountToRemove = amount ?? 0;
 
   for (const timestamp of Object.keys(updatedDrinksList).sort((a, b) =>
     options === 'removeFromLatest' ? +b - +a : +a - +b,
   )) {
     const drinksAtTimestamp = updatedDrinksList[+timestamp];
-    const avaiableAmount = drinksAtTimestamp[drinkKey] || 0;
+    const avaiableAmount = drinksAtTimestamp[drinkKey] ?? 0;
 
     if (avaiableAmount > 0) {
       const amountRemoved = Math.min(remainingAmountToRemove, avaiableAmount);
@@ -336,19 +333,23 @@ function removeDrinksFromList(
 function getSessionAddDrinksOptions(
   session: DrinkingSession,
 ): AddDrinksOptions {
-  return session?.ongoing
-    ? {
-        timestampOption: 'now',
-      }
-    : session?.type === CONST.SESSION.TYPES.LIVE && session?.end_time
-      ? {
-          timestampOption: 'sessionEndTime',
-          end_time: session.end_time,
-        }
-      : {
-          timestampOption: 'sessionStartTime',
-          start_time: session.start_time,
-        };
+  if (session?.ongoing) {
+    return {
+      timestampOption: 'now',
+    };
+  }
+
+  if (session?.type === CONST.SESSION.TYPES.LIVE && session?.end_time) {
+    return {
+      timestampOption: 'sessionEndTime',
+      end_time: session.end_time,
+    };
+  }
+
+  return {
+    timestampOption: 'sessionStartTime',
+    start_time: session.start_time,
+  };
 }
 
 function getSessionRemoveDrinksOptions(): RemoveDrinksOptions {
@@ -466,14 +467,15 @@ function determineSessionMostCommonDrink(
   let highestCount = 0;
   let isTie = false;
   Object.entries(drinkCounts).forEach(([drinkKey, count]) => {
-    if (count) {
-      if (count > highestCount) {
-        highestCount = count;
-        mostCommonDrink = drinkKey as DrinkKey;
-        isTie = false; // Reset the tie flag as we have a new leader
-      } else if (count === highestCount) {
-        isTie = true; // A tie has occurred
-      }
+    if (!count) {
+      return;
+    }
+    if (count > highestCount) {
+      highestCount = count;
+      mostCommonDrink = drinkKey as DrinkKey;
+      isTie = false; // Reset the tie flag as we have a new leader
+    } else if (count === highestCount) {
+      isTie = true; // A tie has occurred
     }
   });
 
@@ -526,8 +528,8 @@ function getSingleDayDrinkingSessions(
   const filteredSessions = returnArray
     ? Object.values(sessions).filter(sessionBelongsToDate)
     : Object.fromEntries(
-        Object.entries(sessions).filter(([key, value]) =>
-          sessionBelongsToDate(value),
+        Object.entries(sessions).filter(([, session]) =>
+          sessionBelongsToDate(session),
         ),
       );
 
