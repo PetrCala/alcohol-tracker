@@ -1,3 +1,4 @@
+import {View} from 'react-native';
 import React from 'react';
 import {useOnyx} from 'react-native-onyx';
 import HeaderWithBackButton from '@components/HeaderWithBackButton';
@@ -12,11 +13,10 @@ import * as ErrorUtils from '@libs/ErrorUtils';
 import * as User from '@userActions/User';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
-import {Theme} from '@src/types/onyx';
+import type {Theme} from '@src/types/onyx';
 import ERRORS from '@src/ERRORS';
 import {useFirebase} from '@context/global/FirebaseContext';
 import FullScreenLoadingIndicator from '@components/FullscreenLoadingIndicator';
-import {View} from 'react-native';
 
 function ThemeScreen() {
   const styles = useThemeStyles();

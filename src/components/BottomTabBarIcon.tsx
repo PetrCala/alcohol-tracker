@@ -14,7 +14,7 @@ type BottomTabBarIconProps = {
   /** The icon source */
   src: IconAsset;
 
-  /** The icon label **/
+  /** The icon label * */
   label: string;
 
   /** Whether the icon is selected */

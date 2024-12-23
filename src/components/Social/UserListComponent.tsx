@@ -22,8 +22,8 @@ import FlexibleLoadingIndicator from '@components/FlexibleLoadingIndicator';
 import {useDatabaseData} from '@context/global/DatabaseDataContext';
 import Text from '@components/Text';
 import ScrollView from '@components/ScrollView';
-import UserOverview from './UserOverview';
 import useLocalize from '@hooks/useLocalize';
+import UserOverview from './UserOverview';
 
 type UserListProps = {
   fullUserArray: UserArray;

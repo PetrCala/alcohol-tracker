@@ -1,9 +1,10 @@
-import type {UserID} from './OnyxCommon';
+import type CONST from '@src/CONST';
+import type DeepValueOf from '@src/types/utils/DeepValueOf';
+import type Locale from './Locale';
 import type {DrinkKey} from './Drinks';
-import CONST from '@src/CONST';
-import DeepValueOf from '../utils/DeepValueOf';
-import Locale from './Locale';
+import type {UserID} from './OnyxCommon';
 
+/** Theme of the application */
 type Theme = DeepValueOf<typeof CONST.THEME>;
 
 /** A model mapping units to session colors */

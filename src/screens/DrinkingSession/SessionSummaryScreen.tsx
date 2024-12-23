@@ -154,6 +154,7 @@ function SessionSummaryScreen({route}: SessionSummaryScreenProps) {
       ],
     };
   }, [
+    translate,
     session,
     lastDrinkAdded,
     sessionColor,
