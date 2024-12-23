@@ -67,7 +67,7 @@ function DrinkingSessionOverview({
   return (
     <PressableWithFeedback
       accessibilityLabel={translate('dayOverviewScreen.sessionWindow', {
-        sessionId: sessionId,
+        sessionId,
       })}
       style={[styles.flexRow, styles.border, styles.mh1, styles.mt1]}
       onPress={() => onSessionButtonPress(sessionId, session)}>

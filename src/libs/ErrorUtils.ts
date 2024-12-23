@@ -5,7 +5,6 @@ import type {TranslationPaths} from '@src/languages/types';
 import type {ErrorFields, Errors} from '@src/types/onyx/OnyxCommon';
 import type {ErrorKey} from '@src/ERRORS';
 import ERRORS from '@src/ERRORS';
-import _ from 'lodash';
 import Log from './Log';
 import AppError from './Errors/AppError';
 import ERROR_MAPPING from './Errors/ERROR_MAPPING';
@@ -17,7 +16,7 @@ import * as Localize from './Localize';
 function extractErrorKeyFromError(error: unknown): ErrorKey {
   if (error instanceof Error) {
     const iteratedErrors = Utils.iterateNestedObject<ErrorKey>(ERRORS);
-    const errorKeys = _.map(iteratedErrors, obj => obj.value);
+    const errorKeys = iteratedErrors.map(obj => obj.value);
     const errorMessage = error instanceof Error ? error.message : '';
     for (const errorKey of errorKeys) {
       if (errorMessage.includes(errorKey)) {
@@ -48,7 +47,7 @@ function getAppError(errorKey?: ErrorKey, error?: unknown): AppError {
     // There is a chance the path is malformed, in which case we want to assign a default message
     title = Localize.translateLocal(titlePath);
     message = Localize.translateLocal(messagePath);
-  } catch (error: unknown) {
+  } catch (err: unknown) {
     title = Localize.translateLocal('errors.unknown.title');
     message = Localize.translateLocal('errors.unknown.message');
   }
