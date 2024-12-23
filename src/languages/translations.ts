@@ -1,5 +1,5 @@
 import en from './en';
-import cs_CZ from './cs_CZ';
+import cs_cz from './cs_cz';
 import type {TranslationBase, TranslationFlatObject} from './types';
 
 /**
@@ -47,5 +47,5 @@ export function flattenObject(obj: TranslationBase): TranslationFlatObject {
 
 export default {
   en: flattenObject(en),
-  cs_CZ: flattenObject(cs_CZ),
+  cs_cz: flattenObject(cs_cz),
 };

@@ -414,7 +414,7 @@ export default {
       en: {
         label: 'English',
       },
-      cs_CZ: {
+      cs_cz: {
         label: 'Czech',
       },
     },

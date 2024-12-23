@@ -18,7 +18,7 @@ const WRITE_COMMANDS = {
   UPDATE_HOME_ADDRESS: 'UpdateHomeAddress',
   UPDATE_AUTOMATIC_TIMEZONE: 'UpdateAutomaticTimezone',
   UPDATE_SELECTED_TIMEZONE: 'UpdateSelectedTimezone',
-  UPDATE_USER_AVATAR: 'UpdateUserAvatar',
+  // UPDATE_USER_AVATAR: 'UpdateUserAvatar',
   DELETE_USER_AVATAR: 'DeleteUserAvatar',
   CLOSE_ACCOUNT: 'CloseAccount',
   //   OPEN_PROFILE: 'OpenProfile',
@@ -46,7 +46,7 @@ type WriteCommandParameters = {
   [WRITE_COMMANDS.UPDATE_HOME_ADDRESS]: Parameters.UpdateHomeAddressParams;
   [WRITE_COMMANDS.UPDATE_AUTOMATIC_TIMEZONE]: Parameters.UpdateAutomaticTimezoneParams;
   [WRITE_COMMANDS.UPDATE_SELECTED_TIMEZONE]: Parameters.UpdateSelectedTimezoneParams;
-  [WRITE_COMMANDS.UPDATE_USER_AVATAR]: Parameters.UpdateUserAvatarParams;
+  // [WRITE_COMMANDS.UPDATE_USER_AVATAR]: Parameters.UpdateUserAvatarParams;
   [WRITE_COMMANDS.DELETE_USER_AVATAR]: EmptyObject;
   [WRITE_COMMANDS.CLOSE_ACCOUNT]: Parameters.CloseAccountParams;
   //   [WRITE_COMMANDS.OPEN_PROFILE]: Parameters.OpenProfileParams;
