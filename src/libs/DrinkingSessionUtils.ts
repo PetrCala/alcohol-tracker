@@ -452,11 +452,12 @@ function determineSessionMostCommonDrink(
 
   Object.values(drinks).forEach(drinksAtTimestamp => {
     Object.entries(drinksAtTimestamp).forEach(([drinkKey, count]) => {
-      if (count) {
-        const key = drinkKey as DrinkKey; // Initialize safely
-        // Increment the count, initializing to 0 if necessary
-        drinkCounts[key] = (drinkCounts[key] || 0) + count;
+      if (!count) {
+        return;
       }
+      const key = drinkKey as DrinkKey; // Initialize safely
+      // Increment the count, initializing to 0 if necessary
+      drinkCounts[key] = (drinkCounts[key] ?? 0) + count;
     });
   });
 
@@ -523,8 +524,12 @@ function getSingleDayDrinkingSessions(
   };
 
   const filteredSessions = returnArray
-    ? _.filter(sessions, sessionBelongsToDate)
-    : _.pickBy(sessions, sessionBelongsToDate);
+    ? Object.values(sessions).filter(sessionBelongsToDate)
+    : Object.fromEntries(
+        Object.entries(sessions).filter(([key, value]) =>
+          sessionBelongsToDate(value),
+        ),
+      );
 
   return filteredSessions;
 }
@@ -571,29 +576,14 @@ function getSingleMonthDrinkingSessions(
   const filteredSessions = sessions.filter(sessionBelongsToMonth);
   return filteredSessions;
 }
-
-/**
- * Given a list of user sessions data, return a list of those that should be rendered in a drinking sessions calendar.
- * This calculation should be memoized and fast.
- * */
-function getSessionsToRenderInCalendar(
-  sessions: DrinkingSessionList | null | undefined,
-  renderFrom: Date,
-): DrinkingSessionArray {
-  //   Object.values(drinkingSessionData),
-  //   session => session.start_time >= renderFrom,
-  // );
-  return [];
-}
-
 /**
  * Get the displayName for a single session participant.
  */
 function getDisplayNameForParticipant(
   userID?: UserID,
-  shouldUseShortForm = false,
-  shouldFallbackToHidden = true,
-  shouldAddCurrentUserPostfix = false,
+  // shouldUseShortForm = false,
+  // shouldFallbackToHidden = true,
+  // shouldAddCurrentUserPostfix = false,
 ): string {
   if (!userID) {
     return '';
@@ -646,7 +636,7 @@ function getDisplayNameForParticipant(
  */
 function isDifferentDay(
   session: DrinkingSession,
-  timezone: SelectedTimezone,
+  tz: SelectedTimezone,
 ): boolean {
   const stringFormat = 'yyyy-MM-dd';
   const start_time = session.start_time;
@@ -656,7 +646,7 @@ function isDifferentDay(
   } else {
     currentDay = format(start_time, stringFormat);
   }
-  const newDay = formatInTimeZone(session.start_time, timezone, stringFormat);
+  const newDay = formatInTimeZone(session.start_time, tz, stringFormat);
   return currentDay !== newDay;
 }
 
@@ -672,7 +662,7 @@ function getUserTrackingStartDate(
   if (isEmptyObject(data)) {
     return null;
   }
-  const startTimes = _.map(Object.values(data), session => session.start_time);
+  const startTimes = Object.values(data).map(session => session.start_time);
 
   const earliestTimestamp = _.min(startTimes);
   if (!earliestTimestamp) {
@@ -763,7 +753,7 @@ async function fixTimezoneSessions(
   db: Database,
   userID: UserID | undefined,
   sessions: DrinkingSessionList | undefined,
-  timezone: SelectedTimezone,
+  tz: SelectedTimezone,
 ) {
   if (!userID) {
     throw new Error('Invalid user. Try reloading the app.');
@@ -775,7 +765,7 @@ async function fixTimezoneSessions(
   Object.entries(sessions).forEach(([sessionId, session]) => {
     const convertedSession = {...session};
     if (!convertedSession.timezone) {
-      convertedSession.timezone = timezone;
+      convertedSession.timezone = tz;
     }
 
     if ('session_type' in session) {
@@ -867,7 +857,6 @@ export {
   getSessionRemoveDrinksOptions,
   getSessionTypeDescription,
   getSessionTypeTitle,
-  getSessionsToRenderInCalendar,
   getSingleDayDrinkingSessions,
   getSingleMonthDrinkingSessions,
   getUserDetailTooltipText,
