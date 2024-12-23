@@ -391,14 +391,12 @@ export default {
       firstDayOfWeek: 'First day of the week',
       theme: "App's theme",
     },
-    unitColorsSection: {
-      title: 'Unit Colors',
+    drinksAndUnitsSection: {
+      title: 'Drinks and Units',
       description:
-        'Set cutoff points where session colors change; each is the maximum value up to which the session retains that color',
-    },
-    drinksToUnitsSection: {
-      title: 'Drinks to Units',
-      description: 'Choose how many units each drink is worth',
+        "Set how many units each drink is worth and when the session's color changes",
+      drinksToUnits: 'Drinks to units',
+      unitsToColors: 'Units to colors',
     },
     save: 'Save preferences',
     saving: 'Saving your preferences...',
@@ -407,6 +405,15 @@ export default {
     error: {
       save: "We couldn't save your preferences. Please try again.",
     },
+  },
+  unitsToColorsScreen: {
+    title: 'Units to Colors',
+    description:
+      'Set cutoff points where session colors change; each is the maximum value up to which the session retains that color',
+  },
+  drinksToUnitsSscreen: {
+    title: 'Drinks to Units',
+    description: 'Choose how many units each drink is worth',
   },
   languageScreen: {
     language: 'Language',
