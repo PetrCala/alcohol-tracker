@@ -68,7 +68,7 @@ function useLazyMarkedDates(
     markedDatesMapToUpdate: Map<DateString, MarkingProps>,
     unitsMapToUpdate: Map<DateString, number>,
   ) => {
-    const relevantSessions = sessionIndex.current.get(dayKey) || [];
+    const relevantSessions = sessionIndex.current.get(dayKey) ?? [];
     const newMarking = sessionsToDayMarking(relevantSessions, preferences);
     if (!newMarking) {
       return;
@@ -91,7 +91,8 @@ function useLazyMarkedDates(
       isWithinInterval(session.start_time, {start, end}),
     );
 
-    // Build the sessionIndex for relevant sessions
+    // Build the sessionIndex for relevant sessions - do not use the in-built forEach method, as it introduces an erro into the assignment
+    // eslint-disable-next-line you-dont-need-lodash-underscore/for-each
     _.forEach(relevantSessions, session => {
       const sessionDate = utcToZonedTime(
         session.start_time,
@@ -106,11 +107,12 @@ function useLazyMarkedDates(
     });
 
     const datesToLoad = eachDayOfInterval({start, end});
-    const dayStrings = _.map(datesToLoad, date =>
+    const dayStrings = datesToLoad.map(date =>
       format(date, CONST.DATE.FNS_FORMAT_STRING),
     );
 
-    // Mark the dates and units for each day
+    // Mark the dates and units for each day - do not use the in-built forEach method, as it introduces an erro into the assignment
+    // eslint-disable-next-line you-dont-need-lodash-underscore/for-each
     _.forEach(dayStrings, dayKey => {
       loadSessionsForDayInternal(
         dayKey,
@@ -165,7 +167,7 @@ function useLazyMarkedDates(
         Onyx.merge(ONYXKEYS.SESSIONS_CALENDAR_MONTHS_LOADED, newMonthsLoaded);
       }
     }
-  }, [isFocused]);
+  }, [isFocused, user?.uid, userID]);
 
   useEffect(() => {
     // Calculate only upon refocus
@@ -181,11 +183,19 @@ function useLazyMarkedDates(
 
     // If the current user has already loaded data, reload the same amount of months
     // If this is the first time loading, or the user is different load the current month only
-    const newMonthsToLoad = user?.uid !== userID ? 0 : monthsLoaded || 0;
+    const newMonthsToLoad = user?.uid !== userID ? 0 : monthsLoaded ?? 0;
 
     loadMoreMonths(newMonthsToLoad, true);
     setIsLoading(false);
-  }, [sessions, preferences, userID, isFocused]);
+  }, [
+    sessions,
+    preferences,
+    userID,
+    isFocused,
+    loadMoreMonths,
+    monthsLoaded,
+    user?.uid,
+  ]);
 
   return {
     markedDates,
