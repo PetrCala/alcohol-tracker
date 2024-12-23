@@ -18,30 +18,9 @@ import type {
 } from '@src/types/onyx';
 import CONST from '@src/CONST';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
-import type {Timezone} from '@src/types/onyx/UserData';
 import _ from 'lodash';
-import Onyx from 'react-native-onyx';
-import ONYXKEYS from '@src/ONYXKEYS';
 import * as DSUtils from './DrinkingSessionUtils';
-import {auth} from './Firebase/FirebaseApp';
 import {getRandomInt} from './Choice';
-
-let timezone: Required<Timezone> = CONST.DEFAULT_TIME_ZONE;
-Onyx.connect({
-  key: ONYXKEYS.USER_DATA_LIST,
-  callback: value => {
-    if (!auth?.currentUser) {
-      return;
-    }
-    const currentUserID = auth?.currentUser?.uid;
-    const userDataTimezone = value?.[currentUserID]?.timezone;
-    timezone = {
-      selected: userDataTimezone?.selected ?? CONST.DEFAULT_TIME_ZONE.selected,
-      automatic:
-        userDataTimezone?.automatic ?? CONST.DEFAULT_TIME_ZONE.automatic,
-    };
-  },
-});
 
 function formatDate(date: Date): DateString {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
@@ -270,7 +249,7 @@ function sessionsToDayMarking(
     : unitsToColors(totalUnits, preferences.units_to_colors);
 
   // Determine text color based on background color
-  const shouldUseContrast = _.includes(['red', 'green', 'black'], color);
+  const shouldUseContrast = color in ['red', 'green', 'black'];
   const textColor = shouldUseContrast ? 'white' : 'black';
 
   const markingObject: SessionsCalendarDayMarking = {

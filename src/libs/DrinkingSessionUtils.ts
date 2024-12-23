@@ -143,7 +143,8 @@ function getDrinkingSessionOnyxKey(
 
 /** Type guard to check if a given key is a valid DrinkType key */
 function isDrinkTypeKey(key: string): key is keyof Drinks {
-  return key in Object.values(CONST.DRINKS.KEYS);
+  // eslint-disable-next-line you-dont-need-lodash-underscore/includes
+  return _.includes(Object.values(CONST.DRINKS.KEYS), key);
 }
 
 /**

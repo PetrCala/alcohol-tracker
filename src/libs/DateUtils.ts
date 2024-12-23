@@ -117,23 +117,19 @@ function getDayStartAndEndUTC(date: Date, tz: SelectedTimezone) {
   return {startOfDayUTC, endOfDayUTC};
 }
 
-function getMonthStartAndEndUTC(
-  date: Date,
-  timezone: string,
-  untilToday: boolean,
-) {
+function getMonthStartAndEndUTC(date: Date, tz: string, untilToday: boolean) {
   // Get the date in the session's timezone
-  const zonedDate = utcToZonedTime(date, timezone);
+  const zonedDate = utcToZonedTime(date, tz);
 
   // Start of the month in the session's timezone
   const startOfMonthDate = startOfMonth(zonedDate);
-  const startOfMonthUTC = zonedTimeToUtc(startOfMonthDate, timezone).getTime();
+  const startOfMonthUTC = zonedTimeToUtc(startOfMonthDate, tz).getTime();
 
   // End of the month in the session's timezone
   let endOfMonthDate = endOfMonth(zonedDate);
 
   if (untilToday) {
-    const todayInTz = utcToZonedTime(new Date(), timezone);
+    const todayInTz = utcToZonedTime(new Date(), tz);
     const todayEndInTz = endOfDay(todayInTz);
 
     // If today is before the end of the month, use today as the end date
@@ -142,7 +138,7 @@ function getMonthStartAndEndUTC(
     }
   }
 
-  const endOfMonthUTC = zonedTimeToUtc(endOfMonthDate, timezone).getTime();
+  const endOfMonthUTC = zonedTimeToUtc(endOfMonthDate, tz).getTime();
 
   return {startOfMonthUTC, endOfMonthUTC};
 }
