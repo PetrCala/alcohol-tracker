@@ -54,7 +54,9 @@ function EmailScreen({route}: EmailScreenProps) {
         const password = values.password;
 
         await User.sendUpdateEmailLink(auth.currentUser, emailToSend, password);
-        setSuccessMessage(translate('emailScreen.success', emailToSend));
+        setSuccessMessage(
+          translate('emailScreen.success', {email: emailToSend}),
+        );
       } catch (error) {
         const appError = ErrorUtils.getAppError(undefined, error);
         setServerErrorMessage(appError.message);

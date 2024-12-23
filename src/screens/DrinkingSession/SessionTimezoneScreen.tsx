@@ -78,10 +78,9 @@ function SesssionTimezoneScreen({route}: SessionTimezoneScreenProps) {
       <ConfirmModal
         danger
         title={translate('common.warning')}
-        prompt={translate(
-          'sessionTimezoneScreen.confirmPrompt',
-          selectedTimezone ?? '',
-        )}
+        prompt={translate('sessionTimezoneScreen.confirmPrompt', {
+          newTimezone: selectedTimezone ?? '',
+        })}
         confirmText={translate('common.yesIKnowWhatIAmDoing')}
         cancelText={translate('common.cancel')}
         isVisible={!!selectedTimezone}

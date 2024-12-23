@@ -274,7 +274,7 @@ function FriendRequestScreen() {
                 <GrayHeader
                   headerText={translate(
                     'friendRequestScreen.requestsReceived',
-                    requestsReceivedCount,
+                    {requestsCount: requestsReceivedCount},
                   )}
                 />
                 <View>
@@ -288,10 +288,9 @@ function FriendRequestScreen() {
                   ))}
                 </View>
                 <GrayHeader
-                  headerText={translate(
-                    'friendRequestScreen.requestsSent',
-                    requestsSentCount,
-                  )}
+                  headerText={translate('friendRequestScreen.requestsSent', {
+                    requestsCount: requestsSentCount,
+                  })}
                 />
                 <View>
                   {requestsSent.map(requestId => (

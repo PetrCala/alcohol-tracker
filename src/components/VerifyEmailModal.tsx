@@ -131,10 +131,9 @@ function VerifyEmailModal() {
                   <Text textAlign="center" style={styles.mt3}>
                     {emailSent
                       ? translate('verifyEmailScreen.checkYourInbox')
-                      : translate(
-                          'verifyEmailScreen.wouldYouLikeToVerify',
-                          user?.email ?? '',
-                        )}
+                      : translate('verifyEmailScreen.wouldYouLikeToVerify', {
+                          email: user?.email ?? '',
+                        })}
                   </Text>
                 </View>
                 <View style={styles.pb1}>
