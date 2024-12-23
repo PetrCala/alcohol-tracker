@@ -2,6 +2,7 @@ import {useState, useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CONST from '@src/CONST';
 import {cacheProfileImage} from '@libs/Cache';
+import type {ProfileImageCacheItem} from '@libs/Cache';
 
 /**
  * Custom hook for caching and retrieving profile images based on user ID.
@@ -23,7 +24,9 @@ const useProfileImageCache = (userID: string) => {
         return;
       }
 
-      const item = JSON.parse(itemStr);
+      const item: ProfileImageCacheItem = JSON.parse(
+        itemStr,
+      ) as ProfileImageCacheItem;
       const now = new Date().getTime();
       const CACHE_LIFESPAN = 12 * 60 * 60 * 1000; // 12 hours
 
