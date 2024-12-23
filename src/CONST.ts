@@ -231,6 +231,7 @@ const CONST = {
   SEARCH_SKELETON_VIEW_ITEM_HEIGHT: 108,
   EMAIL: {
     KIROKU: 'kiroku.alcohol.tracker@gmail.com',
+    KIROKU_EMAIL_DOMAIN: '@kiroku.com',
   },
   EMPTY_ARRAY,
   EMPTY_OBJECT,
@@ -295,6 +296,7 @@ const CONST = {
     UNKNOWN_ERROR: 520,
   },
 
+  MISSING_TRANSLATION: 'MISSING TRANSLATION',
   LANGUAGES: ['en', 'cs_CZ'],
 
   SEARCH: {

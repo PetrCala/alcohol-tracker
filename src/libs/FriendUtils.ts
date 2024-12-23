@@ -6,7 +6,7 @@ import CONST from '@src/CONST';
 import DBPATHS from '@src/DBPATHS';
 import {isNonEmptyArray} from './Validation';
 
-export async function fetchUserFriends(
+async function fetchUserFriends(
   db: Database,
   userID: string,
 ): Promise<UserList | null> {
@@ -22,7 +22,7 @@ export async function fetchUserFriends(
  * @param user2Friends - The friends data of user 2.
  * @returns An array of common friends.
  */
-export function getCommonFriends(
+function getCommonFriends(
   user1FriendIds: UserArray,
   user2FriendIds: UserArray,
 ): UserArray {
@@ -42,7 +42,7 @@ export function getCommonFriends(
  * @param user2Friends - The friends of user 2.
  * @returns The number of common friends.
  */
-export function getCommonFriendsCount(
+function getCommonFriendsCount(
   user1FriendIds: UserArray,
   user2FriendIds: UserArray,
 ): number {
@@ -69,16 +69,25 @@ const getFriendRequestsCount = (
   }, 0);
 };
 
-export const getReceivedRequestsCount = (
+const getReceivedRequestsCount = (
   friendRequests: FriendRequestList | undefined,
 ): number => {
   const status: FriendRequestStatus = CONST.FRIEND_REQUEST_STATUS.RECEIVED;
   return getFriendRequestsCount(friendRequests, status);
 };
 
-export const getSentRequestsCount = (
+const getSentRequestsCount = (
   friendRequests: FriendRequestList | undefined,
 ): number => {
   const status: FriendRequestStatus = CONST.FRIEND_REQUEST_STATUS.SENT;
   return getFriendRequestsCount(friendRequests, status);
+};
+
+export {
+  fetchUserFriends,
+  getCommonFriends,
+  getCommonFriendsCount,
+  getFriendRequestsCount,
+  getReceivedRequestsCount,
+  getSentRequestsCount,
 };

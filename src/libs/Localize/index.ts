@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import * as RNLocalize from 'react-native-localize';
 import Onyx from 'react-native-onyx';
-import type {ValueOf} from 'type-fest';
 import Log from '@libs/Log';
 import type {
   MessageElementBase,
@@ -72,17 +71,13 @@ type Phrase<TKey extends TranslationPaths> =
  * as they have higher chance of being unique, so we'll end up wasting space
  * in our cache.
  */
-const translationCache = new Map<
-  ValueOf<typeof CONST.LOCALES>,
-  Map<TranslationPaths, string>
->(
-  Object.values(CONST.LOCALES).reduce(
-    (cache, locale) => {
-      cache.push([locale, new Map()]);
-      return cache;
-    },
-    [] as Array<[ValueOf<typeof CONST.LOCALES>, Map<TranslationPaths, string>]>,
-  ),
+const translationCache = new Map<Locale, Map<TranslationPaths, string>>(
+  Object.values(CONST.LOCALES).reduce<
+    Array<[Locale, Map<TranslationPaths, string>]>
+  >((cache, locale) => {
+    cache.push([locale as Locale, new Map<TranslationPaths, string>()]);
+    return cache;
+  }, []),
 );
 
 /**
@@ -176,10 +171,7 @@ function translate<TKey extends TranslationPaths>(
   ...phraseParameters: PhraseParameters<Phrase<TKey>>
 ): string {
   // Search phrase in full locale e.g. es-CZ
-  //   const language = desiredLanguage === CONST.LOCALES.ES_ES_ONFIDO
-  //       ? CONST.LOCALES.ES_ES
-  //       : desiredLanguage;
-  //   // Phrase is not found in full locale, search it in fallback language e.g. es
+  // Phrase is not found in full locale, search it in fallback language e.g. es
   //   const languageAbbreviation = desiredLanguage.substring(0, 2) as 'en' | 'es';
   const language = desiredLanguage;
   const languageAbbreviation = desiredLanguage;
@@ -201,9 +193,9 @@ function translate<TKey extends TranslationPaths>(
       ? phraseKey.join('.')
       : phraseKey;
     Log.alert(`${phraseString} was not found in the en locale`);
-    // if (userEmail.includes(CONST.EMAIL.KIROKU_EMAIL_DOMAIN)) {
-    //   return CONST.MISSING_TRANSLATION;
-    // }
+    if (userEmail.includes(CONST.EMAIL.KIROKU_EMAIL_DOMAIN)) {
+      return CONST.MISSING_TRANSLATION;
+    }
     return phraseString;
   }
   throw new Error(`${phraseKey} was not found in the default language`);

@@ -32,6 +32,7 @@ type LogCommandParameters = {
 };
 
 function LogCommand(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   parameters: LogCommandParameters,
 ): Promise<{requestID: string}> {
   //   const commandName = 'Log';
